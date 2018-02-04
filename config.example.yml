@@ -1,0 +1,5 @@
+darktable-cli: /Applications/darktable.app/Contents/MacOS/darktable-cli
+originals-path: photos/originals
+thumbnails-path: photos/thumbnails
+import-path: photos/import
+export-path: photos/export

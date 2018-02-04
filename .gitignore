@@ -12,3 +12,26 @@
 
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
+
+# Compiled, config and log files
+*.log
+config.yml
+/tweethog
+
+# Generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.heartbeat
+.idea
+*~
+.goutputstream*
+.c9revisions
+.settings
+.swp
+.tmp
+/vendor/
