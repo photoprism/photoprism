@@ -16,12 +16,7 @@ import (
 	"encoding/hex"
 )
 
-func getRandomInt(min, max int) int {
-	rand.Seed(time.Now().Unix())
-	return rand.Intn(max-min) + min
-}
-
-func getExpandedFilename(filename string) string {
+func GetExpandedFilename(filename string) string {
 	usr, _ := user.Current()
 	dir := usr.HomeDir
 
@@ -32,6 +27,11 @@ func getExpandedFilename(filename string) string {
 	result, _ := filepath.Abs(filename)
 
 	return result
+}
+
+func getRandomInt(min, max int) int {
+	rand.Seed(time.Now().Unix())
+	return rand.Intn(max-min) + min
 }
 
 func fileExists(filename string) bool {

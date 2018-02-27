@@ -21,7 +21,7 @@ func main() {
 			Name:  "config",
 			Usage: "Displays global configuration values",
 			Action: func(c *cli.Context) error {
-				config.SetValuesFromFile(photoprism.getExpandedFilename(c.GlobalString("config-file")))
+				config.SetValuesFromFile(photoprism.GetExpandedFilename(c.GlobalString("config-file")))
 
 				config.SetValuesFromCliContext(c)
 
@@ -47,7 +47,7 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) error {
-				config.SetValuesFromFile(photoprism.getExpandedFilename(c.GlobalString("config-file")))
+				config.SetValuesFromFile(photoprism.GetExpandedFilename(c.GlobalString("config-file")))
 
 				config.SetValuesFromCliContext(c)
 
