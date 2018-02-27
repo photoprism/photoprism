@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 	"github.com/djherbis/times"
-	"fmt"
+    "github.com/steakknife/hamming"
 )
 
 const (
@@ -45,48 +45,52 @@ var FileExtensions = map[string]string {
 type MediaFile struct {
 	filename string
 	dateCreated time.Time
-	hash     []byte
+	hash     string
 	fileType string
 	mimeType string
+	perceptualHash string
 	tags     []string
 	exifData *ExifData
 }
 
 func NewMediaFile(filename string) *MediaFile {
-	instance := &MediaFile{filename: filename}
+	instance := &MediaFile{
+		filename: filename,
+		fileType: FileTypeOther,
+		}
 
 	return instance
 }
 
-func (mediaFile *MediaFile) GetDateCreated() time.Time {
-	if !mediaFile.dateCreated.IsZero() {
-		return mediaFile.dateCreated
+func (m *MediaFile) GetDateCreated() time.Time {
+	if !m.dateCreated.IsZero() {
+		return m.dateCreated
 	}
 
-	info, err := mediaFile.GetExifData()
+	info, err := m.GetExifData()
 
 	if err == nil {
-		mediaFile.dateCreated = info.DateTime
+		m.dateCreated = info.DateTime
 		return info.DateTime
 	}
 
-	t, err := times.Stat(mediaFile.GetFilename())
+	t, err := times.Stat(m.GetFilename())
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	if t.HasBirthTime() {
-		mediaFile.dateCreated = t.BirthTime()
+		m.dateCreated = t.BirthTime()
 		return t.BirthTime()
 	}
 
-	mediaFile.dateCreated = t.ModTime()
+	m.dateCreated = t.ModTime()
 	return t.ModTime()
 }
 
-func (mediaFile *MediaFile) GetCameraModel () string {
-	info, err := mediaFile.GetExifData()
+func (m *MediaFile) GetCameraModel () string {
+	info, err := m.GetExifData()
 
 	var result string
 
@@ -97,22 +101,26 @@ func (mediaFile *MediaFile) GetCameraModel () string {
 	return result
 }
 
-func (mediaFile *MediaFile) GetCanonicalName() string {
-	dateCreated := mediaFile.GetDateCreated().UTC()
-	cameraModel := strings.Replace(mediaFile.GetCameraModel(), " ", "_", -1)
+func (m *MediaFile) GetCanonicalName() string {
+	dateCreated := m.GetDateCreated().UTC()
+	//cameraModel := strings.Replace(m.GetCameraModel(), " ", "_", -1)
 
-	result := dateCreated.Format("20060102_150405_") + strings.ToUpper(mediaFile.GetHashString()[:8])
+	result := dateCreated.Format("20060102_150405_") + strings.ToUpper(m.GetHash()[:12])
 
-	if cameraModel != "" {
+	/* if cameraModel != "" {
 		result = result + "_" + cameraModel
-	}
+	} */
 
 	return result
 }
 
-func (mediaFile *MediaFile) GetPerceptiveHash() (string, error) {
+func (m *MediaFile) GetPerceptualHash() (string, error) {
+	if m.perceptualHash != "" {
+		return m.perceptualHash, nil
+	}
+
 	hasher := ish.NewDifferenceHash(8, 8)
-	img, _, err := ish.LoadFile(mediaFile.GetFilename())
+	img, _, err := ish.LoadFile(m.GetFilename())
 
 	if err != nil {
 		return "", err
@@ -124,56 +132,84 @@ func (mediaFile *MediaFile) GetPerceptiveHash() (string, error) {
 		return "", err
 	}
 
-	dhs := hex.EncodeToString(dh)
+	m.perceptualHash = hex.EncodeToString(dh)
 
-	return dhs, nil
+	return m.perceptualHash, nil
 }
 
-func (mediaFile *MediaFile) GetHash() []byte  {
-	if len(mediaFile.hash) == 0 {
-		mediaFile.hash = Md5Sum(mediaFile.GetFilename())
+func (m *MediaFile) GetPerceptualDistance(perceptualHash string) (int, error) {
+	var hash1, hash2 []byte
+
+	if imageHash, err := m.GetPerceptualHash(); err != nil {
+		return -1, err
+	} else {
+		if decoded, err := hex.DecodeString(imageHash); err != nil {
+			return -1, err
+		} else {
+			hash1 = decoded
+		}
 	}
 
-	return mediaFile.hash
-}
-
-func (mediaFile *MediaFile) GetHashString() string {
-	return fmt.Sprintf("%x", mediaFile.GetHash())
-}
-
-func (mediaFile *MediaFile) GetRelatedFiles() (result []*MediaFile, err error) {
-	extension := mediaFile.GetExtension()
-
-	baseFilename := mediaFile.filename[0:len(mediaFile.filename)-len(extension)]
-
-	matches, err := filepath.Glob(baseFilename + "*")
-
-	if err != nil {
-		return result, err
+	if decoded, err := hex.DecodeString(perceptualHash); err != nil {
+		return -1, err
+	} else {
+		hash2 = decoded
 	}
 
-	for _, filename := range matches {
-		result = append(result, NewMediaFile(filename))
-	}
+	result := hamming.Bytes(hash1, hash2)
 
 	return result, nil
 }
 
-
-func (mediaFile *MediaFile) GetFilename() string {
-	return mediaFile.filename
-}
-
-func (mediaFile *MediaFile) SetFilename(filename string)  {
-	mediaFile.filename = filename
-}
-
-func (mediaFile *MediaFile) GetMimeType() string {
-	if mediaFile.mimeType != "" {
-		return mediaFile.mimeType
+func (m *MediaFile) GetHash() string {
+	if len(m.hash) == 0 {
+		m.hash = fileHash(m.GetFilename())
 	}
 
-	handle, err := mediaFile.openFile()
+	return m.hash
+}
+
+func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, masterFile *MediaFile, err error) {
+	extension := m.GetExtension()
+
+	baseFilename := m.filename[0:len(m.filename)-len(extension)]
+
+	matches, err := filepath.Glob(baseFilename + "*")
+
+	if err != nil {
+		return result, nil, err
+	}
+
+	for _, filename := range matches {
+		resultFile := NewMediaFile(filename)
+
+		if masterFile == nil && resultFile.IsJpeg() {
+			masterFile = resultFile
+		} else if resultFile.IsRaw() {
+			masterFile = resultFile
+		}
+
+		result = append(result, resultFile)
+	}
+
+	return result, masterFile, nil
+}
+
+
+func (m *MediaFile) GetFilename() string {
+	return m.filename
+}
+
+func (m *MediaFile) SetFilename(filename string)  {
+	m.filename = filename
+}
+
+func (m *MediaFile) GetMimeType() string {
+	if m.mimeType != "" {
+		return m.mimeType
+	}
+
+	handle, err := m.openFile()
 
 	if err != nil {
 		log.Println("Error: Could not open file to determine mime type")
@@ -188,17 +224,17 @@ func (mediaFile *MediaFile) GetMimeType() string {
 	_, err = handle.Read(buffer)
 
 	if err != nil {
-		log.Println("Error: Could not read file to determine mime type: " + mediaFile.GetFilename())
+		log.Println("Error: Could not read file to determine mime type: " + m.GetFilename())
 		return ""
 	}
 
-	mediaFile.mimeType = http.DetectContentType(buffer)
+	m.mimeType = http.DetectContentType(buffer)
 
-	return mediaFile.mimeType
+	return m.mimeType
 }
 
-func (mediaFile *MediaFile) openFile() (*os.File, error) {
-	if handle, err := os.Open(mediaFile.filename); err == nil {
+func (m *MediaFile) openFile() (*os.File, error) {
+	if handle, err := os.Open(m.filename); err == nil {
 		return handle, nil
 	} else {
 		log.Println(err.Error())
@@ -206,40 +242,44 @@ func (mediaFile *MediaFile) openFile() (*os.File, error) {
 	}
 }
 
-func (mediaFile *MediaFile) Exists() bool {
-	return FileExists(mediaFile.GetFilename())
+func (m *MediaFile) Exists() bool {
+	return fileExists(m.GetFilename())
 }
 
-func (mediaFile *MediaFile) Move(newFilename string) error {
-	if err := os.Rename(mediaFile.filename, newFilename); err != nil {
+func (m *MediaFile) Remove() error {
+	return os.Remove(m.GetFilename())
+}
+
+func (m *MediaFile) Move(newFilename string) error {
+	if err := os.Rename(m.filename, newFilename); err != nil {
 		return err
 	}
 
-	mediaFile.filename = newFilename
+	m.filename = newFilename
 
 	return nil
 }
 
-func (mediaFile *MediaFile) GetExtension() string {
-	return strings.ToLower(filepath.Ext(mediaFile.filename))
+func (m *MediaFile) GetExtension() string {
+	return strings.ToLower(filepath.Ext(m.filename))
 }
 
-func (mediaFile *MediaFile) IsJpeg() bool {
-	return mediaFile.GetMimeType() == MimeTypeJpeg
+func (m *MediaFile) IsJpeg() bool {
+	return m.GetMimeType() == MimeTypeJpeg
 }
 
-func (mediaFile *MediaFile) HasType(typeString string) bool {
+func (m *MediaFile) HasType(typeString string) bool {
 	if typeString == FileTypeJpeg {
-		return mediaFile.IsJpeg()
+		return m.IsJpeg()
 	}
 
-	return FileExtensions[mediaFile.GetExtension()] == typeString
+	return FileExtensions[m.GetExtension()] == typeString
 }
 
-func (mediaFile *MediaFile) IsRaw() bool {
-	return mediaFile.HasType(FileTypeRaw)
+func (m *MediaFile) IsRaw() bool {
+	return m.HasType(FileTypeRaw)
 }
 
-func (mediaFile *MediaFile) IsPhoto() bool {
-	return mediaFile.IsJpeg() || mediaFile.IsRaw()
+func (m *MediaFile) IsPhoto() bool {
+	return m.IsJpeg() || m.IsRaw()
 }

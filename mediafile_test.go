@@ -2,61 +2,89 @@ package photoprism
 
 import (
 	"testing"
-	"fmt"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestMediaFile_ConvertToJpeg(t *testing.T) {
-	converterCommand := "/Applications/darktable.app/Contents/MacOS/darktable-cli"
-
-	converter := NewConverter(converterCommand)
-
-	image1,_ := converter.ConvertToJpeg(NewMediaFile("storage/import/IMG_5901.JPG"))
-
-	info1, _ := image1.GetExifData()
-
-	fmt.Printf("%+v\n", info1)
-
-	image2, _ := converter.ConvertToJpeg(NewMediaFile("storage/import/IMG_9087.CR2"))
-
-	info2, _ := image2.GetExifData()
-
-	fmt.Printf("%+v\n", info2)
-}
-
 func TestMediaFile_FindRelatedImages(t *testing.T) {
-	image := NewMediaFile("storage/import/IMG_9079.jpg")
+	conf := NewTestConfig()
 
-	related, err := image.GetRelatedFiles()
+	conf.InitializeTestData(t)
 
-	if err != nil {
-		t.Error(err)
-	}
+	mediaFile := NewMediaFile(conf.ImportPath + "/raw/20140717_154212_1EC48F8489.cr2")
+
+	expectedBaseFilename := conf.ImportPath + "/raw/20140717_154212_1EC48F8489"
+
+	related, _, err := mediaFile.GetRelatedFiles()
+
+	assert.Empty(t, err)
+
+	assert.Len(t, related, 3)
 
 	for _, result := range related {
-		info, _ := result.GetExifData()
-		fmt.Printf("%s %+v\n", result.GetFilename(), info)
+		filename := result.GetFilename()
+
+		extension := result.GetExtension()
+
+		baseFilename := filename[0:len(filename)-len(extension)]
+
+		assert.Equal(t, expectedBaseFilename, baseFilename)
 	}
 }
 
 func TestMediaFile_GetPerceptiveHash(t *testing.T) {
-	image := NewMediaFile("storage/import/IMG_9079.jpg")
+	conf := NewTestConfig()
 
-	hash, _ := image.GetPerceptiveHash()
-	fmt.Printf("Perceptive Hash (large): %s\n", hash)
+	conf.InitializeTestData(t)
 
-	image2 := NewMediaFile("storage/import/IMG_9079_small.jpg")
+	mediaFile1 := NewMediaFile(conf.ImportPath + "/20130203_193332_0AE340D280.jpg")
 
-	hash2, _ := image2.GetPerceptiveHash()
-	fmt.Printf("Perceptive Hash (small): %s\n", hash2)
+	hash1, _ := mediaFile1.GetPerceptualHash()
+
+	assert.Equal(t, "66debc383325d3bd", hash1)
+
+	mediaFile2 := NewMediaFile(conf.ImportPath + "/20130203_193332_0AE340D280_V2.jpg")
+
+	hash2, _ := mediaFile2.GetPerceptualHash()
+
+	assert.Equal(t, "e6debc393325c3b9", hash2)
+
+	distance, _ := mediaFile1.GetPerceptualDistance(hash2)
+
+	assert.Equal(t, 4, distance)
+
+	mediaFile3 := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
+	hash3, _ := mediaFile3.GetPerceptualHash()
+
+	assert.Equal(t, "f1e2858b171d3e78", hash3)
+
+	distance, _ = mediaFile1.GetPerceptualDistance(hash3)
+
+	assert.Equal(t, 33, distance)
 }
 
 
 func TestMediaFile_GetMimeType(t *testing.T) {
-	image1 := NewMediaFile("storage/import/IMG_9083.jpg")
+	conf := NewTestConfig()
 
-	fmt.Println("MimeType: " + image1.GetMimeType())
+	conf.InitializeTestData(t)
 
-	image2 := NewMediaFile("storage/import/IMG_9082.CR2")
+	image1 := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
 
-	fmt.Println("MimeType: " + image2.GetMimeType())
+	assert.Equal(t, "image/jpeg", image1.GetMimeType())
+
+	image2 := NewMediaFile(conf.ImportPath + "/raw/20140717_154212_1EC48F8489.cr2")
+
+	assert.Equal(t, "application/octet-stream", image2.GetMimeType())
+}
+
+func TestMediaFile_Exists(t *testing.T) {
+	conf := NewTestConfig()
+
+	mediaFile := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
+
+	assert.True(t, mediaFile.Exists())
+
+	mediaFile = NewMediaFile(conf.ImportPath + "/iphone/IMG_6788_XYZ.JPG")
+
+	assert.False(t, mediaFile.Exists())
 }

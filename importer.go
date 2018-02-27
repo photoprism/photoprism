@@ -6,130 +6,114 @@ import (
 	"log"
 	"fmt"
 	"github.com/pkg/errors"
-	"bytes"
 	"path"
+	"sort"
+	"strings"
 )
 
 type Importer struct {
 	originalsPath string
-	converter     *Converter
+	removeDotFiles bool
+	removeExistingFiles bool
+	removeEmptyDirectories bool
 }
 
-func NewImporter(originalsPath string, converter *Converter) *Importer {
+func NewImporter(originalsPath string) *Importer {
 	instance := &Importer{
 		originalsPath: originalsPath,
-		converter:     converter,
+		removeDotFiles: true,
+		removeExistingFiles: true,
+		removeEmptyDirectories: true,
 	}
 
 	return instance
 }
 
-func (importer *Importer) CreateJpegFromRaw(sourcePath string) {
-	err := filepath.Walk(sourcePath, func(filename string, fileInfo os.FileInfo, err error) error {
+func (i *Importer) ImportPhotosFromDirectory(importPath string) {
+	var directories []string
 
+	err := filepath.Walk(importPath, func(filename string, fileInfo os.FileInfo, err error) error {
 		if err != nil {
-			log.Print(err.Error())
+			// log.Print(err.Error())
 			return nil
 		}
 
 		if fileInfo.IsDir() {
+			if filename != importPath {
+				directories = append(directories, filename)
+			}
+			return nil
+		}
+
+		if i.removeDotFiles && strings.HasPrefix(filepath.Base(filename), ".") {
+			os.Remove(filename)
 			return nil
 		}
 
 		mediaFile := NewMediaFile(filename)
 
-		if !mediaFile.Exists() || !mediaFile.IsRaw() {
+		if !mediaFile.Exists() || !mediaFile.IsPhoto() {
 			return nil
 		}
 
-		log.Printf("Converting %s \n", filename)
-
-		if _, err := importer.converter.ConvertToJpeg(mediaFile); err != nil {
-			log.Print(err.Error())
-		}
-
-		return nil
-	})
-
-	if err != nil {
-		log.Print(err.Error())
-	}
-}
-
-func (importer *Importer) ImportJpegFromDirectory(sourcePath string) {
-	err := filepath.Walk(sourcePath, func(filename string, fileInfo os.FileInfo, err error) error {
-
-		if err != nil {
-			log.Print(err.Error())
-			return nil
-		}
-
-		if fileInfo.IsDir() {
-			return nil
-		}
-
-		jpegFile := NewMediaFile(filename)
-
-		if !jpegFile.Exists() || !jpegFile.IsJpeg() {
-			return nil
-		}
-
-		log.Println(jpegFile.GetFilename() + " -> " + jpegFile.GetCanonicalName())
-
-		log.Println("Getting related files")
-
-		relatedFiles, _ := jpegFile.GetRelatedFiles()
+		relatedFiles, masterFile, _ := mediaFile.GetRelatedFiles()
 
 		for _, relatedMediaFile := range relatedFiles {
-			log.Println("Processing " + relatedMediaFile.GetFilename())
-			if destinationFilename, err := importer.GetDestinationFilename(jpegFile, relatedMediaFile); err == nil {
-				log.Println("Creating directories")
+			if destinationFilename, err := i.GetDestinationFilename(masterFile, relatedMediaFile); err == nil {
 				os.MkdirAll(path.Dir(destinationFilename), os.ModePerm)
-				log.Println("Moving file " + relatedMediaFile.GetFilename())
+				log.Printf("Moving file %s to %s", relatedMediaFile.GetFilename(), destinationFilename)
 				relatedMediaFile.Move(destinationFilename)
-				log.Println("Moved file to  " + destinationFilename)
-			} else {
-				log.Println("File already exists: " + relatedMediaFile.GetFilename() + " -> " + destinationFilename)
+			} else if i.removeExistingFiles {
+				relatedMediaFile.Remove()
+				log.Printf("Deleted %s (already exists)", relatedMediaFile.GetFilename())
 			}
 		}
 
-		// mediaFile.Move(importer.originalsPath)
+		// mediaFile.Move(i.originalsPath)
 
 		return nil
 	})
+
+	sort.Slice(directories, func(i, j int) bool {
+		return len(directories[i]) > len(directories[j])
+	})
+
+	if i.removeEmptyDirectories {
+		// Remove empty directories from import path
+		for _, directory := range directories {
+			if directoryIsEmpty(directory) {
+				os.Remove(directory)
+				log.Printf("Deleted empty directory %s", directory)
+			}
+		}
+	}
 
 	if err != nil {
 		log.Print(err.Error())
 	}
 }
 
-func (importer *Importer) GetDestinationFilename(jpegFile *MediaFile, mediaFile *MediaFile) (string, error) {
-	canonicalName := jpegFile.GetCanonicalName()
+func (i *Importer) GetDestinationFilename(masterFile *MediaFile, mediaFile *MediaFile) (string, error) {
+	canonicalName := masterFile.GetCanonicalName()
 	fileExtension := mediaFile.GetExtension()
-	dateCreated := jpegFile.GetDateCreated()
+	dateCreated := masterFile.GetDateCreated()
 
 	//	Mon Jan 2 15:04:05 -0700 MST 2006
-	path := importer.originalsPath + "/" + dateCreated.UTC().Format("2006/01")
+	pathName := i.originalsPath + "/" + dateCreated.UTC().Format("2006/01")
 
-	i := 1
+	iteration := 1
 
-	result := path + "/" + canonicalName + fileExtension
+	result := pathName + "/" + canonicalName + fileExtension
 
-	for FileExists(result) {
-		if bytes.Compare(mediaFile.GetHash(), Md5Sum(result)) == 0 {
+	for fileExists(result) {
+		if mediaFile.GetHash() == fileHash(result) {
 			return result, errors.New("File already exists")
 		}
 
-		i++
-		result = path + "/" + canonicalName + "_" + fmt.Sprintf("%02d", i) + fileExtension
-//		log.Println(result)
+		iteration++
+
+		result = pathName + "/" + canonicalName + "_" + fmt.Sprintf("V%d", iteration) + fileExtension
 	}
 
-	// os.MkdirAll(folderPath, os.ModePerm)
-
 	return result, nil
-}
-
-func (importer *Importer) MoveRelatedFiles() {
-
 }

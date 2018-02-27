@@ -2,30 +2,31 @@ package photoprism
 
 import (
 	"testing"
-	"fmt"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestImage_GetExifData(t *testing.T) {
-	config := NewTestConfig()
+func TestMediaFile_GetExifData(t *testing.T) {
+	conf := NewTestConfig()
 
-	converter := NewConverter(config.DarktableCli)
+	conf.InitializeTestData(t)
 
-	image1 := NewMediaFile("storage/import/IMG_9083.jpg")
+	image1 := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
 
-	info1, _ := image1.GetExifData()
+	info, err := image1.GetExifData()
 
-	fmt.Printf("%+v\n", info1)
+	assert.Empty(t, err);
 
-	image2,_ := converter.ConvertToJpeg(NewMediaFile("storage/import/IMG_5901.JPG"))
+	assert.IsType(t, &ExifData{}, info)
 
-	info2, _ := image2.GetExifData()
+	assert.Equal(t, "iPhone SE", info.CameraModel)
 
-	fmt.Printf("%+v\n", info2)
+	image2 := NewMediaFile(conf.ImportPath + "/raw/IMG_1435.cr2")
 
-	image3, _ := converter.ConvertToJpeg(NewMediaFile("storage/import/IMG_9087.CR2"))
+	info, err = image2.GetExifData()
 
-	info3, _ := image3.GetExifData()
+	assert.Empty(t, err)
 
-	fmt.Printf("%+v\n", info3)
+	assert.IsType(t, &ExifData{}, info)
+
+	assert.Equal(t, "Canon EOS M10", info.CameraModel)
 }
-

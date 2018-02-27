@@ -14,33 +14,9 @@
   revision = "bbdc45bcf55de61b38b4108871199a117aecd1be"
 
 [[projects]]
-  name = "github.com/cenkalti/backoff"
-  packages = ["."]
-  revision = "61153c768f31ee5f130071d08fc82b85208528de"
-  version = "v1.1.0"
-
-[[projects]]
-  name = "github.com/ddliu/go-httpclient"
-  packages = ["."]
-  revision = "52a7afc73c57c5b898b5514a5467f8d38decd3ed"
-  version = "v0.5.1"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/dghubble/go-twitter"
-  packages = ["twitter"]
-  revision = "c4115fa44a928413e0b857e0eb47376ffde3a61a"
-
-[[projects]]
-  name = "github.com/dghubble/oauth1"
-  packages = ["."]
-  revision = "70562a5920ad9b6ff03ef697c0f90ae569abbd2b"
-  version = "v0.4.0"
-
-[[projects]]
-  name = "github.com/dghubble/sling"
-  packages = ["."]
-  revision = "eb56e89ac5088bebb12eef3cb4b293300f43608b"
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  revision = "346938d642f2ec3594ed81d874461961cd0faa76"
   version = "v1.1.0"
 
 [[projects]]
@@ -56,12 +32,6 @@
   version = "v1.0.1"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/google/go-querystring"
-  packages = ["query"]
-  revision = "53e6ce116135b80d037921a7fdd5138cf32d7a8a"
-
-[[projects]]
   name = "github.com/julienschmidt/httprouter"
   packages = ["."]
   revision = "8c199fb6259ffc1af525cc3ad52ee60ba8359669"
@@ -74,28 +44,16 @@
   revision = "08cad365cd28a7fba23bb1e57aa43c5e18ad8bb8"
 
 [[projects]]
-  name = "github.com/lastzero/tweethog"
-  packages = ["."]
-  revision = "ac3ce5feaebcb1320109e02d5e477d0a97711793"
-  version = "v0.7.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/mailru/easyjson"
-  packages = [".","buffer","jlexer","jwriter"]
-  revision = "32fa128f234d041f196a9f3e0fea5ac9772c08e1"
-
-[[projects]]
-  name = "github.com/olivere/elastic"
-  packages = ["config","uritemplates"]
-  revision = "c51e74f9bcab8906a2f6cf5660dac396ba51b3d6"
-  version = "v6.1.4"
-
-[[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
+
+[[projects]]
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "go1"
@@ -110,10 +68,10 @@
   version = "0.2.3"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/subosito/shorturl"
-  packages = [".","adfly","base","bitly","catchy","cligs","gggg","gitio","googl","isgd","moourl","pendekin","shorl","snipurl","tinyurl","vamu"]
-  revision = "3dc4cee684914f665399d6a5cddc13b1864b36dd"
+  name = "github.com/stretchr/testify"
+  packages = ["assert"]
+  revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
+  version = "v1.2.1"
 
 [[projects]]
   name = "github.com/tensorflow/tensorflow"
@@ -133,27 +91,9 @@
   packages = ["bmp","riff","tiff","tiff/lzw","vp8","vp8l","webp"]
   revision = "12117c17ca67ffa1ce22e9409f3b0b0a93ac08c7"
 
-[[projects]]
-  branch = "master"
-  name = "golang.org/x/net"
-  packages = ["context","html","html/atom"]
-  revision = "309822c5b9b9f80db67f016069a12628d94fad34"
-
-[[projects]]
-  name = "gopkg.in/olivere/elastic.v6"
-  packages = ["."]
-  revision = "c51e74f9bcab8906a2f6cf5660dac396ba51b3d6"
-  version = "v6.1.4"
-
-[[projects]]
-  name = "mvdan.cc/xurls"
-  packages = ["."]
-  revision = "d315b61cf6727664f310fa87b3197e9faf2a8513"
-  version = "v1.1.0"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "70fdd0684ae209f6735c04d5ecffa4c3ad3dc102214afc431b79c530fb2d1d65"
+  inputs-digest = "ea6460db0c53d350b75d5795872ab17c55d0348840b77a27618da6bd75d329ad"
   solver-name = "gps-cdcl"
   solver-version = 1

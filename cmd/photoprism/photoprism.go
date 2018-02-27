@@ -5,8 +5,6 @@ import (
 	"github.com/urfave/cli"
 	"os"
 	"fmt"
-	"gopkg.in/olivere/elastic.v6"
-	"github.com/lastzero/tweethog"
 )
 
 func main() {
@@ -23,7 +21,7 @@ func main() {
 			Name:  "config",
 			Usage: "Displays global configuration values",
 			Action: func(c *cli.Context) error {
-				config.SetValuesFromFile(tweethog.GetExpandedFilename(c.GlobalString("config-file")))
+				config.SetValuesFromFile(photoprism.getExpandedFilename(c.GlobalString("config-file")))
 
 				config.SetValuesFromCliContext(c)
 
@@ -49,21 +47,17 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) error {
-				config.SetValuesFromFile(tweethog.GetExpandedFilename(c.GlobalString("config-file")))
+				config.SetValuesFromFile(photoprism.getExpandedFilename(c.GlobalString("config-file")))
 
 				config.SetValuesFromCliContext(c)
 
-				fmt.Println("Welcome to PhotoPrism")
+				fmt.Printf("Importing photos from %s\n", config.ImportPath)
 
-				client, err := elastic.NewClient(elastic.SetURL("http://localhost:9200"))
+				importer := photoprism.NewImporter(config.OriginalsPath)
 
-				if err != nil {
-					fmt.Println("Problem with elasticsearch :-(")
+				importer.ImportPhotosFromDirectory(config.ImportPath)
 
-					return err
-				}
-
-				client.ClusterState()
+				fmt.Println("Done.")
 
 				return nil
 			},

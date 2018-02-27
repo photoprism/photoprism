@@ -4,6 +4,8 @@ import (
 	"os"
 	"os/exec"
 	"log"
+	"path/filepath"
+	"errors"
 )
 
 type Converter struct {
@@ -20,7 +22,44 @@ func NewConverter(darktableCli string) *Converter {
 	return &Converter{darktableCli: darktableCli}
 }
 
-func (converter *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
+
+func (c *Converter) ConvertAll(path string) {
+	err := filepath.Walk(path, func(filename string, fileInfo os.FileInfo, err error) error {
+
+		if err != nil {
+			log.Print(err.Error())
+			return nil
+		}
+
+		if fileInfo.IsDir() {
+			return nil
+		}
+
+		mediaFile := NewMediaFile(filename)
+
+		if !mediaFile.Exists() || !mediaFile.IsRaw() {
+			return nil
+		}
+
+		log.Printf("Converting %s \n", filename)
+
+		if _, err := c.ConvertToJpeg(mediaFile); err != nil {
+			log.Print(err.Error())
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		log.Print(err.Error())
+	}
+}
+
+func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
+	if !image.Exists() {
+		return nil, errors.New("can not convert, file does not exist")
+	}
+
 	if image.IsJpeg() {
 		return image, nil
 	}
@@ -40,9 +79,9 @@ func (converter *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) 
 	var convertCommand *exec.Cmd
 
 	if _, err := os.Stat(xmpFilename); err == nil {
-		convertCommand = exec.Command(converter.darktableCli, image.filename, xmpFilename, jpegFilename)
+		convertCommand = exec.Command(c.darktableCli, image.filename, xmpFilename, jpegFilename)
 	} else {
-		convertCommand = exec.Command(converter.darktableCli, image.filename, jpegFilename)
+		convertCommand = exec.Command(c.darktableCli, image.filename, jpegFilename)
 	}
 
 	if err := convertCommand.Run(); err != nil {

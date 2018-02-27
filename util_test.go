@@ -7,7 +7,7 @@ func TestGetRandomInt(t *testing.T) {
 	max := 50
 
 	for i := 0; i < 10; i++ {
-		result := GetRandomInt(min, max)
+		result := getRandomInt(min, max)
 
 		if result > max {
 			t.Errorf("Random result must not be bigger than %d", max)

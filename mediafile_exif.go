@@ -6,36 +6,36 @@ import (
 	"time"
 	"errors"
 	"strings"
-	"log"
 )
 
 type ExifData struct {
 	DateTime    time.Time
 	CameraModel string
+	UniqueID    string
 	Lat         float64
 	Long        float64
+	Thumbnail   []byte
 }
 
-func (mediaFile *MediaFile) GetExifData() (*ExifData, error) {
-	if mediaFile.exifData != nil {
-		log.Printf("GetExifData() Cache Hit %s", mediaFile.filename)
-		return mediaFile.exifData, nil
+func (m *MediaFile) GetExifData() (*ExifData, error) {
+	if m == nil {
+		return nil, errors.New("media file is null")
 	}
 
-	log.Printf("GetExifData() Cache Miss %s", mediaFile.filename)
-
-	if !mediaFile.IsJpeg() {
-		// EXIF only works for JPEG
-		return nil, errors.New("MediaFile is not a JPEG")
+	if m.exifData != nil {
+		return m.exifData, nil
 	}
 
-	mediaFile.exifData = &ExifData{}
+	if !m.IsPhoto() {
+		return nil, errors.New("not a JPEG or Raw file")
+	}
 
-	log.Printf("GetExifData() Open File %s", mediaFile.filename)
-	file, err := mediaFile.openFile()
+	m.exifData = &ExifData{}
+
+	file, err := m.openFile()
 
 	if err != nil {
-		return mediaFile.exifData, err
+		return m.exifData, err
 	}
 
 	defer file.Close()
@@ -45,18 +45,29 @@ func (mediaFile *MediaFile) GetExifData() (*ExifData, error) {
 	x, err := exif.Decode(file)
 
 	if err != nil {
-		return mediaFile.exifData, err
+		return m.exifData, err
 	}
 
-	camModel, _ := x.Get(exif.Model)
-	mediaFile.exifData.CameraModel = strings.Replace(camModel.String(), "\"", "", -1)
+	if camModel, err := x.Get(exif.Model); err == nil {
+		m.exifData.CameraModel = strings.Replace(camModel.String(), "\"", "", -1)
+	}
 
-	tm, _ := x.DateTime()
-	mediaFile.exifData.DateTime = tm
+	if tm, err := x.DateTime(); err == nil {
+		m.exifData.DateTime = tm
+	}
 
-	lat, long, _ := x.LatLong()
-	mediaFile.exifData.Lat = lat
-	mediaFile.exifData.Long = long
+	if lat, long, err := x.LatLong(); err == nil {
+		m.exifData.Lat = lat
+		m.exifData.Long = long
+	}
 
-	return mediaFile.exifData, nil
+	if thumbnail, err := x.JpegThumbnail(); err == nil {
+		m.exifData.Thumbnail = thumbnail
+	}
+
+	if uniqueId, err := x.Get(exif.ImageUniqueID); err == nil {
+		m.exifData.UniqueID = uniqueId.String()
+	}
+
+	return m.exifData, nil
 }
