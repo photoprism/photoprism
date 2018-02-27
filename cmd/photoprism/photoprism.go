@@ -8,30 +8,29 @@ import (
 )
 
 func main() {
-	config := photoprism.NewConfig()
+	conf := photoprism.NewConfig()
 
 	app := cli.NewApp()
 	app.Name = "PhotoPrism"
-	app.Usage = "Sort, view and archive photos on your local computer"
-	app.Version = "0.0.1"
-	app.Copyright = "Michael Mayer <michael@liquidbytes.net>"
+	app.Usage = "Long-Term Digital Photo Archiving"
+	app.Version = "0.0.2"
 	app.Flags = globalCliFlags
 	app.Commands = []cli.Command{
 		{
 			Name:  "config",
 			Usage: "Displays global configuration values",
-			Action: func(c *cli.Context) error {
-				config.SetValuesFromFile(photoprism.GetExpandedFilename(c.GlobalString("config-file")))
+			Action: func(context *cli.Context) error {
+				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
 
-				config.SetValuesFromCliContext(c)
+				conf.SetValuesFromCliContext(context)
 
 				fmt.Printf("<name>                <value>\n")
-				fmt.Printf("config-file           %s\n", config.ConfigFile)
-				fmt.Printf("darktable-cli         %s\n", config.DarktableCli)
-				fmt.Printf("originals-path        %s\n", config.OriginalsPath)
-				fmt.Printf("thumbnails-path       %s\n", config.ThumbnailsPath)
-				fmt.Printf("import-path           %s\n", config.ImportPath)
-				fmt.Printf("export-path           %s\n", config.ExportPath)
+				fmt.Printf("config-file           %s\n", conf.ConfigFile)
+				fmt.Printf("darktable-cli         %s\n", conf.DarktableCli)
+				fmt.Printf("originals-path        %s\n", conf.OriginalsPath)
+				fmt.Printf("thumbnails-path       %s\n", conf.ThumbnailsPath)
+				fmt.Printf("import-path           %s\n", conf.ImportPath)
+				fmt.Printf("export-path           %s\n", conf.ExportPath)
 
 				return nil
 			},
@@ -46,16 +45,16 @@ func main() {
 					Value: "~/Pictures/Import",
 				},
 			},
-			Action: func(c *cli.Context) error {
-				config.SetValuesFromFile(photoprism.GetExpandedFilename(c.GlobalString("config-file")))
+			Action: func(context *cli.Context) error {
+				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
 
-				config.SetValuesFromCliContext(c)
+				conf.SetValuesFromCliContext(context)
 
-				fmt.Printf("Importing photos from %s\n", config.ImportPath)
+				fmt.Printf("Importing photos from %s\n", conf.ImportPath)
 
-				importer := photoprism.NewImporter(config.OriginalsPath)
+				importer := photoprism.NewImporter(conf.OriginalsPath)
 
-				importer.ImportPhotosFromDirectory(config.ImportPath)
+				importer.ImportPhotosFromDirectory(conf.ImportPath)
 
 				fmt.Println("Done.")
 
@@ -75,12 +74,27 @@ var globalCliFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:  "darktable-cli",
-		Usage: "Darktable CLI app",
+		Usage: "Darktable CLI",
 		Value: "/Applications/darktable.app/Contents/MacOS/darktable-cli",
 	},
 	cli.StringFlag{
-		Name:  "storage-path",
-		Usage: "Storage path",
-		Value: "~/Photos",
+		Name:  "originals-path",
+		Usage: "Originals path",
+		Value: "~/Photos/Originals",
+	},
+	cli.StringFlag{
+		Name:  "import-path",
+		Usage: "Import path",
+		Value: "~/Photos/Import",
+	},
+	cli.StringFlag{
+		Name:  "export-path",
+		Usage: "Export path",
+		Value: "~/Photos/Export",
+	},
+	cli.StringFlag{
+		Name:  "thumbnails-path",
+		Usage: "Thumbnails path",
+		Value: "~/Photos/Thumbnails",
 	},
 }
