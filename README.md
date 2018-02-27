@@ -11,8 +11,8 @@ PhotoPrism: Long-Term Digital Photo Archiving
 [issues]: https://github.com/photoprism/photoprism/issues
 [license]: https://github.com/photoprism/photoprism/blob/master/LICENSE
 
-PhotoPrism is a free tool for managing large amounts of
-JPEG and RAW photos. All data is intentionally stored in the file system for easy
+PhotoPrism is a free tool for importing, filtering and archiving large amounts of
+JPEG and RAW photos. Originals, thumbnails and metadata are stored in the file system for easy
 backup and reliable long-term accessibility.
 
 **Note: This software is still pre-alpha and under active development.
@@ -37,6 +37,7 @@ will provide a testing guide once everything is up and running.
 
 Dependencies
 ------------
+
 We are using [dep](https://github.com/golang/dep) for dependency management:
 
 ```
