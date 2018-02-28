@@ -4,11 +4,10 @@ services:
     - docker
 
 before_script:
-  - docker-compose build
-  - docker-compose up -d
+  - docker-compose -f docker-compose.travis.yml up --build -d
 
 script:
   - docker-compose exec photoprism /usr/local/go/bin/go test
 
 after_script:
-  - docker-compose down
+  - docker-compose -f docker-compose.travis.yml down
