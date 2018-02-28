@@ -21,13 +21,19 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	converter := NewConverter(conf.DarktableCli)
 
-	jpegFilename := conf.ImportPath + "/iphone/IMG_6788.jpg"
+	jpegFilename := conf.ImportPath + "/iphone/IMG_6788.JPG"
+
+	assert.Truef(t, fileExists(jpegFilename), "file does not exist: %s", jpegFilename)
 
 	t.Logf("Testing RAW to JPEG converter with %s", jpegFilename)
 
-	imageJpeg, _ := converter.ConvertToJpeg(NewMediaFile(jpegFilename))
+	imageJpeg, err := converter.ConvertToJpeg(NewMediaFile(jpegFilename))
+
+	assert.Empty(t, err, "ConvertToJpeg() failed")
 
 	infoJpeg, err := imageJpeg.GetExifData()
+
+	assert.Emptyf(t, err, "GetExifData() failed")
 
 	assert.Equal(t, jpegFilename, imageJpeg.filename)
 

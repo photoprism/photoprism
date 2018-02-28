@@ -28,7 +28,7 @@ func TestImporter_GetDestinationFilename(t *testing.T) {
 	conf.InitializeTestData(t)
 	importer := NewImporter(conf.OriginalsPath)
 
-	rawFile := NewMediaFile(conf.ImportPath + "/raw/IMG_1435.cr2")
+	rawFile := NewMediaFile(conf.ImportPath + "/raw/IMG_1435.CR2")
 
 	filename, err := importer.GetDestinationFilename(rawFile, rawFile)
 
