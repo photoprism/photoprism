@@ -1,12 +1,13 @@
 version: '3.3'
 
 services:
-  tensorflowapi:
-    build: './cmd/tensorflowapi'
+  photoprism:
+    build: .
     ports:
+      - 80:80
       - 8080:8080
     volumes:
-      - './cmd/tensorflowapi:/go/src/tensorflowapi'
+      - .:/go/src/photoprism
   database:
     image: mysql:latest
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024

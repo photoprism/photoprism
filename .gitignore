@@ -3,8 +3,8 @@
 *.dll
 *.so
 *.dylib
-import.zip
-photoprism
+/*.zip
+/photoprism
 
 # Test binary, build with `go test -c`
 *.test

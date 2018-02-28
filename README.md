@@ -12,7 +12,7 @@ PhotoPrism: Long-Term Digital Photo Archiving
 [license]: https://github.com/photoprism/photoprism/blob/master/LICENSE
 
 PhotoPrism is a free tool for importing, filtering and archiving large amounts of
-JPEG and RAW photos. Originals, thumbnails and metadata are stored in the file system for easy
+JPEG and RAW files. Originals, thumbnails and metadata are stored in the file system for easy
 backup and reliable long-term accessibility.
 
 **Note: This software is still pre-alpha and under active development.
