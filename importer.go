@@ -1,28 +1,28 @@
 package photoprism
 
 import (
-	"path/filepath"
-	"os"
-	"log"
 	"fmt"
 	"github.com/pkg/errors"
+	"log"
+	"os"
 	"path"
+	"path/filepath"
 	"sort"
 	"strings"
 )
 
 type Importer struct {
-	originalsPath string
-	removeDotFiles bool
-	removeExistingFiles bool
+	originalsPath          string
+	removeDotFiles         bool
+	removeExistingFiles    bool
 	removeEmptyDirectories bool
 }
 
 func NewImporter(originalsPath string) *Importer {
 	instance := &Importer{
-		originalsPath: originalsPath,
-		removeDotFiles: true,
-		removeExistingFiles: true,
+		originalsPath:          originalsPath,
+		removeDotFiles:         true,
+		removeExistingFiles:    true,
 		removeEmptyDirectories: true,
 	}
 

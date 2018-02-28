@@ -1,10 +1,10 @@
 package photoprism
 
 import (
+	"fmt"
+	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
-	"github.com/stretchr/testify/assert"
-	"fmt"
 )
 
 const testDataPath = "testdata"

@@ -1,8 +1,8 @@
 package photoprism
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestNewImporter(t *testing.T) {
@@ -34,5 +34,5 @@ func TestImporter_GetDestinationFilename(t *testing.T) {
 
 	assert.Empty(t, err)
 
-	assert.Equal(t, conf.OriginalsPath + "/2018/02/20180204_180813_B0770443A5F7.cr2", filename)
+	assert.Equal(t, conf.OriginalsPath+"/2018/02/20180204_180813_B0770443A5F7.cr2", filename)
 }

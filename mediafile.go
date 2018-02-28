@@ -1,16 +1,16 @@
 package photoprism
 
 import (
-	"path/filepath"
 	"encoding/hex"
 	"github.com/brett-lempereur/ish"
+	"github.com/djherbis/times"
+	"github.com/steakknife/hamming"
+	"log"
 	"net/http"
 	"os"
-	"log"
+	"path/filepath"
 	"strings"
 	"time"
-	"github.com/djherbis/times"
-    "github.com/steakknife/hamming"
 )
 
 const (
@@ -27,37 +27,37 @@ const (
 	MimeTypeJpeg = "image/jpeg"
 )
 
-var FileExtensions = map[string]string {
-	".crw": FileTypeRaw,
-	".cr2": FileTypeRaw,
-	".nef": FileTypeRaw,
-	".arw": FileTypeRaw,
-	".dng": FileTypeRaw,
-	".mov": FileTypeMovie,
-	".avi": FileTypeMovie,
-	".yml": FileTypeYaml,
-	".jpg": FileTypeJpeg,
+var FileExtensions = map[string]string{
+	".crw":  FileTypeRaw,
+	".cr2":  FileTypeRaw,
+	".nef":  FileTypeRaw,
+	".arw":  FileTypeRaw,
+	".dng":  FileTypeRaw,
+	".mov":  FileTypeMovie,
+	".avi":  FileTypeMovie,
+	".yml":  FileTypeYaml,
+	".jpg":  FileTypeJpeg,
 	".jpeg": FileTypeJpeg,
-	".xmp": FileTypeXmp,
-	".aae": FileTypeAae,
+	".xmp":  FileTypeXmp,
+	".aae":  FileTypeAae,
 }
 
 type MediaFile struct {
-	filename string
-	dateCreated time.Time
-	hash     string
-	fileType string
-	mimeType string
+	filename       string
+	dateCreated    time.Time
+	hash           string
+	fileType       string
+	mimeType       string
 	perceptualHash string
-	tags     []string
-	exifData *ExifData
+	tags           []string
+	exifData       *ExifData
 }
 
 func NewMediaFile(filename string) *MediaFile {
 	instance := &MediaFile{
 		filename: filename,
 		fileType: FileTypeOther,
-		}
+	}
 
 	return instance
 }
@@ -89,7 +89,7 @@ func (m *MediaFile) GetDateCreated() time.Time {
 	return t.ModTime()
 }
 
-func (m *MediaFile) GetCameraModel () string {
+func (m *MediaFile) GetCameraModel() string {
 	info, err := m.GetExifData()
 
 	var result string
@@ -172,7 +172,7 @@ func (m *MediaFile) GetHash() string {
 func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, masterFile *MediaFile, err error) {
 	extension := m.GetExtension()
 
-	baseFilename := m.filename[0:len(m.filename)-len(extension)]
+	baseFilename := m.filename[0 : len(m.filename)-len(extension)]
 
 	matches, err := filepath.Glob(baseFilename + "*")
 
@@ -195,12 +195,11 @@ func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, masterFile *MediaFil
 	return result, masterFile, nil
 }
 
-
 func (m *MediaFile) GetFilename() string {
 	return m.filename
 }
 
-func (m *MediaFile) SetFilename(filename string)  {
+func (m *MediaFile) SetFilename(filename string) {
 	m.filename = filename
 }
 

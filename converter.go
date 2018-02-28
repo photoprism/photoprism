@@ -1,11 +1,11 @@
 package photoprism
 
 import (
+	"errors"
+	"log"
 	"os"
 	"os/exec"
-	"log"
 	"path/filepath"
-	"errors"
 )
 
 type Converter struct {
@@ -21,7 +21,6 @@ func NewConverter(darktableCli string) *Converter {
 
 	return &Converter{darktableCli: darktableCli}
 }
-
 
 func (c *Converter) ConvertAll(path string) {
 	err := filepath.Walk(path, func(filename string, fileInfo os.FileInfo, err error) error {
@@ -66,7 +65,7 @@ func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 
 	extension := image.GetExtension()
 
-	baseFilename := image.filename[0:len(image.filename)-len(extension)]
+	baseFilename := image.filename[0 : len(image.filename)-len(extension)]
 
 	jpegFilename := baseFilename + ".jpg"
 

@@ -1,8 +1,8 @@
 package photoprism
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestMediaFile_GetExifData(t *testing.T) {
@@ -14,7 +14,7 @@ func TestMediaFile_GetExifData(t *testing.T) {
 
 	info, err := image1.GetExifData()
 
-	assert.Empty(t, err);
+	assert.Empty(t, err)
 
 	assert.IsType(t, &ExifData{}, info)
 

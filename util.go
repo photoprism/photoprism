@@ -1,19 +1,19 @@
 package photoprism
 
 import (
+	"archive/zip"
+	"crypto/sha512"
+	"encoding/hex"
+	"fmt"
+	"io"
+	"log"
 	"math/rand"
-	"time"
+	"net/http"
+	"os"
 	"os/user"
 	"path/filepath"
-	"os"
-	"crypto/sha512"
-	"io"
 	"strings"
-	"archive/zip"
-	"log"
-	"fmt"
-	"net/http"
-	"encoding/hex"
+	"time"
 )
 
 func GetExpandedFilename(filename string) string {

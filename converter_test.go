@@ -1,9 +1,9 @@
 package photoprism
 
 import (
-	"testing"
-	"os"
 	"github.com/stretchr/testify/assert"
+	"os"
+	"testing"
 )
 
 func TestNewConverter(t *testing.T) {
@@ -21,11 +21,11 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	converter := NewConverter(conf.DarktableCli)
 
-	jpegFilename :=  conf.ImportPath + "/iphone/IMG_6788.jpg"
+	jpegFilename := conf.ImportPath + "/iphone/IMG_6788.jpg"
 
 	t.Logf("Testing RAW to JPEG converter with %s", jpegFilename)
 
-	imageJpeg,_ := converter.ConvertToJpeg(NewMediaFile(jpegFilename))
+	imageJpeg, _ := converter.ConvertToJpeg(NewMediaFile(jpegFilename))
 
 	infoJpeg, err := imageJpeg.GetExifData()
 
@@ -35,13 +35,13 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	assert.Equal(t, "iPhone SE", infoJpeg.CameraModel)
 
-	rawFilemame :=  conf.ImportPath + "/raw/IMG_1435.CR2"
+	rawFilemame := conf.ImportPath + "/raw/IMG_1435.CR2"
 
 	t.Logf("Testing RAW to JPEG converter with %s", rawFilemame)
 
 	imageRaw, _ := converter.ConvertToJpeg(NewMediaFile(rawFilemame))
 
-	assert.True(t, fileExists(conf.ImportPath + "/raw/IMG_1435.jpg"), "Jpeg file was not found - is Darktable installed?")
+	assert.True(t, fileExists(conf.ImportPath+"/raw/IMG_1435.jpg"), "Jpeg file was not found - is Darktable installed?")
 
 	assert.NotEqual(t, rawFilemame, imageRaw.filename)
 

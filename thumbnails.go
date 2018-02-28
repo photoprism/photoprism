@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func CreateThumbnail () {
+func CreateThumbnail() {
 	src, err := imaging.Open("testdata/lena_512.png")
 
 	if err != nil {

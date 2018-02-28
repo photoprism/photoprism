@@ -1,10 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/photoprism/photoprism"
 	"github.com/urfave/cli"
 	"os"
-	"fmt"
 )
 
 func main() {

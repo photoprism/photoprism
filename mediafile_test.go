@@ -1,8 +1,8 @@
 package photoprism
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestMediaFile_FindRelatedImages(t *testing.T) {
@@ -25,7 +25,7 @@ func TestMediaFile_FindRelatedImages(t *testing.T) {
 
 		extension := result.GetExtension()
 
-		baseFilename := filename[0:len(filename)-len(extension)]
+		baseFilename := filename[0 : len(filename)-len(extension)]
 
 		assert.Equal(t, expectedBaseFilename, baseFilename)
 	}
@@ -61,7 +61,6 @@ func TestMediaFile_GetPerceptiveHash(t *testing.T) {
 
 	assert.Equal(t, 33, distance)
 }
-
 
 func TestMediaFile_GetMimeType(t *testing.T) {
 	conf := NewTestConfig()
