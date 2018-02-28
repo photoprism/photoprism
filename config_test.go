@@ -11,7 +11,7 @@ const testDataPath = "testdata"
 const testDataUrl = "https://www.dropbox.com/s/na9p9wwt98l7m5b/import.zip?dl=1"
 const testDataHash = "ed3bdb2fe86ea662bc863b63e219b47b8d9a74024757007f7979887d"
 
-var darktableCli = "/Applications/darktable.app/Contents/MacOS/darktable-cli"
+var darktableCli = "/usr/bin/darktable-cli"
 var testDataZip = GetExpandedFilename(testDataPath + "/import.zip")
 var originalsPath = GetExpandedFilename(testDataPath + "/originals")
 var thumbnailsPath = GetExpandedFilename(testDataPath + "/thumbnails")

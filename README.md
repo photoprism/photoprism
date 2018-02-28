@@ -28,6 +28,8 @@ Our goal is to provide the following features (tested as a proof-of-concept):
 - Image search with powerful filters
 - Easy backup and export
 
+![](https://www.dropbox.com/s/m1cnl8mn4s4ub8h/concept.jpg?dl=1)
+
 Unit Tests
 ----------
 

@@ -7,7 +7,7 @@ before_script:
   - docker-compose up --build -d
 
 script:
-  - docker-compose exec photoprism 'go test'
+  - docker-compose exec photoprism /usr/local/go/bin/go test
 
 after_script:
   - docker-compose down

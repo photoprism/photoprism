@@ -8,7 +8,10 @@ RUN ldconfig
 # Hide some warnings
 ENV TF_CPP_MIN_LOG_LEVEL 2
 
-# Install Go (https://github.com/docker-library/golang/blob/221ee92559f2963c1fe55646d3516f5b8f4c91a4/1.9/stretch/Dockerfile)
+RUN curl -L "https://download.opensuse.org/repositories/graphics:darktable:stable/xUbuntu_16.04/Release.key" | apt-key add -
+RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktable:/stable/xUbuntu_16.04/ /' > /etc/apt/sources.list.d/darktable.list"
+
+# Install Go
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		g++ \
 		gcc \
@@ -19,6 +22,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     darktable \
     git \
 	&& rm -rf /var/lib/apt/lists/*
+
+RUN apt-get upgrade -y
 
 ENV GOLANG_VERSION 1.10
 RUN set -eux; \

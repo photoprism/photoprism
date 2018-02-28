@@ -7,8 +7,9 @@ import (
 
 func CreateThumbnail () {
 	src, err := imaging.Open("testdata/lena_512.png")
+
 	if err != nil {
-		log.Print("Open failed: %v", err)
+		log.Printf("Open failed: %s", err.Error())
 	}
 
 	// Crop the original image to 350x350px size using the center anchor.
