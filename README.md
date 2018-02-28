@@ -7,7 +7,7 @@ PhotoPrism: Long-Term Digital Photo Archiving
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)][license]
 
 [ci]: https://travis-ci.org/photoprism/photoprism
-[code quality]: https://travis-ci.org/photoprism/photoprism
+[code quality]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [issues]: https://github.com/photoprism/photoprism/issues
 [license]: https://github.com/photoprism/photoprism/blob/master/LICENSE
 
