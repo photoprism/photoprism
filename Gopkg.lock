@@ -44,6 +44,12 @@
   revision = "08cad365cd28a7fba23bb1e57aa43c5e18ad8bb8"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/photoprism/photoprism"
+  packages = ["."]
+  revision = "7a6c9464cdef3048cd7558fd11e19bbc290312a3"
+
+[[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
@@ -58,7 +64,11 @@
 [[projects]]
   branch = "go1"
   name = "github.com/rwcarlsen/goexif"
-  packages = ["exif","mknote","tiff"]
+  packages = [
+    "exif",
+    "mknote",
+    "tiff"
+  ]
   revision = "17202558c8d9c3fd047859f1a5e73fd9ae709187"
 
 [[projects]]
@@ -75,7 +85,10 @@
 
 [[projects]]
   name = "github.com/tensorflow/tensorflow"
-  packages = ["tensorflow/go","tensorflow/go/op"]
+  packages = [
+    "tensorflow/go",
+    "tensorflow/go/op"
+  ]
   revision = "37aa430d84ced579342a4044c89c236664be7f68"
   version = "v1.5.0"
 
@@ -88,12 +101,20 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/image"
-  packages = ["bmp","riff","tiff","tiff/lzw","vp8","vp8l","webp"]
+  packages = [
+    "bmp",
+    "riff",
+    "tiff",
+    "tiff/lzw",
+    "vp8",
+    "vp8l",
+    "webp"
+  ]
   revision = "12117c17ca67ffa1ce22e9409f3b0b0a93ac08c7"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ea6460db0c53d350b75d5795872ab17c55d0348840b77a27618da6bd75d329ad"
+  inputs-digest = "b3174d1366468b5b9de596cebcbf97d941b95ce61cca9c13ca5456379f2f68c2"
   solver-name = "gps-cdcl"
   solver-version = 1

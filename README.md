@@ -1,5 +1,5 @@
-PhotoPrism: Long-Term Digital Photo Archiving
-=============================================
+PhotoPrism: Digital Photo Archive
+=================================
 
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=master)][ci]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][code quality]
@@ -15,7 +15,41 @@ PhotoPrism is a free tool for importing, filtering and archiving large amounts o
 JPEG and RAW files. Originals, thumbnails and metadata are stored in the file system for easy
 backup and reliable long-term accessibility.
 
-**Note: This software is still pre-alpha and under active development.
+Setup
+-----
+Before you start, make sure you got Git and Docker installed on your system.
+Instead of using Docker, you can also setup your own runtime environment
+based on the existing Docker configuration.
+
+**Step 1:** Run [Git](https://getcomposer.org/) to clone this project:
+
+```
+git clone git@github.com:photoprism/photoprism.git
+```
+
+**Step 2:** Start [Docker](https://www.docker.com/) containers:
+
+```
+cd photoprism
+docker-compose up
+```
+
+*Note: This docker-compose configuration is for testing and development purposes only.*
+
+**Step 3:** Open a terminal to run commands and unit tests:
+
+```
+docker-compose exec photoprism sh
+dep ensure
+go test
+go build cmd/photoprism/photoprism.go
+./photoprism
+```
+
+About
+-----
+
+**Note: This software is still alpha and under active development.
 You're welcome to join our team.**
 
 Our goal is to provide the following features (tested as a proof-of-concept):
@@ -28,24 +62,4 @@ Our goal is to provide the following features (tested as a proof-of-concept):
 - Image search with powerful filters
 - Easy backup and export
 
-![](https://www.dropbox.com/s/m1cnl8mn4s4ub8h/concept.jpg?dl=1)
-
-Unit Tests
-----------
-
-Tests are currently not running on Travis CI as they require
-docker container configuration that is still on the todo list. We
-will provide a testing guide once everything is up and running.
-
-Dependencies
-------------
-
-We are using [dep](https://github.com/golang/dep) for dependency management:
-
-```
-dep ensure
-go test
-```
-
-In addition, PhotoPrism requires [darktable](https://www.darktable.org/) to convert RAW images to JPEG.
-We are working on a docker container that contains it so that you don't have to install it locally.
+![](assets/img/concept.jpg)

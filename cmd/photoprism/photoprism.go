@@ -12,8 +12,8 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "PhotoPrism"
-	app.Usage = "Long-Term Digital Photo Archiving"
-	app.Version = "0.0.2"
+	app.Usage = "Digital Photo Archive"
+	app.Version = "0.0.3"
 	app.Flags = globalCliFlags
 	app.Commands = []cli.Command{
 		{
