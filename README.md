@@ -39,7 +39,7 @@ docker-compose up
 **Step 3:** Open a terminal to run commands and unit tests:
 
 ```
-docker-compose exec photoprism sh
+docker-compose exec photoprism bash
 dep ensure
 go test
 go build cmd/photoprism/photoprism.go
