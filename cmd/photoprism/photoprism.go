@@ -37,12 +37,77 @@ func main() {
 		},
 		{
 			Name:  "import",
-			Usage: "Imports photo from a directory",
+			Usage: "Import photos from directory",
+			Action: func(context *cli.Context) error {
+				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
+
+				conf.SetValuesFromCliContext(context)
+
+				fmt.Printf("Importing photos from %s...\n", conf.ImportPath)
+
+				importer := photoprism.NewImporter(conf.OriginalsPath)
+
+				importer.ImportPhotosFromDirectory(conf.ImportPath)
+
+				fmt.Println("Done.")
+
+				return nil
+			},
+		},
+		{
+			Name:  "convert",
+			Usage: "Convert RAW originals to JPEG",
+			Action: func(context *cli.Context) error {
+				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
+
+				conf.SetValuesFromCliContext(context)
+
+				fmt.Printf("Converting RAW images in %s to JPEG...\n", conf.OriginalsPath)
+
+				converter := photoprism.NewConverter(conf.DarktableCli)
+
+				converter.ConvertAll(conf.OriginalsPath)
+
+				fmt.Println("Done.")
+
+				return nil
+			},
+		},
+		{
+			Name:  "thumbnails",
+			Usage: "Create thumbnails",
+			Action: func(context *cli.Context) error {
+				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
+
+				conf.SetValuesFromCliContext(context)
+
+				fmt.Printf("Creating thumbnails in %s...\n", conf.ThumbnailsPath)
+
+				fmt.Println("[TODO]")
+
+				fmt.Println("Done.")
+
+				return nil
+			},
+		},
+		{
+			Name:  "export",
+			Usage: "Export photos as JPEG",
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "import-directory, d",
-					Usage: "Import directory",
-					Value: "~/Pictures/Import",
+					Name:  "from, f",
+					Usage: "Start date & time",
+					Value: "yesterday",
+				},
+				cli.StringFlag{
+					Name:  "to, t",
+					Usage: "End date & time",
+					Value: "today",
+				},
+				cli.StringFlag{
+					Name:  "size, s",
+					Usage: "Max image size in pixels",
+					Value: "4096",
 				},
 			},
 			Action: func(context *cli.Context) error {
@@ -50,11 +115,9 @@ func main() {
 
 				conf.SetValuesFromCliContext(context)
 
-				fmt.Printf("Importing photos from %s\n", conf.ImportPath)
+				fmt.Printf("Exporting photos to %s...\n", conf.ExportPath)
 
-				importer := photoprism.NewImporter(conf.OriginalsPath)
-
-				importer.ImportPhotosFromDirectory(conf.ImportPath)
+				fmt.Println("[TODO]")
 
 				fmt.Println("Done.")
 

@@ -40,8 +40,6 @@ func (c *Converter) ConvertAll(path string) {
 			return nil
 		}
 
-		log.Printf("Converting %s \n", filename)
-
 		if _, err := c.ConvertToJpeg(mediaFile); err != nil {
 			log.Print(err.Error())
 		}
@@ -72,6 +70,8 @@ func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 	if _, err := os.Stat(jpegFilename); err == nil {
 		return NewMediaFile(jpegFilename), nil
 	}
+
+	log.Printf("Converting %s to %s \n", image.filename, jpegFilename)
 
 	xmpFilename := baseFilename + ".xmp"
 

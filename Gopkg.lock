@@ -44,12 +44,6 @@
   revision = "08cad365cd28a7fba23bb1e57aa43c5e18ad8bb8"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/photoprism/photoprism"
-  packages = ["."]
-  revision = "7a6c9464cdef3048cd7558fd11e19bbc290312a3"
-
-[[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
@@ -115,6 +109,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b3174d1366468b5b9de596cebcbf97d941b95ce61cca9c13ca5456379f2f68c2"
+  inputs-digest = "af3dcd4c923c605a744d0ffad8c1a20ed0ce15fc3bdedb6d73b32be52dba9d23"
   solver-name = "gps-cdcl"
   solver-version = 1
