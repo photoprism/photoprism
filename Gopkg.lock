@@ -3,6 +3,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/araddon/dateparse"
+  packages = ["."]
+  revision = "6135c1994ea28aa1bb341f5c704885906f584904"
+
+[[projects]]
+  branch = "master"
   name = "github.com/bamiaux/rez"
   packages = ["."]
   revision = "29f4463c688b986c11f166b12734f69b58b5555f"
@@ -109,6 +115,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "af3dcd4c923c605a744d0ffad8c1a20ed0ce15fc3bdedb6d73b32be52dba9d23"
+  inputs-digest = "1ffc35574da6350baeabae12e2aed7a151f4db332e9e73656bd10b8db55de7d2"
   solver-name = "gps-cdcl"
   solver-version = 1

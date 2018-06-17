@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"io"
 )
 
 const (
@@ -250,6 +251,35 @@ func (m *MediaFile) Move(newFilename string) error {
 	}
 
 	m.filename = newFilename
+
+	return nil
+}
+
+func (m *MediaFile) Copy(destinationFilename string) error {
+	file, err := m.openFile()
+
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	defer file.Close()
+
+	destination, err := os.OpenFile(destinationFilename, os.O_RDWR|os.O_CREATE, 0666)
+
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	defer destination.Close()
+
+	_, err = io.Copy(destination, file)
+
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
 
 	return nil
 }
