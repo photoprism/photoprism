@@ -103,13 +103,8 @@ func (m *MediaFile) GetCameraModel() string {
 
 func (m *MediaFile) GetCanonicalName() string {
 	dateCreated := m.GetDateCreated().UTC()
-	//cameraModel := strings.Replace(m.GetCameraModel(), " ", "_", -1)
 
 	result := dateCreated.Format("20060102_150405_") + strings.ToUpper(m.GetHash()[:12])
-
-	/* if cameraModel != "" {
-		result = result + "_" + cameraModel
-	} */
 
 	return result
 }
@@ -264,6 +259,11 @@ func (m *MediaFile) GetExtension() string {
 }
 
 func (m *MediaFile) IsJpeg() bool {
+	// Don't import/use existing thumbnail files (we create our own)
+	if m.GetExtension() == ".thm" {
+		return false
+	}
+
 	return m.GetMimeType() == MimeTypeJpeg
 }
 

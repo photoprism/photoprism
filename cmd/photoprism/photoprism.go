@@ -43,6 +43,8 @@ func main() {
 
 				conf.SetValuesFromCliContext(context)
 
+				conf.CreateDirectories()
+
 				fmt.Printf("Importing photos from %s...\n", conf.ImportPath)
 
 				importer := photoprism.NewImporter(conf.OriginalsPath)
@@ -62,6 +64,8 @@ func main() {
 
 				conf.SetValuesFromCliContext(context)
 
+				conf.CreateDirectories()
+
 				fmt.Printf("Converting RAW images in %s to JPEG...\n", conf.OriginalsPath)
 
 				converter := photoprism.NewConverter(conf.DarktableCli)
@@ -76,14 +80,43 @@ func main() {
 		{
 			Name:  "thumbnails",
 			Usage: "Create thumbnails",
+			Flags: []cli.Flag{
+				cli.IntSliceFlag{
+					Name:  "size, s",
+					Usage: "Thumbnail size in pixels",
+				},
+				cli.BoolFlag{
+					Name:  "default, d",
+					Usage: "Render default sizes: 320, 500, 640, 1280, 1920 and 2560px",
+				},
+				cli.BoolFlag{
+					Name:  "square, q",
+					Usage: "Square aspect ratio",
+				},
+			},
 			Action: func(context *cli.Context) error {
 				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
 
 				conf.SetValuesFromCliContext(context)
 
+				conf.CreateDirectories()
+
 				fmt.Printf("Creating thumbnails in %s...\n", conf.ThumbnailsPath)
 
-				fmt.Println("[TODO]")
+				sizes := context.IntSlice("size")
+
+				if context.Bool("default") {
+					sizes = []int{320, 500, 640, 1280, 1920, 2560}
+				}
+
+				if len(sizes) == 0 {
+					fmt.Println("No sizes selected. Nothing to do.")
+					return nil
+				}
+
+				for _, size := range sizes {
+					photoprism.CreateThumbnailsFromOriginals(conf.OriginalsPath, conf.ThumbnailsPath, size, context.Bool("square"))
+				}
 
 				fmt.Println("Done.")
 
@@ -114,6 +147,8 @@ func main() {
 				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
 
 				conf.SetValuesFromCliContext(context)
+
+				conf.CreateDirectories()
 
 				fmt.Printf("Exporting photos to %s...\n", conf.ExportPath)
 

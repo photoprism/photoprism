@@ -3,6 +3,8 @@ package photoprism
 import (
 	"github.com/kylelemons/go-gypsy/yaml"
 	"github.com/urfave/cli"
+	"os"
+	"path"
 )
 
 type Config struct {
@@ -72,4 +74,11 @@ func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 	}
 
 	return nil
+}
+
+func (c *Config) CreateDirectories() {
+	os.MkdirAll(path.Dir(c.OriginalsPath), os.ModePerm)
+	os.MkdirAll(path.Dir(c.ThumbnailsPath), os.ModePerm)
+	os.MkdirAll(path.Dir(c.ImportPath), os.ModePerm)
+	os.MkdirAll(path.Dir(c.ExportPath), os.ModePerm)
 }
