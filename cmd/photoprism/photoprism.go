@@ -38,7 +38,7 @@ func main() {
 		},
 		{
 			Name:  "import",
-			Usage: "Import photos from directory",
+			Usage: "Imports photos",
 			Action: func(context *cli.Context) error {
 				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
 
@@ -59,7 +59,7 @@ func main() {
 		},
 		{
 			Name:  "convert",
-			Usage: "Convert RAW originals to JPEG",
+			Usage: "Converts RAW originals to JPEG",
 			Action: func(context *cli.Context) error {
 				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
 
@@ -80,7 +80,7 @@ func main() {
 		},
 		{
 			Name:  "thumbnails",
-			Usage: "Create thumbnails",
+			Usage: "Creates thumbnails",
 			Flags: []cli.Flag{
 				cli.IntSliceFlag{
 					Name:  "size, s",
@@ -126,7 +126,7 @@ func main() {
 		},
 		{
 			Name:  "export",
-			Usage: "Export photos as JPEG",
+			Usage: "Exports photos as JPEG",
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "name, n",
@@ -198,32 +198,32 @@ func main() {
 var globalCliFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "config-file, c",
-		Usage: "Config filename",
+		Usage: "config filename",
 		Value: "~/.photoprism",
 	},
 	cli.StringFlag{
 		Name:  "darktable-cli",
-		Usage: "Darktable CLI",
+		Usage: "darktable CLI",
 		Value: "/Applications/darktable.app/Contents/MacOS/darktable-cli",
 	},
 	cli.StringFlag{
 		Name:  "originals-path",
-		Usage: "Originals path",
+		Usage: "originals path",
 		Value: "~/Photos/Originals",
 	},
 	cli.StringFlag{
 		Name:  "import-path",
-		Usage: "Import path",
+		Usage: "import path",
 		Value: "~/Photos/Import",
 	},
 	cli.StringFlag{
 		Name:  "export-path",
-		Usage: "Export path",
+		Usage: "export path",
 		Value: "~/Photos/Export",
 	},
 	cli.StringFlag{
 		Name:  "thumbnails-path",
-		Usage: "Thumbnails path",
+		Usage: "thumbnails path",
 		Value: "~/Photos/Thumbnails",
 	},
 }
