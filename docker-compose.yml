@@ -8,6 +8,7 @@ services:
       - 8080:8080
     volumes:
       - .:/go/src/photoprism
+
   database:
     image: mysql:latest
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024

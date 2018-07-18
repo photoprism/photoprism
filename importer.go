@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"fmt"
+	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"log"
 	"os"
@@ -13,14 +14,16 @@ import (
 
 type Importer struct {
 	originalsPath          string
+	db                     *gorm.DB
 	removeDotFiles         bool
 	removeExistingFiles    bool
 	removeEmptyDirectories bool
 }
 
-func NewImporter(originalsPath string) *Importer {
+func NewImporter(originalsPath string, db *gorm.DB) *Importer {
 	instance := &Importer{
 		originalsPath:          originalsPath,
+		db:                     db,
 		removeDotFiles:         true,
 		removeExistingFiles:    true,
 		removeEmptyDirectories: true,

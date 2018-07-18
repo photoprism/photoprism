@@ -5,13 +5,13 @@ import (
 	"github.com/brett-lempereur/ish"
 	"github.com/djherbis/times"
 	"github.com/steakknife/hamming"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
-	"io"
 )
 
 const (

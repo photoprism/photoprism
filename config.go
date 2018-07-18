@@ -1,8 +1,14 @@
 package photoprism
 
 import (
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mssql"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/kylelemons/go-gypsy/yaml"
 	"github.com/urfave/cli"
+	"log"
 	"os"
 	"path"
 )
@@ -14,6 +20,9 @@ type Config struct {
 	ThumbnailsPath string
 	ImportPath     string
 	ExportPath     string
+	DatabaseDriver string
+	DatabaseDsn    string
+	db             *gorm.DB
 }
 
 func NewConfig() *Config {
@@ -49,6 +58,14 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 		c.DarktableCli = GetExpandedFilename(DarktableCli)
 	}
 
+	if DatabaseDriver, err := yamlConfig.Get("database-driver"); err == nil {
+		c.DatabaseDriver = DatabaseDriver
+	}
+
+	if DatabaseDsn, err := yamlConfig.Get("database-dsn"); err == nil {
+		c.DatabaseDsn = DatabaseDsn
+	}
+
 	return nil
 }
 
@@ -73,6 +90,14 @@ func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 		c.DarktableCli = GetExpandedFilename(context.String("darktable-cli"))
 	}
 
+	if context.IsSet("database-driver") {
+		c.DatabaseDriver = context.String("database-driver")
+	}
+
+	if context.IsSet("database-dsn") {
+		c.DatabaseDsn = context.String("database-dsn")
+	}
+
 	return nil
 }
 
@@ -81,4 +106,32 @@ func (c *Config) CreateDirectories() {
 	os.MkdirAll(path.Dir(c.ThumbnailsPath), os.ModePerm)
 	os.MkdirAll(path.Dir(c.ImportPath), os.ModePerm)
 	os.MkdirAll(path.Dir(c.ExportPath), os.ModePerm)
+}
+
+func (c *Config) ConnectToDatabase() error {
+	db, err := gorm.Open(c.DatabaseDriver, c.DatabaseDsn)
+
+	if err != nil || db == nil {
+		log.Fatal(err)
+	}
+
+	c.db = db
+
+	c.MigrateDb()
+
+	return err
+}
+
+func (c *Config) GetDb() *gorm.DB {
+	if c.db == nil {
+		c.ConnectToDatabase()
+	}
+
+	return c.db
+}
+
+func (c *Config) MigrateDb() {
+	db := c.GetDb()
+
+	db.AutoMigrate(&File{}, &Photo{}, &Tag{}, &Album{})
 }

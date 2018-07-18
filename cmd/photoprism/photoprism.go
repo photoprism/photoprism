@@ -37,6 +37,23 @@ func main() {
 			},
 		},
 		{
+			Name:  "migrate-db",
+			Usage: "Automatically migrates / initializes database",
+			Action: func(context *cli.Context) error {
+				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
+
+				conf.SetValuesFromCliContext(context)
+
+				fmt.Println("Migrating database...")
+
+				conf.MigrateDb()
+
+				fmt.Println("Done.")
+
+				return nil
+			},
+		},
+		{
 			Name:  "import",
 			Usage: "Imports photos",
 			Action: func(context *cli.Context) error {
@@ -48,7 +65,7 @@ func main() {
 
 				fmt.Printf("Importing photos from %s...\n", conf.ImportPath)
 
-				importer := photoprism.NewImporter(conf.OriginalsPath)
+				importer := photoprism.NewImporter(conf.OriginalsPath, conf.GetDb())
 
 				importer.ImportPhotosFromDirectory(conf.ImportPath)
 
@@ -225,5 +242,15 @@ var globalCliFlags = []cli.Flag{
 		Name:  "thumbnails-path",
 		Usage: "thumbnails path",
 		Value: "~/Photos/Thumbnails",
+	},
+	cli.StringFlag{
+		Name:  "database-driver",
+		Usage: "database driver (mysql, mssql, postgres or sqlite)",
+		Value: "mysql",
+	},
+	cli.StringFlag{
+		Name:  "database-dsn",
+		Usage: "database data source name (DSN)",
+		Value: "photoprism:photoprism@tcp(database:3306)/photoprism",
 	},
 }

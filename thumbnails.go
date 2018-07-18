@@ -1,10 +1,10 @@
 package photoprism
 
 import (
+	"fmt"
 	"github.com/disintegration/imaging"
 	"log"
 	"os"
-	"fmt"
 	"path/filepath"
 	"strings"
 )
@@ -30,7 +30,7 @@ func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, 
 		} else {
 			log.Printf("Creating %dpx thumbnail for %s", size, filename)
 
-			if _, err := mediaFile.GetThumbnail(thumbnailsPath, size); err != nil  {
+			if _, err := mediaFile.GetThumbnail(thumbnailsPath, size); err != nil {
 				log.Print(err.Error())
 			}
 		}

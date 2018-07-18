@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"fmt"
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
@@ -17,6 +18,8 @@ var originalsPath = GetExpandedFilename(testDataPath + "/originals")
 var thumbnailsPath = GetExpandedFilename(testDataPath + "/thumbnails")
 var importPath = GetExpandedFilename(testDataPath + "/import")
 var exportPath = GetExpandedFilename(testDataPath + "/export")
+var databaseDriver = "mysql"
+var databaseDsn = "photoprism:photoprism@tcp(database:3306)/photoprism"
 
 func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.ImportPath)
@@ -67,6 +70,8 @@ func NewTestConfig() *Config {
 		ThumbnailsPath: thumbnailsPath,
 		ImportPath:     importPath,
 		ExportPath:     exportPath,
+		DatabaseDriver: databaseDriver,
+		DatabaseDsn:    databaseDsn,
 	}
 }
 
@@ -85,4 +90,16 @@ func TestConfig_SetValuesFromFile(t *testing.T) {
 	assert.Equal(t, GetExpandedFilename("photos/thumbnails"), c.ThumbnailsPath)
 	assert.Equal(t, GetExpandedFilename("photos/import"), c.ImportPath)
 	assert.Equal(t, GetExpandedFilename("photos/export"), c.ExportPath)
+	assert.Equal(t, databaseDriver, c.DatabaseDriver)
+	assert.Equal(t, databaseDsn, c.DatabaseDsn)
+}
+
+func TestConfig_ConnectToDatabase(t *testing.T) {
+	c := NewTestConfig()
+
+	c.ConnectToDatabase()
+
+	db := c.GetDb()
+
+	assert.IsType(t, &gorm.DB{}, db)
 }

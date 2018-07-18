@@ -1,9 +1,9 @@
 package photoprism
 
 import (
-	"os"
-	"log"
 	"fmt"
+	"log"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -46,7 +46,7 @@ func ExportPhotosFromOriginals(originals []*MediaFile, thumbnailsPath string, ex
 
 		thumbnail, err := mediaFile.GetThumbnail(thumbnailsPath, size)
 
-		if err != nil  {
+		if err != nil {
 			log.Print(err.Error())
 		}
 

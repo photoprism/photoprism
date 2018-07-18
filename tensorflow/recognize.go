@@ -1,18 +1,13 @@
-package main
+package tensorflow
 
 import (
 	"bufio"
-	"bytes"
-	"io"
 	"io/ioutil"
-	"log"
-	"net/http"
 	"os"
 	"sort"
-	"strings"
-
-	"github.com/julienschmidt/httprouter"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
+	"log"
+	"errors"
 )
 
 type ClassifyResult struct {
@@ -30,15 +25,41 @@ var (
 	labels []string
 )
 
-func main() {
+func RecognizeImage(image string) (result []LabelResult, err error) {
 	if err := loadModel(); err != nil {
-		log.Fatal(err)
-		return
+		return nil, err
 	}
 
-	r := httprouter.New()
-	r.POST("/recognize", recognizeHandler)
-	log.Fatal(http.ListenAndServe(":8080", r))
+	// Make tensor
+	tensor, err := makeTensorFromImage(image, "jpeg")
+
+	if err != nil {
+		return nil, errors.New("invalid image")
+	}
+
+	// Run inference
+	session, err := tf.NewSession(graph, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer session.Close()
+
+	output, err := session.Run(
+		map[tf.Output]*tf.Tensor{
+			graph.Operation("input").Output(0): tensor,
+		},
+		[]tf.Output{
+			graph.Operation("output").Output(0),
+		},
+		nil)
+
+	if err != nil {
+		return nil, errors.New("could not run inference")
+	}
+
+	// Return best labels
+	return findBestLabels(output[0].Value().([][]float32)[0]), nil
 }
 
 func loadModel() error {
@@ -51,6 +72,7 @@ func loadModel() error {
 	if err := graph.Import(model, ""); err != nil {
 		return err
 	}
+
 	// Load labels
 	labelsFile, err := os.Open("/model/imagenet_comp_graph_label_strings.txt")
 	if err != nil {
@@ -58,6 +80,7 @@ func loadModel() error {
 	}
 	defer labelsFile.Close()
 	scanner := bufio.NewScanner(labelsFile)
+
 	// Labels are separated by newlines
 	for scanner.Scan() {
 		labels = append(labels, scanner.Text())
@@ -66,54 +89,6 @@ func loadModel() error {
 		return err
 	}
 	return nil
-}
-
-func recognizeHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	// Read image
-	imageFile, header, err := r.FormFile("image")
-	// Will contain filename and extension
-	imageName := strings.Split(header.Filename, ".")
-	if err != nil {
-		responseError(w, "Could not read image", http.StatusBadRequest)
-		return
-	}
-	defer imageFile.Close()
-	var imageBuffer bytes.Buffer
-	// Copy image data to a buffer
-	io.Copy(&imageBuffer, imageFile)
-
-	// ...
-	// Make tensor
-	tensor, err := makeTensorFromImage(&imageBuffer, imageName[:1][0])
-	if err != nil {
-		responseError(w, "Invalid image", http.StatusBadRequest)
-		return
-	}
-
-	// Run inference
-	session, err := tf.NewSession(graph, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer session.Close()
-	output, err := session.Run(
-		map[tf.Output]*tf.Tensor{
-			graph.Operation("input").Output(0): tensor,
-		},
-		[]tf.Output{
-			graph.Operation("output").Output(0),
-		},
-		nil)
-	if err != nil {
-		responseError(w, "Could not run inference", http.StatusInternalServerError)
-		return
-	}
-
-	// Return best labels
-	responseJSON(w, ClassifyResult{
-		Filename: header.Filename,
-		Labels:   findBestLabels(output[0].Value().([][]float32)[0]),
-	})
 }
 
 type ByProbability []LabelResult
@@ -131,8 +106,10 @@ func findBestLabels(probabilities []float32) []LabelResult {
 		}
 		resultLabels = append(resultLabels, LabelResult{Label: labels[i], Probability: p})
 	}
+
 	// Sort by probability
 	sort.Sort(ByProbability(resultLabels))
+
 	// Return top 5 labels
 	return resultLabels[:5]
 }

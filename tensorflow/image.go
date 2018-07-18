@@ -1,14 +1,12 @@
-package main
+package tensorflow
 
 import (
-	"bytes"
-
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/tensorflow/tensorflow/tensorflow/go/op"
 )
 
-func makeTensorFromImage(imageBuffer *bytes.Buffer, imageFormat string) (*tf.Tensor, error) {
-	tensor, err := tf.NewTensor(imageBuffer.String())
+func makeTensorFromImage(image string, imageFormat string) (*tf.Tensor, error) {
+	tensor, err := tf.NewTensor(image)
 	if err != nil {
 		return nil, err
 	}

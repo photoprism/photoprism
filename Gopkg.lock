@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "cloud.google.com/go"
+  packages = ["civil"]
+  revision = "777200caa7fb8936aed0f12b1fd79af64cc83ec9"
+  version = "v0.24.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/araddon/dateparse"
   packages = ["."]
@@ -26,6 +32,15 @@
   version = "v1.1.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/denisenkom/go-mssqldb"
+  packages = [
+    ".",
+    "internal/cp"
+  ]
+  revision = "94c9c97e8c9f9844d15c846854a7a6031ae2132c"
+
+[[projects]]
   name = "github.com/disintegration/imaging"
   packages = ["."]
   revision = "1884593a19ddc6f2ea050403430d02c1d0fc1283"
@@ -38,16 +53,56 @@
   version = "v1.0.1"
 
 [[projects]]
-  name = "github.com/julienschmidt/httprouter"
+  name = "github.com/go-sql-driver/mysql"
   packages = ["."]
-  revision = "8c199fb6259ffc1af525cc3ad52ee60ba8359669"
-  version = "v1.1"
+  revision = "d523deb1b23d913de5bdada721a6071e71283618"
+  version = "v1.4.0"
+
+[[projects]]
+  name = "github.com/jinzhu/gorm"
+  packages = [
+    ".",
+    "dialects/mssql",
+    "dialects/mysql",
+    "dialects/postgres",
+    "dialects/sqlite"
+  ]
+  revision = "6ed508ec6a4ecb3531899a69cbc746ccf65a4166"
+  version = "v1.9.1"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/jinzhu/inflection"
+  packages = ["."]
+  revision = "04140366298a54a039076d798123ffa108fff46c"
 
 [[projects]]
   branch = "master"
   name = "github.com/kylelemons/go-gypsy"
   packages = ["yaml"]
   revision = "08cad365cd28a7fba23bb1e57aa43c5e18ad8bb8"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/lib/pq"
+  packages = [
+    ".",
+    "hstore",
+    "oid"
+  ]
+  revision = "90697d60dd844d5ef6ff15135d0203f65d2f53b8"
+
+[[projects]]
+  name = "github.com/mattn/go-sqlite3"
+  packages = ["."]
+  revision = "25ecb14adfc7543176f7d85291ec7dba82c6f7e4"
+  version = "v1.9.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/photoprism/photoprism"
+  packages = ["."]
+  revision = "b2659ba5ce48b223490b8f51db065d93ae8f0cf5"
 
 [[projects]]
   name = "github.com/pkg/errors"
@@ -100,6 +155,12 @@
 
 [[projects]]
   branch = "master"
+  name = "golang.org/x/crypto"
+  packages = ["md4"]
+  revision = "a49355c7e3f8fe157a85be2f77e6e269a0f89602"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/image"
   packages = [
     "bmp",
@@ -112,9 +173,15 @@
   ]
   revision = "12117c17ca67ffa1ce22e9409f3b0b0a93ac08c7"
 
+[[projects]]
+  name = "google.golang.org/appengine"
+  packages = ["cloudsql"]
+  revision = "b1f26356af11148e710935ed1ac8a7f5702c7612"
+  version = "v1.1.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1ffc35574da6350baeabae12e2aed7a151f4db332e9e73656bd10b8db55de7d2"
+  inputs-digest = "8aa59b793f2c56ca48723acc6a2b517cbd2dd323af673b71c1bcc74d491951bf"
   solver-name = "gps-cdcl"
   solver-version = 1
