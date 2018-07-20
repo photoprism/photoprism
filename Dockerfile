@@ -91,4 +91,4 @@ RUN dep ensure
 RUN go install -v ./...
 
 # Run the app
-CMD [ "tensorflowapi" ]
+CMD [ "photoprism start" ]

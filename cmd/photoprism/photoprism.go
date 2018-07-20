@@ -6,6 +6,7 @@ import (
 	"github.com/urfave/cli"
 	"os"
 	"github.com/araddon/dateparse"
+	"github.com/photoprism/photoprism/server"
 )
 
 func main() {
@@ -32,6 +33,37 @@ func main() {
 				fmt.Printf("thumbnails-path       %s\n", conf.ThumbnailsPath)
 				fmt.Printf("import-path           %s\n", conf.ImportPath)
 				fmt.Printf("export-path           %s\n", conf.ExportPath)
+
+				return nil
+			},
+		},
+		{
+			Name:  "start",
+			Usage: "Starts web server",
+			Flags: []cli.Flag{
+				cli.IntFlag{
+					Name:  "port, p",
+					Usage: "HTTP server port",
+					Value: 80,
+				},
+				cli.StringFlag{
+					Name:  "ip, i",
+					Usage: "HTTP server IP address (optional)",
+					Value: "",
+				},
+			},
+			Action: func(context *cli.Context) error {
+				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
+
+				conf.SetValuesFromCliContext(context)
+
+				conf.CreateDirectories()
+
+				fmt.Printf("Starting web server at port %d...\n", context.Int("port"))
+
+				server.Start(context.String("ip"), context.Int("port"))
+
+				fmt.Println("Done.")
 
 				return nil
 			},
