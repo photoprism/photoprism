@@ -14,7 +14,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "PhotoPrism"
 	app.Usage = "Digital Photo Archive"
-	app.Version = "0.1.0"
+	app.Version = "0.2.0"
 	app.Flags = globalCliFlags
 	app.Commands = []cli.Command{
 		{
@@ -65,9 +65,32 @@ func main() {
 
 				fmt.Printf("Importing photos from %s...\n", conf.ImportPath)
 
-				importer := photoprism.NewImporter(conf.OriginalsPath, conf.GetDb())
+				indexer := photoprism.NewIndexer(conf.OriginalsPath, conf.GetDb())
+
+				importer := photoprism.NewImporter(conf.OriginalsPath, indexer)
 
 				importer.ImportPhotosFromDirectory(conf.ImportPath)
+
+				fmt.Println("Done.")
+
+				return nil
+			},
+		},
+		{
+			Name:  "index",
+			Usage: "Re-indexes all originals",
+			Action: func(context *cli.Context) error {
+				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
+
+				conf.SetValuesFromCliContext(context)
+
+				conf.CreateDirectories()
+
+				fmt.Printf("Indexing photos in %s...\n", conf.OriginalsPath)
+
+				indexer := photoprism.NewIndexer(conf.OriginalsPath, conf.GetDb())
+
+				indexer.IndexAll()
 
 				fmt.Println("Done.")
 

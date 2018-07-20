@@ -1,4 +1,4 @@
-package tensorflow
+package recognize
 
 import (
 	"bufio"
@@ -25,7 +25,7 @@ var (
 	labels []string
 )
 
-func RecognizeImage(image string) (result []LabelResult, err error) {
+func GetImageTags(image string) (result []LabelResult, err error) {
 	if err := loadModel(); err != nil {
 		return nil, err
 	}

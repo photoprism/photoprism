@@ -4,4 +4,4 @@ thumbnails-path: photos/thumbnails
 import-path: photos/import
 export-path: photos/export
 database-driver: mysql
-database-dsn: photoprism:photoprism@tcp(database:3306)/photoprism
+database-dsn: photoprism:photoprism@tcp(database:3306)/photoprism?parseTime=true

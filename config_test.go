@@ -19,7 +19,7 @@ var thumbnailsPath = GetExpandedFilename(testDataPath + "/thumbnails")
 var importPath = GetExpandedFilename(testDataPath + "/import")
 var exportPath = GetExpandedFilename(testDataPath + "/export")
 var databaseDriver = "mysql"
-var databaseDsn = "photoprism:photoprism@tcp(database:3306)/photoprism"
+var databaseDsn = "photoprism:photoprism@tcp(database:3306)/photoprism?parseTime=true"
 
 func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.ImportPath)

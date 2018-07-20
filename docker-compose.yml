@@ -7,7 +7,7 @@ services:
       - 80:80
       - 8080:8080
     volumes:
-      - .:/go/src/photoprism
+      - .:/go/src/github.com/photoprism/photoprism
 
   database:
     image: mysql:latest

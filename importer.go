@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"log"
 	"os"
@@ -14,16 +13,16 @@ import (
 
 type Importer struct {
 	originalsPath          string
-	db                     *gorm.DB
+	indexer                *Indexer
 	removeDotFiles         bool
 	removeExistingFiles    bool
 	removeEmptyDirectories bool
 }
 
-func NewImporter(originalsPath string, db *gorm.DB) *Importer {
+func NewImporter(originalsPath string, indexer *Indexer) *Importer {
 	instance := &Importer{
 		originalsPath:          originalsPath,
-		db:                     db,
+		indexer:                indexer,
 		removeDotFiles:         true,
 		removeExistingFiles:    true,
 		removeEmptyDirectories: true,
@@ -66,13 +65,12 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 				os.MkdirAll(path.Dir(destinationFilename), os.ModePerm)
 				log.Printf("Moving file %s to %s", relatedMediaFile.GetFilename(), destinationFilename)
 				relatedMediaFile.Move(destinationFilename)
+				i.indexer.IndexMediaFile(relatedMediaFile)
 			} else if i.removeExistingFiles {
 				relatedMediaFile.Remove()
 				log.Printf("Deleted %s (already exists)", relatedMediaFile.GetFilename())
 			}
 		}
-
-		// mediaFile.Move(i.originalsPath)
 
 		return nil
 	})
@@ -115,7 +113,7 @@ func (i *Importer) GetDestinationFilename(masterFile *MediaFile, mediaFile *Medi
 
 		iteration++
 
-		result = pathName + "/" + canonicalName + "_" + fmt.Sprintf("V%d", iteration) + fileExtension
+		result = pathName + "/" + canonicalName + "." + fmt.Sprintf("V%d", iteration) + fileExtension
 	}
 
 	return result, nil

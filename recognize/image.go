@@ -1,4 +1,4 @@
-package tensorflow
+package recognize
 
 import (
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"

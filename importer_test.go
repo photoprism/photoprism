@@ -8,7 +8,9 @@ import (
 func TestNewImporter(t *testing.T) {
 	conf := NewTestConfig()
 
-	importer := NewImporter(conf.OriginalsPath)
+	indexer := NewIndexer(conf.OriginalsPath, conf.GetDb())
+
+	importer := NewImporter(conf.OriginalsPath, indexer)
 
 	assert.IsType(t, &Importer{}, importer)
 }
@@ -18,7 +20,9 @@ func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	importer := NewImporter(conf.OriginalsPath)
+	indexer := NewIndexer(conf.OriginalsPath, conf.GetDb())
+
+	importer := NewImporter(conf.OriginalsPath, indexer)
 
 	importer.ImportPhotosFromDirectory(conf.ImportPath)
 }
@@ -26,7 +30,10 @@ func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
 func TestImporter_GetDestinationFilename(t *testing.T) {
 	conf := NewTestConfig()
 	conf.InitializeTestData(t)
-	importer := NewImporter(conf.OriginalsPath)
+
+	indexer := NewIndexer(conf.OriginalsPath, conf.GetDb())
+
+	importer := NewImporter(conf.OriginalsPath, indexer)
 
 	rawFile := NewMediaFile(conf.ImportPath + "/raw/IMG_1435.CR2")
 
@@ -34,5 +41,5 @@ func TestImporter_GetDestinationFilename(t *testing.T) {
 
 	assert.Empty(t, err)
 
-	assert.Equal(t, conf.OriginalsPath+"/2018/02/20180204_180813_B0770443A5F7.cr2", filename)
+	assert.Equal(t, conf.OriginalsPath + "/2018/02/20180204_170813_B0770443A5F7.cr2", filename)
 }

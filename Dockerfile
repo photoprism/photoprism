@@ -82,7 +82,7 @@ RUN mkdir -m 777 /go/pkg/dep
 # USER photoprism
 
 # Set up project directory
-WORKDIR "/go/src/photoprism"
+WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
 
 RUN dep ensure

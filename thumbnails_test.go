@@ -44,7 +44,9 @@ func TestCreateThumbnailsFromOriginals(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	importer := NewImporter(conf.OriginalsPath)
+	indexer := NewIndexer(conf.OriginalsPath, conf.GetDb())
+
+	importer := NewImporter(conf.OriginalsPath, indexer)
 
 	importer.ImportPhotosFromDirectory(conf.ImportPath)
 

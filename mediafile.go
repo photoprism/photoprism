@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -38,6 +39,7 @@ var FileExtensions = map[string]string{
 	".avi":  FileTypeMovie,
 	".yml":  FileTypeYaml,
 	".jpg":  FileTypeJpeg,
+	".thm":  FileTypeJpeg,
 	".jpeg": FileTypeJpeg,
 	".xmp":  FileTypeXmp,
 	".aae":  FileTypeAae,
@@ -108,6 +110,16 @@ func (m *MediaFile) GetCanonicalName() string {
 	result := dateCreated.Format("20060102_150405_") + strings.ToUpper(m.GetHash()[:12])
 
 	return result
+}
+
+func (m *MediaFile) GetCanonicalNameFromFile() string {
+	basename := filepath.Base(m.GetFilename())
+
+	if end := strings.Index(basename, "."); end != -1 {
+		return basename[:end] // Length of canonical name: 16 + 12
+	} else {
+		return basename
+	}
 }
 
 func (m *MediaFile) GetPerceptualHash() (string, error) {
@@ -297,12 +309,16 @@ func (m *MediaFile) IsJpeg() bool {
 	return m.GetMimeType() == MimeTypeJpeg
 }
 
+func (m *MediaFile) GetType() string {
+	return FileExtensions[m.GetExtension()]
+}
+
 func (m *MediaFile) HasType(typeString string) bool {
 	if typeString == FileTypeJpeg {
 		return m.IsJpeg()
 	}
 
-	return FileExtensions[m.GetExtension()] == typeString
+	return m.GetType() == typeString
 }
 
 func (m *MediaFile) IsRaw() bool {
@@ -311,4 +327,20 @@ func (m *MediaFile) IsRaw() bool {
 
 func (m *MediaFile) IsPhoto() bool {
 	return m.IsJpeg() || m.IsRaw()
+}
+
+func (m *MediaFile) GetJpeg() (*MediaFile, error) {
+	if m.IsJpeg() {
+		return m, nil
+	}
+
+	jpegFilename := m.GetFilename()[0:len(m.GetFilename()) - len(filepath.Ext(m.GetFilename()))] + ".jpg"
+
+	if !fileExists(jpegFilename) {
+		return nil, errors.New("file does not exist")
+	}
+
+	result := NewMediaFile(jpegFilename)
+
+	return result, nil
 }

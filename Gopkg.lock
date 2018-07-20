@@ -4,14 +4,14 @@
 [[projects]]
   name = "cloud.google.com/go"
   packages = ["civil"]
-  revision = "777200caa7fb8936aed0f12b1fd79af64cc83ec9"
-  version = "v0.24.0"
+  revision = "aad3f485ee528456e0768f20397b4d9dd941e755"
+  version = "v0.25.0"
 
 [[projects]]
   branch = "master"
   name = "github.com/araddon/dateparse"
   packages = ["."]
-  revision = "6135c1994ea28aa1bb341f5c704885906f584904"
+  revision = "089f77b1d92b615cc77fde0d2fa528b5e85e832d"
 
 [[projects]]
   branch = "master"
@@ -38,13 +38,13 @@
     ".",
     "internal/cp"
   ]
-  revision = "94c9c97e8c9f9844d15c846854a7a6031ae2132c"
+  revision = "242fa5aa1b45aeb9fcdfeee88822982e3f548e22"
 
 [[projects]]
   name = "github.com/disintegration/imaging"
   packages = ["."]
-  revision = "1884593a19ddc6f2ea050403430d02c1d0fc1283"
-  version = "v1.3.0"
+  revision = "bbcee2f5c9d5e94ca42c8b50ec847fec64a6c134"
+  version = "v1.4.2"
 
 [[projects]]
   name = "github.com/djherbis/times"
@@ -99,12 +99,6 @@
   version = "v1.9.0"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/photoprism/photoprism"
-  packages = ["."]
-  revision = "b2659ba5ce48b223490b8f51db065d93ae8f0cf5"
-
-[[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
@@ -124,7 +118,7 @@
     "mknote",
     "tiff"
   ]
-  revision = "17202558c8d9c3fd047859f1a5e73fd9ae709187"
+  revision = "8d986c03457a2057c7b0fb0a48113f7dd48f9619"
 
 [[projects]]
   name = "github.com/steakknife/hamming"
@@ -135,8 +129,8 @@
 [[projects]]
   name = "github.com/stretchr/testify"
   packages = ["assert"]
-  revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
-  version = "v1.2.1"
+  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
+  version = "v1.2.2"
 
 [[projects]]
   name = "github.com/tensorflow/tensorflow"
@@ -144,8 +138,8 @@
     "tensorflow/go",
     "tensorflow/go/op"
   ]
-  revision = "37aa430d84ced579342a4044c89c236664be7f68"
-  version = "v1.5.0"
+  revision = "25c197e02393bd44f50079945409009dd4d434f8"
+  version = "v1.9.0"
 
 [[projects]]
   name = "github.com/urfave/cli"
@@ -171,7 +165,7 @@
     "vp8l",
     "webp"
   ]
-  revision = "12117c17ca67ffa1ce22e9409f3b0b0a93ac08c7"
+  revision = "c73c2afc3b812cdd6385de5a50616511c4a3d458"
 
 [[projects]]
   name = "google.golang.org/appengine"
@@ -182,6 +176,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8aa59b793f2c56ca48723acc6a2b517cbd2dd323af673b71c1bcc74d491951bf"
+  inputs-digest = "a6f9a83ff2c8ea983a59f7664e5594f0b44e75bf123a6e5b4643574e5ec1765f"
   solver-name = "gps-cdcl"
   solver-version = 1

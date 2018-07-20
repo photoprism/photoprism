@@ -1,4 +1,4 @@
-package tensorflow
+package recognize
 
 import (
 	"testing"
@@ -6,11 +6,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRecognizeImage(t *testing.T) {
+func TestGetImageTags(t *testing.T) {
 	if imageBuffer, err := ioutil.ReadFile("cat.jpg"); err != nil {
 		t.Error(err)
 	} else {
-		result, err := RecognizeImage(string(imageBuffer))
+		result, err := GetImageTags(string(imageBuffer))
 
 		assert.NotNil(t, result)
 		assert.Nil(t, err)
