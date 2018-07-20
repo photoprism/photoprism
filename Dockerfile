@@ -88,7 +88,7 @@ COPY . .
 RUN dep ensure
 
 # Install the app
-RUN go install -v ./...
+RUN go build cmd/photoprism/photoprism.go
 
 # Run the app
-CMD [ "photoprism start" ]
+CMD [ "./photoprism start" ]
