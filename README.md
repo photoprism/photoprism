@@ -62,4 +62,4 @@ Our goal is to provide the following features (tested as a proof-of-concept):
 - Image search with powerful filters
 - Easy backup and export
 
-![](assets/img/concept.jpg)
+![](docs/img/concept.jpg)

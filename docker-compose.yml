@@ -6,6 +6,8 @@ services:
     ports:
       - 80:80
       - 8080:8080
+      - 6006:6006
+      - 8888:8888
     volumes:
       - .:/go/src/github.com/photoprism/photoprism
 

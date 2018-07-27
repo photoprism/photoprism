@@ -9,19 +9,16 @@ import (
 func Start(address string, port int) {
 	router := gin.Default()
 
-	router.LoadHTMLGlob("templates/*")
+	router.LoadHTMLGlob("server/templates/*")
 
-	router.Static("/assets", "./assets")
+	router.StaticFile("/favicon.ico", "./server/assets/favicon.ico")
+	router.StaticFile("/robots.txt", "./server/assets/robots.txt")
 
-	router.GET("/", func(c *gin.Context) {
+	router.Static("/assets", "./server/assets")
+
+	router.NoRoute(func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
 			"title": "PhotoPrism",
-		})
-	})
-
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
 		})
 	})
 

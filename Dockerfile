@@ -13,17 +13,28 @@ RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktab
 
 # Install Go
 RUN apt-get update && apt-get install -y --no-install-recommends \
-		g++ \
-		gcc \
-		libc6-dev \
-		make \
-		pkg-config \
+    g++ \
+    gcc \
+    libc6-dev \
+    make \
+    pkg-config \
+    nano \
+    build-essential \
     wget \
     darktable \
     git \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN apt-get upgrade -y
+
+# Install NPM (NodeJS)
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get install -y nodejs
+
+# Install YARN (Package Manager)
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update && apt-get install yarn
 
 ENV GOLANG_VERSION 1.10
 RUN set -eux; \
@@ -89,6 +100,3 @@ RUN dep ensure
 
 # Install the app
 RUN go build cmd/photoprism/photoprism.go
-
-# Run the app
-CMD [ "./photoprism start" ]
