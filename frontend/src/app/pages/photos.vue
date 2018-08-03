@@ -1,7 +1,5 @@
 <template>
-
-
-    <div class="dashboard">
+    <div class="page page-photos">
         <h1 class="md-display-1">Welcome to PhotoPrism</h1>
         <p class="md-subheading">
             A user-friendly tool for importing, filtering and archiving large amounts of JPEG and RAW files
@@ -11,25 +9,12 @@
 
 <script>
     export default {
-        name: 'dashboard',
+        name: 'photos',
         data() {
             return {
-                msg: 'Welcome to PhotoPrism',
-                username: this.$session.getFullName(),
             };
         },
         methods: {
-            open() {
-                this.$refs.snackbar.open();
-            },
-
-            showNotification() {
-                this.$alert.success('Yeah wuwuwu');
-            },
-
-            logout() {
-                this.$session.logout();
-            },
         }
     };
 </script>

@@ -34,7 +34,13 @@ func (i *Indexer) GetImageTags(jpeg *MediaFile) (result []Tag) {
 
 		for _, tag := range tags {
 			if tag.Probability > 0.2 {
-				result = append(result, Tag{Label: tag.Label})
+				var tagModel Tag
+
+				if res := i.db.First(&tagModel, "label = ?", tag.Label); res.Error != nil {
+					tagModel.Label = tag.Label
+				}
+
+				result = append(result, tagModel)
 			}
 		}
 	}

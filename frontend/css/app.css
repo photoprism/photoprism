@@ -19,36 +19,66 @@
     background-color: rgba(0,0,0,0.2);
 }
 
+body {
+    background: #333333;
+    color: rgba(255,255,255,0.9);
+}
 
 main {
-    margin: 10px 20px;
-}
-/*
-nav {
-    background-color: #616161;
+    padding: 0;
+    margin: 0;
 }
 
-nav a:hover {
-    text-decoration: none !important;
-    color: rgba(255, 255, 255, .87) !important;
+main div.page {
+    padding: 2rem;
 }
 
-nav a {
-    font-size: 14px;
-    font-weight: bold !important;
-    text-transform: uppercase;
-    display: inline-block;
-    text-align: center;
-    width: 120px;
-    background: #616161;
-    padding: 10px;
-    text-decoration: none;
-    border-bottom: 3px solid #616161;
-    color: rgba(255, 255, 255, .54) !important;
+.navbar {
+    padding: 3px 2rem 3px 2rem;
+    background: black !important;
 }
 
-nav a.router-link-active {
-    font-weight: bold !important;
-    border-bottom: 3px solid #E64A19;
-    color: rgba(255, 255, 255, .87) !important;
-}*/
+.navbar .nav-item-photos .nav-link.active,
+.navbar .nav-item-photos .nav-link:hover {
+    color: #c8e5ff;
+}
+
+main div.page-photos {
+    border-top: 2px solid #c8e5ff;
+}
+
+.navbar .nav-item-albums .nav-link.active,
+.navbar .nav-item-albums .nav-link:hover {
+    color: #c4ffcb;
+}
+
+main div.page-albums {
+    border-top: 2px solid #c4ffcb;
+}
+
+.navbar .nav-item-import .nav-link.active,
+.navbar .nav-item-import .nav-link:hover {
+    color: #feffb8;
+}
+
+main div.page-import {
+    border-top: 2px solid #feffb8;
+}
+
+.navbar .nav-item-export .nav-link.active,
+.navbar .nav-item-export .nav-link:hover {
+    color: #ffedc1;
+}
+
+main div.page-export {
+    border-top: 2px solid #ffedc1;
+}
+
+.navbar .nav-item-settings .nav-link.active,
+.navbar .nav-item-settings .nav-link:hover {
+    color: #f5c5c5;
+}
+
+main div.page-settings {
+    border-top: 2px solid #f5c5c5;
+}

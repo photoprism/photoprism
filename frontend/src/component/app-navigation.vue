@@ -4,14 +4,16 @@
 
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
-            <b-navbar-brand href="#">PhotoPrism</b-navbar-brand>
+            <b-navbar-brand href="/"><img src="/assets/img/logo.png" alt="PhotoPrism"></b-navbar-brand>
 
             <b-collapse is-nav id="nav_collapse">
 
                 <b-navbar-nav>
-                    <b-nav-item href="#">Browse</b-nav-item>
-                    <b-nav-item href="#">Import</b-nav-item>
-                    <b-nav-item href="#">Export</b-nav-item>
+                    <b-nav-item to="/photos" class="nav-item-photos">Photos</b-nav-item>
+                    <b-nav-item to="/albums" class="nav-item-albums">Albums</b-nav-item>
+                    <b-nav-item to="/import" class="nav-item-import">Import</b-nav-item>
+                    <b-nav-item to="/export" class="nav-item-export">Export</b-nav-item>
+                    <b-nav-item to="/settings" class="nav-item-settings">Settings</b-nav-item>
                 </b-navbar-nav>
 
                 <!-- Right aligned nav items -->
@@ -22,21 +24,6 @@
                         <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
                     </b-nav-form>
 
-                    <b-nav-item-dropdown text="Lang" right>
-                        <b-dropdown-item href="#">EN</b-dropdown-item>
-                        <b-dropdown-item href="#">ES</b-dropdown-item>
-                        <b-dropdown-item href="#">RU</b-dropdown-item>
-                        <b-dropdown-item href="#">FA</b-dropdown-item>
-                    </b-nav-item-dropdown>
-
-                    <b-nav-item-dropdown right>
-                        <!-- Using button-content slot -->
-                        <template slot="button-content">
-                            User
-                        </template>
-                        <b-dropdown-item href="#">Profile</b-dropdown-item>
-                        <b-dropdown-item href="#">Signout</b-dropdown-item>
-                    </b-nav-item-dropdown>
                 </b-navbar-nav>
 
             </b-collapse>
