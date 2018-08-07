@@ -13,6 +13,11 @@ import (
 	"strings"
 	"time"
 	"github.com/pkg/errors"
+	"image"
+	_ "image/jpeg"
+	_ "image/png"
+	_ "image/gif"
+	"math"
 )
 
 const (
@@ -54,6 +59,8 @@ type MediaFile struct {
 	perceptualHash string
 	tags           []string
 	exifData       *ExifData
+	width          int
+	height         int
 }
 
 func NewMediaFile(filename string) *MediaFile {
@@ -334,7 +341,7 @@ func (m *MediaFile) GetJpeg() (*MediaFile, error) {
 		return m, nil
 	}
 
-	jpegFilename := m.GetFilename()[0:len(m.GetFilename()) - len(filepath.Ext(m.GetFilename()))] + ".jpg"
+	jpegFilename := m.GetFilename()[0:len(m.GetFilename())-len(filepath.Ext(m.GetFilename()))] + ".jpg"
 
 	if !fileExists(jpegFilename) {
 		return nil, errors.New("file does not exist")
@@ -343,4 +350,63 @@ func (m *MediaFile) GetJpeg() (*MediaFile, error) {
 	result := NewMediaFile(jpegFilename)
 
 	return result, nil
+}
+
+func (m *MediaFile) decodeDimensions() error {
+	if m.IsJpeg() {
+		file, err := os.Open(m.GetFilename())
+
+		defer file.Close()
+
+		if err != nil {
+			return err
+		}
+
+		size, _, err := image.DecodeConfig(file)
+
+		if err != nil {
+			return err
+		}
+
+		m.width = size.Width
+		m.height = size.Height
+	} else {
+		if exif, err := m.GetExifData(); err == nil {
+			m.width = exif.Width
+			m.height = exif.Height
+		} else {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *MediaFile) GetWidth() int {
+	if m.width <= 0 {
+		m.decodeDimensions()
+	}
+
+	return m.width
+}
+
+func (m *MediaFile) GetHeight() int {
+	if m.height <= 0 {
+		m.decodeDimensions()
+	}
+
+	return m.height
+}
+
+func (m *MediaFile) GetAspectRatio() float64 {
+	width := float64(m.GetWidth())
+	height := float64(m.GetHeight())
+
+	if width <= 0 || height <= 0 {
+		return 0
+	}
+
+	aspectRatio := width / height
+
+	return math.Round(aspectRatio * 100) / 100
 }

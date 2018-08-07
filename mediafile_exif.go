@@ -15,6 +15,9 @@ type ExifData struct {
 	Lat         float64
 	Long        float64
 	Thumbnail   []byte
+	Width       int
+	Height      int
+	Orientation int
 }
 
 func (m *MediaFile) GetExifData() (*ExifData, error) {
@@ -68,6 +71,19 @@ func (m *MediaFile) GetExifData() (*ExifData, error) {
 	if uniqueId, err := x.Get(exif.ImageUniqueID); err == nil {
 		m.exifData.UniqueID = uniqueId.String()
 	}
+
+	if width, err := x.Get(exif.ImageWidth); err == nil {
+		m.exifData.Width, _ = width.Int(0)
+	}
+
+	if height, err := x.Get(exif.ImageLength); err == nil {
+		m.exifData.Height, _ = height.Int(0)
+	}
+
+	if orientation, err := x.Get(exif.Orientation); err == nil {
+		m.exifData.Orientation, _ = orientation.Int(0)
+	}
+
 
 	return m.exifData, nil
 }

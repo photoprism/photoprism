@@ -1,6 +1,6 @@
 @import url("../node_modules/bootstrap/dist/css/bootstrap.css");
 @import url("../node_modules/bootstrap-vue/dist/bootstrap-vue.css");
-@import url("../node_modules/font-awesome/css/font-awesome.min.css");
+@import url("../node_modules/@fortawesome/fontawesome-free/css/all.css");
 @import url("alerts.css");
 
 #app div.loading {
@@ -20,8 +20,13 @@
 }
 
 body {
-    background: #333333;
-    color: rgba(255,255,255,0.9);
+    background: #fefefe;
+    color: #333333;
+}
+
+footer {
+    clear: both;
+    padding: 1rem 2rem;
 }
 
 main {
@@ -30,12 +35,23 @@ main {
 }
 
 main div.page {
+    margin: 43px 0 0 0;
     padding: 2rem;
 }
 
+main div.page {
+    border-top-width: 3px;
+    border-top-style: solid;
+}
+
 .navbar {
-    padding: 3px 2rem 3px 2rem;
+    padding: 1px 2rem 1px 2rem;
+    top: 0;
+    left: 0;
+    right: 0;
     background: black !important;
+    position: fixed !important;
+    z-index: 1000;
 }
 
 .navbar .nav-item-photos .nav-link.active,
@@ -44,7 +60,7 @@ main div.page {
 }
 
 main div.page-photos {
-    border-top: 2px solid #c8e5ff;
+    border-top-color: #c8e5ff;
 }
 
 .navbar .nav-item-albums .nav-link.active,
@@ -53,7 +69,7 @@ main div.page-photos {
 }
 
 main div.page-albums {
-    border-top: 2px solid #c4ffcb;
+    border-top-color: #c4ffcb;
 }
 
 .navbar .nav-item-import .nav-link.active,
@@ -62,7 +78,7 @@ main div.page-albums {
 }
 
 main div.page-import {
-    border-top: 2px solid #feffb8;
+    border-top-color: #feffb8;
 }
 
 .navbar .nav-item-export .nav-link.active,
@@ -71,7 +87,7 @@ main div.page-import {
 }
 
 main div.page-export {
-    border-top: 2px solid #ffedc1;
+    border-top-color: #ffedc1;
 }
 
 .navbar .nav-item-settings .nav-link.active,
@@ -80,5 +96,74 @@ main div.page-export {
 }
 
 main div.page-settings {
-    border-top: 2px solid #f5c5c5;
+    border-top-color: #f5c5c5;
+}
+
+.photo-grid .photo {
+    background: #eeeeee;
+    display: block;
+    width: 250px;
+    height: 250px;
+    float: left;
+    margin: 2px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+
+.photo-grid .photo img {
+    margin: 0;
+    padding: 0;
+}
+
+.photo-grid .photo .info {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 0.75;
+    background: black;
+    font-size: 12px;
+    padding: 8px 12px;
+    color: white;
+    cursor: text;
+}
+
+.photo-grid .photo:hover .info {
+    display: block;
+}
+
+.photo-grid .photo .right {
+    float: right;
+}
+
+.photo-grid .photo .actions {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 1;
+    background: transparent;
+    font-size: 14px;
+    padding: 6px 12px;
+    color: white;
+    text-align: left;
+    cursor: default;
+}
+
+.photo-grid .photo:hover .actions {
+    background: black;
+    opacity: 0.75;
+}
+
+.photo-grid .photo .actions .action {
+    display: none;
+}
+
+.photo-grid .photo:hover .actions .action,
+.photo-grid .photo .actions .action.liked {
+    display: inline;
+    cursor: pointer;
 }

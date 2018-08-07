@@ -9,6 +9,7 @@ import AppComponents from 'component/app-components';
 import Alert from 'common/alert';
 import Session from 'common/session';
 import Event from 'pubsub-js';
+import Moment from 'vue-moment';
 
 const session = new Session(window.localStorage);
 
@@ -19,6 +20,7 @@ Vue.prototype.$api = Api;
 Vue.prototype.$config = window.appConfig;
 
 Vue.use(BootstrapVue);
+Vue.use(Moment);
 Vue.use(AppComponents);
 Vue.use(Router);
 

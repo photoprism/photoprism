@@ -89,6 +89,12 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 		file.FileType = mediaFile.GetType()
 		file.MimeType = mediaFile.GetMimeType()
 
+		if mediaFile.GetWidth() > 0 && mediaFile.GetHeight() > 0 {
+			file.Width = mediaFile.GetWidth()
+			file.Height = mediaFile.GetHeight()
+			file.AspectRatio = mediaFile.GetAspectRatio()
+		}
+
 		i.db.Create(&file)
 	}
 }

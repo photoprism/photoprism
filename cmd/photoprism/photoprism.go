@@ -61,7 +61,7 @@ func main() {
 
 				fmt.Printf("Starting web server at port %d...\n", context.Int("port"))
 
-				server.Start(context.String("ip"), context.Int("port"))
+				server.Start(context.String("ip"), context.Int("port"), conf)
 
 				fmt.Println("Done.")
 

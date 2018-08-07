@@ -20,7 +20,7 @@
                 <b-navbar-nav class="ml-auto">
 
                     <b-nav-form>
-                        <b-form-input size="sm" class="mr-sm-2" type="text" placeholder="Search"/>
+                        <b-form-input size="sm" class="mr-sm-2" type="text" name="q" :value="q" placeholder="Search"/>
                         <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
                     </b-nav-form>
 
@@ -34,7 +34,12 @@
 <script>
     export default {
         data() {
-            return {};
+            const query = this.$route.query;
+            const q = query.hasOwnProperty('q') ? query['q'] : '';
+
+            return {
+                'q': q,
+            };
         },
         methods: {
             toggleLeftSidenav() {
