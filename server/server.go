@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"github.com/photoprism/photoprism"
 	"strconv"
+	"log"
 )
 
 func Start(address string, port int, conf *photoprism.Config) {
@@ -22,10 +23,23 @@ func Start(address string, port int, conf *photoprism.Config) {
 		v1.GET("/photos", func(c *gin.Context) {
 			search := photoprism.NewQuery(conf.OriginalsPath, conf.GetDb())
 
-			photos := search.FindPhotos(70, 0)
+			count, _ := strconv.Atoi(c.DefaultQuery("count", "50"))
+			offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+
+			query := c.DefaultQuery("q", "")
+
+			photos := search.FindPhotos(query, count, offset)
+
+			log.Printf("Query: %s, Count: %d", query, count)
+
+			c.Header("x-result-total", strconv.Itoa(len(photos)))
+			c.Header("x-result-count", strconv.Itoa(count))
+			c.Header("x-result-offset", strconv.Itoa(offset))
 
 			c.JSON(http.StatusOK, photos)
 		})
+
+		// v1.OPTIONS()
 
 		v1.GET("/files", func(c *gin.Context) {
 			search := photoprism.NewQuery(conf.OriginalsPath, conf.GetDb())

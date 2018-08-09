@@ -9,6 +9,10 @@ class Photo extends Abstract {
         return this.ID;
     }
 
+    getGoogleMapsLink() {
+        return 'https://www.google.com/maps/place/' + this.Lat + ',' + this.Long;
+    }
+
     static getCollectionResource() {
         return 'photos';
     }

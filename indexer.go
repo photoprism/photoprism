@@ -69,13 +69,19 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 			photo.Tags = i.GetImageTags(jpeg)
 		}
 
+		if location, err := mediaFile.GetLocation(); err == nil {
+			i.db.FirstOrCreate(location, "id = ?", location.ID)
+			photo.Location = location
+		}
+
+		photo.TakenAt = mediaFile.GetDateCreated()
 		photo.CanonicalName = canonicalName
 		photo.Files = []File{}
 		photo.Albums = []Album{}
 		photo.Author = ""
 		photo.CameraModel = mediaFile.GetCameraModel()
-		photo.LocationName = ""
-		photo.Liked = false
+
+		photo.Favorite = false
 		photo.Private = true
 		photo.Deleted = false
 
@@ -88,6 +94,7 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 		file.Hash = fileHash
 		file.FileType = mediaFile.GetType()
 		file.MimeType = mediaFile.GetMimeType()
+		file.Orientation = mediaFile.GetOrientation()
 
 		if mediaFile.GetWidth() > 0 && mediaFile.GetHeight() > 0 {
 			file.Width = mediaFile.GetWidth()

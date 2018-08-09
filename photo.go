@@ -2,12 +2,14 @@ package photoprism
 
 import (
 	"github.com/jinzhu/gorm"
+	"time"
 )
 
 type Photo struct {
 	gorm.Model
 	Title          string
 	Description    string  `gorm:"type:text;"`
+	TakenAt        time.Time
 	CanonicalName  string
 	PerceptualHash string
 	Tags           []Tag   `gorm:"many2many:photo_tags;"`
@@ -15,10 +17,11 @@ type Photo struct {
 	Albums         []Album `gorm:"many2many:album_photos;"`
 	Author         string
 	CameraModel    string
-	LocationName   string
 	Lat            float64
 	Long           float64
-	Liked          bool
+	Location       *Location
+	LocationID     uint
+	Favorite       bool
 	Private        bool
 	Deleted        bool
 }

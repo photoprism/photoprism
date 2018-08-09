@@ -18,8 +18,17 @@ func NewQuery(originalsPath string, db *gorm.DB) *Search {
 	return instance
 }
 
-func (s *Search) FindPhotos (count int, offset int) (photos []Photo) {
-	s.db.Preload("Tags").Preload("Files").Preload("Albums").Where(&Photo{Deleted: false}).Limit(count).Offset(offset).Find(&photos)
+func (s *Search) FindPhotos (query string, count int, offset int) (photos []Photo) {
+	q := s.db.Preload("Tags").Preload("Files").Preload("Location").Preload("Albums")
+
+	if query != "" {
+		q = q.Joins("JOIN photo_tags ON photo_tags.photo_id=photos.id")
+		q = q.Joins("JOIN tags ON photo_tags.tag_id=tags.id")
+		q = q.Where("tags.label LIKE ?", "%" + query + "%")
+	}
+
+	q = q.Where(&Photo{Deleted: false}).Order("taken_at").Limit(count).Offset(offset)
+	q = q.Find(&photos)
 
 	return photos
 }

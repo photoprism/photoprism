@@ -19,7 +19,7 @@
                 <!-- Right aligned nav items -->
                 <b-navbar-nav class="ml-auto">
 
-                    <b-nav-form>
+                    <b-nav-form action="/photos">
                         <b-form-input size="sm" class="mr-sm-2" type="text" name="q" :value="q" placeholder="Search"/>
                         <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
                     </b-nav-form>
@@ -38,31 +38,10 @@
             const q = query.hasOwnProperty('q') ? query['q'] : '';
 
             return {
-                'q': q,
+                q: q,
             };
         },
         methods: {
-            toggleLeftSidenav() {
-                this.$refs.leftSidenav.toggle();
-            },
-
-            open(ref) {
-            },
-
-            close(ref) {
-            },
-
-            login() {
-                this.$refs.loginDialog.open();
-            },
-
-            register() {
-                this.$refs.registerDialog.open();
-            },
-
-            logout() {
-                this.$session.logout();
-            },
         }
     };
 </script>

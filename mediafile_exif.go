@@ -82,6 +82,8 @@ func (m *MediaFile) GetExifData() (*ExifData, error) {
 
 	if orientation, err := x.Get(exif.Orientation); err == nil {
 		m.exifData.Orientation, _ = orientation.Int(0)
+	} else {
+		m.exifData.Orientation = 1
 	}
 
 

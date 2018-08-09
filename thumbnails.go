@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"image"
 )
 
 func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, size int, square bool) {
@@ -60,21 +61,36 @@ func (m *MediaFile) GetThumbnail(path string, size int) (result *MediaFile, err 
 	return m.CreateThumbnail(thumbnailFilename, size)
 }
 
+func (m *MediaFile) fixImageOrientation(img image.Image) image.Image {
+	switch orientation := m.GetOrientation(); orientation {
+	case 3:
+		img = imaging.Rotate180(img)
+	case 6:
+		img = imaging.Rotate270(img)
+	case 8:
+		img = imaging.Rotate90(img)
+	}
+
+	return img
+}
+
 // Resize preserving the aspect ratio
 func (m *MediaFile) CreateThumbnail(filename string, size int) (result *MediaFile, err error) {
-	image, err := imaging.Open(m.filename)
+	img, err := imaging.Open(m.filename)
 
 	if err != nil {
 		log.Printf("open failed: %s", err.Error())
 		return nil, err
 	}
 
-	image = imaging.Fit(image, size, size, imaging.Lanczos)
+	img = m.fixImageOrientation(img)
 
-	err = imaging.Save(image, filename)
+	img = imaging.Fit(img, size, size, imaging.Lanczos)
+
+	err = imaging.Save(img, filename)
 
 	if err != nil {
-		log.Fatalf("failed to save image: %v", err)
+		log.Fatalf("failed to save img: %v", err)
 		return nil, err
 	}
 
@@ -102,19 +118,21 @@ func (m *MediaFile) GetSquareThumbnail(path string, size int) (result *MediaFile
 
 // Resize and crop to square format
 func (m *MediaFile) CreateSquareThumbnail(filename string, size int) (result *MediaFile, err error) {
-	image, err := imaging.Open(m.filename)
+	img, err := imaging.Open(m.filename)
 
 	if err != nil {
 		log.Printf("open failed: %s", err.Error())
 		return nil, err
 	}
 
-	image = imaging.Fill(image, size, size, imaging.Center, imaging.Lanczos)
+	img = m.fixImageOrientation(img)
 
-	err = imaging.Save(image, filename)
+	img = imaging.Fill(img, size, size, imaging.Center, imaging.Lanczos)
+
+	err = imaging.Save(img, filename)
 
 	if err != nil {
-		log.Fatalf("failed to save image: %v", err)
+		log.Fatalf("failed to save img: %v", err)
 		return nil, err
 	}
 

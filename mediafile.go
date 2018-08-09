@@ -58,9 +58,10 @@ type MediaFile struct {
 	mimeType       string
 	perceptualHash string
 	tags           []string
-	exifData       *ExifData
 	width          int
 	height         int
+	exifData       *ExifData
+	location       *Location
 }
 
 func NewMediaFile(filename string) *MediaFile {
@@ -408,5 +409,13 @@ func (m *MediaFile) GetAspectRatio() float64 {
 
 	aspectRatio := width / height
 
-	return math.Round(aspectRatio * 100) / 100
+	return math.Round(aspectRatio*100) / 100
+}
+
+func (m *MediaFile) GetOrientation() int {
+	if exif, err := m.GetExifData(); err == nil {
+		return exif.Orientation
+	} else {
+		return 1
+	}
 }

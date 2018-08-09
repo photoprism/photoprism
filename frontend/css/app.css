@@ -22,6 +22,7 @@
 body {
     background: #fefefe;
     color: #333333;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 footer {
@@ -36,12 +37,20 @@ main {
 
 main div.page {
     margin: 43px 0 0 0;
-    padding: 2rem;
+    padding: 0;
 }
 
-main div.page {
-    border-top-width: 3px;
-    border-top-style: solid;
+main div.page .page-container {
+    padding: 2rem;
+    overflow: auto;
+}
+
+main div.page .page-form {
+    padding: 2.4rem 2rem 0 2rem;
+    float: none;
+}
+
+main div.page .page-form form {
 }
 
 .navbar {
@@ -51,6 +60,7 @@ main div.page {
     right: 0;
     background: black !important;
     position: fixed !important;
+    box-shadow: 0px 6px 30px 0px rgba(0,0,0,0.75);
     z-index: 1000;
 }
 
@@ -60,7 +70,6 @@ main div.page {
 }
 
 main div.page-photos {
-    border-top-color: #c8e5ff;
 }
 
 .navbar .nav-item-albums .nav-link.active,
@@ -69,7 +78,6 @@ main div.page-photos {
 }
 
 main div.page-albums {
-    border-top-color: #c4ffcb;
 }
 
 .navbar .nav-item-import .nav-link.active,
@@ -78,7 +86,6 @@ main div.page-albums {
 }
 
 main div.page-import {
-    border-top-color: #feffb8;
 }
 
 .navbar .nav-item-export .nav-link.active,
@@ -87,7 +94,6 @@ main div.page-import {
 }
 
 main div.page-export {
-    border-top-color: #ffedc1;
 }
 
 .navbar .nav-item-settings .nav-link.active,
@@ -96,7 +102,6 @@ main div.page-export {
 }
 
 main div.page-settings {
-    border-top-color: #f5c5c5;
 }
 
 .photo-grid .photo {
@@ -105,7 +110,7 @@ main div.page-settings {
     width: 250px;
     height: 250px;
     float: left;
-    margin: 2px;
+    margin: 3px;
     overflow: hidden;
     position: relative;
     cursor: pointer;
@@ -138,6 +143,10 @@ main div.page-settings {
     float: right;
 }
 
+.photo-grid .photo .left {
+    float: left;
+}
+
 .photo-grid .photo .actions {
     display: block;
     position: absolute;
@@ -149,7 +158,7 @@ main div.page-settings {
     font-size: 14px;
     padding: 6px 12px;
     color: white;
-    text-align: left;
+    text-align: center;
     cursor: default;
 }
 
@@ -162,8 +171,25 @@ main div.page-settings {
     display: none;
 }
 
+.photo-grid .photo .location {
+    display: none;
+    font-size: 12px;
+    text-decoration: none;
+    color: white;
+}
+
+.photo-grid .photo:hover .location {
+    display: inline;
+}
+
 .photo-grid .photo:hover .actions .action,
-.photo-grid .photo .actions .action.liked {
+.photo-grid .photo .actions .action.favorite {
     display: inline;
     cursor: pointer;
+}
+
+@media(min-width: 576px) {
+    .mb-sm-0, .my-sm-0 {
+        margin-bottom: 8px !important;
+    }
 }
