@@ -76,13 +76,15 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 # Install dependencies
 RUN go get github.com/tensorflow/tensorflow/tensorflow/go \
   github.com/tensorflow/tensorflow/tensorflow/go/op \
-  github.com/julienschmidt/httproutergovendor add +external
+  github.com/julienschmidt/httprouter
 
 # Download InceptionV3 model
 RUN mkdir -p /model && \
   wget "https://storage.googleapis.com/download.tensorflow.org/models/inception5h.zip" -O /model/inception.zip && \
   unzip /model/inception.zip -d /model && \
   chmod -R 777 /model
+
+RUN go get -u github.com/kardianos/govendor
 
 RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
