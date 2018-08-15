@@ -84,7 +84,12 @@ RUN mkdir -p /model && \
   unzip /model/inception.zip -d /model && \
   chmod -R 777 /model
 
-RUN go get -u github.com/kardianos/govendor
+# Doesn't work properly at the moment (wait for stable release)
+# RUN go get -u github.com/kardianos/govendor
+
+# Using dep for the moment...
+RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+RUN mkdir -m 777 /go/pkg/dep
 
 # Create user
 # RUN adduser --disabled-password --gecos '' photoprism
@@ -96,8 +101,9 @@ COPY . .
 
 RUN cp config.example.yml ~/.photoprism
 
-RUN govendor sync
+# RUN govendor sync
+RUN dep ensure
 
 # Build
-# RUN go build cmd/photoprism/photoprism.go
-# RUN govendor install +local,program
+# RUN govendor install +local
+RUN go build cmd/photoprism/photoprism.go

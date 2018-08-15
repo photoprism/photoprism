@@ -42,8 +42,8 @@ docker-compose up
 
 ```
 docker-compose exec photoprism bash
-govendor sync
-govendor test +local
+dep ensure
+go test
 go run cmd/photoprism/photoprism.go migrate-db
 go run cmd/photoprism/photoprism.go start
 ```
