@@ -1,13 +1,14 @@
 sudo: required
 
 services:
-    - docker
+  - docker
 
 before_script:
   - docker-compose -f docker-compose.travis.yml up --build -d
+  - sleep 15
+  - docker-compose exec photoprism /usr/local/go/bin/go run cmd/photoprism/photoprism.go migrate-db
 
 script:
-  - docker-compose exec photoprism /usr/local/go/bin/go run cmd/photoprism/photoprism.go migrate-db
   - docker-compose exec photoprism /usr/local/go/bin/go test
 
 after_script:
