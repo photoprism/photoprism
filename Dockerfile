@@ -76,7 +76,7 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 # Install dependencies
 RUN go get github.com/tensorflow/tensorflow/tensorflow/go \
   github.com/tensorflow/tensorflow/tensorflow/go/op \
-  github.com/julienschmidt/httprouter
+  github.com/julienschmidt/httproutergovendor add +external
 
 # Download InceptionV3 model
 RUN mkdir -p /model && \
@@ -88,6 +88,8 @@ RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 RUN mkdir -m 777 /go/pkg/dep
 
+RUN go get -u github.com/kardianos/govendor
+
 # Create user
 # RUN adduser --disabled-password --gecos '' photoprism
 # USER photoprism
@@ -95,6 +97,8 @@ RUN mkdir -m 777 /go/pkg/dep
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
+
+RUN cp config.example.yml ~/.photoprism
 
 RUN dep ensure
 
