@@ -133,5 +133,5 @@ func (c *Config) GetDb() *gorm.DB {
 func (c *Config) MigrateDb() {
 	db := c.GetDb()
 
-	db.AutoMigrate(&File{}, &Photo{}, &Tag{}, &Album{}, &Location{})
+	db.AutoMigrate(&File{}, &Photo{}, &Tag{}, &Album{}, &Location{}, &Camera{})
 }

@@ -74,12 +74,12 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 			photo.Location = location
 		}
 
+		photo.Camera = NewCamera(mediaFile.GetCameraModel()).FirstOrCreate(i.db)
 		photo.TakenAt = mediaFile.GetDateCreated()
 		photo.CanonicalName = canonicalName
 		photo.Files = []File{}
 		photo.Albums = []Album{}
 		photo.Author = ""
-		photo.CameraModel = mediaFile.GetCameraModel()
 
 		photo.Favorite = false
 		photo.Private = true

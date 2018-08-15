@@ -2,41 +2,41 @@
     <div class="page page-photos">
         <div class="page-form">
             <b-form inline @submit="formChange">
-                <b-form-select class="mb-2 mr-sm-2 mb-sm-0"
+                <b-form-select class="mb-2 mr-sm-2"
                                v-b-tooltip.hover title="Category"
-                               v-model="form.category"
+                               v-model="query.category"
                                :options="{ 'junction': 'Junction', 'tourism': 'Tourism', 'historic': 'Historic' }"
                                id="inlineFormCustomSelectPref">
                     <option slot="first" :value="null"></option>
                 </b-form-select>
 
-                <b-form-select @change="formChange" class="mb-2 mr-sm-2 mb-sm-0"
-                               v-model="form.country"
+                <b-form-select @change="formChange" class="mb-2 mr-sm-2"
+                               v-model="query.country"
                                :options="{ '1': 'One', '2': 'Two', '3': 'Three' }"
                                id="inlineFormCustomSelectPref">
                     <option slot="first" :value="null">Country</option>
                 </b-form-select>
-                <b-form-select @change="formChange" class="mb-2 mr-sm-2 mb-sm-0"
-                               :v-model="form.camera"
+                <b-form-select @change="formChange" class="mb-2 mr-sm-2"
+                               :v-model="query.camera"
                                :options="{ '1': 'One', '2': 'Two', '3': 'Three' }"
                                id="inlineFormCustomSelectPref">
                     <option slot="first" :value="null">Camera Model</option>
                 </b-form-select>
-                <b-form-select @change="formChange" class="mb-2 mr-sm-2 mb-sm-0"
+                <b-form-select @change="formChange" class="mb-2 mr-sm-2"
                                v-model="dir"
                                :options="{ 'asc': 'Ascending', 'desc': 'Descending' }"
                                id="inlineFormCustomSelectPref">
                     <option slot="first" :value="null">Sort Order</option>
                 </b-form-select>
 
-                <b-form-select @change="formChange" class="mb-2 mr-sm-2 mb-sm-0"
-                               v-model="form.view"
-                               :options="{ 'list': 'List View', 'tile': 'Tile View (small)', 'tilel_large': 'Tile View (large)' }"
+                <b-form-select @change="formChange" class="mb-2 mr-sm-2"
+                               v-model="view"
+                               :options="{ 'list': 'List View', 'tile': 'Tile View (small)', 'tile_large': 'Tile View (large)' }"
                                id="inlineFormCustomSelectPref">
                 </b-form-select>
 
-                <b-form-input class="mb-2 mr-sm-2 mb-sm-0" v-b-tooltip.hover title="Date" type="date"/>
-                <b-form-input class="mb-2 mr-sm-2 mb-sm-0" placeholder="Tags" v-b-tooltip.hover title="Tags" type="text"/>
+                <b-form-input class="mb-2 mr-sm-2" v-b-tooltip.hover title="After" type="date"/>
+                <b-form-input class="mb-2 mr-sm-2" v-b-tooltip.hover title="Before" type="date"/>
 
                 <b-form-checkbox class="mb-2 mr-sm-2 mb-sm-0">
                     Favorites only
@@ -45,7 +45,7 @@
             <div class="clearfix"></div>
         </div>
         <div class="page-container photo-grid">
-            <template v-for="photo in rows">
+            <template v-for="photo in items">
                 <div class="photo">
                     <div class="info">{{ photo.TakenAt | moment("DD.MM.YYYY hh:mm:ss") }}<span class="right">{{ photo.CameraModel }}</span></div>
                     <div class="actions">
@@ -79,28 +79,33 @@
 
     export default {
         name: 'photos',
-        props: {},
+        props: {
+        },
         data() {
             const query = this.$route.query;
             const resultCount = query.hasOwnProperty('count') ? parseInt(query['count']) : 70;
             const resultPage = query.hasOwnProperty('page') ? parseInt(query['page']) : 1;
             const resultOffset = resultCount * (resultPage - 1);
+            const order = query.hasOwnProperty('order') ? query['order'] : 'taken_at';
             const dir = query.hasOwnProperty('dir') ? query['dir'] : '';
             const q = query.hasOwnProperty('q') ? query['q'] : '';
+            const view = query.hasOwnProperty('view') ? query['view'] : 'tile';
 
             return {
-                'rows': [],
-                'images': [],
-                'form': {
+                'items': [],
+                'query': {
                     category: '',
+                    country: '',
                     camera: '',
-                    dir: 'asc',
-                    view: 'list',
+                    after: '',
+                    before: '',
+                    favorites_only: '',
+                    q: q,
                 },
                 'page': resultPage,
+                'order': order,
                 'dir': dir,
-                'q': q,
-                'pageOptions': [15, 30, 50, 100],
+                'view': view,
                 'resultCount': resultCount,
                 'resultOffset': resultOffset,
                 'resultTotal': 'Many',
@@ -124,7 +129,7 @@
                 const params = {
                     count: this.resultCount,
                     offset: this.resultCount * (this.page - 1),
-                    dir: this.dir,
+                    order: this.order !== '' ? this.order + ' ' + this.dir : '',
                 };
 
                 Object.assign(params, this.query);
@@ -138,21 +143,21 @@
                 const urlParams = {
                     count: this.resultCount,
                     page: this.page,
+                    order: this.order,
                     dir: this.dir,
-                    q: this.q
                 };
 
                 Object.assign(urlParams, this.query);
 
                 this.$router.replace({query: urlParams});
 
-                Photo.search(urlParams).then(response => {
+                Photo.search(params).then(response => {
                     console.log(response);
                     this.resultTotal = parseInt(response.headers['x-result-total']);
                     this.resultCount = parseInt(response.headers['x-result-count']);
                     this.resultOffset = parseInt(response.headers['x-result-offset']);
-                    this.rows = response.models;
-                    this.$alert.info(this.rows.length + ' photos found');
+                    this.items = response.models;
+                    this.$alert.info(this.items.length + ' photos found');
                 });
             }
         },

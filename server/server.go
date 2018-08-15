@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"github.com/photoprism/photoprism"
 	"strconv"
-	"log"
+	"github.com/photoprism/photoprism/server/forms"
+	"github.com/gin-gonic/gin/binding"
 )
 
 func Start(address string, port int, conf *photoprism.Config) {
@@ -23,18 +24,15 @@ func Start(address string, port int, conf *photoprism.Config) {
 		v1.GET("/photos", func(c *gin.Context) {
 			search := photoprism.NewQuery(conf.OriginalsPath, conf.GetDb())
 
-			count, _ := strconv.Atoi(c.DefaultQuery("count", "50"))
-			offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+			var form forms.PhotoSearchForm
 
-			query := c.DefaultQuery("q", "")
+			c.MustBindWith(&form, binding.Form)
 
-			photos := search.FindPhotos(query, count, offset)
-
-			log.Printf("Query: %s, Count: %d", query, count)
+			photos := search.FindPhotos(form.Query, form.Count, form.Offset)
 
 			c.Header("x-result-total", strconv.Itoa(len(photos)))
-			c.Header("x-result-count", strconv.Itoa(count))
-			c.Header("x-result-offset", strconv.Itoa(offset))
+			c.Header("x-result-count", strconv.Itoa(form.Count))
+			c.Header("x-result-offset", strconv.Itoa(form.Offset))
 
 			c.JSON(http.StatusOK, photos)
 		})

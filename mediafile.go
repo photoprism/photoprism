@@ -78,26 +78,31 @@ func (m *MediaFile) GetDateCreated() time.Time {
 		return m.dateCreated
 	}
 
+	m.dateCreated = time.Now()
+
 	info, err := m.GetExifData()
 
-	if err == nil {
+	if err == nil && !info.DateTime.IsZero() {
 		m.dateCreated = info.DateTime
-		return info.DateTime
+
+		return m.dateCreated
 	}
 
 	t, err := times.Stat(m.GetFilename())
 
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
+
+		return m.dateCreated
 	}
 
 	if t.HasBirthTime() {
 		m.dateCreated = t.BirthTime()
-		return t.BirthTime()
+	} else {
+		m.dateCreated = t.ModTime()
 	}
 
-	m.dateCreated = t.ModTime()
-	return t.ModTime()
+	return m.dateCreated
 }
 
 func (m *MediaFile) GetCameraModel() string {

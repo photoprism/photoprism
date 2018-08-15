@@ -15,6 +15,8 @@ PhotoPrism is a free tool for importing, filtering and archiving large amounts o
 JPEG and RAW files. Originals, thumbnails and metadata are stored in the file system for easy
 backup and reliable long-term accessibility.
 
+![](docs/img/search.png)
+
 Setup
 -----
 Before you start, make sure you got Git and Docker installed on your system.
@@ -42,8 +44,8 @@ docker-compose up
 docker-compose exec photoprism bash
 dep ensure
 go test
-go build cmd/photoprism/photoprism.go
-./photoprism
+go run cmd/photoprism/photoprism.go migrate-db
+go run cmd/photoprism/photoprism.go start
 ```
 
 About
