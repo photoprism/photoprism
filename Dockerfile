@@ -86,10 +86,6 @@ RUN mkdir -p /model && \
 
 RUN go get -u github.com/kardianos/govendor
 
-RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-
-RUN mkdir -m 777 /go/pkg/dep
-
 # Create user
 # RUN adduser --disabled-password --gecos '' photoprism
 # USER photoprism
@@ -100,7 +96,8 @@ COPY . .
 
 RUN cp config.example.yml ~/.photoprism
 
-RUN dep ensure
+RUN govendor sync
 
-# Install the app
-RUN go build cmd/photoprism/photoprism.go
+# Build
+# RUN go build cmd/photoprism/photoprism.go
+# RUN govendor install +local,program

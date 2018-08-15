@@ -1,0 +1,5 @@
+photos
+frontend/node_modules
+vendor/*
+!vendor/.gitignore
+!vendor/vendor.json

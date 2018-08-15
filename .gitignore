@@ -37,5 +37,4 @@ Thumbs.db
 .swp
 .tmp
 /photos/
-/vendor/
 node_modules/
