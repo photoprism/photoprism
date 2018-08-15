@@ -88,8 +88,6 @@ RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 RUN mkdir -m 777 /go/pkg/dep
 
-RUN go get -u github.com/kardianos/govendor
-
 # Create user
 # RUN adduser --disabled-password --gecos '' photoprism
 # USER photoprism
