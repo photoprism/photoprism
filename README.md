@@ -1,5 +1,8 @@
 ![PhotoPrism](docs/img/logo.png)
 
+A free tool for importing, indexing and searching large amounts of JPEG and RAW files
+=====================================================================================
+
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=master)][ci]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][code quality]
 [![GitHub issues](https://img.shields.io/github/issues/photoprism/photoprism.svg)][issues]
@@ -10,9 +13,21 @@
 [issues]: https://github.com/photoprism/photoprism/issues
 [license]: https://github.com/photoprism/photoprism/blob/master/LICENSE
 
-PhotoPrism is a free tool for importing, filtering and archiving large amounts of
-JPEG and RAW files. Originals, thumbnails and metadata are stored in the file system for easy
+Originals, thumbnails and metadata are stored in the file system for easy
 backup and reliable long-term accessibility.
+
+This software is still alpha and under active development. You're welcome to join our team.
+
+Our goal is to provide the following features (tested as a proof-of-concept):
+
+- High-performance command line tool
+- Web frontend
+- No proprietary or binary data formats
+- Duplicate detection
+- Automated tagging using Google TensorFlow
+- Support for reverse geocoding based on latitude and longitude
+- Image search with powerful filters
+- Easy backup and export
 
 ![](docs/img/search.png)
 
@@ -47,20 +62,7 @@ go run cmd/photoprism/photoprism.go migrate-db
 go run cmd/photoprism/photoprism.go start
 ```
 
-About
------
-
-**Note: This software is still alpha and under active development.
-You're welcome to join our team.**
-
-Our goal is to provide the following features (tested as a proof-of-concept):
-
-- High-performance command line tool
-- Web frontend
-- No proprietary or binary data formats
-- Duplicate detection
-- Automated tagging using Google TensorFlow
-- Image search with powerful filters
-- Easy backup and export
+Concept
+-------
 
 ![](docs/img/concept.jpg)
