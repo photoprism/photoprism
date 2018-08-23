@@ -1,5 +1,4 @@
-PhotoPrism: Digital Photo Archive
-=================================
+![PhotoPrism](docs/img/logo.png)
 
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=master)][ci]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][code quality]
