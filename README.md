@@ -25,7 +25,7 @@ Our goal is to provide the following features (tested as a proof-of-concept):
 - No proprietary or binary data formats
 - Duplicate detection
 - Automated tagging using Google TensorFlow
-- Support for reverse geocoding based on latitude and longitude
+- Reverse geocoding based on latitude and longitude
 - Image search with powerful filters
 - Easy backup and export
 
