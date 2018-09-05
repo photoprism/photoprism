@@ -116,8 +116,7 @@ COPY . .
 RUN cp config.example.yml ~/.photoprism
 
 # Build PhotoPrism
-RUN go build ./...
-RUN go install cmd/photoprism/photoprism.go
+RUN make deps js install
 
 # Expose HTTP port
 EXPOSE 80

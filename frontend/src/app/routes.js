@@ -1,7 +1,7 @@
 import Photos from 'app/pages/photos.vue';
 import Albums from 'app/pages/albums.vue';
-import Import from 'app/pages/Import.vue';
-import Export from 'app/pages/Export.vue';
+import Import from 'app/pages/import.vue';
+import Export from 'app/pages/export.vue';
 import Settings from 'app/pages/settings.vue';
 
 export default [

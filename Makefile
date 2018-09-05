@@ -8,11 +8,18 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 BINARY_NAME=photoprism
 
-all: deps test build
+all: deps js build
 install:
 	$(GOINSTALL) cmd/photoprism/photoprism.go
 build:
-	$(GOBUILD) cmd/photoprism/photoprism.go -o $(BINARY_NAME) -v
+	$(GOBUILD) cmd/photoprism/photoprism.go
+js:
+	(cd frontend &&	yarn install)
+	(cd frontend &&	npm run build)
+start:
+	$(GORUN) cmd/photoprism/photoprism.go start
+migrate-db:
+	$(GORUN) cmd/photoprism/photoprism.go migrate-db
 test:
 	$(GOTEST) -v ./...
 clean:
@@ -23,3 +30,5 @@ image:
 	docker push photoprism/photoprism
 deps:
 	$(GOBUILD) -v ./...
+upgrade:
+	$(GOGET) -u

@@ -1,5 +1,4 @@
-photos
-frontend/node_modules
-vendor/*
-!vendor/.gitignore
-!vendor/vendor.json
+photos/
+frontend/node_modules/*
+vendor/
+server/assets/build/*
