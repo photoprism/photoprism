@@ -99,14 +99,9 @@ RUN set -eux; \
 ENV GOPATH /go
 ENV GOBIN $GOPATH/bin
 ENV PATH $GOBIN:/usr/local/go/bin:$PATH
-# ENV GO111MODULE on
+ENV GO111MODULE on
 
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
-
-# Install dependencies
-RUN go get github.com/tensorflow/tensorflow/tensorflow/go \
-  github.com/tensorflow/tensorflow/tensorflow/go/op \
-  github.com/julienschmidt/httprouter
 
 # Download InceptionV3 model
 RUN mkdir -p /model && \
@@ -114,24 +109,17 @@ RUN mkdir -p /model && \
   unzip /model/inception.zip -d /model && \
   chmod -R 777 /model
 
-# Using dep for the moment...
-RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-RUN mkdir -m 777 /go/pkg/dep
-
-# Create user
-# RUN adduser --disabled-password --gecos '' photoprism
-# USER photoprism
-
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
 
 RUN cp config.example.yml ~/.photoprism
 
-# Get dependencies and install
-RUN dep ensure
+# Build PhotoPrism
+RUN go build ./...
 RUN go install cmd/photoprism/photoprism.go
 
+# Expose HTTP port
 EXPOSE 80
 
 # Start PhotoPrism server

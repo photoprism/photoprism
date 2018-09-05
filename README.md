@@ -56,11 +56,13 @@ docker-compose up
 
 ```
 docker-compose exec photoprism bash
-dep ensure
-go test
+go build ./...
+go test ./...
 go run cmd/photoprism/photoprism.go migrate-db
 go run cmd/photoprism/photoprism.go start
 ```
+
+This project uses modules and requires Go 1.11 or later. See https://github.com/golang/go/wiki/Modules for more information.
 
 Concept
 -------
