@@ -52,13 +52,13 @@ docker-compose up
 
 *Note: This docker-compose configuration is for testing and development purposes only.*
 
-**Step 3:** Open a terminal to run commands and unit tests:
+**Step 3:** Open a terminal to run tests and commands (see [Makefile]):
 
 ```
 docker-compose exec photoprism bash
-go build ./...
-go test ./...
-go run cmd/photoprism/photoprism.go migrate-db
+make
+make test
+make install
 go run cmd/photoprism/photoprism.go start
 ```
 
