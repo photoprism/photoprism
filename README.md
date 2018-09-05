@@ -52,7 +52,7 @@ docker-compose up
 
 *Note: This docker-compose configuration is for testing and development purposes only.*
 
-**Step 3:** Open a terminal to run tests and commands (see [Makefile]):
+**Step 3:** Open a terminal to run tests and commands (see [Makefile](Makefile)):
 
 ```
 docker-compose exec photoprism bash
