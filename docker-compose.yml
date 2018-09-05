@@ -2,12 +2,10 @@ version: '3.3'
 
 services:
   photoprism:
-    build: .
+    image: photoprism/photoprism
+    command: tail -f /dev/null
     ports:
       - 80:80
-      - 8080:8080
-      - 6006:6006
-      - 8888:8888
     volumes:
       - .:/go/src/github.com/photoprism/photoprism
 

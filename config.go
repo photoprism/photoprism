@@ -11,6 +11,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"time"
 )
 
 type Config struct {
@@ -112,12 +113,22 @@ func (c *Config) ConnectToDatabase() error {
 	db, err := gorm.Open(c.DatabaseDriver, c.DatabaseDsn)
 
 	if err != nil || db == nil {
-		log.Fatal(err)
+		for i := 1; i <= 12; i++ {
+			time.Sleep(5 * time.Second)
+
+			db, err = gorm.Open(c.DatabaseDriver, c.DatabaseDsn)
+
+			if db != nil && err == nil {
+				break
+			}
+		}
+
+		if err != nil || db == nil {
+			log.Fatal(err)
+		}
 	}
 
 	c.db = db
-
-	c.MigrateDb()
 
 	return err
 }
