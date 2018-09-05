@@ -2,8 +2,11 @@ version: '3.3'
 
 services:
   photoprism:
-    build: .
+    image: photoprism/photoprism
     command: tail -f /dev/null
+    volumes:
+      - .:/go/src/github.com/photoprism/photoprism
+
   database:
     image: mysql:latest
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
