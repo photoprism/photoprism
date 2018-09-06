@@ -1,5 +1,5 @@
-@import url("../node_modules/bootstrap/dist/css/bootstrap.css");
-@import url("../node_modules/bootstrap-vue/dist/bootstrap-vue.css");
+@import url("../node_modules/vuetify/dist/vuetify.min.css");
+@import url("../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
 @import url("../node_modules/@fortawesome/fontawesome-free/css/all.css");
 @import url("alerts.css");
 
@@ -36,12 +36,12 @@ main {
 }
 
 main div.page {
-    margin: 43px 0 0 0;
+    margin: 0;
     padding: 0;
 }
 
 main div.page .page-container {
-    padding: 2rem;
+    padding: 0;
     overflow: auto;
 }
 

@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import BootstrapVue from 'bootstrap-vue';
+import Vuetify from 'vuetify';
 import Router from 'vue-router';
 import '../css/app.css';
 import App from 'app/main.vue';
@@ -19,7 +19,15 @@ Vue.prototype.$session = session;
 Vue.prototype.$api = Api;
 Vue.prototype.$config = window.appConfig;
 
-Vue.use(BootstrapVue);
+Vue.use(Vuetify, {
+    theme: {
+        primary: '#FFCA28',
+        secondary: '#b0bec5',
+        accent: '#8c9eff',
+        error: '#b71c1c',
+    },
+});
+
 Vue.use(Moment);
 Vue.use(AppComponents);
 Vue.use(Router);

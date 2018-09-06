@@ -1,10 +1,10 @@
 <template>
-    <div class="page page-import">
+    <v-container fluid>
         <h1>Import</h1>
         <p class="md-subheading">
             A user-friendly tool for importing, filtering and archiving large amounts of JPEG and RAW files
         </p>
-    </div>
+    </v-container>
 </template>
 
 <script>

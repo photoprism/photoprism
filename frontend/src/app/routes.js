@@ -5,11 +5,11 @@ import Export from 'app/pages/export.vue';
 import Settings from 'app/pages/settings.vue';
 
 export default [
-    { path: '/', redirect: '/photos' },
-    { path: '/photos', component: Photos },
-    { path: '/albums', component: Albums },
-    { path: '/import', component: Import },
-    { path: '/export', component: Export },
-    { path: '/settings', component: Settings },
+    { name: 'home', path: '/', redirect: '/photos' },
+    { name: 'photos', path: '/photos', component: Photos },
+    { name: 'albums', path: '/albums', component: Albums },
+    { name: 'import', path: '/import', component: Import },
+    { name: 'export', path: '/export', component: Export },
+    { name: 'settings', path: '/settings', component: Settings },
     { path: '*', redirect: '/photos' },
 ];

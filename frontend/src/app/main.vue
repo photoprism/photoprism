@@ -2,13 +2,13 @@
     <div id="app">
         <app-loading-bar ref="loadingBar" height="4"></app-loading-bar>
 
-        <app-navigation></app-navigation>
+        <v-app>
+            <app-navigation></app-navigation>
 
-        <!-- route outlet -->
-        <!-- component matched by the route will render here -->
-        <main>
-            <router-view></router-view>
-        </main>
+            <v-content>
+                <router-view></router-view>
+            </v-content>
+        </v-app>
     </div>
 </template>
 

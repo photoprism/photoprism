@@ -1,34 +1,63 @@
 <template>
-    <div class="app-navigation">
-        <b-navbar toggleable="md" type="dark" variant="dark">
+    <v-navigation-drawer
+            v-model="drawer"
+            :mini-variant="mini"
+            fixed
+            dark
+            app
+    >
+        <v-toolbar flat>
+            <v-list>
+                <v-list-tile>
+                    <v-list-tile-avatar>
+                        <img src="/assets/img/logo.png">
+                    </v-list-tile-avatar>
+                    <v-list-tile-content>
+                        <v-list-tile-title class="title">
+                            PhotoPrism
+                        </v-list-tile-title>
+                    </v-list-tile-content>
+                    <v-list-tile-action>
+                        <v-btn icon @click.stop="mini = !mini">
+                            <v-icon>chevron_left</v-icon>
+                        </v-btn>
+                    </v-list-tile-action>
+                </v-list-tile>
+            </v-list>
+        </v-toolbar>
 
-            <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+        <!-- b-navbar-nav class="ml-auto">
 
-            <b-navbar-brand href="/"><img src="/assets/img/logo.png" alt="PhotoPrism"></b-navbar-brand>
+            <b-nav-form action="/photos">
+                <b-form-input size="sm" class="mr-sm-2" type="text" name="q" :value="q" placeholder="Search"/>
+                <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
+            </b-nav-form>
 
-            <b-collapse is-nav id="nav_collapse">
+        </b-navbar-nav -->
 
-                <b-navbar-nav>
-                    <b-nav-item to="/photos" class="nav-item-photos">Photos</b-nav-item>
-                    <b-nav-item to="/albums" class="nav-item-albums">Albums</b-nav-item>
-                    <b-nav-item to="/import" class="nav-item-import">Import</b-nav-item>
-                    <b-nav-item to="/export" class="nav-item-export">Export</b-nav-item>
-                    <b-nav-item to="/settings" class="nav-item-settings">Settings</b-nav-item>
-                </b-navbar-nav>
+        <v-list class="pt-3">
+            <v-list-tile v-if="mini" @click.stop="mini = !mini">
+                <v-list-tile-action>
+                    <v-icon>chevron_right</v-icon>
+                </v-list-tile-action>
+            </v-list-tile>
 
-                <!-- Right aligned nav items -->
-                <b-navbar-nav class="ml-auto">
+            <v-list-tile
+                    v-for="item in items"
+                    :key="item.title"
+                    :to="{ name: item.route }"
+                    @click=""
+            >
+                <v-list-tile-action>
+                    <v-icon>{{ item.icon }}</v-icon>
+                </v-list-tile-action>
 
-                    <b-nav-form action="/photos">
-                        <b-form-input size="sm" class="mr-sm-2" type="text" name="q" :value="q" placeholder="Search"/>
-                        <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
-                    </b-nav-form>
-
-                </b-navbar-nav>
-
-            </b-collapse>
-        </b-navbar>
-    </div>
+                <v-list-tile-content>
+                    <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list>
+    </v-navigation-drawer>
 </template>
 
 <script>
@@ -38,6 +67,15 @@
             const q = query.hasOwnProperty('q') ? query['q'] : '';
 
             return {
+                items: [
+                    { title: 'Photos', route: 'photos', icon: 'photo_library' },
+                    { title: 'Albums', route: 'albums', icon: 'folder' },
+                    { title: 'Import', route: 'import', icon: 'add_circle' },
+                    { title: 'Export', route: 'export', icon: 'save' },
+                    { title: 'Settings', route: 'settings', icon: 'settings' },
+                ],
+                drawer: null,
+                mini: false,
                 q: q,
             };
         },

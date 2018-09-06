@@ -1,5 +1,5 @@
 <template>
-    <div class="page page-settings">
+    <v-container fluid>
         <h1 class="md-display-1">Settings</h1>
         <p class="md-subheading">
 
@@ -8,7 +8,7 @@
         <button v-on:click="showInfo()">Show Info</button>
         <button v-on:click="showError()">Show Error</button>
         <button v-on:click="showWarning()">Show Warning</button>
-    </div>
+    </v-container>
 </template>
 
 <script>
