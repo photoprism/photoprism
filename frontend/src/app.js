@@ -21,7 +21,7 @@ Vue.prototype.$config = window.appConfig;
 
 Vue.use(Vuetify, {
     theme: {
-        primary: '#FFCA28',
+        primary: '#FDD835',
         secondary: '#b0bec5',
         accent: '#8c9eff',
         error: '#b71c1c',
