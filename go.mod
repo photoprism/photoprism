@@ -25,7 +25,7 @@ require (
 	github.com/pkg/errors v0.8.0
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/rwcarlsen/goexif v0.0.0-20180518182100-8d986c03457a
-	github.com/steakknife/hamming v0.0.0-20161012051909-5ac3f73b8842
+	github.com/steakknife/hamming v0.0.0-20180906055917-c99c65617cd3
 	github.com/stretchr/testify v1.2.2
 	github.com/tensorflow/tensorflow v1.10.1
 	github.com/ugorji/go v1.1.1

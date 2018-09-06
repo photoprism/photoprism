@@ -1,12 +1,12 @@
 package photoprism
 
 import (
-	"fmt"
 	"encoding/json"
-	"net/http"
-	"github.com/jinzhu/gorm"
-	"strconv"
 	"errors"
+	"fmt"
+	"github.com/jinzhu/gorm"
+	"net/http"
+	"strconv"
 )
 
 type Location struct {
@@ -36,7 +36,7 @@ type OpenstreetmapAddress struct {
 }
 
 type OpenstreetmapLocation struct {
-	PlaceId     string                  `json:"place_id"`
+	PlaceId     string                `json:"place_id"`
 	Lat         string                `json:"lat"`
 	Lon         string                `json:"lon"`
 	Category    string                `json:"category"`

@@ -6,6 +6,7 @@ GORUN=$(GOCMD) run
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
+GOFMT=$(GOCMD) fmt
 BINARY_NAME=photoprism
 
 all: deps js build
@@ -28,6 +29,8 @@ clean:
 image:
 	docker build . --tag photoprism/photoprism
 	docker push photoprism/photoprism
+format:
+	$(GOFMT) ./...
 deps:
 	$(GOBUILD) -v ./...
 upgrade:

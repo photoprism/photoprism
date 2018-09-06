@@ -2,12 +2,12 @@ package photoprism
 
 import (
 	"github.com/jinzhu/gorm"
-	"os"
-	"strings"
-	"path/filepath"
-	"log"
-	"io/ioutil"
 	"github.com/photoprism/photoprism/recognize"
+	"io/ioutil"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 type Indexer struct {

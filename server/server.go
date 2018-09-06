@@ -1,13 +1,13 @@
 package server
 
 import (
-	"github.com/gin-gonic/gin"
 	"fmt"
-	"net/http"
-	"github.com/photoprism/photoprism"
-	"strconv"
-	"github.com/photoprism/photoprism/server/forms"
+	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/photoprism/photoprism"
+	"github.com/photoprism/photoprism/server/forms"
+	"net/http"
+	"strconv"
 )
 
 func Start(address string, port int, conf *photoprism.Config) {

@@ -2,12 +2,12 @@ package recognize
 
 import (
 	"bufio"
+	"errors"
+	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"io/ioutil"
+	"log"
 	"os"
 	"sort"
-	tf "github.com/tensorflow/tensorflow/tensorflow/go"
-	"log"
-	"errors"
 )
 
 type ClassifyResult struct {

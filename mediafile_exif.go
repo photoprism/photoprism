@@ -86,6 +86,5 @@ func (m *MediaFile) GetExifData() (*ExifData, error) {
 		m.exifData.Orientation = 1
 	}
 
-
 	return m.exifData, nil
 }

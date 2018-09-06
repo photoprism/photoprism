@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/araddon/dateparse"
 	"github.com/photoprism/photoprism"
+	"github.com/photoprism/photoprism/server"
 	"github.com/urfave/cli"
 	"os"
-	"github.com/araddon/dateparse"
-	"github.com/photoprism/photoprism/server"
 )
 
 func main() {
@@ -251,7 +251,7 @@ func main() {
 					}
 				}
 
-				exportPath := fmt.Sprintf("%s/%s", conf.ExportPath, name);
+				exportPath := fmt.Sprintf("%s/%s", conf.ExportPath, name)
 				size := context.Int("size")
 				originals := photoprism.FindOriginalsByDate(conf.OriginalsPath, afterDate, beforeDate)
 

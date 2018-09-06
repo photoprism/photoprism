@@ -3,11 +3,11 @@ package photoprism
 import (
 	"fmt"
 	"github.com/disintegration/imaging"
+	"image"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
-	"image"
 )
 
 func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, size int, square bool) {

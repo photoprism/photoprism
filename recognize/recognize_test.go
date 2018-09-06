@@ -1,9 +1,9 @@
 package recognize
 
 import (
-	"testing"
-	"io/ioutil"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"testing"
 )
 
 func TestGetImageTags(t *testing.T) {
