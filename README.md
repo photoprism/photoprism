@@ -13,13 +13,12 @@ A digital photo library for large amounts of JPEG and RAW files
 [issues]: https://github.com/photoprism/photoprism/issues
 [ci]: https://travis-ci.org/photoprism/photoprism
 
-Originals, thumbnails and metadata are stored in the file system for easy
-backup and reliable long-term accessibility.
+PhotoPrism is a server-based photo library software for privately managing large amounts of JPEG and RAW files. It is functionally similar to popular cloud services such as [Flickr](https://www.flickr.com/) or [Google Photos](https://photos.google.com/).
+Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
 
-This software is still alpha and under active development. You're welcome to join our team.
+*Note: This software is still alpha and under active development. You're welcome to join our team.*
 
 Our goal is to provide the following features (tested as a proof-of-concept):
-
 - High-performance command line tool
 - Web frontend
 - No proprietary or binary data formats
