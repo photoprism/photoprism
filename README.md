@@ -27,7 +27,11 @@ Our goal is to provide the following features (tested as a proof-of-concept):
 - Image search with powerful filters
 - Easy backup and export
 
-![](docs/img/search.png)
+User Interface
+--------------
+The Web interface for searching and organizing photos is based on [Vuetify](https://vuetifyjs.com/en/), a [Material Design](https://material.io/) component framework for Vue.js 2.
+
+![](docs/img/search.png "Advanced Search")
 
 Setup
 -----

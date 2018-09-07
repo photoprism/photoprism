@@ -6,7 +6,6 @@
                               single-line
                               label="Search"
                               prepend-inner-icon="search"
-                              clear-icon="close-circle"
                               clearable
                               v-model="query.q"
                               @keyup.enter.native="formChange"
@@ -23,46 +22,53 @@
                         style="box-shadow: 0 4px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 4px 10px 0 rgba(0,0,0,.12);"
                         v-show="advandedSearch">
                     <v-card-text>
-
                         <v-layout row wrap>
                             <v-flex xs12 sm6 md3 pa-2>
-                                <v-select @change="formChange" class="mb-2 mr-sm-2"
+                                <v-select @change="formChange"
                                           label="Category"
+                                          flat solo
                                           v-model="query.category"
-                                          :options="{ 'junction': 'Junction', 'tourism': 'Tourism', 'historic': 'Historic' }"
-                                          id="inlineFormCustomSelectPref">
-                                    <option slot="first" :value="null"></option>
+                                          :items="options.categories">
                                 </v-select>
                             </v-flex>
-
                             <v-flex xs12 sm6 md3 pa-2>
-                                <v-select @change="formChange" class="mb-2 mr-sm-2"
+                                <v-select @change="formChange"
                                           label="Country"
+                                          flat solo
                                           v-model="query.country"
-                                          :options="{ '1': 'One', '2': 'Two', '3': 'Three' }"
-                                          id="inlineFormCustomSelectPref">
-                                    <option slot="first" :value="null">Country</option>
+                                          :items="options.countries">
                                 </v-select>
                             </v-flex>
                             <v-flex xs12 sm6 md3 pa-2>
-                                <v-select @change="formChange" class="mb-2 mr-sm-2"
+                                <v-select @change="formChange"
                                           label="Camera"
-                                          :v-model="query.camera"
-                                          :options="{ '1': 'One', '2': 'Two', '3': 'Three' }"
-                                          id="inlineFormCustomSelectPref">
-                                    <option slot="first" :value="null">Camera Model</option>
+                                          flat solo
+                                          v-model="query.camera"
+                                          :items="options.cameras">
                                 </v-select>
                             </v-flex>
                             <v-flex xs12 sm6 md3 pa-2>
-                                <v-select @change="formChange" class="mb-2 mr-sm-2"
-                                          label="Sort Order"
+                                <v-select @change="formChange"
+                                          label="Sort By"
+                                          flat solo
                                           v-model="dir"
-                                          :options="{ 'asc': 'Ascending', 'desc': 'Descending' }"
-                                          id="inlineFormCustomSelectPref">
-                                    <option slot="first" :value="null">Sort Order</option>
+                                          :items="options.sorting">
                                 </v-select>
                             </v-flex>
                         </v-layout>
+                        <v-flex pa-3>
+                            <v-range-slider
+                                    :tick-labels="['2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015']"
+                                    :value="[6, 30]"
+                                    step="10"
+                                    ticks
+                            >
+                            </v-range-slider>
+                        </v-flex>
+                        <p class="text-lg-right">
+                            <v-btn @click="formChange" color="secondary">Create Filter</v-btn>
+                            <v-btn @click="formChange" color="accent">Search</v-btn>
+                        </p>
                     </v-card-text>
                 </v-card>
             </v-slide-y-transition>
@@ -137,6 +143,12 @@
                     before: '',
                     favorites_only: '',
                     q: q,
+                },
+                'options': {
+                    'categories': [ { value: '', text: 'All Categories' }, { value: 'junction', text: 'Junction' }, { value: 'tourism', text: 'Tourism'}, { value: 'historic', text: 'Historic'} ],
+                    'countries': [{ value: '', text: 'All Countries' }, { value: 'de', text: 'Germany' }, { value: 'ca', text: 'Canada'}, { value: 'us', text: 'United States'}],
+                    'cameras': [{ value: '', text: 'All Cameras' }, { value: 'iPhone SE', text: 'iPhone SE' }, { value: 'EOS 6D', text: 'Canon EOS 6D'}],
+                    'sorting': [{ value: '', text: 'Sort by date taken' }, { value: 'imported', text: 'Sort by date imported'}, { value: 'score', text: 'Sort by relevance' }],
                 },
                 'page': resultPage,
                 'order': order,
