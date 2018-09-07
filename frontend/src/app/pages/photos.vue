@@ -87,7 +87,7 @@
                             <span class="center" v-if="photo.Location">
                             <v-tooltip bottom>
                                 <a slot="activator" class="location" target="_blank" :href="photo.getGoogleMapsLink()">{{ photo.Location.Country }}</a>
-                                <span :html="photo.Location.DisplayName"></span>
+                                <span>{{ photo.Location.DisplayName }}</span>
                             </v-tooltip>
                         </span>
                             <span class="right">

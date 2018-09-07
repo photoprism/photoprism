@@ -187,3 +187,11 @@ main div.page-settings {
     display: inline;
     cursor: pointer;
 }
+
+.v-badge__badge {
+    font-size: 12px;
+    height: 19px;
+    width: 19px;
+    right: -20px;
+    top: -8px;
+}
