@@ -29,7 +29,7 @@ Our goal is to provide the following features (tested as a proof-of-concept):
 
 User Interface
 --------------
-The Web interface is based on [Vuetify](https://vuetifyjs.com/en/), a [Material Design](https://material.io/) component framework for Vue.js 2.
+The Web frontend is based on [Vuetify](https://vuetifyjs.com/en/), a [Material Design](https://material.io/) component framework for Vue.js 2.
 
 ![](docs/img/search.png "Advanced Search")
 
