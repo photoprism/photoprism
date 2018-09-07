@@ -1,17 +1,19 @@
 ![PhotoPrism](docs/img/logo.png)
 
-A free tool for importing, indexing and searching large amounts of JPEG and RAW files
-=====================================================================================
+A digital photo library for large amounts of JPEG and RAW files
+===============================================================
 
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=master)][ci]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][code quality]
 [![GitHub issues](https://img.shields.io/github/issues/photoprism/photoprism.svg)][issues]
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)][license]
+[![Powered By](https://img.shields.io/badge/powered%20by-go%20%26%20google%20tensorflow-green.svg)][powered by]
 
 [ci]: https://travis-ci.org/photoprism/photoprism
 [code quality]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [issues]: https://github.com/photoprism/photoprism/issues
 [license]: https://github.com/photoprism/photoprism/blob/master/LICENSE
+[powered by]: https://www.tensorflow.org/install/install_go
 
 Originals, thumbnails and metadata are stored in the file system for easy
 backup and reliable long-term accessibility.
