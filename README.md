@@ -1,7 +1,7 @@
 A digital photo library for large amounts of JPEG and RAW files
 ========================================================================
 
-[![Powered By](https://img.shields.io/badge/powered%20by-Go,%20Google%20TensorFlow%20%26%20Vuetify-%23375EAB.svg)][powered by]
+[![Powered By](https://img.shields.io/badge/powered%20by-Go,%20Google%20TensorFlow%20%26%20Vuetify-blue.svg)][powered by]
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)][license]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][code quality]
 [![GitHub issues](https://img.shields.io/github/issues/photoprism/photoprism.svg)][issues]
