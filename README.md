@@ -33,7 +33,7 @@ Setup
 -----
 Before you start, make sure you got Git and Docker installed on your system.
 Instead of using Docker, you can also setup your own runtime environment
-based on the existing Docker configuration.
+based on the existing Docker configuration (not recommended).
 
 **Step 1:** Run [Git](https://getcomposer.org/) to clone this project:
 
@@ -60,7 +60,7 @@ make install
 go run cmd/photoprism/photoprism.go start
 ```
 
-This project uses modules and requires Go 1.11 or later. See https://github.com/golang/go/wiki/Modules for more information.
+See [Quick and easy guide for migrating to Go 1.11 modules](https://blog.liquidbytes.net/2018/09/quick-and-easy-guide-for-migrating-to-go-1-11-modules/) for an introduction to Go Modules and Makefiles.
 
 Concept
 -------
