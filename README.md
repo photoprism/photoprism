@@ -1,6 +1,6 @@
 ![PhotoPrism](docs/img/logo.png)
 
-[![Powered By](https://img.shields.io/badge/powered%20by-Go,%20Google%20TensorFlow%20%26%20Vuetify-blue.svg)][powered by]
+[![Powered By](https://img.shields.io/badge/powered%20by-Go,%20TensorFlow%20%26%20Vuetify-blue.svg)][powered by]
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)][license]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][code quality]
 [![GitHub issues](https://img.shields.io/github/issues/photoprism/photoprism.svg)][issues]
@@ -20,17 +20,17 @@ Originals are stored in the file system in a structured way for easy backup and 
 
 Our goal is to provide the following features (tested as a proof-of-concept):
 - High-performance command line tool
-- Web frontend
+- [Web frontend](docs/img/search.png)
 - No proprietary or binary data formats
 - Duplicate detection
-- Automated tagging using Google TensorFlow
-- Reverse geocoding based on latitude and longitude
+- Automated tagging using [Google TensorFlow](https://www.tensorflow.org/install/install_go)
+- [Reverse geocoding](https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding) based on latitude and longitude
 - Image search with powerful filters
 - Easy backup and export
 
 Web Frontend
 ------------
-Open a terminal an type `photoprism start` to start the built-in server. It will listen on localhost port 80 by default.
+Open a terminal an type `photoprism start` to start the built-in server. It will listen on port 80 by default.
 The UI is based on [Vuetify](https://vuetifyjs.com/en/), a [Material Design](https://material.io/) component framework for Vue.js 2.
 
 ![](docs/img/search.png "Advanced Search")
