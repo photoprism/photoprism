@@ -1,8 +1,8 @@
 <template>
     <div>
         <v-form ref="form" lazy-validation @submit="formChange" dense>
-            <v-toolbar>
-                <v-text-field class="pt-3"
+            <v-toolbar flat color="blue-grey lighten-4">
+                <v-text-field class="pt-3 pr-3"
                               single-line
                               label="Search"
                               prepend-inner-icon="search"
@@ -10,7 +10,7 @@
                               v-model="query.q"
                               @keyup.enter.native="formChange"
                 ></v-text-field>
-
+                <v-btn @click="formChange" color="secondary">Search</v-btn>
                 <v-spacer></v-spacer>
 
                 <v-btn icon @click="advandedSearch = !advandedSearch">
@@ -18,8 +18,9 @@
                 </v-btn>
             </v-toolbar>
             <v-slide-y-transition>
-                <v-card class="theme--light v-toolbar pt-0"
-                        style="box-shadow: 0 4px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 4px 10px 0 rgba(0,0,0,.12);"
+                <v-card class="pt-0"
+                        flat
+                        color="blue-grey lighten-4"
                         v-show="advandedSearch">
                     <v-card-text>
                         <v-layout row wrap>
@@ -56,26 +57,11 @@
                                 </v-select>
                             </v-flex>
                         </v-layout>
-                        <v-flex pa-3>
-                            <v-range-slider
-                                    :tick-labels="['2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015']"
-                                    :value="[6, 30]"
-                                    step="10"
-                                    ticks
-                            >
-                            </v-range-slider>
-                        </v-flex>
-                        <p class="text-lg-right">
-                            <v-btn @click="formChange" color="secondary">Create Filter</v-btn>
-                            <v-btn @click="formChange" color="accent">Search</v-btn>
-                        </p>
                     </v-card-text>
                 </v-card>
             </v-slide-y-transition>
         </v-form>
         <v-container fluid>
-
-
             <div class="page-container photo-grid pt-3">
                 <template v-for="photo in items">
 
@@ -107,7 +93,6 @@
                                  :src="'/api/v1/files/' + file.ID + '/square_thumbnail?size=250'">
                         </template>
                     </div>
-
                 </template>
             </div>
             <div style="clear: both"></div>

@@ -12,7 +12,8 @@
 [issues]: https://github.com/photoprism/photoprism/issues
 [ci]: https://travis-ci.org/photoprism/photoprism
 
-PhotoPrism is a server-based application for privately managing large amounts of JPEG and RAW files. It is functionally similar to popular cloud services such as [Flickr](https://www.flickr.com/) or [Google Photos](https://photos.google.com/).
+PhotoPrism is a server-based application for privately managing large amounts of JPEG and RAW files. It is functionally similar to
+popular cloud services such as [Flickr](https://www.flickr.com/) or [Google Photos](https://photos.google.com/).
 Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
 
 *Note: This software is still alpha and under active development. You're welcome to join our team.*
@@ -27,9 +28,10 @@ Our goal is to provide the following features (tested as a proof-of-concept):
 - Image search with powerful filters
 - Easy backup and export
 
-User Interface
---------------
-The Web frontend is based on [Vuetify](https://vuetifyjs.com/en/), a [Material Design](https://material.io/) component framework for Vue.js 2.
+Web Frontend
+------------
+Open a terminal an type `photoprism start` to start the built-in server. It will listen on localhost port 80 by default.
+The UI is based on [Vuetify](https://vuetifyjs.com/en/), a [Material Design](https://material.io/) component framework for Vue.js 2.
 
 ![](docs/img/search.png "Advanced Search")
 
