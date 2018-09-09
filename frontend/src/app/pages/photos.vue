@@ -10,7 +10,7 @@
                               v-model="query.q"
                               @keyup.enter.native="formChange"
                 ></v-text-field>
-                <v-btn @click="formChange" color="secondary">Search</v-btn>
+                <!-- v-btn @click="formChange" color="secondary">Create Filter</v-btn -->
                 <v-spacer></v-spacer>
 
                 <v-btn icon @click="advandedSearch = !advandedSearch">
@@ -62,6 +62,55 @@
             </v-slide-y-transition>
         </v-form>
         <v-container fluid>
+            <v-speed-dial
+                    fixed
+                    bottom
+                    right
+                    direction="top"
+                    open-on-hover
+                    transition="slide-y-reverse-transition"
+            >
+                <v-btn
+                        slot="activator"
+                        color="blue-grey darken-1"
+                        dark
+                        fab
+                >
+                    <v-icon>menu</v-icon>
+                </v-btn>
+                <v-btn
+                        fab
+                        dark
+                        small
+                        color="light-green"
+                >
+                    <v-icon>save</v-icon>
+                </v-btn>
+                <v-btn
+                        fab
+                        dark
+                        small
+                        color="yellow darken-4"
+                >
+                    <v-icon>create_new_folder</v-icon>
+                </v-btn>
+                <v-btn
+                        fab
+                        dark
+                        small
+                        color="light-blue"
+                >
+                    <v-icon>youtube_searched_for</v-icon>
+                </v-btn>
+                <v-btn
+                        fab
+                        dark
+                        small
+                        color="red"
+                >
+                    <v-icon>delete</v-icon>
+                </v-btn>
+            </v-speed-dial>
             <div class="page-container photo-grid pt-3">
                 <template v-for="photo in items">
 

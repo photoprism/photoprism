@@ -9,6 +9,7 @@ export default [
     { name: 'home', path: '/', redirect: '/photos' },
     { name: 'photos', path: '/photos', component: Photos },
     { name: 'filters', path: '/filters', component: Todo },
+    { name: 'calendar', path: '/calendar', component: Todo },
     { name: 'bookmarks', path: '/bookmarks', component: Todo },
     { name: 'favorites', path: '/favorites', component: Todo },
     { name: 'places', path: '/places', component: Todo },

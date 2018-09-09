@@ -55,6 +55,16 @@
                 </v-list-tile-content>
             </v-list-tile>
 
+            <v-list-tile to="/calendar" @click="">
+                <v-list-tile-action>
+                    <v-icon>date_range</v-icon>
+                </v-list-tile-action>
+
+                <v-list-tile-content>
+                    <v-list-tile-title>Calendar</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+
             <v-list-tile to="/favorites" @click="">
                 <v-list-tile-action>
                     <v-icon>favorite</v-icon>
