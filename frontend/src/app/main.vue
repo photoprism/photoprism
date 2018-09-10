@@ -2,6 +2,8 @@
     <div id="app">
         <app-loading-bar ref="loadingBar" height="4"></app-loading-bar>
 
+        <app-alert></app-alert>
+
         <v-app>
             <app-navigation></app-navigation>
 

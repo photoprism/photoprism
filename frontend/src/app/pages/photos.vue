@@ -7,6 +7,7 @@
                               label="Search"
                               prepend-inner-icon="search"
                               clearable
+                              @click:clear="clearQuery"
                               v-model="query.q"
                               @keyup.enter.native="formChange"
                 ></v-text-field>
@@ -82,7 +83,15 @@
                         fab
                         dark
                         small
-                        color="light-green"
+                        color="cyan accent-4"
+                >
+                    <v-icon>youtube_searched_for</v-icon>
+                </v-btn>
+                <v-btn
+                        fab
+                        dark
+                        small
+                        color="teal accent-4"
                 >
                     <v-icon>save</v-icon>
                 </v-btn>
@@ -90,18 +99,11 @@
                         fab
                         dark
                         small
-                        color="yellow darken-4"
+                        color="yellow accent-4"
                 >
                     <v-icon>create_new_folder</v-icon>
                 </v-btn>
-                <v-btn
-                        fab
-                        dark
-                        small
-                        color="light-blue"
-                >
-                    <v-icon>youtube_searched_for</v-icon>
-                </v-btn>
+
                 <v-btn
                         fab
                         dark
@@ -203,7 +205,10 @@
                 this.$alert.success('Photo deleted');
             },
             formChange(event) {
-                this.$alert.success('Form change');
+                this.refreshList();
+            },
+            clearQuery() {
+                this.query.q = '';
                 this.refreshList();
             },
             refreshList() {
