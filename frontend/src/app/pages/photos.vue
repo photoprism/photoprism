@@ -7,6 +7,7 @@
                               label="Search"
                               prepend-inner-icon="search"
                               clearable
+                              color="blue-grey"
                               @click:clear="clearQuery"
                               v-model="query.q"
                               @keyup.enter.native="formChange"
@@ -29,6 +30,7 @@
                                 <v-select @change="formChange"
                                           label="Category"
                                           flat solo
+                                          color="blue-grey"
                                           v-model="query.category"
                                           :items="options.categories">
                                 </v-select>
@@ -37,6 +39,7 @@
                                 <v-select @change="formChange"
                                           label="Country"
                                           flat solo
+                                          color="blue-grey"
                                           v-model="query.country"
                                           :items="options.countries">
                                 </v-select>
@@ -45,6 +48,7 @@
                                 <v-select @change="formChange"
                                           label="Camera"
                                           flat solo
+                                          color="blue-grey"
                                           v-model="query.camera"
                                           :items="options.cameras">
                                 </v-select>
@@ -53,6 +57,7 @@
                                 <v-select @change="formChange"
                                           label="Sort By"
                                           flat solo
+                                          color="blue-grey"
                                           v-model="dir"
                                           :items="options.sorting">
                                 </v-select>
