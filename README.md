@@ -13,7 +13,7 @@ PhotoPrism
 [issues]: https://github.com/photoprism/photoprism/issues
 [ci]: https://travis-ci.org/photoprism/photoprism
 
-PhotoPrism is an application for automatically tagging, searching and sharing large amounts of JPEG and RAW files at home or on a private server.
+PhotoPrism is a server-based application for automatically tagging, searching and archiving large amounts of JPEG and RAW files.
 It is functionally similar to popular cloud services such as [Flickr](https://www.flickr.com/) or [Google Photos](https://photos.google.com/).
 Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
 
@@ -23,7 +23,7 @@ Our goal is to provide the following features (tested as a proof-of-concept):
 - High-performance command line tool
 - [Web frontend](docs/img/search.png)
 - No proprietary or binary data formats
-- Duplicate detection
+- Duplicate detection (RAW and JPEG can be used simultaneously)
 - Automated tagging using [Google TensorFlow](https://www.tensorflow.org/install/install_go)
 - [Reverse geocoding](https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding) based on latitude and longitude
 - Image search with powerful filters
