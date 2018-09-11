@@ -31,6 +31,17 @@ func TestMediaFile_FindRelatedImages(t *testing.T) {
 	}
 }
 
+func TestMediaFile_GetEditedFilename(t *testing.T) {
+	mediaFile1 := NewMediaFile("/foo/bar/IMG_1234.jpg")
+	assert.Equal(t, "/foo/bar/IMG_E1234.jpg", mediaFile1.GetEditedFilename())
+
+	mediaFile2 := NewMediaFile("/foo/bar/IMG_E1234.jpg")
+	assert.Equal(t, "", mediaFile2.GetEditedFilename())
+
+	mediaFile3 := NewMediaFile("/foo/bar/BAZ_1234.jpg")
+	assert.Equal(t, "", mediaFile3.GetEditedFilename())
+}
+
 func TestMediaFile_GetPerceptiveHash(t *testing.T) {
 	conf := NewTestConfig()
 

@@ -6,6 +6,7 @@ import (
 	"golang.org/x/image/colornames"
 	"image"
 	"os"
+	"sort"
 )
 
 func getColorNames(actualColor colorful.Color) (result []string) {
@@ -42,6 +43,8 @@ func (m *MediaFile) GetColors() (colors []string, vibrantHex string, mutedHex st
 		colors = append(colors, getColorNames(color)...)
 		mutedHex = color.Hex()
 	}
+
+	sort.Strings(colors)
 
 	return colors, vibrantHex, mutedHex
 }

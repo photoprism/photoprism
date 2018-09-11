@@ -26,7 +26,9 @@ func (s *Search) FindPhotos(query string, count int, offset int) (photos []Photo
 	if query != "" {
 		q = q.Joins("JOIN photo_tags ON photo_tags.photo_id = photos.id")
 		q = q.Joins("JOIN tags ON photo_tags.tag_id = tags.id")
-		q = q.Where("tags.label LIKE ?", "%"+query+"%")
+		q = q.Where("tags.label LIKE ?", "%"+query+"%").
+			Or("photos.keywords LIKE ?", "%"+query+"%").
+			Or("photos.colors LIKE ?", "%"+query+"%")
 	}
 
 	q = q.Where(&Photo{Deleted: false}).Order("taken_at").Limit(count).Offset(offset)

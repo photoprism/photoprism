@@ -1,5 +1,5 @@
-PhotoPrism - Long-Term Digital Photo Archive
-============================================
+PhotoPrism
+==========
 
 [![Powered By](https://img.shields.io/badge/powered%20by-Go,%20TensorFlow%20%26%20Vuetify-blue.svg)][powered by]
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)][license]
@@ -25,7 +25,6 @@ Our goal is to provide the following features (tested as a proof-of-concept):
 - No proprietary or binary data formats
 - Duplicate detection
 - Automated tagging using [Google TensorFlow](https://www.tensorflow.org/install/install_go)
-- Text recognition using [Tesseract](https://github.com/otiai10/gosseract)
 - [Reverse geocoding](https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding) based on latitude and longitude
 - Image search with powerful filters
 - Easy backup and export
@@ -35,7 +34,7 @@ Web Frontend
 Open a terminal an type `photoprism start` to start the built-in server. It will listen on port 80 by default.
 The UI is based on [Vuetify](https://vuetifyjs.com/en/), a [Material Design](https://material.io/) component framework for Vue.js 2.
 
-![](docs/img/screenshot.png)
+![](docs/img/screenshot.jpg)
 
 Setup
 -----

@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -49,6 +50,37 @@ func (i *Indexer) GetImageTags(jpeg *MediaFile) (result []Tag) {
 	return result
 }
 
+func getKeywordWithSynonyms(keyword string) []string {
+	var result []string
+
+	// TODO: Just a proof-of-concept for now, needs implementation via config file or dictionary
+	switch keyword {
+	case "tabby":
+		result = []string{keyword, "cat"}
+	case "lynx":
+		result = []string{keyword, "cat"}
+	case "tiger":
+		result = []string{keyword, "cat"}
+	default:
+		result = []string{keyword}
+	}
+
+	return result
+}
+
+func getKeywordsAsString(keywords []string) string {
+	var result []string
+
+	for _, keyword := range keywords {
+		result = append(result, getKeywordWithSynonyms(keyword)...)
+	}
+
+	result = uniqueStrings(result)
+	sort.Strings(result)
+
+	return strings.ToLower(strings.Join(result, ", "))
+}
+
 func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 	var photo Photo
 	var file, primaryFile File
@@ -61,20 +93,24 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 
 	if result := i.db.First(&photo, "canonical_name = ?", canonicalName); result.Error != nil {
 		if jpeg, err := mediaFile.GetJpeg(); err == nil {
+			// Perceptual Hash
 			if perceptualHash, err := jpeg.GetPerceptualHash(); err == nil {
 				photo.PerceptualHash = perceptualHash
 			}
 
+			// Geo Location
 			if exifData, err := jpeg.GetExifData(); err == nil {
 				photo.Lat = exifData.Lat
 				photo.Long = exifData.Long
 				photo.Artist = exifData.Artist
 			}
 
+			// Colors
 			colorNames, photo.VibrantColor, photo.MutedColor = jpeg.GetColors()
 
-			photo.ColorNames = strings.Join(colorNames, ", ")
+			photo.Colors = strings.Join(colorNames, ", ")
 
+			// Tags (TensorFlow)
 			photo.Tags = i.GetImageTags(jpeg)
 
 			for _, tag := range photo.Tags {
@@ -85,31 +121,26 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 		if location, err := mediaFile.GetLocation(); err == nil {
 			i.db.FirstOrCreate(location, "id = ?", location.ID)
 			photo.Location = location
-			keywords = append(keywords, location.City, location.County, location.Country, location.LocationCategory)
+			keywords = append(keywords, location.City, location.County, location.Country, location.LocationCategory, location.Name, location.LocationType)
 
-			if location.Name != "" {
+			if location.Name != "" { // TODO: User defined title format
 				photo.Title = fmt.Sprintf("%s / %s / %s", location.Name, location.Country, mediaFile.GetDateCreated().Format("2006"))
-				keywords = append(keywords, location.Name)
 			} else if location.City != "" {
 				photo.Title = fmt.Sprintf("%s / %s / %s", location.City, location.Country, mediaFile.GetDateCreated().Format("2006"))
 			} else if location.County != "" {
 				photo.Title = fmt.Sprintf("%s / %s / %s", location.County, location.Country, mediaFile.GetDateCreated().Format("2006"))
 			}
-
-			if location.LocationType != "" {
-				keywords = append(keywords, location.LocationType)
-			}
 		}
 
 		if photo.Title == "" {
-			if len(photo.Tags) > 0 {
+			if len(photo.Tags) > 0 { // TODO: User defined title format
 				photo.Title = fmt.Sprintf("%s / %s", strings.Title(photo.Tags[0].Label), mediaFile.GetDateCreated().Format("2006"))
 			} else {
 				photo.Title = fmt.Sprintf("Unknown / %s", mediaFile.GetDateCreated().Format("2006"))
 			}
 		}
 
-		photo.Keywords = strings.ToLower(strings.Join(keywords, ", "))
+		photo.Keywords = getKeywordsAsString(keywords)
 		photo.Camera = NewCamera(mediaFile.GetCameraModel()).FirstOrCreate(i.db)
 		photo.TakenAt = mediaFile.GetDateCreated()
 		photo.CanonicalName = canonicalName

@@ -11,8 +11,7 @@ type Photo struct {
 	Description    string `gorm:"type:text;"`
 	Artist         string
 	Keywords       string
-	TextContent    string `gorm:"type:text;"`
-	ColorNames     string
+	Colors         string
 	VibrantColor   string
 	MutedColor     string
 	TakenAt        time.Time

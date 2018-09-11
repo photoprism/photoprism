@@ -1,6 +1,9 @@
 package photoprism
 
-import "testing"
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
 
 func TestGetRandomInt(t *testing.T) {
 	min := 5
@@ -15,4 +18,14 @@ func TestGetRandomInt(t *testing.T) {
 			t.Errorf("Random result must not be smaller than %d", min)
 		}
 	}
+}
+
+func TestUniqueStrings(t *testing.T) {
+	input := []string{"zzz", "AAA", "ZZZ", "aaa", "foo", "1", "", "zzz", "AAA", "ZZZ", "aaa"}
+
+	output := uniqueStrings(input)
+
+	expected := []string{"foo", "1", "zzz", "AAA", "ZZZ", "aaa"}
+
+	assert.ElementsMatch(t, expected, output)
 }

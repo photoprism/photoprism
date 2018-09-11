@@ -190,6 +190,17 @@ func (m *MediaFile) GetHash() string {
 	return m.hash
 }
 
+// When editing photos, iPhones create additional files like IMG_E12345.JPG
+func (m *MediaFile) GetEditedFilename() (result string) {
+	basename := filepath.Base(m.filename)
+
+	if strings.ToUpper(basename[:4]) == "IMG_" && strings.ToUpper(basename[:5]) != "IMG_E" {
+		result = filepath.Dir(m.filename) + string(os.PathSeparator) + basename[:4] + "E" + basename[4:]
+	}
+
+	return result
+}
+
 func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, masterFile *MediaFile, err error) {
 	extension := m.GetExtension()
 
@@ -199,6 +210,10 @@ func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, masterFile *MediaFil
 
 	if err != nil {
 		return result, nil, err
+	}
+
+	if editedFilename := m.GetEditedFilename(); editedFilename != "" && fileExists(editedFilename) {
+		matches = append(matches, editedFilename)
 	}
 
 	for _, filename := range matches {

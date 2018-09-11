@@ -116,7 +116,7 @@ COPY . .
 RUN cp config.example.yml ~/.photoprism
 
 # Build PhotoPrism
-RUN make deps js install
+RUN make dep js install
 
 # Expose HTTP port
 EXPOSE 80

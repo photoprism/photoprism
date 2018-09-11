@@ -5,11 +5,13 @@
     >
         {{ text }}
         <v-btn
+                class="pr-0"
                 color="primary"
+                icon
                 flat
                 @click="close"
         >
-            Close
+            <v-icon>close</v-icon>
         </v-btn>
     </v-snackbar>
 </template>
