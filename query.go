@@ -21,9 +21,11 @@ func NewQuery(originalsPath string, db *gorm.DB) *Search {
 func (s *Search) FindPhotos(query string, count int, offset int) (photos []Photo) {
 	q := s.db.Preload("Tags").Preload("Files").Preload("Location").Preload("Albums")
 
+	q = q.Joins("JOIN files ON files.photo_id = photos.id AND files.primary_file")
+
 	if query != "" {
-		q = q.Joins("JOIN photo_tags ON photo_tags.photo_id=photos.id")
-		q = q.Joins("JOIN tags ON photo_tags.tag_id=tags.id")
+		q = q.Joins("JOIN photo_tags ON photo_tags.photo_id = photos.id")
+		q = q.Joins("JOIN tags ON photo_tags.tag_id = tags.id")
 		q = q.Where("tags.label LIKE ?", "%"+query+"%")
 	}
 

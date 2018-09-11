@@ -3,7 +3,6 @@ package photoprism
 import (
 	"fmt"
 	"github.com/disintegration/imaging"
-	"image"
 	"log"
 	"os"
 	"path/filepath"
@@ -61,29 +60,14 @@ func (m *MediaFile) GetThumbnail(path string, size int) (result *MediaFile, err 
 	return m.CreateThumbnail(thumbnailFilename, size)
 }
 
-func (m *MediaFile) fixImageOrientation(img image.Image) image.Image {
-	switch orientation := m.GetOrientation(); orientation {
-	case 3:
-		img = imaging.Rotate180(img)
-	case 6:
-		img = imaging.Rotate270(img)
-	case 8:
-		img = imaging.Rotate90(img)
-	}
-
-	return img
-}
-
 // Resize preserving the aspect ratio
 func (m *MediaFile) CreateThumbnail(filename string, size int) (result *MediaFile, err error) {
-	img, err := imaging.Open(m.filename)
+	img, err := imaging.Open(m.filename, imaging.AutoOrientation(true))
 
 	if err != nil {
 		log.Printf("open failed: %s", err.Error())
 		return nil, err
 	}
-
-	img = m.fixImageOrientation(img)
 
 	img = imaging.Fit(img, size, size, imaging.Lanczos)
 
@@ -118,14 +102,12 @@ func (m *MediaFile) GetSquareThumbnail(path string, size int) (result *MediaFile
 
 // Resize and crop to square format
 func (m *MediaFile) CreateSquareThumbnail(filename string, size int) (result *MediaFile, err error) {
-	img, err := imaging.Open(m.filename)
+	img, err := imaging.Open(m.filename, imaging.AutoOrientation(true))
 
 	if err != nil {
 		log.Printf("open failed: %s", err.Error())
 		return nil, err
 	}
-
-	img = m.fixImageOrientation(img)
 
 	img = imaging.Fill(img, size, size, imaging.Center, imaging.Lanczos)
 

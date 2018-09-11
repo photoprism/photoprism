@@ -8,6 +8,7 @@ type File struct {
 	gorm.Model
 	Photo       *Photo
 	PhotoID     uint
+	PrimaryFile bool
 	Filename    string
 	FileType    string `gorm:"type:varchar(30)"`
 	MimeType    string `gorm:"type:varchar(50)"`

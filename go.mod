@@ -2,6 +2,7 @@ module github.com/photoprism/photoprism
 
 require (
 	cloud.google.com/go v0.27.0
+	github.com/RobCherry/vibrant v0.0.0-20160904011657-0680b8cf1c89
 	github.com/araddon/dateparse v0.0.0-20180729174819-cfd92a431d0e
 	github.com/bamiaux/rez v0.0.0-20170731184118-29f4463c688b
 	github.com/brett-lempereur/ish v0.0.0-20161214150457-bbdc45bcf55d
@@ -18,6 +19,7 @@ require (
 	github.com/json-iterator/go v1.1.5
 	github.com/kylelemons/go-gypsy v0.0.0-20160905020020-08cad365cd28
 	github.com/lib/pq v1.0.0
+	github.com/lucasb-eyer/go-colorful v0.0.0-20180709185858-c7842319cf3a
 	github.com/mattn/go-isatty v0.0.4
 	github.com/mattn/go-sqlite3 v1.9.0
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd

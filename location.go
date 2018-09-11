@@ -14,6 +14,7 @@ type Location struct {
 	DisplayName      string
 	Lat              float64
 	Long             float64
+	Name             string
 	City             string
 	Postcode         string
 	County           string
@@ -39,6 +40,7 @@ type OpenstreetmapLocation struct {
 	PlaceId     string                `json:"place_id"`
 	Lat         string                `json:"lat"`
 	Lon         string                `json:"lon"`
+	Name        string                `json:"name"`
 	Category    string                `json:"category"`
 	Type        string                `json:"type"`
 	DisplayName string                `json:"display_name"`
@@ -89,6 +91,7 @@ func (m *MediaFile) GetLocation() (*Location, error) {
 		location.Long = lon
 	}
 
+	location.Name = openstreetmapLocation.Name
 	location.Postcode = openstreetmapLocation.Address.Postcode
 	location.County = openstreetmapLocation.Address.County
 	location.State = openstreetmapLocation.Address.State
@@ -96,7 +99,10 @@ func (m *MediaFile) GetLocation() (*Location, error) {
 	location.CountryCode = openstreetmapLocation.Address.CountryCode
 	location.DisplayName = openstreetmapLocation.DisplayName
 	location.LocationCategory = openstreetmapLocation.Category
-	location.LocationType = openstreetmapLocation.Type
+
+	if openstreetmapLocation.Type != "yes" && openstreetmapLocation.Type != "unclassified" {
+		location.LocationType = openstreetmapLocation.Type
+	}
 
 	m.location = location
 

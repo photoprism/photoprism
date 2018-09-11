@@ -9,6 +9,12 @@ type Photo struct {
 	gorm.Model
 	Title          string
 	Description    string `gorm:"type:text;"`
+	Artist         string
+	Keywords       string
+	TextContent    string `gorm:"type:text;"`
+	ColorNames     string
+	VibrantColor   string
+	MutedColor     string
 	TakenAt        time.Time
 	CanonicalName  string
 	PerceptualHash string
@@ -17,7 +23,6 @@ type Photo struct {
 	Albums         []Album `gorm:"many2many:album_photos;"`
 	Camera         *Camera
 	CameraID       uint
-	Author         string
 	Lat            float64
 	Long           float64
 	Location       *Location

@@ -14,7 +14,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "PhotoPrism"
-	app.Usage = "Digital Photo Archive"
+	app.Usage = "Long-Term Digital Photo Archive"
 	app.Version = "0.2.0"
 	app.Flags = globalCliFlags
 	app.Commands = []cli.Command{
@@ -97,6 +97,8 @@ func main() {
 
 				conf.CreateDirectories()
 
+				conf.MigrateDb()
+
 				fmt.Printf("Importing photos from %s...\n", conf.ImportPath)
 
 				indexer := photoprism.NewIndexer(conf.OriginalsPath, conf.GetDb())
@@ -119,6 +121,8 @@ func main() {
 				conf.SetValuesFromCliContext(context)
 
 				conf.CreateDirectories()
+
+				conf.MigrateDb()
 
 				fmt.Printf("Indexing photos in %s...\n", conf.OriginalsPath)
 

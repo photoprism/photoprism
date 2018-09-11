@@ -10,6 +10,7 @@ import (
 
 type ExifData struct {
 	DateTime    time.Time
+	Artist      string
 	CameraModel string
 	UniqueID    string
 	Lat         float64
@@ -49,6 +50,10 @@ func (m *MediaFile) GetExifData() (*ExifData, error) {
 
 	if err != nil {
 		return m.exifData, err
+	}
+
+	if artist, err := x.Get(exif.Artist); err == nil {
+		m.exifData.Artist = strings.Replace(artist.String(), "\"", "", -1)
 	}
 
 	if camModel, err := x.Get(exif.Model); err == nil {

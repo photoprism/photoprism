@@ -9,7 +9,7 @@ GOGET=$(GOCMD) get
 GOFMT=$(GOCMD) fmt
 BINARY_NAME=photoprism
 
-all: deps js build
+all: dep js build
 install:
 	$(GOINSTALL) cmd/photoprism/photoprism.go
 build:
@@ -29,9 +29,9 @@ clean:
 image:
 	docker build . --tag photoprism/photoprism
 	docker push photoprism/photoprism
-format:
+fmt:
 	$(GOFMT) ./...
-deps:
+dep:
 	$(GOBUILD) -v ./...
 upgrade:
 	$(GOGET) -u
