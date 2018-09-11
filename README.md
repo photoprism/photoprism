@@ -21,7 +21,7 @@ Originals are stored in the file system in a structured way for easy backup and 
 
 Our goal is to provide the following features (tested as a proof-of-concept):
 - High-performance command line tool
-- [Web frontend](docs/img/search.png)
+- [Web frontend](docs/img/search.jpg)
 - No proprietary or binary data formats
 - Duplicate detection (RAW and JPEG can be used simultaneously)
 - Automated tagging using [Google TensorFlow](https://www.tensorflow.org/install/install_go)
