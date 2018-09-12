@@ -38,8 +38,8 @@ func (i *Indexer) GetImageTags(jpeg *MediaFile) (result []Tag) {
 			if tag.Probability > 0.2 { // TODO: Use config variable
 				var tagModel Tag
 
-				if res := i.db.First(&tagModel, "label = ?", tag.Label); res.Error != nil {
-					tagModel.Label = tag.Label
+				if res := i.db.First(&tagModel, "tag_label = ?", tag.Label); res.Error != nil {
+					tagModel.TagLabel = tag.Label
 				}
 
 				result = append(result, tagModel)
@@ -91,86 +91,84 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 	canonicalName := mediaFile.GetCanonicalNameFromFile()
 	fileHash := mediaFile.GetHash()
 
-	if result := i.db.First(&photo, "canonical_name = ?", canonicalName); result.Error != nil {
+	if result := i.db.First(&photo, "photo_canonical_name = ?", canonicalName); result.Error != nil {
 		if jpeg, err := mediaFile.GetJpeg(); err == nil {
 			// Perceptual Hash
 			if perceptualHash, err := jpeg.GetPerceptualHash(); err == nil {
-				photo.PerceptualHash = perceptualHash
+				photo.PhotoPerceptualHash = perceptualHash
 			}
 
 			// Geo Location
 			if exifData, err := jpeg.GetExifData(); err == nil {
-				photo.Lat = exifData.Lat
-				photo.Long = exifData.Long
-				photo.Artist = exifData.Artist
+				photo.PhotoLat = exifData.Lat
+				photo.PhotoLong = exifData.Long
+				photo.PhotoArtist = exifData.Artist
 			}
 
-			// Colors
-			colorNames, photo.VibrantColor, photo.MutedColor = jpeg.GetColors()
+			// PhotoColors
+			colorNames, photo.PhotoVibrantColor, photo.PhotoMutedColor = jpeg.GetColors()
 
-			photo.Colors = strings.Join(colorNames, ", ")
+			photo.PhotoColors = strings.Join(colorNames, ", ")
 
 			// Tags (TensorFlow)
 			photo.Tags = i.GetImageTags(jpeg)
 
 			for _, tag := range photo.Tags {
-				keywords = append(keywords, tag.Label)
+				keywords = append(keywords, tag.TagLabel)
 			}
 		}
 
 		if location, err := mediaFile.GetLocation(); err == nil {
 			i.db.FirstOrCreate(location, "id = ?", location.ID)
 			photo.Location = location
-			keywords = append(keywords, location.City, location.County, location.Country, location.LocationCategory, location.Name, location.LocationType)
+			keywords = append(keywords, location.LocCity, location.LocCounty, location.LocCountry, location.LocCategory, location.LocName, location.LocType)
 
-			if location.Name != "" { // TODO: User defined title format
-				photo.Title = fmt.Sprintf("%s / %s / %s", location.Name, location.Country, mediaFile.GetDateCreated().Format("2006"))
-			} else if location.City != "" {
-				photo.Title = fmt.Sprintf("%s / %s / %s", location.City, location.Country, mediaFile.GetDateCreated().Format("2006"))
-			} else if location.County != "" {
-				photo.Title = fmt.Sprintf("%s / %s / %s", location.County, location.Country, mediaFile.GetDateCreated().Format("2006"))
+			if location.LocName != "" { // TODO: User defined title format
+				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocName, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
+			} else if location.LocCity != "" {
+				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
+			} else if location.LocCounty != "" {
+				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
 			}
 		}
 
-		if photo.Title == "" {
+		if photo.PhotoTitle == "" {
 			if len(photo.Tags) > 0 { // TODO: User defined title format
-				photo.Title = fmt.Sprintf("%s / %s", strings.Title(photo.Tags[0].Label), mediaFile.GetDateCreated().Format("2006"))
+				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Tags[0].TagLabel), mediaFile.GetDateCreated().Format("2006"))
 			} else {
-				photo.Title = fmt.Sprintf("Unknown / %s", mediaFile.GetDateCreated().Format("2006"))
+				photo.PhotoTitle = fmt.Sprintf("Unknown / %s", mediaFile.GetDateCreated().Format("2006"))
 			}
 		}
 
-		photo.Keywords = getKeywordsAsString(keywords)
+		photo.PhotoKeywords = getKeywordsAsString(keywords)
 		photo.Camera = NewCamera(mediaFile.GetCameraModel()).FirstOrCreate(i.db)
 		photo.TakenAt = mediaFile.GetDateCreated()
-		photo.CanonicalName = canonicalName
+		photo.PhotoCanonicalName = canonicalName
 		photo.Files = []File{}
 		photo.Albums = []Album{}
 
-		photo.Favorite = false
-		photo.Private = true
-		photo.Deleted = false
+		photo.PhotoFavorite = false
 
 		i.db.Create(&photo)
 	}
 
-	if result := i.db.Where("file_type = 'jpg' AND primary_file = 1 AND photo_id = ?", photo.ID).First(&primaryFile); result.Error != nil {
+	if result := i.db.Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); result.Error != nil {
 		isPrimary = mediaFile.GetType() == FileTypeJpeg
 	}
 
-	if result := i.db.First(&file, "hash = ?", fileHash); result.Error != nil {
+	if result := i.db.First(&file, "file_hash = ?", fileHash); result.Error != nil {
 		file.PhotoID = photo.ID
-		file.PrimaryFile = isPrimary
-		file.Filename = mediaFile.GetFilename()
-		file.Hash = fileHash
+		file.FilePrimary = isPrimary
+		file.FileName = mediaFile.GetFilename()
+		file.FileHash = fileHash
 		file.FileType = mediaFile.GetType()
-		file.MimeType = mediaFile.GetMimeType()
-		file.Orientation = mediaFile.GetOrientation()
+		file.FileMime = mediaFile.GetMimeType()
+		file.FileOrientation = mediaFile.GetOrientation()
 
 		if mediaFile.GetWidth() > 0 && mediaFile.GetHeight() > 0 {
-			file.Width = mediaFile.GetWidth()
-			file.Height = mediaFile.GetHeight()
-			file.AspectRatio = mediaFile.GetAspectRatio()
+			file.FileWidth = mediaFile.GetWidth()
+			file.FileHeight = mediaFile.GetHeight()
+			file.FileAspectRatio = mediaFile.GetAspectRatio()
 		}
 
 		i.db.Create(&file)

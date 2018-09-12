@@ -23,7 +23,8 @@ Our goal is to provide the following features (tested as a proof-of-concept):
 - High-performance command line tool
 - [Web frontend](docs/img/screenshot.jpg)
 - No proprietary or binary data formats
-- Duplicate detection (RAW and JPEG can be used simultaneously)
+- Automatic RAW to JPEG conversion
+- Duplicate detection (JPEG and RAW can be used simultaneously)
 - Automated tagging using [Google TensorFlow](https://www.tensorflow.org/install/install_go)
 - [Reverse geocoding](https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding) based on latitude and longitude
 - Image search with powerful filters

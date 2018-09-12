@@ -6,9 +6,9 @@ import (
 
 type Camera struct {
 	gorm.Model
-	ModelName string
-	Type      string
-	Notes     string
+	CameraModel string
+	CameraType      string
+	CameraNotes     string
 }
 
 func NewCamera(modelName string) *Camera {
@@ -17,14 +17,14 @@ func NewCamera(modelName string) *Camera {
 	}
 
 	result := &Camera{
-		ModelName: modelName,
+		CameraModel: modelName,
 	}
 
 	return result
 }
 
 func (c *Camera) FirstOrCreate(db *gorm.DB) *Camera {
-	db.FirstOrCreate(c, "model_name = ?", c.ModelName)
+	db.FirstOrCreate(c, "camera_model = ?", c.CameraModel)
 
 	return c
 }

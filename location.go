@@ -11,19 +11,19 @@ import (
 
 type Location struct {
 	gorm.Model
-	DisplayName      string
-	Lat              float64
-	Long             float64
-	Name             string
-	City             string
-	Postcode         string
-	County           string
-	State            string
-	Country          string
-	CountryCode      string
-	LocationCategory string
-	LocationType     string
-	Favorite         bool
+	LocDisplayName string
+	LocLat         float64
+	LocLong        float64
+	LocCategory    string
+	LocType        string
+	LocName        string
+	LocCity        string
+	LocPostcode    string
+	LocCounty      string
+	LocState       string
+	LocCountry     string
+	LocCountryCode string
+	LocFavorite    bool
 }
 
 type OpenstreetmapAddress struct {
@@ -78,30 +78,30 @@ func (m *MediaFile) GetLocation() (*Location, error) {
 	}
 
 	if openstreetmapLocation.Address.City != "" {
-		location.City = openstreetmapLocation.Address.City
+		location.LocCity = openstreetmapLocation.Address.City
 	} else {
-		location.City = openstreetmapLocation.Address.Town
+		location.LocCity = openstreetmapLocation.Address.Town
 	}
 
 	if lat, err := strconv.ParseFloat(openstreetmapLocation.Lat, 64); err == nil {
-		location.Lat = lat
+		location.LocLat = lat
 	}
 
 	if lon, err := strconv.ParseFloat(openstreetmapLocation.Lon, 64); err == nil {
-		location.Long = lon
+		location.LocLong = lon
 	}
 
-	location.Name = openstreetmapLocation.Name
-	location.Postcode = openstreetmapLocation.Address.Postcode
-	location.County = openstreetmapLocation.Address.County
-	location.State = openstreetmapLocation.Address.State
-	location.Country = openstreetmapLocation.Address.Country
-	location.CountryCode = openstreetmapLocation.Address.CountryCode
-	location.DisplayName = openstreetmapLocation.DisplayName
-	location.LocationCategory = openstreetmapLocation.Category
+	location.LocName = openstreetmapLocation.Name
+	location.LocPostcode = openstreetmapLocation.Address.Postcode
+	location.LocCounty = openstreetmapLocation.Address.County
+	location.LocState = openstreetmapLocation.Address.State
+	location.LocCountry = openstreetmapLocation.Address.Country
+	location.LocCountryCode = openstreetmapLocation.Address.CountryCode
+	location.LocDisplayName = openstreetmapLocation.DisplayName
+	location.LocCategory = openstreetmapLocation.Category
 
 	if openstreetmapLocation.Type != "yes" && openstreetmapLocation.Type != "unclassified" {
-		location.LocationType = openstreetmapLocation.Type
+		location.LocType = openstreetmapLocation.Type
 	}
 
 	m.location = location

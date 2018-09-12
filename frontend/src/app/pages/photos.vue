@@ -118,39 +118,35 @@
                     <v-icon>delete</v-icon>
                 </v-btn>
             </v-speed-dial>
-            <div class="page-container photo-grid pt-3">
-                <template v-for="photo in items">
+            <v-container grid-list-sm fluid class="pa-0">
+                <v-layout row wrap>
+                    <v-flex
+                            v-for="photo in results"
+                            :key="photo.ID"
+                            xs2
+                            d-flex
+                    >
+                        <v-card-actions flat tile class="d-flex" @click="selectPhoto(photo)">
+                            <v-img  :src="'/api/v1/files/' + photo.FileID + '/square_thumbnail?size=500'"
+                                    aspect-ratio="1"
+                                    :title="photo.TakenAt | moment('DD.MM.YYYY hh:mm:ss')"
+                                    class="grey lighten-2"
+                            >
+                                <v-layout
+                                        slot="placeholder"
+                                        fill-height
+                                        align-center
+                                        justify-center
+                                        ma-0
+                                >
+                                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                </v-layout>
+                            </v-img>
+                        </v-card-actions>
 
-                    <div class="photo hover-12">
-                        <div class="info">{{ photo.TakenAt | moment("DD.MM.YYYY hh:mm:ss") }}<span class="right">{{ photo.CameraModel }}</span>
-                        </div>
-                        <div class="actions">
-                        <span class="left">
-                            <a class="action like" v-bind:class="{ favorite: photo.Favorite }"
-                               v-on:click="likePhoto(photo)">
-                                <i v-if="!photo.Favorite" class="far fa-heart"></i>
-                                <i v-if="photo.Favorite" class="fas fa-heart"></i>
-                            </a>
-                        </span>
-                            <span class="center" v-if="photo.Location">
-                            <v-tooltip bottom>
-                                <a slot="activator" class="location" target="_blank" :href="photo.getGoogleMapsLink()">{{ photo.Location.Country }}</a>
-                                <span>{{ photo.Location.DisplayName }}</span>
-                            </v-tooltip>
-                        </span>
-                            <span class="right">
-                            <a class="action delete" v-on:click="deletePhoto(photo)">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </span>
-                        </div>
-                        <template v-for="file in photo.Files">
-                            <img v-if="file.FileType === 'jpg'"
-                                 :src="'/api/v1/files/' + file.ID + '/square_thumbnail?size=250'">
-                        </template>
-                    </div>
-                </template>
-            </div>
+                    </v-flex>
+                </v-layout>
+            </v-container>
             <div style="clear: both"></div>
         </v-container>
     </div>
@@ -175,7 +171,7 @@
 
             return {
                 'advandedSearch': false,
-                'items': [],
+                'results': [],
                 'query': {
                     category: '',
                     country: '',
@@ -188,7 +184,7 @@
                 'options': {
                     'categories': [ { value: '', text: 'All Categories' }, { value: 'junction', text: 'Junction' }, { value: 'tourism', text: 'Tourism'}, { value: 'historic', text: 'Historic'} ],
                     'countries': [{ value: '', text: 'All Countries' }, { value: 'de', text: 'Germany' }, { value: 'ca', text: 'Canada'}, { value: 'us', text: 'United States'}],
-                    'cameras': [{ value: '', text: 'All Cameras' }, { value: 'iPhone SE', text: 'iPhone SE' }, { value: 'EOS 6D', text: 'Canon EOS 6D'}],
+                    'cameras': [{ value: '', text: 'All Cameras' }, { value: '1', text: 'iPhone SE' }, { value: '2', text: 'Canon EOS 6D'}],
                     'sorting': [{ value: '', text: 'Sort by date taken' }, { value: 'imported', text: 'Sort by date imported'}, { value: 'score', text: 'Sort by relevance' }],
                 },
                 'page': resultPage,
@@ -203,6 +199,9 @@
             };
         },
         methods: {
+            selectPhoto(photo) {
+                this.$alert.success(photo.getEntityName());
+            },
             likePhoto(photo) {
                 photo.Favorite = !photo.Favorite;
             },
@@ -248,8 +247,8 @@
                     this.resultTotal = parseInt(response.headers['x-result-total']);
                     this.resultCount = parseInt(response.headers['x-result-count']);
                     this.resultOffset = parseInt(response.headers['x-result-offset']);
-                    this.items = response.models;
-                    this.$alert.info(this.items.length + ' photos found');
+                    this.results = response.models;
+                    this.$alert.info(this.results.length + ' photos found');
                 });
             }
         },

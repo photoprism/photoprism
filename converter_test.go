@@ -73,7 +73,7 @@ func TestConverter_ConvertAll(t *testing.T) {
 
 	image := NewMediaFile(jpegFilename)
 
-	assert.Equal(t, jpegFilename, image.filename, "Filename must be the same")
+	assert.Equal(t, jpegFilename, image.filename, "FileName must be the same")
 
 	infoRaw, err := image.GetExifData()
 

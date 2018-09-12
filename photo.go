@@ -7,26 +7,24 @@ import (
 
 type Photo struct {
 	gorm.Model
-	Title          string
-	Description    string `gorm:"type:text;"`
-	Artist         string
-	Keywords       string
-	Colors         string
-	VibrantColor   string
-	MutedColor     string
-	TakenAt        time.Time
-	CanonicalName  string
-	PerceptualHash string
-	Tags           []Tag `gorm:"many2many:photo_tags;"`
-	Files          []File
-	Albums         []Album `gorm:"many2many:album_photos;"`
-	Camera         *Camera
-	CameraID       uint
-	Lat            float64
-	Long           float64
-	Location       *Location
-	LocationID     uint
-	Favorite       bool
-	Private        bool
-	Deleted        bool
+	TakenAt             time.Time
+	PhotoTitle          string
+	PhotoDescription    string `gorm:"type:text;"`
+	PhotoArtist         string
+	PhotoKeywords       string
+	PhotoColors         string
+	PhotoVibrantColor   string
+	PhotoMutedColor     string
+	PhotoCanonicalName  string
+	PhotoPerceptualHash string
+	PhotoFavorite       bool
+	PhotoLat            float64
+	PhotoLong           float64
+	Location            *Location
+	LocationID          uint
+	Tags                []Tag `gorm:"many2many:photo_tags;"`
+	Files               []File
+	Albums              []Album `gorm:"many2many:album_photos;"`
+	Camera              *Camera
+	CameraID            uint
 }

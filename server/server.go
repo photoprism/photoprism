@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism"
-	"github.com/photoprism/photoprism/server/forms"
+	"github.com/photoprism/photoprism/forms"
 	"net/http"
 	"strconv"
 )
@@ -28,13 +28,15 @@ func Start(address string, port int, conf *photoprism.Config) {
 
 			c.MustBindWith(&form, binding.Form)
 
-			photos := search.FindPhotos(form.Query, form.Count, form.Offset)
+			if photos, err := search.Photos(form); err == nil {
+				c.Header("x-result-total", strconv.Itoa(len(photos)))
+				c.Header("x-result-count", strconv.Itoa(form.Count))
+				c.Header("x-result-offset", strconv.Itoa(form.Offset))
 
-			c.Header("x-result-total", strconv.Itoa(len(photos)))
-			c.Header("x-result-count", strconv.Itoa(form.Count))
-			c.Header("x-result-offset", strconv.Itoa(form.Offset))
-
-			c.JSON(http.StatusOK, photos)
+				c.JSON(http.StatusOK, photos)
+			} else {
+				c.AbortWithError(500, err)
+			}
 		})
 
 		// v1.OPTIONS()
@@ -55,7 +57,7 @@ func Start(address string, port int, conf *photoprism.Config) {
 
 			file := search.FindFile(id)
 
-			mediaFile := photoprism.NewMediaFile(file.Filename)
+			mediaFile := photoprism.NewMediaFile(file.FileName)
 
 			thumbnail, _ := mediaFile.GetThumbnail(conf.ThumbnailsPath, size)
 
@@ -70,7 +72,7 @@ func Start(address string, port int, conf *photoprism.Config) {
 
 			file := search.FindFile(id)
 
-			mediaFile := photoprism.NewMediaFile(file.Filename)
+			mediaFile := photoprism.NewMediaFile(file.FileName)
 
 			thumbnail, _ := mediaFile.GetSquareThumbnail(conf.ThumbnailsPath, size)
 

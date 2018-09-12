@@ -197,7 +197,7 @@
             const q = query.hasOwnProperty('q') ? query['q'] : '';
 
             return {
-                items: [
+                results: [
                     { title: 'Photos', route: 'photos', icon: 'photo_library' },
                     { title: 'Filters', route: 'filters', icon: 'search' },
                     { title: 'Albums', route: 'albums', icon: 'folder' },

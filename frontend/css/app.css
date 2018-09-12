@@ -1,6 +1,6 @@
 @import url("../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
-@import url("../node_modules/@fortawesome/fontawesome-free/css/all.css");
+
 @import url("alerts.css");
 
 #app div.loading {

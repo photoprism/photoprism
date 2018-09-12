@@ -2,7 +2,7 @@ import Abstract from 'model/abstract';
 
 class Photo extends Abstract {
     getEntityName() {
-        return this.Title;
+        return this.PhotoTitle;
     }
 
     getId() {
@@ -10,7 +10,7 @@ class Photo extends Abstract {
     }
 
     getGoogleMapsLink() {
-        return 'https://www.google.com/maps/place/' + this.Lat + ',' + this.Long;
+        return 'https://www.google.com/maps/place/' + this.PhotoLat + ',' + this.PhotoLong;
     }
 
     static getCollectionResource() {

@@ -34,7 +34,7 @@ mock.onPut('foo/2').reply(200, putEntityResponse);
 mock.onDelete('foo/2').reply(204, deleteEntityResponse);
 
 describe('common/api', () => {
-    it('get("foo") should return a list of items and return with HTTP code 200', (done) => {
+    it('get("foo") should return a list of results and return with HTTP code 200', (done) => {
         Api.get('foo').then(
             (response) => {
                 assert.equal(200, response.status);
