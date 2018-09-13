@@ -191,7 +191,7 @@
             const resultPage = query.hasOwnProperty('page') ? parseInt(query['page']) : 1;
             const resultOffset = resultCount * (resultPage - 1);
             const order = query.hasOwnProperty('order') && query['order'] != "" ? query['order'] : 'taken_at DESC';
-            const dir = query.hasOwnProperty('dir') ? query['dir'] : '';
+            const camera_id = query.hasOwnProperty('camera_id') ? parseInt(query['camera_id']) : '';
             const q = query.hasOwnProperty('q') ? query['q'] : '';
             const view = query.hasOwnProperty('view') ? query['view'] : 'tile';
             const cameras = [{value: '', text: 'All Cameras'}];
@@ -209,7 +209,7 @@
                 'query': {
                     category: '',
                     country: '',
-                    camera_id: '',
+                    camera_id: camera_id,
                     order: order,
                     q: q,
                 },
@@ -234,8 +234,6 @@
                     ],
                 },
                 'page': resultPage,
-                'order': order,
-                'dir': dir,
                 'view': view,
                 'resultCount': resultCount,
                 'resultOffset': resultOffset,
