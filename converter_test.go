@@ -27,7 +27,11 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	t.Logf("Testing RAW to JPEG converter with %s", jpegFilename)
 
-	imageJpeg, err := converter.ConvertToJpeg(NewMediaFile(jpegFilename))
+	jpegMediaFile, err := NewMediaFile(jpegFilename)
+
+	assert.Nil(t, err)
+
+	imageJpeg, err := converter.ConvertToJpeg(jpegMediaFile)
 
 	assert.Empty(t, err, "ConvertToJpeg() failed")
 
@@ -45,7 +49,11 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	t.Logf("Testing RAW to JPEG converter with %s", rawFilemame)
 
-	imageRaw, _ := converter.ConvertToJpeg(NewMediaFile(rawFilemame))
+	rawMediaFile, err := NewMediaFile(rawFilemame)
+
+	assert.Nil(t, err)
+
+	imageRaw, _ := converter.ConvertToJpeg(rawMediaFile)
 
 	assert.True(t, fileExists(conf.ImportPath+"/raw/IMG_1435.jpg"), "Jpeg file was not found - is Darktable installed?")
 
@@ -71,7 +79,9 @@ func TestConverter_ConvertAll(t *testing.T) {
 
 	assert.True(t, fileExists(jpegFilename), "Jpeg file was not found - is Darktable installed?")
 
-	image := NewMediaFile(jpegFilename)
+	image, err := NewMediaFile(jpegFilename)
+
+	assert.Nil(t, err)
 
 	assert.Equal(t, jpegFilename, image.filename, "FileName must be the same")
 

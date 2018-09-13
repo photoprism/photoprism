@@ -52,9 +52,9 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 			return nil
 		}
 
-		mediaFile := NewMediaFile(filename)
+		mediaFile, err := NewMediaFile(filename)
 
-		if !mediaFile.Exists() || !mediaFile.IsPhoto() {
+		if err != nil || !mediaFile.IsPhoto() {
 			return nil
 		}
 

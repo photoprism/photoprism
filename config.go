@@ -26,6 +26,8 @@ type Config struct {
 	db             *gorm.DB
 }
 
+type ConfigValues map[string]interface{}
+
 func NewConfig() *Config {
 	return &Config{}
 }
@@ -149,4 +151,21 @@ func (c *Config) MigrateDb() {
 	if !db.Dialect().HasIndex("photos", "photos_fulltext") {
 		db.Exec("CREATE FULLTEXT INDEX photos_fulltext ON photos (photo_title, photo_description, photo_artist, photo_colors)")
 	}
+}
+
+func (c *Config) GetClientConfig() ConfigValues {
+	db := c.GetDb()
+
+	var cameras []*Camera
+	// var countries map[string]string
+
+	db.Where("deleted_at IS NULL").Limit(1000).Order("camera_model").Find(&cameras)
+
+	result := ConfigValues{
+		"title":   "PhotoPrism",
+		"debug":   true,
+		"cameras": cameras,
+	}
+
+	return result
 }

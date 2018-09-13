@@ -49,7 +49,7 @@
                                           label="Camera"
                                           flat solo
                                           color="blue-grey"
-                                          v-model="query.camera"
+                                          v-model="query.camera_id"
                                           :items="options.cameras">
                                 </v-select>
                             </v-flex>
@@ -187,13 +187,19 @@
         props: {},
         data() {
             const query = this.$route.query;
-            const resultCount = query.hasOwnProperty('count') ? parseInt(query['count']) : 70;
+            const resultCount = query.hasOwnProperty('count') ? parseInt(query['count']) : 60;
             const resultPage = query.hasOwnProperty('page') ? parseInt(query['page']) : 1;
             const resultOffset = resultCount * (resultPage - 1);
             const order = query.hasOwnProperty('order') && query['order'] != "" ? query['order'] : 'taken_at DESC';
             const dir = query.hasOwnProperty('dir') ? query['dir'] : '';
             const q = query.hasOwnProperty('q') ? query['q'] : '';
             const view = query.hasOwnProperty('view') ? query['view'] : 'tile';
+            const cameras = [{value: '', text: 'All Cameras'}];
+
+            console.log(this.$config.getValue('cameras'));
+            this.$config.getValue('cameras').forEach(function (camera) {
+                cameras.push({value: camera.ID, text: camera.CameraModel});
+            });
 
             return {
                 'snackbarVisible': false,
@@ -203,7 +209,7 @@
                 'query': {
                     category: '',
                     country: '',
-                    camera: '',
+                    camera_id: '',
                     order: order,
                     q: q,
                 },
@@ -220,11 +226,7 @@
                         {value: 'ca', text: 'Canada'},
                         {value: 'us', text: 'United States'}
                     ],
-                    'cameras': [
-                        {value: '', text: 'All Cameras'},
-                        {value: '1', text: 'iPhone SE'},
-                        {value: '2', text: 'Canon EOS 6D'},
-                    ],
+                    'cameras': cameras,
                     'sorting': [
                         {value: 'taken_at DESC', text: 'Newest first'},
                         {value: 'taken_at', text: 'Oldest first'},

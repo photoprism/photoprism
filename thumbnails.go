@@ -15,9 +15,9 @@ func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, 
 			return nil
 		}
 
-		mediaFile := NewMediaFile(filename)
+		mediaFile, err := NewMediaFile(filename)
 
-		if !mediaFile.Exists() || !mediaFile.IsJpeg() {
+		if err != nil || !mediaFile.IsJpeg() {
 			return nil
 		}
 
@@ -54,7 +54,7 @@ func (m *MediaFile) GetThumbnail(path string, size int) (result *MediaFile, err 
 	thumbnailFilename := fmt.Sprintf("%s/%s_%dpx.jpg", thumbnailPath, canonicalName, size)
 
 	if fileExists(thumbnailFilename) {
-		return NewMediaFile(thumbnailFilename), nil
+		return NewMediaFile(thumbnailFilename)
 	}
 
 	return m.CreateThumbnail(thumbnailFilename, size)
@@ -78,9 +78,7 @@ func (m *MediaFile) CreateThumbnail(filename string, size int) (result *MediaFil
 		return nil, err
 	}
 
-	result = NewMediaFile(filename)
-
-	return result, nil
+	return NewMediaFile(filename)
 }
 
 func (m *MediaFile) GetSquareThumbnail(path string, size int) (result *MediaFile, err error) {
@@ -94,7 +92,7 @@ func (m *MediaFile) GetSquareThumbnail(path string, size int) (result *MediaFile
 	thumbnailFilename := fmt.Sprintf("%s/%s_square_%dpx.jpg", thumbnailPath, canonicalName, size)
 
 	if fileExists(thumbnailFilename) {
-		return NewMediaFile(thumbnailFilename), nil
+		return NewMediaFile(thumbnailFilename)
 	}
 
 	return m.CreateSquareThumbnail(thumbnailFilename, size)
@@ -118,7 +116,5 @@ func (m *MediaFile) CreateSquareThumbnail(filename string, size int) (result *Me
 		return nil, err
 	}
 
-	result = NewMediaFile(filename)
-
-	return result, nil
+	return NewMediaFile(filename)
 }

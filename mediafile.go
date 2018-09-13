@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"encoding/hex"
+	"fmt"
 	"github.com/brett-lempereur/ish"
 	"github.com/djherbis/times"
 	"github.com/pkg/errors"
@@ -64,13 +65,17 @@ type MediaFile struct {
 	location       *Location
 }
 
-func NewMediaFile(filename string) *MediaFile {
+func NewMediaFile(filename string) (*MediaFile, error) {
+	if !fileExists(filename) {
+		return nil, fmt.Errorf("file does not exist: %s", filename)
+	}
+
 	instance := &MediaFile{
 		filename: filename,
 		fileType: FileTypeOther,
 	}
 
-	return instance
+	return instance, nil
 }
 
 func (m *MediaFile) GetDateCreated() time.Time {
@@ -118,9 +123,17 @@ func (m *MediaFile) GetCameraModel() string {
 }
 
 func (m *MediaFile) GetCanonicalName() string {
+	var postfix string
+
 	dateCreated := m.GetDateCreated().UTC()
 
-	result := dateCreated.Format("20060102_150405_") + strings.ToUpper(m.GetHash()[:12])
+	if fileHash := m.GetHash(); len(fileHash) > 12 {
+		postfix = strings.ToUpper(fileHash[:12])
+	} else {
+		postfix = "NOTFOUND"
+	}
+
+	result := dateCreated.Format("20060102_150405_") + postfix
 
 	return result
 }
@@ -217,7 +230,11 @@ func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, masterFile *MediaFil
 	}
 
 	for _, filename := range matches {
-		resultFile := NewMediaFile(filename)
+		resultFile, err := NewMediaFile(filename)
+
+		if err != nil {
+			continue
+		}
 
 		if masterFile == nil && resultFile.IsJpeg() {
 			masterFile = resultFile
@@ -368,9 +385,7 @@ func (m *MediaFile) GetJpeg() (*MediaFile, error) {
 		return nil, errors.New("file does not exist")
 	}
 
-	result := NewMediaFile(jpegFilename)
-
-	return result, nil
+	return NewMediaFile(jpegFilename)
 }
 
 func (m *MediaFile) decodeDimensions() error {

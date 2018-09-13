@@ -34,9 +34,9 @@ func (c *Converter) ConvertAll(path string) {
 			return nil
 		}
 
-		mediaFile := NewMediaFile(filename)
+		mediaFile, err := NewMediaFile(filename)
 
-		if !mediaFile.Exists() || !mediaFile.IsRaw() {
+		if err != nil || !mediaFile.IsRaw() {
 			return nil
 		}
 
@@ -67,8 +67,10 @@ func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 
 	jpegFilename := baseFilename + ".jpg"
 
-	if _, err := os.Stat(jpegFilename); err == nil {
-		return NewMediaFile(jpegFilename), nil
+	mediaFile, err := NewMediaFile(jpegFilename)
+
+	if err == nil {
+		return mediaFile, nil
 	}
 
 	log.Printf("Converting %s to %s \n", image.filename, jpegFilename)
@@ -87,5 +89,5 @@ func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 		return nil, err
 	}
 
-	return NewMediaFile(jpegFilename), nil
+	return NewMediaFile(jpegFilename)
 }

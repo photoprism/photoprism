@@ -10,7 +10,9 @@ func TestMediaFile_GetExifData(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	image1 := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
+	image1, err := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
+
+	assert.Nil(t, err)
 
 	info, err := image1.GetExifData()
 
@@ -20,7 +22,9 @@ func TestMediaFile_GetExifData(t *testing.T) {
 
 	assert.Equal(t, "iPhone SE", info.CameraModel)
 
-	image2 := NewMediaFile(conf.ImportPath + "/raw/IMG_1435.CR2")
+	image2, err := NewMediaFile(conf.ImportPath + "/raw/IMG_1435.CR2")
+
+	assert.Nil(t, err)
 
 	info, err = image2.GetExifData()
 

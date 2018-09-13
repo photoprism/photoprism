@@ -1,6 +1,5 @@
 import Api from 'common/api';
 import Form from 'common/form';
-import _ from 'lodash/object';
 
 class Abstract {
     constructor(values) {

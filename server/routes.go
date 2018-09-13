@@ -55,11 +55,13 @@ func ConfigureRoutes(app *gin.Engine, conf *photoprism.Config) {
 
 			file := search.FindFile(id)
 
-			mediaFile := photoprism.NewMediaFile(file.FileName)
+			if mediaFile, err := photoprism.NewMediaFile(file.FileName); err == nil {
+				thumbnail, _ := mediaFile.GetThumbnail(conf.ThumbnailsPath, size)
 
-			thumbnail, _ := mediaFile.GetThumbnail(conf.ThumbnailsPath, size)
-
-			c.File(thumbnail.GetFilename())
+				c.File(thumbnail.GetFilename())
+			} else {
+				c.Data(404, "image/svg+xml", notFoundSvg)
+			}
 		})
 
 		v1.GET("/files/:id/square_thumbnail", func(c *gin.Context) {
@@ -70,11 +72,13 @@ func ConfigureRoutes(app *gin.Engine, conf *photoprism.Config) {
 
 			file := search.FindFile(id)
 
-			mediaFile := photoprism.NewMediaFile(file.FileName)
+			if mediaFile, err := photoprism.NewMediaFile(file.FileName); err == nil {
+				thumbnail, _ := mediaFile.GetSquareThumbnail(conf.ThumbnailsPath, size)
 
-			thumbnail, _ := mediaFile.GetSquareThumbnail(conf.ThumbnailsPath, size)
-
-			c.File(thumbnail.GetFilename())
+				c.File(thumbnail.GetFilename())
+			} else {
+				c.Data(404, "image/svg+xml", notFoundSvg)
+			}
 		})
 
 		v1.GET("/albums", func(c *gin.Context) {
@@ -87,9 +91,6 @@ func ConfigureRoutes(app *gin.Engine, conf *photoprism.Config) {
 	}
 
 	app.NoRoute(func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
-			"title": "PhotoPrism",
-			"debug": true,
-		})
+		c.HTML(http.StatusOK, "index.tmpl", conf.GetClientConfig())
 	})
 }

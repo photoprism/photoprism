@@ -93,6 +93,10 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 		q = q.Where("tags.tag_label LIKE ? OR MATCH (photo_title, photo_description, photo_artist, photo_colors) AGAINST (?)", strings.ToLower(form.Query)+"%", form.Query)
 	}
 
+	if form.CameraID > 0 {
+		q = q.Where("camera_id = ?", form.CameraID)
+	}
+
 	q = q.Order(form.Order).Limit(form.Count).Offset(form.Offset)
 
 	results := make([]PhotoSearchResult, 0, form.Count)

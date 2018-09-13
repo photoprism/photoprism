@@ -10,7 +10,9 @@ func TestMediaFile_FindRelatedImages(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	mediaFile := NewMediaFile(conf.ImportPath + "/raw/20140717_154212_1EC48F8489.cr2")
+	mediaFile, err := NewMediaFile(conf.ImportPath + "/raw/20140717_154212_1EC48F8489.cr2")
+
+	assert.Nil(t, err)
 
 	expectedBaseFilename := conf.ImportPath + "/raw/20140717_154212_1EC48F8489"
 
@@ -32,13 +34,22 @@ func TestMediaFile_FindRelatedImages(t *testing.T) {
 }
 
 func TestMediaFile_GetEditedFilename(t *testing.T) {
-	mediaFile1 := NewMediaFile("/foo/bar/IMG_1234.jpg")
-	assert.Equal(t, "/foo/bar/IMG_E1234.jpg", mediaFile1.GetEditedFilename())
+	conf := NewTestConfig()
 
-	mediaFile2 := NewMediaFile("/foo/bar/IMG_E1234.jpg")
+	conf.InitializeTestData(t)
+
+	mediaFile1, err := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.jpg")
+	assert.Nil(t, err)
+	assert.Equal(t, conf.ImportPath+"/iphone/IMG_E6788.jpg", mediaFile1.GetEditedFilename())
+
+	/* TODO: Add example files to import.zip
+	mediaFile2, err := NewMediaFile("/foo/bar/IMG_E1234.jpg")
+	assert.Nil(t, err)
 	assert.Equal(t, "", mediaFile2.GetEditedFilename())
+	*/
 
-	mediaFile3 := NewMediaFile("/foo/bar/BAZ_1234.jpg")
+	mediaFile3, err := NewMediaFile(conf.ImportPath + "/raw/20140717_154212_1EC48F8489.jpg")
+	assert.Nil(t, err)
 	assert.Equal(t, "", mediaFile3.GetEditedFilename())
 }
 
@@ -47,14 +58,14 @@ func TestMediaFile_GetPerceptiveHash(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	mediaFile1 := NewMediaFile(conf.ImportPath + "/20130203_193332_0AE340D280.jpg")
-
+	mediaFile1, err := NewMediaFile(conf.ImportPath + "/20130203_193332_0AE340D280.jpg")
+	assert.Nil(t, err)
 	hash1, _ := mediaFile1.GetPerceptualHash()
 
 	assert.Equal(t, "66debc383325d3bd", hash1)
 
-	mediaFile2 := NewMediaFile(conf.ImportPath + "/20130203_193332_0AE340D280_V2.jpg")
-
+	mediaFile2, err := NewMediaFile(conf.ImportPath + "/20130203_193332_0AE340D280_V2.jpg")
+	assert.Nil(t, err)
 	hash2, _ := mediaFile2.GetPerceptualHash()
 
 	assert.Equal(t, "e6debc393325c3b9", hash2)
@@ -63,7 +74,8 @@ func TestMediaFile_GetPerceptiveHash(t *testing.T) {
 
 	assert.Equal(t, 4, distance)
 
-	mediaFile3 := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
+	mediaFile3, err := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
+	assert.Nil(t, err)
 	hash3, _ := mediaFile3.GetPerceptualHash()
 
 	assert.Equal(t, "f1e2858b171d3e78", hash3)
@@ -78,23 +90,24 @@ func TestMediaFile_GetMimeType(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	image1 := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
-
+	image1, err := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
+	assert.Nil(t, err)
 	assert.Equal(t, "image/jpeg", image1.GetMimeType())
 
-	image2 := NewMediaFile(conf.ImportPath + "/raw/20140717_154212_1EC48F8489.cr2")
-
+	image2, err := NewMediaFile(conf.ImportPath + "/raw/20140717_154212_1EC48F8489.cr2")
+	assert.Nil(t, err)
 	assert.Equal(t, "application/octet-stream", image2.GetMimeType())
 }
 
 func TestMediaFile_Exists(t *testing.T) {
 	conf := NewTestConfig()
 
-	mediaFile := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
-
+	mediaFile, err := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
+	assert.Nil(t, err)
+	assert.NotNil(t, mediaFile)
 	assert.True(t, mediaFile.Exists())
 
-	mediaFile = NewMediaFile(conf.ImportPath + "/iphone/IMG_6788_XYZ.JPG")
-
-	assert.False(t, mediaFile.Exists())
+	mediaFile, err = NewMediaFile(conf.ImportPath + "/iphone/IMG_6788_XYZ.JPG")
+	assert.NotNil(t, err)
+	assert.Nil(t, mediaFile)
 }
