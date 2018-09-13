@@ -104,6 +104,14 @@ main div.page-export {
 main div.page-settings {
 }
 
+.photo-tile {
+    cursor: pointer;
+}
+
+.photo-tile.selected {
+    opacity: 0.6;
+}
+
 .photo-grid .photo {
     background: #eeeeee;
     display: block;

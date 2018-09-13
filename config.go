@@ -147,6 +147,6 @@ func (c *Config) MigrateDb() {
 	db.AutoMigrate(&File{}, &Photo{}, &Tag{}, &Album{}, &Location{}, &Camera{})
 
 	if !db.Dialect().HasIndex("photos", "photos_fulltext") {
-		db.Exec("CREATE FULLTEXT INDEX photos_fulltext ON photos (photo_title, photo_description, photo_artist, photo_keywords, photo_colors)")
+		db.Exec("CREATE FULLTEXT INDEX photos_fulltext ON photos (photo_title, photo_description, photo_artist, photo_colors)")
 	}
 }

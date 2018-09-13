@@ -7,8 +7,8 @@ import (
 type Camera struct {
 	gorm.Model
 	CameraModel string
-	CameraType      string
-	CameraNotes     string
+	CameraType  string
+	CameraNotes string
 }
 
 func NewCamera(modelName string) *Camera {

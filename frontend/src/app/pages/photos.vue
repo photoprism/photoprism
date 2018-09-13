@@ -58,7 +58,7 @@
                                           label="Sort By"
                                           flat solo
                                           color="blue-grey"
-                                          v-model="dir"
+                                          v-model="query.order"
                                           :items="options.sorting">
                                 </v-select>
                             </v-flex>
@@ -83,6 +83,14 @@
                         fab
                 >
                     <v-icon>menu</v-icon>
+                </v-btn>
+                <v-btn
+                        fab
+                        dark
+                        small
+                        color="deep-purple lighten-2"
+                >
+                    <v-icon>favorite</v-icon>
                 </v-btn>
                 <v-btn
                         fab
@@ -118,36 +126,54 @@
                     <v-icon>delete</v-icon>
                 </v-btn>
             </v-speed-dial>
-            <v-container grid-list-sm fluid class="pa-0">
+            <v-container grid-list-xs fluid class="pa-0">
                 <v-layout row wrap>
                     <v-flex
                             v-for="photo in results"
                             :key="photo.ID"
-                            xs2
-                            d-flex
+                            xs12 sm6 md3 lg2 d-flex
+                            v-bind:class="{ selected: photo.selected }"
+                            class="photo-tile"
                     >
-                        <v-card-actions flat tile class="d-flex" @click="selectPhoto(photo)">
-                            <v-img  :src="'/api/v1/files/' + photo.FileID + '/square_thumbnail?size=500'"
-                                    aspect-ratio="1"
-                                    :title="photo.TakenAt | moment('DD.MM.YYYY hh:mm:ss')"
-                                    class="grey lighten-2"
-                            >
-                                <v-layout
-                                        slot="placeholder"
-                                        fill-height
-                                        align-center
-                                        justify-center
-                                        ma-0
+                        <v-tooltip bottom>
+                            <v-card-actions flat tile class="d-flex" slot="activator" @click="selectPhoto(photo)"
+                                            @mouseover="overPhoto(photo)" @mouseleave="leavePhoto(photo)">
+                                <v-img :src="'/api/v1/files/' + photo.FileID + '/square_thumbnail?size=500'"
+                                       aspect-ratio="1"
+                                       class="grey lighten-2"
                                 >
-                                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                                </v-layout>
-                            </v-img>
-                        </v-card-actions>
-
+                                    <v-layout
+                                            slot="placeholder"
+                                            fill-height
+                                            align-center
+                                            justify-center
+                                            ma-0
+                                    >
+                                        <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                    </v-layout>
+                                </v-img>
+                            </v-card-actions>
+                            <span>{{ photo.PhotoTitle }}<br/>{{ photo.TakenAt | moment('DD/MM/YYYY') }} / {{ photo.CameraModel }}</span>
+                        </v-tooltip>
                     </v-flex>
                 </v-layout>
             </v-container>
-            <div style="clear: both"></div>
+            <v-snackbar
+                    v-model="snackbarVisible"
+                    bottom
+                    :timeout="0"
+            >
+                {{ snackbarText }}
+                <v-btn
+                        class="pr-0"
+                        color="primary"
+                        icon
+                        flat
+                        @click="clearSelection()"
+                >
+                    <v-icon>close</v-icon>
+                </v-btn>
+            </v-snackbar>
         </v-container>
     </div>
 </template>
@@ -164,28 +190,46 @@
             const resultCount = query.hasOwnProperty('count') ? parseInt(query['count']) : 70;
             const resultPage = query.hasOwnProperty('page') ? parseInt(query['page']) : 1;
             const resultOffset = resultCount * (resultPage - 1);
-            const order = query.hasOwnProperty('order') ? query['order'] : 'taken_at';
+            const order = query.hasOwnProperty('order') && query['order'] != "" ? query['order'] : 'taken_at DESC';
             const dir = query.hasOwnProperty('dir') ? query['dir'] : '';
             const q = query.hasOwnProperty('q') ? query['q'] : '';
             const view = query.hasOwnProperty('view') ? query['view'] : 'tile';
 
             return {
+                'snackbarVisible': false,
+                'snackbarText': '',
                 'advandedSearch': false,
                 'results': [],
                 'query': {
                     category: '',
                     country: '',
                     camera: '',
-                    after: '',
-                    before: '',
-                    favorites_only: '',
+                    order: order,
                     q: q,
                 },
                 'options': {
-                    'categories': [ { value: '', text: 'All Categories' }, { value: 'junction', text: 'Junction' }, { value: 'tourism', text: 'Tourism'}, { value: 'historic', text: 'Historic'} ],
-                    'countries': [{ value: '', text: 'All Countries' }, { value: 'de', text: 'Germany' }, { value: 'ca', text: 'Canada'}, { value: 'us', text: 'United States'}],
-                    'cameras': [{ value: '', text: 'All Cameras' }, { value: '1', text: 'iPhone SE' }, { value: '2', text: 'Canon EOS 6D'}],
-                    'sorting': [{ value: '', text: 'Sort by date taken' }, { value: 'imported', text: 'Sort by date imported'}, { value: 'score', text: 'Sort by relevance' }],
+                    'categories': [
+                        {value: '', text: 'All Categories'},
+                        {value: 'junction', text: 'Junction'},
+                        {value: 'tourism', text: 'Tourism'},
+                        {value: 'historic', text: 'Historic'},
+                    ],
+                    'countries': [
+                        {value: '', text: 'All Countries'},
+                        {value: 'de', text: 'Germany'},
+                        {value: 'ca', text: 'Canada'},
+                        {value: 'us', text: 'United States'}
+                    ],
+                    'cameras': [
+                        {value: '', text: 'All Cameras'},
+                        {value: '1', text: 'iPhone SE'},
+                        {value: '2', text: 'Canon EOS 6D'},
+                    ],
+                    'sorting': [
+                        {value: 'taken_at DESC', text: 'Newest first'},
+                        {value: 'taken_at', text: 'Oldest first'},
+                        {value: 'created_at DESC', text: 'Recently imported'},
+                    ],
                 },
                 'page': resultPage,
                 'order': order,
@@ -196,11 +240,51 @@
                 'resultTotal': 'Many',
                 'lastQuery': {},
                 'submitTimeout': false,
+                'selected': []
             };
         },
         methods: {
+            overPhoto(photo) {
+
+            },
+            leavePhoto(photo) {
+
+            },
+            clearSelection() {
+                for (let i = 0; i < this.selected.length; i++) {
+                    this.selected[i].selected = false;
+                }
+                this.selected = [];
+                this.snackbarText = '';
+                this.snackbarVisible = false;
+            },
             selectPhoto(photo) {
-                this.$alert.success(photo.getEntityName());
+                console.log(photo)
+                if (photo.selected) {
+                    for (let i = 0; i < this.selected.length; i++) {
+                        if (this.selected[i].id === photo.id) {
+                            this.selected.splice(i, 1)
+                            break;
+                        }
+                    }
+
+                    photo.selected = false;
+                } else {
+                    this.selected.push(photo);
+                    photo.selected = true;
+                }
+
+                if (this.selected.length > 0) {
+                    if (this.selected.length === 1) {
+                        this.snackbarText = 'One photo selected';
+                    } else {
+                        this.snackbarText = this.selected.length + ' photos selected';
+                    }
+                    this.snackbarVisible = true;
+                } else {
+                    this.snackbarText = '';
+                    this.snackbarVisible = false;
+                }
             },
             likePhoto(photo) {
                 photo.Favorite = !photo.Favorite;
@@ -220,7 +304,6 @@
                 const params = {
                     count: this.resultCount,
                     offset: this.resultCount * (this.page - 1),
-                    order: this.order !== '' ? this.order + ' ' + this.dir : '',
                 };
 
                 Object.assign(params, this.query);
@@ -234,8 +317,6 @@
                 const urlParams = {
                     count: this.resultCount,
                     page: this.page,
-                    order: this.order,
-                    dir: this.dir,
                 };
 
                 Object.assign(urlParams, this.query);

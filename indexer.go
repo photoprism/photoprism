@@ -26,28 +26,22 @@ func NewIndexer(originalsPath string, db *gorm.DB) *Indexer {
 	return instance
 }
 
-func (i *Indexer) GetImageTags(jpeg *MediaFile) (result []Tag) {
+func (i *Indexer) GetImageTags(jpeg *MediaFile) (results []*Tag) {
 	if imageBuffer, err := ioutil.ReadFile(jpeg.filename); err == nil {
 		tags, err := recognize.GetImageTags(string(imageBuffer))
 
 		if err != nil {
-			return result
+			return results
 		}
 
 		for _, tag := range tags {
 			if tag.Probability > 0.2 { // TODO: Use config variable
-				var tagModel Tag
-
-				if res := i.db.First(&tagModel, "tag_label = ?", tag.Label); res.Error != nil {
-					tagModel.TagLabel = tag.Label
-				}
-
-				result = append(result, tagModel)
+				results = i.appendTag(results, tag.Label)
 			}
 		}
 	}
 
-	return result
+	return results
 }
 
 func getKeywordWithSynonyms(keyword string) []string {
@@ -81,12 +75,30 @@ func getKeywordsAsString(keywords []string) string {
 	return strings.ToLower(strings.Join(result, ", "))
 }
 
+func (i *Indexer) appendTag(tags []*Tag, label string) []*Tag {
+	if label == "" {
+		return tags
+	}
+
+	label = strings.ToLower(label)
+
+	for _, tag := range tags {
+		if tag.TagLabel == label {
+			return tags
+		}
+	}
+
+	tag := NewTag(label).FirstOrCreate(i.db)
+
+	return append(tags, tag)
+}
+
 func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 	var photo Photo
 	var file, primaryFile File
 	var isPrimary = false
 	var colorNames []string
-	var keywords []string
+	var tags []*Tag
 
 	canonicalName := mediaFile.GetCanonicalNameFromFile()
 	fileHash := mediaFile.GetHash()
@@ -111,17 +123,19 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 			photo.PhotoColors = strings.Join(colorNames, ", ")
 
 			// Tags (TensorFlow)
-			photo.Tags = i.GetImageTags(jpeg)
-
-			for _, tag := range photo.Tags {
-				keywords = append(keywords, tag.TagLabel)
-			}
+			tags = i.GetImageTags(jpeg)
 		}
 
 		if location, err := mediaFile.GetLocation(); err == nil {
 			i.db.FirstOrCreate(location, "id = ?", location.ID)
 			photo.Location = location
-			keywords = append(keywords, location.LocCity, location.LocCounty, location.LocCountry, location.LocCategory, location.LocName, location.LocType)
+
+			tags = i.appendTag(tags, location.LocCity)
+			tags = i.appendTag(tags, location.LocCounty)
+			tags = i.appendTag(tags, location.LocCountry)
+			tags = i.appendTag(tags, location.LocCategory)
+			tags = i.appendTag(tags, location.LocName)
+			tags = i.appendTag(tags, location.LocType)
 
 			if location.LocName != "" { // TODO: User defined title format
 				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocName, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
@@ -140,12 +154,10 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 			}
 		}
 
-		photo.PhotoKeywords = getKeywordsAsString(keywords)
+		photo.Tags = tags
 		photo.Camera = NewCamera(mediaFile.GetCameraModel()).FirstOrCreate(i.db)
 		photo.TakenAt = mediaFile.GetDateCreated()
 		photo.PhotoCanonicalName = canonicalName
-		photo.Files = []File{}
-		photo.Albums = []Album{}
 
 		photo.PhotoFavorite = false
 

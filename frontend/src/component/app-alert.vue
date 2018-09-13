@@ -1,12 +1,14 @@
 <template>
     <v-snackbar
             v-model="visible"
-            bottom
+            :color="color"
+            top
+            right
     >
         {{ text }}
         <v-btn
                 class="pr-0"
-                color="primary"
+
                 icon
                 flat
                 @click="close"
@@ -23,6 +25,7 @@
         data() {
             return {
                 text: '',
+                color: 'primary',
                 visible: false,
                 messages: [],
                 lastMessageId: 1,
@@ -74,13 +77,13 @@
                 this.addMessage('info', message, 3000);
             },
 
-            addMessage: function (type, message, delay) {
+            addMessage: function (color, message, delay) {
                 if (message === this.lastMessage) return;
 
                 this.lastMessageId++;
                 this.lastMessage = message;
 
-                const alert = {'id': this.lastMessageId, 'type': type, 'delay': delay, 'msg': message};
+                const alert = {'id': this.lastMessageId, 'color': color, 'delay': delay, 'msg': message};
 
                 this.messages.push(alert);
 
@@ -98,6 +101,7 @@
 
                 if(message) {
                     this.text = message.msg;
+                    this.color = message.color;
                     this.visible = true;
 
                     setTimeout(() => {

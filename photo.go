@@ -11,7 +11,6 @@ type Photo struct {
 	PhotoTitle          string
 	PhotoDescription    string `gorm:"type:text;"`
 	PhotoArtist         string
-	PhotoKeywords       string
 	PhotoColors         string
 	PhotoVibrantColor   string
 	PhotoMutedColor     string
@@ -22,9 +21,9 @@ type Photo struct {
 	PhotoLong           float64
 	Location            *Location
 	LocationID          uint
-	Tags                []Tag `gorm:"many2many:photo_tags;"`
-	Files               []File
-	Albums              []Album `gorm:"many2many:album_photos;"`
+	Tags                []*Tag `gorm:"many2many:photo_tags;"`
+	Files               []*File
+	Albums              []*Album `gorm:"many2many:album_photos;"`
 	Camera              *Camera
 	CameraID            uint
 }

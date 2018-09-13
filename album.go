@@ -6,6 +6,6 @@ import (
 
 type Album struct {
 	gorm.Model
-	AlbumName   string
-	Photos []Photo `gorm:"many2many:album_photos;"`
+	AlbumName string
+	Photos    []Photo `gorm:"many2many:album_photos;"`
 }

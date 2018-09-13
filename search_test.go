@@ -12,7 +12,7 @@ func TestSearch_Photos(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	search := NewQuery(conf.OriginalsPath, conf.GetDb())
+	search := NewSearch(conf.OriginalsPath, conf.GetDb())
 
 	var form forms.PhotoSearchForm
 

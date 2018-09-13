@@ -3,6 +3,7 @@ package photoprism
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/forms"
+	"strings"
 	"time"
 )
 
@@ -57,9 +58,12 @@ type PhotoSearchResult struct {
 	FileHeight      int
 	FileOrientation int
 	FileAspectRatio float64
+
+	// Tags
+	Tags string
 }
 
-func NewQuery(originalsPath string, db *gorm.DB) *Search {
+func NewSearch(originalsPath string, db *gorm.DB) *Search {
 	instance := &Search{
 		originalsPath: originalsPath,
 		db:            db,
@@ -75,17 +79,21 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 		Select(`photos.*,
 		files.id AS file_id, files.file_name, files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, files.file_orientation,
 		cameras.camera_model,
-		locations.loc_display_name, locations.loc_name, locations.loc_city, locations.loc_postcode, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type`).
+		locations.loc_display_name, locations.loc_name, locations.loc_city, locations.loc_postcode, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type,
+		GROUP_CONCAT(tags.tag_label) AS tags`).
 		Joins("JOIN files ON files.photo_id = photos.id AND files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("LEFT JOIN locations ON locations.id = photos.location_id").
-		Where("photos.deleted_at IS NULL")
+		Joins("LEFT JOIN photo_tags ON photo_tags.photo_id = photos.id").
+		Joins("LEFT JOIN tags ON photo_tags.tag_id = tags.id").
+		Where("photos.deleted_at IS NULL").
+		Group("photos.id, files.id")
 
 	if form.Query != "" {
-		q = q.Where("MATCH (photo_title, photo_description, photo_artist, photo_keywords, photo_colors) AGAINST (? IN BOOLEAN MODE)", form.Query)
+		q = q.Where("tags.tag_label LIKE ? OR MATCH (photo_title, photo_description, photo_artist, photo_colors) AGAINST (?)", strings.ToLower(form.Query)+"%", form.Query)
 	}
 
-	q = q.Order("taken_at").Limit(form.Count).Offset(form.Offset)
+	q = q.Order(form.Order).Limit(form.Count).Offset(form.Offset)
 
 	results := make([]PhotoSearchResult, 0, form.Count)
 
