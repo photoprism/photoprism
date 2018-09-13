@@ -6,7 +6,13 @@ import (
 	"github.com/photoprism/photoprism"
 )
 
-func Start(address string, port int, conf *photoprism.Config) {
+func Start(address string, port int, mode string, conf *photoprism.Config) {
+	if mode != "" {
+		gin.SetMode(mode)
+	} else if conf.Debug == false{
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	app := gin.Default()
 
 	ConfigureRoutes(app, conf)

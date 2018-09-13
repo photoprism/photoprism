@@ -18,6 +18,7 @@ var originalsPath = GetExpandedFilename(testDataPath + "/originals")
 var thumbnailsPath = GetExpandedFilename(testDataPath + "/thumbnails")
 var importPath = GetExpandedFilename(testDataPath + "/import")
 var exportPath = GetExpandedFilename(testDataPath + "/export")
+var serverAssetsPath = GetExpandedFilename("server/assets")
 var databaseDriver = "mysql"
 var databaseDsn = "photoprism:photoprism@tcp(database:3306)/photoprism?parseTime=true"
 
@@ -65,13 +66,15 @@ func (c *Config) InitializeTestData(t *testing.T) {
 
 func NewTestConfig() *Config {
 	return &Config{
-		DarktableCli:   darktableCli,
-		OriginalsPath:  originalsPath,
-		ThumbnailsPath: thumbnailsPath,
-		ImportPath:     importPath,
-		ExportPath:     exportPath,
-		DatabaseDriver: databaseDriver,
-		DatabaseDsn:    databaseDsn,
+		Debug:            false,
+		DarktableCli:     darktableCli,
+		OriginalsPath:    originalsPath,
+		ThumbnailsPath:   thumbnailsPath,
+		ImportPath:       importPath,
+		ExportPath:       exportPath,
+		ServerAssetsPath: serverAssetsPath,
+		DatabaseDriver:   databaseDriver,
+		DatabaseDsn:      databaseDsn,
 	}
 }
 
@@ -90,6 +93,7 @@ func TestConfig_SetValuesFromFile(t *testing.T) {
 	assert.Equal(t, GetExpandedFilename("photos/thumbnails"), c.ThumbnailsPath)
 	assert.Equal(t, GetExpandedFilename("photos/import"), c.ImportPath)
 	assert.Equal(t, GetExpandedFilename("photos/export"), c.ExportPath)
+	assert.Equal(t, GetExpandedFilename("server/assets"), c.ServerAssetsPath)
 	assert.Equal(t, databaseDriver, c.DatabaseDriver)
 	assert.Equal(t, databaseDsn, c.DatabaseDsn)
 }

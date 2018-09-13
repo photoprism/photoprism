@@ -27,12 +27,14 @@ func main() {
 				conf.SetValuesFromCliContext(context)
 
 				fmt.Printf("NAME                  VALUE\n")
+				fmt.Printf("debug                 %t\n", conf.Debug)
 				fmt.Printf("config-file           %s\n", conf.ConfigFile)
 				fmt.Printf("darktable-cli         %s\n", conf.DarktableCli)
 				fmt.Printf("originals-path        %s\n", conf.OriginalsPath)
 				fmt.Printf("thumbnails-path       %s\n", conf.ThumbnailsPath)
 				fmt.Printf("import-path           %s\n", conf.ImportPath)
 				fmt.Printf("export-path           %s\n", conf.ExportPath)
+				fmt.Printf("server-assets-path    %s\n", conf.ServerAssetsPath)
 
 				return nil
 			},
@@ -51,6 +53,11 @@ func main() {
 					Usage: "HTTP server IP address (optional)",
 					Value: "",
 				},
+				cli.StringFlag{
+					Name:  "mode, m",
+					Usage: "debug, release or test",
+					Value: "",
+				},
 			},
 			Action: func(context *cli.Context) error {
 				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
@@ -63,7 +70,7 @@ func main() {
 
 				fmt.Printf("Starting web server at port %d...\n", context.Int("port"))
 
-				server.Start(context.String("ip"), context.Int("port"), conf)
+				server.Start(context.String("ip"), context.Int("port"), context.String("mode"), conf)
 
 				fmt.Println("Done.")
 
@@ -274,6 +281,10 @@ func main() {
 }
 
 var globalCliFlags = []cli.Flag{
+	cli.BoolFlag{
+		Name:  "debug",
+		Usage: "run in debug mode",
+	},
 	cli.StringFlag{
 		Name:  "config-file, c",
 		Usage: "config filename",
@@ -290,6 +301,11 @@ var globalCliFlags = []cli.Flag{
 		Value: "~/Photos/Originals",
 	},
 	cli.StringFlag{
+		Name:  "thumbnails-path",
+		Usage: "thumbnails path",
+		Value: "~/Photos/Thumbnails",
+	},
+	cli.StringFlag{
 		Name:  "import-path",
 		Usage: "import path",
 		Value: "~/Photos/Import",
@@ -300,9 +316,9 @@ var globalCliFlags = []cli.Flag{
 		Value: "~/Photos/Export",
 	},
 	cli.StringFlag{
-		Name:  "thumbnails-path",
-		Usage: "thumbnails path",
-		Value: "~/Photos/Thumbnails",
+		Name:  "server-assets-path",
+		Usage: "server assets path for templates, js and css",
+		Value: "~/Photos/Server",
 	},
 	cli.StringFlag{
 		Name:  "database-driver",

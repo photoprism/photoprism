@@ -5,7 +5,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const PATHS = {
     app: path.join(__dirname, 'src/app.js'),
     css: path.join(__dirname, 'css'),
-    build: path.join(__dirname, '../server/assets/build'),
+    build: path.join(__dirname, '../server/assets/public/build'),
 };
 
 const cssPlugin = new ExtractTextPlugin({

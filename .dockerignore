@@ -1,4 +1,3 @@
 photos/
 frontend/node_modules/*
-vendor/
-server/assets/build/*
+server/assets/public/build/*

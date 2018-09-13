@@ -38,9 +38,9 @@ func TestMediaFile_GetEditedFilename(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	mediaFile1, err := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.jpg")
+	mediaFile1, err := NewMediaFile(conf.ImportPath + "/iphone/IMG_6788.JPG")
 	assert.Nil(t, err)
-	assert.Equal(t, conf.ImportPath+"/iphone/IMG_E6788.jpg", mediaFile1.GetEditedFilename())
+	assert.Equal(t, conf.ImportPath+"/iphone/IMG_E6788.JPG", mediaFile1.GetEditedFilename())
 
 	/* TODO: Add example files to import.zip
 	mediaFile2, err := NewMediaFile("/foo/bar/IMG_E1234.jpg")

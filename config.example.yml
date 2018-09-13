@@ -3,5 +3,6 @@ originals-path: photos/originals
 thumbnails-path: photos/thumbnails
 import-path: photos/import
 export-path: photos/export
+server-assets-path: server/assets
 database-driver: mysql
 database-dsn: photoprism:photoprism@tcp(database:3306)/photoprism?parseTime=true

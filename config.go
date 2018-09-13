@@ -15,15 +15,17 @@ import (
 )
 
 type Config struct {
-	ConfigFile     string
-	DarktableCli   string
-	OriginalsPath  string
-	ThumbnailsPath string
-	ImportPath     string
-	ExportPath     string
-	DatabaseDriver string
-	DatabaseDsn    string
-	db             *gorm.DB
+	Debug            bool
+	ConfigFile       string
+	DarktableCli     string
+	OriginalsPath    string
+	ThumbnailsPath   string
+	ImportPath       string
+	ExportPath       string
+	ServerAssetsPath string
+	DatabaseDriver   string
+	DatabaseDsn      string
+	db               *gorm.DB
 }
 
 type ConfigValues map[string]interface{}
@@ -57,6 +59,10 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 		c.ExportPath = GetExpandedFilename(ExportPath)
 	}
 
+	if ServerAssetsPath, err := yamlConfig.Get("server-assets-path"); err == nil {
+		c.ServerAssetsPath = GetExpandedFilename(ServerAssetsPath)
+	}
+
 	if DarktableCli, err := yamlConfig.Get("darktable-cli"); err == nil {
 		c.DarktableCli = GetExpandedFilename(DarktableCli)
 	}
@@ -73,32 +79,38 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 }
 
 func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
-	if context.IsSet("originals-path") {
-		c.OriginalsPath = GetExpandedFilename(context.String("originals-path"))
+	c.Debug = context.GlobalBool("debug")
+
+	if context.GlobalIsSet("originals-path") {
+		c.OriginalsPath = GetExpandedFilename(context.GlobalString("originals-path"))
 	}
 
-	if context.IsSet("thumbnails-path") {
-		c.ThumbnailsPath = GetExpandedFilename(context.String("thumbnails-path"))
+	if context.GlobalIsSet("thumbnails-path") {
+		c.ThumbnailsPath = GetExpandedFilename(context.GlobalString("thumbnails-path"))
 	}
 
-	if context.IsSet("import-path") {
-		c.ImportPath = GetExpandedFilename(context.String("import-path"))
+	if context.GlobalIsSet("import-path") {
+		c.ImportPath = GetExpandedFilename(context.GlobalString("import-path"))
 	}
 
-	if context.IsSet("export-path") {
-		c.ExportPath = GetExpandedFilename(context.String("export-path"))
+	if context.GlobalIsSet("export-path") {
+		c.ExportPath = GetExpandedFilename(context.GlobalString("export-path"))
 	}
 
-	if context.IsSet("darktable-cli") {
-		c.DarktableCli = GetExpandedFilename(context.String("darktable-cli"))
+	if context.GlobalIsSet("server-assets-path") {
+		c.ServerAssetsPath = GetExpandedFilename(context.GlobalString("server-assets-path"))
 	}
 
-	if context.IsSet("database-driver") {
-		c.DatabaseDriver = context.String("database-driver")
+	if context.GlobalIsSet("darktable-cli") {
+		c.DarktableCli = GetExpandedFilename(context.GlobalString("darktable-cli"))
 	}
 
-	if context.IsSet("database-dsn") {
-		c.DatabaseDsn = context.String("database-dsn")
+	if context.GlobalIsSet("database-driver") {
+		c.DatabaseDriver = context.GlobalString("database-driver")
+	}
+
+	if context.GlobalIsSet("database-dsn") {
+		c.DatabaseDsn = context.GlobalString("database-dsn")
 	}
 
 	return nil
@@ -163,7 +175,7 @@ func (c *Config) GetClientConfig() ConfigValues {
 
 	result := ConfigValues{
 		"title":   "PhotoPrism",
-		"debug":   true,
+		"debug":   c.Debug,
 		"cameras": cameras,
 	}
 
