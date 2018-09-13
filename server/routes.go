@@ -28,15 +28,17 @@ func ConfigureRoutes(app *gin.Engine, conf *photoprism.Config) {
 
 			c.MustBindWith(&form, binding.Form)
 
-			if photos, err := search.Photos(form); err == nil {
-				c.Header("x-result-total", strconv.Itoa(len(photos)))
-				c.Header("x-result-count", strconv.Itoa(form.Count))
-				c.Header("x-result-offset", strconv.Itoa(form.Offset))
+			result, total, err := search.Photos(form)
 
-				c.JSON(http.StatusOK, photos)
-			} else {
-				c.AbortWithError(400, err)
+			if err != nil {
+				c.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 			}
+
+			c.Header("x-result-total", strconv.Itoa(total))
+			c.Header("x-result-count", strconv.Itoa(form.Count))
+			c.Header("x-result-offset", strconv.Itoa(form.Offset))
+
+			c.JSON(http.StatusOK, result)
 		})
 
 		// v1.OPTIONS()

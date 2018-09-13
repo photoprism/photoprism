@@ -100,8 +100,9 @@ ENV GOPATH /go
 ENV GOBIN $GOPATH/bin
 ENV PATH $GOBIN:/usr/local/go/bin:$PATH
 ENV GO111MODULE on
+ENV NODE_ENV production
 
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" /etc/photoprism /var/photos && chmod -R 777 "$GOPATH"
 
 # Download InceptionV3 model
 RUN mkdir -p /model && \
@@ -113,10 +114,12 @@ RUN mkdir -p /model && \
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
 
-RUN cp config.example.yml ~/.photoprism
+RUN cp config.prod.yml /etc/photoprism/config.yml
 
 # Build PhotoPrism
 RUN make dep js install
+
+RUN cp -r server/assets /etc/photoprism
 
 # Expose HTTP port
 EXPOSE 80

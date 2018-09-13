@@ -12,6 +12,10 @@ type Search struct {
 	db            *gorm.DB
 }
 
+type SearchCount struct {
+	Total int
+}
+
 type PhotoSearchResult struct {
 	// Photo
 	ID                  uint
@@ -72,11 +76,10 @@ func NewSearch(originalsPath string, db *gorm.DB) *Search {
 	return instance
 }
 
-func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error) {
-	q := s.db.Preload("Tags").Preload("Files").Preload("Location").Preload("Albums")
-
+func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, int, error) {
+	q := s.db.NewScope(nil).DB()
 	q = q.Table("photos").
-		Select(`photos.*,
+		Select(`SQL_CALC_FOUND_ROWS photos.*,
 		files.id AS file_id, files.file_name, files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, files.file_orientation,
 		cameras.camera_model,
 		locations.loc_display_name, locations.loc_name, locations.loc_city, locations.loc_postcode, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type,
@@ -90,7 +93,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 		Group("photos.id, files.id")
 
 	if form.Query != "" {
-		q = q.Where("tags.tag_label LIKE ? OR MATCH (photo_title, photo_description, photo_artist, photo_colors) AGAINST (?)", strings.ToLower(form.Query)+"%", form.Query)
+		q = q.Where("tags.tag_label LIKE ? OR MATCH (photo_title, photo_description, photo_artist, photo_colors) AGAINST (?)", "%"+strings.ToLower(form.Query)+"%", form.Query)
 	}
 
 	if form.CameraID > 0 {
@@ -104,7 +107,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 	rows, err := q.Rows()
 
 	if err != nil {
-		return results, err
+		return results, 0, err
 	}
 
 	defer rows.Close()
@@ -115,7 +118,12 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 		results = append(results, result)
 	}
 
-	return results, nil
+	// TODO: Check if this works properly with concurrent requests and caching
+	count := &SearchCount{}
+	s.db.Raw("SELECT FOUND_ROWS() AS total").Scan(&count)
+	total := count.Total
+
+	return results, total, nil
 }
 
 func (s *Search) FindFiles(count int, offset int) (files []File) {

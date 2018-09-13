@@ -23,13 +23,14 @@ Vue.prototype.$config = config;
 
 Vue.use(Vuetify, {
     theme: {
-        primary: '#FDD835',
+        primary: '#FFD600',
         secondary: '#b0bec5',
         accent: '#8c9eff',
-        error: '#F44336',
+        error: '#E57373',
         info: '#00B8D4',
         success: '#00BFA5',
         warning: '#FFD600',
+        delete: '#E57373',
     },
 });
 

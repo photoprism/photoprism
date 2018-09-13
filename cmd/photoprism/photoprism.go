@@ -15,7 +15,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "PhotoPrism"
 	app.Usage = "Digital Photo Archive"
-	app.Version = "0.2.0"
+	app.Version = "0.0.0"
 	app.Flags = globalCliFlags
 	app.Commands = []cli.Command{
 		{
@@ -29,12 +29,15 @@ func main() {
 				fmt.Printf("NAME                  VALUE\n")
 				fmt.Printf("debug                 %t\n", conf.Debug)
 				fmt.Printf("config-file           %s\n", conf.ConfigFile)
+				fmt.Printf("server-ip             %s\n", conf.ServerIP)
+				fmt.Printf("server-port           %d\n", conf.ServerPort)
+				fmt.Printf("server-mode           %s\n", conf.ServerMode)
+				fmt.Printf("server-assets-path    %s\n", conf.ServerAssetsPath)
 				fmt.Printf("darktable-cli         %s\n", conf.DarktableCli)
 				fmt.Printf("originals-path        %s\n", conf.OriginalsPath)
 				fmt.Printf("thumbnails-path       %s\n", conf.ThumbnailsPath)
 				fmt.Printf("import-path           %s\n", conf.ImportPath)
 				fmt.Printf("export-path           %s\n", conf.ExportPath)
-				fmt.Printf("server-assets-path    %s\n", conf.ServerAssetsPath)
 
 				return nil
 			},
@@ -44,17 +47,17 @@ func main() {
 			Usage: "Starts web server",
 			Flags: []cli.Flag{
 				cli.IntFlag{
-					Name:  "port, p",
+					Name:  "server-port, p",
 					Usage: "HTTP server port",
 					Value: 80,
 				},
 				cli.StringFlag{
-					Name:  "ip, i",
+					Name:  "server-ip, i",
 					Usage: "HTTP server IP address (optional)",
 					Value: "",
 				},
 				cli.StringFlag{
-					Name:  "mode, m",
+					Name:  "server-mode, m",
 					Usage: "debug, release or test",
 					Value: "",
 				},
@@ -64,13 +67,25 @@ func main() {
 
 				conf.SetValuesFromCliContext(context)
 
+				if context.IsSet("server-ip") {
+					conf.ServerIP = context.String("server-ip")
+				}
+
+				if context.IsSet("server-port") {
+					conf.ServerPort = context.Int("server-port")
+				}
+
+				if context.IsSet("server-mode") {
+					conf.ServerMode = context.String("server-mode")
+				}
+
 				conf.CreateDirectories()
 
 				conf.MigrateDb()
 
 				fmt.Printf("Starting web server at port %d...\n", context.Int("port"))
 
-				server.Start(context.String("ip"), context.Int("port"), context.String("mode"), conf)
+				server.Start(conf)
 
 				fmt.Println("Done.")
 
@@ -288,37 +303,37 @@ var globalCliFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "config-file, c",
 		Usage: "config filename",
-		Value: "~/.photoprism",
+		Value: "/etc/photoprism/config.yml",
 	},
 	cli.StringFlag{
 		Name:  "darktable-cli",
 		Usage: "darktable CLI",
-		Value: "/Applications/darktable.app/Contents/MacOS/darktable-cli",
+		Value: "/usr/bin/darktable-cli",
 	},
 	cli.StringFlag{
 		Name:  "originals-path",
 		Usage: "originals path",
-		Value: "~/Photos/Originals",
+		Value: "/var/photoprism/originals",
 	},
 	cli.StringFlag{
 		Name:  "thumbnails-path",
 		Usage: "thumbnails path",
-		Value: "~/Photos/Thumbnails",
+		Value: "/var/photoprism/thumbnails",
 	},
 	cli.StringFlag{
 		Name:  "import-path",
 		Usage: "import path",
-		Value: "~/Photos/Import",
+		Value: "/var/photoprism/import",
 	},
 	cli.StringFlag{
 		Name:  "export-path",
 		Usage: "export path",
-		Value: "~/Photos/Export",
+		Value: "/var/photoprism/export",
 	},
 	cli.StringFlag{
 		Name:  "server-assets-path",
 		Usage: "server assets path for templates, js and css",
-		Value: "~/Photos/Server",
+		Value: "/var/photoprism/server",
 	},
 	cli.StringFlag{
 		Name:  "database-driver",
@@ -328,6 +343,6 @@ var globalCliFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "database-dsn",
 		Usage: "database data source name (DSN)",
-		Value: "photoprism:photoprism@tcp(database:3306)/photoprism",
+		Value: "photoprism:photoprism@tcp(localhost:3306)/photoprism",
 	},
 }

@@ -17,12 +17,15 @@ import (
 type Config struct {
 	Debug            bool
 	ConfigFile       string
+	ServerIP         string
+	ServerPort       int
+	ServerMode       string
+	ServerAssetsPath string
 	DarktableCli     string
 	OriginalsPath    string
 	ThumbnailsPath   string
 	ImportPath       string
 	ExportPath       string
-	ServerAssetsPath string
 	DatabaseDriver   string
 	DatabaseDsn      string
 	db               *gorm.DB
@@ -43,43 +46,61 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 
 	c.ConfigFile = fileName
 
-	if OriginalsPath, err := yamlConfig.Get("originals-path"); err == nil {
-		c.OriginalsPath = GetExpandedFilename(OriginalsPath)
+	if debug, err := yamlConfig.GetBool("debug"); err == nil {
+		c.Debug = debug
 	}
 
-	if ThumbnailsPath, err := yamlConfig.Get("thumbnails-path"); err == nil {
-		c.ThumbnailsPath = GetExpandedFilename(ThumbnailsPath)
+	if serverIP, err := yamlConfig.Get("server-ip"); err == nil {
+		c.ServerIP = serverIP
 	}
 
-	if ImportPath, err := yamlConfig.Get("import-path"); err == nil {
-		c.ImportPath = GetExpandedFilename(ImportPath)
+	if serverPort, err := yamlConfig.GetInt("server-port"); err == nil {
+		c.ServerPort = int(serverPort)
 	}
 
-	if ExportPath, err := yamlConfig.Get("export-path"); err == nil {
-		c.ExportPath = GetExpandedFilename(ExportPath)
+	if serverMode, err := yamlConfig.Get("server-mode"); err == nil {
+		c.ServerMode = serverMode
 	}
 
-	if ServerAssetsPath, err := yamlConfig.Get("server-assets-path"); err == nil {
-		c.ServerAssetsPath = GetExpandedFilename(ServerAssetsPath)
+	if serverAssetsPath, err := yamlConfig.Get("server-assets-path"); err == nil {
+		c.ServerAssetsPath = GetExpandedFilename(serverAssetsPath)
 	}
 
-	if DarktableCli, err := yamlConfig.Get("darktable-cli"); err == nil {
-		c.DarktableCli = GetExpandedFilename(DarktableCli)
+	if originalsPath, err := yamlConfig.Get("originals-path"); err == nil {
+		c.OriginalsPath = GetExpandedFilename(originalsPath)
 	}
 
-	if DatabaseDriver, err := yamlConfig.Get("database-driver"); err == nil {
-		c.DatabaseDriver = DatabaseDriver
+	if thumbnailsPath, err := yamlConfig.Get("thumbnails-path"); err == nil {
+		c.ThumbnailsPath = GetExpandedFilename(thumbnailsPath)
 	}
 
-	if DatabaseDsn, err := yamlConfig.Get("database-dsn"); err == nil {
-		c.DatabaseDsn = DatabaseDsn
+	if importPath, err := yamlConfig.Get("import-path"); err == nil {
+		c.ImportPath = GetExpandedFilename(importPath)
+	}
+
+	if exportPath, err := yamlConfig.Get("export-path"); err == nil {
+		c.ExportPath = GetExpandedFilename(exportPath)
+	}
+
+	if darktableCli, err := yamlConfig.Get("darktable-cli"); err == nil {
+		c.DarktableCli = GetExpandedFilename(darktableCli)
+	}
+
+	if databaseDriver, err := yamlConfig.Get("database-driver"); err == nil {
+		c.DatabaseDriver = databaseDriver
+	}
+
+	if databaseDsn, err := yamlConfig.Get("database-dsn"); err == nil {
+		c.DatabaseDsn = databaseDsn
 	}
 
 	return nil
 }
 
 func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
-	c.Debug = context.GlobalBool("debug")
+	if context.GlobalBool("debug") {
+		c.Debug = context.GlobalBool("debug")
+	}
 
 	if context.GlobalIsSet("originals-path") {
 		c.OriginalsPath = GetExpandedFilename(context.GlobalString("originals-path"))

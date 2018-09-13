@@ -6,9 +6,9 @@ import (
 	"github.com/photoprism/photoprism"
 )
 
-func Start(address string, port int, mode string, conf *photoprism.Config) {
-	if mode != "" {
-		gin.SetMode(mode)
+func Start(conf *photoprism.Config) {
+	if conf.ServerMode != "" {
+		gin.SetMode(conf.ServerMode)
 	} else if conf.Debug == false{
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -17,5 +17,5 @@ func Start(address string, port int, mode string, conf *photoprism.Config) {
 
 	ConfigureRoutes(app, conf)
 
-	app.Run(fmt.Sprintf("%s:%d", address, port))
+	app.Run(fmt.Sprintf("%s:%d", conf.ServerIP, conf.ServerPort))
 }

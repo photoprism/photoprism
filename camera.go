@@ -1,11 +1,13 @@
 package photoprism
 
 import (
+	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 )
 
 type Camera struct {
 	gorm.Model
+	CameraSlug  string
 	CameraModel string
 	CameraType  string
 	CameraNotes string
@@ -16,8 +18,11 @@ func NewCamera(modelName string) *Camera {
 		modelName = "Unknown"
 	}
 
+	cameraSlug := slug.MakeLang(modelName, "en")
+
 	result := &Camera{
 		CameraModel: modelName,
+		CameraSlug: cameraSlug,
 	}
 
 	return result

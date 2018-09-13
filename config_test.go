@@ -87,7 +87,7 @@ func TestNewConfig(t *testing.T) {
 func TestConfig_SetValuesFromFile(t *testing.T) {
 	c := NewConfig()
 
-	c.SetValuesFromFile(GetExpandedFilename("config.example.yml"))
+	c.SetValuesFromFile(GetExpandedFilename("config.dev.yml"))
 
 	assert.Equal(t, GetExpandedFilename("photos/originals"), c.OriginalsPath)
 	assert.Equal(t, GetExpandedFilename("photos/thumbnails"), c.ThumbnailsPath)

@@ -2,19 +2,15 @@ version: '3.3'
 
 services:
   photoprism:
-    image: photoprism/photoprism
-    command: tail -f /dev/null
+    build: .
     ports:
       - 80:80
     volumes:
-      - .:/go/src/github.com/photoprism/photoprism
-      - ./config.dev.yml:/etc/photoprism/config.yml
+      - photo-data:/var/photos
 
   database:
     image: mysql:latest
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
-    ports:
-      - 13306:3306
     volumes:
       - database-data:/var/lib/mysql
     environment:
@@ -24,5 +20,7 @@ services:
       MYSQL_DATABASE: photoprism
 
 volumes:
+  photo-data:
+    driver: local
   database-data:
     driver: local

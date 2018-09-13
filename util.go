@@ -35,9 +35,15 @@ func getRandomInt(min, max int) int {
 }
 
 func fileExists(filename string) bool {
-	_, err := os.Stat(filename)
+	info, err := os.Stat(filename)
 
-	return err == nil
+	return err == nil && !info.IsDir()
+}
+
+func pathExists(pathname string) bool {
+	info, err := os.Stat(pathname)
+
+	return err == nil && info.IsDir()
 }
 
 func fileHash(filename string) string {

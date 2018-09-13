@@ -2,6 +2,8 @@ const path = require('path');
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
+const webpack = require('webpack');
+
 const PATHS = {
     app: path.join(__dirname, 'src/app.js'),
     css: path.join(__dirname, 'css'),
@@ -16,6 +18,7 @@ const cssPlugin = new ExtractTextPlugin({
 process.noDeprecation = true;
 
 const config = {
+    devtool: false,
     entry: {
         app: PATHS.app,
     },
@@ -33,7 +36,7 @@ const config = {
         },
     },
     plugins: [
-        cssPlugin,
+        cssPlugin
     ],
     node: {
         fs: 'empty',
@@ -100,8 +103,12 @@ const config = {
 };
 
 // No sourcemap for production
-if (process.env.NODE_ENV === "production") {
-    config.devtool = "";
+if (process.env.NODE_ENV !== "production") {
+    const devToolPlugin = new webpack.SourceMapDevToolPlugin({
+        filename: '[name].map',
+    });
+
+    config.plugins.push(devToolPlugin);
 }
 
 module.exports = config;

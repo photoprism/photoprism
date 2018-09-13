@@ -15,8 +15,8 @@ install:
 build:
 	$(GOBUILD) cmd/photoprism/photoprism.go
 js:
-	(cd frontend &&	yarn install)
-	(cd frontend &&	npm run build)
+	(cd frontend &&	yarn install --prod)
+	(cd frontend &&	env NODE_ENV=production npm run build)
 start:
 	$(GORUN) cmd/photoprism/photoprism.go start
 migrate-db:

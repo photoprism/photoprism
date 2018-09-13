@@ -49,6 +49,8 @@
                                           label="Camera"
                                           flat solo
                                           color="blue-grey"
+                                          item-value="ID"
+                                          item-text="CameraModel"
                                           v-model="query.camera_id"
                                           :items="options.cameras">
                                 </v-select>
@@ -121,7 +123,7 @@
                         fab
                         dark
                         small
-                        color="red"
+                        color="delete"
                 >
                     <v-icon>delete</v-icon>
                 </v-btn>
@@ -190,16 +192,11 @@
             const resultCount = query.hasOwnProperty('count') ? parseInt(query['count']) : 60;
             const resultPage = query.hasOwnProperty('page') ? parseInt(query['page']) : 1;
             const resultOffset = resultCount * (resultPage - 1);
-            const order = query.hasOwnProperty('order') && query['order'] != "" ? query['order'] : 'taken_at DESC';
-            const camera_id = query.hasOwnProperty('camera_id') ? parseInt(query['camera_id']) : '';
+            const order = query['order'] ? query['order'] : 'taken_at DESC';
+            const camera_id = query['camera_id'] ? parseInt(query['camera_id']) : 0;
             const q = query.hasOwnProperty('q') ? query['q'] : '';
             const view = query.hasOwnProperty('view') ? query['view'] : 'tile';
-            const cameras = [{value: '', text: 'All Cameras'}];
-
-            console.log(this.$config.getValue('cameras'));
-            this.$config.getValue('cameras').forEach(function (camera) {
-                cameras.push({value: camera.ID, text: camera.CameraModel});
-            });
+            const cameras = [{ID: 0, CameraModel: 'All Cameras'}].concat( this.$config.getValue('cameras'));
 
             return {
                 'snackbarVisible': false,
@@ -329,7 +326,7 @@
                     this.resultCount = parseInt(response.headers['x-result-count']);
                     this.resultOffset = parseInt(response.headers['x-result-offset']);
                     this.results = response.models;
-                    this.$alert.info(this.results.length + ' photos found');
+                    this.$alert.info(this.resultTotal + ' photos found');
                 });
             }
         },
