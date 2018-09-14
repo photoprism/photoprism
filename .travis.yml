@@ -7,7 +7,7 @@ before_script:
   - docker-compose -f docker-compose.travis.yml up -d
 
 script:
-  - docker-compose exec photoprism make dep migrate-db js test
+  - docker-compose exec photoprism make dep tensorflow-model migrate-db js test
 
 after_script:
   - docker-compose -f docker-compose.travis.yml down
