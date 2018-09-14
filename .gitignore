@@ -1,11 +1,17 @@
+# Application files and directories
+/photoprism
+assets/photos/originals/*
+assets/photos/import/*
+assets/photos/export/*
+frontend/node_modules/*
+*.log
+
 # Binaries for programs and plugins
 *.exe
 *.dll
 *.so
 *.dylib
 /*.zip
-/photoprism
-vendor/
 # Test binary, build with `go test -c`
 *.test
 
@@ -14,11 +20,6 @@ vendor/
 
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
-
-# Compiled, config and log files
-*.log
-config.yml
-/tweethog
 
 # Generated files
 .DS_Store
@@ -36,5 +37,3 @@ Thumbs.db
 .settings
 .swp
 .tmp
-/photos/
-node_modules/

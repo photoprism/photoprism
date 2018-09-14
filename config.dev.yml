@@ -1,12 +1,12 @@
 debug: true
 darktable-cli: /usr/bin/darktable-cli
-originals-path: photos/originals
-thumbnails-path: photos/thumbnails
-import-path: photos/import
-export-path: photos/export
+assets-path: assets
+thumbnails-path: assets/thumbnails
+originals-path: assets/photos/originals
+import-path: assets/photos/import
+export-path: assets/photos/export
 server-ip:
 server-mode: debug
 server-port: 80
-server-assets-path: server/assets
 database-driver: mysql
 database-dsn: photoprism:photoprism@tcp(database:3306)/photoprism?parseTime=true

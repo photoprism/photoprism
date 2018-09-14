@@ -102,24 +102,14 @@ ENV PATH $GOBIN:/usr/local/go/bin:$PATH
 ENV GO111MODULE on
 ENV NODE_ENV production
 
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" /etc/photoprism /var/photos && chmod -R 777 "$GOPATH"
-
-# Download InceptionV3 model
-RUN mkdir -p /model && \
-  wget "https://storage.googleapis.com/download.tensorflow.org/models/inception5h.zip" -O /model/inception.zip && \
-  unzip /model/inception.zip -d /model && \
-  chmod -R 777 /model
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
 
-RUN cp config.prod.yml /etc/photoprism/config.yml
-
 # Build PhotoPrism
-RUN make dep js install
-
-RUN cp -r server/assets /etc/photoprism
+RUN make all install
 
 # Expose HTTP port
 EXPOSE 80

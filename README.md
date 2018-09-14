@@ -21,7 +21,7 @@ Originals are stored in the file system in a structured way for easy backup and 
 
 Our goal is to provide the following features (tested as a proof-of-concept):
 - High-performance command line tool
-- [Web frontend](docs/img/screenshot.jpg)
+- [Web frontend](assets/docs/img/screenshot.jpg)
 - No proprietary or binary data formats
 - Automatic RAW to JPEG conversion
 - Duplicate detection (JPEG and RAW can be used simultaneously)
@@ -35,7 +35,7 @@ Web Frontend
 Open a terminal an type `photoprism start` to start the built-in server. It will listen on port 80 by default.
 The UI is based on [Vuetify](https://vuetifyjs.com/en/), a [Material Design](https://material.io/) component framework for Vue.js 2.
 
-![](docs/img/screenshot.jpg)
+![](assets/docs/img/screenshot.jpg)
 
 Setup
 -----
@@ -73,4 +73,4 @@ See [Quick and easy guide for migrating to Go 1.11 modules](https://blog.liquidb
 Concept
 -------
 
-![](docs/img/concept.jpg)
+![](assets/docs/img/concept.jpg)

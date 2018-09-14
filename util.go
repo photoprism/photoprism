@@ -20,7 +20,11 @@ func GetExpandedFilename(filename string) string {
 	usr, _ := user.Current()
 	dir := usr.HomeDir
 
-	if filename[:2] == "~/" {
+	if filename == "" {
+		panic("filename was empty")
+	}
+
+	if len(filename) > 2 && filename[:2] == "~/" {
 		filename = filepath.Join(dir, filename[2:])
 	}
 

@@ -9,9 +9,15 @@ GOGET=$(GOCMD) get
 GOFMT=$(GOCMD) fmt
 BINARY_NAME=photoprism
 
-all: dep js build
-install:
+all: tensorflow-model dep js build
+install: install-bin install-assets install-config
+install-bin:
 	$(GOINSTALL) cmd/photoprism/photoprism.go
+install-assets:
+	cp -r assets /var/photoprism
+install-config:
+	mkdir -p /etc/photoprism
+	cp config.prod.yml /etc/photoprism/config.yml
 build:
 	$(GOBUILD) cmd/photoprism/photoprism.go
 js:
@@ -26,6 +32,8 @@ test:
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
+tensorflow-model:
+	scripts/download-tf-model.sh
 image:
 	docker build . --tag photoprism/photoprism
 	docker push photoprism/photoprism

@@ -10,13 +10,13 @@ import (
 )
 
 func ConfigureRoutes(app *gin.Engine, conf *photoprism.Config) {
-	serverAssetsPath := conf.ServerAssetsPath
-	app.LoadHTMLGlob(serverAssetsPath + "/templates/*")
+	assetsPath := conf.AssetsPath
+	app.LoadHTMLGlob(assetsPath + "/templates/*")
 
-	app.StaticFile("/favicon.ico", serverAssetsPath + "/favicons/favicon.ico")
-	app.StaticFile("/favicon.png", serverAssetsPath + "/favicons/favicon.png")
+	app.StaticFile("/favicon.ico", assetsPath+"/favicons/favicon.ico")
+	app.StaticFile("/favicon.png", assetsPath+"/favicons/favicon.png")
 
-	app.Static("/assets", serverAssetsPath + "/public")
+	app.Static("/assets", assetsPath+"/public")
 
 	// JSON-REST API Version 1
 	v1 := app.Group("/api/v1")

@@ -15,26 +15,30 @@ import (
 )
 
 type Config struct {
-	Debug            bool
-	ConfigFile       string
-	ServerIP         string
-	ServerPort       int
-	ServerMode       string
-	ServerAssetsPath string
-	DarktableCli     string
-	OriginalsPath    string
-	ThumbnailsPath   string
-	ImportPath       string
-	ExportPath       string
-	DatabaseDriver   string
-	DatabaseDsn      string
-	db               *gorm.DB
+	Debug          bool
+	ConfigFile     string
+	ServerIP       string
+	ServerPort     int
+	ServerMode     string
+	AssetsPath     string
+	ThumbnailsPath string
+	OriginalsPath  string
+	ImportPath     string
+	ExportPath     string
+	DarktableCli   string
+	DatabaseDriver string
+	DatabaseDsn    string
+	db             *gorm.DB
 }
 
 type ConfigValues map[string]interface{}
 
-func NewConfig() *Config {
-	return &Config{}
+func NewConfig(context *cli.Context) *Config {
+	c := &Config{}
+	c.SetValuesFromFile(GetExpandedFilename(context.GlobalString("config-file")))
+	c.SetValuesFromCliContext(context)
+
+	return c
 }
 
 func (c *Config) SetValuesFromFile(fileName string) error {
@@ -62,16 +66,16 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 		c.ServerMode = serverMode
 	}
 
-	if serverAssetsPath, err := yamlConfig.Get("server-assets-path"); err == nil {
-		c.ServerAssetsPath = GetExpandedFilename(serverAssetsPath)
-	}
-
-	if originalsPath, err := yamlConfig.Get("originals-path"); err == nil {
-		c.OriginalsPath = GetExpandedFilename(originalsPath)
+	if assetsPath, err := yamlConfig.Get("assets-path"); err == nil {
+		c.AssetsPath = GetExpandedFilename(assetsPath)
 	}
 
 	if thumbnailsPath, err := yamlConfig.Get("thumbnails-path"); err == nil {
 		c.ThumbnailsPath = GetExpandedFilename(thumbnailsPath)
+	}
+
+	if originalsPath, err := yamlConfig.Get("originals-path"); err == nil {
+		c.OriginalsPath = GetExpandedFilename(originalsPath)
 	}
 
 	if importPath, err := yamlConfig.Get("import-path"); err == nil {
@@ -102,12 +106,16 @@ func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 		c.Debug = context.GlobalBool("debug")
 	}
 
-	if context.GlobalIsSet("originals-path") {
-		c.OriginalsPath = GetExpandedFilename(context.GlobalString("originals-path"))
+	if context.GlobalIsSet("assets-path") {
+		c.AssetsPath = GetExpandedFilename(context.GlobalString("assets-path"))
 	}
 
 	if context.GlobalIsSet("thumbnails-path") {
 		c.ThumbnailsPath = GetExpandedFilename(context.GlobalString("thumbnails-path"))
+	}
+
+	if context.GlobalIsSet("originals-path") {
+		c.OriginalsPath = GetExpandedFilename(context.GlobalString("originals-path"))
 	}
 
 	if context.GlobalIsSet("import-path") {
@@ -116,10 +124,6 @@ func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 
 	if context.GlobalIsSet("export-path") {
 		c.ExportPath = GetExpandedFilename(context.GlobalString("export-path"))
-	}
-
-	if context.GlobalIsSet("server-assets-path") {
-		c.ServerAssetsPath = GetExpandedFilename(context.GlobalString("server-assets-path"))
 	}
 
 	if context.GlobalIsSet("darktable-cli") {
@@ -166,6 +170,10 @@ func (c *Config) ConnectToDatabase() error {
 	c.db = db
 
 	return err
+}
+
+func (c *Config) GetTensorFlowModelPath() string {
+	return c.AssetsPath + "/tensorflow"
 }
 
 func (c *Config) GetDb() *gorm.DB {

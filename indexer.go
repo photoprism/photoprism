@@ -3,8 +3,6 @@ package photoprism
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/recognize"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -14,12 +12,14 @@ import (
 
 type Indexer struct {
 	originalsPath string
+	tensorFlow    *TensorFlow
 	db            *gorm.DB
 }
 
-func NewIndexer(originalsPath string, db *gorm.DB) *Indexer {
+func NewIndexer(originalsPath string, tensorFlow *TensorFlow, db *gorm.DB) *Indexer {
 	instance := &Indexer{
 		originalsPath: originalsPath,
+		tensorFlow:    tensorFlow,
 		db:            db,
 	}
 
@@ -27,17 +27,15 @@ func NewIndexer(originalsPath string, db *gorm.DB) *Indexer {
 }
 
 func (i *Indexer) GetImageTags(jpeg *MediaFile) (results []*Tag) {
-	if imageBuffer, err := ioutil.ReadFile(jpeg.filename); err == nil {
-		tags, err := recognize.GetImageTags(string(imageBuffer))
+	tags, err := i.tensorFlow.GetImageTagsFromFile(jpeg.filename)
 
-		if err != nil {
-			return results
-		}
+	if err != nil {
+		return results
+	}
 
-		for _, tag := range tags {
-			if tag.Probability > 0.2 { // TODO: Use config variable
-				results = i.appendTag(results, tag.Label)
-			}
+	for _, tag := range tags {
+		if tag.Probability > 0.15 { // TODO: Use config variable
+			results = i.appendTag(results, tag.Label)
 		}
 	}
 

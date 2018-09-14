@@ -8,7 +8,9 @@ import (
 func TestNewImporter(t *testing.T) {
 	conf := NewTestConfig()
 
-	indexer := NewIndexer(conf.OriginalsPath, conf.GetDb())
+	tensorFlow := NewTensorFlow(conf.GetTensorFlowModelPath())
+
+	indexer := NewIndexer(conf.OriginalsPath, tensorFlow, conf.GetDb())
 
 	importer := NewImporter(conf.OriginalsPath, indexer)
 
@@ -20,7 +22,9 @@ func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	indexer := NewIndexer(conf.OriginalsPath, conf.GetDb())
+	tensorFlow := NewTensorFlow(conf.GetTensorFlowModelPath())
+
+	indexer := NewIndexer(conf.OriginalsPath, tensorFlow, conf.GetDb())
 
 	importer := NewImporter(conf.OriginalsPath, indexer)
 
@@ -31,7 +35,9 @@ func TestImporter_GetDestinationFilename(t *testing.T) {
 	conf := NewTestConfig()
 	conf.InitializeTestData(t)
 
-	indexer := NewIndexer(conf.OriginalsPath, conf.GetDb())
+	tensorFlow := NewTensorFlow(conf.GetTensorFlowModelPath())
+
+	indexer := NewIndexer(conf.OriginalsPath, tensorFlow, conf.GetDb())
 
 	importer := NewImporter(conf.OriginalsPath, indexer)
 

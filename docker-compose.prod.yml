@@ -6,7 +6,7 @@ services:
     ports:
       - 80:80
     volumes:
-      - photo-data:/var/photos
+      - photo-data:/var/photoprism/photos
 
   database:
     image: mysql:latest

@@ -10,8 +10,6 @@ import (
 )
 
 func main() {
-	conf := photoprism.NewConfig()
-
 	app := cli.NewApp()
 	app.Name = "PhotoPrism"
 	app.Usage = "Digital Photo Archive"
@@ -22,9 +20,7 @@ func main() {
 			Name:  "config",
 			Usage: "Displays global configuration values",
 			Action: func(context *cli.Context) error {
-				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
-
-				conf.SetValuesFromCliContext(context)
+				conf := photoprism.NewConfig(context)
 
 				fmt.Printf("NAME                  VALUE\n")
 				fmt.Printf("debug                 %t\n", conf.Debug)
@@ -32,12 +28,14 @@ func main() {
 				fmt.Printf("server-ip             %s\n", conf.ServerIP)
 				fmt.Printf("server-port           %d\n", conf.ServerPort)
 				fmt.Printf("server-mode           %s\n", conf.ServerMode)
-				fmt.Printf("server-assets-path    %s\n", conf.ServerAssetsPath)
-				fmt.Printf("darktable-cli         %s\n", conf.DarktableCli)
+				fmt.Printf("assets-path           %s\n", conf.AssetsPath)
 				fmt.Printf("originals-path        %s\n", conf.OriginalsPath)
 				fmt.Printf("thumbnails-path       %s\n", conf.ThumbnailsPath)
 				fmt.Printf("import-path           %s\n", conf.ImportPath)
 				fmt.Printf("export-path           %s\n", conf.ExportPath)
+				fmt.Printf("darktable-cli         %s\n", conf.DarktableCli)
+				fmt.Printf("database-driver       %s\n", conf.DatabaseDriver)
+				fmt.Printf("database-dsn          %s\n", conf.DatabaseDsn)
 
 				return nil
 			},
@@ -63,9 +61,7 @@ func main() {
 				},
 			},
 			Action: func(context *cli.Context) error {
-				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
-
-				conf.SetValuesFromCliContext(context)
+				conf := photoprism.NewConfig(context)
 
 				if context.IsSet("server-ip") {
 					conf.ServerIP = context.String("server-ip")
@@ -96,9 +92,7 @@ func main() {
 			Name:  "migrate-db",
 			Usage: "Automatically migrates / initializes database",
 			Action: func(context *cli.Context) error {
-				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
-
-				conf.SetValuesFromCliContext(context)
+				conf := photoprism.NewConfig(context)
 
 				fmt.Println("Migrating database...")
 
@@ -113,9 +107,7 @@ func main() {
 			Name:  "import",
 			Usage: "Imports photos",
 			Action: func(context *cli.Context) error {
-				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
-
-				conf.SetValuesFromCliContext(context)
+				conf := photoprism.NewConfig(context)
 
 				conf.CreateDirectories()
 
@@ -123,7 +115,9 @@ func main() {
 
 				fmt.Printf("Importing photos from %s...\n", conf.ImportPath)
 
-				indexer := photoprism.NewIndexer(conf.OriginalsPath, conf.GetDb())
+				tensorFlow := photoprism.NewTensorFlow(conf.GetTensorFlowModelPath())
+
+				indexer := photoprism.NewIndexer(conf.OriginalsPath, tensorFlow, conf.GetDb())
 
 				importer := photoprism.NewImporter(conf.OriginalsPath, indexer)
 
@@ -138,9 +132,7 @@ func main() {
 			Name:  "index",
 			Usage: "Re-indexes all originals",
 			Action: func(context *cli.Context) error {
-				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
-
-				conf.SetValuesFromCliContext(context)
+				conf := photoprism.NewConfig(context)
 
 				conf.CreateDirectories()
 
@@ -148,7 +140,9 @@ func main() {
 
 				fmt.Printf("Indexing photos in %s...\n", conf.OriginalsPath)
 
-				indexer := photoprism.NewIndexer(conf.OriginalsPath, conf.GetDb())
+				tensorFlow := photoprism.NewTensorFlow(conf.GetTensorFlowModelPath())
+
+				indexer := photoprism.NewIndexer(conf.OriginalsPath, tensorFlow, conf.GetDb())
 
 				indexer.IndexAll()
 
@@ -161,9 +155,7 @@ func main() {
 			Name:  "convert",
 			Usage: "Converts RAW originals to JPEG",
 			Action: func(context *cli.Context) error {
-				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
-
-				conf.SetValuesFromCliContext(context)
+				conf := photoprism.NewConfig(context)
 
 				conf.CreateDirectories()
 
@@ -196,9 +188,7 @@ func main() {
 				},
 			},
 			Action: func(context *cli.Context) error {
-				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
-
-				conf.SetValuesFromCliContext(context)
+				conf := photoprism.NewConfig(context)
 
 				conf.CreateDirectories()
 
@@ -247,9 +237,7 @@ func main() {
 				},
 			},
 			Action: func(context *cli.Context) error {
-				conf.SetValuesFromFile(photoprism.GetExpandedFilename(context.GlobalString("config-file")))
-
-				conf.SetValuesFromCliContext(context)
+				conf := photoprism.NewConfig(context)
 
 				conf.CreateDirectories()
 
@@ -313,27 +301,27 @@ var globalCliFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "originals-path",
 		Usage: "originals path",
-		Value: "/var/photoprism/originals",
+		Value: "/var/photoprism/photos/originals",
 	},
 	cli.StringFlag{
 		Name:  "thumbnails-path",
 		Usage: "thumbnails path",
-		Value: "/var/photoprism/thumbnails",
+		Value: "/var/photoprism/photos/thumbnails",
 	},
 	cli.StringFlag{
 		Name:  "import-path",
 		Usage: "import path",
-		Value: "/var/photoprism/import",
+		Value: "/var/photoprism/photos/import",
 	},
 	cli.StringFlag{
 		Name:  "export-path",
 		Usage: "export path",
-		Value: "/var/photoprism/export",
+		Value: "/var/photoprism/photos/export",
 	},
 	cli.StringFlag{
-		Name:  "server-assets-path",
-		Usage: "server assets path for templates, js and css",
-		Value: "/var/photoprism/server",
+		Name:  "assets-path",
+		Usage: "assets path",
+		Value: "/var/photoprism",
 	},
 	cli.StringFlag{
 		Name:  "database-driver",
