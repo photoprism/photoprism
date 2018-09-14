@@ -8,7 +8,7 @@ services:
       - 80:80
     volumes:
       - .:/go/src/github.com/photoprism/photoprism
-      - ./config.dev.yml:/etc/photoprism/config.yml
+      - ./configs/photoprism.dev.yml:/etc/photoprism/photoprism.yml
 
   database:
     image: mysql:latest

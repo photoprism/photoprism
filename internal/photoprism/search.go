@@ -2,7 +2,7 @@ package photoprism
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/forms"
+	"github.com/photoprism/photoprism/internal/forms"
 	"strings"
 	"time"
 )

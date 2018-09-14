@@ -10,6 +10,7 @@ require (
 	github.com/denisenkom/go-mssqldb v0.0.0-20180901172138-1eb28afdf9b6
 	github.com/disintegration/imaging v1.5.0
 	github.com/djherbis/times v1.0.1
+	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7
 	github.com/gin-gonic/gin v1.3.0
 	github.com/go-sql-driver/mysql v1.4.0
@@ -17,6 +18,7 @@ require (
 	github.com/gosimple/slug v1.2.0
 	github.com/jinzhu/gorm v1.9.1
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a
+	github.com/jinzhu/now v0.0.0-20180511015916-ed742868f2ae // indirect
 	github.com/json-iterator/go v1.1.5
 	github.com/kylelemons/go-gypsy v0.0.0-20160905020020-08cad365cd28
 	github.com/lib/pq v1.0.0

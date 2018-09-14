@@ -10,13 +10,14 @@ import (
 	"testing"
 )
 
-const testDataPath = "assets/testdata"
+const testDataPath = "testdata"
 const testDataUrl = "https://www.dropbox.com/s/na9p9wwt98l7m5b/import.zip?dl=1"
 const testDataHash = "ed3bdb2fe86ea662bc863b63e219b47b8d9a74024757007f7979887d"
+const testConfigFile = "../../configs/photoprism.dev.yml"
 
 var darktableCli = "/usr/bin/darktable-cli"
 var testDataZip = GetExpandedFilename(testDataPath + "/import.zip")
-var assetsPath = GetExpandedFilename("assets")
+var assetsPath = GetExpandedFilename("../../assets")
 var thumbnailsPath = GetExpandedFilename(testDataPath + "/thumbnails")
 var originalsPath = GetExpandedFilename(testDataPath + "/originals")
 var importPath = GetExpandedFilename(testDataPath + "/import")
@@ -83,18 +84,25 @@ func NewTestConfig() *Config {
 func getTestCliContext() *cli.Context {
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.Bool("debug", false, "doc")
-	globalSet.String("config-file", "config.dev.yml", "doc")
+	globalSet.String("config-file", testConfigFile, "doc")
 	globalSet.String("assets-path", assetsPath, "doc")
 	globalSet.String("originals-path", originalsPath, "doc")
-	globalSet.String("darktable-cli ", darktableCli, "doc")
+	globalSet.String("darktable-cli", darktableCli, "doc")
 
-	return cli.NewContext(nil, globalSet, nil)
+	c := cli.NewContext(nil, globalSet, nil)
+
+	c.Set("config-file", testConfigFile)
+	c.Set("assets-path", assetsPath)
+	c.Set("originals-path", originalsPath)
+	c.Set("darktable-cli", darktableCli)
+
+	return c
 }
 
 func TestNewConfig(t *testing.T) {
 	context := getTestCliContext()
 
-	assert.False(t, context.IsSet("assets-path"))
+	assert.True(t, context.IsSet("assets-path"))
 	assert.False(t, context.Bool("debug"))
 
 	c := NewConfig(context)
@@ -108,7 +116,7 @@ func TestNewConfig(t *testing.T) {
 func TestConfig_SetValuesFromFile(t *testing.T) {
 	c := NewConfig(getTestCliContext())
 
-	c.SetValuesFromFile(GetExpandedFilename("config.dev.yml"))
+	c.SetValuesFromFile(GetExpandedFilename(testConfigFile))
 
 	assert.Equal(t, GetExpandedFilename("assets"), c.AssetsPath)
 	assert.Equal(t, GetExpandedFilename("assets/thumbnails"), c.ThumbnailsPath)

@@ -3,7 +3,7 @@ package server
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism"
+	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
 func Start(conf *photoprism.Config) {

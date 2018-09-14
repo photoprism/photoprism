@@ -4,10 +4,10 @@ services:
   - docker
 
 before_script:
-  - docker-compose -f docker-compose.travis.yml up -d
+  - docker-compose -f configs/docker-compose.travis.yml up -d
 
 script:
-  - docker-compose exec photoprism make dep tensorflow-model migrate-db js test
+  - docker-compose exec photoprism make all migrate-db test
 
 after_script:
-  - docker-compose -f docker-compose.travis.yml down
+  - docker-compose -f configs/docker-compose.travis.yml down

@@ -17,7 +17,7 @@ install-assets:
 	cp -r assets /var/photoprism
 install-config:
 	mkdir -p /etc/photoprism
-	cp config.prod.yml /etc/photoprism/config.yml
+	cp configs/photoprism.prod.yml /etc/photoprism/photoprism.yml
 build:
 	$(GOBUILD) cmd/photoprism/photoprism.go
 js:

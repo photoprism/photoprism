@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/araddon/dateparse"
-	"github.com/photoprism/photoprism"
-	"github.com/photoprism/photoprism/server"
+	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/server"
 	"github.com/urfave/cli"
 	"os"
 )
@@ -79,7 +79,7 @@ func main() {
 
 				conf.MigrateDb()
 
-				fmt.Printf("Starting web server at port %d...\n", context.Int("port"))
+				fmt.Printf("Starting web server at port %d...\n", context.Int("server-port"))
 
 				server.Start(conf)
 
@@ -291,7 +291,7 @@ var globalCliFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "config-file, c",
 		Usage: "config filename",
-		Value: "/etc/photoprism/config.yml",
+		Value: "/etc/photoprism/photoprism.yml",
 	},
 	cli.StringFlag{
 		Name:  "darktable-cli",
