@@ -6,6 +6,7 @@ services:
     command: tail -f /dev/null
     volumes:
       - .:/go/src/github.com/photoprism/photoprism
+      - ./configs/photoprism.dev.yml:/etc/photoprism/photoprism.yml
 
   database:
     image: mysql:latest
