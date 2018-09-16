@@ -13,7 +13,7 @@ PhotoPrism
 [issues]: https://github.com/photoprism/photoprism/issues
 [ci]: https://travis-ci.org/photoprism/photoprism
 
-PhotoPrism is a server-based application for automatically tagging, searching and organizing large amounts of JPEG and RAW files.
+PhotoPrism is a server-based application for automatically tagging, searching and organizing digital photo collections.
 It is functionally similar to popular cloud services such as [Flickr](https://www.flickr.com/) or [Google Photos](https://photos.google.com/).
 Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
 

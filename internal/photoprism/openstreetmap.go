@@ -2,29 +2,12 @@ package photoprism
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/jinzhu/gorm"
+	. "github.com/photoprism/photoprism/internal/models"
+	"github.com/pkg/errors"
 	"net/http"
 	"strconv"
 )
-
-type Location struct {
-	gorm.Model
-	LocDisplayName string
-	LocLat         float64
-	LocLong        float64
-	LocCategory    string
-	LocType        string
-	LocName        string
-	LocCity        string
-	LocPostcode    string
-	LocCounty      string
-	LocState       string
-	LocCountry     string
-	LocCountryCode string
-	LocFavorite    bool
-}
 
 type OpenstreetmapAddress struct {
 	Town        string `json:"town"`

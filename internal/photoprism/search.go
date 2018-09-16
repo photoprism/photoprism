@@ -2,7 +2,8 @@ package photoprism
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/forms"
+	. "github.com/photoprism/photoprism/internal/forms"
+	. "github.com/photoprism/photoprism/internal/models"
 	"strings"
 	"time"
 )
@@ -76,7 +77,7 @@ func NewSearch(originalsPath string, db *gorm.DB) *Search {
 	return instance
 }
 
-func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, int, error) {
+func (s *Search) Photos(form PhotoSearchForm) ([]PhotoSearchResult, int, error) {
 	q := s.db.NewScope(nil).DB()
 	q = q.Table("photos").
 		Select(`SQL_CALC_FOUND_ROWS photos.*,

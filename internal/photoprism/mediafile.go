@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/brett-lempereur/ish"
 	"github.com/djherbis/times"
+	. "github.com/photoprism/photoprism/internal/models"
 	"github.com/pkg/errors"
 	"github.com/steakknife/hamming"
 	"image"

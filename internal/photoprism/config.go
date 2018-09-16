@@ -7,6 +7,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/kylelemons/go-gypsy/yaml"
+	. "github.com/photoprism/photoprism/internal/models"
 	"github.com/urfave/cli"
 	"log"
 	"os"
