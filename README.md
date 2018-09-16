@@ -17,9 +17,10 @@ PhotoPrism is a server-based application for automatically tagging, searching an
 It is functionally similar to popular cloud services such as [Flickr](https://www.flickr.com/) or [Google Photos](https://photos.google.com/).
 Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
 
-*Note: This software is still alpha and under active development. You're welcome to ask if you have any questions or would like to support the project.*
+*Note: This software is under active development. There is no stable release yet. You're welcome to leave a star to show your interest.*
 
-Our goal is to provide the following features (tested as a proof-of-concept):
+The goal of this project is to provide the following features (tested as a proof-of-concept):
+
 - High-performance command line tool
 - [Web frontend](assets/docs/img/screenshot.jpg)
 - No proprietary or binary data formats
