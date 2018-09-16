@@ -19,16 +19,17 @@ Originals are stored in the file system in a structured way for easy backup and 
 
 *Note: This software is under active development. There is no stable release yet. You're welcome to leave a star to show your interest.*
 
-The goal of this project is to provide the following features (tested as a proof-of-concept):
+The final release will contain the following features (tested as a proof-of-concept):
 
-- High-performance command line tool
 - [Web frontend](assets/docs/img/screenshot.jpg)
+- High-performance command line tool
 - No proprietary or binary data formats
 - Automatic RAW to JPEG conversion
 - Duplicate detection (JPEG and RAW can be used simultaneously)
 - Automated tagging using [Google TensorFlow](https://www.tensorflow.org/install/install_go)
 - [Reverse geocoding](https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding) based on latitude and longitude
 - Image search with powerful filters
+- Albums to organize your photos
 - Easy backup and export
 
 Web Frontend
