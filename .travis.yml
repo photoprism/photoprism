@@ -7,7 +7,7 @@ before_script:
   - docker-compose -f docker-compose.travis.yml up -d --build
 
 script:
-  - docker-compose -f docker-compose.travis.yml exec photoprism make all migrate-db test
+  - docker-compose -f docker-compose.travis.yml exec photoprism make migrate-db test
 
 after_script:
   - docker-compose -f docker-compose.travis.yml down
