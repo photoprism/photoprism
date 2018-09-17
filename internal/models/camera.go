@@ -22,7 +22,7 @@ func NewCamera(modelName string) *Camera {
 
 	result := &Camera{
 		CameraModel: modelName,
-		CameraSlug: cameraSlug,
+		CameraSlug:  cameraSlug,
 	}
 
 	return result

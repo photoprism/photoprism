@@ -13,12 +13,12 @@ import (
 
 type TensorFlow struct {
 	modelPath string
-	graph  *tf.Graph
-	labels []string
+	graph     *tf.Graph
+	labels    []string
 }
 
 func NewTensorFlow(tensorFlowModelPath string) *TensorFlow {
-	return &TensorFlow{modelPath:tensorFlowModelPath}
+	return &TensorFlow{modelPath: tensorFlowModelPath}
 }
 
 type TensorFlowLabel struct {
@@ -129,7 +129,6 @@ func (t *TensorFlow) findBestLabels(probabilities []float32) []TensorFlowLabel {
 	// Return top 5 labels
 	return resultLabels[:5]
 }
-
 
 func (t *TensorFlow) makeTensorFromImage(image string, imageFormat string) (*tf.Tensor, error) {
 	tensor, err := tf.NewTensor(image)
