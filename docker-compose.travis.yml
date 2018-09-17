@@ -5,21 +5,12 @@ services:
     build: .
     image: photoprism/photoprism
     command: tail -f /dev/null
-    volumes:
-      - .:/go/src/github.com/photoprism/photoprism
-      - ./configs/photoprism.dev.yml:/etc/photoprism/photoprism.yml
 
   database:
     image: mysql:latest
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
-    volumes:
-      - database-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
-
-volumes:
-  database-data:
-    driver: local

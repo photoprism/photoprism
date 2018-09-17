@@ -14,6 +14,7 @@ after_script:
 
 deploy:
   provider: script
-  script: scripts/docker_push.sh
+  script: make docker-push
+  skip_cleanup: true
   on:
     branch: master
