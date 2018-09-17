@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   photoprism:
-    build: .
+    image: photoprism/photoprism
     ports:
       - 80:80
     volumes:

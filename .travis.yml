@@ -4,10 +4,16 @@ services:
   - docker
 
 before_script:
-  - docker-compose -f docker-compose.travis.yml up -d
+  - docker-compose -f docker-compose.travis.yml up -d --build
 
 script:
   - docker-compose -f docker-compose.travis.yml exec photoprism make all migrate-db test
 
 after_script:
   - docker-compose -f docker-compose.travis.yml down
+
+deploy:
+  provider: script
+  script: scripts/docker_push.sh
+  on:
+    branch: master

@@ -14,10 +14,16 @@ install: install-bin install-assets install-config
 install-bin:
 	$(GOINSTALL) cmd/photoprism/photoprism.go
 install-assets:
-	cp -r assets /var/photoprism
+	mkdir -p /var/photoprism
+	mkdir -p /var/photoprism/photos
+	mkdir -p /var/photoprism/thumbnails
+	cp -r assets/favicons /var/photoprism
+	cp -r assets/public /var/photoprism
+	cp -r assets/templates /var/photoprism
+	cp -r assets/tensorflow /var/photoprism
 install-config:
 	mkdir -p /etc/photoprism
-	cp configs/photoprism.prod.yml /etc/photoprism/photoprism.yml
+	test -e /etc/photoprism/photoprism.yml || cp -n configs/photoprism.prod.yml /etc/photoprism/photoprism.yml
 build:
 	$(GOBUILD) cmd/photoprism/photoprism.go
 js:
@@ -34,9 +40,8 @@ clean:
 	rm -f $(BINARY_NAME)
 tensorflow-model:
 	scripts/download-tf-model.sh
-image:
-	docker build . --tag photoprism/photoprism
-	docker push photoprism/photoprism
+docker-push:
+	scripts/docker-push.sh
 fmt:
 	$(GOFMT) ./...
 dep:
