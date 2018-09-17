@@ -9,7 +9,7 @@ services:
       - 80:80
     volumes:
       - .:/go/src/github.com/photoprism/photoprism
-      - ./configs/photoprism.dev.yml:/etc/photoprism/photoprism.yml
+      - ./configs/photoprism.dev.yml:/etc/photoprism/photoprism.yml:ro
 
   database:
     image: mysql:latest
@@ -17,13 +17,9 @@ services:
     ports:
       - 13306:3306
     volumes:
-      - database-data:/var/lib/mysql
+      - /var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
-
-volumes:
-  database-data:
-    driver: local
