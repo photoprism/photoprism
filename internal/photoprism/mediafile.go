@@ -6,7 +6,6 @@ import (
 	"github.com/brett-lempereur/ish"
 	"github.com/djherbis/times"
 	. "github.com/photoprism/photoprism/internal/models"
-	"github.com/pkg/errors"
 	"github.com/steakknife/hamming"
 	"image"
 	_ "image/gif"
@@ -53,43 +52,43 @@ var FileExtensions = map[string]string{
 	".aae":  FileTypeAae,
 	".heif": FileTypeHEIF,
 	".heic": FileTypeHEIF,
-	".3fr": FileTypeRaw,
-	".ari": FileTypeRaw,
-	".bay": FileTypeRaw,
-	".cr3": FileTypeRaw,
-	".cap": FileTypeRaw,
+	".3fr":  FileTypeRaw,
+	".ari":  FileTypeRaw,
+	".bay":  FileTypeRaw,
+	".cr3":  FileTypeRaw,
+	".cap":  FileTypeRaw,
 	".data": FileTypeRaw,
-	".dcs": FileTypeRaw,
-	".dcr": FileTypeRaw,
-	".drf": FileTypeRaw,
-	".eip": FileTypeRaw,
-	".erf": FileTypeRaw,
-	".fff": FileTypeRaw,
-	".gpr": FileTypeRaw,
-	".iiq": FileTypeRaw,
-	".k25": FileTypeRaw,
-	".kdc": FileTypeRaw,
-	".mdc": FileTypeRaw,
-	".mef": FileTypeRaw,
-	".mos": FileTypeRaw,
-	".mrw": FileTypeRaw,
-	".nrw": FileTypeRaw,
-	".obm": FileTypeRaw,
-	".orf": FileTypeRaw,
-	".pef": FileTypeRaw,
-	".ptx": FileTypeRaw,
-	".pxn": FileTypeRaw,
-	".r3d": FileTypeRaw,
-	".raf": FileTypeRaw,
-	".raw": FileTypeRaw,
-	".rwl": FileTypeRaw,
-	".rw2": FileTypeRaw,
-	".rwz": FileTypeRaw,
-	".sr2": FileTypeRaw,
-	".srf": FileTypeRaw,
-	".srw": FileTypeRaw,
-	".tif": FileTypeRaw,
-	".x3f": FileTypeRaw,
+	".dcs":  FileTypeRaw,
+	".dcr":  FileTypeRaw,
+	".drf":  FileTypeRaw,
+	".eip":  FileTypeRaw,
+	".erf":  FileTypeRaw,
+	".fff":  FileTypeRaw,
+	".gpr":  FileTypeRaw,
+	".iiq":  FileTypeRaw,
+	".k25":  FileTypeRaw,
+	".kdc":  FileTypeRaw,
+	".mdc":  FileTypeRaw,
+	".mef":  FileTypeRaw,
+	".mos":  FileTypeRaw,
+	".mrw":  FileTypeRaw,
+	".nrw":  FileTypeRaw,
+	".obm":  FileTypeRaw,
+	".orf":  FileTypeRaw,
+	".pef":  FileTypeRaw,
+	".ptx":  FileTypeRaw,
+	".pxn":  FileTypeRaw,
+	".r3d":  FileTypeRaw,
+	".raf":  FileTypeRaw,
+	".raw":  FileTypeRaw,
+	".rwl":  FileTypeRaw,
+	".rw2":  FileTypeRaw,
+	".rwz":  FileTypeRaw,
+	".sr2":  FileTypeRaw,
+	".srf":  FileTypeRaw,
+	".srw":  FileTypeRaw,
+	".tif":  FileTypeRaw,
+	".x3f":  FileTypeRaw,
 }
 
 type MediaFile struct {
@@ -189,6 +188,10 @@ func (m *MediaFile) GetCanonicalNameFromFile() string {
 	}
 }
 
+func (m *MediaFile) GetCanonicalNameFromFileWithDirectory() string {
+	return m.GetDirectory() + string(os.PathSeparator) + m.GetCanonicalNameFromFile()
+}
+
 func (m *MediaFile) GetPerceptualHash() (string, error) {
 	if m.perceptualHash != "" {
 		return m.perceptualHash, nil
@@ -255,8 +258,8 @@ func (m *MediaFile) GetEditedFilename() (result string) {
 	return result
 }
 
-func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, masterFile *MediaFile, err error) {
-	baseFilename := m.GetDirectory() + string(os.PathSeparator) + m.GetCanonicalNameFromFile()
+func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, mainFile *MediaFile, err error) {
+	baseFilename := m.GetCanonicalNameFromFileWithDirectory()
 
 	matches, err := filepath.Glob(baseFilename + "*")
 
@@ -275,18 +278,18 @@ func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, masterFile *MediaFil
 			continue
 		}
 
-		if masterFile == nil && resultFile.IsJpeg() {
-			masterFile = resultFile
+		if mainFile == nil && resultFile.IsJpeg() {
+			mainFile = resultFile
 		} else if resultFile.IsRaw() {
-			masterFile = resultFile
-		} else if resultFile.IsJpeg() && resultFile.IsJpeg() && len(masterFile.GetFilename()) > len(resultFile.GetFilename()) {
-			masterFile = resultFile
+			mainFile = resultFile
+		} else if resultFile.IsJpeg() && resultFile.IsJpeg() && len(mainFile.GetFilename()) > len(resultFile.GetFilename()) {
+			mainFile = resultFile
 		}
 
 		result = append(result, resultFile)
 	}
 
-	return result, masterFile, nil
+	return result, mainFile, nil
 }
 
 func (m *MediaFile) GetFilename() string {
@@ -301,7 +304,8 @@ func (m *MediaFile) GetRelativeFilename(directory string) string {
 	index := strings.Index(m.filename, directory)
 
 	if index == 0 {
-		return m.filename[len(directory):]
+		pos := len(directory) + 1
+		return m.filename[pos:]
 	}
 
 	return m.filename
@@ -359,6 +363,10 @@ func (m *MediaFile) Exists() bool {
 
 func (m *MediaFile) Remove() error {
 	return os.Remove(m.GetFilename())
+}
+
+func (m *MediaFile) HasSameFilename(other *MediaFile) bool {
+	return m.GetFilename() == other.GetFilename()
 }
 
 func (m *MediaFile) Move(newFilename string) error {
@@ -442,10 +450,10 @@ func (m *MediaFile) GetJpeg() (*MediaFile, error) {
 		return m, nil
 	}
 
-	jpegFilename := m.GetFilename()[0:len(m.GetFilename())-len(filepath.Ext(m.GetFilename()))] + ".jpg"
+	jpegFilename := m.GetCanonicalNameFromFileWithDirectory() + ".jpg"
 
 	if !fileExists(jpegFilename) {
-		return nil, errors.New("file does not exist")
+		return nil, fmt.Errorf("jpeg file does not exist: %s", jpegFilename)
 	}
 
 	return NewMediaFile(jpegFilename)

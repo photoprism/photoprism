@@ -1,7 +1,7 @@
 package photoprism
 
 import (
-	"errors"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -54,16 +54,14 @@ func (c *Converter) ConvertAll(path string) {
 
 func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 	if !image.Exists() {
-		return nil, errors.New("can not convert, file does not exist")
+		return nil, fmt.Errorf("can not convert, file does not exist: %s", image.GetFilename())
 	}
 
 	if image.IsJpeg() {
 		return image, nil
 	}
 
-	extension := image.GetExtension()
-
-	baseFilename := image.filename[0 : len(image.filename)-len(extension)]
+	baseFilename := image.GetCanonicalNameFromFileWithDirectory()
 
 	jpegFilename := baseFilename + ".jpg"
 
@@ -73,7 +71,7 @@ func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 		return mediaFile, nil
 	}
 
-	log.Printf("Converting %s to %s \n", image.filename, jpegFilename)
+	log.Printf("Converting \"%s\" to \"%s\"\n", image.filename, jpegFilename)
 
 	xmpFilename := baseFilename + ".xmp"
 

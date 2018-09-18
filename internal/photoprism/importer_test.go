@@ -12,7 +12,9 @@ func TestNewImporter(t *testing.T) {
 
 	indexer := NewIndexer(conf.OriginalsPath, tensorFlow, conf.GetDb())
 
-	importer := NewImporter(conf.OriginalsPath, indexer)
+	converter := NewConverter(conf.DarktableCli)
+
+	importer := NewImporter(conf.OriginalsPath, indexer, converter)
 
 	assert.IsType(t, &Importer{}, importer)
 }
@@ -26,7 +28,9 @@ func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
 
 	indexer := NewIndexer(conf.OriginalsPath, tensorFlow, conf.GetDb())
 
-	importer := NewImporter(conf.OriginalsPath, indexer)
+	converter := NewConverter(conf.DarktableCli)
+
+	importer := NewImporter(conf.OriginalsPath, indexer, converter)
 
 	importer.ImportPhotosFromDirectory(conf.ImportPath)
 }
@@ -39,7 +43,9 @@ func TestImporter_GetDestinationFilename(t *testing.T) {
 
 	indexer := NewIndexer(conf.OriginalsPath, tensorFlow, conf.GetDb())
 
-	importer := NewImporter(conf.OriginalsPath, indexer)
+	converter := NewConverter(conf.DarktableCli)
+
+	importer := NewImporter(conf.OriginalsPath, indexer, converter)
 
 	rawFile, err := NewMediaFile(conf.ImportPath + "/raw/IMG_1435.CR2")
 

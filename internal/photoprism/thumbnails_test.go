@@ -50,7 +50,9 @@ func TestCreateThumbnailsFromOriginals(t *testing.T) {
 
 	indexer := NewIndexer(conf.OriginalsPath, tensorFlow, conf.GetDb())
 
-	importer := NewImporter(conf.OriginalsPath, indexer)
+	converter := NewConverter(conf.DarktableCli)
+
+	importer := NewImporter(conf.OriginalsPath, indexer, converter)
 
 	importer.ImportPhotosFromDirectory(conf.ImportPath)
 

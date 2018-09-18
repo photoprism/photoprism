@@ -186,7 +186,39 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 	}
 }
 
-func (i *Indexer) IndexAll() {
+func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
+	indexed := make(map[string]bool)
+
+	relatedFiles, mainFile, err := mediaFile.GetRelatedFiles()
+
+	if err != nil {
+		log.Printf("Could not index \"%s\": %s", mediaFile.GetRelativeFilename(i.originalsPath), err.Error())
+
+		return indexed
+	}
+
+	log.Printf("Indexing main %s file \"%s\"", mainFile.GetType(), mainFile.GetRelativeFilename(i.originalsPath))
+
+	i.IndexMediaFile(mainFile)
+
+	indexed[mainFile.GetFilename()] = true
+
+	for _, relatedMediaFile := range relatedFiles {
+		if indexed[relatedMediaFile.GetFilename()] {
+			continue
+		}
+
+		log.Printf("Indexing related %s file \"%s\"", relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(i.originalsPath))
+
+		i.IndexMediaFile(relatedMediaFile)
+
+		indexed[relatedMediaFile.GetFilename()] = true
+	}
+
+	return indexed
+}
+
+func (i *Indexer) IndexAll() map[string]bool {
 	indexed := make(map[string]bool)
 
 	err := filepath.Walk(i.originalsPath, func(filename string, fileInfo os.FileInfo, err error) error {
@@ -204,28 +236,8 @@ func (i *Indexer) IndexAll() {
 			return nil
 		}
 
-		relatedFiles, masterFile, err := mediaFile.GetRelatedFiles()
-
-		if err != nil {
-			log.Printf("Could not import %s: %s", mediaFile.GetRelativeFilename(i.originalsPath), err.Error())
-			return nil
-		}
-
-		log.Printf("Indexing %s", masterFile.GetRelativeFilename(i.originalsPath))
-
-		i.IndexMediaFile(masterFile)
-
-		indexed[masterFile.GetFilename()] = true
-
-		for _, relatedMediaFile := range relatedFiles {
-			if indexed[relatedMediaFile.GetFilename()] {
-				continue
-			}
-
-			log.Printf(" + related %s file: %s", relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(i.originalsPath))
-			i.IndexMediaFile(relatedMediaFile)
-
-			indexed[relatedMediaFile.GetFilename()] = true
+		for relatedFilename := range i.IndexRelated(mediaFile) {
+			indexed[relatedFilename] = true
 		}
 
 		return nil
@@ -234,4 +246,6 @@ func (i *Indexer) IndexAll() {
 	if err != nil {
 		log.Print(err.Error())
 	}
+
+	return indexed
 }
