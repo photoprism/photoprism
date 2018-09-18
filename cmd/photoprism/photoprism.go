@@ -52,7 +52,7 @@ func main() {
 					EnvVar: "PHOTOPRISM_SERVER_PORT",
 				},
 				cli.StringFlag{
-					Name:   "server-host, h",
+					Name:   "server-host, i",
 					Usage:  "HTTP server host",
 					Value:  "",
 					EnvVar: "PHOTOPRISM_SERVER_HOST",
