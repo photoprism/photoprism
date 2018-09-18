@@ -77,7 +77,7 @@ func NewSearch(originalsPath string, db *gorm.DB) *Search {
 	return instance
 }
 
-func (s *Search) Photos(form PhotoSearchForm) ([]PhotoSearchResult, int, error) {
+func (s *Search) Photos(form PhotoSearchForm) ([]PhotoSearchResult, error) {
 	q := s.db.NewScope(nil).DB()
 	q = q.Table("photos").
 		Select(`SQL_CALC_FOUND_ROWS photos.*,
@@ -98,7 +98,39 @@ func (s *Search) Photos(form PhotoSearchForm) ([]PhotoSearchResult, int, error) 
 	}
 
 	if form.CameraID > 0 {
-		q = q.Where("camera_id = ?", form.CameraID)
+		q = q.Where("photos.camera_id = ?", form.CameraID)
+	}
+
+	if form.Country != "" {
+		q = q.Where("locations.loc_country_code = ?", form.Country)
+	}
+
+	switch form.Cat {
+	case "amenity":
+		q = q.Where("locations.loc_category = 'amenity'")
+	case "bank":
+		q = q.Where("locations.loc_type = 'bank'")
+	case "building":
+		q = q.Where("locations.loc_category = 'building'")
+	case "school":
+		q = q.Where("locations.loc_type = 'school'")
+	case "supermarket":
+		q = q.Where("locations.loc_type = 'supermarket'")
+	case "shop":
+		q = q.Where("locations.loc_category = 'shop'")
+	case "hotel":
+		q = q.Where("locations.loc_type = 'hotel'")
+	case "bar":
+		q = q.Where("locations.loc_type = 'bar'")
+	case "parking":
+		q = q.Where("locations.loc_type = 'parking'")
+	case "airport":
+		q = q.Where("locations.loc_category = 'aeroway'")
+	case "historic":
+		q = q.Where("locations.loc_category = 'historic'")
+	case "tourism":
+		q = q.Where("locations.loc_category = 'tourism'")
+	default:
 	}
 
 	switch form.Order {
@@ -118,28 +150,13 @@ func (s *Search) Photos(form PhotoSearchForm) ([]PhotoSearchResult, int, error) 
 		q = q.Limit(100).Offset(0)
 	}
 
-	results := make([]PhotoSearchResult, 0, form.Count)
+	var results []PhotoSearchResult
 
-	rows, err := q.Rows()
-
-	if err != nil {
-		return results, 0, err
+	if result := q.Scan(&results); result.Error != nil {
+		return results, result.Error
 	}
 
-	defer rows.Close()
-
-	for rows.Next() {
-		var result PhotoSearchResult
-		s.db.ScanRows(rows, &result)
-		results = append(results, result)
-	}
-
-	// TODO: Check if this works properly with concurrent requests and caching
-	count := &SearchCount{}
-	s.db.Raw("SELECT FOUND_ROWS() AS total").Scan(&count)
-	total := count.Total
-
-	return results, total, nil
+	return results, nil
 }
 
 func (s *Search) FindFiles(count int, offset int) (files []File) {

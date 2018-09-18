@@ -25,7 +25,6 @@ func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, 
 			if thumbnail, err := mediaFile.GetSquareThumbnail(thumbnailsPath, size); err != nil {
 				log.Printf("Could not create thumbnail: %s", err.Error())
 			} else {
-				thumbnail.GetHeight()
 				log.Printf("Created %dx%d px thumbnail for \"%s\"", thumbnail.GetWidth(), thumbnail.GetHeight(), mediaFile.GetRelativeFilename(originalsPath))
 			}
 		} else {

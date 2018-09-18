@@ -231,7 +231,15 @@ func (c *Config) GetClientConfig() ConfigValues {
 	db := c.GetDb()
 
 	var cameras []*Camera
-	// var countries map[string]string
+
+	type country struct {
+		LocCountry     string
+		LocCountryCode string
+	}
+
+	var countries []country
+
+	db.Model(&Location{}).Select("DISTINCT loc_country_code, loc_country").Scan(&countries)
 
 	db.Where("deleted_at IS NULL").Limit(1000).Order("camera_model").Find(&cameras)
 
@@ -242,6 +250,7 @@ func (c *Config) GetClientConfig() ConfigValues {
 		"title":   "PhotoPrism",
 		"debug":   c.Debug,
 		"cameras": cameras,
+		"countries": countries,
 		"jsHash": jsHash,
 		"cssHash": cssHash,
 	}

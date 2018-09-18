@@ -28,13 +28,12 @@ func ConfigureRoutes(app *gin.Engine, conf *photoprism.Config) {
 
 			c.MustBindWith(&form, binding.Form)
 
-			result, total, err := search.Photos(form)
+			result, err := search.Photos(form)
 
 			if err != nil {
 				c.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 			}
 
-			c.Header("x-result-total", strconv.Itoa(total))
 			c.Header("x-result-count", strconv.Itoa(form.Count))
 			c.Header("x-result-offset", strconv.Itoa(form.Offset))
 

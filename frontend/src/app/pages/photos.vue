@@ -40,6 +40,8 @@
                                           label="Country"
                                           flat solo
                                           color="blue-grey"
+                                          item-value="LocCountryCode"
+                                          item-text="LocCountry"
                                           v-model="query.country"
                                           :items="options.countries">
                                 </v-select>
@@ -77,6 +79,7 @@
                     direction="top"
                     open-on-hover
                     transition="slide-y-reverse-transition"
+                    style="right: 8px; bottom: 8px;"
             >
                 <v-btn
                         slot="activator"
@@ -203,7 +206,11 @@
             const cat = query['cat'] ? query['cat'] : '';
             const country = query['country'] ? query['country'] : '';
             const view = query['view'] ? query['view'] : 'tile';
-            const cameras = [{ID: 0, CameraModel: 'All Cameras'}].concat( this.$config.getValue('cameras'));
+            const cameras = [{ID: 0, CameraModel: 'All Cameras'}].concat(this.$config.getValue('cameras'));
+            const countries = [{
+                LocCountryCode: '',
+                LocCountry: 'All Countries'
+            }].concat(this.$config.getValue('countries'));
 
             return {
                 'snackbarVisible': false,
@@ -220,16 +227,14 @@
                 'options': {
                     'categories': [
                         {value: '', text: 'All Categories'},
-                        {value: 'junction', text: 'Junction'},
-                        {value: 'tourism', text: 'Tourism'},
+                        {value: 'airport', text: 'Airport'},
+                        {value: 'amenity', text: 'Amenity'},
+                        {value: 'building', text: 'Building'},
                         {value: 'historic', text: 'Historic'},
+                        {value: 'shop', text: 'Shop'},
+                        {value: 'tourism', text: 'Tourism'},
                     ],
-                    'countries': [
-                        {value: '', text: 'All Countries'},
-                        {value: 'de', text: 'Germany'},
-                        {value: 'ca', text: 'Canada'},
-                        {value: 'us', text: 'United States'}
-                    ],
+                    'countries': countries,
                     'cameras': cameras,
                     'sorting': [
                         {value: 'newest', text: 'Newest first'},
@@ -302,7 +307,7 @@
                 this.refreshList();
             },
             loadMore() {
-                if(this.loadMoreDisabled) return;
+                if (this.loadMoreDisabled) return;
 
                 this.loadMoreDisabled = true;
 
@@ -321,7 +326,7 @@
 
                     this.loadMoreDisabled = (response.models.length < this.pageSize);
 
-                    if(this.loadMoreDisabled) {
+                    if (this.loadMoreDisabled) {
                         this.$alert.info('All ' + this.results.length + ' photos loaded');
                     }
                 });
@@ -351,7 +356,7 @@
 
                     this.loadMoreDisabled = (response.models.length < this.pageSize);
 
-                    if(this.loadMoreDisabled) {
+                    if (this.loadMoreDisabled) {
                         this.$alert.info(this.results.length + ' photos found');
                     } else {
                         this.$alert.info('More than 50 photos found');

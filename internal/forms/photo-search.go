@@ -7,7 +7,7 @@ import (
 type PhotoSearchForm struct {
 	Query         string    `form:"q"`
 	Tags          string    `form:"tags"`
-	Category      string    `form:"cat"`
+	Cat           string    `form:"cat"`
 	Country       string    `form:"country"`
 	CameraID      int       `form:"camera"`
 	Order         string    `form:"order"`

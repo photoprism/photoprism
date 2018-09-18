@@ -39,7 +39,7 @@ func (m *MediaFile) GetExifData() (*ExifData, error) {
 	file, err := m.openFile()
 
 	if err != nil {
-		return m.exifData, err
+		return nil, err
 	}
 
 	defer file.Close()
@@ -49,7 +49,7 @@ func (m *MediaFile) GetExifData() (*ExifData, error) {
 	x, err := exif.Decode(file)
 
 	if err != nil {
-		return m.exifData, err
+		return nil, err
 	}
 
 	if artist, err := x.Get(exif.Artist); err == nil {

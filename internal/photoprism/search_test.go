@@ -20,23 +20,21 @@ func TestSearch_Photos_Query(t *testing.T) {
 	form.Count = 3
 	form.Offset = 0
 
-	photos, total, err := search.Photos(form)
+	photos, err := search.Photos(form)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(photos)
-	t.Logf("Total Count: %d", total)
 
-	photos, total, err = search.Photos(form)
+	photos, err = search.Photos(form)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(photos)
-	t.Logf("Total Count: %d", total)
 
 }
 
@@ -56,12 +54,11 @@ func TestSearch_Photos_Camera(t *testing.T) {
 	form.Count = 3
 	form.Offset = 0
 
-	photos, total, err := search.Photos(form)
+	photos, err := search.Photos(form)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(photos)
-	t.Logf("Total Count: %d", total)
 }
