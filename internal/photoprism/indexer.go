@@ -9,6 +9,12 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
+)
+
+const (
+	IndexResultUpdated = "Updated"
+	IndexResultAdded  = "Added"
 )
 
 type Indexer struct {
@@ -92,7 +98,7 @@ func (i *Indexer) appendTag(tags []*Tag, label string) []*Tag {
 	return append(tags, tag)
 }
 
-func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
+func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 	var photo Photo
 	var file, primaryFile File
 	var isPrimary = false
@@ -101,8 +107,11 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 
 	canonicalName := mediaFile.GetCanonicalNameFromFile()
 	fileHash := mediaFile.GetHash()
+	relativeFileName := mediaFile.GetRelativeFilename(i.originalsPath)
 
-	if result := i.db.First(&photo, "photo_canonical_name = ?", canonicalName); result.Error != nil {
+	photoQuery := i.db.First(&photo, "photo_canonical_name = ?", canonicalName)
+
+	if photoQuery.Error != nil {
 		if jpeg, err := mediaFile.GetJpeg(); err == nil {
 			// Perceptual Hash
 			if perceptualHash, err := jpeg.GetPerceptualHash(); err == nil {
@@ -136,11 +145,11 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 			tags = i.appendTag(tags, location.LocName)
 			tags = i.appendTag(tags, location.LocType)
 
-			if location.LocName != "" { // TODO: User defined title format
+			if photo.PhotoTitle == "" && location.LocName != "" { // TODO: User defined title format
 				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocName, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
-			} else if location.LocCity != "" {
+			} else if photo.PhotoTitle == "" && location.LocCity != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
-			} else if location.LocCounty != "" {
+			} else if photo.PhotoTitle == "" && location.LocCounty != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
 			}
 		}
@@ -156,33 +165,57 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 		photo.Tags = tags
 		photo.Camera = NewCamera(mediaFile.GetCameraModel()).FirstOrCreate(i.db)
 		photo.TakenAt = mediaFile.GetDateCreated()
-		photo.PhotoCanonicalName = canonicalName
 
+		photo.PhotoCanonicalName = canonicalName
 		photo.PhotoFavorite = false
 
 		i.db.Create(&photo)
+	} else if time.Now().Sub(photo.UpdatedAt).Minutes() > 10 { // If updated more than 10 minutes ago
+		if jpeg, err := mediaFile.GetJpeg(); err == nil {
+			// Perceptual Hash
+			if photo.PhotoPerceptualHash == "" {
+				if perceptualHash, err := jpeg.GetPerceptualHash(); err == nil {
+					photo.PhotoPerceptualHash = perceptualHash
+				}
+			}
+
+			// PhotoColors
+			colorNames, photo.PhotoVibrantColor, photo.PhotoMutedColor = jpeg.GetColors()
+
+			photo.PhotoColors = strings.Join(colorNames, ", ")
+		}
+
+		i.db.Save(&photo)
 	}
 
 	if result := i.db.Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); result.Error != nil {
 		isPrimary = mediaFile.GetType() == FileTypeJpeg
+	} else {
+		isPrimary = mediaFile.GetType() == FileTypeJpeg && (relativeFileName == primaryFile.FileName || fileHash == primaryFile.FileHash)
 	}
 
-	if result := i.db.First(&file, "file_hash = ?", fileHash); result.Error != nil {
-		file.PhotoID = photo.ID
-		file.FilePrimary = isPrimary
-		file.FileName = mediaFile.GetRelativeFilename(i.originalsPath)
-		file.FileHash = fileHash
-		file.FileType = mediaFile.GetType()
-		file.FileMime = mediaFile.GetMimeType()
-		file.FileOrientation = mediaFile.GetOrientation()
+	fileQuery := i.db.First(&file, "file_hash = ? OR file_name = ?", fileHash, relativeFileName)
 
-		if mediaFile.GetWidth() > 0 && mediaFile.GetHeight() > 0 {
-			file.FileWidth = mediaFile.GetWidth()
-			file.FileHeight = mediaFile.GetHeight()
-			file.FileAspectRatio = mediaFile.GetAspectRatio()
-		}
+	file.PhotoID = photo.ID
+	file.FilePrimary = isPrimary
+	file.FileName = relativeFileName
+	file.FileHash = fileHash
+	file.FileType = mediaFile.GetType()
+	file.FileMime = mediaFile.GetMimeType()
+	file.FileOrientation = mediaFile.GetOrientation()
 
+	if mediaFile.GetWidth() > 0 && mediaFile.GetHeight() > 0 {
+		file.FileWidth = mediaFile.GetWidth()
+		file.FileHeight = mediaFile.GetHeight()
+		file.FileAspectRatio = mediaFile.GetAspectRatio()
+	}
+
+	if fileQuery.Error == nil {
+		i.db.Save(&file)
+		return IndexResultUpdated
+	} else {
 		i.db.Create(&file)
+		return IndexResultAdded
 	}
 }
 
@@ -197,22 +230,20 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 		return indexed
 	}
 
-	log.Printf("Indexing main %s file \"%s\"", mainFile.GetType(), mainFile.GetRelativeFilename(i.originalsPath))
-
-	i.IndexMediaFile(mainFile)
-
+	mainIndexResult := i.IndexMediaFile(mainFile)
 	indexed[mainFile.GetFilename()] = true
+
+	log.Printf("%s main %s file \"%s\"", mainIndexResult, mainFile.GetType(), mainFile.GetRelativeFilename(i.originalsPath))
 
 	for _, relatedMediaFile := range relatedFiles {
 		if indexed[relatedMediaFile.GetFilename()] {
 			continue
 		}
 
-		log.Printf("Indexing related %s file \"%s\"", relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(i.originalsPath))
-
-		i.IndexMediaFile(relatedMediaFile)
-
+		indexResult := i.IndexMediaFile(relatedMediaFile)
 		indexed[relatedMediaFile.GetFilename()] = true
+
+		log.Printf("%s related %s file \"%s\"", indexResult, relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(i.originalsPath))
 	}
 
 	return indexed
