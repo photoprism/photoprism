@@ -17,6 +17,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 )
@@ -258,7 +259,7 @@ func (m *MediaFile) GetEditedFilename() (result string) {
 	return result
 }
 
-func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, mainFile *MediaFile, err error) {
+func (m *MediaFile) GetRelatedFiles() (result MediaFiles, mainFile *MediaFile, err error) {
 	baseFilename := m.GetCanonicalNameFromFileWithDirectory()
 
 	matches, err := filepath.Glob(baseFilename + "*")
@@ -288,6 +289,8 @@ func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, mainFile *MediaFile,
 
 		result = append(result, resultFile)
 	}
+
+	sort.Sort(result)
 
 	return result, mainFile, nil
 }
