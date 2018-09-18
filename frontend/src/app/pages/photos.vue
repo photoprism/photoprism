@@ -129,6 +129,14 @@
                 </v-btn>
             </v-speed-dial>
             <v-container grid-list-xs fluid class="pa-0">
+                <v-card v-if="results.length === 0">
+                    <v-card-title primary-title>
+                        <div>
+                            <h3 class="headline mb-3">No photos matched your search</h3>
+                            <div>Try using other terms and search options such as category, country and camera.</div>
+                        </div>
+                    </v-card-title>
+                </v-card>
                 <v-layout row wrap>
                     <v-flex
                             v-for="photo in results"
@@ -256,11 +264,10 @@
                 this.snackbarVisible = false;
             },
             selectPhoto(photo) {
-                console.log(photo)
                 if (photo.selected) {
                     for (let i = 0; i < this.selected.length; i++) {
                         if (this.selected[i].id === photo.id) {
-                            this.selected.splice(i, 1)
+                            this.selected.splice(i, 1);
                             break;
                         }
                     }
