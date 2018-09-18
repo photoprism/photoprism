@@ -52,10 +52,10 @@ func main() {
 					EnvVar: "PHOTOPRISM_SERVER_PORT",
 				},
 				cli.StringFlag{
-					Name:  "server-ip, i",
-					Usage: "HTTP server IP address (optional)",
+					Name:  "server-host, h",
+					Usage: "HTTP server host",
 					Value: "",
-					EnvVar: "PHOTOPRISM_SERVER_IP",
+					EnvVar: "PHOTOPRISM_SERVER_HOST",
 				},
 				cli.StringFlag{
 					Name:  "server-mode, m",
@@ -67,8 +67,8 @@ func main() {
 			Action: func(context *cli.Context) error {
 				conf := photoprism.NewConfig(context)
 
-				if context.IsSet("server-ip") || conf.ServerIP == "" {
-					conf.ServerIP = context.String("server-ip")
+				if context.IsSet("server-host") || conf.ServerIP == "" {
+					conf.ServerIP = context.String("server-host")
 				}
 
 				if context.IsSet("server-port") || conf.ServerPort == 0 {
@@ -89,7 +89,7 @@ func main() {
 
 				conf.MigrateDb()
 
-				fmt.Printf("Starting web server at port %d...\n", context.Int("server-port"))
+				fmt.Printf("Starting web server at %s:%d...\n", context.String("server-host"), context.Int("server-port"))
 
 				server.Start(conf)
 

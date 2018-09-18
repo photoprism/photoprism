@@ -55,7 +55,7 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 		c.Debug = debug
 	}
 
-	if serverIP, err := yamlConfig.Get("server-ip"); err == nil {
+	if serverIP, err := yamlConfig.Get("server-host"); err == nil {
 		c.ServerIP = serverIP
 	}
 

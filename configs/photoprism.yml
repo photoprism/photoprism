@@ -5,7 +5,7 @@ thumbnails-path: /var/photoprism/thumbnails
 originals-path: /var/photoprism/photos/originals
 import-path: /var/photoprism/photos/import
 export-path: /var/photoprism/photos/export
-server-ip:
+server-host:
 server-mode: release
 server-port: 80
 database-driver: mysql
