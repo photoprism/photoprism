@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 	"time"
 )
@@ -47,37 +46,6 @@ func (i *Indexer) GetImageTags(jpeg *MediaFile) (results []*Tag) {
 	}
 
 	return results
-}
-
-func getKeywordWithSynonyms(keyword string) []string {
-	var result []string
-
-	// TODO: Just a proof-of-concept for now, needs implementation via config file or dictionary
-	switch keyword {
-	case "tabby":
-		result = []string{keyword, "cat"}
-	case "lynx":
-		result = []string{keyword, "cat"}
-	case "tiger":
-		result = []string{keyword, "cat"}
-	default:
-		result = []string{keyword}
-	}
-
-	return result
-}
-
-func getKeywordsAsString(keywords []string) string {
-	var result []string
-
-	for _, keyword := range keywords {
-		result = append(result, getKeywordWithSynonyms(keyword)...)
-	}
-
-	result = uniqueStrings(result)
-	sort.Strings(result)
-
-	return strings.ToLower(strings.Join(result, ", "))
 }
 
 func (i *Indexer) appendTag(tags []*Tag, label string) []*Tag {
