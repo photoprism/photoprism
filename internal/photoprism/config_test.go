@@ -110,7 +110,7 @@ func TestNewConfig(t *testing.T) {
 	assert.IsType(t, &Config{}, c)
 
 	assert.Equal(t, assetsPath, c.AssetsPath)
-	assert.True(t, c.Debug)
+	assert.False(t, c.Debug)
 }
 
 func TestConfig_SetValuesFromFile(t *testing.T) {
