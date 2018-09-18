@@ -247,12 +247,12 @@ func (c *Config) GetClientConfig() ConfigValues {
 	cssHash := fileHash(c.GetPublicBuildPath() + "/app.css")
 
 	result := ConfigValues{
-		"title":   "PhotoPrism",
-		"debug":   c.Debug,
-		"cameras": cameras,
+		"title":     "PhotoPrism",
+		"debug":     c.Debug,
+		"cameras":   cameras,
 		"countries": countries,
-		"jsHash": jsHash,
-		"cssHash": cssHash,
+		"jsHash":    jsHash,
+		"cssHash":   cssHash,
 	}
 
 	return result

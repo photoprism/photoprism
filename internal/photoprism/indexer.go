@@ -13,7 +13,7 @@ import (
 
 const (
 	IndexResultUpdated = "Updated"
-	IndexResultAdded  = "Added"
+	IndexResultAdded   = "Added"
 )
 
 type Indexer struct {
