@@ -99,7 +99,7 @@ func main() {
 			},
 		},
 		{
-			Name:  "migrate-db",
+			Name:  "migrate",
 			Usage: "Automatically migrates / initializes database",
 			Action: func(context *cli.Context) error {
 				conf := photoprism.NewConfig(context)

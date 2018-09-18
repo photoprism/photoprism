@@ -100,7 +100,7 @@ USAGE:
 COMMANDS:
      config      Displays global configuration values
      start       Starts web server
-     migrate-db  Automatically migrates / initializes database
+     migrate     Automatically migrates / initializes database
      import      Imports photos
      index       Re-indexes all originals
      convert     Converts RAW originals to JPEG

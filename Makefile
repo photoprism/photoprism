@@ -31,8 +31,8 @@ js:
 	(cd frontend &&	env NODE_ENV=production npm run build)
 start:
 	$(GORUN) cmd/photoprism/photoprism.go start
-migrate-db:
-	$(GORUN) cmd/photoprism/photoprism.go migrate-db
+migrate:
+	$(GORUN) cmd/photoprism/photoprism.go migrate
 test:
 	$(GOTEST) -v ./...
 clean:
