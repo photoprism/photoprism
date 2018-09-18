@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-infinite-scroll="loadMore" infinite-scroll-disabled="loadMoreDisabled" infinite-scroll-distance="10">
         <v-form ref="form" lazy-validation @submit="formChange" dense>
             <v-toolbar flat color="blue-grey lighten-4">
                 <v-text-field class="pt-3 pr-3"
@@ -31,7 +31,7 @@
                                           label="Category"
                                           flat solo
                                           color="blue-grey"
-                                          v-model="query.category"
+                                          v-model="query.cat"
                                           :items="options.categories">
                                 </v-select>
                             </v-flex>
@@ -51,7 +51,7 @@
                                           color="blue-grey"
                                           item-value="ID"
                                           item-text="CameraModel"
-                                          v-model="query.camera_id"
+                                          v-model="query.camera"
                                           :items="options.cameras">
                                 </v-select>
                             </v-flex>
@@ -197,13 +197,12 @@
         props: {},
         data() {
             const query = this.$route.query;
-            const resultCount = query.hasOwnProperty('count') ? parseInt(query['count']) : 60;
-            const resultPage = query.hasOwnProperty('page') ? parseInt(query['page']) : 1;
-            const resultOffset = resultCount * (resultPage - 1);
-            const order = query['order'] ? query['order'] : 'taken_at DESC';
-            const camera_id = query['camera_id'] ? parseInt(query['camera_id']) : 0;
-            const q = query.hasOwnProperty('q') ? query['q'] : '';
-            const view = query.hasOwnProperty('view') ? query['view'] : 'tile';
+            const order = query['order'] ? query['order'] : 'newest';
+            const camera = query['camera'] ? parseInt(query['camera']) : 0;
+            const q = query['q'] ? query['q'] : '';
+            const cat = query['cat'] ? query['cat'] : '';
+            const country = query['country'] ? query['country'] : '';
+            const view = query['view'] ? query['view'] : 'tile';
             const cameras = [{ID: 0, CameraModel: 'All Cameras'}].concat( this.$config.getValue('cameras'));
 
             return {
@@ -212,9 +211,9 @@
                 'advandedSearch': false,
                 'results': [],
                 'query': {
-                    category: '',
-                    country: '',
-                    camera_id: camera_id,
+                    cat: cat,
+                    country: country,
+                    camera: camera,
                     order: order,
                     q: q,
                 },
@@ -233,19 +232,18 @@
                     ],
                     'cameras': cameras,
                     'sorting': [
-                        {value: 'taken_at DESC', text: 'Newest first'},
-                        {value: 'taken_at', text: 'Oldest first'},
-                        {value: 'created_at DESC', text: 'Recently imported'},
+                        {value: 'newest', text: 'Newest first'},
+                        {value: 'oldest', text: 'Oldest first'},
+                        {value: 'imported', text: 'Recently imported'},
                     ],
                 },
-                'page': resultPage,
                 'view': view,
-                'resultCount': resultCount,
-                'resultOffset': resultOffset,
-                'resultTotal': 'Many',
+                'loadMoreDisabled': true,
+                'pageSize': 60,
+                'offset': 0,
                 'lastQuery': {},
                 'submitTimeout': false,
-                'selected': []
+                'selected': [],
             };
         },
         methods: {
@@ -303,37 +301,61 @@
                 this.query.q = '';
                 this.refreshList();
             },
-            refreshList() {
-                // Compose query parameters
+            loadMore() {
+                if(this.loadMoreDisabled) return;
+
+                this.loadMoreDisabled = true;
+
+                this.offset += this.pageSize;
+
                 const params = {
-                    count: this.resultCount,
-                    offset: this.resultCount * (this.page - 1),
+                    count: this.pageSize,
+                    offset: this.offset,
+                };
+
+                Object.assign(params, this.lastQuery);
+
+                Photo.search(params).then(response => {
+                    console.log(response);
+                    this.results = this.results.concat(response.models);
+
+                    this.loadMoreDisabled = (response.models.length < this.pageSize);
+
+                    if(this.loadMoreDisabled) {
+                        this.$alert.info('All ' + this.results.length + ' photos loaded');
+                    }
+                });
+            },
+            refreshList() {
+                this.loadMoreDisabled = true;
+                console.log('QUERY', this.lastQuery, this.query);
+                // Don't query the same data more than once
+                if (_.isEqual(this.lastQuery, this.query)) return;
+
+                Object.assign(this.lastQuery, this.query);
+
+                this.offset = 0;
+
+                this.$router.replace({query: this.query});
+
+                const params = {
+                    count: this.pageSize,
+                    offset: this.offset,
                 };
 
                 Object.assign(params, this.query);
 
-                // Don't query the same data more than once
-                if (_.isEqual(this.lastQuery, params)) return;
-
-                this.lastQuery = params;
-
-                // Set URL hash
-                const urlParams = {
-                    count: this.resultCount,
-                    page: this.page,
-                };
-
-                Object.assign(urlParams, this.query);
-
-                this.$router.replace({query: urlParams});
-
                 Photo.search(params).then(response => {
                     console.log(response);
-                    this.resultTotal = parseInt(response.headers['x-result-total']);
-                    this.resultCount = parseInt(response.headers['x-result-count']);
-                    this.resultOffset = parseInt(response.headers['x-result-offset']);
                     this.results = response.models;
-                    this.$alert.info(this.resultTotal + ' photos found');
+
+                    this.loadMoreDisabled = (response.models.length < this.pageSize);
+
+                    if(this.loadMoreDisabled) {
+                        this.$alert.info(this.results.length + ' photos found');
+                    } else {
+                        this.$alert.info('More than 50 photos found');
+                    }
                 });
             }
         },

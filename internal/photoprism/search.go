@@ -101,7 +101,22 @@ func (s *Search) Photos(form PhotoSearchForm) ([]PhotoSearchResult, int, error) 
 		q = q.Where("camera_id = ?", form.CameraID)
 	}
 
-	q = q.Order(form.Order).Limit(form.Count).Offset(form.Offset)
+	switch form.Order {
+	case "newest":
+		q = q.Order("taken_at DESC")
+	case "oldest":
+		q = q.Order("taken_at")
+	case "imported":
+		q = q.Order("created_at DESC")
+	default:
+		q = q.Order("taken_at DESC")
+	}
+
+	if form.Count > 0 && form.Count <= 1000 {
+		q = q.Limit(form.Count).Offset(form.Offset)
+	} else {
+		q = q.Limit(100).Offset(0)
+	}
 
 	results := make([]PhotoSearchResult, 0, form.Count)
 

@@ -6931,6 +6931,10 @@ vue-hot-reload-api@^2.0.11:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.0.tgz#97976142405d13d8efae154749e88c4e358cf926"
 
+vue-infinite-scroll@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/vue-infinite-scroll/-/vue-infinite-scroll-2.0.2.tgz#ca37a91fe92ee0ad3b74acf8682c00917144b711"
+
 vue-justified-layout@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/vue-justified-layout/-/vue-justified-layout-0.1.0.tgz#f26b606614719697aeff98f26b68795b926ae013"

@@ -185,8 +185,28 @@ func (c *Config) ConnectToDatabase() error {
 	return err
 }
 
+func (c *Config) GetAssetsPath() string {
+	return c.AssetsPath
+}
+
 func (c *Config) GetTensorFlowModelPath() string {
-	return c.AssetsPath + "/tensorflow"
+	return c.GetAssetsPath() + "/tensorflow"
+}
+
+func (c *Config) GetTemplatesPath() string {
+	return c.GetAssetsPath() + "/templates"
+}
+
+func (c *Config) GetFaviconsPath() string {
+	return c.GetAssetsPath() + "/favicons"
+}
+
+func (c *Config) GetPublicPath() string {
+	return c.GetAssetsPath() + "/public"
+}
+
+func (c *Config) GetPublicBuildPath() string {
+	return c.GetPublicPath() + "/build"
 }
 
 func (c *Config) GetDb() *gorm.DB {
@@ -215,10 +235,15 @@ func (c *Config) GetClientConfig() ConfigValues {
 
 	db.Where("deleted_at IS NULL").Limit(1000).Order("camera_model").Find(&cameras)
 
+	jsHash := fileHash(c.GetPublicBuildPath() + "/app.js")
+	cssHash := fileHash(c.GetPublicBuildPath() + "/app.css")
+
 	result := ConfigValues{
 		"title":   "PhotoPrism",
 		"debug":   c.Debug,
 		"cameras": cameras,
+		"jsHash": jsHash,
+		"cssHash": cssHash,
 	}
 
 	return result

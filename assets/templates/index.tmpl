@@ -11,7 +11,7 @@
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favicon.png" />
 
-    <link rel="stylesheet" href="/assets/build/app.css">
+    <link rel="stylesheet" href="/assets/build/app.css?{{ .cssHash }}">
 
     <script>
         window.appConfig = {
@@ -34,6 +34,6 @@
 </div>
 <footer>
 </footer>
-<script src="/assets/build/app.js"></script>
+<script src="/assets/build/app.js?{{ .jsHash }}"></script>
 </body>
 </html>
