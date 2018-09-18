@@ -13,7 +13,7 @@ import (
 const testDataPath = "testdata"
 const testDataUrl = "https://www.dropbox.com/s/na9p9wwt98l7m5b/import.zip?dl=1"
 const testDataHash = "ed3bdb2fe86ea662bc863b63e219b47b8d9a74024757007f7979887d"
-const testConfigFile = "../../configs/photoprism.dev.yml"
+const testConfigFile = "../../configs/photoprism.yml"
 
 var darktableCli = "/usr/bin/darktable-cli"
 var testDataZip = GetExpandedFilename(testDataPath + "/import.zip")
@@ -108,7 +108,7 @@ func TestNewConfig(t *testing.T) {
 	c := NewConfig(context)
 
 	assert.IsType(t, &Config{}, c)
-	t.Log(c.AssetsPath, c.OriginalsPath, c.DarktableCli)
+
 	assert.Equal(t, assetsPath, c.AssetsPath)
 	assert.True(t, c.Debug)
 }
@@ -118,11 +118,11 @@ func TestConfig_SetValuesFromFile(t *testing.T) {
 
 	c.SetValuesFromFile(GetExpandedFilename(testConfigFile))
 
-	assert.Equal(t, GetExpandedFilename("assets"), c.AssetsPath)
-	assert.Equal(t, GetExpandedFilename("assets/thumbnails"), c.ThumbnailsPath)
-	assert.Equal(t, GetExpandedFilename("assets/photos/originals"), c.OriginalsPath)
-	assert.Equal(t, GetExpandedFilename("assets/photos/import"), c.ImportPath)
-	assert.Equal(t, GetExpandedFilename("assets/photos/export"), c.ExportPath)
+	assert.Equal(t, "/var/photoprism", c.AssetsPath)
+	assert.Equal(t, "/var/photoprism/thumbnails", c.ThumbnailsPath)
+	assert.Equal(t, "/var/photoprism/photos/originals", c.OriginalsPath)
+	assert.Equal(t, "/var/photoprism/photos/import", c.ImportPath)
+	assert.Equal(t, "/var/photoprism/photos/export", c.ExportPath)
 	assert.Equal(t, databaseDriver, c.DatabaseDriver)
 	assert.Equal(t, databaseDsn, c.DatabaseDsn)
 }
