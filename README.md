@@ -72,6 +72,59 @@ go run cmd/photoprism/photoprism.go start
 
 See [Quick and easy guide for migrating to Go 1.11 modules](https://blog.liquidbytes.net/2018/09/quick-and-easy-guide-for-migrating-to-go-1-11-modules/) for an introduction to Go Modules and Makefiles.
 
+Directory Layout
+----------------
+
+The directory layout is loosely based on https://github.com/golang-standards/project-layout.
+
+Assets like photos, built JavaScript/CSS files and HTML templates are located in `assets/` by default. You can configure individual paths in the config file, using environment variables or command flags.
+
+Example configuration files can be found in `configs/`.
+
+The frontend code is located in `frontend/`. Developers run `npm run dev` to watch files and automatically re-build them when changed.
+
+All other paths contain Go source code and scripts used for building the application.
+
+Command-line Interface
+----------------------
+
+Running `photoprism` without arguments displays usage hints:
+
+```
+NAME:
+   PhotoPrism - Digital Photo Archive
+
+USAGE:
+   photoprism [global options] command [command options] [arguments...]
+
+COMMANDS:
+     config      Displays global configuration values
+     start       Starts web server
+     migrate-db  Automatically migrates / initializes database
+     import      Imports photos
+     index       Re-indexes all originals
+     convert     Converts RAW originals to JPEG
+     thumbnails  Creates thumbnails
+     export      Exports photos as JPEG
+     help, h     Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --debug                              run in debug mode [$PHOTOPRISM_DEBUG]
+   --config-file FILENAME, -c FILENAME  load configuration from FILENAME (default: "/etc/photoprism/photoprism.yml") [$PHOTOPRISM_CONFIG_FILE]
+   --darktable-cli FILENAME             darktable command-line executable FILENAME (default: "/usr/bin/darktable-cli") [$PHOTOPRISM_DARKTABLE_CLI]
+   --originals-path PATH                originals PATH (default: "/var/photoprism/photos/originals") [$PHOTOPRISM_ORIGINALS_PATH]
+   --thumbnails-path PATH               thumbnails PATH (default: "/var/photoprism/photos/thumbnails") [$PHOTOPRISM_THUMBNAILS_PATH]
+   --import-path PATH                   import PATH (default: "/var/photoprism/photos/import") [$PHOTOPRISM_IMPORT_PATH]
+   --export-path PATH                   export PATH (default: "/var/photoprism/photos/export") [$PHOTOPRISM_EXPORT_PATH]
+   --assets-path PATH                   assets PATH (default: "/var/photoprism") [$PHOTOPRISM_ASSETS_PATH]
+   --database-driver DRIVER             database DRIVER (mysql, mssql, postgres or sqlite) (default: "mysql") [$PHOTOPRISM_DATABASE_DRIVER]
+   --database-dsn DSN                   database data source name (DSN) (default: "photoprism:photoprism@tcp(localhost:3306)/photoprism") [$PHOTOPRISM_DATABASE_DSN]
+   --help, -h                           show help
+   --version, -v                        print the version
+```
+
+A more detailed documentation will follow. Please ask if you have any questions.
+
 Concept
 -------
 
