@@ -170,7 +170,7 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 	if result := i.db.First(&file, "file_hash = ?", fileHash); result.Error != nil {
 		file.PhotoID = photo.ID
 		file.FilePrimary = isPrimary
-		file.FileName = mediaFile.GetFilename()
+		file.FileName = mediaFile.GetRelativeFilename(i.originalsPath)
 		file.FileHash = fileHash
 		file.FileType = mediaFile.GetType()
 		file.FileMime = mediaFile.GetMimeType()

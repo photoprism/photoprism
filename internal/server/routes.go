@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/forms"
@@ -59,7 +60,9 @@ func ConfigureRoutes(app *gin.Engine, conf *photoprism.Config) {
 
 			file := search.FindFile(id)
 
-			if mediaFile, err := photoprism.NewMediaFile(file.FileName); err == nil {
+			fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath, file.FileName)
+
+			if mediaFile, err := photoprism.NewMediaFile(fileName); err == nil {
 				thumbnail, _ := mediaFile.GetThumbnail(conf.ThumbnailsPath, size)
 
 				c.File(thumbnail.GetFilename())
@@ -76,7 +79,9 @@ func ConfigureRoutes(app *gin.Engine, conf *photoprism.Config) {
 
 			file := search.FindFile(id)
 
-			if mediaFile, err := photoprism.NewMediaFile(file.FileName); err == nil {
+			fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath, file.FileName)
+
+			if mediaFile, err := photoprism.NewMediaFile(fileName); err == nil {
 				thumbnail, _ := mediaFile.GetSquareThumbnail(conf.ThumbnailsPath, size)
 
 				c.File(thumbnail.GetFilename())

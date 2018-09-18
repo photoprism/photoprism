@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
 	"log"
 	"os"
 	"path"
@@ -141,7 +140,7 @@ func (i *Importer) GetDestinationFilename(mainFile *MediaFile, mediaFile *MediaF
 
 	for fileExists(result) {
 		if mediaFile.GetHash() == fileHash(result) {
-			return result, errors.New("File already exists")
+			return result, fmt.Errorf("file already exists: %s", result)
 		}
 
 		iteration++
