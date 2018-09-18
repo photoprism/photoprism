@@ -1,12 +1,22 @@
 version: '3.3'
 
+# Example docker-compose config file for production use
+# Usage: docker-compose -f docker-compose.prod.yml up
+
 services:
   photoprism:
-    image: photoprism/photoprism
+    image: photoprism/photoprism # Uses pre-built image from docker hub: https://hub.docker.com/r/photoprism/photoprism/
     ports:
       - 80:80
     volumes:
-      - photoprism-photos:/var/photoprism/photos
+      - ~/Photos:/var/photoprism/photos # Change ~/Photos to whatever directory you want to use on your local computer
+      - photoprism-thumbnails:/var/photoprism/thumbnails
+    environment:
+      PHOTOPRISM_ASSETS_PATH: /var/photoprism
+      PHOTOPRISM_THUMBNAILS_PATH: /var/photoprism/thumbnails
+      PHOTOPRISM_IMPORT_PATH: /var/photoprism/photos/Import # ~/Photos/Import on your local computer
+      PHOTOPRISM_EXPORT_PATH: /var/photoprism/photos/Export # ~/Photos/Export on your local computer
+      PHOTOPRISM_ORIGINALS_PATH: /var/photoprism/photos/Originals # ~/Photos/Originals on your local computer
 
   database:
     image: mysql:latest
@@ -20,7 +30,7 @@ services:
       MYSQL_DATABASE: photoprism
 
 volumes:
-  photoprism-photos:
+  photoprism-thumbnails:
     driver: local
   photoprism-database:
     driver: local

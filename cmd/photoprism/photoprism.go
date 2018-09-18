@@ -6,6 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/urfave/cli"
+	"log"
 	"os"
 )
 
@@ -78,7 +79,13 @@ func main() {
 					conf.ServerMode = context.String("server-mode")
 				}
 
-				conf.CreateDirectories()
+				if conf.ServerPort < 1 {
+					log.Fatal("Server port must be a positive integer")
+				}
+
+				if err := conf.CreateDirectories(); err != nil {
+					log.Fatal(err)
+				}
 
 				conf.MigrateDb()
 
@@ -112,7 +119,9 @@ func main() {
 			Action: func(context *cli.Context) error {
 				conf := photoprism.NewConfig(context)
 
-				conf.CreateDirectories()
+				if err := conf.CreateDirectories(); err != nil {
+					log.Fatal(err)
+				}
 
 				conf.MigrateDb()
 
@@ -137,7 +146,9 @@ func main() {
 			Action: func(context *cli.Context) error {
 				conf := photoprism.NewConfig(context)
 
-				conf.CreateDirectories()
+				if err := conf.CreateDirectories(); err != nil {
+					log.Fatal(err)
+				}
 
 				conf.MigrateDb()
 
@@ -160,7 +171,9 @@ func main() {
 			Action: func(context *cli.Context) error {
 				conf := photoprism.NewConfig(context)
 
-				conf.CreateDirectories()
+				if err := conf.CreateDirectories(); err != nil {
+					log.Fatal(err)
+				}
 
 				fmt.Printf("Converting RAW images in %s to JPEG...\n", conf.OriginalsPath)
 
@@ -193,7 +206,9 @@ func main() {
 			Action: func(context *cli.Context) error {
 				conf := photoprism.NewConfig(context)
 
-				conf.CreateDirectories()
+				if err := conf.CreateDirectories(); err != nil {
+					log.Fatal(err)
+				}
 
 				fmt.Printf("Creating thumbnails in %s...\n", conf.ThumbnailsPath)
 
@@ -242,7 +257,9 @@ func main() {
 			Action: func(context *cli.Context) error {
 				conf := photoprism.NewConfig(context)
 
-				conf.CreateDirectories()
+				if err := conf.CreateDirectories(); err != nil {
+					log.Fatal(err)
+				}
 
 				before := context.String("before")
 				after := context.String("after")

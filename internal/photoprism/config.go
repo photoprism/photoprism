@@ -142,11 +142,24 @@ func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 	return nil
 }
 
-func (c *Config) CreateDirectories() {
-	os.MkdirAll(path.Dir(c.OriginalsPath), os.ModePerm)
-	os.MkdirAll(path.Dir(c.ThumbnailsPath), os.ModePerm)
-	os.MkdirAll(path.Dir(c.ImportPath), os.ModePerm)
-	os.MkdirAll(path.Dir(c.ExportPath), os.ModePerm)
+func (c *Config) CreateDirectories() error {
+	if err := os.MkdirAll(path.Dir(c.OriginalsPath), os.ModePerm); err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(path.Dir(c.ThumbnailsPath), os.ModePerm); err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(path.Dir(c.ImportPath), os.ModePerm); err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(path.Dir(c.ExportPath), os.ModePerm); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Config) ConnectToDatabase() error {
