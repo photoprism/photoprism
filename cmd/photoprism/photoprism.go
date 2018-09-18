@@ -14,9 +14,10 @@ func main() {
 	app.Name = "PhotoPrism"
 	app.Usage = "Digital Photo Archive"
 	app.Version = "0.0.0"
-	app.Author = "Michael Mayer"
-	app.Email = "michael@liquidbytes.net"
+	app.Copyright = "Copyright (c) 2018 Michael Mayer <michael@liquidbytes.net> and contributors"
+	app.EnableBashCompletion = true
 	app.Flags = globalCliFlags
+
 	app.Commands = []cli.Command{
 		{
 			Name:  "config",
@@ -27,9 +28,6 @@ func main() {
 				fmt.Printf("NAME                  VALUE\n")
 				fmt.Printf("debug                 %t\n", conf.Debug)
 				fmt.Printf("config-file           %s\n", conf.ConfigFile)
-				fmt.Printf("server-ip             %s\n", conf.ServerIP)
-				fmt.Printf("server-port           %d\n", conf.ServerPort)
-				fmt.Printf("server-mode           %s\n", conf.ServerMode)
 				fmt.Printf("assets-path           %s\n", conf.AssetsPath)
 				fmt.Printf("originals-path        %s\n", conf.OriginalsPath)
 				fmt.Printf("thumbnails-path       %s\n", conf.ThumbnailsPath)
@@ -65,15 +63,15 @@ func main() {
 			Action: func(context *cli.Context) error {
 				conf := photoprism.NewConfig(context)
 
-				if context.IsSet("server-ip") {
+				if context.IsSet("server-ip") || conf.ServerIP == "" {
 					conf.ServerIP = context.String("server-ip")
 				}
 
-				if context.IsSet("server-port") {
+				if context.IsSet("server-port") || conf.ServerPort == 0 {
 					conf.ServerPort = context.Int("server-port")
 				}
 
-				if context.IsSet("server-mode") {
+				if context.IsSet("server-mode") || conf.ServerMode == "" {
 					conf.ServerMode = context.String("server-mode")
 				}
 

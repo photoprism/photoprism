@@ -107,35 +107,35 @@ func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 		c.Debug = context.GlobalBool("debug")
 	}
 
-	if context.GlobalIsSet("assets-path") {
+	if context.GlobalIsSet("assets-path") || c.AssetsPath == "" {
 		c.AssetsPath = GetExpandedFilename(context.GlobalString("assets-path"))
 	}
 
-	if context.GlobalIsSet("thumbnails-path") {
+	if context.GlobalIsSet("thumbnails-path") || c.ThumbnailsPath == "" {
 		c.ThumbnailsPath = GetExpandedFilename(context.GlobalString("thumbnails-path"))
 	}
 
-	if context.GlobalIsSet("originals-path") {
+	if context.GlobalIsSet("originals-path") || c.OriginalsPath == "" {
 		c.OriginalsPath = GetExpandedFilename(context.GlobalString("originals-path"))
 	}
 
-	if context.GlobalIsSet("import-path") {
+	if context.GlobalIsSet("import-path") || c.ImportPath == "" {
 		c.ImportPath = GetExpandedFilename(context.GlobalString("import-path"))
 	}
 
-	if context.GlobalIsSet("export-path") {
+	if context.GlobalIsSet("export-path") || c.ExportPath == "" {
 		c.ExportPath = GetExpandedFilename(context.GlobalString("export-path"))
 	}
 
-	if context.GlobalIsSet("darktable-cli") {
+	if context.GlobalIsSet("darktable-cli") || c.DarktableCli == "" {
 		c.DarktableCli = GetExpandedFilename(context.GlobalString("darktable-cli"))
 	}
 
-	if context.GlobalIsSet("database-driver") {
+	if context.GlobalIsSet("database-driver") || c.DatabaseDriver == "" {
 		c.DatabaseDriver = context.GlobalString("database-driver")
 	}
 
-	if context.GlobalIsSet("database-dsn") {
+	if context.GlobalIsSet("database-dsn") || c.DatabaseDsn == "" {
 		c.DatabaseDsn = context.GlobalString("database-dsn")
 	}
 
