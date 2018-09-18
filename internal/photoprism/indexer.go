@@ -187,8 +187,10 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) {
 }
 
 func (i *Indexer) IndexAll() {
+	indexed := make(map[string]bool)
+
 	err := filepath.Walk(i.originalsPath, func(filename string, fileInfo os.FileInfo, err error) error {
-		if err != nil {
+		if err != nil || indexed[filename] {
 			return nil
 		}
 
@@ -202,11 +204,28 @@ func (i *Indexer) IndexAll() {
 			return nil
 		}
 
-		relatedFiles, _, _ := mediaFile.GetRelatedFiles()
+		relatedFiles, masterFile, err := mediaFile.GetRelatedFiles()
+
+		if err != nil {
+			log.Printf("Could not import %s: %s", mediaFile.GetRelativeFilename(i.originalsPath), err.Error())
+			return nil
+		}
+
+		log.Printf("Indexing %s", masterFile.GetRelativeFilename(i.originalsPath))
+
+		i.IndexMediaFile(masterFile)
+
+		indexed[masterFile.GetFilename()] = true
 
 		for _, relatedMediaFile := range relatedFiles {
-			log.Printf("Indexing %s", relatedMediaFile.GetFilename())
+			if indexed[relatedMediaFile.GetFilename()] {
+				continue
+			}
+
+			log.Printf(" + related %s file: %s", relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(i.originalsPath))
 			i.IndexMediaFile(relatedMediaFile)
+
+			indexed[relatedMediaFile.GetFilename()] = true
 		}
 
 		return nil

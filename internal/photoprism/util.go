@@ -188,7 +188,7 @@ func uniqueStrings(input []string) []string {
 	m := make(map[string]bool)
 
 	for _, val := range input {
-		if _, ok := m[val]; !ok && val != "" {
+		if !m[val] && val != "" {
 			m[val] = true
 			u = append(u, val)
 		}

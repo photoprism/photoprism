@@ -23,13 +23,14 @@ import (
 )
 
 const (
-	FileTypeOther = ""
+	FileTypeOther = "unknown"
 	FileTypeYaml  = "yml"
 	FileTypeJpeg  = "jpg"
 	FileTypeRaw   = "raw"
 	FileTypeXmp   = "xmp"
 	FileTypeAae   = "aae"
 	FileTypeMovie = "mov"
+	FileTypeHEIF  = "heif" // High Efficiency Image File Format
 )
 
 const (
@@ -50,6 +51,45 @@ var FileExtensions = map[string]string{
 	".jpeg": FileTypeJpeg,
 	".xmp":  FileTypeXmp,
 	".aae":  FileTypeAae,
+	".heif": FileTypeHEIF,
+	".heic": FileTypeHEIF,
+	".3fr": FileTypeRaw,
+	".ari": FileTypeRaw,
+	".bay": FileTypeRaw,
+	".cr3": FileTypeRaw,
+	".cap": FileTypeRaw,
+	".data": FileTypeRaw,
+	".dcs": FileTypeRaw,
+	".dcr": FileTypeRaw,
+	".drf": FileTypeRaw,
+	".eip": FileTypeRaw,
+	".erf": FileTypeRaw,
+	".fff": FileTypeRaw,
+	".gpr": FileTypeRaw,
+	".iiq": FileTypeRaw,
+	".k25": FileTypeRaw,
+	".kdc": FileTypeRaw,
+	".mdc": FileTypeRaw,
+	".mef": FileTypeRaw,
+	".mos": FileTypeRaw,
+	".mrw": FileTypeRaw,
+	".nrw": FileTypeRaw,
+	".obm": FileTypeRaw,
+	".orf": FileTypeRaw,
+	".pef": FileTypeRaw,
+	".ptx": FileTypeRaw,
+	".pxn": FileTypeRaw,
+	".r3d": FileTypeRaw,
+	".raf": FileTypeRaw,
+	".raw": FileTypeRaw,
+	".rwl": FileTypeRaw,
+	".rw2": FileTypeRaw,
+	".rwz": FileTypeRaw,
+	".sr2": FileTypeRaw,
+	".srf": FileTypeRaw,
+	".srw": FileTypeRaw,
+	".tif": FileTypeRaw,
+	".x3f": FileTypeRaw,
 }
 
 type MediaFile struct {
@@ -216,9 +256,7 @@ func (m *MediaFile) GetEditedFilename() (result string) {
 }
 
 func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, masterFile *MediaFile, err error) {
-	extension := m.GetExtension()
-
-	baseFilename := m.filename[0 : len(m.filename)-len(extension)]
+	baseFilename := m.GetDirectory() + string(os.PathSeparator) + m.GetCanonicalNameFromFile()
 
 	matches, err := filepath.Glob(baseFilename + "*")
 
@@ -241,6 +279,8 @@ func (m *MediaFile) GetRelatedFiles() (result []*MediaFile, masterFile *MediaFil
 			masterFile = resultFile
 		} else if resultFile.IsRaw() {
 			masterFile = resultFile
+		} else if resultFile.IsJpeg() && resultFile.IsJpeg() && len(masterFile.GetFilename()) > len(resultFile.GetFilename()) {
+			masterFile = resultFile
 		}
 
 		result = append(result, resultFile)
@@ -255,6 +295,24 @@ func (m *MediaFile) GetFilename() string {
 
 func (m *MediaFile) SetFilename(filename string) {
 	m.filename = filename
+}
+
+func (m *MediaFile) GetRelativeFilename(directory string) string {
+	index := strings.Index(m.filename, directory)
+
+	if index == 0 {
+		return m.filename[len(directory):]
+	}
+
+	return m.filename
+}
+
+func (m *MediaFile) GetDirectory() string {
+	return filepath.Dir(m.filename)
+}
+
+func (m *MediaFile) GetBasename() string {
+	return filepath.Base(m.filename)
 }
 
 func (m *MediaFile) GetMimeType() string {
@@ -371,8 +429,12 @@ func (m *MediaFile) IsRaw() bool {
 	return m.HasType(FileTypeRaw)
 }
 
+func (m *MediaFile) IsHighEfficiencyImageFile() bool {
+	return m.HasType(FileTypeHEIF)
+}
+
 func (m *MediaFile) IsPhoto() bool {
-	return m.IsJpeg() || m.IsRaw()
+	return m.IsJpeg() || m.IsRaw() || m.IsHighEfficiencyImageFile()
 }
 
 func (m *MediaFile) GetJpeg() (*MediaFile, error) {

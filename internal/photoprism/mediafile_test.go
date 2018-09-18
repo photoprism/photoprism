@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestMediaFile_FindRelatedImages(t *testing.T) {
+func TestMediaFile_GetRelatedFiles(t *testing.T) {
 	conf := NewTestConfig()
 
 	conf.InitializeTestData(t)
@@ -18,11 +18,13 @@ func TestMediaFile_FindRelatedImages(t *testing.T) {
 
 	related, _, err := mediaFile.GetRelatedFiles()
 
-	assert.Empty(t, err)
+	assert.Nil(t, err)
 
 	assert.Len(t, related, 3)
 
 	for _, result := range related {
+		t.Logf("Filename: %s", result.GetFilename())
+
 		filename := result.GetFilename()
 
 		extension := result.GetExtension()
@@ -30,6 +32,27 @@ func TestMediaFile_FindRelatedImages(t *testing.T) {
 		baseFilename := filename[0 : len(filename)-len(extension)]
 
 		assert.Equal(t, expectedBaseFilename, baseFilename)
+	}
+}
+
+func TestMediaFile_GetRelatedFiles_Ordering(t *testing.T) {
+	conf := NewTestConfig()
+
+	conf.InitializeTestData(t)
+
+	mediaFile, err := NewMediaFile(conf.ImportPath + "/20130203_193332_0AE340D280.jpg")
+
+	assert.Nil(t, err)
+
+	related, _, err := mediaFile.GetRelatedFiles()
+
+	assert.Nil(t, err)
+
+	assert.Len(t, related, 2)
+
+	for _, result := range related {
+		filename := result.GetFilename()
+		t.Logf("Filename: %s", filename)
 	}
 }
 
