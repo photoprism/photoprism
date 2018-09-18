@@ -23,7 +23,7 @@ install-assets:
 	cp -r assets/tensorflow /var/photoprism
 install-config:
 	mkdir -p /etc/photoprism
-	test -e /etc/photoprism/photoprism.yml || cp -n configs/photoprism.prod.yml /etc/photoprism/photoprism.yml
+	test -e /etc/photoprism/photoprism.yml || cp -n configs/photoprism.yml /etc/photoprism/photoprism.yml
 build:
 	$(GOBUILD) cmd/photoprism/photoprism.go
 js:

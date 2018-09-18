@@ -4,21 +4,21 @@ version: '3.3'
 # Usage: docker-compose -f docker-compose.prod.yml up
 
 services:
-  photoprism:
-    image: photoprism/photoprism # Uses pre-built image from docker hub: https://hub.docker.com/r/photoprism/photoprism/
+  photoprism: # change if needed
+    image: photoprism/photoprism # use pre-built image from docker hub: https://hub.docker.com/r/photoprism/photoprism/
     ports:
-      - 80:80
+      - 80:80 # left side is your local port (change if port 80 is already used)
     volumes:
-      - ~/Photos:/var/photoprism/photos # Change ~/Photos to whatever directory you want to use on your local computer
-      - photoprism-thumbnails:/var/photoprism/thumbnails
+      - ~/Photos:/Photos # change ~/Photos to whatever directory you want to use on your local computer
+      - photoprism-thumbnails:/var/photoprism/thumbnails # keep this
     environment:
-      PHOTOPRISM_ASSETS_PATH: /var/photoprism
-      PHOTOPRISM_THUMBNAILS_PATH: /var/photoprism/thumbnails
-      PHOTOPRISM_IMPORT_PATH: /var/photoprism/photos/Import # ~/Photos/Import on your local computer
-      PHOTOPRISM_EXPORT_PATH: /var/photoprism/photos/Export # ~/Photos/Export on your local computer
-      PHOTOPRISM_ORIGINALS_PATH: /var/photoprism/photos/Originals # ~/Photos/Originals on your local computer
+      PHOTOPRISM_ASSETS_PATH: /var/photoprism # keep this
+      PHOTOPRISM_THUMBNAILS_PATH: /var/photoprism/thumbnails # keep this
+      PHOTOPRISM_IMPORT_PATH: /Photos/Import # ~/Photos/Import (files to be imported to originals)
+      PHOTOPRISM_EXPORT_PATH: /Photos/Export # ~/Photos/Export (files exported from originals)
+      PHOTOPRISM_ORIGINALS_PATH: /Photos/Originals # ~/Photos/Originals (original jpeg, raw and meta files)
 
-  database:
+  database: # keep this
     image: mysql:latest
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
     volumes:
@@ -29,7 +29,7 @@ services:
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
-volumes:
+volumes: # keep this
   photoprism-thumbnails:
     driver: local
   photoprism-database:
