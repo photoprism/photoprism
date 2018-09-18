@@ -11,7 +11,6 @@ import (
 	"github.com/urfave/cli"
 	"log"
 	"os"
-	"path"
 	"time"
 )
 
@@ -143,19 +142,19 @@ func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 }
 
 func (c *Config) CreateDirectories() error {
-	if err := os.MkdirAll(path.Dir(c.OriginalsPath), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.OriginalsPath, os.ModePerm); err != nil {
 		return err
 	}
 
-	if err := os.MkdirAll(path.Dir(c.ThumbnailsPath), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.ThumbnailsPath, os.ModePerm); err != nil {
 		return err
 	}
 
-	if err := os.MkdirAll(path.Dir(c.ImportPath), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.ImportPath, os.ModePerm); err != nil {
 		return err
 	}
 
-	if err := os.MkdirAll(path.Dir(c.ExportPath), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.ExportPath, os.ModePerm); err != nil {
 		return err
 	}
 

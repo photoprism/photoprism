@@ -10,13 +10,13 @@ services:
     volumes:
       - .:/go/src/github.com/photoprism/photoprism
     environment:
-      PHOTOPRISM_DEBUG: true
-      PHOTOPRISM_SERVER_MODE: debug
-      PHOTOPRISM_ASSETS_PATH: /go/src/github.com/photoprism/photoprism/assets
-      PHOTOPRISM_THUMBNAILS_PATH: /go/src/github.com/photoprism/photoprism/assets/thumbnails
-      PHOTOPRISM_IMPORT_PATH: /go/src/github.com/photoprism/photoprism/assets/photos/import
-      PHOTOPRISM_EXPORT_PATH: /var/photoprism/photos/export
-      PHOTOPRISM_ORIGINALS_PATH: /go/src/github.com/photoprism/photoprism/assets/photos/originals
+      PHOTOPRISM_DEBUG: "true"
+      PHOTOPRISM_SERVER_MODE: "debug"
+      PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
+      PHOTOPRISM_THUMBNAILS_PATH: "/go/src/github.com/photoprism/photoprism/assets/thumbnails"
+      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/import"
+      PHOTOPRISM_EXPORT_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/export"
+      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/originals"
 
   database:
     image: mysql:latest

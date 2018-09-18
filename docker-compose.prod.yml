@@ -10,13 +10,11 @@ services:
       - 80:80 # left side is your local port (change if port 80 is already used)
     volumes:
       - ~/Photos:/Photos # change ~/Photos to whatever directory you want to use on your local computer
-      - photoprism-thumbnails:/var/photoprism/thumbnails # keep this
+      - photoprism-thumbnails:/var/photoprism/thumbnails # keep this (thumbnail cache)
     environment:
-      PHOTOPRISM_ASSETS_PATH: /var/photoprism # keep this
-      PHOTOPRISM_THUMBNAILS_PATH: /var/photoprism/thumbnails # keep this
-      PHOTOPRISM_IMPORT_PATH: /Photos/Import # ~/Photos/Import (files to be imported to originals)
-      PHOTOPRISM_EXPORT_PATH: /Photos/Export # ~/Photos/Export (files exported from originals)
-      PHOTOPRISM_ORIGINALS_PATH: /Photos/Originals # ~/Photos/Originals (original jpeg, raw and meta files)
+      PHOTOPRISM_IMPORT_PATH: "/Photos/Import" # ~/Photos/Import (files to be imported to originals)
+      PHOTOPRISM_EXPORT_PATH: "/Photos/Export" # ~/Photos/Export (files exported from originals)
+      PHOTOPRISM_ORIGINALS_PATH: "/Photos/Originals" # ~/Photos/Originals (original jpeg, raw and meta files)
 
   database: # keep this
     image: mysql:latest
