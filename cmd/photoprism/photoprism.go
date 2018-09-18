@@ -14,6 +14,8 @@ func main() {
 	app.Name = "PhotoPrism"
 	app.Usage = "Digital Photo Archive"
 	app.Version = "0.0.0"
+	app.Author = "Michael Mayer"
+	app.Email = "michael@liquidbytes.net"
 	app.Flags = globalCliFlags
 	app.Commands = []cli.Command{
 		{
@@ -290,47 +292,47 @@ var globalCliFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:  "config-file, c",
-		Usage: "config filename",
+		Usage: "load configuration from `FILENAME`",
 		Value: "/etc/photoprism/photoprism.yml",
 	},
 	cli.StringFlag{
 		Name:  "darktable-cli",
-		Usage: "darktable CLI",
+		Usage: "darktable command-line executable `FILENAME`",
 		Value: "/usr/bin/darktable-cli",
 	},
 	cli.StringFlag{
 		Name:  "originals-path",
-		Usage: "originals path",
+		Usage: "originals `PATH`",
 		Value: "/var/photoprism/photos/originals",
 	},
 	cli.StringFlag{
 		Name:  "thumbnails-path",
-		Usage: "thumbnails path",
+		Usage: "thumbnails `PATH`",
 		Value: "/var/photoprism/photos/thumbnails",
 	},
 	cli.StringFlag{
 		Name:  "import-path",
-		Usage: "import path",
+		Usage: "import `PATH`",
 		Value: "/var/photoprism/photos/import",
 	},
 	cli.StringFlag{
 		Name:  "export-path",
-		Usage: "export path",
+		Usage: "export `PATH`",
 		Value: "/var/photoprism/photos/export",
 	},
 	cli.StringFlag{
 		Name:  "assets-path",
-		Usage: "assets path",
+		Usage: "assets `PATH`",
 		Value: "/var/photoprism",
 	},
 	cli.StringFlag{
 		Name:  "database-driver",
-		Usage: "database driver (mysql, mssql, postgres or sqlite)",
+		Usage: "database `DRIVER` (mysql, mssql, postgres or sqlite)",
 		Value: "mysql",
 	},
 	cli.StringFlag{
 		Name:  "database-dsn",
-		Usage: "database data source name (DSN)",
+		Usage: "database data source name (`DSN`)",
 		Value: "photoprism:photoprism@tcp(localhost:3306)/photoprism",
 	},
 }
