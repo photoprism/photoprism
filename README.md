@@ -37,7 +37,11 @@ Web Frontend
 Open a terminal an type `photoprism start` to start the built-in server. It will listen on port 80 by default.
 The UI is based on [Vuetify](https://vuetifyjs.com/en/), a [Material Design](https://material.io/) component framework for Vue.js 2.
 
-![](assets/docs/img/screenshot.jpg)
+![](assets/docs/img/screenshot-zebra.jpg)
+
+![](assets/docs/img/screenshot-detailview.jpg)
+
+![](assets/docs/img/screenshot-listview.jpg)
 
 Setup
 -----
