@@ -21,7 +21,7 @@ Originals are stored in the file system in a structured way for easy backup and 
 
 Our goal is to provide the following features for the first release (tested as a proof-of-concept and partly implemented):
 
-- [Web frontend](assets/docs/img/screenshot.jpg)
+- Web frontend
 - High-performance command line tool
 - No proprietary or binary data formats
 - Automatic RAW to JPEG conversion
