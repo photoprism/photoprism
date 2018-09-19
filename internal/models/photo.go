@@ -21,7 +21,7 @@ type Photo struct {
 	PhotoLat            float64
 	PhotoLong           float64
 	Country             *Country
-	CountryID           uint
+	CountryID           string
 	Location            *Location
 	LocationID          uint
 	Tags                []*Tag `gorm:"many2many:photo_tags;"`

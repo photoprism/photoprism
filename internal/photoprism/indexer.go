@@ -105,6 +105,7 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 		if location, err := mediaFile.GetLocation(); err == nil {
 			i.db.FirstOrCreate(location, "id = ?", location.ID)
 			photo.Location = location
+			photo.Country = NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
 
 			tags = i.appendTag(tags, location.LocCity)
 			tags = i.appendTag(tags, location.LocCounty)
@@ -120,6 +121,14 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 			} else if photo.PhotoTitle == "" && location.LocCounty != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
 			}
+		} else {
+			var recentPhoto Photo
+
+			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", mediaFile.GetDateCreated())).Preload("Country").First(&recentPhoto); result.Error == nil {
+				if recentPhoto.Country != nil {
+					photo.Country = recentPhoto.Country
+				}
+			}
 		}
 
 		if photo.PhotoTitle == "" {
@@ -131,9 +140,9 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 		}
 
 		photo.Tags = tags
+
 		photo.Camera = NewCamera(mediaFile.GetCameraModel()).FirstOrCreate(i.db)
 		photo.TakenAt = mediaFile.GetDateCreated()
-
 		photo.PhotoCanonicalName = canonicalName
 		photo.PhotoFavorite = false
 
@@ -151,6 +160,16 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 			colorNames, photo.PhotoVibrantColor, photo.PhotoMutedColor = jpeg.GetColors()
 
 			photo.PhotoColors = strings.Join(colorNames, ", ")
+		}
+
+		if photo.CountryID == "" {
+			var recentPhoto Photo
+
+			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", photo.TakenAt)).Preload("Country").First(&recentPhoto); result.Error == nil {
+				if recentPhoto.Country != nil {
+					photo.Country = recentPhoto.Country
+				}
+			}
 		}
 
 		i.db.Save(&photo)

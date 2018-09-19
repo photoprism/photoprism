@@ -24,9 +24,13 @@ services:
     ports:
       - 13306:3306
     volumes:
-      - /var/lib/mysql
+      - photoprism-database:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
+
+volumes: # keep this
+  photoprism-database:
+    driver: local

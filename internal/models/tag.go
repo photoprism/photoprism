@@ -8,8 +8,8 @@ import (
 
 type Tag struct {
 	gorm.Model
-	TagLabel string `gorm:"type:varchar(100);unique_index"`
 	TagSlug  string `gorm:"type:varchar(100);unique_index"`
+	TagLabel string `gorm:"type:varchar(100);unique_index"`
 }
 
 func NewTag(label string) *Tag {
