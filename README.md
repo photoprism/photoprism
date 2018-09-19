@@ -17,15 +17,15 @@ PhotoPrism is a server-based application for automatically tagging, searching an
 It is functionally similar to popular cloud services such as [Flickr](https://www.flickr.com/) or [Google Photos](https://photos.google.com/).
 Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
 
-*Note: This software is under active development. There is no stable release yet. Please leave a star if you think this is useful and ask if you have any questions.*
+*Note: This software is still under development. Please leave a star if you like it.*
 
 Our goal is to provide the following features for the first release (tested as a proof-of-concept and partly implemented):
 
-- Web frontend
+- Easy-to-use Web interface based on [Material Design](https://material.io/)
 - High-performance command line tool
 - No proprietary or binary data formats
-- Automatic RAW to JPEG conversion
-- Duplicate detection (JPEG and RAW can be used simultaneously)
+- Automatic RAW to JPEG conversion 
+- Duplicate detection (RAW plus multiple JPEG files can be used simultaneously)
 - Automated tagging using [Google TensorFlow](https://www.tensorflow.org/install/install_go)
 - [Reverse geocoding](https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding) based on latitude and longitude
 - Image search with powerful filters
@@ -35,7 +35,7 @@ Our goal is to provide the following features for the first release (tested as a
 Web Frontend
 ------------
 Open a terminal an type `photoprism start` to start the built-in server. It will listen on port 80 by default.
-The UI is based on [Vuetify](https://vuetifyjs.com/en/), a [Material Design](https://material.io/) component framework for Vue.js 2.
+The UI is based on [Vuetify](https://vuetifyjs.com/en/), a Material Design component framework for Vue.js 2.
 
 ![](assets/docs/img/screenshot-zebra.jpg)
 
