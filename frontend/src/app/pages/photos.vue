@@ -193,7 +193,6 @@
 
 <script>
     import Photo from 'model/photo';
-    import _ from 'lodash/lang';
 
     export default {
         name: 'photos',
@@ -333,9 +332,9 @@
             },
             refreshList() {
                 this.loadMoreDisabled = true;
-                console.log('QUERY', this.lastQuery, this.query);
+
                 // Don't query the same data more than once
-                if (_.isEqual(this.lastQuery, this.query)) return;
+                if (JSON.stringify(this.lastQuery) === JSON.stringify(this.query)) return;
 
                 Object.assign(this.lastQuery, this.query);
 

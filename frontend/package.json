@@ -55,7 +55,6 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-webdriver-launcher": "^1.0.5",
     "karma-webpack": "^2.0.3",
-    "lodash": "^4.17.10",
     "material-design-icons-iconfont": "^3.0.3",
     "mocha": "^3.3.0",
     "node-sass": "^4.9.2",
