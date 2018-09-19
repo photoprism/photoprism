@@ -28,15 +28,6 @@
                         <v-layout row wrap>
                             <v-flex xs12 sm6 md3 pa-2>
                                 <v-select @change="formChange"
-                                          label="Category"
-                                          flat solo
-                                          color="blue-grey"
-                                          v-model="query.cat"
-                                          :items="options.categories">
-                                </v-select>
-                            </v-flex>
-                            <v-flex xs12 sm6 md3 pa-2>
-                                <v-select @change="formChange"
                                           label="Country"
                                           flat solo
                                           color="blue-grey"
@@ -55,6 +46,15 @@
                                           item-text="CameraModel"
                                           v-model="query.camera"
                                           :items="options.cameras">
+                                </v-select>
+                            </v-flex>
+                            <v-flex xs12 sm6 md3 pa-2>
+                                <v-select @change="formChange"
+                                          label="View"
+                                          flat solo
+                                          color="blue-grey"
+                                          v-model="query.view"
+                                          :items="options.views">
                                 </v-select>
                             </v-flex>
                             <v-flex xs12 sm6 md3 pa-2>
@@ -131,7 +131,37 @@
                     <v-icon>delete</v-icon>
                 </v-btn>
             </v-speed-dial>
-            <v-container grid-list-xs fluid class="pa-0">
+            <v-data-table
+                    :headers="listColumns"
+                    :items="results"
+                    hide-actions
+                    class="elevation-1"
+                    v-if="query.view === 'list'"
+                    select-all
+                    disable-initial-sort
+                    item-key="ID"
+                    v-model="selected"
+                    :no-data-text="'No photos matched your search'"
+            >
+                <template slot="items" slot-scope="props">
+                    <td>
+                        <v-checkbox
+                                v-model="props.selected"
+                                primary
+                                hide-details
+                        ></v-checkbox>
+                    </td>
+                    <td>{{ props.item.PhotoTitle }}</td>
+                    <td>{{ props.item.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}</td>
+                    <td>{{ props.item.LocCity }}</td>
+                    <td>{{ props.item.LocCountry }}</td>
+                    <td>{{ props.item.CameraModel }}</td>
+                    <td>{{ props.item.PhotoFavorite ? 'Yes' : 'No' }}</td>
+                </template>
+            </v-data-table>
+
+
+            <v-container grid-list-xs fluid class="pa-0" v-if="query.view === 'tiles'">
                 <v-card v-if="results.length === 0">
                     <v-card-title primary-title>
                         <div>
@@ -202,9 +232,8 @@
             const order = query['order'] ? query['order'] : 'newest';
             const camera = query['camera'] ? parseInt(query['camera']) : 0;
             const q = query['q'] ? query['q'] : '';
-            const cat = query['cat'] ? query['cat'] : '';
             const country = query['country'] ? query['country'] : '';
-            const view = query['view'] ? query['view'] : 'tile';
+            const view = query['view'] === 'list' ? 'list' : 'tiles';
             const cameras = [{ID: 0, CameraModel: 'All Cameras'}].concat(this.$config.getValue('cameras'));
             const countries = [{
                 LocCountryCode: '',
@@ -217,7 +246,7 @@
                 'advandedSearch': false,
                 'results': [],
                 'query': {
-                    cat: cat,
+                    view: view,
                     country: country,
                     camera: camera,
                     order: order,
@@ -233,6 +262,10 @@
                         {value: 'shop', text: 'Shop'},
                         {value: 'tourism', text: 'Tourism'},
                     ],
+                    'views': [
+                        {value: 'tiles', text: 'Tiles'},
+                        {value: 'list', text: 'List'},
+                    ],
                     'countries': countries,
                     'cameras': cameras,
                     'sorting': [
@@ -241,6 +274,14 @@
                         {value: 'imported', text: 'Recently imported'},
                     ],
                 },
+                'listColumns': [
+                    { text: 'Title', value: 'PhotoTitle' },
+                    { text: 'Taken At', value: 'TakenAt' },
+                    { text: 'City', value: 'LocCity' },
+                    { text: 'Country', value: 'LocCountry' },
+                    { text: 'Camera', value: 'CameraModel' },
+                    { text: 'Favorite', value: 'PhotoFavorite' },
+                ],
                 'view': view,
                 'loadMoreDisabled': true,
                 'pageSize': 60,
