@@ -50,13 +50,13 @@ func ConfigureRoutes(app *gin.Engine, conf *photoprism.Config) {
 			c.JSON(http.StatusOK, files)
 		})
 
-		v1.GET("/files/:id/thumbnail", func(c *gin.Context) {
-			id := c.Param("id")
+		v1.GET("/files/:hash/thumbnail", func(c *gin.Context) {
+			fileHash := c.Param("hash")
 			size, _ := strconv.Atoi(c.Query("size"))
 
 			search := photoprism.NewSearch(conf.OriginalsPath, conf.GetDb())
 
-			file := search.FindFile(id)
+			file := search.FindFileByHash(fileHash)
 
 			fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath, file.FileName)
 
@@ -69,13 +69,13 @@ func ConfigureRoutes(app *gin.Engine, conf *photoprism.Config) {
 			}
 		})
 
-		v1.GET("/files/:id/square_thumbnail", func(c *gin.Context) {
-			id := c.Param("id")
+		v1.GET("/files/:hash/square_thumbnail", func(c *gin.Context) {
+			fileHash := c.Param("hash")
 			size, _ := strconv.Atoi(c.Query("size"))
 
 			search := photoprism.NewSearch(conf.OriginalsPath, conf.GetDb())
 
-			file := search.FindFile(id)
+			file := search.FindFileByHash(fileHash)
 
 			fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath, file.FileName)
 

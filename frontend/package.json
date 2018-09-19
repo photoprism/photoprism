@@ -75,6 +75,7 @@
     "vue-router": "^2.7.0",
     "vue-style-loader": "^2.0.0",
     "vue-template-compiler": "^2.4.4",
+    "vue-truncate-filter": "^1.1.7",
     "vuelidate": "^0.4.3",
     "vuetify": "^1.2.3",
     "webpack": "^3.12.0",

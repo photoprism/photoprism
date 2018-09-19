@@ -160,6 +160,59 @@
                 </template>
             </v-data-table>
 
+            <v-container grid-list-xs fluid class="pa-0" v-if="query.view === 'details'">
+                <v-card v-if="results.length === 0">
+                    <v-card-title primary-title>
+                        <div>
+                            <h3 class="headline mb-3">No photos matched your search</h3>
+                            <div>Try using other terms and search options such as category, country and camera.</div>
+                        </div>
+                    </v-card-title>
+                </v-card>
+                <v-layout row wrap>
+                    <v-flex
+                            v-for="photo in results"
+                            :key="photo.ID"
+                            xs12 sm6 md4 lg3 d-flex
+                    >
+                        <v-card tile class="ma-2">
+                            <v-img
+                                    :src="'/api/v1/files/' + photo.FileHash + '/square_thumbnail?size=500'"
+                                    aspect-ratio="1"
+                                    v-bind:class="{ selected: photo.selected }"
+                                    @click="selectPhoto(photo)"
+                            >
+                                <v-layout
+                                        slot="placeholder"
+                                        fill-height
+                                        align-center
+                                        justify-center
+                                        ma-0
+                                >
+                                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                </v-layout>
+                            </v-img>
+
+                            <v-card-title primary-title class="pa-3">
+                                <div>
+                                    <h3 class="subheading text-truncate mb-0">{{ photo.PhotoTitle | truncate(50)}}</h3>
+                                    <div><v-icon small>date_range</v-icon> {{ photo.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}
+                                        <v-spacer></v-spacer>
+                                        <v-icon small>photo_camera</v-icon> {{ photo.CameraModel }}<v-spacer></v-spacer>
+                                        <v-icon small>location_on</v-icon> {{ photo.LocName ? photo.LocName + ', ' : ''}}{{ photo.LocCity ? photo.LocCity + ', ' : ''}}{{ photo.LocCounty ? photo.LocCounty + ', ' : ''}}{{ photo.LocCountry }}
+                                    </div>
+                                </div>
+                            </v-card-title>
+
+                            <!-- v-card-actions>
+                                <v-btn flat color="orange">Like</v-btn>
+                                <v-btn flat color="orange">Edit</v-btn>
+                            </v-card-actions -->
+                        </v-card>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+
 
             <v-container grid-list-xs fluid class="pa-0" v-if="query.view === 'tiles'">
                 <v-card v-if="results.length === 0">
@@ -181,7 +234,7 @@
                         <v-tooltip bottom>
                             <v-card-actions flat tile class="d-flex" slot="activator" @click="selectPhoto(photo)"
                                             @mouseover="overPhoto(photo)" @mouseleave="leavePhoto(photo)">
-                                <v-img :src="'/api/v1/files/' + photo.FileID + '/square_thumbnail?size=500'"
+                                <v-img :src="'/api/v1/files/' + photo.FileHash + '/square_thumbnail?size=500'"
                                        aspect-ratio="1"
                                        class="grey lighten-2"
                                 >
@@ -233,7 +286,7 @@
             const camera = query['camera'] ? parseInt(query['camera']) : 0;
             const q = query['q'] ? query['q'] : '';
             const country = query['country'] ? query['country'] : '';
-            const view = query['view'] === 'list' ? 'list' : 'tiles';
+            const view = query['view'] ? query['view'] : 'tiles';
             const cameras = [{ID: 0, CameraModel: 'All Cameras'}].concat(this.$config.getValue('cameras'));
             const countries = [{
                 LocCountryCode: '',
@@ -264,6 +317,7 @@
                     ],
                     'views': [
                         {value: 'tiles', text: 'Tiles'},
+                        {value: 'details', text: 'Details'},
                         {value: 'list', text: 'List'},
                     ],
                     'countries': countries,
@@ -275,12 +329,12 @@
                     ],
                 },
                 'listColumns': [
-                    { text: 'Title', value: 'PhotoTitle' },
-                    { text: 'Taken At', value: 'TakenAt' },
-                    { text: 'City', value: 'LocCity' },
-                    { text: 'Country', value: 'LocCountry' },
-                    { text: 'Camera', value: 'CameraModel' },
-                    { text: 'Favorite', value: 'PhotoFavorite' },
+                    {text: 'Title', value: 'PhotoTitle'},
+                    {text: 'Taken At', value: 'TakenAt'},
+                    {text: 'City', value: 'LocCity'},
+                    {text: 'Country', value: 'LocCountry'},
+                    {text: 'Camera', value: 'CameraModel'},
+                    {text: 'Favorite', value: 'PhotoFavorite'},
                 ],
                 'view': view,
                 'loadMoreDisabled': true,

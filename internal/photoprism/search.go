@@ -57,6 +57,7 @@ type PhotoSearchResult struct {
 	// File
 	FileID          uint
 	FileName        string
+	FileHash        string
 	FileType        string
 	FileMime        string
 	FileWidth       int
@@ -81,7 +82,7 @@ func (s *Search) Photos(form PhotoSearchForm) ([]PhotoSearchResult, error) {
 	q := s.db.NewScope(nil).DB()
 	q = q.Table("photos").
 		Select(`SQL_CALC_FOUND_ROWS photos.*,
-		files.id AS file_id, files.file_name, files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, files.file_orientation,
+		files.id AS file_id, files.file_name, files.file_hash, files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, files.file_orientation,
 		cameras.camera_model,
 		locations.loc_display_name, locations.loc_name, locations.loc_city, locations.loc_postcode, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type,
 		GROUP_CONCAT(tags.tag_label) AS tags`).
@@ -165,8 +166,14 @@ func (s *Search) FindFiles(count int, offset int) (files []File) {
 	return files
 }
 
-func (s *Search) FindFile(id string) (file File) {
+func (s *Search) FindFileById(id string) (file File) {
 	s.db.Where("id = ?", id).First(&file)
+
+	return file
+}
+
+func (s *Search) FindFileByHash(fileHash string) (file File) {
+	s.db.Where("file_hash = ?", fileHash).First(&file)
 
 	return file
 }

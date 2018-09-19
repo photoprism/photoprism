@@ -12,6 +12,7 @@ import Session from 'common/session';
 import Event from 'pubsub-js';
 import Moment from 'vue-moment';
 import InfiniteScroll from 'vue-infinite-scroll';
+import VueTruncate from 'vue-truncate-filter';
 
 const session = new Session(window.localStorage);
 const config = new Config(window.localStorage, window.appConfig);
@@ -37,6 +38,7 @@ Vue.use(Vuetify, {
 
 Vue.use(Moment);
 Vue.use(InfiniteScroll);
+Vue.use(VueTruncate);
 Vue.use(AppComponents);
 Vue.use(Router);
 
