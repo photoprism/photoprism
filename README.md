@@ -129,6 +129,31 @@ GLOBAL OPTIONS:
 
 A more detailed documentation will follow. Please ask if you have any questions.
 
+### Example
+
+```
+# ./photoprism import
+Importing photos from /photos/import...
+Moving main raw file "Canon 6D South Africa 2018/IMG_2171.CR2" to "/photos/originals/2017/12/20171226_093058_8BA53355C9BF.cr2"
+Converting "/photos/originals/2017/12/20171226_093058_8BA53355C9BF.cr2" to "/photos/originals/2017/12/20171226_093058_8BA53355C9BF.jpg"
+Added main raw file "2017/12/20171226_093058_8BA53355C9BF.cr2"
+Added related jpg file "2017/12/20171226_093058_8BA53355C9BF.jpg"
+Moving main raw file "Canon 6D South Africa 2018/IMG_2172.CR2" to "/photos/originals/2017/12/20171226_093107_B522D1D35DD7.cr2"
+Converting "/photos/originals/2017/12/20171226_093107_B522D1D35DD7.cr2" to "/photos/originals/2017/12/20171226_093107_B522D1D35DD7.jpg"
+Added main raw file "2017/12/20171226_093107_B522D1D35DD7.cr2"
+Added related jpg file "2017/12/20171226_093107_B522D1D35DD7.jpg"
+Moving main raw file "Canon 6D South Africa 2018/IMG_2173.CR2" to "/photos/originals/2017/12/20171226_093117_E1EEE95F488F.cr2"
+Converting "/photos/originals/2017/12/20171226_093117_E1EEE95F488F.cr2" to "/photos/originals/2017/12/20171226_093117_E1EEE95F488F.jpg"
+Added main raw file "2017/12/20171226_093117_E1EEE95F488F.cr2"
+Added related jpg file "2017/12/20171226_093117_E1EEE95F488F.jpg"
+Moving main raw file "Canon 6D South Africa 2018/IMG_2174.CR2" to "/photos/originals/2017/12/20171226_093120_9D205FF627B3.cr2"
+Converting "/photos/originals/2017/12/20171226_093120_9D205FF627B3.cr2" to "/photos/originals/2017/12/20171226_093120_9D205FF627B3.jpg"
+Added main raw file "2017/12/20171226_093120_9D205FF627B3.cr2"
+Added related jpg file "2017/12/20171226_093120_9D205FF627B3.jpg"
+Deleted empty directory "/photos/import/Canon 6D South Africa 2018"
+Done.
+```
+
 Concept
 -------
 
