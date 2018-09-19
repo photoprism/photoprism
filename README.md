@@ -19,7 +19,7 @@ Originals are stored in the file system in a structured way for easy backup and 
 
 *Note: This software is under active development. There is no stable release yet. Please leave a star if you think this is useful and ask if you have any questions.*
 
-The final release will contain the following features (tested as a proof-of-concept):
+Our goal is to provide the following features for the first release (tested as a proof-of-concept and partly implemented):
 
 - [Web frontend](assets/docs/img/screenshot.jpg)
 - High-performance command line tool
