@@ -17,4 +17,5 @@ type File struct {
 	FileOrientation int
 	FileAspectRatio float64
 	FileHash        string `gorm:"type:varchar(100);unique_index"`
+	FileNotes       string `gorm:"type:text;"`
 }

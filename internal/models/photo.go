@@ -10,6 +10,7 @@ type Photo struct {
 	TakenAt             time.Time
 	PhotoTitle          string
 	PhotoDescription    string `gorm:"type:text;"`
+	PhotoNotes          string `gorm:"type:text;"`
 	PhotoArtist         string
 	PhotoColors         string
 	PhotoVibrantColor   string
@@ -19,6 +20,8 @@ type Photo struct {
 	PhotoFavorite       bool
 	PhotoLat            float64
 	PhotoLong           float64
+	Country             *Country
+	CountryID           uint
 	Location            *Location
 	LocationID          uint
 	Tags                []*Tag `gorm:"many2many:photo_tags;"`

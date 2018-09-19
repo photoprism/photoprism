@@ -18,5 +18,9 @@ type Location struct {
 	LocState       string
 	LocCountry     string
 	LocCountryCode string
+	LocDescription string `gorm:"type:text;"`
+	LocNotes       string `gorm:"type:text;"`
+	LocPhoto       *Photo
+	LocPhotoID     uint
 	LocFavorite    bool
 }

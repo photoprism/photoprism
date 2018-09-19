@@ -7,10 +7,12 @@ import (
 
 type Camera struct {
 	gorm.Model
-	CameraSlug  string
-	CameraModel string
-	CameraType  string
-	CameraNotes string
+	CameraSlug        string
+	CameraModel       string
+	CameraType        string
+	CameraOwner       string
+	CameraDescription string `gorm:"type:text;"`
+	CameraNotes       string `gorm:"type:text;"`
 }
 
 func NewCamera(modelName string) *Camera {
