@@ -171,7 +171,7 @@
                 </v-card>
                 <v-layout row wrap>
                     <v-flex
-                            v-for="photo in results"
+                            v-for="(photo, index) in results"
                             :key="photo.ID"
                             xs12 sm6 md4 lg3 d-flex
                     >
@@ -184,7 +184,7 @@
                                         v-bind:class="{ selected: photo.selected }"
                                         style="cursor: pointer"
                                         class="grey lighten-2"
-                                        @click="openPhoto(photo)"
+                                        @click="openPhoto(photo, index)"
 
                                 >
                                     <v-layout
@@ -235,7 +235,6 @@
                 </v-layout>
             </v-container>
 
-
             <v-container grid-list-xs fluid class="pa-0" v-if="query.view === 'tiles'">
                 <v-card v-if="results.length === 0">
                     <v-card-title primary-title>
@@ -247,7 +246,7 @@
                 </v-card>
                 <v-layout row wrap>
                     <v-flex
-                            v-for="photo in results"
+                            v-for="(photo, index) in results"
                             :key="photo.ID"
                             xs12 sm6 md3 lg2 d-flex
                             v-bind:class="{ selected: photo.selected }"
@@ -259,7 +258,7 @@
                                        aspect-ratio="1"
                                        class="grey lighten-2"
                                        style="cursor: pointer"
-                                       @click="openPhoto(photo)"
+                                       @click="openPhoto(photo, index)"
                                 >
                                     <v-layout
                                             slot="placeholder"
@@ -312,7 +311,7 @@
 
 
         <v-dialog v-model="viewDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
-            <v-card v-if="viewDialogPhoto">
+            <v-card v-if="viewDialogPhoto" dark color="black" class="photo-carousel">
                 <v-img :src="viewDialogPhoto.getThumbnailUrl('fit', 500)"
                        :aspect-ratio="viewDialogPhoto.FileAspectRatio"
                        contain
@@ -334,6 +333,13 @@
                         <v-progress-circular indeterminate
                                              color="grey lighten-5"></v-progress-circular>
                     </v-layout>
+
+                    <v-btn icon large absolute class="next" @click.stop.prevent="nextPhoto()">
+                        <v-icon color="white" x-large>chevron_right</v-icon>
+                    </v-btn>
+                    <v-btn icon large absolute class="prev">
+                        <v-icon color="white" x-large @click.stop.prevent="prevPhoto()">chevron_left</v-icon>
+                    </v-btn>
                 </v-img>
 
             </v-card>
@@ -366,6 +372,7 @@
                 'advandedSearch': false,
                 'viewDialog': false,
                 'viewDialogPhoto': null,
+                'viewDialogPhotoIndex': 0,
                 'window': {
                     width: 0,
                     height: 0
@@ -426,11 +433,15 @@
                 this.window.width = window.innerWidth;
                 this.window.height = window.innerHeight;
             },
-            overPhoto(photo) {
-
+            prevPhoto() {
+                if(this.viewDialogPhotoIndex < 1 || !this.results[this.viewDialogPhotoIndex - 1]) return false;
+                this.viewDialogPhotoIndex--;
+                this.viewDialogPhoto = this.results[this.viewDialogPhotoIndex];
             },
-            leavePhoto(photo) {
-
+            nextPhoto() {
+                if(this.viewDialogPhotoIndex >= this.results.length || !this.results[this.viewDialogPhotoIndex + 1]) return false;
+                this.viewDialogPhotoIndex++;
+                this.viewDialogPhoto = this.results[this.viewDialogPhotoIndex];
             },
             clearSelection() {
                 for (let i = 0; i < this.selected.length; i++) {
@@ -479,14 +490,15 @@
                     this.snackbarVisible = false;
                 }
             },
-            openPhoto(photo) {
-                this.$alert.success('Open photo' + photo.PhotoTitle);
+            openPhoto(photo, index) {
                 this.viewDialogPhoto = photo;
+                this.viewDialogPhotoIndex = index;
                 this.viewDialog = true;
                 this.hideSnackbar();
             },
             closePhoto() {
                 this.viewDialogPhoto = null;
+                this.viewDialogPhotoIndex = 0;
                 this.viewDialog = false;
                 this.showSnackbar();
             },
