@@ -205,7 +205,7 @@
                                     </v-btn>
 
                                     <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large absolute
-                                           :ripple="false" style="top: 4px; left: 4px"
+                                           :ripple="false" style="bottom: 4px; left: 4px"
                                            @click.stop.prevent="likePhoto(photo)">
                                         <v-icon v-if="photo.PhotoFavorite" color="white">favorite
                                         </v-icon>
@@ -280,7 +280,7 @@
                                     </v-btn>
 
                                     <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large absolute
-                                           :ripple="false" style="top: 4px; left: 4px"
+                                           :ripple="false" style="bottom: 4px; left: 4px"
                                            @click.stop.prevent="likePhoto(photo)">
                                         <v-icon v-if="photo.PhotoFavorite" color="white">favorite</v-icon>
                                         <v-icon v-else color="white">favorite_border</v-icon>
