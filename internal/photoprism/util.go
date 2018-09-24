@@ -2,7 +2,7 @@ package photoprism
 
 import (
 	"archive/zip"
-	"crypto/sha512"
+	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -61,7 +61,7 @@ func fileHash(filename string) string {
 
 	defer file.Close()
 
-	hash := sha512.New512_224()
+	hash := sha1.New()
 
 	if _, err := io.Copy(hash, file); err != nil {
 		return ""
