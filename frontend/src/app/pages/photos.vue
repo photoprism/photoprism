@@ -176,8 +176,8 @@
                             xs12 sm6 md4 lg3 d-flex
                     >
                         <v-hover>
-                            <v-card tile class="ma-2" slot-scope="{ hover }"
-                                    :class="photo.selected ? 'elevation-14' : 'elevation-2'">
+                            <v-card tile slot-scope="{ hover }"
+                                    :class="photo.selected ? 'elevation-14 ma-1' : 'elevation-2 ma-2'">
                                 <v-img
                                         :src="photo.getThumbnailUrl('square', 500)"
                                         aspect-ratio="1"
@@ -253,8 +253,8 @@
                             v-bind:class="{ selected: photo.selected }"
                     >
                         <v-hover>
-                            <v-card tile class="ma-2" slot-scope="{ hover }"
-                                    :class="photo.selected ? 'elevation-14' : hover ? 'elevation-6' : 'elevation-2'">
+                            <v-card tile slot-scope="{ hover }"
+                                    :class="photo.selected ? 'elevation-14 ma-1' : hover ? 'elevation-6 ma-2' : 'elevation-2 ma-2'">
                                 <v-img :src="photo.getThumbnailUrl('square', 500)"
                                        aspect-ratio="1"
                                        class="grey lighten-2"
