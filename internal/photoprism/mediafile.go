@@ -163,6 +163,66 @@ func (m *MediaFile) GetCameraModel() string {
 	return result
 }
 
+func (m *MediaFile) GetCameraMake() string {
+	info, err := m.GetExifData()
+
+	var result string
+
+	if err == nil {
+		result = info.CameraMake
+	}
+
+	return result
+}
+
+func (m *MediaFile) GetLensModel() string {
+	info, err := m.GetExifData()
+
+	var result string
+
+	if err == nil {
+		result = info.LensModel
+	}
+
+	return result
+}
+
+func (m *MediaFile) GetLensMake() string {
+	info, err := m.GetExifData()
+
+	var result string
+
+	if err == nil {
+		result = info.LensMake
+	}
+
+	return result
+}
+
+func (m *MediaFile) GetFocalLength() float64 {
+	info, err := m.GetExifData()
+
+	var result float64
+
+	if err == nil {
+		result = info.FocalLength
+	}
+
+	return result
+}
+
+func (m *MediaFile) GetAperture() float64 {
+	info, err := m.GetExifData()
+
+	var result float64
+
+	if err == nil {
+		result = info.Aperture
+	}
+
+	return result
+}
+
 func (m *MediaFile) GetCanonicalName() string {
 	var postfix string
 
@@ -198,7 +258,7 @@ func (m *MediaFile) GetPerceptualHash() (string, error) {
 		return m.perceptualHash, nil
 	}
 
-	hasher := ish.NewDifferenceHash(8, 8)
+	hasher := ish.NewDifferenceHash(PerceptualHashSize, PerceptualHashSize)
 	img, _, err := ish.LoadFile(m.GetFilename())
 
 	if err != nil {

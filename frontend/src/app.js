@@ -33,6 +33,7 @@ Vue.use(Vuetify, {
         success: '#00BFA5',
         warning: '#FFD600',
         delete: '#E57373',
+        love: '#EF5350',
     },
 });
 

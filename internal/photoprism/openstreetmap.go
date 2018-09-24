@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type OpenstreetmapAddress struct {
@@ -74,7 +75,7 @@ func (m *MediaFile) GetLocation() (*Location, error) {
 		location.LocLong = lon
 	}
 
-	location.LocName = openstreetmapLocation.Name
+	location.LocName = strings.Title(openstreetmapLocation.Name)
 	location.LocPostcode = openstreetmapLocation.Address.Postcode
 	location.LocCounty = openstreetmapLocation.Address.County
 	location.LocState = openstreetmapLocation.Address.State

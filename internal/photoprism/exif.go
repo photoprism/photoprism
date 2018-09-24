@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/rwcarlsen/goexif/exif"
 	"github.com/rwcarlsen/goexif/mknote"
+	"math"
 	"strings"
 	"time"
 )
@@ -11,7 +12,12 @@ import (
 type ExifData struct {
 	DateTime    time.Time
 	Artist      string
+	CameraMake  string
 	CameraModel string
+	LensMake    string
+	LensModel   string
+	Aperture    float64
+	FocalLength float64
 	UniqueID    string
 	Lat         float64
 	Long        float64
@@ -58,6 +64,42 @@ func (m *MediaFile) GetExifData() (*ExifData, error) {
 
 	if camModel, err := x.Get(exif.Model); err == nil {
 		m.exifData.CameraModel = strings.Replace(camModel.String(), "\"", "", -1)
+	}
+
+	if camMake, err := x.Get(exif.Make); err == nil {
+		m.exifData.CameraMake = strings.Replace(camMake.String(), "\"", "", -1)
+	}
+
+	if lensMake, err := x.Get(exif.LensMake); err == nil {
+		m.exifData.LensMake = strings.Replace(lensMake.String(), "\"", "", -1)
+	}
+
+	if lensModel, err := x.Get(exif.LensModel); err == nil {
+		m.exifData.LensModel = strings.Replace(lensModel.String(), "\"", "", -1)
+	}
+
+	if aperture, err := x.Get(exif.ApertureValue); err == nil {
+		number, denom, _ := aperture.Rat2(0)
+
+		if denom == 0 {
+			denom = 1
+		}
+
+		value := float64(number) / float64(denom)
+
+		m.exifData.Aperture = math.Round(value * 1000) / 1000
+	}
+
+	if focal, err := x.Get(exif.FocalLength); err == nil {
+		number, denom, _ := focal.Rat2(0)
+
+		if denom == 0 {
+			denom = 1
+		}
+
+		value := float64(number) / float64(denom)
+
+		m.exifData.FocalLength = math.Round(value * 1000) / 1000
 	}
 
 	if tm, err := x.DateTime(); err == nil {

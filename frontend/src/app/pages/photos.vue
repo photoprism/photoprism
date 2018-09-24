@@ -175,42 +175,63 @@
                             :key="photo.ID"
                             xs12 sm6 md4 lg3 d-flex
                     >
-                        <v-card tile class="ma-2">
-                            <v-img
-                                    :src="photo.getThumbnailUrl('square', 500)"
-                                    aspect-ratio="1"
-                                    v-bind:class="{ selected: photo.selected }"
-                                    @click="selectPhoto(photo)"
-                            >
-                                <v-layout
-                                        slot="placeholder"
-                                        fill-height
-                                        align-center
-                                        justify-center
-                                        ma-0
+                        <v-hover>
+                            <v-card tile class="ma-2" slot-scope="{ hover }"
+                                    :class="photo.selected ? 'elevation-14' : 'elevation-2'">
+                                <v-img
+                                        :src="photo.getThumbnailUrl('square', 500)"
+                                        aspect-ratio="1"
+                                        v-bind:class="{ selected: photo.selected }"
+                                        style="cursor: pointer"
+                                        class="grey lighten-2"
+                                        @click="openPhoto(photo)"
+
                                 >
-                                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                                </v-layout>
-                            </v-img>
+                                    <v-layout
+                                            slot="placeholder"
+                                            fill-height
+                                            align-center
+                                            justify-center
+                                            ma-0
+                                    >
+                                        <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                    </v-layout>
 
-                            <v-card-title primary-title class="pa-3">
-                                <div>
-                                    <h3 class="subheading mb-0">{{ photo.PhotoTitle | truncate(50)}}</h3>
-                                    <div><v-icon small>date_range</v-icon> {{ photo.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}
-                                        <v-spacer></v-spacer>
-                                        <v-icon small>photo_camera</v-icon> {{ photo.CameraModel }}<v-spacer></v-spacer>
-                                        <template v-if="photo.LocationID"><v-icon small>location_on</v-icon> {{ photo.LocName ? photo.LocName + ', ' : ''}}{{ photo.LocCity ? photo.LocCity + ', ' : ''}}{{ photo.LocCounty ? photo.LocCounty + ', ' : ''}}{{ photo.LocCountry }}</template>
-                                        <template v-if="photo.CountryName"><v-icon small>location_on</v-icon> {{ photo.CountryName }}</template>
+                                    <v-btn v-if="hover || photo.selected" :flat="!hover" icon large absolute
+                                           :ripple="false" style="right: 4px; bottom: 4px;"
+                                           @click.stop.prevent="selectPhoto(photo)">
+                                        <v-icon v-if="photo.selected" color="white">check_box</v-icon>
+                                        <v-icon v-else color="white">check_box_outline_blank</v-icon>
+                                    </v-btn>
 
+                                    <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large absolute
+                                           :ripple="false" style="top: 4px; left: 4px"
+                                           @click.stop.prevent="likePhoto(photo)">
+                                        <v-icon v-if="photo.PhotoFavorite" color="white">favorite
+                                        </v-icon>
+                                        <v-icon v-else color="white">favorite_border</v-icon>
+                                    </v-btn>
+                                </v-img>
+
+
+                                <v-card-title primary-title class="pa-3">
+                                    <div>
+                                        <h3 class="subheading mb-2" :title="photo.PhotoTitle">{{ photo.PhotoTitle |
+                                            truncate(80) }}</h3>
+                                        <div class="caption">
+                                            <v-icon size="14">date_range</v-icon>
+                                            {{ photo.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}
+                                            <br/>
+                                            <v-icon size="14">photo_camera</v-icon>
+                                            {{ photo.getCamera() }}
+                                            <br/>
+                                            <v-icon size="14">location_on</v-icon>
+                                            <span :title="photo.getFullLocation()">{{ photo.getLocation() }}</span>
+                                        </div>
                                     </div>
-                                </div>
-                            </v-card-title>
-
-                            <!-- v-card-actions>
-                                <v-btn flat color="orange">Like</v-btn>
-                                <v-btn flat color="orange">Edit</v-btn>
-                            </v-card-actions -->
-                        </v-card>
+                                </v-card-title>
+                            </v-card>
+                        </v-hover>
                     </v-flex>
                 </v-layout>
             </v-container>
@@ -231,14 +252,15 @@
                             :key="photo.ID"
                             xs12 sm6 md3 lg2 d-flex
                             v-bind:class="{ selected: photo.selected }"
-                            class="photo-tile"
                     >
-                        <v-tooltip bottom>
-                            <v-card-actions flat tile class="d-flex" slot="activator" @click="selectPhoto(photo)"
-                                            @mouseover="overPhoto(photo)" @mouseleave="leavePhoto(photo)">
+                        <v-hover>
+                            <v-card tile class="ma-2" slot-scope="{ hover }"
+                                    :class="photo.selected ? 'elevation-14' : hover ? 'elevation-6' : 'elevation-2'">
                                 <v-img :src="photo.getThumbnailUrl('square', 500)"
                                        aspect-ratio="1"
                                        class="grey lighten-2"
+                                       style="cursor: pointer"
+                                       @click="openPhoto(photo)"
                                 >
                                     <v-layout
                                             slot="placeholder"
@@ -247,12 +269,27 @@
                                             justify-center
                                             ma-0
                                     >
-                                        <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                        <v-progress-circular indeterminate
+                                                             color="grey lighten-5"></v-progress-circular>
                                     </v-layout>
+
+                                    <v-btn v-if="hover || photo.selected" :flat="!hover" icon large absolute
+                                           :ripple="false" style="right: 4px; bottom: 4px;"
+                                           @click.stop.prevent="selectPhoto(photo)">
+                                        <v-icon v-if="photo.selected" color="white">check_box</v-icon>
+                                        <v-icon v-else color="white">check_box_outline_blank</v-icon>
+                                    </v-btn>
+
+                                    <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large absolute
+                                           :ripple="false" style="top: 4px; left: 4px"
+                                           @click.stop.prevent="likePhoto(photo)">
+                                        <v-icon v-if="photo.PhotoFavorite" color="white">favorite</v-icon>
+                                        <v-icon v-else color="white">favorite_border</v-icon>
+                                    </v-btn>
                                 </v-img>
-                            </v-card-actions>
-                            <span>{{ photo.PhotoTitle }}<br/>{{ photo.TakenAt | moment('DD/MM/YYYY') }} / {{ photo.CameraModel }}</span>
-                        </v-tooltip>
+
+                            </v-card>
+                        </v-hover>
                     </v-flex>
                 </v-layout>
             </v-container>
@@ -273,6 +310,35 @@
                 </v-btn>
             </v-snackbar>
         </v-container>
+
+
+        <v-dialog v-model="viewDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+            <v-card v-if="viewDialogPhoto">
+                <v-img :src="viewDialogPhoto.getThumbnailUrl('fit', 500)"
+                       :aspect-ratio="viewDialogPhoto.FileAspectRatio"
+                       contain
+                       class="black"
+                       @click="closePhoto()"
+                       style="cursor: pointer"
+                       :max-width="window.width"
+                       :max-height="window.height"
+                       :srcset="viewDialogPhoto.getThumbnailSrcset()"
+                       :sizes="viewDialogPhoto.getThumbnailSizes()"
+                >
+                    <v-layout
+                            slot="placeholder"
+                            fill-height
+                            align-center
+                            justify-center
+                            ma-0
+                    >
+                        <v-progress-circular indeterminate
+                                             color="grey lighten-5"></v-progress-circular>
+                    </v-layout>
+                </v-img>
+
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 
@@ -299,6 +365,12 @@
                 'snackbarVisible': false,
                 'snackbarText': '',
                 'advandedSearch': false,
+                'viewDialog': false,
+                'viewDialogPhoto': null,
+                'window': {
+                    width: 0,
+                    height: 0
+                },
                 'results': [],
                 'query': {
                     view: view,
@@ -347,7 +419,14 @@
                 'selected': [],
             };
         },
+        destroyed() {
+            window.removeEventListener('resize', this.handleResize)
+        },
         methods: {
+            handleResize() {
+                this.window.width = window.innerWidth;
+                this.window.height = window.innerHeight;
+            },
             overPhoto(photo) {
 
             },
@@ -359,10 +438,22 @@
                     this.selected[i].selected = false;
                 }
                 this.selected = [];
-                this.snackbarText = '';
+                this.updateSnackbar();
+            },
+            updateSnackbar(text) {
+                if(!text) text = "";
+
+                this.snackbarText = text;
+
+                this.snackbarVisible = this.snackbarText !== "";
+            },
+            showSnackbar() {
+                this.snackbarVisible = this.snackbarText !== "";
+            },
+            hideSnackbar() {
                 this.snackbarVisible = false;
             },
-            selectPhoto(photo) {
+            selectPhoto(photo, ev) {
                 if (photo.selected) {
                     for (let i = 0; i < this.selected.length; i++) {
                         if (this.selected[i].id === photo.id) {
@@ -389,8 +480,19 @@
                     this.snackbarVisible = false;
                 }
             },
+            openPhoto(photo) {
+                this.$alert.success('Open photo' + photo.PhotoTitle);
+                this.viewDialogPhoto = photo;
+                this.viewDialog = true;
+                this.hideSnackbar();
+            },
+            closePhoto() {
+                this.viewDialogPhoto = null;
+                this.viewDialog = false;
+                this.showSnackbar();
+            },
             likePhoto(photo) {
-                photo.Favorite = !photo.Favorite;
+                photo.PhotoFavorite = !photo.PhotoFavorite;
             },
             deletePhoto(photo) {
                 this.$alert.success('Photo deleted');
@@ -459,7 +561,17 @@
                 });
             }
         },
+        beforeRouteLeave(to, from, next) {
+            if (this.viewDialog) {
+                this.closePhoto()
+                next(false)
+            } else {
+                next()
+            }
+        },
         created() {
+            window.addEventListener('resize', this.handleResize);
+            this.handleResize();
             this.refreshList();
         },
     };

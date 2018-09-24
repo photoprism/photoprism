@@ -115,7 +115,11 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 			tags = i.appendTag(tags, location.LocType)
 
 			if photo.PhotoTitle == "" && location.LocName != "" { // TODO: User defined title format
-				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocName, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
+				if len(location.LocName) > 40 {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(location.LocName), mediaFile.GetDateCreated().Format("2006"))
+				} else {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(location.LocName), location.LocCity, mediaFile.GetDateCreated().Format("2006"))
+				}
 			} else if photo.PhotoTitle == "" && location.LocCity != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
 			} else if photo.PhotoTitle == "" && location.LocCounty != "" {
@@ -131,17 +135,23 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 			}
 		}
 
+		photo.Tags = tags
+
 		if photo.PhotoTitle == "" {
 			if len(photo.Tags) > 0 { // TODO: User defined title format
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Tags[0].TagLabel), mediaFile.GetDateCreated().Format("2006"))
+			} else if photo.Country != nil && photo.Country.CountryName != "" {
+				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Country.CountryName), mediaFile.GetDateCreated().Format("2006"))
 			} else {
 				photo.PhotoTitle = fmt.Sprintf("Unknown / %s", mediaFile.GetDateCreated().Format("2006"))
 			}
 		}
 
-		photo.Tags = tags
+		photo.Camera = NewCamera(mediaFile.GetCameraModel(), mediaFile.GetCameraMake()).FirstOrCreate(i.db)
+		photo.Lens = NewLens(mediaFile.GetLensModel(), mediaFile.GetLensMake()).FirstOrCreate(i.db)
+		photo.PhotoFocalLength = mediaFile.GetFocalLength()
+		photo.PhotoAperture = mediaFile.GetAperture()
 
-		photo.Camera = NewCamera(mediaFile.GetCameraModel()).FirstOrCreate(i.db)
 		photo.TakenAt = mediaFile.GetDateCreated()
 		photo.PhotoCanonicalName = canonicalName
 		photo.PhotoFavorite = false
@@ -160,9 +170,14 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 			colorNames, photo.PhotoVibrantColor, photo.PhotoMutedColor = jpeg.GetColors()
 
 			photo.PhotoColors = strings.Join(colorNames, ", ")
+
+			photo.Camera = NewCamera(mediaFile.GetCameraModel(), mediaFile.GetCameraMake()).FirstOrCreate(i.db)
+			photo.Lens = NewLens(mediaFile.GetLensModel(), mediaFile.GetLensMake()).FirstOrCreate(i.db)
+			photo.PhotoFocalLength = mediaFile.GetFocalLength()
+			photo.PhotoAperture = mediaFile.GetAperture()
 		}
 
-		if photo.CountryID == "" {
+		if photo.LocationID == 0 {
 			var recentPhoto Photo
 
 			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", photo.TakenAt)).Preload("Country").First(&recentPhoto); result.Error == nil {
