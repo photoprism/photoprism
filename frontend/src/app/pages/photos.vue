@@ -195,11 +195,13 @@
 
                             <v-card-title primary-title class="pa-3">
                                 <div>
-                                    <h3 class="subheading text-truncate mb-0">{{ photo.PhotoTitle | truncate(50)}}</h3>
+                                    <h3 class="subheading mb-0">{{ photo.PhotoTitle | truncate(50)}}</h3>
                                     <div><v-icon small>date_range</v-icon> {{ photo.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}
                                         <v-spacer></v-spacer>
                                         <v-icon small>photo_camera</v-icon> {{ photo.CameraModel }}<v-spacer></v-spacer>
-                                        <v-icon small>location_on</v-icon> {{ photo.LocName ? photo.LocName + ', ' : ''}}{{ photo.LocCity ? photo.LocCity + ', ' : ''}}{{ photo.LocCounty ? photo.LocCounty + ', ' : ''}}{{ photo.LocCountry }}
+                                        <template v-if="photo.LocationID"><v-icon small>location_on</v-icon> {{ photo.LocName ? photo.LocName + ', ' : ''}}{{ photo.LocCity ? photo.LocCity + ', ' : ''}}{{ photo.LocCounty ? photo.LocCounty + ', ' : ''}}{{ photo.LocCountry }}</template>
+                                        <template v-if="photo.CountryName"><v-icon small>location_on</v-icon> {{ photo.CountryName }}</template>
+
                                     </div>
                                 </div>
                             </v-card-title>

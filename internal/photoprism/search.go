@@ -41,6 +41,10 @@ type PhotoSearchResult struct {
 	CameraID    uint
 	CameraModel string
 
+	// Country
+	CountryID   string
+	CountryName string
+
 	// Location
 	LocationID     uint
 	LocDisplayName string
@@ -84,10 +88,12 @@ func (s *Search) Photos(form PhotoSearchForm) ([]PhotoSearchResult, error) {
 		Select(`SQL_CALC_FOUND_ROWS photos.*,
 		files.id AS file_id, files.file_name, files.file_hash, files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, files.file_orientation,
 		cameras.camera_model,
+		countries.country_name,
 		locations.loc_display_name, locations.loc_name, locations.loc_city, locations.loc_postcode, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type,
 		GROUP_CONCAT(tags.tag_label) AS tags`).
 		Joins("JOIN files ON files.photo_id = photos.id AND files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
+		Joins("LEFT JOIN countries ON countries.id = photos.country_id").
 		Joins("LEFT JOIN locations ON locations.id = photos.location_id").
 		Joins("LEFT JOIN photo_tags ON photo_tags.photo_id = photos.id").
 		Joins("LEFT JOIN tags ON photo_tags.tag_id = tags.id").
