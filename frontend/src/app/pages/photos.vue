@@ -177,7 +177,7 @@
                     >
                         <v-card tile class="ma-2">
                             <v-img
-                                    :src="'/api/v1/files/' + photo.FileHash + '/square_thumbnail?size=500'"
+                                    :src="photo.getThumbnailUrl('square', 500)"
                                     aspect-ratio="1"
                                     v-bind:class="{ selected: photo.selected }"
                                     @click="selectPhoto(photo)"
@@ -234,7 +234,7 @@
                         <v-tooltip bottom>
                             <v-card-actions flat tile class="d-flex" slot="activator" @click="selectPhoto(photo)"
                                             @mouseover="overPhoto(photo)" @mouseleave="leavePhoto(photo)">
-                                <v-img :src="'/api/v1/files/' + photo.FileHash + '/square_thumbnail?size=500'"
+                                <v-img :src="photo.getThumbnailUrl('square', 500)"
                                        aspect-ratio="1"
                                        class="grey lighten-2"
                                 >
@@ -445,7 +445,6 @@
                 Object.assign(params, this.query);
 
                 Photo.search(params).then(response => {
-                    console.log(response);
                     this.results = response.models;
 
                     this.loadMoreDisabled = (response.models.length < this.pageSize);

@@ -13,6 +13,10 @@ class Photo extends Abstract {
         return 'https://www.google.com/maps/place/' + this.PhotoLat + ',' + this.PhotoLong;
     }
 
+    getThumbnailUrl(type, size) {
+        return '/api/v1/thumbnails/' + type + '/' + size + '/' + this.FileHash;
+    }
+
     static getCollectionResource() {
         return 'photos';
     }
