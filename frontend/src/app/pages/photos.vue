@@ -216,8 +216,7 @@
 
                                 <v-card-title primary-title class="pa-3">
                                     <div>
-                                        <h3 class="subheading mb-2" :title="photo.PhotoTitle">{{ photo.PhotoTitle |
-                                            truncate(80) }}</h3>
+                                        <h3 class="subheading mb-2" :title="photo.PhotoTitle">{{ photo.PhotoTitle | truncate(80) }}</h3>
                                         <div class="caption">
                                             <v-icon size="14">date_range</v-icon>
                                             {{ photo.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}

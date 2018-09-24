@@ -57,7 +57,7 @@ class Photo extends Abstract {
                 location.push(this.LocCounty)
             }
 
-            if (this.LocState && LocState !== LocCity) {
+            if (this.LocState && this.LocState !== this.LocCity) {
                 location.push(this.LocState)
             }
 
