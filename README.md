@@ -17,31 +17,29 @@ PhotoPrism is a server-based application for automatically tagging, searching an
 It is functionally similar to popular cloud services such as [Flickr](https://www.flickr.com/) or [Google Photos](https://photos.google.com/).
 Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
 
-This software is still under development. Our goal is to provide the following features for the first release (tested as a proof-of-concept and partly implemented):
+*Note: This software is under active development. Screenshots can be found below.*
 
-- Easy-to-use Web interface based on [Material Design](https://material.io/)
-- High-performance command line tool
+Our goal is to provide the following features for the first release (tested as a proof-of-concept and partly implemented):
+
+- Easy-to-use Web interface based on [Material Design](https://material.io/) (20% implemented)
+- High-performance command line tool (80% implemented)
 - No proprietary or binary data formats
-- Automatic RAW to JPEG conversion 
-- Duplicate detection (RAW plus multiple JPEG files can be used simultaneously)
-- Automated tagging using [Google TensorFlow](https://www.tensorflow.org/install/install_go)
-- [Reverse geocoding](https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding) based on latitude and longitude
-- Image search with powerful filters
-- Albums to organize your photos
-- Easy backup and export
+- Automatic RAW to JPEG conversion (implemented using [Darktable](https://www.darktable.org/))
+- Duplicate detection (RAW plus multiple JPEG files can be used simultaneously) (implemented)
+- Automated tagging using [Google TensorFlow](https://www.tensorflow.org/install/install_go) (90% implemented)
+- [Reverse geocoding](https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding) based on latitude and longitude (implemented using OpenStreetMap; support for Google Maps on the todo list)
+- Image search with powerful filters (40% implemented)
+- Albums to organize your photos (0% implemented)
+- Easy backup and export (10% implemented)
 
-A more detailed documentation - also for non-developers - will follow. Please ask if you have any questions or would like to support us (so far it's just two people from Berlin who have a ton of unsorted photos on their hard disk).
+Please ask if you have any questions and leave a star if you like this project. A more detailed documentation - also for non-developers - will follow.
 
 Web Frontend
 ------------
 Open a terminal an type `photoprism start` to start the built-in server. It will listen on port 80 by default.
 The UI is based on [Vuetify](https://vuetifyjs.com/en/), a Material Design component framework for Vue.js 2.
 
-![](assets/docs/img/screenshot-zebra.jpg)
-
 ![](assets/docs/img/screenshot-detailview.jpg)
-
-![](assets/docs/img/screenshot-listview.jpg)
 
 Setup
 -----
