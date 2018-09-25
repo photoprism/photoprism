@@ -91,12 +91,8 @@
     cursor: pointer;
 }
 
-.photo-carousel .next {
-    position: absolute;
-    top: 50%;
-    z-index: 1;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
+.photo-carousel {
+    overflow: hidden;
 }
 
 .photo-carousel .next,
@@ -114,4 +110,10 @@
 
 .photo-carousel .prev {
     left: 5px;
+}
+
+.photo-carousel .photo-img {
+    margin: 0;
+    padding: 0;
+    cursor: pointer
 }

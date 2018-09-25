@@ -315,11 +315,10 @@
                 <v-img :src="viewDialogPhoto.getThumbnailUrl('fit', 500)"
                        :aspect-ratio="viewDialogPhoto.FileAspectRatio"
                        contain
-                       class="black"
+                       class="black photo-img"
                        @click="closePhoto()"
-                       style="cursor: pointer"
-                       :max-width="window.width"
-                       :max-height="window.height"
+                       width="100%"
+                       height="100%"
                        :srcset="viewDialogPhoto.getThumbnailSrcset()"
                        :sizes="viewDialogPhoto.getThumbnailSizes()"
                 >
