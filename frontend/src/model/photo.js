@@ -34,13 +34,13 @@ class Photo extends Abstract {
     getThumbnailSizes() {
         const result = [];
 
-        result.push('(max-width: 320px) or (max-height: 320px) 320px');
-        result.push('(max-width: 500px) or (max-height: 500px) 500px');
-        result.push('(max-width: 720px) or (max-height: 720px) 720px');
-        result.push('(max-width: 1280px) or (max-height: 1280px) 1280px');
-        result.push('(max-width: 1920px) or (max-height: 1920px) 1920px');
-        result.push('(max-width: 2560px) or (max-height: 2560px) 2560px');
-        result.push('(min-width: 1920px) or (min-height: 1920px) 3840px');
+        result.push('(min-width: 2560px) 3840px');
+        result.push('(min-width: 1920px) 2560px');
+        result.push('(min-width: 1280px) 1920px');
+        result.push('(min-width: 720px) 1280px');
+        result.push('(min-width: 500px) 720px');
+        result.push('(min-width: 320px) 500px');
+        result.push('320px');
 
         return result.join(', ');
     }
