@@ -27,12 +27,19 @@ Api.interceptors.response.use(function (response) {
         console.log(error);
     }
 
-    const data = error.response.data;
+    let errorMessage = 'An error occurred - are you offline?';
+    let code = error.code;
+
+    if(error.response && error.response.data) {
+        let data = error.response.data;
+        code = data.code;
+        errorMessage = data.message ? data.message : data.error;
+    }
 
     Event.publish('ajax.end');
-    Event.publish('alert.error', data.message ? data.message : data.error);
+    Event.publish('alert.error', errorMessage);
 
-    if(data.code === 401) {
+    if(code === 401) {
         window.location = '/';
     }
 
