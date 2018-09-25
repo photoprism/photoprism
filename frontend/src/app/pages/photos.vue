@@ -319,6 +319,8 @@
                        @click="closePhoto()"
                        width="100%"
                        height="100%"
+                       :max-width="window.width"
+                       :max-height="window.height"
                        :srcset="viewDialogPhoto.getThumbnailSrcset()"
                        :sizes="viewDialogPhoto.getThumbnailSizes()"
                 >
@@ -435,12 +437,20 @@
             prevPhoto() {
                 if(this.viewDialogPhotoIndex < 1 || !this.results[this.viewDialogPhotoIndex - 1]) return false;
                 this.viewDialogPhotoIndex--;
-                this.viewDialogPhoto = this.results[this.viewDialogPhotoIndex];
+                this.viewDialogPhoto = null;
+
+                this.$nextTick(function () {
+                    this.viewDialogPhoto = this.results[this.viewDialogPhotoIndex];
+                })
             },
             nextPhoto() {
                 if(this.viewDialogPhotoIndex >= this.results.length || !this.results[this.viewDialogPhotoIndex + 1]) return false;
                 this.viewDialogPhotoIndex++;
-                this.viewDialogPhoto = this.results[this.viewDialogPhotoIndex];
+                this.viewDialogPhoto = null;
+
+                this.$nextTick(function () {
+                    this.viewDialogPhoto = this.results[this.viewDialogPhotoIndex];
+                })
             },
             clearSelection() {
                 for (let i = 0; i < this.selected.length; i++) {
