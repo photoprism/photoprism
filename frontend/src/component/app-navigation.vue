@@ -1,6 +1,6 @@
 <template>
     <div id="app-navigation">
-        <v-toolbar dense dark color="grey darken-3" class="hidden-lg-and-up" @click.stop="showNavigation()">
+        <v-toolbar dark color="grey darken-3" class="hidden-lg-and-up" @click.stop="showNavigation()">
             <v-toolbar-side-icon></v-toolbar-side-icon>
 
             <v-toolbar-title>{{ $router.currentRoute.name }}</v-toolbar-title>
