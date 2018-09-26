@@ -26,7 +26,7 @@
                     v-show="advandedSearch">
                 <v-card-text>
                     <v-layout row wrap>
-                        <v-flex xs12 sm6 md3 pa-2>
+                        <v-flex xs12 sm6 md3 pa-1>
                             <v-select @change="formChange"
                                       label="Country"
                                       flat solo hide-details
@@ -37,7 +37,7 @@
                                       :items="options.countries">
                             </v-select>
                         </v-flex>
-                        <v-flex xs12 sm6 md3 pa-2>
+                        <v-flex xs12 sm6 md3 pa-1>
                             <v-select @change="formChange"
                                       label="Camera"
                                       flat solo hide-details
@@ -48,7 +48,7 @@
                                       :items="options.cameras">
                             </v-select>
                         </v-flex>
-                        <v-flex xs12 sm6 md3 pa-2>
+                        <v-flex xs12 sm6 md3 pa-1>
                             <v-select @change="formChange"
                                       label="View"
                                       flat solo hide-details
@@ -57,7 +57,7 @@
                                       :items="options.views">
                             </v-select>
                         </v-flex>
-                        <v-flex xs12 sm6 md3 pa-2>
+                        <v-flex xs12 sm6 md3 pa-1>
                             <v-select @change="formChange"
                                       label="Sort By"
                                       flat solo hide-details
