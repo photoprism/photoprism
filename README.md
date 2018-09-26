@@ -16,7 +16,6 @@ PhotoPrism
 PhotoPrism is a server-based application for automatically tagging, searching and organizing digital photo collections.
 It is functionally similar to popular cloud services such as [Flickr](https://www.flickr.com/) or [Google Photos](https://photos.google.com/).
 Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
-You can use it for free under the terms of the MIT license.
 
 ![](assets/docs/img/screenshot-detailview.jpg)
 
