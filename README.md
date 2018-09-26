@@ -16,8 +16,12 @@ PhotoPrism
 PhotoPrism is a server-based application for automatically tagging, searching and organizing digital photo collections.
 It is functionally similar to popular cloud services such as [Flickr](https://www.flickr.com/) or [Google Photos](https://photos.google.com/).
 Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
+You can use it for free under the terms of the MIT license.
 
-*Note: This software is under active development. Screenshots can be found below.*
+![](assets/docs/img/screenshot-detailview.jpg)
+
+Overview
+--------
 
 Our goal is to provide the following features for the first release (tested as a proof-of-concept and partly implemented):
 
@@ -33,13 +37,6 @@ Our goal is to provide the following features for the first release (tested as a
 - Easy backup and export (10% implemented)
 
 Please ask if you have any questions and leave a star if you like this project. A more detailed documentation - also for non-developers - will follow.
-
-Web Frontend
-------------
-Open a terminal an type `photoprism start` to start the built-in server. It will listen on port 80 by default.
-The UI is based on [Vuetify](https://vuetifyjs.com/en/), a Material Design component framework for Vue.js 2.
-
-![](assets/docs/img/screenshot-detailview.jpg)
 
 Setup
 -----
@@ -86,6 +83,11 @@ Example configuration files can be found in `configs/`.
 The frontend code is located in `frontend/`. Developers run `npm run dev` to watch files and automatically re-build them when changed.
 
 All other paths contain Go source code and scripts used for building the application.
+
+Web Frontend
+------------
+Open a terminal an type `photoprism start` to start the built-in server. It will listen on port 80 by default.
+The UI is based on [Vuetify](https://vuetifyjs.com/en/), a Material Design component framework for Vue.js 2.
 
 Command-line Interface
 ----------------------
