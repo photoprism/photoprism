@@ -176,6 +176,7 @@
                     >
                         <v-hover>
                             <v-card tile slot-scope="{ hover }"
+                                    :dark="photo.selected"
                                     :class="photo.selected ? 'elevation-14 ma-1' : 'elevation-2 ma-2'">
                                 <v-img
                                         :src="photo.getThumbnailUrl('square', 500)"
@@ -253,6 +254,7 @@
                     >
                         <v-hover>
                             <v-card tile slot-scope="{ hover }"
+                                    :dark="photo.selected"
                                     :class="photo.selected ? 'elevation-14 ma-1' : hover ? 'elevation-6 ma-2' : 'elevation-2 ma-2'">
                                 <v-img :src="photo.getThumbnailUrl('square', 500)"
                                        aspect-ratio="1"
