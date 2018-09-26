@@ -82,7 +82,7 @@
             >
                 <v-btn
                         slot="activator"
-                        color="blue-grey darken-1"
+                        color="grey darken-2"
                         dark
                         fab
                 >
