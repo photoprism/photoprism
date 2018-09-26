@@ -19,57 +19,56 @@
                     <v-icon>{{ advandedSearch ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
                 </v-btn>
             </v-toolbar>
-            <v-slide-y-transition>
-                <v-card class="pt-0"
-                        flat
-                        color="blue-grey lighten-4"
-                        v-show="advandedSearch">
-                    <v-card-text>
-                        <v-layout row wrap>
-                            <v-flex xs12 sm6 md3 pa-2>
-                                <v-select @change="formChange"
-                                          label="Country"
-                                          flat solo
-                                          color="blue-grey"
-                                          item-value="LocCountryCode"
-                                          item-text="LocCountry"
-                                          v-model="query.country"
-                                          :items="options.countries">
-                                </v-select>
-                            </v-flex>
-                            <v-flex xs12 sm6 md3 pa-2>
-                                <v-select @change="formChange"
-                                          label="Camera"
-                                          flat solo
-                                          color="blue-grey"
-                                          item-value="ID"
-                                          item-text="CameraModel"
-                                          v-model="query.camera"
-                                          :items="options.cameras">
-                                </v-select>
-                            </v-flex>
-                            <v-flex xs12 sm6 md3 pa-2>
-                                <v-select @change="formChange"
-                                          label="View"
-                                          flat solo
-                                          color="blue-grey"
-                                          v-model="query.view"
-                                          :items="options.views">
-                                </v-select>
-                            </v-flex>
-                            <v-flex xs12 sm6 md3 pa-2>
-                                <v-select @change="formChange"
-                                          label="Sort By"
-                                          flat solo
-                                          color="blue-grey"
-                                          v-model="query.order"
-                                          :items="options.sorting">
-                                </v-select>
-                            </v-flex>
-                        </v-layout>
-                    </v-card-text>
-                </v-card>
-            </v-slide-y-transition>
+
+            <v-card class="pt-1"
+                    flat
+                    color="blue-grey lighten-5"
+                    v-show="advandedSearch">
+                <v-card-text>
+                    <v-layout row wrap>
+                        <v-flex xs12 sm6 md3 pa-2>
+                            <v-select @change="formChange"
+                                      label="Country"
+                                      flat solo hide-details
+                                      color="blue-grey"
+                                      item-value="LocCountryCode"
+                                      item-text="LocCountry"
+                                      v-model="query.country"
+                                      :items="options.countries">
+                            </v-select>
+                        </v-flex>
+                        <v-flex xs12 sm6 md3 pa-2>
+                            <v-select @change="formChange"
+                                      label="Camera"
+                                      flat solo hide-details
+                                      color="blue-grey"
+                                      item-value="ID"
+                                      item-text="CameraModel"
+                                      v-model="query.camera"
+                                      :items="options.cameras">
+                            </v-select>
+                        </v-flex>
+                        <v-flex xs12 sm6 md3 pa-2>
+                            <v-select @change="formChange"
+                                      label="View"
+                                      flat solo hide-details
+                                      color="blue-grey"
+                                      v-model="query.view"
+                                      :items="options.views">
+                            </v-select>
+                        </v-flex>
+                        <v-flex xs12 sm6 md3 pa-2>
+                            <v-select @change="formChange"
+                                      label="Sort By"
+                                      flat solo hide-details
+                                      color="blue-grey"
+                                      v-model="query.order"
+                                      :items="options.sorting">
+                            </v-select>
+                        </v-flex>
+                    </v-layout>
+                </v-card-text>
+            </v-card>
         </v-form>
         <v-container fluid>
             <v-speed-dial
@@ -216,7 +215,8 @@
 
                                 <v-card-title primary-title class="pa-3">
                                     <div>
-                                        <h3 class="subheading mb-2" :title="photo.PhotoTitle">{{ photo.PhotoTitle | truncate(80) }}</h3>
+                                        <h3 class="subheading mb-2" :title="photo.PhotoTitle">{{ photo.PhotoTitle |
+                                            truncate(80) }}</h3>
                                         <div class="caption">
                                             <v-icon size="14">date_range</v-icon>
                                             {{ photo.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}
@@ -435,7 +435,7 @@
                 this.window.height = window.innerHeight;
             },
             prevPhoto() {
-                if(this.viewDialogPhotoIndex < 1 || !this.results[this.viewDialogPhotoIndex - 1]) return false;
+                if (this.viewDialogPhotoIndex < 1 || !this.results[this.viewDialogPhotoIndex - 1]) return false;
                 this.viewDialogPhotoIndex--;
                 this.viewDialogPhoto = null;
 
@@ -444,7 +444,7 @@
                 })
             },
             nextPhoto() {
-                if(this.viewDialogPhotoIndex >= this.results.length || !this.results[this.viewDialogPhotoIndex + 1]) return false;
+                if (this.viewDialogPhotoIndex >= this.results.length || !this.results[this.viewDialogPhotoIndex + 1]) return false;
                 this.viewDialogPhotoIndex++;
                 this.viewDialogPhoto = null;
 
@@ -460,7 +460,7 @@
                 this.updateSnackbar();
             },
             updateSnackbar(text) {
-                if(!text) text = "";
+                if (!text) text = "";
 
                 this.snackbarText = text;
 
