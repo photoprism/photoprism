@@ -16,7 +16,7 @@
                 <v-spacer></v-spacer>
 
                 <v-btn icon @click="advandedSearch = !advandedSearch">
-                    <v-icon>{{ advandedSearch ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
+                    <v-icon>{{ advandedSearch ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
                 </v-btn>
             </v-toolbar>
             <v-slide-y-transition>
