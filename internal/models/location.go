@@ -12,6 +12,9 @@ type Location struct {
 	LocCategory    string
 	LocType        string
 	LocName        string
+	LocHouseNr     string
+	LocStreet      string
+	LocSuburb      string
 	LocCity        string
 	LocPostcode    string
 	LocCounty      string

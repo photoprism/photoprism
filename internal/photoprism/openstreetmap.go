@@ -11,6 +11,9 @@ import (
 )
 
 type OpenstreetmapAddress struct {
+	HouseNumber string `json:"house_number"`
+	Road        string `json:"road"`
+	Suburb      string `json:"suburb"`
 	Town        string `json:"town"`
 	City        string `json:"city"`
 	Postcode    string `json:"postcode"`
@@ -76,6 +79,9 @@ func (m *MediaFile) GetLocation() (*Location, error) {
 	}
 
 	location.LocName = strings.Title(openstreetmapLocation.Name)
+	location.LocHouseNr = openstreetmapLocation.Address.HouseNumber
+	location.LocStreet = openstreetmapLocation.Address.Road
+	location.LocSuburb = openstreetmapLocation.Address.Suburb
 	location.LocPostcode = openstreetmapLocation.Address.Postcode
 	location.LocCounty = openstreetmapLocation.Address.County
 	location.LocState = openstreetmapLocation.Address.State
