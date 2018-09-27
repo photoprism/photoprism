@@ -29,7 +29,7 @@ a more complex technology experiment and a broader vision.
 
 <img align="right" width="400" src="assets/docs/img/concept.jpg" title="original concept">
 
-Our first major milestone was a proof-of-concept which got completed in September 2018:
+The first major milestone was a proof-of-concept which got completed in September 2018:
 
 - It can import all your photos from a local directory and re-index them later
 - Photos are getting automatically labeled, tagged and sorted
