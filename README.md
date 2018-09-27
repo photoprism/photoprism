@@ -24,6 +24,9 @@ History
 -------
 
 We started in January 2018 with brainstorming and finding the right technologies.
+
+<img align="right" width="400" src="assets/docs/img/concept.jpg" title="original concept">
+
 Our first milestone was a proof-of-concept which got completed in September 2018:
 
 - It can import all your photos from a local directory and re-index them later
@@ -182,8 +185,3 @@ Added related jpg file "2017/12/20171226_093120_9D205FF627B3.jpg"
 Deleted empty directory "/photos/import/Canon 6D South Africa 2018"
 Done.
 ```
-
-Concept
--------
-
-![](assets/docs/img/concept.jpg)
