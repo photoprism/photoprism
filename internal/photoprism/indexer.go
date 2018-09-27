@@ -188,6 +188,7 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 
 	file.PhotoID = photo.ID
 	file.FilePrimary = isPrimary
+	file.FileMissing = false
 	file.FileName = relativeFileName
 	file.FileHash = fileHash
 	file.FileType = mediaFile.GetType()

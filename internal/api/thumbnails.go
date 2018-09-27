@@ -54,6 +54,10 @@ func GetThumbnail(router *gin.RouterGroup, conf *photoprism.Config) {
 		} else {
 			log.Printf("could not find image for thumbnail: %s", err.Error())
 			c.Data(404, "image/svg+xml", photoIconSvg)
+
+			// Set missing flag so that the file doesn't show up in search results anymore
+			file.FileMissing = true
+			conf.GetDb().Update(file)
 		}
 	})
 }
