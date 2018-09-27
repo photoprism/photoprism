@@ -29,8 +29,8 @@ to the conclusion that existing cloud solutions are not the right tool to keep t
 organized. At the same time, traditional desktop software like Adobe Lightroom lacks many
 features and can only be used on a single computer.
 
-That's why started working on an easy-to-use application that can be
-hosted at home or on a private server. The first step was a working
+That's why we started working on an easy-to-use application that can be
+hosted at home or on a private server. The first step was a
 proof-of-concept which got completed in September 2018.
 
 You can import all your photos from a local directory and they are
