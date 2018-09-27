@@ -15,7 +15,7 @@ PhotoPrism
 
 PhotoPrism is a server-based application that makes it simple to automatically tag, search and organize all your photos.
 In times of governments and corporations invading everyone's privacy, we should not be forced to upload our most valuable digital assets
-to public cloud services just because there is no good alternative.
+to public cloud services just because there is no convenient alternative.
 This software runs on every computer that has Docker installed. You can easily create backups as originals are stored in the file system sorted by year and month.
 
 ![](assets/docs/img/screenshot-detailview.jpg)
