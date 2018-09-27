@@ -57,7 +57,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *photoprism.Config) {
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			file.FileMissing = true
-			conf.GetDb().Update(file)
+			conf.GetDb().Save(&file)
 		}
 	})
 }
