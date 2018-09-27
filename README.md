@@ -39,12 +39,13 @@ Please ask if you have any questions. A more detailed documentation - also for n
 Donations
 ---------
 
-To continue working full-time and create a community, we are looking for public funding or an investor who shares our vision. Please contact us if this is you or you have an idea.
+To continue working full-time and create a community, we are looking for public funding or an investor who shares our vision. Please contact us if this is you or you have some advice.
 
 Since the software is not released yet, we don't want to ask for small donations from individuals. Please leave a star if you like this project, it provides enough motivation to keep going.
 
 Setup
 -----
+
 Before you start, make sure you got Git and Docker installed on your system.
 Instead of using Docker, you can also setup your own runtime environment
 based on the existing Docker configuration (not recommended).
