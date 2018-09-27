@@ -42,7 +42,7 @@ Donations
 To continue working full-time and create a community, we are looking for public funding or an investor who shares our vision. Please contact us if this is you or you have an idea.
 Since the software is not released yet, we don't want to ask for small donations from individuals.
 
-Please leave a star if you like this project, it also helps.
+Please leave a star if you like this project, it provides enough motivation to keep going.
 
 Setup
 -----
