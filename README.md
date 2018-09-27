@@ -23,11 +23,13 @@ That's why we started working on an easy-to-use application that can be hosted a
 History
 -------
 
-We started in January 2018 with brainstorming and finding the right technologies.
+Our endeavour probably had its origins around January 2018 while traveling through South Africa.
+The original plan was just to find all of Theresa's cat pictures, but it soon expanded into
+a more complex technology experiment and a broader vision.
 
 <img align="right" width="400" src="assets/docs/img/concept.jpg" title="original concept">
 
-Our first milestone was a proof-of-concept which got completed in September 2018:
+Our first major milestone was a proof-of-concept which got completed in September 2018:
 
 - It can import all your photos from a local directory and re-index them later
 - Photos are getting automatically labeled, tagged and sorted
