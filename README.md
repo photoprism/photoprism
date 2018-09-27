@@ -13,7 +13,7 @@ PhotoPrism
 [issues]: https://github.com/photoprism/photoprism/issues
 [ci]: https://travis-ci.org/photoprism/photoprism
 
-PhotoPrism is a server-based software that makes it easy to automatically tag, search and organize your photos without uploading them to public cloud services such as Flickr, Facebook or Google Photos.
+PhotoPrism is a server-based application that makes it easy to automatically tag, search and organize your photos without uploading them to public cloud services such as Flickr, Facebook or Google Photos.
 Written in Go. Runs on every computer that has Docker installed. Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
 
 ![](assets/docs/img/screenshot-detailview.jpg)
