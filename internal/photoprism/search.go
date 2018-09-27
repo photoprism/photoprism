@@ -107,7 +107,7 @@ func (s *Search) Photos(form PhotoSearchForm) ([]PhotoSearchResult, error) {
 		Joins("LEFT JOIN locations ON locations.id = photos.location_id").
 		Joins("LEFT JOIN photo_tags ON photo_tags.photo_id = photos.id").
 		Joins("LEFT JOIN tags ON photo_tags.tag_id = tags.id").
-		Where("photos.deleted_at IS NULL").
+		Where("photos.deleted_at IS NULL AND photos.file_missing = 0").
 		Group("photos.id, files.id")
 
 	if form.Query != "" {
