@@ -7,12 +7,12 @@ import (
 )
 
 var MigrateCommand = cli.Command{
-	Name:  "migrate",
-	Usage: "Automatically migrates / initializes database",
+	Name:   "migrate",
+	Usage:  "Automatically migrates / initializes database",
 	Action: migrateAction,
 }
 
-func migrateAction (context *cli.Context) error {
+func migrateAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 
 	fmt.Println("Migrating database...")

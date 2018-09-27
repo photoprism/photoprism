@@ -87,7 +87,7 @@ func (m *MediaFile) GetExifData() (*ExifData, error) {
 
 		value := float64(number) / float64(denom)
 
-		m.exifData.Aperture = math.Round(value * 1000) / 1000
+		m.exifData.Aperture = math.Round(value*1000) / 1000
 	}
 
 	if focal, err := x.Get(exif.FocalLength); err == nil {
@@ -99,7 +99,7 @@ func (m *MediaFile) GetExifData() (*ExifData, error) {
 
 		value := float64(number) / float64(denom)
 
-		m.exifData.FocalLength = math.Round(value * 1000) / 1000
+		m.exifData.FocalLength = math.Round(value*1000) / 1000
 	}
 
 	if tm, err := x.DateTime(); err == nil {

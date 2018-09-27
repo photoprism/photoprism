@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func GetPhotos (router *gin.RouterGroup, conf *photoprism.Config) {
+func GetPhotos(router *gin.RouterGroup, conf *photoprism.Config) {
 	router.GET("/photos", func(c *gin.Context) {
 		var form forms.PhotoSearchForm
 

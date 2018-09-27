@@ -81,11 +81,6 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 
 	if photoQuery.Error != nil {
 		if jpeg, err := mediaFile.GetJpeg(); err == nil {
-			// Perceptual Hash
-			if perceptualHash, err := jpeg.GetPerceptualHash(); err == nil {
-				photo.PhotoPerceptualHash = perceptualHash
-			}
-
 			// Geo Location
 			if exifData, err := jpeg.GetExifData(); err == nil {
 				photo.PhotoLat = exifData.Lat
@@ -159,13 +154,6 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 		i.db.Create(&photo)
 	} else if time.Now().Sub(photo.UpdatedAt).Minutes() > 10 { // If updated more than 10 minutes ago
 		if jpeg, err := mediaFile.GetJpeg(); err == nil {
-			// Perceptual Hash
-			if photo.PhotoPerceptualHash == "" {
-				if perceptualHash, err := jpeg.GetPerceptualHash(); err == nil {
-					photo.PhotoPerceptualHash = perceptualHash
-				}
-			}
-
 			// PhotoColors
 			colorNames, photo.PhotoVibrantColor, photo.PhotoMutedColor = jpeg.GetColors()
 
@@ -205,6 +193,13 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 	file.FileType = mediaFile.GetType()
 	file.FileMime = mediaFile.GetMimeType()
 	file.FileOrientation = mediaFile.GetOrientation()
+
+	// Perceptual Hash
+	if file.FilePerceptualHash == "" && mediaFile.IsJpeg() {
+		if perceptualHash, err := mediaFile.GetPerceptualHash(); err == nil {
+			file.FilePerceptualHash = perceptualHash
+		}
+	}
 
 	if mediaFile.GetWidth() > 0 && mediaFile.GetHeight() > 0 {
 		file.FileWidth = mediaFile.GetWidth()

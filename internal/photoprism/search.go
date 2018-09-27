@@ -19,23 +19,22 @@ type SearchCount struct {
 
 type PhotoSearchResult struct {
 	// Photo
-	ID                  uint
-	CreatedAt           time.Time
-	UpdatedAt           time.Time
-	DeletedAt           time.Time
-	TakenAt             time.Time
-	PhotoTitle          string
-	PhotoDescription    string
-	PhotoArtist         string
-	PhotoKeywords       string
-	PhotoColors         string
-	PhotoVibrantColor   string
-	PhotoMutedColor     string
-	PhotoCanonicalName  string
-	PhotoPerceptualHash string
-	PhotoLat            float64
-	PhotoLong           float64
-	PhotoFavorite       bool
+	ID                 uint
+	CreatedAt          time.Time
+	UpdatedAt          time.Time
+	DeletedAt          time.Time
+	TakenAt            time.Time
+	PhotoTitle         string
+	PhotoDescription   string
+	PhotoArtist        string
+	PhotoKeywords      string
+	PhotoColors        string
+	PhotoVibrantColor  string
+	PhotoMutedColor    string
+	PhotoCanonicalName string
+	PhotoLat           float64
+	PhotoLong          float64
+	PhotoFavorite      bool
 
 	// Camera
 	CameraID    uint
@@ -65,15 +64,18 @@ type PhotoSearchResult struct {
 	LocType        string
 
 	// File
-	FileID          uint
-	FileName        string
-	FileHash        string
-	FileType        string
-	FileMime        string
-	FileWidth       int
-	FileHeight      int
-	FileOrientation int
-	FileAspectRatio float64
+	FileID             uint
+	FilePrimary        bool
+	FileMissing        bool
+	FileName           string
+	FileHash           string
+	FilePerceptualHash string
+	FileType           string
+	FileMime           string
+	FileWidth          int
+	FileHeight         int
+	FileOrientation    int
+	FileAspectRatio    float64
 
 	// Tags
 	Tags string
@@ -92,7 +94,7 @@ func (s *Search) Photos(form PhotoSearchForm) ([]PhotoSearchResult, error) {
 	q := s.db.NewScope(nil).DB()
 	q = q.Table("photos").
 		Select(`SQL_CALC_FOUND_ROWS photos.*,
-		files.id AS file_id, files.file_name, files.file_hash, files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, files.file_orientation,
+		files.id AS file_id, files.file_primary, files.file_missing, files.file_name, files.file_hash, files.file_perceptual_hash, files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, files.file_orientation,
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
 		countries.country_name,

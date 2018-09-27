@@ -9,9 +9,9 @@ import (
 )
 
 var ExportCommand = cli.Command{
-	Name:  "export",
-	Usage: "Exports photos as JPEG",
-	Flags: exportFlags,
+	Name:   "export",
+	Usage:  "Exports photos as JPEG",
+	Flags:  exportFlags,
 	Action: exportAction,
 }
 
