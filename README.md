@@ -15,7 +15,6 @@ PhotoPrism
 
 PhotoPrism makes it super easy to automatically tag, search and organize your photos without uploading them to public cloud services such as Flickr, Facebook or Google Photos.
 Written in Go. Runs on every computer that has Docker installed. Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
-It's all open-source and free.
 
 ![](assets/docs/img/screenshot-detailview.jpg)
 
