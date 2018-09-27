@@ -39,7 +39,7 @@ Please ask if you have any questions. A more detailed documentation - also for n
 Donations
 ---------
 
-To continue working full-time and create a community, we either need open-source funding or somebody with enough resources who also thinks this is important.
+To continue working full-time and create a community, we are looking for public funding or an investor who shares our vision. Please contact us if this is you or you have an idea.
 Since the software is not released yet, we don't want to ask for small donations from individuals.
 
 Please leave a star if you like this project, it also helps.
