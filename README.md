@@ -16,12 +16,33 @@ PhotoPrism
 PhotoPrism is a server-based application that makes it simple to automatically tag, search and organize your photos without uploading them to public cloud services such as Flickr, Facebook or Google Photos.
 Written in Go. Runs on every computer that has Docker installed. Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
 
+In times of governments and corporations invading our privacy, we should not be forced to give away our most private assets because there is no good alternative.
+
 ![](assets/docs/img/screenshot-detailview.jpg)
 
-Overview
---------
+History
+-------
 
-It was a long way from the first ideas to this proof-of-concept. Our goal is to provide the following features for the first release:
+We love taking photos and they belong to our most valuable (and storage consuming) assets.
+Privacy concerns and the wish to properly archive them for the next generation brought us
+to the conclusion that existing cloud solutions are not the right tool to keep them
+organized. At the same time, traditional desktop software like Adobe Lightroom lacks many
+features and can only be used on a single computer.
+
+That's why started working on an easy-to-use application that can be
+hosted at home or on a private server. The first step was a working
+proof-of-concept which got completed in September 2018.
+
+You can import all your photos from a local directory and they are
+getting automatically labeled, tagged and sorted. It is possible to
+instantly search for objects and locations or filter by camera model.
+
+We think this is pretty impressive and we got lots of positive feedback. Thank you for that.
+
+Roadmap
+-------
+
+Our next goal is to implement the following features in good quality for the first release:
 
 - Easy-to-use Web interface based on [Material Design](https://material.io/) (20% implemented)
 - High-performance command line tool (80% implemented)
@@ -34,12 +55,17 @@ It was a long way from the first ideas to this proof-of-concept. Our goal is to 
 - Albums to organize your photos (0% implemented)
 - Easy backup and export (10% implemented)
 
+More advanced features will follow later:
+- Sharing with friends
+- Improved search based on Solr
+- Facial recognition
+
 Please ask if you have any questions. A more detailed documentation - also for non-developers - will follow.
 
 Donations
 ---------
 
-To continue working full-time and create a community, we are looking for public funding or an investor who shares our vision. Please contact us if this is you or you have some advice.
+To continue working full-time and build a community, we are looking for public funding or an investor who shares our vision. Any help and advice is much appreciated.
 
 Since the software is not released yet, we don't want to ask for small donations from individuals. Please leave a star if you like this project, it provides enough motivation to keep going.
 
