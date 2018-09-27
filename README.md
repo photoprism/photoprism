@@ -13,28 +13,26 @@ PhotoPrism
 [issues]: https://github.com/photoprism/photoprism/issues
 [ci]: https://travis-ci.org/photoprism/photoprism
 
-PhotoPrism is a server-based application that makes it simple to automatically tag, search and organize digital photo collections.
-It is functionally similar to popular cloud services such as Flickr or Google Photos and runs on every computer that has Docker installed.
-You can easily create backups as originals are stored in the file system sorted by year and month.
+We love taking photos and they belong to our most valuable (and storage consuming) assets. Privacy concerns and the wish to properly
+archive them for the next generation brought us to the conclusion that existing cloud solutions are not the right tool to keep them organized.
+At the same time, traditional desktop software like Adobe Lightroom lacks many features and can only be used on a single computer.
+That's why we started working on an easy-to-use application that can be hosted at home or on a private server.
 
 ![](assets/docs/img/screenshot-detailview.jpg)
 
 History
 -------
 
-We love taking photos and they belong to our most valuable (and storage consuming) assets.
-Privacy concerns and the wish to properly archive them for the next generation brought us
-to the conclusion that existing cloud solutions are not the right tool to keep them
-organized. At the same time, traditional desktop software like Adobe Lightroom lacks many
-features and can only be used on a single computer.
+We started in January 2018 with brainstorming and finding the right technologies.
+Our first milestone was a proof-of-concept which got completed in September 2018:
 
-That's why we started working on an easy-to-use application that can be
-hosted at home or on a private server. The first step was a
-proof-of-concept which got completed in September 2018.
-
-You can import all your photos from a local directory and they are
-getting automatically labeled, tagged and sorted. It is possible to
-instantly search for objects and locations or filter by camera model.
+- It can import all your photos from a local directory and re-index them later
+- Photos are getting automatically labeled, tagged and sorted
+- It is possible to instantly search for objects and locations or filter by camera model
+- You can view individual photos
+- Thumbnails are created using a high-quality resampling filter (Lanczos)
+- The application layout is fully responsive
+- Contains all important technologies such as TensorFlow
 
 We think this is pretty impressive and we got lots of positive feedback. Thank you for that.
 
@@ -45,21 +43,23 @@ Our next goal is to implement the following features in good quality for the fir
 
 - Easy-to-use Web interface based on [Material Design](https://material.io/) (20% implemented)
 - High-performance command line tool (80% implemented)
-- No proprietary or binary data formats
+- No difficult installation, all you need is Docker (done)
+- No proprietary or binary data formats (done)
 - Automatic RAW to JPEG conversion (implemented using [Darktable](https://www.darktable.org/))
-- Duplicate detection (RAW plus multiple JPEG files can be used simultaneously) (implemented)
+- Duplicate detection (RAW plus multiple JPEG files can be used simultaneously) (done)
 - Automated tagging using [Google TensorFlow](https://www.tensorflow.org/install/install_go) (90% implemented)
 - [Reverse geocoding](https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding) based on latitude and longitude (implemented using OpenStreetMap; support for Google Maps on the todo list)
 - Image search with powerful filters (40% implemented)
 - Albums to organize your photos (0% implemented)
 - Easy backup and export (10% implemented)
+- Project Web site including a demo and end-user documentation (0% implemented)
 
 More advanced features will follow later:
 - Sharing with friends
 - Improved search based on Solr
 - Facial recognition
 
-Please ask if you have any questions. A more detailed documentation - also for non-developers - will follow.
+Please ask if you have any questions. We value feedback. A more detailed documentation - also for non-developers - will follow.
 
 Donations
 ---------
