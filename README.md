@@ -13,16 +13,16 @@ PhotoPrism
 [issues]: https://github.com/photoprism/photoprism/issues
 [ci]: https://travis-ci.org/photoprism/photoprism
 
-PhotoPrism is a server-based application for automatically tagging, searching and organizing digital photo collections.
-It is functionally similar to popular cloud services such as [Flickr](https://www.flickr.com/) or [Google Photos](https://photos.google.com/).
-Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
+PhotoPrism makes it super easy to automatically tag, search and organize your photos without uploading them to public cloud services such as Flickr, Facebook or Google Photos.
+Written in Go. Runs on every computer that has Docker installed. Originals are stored in the file system in a structured way for easy backup and reliable long-term accessibility.
+It's all open-source and free.
 
 ![](assets/docs/img/screenshot-detailview.jpg)
 
 Overview
 --------
 
-Our goal is to provide the following features for the first release (tested as a proof-of-concept and partly implemented):
+It was a long way from the first ideas to this proof-of-concept. Our goal is to provide the following features for the first release:
 
 - Easy-to-use Web interface based on [Material Design](https://material.io/) (20% implemented)
 - High-performance command line tool (80% implemented)
@@ -35,7 +35,15 @@ Our goal is to provide the following features for the first release (tested as a
 - Albums to organize your photos (0% implemented)
 - Easy backup and export (10% implemented)
 
-Please ask if you have any questions and leave a star if you like this project. A more detailed documentation - also for non-developers - will follow.
+Please ask if you have any questions. A more detailed documentation - also for non-developers - will follow.
+
+Donations
+---------
+
+To continue working full-time and create a community, we either need open-source funding or somebody with enough resources who also thinks this is important.
+Since the software is not released yet, we don't want to ask for small donations from individuals.
+
+Please leave a star if you like this project, it also helps.
 
 Setup
 -----
