@@ -65,7 +65,7 @@ Please ask if you have any questions. A more detailed documentation - also for n
 Donations
 ---------
 
-To continue working full-time and build a community, we are looking for public funding or an investor who shares our vision. Any help and advice is much appreciated.
+To continue working full-time and build a community, we are looking for public funding or a private sponsor who shares our vision. Any help and advice is much appreciated.
 
 Since the software is not released yet, we don't want to ask for small donations from individuals. Please leave a star if you like this project, it provides enough motivation to keep going.
 
