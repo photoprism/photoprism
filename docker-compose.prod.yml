@@ -6,6 +6,7 @@ version: '3.3'
 services:
   photoprism: # change if needed
     image: photoprism/photoprism # use pre-built image from docker hub: https://hub.docker.com/r/photoprism/photoprism/
+    restart: always
     ports:
       - 80:80 # left side is your local port (change if port 80 is already used)
     volumes:
@@ -18,6 +19,7 @@ services:
 
   database: # keep this
     image: mysql:latest
+    restart: always
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
     volumes:
       - photoprism-database:/var/lib/mysql
