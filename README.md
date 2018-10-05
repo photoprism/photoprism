@@ -1,4 +1,4 @@
-[PhotoPrism](https://photoprism.org/): Browse your life in pictures
+PhotoPrism: Browse your life in pictures
 ========================================
 
 [![Powered By](https://img.shields.io/badge/powered%20by-Go,%20TensorFlow%20%26%20Vuetify-blue.svg)][powered by]
