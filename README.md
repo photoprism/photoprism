@@ -30,19 +30,19 @@ Features
 
 For screenshots see https://photoprism.org/#screenshots
 
-Donations
----------
-
-To continue working full-time and build a community, we are looking for public funding or a private sponsor who shares our vision. Any help and advice is much appreciated.
-
-Since the software is not released yet, we don't want to ask for small donations from individuals. Please leave a star if you like this project, it provides enough motivation to keep going.
-
 Contribute
 ----------
 
 We are currently setting up the infrastructure necessary to coordinate a remote team and keep everyone up-to-date.
 
 At the moment, the best way to get in touch is to write an email to hello@photoprism.org. We'd love to hear from you!
+
+Donations
+---------
+
+To continue working full-time and build a community, we are looking for public funding or a private sponsor who shares our vision. Any help and advice is much appreciated.
+
+Since the software is not released yet, we don't want to ask for small donations from individuals. Please leave a star if you like this project, it provides enough motivation to keep going.
 
 Setup
 -----
