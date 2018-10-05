@@ -1,4 +1,4 @@
-PhotoPrism: Browse your life in pictures
+[PhotoPrism](https://photoprism.org/): Browse your life in pictures
 ========================================
 
 [![Powered By](https://img.shields.io/badge/powered%20by-Go,%20TensorFlow%20%26%20Vuetify-blue.svg)][powered by]
@@ -20,51 +20,15 @@ That's why we started working on an easy-to-use application that can be hosted a
 
 ![](assets/docs/img/screenshot-detailview.jpg)
 
-History
+Features
 -------
 
-Our endeavour probably had its origins around January 2018 while traveling through South Africa.
-The original plan was just to find all of Theresa's cat pictures, but it soon expanded into
-a more complex technology experiment and a broader vision.
+* Clearly structured Web interface for browsing, organizing and sharing your personal photo collection.
+* Import everything without worrying about duplicates or RAW to JPEG conversion.
+* Reverse geocoding and automated tagging based on Google TensorFlow.
+* No monthly costs. No proprietary formats. No privacy concerns.
 
-<img align="right" width="400" src="assets/docs/img/concept.jpg" title="original concept">
-
-The first major milestone was a proof-of-concept which got completed in September 2018:
-
-- It can import all your photos from a local directory and re-index them later
-- Photos are getting automatically labeled, tagged and sorted
-- It is possible to instantly search for objects and locations or filter by camera model
-- You can view individual photos
-- Thumbnails are created using a high-quality resampling filter (Lanczos)
-- The application layout is fully responsive
-- Contains all important technologies such as TensorFlow
-
-We think this is pretty impressive and we got lots of positive feedback. Thank you for that.
-
-Roadmap
--------
-
-Our next goal is to implement the following features in good quality for the first release:
-
-- Easy-to-use Web interface based on [Material Design](https://material.io/) (20% implemented)
-- High-performance command line tool (80% implemented)
-- No difficult installation, all you need is Docker (done)
-- No proprietary or binary data formats (done)
-- Automatic RAW to JPEG conversion (implemented using [Darktable](https://www.darktable.org/))
-- Duplicate detection (RAW plus multiple JPEG files can be used simultaneously) (done)
-- Automated tagging using [Google TensorFlow](https://www.tensorflow.org/install/install_go) (90% implemented)
-- [Reverse geocoding](https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding) based on latitude and longitude (implemented using OpenStreetMap; support for Google Maps on the todo list)
-- Image search with powerful filters (40% implemented)
-- Albums to organize your photos (0% implemented)
-- Easy backup and export (10% implemented)
-- Project Web site including a demo and end-user documentation (0% implemented)
-
-More advanced features will follow later:
-- Sharing with friends
-- Improved search based on Solr
-- Facial recognition
-
-Please ask if you have any questions. We value feedback. A more detailed documentation - also for non-developers - will follow.
+For screenshots see https://photoprism.org/#screenshots
 
 Donations
 ---------
@@ -72,6 +36,13 @@ Donations
 To continue working full-time and build a community, we are looking for public funding or a private sponsor who shares our vision. Any help and advice is much appreciated.
 
 Since the software is not released yet, we don't want to ask for small donations from individuals. Please leave a star if you like this project, it provides enough motivation to keep going.
+
+Contribute
+----------
+
+We are currently setting up the infrastructure necessary to coordinate a remote team and keep everyone up-to-date.
+
+At the moment, the best way to get in touch is to write an email to hello@photoprism.org. We'd love to hear from you!
 
 Setup
 -----
