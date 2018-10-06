@@ -2,7 +2,7 @@ PhotoPrism: Browse your life in pictures
 ========================================
 
 [![Powered By](https://img.shields.io/badge/powered%20by-Go,%20TensorFlow%20%26%20Vuetify-blue.svg)][powered by]
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)][license]
+[![GPL License](https://img.shields.io/badge/license-GPL-blue.svg)][license]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][code quality]
 [![GitHub issues](https://img.shields.io/github/issues/photoprism/photoprism.svg)][issues]
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=master)][ci]
@@ -13,8 +13,8 @@ PhotoPrism: Browse your life in pictures
 [issues]: https://github.com/photoprism/photoprism/issues
 [ci]: https://travis-ci.org/photoprism/photoprism
 
-We love taking photos and they belong to our most valuable (and storage consuming) assets. Privacy concerns and the wish to properly
-archive them for the next generation brought us to the conclusion that existing cloud solutions are not the right tool to keep them organized.
+We love taking photos and they belong to our most valuable (and storage consuming) assets. Privacy concerns - and the wish to properly
+archive them for the next generation - brought us to the conclusion that existing cloud solutions are not the right tool to keep them organized.
 At the same time, traditional desktop software like Adobe Lightroom lacks many features and can only be used on a single computer.
 That's why we started working on an easy-to-use application that can be hosted at home or on a private server.
 
