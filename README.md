@@ -23,12 +23,47 @@ That's why we started working on an easy-to-use application that can be hosted a
 More screenshots: https://photoprism.org/#screenshots
 
 Features
--------
+--------
+
+We focus on what really matters for photographers:
 
 * Clearly structured Web interface for browsing, organizing and sharing your personal photo collection.
 * Import everything without worrying about duplicates or RAW to JPEG conversion.
 * Reverse geocoding and automated tagging based on Google TensorFlow.
 * No monthly costs. No proprietary formats. No privacy concerns.
+
+*Note: This is not a photo editor. All images are stored in the file system, so you can continue using your favorite tools like Photoshop or Lightroom. No upload or download needed, if you run it at home. Easy, isn't it?*
+
+Installation
+------------
+
+Before you start, make sure you got [Docker](https://store.docker.com/search?type=edition&offering=community) installed on your system. It is available for Mac, Linux and Windows.
+Developers can skip this and read the [Developer Guide](https://github.com/photoprism/photoprism/wiki/Developer-Guide) in our [Wiki](https://github.com/photoprism/photoprism/wiki).
+
+**Step 1:** Download [docker-compose.prod.yml](https://github.com/photoprism/photoprism/blob/master/docker-compose.prod.yml), rename it to `docker-compose.yml` and set the default photo path `~/Photos` to whatever directory you want to use on your local computer:
+
+```yaml
+    volumes:
+        - ~/Photos:/Photos # change ~/Photos to whatever directory you want to use on your local computer
+```
+
+PhotoPrism will create the following sub-directories in your photo path: `Import`, `Export` and `Originals`. Copy existing photos to `Import`, not directly to `Originals` as they need to be renamed and indexed in order to remove duplicates.
+
+**Step 2:** Start PhotoPrism using `docker-compose` in the same directory:
+
+```
+docker-compose up -d
+```
+
+**Step 3:** The Web frontend is now available at http://localhost/. The port can be changed in `docker-compose.yml` if needed. Remember to run `docker-compose restart` every time you change the config.
+Open a terminal to to import photos:
+
+```
+docker-compose exec photoprism bash
+./photoprism import
+```
+
+*Note: This is the official way to test our development snapshot. We just started working on the UI and features are neither complete or stable. Feedback early in development helps saving a lot of time. We're a small team and need to move fast.*
 
 Contribute
 ----------
@@ -47,6 +82,6 @@ Since the software is not released yet, we don't want to ask for small donations
 Sponsors
 --------
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website and we can help your development team getting started with any of the technologies we use, either on-site or remote.
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website and we can help you or your development team getting started with any of the technologies we use, either on-site or remote.
 
 <a href="Support this project by becoming a sponsor. Your logo will show up here with a link to your website." target="_blank"><img src="https://blog.liquidbytes.net/wp-content/uploads/2015/10/liquidbytes_v06_300px-min.png" /></a>
