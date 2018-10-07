@@ -38,7 +38,7 @@ Installation
 ------------
 
 Before you start, make sure you got [Docker](https://store.docker.com/search?type=edition&offering=community) installed on your system. It is available for Mac, Linux and Windows.
-Developers can skip this and read the [Developer Guide](https://github.com/photoprism/photoprism/wiki/Developer-Guide) in our [Wiki](https://github.com/photoprism/photoprism/wiki).
+Developers can skip this and move on to the [Developer Guide](https://github.com/photoprism/photoprism/wiki/Developer-Guide) in our [Wiki](https://github.com/photoprism/photoprism/wiki).
 
 **Step 1:** Download [docker-compose.prod.yml](https://github.com/photoprism/photoprism/blob/master/docker-compose.prod.yml), rename it to `docker-compose.yml` and set the default photo path `~/Photos` to whatever directory you want to use on your local computer:
 
@@ -83,5 +83,3 @@ Sponsors
 --------
 
 Support this project by becoming a sponsor. Your logo will show up here with a link to your website and we can help you or your development team getting started with any of the technologies we use, either on-site or remote.
-
-<a href="Support this project by becoming a sponsor. Your logo will show up here with a link to your website." target="_blank"><img src="https://blog.liquidbytes.net/wp-content/uploads/2015/10/liquidbytes_v06_300px-min.png" /></a>
