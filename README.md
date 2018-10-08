@@ -74,9 +74,10 @@ The full documentation is available at https://docs.photoprism.org/en/latest/.
 Contribute
 ----------
 
-We are currently setting up the infrastructure necessary to coordinate a remote team and keep everyone up-to-date.
+If you have a bug or an idea, read the [contributing guidelines](CONTRIBUTING.md) before opening an issue.
+Issues labeled help wanted or good first issue can be good first contributions.
 
-At the moment, the best way to get in touch is to write an email to hello@photoprism.org. We'd love to hear from you!
+The best way to get in touch is to write an email to hello@photoprism.org or join our [Telegram](https://t.me/joinchat/B8AmeBAUEugGszzuklsj5w) group. We'd love to hear from you!
 
 Donations
 ---------
