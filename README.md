@@ -70,7 +70,7 @@ You should now be able to see your photos. You can continue using your favorite 
 to edit images in the `Originals` folder. Run `photoprism index` to reindex them as needed.
 Even deleting and adding is possible, if you stick to the naming scheme. Easy, isn't it?
 
-The full documentation is available at https://docs.photoprism.org/en/latest/.
+The full documentation can be found on [docs.photoprism.org](https://docs.photoprism.org/en/latest/).
 
 Contribute
 ----------
