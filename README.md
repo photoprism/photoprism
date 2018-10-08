@@ -42,7 +42,7 @@ This is the official way to test our development snapshot. We just started worki
 Before you start, make sure you got [Docker](https://store.docker.com/search?type=edition&offering=community) installed on your system. It is available for Mac, Linux and Windows.
 Developers can skip this and move on to the [Developer Guide](https://github.com/photoprism/photoprism/wiki/Developer-Guide) in our [Wiki](https://github.com/photoprism/photoprism/wiki).
 
-**Step 1:** Download [docker-compose.yml](https://raw.githubusercontent.com/photoprism/photoprism/master/configs/docker-compose.yml) (right click and *Save Link As...*) to a directory of your choice.
+**Step 1:** Download the config file [docker-compose.yml](https://raw.githubusercontent.com/photoprism/photoprism/master/configs/docker-compose.yml) (right click and *Save Link As...*) to a directory of your choice.
 
 By default, a folder named `Photos` in your home directory will be used to store all images. You don't need to create it.
 
@@ -51,7 +51,7 @@ Files that can not be imported - like videos - will stay in the `Import` directo
 
 If you prefer to use different directory names, you can change them in `docker-compose.yml`. See inline comments for instructions.
 
-**Step 2:** Open a terminal, go to the directory in which you saved the `docker-compose.yml` file and run this command to start the application:
+**Step 2:** Open a terminal, go to the directory in which you saved the config file and run this command to start the application:
 
 ```
 docker-compose up -d
@@ -67,7 +67,8 @@ photoprism import
 ```
 
 You should now be able to see your photos. You can continue using your favorite tools like Photoshop or Lightroom
-to edit images in the `Originals` folder. Run `photoprism index` to reindex them as needed. Easy, isn't it?
+to edit images in the `Originals` folder. Run `photoprism index` to reindex them as needed.
+Even deleting and adding is possible, if you stick to the naming scheme. Easy, isn't it?
 
 The full documentation is available at https://docs.photoprism.org/en/latest/.
 
