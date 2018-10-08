@@ -34,8 +34,6 @@ We focus on what really matters for photographers:
 * Reverse geocoding and automated tagging based on Google TensorFlow.
 * No monthly costs. No proprietary formats. No privacy concerns.
 
-*Note: This is not a photo editor. All images are stored in the file system, so you can continue using your favorite tools like Photoshop or Lightroom. No upload or download needed, if you run it at home. Easy, isn't it?*
-
 Installation
 ------------
 
