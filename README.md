@@ -44,7 +44,7 @@ This is the official way to test our development snapshot. We just started worki
 Before you start, make sure you got [Docker](https://store.docker.com/search?type=edition&offering=community) installed on your system. It is available for Mac, Linux and Windows.
 Developers can skip this and move on to the [Developer Guide](https://github.com/photoprism/photoprism/wiki/Developer-Guide) in our [Wiki](https://github.com/photoprism/photoprism/wiki).
 
-**Step 1:** Download [docker-compose.prod.yml](https://github.com/photoprism/photoprism/blob/master/docker-compose.prod.yml), rename it to `docker-compose.yml` and set the default photo path `~/Photos` to whatever directory you want to use on your local computer:
+**Step 1:** Download [docker-compose.yml](https://raw.githubusercontent.com/photoprism/photoprism/master/configs/docker-compose.yml) to a directory of your choice and set the default photo path `~/Photos` to where you want to store your photos:
 
 ```yaml
     volumes:
