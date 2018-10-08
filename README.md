@@ -1,15 +1,15 @@
 PhotoPrism: Browse your life in pictures
 ========================================
 
-[![Powered By](https://img.shields.io/badge/powered%20by-Go,%20TensorFlow%20%26%20Vuetify-blue.svg)][powered by]
 [![GPL License](https://img.shields.io/badge/license-GPL-blue.svg)][license]
+[![Donate](https://img.shields.io/badge/donate-paypal.me-blue.svg)]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][code quality]
 [![GitHub issues](https://img.shields.io/github/issues/photoprism/photoprism.svg)][issues]
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=master)][ci]
 [![Documentation](https://readthedocs.org/projects/photoprism-docs/badge/?version=latest&style=flat)][docs]
 
-[powered by]: https://www.tensorflow.org/install/install_go
 [license]: https://github.com/photoprism/photoprism/blob/master/LICENSE
+[donate]: https://paypal.me/photoprism/10
 [code quality]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [issues]: https://github.com/photoprism/photoprism/issues
 [ci]: https://travis-ci.org/photoprism/photoprism
@@ -75,18 +75,16 @@ Contribute
 ----------
 
 If you have a bug or an idea, read the [contributing guidelines](CONTRIBUTING.md) before opening an issue.
-Issues labeled help wanted or good first issue can be good first contributions.
+Issues labeled `help wanted` or `good first issue` can be good first contributions.
 
 The best way to get in touch is to write an email to hello@photoprism.org or join our [Telegram](https://t.me/joinchat/B8AmeBAUEugGszzuklsj5w) group. We'd love to hear from you!
 
 Donations
 ---------
 
-To continue working full-time and build a community, we are looking for public funding or a private sponsor who shares our vision. Any help and advice is much appreciated.
+Please leave a star if you like this project, it provides enough motivation to keep going. If you still want to donate, you can do so via [PayPal](https://paypal.me/photoprism/10).
 
-Since the software is not released yet, we don't want to ask for small donations from individuals. Please leave a star if you like this project, it provides enough motivation to keep going.
+Sponsoring
+----------
 
-Sponsors
---------
-
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website and we can help you or your development team getting started with any of the technologies we use, either on-site or remote.
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website and we can help you getting started with any of the technologies we use, either on-site or remote.
