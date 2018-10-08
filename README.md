@@ -51,13 +51,13 @@ Files that can not be imported - like videos - will stay in the `Import` directo
 
 If you prefer to use different directory names, you can change them in `docker-compose.yml`. See inline comments for instructions.
 
-**Step 2:** Open a terminal, go to the directory in which you saved the config file and run this command to start the application:
+**Step 2:** Open a terminal, go to the directory in which you saved the `docker-compose.yml` file and run this command to start the application:
 
 ```
 docker-compose up -d
 ```
 
-The Web frontend is now available at http://localhost:2342/. The port can be changed in `docker-compose.yml` if needed. Remember to run `docker-compose restart` every time you change the config.
+The Web frontend is now available at http://localhost:2342/. The port can be changed in `docker-compose.yml`. Remember to run `docker-compose restart` every time you touch the config.
 
 **Step 3:** Connect to the application container and run `photoprism import` after putting files in the `Import` folder:
 
@@ -67,7 +67,7 @@ photoprism import
 ```
 
 You should now be able to see your photos. You can continue using your favorite tools like Photoshop or Lightroom
-to edit images in the `Originals` folder. Run `photoprism index` to reindex them. No upload or download needed. Easy, isn't it?
+to edit images in the `Originals` folder. Run `photoprism index` to reindex them as needed. Easy, isn't it?
 
 The full documentation is available at https://docs.photoprism.org/en/latest/.
 
