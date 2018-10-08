@@ -53,7 +53,7 @@ If you prefer to use different directory names, you can change them in `docker-c
 
 **Step 2:** Open a terminal, go to the directory in which you saved the config file and run this command to start the application:
 
-```bash
+```
 docker-compose up -d
 ```
 
@@ -61,13 +61,13 @@ The Web frontend is now available at http://localhost:2342/. The port can be cha
 
 **Step 3:** Connect to the application container and run `photoprism import` after putting files in the `Import` folder:
 
-```bash
+```
 docker-compose exec photoprism bash
 photoprism import
 ```
 
 You should now be able to see your photos. You can continue using your favorite tools like Photoshop or Lightroom
-to edit images in the `Originals` folder. Run `photoprism index` to reindex them if needed. No upload or download needed. Easy, isn't it?
+to edit images in the `Originals` folder. Run `photoprism index` to reindex them. No upload or download needed. Easy, isn't it?
 
 The full documentation is available at https://docs.photoprism.org/en/latest/.
 
@@ -82,9 +82,11 @@ The best way to get in touch is to write an email to hello@photoprism.org or joi
 Donations
 ---------
 
-Please leave a star if you like this project, it provides enough motivation to keep going. If you still want to donate, you can do so via [PayPal](https://paypal.me/photoprism/10).
+Please leave a star if you like this project, it provides enough motivation to keep going.
+If you still want to donate, you can do so via [PayPal](https://paypal.me/photoprism/10).
+Thank you very much! <3
 
 Sponsoring
 ----------
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website and we can help you getting started with any of the technologies we use, either on-site or remote.
+Support this project by becoming a sponsor. Your logo will show up on our Web site plus we can help you getting started with any of the technologies we use, either on-site or remote.
