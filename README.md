@@ -52,7 +52,7 @@ Files that can not be imported - like videos - will stay in the `Import` directo
 
 **Step 2:** Start PhotoPrism using `docker-compose` in the same directory:
 
-```console
+```bash
 docker-compose up -d
 ```
 
@@ -60,7 +60,7 @@ The Web frontend is now available at http://localhost/. The port can be changed 
 
 **Step 3:** Open a terminal to import photos:
 
-```console
+```bash
 docker-compose exec photoprism bash
 ./photoprism import
 ```
