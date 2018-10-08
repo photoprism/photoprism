@@ -39,6 +39,8 @@ We focus on what really matters for photographers:
 Installation
 ------------
 
+This is the official way to test our development snapshot. We just started working on the UI and features are neither complete or stable. Feedback early in development helps saving a lot of time. We're a small team and need to move fast.
+
 Before you start, make sure you got [Docker](https://store.docker.com/search?type=edition&offering=community) installed on your system. It is available for Mac, Linux and Windows.
 Developers can skip this and move on to the [Developer Guide](https://github.com/photoprism/photoprism/wiki/Developer-Guide) in our [Wiki](https://github.com/photoprism/photoprism/wiki).
 
@@ -60,14 +62,14 @@ docker-compose up -d
 
 The Web frontend is now available at http://localhost/. The port can be changed in `docker-compose.yml` if needed. Remember to run `docker-compose restart` every time you change the config.
 
-**Step 3:** Open a terminal to import photos:
+**Step 3:** Open a terminal to import your photos:
 
 ```bash
 docker-compose exec photoprism bash
 photoprism import
 ```
 
-*Note: This is the official way to test our development snapshot. We just started working on the UI and features are neither complete or stable. Feedback early in development helps saving a lot of time. We're a small team and need to move fast.*
+The full documentation is available at https://docs.photoprism.org/en/latest/.
 
 Contribute
 ----------
