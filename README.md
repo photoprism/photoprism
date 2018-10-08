@@ -44,15 +44,14 @@ This is the official way to test our development snapshot. We just started worki
 Before you start, make sure you got [Docker](https://store.docker.com/search?type=edition&offering=community) installed on your system. It is available for Mac, Linux and Windows.
 Developers can skip this and move on to the [Developer Guide](https://github.com/photoprism/photoprism/wiki/Developer-Guide) in our [Wiki](https://github.com/photoprism/photoprism/wiki).
 
-**Step 1:** Download [docker-compose.yml](https://raw.githubusercontent.com/photoprism/photoprism/master/configs/docker-compose.yml) to a directory of your choice and set the default photo path `~/Photos` to where you want to store your photos:
+**Step 1:** Download [docker-compose.yml](https://raw.githubusercontent.com/photoprism/photoprism/master/configs/docker-compose.yml) (right click and *Save Link As...*) to a directory of your choice.
 
-```yaml
-    volumes:
-        - ~/Photos:/Photos
-```
+By default, a folder named `Photos` in your home directory will be used to store all images. You don't need to create it.
 
-PhotoPrism will create the following sub-directories in your photo path: `Import`, `Export` and `Originals`. Copy existing photos to `Import`, not directly to `Originals` as they need to be renamed and indexed in order to remove duplicates.
+PhotoPrism will also create the following sub-directories in your photo path: `Import`, `Export` and `Originals`. Copy existing photos to `Import`, not directly to `Originals` as they need to be renamed and indexed in order to remove duplicates.
 Files that can not be imported - like videos - will stay in the `Import` directory, nothing gets lost.
+
+If you prefer to use different directory names, you can change them in `docker-compose.yml`. See inline comments for instructions.
 
 **Step 2:** Start PhotoPrism using `docker-compose` in the same directory:
 
@@ -60,16 +59,16 @@ Files that can not be imported - like videos - will stay in the `Import` directo
 docker-compose up -d
 ```
 
-The Web frontend is now available at http://localhost/. The port can be changed in `docker-compose.yml` if needed. Remember to run `docker-compose restart` every time you change the config.
+The Web frontend is now available at http://localhost:2342/. The port can be changed in `docker-compose.yml` if needed. Remember to run `docker-compose restart` every time you change the config.
 
-**Step 3:** Open a terminal to import your photos:
+**Step 3:** Open a terminal to import photos:
 
 ```bash
 docker-compose exec photoprism bash
 photoprism import
 ```
 
-The full documentation is available at https://docs.photoprism.org/en/latest/.
+You should now be able to see your photos. The full documentation is available at https://docs.photoprism.org/en/latest/.
 
 Contribute
 ----------
