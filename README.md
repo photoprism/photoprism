@@ -62,7 +62,7 @@ The Web frontend is now available at http://localhost/. The port can be changed 
 
 ```bash
 docker-compose exec photoprism bash
-./photoprism import
+photoprism import
 ```
 
 *Note: This is the official way to test our development snapshot. We just started working on the UI and features are neither complete or stable. Feedback early in development helps saving a lot of time. We're a small team and need to move fast.*
