@@ -6,12 +6,14 @@ PhotoPrism: Browse your life in pictures
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][code quality]
 [![GitHub issues](https://img.shields.io/github/issues/photoprism/photoprism.svg)][issues]
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=master)][ci]
+[![Documentation](https://readthedocs.org/projects/photoprism-docs/badge/?version=latest&style=flat)][docs]
 
 [powered by]: https://www.tensorflow.org/install/install_go
 [license]: https://github.com/photoprism/photoprism/blob/master/LICENSE
 [code quality]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [issues]: https://github.com/photoprism/photoprism/issues
 [ci]: https://travis-ci.org/photoprism/photoprism
+[docs]: https://docs.photoprism.org/en/latest/
 
 We love taking photos and they belong to our most valuable (and storage consuming) assets. Privacy concerns - and the wish to properly
 archive them for the next generation - brought us to the conclusion that existing cloud solutions are not the right tool to keep them organized.
