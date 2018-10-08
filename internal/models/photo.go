@@ -8,6 +8,7 @@ import (
 type Photo struct {
 	gorm.Model
 	TakenAt            time.Time
+	TakenAtChanged     bool
 	PhotoTitle         string
 	PhotoTitleChanged  bool
 	PhotoDescription   string `gorm:"type:text;"`
