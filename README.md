@@ -15,7 +15,7 @@ PhotoPrism: Browse your life in pictures
 [ci]: https://travis-ci.org/photoprism/photoprism
 [docs]: https://docs.photoprism.org/en/latest/
 
-We love taking photos and they belong to our most valuable (and storage consuming) assets. Privacy concerns - and the wish to properly
+We love taking photos. They belong to our most valuable (and storage consuming) assets. Privacy concerns - and the wish to properly
 archive them for the next generation - brought us to the conclusion that existing cloud solutions are not the right tool to keep them organized.
 At the same time, traditional desktop software like Adobe Lightroom lacks many features and can only be used on a single computer.
 That's why we started working on an easy-to-use application that can be hosted at home or on a private server.
