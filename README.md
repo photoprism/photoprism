@@ -20,7 +20,7 @@ archive them for the next generation - brought us to the conclusion that existin
 At the same time, traditional desktop software like Adobe Lightroom lacks many features and can only be used on a single computer.
 That's why we started working on an easy-to-use application that can be hosted at home or on a private server.
 
-![](assets/docs/img/screenshot-detailview.jpg)
+![](https://photoprism.org/images/fulls/02.jpg)
 
 More screenshots: https://photoprism.org/#screenshots
 
