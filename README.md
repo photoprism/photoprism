@@ -38,7 +38,7 @@ Installation
 This is the official way to test our development snapshot. We just started working on the UI and features are neither complete or stable. Feedback early in development helps saving a lot of time. We're a small team and need to move fast.
 
 Before you start, make sure you got [Docker](https://store.docker.com/search?type=edition&offering=community) installed on your system. It is available for Mac, Linux and Windows.
-Developers can skip this and move on to the [Developer's Guide](https://github.com/photoprism/photoprism/wiki).
+Developers can skip this and move on to the [Developer Guide](https://github.com/photoprism/photoprism/wiki).
 
 **Step 1:** Download the config file [docker-compose.yml](https://raw.githubusercontent.com/photoprism/photoprism/master/configs/docker-compose.yml) (right click and *Save Link As...*) to a directory of your choice.
 

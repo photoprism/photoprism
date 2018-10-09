@@ -59,4 +59,4 @@ Please use a short and descriptive branch name, e.g. **NOT** "patch-1". It's ver
 
 ###  Fetching the Sources From GitHub
 
-Is is easiest to build PhotoPrism inside the Docker container. See [Developer's Guide](https://github.com/photoprism/photoprism/wiki).
+Is is easiest to build PhotoPrism inside the Docker container. See [Developer Guide](https://github.com/photoprism/photoprism/wiki).
