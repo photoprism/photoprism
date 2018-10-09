@@ -6,7 +6,7 @@ services:
     image: photoprism/photoprism
     command: tail -f /dev/null
     ports:
-      - 80:80
+      - 2342:80
     volumes:
       - .:/go/src/github.com/photoprism/photoprism
     environment:

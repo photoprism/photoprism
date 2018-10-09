@@ -24,10 +24,8 @@ That's why we started working on an easy-to-use application that can be hosted a
 
 More screenshots: https://photoprism.org/#screenshots
 
-Features
---------
-
-We focus on what really matters for photographers:
+What to expect
+--------------
 
 * Clearly structured Web interface for browsing, organizing and sharing your personal photo collection.
 * Import everything without worrying about duplicates or RAW to JPEG conversion.
