@@ -85,7 +85,15 @@ Please leave a star if you like this project, it provides enough motivation to k
 If you still want to donate, you can do so via [PayPal](https://paypal.me/photoprism/10).
 Thank you very much! <3
 
-Sponsoring
-----------
+Sponsorship
+-----------
 
-Support this project by becoming a sponsor. Your logo will show up on our Web site plus we can help you getting started with any of the technologies we use, either on-site or remote.
+Our ongoing progress encourages us to continue working towards a stable release that can be used by everyone.
+
+Sponsoring can provide a sustainable way to cover our cost of living during that time. Ideally it also enables us to offer perks for contributions and explore
+new ways of organizing product development.
+
+In exchange, we would love to share our knowledge and experience with you or your team, either on-site or remote. We can also
+help you getting existing photo collections labeled or build an API that integrates with your infrastructure.
+
+Please [contact us](mailto:hello@photoprism.org) if you're interested in pursuing this unique opportunity.
