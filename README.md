@@ -32,8 +32,8 @@ What to expect
 * Reverse geocoding and automated tagging based on Google TensorFlow.
 * No monthly costs. No proprietary formats. No privacy concerns.
 
-Installation
-------------
+For the early birds
+-------------------
 
 This is the official way to test our development snapshot. We just started working on the UI and features are neither complete or stable. Feedback early in development helps saving a lot of time. We're a small team and need to move fast.
 
@@ -70,8 +70,8 @@ Even deleting and adding is possible, if you stick to the naming scheme. Easy, i
 
 The full documentation can be found on [docs.photoprism.org](https://docs.photoprism.org/en/latest/).
 
-Contribute
-----------
+How to contribute
+-----------------
 
 If you have a bug or an idea, read the [contributing guidelines](CONTRIBUTING.md) before opening an issue.
 Issues labeled `help wanted` or `good first issue` can be good first contributions.
