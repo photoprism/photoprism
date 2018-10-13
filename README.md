@@ -1,7 +1,7 @@
 PhotoPrism: Browse your life in pictures
 ========================================
 
-[![GPL License](https://img.shields.io/badge/license-GPL-blue.svg)][license]
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)][license]
 [![Donate](https://img.shields.io/badge/donate-paypal.me-blue.svg)][donate]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][code quality]
 [![GitHub issues](https://img.shields.io/github/issues/photoprism/photoprism.svg)][issues]
