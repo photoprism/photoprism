@@ -15,7 +15,9 @@ PhotoPrism: Browse your life in pictures
 [ci]: https://travis-ci.org/photoprism/photoprism
 [docs]: https://docs.photoprism.org/en/latest/
 
-PhotoPrism is a server-based application for browsing, organizing and sharing your personal photo collection. It makes use of the latest technologies to automatically tag and find pictures without getting in your way. Say goodbye to solutions that force you to upload your content to cloud providers or pay monthly fees.
+PhotoPrism is a server-based application for browsing, organizing and sharing your personal photo collection.
+It makes use of the latest technologies to automatically tag and find pictures without getting in your way.
+Say goodbye to solutions that force you to upload your visual memories to the cloud or pay monthly fees.
 
 ![](https://photoprism.org/images/fulls/02.jpg)
 
