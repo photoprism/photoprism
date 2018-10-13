@@ -60,7 +60,6 @@ to perform a task.
 ## Donations
 
 Please leave a star if you like this project, it provides enough motivation to keep going.
-If you still want to donate, you can do so via [PayPal](https://paypal.me/photoprism/10).
 Thank you very much! <3
 
 ## Sponsorship
