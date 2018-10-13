@@ -33,8 +33,8 @@ All you need is a Web browser and [Docker](https://store.docker.com/search?type=
 to run the server. It is available for Mac, Linux and Windows.
 
 Note that we just started working on the UI and features are neither complete nor stable.
-Step-by-step [instructions](https://docs.photoprism.org/en/latest/setup/) can be found 
-in our User Guide on [docs.photoprism.org](https://docs.photoprism.org/en/latest/). 
+[Step-by-step instructions](https://docs.photoprism.org/en/latest/setup/) can be found
+in our [User Guide](https://docs.photoprism.org/en/latest/).
 Developers can skip this and move on to the [Developer Guide](https://github.com/photoprism/photoprism/wiki).
 
 ## Why this has to be free software
