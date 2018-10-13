@@ -15,10 +15,7 @@ PhotoPrism: Browse your life in pictures
 [ci]: https://travis-ci.org/photoprism/photoprism
 [docs]: https://docs.photoprism.org/en/latest/
 
-We love taking photos. Privacy concerns - and the wish to properly archive them for the next generation - brought us to the
-conclusion that existing cloud solutions are not the right tool to keep them organized.
-At the same time, traditional desktop software like Adobe Lightroom lacks many features and can only be used on a single computer.
-That's why we started working on an easy-to-use application that can be hosted at home or on a private server.
+PhotoPrism is a server-based application for browsing, organizing and sharing your personal photo collection. It makes use of the latest technologies to automatically tag and find pictures without getting in your way. Say goodbye to solutions that force you to upload your content to cloud providers or pay monthly fees.
 
 ![](https://photoprism.org/images/fulls/02.jpg)
 
@@ -52,14 +49,16 @@ Go, the programming language in which this software is written in, is a great ex
 was heavily influenced by the ideas of Niklaus Wirth.
 
 > Simple, elegant solutions are more effective, but they are harder to find than complex ones, and they require more time, which we too often believe to be unaffordable.
-> — NIKLAUS WIRTH, COMMUNICATIONS OF THE ACM, FEB. 1985
+> — NIKLAUS WIRTH, CACM, FEB. 1985
 
 ## How to contribute
 
-If you have a bug or an idea, read the [contributing guidelines](CONTRIBUTING.md) before opening an issue.
-Issues labeled `help wanted` or `good first issue` can be good first contributions.
-
-The best way to get in touch is to write an email to hello@photoprism.org or join our [Telegram](https://t.me/joinchat/B8AmeBAUEugGszzuklsj5w) group. We'd love to hear from you!
+We welcome contributions of any kind. If you have a bug or an idea, read our 
+[guide](https://docs.photoprism.org/en/latest/contribute/) before opening an issue.
+Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) or
+[good first issue](https://github.com/photoprism/photoprism/labels/good%20first%20issue) can be
+good first contributions. Let us know if you need additional information or permissions on GitHub
+to perform a task.
 
 ## Donations
 
