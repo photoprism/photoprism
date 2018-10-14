@@ -9,9 +9,9 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "PhotoPrism"
-	app.Usage = "Digital Photo Archive"
+	app.Usage = "Browse your life in pictures"
 	app.Version = "0.0.0"
-	app.Copyright = "Copyright (c) 2018 Michael Mayer <michael@liquidbytes.net> and contributors"
+	app.Copyright = "Copyright (c) 2018 The PhotoPrism contributors"
 	app.EnableBashCompletion = true
 	app.Flags = commands.GlobalFlags
 
