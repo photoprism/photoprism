@@ -2,10 +2,11 @@ package commands
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/araddon/dateparse"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
-	"log"
 )
 
 var ExportCommand = cli.Command{
@@ -35,6 +36,7 @@ var exportFlags = []cli.Flag{
 	},
 }
 
+// Exports photos as JPEG; called by ExportCommand and uses exportFlags
 func exportAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 

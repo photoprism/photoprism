@@ -2,9 +2,10 @@ package commands
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
-	"log"
 )
 
 var ImportCommand = cli.Command{
@@ -13,6 +14,7 @@ var ImportCommand = cli.Command{
 	Action: importAction,
 }
 
+// Imports photos from path defined in context arg; called by ImportCommand;
 func importAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 
