@@ -1,14 +1,16 @@
 package api
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/forms"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"net/http"
-	"strconv"
 )
 
+// GetPhotos searches the databse for photos based on a form.
 func GetPhotos(router *gin.RouterGroup, conf *photoprism.Config) {
 	router.GET("/photos", func(c *gin.Context) {
 		var form forms.PhotoSearchForm

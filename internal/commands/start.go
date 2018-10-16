@@ -2,10 +2,11 @@ package commands
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/urfave/cli"
-	"log"
 )
 
 var StartCommand = cli.Command{
@@ -36,6 +37,7 @@ var startFlags = []cli.Flag{
 	},
 }
 
+// Starts web serve using startFlags; called by startCommand
 func startAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 

@@ -2,9 +2,10 @@ package commands
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
-	"log"
 )
 
 var ConvertCommand = cli.Command{
@@ -13,6 +14,7 @@ var ConvertCommand = cli.Command{
 	Action: convertAction,
 }
 
+// Converts images to JPEG; called by ConvertCommand
 func convertAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 

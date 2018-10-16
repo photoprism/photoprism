@@ -2,9 +2,10 @@ package commands
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
-	"log"
 )
 
 var IndexCommand = cli.Command{
@@ -13,6 +14,7 @@ var IndexCommand = cli.Command{
 	Action: indexAction,
 }
 
+// Indexes original photos; called by IndexCommand
 func indexAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 
