@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
 )
