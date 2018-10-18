@@ -515,6 +515,7 @@
             },
             likePhoto(photo) {
                 photo.PhotoFavorite = !photo.PhotoFavorite;
+                photo.like(photo.PhotoFavorite);
             },
             deletePhoto(photo) {
                 this.$alert.success('Photo deleted');
