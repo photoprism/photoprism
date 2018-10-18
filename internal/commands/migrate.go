@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
-	"log"
 )
 
 var MigrateCommand = cli.Command{
