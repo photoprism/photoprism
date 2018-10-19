@@ -1,10 +1,11 @@
 package server
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"net/http"
 )
 
 func registerRoutes(app *gin.Engine, conf *photoprism.Config) {

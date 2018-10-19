@@ -15,6 +15,7 @@ require (
 	github.com/gin-gonic/gin v1.3.0
 	github.com/go-sql-driver/mysql v1.4.0
 	github.com/golang/protobuf v1.2.0
+	github.com/google/uuid v1.0.0
 	github.com/gosimple/slug v1.2.0
 	github.com/jinzhu/gorm v1.9.1
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a
@@ -31,6 +32,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
 	github.com/rwcarlsen/goexif v0.0.0-20180518182100-8d986c03457a
+	github.com/satori/go.uuid v1.2.0
 	github.com/steakknife/hamming v0.0.0-20180906055917-c99c65617cd3
 	github.com/stretchr/testify v1.2.2
 	github.com/tensorflow/tensorflow v1.10.1
@@ -42,5 +44,6 @@ require (
 	google.golang.org/appengine v1.1.0
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2
+	gopkg.in/h2non/filetype.v1 v1.0.5
 	gopkg.in/yaml.v2 v2.2.1
 )

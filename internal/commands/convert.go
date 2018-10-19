@@ -2,9 +2,10 @@ package commands
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
-	"log"
 )
 
 var ConvertCommand = cli.Command{
