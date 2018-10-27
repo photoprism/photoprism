@@ -2,6 +2,7 @@ export GO111MODULE=on
 GOCMD=go
 GOINSTALL=$(GOCMD) install
 GOBUILD=$(GOCMD) build
+GOMOD=$(GOCMD) mod
 GORUN=$(GOCMD) run
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
@@ -46,5 +47,6 @@ fmt:
 	$(GOFMT) ./...
 dep:
 	$(GOBUILD) -v ./...
+	$(GOMOD) tidy
 upgrade:
 	$(GOGET) -u
