@@ -1,38 +1,45 @@
 package photoprism
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mssql"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/kylelemons/go-gypsy/yaml"
-	. "github.com/photoprism/photoprism/internal/models"
-	"github.com/urfave/cli"
+	"io/ioutil"
 	"log"
 	"os"
 	"time"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mssql" // Import gorm drivers
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/photoprism/photoprism/internal/models"
+	"github.com/urfave/cli"
+	"gopkg.in/yaml.v2"
 )
 
+// Config provides a struct in which application configuration is stored.
 type Config struct {
-	Debug          bool
+	Debug          bool `yaml:"debug"`
 	ConfigFile     string
 	ServerIP       string
-	ServerPort     int
-	ServerMode     string
-	AssetsPath     string
-	ThumbnailsPath string
-	OriginalsPath  string
-	ImportPath     string
-	ExportPath     string
-	DarktableCli   string
-	DatabaseDriver string
-	DatabaseDsn    string
+	ServerPort     int    `yaml:"server-port"`
+	ServerMode     string `yaml:"server-mode"`
+	AssetsPath     string `yaml:"assets-path"`
+	ThumbnailsPath string `yaml:"thumbnails-path"`
+	OriginalsPath  string `yaml:"originals-path"`
+	ImportPath     string `yaml:"import-path"`
+	ExportPath     string `yaml:"export-path"`
+	DarktableCli   string `yaml:"darktable-cli"`
+	DatabaseDriver string `yaml:"database-driver"`
+	DatabaseDsn    string `yaml:"database-dsn"`
 	db             *gorm.DB
 }
 
-type ConfigValues map[string]interface{}
+type configValues map[string]interface{}
 
+// NewConfig creates a new configuration entity by using two methods.
+// 1: SetValuesFromFile: This will initialize values from a yaml config file.
+// 2: SetValuesFromCliContext: Which comes after SetValuesFromFile and overrides
+// any previous values giving an option two override file configs through the CLI.
 func NewConfig(context *cli.Context) *Config {
 	c := &Config{}
 	c.SetValuesFromFile(GetExpandedFilename(context.GlobalString("config-file")))
@@ -41,66 +48,26 @@ func NewConfig(context *cli.Context) *Config {
 	return c
 }
 
+// SetValuesFromFile uses a yaml config file to initiate the configuration entity.
 func (c *Config) SetValuesFromFile(fileName string) error {
-	yamlConfig, err := yaml.ReadFile(fileName)
+	content, err := ioutil.ReadFile(fileName)
 
+	if err != nil {
+		return err
+	}
+
+	err = yaml.Unmarshal(content, c)
 	if err != nil {
 		return err
 	}
 
 	c.ConfigFile = fileName
 
-	if debug, err := yamlConfig.GetBool("debug"); err == nil {
-		c.Debug = debug
-	}
-
-	if serverIP, err := yamlConfig.Get("server-host"); err == nil {
-		c.ServerIP = serverIP
-	}
-
-	if serverPort, err := yamlConfig.GetInt("server-port"); err == nil {
-		c.ServerPort = int(serverPort)
-	}
-
-	if serverMode, err := yamlConfig.Get("server-mode"); err == nil {
-		c.ServerMode = serverMode
-	}
-
-	if assetsPath, err := yamlConfig.Get("assets-path"); err == nil {
-		c.AssetsPath = GetExpandedFilename(assetsPath)
-	}
-
-	if thumbnailsPath, err := yamlConfig.Get("thumbnails-path"); err == nil {
-		c.ThumbnailsPath = GetExpandedFilename(thumbnailsPath)
-	}
-
-	if originalsPath, err := yamlConfig.Get("originals-path"); err == nil {
-		c.OriginalsPath = GetExpandedFilename(originalsPath)
-	}
-
-	if importPath, err := yamlConfig.Get("import-path"); err == nil {
-		c.ImportPath = GetExpandedFilename(importPath)
-	}
-
-	if exportPath, err := yamlConfig.Get("export-path"); err == nil {
-		c.ExportPath = GetExpandedFilename(exportPath)
-	}
-
-	if darktableCli, err := yamlConfig.Get("darktable-cli"); err == nil {
-		c.DarktableCli = GetExpandedFilename(darktableCli)
-	}
-
-	if databaseDriver, err := yamlConfig.Get("database-driver"); err == nil {
-		c.DatabaseDriver = databaseDriver
-	}
-
-	if databaseDsn, err := yamlConfig.Get("database-dsn"); err == nil {
-		c.DatabaseDsn = databaseDsn
-	}
-
 	return nil
 }
 
+// SetValuesFromCliContext uses values from the CLI to setup configuration overrides
+// for the entity.
 func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 	if context.GlobalBool("debug") {
 		c.Debug = context.GlobalBool("debug")
@@ -141,6 +108,11 @@ func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 	return nil
 }
 
+// CreateDirectories creates all the folders that photoprism needs. These are:
+// OriginalsPath
+// ThumbnailsPath
+// ImportPath
+// ExportPath
 func (c *Config) CreateDirectories() error {
 	if err := os.MkdirAll(c.OriginalsPath, os.ModePerm); err != nil {
 		return err
@@ -161,7 +133,9 @@ func (c *Config) CreateDirectories() error {
 	return nil
 }
 
-func (c *Config) ConnectToDatabase() error {
+// connectToDatabase estabilishes a connection to a database given a driver.
+// It tries to do this 12 times with a 5 second sleep intervall in between.
+func (c *Config) connectToDatabase() error {
 	db, err := gorm.Open(c.DatabaseDriver, c.DatabaseDsn)
 
 	if err != nil || db == nil {
@@ -185,52 +159,63 @@ func (c *Config) ConnectToDatabase() error {
 	return err
 }
 
-func (c *Config) GetAssetsPath() string {
-	return c.AssetsPath
-}
-
+// GetTensorFlowModelPath returns the tensorflow model path.
 func (c *Config) GetTensorFlowModelPath() string {
-	return c.GetAssetsPath() + "/tensorflow"
+	return c.AssetsPath + "/tensorflow"
 }
 
+// GetTemplatesPath returns the templates path.
 func (c *Config) GetTemplatesPath() string {
-	return c.GetAssetsPath() + "/templates"
+	return c.AssetsPath + "/templates"
 }
 
+// GetFaviconsPath returns the favicons path.
 func (c *Config) GetFaviconsPath() string {
-	return c.GetAssetsPath() + "/favicons"
+	return c.AssetsPath + "/favicons"
 }
 
+// GetPublicPath returns the public path.
 func (c *Config) GetPublicPath() string {
-	return c.GetAssetsPath() + "/public"
+	return c.AssetsPath + "/public"
 }
 
+// GetPublicBuildPath returns the public build path.
 func (c *Config) GetPublicBuildPath() string {
-	return c.GetPublicPath() + "/build"
+	return c.AssetsPath + "/build"
 }
 
+// GetDb gets a db connection. If it already is estabilished it will return that.
 func (c *Config) GetDb() *gorm.DB {
 	if c.db == nil {
-		c.ConnectToDatabase()
+		c.connectToDatabase()
 	}
 
 	return c.db
 }
 
+// MigrateDb will start a migration process.
 func (c *Config) MigrateDb() {
 	db := c.GetDb()
 
-	db.AutoMigrate(&File{}, &Photo{}, &Tag{}, &Album{}, &Location{}, &Camera{}, &Lens{}, &Country{})
+	db.AutoMigrate(&models.File{},
+		&models.Photo{},
+		&models.Tag{},
+		&models.Album{},
+		&models.Location{},
+		&models.Camera{},
+		&models.Lens{},
+		&models.Country{})
 
 	if !db.Dialect().HasIndex("photos", "photos_fulltext") {
 		db.Exec("CREATE FULLTEXT INDEX photos_fulltext ON photos (photo_title, photo_description, photo_artist, photo_colors)")
 	}
 }
 
-func (c *Config) GetClientConfig() ConfigValues {
+// GetClientConfig returns a loaded and set configuration entity.
+func (c *Config) GetClientConfig() map[string]interface{} {
 	db := c.GetDb()
 
-	var cameras []*Camera
+	var cameras []*models.Camera
 
 	type country struct {
 		LocCountry     string
@@ -239,14 +224,14 @@ func (c *Config) GetClientConfig() ConfigValues {
 
 	var countries []country
 
-	db.Model(&Location{}).Select("DISTINCT loc_country_code, loc_country").Scan(&countries)
+	db.Model(&models.Location{}).Select("DISTINCT loc_country_code, loc_country").Scan(&countries)
 
 	db.Where("deleted_at IS NULL").Limit(1000).Order("camera_model").Find(&cameras)
 
 	jsHash := fileHash(c.GetPublicBuildPath() + "/app.js")
 	cssHash := fileHash(c.GetPublicBuildPath() + "/app.css")
 
-	result := ConfigValues{
+	result := configValues{
 		"title":     "PhotoPrism",
 		"debug":     c.Debug,
 		"cameras":   cameras,

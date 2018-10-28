@@ -3,15 +3,16 @@ package photoprism
 import (
 	"flag"
 	"fmt"
+	"os"
+	"testing"
+
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/urfave/cli"
-	"os"
-	"testing"
 )
 
 const testDataPath = "testdata"
-const testDataUrl = "https://www.dropbox.com/s/na9p9wwt98l7m5b/import.zip?dl=1"
+const testDataURL = "https://www.dropbox.com/s/na9p9wwt98l7m5b/import.zip?dl=1"
 const testDataHash = "ed3bdb2fe86ea662bc863b63e219b47b8d9a74024757007f7979887d"
 const testConfigFile = "../../configs/photoprism.yml"
 
@@ -43,9 +44,9 @@ func (c *Config) DownloadTestData(t *testing.T) {
 	}
 
 	if !fileExists(testDataZip) {
-		fmt.Printf("Downloading latest test data zip file from %s\n", testDataUrl)
+		fmt.Printf("Downloading latest test data zip file from %s\n", testDataURL)
 
-		if err := downloadFile(testDataZip, testDataUrl); err != nil {
+		if err := downloadFile(testDataZip, testDataURL); err != nil {
 			fmt.Printf("Download failed: %s\n", err.Error())
 		}
 	}
@@ -130,7 +131,7 @@ func TestConfig_SetValuesFromFile(t *testing.T) {
 func TestConfig_ConnectToDatabase(t *testing.T) {
 	c := NewTestConfig()
 
-	c.ConnectToDatabase()
+	c.connectToDatabase()
 
 	db := c.GetDb()
 

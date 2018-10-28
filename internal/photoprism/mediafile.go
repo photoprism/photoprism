@@ -3,12 +3,8 @@ package photoprism
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/brett-lempereur/ish"
-	"github.com/djherbis/times"
-	. "github.com/photoprism/photoprism/internal/models"
-	"github.com/steakknife/hamming"
 	"image"
-	_ "image/gif"
+	_ "image/gif" // Import for image.
 	_ "image/jpeg"
 	_ "image/png"
 	"io"
@@ -20,23 +16,40 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/brett-lempereur/ish"
+	"github.com/djherbis/times"
+	"github.com/photoprism/photoprism/internal/models"
+	"github.com/steakknife/hamming"
 )
 
 const (
+	// FileTypeOther is an unkown file format.
 	FileTypeOther = "unknown"
-	FileTypeYaml  = "yml"
-	FileTypeJpeg  = "jpg"
-	FileTypeRaw   = "raw"
-	FileTypeXmp   = "xmp"
-	FileTypeAae   = "aae"
+	// FileTypeYaml is a yaml file format.
+	FileTypeYaml = "yml"
+	// FileTypeJpeg is a jpeg file format.
+	FileTypeJpeg = "jpg"
+	// FileTypeRaw is a raw file format.
+	FileTypeRaw = "raw"
+	// FileTypeXmp is an xmp file format.
+	FileTypeXmp = "xmp"
+	// FileTypeAae is an aae file format.
+	FileTypeAae = "aae"
+	// FileTypeMovie is a movie file format.
 	FileTypeMovie = "mov"
-	FileTypeHEIF  = "heif" // High Efficiency Image File Format
+	// FileTypeHEIF High Efficiency Image File Format
+	FileTypeHEIF = "heif" // High Efficiency Image File Format
 )
 
 const (
+	// MimeTypeJpeg is jpeg image type
 	MimeTypeJpeg = "image/jpeg"
+	// PerceptualHashSize defines the default hash size.
+	PerceptualHashSize = 4
 )
 
+// FileExtensions lists all the available and supported image file formats.
 var FileExtensions = map[string]string{
 	".crw":  FileTypeRaw,
 	".cr2":  FileTypeRaw,
@@ -92,6 +105,7 @@ var FileExtensions = map[string]string{
 	".x3f":  FileTypeRaw,
 }
 
+// MediaFile represents a single file.
 type MediaFile struct {
 	filename       string
 	dateCreated    time.Time
@@ -103,9 +117,10 @@ type MediaFile struct {
 	width          int
 	height         int
 	exifData       *ExifData
-	location       *Location
+	location       *models.Location
 }
 
+// NewMediaFile returns a new MediaFile.
 func NewMediaFile(filename string) (*MediaFile, error) {
 	if !fileExists(filename) {
 		return nil, fmt.Errorf("file does not exist: %s", filename)
@@ -119,6 +134,7 @@ func NewMediaFile(filename string) (*MediaFile, error) {
 	return instance, nil
 }
 
+// GetDateCreated returns the date on which a mediafile was created.
 func (m *MediaFile) GetDateCreated() time.Time {
 	if !m.dateCreated.IsZero() {
 		return m.dateCreated
@@ -151,6 +167,7 @@ func (m *MediaFile) GetDateCreated() time.Time {
 	return m.dateCreated
 }
 
+// GetCameraModel returns the camera model with which the mediafile was created.
 func (m *MediaFile) GetCameraModel() string {
 	info, err := m.GetExifData()
 
@@ -163,6 +180,7 @@ func (m *MediaFile) GetCameraModel() string {
 	return result
 }
 
+// GetCameraMake returns the make of the camera with which the file was created.
 func (m *MediaFile) GetCameraMake() string {
 	info, err := m.GetExifData()
 
@@ -175,6 +193,7 @@ func (m *MediaFile) GetCameraMake() string {
 	return result
 }
 
+// GetLensModel returns the lens model of a mediafile.
 func (m *MediaFile) GetLensModel() string {
 	info, err := m.GetExifData()
 
@@ -187,6 +206,7 @@ func (m *MediaFile) GetLensModel() string {
 	return result
 }
 
+// GetLensMake returns the make of the Lens.
 func (m *MediaFile) GetLensMake() string {
 	info, err := m.GetExifData()
 
@@ -199,6 +219,7 @@ func (m *MediaFile) GetLensMake() string {
 	return result
 }
 
+// GetFocalLength return the length of the focal for a file.
 func (m *MediaFile) GetFocalLength() float64 {
 	info, err := m.GetExifData()
 
@@ -211,6 +232,7 @@ func (m *MediaFile) GetFocalLength() float64 {
 	return result
 }
 
+// GetAperture returns the aperture with which the mediafile was created.
 func (m *MediaFile) GetAperture() float64 {
 	info, err := m.GetExifData()
 
@@ -223,6 +245,7 @@ func (m *MediaFile) GetAperture() float64 {
 	return result
 }
 
+// GetCanonicalName returns the canonical name of a mediafile.
 func (m *MediaFile) GetCanonicalName() string {
 	var postfix string
 
@@ -239,6 +262,7 @@ func (m *MediaFile) GetCanonicalName() string {
 	return result
 }
 
+// GetCanonicalNameFromFile returns the canonical name of a file derived from the image name.
 func (m *MediaFile) GetCanonicalNameFromFile() string {
 	basename := filepath.Base(m.GetFilename())
 
@@ -249,10 +273,13 @@ func (m *MediaFile) GetCanonicalNameFromFile() string {
 	}
 }
 
+// GetCanonicalNameFromFileWithDirectory gets the canonical name for a mediafile
+// including the directory.
 func (m *MediaFile) GetCanonicalNameFromFileWithDirectory() string {
 	return m.GetDirectory() + string(os.PathSeparator) + m.GetCanonicalNameFromFile()
 }
 
+// GetPerceptualHash returns the perceptual hash of a mediafile.
 func (m *MediaFile) GetPerceptualHash() (string, error) {
 	if m.perceptualHash != "" {
 		return m.perceptualHash, nil

@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// Importer todo: Fill me.
 type Importer struct {
 	originalsPath          string
 	indexer                *Indexer
@@ -19,6 +20,7 @@ type Importer struct {
 	removeEmptyDirectories bool
 }
 
+// NewImporter returns a new importer.
 func NewImporter(originalsPath string, indexer *Indexer, converter *Converter) *Importer {
 	instance := &Importer{
 		originalsPath:          originalsPath,
@@ -32,6 +34,8 @@ func NewImporter(originalsPath string, indexer *Indexer, converter *Converter) *
 	return instance
 }
 
+// ImportPhotosFromDirectory imports all the photos from a given directory path.
+// This function ignores errors.
 func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 	var directories []string
 
@@ -126,6 +130,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 	}
 }
 
+// GetDestinationFilename get the destination of a media file.
 func (i *Importer) GetDestinationFilename(mainFile *MediaFile, mediaFile *MediaFile) (string, error) {
 	canonicalName := mainFile.GetCanonicalName()
 	fileExtension := mediaFile.GetExtension()
