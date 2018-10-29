@@ -2,6 +2,7 @@
     <v-snackbar
             v-model="visible"
             :color="color"
+            :timeout="0"
             top
             right
     >
