@@ -1,8 +1,6 @@
-// Copyright (c) 2018 The PhotoPrism contributors
-
 /*
+This package contains commands and flags to be used by the main application.
 
-Package commands provides useful commands for managing photo libraries, such as importing photos, converting to JPEG, and creating thumbnails.
-
+See https://photoprism.org/ for more information about PhotoPrism.
 */
 package commands
