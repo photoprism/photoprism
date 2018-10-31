@@ -104,6 +104,8 @@ ENV NODE_ENV production
 
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
+RUN env GO111MODULE=off /usr/local/go/bin/go get golang.org/x/tools/cmd/goimports
+
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
