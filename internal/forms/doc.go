@@ -1,8 +1,6 @@
-// Copyright (c) 2018 The PhotoPrism contributors
-
 /*
+Package forms contains tagged structs for input value validation.
 
-Package forms defines a struct that can be used to sort and organize photos.
-
+See https://photoprism.org/ for more information about PhotoPrism.
 */
 package forms
