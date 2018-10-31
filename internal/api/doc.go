@@ -1,8 +1,6 @@
-// Copyright (c) 2018 The PhotoPrism contributors
-
 /*
+Package api contains REST request handlers used by the server package.
 
-Package api allows programatic access to photos and thumbnails contained on a PhotoPrism server.
-
+See https://photoprism.org/ for more information about PhotoPrism.
 */
 package api
