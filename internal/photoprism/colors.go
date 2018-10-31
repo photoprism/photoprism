@@ -1,12 +1,13 @@
 package photoprism
 
 import (
-	"github.com/RobCherry/vibrant"
-	"github.com/lucasb-eyer/go-colorful"
-	"golang.org/x/image/colornames"
 	"image"
 	"os"
 	"sort"
+
+	"github.com/RobCherry/vibrant"
+	"github.com/lucasb-eyer/go-colorful"
+	"golang.org/x/image/colornames"
 )
 
 func getColorNames(actualColor colorful.Color) (result []string) {

@@ -3,10 +3,6 @@ package photoprism
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/brett-lempereur/ish"
-	"github.com/djherbis/times"
-	. "github.com/photoprism/photoprism/internal/models"
-	"github.com/steakknife/hamming"
 	"image"
 	_ "image/gif"
 	_ "image/jpeg"
@@ -20,6 +16,11 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/brett-lempereur/ish"
+	"github.com/djherbis/times"
+	. "github.com/photoprism/photoprism/internal/models"
+	"github.com/steakknife/hamming"
 )
 
 const (

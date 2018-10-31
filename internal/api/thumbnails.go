@@ -2,10 +2,11 @@ package api
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"log"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
 var photoIconSvg = []byte(`

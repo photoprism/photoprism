@@ -3,12 +3,13 @@ package photoprism
 import (
 	"bufio"
 	"errors"
-	tf "github.com/tensorflow/tensorflow/tensorflow/go"
-	"github.com/tensorflow/tensorflow/tensorflow/go/op"
 	"io/ioutil"
 	"log"
 	"os"
 	"sort"
+
+	tf "github.com/tensorflow/tensorflow/tensorflow/go"
+	"github.com/tensorflow/tensorflow/tensorflow/go/op"
 )
 
 type TensorFlow struct {

@@ -3,11 +3,12 @@ package photoprism
 import (
 	"encoding/json"
 	"fmt"
-	. "github.com/photoprism/photoprism/internal/models"
-	"github.com/pkg/errors"
 	"net/http"
 	"strconv"
 	"strings"
+
+	. "github.com/photoprism/photoprism/internal/models"
+	"github.com/pkg/errors"
 )
 
 type OpenstreetmapAddress struct {

@@ -1,9 +1,10 @@
 package main
 
 import (
+	"os"
+
 	"github.com/photoprism/photoprism/internal/commands"
 	"github.com/urfave/cli"
-	"os"
 )
 
 func main() {

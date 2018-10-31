@@ -2,11 +2,12 @@ package photoprism
 
 import (
 	"errors"
-	"github.com/rwcarlsen/goexif/exif"
-	"github.com/rwcarlsen/goexif/mknote"
 	"math"
 	"strings"
 	"time"
+
+	"github.com/rwcarlsen/goexif/exif"
+	"github.com/rwcarlsen/goexif/mknote"
 )
 
 type ExifData struct {

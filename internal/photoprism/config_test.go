@@ -3,11 +3,12 @@ package photoprism
 import (
 	"flag"
 	"fmt"
+	"os"
+	"testing"
+
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/urfave/cli"
-	"os"
-	"testing"
 )
 
 const testDataPath = "testdata"

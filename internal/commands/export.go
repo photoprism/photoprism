@@ -2,10 +2,11 @@ package commands
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/araddon/dateparse"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
-	"log"
 )
 
 var ExportCommand = cli.Command{

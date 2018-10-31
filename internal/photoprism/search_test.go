@@ -1,8 +1,9 @@
 package photoprism
 
 import (
-	"github.com/photoprism/photoprism/internal/forms"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/forms"
 )
 
 func TestSearch_Photos_Query(t *testing.T) {

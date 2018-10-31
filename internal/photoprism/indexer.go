@@ -2,13 +2,14 @@ package photoprism
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	. "github.com/photoprism/photoprism/internal/models"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/jinzhu/gorm"
+	. "github.com/photoprism/photoprism/internal/models"
 )
 
 const (

@@ -1,9 +1,10 @@
 package photoprism
 
 import (
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTensorFlow_GetImageTags(t *testing.T) {

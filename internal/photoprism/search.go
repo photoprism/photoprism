@@ -1,11 +1,12 @@
 package photoprism
 
 import (
+	"strings"
+	"time"
+
 	"github.com/jinzhu/gorm"
 	. "github.com/photoprism/photoprism/internal/forms"
 	. "github.com/photoprism/photoprism/internal/models"
-	"strings"
-	"time"
 )
 
 type Search struct {

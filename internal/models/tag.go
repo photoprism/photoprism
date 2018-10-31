@@ -1,9 +1,10 @@
 package models
 
 import (
+	"strings"
+
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
-	"strings"
 )
 
 type Tag struct {

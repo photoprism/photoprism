@@ -2,10 +2,11 @@ package commands
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/urfave/cli"
-	"log"
 )
 
 var StartCommand = cli.Command{

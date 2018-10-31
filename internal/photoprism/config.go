@@ -1,6 +1,10 @@
 package photoprism
 
 import (
+	"log"
+	"os"
+	"time"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mssql"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -9,9 +13,6 @@ import (
 	"github.com/kylelemons/go-gypsy/yaml"
 	. "github.com/photoprism/photoprism/internal/models"
 	"github.com/urfave/cli"
-	"log"
-	"os"
-	"time"
 )
 
 type Config struct {

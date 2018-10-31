@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
