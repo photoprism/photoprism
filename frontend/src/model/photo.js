@@ -1,4 +1,5 @@
 import Abstract from 'model/abstract';
+import Api from 'common/api';
 
 class Photo extends Abstract {
     getEntityName() {
@@ -115,6 +116,14 @@ class Photo extends Abstract {
         }
 
         return 'Unknown'
+    }
+
+    like(liked) {
+        if (liked === true) {
+            return Api.post(this.getEntityResource() + "/like");
+        } else {
+            return Api.delete(this.getEntityResource() + "/like");
+        }
     }
 
     static getCollectionResource() {

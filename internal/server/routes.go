@@ -20,6 +20,8 @@ func registerRoutes(app *gin.Engine, conf *photoprism.Config) {
 	{
 		api.GetPhotos(v1, conf)
 		api.GetThumbnail(v1, conf)
+		api.LikePhoto(v1, conf)
+		api.DislikePhoto(v1, conf)
 	}
 
 	// Default HTML page (client-side routing implemented via Vue.js)
