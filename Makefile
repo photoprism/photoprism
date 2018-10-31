@@ -36,7 +36,7 @@ start:
 migrate:
 	$(GORUN) cmd/photoprism/photoprism.go migrate
 test:
-	$(GOTEST) -v ./...
+	$(GOTEST) -v ./internal/...
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
@@ -46,7 +46,7 @@ docker-push:
 	scripts/docker-push.sh
 fmt:
 	$(GOIMPORTS) -w internal cmd
-	$(GOFMT) ./...
+	$(GOFMT) ./internal/... ./cmd/...
 dep:
 	$(GOBUILD) -v ./...
 	$(GOMOD) tidy
