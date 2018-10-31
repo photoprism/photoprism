@@ -13,6 +13,7 @@ var ConvertCommand = cli.Command{
 	Action: convertAction,
 }
 
+// Converts images to JPEG; called by ConvertCommand
 func convertAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 

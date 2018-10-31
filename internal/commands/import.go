@@ -13,6 +13,7 @@ var ImportCommand = cli.Command{
 	Action: importAction,
 }
 
+// Imports photos from path defined in context arg; called by ImportCommand;
 func importAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 

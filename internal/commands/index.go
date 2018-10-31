@@ -13,6 +13,7 @@ var IndexCommand = cli.Command{
 	Action: indexAction,
 }
 
+// Indexes original photos; called by IndexCommand
 func indexAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 

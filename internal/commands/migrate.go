@@ -12,6 +12,7 @@ var MigrateCommand = cli.Command{
 	Action: migrateAction,
 }
 
+// Automatically migrates / initializes database; called by MigrateCommand
 func migrateAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 

@@ -35,6 +35,7 @@ var exportFlags = []cli.Flag{
 	},
 }
 
+// Exports photos as JPEG; called by ExportCommand and uses exportFlags
 func exportAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 

@@ -36,6 +36,7 @@ var startFlags = []cli.Flag{
 	},
 }
 
+// Starts web serve using startFlags; called by startCommand
 func startAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 

@@ -12,6 +12,7 @@ var ConfigCommand = cli.Command{
 	Action: configAction,
 }
 
+// Prints current configuration; called by ConfigCommand
 func configAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 
