@@ -3,6 +3,8 @@ package photoprism
 import (
 	"log"
 	"os"
+	"os/user"
+	"path/filepath"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -200,29 +202,34 @@ func (c *Config) connectToDatabase() error {
 	return err
 }
 
+// GetAssetsPath returns the path to the assets.
+func (c *Config) GetAssetsPath() string {
+	return c.AssetsPath
+}
+
 // GetTensorFlowModelPath returns the tensorflow model path.
 func (c *Config) GetTensorFlowModelPath() string {
-	return c.AssetsPath + "/tensorflow"
+	return c.GetAssetsPath() + "/tensorflow"
 }
 
 // GetTemplatesPath returns the templates path.
 func (c *Config) GetTemplatesPath() string {
-	return c.AssetsPath + "/templates"
+	return c.GetAssetsPath() + "/templates"
 }
 
 // GetFaviconsPath returns the favicons path.
 func (c *Config) GetFaviconsPath() string {
-	return c.AssetsPath + "/favicons"
+	return c.GetAssetsPath() + "/favicons"
 }
 
 // GetPublicPath returns the public path.
 func (c *Config) GetPublicPath() string {
-	return c.AssetsPath + "/public"
+	return c.GetAssetsPath() + "/public"
 }
 
 // GetPublicBuildPath returns the public build path.
 func (c *Config) GetPublicBuildPath() string {
-	return c.AssetsPath + "/build"
+	return c.GetPublicPath() + "/build"
 }
 
 // GetDb gets a db connection. If it already is estabilished it will return that.
@@ -280,6 +287,24 @@ func (c *Config) GetClientConfig() map[string]interface{} {
 		"jsHash":    jsHash,
 		"cssHash":   cssHash,
 	}
+
+	return result
+}
+
+// GetExpandedFilename returns the expanded format for a filename.
+func GetExpandedFilename(filename string) string {
+	usr, _ := user.Current()
+	dir := usr.HomeDir
+
+	if filename == "" {
+		panic("filename was empty")
+	}
+
+	if len(filename) > 2 && filename[:2] == "~/" {
+		filename = filepath.Join(dir, filename[2:])
+	}
+
+	result, _ := filepath.Abs(filename)
 
 	return result
 }

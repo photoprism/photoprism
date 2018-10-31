@@ -385,14 +385,17 @@ func (m *MediaFile) GetRelatedFiles() (result MediaFiles, mainFile *MediaFile, e
 	return result, mainFile, nil
 }
 
+// GetFilename returns the filename.
 func (m *MediaFile) GetFilename() string {
 	return m.filename
 }
 
+// SetFilename sets the filename to the given string.
 func (m *MediaFile) SetFilename(filename string) {
 	m.filename = filename
 }
 
+// GetRelativeFilename returns the relative filename.
 func (m *MediaFile) GetRelativeFilename(directory string) string {
 	index := strings.Index(m.filename, directory)
 
@@ -404,14 +407,17 @@ func (m *MediaFile) GetRelativeFilename(directory string) string {
 	return m.filename
 }
 
+// GetDirectory returns the directory
 func (m *MediaFile) GetDirectory() string {
 	return filepath.Dir(m.filename)
 }
 
+// GetBasename returns the basename.
 func (m *MediaFile) GetBasename() string {
 	return filepath.Base(m.filename)
 }
 
+// GetMimeType returns the mimetype.
 func (m *MediaFile) GetMimeType() string {
 	if m.mimeType != "" {
 		return m.mimeType
@@ -442,26 +448,31 @@ func (m *MediaFile) GetMimeType() string {
 }
 
 func (m *MediaFile) openFile() (*os.File, error) {
-	if handle, err := os.Open(m.filename); err == nil {
-		return handle, nil
-	} else {
+	handle, err := os.Open(m.filename)
+	if err != nil {
 		log.Println(err.Error())
 		return nil, err
 	}
+	return handle, nil
 }
 
+// Exists checks if a mediafile exists by filename.
 func (m *MediaFile) Exists() bool {
 	return fileExists(m.GetFilename())
 }
 
+// Remove a mediafile.
 func (m *MediaFile) Remove() error {
 	return os.Remove(m.GetFilename())
 }
 
+// HasSameFilename compares a mediafile with another mediafile and returns if
+// their filenames are matching or not.
 func (m *MediaFile) HasSameFilename(other *MediaFile) bool {
 	return m.GetFilename() == other.GetFilename()
 }
 
+// Move a mediafile to a new file with the filename provided in parameter.
 func (m *MediaFile) Move(newFilename string) error {
 	if err := os.Rename(m.filename, newFilename); err != nil {
 		return err
@@ -472,6 +483,7 @@ func (m *MediaFile) Move(newFilename string) error {
 	return nil
 }
 
+// Copy a mediafile to another file by destinationFilename.
 func (m *MediaFile) Copy(destinationFilename string) error {
 	file, err := m.openFile()
 
@@ -501,10 +513,12 @@ func (m *MediaFile) Copy(destinationFilename string) error {
 	return nil
 }
 
+// GetExtension returns the extension of a mediafile.
 func (m *MediaFile) GetExtension() string {
 	return strings.ToLower(filepath.Ext(m.filename))
 }
 
+// IsJpeg return true if the given mediafile is of mimetype Jpeg.
 func (m *MediaFile) IsJpeg() bool {
 	// Don't import/use existing thumbnail files (we create our own)
 	if m.GetExtension() == ".thm" {
@@ -514,10 +528,12 @@ func (m *MediaFile) IsJpeg() bool {
 	return m.GetMimeType() == MimeTypeJpeg
 }
 
+// GetType returns the type of the mediafile.
 func (m *MediaFile) GetType() string {
 	return FileExtensions[m.GetExtension()]
 }
 
+// HasType checks whether a mediafile is of a given type.
 func (m *MediaFile) HasType(typeString string) bool {
 	if typeString == FileTypeJpeg {
 		return m.IsJpeg()
@@ -526,18 +542,23 @@ func (m *MediaFile) HasType(typeString string) bool {
 	return m.GetType() == typeString
 }
 
+// IsRaw check whether the given mediafile is of Raw type.
 func (m *MediaFile) IsRaw() bool {
 	return m.HasType(FileTypeRaw)
 }
 
+// IsHighEfficiencyImageFile check if a given mediafile is of HEIF type.
 func (m *MediaFile) IsHighEfficiencyImageFile() bool {
 	return m.HasType(FileTypeHEIF)
 }
 
+// IsPhoto checks if a mediafile is a photo.
 func (m *MediaFile) IsPhoto() bool {
 	return m.IsJpeg() || m.IsRaw() || m.IsHighEfficiencyImageFile()
 }
 
+// GetJpeg returns a new mediafile given the current one's canonical name
+// plus the extension .jpg.
 func (m *MediaFile) GetJpeg() (*MediaFile, error) {
 	if m.IsJpeg() {
 		return m, nil
@@ -582,6 +603,7 @@ func (m *MediaFile) decodeDimensions() error {
 	return nil
 }
 
+// GetWidth return the width dimension of a mediafile.
 func (m *MediaFile) GetWidth() int {
 	if m.width <= 0 {
 		m.decodeDimensions()
@@ -590,6 +612,7 @@ func (m *MediaFile) GetWidth() int {
 	return m.width
 }
 
+// GetHeight returns the height dimension of a mediafile.
 func (m *MediaFile) GetHeight() int {
 	if m.height <= 0 {
 		m.decodeDimensions()
@@ -598,6 +621,7 @@ func (m *MediaFile) GetHeight() int {
 	return m.height
 }
 
+// GetAspectRatio returns the aspect ratio of a mediafile.
 func (m *MediaFile) GetAspectRatio() float64 {
 	width := float64(m.GetWidth())
 	height := float64(m.GetHeight())
@@ -611,10 +635,11 @@ func (m *MediaFile) GetAspectRatio() float64 {
 	return math.Round(aspectRatio*100) / 100
 }
 
+// GetOrientation returns the orientation of a mediafile.
 func (m *MediaFile) GetOrientation() int {
 	if exif, err := m.GetExifData(); err == nil {
 		return exif.Orientation
-	} else {
-		return 1
 	}
+
+	return 1
 }
