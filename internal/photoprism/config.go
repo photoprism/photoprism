@@ -1,7 +1,6 @@
 package photoprism
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -11,26 +10,26 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/kylelemons/go-gypsy/yaml"
 	"github.com/photoprism/photoprism/internal/models"
 	"github.com/urfave/cli"
-	"gopkg.in/yaml.v2"
 )
 
 // Config provides a struct in which application configuration is stored.
 type Config struct {
-	Debug          bool `yaml:"debug"`
+	Debug          bool
 	ConfigFile     string
 	ServerIP       string
-	ServerPort     int    `yaml:"server-port"`
-	ServerMode     string `yaml:"server-mode"`
-	AssetsPath     string `yaml:"assets-path"`
-	ThumbnailsPath string `yaml:"thumbnails-path"`
-	OriginalsPath  string `yaml:"originals-path"`
-	ImportPath     string `yaml:"import-path"`
-	ExportPath     string `yaml:"export-path"`
-	DarktableCli   string `yaml:"darktable-cli"`
-	DatabaseDriver string `yaml:"database-driver"`
-	DatabaseDsn    string `yaml:"database-dsn"`
+	ServerPort     int
+	ServerMode     string
+	AssetsPath     string
+	ThumbnailsPath string
+	OriginalsPath  string
+	ImportPath     string
+	ExportPath     string
+	DarktableCli   string
+	DatabaseDriver string
+	DatabaseDsn    string
 	db             *gorm.DB
 }
 
@@ -50,18 +49,60 @@ func NewConfig(context *cli.Context) *Config {
 
 // SetValuesFromFile uses a yaml config file to initiate the configuration entity.
 func (c *Config) SetValuesFromFile(fileName string) error {
-	content, err := ioutil.ReadFile(fileName)
+	yamlConfig, err := yaml.ReadFile(fileName)
 
-	if err != nil {
-		return err
-	}
-
-	err = yaml.Unmarshal(content, c)
 	if err != nil {
 		return err
 	}
 
 	c.ConfigFile = fileName
+	if debug, err := yamlConfig.GetBool("debug"); err == nil {
+		c.Debug = debug
+	}
+
+	if serverIP, err := yamlConfig.Get("server-host"); err == nil {
+		c.ServerIP = serverIP
+	}
+
+	if serverPort, err := yamlConfig.GetInt("server-port"); err == nil {
+		c.ServerPort = int(serverPort)
+	}
+
+	if serverMode, err := yamlConfig.Get("server-mode"); err == nil {
+		c.ServerMode = serverMode
+	}
+
+	if assetsPath, err := yamlConfig.Get("assets-path"); err == nil {
+		c.AssetsPath = GetExpandedFilename(assetsPath)
+	}
+
+	if thumbnailsPath, err := yamlConfig.Get("thumbnails-path"); err == nil {
+		c.ThumbnailsPath = GetExpandedFilename(thumbnailsPath)
+	}
+
+	if originalsPath, err := yamlConfig.Get("originals-path"); err == nil {
+		c.OriginalsPath = GetExpandedFilename(originalsPath)
+	}
+
+	if importPath, err := yamlConfig.Get("import-path"); err == nil {
+		c.ImportPath = GetExpandedFilename(importPath)
+	}
+
+	if exportPath, err := yamlConfig.Get("export-path"); err == nil {
+		c.ExportPath = GetExpandedFilename(exportPath)
+	}
+
+	if darktableCli, err := yamlConfig.Get("darktable-cli"); err == nil {
+		c.DarktableCli = GetExpandedFilename(darktableCli)
+	}
+
+	if databaseDriver, err := yamlConfig.Get("database-driver"); err == nil {
+		c.DatabaseDriver = databaseDriver
+	}
+
+	if databaseDsn, err := yamlConfig.Get("database-dsn"); err == nil {
+		c.DatabaseDsn = databaseDsn
+	}
 
 	return nil
 }

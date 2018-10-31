@@ -268,9 +268,9 @@ func (m *MediaFile) GetCanonicalNameFromFile() string {
 
 	if end := strings.Index(basename, "."); end != -1 {
 		return basename[:end] // Length of canonical name: 16 + 12
-	} else {
-		return basename
 	}
+
+	return basename
 }
 
 // GetCanonicalNameFromFileWithDirectory gets the canonical name for a mediafile
@@ -303,30 +303,32 @@ func (m *MediaFile) GetPerceptualHash() (string, error) {
 	return m.perceptualHash, nil
 }
 
+// GetPerceptualDistance returns the perceptual distance for a mediafile.
 func (m *MediaFile) GetPerceptualDistance(perceptualHash string) (int, error) {
-	var hash1, hash2 []byte
+	imageHash, err := m.GetPerceptualHash()
 
-	if imageHash, err := m.GetPerceptualHash(); err != nil {
+	if err != nil {
 		return -1, err
-	} else {
-		if decoded, err := hex.DecodeString(imageHash); err != nil {
-			return -1, err
-		} else {
-			hash1 = decoded
-		}
 	}
 
-	if decoded, err := hex.DecodeString(perceptualHash); err != nil {
+	decodedImageHash, err := hex.DecodeString(imageHash)
+
+	if err != nil {
 		return -1, err
-	} else {
-		hash2 = decoded
 	}
 
-	result := hamming.Bytes(hash1, hash2)
+	decodedPerceptualHash, err := hex.DecodeString(perceptualHash)
+
+	if err != nil {
+		return -1, err
+	}
+
+	result := hamming.Bytes(decodedImageHash, decodedPerceptualHash)
 
 	return result, nil
 }
 
+// GetHash return a sha1 hash of a mediafile based on the filename.
 func (m *MediaFile) GetHash() string {
 	if len(m.hash) == 0 {
 		m.hash = fileHash(m.GetFilename())
@@ -335,7 +337,7 @@ func (m *MediaFile) GetHash() string {
 	return m.hash
 }
 
-// When editing photos, iPhones create additional files like IMG_E12345.JPG
+// GetEditedFilename When editing photos, iPhones create additional files like IMG_E12345.JPG
 func (m *MediaFile) GetEditedFilename() (result string) {
 	basename := filepath.Base(m.filename)
 
@@ -346,6 +348,7 @@ func (m *MediaFile) GetEditedFilename() (result string) {
 	return result
 }
 
+// GetRelatedFiles returns the mediafiles which are related to a given mediafile.
 func (m *MediaFile) GetRelatedFiles() (result MediaFiles, mainFile *MediaFile, err error) {
 	baseFilename := m.GetCanonicalNameFromFileWithDirectory()
 
