@@ -40,7 +40,7 @@ func LikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
 		photoId, err := strconv.ParseUint(c.Param("photoId"), 10, 64)
 
 		if err == nil {
-			photo := search.FindPhotoById(photoId)
+			photo := search.FindPhotoByID(photoId)
 			photo.PhotoFavorite = true
 			conf.GetDb().Save(&photo)
 			c.JSON(http.StatusAccepted, http.Response{})
@@ -58,7 +58,7 @@ func DislikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
 		photoId, err := strconv.ParseUint(c.Param("photoId"), 10, 64)
 
 		if err == nil {
-			photo := search.FindPhotoById(photoId)
+			photo := search.FindPhotoByID(photoId)
 			photo.PhotoFavorite = false
 			conf.GetDb().Save(&photo)
 			c.JSON(http.StatusAccepted, http.Response{})

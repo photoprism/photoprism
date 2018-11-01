@@ -204,8 +204,9 @@ func (s *Search) FindFileByHash(fileHash string) (file models.File) {
 	return file
 }
 
-func (s *Search) FindPhotoById(photoId uint64) (photo Photo) {
-	s.db.Where("id = ?", photoId).First(&photo)
+// FindPhotoByID returns a Photo based on the ID.
+func (s *Search) FindPhotoByID(photoID uint64) (photo models.Photo) {
+	s.db.Where("id = ?", photoID).First(&photo)
 
 	return photo
 }
