@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path"
@@ -10,6 +11,7 @@ import (
 	"strings"
 )
 
+// Importer todo: Fill me.
 type Importer struct {
 	originalsPath          string
 	indexer                *Indexer
@@ -19,6 +21,7 @@ type Importer struct {
 	removeEmptyDirectories bool
 }
 
+// NewImporter returns a new importer.
 func NewImporter(originalsPath string, indexer *Indexer, converter *Converter) *Importer {
 	instance := &Importer{
 		originalsPath:          originalsPath,
@@ -32,6 +35,8 @@ func NewImporter(originalsPath string, indexer *Indexer, converter *Converter) *
 	return instance
 }
 
+// ImportPhotosFromDirectory imports all the photos from a given directory path.
+// This function ignores errors.
 func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 	var directories []string
 
@@ -126,6 +131,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 	}
 }
 
+// GetDestinationFilename get the destination of a media file.
 func (i *Importer) GetDestinationFilename(mainFile *MediaFile, mediaFile *MediaFile) (string, error) {
 	canonicalName := mainFile.GetCanonicalName()
 	fileExtension := mediaFile.GetExtension()
@@ -149,4 +155,22 @@ func (i *Importer) GetDestinationFilename(mainFile *MediaFile, mediaFile *MediaF
 	}
 
 	return result, nil
+}
+
+func directoryIsEmpty(path string) bool {
+	f, err := os.Open(path)
+
+	if err != nil {
+		return false
+	}
+
+	defer f.Close()
+
+	_, err = f.Readdirnames(1)
+
+	if err == io.EOF {
+		return true
+	}
+
+	return false
 }

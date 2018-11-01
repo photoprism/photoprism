@@ -25,6 +25,7 @@ func getColorNames(actualColor colorful.Color) (result []string) {
 	return result
 }
 
+// GetColors returns color information for a given mediafiles.
 func (m *MediaFile) GetColors() (colors []string, vibrantHex string, mutedHex string) {
 	file, _ := os.Open(m.filename)
 

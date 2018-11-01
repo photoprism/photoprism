@@ -7,11 +7,11 @@ import (
 	"strconv"
 	"strings"
 
-	. "github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/models"
 	"github.com/pkg/errors"
 )
 
-type OpenstreetmapAddress struct {
+type openstreetmapAddress struct {
 	HouseNumber string `json:"house_number"`
 	Road        string `json:"road"`
 	Suburb      string `json:"suburb"`
@@ -24,27 +24,27 @@ type OpenstreetmapAddress struct {
 	CountryCode string `json:"country_code"`
 }
 
-type OpenstreetmapLocation struct {
-	PlaceId     string                `json:"place_id"`
+type openstreetmapLocation struct {
+	PlaceID     string                `json:"place_id"`
 	Lat         string                `json:"lat"`
 	Lon         string                `json:"lon"`
 	Name        string                `json:"name"`
 	Category    string                `json:"category"`
 	Type        string                `json:"type"`
 	DisplayName string                `json:"display_name"`
-	Address     *OpenstreetmapAddress `json:"address"`
+	Address     *openstreetmapAddress `json:"address"`
 }
 
-// See https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding
-func (m *MediaFile) GetLocation() (*Location, error) {
+// GetLocation See https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding
+func (m *MediaFile) GetLocation() (*models.Location, error) {
 	if m.location != nil {
 		return m.location, nil
 	}
 
-	location := &Location{}
+	location := &models.Location{}
 
-	openstreetmapLocation := &OpenstreetmapLocation{
-		Address: &OpenstreetmapAddress{},
+	openstreetmapLocation := &openstreetmapLocation{
+		Address: &openstreetmapAddress{},
 	}
 
 	if exifData, err := m.GetExifData(); err == nil {
@@ -59,7 +59,7 @@ func (m *MediaFile) GetLocation() (*Location, error) {
 		return nil, err
 	}
 
-	if id, err := strconv.Atoi(openstreetmapLocation.PlaceId); err == nil && id > 0 {
+	if id, err := strconv.Atoi(openstreetmapLocation.PlaceID); err == nil && id > 0 {
 		location.ID = uint(id)
 	} else {
 		return nil, errors.New("no location found")

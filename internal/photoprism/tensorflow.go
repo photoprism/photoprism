@@ -12,27 +12,32 @@ import (
 	"github.com/tensorflow/tensorflow/tensorflow/go/op"
 )
 
+// TensorFlow if a tensorflow wrapper given a graph, labels and a modelPath.
 type TensorFlow struct {
 	modelPath string
 	graph     *tf.Graph
 	labels    []string
 }
 
+// NewTensorFlow returns a new TensorFlow.
 func NewTensorFlow(tensorFlowModelPath string) *TensorFlow {
 	return &TensorFlow{modelPath: tensorFlowModelPath}
 }
 
+// TensorFlowLabel defines a Json struct with label and probability.
 type TensorFlowLabel struct {
 	Label       string  `json:"label"`
 	Probability float32 `json:"probability"`
 }
 
+// TensorFlowLabels is a slice of tensorflow labels.
 type TensorFlowLabels []TensorFlowLabel
 
 func (a TensorFlowLabels) Len() int           { return len(a) }
 func (a TensorFlowLabels) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a TensorFlowLabels) Less(i, j int) bool { return a[i].Probability > a[j].Probability }
 
+// GetImageTagsFromFile returns a slice of tags given a mediafile filename.
 func (t *TensorFlow) GetImageTagsFromFile(filename string) (result []TensorFlowLabel, err error) {
 	imageBuffer, err := ioutil.ReadFile(filename)
 
@@ -43,6 +48,7 @@ func (t *TensorFlow) GetImageTagsFromFile(filename string) (result []TensorFlowL
 	return t.GetImageTags(string(imageBuffer))
 }
 
+// GetImageTags returns the tags for a given image.
 func (t *TensorFlow) GetImageTags(image string) (result []TensorFlowLabel, err error) {
 	if err := t.loadModel(); err != nil {
 		return nil, err

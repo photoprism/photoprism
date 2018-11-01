@@ -8,10 +8,13 @@ import (
 	"path/filepath"
 )
 
+// Converter wraps a darktable cli binary.
 type Converter struct {
 	darktableCli string
 }
 
+// NewConverter returns a new converter by setting the darktable
+// cli binary location.
 func NewConverter(darktableCli string) *Converter {
 	if stat, err := os.Stat(darktableCli); err != nil {
 		log.Print("Darktable CLI binary could not be found at " + darktableCli)
@@ -22,6 +25,8 @@ func NewConverter(darktableCli string) *Converter {
 	return &Converter{darktableCli: darktableCli}
 }
 
+// ConvertAll converts all the files given a path to JPEG. This function
+// ignores error during this process.
 func (c *Converter) ConvertAll(path string) {
 	err := filepath.Walk(path, func(filename string, fileInfo os.FileInfo, err error) error {
 
@@ -52,6 +57,7 @@ func (c *Converter) ConvertAll(path string) {
 	}
 }
 
+// ConvertToJpeg converts a single image the JPEG format.
 func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 	if !image.Exists() {
 		return nil, fmt.Errorf("can not convert, file does not exist: %s", image.GetFilename())

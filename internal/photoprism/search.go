@@ -5,19 +5,22 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	. "github.com/photoprism/photoprism/internal/forms"
-	. "github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/forms"
+	"github.com/photoprism/photoprism/internal/models"
 )
 
+// Search searches given an originals path and a db instance.
 type Search struct {
 	originalsPath string
 	db            *gorm.DB
 }
 
+// SearchCount is the total number of search hits.
 type SearchCount struct {
 	Total int
 }
 
+// PhotoSearchResult is a found mediafile.
 type PhotoSearchResult struct {
 	// Photo
 	ID                 uint
@@ -82,6 +85,7 @@ type PhotoSearchResult struct {
 	Tags string
 }
 
+// NewSearch returns a new Search type with a given path and db instance.
 func NewSearch(originalsPath string, db *gorm.DB) *Search {
 	instance := &Search{
 		originalsPath: originalsPath,
@@ -91,7 +95,8 @@ func NewSearch(originalsPath string, db *gorm.DB) *Search {
 	return instance
 }
 
-func (s *Search) Photos(form PhotoSearchForm) ([]PhotoSearchResult, error) {
+// Photos searches for photos based on a Form and returns a PhotoSearchResult slice.
+func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error) {
 	q := s.db.NewScope(nil).DB()
 	q = q.Table("photos").
 		Select(`SQL_CALC_FOUND_ROWS photos.*,
@@ -177,26 +182,31 @@ func (s *Search) Photos(form PhotoSearchForm) ([]PhotoSearchResult, error) {
 	return results, nil
 }
 
-func (s *Search) FindFiles(count int, offset int) (files []File) {
-	s.db.Where(&File{}).Limit(count).Offset(offset).Find(&files)
+// FindFiles finds files returning maximum results defined by limit
+// and finding them from an offest defined by offset.
+func (s *Search) FindFiles(limit int, offset int) (files []models.File) {
+	s.db.Where(&models.File{}).Limit(limit).Offset(offset).Find(&files)
 
 	return files
 }
 
-func (s *Search) FindFileById(id string) (file File) {
+// FindFileByID returns a mediafile given a certain ID.
+func (s *Search) FindFileByID(id string) (file models.File) {
 	s.db.Where("id = ?", id).First(&file)
 
 	return file
 }
 
-func (s *Search) FindFileByHash(fileHash string) (file File) {
+// FindFileByHash finds a file with a given hash string.
+func (s *Search) FindFileByHash(fileHash string) (file models.File) {
 	s.db.Where("file_hash = ?", fileHash).First(&file)
 
 	return file
 }
 
-func (s *Search) FindPhotoById(photoId uint64) (photo Photo) {
-	s.db.Where("id = ?", photoId).First(&photo)
+// FindPhotoByID returns a Photo based on the ID.
+func (s *Search) FindPhotoByID(photoID uint64) (photo models.Photo) {
+	s.db.Where("id = ?", photoID).First(&photo)
 
 	return photo
 }

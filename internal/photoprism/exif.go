@@ -10,6 +10,7 @@ import (
 	"github.com/rwcarlsen/goexif/mknote"
 )
 
+// ExifData returns information about a single image.
 type ExifData struct {
 	DateTime    time.Time
 	Artist      string
@@ -28,6 +29,7 @@ type ExifData struct {
 	Orientation int
 }
 
+// GetExifData return ExifData given a single mediaFile.
 func (m *MediaFile) GetExifData() (*ExifData, error) {
 	if m == nil {
 		return nil, errors.New("media file is null")
@@ -116,8 +118,8 @@ func (m *MediaFile) GetExifData() (*ExifData, error) {
 		m.exifData.Thumbnail = thumbnail
 	}
 
-	if uniqueId, err := x.Get(exif.ImageUniqueID); err == nil {
-		m.exifData.UniqueID = uniqueId.String()
+	if uniqueID, err := x.Get(exif.ImageUniqueID); err == nil {
+		m.exifData.UniqueID = uniqueID.String()
 	}
 
 	if width, err := x.Get(exif.ImageWidth); err == nil {

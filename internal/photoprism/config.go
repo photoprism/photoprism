@@ -3,18 +3,21 @@ package photoprism
 import (
 	"log"
 	"os"
+	"os/user"
+	"path/filepath"
 	"time"
 
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mssql"
+	_ "github.com/jinzhu/gorm/dialects/mssql" // Import gorm drivers
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/kylelemons/go-gypsy/yaml"
-	. "github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/models"
 	"github.com/urfave/cli"
 )
 
+// Config provides a struct in which application configuration is stored.
 type Config struct {
 	Debug          bool
 	ConfigFile     string
@@ -32,8 +35,12 @@ type Config struct {
 	db             *gorm.DB
 }
 
-type ConfigValues map[string]interface{}
+type configValues map[string]interface{}
 
+// NewConfig creates a new configuration entity by using two methods.
+// 1: SetValuesFromFile: This will initialize values from a yaml config file.
+// 2: SetValuesFromCliContext: Which comes after SetValuesFromFile and overrides
+// any previous values giving an option two override file configs through the CLI.
 func NewConfig(context *cli.Context) *Config {
 	c := &Config{}
 	c.SetValuesFromFile(GetExpandedFilename(context.GlobalString("config-file")))
@@ -42,6 +49,7 @@ func NewConfig(context *cli.Context) *Config {
 	return c
 }
 
+// SetValuesFromFile uses a yaml config file to initiate the configuration entity.
 func (c *Config) SetValuesFromFile(fileName string) error {
 	yamlConfig, err := yaml.ReadFile(fileName)
 
@@ -50,7 +58,6 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 	}
 
 	c.ConfigFile = fileName
-
 	if debug, err := yamlConfig.GetBool("debug"); err == nil {
 		c.Debug = debug
 	}
@@ -102,6 +109,8 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 	return nil
 }
 
+// SetValuesFromCliContext uses values from the CLI to setup configuration overrides
+// for the entity.
 func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 	if context.GlobalBool("debug") {
 		c.Debug = context.GlobalBool("debug")
@@ -142,6 +151,11 @@ func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 	return nil
 }
 
+// CreateDirectories creates all the folders that photoprism needs. These are:
+// OriginalsPath
+// ThumbnailsPath
+// ImportPath
+// ExportPath
 func (c *Config) CreateDirectories() error {
 	if err := os.MkdirAll(c.OriginalsPath, os.ModePerm); err != nil {
 		return err
@@ -162,7 +176,9 @@ func (c *Config) CreateDirectories() error {
 	return nil
 }
 
-func (c *Config) ConnectToDatabase() error {
+// connectToDatabase estabilishes a connection to a database given a driver.
+// It tries to do this 12 times with a 5 second sleep intervall in between.
+func (c *Config) connectToDatabase() error {
 	db, err := gorm.Open(c.DatabaseDriver, c.DatabaseDsn)
 
 	if err != nil || db == nil {
@@ -186,52 +202,68 @@ func (c *Config) ConnectToDatabase() error {
 	return err
 }
 
+// GetAssetsPath returns the path to the assets.
 func (c *Config) GetAssetsPath() string {
 	return c.AssetsPath
 }
 
+// GetTensorFlowModelPath returns the tensorflow model path.
 func (c *Config) GetTensorFlowModelPath() string {
 	return c.GetAssetsPath() + "/tensorflow"
 }
 
+// GetTemplatesPath returns the templates path.
 func (c *Config) GetTemplatesPath() string {
 	return c.GetAssetsPath() + "/templates"
 }
 
+// GetFaviconsPath returns the favicons path.
 func (c *Config) GetFaviconsPath() string {
 	return c.GetAssetsPath() + "/favicons"
 }
 
+// GetPublicPath returns the public path.
 func (c *Config) GetPublicPath() string {
 	return c.GetAssetsPath() + "/public"
 }
 
+// GetPublicBuildPath returns the public build path.
 func (c *Config) GetPublicBuildPath() string {
 	return c.GetPublicPath() + "/build"
 }
 
+// GetDb gets a db connection. If it already is estabilished it will return that.
 func (c *Config) GetDb() *gorm.DB {
 	if c.db == nil {
-		c.ConnectToDatabase()
+		c.connectToDatabase()
 	}
 
 	return c.db
 }
 
+// MigrateDb will start a migration process.
 func (c *Config) MigrateDb() {
 	db := c.GetDb()
 
-	db.AutoMigrate(&File{}, &Photo{}, &Tag{}, &Album{}, &Location{}, &Camera{}, &Lens{}, &Country{})
+	db.AutoMigrate(&models.File{},
+		&models.Photo{},
+		&models.Tag{},
+		&models.Album{},
+		&models.Location{},
+		&models.Camera{},
+		&models.Lens{},
+		&models.Country{})
 
 	if !db.Dialect().HasIndex("photos", "photos_fulltext") {
 		db.Exec("CREATE FULLTEXT INDEX photos_fulltext ON photos (photo_title, photo_description, photo_artist, photo_colors)")
 	}
 }
 
-func (c *Config) GetClientConfig() ConfigValues {
+// GetClientConfig returns a loaded and set configuration entity.
+func (c *Config) GetClientConfig() map[string]interface{} {
 	db := c.GetDb()
 
-	var cameras []*Camera
+	var cameras []*models.Camera
 
 	type country struct {
 		LocCountry     string
@@ -240,14 +272,14 @@ func (c *Config) GetClientConfig() ConfigValues {
 
 	var countries []country
 
-	db.Model(&Location{}).Select("DISTINCT loc_country_code, loc_country").Scan(&countries)
+	db.Model(&models.Location{}).Select("DISTINCT loc_country_code, loc_country").Scan(&countries)
 
 	db.Where("deleted_at IS NULL").Limit(1000).Order("camera_model").Find(&cameras)
 
 	jsHash := fileHash(c.GetPublicBuildPath() + "/app.js")
 	cssHash := fileHash(c.GetPublicBuildPath() + "/app.css")
 
-	result := ConfigValues{
+	result := configValues{
 		"title":     "PhotoPrism",
 		"debug":     c.Debug,
 		"cameras":   cameras,
@@ -255,6 +287,24 @@ func (c *Config) GetClientConfig() ConfigValues {
 		"jsHash":    jsHash,
 		"cssHash":   cssHash,
 	}
+
+	return result
+}
+
+// GetExpandedFilename returns the expanded format for a filename.
+func GetExpandedFilename(filename string) string {
+	usr, _ := user.Current()
+	dir := usr.HomeDir
+
+	if filename == "" {
+		panic("filename was empty")
+	}
+
+	if len(filename) > 2 && filename[:2] == "~/" {
+		filename = filepath.Join(dir, filename[2:])
+	}
+
+	result, _ := filepath.Abs(filename)
 
 	return result
 }

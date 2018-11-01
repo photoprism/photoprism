@@ -9,20 +9,23 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	. "github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/models"
 )
 
 const (
-	IndexResultUpdated = "Updated"
-	IndexResultAdded   = "Added"
+	indexResultUpdated = "Updated"
+	indexResultAdded   = "Added"
 )
 
+// Indexer defines an indexer with originals path tensorflow and a db.
 type Indexer struct {
 	originalsPath string
 	tensorFlow    *TensorFlow
 	db            *gorm.DB
 }
 
+// NewIndexer returns a new indexer.
+// TODO: Is it really necessary to return a pointer?
 func NewIndexer(originalsPath string, tensorFlow *TensorFlow, db *gorm.DB) *Indexer {
 	instance := &Indexer{
 		originalsPath: originalsPath,
@@ -33,7 +36,9 @@ func NewIndexer(originalsPath string, tensorFlow *TensorFlow, db *gorm.DB) *Inde
 	return instance
 }
 
-func (i *Indexer) GetImageTags(jpeg *MediaFile) (results []*Tag) {
+// getImageTags returns all tags of a given mediafile. This function returns
+// an empty list in the case of an error.
+func (i *Indexer) getImageTags(jpeg *MediaFile) (results []*models.Tag) {
 	tags, err := i.tensorFlow.GetImageTagsFromFile(jpeg.filename)
 
 	if err != nil {
@@ -49,7 +54,7 @@ func (i *Indexer) GetImageTags(jpeg *MediaFile) (results []*Tag) {
 	return results
 }
 
-func (i *Indexer) appendTag(tags []*Tag, label string) []*Tag {
+func (i *Indexer) appendTag(tags []*models.Tag, label string) []*models.Tag {
 	if label == "" {
 		return tags
 	}
@@ -62,17 +67,17 @@ func (i *Indexer) appendTag(tags []*Tag, label string) []*Tag {
 		}
 	}
 
-	tag := NewTag(label).FirstOrCreate(i.db)
+	tag := models.NewTag(label).FirstOrCreate(i.db)
 
 	return append(tags, tag)
 }
 
-func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
-	var photo Photo
-	var file, primaryFile File
+func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
+	var photo models.Photo
+	var file, primaryFile models.File
 	var isPrimary = false
 	var colorNames []string
-	var tags []*Tag
+	var tags []*models.Tag
 
 	canonicalName := mediaFile.GetCanonicalNameFromFile()
 	fileHash := mediaFile.GetHash()
@@ -95,13 +100,13 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 			photo.PhotoColors = strings.Join(colorNames, ", ")
 
 			// Tags (TensorFlow)
-			tags = i.GetImageTags(jpeg)
+			tags = i.getImageTags(jpeg)
 		}
 
 		if location, err := mediaFile.GetLocation(); err == nil {
 			i.db.FirstOrCreate(location, "id = ?", location.ID)
 			photo.Location = location
-			photo.Country = NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
+			photo.Country = models.NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
 
 			tags = i.appendTag(tags, location.LocCity)
 			tags = i.appendTag(tags, location.LocCounty)
@@ -122,7 +127,7 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
 			}
 		} else {
-			var recentPhoto Photo
+			var recentPhoto models.Photo
 
 			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", mediaFile.GetDateCreated())).Preload("Country").First(&recentPhoto); result.Error == nil {
 				if recentPhoto.Country != nil {
@@ -143,8 +148,8 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 			}
 		}
 
-		photo.Camera = NewCamera(mediaFile.GetCameraModel(), mediaFile.GetCameraMake()).FirstOrCreate(i.db)
-		photo.Lens = NewLens(mediaFile.GetLensModel(), mediaFile.GetLensMake()).FirstOrCreate(i.db)
+		photo.Camera = models.NewCamera(mediaFile.GetCameraModel(), mediaFile.GetCameraMake()).FirstOrCreate(i.db)
+		photo.Lens = models.NewLens(mediaFile.GetLensModel(), mediaFile.GetLensMake()).FirstOrCreate(i.db)
 		photo.PhotoFocalLength = mediaFile.GetFocalLength()
 		photo.PhotoAperture = mediaFile.GetAperture()
 
@@ -160,14 +165,14 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 
 			photo.PhotoColors = strings.Join(colorNames, ", ")
 
-			photo.Camera = NewCamera(mediaFile.GetCameraModel(), mediaFile.GetCameraMake()).FirstOrCreate(i.db)
-			photo.Lens = NewLens(mediaFile.GetLensModel(), mediaFile.GetLensMake()).FirstOrCreate(i.db)
+			photo.Camera = models.NewCamera(mediaFile.GetCameraModel(), mediaFile.GetCameraMake()).FirstOrCreate(i.db)
+			photo.Lens = models.NewLens(mediaFile.GetLensModel(), mediaFile.GetLensMake()).FirstOrCreate(i.db)
 			photo.PhotoFocalLength = mediaFile.GetFocalLength()
 			photo.PhotoAperture = mediaFile.GetAperture()
 		}
 
 		if photo.LocationID == 0 {
-			var recentPhoto Photo
+			var recentPhoto models.Photo
 
 			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", photo.TakenAt)).Preload("Country").First(&recentPhoto); result.Error == nil {
 				if recentPhoto.Country != nil {
@@ -211,13 +216,14 @@ func (i *Indexer) IndexMediaFile(mediaFile *MediaFile) string {
 
 	if fileQuery.Error == nil {
 		i.db.Save(&file)
-		return IndexResultUpdated
-	} else {
-		i.db.Create(&file)
-		return IndexResultAdded
+		return indexResultUpdated
 	}
+
+	i.db.Create(&file)
+	return indexResultAdded
 }
 
+// IndexRelated will index all mediafiles which has relate to a given mediafile.
 func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 	indexed := make(map[string]bool)
 
@@ -229,7 +235,7 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 		return indexed
 	}
 
-	mainIndexResult := i.IndexMediaFile(mainFile)
+	mainIndexResult := i.indexMediaFile(mainFile)
 	indexed[mainFile.GetFilename()] = true
 
 	log.Printf("%s main %s file \"%s\"", mainIndexResult, mainFile.GetType(), mainFile.GetRelativeFilename(i.originalsPath))
@@ -239,7 +245,7 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 			continue
 		}
 
-		indexResult := i.IndexMediaFile(relatedMediaFile)
+		indexResult := i.indexMediaFile(relatedMediaFile)
 		indexed[relatedMediaFile.GetFilename()] = true
 
 		log.Printf("%s related %s file \"%s\"", indexResult, relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(i.originalsPath))
@@ -248,6 +254,7 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 	return indexed
 }
 
+// IndexAll will index all mediafiles.
 func (i *Indexer) IndexAll() map[string]bool {
 	indexed := make(map[string]bool)
 

@@ -10,6 +10,7 @@ import (
 	"github.com/disintegration/imaging"
 )
 
+// CreateThumbnailsFromOriginals create thumbnails.
 func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, size int, square bool) {
 	err := filepath.Walk(originalsPath, func(filename string, fileInfo os.FileInfo, err error) error {
 		if err != nil || fileInfo.IsDir() || strings.HasPrefix(filepath.Base(filename), ".") {
@@ -44,6 +45,7 @@ func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, 
 	}
 }
 
+// GetThumbnail get the thumbnail for a path.
 func (m *MediaFile) GetThumbnail(path string, size int) (result *MediaFile, err error) {
 	canonicalName := m.GetCanonicalName()
 	dateCreated := m.GetDateCreated()
@@ -61,7 +63,7 @@ func (m *MediaFile) GetThumbnail(path string, size int) (result *MediaFile, err 
 	return m.CreateThumbnail(thumbnailFilename, size)
 }
 
-// Resize preserving the aspect ratio
+// CreateThumbnail Resize preserving the aspect ratio
 func (m *MediaFile) CreateThumbnail(filename string, size int) (result *MediaFile, err error) {
 	img, err := imaging.Open(m.filename, imaging.AutoOrientation(true))
 
@@ -82,6 +84,7 @@ func (m *MediaFile) CreateThumbnail(filename string, size int) (result *MediaFil
 	return NewMediaFile(filename)
 }
 
+// GetSquareThumbnail return the square thumbnail for a path and size.
 func (m *MediaFile) GetSquareThumbnail(path string, size int) (result *MediaFile, err error) {
 	canonicalName := m.GetCanonicalName()
 	dateCreated := m.GetDateCreated()
@@ -99,7 +102,7 @@ func (m *MediaFile) GetSquareThumbnail(path string, size int) (result *MediaFile
 	return m.CreateSquareThumbnail(thumbnailFilename, size)
 }
 
-// Resize and crop to square format
+// CreateSquareThumbnail Resize and crop to square format
 func (m *MediaFile) CreateSquareThumbnail(filename string, size int) (result *MediaFile, err error) {
 	img, err := imaging.Open(m.filename, imaging.AutoOrientation(true))
 
