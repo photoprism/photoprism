@@ -1,10 +1,11 @@
 package server
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"net/http"
 )
 
 func registerRoutes(app *gin.Engine, conf *photoprism.Config) {
@@ -20,6 +21,8 @@ func registerRoutes(app *gin.Engine, conf *photoprism.Config) {
 	{
 		api.GetPhotos(v1, conf)
 		api.GetThumbnail(v1, conf)
+		api.LikePhoto(v1, conf)
+		api.DislikePhoto(v1, conf)
 	}
 
 	// Default HTML page (client-side routing implemented via Vue.js)

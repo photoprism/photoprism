@@ -2,9 +2,10 @@ package commands
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
-	"log"
 )
 
 var ThumbnailsCommand = cli.Command{
@@ -27,6 +28,7 @@ var ThumbnailsCommand = cli.Command{
 	Action: thumbnailsAction,
 }
 
+// Creates thumbnail; called by ThumbnailsCommand
 func thumbnailsAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 

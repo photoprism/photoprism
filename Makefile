@@ -8,6 +8,7 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GOFMT=$(GOCMD) fmt
+GOIMPORTS=goimports
 BINARY_NAME=photoprism
 
 all: tensorflow-model dep js build
@@ -35,7 +36,7 @@ start:
 migrate:
 	$(GORUN) cmd/photoprism/photoprism.go migrate
 test:
-	$(GOTEST) -v ./...
+	$(GOTEST) -v ./internal/...
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
@@ -44,7 +45,8 @@ tensorflow-model:
 docker-push:
 	scripts/docker-push.sh
 fmt:
-	$(GOFMT) ./...
+	$(GOIMPORTS) -w internal cmd
+	$(GOFMT) ./internal/... ./cmd/...
 dep:
 	$(GOBUILD) -v ./...
 	$(GOMOD) tidy
