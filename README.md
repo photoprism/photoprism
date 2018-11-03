@@ -5,6 +5,8 @@ PhotoPrism: Browse your life in pictures
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][code quality]
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=develop)][ci]
 [![Documentation](https://readthedocs.org/projects/photoprism-docs/badge/?version=latest&style=flat)][docs]
+[![Backers on Open Collective](https://opencollective.com/photoprism/backers/badge.svg)](#backers)
+[![Sponsors on Open Collective](https://opencollective.com/photoprism/sponsors/badge.svg)](#sponsors) 
 
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
 [code quality]: https://goreportcard.com/report/github.com/photoprism/photoprism
@@ -71,3 +73,23 @@ In exchange, we would love to share our knowledge and experience with you or you
 help you getting existing photo collections tagged or build an API that integrates with your infrastructure.
 
 Please [contact us](mailto:hello@photoprism.org) if you're interested in pursuing this unique opportunity.
+
+## Credits
+
+### Contributors
+
+This project exists thanks to all the people who contribute. 
+<img src="https://opencollective.com/photoprism/contributors.svg?width=890&button=false" /></a>
+
+### Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/XX#backer)]
+
+<a href="https://opencollective.com/photoprism#backers" target="_blank"><img src="https://opencollective.com/photoprism/backers.svg?width=890”></a>
+
+### Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/photoprism#sponsor)]
+
+<a href="https://opencollective.com/photoprism/sponsor/0/website" target="_blank"><img src="https://opencollective.com/photoprism/sponsor/0/avatar.svg"></a>
+
