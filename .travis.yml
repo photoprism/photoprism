@@ -7,10 +7,14 @@ before_script:
   - docker-compose -f docker-compose.travis.yml up -d --build
 
 script:
-  - docker-compose -f docker-compose.travis.yml exec photoprism make migrate test
+  - docker-compose -f docker-compose.travis.yml exec photoprism make migrate test-coverage
 
 after_script:
+  - docker cp $(docker-compose ps -q photoprism):/go/src/github.com/photoprism/photoprism/coverage.txt coverage.txt
   - docker-compose -f docker-compose.travis.yml down
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 deploy:
   provider: script

@@ -7,3 +7,4 @@ Dockerfile
 /photoprism
 docker-compose*
 .travis.yml
+/coverage.*

@@ -6,6 +6,7 @@ GOMOD=$(GOCMD) mod
 GORUN=$(GOCMD) run
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
+GOTOOL=$(GOCMD) tool
 GOGET=$(GOCMD) get
 GOFMT=$(GOCMD) fmt
 GOIMPORTS=goimports
@@ -36,7 +37,10 @@ start:
 migrate:
 	$(GORUN) cmd/photoprism/photoprism.go migrate
 test:
-	$(GOTEST) -v ./internal/...
+	$(GOTEST) -timeout 30m -v ./internal/...
+test-coverage:
+	$(GOTEST) -timeout 30m -race -coverprofile=coverage.txt -covermode=atomic -v ./internal/...
+	$(GOTOOL) cover -html=coverage.txt -o coverage.html
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
