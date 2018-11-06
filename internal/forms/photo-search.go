@@ -15,5 +15,5 @@ type PhotoSearchForm struct {
 	Offset        int       `form:"offset"`
 	Before        time.Time `form:"before" time_format:"2006-01-02"`
 	After         time.Time `form:"after" time_format:"2006-01-02"`
-	FavoritesOnly bool      `form:"category"`
+	FavoritesOnly bool      `form:"favorites"`
 }
