@@ -11,7 +11,8 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
-// GetPhotos searches the databse for photos based on a form.
+// GET /api/v1/photos
+// Parameters see https://github.com/photoprism/photoprism/blob/develop/internal/forms/photo-search.go
 func GetPhotos(router *gin.RouterGroup, conf *photoprism.Config) {
 	router.GET("/photos", func(c *gin.Context) {
 		var form forms.PhotoSearchForm
@@ -33,6 +34,7 @@ func GetPhotos(router *gin.RouterGroup, conf *photoprism.Config) {
 	})
 }
 
+// POST /api/v1/photos/:photoId/like
 func LikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
 	router.POST("/photos/:photoId/like", func(c *gin.Context) {
 		search := photoprism.NewSearch(conf.OriginalsPath, conf.GetDb())
@@ -51,6 +53,7 @@ func LikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
 	})
 }
 
+// DELETE /api/v1/photos/:photoId/like
 func DislikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
 	router.DELETE("/photos/:photoId/like", func(c *gin.Context) {
 		search := photoprism.NewSearch(conf.OriginalsPath, conf.GetDb())
