@@ -4,11 +4,10 @@ services:
   - docker
 
 before_script:
-  - ci_env=`bash <(curl -s https://codecov.io/env)`
-  - docker-compose $ci_env -f docker-compose.travis.yml up -d --build
+  - docker-compose -f docker-compose.travis.yml up -d --build
 
 script:
-  - docker-compose -f docker-compose.travis.yml exec photoprism make migrate test-codecov
+  - docker-compose -f docker-compose.travis.yml exec -e CODECOV_TOKEN photoprism make migrate test-codecov
 
 after_script:
   - docker-compose -f docker-compose.travis.yml down
