@@ -7,6 +7,18 @@ services:
     command: tail -f /dev/null
     environment:
       - CODECOV_TOKEN
+      - CODECOV_ENV
+      - CODECOV_TOKEN
+      - CODECOV_URL
+      - CODECOV_SLUG
+      - VCS_COMMIT_ID
+      - VCS_BRANCH_NAME
+      - VCS_PULL_REQUEST
+      - VCS_SLUG
+      - VCS_TAG
+      - CI_BUILD_URL
+      - CI_BUILD_ID
+      - CI_JOB_ID
 
   database:
     image: mysql:latest
