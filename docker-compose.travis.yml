@@ -8,7 +8,6 @@ services:
     environment:
       - CODECOV_TOKEN
       - CODECOV_ENV
-      - CODECOV_TOKEN
       - CODECOV_URL
       - CODECOV_SLUG
       - VCS_COMMIT_ID
