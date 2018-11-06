@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Query parameters for GET /api/v1/photos
 type PhotoSearchForm struct {
 	Query         string    `form:"q"`
 	Tags          string    `form:"tags"`

@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// A photo can have multiple images and sidecar files
 type Photo struct {
 	gorm.Model
 	TakenAt            time.Time

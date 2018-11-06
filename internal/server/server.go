@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
+// Start the REST API server using the configuration provided
 func Start(conf *photoprism.Config) {
 	if conf.ServerMode != "" {
 		gin.SetMode(conf.ServerMode)

@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// Camera model and make (as extracted from EXIF metadata)
 type Camera struct {
 	gorm.Model
 	CameraSlug        string

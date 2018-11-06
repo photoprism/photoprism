@@ -4,6 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// Photo location
 type Location struct {
 	gorm.Model
 	LocDisplayName string

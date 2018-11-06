@@ -7,12 +7,14 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// Photo tagß
 type Tag struct {
 	gorm.Model
 	TagSlug  string `gorm:"type:varchar(100);unique_index"`
 	TagLabel string `gorm:"type:varchar(100);unique_index"`
 }
 
+// Create a new tag
 func NewTag(label string) *Tag {
 	if label == "" {
 		label = "unknown"

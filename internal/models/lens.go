@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// Camera lens (as extracted from EXIF metadata)
 type Lens struct {
 	gorm.Model
 	LensSlug        string

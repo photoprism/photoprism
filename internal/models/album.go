@@ -4,6 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// Photo album
 type Album struct {
 	gorm.Model
 	AlbumSlug        string

@@ -4,6 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// A file that belongs to a photo
 type File struct {
 	gorm.Model
 	Photo              *Photo

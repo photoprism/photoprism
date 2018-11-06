@@ -15,6 +15,7 @@ type Country struct {
 	CountryPhotoID     uint
 }
 
+// Create a new country
 func NewCountry(countryCode string, countryName string) *Country {
 	if countryCode == "" {
 		countryCode = "zz"
