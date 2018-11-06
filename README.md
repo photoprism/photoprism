@@ -2,12 +2,14 @@ PhotoPrism: Browse your life in pictures
 ========================================
 
 [![Apache License](https://img.shields.io/badge/license-apache-blue.svg)][license]
-[![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][code quality]
+[![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][quality]
+[![Test Coverage](https://codecov.io/gh/photoprism/photoprism/branch/develop/graph/badge.svg)][coverage]
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=develop)][ci]
 [![Documentation](https://readthedocs.org/projects/photoprism-docs/badge/?version=latest&style=flat)][docs]
 
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
-[code quality]: https://goreportcard.com/report/github.com/photoprism/photoprism
+[quality]: https://goreportcard.com/report/github.com/photoprism/photoprism
+[coverage]: https://codecov.io/gh/photoprism/photoprism
 [ci]: https://travis-ci.org/photoprism/photoprism
 [docs]: https://docs.photoprism.org/en/latest/
 
