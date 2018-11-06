@@ -5,6 +5,8 @@ services:
     build: .
     image: photoprism/photoprism
     command: tail -f /dev/null
+    environment:
+      - CODECOV_TOKEN
 
   database:
     image: mysql:latest
