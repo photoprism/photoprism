@@ -15,12 +15,12 @@ var photoIconSvg = []byte(`
 <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
 </svg>`)
 
-// `GET /api/v1/thumbnails/:type/:size/:hash`
+// GET /api/v1/thumbnails/:type/:size/:hash
 //
 // Parameters:
-//   - `type`: string Format, either "fit" or "square"
-//   - `size`: int Size in pixels
-//   - `hash`: string The file hash as returned by the search API
+//   type: string Format, either "fit" or "square"
+//   size: int    Size in pixels
+//   hash: string The file hash as returned by the search API
 func GetThumbnail(router *gin.RouterGroup, conf *photoprism.Config) {
 	router.GET("/thumbnails/:type/:size/:hash", func(c *gin.Context) {
 		fileHash := c.Param("hash")

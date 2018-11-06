@@ -11,20 +11,20 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
-// `GET /api/v1/photos`
+// GET /api/v1/photos
 //
 // Query:
-//   - `q`: string Query string            `form:""`
-//	 - `tags`: string Tags          string    `form:"tags"`
-//	 - `cat`: string Category
-//	 - `country`: string Country code
-//	 - `camera`: int Camera ID
-//	 - `order`: string Sort order
-//	 - `count`: int Max result count (required)
-//	 - `offset`: int Result offset
-//	 - `before`: date Find photos taken before (format: "2006-01-02")
-//	 - `after`: date Find photos taken after (format: "2006-01-02")
-//	 - `favorites`: bool Find favorites only
+//   q:         string Query string
+//   tags:      string Tags
+//   cat:       string Category
+//   country:   string Country code
+//   camera:    int    Camera ID
+//   order:     string Sort order
+//   count:     int    Max result count (required)
+//   offset:    int    Result offset
+//   before:    date   Find photos taken before (format: "2006-01-02")
+//   after:     date   Find photos taken after (format: "2006-01-02")
+//   favorites: bool   Find favorites only
 func GetPhotos(router *gin.RouterGroup, conf *photoprism.Config) {
 	router.GET("/photos", func(c *gin.Context) {
 		var form forms.PhotoSearchForm
@@ -46,10 +46,10 @@ func GetPhotos(router *gin.RouterGroup, conf *photoprism.Config) {
 	})
 }
 
-// `POST /api/v1/photos/:photoId/like`
+// POST /api/v1/photos/:photoId/like
 //
 // Parameters:
-//   - `photoId`: Photo ID as returned by the API
+//   photoId: int Photo ID as returned by the API
 func LikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
 	router.POST("/photos/:photoId/like", func(c *gin.Context) {
 		search := photoprism.NewSearch(conf.OriginalsPath, conf.GetDb())
@@ -68,10 +68,10 @@ func LikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
 	})
 }
 
-// `DELETE /api/v1/photos/:photoId/like`
+// DELETE /api/v1/photos/:photoId/like
 //
 // Parameters:
-//   - `photoId`: Photo ID as returned by the API
+//   photoId: int Photo ID as returned by the API
 func DislikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
 	router.DELETE("/photos/:photoId/like", func(c *gin.Context) {
 		search := photoprism.NewSearch(conf.OriginalsPath, conf.GetDb())
