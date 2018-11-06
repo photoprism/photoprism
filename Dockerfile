@@ -10,8 +10,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libpng-dev \
         libzmq3-dev \
         pkg-config \
-        python \
-        python-dev \
         rsync \
         software-properties-common \
         unzip \
@@ -25,9 +23,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         wget \
         darktable \
         git \
-        python3 \
-        python-setuptools \
-        python3-dev \
         mysql-client \
         && \
     apt-get clean && \
@@ -43,33 +38,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN apt-get upgrade -y
 
-RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
-    python get-pip.py && \
-    rm get-pip.py
-
-# Install TensorFlow CPU version from central repo
-RUN pip --no-cache-dir install \
-    http://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-1.10.1-cp27-none-linux_x86_64.whl
-
-RUN pip --no-cache-dir install --upgrade \
-        requests \
-        Pillow \
-        h5py \
-        ipykernel \
-        jupyter \
-        keras_applications \
-        keras_preprocessing \
-        matplotlib \
-        numpy \
-        pandas \
-        scipy \
-        sklearn \
-        && \
-    python -m ipykernel.kernelspec
-
 # Install TensorFlow C library
 RUN curl -L \
-   "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.10.1.tar.gz" | \
+   "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.11.0.tar.gz" | \
    tar -C "/usr/local" -xz
 RUN ldconfig
 
@@ -85,12 +56,12 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 RUN apt-get update && apt-get install yarn
 
-ENV GOLANG_VERSION 1.11
+ENV GOLANG_VERSION 1.11.2
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "b3fcf280ff86558e0559e185b601c9eade0fd24c900b4c63cd14d1d38613e499 *go.tgz" | sha256sum -c -; \
+	echo "1dfe664fa3d8ad714bbd15a36627992effd150ddabd7523931f077b3926d736d *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
