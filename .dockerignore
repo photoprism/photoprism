@@ -1,10 +1,14 @@
-.*
 assets/photos/*
 assets/thumbnails/*
 internal/photoprism/testdata/*
 frontend/node_modules/*
 assets/public/build/*
 Dockerfile
+/docker
 /photoprism
 docker-compose*
 /coverage.*
+.gitignore
+.dockerignore
+.idea
+.travis.yml
