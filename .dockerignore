@@ -1,3 +1,4 @@
+.*
 assets/photos/*
 assets/thumbnails/*
 internal/photoprism/testdata/*
@@ -6,5 +7,4 @@ assets/public/build/*
 Dockerfile
 /photoprism
 docker-compose*
-.travis.yml
 /coverage.*
