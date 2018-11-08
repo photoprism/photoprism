@@ -19,11 +19,11 @@ import (
 
 const testDataPath = "testdata"
 const testDataURL = "https://www.dropbox.com/s/na9p9wwt98l7m5b/import.zip?dl=1"
-const testDataHash = "ed3bdb2fe86ea662bc863b63e219b47b8d9a74024757007f7979887d"
+const testDataHash = "1a59b358b80221ab3e76efb683ad72402f0b0844"
 const testConfigFile = "../../configs/photoprism.yml"
 
 var darktableCli = "/usr/bin/darktable-cli"
-var testDataZip = GetExpandedFilename(testDataPath + "/import.zip")
+var testDataZip = "/tmp/photoprism/testdata.zip"
 var assetsPath = GetExpandedFilename("../../assets")
 var thumbnailsPath = GetExpandedFilename(testDataPath + "/thumbnails")
 var originalsPath = GetExpandedFilename(testDataPath + "/originals")
@@ -213,6 +213,8 @@ func unzip(src, dest string) ([]string, error) {
 }
 
 func downloadFile(filepath string, url string) (err error) {
+	os.MkdirAll("/tmp/photoprism", os.ModePerm)
+
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {

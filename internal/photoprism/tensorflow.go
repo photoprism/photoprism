@@ -93,7 +93,7 @@ func (t *TensorFlow) loadModel() error {
 	}
 
 	// Load inception model
-	model, err := ioutil.ReadFile(t.modelPath + "/tensorflow_inception_graph.pb")
+	model, err := ioutil.ReadFile(t.modelPath + "/inception/tensorflow_inception_graph.pb")
 	if err != nil {
 		return err
 	}
@@ -103,7 +103,7 @@ func (t *TensorFlow) loadModel() error {
 	}
 
 	// Load labels
-	labelsFile, err := os.Open(t.modelPath + "/imagenet_comp_graph_label_strings.txt")
+	labelsFile, err := os.Open(t.modelPath + "/inception/imagenet_comp_graph_label_strings.txt")
 	if err != nil {
 		return err
 	}

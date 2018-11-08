@@ -1,4 +1,4 @@
-FROM photoprism/development:20181107
+FROM photoprism/development:20181108
 
 # Install Python and TensorFlow
 RUN apt-get update && apt-get install -y --no-install-recommends \

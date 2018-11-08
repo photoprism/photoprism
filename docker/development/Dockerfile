@@ -70,6 +70,12 @@ ENV NODE_ENV production
 
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
+# Download TensorFlow model and test files
+RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism
+RUN wget "https://storage.googleapis.com/download.tensorflow.org/models/inception5h.zip" -O /tmp/photoprism/inception.zip
+RUN wget "https://www.dropbox.com/s/na9p9wwt98l7m5b/import.zip?dl=1" -O /tmp/photoprism/testdata.zip
+
+# Install goimports
 RUN env GO111MODULE=off /usr/local/go/bin/go get golang.org/x/tools/cmd/goimports
 
 # Expose HTTP port

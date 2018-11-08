@@ -13,7 +13,7 @@ GOIMPORTS=goimports
 BINARY_NAME=photoprism
 DOCKER_TAG=`date -u +%Y%m%d`
 
-all: tensorflow-model dep js build
+all: download dep js build
 install: install-bin install-assets install-config
 install-bin:
 	cp $(BINARY_NAME) /usr/local/bin/$(BINARY_NAME)
@@ -50,8 +50,8 @@ test-coverage:
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
-tensorflow-model:
-	scripts/download-tf-model.sh
+download:
+	scripts/download-inception.sh
 deploy-photoprism:
 	scripts/docker-build.sh photoprism $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism $(DOCKER_TAG)
