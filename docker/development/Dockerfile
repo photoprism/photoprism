@@ -32,7 +32,7 @@ RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
 
 # Install TensorFlow C library
 RUN curl -L \
-   "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.11.0.tar.gz" | \
+   "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.12.0.tar.gz" | \
    tar -C "/usr/local" -xz
 RUN ldconfig
 
@@ -77,6 +77,14 @@ RUN wget "https://www.dropbox.com/s/na9p9wwt98l7m5b/import.zip?dl=1" -O /tmp/pho
 
 # Install goimports
 RUN env GO111MODULE=off /usr/local/go/bin/go get golang.org/x/tools/cmd/goimports
+
+# Set up project directory
+WORKDIR "/go/src/github.com/photoprism/photoprism"
+
+# Get PhotoPrism dependencies
+COPY . .
+RUN make dep
+RUN rm -rf /go/src/github.com/photoprism/photoprism
 
 # Expose HTTP port
 EXPOSE 80
