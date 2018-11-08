@@ -1,10 +1,10 @@
 debug: false
 darktable-cli: /usr/bin/darktable-cli
-assets-path: /var/photoprism
-thumbnails-path: /var/photoprism/thumbnails
-originals-path: /var/photoprism/photos/originals
-import-path: /var/photoprism/photos/import
-export-path: /var/photoprism/photos/export
+assets-path: /srv/photoprism
+thumbnails-path: /srv/photoprism/thumbnails
+originals-path: /srv/photoprism/photos/originals
+import-path: /srv/photoprism/photos/import
+export-path: /srv/photoprism/photos/export
 server-host:
 server-mode: release
 server-port: 80

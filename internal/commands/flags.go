@@ -23,31 +23,31 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "originals-path",
 		Usage:  "originals `PATH`",
-		Value:  "/var/photoprism/photos/originals",
+		Value:  "/srv/photoprism/photos/originals",
 		EnvVar: "PHOTOPRISM_ORIGINALS_PATH",
 	},
 	cli.StringFlag{
 		Name:   "thumbnails-path",
 		Usage:  "thumbnails `PATH`",
-		Value:  "/var/photoprism/photos/thumbnails",
+		Value:  "/srv/photoprism/photos/thumbnails",
 		EnvVar: "PHOTOPRISM_THUMBNAILS_PATH",
 	},
 	cli.StringFlag{
 		Name:   "import-path",
 		Usage:  "import `PATH`",
-		Value:  "/var/photoprism/photos/import",
+		Value:  "/srv/photoprism/photos/import",
 		EnvVar: "PHOTOPRISM_IMPORT_PATH",
 	},
 	cli.StringFlag{
 		Name:   "export-path",
 		Usage:  "export `PATH`",
-		Value:  "/var/photoprism/photos/export",
+		Value:  "/srv/photoprism/photos/export",
 		EnvVar: "PHOTOPRISM_EXPORT_PATH",
 	},
 	cli.StringFlag{
 		Name:   "assets-path",
 		Usage:  "assets `PATH`",
-		Value:  "/var/photoprism",
+		Value:  "/srv/photoprism",
 		EnvVar: "PHOTOPRISM_ASSETS_PATH",
 	},
 	cli.StringFlag{

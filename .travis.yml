@@ -7,14 +7,15 @@ before_script:
   - docker-compose -f docker-compose.travis.yml up -d --build
 
 script:
-  - docker-compose -f docker-compose.travis.yml exec photoprism make migrate test-codecov
+  - if [ "$TRAVIS_BRANCH" == "develop" ]; then docker-compose -f docker-compose.travis.yml exec photoprism make migrate test-codecov; fi
+  - if [ "$TRAVIS_BRANCH" != "develop" ]; then docker-compose -f docker-compose.travis.yml exec photoprism make migrate test; fi
 
 after_script:
   - docker-compose -f docker-compose.travis.yml down
 
 deploy:
   provider: script
-  script: make docker-push
+  script: make deploy-photoprism
   skip_cleanup: true
   on:
     branch: master

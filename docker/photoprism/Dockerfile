@@ -1,0 +1,50 @@
+FROM photoprism/development:20181107 as build
+
+# Set up project directory
+WORKDIR "/go/src/github.com/photoprism/photoprism"
+COPY . .
+
+# Build PhotoPrism
+RUN make all install
+
+# Base base image as photoprism/development
+FROM ubuntu:18.04
+
+WORKDIR /srv/photoprism
+
+# Install additional distribution packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl \
+        unzip \
+        nano \
+        wget \
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy built binaries and assets to this image
+COPY --from=build /etc/apt/sources.list.d/pmjdebruijn-ubuntu-darktable-release-bionic.list /etc/apt/sources.list.d/pmjdebruijn-ubuntu-darktable-release-bionic.list
+COPY --from=build /etc/apt/trusted.gpg.d/pmjdebruijn_ubuntu_darktable-release.gpg /etc/apt/trusted.gpg.d/pmjdebruijn_ubuntu_darktable-release.gpg
+COPY --from=build /usr/local/bin/photoprism /usr/local/bin/photoprism
+COPY --from=build /etc/photoprism/photoprism.yml /etc/photoprism/photoprism.yml
+COPY --from=build /usr/local/lib/libtensorflow.so /usr/local/lib/libtensorflow.so
+COPY --from=build /usr/local/lib/libtensorflow_framework.so /usr/local/lib/libtensorflow_framework.so
+COPY --from=build /srv/photoprism /srv/photoprism
+
+# Configure dynamic linker run-time bindings
+RUN ldconfig
+
+# Install darktable (RAW to JPEG converter)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends darktable && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Show photoprism version
+RUN photoprism -v
+
+# Expose HTTP port
+EXPOSE 80
+
+# Start PhotoPrism server
+CMD photoprism start

@@ -96,7 +96,9 @@ func getTestCliContext() *cli.Context {
 	globalSet.String("originals-path", originalsPath, "doc")
 	globalSet.String("darktable-cli", darktableCli, "doc")
 
-	c := cli.NewContext(nil, globalSet, nil)
+	app := cli.NewApp()
+
+	c := cli.NewContext(app, globalSet, nil)
 
 	c.Set("config-file", testConfigFile)
 	c.Set("assets-path", assetsPath)
@@ -125,11 +127,11 @@ func TestConfig_SetValuesFromFile(t *testing.T) {
 
 	c.SetValuesFromFile(GetExpandedFilename(testConfigFile))
 
-	assert.Equal(t, "/var/photoprism", c.AssetsPath)
-	assert.Equal(t, "/var/photoprism/thumbnails", c.ThumbnailsPath)
-	assert.Equal(t, "/var/photoprism/photos/originals", c.OriginalsPath)
-	assert.Equal(t, "/var/photoprism/photos/import", c.ImportPath)
-	assert.Equal(t, "/var/photoprism/photos/export", c.ExportPath)
+	assert.Equal(t, "/srv/photoprism", c.AssetsPath)
+	assert.Equal(t, "/srv/photoprism/thumbnails", c.ThumbnailsPath)
+	assert.Equal(t, "/srv/photoprism/photos/originals", c.OriginalsPath)
+	assert.Equal(t, "/srv/photoprism/photos/import", c.ImportPath)
+	assert.Equal(t, "/srv/photoprism/photos/export", c.ExportPath)
 	assert.Equal(t, databaseDriver, c.DatabaseDriver)
 	assert.Equal(t, databaseDsn, c.DatabaseDsn)
 }

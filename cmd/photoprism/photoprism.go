@@ -7,11 +7,13 @@ import (
 	"github.com/urfave/cli"
 )
 
+var version = "development"
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "PhotoPrism"
 	app.Usage = "Browse your life in pictures"
-	app.Version = "0.0.0"
+	app.Version = version
 	app.Copyright = "Copyright (c) 2018 The PhotoPrism contributors"
 	app.EnableBashCompletion = true
 	app.Flags = commands.GlobalFlags

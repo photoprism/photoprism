@@ -1,21 +1,21 @@
 version: '3.3'
 
 # Example docker-compose config file for production use
-# Usage: docker-compose -f docker-compose.prod.yml up
+# Usage: docker-compose up
 
 services:
   photoprism: # change if needed
-    image: photoprism/photoprism # use pre-built image from docker hub: https://hub.docker.com/r/photoprism/photoprism/
+    image: photoprism/photoprism:latest # use pre-built image from docker hub: https://hub.docker.com/r/photoprism/photoprism/
     restart: always
     ports:
       - 2342:80 # left side is your local port (change if port 2342 is already used or you want to use port 80)
     volumes:
-      - ~/Photos:/Photos # change ~/Photos to whatever directory you want to use on your local computer
-      - photoprism-thumbnails:/var/photoprism/thumbnails # keep this (thumbnail cache)
+      - ~/Photos:/srv/photoprism/photos # change ~/Photos to whatever directory you want to use on your local computer
+      - photoprism-thumbnails:/srv/photoprism/thumbnails # keep this (thumbnail cache)
     environment:
-      PHOTOPRISM_IMPORT_PATH: "/Photos/Import" # ~/Photos/Import (files to be imported to originals)
-      PHOTOPRISM_EXPORT_PATH: "/Photos/Export" # ~/Photos/Export (files exported from originals)
-      PHOTOPRISM_ORIGINALS_PATH: "/Photos/Originals" # ~/Photos/Originals (original jpeg, raw and meta files)
+      PHOTOPRISM_IMPORT_PATH: /srv/photoprism/photos/Import # ~/Photos/Import (files to be imported to originals)
+      PHOTOPRISM_EXPORT_PATH: /srv/photoprism/photos/Export # ~/Photos/Export (files exported from originals)
+      PHOTOPRISM_ORIGINALS_PATH: /srv/photoprism/photos/Originals # ~/Photos/Originals (original jpeg, raw and meta files)
 
   database: # keep this
     image: mysql:latest

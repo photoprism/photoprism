@@ -19,6 +19,9 @@ import (
 
 // Config provides a struct in which application configuration is stored.
 type Config struct {
+	AppName        string
+	AppVersion     string
+	Copyright      string
 	Debug          bool
 	ConfigFile     string
 	ServerIP       string
@@ -43,6 +46,9 @@ type configValues map[string]interface{}
 // any previous values giving an option two override file configs through the CLI.
 func NewConfig(context *cli.Context) *Config {
 	c := &Config{}
+	c.AppName = context.App.Name
+	c.Copyright = context.App.Copyright
+	c.AppVersion = context.App.Version
 	c.SetValuesFromFile(GetExpandedFilename(context.GlobalString("config-file")))
 	c.SetValuesFromCliContext(context)
 
@@ -280,12 +286,13 @@ func (c *Config) GetClientConfig() map[string]interface{} {
 	cssHash := fileHash(c.GetPublicBuildPath() + "/app.css")
 
 	result := configValues{
-		"title":     "PhotoPrism",
-		"debug":     c.Debug,
-		"cameras":   cameras,
-		"countries": countries,
-		"jsHash":    jsHash,
-		"cssHash":   cssHash,
+		"appName":    c.AppName,
+		"appVersion": c.AppVersion,
+		"debug":      c.Debug,
+		"cameras":    cameras,
+		"countries":  countries,
+		"jsHash":     jsHash,
+		"cssHash":    cssHash,
 	}
 
 	return result

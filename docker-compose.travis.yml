@@ -3,7 +3,7 @@ version: '3.3'
 services:
   photoprism:
     build: .
-    image: photoprism/photoprism
+    image: photoprism/photoprism:develop
     command: tail -f /dev/null
     environment:
       - CODECOV_TOKEN

@@ -11,24 +11,25 @@ GOGET=$(GOCMD) get
 GOFMT=$(GOCMD) fmt
 GOIMPORTS=goimports
 BINARY_NAME=photoprism
+DOCKER_TAG=`date -u +%Y%m%d`
 
 all: tensorflow-model dep js build
 install: install-bin install-assets install-config
 install-bin:
-	$(GOINSTALL) cmd/photoprism/photoprism.go
+	cp $(BINARY_NAME) /usr/local/bin/$(BINARY_NAME)
 install-assets:
-	mkdir -p /var/photoprism
-	mkdir -p /var/photoprism/photos
-	mkdir -p /var/photoprism/thumbnails
-	cp -r assets/favicons /var/photoprism
-	cp -r assets/public /var/photoprism
-	cp -r assets/templates /var/photoprism
-	cp -r assets/tensorflow /var/photoprism
+	mkdir -p /srv/photoprism
+	mkdir -p /srv/photoprism/photos
+	mkdir -p /srv/photoprism/thumbnails
+	cp -r assets/favicons /srv/photoprism
+	cp -r assets/public /srv/photoprism
+	cp -r assets/templates /srv/photoprism
+	cp -r assets/tensorflow /srv/photoprism
 install-config:
 	mkdir -p /etc/photoprism
 	test -e /etc/photoprism/photoprism.yml || cp -n configs/photoprism.yml /etc/photoprism/photoprism.yml
 build:
-	$(GOBUILD) cmd/photoprism/photoprism.go
+	scripts/build.sh
 js:
 	(cd frontend &&	yarn install --prod)
 	(cd frontend &&	env NODE_ENV=production npm run build)
@@ -51,8 +52,15 @@ clean:
 	rm -f $(BINARY_NAME)
 tensorflow-model:
 	scripts/download-tf-model.sh
-docker-push:
-	scripts/docker-push.sh
+deploy-photoprism:
+	scripts/docker-build.sh photoprism $(DOCKER_TAG)
+	scripts/docker-push.sh photoprism $(DOCKER_TAG)
+deploy-development:
+	scripts/docker-build.sh development $(DOCKER_TAG)
+	scripts/docker-push.sh development $(DOCKER_TAG)
+deploy-tensorflow:
+	scripts/docker-build.sh tensorflow $(DOCKER_TAG)
+	scripts/docker-push.sh tensorflow $(DOCKER_TAG)
 fmt:
 	$(GOIMPORTS) -w internal cmd
 	$(GOFMT) ./internal/... ./cmd/...
