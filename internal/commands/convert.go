@@ -22,11 +22,11 @@ func convertAction(context *cli.Context) error {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Converting RAW images in %s to JPEG...\n", conf.OriginalsPath)
+	fmt.Printf("Converting RAW images in %s to JPEG...\n", conf.GetOriginalsPath())
 
-	converter := photoprism.NewConverter(conf.DarktableCli)
+	converter := photoprism.NewConverter(conf.GetDarktableCli())
 
-	converter.ConvertAll(conf.OriginalsPath)
+	converter.ConvertAll(conf.GetOriginalsPath())
 
 	fmt.Println("Done.")
 

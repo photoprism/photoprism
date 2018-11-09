@@ -1,7 +1,7 @@
 debug: false
 darktable-cli: /usr/bin/darktable-cli
 assets-path: /srv/photoprism
-thumbnails-path: /srv/photoprism/thumbnails
+cache-path: /srv/photoprism/cache
 originals-path: /srv/photoprism/photos/originals
 import-path: /srv/photoprism/photos/import
 export-path: /srv/photoprism/photos/export

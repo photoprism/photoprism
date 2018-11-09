@@ -24,17 +24,17 @@ func importAction(context *cli.Context) error {
 
 	conf.MigrateDb()
 
-	fmt.Printf("Importing photos from %s...\n", conf.ImportPath)
+	fmt.Printf("Importing photos from %s...\n", conf.GetImportPath())
 
 	tensorFlow := photoprism.NewTensorFlow(conf.GetTensorFlowModelPath())
 
-	indexer := photoprism.NewIndexer(conf.OriginalsPath, tensorFlow, conf.GetDb())
+	indexer := photoprism.NewIndexer(conf.GetOriginalsPath(), tensorFlow, conf.GetDb())
 
-	converter := photoprism.NewConverter(conf.DarktableCli)
+	converter := photoprism.NewConverter(conf.GetDarktableCli())
 
-	importer := photoprism.NewImporter(conf.OriginalsPath, indexer, converter)
+	importer := photoprism.NewImporter(conf.GetOriginalsPath(), indexer, converter)
 
-	importer.ImportPhotosFromDirectory(conf.ImportPath)
+	importer.ImportPhotosFromDirectory(conf.GetImportPath())
 
 	fmt.Println("Done.")
 

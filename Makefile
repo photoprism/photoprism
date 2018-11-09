@@ -19,7 +19,7 @@ install-bin:
 	scripts/build.sh install /usr/local/bin/$(BINARY_NAME)
 install-assets:
 	mkdir -p /srv/photoprism/photos
-	mkdir -p /srv/photoprism/thumbnails
+	mkdir -p /srv/photoprism/cache
 	mkdir -p /srv/photoprism/database
 	cp -r assets/server /srv/photoprism
 	cp -r assets/tensorflow /srv/photoprism

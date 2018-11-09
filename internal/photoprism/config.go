@@ -27,6 +27,7 @@ type Config struct {
 	ServerPort     int
 	ServerMode     string
 	AssetsPath     string
+	CachePath      string
 	ThumbnailsPath string
 	OriginalsPath  string
 	ImportPath     string
@@ -83,8 +84,8 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 		c.AssetsPath = GetExpandedFilename(assetsPath)
 	}
 
-	if thumbnailsPath, err := yamlConfig.Get("thumbnails-path"); err == nil {
-		c.ThumbnailsPath = GetExpandedFilename(thumbnailsPath)
+	if cachePath, err := yamlConfig.Get("cache-path"); err == nil {
+		c.CachePath = GetExpandedFilename(cachePath)
 	}
 
 	if originalsPath, err := yamlConfig.Get("originals-path"); err == nil {
@@ -125,8 +126,8 @@ func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 		c.AssetsPath = GetExpandedFilename(context.GlobalString("assets-path"))
 	}
 
-	if context.GlobalIsSet("thumbnails-path") || c.ThumbnailsPath == "" {
-		c.ThumbnailsPath = GetExpandedFilename(context.GlobalString("thumbnails-path"))
+	if context.GlobalIsSet("cache-path") || c.CachePath == "" {
+		c.CachePath = GetExpandedFilename(context.GlobalString("cache-path"))
 	}
 
 	if context.GlobalIsSet("originals-path") || c.OriginalsPath == "" {
@@ -153,6 +154,18 @@ func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 		c.DatabaseDsn = context.GlobalString("database-dsn")
 	}
 
+	if context.IsSet("server-host") || c.ServerIP == "" {
+		c.ServerIP = context.String("server-host")
+	}
+
+	if context.IsSet("server-port") || c.ServerPort == 0 {
+		c.ServerPort = context.Int("server-port")
+	}
+
+	if context.IsSet("server-mode") || c.ServerMode == "" {
+		c.ServerMode = context.String("server-mode")
+	}
+
 	return nil
 }
 
@@ -162,19 +175,31 @@ func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 // ImportPath
 // ExportPath
 func (c *Config) CreateDirectories() error {
-	if err := os.MkdirAll(c.OriginalsPath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.GetOriginalsPath(), os.ModePerm); err != nil {
 		return err
 	}
 
-	if err := os.MkdirAll(c.ThumbnailsPath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.GetImportPath(), os.ModePerm); err != nil {
 		return err
 	}
 
-	if err := os.MkdirAll(c.ImportPath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.GetExportPath(), os.ModePerm); err != nil {
 		return err
 	}
 
-	if err := os.MkdirAll(c.ExportPath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.GetThumbnailsPath(), os.ModePerm); err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(c.GetDatabasePath(), os.ModePerm); err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(c.GetTensorFlowModelPath(), os.ModePerm); err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(c.GetPublicBuildPath(), os.ModePerm); err != nil {
 		return err
 	}
 
@@ -205,6 +230,86 @@ func (c *Config) connectToDatabase() error {
 	c.db = db
 
 	return err
+}
+
+// GetAppName returns the application name.
+func (c *Config) GetAppName() string {
+	return c.AppName
+}
+
+// GetAppVersion returns the application version.
+func (c *Config) GetAppVersion() string {
+	return c.AppVersion
+}
+
+// GetCopyright returns the application copyright.
+func (c *Config) GetCopyright() string {
+	return c.Copyright
+}
+
+// IsDebug returns true if debug mode is on.
+func (c *Config) IsDebug() bool {
+	return c.Debug
+}
+
+// GetConfigFile returns the config file name.
+func (c *Config) GetConfigFile() string {
+	return c.ConfigFile
+}
+
+// GetServerIP returns the server IP address (empty for all).
+func (c *Config) GetServerIP() string {
+	return c.ServerIP
+}
+
+// GetServerPort returns the server port.
+func (c *Config) GetServerPort() int {
+	return c.ServerPort
+}
+
+// GetServerMode returns the server mode.
+func (c *Config) GetServerMode() string {
+	return c.ServerMode
+}
+
+// GetOriginalsPath returns the originals.
+func (c *Config) GetOriginalsPath() string {
+	return c.OriginalsPath
+}
+
+// GetImportPath returns the import directory.
+func (c *Config) GetImportPath() string {
+	return c.ImportPath
+}
+
+// GetExportPath returns the export directory.
+func (c *Config) GetExportPath() string {
+	return c.ExportPath
+}
+
+// GetDarktableCli returns the darktable-cli binary file name.
+func (c *Config) GetDarktableCli() string {
+	return c.DarktableCli
+}
+
+// GetDatabaseDriver returns the database driver name.
+func (c *Config) GetDatabaseDriver() string {
+	return c.DatabaseDriver
+}
+
+// GetDatabaseDsn returns the database data source name (DSN).
+func (c *Config) GetDatabaseDsn() string {
+	return c.DatabaseDsn
+}
+
+// GetCachePath returns the path to the cache.
+func (c *Config) GetCachePath() string {
+	return c.CachePath
+}
+
+// GetThumbnailsPath returns the path to the cached thumbnails.
+func (c *Config) GetThumbnailsPath() string {
+	return c.GetCachePath() + "/thumbnails"
 }
 
 // GetAssetsPath returns the path to the assets.

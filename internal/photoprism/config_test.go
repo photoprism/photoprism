@@ -25,7 +25,7 @@ const testConfigFile = "../../configs/photoprism.yml"
 var darktableCli = "/usr/bin/darktable-cli"
 var testDataZip = "/tmp/photoprism/testdata.zip"
 var assetsPath = GetExpandedFilename("../../assets")
-var thumbnailsPath = GetExpandedFilename(testDataPath + "/thumbnails")
+var cachePath = GetExpandedFilename(testDataPath + "/cache")
 var originalsPath = GetExpandedFilename(testDataPath + "/originals")
 var importPath = GetExpandedFilename(testDataPath + "/import")
 var exportPath = GetExpandedFilename(testDataPath + "/export")
@@ -38,10 +38,10 @@ func init() {
 }
 
 func (c *Config) RemoveTestData(t *testing.T) {
-	os.RemoveAll(c.ImportPath)
-	os.RemoveAll(c.ExportPath)
-	os.RemoveAll(c.OriginalsPath)
-	os.RemoveAll(c.ThumbnailsPath)
+	os.RemoveAll(c.GetImportPath())
+	os.RemoveAll(c.GetExportPath())
+	os.RemoveAll(c.GetOriginalsPath())
+	os.RemoveAll(c.GetCachePath())
 }
 
 func (c *Config) DownloadTestData(t *testing.T) {
@@ -83,7 +83,7 @@ func NewTestConfig() *Config {
 	return &Config{
 		Debug:          false,
 		AssetsPath:     assetsPath,
-		ThumbnailsPath: thumbnailsPath,
+		CachePath:      cachePath,
 		OriginalsPath:  originalsPath,
 		ImportPath:     importPath,
 		ExportPath:     exportPath,
@@ -123,8 +123,8 @@ func TestNewConfig(t *testing.T) {
 
 	assert.IsType(t, &Config{}, c)
 
-	assert.Equal(t, assetsPath, c.AssetsPath)
-	assert.False(t, c.Debug)
+	assert.Equal(t, assetsPath, c.GetAssetsPath())
+	assert.False(t, c.IsDebug())
 }
 
 func TestConfig_SetValuesFromFile(t *testing.T) {
@@ -132,19 +132,18 @@ func TestConfig_SetValuesFromFile(t *testing.T) {
 
 	c.SetValuesFromFile(GetExpandedFilename(testConfigFile))
 
-	assert.Equal(t, "/srv/photoprism", c.AssetsPath)
-	assert.Equal(t, "/srv/photoprism/thumbnails", c.ThumbnailsPath)
-	assert.Equal(t, "/srv/photoprism/photos/originals", c.OriginalsPath)
-	assert.Equal(t, "/srv/photoprism/photos/import", c.ImportPath)
-	assert.Equal(t, "/srv/photoprism/photos/export", c.ExportPath)
-	assert.Equal(t, databaseDriver, c.DatabaseDriver)
-	assert.Equal(t, databaseDsn, c.DatabaseDsn)
+	assert.Equal(t, "/srv/photoprism", c.GetAssetsPath())
+	assert.Equal(t, "/srv/photoprism/cache", c.GetCachePath())
+	assert.Equal(t, "/srv/photoprism/cache/thumbnails", c.GetThumbnailsPath())
+	assert.Equal(t, "/srv/photoprism/photos/originals", c.GetOriginalsPath())
+	assert.Equal(t, "/srv/photoprism/photos/import", c.GetImportPath())
+	assert.Equal(t, "/srv/photoprism/photos/export", c.GetExportPath())
+	assert.Equal(t, databaseDriver, c.GetDatabaseDriver())
+	assert.Equal(t, databaseDsn, c.GetDatabaseDsn())
 }
 
 func TestConfig_ConnectToDatabase(t *testing.T) {
 	c := NewTestConfig()
-
-	c.connectToDatabase()
 
 	db := c.GetDb()
 

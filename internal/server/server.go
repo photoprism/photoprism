@@ -9,8 +9,8 @@ import (
 
 // Start the REST API server using the configuration provided
 func Start(conf *photoprism.Config) {
-	if conf.ServerMode != "" {
-		gin.SetMode(conf.ServerMode)
+	if conf.GetServerMode() != "" {
+		gin.SetMode(conf.GetServerMode())
 	} else if conf.Debug == false {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -22,5 +22,5 @@ func Start(conf *photoprism.Config) {
 
 	registerRoutes(app, conf)
 
-	app.Run(fmt.Sprintf("%s:%d", conf.ServerIP, conf.ServerPort))
+	app.Run(fmt.Sprintf("%s:%d", conf.GetServerIP(), conf.GetServerPort()))
 }

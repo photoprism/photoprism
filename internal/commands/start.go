@@ -41,19 +41,7 @@ var startFlags = []cli.Flag{
 func startAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 
-	if context.IsSet("server-host") || conf.ServerIP == "" {
-		conf.ServerIP = context.String("server-host")
-	}
-
-	if context.IsSet("server-port") || conf.ServerPort == 0 {
-		conf.ServerPort = context.Int("server-port")
-	}
-
-	if context.IsSet("server-mode") || conf.ServerMode == "" {
-		conf.ServerMode = context.String("server-mode")
-	}
-
-	if conf.ServerPort < 1 {
+	if conf.GetServerPort() < 1 {
 		log.Fatal("Server port must be a positive integer")
 	}
 

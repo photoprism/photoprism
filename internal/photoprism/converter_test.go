@@ -10,7 +10,7 @@ import (
 func TestNewConverter(t *testing.T) {
 	conf := NewTestConfig()
 
-	converter := NewConverter(conf.DarktableCli)
+	converter := NewConverter(conf.GetDarktableCli())
 
 	assert.IsType(t, &Converter{}, converter)
 }
@@ -20,9 +20,9 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	converter := NewConverter(conf.DarktableCli)
+	converter := NewConverter(conf.GetDarktableCli())
 
-	jpegFilename := conf.ImportPath + "/iphone/IMG_6788.JPG"
+	jpegFilename := conf.GetImportPath() + "/iphone/IMG_6788.JPG"
 
 	assert.Truef(t, fileExists(jpegFilename), "file does not exist: %s", jpegFilename)
 
@@ -46,7 +46,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	assert.Equal(t, "iPhone SE", infoJpeg.CameraModel)
 
-	rawFilemame := conf.ImportPath + "/raw/IMG_1435.CR2"
+	rawFilemame := conf.GetImportPath() + "/raw/IMG_1435.CR2"
 
 	t.Logf("Testing RAW to JPEG converter with %s", rawFilemame)
 
@@ -56,7 +56,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	imageRaw, _ := converter.ConvertToJpeg(rawMediaFile)
 
-	assert.True(t, fileExists(conf.ImportPath+"/raw/IMG_1435.jpg"), "Jpeg file was not found - is Darktable installed?")
+	assert.True(t, fileExists(conf.GetImportPath()+"/raw/IMG_1435.jpg"), "Jpeg file was not found - is Darktable installed?")
 
 	assert.NotEqual(t, rawFilemame, imageRaw.filename)
 
@@ -72,11 +72,11 @@ func TestConverter_ConvertAll(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	converter := NewConverter(conf.DarktableCli)
+	converter := NewConverter(conf.GetDarktableCli())
 
-	converter.ConvertAll(conf.ImportPath)
+	converter.ConvertAll(conf.GetImportPath())
 
-	jpegFilename := conf.ImportPath + "/raw/IMG_1435.jpg"
+	jpegFilename := conf.GetImportPath() + "/raw/IMG_1435.jpg"
 
 	assert.True(t, fileExists(jpegFilename), "Jpeg file was not found - is Darktable installed?")
 
@@ -92,13 +92,13 @@ func TestConverter_ConvertAll(t *testing.T) {
 
 	assert.Equal(t, "Canon EOS M10", infoRaw.CameraModel, "Camera model should be Canon EOS M10")
 
-	existingJpegFilename := conf.ImportPath + "/raw/20140717_154212_1EC48F8489.jpg"
+	existingJpegFilename := conf.GetImportPath() + "/raw/20140717_154212_1EC48F8489.jpg"
 
 	oldHash := fileHash(existingJpegFilename)
 
 	os.Remove(existingJpegFilename)
 
-	converter.ConvertAll(conf.ImportPath)
+	converter.ConvertAll(conf.GetImportPath())
 
 	newHash := fileHash(existingJpegFilename)
 

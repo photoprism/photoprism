@@ -29,7 +29,7 @@ func GetPhotos(router *gin.RouterGroup, conf *photoprism.Config) {
 	router.GET("/photos", func(c *gin.Context) {
 		var form forms.PhotoSearchForm
 
-		search := photoprism.NewSearch(conf.OriginalsPath, conf.GetDb())
+		search := photoprism.NewSearch(conf.GetOriginalsPath(), conf.GetDb())
 
 		c.MustBindWith(&form, binding.Form)
 
@@ -52,7 +52,7 @@ func GetPhotos(router *gin.RouterGroup, conf *photoprism.Config) {
 //   photoId: int Photo ID as returned by the API
 func LikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
 	router.POST("/photos/:photoId/like", func(c *gin.Context) {
-		search := photoprism.NewSearch(conf.OriginalsPath, conf.GetDb())
+		search := photoprism.NewSearch(conf.GetOriginalsPath(), conf.GetDb())
 
 		photoId, err := strconv.ParseUint(c.Param("photoId"), 10, 64)
 
@@ -74,7 +74,7 @@ func LikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
 //   photoId: int Photo ID as returned by the API
 func DislikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
 	router.DELETE("/photos/:photoId/like", func(c *gin.Context) {
-		search := photoprism.NewSearch(conf.OriginalsPath, conf.GetDb())
+		search := photoprism.NewSearch(conf.GetOriginalsPath(), conf.GetDb())
 
 		photoId, err := strconv.ParseUint(c.Param("photoId"), 10, 64)
 

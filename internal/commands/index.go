@@ -24,11 +24,11 @@ func indexAction(context *cli.Context) error {
 
 	conf.MigrateDb()
 
-	fmt.Printf("Indexing photos in %s...\n", conf.OriginalsPath)
+	fmt.Printf("Indexing photos in %s...\n", conf.GetOriginalsPath())
 
 	tensorFlow := photoprism.NewTensorFlow(conf.GetTensorFlowModelPath())
 
-	indexer := photoprism.NewIndexer(conf.OriginalsPath, tensorFlow, conf.GetDb())
+	indexer := photoprism.NewIndexer(conf.GetOriginalsPath(), tensorFlow, conf.GetDb())
 
 	indexer.IndexAll()
 

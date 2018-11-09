@@ -32,23 +32,23 @@ func GetThumbnail(router *gin.RouterGroup, conf *photoprism.Config) {
 			c.Data(400, "image/svg+xml", photoIconSvg)
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath, conf.GetDb())
+		search := photoprism.NewSearch(conf.GetOriginalsPath(), conf.GetDb())
 
 		file := search.FindFileByHash(fileHash)
 
-		fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath, file.FileName)
+		fileName := fmt.Sprintf("%s/%s", conf.GetOriginalsPath(), file.FileName)
 
 		if mediaFile, err := photoprism.NewMediaFile(fileName); err == nil {
 			switch thumbnailType {
 			case "fit":
-				if thumbnail, err := mediaFile.GetThumbnail(conf.ThumbnailsPath, size); err == nil {
+				if thumbnail, err := mediaFile.GetThumbnail(conf.GetThumbnailsPath(), size); err == nil {
 					c.File(thumbnail.GetFilename())
 				} else {
 					log.Printf("could not create thumbnail: %s", err.Error())
 					c.Data(400, "image/svg+xml", photoIconSvg)
 				}
 			case "square":
-				if thumbnail, err := mediaFile.GetSquareThumbnail(conf.ThumbnailsPath, size); err == nil {
+				if thumbnail, err := mediaFile.GetSquareThumbnail(conf.GetThumbnailsPath(), size); err == nil {
 					c.File(thumbnail.GetFilename())
 				} else {
 					log.Printf("could not create square thumbnail: %s", err.Error())

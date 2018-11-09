@@ -68,13 +68,13 @@ func exportAction(context *cli.Context) error {
 		}
 	}
 
-	exportPath := fmt.Sprintf("%s/%s", conf.ExportPath, name)
+	exportPath := fmt.Sprintf("%s/%s", conf.GetExportPath(), name)
 	size := context.Int("size")
-	originals := photoprism.FindOriginalsByDate(conf.OriginalsPath, afterDate, beforeDate)
+	originals := photoprism.FindOriginalsByDate(conf.GetOriginalsPath(), afterDate, beforeDate)
 
 	fmt.Printf("Exporting photos to %s...\n", exportPath)
 
-	photoprism.ExportPhotosFromOriginals(originals, conf.ThumbnailsPath, exportPath, size)
+	photoprism.ExportPhotosFromOriginals(originals, conf.GetThumbnailsPath(), exportPath, size)
 
 	fmt.Println("Done.")
 

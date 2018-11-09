@@ -18,16 +18,16 @@ func configAction(context *cli.Context) error {
 	conf := photoprism.NewConfig(context)
 
 	fmt.Printf("NAME                  VALUE\n")
-	fmt.Printf("debug                 %t\n", conf.Debug)
-	fmt.Printf("config-file           %s\n", conf.ConfigFile)
-	fmt.Printf("assets-path           %s\n", conf.AssetsPath)
-	fmt.Printf("originals-path        %s\n", conf.OriginalsPath)
-	fmt.Printf("thumbnails-path       %s\n", conf.ThumbnailsPath)
-	fmt.Printf("import-path           %s\n", conf.ImportPath)
-	fmt.Printf("export-path           %s\n", conf.ExportPath)
-	fmt.Printf("darktable-cli         %s\n", conf.DarktableCli)
-	fmt.Printf("database-driver       %s\n", conf.DatabaseDriver)
-	fmt.Printf("database-dsn          %s\n", conf.DatabaseDsn)
+	fmt.Printf("debug                 %t\n", conf.IsDebug())
+	fmt.Printf("config-file           %s\n", conf.GetConfigFile())
+	fmt.Printf("darktable-cli         %s\n", conf.GetDarktableCli())
+	fmt.Printf("originals-path        %s\n", conf.GetOriginalsPath())
+	fmt.Printf("import-path           %s\n", conf.GetImportPath())
+	fmt.Printf("export-path           %s\n", conf.GetExportPath())
+	fmt.Printf("cache-path            %s\n", conf.GetCachePath())
+	fmt.Printf("assets-path           %s\n", conf.GetAssetsPath())
+	fmt.Printf("database-driver       %s\n", conf.GetDatabaseDriver())
+	fmt.Printf("database-dsn          %s\n", conf.GetDatabaseDsn())
 
 	return nil
 }

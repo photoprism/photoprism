@@ -36,7 +36,7 @@ func thumbnailsAction(context *cli.Context) error {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Creating thumbnails in %s...\n", conf.ThumbnailsPath)
+	fmt.Printf("Creating thumbnails in %s...\n", conf.GetThumbnailsPath())
 
 	sizes := context.IntSlice("size")
 
@@ -50,7 +50,7 @@ func thumbnailsAction(context *cli.Context) error {
 	}
 
 	for _, size := range sizes {
-		photoprism.CreateThumbnailsFromOriginals(conf.OriginalsPath, conf.ThumbnailsPath, size, context.Bool("square"))
+		photoprism.CreateThumbnailsFromOriginals(conf.GetOriginalsPath(), conf.GetThumbnailsPath(), size, context.Bool("square"))
 	}
 
 	fmt.Println("Done.")
