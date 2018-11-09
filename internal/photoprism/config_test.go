@@ -32,6 +32,11 @@ var exportPath = GetExpandedFilename(testDataPath + "/export")
 var databaseDriver = "mysql"
 var databaseDsn = "photoprism:photoprism@tcp(database:3306)/photoprism?parseTime=true"
 
+func init() {
+	conf := NewTestConfig()
+	conf.MigrateDb()
+}
+
 func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.ImportPath)
 	os.RemoveAll(c.ExportPath)
