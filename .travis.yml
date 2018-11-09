@@ -4,6 +4,9 @@ cache:
   directories:
     - $HOME/.cache
 
+before_cache:
+  - sudo chown -R travis:travis $HOME/.cache
+
 services:
   - docker
 
