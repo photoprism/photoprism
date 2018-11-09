@@ -8,7 +8,5 @@ Dockerfile
 /photoprism
 docker-compose*
 /coverage.*
-.gitignore
 .dockerignore
 .idea
-.travis.yml
