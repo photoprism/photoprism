@@ -59,7 +59,7 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "database-dsn",
 		Usage:  "database data source name (`DSN`)",
-		Value:  "photoprism:photoprism@tcp(localhost:3306)/photoprism",
+		Value:  "photoprism:photoprism@tcp(database:3306)/photoprism?parseTime=true",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
 }
