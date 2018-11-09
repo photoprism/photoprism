@@ -5,6 +5,9 @@ services:
     build: .
     image: photoprism/photoprism:develop
     command: tail -f /dev/null
+    volumes:
+      - ~/.cache/yarn:/root/.cache/yarn
+      - ~/.cache/go-mod:/go/pkg/mod
     environment:
       - CODECOV_TOKEN
       - CODECOV_ENV

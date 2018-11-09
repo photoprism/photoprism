@@ -2,6 +2,7 @@ FROM ubuntu:18.04
 
 LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
 
+# Install dev / build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         curl \
@@ -51,6 +52,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install Go
 ENV GOLANG_VERSION 1.11.2
 RUN set -eux; \
 	\
@@ -62,12 +64,11 @@ RUN set -eux; \
 	export PATH="/usr/local/go/bin:$PATH"; \
 	go version
 
+# Configure Go environment
 ENV GOPATH /go
 ENV GOBIN $GOPATH/bin
 ENV PATH $GOBIN:/usr/local/go/bin:$PATH
 ENV GO111MODULE on
-ENV NODE_ENV production
-
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 # Download TensorFlow model and test files
@@ -78,16 +79,15 @@ RUN wget "https://www.dropbox.com/s/na9p9wwt98l7m5b/import.zip?dl=1" -O /tmp/pho
 # Install goimports
 RUN env GO111MODULE=off /usr/local/go/bin/go get golang.org/x/tools/cmd/goimports
 
+# Configure JS environment for building
+ENV NODE_ENV production
+ENV YARN_CACHE_FOLDER /root/.cache/yarn
+
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
-
-# Get PhotoPrism dependencies
-COPY . .
-RUN make dep
-RUN rm -rf /go/src/github.com/photoprism/photoprism
 
 # Expose HTTP port
 EXPOSE 80
 
-# Start PhotoPrism server
+# Keep container running (services can be started manually using a terminal)
 CMD tail -f /dev/null

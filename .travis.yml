@@ -1,5 +1,9 @@
 sudo: required
 
+cache:
+  directories:
+    - $HOME/.cache
+
 services:
   - docker
 
