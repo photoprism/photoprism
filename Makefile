@@ -16,7 +16,7 @@ DOCKER_TAG=`date -u +%Y%m%d`
 all: download dep js build
 install: install-bin install-assets install-config
 install-bin:
-	cp $(BINARY_NAME) /usr/local/bin/$(BINARY_NAME)
+	scripts/build.sh install /usr/local/bin/$(BINARY_NAME)
 install-assets:
 	mkdir -p /srv/photoprism
 	mkdir -p /srv/photoprism/photos
@@ -25,11 +25,12 @@ install-assets:
 	cp -r assets/public /srv/photoprism
 	cp -r assets/templates /srv/photoprism
 	cp -r assets/tensorflow /srv/photoprism
+	find /srv/photoprism -name '.*' -type f -delete
 install-config:
 	mkdir -p /etc/photoprism
 	test -e /etc/photoprism/photoprism.yml || cp -n configs/photoprism.yml /etc/photoprism/photoprism.yml
 build:
-	scripts/build.sh
+	scripts/build.sh debug $(BINARY_NAME)
 js:
 	(cd frontend &&	yarn install --frozen-lockfile --prod)
 	(cd frontend &&	env NODE_ENV=production npm run build)
