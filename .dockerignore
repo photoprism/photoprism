@@ -2,7 +2,7 @@ assets/photos/*
 assets/thumbnails/*
 internal/photoprism/testdata/*
 frontend/node_modules/*
-assets/public/build/*
+assets/server/public/build/*
 Dockerfile
 /docker
 /photoprism

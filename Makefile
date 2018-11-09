@@ -18,12 +18,10 @@ install: install-bin install-assets install-config
 install-bin:
 	scripts/build.sh install /usr/local/bin/$(BINARY_NAME)
 install-assets:
-	mkdir -p /srv/photoprism
 	mkdir -p /srv/photoprism/photos
 	mkdir -p /srv/photoprism/thumbnails
-	cp -r assets/favicons /srv/photoprism
-	cp -r assets/public /srv/photoprism
-	cp -r assets/templates /srv/photoprism
+	mkdir -p /srv/photoprism/database
+	cp -r assets/server /srv/photoprism
 	cp -r assets/tensorflow /srv/photoprism
 	find /srv/photoprism -name '.*' -type f -delete
 install-config:
