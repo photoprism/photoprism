@@ -81,15 +81,15 @@ func (c *Config) InitializeTestData(t *testing.T) {
 
 func NewTestConfig() *Config {
 	return &Config{
-		Debug:          false,
-		AssetsPath:     assetsPath,
-		CachePath:      cachePath,
-		OriginalsPath:  originalsPath,
-		ImportPath:     importPath,
-		ExportPath:     exportPath,
-		DarktableCli:   darktableCli,
-		DatabaseDriver: databaseDriver,
-		DatabaseDsn:    databaseDsn,
+		debug:          false,
+		assetsPath:     assetsPath,
+		cachePath:      cachePath,
+		originalsPath:  originalsPath,
+		importPath:     importPath,
+		exportPath:     exportPath,
+		darktableCli:   darktableCli,
+		databaseDriver: databaseDriver,
+		databaseDsn:    databaseDsn,
 	}
 }
 

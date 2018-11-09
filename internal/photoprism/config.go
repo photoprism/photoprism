@@ -17,38 +17,46 @@ import (
 )
 
 // Config provides a struct in which application configuration is stored.
+// Application code must use functions to get config values, for two reasons:
+//
+// 1. Some values are computed and we don't want to leak implementation details (aims at reducing refactoring overhead).
+//
+// 2. Paths might actually be dynamic later (if we build a multi-user version).
+//
+// See https://github.com/photoprism/photoprism/issues/50#issuecomment-433856358
 type Config struct {
-	AppName        string
-	AppVersion     string
-	Copyright      string
-	Debug          bool
-	ConfigFile     string
-	ServerIP       string
-	ServerPort     int
-	ServerMode     string
-	AssetsPath     string
-	CachePath      string
-	ThumbnailsPath string
-	OriginalsPath  string
-	ImportPath     string
-	ExportPath     string
-	DarktableCli   string
-	DatabaseDriver string
-	DatabaseDsn    string
+	appName        string
+	appVersion     string
+	appCopyright   string
+	debug          bool
+	configFile     string
+	serverIP       string
+	serverPort     int
+	serverMode     string
+	assetsPath     string
+	cachePath      string
+	originalsPath  string
+	importPath     string
+	exportPath     string
+	darktableCli   string
+	databaseDriver string
+	databaseDsn    string
 	db             *gorm.DB
 }
 
 type configValues map[string]interface{}
 
-// NewConfig creates a new configuration entity by using two methods.
-// 1: SetValuesFromFile: This will initialize values from a yaml config file.
-// 2: SetValuesFromCliContext: Which comes after SetValuesFromFile and overrides
-// any previous values giving an option two override file configs through the CLI.
+// NewConfig() creates a new configuration entity by using two methods:
+//
+// 1. SetValuesFromFile: This will initialize values from a yaml config file.
+//
+// 2. SetValuesFromCliContext: Which comes after SetValuesFromFile and overrides
+//    any previous values giving an option two override file configs through the CLI.
 func NewConfig(context *cli.Context) *Config {
 	c := &Config{}
-	c.AppName = context.App.Name
-	c.Copyright = context.App.Copyright
-	c.AppVersion = context.App.Version
+	c.appName = context.App.Name
+	c.appCopyright = context.App.Copyright
+	c.appVersion = context.App.Version
 	c.SetValuesFromFile(GetExpandedFilename(context.GlobalString("config-file")))
 	c.SetValuesFromCliContext(context)
 
@@ -63,53 +71,53 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 		return err
 	}
 
-	c.ConfigFile = fileName
+	c.configFile = fileName
 	if debug, err := yamlConfig.GetBool("debug"); err == nil {
-		c.Debug = debug
+		c.debug = debug
 	}
 
 	if serverIP, err := yamlConfig.Get("server-host"); err == nil {
-		c.ServerIP = serverIP
+		c.serverIP = serverIP
 	}
 
 	if serverPort, err := yamlConfig.GetInt("server-port"); err == nil {
-		c.ServerPort = int(serverPort)
+		c.serverPort = int(serverPort)
 	}
 
 	if serverMode, err := yamlConfig.Get("server-mode"); err == nil {
-		c.ServerMode = serverMode
+		c.serverMode = serverMode
 	}
 
 	if assetsPath, err := yamlConfig.Get("assets-path"); err == nil {
-		c.AssetsPath = GetExpandedFilename(assetsPath)
+		c.assetsPath = GetExpandedFilename(assetsPath)
 	}
 
 	if cachePath, err := yamlConfig.Get("cache-path"); err == nil {
-		c.CachePath = GetExpandedFilename(cachePath)
+		c.cachePath = GetExpandedFilename(cachePath)
 	}
 
 	if originalsPath, err := yamlConfig.Get("originals-path"); err == nil {
-		c.OriginalsPath = GetExpandedFilename(originalsPath)
+		c.originalsPath = GetExpandedFilename(originalsPath)
 	}
 
 	if importPath, err := yamlConfig.Get("import-path"); err == nil {
-		c.ImportPath = GetExpandedFilename(importPath)
+		c.importPath = GetExpandedFilename(importPath)
 	}
 
 	if exportPath, err := yamlConfig.Get("export-path"); err == nil {
-		c.ExportPath = GetExpandedFilename(exportPath)
+		c.exportPath = GetExpandedFilename(exportPath)
 	}
 
 	if darktableCli, err := yamlConfig.Get("darktable-cli"); err == nil {
-		c.DarktableCli = GetExpandedFilename(darktableCli)
+		c.darktableCli = GetExpandedFilename(darktableCli)
 	}
 
 	if databaseDriver, err := yamlConfig.Get("database-driver"); err == nil {
-		c.DatabaseDriver = databaseDriver
+		c.databaseDriver = databaseDriver
 	}
 
 	if databaseDsn, err := yamlConfig.Get("database-dsn"); err == nil {
-		c.DatabaseDsn = databaseDsn
+		c.databaseDsn = databaseDsn
 	}
 
 	return nil
@@ -119,61 +127,61 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 // for the entity.
 func (c *Config) SetValuesFromCliContext(context *cli.Context) error {
 	if context.GlobalBool("debug") {
-		c.Debug = context.GlobalBool("debug")
+		c.debug = context.GlobalBool("debug")
 	}
 
-	if context.GlobalIsSet("assets-path") || c.AssetsPath == "" {
-		c.AssetsPath = GetExpandedFilename(context.GlobalString("assets-path"))
+	if context.GlobalIsSet("assets-path") || c.assetsPath == "" {
+		c.assetsPath = GetExpandedFilename(context.GlobalString("assets-path"))
 	}
 
-	if context.GlobalIsSet("cache-path") || c.CachePath == "" {
-		c.CachePath = GetExpandedFilename(context.GlobalString("cache-path"))
+	if context.GlobalIsSet("cache-path") || c.cachePath == "" {
+		c.cachePath = GetExpandedFilename(context.GlobalString("cache-path"))
 	}
 
-	if context.GlobalIsSet("originals-path") || c.OriginalsPath == "" {
-		c.OriginalsPath = GetExpandedFilename(context.GlobalString("originals-path"))
+	if context.GlobalIsSet("originals-path") || c.originalsPath == "" {
+		c.originalsPath = GetExpandedFilename(context.GlobalString("originals-path"))
 	}
 
-	if context.GlobalIsSet("import-path") || c.ImportPath == "" {
-		c.ImportPath = GetExpandedFilename(context.GlobalString("import-path"))
+	if context.GlobalIsSet("import-path") || c.importPath == "" {
+		c.importPath = GetExpandedFilename(context.GlobalString("import-path"))
 	}
 
-	if context.GlobalIsSet("export-path") || c.ExportPath == "" {
-		c.ExportPath = GetExpandedFilename(context.GlobalString("export-path"))
+	if context.GlobalIsSet("export-path") || c.exportPath == "" {
+		c.exportPath = GetExpandedFilename(context.GlobalString("export-path"))
 	}
 
-	if context.GlobalIsSet("darktable-cli") || c.DarktableCli == "" {
-		c.DarktableCli = GetExpandedFilename(context.GlobalString("darktable-cli"))
+	if context.GlobalIsSet("darktable-cli") || c.darktableCli == "" {
+		c.darktableCli = GetExpandedFilename(context.GlobalString("darktable-cli"))
 	}
 
-	if context.GlobalIsSet("database-driver") || c.DatabaseDriver == "" {
-		c.DatabaseDriver = context.GlobalString("database-driver")
+	if context.GlobalIsSet("database-driver") || c.databaseDriver == "" {
+		c.databaseDriver = context.GlobalString("database-driver")
 	}
 
-	if context.GlobalIsSet("database-dsn") || c.DatabaseDsn == "" {
-		c.DatabaseDsn = context.GlobalString("database-dsn")
+	if context.GlobalIsSet("database-dsn") || c.databaseDsn == "" {
+		c.databaseDsn = context.GlobalString("database-dsn")
 	}
 
-	if context.IsSet("server-host") || c.ServerIP == "" {
-		c.ServerIP = context.String("server-host")
+	if context.IsSet("server-host") || c.serverIP == "" {
+		c.serverIP = context.String("server-host")
 	}
 
-	if context.IsSet("server-port") || c.ServerPort == 0 {
-		c.ServerPort = context.Int("server-port")
+	if context.IsSet("server-port") || c.serverPort == 0 {
+		c.serverPort = context.Int("server-port")
 	}
 
-	if context.IsSet("server-mode") || c.ServerMode == "" {
-		c.ServerMode = context.String("server-mode")
+	if context.IsSet("server-mode") || c.serverMode == "" {
+		c.serverMode = context.String("server-mode")
 	}
 
 	return nil
 }
 
 // CreateDirectories creates all the folders that photoprism needs. These are:
-// OriginalsPath
+// originalsPath
 // ThumbnailsPath
-// ImportPath
-// ExportPath
+// importPath
+// exportPath
 func (c *Config) CreateDirectories() error {
 	if err := os.MkdirAll(c.GetOriginalsPath(), os.ModePerm); err != nil {
 		return err
@@ -209,13 +217,13 @@ func (c *Config) CreateDirectories() error {
 // connectToDatabase estabilishes a connection to a database given a driver.
 // It tries to do this 12 times with a 5 second sleep intervall in between.
 func (c *Config) connectToDatabase() error {
-	db, err := gorm.Open(c.DatabaseDriver, c.DatabaseDsn)
+	db, err := gorm.Open(c.databaseDriver, c.databaseDsn)
 
 	if err != nil || db == nil {
 		for i := 1; i <= 12; i++ {
 			time.Sleep(5 * time.Second)
 
-			db, err = gorm.Open(c.DatabaseDriver, c.DatabaseDsn)
+			db, err = gorm.Open(c.databaseDriver, c.databaseDsn)
 
 			if db != nil && err == nil {
 				break
@@ -234,77 +242,77 @@ func (c *Config) connectToDatabase() error {
 
 // GetAppName returns the application name.
 func (c *Config) GetAppName() string {
-	return c.AppName
+	return c.appName
 }
 
 // GetAppVersion returns the application version.
 func (c *Config) GetAppVersion() string {
-	return c.AppVersion
+	return c.appVersion
 }
 
-// GetCopyright returns the application copyright.
-func (c *Config) GetCopyright() string {
-	return c.Copyright
+// GetAppCopyright returns the application copyright.
+func (c *Config) GetAppCopyright() string {
+	return c.appCopyright
 }
 
 // IsDebug returns true if debug mode is on.
 func (c *Config) IsDebug() bool {
-	return c.Debug
+	return c.debug
 }
 
 // GetConfigFile returns the config file name.
 func (c *Config) GetConfigFile() string {
-	return c.ConfigFile
+	return c.configFile
 }
 
 // GetServerIP returns the server IP address (empty for all).
 func (c *Config) GetServerIP() string {
-	return c.ServerIP
+	return c.serverIP
 }
 
 // GetServerPort returns the server port.
 func (c *Config) GetServerPort() int {
-	return c.ServerPort
+	return c.serverPort
 }
 
 // GetServerMode returns the server mode.
 func (c *Config) GetServerMode() string {
-	return c.ServerMode
+	return c.serverMode
 }
 
 // GetOriginalsPath returns the originals.
 func (c *Config) GetOriginalsPath() string {
-	return c.OriginalsPath
+	return c.originalsPath
 }
 
 // GetImportPath returns the import directory.
 func (c *Config) GetImportPath() string {
-	return c.ImportPath
+	return c.importPath
 }
 
 // GetExportPath returns the export directory.
 func (c *Config) GetExportPath() string {
-	return c.ExportPath
+	return c.exportPath
 }
 
 // GetDarktableCli returns the darktable-cli binary file name.
 func (c *Config) GetDarktableCli() string {
-	return c.DarktableCli
+	return c.darktableCli
 }
 
 // GetDatabaseDriver returns the database driver name.
 func (c *Config) GetDatabaseDriver() string {
-	return c.DatabaseDriver
+	return c.databaseDriver
 }
 
 // GetDatabaseDsn returns the database data source name (DSN).
 func (c *Config) GetDatabaseDsn() string {
-	return c.DatabaseDsn
+	return c.databaseDsn
 }
 
 // GetCachePath returns the path to the cache.
 func (c *Config) GetCachePath() string {
-	return c.CachePath
+	return c.cachePath
 }
 
 // GetThumbnailsPath returns the path to the cached thumbnails.
@@ -314,7 +322,7 @@ func (c *Config) GetThumbnailsPath() string {
 
 // GetAssetsPath returns the path to the assets.
 func (c *Config) GetAssetsPath() string {
-	return c.AssetsPath
+	return c.assetsPath
 }
 
 // GetTensorFlowModelPath returns the tensorflow model path.
@@ -400,9 +408,9 @@ func (c *Config) GetClientConfig() map[string]interface{} {
 	cssHash := fileHash(c.GetPublicBuildPath() + "/app.css")
 
 	result := configValues{
-		"appName":    c.AppName,
-		"appVersion": c.AppVersion,
-		"debug":      c.Debug,
+		"appName":    c.GetAppName(),
+		"appVersion": c.GetAppVersion(),
+		"debug":      c.IsDebug(),
 		"cameras":    cameras,
 		"countries":  countries,
 		"jsHash":     jsHash,

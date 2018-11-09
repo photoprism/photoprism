@@ -11,7 +11,7 @@ import (
 func Start(conf *photoprism.Config) {
 	if conf.GetServerMode() != "" {
 		gin.SetMode(conf.GetServerMode())
-	} else if conf.Debug == false {
+	} else if conf.IsDebug() == false {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
