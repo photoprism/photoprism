@@ -2,34 +2,45 @@ FROM ubuntu:18.04
 
 LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
 
+ENV DEBIAN_FRONTEND noninteractive
+
+# Configure apt-get
+RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry
+RUN echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends
+RUN echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests
+RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes
+RUN echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
+
 # Install dev / build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential \
-        curl \
-        libfreetype6-dev \
-        libhdf5-serial-dev \
-        libpng-dev \
-        libzmq3-dev \
-        pkg-config \
-        software-properties-common \
-        rsync \
-        unzip \
-        g++ \
-        gcc \
-        libc6-dev \
-        gpg-agent \
-        apt-utils \
-        make \
-        nano \
-        wget \
-        git \
-        mysql-client
+RUN apt-get update && apt-get upgrade && \
+    apt-get install \
+    build-essential \
+    curl \
+    libfreetype6-dev \
+    libhdf5-serial-dev \
+    libpng-dev \
+    libzmq3-dev \
+    pkg-config \
+    software-properties-common \
+    rsync \
+    unzip \
+    g++ \
+    gcc \
+    libc6-dev \
+    gpg-agent \
+    apt-utils \
+    make \
+    nano \
+    wget \
+    git \
+    mysql-client \
+    libgtk-3-bin
 
 # Install darktable (RAW to JPEG converter)
 RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
     apt-get update && \
-    apt-get install -y --no-install-recommends darktable && \
-    apt-get upgrade -y
+    apt-get install darktable && \
+    apt-get upgrade
 
 # Install TensorFlow C library
 RUN curl -L \
@@ -42,7 +53,7 @@ ENV TF_CPP_MIN_LOG_LEVEL 2
 
 # Install NPM (NodeJS)
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
-RUN apt-get install -y nodejs
+RUN apt-get install nodejs
 
 # Install YARN (Package Manager)
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
@@ -83,11 +94,17 @@ RUN env GO111MODULE=off /usr/local/go/bin/go get golang.org/x/tools/cmd/goimport
 ENV NODE_ENV production
 ENV YARN_CACHE_FOLDER /root/.cache/yarn
 
+# Configure broadwayd (HTML5 display server)
+# Command: broadwayd -p 8080 -a 0.0.0.0 :5
+ENV GDK_BACKEND broadway
+ENV BROADWAY_DISPLAY :5
+
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
-# Expose HTTP port
+# Expose HTTP port plus 8080 for broadwayd (not running by default)
 EXPOSE 80
+EXPOSE 8080
 
 # Keep container running (services can be started manually using a terminal)
 CMD tail -f /dev/null

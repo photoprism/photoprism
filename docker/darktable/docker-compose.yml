@@ -1,0 +1,7 @@
+version: '3.3'
+
+services:
+  darktable:
+    image: photoprism/darktable:latest
+    ports:
+      - 8080:8080

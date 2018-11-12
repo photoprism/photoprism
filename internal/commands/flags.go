@@ -52,7 +52,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "database-driver",
-		Usage:  "database `DRIVER` (mysql, mssql, postgres or sqlite)",
+		Usage:  "database `DRIVER` (mysql, postgres or sqlite)",
 		Value:  "mysql",
 		EnvVar: "PHOTOPRISM_DATABASE_DRIVER",
 	},

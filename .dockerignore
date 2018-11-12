@@ -4,9 +4,9 @@ internal/photoprism/testdata/*
 frontend/node_modules/*
 assets/server/public/build/*
 Dockerfile
-/docker
 /photoprism
 docker-compose*
 /coverage.*
 .dockerignore
 .idea
+.DS_Store

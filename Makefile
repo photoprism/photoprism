@@ -16,7 +16,7 @@ DOCKER_TAG=`date -u +%Y%m%d`
 all: download dep js build
 install: install-bin install-assets install-config
 install-bin:
-	scripts/build.sh install /usr/local/bin/$(BINARY_NAME)
+	scripts/build.sh prod /usr/local/bin/$(BINARY_NAME)
 install-assets:
 	mkdir -p /srv/photoprism/photos
 	mkdir -p /srv/photoprism/cache
@@ -60,6 +60,10 @@ deploy-development:
 deploy-tensorflow:
 	scripts/docker-build.sh tensorflow $(DOCKER_TAG)
 	scripts/docker-push.sh tensorflow $(DOCKER_TAG)
+deploy-darktable:
+	DARKTABLE_VERSION="$(awk '$2 == "DARKTABLE_VERSION" { print $3; exit }' docker/darktable/Dockerfile)"
+	scripts/docker-build.sh darktable $(DARKTABLE_VERSION)
+	scripts/docker-push.sh darktable $(DARKTABLE_VERSION)
 fmt:
 	$(GOIMPORTS) -w internal cmd
 	$(GOFMT) ./internal/... ./cmd/...

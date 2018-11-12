@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ -z "$1" ] || [ -z "$2" ]; then
+if [[ -z $1 ]] || [[ -z $2 ]]; then
     echo "Please provide a container image name and version" 1>&2
     exit 1
 else

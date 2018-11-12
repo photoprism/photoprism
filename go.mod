@@ -39,7 +39,7 @@ require (
 	github.com/ugorji/go v1.1.1 // indirect
 	github.com/urfave/cli v1.20.0
 	golang.org/x/crypto v0.0.0-20181106171534-e4dc69e5b2fd // indirect
-	golang.org/x/image v0.0.0-20181107040041-fe2fa19765cb
+	golang.org/x/image v0.0.0-20181109232246-249dc8530c0e
 	golang.org/x/net v0.0.0-20181108082009-03003ca0c849 // indirect
 	golang.org/x/sync v0.0.0-20181108010431-42b317875d0f // indirect
 	golang.org/x/sys v0.0.0-20181107165924-66b7b1311ac8 // indirect
