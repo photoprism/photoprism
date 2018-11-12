@@ -14,8 +14,7 @@ before_script:
   - docker-compose -f docker-compose.travis.yml up -d --build
 
 script:
-  - if [ "$TRAVIS_BRANCH" == "develop" ]; then docker-compose -f docker-compose.travis.yml exec photoprism make all install migrate test-codecov; fi
-  - if [ "$TRAVIS_BRANCH" != "develop" ]; then docker-compose -f docker-compose.travis.yml exec photoprism make all install migrate test; fi
+  - scripts/travis.sh
 
 after_script:
   - docker-compose -f docker-compose.travis.yml down
