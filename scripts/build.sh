@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-BUILD_DATE=`date -u +%y%m%d`
-VERSION=`git describe --always`
+PHOTOPRISM_DATE=`date -u +%y%m%d`
+PHOTOPRISM_VERSION=`git describe --always`
 
 if [[ -z $1 ]] || [[ -z $2 ]]; then
     echo "Please provide build mode and output file name" 1>&2
@@ -9,30 +9,30 @@ if [[ -z $1 ]] || [[ -z $2 ]]; then
 fi
 
 if [[ $OS == "Windows_NT" ]]; then
-    OPERATING_SYSTEM=win32
+    PHOTOPRISM_OS=win32
     if [[ $PROCESSOR_ARCHITEW6432 == "AMD64" ]]; then
-        PROCESSOR=amd64
+        PHOTOPRISM_ARCH=amd64
     else
         if [[ $PROCESSOR_ARCHITECTURE == "AMD64" ]]; then
-            PROCESSOR=amd64
+            PHOTOPRISM_ARCH=amd64
         fi
         if [[ $PROCESSOR_ARCHITECTURE == "x86" ]]; then
-            PROCESSOR=ia32
+            PHOTOPRISM_ARCH=ia32
         fi
     fi
 else
-    OPERATING_SYSTEM=`uname -s`
-    PROCESSOR=`uname -p`
+    PHOTOPRISM_OS=`uname -s`
+    PHOTOPRISM_ARCH=`uname -p`
 fi
 
 if [[ $1 == "debug" ]]; then
     echo "Building development binary..."
-	go build -ldflags "-X main.version=${BUILD_DATE}-${VERSION}-${OPERATING_SYSTEM}-${PROCESSOR}-DEBUG" -o $2 cmd/photoprism/photoprism.go
+	go build -ldflags "-X main.version=${PHOTOPRISM_DATE}-${PHOTOPRISM_VERSION}-${PHOTOPRISM_OS}-${PHOTOPRISM_ARCH}-DEBUG" -o $2 cmd/photoprism/photoprism.go
 	du -h $2
 	echo "Done."
 else
     echo "Building production binary..."
-	go build -ldflags "-s -w -X main.version=${BUILD_DATE}-${VERSION}-${OPERATING_SYSTEM}-${PROCESSOR}" -o $2 cmd/photoprism/photoprism.go
+	go build -ldflags "-s -w -X main.version=${PHOTOPRISM_DATE}-${PHOTOPRISM_VERSION}-${PHOTOPRISM_OS}-${PHOTOPRISM_ARCH}" -o $2 cmd/photoprism/photoprism.go
 	du -h $2
 	echo "Done."
 fi
