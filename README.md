@@ -54,10 +54,9 @@ Go, the programming language we're using, is a great example. It is heavily infl
 
 We welcome contributions of any kind. If you have a bug or an idea, read our 
 [guide](https://docs.photoprism.org/en/latest/contribute/) before opening an issue.
-Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) or
-[good first issue](https://github.com/photoprism/photoprism/labels/good%20first%20issue) can be
-good first contributions. Let us know if you need additional information or permissions on GitHub
-to perform a task.
+Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) can be
+good (first) contributions. Let us know if you need additional information or permissions on GitHub
+to perform a task. There are no stupid questions.
 
 ## Donations
 
