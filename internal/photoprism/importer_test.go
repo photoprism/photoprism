@@ -20,22 +20,6 @@ func TestNewImporter(t *testing.T) {
 	assert.IsType(t, &Importer{}, importer)
 }
 
-func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
-	conf := NewTestConfig()
-
-	conf.InitializeTestData(t)
-
-	tensorFlow := NewTensorFlow(conf.GetTensorFlowModelPath())
-
-	indexer := NewIndexer(conf.GetOriginalsPath(), tensorFlow, conf.GetDb())
-
-	converter := NewConverter(conf.GetDarktableCli())
-
-	importer := NewImporter(conf.GetOriginalsPath(), indexer, converter)
-
-	importer.ImportPhotosFromDirectory(conf.GetImportPath())
-}
-
 func TestImporter_GetDestinationFilename(t *testing.T) {
 	conf := NewTestConfig()
 	conf.InitializeTestData(t)
