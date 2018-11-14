@@ -1,14 +1,4 @@
 export GO111MODULE=on
-GOCMD=go
-GOINSTALL=$(GOCMD) install
-GOBUILD=$(GOCMD) build
-GOMOD=$(GOCMD) mod
-GORUN=$(GOCMD) run
-GOCLEAN=$(GOCMD) clean
-GOTEST=$(GOCMD) test
-GOTOOL=$(GOCMD) tool
-GOGET=$(GOCMD) get
-GOFMT=$(GOCMD) fmt
 GOIMPORTS=goimports
 BINARY_NAME=photoprism
 DOCKER_TAG=`date -u +%Y%m%d`
@@ -33,23 +23,23 @@ js:
 	(cd frontend &&	yarn install --frozen-lockfile --prod)
 	(cd frontend &&	env NODE_ENV=production npm run build)
 start:
-	$(GORUN) cmd/photoprism/photoprism.go start
+	go run cmd/photoprism/photoprism.go start
 migrate:
-	$(GORUN) cmd/photoprism/photoprism.go migrate
+	go run cmd/photoprism/photoprism.go migrate
 test:
-	$(GOTEST) -tags=slow -timeout 20m -v ./internal/...
+	go test -tags=slow -timeout 20m -v ./internal/...
 test-fast:
-	$(GOTEST) -timeout 20m -v ./internal/...
+	go test -timeout 20m -v ./internal/...
 test-race:
-	$(GOTEST) -tags=slow -race -timeout 60m -v ./internal/...
+	go test -tags=slow -race -timeout 60m -v ./internal/...
 test-codecov:
-	$(GOTEST) -tags=slow -timeout 30m -coverprofile=coverage.txt -covermode=atomic -v ./internal/...
+	go test -tags=slow -timeout 30m -coverprofile=coverage.txt -covermode=atomic -v ./internal/...
 	scripts/codecov.sh
 test-coverage:
-	$(GOTEST) -tags=slow -timeout 30m -coverprofile=coverage.txt -covermode=atomic -v ./internal/...
-	$(GOTOOL) cover -html=coverage.txt -o coverage.html
+	go test -tags=slow -timeout 30m -coverprofile=coverage.txt -covermode=atomic -v ./internal/...
+	go tool cover -html=coverage.txt -o coverage.html
 clean:
-	$(GOCLEAN)
+	go clean
 	rm -f $(BINARY_NAME)
 download:
 	scripts/download-inception.sh
@@ -67,10 +57,10 @@ deploy-darktable:
 	scripts/docker-build.sh darktable $(DARKTABLE_VERSION)
 	scripts/docker-push.sh darktable $(DARKTABLE_VERSION)
 fmt:
-	$(GOIMPORTS) -w internal cmd
-	$(GOFMT) ./internal/... ./cmd/...
+	goimports -w internal cmd
+	go fmt ./internal/... ./cmd/...
 dep:
-	$(GOBUILD) -v ./...
-	$(GOMOD) tidy
+	go build -v ./...
+	go mod tidy
 upgrade:
-	$(GOGET) -u
+	go get -u
