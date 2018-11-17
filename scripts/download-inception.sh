@@ -11,5 +11,5 @@ if [[ ! -e assets/tensorflow/inception/tensorflow_inception_graph.pb ]]; then
   mkdir -p assets/tensorflow/inception
   unzip ${FILENAME} -d assets/tensorflow/inception
 else
-  echo "TensorFlow InceptionV3 model already downloaded."
+  echo "TensorFlow Inception V1 model already downloaded."
 fi

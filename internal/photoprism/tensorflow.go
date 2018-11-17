@@ -180,7 +180,7 @@ func (t *TensorFlow) makeTransformImageGraph(imageFormat string) (graph *tf.Grap
 	// Div and Sub perform (value-Mean)/Scale for each pixel
 	output = op.Div(s,
 		op.Sub(s,
-			// Resize to 224x224 with bilinear interpolation
+			// Resize to 224x224 with bi-linear interpolation
 			op.ResizeBilinear(s,
 				// Create a batch containing a single image
 				op.ExpandDims(s,
