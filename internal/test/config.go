@@ -185,7 +185,7 @@ func (c *Config) GetServerPort() int {
 
 // GetServerMode returns the server mode.
 func (c *Config) GetServerMode() string {
-	return "release"
+	return "test"
 }
 
 // GetOriginalsPath returns the originals.
