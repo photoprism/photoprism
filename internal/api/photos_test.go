@@ -10,7 +10,7 @@ import (
 func TestGetPhotos(t *testing.T) {
 	app, router, conf := NewTest()
 
-    GetPhotos(router, conf)
+	GetPhotos(router, conf)
 
 	result := TestRequest(app, "GET", "/api/v1/photos?count=10")
 
