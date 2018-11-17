@@ -10,6 +10,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// Exports photos as JPEG thumbnails (resized)
 var ExportCommand = cli.Command{
 	Name:   "export",
 	Usage:  "Exports photos as JPEG",
@@ -37,7 +38,6 @@ var exportFlags = []cli.Flag{
 	},
 }
 
-// Exports photos as JPEG; called by ExportCommand and uses exportFlags
 func exportAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 

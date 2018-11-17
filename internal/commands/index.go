@@ -9,13 +9,13 @@ import (
 	"github.com/urfave/cli"
 )
 
+// Re-indexes all photos in originals directory (photo library)
 var IndexCommand = cli.Command{
 	Name:   "index",
 	Usage:  "Re-indexes all originals",
 	Action: indexAction,
 }
 
-// Indexes original photos; called by IndexCommand
 func indexAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 

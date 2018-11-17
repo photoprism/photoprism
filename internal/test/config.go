@@ -10,7 +10,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/frontend"
 	"github.com/photoprism/photoprism/internal/fsutil"
 	"github.com/photoprism/photoprism/internal/models"
 )
@@ -296,7 +296,7 @@ func (c *Config) MigrateDb() {
 }
 
 // GetClientConfig returns a loaded and set configuration entity.
-func (c *Config) GetClientConfig() map[string]interface{} {
+func (c *Config) GetClientConfig() frontend.Config {
 	db := c.GetDb()
 
 	var cameras []*models.Camera
@@ -315,7 +315,7 @@ func (c *Config) GetClientConfig() map[string]interface{} {
 	jsHash := fsutil.Hash(c.GetPublicBuildPath() + "/app.js")
 	cssHash := fsutil.Hash(c.GetPublicBuildPath() + "/app.css")
 
-	result := context.ClientConfig{
+	result := frontend.Config{
 		"appName":    c.GetAppName(),
 		"appVersion": c.GetAppVersion(),
 		"debug":      c.IsDebug(),

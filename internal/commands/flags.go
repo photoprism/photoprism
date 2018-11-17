@@ -2,6 +2,7 @@ package commands
 
 import "github.com/urfave/cli"
 
+// Global CLI flags
 var GlobalFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:   "debug",

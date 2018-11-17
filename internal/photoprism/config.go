@@ -4,14 +4,16 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/photoprism/photoprism/internal/frontend"
 )
 
+// Todo: Remove Get prefix, see https://golang.org/doc/effective_go.html#Getters
 type Config interface {
 	CreateDirectories() error
 	MigrateDb()
 
 	GetDb() *gorm.DB
-	GetClientConfig() map[string]interface{}
+	GetClientConfig() frontend.Config
 
 	GetConfigFile() string
 	GetAppName() string

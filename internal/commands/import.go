@@ -9,13 +9,13 @@ import (
 	"github.com/urfave/cli"
 )
 
+// Imports photos from path defined in command-line args
 var ImportCommand = cli.Command{
 	Name:   "import",
 	Usage:  "Imports photos",
 	Action: importAction,
 }
 
-// Imports photos from path defined in ctx arg; called by ImportCommand;
 func importAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 

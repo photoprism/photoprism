@@ -9,9 +9,10 @@ import (
 	"github.com/urfave/cli"
 )
 
+// Pre-renders thumbnails
 var ThumbnailsCommand = cli.Command{
 	Name:  "thumbnails",
-	Usage: "Creates thumbnails",
+	Usage: "Pre-renders thumbnails",
 	Flags: []cli.Flag{
 		cli.IntSliceFlag{
 			Name:  "size, s",
@@ -29,7 +30,6 @@ var ThumbnailsCommand = cli.Command{
 	Action: thumbnailsAction,
 }
 
-// Creates thumbnail; called by ThumbnailsCommand
 func thumbnailsAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 

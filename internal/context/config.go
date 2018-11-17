@@ -9,6 +9,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/kylelemons/go-gypsy/yaml"
+	"github.com/photoprism/photoprism/internal/frontend"
 	"github.com/photoprism/photoprism/internal/fsutil"
 	"github.com/photoprism/photoprism/internal/models"
 	"github.com/urfave/cli"
@@ -41,8 +42,6 @@ type Config struct {
 	databaseDsn    string
 	db             *gorm.DB
 }
-
-type ClientConfig map[string]interface{}
 
 // NewConfig() creates a new configuration entity by using two methods:
 //
@@ -386,7 +385,7 @@ func (c *Config) MigrateDb() {
 }
 
 // GetClientConfig returns a loaded and set configuration entity.
-func (c *Config) GetClientConfig() map[string]interface{} {
+func (c *Config) GetClientConfig() frontend.Config {
 	db := c.GetDb()
 
 	var cameras []*models.Camera
@@ -405,7 +404,7 @@ func (c *Config) GetClientConfig() map[string]interface{} {
 	jsHash := fsutil.Hash(c.GetPublicBuildPath() + "/app.js")
 	cssHash := fsutil.Hash(c.GetPublicBuildPath() + "/app.css")
 
-	result := ClientConfig{
+	result := frontend.Config{
 		"appName":    c.GetAppName(),
 		"appVersion": c.GetAppVersion(),
 		"debug":      c.IsDebug(),

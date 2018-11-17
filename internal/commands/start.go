@@ -9,6 +9,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// Starts web server (user interface)
 var StartCommand = cli.Command{
 	Name:   "start",
 	Usage:  "Starts web server",
@@ -37,7 +38,6 @@ var startFlags = []cli.Flag{
 	},
 }
 
-// Starts web serve using startFlags; called by startCommand
 func startAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 

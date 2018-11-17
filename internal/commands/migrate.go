@@ -7,13 +7,13 @@ import (
 	"github.com/urfave/cli"
 )
 
+// Automatically migrates / initializes database
 var MigrateCommand = cli.Command{
 	Name:   "migrate",
 	Usage:  "Automatically migrates / initializes database",
 	Action: migrateAction,
 }
 
-// Automatically migrates / initializes database; called by MigrateCommand
 func migrateAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 

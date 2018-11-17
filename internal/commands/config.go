@@ -7,13 +7,13 @@ import (
 	"github.com/urfave/cli"
 )
 
+// Prints current configuration
 var ConfigCommand = cli.Command{
 	Name:   "config",
 	Usage:  "Displays global configuration values",
 	Action: configAction,
 }
 
-// Prints current configuration; called by ConfigCommand
 func configAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 

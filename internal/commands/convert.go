@@ -9,13 +9,13 @@ import (
 	"github.com/urfave/cli"
 )
 
+// Converts RAW files to JPEG images, if no JPEG already exists
 var ConvertCommand = cli.Command{
 	Name:   "convert",
 	Usage:  "Converts RAW originals to JPEG",
 	Action: convertAction,
 }
 
-// Converts images to JPEG; called by ConvertCommand
 func convertAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 
