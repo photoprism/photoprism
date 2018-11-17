@@ -27,11 +27,11 @@ start:
 migrate:
 	go run cmd/photoprism/photoprism.go migrate
 test:
-	go test -tags=slow -timeout 20m -v ./internal/...
+	go test -tags=slow -timeout 20m -v ./internal/... | scripts/colorize-tests.sh
 test-fast:
-	go test -timeout 5m -v ./internal/...
+	go test -timeout 5m -v ./internal/... | scripts/colorize-tests.sh
 test-race:
-	go test -tags=slow -race -timeout 60m -v ./internal/...
+	go test -tags=slow -race -timeout 60m -v ./internal/... | scripts/colorize-tests.sh
 test-codecov:
 	go test -tags=slow -timeout 30m -coverprofile=coverage.txt -covermode=atomic -v ./internal/...
 	scripts/codecov.sh

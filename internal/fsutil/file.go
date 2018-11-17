@@ -12,13 +12,14 @@ import (
 	"strings"
 )
 
+// Returns true if file exists
 func Exists(filename string) bool {
 	info, err := os.Stat(filename)
 
 	return err == nil && !info.IsDir()
 }
 
-// Returns the expanded format for a filename.
+// Returns full path; ~ replaced with actual home directory
 func ExpandedFilename(filename string) string {
 	usr, _ := user.Current()
 	dir := usr.HomeDir
@@ -36,7 +37,7 @@ func ExpandedFilename(filename string) string {
 	return result
 }
 
-
+// Extract Zip file in destination directory
 func Unzip(src, dest string) ([]string, error) {
 
 	var fileNames []string
@@ -103,6 +104,7 @@ func Unzip(src, dest string) ([]string, error) {
 	return fileNames, nil
 }
 
+// Download a file from a URL
 func Download(filepath string, url string) (err error) {
 	os.MkdirAll("/tmp/photoprism", os.ModePerm)
 

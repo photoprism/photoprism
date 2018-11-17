@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/test"
 	"github.com/stretchr/testify/assert"
 )
 

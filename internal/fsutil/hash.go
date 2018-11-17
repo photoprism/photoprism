@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// Returns sha1 hash of file as string
 func Hash(filename string) string {
 	var result []byte
 

@@ -6,6 +6,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/fsutil"
+	"github.com/photoprism/photoprism/internal/test"
 	"github.com/stretchr/testify/assert"
 )
 

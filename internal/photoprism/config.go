@@ -38,4 +38,3 @@ type Config interface {
 	GetPublicPath() string
 	GetPublicBuildPath() string
 }
-

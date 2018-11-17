@@ -4,6 +4,8 @@ package photoprism
 
 import (
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/test"
 )
 
 func TestCreateThumbnailsFromOriginals(t *testing.T) {
