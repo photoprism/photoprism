@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/photoprism/photoprism/internal/fsutil"
 )
 
 // Importer todo: Fill me.
@@ -144,8 +146,8 @@ func (i *Importer) GetDestinationFilename(mainFile *MediaFile, mediaFile *MediaF
 
 	result := pathName + "/" + canonicalName + fileExtension
 
-	for fileExists(result) {
-		if mediaFile.GetHash() == fileHash(result) {
+	for fsutil.Exists(result) {
+		if mediaFile.GetHash() == fsutil.Hash(result) {
 			return result, fmt.Errorf("file already exists: %s", result)
 		}
 

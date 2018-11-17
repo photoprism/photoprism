@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/urfave/cli"
 )
 
@@ -14,8 +14,8 @@ var ConfigCommand = cli.Command{
 }
 
 // Prints current configuration; called by ConfigCommand
-func configAction(context *cli.Context) error {
-	conf := photoprism.NewConfig(context)
+func configAction(ctx *cli.Context) error {
+	conf := context.NewConfig(ctx)
 
 	fmt.Printf("NAME                  VALUE\n")
 	fmt.Printf("debug                 %t\n", conf.IsDebug())

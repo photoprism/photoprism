@@ -14,7 +14,7 @@ func main() {
 	app.Name = "PhotoPrism"
 	app.Usage = "Browse your life in pictures"
 	app.Version = version
-	app.Copyright = "Copyright (c) 2018 The PhotoPrism contributors"
+	app.Copyright = "(c) 2018 The PhotoPrism contributors <hello@photoprism.org>"
 	app.EnableBashCompletion = true
 	app.Flags = commands.GlobalFlags
 

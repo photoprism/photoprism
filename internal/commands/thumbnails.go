@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
 )
@@ -29,8 +30,8 @@ var ThumbnailsCommand = cli.Command{
 }
 
 // Creates thumbnail; called by ThumbnailsCommand
-func thumbnailsAction(context *cli.Context) error {
-	conf := photoprism.NewConfig(context)
+func thumbnailsAction(ctx *cli.Context) error {
+	conf := context.NewConfig(ctx)
 
 	if err := conf.CreateDirectories(); err != nil {
 		log.Fatal(err)
@@ -38,9 +39,9 @@ func thumbnailsAction(context *cli.Context) error {
 
 	fmt.Printf("Creating thumbnails in %s...\n", conf.GetThumbnailsPath())
 
-	sizes := context.IntSlice("size")
+	sizes := ctx.IntSlice("size")
 
-	if context.Bool("default") {
+	if ctx.Bool("default") {
 		sizes = []int{320, 500, 640, 1280, 1920, 2560}
 	}
 
@@ -50,7 +51,7 @@ func thumbnailsAction(context *cli.Context) error {
 	}
 
 	for _, size := range sizes {
-		photoprism.CreateThumbnailsFromOriginals(conf.GetOriginalsPath(), conf.GetThumbnailsPath(), size, context.Bool("square"))
+		photoprism.CreateThumbnailsFromOriginals(conf.GetOriginalsPath(), conf.GetThumbnailsPath(), size, ctx.Bool("square"))
 	}
 
 	fmt.Println("Done.")

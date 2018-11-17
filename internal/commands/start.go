@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/urfave/cli"
 )
@@ -38,8 +38,8 @@ var startFlags = []cli.Flag{
 }
 
 // Starts web serve using startFlags; called by startCommand
-func startAction(context *cli.Context) error {
-	conf := photoprism.NewConfig(context)
+func startAction(ctx *cli.Context) error {
+	conf := context.NewConfig(ctx)
 
 	if conf.GetServerPort() < 1 {
 		log.Fatal("Server port must be a positive integer")
@@ -51,7 +51,7 @@ func startAction(context *cli.Context) error {
 
 	conf.MigrateDb()
 
-	fmt.Printf("Starting web server at %s:%d...\n", context.String("server-host"), context.Int("server-port"))
+	fmt.Printf("Starting web server at %s:%d...\n", ctx.String("server-host"), ctx.Int("server-port"))
 
 	server.Start(conf)
 

@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/urfave/cli"
 )
 
@@ -14,8 +14,8 @@ var MigrateCommand = cli.Command{
 }
 
 // Automatically migrates / initializes database; called by MigrateCommand
-func migrateAction(context *cli.Context) error {
-	conf := photoprism.NewConfig(context)
+func migrateAction(ctx *cli.Context) error {
+	conf := context.NewConfig(ctx)
 
 	fmt.Println("Migrating database...")
 

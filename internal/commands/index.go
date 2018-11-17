@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
 )
@@ -15,8 +16,8 @@ var IndexCommand = cli.Command{
 }
 
 // Indexes original photos; called by IndexCommand
-func indexAction(context *cli.Context) error {
-	conf := photoprism.NewConfig(context)
+func indexAction(ctx *cli.Context) error {
+	conf := context.NewConfig(ctx)
 
 	if err := conf.CreateDirectories(); err != nil {
 		log.Fatal(err)

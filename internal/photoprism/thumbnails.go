@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/disintegration/imaging"
+	"github.com/photoprism/photoprism/internal/fsutil"
 )
 
 // CreateThumbnailsFromOriginals create thumbnails.
@@ -56,7 +57,7 @@ func (m *MediaFile) GetThumbnail(path string, size int) (result *MediaFile, err 
 
 	thumbnailFilename := fmt.Sprintf("%s/%s_%dpx.jpg", thumbnailPath, canonicalName, size)
 
-	if fileExists(thumbnailFilename) {
+	if fsutil.Exists(thumbnailFilename) {
 		return NewMediaFile(thumbnailFilename)
 	}
 
@@ -95,7 +96,7 @@ func (m *MediaFile) GetSquareThumbnail(path string, size int) (result *MediaFile
 
 	thumbnailFilename := fmt.Sprintf("%s/%s_square_%dpx.jpg", thumbnailPath, canonicalName, size)
 
-	if fileExists(thumbnailFilename) {
+	if fsutil.Exists(thumbnailFilename) {
 		return NewMediaFile(thumbnailFilename)
 	}
 

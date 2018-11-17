@@ -4,10 +4,11 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/forms"
+	"github.com/photoprism/photoprism/internal/test"
 )
 
 func TestSearch_Photos_Query(t *testing.T) {
-	conf := NewTestConfig()
+	conf := test.NewConfig()
 
 	conf.CreateDirectories()
 
@@ -40,7 +41,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 }
 
 func TestSearch_Photos_Camera(t *testing.T) {
-	conf := NewTestConfig()
+	conf := test.NewConfig()
 
 	conf.CreateDirectories()
 

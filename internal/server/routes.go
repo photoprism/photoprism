@@ -8,7 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
-func registerRoutes(app *gin.Engine, conf *photoprism.Config) {
+func registerRoutes(app *gin.Engine, conf photoprism.Config) {
 	// Favicon images
 	app.StaticFile("/favicon.ico", conf.GetFaviconsPath()+"/favicon.ico")
 	app.StaticFile("/favicon.png", conf.GetFaviconsPath()+"/favicon.png")

@@ -10,7 +10,7 @@ import (
 )
 
 func TestConverter_ConvertToJpeg(t *testing.T) {
-	conf := NewTestConfig()
+	conf := test.NewConfig()
 
 	conf.InitializeTestData(t)
 
@@ -18,7 +18,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	jpegFilename := conf.GetImportPath() + "/iphone/IMG_6788.JPG"
 
-	assert.Truef(t, fileExists(jpegFilename), "file does not exist: %s", jpegFilename)
+	assert.Truef(t, fsutil.Exists(jpegFilename), "file does not exist: %s", jpegFilename)
 
 	t.Logf("Testing RAW to JPEG converter with %s", jpegFilename)
 
@@ -50,7 +50,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	imageRaw, _ := converter.ConvertToJpeg(rawMediaFile)
 
-	assert.True(t, fileExists(conf.GetImportPath()+"/raw/IMG_1435.jpg"), "Jpeg file was not found - is Darktable installed?")
+	assert.True(t, fsutil.Exists(conf.GetImportPath()+"/raw/IMG_1435.jpg"), "Jpeg file was not found - is Darktable installed?")
 
 	assert.NotEqual(t, rawFilemame, imageRaw.filename)
 
@@ -62,7 +62,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 }
 
 func TestConverter_ConvertAll(t *testing.T) {
-	conf := NewTestConfig()
+	conf := test.NewConfig()
 
 	conf.InitializeTestData(t)
 
@@ -72,7 +72,7 @@ func TestConverter_ConvertAll(t *testing.T) {
 
 	jpegFilename := conf.GetImportPath() + "/raw/IMG_1435.jpg"
 
-	assert.True(t, fileExists(jpegFilename), "Jpeg file was not found - is Darktable installed?")
+	assert.True(t, fsutil.Exists(jpegFilename), "Jpeg file was not found - is Darktable installed?")
 
 	image, err := NewMediaFile(jpegFilename)
 
@@ -88,15 +88,15 @@ func TestConverter_ConvertAll(t *testing.T) {
 
 	existingJpegFilename := conf.GetImportPath() + "/raw/20140717_154212_1EC48F8489.jpg"
 
-	oldHash := fileHash(existingJpegFilename)
+	oldHash := fsutil.Hash(existingJpegFilename)
 
 	os.Remove(existingJpegFilename)
 
 	converter.ConvertAll(conf.GetImportPath())
 
-	newHash := fileHash(existingJpegFilename)
+	newHash := fsutil.Hash(existingJpegFilename)
 
-	assert.True(t, fileExists(existingJpegFilename), "Jpeg file was not found - is Darktable installed?")
+	assert.True(t, fsutil.Exists(existingJpegFilename), "Jpeg file was not found - is Darktable installed?")
 
 	assert.NotEqual(t, oldHash, newHash, "Fingerprint of old and new JPEG file must not be the same")
 }

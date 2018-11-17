@@ -25,7 +25,7 @@ import (
 //   before:    date   Find photos taken before (format: "2006-01-02")
 //   after:     date   Find photos taken after (format: "2006-01-02")
 //   favorites: bool   Find favorites only
-func GetPhotos(router *gin.RouterGroup, conf *photoprism.Config) {
+func GetPhotos(router *gin.RouterGroup, conf photoprism.Config) {
 	router.GET("/photos", func(c *gin.Context) {
 		var form forms.PhotoSearchForm
 
@@ -50,7 +50,7 @@ func GetPhotos(router *gin.RouterGroup, conf *photoprism.Config) {
 //
 // Parameters:
 //   photoId: int Photo ID as returned by the API
-func LikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
+func LikePhoto(router *gin.RouterGroup, conf photoprism.Config) {
 	router.POST("/photos/:photoId/like", func(c *gin.Context) {
 		search := photoprism.NewSearch(conf.GetOriginalsPath(), conf.GetDb())
 
@@ -72,7 +72,7 @@ func LikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
 //
 // Parameters:
 //   photoId: int Photo ID as returned by the API
-func DislikePhoto(router *gin.RouterGroup, conf *photoprism.Config) {
+func DislikePhoto(router *gin.RouterGroup, conf photoprism.Config) {
 	router.DELETE("/photos/:photoId/like", func(c *gin.Context) {
 		search := photoprism.NewSearch(conf.GetOriginalsPath(), conf.GetDb())
 

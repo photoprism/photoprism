@@ -7,7 +7,7 @@ import (
 )
 
 func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
-	conf := NewTestConfig()
+	conf := test.NewConfig()
 
 	conf.InitializeTestData(t)
 

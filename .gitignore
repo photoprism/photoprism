@@ -1,9 +1,10 @@
 # Application files and directories
 /photoprism
-assets/photos/originals/*
-assets/photos/import/*
-assets/photos/export/*
-frontend/node_modules/*
+/assets/photos/originals/*
+/assets/photos/import/*
+/assets/photos/export/*
+/frontend/node_modules/*
+/assets/testdata
 *.log
 
 # Binaries for programs and plugins

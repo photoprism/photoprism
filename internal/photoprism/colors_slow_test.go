@@ -9,7 +9,7 @@ import (
 )
 
 func TestMediaFile_GetColors_Slow(t *testing.T) {
-	conf := NewTestConfig()
+	conf := test.NewConfig()
 
 	conf.InitializeTestData(t)
 

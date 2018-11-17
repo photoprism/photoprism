@@ -3,11 +3,12 @@ package photoprism
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/test"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMediaFile_GetThumbnail(t *testing.T) {
-	conf := NewTestConfig()
+	conf := test.NewConfig()
 
 	conf.CreateDirectories()
 
@@ -24,7 +25,7 @@ func TestMediaFile_GetThumbnail(t *testing.T) {
 }
 
 func TestMediaFile_GetSquareThumbnail(t *testing.T) {
-	conf := NewTestConfig()
+	conf := test.NewConfig()
 
 	conf.CreateDirectories()
 

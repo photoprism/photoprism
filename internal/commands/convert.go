@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
 )
@@ -15,8 +16,8 @@ var ConvertCommand = cli.Command{
 }
 
 // Converts images to JPEG; called by ConvertCommand
-func convertAction(context *cli.Context) error {
-	conf := photoprism.NewConfig(context)
+func convertAction(ctx *cli.Context) error {
+	conf := context.NewConfig(ctx)
 
 	if err := conf.CreateDirectories(); err != nil {
 		log.Fatal(err)

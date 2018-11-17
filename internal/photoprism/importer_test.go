@@ -3,11 +3,12 @@ package photoprism
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/test"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewImporter(t *testing.T) {
-	conf := NewTestConfig()
+	conf := test.NewConfig()
 
 	tensorFlow := NewTensorFlow(conf.GetTensorFlowModelPath())
 
@@ -21,7 +22,7 @@ func TestNewImporter(t *testing.T) {
 }
 
 func TestImporter_GetDestinationFilename(t *testing.T) {
-	conf := NewTestConfig()
+	conf := test.NewConfig()
 	conf.InitializeTestData(t)
 
 	tensorFlow := NewTensorFlow(conf.GetTensorFlowModelPath())

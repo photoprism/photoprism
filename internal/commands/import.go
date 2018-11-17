@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
 )
@@ -14,9 +15,9 @@ var ImportCommand = cli.Command{
 	Action: importAction,
 }
 
-// Imports photos from path defined in context arg; called by ImportCommand;
-func importAction(context *cli.Context) error {
-	conf := photoprism.NewConfig(context)
+// Imports photos from path defined in ctx arg; called by ImportCommand;
+func importAction(ctx *cli.Context) error {
+	conf := context.NewConfig(ctx)
 
 	if err := conf.CreateDirectories(); err != nil {
 		log.Fatal(err)

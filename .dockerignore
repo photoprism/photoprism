@@ -1,8 +1,9 @@
-assets/photos/*
-assets/thumbnails/*
-internal/photoprism/testdata/*
-frontend/node_modules/*
-assets/server/public/build/*
+/assets/photos/*
+/assets/cache/*
+/internal/photoprism/testdata/*
+/frontend/node_modules/*
+/assets/server/public/build/*
+/assets/testdata
 Dockerfile
 /photoprism
 docker-compose*

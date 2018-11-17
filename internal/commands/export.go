@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/araddon/dateparse"
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
 )
@@ -37,15 +38,15 @@ var exportFlags = []cli.Flag{
 }
 
 // Exports photos as JPEG; called by ExportCommand and uses exportFlags
-func exportAction(context *cli.Context) error {
-	conf := photoprism.NewConfig(context)
+func exportAction(ctx *cli.Context) error {
+	conf := context.NewConfig(ctx)
 
 	if err := conf.CreateDirectories(); err != nil {
 		log.Fatal(err)
 	}
 
-	before := context.String("before")
-	after := context.String("after")
+	before := ctx.String("before")
+	after := ctx.String("after")
 
 	if before == "" || after == "" {
 		fmt.Println("You need to provide before and after dates for export, e.g.\n\nphotoprism export --after 2018/04/10 --before '2018/04/15 23:00:00'")
@@ -58,7 +59,7 @@ func exportAction(context *cli.Context) error {
 	afterDateFormatted := afterDate.Format("20060102")
 	beforeDateFormatted := beforeDate.Format("20060102")
 
-	name := context.String("name")
+	name := ctx.String("name")
 
 	if name == "" {
 		if afterDateFormatted == beforeDateFormatted {
@@ -69,7 +70,7 @@ func exportAction(context *cli.Context) error {
 	}
 
 	exportPath := fmt.Sprintf("%s/%s", conf.GetExportPath(), name)
-	size := context.Int("size")
+	size := ctx.Int("size")
 	originals := photoprism.FindOriginalsByDate(conf.GetOriginalsPath(), afterDate, beforeDate)
 
 	fmt.Printf("Exporting photos to %s...\n", exportPath)

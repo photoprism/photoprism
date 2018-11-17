@@ -21,7 +21,7 @@ var photoIconSvg = []byte(`
 //   type: string Format, either "fit" or "square"
 //   size: int    Size in pixels
 //   hash: string The file hash as returned by the search API
-func GetThumbnail(router *gin.RouterGroup, conf *photoprism.Config) {
+func GetThumbnail(router *gin.RouterGroup, conf photoprism.Config) {
 	router.GET("/thumbnails/:type/:size/:hash", func(c *gin.Context) {
 		fileHash := c.Param("hash")
 		thumbnailType := c.Param("type")

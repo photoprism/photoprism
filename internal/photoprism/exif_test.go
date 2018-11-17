@@ -3,11 +3,12 @@ package photoprism
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/test"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMediaFile_GetExifData(t *testing.T) {
-	conf := NewTestConfig()
+	conf := test.NewConfig()
 
 	conf.InitializeTestData(t)
 
