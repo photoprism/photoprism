@@ -38,6 +38,7 @@ Developers can skip this and move on to the [Developer Guide](https://github.com
 All you need is a Web browser and [Docker](https://store.docker.com/search?type=edition&offering=community)
 to run the server. It is available for Mac, Linux and Windows.
 Note that we just started working on the UI and features are neither complete nor stable.
+Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
 
 ## Why this has to be free software
 
