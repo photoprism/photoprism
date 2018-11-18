@@ -1,4 +1,4 @@
 package frontend
 
-// Config values for Web frontend
+// HTTP client / Web UI config values
 type Config map[string]interface{}

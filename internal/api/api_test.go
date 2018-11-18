@@ -9,7 +9,8 @@ import (
 	"github.com/photoprism/photoprism/internal/test"
 )
 
-func NewTest() (app *gin.Engine, router *gin.RouterGroup, conf photoprism.Config) {
+// API test helper
+func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf photoprism.Config) {
 	conf = test.NewConfig()
 	gin.SetMode(gin.TestMode)
 	app = gin.New()
@@ -19,7 +20,8 @@ func NewTest() (app *gin.Engine, router *gin.RouterGroup, conf photoprism.Config
 	return app, router, conf
 }
 
-func TestRequest(r http.Handler, method, path string) *httptest.ResponseRecorder {
+// See https://medium.com/@craigchilds94/testing-gin-json-responses-1f258ce3b0b1
+func PerformRequest(r http.Handler, method, path string) *httptest.ResponseRecorder {
 	req, _ := http.NewRequest(method, path, nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
