@@ -3,15 +3,10 @@ PhotoPrism: Browse your life in pictures
 
 [![Apache License](https://img.shields.io/badge/license-apache-blue.svg)][license]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][quality]
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ea5b6b16814540469f384b8ff35ba511)][codacy]
 [![Test Coverage](https://codecov.io/gh/photoprism/photoprism/branch/develop/graph/badge.svg)][coverage]
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=develop)][ci]
 [![Documentation](https://readthedocs.org/projects/photoprism-docs/badge/?version=latest&style=flat)][docs]
-
-[license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
-[quality]: https://goreportcard.com/report/github.com/photoprism/photoprism
-[coverage]: https://codecov.io/gh/photoprism/photoprism
-[ci]: https://travis-ci.org/photoprism/photoprism
-[docs]: https://docs.photoprism.org/en/latest/
 
 PhotoPrism is a server-based application for browsing, organizing and sharing your personal photo collection.
 It makes use of the latest technologies to automatically tag and find pictures without getting in your way.
@@ -73,3 +68,10 @@ In exchange, we would love to share our knowledge and experience with you or you
 help you getting existing photo collections tagged or build an API that integrates with your infrastructure.
 
 Please [contact us](mailto:hello@photoprism.org) if you want to support this project by becoming a sponsor.
+
+[license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
+[quality]: https://goreportcard.com/report/github.com/photoprism/photoprism
+[codacy]: https://www.codacy.com/project/lastzero/photoprism/dashboard
+[coverage]: https://codecov.io/gh/photoprism/photoprism
+[ci]: https://travis-ci.org/photoprism/photoprism
+[docs]: https://docs.photoprism.org/en/latest/
