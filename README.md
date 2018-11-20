@@ -2,8 +2,7 @@ PhotoPrism: Browse your life in pictures
 ========================================
 
 [![Apache License](https://img.shields.io/badge/license-apache-blue.svg)][license]
-[![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][quality]
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ea5b6b16814540469f384b8ff35ba511)][codacy]
+[![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][goreport]
 [![Test Coverage](https://codecov.io/gh/photoprism/photoprism/branch/develop/graph/badge.svg)][coverage]
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=develop)][ci]
 [![Documentation](https://readthedocs.org/projects/photoprism-docs/badge/?version=latest&style=flat)][docs]
@@ -71,8 +70,7 @@ help you getting existing photo collections tagged or build an API that integrat
 Please [contact us](mailto:hello@photoprism.org) if you want to support this project by becoming a sponsor.
 
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
-[quality]: https://goreportcard.com/report/github.com/photoprism/photoprism
-[codacy]: https://www.codacy.com/project/lastzero/photoprism/dashboard
+[goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [coverage]: https://codecov.io/gh/photoprism/photoprism
 [ci]: https://travis-ci.org/photoprism/photoprism
 [docs]: https://docs.photoprism.org/en/latest/
