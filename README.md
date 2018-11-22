@@ -27,6 +27,7 @@ More screenshots: https://photoprism.org/#screenshots
 You are welcome to get an impression and provide early feedback.
 **[Step-by-step instructions](https://docs.photoprism.org/en/latest/setup/)** can be found
 in our [User Guide](https://docs.photoprism.org/en/latest/).
+Use our [forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help) if you need help.
 Developers can skip this and move on to the [Developer Guide](https://github.com/photoprism/photoprism/wiki).
 
 All you need is a Web browser and [Docker](https://store.docker.com/search?type=edition&offering=community)
@@ -50,9 +51,11 @@ Go, the programming language we're using, is a great example. It is heavily infl
 
 We welcome contributions of any kind. If you have a bug or an idea, read our 
 [guide](https://docs.photoprism.org/en/latest/contribute/) before opening an issue.
-Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) can be
-good (first) contributions. Let us know if you need additional information or permissions on GitHub
-to perform a task. There are no stupid questions.
+Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
+[easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
+good (first) contributions. Please join our 
+[developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
+to discuss development related topics and get regular project updates. There are no stupid questions.
 
 ## Donations
 
