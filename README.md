@@ -27,14 +27,14 @@ More screenshots: https://photoprism.org/#screenshots
 You are welcome to get an impression and provide early feedback.
 **[Step-by-step instructions](https://docs.photoprism.org/en/latest/setup/)** can be found
 in our [User Guide](https://docs.photoprism.org/en/latest/).
-Use our [forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help) if you need help.
 Developers can skip this and move on to the [Developer Guide](https://github.com/photoprism/photoprism/wiki).
 
 All you need is a Web browser and [Docker](https://store.docker.com/search?type=edition&offering=community)
 to run the server. It is available for Mac, Linux and Windows.
 Note that we just [started working](https://github.com/photoprism/photoprism/wiki/Project-Status) 
 on the UI and features are neither complete nor stable. 
-Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
+Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33). 
+For further assistance, please use our [help forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help).
 
 ## Why this has to be free software
 
