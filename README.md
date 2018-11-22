@@ -34,7 +34,8 @@ to run the server. It is available for Mac, Linux and Windows.
 Note that we just [started working](https://github.com/photoprism/photoprism/wiki/Project-Status) 
 on the UI and features are neither complete nor stable. 
 Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33). 
-For further assistance, please use our [help forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help).
+
+If you have a question, you are welcome to [contact us via email](mailto:hello@photoprism.org) or ask in our [help forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help).
 
 ## Why this has to be free software
 
