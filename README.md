@@ -35,7 +35,8 @@ Note that we just [started working](https://github.com/photoprism/photoprism/wik
 on the UI and features are neither complete nor stable. 
 Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33). 
 
-If you have a question, you are welcome to [contact us via email](mailto:hello@photoprism.org) or ask in our [help forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help).
+If you have a question, don't hesitate to ask in our [help forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help) 
+or [contact us via email](mailto:hello@photoprism.org).
 
 ## Why this has to be free software
 
@@ -56,7 +57,7 @@ Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/hel
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
 good (first) contributions. Please join our 
 [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
-to discuss development related topics and get regular project updates. There are no stupid questions.
+to get regular project updates and discuss development related topics. There are no stupid questions.
 
 ## Donations
 
@@ -68,8 +69,8 @@ Thank you very much! <3
 We are open to sponsorship proposals to improve our funding while we continue working on our first release and beyond.
 Ideally it also enables us to offer perks for contributions and explore new ways of organizing product development.
 
-In exchange, we would love to share our knowledge and experience with you or your team, either on-site or remote. We can also
-help you getting existing photo collections tagged or build an API that integrates with your infrastructure.
+In exchange, we would love to share our knowledge and experience with you or your team, either on-site or remote. 
+We can also help you getting existing photo collections tagged or build an API that integrates with your infrastructure.
 
 Please [contact us](mailto:hello@photoprism.org) if you want to support this project by becoming a sponsor.
 
