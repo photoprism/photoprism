@@ -57,7 +57,7 @@ Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/hel
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
 good (first) contributions. Please join our 
 [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
-to get regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
+to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
 
 ## Donations
 
