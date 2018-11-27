@@ -4,6 +4,7 @@
 /assets/photos/import/*
 /assets/photos/export/*
 /frontend/node_modules/*
+/frontend/tests/result.html
 /assets/testdata
 *.log
 

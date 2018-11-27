@@ -38,7 +38,7 @@ describe('common/api', () => {
         Api.get('foo').then(
             (response) => {
                 assert.equal(200, response.status);
-                assert.equal(getCollectionResponse, response.data);
+                assert.deepEqual(getCollectionResponse, response.data);
                 done();
             }
         ).catch(
@@ -52,7 +52,7 @@ describe('common/api', () => {
         Api.get('foo/123').then(
             (response) => {
                 assert.equal(200, response.status);
-                assert.equal(getEntityResponse, response.data);
+                assert.deepEqual(getEntityResponse, response.data);
                 done();
             }
         ).catch(
@@ -66,7 +66,7 @@ describe('common/api', () => {
         Api.post('foo', postEntityResponse).then(
             (response) => {
                 assert.equal(201, response.status);
-                assert.equal(postEntityResponse, response.data);
+                assert.deepEqual(postEntityResponse, response.data);
                 done();
             }
         ).catch(
@@ -80,7 +80,7 @@ describe('common/api', () => {
         Api.put('foo/2', putEntityResponse).then(
             (response) => {
                 assert.equal(200, response.status);
-                assert.equal(putEntityResponse, response.data);
+                assert.deepEqual(putEntityResponse, response.data);
                 done();
             }
         ).catch(
@@ -94,7 +94,7 @@ describe('common/api', () => {
         Api.delete('foo/2', deleteEntityResponse).then(
             (response) => {
                 assert.equal(204, response.status);
-                assert.equal(deleteEntityResponse, response.data);
+                assert.deepEqual(deleteEntityResponse, response.data);
                 done();
             }
         ).catch(
