@@ -24,7 +24,7 @@ func TestLikePhoto(t *testing.T) {
 
 	result := PerformRequest(app, "POST", "/api/v1/photos/1/like")
 
-	assert.Equal(t, http.StatusAccepted, result.Code)
+	assert.Equal(t, http.StatusOK, result.Code)
 }
 
 func TestDislikePhoto(t *testing.T) {
@@ -34,5 +34,5 @@ func TestDislikePhoto(t *testing.T) {
 
 	result := PerformRequest(app, "DELETE", "/api/v1/photos/1/like")
 
-	assert.Equal(t, http.StatusAccepted, result.Code)
+	assert.Equal(t, http.StatusOK, result.Code)
 }

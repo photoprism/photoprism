@@ -60,7 +60,7 @@ func LikePhoto(router *gin.RouterGroup, conf photoprism.Config) {
 			photo := search.FindPhotoByID(photoId)
 			photo.PhotoFavorite = true
 			conf.GetDb().Save(&photo)
-			c.JSON(http.StatusAccepted, http.Response{})
+			c.JSON(http.StatusOK, http.Response{})
 		} else {
 			log.Printf("could not find image for id: %s", err.Error())
 			c.Data(http.StatusNotFound, "image", []byte(""))
@@ -82,7 +82,7 @@ func DislikePhoto(router *gin.RouterGroup, conf photoprism.Config) {
 			photo := search.FindPhotoByID(photoId)
 			photo.PhotoFavorite = false
 			conf.GetDb().Save(&photo)
-			c.JSON(http.StatusAccepted, http.Response{})
+			c.JSON(http.StatusOK, http.Response{})
 		} else {
 			log.Printf("could not find image for id: %s", err.Error())
 			c.Data(http.StatusNotFound, "image", []byte(""))
