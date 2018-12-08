@@ -67,8 +67,8 @@ Thank you very much! <3
 ## Sponsorship
 
 We welcome support from corporate sponsors and foundations to improve our funding while we continue working on 
-our first release and beyond: From providing test devices and offering perks for contributions to covering the 
-cost of living for a full-time developer.
+our first release and beyond. Grants will be used for organizing meetups, visiting conferences, buying test 
+devices, offering perks for contributions and covering the cost of living for full-time developers.
 
 In exchange, we are happy to mention your support and would love to share our experience with you or your team, 
 either on-site or remote. We can also help you getting existing photo collections tagged or build an API that 
