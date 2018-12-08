@@ -74,8 +74,7 @@ In exchange, we are happy to mention your support and would love to share our ex
 either on-site or remote. We can also help you getting existing photo collections tagged or build an API that 
 integrates with your infrastructure.
 
-Please [contact us](mailto:hello@photoprism.org) if you are interested in becoming a sponsor or work for an 
-organization that might want to support our project.
+Please [contact us](mailto:hello@photoprism.org) if you work for an organization that might want to support our project.
 
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
