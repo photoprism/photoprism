@@ -15,7 +15,7 @@ an impediment. We are sure we can do better with only a fraction of the
 budget. However, we can't cover all expenses from our personal savings.
 
 Your support is highly appreciated and will have significant impact on
-our work.
+[our progress](https://github.com/photoprism/photoprism/wiki/Project-Status).
 
 Please visit our new [Patreon](https://www.patreon.com/photoprism)
 page or [reach out](mailto:hello@photoprism.org) to us if you work for
