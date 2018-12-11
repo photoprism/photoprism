@@ -66,10 +66,7 @@ Thank you very much! <3
 
 ## Sponsorship
 
-Developing open-source software is a [community effort](https://photoprism.org/downloads/PhotoPrism.pdf).
-Solid funding enables us to quickly implement features and integrate with services you care about.
-Please visit our new [Patreon](https://www.patreon.com/photoprism) page or [reach out](mailto:hello@photoprism.org)
-to us if you work for an organization that would like to [sponsor our project](SPONSORS.md).
+Millions are wasted in commercial software projects every day. This is your chance to spend a tiny fraction of your budget for something truly useful. See [SPONSORS.md](SPONSORS.md) for details.
 
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
