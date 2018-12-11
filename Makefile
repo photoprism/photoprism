@@ -46,6 +46,9 @@ download:
 deploy-photoprism:
 	scripts/docker-build.sh photoprism $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism $(DOCKER_TAG)
+deploy-demo:
+	scripts/docker-build.sh demo $(DOCKER_TAG)
+	scripts/docker-push.sh demo $(DOCKER_TAG)
 deploy-development:
 	scripts/docker-build.sh development $(DOCKER_TAG)
 	scripts/docker-push.sh development $(DOCKER_TAG)
