@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/models"
 )
 
-const DataURL = "https://www.dropbox.com/s/na9p9wwt98l7m5b/import.zip?dl=1"
+const DataURL = "https://dl.photoprism.org/fixtures/photos.zip"
 const DataHash = "1a59b358b80221ab3e76efb683ad72402f0b0844"
 const ConfigFile = "../../configs/photoprism.yml"
 
