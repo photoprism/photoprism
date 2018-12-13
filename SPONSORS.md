@@ -7,7 +7,7 @@ Grants and donations will be used for organizing meetups, visiting conferences, 
 
 We've built similar apps more than once and every single time the constraints of working in a profit-oriented corporate environment were an impediment. We are sure we can do better with only a fraction of the budget.
 
-That doesn't mean we can or want to cover all expenses from our personal savings while millions are wasted in commercial software projects every day. This is your chance to spend a tiny fraction of your budget for something truly useful.
+That doesn't mean we can or want to cover all expenses from our personal savings while millions are wasted in commercial software projects every day. This is your chance to spend a tiny fraction of your budget for something truly useful and get a lot of love for it in return.
 
 **Your support is highly appreciated and will have significant impact on our work.**
 
