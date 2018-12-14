@@ -61,14 +61,12 @@ to receive regular project updates and discuss development related topics. Don't
 
 ## Donations
 
-Please leave a star if you like this project, it provides enough motivation to keep going.
+We don't want to ask individuals for a donation at the moment. Please leave a star if you like this project, it provides enough motivation to keep going.
 Thank you very much! <3
 
 ## Sponsorship
 
-Developing open-source software is a community effort. Solid funding enables us to quickly implement features and integrate with services you care about.
-
-Grants and donations will be used for [organizing meetups](https://github.com/photoprism/photoprism/wiki/Meetups), [running our servers](https://github.com/photoprism/photoprism/wiki/Infrastructure), visiting conferences, buying test devices, offering perks for contributions, and covering our cost of living.
+Developing open-source software is a community effort. Solid funding enables us to quickly implement features and integrate with services you care about. Grants and donations will be used for [organizing meetups](https://github.com/photoprism/photoprism/wiki/Meetups), [running our servers](https://github.com/photoprism/photoprism/wiki/Infrastructure), visiting conferences, buying test devices, offering perks for contributions, and covering our cost of living.
 See [SPONSORS.md](SPONSORS.md) for details.
 
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
