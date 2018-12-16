@@ -26,6 +26,7 @@ More screenshots: https://photoprism.org/#screenshots
 
 You're welcome to play with our demo at [demo.photoprism.org](https://demo.photoprism.org).
 Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
+
 Step-by-step [installation instructions](https://docs.photoprism.org/en/latest/setup/) can be found
 in our [User Guide](https://docs.photoprism.org/en/latest/).
 Developers can skip this and move on to the [Developer Guide](https://github.com/photoprism/photoprism/wiki).
@@ -34,7 +35,7 @@ All you need is a Web browser and [Docker](https://store.docker.com/search?type=
 to run the server. It is available for Mac, Linux and Windows.
 Note that we just [started working](https://github.com/photoprism/photoprism/wiki/Project-Status) 
 on the UI and features are neither complete nor stable. 
-We plan to ship our app as a single binary including all dependencies.
+We plan to ship the final app as a single binary including all dependencies.
 
 If you have a question, don't hesitate to ask in our [help forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help) 
 or [contact us via email](mailto:hello@photoprism.org).
