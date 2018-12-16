@@ -24,8 +24,9 @@ More screenshots: https://photoprism.org/#screenshots
 
 ## For the early birds
 
-You are welcome to get an impression and provide early feedback.
-**[Step-by-step instructions](https://docs.photoprism.org/en/latest/setup/)** can be found
+You're welcome to play with our demo at [demo.photoprism.org](https://demo.photoprism.org).
+Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
+Step-by-step [installation instructions](https://docs.photoprism.org/en/latest/setup/) can be found
 in our [User Guide](https://docs.photoprism.org/en/latest/).
 Developers can skip this and move on to the [Developer Guide](https://github.com/photoprism/photoprism/wiki).
 
@@ -33,7 +34,7 @@ All you need is a Web browser and [Docker](https://store.docker.com/search?type=
 to run the server. It is available for Mac, Linux and Windows.
 Note that we just [started working](https://github.com/photoprism/photoprism/wiki/Project-Status) 
 on the UI and features are neither complete nor stable. 
-Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33). 
+We plan to ship our app as a single binary including all dependencies.
 
 If you have a question, don't hesitate to ask in our [help forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help) 
 or [contact us via email](mailto:hello@photoprism.org).
@@ -43,11 +44,8 @@ or [contact us via email](mailto:hello@photoprism.org).
 The development of every commercial product is focused on monetization.
 We've [built similar apps more than once](https://github.com/photoprism/photoprism/wiki/Mediencenter) and every single time the constraints of working
 in a profit-oriented corporate environment were an impediment.
-We are sure we can do better with only a fraction of the budget. Simplicity can be very powerful.
-Go, the programming language we're using, is a great example. It is heavily influenced by the ideas of Niklaus Wirth.
-
-> Simple, elegant solutions are more effective, but they are harder to find than complex ones, and they require more time, which we too often believe to be unaffordable.
-> — NIKLAUS WIRTH, CACM, FEB. 1985
+We are sure we can do better with only a fraction of the budget. Simplicity - the art of maximizing the amount of work not done - can be very powerful.
+Go, the programming language we're using, is a [great example](https://dave.cheney.net/2015/03/08/simplicity-and-collaboration).
 
 ## How to contribute
 
