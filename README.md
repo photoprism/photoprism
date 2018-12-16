@@ -44,6 +44,7 @@ or [contact us via email](mailto:hello@photoprism.org).
 The development of every commercial product is focused on monetization.
 We've [built similar apps more than once](https://github.com/photoprism/photoprism/wiki/Mediencenter) and every single time the constraints of working
 in a profit-oriented corporate environment were an impediment.
+
 We are sure we can do better with only a fraction of the budget. Simplicity - the art of maximizing the amount of work not done - can be very powerful.
 Go, the programming language we're using, is a [great example](https://dave.cheney.net/2015/03/08/simplicity-and-collaboration).
 
@@ -64,7 +65,8 @@ Thank you very much! <3
 
 ## Sponsorship
 
-Developing open-source software is a community effort. Solid funding enables us to quickly implement features and integrate with services you care about. Grants and donations will be used for [organizing meetups](https://github.com/photoprism/photoprism/wiki/Meetups), [running our servers](https://github.com/photoprism/photoprism/wiki/Infrastructure), visiting conferences, buying test devices, offering perks for contributions, and covering our cost of living.
+Developing open-source software is a community effort. Solid funding enables us to quickly implement features and integrate with services you care about.
+Grants and donations will be used for [organizing meetups](https://github.com/photoprism/photoprism/wiki/Meetups), [running our servers](https://github.com/photoprism/photoprism/wiki/Infrastructure), visiting conferences, buying test devices, offering perks for contributions, and covering our cost of living.
 See [SPONSORS.md](SPONSORS.md) for details.
 
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
