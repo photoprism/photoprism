@@ -49,7 +49,7 @@ in a profit-oriented corporate environment were an impediment.
 We are sure we can do better with only a fraction of the budget. Simplicity - the art of maximizing the amount of work not done - can be very powerful.
 Go, the programming language we're using, is a [great example](https://dave.cheney.net/2015/03/08/simplicity-and-collaboration).
 
-Our long-term goal is to become an open platform for machine learning research based on real-world photo collections.
+Our long-term goal is to become an open platform for machine learning [research](https://dl.photoprism.org/slides/Personal%20Photo%20Management%20and%20Preservation.pdf) based on real-world photo collections.
 
 ## How to contribute
 
