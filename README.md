@@ -65,7 +65,7 @@ Thank you very much! <3
 
 ## Sponsorship
 
-Developing open-source software is a community effort. Solid funding enables us to quickly implement features and integrate with services you care about.
+Developing open-source software is a [community effort](https://dl.photoprism.org/slides/PhotoPrism.pdf). Solid funding enables us to quickly implement features and integrate with services you care about.
 Grants and donations will be used for [organizing meetups](https://github.com/photoprism/photoprism/wiki/Meetups), [running our servers](https://github.com/photoprism/photoprism/wiki/Infrastructure), visiting conferences, buying test devices, offering perks for contributions, and covering our cost of living.
 See [SPONSORS.md](SPONSORS.md) for details.
 
