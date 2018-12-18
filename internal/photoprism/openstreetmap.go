@@ -48,10 +48,18 @@ func (m *MediaFile) GetLocation() (*models.Location, error) {
 	}
 
 	if exifData, err := m.GetExifData(); err == nil {
+		if exifData.Lat == 0 && exifData.Long == 0 {
+			return nil, errors.New("lat and long are missing in Exif metadata")
+		}
+
 		url := fmt.Sprintf("https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=jsonv2", exifData.Lat, exifData.Long)
 
 		if res, err := http.Get(url); err == nil {
-			json.NewDecoder(res.Body).Decode(openstreetmapLocation)
+			err = json.NewDecoder(res.Body).Decode(openstreetmapLocation)
+
+			if err != nil {
+				return nil, err
+			}
 		} else {
 			return nil, err
 		}
@@ -62,7 +70,7 @@ func (m *MediaFile) GetLocation() (*models.Location, error) {
 	if id, err := strconv.Atoi(openstreetmapLocation.PlaceID); err == nil && id > 0 {
 		location.ID = uint(id)
 	} else {
-		return nil, errors.New("no location found")
+		return nil, errors.New("query returned no result")
 	}
 
 	if openstreetmapLocation.Address.City != "" {

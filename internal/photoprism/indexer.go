@@ -127,6 +127,8 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
 			}
 		} else {
+			log.Printf("No location: %s", err)
+
 			var recentPhoto models.Photo
 
 			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", mediaFile.GetDateCreated())).Preload("Country").First(&recentPhoto); result.Error == nil {
