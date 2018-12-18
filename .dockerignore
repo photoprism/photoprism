@@ -1,5 +1,6 @@
 /assets/photos/*
 /assets/cache/*
+/assets/database/*
 /internal/photoprism/testdata/*
 /frontend/node_modules/*
 /assets/server/public/build/*

@@ -14,4 +14,4 @@ Community feedback and [full transparency](https://github.com/photoprism/photopr
 Sponsors
 --------
 
-![Your logo could be here](https://dl.photoprism.org/assets/images/sponsor.png)
+![Your logo could be here](https://dl.photoprism.org/assets/img/sponsor.png)
