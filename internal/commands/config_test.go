@@ -25,8 +25,8 @@ import-path           /srv/photoprism/photos/import
 export-path           /srv/photoprism/photos/export
 cache-path            /srv/photoprism/cache
 assets-path           /go/src/github.com/photoprism/photoprism/assets
-database-driver       mysql
-database-dsn          photoprism:photoprism@tcp(database:3306)/photoprism?parseTime=true
+database-driver       tidb
+database-dsn          root:@tcp(localhost:4000)/photoprism?parseTime=true
 `
 
 	assert.Equal(t, expected, output)

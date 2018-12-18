@@ -34,13 +34,15 @@ RUN apt-get update && apt-get upgrade && \
     wget \
     git \
     mysql-client \
-    libgtk-3-bin
+    libgtk-3-bin \
+    tzdata
 
 # Install darktable (RAW to JPEG converter)
 RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
     apt-get update && \
     apt-get install darktable && \
-    apt-get upgrade
+    apt-get upgrade && \
+    apt-get dist-upgrade
 
 # Install TensorFlow C library
 RUN curl -L \
@@ -64,12 +66,12 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Go
-ENV GOLANG_VERSION 1.11.2
+ENV GOLANG_VERSION 1.11.4
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "1dfe664fa3d8ad714bbd15a36627992effd150ddabd7523931f077b3926d736d *go.tgz" | sha256sum -c -; \
+	echo "fb26c30e6a04ad937bbc657a1b5bba92f80096af1e8ee6da6430c045a8db3a5b *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
@@ -102,8 +104,9 @@ ENV BROADWAY_DISPLAY :5
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
-# Expose HTTP port plus 8080 for broadwayd (not running by default)
+# Expose HTTP port plus 4000 for TiDB and 8080 for broadwayd (not running by default)
 EXPOSE 80
+EXPOSE 4000
 EXPOSE 8080
 
 # Keep container running (services can be started manually using a terminal)

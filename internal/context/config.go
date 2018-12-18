@@ -12,7 +12,13 @@ import (
 	"github.com/photoprism/photoprism/internal/frontend"
 	"github.com/photoprism/photoprism/internal/fsutil"
 	"github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/tidb"
 	"github.com/urfave/cli"
+)
+
+const (
+	DbTiDB  = "tidb"
+	DbMySQL = "mysql"
 )
 
 // Config provides a struct in which application configuration is stored.
@@ -29,6 +35,9 @@ type Config struct {
 	appCopyright   string
 	debug          bool
 	configFile     string
+	dbServerIP     string
+	dbServerPort   uint
+	dbServerPath   string
 	serverIP       string
 	serverPort     int
 	serverMode     string
@@ -71,6 +80,18 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 	c.configFile = fileName
 	if debug, err := yamlConfig.GetBool("debug"); err == nil {
 		c.debug = debug
+	}
+
+	if dbServerIP, err := yamlConfig.Get("db-host"); err == nil {
+		c.dbServerIP = dbServerIP
+	}
+
+	if dbServerPort, err := yamlConfig.GetInt("db-port"); err == nil {
+		c.dbServerPort = uint(dbServerPort)
+	}
+
+	if dbServerPath, err := yamlConfig.Get("db-path"); err == nil {
+		c.dbServerPath = dbServerPath
 	}
 
 	if serverIP, err := yamlConfig.Get("server-host"); err == nil {
@@ -159,6 +180,18 @@ func (c *Config) SetValuesFromCliContext(ctx *cli.Context) error {
 		c.databaseDsn = ctx.GlobalString("database-dsn")
 	}
 
+	if ctx.IsSet("db-host") || c.dbServerIP == "" {
+		c.dbServerIP = ctx.String("db-host")
+	}
+
+	if ctx.IsSet("db-port") || c.dbServerPort == 0 {
+		c.dbServerPort = ctx.Uint("db-port")
+	}
+
+	if ctx.IsSet("db-path") || c.dbServerPath == "" {
+		c.dbServerPath = ctx.String("db-path")
+	}
+
 	if ctx.IsSet("server-host") || c.serverIP == "" {
 		c.serverIP = ctx.String("server-host")
 	}
@@ -211,19 +244,45 @@ func (c *Config) CreateDirectories() error {
 	return nil
 }
 
-// connectToDatabase estabilishes a connection to a database given a driver.
-// It tries to do this 12 times with a 5 second sleep intervall in between.
+// connectToDatabase establishes a database connection.
+// When used with the tidb driver, it may create a new database server instance.
+// It tries to do this 12 times with a 5 second sleep interval in between.
 func (c *Config) connectToDatabase() error {
-	db, err := gorm.Open(c.databaseDriver, c.databaseDsn)
+	dbDriver := c.GetDatabaseDriver()
+	dbDsn := c.GetDatabaseDsn()
+
+	isTiDB := false
+	initSuccess := false
+
+	if dbDriver == DbTiDB {
+		isTiDB = true
+		dbDriver = DbMySQL
+	}
+
+	db, err := gorm.Open(dbDriver, dbDsn)
 
 	if err != nil || db == nil {
+		if isTiDB {
+			go tidb.Start(c.GetDatabasePath(), 4000, "", c.IsDebug())
+		}
+
 		for i := 1; i <= 12; i++ {
 			time.Sleep(5 * time.Second)
 
-			db, err = gorm.Open(c.databaseDriver, c.databaseDsn)
+			db, err = gorm.Open(dbDriver, dbDsn)
 
 			if db != nil && err == nil {
 				break
+			}
+
+			if isTiDB && !initSuccess {
+				err = tidb.InitDatabase(4000)
+
+				if err != nil {
+					log.Println(err)
+				} else {
+					initSuccess = true
+				}
 			}
 		}
 
@@ -260,6 +319,16 @@ func (c *Config) IsDebug() bool {
 // GetConfigFile returns the config file name.
 func (c *Config) GetConfigFile() string {
 	return c.configFile
+}
+
+// DbServerIP returns the database server IP address (empty for all).
+func (c *Config) DbServerIP() string {
+	return c.dbServerIP
+}
+
+// DbServerPort returns the database server port.
+func (c *Config) DbServerPort() uint {
+	return c.dbServerPort
 }
 
 // GetServerIP returns the server IP address (empty for all).
@@ -357,7 +426,7 @@ func (c *Config) GetPublicBuildPath() string {
 	return c.GetPublicPath() + "/build"
 }
 
-// GetDb gets a db connection. If it already is estabilished it will return that.
+// GetDb returns the db connection.
 func (c *Config) GetDb() *gorm.DB {
 	if c.db == nil {
 		c.connectToDatabase()
@@ -378,10 +447,6 @@ func (c *Config) MigrateDb() {
 		&models.Camera{},
 		&models.Lens{},
 		&models.Country{})
-
-	if !db.Dialect().HasIndex("photos", "photos_fulltext") {
-		db.Exec("CREATE FULLTEXT INDEX photos_fulltext ON photos (photo_title, photo_description, photo_artist, photo_colors)")
-	}
 }
 
 // GetClientConfig returns a loaded and set configuration entity.

@@ -53,14 +53,14 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "database-driver",
-		Usage:  "database `DRIVER` (mysql, postgres or sqlite)",
-		Value:  "mysql",
+		Usage:  "database `DRIVER` (tidb or mysql)",
+		Value:  "tidb",
 		EnvVar: "PHOTOPRISM_DATABASE_DRIVER",
 	},
 	cli.StringFlag{
 		Name:   "database-dsn",
 		Usage:  "database data source name (`DSN`)",
-		Value:  "photoprism:photoprism@tcp(database:3306)/photoprism?parseTime=true",
+		Value:  "root:@tcp(localhost:4000)/photoprism?parseTime=true",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
 }

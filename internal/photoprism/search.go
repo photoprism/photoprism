@@ -117,7 +117,8 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 		Group("photos.id, files.id")
 
 	if form.Query != "" {
-		q = q.Where("tags.tag_label LIKE ? OR MATCH (photo_title, photo_description, photo_artist, photo_colors) AGAINST (?)", "%"+strings.ToLower(form.Query)+"%", form.Query)
+		likeString := "%"+strings.ToLower(form.Query)+"%"
+		q = q.Where("tags.tag_label LIKE ? OR LOWER(photo_title) LIKE ?", likeString, likeString)
 	}
 
 	if form.CameraID > 0 {

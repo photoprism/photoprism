@@ -1,4 +1,4 @@
-FROM photoprism/development:20181112 as build
+FROM photoprism/development:20181218 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         unzip \
         nano \
         wget \
+        tzdata \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -43,8 +44,9 @@ RUN apt-get update && \
 # Show photoprism version
 RUN photoprism -v
 
-# Expose HTTP port
+# Expose HTTP & TiDB port
 EXPOSE 80
+EXPOSE 4000
 
 # Start PhotoPrism server
 CMD photoprism start

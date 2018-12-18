@@ -4,10 +4,11 @@ services:
   photoprism:
     build: .
     image: photoprism/photoprism:develop
-    command: broadwayd -p 8080 -a 0.0.0.0 :5
+    depends_on:
+      - database
     ports:
       - 2342:80 # Web Server (PhotoPrism)
-      - 2343:8080 # Broadwayd (HTML5 display server)
+      - 4000:4000 # Database (MySQL compatible)
     volumes:
       - .:/go/src/github.com/photoprism/photoprism
     environment:
@@ -20,18 +21,10 @@ services:
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/originals"
 
   database:
-    image: mysql:latest
+    image: mysql:8.0.12
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
-    ports:
-      - 13306:3306
-    volumes:
-      - photoprism-database:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
-
-volumes: # keep this
-  photoprism-database:
-    driver: local

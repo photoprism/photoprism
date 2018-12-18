@@ -20,6 +20,8 @@ type Config interface {
 	GetAppVersion() string
 	GetAppCopyright() string
 	IsDebug() bool
+	DbServerIP() string
+	DbServerPort() uint
 	GetServerIP() string
 	GetServerPort() int
 	GetServerMode() string

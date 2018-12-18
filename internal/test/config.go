@@ -15,9 +15,11 @@ import (
 	"github.com/photoprism/photoprism/internal/models"
 )
 
-const DataURL = "https://dl.photoprism.org/fixtures/test.zip"
-const DataHash = "1a59b358b80221ab3e76efb683ad72402f0b0844"
-const ConfigFile = "../../configs/photoprism.yml"
+const (
+	DataURL    = "https://dl.photoprism.org/fixtures/test.zip"
+	DataHash   = "1a59b358b80221ab3e76efb683ad72402f0b0844"
+	ConfigFile = "../../configs/photoprism.yml"
+)
 
 var DarktableCli = "/usr/bin/darktable-cli"
 var DataZip = "/tmp/photoprism/testdata.zip"
@@ -125,13 +127,16 @@ func (c *Config) CreateDirectories() error {
 // connectToDatabase estabilishes a connection to a database given a driver.
 // It tries to do this 12 times with a 5 second sleep intervall in between.
 func (c *Config) connectToDatabase() error {
-	db, err := gorm.Open(c.GetDatabaseDriver(), c.GetDatabaseDsn())
+	dbDriver := c.GetDatabaseDriver()
+	dbDsn := c.GetDatabaseDsn()
+
+	db, err := gorm.Open(dbDriver, dbDsn)
 
 	if err != nil || db == nil {
 		for i := 1; i <= 12; i++ {
 			time.Sleep(5 * time.Second)
 
-			db, err = gorm.Open(c.GetDatabaseDriver(), c.GetDatabaseDsn())
+			db, err = gorm.Open(dbDriver, dbDsn)
 
 			if db != nil && err == nil {
 				break
@@ -181,6 +186,16 @@ func (c *Config) GetServerIP() string {
 // GetServerPort returns the server port.
 func (c *Config) GetServerPort() int {
 	return 80
+}
+
+// DbServerIP returns the database server IP address (empty for all).
+func (c *Config) DbServerIP() string {
+	return "127.0.0.1"
+}
+
+// DbServerPort returns the database server port.
+func (c *Config) DbServerPort() uint {
+	return 4001
 }
 
 // GetServerMode returns the server mode.
@@ -289,10 +304,6 @@ func (c *Config) MigrateDb() {
 		&models.Camera{},
 		&models.Lens{},
 		&models.Country{})
-
-	if !db.Dialect().HasIndex("photos", "photos_fulltext") {
-		db.Exec("CREATE FULLTEXT INDEX photos_fulltext ON photos (photo_title, photo_description, photo_artist, photo_colors)")
-	}
 }
 
 // GetClientConfig returns a loaded and set configuration entity.
