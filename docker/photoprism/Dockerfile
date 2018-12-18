@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         unzip \
         nano \
         wget \
+        ca-certificates \
         tzdata \
         && \
     apt-get clean && \
