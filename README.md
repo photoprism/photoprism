@@ -1,9 +1,9 @@
 PhotoPrism: Browse your life in pictures
 ========================================
 
-[![License: GPL](https://img.shields.io/badge/License-GPL-blue.svg)][license]
-[![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][goreport]
+[![License: GPL](https://img.shields.io/badge/license-GPL-blue.svg)][license]
 [![Test Coverage](https://codecov.io/gh/photoprism/photoprism/branch/develop/graph/badge.svg)][coverage]
+[![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][goreport]
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=develop)][ci]
 [![Documentation](https://readthedocs.org/projects/photoprism-docs/badge/?version=latest&style=flat)][docs]
 
@@ -49,7 +49,7 @@ in a profit-oriented corporate environment were an impediment.
 We are sure we can do better with only a fraction of the budget. Simplicity - the art of maximizing the amount of work not done - can be very powerful.
 Go, the programming language we're using, is a [great example](https://dave.cheney.net/2015/03/08/simplicity-and-collaboration).
 
-Our long-term goal is to become an open platform for machine learning [research](https://dl.photoprism.org/slides/Personal%20Photo%20Management%20and%20Preservation.pdf) based on real-world photo collections.
+Our long-term goal is to become an open platform for machine learning [research](https://github.com/photoprism/photoprism/wiki/Research) based on real-world photo collections.
 
 ## How to contribute
 
@@ -68,9 +68,9 @@ Thank you very much! <3
 
 ## Sponsorship
 
-Developing open-source software is a [community effort](https://dl.photoprism.org/slides/PhotoPrism.pdf). Solid funding enables us to quickly implement features and integrate with services you care about.
+Organizations - who would like to [support our work](https://dl.photoprism.org/slides/PhotoPrism.pdf) - can conveniently [donate via PayPal](https://www.paypal.me/photoprism), [become a sponsor on Patreon](https://www.patreon.com/photoprism) or [get in touch with us](mailto:hello@photoprism.org) to discuss further details. See [SPONSORS.md](SPONSORS.md) for details.
+
 Grants and donations will be used for [organizing meetups](https://github.com/photoprism/photoprism/wiki/Meetups), [running our servers](https://github.com/photoprism/photoprism/wiki/Infrastructure), visiting conferences, buying test devices, offering perks for contributions, and covering our cost of living.
-See [SPONSORS.md](SPONSORS.md) for details.
 
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
