@@ -68,7 +68,8 @@ Thank you very much! <3
 
 ## Sponsorship
 
-Organizations - who would like to [support our work](https://dl.photoprism.org/slides/PhotoPrism.pdf) - can conveniently [donate via PayPal](https://www.paypal.me/photoprism), [become a sponsor on Patreon](https://www.patreon.com/photoprism) or [get in touch with us](mailto:hello@photoprism.org) to discuss further details. You'll earn our eternal gratitude.
+Organizations - who would like to [support our work](https://dl.photoprism.org/slides/PhotoPrism.pdf) - can conveniently [donate via PayPal](https://www.paypal.me/photoprism), [become a sponsor on Patreon](https://www.patreon.com/photoprism) or [get in touch with us](mailto:hello@photoprism.org) to discuss further details. 
+We'll be more than happy to mention your contribution plus you can get direct access to our team of top-class engineers and scientists.
 
 Grants and donations will be used for [organizing meetups](https://github.com/photoprism/photoprism/wiki/Meetups), [running our servers](https://github.com/photoprism/photoprism/wiki/Infrastructure), visiting conferences, buying test devices, offering perks for contributions, and covering our cost of living. See [SPONSORS.md](SPONSORS.md) for details.
 
