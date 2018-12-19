@@ -46,7 +46,7 @@ RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
 
 # Install TensorFlow C library
 RUN curl -L \
-   "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-gpu-linux-x86_64-1.12.0.tar.gz" | \
+   "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.12.0.tar.gz" | \
    tar -C "/usr/local" -xz
 RUN ldconfig
 
