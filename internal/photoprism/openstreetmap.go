@@ -49,7 +49,7 @@ func (m *MediaFile) GetLocation() (*models.Location, error) {
 
 	if exifData, err := m.GetExifData(); err == nil {
 		if exifData.Lat == 0 && exifData.Long == 0 {
-			return nil, errors.New("lat and long are missing in Exif metadata")
+			return nil, errors.New("lat and long are missing in metadata")
 		}
 
 		url := fmt.Sprintf("https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=jsonv2", exifData.Lat, exifData.Long)
