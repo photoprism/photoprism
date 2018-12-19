@@ -1,4 +1,4 @@
-FROM photoprism/photoprism:20181219 as build
+FROM photoprism/photoprism:latest as build
 
 RUN mkdir -p /srv/photoprism/photos/import && \
     wget -qO- https://dl.photoprism.org/fixtures/demo.tar.gz | tar xvz -C /srv/photoprism/photos/import
