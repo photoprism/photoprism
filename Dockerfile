@@ -1,4 +1,4 @@
-FROM photoprism/development:20181218
+FROM photoprism/development:20181219
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
