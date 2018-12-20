@@ -60,7 +60,7 @@ Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/hel
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
 good (first) contributions. 
 
-You'll get a small reward for working on [funded issues](https://github.com/photoprism/photoprism/labels/IssueHunt), see [issuehunt.io](https://issuehunt.io/repos/119160553) for details.
+You'll get a small reward for working on [funded issues](https://github.com/photoprism/photoprism/labels/IssueHunt), see [issuehunt.io](https://issuehunt.io/repos/119160553) for details. Note that issue descriptions may be outdated on their site. Rewards are paid out when all [acceptance criteria](https://github.com/photoprism/photoprism/wiki/Issues#user-stories) prioritized as MUST are met and your pull request was successfully merged.
 
 Please join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
 to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
