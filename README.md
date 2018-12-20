@@ -6,6 +6,7 @@ PhotoPrism: Browse your life in pictures
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][goreport]
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=develop)][ci]
 [![Documentation](https://readthedocs.org/projects/photoprism-docs/badge/?version=latest&style=flat)][docs]
+[![Funded Issues](https://img.shields.io/badge/IssueHunt-funded%20issues-13ba6f.svg)][issuehunt]
 
 PhotoPrism is a server-based application for browsing, organizing and sharing your personal photo collection.
 It makes use of the latest technologies to automatically tag and find pictures without getting in your way.
@@ -59,7 +60,7 @@ Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/hel
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
 good (first) contributions. 
 
-You'll get a small reward for working on sponsored issues labeled [IssueHunt](https://github.com/photoprism/photoprism/labels/IssueHunt), see [issuehunt.io](https://issuehunt.io/repos/119160553).
+You'll get a small reward for working on [funded issues](https://github.com/photoprism/photoprism/labels/IssueHunt), see [issuehunt.io](https://issuehunt.io/repos/119160553) for details.
 
 Please join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
 to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
@@ -81,3 +82,4 @@ Grants and donations will be used for [organizing meetups](https://github.com/ph
 [coverage]: https://codecov.io/gh/photoprism/photoprism
 [ci]: https://travis-ci.org/photoprism/photoprism
 [docs]: https://docs.photoprism.org/en/latest/
+[issuehunt]: https://issuehunt.io/repos/119160553
