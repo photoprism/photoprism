@@ -57,8 +57,11 @@ We welcome contributions of any kind. If you have a bug or an idea, read our
 [guide](https://docs.photoprism.org/en/latest/contribute/) before opening an issue.
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
-good (first) contributions. Please join our 
-[developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
+good (first) contributions. 
+
+You'll get a small reward for working on sponsored issues labeled [IssueHunt](https://github.com/photoprism/photoprism/labels/IssueHunt), see [issuehunt.io](https://issuehunt.io/repos/119160553).
+
+Please join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
 to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
 
 ## Donations
@@ -71,7 +74,7 @@ Thank you very much! <3
 Organizations - who would like to [support our work](https://dl.photoprism.org/slides/PhotoPrism.pdf) - can conveniently [donate via PayPal](https://www.paypal.me/photoprism), [become a sponsor on Patreon](https://www.patreon.com/photoprism) or [get in touch with us](mailto:hello@photoprism.org) to discuss further details. 
 We'll be more than happy to mention your contribution plus you can get direct access to [our team](https://docs.photoprism.org/en/latest/team/) of top-class engineers and scientists.
 
-Grants and donations will be used for [organizing meetups](https://github.com/photoprism/photoprism/wiki/Meetups), [running our servers](https://github.com/photoprism/photoprism/wiki/Infrastructure), visiting conferences, buying test devices, offering perks for contributions, and covering our cost of living. See [SPONSORS.md](SPONSORS.md) for details.
+Grants and donations will be used for [organizing meetups](https://github.com/photoprism/photoprism/wiki/Meetups), [running our servers](https://github.com/photoprism/photoprism/wiki/Infrastructure), visiting conferences, buying test devices, offering rewards for contributions, and covering our cost of living. See [SPONSORS.md](SPONSORS.md) for details.
 
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
