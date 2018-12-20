@@ -5,7 +5,7 @@ We've [built similar apps more than once](https://github.com/photoprism/photopri
 That doesn't mean we can or want to cover all expenses from our personal savings while millions are wasted in commercial software projects every day.
 
 This is your chance to spend a small amount for something truly useful.
-Your contribution will have significant impact on our work. Thank you very much! :)
+Your contribution will have significant impact on our progress. Thank you very much! 💎
 
 You can conveniently [donate via PayPal](https://www.paypal.me/photoprism), [become a sponsor on Patreon](https://www.patreon.com/photoprism) or [get in touch with us](mailto:hello@photoprism.org) to discuss further details.
 
