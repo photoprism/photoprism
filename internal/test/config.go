@@ -183,8 +183,8 @@ func (c *Config) HttpServerHost() string {
 	return "127.0.0.1"
 }
 
-// GetServerPort returns the server port.
-func (c *Config) GetServerPort() int {
+// HttpServerPort returns the server port.
+func (c *Config) HttpServerPort() int {
 	return 80
 }
 

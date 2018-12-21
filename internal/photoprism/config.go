@@ -9,21 +9,25 @@ import (
 
 // Todo: Remove Get prefix, see https://golang.org/doc/effective_go.html#Getters
 type Config interface {
+	Debug() bool
+	Db() *gorm.DB
+
 	CreateDirectories() error
 	MigrateDb()
 
-	Db() *gorm.DB
 	ClientConfig() frontend.Config
-
 	ConfigFile() string
+
 	AppName() string
 	AppVersion() string
 	AppCopyright() string
-	Debug() bool
+
 	SqlServerHost() string
 	SqlServerPort() uint
+
 	HttpServerHost() string
-	GetServerPort() int
+	HttpServerPort() int
+
 	GetServerMode() string
 	GetDatabaseDriver() string
 	GetDatabaseDsn() string

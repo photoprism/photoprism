@@ -331,13 +331,13 @@ func (c *Config) SqlServerPort() uint {
 	return c.sqlServerPort
 }
 
-// HttpServerHost returns the server host name or IP address (empty for all interfaces).
+// HttpServerHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
 func (c *Config) HttpServerHost() string {
 	return c.httpServerHost
 }
 
-// GetServerPort returns the server port.
-func (c *Config) GetServerPort() int {
+// HttpServerPort returns the built-in HTTP server port.
+func (c *Config) HttpServerPort() int {
 	return c.httpServerPort
 }
 

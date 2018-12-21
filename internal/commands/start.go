@@ -41,7 +41,7 @@ var startFlags = []cli.Flag{
 func startAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 
-	if conf.GetServerPort() < 1 {
+	if conf.HttpServerPort() < 1 {
 		log.Fatal("Server port must be a positive integer")
 	}
 
