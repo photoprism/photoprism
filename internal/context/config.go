@@ -263,7 +263,7 @@ func (c *Config) connectToDatabase() error {
 
 	if err != nil || db == nil {
 		if isTiDB {
-			go tidb.Start(c.GetDatabasePath(), 4000, "", c.IsDebug())
+			go tidb.Start(c.GetDatabasePath(), 4000, "", c.Debug())
 		}
 
 		for i := 1; i <= 12; i++ {
@@ -311,8 +311,8 @@ func (c *Config) AppCopyright() string {
 	return c.appCopyright
 }
 
-// IsDebug returns true if debug mode is on.
-func (c *Config) IsDebug() bool {
+// Debug returns true if debug mode is on.
+func (c *Config) Debug() bool {
 	return c.debug
 }
 
@@ -472,7 +472,7 @@ func (c *Config) ClientConfig() frontend.Config {
 	result := frontend.Config{
 		"appName":    c.AppName(),
 		"appVersion": c.AppVersion(),
-		"debug":      c.IsDebug(),
+		"debug":      c.Debug(),
 		"cameras":    cameras,
 		"countries":  countries,
 		"jsHash":     jsHash,

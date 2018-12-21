@@ -168,8 +168,8 @@ func (c *Config) AppCopyright() string {
 	return "The PhotoPrism contributors <hello@photoprism.org>"
 }
 
-// IsDebug returns true if debug mode is on.
-func (c *Config) IsDebug() bool {
+// Debug returns true if debug mode is on.
+func (c *Config) Debug() bool {
 	return false
 }
 
@@ -329,7 +329,7 @@ func (c *Config) ClientConfig() frontend.Config {
 	result := frontend.Config{
 		"appName":    c.AppName(),
 		"appVersion": c.AppVersion(),
-		"debug":      c.IsDebug(),
+		"debug":      c.Debug(),
 		"cameras":    cameras,
 		"countries":  countries,
 		"jsHash":     jsHash,

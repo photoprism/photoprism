@@ -20,7 +20,7 @@ func TestNewConfig(t *testing.T) {
 	assert.IsType(t, new(Config), c)
 
 	assert.Equal(t, fsutil.ExpandedFilename("../../assets"), c.GetAssetsPath())
-	assert.False(t, c.IsDebug())
+	assert.False(t, c.Debug())
 }
 
 func TestConfig_SetValuesFromFile(t *testing.T) {
