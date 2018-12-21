@@ -35,8 +35,8 @@ type Config struct {
 	appCopyright   string
 	debug          bool
 	configFile     string
-	dbServerIP     string
-	dbServerPort   uint
+	sqlServerHost  string
+	sqlServerPort  uint
 	dbServerPath   string
 	serverIP       string
 	serverPort     int
@@ -82,12 +82,12 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 		c.debug = debug
 	}
 
-	if dbServerIP, err := yamlConfig.Get("db-host"); err == nil {
-		c.dbServerIP = dbServerIP
+	if sqlServerHost, err := yamlConfig.Get("sql-host"); err == nil {
+		c.sqlServerHost = sqlServerHost
 	}
 
-	if dbServerPort, err := yamlConfig.GetInt("db-port"); err == nil {
-		c.dbServerPort = uint(dbServerPort)
+	if sqlServerPort, err := yamlConfig.GetInt("sql-port"); err == nil {
+		c.sqlServerPort = uint(sqlServerPort)
 	}
 
 	if dbServerPath, err := yamlConfig.Get("db-path"); err == nil {
@@ -180,12 +180,12 @@ func (c *Config) SetValuesFromCliContext(ctx *cli.Context) error {
 		c.databaseDsn = ctx.GlobalString("database-dsn")
 	}
 
-	if ctx.IsSet("db-host") || c.dbServerIP == "" {
-		c.dbServerIP = ctx.String("db-host")
+	if ctx.IsSet("sql-host") || c.sqlServerHost == "" {
+		c.sqlServerHost = ctx.String("sql-host")
 	}
 
-	if ctx.IsSet("db-port") || c.dbServerPort == 0 {
-		c.dbServerPort = ctx.Uint("db-port")
+	if ctx.IsSet("sql-port") || c.sqlServerPort == 0 {
+		c.sqlServerPort = ctx.Uint("sql-port")
 	}
 
 	if ctx.IsSet("db-path") || c.dbServerPath == "" {
@@ -321,17 +321,17 @@ func (c *Config) ConfigFile() string {
 	return c.configFile
 }
 
-// DbServerIP returns the database server IP address (empty for all).
-func (c *Config) DbServerIP() string {
-	return c.dbServerIP
+// SqlServerHost returns the built-in SQL server host name or IP address (empty for all interfaces).
+func (c *Config) SqlServerHost() string {
+	return c.sqlServerHost
 }
 
-// DbServerPort returns the database server port.
-func (c *Config) DbServerPort() uint {
-	return c.dbServerPort
+// SqlServerPort returns the built-in SQL server port.
+func (c *Config) SqlServerPort() uint {
+	return c.sqlServerPort
 }
 
-// GetServerIP returns the server IP address (empty for all).
+// GetServerIP returns the server host name or IP address (empty for all interfaces).
 func (c *Config) GetServerIP() string {
 	return c.serverIP
 }

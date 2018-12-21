@@ -20,8 +20,8 @@ type Config interface {
 	AppVersion() string
 	AppCopyright() string
 	Debug() bool
-	DbServerIP() string
-	DbServerPort() uint
+	SqlServerHost() string
+	SqlServerPort() uint
 	GetServerIP() string
 	GetServerPort() int
 	GetServerMode() string

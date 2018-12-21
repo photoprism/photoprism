@@ -188,13 +188,13 @@ func (c *Config) GetServerPort() int {
 	return 80
 }
 
-// DbServerIP returns the database server IP address (empty for all).
-func (c *Config) DbServerIP() string {
+// SqlServerHost returns the database server IP address (empty for all).
+func (c *Config) SqlServerHost() string {
 	return "127.0.0.1"
 }
 
-// DbServerPort returns the database server port.
-func (c *Config) DbServerPort() uint {
+// SqlServerPort returns the database server port.
+func (c *Config) SqlServerPort() uint {
 	return 4001
 }
 
