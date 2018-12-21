@@ -27,18 +27,6 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("database-driver       %s\n", conf.DatabaseDriver())
 	fmt.Printf("database-dsn          %s\n", conf.DatabaseDsn())
 
-	fmt.Printf("originals-path        %s\n", conf.OriginalsPath())
-	fmt.Printf("import-path           %s\n", conf.ImportPath())
-	fmt.Printf("export-path           %s\n", conf.ExportPath())
-	fmt.Printf("cache-path            %s\n", conf.CachePath())
-	fmt.Printf("assets-path           %s\n", conf.AssetsPath())
-	fmt.Printf("thumbnails-path       %s\n", conf.ThumbnailsPath())
-	fmt.Printf("tf-model-path         %s\n", conf.TensorFlowModelPath())
-	fmt.Printf("templates-path        %s\n", conf.HttpTemplatesPath())
-	fmt.Printf("favicons-path         %s\n", conf.HttpFaviconsPath())
-	fmt.Printf("public-path           %s\n", conf.HttpPublicPath())
-	fmt.Printf("public-build-path     %s\n", conf.HttpPublicBuildPath())
-
 	fmt.Printf("http-host             %s\n", conf.HttpServerHost())
 	fmt.Printf("http-port             %d\n", conf.HttpServerPort())
 	fmt.Printf("http-mode             %s\n", conf.HttpServerMode())
@@ -46,6 +34,18 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("sql-host              %s\n", conf.SqlServerHost())
 	fmt.Printf("sql-port              %d\n", conf.SqlServerPort())
 	fmt.Printf("sql-path              %s\n", conf.SqlServerPath())
+
+	fmt.Printf("assets-path           %s\n", conf.AssetsPath())
+	fmt.Printf("originals-path        %s\n", conf.OriginalsPath())
+	fmt.Printf("import-path           %s\n", conf.ImportPath())
+	fmt.Printf("export-path           %s\n", conf.ExportPath())
+	fmt.Printf("cache-path            %s\n", conf.CachePath())
+	fmt.Printf("thumbnails-path       %s\n", conf.ThumbnailsPath())
+	fmt.Printf("tf-model-path         %s\n", conf.TensorFlowModelPath())
+	fmt.Printf("templates-path        %s\n", conf.HttpTemplatesPath())
+	fmt.Printf("favicons-path         %s\n", conf.HttpFaviconsPath())
+	fmt.Printf("public-path           %s\n", conf.HttpPublicPath())
+	fmt.Printf("public-build-path     %s\n", conf.HttpPublicBuildPath())
 
 	fmt.Printf("darktable-cli         %s\n", conf.DarktableCli())
 
