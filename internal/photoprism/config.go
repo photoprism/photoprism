@@ -36,10 +36,10 @@ type Config interface {
 	ImportPath() string
 	ExportPath() string
 	CachePath() string
+	ThumbnailsPath() string
+	AssetsPath() string
 
 	DarktableCli() string
-	ThumbnailsPath() string
-	GetAssetsPath() string
 	GetTensorFlowModelPath() string
 	GetDatabasePath() string
 	GetServerAssetsPath() string

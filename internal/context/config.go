@@ -386,24 +386,24 @@ func (c *Config) ThumbnailsPath() string {
 	return c.CachePath() + "/thumbnails"
 }
 
-// GetAssetsPath returns the path to the assets.
-func (c *Config) GetAssetsPath() string {
+// AssetsPath returns the path to the assets.
+func (c *Config) AssetsPath() string {
 	return c.assetsPath
 }
 
 // GetTensorFlowModelPath returns the tensorflow model path.
 func (c *Config) GetTensorFlowModelPath() string {
-	return c.GetAssetsPath() + "/tensorflow"
+	return c.AssetsPath() + "/tensorflow"
 }
 
 // GetDatabasePath returns the database storage path (e.g. for SQLite or Bleve).
 func (c *Config) GetDatabasePath() string {
-	return c.GetAssetsPath() + "/database"
+	return c.AssetsPath() + "/database"
 }
 
 // GetServerAssetsPath returns the server assets path (public files, favicons, templates,...).
 func (c *Config) GetServerAssetsPath() string {
-	return c.GetAssetsPath() + "/server"
+	return c.AssetsPath() + "/server"
 }
 
 // GetTemplatesPath returns the server templates path.

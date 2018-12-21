@@ -25,7 +25,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("import-path           %s\n", conf.ImportPath())
 	fmt.Printf("export-path           %s\n", conf.ExportPath())
 	fmt.Printf("cache-path            %s\n", conf.CachePath())
-	fmt.Printf("assets-path           %s\n", conf.GetAssetsPath())
+	fmt.Printf("assets-path           %s\n", conf.AssetsPath())
 	fmt.Printf("database-driver       %s\n", conf.DatabaseDriver())
 	fmt.Printf("database-dsn          %s\n", conf.DatabaseDsn())
 

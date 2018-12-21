@@ -19,7 +19,7 @@ func TestNewConfig(t *testing.T) {
 
 	assert.IsType(t, new(Config), c)
 
-	assert.Equal(t, fsutil.ExpandedFilename("../../assets"), c.GetAssetsPath())
+	assert.Equal(t, fsutil.ExpandedFilename("../../assets"), c.AssetsPath())
 	assert.False(t, c.Debug())
 }
 
@@ -28,7 +28,7 @@ func TestConfig_SetValuesFromFile(t *testing.T) {
 
 	c.SetValuesFromFile(fsutil.ExpandedFilename("../../configs/photoprism.yml"))
 
-	assert.Equal(t, "/srv/photoprism", c.GetAssetsPath())
+	assert.Equal(t, "/srv/photoprism", c.AssetsPath())
 	assert.Equal(t, "/srv/photoprism/cache", c.CachePath())
 	assert.Equal(t, "/srv/photoprism/cache/thumbnails", c.ThumbnailsPath())
 	assert.Equal(t, "/srv/photoprism/photos/originals", c.OriginalsPath())

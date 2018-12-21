@@ -43,7 +43,7 @@ func TestNewConfig(t *testing.T) {
 
 	assert.IsType(t, new(context.Config), c)
 
-	assert.Equal(t, test.AssetsPath, c.GetAssetsPath())
+	assert.Equal(t, test.AssetsPath, c.AssetsPath())
 	assert.False(t, c.Debug())
 }
 
@@ -52,7 +52,7 @@ func TestContextConfig_SetValuesFromFile(t *testing.T) {
 
 	c.SetValuesFromFile(fsutil.ExpandedFilename(test.ConfigFile))
 
-	assert.Equal(t, "/srv/photoprism", c.GetAssetsPath())
+	assert.Equal(t, "/srv/photoprism", c.AssetsPath())
 	assert.Equal(t, "/srv/photoprism/cache", c.CachePath())
 	assert.Equal(t, "/srv/photoprism/cache/thumbnails", c.ThumbnailsPath())
 	assert.Equal(t, "/srv/photoprism/photos/originals", c.OriginalsPath())

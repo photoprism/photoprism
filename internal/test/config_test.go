@@ -12,7 +12,7 @@ func TestNewConfig(t *testing.T) {
 
 	assert.IsType(t, new(Config), c)
 
-	assert.Equal(t, AssetsPath, c.GetAssetsPath())
+	assert.Equal(t, AssetsPath, c.AssetsPath())
 	assert.False(t, c.Debug())
 }
 
