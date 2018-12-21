@@ -94,15 +94,15 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 		c.dbServerPath = dbServerPath
 	}
 
-	if httpServerHost, err := yamlConfig.Get("server-host"); err == nil {
+	if httpServerHost, err := yamlConfig.Get("http-host"); err == nil {
 		c.httpServerHost = httpServerHost
 	}
 
-	if httpServerPort, err := yamlConfig.GetInt("server-port"); err == nil {
+	if httpServerPort, err := yamlConfig.GetInt("http-port"); err == nil {
 		c.httpServerPort = int(httpServerPort)
 	}
 
-	if serverMode, err := yamlConfig.Get("server-mode"); err == nil {
+	if serverMode, err := yamlConfig.Get("http-mode"); err == nil {
 		c.serverMode = serverMode
 	}
 
@@ -192,16 +192,16 @@ func (c *Config) SetValuesFromCliContext(ctx *cli.Context) error {
 		c.dbServerPath = ctx.String("db-path")
 	}
 
-	if ctx.IsSet("server-host") || c.httpServerHost == "" {
-		c.httpServerHost = ctx.String("server-host")
+	if ctx.IsSet("http-host") || c.httpServerHost == "" {
+		c.httpServerHost = ctx.String("http-host")
 	}
 
-	if ctx.IsSet("server-port") || c.httpServerPort == 0 {
-		c.httpServerPort = ctx.Int("server-port")
+	if ctx.IsSet("http-port") || c.httpServerPort == 0 {
+		c.httpServerPort = ctx.Int("http-port")
 	}
 
-	if ctx.IsSet("server-mode") || c.serverMode == "" {
-		c.serverMode = ctx.String("server-mode")
+	if ctx.IsSet("http-mode") || c.serverMode == "" {
+		c.serverMode = ctx.String("http-mode")
 	}
 
 	return nil
