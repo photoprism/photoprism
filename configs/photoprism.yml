@@ -5,8 +5,10 @@ cache-path: /srv/photoprism/cache
 originals-path: /srv/photoprism/photos/originals
 import-path: /srv/photoprism/photos/import
 export-path: /srv/photoprism/photos/export
-server-host:
-server-mode: release
-server-port: 80
+sql-host: localhost
+sql-port: 4000
+http-host:
+http-mode: release
+http-port: 80
 database-driver: tidb
 database-dsn: root:@tcp(localhost:4000)/photoprism?parseTime=true
