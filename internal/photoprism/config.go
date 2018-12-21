@@ -31,7 +31,8 @@ type Config interface {
 
 	DatabaseDriver() string
 	DatabaseDsn() string
-	GetOriginalsPath() string
+
+	OriginalsPath() string
 	GetImportPath() string
 	GetExportPath() string
 	GetDarktableCli() string

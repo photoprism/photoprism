@@ -32,11 +32,11 @@ func GetThumbnail(router *gin.RouterGroup, conf photoprism.Config) {
 			c.Data(400, "image/svg+xml", photoIconSvg)
 		}
 
-		search := photoprism.NewSearch(conf.GetOriginalsPath(), conf.Db())
+		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 
 		file := search.FindFileByHash(fileHash)
 
-		fileName := fmt.Sprintf("%s/%s", conf.GetOriginalsPath(), file.FileName)
+		fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
 
 		if mediaFile, err := photoprism.NewMediaFile(fileName); err == nil {
 			switch thumbnailType {

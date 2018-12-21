@@ -17,15 +17,15 @@ func TestCreateThumbnailsFromOriginals(t *testing.T) {
 
 	tensorFlow := NewTensorFlow(conf.GetTensorFlowModelPath())
 
-	indexer := NewIndexer(conf.GetOriginalsPath(), tensorFlow, conf.Db())
+	indexer := NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
 
 	converter := NewConverter(conf.GetDarktableCli())
 
-	importer := NewImporter(conf.GetOriginalsPath(), indexer, converter)
+	importer := NewImporter(conf.OriginalsPath(), indexer, converter)
 
 	importer.ImportPhotosFromDirectory(conf.GetImportPath())
 
-	CreateThumbnailsFromOriginals(conf.GetOriginalsPath(), conf.GetThumbnailsPath(), 600, false)
+	CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.GetThumbnailsPath(), 600, false)
 
-	CreateThumbnailsFromOriginals(conf.GetOriginalsPath(), conf.GetThumbnailsPath(), 300, true)
+	CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.GetThumbnailsPath(), 300, true)
 }

@@ -51,7 +51,7 @@ func thumbnailsAction(ctx *cli.Context) error {
 	}
 
 	for _, size := range sizes {
-		photoprism.CreateThumbnailsFromOriginals(conf.GetOriginalsPath(), conf.GetThumbnailsPath(), size, ctx.Bool("square"))
+		photoprism.CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.GetThumbnailsPath(), size, ctx.Bool("square"))
 	}
 
 	fmt.Println("Done.")

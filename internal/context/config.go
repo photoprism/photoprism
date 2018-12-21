@@ -213,7 +213,7 @@ func (c *Config) SetValuesFromCliContext(ctx *cli.Context) error {
 // importPath
 // exportPath
 func (c *Config) CreateDirectories() error {
-	if err := os.MkdirAll(c.GetOriginalsPath(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.OriginalsPath(), os.ModePerm); err != nil {
 		return err
 	}
 
@@ -346,8 +346,8 @@ func (c *Config) HttpServerMode() string {
 	return c.serverMode
 }
 
-// GetOriginalsPath returns the originals.
-func (c *Config) GetOriginalsPath() string {
+// OriginalsPath returns the originals.
+func (c *Config) OriginalsPath() string {
 	return c.originalsPath
 }
 

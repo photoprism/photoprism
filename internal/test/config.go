@@ -44,7 +44,7 @@ type Config struct {
 func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.GetImportPath())
 	os.RemoveAll(c.GetExportPath())
-	os.RemoveAll(c.GetOriginalsPath())
+	os.RemoveAll(c.OriginalsPath())
 	os.RemoveAll(c.GetCachePath())
 }
 
@@ -93,7 +93,7 @@ func NewConfig() *Config {
 // ImportPath
 // ExportPath
 func (c *Config) CreateDirectories() error {
-	if err := os.MkdirAll(c.GetOriginalsPath(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.OriginalsPath(), os.ModePerm); err != nil {
 		return err
 	}
 
@@ -203,8 +203,8 @@ func (c *Config) HttpServerMode() string {
 	return "test"
 }
 
-// GetOriginalsPath returns the originals.
-func (c *Config) GetOriginalsPath() string {
+// OriginalsPath returns the originals.
+func (c *Config) OriginalsPath() string {
 	return OriginalsPath
 }
 
