@@ -23,7 +23,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("darktable-cli         %s\n", conf.GetDarktableCli())
 	fmt.Printf("originals-path        %s\n", conf.OriginalsPath())
 	fmt.Printf("import-path           %s\n", conf.ImportPath())
-	fmt.Printf("export-path           %s\n", conf.GetExportPath())
+	fmt.Printf("export-path           %s\n", conf.ExportPath())
 	fmt.Printf("cache-path            %s\n", conf.GetCachePath())
 	fmt.Printf("assets-path           %s\n", conf.GetAssetsPath())
 	fmt.Printf("database-driver       %s\n", conf.DatabaseDriver())

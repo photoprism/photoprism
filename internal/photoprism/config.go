@@ -34,7 +34,8 @@ type Config interface {
 
 	OriginalsPath() string
 	ImportPath() string
-	GetExportPath() string
+	ExportPath() string
+
 	GetDarktableCli() string
 	GetCachePath() string
 	GetThumbnailsPath() string

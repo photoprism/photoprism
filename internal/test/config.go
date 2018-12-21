@@ -43,7 +43,7 @@ type Config struct {
 
 func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.ImportPath())
-	os.RemoveAll(c.GetExportPath())
+	os.RemoveAll(c.ExportPath())
 	os.RemoveAll(c.OriginalsPath())
 	os.RemoveAll(c.GetCachePath())
 }
@@ -101,7 +101,7 @@ func (c *Config) CreateDirectories() error {
 		return err
 	}
 
-	if err := os.MkdirAll(c.GetExportPath(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.ExportPath(), os.ModePerm); err != nil {
 		return err
 	}
 
@@ -213,8 +213,8 @@ func (c *Config) ImportPath() string {
 	return ImportPath
 }
 
-// GetExportPath returns the export directory.
-func (c *Config) GetExportPath() string {
+// ExportPath returns the export directory.
+func (c *Config) ExportPath() string {
 	return ExportPath
 }
 

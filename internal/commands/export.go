@@ -69,7 +69,7 @@ func exportAction(ctx *cli.Context) error {
 		}
 	}
 
-	exportPath := fmt.Sprintf("%s/%s", conf.GetExportPath(), name)
+	exportPath := fmt.Sprintf("%s/%s", conf.ExportPath(), name)
 	size := ctx.Int("size")
 	originals := photoprism.FindOriginalsByDate(conf.OriginalsPath(), afterDate, beforeDate)
 
