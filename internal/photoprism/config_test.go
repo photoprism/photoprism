@@ -65,7 +65,7 @@ func TestContextConfig_SetValuesFromFile(t *testing.T) {
 func TestTestConfig_ConnectToDatabase(t *testing.T) {
 	c := test.NewConfig()
 
-	db := c.GetDb()
+	db := c.Db()
 
 	assert.IsType(t, &gorm.DB{}, db)
 }

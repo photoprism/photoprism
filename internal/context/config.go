@@ -427,7 +427,7 @@ func (c *Config) GetPublicBuildPath() string {
 }
 
 // GetDb returns the db connection.
-func (c *Config) GetDb() *gorm.DB {
+func (c *Config) Db() *gorm.DB {
 	if c.db == nil {
 		c.connectToDatabase()
 	}
@@ -437,7 +437,7 @@ func (c *Config) GetDb() *gorm.DB {
 
 // MigrateDb will start a migration process.
 func (c *Config) MigrateDb() {
-	db := c.GetDb()
+	db := c.Db()
 
 	db.AutoMigrate(&models.File{},
 		&models.Photo{},
@@ -451,7 +451,7 @@ func (c *Config) MigrateDb() {
 
 // GetClientConfig returns a loaded and set configuration entity.
 func (c *Config) GetClientConfig() frontend.Config {
-	db := c.GetDb()
+	db := c.Db()
 
 	var cameras []*models.Camera
 

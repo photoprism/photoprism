@@ -29,7 +29,7 @@ func indexAction(ctx *cli.Context) error {
 
 	tensorFlow := photoprism.NewTensorFlow(conf.GetTensorFlowModelPath())
 
-	indexer := photoprism.NewIndexer(conf.GetOriginalsPath(), tensorFlow, conf.GetDb())
+	indexer := photoprism.NewIndexer(conf.GetOriginalsPath(), tensorFlow, conf.Db())
 
 	indexer.IndexAll()
 

@@ -15,7 +15,7 @@ func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
 
 	tensorFlow := NewTensorFlow(conf.GetTensorFlowModelPath())
 
-	indexer := NewIndexer(conf.GetOriginalsPath(), tensorFlow, conf.GetDb())
+	indexer := NewIndexer(conf.GetOriginalsPath(), tensorFlow, conf.Db())
 
 	converter := NewConverter(conf.GetDarktableCli())
 

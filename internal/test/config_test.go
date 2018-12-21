@@ -19,7 +19,7 @@ func TestNewConfig(t *testing.T) {
 func TestConfig_ConnectToDatabase(t *testing.T) {
 	c := NewConfig()
 
-	db := c.GetDb()
+	db := c.Db()
 
 	assert.IsType(t, &gorm.DB{}, db)
 }

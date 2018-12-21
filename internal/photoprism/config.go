@@ -12,7 +12,7 @@ type Config interface {
 	CreateDirectories() error
 	MigrateDb()
 
-	GetDb() *gorm.DB
+	Db() *gorm.DB
 	GetClientConfig() frontend.Config
 
 	GetConfigFile() string

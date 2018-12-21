@@ -32,7 +32,7 @@ func GetThumbnail(router *gin.RouterGroup, conf photoprism.Config) {
 			c.Data(400, "image/svg+xml", photoIconSvg)
 		}
 
-		search := photoprism.NewSearch(conf.GetOriginalsPath(), conf.GetDb())
+		search := photoprism.NewSearch(conf.GetOriginalsPath(), conf.Db())
 
 		file := search.FindFileByHash(fileHash)
 
@@ -64,7 +64,7 @@ func GetThumbnail(router *gin.RouterGroup, conf photoprism.Config) {
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			file.FileMissing = true
-			conf.GetDb().Save(&file)
+			conf.Db().Save(&file)
 		}
 	})
 }
