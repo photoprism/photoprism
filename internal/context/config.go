@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	DbTiDB  = "tidb"
+	DbTiDB  = "internal"
 	DbMySQL = "mysql"
 )
 
@@ -245,7 +245,7 @@ func (c *Config) CreateDirectories() error {
 }
 
 // connectToDatabase establishes a database connection.
-// When used with the tidb driver, it may create a new database server instance.
+// When used with the internal driver, it may create a new database server instance.
 // It tries to do this 12 times with a 5 second sleep interval in between.
 func (c *Config) connectToDatabase() error {
 	dbDriver := c.DatabaseDriver()
@@ -263,7 +263,7 @@ func (c *Config) connectToDatabase() error {
 
 	if err != nil || db == nil {
 		if isTiDB {
-			go tidb.Start(c.SqlServerPath(), 4000, "", c.Debug())
+			go tidb.Start(c.SqlServerPath(), c.SqlServerPort(), c.SqlServerHost(), c.Debug())
 		}
 
 		for i := 1; i <= 12; i++ {
@@ -276,7 +276,7 @@ func (c *Config) connectToDatabase() error {
 			}
 
 			if isTiDB && !initSuccess {
-				err = tidb.InitDatabase(4000)
+				err = tidb.InitDatabase(c.SqlServerPort())
 
 				if err != nil {
 					log.Println(err)

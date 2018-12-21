@@ -53,8 +53,8 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "database-driver",
-		Usage:  "database `DRIVER` (tidb or mysql)",
-		Value:  "tidb",
+		Usage:  "database `DRIVER` (internal or mysql)",
+		Value:  "internal",
 		EnvVar: "PHOTOPRISM_DATABASE_DRIVER",
 	},
 	cli.StringFlag{
@@ -83,19 +83,19 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "sql-port, s",
-		Usage:  "SQL server port",
+		Usage:  "Built-in SQL server port",
 		Value:  4000,
 		EnvVar: "PHOTOPRISM_SQL_PORT",
 	},
 	cli.StringFlag{
 		Name:   "sql-host",
-		Usage:  "SQL server host",
+		Usage:  "Built-in SQL server host",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_SQL_HOST",
 	},
 	cli.StringFlag{
 		Name:   "sql-path",
-		Usage:  "SQL server storage path",
+		Usage:  "Built-in SQL server storage path",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_SQL_PATH",
 	},

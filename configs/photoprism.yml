@@ -10,5 +10,5 @@ sql-port: 4000
 http-host:
 http-mode: release
 http-port: 80
-database-driver: tidb
+database-driver: internal
 database-dsn: root:@tcp(localhost:4000)/photoprism?parseTime=true
