@@ -20,7 +20,6 @@ func main() {
 
 	app.Commands = []cli.Command{
 		commands.ConfigCommand,
-		commands.VersionCommand,
 		commands.StartCommand,
 		commands.MigrateCommand,
 		commands.ImportCommand,
@@ -28,6 +27,7 @@ func main() {
 		commands.ConvertCommand,
 		commands.ThumbnailsCommand,
 		commands.ExportCommand,
+		commands.VersionCommand,
 	}
 
 	app.Run(os.Args)

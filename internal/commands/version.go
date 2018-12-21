@@ -7,10 +7,10 @@ import (
 	"github.com/urfave/cli"
 )
 
-// Prints current configuration
+// Prints current version
 var VersionCommand = cli.Command{
 	Name:   "version",
-	Usage:  "Displays version information",
+	Usage:  "Shows version information",
 	Action: versionAction,
 }
 
