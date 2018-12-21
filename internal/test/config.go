@@ -178,8 +178,8 @@ func (c *Config) ConfigFile() string {
 	return ConfigFile
 }
 
-// GetServerIP returns the server IP address (empty for all).
-func (c *Config) GetServerIP() string {
+// HttpServerHost returns the server IP address (empty for all).
+func (c *Config) HttpServerHost() string {
 	return "127.0.0.1"
 }
 

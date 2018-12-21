@@ -331,8 +331,8 @@ func (c *Config) SqlServerPort() uint {
 	return c.sqlServerPort
 }
 
-// GetServerIP returns the server host name or IP address (empty for all interfaces).
-func (c *Config) GetServerIP() string {
+// HttpServerHost returns the server host name or IP address (empty for all interfaces).
+func (c *Config) HttpServerHost() string {
 	return c.serverIP
 }
 

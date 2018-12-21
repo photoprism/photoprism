@@ -22,5 +22,5 @@ func Start(conf photoprism.Config) {
 
 	registerRoutes(app, conf)
 
-	app.Run(fmt.Sprintf("%s:%d", conf.GetServerIP(), conf.GetServerPort()))
+	app.Run(fmt.Sprintf("%s:%d", conf.HttpServerHost(), conf.GetServerPort()))
 }

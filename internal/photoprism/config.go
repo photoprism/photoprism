@@ -22,7 +22,7 @@ type Config interface {
 	Debug() bool
 	SqlServerHost() string
 	SqlServerPort() uint
-	GetServerIP() string
+	HttpServerHost() string
 	GetServerPort() int
 	GetServerMode() string
 	GetDatabaseDriver() string
