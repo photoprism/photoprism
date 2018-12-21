@@ -29,7 +29,6 @@ type Config interface {
 	HttpServerHost() string
 	HttpServerPort() int
 	HttpServerMode() string
-	ServerPath() string
 	HttpTemplatesPath() string
 	HttpFaviconsPath() string
 	HttpPublicPath() string
@@ -39,6 +38,7 @@ type Config interface {
 	DatabaseDsn() string
 
 	AssetsPath() string
+	ServerPath() string
 	OriginalsPath() string
 	ImportPath() string
 	ExportPath() string
