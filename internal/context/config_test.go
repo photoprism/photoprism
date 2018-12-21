@@ -34,6 +34,6 @@ func TestConfig_SetValuesFromFile(t *testing.T) {
 	assert.Equal(t, "/srv/photoprism/photos/originals", c.GetOriginalsPath())
 	assert.Equal(t, "/srv/photoprism/photos/import", c.GetImportPath())
 	assert.Equal(t, "/srv/photoprism/photos/export", c.GetExportPath())
-	assert.Equal(t, "tidb", c.GetDatabaseDriver())
+	assert.Equal(t, "tidb", c.DatabaseDriver())
 	assert.Equal(t, "root:@tcp(localhost:4000)/photoprism?parseTime=true", c.GetDatabaseDsn())
 }

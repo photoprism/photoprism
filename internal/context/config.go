@@ -248,7 +248,7 @@ func (c *Config) CreateDirectories() error {
 // When used with the tidb driver, it may create a new database server instance.
 // It tries to do this 12 times with a 5 second sleep interval in between.
 func (c *Config) connectToDatabase() error {
-	dbDriver := c.GetDatabaseDriver()
+	dbDriver := c.DatabaseDriver()
 	dbDsn := c.GetDatabaseDsn()
 
 	isTiDB := false
@@ -366,8 +366,8 @@ func (c *Config) GetDarktableCli() string {
 	return c.darktableCli
 }
 
-// GetDatabaseDriver returns the database driver name.
-func (c *Config) GetDatabaseDriver() string {
+// DatabaseDriver returns the database driver name.
+func (c *Config) DatabaseDriver() string {
 	return c.databaseDriver
 }
 

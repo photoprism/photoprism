@@ -127,7 +127,7 @@ func (c *Config) CreateDirectories() error {
 // connectToDatabase estabilishes a connection to a database given a driver.
 // It tries to do this 12 times with a 5 second sleep intervall in between.
 func (c *Config) connectToDatabase() error {
-	dbDriver := c.GetDatabaseDriver()
+	dbDriver := c.DatabaseDriver()
 	dbDsn := c.GetDatabaseDsn()
 
 	db, err := gorm.Open(dbDriver, dbDsn)
@@ -223,8 +223,8 @@ func (c *Config) GetDarktableCli() string {
 	return DarktableCli
 }
 
-// GetDatabaseDriver returns the database driver name.
-func (c *Config) GetDatabaseDriver() string {
+// DatabaseDriver returns the database driver name.
+func (c *Config) DatabaseDriver() string {
 	return DatabaseDriver
 }
 

@@ -29,7 +29,7 @@ type Config interface {
 	HttpServerPort() int
 	HttpServerMode() string
 
-	GetDatabaseDriver() string
+	DatabaseDriver() string
 	GetDatabaseDsn() string
 	GetOriginalsPath() string
 	GetImportPath() string
