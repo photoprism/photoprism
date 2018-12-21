@@ -268,8 +268,8 @@ func (c *Config) TemplatesPath() string {
 	return c.ServerAssetsPath() + "/templates"
 }
 
-// GetFaviconsPath returns the favicons path.
-func (c *Config) GetFaviconsPath() string {
+// FaviconsPath returns the favicons path.
+func (c *Config) FaviconsPath() string {
 	return c.ServerAssetsPath() + "/favicons"
 }
 

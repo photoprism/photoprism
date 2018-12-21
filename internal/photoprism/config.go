@@ -42,9 +42,9 @@ type Config interface {
 	TensorFlowModelPath() string
 	ServerAssetsPath() string
 	TemplatesPath() string
+	FaviconsPath() string
 
 	DarktableCli() string
-	GetFaviconsPath() string
 	GetPublicPath() string
 	GetPublicBuildPath() string
 }

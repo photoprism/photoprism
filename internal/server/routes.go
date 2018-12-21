@@ -10,8 +10,8 @@ import (
 
 func registerRoutes(app *gin.Engine, conf photoprism.Config) {
 	// Favicon images
-	app.StaticFile("/favicon.ico", conf.GetFaviconsPath()+"/favicon.ico")
-	app.StaticFile("/favicon.png", conf.GetFaviconsPath()+"/favicon.png")
+	app.StaticFile("/favicon.ico", conf.FaviconsPath()+"/favicon.ico")
+	app.StaticFile("/favicon.png", conf.FaviconsPath()+"/favicon.png")
 
 	// Static assets like js and css files
 	app.Static("/assets", conf.GetPublicPath())
