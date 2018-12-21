@@ -54,7 +54,7 @@ func TestContextConfig_SetValuesFromFile(t *testing.T) {
 
 	assert.Equal(t, "/srv/photoprism", c.GetAssetsPath())
 	assert.Equal(t, "/srv/photoprism/cache", c.CachePath())
-	assert.Equal(t, "/srv/photoprism/cache/thumbnails", c.GetThumbnailsPath())
+	assert.Equal(t, "/srv/photoprism/cache/thumbnails", c.ThumbnailsPath())
 	assert.Equal(t, "/srv/photoprism/photos/originals", c.OriginalsPath())
 	assert.Equal(t, "/srv/photoprism/photos/import", c.ImportPath())
 	assert.Equal(t, "/srv/photoprism/photos/export", c.ExportPath())

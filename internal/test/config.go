@@ -105,7 +105,7 @@ func (c *Config) CreateDirectories() error {
 		return err
 	}
 
-	if err := os.MkdirAll(c.GetThumbnailsPath(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.ThumbnailsPath(), os.ModePerm); err != nil {
 		return err
 	}
 
@@ -238,8 +238,8 @@ func (c *Config) CachePath() string {
 	return CachePath
 }
 
-// GetThumbnailsPath returns the path to the cached thumbnails.
-func (c *Config) GetThumbnailsPath() string {
+// ThumbnailsPath returns the path to the cached thumbnails.
+func (c *Config) ThumbnailsPath() string {
 	return c.CachePath() + "/thumbnails"
 }
 

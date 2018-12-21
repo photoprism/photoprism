@@ -75,7 +75,7 @@ func exportAction(ctx *cli.Context) error {
 
 	fmt.Printf("Exporting photos to %s...\n", exportPath)
 
-	photoprism.ExportPhotosFromOriginals(originals, conf.GetThumbnailsPath(), exportPath, size)
+	photoprism.ExportPhotosFromOriginals(originals, conf.ThumbnailsPath(), exportPath, size)
 
 	fmt.Println("Done.")
 

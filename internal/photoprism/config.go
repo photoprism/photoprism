@@ -38,7 +38,7 @@ type Config interface {
 	CachePath() string
 
 	DarktableCli() string
-	GetThumbnailsPath() string
+	ThumbnailsPath() string
 	GetAssetsPath() string
 	GetTensorFlowModelPath() string
 	GetDatabasePath() string
