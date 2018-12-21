@@ -198,8 +198,8 @@ func (c *Config) SqlServerPort() uint {
 	return 4001
 }
 
-// GetServerMode returns the server mode.
-func (c *Config) GetServerMode() string {
+// HttpServerMode returns the server mode.
+func (c *Config) HttpServerMode() string {
 	return "test"
 }
 

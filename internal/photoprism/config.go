@@ -27,8 +27,8 @@ type Config interface {
 
 	HttpServerHost() string
 	HttpServerPort() int
+	HttpServerMode() string
 
-	GetServerMode() string
 	GetDatabaseDriver() string
 	GetDatabaseDsn() string
 	GetOriginalsPath() string

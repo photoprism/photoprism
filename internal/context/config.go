@@ -341,8 +341,8 @@ func (c *Config) HttpServerPort() int {
 	return c.httpServerPort
 }
 
-// GetServerMode returns the server mode.
-func (c *Config) GetServerMode() string {
+// HttpServerMode returns the server mode.
+func (c *Config) HttpServerMode() string {
 	return c.serverMode
 }
 

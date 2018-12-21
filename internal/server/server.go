@@ -9,8 +9,8 @@ import (
 
 // Start the REST API server using the configuration provided
 func Start(conf photoprism.Config) {
-	if conf.GetServerMode() != "" {
-		gin.SetMode(conf.GetServerMode())
+	if conf.HttpServerMode() != "" {
+		gin.SetMode(conf.HttpServerMode())
 	} else if conf.Debug() == false {
 		gin.SetMode(gin.ReleaseMode)
 	}
