@@ -53,7 +53,7 @@ func TestContextConfig_SetValuesFromFile(t *testing.T) {
 	c.SetValuesFromFile(fsutil.ExpandedFilename(test.ConfigFile))
 
 	assert.Equal(t, "/srv/photoprism", c.GetAssetsPath())
-	assert.Equal(t, "/srv/photoprism/cache", c.GetCachePath())
+	assert.Equal(t, "/srv/photoprism/cache", c.CachePath())
 	assert.Equal(t, "/srv/photoprism/cache/thumbnails", c.GetThumbnailsPath())
 	assert.Equal(t, "/srv/photoprism/photos/originals", c.OriginalsPath())
 	assert.Equal(t, "/srv/photoprism/photos/import", c.ImportPath())

@@ -376,14 +376,14 @@ func (c *Config) DatabaseDsn() string {
 	return c.databaseDsn
 }
 
-// GetCachePath returns the path to the cache.
-func (c *Config) GetCachePath() string {
+// CachePath returns the path to the cache.
+func (c *Config) CachePath() string {
 	return c.cachePath
 }
 
 // GetThumbnailsPath returns the path to the cached thumbnails.
 func (c *Config) GetThumbnailsPath() string {
-	return c.GetCachePath() + "/thumbnails"
+	return c.CachePath() + "/thumbnails"
 }
 
 // GetAssetsPath returns the path to the assets.

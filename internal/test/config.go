@@ -45,7 +45,7 @@ func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.ImportPath())
 	os.RemoveAll(c.ExportPath())
 	os.RemoveAll(c.OriginalsPath())
-	os.RemoveAll(c.GetCachePath())
+	os.RemoveAll(c.CachePath())
 }
 
 func (c *Config) DownloadTestData(t *testing.T) {
@@ -233,14 +233,14 @@ func (c *Config) DatabaseDsn() string {
 	return DatabaseDsn
 }
 
-// GetCachePath returns the path to the cache.
-func (c *Config) GetCachePath() string {
+// CachePath returns the path to the cache.
+func (c *Config) CachePath() string {
 	return CachePath
 }
 
 // GetThumbnailsPath returns the path to the cached thumbnails.
 func (c *Config) GetThumbnailsPath() string {
-	return c.GetCachePath() + "/thumbnails"
+	return c.CachePath() + "/thumbnails"
 }
 
 // GetAssetsPath returns the path to the assets.
