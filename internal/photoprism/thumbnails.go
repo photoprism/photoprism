@@ -69,7 +69,7 @@ func (m *MediaFile) CreateThumbnail(filename string, size int) (result *MediaFil
 	img, err := imaging.Open(m.filename, imaging.AutoOrientation(true))
 
 	if err != nil {
-		log.Printf("open failed: %s", err.Error())
+		log.Printf("can't open original: %s", err.Error())
 		return nil, err
 	}
 
@@ -78,7 +78,7 @@ func (m *MediaFile) CreateThumbnail(filename string, size int) (result *MediaFil
 	err = imaging.Save(img, filename)
 
 	if err != nil {
-		log.Fatalf("failed to save img: %v", err)
+		log.Fatalf("failed to save thumbnail: %v", err)
 		return nil, err
 	}
 
@@ -108,7 +108,7 @@ func (m *MediaFile) CreateSquareThumbnail(filename string, size int) (result *Me
 	img, err := imaging.Open(m.filename, imaging.AutoOrientation(true))
 
 	if err != nil {
-		log.Printf("open failed: %s", err.Error())
+		log.Printf("can't open original: %s", err.Error())
 		return nil, err
 	}
 
@@ -117,7 +117,7 @@ func (m *MediaFile) CreateSquareThumbnail(filename string, size int) (result *Me
 	err = imaging.Save(img, filename)
 
 	if err != nil {
-		log.Fatalf("failed to save img: %v", err)
+		log.Fatalf("failed to save thumbnail: %v", err)
 		return nil, err
 	}
 
