@@ -37,7 +37,7 @@ func (a TensorFlowLabels) Len() int           { return len(a) }
 func (a TensorFlowLabels) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a TensorFlowLabels) Less(i, j int) bool { return a[i].Probability > a[j].Probability }
 
-// GetImageTagsFromFile returns a slice of tags given a mediafile filename.
+// GetImageTagsFromFile returns tags for a jpeg image file.
 func (t *TensorFlow) GetImageTagsFromFile(filename string) (result []TensorFlowLabel, err error) {
 	imageBuffer, err := ioutil.ReadFile(filename)
 
@@ -48,7 +48,7 @@ func (t *TensorFlow) GetImageTagsFromFile(filename string) (result []TensorFlowL
 	return t.GetImageTags(string(imageBuffer))
 }
 
-// GetImageTags returns the tags for a given image.
+// GetImageTags returns tags for a jpeg image string.
 func (t *TensorFlow) GetImageTags(image string) (result []TensorFlowLabel, err error) {
 	if err := t.loadModel(); err != nil {
 		return nil, err
@@ -161,8 +161,9 @@ func (t *TensorFlow) makeTensorFromImage(image string, imageFormat string) (*tf.
 	return normalized[0], nil
 }
 
-// Creates a graph to decode, rezise and normalize an image
-func (t *TensorFlow) makeTransformImageGraph(imageFormat string) (graph *tf.Graph, input, output tf.Output, err error) {
+// Creates a graph to decode, resize and normalize an image
+func (t *TensorFlow) makeTransformImageGraph(imageFormat string) (
+		graph *tf.Graph, input, output tf.Output, err error) {
 	const (
 		H, W  = 224, 224
 		Mean  = float32(117)
