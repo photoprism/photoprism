@@ -15,7 +15,7 @@ func TestCreateThumbnailsFromOriginals(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(conf.GetTensorFlowModelPath())
+	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
 
 	indexer := NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
 

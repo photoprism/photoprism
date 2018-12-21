@@ -233,7 +233,7 @@ func (c *Config) CreateDirectories() error {
 		return err
 	}
 
-	if err := os.MkdirAll(c.GetTensorFlowModelPath(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.TensorFlowModelPath(), os.ModePerm); err != nil {
 		return err
 	}
 
@@ -391,8 +391,8 @@ func (c *Config) AssetsPath() string {
 	return c.assetsPath
 }
 
-// GetTensorFlowModelPath returns the tensorflow model path.
-func (c *Config) GetTensorFlowModelPath() string {
+// TensorFlowModelPath returns the tensorflow model path.
+func (c *Config) TensorFlowModelPath() string {
 	return c.AssetsPath() + "/tensorflow"
 }
 

@@ -12,7 +12,7 @@ func TestTensorFlow_GetImageTagsFromFile(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(conf.GetTensorFlowModelPath())
+	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
 
 	result, err := tensorFlow.GetImageTagsFromFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
 
