@@ -63,4 +63,40 @@ var GlobalFlags = []cli.Flag{
 		Value:  "root:@tcp(localhost:4000)/photoprism?parseTime=true",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
+	cli.IntFlag{
+		Name:   "http-port, p",
+		Usage:  "HTTP server port",
+		Value:  80,
+		EnvVar: "PHOTOPRISM_HTTP_PORT",
+	},
+	cli.StringFlag{
+		Name:   "http-host, i",
+		Usage:  "HTTP server host",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_HTTP_HOST",
+	},
+	cli.StringFlag{
+		Name:   "http-mode, m",
+		Usage:  "debug, release or test",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_HTTP_MODE",
+	},
+	cli.IntFlag{
+		Name:   "sql-port, s",
+		Usage:  "SQL server port",
+		Value:  4000,
+		EnvVar: "PHOTOPRISM_SQL_PORT",
+	},
+	cli.StringFlag{
+		Name:   "sql-host",
+		Usage:  "SQL server host",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_SQL_HOST",
+	},
+	cli.StringFlag{
+		Name:   "sql-path",
+		Usage:  "SQL server storage path",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_SQL_PATH",
+	},
 }

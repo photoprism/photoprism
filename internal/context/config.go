@@ -180,28 +180,28 @@ func (c *Config) SetValuesFromCliContext(ctx *cli.Context) error {
 		c.databaseDsn = ctx.GlobalString("database-dsn")
 	}
 
-	if ctx.IsSet("sql-host") || c.sqlServerHost == "" {
-		c.sqlServerHost = ctx.String("sql-host")
+	if ctx.GlobalIsSet("sql-host") || c.sqlServerHost == "" {
+		c.sqlServerHost = ctx.GlobalString("sql-host")
 	}
 
-	if ctx.IsSet("sql-port") || c.sqlServerPort == 0 {
-		c.sqlServerPort = ctx.Uint("sql-port")
+	if ctx.GlobalIsSet("sql-port") || c.sqlServerPort == 0 {
+		c.sqlServerPort = ctx.GlobalUint("sql-port")
 	}
 
-	if ctx.IsSet("sql-path") || c.sqlServerPath == "" {
-		c.sqlServerPath = ctx.String("sql-path")
+	if ctx.GlobalIsSet("sql-path") || c.sqlServerPath == "" {
+		c.sqlServerPath = ctx.GlobalString("sql-path")
 	}
 
-	if ctx.IsSet("http-host") || c.httpServerHost == "" {
-		c.httpServerHost = ctx.String("http-host")
+	if ctx.GlobalIsSet("http-host") || c.httpServerHost == "" {
+		c.httpServerHost = ctx.GlobalString("http-host")
 	}
 
-	if ctx.IsSet("http-port") || c.httpServerPort == 0 {
-		c.httpServerPort = ctx.Int("http-port")
+	if ctx.GlobalIsSet("http-port") || c.httpServerPort == 0 {
+		c.httpServerPort = ctx.GlobalInt("http-port")
 	}
 
-	if ctx.IsSet("http-mode") || c.httpServerMode == "" {
-		c.httpServerMode = ctx.String("http-mode")
+	if ctx.GlobalIsSet("http-mode") || c.httpServerMode == "" {
+		c.httpServerMode = ctx.GlobalString("http-mode")
 	}
 
 	return nil
