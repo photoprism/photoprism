@@ -29,7 +29,7 @@ type Config interface {
 	HttpServerHost() string
 	HttpServerPort() int
 	HttpServerMode() string
-	HttpAssetsPath() string
+	ServerPath() string
 	HttpTemplatesPath() string
 	HttpFaviconsPath() string
 	HttpPublicPath() string

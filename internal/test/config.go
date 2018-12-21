@@ -255,27 +255,27 @@ func (c *Config) TensorFlowModelPath() string {
 
 // SqlServerPath returns the database storage path (e.g. for SQLite or Bleve).
 func (c *Config) SqlServerPath() string {
-	return c.AssetsPath() + "/database"
+	return c.ServerPath() + "/database"
 }
 
-// HttpAssetsPath returns the server assets path (public files, favicons, templates,...).
-func (c *Config) HttpAssetsPath() string {
+// ServerPath returns the server assets path (public files, favicons, templates,...).
+func (c *Config) ServerPath() string {
 	return c.AssetsPath() + "/server"
 }
 
 // HttpTemplatesPath returns the server templates path.
 func (c *Config) HttpTemplatesPath() string {
-	return c.HttpAssetsPath() + "/templates"
+	return c.ServerPath() + "/templates"
 }
 
 // HttpFaviconsPath returns the favicons path.
 func (c *Config) HttpFaviconsPath() string {
-	return c.HttpAssetsPath() + "/favicons"
+	return c.HttpPublicPath() + "/favicons"
 }
 
 // HttpPublicPath returns the public server path (//server/assets/*).
 func (c *Config) HttpPublicPath() string {
-	return c.HttpAssetsPath() + "/public"
+	return c.ServerPath() + "/public"
 }
 
 // HttpPublicBuildPath returns the public build path (//server/assets/build/*).

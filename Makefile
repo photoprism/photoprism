@@ -12,8 +12,8 @@ install-bin:
 install-assets:
 	mkdir -p /srv/photoprism/photos
 	mkdir -p /srv/photoprism/cache
-	mkdir -p /srv/photoprism/database
-	cp -r assets/server /srv/photoprism
+	mkdir -p /srv/photoprism/server/database
+	cp -r assets/server/public assets/server/templates /srv/photoprism/server
 	cp -r assets/tensorflow /srv/photoprism
 	find /srv/photoprism -name '.*' -type f -delete
 install-config:

@@ -35,17 +35,17 @@ type Config struct {
 	appCopyright   string
 	debug          bool
 	configFile     string
-	sqlServerHost  string
-	sqlServerPort  uint
-	dbServerPath   string
-	httpServerHost string
-	httpServerPort int
-	serverMode     string
 	assetsPath     string
 	cachePath      string
 	originalsPath  string
 	importPath     string
 	exportPath     string
+	sqlServerHost  string
+	sqlServerPort  uint
+	sqlServerPath  string
+	httpServerHost string
+	httpServerPort int
+	httpServerMode string
 	darktableCli   string
 	databaseDriver string
 	databaseDsn    string
@@ -90,8 +90,8 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 		c.sqlServerPort = uint(sqlServerPort)
 	}
 
-	if dbServerPath, err := yamlConfig.Get("db-path"); err == nil {
-		c.dbServerPath = dbServerPath
+	if sqlServerPath, err := yamlConfig.Get("sql-path"); err == nil {
+		c.sqlServerPath = sqlServerPath
 	}
 
 	if httpServerHost, err := yamlConfig.Get("http-host"); err == nil {
@@ -103,7 +103,7 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 	}
 
 	if serverMode, err := yamlConfig.Get("http-mode"); err == nil {
-		c.serverMode = serverMode
+		c.httpServerMode = serverMode
 	}
 
 	if assetsPath, err := yamlConfig.Get("assets-path"); err == nil {
@@ -188,8 +188,8 @@ func (c *Config) SetValuesFromCliContext(ctx *cli.Context) error {
 		c.sqlServerPort = ctx.Uint("sql-port")
 	}
 
-	if ctx.IsSet("db-path") || c.dbServerPath == "" {
-		c.dbServerPath = ctx.String("db-path")
+	if ctx.IsSet("sql-path") || c.sqlServerPath == "" {
+		c.sqlServerPath = ctx.String("sql-path")
 	}
 
 	if ctx.IsSet("http-host") || c.httpServerHost == "" {
@@ -200,8 +200,8 @@ func (c *Config) SetValuesFromCliContext(ctx *cli.Context) error {
 		c.httpServerPort = ctx.Int("http-port")
 	}
 
-	if ctx.IsSet("http-mode") || c.serverMode == "" {
-		c.serverMode = ctx.String("http-mode")
+	if ctx.IsSet("http-mode") || c.httpServerMode == "" {
+		c.httpServerMode = ctx.String("http-mode")
 	}
 
 	return nil
@@ -331,6 +331,15 @@ func (c *Config) SqlServerPort() uint {
 	return c.sqlServerPort
 }
 
+// SqlServerPath returns the database storage path for TiDB.
+func (c *Config) SqlServerPath() string {
+	if c.sqlServerPath != "" {
+		return c.sqlServerPath
+	}
+
+	return c.ServerPath() + "/database"
+}
+
 // HttpServerHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
 func (c *Config) HttpServerHost() string {
 	return c.httpServerHost
@@ -343,7 +352,7 @@ func (c *Config) HttpServerPort() int {
 
 // HttpServerMode returns the server mode.
 func (c *Config) HttpServerMode() string {
-	return c.serverMode
+	return c.httpServerMode
 }
 
 // OriginalsPath returns the originals.
@@ -396,29 +405,24 @@ func (c *Config) TensorFlowModelPath() string {
 	return c.AssetsPath() + "/tensorflow"
 }
 
-// SqlServerPath returns the database storage path (e.g. for SQLite or Bleve).
-func (c *Config) SqlServerPath() string {
-	return c.AssetsPath() + "/database"
-}
-
-// HttpAssetsPath returns the server assets path (public files, favicons, templates,...).
-func (c *Config) HttpAssetsPath() string {
+// ServerPath returns the server assets path (public files, favicons, templates,...).
+func (c *Config) ServerPath() string {
 	return c.AssetsPath() + "/server"
 }
 
 // HttpTemplatesPath returns the server templates path.
 func (c *Config) HttpTemplatesPath() string {
-	return c.HttpAssetsPath() + "/templates"
+	return c.ServerPath() + "/templates"
 }
 
 // HttpFaviconsPath returns the favicons path.
 func (c *Config) HttpFaviconsPath() string {
-	return c.HttpAssetsPath() + "/favicons"
+	return c.HttpPublicPath() + "/favicons"
 }
 
 // HttpPublicPath returns the public server path (//server/assets/*).
 func (c *Config) HttpPublicPath() string {
-	return c.HttpAssetsPath() + "/public"
+	return c.ServerPath() + "/public"
 }
 
 // HttpPublicBuildPath returns the public build path (//server/assets/build/*).
