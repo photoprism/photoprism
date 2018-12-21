@@ -109,7 +109,7 @@ func (c *Config) CreateDirectories() error {
 		return err
 	}
 
-	if err := os.MkdirAll(c.GetDatabasePath(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.SqlServerPath(), os.ModePerm); err != nil {
 		return err
 	}
 
@@ -253,8 +253,8 @@ func (c *Config) TensorFlowModelPath() string {
 	return c.AssetsPath() + "/tensorflow"
 }
 
-// GetDatabasePath returns the database storage path (e.g. for SQLite or Bleve).
-func (c *Config) GetDatabasePath() string {
+// SqlServerPath returns the database storage path (e.g. for SQLite or Bleve).
+func (c *Config) SqlServerPath() string {
 	return c.AssetsPath() + "/database"
 }
 

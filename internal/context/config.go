@@ -229,7 +229,7 @@ func (c *Config) CreateDirectories() error {
 		return err
 	}
 
-	if err := os.MkdirAll(c.GetDatabasePath(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.SqlServerPath(), os.ModePerm); err != nil {
 		return err
 	}
 
@@ -263,7 +263,7 @@ func (c *Config) connectToDatabase() error {
 
 	if err != nil || db == nil {
 		if isTiDB {
-			go tidb.Start(c.GetDatabasePath(), 4000, "", c.Debug())
+			go tidb.Start(c.SqlServerPath(), 4000, "", c.Debug())
 		}
 
 		for i := 1; i <= 12; i++ {
@@ -396,8 +396,8 @@ func (c *Config) TensorFlowModelPath() string {
 	return c.AssetsPath() + "/tensorflow"
 }
 
-// GetDatabasePath returns the database storage path (e.g. for SQLite or Bleve).
-func (c *Config) GetDatabasePath() string {
+// SqlServerPath returns the database storage path (e.g. for SQLite or Bleve).
+func (c *Config) SqlServerPath() string {
 	return c.AssetsPath() + "/database"
 }
 

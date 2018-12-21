@@ -24,6 +24,7 @@ type Config interface {
 
 	SqlServerHost() string
 	SqlServerPort() uint
+	SqlServerPath() string
 
 	HttpServerHost() string
 	HttpServerPort() int
@@ -42,7 +43,6 @@ type Config interface {
 	ServerAssetsPath() string
 
 	DarktableCli() string
-	GetDatabasePath() string
 	GetTemplatesPath() string
 	GetFaviconsPath() string
 	GetPublicPath() string
