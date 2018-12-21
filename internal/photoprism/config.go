@@ -15,7 +15,7 @@ type Config interface {
 	Db() *gorm.DB
 	ClientConfig() frontend.Config
 
-	GetConfigFile() string
+	ConfigFile() string
 	GetAppName() string
 	GetAppVersion() string
 	GetAppCopyright() string

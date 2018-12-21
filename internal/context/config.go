@@ -316,8 +316,8 @@ func (c *Config) IsDebug() bool {
 	return c.debug
 }
 
-// GetConfigFile returns the config file name.
-func (c *Config) GetConfigFile() string {
+// ConfigFile returns the config file name.
+func (c *Config) ConfigFile() string {
 	return c.configFile
 }
 
