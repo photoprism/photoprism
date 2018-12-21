@@ -27,6 +27,6 @@ func registerRoutes(app *gin.Engine, conf photoprism.Config) {
 
 	// Default HTML page (client-side routing implemented via Vue.js)
 	app.NoRoute(func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.tmpl", conf.GetClientConfig())
+		c.HTML(http.StatusOK, "index.tmpl", conf.ClientConfig())
 	})
 }

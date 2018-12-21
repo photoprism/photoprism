@@ -449,8 +449,8 @@ func (c *Config) MigrateDb() {
 		&models.Country{})
 }
 
-// GetClientConfig returns a loaded and set configuration entity.
-func (c *Config) GetClientConfig() frontend.Config {
+// ClientConfig returns a loaded and set configuration entity.
+func (c *Config) ClientConfig() frontend.Config {
 	db := c.Db()
 
 	var cameras []*models.Camera

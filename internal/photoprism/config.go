@@ -13,7 +13,7 @@ type Config interface {
 	MigrateDb()
 
 	Db() *gorm.DB
-	GetClientConfig() frontend.Config
+	ClientConfig() frontend.Config
 
 	GetConfigFile() string
 	GetAppName() string
