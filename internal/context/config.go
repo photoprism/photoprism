@@ -38,8 +38,8 @@ type Config struct {
 	sqlServerHost  string
 	sqlServerPort  uint
 	dbServerPath   string
-	serverIP       string
-	serverPort     int
+	httpServerHost string
+	httpServerPort int
 	serverMode     string
 	assetsPath     string
 	cachePath      string
@@ -94,12 +94,12 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 		c.dbServerPath = dbServerPath
 	}
 
-	if serverIP, err := yamlConfig.Get("server-host"); err == nil {
-		c.serverIP = serverIP
+	if httpServerHost, err := yamlConfig.Get("server-host"); err == nil {
+		c.httpServerHost = httpServerHost
 	}
 
-	if serverPort, err := yamlConfig.GetInt("server-port"); err == nil {
-		c.serverPort = int(serverPort)
+	if httpServerPort, err := yamlConfig.GetInt("server-port"); err == nil {
+		c.httpServerPort = int(httpServerPort)
 	}
 
 	if serverMode, err := yamlConfig.Get("server-mode"); err == nil {
@@ -192,12 +192,12 @@ func (c *Config) SetValuesFromCliContext(ctx *cli.Context) error {
 		c.dbServerPath = ctx.String("db-path")
 	}
 
-	if ctx.IsSet("server-host") || c.serverIP == "" {
-		c.serverIP = ctx.String("server-host")
+	if ctx.IsSet("server-host") || c.httpServerHost == "" {
+		c.httpServerHost = ctx.String("server-host")
 	}
 
-	if ctx.IsSet("server-port") || c.serverPort == 0 {
-		c.serverPort = ctx.Int("server-port")
+	if ctx.IsSet("server-port") || c.httpServerPort == 0 {
+		c.httpServerPort = ctx.Int("server-port")
 	}
 
 	if ctx.IsSet("server-mode") || c.serverMode == "" {
@@ -333,12 +333,12 @@ func (c *Config) SqlServerPort() uint {
 
 // HttpServerHost returns the server host name or IP address (empty for all interfaces).
 func (c *Config) HttpServerHost() string {
-	return c.serverIP
+	return c.httpServerHost
 }
 
 // GetServerPort returns the server port.
 func (c *Config) GetServerPort() int {
-	return c.serverPort
+	return c.httpServerPort
 }
 
 // GetServerMode returns the server mode.
