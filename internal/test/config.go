@@ -258,24 +258,24 @@ func (c *Config) GetDatabasePath() string {
 	return c.AssetsPath() + "/database"
 }
 
-// GetServerAssetsPath returns the server assets path (public files, favicons, templates,...).
-func (c *Config) GetServerAssetsPath() string {
+// ServerAssetsPath returns the server assets path (public files, favicons, templates,...).
+func (c *Config) ServerAssetsPath() string {
 	return c.AssetsPath() + "/server"
 }
 
 // GetTemplatesPath returns the server templates path.
 func (c *Config) GetTemplatesPath() string {
-	return c.GetServerAssetsPath() + "/templates"
+	return c.ServerAssetsPath() + "/templates"
 }
 
 // GetFaviconsPath returns the favicons path.
 func (c *Config) GetFaviconsPath() string {
-	return c.GetServerAssetsPath() + "/favicons"
+	return c.ServerAssetsPath() + "/favicons"
 }
 
 // GetPublicPath returns the public server path (//server/assets/*).
 func (c *Config) GetPublicPath() string {
-	return c.GetServerAssetsPath() + "/public"
+	return c.ServerAssetsPath() + "/public"
 }
 
 // GetPublicBuildPath returns the public build path (//server/assets/build/*).

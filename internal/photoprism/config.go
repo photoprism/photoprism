@@ -32,17 +32,17 @@ type Config interface {
 	DatabaseDriver() string
 	DatabaseDsn() string
 
+	AssetsPath() string
 	OriginalsPath() string
 	ImportPath() string
 	ExportPath() string
 	CachePath() string
 	ThumbnailsPath() string
-	AssetsPath() string
 	TensorFlowModelPath() string
+	ServerAssetsPath() string
 
 	DarktableCli() string
 	GetDatabasePath() string
-	GetServerAssetsPath() string
 	GetTemplatesPath() string
 	GetFaviconsPath() string
 	GetPublicPath() string
