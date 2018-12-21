@@ -16,7 +16,7 @@ type Config interface {
 	ClientConfig() frontend.Config
 
 	ConfigFile() string
-	GetAppName() string
+	AppName() string
 	GetAppVersion() string
 	GetAppCopyright() string
 	IsDebug() bool

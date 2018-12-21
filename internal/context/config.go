@@ -296,8 +296,8 @@ func (c *Config) connectToDatabase() error {
 	return err
 }
 
-// GetAppName returns the application name.
-func (c *Config) GetAppName() string {
+// AppName returns the application name.
+func (c *Config) AppName() string {
 	return c.appName
 }
 
@@ -470,7 +470,7 @@ func (c *Config) ClientConfig() frontend.Config {
 	cssHash := fsutil.Hash(c.GetPublicBuildPath() + "/app.css")
 
 	result := frontend.Config{
-		"appName":    c.GetAppName(),
+		"appName":    c.AppName(),
 		"appVersion": c.GetAppVersion(),
 		"debug":      c.IsDebug(),
 		"cameras":    cameras,
