@@ -406,8 +406,8 @@ func (c *Config) ServerAssetsPath() string {
 	return c.AssetsPath() + "/server"
 }
 
-// GetTemplatesPath returns the server templates path.
-func (c *Config) GetTemplatesPath() string {
+// TemplatesPath returns the server templates path.
+func (c *Config) TemplatesPath() string {
 	return c.ServerAssetsPath() + "/templates"
 }
 
