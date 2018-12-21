@@ -158,13 +158,13 @@ func (c *Config) AppName() string {
 	return "PhotoPrism"
 }
 
-// GetAppVersion returns the application version.
-func (c *Config) GetAppVersion() string {
+// AppVersion returns the application version.
+func (c *Config) AppVersion() string {
 	return "DEVELOPMENT"
 }
 
-// GetAppCopyright returns the application copyright.
-func (c *Config) GetAppCopyright() string {
+// AppCopyright returns the application copyright.
+func (c *Config) AppCopyright() string {
 	return "The PhotoPrism contributors <hello@photoprism.org>"
 }
 
@@ -328,7 +328,7 @@ func (c *Config) ClientConfig() frontend.Config {
 
 	result := frontend.Config{
 		"appName":    c.AppName(),
-		"appVersion": c.GetAppVersion(),
+		"appVersion": c.AppVersion(),
 		"debug":      c.IsDebug(),
 		"cameras":    cameras,
 		"countries":  countries,

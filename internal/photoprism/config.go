@@ -17,8 +17,8 @@ type Config interface {
 
 	ConfigFile() string
 	AppName() string
-	GetAppVersion() string
-	GetAppCopyright() string
+	AppVersion() string
+	AppCopyright() string
 	IsDebug() bool
 	DbServerIP() string
 	DbServerPort() uint
