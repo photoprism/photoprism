@@ -426,7 +426,7 @@ func (c *Config) GetPublicBuildPath() string {
 	return c.GetPublicPath() + "/build"
 }
 
-// GetDb returns the db connection.
+// Db returns the db connection.
 func (c *Config) Db() *gorm.DB {
 	if c.db == nil {
 		c.connectToDatabase()

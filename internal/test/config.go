@@ -283,7 +283,7 @@ func (c *Config) GetPublicBuildPath() string {
 	return c.GetPublicPath() + "/build"
 }
 
-// GetDb gets a db connection. If it already is estabilished it will return that.
+// Db gets a db connection. If it already is estabilished it will return that.
 func (c *Config) Db() *gorm.DB {
 	if c.db == nil {
 		c.connectToDatabase()
