@@ -16,7 +16,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	converter := NewConverter(conf.GetDarktableCli())
+	converter := NewConverter(conf.DarktableCli())
 
 	jpegFilename := conf.ImportPath() + "/iphone/IMG_6788.JPG"
 
@@ -68,7 +68,7 @@ func TestConverter_ConvertAll(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	converter := NewConverter(conf.GetDarktableCli())
+	converter := NewConverter(conf.DarktableCli())
 
 	converter.ConvertAll(conf.ImportPath())
 

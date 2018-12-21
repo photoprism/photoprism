@@ -14,7 +14,7 @@ func TestNewImporter(t *testing.T) {
 
 	indexer := NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
 
-	converter := NewConverter(conf.GetDarktableCli())
+	converter := NewConverter(conf.DarktableCli())
 
 	importer := NewImporter(conf.OriginalsPath(), indexer, converter)
 
@@ -29,7 +29,7 @@ func TestImporter_GetDestinationFilename(t *testing.T) {
 
 	indexer := NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
 
-	converter := NewConverter(conf.GetDarktableCli())
+	converter := NewConverter(conf.DarktableCli())
 
 	importer := NewImporter(conf.OriginalsPath(), indexer, converter)
 

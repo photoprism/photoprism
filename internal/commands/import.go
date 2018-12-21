@@ -31,7 +31,7 @@ func importAction(ctx *cli.Context) error {
 
 	indexer := photoprism.NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
 
-	converter := photoprism.NewConverter(conf.GetDarktableCli())
+	converter := photoprism.NewConverter(conf.DarktableCli())
 
 	importer := photoprism.NewImporter(conf.OriginalsPath(), indexer, converter)
 

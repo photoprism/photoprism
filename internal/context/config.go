@@ -361,8 +361,8 @@ func (c *Config) ExportPath() string {
 	return c.exportPath
 }
 
-// GetDarktableCli returns the darktable-cli binary file name.
-func (c *Config) GetDarktableCli() string {
+// DarktableCli returns the darktable-cli binary file name.
+func (c *Config) DarktableCli() string {
 	return c.darktableCli
 }
 

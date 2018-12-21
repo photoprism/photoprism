@@ -10,7 +10,7 @@ import (
 func TestNewConverter(t *testing.T) {
 	conf := test.NewConfig()
 
-	converter := NewConverter(conf.GetDarktableCli())
+	converter := NewConverter(conf.DarktableCli())
 
 	assert.IsType(t, &Converter{}, converter)
 }

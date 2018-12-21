@@ -20,7 +20,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("NAME                  VALUE\n")
 	fmt.Printf("debug                 %t\n", conf.Debug())
 	fmt.Printf("config-file           %s\n", conf.ConfigFile())
-	fmt.Printf("darktable-cli         %s\n", conf.GetDarktableCli())
+	fmt.Printf("darktable-cli         %s\n", conf.DarktableCli())
 	fmt.Printf("originals-path        %s\n", conf.OriginalsPath())
 	fmt.Printf("import-path           %s\n", conf.ImportPath())
 	fmt.Printf("export-path           %s\n", conf.ExportPath())
