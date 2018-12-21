@@ -18,7 +18,7 @@ func Start(conf photoprism.Config) {
 	app := gin.Default()
 
 	// Set template directory
-	app.LoadHTMLGlob(conf.TemplatesPath() + "/*")
+	app.LoadHTMLGlob(conf.HttpTemplatesPath() + "/*")
 
 	registerRoutes(app, conf)
 

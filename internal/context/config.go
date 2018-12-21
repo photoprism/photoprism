@@ -237,7 +237,7 @@ func (c *Config) CreateDirectories() error {
 		return err
 	}
 
-	if err := os.MkdirAll(c.GetPublicBuildPath(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.HttpPublicBuildPath(), os.ModePerm); err != nil {
 		return err
 	}
 
@@ -401,29 +401,29 @@ func (c *Config) SqlServerPath() string {
 	return c.AssetsPath() + "/database"
 }
 
-// ServerAssetsPath returns the server assets path (public files, favicons, templates,...).
-func (c *Config) ServerAssetsPath() string {
+// HttpAssetsPath returns the server assets path (public files, favicons, templates,...).
+func (c *Config) HttpAssetsPath() string {
 	return c.AssetsPath() + "/server"
 }
 
-// TemplatesPath returns the server templates path.
-func (c *Config) TemplatesPath() string {
-	return c.ServerAssetsPath() + "/templates"
+// HttpTemplatesPath returns the server templates path.
+func (c *Config) HttpTemplatesPath() string {
+	return c.HttpAssetsPath() + "/templates"
 }
 
-// FaviconsPath returns the favicons path.
-func (c *Config) FaviconsPath() string {
-	return c.ServerAssetsPath() + "/favicons"
+// HttpFaviconsPath returns the favicons path.
+func (c *Config) HttpFaviconsPath() string {
+	return c.HttpAssetsPath() + "/favicons"
 }
 
-// GetPublicPath returns the public server path (//server/assets/*).
-func (c *Config) GetPublicPath() string {
-	return c.ServerAssetsPath() + "/public"
+// HttpPublicPath returns the public server path (//server/assets/*).
+func (c *Config) HttpPublicPath() string {
+	return c.HttpAssetsPath() + "/public"
 }
 
-// GetPublicBuildPath returns the public build path (//server/assets/build/*).
-func (c *Config) GetPublicBuildPath() string {
-	return c.GetPublicPath() + "/build"
+// HttpPublicBuildPath returns the public build path (//server/assets/build/*).
+func (c *Config) HttpPublicBuildPath() string {
+	return c.HttpPublicPath() + "/build"
 }
 
 // Db returns the db connection.
@@ -466,8 +466,8 @@ func (c *Config) ClientConfig() frontend.Config {
 
 	db.Where("deleted_at IS NULL").Limit(1000).Order("camera_model").Find(&cameras)
 
-	jsHash := fsutil.Hash(c.GetPublicBuildPath() + "/app.js")
-	cssHash := fsutil.Hash(c.GetPublicBuildPath() + "/app.css")
+	jsHash := fsutil.Hash(c.HttpPublicBuildPath() + "/app.js")
+	cssHash := fsutil.Hash(c.HttpPublicBuildPath() + "/app.css")
 
 	result := frontend.Config{
 		"appName":    c.AppName(),

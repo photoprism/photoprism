@@ -29,6 +29,11 @@ type Config interface {
 	HttpServerHost() string
 	HttpServerPort() int
 	HttpServerMode() string
+	HttpAssetsPath() string
+	HttpTemplatesPath() string
+	HttpFaviconsPath() string
+	HttpPublicPath() string
+	HttpPublicBuildPath() string
 
 	DatabaseDriver() string
 	DatabaseDsn() string
@@ -40,11 +45,6 @@ type Config interface {
 	CachePath() string
 	ThumbnailsPath() string
 	TensorFlowModelPath() string
-	ServerAssetsPath() string
-	TemplatesPath() string
-	FaviconsPath() string
 
 	DarktableCli() string
-	GetPublicPath() string
-	GetPublicBuildPath() string
 }
