@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/frontend"
 )
 
-// Todo: Remove Get prefix, see https://golang.org/doc/effective_go.html#Getters
+// Config interface implemented in context (cli) and test packages
 type Config interface {
 	Debug() bool
 	Db() *gorm.DB
