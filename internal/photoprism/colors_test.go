@@ -12,7 +12,7 @@ func TestMediaFile_GetColors(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	if mediaFile1, err := NewMediaFile(conf.GetImportPath() + "/dog.jpg"); err == nil {
+	if mediaFile1, err := NewMediaFile(conf.ImportPath() + "/dog.jpg"); err == nil {
 		names, vibrantHex, mutedHex := mediaFile1.GetColors()
 
 		t.Log(names, vibrantHex, mutedHex)

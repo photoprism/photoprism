@@ -14,7 +14,7 @@ func TestMediaFile_GetExifData_Slow(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	image2, err := NewMediaFile(conf.GetImportPath() + "/raw/IMG_1435.CR2")
+	image2, err := NewMediaFile(conf.ImportPath() + "/raw/IMG_1435.CR2")
 
 	assert.Nil(t, err)
 

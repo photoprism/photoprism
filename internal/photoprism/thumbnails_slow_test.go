@@ -23,7 +23,7 @@ func TestCreateThumbnailsFromOriginals(t *testing.T) {
 
 	importer := NewImporter(conf.OriginalsPath(), indexer, converter)
 
-	importer.ImportPhotosFromDirectory(conf.GetImportPath())
+	importer.ImportPhotosFromDirectory(conf.ImportPath())
 
 	CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.GetThumbnailsPath(), 600, false)
 

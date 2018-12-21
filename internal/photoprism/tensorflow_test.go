@@ -14,7 +14,7 @@ func TestTensorFlow_GetImageTagsFromFile(t *testing.T) {
 
 	tensorFlow := NewTensorFlow(conf.GetTensorFlowModelPath())
 
-	result, err := tensorFlow.GetImageTagsFromFile(conf.GetImportPath() + "/iphone/IMG_6788.JPG")
+	result, err := tensorFlow.GetImageTagsFromFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
 
 	assert.NotNil(t, result)
 	assert.Nil(t, err)

@@ -33,7 +33,7 @@ func TestImporter_GetDestinationFilename(t *testing.T) {
 
 	importer := NewImporter(conf.OriginalsPath(), indexer, converter)
 
-	rawFile, err := NewMediaFile(conf.GetImportPath() + "/raw/IMG_1435.CR2")
+	rawFile, err := NewMediaFile(conf.ImportPath() + "/raw/IMG_1435.CR2")
 
 	assert.Nil(t, err)
 

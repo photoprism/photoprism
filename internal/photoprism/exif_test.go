@@ -12,7 +12,7 @@ func TestMediaFile_GetExifData(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	image1, err := NewMediaFile(conf.GetImportPath() + "/iphone/IMG_6788.JPG")
+	image1, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
 
 	assert.Nil(t, err)
 

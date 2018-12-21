@@ -33,7 +33,7 @@ type Config interface {
 	DatabaseDsn() string
 
 	OriginalsPath() string
-	GetImportPath() string
+	ImportPath() string
 	GetExportPath() string
 	GetDarktableCli() string
 	GetCachePath() string

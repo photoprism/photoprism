@@ -25,7 +25,7 @@ func importAction(ctx *cli.Context) error {
 
 	conf.MigrateDb()
 
-	fmt.Printf("Importing photos from %s...\n", conf.GetImportPath())
+	fmt.Printf("Importing photos from %s...\n", conf.ImportPath())
 
 	tensorFlow := photoprism.NewTensorFlow(conf.GetTensorFlowModelPath())
 
@@ -35,7 +35,7 @@ func importAction(ctx *cli.Context) error {
 
 	importer := photoprism.NewImporter(conf.OriginalsPath(), indexer, converter)
 
-	importer.ImportPhotosFromDirectory(conf.GetImportPath())
+	importer.ImportPhotosFromDirectory(conf.ImportPath())
 
 	fmt.Println("Done.")
 

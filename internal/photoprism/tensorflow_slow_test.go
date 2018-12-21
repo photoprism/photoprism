@@ -17,7 +17,7 @@ func TestTensorFlow_GetImageTags(t *testing.T) {
 
 	tensorFlow := NewTensorFlow(conf.GetTensorFlowModelPath())
 
-	if imageBuffer, err := ioutil.ReadFile(conf.GetImportPath() + "/iphone/IMG_6788.JPG"); err != nil {
+	if imageBuffer, err := ioutil.ReadFile(conf.ImportPath() + "/iphone/IMG_6788.JPG"); err != nil {
 		t.Error(err)
 	} else {
 		result, err := tensorFlow.GetImageTags(string(imageBuffer))

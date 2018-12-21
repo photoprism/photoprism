@@ -217,7 +217,7 @@ func (c *Config) CreateDirectories() error {
 		return err
 	}
 
-	if err := os.MkdirAll(c.GetImportPath(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.ImportPath(), os.ModePerm); err != nil {
 		return err
 	}
 
@@ -351,8 +351,8 @@ func (c *Config) OriginalsPath() string {
 	return c.originalsPath
 }
 
-// GetImportPath returns the import directory.
-func (c *Config) GetImportPath() string {
+// ImportPath returns the import directory.
+func (c *Config) ImportPath() string {
 	return c.importPath
 }
 
