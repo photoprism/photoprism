@@ -128,7 +128,7 @@ func (c *Config) CreateDirectories() error {
 // It tries to do this 12 times with a 5 second sleep intervall in between.
 func (c *Config) connectToDatabase() error {
 	dbDriver := c.DatabaseDriver()
-	dbDsn := c.GetDatabaseDsn()
+	dbDsn := c.DatabaseDsn()
 
 	db, err := gorm.Open(dbDriver, dbDsn)
 
@@ -228,8 +228,8 @@ func (c *Config) DatabaseDriver() string {
 	return DatabaseDriver
 }
 
-// GetDatabaseDsn returns the database data source name (DSN).
-func (c *Config) GetDatabaseDsn() string {
+// DatabaseDsn returns the database data source name (DSN).
+func (c *Config) DatabaseDsn() string {
 	return DatabaseDsn
 }
 

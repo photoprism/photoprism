@@ -249,7 +249,7 @@ func (c *Config) CreateDirectories() error {
 // It tries to do this 12 times with a 5 second sleep interval in between.
 func (c *Config) connectToDatabase() error {
 	dbDriver := c.DatabaseDriver()
-	dbDsn := c.GetDatabaseDsn()
+	dbDsn := c.DatabaseDsn()
 
 	isTiDB := false
 	initSuccess := false
@@ -371,8 +371,8 @@ func (c *Config) DatabaseDriver() string {
 	return c.databaseDriver
 }
 
-// GetDatabaseDsn returns the database data source name (DSN).
-func (c *Config) GetDatabaseDsn() string {
+// DatabaseDsn returns the database data source name (DSN).
+func (c *Config) DatabaseDsn() string {
 	return c.databaseDsn
 }
 

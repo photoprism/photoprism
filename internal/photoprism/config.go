@@ -30,7 +30,7 @@ type Config interface {
 	HttpServerMode() string
 
 	DatabaseDriver() string
-	GetDatabaseDsn() string
+	DatabaseDsn() string
 	GetOriginalsPath() string
 	GetImportPath() string
 	GetExportPath() string
