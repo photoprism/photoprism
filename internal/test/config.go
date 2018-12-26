@@ -198,9 +198,19 @@ func (c *Config) SqlServerPort() uint {
 	return 4001
 }
 
+// SqlServerPassword returns the password for the built-in database server.
+func (c *Config) SqlServerPassword() string {
+	return "photoprism"
+}
+
 // HttpServerMode returns the server mode.
 func (c *Config) HttpServerMode() string {
 	return "test"
+}
+
+// HttpServerPassword returns the password for the Web UI.
+func (c *Config) HttpServerPassword() string {
+	return ""
 }
 
 // OriginalsPath returns the originals.

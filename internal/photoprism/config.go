@@ -25,10 +25,12 @@ type Config interface {
 	SqlServerHost() string
 	SqlServerPort() uint
 	SqlServerPath() string
+	SqlServerPassword() string
 
 	HttpServerHost() string
 	HttpServerPort() int
 	HttpServerMode() string
+	HttpServerPassword() string
 	HttpTemplatesPath() string
 	HttpFaviconsPath() string
 	HttpPublicPath() string

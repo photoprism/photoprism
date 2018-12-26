@@ -30,26 +30,28 @@ const (
 //
 // See https://github.com/photoprism/photoprism/issues/50#issuecomment-433856358
 type Config struct {
-	appName        string
-	appVersion     string
-	appCopyright   string
-	debug          bool
-	configFile     string
-	assetsPath     string
-	cachePath      string
-	originalsPath  string
-	importPath     string
-	exportPath     string
-	sqlServerHost  string
-	sqlServerPort  uint
-	sqlServerPath  string
-	httpServerHost string
-	httpServerPort int
-	httpServerMode string
-	darktableCli   string
-	databaseDriver string
-	databaseDsn    string
-	db             *gorm.DB
+	appName            string
+	appVersion         string
+	appCopyright       string
+	debug              bool
+	configFile         string
+	assetsPath         string
+	cachePath          string
+	originalsPath      string
+	importPath         string
+	exportPath         string
+	sqlServerHost      string
+	sqlServerPort      uint
+	sqlServerPath      string
+	sqlServerPassword  string
+	httpServerHost     string
+	httpServerPort     int
+	httpServerMode     string
+	httpServerPassword string
+	darktableCli       string
+	databaseDriver     string
+	databaseDsn        string
+	db                 *gorm.DB
 }
 
 // NewConfig() creates a new configuration entity by using two methods:
@@ -90,6 +92,10 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 		c.sqlServerPort = uint(sqlServerPort)
 	}
 
+	if sqlServerPassword, err := yamlConfig.Get("sql-password"); err == nil {
+		c.sqlServerPassword = sqlServerPassword
+	}
+
 	if sqlServerPath, err := yamlConfig.Get("sql-path"); err == nil {
 		c.sqlServerPath = sqlServerPath
 	}
@@ -102,8 +108,12 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 		c.httpServerPort = int(httpServerPort)
 	}
 
-	if serverMode, err := yamlConfig.Get("http-mode"); err == nil {
-		c.httpServerMode = serverMode
+	if httpServerMode, err := yamlConfig.Get("http-mode"); err == nil {
+		c.httpServerMode = httpServerMode
+	}
+
+	if httpServerPassword, err := yamlConfig.Get("http-password"); err == nil {
+		c.httpServerPassword = httpServerPassword
 	}
 
 	if assetsPath, err := yamlConfig.Get("assets-path"); err == nil {
@@ -340,6 +350,11 @@ func (c *Config) SqlServerPath() string {
 	return c.ServerPath() + "/database"
 }
 
+// SqlServerPassword returns the password for the built-in database server.
+func (c *Config) SqlServerPassword() string {
+	return c.sqlServerPassword
+}
+
 // HttpServerHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
 func (c *Config) HttpServerHost() string {
 	return c.httpServerHost
@@ -353,6 +368,11 @@ func (c *Config) HttpServerPort() int {
 // HttpServerMode returns the server mode.
 func (c *Config) HttpServerMode() string {
 	return c.httpServerMode
+}
+
+// HttpServerPassword returns the password for the user interface (optional).
+func (c *Config) HttpServerPassword() string {
+	return c.httpServerPassword
 }
 
 // OriginalsPath returns the originals.

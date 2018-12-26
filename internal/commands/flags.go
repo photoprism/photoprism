@@ -81,22 +81,34 @@ var GlobalFlags = []cli.Flag{
 		Value:  "",
 		EnvVar: "PHOTOPRISM_HTTP_MODE",
 	},
+	cli.StringFlag{
+		Name:   "http-password",
+		Usage:  "HTTP server password (optional)",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_HTTP_PASSWORD",
+	},
 	cli.IntFlag{
 		Name:   "sql-port, s",
-		Usage:  "Built-in SQL server port",
+		Usage:  "built-in SQL server port",
 		Value:  4000,
 		EnvVar: "PHOTOPRISM_SQL_PORT",
 	},
 	cli.StringFlag{
 		Name:   "sql-host",
-		Usage:  "Built-in SQL server host",
+		Usage:  "built-in SQL server host",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_SQL_HOST",
 	},
 	cli.StringFlag{
 		Name:   "sql-path",
-		Usage:  "Built-in SQL server storage path",
+		Usage:  "built-in SQL server storage path",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_SQL_PATH",
+	},
+	cli.StringFlag{
+		Name:   "sql-password",
+		Usage:  "built-in SQL server password",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_SQL_PASSWORD",
 	},
 }
