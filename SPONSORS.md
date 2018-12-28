@@ -12,4 +12,4 @@ Thank you very much! 💎
 Sponsors
 --------
 
-![Your logo could be here](https://dl.photoprism.org/assets/img/sponsor.png)
+[![Liquid Bytes](https://blog.liquidbytes.net/img/logo-retina.png)](https://blog.liquidbytes.net/)
