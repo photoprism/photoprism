@@ -21,18 +21,21 @@ func Exists(filename string) bool {
 
 // Returns full path; ~ replaced with actual home directory
 func ExpandedFilename(filename string) string {
-	usr, _ := user.Current()
-	dir := usr.HomeDir
-
 	if filename == "" {
 		panic("filename was empty")
 	}
 
 	if len(filename) > 2 && filename[:2] == "~/" {
-		filename = filepath.Join(dir, filename[2:])
+		if usr, err := user.Current(); err == nil {
+			filename = filepath.Join(usr.HomeDir, filename[2:])
+		}
 	}
 
-	result, _ := filepath.Abs(filename)
+	result, err := filepath.Abs(filename)
+
+	if err != nil {
+		panic(err)
+	}
 
 	return result
 }
