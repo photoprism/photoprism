@@ -9,7 +9,10 @@ Your support will have significant impact on our [progress](https://github.com/p
 You can [become a sponsor on Patreon](https://www.patreon.com/photoprism), [fund issues](https://issuehunt.io/repos/119160553), [donate via PayPal](https://www.paypal.me/photoprism) or [get in touch with us](mailto:hello@photoprism.org) to discuss further details.
 Thank you very much! 💎
 
-Sponsors
---------
+## Sponsors ##
 
 [![Liquid Bytes](https://blog.liquidbytes.net/img/logo-retina.png)](https://blog.liquidbytes.net/)
+
+## Donations ##
+
+- [David Pennington](https://github.com/Xeoncross)
