@@ -8,12 +8,12 @@ We welcome contributions of any kind including pull requests, ideas, bug reports
 testing, writing documentation, tutorials and blog posts. If you help with development,
 you have the opportunity to learn Docker, Go, TensorFlow and much more.
 
-## Questions?
+## Questions? ##
 
 Join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers)
 to receive regular project updates, get in contact with other contributors and discuss your ideas. Don't be afraid to ask stupid questions.
 
-## Pull requests
+## Pull requests ##
 
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
 [easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
@@ -25,7 +25,7 @@ Our [step-by-step guide](https://github.com/photoprism/photoprism/wiki/Pull-Requ
 
 You'll get a small reward for working on [funded issues](https://github.com/photoprism/photoprism/labels/IssueHunt), see [issuehunt.io](https://issuehunt.io/repos/119160553) for details. Note that issue descriptions may be outdated on their site. Rewards are paid out when all [acceptance criteria](https://github.com/photoprism/photoprism/wiki/Issues#user-stories) prioritized as MUST are met and your pull request was successfully merged.
 
-## Feature requests
+## Feature requests ##
 
 You are welcome to add specific feature requests directly to our [GitHub issue tracker](https://github.com/photoprism/photoprism/issues)
 if no similar [idea](https://github.com/photoprism/photoprism/labels/idea)
@@ -39,7 +39,7 @@ for collecting interesting ideas and feedback, e.g.
 [Concerns](https://github.com/photoprism/photoprism/wiki/Concerns) and
 [Research](https://github.com/photoprism/photoprism/wiki/Research).
 
-## Reporting bugs
+## Reporting bugs ##
 
 Please use the [GitHub issue tracker](https://github.com/photoprism/photoprism/issues) to report clearly identified bugs and impediments to us.
 If you're not sure, start by asking in our [help forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help) or [contact us via email](mailto:help@photoprism.org).
