@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"os/user"
@@ -41,12 +40,8 @@ func ExpandedFilename(filename string) string {
 }
 
 // Extract Zip file in destination directory
-func Unzip(src, dest string) ([]string, error) {
-
-	var fileNames []string
-
+func Unzip(src, dest string) (fileNames []string, err error) {
 	r, err := zip.OpenReader(src)
-
 	if err != nil {
 		return fileNames, err
 	}
@@ -59,56 +54,62 @@ func Unzip(src, dest string) ([]string, error) {
 			continue
 		}
 
-		rc, err := f.Open()
-
+		fn, err := copyToFile(f, dest)
 		if err != nil {
 			return fileNames, err
 		}
 
-		defer rc.Close()
-
-		// Store filename/path for returning and using later on
-		fpath := filepath.Join(dest, f.Name)
-		fileNames = append(fileNames, fpath)
-
-		if f.FileInfo().IsDir() {
-
-			// Make Folder
-			os.MkdirAll(fpath, os.ModePerm)
-
-		} else {
-
-			// Make File
-			var fdir string
-			if lastIndex := strings.LastIndex(fpath, string(os.PathSeparator)); lastIndex > -1 {
-				fdir = fpath[:lastIndex]
-			}
-
-			err = os.MkdirAll(fdir, os.ModePerm)
-			if err != nil {
-				log.Fatal(err)
-				return fileNames, err
-			}
-			f, err := os.OpenFile(
-				fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-			if err != nil {
-				return fileNames, err
-			}
-			defer f.Close()
-
-			_, err = io.Copy(f, rc)
-			if err != nil {
-				return fileNames, err
-			}
-
-		}
+		fileNames = append(fileNames, fn)
 	}
 
 	return fileNames, nil
 }
 
+// copyToFile copies the zip file to destination
+// if the zip file is a directory, a directory is created at the destination.
+func copyToFile(f *zip.File, dest string) (fileName string, err error) {
+	rc, err := f.Open()
+	if err != nil {
+		return fileName, err
+	}
+
+	defer rc.Close()
+
+	// Store filename/path for returning and using later on
+	fileName = filepath.Join(dest, f.Name)
+
+	if f.FileInfo().IsDir() {
+		// Make Folder
+		return fileName, os.MkdirAll(fileName, os.ModePerm)
+	}
+
+	// Make File
+	var fdir string
+	if lastIndex := strings.LastIndex(fileName, string(os.PathSeparator)); lastIndex > -1 {
+		fdir = fileName[:lastIndex]
+	}
+
+	err = os.MkdirAll(fdir, os.ModePerm)
+	if err != nil {
+		return fileName, err
+	}
+
+	fd, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+	if err != nil {
+		return fileName, err
+	}
+
+	defer fd.Close()
+	_, err = io.Copy(fd, rc)
+	if err != nil {
+		return fileName, err
+	}
+
+	return fileName, nil
+}
+
 // Download a file from a URL
-func Download(filepath string, url string) (err error) {
+func Download(filepath string, url string) error {
 	os.MkdirAll("/tmp/photoprism", os.ModePerm)
 
 	// Create the file
