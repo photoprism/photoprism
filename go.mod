@@ -48,15 +48,11 @@ require (
 	github.com/myesui/uuid v1.0.0 // indirect
 	github.com/onsi/gomega v1.4.3 // indirect
 	github.com/opentracing/opentracing-go v1.0.2
-	github.com/pingcap/check v0.0.0-20171206051426-1c287c953996
 	github.com/pingcap/errors v0.11.0
-	github.com/pingcap/goleveldb v0.0.0-20171020084629-8d44bfdf1030
-	github.com/pingcap/kvproto v0.0.0-20181109035735-8e3f33ac4929
 	github.com/pingcap/parser v0.0.0-20181207085916-6c21d4344dfa
 	github.com/pingcap/pd v2.1.0-rc.4+incompatible
 	github.com/pingcap/tidb v0.0.0-20181212102244-990f859384b8
 	github.com/pingcap/tidb-tools v0.0.0-20181112132202-4860a0d5de03
-	github.com/pingcap/tipb v0.0.0-20180910045846-371b48b15d93
 	github.com/pkg/errors v0.8.0
 	github.com/prometheus/client_golang v0.9.2
 	github.com/prometheus/common v0.0.0-20181218105931-67670fe90761 // indirect
@@ -72,8 +68,6 @@ require (
 	github.com/tensorflow/tensorflow v1.12.0
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6 // indirect
 	github.com/twinj/uuid v1.0.0 // indirect
-	github.com/uber-go/atomic v1.3.2 // indirect
-	github.com/uber/jaeger-client-go v2.8.0+incompatible
 	github.com/unrolled/render v0.0.0-20181210145518-4c664cb3ad2f // indirect
 	github.com/urfave/cli v1.20.0
 	go.uber.org/atomic v1.3.2 // indirect
