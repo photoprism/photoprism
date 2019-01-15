@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/araddon/dateparse"
 	"github.com/photoprism/photoprism/internal/context"
@@ -42,7 +41,7 @@ func exportAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 
 	if err := conf.CreateDirectories(); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	before := ctx.String("before")

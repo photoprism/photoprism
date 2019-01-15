@@ -374,7 +374,7 @@ func (m *MediaFile) GetRelatedFiles() (result MediaFiles, mainFile *MediaFile, e
 			mainFile = resultFile
 		} else if resultFile.IsRaw() {
 			mainFile = resultFile
-		} else if resultFile.IsJpeg() && resultFile.IsJpeg() && len(mainFile.GetFilename()) > len(resultFile.GetFilename()) {
+		} else if resultFile.IsJpeg() && len(mainFile.GetFilename()) > len(resultFile.GetFilename()) {
 			mainFile = resultFile
 		}
 

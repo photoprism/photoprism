@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -20,7 +19,7 @@ func convertAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 
 	if err := conf.CreateDirectories(); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	fmt.Printf("Converting RAW images in %s to JPEG...\n", conf.OriginalsPath())

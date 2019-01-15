@@ -117,7 +117,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 		Group("photos.id, files.id")
 
 	if form.Query != "" {
-		likeString := "%"+strings.ToLower(form.Query)+"%"
+		likeString := "%" + strings.ToLower(form.Query) + "%"
 		q = q.Where("tags.tag_label LIKE ? OR LOWER(photo_title) LIKE ?", likeString, likeString)
 	}
 
@@ -201,7 +201,6 @@ func (s *Search) FindFileByID(id string) (file models.File) {
 // FindFileByHash finds a file with a given hash string.
 func (s *Search) FindFileByHash(fileHash string) (file models.File) {
 	s.db.Where("file_hash = ?", fileHash).First(&file)
-
 	return file
 }
 
