@@ -24,7 +24,6 @@ func FindOriginalsByDate(originalsPath string, after time.Time, before time.Time
 		}
 
 		mediaFile, err := NewMediaFile(filename)
-
 		if err != nil || !mediaFile.IsJpeg() {
 			return nil
 		}

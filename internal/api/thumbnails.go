@@ -26,45 +26,45 @@ func GetThumbnail(router *gin.RouterGroup, conf photoprism.Config) {
 		fileHash := c.Param("hash")
 		thumbnailType := c.Param("type")
 		size, err := strconv.Atoi(c.Param("size"))
-
 		if err != nil {
 			log.Printf("invalid size: %s", c.Param("size"))
 			c.Data(400, "image/svg+xml", photoIconSvg)
+			return
 		}
 
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-
 		file := search.FindFileByHash(fileHash)
-
 		fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
 
-		if mediaFile, err := photoprism.NewMediaFile(fileName); err == nil {
-			switch thumbnailType {
-			case "fit":
-				if thumbnail, err := mediaFile.GetThumbnail(conf.ThumbnailsPath(), size); err == nil {
-					c.File(thumbnail.GetFilename())
-				} else {
-					log.Printf("could not create thumbnail: %s", err.Error())
-					c.Data(400, "image/svg+xml", photoIconSvg)
-				}
-			case "square":
-				if thumbnail, err := mediaFile.GetSquareThumbnail(conf.ThumbnailsPath(), size); err == nil {
-					c.File(thumbnail.GetFilename())
-				} else {
-					log.Printf("could not create square thumbnail: %s", err.Error())
-					c.Data(400, "image/svg+xml", photoIconSvg)
-				}
-			default:
-				log.Printf("unknown thumbnail type: %s", thumbnailType)
-				c.Data(400, "image/svg+xml", photoIconSvg)
-			}
-		} else {
+		mediaFile, err := photoprism.NewMediaFile(fileName)
+		if err != nil {
 			log.Printf("could not find image for thumbnail: %s", err.Error())
 			c.Data(404, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			file.FileMissing = true
 			conf.Db().Save(&file)
+			return
+		}
+
+		switch thumbnailType {
+		case "fit":
+			if thumbnail, err := mediaFile.GetThumbnail(conf.ThumbnailsPath(), size); err == nil {
+				c.File(thumbnail.GetFilename())
+			} else {
+				log.Printf("could not create thumbnail: %s", err.Error())
+				c.Data(400, "image/svg+xml", photoIconSvg)
+			}
+		case "square":
+			if thumbnail, err := mediaFile.GetSquareThumbnail(conf.ThumbnailsPath(), size); err == nil {
+				c.File(thumbnail.GetFilename())
+			} else {
+				log.Printf("could not create square thumbnail: %s", err.Error())
+				c.Data(400, "image/svg+xml", photoIconSvg)
+			}
+		default:
+			log.Printf("unknown thumbnail type: %s", thumbnailType)
+			c.Data(400, "image/svg+xml", photoIconSvg)
 		}
 	})
 }
