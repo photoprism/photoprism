@@ -52,9 +52,9 @@ func GetPhotos(router *gin.RouterGroup, conf photoprism.Config) {
 // Parameters:
 //   id: int Photo ID as returned by the API
 func LikePhoto(router *gin.RouterGroup, conf photoprism.Config) {
-	router.POST("/photos/:photoID/like", func(c *gin.Context) {
+	router.POST("/photos/:id/like", func(c *gin.Context) {
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		photoID, err := strconv.ParseUint(c.Param("photoID"), 10, 64)
+		photoID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
 			log.Printf("could not find image for id: %s", err.Error())
 			c.Data(http.StatusNotFound, "image", []byte(""))
