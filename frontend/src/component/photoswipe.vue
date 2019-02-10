@@ -81,28 +81,82 @@
             images: Array
         },
         methods: {
+            createPhotoSizes(photo) {
+                const createPhotoSize = height => ({
+                    src: photo.getThumbnailUrl('fit', height),
+                    w: photo.calculateWidth(height),
+                    h: height,
+                    title: photo.PhotoTitle
+                });
+
+                return {
+                    xxs: createPhotoSize(320),
+                    xs: createPhotoSize(500),
+                    s: createPhotoSize(720),
+                    m: createPhotoSize(1280),
+                    l: createPhotoSize(1920),
+                    xl: createPhotoSize(2560),
+                    xxl: createPhotoSize(3840)
+                }
+            },
+
+            mapViewportToImageSize(viewportWidth, viewportHeight, item) {
+                for (const [sizeKey, photo] of Object.entries(item)) {
+                    if (photo.w > viewportWidth || photo.h > viewportHeight) {
+                        return sizeKey
+                    }
+                }
+            },
+
             openGallery: function (index = 0) {
                 if (this.$props.images.length === 0) {
                     return
                 }
-                const pswpElement = document.querySelectorAll('.pswp')[0];
-                // build items array
-                const items = this.$props.images.map(photo => ({
-                    src: photo.getThumbnailUrl('fit', photo.FileHeight),
-                    w: photo.FileWidth,
-                    h: photo.FileHeight,
-                    title: photo.PhotoTitle
-                }));
-                console.log(this.$props.images[0].getThumbnailSrcset())
 
-                // define options (if needed)
+                const pswpElement = document.querySelectorAll('.pswp')[0];
+                const items = this.$props.images.map(this.createPhotoSizes);
+
                 const options = {
-                    // optionName: 'option value'
-                    // for example:
-                    index // start at first slide
+                    index
                 };
-                // Initializes and opens PhotoSwipe
+
                 let gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
+                let realViewportWidth;
+                let realViewportHeight;
+                let useSize = 'm';
+                let nextSize;
+                let firstResize = true;
+                let mapViewport = this.mapViewportToImageSize;
+                let imageSrcWillChange;
+
+                gallery.listen('beforeResize', function () {
+                    realViewportWidth = gallery.viewportSize.x * window.devicePixelRatio;
+                    realViewportHeight = gallery.viewportSize.y * window.devicePixelRatio;
+
+                    nextSize = mapViewport(realViewportWidth, realViewportHeight, items[index])
+                    if (nextSize !== useSize) {
+                        imageSrcWillChange = true
+                    }
+
+                    if (imageSrcWillChange && !firstResize) {
+                        gallery.invalidateCurrItems();
+                    }
+
+                    if (firstResize) {
+                        firstResize = false;
+                    }
+
+                    imageSrcWillChange = false;
+                });
+
+
+                gallery.listen('gettingData', function (index, item) {
+                    item.src = item[useSize].src;
+                    item.w = item[useSize].w;
+                    item.h = item[useSize].h;
+                    item.title = item[useSize].title;
+                });
+
                 gallery.init();
 
             }
