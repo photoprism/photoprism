@@ -87,14 +87,16 @@
                 }
                 const pswpElement = document.querySelectorAll('.pswp')[0];
                 // build items array
-                let items = this.$props.images.map(photo => ({
-                    src: photo.getThumbnailUrl('square', 500),
-                    w: 500,
-                    h: 500
+                const items = this.$props.images.map(photo => ({
+                    src: photo.getThumbnailUrl('fit', photo.FileHeight),
+                    w: photo.FileWidth,
+                    h: photo.FileHeight,
+                    title: photo.PhotoTitle
                 }));
+                console.log(this.$props.images[0].getThumbnailSrcset())
 
                 // define options (if needed)
-                let options = {
+                const options = {
                     // optionName: 'option value'
                     // for example:
                     index // start at first slide
