@@ -245,53 +245,58 @@
                         </div>
                     </v-card-title>
                 </v-card>
-                <v-layout row wrap>
-                    <v-flex
-                            v-for="(photo, index) in results"
-                            :key="photo.ID"
-                            xs12 sm6 md3 lg2 d-flex
-                            v-bind:class="{ selected: photo.selected }"
-                    >
-                        <v-hover>
-                            <v-card tile slot-scope="{ hover }"
-                                    :dark="photo.selected"
-                                    :class="photo.selected ? 'elevation-14 ma-1' : hover ? 'elevation-6 ma-2' : 'elevation-2 ma-2'">
-                                <v-img :src="photo.getThumbnailUrl('square', 500)"
-                                       aspect-ratio="1"
-                                       class="grey lighten-2"
-                                       style="cursor: pointer"
-                                       @click="openPhoto(photo, index)"
-                                >
-                                    <v-layout
-                                            slot="placeholder"
-                                            fill-height
-                                            align-center
-                                            justify-center
-                                            ma-0
-                                    >
-                                        <v-progress-circular indeterminate
-                                                             color="grey lighten-5"></v-progress-circular>
-                                    </v-layout>
+                <photoswipe :images="results">
+                    <template slot-scope="slotProps">
+                        <v-layout row wrap>
+                            <v-flex
+                                    v-for="(photo, index) in results"
+                                    :key="photo.ID"
+                                    xs12 sm6 md3 lg2 d-flex
+                                    v-bind:class="{ selected: photo.selected }"
+                            >
+                                <v-hover>
+                                    <v-card tile slot-scope="{ hover }"
+                                            :dark="photo.selected"
+                                            :class="photo.selected ? 'elevation-14 ma-1' : hover ? 'elevation-6 ma-2' : 'elevation-2 ma-2'">
+                                        <v-img :src="photo.getThumbnailUrl('square', 500)"
+                                               aspect-ratio="1"
+                                               class="grey lighten-2"
+                                               style="cursor: pointer"
+                                               @click="slotProps.openGallery(index)"
+                                        >
+                                            <v-layout
+                                                    slot="placeholder"
+                                                    fill-height
+                                                    align-center
+                                                    justify-center
+                                                    ma-0
+                                            >
+                                                <v-progress-circular indeterminate
+                                                                     color="grey lighten-5"></v-progress-circular>
+                                            </v-layout>
 
-                                    <v-btn v-if="hover || photo.selected" :flat="!hover" icon large absolute
-                                           :ripple="false" style="right: 4px; bottom: 4px;"
-                                           @click.stop.prevent="selectPhoto(photo)">
-                                        <v-icon v-if="photo.selected" color="white">check_box</v-icon>
-                                        <v-icon v-else color="white">check_box_outline_blank</v-icon>
-                                    </v-btn>
+                                            <v-btn v-if="hover || photo.selected" :flat="!hover" icon large absolute
+                                                   :ripple="false" style="right: 4px; bottom: 4px;"
+                                                   @click.stop.prevent="selectPhoto(photo)">
+                                                <v-icon v-if="photo.selected" color="white">check_box</v-icon>
+                                                <v-icon v-else color="white">check_box_outline_blank</v-icon>
+                                            </v-btn>
 
-                                    <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large absolute
-                                           :ripple="false" style="bottom: 4px; left: 4px"
-                                           @click.stop.prevent="likePhoto(photo)">
-                                        <v-icon v-if="photo.PhotoFavorite" color="white">favorite</v-icon>
-                                        <v-icon v-else color="white">favorite_border</v-icon>
-                                    </v-btn>
-                                </v-img>
+                                            <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large
+                                                   absolute
+                                                   :ripple="false" style="bottom: 4px; left: 4px"
+                                                   @click.stop.prevent="likePhoto(photo)">
+                                                <v-icon v-if="photo.PhotoFavorite" color="white">favorite</v-icon>
+                                                <v-icon v-else color="white">favorite_border</v-icon>
+                                            </v-btn>
+                                        </v-img>
 
-                            </v-card>
-                        </v-hover>
-                    </v-flex>
-                </v-layout>
+                                    </v-card>
+                                </v-hover>
+                            </v-flex>
+                        </v-layout>
+                    </template>
+                </photoswipe>
             </v-container>
             <v-snackbar
                     v-model="snackbarVisible"
