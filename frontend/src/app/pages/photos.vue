@@ -184,7 +184,7 @@
                                         v-bind:class="{ selected: photo.selected }"
                                         style="cursor: pointer"
                                         class="grey lighten-2"
-                                        @click="openPhoto(photo, index)"
+                                        @click="openPhoto(index)"
 
                                 >
                                     <v-layout
@@ -260,7 +260,7 @@
                                        aspect-ratio="1"
                                        class="grey lighten-2"
                                        style="cursor: pointer"
-                                       @click="openPhoto(photo, index)"
+                                       @click="openPhoto(index)"
                                 >
                                     <v-layout
                                             slot="placeholder"
@@ -310,43 +310,7 @@
                 </v-btn>
             </v-snackbar>
         </v-container>
-
-
-        <v-dialog v-model="viewDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
-            <v-card v-if="viewDialogPhoto" dark color="black" class="photo-carousel">
-                <v-img :src="viewDialogPhoto.getThumbnailUrl('fit', 500)"
-                       :aspect-ratio="viewDialogPhoto.FileAspectRatio"
-                       contain
-                       class="black photo-img"
-                       @click="closePhoto()"
-                       width="100%"
-                       height="100%"
-                       :max-width="window.width"
-                       :max-height="window.height"
-                       :srcset="viewDialogPhoto.getThumbnailSrcset()"
-                       :sizes="viewDialogPhoto.getThumbnailSizes()"
-                >
-                    <v-layout
-                            slot="placeholder"
-                            fill-height
-                            align-center
-                            justify-center
-                            ma-0
-                    >
-                        <v-progress-circular indeterminate
-                                             color="grey lighten-5"></v-progress-circular>
-                    </v-layout>
-
-                    <v-btn icon large absolute class="next" @click.stop.prevent="nextPhoto()">
-                        <v-icon color="white" x-large>chevron_right</v-icon>
-                    </v-btn>
-                    <v-btn icon large absolute class="prev">
-                        <v-icon color="white" x-large @click.stop.prevent="prevPhoto()">chevron_left</v-icon>
-                    </v-btn>
-                </v-img>
-
-            </v-card>
-        </v-dialog>
+        <photoswipe :images="results" ref="gallery"></photoswipe>
     </div>
 </template>
 
@@ -373,9 +337,6 @@
                 'snackbarVisible': false,
                 'snackbarText': '',
                 'advandedSearch': false,
-                'viewDialog': false,
-                'viewDialogPhoto': null,
-                'viewDialogPhotoIndex': 0,
                 'window': {
                     width: 0,
                     height: 0
@@ -436,24 +397,6 @@
                 this.window.width = window.innerWidth;
                 this.window.height = window.innerHeight;
             },
-            prevPhoto() {
-                if (this.viewDialogPhotoIndex < 1 || !this.results[this.viewDialogPhotoIndex - 1]) return false;
-                this.viewDialogPhotoIndex--;
-                this.viewDialogPhoto = null;
-
-                this.$nextTick(function () {
-                    this.viewDialogPhoto = this.results[this.viewDialogPhotoIndex];
-                })
-            },
-            nextPhoto() {
-                if (this.viewDialogPhotoIndex >= this.results.length || !this.results[this.viewDialogPhotoIndex + 1]) return false;
-                this.viewDialogPhotoIndex++;
-                this.viewDialogPhoto = null;
-
-                this.$nextTick(function () {
-                    this.viewDialogPhoto = this.results[this.viewDialogPhotoIndex];
-                })
-            },
             clearSelection() {
                 for (let i = 0; i < this.selected.length; i++) {
                     this.selected[i].selected = false;
@@ -501,18 +444,6 @@
                     this.snackbarVisible = false;
                 }
             },
-            openPhoto(photo, index) {
-                this.viewDialogPhoto = photo;
-                this.viewDialogPhotoIndex = index;
-                this.viewDialog = true;
-                this.hideSnackbar();
-            },
-            closePhoto() {
-                this.viewDialogPhoto = null;
-                this.viewDialogPhotoIndex = 0;
-                this.viewDialog = false;
-                this.showSnackbar();
-            },
             likePhoto(photo) {
                 photo.PhotoFavorite = !photo.PhotoFavorite;
                 photo.like(photo.PhotoFavorite);
@@ -526,6 +457,9 @@
             clearQuery() {
                 this.query.q = '';
                 this.refreshList();
+            },
+            openPhoto(index) {
+                this.$refs.gallery.openPhoto(index)
             },
             loadMore() {
                 if (this.loadMoreDisabled) return;
@@ -555,7 +489,7 @@
             refreshList() {
                 this.loadMoreDisabled = true;
 
-                // Don't query the same data more than once
+                // Don't query the same data more than once:197
                 if (JSON.stringify(this.lastQuery) === JSON.stringify(this.query)) return;
 
                 Object.assign(this.lastQuery, this.query);
@@ -585,12 +519,7 @@
             }
         },
         beforeRouteLeave(to, from, next) {
-            if (this.viewDialog) {
-                this.closePhoto()
-                next(false)
-            } else {
-                next()
-            }
+            next()
         },
         created() {
             window.addEventListener('resize', this.handleResize);

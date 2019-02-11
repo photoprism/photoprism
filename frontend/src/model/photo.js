@@ -32,6 +32,10 @@ class Photo extends Abstract {
         return result.join(', ');
     }
 
+    calculateWidth(height) {
+        return height * this.FileAspectRatio;
+    }
+
     getThumbnailSizes() {
         const result = [];
 
