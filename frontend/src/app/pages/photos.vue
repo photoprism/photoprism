@@ -248,7 +248,6 @@
                         </div>
                     </v-card-title>
                 </v-card>
-                <photoswipe :images="results" ref="gallery"></photoswipe>
                 <v-layout row wrap>
                     <v-flex
                             v-for="(photo, index) in results"
@@ -315,6 +314,7 @@
                 </v-btn>
             </v-snackbar>
         </v-container>
+        <photoswipe :images="results" ref="gallery"></photoswipe>
     </div>
 </template>
 
