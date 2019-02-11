@@ -123,18 +123,21 @@
                 let gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
                 let realViewportWidth;
                 let realViewportHeight;
-                let useSize = 'm';
+                let previousSize;
                 let nextSize;
                 let firstResize = true;
-                let mapViewport = this.mapViewportToImageSize;
                 let imageSrcWillChange;
 
-                gallery.listen('beforeResize', function () {
+                gallery.listen('beforeResize', () => {
                     realViewportWidth = gallery.viewportSize.x * window.devicePixelRatio;
                     realViewportHeight = gallery.viewportSize.y * window.devicePixelRatio;
 
-                    nextSize = mapViewport(realViewportWidth, realViewportHeight, items[index])
-                    if (nextSize !== useSize) {
+                    if (!previousSize) {
+                        previousSize = 'm'
+                    }
+
+                    nextSize = this.mapViewportToImageSize(realViewportWidth, realViewportHeight, items[index])
+                    if (nextSize !== previousSize) {
                         imageSrcWillChange = true
                     }
 
@@ -151,10 +154,11 @@
 
 
                 gallery.listen('gettingData', function (index, item) {
-                    item.src = item[useSize].src;
-                    item.w = item[useSize].w;
-                    item.h = item[useSize].h;
-                    item.title = item[useSize].title;
+                    item.src = item[nextSize].src;
+                    item.w = item[nextSize].w;
+                    item.h = item[nextSize].h;
+                    item.title = item[nextSize].title;
+                    previousSize = nextSize;
                 });
 
                 gallery.init();
