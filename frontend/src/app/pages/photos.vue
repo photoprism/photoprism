@@ -194,8 +194,7 @@
                                             justify-center
                                             ma-0
                                     >
-                                        <v-progress-circular indeterminate
-                                                             color="grey lighten-5"></v-progress-circular>
+                                        <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
                                     </v-layout>
 
                                     <v-btn v-if="hover || photo.selected" :flat="!hover" icon large absolute
@@ -205,8 +204,7 @@
                                         <v-icon v-else color="white">check_box_outline_blank</v-icon>
                                     </v-btn>
 
-                                    <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large
-                                           absolute
+                                    <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large absolute
                                            :ripple="false" style="bottom: 4px; left: 4px"
                                            @click.stop.prevent="likePhoto(photo)">
                                         <v-icon v-if="photo.PhotoFavorite" color="white">favorite
@@ -218,8 +216,7 @@
 
                                 <v-card-title primary-title class="pa-3">
                                     <div>
-                                        <h3 class="subheading mb-2" :title="photo.PhotoTitle">{{
-                                            photo.PhotoTitle |
+                                        <h3 class="subheading mb-2" :title="photo.PhotoTitle">{{ photo.PhotoTitle |
                                             truncate(80) }}</h3>
                                         <div class="caption">
                                             <v-icon size="14">date_range</v-icon>
@@ -283,8 +280,7 @@
                                         <v-icon v-else color="white">check_box_outline_blank</v-icon>
                                     </v-btn>
 
-                                    <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large
-                                           absolute
+                                    <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large absolute
                                            :ripple="false" style="bottom: 4px; left: 4px"
                                            @click.stop.prevent="likePhoto(photo)">
                                         <v-icon v-if="photo.PhotoFavorite" color="white">favorite</v-icon>
@@ -493,7 +489,7 @@
             refreshList() {
                 this.loadMoreDisabled = true;
 
-                // Don't query the same data more than once
+                // Don't query the same data more than once:197
                 if (JSON.stringify(this.lastQuery) === JSON.stringify(this.query)) return;
 
                 Object.assign(this.lastQuery, this.query);
