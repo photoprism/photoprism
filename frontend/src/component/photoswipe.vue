@@ -80,6 +80,11 @@
         props: {
             images: Array
         },
+        computed: {
+            imagesWithSizes: function() {
+                return this.images.map(this.createPhotoSizes);
+            }
+        },
         methods: {
             createPhotoSizes(photo) {
                 const createPhotoSize = height => ({
@@ -114,13 +119,12 @@
                 }
 
                 const pswpElement = document.querySelectorAll('.pswp')[0];
-                const items = this.$props.images.map(this.createPhotoSizes);
 
                 const options = {
                     index
                 };
 
-                let gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
+                let gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, this.imagesWithSizes, options);
                 let realViewportWidth;
                 let realViewportHeight;
                 let previousSize;
@@ -136,7 +140,7 @@
                         previousSize = 'm'
                     }
 
-                    nextSize = this.mapViewportToImageSize(realViewportWidth, realViewportHeight, items[index])
+                    nextSize = this.mapViewportToImageSize(realViewportWidth, realViewportHeight, this.imagesWithSizes[index])
                     if (nextSize !== previousSize) {
                         imageSrcWillChange = true
                     }
@@ -162,7 +166,6 @@
                 });
 
                 gallery.init();
-
             }
         }
     }
