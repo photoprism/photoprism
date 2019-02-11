@@ -108,7 +108,7 @@
                 }
             },
 
-            openGallery: function (index = 0) {
+            openPhoto: function (index = 0) {
                 if (this.$props.images.length === 0) {
                     return
                 }
