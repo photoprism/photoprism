@@ -10,6 +10,11 @@ class Photo extends Abstract {
         return this.ID;
     }
 
+
+    getColors() {
+        return this.PhotoColors;
+    }
+
     getGoogleMapsLink() {
         return 'https://www.google.com/maps/place/' + this.PhotoLat + ',' + this.PhotoLong;
     }

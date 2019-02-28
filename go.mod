@@ -2,6 +2,7 @@ module github.com/photoprism/photoprism
 
 require (
 	cloud.google.com/go v0.34.0 // indirect
+	github.com/EdlinOrg/prominentcolor v0.0.0-20180211183425-27c67d28df53
 	github.com/RobCherry/vibrant v0.0.0-20160904011657-0680b8cf1c89
 	github.com/araddon/dateparse v0.0.0-20181123171228-21df004e09ca
 	github.com/bamiaux/rez v0.0.0-20170731184118-29f4463c688b // indirect
@@ -46,6 +47,8 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/montanaflynn/stats v0.0.0-20181214052348-945b007cb92f // indirect
 	github.com/myesui/uuid v1.0.0 // indirect
+	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
+	github.com/oliamb/cutter v0.2.2 // indirect
 	github.com/onsi/gomega v1.4.3 // indirect
 	github.com/opentracing/opentracing-go v1.0.2
 	github.com/pingcap/errors v0.11.0
