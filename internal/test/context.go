@@ -6,7 +6,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// Returns example cli context for testing
+// CliContext returns example cli context for testing
 func CliContext() *cli.Context {
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.Bool("debug", false, "doc")

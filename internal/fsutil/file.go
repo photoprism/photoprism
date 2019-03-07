@@ -11,14 +11,14 @@ import (
 	"strings"
 )
 
-// Returns true if file exists
+// Exists returns true if file exists
 func Exists(filename string) bool {
 	info, err := os.Stat(filename)
 
 	return err == nil && !info.IsDir()
 }
 
-// Returns full path; ~ replaced with actual home directory
+// ExpandedFilename returns full path; ~ replaced with actual home directory
 func ExpandedFilename(filename string) string {
 	if filename == "" {
 		panic("filename was empty")

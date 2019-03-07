@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-// Returns output to stdout and stderr for testing
+// Capture returns output to stdout and stderr for testing
 func Capture(f func()) string {
 	r, w, err := os.Pipe()
 	if err != nil {
