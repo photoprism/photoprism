@@ -1,15 +1,15 @@
 package photoprism
 
 import (
+	"fmt"
+	"github.com/EdlinOrg/prominentcolor"
+	"github.com/RobCherry/vibrant"
+	"github.com/lucasb-eyer/go-colorful"
 	"image"
 	"image/color"
 	"log"
 	"os"
 	"sort"
-
-	"github.com/EdlinOrg/prominentcolor"
-	"github.com/RobCherry/vibrant"
-	"github.com/lucasb-eyer/go-colorful"
 )
 
 var colorMap = map[string]color.RGBA{
@@ -31,15 +31,29 @@ var colorMap = map[string]color.RGBA{
 	"black":  {0xFF, 0xFF, 0xFF, 0xff},
 }
 
+func deduplicate(s []string) []string {
+	seen := make(map[string]struct{}, len(s))
+	j := 0
+	for _, v := range s {
+		if _, ok := seen[v]; ok {
+			continue
+		}
+		seen[v] = struct{}{}
+		s[j] = v
+		j++
+	}
+	return s[:j]
+}
+
 func getColorNames(actualColor colorful.Color) (result []string) {
-	var maxDistance = 0.30
+	var maxDistance = 0.27
 
 	for colorName, colorRGBA := range colorMap {
 		colorColorful, _ := colorful.MakeColor(colorRGBA)
-		currentDistance := colorColorful.DistanceRgb(actualColor)
+		currentDistance := colorColorful.DistanceLab(actualColor)
 
 		if maxDistance >= currentDistance {
-			result = append(result, colorName)
+			result = append(result, fmt.Sprintf("%s", colorName))
 		}
 	}
 
@@ -53,31 +67,30 @@ func (m *MediaFile) GetColors() (colors []string, vibrantHex string, mutedHex st
 	defer file.Close()
 
 	decodedImage, _, _ := image.Decode(file)
-	centroids, e := prominentcolor.KmeansWithAll(5, decodedImage, prominentcolor.ArgumentDefault | prominentcolor.ArgumentAverageMean, prominentcolor.DefaultSize, prominentcolor.GetDefaultMasks() )
-	if e != nil {
-		log.Printf("Error while doing kmeans on color")
-	}
 
 	palette := vibrant.NewPaletteBuilder(decodedImage).Generate()
 
 	if vibrantSwatch := palette.VibrantSwatch(); vibrantSwatch != nil {
 		color, _ := colorful.MakeColor(vibrantSwatch.Color())
-		//colors = append(colors, getColorNames(color)...)
 		vibrantHex = color.Hex()
 	}
 
 	if mutedSwatch := palette.MutedSwatch(); mutedSwatch != nil {
 		color, _ := colorful.MakeColor(mutedSwatch.Color())
-		//colors = append(colors, getColorNames(color)...)
 		mutedHex = color.Hex()
 	}
 
-	for _, centroid := range centroids {
-		colorfulColor, _ := colorful.MakeColor(color.RGBA{uint8(centroid.Color.R), uint8(centroid.Color.G), uint8(centroid.Color.B), 0xff})
-		colors = append(colors, getColorNames(colorfulColor)...)
+	centroids, err := prominentcolor.KmeansWithAll(5, decodedImage, prominentcolor.ArgumentDefault|prominentcolor.ArgumentNoCropping, prominentcolor.DefaultSize, prominentcolor.GetDefaultMasks())
+	if err == nil {
+		for _, centroid := range centroids {
+			colorfulColor, _ := colorful.MakeColor(color.RGBA{R: uint8(centroid.Color.R), G: uint8(centroid.Color.G), B: uint8(centroid.Color.B), A: 0xff})
+			colors = append(colors, getColorNames(colorfulColor)...)
+		}
+		colors = deduplicate(colors)
+		sort.Strings(colors)
+	} else {
+		log.Printf("Unable to detect most dominent color in image: %s", err)
 	}
-
-	sort.Strings(colors)
 
 	return colors, vibrantHex, mutedHex
 }
