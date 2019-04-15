@@ -1,112 +1,91 @@
 <template>
     <div v-infinite-scroll="loadMore" infinite-scroll-disabled="loadMoreDisabled" infinite-scroll-distance="10">
-        <v-form ref="form" lazy-validation @submit="formChange" dense>
-            <v-toolbar flat color="blue-grey lighten-4">
-                <h1 class="md-display-1">Albums</h1>
-                <v-spacer></v-spacer>
-                <v-text-field class="pt-3 pr-3"
-                              single-line
-                              label="Search"
-                              prepend-inner-icon="search"
-                              clearable
-                              color="blue-grey"
-                              @click:clear="clearQuery"
-                              v-model="query.q"
-                              @keyup.enter.native="formChange"
-                ></v-text-field>
-                <!-- v-btn @click="formChange" color="secondary">Create Filter</v-btn -->
-                <v-spacer></v-spacer>
+    <v-form ref="form" lazy-validation @submit="formChange" dense>
+                    <v-toolbar flat color="blue-grey lighten-4">
+                        <v-text-field class="pt-3 pr-3"
+                                      single-line
+                                      label="Search"
+                                      prepend-inner-icon="search"
+                                      clearable
+                                      color="blue-grey"
+                                      @click:clear="clearQuery"
+                                      v-model="query.q"
+                                      @keyup.enter.native="formChange"
+                        ></v-text-field>
+                        <!-- v-btn @click="formChange" color="secondary">Create Filter</v-btn -->
+                        <v-spacer></v-spacer>
 
-                <v-btn icon @click="advandedSearch = !advandedSearch">
-                    <v-icon>{{ advandedSearch ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
-                </v-btn>
-            </v-toolbar>
+                        <v-btn icon @click="advandedSearch = !advandedSearch">
+                            <v-icon>{{ advandedSearch ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
+                        </v-btn>
+                    </v-toolbar>
 
-            <v-card class="pt-1"
-                    flat
-                    color="blue-grey lighten-5"
-                    v-show="advandedSearch">
-                <v-card-text>
-                    <v-layout row wrap>
-                        <v-flex xs12 sm6 md3 pa-2>
-                            <v-select @change="formChange"
-                                      label="Country"
-                                      flat solo hide-details
-                                      color="blue-grey"
-                                      item-value="LocCountryCode"
-                                      item-text="LocCountry"
-                                      v-model="query.country"
-                                      :items="options.countries">
-                            </v-select>
-                        </v-flex>
-                        <v-flex xs12 sm6 md3 pa-2>
-                            <v-select @change="formChange"
-                                      label="Camera"
-                                      flat solo hide-details
-                                      color="blue-grey"
-                                      item-value="ID"
-                                      item-text="CameraModel"
-                                      v-model="query.camera"
-                                      :items="options.cameras">
-                            </v-select>
-                        </v-flex>
-                        <v-flex xs12 sm6 md3 pa-2>
-                            <v-select @change="formChange"
-                                      label="View"
-                                      flat solo hide-details
-                                      color="blue-grey"
-                                      v-model="query.view"
-                                      :items="options.views">
-                            </v-select>
-                        </v-flex>
-                        <v-flex xs12 sm6 md3 pa-2>
-                            <v-select @change="formChange"
-                                      label="Sort By"
-                                      flat solo hide-details
-                                      color="blue-grey"
-                                      v-model="query.order"
-                                      :items="options.sorting">
-                            </v-select>
-                        </v-flex>
-                    </v-layout>
-                </v-card-text>
-            </v-card>
-        </v-form>
-        <v-container fluid>
-            <p class="md-subheading">
-                    A user-friendly tool for importing, filtering and archiving large amounts of JPEG and RAW files
-                </p>
-                <v-btn
-                              color="success"
-                              dark
-                              @click.stop="dialog = true"
-                            >Create album
-                                 </v-btn>
+                    <v-card class="pt-1"
+                            flat
+                            color="blue-grey lighten-5"
+                            v-show="advandedSearch">
+                        <v-card-text>
+                            <v-layout row wrap>
+                                <v-flex xs12 sm6 md3 pa-2>
+                                    <v-select @change="formChange"
+                                              label="Country"
+                                              flat solo hide-details
+                                              color="blue-grey"
+                                              item-value="LocCountryCode"
+                                              item-text="LocCountry"
+                                              v-model="query.country"
+                                              :items="options.countries">
+                                    </v-select>
+                                </v-flex>
+                                <v-flex xs12 sm6 md3 pa-2>
+                                    <v-select @change="formChange"
+                                              label="Camera"
+                                              flat solo hide-details
+                                              color="blue-grey"
+                                              item-value="ID"
+                                              item-text="CameraModel"
+                                              v-model="query.camera"
+                                              :items="options.cameras">
+                                    </v-select>
+                                </v-flex>
+                                <v-flex xs12 sm6 md3 pa-2>
+                                    <v-select @change="formChange"
+                                              label="View"
+                                              flat solo hide-details
+                                              color="blue-grey"
+                                              v-model="query.view"
+                                              :items="options.views">
+                                    </v-select>
+                                </v-flex>
+                                <v-flex xs12 sm6 md3 pa-2>
+                                    <v-select @change="formChange"
+                                              label="Sort By"
+                                              flat solo hide-details
+                                              color="blue-grey"
+                                              v-model="query.order"
+                                              :items="options.sorting">
+                                    </v-select>
+                                </v-flex>
+                            </v-layout>
+                        </v-card-text>
+                    </v-card>
+                </v-form>
+    <v-container fluid>
+        <v-layout wrap>
+            <v-flex xs12>
+                <h1><v-text-field label="Album name*" required value="South Africa 2018" solo></v-text-field></h1>
+            </v-flex>
+            <v-flex xs12>
+                <v-textarea label="Description" value="Nice photo collection of the last vacation" solo></v-textarea>
+            </v-flex>
+        </v-layout>
+                <p> In case you want to add photos to this album
+                --> go to the photos view --> select all photos you want to add
+                --> click add to album in the bottom right menu and select this album.</p>
+                <p> In case you want to remove photos from this album
+                    --> select all photos you want to remove
+                    --> click remove in the bottom right menu.</p>
                 </v-container>
-        <v-dialog v-model="dialog" dark persistent max-width="600px">
-          <v-card dark>
-            <v-card-title>
-              <span class="headline">Create album</span>
-            </v-card-title>
-            <v-card-text>
-              <v-container grid-list-md>
-                <v-layout wrap>
-                  <v-flex xs12>
-                    <v-text-field label="Album name*" required></v-text-field>
-                  </v-flex>
-                  <v-flex xs12>
-                    <v-textarea label="Description"></v-textarea>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="success" flat @click="dialog = false">Close</v-btn>
-              <v-btn color="success" flat @click="dialog = false">Save</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
 
             <v-container fluid>
                         <v-speed-dial
@@ -169,33 +148,33 @@
                             </v-btn>
                         </v-speed-dial>
                          <v-data-table
-                                            :headers="listColumns"
-                                            :items="results"
-                                            hide-actions
-                                            class="elevation-1"
-                                            v-if="query.view === 'list'"
-                                            select-all
-                                            disable-initial-sort
-                                            item-key="ID"
-                                            v-model="selected"
-                                            :no-data-text="'No photos matched your search'"
-                                    >
-                                        <template slot="items" slot-scope="props">
-                                            <td>
-                                                <v-checkbox
-                                                        v-model="props.selected"
-                                                        primary
-                                                        hide-details
-                                                ></v-checkbox>
-                                            </td>
-                                            <td>Album Title</td>
-                                            <td>Some album description</td>
-                                            <td>11/01/2018 - 01/02/2018</td>
-                                            <td>London, Durban, Berlin</td>
-                                            <td>Germany, South Africa</td>
-                                            <td>Iphone SE, Canon</td>
-                                        </template>
-                                    </v-data-table>
+                                             :headers="listColumns"
+                                             :items="results"
+                                             hide-actions
+                                             class="elevation-1"
+                                             v-if="query.view === 'list'"
+                                             select-all
+                                             disable-initial-sort
+                                             item-key="ID"
+                                             v-model="selected"
+                                             :no-data-text="'No photos matched your search'"
+                                     >
+                                         <template slot="items" slot-scope="props">
+                                             <td>
+                                                 <v-checkbox
+                                                         v-model="props.selected"
+                                                         primary
+                                                         hide-details
+                                                 ></v-checkbox>
+                                             </td>
+                                             <td>{{ props.item.PhotoTitle }}</td>
+                                             <td>{{ props.item.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}</td>
+                                             <td>{{ props.item.LocCity }}</td>
+                                             <td>{{ props.item.LocCountry }}</td>
+                                             <td>{{ props.item.CameraModel }}</td>
+                                             <td>{{ props.item.PhotoFavorite ? 'Yes' : 'No' }}</td>
+                                         </template>
+                                     </v-data-table>
 
                                     <v-container grid-list-xs fluid class="pa-0" v-if="query.view === 'details'">
                                         <v-card v-if="results.length === 0">
@@ -254,18 +233,17 @@
 
                                                         <v-card-title primary-title class="pa-3">
                                                             <div>
-                                                                <h3 class="subheading mb-2" :title="photo.PhotoTitle">Album Title</h3>
+                                                                <h3 class="subheading mb-2" :title="photo.PhotoTitle">{{ photo.PhotoTitle |
+                                                                    truncate(80) }}</h3>
                                                                 <div class="caption">
-                                                                    Some description
-                                                                    <br/>
                                                                     <v-icon size="14">date_range</v-icon>
-                                                                    11/01/2018 - 01/02/2018
+                                                                    {{ photo.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}
                                                                     <br/>
                                                                     <v-icon size="14">photo_camera</v-icon>
-                                                                    iPhone SE, Canon
+                                                                    {{ photo.getCamera() }}
                                                                     <br/>
                                                                     <v-icon size="14">location_on</v-icon>
-                                                                    South africa, Germany (Most occuring locations)
+                                                                    <span :title="photo.getFullLocation()">{{ photo.getLocation() }}</span>
                                                                 </div>
                                                             </div>
                                                         </v-card-title>
@@ -360,12 +338,13 @@
             name: 'browse',
             props: {},
             data() {
+                dialog: false;
                 const query = this.$route.query;
                 const order = query['order'] ? query['order'] : 'newest';
                 const camera = query['camera'] ? parseInt(query['camera']) : 0;
                 const q = query['q'] ? query['q'] : '';
                 const country = query['country'] ? query['country'] : '';
-                const view = query['view'] ? query['view'] : 'details';
+                const view = query['view'] ? query['view'] : 'tiles';
                 const cameras = [{ID: 0, CameraModel: 'All Cameras'}].concat(this.$config.getValue('cameras'));
                 const countries = [{
                     LocCountryCode: '',
@@ -399,9 +378,9 @@
                             {value: 'tourism', text: 'Tourism'},
                         ],
                         'views': [
+                            {value: 'tiles', text: 'Tiles'},
                             {value: 'details', text: 'Details'},
                             {value: 'list', text: 'List'},
-                            {value: 'tiles', text: 'Tiles'},
                         ],
                         'countries': countries,
                         'cameras': cameras,
@@ -412,12 +391,12 @@
                         ],
                     },
                     'listColumns': [
-                        {text: 'Title', value: 'PhotoTitle'},
-                        {text: 'Description', value: 'PhotoFavorite'},
+                         {text: 'Title', value: 'PhotoTitle'},
                         {text: 'Taken At', value: 'TakenAt'},
                         {text: 'City', value: 'LocCity'},
                         {text: 'Country', value: 'LocCountry'},
                         {text: 'Camera', value: 'CameraModel'},
+                        {text: 'Favorite', value: 'PhotoFavorite'},
                     ],
                     'view': view,
                     'loadMoreDisabled': true,
