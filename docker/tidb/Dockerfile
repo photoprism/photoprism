@@ -1,13 +1,14 @@
 # Builder image
-FROM golang:1.11.4-alpine as builder
+FROM golang:1.12.4-alpine as builder
 
-ENV TIDB_VERSION 2.1.1
+ENV TIDB_VERSION 2.1.8
 
 RUN apk add --no-cache \
     wget \
     make \
     git \
-    unzip
+    g++ \
+    gcc
 
 RUN git clone https://github.com/pingcap/tidb.git /go/src/github.com/pingcap/tidb
 
@@ -16,7 +17,7 @@ WORKDIR /go/src/github.com/pingcap/tidb/
 RUN git checkout tags/v$TIDB_VERSION && rm go.sum && GO111MODULE=on go mod tidy && make
 
 # Executable image
-FROM alpine:3.8
+FROM alpine:3.9
 
 COPY --from=builder /go/src/github.com/pingcap/tidb/bin/tidb-server /usr/local/bin/tidb-server
 
