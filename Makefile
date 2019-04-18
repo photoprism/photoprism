@@ -30,8 +30,8 @@ migrate:
 	go run cmd/photoprism/photoprism.go migrate
 test:
 	go test -tags=slow -timeout 20m -v ./internal/... | scripts/colorize-tests.sh
-test-fast:
-	go test -timeout 5m -v ./internal/... | scripts/colorize-tests.sh
+test-short:
+	go test -short -timeout 5m -v ./internal/... | scripts/colorize-tests.sh
 test-race:
 	go test -tags=slow -race -timeout 60m -v ./internal/... | scripts/colorize-tests.sh
 test-codecov:
