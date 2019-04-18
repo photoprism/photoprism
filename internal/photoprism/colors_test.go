@@ -20,6 +20,7 @@ func TestMediaFile_GetColors(t *testing.T) {
 		assert.IsType(t, []string{}, names)
 		assert.Equal(t, "#e0ed21", vibrantHex)
 		assert.Equal(t, "#977d67", mutedHex)
+		assert.Equal(t, []string([]string{"black", "brown", "grey", "white"}), names);
 	} else {
 		t.Error(err)
 	}

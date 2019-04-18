@@ -22,6 +22,7 @@ func TestMediaFile_GetColors_Slow(t *testing.T) {
 
 		assert.Equal(t, "#3d85c3", vibrantHex)
 		assert.Equal(t, "#988570", mutedHex)
+		assert.Equal(t, []string([]string{"black", "brown", "grey", "white"}), names);
 	} else {
 		t.Error(err)
 	}
@@ -31,7 +32,7 @@ func TestMediaFile_GetColors_Slow(t *testing.T) {
 		names, vibrantHex, mutedHex := mediaFile3.GetColors()
 
 		t.Log(names, vibrantHex, mutedHex)
-
+		assert.Equal(t, []string([]string{"black", "brown", "grey", "white"}), names);
 		assert.Equal(t, "#d5d437", vibrantHex)
 		assert.Equal(t, "#a69f55", mutedHex)
 	} else {
