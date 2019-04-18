@@ -25,7 +25,7 @@ type openstreetmapAddress struct {
 }
 
 type openstreetmapLocation struct {
-	PlaceID     string                `json:"place_id"`
+	PlaceID     uint                  `json:"place_id"`
 	Lat         string                `json:"lat"`
 	Lon         string                `json:"lon"`
 	Name        string                `json:"name"`
@@ -67,8 +67,8 @@ func (m *MediaFile) GetLocation() (*models.Location, error) {
 		return nil, err
 	}
 
-	if id, err := strconv.Atoi(openstreetmapLocation.PlaceID); err == nil && id > 0 {
-		location.ID = uint(id)
+	if id := openstreetmapLocation.PlaceID; id > 0 {
+		location.ID = id
 	} else {
 		return nil, errors.New("query returned no result")
 	}
