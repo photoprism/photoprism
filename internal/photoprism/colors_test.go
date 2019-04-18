@@ -24,4 +24,17 @@ func TestMediaFile_GetColors(t *testing.T) {
 	} else {
 		t.Error(err)
 	}
+
+	if mediaFile2, err := NewMediaFile(conf.ImportPath() + "/ape.jpeg"); err == nil {
+		names, vibrantHex, mutedHex := mediaFile2.GetColors()
+
+		t.Log(names, vibrantHex, mutedHex)
+
+		assert.IsType(t, []string{}, names)
+		assert.Equal(t, "#97c84a", vibrantHex)
+		assert.Equal(t, "#6c9a68", mutedHex)
+		assert.Equal(t, []string([]string{"grey", "teal", "white"}), names);
+	} else {
+		t.Error(err)
+	}
 }
