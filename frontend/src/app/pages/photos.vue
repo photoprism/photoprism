@@ -227,9 +227,6 @@
                                             <v-icon size="14">photo_camera</v-icon>
                                             {{ photo.getCamera() }}
                                             <br/>
-                                            <v-icon size="14">photo_colors</v-icon>
-                                            {{ photo.getColors() }}
-                                            <br/>
                                             <v-icon size="14">location_on</v-icon>
                                             <span :title="photo.getFullLocation()">{{ photo.getLocation() }}</span>
                                         </div>
