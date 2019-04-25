@@ -11,14 +11,14 @@ type File struct {
 	PhotoID            uint
 	FilePrimary        bool
 	FileMissing        bool
-	FileName           string
-	FileType           string `gorm:"type:varchar(30)"`
-	FileMime           string `gorm:"type:varchar(50)"`
+	FileName           string `gorm:"type:varchar(4096);index"`
+	FileType           string `gorm:"type:varchar(32)"`
+	FileMime           string `gorm:"type:varchar(64)"`
 	FileWidth          int
 	FileHeight         int
 	FileOrientation    int
 	FileAspectRatio    float64
-	FileHash           string `gorm:"type:varchar(100);unique_index"`
+	FileHash           string `gorm:"type:varchar(128);unique_index"`
 	FilePerceptualHash string
 
 	FileNotes string `gorm:"type:text;"`
