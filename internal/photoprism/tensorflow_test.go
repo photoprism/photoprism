@@ -24,5 +24,5 @@ func TestTensorFlow_GetImageTagsFromFile(t *testing.T) {
 	assert.Equal(t, "tabby", result[0].Label)
 	assert.Equal(t, "tiger cat", result[1].Label)
 
-	assert.Equal(t, float32(0.1648176), result[1].Probability)
+	assert.Equal(t, float32(0.16481775), result[1].Probability)
 }
