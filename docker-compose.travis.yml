@@ -23,7 +23,7 @@ services:
       - CI_JOB_ID
 
   database:
-    image: mysql:latest
+    image: mysql:8.0.16
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
