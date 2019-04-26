@@ -11,7 +11,7 @@ type File struct {
 	PhotoID            uint
 	FilePrimary        bool
 	FileMissing        bool
-	FileName           string `gorm:"type:varchar(4096);index"`
+	FileName           string `gorm:"type:varchar(2048);index"`
 	FileType           string `gorm:"type:varchar(32)"`
 	FileMime           string `gorm:"type:varchar(64)"`
 	FileWidth          int
