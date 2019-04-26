@@ -184,28 +184,37 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 
 // FindFiles finds files returning maximum results defined by limit
 // and finding them from an offest defined by offset.
-func (s *Search) FindFiles(limit int, offset int) (files []models.File) {
-	s.db.Where(&models.File{}).Limit(limit).Offset(offset).Find(&files)
+func (s *Search) FindFiles(limit int, offset int) (files []models.File, err error) {
+	if err := s.db.Where(&models.File{}).Limit(limit).Offset(offset).Find(&files).Error; err != nil {
+		return files, err
+	}
 
-	return files
+	return files, nil
 }
 
 // FindFileByID returns a mediafile given a certain ID.
-func (s *Search) FindFileByID(id string) (file models.File) {
-	s.db.Where("id = ?", id).First(&file)
+func (s *Search) FindFileByID(id string) (file models.File, err error) {
+	if err := s.db.Where("id = ?", id).First(&file).Error; err != nil {
+		return file, err
+	}
 
-	return file
+	return file, nil
 }
 
 // FindFileByHash finds a file with a given hash string.
-func (s *Search) FindFileByHash(fileHash string) (file models.File) {
-	s.db.Where("file_hash = ?", fileHash).First(&file)
-	return file
+func (s *Search) FindFileByHash(fileHash string) (file models.File, err error) {
+	if err := s.db.Where("file_hash = ?", fileHash).First(&file).Error; err != nil {
+		return file, err
+	}
+
+	return file, nil
 }
 
 // FindPhotoByID returns a Photo based on the ID.
-func (s *Search) FindPhotoByID(photoID uint64) (photo models.Photo) {
-	s.db.Where("id = ?", photoID).First(&photo)
+func (s *Search) FindPhotoByID(photoID uint64) (photo models.Photo, err error) {
+	if err := s.db.Where("id = ?", photoID).First(&photo).Error; err != nil {
+		return photo, err
+	}
 
-	return photo
+	return photo, nil
 }

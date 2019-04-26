@@ -33,7 +33,13 @@ func GetThumbnail(router *gin.RouterGroup, conf photoprism.Config) {
 		}
 
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		file := search.FindFileByHash(fileHash)
+		file, err := search.FindFileByHash(fileHash)
+
+		if err != nil {
+			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
+			return
+		}
+
 		fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
 
 		mediaFile, err := photoprism.NewMediaFile(fileName)
