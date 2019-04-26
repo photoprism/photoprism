@@ -2,95 +2,172 @@ package photoprism
 
 import (
 	"fmt"
-	"github.com/EdlinOrg/prominentcolor"
-	"github.com/RobCherry/vibrant"
-	"github.com/lucasb-eyer/go-colorful"
-	"image"
 	"image/color"
 	"log"
-	"os"
-	"sort"
+
+	"github.com/disintegration/imaging"
+	"github.com/lucasb-eyer/go-colorful"
 )
 
-var colorMap = map[string]color.RGBA{
-	"red":    {0xf4, 0x43, 0x36, 0xff},
-	"pink":   {0xe9, 0x1e, 0x63, 0xff},
-	"purple": {0x9c, 0x27, 0xb0, 0xff},
-	"indigo": {0x3F, 0x51, 0xB5, 0xff},
-	"blue":   {0x21, 0x96, 0xF3, 0xff},
-	"cyan":   {0x00, 0xBC, 0xD4, 0xff},
-	"teal":   {0x00, 0x96, 0x88, 0xff},
-	"green":  {0x4C, 0xAF, 0x50, 0xff},
-	"lime":   {0xCD, 0xDC, 0x39, 0xff},
-	"yellow": {0xFF, 0xEB, 0x3B, 0xff},
-	"amber":  {0xFF, 0xC1, 0x07, 0xff},
-	"orange": {0xFF, 0x98, 0x00, 0xff},
-	"brown":  {0x79, 0x55, 0x48, 0xff},
-	"grey":   {0x9E, 0x9E, 0x9E, 0xff},
-	"white":  {0x00, 0x00, 0x00, 0xff},
-	"black":  {0xFF, 0xFF, 0xFF, 0xff},
+type MaterialColor uint16
+type MaterialColors []MaterialColor
+
+const ColorSampleSize = 3
+
+const (
+	Black MaterialColor = iota
+	Brown
+	Grey
+	White
+	Purple
+	Indigo
+	Blue
+	Cyan
+	Teal
+	Green
+	Lime
+	Yellow
+	Amber
+	Orange
+	Red
+	Pink
+)
+
+var materialColorNames = map[MaterialColor]string{
+	Black:  "black",  // 0
+	Brown:  "brown",  // 1
+	Grey:   "grey",   // 2
+	White:  "white",  // 3
+	Purple: "purple", // 4
+	Indigo: "indigo", // 5
+	Blue:   "blue",   // 6
+	Cyan:   "cyan",   // 7
+	Teal:   "teal",   // 8
+	Green:  "green",  // 9
+	Lime:   "lime",   // A
+	Yellow: "yellow", // B
+	Amber:  "amber",  // C
+	Orange: "orange", // D
+	Red:    "red",    // E
+	Pink:   "pink",   // F
 }
 
-func deduplicate(s []string) []string {
-	seen := make(map[string]struct{}, len(s))
-	j := 0
-	for _, v := range s {
-		if _, ok := seen[v]; ok {
-			continue
-		}
-		seen[v] = struct{}{}
-		s[j] = v
-		j++
+var materialColorWeight = map[MaterialColor]uint16{
+	Black:  2,
+	Brown:  1,
+	Grey:   2,
+	White:  2,
+	Purple: 5,
+	Indigo: 3,
+	Blue:   3,
+	Cyan:   4,
+	Teal:   4,
+	Green:  3,
+	Lime:   5,
+	Yellow: 5,
+	Amber:  5,
+	Orange: 5,
+	Red:    5,
+	Pink:   5,
+}
+
+func (c MaterialColor) Name() string {
+	return materialColorNames[c]
+}
+
+func (c MaterialColor) Hex() string {
+	return fmt.Sprintf("%X", c)
+}
+
+func (c MaterialColors) Hex() (result string) {
+	for _, materialColor := range c {
+		result += materialColor.Hex()
 	}
-	return s[:j]
+
+	return result
 }
 
-func getColorNames(actualColor colorful.Color) (result []string) {
-	var maxDistance = 0.27
+var materialColorMap = map[color.RGBA]MaterialColor{
+	{0x00, 0x00, 0x00, 0xff}: Black,
+	{0x79, 0x55, 0x48, 0xff}: Brown,
+	{0x9E, 0x9E, 0x9E, 0xff}: Grey,
+	{0xFF, 0xFF, 0xFF, 0xff}: White,
+	{0x9c, 0x27, 0xb0, 0xff}: Purple,
+	{0x3F, 0x51, 0xB5, 0xff}: Indigo,
+	{0x21, 0x96, 0xF3, 0xff}: Blue,
+	{0x00, 0xBC, 0xD4, 0xff}: Cyan,
+	{0x00, 0x96, 0x88, 0xff}: Teal,
+	{0x4C, 0xAF, 0x50, 0xff}: Green,
+	{0xCD, 0xDC, 0x39, 0xff}: Lime,
+	{0xFF, 0xEB, 0x3B, 0xff}: Yellow,
+	{0xFF, 0xC1, 0x07, 0xff}: Amber,
+	{0xFF, 0x98, 0x00, 0xff}: Orange,
+	{0xf4, 0x43, 0x36, 0xff}: Red,
+	{0xe9, 0x1e, 0x63, 0xff}: Pink,
+}
 
-	for colorName, colorRGBA := range colorMap {
+func colorfulToMaterialColor(actualColor colorful.Color) (result MaterialColor) {
+	var distance = 1.0
+
+	for colorRGBA, materialColor := range materialColorMap {
 		colorColorful, _ := colorful.MakeColor(colorRGBA)
 		currentDistance := colorColorful.DistanceLab(actualColor)
 
-		if maxDistance >= currentDistance {
-			result = append(result, fmt.Sprintf("%s", colorName))
+		if distance >= currentDistance {
+			distance = currentDistance
+			result = materialColor
 		}
 	}
 
 	return result
 }
 
-// GetColors returns color information for a given mediafiles.
-func (m *MediaFile) GetColors() (colors []string, vibrantHex string, mutedHex string) {
-	file, _ := os.Open(m.filename)
+// Colors returns color information for a media file.
+func (m *MediaFile) Colors() (colors MaterialColors, mainColor MaterialColor, err error) {
+	jpeg, err := m.GetJpeg()
 
-	defer file.Close()
+	if err != nil {
+		log.Printf("can't find jpeg: %s", err.Error())
 
-	decodedImage, _, _ := image.Decode(file)
-
-	palette := vibrant.NewPaletteBuilder(decodedImage).Generate()
-
-	if vibrantSwatch := palette.VibrantSwatch(); vibrantSwatch != nil {
-		color, _ := colorful.MakeColor(vibrantSwatch.Color())
-		vibrantHex = color.Hex()
+		return colors, mainColor, err
 	}
 
-	if mutedSwatch := palette.MutedSwatch(); mutedSwatch != nil {
-		color, _ := colorful.MakeColor(mutedSwatch.Color())
-		mutedHex = color.Hex()
+	img, err := imaging.Open(jpeg.GetFilename(), imaging.AutoOrientation(true))
+
+	if err != nil {
+		log.Printf("can't open jpeg: %s", err.Error())
+
+		return colors, mainColor, err
 	}
 
-	centroids, err := prominentcolor.KmeansWithAll(5, decodedImage, prominentcolor.ArgumentDefault|prominentcolor.ArgumentNoCropping, prominentcolor.DefaultSize, prominentcolor.GetDefaultMasks())
-	if err == nil {
-		for _, centroid := range centroids {
-			colorfulColor, _ := colorful.MakeColor(color.RGBA{R: uint8(centroid.Color.R), G: uint8(centroid.Color.G), B: uint8(centroid.Color.B), A: 0xff})
-			colors = append(colors, getColorNames(colorfulColor)...)
+	img = imaging.Resize(img, ColorSampleSize, ColorSampleSize, imaging.Box)
+
+	bounds := img.Bounds()
+	width, height := bounds.Max.X, bounds.Max.Y
+
+	colorCount := make(map[MaterialColor]uint16)
+	var mainColorCount uint16
+
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			r, g, b, a := img.At(x, y).RGBA()
+			rgbColor, _ := colorful.MakeColor(color.RGBA{R: uint8(r), G: uint8(g), B: uint8(b), A: uint8(a)})
+			materialColor := colorfulToMaterialColor(rgbColor)
+			colors = append(colors, materialColor)
+
+			if _, ok := colorCount[materialColor]; ok == true {
+				colorCount[materialColor] += materialColorWeight[materialColor]
+			} else {
+				colorCount[materialColor] = materialColorWeight[materialColor]
+			}
+
+			if colorCount[materialColor] > mainColorCount {
+				mainColorCount = colorCount[materialColor]
+				mainColor = materialColor
+			}
+
 		}
-		colors = deduplicate(colors)
-		sort.Strings(colors)
-	} else {
-		log.Printf("Unable to detect most dominent color in image: %s", err)
 	}
 
-	return colors, vibrantHex, mutedHex
+	return colors, mainColor, nil
 }

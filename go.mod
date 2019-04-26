@@ -2,8 +2,6 @@ module github.com/photoprism/photoprism
 
 require (
 	cloud.google.com/go v0.34.0 // indirect
-	github.com/EdlinOrg/prominentcolor v0.0.0-20180211183425-27c67d28df53
-	github.com/RobCherry/vibrant v0.0.0-20160904011657-0680b8cf1c89
 	github.com/araddon/dateparse v0.0.0-20181123171228-21df004e09ca
 	github.com/bamiaux/rez v0.0.0-20170731184118-29f4463c688b // indirect
 	github.com/blacktear23/go-proxyprotocol v0.0.0-20180807104634-af7a81e8dd0d // indirect
@@ -47,8 +45,6 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/montanaflynn/stats v0.0.0-20181214052348-945b007cb92f // indirect
 	github.com/myesui/uuid v1.0.0 // indirect
-	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
-	github.com/oliamb/cutter v0.2.2 // indirect
 	github.com/onsi/gomega v1.4.3 // indirect
 	github.com/opentracing/opentracing-go v1.0.2
 	github.com/pingcap/errors v0.11.0
@@ -76,10 +72,12 @@ require (
 	go.uber.org/atomic v1.3.2 // indirect
 	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.9.1 // indirect
-	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9 // indirect
-	golang.org/x/image v0.0.0-20181116024801-cd38e8056d9b
-	golang.org/x/net v0.0.0-20181217023233-e147a9138326 // indirect
-	golang.org/x/sys v0.0.0-20181217223516-dcdaa6325bcb // indirect
+	golang.org/x/crypto v0.0.0-20190424203555-c05e17bb3b2d // indirect
+	golang.org/x/image v0.0.0-20181116024801-cd38e8056d9b // indirect
+	golang.org/x/net v0.0.0-20190424112056-4829fb13d2c6 // indirect
+	golang.org/x/sync v0.0.0-20190423024810-112230192c58 // indirect
+	golang.org/x/sys v0.0.0-20190424175732-18eb32c0e2f0 // indirect
+	golang.org/x/text v0.3.1 // indirect
 	golang.org/x/time v0.0.0-20181108054448-85acf8d2951c // indirect
 	google.golang.org/appengine v1.3.0 // indirect
 	google.golang.org/genproto v0.0.0-20181218023534-67d6565462c5 // indirect

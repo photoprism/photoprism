@@ -76,7 +76,6 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	var photo models.Photo
 	var file, primaryFile models.File
 	var isPrimary = false
-	var colorNames []string
 	var tags []*models.Tag
 
 	canonicalName := mediaFile.GetCanonicalNameFromFile()
@@ -95,9 +94,10 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			}
 
 			// PhotoColors
-			colorNames, photo.PhotoVibrantColor, photo.PhotoMutedColor = jpeg.GetColors()
+			photoColors, photoColor, _ := jpeg.Colors()
 
-			photo.PhotoColors = strings.Join(colorNames, ", ")
+			photo.PhotoColor = photoColor.Name()
+			photo.PhotoColors = photoColors.Hex()
 
 			// Tags (TensorFlow)
 			tags = i.getImageTags(jpeg)
@@ -163,9 +163,10 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	} else if time.Now().Sub(photo.UpdatedAt).Minutes() > 10 { // If updated more than 10 minutes ago
 		if jpeg, err := mediaFile.GetJpeg(); err == nil {
 			// PhotoColors
-			colorNames, photo.PhotoVibrantColor, photo.PhotoMutedColor = jpeg.GetColors()
+			photoColors, photoColor, _ := jpeg.Colors()
 
-			photo.PhotoColors = strings.Join(colorNames, ", ")
+			photo.PhotoColor = photoColor.Name()
+			photo.PhotoColors = photoColors.Hex()
 
 			photo.Camera = models.NewCamera(mediaFile.GetCameraModel(), mediaFile.GetCameraMake()).FirstOrCreate(i.db)
 			photo.Lens = models.NewLens(mediaFile.GetLensModel(), mediaFile.GetLensMake()).FirstOrCreate(i.db)

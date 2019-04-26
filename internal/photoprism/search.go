@@ -33,8 +33,7 @@ type PhotoSearchResult struct {
 	PhotoArtist        string
 	PhotoKeywords      string
 	PhotoColors        string
-	PhotoVibrantColor  string
-	PhotoMutedColor    string
+	PhotoColor         string
 	PhotoCanonicalName string
 	PhotoLat           float64
 	PhotoLong          float64
@@ -118,7 +117,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 
 	if form.Query != "" {
 		likeString := "%" + strings.ToLower(form.Query) + "%"
-		q = q.Where("tags.tag_label LIKE ? OR LOWER(photo_title) LIKE ? OR LOWER(photo_colors) LIKE ?", likeString, likeString, likeString)
+		q = q.Where("tags.tag_label LIKE ? OR LOWER(photo_title) LIKE ? OR LOWER(photo_color) LIKE ?", likeString, likeString, likeString)
 	}
 
 	if form.CameraID > 0 {

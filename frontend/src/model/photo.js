@@ -10,6 +10,17 @@ class Photo extends Abstract {
         return this.ID;
     }
 
+    getColor() {
+        switch (this.PhotoColor) {
+            case 'brown':
+            case 'black':
+            case 'white':
+            case 'grey':
+                return 'grey lighten-2';
+            default:
+                return this.PhotoColor + ' lighten-4';
+        }
+    }
 
     getColors() {
         return this.PhotoColors;

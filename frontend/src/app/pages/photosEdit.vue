@@ -63,15 +63,9 @@
                                 ></v-text-field>
                                 <v-spacer></v-spacer>
                                 <v-text-field
-                                        v-model="vibrantColor"
-                                        label="Vibrant color"
-                                        placeholder="white"
-                                ></v-text-field>
-                                <v-spacer></v-spacer>
-                                <v-text-field
-                                        v-model="mutedColor"
-                                        label="Muted color"
-                                        placeholder="blue"
+                                        v-model="color"
+                                        label="Color"
+                                        placeholder="unknown"
                                 ></v-text-field>
                                 <v-spacer></v-spacer>
 
@@ -229,6 +223,7 @@
                 'activator': null,
                 'attach': null,
                 'colors': ['green', 'purple', 'indigo', 'primary', 'success', 'orange'],
+                'color': '',
                 'editing': null,
                 'index': -1,
                 'items': [

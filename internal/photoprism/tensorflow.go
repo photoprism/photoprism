@@ -163,7 +163,7 @@ func (t *TensorFlow) makeTensorFromImage(image string, imageFormat string) (*tf.
 
 // Creates a graph to decode, resize and normalize an image
 func (t *TensorFlow) makeTransformImageGraph(imageFormat string) (
-		graph *tf.Graph, input, output tf.Output, err error) {
+	graph *tf.Graph, input, output tf.Output, err error) {
 	const (
 		H, W  = 224, 224
 		Mean  = float32(117)

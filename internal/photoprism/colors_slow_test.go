@@ -15,26 +15,29 @@ func TestMediaFile_GetColors_Slow(t *testing.T) {
 	conf.InitializeTestData(t)
 
 	if mediaFile2, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG"); err == nil {
+		colors, main, err := mediaFile2.Colors()
 
-		names, vibrantHex, mutedHex := mediaFile2.GetColors()
+		t.Log(colors, main, err)
 
-		t.Log(names, vibrantHex, mutedHex)
-
-		assert.Equal(t, "#3d85c3", vibrantHex)
-		assert.Equal(t, "#988570", mutedHex)
-		assert.Equal(t, []string([]string{"black", "brown", "grey", "white"}), names);
+		assert.Nil(t, err)
+		assert.IsType(t, MaterialColors{}, colors)
+		assert.Equal(t, "grey", main.Name())
+		assert.Equal(t, MaterialColors{0x2, 0x1, 0x2, 0x1, 0x1, 0x1, 0x2, 0x1, 0x2}, colors)
 	} else {
 		t.Error(err)
 	}
 
 	if mediaFile3, err := NewMediaFile(conf.ImportPath() + "/raw/20140717_154212_1EC48F8489.jpg"); err == nil {
+		colors, main, err := mediaFile3.Colors()
 
-		names, vibrantHex, mutedHex := mediaFile3.GetColors()
+		t.Log(colors, main, err)
 
-		t.Log(names, vibrantHex, mutedHex)
-		assert.Equal(t, []string([]string{"black", "brown", "grey"}), names);
-		assert.Equal(t, "#d5d437", vibrantHex)
-		assert.Equal(t, "#a69f55", mutedHex)
+		assert.Nil(t, err)
+		assert.IsType(t, MaterialColors{}, colors)
+		assert.Equal(t, "grey", main.Name())
+
+		assert.Equal(t, MaterialColors{0x3, 0x2, 0x2, 0x1, 0x2, 0x2, 0x2, 0x2, 0x1}, colors)
+
 	} else {
 		t.Error(err)
 	}

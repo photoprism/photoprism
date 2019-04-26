@@ -41,7 +41,6 @@ test-coverage:
 	go test -tags=slow -timeout 30m -coverprofile=coverage.txt -covermode=atomic -v ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
 clean:
-	go clean
 	rm -f $(BINARY_NAME)
 download:
 	scripts/download-inception.sh
@@ -68,6 +67,8 @@ fmt:
 	go fmt ./internal/... ./cmd/...
 dep:
 	go build -v ./...
+tidy:
+	go mod tidy
 upgrade:
 	go mod tidy
 	go get -u
