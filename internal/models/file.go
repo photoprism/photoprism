@@ -11,7 +11,7 @@ type File struct {
 	PhotoID            uint
 	FilePrimary        bool
 	FileMissing        bool
-	FileName           string `gorm:"type:varchar(2048);index"`
+	FileName           string `gorm:"type:varchar(512);index"` // max 3072 bytes / 4 bytes for utf8mb4 = 768 chars
 	FileType           string `gorm:"type:varchar(32)"`
 	FileMime           string `gorm:"type:varchar(64)"`
 	FileWidth          int
