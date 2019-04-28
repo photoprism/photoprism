@@ -4,6 +4,7 @@ package photoprism
 
 import (
 	"io/ioutil"
+	"math"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/test"
@@ -30,6 +31,6 @@ func TestTensorFlow_GetImageTags(t *testing.T) {
 		assert.Equal(t, "tabby", result[0].Label)
 		assert.Equal(t, "tiger cat", result[1].Label)
 
-		assert.Equal(t, float32(0.1648176), result[1].Probability)
+		assert.Equal(t, float64(0.165), math.Round(float64(result[1].Probability)*1000)/1000)
 	}
 }
