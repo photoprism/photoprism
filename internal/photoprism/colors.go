@@ -2,8 +2,10 @@ package photoprism
 
 import (
 	"fmt"
+	"image"
 	"image/color"
 	"log"
+	"math"
 
 	"github.com/disintegration/imaging"
 	"github.com/lucasb-eyer/go-colorful"
@@ -11,6 +13,9 @@ import (
 
 type MaterialColor uint16
 type MaterialColors []MaterialColor
+
+type Luminance uint8
+type LightMap []Luminance
 
 const ColorSampleSize = 3
 
@@ -87,6 +92,18 @@ func (c MaterialColors) Hex() (result string) {
 	return result
 }
 
+func (l Luminance) Hex() string {
+	return fmt.Sprintf("%X", l)
+}
+
+func (m LightMap) Hex() (result string) {
+	for _, luminance := range m {
+		result += luminance.Hex()
+	}
+
+	return result
+}
+
 var materialColorMap = map[color.RGBA]MaterialColor{
 	{0x00, 0x00, 0x00, 0xff}: Black,
 	{0x79, 0x55, 0x48, 0xff}: Brown,
@@ -122,28 +139,35 @@ func colorfulToMaterialColor(actualColor colorful.Color) (result MaterialColor) 
 	return result
 }
 
-// Colors returns color information for a media file.
-func (m *MediaFile) Colors() (colors MaterialColors, mainColor MaterialColor, err error) {
+func (m *MediaFile) Resize(width, height int) (result *image.NRGBA, err error) {
 	jpeg, err := m.GetJpeg()
 
 	if err != nil {
-		log.Printf("can't find jpeg: %s", err.Error())
-
-		return colors, mainColor, err
+		return nil, err
 	}
 
-	img, err := imaging.Open(jpeg.GetFilename(), imaging.AutoOrientation(true))
+	img, err:= imaging.Open(jpeg.GetFilename(), imaging.AutoOrientation(true))
 
 	if err != nil {
-		log.Printf("can't open jpeg: %s", err.Error())
-
-		return colors, mainColor, err
+		return nil, err
 	}
 
-	img = imaging.Resize(img, ColorSampleSize, ColorSampleSize, imaging.Box)
+	return imaging.Resize(img, width, height, imaging.Box), nil
+}
+
+// Colors returns color information for a media file.
+func (m *MediaFile) Colors() (colors MaterialColors, mainColor MaterialColor, luminance LightMap, monochrome bool, err error) {
+	img, err := m.Resize(ColorSampleSize, ColorSampleSize)
+
+	if err != nil {
+		log.Printf("can't open image: %s", err.Error())
+
+		return colors, mainColor, luminance, monochrome, err
+	}
 
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
+	monochrome = true
 
 	colorCount := make(map[MaterialColor]uint16)
 	var mainColorCount uint16
@@ -166,8 +190,15 @@ func (m *MediaFile) Colors() (colors MaterialColors, mainColor MaterialColor, er
 				mainColor = materialColor
 			}
 
+			_, s, l := rgbColor.Hsl()
+
+			if s != 0 {
+				monochrome = false
+			}
+
+			luminance = append(luminance, Luminance(math.Round(l * 16)))
 		}
 	}
 
-	return colors, mainColor, nil
+	return colors, mainColor, luminance, monochrome, nil
 }

@@ -18,6 +18,8 @@ type Photo struct {
 	PhotoArtist        string
 	PhotoColors        string
 	PhotoColor         string
+	PhotoLuminance     string
+	PhotoMonochrome    bool
 	PhotoCanonicalName string
 	PhotoFavorite      bool
 	PhotoLat           float64

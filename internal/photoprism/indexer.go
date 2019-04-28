@@ -94,10 +94,12 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			}
 
 			// PhotoColors
-			photoColors, photoColor, _ := jpeg.Colors()
+			photoColors, photoColor, luminance, monochrome, _ := jpeg.Colors()
 
 			photo.PhotoColor = photoColor.Name()
 			photo.PhotoColors = photoColors.Hex()
+			photo.PhotoLuminance = luminance.Hex()
+			photo.PhotoMonochrome = monochrome
 
 			// Tags (TensorFlow)
 			tags = i.getImageTags(jpeg)
@@ -163,10 +165,12 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	} else if time.Now().Sub(photo.UpdatedAt).Minutes() > 10 { // If updated more than 10 minutes ago
 		if jpeg, err := mediaFile.GetJpeg(); err == nil {
 			// PhotoColors
-			photoColors, photoColor, _ := jpeg.Colors()
+			photoColors, photoColor, luminance, monochrome, _ := jpeg.Colors()
 
 			photo.PhotoColor = photoColor.Name()
 			photo.PhotoColors = photoColors.Hex()
+			photo.PhotoLuminance = luminance.Hex()
+			photo.PhotoMonochrome = monochrome
 
 			photo.Camera = models.NewCamera(mediaFile.GetCameraModel(), mediaFile.GetCameraMake()).FirstOrCreate(i.db)
 			photo.Lens = models.NewLens(mediaFile.GetLensModel(), mediaFile.GetLensMake()).FirstOrCreate(i.db)
