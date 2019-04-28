@@ -16,3 +16,5 @@ Thank you very much! 💎
 ## Donations ##
 
 - [David Pennington](https://github.com/Xeoncross)
+- Jun Li
+- Jonas Aaberg
