@@ -14,6 +14,7 @@ import (
 type MaterialColor uint16
 type MaterialColors []MaterialColor
 
+type Saturation uint8
 type Luminance uint8
 type LightMap []Luminance
 
@@ -92,6 +93,18 @@ func (c MaterialColors) Hex() (result string) {
 	return result
 }
 
+func (s Saturation) Hex() string {
+	return fmt.Sprintf("%X", s)
+}
+
+func (s Saturation) Uint() uint {
+	return uint(s)
+}
+
+func (s Saturation) Int() int {
+	return int(s)
+}
+
 func (l Luminance) Hex() string {
 	return fmt.Sprintf("%X", l)
 }
@@ -156,18 +169,19 @@ func (m *MediaFile) Resize(width, height int) (result *image.NRGBA, err error) {
 }
 
 // Colors returns color information for a media file.
-func (m *MediaFile) Colors() (colors MaterialColors, mainColor MaterialColor, luminance LightMap, monochrome bool, err error) {
+func (m *MediaFile) Colors() (colors MaterialColors, mainColor MaterialColor, luminance LightMap, saturation Saturation, err error) {
 	img, err := m.Resize(ColorSampleSize, ColorSampleSize)
 
 	if err != nil {
 		log.Printf("can't open image: %s", err.Error())
 
-		return colors, mainColor, luminance, monochrome, err
+		return colors, mainColor, luminance, saturation, err
 	}
 
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
-	monochrome = true
+	pixels := float64(width * height)
+	saturationSum := 0.0
 
 	colorCount := make(map[MaterialColor]uint16)
 	var mainColorCount uint16
@@ -192,13 +206,13 @@ func (m *MediaFile) Colors() (colors MaterialColors, mainColor MaterialColor, lu
 
 			_, s, l := rgbColor.Hsl()
 
-			if s != 0 {
-				monochrome = false
-			}
+			saturationSum += s
 
 			luminance = append(luminance, Luminance(math.Round(l * 16)))
 		}
 	}
 
-	return colors, mainColor, luminance, monochrome, nil
+	saturation = Saturation(math.Ceil((saturationSum / pixels) * 16))
+
+	return colors, mainColor, luminance, saturation, nil
 }
