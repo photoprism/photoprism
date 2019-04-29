@@ -93,14 +93,6 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 				photo.PhotoArtist = exifData.Artist
 			}
 
-			// PhotoColors
-			photoColors, photoColor, luminance, saturation, _ := jpeg.Colors()
-
-			photo.PhotoColor = photoColor.Name()
-			photo.PhotoColors = photoColors.Hex()
-			photo.PhotoLuminance = luminance.Hex()
-			photo.PhotoSaturation = saturation.Uint()
-
 			// Tags (TensorFlow)
 			tags = i.getImageTags(jpeg)
 		}
@@ -164,18 +156,17 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		i.db.Create(&photo)
 	} else if time.Now().Sub(photo.UpdatedAt).Minutes() > 10 { // If updated more than 10 minutes ago
 		if jpeg, err := mediaFile.GetJpeg(); err == nil {
-			// PhotoColors
-			photoColors, photoColor, luminance, saturation, _ := jpeg.Colors()
-
-			photo.PhotoColor = photoColor.Name()
-			photo.PhotoColors = photoColors.Hex()
-			photo.PhotoLuminance = luminance.Hex()
-			photo.PhotoSaturation = saturation.Uint()
-
 			photo.Camera = models.NewCamera(mediaFile.GetCameraModel(), mediaFile.GetCameraMake()).FirstOrCreate(i.db)
 			photo.Lens = models.NewLens(mediaFile.GetLensModel(), mediaFile.GetLensMake()).FirstOrCreate(i.db)
 			photo.PhotoFocalLength = mediaFile.GetFocalLength()
 			photo.PhotoAperture = mediaFile.GetAperture()
+
+			// Geo Location
+			if exifData, err := jpeg.GetExifData(); err == nil {
+				photo.PhotoLat = exifData.Lat
+				photo.PhotoLong = exifData.Long
+				photo.PhotoArtist = exifData.Artist
+			}
 		}
 
 		if photo.LocationID == 0 {
@@ -209,11 +200,16 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	file.FileOrientation = mediaFile.GetOrientation()
 
 	// Perceptual Hash
-	if file.FilePerceptualHash == "" && mediaFile.IsJpeg() {
-		if perceptualHash, err := mediaFile.GetPerceptualHash(); err == nil {
-			file.FilePerceptualHash = perceptualHash
-		}
+	if mediaFile.IsJpeg() {
+		// PhotoColors
+		c, mc, l, s, _ := mediaFile.Colors()
+
+		file.FileMainColor = mc.Name()
+		file.FileColors = c.Hex()
+		file.FileLuminance = l.Hex()
+		file.FileSaturation = s.Uint()
 	}
+
 
 	if mediaFile.GetWidth() > 0 && mediaFile.GetHeight() > 0 {
 		file.FileWidth = mediaFile.GetWidth()

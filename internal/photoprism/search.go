@@ -99,11 +99,14 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 	q := s.db.NewScope(nil).DB()
 	q = q.Table("photos").
 		Select(`SQL_CALC_FOUND_ROWS photos.*,
-		files.id AS file_id, files.file_primary, files.file_missing, files.file_name, files.file_hash, files.file_perceptual_hash, files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, files.file_orientation,
+		files.id AS file_id, files.file_primary, files.file_missing, files.file_name, files.file_hash, 
+		files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, 
+		files.file_orientation, files.file_main_color, files.file_colors, files.file_luminance, files.file_saturation,
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
 		countries.country_name,
-		locations.loc_display_name, locations.loc_name, locations.loc_city, locations.loc_postcode, locations.loc_county, locations.loc_state, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type,
+		locations.loc_display_name, locations.loc_name, locations.loc_city, locations.loc_postcode, locations.loc_county, 
+		locations.loc_state, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type,
 		GROUP_CONCAT(tags.tag_label) AS tags`).
 		Joins("JOIN files ON files.photo_id = photos.id AND files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
@@ -117,7 +120,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 
 	if form.Query != "" {
 		likeString := "%" + strings.ToLower(form.Query) + "%"
-		q = q.Where("tags.tag_label LIKE ? OR LOWER(photo_title) LIKE ? OR LOWER(photo_color) LIKE ?", likeString, likeString, likeString)
+		q = q.Where("tags.tag_label LIKE ? OR LOWER(photo_title) LIKE ? OR LOWER(files.file_main_color) LIKE ?", likeString, likeString, likeString)
 	}
 
 	if form.CameraID > 0 {
