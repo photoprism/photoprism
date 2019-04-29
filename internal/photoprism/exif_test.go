@@ -24,3 +24,25 @@ func TestMediaFile_GetExifData(t *testing.T) {
 
 	assert.Equal(t, "iPhone SE", info.CameraModel)
 }
+
+func TestMediaFile_GetExifData_Slow(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	conf := test.NewConfig()
+
+	conf.InitializeTestData(t)
+
+	image2, err := NewMediaFile(conf.ImportPath() + "/raw/IMG_1435.CR2")
+
+	assert.Nil(t, err)
+
+	info, err := image2.GetExifData()
+
+	assert.Empty(t, err)
+
+	assert.IsType(t, &ExifData{}, info)
+
+	assert.Equal(t, "Canon EOS M10", info.CameraModel)
+}

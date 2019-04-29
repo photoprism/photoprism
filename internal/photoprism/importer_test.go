@@ -43,3 +43,23 @@ func TestImporter_GetDestinationFilename(t *testing.T) {
 
 	assert.Equal(t, conf.OriginalsPath()+"/2018/02/20180204_170813_863A6248DCCA.cr2", filename)
 }
+
+func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	conf := test.NewConfig()
+
+	conf.InitializeTestData(t)
+
+	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
+
+	indexer := NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
+
+	converter := NewConverter(conf.DarktableCli())
+
+	importer := NewImporter(conf.OriginalsPath(), indexer, converter)
+
+	importer.ImportPhotosFromDirectory(conf.ImportPath())
+}
