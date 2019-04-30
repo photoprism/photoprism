@@ -6,6 +6,7 @@
 /frontend/node_modules/*
 /frontend/tests/result.html
 /assets/testdata
+/assets/tensorflow
 *.log
 
 # Binaries for programs and plugins

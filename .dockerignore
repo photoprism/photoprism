@@ -5,6 +5,7 @@
 /frontend/node_modules/*
 /assets/server/public/build/*
 /assets/testdata
+/assets/tensorflow
 Dockerfile
 /photoprism
 docker-compose*

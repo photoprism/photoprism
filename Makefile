@@ -43,7 +43,7 @@ test-coverage:
 clean:
 	rm -f $(BINARY_NAME)
 download:
-	scripts/download-inception.sh
+	scripts/download-assets.sh
 deploy-photoprism:
 	scripts/docker-build.sh photoprism $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism $(DOCKER_TAG)

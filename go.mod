@@ -64,7 +64,7 @@ require (
 	github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72 // indirect
 	github.com/steakknife/hamming v0.0.0-20180906055917-c99c65617cd3
 	github.com/stretchr/testify v1.2.2
-	github.com/tensorflow/tensorflow v1.12.0
+	github.com/tensorflow/tensorflow v1.13.1
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6 // indirect
 	github.com/twinj/uuid v1.0.0 // indirect
 	github.com/unrolled/render v0.0.0-20181210145518-4c664cb3ad2f // indirect
