@@ -7,10 +7,10 @@ import-path: /srv/photoprism/photos/import
 export-path: /srv/photoprism/photos/export
 sql-host: localhost
 sql-port: 4000
-sql-password:
+sql-password: photoprism
 http-host:
 http-mode: release
 http-port: 80
 http-password:
 database-driver: internal
-database-dsn: root:@tcp(localhost:4000)/photoprism?parseTime=true
+database-dsn: root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true

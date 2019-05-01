@@ -93,7 +93,6 @@ func (t *TensorFlow) GetImageTags(img []byte) (result []TensorFlowLabel, err err
 		return result, errors.New("result is empty")
 	}
 
-
 	// Return best labels
 	return t.findBestLabels(output[0].Value().([][]float32)[0]), nil
 }
@@ -105,7 +104,7 @@ func (t *TensorFlow) loadModel() error {
 	}
 
 	// Load model
-	model, err := tf.LoadSavedModel(t.modelPath + "/nasnet", []string{"photoprism"}, nil)
+	model, err := tf.LoadSavedModel(t.modelPath+"/nasnet", []string{"photoprism"}, nil)
 
 	if err != nil {
 		return err
@@ -150,7 +149,7 @@ func (t *TensorFlow) findBestLabels(probabilities []float32) []TensorFlowLabel {
 }
 
 func (t *TensorFlow) makeTensorFromImage(image []byte, imageFormat string) (*tf.Tensor, error) {
-	img, err:= imaging.Decode(bytes.NewReader(image), imaging.AutoOrientation(true))
+	img, err := imaging.Decode(bytes.NewReader(image), imaging.AutoOrientation(true))
 
 	if err != nil {
 		return nil, err

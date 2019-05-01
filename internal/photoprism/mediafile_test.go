@@ -78,22 +78,6 @@ func TestMediaFile_GetEditedFilename(t *testing.T) {
 	assert.Equal(t, "", mediaFile3.GetEditedFilename())
 }
 
-func TestMediaFile_GetPerceptiveHash(t *testing.T) {
-	conf := test.NewConfig()
-
-	conf.InitializeTestData(t)
-
-	mediaFile1, err := NewMediaFile(conf.ImportPath() + "/20130203_193332_0AE340D280.jpg")
-	assert.Nil(t, err)
-	hash1, _ := mediaFile1.GetPerceptualHash()
-
-	assert.Equal(t, "ef95", hash1)
-
-	distance, _ := mediaFile1.GetPerceptualDistance("6f95")
-
-	assert.Equal(t, 1, distance)
-}
-
 func TestMediaFile_GetMimeType(t *testing.T) {
 	conf := test.NewConfig()
 
@@ -119,40 +103,4 @@ func TestMediaFile_Exists(t *testing.T) {
 	mediaFile, err = NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788_XYZ.JPG")
 	assert.NotNil(t, err)
 	assert.Nil(t, mediaFile)
-}
-
-func TestMediaFile_GetPerceptiveHash_Slow(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
-	conf := test.NewConfig()
-
-	conf.InitializeTestData(t)
-
-	mediaFile1, err := NewMediaFile(conf.ImportPath() + "/20130203_193332_0AE340D280.jpg")
-	assert.Nil(t, err)
-	hash1, _ := mediaFile1.GetPerceptualHash()
-
-	assert.Equal(t, "ef95", hash1)
-
-	mediaFile2, err := NewMediaFile(conf.ImportPath() + "/20130203_193332_0AE340D280_V2.jpg")
-	assert.Nil(t, err)
-	hash2, _ := mediaFile2.GetPerceptualHash()
-
-	assert.Equal(t, "6f95", hash2)
-
-	distance, _ := mediaFile1.GetPerceptualDistance(hash2)
-
-	assert.Equal(t, 1, distance)
-
-	mediaFile3, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
-	assert.Nil(t, err)
-	hash3, _ := mediaFile3.GetPerceptualHash()
-
-	assert.Equal(t, "ad73", hash3)
-
-	distance, _ = mediaFile1.GetPerceptualDistance(hash3)
-
-	assert.Equal(t, 7, distance)
 }

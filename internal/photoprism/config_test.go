@@ -59,7 +59,7 @@ func TestContextConfig_SetValuesFromFile(t *testing.T) {
 	assert.Equal(t, "/srv/photoprism/photos/import", c.ImportPath())
 	assert.Equal(t, "/srv/photoprism/photos/export", c.ExportPath())
 	assert.Equal(t, "internal", c.DatabaseDriver())
-	assert.Equal(t, "root:@tcp(localhost:4000)/photoprism?parseTime=true", c.DatabaseDsn())
+	assert.Equal(t, "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true", c.DatabaseDsn())
 }
 
 func TestTestConfig_ConnectToDatabase(t *testing.T) {

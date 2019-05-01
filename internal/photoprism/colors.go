@@ -159,7 +159,7 @@ func (m *MediaFile) Resize(width, height int) (result *image.NRGBA, err error) {
 		return nil, err
 	}
 
-	img, err:= imaging.Open(jpeg.GetFilename(), imaging.AutoOrientation(true))
+	img, err := imaging.Open(jpeg.GetFilename(), imaging.AutoOrientation(true))
 
 	if err != nil {
 		return nil, err
@@ -208,7 +208,7 @@ func (m *MediaFile) Colors() (colors MaterialColors, mainColor MaterialColor, lu
 
 			saturationSum += s
 
-			luminance = append(luminance, Luminance(math.Round(l * 16)))
+			luminance = append(luminance, Luminance(math.Round(l*16)))
 		}
 	}
 

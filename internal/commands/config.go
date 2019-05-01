@@ -33,6 +33,7 @@ func configAction(ctx *cli.Context) error {
 
 	fmt.Printf("sql-host              %s\n", conf.SqlServerHost())
 	fmt.Printf("sql-port              %d\n", conf.SqlServerPort())
+	fmt.Printf("sql-password          %s\n", conf.SqlServerPassword())
 	fmt.Printf("sql-path              %s\n", conf.SqlServerPath())
 
 	fmt.Printf("assets-path           %s\n", conf.AssetsPath())

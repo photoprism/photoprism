@@ -1,7 +1,7 @@
 package context
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"time"
 
@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/fsutil"
 	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/tidb"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -61,12 +62,26 @@ type Config struct {
 // 2. SetValuesFromCliContext: Which comes after SetValuesFromFile and overrides
 //    any previous values giving an option two override file configs through the CLI.
 func NewConfig(ctx *cli.Context) *Config {
+	log.SetLevel(log.InfoLevel)
+
 	c := &Config{}
 	c.appName = ctx.App.Name
 	c.appCopyright = ctx.App.Copyright
 	c.appVersion = ctx.App.Version
-	c.SetValuesFromFile(fsutil.ExpandedFilename(ctx.GlobalString("config-file")))
-	c.SetValuesFromCliContext(ctx)
+
+	if err := c.SetValuesFromFile(fsutil.ExpandedFilename(ctx.GlobalString("config-file"))); err != nil {
+		log.Error(err)
+	}
+
+	if err := c.SetValuesFromCliContext(ctx); err != nil {
+		log.Error(err)
+	}
+
+	if c.Debug() {
+		log.SetLevel(log.DebugLevel)
+	} else {
+		log.SetLevel(log.ErrorLevel)
+	}
 
 	return c
 }
@@ -273,6 +288,8 @@ func (c *Config) connectToDatabase() error {
 
 	if err != nil || db == nil {
 		if isTiDB {
+			fmt.Printf("Starting database server at %s:%d...\n", c.SqlServerHost(), c.SqlServerPort())
+
 			go tidb.Start(c.SqlServerPath(), c.SqlServerPort(), c.SqlServerHost(), c.Debug())
 		}
 
@@ -286,7 +303,7 @@ func (c *Config) connectToDatabase() error {
 			}
 
 			if isTiDB && !initSuccess {
-				err = tidb.InitDatabase(c.SqlServerPort())
+				err = tidb.InitDatabase(c.SqlServerPort(), c.SqlServerPassword())
 
 				if err != nil {
 					log.Println(err)

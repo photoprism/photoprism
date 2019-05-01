@@ -26,7 +26,7 @@ import (
 	"github.com/pingcap/errors"
 	"github.com/pingcap/parser/mysql"
 	"github.com/pingcap/parser/terror"
-	"github.com/pingcap/pd/client"
+	pd "github.com/pingcap/pd/client"
 	pumpcli "github.com/pingcap/tidb-tools/tidb-binlog/pump_client"
 	"github.com/pingcap/tidb/config"
 	"github.com/pingcap/tidb/ddl"
@@ -47,7 +47,7 @@ import (
 	"github.com/pingcap/tidb/util/printer"
 	"github.com/pingcap/tidb/util/signal"
 	"github.com/pingcap/tidb/util/systimemon"
-	"github.com/pingcap/tidb/x-server"
+	xserver "github.com/pingcap/tidb/x-server"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/push"
 	log "github.com/sirupsen/logrus"
@@ -64,32 +64,54 @@ var (
 
 // Start the TiDB server using the configuration provided
 func Start(path string, port uint, host string, debug bool) {
+	if err := logutil.SetLevel("fatal"); err != nil {
+		log.Error(err)
+	}
+
 	registerStores()
 	registerMetrics()
 	loadConfig()
 
-	cfg.Log.Level = "error"
+	cfg.Log.Level = "fatal"
+
+	// cfg.Security.SkipGrantTable = true
+	if debug {
+		cfg.Log.Level = "error"
+		host = "0.0.0.0"
+	}
+
 	cfg.Path = path
 	cfg.Store = "mocktikv"
-	if debug && host == "" {
-		cfg.Host = "0.0.0.0"
-	} else {
-		cfg.Host = "localhost"
+
+	if host == "" {
+		host = "localhost"
 	}
+
+	cfg.Host = host
 	cfg.Port = port
 	cfg.Status.ReportStatus = false
 
 	validateConfig()
+
 	setGlobalVars()
-	setupLog()
-	setupTracing() // Should before createServer and after setup config.
-	printInfo()
+
+	setupTracing()
+
+	if debug {
+		printInfo()
+		log.SetLevel(log.DebugLevel)
+	} else {
+		// TODO: Graceful shutdown of gin Web server before shutting down SQL server
+		log.SetLevel(log.FatalLevel)
+	}
+
 	setupBinlogClient()
 	setupMetrics()
 	createStoreAndDomain()
 	createServer()
 	signal.SetupSignalHandler(serverShutdown)
 	runServer()
+
 	cleanup()
 	os.Exit(0)
 }
@@ -273,11 +295,6 @@ func setGlobalVars() {
 	tikv.CommitMaxBackoff = int(parseDuration(cfg.TiKVClient.CommitTimeout).Seconds() * 1000)
 }
 
-func setupLog() {
-	err := logutil.InitLogger(cfg.Log.ToLogConfig())
-	terror.MustNil(err)
-}
-
 func printInfo() {
 	// Make sure the TiDB info is always printed.
 	level := log.GetLevel()
@@ -308,10 +325,16 @@ func serverShutdown(isgraceful bool) {
 	if isgraceful {
 		graceful = true
 	}
+	logLevel := log.GetLevel()
+	log.SetLevel(log.FatalLevel)
+
 	if xsvr != nil {
 		xsvr.Close() // Should close xserver before server.
 	}
+
 	svr.Close()
+
+	log.SetLevel(logLevel)
 }
 
 func setupMetrics() {
@@ -345,7 +368,13 @@ func setupTracing() {
 
 func runServer() {
 	err := svr.Run()
+	logLevel := log.GetLevel()
+	log.SetLevel(log.FatalLevel)
+
 	terror.MustNil(err)
+
+	log.SetLevel(logLevel)
+
 	if cfg.XProtocol.XServer {
 		err := xsvr.Run()
 		terror.MustNil(err)
@@ -355,7 +384,7 @@ func runServer() {
 func closeDomainAndStorage() {
 	dom.Close()
 	err := storage.Close()
-	terror.Log(errors.Trace(err))
+	log.Debug(errors.Trace(err))
 }
 
 func cleanup() {

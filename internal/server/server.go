@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	log "github.com/sirupsen/logrus"
 )
 
 // Start the REST API server using the configuration provided
@@ -22,5 +23,7 @@ func Start(conf photoprism.Config) {
 
 	registerRoutes(app, conf)
 
-	app.Run(fmt.Sprintf("%s:%d", conf.HttpServerHost(), conf.HttpServerPort()))
+	if err := app.Run(fmt.Sprintf("%s:%d", conf.HttpServerHost(), conf.HttpServerPort())); err != nil {
+		log.Error(err)
+	}
 }

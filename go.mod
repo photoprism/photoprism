@@ -3,7 +3,6 @@ module github.com/photoprism/photoprism
 require (
 	github.com/araddon/dateparse v0.0.0-20181123171228-21df004e09ca
 	github.com/bamiaux/rez v0.0.0-20170731184118-29f4463c688b // indirect
-	github.com/brett-lempereur/ish v0.0.0-20161214150457-bbdc45bcf55d
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/coreos/etcd v3.3.10+incompatible // indirect
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect

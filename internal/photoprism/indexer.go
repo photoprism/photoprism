@@ -210,7 +210,6 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		file.FileSaturation = s.Uint()
 	}
 
-
 	if mediaFile.GetWidth() > 0 && mediaFile.GetHeight() > 0 {
 		file.FileWidth = mediaFile.GetWidth()
 		file.FileHeight = mediaFile.GetHeight()

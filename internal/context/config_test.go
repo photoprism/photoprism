@@ -26,7 +26,9 @@ func TestNewConfig(t *testing.T) {
 func TestConfig_SetValuesFromFile(t *testing.T) {
 	c := NewConfig(test.CliContext())
 
-	c.SetValuesFromFile(fsutil.ExpandedFilename("../../configs/photoprism.yml"))
+	err := c.SetValuesFromFile(fsutil.ExpandedFilename("../../configs/photoprism.yml"))
+
+	assert.Nil(t, err)
 
 	assert.Equal(t, "/srv/photoprism", c.AssetsPath())
 	assert.Equal(t, "/srv/photoprism/cache", c.CachePath())
@@ -35,5 +37,5 @@ func TestConfig_SetValuesFromFile(t *testing.T) {
 	assert.Equal(t, "/srv/photoprism/photos/import", c.ImportPath())
 	assert.Equal(t, "/srv/photoprism/photos/export", c.ExportPath())
 	assert.Equal(t, "internal", c.DatabaseDriver())
-	assert.Equal(t, "root:@tcp(localhost:4000)/photoprism?parseTime=true", c.DatabaseDsn())
+	assert.Equal(t, "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true", c.DatabaseDsn())
 }

@@ -19,7 +19,7 @@ func TestMediaFile_GetColors(t *testing.T) {
 			t.Log(colors, main, l, s, err)
 
 			assert.Nil(t, err)
-			assert.Equal(t, 2, s.Int())
+			assert.Equal(t, 3, s.Int())
 			assert.IsType(t, MaterialColors{}, colors)
 			assert.Equal(t, "grey", main.Name())
 			assert.Equal(t, MaterialColors{0x1, 0x2, 0x1, 0x2, 0x2, 0x1, 0x1, 0x1, 0x0}, colors)

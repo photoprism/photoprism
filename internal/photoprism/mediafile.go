@@ -1,7 +1,6 @@
 package photoprism
 
 import (
-	"encoding/hex"
 	"fmt"
 	"image"
 	_ "image/gif" // Import for image.
@@ -17,11 +16,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/brett-lempereur/ish"
 	"github.com/djherbis/times"
 	"github.com/photoprism/photoprism/internal/fsutil"
 	"github.com/photoprism/photoprism/internal/models"
-	"github.com/steakknife/hamming"
 )
 
 const (
@@ -278,55 +275,6 @@ func (m *MediaFile) GetCanonicalNameFromFile() string {
 // including the directory.
 func (m *MediaFile) GetCanonicalNameFromFileWithDirectory() string {
 	return m.GetDirectory() + string(os.PathSeparator) + m.GetCanonicalNameFromFile()
-}
-
-// GetPerceptualHash returns the perceptual hash of a mediafile.
-func (m *MediaFile) GetPerceptualHash() (string, error) {
-	if m.perceptualHash != "" {
-		return m.perceptualHash, nil
-	}
-
-	hasher := ish.NewDifferenceHash(PerceptualHashSize, PerceptualHashSize)
-	img, _, err := ish.LoadFile(m.GetFilename())
-
-	if err != nil {
-		return "", err
-	}
-
-	dh, err := hasher.Hash(img)
-
-	if err != nil {
-		return "", err
-	}
-
-	m.perceptualHash = hex.EncodeToString(dh)
-
-	return m.perceptualHash, nil
-}
-
-// GetPerceptualDistance returns the perceptual distance for a mediafile.
-func (m *MediaFile) GetPerceptualDistance(perceptualHash string) (int, error) {
-	imageHash, err := m.GetPerceptualHash()
-
-	if err != nil {
-		return -1, err
-	}
-
-	decodedImageHash, err := hex.DecodeString(imageHash)
-
-	if err != nil {
-		return -1, err
-	}
-
-	decodedPerceptualHash, err := hex.DecodeString(perceptualHash)
-
-	if err != nil {
-		return -1, err
-	}
-
-	result := hamming.Bytes(decodedImageHash, decodedPerceptualHash)
-
-	return result, nil
 }
 
 // GetHash return a sha1 hash of a mediafile based on the filename.
