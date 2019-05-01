@@ -86,8 +86,8 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 # Download TensorFlow model and test files
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism
-RUN wget "https://dl.photoprism.org/tensorflow/nasnet.zip" -O /tmp/photoprism/nasnet.zip
-RUN wget "https://dl.photoprism.org/fixtures/test.zip" -O /tmp/photoprism/testdata.zip
+RUN wget "https://dl.photoprism.org/tensorflow/nasnet-20190501.zip" -O /tmp/photoprism/nasnet.zip
+RUN wget "https://dl.photoprism.org/fixtures/testdata-20190501.zip" -O /tmp/photoprism/testdata.zip
 
 # Install goimports
 RUN env GO111MODULE=off /usr/local/go/bin/go get golang.org/x/tools/cmd/goimports
