@@ -19,6 +19,7 @@ func configAction(ctx *cli.Context) error {
 
 	fmt.Printf("NAME                  VALUE\n")
 	fmt.Printf("debug                 %t\n", conf.Debug())
+	fmt.Printf("log-level             %s\n", conf.LogLevel())
 	fmt.Printf("config-file           %s\n", conf.ConfigFile())
 	fmt.Printf("app-name              %s\n", conf.AppName())
 	fmt.Printf("app-version           %s\n", conf.AppVersion())

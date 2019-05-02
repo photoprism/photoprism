@@ -3,12 +3,13 @@ package photoprism
 import (
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"sort"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/fsutil"
 )
@@ -46,7 +47,6 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 		var destinationMainFilename string
 
 		if err != nil {
-			// log.Print(err.Error())
 			return nil
 		}
 
@@ -72,7 +72,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 		relatedFiles, mainFile, err := mediaFile.GetRelatedFiles()
 
 		if err != nil {
-			log.Printf("Could not import \"%s\": %s", mediaFile.GetRelativeFilename(importPath), err.Error())
+			log.Errorf("could not import \"%s\": %s", mediaFile.GetRelativeFilename(importPath), err.Error())
 
 			return nil
 		}
@@ -83,15 +83,15 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 
 				if mainFile.HasSameFilename(relatedMediaFile) {
 					destinationMainFilename = destinationFilename
-					log.Printf("Moving main %s file \"%s\" to \"%s\"", relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(importPath), destinationFilename)
+					log.Infof("moving main %s file \"%s\" to \"%s\"", relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(importPath), destinationFilename)
 				} else {
-					log.Printf("Moving related %s file \"%s\" to \"%s\"", relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(importPath), destinationFilename)
+					log.Infof("moving related %s file \"%s\" to \"%s\"", relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(importPath), destinationFilename)
 				}
 
 				relatedMediaFile.Move(destinationFilename)
 			} else if i.removeExistingFiles {
 				relatedMediaFile.Remove()
-				log.Printf("Deleted \"%s\" (already exists)", relatedMediaFile.GetRelativeFilename(importPath))
+				log.Infof("deleted \"%s\" (already exists)", relatedMediaFile.GetRelativeFilename(importPath))
 			}
 		}
 
@@ -99,7 +99,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 			importedMainFile, err := NewMediaFile(destinationMainFilename)
 
 			if err != nil {
-				log.Printf("Could not index \"%s\" after import: %s", destinationMainFilename, err.Error())
+				log.Errorf("could not index \"%s\" after import: %s", destinationMainFilename, err.Error())
 
 				return nil
 			}
@@ -122,14 +122,17 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 		// Remove empty directories from import path
 		for _, directory := range directories {
 			if directoryIsEmpty(directory) {
-				os.Remove(directory)
-				log.Printf("Deleted empty directory \"%s\"", directory)
+				if err := os.Remove(directory); err != nil {
+					log.Errorf("could not deleted empty directory \"%s\": %s", directory, err)
+				} else {
+					log.Infof("deleted empty directory \"%s\"", directory)
+				}
 			}
 		}
 	}
 
 	if err != nil {
-		log.Print(err.Error())
+		log.Error(err.Error())
 	}
 }
 

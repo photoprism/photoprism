@@ -2,10 +2,11 @@ package test
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"testing"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -171,6 +172,11 @@ func (c *Config) AppCopyright() string {
 // Debug returns true if debug mode is on.
 func (c *Config) Debug() bool {
 	return false
+}
+
+// LogLevel returns the logrus log level.
+func (c *Config) LogLevel() log.Level {
+	return log.DebugLevel
 }
 
 // ConfigFile returns the config file name.

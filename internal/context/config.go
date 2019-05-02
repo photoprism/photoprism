@@ -1,7 +1,6 @@
 package context
 
 import (
-	"fmt"
 	"os"
 	"time"
 
@@ -35,6 +34,7 @@ type Config struct {
 	appVersion         string
 	appCopyright       string
 	debug              bool
+	logLevel           string
 	configFile         string
 	assetsPath         string
 	cachePath          string
@@ -62,26 +62,32 @@ type Config struct {
 // 2. SetValuesFromCliContext: Which comes after SetValuesFromFile and overrides
 //    any previous values giving an option two override file configs through the CLI.
 func NewConfig(ctx *cli.Context) *Config {
-	log.SetLevel(log.InfoLevel)
-
 	c := &Config{}
+
+	if ctx.GlobalBool("debug") {
+		c.debug = ctx.GlobalBool("debug")
+	}
+
 	c.appName = ctx.App.Name
 	c.appCopyright = ctx.App.Copyright
 	c.appVersion = ctx.App.Version
 
+	log.SetLevel(c.LogLevel())
+
+	log.SetFormatter(&log.TextFormatter{
+		DisableColors: false,
+		FullTimestamp: true,
+	})
+
 	if err := c.SetValuesFromFile(fsutil.ExpandedFilename(ctx.GlobalString("config-file"))); err != nil {
-		log.Error(err)
+		log.Info(err)
 	}
 
 	if err := c.SetValuesFromCliContext(ctx); err != nil {
 		log.Error(err)
 	}
 
-	if c.Debug() {
-		log.SetLevel(log.DebugLevel)
-	} else {
-		log.SetLevel(log.ErrorLevel)
-	}
+	log.SetLevel(c.LogLevel())
 
 	return c
 }
@@ -97,6 +103,10 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 	c.configFile = fileName
 	if debug, err := yamlConfig.GetBool("debug"); err == nil {
 		c.debug = debug
+	}
+
+	if logLevel, err := yamlConfig.Get("log-level"); err == nil {
+		c.logLevel = logLevel
 	}
 
 	if sqlServerHost, err := yamlConfig.Get("sql-host"); err == nil {
@@ -171,6 +181,10 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 func (c *Config) SetValuesFromCliContext(ctx *cli.Context) error {
 	if ctx.GlobalBool("debug") {
 		c.debug = ctx.GlobalBool("debug")
+	}
+
+	if ctx.GlobalIsSet("log-level") || c.logLevel == "" {
+		c.logLevel = ctx.GlobalString("log-level")
 	}
 
 	if ctx.GlobalIsSet("assets-path") || c.assetsPath == "" {
@@ -288,7 +302,7 @@ func (c *Config) connectToDatabase() error {
 
 	if err != nil || db == nil {
 		if isTiDB {
-			fmt.Printf("Starting database server at %s:%d...\n", c.SqlServerHost(), c.SqlServerPort())
+			log.Infof("starting database server at %s:%d\n", c.SqlServerHost(), c.SqlServerPort())
 
 			go tidb.Start(c.SqlServerPath(), c.SqlServerPort(), c.SqlServerHost(), c.Debug())
 		}
@@ -306,7 +320,7 @@ func (c *Config) connectToDatabase() error {
 				err = tidb.InitDatabase(c.SqlServerPort(), c.SqlServerPassword())
 
 				if err != nil {
-					log.Println(err)
+					log.Debug(err)
 				} else {
 					initSuccess = true
 				}
@@ -343,6 +357,19 @@ func (c *Config) Debug() bool {
 	return c.debug
 }
 
+// LogLevel returns the logrus log level.
+func (c *Config) LogLevel() log.Level {
+	if c.Debug() {
+		c.logLevel = "debug"
+	}
+
+	if logLevel, err := log.ParseLevel(c.logLevel); err == nil {
+		return logLevel
+	} else {
+		return log.ErrorLevel
+	}
+}
+
 // ConfigFile returns the config file name.
 func (c *Config) ConfigFile() string {
 	return c.configFile
@@ -374,6 +401,10 @@ func (c *Config) SqlServerPassword() string {
 
 // HttpServerHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
 func (c *Config) HttpServerHost() string {
+	if c.httpServerHost == "" {
+		return "0.0.0.0"
+	}
+
 	return c.httpServerHost
 }
 

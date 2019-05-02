@@ -2,19 +2,20 @@ package photoprism
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/models"
 )
 
 const (
-	indexResultUpdated = "Updated"
-	indexResultAdded   = "Added"
+	indexResultUpdated = "updated"
+	indexResultAdded   = "added"
 )
 
 // Indexer defines an indexer with originals path tensorflow and a db.
@@ -121,7 +122,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
 			}
 		} else {
-			log.Printf("No location: %s", err)
+			log.Infof("no location: %s", err)
 
 			var recentPhoto models.Photo
 
@@ -232,7 +233,7 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 	relatedFiles, mainFile, err := mediaFile.GetRelatedFiles()
 
 	if err != nil {
-		log.Printf("Could not index \"%s\": %s", mediaFile.GetRelativeFilename(i.originalsPath), err.Error())
+		log.Warnf("could not index \"%s\": %s", mediaFile.GetRelativeFilename(i.originalsPath), err.Error())
 
 		return indexed
 	}
@@ -240,7 +241,7 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 	mainIndexResult := i.indexMediaFile(mainFile)
 	indexed[mainFile.GetFilename()] = true
 
-	log.Printf("%s main %s file \"%s\"", mainIndexResult, mainFile.GetType(), mainFile.GetRelativeFilename(i.originalsPath))
+	log.Infof("%s main %s file \"%s\"", mainIndexResult, mainFile.GetType(), mainFile.GetRelativeFilename(i.originalsPath))
 
 	for _, relatedMediaFile := range relatedFiles {
 		if indexed[relatedMediaFile.GetFilename()] {
@@ -250,7 +251,7 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 		indexResult := i.indexMediaFile(relatedMediaFile)
 		indexed[relatedMediaFile.GetFilename()] = true
 
-		log.Printf("%s related %s file \"%s\"", indexResult, relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(i.originalsPath))
+		log.Infof("%s related %s file \"%s\"", indexResult, relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(i.originalsPath))
 	}
 
 	return indexed
@@ -283,7 +284,7 @@ func (i *Indexer) IndexAll() map[string]bool {
 	})
 
 	if err != nil {
-		log.Print(err.Error())
+		log.Warn(err.Error())
 	}
 
 	return indexed

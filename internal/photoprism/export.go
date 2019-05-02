@@ -2,11 +2,12 @@ package photoprism
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // FindOriginalsByDate searches the originalsPath given a time frame in the format of
@@ -45,19 +46,28 @@ func ExportPhotosFromOriginals(originals []*MediaFile, thumbnailsPath string, ex
 			return nil
 		}
 
-		log.Printf("Exporting %s as %dpx JPEG", mediaFile.GetFilename(), size)
+		log.Infof("exporting %s as %dpx JPEG", mediaFile.GetFilename(), size)
 
 		thumbnail, err := mediaFile.GetThumbnail(thumbnailsPath, size)
 
 		if err != nil {
-			log.Print(err.Error())
+			log.Error(err.Error())
 		}
 
-		os.MkdirAll(exportPath, os.ModePerm)
+		if thumbnail == nil {
+			log.Error("thumbnail is nil")
+			return err
+		}
+
+		if err := os.MkdirAll(exportPath, os.ModePerm); err != nil {
+			log.Error(err.Error())
+		}
 
 		destinationFilename := fmt.Sprintf("%s/%s_%dpx.jpg", exportPath, mediaFile.GetCanonicalName(), size)
 
-		thumbnail.Copy(destinationFilename)
+		if err := thumbnail.Copy(destinationFilename); err != nil {
+			log.Error(err.Error())
+		}
 	}
 
 	return nil

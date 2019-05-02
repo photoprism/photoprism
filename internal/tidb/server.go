@@ -106,7 +106,7 @@ func Start(path string, port uint, host string, debug bool) {
 	}
 
 	setupBinlogClient()
-	setupMetrics()
+	// setupMetrics()
 	createStoreAndDomain()
 	createServer()
 	signal.SetupSignalHandler(serverShutdown)

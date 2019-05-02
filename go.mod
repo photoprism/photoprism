@@ -47,6 +47,7 @@ require (
 	github.com/stretchr/testify v1.3.0
 	github.com/tensorflow/tensorflow v1.13.1
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6 // indirect
+	github.com/toorop/gin-logrus v0.0.0-20190324082946-8887861896bb
 	github.com/twinj/uuid v1.0.0 // indirect
 	github.com/uber-go/atomic v1.3.2 // indirect
 	github.com/uber/jaeger-client-go v2.15.0+incompatible // indirect

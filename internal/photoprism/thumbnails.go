@@ -2,10 +2,11 @@ package photoprism
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/fsutil"
@@ -26,15 +27,15 @@ func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, 
 
 		if square {
 			if thumbnail, err := mediaFile.GetSquareThumbnail(thumbnailsPath, size); err != nil {
-				log.Printf("Could not create thumbnail: %s", err.Error())
+				log.Errorf("could not create thumbnail: %s", err.Error())
 			} else {
-				log.Printf("Created %dx%d px thumbnail for \"%s\"", thumbnail.GetWidth(), thumbnail.GetHeight(), mediaFile.GetRelativeFilename(originalsPath))
+				log.Infof("created %dx%d px thumbnail for \"%s\"", thumbnail.GetWidth(), thumbnail.GetHeight(), mediaFile.GetRelativeFilename(originalsPath))
 			}
 		} else {
 			if thumbnail, err := mediaFile.GetThumbnail(thumbnailsPath, size); err != nil {
-				log.Printf("Could not create thumbnail: %s", err.Error())
+				log.Errorf("could not create thumbnail: %s", err.Error())
 			} else {
-				log.Printf("Created %dx%d px thumbnail for \"%s\"", thumbnail.GetWidth(), thumbnail.GetHeight(), mediaFile.GetRelativeFilename(originalsPath))
+				log.Infof("created %dx%d px thumbnail for \"%s\"", thumbnail.GetWidth(), thumbnail.GetHeight(), mediaFile.GetRelativeFilename(originalsPath))
 			}
 		}
 
@@ -42,7 +43,7 @@ func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, 
 	})
 
 	if err != nil {
-		log.Print(err.Error())
+		log.Error(err.Error())
 	}
 }
 
@@ -69,7 +70,7 @@ func (m *MediaFile) CreateThumbnail(filename string, size int) (result *MediaFil
 	img, err := imaging.Open(m.filename, imaging.AutoOrientation(true))
 
 	if err != nil {
-		log.Printf("can't open original: %s", err.Error())
+		log.Errorf("can't open original: %s", err.Error())
 		return nil, err
 	}
 
@@ -108,7 +109,7 @@ func (m *MediaFile) CreateSquareThumbnail(filename string, size int) (result *Me
 	img, err := imaging.Open(m.filename, imaging.AutoOrientation(true))
 
 	if err != nil {
-		log.Printf("can't open original: %s", err.Error())
+		log.Errorf("can't open original: %s", err.Error())
 		return nil, err
 	}
 

@@ -1,10 +1,9 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -22,13 +21,13 @@ func convertAction(ctx *cli.Context) error {
 		return err
 	}
 
-	fmt.Printf("Converting RAW images in %s to JPEG...\n", conf.OriginalsPath())
+	log.Infof("converting RAW images in %s to JPEG", conf.OriginalsPath())
 
 	converter := photoprism.NewConverter(conf.DarktableCli())
 
 	converter.ConvertAll(conf.OriginalsPath())
 
-	fmt.Println("Done.")
+	log.Infof("image conversion complete")
 
 	return nil
 }

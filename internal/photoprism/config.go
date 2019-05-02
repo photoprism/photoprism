@@ -5,11 +5,13 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/photoprism/photoprism/internal/frontend"
+	"github.com/sirupsen/logrus"
 )
 
 // Config interface implemented in context (cli) and test packages
 type Config interface {
 	Debug() bool
+	LogLevel() logrus.Level
 	Db() *gorm.DB
 
 	CreateDirectories() error

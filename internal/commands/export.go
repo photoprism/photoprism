@@ -3,6 +3,8 @@ package commands
 import (
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/araddon/dateparse"
 	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -48,7 +50,7 @@ func exportAction(ctx *cli.Context) error {
 	after := ctx.String("after")
 
 	if before == "" || after == "" {
-		fmt.Println("You need to provide before and after dates for export, e.g.\n\nphotoprism export --after 2018/04/10 --before '2018/04/15 23:00:00'")
+		log.Infoln("you need to provide before and after dates for export, e.g.\n\nphotoprism export --after 2018/04/10 --before '2018/04/15 23:00:00'")
 
 		return nil
 	}
@@ -72,11 +74,11 @@ func exportAction(ctx *cli.Context) error {
 	size := ctx.Int("size")
 	originals := photoprism.FindOriginalsByDate(conf.OriginalsPath(), afterDate, beforeDate)
 
-	fmt.Printf("Exporting photos to %s...\n", exportPath)
+	log.Infof("exporting photos to %s", exportPath)
 
 	photoprism.ExportPhotosFromOriginals(originals, conf.ThumbnailsPath(), exportPath, size)
 
-	fmt.Println("Done.")
+	log.Infof("photo export complete")
 
 	return nil
 }

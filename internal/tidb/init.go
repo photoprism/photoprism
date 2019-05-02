@@ -8,44 +8,41 @@ import (
 )
 
 func InitDatabase(port uint, password string) error {
-	log.Print("init database: trying login without password")
+	log.Info("init database: trying login without password")
 
 	db, err := sql.Open("mysql", fmt.Sprintf("root:@tcp(localhost:%d)/", port))
 
 	defer db.Close()
 
 	if err != nil {
-		log.Print(err)
-		log.Print("init database: login as root with password")
+		log.Debugf("init database: %s", err)
+		log.Debug("init database: login as root with password")
 		db, err = sql.Open("mysql", fmt.Sprintf("root:%s@tcp(localhost:%d)/", password, port))
 	}
 
 	if err != nil {
-		log.Print(err)
+		log.Error(err)
 		return err
 	}
 
-	log.Print("init database: login was successful")
+	log.Debug("init database: login was successful")
 
 	_, err = db.Exec(fmt.Sprintf("SET PASSWORD FOR 'root'@'%%' = '%s'", password))
 
 	if err != nil {
-		log.Print(err)
+		log.Error(err)
 	} else {
-		log.Print("init database: FLUSH PRIVILEGES")
+		log.Debug("init database: FLUSH PRIVILEGES")
 
 		_, err = db.Exec("FLUSH PRIVILEGES")
-
-		log.Print(err)
-
 	}
 
-	log.Printf("init database: CREATE DATABASE IF NOT EXISTS photoprism")
+	log.Debug("init database: CREATE DATABASE IF NOT EXISTS photoprism")
 
 	_, err = db.Exec("CREATE DATABASE IF NOT EXISTS photoprism")
 
 	if err != nil {
-		log.Print(err)
+		log.Error(err)
 	}
 
 	return nil

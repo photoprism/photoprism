@@ -6,7 +6,6 @@ import (
 	"errors"
 	"image"
 	"io/ioutil"
-	"log"
 	"math"
 	"os"
 	"sort"
@@ -44,12 +43,6 @@ type TensorFlowLabels []TensorFlowLabel
 func (a TensorFlowLabels) Len() int           { return len(a) }
 func (a TensorFlowLabels) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a TensorFlowLabels) Less(i, j int) bool { return a[i].Probability > a[j].Probability }
-
-func (t *TensorFlow) closeSession(s *tf.Session) {
-	if err := s.Close(); err != nil {
-		log.Print(err)
-	}
-}
 
 // GetImageTagsFromFile returns tags for a jpeg image file.
 func (t *TensorFlow) GetImageTagsFromFile(filename string) (result []TensorFlowLabel, err error) {

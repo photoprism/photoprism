@@ -1,10 +1,9 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -24,7 +23,7 @@ func importAction(ctx *cli.Context) error {
 
 	conf.MigrateDb()
 
-	fmt.Printf("Importing photos from %s...\n", conf.ImportPath())
+	log.Infof("importing photos from %s", conf.ImportPath())
 
 	tensorFlow := photoprism.NewTensorFlow(conf.TensorFlowModelPath())
 
@@ -36,7 +35,7 @@ func importAction(ctx *cli.Context) error {
 
 	importer.ImportPhotosFromDirectory(conf.ImportPath())
 
-	fmt.Println("Done.")
+	log.Info("photo import complete")
 
 	return nil
 }

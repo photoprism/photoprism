@@ -2,10 +2,11 @@ package photoprism
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Converter wraps a darktable cli binary.
@@ -17,9 +18,9 @@ type Converter struct {
 // cli binary location.
 func NewConverter(darktableCli string) *Converter {
 	if stat, err := os.Stat(darktableCli); err != nil {
-		log.Print("Darktable CLI binary could not be found at " + darktableCli)
+		log.Errorf("darktable CLI binary could not be found at %s", darktableCli)
 	} else if stat.IsDir() {
-		log.Print("Darktable CLI must be a file, not a directory")
+		log.Error("darktable CLI must be a file, not a directory")
 	}
 
 	return &Converter{darktableCli: darktableCli}
@@ -31,7 +32,7 @@ func (c *Converter) ConvertAll(path string) {
 	err := filepath.Walk(path, func(filename string, fileInfo os.FileInfo, err error) error {
 
 		if err != nil {
-			log.Print(err.Error())
+			log.Error(err.Error())
 			return nil
 		}
 
@@ -46,14 +47,14 @@ func (c *Converter) ConvertAll(path string) {
 		}
 
 		if _, err := c.ConvertToJpeg(mediaFile); err != nil {
-			log.Print(err.Error())
+			log.Error(err.Error())
 		}
 
 		return nil
 	})
 
 	if err != nil {
-		log.Print(err.Error())
+		log.Error(err.Error())
 	}
 }
 
@@ -77,7 +78,7 @@ func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 		return mediaFile, nil
 	}
 
-	log.Printf("Converting \"%s\" to \"%s\"\n", image.filename, jpegFilename)
+	log.Errorf("converting \"%s\" to \"%s\"", image.filename, jpegFilename)
 
 	xmpFilename := baseFilename + ".xmp"
 

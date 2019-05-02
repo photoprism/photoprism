@@ -1,8 +1,7 @@
 package commands
 
 import (
-	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/server"
@@ -42,7 +41,7 @@ func startAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 
 	if conf.HttpServerPort() < 1 {
-		log.Fatal("Server port must be a positive integer")
+		log.Fatal("server port must be a positive integer")
 	}
 
 	if err := conf.CreateDirectories(); err != nil {
@@ -51,11 +50,9 @@ func startAction(ctx *cli.Context) error {
 
 	conf.MigrateDb()
 
-	fmt.Printf("Starting web server at %s:%d...\n", ctx.String("http-host"), ctx.Int("http-port"))
+	log.Infof("starting web server at %s:%d", conf.HttpServerHost(), conf.HttpServerPort())
 
 	server.Start(conf)
-
-	fmt.Println("Done.")
 
 	return nil
 }

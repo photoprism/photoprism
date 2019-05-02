@@ -1,10 +1,9 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -24,15 +23,15 @@ func indexAction(ctx *cli.Context) error {
 
 	conf.MigrateDb()
 
-	fmt.Printf("Indexing photos in %s...\n", conf.OriginalsPath())
+	log.Infof("indexing photos in %s", conf.OriginalsPath())
 
 	tensorFlow := photoprism.NewTensorFlow(conf.TensorFlowModelPath())
 
 	indexer := photoprism.NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
 
-	indexer.IndexAll()
+	files := indexer.IndexAll()
 
-	fmt.Println("Done.")
+	log.Infof("indexed %d files", len(files))
 
 	return nil
 }

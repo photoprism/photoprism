@@ -7,7 +7,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"io"
-	"log"
 	"math"
 	"net/http"
 	"os"
@@ -15,6 +14,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/djherbis/times"
 	"github.com/photoprism/photoprism/internal/fsutil"
@@ -151,7 +152,7 @@ func (m *MediaFile) GetDateCreated() time.Time {
 	t, err := times.Stat(m.GetFilename())
 
 	if err != nil {
-		log.Println(err.Error())
+		log.Debug(err.Error())
 
 		return m.dateCreated
 	}
@@ -375,7 +376,7 @@ func (m *MediaFile) GetMimeType() string {
 	handle, err := m.openFile()
 
 	if err != nil {
-		log.Println("Error: Could not open file to determine mime type")
+		log.Errorf("could not read file to determine mime type: %s", m.GetFilename())
 		return ""
 	}
 
@@ -387,7 +388,7 @@ func (m *MediaFile) GetMimeType() string {
 	_, err = handle.Read(buffer)
 
 	if err != nil {
-		log.Println("Error: Could not read file to determine mime type: " + m.GetFilename())
+		log.Errorf("could not read file to determine mime type: %s", m.GetFilename())
 		return ""
 	}
 
@@ -399,7 +400,7 @@ func (m *MediaFile) GetMimeType() string {
 func (m *MediaFile) openFile() (*os.File, error) {
 	handle, err := os.Open(m.filename)
 	if err != nil {
-		log.Println(err.Error())
+		log.Error(err.Error())
 		return nil, err
 	}
 	return handle, nil
@@ -437,7 +438,7 @@ func (m *MediaFile) Copy(destinationFilename string) error {
 	file, err := m.openFile()
 
 	if err != nil {
-		log.Println(err.Error())
+		log.Error(err.Error())
 		return err
 	}
 
@@ -446,7 +447,7 @@ func (m *MediaFile) Copy(destinationFilename string) error {
 	destination, err := os.OpenFile(destinationFilename, os.O_RDWR|os.O_CREATE, 0666)
 
 	if err != nil {
-		log.Println(err.Error())
+		log.Error(err.Error())
 		return err
 	}
 
@@ -455,7 +456,7 @@ func (m *MediaFile) Copy(destinationFilename string) error {
 	_, err = io.Copy(destination, file)
 
 	if err != nil {
-		log.Println(err.Error())
+		log.Error(err.Error())
 		return err
 	}
 

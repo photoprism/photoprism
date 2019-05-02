@@ -1,10 +1,9 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/photoprism/photoprism/internal/context"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -36,7 +35,7 @@ func thumbnailsAction(ctx *cli.Context) error {
 		return err
 	}
 
-	fmt.Printf("Creating thumbnails in %s...\n", conf.ThumbnailsPath())
+	log.Infof("creating thumbnails in %s", conf.ThumbnailsPath())
 
 	sizes := ctx.IntSlice("size")
 
@@ -45,7 +44,7 @@ func thumbnailsAction(ctx *cli.Context) error {
 	}
 
 	if len(sizes) == 0 {
-		fmt.Println("No sizes selected. Nothing to do.")
+		log.Warn("no thumbnail size selected")
 		return nil
 	}
 
@@ -53,7 +52,7 @@ func thumbnailsAction(ctx *cli.Context) error {
 		photoprism.CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), size, ctx.Bool("square"))
 	}
 
-	fmt.Println("Done.")
+	log.Info("thumbnails created")
 
 	return nil
 }

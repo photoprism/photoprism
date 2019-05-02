@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	"log"
 	"math"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/disintegration/imaging"
 	"github.com/lucasb-eyer/go-colorful"

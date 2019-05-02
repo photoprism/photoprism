@@ -1,9 +1,8 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/photoprism/photoprism/internal/context"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -17,11 +16,11 @@ var MigrateCommand = cli.Command{
 func migrateAction(ctx *cli.Context) error {
 	conf := context.NewConfig(ctx)
 
-	fmt.Println("Migrating database...")
+	log.Infoln("migrating database")
 
 	conf.MigrateDb()
 
-	fmt.Println("Done.")
+	log.Infoln("database migration complete")
 
 	return nil
 }

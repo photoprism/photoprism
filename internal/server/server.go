@@ -16,7 +16,8 @@ func Start(conf photoprism.Config) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	app := gin.Default()
+	app := gin.New()
+	app.Use(gin.Logger(), gin.Recovery())
 
 	// Set template directory
 	app.LoadHTMLGlob(conf.HttpTemplatesPath() + "/*")
