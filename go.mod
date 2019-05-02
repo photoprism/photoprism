@@ -2,7 +2,6 @@ module github.com/photoprism/photoprism
 
 require (
 	github.com/araddon/dateparse v0.0.0-20181123171228-21df004e09ca
-	github.com/bamiaux/rez v0.0.0-20170731184118-29f4463c688b // indirect
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/coreos/etcd v3.3.10+incompatible // indirect
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
@@ -43,11 +42,9 @@ require (
 	github.com/sirupsen/logrus v1.2.0
 	github.com/soheilhy/cmux v0.1.4 // indirect
 	github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72 // indirect
-	github.com/steakknife/hamming v0.0.0-20180906055917-c99c65617cd3
 	github.com/stretchr/testify v1.3.0
 	github.com/tensorflow/tensorflow v1.13.1
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6 // indirect
-	github.com/toorop/gin-logrus v0.0.0-20190324082946-8887861896bb
 	github.com/twinj/uuid v1.0.0 // indirect
 	github.com/uber-go/atomic v1.3.2 // indirect
 	github.com/uber/jaeger-client-go v2.15.0+incompatible // indirect
@@ -62,5 +59,4 @@ require (
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20180705113604-9856a29383ce // indirect
-	gopkg.in/stretchr/testify.v1 v1.2.2+incompatible // indirect
 )
