@@ -46,9 +46,9 @@ func ExportPhotosFromOriginals(originals []*MediaFile, thumbnailsPath string, ex
 			return nil
 		}
 
-		log.Infof("exporting %s as %dpx JPEG", mediaFile.GetFilename(), size)
+		log.Infof("exporting %s as %dpx JPEG", mediaFile.Filename(), size)
 
-		thumbnail, err := mediaFile.GetThumbnail(thumbnailsPath, size)
+		thumbnail, err := mediaFile.Thumbnail(thumbnailsPath, size)
 
 		if err != nil {
 			log.Error(err.Error())
@@ -63,7 +63,7 @@ func ExportPhotosFromOriginals(originals []*MediaFile, thumbnailsPath string, ex
 			log.Error(err.Error())
 		}
 
-		destinationFilename := fmt.Sprintf("%s/%s_%dpx.jpg", exportPath, mediaFile.GetCanonicalName(), size)
+		destinationFilename := fmt.Sprintf("%s/%s_%dpx.jpg", exportPath, mediaFile.CanonicalName(), size)
 
 		if err := thumbnail.Copy(destinationFilename); err != nil {
 			log.Error(err.Error())

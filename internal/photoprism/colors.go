@@ -154,13 +154,13 @@ func colorfulToMaterialColor(actualColor colorful.Color) (result MaterialColor) 
 }
 
 func (m *MediaFile) Resize(width, height int) (result *image.NRGBA, err error) {
-	jpeg, err := m.GetJpeg()
+	jpeg, err := m.Jpeg()
 
 	if err != nil {
 		return nil, err
 	}
 
-	img, err := imaging.Open(jpeg.GetFilename(), imaging.AutoOrientation(true))
+	img, err := imaging.Open(jpeg.Filename(), imaging.AutoOrientation(true))
 
 	if err != nil {
 		return nil, err

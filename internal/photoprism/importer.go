@@ -69,29 +69,29 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 			return nil
 		}
 
-		relatedFiles, mainFile, err := mediaFile.GetRelatedFiles()
+		relatedFiles, mainFile, err := mediaFile.RelatedFiles()
 
 		if err != nil {
-			log.Errorf("could not import \"%s\": %s", mediaFile.GetRelativeFilename(importPath), err.Error())
+			log.Errorf("could not import \"%s\": %s", mediaFile.RelativeFilename(importPath), err.Error())
 
 			return nil
 		}
 
 		for _, relatedMediaFile := range relatedFiles {
-			if destinationFilename, err := i.GetDestinationFilename(mainFile, relatedMediaFile); err == nil {
+			if destinationFilename, err := i.DestinationFilename(mainFile, relatedMediaFile); err == nil {
 				os.MkdirAll(path.Dir(destinationFilename), os.ModePerm)
 
 				if mainFile.HasSameFilename(relatedMediaFile) {
 					destinationMainFilename = destinationFilename
-					log.Infof("moving main %s file \"%s\" to \"%s\"", relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(importPath), destinationFilename)
+					log.Infof("moving main %s file \"%s\" to \"%s\"", relatedMediaFile.Type(), relatedMediaFile.RelativeFilename(importPath), destinationFilename)
 				} else {
-					log.Infof("moving related %s file \"%s\" to \"%s\"", relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(importPath), destinationFilename)
+					log.Infof("moving related %s file \"%s\" to \"%s\"", relatedMediaFile.Type(), relatedMediaFile.RelativeFilename(importPath), destinationFilename)
 				}
 
 				relatedMediaFile.Move(destinationFilename)
 			} else if i.removeExistingFiles {
 				relatedMediaFile.Remove()
-				log.Infof("deleted \"%s\" (already exists)", relatedMediaFile.GetRelativeFilename(importPath))
+				log.Infof("deleted \"%s\" (already exists)", relatedMediaFile.RelativeFilename(importPath))
 			}
 		}
 
@@ -136,11 +136,11 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 	}
 }
 
-// GetDestinationFilename get the destination of a media file.
-func (i *Importer) GetDestinationFilename(mainFile *MediaFile, mediaFile *MediaFile) (string, error) {
-	canonicalName := mainFile.GetCanonicalName()
-	fileExtension := mediaFile.GetExtension()
-	dateCreated := mainFile.GetDateCreated()
+// DestinationFilename get the destination of a media file.
+func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile) (string, error) {
+	canonicalName := mainFile.CanonicalName()
+	fileExtension := mediaFile.Extension()
+	dateCreated := mainFile.DateCreated()
 
 	//	Mon Jan 2 15:04:05 -0700 MST 2006
 	pathName := i.originalsPath + "/" + dateCreated.UTC().Format("2006/01")
@@ -150,7 +150,7 @@ func (i *Importer) GetDestinationFilename(mainFile *MediaFile, mediaFile *MediaF
 	result := pathName + "/" + canonicalName + fileExtension
 
 	for fsutil.Exists(result) {
-		if mediaFile.GetHash() == fsutil.Hash(result) {
+		if mediaFile.Hash() == fsutil.Hash(result) {
 			return result, fmt.Errorf("file already exists: %s", result)
 		}
 

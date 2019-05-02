@@ -42,9 +42,9 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	assert.Empty(t, err, "ConvertToJpeg() failed")
 
-	infoJpeg, err := imageJpeg.GetExifData()
+	infoJpeg, err := imageJpeg.ExifData()
 
-	assert.Emptyf(t, err, "GetExifData() failed")
+	assert.Emptyf(t, err, "ExifData() failed")
 
 	assert.Equal(t, jpegFilename, imageJpeg.filename)
 
@@ -66,7 +66,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	assert.NotEqual(t, rawFilemame, imageRaw.filename)
 
-	infoRaw, err := imageRaw.GetExifData()
+	infoRaw, err := imageRaw.ExifData()
 
 	assert.False(t, infoRaw == nil || err != nil, "Could not read EXIF data of RAW image")
 
@@ -96,7 +96,7 @@ func TestConverter_ConvertAll(t *testing.T) {
 
 	assert.Equal(t, jpegFilename, image.filename, "FileName must be the same")
 
-	infoRaw, err := image.GetExifData()
+	infoRaw, err := image.ExifData()
 
 	assert.False(t, infoRaw == nil || err != nil, "Could not read EXIF data of RAW image")
 

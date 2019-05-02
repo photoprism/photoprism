@@ -35,8 +35,8 @@ type openstreetmapLocation struct {
 	Address     *openstreetmapAddress `json:"address"`
 }
 
-// GetLocation See https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding
-func (m *MediaFile) GetLocation() (*models.Location, error) {
+// Location See https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding
+func (m *MediaFile) Location() (*models.Location, error) {
 	if m.location != nil {
 		return m.location, nil
 	}
@@ -47,7 +47,7 @@ func (m *MediaFile) GetLocation() (*models.Location, error) {
 		Address: &openstreetmapAddress{},
 	}
 
-	if exifData, err := m.GetExifData(); err == nil {
+	if exifData, err := m.ExifData(); err == nil {
 		if exifData.Lat == 0 && exifData.Long == 0 {
 			return nil, errors.New("lat and long are missing in metadata")
 		}

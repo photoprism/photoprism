@@ -16,7 +16,7 @@ func TestMediaFile_GetExifData(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	info, err := image1.GetExifData()
+	info, err := image1.ExifData()
 
 	assert.Empty(t, err)
 
@@ -38,7 +38,7 @@ func TestMediaFile_GetExifData_Slow(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	info, err := image2.GetExifData()
+	info, err := image2.ExifData()
 
 	assert.Empty(t, err)
 

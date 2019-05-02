@@ -37,7 +37,7 @@ func TestImporter_GetDestinationFilename(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	filename, err := importer.GetDestinationFilename(rawFile, rawFile)
+	filename, err := importer.DestinationFilename(rawFile, rawFile)
 
 	assert.Nil(t, err)
 

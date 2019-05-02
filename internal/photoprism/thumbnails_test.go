@@ -17,7 +17,7 @@ func TestMediaFile_GetThumbnail(t *testing.T) {
 	image1, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
 	assert.Nil(t, err)
 
-	thumbnail1, err := image1.GetThumbnail(conf.ThumbnailsPath(), 350)
+	thumbnail1, err := image1.Thumbnail(conf.ThumbnailsPath(), 350)
 
 	assert.Empty(t, err)
 
@@ -34,7 +34,7 @@ func TestMediaFile_GetSquareThumbnail(t *testing.T) {
 	image1, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
 	assert.Nil(t, err)
 
-	thumbnail1, err := image1.GetSquareThumbnail(conf.ThumbnailsPath(), 350)
+	thumbnail1, err := image1.SquareThumbnail(conf.ThumbnailsPath(), 350)
 
 	assert.Empty(t, err)
 

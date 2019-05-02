@@ -61,14 +61,14 @@ func (c *Converter) ConvertAll(path string) {
 // ConvertToJpeg converts a single image the JPEG format.
 func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 	if !image.Exists() {
-		return nil, fmt.Errorf("can not convert, file does not exist: %s", image.GetFilename())
+		return nil, fmt.Errorf("can not convert, file does not exist: %s", image.Filename())
 	}
 
 	if image.IsJpeg() {
 		return image, nil
 	}
 
-	baseFilename := image.GetCanonicalNameFromFileWithDirectory()
+	baseFilename := image.CanonicalNameFromFileWithDirectory()
 
 	jpegFilename := baseFilename + ".jpg"
 

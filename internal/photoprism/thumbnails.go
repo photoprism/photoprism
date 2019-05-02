@@ -26,16 +26,16 @@ func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, 
 		}
 
 		if square {
-			if thumbnail, err := mediaFile.GetSquareThumbnail(thumbnailsPath, size); err != nil {
+			if thumbnail, err := mediaFile.SquareThumbnail(thumbnailsPath, size); err != nil {
 				log.Errorf("could not create thumbnail: %s", err.Error())
 			} else {
-				log.Infof("created %dx%d px thumbnail for \"%s\"", thumbnail.GetWidth(), thumbnail.GetHeight(), mediaFile.GetRelativeFilename(originalsPath))
+				log.Infof("created %dx%d px thumbnail for \"%s\"", thumbnail.Width(), thumbnail.Height(), mediaFile.RelativeFilename(originalsPath))
 			}
 		} else {
-			if thumbnail, err := mediaFile.GetThumbnail(thumbnailsPath, size); err != nil {
+			if thumbnail, err := mediaFile.Thumbnail(thumbnailsPath, size); err != nil {
 				log.Errorf("could not create thumbnail: %s", err.Error())
 			} else {
-				log.Infof("created %dx%d px thumbnail for \"%s\"", thumbnail.GetWidth(), thumbnail.GetHeight(), mediaFile.GetRelativeFilename(originalsPath))
+				log.Infof("created %dx%d px thumbnail for \"%s\"", thumbnail.Width(), thumbnail.Height(), mediaFile.RelativeFilename(originalsPath))
 			}
 		}
 
@@ -47,10 +47,10 @@ func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, 
 	}
 }
 
-// GetThumbnail get the thumbnail for a path.
-func (m *MediaFile) GetThumbnail(path string, size int) (result *MediaFile, err error) {
-	canonicalName := m.GetCanonicalName()
-	dateCreated := m.GetDateCreated()
+// Thumbnail get the thumbnail for a path.
+func (m *MediaFile) Thumbnail(path string, size int) (result *MediaFile, err error) {
+	canonicalName := m.CanonicalName()
+	dateCreated := m.DateCreated()
 
 	thumbnailPath := fmt.Sprintf("%s/%dpx/%s", path, size, dateCreated.UTC().Format("2006/01"))
 
@@ -86,10 +86,10 @@ func (m *MediaFile) CreateThumbnail(filename string, size int) (result *MediaFil
 	return NewMediaFile(filename)
 }
 
-// GetSquareThumbnail return the square thumbnail for a path and size.
-func (m *MediaFile) GetSquareThumbnail(path string, size int) (result *MediaFile, err error) {
-	canonicalName := m.GetCanonicalName()
-	dateCreated := m.GetDateCreated()
+// SquareThumbnail return the square thumbnail for a path and size.
+func (m *MediaFile) SquareThumbnail(path string, size int) (result *MediaFile, err error) {
+	canonicalName := m.CanonicalName()
+	dateCreated := m.DateCreated()
 
 	thumbnailPath := fmt.Sprintf("%s/square/%dpx/%s", path, size, dateCreated.UTC().Format("2006/01"))
 

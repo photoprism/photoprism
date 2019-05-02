@@ -79,16 +79,16 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	var isPrimary = false
 	var tags []*models.Tag
 
-	canonicalName := mediaFile.GetCanonicalNameFromFile()
-	fileHash := mediaFile.GetHash()
-	relativeFileName := mediaFile.GetRelativeFilename(i.originalsPath)
+	canonicalName := mediaFile.CanonicalNameFromFile()
+	fileHash := mediaFile.Hash()
+	relativeFileName := mediaFile.RelativeFilename(i.originalsPath)
 
 	photoQuery := i.db.First(&photo, "photo_canonical_name = ?", canonicalName)
 
 	if photoQuery.Error != nil {
-		if jpeg, err := mediaFile.GetJpeg(); err == nil {
+		if jpeg, err := mediaFile.Jpeg(); err == nil {
 			// Geo Location
-			if exifData, err := jpeg.GetExifData(); err == nil {
+			if exifData, err := jpeg.ExifData(); err == nil {
 				photo.PhotoLat = exifData.Lat
 				photo.PhotoLong = exifData.Long
 				photo.PhotoArtist = exifData.Artist
@@ -98,7 +98,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			tags = i.getImageTags(jpeg)
 		}
 
-		if location, err := mediaFile.GetLocation(); err == nil {
+		if location, err := mediaFile.Location(); err == nil {
 			i.db.FirstOrCreate(location, "id = ?", location.ID)
 			photo.Location = location
 			photo.Country = models.NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
@@ -112,21 +112,21 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 
 			if photo.PhotoTitle == "" && location.LocName != "" { // TODO: User defined title format
 				if len(location.LocName) > 40 {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(location.LocName), mediaFile.GetDateCreated().Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(location.LocName), mediaFile.DateCreated().Format("2006"))
 				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(location.LocName), location.LocCity, mediaFile.GetDateCreated().Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(location.LocName), location.LocCity, mediaFile.DateCreated().Format("2006"))
 				}
 			} else if photo.PhotoTitle == "" && location.LocCity != "" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
+				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, mediaFile.DateCreated().Format("2006"))
 			} else if photo.PhotoTitle == "" && location.LocCounty != "" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.GetDateCreated().Format("2006"))
+				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.DateCreated().Format("2006"))
 			}
 		} else {
 			log.Infof("no location: %s", err)
 
 			var recentPhoto models.Photo
 
-			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", mediaFile.GetDateCreated())).Preload("Country").First(&recentPhoto); result.Error == nil {
+			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", mediaFile.DateCreated())).Preload("Country").First(&recentPhoto); result.Error == nil {
 				if recentPhoto.Country != nil {
 					photo.Country = recentPhoto.Country
 				}
@@ -137,33 +137,33 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 
 		if photo.PhotoTitle == "" {
 			if len(photo.Tags) > 0 { // TODO: User defined title format
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Tags[0].TagLabel), mediaFile.GetDateCreated().Format("2006"))
+				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Tags[0].TagLabel), mediaFile.DateCreated().Format("2006"))
 			} else if photo.Country != nil && photo.Country.CountryName != "" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Country.CountryName), mediaFile.GetDateCreated().Format("2006"))
+				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Country.CountryName), mediaFile.DateCreated().Format("2006"))
 			} else {
-				photo.PhotoTitle = fmt.Sprintf("Unknown / %s", mediaFile.GetDateCreated().Format("2006"))
+				photo.PhotoTitle = fmt.Sprintf("Unknown / %s", mediaFile.DateCreated().Format("2006"))
 			}
 		}
 
-		photo.Camera = models.NewCamera(mediaFile.GetCameraModel(), mediaFile.GetCameraMake()).FirstOrCreate(i.db)
-		photo.Lens = models.NewLens(mediaFile.GetLensModel(), mediaFile.GetLensMake()).FirstOrCreate(i.db)
-		photo.PhotoFocalLength = mediaFile.GetFocalLength()
-		photo.PhotoAperture = mediaFile.GetAperture()
+		photo.Camera = models.NewCamera(mediaFile.CameraModel(), mediaFile.CameraMake()).FirstOrCreate(i.db)
+		photo.Lens = models.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
+		photo.PhotoFocalLength = mediaFile.FocalLength()
+		photo.PhotoAperture = mediaFile.Aperture()
 
-		photo.TakenAt = mediaFile.GetDateCreated()
+		photo.TakenAt = mediaFile.DateCreated()
 		photo.PhotoCanonicalName = canonicalName
 		photo.PhotoFavorite = false
 
 		i.db.Create(&photo)
 	} else if time.Now().Sub(photo.UpdatedAt).Minutes() > 10 { // If updated more than 10 minutes ago
-		if jpeg, err := mediaFile.GetJpeg(); err == nil {
-			photo.Camera = models.NewCamera(mediaFile.GetCameraModel(), mediaFile.GetCameraMake()).FirstOrCreate(i.db)
-			photo.Lens = models.NewLens(mediaFile.GetLensModel(), mediaFile.GetLensMake()).FirstOrCreate(i.db)
-			photo.PhotoFocalLength = mediaFile.GetFocalLength()
-			photo.PhotoAperture = mediaFile.GetAperture()
+		if jpeg, err := mediaFile.Jpeg(); err == nil {
+			photo.Camera = models.NewCamera(mediaFile.CameraModel(), mediaFile.CameraMake()).FirstOrCreate(i.db)
+			photo.Lens = models.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
+			photo.PhotoFocalLength = mediaFile.FocalLength()
+			photo.PhotoAperture = mediaFile.Aperture()
 
 			// Geo Location
-			if exifData, err := jpeg.GetExifData(); err == nil {
+			if exifData, err := jpeg.ExifData(); err == nil {
 				photo.PhotoLat = exifData.Lat
 				photo.PhotoLong = exifData.Long
 				photo.PhotoArtist = exifData.Artist
@@ -184,9 +184,9 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	}
 
 	if result := i.db.Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); result.Error != nil {
-		isPrimary = mediaFile.GetType() == FileTypeJpeg
+		isPrimary = mediaFile.Type() == FileTypeJpeg
 	} else {
-		isPrimary = mediaFile.GetType() == FileTypeJpeg && (relativeFileName == primaryFile.FileName || fileHash == primaryFile.FileHash)
+		isPrimary = mediaFile.Type() == FileTypeJpeg && (relativeFileName == primaryFile.FileName || fileHash == primaryFile.FileHash)
 	}
 
 	fileQuery := i.db.First(&file, "file_hash = ? OR file_name = ?", fileHash, relativeFileName)
@@ -196,9 +196,9 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	file.FileMissing = false
 	file.FileName = relativeFileName
 	file.FileHash = fileHash
-	file.FileType = mediaFile.GetType()
-	file.FileMime = mediaFile.GetMimeType()
-	file.FileOrientation = mediaFile.GetOrientation()
+	file.FileType = mediaFile.Type()
+	file.FileMime = mediaFile.MimeType()
+	file.FileOrientation = mediaFile.Orientation()
 
 	// Perceptual Hash
 	if mediaFile.IsJpeg() {
@@ -211,10 +211,10 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		file.FileSaturation = s.Uint()
 	}
 
-	if mediaFile.GetWidth() > 0 && mediaFile.GetHeight() > 0 {
-		file.FileWidth = mediaFile.GetWidth()
-		file.FileHeight = mediaFile.GetHeight()
-		file.FileAspectRatio = mediaFile.GetAspectRatio()
+	if mediaFile.Width() > 0 && mediaFile.Height() > 0 {
+		file.FileWidth = mediaFile.Width()
+		file.FileHeight = mediaFile.Height()
+		file.FileAspectRatio = mediaFile.AspectRatio()
 	}
 
 	if fileQuery.Error == nil {
@@ -230,28 +230,28 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 	indexed := make(map[string]bool)
 
-	relatedFiles, mainFile, err := mediaFile.GetRelatedFiles()
+	relatedFiles, mainFile, err := mediaFile.RelatedFiles()
 
 	if err != nil {
-		log.Warnf("could not index \"%s\": %s", mediaFile.GetRelativeFilename(i.originalsPath), err.Error())
+		log.Warnf("could not index \"%s\": %s", mediaFile.RelativeFilename(i.originalsPath), err.Error())
 
 		return indexed
 	}
 
 	mainIndexResult := i.indexMediaFile(mainFile)
-	indexed[mainFile.GetFilename()] = true
+	indexed[mainFile.Filename()] = true
 
-	log.Infof("%s main %s file \"%s\"", mainIndexResult, mainFile.GetType(), mainFile.GetRelativeFilename(i.originalsPath))
+	log.Infof("%s main %s file \"%s\"", mainIndexResult, mainFile.Type(), mainFile.RelativeFilename(i.originalsPath))
 
 	for _, relatedMediaFile := range relatedFiles {
-		if indexed[relatedMediaFile.GetFilename()] {
+		if indexed[relatedMediaFile.Filename()] {
 			continue
 		}
 
 		indexResult := i.indexMediaFile(relatedMediaFile)
-		indexed[relatedMediaFile.GetFilename()] = true
+		indexed[relatedMediaFile.Filename()] = true
 
-		log.Infof("%s related %s file \"%s\"", indexResult, relatedMediaFile.GetType(), relatedMediaFile.GetRelativeFilename(i.originalsPath))
+		log.Infof("%s related %s file \"%s\"", indexResult, relatedMediaFile.Type(), relatedMediaFile.RelativeFilename(i.originalsPath))
 	}
 
 	return indexed

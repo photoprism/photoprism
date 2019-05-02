@@ -56,15 +56,15 @@ func GetThumbnail(router *gin.RouterGroup, conf photoprism.Config) {
 
 		switch thumbnailType {
 		case "fit":
-			if thumbnail, err := mediaFile.GetThumbnail(conf.ThumbnailsPath(), size); err == nil {
-				c.File(thumbnail.GetFilename())
+			if thumbnail, err := mediaFile.Thumbnail(conf.ThumbnailsPath(), size); err == nil {
+				c.File(thumbnail.Filename())
 			} else {
 				log.Printf("could not create thumbnail: %s", err.Error())
 				c.Data(400, "image/svg+xml", photoIconSvg)
 			}
 		case "square":
-			if thumbnail, err := mediaFile.GetSquareThumbnail(conf.ThumbnailsPath(), size); err == nil {
-				c.File(thumbnail.GetFilename())
+			if thumbnail, err := mediaFile.SquareThumbnail(conf.ThumbnailsPath(), size); err == nil {
+				c.File(thumbnail.Filename())
 			} else {
 				log.Printf("could not create square thumbnail: %s", err.Error())
 				c.Data(400, "image/svg+xml", photoIconSvg)

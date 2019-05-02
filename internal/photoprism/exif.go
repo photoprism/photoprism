@@ -29,8 +29,8 @@ type ExifData struct {
 	Orientation int
 }
 
-// GetExifData return ExifData given a single mediaFile.
-func (m *MediaFile) GetExifData() (*ExifData, error) {
+// ExifData return ExifData given a single mediaFile.
+func (m *MediaFile) ExifData() (*ExifData, error) {
 	if m == nil {
 		return nil, errors.New("media file is null")
 	}

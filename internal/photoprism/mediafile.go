@@ -133,15 +133,15 @@ func NewMediaFile(filename string) (*MediaFile, error) {
 	return instance, nil
 }
 
-// GetDateCreated returns the date on which a mediafile was created.
-func (m *MediaFile) GetDateCreated() time.Time {
+// DateCreated returns the date on which a mediafile was created.
+func (m *MediaFile) DateCreated() time.Time {
 	if !m.dateCreated.IsZero() {
 		return m.dateCreated
 	}
 
 	m.dateCreated = time.Now()
 
-	info, err := m.GetExifData()
+	info, err := m.ExifData()
 
 	if err == nil && !info.DateTime.IsZero() {
 		m.dateCreated = info.DateTime
@@ -149,7 +149,7 @@ func (m *MediaFile) GetDateCreated() time.Time {
 		return m.dateCreated
 	}
 
-	t, err := times.Stat(m.GetFilename())
+	t, err := times.Stat(m.Filename())
 
 	if err != nil {
 		log.Debug(err.Error())
@@ -166,9 +166,9 @@ func (m *MediaFile) GetDateCreated() time.Time {
 	return m.dateCreated
 }
 
-// GetCameraModel returns the camera model with which the mediafile was created.
-func (m *MediaFile) GetCameraModel() string {
-	info, err := m.GetExifData()
+// CameraModel returns the camera model with which the mediafile was created.
+func (m *MediaFile) CameraModel() string {
+	info, err := m.ExifData()
 
 	var result string
 
@@ -179,9 +179,9 @@ func (m *MediaFile) GetCameraModel() string {
 	return result
 }
 
-// GetCameraMake returns the make of the camera with which the file was created.
-func (m *MediaFile) GetCameraMake() string {
-	info, err := m.GetExifData()
+// CameraMake returns the make of the camera with which the file was created.
+func (m *MediaFile) CameraMake() string {
+	info, err := m.ExifData()
 
 	var result string
 
@@ -192,9 +192,9 @@ func (m *MediaFile) GetCameraMake() string {
 	return result
 }
 
-// GetLensModel returns the lens model of a mediafile.
-func (m *MediaFile) GetLensModel() string {
-	info, err := m.GetExifData()
+// LensModel returns the lens model of a mediafile.
+func (m *MediaFile) LensModel() string {
+	info, err := m.ExifData()
 
 	var result string
 
@@ -205,9 +205,9 @@ func (m *MediaFile) GetLensModel() string {
 	return result
 }
 
-// GetLensMake returns the make of the Lens.
-func (m *MediaFile) GetLensMake() string {
-	info, err := m.GetExifData()
+// LensMake returns the make of the Lens.
+func (m *MediaFile) LensMake() string {
+	info, err := m.ExifData()
 
 	var result string
 
@@ -218,9 +218,9 @@ func (m *MediaFile) GetLensMake() string {
 	return result
 }
 
-// GetFocalLength return the length of the focal for a file.
-func (m *MediaFile) GetFocalLength() float64 {
-	info, err := m.GetExifData()
+// FocalLength return the length of the focal for a file.
+func (m *MediaFile) FocalLength() float64 {
+	info, err := m.ExifData()
 
 	var result float64
 
@@ -231,9 +231,9 @@ func (m *MediaFile) GetFocalLength() float64 {
 	return result
 }
 
-// GetAperture returns the aperture with which the mediafile was created.
-func (m *MediaFile) GetAperture() float64 {
-	info, err := m.GetExifData()
+// Aperture returns the aperture with which the mediafile was created.
+func (m *MediaFile) Aperture() float64 {
+	info, err := m.ExifData()
 
 	var result float64
 
@@ -244,13 +244,13 @@ func (m *MediaFile) GetAperture() float64 {
 	return result
 }
 
-// GetCanonicalName returns the canonical name of a mediafile.
-func (m *MediaFile) GetCanonicalName() string {
+// CanonicalName returns the canonical name of a mediafile.
+func (m *MediaFile) CanonicalName() string {
 	var postfix string
 
-	dateCreated := m.GetDateCreated().UTC()
+	dateCreated := m.DateCreated().UTC()
 
-	if fileHash := m.GetHash(); len(fileHash) > 12 {
+	if fileHash := m.Hash(); len(fileHash) > 12 {
 		postfix = strings.ToUpper(fileHash[:12])
 	} else {
 		postfix = "NOTFOUND"
@@ -261,9 +261,9 @@ func (m *MediaFile) GetCanonicalName() string {
 	return result
 }
 
-// GetCanonicalNameFromFile returns the canonical name of a file derived from the image name.
-func (m *MediaFile) GetCanonicalNameFromFile() string {
-	basename := filepath.Base(m.GetFilename())
+// CanonicalNameFromFile returns the canonical name of a file derived from the image name.
+func (m *MediaFile) CanonicalNameFromFile() string {
+	basename := filepath.Base(m.Filename())
 
 	if end := strings.Index(basename, "."); end != -1 {
 		return basename[:end] // Length of canonical name: 16 + 12
@@ -272,23 +272,23 @@ func (m *MediaFile) GetCanonicalNameFromFile() string {
 	return basename
 }
 
-// GetCanonicalNameFromFileWithDirectory gets the canonical name for a mediafile
+// CanonicalNameFromFileWithDirectory gets the canonical name for a mediafile
 // including the directory.
-func (m *MediaFile) GetCanonicalNameFromFileWithDirectory() string {
-	return m.GetDirectory() + string(os.PathSeparator) + m.GetCanonicalNameFromFile()
+func (m *MediaFile) CanonicalNameFromFileWithDirectory() string {
+	return m.Directory() + string(os.PathSeparator) + m.CanonicalNameFromFile()
 }
 
-// GetHash return a sha1 hash of a mediafile based on the filename.
-func (m *MediaFile) GetHash() string {
+// Hash return a sha1 hash of a mediafile based on the filename.
+func (m *MediaFile) Hash() string {
 	if len(m.hash) == 0 {
-		m.hash = fsutil.Hash(m.GetFilename())
+		m.hash = fsutil.Hash(m.Filename())
 	}
 
 	return m.hash
 }
 
-// GetEditedFilename When editing photos, iPhones create additional files like IMG_E12345.JPG
-func (m *MediaFile) GetEditedFilename() (result string) {
+// EditedFilename When editing photos, iPhones create additional files like IMG_E12345.JPG
+func (m *MediaFile) EditedFilename() (result string) {
 	basename := filepath.Base(m.filename)
 
 	if strings.ToUpper(basename[:4]) == "IMG_" && strings.ToUpper(basename[:5]) != "IMG_E" {
@@ -298,9 +298,9 @@ func (m *MediaFile) GetEditedFilename() (result string) {
 	return result
 }
 
-// GetRelatedFiles returns the mediafiles which are related to a given mediafile.
-func (m *MediaFile) GetRelatedFiles() (result MediaFiles, mainFile *MediaFile, err error) {
-	baseFilename := m.GetCanonicalNameFromFileWithDirectory()
+// RelatedFiles returns the mediafiles which are related to a given mediafile.
+func (m *MediaFile) RelatedFiles() (result MediaFiles, mainFile *MediaFile, err error) {
+	baseFilename := m.CanonicalNameFromFileWithDirectory()
 
 	matches, err := filepath.Glob(baseFilename + "*")
 
@@ -308,7 +308,7 @@ func (m *MediaFile) GetRelatedFiles() (result MediaFiles, mainFile *MediaFile, e
 		return result, nil, err
 	}
 
-	if editedFilename := m.GetEditedFilename(); editedFilename != "" && fsutil.Exists(editedFilename) {
+	if editedFilename := m.EditedFilename(); editedFilename != "" && fsutil.Exists(editedFilename) {
 		matches = append(matches, editedFilename)
 	}
 
@@ -323,7 +323,7 @@ func (m *MediaFile) GetRelatedFiles() (result MediaFiles, mainFile *MediaFile, e
 			mainFile = resultFile
 		} else if resultFile.IsRaw() {
 			mainFile = resultFile
-		} else if resultFile.IsJpeg() && len(mainFile.GetFilename()) > len(resultFile.GetFilename()) {
+		} else if resultFile.IsJpeg() && len(mainFile.Filename()) > len(resultFile.Filename()) {
 			mainFile = resultFile
 		}
 
@@ -335,8 +335,8 @@ func (m *MediaFile) GetRelatedFiles() (result MediaFiles, mainFile *MediaFile, e
 	return result, mainFile, nil
 }
 
-// GetFilename returns the filename.
-func (m *MediaFile) GetFilename() string {
+// Filename returns the filename.
+func (m *MediaFile) Filename() string {
 	return m.filename
 }
 
@@ -345,8 +345,8 @@ func (m *MediaFile) SetFilename(filename string) {
 	m.filename = filename
 }
 
-// GetRelativeFilename returns the relative filename.
-func (m *MediaFile) GetRelativeFilename(directory string) string {
+// RelativeFilename returns the relative filename.
+func (m *MediaFile) RelativeFilename(directory string) string {
 	index := strings.Index(m.filename, directory)
 
 	if index == 0 {
@@ -357,18 +357,18 @@ func (m *MediaFile) GetRelativeFilename(directory string) string {
 	return m.filename
 }
 
-// GetDirectory returns the directory
-func (m *MediaFile) GetDirectory() string {
+// Directory returns the directory
+func (m *MediaFile) Directory() string {
 	return filepath.Dir(m.filename)
 }
 
-// GetBasename returns the basename.
-func (m *MediaFile) GetBasename() string {
+// Basename returns the basename.
+func (m *MediaFile) Basename() string {
 	return filepath.Base(m.filename)
 }
 
-// GetMimeType returns the mimetype.
-func (m *MediaFile) GetMimeType() string {
+// MimeType returns the mimetype.
+func (m *MediaFile) MimeType() string {
 	if m.mimeType != "" {
 		return m.mimeType
 	}
@@ -376,7 +376,7 @@ func (m *MediaFile) GetMimeType() string {
 	handle, err := m.openFile()
 
 	if err != nil {
-		log.Errorf("could not read file to determine mime type: %s", m.GetFilename())
+		log.Errorf("could not read file to determine mime type: %s", m.Filename())
 		return ""
 	}
 
@@ -388,7 +388,7 @@ func (m *MediaFile) GetMimeType() string {
 	_, err = handle.Read(buffer)
 
 	if err != nil {
-		log.Errorf("could not read file to determine mime type: %s", m.GetFilename())
+		log.Errorf("could not read file to determine mime type: %s", m.Filename())
 		return ""
 	}
 
@@ -408,18 +408,18 @@ func (m *MediaFile) openFile() (*os.File, error) {
 
 // Exists checks if a mediafile exists by filename.
 func (m *MediaFile) Exists() bool {
-	return fsutil.Exists(m.GetFilename())
+	return fsutil.Exists(m.Filename())
 }
 
 // Remove a mediafile.
 func (m *MediaFile) Remove() error {
-	return os.Remove(m.GetFilename())
+	return os.Remove(m.Filename())
 }
 
 // HasSameFilename compares a mediafile with another mediafile and returns if
 // their filenames are matching or not.
 func (m *MediaFile) HasSameFilename(other *MediaFile) bool {
-	return m.GetFilename() == other.GetFilename()
+	return m.Filename() == other.Filename()
 }
 
 // Move a mediafile to a new file with the filename provided in parameter.
@@ -463,24 +463,24 @@ func (m *MediaFile) Copy(destinationFilename string) error {
 	return nil
 }
 
-// GetExtension returns the extension of a mediafile.
-func (m *MediaFile) GetExtension() string {
+// Extension returns the extension of a mediafile.
+func (m *MediaFile) Extension() string {
 	return strings.ToLower(filepath.Ext(m.filename))
 }
 
 // IsJpeg return true if the given mediafile is of mimetype Jpeg.
 func (m *MediaFile) IsJpeg() bool {
 	// Don't import/use existing thumbnail files (we create our own)
-	if m.GetExtension() == ".thm" {
+	if m.Extension() == ".thm" {
 		return false
 	}
 
-	return m.GetMimeType() == MimeTypeJpeg
+	return m.MimeType() == MimeTypeJpeg
 }
 
-// GetType returns the type of the mediafile.
-func (m *MediaFile) GetType() string {
-	return FileExtensions[m.GetExtension()]
+// Type returns the type of the mediafile.
+func (m *MediaFile) Type() string {
+	return FileExtensions[m.Extension()]
 }
 
 // HasType checks whether a mediafile is of a given type.
@@ -489,7 +489,7 @@ func (m *MediaFile) HasType(typeString string) bool {
 		return m.IsJpeg()
 	}
 
-	return m.GetType() == typeString
+	return m.Type() == typeString
 }
 
 // IsRaw check whether the given mediafile is of Raw type.
@@ -507,14 +507,14 @@ func (m *MediaFile) IsPhoto() bool {
 	return m.IsJpeg() || m.IsRaw() || m.IsHighEfficiencyImageFile()
 }
 
-// GetJpeg returns a new mediafile given the current one's canonical name
+// Jpeg returns a new mediafile given the current one's canonical name
 // plus the extension .jpg.
-func (m *MediaFile) GetJpeg() (*MediaFile, error) {
+func (m *MediaFile) Jpeg() (*MediaFile, error) {
 	if m.IsJpeg() {
 		return m, nil
 	}
 
-	jpegFilename := m.GetCanonicalNameFromFileWithDirectory() + ".jpg"
+	jpegFilename := m.CanonicalNameFromFileWithDirectory() + ".jpg"
 
 	if !fsutil.Exists(jpegFilename) {
 		return nil, fmt.Errorf("jpeg file does not exist: %s", jpegFilename)
@@ -525,7 +525,7 @@ func (m *MediaFile) GetJpeg() (*MediaFile, error) {
 
 func (m *MediaFile) decodeDimensions() error {
 	if m.IsJpeg() {
-		file, err := os.Open(m.GetFilename())
+		file, err := os.Open(m.Filename())
 
 		defer file.Close()
 
@@ -542,7 +542,7 @@ func (m *MediaFile) decodeDimensions() error {
 		m.width = size.Width
 		m.height = size.Height
 	} else {
-		if exif, err := m.GetExifData(); err == nil {
+		if exif, err := m.ExifData(); err == nil {
 			m.width = exif.Width
 			m.height = exif.Height
 		} else {
@@ -553,28 +553,32 @@ func (m *MediaFile) decodeDimensions() error {
 	return nil
 }
 
-// GetWidth return the width dimension of a mediafile.
-func (m *MediaFile) GetWidth() int {
+// Width return the width dimension of a mediafile.
+func (m *MediaFile) Width() int {
 	if m.width <= 0 {
-		m.decodeDimensions()
+		if err := m.decodeDimensions(); err != nil {
+			log.Error(err)
+		}
 	}
 
 	return m.width
 }
 
-// GetHeight returns the height dimension of a mediafile.
-func (m *MediaFile) GetHeight() int {
+// Height returns the height dimension of a mediafile.
+func (m *MediaFile) Height() int {
 	if m.height <= 0 {
-		m.decodeDimensions()
+		if err := m.decodeDimensions(); err != nil {
+			log.Error(err)
+		}
 	}
 
 	return m.height
 }
 
-// GetAspectRatio returns the aspect ratio of a mediafile.
-func (m *MediaFile) GetAspectRatio() float64 {
-	width := float64(m.GetWidth())
-	height := float64(m.GetHeight())
+// AspectRatio returns the aspect ratio of a mediafile.
+func (m *MediaFile) AspectRatio() float64 {
+	width := float64(m.Width())
+	height := float64(m.Height())
 
 	if width <= 0 || height <= 0 {
 		return 0
@@ -585,9 +589,9 @@ func (m *MediaFile) GetAspectRatio() float64 {
 	return math.Round(aspectRatio*100) / 100
 }
 
-// GetOrientation returns the orientation of a mediafile.
-func (m *MediaFile) GetOrientation() int {
-	if exif, err := m.GetExifData(); err == nil {
+// Orientation returns the orientation of a mediafile.
+func (m *MediaFile) Orientation() int {
+	if exif, err := m.ExifData(); err == nil {
 		return exif.Orientation
 	}
 
