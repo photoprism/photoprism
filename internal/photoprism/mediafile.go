@@ -44,8 +44,6 @@ const (
 const (
 	// MimeTypeJpeg is jpeg image type
 	MimeTypeJpeg = "image/jpeg"
-	// PerceptualHashSize defines the default hash size.
-	PerceptualHashSize = 4
 )
 
 // FileExtensions lists all the available and supported image file formats.
