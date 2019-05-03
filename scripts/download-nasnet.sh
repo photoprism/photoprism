@@ -12,24 +12,26 @@ MODEL_BACKUP="assets/backups/nasnet-$TODAY"
 
 echo "Installing $MODEL_NAME for TensorFlow..."
 
-# Check for update
-if [[ -f ${MODEL_ZIP} ]] && [[ `sha1sum ${MODEL_ZIP}` == ${MODEL_HASH} ]]; then
-  echo "Already up to date."
-  exit
-fi
-
 # Create directories
 mkdir -p /tmp/photoprism
 mkdir -p assets/tensorflow
 mkdir -p assets/backups
 
-# Download model
-echo "Downloading latest model from $MODEL_URL..."
-wget ${MODEL_URL} -O ${MODEL_ZIP}
+# Check for update
+if [[ -f ${MODEL_ZIP} ]] && [[ `sha1sum ${MODEL_ZIP}` == ${MODEL_HASH} ]]; then
+  if [[ -f ${MODEL_VERSION} ]]; then
+    echo "Already up to date."
+    exit
+  fi
+else
+  # Download model
+  echo "Downloading latest model from $MODEL_URL..."
+  wget ${MODEL_URL} -O ${MODEL_ZIP}
 
-TMP_HASH=`sha1sum ${MODEL_ZIP}`
+  TMP_HASH=`sha1sum ${MODEL_ZIP}`
 
-echo ${TMP_HASH}
+  echo ${TMP_HASH}
+fi
 
 # Create backup
 if [[ -e ${MODEL_PATH} ]]; then
