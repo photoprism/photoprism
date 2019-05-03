@@ -16,7 +16,7 @@ import (
 
 const (
 	TestDataZip  = "/tmp/photoprism/testdata.zip"
-	TestDataURL  = "https://dl.photoprism.org/fixtures/testdata-20190501.zip"
+	TestDataURL  = "https://dl.photoprism.org/fixtures/testdata.zip"
 	TestDataHash = "1a59b358b80221ab3e76efb683ad72402f0b0844"
 )
 

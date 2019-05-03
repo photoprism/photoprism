@@ -21,7 +21,7 @@ after_script:
 
 deploy:
   provider: script
-  script: make deploy-photoprism deploy-demo
+  script: make docker-photoprism docker-demo
   skip_cleanup: true
   on:
     branch: master

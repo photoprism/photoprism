@@ -42,24 +42,26 @@ test-coverage:
 	go tool cover -html=coverage.txt -o coverage.html
 clean:
 	rm -f $(BINARY_NAME)
+	rm -rf assets/testdata
+	rm -rf assets/backups
 download:
-	scripts/download-assets.sh
-deploy-photoprism:
-	scripts/docker-build.sh photoprism $(DOCKER_TAG)
-	scripts/docker-push.sh photoprism $(DOCKER_TAG)
-deploy-demo:
-	scripts/docker-build.sh demo $(DOCKER_TAG)
-	scripts/docker-push.sh demo $(DOCKER_TAG)
-deploy-development:
+	scripts/download-nasnet.sh
+docker-development:
 	scripts/docker-build.sh development $(DOCKER_TAG)
 	scripts/docker-push.sh development $(DOCKER_TAG)
-deploy-tensorflow:
+docker-photoprism:
+	scripts/docker-build.sh photoprism $(DOCKER_TAG)
+	scripts/docker-push.sh photoprism $(DOCKER_TAG)
+docker-demo:
+	scripts/docker-build.sh demo $(DOCKER_TAG)
+	scripts/docker-push.sh demo $(DOCKER_TAG)
+docker-tensorflow:
 	scripts/docker-build.sh tensorflow $(DOCKER_TAG)
 	scripts/docker-push.sh tensorflow $(DOCKER_TAG)
-deploy-darktable:
+docker-darktable:
 	scripts/docker-build.sh darktable $(DARKTABLE_VERSION)
 	scripts/docker-push.sh darktable $(DARKTABLE_VERSION)
-deploy-tidb:
+docker-tidb:
 	scripts/docker-build.sh tidb $(TIDB_VERSION)
 	scripts/docker-push.sh tidb $(TIDB_VERSION)
 fmt:
