@@ -15,19 +15,19 @@ var IndexCommand = cli.Command{
 }
 
 func indexAction(ctx *cli.Context) error {
-	conf := context.NewConfig(ctx)
+	app := context.NewContext(ctx)
 
-	if err := conf.CreateDirectories(); err != nil {
+	if err := app.CreateDirectories(); err != nil {
 		return err
 	}
 
-	conf.MigrateDb()
+	app.MigrateDb()
 
-	log.Infof("indexing photos in %s", conf.OriginalsPath())
+	log.Infof("indexing photos in %s", app.OriginalsPath())
 
-	tensorFlow := photoprism.NewTensorFlow(conf.TensorFlowModelPath())
+	tensorFlow := photoprism.NewTensorFlow(app.TensorFlowModelPath())
 
-	indexer := photoprism.NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
+	indexer := photoprism.NewIndexer(app.OriginalsPath(), tensorFlow, app.Db())
 
 	files := indexer.IndexAll()
 

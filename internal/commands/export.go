@@ -40,9 +40,9 @@ var exportFlags = []cli.Flag{
 }
 
 func exportAction(ctx *cli.Context) error {
-	conf := context.NewConfig(ctx)
+	app := context.NewContext(ctx)
 
-	if err := conf.CreateDirectories(); err != nil {
+	if err := app.CreateDirectories(); err != nil {
 		return err
 	}
 
@@ -70,13 +70,13 @@ func exportAction(ctx *cli.Context) error {
 		}
 	}
 
-	exportPath := fmt.Sprintf("%s/%s", conf.ExportPath(), name)
+	exportPath := fmt.Sprintf("%s/%s", app.ExportPath(), name)
 	size := ctx.Int("size")
-	originals := photoprism.FindOriginalsByDate(conf.OriginalsPath(), afterDate, beforeDate)
+	originals := photoprism.FindOriginalsByDate(app.OriginalsPath(), afterDate, beforeDate)
 
 	log.Infof("exporting photos to %s", exportPath)
 
-	photoprism.ExportPhotosFromOriginals(originals, conf.ThumbnailsPath(), exportPath, size)
+	photoprism.ExportPhotosFromOriginals(originals, app.ThumbnailsPath(), exportPath, size)
 
 	log.Infof("photo export complete")
 

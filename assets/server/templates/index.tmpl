@@ -1,51 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>PhotoPrism</title>
+  <title>{{ .name }}</title>
 
-    <meta property="og:title" content="PhotoPrism: Try our demo! 🌈" />
-    <meta property="og:image" content="https://dl.photoprism.org/assets/img/preview.jpg" />
-    <meta property="og:url" content="https://demo.photoprism.org/" />
-    <meta property="og:description" content="Personal photo management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin." />
+  <meta property="og:title" content="PhotoPrism: Try our demo! 🌈"/>
+  <meta property="og:image" content="https://dl.photoprism.org/assets/img/preview.jpg"/>
+  <meta property="og:url" content="https://demo.photoprism.org/"/>
+  <meta property="og:description"
+        content="Personal photo management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin."/>
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="PhotoPrism: Try our demo! 🌈" />
-    <meta name="twitter:description" content="Personal photo management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin." />
-    <meta name="twitter:image" content="https://dl.photoprism.org/assets/img/preview.jpg" />
-    <meta name="twitter:site" content="@browseyourlife" />
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="PhotoPrism: Try our demo! 🌈"/>
+  <meta name="twitter:description"
+        content="Personal photo management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin."/>
+  <meta name="twitter:image" content="https://dl.photoprism.org/assets/img/preview.jpg"/>
+  <meta name="twitter:site" content="@browseyourlife"/>
 
-    <meta name="author" content="PhotoPrism.org">
-    <meta name="description" content="Personal photo management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin." />
+  <meta name="author" content="PhotoPrism.org">
+  <meta name="description"
+        content="Personal photo management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin."/>
 
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/assets/favicons/favicon.png">
-    <link rel="icon" type="image/png" href="/assets/favicons/favicon.png" />
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/favicons/favicon.png">
+  <link rel="icon" type="image/png" href="/assets/favicons/favicon.png"/>
 
-    <link rel="stylesheet" href="/assets/build/app.css?{{ .cssHash }}">
+  <link rel="stylesheet" href="/assets/build/app.css?{{ .cssHash }}">
 
-    <script>
-        window.appConfig = {
-            appName: "{{ .appName }}",
-            appVersion: "{{ .appVersion }}",
-            debug: {{ .debug }},
-            cameras: {{ .cameras }},
-            countries: {{ .countries }}
-        };
-    </script>
+  <script>
+      window.appConfig = {
+          name: "{{ .name }}",
+          version: "{{ .version }}",
+          debug: {{ .debug }},
+          cameras: {{ .cameras }},
+          countries: {{ .countries }}
+      };
+  </script>
 </head>
 <body>
 <!--[if lt IE 8]>
-<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+  your browser</a> to improve your experience.</p>
 <![endif]-->
 
 <div id="app" class="container">
-    <div class="loading">
-        <div class="v-progress-linear" style="height: 7px;"><div class="v-progress-linear__background amber" style="height: 7px; opacity: 0.3; width: 100%;"></div><div class="v-progress-linear__bar"><div class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"><div class="v-progress-linear__bar__indeterminate long amber"></div><div class="v-progress-linear__bar__indeterminate short amber"></div></div><!----></div></div>
+  <div class="loading">
+    <div class="v-progress-linear" style="height: 7px;">
+      <div class="v-progress-linear__background amber" style="height: 7px; opacity: 0.3; width: 100%;"></div>
+      <div class="v-progress-linear__bar">
+        <div class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active">
+          <div class="v-progress-linear__bar__indeterminate long amber"></div>
+          <div class="v-progress-linear__bar__indeterminate short amber"></div>
+        </div><!----></div>
     </div>
+  </div>
 </div>
 <footer>
 </footer>

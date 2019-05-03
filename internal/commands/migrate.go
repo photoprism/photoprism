@@ -14,11 +14,11 @@ var MigrateCommand = cli.Command{
 }
 
 func migrateAction(ctx *cli.Context) error {
-	conf := context.NewConfig(ctx)
+	app := context.NewContext( ctx)
 
 	log.Infoln("migrating database")
 
-	conf.MigrateDb()
+	app.MigrateDb()
 
 	log.Infoln("database migration complete")
 

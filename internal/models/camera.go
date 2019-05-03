@@ -22,7 +22,13 @@ func NewCamera(modelName string, makeName string) *Camera {
 		modelName = "Unknown"
 	}
 
-	cameraSlug := slug.MakeLang(modelName, "en")
+	var cameraSlug string
+
+	if makeName != "" {
+		cameraSlug = slug.MakeLang(makeName+" "+modelName, "en")
+	} else {
+		cameraSlug = slug.MakeLang(modelName, "en")
+	}
 
 	result := &Camera{
 		CameraModel: modelName,

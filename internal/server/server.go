@@ -4,15 +4,15 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/context"
 	log "github.com/sirupsen/logrus"
 )
 
 // Start the REST API server using the configuration provided
-func Start(conf photoprism.Config) {
-	if conf.HttpServerMode() != "" {
-		gin.SetMode(conf.HttpServerMode())
-	} else if conf.Debug() == false {
+func Start(ctx *context.Context) {
+	if ctx.HttpServerMode() != "" {
+		gin.SetMode(ctx.HttpServerMode())
+	} else if ctx.Debug() == false {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
@@ -20,11 +20,11 @@ func Start(conf photoprism.Config) {
 	app.Use(gin.Logger(), gin.Recovery())
 
 	// Set template directory
-	app.LoadHTMLGlob(conf.HttpTemplatesPath() + "/*")
+	app.LoadHTMLGlob(ctx.HttpTemplatesPath() + "/*")
 
-	registerRoutes(app, conf)
+	registerRoutes(app, ctx)
 
-	if err := app.Run(fmt.Sprintf("%s:%d", conf.HttpServerHost(), conf.HttpServerPort())); err != nil {
+	if err := app.Run(fmt.Sprintf("%s:%d", ctx.HttpServerHost(), ctx.HttpServerPort())); err != nil {
 		log.Error(err)
 	}
 }

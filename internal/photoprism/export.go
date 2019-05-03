@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// FindOriginalsByDate searches the originalsPath given a time frame in the format of
+// FindOriginalsByDate searches the OriginalsPath given a time frame in the format of
 // after <=> before and returns a list of results.
 func FindOriginalsByDate(originalsPath string, after time.Time, before time.Time) (result []*MediaFile) {
 	filepath.Walk(originalsPath, func(filename string, fileInfo os.FileInfo, err error) error {

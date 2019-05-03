@@ -1,4 +1,4 @@
-package test
+package context
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 )
 
 // Returns output to stdout and stderr for testing
-func Capture(f func()) string {
+func CaptureOutput(f func()) string {
 	r, w, err := os.Pipe()
 	if err != nil {
 		panic(err)

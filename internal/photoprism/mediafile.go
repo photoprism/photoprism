@@ -542,12 +542,14 @@ func (m *MediaFile) decodeDimensions() error {
 		m.width = size.Width
 		m.height = size.Height
 	} else {
-		if exif, err := m.ExifData(); err == nil {
-			m.width = exif.Width
-			m.height = exif.Height
-		} else {
+		exif, err := m.ExifData()
+
+		if err != nil {
 			return err
 		}
+
+		m.width = exif.Width
+		m.height = exif.Height
 	}
 
 	return nil
@@ -555,6 +557,10 @@ func (m *MediaFile) decodeDimensions() error {
 
 // Width return the width dimension of a mediafile.
 func (m *MediaFile) Width() int {
+	if !m.IsPhoto() {
+		return 0
+	}
+
 	if m.width <= 0 {
 		if err := m.decodeDimensions(); err != nil {
 			log.Error(err)
@@ -566,6 +572,10 @@ func (m *MediaFile) Width() int {
 
 // Height returns the height dimension of a mediafile.
 func (m *MediaFile) Height() int {
+	if !m.IsPhoto() {
+		return 0
+	}
+
 	if m.height <= 0 {
 		if err := m.decodeDimensions(); err != nil {
 			log.Error(err)

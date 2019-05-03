@@ -32,7 +32,7 @@ func (c *Converter) ConvertAll(path string) {
 	err := filepath.Walk(path, func(filename string, fileInfo os.FileInfo, err error) error {
 
 		if err != nil {
-			log.Error(err.Error())
+			log.Error("Walk", err.Error())
 			return nil
 		}
 
@@ -47,7 +47,7 @@ func (c *Converter) ConvertAll(path string) {
 		}
 
 		if _, err := c.ConvertToJpeg(mediaFile); err != nil {
-			log.Error(err.Error())
+			log.Warnf("file could not be converted to JPEG: \"%s\"", filename)
 		}
 
 		return nil
@@ -78,7 +78,7 @@ func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 		return mediaFile, nil
 	}
 
-	log.Errorf("converting \"%s\" to \"%s\"", image.filename, jpegFilename)
+	log.Infof("converting \"%s\" to \"%s\"", image.filename, jpegFilename)
 
 	xmpFilename := baseFilename + ".xmp"
 

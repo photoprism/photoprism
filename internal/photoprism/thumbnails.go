@@ -29,13 +29,13 @@ func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, 
 			if thumbnail, err := mediaFile.SquareThumbnail(thumbnailsPath, size); err != nil {
 				log.Errorf("could not create thumbnail: %s", err.Error())
 			} else {
-				log.Infof("created %dx%d px thumbnail for \"%s\"", thumbnail.Width(), thumbnail.Height(), mediaFile.RelativeFilename(originalsPath))
+				log.Infof("created %dx%d thumbnail for \"%s\"", thumbnail.Width(), thumbnail.Height(), mediaFile.RelativeFilename(originalsPath))
 			}
 		} else {
 			if thumbnail, err := mediaFile.Thumbnail(thumbnailsPath, size); err != nil {
 				log.Errorf("could not create thumbnail: %s", err.Error())
 			} else {
-				log.Infof("created %dx%d px thumbnail for \"%s\"", thumbnail.Width(), thumbnail.Height(), mediaFile.RelativeFilename(originalsPath))
+				log.Infof("created %dx%d thumbnail for \"%s\"", thumbnail.Width(), thumbnail.Height(), mediaFile.RelativeFilename(originalsPath))
 			}
 		}
 

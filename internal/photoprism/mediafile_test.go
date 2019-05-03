@@ -3,20 +3,20 @@ package photoprism
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/test"
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMediaFile_GetRelatedFiles(t *testing.T) {
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	mediaFile, err := NewMediaFile(conf.ImportPath() + "/raw/20140717_154212_1EC48F8489.cr2")
+	mediaFile, err := NewMediaFile(ctx.ImportPath() + "/raw/20140717_154212_1EC48F8489.cr2")
 
 	assert.Nil(t, err)
 
-	expectedBaseFilename := conf.ImportPath() + "/raw/20140717_154212_1EC48F8489"
+	expectedBaseFilename := ctx.ImportPath() + "/raw/20140717_154212_1EC48F8489"
 
 	related, _, err := mediaFile.RelatedFiles()
 
@@ -38,11 +38,11 @@ func TestMediaFile_GetRelatedFiles(t *testing.T) {
 }
 
 func TestMediaFile_GetRelatedFiles_Ordering(t *testing.T) {
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	mediaFile, err := NewMediaFile(conf.ImportPath() + "/20130203_193332_0AE340D280.jpg")
+	mediaFile, err := NewMediaFile(ctx.ImportPath() + "/20130203_193332_0AE340D280.jpg")
 
 	assert.Nil(t, err)
 
@@ -59,13 +59,13 @@ func TestMediaFile_GetRelatedFiles_Ordering(t *testing.T) {
 }
 
 func TestMediaFile_GetEditedFilename(t *testing.T) {
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	mediaFile1, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
+	mediaFile1, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
 	assert.Nil(t, err)
-	assert.Equal(t, conf.ImportPath()+"/iphone/IMG_E6788.JPG", mediaFile1.EditedFilename())
+	assert.Equal(t, ctx.ImportPath()+"/iphone/IMG_E6788.JPG", mediaFile1.EditedFilename())
 
 	/* TODO: Add example files to import.zip
 	mediaFile2, err := NewMediaFile("/foo/bar/IMG_E1234.jpg")
@@ -73,34 +73,34 @@ func TestMediaFile_GetEditedFilename(t *testing.T) {
 	assert.Equal(t, "", mediaFile2.EditedFilename())
 	*/
 
-	mediaFile3, err := NewMediaFile(conf.ImportPath() + "/raw/20140717_154212_1EC48F8489.jpg")
+	mediaFile3, err := NewMediaFile(ctx.ImportPath() + "/raw/20140717_154212_1EC48F8489.jpg")
 	assert.Nil(t, err)
 	assert.Equal(t, "", mediaFile3.EditedFilename())
 }
 
 func TestMediaFile_GetMimeType(t *testing.T) {
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	image1, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
+	image1, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
 	assert.Nil(t, err)
 	assert.Equal(t, "image/jpeg", image1.MimeType())
 
-	image2, err := NewMediaFile(conf.ImportPath() + "/raw/20140717_154212_1EC48F8489.cr2")
+	image2, err := NewMediaFile(ctx.ImportPath() + "/raw/20140717_154212_1EC48F8489.cr2")
 	assert.Nil(t, err)
 	assert.Equal(t, "application/octet-stream", image2.MimeType())
 }
 
 func TestMediaFile_Exists(t *testing.T) {
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	mediaFile, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
+	mediaFile, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
 	assert.Nil(t, err)
 	assert.NotNil(t, mediaFile)
 	assert.True(t, mediaFile.Exists())
 
-	mediaFile, err = NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788_XYZ.JPG")
+	mediaFile, err = NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788_XYZ.JPG")
 	assert.NotNil(t, err)
 	assert.Nil(t, mediaFile)
 }

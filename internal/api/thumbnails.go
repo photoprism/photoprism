@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/photoprism/photoprism/internal/context"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
@@ -22,18 +23,18 @@ var photoIconSvg = []byte(`
 //   type: string Format, either "fit" or "square"
 //   size: int    Size in pixels
 //   hash: string The file hash as returned by the search API
-func GetThumbnail(router *gin.RouterGroup, conf photoprism.Config) {
+func GetThumbnail(router *gin.RouterGroup, ctx *context.Context) {
 	router.GET("/thumbnails/:type/:size/:hash", func(c *gin.Context) {
 		fileHash := c.Param("hash")
 		thumbnailType := c.Param("type")
 		size, err := strconv.Atoi(c.Param("size"))
 		if err != nil {
-			log.Printf("invalid size: %s", c.Param("size"))
+			log.Errorf("invalid size: %s", c.Param("size"))
 			c.Data(400, "image/svg+xml", photoIconSvg)
 			return
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		search := photoprism.NewSearch(ctx.OriginalsPath(), ctx.Db())
 		file, err := search.FindFileByHash(fileHash)
 
 		if err != nil {
@@ -41,36 +42,36 @@ func GetThumbnail(router *gin.RouterGroup, conf photoprism.Config) {
 			return
 		}
 
-		fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
+		fileName := fmt.Sprintf("%s/%s", ctx.OriginalsPath(), file.FileName)
 
 		mediaFile, err := photoprism.NewMediaFile(fileName)
 		if err != nil {
-			log.Printf("could not find image for thumbnail: %s", err.Error())
+			log.Errorf("could not find image for thumbnail: %s", err.Error())
 			c.Data(404, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			file.FileMissing = true
-			conf.Db().Save(&file)
+			ctx.Db().Save(&file)
 			return
 		}
 
 		switch thumbnailType {
 		case "fit":
-			if thumbnail, err := mediaFile.Thumbnail(conf.ThumbnailsPath(), size); err == nil {
+			if thumbnail, err := mediaFile.Thumbnail(ctx.ThumbnailsPath(), size); err == nil {
 				c.File(thumbnail.Filename())
 			} else {
-				log.Printf("could not create thumbnail: %s", err.Error())
+				log.Errorf("could not create thumbnail: %s", err.Error())
 				c.Data(400, "image/svg+xml", photoIconSvg)
 			}
 		case "square":
-			if thumbnail, err := mediaFile.SquareThumbnail(conf.ThumbnailsPath(), size); err == nil {
+			if thumbnail, err := mediaFile.SquareThumbnail(ctx.ThumbnailsPath(), size); err == nil {
 				c.File(thumbnail.Filename())
 			} else {
-				log.Printf("could not create square thumbnail: %s", err.Error())
+				log.Errorf("could not create square thumbnail: %s", err.Error())
 				c.Data(400, "image/svg+xml", photoIconSvg)
 			}
 		default:
-			log.Printf("unknown thumbnail type: %s", thumbnailType)
+			log.Errorf("unknown thumbnail type: %s", thumbnailType)
 			c.Data(400, "image/svg+xml", photoIconSvg)
 		}
 	})

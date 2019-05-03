@@ -38,21 +38,21 @@ var startFlags = []cli.Flag{
 }
 
 func startAction(ctx *cli.Context) error {
-	conf := context.NewConfig(ctx)
+	app := context.NewContext(ctx)
 
-	if conf.HttpServerPort() < 1 {
+	if app.HttpServerPort() < 1 {
 		log.Fatal("server port must be a positive integer")
 	}
 
-	if err := conf.CreateDirectories(); err != nil {
+	if err := app.CreateDirectories(); err != nil {
 		log.Fatal(err)
 	}
 
-	conf.MigrateDb()
+	app.MigrateDb()
 
-	log.Infof("starting web server at %s:%d", conf.HttpServerHost(), conf.HttpServerPort())
+	log.Infof("starting web server at %s:%d", app.HttpServerHost(), app.HttpServerPort())
 
-	server.Start(conf)
+	server.Start(app)
 
 	return nil
 }

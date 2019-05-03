@@ -3,37 +3,38 @@ package photoprism
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/test"
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewImporter(t *testing.T) {
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
 
-	indexer := NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
+	indexer := NewIndexer(ctx.OriginalsPath(), tensorFlow, ctx.Db())
 
-	converter := NewConverter(conf.DarktableCli())
+	converter := NewConverter(ctx.DarktableCli())
 
-	importer := NewImporter(conf.OriginalsPath(), indexer, converter)
+	importer := NewImporter(ctx.OriginalsPath(), indexer, converter)
 
 	assert.IsType(t, &Importer{}, importer)
 }
 
 func TestImporter_GetDestinationFilename(t *testing.T) {
-	conf := test.NewConfig()
-	conf.InitializeTestData(t)
+	ctx := context.TestContext()
 
-	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
+	ctx.InitializeTestData(t)
 
-	indexer := NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
+	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
 
-	converter := NewConverter(conf.DarktableCli())
+	indexer := NewIndexer(ctx.OriginalsPath(), tensorFlow, ctx.Db())
 
-	importer := NewImporter(conf.OriginalsPath(), indexer, converter)
+	converter := NewConverter(ctx.DarktableCli())
 
-	rawFile, err := NewMediaFile(conf.ImportPath() + "/raw/IMG_1435.CR2")
+	importer := NewImporter(ctx.OriginalsPath(), indexer, converter)
+
+	rawFile, err := NewMediaFile(ctx.ImportPath() + "/raw/IMG_1435.CR2")
 
 	assert.Nil(t, err)
 
@@ -41,7 +42,7 @@ func TestImporter_GetDestinationFilename(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	assert.Equal(t, conf.OriginalsPath()+"/2018/02/20180204_170813_863A6248DCCA.cr2", filename)
+	assert.Equal(t, ctx.OriginalsPath()+"/2018/02/20180204_170813_863A6248DCCA.cr2", filename)
 }
 
 func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
@@ -49,17 +50,17 @@ func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
 
-	indexer := NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
+	indexer := NewIndexer(ctx.OriginalsPath(), tensorFlow, ctx.Db())
 
-	converter := NewConverter(conf.DarktableCli())
+	converter := NewConverter(ctx.DarktableCli())
 
-	importer := NewImporter(conf.OriginalsPath(), indexer, converter)
+	importer := NewImporter(ctx.OriginalsPath(), indexer, converter)
 
-	importer.ImportPhotosFromDirectory(conf.ImportPath())
+	importer.ImportPhotosFromDirectory(ctx.ImportPath())
 }

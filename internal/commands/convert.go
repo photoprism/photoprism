@@ -15,17 +15,17 @@ var ConvertCommand = cli.Command{
 }
 
 func convertAction(ctx *cli.Context) error {
-	conf := context.NewConfig(ctx)
+	app := context.NewContext(ctx)
 
-	if err := conf.CreateDirectories(); err != nil {
+	if err := app.CreateDirectories(); err != nil {
 		return err
 	}
 
-	log.Infof("converting RAW images in %s to JPEG", conf.OriginalsPath())
+	log.Infof("converting RAW images in %s to JPEG", app.OriginalsPath())
 
-	converter := photoprism.NewConverter(conf.DarktableCli())
+	converter := photoprism.NewConverter(app.DarktableCli())
 
-	converter.ConvertAll(conf.OriginalsPath())
+	converter.ConvertAll(app.OriginalsPath())
 
 	log.Infof("image conversion complete")
 

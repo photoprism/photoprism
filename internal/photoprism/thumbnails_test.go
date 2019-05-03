@@ -3,21 +3,21 @@ package photoprism
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/test"
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMediaFile_GetThumbnail(t *testing.T) {
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.CreateDirectories()
+	ctx.CreateDirectories()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	image1, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
+	image1, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
 	assert.Nil(t, err)
 
-	thumbnail1, err := image1.Thumbnail(conf.ThumbnailsPath(), 350)
+	thumbnail1, err := image1.Thumbnail(ctx.ThumbnailsPath(), 350)
 
 	assert.Empty(t, err)
 
@@ -25,16 +25,16 @@ func TestMediaFile_GetThumbnail(t *testing.T) {
 }
 
 func TestMediaFile_GetSquareThumbnail(t *testing.T) {
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.CreateDirectories()
+	ctx.CreateDirectories()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	image1, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
+	image1, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
 	assert.Nil(t, err)
 
-	thumbnail1, err := image1.SquareThumbnail(conf.ThumbnailsPath(), 350)
+	thumbnail1, err := image1.SquareThumbnail(ctx.ThumbnailsPath(), 350)
 
 	assert.Empty(t, err)
 
@@ -46,23 +46,23 @@ func TestCreateThumbnailsFromOriginals(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.CreateDirectories()
+	ctx.CreateDirectories()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
 
-	indexer := NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
+	indexer := NewIndexer(ctx.OriginalsPath(), tensorFlow, ctx.Db())
 
-	converter := NewConverter(conf.DarktableCli())
+	converter := NewConverter(ctx.DarktableCli())
 
-	importer := NewImporter(conf.OriginalsPath(), indexer, converter)
+	importer := NewImporter(ctx.OriginalsPath(), indexer, converter)
 
-	importer.ImportPhotosFromDirectory(conf.ImportPath())
+	importer.ImportPhotosFromDirectory(ctx.ImportPath())
 
-	CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), 600, false)
+	CreateThumbnailsFromOriginals(ctx.OriginalsPath(), ctx.ThumbnailsPath(), 600, false)
 
-	CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), 300, true)
+	CreateThumbnailsFromOriginals(ctx.OriginalsPath(), ctx.ThumbnailsPath(), 300, true)
 }

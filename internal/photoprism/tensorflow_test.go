@@ -4,18 +4,18 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/test"
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTensorFlow_GetImageTagsFromFile(t *testing.T) {
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
 
-	result, err := tensorFlow.GetImageTagsFromFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
+	result, err := tensorFlow.GetImageTagsFromFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
 
 	assert.Nil(t, err)
 
@@ -42,13 +42,13 @@ func TestTensorFlow_GetImageTags(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
 
-	if imageBuffer, err := ioutil.ReadFile(conf.ImportPath() + "/iphone/IMG_6788.JPG"); err != nil {
+	if imageBuffer, err := ioutil.ReadFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG"); err != nil {
 		t.Error(err)
 	} else {
 		result, err := tensorFlow.GetImageTags(imageBuffer)
@@ -74,13 +74,13 @@ func TestTensorFlow_GetImageTags_Dog(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
 
-	if imageBuffer, err := ioutil.ReadFile(conf.ImportPath() + "/dog.jpg"); err != nil {
+	if imageBuffer, err := ioutil.ReadFile(ctx.ImportPath() + "/dog.jpg"); err != nil {
 		t.Error(err)
 	} else {
 		result, err := tensorFlow.GetImageTags(imageBuffer)

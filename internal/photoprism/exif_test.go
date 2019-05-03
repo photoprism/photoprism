@@ -3,16 +3,16 @@ package photoprism
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/test"
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMediaFile_GetExifData(t *testing.T) {
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	image1, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
+	image1, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
 
 	assert.Nil(t, err)
 
@@ -30,11 +30,11 @@ func TestMediaFile_GetExifData_Slow(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
-	image2, err := NewMediaFile(conf.ImportPath() + "/raw/IMG_1435.CR2")
+	image2, err := NewMediaFile(ctx.ImportPath() + "/raw/IMG_1435.CR2")
 
 	assert.Nil(t, err)
 

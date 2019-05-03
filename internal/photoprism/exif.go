@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"strings"
 	"time"
@@ -32,7 +33,7 @@ type ExifData struct {
 // ExifData return ExifData given a single mediaFile.
 func (m *MediaFile) ExifData() (*ExifData, error) {
 	if m == nil {
-		return nil, errors.New("media file is null")
+		return nil, errors.New("can't parse Exif data: file instance is null")
 	}
 
 	if m.exifData != nil {
@@ -40,7 +41,7 @@ func (m *MediaFile) ExifData() (*ExifData, error) {
 	}
 
 	if !m.IsPhoto() {
-		return nil, errors.New("not a JPEG or Raw file")
+		return nil, errors.New(fmt.Sprintf("file not compatible with Exif: \"%s\"", m.Filename()))
 	}
 
 	m.exifData = &ExifData{}

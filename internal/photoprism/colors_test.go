@@ -3,17 +3,17 @@ package photoprism
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/test"
+	"github.com/photoprism/photoprism/internal/context"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMediaFile_GetColors(t *testing.T) {
-	conf := test.NewConfig()
+	ctx := context.TestContext()
 
-	conf.InitializeTestData(t)
+	ctx.InitializeTestData(t)
 
 	t.Run("dog.jpg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(conf.ImportPath() + "/dog.jpg"); err == nil {
+		if mediaFile, err := NewMediaFile(ctx.ImportPath() + "/dog.jpg"); err == nil {
 			colors, main, l, s, err := mediaFile.Colors()
 
 			t.Log(colors, main, l, s, err)
@@ -30,7 +30,7 @@ func TestMediaFile_GetColors(t *testing.T) {
 	})
 
 	t.Run("ape.jpeg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(conf.ImportPath() + "/ape.jpeg"); err == nil {
+		if mediaFile, err := NewMediaFile(ctx.ImportPath() + "/ape.jpeg"); err == nil {
 			colors, main, l, s, err := mediaFile.Colors()
 
 			t.Log(colors, main, l, s, err)
@@ -47,7 +47,7 @@ func TestMediaFile_GetColors(t *testing.T) {
 	})
 
 	t.Run("iphone/IMG_6788.JPG", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG"); err == nil {
+		if mediaFile, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG"); err == nil {
 			colors, main, l, s, err := mediaFile.Colors()
 
 			t.Log(colors, main, l, s, err)
@@ -63,7 +63,7 @@ func TestMediaFile_GetColors(t *testing.T) {
 	})
 
 	t.Run("raw/20140717_154212_1EC48F8489.jpg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(conf.ImportPath() + "/raw/20140717_154212_1EC48F8489.jpg"); err == nil {
+		if mediaFile, err := NewMediaFile(ctx.ImportPath() + "/raw/20140717_154212_1EC48F8489.jpg"); err == nil {
 			colors, main, l, s, err := mediaFile.Colors()
 
 			t.Log(colors, main, l, s, err)

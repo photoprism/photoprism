@@ -15,9 +15,9 @@ var VersionCommand = cli.Command{
 }
 
 func versionAction(ctx *cli.Context) error {
-	conf := context.NewConfig(ctx)
+	app := context.NewContext(ctx)
 
-	fmt.Println(conf.AppVersion())
+	fmt.Println(app.Version())
 
 	return nil
 }

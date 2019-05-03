@@ -15,25 +15,25 @@ var ImportCommand = cli.Command{
 }
 
 func importAction(ctx *cli.Context) error {
-	conf := context.NewConfig(ctx)
+	app := context.NewContext(ctx)
 
-	if err := conf.CreateDirectories(); err != nil {
+	if err := app.CreateDirectories(); err != nil {
 		return err
 	}
 
-	conf.MigrateDb()
+	app.MigrateDb()
 
-	log.Infof("importing photos from %s", conf.ImportPath())
+	log.Infof("importing photos from %s", app.ImportPath())
 
-	tensorFlow := photoprism.NewTensorFlow(conf.TensorFlowModelPath())
+	tensorFlow := photoprism.NewTensorFlow(app.TensorFlowModelPath())
 
-	indexer := photoprism.NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
+	indexer := photoprism.NewIndexer(app.OriginalsPath(), tensorFlow, app.Db())
 
-	converter := photoprism.NewConverter(conf.DarktableCli())
+	converter := photoprism.NewConverter(app.DarktableCli())
 
-	importer := photoprism.NewImporter(conf.OriginalsPath(), indexer, converter)
+	importer := photoprism.NewImporter(app.OriginalsPath(), indexer, converter)
 
-	importer.ImportPhotosFromDirectory(conf.ImportPath())
+	importer.ImportPhotosFromDirectory(app.ImportPath())
 
 	log.Info("photo import complete")
 
