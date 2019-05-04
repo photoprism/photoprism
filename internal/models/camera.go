@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 )
@@ -43,4 +45,14 @@ func (c *Camera) FirstOrCreate(db *gorm.DB) *Camera {
 	db.FirstOrCreate(c, "camera_model = ? AND camera_make = ?", c.CameraModel, c.CameraMake)
 
 	return c
+}
+
+func (c *Camera) String() string {
+	if c.CameraMake != "" && c.CameraModel != "" {
+		return fmt.Sprintf("%s %s", c.CameraMake, c.CameraModel)
+	} else if c.CameraModel != "" {
+		return c.CameraModel
+	}
+
+	return ""
 }

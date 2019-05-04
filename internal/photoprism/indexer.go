@@ -122,28 +122,19 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.DateCreated().Format("2006"))
 			}
 		} else {
-			log.Infof("no location: %s", err)
+			log.Debugf("location cannot be determined precisely: %s", err)
 
 			var recentPhoto models.Photo
 
 			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", mediaFile.DateCreated())).Preload("Country").First(&recentPhoto); result.Error == nil {
 				if recentPhoto.Country != nil {
 					photo.Country = recentPhoto.Country
+					log.Debugf("approximate location: %s", recentPhoto.Country.CountryName)
 				}
 			}
 		}
 
 		photo.Tags = tags
-
-		if photo.PhotoTitle == "" {
-			if len(photo.Tags) > 0 { // TODO: User defined title format
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Tags[0].TagLabel), mediaFile.DateCreated().Format("2006"))
-			} else if photo.Country != nil && photo.Country.CountryName != "" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Country.CountryName), mediaFile.DateCreated().Format("2006"))
-			} else {
-				photo.PhotoTitle = fmt.Sprintf("Unknown / %s", mediaFile.DateCreated().Format("2006"))
-			}
-		}
 
 		photo.Camera = models.NewCamera(mediaFile.CameraModel(), mediaFile.CameraMake()).FirstOrCreate(i.db)
 		photo.Lens = models.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
@@ -153,6 +144,36 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		photo.TakenAt = mediaFile.DateCreated()
 		photo.PhotoCanonicalName = canonicalName
 		photo.PhotoFavorite = false
+
+		if photo.PhotoTitle == "" {
+			if len(photo.Tags) > 0 { // TODO: User defined title format
+				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Tags[0].TagLabel), mediaFile.DateCreated().Format("2006"))
+			} else if photo.Country != nil && photo.Country.CountryName != "" {
+				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Country.CountryName), mediaFile.DateCreated().Format("2006"))
+			} else if photo.Camera.String() != "" && photo.Camera.String() != "Unknown"  {
+				photo.PhotoTitle = fmt.Sprintf("%s / %s", photo.Camera, mediaFile.DateCreated().Format("January 2006"))
+			} else {
+				var daytimeString string
+				hour := mediaFile.DateCreated().Hour()
+
+				switch {
+				case hour < 8:
+					daytimeString = "Early Bird"
+				case hour < 12:
+					daytimeString = "Morning Mood"
+				case hour < 17:
+					daytimeString = "Carpe Diem"
+				case hour < 20:
+					daytimeString = "Sunset"
+				default:
+					daytimeString = "Late Night"
+				}
+
+				photo.PhotoTitle = fmt.Sprintf("%s / %s", daytimeString, mediaFile.DateCreated().Format("January 2006"))
+			}
+		}
+
+		log.Debugf("title: \"%s\"", photo.PhotoTitle)
 
 		i.db.Create(&photo)
 	} else if time.Now().Sub(photo.UpdatedAt).Minutes() > 10 { // If updated more than 10 minutes ago

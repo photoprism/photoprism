@@ -33,5 +33,7 @@ func indexAction(ctx *cli.Context) error {
 
 	log.Infof("indexed %d files", len(files))
 
+	app.Shutdown()
+
 	return nil
 }

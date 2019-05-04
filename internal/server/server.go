@@ -50,11 +50,7 @@ func Start(ctx *context.Context) {
 		<-quit
 		log.Info("received interrupt signal - shutting down")
 
-		if err := ctx.CloseDb(); err != nil {
-			log.Errorf("could not close database connection: %s", err)
-		} else {
-			log.Info("closed database connection")
-		}
+		ctx.Shutdown()
 
 		if err := server.Close(); err != nil {
 			log.Errorf("server close: %s", err)
@@ -71,5 +67,5 @@ func Start(ctx *context.Context) {
 
 	log.Info("please come back another time")
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(2 * time.Second)
 }

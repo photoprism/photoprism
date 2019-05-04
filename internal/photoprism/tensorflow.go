@@ -11,13 +11,13 @@ import (
 	"sort"
 
 	"github.com/disintegration/imaging"
+	log "github.com/sirupsen/logrus"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
 // TensorFlow if a tensorflow wrapper given a graph, labels and a modelPath.
 type TensorFlow struct {
 	modelPath string
-	graph     *tf.Graph
 	model     *tf.SavedModel
 	labels    []string
 }
@@ -87,17 +87,26 @@ func (t *TensorFlow) GetImageTags(img []byte) (result []TensorFlowLabel, err err
 	}
 
 	// Return best labels
-	return t.findBestLabels(output[0].Value().([][]float32)[0]), nil
+	result = t.findBestLabels(output[0].Value().([][]float32)[0])
+
+	log.Debugf("labels: %v", result)
+
+	return result, nil
 }
 
 func (t *TensorFlow) loadModel() error {
-	if t.graph != nil {
+	if t.model != nil {
 		// Already loaded
 		return nil
 	}
 
+	savedModel := t.modelPath + "/nasnet"
+	modelLabels := savedModel + "/labels.txt"
+
+	log.Infof("loading image classification model from \"%s\"", savedModel)
+
 	// Load model
-	model, err := tf.LoadSavedModel(t.modelPath+"/nasnet", []string{"photoprism"}, nil)
+	model, err := tf.LoadSavedModel(savedModel, []string{"photoprism"}, nil)
 
 	if err != nil {
 		return err
@@ -105,40 +114,54 @@ func (t *TensorFlow) loadModel() error {
 
 	t.model = model
 
+	log.Infof("loading classification labels from \"%s\"", modelLabels)
+
 	// Load labels
-	labelsFile, err := os.Open(t.modelPath + "/nasnet/labels.txt")
+	f, err := os.Open(modelLabels)
+
 	if err != nil {
 		return err
 	}
-	defer labelsFile.Close()
 
-	scanner := bufio.NewScanner(labelsFile)
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
 
 	// Labels are separated by newlines
 	for scanner.Scan() {
 		t.labels = append(t.labels, scanner.Text())
 	}
+
 	if err := scanner.Err(); err != nil {
 		return err
 	}
+
 	return nil
 }
 
 func (t *TensorFlow) findBestLabels(probabilities []float32) []TensorFlowLabel {
 	// Make a list of label/probability pairs
-	var resultLabels []TensorFlowLabel
+	var result []TensorFlowLabel
 	for i, p := range probabilities {
 		if i >= len(t.labels) {
 			break
 		}
-		resultLabels = append(resultLabels, TensorFlowLabel{Label: t.labels[i], Probability: p})
+
+		if p < 0.08 { continue }
+
+		result = append(result, TensorFlowLabel{Label: t.labels[i], Probability: p})
 	}
 
 	// Sort by probability
-	sort.Sort(TensorFlowLabels(resultLabels))
+	sort.Sort(TensorFlowLabels(result))
 
-	// Return top 5 labels
-	return resultLabels[:5]
+	l := len(result)
+
+	if l >= 5 {
+		return result[:5]
+	} else {
+		return result[:l]
+	}
 }
 
 func (t *TensorFlow) makeTensorFromImage(image []byte, imageFormat string) (*tf.Tensor, error) {

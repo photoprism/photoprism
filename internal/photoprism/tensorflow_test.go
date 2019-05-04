@@ -26,7 +26,7 @@ func TestTensorFlow_GetImageTagsFromFile(t *testing.T) {
 
 	assert.NotNil(t, result)
 	assert.IsType(t, []TensorFlowLabel{}, result)
-	assert.Equal(t, 5, len(result))
+	assert.Equal(t, 2, len(result))
 
 	t.Log(result)
 
@@ -59,7 +59,7 @@ func TestTensorFlow_GetImageTags(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.IsType(t, []TensorFlowLabel{}, result)
-		assert.Equal(t, 5, len(result))
+		assert.Equal(t, 2, len(result))
 
 		assert.Equal(t, "tabby cat", result[0].Label)
 		assert.Equal(t, "tiger cat", result[1].Label)
@@ -91,7 +91,7 @@ func TestTensorFlow_GetImageTags_Dog(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.IsType(t, []TensorFlowLabel{}, result)
-		assert.Equal(t, 5, len(result))
+		assert.Equal(t, 3, len(result))
 
 		assert.Equal(t, "belt", result[0].Label)
 		assert.Equal(t, "beagle dog", result[1].Label)

@@ -117,6 +117,7 @@ func Start(path string, port uint, host string, debug bool) {
 	runServer()
 
 	cleanup()
+
 	os.Exit(0)
 }
 

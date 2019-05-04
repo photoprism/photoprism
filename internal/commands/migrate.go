@@ -22,5 +22,7 @@ func migrateAction(ctx *cli.Context) error {
 
 	log.Infoln("database migration complete")
 
+	app.Shutdown()
+
 	return nil
 }
