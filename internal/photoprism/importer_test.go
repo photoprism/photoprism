@@ -21,7 +21,7 @@ func TestNewImporter(t *testing.T) {
 	assert.IsType(t, &Importer{}, importer)
 }
 
-func TestImporter_GetDestinationFilename(t *testing.T) {
+func TestImporter_DestinationFilename(t *testing.T) {
 	ctx := context.TestContext()
 
 	ctx.InitializeTestData(t)

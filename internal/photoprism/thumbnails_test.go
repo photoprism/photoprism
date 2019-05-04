@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMediaFile_GetThumbnail(t *testing.T) {
+func TestMediaFile_Thumbnail(t *testing.T) {
 	ctx := context.TestContext()
 
 	ctx.CreateDirectories()
@@ -24,7 +24,7 @@ func TestMediaFile_GetThumbnail(t *testing.T) {
 	assert.IsType(t, &MediaFile{}, thumbnail1)
 }
 
-func TestMediaFile_GetSquareThumbnail(t *testing.T) {
+func TestMediaFile_SquareThumbnail(t *testing.T) {
 	ctx := context.TestContext()
 
 	ctx.CreateDirectories()

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMediaFile_GetExifData(t *testing.T) {
+func TestMediaFile_ExifData(t *testing.T) {
 	ctx := context.TestContext()
 
 	ctx.InitializeTestData(t)
@@ -25,7 +25,7 @@ func TestMediaFile_GetExifData(t *testing.T) {
 	assert.Equal(t, "iPhone SE", info.CameraModel)
 }
 
-func TestMediaFile_GetExifData_Slow(t *testing.T) {
+func TestMediaFile_ExifData_Slow(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}

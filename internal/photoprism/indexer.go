@@ -200,15 +200,12 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	file.FileMime = mediaFile.MimeType()
 	file.FileOrientation = mediaFile.Orientation()
 
-	// Perceptual Hash
-	if mediaFile.IsJpeg() {
-		// PhotoColors
-		c, mc, l, s, _ := mediaFile.Colors()
-
-		file.FileMainColor = mc.Name()
-		file.FileColors = c.Hex()
-		file.FileLuminance = l.Hex()
-		file.FileSaturation = s.Uint()
+	// Color information
+	if p, err := mediaFile.Colors(); err == nil {
+		file.FileMainColor = p.MainColor.Name()
+		file.FileColors = p.Colors.Hex()
+		file.FileLuminance = p.Luminance.Hex()
+		file.FileSaturation = p.Saturation.Uint()
 	}
 
 	if mediaFile.Width() > 0 && mediaFile.Height() > 0 {

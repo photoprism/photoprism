@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMediaFile_GetRelatedFiles(t *testing.T) {
+func TestMediaFile_RelatedFiles(t *testing.T) {
 	ctx := context.TestContext()
 
 	ctx.InitializeTestData(t)
@@ -37,7 +37,7 @@ func TestMediaFile_GetRelatedFiles(t *testing.T) {
 	}
 }
 
-func TestMediaFile_GetRelatedFiles_Ordering(t *testing.T) {
+func TestMediaFile_RelatedFiles_Ordering(t *testing.T) {
 	ctx := context.TestContext()
 
 	ctx.InitializeTestData(t)
@@ -58,7 +58,7 @@ func TestMediaFile_GetRelatedFiles_Ordering(t *testing.T) {
 	}
 }
 
-func TestMediaFile_GetEditedFilename(t *testing.T) {
+func TestMediaFile_EditedFilename(t *testing.T) {
 	ctx := context.TestContext()
 
 	ctx.InitializeTestData(t)
@@ -78,7 +78,7 @@ func TestMediaFile_GetEditedFilename(t *testing.T) {
 	assert.Equal(t, "", mediaFile3.EditedFilename())
 }
 
-func TestMediaFile_GetMimeType(t *testing.T) {
+func TestMediaFile_MimeType(t *testing.T) {
 	ctx := context.TestContext()
 
 	ctx.InitializeTestData(t)

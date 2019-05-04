@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"errors"
 	"fmt"
 	"image"
 	"image/color"
@@ -12,8 +13,15 @@ import (
 	"github.com/lucasb-eyer/go-colorful"
 )
 
-type MaterialColor uint16
-type MaterialColors []MaterialColor
+type ColorPerception struct {
+	Colors     IndexedColors
+	MainColor  IndexedColor
+	Luminance  LightMap
+	Saturation Saturation
+}
+
+type IndexedColor uint16
+type IndexedColors []IndexedColor
 
 type Saturation uint8
 type Luminance uint8
@@ -22,7 +30,7 @@ type LightMap []Luminance
 const ColorSampleSize = 3
 
 const (
-	Black MaterialColor = iota
+	Black IndexedColor = iota
 	Brown
 	Grey
 	White
@@ -40,7 +48,7 @@ const (
 	Pink
 )
 
-var materialColorNames = map[MaterialColor]string{
+var IndexedColorNames = map[IndexedColor]string{
 	Black:  "black",  // 0
 	Brown:  "brown",  // 1
 	Grey:   "grey",   // 2
@@ -59,7 +67,7 @@ var materialColorNames = map[MaterialColor]string{
 	Pink:   "pink",   // F
 }
 
-var materialColorWeight = map[MaterialColor]uint16{
+var IndexedColorWeight = map[IndexedColor]uint16{
 	Black:  2,
 	Brown:  1,
 	Grey:   2,
@@ -78,15 +86,15 @@ var materialColorWeight = map[MaterialColor]uint16{
 	Pink:   5,
 }
 
-func (c MaterialColor) Name() string {
-	return materialColorNames[c]
+func (c IndexedColor) Name() string {
+	return IndexedColorNames[c]
 }
 
-func (c MaterialColor) Hex() string {
+func (c IndexedColor) Hex() string {
 	return fmt.Sprintf("%X", c)
 }
 
-func (c MaterialColors) Hex() (result string) {
+func (c IndexedColors) Hex() (result string) {
 	for _, materialColor := range c {
 		result += materialColor.Hex()
 	}
@@ -118,7 +126,7 @@ func (m LightMap) Hex() (result string) {
 	return result
 }
 
-var materialColorMap = map[color.RGBA]MaterialColor{
+var IndexedColorMap = map[color.RGBA]IndexedColor{
 	{0x00, 0x00, 0x00, 0xff}: Black,
 	{0x79, 0x55, 0x48, 0xff}: Brown,
 	{0x9E, 0x9E, 0x9E, 0xff}: Grey,
@@ -137,16 +145,16 @@ var materialColorMap = map[color.RGBA]MaterialColor{
 	{0xe9, 0x1e, 0x63, 0xff}: Pink,
 }
 
-func colorfulToMaterialColor(actualColor colorful.Color) (result MaterialColor) {
+func ColorfulToIndexedColor(actualColor colorful.Color) (result IndexedColor) {
 	var distance = 1.0
 
-	for colorRGBA, materialColor := range materialColorMap {
-		colorColorful, _ := colorful.MakeColor(colorRGBA)
+	for rgba, i := range IndexedColorMap {
+		colorColorful, _ := colorful.MakeColor(rgba)
 		currentDistance := colorColorful.DistanceLab(actualColor)
 
 		if distance >= currentDistance {
 			distance = currentDistance
-			result = materialColor
+			result = i
 		}
 	}
 
@@ -170,13 +178,17 @@ func (m *MediaFile) Resize(width, height int) (result *image.NRGBA, err error) {
 }
 
 // Colors returns color information for a media file.
-func (m *MediaFile) Colors() (colors MaterialColors, mainColor MaterialColor, luminance LightMap, saturation Saturation, err error) {
+func (m *MediaFile) Colors() (perception ColorPerception, err error) {
+	if !m.IsJpeg() {
+		return perception, errors.New("no color information: not a JPEG file")
+	}
+
 	img, err := m.Resize(ColorSampleSize, ColorSampleSize)
 
 	if err != nil {
 		log.Printf("can't open image: %s", err.Error())
 
-		return colors, mainColor, luminance, saturation, err
+		return perception, err
 	}
 
 	bounds := img.Bounds()
@@ -184,36 +196,36 @@ func (m *MediaFile) Colors() (colors MaterialColors, mainColor MaterialColor, lu
 	pixels := float64(width * height)
 	saturationSum := 0.0
 
-	colorCount := make(map[MaterialColor]uint16)
+	colorCount := make(map[IndexedColor]uint16)
 	var mainColorCount uint16
 
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
 			r, g, b, a := img.At(x, y).RGBA()
-			rgbColor, _ := colorful.MakeColor(color.RGBA{R: uint8(r), G: uint8(g), B: uint8(b), A: uint8(a)})
-			materialColor := colorfulToMaterialColor(rgbColor)
-			colors = append(colors, materialColor)
+			rgb, _ := colorful.MakeColor(color.RGBA{R: uint8(r), G: uint8(g), B: uint8(b), A: uint8(a)})
+			i := ColorfulToIndexedColor(rgb)
+			perception.Colors = append(perception.Colors, i)
 
-			if _, ok := colorCount[materialColor]; ok == true {
-				colorCount[materialColor] += materialColorWeight[materialColor]
+			if _, ok := colorCount[i]; ok == true {
+				colorCount[i] += IndexedColorWeight[i]
 			} else {
-				colorCount[materialColor] = materialColorWeight[materialColor]
+				colorCount[i] = IndexedColorWeight[i]
 			}
 
-			if colorCount[materialColor] > mainColorCount {
-				mainColorCount = colorCount[materialColor]
-				mainColor = materialColor
+			if colorCount[i] > mainColorCount {
+				mainColorCount = colorCount[i]
+				perception.MainColor = i
 			}
 
-			_, s, l := rgbColor.Hsl()
+			_, s, l := rgb.Hsl()
 
 			saturationSum += s
 
-			luminance = append(luminance, Luminance(math.Round(l*16)))
+			perception.Luminance = append(perception.Luminance, Luminance(math.Round(l * 15)))
 		}
 	}
 
-	saturation = Saturation(math.Ceil((saturationSum / pixels) * 16))
+	perception.Saturation = Saturation(math.Round((saturationSum / pixels) * 15))
 
-	return colors, mainColor, luminance, saturation, nil
+	return perception, nil
 }
