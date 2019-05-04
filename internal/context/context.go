@@ -176,7 +176,7 @@ func (c *Context) LogLevel() log.Level {
 	if logLevel, err := log.ParseLevel(c.config.LogLevel); err == nil {
 		return logLevel
 	} else {
-		return log.ErrorLevel
+		return log.InfoLevel
 	}
 }
 
@@ -330,6 +330,19 @@ func (c *Context) Db() *gorm.DB {
 	return c.db
 }
 
+// CloseDb closes the db connection (if any).
+func (c *Context) CloseDb() error {
+	if c.db != nil {
+		if err := c.db.Close(); err == nil {
+			c.db = nil
+		} else {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // MigrateDb will start a migration process.
 func (c *Context) MigrateDb() {
 	db := c.Db()
@@ -344,7 +357,7 @@ func (c *Context) MigrateDb() {
 		&models.Camera{},
 		&models.Lens{},
 		&models.Country{},
-		)
+	)
 }
 
 // ClientConfig returns a loaded and set configuration entity.

@@ -46,7 +46,6 @@ import (
 	"github.com/pingcap/tidb/util/logutil"
 	"github.com/pingcap/tidb/util/printer"
 	"github.com/pingcap/tidb/util/signal"
-	"github.com/pingcap/tidb/util/systimemon"
 	xserver "github.com/pingcap/tidb/x-server"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/push"
@@ -72,7 +71,7 @@ func Start(path string, port uint, host string, debug bool) {
 	registerMetrics()
 	loadConfig()
 
-	cfg.Log.Level = "fatal"
+	cfg.Log.Level = log.GetLevel().String()
 
 	// cfg.Security.SkipGrantTable = true
 	if debug {
@@ -99,17 +98,22 @@ func Start(path string, port uint, host string, debug bool) {
 
 	if debug {
 		printInfo()
-		log.SetLevel(log.DebugLevel)
-	} else {
-		// TODO: Graceful shutdown of gin Web server before shutting down SQL server
-		log.SetLevel(log.FatalLevel)
 	}
 
 	setupBinlogClient()
 	// setupMetrics()
 	createStoreAndDomain()
 	createServer()
+
+	/*
+		TODO: Use context for graceful shutdown of all services and add HTTP / TiDB server tests
+
+		See
+		- https://github.com/gin-gonic/gin/blob/dfe37ea6f1b9127be4cff4822a1308b4349444e0/examples/graceful-shutdown/graceful-shutdown/server.go
+		- https://stackoverflow.com/questions/45500836/close-multiple-goroutine-if-an-error-occurs-in-one-in-go
+	*/
 	signal.SetupSignalHandler(serverShutdown)
+
 	runServer()
 
 	cleanup()
@@ -297,10 +301,7 @@ func setGlobalVars() {
 
 func printInfo() {
 	// Make sure the TiDB info is always printed.
-	level := log.GetLevel()
-	log.SetLevel(log.InfoLevel)
 	printer.PrintTiDBInfo()
-	log.SetLevel(level)
 }
 
 func createServer() {
@@ -323,10 +324,11 @@ func createServer() {
 
 func serverShutdown(isgraceful bool) {
 	if isgraceful {
+		log.Info("graceful database shutdown")
 		graceful = true
+	} else {
+		log.Info("database shutdown")
 	}
-	logLevel := log.GetLevel()
-	log.SetLevel(log.FatalLevel)
 
 	if xsvr != nil {
 		xsvr.Close() // Should close xserver before server.
@@ -334,27 +336,7 @@ func serverShutdown(isgraceful bool) {
 
 	svr.Close()
 
-	log.SetLevel(logLevel)
-}
-
-func setupMetrics() {
-	// Enable the mutex profile, 1/10 of mutex blocking event sampling.
-	runtime.SetMutexProfileFraction(10)
-	systimeErrHandler := func() {
-		metrics.TimeJumpBackCounter.Inc()
-	}
-	callBackCount := 0
-	sucessCallBack := func() {
-		callBackCount++
-		// It is callback by monitor per second, we increase metrics.KeepAliveCounter per 5s.
-		if callBackCount >= 5 {
-			callBackCount = 0
-			metrics.KeepAliveCounter.Inc()
-		}
-	}
-	go systimemon.StartMonitor(time.Now, systimeErrHandler, sucessCallBack)
-
-	pushMetric(cfg.Status.MetricsAddr, time.Duration(cfg.Status.MetricsInterval)*time.Second)
+	log.Info("database server closed")
 }
 
 func setupTracing() {
@@ -368,12 +350,8 @@ func setupTracing() {
 
 func runServer() {
 	err := svr.Run()
-	logLevel := log.GetLevel()
-	log.SetLevel(log.FatalLevel)
 
 	terror.MustNil(err)
-
-	log.SetLevel(logLevel)
 
 	if cfg.XProtocol.XServer {
 		err := xsvr.Run()
@@ -383,8 +361,11 @@ func runServer() {
 
 func closeDomainAndStorage() {
 	dom.Close()
-	err := storage.Close()
-	log.Debug(errors.Trace(err))
+	if err := storage.Close(); err != nil {
+		log.Error(errors.Trace(err))
+	} else {
+		log.Info("database storage closed")
+	}
 }
 
 func cleanup() {

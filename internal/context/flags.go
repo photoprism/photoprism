@@ -15,6 +15,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_READ_ONLY",
 	},
 	cli.StringFlag{
+		Name:   "log-level, l",
+		Usage:  "trace, debug, info, warning, error, fatal or panic",
+		Value:  "info",
+		EnvVar: "PHOTOPRISM_LOG_LEVEL",
+	},
+	cli.StringFlag{
 		Name:   "config-file, c",
 		Usage:  "load configuration from `FILENAME`",
 		Value:  "/etc/photoprism/photoprism.yml",

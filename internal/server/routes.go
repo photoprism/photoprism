@@ -8,15 +8,15 @@ import (
 	"github.com/photoprism/photoprism/internal/context"
 )
 
-func registerRoutes(app *gin.Engine, ctx *context.Context) {
+func registerRoutes(router *gin.Engine, ctx *context.Context) {
 	// Favicon
-	app.StaticFile("/favicon.ico", ctx.HttpFaviconsPath()+"/favicon.ico")
+	router.StaticFile("/favicon.ico", ctx.HttpFaviconsPath()+"/favicon.ico")
 
 	// Static assets like js and css files
-	app.Static("/assets", ctx.HttpPublicPath())
+	router.Static("/assets", ctx.HttpPublicPath())
 
 	// JSON-REST API Version 1
-	v1 := app.Group("/api/v1")
+	v1 := router.Group("/api/v1")
 	{
 		api.GetPhotos(v1, ctx)
 		api.GetThumbnail(v1, ctx)
@@ -25,7 +25,7 @@ func registerRoutes(app *gin.Engine, ctx *context.Context) {
 	}
 
 	// Default HTML page (client-side routing implemented via Vue.js)
-	app.NoRoute(func(c *gin.Context) {
+	router.NoRoute(func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", ctx.ClientConfig())
 	})
 }

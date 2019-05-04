@@ -221,7 +221,7 @@ func (m *MediaFile) Colors() (perception ColorPerception, err error) {
 
 			saturationSum += s
 
-			perception.Luminance = append(perception.Luminance, Luminance(math.Round(l * 15)))
+			perception.Luminance = append(perception.Luminance, Luminance(math.Round(l*15)))
 		}
 	}
 

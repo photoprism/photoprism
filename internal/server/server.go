@@ -2,6 +2,11 @@ package server
 
 import (
 	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/context"
@@ -16,15 +21,55 @@ func Start(ctx *context.Context) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	app := gin.New()
-	app.Use(gin.Logger(), gin.Recovery())
+	router := gin.New()
+	router.Use(gin.Logger(), gin.Recovery())
 
 	// Set template directory
-	app.LoadHTMLGlob(ctx.HttpTemplatesPath() + "/*")
+	router.LoadHTMLGlob(ctx.HttpTemplatesPath() + "/*")
 
-	registerRoutes(app, ctx)
+	registerRoutes(router, ctx)
 
-	if err := app.Run(fmt.Sprintf("%s:%d", ctx.HttpServerHost(), ctx.HttpServerPort())); err != nil {
-		log.Error(err)
+	server := &http.Server{
+		Addr:    fmt.Sprintf("%s:%d", ctx.HttpServerHost(), ctx.HttpServerPort()),
+		Handler: router,
 	}
+
+	quit := make(chan os.Signal)
+
+	/*
+		TODO: Use context for graceful shutdown of all services and add HTTP / TiDB server tests
+
+		See
+		- https://github.com/gin-gonic/gin/blob/dfe37ea6f1b9127be4cff4822a1308b4349444e0/examples/graceful-shutdown/graceful-shutdown/server.go
+		- https://stackoverflow.com/questions/45500836/close-multiple-goroutine-if-an-error-occurs-in-one-in-go
+	*/
+
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-quit
+		log.Info("received interrupt signal - shutting down")
+
+		if err := ctx.CloseDb(); err != nil {
+			log.Errorf("could not close database connection: %s", err)
+		} else {
+			log.Info("closed database connection")
+		}
+
+		if err := server.Close(); err != nil {
+			log.Errorf("server close: %s", err)
+		}
+	}()
+
+	if err := server.ListenAndServe(); err != nil {
+		if err == http.ErrServerClosed {
+			log.Info("web server closed")
+		} else {
+			log.Errorf("web server closed unexpect: %s", err)
+		}
+	}
+
+	log.Info("please come back another time")
+
+	time.Sleep(3 * time.Second)
 }
