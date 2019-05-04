@@ -14,7 +14,7 @@ var MigrateCommand = cli.Command{
 }
 
 func migrateAction(ctx *cli.Context) error {
-	app := context.NewContext( ctx)
+	app := context.NewContext(ctx)
 
 	log.Infoln("migrating database")
 

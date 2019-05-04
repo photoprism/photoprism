@@ -32,6 +32,7 @@ type Config struct {
 	Version            string
 	Copyright          string
 	Debug              bool   `yaml:"debug" flag:"debug"`
+	ReadOnly           bool   `yaml:"read-only" flag:"read-only"`
 	LogLevel           string `yaml:"log-level" flag:"log-level"`
 	ConfigFile         string
 	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`

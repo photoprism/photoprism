@@ -19,4 +19,5 @@ func TestNewContext(t *testing.T) {
 
 	assert.Equal(t, fsutil.ExpandedFilename("../../assets"), c.AssetsPath())
 	assert.False(t, c.Debug())
+	assert.False(t, c.ReadOnly())
 }

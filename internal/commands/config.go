@@ -22,6 +22,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("version               %s\n", app.Version())
 	fmt.Printf("copyright             %s\n", app.Copyright())
 	fmt.Printf("debug                 %t\n", app.Debug())
+	fmt.Printf("read-only             %t\n", app.ReadOnly())
 	fmt.Printf("log-level             %s\n", app.LogLevel())
 	fmt.Printf("config-file           %s\n", app.ConfigFile())
 

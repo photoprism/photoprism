@@ -19,6 +19,7 @@ func TestNewConfig(t *testing.T) {
 
 	assert.Equal(t, fsutil.ExpandedFilename("../../assets"), c.AssetsPath)
 	assert.False(t, c.Debug)
+	assert.False(t, c.ReadOnly)
 }
 
 func TestConfig_SetValuesFromFile(t *testing.T) {
@@ -29,6 +30,7 @@ func TestConfig_SetValuesFromFile(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.False(t, c.Debug)
+	assert.False(t, c.ReadOnly)
 	assert.Equal(t, "/srv/photoprism", c.AssetsPath)
 	assert.Equal(t, "/srv/photoprism/cache", c.CachePath)
 	assert.Equal(t, "/srv/photoprism/photos/originals", c.OriginalsPath)

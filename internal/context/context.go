@@ -20,7 +20,7 @@ type Context struct {
 	config *Config
 }
 
-func initLogger(debug bool)  {
+func initLogger(debug bool) {
 	log.SetFormatter(&log.TextFormatter{
 		DisableColors: false,
 		FullTimestamp: true,
@@ -160,6 +160,11 @@ func (c *Context) Copyright() string {
 // Debug returns true if Debug mode is on.
 func (c *Context) Debug() bool {
 	return c.config.Debug
+}
+
+// ReadOnly returns true if photo directories are write protected.
+func (c *Context) ReadOnly() bool {
+	return c.config.ReadOnly
 }
 
 // LogLevel returns the logrus log level.
@@ -364,6 +369,7 @@ func (c *Context) ClientConfig() ClientConfig {
 		"version":   c.Version(),
 		"copyright": c.Copyright(),
 		"debug":     c.Debug(),
+		"readonly":  c.ReadOnly(),
 		"cameras":   cameras,
 		"countries": countries,
 		"jsHash":    jsHash,
