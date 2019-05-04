@@ -1,6 +1,7 @@
 package context
 
 import (
+	"errors"
 	"os"
 	"time"
 
@@ -19,41 +20,21 @@ type Context struct {
 	config *Config
 }
 
-// NewConfig() creates a new configuration entity by using two methods:
-//
-// 1. SetValuesFromFile: This will initialize values from a yaml config file.
-//
-// 2. SetValuesFromCliContext: Which comes after SetValuesFromFile and overrides
-//    any previous values giving an option two override file configs through the CLI.
-func NewConfig(ctx *cli.Context) *Config {
-	c := &Config{}
-
-	c.Name = ctx.App.Name
-	c.Copyright = ctx.App.Copyright
-	c.Version = ctx.App.Version
-
+func initLogger(debug bool)  {
 	log.SetFormatter(&log.TextFormatter{
 		DisableColors: false,
 		FullTimestamp: true,
 	})
 
-	if err := c.SetValuesFromFile(fsutil.ExpandedFilename(ctx.GlobalString("config-file"))); err != nil {
-		log.Debug(err)
+	if debug {
+		log.SetLevel(log.DebugLevel)
+	} else {
+		log.SetLevel(log.InfoLevel)
 	}
-
-	if err := c.SetValuesFromCliContext(ctx); err != nil {
-		log.Error(err)
-	}
-
-	return c
 }
 
 func NewContext(ctx *cli.Context) *Context {
-	if ctx.GlobalBool("debug") {
-		log.SetLevel(log.DebugLevel)
-	} else {
-		log.SetLevel(log.ErrorLevel)
-	}
+	initLogger(ctx.GlobalBool("debug"))
 
 	c := &Context{config: NewConfig(ctx)}
 
@@ -61,7 +42,6 @@ func NewContext(ctx *cli.Context) *Context {
 
 	return c
 }
-
 
 // CreateDirectories creates all the folders that photoprism needs. These are:
 // OriginalsPath
@@ -106,6 +86,14 @@ func (c *Context) CreateDirectories() error {
 func (c *Context) connectToDatabase() error {
 	dbDriver := c.DatabaseDriver()
 	dbDsn := c.DatabaseDsn()
+
+	if dbDriver == "" {
+		return errors.New("can't connect: database driver not specified")
+	}
+
+	if dbDsn == "" {
+		return errors.New("can't connect: database DSN not specified")
+	}
 
 	isTiDB := false
 	initSuccess := false
@@ -257,16 +245,27 @@ func (c *Context) ExportPath() string {
 
 // DarktableCli returns the darktable-cli binary file name.
 func (c *Context) DarktableCli() string {
+	if c.config.DarktableCli == "" {
+		return "/usr/bin/darktable-cli"
+	}
 	return c.config.DarktableCli
 }
 
 // DatabaseDriver returns the database driver name.
 func (c *Context) DatabaseDriver() string {
+	if c.config.DatabaseDriver == "" {
+		return DbTiDB
+	}
+
 	return c.config.DatabaseDriver
 }
 
 // DatabaseDsn returns the database data source name (DSN).
 func (c *Context) DatabaseDsn() string {
+	if c.config.DatabaseDsn == "" {
+		return "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
+	}
+
 	return c.config.DatabaseDsn
 }
 
@@ -318,7 +317,9 @@ func (c *Context) HttpPublicBuildPath() string {
 // Db returns the db connection.
 func (c *Context) Db() *gorm.DB {
 	if c.db == nil {
-		c.connectToDatabase()
+		if err := c.connectToDatabase(); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	return c.db

@@ -19,10 +19,12 @@ services:
       PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/import"
       PHOTOPRISM_EXPORT_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/export"
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/originals"
+      PHOTOPRISM_DATABASE_DRIVER: "internal"
       PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
       PHOTOPRISM_SQL_HOST: "0.0.0.0"
       PHOTOPRISM_SQL_PORT: 4000
       PHOTOPRISM_SQL_PASSWORD: "photoprism"
+      PHOTOPRISM_DARKTABLE_CLI: "/usr/bin/darktable-cli"
 
   database:
     image: mysql:8.0.16

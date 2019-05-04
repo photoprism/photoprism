@@ -7,16 +7,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewAppConfig(t *testing.T) {
+func TestNewContext(t *testing.T) {
 	ctx := CliTestContext()
 
 	assert.True(t, ctx.IsSet("assets-path"))
 	assert.False(t, ctx.Bool("debug"))
 
-	c := NewConfig(ctx)
+	c := NewContext(ctx)
 
-	assert.IsType(t, new(Config), c)
+	assert.IsType(t, new(Context), c)
 
-	assert.Equal(t, fsutil.ExpandedFilename("../../assets"), c.AssetsPath)
-	assert.False(t, c.Debug)
+	assert.Equal(t, fsutil.ExpandedFilename("../../assets"), c.AssetsPath())
+	assert.False(t, c.Debug())
 }

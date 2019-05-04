@@ -28,10 +28,10 @@ func testDataPath(assetsPath string) string {
 
 func NewTestConfig() *Config {
 	assetsPath := fsutil.ExpandedFilename("../../assets")
+
 	testDataPath := testDataPath(assetsPath)
 
 	c := &Config{
-		ConfigFile:     "../../configs/photoprism.yml",
 		DarktableCli:   "/usr/bin/darktable-cli",
 		AssetsPath:     assetsPath,
 		CachePath:      testDataPath + "/cache",
@@ -54,7 +54,7 @@ func TestContext() *Context {
 }
 
 func NewTestContext() *Context {
-	log.SetLevel(log.FatalLevel)
+	log.SetLevel(log.DebugLevel)
 
 	c := &Context{config: NewTestConfig()}
 
@@ -99,12 +99,12 @@ func (c *Context) DownloadTestData(t *testing.T) {
 
 		if hash != TestDataHash {
 			os.Remove(TestDataZip)
-			t.Logf("Removed outdated test data zip file (fingerprint %s)\n", hash)
+			t.Logf("removed outdated test data zip file (fingerprint %s)\n", hash)
 		}
 	}
 
 	if !fsutil.Exists(TestDataZip) {
-		fmt.Printf("Downloading latest test data zip file from %s\n", TestDataURL)
+		fmt.Printf("downloading latest test data zip file from %s\n", TestDataURL)
 
 		if err := fsutil.Download(TestDataZip, TestDataURL); err != nil {
 			fmt.Printf("Download failed: %s\n", err.Error())
@@ -114,12 +114,12 @@ func (c *Context) DownloadTestData(t *testing.T) {
 
 func (c *Context) UnzipTestData(t *testing.T) {
 	if _, err := fsutil.Unzip(TestDataZip, testDataPath(c.AssetsPath())); err != nil {
-		t.Logf("Could not unzip test data: %s\n", err.Error())
+		t.Logf("could not unzip test data: %s\n", err.Error())
 	}
 }
 
 func (c *Context) InitializeTestData(t *testing.T) {
-	t.Log("Initializing test data")
+	t.Log("initializing test data")
 
 	c.RemoveTestData(t)
 

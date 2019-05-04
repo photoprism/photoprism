@@ -1,0 +1,16 @@
+debug: false
+darktable-cli: /usr/bin/darktable-cli
+assets-path: /srv/photoprism
+cache-path: /srv/photoprism/cache
+originals-path: /srv/photoprism/photos/originals
+import-path: /srv/photoprism/photos/import
+export-path: /srv/photoprism/photos/export
+sql-host: localhost
+sql-port: 4000
+sql-password: photoprism
+http-host:
+http-mode: release
+http-port: 81
+http-password:
+database-driver: internal
+database-dsn: root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true

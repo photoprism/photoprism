@@ -7,12 +7,12 @@ import (
 )
 
 func TestExists(t *testing.T) {
-	assert.True(t, Exists("./_fixtures/test.jpg"))
+	assert.True(t, Exists("./testdata/test.jpg"))
 	assert.False(t, Exists("./foo.jpg"))
 }
 
 func TestExpandedFilename(t *testing.T) {
-	filename := ExpandedFilename("./_fixtures/test.jpg")
+	filename := ExpandedFilename("./testdata/test.jpg")
 
 	assert.IsType(t, "", filename)
 
