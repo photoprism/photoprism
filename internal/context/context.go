@@ -334,14 +334,17 @@ func (c *Context) Db() *gorm.DB {
 func (c *Context) MigrateDb() {
 	db := c.Db()
 
-	db.AutoMigrate(&models.File{},
+	db.AutoMigrate(
+		&models.File{},
 		&models.Photo{},
 		&models.Tag{},
+		&models.PhotoTag{},
 		&models.Album{},
 		&models.Location{},
 		&models.Camera{},
 		&models.Lens{},
-		&models.Country{})
+		&models.Country{},
+		)
 }
 
 // ClientConfig returns a loaded and set configuration entity.
