@@ -3,7 +3,6 @@ package context
 import (
 	"errors"
 	"os"
-	"syscall"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -401,9 +400,5 @@ func (c *Context) Shutdown() {
 		log.Errorf("could not close database connection: %s", err)
 	} else {
 		log.Info("closed database connection")
-	}
-
-	if err := syscall.Kill(syscall.Getpid(), syscall.SIGINT); err != nil {
-		log.Error(err)
 	}
 }
