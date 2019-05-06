@@ -3,7 +3,7 @@ package commands
 import (
 	log "github.com/sirupsen/logrus"
 
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/urfave/cli"
 )
@@ -38,21 +38,21 @@ var startFlags = []cli.Flag{
 }
 
 func startAction(ctx *cli.Context) error {
-	app := context.NewContext(ctx)
+	conf := config.NewConfig(ctx)
 
-	if app.HttpServerPort() < 1 {
+	if conf.HttpServerPort() < 1 {
 		log.Fatal("server port must be a positive integer")
 	}
 
-	if err := app.CreateDirectories(); err != nil {
+	if err := conf.CreateDirectories(); err != nil {
 		log.Fatal(err)
 	}
 
-	app.MigrateDb()
+	conf.MigrateDb()
 
-	log.Infof("starting web server at %s:%d", app.HttpServerHost(), app.HttpServerPort())
+	log.Infof("starting web server at %s:%d", conf.HttpServerHost(), conf.HttpServerPort())
 
-	server.Start(app)
+	server.Start(conf)
 
 	return nil
 }

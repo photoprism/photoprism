@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +23,7 @@ var photoIconSvg = []byte(`
 //   type: string Format, either "fit" or "square"
 //   size: int    Size in pixels
 //   hash: string The file hash as returned by the search API
-func GetThumbnail(router *gin.RouterGroup, ctx *context.Context) {
+func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/thumbnails/:type/:size/:hash", func(c *gin.Context) {
 		fileHash := c.Param("hash")
 		thumbnailType := c.Param("type")
@@ -34,7 +34,7 @@ func GetThumbnail(router *gin.RouterGroup, ctx *context.Context) {
 			return
 		}
 
-		search := photoprism.NewSearch(ctx.OriginalsPath(), ctx.Db())
+		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 		file, err := search.FindFileByHash(fileHash)
 
 		if err != nil {
@@ -42,7 +42,7 @@ func GetThumbnail(router *gin.RouterGroup, ctx *context.Context) {
 			return
 		}
 
-		fileName := fmt.Sprintf("%s/%s", ctx.OriginalsPath(), file.FileName)
+		fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
 
 		mediaFile, err := photoprism.NewMediaFile(fileName)
 		if err != nil {
@@ -51,20 +51,20 @@ func GetThumbnail(router *gin.RouterGroup, ctx *context.Context) {
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			file.FileMissing = true
-			ctx.Db().Save(&file)
+			conf.Db().Save(&file)
 			return
 		}
 
 		switch thumbnailType {
 		case "fit":
-			if thumbnail, err := mediaFile.Thumbnail(ctx.ThumbnailsPath(), size); err == nil {
+			if thumbnail, err := mediaFile.Thumbnail(conf.ThumbnailsPath(), size); err == nil {
 				c.File(thumbnail.Filename())
 			} else {
 				log.Errorf("could not create thumbnail: %s", err.Error())
 				c.Data(400, "image/svg+xml", photoIconSvg)
 			}
 		case "square":
-			if thumbnail, err := mediaFile.SquareThumbnail(ctx.ThumbnailsPath(), size); err == nil {
+			if thumbnail, err := mediaFile.SquareThumbnail(conf.ThumbnailsPath(), size); err == nil {
 				c.File(thumbnail.Filename())
 			} else {
 				log.Errorf("could not create square thumbnail: %s", err.Error())

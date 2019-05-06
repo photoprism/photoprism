@@ -3,12 +3,12 @@ package photoprism
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMediaFile_RelatedFiles(t *testing.T) {
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	ctx.InitializeTestData(t)
 
@@ -38,7 +38,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 }
 
 func TestMediaFile_RelatedFiles_Ordering(t *testing.T) {
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	ctx.InitializeTestData(t)
 
@@ -59,7 +59,7 @@ func TestMediaFile_RelatedFiles_Ordering(t *testing.T) {
 }
 
 func TestMediaFile_EditedFilename(t *testing.T) {
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	ctx.InitializeTestData(t)
 
@@ -79,7 +79,7 @@ func TestMediaFile_EditedFilename(t *testing.T) {
 }
 
 func TestMediaFile_MimeType(t *testing.T) {
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	ctx.InitializeTestData(t)
 
@@ -93,7 +93,7 @@ func TestMediaFile_MimeType(t *testing.T) {
 }
 
 func TestMediaFile_Exists(t *testing.T) {
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	mediaFile, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
 	assert.Nil(t, err)

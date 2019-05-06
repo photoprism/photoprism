@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -29,13 +29,13 @@ var ThumbnailsCommand = cli.Command{
 }
 
 func thumbnailsAction(ctx *cli.Context) error {
-	app := context.NewContext(ctx)
+	conf := config.NewConfig(ctx)
 
-	if err := app.CreateDirectories(); err != nil {
+	if err := conf.CreateDirectories(); err != nil {
 		return err
 	}
 
-	log.Infof("creating thumbnails in \"%s\"", app.ThumbnailsPath())
+	log.Infof("creating thumbnails in \"%s\"", conf.ThumbnailsPath())
 
 	sizes := ctx.IntSlice("size")
 
@@ -49,7 +49,7 @@ func thumbnailsAction(ctx *cli.Context) error {
 	}
 
 	for _, size := range sizes {
-		photoprism.CreateThumbnailsFromOriginals(app.OriginalsPath(), app.ThumbnailsPath(), size, ctx.Bool("square"))
+		photoprism.CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), size, ctx.Bool("square"))
 	}
 
 	log.Info("thumbnails created")

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -80,7 +80,7 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 }
 
 func TestMediaFile_Colors(t *testing.T) {
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	ctx.InitializeTestData(t)
 

@@ -11,7 +11,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/photoprism/photoprism/internal/fsutil"
+	"github.com/photoprism/photoprism/internal/util"
 )
 
 // Importer todo: Fill me.
@@ -149,8 +149,8 @@ func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 	result := pathName + "/" + canonicalName + fileExtension
 
-	for fsutil.Exists(result) {
-		if mediaFile.Hash() == fsutil.Hash(result) {
+	for util.Exists(result) {
+		if mediaFile.Hash() == util.Hash(result) {
 			return result, fmt.Errorf("file already exists: %s", result)
 		}
 

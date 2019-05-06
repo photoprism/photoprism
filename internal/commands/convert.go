@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -15,17 +15,17 @@ var ConvertCommand = cli.Command{
 }
 
 func convertAction(ctx *cli.Context) error {
-	app := context.NewContext(ctx)
+	conf := config.NewConfig(ctx)
 
-	if err := app.CreateDirectories(); err != nil {
+	if err := conf.CreateDirectories(); err != nil {
 		return err
 	}
 
-	log.Infof("converting RAW images in %s to JPEG", app.OriginalsPath())
+	log.Infof("converting RAW images in %s to JPEG", conf.OriginalsPath())
 
-	converter := photoprism.NewConverter(app.DarktableCli())
+	converter := photoprism.NewConverter(conf.DarktableCli())
 
-	converter.ConvertAll(app.OriginalsPath())
+	converter.ConvertAll(conf.OriginalsPath())
 
 	log.Infof("image conversion complete")
 

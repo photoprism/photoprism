@@ -1,4 +1,4 @@
-package fsutil
+package util
 
 import (
 	"crypto/sha1"

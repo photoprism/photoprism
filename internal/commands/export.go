@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/araddon/dateparse"
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
 )
@@ -40,9 +40,9 @@ var exportFlags = []cli.Flag{
 }
 
 func exportAction(ctx *cli.Context) error {
-	app := context.NewContext(ctx)
+	conf := config.NewConfig(ctx)
 
-	if err := app.CreateDirectories(); err != nil {
+	if err := conf.CreateDirectories(); err != nil {
 		return err
 	}
 
@@ -70,15 +70,17 @@ func exportAction(ctx *cli.Context) error {
 		}
 	}
 
-	exportPath := fmt.Sprintf("%s/%s", app.ExportPath(), name)
+	exportPath := fmt.Sprintf("%s/%s", conf.ExportPath(), name)
 	size := ctx.Int("size")
-	originals := photoprism.FindOriginalsByDate(app.OriginalsPath(), afterDate, beforeDate)
+	originals := photoprism.FindOriginalsByDate(conf.OriginalsPath(), afterDate, beforeDate)
 
 	log.Infof("exporting photos to %s", exportPath)
 
-	photoprism.ExportPhotosFromOriginals(originals, app.ThumbnailsPath(), exportPath, size)
-
-	log.Infof("photo export complete")
+	if err := photoprism.ExportPhotosFromOriginals(originals, conf.ThumbnailsPath(), exportPath, size); err != nil {
+		log.Error(err)
+	} else {
+		log.Infof("photo export complete")
+	}
 
 	return nil
 }

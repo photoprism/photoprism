@@ -150,7 +150,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Tags[0].TagLabel), mediaFile.DateCreated().Format("2006"))
 			} else if photo.Country != nil && photo.Country.CountryName != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Country.CountryName), mediaFile.DateCreated().Format("2006"))
-			} else if photo.Camera.String() != "" && photo.Camera.String() != "Unknown"  {
+			} else if photo.Camera.String() != "" && photo.Camera.String() != "Unknown" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", photo.Camera, mediaFile.DateCreated().Format("January 2006"))
 			} else {
 				var daytimeString string

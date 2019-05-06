@@ -9,15 +9,15 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	log "github.com/sirupsen/logrus"
 )
 
 // Start the REST API server using the configuration provided
-func Start(ctx *context.Context) {
-	if ctx.HttpServerMode() != "" {
-		gin.SetMode(ctx.HttpServerMode())
-	} else if ctx.Debug() == false {
+func Start(conf *config.Config) {
+	if conf.HttpServerMode() != "" {
+		gin.SetMode(conf.HttpServerMode())
+	} else if conf.Debug() == false {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
@@ -25,19 +25,19 @@ func Start(ctx *context.Context) {
 	router.Use(gin.Logger(), gin.Recovery())
 
 	// Set template directory
-	router.LoadHTMLGlob(ctx.HttpTemplatesPath() + "/*")
+	router.LoadHTMLGlob(conf.HttpTemplatesPath() + "/*")
 
-	registerRoutes(router, ctx)
+	registerRoutes(router, conf)
 
 	server := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", ctx.HttpServerHost(), ctx.HttpServerPort()),
+		Addr:    fmt.Sprintf("%s:%d", conf.HttpServerHost(), conf.HttpServerPort()),
 		Handler: router,
 	}
 
 	quit := make(chan os.Signal)
 
 	/*
-		TODO: Use context for graceful shutdown of all services and add HTTP / TiDB server tests
+		TODO: Use config for graceful shutdown of all services and add HTTP / TiDB server tests
 
 		See
 		- https://github.com/gin-gonic/gin/blob/dfe37ea6f1b9127be4cff4822a1308b4349444e0/examples/graceful-shutdown/graceful-shutdown/server.go
@@ -50,7 +50,7 @@ func Start(ctx *context.Context) {
 		<-quit
 		log.Info("received interrupt signal - shutting down")
 
-		ctx.Shutdown()
+		conf.Shutdown()
 
 		if err := server.Close(); err != nil {
 			log.Errorf("server close: %s", err)

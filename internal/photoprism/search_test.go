@@ -3,12 +3,12 @@ package photoprism
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/forms"
 )
 
 func TestSearch_Photos_Query(t *testing.T) {
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	ctx.CreateDirectories()
 
@@ -41,7 +41,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 }
 
 func TestSearch_Photos_Camera(t *testing.T) {
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	ctx.CreateDirectories()
 

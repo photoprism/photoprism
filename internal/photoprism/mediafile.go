@@ -18,8 +18,8 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/djherbis/times"
-	"github.com/photoprism/photoprism/internal/fsutil"
 	"github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/util"
 )
 
 const (
@@ -119,7 +119,7 @@ type MediaFile struct {
 
 // NewMediaFile returns a new MediaFile.
 func NewMediaFile(filename string) (*MediaFile, error) {
-	if !fsutil.Exists(filename) {
+	if !util.Exists(filename) {
 		return nil, fmt.Errorf("file does not exist: %s", filename)
 	}
 
@@ -279,7 +279,7 @@ func (m *MediaFile) CanonicalNameFromFileWithDirectory() string {
 // Hash return a sha1 hash of a mediafile based on the filename.
 func (m *MediaFile) Hash() string {
 	if len(m.hash) == 0 {
-		m.hash = fsutil.Hash(m.Filename())
+		m.hash = util.Hash(m.Filename())
 	}
 
 	return m.hash
@@ -306,7 +306,7 @@ func (m *MediaFile) RelatedFiles() (result MediaFiles, mainFile *MediaFile, err 
 		return result, nil, err
 	}
 
-	if editedFilename := m.EditedFilename(); editedFilename != "" && fsutil.Exists(editedFilename) {
+	if editedFilename := m.EditedFilename(); editedFilename != "" && util.Exists(editedFilename) {
 		matches = append(matches, editedFilename)
 	}
 
@@ -406,7 +406,7 @@ func (m *MediaFile) openFile() (*os.File, error) {
 
 // Exists checks if a mediafile exists by filename.
 func (m *MediaFile) Exists() bool {
-	return fsutil.Exists(m.Filename())
+	return util.Exists(m.Filename())
 }
 
 // Remove a mediafile.
@@ -514,7 +514,7 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 
 	jpegFilename := m.CanonicalNameFromFileWithDirectory() + ".jpg"
 
-	if !fsutil.Exists(jpegFilename) {
+	if !util.Exists(jpegFilename) {
 		return nil, fmt.Errorf("jpeg file does not exist: %s", jpegFilename)
 	}
 

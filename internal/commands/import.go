@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -15,25 +15,25 @@ var ImportCommand = cli.Command{
 }
 
 func importAction(ctx *cli.Context) error {
-	app := context.NewContext(ctx)
+	conf := config.NewConfig(ctx)
 
-	if err := app.CreateDirectories(); err != nil {
+	if err := conf.CreateDirectories(); err != nil {
 		return err
 	}
 
-	app.MigrateDb()
+	conf.MigrateDb()
 
-	log.Infof("importing photos from %s", app.ImportPath())
+	log.Infof("importing photos from %s", conf.ImportPath())
 
-	tensorFlow := photoprism.NewTensorFlow(app.TensorFlowModelPath())
+	tensorFlow := photoprism.NewTensorFlow(conf.TensorFlowModelPath())
 
-	indexer := photoprism.NewIndexer(app.OriginalsPath(), tensorFlow, app.Db())
+	indexer := photoprism.NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
 
-	converter := photoprism.NewConverter(app.DarktableCli())
+	converter := photoprism.NewConverter(conf.DarktableCli())
 
-	importer := photoprism.NewImporter(app.OriginalsPath(), indexer, converter)
+	importer := photoprism.NewImporter(conf.OriginalsPath(), indexer, converter)
 
-	importer.ImportPhotosFromDirectory(app.ImportPath())
+	importer.ImportPhotosFromDirectory(conf.ImportPath())
 
 	log.Info("photo import complete")
 

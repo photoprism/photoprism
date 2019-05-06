@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/urfave/cli"
 )
 
@@ -15,9 +15,9 @@ var VersionCommand = cli.Command{
 }
 
 func versionAction(ctx *cli.Context) error {
-	app := context.NewContext(ctx)
+	conf := config.NewConfig(ctx)
 
-	fmt.Println(app.Version())
+	fmt.Println(conf.Version())
 
 	return nil
 }

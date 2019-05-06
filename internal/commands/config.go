@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/urfave/cli"
 )
 
@@ -15,42 +15,42 @@ var ConfigCommand = cli.Command{
 }
 
 func configAction(ctx *cli.Context) error {
-	app := context.NewContext(ctx)
+	conf := config.NewConfig(ctx)
 
 	fmt.Printf("NAME                  VALUE\n")
-	fmt.Printf("name                  %s\n", app.Name())
-	fmt.Printf("version               %s\n", app.Version())
-	fmt.Printf("copyright             %s\n", app.Copyright())
-	fmt.Printf("debug                 %t\n", app.Debug())
-	fmt.Printf("read-only             %t\n", app.ReadOnly())
-	fmt.Printf("log-level             %s\n", app.LogLevel())
-	fmt.Printf("config-file           %s\n", app.ConfigFile())
+	fmt.Printf("name                  %s\n", conf.Name())
+	fmt.Printf("version               %s\n", conf.Version())
+	fmt.Printf("copyright             %s\n", conf.Copyright())
+	fmt.Printf("debug                 %t\n", conf.Debug())
+	fmt.Printf("read-only             %t\n", conf.ReadOnly())
+	fmt.Printf("log-level             %s\n", conf.LogLevel())
+	fmt.Printf("config-file           %s\n", conf.ConfigFile())
 
-	fmt.Printf("database-driver       %s\n", app.DatabaseDriver())
-	fmt.Printf("database-dsn          %s\n", app.DatabaseDsn())
+	fmt.Printf("database-driver       %s\n", conf.DatabaseDriver())
+	fmt.Printf("database-dsn          %s\n", conf.DatabaseDsn())
 
-	fmt.Printf("http-host             %s\n", app.HttpServerHost())
-	fmt.Printf("http-port             %d\n", app.HttpServerPort())
-	fmt.Printf("http-mode             %s\n", app.HttpServerMode())
+	fmt.Printf("http-host             %s\n", conf.HttpServerHost())
+	fmt.Printf("http-port             %d\n", conf.HttpServerPort())
+	fmt.Printf("http-mode             %s\n", conf.HttpServerMode())
 
-	fmt.Printf("sql-host              %s\n", app.SqlServerHost())
-	fmt.Printf("sql-port              %d\n", app.SqlServerPort())
-	fmt.Printf("sql-password          %s\n", app.SqlServerPassword())
-	fmt.Printf("sql-path              %s\n", app.SqlServerPath())
+	fmt.Printf("sql-host              %s\n", conf.SqlServerHost())
+	fmt.Printf("sql-port              %d\n", conf.SqlServerPort())
+	fmt.Printf("sql-password          %s\n", conf.SqlServerPassword())
+	fmt.Printf("sql-path              %s\n", conf.SqlServerPath())
 
-	fmt.Printf("assets-path           %s\n", app.AssetsPath())
-	fmt.Printf("originals-path        %s\n", app.OriginalsPath())
-	fmt.Printf("import-path           %s\n", app.ImportPath())
-	fmt.Printf("export-path           %s\n", app.ExportPath())
-	fmt.Printf("cache-path            %s\n", app.CachePath())
-	fmt.Printf("thumbnails-path       %s\n", app.ThumbnailsPath())
-	fmt.Printf("tf-model-path         %s\n", app.TensorFlowModelPath())
-	fmt.Printf("templates-path        %s\n", app.HttpTemplatesPath())
-	fmt.Printf("favicons-path         %s\n", app.HttpFaviconsPath())
-	fmt.Printf("public-path           %s\n", app.HttpPublicPath())
-	fmt.Printf("public-build-path     %s\n", app.HttpPublicBuildPath())
+	fmt.Printf("assets-path           %s\n", conf.AssetsPath())
+	fmt.Printf("originals-path        %s\n", conf.OriginalsPath())
+	fmt.Printf("import-path           %s\n", conf.ImportPath())
+	fmt.Printf("export-path           %s\n", conf.ExportPath())
+	fmt.Printf("cache-path            %s\n", conf.CachePath())
+	fmt.Printf("thumbnails-path       %s\n", conf.ThumbnailsPath())
+	fmt.Printf("tf-model-path         %s\n", conf.TensorFlowModelPath())
+	fmt.Printf("templates-path        %s\n", conf.HttpTemplatesPath())
+	fmt.Printf("favicons-path         %s\n", conf.HttpFaviconsPath())
+	fmt.Printf("public-path           %s\n", conf.HttpPublicPath())
+	fmt.Printf("public-build-path     %s\n", conf.HttpPublicBuildPath())
 
-	fmt.Printf("darktable-cli         %s\n", app.DarktableCli())
+	fmt.Printf("darktable-cli         %s\n", conf.DarktableCli())
 
 	return nil
 }

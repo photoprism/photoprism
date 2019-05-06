@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -15,25 +15,25 @@ var IndexCommand = cli.Command{
 }
 
 func indexAction(ctx *cli.Context) error {
-	app := context.NewContext(ctx)
+	conf := config.NewConfig(ctx)
 
-	if err := app.CreateDirectories(); err != nil {
+	if err := conf.CreateDirectories(); err != nil {
 		return err
 	}
 
-	app.MigrateDb()
+	conf.MigrateDb()
 
-	log.Infof("indexing photos in %s", app.OriginalsPath())
+	log.Infof("indexing photos in %s", conf.OriginalsPath())
 
-	tensorFlow := photoprism.NewTensorFlow(app.TensorFlowModelPath())
+	tensorFlow := photoprism.NewTensorFlow(conf.TensorFlowModelPath())
 
-	indexer := photoprism.NewIndexer(app.OriginalsPath(), tensorFlow, app.Db())
+	indexer := photoprism.NewIndexer(conf.OriginalsPath(), tensorFlow, conf.Db())
 
 	files := indexer.IndexAll()
 
 	log.Infof("indexed %d files", len(files))
 
-	app.Shutdown()
+	conf.Shutdown()
 
 	return nil
 }

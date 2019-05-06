@@ -1,4 +1,4 @@
-package context
+package config
 
 import (
 	"errors"
@@ -8,16 +8,16 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/photoprism/photoprism/internal/fsutil"
 	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/tidb"
+	"github.com/photoprism/photoprism/internal/util"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
-type Context struct {
+type Config struct {
 	db     *gorm.DB
-	config *Config
+	config *Params
 }
 
 func initLogger(debug bool) {
@@ -33,10 +33,10 @@ func initLogger(debug bool) {
 	}
 }
 
-func NewContext(ctx *cli.Context) *Context {
+func NewConfig(ctx *cli.Context) *Config {
 	initLogger(ctx.GlobalBool("debug"))
 
-	c := &Context{config: NewConfig(ctx)}
+	c := &Config{config: NewParams(ctx)}
 
 	log.SetLevel(c.LogLevel())
 
@@ -48,7 +48,7 @@ func NewContext(ctx *cli.Context) *Context {
 // ThumbnailsPath
 // ImportPath
 // ExportPath
-func (c *Context) CreateDirectories() error {
+func (c *Config) CreateDirectories() error {
 	if err := os.MkdirAll(c.OriginalsPath(), os.ModePerm); err != nil {
 		return err
 	}
@@ -83,7 +83,7 @@ func (c *Context) CreateDirectories() error {
 // connectToDatabase establishes a database connection.
 // When used with the internal driver, it may create a new database server instance.
 // It tries to do this 12 times with a 5 second sleep interval in between.
-func (c *Context) connectToDatabase() error {
+func (c *Config) connectToDatabase() error {
 	dbDriver := c.DatabaseDriver()
 	dbDsn := c.DatabaseDsn()
 
@@ -143,32 +143,32 @@ func (c *Context) connectToDatabase() error {
 }
 
 // Name returns the application name.
-func (c *Context) Name() string {
+func (c *Config) Name() string {
 	return c.config.Name
 }
 
 // Version returns the application version.
-func (c *Context) Version() string {
+func (c *Config) Version() string {
 	return c.config.Version
 }
 
 // Copyright returns the application copyright.
-func (c *Context) Copyright() string {
+func (c *Config) Copyright() string {
 	return c.config.Copyright
 }
 
 // Debug returns true if Debug mode is on.
-func (c *Context) Debug() bool {
+func (c *Config) Debug() bool {
 	return c.config.Debug
 }
 
 // ReadOnly returns true if photo directories are write protected.
-func (c *Context) ReadOnly() bool {
+func (c *Config) ReadOnly() bool {
 	return c.config.ReadOnly
 }
 
 // LogLevel returns the logrus log level.
-func (c *Context) LogLevel() log.Level {
+func (c *Config) LogLevel() log.Level {
 	if c.Debug() {
 		c.config.LogLevel = "debug"
 	}
@@ -181,22 +181,22 @@ func (c *Context) LogLevel() log.Level {
 }
 
 // TestConfigFile returns the config file name.
-func (c *Context) ConfigFile() string {
+func (c *Config) ConfigFile() string {
 	return c.config.ConfigFile
 }
 
 // SqlServerHost returns the built-in SQL server host name or IP address (empty for all interfaces).
-func (c *Context) SqlServerHost() string {
+func (c *Config) SqlServerHost() string {
 	return c.config.SqlServerHost
 }
 
 // SqlServerPort returns the built-in SQL server port.
-func (c *Context) SqlServerPort() uint {
+func (c *Config) SqlServerPort() uint {
 	return c.config.SqlServerPort
 }
 
 // SqlServerPath returns the database storage path for TiDB.
-func (c *Context) SqlServerPath() string {
+func (c *Config) SqlServerPath() string {
 	if c.config.SqlServerPath != "" {
 		return c.config.SqlServerPath
 	}
@@ -205,12 +205,12 @@ func (c *Context) SqlServerPath() string {
 }
 
 // SqlServerPassword returns the password for the built-in database server.
-func (c *Context) SqlServerPassword() string {
+func (c *Config) SqlServerPassword() string {
 	return c.config.SqlServerPassword
 }
 
 // HttpServerHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
-func (c *Context) HttpServerHost() string {
+func (c *Config) HttpServerHost() string {
 	if c.config.HttpServerHost == "" {
 		return "0.0.0.0"
 	}
@@ -219,37 +219,37 @@ func (c *Context) HttpServerHost() string {
 }
 
 // HttpServerPort returns the built-in HTTP server port.
-func (c *Context) HttpServerPort() int {
+func (c *Config) HttpServerPort() int {
 	return c.config.HttpServerPort
 }
 
 // HttpServerMode returns the server mode.
-func (c *Context) HttpServerMode() string {
+func (c *Config) HttpServerMode() string {
 	return c.config.HttpServerMode
 }
 
 // HttpServerPassword returns the password for the user interface (optional).
-func (c *Context) HttpServerPassword() string {
+func (c *Config) HttpServerPassword() string {
 	return c.config.HttpServerPassword
 }
 
 // OriginalsPath returns the originals.
-func (c *Context) OriginalsPath() string {
+func (c *Config) OriginalsPath() string {
 	return c.config.OriginalsPath
 }
 
 // ImportPath returns the import directory.
-func (c *Context) ImportPath() string {
+func (c *Config) ImportPath() string {
 	return c.config.ImportPath
 }
 
 // ExportPath returns the export directory.
-func (c *Context) ExportPath() string {
+func (c *Config) ExportPath() string {
 	return c.config.ExportPath
 }
 
 // DarktableCli returns the darktable-cli binary file name.
-func (c *Context) DarktableCli() string {
+func (c *Config) DarktableCli() string {
 	if c.config.DarktableCli == "" {
 		return "/usr/bin/darktable-cli"
 	}
@@ -257,7 +257,7 @@ func (c *Context) DarktableCli() string {
 }
 
 // DatabaseDriver returns the database driver name.
-func (c *Context) DatabaseDriver() string {
+func (c *Config) DatabaseDriver() string {
 	if c.config.DatabaseDriver == "" {
 		return DbTiDB
 	}
@@ -266,7 +266,7 @@ func (c *Context) DatabaseDriver() string {
 }
 
 // DatabaseDsn returns the database data source name (DSN).
-func (c *Context) DatabaseDsn() string {
+func (c *Config) DatabaseDsn() string {
 	if c.config.DatabaseDsn == "" {
 		return "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
 	}
@@ -275,52 +275,52 @@ func (c *Context) DatabaseDsn() string {
 }
 
 // CachePath returns the path to the cache.
-func (c *Context) CachePath() string {
+func (c *Config) CachePath() string {
 	return c.config.CachePath
 }
 
 // ThumbnailsPath returns the path to the cached thumbnails.
-func (c *Context) ThumbnailsPath() string {
+func (c *Config) ThumbnailsPath() string {
 	return c.CachePath() + "/thumbnails"
 }
 
 // AssetsPath returns the path to the assets.
-func (c *Context) AssetsPath() string {
+func (c *Config) AssetsPath() string {
 	return c.config.AssetsPath
 }
 
 // TensorFlowModelPath returns the tensorflow model path.
-func (c *Context) TensorFlowModelPath() string {
+func (c *Config) TensorFlowModelPath() string {
 	return c.AssetsPath() + "/tensorflow"
 }
 
 // ServerPath returns the server assets path (public files, favicons, templates,...).
-func (c *Context) ServerPath() string {
+func (c *Config) ServerPath() string {
 	return c.AssetsPath() + "/server"
 }
 
 // HttpTemplatesPath returns the server templates path.
-func (c *Context) HttpTemplatesPath() string {
+func (c *Config) HttpTemplatesPath() string {
 	return c.ServerPath() + "/templates"
 }
 
 // HttpFaviconsPath returns the favicons path.
-func (c *Context) HttpFaviconsPath() string {
+func (c *Config) HttpFaviconsPath() string {
 	return c.HttpPublicPath() + "/favicons"
 }
 
 // HttpPublicPath returns the public server path (//server/assets/*).
-func (c *Context) HttpPublicPath() string {
+func (c *Config) HttpPublicPath() string {
 	return c.ServerPath() + "/public"
 }
 
 // HttpPublicBuildPath returns the public build path (//server/assets/build/*).
-func (c *Context) HttpPublicBuildPath() string {
+func (c *Config) HttpPublicBuildPath() string {
 	return c.HttpPublicPath() + "/build"
 }
 
 // Db returns the db connection.
-func (c *Context) Db() *gorm.DB {
+func (c *Config) Db() *gorm.DB {
 	if c.db == nil {
 		if err := c.connectToDatabase(); err != nil {
 			log.Fatal(err)
@@ -331,7 +331,7 @@ func (c *Context) Db() *gorm.DB {
 }
 
 // CloseDb closes the db connection (if any).
-func (c *Context) CloseDb() error {
+func (c *Config) CloseDb() error {
 	if c.db != nil {
 		if err := c.db.Close(); err == nil {
 			c.db = nil
@@ -344,7 +344,7 @@ func (c *Context) CloseDb() error {
 }
 
 // MigrateDb will start a migration process.
-func (c *Context) MigrateDb() {
+func (c *Config) MigrateDb() {
 	db := c.Db()
 
 	db.AutoMigrate(
@@ -361,7 +361,7 @@ func (c *Context) MigrateDb() {
 }
 
 // ClientConfig returns a loaded and set configuration entity.
-func (c *Context) ClientConfig() ClientConfig {
+func (c *Config) ClientConfig() ClientConfig {
 	db := c.Db()
 
 	var cameras []*models.Camera
@@ -377,8 +377,8 @@ func (c *Context) ClientConfig() ClientConfig {
 
 	db.Where("deleted_at IS NULL").Limit(1000).Order("camera_model").Find(&cameras)
 
-	jsHash := fsutil.Hash(c.HttpPublicBuildPath() + "/app.js")
-	cssHash := fsutil.Hash(c.HttpPublicBuildPath() + "/app.css")
+	jsHash := util.Hash(c.HttpPublicBuildPath() + "/app.js")
+	cssHash := util.Hash(c.HttpPublicBuildPath() + "/app.css")
 
 	result := ClientConfig{
 		"name":      c.Name(),
@@ -395,7 +395,7 @@ func (c *Context) ClientConfig() ClientConfig {
 	return result
 }
 
-func (c *Context) Shutdown() {
+func (c *Config) Shutdown() {
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)
 	} else {

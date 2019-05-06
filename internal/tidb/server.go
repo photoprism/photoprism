@@ -106,7 +106,7 @@ func Start(path string, port uint, host string, debug bool) {
 	createServer()
 
 	/*
-		TODO: Use context for graceful shutdown of all services and add HTTP / TiDB server tests
+		TODO: Use config for graceful shutdown of all services and add HTTP / TiDB server tests
 
 		See
 		- https://github.com/gin-gonic/gin/blob/dfe37ea6f1b9127be4cff4822a1308b4349444e0/examples/graceful-shutdown/graceful-shutdown/server.go

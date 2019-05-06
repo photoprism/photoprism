@@ -3,16 +3,17 @@ package commands
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/util"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestConfigCommand(t *testing.T) {
 	var err error
 
-	ctx := context.CliTestContext()
+	ctx := config.CliTestContext()
 
-	output := context.CaptureOutput(func() {
+	output := util.CaptureOutput(func() {
 		err = ConfigCommand.Run(ctx)
 	})
 

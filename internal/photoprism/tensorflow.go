@@ -147,7 +147,9 @@ func (t *TensorFlow) findBestLabels(probabilities []float32) []TensorFlowLabel {
 			break
 		}
 
-		if p < 0.08 { continue }
+		if p < 0.08 {
+			continue
+		}
 
 		result = append(result, TensorFlowLabel{Label: t.labels[i], Probability: p})
 	}

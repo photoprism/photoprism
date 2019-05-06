@@ -1,4 +1,4 @@
-package context
+package config
 
 import (
 	"flag"
@@ -8,7 +8,7 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/photoprism/photoprism/internal/fsutil"
+	"github.com/photoprism/photoprism/internal/util"
 	"github.com/urfave/cli"
 
 	log "github.com/sirupsen/logrus"
@@ -20,18 +20,18 @@ const (
 	TestDataHash = "1a59b358b80221ab3e76efb683ad72402f0b0844"
 )
 
-var testContext *Context
+var testConfig *Config
 
 func testDataPath(assetsPath string) string {
 	return assetsPath + "/testdata"
 }
 
-func NewTestConfig() *Config {
-	assetsPath := fsutil.ExpandedFilename("../../assets")
+func NewTestParams() *Params {
+	assetsPath := util.ExpandedFilename("../../assets")
 
 	testDataPath := testDataPath(assetsPath)
 
-	c := &Config{
+	c := &Params{
 		DarktableCli:   "/usr/bin/darktable-cli",
 		AssetsPath:     assetsPath,
 		CachePath:      testDataPath + "/cache",
@@ -45,27 +45,27 @@ func NewTestConfig() *Config {
 	return c
 }
 
-func TestContext() *Context {
-	if testContext == nil {
-		testContext = NewTestContext()
+func TestConfig() *Config {
+	if testConfig == nil {
+		testConfig = NewTestConfig()
 	}
 
-	return testContext
+	return testConfig
 }
 
-func NewTestContext() *Context {
+func NewTestConfig() *Config {
 	log.SetLevel(log.DebugLevel)
 
-	c := &Context{config: NewTestConfig()}
+	c := &Config{config: NewTestParams()}
 
 	c.MigrateDb()
 
 	return c
 }
 
-// Returns example cli context for testing
+// Returns example cli config for testing
 func CliTestContext() *cli.Context {
-	config := NewTestConfig()
+	config := NewTestParams()
 
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.Bool("debug", false, "doc")
@@ -86,16 +86,16 @@ func CliTestContext() *cli.Context {
 	return c
 }
 
-func (c *Context) RemoveTestData(t *testing.T) {
+func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.ImportPath())
 	os.RemoveAll(c.ExportPath())
 	os.RemoveAll(c.OriginalsPath())
 	os.RemoveAll(c.CachePath())
 }
 
-func (c *Context) DownloadTestData(t *testing.T) {
-	if fsutil.Exists(TestDataZip) {
-		hash := fsutil.Hash(TestDataZip)
+func (c *Config) DownloadTestData(t *testing.T) {
+	if util.Exists(TestDataZip) {
+		hash := util.Hash(TestDataZip)
 
 		if hash != TestDataHash {
 			os.Remove(TestDataZip)
@@ -103,22 +103,22 @@ func (c *Context) DownloadTestData(t *testing.T) {
 		}
 	}
 
-	if !fsutil.Exists(TestDataZip) {
+	if !util.Exists(TestDataZip) {
 		fmt.Printf("downloading latest test data zip file from %s\n", TestDataURL)
 
-		if err := fsutil.Download(TestDataZip, TestDataURL); err != nil {
+		if err := util.Download(TestDataZip, TestDataURL); err != nil {
 			fmt.Printf("Download failed: %s\n", err.Error())
 		}
 	}
 }
 
-func (c *Context) UnzipTestData(t *testing.T) {
-	if _, err := fsutil.Unzip(TestDataZip, testDataPath(c.AssetsPath())); err != nil {
+func (c *Config) UnzipTestData(t *testing.T) {
+	if _, err := util.Unzip(TestDataZip, testDataPath(c.AssetsPath())); err != nil {
 		t.Logf("could not unzip test data: %s\n", err.Error())
 	}
 }
 
-func (c *Context) InitializeTestData(t *testing.T) {
+func (c *Config) InitializeTestData(t *testing.T) {
 	t.Log("initializing test data")
 
 	c.RemoveTestData(t)

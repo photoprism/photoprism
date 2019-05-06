@@ -1,29 +1,29 @@
-package context
+package config
 
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/fsutil"
+	"github.com/photoprism/photoprism/internal/util"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewConfig(t *testing.T) {
+func TestNewParams(t *testing.T) {
 	ctx := CliTestContext()
 
 	assert.True(t, ctx.IsSet("assets-path"))
 	assert.False(t, ctx.Bool("debug"))
 
-	c := NewConfig(ctx)
+	c := NewParams(ctx)
 
-	assert.IsType(t, new(Config), c)
+	assert.IsType(t, new(Params), c)
 
-	assert.Equal(t, fsutil.ExpandedFilename("../../assets"), c.AssetsPath)
+	assert.Equal(t, util.ExpandedFilename("../../assets"), c.AssetsPath)
 	assert.False(t, c.Debug)
 	assert.False(t, c.ReadOnly)
 }
 
-func TestConfig_SetValuesFromFile(t *testing.T) {
-	c := NewConfig(CliTestContext())
+func TestParams_SetValuesFromFile(t *testing.T) {
+	c := NewParams(CliTestContext())
 
 	err := c.SetValuesFromFile("testdata/config.yml")
 

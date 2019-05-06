@@ -3,12 +3,12 @@ package photoprism
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewImporter(t *testing.T) {
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
 
@@ -22,7 +22,7 @@ func TestNewImporter(t *testing.T) {
 }
 
 func TestImporter_DestinationFilename(t *testing.T) {
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	ctx.InitializeTestData(t)
 
@@ -50,7 +50,7 @@ func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	ctx.InitializeTestData(t)
 

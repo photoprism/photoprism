@@ -1,4 +1,4 @@
-package context
+package config
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/photoprism/photoprism/internal/fsutil"
+	"github.com/photoprism/photoprism/internal/util"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"gopkg.in/yaml.v2"
@@ -19,7 +19,7 @@ const (
 	DbMySQL = "mysql"
 )
 
-// Config provides a struct in which application configuration is stored.
+// Params provides a struct in which application configuration is stored.
 // Application code must use functions to get config values, for two reasons:
 //
 // 1. Some values are computed and we don't want to leak implementation details (aims at reducing refactoring overhead).
@@ -27,7 +27,7 @@ const (
 // 2. Paths might actually be dynamic later (if we build a multi-user version).
 //
 // See https://github.com/photoprism/photoprism/issues/50#issuecomment-433856358
-type Config struct {
+type Params struct {
 	Name               string
 	Version            string
 	Copyright          string
@@ -53,20 +53,20 @@ type Config struct {
 	DatabaseDsn        string `yaml:"database-dsn" flag:"database-dsn"`
 }
 
-// NewConfig() creates a new configuration entity by using two methods:
+// NewParams() creates a new configuration entity by using two methods:
 //
 // 1. SetValuesFromFile: This will initialize values from a yaml config file.
 //
 // 2. SetValuesFromCliContext: Which comes after SetValuesFromFile and overrides
 //    any previous values giving an option two override file configs through the CLI.
-func NewConfig(ctx *cli.Context) *Config {
-	c := &Config{}
+func NewParams(ctx *cli.Context) *Params {
+	c := &Params{}
 
 	c.Name = ctx.App.Name
 	c.Copyright = ctx.App.Copyright
 	c.Version = ctx.App.Version
 
-	if err := c.SetValuesFromFile(fsutil.ExpandedFilename(ctx.GlobalString("config-file"))); err != nil {
+	if err := c.SetValuesFromFile(util.ExpandedFilename(ctx.GlobalString("config-file"))); err != nil {
 		log.Debug(err)
 	}
 
@@ -79,19 +79,19 @@ func NewConfig(ctx *cli.Context) *Config {
 	return c
 }
 
-func (c *Config) expandFilenames() {
-	c.AssetsPath = fsutil.ExpandedFilename(c.AssetsPath)
-	c.CachePath = fsutil.ExpandedFilename(c.CachePath)
-	c.OriginalsPath = fsutil.ExpandedFilename(c.OriginalsPath)
-	c.ImportPath = fsutil.ExpandedFilename(c.ImportPath)
-	c.ExportPath = fsutil.ExpandedFilename(c.ExportPath)
-	c.DarktableCli = fsutil.ExpandedFilename(c.DarktableCli)
-	c.SqlServerPath = fsutil.ExpandedFilename(c.SqlServerPath)
+func (c *Params) expandFilenames() {
+	c.AssetsPath = util.ExpandedFilename(c.AssetsPath)
+	c.CachePath = util.ExpandedFilename(c.CachePath)
+	c.OriginalsPath = util.ExpandedFilename(c.OriginalsPath)
+	c.ImportPath = util.ExpandedFilename(c.ImportPath)
+	c.ExportPath = util.ExpandedFilename(c.ExportPath)
+	c.DarktableCli = util.ExpandedFilename(c.DarktableCli)
+	c.SqlServerPath = util.ExpandedFilename(c.SqlServerPath)
 }
 
 // SetValuesFromFile uses a yaml config file to initiate the configuration entity.
-func (c *Config) SetValuesFromFile(fileName string) error {
-	if !fsutil.Exists(fileName) {
+func (c *Params) SetValuesFromFile(fileName string) error {
+	if !util.Exists(fileName) {
 		return errors.New(fmt.Sprintf("config file not found: \"%s\"", fileName))
 	}
 
@@ -106,7 +106,7 @@ func (c *Config) SetValuesFromFile(fileName string) error {
 
 // SetValuesFromCliContext uses values from the CLI to setup configuration overrides
 // for the entity.
-func (c *Config) SetValuesFromCliContext(ctx *cli.Context) error {
+func (c *Params) SetValuesFromCliContext(ctx *cli.Context) error {
 	v := reflect.ValueOf(c).Elem()
 
 	// Iterate through all config fields

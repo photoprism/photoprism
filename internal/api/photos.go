@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
@@ -27,10 +27,10 @@ import (
 //   before:    date   Find photos taken before (format: "2006-01-02")
 //   after:     date   Find photos taken after (format: "2006-01-02")
 //   favorites: bool   Find favorites only
-func GetPhotos(router *gin.RouterGroup, ctx *context.Context) {
+func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/photos", func(c *gin.Context) {
 		var form forms.PhotoSearchForm
-		search := photoprism.NewSearch(ctx.OriginalsPath(), ctx.Db())
+		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 		err := c.MustBindWith(&form, binding.Form)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -53,9 +53,9 @@ func GetPhotos(router *gin.RouterGroup, ctx *context.Context) {
 //
 // Parameters:
 //   id: int Photo ID as returned by the API
-func LikePhoto(router *gin.RouterGroup, ctx *context.Context) {
+func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/photos/:id/like", func(c *gin.Context) {
-		search := photoprism.NewSearch(ctx.OriginalsPath(), ctx.Db())
+		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 		photoID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
 			log.Errorf("could not find image for id: %s", err.Error())
@@ -71,7 +71,7 @@ func LikePhoto(router *gin.RouterGroup, ctx *context.Context) {
 		}
 
 		photo.PhotoFavorite = true
-		ctx.Db().Save(&photo)
+		conf.Db().Save(&photo)
 		c.JSON(http.StatusOK, http.Response{})
 	})
 }
@@ -80,9 +80,9 @@ func LikePhoto(router *gin.RouterGroup, ctx *context.Context) {
 //
 // Parameters:
 //   id: int Photo ID as returned by the API
-func DislikePhoto(router *gin.RouterGroup, ctx *context.Context) {
+func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 	router.DELETE("/photos/:id/like", func(c *gin.Context) {
-		search := photoprism.NewSearch(ctx.OriginalsPath(), ctx.Db())
+		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
 			log.Errorf("could not find image for id: %s", err.Error())
@@ -98,7 +98,7 @@ func DislikePhoto(router *gin.RouterGroup, ctx *context.Context) {
 		}
 
 		photo.PhotoFavorite = false
-		ctx.Db().Save(&photo)
+		conf.Db().Save(&photo)
 		c.JSON(http.StatusOK, http.Response{})
 	})
 }

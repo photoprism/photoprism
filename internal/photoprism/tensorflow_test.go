@@ -4,12 +4,12 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/context"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTensorFlow_GetImageTagsFromFile(t *testing.T) {
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	ctx.InitializeTestData(t)
 
@@ -42,7 +42,7 @@ func TestTensorFlow_GetImageTags(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	ctx.InitializeTestData(t)
 
@@ -74,7 +74,7 @@ func TestTensorFlow_GetImageTags_Dog(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	ctx := context.TestContext()
+	ctx := config.TestConfig()
 
 	ctx.InitializeTestData(t)
 
