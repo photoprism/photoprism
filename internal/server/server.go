@@ -37,7 +37,9 @@ func Start(conf *config.Config) {
 	quit := make(chan os.Signal)
 
 	/*
-		TODO: Use config for graceful shutdown of all services and add HTTP / TiDB server tests
+	    TODO: Use a Context for graceful shutdown of web and database servers (and other goroutines)
+
+		TODO: Add web server tests
 
 		See
 		- https://github.com/gin-gonic/gin/blob/dfe37ea6f1b9127be4cff4822a1308b4349444e0/examples/graceful-shutdown/graceful-shutdown/server.go
