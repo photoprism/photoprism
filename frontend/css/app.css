@@ -34,6 +34,7 @@ footer {
 main {
     padding: 0;
     margin: 0;
+    z-index: 1;
 }
 
 #app main a {
@@ -46,4 +47,8 @@ main {
     width: 19px;
     right: -20px;
     top: -8px;
+}
+
+#app-navigation {
+    z-index: 10;
 }
