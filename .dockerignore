@@ -3,6 +3,7 @@
 /assets/database/*
 /internal/photoprism/testdata/*
 /frontend/node_modules/*
+/node_modules
 /assets/server/public/build/*
 /assets/testdata
 /assets/backups

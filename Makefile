@@ -44,8 +44,11 @@ test-coverage:
 	go tool cover -html=coverage.txt -o coverage.html
 clean:
 	rm -f $(BINARY_NAME)
+	rm -f *.log
+	rm -rf node_modules
 	rm -rf assets/testdata
 	rm -rf assets/backups
+	rm -rf frontend/node_modules
 download:
 	scripts/download-nasnet.sh
 docker-development:
