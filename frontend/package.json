@@ -1,7 +1,7 @@
 {
   "name": "photoprism",
   "version": "1.0.0",
-  "description": "Web application frontend for PhotoPrism",
+  "description": "Single-page Web app frontend for PhotoPrism",
   "author": "Michael Mayer",
   "private": true,
   "scripts": {
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.2.0",
+    "@types/leaflet": "^1.4.4",
     "autoprefixer": "^6.7.2",
     "axios": "^0.16.1",
     "axios-mock-adapter": "^1.8.1",
@@ -55,6 +56,7 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-webdriver-launcher": "^1.0.5",
     "karma-webpack": "^2.0.3",
+    "leaflet": "^1.4.0",
     "material-design-icons-iconfont": "^3.0.3",
     "mocha": "^3.3.0",
     "node-sass": "^4.9.2",
@@ -78,6 +80,7 @@
     "vue-style-loader": "^2.0.0",
     "vue-template-compiler": "^2.4.4",
     "vue-truncate-filter": "^1.1.7",
+    "vue2-leaflet": "^2.1.1",
     "vuelidate": "^0.4.3",
     "vuetify": "^1.2.3",
     "webpack": "^3.12.0",

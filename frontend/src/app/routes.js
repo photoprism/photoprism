@@ -9,17 +9,19 @@ import Export from 'app/pages/export.vue';
 import Settings from 'app/pages/settings.vue';
 import Tags from 'app/pages/tags.vue';
 import Todo from 'app/pages/todo.vue';
+import Places from 'app/pages/places.vue';
+import Calendar from 'app/pages/calendar.vue';
 
 export default [
     { name: 'Home', path: '/', redirect: '/photos' },
     { name: 'Photos', path: '/photos', component: Photos },
     { name: 'PhotosEdit', path: '/photosEdit', component: PhotosEdit },
     { name: 'Filters', path: '/filters', component: Todo },
-    { name: 'Calendar', path: '/calendar', component: Todo },
+    { name: 'Calendar', path: '/calendar', component: Calendar },
     { name: 'Tags', path: '/tags', component: Tags },
     { name: 'Bookmarks', path: '/bookmarks', component: Todo },
     { name: 'Favorites', path: '/favorites', component: Todo },
-    { name: 'Places', path: '/places', component: Todo },
+    { name: 'Places', path: '/places', component: Places },
     { name: 'Albums', path: '/albums', component: Albums },
     { name: 'Albums2', path: '/albums2', component: Albums2 },
     { name: 'Import', path: '/import', component: Import },

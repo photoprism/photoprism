@@ -1,25 +1,38 @@
 <template>
-    <v-container fluid>
-        <h1 class="md-display-1">Export</h1>
-        <p class="md-subheading">
-            A user-friendly tool for importing, filtering and archiving large amounts of JPEG and RAW files
-        </p>
-    </v-container>
+    <div>
+        <v-toolbar flat color="blue-grey lighten-4">
+            <v-toolbar-title>Export</v-toolbar-title>
+
+            <v-spacer></v-spacer>
+        </v-toolbar>
+
+        <v-container>
+            <p>
+                Issues labeled <a href="https://github.com/photoprism/photoprism/labels/help%20wanted">help wanted</a> /
+                <a href="https://github.com/photoprism/photoprism/labels/easy">easy</a> can be good (first)
+                contributions.
+                Our <a href="https://github.com/photoprism/photoprism/wiki">Developer Guide</a> contains all information
+                necessary to get you started.
+            </p>
+        </v-container>
+    </div>
 </template>
 
 <script>
     export default {
-        name: 'browse',
+        name: 'todo',
         data() {
-            return {
-            };
+            return {};
         },
-        methods: {
-        }
+        methods: {}
     };
 </script>
 
 <style scoped>
+    a {
+        color: #00B8D4;
+    }
+
     h1, h2 {
         font-weight: normal;
     }

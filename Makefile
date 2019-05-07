@@ -22,7 +22,7 @@ install-config:
 build:
 	scripts/build.sh debug $(BINARY_NAME)
 js:
-	(cd frontend &&	yarn install --frozen-lockfile --prod)
+	(cd frontend &&	npm install --production)
 	(cd frontend &&	env NODE_ENV=production npm run build)
 start:
 	go run cmd/photoprism/photoprism.go start

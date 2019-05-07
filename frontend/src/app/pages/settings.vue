@@ -1,22 +1,27 @@
 <template>
-    <v-container fluid>
-        <h1 class="md-display-1">Settings</h1>
-        <p class="md-subheading">
+    <div>
+        <v-toolbar flat color="blue-grey lighten-4">
+            <v-toolbar-title>Settings</v-toolbar-title>
 
-        </p>
-        <button v-on:click="showSuccess()">Show Success</button>
-        <button v-on:click="showInfo()">Show Info</button>
-        <button v-on:click="showError()">Show Error</button>
-        <button v-on:click="showWarning()">Show Warning</button>
-    </v-container>
+            <v-spacer></v-spacer>
+        </v-toolbar>
+
+        <v-container>
+            <p>
+                <v-btn v-on:click="showSuccess()">Show Success</v-btn>
+                <v-btn v-on:click="showInfo()">Show Info</v-btn>
+                <v-btn v-on:click="showError()">Show Error</v-btn>
+                <v-btn v-on:click="showWarning()">Show Warning</v-btn>
+            </p>
+        </v-container>
+    </div>
 </template>
 
 <script>
     export default {
-        name: 'dashboard',
+        name: 'settings',
         data() {
-            return {
-            };
+            return {};
         },
         methods: {
             showSuccess() {
@@ -36,6 +41,10 @@
 </script>
 
 <style scoped>
+    a {
+        color: #00B8D4;
+    }
+
     h1, h2 {
         font-weight: normal;
     }

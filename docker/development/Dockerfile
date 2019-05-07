@@ -55,15 +55,12 @@ ENV TF_CPP_MIN_LOG_LEVEL 2
 
 # Install NPM (NodeJS)
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
-RUN apt-get install nodejs
-
-# Install YARN (Package Manager)
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 RUN apt-get update && \
-    apt-get install yarn && \
+    apt-get install nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+RUN npm install -g npm
+RUN npm config set cache ~/.cache/npm
 
 # Install Go
 ENV GOLANG_VERSION 1.12.4
