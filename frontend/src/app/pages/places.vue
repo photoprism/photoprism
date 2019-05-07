@@ -13,10 +13,10 @@
         data() {
             return {
                 zoom: 13,
-                center: L.latLng(47.413220, -1.219482),
-                url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+                center: L.latLng(52.5259279,13.414496),
+                url: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-                marker: L.latLng(47.413220, -1.219482),
+                marker: L.latLng(52.5259279,13.414496),
             }
         },
         methods: {},
