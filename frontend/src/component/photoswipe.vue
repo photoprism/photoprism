@@ -113,6 +113,9 @@
                 }
             },
 
+            openGallery: function () {
+            },
+
             openPhoto: function (index = 0) {
                 if (this.$props.images.length === 0) {
                     return
@@ -170,7 +173,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

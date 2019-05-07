@@ -24,6 +24,8 @@ build:
 js:
 	(cd frontend &&	npm install --production)
 	(cd frontend &&	env NODE_ENV=production npm run build)
+test-js:
+	(cd frontend &&	env NODE_ENV=development npm run test)
 start:
 	go run cmd/photoprism/photoprism.go start
 migrate:

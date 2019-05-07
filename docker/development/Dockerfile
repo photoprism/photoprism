@@ -16,7 +16,13 @@ RUN apt-get update && apt-get upgrade && \
     apt-get install \
     build-essential \
     curl \
+    chrpath \
+    libssl-dev \
+    libxft-dev \
+    libfreetype6 \
     libfreetype6-dev \
+    libfontconfig1 \
+    libfontconfig1-dev \
     libhdf5-serial-dev \
     libpng-dev \
     libzmq3-dev \
@@ -35,7 +41,11 @@ RUN apt-get update && apt-get upgrade && \
     git \
     mysql-client \
     libgtk-3-bin \
-    tzdata
+    tzdata \
+    gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libgcc1 \
+    libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 \
+    libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 \
+    libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils
 
 # Install darktable (RAW to JPEG converter)
 RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
@@ -50,15 +60,18 @@ RUN curl -L \
    tar -C "/usr/local" -xz
 RUN ldconfig
 
-# Hide some warnings
-ENV TF_CPP_MIN_LOG_LEVEL 2
+# Show TensorFlow debug log
+ENV TF_CPP_MIN_LOG_LEVEL 0
 
-# Install NPM (NodeJS)
+# Install NodeJS
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get update && \
     apt-get install nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# Install and configure NodeJS Package Manager (npm)
+ENV NODE_ENV production
 RUN npm install -g npm
 RUN npm config set cache ~/.cache/npm
 
@@ -90,10 +103,6 @@ RUN wget "https://dl.photoprism.org/fixtures/testdata.zip?$BUILD_DATE" -O /tmp/p
 
 # Install goimports
 RUN env GO111MODULE=off /usr/local/go/bin/go get golang.org/x/tools/cmd/goimports
-
-# Configure JS environment for building
-ENV NODE_ENV production
-ENV YARN_CACHE_FOLDER /root/.cache/yarn
 
 # Configure broadwayd (HTML5 display server)
 # Command: broadwayd -p 8080 -a 0.0.0.0 :5

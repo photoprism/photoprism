@@ -6,7 +6,7 @@ if [[ -z $TRAVIS_BRANCH ]]; then
 fi
 
 if [[ $TRAVIS_BRANCH == "develop" ]]; then
-    docker-compose -f docker-compose.travis.yml exec photoprism make all install migrate test-codecov;
+    docker-compose -f docker-compose.travis.yml exec photoprism make all test-js install migrate test-codecov;
 else
-    docker-compose -f docker-compose.travis.yml exec photoprism make all install migrate test;
+    docker-compose -f docker-compose.travis.yml exec photoprism make all test-js install migrate test;
 fi

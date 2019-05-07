@@ -36,6 +36,10 @@ main {
     margin: 0;
 }
 
+#app main a {
+    color: #00B8D4;
+}
+
 .v-badge__badge {
     font-size: 12px;
     height: 19px;

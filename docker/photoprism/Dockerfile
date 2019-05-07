@@ -1,4 +1,4 @@
-FROM photoprism/development:20190506 as build
+FROM photoprism/development:20190507 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -44,6 +44,9 @@ RUN apt-get update && \
 
 # Show photoprism version
 RUN photoprism -v
+
+# Hide TensorFlow warnings
+ENV TF_CPP_MIN_LOG_LEVEL 2
 
 # Expose HTTP & TiDB port
 EXPOSE 80

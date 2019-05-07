@@ -12,7 +12,7 @@
                               v-model="query.q"
                               @keyup.enter.native="formChange"
                 ></v-text-field>
-                <!-- v-btn @click="formChange" color="secondary">Create Filter</v-btn -->
+
                 <v-spacer></v-spacer>
 
                 <v-btn icon @click="advandedSearch = !advandedSearch">
@@ -324,7 +324,6 @@
                     <v-spacer></v-spacer>
                     <v-combobox
                             v-model="model"
-                            :filter="filter"
                             :hide-no-data="!search"
                             :items="items"
                             :search-input.sync="search"
@@ -390,7 +389,6 @@
                     <h4>Remove tags</h4>
                     <v-combobox
                             v-model="model"
-                            :filter="filter"
                             :hide-no-data="!search"
                             :items="items"
                             :search-input.sync="search"
@@ -722,7 +720,7 @@
                         this.$alert.info('More than 50 photos found');
                     }
                 });
-            }
+            },
         },
         beforeRouteLeave(to, from, next) {
             next()
@@ -734,6 +732,3 @@
         },
     };
 </script>
-
-<style scoped>
-</style>

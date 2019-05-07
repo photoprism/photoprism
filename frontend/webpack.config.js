@@ -1,6 +1,6 @@
 const path = require('path');
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const webpack = require('webpack');
 
@@ -10,15 +10,11 @@ const PATHS = {
     build: path.join(__dirname, '../assets/server/public/build'),
 };
 
-const cssPlugin = new ExtractTextPlugin({
-    filename: '[name].css',
-});
-
-// See https://github.com/webpack/loader-utils/issues/56
-process.noDeprecation = true;
+const isDev = process.env.NODE_ENV !== 'production';
 
 const config = {
-    devtool: false,
+    mode: 'production',
+    devtool: isDev ? 'inline-source-map' : false,
     entry: {
         app: PATHS.app,
     },
@@ -36,10 +32,17 @@ const config = {
         },
     },
     plugins: [
-        cssPlugin
+        new MiniCssExtractPlugin({
+            filename: '[name].css',
+        }),
     ],
     node: {
         fs: 'empty',
+    },
+    performance: {
+        hints: 'warning',
+        maxEntrypointSize: 1512000,
+        maxAssetSize: 1512000
     },
     module: {
         rules: [
@@ -50,46 +53,120 @@ const config = {
                 loader: 'eslint-loader',
             },
             {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['es2015'],
+                test: /\.vue$/,
+                loader: "vue-loader",
+                options: {
+                    loaders: {
+                        js: 'babel-loader',
+                        css: 'css-loader',
+                    }
                 },
             },
             {
-                test: /\.vue$/,
-                loader: 'vue-loader',
-                options: {
-                    loaders: {
-                        js: 'babel-loader?presets[]=es2015',
-                    },
+                test: /\.js$/,
+                loader: 'babel-loader',
+                exclude: file => (
+                    /node_modules/.test(file)
+                ),
+                query: {
+                    presets: ['@babel/preset-env'],
+                    compact: false
                 },
             },
             {
                 test: /\.css$/,
                 include: PATHS.css,
                 exclude: /node_modules/,
-                use: cssPlugin.extract({
-                    use: 'css-loader',
-                    fallback: 'style-loader',
-                }),
+                use: [
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            hmr: false,
+                            fallback: 'vue-style-loader',
+                            use: [
+                                // "vue-style-loader",
+                                'style-loader',
+                                {
+                                    loader: 'css-loader',
+                                    options: {
+                                        importLoaders: 1,
+                                        sourceMap: isDev
+                                    },
+                                },
+                                {
+                                    loader: 'postcss-loader',
+                                    options: {
+                                        sourceMap: isDev,
+                                        config: {
+                                            path: path.resolve(__dirname, './postcss.config.js'),
+                                        },
+                                    },
+                                },
+                                'resolve-url-loader',
+                            ],
+                            publicPath: PATHS.build,
+                        },
+                    },
+                    "css-loader",
+                ]
             },
             {
                 test: /\.css$/,
                 include: /node_modules/,
-                loaders: ['style-loader', 'css-loader']
+                loaders: [
+                    "vue-style-loader",
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: { importLoaders: 1, sourceMap: isDev },
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            sourceMap: isDev,
+                            config: {
+                                path: path.resolve(__dirname, './postcss.config.js'),
+                            },
+                        },
+                    },
+                    'resolve-url-loader'
+                ]
             },
             {
-                test: /\.scss$/,
-                loaders: ['style-loader', 'css-loader', 'sass-loader']
+                test: /\.s[c|a]ss$/,
+                use: [
+                    "vue-style-loader",
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: { importLoaders: 2, sourceMap: isDev },
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            sourceMap: isDev,
+                            config: {
+                                path: path.resolve(__dirname, './postcss.config.js'),
+                            },
+                        },
+                    },
+                    'resolve-url-loader',
+                    'sass-loader'
+                ]
+
             },
             {
-                test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
+                test: /\.(png|jpg|jpeg|gif)$/,
                 loader: 'url-loader',
             },
             {
-                test: /\.(wav|mp3|eot|ttf)$/,
+                test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
                 loader: 'file-loader',
+                options: {
+                    name: '[hash].[ext]',
+                    publicPath: '/assets/build/fonts',
+                    outputPath: 'fonts',
+                }
             },
             {
                 test: /\.svg/,
@@ -103,7 +180,7 @@ const config = {
 };
 
 // No sourcemap for production
-if (process.env.NODE_ENV !== "production") {
+if (isDev) {
     const devToolPlugin = new webpack.SourceMapDevToolPlugin({
         filename: '[name].map',
     });

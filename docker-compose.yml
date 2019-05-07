@@ -25,6 +25,7 @@ services:
       PHOTOPRISM_SQL_PORT: 4000
       PHOTOPRISM_SQL_PASSWORD: "photoprism"
       PHOTOPRISM_DARKTABLE_CLI: "/usr/bin/darktable-cli"
+      TF_CPP_MIN_LOG_LEVEL: 1
 
   database:
     image: mysql:8.0.16

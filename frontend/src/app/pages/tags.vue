@@ -461,6 +461,9 @@
                         this.$alert.info('More than 50 photos found');
                     }
                 });
+            },
+            translation() {
+                return ''
             }
         },
         beforeRouteLeave(to, from, next) {
@@ -473,6 +476,3 @@
         },
     };
 </script>
-
-<style scoped>
-</style>

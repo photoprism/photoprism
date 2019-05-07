@@ -1,20 +1,19 @@
 const path = require('path');
 
-// See https://github.com/webpack/loader-utils/issues/56
-process.noDeprecation = true;
+process.env.CHROME_BIN = require('puppeteer').executablePath()
 
 module.exports = (config) => {
-    const tests = 'tests/*/*.test.js';
-
     config.set({
         frameworks: ['mocha'],
 
-        phantomjsLauncher: {
-            // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
-            exitOnResourceError: true
-        },
+        browsers: ['PhotoPrism'],
 
-        browsers: ['PhantomJS'],
+        customLaunchers: {
+            PhotoPrism: {
+                base: 'ChromeHeadless',
+                flags: ['--disable-translate', '--disable-extensions', '--no-sandbox', '--disable-web-security'],
+            }
+        },
 
         files: [
             {pattern: 'tests/**/*_test.js', watched: false}
@@ -32,6 +31,8 @@ module.exports = (config) => {
         },
 
         webpack: {
+            mode: 'development',
+
             resolve: {
                 modules: [
                     path.join(__dirname, 'src'),
@@ -47,8 +48,12 @@ module.exports = (config) => {
                     {
                         test: /\.js$/,
                         loader: 'babel-loader',
+                        exclude: file => (
+                            /node_modules/.test(file)
+                        ),
                         query: {
-                            presets: ['es2015']
+                            presets: ['@babel/preset-env'],
+                            compact: false
                         },
                     },
                 ]

@@ -5,5 +5,8 @@ RUN mkdir -p /srv/photoprism/photos/import && \
 
 RUN photoprism import
 
+# Hide TensorFlow warnings
+ENV TF_CPP_MIN_LOG_LEVEL 2
+
 # Start PhotoPrism server
 CMD photoprism start
