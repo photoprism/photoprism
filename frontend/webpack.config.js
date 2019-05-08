@@ -157,7 +157,12 @@ const config = {
             },
             {
                 test: /\.(png|jpg|jpeg|gif)$/,
-                loader: 'url-loader',
+                loader: 'file-loader',
+                options: {
+                    name: '[hash].[ext]',
+                    publicPath: '/assets/build/img',
+                    outputPath: 'img',
+                }
             },
             {
                 test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,

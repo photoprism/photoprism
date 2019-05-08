@@ -6,7 +6,8 @@ import App from 'app/main.vue';
 import routes from 'app/routes';
 import Api from 'common/api';
 import Config from 'common/config';
-import Components from 'component/components';
+import Components from 'component/init';
+import Maps from 'maps/init';
 import Alert from 'common/alert';
 import Gallery from 'common/gallery';
 import Session from 'common/session';
@@ -49,6 +50,7 @@ Vue.use(InfiniteScroll);
 Vue.use(VueTruncate);
 Vue.use(VueFullscreen);
 Vue.use(Components);
+Vue.use(Maps);
 Vue.use(Router);
 
 // Configure client-side routing

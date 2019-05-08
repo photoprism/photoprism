@@ -135,6 +135,7 @@
                             iconUrl: result.getThumbnailUrl('square', 50),
                             iconRetinaUrl: result.getThumbnailUrl('square', 100),
                             iconSize: [50, 50],
+                            className: 'leaflet-marker-photo',
                         }),
                         location: L.latLng(result.PhotoLat, result.PhotoLong),
                     });
