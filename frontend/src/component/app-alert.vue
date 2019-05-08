@@ -3,13 +3,13 @@
             v-model="visible"
             :color="color"
             :timeout="0"
+            :class="textColor"
             top
             right
     >
         {{ text }}
         <v-btn
-                class="pr-0"
-
+                :class="textColor + ' pr-0'"
                 icon
                 flat
                 @click="close"
@@ -27,6 +27,7 @@
             return {
                 text: '',
                 color: 'primary',
+                textColor: '',
                 visible: false,
                 messages: [],
                 lastMessageId: 1,
@@ -63,28 +64,28 @@
             },
 
             addWarningMessage: function (message) {
-                this.addMessage('warning', message, 4000);
+                this.addMessage('warning', 'black--text', message, 4000);
             },
 
             addErrorMessage: function (message) {
-                this.addMessage('error', message, 8000);
+                this.addMessage('error', 'white--text', message, 8000);
             },
 
             addSuccessMessage: function (message) {
-                this.addMessage('success', message, 3000);
+                this.addMessage('success', 'white--text', message, 3000);
             },
 
             addInfoMessage: function (message) {
-                this.addMessage('info', message, 3000);
+                this.addMessage('info', 'white--text', message, 3000);
             },
 
-            addMessage: function (color, message, delay) {
+            addMessage: function (color, textColor, message, delay) {
                 if (message === this.lastMessage) return;
 
                 this.lastMessageId++;
                 this.lastMessage = message;
 
-                const alert = {'id': this.lastMessageId, 'color': color, 'delay': delay, 'msg': message};
+                const alert = {'id': this.lastMessageId, 'color': color, 'textColor': textColor, 'delay': delay, 'msg': message};
 
                 this.messages.push(alert);
 
@@ -103,6 +104,7 @@
                 if(message) {
                     this.text = message.msg;
                     this.color = message.color;
+                    this.textColor = message.textColor;
                     this.visible = true;
 
                     setTimeout(() => {

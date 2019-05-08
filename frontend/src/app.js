@@ -8,6 +8,7 @@ import Api from 'common/api';
 import Config from 'common/config';
 import Components from 'component/components';
 import Alert from 'common/alert';
+import Gallery from 'common/gallery';
 import Session from 'common/session';
 import Event from 'pubsub-js';
 import Moment from 'vue-moment';
@@ -22,6 +23,7 @@ const config = new Config(window.localStorage, window.appConfig);
 // Set global helpers
 Vue.prototype.$event = Event;
 Vue.prototype.$alert = Alert;
+Vue.prototype.$gallery = new Gallery;
 Vue.prototype.$session = session;
 Vue.prototype.$api = Api;
 Vue.prototype.$config = config;

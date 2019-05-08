@@ -11,6 +11,8 @@
                 <router-view></router-view>
             </v-content>
         </v-app>
+
+        <app-gallery></app-gallery>
     </div>
 </template>
 
@@ -20,7 +22,7 @@
         computed: {},
         methods: {
             login() {
-                this.$refs.loginDialog.open();
+                // this.$refs.loginDialog.open();
             },
 
             logout() {
@@ -29,7 +31,3 @@
         },
     };
 </script>
-
-<style lang="css">
-
-</style>

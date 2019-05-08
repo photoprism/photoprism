@@ -329,7 +329,7 @@
                 this.refreshList();
             },
             openPhoto(index) {
-                this.$refs.gallery.openPhoto(index)
+                this.$gallery.show(this.results, index)
             },
             loadMore() {
                 if (this.loadMoreDisabled) return;

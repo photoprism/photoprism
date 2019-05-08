@@ -145,16 +145,18 @@
                     <td>28/11/2019</td>
                     <td>#4</td>
                     <td>55</td>
-                    <td> <v-btn color="success"
-                                @click.stop="dialog = true">
-                        Edit
-                    </v-btn></td>
+                    <td>
+                        <v-btn color="success"
+                               @click.stop="dialog = true">
+                            Edit
+                        </v-btn>
+                    </td>
                 </template>
             </v-data-table>
             <v-container fluid v-if="query.view === 'cloud'">
                 <v-layout justify-space-around>
                     <v-flex>
-                            <v-img src="/assets/img/tagcloud.jpg" aspect-ratio="1.7"  @click.stop="dialog = true"></v-img>
+                        <v-img src="/assets/img/tagcloud.jpg" aspect-ratio="1.7" @click.stop="dialog = true"></v-img>
                     </v-flex>
                 </v-layout>
             </v-container>
@@ -176,7 +178,7 @@
                 </v-btn>
             </v-snackbar>
         </v-container>
-        <photoswipe :images="results" ref="gallery"></photoswipe>
+
         <v-dialog v-model="dialog" dark persistent max-width="600px">
             <v-card dark>
                 <v-card-title>
@@ -231,7 +233,7 @@
                     <template>
                         <form>
                             13 tags selected <br>
-                        <v-spacer></v-spacer>
+                            <v-spacer></v-spacer>
                             <v-select
                                     v-model="select"
                                     :items="items2"
@@ -295,10 +297,10 @@
                         {value: 'cloud', text: 'Cloud'},
                         {value: 'list', text: 'List'},
                     ],
-                    'groups':  [
+                    'groups': [
                         {value: 'a', text: 'Animals'},
                         {value: 'b', text: 'People'},
-                        ],
+                    ],
                     'sorting': [
                         {value: 'newest', text: 'Mostly used'},
                         {value: 'oldest', text: 'Rarely used'},
@@ -404,7 +406,7 @@
                 this.refreshList();
             },
             openPhoto(index) {
-                this.$refs.gallery.openPhoto(index)
+                this.$gallery.show(this.results, index)
             },
             loadMore() {
                 if (this.loadMoreDisabled) return;

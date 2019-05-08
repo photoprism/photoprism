@@ -10,6 +10,10 @@ class Photo extends Abstract {
         return this.ID;
     }
 
+    getTitle() {
+        return this.PhotoTitle;
+    }
+
     getColor() {
         switch (this.PhotoColor) {
             case 'brown':
@@ -64,6 +68,10 @@ class Photo extends Abstract {
         result.push('320px');
 
         return result.join(', ');
+    }
+
+    hasLocation() {
+        return this.PhotoLat !== 0 || this.PhotoLong !== 0;
     }
 
     getLocation() {

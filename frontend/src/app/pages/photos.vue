@@ -312,7 +312,7 @@
                 </v-btn>
             </v-snackbar>
         </v-container>
-        <photoswipe :images="results" ref="gallery"></photoswipe>
+
         <v-dialog v-model="dialog" dark persistent max-width="600px">
             <v-card dark>
                 <v-card-title>
@@ -663,7 +663,7 @@
                 this.refreshList();
             },
             openPhoto(index) {
-                this.$refs.gallery.openPhoto(index)
+                this.$gallery.show(this.results, index)
             },
             loadMore() {
                 if (this.loadMoreDisabled) return;
@@ -693,7 +693,7 @@
             refreshList() {
                 this.loadMoreDisabled = true;
 
-                // Don't query the same data more than once:197
+                // Don't query the same data more than once
                 if (JSON.stringify(this.lastQuery) === JSON.stringify(this.query)) return;
 
                 Object.assign(this.lastQuery, this.query);
