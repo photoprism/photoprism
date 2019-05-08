@@ -23,7 +23,7 @@
             <l-marker v-for="photo in photos" v-bind:data="photo"
                       v-bind:key="photo.index" :lat-lng="photo.location" :icon="photo.icon"
                       :options="photo.options" @click="openPhoto(photo.index)"></l-marker>
-            <l-marker v-if="position" :lat-lng="position" z-index-offset="1"></l-marker>
+            <l-marker v-if="position" :lat-lng="position" :z-index-offset="1"></l-marker>
         </l-map>
     </v-container>
 </template>
@@ -112,13 +112,13 @@
                     this.minLong = long;
                 }
             },
-            updateMap() {
+            updateMap(results) {
                 const photos = [];
 
                 this.resetBoundingBox();
 
-                for (let i = 0, len = this.results.length; i < len; i++) {
-                    let result = this.results[i];
+                for (let i = 0, len = results.length; i < len; i++) {
+                    let result = results[i];
 
                     if (!result.hasLocation()) continue;
 
@@ -141,13 +141,19 @@
                     });
                 }
 
-                this.center = photos[photos.length - 1].location;
+                if (photos.length === 0) {
+                    this.$alert.warning('No locations found');
+                    return;
+                }
 
+                this.results = results;
+                this.photos = photos;
+
+                this.center = photos[0].location;
                 this.bounds = [[this.maxLat, this.minLong], [this.minLat, this.maxLong]];
 
                 this.$alert.info(photos.length + ' photos found');
 
-                this.photos = photos;
             },
 
             refreshList() {
@@ -173,9 +179,7 @@
                         return;
                     }
 
-                    this.results = response.models;
-
-                    this.updateMap();
+                    this.updateMap(response.models);
                 });
             },
         },
