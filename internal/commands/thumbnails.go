@@ -18,7 +18,7 @@ var ThumbnailsCommand = cli.Command{
 		},
 		cli.BoolFlag{
 			Name:  "default, d",
-			Usage: "Render default sizes: 320, 500, 640, 1280, 1920 and 2560px",
+			Usage: "Render default sizes: 720, 1280, 1920, 2560 and 3840px",
 		},
 		cli.BoolFlag{
 			Name:  "square, q",
@@ -40,7 +40,7 @@ func thumbnailsAction(ctx *cli.Context) error {
 	sizes := ctx.IntSlice("size")
 
 	if ctx.Bool("default") {
-		sizes = []int{320, 500, 640, 1280, 1920, 2560}
+		sizes = []int{720, 1280, 1920, 2560, 3840}
 	}
 
 	if len(sizes) == 0 {

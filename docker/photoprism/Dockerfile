@@ -12,6 +12,9 @@ FROM ubuntu:18.04
 
 WORKDIR /srv/photoprism
 
+# Hide TensorFlow warnings
+ENV TF_CPP_MIN_LOG_LEVEL 2
+
 # Install additional distribution packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
         curl \
@@ -44,9 +47,6 @@ RUN apt-get update && \
 
 # Show photoprism version
 RUN photoprism -v
-
-# Hide TensorFlow warnings
-ENV TF_CPP_MIN_LOG_LEVEL 2
 
 # Expose HTTP & TiDB port
 EXPOSE 80
