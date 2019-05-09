@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "webpack --watch",
     "build": "webpack --optimize-minimize",
-    "lint": "eslint app/ webpack.*.js --cache",
+    "lint": "eslint --cache src/ webpack.*.js",
+    "fmt": "eslint --cache --fix src/ webpack.*.js",
     "test": "karma start"
   },
   "babel": {
@@ -35,6 +36,7 @@
     "chai": "^4.2.0",
     "chalk": "^2.4.2",
     "chart.js": "^2.5.0",
+    "chrome-finder": "^1.0.5",
     "clean-webpack-plugin": "^2.0.2",
     "connect-history-api-fallback": "^1.3.0",
     "copy-webpack-plugin": "^5.0.3",
@@ -43,6 +45,7 @@
     "cssnano": "^4.1.10",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
+    "eslint-formatter-pretty": "^2.1.1",
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^2.1.2",
     "eslint-plugin-html": "^5.0.3",
@@ -58,7 +61,6 @@
     "inject-loader": "^4.0.1",
     "karma": "^4.1.0",
     "karma-chrome-launcher": "^2.2.0",
-    "karma-firefox-launcher": "^1.1.0",
     "karma-htmlfile-reporter": "^0.3.8",
     "karma-mocha": "^1.3.0",
     "karma-webdriver-launcher": "^1.0.5",
@@ -79,7 +81,7 @@
     "postcss-reporter": "^6.0.1",
     "postcss-url": "^8.0.0",
     "pubsub-js": "^1.7.0",
-    "puppeteer": "^1.15.0",
+    "puppeteer-core": "^1.15.0",
     "resolve-url-loader": "^3.1.0",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",

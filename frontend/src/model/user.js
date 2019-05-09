@@ -22,7 +22,7 @@ class User extends Abstract {
     changePassword(oldPassword, newPassword) {
         return Api.put(this.getEntityResource() + '/password', {
             password: oldPassword,
-            new_password: newPassword
+            new_password: newPassword,
         }).then((response) => Promise.resolve(response.data));
     }
 

@@ -42,10 +42,8 @@ RUN apt-get update && apt-get upgrade && \
     mysql-client \
     libgtk-3-bin \
     tzdata \
-    gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libgcc1 \
-    libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 \
-    libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 \
-    libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils
+    gconf-service \
+    chromium-browser
 
 # Install darktable (RAW to JPEG converter)
 RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
@@ -76,12 +74,12 @@ RUN npm install -g npm
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.12.4
+ENV GOLANG_VERSION 1.12.5
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "d7d1f1f88ddfe55840712dc1747f37a790cbcaa448f6c9cf51bbe10aa65442f5 *go.tgz" | sha256sum -c -; \
+	echo "aea86e3c73495f205929cfebba0d63f1382c8ac59be081b6351681415f4063cf *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \

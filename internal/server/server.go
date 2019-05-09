@@ -37,13 +37,13 @@ func Start(conf *config.Config) {
 	quit := make(chan os.Signal)
 
 	/*
-	    TODO: Use a Context for graceful shutdown of web and database servers (and other goroutines)
+		    TODO: Use a Context for graceful shutdown of web and database servers (and other goroutines)
 
-		TODO: Add web server tests
+			TODO: Add web server tests
 
-		See
-		- https://github.com/gin-gonic/gin/blob/dfe37ea6f1b9127be4cff4822a1308b4349444e0/examples/graceful-shutdown/graceful-shutdown/server.go
-		- https://stackoverflow.com/questions/45500836/close-multiple-goroutine-if-an-error-occurs-in-one-in-go
+			See
+			- https://github.com/gin-gonic/gin/blob/dfe37ea6f1b9127be4cff4822a1308b4349444e0/examples/graceful-shutdown/graceful-shutdown/server.go
+			- https://stackoverflow.com/questions/45500836/close-multiple-goroutine-if-an-error-occurs-in-one-in-go
 	*/
 
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)

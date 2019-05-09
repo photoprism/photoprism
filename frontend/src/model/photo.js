@@ -16,13 +16,13 @@ class Photo extends Abstract {
 
     getColor() {
         switch (this.PhotoColor) {
-            case 'brown':
-            case 'black':
-            case 'white':
-            case 'grey':
-                return 'grey lighten-2';
-            default:
-                return this.PhotoColor + ' lighten-4';
+        case 'brown':
+        case 'black':
+        case 'white':
+        case 'grey':
+            return 'grey lighten-2';
+        default:
+            return this.PhotoColor + ' lighten-4';
         }
     }
 
@@ -79,24 +79,24 @@ class Photo extends Abstract {
 
         if (this.LocationID) {
             if (this.LocName && !this.LocCity && !this.LocCounty) {
-                location.push(this.LocName)
+                location.push(this.LocName);
             } else if (this.LocCity) {
-                location.push(this.LocCity)
+                location.push(this.LocCity);
             } else if (this.LocCounty) {
-                location.push(this.LocCounty)
+                location.push(this.LocCounty);
             }
 
             if (this.LocState && this.LocState !== this.LocCity) {
-                location.push(this.LocState)
+                location.push(this.LocState);
             }
 
             if (this.LocCountry) {
-                location.push(this.LocCountry)
+                location.push(this.LocCountry);
             }
         } else if (this.CountryName) {
-            location.push(this.CountryName)
+            location.push(this.CountryName);
         } else {
-            location.push('Unknown')
+            location.push('Unknown');
         }
 
         return location.join(', ');
@@ -107,32 +107,32 @@ class Photo extends Abstract {
 
         if (this.LocationID) {
             if (this.LocName) {
-                location.push(this.LocName)
+                location.push(this.LocName);
             }
 
             if (this.LocCity) {
-                location.push(this.LocCity)
+                location.push(this.LocCity);
             }
 
             if (this.LocPostcode) {
-                location.push(this.LocPostcode)
+                location.push(this.LocPostcode);
             }
 
             if (this.LocCounty) {
-                location.push(this.LocCounty)
+                location.push(this.LocCounty);
             }
 
             if (this.LocState) {
-                location.push(this.LocState)
+                location.push(this.LocState);
             }
 
             if (this.LocCountry) {
-                location.push(this.LocCountry)
+                location.push(this.LocCountry);
             }
         } else if (this.CountryName) {
-            location.push(this.CountryName)
+            location.push(this.CountryName);
         } else {
-            location.push('Unknown')
+            location.push('Unknown');
         }
 
         return location.join(', ');
@@ -140,17 +140,17 @@ class Photo extends Abstract {
 
     getCamera() {
         if (this.CameraModel) {
-            return this.CameraModel
+            return this.CameraModel;
         }
 
-        return 'Unknown'
+        return 'Unknown';
     }
 
     like(liked) {
         if (liked === true) {
-            return Api.post(this.getEntityResource() + "/like");
+            return Api.post(this.getEntityResource() + '/like');
         } else {
-            return Api.delete(this.getEntityResource() + "/like");
+            return Api.delete(this.getEntityResource() + '/like');
         }
     }
 

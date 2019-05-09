@@ -14,7 +14,7 @@ components.install = (Vue) => {
     Icon.Default.mergeOptions({
         iconRetinaUrl: require('./marker/marker-icon-2x-red.png'),
         iconUrl: require('./marker/marker-icon-red.png'),
-        shadowUrl: require('./marker/marker-shadow.png')
+        shadowUrl: require('./marker/marker-shadow.png'),
     });
 };
 

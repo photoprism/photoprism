@@ -5,8 +5,17 @@ DOCKER_TAG=`date -u +%Y%m%d`
 TIDB_VERSION=2.1.8
 DARKTABLE_VERSION="$(awk '$2 == "DARKTABLE_VERSION" { print $3; exit }' docker/darktable/Dockerfile)"
 
-all: download dep js build
+all: dep build
+dep: dep-tensorflow dep-js dep-go
+build: build-js build-go
 install: install-bin install-assets install-config
+test: test-js test-go
+fmt: fmt-js fmt-go
+upgrade: upgrade-js upgrade-go
+start:
+	go run cmd/photoprism/photoprism.go start
+migrate:
+	go run cmd/photoprism/photoprism.go migrate
 install-bin:
 	scripts/build.sh prod /usr/local/bin/$(BINARY_NAME)
 install-assets:
@@ -19,20 +28,19 @@ install-assets:
 install-config:
 	mkdir -p /etc/photoprism
 	test -e /etc/photoprism/photoprism.yml || cp -n configs/photoprism.yml /etc/photoprism/photoprism.yml
-build:
-	scripts/build.sh debug $(BINARY_NAME)
-js:
-	(cd frontend &&	npm install --production)
-	(cd frontend &&	env NODE_ENV=production npm run build)
+dep-js:
+	(cd frontend &&	npm install)
+dep-go:
+	go build -v ./...
+dep-tensorflow:
+	scripts/download-nasnet.sh
 build-js:
 	(cd frontend &&	env NODE_ENV=production npm run build)
+build-go:
+	scripts/build.sh debug $(BINARY_NAME)
 test-js:
 	(cd frontend &&	env NODE_ENV=development npm run test)
-start:
-	go run cmd/photoprism/photoprism.go start
-migrate:
-	go run cmd/photoprism/photoprism.go migrate
-test:
+test-go:
 	go test -tags=slow -timeout 20m -v ./internal/... | scripts/colorize-tests.sh
 test-short:
 	go test -short -timeout 5m -v ./internal/... | scripts/colorize-tests.sh
@@ -51,8 +59,6 @@ clean:
 	rm -rf assets/testdata
 	rm -rf assets/backups
 	rm -rf frontend/node_modules
-download:
-	scripts/download-nasnet.sh
 docker-development:
 	scripts/docker-build.sh development $(DOCKER_TAG)
 	scripts/docker-push.sh development $(DOCKER_TAG)
@@ -71,13 +77,17 @@ docker-darktable:
 docker-tidb:
 	scripts/docker-build.sh tidb $(TIDB_VERSION)
 	scripts/docker-push.sh tidb $(TIDB_VERSION)
-fmt:
+lint-js:
+	(cd frontend &&	npm run lint)
+fmt-js:
+	(cd frontend &&	npm run fmt)
+fmt-go:
 	goimports -w internal cmd
 	go fmt ./internal/... ./cmd/...
-dep:
-	go build -v ./...
 tidy:
 	go mod tidy
-upgrade:
+upgrade-js:
+	(cd frontend &&	npm update --depth 1)
+upgrade-go:
 	go mod tidy
 	go get -u

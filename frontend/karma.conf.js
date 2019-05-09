@@ -1,15 +1,16 @@
 const path = require('path');
+const findChrome = require('chrome-finder');
 
-process.env.CHROME_BIN = require('puppeteer').executablePath()
+process.env.CHROME_BIN = findChrome();
 
 module.exports = (config) => {
     config.set({
         frameworks: ['mocha'],
 
-        browsers: ['PhotoPrism'],
+        browsers: ['LocalChrome'],
 
         customLaunchers: {
-            PhotoPrism: {
+            LocalChrome: {
                 base: 'ChromeHeadless',
                 flags: ['--disable-translate', '--disable-extensions', '--no-sandbox', '--disable-web-security'],
             }

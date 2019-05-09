@@ -42,24 +42,28 @@ const config = {
     performance: {
         hints: 'warning',
         maxEntrypointSize: 1512000,
-        maxAssetSize: 1512000
+        maxAssetSize: 1512000,
     },
     module: {
         rules: [
             {
-                test: /\.(js)$/,
+                test: /\.js$/,
                 include: PATHS.app,
+                exclude: /node_modules/,
                 enforce: 'pre',
                 loader: 'eslint-loader',
+                options: {
+                    formatter: require('eslint-formatter-pretty'),
+                },
             },
             {
                 test: /\.vue$/,
-                loader: "vue-loader",
+                loader: 'vue-loader',
                 options: {
                     loaders: {
                         js: 'babel-loader',
                         css: 'css-loader',
-                    }
+                    },
                 },
             },
             {
@@ -70,7 +74,7 @@ const config = {
                 ),
                 query: {
                     presets: ['@babel/preset-env'],
-                    compact: false
+                    compact: false,
                 },
             },
             {
@@ -90,7 +94,7 @@ const config = {
                                     loader: 'css-loader',
                                     options: {
                                         importLoaders: 1,
-                                        sourceMap: isDev
+                                        sourceMap: isDev,
                                     },
                                 },
                                 {
@@ -107,14 +111,14 @@ const config = {
                             publicPath: PATHS.build,
                         },
                     },
-                    "css-loader",
-                ]
+                    'css-loader',
+                ],
             },
             {
                 test: /\.css$/,
                 include: /node_modules/,
                 loaders: [
-                    "vue-style-loader",
+                    'vue-style-loader',
                     'style-loader',
                     {
                         loader: 'css-loader',
@@ -129,13 +133,13 @@ const config = {
                             },
                         },
                     },
-                    'resolve-url-loader'
-                ]
+                    'resolve-url-loader',
+                ],
             },
             {
                 test: /\.s[c|a]ss$/,
                 use: [
-                    "vue-style-loader",
+                    'vue-style-loader',
                     'style-loader',
                     {
                         loader: 'css-loader',
@@ -151,8 +155,8 @@ const config = {
                         },
                     },
                     'resolve-url-loader',
-                    'sass-loader'
-                ]
+                    'sass-loader',
+                ],
 
             },
             {
@@ -162,7 +166,7 @@ const config = {
                     name: '[hash].[ext]',
                     publicPath: '/assets/build/img',
                     outputPath: 'img',
-                }
+                },
             },
             {
                 test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
@@ -171,7 +175,7 @@ const config = {
                     name: '[hash].[ext]',
                     publicPath: '/assets/build/fonts',
                     outputPath: 'fonts',
-                }
+                },
             },
             {
                 test: /\.svg/,

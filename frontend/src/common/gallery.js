@@ -1,5 +1,5 @@
-import PhotoSwipe from 'photoswipe'
-import PhotoSwipeUI_Default from 'photoswipe/dist/photoswipe-ui-default.js'
+import PhotoSwipe from 'photoswipe';
+import PhotoSwipeUI_Default from 'photoswipe/dist/photoswipe-ui-default.js';
 
 class Gallery {
     constructor() {
@@ -16,7 +16,7 @@ class Gallery {
             src: photo.getThumbnailUrl('fit', height),
             w: photo.calculateWidth(height),
             h: height,
-            title: photo.PhotoTitle
+            title: photo.PhotoTitle,
         });
 
         return {
@@ -26,8 +26,8 @@ class Gallery {
             m: createPhotoSize(1280),
             l: createPhotoSize(1920),
             xl: createPhotoSize(2560),
-            xxl: createPhotoSize(3840)
-        }
+            xxl: createPhotoSize(3840),
+        };
     }
 
     getEl() {
@@ -35,7 +35,7 @@ class Gallery {
             const elements = document.querySelectorAll('.pswp');
 
             if(elements.length !== 1) {
-                let err = "There should be only one PhotoSwipe element";
+                let err = 'There should be only one PhotoSwipe element';
                 console.log(err, elements);
                 throw err;
             }
@@ -48,8 +48,8 @@ class Gallery {
 
     show(photos, index = 0) {
         if (!Array.isArray(photos) || photos.length === 0 || index >= photos.length) {
-            console.log("Array passed to gallery was empty:", photos);
-            return
+            console.log('Array passed to gallery was empty:', photos);
+            return;
         }
 
         this.photos = photos;
@@ -84,12 +84,12 @@ class Gallery {
             realViewportHeight = gallery.viewportSize.y * window.devicePixelRatio;
 
             if (!previousSize) {
-                previousSize = 'm'
+                previousSize = 'm';
             }
 
-            nextSize = this.constructor.mapViewportToImageSize(realViewportWidth, realViewportHeight, photosWithSizes[index])
+            nextSize = this.constructor.mapViewportToImageSize(realViewportWidth, realViewportHeight, photosWithSizes[index]);
             if (nextSize !== previousSize) {
-                photoSrcWillChange = true
+                photoSrcWillChange = true;
             }
 
             if (photoSrcWillChange && !firstResize) {
@@ -118,7 +118,7 @@ class Gallery {
     static mapViewportToImageSize(viewportWidth, viewportHeight, item) {
         for (const [sizeKey, photo] of Object.entries(item)) {
             if (photo.w > viewportWidth || photo.h > viewportHeight) {
-                return sizeKey
+                return sizeKey;
             }
         }
     }
