@@ -1,5 +1,5 @@
-import Api from 'common/api';
-import User from 'model/user';
+import Api from "common/api";
+import User from "model/user";
 
 class Session {
     /**
@@ -7,17 +7,17 @@ class Session {
      */
     constructor(storage) {
         this.storage = storage;
-        this.session_token = this.storage.getItem('session_token');
+        this.session_token = this.storage.getItem("session_token");
 
-        const userJson = this.storage.getItem('user');
+        const userJson = this.storage.getItem("user");
 
-        this.user = userJson !== 'undefined' ? new User(JSON.parse(userJson)) : null;
+        this.user = userJson !== "undefined" ? new User(JSON.parse(userJson)) : null;
     }
 
     setToken(token) {
         this.session_token = token;
-        this.storage.setItem('session_token', token);
-        Api.defaults.headers.common['X-Session-Token'] = token;
+        this.storage.setItem("session_token", token);
+        Api.defaults.headers.common["X-Session-Token"] = token;
     }
 
     getToken() {
@@ -26,14 +26,14 @@ class Session {
 
     deleteToken() {
         this.session_token = null;
-        this.storage.removeItem('session_token');
-        Api.defaults.headers.common['X-Session-Token'] = '';
+        this.storage.removeItem("session_token");
+        Api.defaults.headers.common["X-Session-Token"] = "";
         this.deleteUser();
     }
 
     setUser(user) {
         this.user = user;
-        this.storage.setItem('user', JSON.stringify(user.getValues()));
+        this.storage.setItem("user", JSON.stringify(user.getValues()));
     }
 
     getUser() {
@@ -45,15 +45,15 @@ class Session {
             return this.user.userEmail;
         }
 
-        return '';
+        return "";
     }
 
     getFullName() {
         if (this.isUser()) {
-            return this.user.userFirstName + ' ' + this.user.userLastName;
+            return this.user.userFirstName + " " + this.user.userLastName;
         }
 
-        return '';
+        return "";
     }
 
     getFirstName() {
@@ -61,7 +61,7 @@ class Session {
             return this.user.userFirstName;
         }
 
-        return '';
+        return "";
     }
 
     isUser() {
@@ -69,7 +69,7 @@ class Session {
     }
 
     isAdmin() {
-        return this.user.hasId() && this.user.userRole === 'admin';
+        return this.user.hasId() && this.user.userRole === "admin";
     }
 
     isAnonymous() {
@@ -78,13 +78,13 @@ class Session {
 
     deleteUser() {
         this.user = null;
-        this.storage.removeItem('user');
+        this.storage.removeItem("user");
     }
 
     login(email, password) {
         this.deleteToken();
 
-        return Api.post('session', { email: email, password: password }).then(
+        return Api.post("session", { email: email, password: password }).then(
             (result) => {
                 this.setToken(result.data.token);
                 this.setUser(new User(result.data.user));
@@ -97,9 +97,9 @@ class Session {
 
         this.deleteToken();
 
-        Api.delete('session/' + token).then(
+        Api.delete("session/" + token).then(
             () => {
-                window.location = '/';
+                window.location = "/";
             }
         );
     }

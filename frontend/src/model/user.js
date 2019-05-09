@@ -1,10 +1,10 @@
-import Abstract from 'model/abstract';
-import Form from 'common/form';
-import Api from 'common/api';
+import Abstract from "model/abstract";
+import Form from "common/form";
+import Api from "common/api";
 
 class User extends Abstract {
     getEntityName() {
-        return this.userFirstName + ' ' + this.userLastName;
+        return this.userFirstName + " " + this.userLastName;
     }
 
     getId() {
@@ -12,30 +12,30 @@ class User extends Abstract {
     }
 
     getRegisterForm() {
-        return Api.options(this.getEntityResource() + '/register').then(response => Promise.resolve(new Form(response.data)));
+        return Api.options(this.getEntityResource() + "/register").then(response => Promise.resolve(new Form(response.data)));
     }
 
     getProfileForm() {
-        return Api.options(this.getEntityResource() + '/profile').then(response => Promise.resolve(new Form(response.data)));
+        return Api.options(this.getEntityResource() + "/profile").then(response => Promise.resolve(new Form(response.data)));
     }
 
     changePassword(oldPassword, newPassword) {
-        return Api.put(this.getEntityResource() + '/password', {
+        return Api.put(this.getEntityResource() + "/password", {
             password: oldPassword,
             new_password: newPassword,
         }).then((response) => Promise.resolve(response.data));
     }
 
     saveProfile() {
-        return Api.post(this.getEntityResource() + '/profile', this.getValues()).then((response) => Promise.resolve(this.setValues(response.data)));
+        return Api.post(this.getEntityResource() + "/profile", this.getValues()).then((response) => Promise.resolve(this.setValues(response.data)));
     }
 
     static getCollectionResource() {
-        return 'users';
+        return "users";
     }
 
     static getModelName() {
-        return 'User';
+        return "User";
     }
 }
 

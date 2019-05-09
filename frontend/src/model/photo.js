@@ -1,5 +1,5 @@
-import Abstract from 'model/abstract';
-import Api from 'common/api';
+import Abstract from "model/abstract";
+import Api from "common/api";
 
 class Photo extends Abstract {
     getEntityName() {
@@ -16,13 +16,13 @@ class Photo extends Abstract {
 
     getColor() {
         switch (this.PhotoColor) {
-        case 'brown':
-        case 'black':
-        case 'white':
-        case 'grey':
-            return 'grey lighten-2';
+        case "brown":
+        case "black":
+        case "white":
+        case "grey":
+            return "grey lighten-2";
         default:
-            return this.PhotoColor + ' lighten-4';
+            return this.PhotoColor + " lighten-4";
         }
     }
 
@@ -31,25 +31,25 @@ class Photo extends Abstract {
     }
 
     getGoogleMapsLink() {
-        return 'https://www.google.com/maps/place/' + this.PhotoLat + ',' + this.PhotoLong;
+        return "https://www.google.com/maps/place/" + this.PhotoLat + "," + this.PhotoLong;
     }
 
     getThumbnailUrl(type, size) {
-        return '/api/v1/thumbnails/' + type + '/' + size + '/' + this.FileHash;
+        return "/api/v1/thumbnails/" + type + "/" + size + "/" + this.FileHash;
     }
 
     getThumbnailSrcset() {
         const result = [];
 
-        result.push(this.getThumbnailUrl('fit', 320) + ' 320w');
-        result.push(this.getThumbnailUrl('fit', 500) + ' 500w');
-        result.push(this.getThumbnailUrl('fit', 720) + ' 720w');
-        result.push(this.getThumbnailUrl('fit', 1280) + ' 1280w');
-        result.push(this.getThumbnailUrl('fit', 1920) + ' 1920w');
-        result.push(this.getThumbnailUrl('fit', 2560) + ' 2560w');
-        result.push(this.getThumbnailUrl('fit', 3840) + ' 3840w');
+        result.push(this.getThumbnailUrl("fit", 320) + " 320w");
+        result.push(this.getThumbnailUrl("fit", 500) + " 500w");
+        result.push(this.getThumbnailUrl("fit", 720) + " 720w");
+        result.push(this.getThumbnailUrl("fit", 1280) + " 1280w");
+        result.push(this.getThumbnailUrl("fit", 1920) + " 1920w");
+        result.push(this.getThumbnailUrl("fit", 2560) + " 2560w");
+        result.push(this.getThumbnailUrl("fit", 3840) + " 3840w");
 
-        return result.join(', ');
+        return result.join(", ");
     }
 
     calculateWidth(height) {
@@ -59,15 +59,15 @@ class Photo extends Abstract {
     getThumbnailSizes() {
         const result = [];
 
-        result.push('(min-width: 2560px) 3840px');
-        result.push('(min-width: 1920px) 2560px');
-        result.push('(min-width: 1280px) 1920px');
-        result.push('(min-width: 720px) 1280px');
-        result.push('(min-width: 500px) 720px');
-        result.push('(min-width: 320px) 500px');
-        result.push('320px');
+        result.push("(min-width: 2560px) 3840px");
+        result.push("(min-width: 1920px) 2560px");
+        result.push("(min-width: 1280px) 1920px");
+        result.push("(min-width: 720px) 1280px");
+        result.push("(min-width: 500px) 720px");
+        result.push("(min-width: 320px) 500px");
+        result.push("320px");
 
-        return result.join(', ');
+        return result.join(", ");
     }
 
     hasLocation() {
@@ -96,10 +96,10 @@ class Photo extends Abstract {
         } else if (this.CountryName) {
             location.push(this.CountryName);
         } else {
-            location.push('Unknown');
+            location.push("Unknown");
         }
 
-        return location.join(', ');
+        return location.join(", ");
     }
 
     getFullLocation() {
@@ -132,10 +132,10 @@ class Photo extends Abstract {
         } else if (this.CountryName) {
             location.push(this.CountryName);
         } else {
-            location.push('Unknown');
+            location.push("Unknown");
         }
 
-        return location.join(', ');
+        return location.join(", ");
     }
 
     getCamera() {
@@ -143,23 +143,23 @@ class Photo extends Abstract {
             return this.CameraModel;
         }
 
-        return 'Unknown';
+        return "Unknown";
     }
 
     like(liked) {
         if (liked === true) {
-            return Api.post(this.getEntityResource() + '/like');
+            return Api.post(this.getEntityResource() + "/like");
         } else {
-            return Api.delete(this.getEntityResource() + '/like');
+            return Api.delete(this.getEntityResource() + "/like");
         }
     }
 
     static getCollectionResource() {
-        return 'photos';
+        return "photos";
     }
 
     static getModelName() {
-        return 'Photo';
+        return "Photo";
     }
 }
 

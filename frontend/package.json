@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "webpack --watch",
     "build": "webpack --optimize-minimize",
-    "lint": "eslint --cache src/ webpack.*.js",
-    "fmt": "eslint --cache --fix src/ webpack.*.js",
+    "lint": "eslint --cache src/ *.js",
+    "fmt": "eslint --cache --fix src/ *.js",
     "test": "karma start"
   },
   "babel": {

@@ -1,46 +1,46 @@
-const path = require('path');
+const path = require("path");
 
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const webpack = require('webpack');
+const webpack = require("webpack");
 
 const PATHS = {
-    app: path.join(__dirname, 'src/app.js'),
-    css: path.join(__dirname, 'css'),
-    build: path.join(__dirname, '../assets/server/public/build'),
+    app: path.join(__dirname, "src/app.js"),
+    css: path.join(__dirname, "css"),
+    build: path.join(__dirname, "../assets/server/public/build"),
 };
 
-const isDev = process.env.NODE_ENV !== 'production';
+const isDev = process.env.NODE_ENV !== "production";
 
 const config = {
-    mode: 'production',
-    devtool: isDev ? 'inline-source-map' : false,
+    mode: "production",
+    devtool: isDev ? "inline-source-map" : false,
     entry: {
         app: PATHS.app,
     },
     output: {
         path: PATHS.build,
-        filename: '[name].js',
+        filename: "[name].js",
     },
     resolve: {
         modules: [
-            path.join(__dirname, 'src'),
-            path.join(__dirname, 'node_modules'),
+            path.join(__dirname, "src"),
+            path.join(__dirname, "node_modules"),
         ],
         alias: {
-            vue: 'vue/dist/vue.js',
+            vue: "vue/dist/vue.js",
         },
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: '[name].css',
+            filename: "[name].css",
         }),
     ],
     node: {
-        fs: 'empty',
+        fs: "empty",
     },
     performance: {
-        hints: 'warning',
+        hints: "warning",
         maxEntrypointSize: 1512000,
         maxAssetSize: 1512000,
     },
@@ -50,30 +50,30 @@ const config = {
                 test: /\.js$/,
                 include: PATHS.app,
                 exclude: /node_modules/,
-                enforce: 'pre',
-                loader: 'eslint-loader',
+                enforce: "pre",
+                loader: "eslint-loader",
                 options: {
-                    formatter: require('eslint-formatter-pretty'),
+                    formatter: require("eslint-formatter-pretty"),
                 },
             },
             {
                 test: /\.vue$/,
-                loader: 'vue-loader',
+                loader: "vue-loader",
                 options: {
                     loaders: {
-                        js: 'babel-loader',
-                        css: 'css-loader',
+                        js: "babel-loader",
+                        css: "css-loader",
                     },
                 },
             },
             {
                 test: /\.js$/,
-                loader: 'babel-loader',
+                loader: "babel-loader",
                 exclude: file => (
                     /node_modules/.test(file)
                 ),
                 query: {
-                    presets: ['@babel/preset-env'],
+                    presets: ["@babel/preset-env"],
                     compact: false,
                 },
             },
@@ -86,101 +86,101 @@ const config = {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
                             hmr: false,
-                            fallback: 'vue-style-loader',
+                            fallback: "vue-style-loader",
                             use: [
                                 // "vue-style-loader",
-                                'style-loader',
+                                "style-loader",
                                 {
-                                    loader: 'css-loader',
+                                    loader: "css-loader",
                                     options: {
                                         importLoaders: 1,
                                         sourceMap: isDev,
                                     },
                                 },
                                 {
-                                    loader: 'postcss-loader',
+                                    loader: "postcss-loader",
                                     options: {
                                         sourceMap: isDev,
                                         config: {
-                                            path: path.resolve(__dirname, './postcss.config.js'),
+                                            path: path.resolve(__dirname, "./postcss.config.js"),
                                         },
                                     },
                                 },
-                                'resolve-url-loader',
+                                "resolve-url-loader",
                             ],
                             publicPath: PATHS.build,
                         },
                     },
-                    'css-loader',
+                    "css-loader",
                 ],
             },
             {
                 test: /\.css$/,
                 include: /node_modules/,
                 loaders: [
-                    'vue-style-loader',
-                    'style-loader',
+                    "vue-style-loader",
+                    "style-loader",
                     {
-                        loader: 'css-loader',
+                        loader: "css-loader",
                         options: { importLoaders: 1, sourceMap: isDev },
                     },
                     {
-                        loader: 'postcss-loader',
+                        loader: "postcss-loader",
                         options: {
                             sourceMap: isDev,
                             config: {
-                                path: path.resolve(__dirname, './postcss.config.js'),
+                                path: path.resolve(__dirname, "./postcss.config.js"),
                             },
                         },
                     },
-                    'resolve-url-loader',
+                    "resolve-url-loader",
                 ],
             },
             {
                 test: /\.s[c|a]ss$/,
                 use: [
-                    'vue-style-loader',
-                    'style-loader',
+                    "vue-style-loader",
+                    "style-loader",
                     {
-                        loader: 'css-loader',
+                        loader: "css-loader",
                         options: { importLoaders: 2, sourceMap: isDev },
                     },
                     {
-                        loader: 'postcss-loader',
+                        loader: "postcss-loader",
                         options: {
                             sourceMap: isDev,
                             config: {
-                                path: path.resolve(__dirname, './postcss.config.js'),
+                                path: path.resolve(__dirname, "./postcss.config.js"),
                             },
                         },
                     },
-                    'resolve-url-loader',
-                    'sass-loader',
+                    "resolve-url-loader",
+                    "sass-loader",
                 ],
 
             },
             {
                 test: /\.(png|jpg|jpeg|gif)$/,
-                loader: 'file-loader',
+                loader: "file-loader",
                 options: {
-                    name: '[hash].[ext]',
-                    publicPath: '/assets/build/img',
-                    outputPath: 'img',
+                    name: "[hash].[ext]",
+                    publicPath: "/assets/build/img",
+                    outputPath: "img",
                 },
             },
             {
                 test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
-                loader: 'file-loader',
+                loader: "file-loader",
                 options: {
-                    name: '[hash].[ext]',
-                    publicPath: '/assets/build/fonts',
-                    outputPath: 'fonts',
+                    name: "[hash].[ext]",
+                    publicPath: "/assets/build/fonts",
+                    outputPath: "fonts",
                 },
             },
             {
                 test: /\.svg/,
                 use: {
-                    loader: 'svg-url-loader',
+                    loader: "svg-url-loader",
                     options: {},
                 },
             },
@@ -191,7 +191,7 @@ const config = {
 // No sourcemap for production
 if (isDev) {
     const devToolPlugin = new webpack.SourceMapDevToolPlugin({
-        filename: '[name].map',
+        filename: "[name].map",
     });
 
     config.plugins.push(devToolPlugin);

@@ -1,17 +1,17 @@
-import axios from 'axios';
-import Event from 'pubsub-js';
-import '@babel/polyfill';
+import axios from "axios";
+import Event from "pubsub-js";
+import "@babel/polyfill";
 
 const Api = axios.create({
-    baseURL: '/api/v1',
+    baseURL: "/api/v1",
     headers: {common: {
-        'X-Session-Token': window.localStorage.getItem('session_token'),
+        "X-Session-Token": window.localStorage.getItem("session_token"),
     }},
 });
 
 Api.interceptors.request.use(function (config) {
     // Do something before request is sent
-    Event.publish('ajax.start', config);
+    Event.publish("ajax.start", config);
     return config;
 }, function (error) {
     // Do something with request error
@@ -19,7 +19,7 @@ Api.interceptors.request.use(function (config) {
 });
 
 Api.interceptors.response.use(function (response) {
-    Event.publish('ajax.end', response);
+    Event.publish("ajax.end", response);
 
     return response;
 }, function (error) {
@@ -27,7 +27,7 @@ Api.interceptors.response.use(function (response) {
         console.log(error);
     }
 
-    let errorMessage = 'An error occurred - are you offline?';
+    let errorMessage = "An error occurred - are you offline?";
     let code = error.code;
 
     if(error.response && error.response.data) {
@@ -36,11 +36,11 @@ Api.interceptors.response.use(function (response) {
         errorMessage = data.message ? data.message : data.error;
     }
 
-    Event.publish('ajax.end');
-    Event.publish('alert.error', errorMessage);
+    Event.publish("ajax.end");
+    Event.publish("alert.error", errorMessage);
 
     if(code === 401) {
-        window.location = '/';
+        window.location = "/";
     }
 
     return Promise.reject(error);

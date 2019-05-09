@@ -1,5 +1,5 @@
-import PhotoSwipe from 'photoswipe';
-import PhotoSwipeUI_Default from 'photoswipe/dist/photoswipe-ui-default.js';
+import PhotoSwipe from "photoswipe";
+import PhotoSwipeUI_Default from "photoswipe/dist/photoswipe-ui-default.js";
 
 class Gallery {
     constructor() {
@@ -13,7 +13,7 @@ class Gallery {
 
     createPhotoSizes(photo) {
         const createPhotoSize = height => ({
-            src: photo.getThumbnailUrl('fit', height),
+            src: photo.getThumbnailUrl("fit", height),
             w: photo.calculateWidth(height),
             h: height,
             title: photo.PhotoTitle,
@@ -32,10 +32,10 @@ class Gallery {
 
     getEl() {
         if(!this.el) {
-            const elements = document.querySelectorAll('.pswp');
+            const elements = document.querySelectorAll(".pswp");
 
             if(elements.length !== 1) {
-                let err = 'There should be only one PhotoSwipe element';
+                let err = "There should be only one PhotoSwipe element";
                 console.log(err, elements);
                 throw err;
             }
@@ -48,7 +48,7 @@ class Gallery {
 
     show(photos, index = 0) {
         if (!Array.isArray(photos) || photos.length === 0 || index >= photos.length) {
-            console.log('Array passed to gallery was empty:', photos);
+            console.log("Array passed to gallery was empty:", photos);
             return;
         }
 
@@ -79,12 +79,12 @@ class Gallery {
         let firstResize = true;
         let photoSrcWillChange;
 
-        gallery.listen('beforeResize', () => {
+        gallery.listen("beforeResize", () => {
             realViewportWidth = gallery.viewportSize.x * window.devicePixelRatio;
             realViewportHeight = gallery.viewportSize.y * window.devicePixelRatio;
 
             if (!previousSize) {
-                previousSize = 'm';
+                previousSize = "m";
             }
 
             nextSize = this.constructor.mapViewportToImageSize(realViewportWidth, realViewportHeight, photosWithSizes[index]);
@@ -104,7 +104,7 @@ class Gallery {
         });
 
 
-        gallery.listen('gettingData', function (index, item) {
+        gallery.listen("gettingData", function (index, item) {
             item.src = item[nextSize].src;
             item.w = item[nextSize].w;
             item.h = item[nextSize].h;

@@ -1,4 +1,4 @@
-import Api from 'common/api';
+import Api from "common/api";
 
 class Config {
     /**
@@ -7,7 +7,7 @@ class Config {
      */
     constructor(storage, values) {
         this.storage = storage;
-        this.storage_key = 'config';
+        this.storage_key = "config";
 
         this.values = values;
 
@@ -54,7 +54,7 @@ class Config {
     }
 
     pullFromServer() {
-        return Api.get('config').then(
+        return Api.get("config").then(
             (result) => {
                 this.setValues(result.data);
             }
