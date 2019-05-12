@@ -29,6 +29,7 @@ require (
 	github.com/myesui/uuid v1.0.0 // indirect
 	github.com/opentracing/opentracing-go v1.0.2
 	github.com/pingcap/errors v0.11.1
+	github.com/pingcap/goleveldb v0.0.0-20171020122428-b9ff6c35079e // indirect
 	github.com/pingcap/parser v0.0.0-20190410113155-72aa33252485
 	github.com/pingcap/pd v2.1.0-rc.4+incompatible
 	github.com/pingcap/tidb v2.1.8+incompatible

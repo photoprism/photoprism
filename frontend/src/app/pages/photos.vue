@@ -11,11 +11,12 @@
                               @click:clear="clearQuery"
                               v-model="query.q"
                               @keyup.enter.native="formChange"
+                              id="search"
                 ></v-text-field>
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon @click="advandedSearch = !advandedSearch">
+                <v-btn icon @click="advandedSearch = !advandedSearch" id="advancedMenu">
                     <v-icon>{{ advandedSearch ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
                 </v-btn>
             </v-toolbar>
@@ -26,7 +27,7 @@
                     v-show="advandedSearch">
                 <v-card-text>
                     <v-layout row wrap>
-                        <v-flex xs12 sm6 md3 pa-2>
+                        <v-flex xs12 sm6 md3 pa-2 id="countriesFlex">
                             <v-select @change="formChange"
                                       label="Country"
                                       flat solo hide-details
@@ -37,7 +38,7 @@
                                       :items="options.countries">
                             </v-select>
                         </v-flex>
-                        <v-flex xs12 sm6 md3 pa-2>
+                        <v-flex xs12 sm6 md3 pa-2 id="cameraFlex">
                             <v-select @change="formChange"
                                       label="Camera"
                                       flat solo hide-details
@@ -48,16 +49,17 @@
                                       :items="options.cameras">
                             </v-select>
                         </v-flex>
-                        <v-flex xs12 sm6 md3 pa-2>
+                        <v-flex xs12 sm6 md3 pa-2 id="viewFlex">
                             <v-select @change="formChange"
                                       label="View"
                                       flat solo hide-details
                                       color="blue-grey"
                                       v-model="query.view"
-                                      :items="options.views">
+                                      :items="options.views"
+                                    id="viewSelect">
                             </v-select>
                         </v-flex>
-                        <v-flex xs12 sm6 md3 pa-2>
+                        <v-flex xs12 sm6 md3 pa-2 id="timeFlex">
                             <v-select @change="formChange"
                                       label="Sort By"
                                       flat solo hide-details
