@@ -30,6 +30,10 @@ type ExifData struct {
 	Orientation int
 }
 
+func init() {
+	exif.RegisterParsers(mknote.All...)
+}
+
 // ExifData return ExifData given a single mediaFile.
 func (m *MediaFile) ExifData() (*ExifData, error) {
 	if m == nil {
@@ -53,8 +57,6 @@ func (m *MediaFile) ExifData() (*ExifData, error) {
 	}
 
 	defer file.Close()
-
-	exif.RegisterParsers(mknote.All...)
 
 	x, err := exif.Decode(file)
 
