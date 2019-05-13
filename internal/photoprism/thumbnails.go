@@ -62,11 +62,11 @@ var ThumbnailTypes = map[string]ThumbnailType{
 	"fit_1280":   {"", 1280, 1280, []ResampleOption{ResampleFit, ResampleBest}},
 	"fit_1920":   {"", 1920, 1920, []ResampleOption{ResampleFit, ResampleBest}},
 	"fit_2560":   {"", 2560, 2560, []ResampleOption{ResampleFit, ResampleBest}},
-	"fit_3540":   {"", 3840, 3840, []ResampleOption{ResampleFit, ResampleBest}},
+	"fit_3840":   {"", 3840, 3840, []ResampleOption{ResampleFit, ResampleBest}},
 }
 
 var DefaultThumbnails = []string{
-	"fit_3540", "fit_2560", "fit_1920", "fit_1280", "fit_720", "right_224", "left_224", "center_224", "colors", "tile_500", "tile_100", "tile_50",
+	"fit_3840", "fit_2560", "fit_1920", "fit_1280", "fit_720", "right_224", "left_224", "center_224", "colors", "tile_500", "tile_100", "tile_50",
 }
 
 // CreateThumbnailsFromOriginals creates default thumbnails for all originals.
