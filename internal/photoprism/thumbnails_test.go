@@ -70,7 +70,7 @@ func TestResampleFile(t *testing.T) {
 	conf.InitializeTestData(t)
 
 	fileModel := &models.File{
-		FileName: "testdata/chameleon_lime.jpg",
+		FileName: conf.ImportPath() + "/dog.jpg",
 		FileHash: "123456789",
 	}
 
@@ -85,17 +85,21 @@ func TestCreateThumbnail(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	thumbsPath := "testdata/_tmp"
+	conf := config.TestConfig()
 
-	defer os.RemoveAll(thumbsPath)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Error(err)
+	}
 
-	expectedFilename, err := ThumbnailFilename("1234","testdata/_tmp", 150, 150, ResampleFit, ResampleFast)
+	conf.InitializeTestData(t)
+
+	expectedFilename, err := ThumbnailFilename("12345", conf.ThumbnailsPath(), 150, 150, ResampleFit, ResampleFast)
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	img, err := imaging.Open("testdata/6720px_white.jpg", imaging.AutoOrientation(true))
+	img, err := imaging.Open(conf.ImportPath() + "/dog.jpg", imaging.AutoOrientation(true))
 
 	if err != nil {
 		t.Errorf("can't open original: %s", err)
@@ -110,7 +114,7 @@ func TestCreateThumbnail(t *testing.T) {
 	bounds := thumb.Bounds()
 
 	assert.Equal(t, 150, bounds.Dx())
-	assert.Equal(t, 100, bounds.Dy())
+	assert.Equal(t, 106, bounds.Dy())
 
 	assert.FileExists(t, expectedFilename)
 }
