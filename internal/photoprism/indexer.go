@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/config"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jinzhu/gorm"
@@ -20,35 +21,66 @@ const (
 
 // Indexer defines an indexer with originals path tensorflow and a db.
 type Indexer struct {
-	originalsPath string
-	tensorFlow    *TensorFlow
-	db            *gorm.DB
+	conf       *config.Config
+	tensorFlow *TensorFlow
+	db         *gorm.DB
 }
 
 // NewIndexer returns a new indexer.
 // TODO: Is it really necessary to return a pointer?
-func NewIndexer(originalsPath string, tensorFlow *TensorFlow, db *gorm.DB) *Indexer {
+func NewIndexer(conf *config.Config, tensorFlow *TensorFlow) *Indexer {
 	instance := &Indexer{
-		originalsPath: originalsPath,
-		tensorFlow:    tensorFlow,
-		db:            db,
+		conf:       conf,
+		tensorFlow: tensorFlow,
+		db:         conf.Db(),
 	}
 
 	return instance
 }
 
+func (i *Indexer) originalsPath() string {
+	return i.conf.OriginalsPath()
+}
+
+func (i *Indexer) thumbnailsPath() string {
+	return i.conf.ThumbnailsPath()
+}
+
 // getImageTags returns all tags of a given mediafile. This function returns
 // an empty list in the case of an error.
 func (i *Indexer) getImageTags(jpeg *MediaFile) (results []*models.Tag) {
-	tags, err := i.tensorFlow.GetImageTagsFromFile(jpeg.filename)
+	var thumbs []string
 
-	if err != nil {
-		return results
+	if jpeg.AspectRatio() == 1 {
+		thumbs = []string{"center_224"}
+	} else {
+		thumbs = []string{"center_224", "left_224", "right_224"}
 	}
 
-	for _, tag := range tags {
-		if tag.Probability > 0.15 { // TODO: Use config variable
-			results = i.appendTag(results, tag.Label)
+	tagExists := make(map[string]bool)
+
+	for _, thumb := range thumbs {
+		filename, err := jpeg.Thumbnail(i.thumbnailsPath(), thumb)
+
+		if err != nil {
+			log.Error(err)
+			continue
+		}
+
+		tags, err := i.tensorFlow.GetImageTagsFromFile(filename)
+
+		if err != nil {
+			log.Error(err)
+			continue
+		}
+
+		for _, tag := range tags {
+			if tag.Probability > 0.15 { // TODO: Use config variable
+				if _, ok := tagExists[tag.Label]; !ok {
+					results = i.appendTag(results, tag.Label)
+					tagExists[tag.Label] = true
+				}
+			}
 		}
 	}
 
@@ -81,7 +113,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 
 	canonicalName := mediaFile.CanonicalNameFromFile()
 	fileHash := mediaFile.Hash()
-	relativeFileName := mediaFile.RelativeFilename(i.originalsPath)
+	relativeFileName := mediaFile.RelativeFilename(i.originalsPath())
 
 	photoQuery := i.db.First(&photo, "photo_canonical_name = ?", canonicalName)
 
@@ -222,7 +254,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	file.FileOrientation = mediaFile.Orientation()
 
 	// Color information
-	if p, err := mediaFile.Colors(); err == nil {
+	if p, err := mediaFile.Colors(i.thumbnailsPath()); err == nil {
 		file.FileMainColor = p.MainColor.Name()
 		file.FileColors = p.Colors.Hex()
 		file.FileLuminance = p.Luminance.Hex()
@@ -251,7 +283,7 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 	relatedFiles, mainFile, err := mediaFile.RelatedFiles()
 
 	if err != nil {
-		log.Warnf("could not index \"%s\": %s", mediaFile.RelativeFilename(i.originalsPath), err.Error())
+		log.Warnf("could not index \"%s\": %s", mediaFile.RelativeFilename(i.originalsPath()), err.Error())
 
 		return indexed
 	}
@@ -259,7 +291,7 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 	mainIndexResult := i.indexMediaFile(mainFile)
 	indexed[mainFile.Filename()] = true
 
-	log.Infof("%s main %s file \"%s\"", mainIndexResult, mainFile.Type(), mainFile.RelativeFilename(i.originalsPath))
+	log.Infof("%s main %s file \"%s\"", mainIndexResult, mainFile.Type(), mainFile.RelativeFilename(i.originalsPath()))
 
 	for _, relatedMediaFile := range relatedFiles {
 		if indexed[relatedMediaFile.Filename()] {
@@ -269,7 +301,7 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 		indexResult := i.indexMediaFile(relatedMediaFile)
 		indexed[relatedMediaFile.Filename()] = true
 
-		log.Infof("%s related %s file \"%s\"", indexResult, relatedMediaFile.Type(), relatedMediaFile.RelativeFilename(i.originalsPath))
+		log.Infof("%s related %s file \"%s\"", indexResult, relatedMediaFile.Type(), relatedMediaFile.RelativeFilename(i.originalsPath()))
 	}
 
 	return indexed
@@ -279,7 +311,7 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile) map[string]bool {
 func (i *Indexer) IndexAll() map[string]bool {
 	indexed := make(map[string]bool)
 
-	err := filepath.Walk(i.originalsPath, func(filename string, fileInfo os.FileInfo, err error) error {
+	err := filepath.Walk(i.originalsPath(), func(filename string, fileInfo os.FileInfo, err error) error {
 		if err != nil || indexed[filename] {
 			return nil
 		}

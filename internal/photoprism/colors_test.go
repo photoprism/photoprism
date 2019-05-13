@@ -11,6 +11,10 @@ import (
 )
 
 func TestMediaFile_Colors_Testdata(t *testing.T) {
+	thumbsPath := "testdata/_tmp"
+
+	defer os.RemoveAll(thumbsPath)
+
 	/*
 		TODO: Add and compare other images in "testdata/"
 	*/
@@ -57,7 +61,7 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 		}
 
 		t.Run(filename, func(t *testing.T) {
-			p, err := mediaFile.Colors()
+			p, err := mediaFile.Colors(thumbsPath)
 
 			t.Log(p, err)
 
@@ -80,13 +84,13 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 }
 
 func TestMediaFile_Colors(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
 	t.Run("dog.jpg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(ctx.ImportPath() + "/dog.jpg"); err == nil {
-			p, err := mediaFile.Colors()
+		if mediaFile, err := NewMediaFile(conf.ImportPath() + "/dog.jpg"); err == nil {
+			p, err := mediaFile.Colors(conf.ThumbnailsPath())
 
 			t.Log(p, err)
 
@@ -102,8 +106,8 @@ func TestMediaFile_Colors(t *testing.T) {
 	})
 
 	t.Run("ape.jpeg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(ctx.ImportPath() + "/ape.jpeg"); err == nil {
-			p, err := mediaFile.Colors()
+		if mediaFile, err := NewMediaFile(conf.ImportPath() + "/ape.jpeg"); err == nil {
+			p, err := mediaFile.Colors(conf.ThumbnailsPath())
 
 			t.Log(p, err)
 
@@ -119,8 +123,8 @@ func TestMediaFile_Colors(t *testing.T) {
 	})
 
 	t.Run("iphone/IMG_6788.JPG", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG"); err == nil {
-			p, err := mediaFile.Colors()
+		if mediaFile, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG"); err == nil {
+			p, err := mediaFile.Colors(conf.ThumbnailsPath())
 
 			t.Log(p, err)
 
@@ -135,8 +139,8 @@ func TestMediaFile_Colors(t *testing.T) {
 	})
 
 	t.Run("raw/20140717_154212_1EC48F8489.jpg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(ctx.ImportPath() + "/raw/20140717_154212_1EC48F8489.jpg"); err == nil {
-			p, err := mediaFile.Colors()
+		if mediaFile, err := NewMediaFile(conf.ImportPath() + "/raw/20140717_154212_1EC48F8489.jpg"); err == nil {
+			p, err := mediaFile.Colors(conf.ThumbnailsPath())
 
 			t.Log(p, err)
 

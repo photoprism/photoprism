@@ -34,7 +34,7 @@ func TestTensorFlow_GetImageTagsFromFile(t *testing.T) {
 	assert.Equal(t, "tiger cat", result[1].Label)
 
 	assert.Equal(t, 68, result[0].Percent())
-	assert.Equal(t, 13, result[1].Percent())
+	assert.Equal(t, 14, result[1].Percent())
 }
 
 func TestTensorFlow_GetImageTags(t *testing.T) {
@@ -65,7 +65,7 @@ func TestTensorFlow_GetImageTags(t *testing.T) {
 		assert.Equal(t, "tiger cat", result[1].Label)
 
 		assert.Equal(t, 68, result[0].Percent())
-		assert.Equal(t, 13, result[1].Percent())
+		assert.Equal(t, 14, result[1].Percent())
 	}
 }
 
@@ -96,7 +96,7 @@ func TestTensorFlow_GetImageTags_Dog(t *testing.T) {
 		assert.Equal(t, "belt", result[0].Label)
 		assert.Equal(t, "beagle dog", result[1].Label)
 
-		assert.Equal(t, 10, result[0].Percent())
+		assert.Equal(t, 11, result[0].Percent())
 		assert.Equal(t, 9, result[1].Percent())
 	}
 }

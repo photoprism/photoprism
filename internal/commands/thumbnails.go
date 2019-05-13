@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"time"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	log "github.com/sirupsen/logrus"
@@ -10,19 +12,11 @@ import (
 // Pre-renders thumbnails
 var ThumbnailsCommand = cli.Command{
 	Name:  "thumbnails",
-	Usage: "Pre-renders thumbnails",
+	Usage: "Render default thumbnails",
 	Flags: []cli.Flag{
-		cli.IntSliceFlag{
-			Name:  "size, s",
-			Usage: "Thumbnail size in pixels",
-		},
 		cli.BoolFlag{
-			Name:  "default, d",
-			Usage: "Render default sizes: 720, 1280, 1920, 2560 and 3840px",
-		},
-		cli.BoolFlag{
-			Name:  "square, q",
-			Usage: "Square aspect ratio",
+			Name:  "force, f",
+			Usage: "Re-create existing thumbnails",
 		},
 	},
 	Action: thumbnailsAction,
@@ -35,24 +29,15 @@ func thumbnailsAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("creating thumbnails in \"%s\"", conf.ThumbnailsPath())
+	log.Infof("creating default thumbnails in \"%s\"", conf.ThumbnailsPath())
+	start := time.Now()
 
-	sizes := ctx.IntSlice("size")
-
-	if ctx.Bool("default") {
-		sizes = []int{720, 1280, 1920, 2560, 3840}
+	if err := photoprism.CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), ctx.Bool("force")); err != nil {
+		log.Error(err)
+		return err
 	}
 
-	if len(sizes) == 0 {
-		log.Warn("no thumbnail size selected")
-		return nil
-	}
-
-	for _, size := range sizes {
-		photoprism.CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), size, ctx.Bool("square"))
-	}
-
-	log.Info("thumbnails created")
+	log.Infof("default thumbnails created in %s", time.Since(start))
 
 	return nil
 }

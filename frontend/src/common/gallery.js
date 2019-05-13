@@ -12,16 +12,16 @@ class Gallery {
     }
 
     createPhotoSizes(photo) {
-        const createPhotoSize = height => ({
-            src: photo.getThumbnailUrl("fit", height),
-            w: photo.calculateWidth(height),
-            h: height,
-            title: photo.PhotoTitle,
-        });
+        const createPhotoSize = size => {
+            return {
+                src: photo.getThumbnailUrl("fit_" + size),
+                w: photo.calculateWidth(size),
+                h: photo.calculateHeight(size),
+                title: photo.PhotoTitle,
+            }
+        };
 
         return {
-            xxs: createPhotoSize(320),
-            xs: createPhotoSize(500),
             s: createPhotoSize(720),
             m: createPhotoSize(1280),
             l: createPhotoSize(1920),
@@ -31,10 +31,10 @@ class Gallery {
     }
 
     getEl() {
-        if(!this.el) {
+        if (!this.el) {
             const elements = document.querySelectorAll(".pswp");
 
-            if(elements.length !== 1) {
+            if (elements.length !== 1) {
                 let err = "There should be only one PhotoSwipe element";
                 console.log(err, elements);
                 throw err;

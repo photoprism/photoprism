@@ -3,13 +3,11 @@ package photoprism
 import (
 	"errors"
 	"fmt"
-	"image"
 	"image/color"
 	"math"
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/disintegration/imaging"
 	"github.com/lucasb-eyer/go-colorful"
 )
 
@@ -478,29 +476,13 @@ func ColorfulToIndexedColor(actualColor colorful.Color) (result IndexedColor) {
 	return result
 }
 
-func (m *MediaFile) Resize(width, height int) (result *image.NRGBA, err error) {
-	jpeg, err := m.Jpeg()
-
-	if err != nil {
-		return nil, err
-	}
-
-	img, err := imaging.Open(jpeg.Filename(), imaging.AutoOrientation(true))
-
-	if err != nil {
-		return nil, err
-	}
-
-	return imaging.Resize(img, width, height, imaging.NearestNeighbor), nil
-}
-
 // Colors returns color information for a media file.
-func (m *MediaFile) Colors() (perception ColorPerception, err error) {
+func (m *MediaFile) Colors(thumbPath string) (perception ColorPerception, err error) {
 	if !m.IsJpeg() {
 		return perception, errors.New("no color information: not a JPEG file")
 	}
 
-	img, err := m.Resize(ColorSampleSize, ColorSampleSize)
+	img, err := m.Resample(thumbPath, "colors")
 
 	if err != nil {
 		log.Printf("can't open image: %s", err.Error())

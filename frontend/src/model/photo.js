@@ -34,26 +34,36 @@ class Photo extends Abstract {
         return "https://www.google.com/maps/place/" + this.PhotoLat + "," + this.PhotoLong;
     }
 
-    getThumbnailUrl(type, size) {
-        return "/api/v1/thumbnails/" + type + "/" + size + "/" + this.FileHash;
+    getThumbnailUrl(type) {
+        return "/api/v1/thumbnails/" + this.FileHash + "/" + type;
     }
 
     getThumbnailSrcset() {
         const result = [];
 
-        result.push(this.getThumbnailUrl("fit", 320) + " 320w");
-        result.push(this.getThumbnailUrl("fit", 500) + " 500w");
-        result.push(this.getThumbnailUrl("fit", 720) + " 720w");
-        result.push(this.getThumbnailUrl("fit", 1280) + " 1280w");
-        result.push(this.getThumbnailUrl("fit", 1920) + " 1920w");
-        result.push(this.getThumbnailUrl("fit", 2560) + " 2560w");
-        result.push(this.getThumbnailUrl("fit", 3840) + " 3840w");
+        result.push(this.getThumbnailUrl("fit_720")  + " 720w");
+        result.push(this.getThumbnailUrl("fit_1280") + " 1280w");
+        result.push(this.getThumbnailUrl("fit_1920") + " 1920w");
+        result.push(this.getThumbnailUrl("fit_2560") + " 2560w");
+        result.push(this.getThumbnailUrl("fit_3840") + " 3840w");
 
         return result.join(", ");
     }
 
-    calculateWidth(height) {
-        return height * this.FileAspectRatio;
+    calculateWidth(size) {
+        if(this.FileAspectRatio < 1) {
+            return Math.round(size * this.FileAspectRatio);
+        } else {
+            return size;
+        }
+    }
+
+    calculateHeight(size) {
+        if(this.FileAspectRatio < 1) {
+            return size;
+        } else {
+            return Math.round(size / this.FileAspectRatio);
+        }
     }
 
     getThumbnailSizes() {
@@ -63,9 +73,7 @@ class Photo extends Abstract {
         result.push("(min-width: 1920px) 2560px");
         result.push("(min-width: 1280px) 1920px");
         result.push("(min-width: 720px) 1280px");
-        result.push("(min-width: 500px) 720px");
-        result.push("(min-width: 320px) 500px");
-        result.push("320px");
+        result.push("720px");
 
         return result.join(", ");
     }

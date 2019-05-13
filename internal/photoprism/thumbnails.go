@@ -2,9 +2,12 @@ package photoprism
 
 import (
 	"fmt"
+	"image"
+	"image/png"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -12,8 +15,62 @@ import (
 	"github.com/photoprism/photoprism/internal/util"
 )
 
-// CreateThumbnailsFromOriginals create thumbnails.
-func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, size int, square bool) {
+type ResampleOption int
+
+const (
+	MaxThumbWidth    = 8192
+	MaxThumbHeight   = 8192
+	JpegQuality      = 95
+	JpegQualitySmall = 75
+)
+
+const (
+	ResampleFillCenter ResampleOption = iota
+	ResampleFillTopLeft
+	ResampleFillBottomRight
+	ResampleFit
+	ResampleResize
+	ResampleFast
+	ResampleBest
+	ResamplePng
+)
+
+var ResampleMethods = map[ResampleOption]string{
+	ResampleFillCenter:      "center",
+	ResampleFillTopLeft:     "left",
+	ResampleFillBottomRight: "right",
+	ResampleFit:             "fit",
+	ResampleResize:          "resize",
+}
+
+type ThumbnailType struct {
+	Source  string
+	Width   int
+	Height  int
+	Options []ResampleOption
+}
+
+var ThumbnailTypes = map[string]ThumbnailType{
+	"tile_50":    {"tile_500", 50, 50, []ResampleOption{ResampleFillCenter, ResampleBest}},
+	"tile_100":   {"tile_500", 100, 100, []ResampleOption{ResampleFillCenter, ResampleBest}},
+	"tile_500":   {"", 500, 500, []ResampleOption{ResampleFillCenter, ResampleBest}},
+	"colors":     {"fit_720", 3, 3, []ResampleOption{ResampleResize, ResampleFast, ResamplePng}},
+	"center_224": {"fit_720", 224, 224, []ResampleOption{ResampleFillCenter, ResampleBest}},
+	"left_224":   {"fit_720", 224, 224, []ResampleOption{ResampleFillTopLeft, ResampleBest}},
+	"right_224":  {"fit_720", 224, 224, []ResampleOption{ResampleFillBottomRight, ResampleBest}},
+	"fit_720":    {"", 720, 720, []ResampleOption{ResampleFit, ResampleBest}},
+	"fit_1280":   {"", 1280, 1280, []ResampleOption{ResampleFit, ResampleBest}},
+	"fit_1920":   {"", 1920, 1920, []ResampleOption{ResampleFit, ResampleBest}},
+	"fit_2560":   {"", 2560, 2560, []ResampleOption{ResampleFit, ResampleBest}},
+	"fit_3540":   {"", 3840, 3840, []ResampleOption{ResampleFit, ResampleBest}},
+}
+
+var DefaultThumbnails = []string{
+	"fit_3540", "fit_2560", "fit_1920", "fit_1280", "fit_720", "right_224", "left_224", "center_224", "colors", "tile_500", "tile_100", "tile_50",
+}
+
+// CreateThumbnailsFromOriginals creates default thumbnails for all originals.
+func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, force bool) error {
 	err := filepath.Walk(originalsPath, func(filename string, fileInfo os.FileInfo, err error) error {
 		if err != nil || fileInfo.IsDir() || strings.HasPrefix(filepath.Base(filename), ".") {
 			return nil
@@ -25,102 +82,244 @@ func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, 
 			return nil
 		}
 
-		if square {
-			if thumbnail, err := mediaFile.SquareThumbnail(thumbnailsPath, size); err != nil {
-				log.Errorf("could not create thumbnail: %s", err.Error())
-			} else {
-				log.Infof("created %dx%d thumbnail for \"%s\"", thumbnail.Width(), thumbnail.Height(), mediaFile.RelativeFilename(originalsPath))
-			}
-		} else {
-			if thumbnail, err := mediaFile.Thumbnail(thumbnailsPath, size); err != nil {
-				log.Errorf("could not create thumbnail: %s", err.Error())
-			} else {
-				log.Infof("created %dx%d thumbnail for \"%s\"", thumbnail.Width(), thumbnail.Height(), mediaFile.RelativeFilename(originalsPath))
-			}
+		if err := mediaFile.CreateDefaultThumbnails(thumbnailsPath, force); err != nil {
+			log.Errorf("could not create default thumbnails: %s", err)
+			return err
 		}
 
 		return nil
 	})
 
 	if err != nil {
-		log.Error(err.Error())
-	}
-}
-
-// Thumbnail get the thumbnail for a path.
-func (m *MediaFile) Thumbnail(path string, size int) (result *MediaFile, err error) {
-	canonicalName := m.CanonicalName()
-	dateCreated := m.DateCreated()
-
-	thumbnailPath := fmt.Sprintf("%s/%dpx/%s", path, size, dateCreated.UTC().Format("2006/01"))
-
-	os.MkdirAll(thumbnailPath, os.ModePerm)
-
-	thumbnailFilename := fmt.Sprintf("%s/%s_%dpx.jpg", thumbnailPath, canonicalName, size)
-
-	if util.Exists(thumbnailFilename) {
-		return NewMediaFile(thumbnailFilename)
+		log.Error(err)
 	}
 
-	return m.CreateThumbnail(thumbnailFilename, size)
+	return err
 }
 
-// CreateThumbnail Resize preserving the aspect ratio
-func (m *MediaFile) CreateThumbnail(filename string, size int) (result *MediaFile, err error) {
-	img, err := imaging.Open(m.filename, imaging.AutoOrientation(true))
+// Thumbnail returns a thumbnail filename.
+func (m *MediaFile) Thumbnail(path string, typeName string) (filename string, err error) {
+	thumbType, ok := ThumbnailTypes[typeName]
+
+	if !ok {
+		log.Errorf("invalid type: %s", typeName)
+		return "", fmt.Errorf("invalid type: %s", typeName)
+	}
+
+	thumbnail, err := ThumbnailFromFile(m.Filename(), m.Hash(), path, thumbType.Width, thumbType.Height, thumbType.Options...)
 
 	if err != nil {
-		log.Errorf("can't open original: %s", err.Error())
+		log.Errorf("could not create thumbnail: %s", err)
+		return "", fmt.Errorf("could not create thumbnail: %s", err)
+	}
+
+	return thumbnail, nil
+}
+
+// Thumbnail returns a resampled image of the file.
+func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err error) {
+	filename, err := m.Thumbnail(path, typeName)
+
+	if err != nil {
 		return nil, err
 	}
 
-	img = imaging.Fit(img, size, size, imaging.Lanczos)
-
-	err = imaging.Save(img, filename)
-
-	if err != nil {
-		log.Fatalf("failed to save thumbnail: %v", err)
-		return nil, err
-	}
-
-	return NewMediaFile(filename)
+	return imaging.Open(filename, imaging.AutoOrientation(true))
 }
 
-// SquareThumbnail return the square thumbnail for a path and size.
-func (m *MediaFile) SquareThumbnail(path string, size int) (result *MediaFile, err error) {
-	canonicalName := m.CanonicalName()
-	dateCreated := m.DateCreated()
+func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format string) {
+	method = ResampleFit
+	filter = imaging.Lanczos
+	format = FileTypeJpeg
 
-	thumbnailPath := fmt.Sprintf("%s/square/%dpx/%s", path, size, dateCreated.UTC().Format("2006/01"))
-
-	os.MkdirAll(thumbnailPath, os.ModePerm)
-
-	thumbnailFilename := fmt.Sprintf("%s/%s_square_%dpx.jpg", thumbnailPath, canonicalName, size)
-
-	if util.Exists(thumbnailFilename) {
-		return NewMediaFile(thumbnailFilename)
+	for _, option := range opts {
+		switch option {
+		case ResamplePng:
+			format = FileTypePng
+		case ResampleFast:
+			filter = imaging.NearestNeighbor
+		case ResampleBest:
+			filter = imaging.Lanczos
+		case ResampleFillTopLeft:
+			method = ResampleFillTopLeft
+		case ResampleFillCenter:
+			method = ResampleFillCenter
+		case ResampleFillBottomRight:
+			method = ResampleFillBottomRight
+		case ResampleFit:
+			method = ResampleFit
+		case ResampleResize:
+			method = ResampleResize
+		default:
+			panic(fmt.Errorf("not a valid resample option: %d", option))
+		}
 	}
 
-	return m.CreateSquareThumbnail(thumbnailFilename, size)
+	return method, filter, format
 }
 
-// CreateSquareThumbnail Resize and crop to square format
-func (m *MediaFile) CreateSquareThumbnail(filename string, size int) (result *MediaFile, err error) {
-	img, err := imaging.Open(m.filename, imaging.AutoOrientation(true))
+func Resample(img image.Image, width, height int, opts ...ResampleOption) (result image.Image) {
+	method, filter, _ := ResampleOptions(opts...)
 
-	if err != nil {
-		log.Errorf("can't open original: %s", err.Error())
-		return nil, err
+	if method == ResampleFit {
+		result = imaging.Fit(img, width, height, filter)
+	} else if method == ResampleFillCenter {
+		result = imaging.Fill(img, width, height, imaging.Center, filter)
+	} else if method == ResampleFillTopLeft {
+		result = imaging.Fill(img, width, height, imaging.TopLeft, filter)
+	} else if method == ResampleFillBottomRight {
+		result = imaging.Fill(img, width, height, imaging.BottomRight, filter)
+	} else if method == ResampleResize {
+		result = imaging.Resize(img, width, height, filter)
 	}
 
-	img = imaging.Fill(img, size, size, imaging.Center, imaging.Lanczos)
+	return result
+}
 
-	err = imaging.Save(img, filename)
+func ThumbnailPostfix(width, height int, opts ...ResampleOption) (result string) {
+	method, _, format := ResampleOptions(opts...)
 
-	if err != nil {
-		log.Fatalf("failed to save thumbnail: %v", err)
-		return nil, err
+	result = fmt.Sprintf("%dx%d_%s.%s", width, height, ResampleMethods[method], format)
+
+	return result
+}
+
+func ThumbnailFilename(hash string, thumbPath string, width, height int, opts ...ResampleOption) (filename string, err error) {
+	if width < 0 || width > MaxThumbWidth {
+		return "", fmt.Errorf("width has an invalid value: %d", width)
 	}
 
-	return NewMediaFile(filename)
+	if height < 0 || height > MaxThumbHeight {
+		return "", fmt.Errorf("height has an invalid value: %d", height)
+	}
+
+	if len(hash) < 4 {
+		return "", fmt.Errorf("file hash is empty or too short: %s", hash)
+	}
+
+	if len(thumbPath) == 0 {
+		return "", fmt.Errorf("thumbnail path is empty: %s", thumbPath)
+	}
+
+	postfix := ThumbnailPostfix(width, height, opts...)
+	path := fmt.Sprintf("%s/%s/%s/%s", thumbPath, hash[0:1], hash[1:2], hash[2:3])
+
+	if err := os.MkdirAll(path, os.ModePerm); err != nil {
+		return "", err
+	}
+
+	filename = fmt.Sprintf("%s/%s_%s", path, hash, postfix)
+
+	return filename, nil
+}
+
+func ThumbnailFromFile(imageFilename string, hash string, thumbPath string, width, height int, opts ...ResampleOption) (fileName string, err error) {
+	if len(hash) < 4 {
+		return "", fmt.Errorf("file hash is empty or too short: %s", hash)
+	}
+
+	if len(imageFilename) < 4 {
+		return "", fmt.Errorf("image filename is empty or too short: %s", imageFilename)
+	}
+
+	fileName, err = ThumbnailFilename(hash, thumbPath, width, height, opts...)
+
+	if err != nil {
+		log.Errorf("can't determine thumb filename: %s", err)
+		return "", err
+	}
+
+	if util.Exists(fileName) {
+		return fileName, nil
+	}
+
+	img, err := imaging.Open(imageFilename, imaging.AutoOrientation(true))
+
+	if err != nil {
+		log.Errorf("can't open original: %s", err)
+		return "", err
+	}
+
+	if _, err := CreateThumbnail(img, fileName, width, height, opts...); err != nil {
+		return "", err
+	}
+
+	return fileName, nil
+}
+
+func CreateThumbnail(img image.Image, fileName string, width, height int, opts ...ResampleOption) (result image.Image, err error) {
+	if width < 0 || width > MaxThumbWidth {
+		return img, fmt.Errorf("width has an invalid value: %d", width)
+	}
+
+	if height < 0 || height > MaxThumbHeight {
+		return img, fmt.Errorf("height has an invalid value: %d", height)
+	}
+
+	result = Resample(img, width, height, opts...)
+
+	var saveOption imaging.EncodeOption
+
+	if filepath.Ext(fileName) == "." + FileTypePng {
+		saveOption = imaging.PNGCompressionLevel(png.DefaultCompression)
+	} else if width <= 150 && height <= 150 {
+		saveOption = imaging.JPEGQuality(JpegQualitySmall)
+	} else {
+		saveOption = imaging.JPEGQuality(JpegQuality)
+	}
+
+	err = imaging.Save(result, fileName, saveOption)
+
+	if err != nil {
+		log.Errorf("failed to save thumbnail: %v", err)
+		return result, err
+	}
+
+	return result, nil
+}
+
+func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err error) {
+	defer util.ProfileTime(time.Now(), fmt.Sprintf("creating default thumbnails for \"%s\"", m.Filename()))
+
+	hash := m.Hash()
+
+	img, err := imaging.Open(m.Filename(), imaging.AutoOrientation(true))
+
+	if err != nil {
+		log.Errorf("can't open original: %s", err)
+		return err
+	}
+
+	var sourceImg image.Image
+	var sourceImgType string
+
+	for _, name := range DefaultThumbnails {
+		thumbType := ThumbnailTypes[name]
+
+		if fileName, err := ThumbnailFilename(hash, thumbPath, thumbType.Width, thumbType.Height, thumbType.Options...); err != nil {
+			log.Errorf("could not create default %s thumbnail: \"%s\"", name, err)
+
+			return err
+		} else {
+			if !force && util.Exists(fileName) {
+				continue
+			}
+
+			if sourceImg != nil && thumbType.Source == sourceImgType {
+				_, err = CreateThumbnail(sourceImg, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+			} else if thumbType.Source != "" {
+				_, err = CreateThumbnail(img, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+			} else {
+				sourceImg, err = CreateThumbnail(img, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+				sourceImgType = name
+			}
+
+			if err != nil {
+				log.Errorf("could not create default %s thumbnail: \"%s\"", name, err)
+				return err
+			}
+		}
+	}
+
+	return nil
 }

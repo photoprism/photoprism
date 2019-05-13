@@ -142,3 +142,23 @@ func Download(filepath string, url string) error {
 
 	return nil
 }
+
+
+func DirectoryIsEmpty(path string) bool {
+	f, err := os.Open(path)
+
+	if err != nil {
+		return false
+	}
+
+	defer f.Close()
+
+	_, err = f.Readdirnames(1)
+
+	if err == io.EOF {
+		return true
+	}
+
+	return false
+}
+

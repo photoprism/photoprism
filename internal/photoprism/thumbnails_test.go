@@ -1,44 +1,33 @@
 package photoprism
 
 import (
+	"os"
 	"testing"
 
+	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/models"
+
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMediaFile_Thumbnail(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.CreateDirectories()
+	if err := conf.CreateDirectories(); err != nil {
+		t.Error(err)
+	}
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	image1, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
+	image, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
 	assert.Nil(t, err)
 
-	thumbnail1, err := image1.Thumbnail(ctx.ThumbnailsPath(), 350)
+	thumbnail, err := image.Thumbnail(conf.ThumbnailsPath(), "tile_500")
 
 	assert.Empty(t, err)
 
-	assert.IsType(t, &MediaFile{}, thumbnail1)
-}
-
-func TestMediaFile_SquareThumbnail(t *testing.T) {
-	ctx := config.TestConfig()
-
-	ctx.CreateDirectories()
-
-	ctx.InitializeTestData(t)
-
-	image1, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
-	assert.Nil(t, err)
-
-	thumbnail1, err := image1.SquareThumbnail(ctx.ThumbnailsPath(), 350)
-
-	assert.Empty(t, err)
-
-	assert.IsType(t, &MediaFile{}, thumbnail1)
+	assert.FileExists(t, thumbnail)
 }
 
 func TestCreateThumbnailsFromOriginals(t *testing.T) {
@@ -46,23 +35,105 @@ func TestCreateThumbnailsFromOriginals(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.CreateDirectories()
+	if err := conf.CreateDirectories(); err != nil {
+		t.Error(err)
+	}
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
 
-	indexer := NewIndexer(ctx.OriginalsPath(), tensorFlow, ctx.Db())
+	indexer := NewIndexer(conf, tensorFlow)
 
-	converter := NewConverter(ctx.DarktableCli())
+	converter := NewConverter(conf.DarktableCli())
 
-	importer := NewImporter(ctx.OriginalsPath(), indexer, converter)
+	importer := NewImporter(conf, indexer, converter)
 
-	importer.ImportPhotosFromDirectory(ctx.ImportPath())
+	importer.ImportPhotosFromDirectory(conf.ImportPath())
 
-	CreateThumbnailsFromOriginals(ctx.OriginalsPath(), ctx.ThumbnailsPath(), 600, false)
+	err := CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), true)
 
-	CreateThumbnailsFromOriginals(ctx.OriginalsPath(), ctx.ThumbnailsPath(), 300, true)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestResampleFile(t *testing.T) {
+	conf := config.TestConfig()
+
+	if err := conf.CreateDirectories(); err != nil {
+		t.Error(err)
+	}
+
+	conf.InitializeTestData(t)
+
+	fileModel := &models.File{
+		FileName: "testdata/chameleon_lime.jpg",
+		FileHash: "123456789",
+	}
+
+	thumb, err := ThumbnailFromFile(fileModel.FileName, fileModel.FileHash, conf.ThumbnailsPath(), 224, 224)
+	assert.Nil(t, err)
+
+	assert.IsType(t, "", thumb)
+}
+
+func TestCreateThumbnail(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	thumbsPath := "testdata/_tmp"
+
+	defer os.RemoveAll(thumbsPath)
+
+	expectedFilename, err := ThumbnailFilename("1234","testdata/_tmp", 150, 150, ResampleFit, ResampleFast)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	img, err := imaging.Open("testdata/6720px_white.jpg", imaging.AutoOrientation(true))
+
+	if err != nil {
+		t.Errorf("can't open original: %s", err)
+	}
+
+	thumb, err := CreateThumbnail(img, expectedFilename, 150, 150, ResampleFit, ResampleFast)
+
+	assert.Empty(t, err)
+
+	assert.NotNil(t, thumb)
+
+	bounds := thumb.Bounds()
+
+	assert.Equal(t, 150, bounds.Dx())
+	assert.Equal(t, 100, bounds.Dy())
+
+	assert.FileExists(t, expectedFilename)
+}
+
+func TestMediaFile_CreateDefaultThumbnails(t *testing.T) {
+	thumbsPath := "testdata/_tmp"
+
+	defer os.RemoveAll(thumbsPath)
+
+	m, err := NewMediaFile("testdata/chameleon_lime.jpg")
+	assert.Nil(t, err)
+
+	err = m.CreateDefaultThumbnails(thumbsPath, true)
+
+	assert.Empty(t, err)
+
+	thumbFilename, err := ThumbnailFilename(m.Hash(), thumbsPath, ThumbnailTypes["tile_50"].Width, ThumbnailTypes["tile_50"].Height, ThumbnailTypes["tile_50"].Options...)
+
+	assert.Empty(t, err)
+
+	assert.FileExists(t, thumbFilename)
+
+	err = m.CreateDefaultThumbnails(thumbsPath, false)
+
+	assert.Empty(t, err)
 }

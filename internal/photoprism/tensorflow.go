@@ -175,7 +175,7 @@ func (t *TensorFlow) makeTensorFromImage(image []byte, imageFormat string) (*tf.
 
 	width, height := 224, 224
 
-	img = imaging.Fill(img, width, height, imaging.Center, imaging.CatmullRom)
+	img = imaging.Fill(img, width, height, imaging.Center, imaging.Lanczos)
 
 	return imageToTensorTF(img, width, height)
 }

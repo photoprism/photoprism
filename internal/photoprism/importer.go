@@ -2,21 +2,21 @@ package photoprism
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"path"
 	"path/filepath"
 	"sort"
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/config"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/util"
 )
 
-// Importer todo: Fill me.
+// Importer is responsible for importing new files to originals.
 type Importer struct {
-	originalsPath          string
+	conf                   *config.Config
 	indexer                *Indexer
 	converter              *Converter
 	removeDotFiles         bool
@@ -25,9 +25,9 @@ type Importer struct {
 }
 
 // NewImporter returns a new importer.
-func NewImporter(originalsPath string, indexer *Indexer, converter *Converter) *Importer {
+func NewImporter(conf *config.Config, indexer *Indexer, converter *Converter) *Importer {
 	instance := &Importer{
-		originalsPath:          originalsPath,
+		conf:                   conf,
 		indexer:                indexer,
 		converter:              converter,
 		removeDotFiles:         true,
@@ -36,6 +36,10 @@ func NewImporter(originalsPath string, indexer *Indexer, converter *Converter) *
 	}
 
 	return instance
+}
+
+func (i *Importer) originalsPath() string {
+	return i.conf.OriginalsPath()
 }
 
 // ImportPhotosFromDirectory imports all the photos from a given directory path.
@@ -105,7 +109,17 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 			}
 
 			if importedMainFile.IsRaw() {
-				i.converter.ConvertToJpeg(importedMainFile)
+				if _, err := i.converter.ConvertToJpeg(importedMainFile); err != nil {
+					log.Errorf("could not create jpeg from raw: %s", err)
+				}
+			}
+
+			if jpg, err := importedMainFile.Jpeg(); err != nil {
+				log.Error(err)
+			} else {
+				if err := jpg.CreateDefaultThumbnails(i.conf.ThumbnailsPath(), false); err != nil {
+					log.Errorf("could not create default thumbnails: %s", err)
+				}
 			}
 
 			i.indexer.IndexRelated(importedMainFile)
@@ -121,7 +135,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 	if i.removeEmptyDirectories {
 		// Remove empty directories from import path
 		for _, directory := range directories {
-			if directoryIsEmpty(directory) {
+			if util.DirectoryIsEmpty(directory) {
 				if err := os.Remove(directory); err != nil {
 					log.Errorf("could not deleted empty directory \"%s\": %s", directory, err)
 				} else {
@@ -143,7 +157,7 @@ func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	dateCreated := mainFile.DateCreated()
 
 	//	Mon Jan 2 15:04:05 -0700 MST 2006
-	pathName := i.originalsPath + "/" + dateCreated.UTC().Format("2006/01")
+	pathName := i.originalsPath() + "/" + dateCreated.UTC().Format("2006/01")
 
 	iteration := 0
 
@@ -160,22 +174,4 @@ func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	}
 
 	return result, nil
-}
-
-func directoryIsEmpty(path string) bool {
-	f, err := os.Open(path)
-
-	if err != nil {
-		return false
-	}
-
-	defer f.Close()
-
-	_, err = f.Readdirnames(1)
-
-	if err == io.EOF {
-		return true
-	}
-
-	return false
 }

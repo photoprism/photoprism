@@ -8,33 +8,33 @@ import (
 )
 
 func TestNewImporter(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
 
-	indexer := NewIndexer(ctx.OriginalsPath(), tensorFlow, ctx.Db())
+	indexer := NewIndexer(conf, tensorFlow)
 
-	converter := NewConverter(ctx.DarktableCli())
+	converter := NewConverter(conf.DarktableCli())
 
-	importer := NewImporter(ctx.OriginalsPath(), indexer, converter)
+	importer := NewImporter(conf, indexer, converter)
 
 	assert.IsType(t, &Importer{}, importer)
 }
 
 func TestImporter_DestinationFilename(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
 
-	indexer := NewIndexer(ctx.OriginalsPath(), tensorFlow, ctx.Db())
+	indexer := NewIndexer(conf, tensorFlow)
 
-	converter := NewConverter(ctx.DarktableCli())
+	converter := NewConverter(conf.DarktableCli())
 
-	importer := NewImporter(ctx.OriginalsPath(), indexer, converter)
+	importer := NewImporter(conf, indexer, converter)
 
-	rawFile, err := NewMediaFile(ctx.ImportPath() + "/raw/IMG_1435.CR2")
+	rawFile, err := NewMediaFile(conf.ImportPath() + "/raw/IMG_1435.CR2")
 
 	assert.Nil(t, err)
 
@@ -42,7 +42,7 @@ func TestImporter_DestinationFilename(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	assert.Equal(t, ctx.OriginalsPath()+"/2018/02/20180204_170813_863A6248DCCA.cr2", filename)
+	assert.Equal(t, conf.OriginalsPath()+"/2018/02/20180204_170813_863A6248DCCA.cr2", filename)
 }
 
 func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
@@ -50,17 +50,17 @@ func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
 
-	indexer := NewIndexer(ctx.OriginalsPath(), tensorFlow, ctx.Db())
+	indexer := NewIndexer(conf, tensorFlow)
 
-	converter := NewConverter(ctx.DarktableCli())
+	converter := NewConverter(conf.DarktableCli())
 
-	importer := NewImporter(ctx.OriginalsPath(), indexer, converter)
+	importer := NewImporter(conf, indexer, converter)
 
-	importer.ImportPhotosFromDirectory(ctx.ImportPath())
+	importer.ImportPhotosFromDirectory(conf.ImportPath())
 }

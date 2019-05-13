@@ -7,7 +7,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"io"
-	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -29,6 +28,8 @@ const (
 	FileTypeYaml = "yml"
 	// FileTypeJpeg is a jpeg file format.
 	FileTypeJpeg = "jpg"
+	// FileTypePng is a png file format.
+	FileTypePng = "png"
 	// FileTypeRaw is a raw file format.
 	FileTypeRaw = "raw"
 	// FileTypeXmp is an xmp file format.
@@ -522,14 +523,23 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 }
 
 func (m *MediaFile) decodeDimensions() error {
+	if !m.IsPhoto() {
+		return fmt.Errorf("not a photo: %s", m.Filename())
+	}
+
+	var width, height int
+
+	exif, err := m.ExifData()
+
+	if err == nil {
+		width = exif.Width
+		height = exif.Height
+	}
+
 	if m.IsJpeg() {
 		file, err := os.Open(m.Filename())
 
 		defer file.Close()
-
-		if err != nil {
-			return err
-		}
 
 		size, _, err := image.DecodeConfig(file)
 
@@ -537,17 +547,16 @@ func (m *MediaFile) decodeDimensions() error {
 			return err
 		}
 
-		m.width = size.Width
-		m.height = size.Height
+		width = size.Width
+		height = size.Height
+	}
+
+	if m.Orientation() > 4 {
+		m.width = height
+		m.height = width
 	} else {
-		exif, err := m.ExifData()
-
-		if err != nil {
-			return err
-		}
-
-		m.width = exif.Width
-		m.height = exif.Height
+		m.width = width
+		m.height = height
 	}
 
 	return nil
@@ -594,7 +603,7 @@ func (m *MediaFile) AspectRatio() float64 {
 
 	aspectRatio := width / height
 
-	return math.Round(aspectRatio*100) / 100
+	return aspectRatio
 }
 
 // Orientation returns the orientation of a mediafile.

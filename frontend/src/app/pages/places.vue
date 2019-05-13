@@ -132,8 +132,8 @@
                             clickable: true,
                         },
                         icon: L.icon({
-                            iconUrl: result.getThumbnailUrl('square', 50),
-                            iconRetinaUrl: result.getThumbnailUrl('square', 100),
+                            iconUrl: result.getThumbnailUrl('tile_50'),
+                            iconRetinaUrl: result.getThumbnailUrl('tile_100'),
                             iconSize: [50, 50],
                             className: 'leaflet-marker-photo',
                         }),

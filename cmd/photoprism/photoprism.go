@@ -28,7 +28,6 @@ func main() {
 		commands.IndexCommand,
 		commands.ConvertCommand,
 		commands.ThumbnailsCommand,
-		commands.ExportCommand,
 		commands.VersionCommand,
 	}
 
