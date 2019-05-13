@@ -1,7 +1,6 @@
 package photoprism
 
 import (
-	"os"
 	"testing"
 
 	"github.com/disintegration/imaging"
@@ -120,24 +119,28 @@ func TestCreateThumbnail(t *testing.T) {
 }
 
 func TestMediaFile_CreateDefaultThumbnails(t *testing.T) {
-	thumbsPath := "testdata/_tmp"
+	conf := config.TestConfig()
 
-	defer os.RemoveAll(thumbsPath)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Error(err)
+	}
 
-	m, err := NewMediaFile("testdata/chameleon_lime.jpg")
+	conf.InitializeTestData(t)
+
+	m, err := NewMediaFile(conf.ImportPath() + "/dog.jpg")
 	assert.Nil(t, err)
 
-	err = m.CreateDefaultThumbnails(thumbsPath, true)
+	err = m.CreateDefaultThumbnails(conf.ThumbnailsPath(), true)
 
 	assert.Empty(t, err)
 
-	thumbFilename, err := ThumbnailFilename(m.Hash(), thumbsPath, ThumbnailTypes["tile_50"].Width, ThumbnailTypes["tile_50"].Height, ThumbnailTypes["tile_50"].Options...)
+	thumbFilename, err := ThumbnailFilename(m.Hash(), conf.ThumbnailsPath(), ThumbnailTypes["tile_50"].Width, ThumbnailTypes["tile_50"].Height, ThumbnailTypes["tile_50"].Options...)
 
 	assert.Empty(t, err)
 
 	assert.FileExists(t, thumbFilename)
 
-	err = m.CreateDefaultThumbnails(thumbsPath, false)
+	err = m.CreateDefaultThumbnails(conf.ThumbnailsPath(), false)
 
 	assert.Empty(t, err)
 }
