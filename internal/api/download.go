@@ -11,23 +11,13 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
-// GET /api/v1/thumbnails/:hash/:type
+// GET /api/v1/download/:hash
 //
 // Parameters:
 //   hash: string The file hash as returned by the search API
-//   type: string Thumbnail type, see photoprism.ThumbnailTypes
-func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/thumbnails/:hash/:type", func(c *gin.Context) {
+func GetDownload(router *gin.RouterGroup, conf *config.Config) {
+	router.GET("/download/:hash", func(c *gin.Context) {
 		fileHash := c.Param("hash")
-		typeName := c.Param("type")
-
-		thumbType, ok := photoprism.ThumbnailTypes[typeName]
-
-		if !ok {
-			log.Errorf("invalid type: %s", typeName)
-			c.Data(400, "image/svg+xml", photoIconSvg)
-			return
-		}
 
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 		file, err := search.FindFileByHash(fileHash)
@@ -40,7 +30,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
 
 		if !util.Exists(fileName) {
-			log.Errorf("could not find original for thumbnail: %s", fileName)
+			log.Errorf("could not find original: %s", fileHash)
 			c.Data(404, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
@@ -49,11 +39,10 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if thumbnail, err := photoprism.ThumbnailFromFile(fileName, file.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
-			c.File(thumbnail)
-		} else {
-			log.Errorf("could not create thumbnail: %s", err)
-			c.Data(400, "image/svg+xml", photoIconSvg)
-		}
+		downloadFileName := file.DownloadFileName(conf.Db())
+
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFileName))
+
+		c.File(fileName)
 	})
 }

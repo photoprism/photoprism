@@ -38,6 +38,10 @@ class Photo extends Abstract {
         return "/api/v1/thumbnails/" + this.FileHash + "/" + type;
     }
 
+    getDownloadUrl() {
+        return "/api/v1/download/" + this.FileHash;
+    }
+
     getThumbnailSrcset() {
         const result = [];
 

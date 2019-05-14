@@ -12,7 +12,11 @@ class Gallery {
     }
 
     createPhotoSizes(photo) {
-        const result = {};
+        const result = {
+            title: photo.PhotoTitle,
+            download_url: photo.getDownloadUrl(),
+        };
+
         const thumbs = window.appConfig.thumbnails;
 
         for (let i = 0; i < thumbs.length; i++) {
@@ -22,7 +26,6 @@ class Gallery {
                 src: photo.getThumbnailUrl(thumbs[i].Name),
                 w: size.width,
                 h: size.height,
-                title: photo.PhotoTitle,
             };
         }
 
@@ -55,24 +58,25 @@ class Gallery {
 
 
         const shareButtons = [
-            {id:"download", label:"Download image", url:"foo", download:true},
+            {id: "download", label: "Download image", url: "{{raw_image_url}}", download: true},
         ];
 
         const options = {
             index: index,
             history: false,
-            preload: [1,1],
+            preload: [1, 1],
             focus: true,
             modal: true,
             closeEl: true,
             captionEl: true,
             fullscreenEl: true,
             zoomEl: true,
-            shareEl: false,
+            shareEl: true,
             shareButtons: shareButtons,
             counterEl: false,
             arrowEl: true,
             preloaderEl: true,
+            getImageURLForShare: function() { return gallery.currItem.download_url},
         };
 
         let photosWithSizes = this.photosWithSizes();
@@ -115,7 +119,6 @@ class Gallery {
             item.src = item[nextSize].src;
             item.w = item[nextSize].w;
             item.h = item[nextSize].h;
-            item.title = item[nextSize].title;
             previousSize = nextSize;
         });
 
