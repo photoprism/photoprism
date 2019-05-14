@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/config"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/disintegration/imaging"
@@ -47,26 +48,37 @@ type ThumbnailType struct {
 	Source  string
 	Width   int
 	Height  int
+	Public  bool
 	Options []ResampleOption
 }
 
 var ThumbnailTypes = map[string]ThumbnailType{
-	"tile_50":    {"tile_500", 50, 50, []ResampleOption{ResampleFillCenter, ResampleLanczos}},
-	"tile_100":   {"tile_500", 100, 100, []ResampleOption{ResampleFillCenter, ResampleLanczos}},
-	"tile_500":   {"", 500, 500, []ResampleOption{ResampleFillCenter, ResampleLanczos}},
-	"colors":     {"fit_720", 3, 3, []ResampleOption{ResampleResize, ResampleNearestNeighbor, ResamplePng}},
-	"center_224": {"fit_720", 224, 224, []ResampleOption{ResampleFillCenter, ResampleLanczos}},
-	"left_224":   {"fit_720", 224, 224, []ResampleOption{ResampleFillTopLeft, ResampleLanczos}},
-	"right_224":  {"fit_720", 224, 224, []ResampleOption{ResampleFillBottomRight, ResampleLanczos}},
-	"fit_720":    {"", 720, 720, []ResampleOption{ResampleFit, ResampleLanczos}},
-	"fit_1280":   {"", 1280, 1280, []ResampleOption{ResampleFit, ResampleLanczos}},
-	"fit_1920":   {"", 1920, 1920, []ResampleOption{ResampleFit, ResampleLanczos}},
-	"fit_2560":   {"", 2560, 2560, []ResampleOption{ResampleFit, ResampleLanczos}},
-	"fit_3840":   {"", 3840, 3840, []ResampleOption{ResampleFit, ResampleLanczos}},
+	"tile_50":    {"tile_500", 50, 50, false, []ResampleOption{ResampleFillCenter, ResampleLanczos}},
+	"tile_100":   {"tile_500", 100, 100, false, []ResampleOption{ResampleFillCenter, ResampleLanczos}},
+	"tile_500":   {"", 500, 500, false, []ResampleOption{ResampleFillCenter, ResampleLanczos}},
+	"colors":     {"fit_720", 3, 3, false, []ResampleOption{ResampleResize, ResampleNearestNeighbor, ResamplePng}},
+	"center_224": {"fit_720", 224, 224, false, []ResampleOption{ResampleFillCenter, ResampleLanczos}},
+	"left_224":   {"fit_720", 224, 224, false, []ResampleOption{ResampleFillTopLeft, ResampleLanczos}},
+	"right_224":  {"fit_720", 224, 224, false, []ResampleOption{ResampleFillBottomRight, ResampleLanczos}},
+	"fit_720":    {"", 720, 720, true, []ResampleOption{ResampleFit, ResampleLanczos}},
+	"fit_1280":   {"fit_2048", 1280, 1024, true, []ResampleOption{ResampleFit, ResampleLanczos}},
+	"fit_1920":   {"fit_2048", 1920, 1200, true, []ResampleOption{ResampleFit, ResampleLanczos}},
+	"fit_2048":   {"", 2048, 2048, true, []ResampleOption{ResampleFit, ResampleLanczos}},
+	"fit_2560":   {"", 2560, 1600, true, []ResampleOption{ResampleFit, ResampleLanczos}},
+	"fit_3840":   {"", 3840, 2400, true, []ResampleOption{ResampleFit, ResampleLanczos}},
 }
 
 var DefaultThumbnails = []string{
-	"fit_3840", "fit_2560", "fit_1920", "fit_1280", "fit_720", "right_224", "left_224", "center_224", "colors", "tile_500", "tile_100", "tile_50",
+	"fit_3840", "fit_2560", "fit_2048", "fit_1920", "fit_1280", "fit_720", "right_224", "left_224", "center_224", "colors", "tile_500", "tile_100", "tile_50",
+}
+
+func init() {
+	for name, t := range ThumbnailTypes {
+		if t.Public {
+			thumb := config.Thumbnail{Name: name, Width: t.Width, Height: t.Height}
+			config.Thumbnails = append(config.Thumbnails, thumb)
+		}
+	}
 }
 
 // CreateThumbnailsFromOriginals creates default thumbnails for all originals.
@@ -260,7 +272,7 @@ func CreateThumbnail(img image.Image, fileName string, width, height int, opts .
 
 	var saveOption imaging.EncodeOption
 
-	if filepath.Ext(fileName) == "." + FileTypePng {
+	if filepath.Ext(fileName) == "."+FileTypePng {
 		saveOption = imaging.PNGCompressionLevel(png.DefaultCompression)
 	} else if width <= 150 && height <= 150 {
 		saveOption = imaging.JPEGQuality(JpegQualitySmall)
@@ -279,7 +291,7 @@ func CreateThumbnail(img image.Image, fileName string, width, height int, opts .
 }
 
 func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err error) {
-	defer util.ProfileTime(time.Now(), fmt.Sprintf("creating default thumbnails for \"%s\"", m.Filename()))
+	defer util.ProfileTime(time.Now(), fmt.Sprintf("creating thumbnails for \"%s\"", m.Filename()))
 
 	hash := m.Hash()
 
@@ -297,7 +309,7 @@ func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err e
 		thumbType := ThumbnailTypes[name]
 
 		if fileName, err := ThumbnailFilename(hash, thumbPath, thumbType.Width, thumbType.Height, thumbType.Options...); err != nil {
-			log.Errorf("could not create default %s thumbnail: \"%s\"", name, err)
+			log.Errorf("could not create %s thumbnail: \"%s\"", name, err)
 
 			return err
 		} else {
@@ -305,17 +317,19 @@ func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err e
 				continue
 			}
 
-			if sourceImg != nil && thumbType.Source == sourceImgType {
-				_, err = CreateThumbnail(sourceImg, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
-			} else if thumbType.Source != "" {
-				_, err = CreateThumbnail(img, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+			if thumbType.Source != "" {
+				if thumbType.Source == sourceImgType && sourceImg != nil {
+					_, err = CreateThumbnail(sourceImg, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+				} else {
+					_, err = CreateThumbnail(img, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+				}
 			} else {
 				sourceImg, err = CreateThumbnail(img, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
 				sourceImgType = name
 			}
 
 			if err != nil {
-				log.Errorf("could not create default %s thumbnail: \"%s\"", name, err)
+				log.Errorf("could not create %s thumbnail: \"%s\"", name, err)
 				return err
 			}
 		}

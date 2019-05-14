@@ -50,20 +50,26 @@ class Photo extends Abstract {
         return result.join(", ");
     }
 
-    calculateWidth(size) {
-        if(this.FileAspectRatio < 1) {
-            return Math.round(size * this.FileAspectRatio);
-        } else {
-            return size;
+    calculateSize(width, height) {
+        if(width >= this.FileWidth && height >= this.FileHeight) { // Smaller
+            return {width: this.FileWidth, height: this.FileHeight};
         }
-    }
 
-    calculateHeight(size) {
-        if(this.FileAspectRatio < 1) {
-            return size;
+        const srcAspectRatio = this.FileWidth / this.FileHeight;
+        const maxAspectRatio = width / height;
+
+        let newW, newH;
+
+        if (srcAspectRatio > maxAspectRatio) {
+            newW = width;
+            newH = Math.round(newW / srcAspectRatio);
+
         } else {
-            return Math.round(size / this.FileAspectRatio);
+            newH = height;
+            newW = Math.round(newH * srcAspectRatio);
         }
+
+        return {width: newW, height: newH};
     }
 
     getThumbnailSizes() {

@@ -36,7 +36,9 @@ func initLogger(debug bool) {
 func NewConfig(ctx *cli.Context) *Config {
 	initLogger(ctx.GlobalBool("debug"))
 
-	c := &Config{config: NewParams(ctx)}
+	c := &Config{
+		config: NewParams(ctx),
+	}
 
 	log.SetLevel(c.LogLevel())
 
@@ -381,15 +383,16 @@ func (c *Config) ClientConfig() ClientConfig {
 	cssHash := util.Hash(c.HttpPublicBuildPath() + "/app.css")
 
 	result := ClientConfig{
-		"name":      c.Name(),
-		"version":   c.Version(),
-		"copyright": c.Copyright(),
-		"debug":     c.Debug(),
-		"readonly":  c.ReadOnly(),
-		"cameras":   cameras,
-		"countries": countries,
-		"jsHash":    jsHash,
-		"cssHash":   cssHash,
+		"name":       c.Name(),
+		"version":    c.Version(),
+		"copyright":  c.Copyright(),
+		"debug":      c.Debug(),
+		"readonly":   c.ReadOnly(),
+		"cameras":    cameras,
+		"countries":  countries,
+		"thumbnails": Thumbnails,
+		"jsHash":     jsHash,
+		"cssHash":    cssHash,
 	}
 
 	return result

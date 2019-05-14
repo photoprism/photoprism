@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"time"
+
 	"github.com/photoprism/photoprism/internal/config"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -14,13 +16,17 @@ var MigrateCommand = cli.Command{
 }
 
 func migrateAction(ctx *cli.Context) error {
+	start := time.Now()
+
 	conf := config.NewConfig(ctx)
 
 	log.Infoln("migrating database")
 
 	conf.MigrateDb()
 
-	log.Infoln("database migration complete")
+	elapsed := time.Since(start)
+
+	log.Infof("database migration completed in %s", elapsed)
 
 	conf.Shutdown()
 

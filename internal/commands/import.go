@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"time"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	log "github.com/sirupsen/logrus"
@@ -15,6 +17,8 @@ var ImportCommand = cli.Command{
 }
 
 func importAction(ctx *cli.Context) error {
+	start := time.Now()
+
 	conf := config.NewConfig(ctx)
 
 	if err := conf.CreateDirectories(); err != nil {
@@ -35,7 +39,9 @@ func importAction(ctx *cli.Context) error {
 
 	importer.ImportPhotosFromDirectory(conf.ImportPath())
 
-	log.Info("photo import complete")
+	elapsed := time.Since(start)
+
+	log.Infof("photo import completed in %s", elapsed)
 
 	return nil
 }

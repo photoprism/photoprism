@@ -12,22 +12,21 @@ class Gallery {
     }
 
     createPhotoSizes(photo) {
-        const createPhotoSize = size => {
-            return {
-                src: photo.getThumbnailUrl("fit_" + size),
-                w: photo.calculateWidth(size),
-                h: photo.calculateHeight(size),
-                title: photo.PhotoTitle,
-            }
-        };
+        const result = {};
+        const thumbs = window.appConfig.thumbnails;
 
-        return {
-            s: createPhotoSize(720),
-            m: createPhotoSize(1280),
-            l: createPhotoSize(1920),
-            xl: createPhotoSize(2560),
-            xxl: createPhotoSize(3840),
-        };
+        for (let i = 0; i < thumbs.length; i++) {
+            let size = photo.calculateSize(thumbs[i].Width, thumbs[i].Height);
+
+            result[thumbs[i].Name] = {
+                src: photo.getThumbnailUrl(thumbs[i].Name),
+                w: size.width,
+                h: size.height,
+                title: photo.PhotoTitle,
+            };
+        }
+
+        return result;
     }
 
     getEl() {
@@ -54,10 +53,15 @@ class Gallery {
 
         this.photos = photos;
 
+
+        const shareButtons = [
+            {id:"download", label:"Download image", url:"foo", download:true},
+        ];
+
         const options = {
             index: index,
             history: false,
-            preload: true,
+            preload: [1,1],
             focus: true,
             modal: true,
             closeEl: true,
@@ -65,12 +69,14 @@ class Gallery {
             fullscreenEl: true,
             zoomEl: true,
             shareEl: false,
+            shareButtons: shareButtons,
             counterEl: false,
             arrowEl: true,
             preloaderEl: true,
         };
 
         let photosWithSizes = this.photosWithSizes();
+
         let gallery = new PhotoSwipe(this.getEl(), PhotoSwipeUI_Default, photosWithSizes, options);
         let realViewportWidth;
         let realViewportHeight;
@@ -84,10 +90,11 @@ class Gallery {
             realViewportHeight = gallery.viewportSize.y * window.devicePixelRatio;
 
             if (!previousSize) {
-                previousSize = "m";
+                previousSize = "tile_720";
             }
 
-            nextSize = this.constructor.mapViewportToImageSize(realViewportWidth, realViewportHeight, photosWithSizes[index]);
+            nextSize = this.constructor.mapViewportToImageSize(realViewportWidth, realViewportHeight);
+
             if (nextSize !== previousSize) {
                 photoSrcWillChange = true;
             }
@@ -115,12 +122,16 @@ class Gallery {
         gallery.init();
     }
 
-    static mapViewportToImageSize(viewportWidth, viewportHeight, item) {
-        for (const [sizeKey, photo] of Object.entries(item)) {
-            if (photo.w > viewportWidth || photo.h > viewportHeight) {
-                return sizeKey;
+    static mapViewportToImageSize(viewportWidth, viewportHeight) {
+        const thumbs = window.appConfig.thumbnails;
+
+        for (let i = 0; i < thumbs.length; i++) {
+            if (thumbs[i].Width >= viewportWidth || thumbs[i].Height >= viewportHeight) {
+                return thumbs[i].Name;
             }
         }
+
+        return "fit_720";
     }
 }
 

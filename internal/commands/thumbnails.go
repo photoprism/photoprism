@@ -12,7 +12,7 @@ import (
 // Pre-renders thumbnails
 var ThumbnailsCommand = cli.Command{
 	Name:  "thumbnails",
-	Usage: "Render default thumbnails",
+	Usage: "Render thumbnails for all originals",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",
@@ -23,21 +23,24 @@ var ThumbnailsCommand = cli.Command{
 }
 
 func thumbnailsAction(ctx *cli.Context) error {
+	start := time.Now()
+
 	conf := config.NewConfig(ctx)
 
 	if err := conf.CreateDirectories(); err != nil {
 		return err
 	}
 
-	log.Infof("creating default thumbnails in \"%s\"", conf.ThumbnailsPath())
-	start := time.Now()
+	log.Infof("creating thumbnails in \"%s\"", conf.ThumbnailsPath())
 
 	if err := photoprism.CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), ctx.Bool("force")); err != nil {
 		log.Error(err)
 		return err
 	}
 
-	log.Infof("default thumbnails created in %s", time.Since(start))
+	elapsed := time.Since(start)
+
+	log.Infof("thumbnails created in %s", elapsed)
 
 	return nil
 }

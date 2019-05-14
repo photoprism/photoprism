@@ -143,7 +143,6 @@ func Download(filepath string, url string) error {
 	return nil
 }
 
-
 func DirectoryIsEmpty(path string) bool {
 	f, err := os.Open(path)
 
@@ -161,4 +160,3 @@ func DirectoryIsEmpty(path string) bool {
 
 	return false
 }
-

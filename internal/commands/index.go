@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"time"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	log "github.com/sirupsen/logrus"
@@ -15,6 +17,8 @@ var IndexCommand = cli.Command{
 }
 
 func indexAction(ctx *cli.Context) error {
+	start := time.Now()
+
 	conf := config.NewConfig(ctx)
 
 	if err := conf.CreateDirectories(); err != nil {
@@ -31,7 +35,9 @@ func indexAction(ctx *cli.Context) error {
 
 	files := indexer.IndexAll()
 
-	log.Infof("indexed %d files", len(files))
+	elapsed := time.Since(start)
+
+	log.Infof("indexed %d files in %s", len(files), elapsed)
 
 	conf.Shutdown()
 

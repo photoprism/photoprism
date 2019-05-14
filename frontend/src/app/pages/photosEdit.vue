@@ -346,7 +346,6 @@
                 Object.assign(params, this.lastQuery);
 
                 Photo.search(params).then(response => {
-                    console.log(response);
                     this.results = this.results.concat(response.models);
 
                     this.loadMoreDisabled = (response.models.length < this.pageSize);

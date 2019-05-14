@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"time"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	log "github.com/sirupsen/logrus"
@@ -15,6 +17,8 @@ var ConvertCommand = cli.Command{
 }
 
 func convertAction(ctx *cli.Context) error {
+	start := time.Now()
+
 	conf := config.NewConfig(ctx)
 
 	if err := conf.CreateDirectories(); err != nil {
@@ -27,7 +31,9 @@ func convertAction(ctx *cli.Context) error {
 
 	converter.ConvertAll(conf.OriginalsPath())
 
-	log.Infof("image conversion complete")
+	elapsed := time.Since(start)
+
+	log.Infof("image conversion completed in %s", elapsed)
 
 	return nil
 }

@@ -98,7 +98,7 @@ func TestCreateThumbnail(t *testing.T) {
 		t.Error(err)
 	}
 
-	img, err := imaging.Open(conf.ImportPath() + "/dog.jpg", imaging.AutoOrientation(true))
+	img, err := imaging.Open(conf.ImportPath()+"/dog.jpg", imaging.AutoOrientation(true))
 
 	if err != nil {
 		t.Errorf("can't open original: %s", err)
