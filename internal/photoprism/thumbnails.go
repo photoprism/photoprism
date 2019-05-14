@@ -15,13 +15,11 @@ import (
 	"github.com/photoprism/photoprism/internal/util"
 )
 
-type ResampleOption int
-
 const (
 	MaxThumbWidth    = 8192
 	MaxThumbHeight   = 8192
 	JpegQuality      = 95
-	JpegQualitySmall = 75
+	JpegQualitySmall = 80
 )
 
 const (
@@ -30,10 +28,12 @@ const (
 	ResampleFillBottomRight
 	ResampleFit
 	ResampleResize
-	ResampleFast
-	ResampleBest
+	ResampleNearestNeighbor
+	ResampleLanczos
 	ResamplePng
 )
+
+type ResampleOption int
 
 var ResampleMethods = map[ResampleOption]string{
 	ResampleFillCenter:      "center",
@@ -51,18 +51,18 @@ type ThumbnailType struct {
 }
 
 var ThumbnailTypes = map[string]ThumbnailType{
-	"tile_50":    {"tile_500", 50, 50, []ResampleOption{ResampleFillCenter, ResampleBest}},
-	"tile_100":   {"tile_500", 100, 100, []ResampleOption{ResampleFillCenter, ResampleBest}},
-	"tile_500":   {"", 500, 500, []ResampleOption{ResampleFillCenter, ResampleBest}},
-	"colors":     {"fit_720", 3, 3, []ResampleOption{ResampleResize, ResampleFast, ResamplePng}},
-	"center_224": {"fit_720", 224, 224, []ResampleOption{ResampleFillCenter, ResampleBest}},
-	"left_224":   {"fit_720", 224, 224, []ResampleOption{ResampleFillTopLeft, ResampleBest}},
-	"right_224":  {"fit_720", 224, 224, []ResampleOption{ResampleFillBottomRight, ResampleBest}},
-	"fit_720":    {"", 720, 720, []ResampleOption{ResampleFit, ResampleBest}},
-	"fit_1280":   {"", 1280, 1280, []ResampleOption{ResampleFit, ResampleBest}},
-	"fit_1920":   {"", 1920, 1920, []ResampleOption{ResampleFit, ResampleBest}},
-	"fit_2560":   {"", 2560, 2560, []ResampleOption{ResampleFit, ResampleBest}},
-	"fit_3840":   {"", 3840, 3840, []ResampleOption{ResampleFit, ResampleBest}},
+	"tile_50":    {"tile_500", 50, 50, []ResampleOption{ResampleFillCenter, ResampleLanczos}},
+	"tile_100":   {"tile_500", 100, 100, []ResampleOption{ResampleFillCenter, ResampleLanczos}},
+	"tile_500":   {"", 500, 500, []ResampleOption{ResampleFillCenter, ResampleLanczos}},
+	"colors":     {"fit_720", 3, 3, []ResampleOption{ResampleResize, ResampleNearestNeighbor, ResamplePng}},
+	"center_224": {"fit_720", 224, 224, []ResampleOption{ResampleFillCenter, ResampleLanczos}},
+	"left_224":   {"fit_720", 224, 224, []ResampleOption{ResampleFillTopLeft, ResampleLanczos}},
+	"right_224":  {"fit_720", 224, 224, []ResampleOption{ResampleFillBottomRight, ResampleLanczos}},
+	"fit_720":    {"", 720, 720, []ResampleOption{ResampleFit, ResampleLanczos}},
+	"fit_1280":   {"", 1280, 1280, []ResampleOption{ResampleFit, ResampleLanczos}},
+	"fit_1920":   {"", 1920, 1920, []ResampleOption{ResampleFit, ResampleLanczos}},
+	"fit_2560":   {"", 2560, 2560, []ResampleOption{ResampleFit, ResampleLanczos}},
+	"fit_3840":   {"", 3840, 3840, []ResampleOption{ResampleFit, ResampleLanczos}},
 }
 
 var DefaultThumbnails = []string{
@@ -136,9 +136,9 @@ func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imag
 		switch option {
 		case ResamplePng:
 			format = FileTypePng
-		case ResampleFast:
+		case ResampleNearestNeighbor:
 			filter = imaging.NearestNeighbor
-		case ResampleBest:
+		case ResampleLanczos:
 			filter = imaging.Lanczos
 		case ResampleFillTopLeft:
 			method = ResampleFillTopLeft

@@ -92,7 +92,7 @@ func TestCreateThumbnail(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	expectedFilename, err := ThumbnailFilename("12345", conf.ThumbnailsPath(), 150, 150, ResampleFit, ResampleFast)
+	expectedFilename, err := ThumbnailFilename("12345", conf.ThumbnailsPath(), 150, 150, ResampleFit, ResampleNearestNeighbor)
 
 	if err != nil {
 		t.Error(err)
@@ -104,7 +104,7 @@ func TestCreateThumbnail(t *testing.T) {
 		t.Errorf("can't open original: %s", err)
 	}
 
-	thumb, err := CreateThumbnail(img, expectedFilename, 150, 150, ResampleFit, ResampleFast)
+	thumb, err := CreateThumbnail(img, expectedFilename, 150, 150, ResampleFit, ResampleNearestNeighbor)
 
 	assert.Empty(t, err)
 
