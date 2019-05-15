@@ -7,6 +7,8 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/forms"
 	"github.com/photoprism/photoprism/internal/models"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Search searches given an originals path and a db instance.
@@ -95,7 +97,13 @@ func NewSearch(originalsPath string, db *gorm.DB) *Search {
 }
 
 // Photos searches for photos based on a Form and returns a PhotoSearchResult slice.
-func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error) {
+func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult, err error) {
+	if err := form.ParseQueryString(); err != nil {
+		return results, err
+	}
+
+	log.Infof("%+v\n", form)
+
 	q := s.db.NewScope(nil).DB()
 	q = q.Table("photos").
 		Select(`SQL_CALC_FOUND_ROWS photos.*,
@@ -130,8 +138,16 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 		q = q.Where("tags.tag_label LIKE ? OR LOWER(photo_title) LIKE ? OR LOWER(files.file_main_color) LIKE ?", likeString, likeString, likeString)
 	}
 
-	if form.CameraID > 0 {
-		q = q.Where("photos.camera_id = ?", form.CameraID)
+	if form.Camera > 0 {
+		q = q.Where("photos.camera_id = ?", form.Camera)
+	}
+
+	if form.Color != "" {
+		q = q.Where("files.file_main_color = ?", form.Color)
+	}
+
+	if form.Favorites {
+		q = q.Where("photos.photo_favorite = 1")
 	}
 
 	if form.Country != "" {
@@ -182,8 +198,6 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 	} else {
 		q = q.Limit(100).Offset(0)
 	}
-
-	var results []PhotoSearchResult
 
 	if result := q.Scan(&results); result.Error != nil {
 		return results, result.Error

@@ -76,7 +76,7 @@ class Gallery {
             counterEl: false,
             arrowEl: true,
             preloaderEl: true,
-            getImageURLForShare: function() { return gallery.currItem.download_url},
+            getImageURLForShare: function() { return gallery.currItem.download_url;},
         };
 
         let photosWithSizes = this.photosWithSizes();

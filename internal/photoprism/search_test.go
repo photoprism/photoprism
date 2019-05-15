@@ -52,7 +52,7 @@ func TestSearch_Photos_Camera(t *testing.T) {
 	var form forms.PhotoSearchForm
 
 	form.Query = ""
-	form.CameraID = 2
+	form.Camera = 2
 	form.Count = 3
 	form.Offset = 0
 
