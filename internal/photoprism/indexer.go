@@ -52,9 +52,9 @@ func (i *Indexer) getImageTags(jpeg *MediaFile) (results []*models.Tag) {
 	var thumbs []string
 
 	if jpeg.AspectRatio() == 1 {
-		thumbs = []string{"center_224"}
+		thumbs = []string{"tile_224"}
 	} else {
-		thumbs = []string{"center_224", "left_224", "right_224"}
+		thumbs = []string{"tile_224", "left_224", "right_224"}
 	}
 
 	tagExists := make(map[string]bool)
