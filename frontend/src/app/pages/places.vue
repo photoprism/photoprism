@@ -42,13 +42,14 @@
             return {
                 zoom: 15,
                 position: null,
-                center: L.latLng(52.5259279, 13.414496),
+                center: L.latLng(0, 0),
                 url: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
                 options: {
                     icon: {
-                        iconSize: [40, 40]
-                    }
+                        iconSize: [50, 50]
+                    },
+                    minZoom: 3,
                 },
                 photos: [],
                 results: [],
@@ -57,7 +58,7 @@
                     q: q,
                 },
                 offset: 0,
-                pageSize: 100,
+                pageSize: 101,
                 lastQuery: {},
                 bounds: null,
                 minLat: null,
@@ -74,7 +75,7 @@
                 if ("geolocation" in navigator) {
                     const self = this;
                     this.$alert.success('Finding your position...');
-                    navigator.geolocation.getCurrentPosition(function(position) {
+                    navigator.geolocation.getCurrentPosition(function (position) {
                         self.center = L.latLng(position.coords.latitude, position.coords.longitude);
                         self.position = L.latLng(position.coords.latitude, position.coords.longitude);
                     });
@@ -96,19 +97,19 @@
                 this.maxLong = null;
             },
             fitBoundingBox(lat, long) {
-                if(this.maxLat === null || lat > this.maxLat) {
+                if (this.maxLat === null || lat > this.maxLat) {
                     this.maxLat = lat;
                 }
 
-                if(this.minLat === null || lat < this.minLat) {
+                if (this.minLat === null || lat < this.minLat) {
                     this.minLat = lat;
                 }
 
-                if(this.maxLong === null || long > this.maxLong) {
+                if (this.maxLong === null || long > this.maxLong) {
                     this.maxLong = long;
                 }
 
-                if(this.minLong === null || long < this.minLong) {
+                if (this.minLong === null || long < this.minLong) {
                     this.minLong = long;
                 }
             },
@@ -152,8 +153,11 @@
                 this.center = photos[0].location;
                 this.bounds = [[this.maxLat, this.minLong], [this.minLat, this.maxLong]];
 
-                this.$alert.info(photos.length + ' photos found');
-
+                if (photos.length > 100) {
+                    this.$alert.info('More than 100 photos found');
+                } else {
+                    this.$alert.info(photos.length + ' photos found');
+                }
             },
 
             refreshList() {
@@ -169,6 +173,7 @@
                 const params = {
                     count: this.pageSize,
                     offset: this.offset,
+                    location: 1,
                 };
 
                 Object.assign(params, this.query);
@@ -187,9 +192,5 @@
             this.refreshList();
         },
     };
-
-    /*  L.icon({
-        html: '<div style="background-image: url(/api/v1/thumbnails/square/40/cc1a022c30fff3d5603f1c3f722ec1960e3fa95e);"></div>​',
-        className: 'leaflet-marker-photo' }), */
 </script>
 

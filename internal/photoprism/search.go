@@ -118,7 +118,14 @@ func (s *Search) Photos(form forms.PhotoSearchForm) ([]PhotoSearchResult, error)
 		Where("photos.deleted_at IS NULL AND files.file_missing = 0").
 		Group("photos.id, files.id")
 
-	if form.Query != "" {
+	if form.Location == true {
+		q = q.Where("location_id > 0")
+
+		if form.Query != "" {
+			likeString := "%" + strings.ToLower(form.Query) + "%"
+			q = q.Where("LOWER(locations.loc_display_name) LIKE ?", likeString)
+		}
+	} else if form.Query != "" {
 		likeString := "%" + strings.ToLower(form.Query) + "%"
 		q = q.Where("tags.tag_label LIKE ? OR LOWER(photo_title) LIKE ? OR LOWER(files.file_main_color) LIKE ?", likeString, likeString, likeString)
 	}

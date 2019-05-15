@@ -7,6 +7,7 @@ import (
 // Query parameters for GET /api/v1/photos
 type PhotoSearchForm struct {
 	Query         string    `form:"q"`
+	Location      bool      `form:"location"`
 	Tags          string    `form:"tags"`
 	Cat           string    `form:"cat"`
 	Country       string    `form:"country"`
