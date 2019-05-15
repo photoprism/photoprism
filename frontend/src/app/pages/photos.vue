@@ -336,14 +336,14 @@
                                     </v-layout>
 
                                     <v-btn v-if="hover || photo.selected" :flat="!hover" icon large absolute
-                                           :ripple="false" style="right: 4px; bottom: 4px;"
+                                           :ripple="false" style="right: 1px; bottom: 1px;"
                                            @click.stop.prevent="selectPhoto(photo)">
                                         <v-icon v-if="photo.selected" color="white">check_box</v-icon>
                                         <v-icon v-else color="white">check_box_outline_blank</v-icon>
                                     </v-btn>
 
                                     <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large absolute
-                                           :ripple="false" style="bottom: 4px; left: 4px"
+                                           :ripple="false" style="bottom: 1px; left: 1px"
                                            @click.stop.prevent="likePhoto(photo)">
                                         <v-icon v-if="photo.PhotoFavorite" color="white">favorite</v-icon>
                                         <v-icon v-else color="white">favorite_border</v-icon>
