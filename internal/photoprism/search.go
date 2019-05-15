@@ -1,14 +1,14 @@
 package photoprism
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/forms"
 	"github.com/photoprism/photoprism/internal/models"
-
-	log "github.com/sirupsen/logrus"
+	"github.com/photoprism/photoprism/internal/util"
 )
 
 // Search searches given an originals path and a db instance.
@@ -102,7 +102,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		return results, err
 	}
 
-	log.Infof("%+v\n", form)
+	defer util.ProfileTime(time.Now(), fmt.Sprintf("search for %+v", form))
 
 	q := s.db.NewScope(nil).DB()
 	q = q.Table("photos").
