@@ -154,32 +154,16 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		q = q.Where("locations.loc_country_code = ?", form.Country)
 	}
 
-	switch form.Cat {
-	case "amenity":
-		q = q.Where("locations.loc_category = 'amenity'")
-	case "bank":
-		q = q.Where("locations.loc_type = 'bank'")
-	case "building":
-		q = q.Where("locations.loc_category = 'building'")
-	case "school":
-		q = q.Where("locations.loc_type = 'school'")
-	case "supermarket":
-		q = q.Where("locations.loc_type = 'supermarket'")
-	case "shop":
-		q = q.Where("locations.loc_category = 'shop'")
-	case "hotel":
-		q = q.Where("locations.loc_type = 'hotel'")
-	case "bar":
-		q = q.Where("locations.loc_type = 'bar'")
-	case "parking":
-		q = q.Where("locations.loc_type = 'parking'")
-	case "airport":
-		q = q.Where("locations.loc_category = 'aeroway'")
-	case "historic":
-		q = q.Where("locations.loc_category = 'historic'")
-	case "tourism":
-		q = q.Where("locations.loc_category = 'tourism'")
-	default:
+	if form.Tags != "" {
+		q = q.Where("tags.tag_label = ?", form.Tags)
+	}
+
+	if !form.Before.IsZero() {
+		q = q.Where("photos.taken_at <= ?", form.Before.Format("2006-01-02"))
+	}
+
+	if !form.After.IsZero() {
+		q = q.Where("photos.taken_at <= ?", form.After.Format("2006-01-02"))
 	}
 
 	switch form.Order {

@@ -2,6 +2,7 @@ package forms
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -15,7 +16,7 @@ func TestPhotoSearchForm(t *testing.T) {
 }
 
 func TestParseQueryString(t *testing.T) {
-	form := &PhotoSearchForm{Query: "tags:foo,bar query:\"fooBar baz\" camera:1"}
+	form := &PhotoSearchForm{Query: "tags:foo,bar query:\"fooBar baz\" before:2019-01-15 camera:23"}
 
 	err := form.ParseQueryString()
 
@@ -24,5 +25,6 @@ func TestParseQueryString(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "foo,bar", form.Tags)
 	assert.Equal(t, "foobar baz", form.Query)
-
+	assert.Equal(t, 23, form.Camera)
+	assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
 }

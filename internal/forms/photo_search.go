@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 	"unicode"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Query parameters for GET /api/v1/photos
@@ -15,7 +17,6 @@ type PhotoSearchForm struct {
 	Query     string    `form:"q"`
 	Location  bool      `form:"location"`
 	Tags      string    `form:"tags"`
-	Cat       string    `form:"cat"`
 	Country   string    `form:"country"`
 	Color     string    `form:"color"`
 	Camera    int       `form:"camera"`
@@ -43,30 +44,35 @@ func (f *PhotoSearchForm) ParseQueryString() (result error) {
 		if unicode.IsSpace(char) && !escaped {
 			if isKeyValue {
 				fieldName := string(bytes.Title(bytes.ToLower(key)))
-
 				field := formValues.FieldByName(fieldName)
-				valueString := string(bytes.ToLower(value))
+				stringValue := string(bytes.ToLower(value))
 
 				if field.CanSet() {
 					switch field.Interface().(type) {
-					case int, int64:
-						if i, err := strconv.Atoi(valueString); err == nil {
-							field.SetInt(int64(i))
-						} else {
+					case time.Time:
+						if timeValue, err := time.Parse("2006-01-02", stringValue); err != nil {
 							result = err
+						} else {
+							field.Set(reflect.ValueOf(timeValue))
+						}
+					case int, int64:
+						if i, err := strconv.Atoi(stringValue); err != nil {
+							result = err
+						} else {
+							field.SetInt(int64(i))
 						}
 					case uint, uint64:
-						if i, err := strconv.Atoi(valueString); err == nil {
-							field.SetUint(uint64(i))
-						} else {
+						if i, err := strconv.Atoi(stringValue); err != nil {
 							result = err
+						} else {
+							field.SetUint(uint64(i))
 						}
 					case string:
-						field.SetString(valueString)
+						field.SetString(stringValue)
 					case bool:
-						if valueString == "1" || valueString == "true" || valueString == "yes" {
+						if stringValue == "1" || stringValue == "true" || stringValue == "yes" {
 							field.SetBool(true)
-						} else if valueString == "0" || valueString == "false" || valueString == "no" {
+						} else if stringValue == "0" || stringValue == "false" || stringValue == "no" {
 							field.SetBool(false)
 						} else {
 							result = fmt.Errorf("not a bool value: %s", fieldName)
@@ -94,6 +100,10 @@ func (f *PhotoSearchForm) ParseQueryString() (result error) {
 		} else {
 			key = append(key, byte(char))
 		}
+	}
+
+	if result != nil {
+		log.Errorf("error while parsing search form: %s", result)
 	}
 
 	return result
