@@ -56,7 +56,7 @@
                                       color="blue-grey"
                                       v-model="query.view"
                                       :items="options.views"
-                                    id="viewSelect">
+                                      id="viewSelect">
                             </v-select>
                         </v-flex>
                         <v-flex xs12 sm6 md3 pa-2 id="timeFlex">
@@ -230,7 +230,8 @@
                                             {{ photo.getCamera() }}
                                             <br/>
                                             <v-icon size="14">location_on</v-icon>
-                                            <span :title="photo.getFullLocation()">{{ photo.getLocation() }}</span>
+                                            <span class="link" :title="photo.getFullLocation()"
+                                                  @click.stop="openLocation(photo)">{{ photo.getLocation() }}</span>
                                         </div>
                                     </div>
                                 </v-card-title>
@@ -420,7 +421,8 @@
                                 <v-icon
                                         small
                                         @click="parent.selectItem(item)"
-                                >close</v-icon>
+                                >close
+                                </v-icon>
                             </v-chip>
                         </template>
                         <template v-slot:item="{ index, item }">
@@ -485,7 +487,8 @@
                                 <v-icon
                                         small
                                         @click="parent.selectItem(item)"
-                                >close</v-icon>
+                                >close
+                                </v-icon>
                             </v-chip>
                         </template>
                         <template v-slot:item="{ index, item }">
@@ -629,7 +632,7 @@
                 'editing': null,
                 'index': -1,
                 'items': [
-                    { header: 'Select a tag or create one' },
+                    {header: 'Select a tag or create one'},
                     {text: 'Cat', color: 'primary'},
                     {text: 'Sun', color: 'red'},
                     {text: 'Dog', color: 'primary'},
@@ -643,9 +646,7 @@
                 ],
                 'nonce': 1,
                 'menu': false,
-                'model': [
-
-                ],
+                'model': [],
                 'dialog2': false,
                 'select': null,
                 'items2': [
@@ -716,6 +717,19 @@
             },
             deletePhoto(photo) {
                 this.$alert.success('Photo deleted');
+            },
+            openLocation(photo) {
+                if (photo.PhotoLat && photo.PhotoLong) {
+                    this.$router.push({name: 'Places', query: {lat: photo.PhotoLat, long: photo.PhotoLong}});
+                } else if (photo.LocName) {
+                    this.$router.push({name: 'Places', query: {q: photo.LocName}});
+                } else if (photo.LocCity) {
+                    this.$router.push({name: 'Places', query: {q: photo.LocCity}});
+                } else if (photo.LocCountry) {
+                    this.$router.push({name: 'Places', query: {q: photo.LocCountry}});
+                } else {
+                    this.$router.push({name: 'Places', query: {q: photo.CountryName}});
+                }
             },
             formChange(event) {
                 this.refreshList();
