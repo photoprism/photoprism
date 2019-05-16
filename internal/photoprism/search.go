@@ -115,7 +115,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		Select(`SQL_CALC_FOUND_ROWS photos.*,
 		files.id AS file_id, files.file_primary, files.file_missing, files.file_name, files.file_hash, 
 		files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, 
-		files.file_orientation, files.file_main_color, files.file_colors, files.file_luminance, files.file_saturation,
+		files.file_orientation, files.file_main_color, files.file_colors, files.file_luminance, files.file_chroma,
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
 		countries.country_name,
