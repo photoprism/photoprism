@@ -50,6 +50,12 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if thumbnail, err := photoprism.ThumbnailFromFile(fileName, file.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
+			if c.Query("download") != "" {
+				downloadFileName := file.DownloadFileName()
+
+				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFileName))
+			}
+
 			c.File(thumbnail)
 		} else {
 			log.Errorf("could not create thumbnail: %s", err)

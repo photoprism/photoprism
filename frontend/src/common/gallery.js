@@ -15,6 +15,8 @@ class Gallery {
         const result = {
             title: photo.PhotoTitle,
             download_url: photo.getDownloadUrl(),
+            original_w: photo.FileWidth,
+            original_h: photo.FileHeight,
         };
 
         const thumbs = window.appConfig.thumbnails;
@@ -58,7 +60,11 @@ class Gallery {
 
 
         const shareButtons = [
-            {id: "download", label: "Download image", url: "{{raw_image_url}}", download: true},
+            {id: "fit_720", template: "Tiny (size)", label: "Tiny", url: "{{raw_image_url}}", download: true},
+            {id: "fit_1280", template: "Small (size)", label: "Small", url: "{{raw_image_url}}", download: true},
+            {id: "fit_2048", template: "Medium (size)", label: "Medium", url: "{{raw_image_url}}", download: true},
+            {id: "fit_2560", template: "Large (size)", label: "Large", url: "{{raw_image_url}}", download: true},
+            {id: "original", template: "Original (size)", label: "Original", url: "{{raw_image_url}}", download: true},
         ];
 
         const options = {
@@ -76,7 +82,17 @@ class Gallery {
             counterEl: false,
             arrowEl: true,
             preloaderEl: true,
-            getImageURLForShare: function() { return gallery.currItem.download_url;},
+            getImageURLForShare: function (button) {
+                const photo = gallery.currItem;
+
+                if(button.id === "original") {
+                    button.label = button.template.replace("size", photo.original_w + " × " + photo.original_h);
+                    return photo.download_url;
+                } else {
+                    button.label = button.template.replace("size", photo[button.id].w + " × " + photo[button.id].h);
+                    return photo[button.id].src + "?download=1";
+                }
+            },
         };
 
         let photosWithSizes = this.photosWithSizes();

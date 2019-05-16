@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
@@ -32,14 +33,22 @@ type File struct {
 	FileNotes        string `gorm:"type:text"`
 }
 
-func (f *File) DownloadFileName(db *gorm.DB) string {
-	var photo Photo
+func (f *File) DownloadFileName() string {
+	if f.Photo == nil {
+		return fmt.Sprintf("%s.%s", f.FileHash, f.FileType)
+	}
 
-	db.Model(f).Related(&photo)
+	var name string
 
-	name := slug.MakeLang(photo.PhotoTitle, "en")
+	if f.Photo.PhotoTitle != "" {
+		name = strings.Title(slug.Make(f.Photo.PhotoTitle))
+	} else {
+		name = string(f.PhotoID)
+	}
 
-	result := fmt.Sprintf("%s.%s", name, f.FileType)
+	taken := f.Photo.TakenAt.Format("20060102-150405")
+
+	result := fmt.Sprintf("%s-%s.%s", taken, name, f.FileType)
 
 	return result
 }

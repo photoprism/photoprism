@@ -1,7 +1,6 @@
 @import url("../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
 @import url("../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../node_modules/leaflet/dist/leaflet.css");
-
 @import url("photo.css");
 
 #app div.loading {
@@ -17,7 +16,7 @@
     width: 100%;
     height: 100%;
     z-index: 100;
-    background-color: rgba(0,0,0,0.2);
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 body {
@@ -65,10 +64,10 @@ main {
 }
 
 div.leaflet-container .leaflet-marker-photo {
-    box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12) !important;
-    background-color: rgba(0,0,0,0.3);
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
+    background-color: rgba(0, 0, 0, 0.3);
     border-color: #fff;
-    color: rgba(0,0,0,0.87);
+    color: rgba(0, 0, 0, 0.87);
     display: block;
     border-radius: 50%;
 }

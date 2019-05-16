@@ -39,7 +39,7 @@ func GetDownload(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		downloadFileName := file.DownloadFileName(conf.Db())
+		downloadFileName := file.DownloadFileName()
 
 		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFileName))
 
