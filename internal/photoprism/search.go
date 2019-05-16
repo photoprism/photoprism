@@ -203,7 +203,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 	}
 
 	if form.Dist == 0 {
-		form.Dist = 1
+		form.Dist = 20
 	} else if form.Dist > 1000 {
 		form.Dist = 1000
 	}
