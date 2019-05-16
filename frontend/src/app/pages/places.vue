@@ -36,8 +36,10 @@
         name: 'places',
         data() {
             const query = this.$route.query;
-            const order = query['order'] ? query['order'] : 'newest';
             const q = query['q'] ? query['q'] : '';
+            const lat = query['lat'] ? query['lat'] : '';
+            const long = query['long'] ? query['long'] : '';
+            const dist = query['dist'] ? query['dist'] : 20;
 
             return {
                 zoom: 15,
@@ -54,8 +56,10 @@
                 photos: [],
                 results: [],
                 query: {
-                    order: order,
                     q: q,
+                    lat: lat,
+                    long: long,
+                    dist: dist,
                 },
                 offset: 0,
                 pageSize: 101,
@@ -71,23 +75,34 @@
             openPhoto(index) {
                 this.$gallery.show(this.results, index)
             },
+            currentPositionSuccess(position) {
+                this.center = L.latLng(position.coords.latitude, position.coords.longitude);
+                this.position = L.latLng(position.coords.latitude, position.coords.longitude);
+                this.query.lat = position.coords.latitude;
+                this.query.long = position.coords.longitude;
+                this.query.q = "";
+                this.refreshList();
+            },
+            currentPositionError(error) {
+                this.$alert.warning(error.message);
+            },
             currentPosition() {
                 if ("geolocation" in navigator) {
-                    const self = this;
                     this.$alert.success('Finding your position...');
-                    navigator.geolocation.getCurrentPosition(function (position) {
-                        self.center = L.latLng(position.coords.latitude, position.coords.longitude);
-                        self.position = L.latLng(position.coords.latitude, position.coords.longitude);
-                    });
+                    navigator.geolocation.getCurrentPosition(this.currentPositionSuccess, this.currentPositionError);
                 } else {
                     this.$alert.warning('Geolocation is not available');
                 }
             },
             formChange() {
+                this.lat = "";
+                this.long = "";
                 this.refreshList();
             },
             clearQuery() {
-                this.query.q = '';
+                this.query.q = "";
+                this.lat = "";
+                this.long = "";
                 this.refreshList();
             },
             resetBoundingBox() {

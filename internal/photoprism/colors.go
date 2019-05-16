@@ -12,20 +12,18 @@ import (
 )
 
 type ColorPerception struct {
-	Colors     IndexedColors
-	MainColor  IndexedColor
-	Luminance  LightMap
-	Saturation Saturation
+	Colors    IndexedColors
+	MainColor IndexedColor
+	Luminance LightMap
+	Chroma    Chroma
 }
 
 type IndexedColor uint16
 type IndexedColors []IndexedColor
 
-type Saturation uint8
+type Chroma uint8
 type Luminance uint8
 type LightMap []Luminance
-
-const ColorSampleSize = 3
 
 const (
 	Black IndexedColor = iota
@@ -100,16 +98,16 @@ func (c IndexedColors) Hex() (result string) {
 	return result
 }
 
-func (s Saturation) Hex() string {
-	return fmt.Sprintf("%X", s)
+func (c Chroma) Hex() string {
+	return fmt.Sprintf("%X", c)
 }
 
-func (s Saturation) Uint() uint {
-	return uint(s)
+func (c Chroma) Uint() uint {
+	return uint(c)
 }
 
-func (s Saturation) Int() int {
-	return int(s)
+func (c Chroma) Int() int {
+	return int(c)
 }
 
 func (l Luminance) Hex() string {
@@ -429,7 +427,7 @@ func (m *MediaFile) Colors(thumbPath string) (perception ColorPerception, err er
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
 	pixels := float64(width * height)
-	saturationSum := 0.0
+	chromaSum := 0.0
 
 	colorCount := make(map[IndexedColor]uint16)
 	var mainColorCount uint16
@@ -452,15 +450,15 @@ func (m *MediaFile) Colors(thumbPath string) (perception ColorPerception, err er
 				perception.MainColor = i
 			}
 
-			_, s, l := rgb.Hsl()
+			_, c, l := rgb.Hcl()
 
-			saturationSum += s
+			chromaSum += c
 
 			perception.Luminance = append(perception.Luminance, Luminance(math.Round(l*15)))
 		}
 	}
 
-	perception.Saturation = Saturation(math.Round((saturationSum / pixels) * 15))
+	perception.Chroma = Chroma(math.Round((chromaSum / pixels) * 15))
 
 	return perception, nil
 }

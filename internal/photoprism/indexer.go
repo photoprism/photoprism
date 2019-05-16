@@ -258,13 +258,14 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		file.FileMainColor = p.MainColor.Name()
 		file.FileColors = p.Colors.Hex()
 		file.FileLuminance = p.Luminance.Hex()
-		file.FileSaturation = p.Saturation.Uint()
+		file.FileChroma = p.Chroma.Uint()
 	}
 
 	if mediaFile.Width() > 0 && mediaFile.Height() > 0 {
 		file.FileWidth = mediaFile.Width()
 		file.FileHeight = mediaFile.Height()
 		file.FileAspectRatio = mediaFile.AspectRatio()
+		file.FilePortrait = mediaFile.Width() < mediaFile.Height()
 	}
 
 	if fileQuery.Error == nil {

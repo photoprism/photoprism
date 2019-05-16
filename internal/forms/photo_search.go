@@ -10,22 +10,40 @@ import (
 	"unicode"
 
 	log "github.com/sirupsen/logrus"
+
+	"github.com/araddon/dateparse"
 )
 
 // Query parameters for GET /api/v1/photos
 type PhotoSearchForm struct {
-	Query     string    `form:"q"`
-	Location  bool      `form:"location"`
-	Tags      string    `form:"tags"`
-	Country   string    `form:"country"`
-	Color     string    `form:"color"`
-	Camera    int       `form:"camera"`
-	Order     string    `form:"order"`
-	Count     int       `form:"count" binding:"required"`
-	Offset    int       `form:"offset"`
-	Before    time.Time `form:"before" time_format:"2006-01-02"`
-	After     time.Time `form:"after" time_format:"2006-01-02"`
-	Favorites bool      `form:"favorites"`
+	Query string `form:"q"`
+
+	Title       string    `form:"title"`
+	Description string    `form:"description"`
+	Notes       string    `form:"notes"`
+	Artist      string    `form:"artist"`
+	Hash        string    `form:"hash"`
+	Duplicate   bool      `form:"duplicate"`
+	Lat         float64   `form:"lat"`
+	Long        float64   `form:"long"`
+	Dist        uint      `form:"dist"`
+	Fmin        float64   `form:"fmin"`
+	Fmax        float64   `form:"fmax"`
+	Chroma      uint      `form:"chroma"`
+	Mono        bool      `form:"mono"`
+	Portrait    bool      `form:"portrait"`
+	Location    bool      `form:"location"`
+	Tags        string    `form:"tags"`
+	Country     string    `form:"country"`
+	Color       string    `form:"color"`
+	Camera      int       `form:"camera"`
+	Before      time.Time `form:"before" time_format:"2006-01-02"`
+	After       time.Time `form:"after" time_format:"2006-01-02"`
+	Favorites   bool      `form:"favorites"`
+
+	Count  int    `form:"count" binding:"required"`
+	Offset int    `form:"offset"`
+	Order  string `form:"order"`
 }
 
 func (f *PhotoSearchForm) ParseQueryString() (result error) {
@@ -50,22 +68,28 @@ func (f *PhotoSearchForm) ParseQueryString() (result error) {
 				if field.CanSet() {
 					switch field.Interface().(type) {
 					case time.Time:
-						if timeValue, err := time.Parse("2006-01-02", stringValue); err != nil {
+						if timeValue, err := dateparse.ParseAny(stringValue); err != nil {
 							result = err
 						} else {
 							field.Set(reflect.ValueOf(timeValue))
 						}
-					case int, int64:
-						if i, err := strconv.Atoi(stringValue); err != nil {
+					case float64:
+						if floatValue, err := strconv.ParseFloat(stringValue, 64); err != nil {
 							result = err
 						} else {
-							field.SetInt(int64(i))
+							field.SetFloat(floatValue)
+						}
+					case int, int64:
+						if intValue, err := strconv.Atoi(stringValue); err != nil {
+							result = err
+						} else {
+							field.SetInt(int64(intValue))
 						}
 					case uint, uint64:
-						if i, err := strconv.Atoi(stringValue); err != nil {
+						if intValue, err := strconv.Atoi(stringValue); err != nil {
 							result = err
 						} else {
-							field.SetUint(uint64(i))
+							field.SetUint(uint64(intValue))
 						}
 					case string:
 						field.SetString(stringValue)

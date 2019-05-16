@@ -23,10 +23,11 @@ type File struct {
 	FileHeight       int
 	FileOrientation  int
 	FileAspectRatio  float64
+	FilePortrait     bool
 	FileMainColor    string
 	FileColors       string
 	FileLuminance    string
-	FileSaturation   uint
+	FileChroma       uint
 	FileHash         string `gorm:"type:varchar(128);unique_index"`
 	FileNotes        string `gorm:"type:text"`
 }

@@ -16,10 +16,6 @@ type Photo struct {
 	PhotoDescription   string `gorm:"type:text;"`
 	PhotoNotes         string `gorm:"type:text;"`
 	PhotoArtist        string
-	PhotoColors        string
-	PhotoColor         string
-	PhotoLuminance     string
-	PhotoSaturation    uint
 	PhotoCanonicalName string
 	PhotoFavorite      bool
 	PhotoLat           float64

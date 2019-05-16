@@ -11,6 +11,9 @@ import (
 	"github.com/photoprism/photoprism/internal/util"
 )
 
+// About 1km ('good enough' for now)
+const SearchRadius = 0.009
+
 // Search searches given an originals path and a db instance.
 type Search struct {
 	originalsPath string
@@ -105,6 +108,9 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 	defer util.ProfileTime(time.Now(), fmt.Sprintf("search for %+v", form))
 
 	q := s.db.NewScope(nil).DB()
+
+	q.LogMode(true)
+
 	q = q.Table("photos").
 		Select(`SQL_CALC_FOUND_ROWS photos.*,
 		files.id AS file_id, files.file_primary, files.file_missing, files.file_name, files.file_hash, 
@@ -158,12 +164,69 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		q = q.Where("tags.tag_label = ?", form.Tags)
 	}
 
+	if form.Title != "" {
+		q = q.Where("LOWER(photos.photo_title) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(form.Title)))
+	}
+
+	if form.Description != "" {
+		q = q.Where("LOWER(photos.photo_description) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(form.Description)))
+	}
+
+	if form.Notes != "" {
+		q = q.Where("LOWER(photos.photo_notes) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(form.Notes)))
+	}
+
+	if form.Hash != "" {
+		q = q.Where("files.file_hash = ?", form.Hash)
+	}
+
+	if form.Duplicate {
+		q = q.Where("files.file_duplicate = 1")
+	}
+
+	if form.Portrait {
+		q = q.Where("files.file_portrait = 1")
+	}
+
+	if form.Mono {
+		q = q.Where("files.file_chroma = 0")
+	} else if form.Chroma > 0 {
+		q = q.Where("files.file_chroma > ?", form.Chroma)
+	}
+
+	if form.Fmin > 0 {
+		q = q.Where("photos.photo_aperture >= ?", form.Fmin)
+	}
+
+	if form.Fmax > 0 {
+		q = q.Where("photos.photo_aperture <= ?", form.Fmax)
+	}
+
+	if form.Dist == 0 {
+		form.Dist = 1
+	} else if form.Dist > 1000 {
+		form.Dist = 1000
+	}
+
+	// Inaccurate distance search, but probably 'good enough' for now
+	if form.Lat > 0 {
+		latMin := form.Lat - SearchRadius*float64(form.Dist)
+		latMax := form.Lat + SearchRadius*float64(form.Dist)
+		q = q.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
+	}
+
+	if form.Long > 0 {
+		longMin := form.Long - SearchRadius*float64(form.Dist)
+		longMax := form.Long + SearchRadius*float64(form.Dist)
+		q = q.Where("photos.photo_long BETWEEN ? AND ?", longMin, longMax)
+	}
+
 	if !form.Before.IsZero() {
 		q = q.Where("photos.taken_at <= ?", form.Before.Format("2006-01-02"))
 	}
 
 	if !form.After.IsZero() {
-		q = q.Where("photos.taken_at <= ?", form.After.Format("2006-01-02"))
+		q = q.Where("photos.taken_at >= ?", form.After.Format("2006-01-02"))
 	}
 
 	switch form.Order {
