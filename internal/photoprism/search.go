@@ -109,7 +109,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 
 	q := s.db.NewScope(nil).DB()
 
-	q.LogMode(true)
+	// q.LogMode(true)
 
 	q = q.Table("photos").
 		Select(`SQL_CALC_FOUND_ROWS photos.*,
@@ -265,7 +265,7 @@ func (s *Search) FindFiles(limit int, offset int) (files []models.File, err erro
 
 // FindFileByID returns a mediafile given a certain ID.
 func (s *Search) FindFileByID(id string) (file models.File, err error) {
-	if err := s.db.Where("id = ?", id).First(&file).Error; err != nil {
+	if err := s.db.Where("id = ?", id).Preload("Photo").First(&file).Error; err != nil {
 		return file, err
 	}
 
@@ -274,7 +274,7 @@ func (s *Search) FindFileByID(id string) (file models.File, err error) {
 
 // FindFileByHash finds a file with a given hash string.
 func (s *Search) FindFileByHash(fileHash string) (file models.File, err error) {
-	if err := s.db.Where("file_hash = ?", fileHash).First(&file).Error; err != nil {
+	if err := s.db.Where("file_hash = ?", fileHash).Preload("Photo").First(&file).Error; err != nil {
 		return file, err
 	}
 
