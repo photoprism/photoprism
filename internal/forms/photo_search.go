@@ -102,10 +102,10 @@ func (f *PhotoSearchForm) ParseQueryString() (result error) {
 							result = fmt.Errorf("not a bool value: %s", fieldName)
 						}
 					default:
-						result = fmt.Errorf("unsupported field type: %s", fieldName)
+						result = fmt.Errorf("unsupported type: %s", fieldName)
 					}
 				} else {
-					result = fmt.Errorf("unknown form field: %s", fieldName)
+					result = fmt.Errorf("unknown filter: %s", fieldName)
 				}
 			} else {
 				f.Query = string(bytes.ToLower(key))

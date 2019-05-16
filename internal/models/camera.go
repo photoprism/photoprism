@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
@@ -20,16 +21,20 @@ type Camera struct {
 }
 
 func NewCamera(modelName string, makeName string) *Camera {
+	makeName = strings.TrimSpace(makeName)
+
 	if modelName == "" {
 		modelName = "Unknown"
+	} else if strings.HasPrefix(modelName, makeName) {
+		modelName = strings.TrimSpace(modelName[len(makeName):])
 	}
 
 	var cameraSlug string
 
 	if makeName != "" {
-		cameraSlug = slug.MakeLang(makeName+" "+modelName, "en")
+		cameraSlug = slug.Make(makeName + " " + modelName)
 	} else {
-		cameraSlug = slug.MakeLang(modelName, "en")
+		cameraSlug = slug.Make(modelName)
 	}
 
 	result := &Camera{

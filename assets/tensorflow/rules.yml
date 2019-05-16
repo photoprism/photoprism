@@ -1,0 +1,102 @@
+tabby cat:
+  see: cat
+
+tiger cat:
+  tag: tiger cat
+  priority: 3
+  synonyms:
+    - pussy
+    - animal
+    - miau
+
+analog clock:
+  priority: 2
+  synonyms:
+    - chronograph
+
+tiger:
+  priority: 3
+  synonyms:
+    - cat
+    - animal
+
+cat:
+  tag: tabby cat
+  priority: 3
+  synonyms:
+    - pussy
+    - animal
+    - miau
+
+racer:
+  tag: race car
+  priority: 1
+
+seashore:
+  priority: 1
+  synonyms:
+    - beach
+    - waterfront
+    - coast
+    - water
+
+lakeside:
+  synonyms:
+    - water
+    - waterfront
+
+cardoon:
+  tag: flower
+
+window shade:
+  tag: house front
+  synonyms:
+    - window
+    - building
+
+banded gecko:
+  tag: animal
+
+daisy:
+  tag: flower
+
+stole:
+  threshold: 0.2
+
+quilt:
+  threshold: 0.2
+
+liner:
+  tag: ocean liner
+  synonyms:
+    - ship
+    - boat
+
+solar dish:
+  threshold: 0.5
+
+grasshopper:
+  priority: 1
+
+velvet:
+  tag: velvet flower
+
+hair slide:
+  tag: jewelry
+  threshold: 0.4
+
+shower curtain:
+  tag: bathroom
+  threshold: 0.15
+
+windsor tie:
+  tag: people
+
+chainlink fence:
+  tag: fence
+
+mitten:
+  tag: unknown
+
+bubble:
+  tag: bubbles

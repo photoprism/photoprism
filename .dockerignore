@@ -7,7 +7,7 @@
 /assets/server/public/build/*
 /assets/testdata
 /assets/backups
-/assets/tensorflow
+/assets/tensorflow/nasnet
 Dockerfile
 /photoprism
 docker-compose*

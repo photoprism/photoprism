@@ -158,7 +158,7 @@
                     <td>{{ props.item.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}</td>
                     <td>{{ props.item.LocCity }}</td>
                     <td>{{ props.item.LocCountry }}</td>
-                    <td>{{ props.item.CameraModel }}</td>
+                    <td>{{ props.item.CameraMake }} {{ props.item.CameraModel }}</td>
                     <td>{{ props.item.PhotoFavorite ? 'Yes' : 'No' }}</td>
                 </template>
             </v-data-table>

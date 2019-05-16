@@ -9,7 +9,7 @@
 /frontend/tests/result.html
 /assets/testdata
 /assets/backups
-/assets/tensorflow
+/assets/tensorflow/nasnet
 *.log
 
 # Binaries for programs and plugins

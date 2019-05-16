@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/config"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/models"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -49,6 +49,8 @@ func (i *Indexer) thumbnailsPath() string {
 // getImageTags returns all tags of a given mediafile. This function returns
 // an empty list in the case of an error.
 func (i *Indexer) getImageTags(jpeg *MediaFile) (results []*models.Tag) {
+	start := time.Now()
+
 	var thumbs []string
 
 	if jpeg.AspectRatio() == 1 {
@@ -57,7 +59,7 @@ func (i *Indexer) getImageTags(jpeg *MediaFile) (results []*models.Tag) {
 		thumbs = []string{"tile_224", "left_224", "right_224"}
 	}
 
-	tagExists := make(map[string]bool)
+	var allLabels TensorFlowLabels
 
 	for _, thumb := range thumbs {
 		filename, err := jpeg.Thumbnail(i.thumbnailsPath(), thumb)
@@ -67,22 +69,34 @@ func (i *Indexer) getImageTags(jpeg *MediaFile) (results []*models.Tag) {
 			continue
 		}
 
-		tags, err := i.tensorFlow.GetImageTagsFromFile(filename)
+		labels, err := i.tensorFlow.GetImageTagsFromFile(filename)
 
 		if err != nil {
 			log.Error(err)
 			continue
 		}
 
-		for _, tag := range tags {
-			if tag.Probability > 0.15 { // TODO: Use config variable
-				if _, ok := tagExists[tag.Label]; !ok {
-					results = i.appendTag(results, tag.Label)
-					tagExists[tag.Label] = true
-				}
-			}
+		allLabels = append(allLabels, labels...)
+	}
+
+	// Sort by probability
+	sort.Sort(TensorFlowLabels(allLabels))
+
+	var max float32 = -1
+
+	for _, l := range allLabels {
+		if max == -1 {
+			max = l.Probability
+		}
+
+		if l.Probability > (max / 3) {
+			results = i.appendTag(results, l.Label)
 		}
 	}
+
+	elapsed := time.Since(start)
+
+	log.Infof("finding %+v labels for %s took %s", allLabels, jpeg.Filename(), elapsed)
 
 	return results
 }
@@ -142,15 +156,15 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			tags = i.appendTag(tags, location.LocName)
 			tags = i.appendTag(tags, location.LocType)
 
-			if photo.PhotoTitle == "" && location.LocName != "" { // TODO: User defined title format
+			if photo.PhotoTitle == "" && location.LocName != "" && location.LocCity != "" { // TODO: User defined title format
 				if len(location.LocName) > 40 {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(location.LocName), mediaFile.DateCreated().Format("2006"))
 				} else {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(location.LocName), location.LocCity, mediaFile.DateCreated().Format("2006"))
 				}
-			} else if photo.PhotoTitle == "" && location.LocCity != "" {
+			} else if photo.PhotoTitle == "" && location.LocCity != "" && location.LocCountry != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, mediaFile.DateCreated().Format("2006"))
-			} else if photo.PhotoTitle == "" && location.LocCounty != "" {
+			} else if photo.PhotoTitle == "" && location.LocCounty != "" && location.LocCountry != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.DateCreated().Format("2006"))
 			}
 		} else {
@@ -180,8 +194,6 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		if photo.PhotoTitle == "" {
 			if len(photo.Tags) > 0 { // TODO: User defined title format
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Tags[0].TagLabel), mediaFile.DateCreated().Format("2006"))
-			} else if photo.Country != nil && photo.Country.CountryName != "" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Country.CountryName), mediaFile.DateCreated().Format("2006"))
 			} else if photo.Camera.String() != "" && photo.Camera.String() != "Unknown" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", photo.Camera, mediaFile.DateCreated().Format("January 2006"))
 			} else {

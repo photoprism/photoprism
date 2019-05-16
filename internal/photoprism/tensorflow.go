@@ -4,45 +4,96 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"fmt"
 	"image"
 	"io/ioutil"
 	"math"
 	"os"
 	"sort"
+	"strings"
 
 	"github.com/disintegration/imaging"
+	"github.com/photoprism/photoprism/internal/util"
 	log "github.com/sirupsen/logrus"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
+	"gopkg.in/yaml.v2"
 )
 
 // TensorFlow if a tensorflow wrapper given a graph, labels and a modelPath.
 type TensorFlow struct {
-	modelPath string
-	model     *tf.SavedModel
-	labels    []string
-}
-
-// NewTensorFlow returns a new TensorFlow.
-func NewTensorFlow(tensorFlowModelPath string) *TensorFlow {
-	return &TensorFlow{modelPath: tensorFlowModelPath}
+	modelPath  string
+	model      *tf.SavedModel
+	labels     []string
+	labelRules LabelRules
 }
 
 // TensorFlowLabel defines a Json struct with label and probability.
 type TensorFlowLabel struct {
 	Label       string  `json:"label"`
 	Probability float32 `json:"probability"`
+	Synonyms    []string
+	Priority    int
+}
+
+type LabelRule struct {
+	Tag       string
+	See       string
+	Threshold float32
+	Synonyms  []string
+	Priority  int
+}
+
+type LabelRules map[string]LabelRule
+
+// NewTensorFlow returns a new TensorFlow.
+func NewTensorFlow(tensorFlowModelPath string) *TensorFlow {
+	return &TensorFlow{modelPath: tensorFlowModelPath}
 }
 
 func (a *TensorFlowLabel) Percent() int {
 	return int(math.Round(float64(a.Probability * 100)))
 }
 
+func (t *TensorFlow) loadLabelRules() (err error) {
+	if len(t.labelRules) > 0 {
+		return nil
+	}
+
+	t.labelRules = make(LabelRules)
+
+	fileName := t.modelPath + "/rules.yml"
+
+	log.Debugf("loading label rules from \"%s\"", fileName)
+
+	if !util.Exists(fileName) {
+		log.Errorf("label rules file not found: \"%s\"", fileName)
+		return fmt.Errorf("label rules file not found: \"%s\"", fileName)
+	}
+
+	yamlConfig, err := ioutil.ReadFile(fileName)
+
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	err = yaml.Unmarshal(yamlConfig, t.labelRules)
+
+	return err
+}
+
 // TensorFlowLabels is a slice of tensorflow labels.
 type TensorFlowLabels []TensorFlowLabel
 
-func (a TensorFlowLabels) Len() int           { return len(a) }
-func (a TensorFlowLabels) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a TensorFlowLabels) Less(i, j int) bool { return a[i].Probability > a[j].Probability }
+func (a TensorFlowLabels) Len() int      { return len(a) }
+func (a TensorFlowLabels) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a TensorFlowLabels) Less(i, j int) bool {
+	if a[i].Priority == a[j].Priority {
+		return a[i].Probability > a[j].Probability
+	} else {
+		return a[i].Priority > a[j].Priority
+	}
+}
 
 // GetImageTagsFromFile returns tags for a jpeg image file.
 func (t *TensorFlow) GetImageTagsFromFile(filename string) (result []TensorFlowLabel, err error) {
@@ -139,9 +190,30 @@ func (t *TensorFlow) loadModel() error {
 	return nil
 }
 
+func (t *TensorFlow) labelRule(label string) LabelRule {
+	if err := t.loadLabelRules(); err != nil {
+		log.Error(err)
+	}
+
+	if rule, ok := t.labelRules[label]; ok {
+		if rule.See != "" {
+			return t.labelRule(rule.See)
+		}
+
+		return t.labelRules[label]
+	}
+
+	return LabelRule{Threshold: 0.08}
+}
+
 func (t *TensorFlow) findBestLabels(probabilities []float32) []TensorFlowLabel {
+	if err := t.loadLabelRules(); err != nil {
+		log.Error(err)
+	}
+
 	// Make a list of label/probability pairs
 	var result []TensorFlowLabel
+
 	for i, p := range probabilities {
 		if i >= len(t.labels) {
 			break
@@ -151,18 +223,28 @@ func (t *TensorFlow) findBestLabels(probabilities []float32) []TensorFlowLabel {
 			continue
 		}
 
-		result = append(result, TensorFlowLabel{Label: t.labels[i], Probability: p})
+		labelText := strings.ToLower(t.labels[i])
+
+		rule := t.labelRule(labelText)
+
+		if p < rule.Threshold {
+			continue
+		}
+
+		if rule.Tag != "" {
+			labelText = rule.Tag
+		}
+
+		result = append(result, TensorFlowLabel{Label: labelText, Probability: p, Synonyms: rule.Synonyms, Priority: rule.Priority})
 	}
 
 	// Sort by probability
 	sort.Sort(TensorFlowLabels(result))
 
-	l := len(result)
-
-	if l >= 5 {
-		return result[:5]
-	} else {
+	if l := len(result); l < 5 {
 		return result[:l]
+	} else {
+		return result[:5]
 	}
 }
 

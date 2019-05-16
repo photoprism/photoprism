@@ -34,6 +34,8 @@ dep-go:
 	go build -v ./...
 dep-tensorflow:
 	scripts/download-nasnet.sh
+zip-nasnet:
+	(cd assets/tensorflow && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
 build-js:
 	(cd frontend &&	env NODE_ENV=production npm run build)
 build-go:

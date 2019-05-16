@@ -17,7 +17,7 @@ func (PhotoTag) TableName() string {
 }
 
 func (t *PhotoTag) FirstOrCreate(db *gorm.DB) *PhotoTag {
-	db.FirstOrCreate(t, "photo_id = ? AND tags_id = ?", t.PhotoID, t.TagID)
+	db.FirstOrCreate(t, "photo_id = ? AND tag_id = ?", t.PhotoID, t.TagID)
 
 	return t
 }
