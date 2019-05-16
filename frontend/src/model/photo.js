@@ -158,7 +158,7 @@ class Photo extends Abstract {
 
     getCamera() {
         if (this.CameraModel) {
-            return this.CameraModel;
+            return this.CameraMake + " " + this.CameraModel;
         }
 
         return "Unknown";
