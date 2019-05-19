@@ -1,6 +1,6 @@
 <template>
-    <v-container grid-list-xs fluid class="pa-0 p-photo-details">
-        <v-card v-if="photos.length === 0">
+    <v-container grid-list-xs fluid class="pa-0 p-photos p-photo-details">
+        <v-card v-if="photos.length === 0" class="p-photos-empty">
             <v-card-title primary-title>
                 <div>
                     <h3 class="headline mb-3">No photos matched your search</h3>
@@ -12,6 +12,7 @@
             <v-flex
                     v-for="(photo, index) in photos"
                     :key="photo.ID"
+                    class="p-photo"
                     xs12 sm6 md4 lg3 d-flex
             >
                 <v-hover>

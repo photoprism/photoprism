@@ -3,14 +3,14 @@
             :headers="listColumns"
             :items="photos"
             hide-actions
-            class="elevation-1 p-photo-list"
+            class="elevation-1 p-photos p-photo-list"
             select-all
             disable-initial-sort
             item-key="ID"
             v-model="selectedPhotos"
             :no-data-text="'No photos matched your search'"
     >
-        <template slot="items" slot-scope="props">
+        <template slot="items" slot-scope="props" class="p-photo">
             <td>
                 <v-checkbox
                         v-model="props.selected"

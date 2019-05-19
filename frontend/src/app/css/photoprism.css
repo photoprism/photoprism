@@ -1,9 +1,8 @@
 @import url("../../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
 @import url("../../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../../node_modules/leaflet/dist/leaflet.css");
-@import url("p-photo-viewer.css");
-@import url("p-busy-overlay.css");
-@import url("p-navigation.css");
+@import url("maps.css");
+@import url("viewer.css");
 
 body {
     background: rgb(250, 250, 250);
@@ -20,6 +19,21 @@ main {
     padding: 0;
     margin: 0;
     z-index: 1;
+}
+
+#p-busy-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#p-navigation {
+    z-index: 10;
 }
 
 #photoprism div.loading {
@@ -39,134 +53,6 @@ main {
     top: -8px;
 }
 
-div.leaflet-container .leaflet-marker-photo {
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
-    background-color: rgba(0, 0, 0, 0.3);
-    border-color: #fff;
-    color: rgba(0, 0, 0, 0.87);
-    display: block;
-    border-radius: 50%;
-}
-
-.photo-tile {
-    cursor: pointer;
-}
-
-.photo-tile.selected {
-    opacity: 0.6;
-}
-
-.photo-grid .photo {
-    background: #eeeeee;
-    display: block;
-    width: 250px;
-    height: 250px;
-    float: left;
-    margin: 3px;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-}
-
-.photo-grid .photo img {
-    margin: 0;
-    padding: 0;
-}
-
-.photo-grid .photo .info {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    opacity: 0.75;
-    background: black;
-    font-size: 12px;
-    padding: 8px 12px;
-    color: white;
-    cursor: text;
-}
-
-.photo-grid .photo:hover .info {
-    display: block;
-}
-
-.photo-grid .photo .right {
-    float: right;
-}
-
-.photo-grid .photo .left {
-    float: left;
-}
-
-.photo-grid .photo .actions {
-    display: block;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    opacity: 1;
-    background: transparent;
-    font-size: 14px;
-    padding: 6px 12px;
-    color: white;
-    text-align: center;
-    cursor: default;
-}
-
-.photo-grid .photo:hover .actions {
-    background: black;
-    opacity: 0.75;
-}
-
-.photo-grid .photo .actions .action {
-    display: none;
-}
-
-.photo-grid .photo .location {
-    display: none;
-    font-size: 12px;
-    text-decoration: none;
-    color: white;
-}
-
-.photo-grid .photo:hover .location {
-    display: inline;
-}
-
-.photo-grid .photo:hover .actions .action,
-.photo-grid .photo .actions .action.favorite {
-    display: inline;
-    cursor: pointer;
-}
-
-.photo-carousel {
-    overflow: hidden;
-}
-
-.photo-carousel .next,
-.photo-carousel .prev {
-    position: absolute;
-    top: 50%;
-    z-index: 1;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
-}
-
-.photo-carousel .next {
-    right: 5px;
-}
-
-.photo-carousel .prev {
-    left: 5px;
-}
-
-.photo-carousel .photo-img {
-    margin: 0;
-    padding: 0;
-    cursor: pointer
-}
-
-span.link {
+#photoprism span.link {
     cursor: pointer;
 }
