@@ -1,5 +1,5 @@
 <template>
-    <div id="app-navigation">
+    <div id="p-navigation">
         <v-toolbar dark color="grey darken-3" class="hidden-lg-and-up" @click.stop="showNavigation()">
             <v-toolbar-side-icon></v-toolbar-side-icon>
 
@@ -209,6 +209,7 @@
 
 <script>
     export default {
+        name: "PNavigation",
         data() {
             return {
                 drawer: null,

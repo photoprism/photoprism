@@ -43,7 +43,7 @@
     })();
 
     export default {
-        name: 'app-loading-bar',
+        name: "PLoadingBar",
         data () {
             return {
                 error: false,

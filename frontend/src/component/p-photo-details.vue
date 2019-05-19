@@ -79,7 +79,7 @@
 </template>
 <script>
     export default {
-        name: 'app-photo-details',
+        name: 'PPhotoDetails',
         props: {
             photos: Array,
             open: Function,

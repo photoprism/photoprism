@@ -1,18 +1,18 @@
 <template>
     <div id="app">
-        <app-loading-bar ref="loadingBar" height="4"></app-loading-bar>
+        <p-loading-bar ref="loadingBar" height="4"></p-loading-bar>
 
-        <app-alert></app-alert>
+        <p-alert></p-alert>
 
         <v-app>
-            <app-navigation></app-navigation>
+            <p-navigation></p-navigation>
 
             <v-content>
                 <router-view></router-view>
             </v-content>
         </v-app>
 
-        <app-gallery></app-gallery>
+        <p-photo-viewer></p-photo-viewer>
     </div>
 </template>
 

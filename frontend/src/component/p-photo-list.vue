@@ -29,7 +29,7 @@
 </template>
 <script>
     export default {
-        name: 'app-photo-list',
+        name: 'PPhotoList',
         props: {
             photos: Array,
             selectedPhotos: Array,

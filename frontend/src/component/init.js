@@ -1,23 +1,23 @@
-import AppAlert from "./app-alert.vue";
-import AppNavigation from "./app-navigation.vue";
-import AppLoadingBar from "./app-loading-bar.vue";
-import AppGallery from "./app-gallery.vue";
-import AppPhotoDetails from "./app-photo-details.vue";
-import AppPhotoTiles from "./app-photo-tiles.vue";
-import AppPhotoMosaic from "./app-photo-mosaic.vue";
-import AppPhotoList from "./app-photo-list.vue";
+import PAlert from "./p-alert.vue";
+import PNavigation from "./p-navigation.vue";
+import PLoadingBar from "./p-loading-bar.vue";
+import PPhotoDetails from "./p-photo-details.vue";
+import PPhotoTiles from "./p-photo-tiles.vue";
+import PPhotoMosaic from "./p-photo-mosaic.vue";
+import PPhotoList from "./p-photo-list.vue";
+import PPhotoViewer from "./p-photo-viewer.vue";
 
 const components = {};
 
 components.install = (Vue) => {
-    Vue.component("app-alert", AppAlert);
-    Vue.component("app-gallery", AppGallery);
-    Vue.component("app-navigation", AppNavigation);
-    Vue.component("app-loading-bar", AppLoadingBar);
-    Vue.component("app-photo-details", AppPhotoDetails);
-    Vue.component("app-photo-tiles", AppPhotoTiles);
-    Vue.component("app-photo-mosaic", AppPhotoMosaic);
-    Vue.component("app-photo-list", AppPhotoList);
+    Vue.component("p-alert", PAlert);
+    Vue.component("p-navigation", PNavigation);
+    Vue.component("p-loading-bar", PLoadingBar);
+    Vue.component("p-photo-details", PPhotoDetails);
+    Vue.component("p-photo-tiles", PPhotoTiles);
+    Vue.component("p-photo-mosaic", PPhotoMosaic);
+    Vue.component("p-photo-list", PPhotoList);
+    Vue.component("p-photo-viewer", PPhotoViewer);
 };
 
 export default components;

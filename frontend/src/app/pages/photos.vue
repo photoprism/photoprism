@@ -135,10 +135,10 @@
                 </v-btn>
             </v-speed-dial>
 
-            <app-photo-tiles v-if="query.view === 'tiles'" :photos="results" :open="openPhoto" :select="selectPhoto" :like="likePhoto"></app-photo-tiles>
-            <app-photo-mosaic v-if="query.view === 'mosaic'" :photos="results" :open="openPhoto" :select="selectPhoto" :like="likePhoto"></app-photo-mosaic>
-            <app-photo-details v-if="query.view === 'details'" :photos="results" :open="openPhoto" :select="selectPhoto" :like="likePhoto"></app-photo-details>
-            <app-photo-list v-if="query.view === 'list'" :photos="results" :selected-photos="selected" :open="openPhoto" :select="selectPhoto" :like="likePhoto"></app-photo-list>
+            <p-photo-tiles v-if="query.view === 'tiles'" :photos="results" :open="openPhoto" :select="selectPhoto" :like="likePhoto"></p-photo-tiles>
+            <p-photo-mosaic v-if="query.view === 'mosaic'" :photos="results" :open="openPhoto" :select="selectPhoto" :like="likePhoto"></p-photo-mosaic>
+            <p-photo-details v-if="query.view === 'details'" :photos="results" :open="openPhoto" :select="selectPhoto" :like="likePhoto"></p-photo-details>
+            <p-photo-list v-if="query.view === 'list'" :photos="results" :selected-photos="selected" :open="openPhoto" :select="selectPhoto" :like="likePhoto"></p-photo-list>
 
             <v-snackbar
                     v-model="snackbarVisible"

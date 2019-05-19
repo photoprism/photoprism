@@ -22,7 +22,7 @@
     import Event from 'pubsub-js';
 
     export default {
-        name: 'app-alert',
+        name: 'PAlert',
         data() {
             return {
                 text: '',

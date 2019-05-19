@@ -74,7 +74,7 @@
     import 'photoswipe/dist/default-skin/default-skin.css'
 
     export default {
-        name: "photoswipe",
+        name: "PPhotoViewer",
         methods: {
             openGallery: function () {
             },
