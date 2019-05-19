@@ -1,5 +1,5 @@
 <template>
-    <div v-infinite-scroll="loadMore" infinite-scroll-disabled="loadMoreDisabled" infinite-scroll-distance="10">
+    <div class="p-page p-page-photos" v-infinite-scroll="loadMore" infinite-scroll-disabled="loadMoreDisabled" infinite-scroll-distance="10">
         <v-form ref="form" lazy-validation @submit="formChange" dense>
             <v-toolbar flat color="blue-grey lighten-4">
                 <v-text-field class="pt-3 pr-3"

@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid fill-height class="pa-0 map">
+    <v-container fluid fill-height class="pa-0 p-page p-page-places">
         <l-map :zoom="zoom" :center="center" :bounds="bounds" :options="options">
             <l-control position="bottomright">
                 <v-toolbar dense floating color="grey lighten-4" v-on:dblclick.stop v-on:click.stop>
