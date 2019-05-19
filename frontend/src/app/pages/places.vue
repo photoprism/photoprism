@@ -73,7 +73,7 @@
         },
         methods: {
             openPhoto(index) {
-                this.$gallery.show(this.results, index)
+                this.$viewer.show(this.results, index)
             },
             currentPositionSuccess(position) {
                 this.center = L.latLng(position.coords.latitude, position.coords.longitude);

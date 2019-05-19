@@ -1,5 +1,5 @@
 <template>
-    <div id="p-photo-viewer" class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div id="p-photo-viewer" class="p-viewer pswp" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="pswp__bg"></div>
         <div class="pswp__scroll-wrap">
             <div class="pswp__container">

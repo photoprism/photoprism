@@ -406,7 +406,7 @@
                 this.refreshList();
             },
             openPhoto(index) {
-                this.$gallery.show(this.results, index)
+                this.$viewer.show(this.results, index)
             },
             loadMore() {
                 if (this.loadMoreDisabled) return;

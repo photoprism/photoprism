@@ -1,7 +1,7 @@
 import PhotoSwipe from "photoswipe";
 import PhotoSwipeUI_Default from "photoswipe/dist/photoswipe-ui-default.js";
 
-class Gallery {
+class Viewer {
     constructor() {
         this.photos = [];
         this.el = null;
@@ -36,15 +36,13 @@ class Gallery {
 
     getEl() {
         if (!this.el) {
-            const elements = document.querySelectorAll(".pswp");
+            this.el = document.getElementById('p-photo-viewer');
 
-            if (elements.length !== 1) {
-                let err = "There should be only one PhotoSwipe element";
-                console.log(err, elements);
+            if (this.el === null) {
+                let err = "no photo viewer element found";
+                console.log(err);
                 throw err;
             }
-
-            this.el = elements[0];
         }
 
         return this.el;
@@ -154,4 +152,4 @@ class Gallery {
     }
 }
 
-export default Gallery;
+export default Viewer;
