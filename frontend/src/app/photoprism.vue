@@ -17,7 +17,7 @@
 </template>
 
 <script>
-    import "./css/app.css";
+    import "./css/photoprism.css";
 
     export default {
         name: 'photoprism',

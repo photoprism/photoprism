@@ -1,0 +1,9 @@
+#p-photo-viewer .pswp__caption__center {
+    text-align: center;
+    max-width: 80%;
+    margin: 0 auto;
+    font-size: 14px;
+    padding: 10px;
+    line-height: 20px;
+    color: #E0E0E0;
+}
