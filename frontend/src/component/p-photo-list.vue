@@ -3,7 +3,7 @@
             :headers="listColumns"
             :items="photos"
             hide-actions
-            class="elevation-1"
+            class="elevation-1 p-photo-list"
             select-all
             disable-initial-sort
             item-key="ID"

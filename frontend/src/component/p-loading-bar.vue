@@ -1,5 +1,6 @@
 <template>
     <transition
+            id="p-loading-bar"
             v-on:before-enter="beforeEnter"
             v-on:enter="enter"
             v-on:after-enter="afterEnter"
@@ -57,7 +58,7 @@
 
         mounted () {
             const overlay = document.createElement("div");
-            overlay.id = 'busy-overlay';
+            overlay.id = 'p-busy-overlay';
             document.body.appendChild(overlay);
 
             let stackSize = 0;
@@ -67,7 +68,7 @@
 
                 if(stackSize === 1) {
                     this.start();
-                    document.getElementById('busy-overlay').style.display = 'block';
+                    document.getElementById('p-busy-overlay').style.display = 'block';
                 }
             }.bind(this));
 
@@ -76,7 +77,7 @@
 
                 if (stackSize === 0) {
                     this.done();
-                    document.getElementById('busy-overlay').style.display = 'none';
+                    document.getElementById('p-busy-overlay').style.display = 'none';
                 }
             }.bind(this));
         },

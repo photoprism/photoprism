@@ -1,5 +1,6 @@
 <template>
     <v-snackbar
+            id="p-alert"
             v-model="visible"
             :color="color"
             :timeout="0"

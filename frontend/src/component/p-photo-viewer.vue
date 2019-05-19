@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="p-photo-viewer">
         <slot v-bind:openGallery="openGallery"></slot>
         <!-- Root element of PhotoSwipe. Must have class pswp. -->
         <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">

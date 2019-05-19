@@ -1,6 +1,6 @@
 <template>
-    <div id="app">
-        <p-loading-bar ref="loadingBar" height="4"></p-loading-bar>
+    <div id="photoprism">
+        <p-loading-bar height="4"></p-loading-bar>
 
         <p-alert></p-alert>
 
@@ -18,7 +18,7 @@
 
 <script>
     export default {
-        name: 'app',
+        name: 'photoprism',
         computed: {},
         methods: {
             login() {

@@ -3,12 +3,12 @@
 @import url("../node_modules/leaflet/dist/leaflet.css");
 @import url("photo.css");
 
-#app div.loading {
+#photoprism div.loading {
     text-align: center;
     margin: 50px 20px;
 }
 
-#busy-overlay {
+#p-busy-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -36,7 +36,7 @@ main {
     z-index: 1;
 }
 
-#app main a {
+#photoprism main a {
     color: #00B8D4;
 }
 
@@ -53,7 +53,7 @@ main {
 }
 
 /* Photo Gallery */
-#app .pswp__caption__center {
+#photoprism .pswp__caption__center {
     text-align: center;
     max-width: 80%;
     margin: 0 auto;

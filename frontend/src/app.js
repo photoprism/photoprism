@@ -2,12 +2,12 @@ import Vue from "vue";
 import Vuetify from "vuetify";
 import Router from "vue-router";
 import "../css/app.css";
-import App from "app/main.vue";
-import routes from "app/routes";
+import PhotoPrism from "app/photoprism.vue";
+import Routes from "routes";
 import Api from "common/api";
 import Config from "common/config";
-import Components from "component/init";
-import Maps from "maps/init";
+import Components from "component/register";
+import Maps from "maps/register";
 import Alert from "common/alert";
 import Gallery from "common/gallery";
 import Session from "common/session";
@@ -55,7 +55,7 @@ Vue.use(Router);
 
 // Configure client-side routing
 const router = new Router({
-    routes,
+    routes: Routes,
     mode: "history",
     saveScrollPosition: true,
 });
@@ -63,7 +63,7 @@ const router = new Router({
 // Run app
 /* eslint-disable no-unused-vars */
 const app = new Vue({
-    el: "#app",
+    el: "#photoprism",
     router,
-    render: h => h(App),
+    render: h => h(PhotoPrism),
 });
