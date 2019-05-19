@@ -12,10 +12,6 @@
     </transition>
 </template>
 <script>
-    /**
-     * Helpers
-     */
-
     function clamp(n, min, max) {
         if (n < min) {
             return min
@@ -27,22 +23,24 @@
     }
 
     let queue = (() => {
-        let pending = []
+        let pending = [];
 
         function next() {
-            let fn = pending.shift()
+            let fn = pending.shift();
+
             if (fn) {
                 fn(next)
             }
         }
 
         return fn => {
-            pending.push(fn)
+            pending.push(fn);
+
             if (pending.length === 1) {
                 next()
             }
         }
-    })()
+    })();
 
     export default {
         name: 'app-loading-bar',

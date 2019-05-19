@@ -88,7 +88,6 @@ const config = {
                             hmr: false,
                             fallback: "vue-style-loader",
                             use: [
-                                // "vue-style-loader",
                                 "style-loader",
                                 {
                                     loader: "css-loader",
