@@ -1,6 +1,6 @@
 <template>
     <div class="p-page p-page-photos" v-infinite-scroll="loadMore" infinite-scroll-disabled="loadMoreDisabled"
-         infinite-scroll-distance="10">
+         infinite-scroll-distance="10" infinite-scroll-listen-for-event="infiniteScrollRefresh">
         <v-form ref="form" lazy-validation @submit="formChange" dense>
             <v-toolbar flat color="blue-grey lighten-4">
                 <v-text-field class="pt-3 pr-3"
@@ -10,7 +10,7 @@
                               clearable
                               color="blue-grey"
                               @click:clear="clearQuery"
-                              v-model="query.q"
+                              v-model="filter.q"
                               @keyup.enter.native="formChange"
                               id="search"
                 ></v-text-field>
@@ -35,7 +35,7 @@
                                       color="blue-grey"
                                       item-value="LocCountryCode"
                                       item-text="LocCountry"
-                                      v-model="query.country"
+                                      v-model="filter.country"
                                       :items="options.countries">
                             </v-select>
                         </v-flex>
@@ -46,16 +46,16 @@
                                       color="blue-grey"
                                       item-value="ID"
                                       item-text="CameraModel"
-                                      v-model="query.camera"
+                                      v-model="filter.camera"
                                       :items="options.cameras">
                             </v-select>
                         </v-flex>
                         <v-flex xs12 sm6 md3 pa-2 id="viewFlex">
-                            <v-select @change="formChange"
+                            <v-select @change="viewChange"
                                       label="View"
                                       flat solo hide-details
                                       color="blue-grey"
-                                      v-model="query.view"
+                                      v-model="view"
                                       :items="options.views"
                                       id="viewSelect">
                             </v-select>
@@ -65,7 +65,7 @@
                                       label="Sort By"
                                       flat solo hide-details
                                       color="blue-grey"
-                                      v-model="query.order"
+                                      v-model="filter.order"
                                       :items="options.sorting">
                             </v-select>
                         </v-flex>
@@ -137,13 +137,13 @@
                 </v-btn>
             </v-speed-dial>
 
-            <p-photo-tiles v-if="query.view === 'tiles'" :photos="results" :selection="selected" :select="selectPhoto"
+            <p-photo-tiles v-if="view === 'tiles'" :photos="results" :selection="selected" :select="selectPhoto"
                            :open="openPhoto" :like="likePhoto"></p-photo-tiles>
-            <p-photo-mosaic v-if="query.view === 'mosaic'" :photos="results" :selection="selected" :select="selectPhoto"
+            <p-photo-mosaic v-if="view === 'mosaic'" :photos="results" :selection="selected" :select="selectPhoto"
                             :open="openPhoto" :like="likePhoto"></p-photo-mosaic>
-            <p-photo-details v-if="query.view === 'details'" :photos="results" :selection="selected"
+            <p-photo-details v-if="view === 'details'" :photos="results" :selection="selected"
                              :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-details>
-            <p-photo-list v-if="query.view === 'list'" :photos="results" :selection="selected" :select="selectPhoto"
+            <p-photo-list v-if="view === 'list'" :photos="results" :selection="selected" :select="selectPhoto"
                           :open="openPhoto" :like="likePhoto"></p-photo-list>
         </v-container>
 
@@ -343,18 +343,14 @@
 
             return {
                 'advandedSearch': false,
-                'window': {
-                    width: 0,
-                    height: 0
-                },
                 'results': [],
-                'query': {
-                    view: view,
+                'filter': {
                     country: country,
                     camera: camera,
                     order: order,
                     q: q,
                 },
+                'lastFilter': {},
                 'options': {
                     'categories': [
                         {value: '', text: 'All Categories'},
@@ -379,11 +375,10 @@
                         {value: 'imported', text: 'Recently imported'},
                     ],
                 },
-                'viewType': view,
-                'loadMoreDisabled': true,
+                'view': view,
                 'pageSize': 60,
                 'offset': 0,
-                'lastQuery': {},
+                'loadMoreDisabled': true,
                 'submitTimeout': false,
                 'selected': [],
                 'dialog': false,
@@ -418,18 +413,8 @@
                 ],
             };
         },
-        destroyed() {
-            window.removeEventListener('resize', this.handleResize)
-        },
         methods: {
-            handleResize() {
-                this.window.width = window.innerWidth;
-                this.window.height = window.innerHeight;
-            },
             clearSelection() {
-                for (let i = 0; i < this.selected.length; i++) {
-                    this.selected[i].selected = false;
-                }
                 this.selected = [];
             },
             selectPhoto(photo) {
@@ -461,7 +446,10 @@
                     this.$router.push({name: 'Places', query: {q: photo.CountryName}});
                 }
             },
-            formChange(event) {
+            viewChange() {
+                this.updateQuery();
+            },
+            formChange() {
                 this.refreshList();
             },
             clearQuery() {
@@ -483,7 +471,7 @@
                     offset: this.offset,
                 };
 
-                Object.assign(params, this.lastQuery);
+                Object.assign(params, this.lastFilter);
 
                 Photo.search(params).then(response => {
                     this.results = this.results.concat(response.models);
@@ -495,24 +483,35 @@
                     }
                 });
             },
+            updateQuery() {
+                const query = {
+                    view: this.view
+                };
+
+                Object.assign(query, this.filter);
+
+                this.$router.replace({query: query});
+
+                this.$nextTick(() => this.$emit("infiniteScrollRefresh"));
+            },
             refreshList() {
                 this.loadMoreDisabled = true;
 
                 // Don't query the same data more than once
-                if (JSON.stringify(this.lastQuery) === JSON.stringify(this.query)) return;
+                if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) return;
 
-                Object.assign(this.lastQuery, this.query);
+                Object.assign(this.lastFilter, this.filter);
 
                 this.offset = 0;
 
-                this.$router.replace({query: this.query});
+                this.updateQuery();
 
                 const params = {
                     count: this.pageSize,
                     offset: this.offset,
                 };
 
-                Object.assign(params, this.query);
+                Object.assign(params, this.filter);
 
                 Photo.search(params).then(response => {
                     this.results = response.models;
@@ -528,11 +527,9 @@
             },
         },
         beforeRouteLeave(to, from, next) {
-            next()
+            next();
         },
         created() {
-            window.addEventListener('resize', this.handleResize);
-            this.handleResize();
             this.refreshList();
         },
     };

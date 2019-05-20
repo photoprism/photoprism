@@ -18,7 +18,7 @@
             >
                 <v-hover>
                     <v-card tile slot-scope="{ hover }"
-                            :class="selection.includes(photo.ID) ? 'elevation-14 ma-1' : hover ? 'elevation-6 ma-2' : 'elevation-2 ma-2'">
+                            :class="selection.includes(photo.ID) ? 'elevation-15 ma-1' : hover ? 'elevation-6 ma-2' : 'elevation-2 ma-2'">
                         <v-img :src="photo.getThumbnailUrl('tile_500')"
                                aspect-ratio="1"
                                class="grey lighten-2"

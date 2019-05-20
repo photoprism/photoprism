@@ -13,8 +13,14 @@ const PATHS = {
 
 const isDev = process.env.NODE_ENV !== "production";
 
+if(isDev) {
+    console.log("Building frontend in DEVELOPMENT mode. Please wait.")
+} else {
+    console.log("Building frontend in PRODUCTION mode. Please wait.")
+}
+
 const config = {
-    mode: "production",
+    mode: isDev ? "development" : "production",
     devtool: isDev ? "inline-source-map" : false,
     entry: {
         app: PATHS.app,
@@ -29,7 +35,7 @@ const config = {
             path.join(__dirname, "node_modules"),
         ],
         alias: {
-            vue: "vue/dist/vue.js",
+            vue: isDev ? "vue/dist/vue.js" : "vue/dist/vue.min.js",
         },
     },
     plugins: [
@@ -41,7 +47,7 @@ const config = {
         fs: "empty",
     },
     performance: {
-        hints: "warning",
+        hints: isDev ? false : "error",
         maxEntrypointSize: 1512000,
         maxAssetSize: 1512000,
     },
