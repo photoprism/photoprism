@@ -44,3 +44,6 @@ Thumbs.db
 .settings
 .swp
 .tmp
+
+# Acceptance Test Screenshots
+/frontend/tests/acceptance/screenshots

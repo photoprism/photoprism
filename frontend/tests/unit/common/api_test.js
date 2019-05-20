@@ -1,6 +1,6 @@
 import assert from 'assert';
 import Api from 'common/api';
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from 'axios-mock-adapter/types';
 
 const mock = new MockAdapter(Api);
 

@@ -54,6 +54,8 @@ test-codecov:
 test-coverage:
 	go test -tags=slow -timeout 30m -coverprofile=coverage.txt -covermode=atomic -v ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
+test-acceptance:
+	testcafe chromium:headless -S -s frontend/tests/screenshots frontend/tests/acceptance/
 clean:
 	rm -f $(BINARY_NAME)
 	rm -f *.log

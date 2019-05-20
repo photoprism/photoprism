@@ -17,18 +17,18 @@ module.exports = (config) => {
         },
 
         files: [
-            {pattern: "tests/**/*_test.js", watched: false},
+            {pattern: "tests/unit/**/*_test.js", watched: false},
         ],
 
         // Preprocess through webpack
         preprocessors: {
-            "tests/**/*_test.js": ["webpack"],
+            "tests/unit/**/*_test.js": ["webpack"],
         },
 
         reporters: ["progress", "html"],
 
         htmlReporter: {
-            outputFile: "tests/result.html",
+            outputFile: "tests/unit/result.html",
         },
 
         webpack: {
@@ -38,7 +38,7 @@ module.exports = (config) => {
                 modules: [
                     path.join(__dirname, "src"),
                     path.join(__dirname, "node_modules"),
-                    path.join(__dirname, "tests"),
+                    path.join(__dirname, "tests/unit"),
                 ],
                 alias: {
                     vue: "vue/dist/vue.js",
