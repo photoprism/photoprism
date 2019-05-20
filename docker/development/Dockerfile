@@ -45,7 +45,8 @@ RUN apt-get update && apt-get upgrade && \
     libgtk-3-bin \
     tzdata \
     gconf-service \
-    chromium-browser
+    chromium-browser \
+    firefox
 
 # Install darktable (RAW to JPEG converter)
 RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
@@ -72,7 +73,7 @@ RUN apt-get update && \
 
 # Install and configure NodeJS Package Manager (npm)
 ENV NODE_ENV production
-RUN npm install -g npm
+RUN npm install -g npm testcafe
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
@@ -112,6 +113,7 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 
 # Expose HTTP port plus 4000 for TiDB and 8080 for broadwayd (not running by default)
 EXPOSE 80
+EXPOSE 2342
 EXPOSE 4000
 EXPOSE 8080
 

@@ -5,12 +5,12 @@ services:
     build: .
     image: photoprism/photoprism:develop
     depends_on:
-      - database
+      - photoprism-mysql
     ports:
-      - 2342:80 # Web Server (PhotoPrism)
-      - 4000:4000 # Database (MySQL compatible)
+      - "2342:2342" # Web Server (PhotoPrism)
+      - "4000:4000" # Database (MySQL compatible)
     volumes:
-      - .:/go/src/github.com/photoprism/photoprism
+      - ".:/go/src/github.com/photoprism/photoprism"
     environment:
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_SERVER_MODE: "debug"
@@ -21,17 +21,21 @@ services:
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/originals"
       PHOTOPRISM_DATABASE_DRIVER: "internal"
       PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
+      PHOTOPRISM_HTTP_HOST: "0.0.0.0"
+      PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_SQL_HOST: "0.0.0.0"
       PHOTOPRISM_SQL_PORT: 4000
       PHOTOPRISM_SQL_PASSWORD: "photoprism"
       PHOTOPRISM_DARKTABLE_CLI: "/usr/bin/darktable-cli"
       TF_CPP_MIN_LOG_LEVEL: 1
 
-  database:
+  photoprism-mysql:
     image: mysql:8.0.16
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
+    command: mysqld --port=4001 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
+    expose:
+      - "4001"
     ports:
-      - 4001:3306 # MySQL (for tests)
+      - "4001:4001" # MySQL (for tests)
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism
