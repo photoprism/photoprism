@@ -3,8 +3,7 @@
             :headers="listColumns"
             :items="photos"
             hide-actions
-            class="elevation-1 p-photos p-photo-list"
-            select-all
+            class="elevation-0 p-photos p-photo-list"
             disable-initial-sort
             item-key="ID"
             v-model="selected"
@@ -12,18 +11,24 @@
     >
         <template slot="items" slot-scope="props" class="p-photo">
             <td>
-                <v-checkbox
-                        v-model="props.selected"
-                        primary
-                        hide-details
-                ></v-checkbox>
+                <v-btn icon small :ripple="false"
+                       class="p-photo-select"
+                       @click.stop.prevent="select(props.item)">
+                    <v-icon v-if="selection.length && selection.includes(props.item.ID)" color="grey darken-2">check_circle</v-icon>
+                    <v-icon v-else-if="!selection.includes(props.item.ID)" color="grey lighten-4">radio_button_off</v-icon>
+                </v-btn>
             </td>
-            <td>{{ props.item.PhotoTitle }}</td>
+            <td @click="open(props.index)" class="p-pointer">{{ props.item.PhotoTitle }}</td>
             <td>{{ props.item.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}</td>
-            <td>{{ props.item.LocCity }}</td>
             <td>{{ props.item.LocCountry }}</td>
             <td>{{ props.item.CameraMake }} {{ props.item.CameraModel }}</td>
-            <td>{{ props.item.PhotoFavorite ? 'Yes' : 'No' }}</td>
+            <td><v-btn icon small flat :ripple="false"
+                       class="p-photo-like"
+                       @click.stop.prevent="like(props.item)">
+                <v-icon v-if="props.item.PhotoFavorite" color="pink lighten-3">favorite</v-icon>
+                <v-icon v-else color="grey lighten-4">favorite_border</v-icon>
+                </v-btn>
+            </td>
         </template>
     </v-data-table>
 </template>
@@ -41,16 +46,20 @@
             return {
                 'selected': [],
                 'listColumns': [
+                    {text: '', value: '', align: 'center', sortable: false, class: 'p-col-select'},
                     {text: 'Title', value: 'PhotoTitle'},
                     {text: 'Taken At', value: 'TakenAt'},
-                    {text: 'City', value: 'LocCity'},
                     {text: 'Country', value: 'LocCountry'},
                     {text: 'Camera', value: 'CameraModel'},
-                    {text: 'Favorite', value: 'PhotoFavorite'},
+                    {text: 'Favorite', value: 'PhotoFavorite', align: 'left'},
                 ],
             };
         },
         methods: {
+            showSelected() {
+                console.log("selected", this.selected);
+                console.log("selection", this.selection);
+            }
         }
     };
 </script>

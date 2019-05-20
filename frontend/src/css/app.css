@@ -1,8 +1,9 @@
-@import url("../../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
-@import url("../../../node_modules/vuetify/dist/vuetify.min.css");
-@import url("../../../node_modules/leaflet/dist/leaflet.css");
+@import url("../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
+@import url("../../node_modules/vuetify/dist/vuetify.min.css");
+@import url("../../node_modules/leaflet/dist/leaflet.css");
 @import url("maps.css");
 @import url("viewer.css");
+@import url("photos.css");
 
 body {
     background: rgb(250, 250, 250);
@@ -53,6 +54,6 @@ main {
     top: -8px;
 }
 
-#photoprism span.link {
+#photoprism .p-pointer {
     cursor: pointer;
 }

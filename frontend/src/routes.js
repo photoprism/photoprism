@@ -1,16 +1,16 @@
-import Photos from "app/pages/photos.vue";
-import PhotosEdit from "app/pages/photosEdit.vue";
-import Albums from "app/pages/albums.vue";
-import Albums2 from "app/pages/albums2.vue";
-import Import2 from "app/pages/import2.vue";
-import Import3 from "app/pages/import3.vue";
-import Import from "app/pages/import.vue";
-import Export from "app/pages/export.vue";
-import Settings from "app/pages/settings.vue";
-import Tags from "app/pages/tags.vue";
-import Todo from "app/pages/todo.vue";
-import Places from "app/pages/places.vue";
-import Calendar from "app/pages/calendar.vue";
+import Photos from "pages/photos.vue";
+import PhotosEdit from "pages/photosEdit.vue";
+import Albums from "pages/albums.vue";
+import Albums2 from "pages/albums2.vue";
+import Import2 from "pages/import2.vue";
+import Import3 from "pages/import3.vue";
+import Import from "pages/import.vue";
+import Export from "pages/export.vue";
+import Settings from "pages/settings.vue";
+import Tags from "pages/tags.vue";
+import Todo from "pages/todo.vue";
+import Places from "pages/places.vue";
+import Calendar from "pages/calendar.vue";
 
 export default [
     { name: "Home", path: "/", redirect: "/photos" },

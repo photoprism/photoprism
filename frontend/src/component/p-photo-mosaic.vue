@@ -36,20 +36,20 @@
                                                      color="grey lighten-5"></v-progress-circular>
                             </v-layout>
 
-                            <v-btn v-if="hover || selection.includes(photo.ID)" :flat="!hover" icon large absolute
-                                   :ripple="false" style="right: 1px; bottom: 1px;"
+                            <v-btn v-if="hover || selection.includes(photo.ID)" :flat="!hover" :ripple="false"
+                                   icon small absolute
                                    class="p-photo-select"
                                    @click.stop.prevent="select(photo)">
-                                <v-icon v-if="selection.length && selection.includes(photo.ID)" color="white">check_box</v-icon>
-                                <v-icon v-else color="white">check_box_outline_blank</v-icon>
+                                <v-icon v-if="selection.length && selection.includes(photo.ID)" color="white">check_circle</v-icon>
+                                <v-icon v-else color="grey lighten-3">radio_button_off</v-icon>
                             </v-btn>
 
-                            <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large absolute
-                                   :ripple="false" style="bottom: 1px; left: 1px"
+                            <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" :ripple="false"
+                                   icon small absolute
                                    class="p-photo-like"
                                    @click.stop.prevent="like(photo)">
                                 <v-icon v-if="photo.PhotoFavorite" color="white">favorite</v-icon>
-                                <v-icon v-else color="white">favorite_border</v-icon>
+                                <v-icon v-else color="grey lighten-3">favorite_border</v-icon>
                             </v-btn>
                         </v-img>
 

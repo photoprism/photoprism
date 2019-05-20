@@ -1,0 +1,30 @@
+#photoprism .p-col-select {
+    width: 50px;
+}
+
+#photoprism .p-photo-list tr td:first-child {
+    padding: 0 0 0 16px;
+    text-align: center;
+}
+
+#photoprism .p-photo-list .p-photo-select {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#photoprism .p-photo-tiles .p-photo-like,
+#photoprism .p-photo-mosaic .p-photo-like,
+#photoprism .p-photo-details .p-photo-like {
+    left: 4px; bottom: 4px;
+}
+
+#photoprism .p-photo-tiles .p-photo-select,
+#photoprism .p-photo-details .p-photo-select,
+#photoprism .p-photo-mosaic .p-photo-select
+{
+    right: 4px; bottom: 4px;
+}
+
+#photoprism .p-photo-list .v-datatable {
+    border-radius: 10px;
+}
