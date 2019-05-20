@@ -7,7 +7,7 @@
             select-all
             disable-initial-sort
             item-key="ID"
-            v-model="selectedPhotos"
+            v-model="selected"
             :no-data-text="'No photos matched your search'"
     >
         <template slot="items" slot-scope="props" class="p-photo">
@@ -32,13 +32,14 @@
         name: 'PPhotoList',
         props: {
             photos: Array,
-            selectedPhotos: Array,
-            open: Function,
+            selection: Array,
             select: Function,
+            open: Function,
             like: Function,
         },
         data() {
             return {
+                'selected': [],
                 'listColumns': [
                     {text: 'Title', value: 'PhotoTitle'},
                     {text: 'Taken At', value: 'TakenAt'},

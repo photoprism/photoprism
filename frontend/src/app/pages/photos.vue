@@ -88,7 +88,8 @@
                         dark
                         fab
                 >
-                    <v-icon>menu</v-icon>
+                    <v-icon v-if="selected.length === 0">menu</v-icon>
+                    <span v-else>{{ selected.length }}</span>
                 </v-btn>
                 <v-btn
                         fab
@@ -135,27 +136,10 @@
                 </v-btn>
             </v-speed-dial>
 
-            <p-photo-tiles v-if="query.view === 'tiles'" :photos="results" :open="openPhoto" :select="selectPhoto" :like="likePhoto"></p-photo-tiles>
-            <p-photo-mosaic v-if="query.view === 'mosaic'" :photos="results" :open="openPhoto" :select="selectPhoto" :like="likePhoto"></p-photo-mosaic>
-            <p-photo-details v-if="query.view === 'details'" :photos="results" :open="openPhoto" :select="selectPhoto" :like="likePhoto"></p-photo-details>
-            <p-photo-list v-if="query.view === 'list'" :photos="results" :selected-photos="selected" :open="openPhoto" :select="selectPhoto" :like="likePhoto"></p-photo-list>
-
-            <v-snackbar
-                    v-model="snackbarVisible"
-                    bottom
-                    :timeout="0"
-            >
-                {{ snackbarText }}
-                <v-btn
-                        class="pr-0"
-                        color="primary"
-                        icon
-                        flat
-                        @click="clearSelection()"
-                >
-                    <v-icon>close</v-icon>
-                </v-btn>
-            </v-snackbar>
+            <p-photo-tiles v-if="query.view === 'tiles'" :photos="results" :selection="selected" :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-tiles>
+            <p-photo-mosaic v-if="query.view === 'mosaic'" :photos="results" :selection="selected" :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-mosaic>
+            <p-photo-details v-if="query.view === 'details'" :photos="results" :selection="selected" :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-details>
+            <p-photo-list v-if="query.view === 'list'" :photos="results" :selection="selected" :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-list>
         </v-container>
 
         <v-dialog v-model="dialog" dark persistent max-width="600px">
@@ -334,7 +318,7 @@
 </template>
 
 <script>
-    import Photo from 'model/photo';
+    import Photo from "model/photo";
 
     export default {
         name: 'photos',
@@ -353,8 +337,6 @@
             }].concat(this.$config.getValue('countries'));
 
             return {
-                'snackbarVisible': false,
-                'snackbarText': '',
                 'advandedSearch': false,
                 'window': {
                     width: 0,
@@ -392,7 +374,7 @@
                         {value: 'imported', text: 'Recently imported'},
                     ],
                 },
-                'view': view,
+                'viewType': view,
                 'loadMoreDisabled': true,
                 'pageSize': 60,
                 'offset': 0,
@@ -444,22 +426,8 @@
                     this.selected[i].selected = false;
                 }
                 this.selected = [];
-                this.updateSnackbar();
             },
-            updateSnackbar(text) {
-                if (!text) text = "";
-
-                this.snackbarText = text;
-
-                this.snackbarVisible = this.snackbarText !== "";
-            },
-            showSnackbar() {
-                this.snackbarVisible = this.snackbarText !== "";
-            },
-            hideSnackbar() {
-                this.snackbarVisible = false;
-            },
-            selectPhoto(photo, ev) {
+            selectPhoto(photo) {
                 if (photo.selected) {
                     for (let i = 0; i < this.selected.length; i++) {
                         if (this.selected[i].id === photo.id) {
@@ -472,18 +440,6 @@
                 } else {
                     this.selected.push(photo);
                     photo.selected = true;
-                }
-
-                if (this.selected.length > 0) {
-                    if (this.selected.length === 1) {
-                        this.snackbarText = 'One photo selected';
-                    } else {
-                        this.snackbarText = this.selected.length + ' photos selected';
-                    }
-                    this.snackbarVisible = true;
-                } else {
-                    this.snackbarText = '';
-                    this.snackbarVisible = false;
                 }
             },
             likePhoto(photo) {
