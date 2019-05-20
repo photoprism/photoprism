@@ -6,25 +6,31 @@ services:
     image: photoprism/photoprism:develop
     command: tail -f /dev/null
     volumes:
-      - ~/.cache/yarn:/root/.cache/yarn
-      - ~/.cache/go-mod:/go/pkg/mod
+      - "~/.cache/yarn:/root/.cache/yarn"
+      - "~/.cache/go-mod:/go/pkg/mod"
     environment:
-      - CODECOV_TOKEN
-      - CODECOV_ENV
-      - CODECOV_URL
-      - CODECOV_SLUG
-      - VCS_COMMIT_ID
-      - VCS_BRANCH_NAME
-      - VCS_PULL_REQUEST
-      - VCS_SLUG
-      - VCS_TAG
-      - CI_BUILD_URL
-      - CI_BUILD_ID
-      - CI_JOB_ID
+      PHOTOPRISM_HTTP_HOST: "0.0.0.0"
+      PHOTOPRISM_HTTP_PORT: 2342
+      PHOTOPRISM_SQL_HOST: "0.0.0.0"
+      PHOTOPRISM_SQL_PORT: 4000
+      CODECOV_TOKEN:
+      CODECOV_ENV:
+      CODECOV_URL:
+      CODECOV_SLUG:
+      VCS_COMMIT_ID:
+      VCS_BRANCH_NAME:
+      VCS_PULL_REQUEST:
+      VCS_SLUG:
+      VCS_TAG:
+      CI_BUILD_URL:
+      CI_BUILD_ID:
+      CI_JOB_ID:
 
-  database:
+  photoprism-mysql:
     image: mysql:8.0.16
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
+    command: mysqld --port=4001 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
+    expose:
+      - "4001"
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism

@@ -10,9 +10,9 @@ services:
     ports:
       - 2342:80 # left side is your local port (change if port 2342 is already used or you want to use port 80)
     volumes:
-      - ~/Photos:/srv/photoprism/photos # change ~/Photos to whatever directory you want to use on your local computer
-      - photoprism-cache:/srv/photoprism/cache # keep this (thumbnail cache)
-      - photoprism-database:/srv/photoprism/database # keep this (database files)
+      - "~/Photos:/srv/photoprism/photos" # change ~/Photos to whatever directory you want to use on your local computer
+      - "photoprism-cache:/srv/photoprism/cache" # keep this (thumbnail cache)
+      - "photoprism-database:/srv/photoprism/database" # keep this (database files)
     environment:
       PHOTOPRISM_IMPORT_PATH: /srv/photoprism/photos/Import # ~/Photos/Import (files to be imported to originals)
       PHOTOPRISM_EXPORT_PATH: /srv/photoprism/photos/Export # ~/Photos/Export (files exported from originals)
