@@ -1,9 +1,9 @@
 <template>
     <div id="p-navigation">
         <v-toolbar dark color="grey darken-3" class="hidden-lg-and-up p-navigation-small" @click.stop="showNavigation()">
-            <v-toolbar-side-icon></v-toolbar-side-icon>
+            <v-toolbar-side-icon class="p-navigation-open"></v-toolbar-side-icon>
 
-            <v-toolbar-title>{{ $router.currentRoute.name }}</v-toolbar-title>
+            <v-toolbar-title class="p-navigation-title">{{ $router.currentRoute.name }}</v-toolbar-title>
 
             <v-spacer></v-spacer>
         </v-toolbar>
@@ -16,7 +16,7 @@
         >
             <v-toolbar flat>
                 <v-list>
-                    <v-list-tile>
+                    <v-list-tile class="p-navigation-logo">
                         <v-list-tile-avatar>
                             <img src="/assets/img/logo.png">
                         </v-list-tile-avatar>
@@ -26,7 +26,7 @@
                             </v-list-tile-title>
                         </v-list-tile-content>
                         <v-list-tile-action class="hidden-md-and-down">
-                            <v-btn icon @click.stop="mini = !mini">
+                            <v-btn icon @click.stop="mini = !mini" class="p-navigation-minimize">
                                 <v-icon>chevron_left</v-icon>
                             </v-btn>
                         </v-list-tile-action>
@@ -35,13 +35,13 @@
             </v-toolbar>
 
             <v-list class="pt-3">
-                <v-list-tile v-if="mini" @click.stop="mini = !mini">
+                <v-list-tile v-if="mini" @click.stop="mini = !mini" class="p-navigation-expand">
                     <v-list-tile-action>
                         <v-icon>chevron_right</v-icon>
                     </v-list-tile-action>
                 </v-list-tile>
 
-                <v-list-tile to="/photos" @click="">
+                <v-list-tile to="/photos" @click="" class="p-navigation-photos">
                     <v-list-tile-action>
                         <v-icon>photo</v-icon>
                     </v-list-tile-action>
@@ -51,7 +51,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/places" @click="">
+                <v-list-tile to="/places" @click="" class="p-navigation-places">
                     <v-list-tile-action>
                         <v-icon>place</v-icon>
                     </v-list-tile-action>
@@ -61,23 +61,23 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/calendar" @click="">
+                <v-list-tile to="/calendar" @click="" class="p-navigation-timeline">
                     <v-list-tile-action>
                         <v-icon>date_range</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title>Calendar</v-list-tile-title>
+                        <v-list-tile-title>Timeline</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/tags" @click="">
+                <v-list-tile to="/tags" @click="" class="p-navigation-scenes">
                     <v-list-tile-action>
                         <v-icon>label</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title>Tags</v-list-tile-title>
+                        <v-list-tile-title>Scenes</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
