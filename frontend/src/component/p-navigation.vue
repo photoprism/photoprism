@@ -1,6 +1,6 @@
 <template>
     <div id="p-navigation">
-        <v-toolbar dark color="grey darken-3" class="hidden-lg-and-up" @click.stop="showNavigation()">
+        <v-toolbar dark color="grey darken-3" class="hidden-lg-and-up p-navigation-small" @click.stop="showNavigation()">
             <v-toolbar-side-icon></v-toolbar-side-icon>
 
             <v-toolbar-title>{{ $router.currentRoute.name }}</v-toolbar-title>
@@ -10,10 +10,9 @@
         <v-navigation-drawer
                 v-model="drawer"
                 :mini-variant="mini"
-                fixed
-                dark
-                app
+                class="p-navigation-sidebar"
                 width="270"
+                fixed dark app
         >
             <v-toolbar flat>
                 <v-list>
