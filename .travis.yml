@@ -1,5 +1,10 @@
 sudo: required
 
+addons:
+  apt:
+    packages:
+      - docker-ce
+
 cache:
   directories:
     - $HOME/.cache
