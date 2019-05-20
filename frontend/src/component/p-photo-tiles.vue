@@ -12,14 +12,13 @@
             <v-flex
                     v-for="(photo, index) in photos"
                     :key="index"
-                    v-bind:class="{ selected: photo.selected }"
+                    v-bind:class="{ selected: selection.includes(photo.ID) }"
                     class="p-photo"
                     xs12 sm6 md3 lg2 d-flex
             >
                 <v-hover>
                     <v-card tile slot-scope="{ hover }"
-                            :dark="photo.selected"
-                            :class="photo.selected ? 'elevation-14 ma-1' : hover ? 'elevation-6 ma-2' : 'elevation-2 ma-2'">
+                            :class="selection.includes(photo.ID) ? 'elevation-14 ma-1' : hover ? 'elevation-6 ma-2' : 'elevation-2 ma-2'">
                         <v-img :src="photo.getThumbnailUrl('tile_500')"
                                aspect-ratio="1"
                                class="grey lighten-2"
@@ -37,12 +36,12 @@
                                                      color="grey lighten-5"></v-progress-circular>
                             </v-layout>
 
-                            <v-btn v-if="hover || photo.selected" :flat="!hover" icon large absolute
+                            <v-btn v-if="hover || selection.includes(photo.ID)" :flat="!hover" icon large absolute
                                    :ripple="false" style="right: 4px; bottom: 4px;"
                                    class="p-photo-select"
                                    @click.stop.prevent="select(photo)">
-                                <v-icon v-if="selection.length && photo.selected" color="white">check_box</v-icon>
-                                <v-icon v-else-if="!photo.selected" color="white">check_box_outline_blank</v-icon>
+                                <v-icon v-if="selection.length && selection.includes(photo.ID)" color="white">check_box</v-icon>
+                                <v-icon v-else-if="!selection.includes(photo.ID)" color="white">check_box_outline_blank</v-icon>
                             </v-btn>
 
                             <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" icon large absolute

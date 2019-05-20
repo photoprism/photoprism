@@ -1,5 +1,6 @@
 <template>
-    <div class="p-page p-page-photos" v-infinite-scroll="loadMore" infinite-scroll-disabled="loadMoreDisabled" infinite-scroll-distance="10">
+    <div class="p-page p-page-photos" v-infinite-scroll="loadMore" infinite-scroll-disabled="loadMoreDisabled"
+         infinite-scroll-distance="10">
         <v-form ref="form" lazy-validation @submit="formChange" dense>
             <v-toolbar flat color="blue-grey lighten-4">
                 <v-text-field class="pt-3 pr-3"
@@ -136,10 +137,14 @@
                 </v-btn>
             </v-speed-dial>
 
-            <p-photo-tiles v-if="query.view === 'tiles'" :photos="results" :selection="selected" :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-tiles>
-            <p-photo-mosaic v-if="query.view === 'mosaic'" :photos="results" :selection="selected" :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-mosaic>
-            <p-photo-details v-if="query.view === 'details'" :photos="results" :selection="selected" :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-details>
-            <p-photo-list v-if="query.view === 'list'" :photos="results" :selection="selected" :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-list>
+            <p-photo-tiles v-if="query.view === 'tiles'" :photos="results" :selection="selected" :select="selectPhoto"
+                           :open="openPhoto" :like="likePhoto"></p-photo-tiles>
+            <p-photo-mosaic v-if="query.view === 'mosaic'" :photos="results" :selection="selected" :select="selectPhoto"
+                            :open="openPhoto" :like="likePhoto"></p-photo-mosaic>
+            <p-photo-details v-if="query.view === 'details'" :photos="results" :selection="selected"
+                             :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-details>
+            <p-photo-list v-if="query.view === 'list'" :photos="results" :selection="selected" :select="selectPhoto"
+                          :open="openPhoto" :like="likePhoto"></p-photo-list>
         </v-container>
 
         <v-dialog v-model="dialog" dark persistent max-width="600px">
@@ -428,18 +433,12 @@
                 this.selected = [];
             },
             selectPhoto(photo) {
-                if (photo.selected) {
-                    for (let i = 0; i < this.selected.length; i++) {
-                        if (this.selected[i].id === photo.id) {
-                            this.selected.splice(i, 1);
-                            break;
-                        }
-                    }
+                const index = this.selected.indexOf(photo.ID);
 
-                    photo.selected = false;
+                if (index === -1) {
+                    this.selected.push(photo.ID);
                 } else {
-                    this.selected.push(photo);
-                    photo.selected = true;
+                    this.selected.splice(index, 1);
                 }
             },
             likePhoto(photo) {
