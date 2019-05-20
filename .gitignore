@@ -6,7 +6,9 @@
 /node_modules
 /frontend/.eslintcache
 /frontend/node_modules/*
-/frontend/tests/result.html
+/frontend/tests/*.html
+/frontend/tests/*.log
+/frontend/tests/screenshots
 /assets/testdata
 /assets/backups
 /assets/tensorflow/nasnet
@@ -46,4 +48,3 @@ Thumbs.db
 .tmp
 
 # Acceptance Test Screenshots
-/frontend/tests/acceptance/screenshots

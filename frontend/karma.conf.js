@@ -28,7 +28,7 @@ module.exports = (config) => {
         reporters: ["progress", "html"],
 
         htmlReporter: {
-            outputFile: "tests/unit/result.html",
+            outputFile: "tests/unit.html",
         },
 
         webpack: {

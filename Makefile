@@ -42,6 +42,10 @@ build-go:
 	scripts/build.sh debug $(BINARY_NAME)
 test-js:
 	(cd frontend &&	env NODE_ENV=development npm run test)
+test-chromium:
+	(cd frontend &&	npm run test-chromium)
+test-firefox:
+	(cd frontend &&	npm run test-firefox)
 test-go:
 	go test -tags=slow -timeout 20m -v ./internal/... | scripts/colorize-tests.sh
 test-short:
@@ -54,8 +58,6 @@ test-codecov:
 test-coverage:
 	go test -tags=slow -timeout 30m -coverprofile=coverage.txt -covermode=atomic -v ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
-test-acceptance:
-	testcafe chromium:headless -S -s frontend/tests/screenshots frontend/tests/acceptance/
 clean:
 	rm -f $(BINARY_NAME)
 	rm -f *.log
