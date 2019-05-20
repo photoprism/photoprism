@@ -10,7 +10,7 @@
     "lint": "eslint --cache src/ *.js",
     "fmt": "eslint --cache --fix src/ *.js",
     "test": "karma start",
-    "test-chromium": "testcafe chromium:headless -S -s tests/screenshots tests/acceptance",
+    "test-chromium": "testcafe \"chromium:headless --disable-dev-shm-usage\" -S -s tests/screenshots tests/acceptance",
     "test-firefox": "testcafe firefox:headless -S -s tests/screenshots tests/acceptance"
   },
   "babel": {

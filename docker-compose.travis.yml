@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 
 services:
   photoprism:
@@ -8,6 +8,7 @@ services:
     volumes:
       - "~/.cache/yarn:/root/.cache/yarn"
       - "~/.cache/go-mod:/go/pkg/mod"
+    shm_size: "2gb"
     environment:
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342

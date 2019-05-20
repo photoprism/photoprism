@@ -12,7 +12,7 @@ module.exports = (config) => {
         customLaunchers: {
             LocalChrome: {
                 base: "ChromeHeadless",
-                flags: ["--disable-translate", "--disable-extensions", "--no-sandbox", "--disable-web-security"],
+                flags: ["--disable-translate", "--disable-extensions", "--no-sandbox", "--disable-web-security", "--disable-dev-shm-usage"],
             },
         },
 

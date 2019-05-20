@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 
 services:
   photoprism:
@@ -11,6 +11,7 @@ services:
       - "4000:4000" # Database (MySQL compatible)
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
+    shm_size: "2gb"
     environment:
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_SERVER_MODE: "debug"
