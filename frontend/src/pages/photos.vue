@@ -79,9 +79,9 @@
                     bottom
                     right
                     direction="top"
-                    open-on-hover
+                    v-model="menuVisible"
                     transition="slide-y-reverse-transition"
-                    style="right: 8px; bottom: 8px;"
+                    class="p-photo-menu"
             >
                 <v-btn
                         slot="activator"
@@ -96,7 +96,18 @@
                         fab
                         dark
                         small
+                        color="grey"
+                        @click.stop="clearSelection()"
+                        v-if="selected.length > 0"
+                >
+                    <v-icon>clear</v-icon>
+                </v-btn>
+                <v-btn
+                        fab
+                        dark
+                        small
                         color="deep-purple lighten-2"
+                        @click.stop="batchLike()"
                 >
                     <v-icon>favorite</v-icon>
                 </v-btn>
@@ -132,6 +143,7 @@
                         dark
                         small
                         color="delete"
+                        @click.stop="batchDelete()"
                 >
                     <v-icon>delete</v-icon>
                 </v-btn>
@@ -379,6 +391,7 @@
                 'pageSize': 60,
                 'offset': 0,
                 'loadMoreDisabled': true,
+                'menuVisible': false,
                 'submitTimeout': false,
                 'selected': [],
                 'dialog': false,
@@ -414,8 +427,15 @@
             };
         },
         methods: {
+            batchLike() {
+                this.menuVisible = false;
+            },
+            batchDelete() {
+                this.menuVisible = false;
+            },
             clearSelection() {
                 this.selected = [];
+                this.menuVisible = false;
             },
             selectPhoto(photo) {
                 const index = this.selected.indexOf(photo.ID);

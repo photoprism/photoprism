@@ -40,6 +40,8 @@ build-js:
 	(cd frontend &&	env NODE_ENV=production npm run build)
 build-go:
 	scripts/build.sh debug $(BINARY_NAME)
+watch-js:
+	(cd frontend &&	env NODE_ENV=development npm run dev)
 test-js:
 	(cd frontend &&	env NODE_ENV=development npm run test)
 test-chromium:

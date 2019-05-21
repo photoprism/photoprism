@@ -28,3 +28,8 @@
 #photoprism .p-photo-list .v-datatable {
     border-radius: 10px;
 }
+
+#photoprism .p-photo-menu {
+    right: 8px;
+    bottom: 8px;
+}
