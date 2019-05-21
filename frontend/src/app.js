@@ -5,6 +5,7 @@ import PhotoPrism from "photoprism.vue";
 import Routes from "routes";
 import Api from "common/api";
 import Config from "common/config";
+import Clipboard from "common/clipboard";
 import Components from "component/register";
 import Maps from "maps/register";
 import Alert from "common/alert";
@@ -16,17 +17,20 @@ import InfiniteScroll from "vue-infinite-scroll";
 import VueTruncate from "vue-truncate-filter";
 import VueFullscreen from "vue-fullscreen";
 
-// Initialize client-side session
+// Initialize helpers
 const session = new Session(window.localStorage);
 const config = new Config(window.localStorage, window.appConfig);
+const viewer = new Viewer();
+const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
 
-// Set global helpers
+// Assign helpers to VueJS prototype
 Vue.prototype.$event = Event;
 Vue.prototype.$alert = Alert;
-Vue.prototype.$viewer = new Viewer;
+Vue.prototype.$viewer = viewer;
 Vue.prototype.$session = session;
 Vue.prototype.$api = Api;
 Vue.prototype.$config = config;
+Vue.prototype.$clipboard = clipboard;
 
 // Register Vuetify
 Vue.use(Vuetify, {

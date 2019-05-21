@@ -8,7 +8,7 @@ class User extends Abstract {
     }
 
     getId() {
-        return this.userId;
+        return this.ID;
     }
 
     getRegisterForm() {

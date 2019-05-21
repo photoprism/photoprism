@@ -36,7 +36,7 @@ class Abstract {
     }
 
     getId() {
-        return this.id;
+        return this.ID;
     }
 
     hasId() {

@@ -17,12 +17,12 @@
             >
                 <v-hover>
                     <v-card tile slot-scope="{ hover }"
-                            :dark="selection.includes(photo.ID)"
-                            :class="selection.includes(photo.ID) ? 'elevation-15 ma-1' : 'elevation-2 ma-2'">
+                            :dark="$clipboard.has(photo)"
+                            :class="$clipboard.has(photo) ? 'elevation-15 ma-1' : 'elevation-2 ma-2'">
                         <v-img
                                 :src="photo.getThumbnailUrl('tile_500')"
                                 aspect-ratio="1"
-                                v-bind:class="{ selected: selection.includes(photo.ID) }"
+                                v-bind:class="{ selected: $clipboard.has(photo) }"
                                 style="cursor: pointer"
                                 class="grey lighten-2"
                                 @click="open(index)"
@@ -38,11 +38,11 @@
                                 <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
                             </v-layout>
 
-                            <v-btn v-if="hover || selection.includes(photo.ID)" :flat="!hover" :ripple="false"
+                            <v-btn v-if="hover || $clipboard.has(photo)" :flat="!hover" :ripple="false"
                                    icon large absolute
                                    class="p-photo-select"
                                    @click.stop.prevent="select(photo)">
-                                <v-icon v-if="selection.length && selection.includes(photo.ID)" color="white">check_circle</v-icon>
+                                <v-icon v-if="selection.length && $clipboard.has(photo)" color="white">check_circle</v-icon>
                                 <v-icon v-else color="grey lighten-3">radio_button_off</v-icon>
                             </v-btn>
 

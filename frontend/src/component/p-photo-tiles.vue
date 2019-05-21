@@ -12,13 +12,13 @@
             <v-flex
                     v-for="(photo, index) in photos"
                     :key="index"
-                    v-bind:class="{ selected: selection.includes(photo.ID) }"
+                    v-bind:class="{ selected: $clipboard.has(photo) }"
                     class="p-photo"
                     xs12 sm6 md3 lg2 d-flex
             >
                 <v-hover>
                     <v-card tile slot-scope="{ hover }"
-                            :class="selection.includes(photo.ID) ? 'elevation-15 ma-1' : hover ? 'elevation-6 ma-2' : 'elevation-2 ma-2'">
+                            :class="$clipboard.has(photo) ? 'elevation-15 ma-1' : hover ? 'elevation-6 ma-2' : 'elevation-2 ma-2'">
                         <v-img :src="photo.getThumbnailUrl('tile_500')"
                                aspect-ratio="1"
                                class="grey lighten-2"
@@ -36,12 +36,12 @@
                                                      color="grey lighten-5"></v-progress-circular>
                             </v-layout>
 
-                            <v-btn v-if="hover || selection.includes(photo.ID)" :flat="!hover" :ripple="false"
+                            <v-btn v-if="hover || $clipboard.has(photo)" :flat="!hover" :ripple="false"
                                    icon large absolute
                                    class="p-photo-select"
                                    @click.stop.prevent="select(photo)">
-                                <v-icon v-if="selection.length && selection.includes(photo.ID)" color="white">check_circle</v-icon>
-                                <v-icon v-else-if="!selection.includes(photo.ID)" color="grey lighten-3">radio_button_off</v-icon>
+                                <v-icon v-if="selection.length && $clipboard.has(photo)" color="white">check_circle</v-icon>
+                                <v-icon v-else-if="!$clipboard.has(photo)" color="grey lighten-3">radio_button_off</v-icon>
                             </v-btn>
 
                             <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" :ripple="false"

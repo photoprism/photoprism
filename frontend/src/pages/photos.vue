@@ -189,7 +189,7 @@
                 'loadMoreDisabled': true,
                 'menuVisible': false,
                 'results': [],
-                'selected': [],
+                'selected': this.$clipboard.selection,
                 'view': view,
                 'pageSize': 60,
                 'offset': 0,
@@ -252,13 +252,7 @@
                 this.menuVisible = false;
             },
             selectPhoto(photo) {
-                const index = this.selected.indexOf(photo.ID);
-
-                if (index === -1) {
-                    this.selected.push(photo.ID);
-                } else {
-                    this.selected.splice(index, 1);
-                }
+                this.$clipboard.toggle(photo);
             },
             likePhoto(photo) {
                 photo.PhotoFavorite = !photo.PhotoFavorite;
