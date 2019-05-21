@@ -92,23 +92,14 @@
                     <v-icon v-if="selected.length === 0">menu</v-icon>
                     <span v-else>{{ selected.length }}</span>
                 </v-btn>
-                <v-btn
-                        fab
-                        dark
-                        small
-                        color="grey"
-                        @click.stop="clearSelection()"
-                        v-if="selected.length > 0"
-                >
-                    <v-icon>clear</v-icon>
-                </v-btn>
+
                 <v-btn
                         fab
                         dark
                         small
                         color="deep-purple lighten-2"
                         @click.stop="batchLike()"
-                        v-if="selected.length > 0"
+                        :disabled="!selected.length"
                 >
                     <v-icon>favorite</v-icon>
                 </v-btn>
@@ -146,9 +137,19 @@
                         small
                         color="delete"
                         @click.stop="batchDelete()"
-                        v-if="selected.length > 0"
+                        :disabled="!selected.length"
                 >
                     <v-icon>delete</v-icon>
+                </v-btn>
+                <v-btn
+                        fab
+                        dark
+                        small
+                        color="grey"
+                        @click.stop="clearSelection()"
+                        :disabled="!selected.length"
+                >
+                    <v-icon>clear</v-icon>
                 </v-btn>
             </v-speed-dial>
 
