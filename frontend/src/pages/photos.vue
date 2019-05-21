@@ -1,78 +1,9 @@
 <template>
     <div class="p-page p-page-photos" v-infinite-scroll="loadMore" infinite-scroll-disabled="loadMoreDisabled"
          infinite-scroll-distance="10" infinite-scroll-listen-for-event="infiniteScrollRefresh">
-        <v-form ref="form" lazy-validation @submit="formChange" dense>
-            <v-toolbar flat color="blue-grey lighten-4">
-                <v-text-field class="pt-3 pr-3"
-                              single-line
-                              label="Search"
-                              prepend-inner-icon="search"
-                              clearable
-                              color="blue-grey"
-                              @click:clear="clearQuery"
-                              v-model="filter.q"
-                              @keyup.enter.native="formChange"
-                              id="search"
-                ></v-text-field>
 
-                <v-spacer></v-spacer>
+        <p-photo-search :settings="settings" :filter="filter" :filter-change="refreshList" :settings-change="updateQuery"></p-photo-search>
 
-                <v-btn icon @click="searchExpanded = !searchExpanded" id="advancedMenu">
-                    <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
-                </v-btn>
-            </v-toolbar>
-
-            <v-card class="pt-1"
-                    flat
-                    color="blue-grey lighten-5"
-                    v-show="searchExpanded">
-                <v-card-text>
-                    <v-layout row wrap>
-                        <v-flex xs12 sm6 md3 pa-2 id="countriesFlex">
-                            <v-select @change="formChange"
-                                      label="Country"
-                                      flat solo hide-details
-                                      color="blue-grey"
-                                      item-value="LocCountryCode"
-                                      item-text="LocCountry"
-                                      v-model="filter.country"
-                                      :items="options.countries">
-                            </v-select>
-                        </v-flex>
-                        <v-flex xs12 sm6 md3 pa-2 id="cameraFlex">
-                            <v-select @change="formChange"
-                                      label="Camera"
-                                      flat solo hide-details
-                                      color="blue-grey"
-                                      item-value="ID"
-                                      item-text="CameraModel"
-                                      v-model="filter.camera"
-                                      :items="options.cameras">
-                            </v-select>
-                        </v-flex>
-                        <v-flex xs12 sm6 md3 pa-2 id="viewFlex">
-                            <v-select @change="viewChange"
-                                      label="View"
-                                      flat solo hide-details
-                                      color="blue-grey"
-                                      v-model="view"
-                                      :items="options.views"
-                                      id="viewSelect">
-                            </v-select>
-                        </v-flex>
-                        <v-flex xs12 sm6 md3 pa-2 id="timeFlex">
-                            <v-select @change="formChange"
-                                      label="Sort By"
-                                      flat solo hide-details
-                                      color="blue-grey"
-                                      v-model="filter.order"
-                                      :items="options.sorting">
-                            </v-select>
-                        </v-flex>
-                    </v-layout>
-                </v-card-text>
-            </v-card>
-        </v-form>
         <v-container fluid>
             <v-speed-dial
                     fixed
@@ -153,14 +84,14 @@
                 </v-btn>
             </v-speed-dial>
 
-            <p-photo-tiles v-if="view === 'tiles'" :photos="results" :selection="selected" :select="selectPhoto"
-                           :open="openPhoto" :like="likePhoto"></p-photo-tiles>
-            <p-photo-mosaic v-if="view === 'mosaic'" :photos="results" :selection="selected" :select="selectPhoto"
+            <p-photo-mosaic v-if="settings.view === 'mosaic'" :photos="results" :selection="selected" :select="selectPhoto"
                             :open="openPhoto" :like="likePhoto"></p-photo-mosaic>
-            <p-photo-details v-if="view === 'details'" :photos="results" :selection="selected"
-                             :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-details>
-            <p-photo-list v-if="view === 'list'" :photos="results" :selection="selected" :select="selectPhoto"
+            <p-photo-list v-else-if="settings.view === 'list'" :photos="results" :selection="selected" :select="selectPhoto"
                           :open="openPhoto" :like="likePhoto"></p-photo-list>
+            <p-photo-details v-else-if="settings.view === 'details'" :photos="results" :selection="selected"
+                             :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-details>
+            <p-photo-tiles v-else :photos="results" :selection="selected" :select="selectPhoto"
+                           :open="openPhoto" :like="likePhoto"></p-photo-tiles>
         </v-container>
     </div>
 </template>
@@ -178,21 +109,18 @@
             const q = query['q'] ? query['q'] : '';
             const country = query['country'] ? query['country'] : '';
             const view = query['view'] ? query['view'] : 'tiles';
-            const cameras = [{ID: 0, CameraModel: 'All Cameras'}].concat(this.$config.getValue('cameras'));
-            const countries = [{
-                LocCountryCode: '',
-                LocCountry: 'All Countries'
-            }].concat(this.$config.getValue('countries'));
 
             return {
                 'searchExpanded': false,
                 'loadMoreDisabled': true,
                 'menuVisible': false,
                 'results': [],
-                'selected': this.$clipboard.selection,
-                'view': view,
                 'pageSize': 60,
                 'offset': 0,
+                'selected': this.$clipboard.selection,
+                'settings': {
+                    'view': view,
+                },
                 'filter': {
                     country: country,
                     camera: camera,
@@ -200,30 +128,6 @@
                     q: q,
                 },
                 'lastFilter': {},
-                'options': {
-                    'categories': [
-                        {value: '', text: 'All Categories'},
-                        {value: 'airport', text: 'Airport'},
-                        {value: 'amenity', text: 'Amenity'},
-                        {value: 'building', text: 'Building'},
-                        {value: 'historic', text: 'Historic'},
-                        {value: 'shop', text: 'Shop'},
-                        {value: 'tourism', text: 'Tourism'},
-                    ],
-                    'views': [
-                        {value: 'tiles', text: 'Tiles'},
-                        {value: 'mosaic', text: 'Mosaic'},
-                        {value: 'details', text: 'Details'},
-                        {value: 'list', text: 'List'},
-                    ],
-                    'countries': countries,
-                    'cameras': cameras,
-                    'sorting': [
-                        {value: 'newest', text: 'Newest first'},
-                        {value: 'oldest', text: 'Oldest first'},
-                        {value: 'imported', text: 'Recently imported'},
-                    ],
-                },
             };
         },
         methods: {
@@ -254,9 +158,6 @@
                 photo.PhotoFavorite = !photo.PhotoFavorite;
                 photo.like(photo.PhotoFavorite);
             },
-            deletePhoto(photo) {
-                this.$alert.success('Photo deleted');
-            },
             openLocation(photo) {
                 if (photo.PhotoLat && photo.PhotoLong) {
                     this.$router.push({name: 'Places', query: {lat: photo.PhotoLat, long: photo.PhotoLong}});
@@ -269,16 +170,6 @@
                 } else {
                     this.$router.push({name: 'Places', query: {q: photo.CountryName}});
                 }
-            },
-            viewChange() {
-                this.updateQuery();
-            },
-            formChange() {
-                this.refreshList();
-            },
-            clearQuery() {
-                this.query.q = '';
-                this.refreshList();
             },
             openPhoto(index) {
                 this.$viewer.show(this.results, index)
@@ -309,7 +200,7 @@
             },
             updateQuery() {
                 const query = {
-                    view: this.view
+                    view: this.settings.view
                 };
 
                 Object.assign(query, this.filter);

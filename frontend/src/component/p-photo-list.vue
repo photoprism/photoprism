@@ -56,10 +56,6 @@
             };
         },
         methods: {
-            showSelected() {
-                console.log("selected", this.selected);
-                console.log("selection", this.selection);
-            }
         }
     };
 </script>

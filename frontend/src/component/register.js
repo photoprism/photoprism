@@ -6,6 +6,7 @@ import PPhotoTiles from "./p-photo-tiles.vue";
 import PPhotoMosaic from "./p-photo-mosaic.vue";
 import PPhotoList from "./p-photo-list.vue";
 import PPhotoViewer from "./p-photo-viewer.vue";
+import PPhotoSearch from "./p-photo-search.vue";
 
 const components = {};
 
@@ -18,6 +19,7 @@ components.install = (Vue) => {
     Vue.component("p-photo-mosaic", PPhotoMosaic);
     Vue.component("p-photo-list", PPhotoList);
     Vue.component("p-photo-viewer", PPhotoViewer);
+    Vue.component("p-photo-search", PPhotoSearch);
 };
 
 export default components;
