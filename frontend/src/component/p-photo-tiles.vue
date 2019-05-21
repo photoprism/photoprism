@@ -23,7 +23,7 @@
                                aspect-ratio="1"
                                class="grey lighten-2"
                                style="cursor: pointer"
-                               @click="open(index)"
+                               @click="openPhoto(index)"
                         >
                             <v-layout
                                     slot="placeholder"
@@ -47,7 +47,7 @@
                             <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" :ripple="false"
                                    icon large absolute
                                    class="p-photo-like"
-                                   @click.stop.prevent="like(photo)">
+                                   @click.stop.prevent="photo.toggleLike()">
                                 <v-icon v-if="photo.PhotoFavorite" color="white">favorite</v-icon>
                                 <v-icon v-else color="grey lighten-3">favorite_border</v-icon>
                             </v-btn>
@@ -61,13 +61,11 @@
 </template>
 <script>
     export default {
-        name: 'PPhotoTiles',
+        name: 'p-photo-tiles',
         props: {
             photos: Array,
             selection: Array,
-            select: Function,
-            open: Function,
-            like: Function,
+            openPhoto: Function,
         },
         methods: {
         }

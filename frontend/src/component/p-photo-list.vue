@@ -18,13 +18,13 @@
                     <v-icon v-else-if="!$clipboard.has(props.item)" color="grey lighten-4">radio_button_off</v-icon>
                 </v-btn>
             </td>
-            <td @click="open(props.index)" class="p-pointer">{{ props.item.PhotoTitle }}</td>
+            <td @click="openPhoto(props.index)" class="p-pointer">{{ props.item.PhotoTitle }}</td>
             <td>{{ props.item.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}</td>
-            <td>{{ props.item.LocCountry }}</td>
+            <td @click="openLocation(props.index)" class="p-pointer">{{ props.item.LocCountry }}</td>
             <td>{{ props.item.CameraMake }} {{ props.item.CameraModel }}</td>
             <td><v-btn icon small flat :ripple="false"
                        class="p-photo-like"
-                       @click.stop.prevent="like(props.item)">
+                       @click.stop.prevent="props.item.toggleLike()">
                 <v-icon v-if="props.item.PhotoFavorite" color="pink lighten-3">favorite</v-icon>
                 <v-icon v-else color="grey lighten-4">favorite_border</v-icon>
                 </v-btn>
@@ -34,13 +34,12 @@
 </template>
 <script>
     export default {
-        name: 'PPhotoList',
+        name: 'p-photo-list',
         props: {
             photos: Array,
             selection: Array,
-            select: Function,
-            open: Function,
-            like: Function,
+            openPhoto: Function,
+            openLocation: Function,
         },
         data() {
             return {

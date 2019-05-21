@@ -17,7 +17,7 @@ test('Select photos', async t => {
         .click(Selector('button.p-photo-select').nth(2))
         .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(4))
         .click(Selector('button.p-photo-select').nth(3))
-        .expect(Selector('div.p-photo-menu').innerText).contains('4');
+        .expect(Selector('div.p-photo-clipboard').innerText).contains('4');
     await page.openNav();
     await t
         .click('a[href="/tags"]')
@@ -25,5 +25,5 @@ test('Select photos', async t => {
     await page.openNav();
     await t
         .click('a[href="/photos"]')
-        .expect(Selector('div.p-photo-menu').innerText).contains('4');
+        .expect(Selector('div.p-photo-clipboard').innerText).contains('4');
 });

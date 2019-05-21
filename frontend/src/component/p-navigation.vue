@@ -212,7 +212,7 @@
 
 <script>
     export default {
-        name: "PNavigation",
+        name: "p-navigation",
         data() {
             return {
                 drawer: null,

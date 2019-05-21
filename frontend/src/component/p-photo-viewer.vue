@@ -55,7 +55,7 @@
     import 'photoswipe/dist/default-skin/default-skin.css'
 
     export default {
-        name: "PPhotoViewer",
+        name: "p-photo-viewer",
         methods: {}
     }
 </script>

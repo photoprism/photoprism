@@ -1,5 +1,5 @@
 <template>
-    <v-form ref="form" lazy-validation @submit="filterChange" dense>
+    <v-form ref="form" class="p-photo-search" lazy-validation @submit="filterChange" dense>
         <v-toolbar flat color="blue-grey lighten-4">
             <v-text-field class="pt-3 pr-3"
                           single-line
@@ -74,7 +74,7 @@
 </template>
 <script>
     export default {
-        name: 'PPhotoSearch',
+        name: 'p-photo-search',
         props: {
             filter: Object,
             settings: Object,

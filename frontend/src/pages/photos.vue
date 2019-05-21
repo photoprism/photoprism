@@ -1,97 +1,20 @@
 <template>
-    <div class="p-page p-page-photos" v-infinite-scroll="loadMore" infinite-scroll-disabled="loadMoreDisabled"
-         infinite-scroll-distance="10" infinite-scroll-listen-for-event="infiniteScrollRefresh">
+    <div class="p-page p-page-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
+         :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <p-photo-search :settings="settings" :filter="filter" :filter-change="refreshList" :settings-change="updateQuery"></p-photo-search>
+        <p-photo-search :settings="settings" :filter="filter" :filter-change="refreshList"
+                        :settings-change="updateQuery"></p-photo-search>
 
         <v-container fluid>
-            <v-speed-dial
-                    fixed
-                    bottom
-                    right
-                    direction="top"
-                    v-model="menuVisible"
-                    transition="slide-y-reverse-transition"
-                    class="p-photo-menu"
-            >
-                <v-btn
-                        slot="activator"
-                        color="grey darken-2"
-                        dark
-                        fab
-                >
-                    <v-icon v-if="selected.length === 0">menu</v-icon>
-                    <span v-else>{{ selected.length }}</span>
-                </v-btn>
+            <p-photo-clipboard :selection="selection"></p-photo-clipboard>
 
-                <v-btn
-                        fab
-                        dark
-                        small
-                        color="deep-purple lighten-2"
-                        @click.stop="batchLike()"
-                        :disabled="!selected.length"
-                >
-                    <v-icon>favorite</v-icon>
-                </v-btn>
-                <v-btn
-                        fab
-                        dark
-                        small
-                        color="cyan accent-4"
-                        @click.stop="batchTag()"
-                >
-                    <v-icon>label</v-icon>
-                </v-btn>
-                <v-btn
-                        fab
-                        dark
-                        small
-                        color="teal accent-4"
-                        @click.stop="batchDownload()"
-                >
-                    <v-icon>save</v-icon>
-                </v-btn>
-                <v-btn
-                        fab
-                        dark
-                        small
-                        color="yellow accent-4"
-                        @click.stop="batchAlbum()"
-                >
-                    <v-icon>create_new_folder</v-icon>
-                </v-btn>
-
-                <v-btn
-                        fab
-                        dark
-                        small
-                        color="delete"
-                        @click.stop="batchDelete()"
-                        :disabled="!selected.length"
-                >
-                    <v-icon>delete</v-icon>
-                </v-btn>
-                <v-btn
-                        fab
-                        dark
-                        small
-                        color="grey"
-                        @click.stop="$clipboard.clear()"
-                        :disabled="!selected.length"
-                >
-                    <v-icon>clear</v-icon>
-                </v-btn>
-            </v-speed-dial>
-
-            <p-photo-mosaic v-if="settings.view === 'mosaic'" :photos="results" :selection="selected" :select="selectPhoto"
-                            :open="openPhoto" :like="likePhoto"></p-photo-mosaic>
-            <p-photo-list v-else-if="settings.view === 'list'" :photos="results" :selection="selected" :select="selectPhoto"
-                          :open="openPhoto" :like="likePhoto"></p-photo-list>
-            <p-photo-details v-else-if="settings.view === 'details'" :photos="results" :selection="selected"
-                             :select="selectPhoto" :open="openPhoto" :like="likePhoto"></p-photo-details>
-            <p-photo-tiles v-else :photos="results" :selection="selected" :select="selectPhoto"
-                           :open="openPhoto" :like="likePhoto"></p-photo-tiles>
+            <p-photo-mosaic v-if="settings.view === 'mosaic'" :photos="results" :selection="selection"
+                            :open-photo="openPhoto"></p-photo-mosaic>
+            <p-photo-list v-else-if="settings.view === 'list'" :photos="results" :selection="selection"
+                          :open-photo="openPhoto" :open-location="openLocation"></p-photo-list>
+            <p-photo-details v-else-if="settings.view === 'details'" :photos="results" :selection="selection"
+                             :open-photo="openPhoto" :open-location="openLocation"></p-photo-details>
+            <p-photo-tiles v-else :photos="results" :selection="selection" :open-photo="openPhoto"></p-photo-tiles>
         </v-container>
     </div>
 </template>
@@ -100,8 +23,7 @@
     import Photo from "model/photo";
 
     export default {
-        name: 'photos',
-        props: {},
+        name: 'p-page-photos',
         data() {
             const query = this.$route.query;
             const order = query['order'] ? query['order'] : 'newest';
@@ -111,54 +33,27 @@
             const view = query['view'] ? query['view'] : 'tiles';
 
             return {
-                'searchExpanded': false,
-                'loadMoreDisabled': true,
-                'menuVisible': false,
-                'results': [],
-                'pageSize': 60,
-                'offset': 0,
-                'selected': this.$clipboard.selection,
-                'settings': {
-                    'view': view,
+                results: [],
+                scrollDisabled: true,
+                pageSize: 60,
+                offset: 0,
+                selection: this.$clipboard.selection,
+                settings: {
+                    view: view,
                 },
-                'filter': {
+                filter: {
                     country: country,
                     camera: camera,
                     order: order,
                     q: q,
                 },
-                'lastFilter': {},
+                lastFilter: {},
             };
         },
         methods: {
-            batchLike() {
-                this.$alert.warning("Not implemented yet");
-                this.menuVisible = false;
-            },
-            batchDelete() {
-                this.$alert.warning("Not implemented yet");
-                this.menuVisible = false;
-            },
-            batchTag() {
-                this.$alert.warning("Not implemented yet");
-                this.menuVisible = false;
-            },
-            batchAlbum() {
-                this.$alert.warning("Not implemented yet");
-                this.menuVisible = false;
-            },
-            batchDownload() {
-                this.$alert.warning("Not implemented yet");
-                this.menuVisible = false;
-            },
-            selectPhoto(photo) {
-                this.$clipboard.toggle(photo);
-            },
-            likePhoto(photo) {
-                photo.PhotoFavorite = !photo.PhotoFavorite;
-                photo.like(photo.PhotoFavorite);
-            },
-            openLocation(photo) {
+            openLocation(index) {
+                const photo = this.results[index];
+
                 if (photo.PhotoLat && photo.PhotoLong) {
                     this.$router.push({name: 'Places', query: {lat: photo.PhotoLat, long: photo.PhotoLong}});
                 } else if (photo.LocName) {
@@ -175,9 +70,9 @@
                 this.$viewer.show(this.results, index)
             },
             loadMore() {
-                if (this.loadMoreDisabled) return;
+                if (this.scrollDisabled) return;
 
-                this.loadMoreDisabled = true;
+                this.scrollDisabled = true;
 
                 this.offset += this.pageSize;
 
@@ -191,9 +86,9 @@
                 Photo.search(params).then(response => {
                     this.results = this.results.concat(response.models);
 
-                    this.loadMoreDisabled = (response.models.length < this.pageSize);
+                    this.scrollDisabled = (response.models.length < this.pageSize);
 
-                    if (this.loadMoreDisabled) {
+                    if (this.scrollDisabled) {
                         this.$alert.info('All ' + this.results.length + ' photos loaded');
                     }
                 });
@@ -207,10 +102,10 @@
 
                 this.$router.replace({query: query});
 
-                this.$nextTick(() => this.$emit("infiniteScrollRefresh"));
+                this.$nextTick(() => this.$emit("scrollRefresh"));
             },
             refreshList() {
-                this.loadMoreDisabled = true;
+                this.scrollDisabled = true;
 
                 // Don't query the same data more than once
                 if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) return;
@@ -231,9 +126,9 @@
                 Photo.search(params).then(response => {
                     this.results = response.models;
 
-                    this.loadMoreDisabled = (response.models.length < this.pageSize);
+                    this.scrollDisabled = (response.models.length < this.pageSize);
 
-                    if (this.loadMoreDisabled) {
+                    if (this.scrollDisabled) {
                         this.$alert.info(this.results.length + ' photos found');
                     } else {
                         this.$alert.info('More than 50 photos found');

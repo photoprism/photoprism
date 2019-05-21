@@ -164,12 +164,24 @@ class Photo extends Abstract {
         return "Unknown";
     }
 
-    like(liked) {
-        if (liked === true) {
+    toggleLike() {
+        this.PhotoFavorite = !this.PhotoFavorite;
+
+        if(this.PhotoFavorite) {
             return Api.post(this.getEntityResource() + "/like");
         } else {
             return Api.delete(this.getEntityResource() + "/like");
         }
+    }
+
+    like() {
+        this.PhotoFavorite = true;
+        return Api.post(this.getEntityResource() + "/like");
+    }
+
+    unlike() {
+        this.PhotoFavorite = false;
+        return Api.delete(this.getEntityResource() + "/like");
     }
 
     static getCollectionResource() {

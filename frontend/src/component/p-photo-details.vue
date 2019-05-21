@@ -25,7 +25,7 @@
                                 v-bind:class="{ selected: $clipboard.has(photo) }"
                                 style="cursor: pointer"
                                 class="grey lighten-2"
-                                @click="open(index)"
+                                @click="openPhoto(index)"
 
                         >
                             <v-layout
@@ -49,7 +49,7 @@
                             <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" :ripple="false"
                                    icon large absolute
                                    class="p-photo-like"
-                                   @click.stop.prevent="like(photo)">
+                                   @click.stop.prevent="photo.toggleLike()">
                                 <v-icon v-if="photo.PhotoFavorite" color="white">favorite
                                 </v-icon>
                                 <v-icon v-else color="grey lighten-3">favorite_border</v-icon>
@@ -70,7 +70,7 @@
                                     <br/>
                                     <v-icon size="14">location_on</v-icon>
                                     <span class="p-pointer" :title="photo.getFullLocation()"
-                                          @click.stop="openLocation(photo)">{{ photo.getLocation() }}</span>
+                                          @click.stop="openLocation(index)">{{ photo.getLocation() }}</span>
                                 </div>
                             </div>
                         </v-card-title>
@@ -82,28 +82,14 @@
 </template>
 <script>
     export default {
-        name: 'PPhotoDetails',
+        name: 'p-photo-details',
         props: {
             photos: Array,
             selection: Array,
-            select: Function,
-            open: Function,
-            like: Function,
+            openPhoto: Function,
+            openLocation: Function,
         },
         methods: {
-            openLocation(photo) {
-                if (photo.PhotoLat && photo.PhotoLong) {
-                    this.$router.push({name: 'Places', query: {lat: photo.PhotoLat, long: photo.PhotoLong}});
-                } else if (photo.LocName) {
-                    this.$router.push({name: 'Places', query: {q: photo.LocName}});
-                } else if (photo.LocCity) {
-                    this.$router.push({name: 'Places', query: {q: photo.LocCity}});
-                } else if (photo.LocCountry) {
-                    this.$router.push({name: 'Places', query: {q: photo.LocCountry}});
-                } else {
-                    this.$router.push({name: 'Places', query: {q: photo.CountryName}});
-                }
-            },
         }
     };
 </script>

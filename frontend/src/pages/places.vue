@@ -33,7 +33,7 @@
     import Photo from "model/photo";
 
     export default {
-        name: 'places',
+        name: 'p-page-places',
         data() {
             const query = this.$route.query;
             const q = query['q'] ? query['q'] : '';

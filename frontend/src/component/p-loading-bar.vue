@@ -44,7 +44,7 @@
     })();
 
     export default {
-        name: "PLoadingBar",
+        name: "p-loading-bar",
         data () {
             return {
                 error: false,
