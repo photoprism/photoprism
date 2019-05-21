@@ -41,7 +41,7 @@
                             <v-btn v-if="hover || $clipboard.has(photo)" :flat="!hover" :ripple="false"
                                    icon large absolute
                                    class="p-photo-select"
-                                   @click.stop.prevent="select(photo)">
+                                   @click.stop.prevent="$clipboard.toggle(photo)">
                                 <v-icon v-if="selection.length && $clipboard.has(photo)" color="white">check_circle</v-icon>
                                 <v-icon v-else color="grey lighten-3">radio_button_off</v-icon>
                             </v-btn>

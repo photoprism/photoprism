@@ -146,7 +146,7 @@
                         dark
                         small
                         color="grey"
-                        @click.stop="clearSelection()"
+                        @click.stop="$clipboard.clear()"
                         :disabled="!selected.length"
                 >
                     <v-icon>clear</v-icon>
@@ -245,10 +245,6 @@
             },
             batchDownload() {
                 this.$alert.warning("Not implemented yet");
-                this.menuVisible = false;
-            },
-            clearSelection() {
-                this.selected = [];
                 this.menuVisible = false;
             },
             selectPhoto(photo) {
