@@ -7,8 +7,8 @@
 
             <v-spacer></v-spacer>
         </v-toolbar>
-        <v-toolbar dark flat color="grey darken-3" class="hidden-lg-and-up">
-            <!-- Invisible -->
+        <v-toolbar flat color="transparent" class="hidden-lg-and-up">
+            <!-- empty spacer -->
             <v-spacer></v-spacer>
         </v-toolbar>
         <v-navigation-drawer
