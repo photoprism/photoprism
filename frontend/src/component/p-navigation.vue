@@ -22,7 +22,7 @@
                 <v-list>
                     <v-list-tile class="p-navigation-logo">
                         <v-list-tile-avatar>
-                            <img src="/assets/img/logo.png">
+                            <img src="/static/img/logo.png">
                         </v-list-tile-avatar>
                         <v-list-tile-content>
                             <v-list-tile-title class="title">

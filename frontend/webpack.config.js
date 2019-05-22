@@ -8,7 +8,7 @@ const PATHS = {
     app: path.join(__dirname, "src/app.js"),
     js: path.join(__dirname, "src"),
     css: path.join(__dirname, "src/css"),
-    build: path.join(__dirname, "../assets/server/public/build"),
+    build: path.join(__dirname, "../assets/server/static/build"),
 };
 
 const isDev = process.env.NODE_ENV !== "production";
@@ -172,7 +172,7 @@ const config = {
                 loader: "file-loader",
                 options: {
                     name: "[hash].[ext]",
-                    publicPath: "/assets/build/img",
+                    publicPath: "/static/build/img",
                     outputPath: "img",
                 },
             },
@@ -181,7 +181,7 @@ const config = {
                 loader: "file-loader",
                 options: {
                     name: "[hash].[ext]",
-                    publicPath: "/assets/build/fonts",
+                    publicPath: "/static/build/fonts",
                     outputPath: "fonts",
                 },
             },

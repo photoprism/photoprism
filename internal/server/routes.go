@@ -13,7 +13,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	router.StaticFile("/favicon.ico", conf.HttpFaviconsPath()+"/favicon.ico")
 
 	// Static assets like js and css files
-	router.Static("/assets", conf.HttpPublicPath())
+	router.Static("/static", conf.HttpStaticPath())
 
 	// JSON-REST API Version 1
 	v1 := router.Group("/api/v1")

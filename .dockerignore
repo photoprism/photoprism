@@ -4,7 +4,7 @@
 /internal/photoprism/testdata/*
 /frontend/node_modules/*
 /node_modules
-/assets/server/public/build/*
+/assets/server/static/build/*
 /assets/testdata
 /assets/backups
 /assets/tensorflow/nasnet

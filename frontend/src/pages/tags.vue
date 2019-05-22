@@ -156,7 +156,7 @@
             <v-container fluid v-if="query.view === 'cloud'">
                 <v-layout justify-space-around>
                     <v-flex>
-                        <v-img src="/assets/img/tagcloud.jpg" aspect-ratio="1.7" @click.stop="dialog = true"></v-img>
+                        <v-img src="/static/img/tagcloud.jpg" aspect-ratio="1.7" @click.stop="dialog = true"></v-img>
                     </v-flex>
                 </v-layout>
             </v-container>

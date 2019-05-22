@@ -3,7 +3,7 @@
   "name": "PhotoPrism: Browse your life in pictures",
   "icons": [
     {
-      "src": "/assets/favicons/favicon.png",
+      "src": "/static/favicons/favicon.png",
       "sizes": "723x729",
       "type": "image/png"
     }

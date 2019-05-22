@@ -7,7 +7,7 @@
                 <v-layout row wrap justify-center class="px-4 py-5">
                     <v-flex md8 xs12>
                         <v-card dark flat>
-                            <v-img src="/assets/img/tagcloud.jpg" aspect-ratio="1" class="mb-5 mx-5"></v-img>
+                            <v-img src="/static/img/tagcloud.jpg" aspect-ratio="1" class="mb-5 mx-5"></v-img>
                         </v-card>
                     </v-flex>
                     <v-flex md4 xs12>

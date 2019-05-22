@@ -47,8 +47,8 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("tf-model-path         %s\n", conf.TensorFlowModelPath())
 	fmt.Printf("templates-path        %s\n", conf.HttpTemplatesPath())
 	fmt.Printf("favicons-path         %s\n", conf.HttpFaviconsPath())
-	fmt.Printf("public-path           %s\n", conf.HttpPublicPath())
-	fmt.Printf("public-build-path     %s\n", conf.HttpPublicBuildPath())
+	fmt.Printf("static-path           %s\n", conf.HttpStaticPath())
+	fmt.Printf("static-build-path     %s\n", conf.HttpStaticBuildPath())
 
 	fmt.Printf("darktable-cli         %s\n", conf.DarktableCli())
 

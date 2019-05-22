@@ -75,7 +75,7 @@ func (c *Config) CreateDirectories() error {
 		return err
 	}
 
-	if err := os.MkdirAll(c.HttpPublicBuildPath(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.HttpStaticBuildPath(), os.ModePerm); err != nil {
 		return err
 	}
 
@@ -296,7 +296,7 @@ func (c *Config) TensorFlowModelPath() string {
 	return c.AssetsPath() + "/tensorflow"
 }
 
-// ServerPath returns the server assets path (public files, favicons, templates,...).
+// ServerPath returns the server assets path (static files, templates,...).
 func (c *Config) ServerPath() string {
 	return c.AssetsPath() + "/server"
 }
@@ -308,17 +308,17 @@ func (c *Config) HttpTemplatesPath() string {
 
 // HttpFaviconsPath returns the favicons path.
 func (c *Config) HttpFaviconsPath() string {
-	return c.HttpPublicPath() + "/favicons"
+	return c.HttpStaticPath() + "/favicons"
 }
 
-// HttpPublicPath returns the public server path (//server/assets/*).
-func (c *Config) HttpPublicPath() string {
-	return c.ServerPath() + "/public"
+// HttpStaticPath returns the static server assets path (//server/static/*).
+func (c *Config) HttpStaticPath() string {
+	return c.ServerPath() + "/static"
 }
 
-// HttpPublicBuildPath returns the public build path (//server/assets/build/*).
-func (c *Config) HttpPublicBuildPath() string {
-	return c.HttpPublicPath() + "/build"
+// HttpStaticBuildPath returns the static build path (//server/static/build/*).
+func (c *Config) HttpStaticBuildPath() string {
+	return c.HttpStaticPath() + "/build"
 }
 
 // Db returns the db connection.
@@ -379,8 +379,8 @@ func (c *Config) ClientConfig() ClientConfig {
 
 	db.Where("deleted_at IS NULL").Limit(1000).Order("camera_model").Find(&cameras)
 
-	jsHash := util.Hash(c.HttpPublicBuildPath() + "/app.js")
-	cssHash := util.Hash(c.HttpPublicBuildPath() + "/app.css")
+	jsHash := util.Hash(c.HttpStaticBuildPath() + "/app.js")
+	cssHash := util.Hash(c.HttpStaticBuildPath() + "/app.css")
 
 	result := ClientConfig{
 		"name":       c.Name(),
