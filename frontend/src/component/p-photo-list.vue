@@ -13,7 +13,7 @@
             <td>
                 <v-btn icon small :ripple="false"
                        class="p-photo-select"
-                       @click.stop.prevent="$clipboard.toggle(photo)">
+                       @click.stop.prevent="$clipboard.toggle(props.item)">
                     <v-icon v-if="selection.length && $clipboard.has(props.item)" color="grey darken-2">check_circle</v-icon>
                     <v-icon v-else-if="!$clipboard.has(props.item)" color="grey lighten-4">radio_button_off</v-icon>
                 </v-btn>

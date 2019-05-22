@@ -1,3 +1,5 @@
+import Abstract from "model/abstract";
+
 class Clipboard {
     /**
      * @param {Storage} storage
@@ -26,6 +28,11 @@ class Clipboard {
     }
 
     toggle(model) {
+        if(!model || !(model instanceof Abstract)) {
+            console.log("Clipboard::toggle() - not a model:", model)
+            return;
+        }
+
         const id = model.getId();
         this.toggleId(id);
     }
@@ -45,6 +52,11 @@ class Clipboard {
     }
 
     add(model) {
+        if(!model || !(model instanceof Abstract)) {
+            console.log("Clipboard::add() - not a model:", model)
+            return;
+        }
+
         const id = model.getId();
 
         this.addId(id);
@@ -60,6 +72,11 @@ class Clipboard {
     }
 
     has(model) {
+        if(!model || !(model instanceof Abstract)) {
+            console.log("Clipboard::has() - not a model:", model)
+            return;
+        }
+
         return this.hasId(model.getId())
     }
 
@@ -68,6 +85,11 @@ class Clipboard {
     }
 
     remove(model) {
+        if(!model || !(model instanceof Abstract)) {
+            console.log("Clipboard::remove() - not a model:", model)
+            return;
+        }
+
         const id = model.getId();
 
         if (!this.hasId(id)) return;
