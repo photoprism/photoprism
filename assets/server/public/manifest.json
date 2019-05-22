@@ -1,0 +1,17 @@
+{
+  "short_name": "PhotoPrism",
+  "name": "PhotoPrism: Browse your life in pictures",
+  "icons": [
+    {
+      "src": "/assets/favicons/favicon.png",
+      "sizes": "723x729",
+      "type": "image/png"
+    }
+  ],
+  "scope": "/",
+  "start_url": "/photos",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#424242",
+  "background_color": "#424242"
+}
