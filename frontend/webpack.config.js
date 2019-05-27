@@ -4,13 +4,6 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const webpack = require("webpack");
 
-const PATHS = {
-    app: path.join(__dirname, "src/app.js"),
-    js: path.join(__dirname, "src"),
-    css: path.join(__dirname, "src/css"),
-    build: path.join(__dirname, "../assets/server/static/build"),
-};
-
 const isDev = process.env.NODE_ENV !== "production";
 
 if(isDev) {
@@ -18,6 +11,13 @@ if(isDev) {
 } else {
     console.log("Building frontend in PRODUCTION mode. Please wait.")
 }
+
+const PATHS = {
+    app: path.join(__dirname, "src/app.js"),
+    js: path.join(__dirname, "src"),
+    css: path.join(__dirname, "src/css"),
+    build: path.join(__dirname, "../assets/server/static/build"),
+};
 
 const config = {
     mode: isDev ? "development" : "production",
