@@ -6,7 +6,7 @@ services:
     image: photoprism/photoprism:develop
     command: tail -f /dev/null
     volumes:
-      - "~/.cache/yarn:/root/.cache/yarn"
+      - "~/.cache/npm:/root/.cache/npm"
       - "~/.cache/go-mod:/go/pkg/mod"
     environment:
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"

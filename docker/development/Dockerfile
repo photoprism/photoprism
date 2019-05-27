@@ -112,10 +112,7 @@ ENV BROADWAY_DISPLAY :5
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
 # Expose HTTP port plus 4000 for TiDB and 8080 for broadwayd (not running by default)
-EXPOSE 80
-EXPOSE 2342
-EXPOSE 4000
-EXPOSE 8080
+EXPOSE 80 2342 4000 8080
 
 # Keep container running (services can be started manually using a terminal)
 CMD tail -f /dev/null
