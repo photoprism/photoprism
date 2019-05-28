@@ -75,13 +75,13 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/tags" @click="" class="p-navigation-scenes">
+                <v-list-tile to="/labels" @click="" class="p-navigation-labels">
                     <v-list-tile-action>
                         <v-icon>label</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title>Scenes</v-list-tile-title>
+                        <v-list-tile-title>Labels</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 

@@ -8,7 +8,7 @@ import Import3 from "pages/import3.vue";
 import Import from "pages/import.vue";
 import Export from "pages/export.vue";
 import Settings from "pages/settings.vue";
-import Tags from "pages/tags.vue";
+import Labels from "pages/labels.vue";
 import Todo from "pages/todo.vue";
 import Calendar from "pages/calendar.vue";
 
@@ -19,7 +19,7 @@ export default [
     { name: "PhotosEdit", path: "/photosEdit", component: PhotosEdit, meta: {area: "Photos"} },
     { name: "Filters", path: "/filters", component: Todo, meta: {area: "Filters"} },
     { name: "Calendar", path: "/calendar", component: Calendar, meta: {area: "Calendar"} },
-    { name: "Tags", path: "/tags", component: Tags, meta: {area: "Labels"} },
+    { name: "Labels", path: "/labels", component: Labels, meta: {area: "Labels"} },
     { name: "Bookmarks", path: "/bookmarks", component: Todo, meta: {area: "Bookmarks"} },
     { name: "Favorites", path: "/favorites", component: Todo, meta: {area: "Favorites"} },
     { name: "Albums", path: "/albums", component: Albums, meta: {area: "Albums"} },

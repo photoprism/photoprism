@@ -14,8 +14,8 @@ test('Navigate', async t => {
         .expect(Selector('div.leaflet-map-pane').exists).ok();
     await page.openNav();
     await t
-        .click('a[href="/tags"]')
-        .expect(Selector('h1').innerText, {timeout: 9000}).contains('Tags');
+        .click('a[href="/labels"]')
+        .expect(Selector('h1').innerText, {timeout: 9000}).contains('Labels');
     await page.openNav();
     await t
         .click('a[href="/albums"]')

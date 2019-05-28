@@ -2,7 +2,7 @@
     <div v-infinite-scroll="loadMore" infinite-scroll-disabled="loadMoreDisabled" infinite-scroll-distance="10">
         <v-form ref="form" lazy-validation @submit="formChange" dense>
             <v-toolbar flat color="blue-grey lighten-4">
-                <h1 class="md-display-1">Tags</h1>
+                <h1 class="md-display-1">Labels</h1>
                 <v-spacer></v-spacer>
                 <v-text-field class="pt-3 pr-3"
                               single-line
@@ -256,7 +256,7 @@
     import Photo from 'model/photo';
 
     export default {
-        name: 'tags',
+        name: 'labels',
         props: {},
         data() {
             const query = this.$route.query;

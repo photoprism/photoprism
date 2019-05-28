@@ -20,8 +20,8 @@ test('Select photos', async t => {
         .expect(Selector('div.p-photo-clipboard').innerText).contains('4');
     await page.openNav();
     await t
-        .click('a[href="/tags"]')
-        .expect(Selector('h1').innerText, {timeout: 5000}).contains('Tags');
+        .click('a[href="/labels"]')
+        .expect(Selector('h1').innerText, {timeout: 5000}).contains('Labels');
     await page.openNav();
     await t
         .click('a[href="/photos"]')
