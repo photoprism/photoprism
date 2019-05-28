@@ -322,11 +322,11 @@
                 this.$alert.success('Photo deleted');
             },
             formChange(event) {
-                this.refreshList();
+                this.search();
             },
             clearQuery() {
                 this.query.q = '';
-                this.refreshList();
+                this.search();
             },
             openPhoto(index) {
                 this.$viewer.show(this.results, index)
@@ -355,7 +355,7 @@
                     }
                 });
             },
-            refreshList() {
+            search() {
                 this.loadMoreDisabled = true;
 
                 // Don't query the same data more than once:197
@@ -393,7 +393,7 @@
         created() {
             window.addEventListener('resize', this.handleResize);
             this.handleResize();
-            this.refreshList();
+            this.search();
         },
     };
 </script>

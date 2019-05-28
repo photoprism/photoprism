@@ -2,7 +2,7 @@
     <div class="p-page p-page-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
          :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <p-photo-search :settings="settings" :filter="filter" :filter-change="refreshList"
+        <p-photo-search :settings="settings" :filter="filter" :filter-change="search"
                         :settings-change="updateQuery"></p-photo-search>
 
         <v-container fluid>
@@ -104,7 +104,7 @@
 
                 this.$nextTick(() => this.$emit("scrollRefresh"));
             },
-            refreshList() {
+            search() {
                 this.scrollDisabled = true;
 
                 // Don't query the same data more than once
@@ -140,7 +140,7 @@
             next();
         },
         created() {
-            this.refreshList();
+            this.search();
         },
     };
 </script>

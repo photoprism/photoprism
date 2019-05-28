@@ -81,7 +81,7 @@
                 this.query.lat = position.coords.latitude;
                 this.query.long = position.coords.longitude;
                 this.query.q = "";
-                this.refreshList();
+                this.search();
             },
             currentPositionError(error) {
                 this.$alert.warning(error.message);
@@ -95,15 +95,15 @@
                 }
             },
             formChange() {
-                this.lat = "";
-                this.long = "";
-                this.refreshList();
+                this.query.lat = "";
+                this.query.long = "";
+                this.search();
             },
             clearQuery() {
                 this.query.q = "";
-                this.lat = "";
-                this.long = "";
-                this.refreshList();
+                this.query.lat = "";
+                this.query.long = "";
+                this.search();
             },
             resetBoundingBox() {
                 this.minLat = null;
@@ -175,7 +175,7 @@
                 }
             },
 
-            refreshList() {
+            search() {
                 // Don't query the same data more than once
                 if (JSON.stringify(this.lastQuery) === JSON.stringify(this.query)) return;
 
@@ -204,7 +204,7 @@
             },
         },
         created() {
-            this.refreshList();
+            this.search();
         },
     };
 </script>
