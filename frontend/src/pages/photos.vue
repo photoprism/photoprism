@@ -24,6 +24,15 @@
 
     export default {
         name: 'p-page-photos',
+        props: {
+            staticFilter: Object
+        },
+        watch: {
+            '$route' () {
+                this.lastFilter = {};
+                this.search();
+            }
+        },
         data() {
             const query = this.$route.query;
             const order = query['order'] ? query['order'] : 'newest';
@@ -31,6 +40,8 @@
             const q = query['q'] ? query['q'] : '';
             const country = query['country'] ? query['country'] : '';
             const view = query['view'] ? query['view'] : 'tiles';
+            const filter = {country: country, camera: camera, order: order, q: q};
+            const settings = {view: view};
 
             return {
                 results: [],
@@ -38,15 +49,8 @@
                 pageSize: 60,
                 offset: 0,
                 selection: this.$clipboard.selection,
-                settings: {
-                    view: view,
-                },
-                filter: {
-                    country: country,
-                    camera: camera,
-                    order: order,
-                    q: q,
-                },
+                settings: settings,
+                filter: filter,
                 lastFilter: {},
             };
         },
@@ -104,6 +108,20 @@
 
                 this.$nextTick(() => this.$emit("scrollRefresh"));
             },
+            searchParams() {
+                const params = {
+                    count: this.pageSize,
+                    offset: this.offset,
+                };
+
+                Object.assign(params, this.filter);
+
+                if (this.staticFilter) {
+                    Object.assign(params, this.staticFilter);
+                }
+
+                return params;
+            },
             search() {
                 this.scrollDisabled = true;
 
@@ -116,12 +134,7 @@
 
                 this.updateQuery();
 
-                const params = {
-                    count: this.pageSize,
-                    offset: this.offset,
-                };
-
-                Object.assign(params, this.filter);
+                const params = this.searchParams();
 
                 Photo.search(params).then(response => {
                     this.results = response.models;
@@ -135,9 +148,6 @@
                     }
                 });
             },
-        },
-        beforeRouteLeave(to, from, next) {
-            next();
         },
         created() {
             this.search();

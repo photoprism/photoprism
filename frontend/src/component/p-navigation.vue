@@ -55,6 +55,16 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
+                <v-list-tile to="/favorites" @click="">
+                    <v-list-tile-action>
+                        <v-icon>favorite</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>Favorites</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
                 <v-list-tile to="/places" @click="" class="p-navigation-places">
                     <v-list-tile-action>
                         <v-icon>place</v-icon>
@@ -82,16 +92,6 @@
 
                     <v-list-tile-content>
                         <v-list-tile-title>Labels</v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-
-                <v-list-tile to="/favorites" @click="">
-                    <v-list-tile-action>
-                        <v-icon>favorite</v-icon>
-                    </v-list-tile-action>
-
-                    <v-list-tile-content>
-                        <v-list-tile-title>Favorites</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 

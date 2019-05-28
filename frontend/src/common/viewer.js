@@ -36,7 +36,7 @@ class Viewer {
 
     getEl() {
         if (!this.el) {
-            this.el = document.getElementById('p-photo-viewer');
+            this.el = document.getElementById("p-photo-viewer");
 
             if (this.el === null) {
                 let err = "no photo viewer element found";

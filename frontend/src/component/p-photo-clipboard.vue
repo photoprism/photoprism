@@ -71,7 +71,7 @@
                 dark
                 small
                 color="grey"
-                @click.stop="$clipboard.clear()"
+                @click.stop="clearClipboard()"
                 :disabled="!selection.length"
         >
             <v-icon>clear</v-icon>
@@ -90,6 +90,10 @@
             };
         },
         methods: {
+            clearClipboard() {
+                this.$clipboard.clear();
+                this.expanded = false;
+            },
             batchLike() {
                 this.$alert.warning("Not implemented yet");
                 this.expanded = false;
