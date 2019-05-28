@@ -3,7 +3,7 @@
         <v-toolbar dark fixed color="grey darken-3" class="hidden-lg-and-up p-navigation-small" @click.stop="showNavigation()">
             <v-toolbar-side-icon class="p-navigation-show"></v-toolbar-side-icon>
 
-            <v-toolbar-title class="p-navigation-title">{{ $router.currentRoute.name }}</v-toolbar-title>
+            <v-toolbar-title class="p-navigation-title">{{ $router.currentRoute.meta.area }}</v-toolbar-title>
 
             <v-spacer></v-spacer>
         </v-toolbar>
