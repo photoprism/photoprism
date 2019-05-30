@@ -52,7 +52,10 @@ func (m *MediaFile) Location() (*models.Location, error) {
 			return nil, errors.New("no latitude and longitude in image metadata")
 		}
 
-		url := fmt.Sprintf("https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=jsonv2", exifData.Lat, exifData.Long)
+		url := fmt.Sprintf(
+			"https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=jsonv2&accept-language=en&zoom=18",
+			exifData.Lat,
+			exifData.Long)
 
 		if res, err := http.Get(url); err == nil {
 			err = json.NewDecoder(res.Body).Decode(openstreetmapLocation)
