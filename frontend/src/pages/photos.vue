@@ -39,7 +39,7 @@
             const camera = query['camera'] ? parseInt(query['camera']) : 0;
             const q = query['q'] ? query['q'] : '';
             const country = query['country'] ? query['country'] : '';
-            const view = query['view'] ? query['view'] : 'tiles';
+            const view = this.viewType();
             const filter = {country: country, camera: camera, order: order, q: q};
             const settings = {view: view};
 
@@ -55,6 +55,21 @@
             };
         },
         methods: {
+            viewType() {
+                let queryParam = this.$route.query['view'];
+                let storedType = window.localStorage.getItem("photo_view_type");
+
+                if(queryParam) {
+                    window.localStorage.setItem("photo_view_type", queryParam);
+                    return queryParam;
+                } else if(storedType) {
+                    return storedType;
+                } else if(window.innerWidth < 960) {
+                    return 'mosaic';
+                }
+
+                return 'tiles';
+            },
             openLocation(index) {
                 const photo = this.results[index];
 
