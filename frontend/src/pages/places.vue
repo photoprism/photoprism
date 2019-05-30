@@ -76,8 +76,6 @@
                 this.$viewer.show(this.results, index)
             },
             currentPositionSuccess(position) {
-                this.center = L.latLng(position.coords.latitude, position.coords.longitude);
-                this.position = L.latLng(position.coords.latitude, position.coords.longitude);
                 this.query.lat = position.coords.latitude;
                 this.query.long = position.coords.longitude;
                 this.query.q = "";
@@ -174,7 +172,16 @@
                     this.$alert.info(photos.length + ' photos found');
                 }
             },
+            updateQuery() {
+                this.$router.replace({query: this.query});
 
+                if(this.query.lat && this.query.long) {
+                    this.position = L.latLng(this.query.lat, this.query.long);
+                    this.center = L.latLng(this.query.lat, this.query.long);
+                } else {
+                    this.position = null;
+                }
+            },
             search() {
                 // Don't query the same data more than once
                 if (JSON.stringify(this.lastQuery) === JSON.stringify(this.query)) return;
@@ -182,6 +189,8 @@
                 Object.assign(this.lastQuery, this.query);
 
                 this.offset = 0;
+
+                this.updateQuery();
 
                 this.$router.replace({query: this.query});
 
