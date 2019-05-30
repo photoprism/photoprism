@@ -105,8 +105,6 @@
                 Object.assign(query, this.filter);
 
                 this.$router.replace({query: query});
-
-                this.$nextTick(() => this.$emit("scrollRefresh"));
             },
             searchParams() {
                 const params = {
@@ -126,7 +124,10 @@
                 this.scrollDisabled = true;
 
                 // Don't query the same data more than once
-                if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) return;
+                if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
+                    this.$nextTick(() => this.$emit("scrollRefresh"));
+                    return;
+                }
 
                 Object.assign(this.lastFilter, this.filter);
 
@@ -145,6 +146,8 @@
                         this.$alert.info(this.results.length + ' photos found');
                     } else {
                         this.$alert.info('More than 50 photos found');
+
+                        this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
                 });
             },
