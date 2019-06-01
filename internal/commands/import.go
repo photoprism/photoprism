@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -20,8 +21,13 @@ func importAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-
 	if err := conf.CreateDirectories(); err != nil {
+		return err
+	}
+
+	cctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	if err := conf.Init(cctx); err != nil {
 		return err
 	}
 
@@ -42,6 +48,6 @@ func importAction(ctx *cli.Context) error {
 	elapsed := time.Since(start)
 
 	log.Infof("photo import completed in %s", elapsed)
-
+	conf.Shutdown()
 	return nil
 }

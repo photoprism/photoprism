@@ -20,7 +20,6 @@ func convertAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-
 	if err := conf.CreateDirectories(); err != nil {
 		return err
 	}

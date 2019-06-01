@@ -55,8 +55,7 @@ func startAction(ctx *cli.Context) error {
 		log.Fatal(err)
 	}
 
-	err := conf.Init(cctx)
-	if err != nil {
+	if err := conf.Init(cctx); err != nil {
 		log.Fatal(err)
 	}
 	conf.MigrateDb()

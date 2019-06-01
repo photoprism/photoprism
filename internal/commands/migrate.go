@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -19,6 +20,11 @@ func migrateAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
+	cctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	if err := conf.Init(cctx); err != nil {
+		return err
+	}
 
 	log.Infoln("migrating database")
 
