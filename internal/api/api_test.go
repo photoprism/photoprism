@@ -13,9 +13,7 @@ func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config
 	conf = config.TestConfig()
 	gin.SetMode(gin.TestMode)
 	app = gin.New()
-
 	router = app.Group("/api/v1")
-
 	return app, router, conf
 }
 
