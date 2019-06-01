@@ -59,7 +59,6 @@ func startAction(ctx *cli.Context) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer conf.Shutdown()
 	conf.MigrateDb()
 
 	log.Infof("starting web server at %s:%d", conf.HttpServerHost(), conf.HttpServerPort())
@@ -70,7 +69,8 @@ func startAction(ctx *cli.Context) error {
 
 	<-quit
 	log.Info("Shutting down...")
+	conf.Shutdown()
 	cancel()
-	time.Sleep(5 * time.Second)
+	time.Sleep(3 * time.Second)
 	return nil
 }

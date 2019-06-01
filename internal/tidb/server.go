@@ -339,13 +339,20 @@ func setupTracing() {
 }
 
 func runServer() {
-	err := svr.Run()
-
-	terror.MustNil(err)
+	go func() {
+		err := svr.Run()
+		if err != nil {
+			log.Errorf("Server failed to run: %v", err)
+		}
+	}()
 
 	if cfg.XProtocol.XServer {
-		err := xsvr.Run()
-		terror.MustNil(err)
+		go func() {
+			err := xsvr.Run()
+			if err != nil {
+				log.Errorf("XServer failed to run: %v", err)
+			}
+		}()
 	}
 }
 
