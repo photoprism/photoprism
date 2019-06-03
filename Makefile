@@ -2,7 +2,7 @@ export GO111MODULE=on
 GOIMPORTS=goimports
 BINARY_NAME=photoprism
 DOCKER_TAG=`date -u +%Y%m%d`
-TIDB_VERSION=2.1.8
+TIDB_VERSION=2.1.11
 DARKTABLE_VERSION="$(awk '$2 == "DARKTABLE_VERSION" { print $3; exit }' docker/darktable/Dockerfile)"
 
 HASRICHGO := $(shell which richgo)

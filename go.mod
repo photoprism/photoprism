@@ -30,9 +30,9 @@ require (
 	github.com/opentracing/opentracing-go v1.0.2
 	github.com/pingcap/errors v0.11.1
 	github.com/pingcap/goleveldb v0.0.0-20171020122428-b9ff6c35079e // indirect
-	github.com/pingcap/parser v0.0.0-20190410113155-72aa33252485
+	github.com/pingcap/parser v0.0.0-20190529073816-0550d84c65ad
 	github.com/pingcap/pd v2.1.0-rc.4+incompatible
-	github.com/pingcap/tidb v2.1.8+incompatible
+	github.com/pingcap/tidb v2.1.11+incompatible
 	github.com/pingcap/tidb-tools v2.1.3-0.20190116051332-34c808eef588+incompatible
 	github.com/pkg/errors v0.8.1
 	github.com/prometheus/client_golang v0.9.3-0.20190127221311-3c4408c8b829
