@@ -5,6 +5,13 @@ DOCKER_TAG=`date -u +%Y%m%d`
 TIDB_VERSION=2.1.8
 DARKTABLE_VERSION="$(awk '$2 == "DARKTABLE_VERSION" { print $3; exit }' docker/darktable/Dockerfile)"
 
+HASRICHGO := $(shell which richgo)
+ifdef HASRICHGO
+    GOTEST=richgo test
+else
+    GOTEST=go test
+endif
+
 all: dep build
 dep: dep-tensorflow dep-js dep-go
 build: build-js build-go
@@ -49,11 +56,13 @@ test-chromium:
 test-firefox:
 	(cd frontend &&	npm run test-firefox)
 test-go:
-	go test -tags=slow -timeout 20m -v ./internal/... | scripts/colorize-tests.sh
+	$(GOTEST) -tags=slow -timeout 20m ./internal/...
+test-debug:
+	$(GOTEST) -tags=slow -timeout 20m -v ./internal/...
 test-short:
-	go test -short -timeout 5m -v ./internal/... | scripts/colorize-tests.sh
+	$(GOTEST) -short -timeout 5m -v ./internal/...
 test-race:
-	go test -tags=slow -race -timeout 60m -v ./internal/... | scripts/colorize-tests.sh
+	$(GOTEST) -tags=slow -race -timeout 60m -v ./internal/...
 test-codecov:
 	go test -tags=slow -timeout 30m -coverprofile=coverage.txt -covermode=atomic -v ./internal/...
 	scripts/codecov.sh

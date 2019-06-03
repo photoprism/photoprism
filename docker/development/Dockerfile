@@ -100,8 +100,10 @@ RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism
 RUN wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip
 RUN wget "https://dl.photoprism.org/fixtures/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# Install goimports
-RUN env GO111MODULE=off /usr/local/go/bin/go get golang.org/x/tools/cmd/goimports
+# Install goimports & richgo (colorizes "go test" output)
+RUN env GO111MODULE=off /usr/local/go/bin/go get -u golang.org/x/tools/cmd/goimports
+RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo
+RUN echo "alias go=richgo" > /root/.bash_aliases
 
 # Configure broadwayd (HTML5 display server)
 # Command: broadwayd -p 8080 -a 0.0.0.0 :5
