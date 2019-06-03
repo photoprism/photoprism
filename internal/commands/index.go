@@ -43,6 +43,8 @@ func indexAction(ctx *cli.Context) error {
 	elapsed := time.Since(start)
 
 	log.Infof("indexed %d files in %s", len(files), elapsed)
+
 	conf.Shutdown()
+
 	return nil
 }

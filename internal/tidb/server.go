@@ -107,7 +107,7 @@ func Start(ctx context.Context, path string, port uint, host string, debug bool)
 	<-ctx.Done()
 	serverShutdown(true)
 	cleanup()
-	log.Info("tidb server shutdown complete.")
+	log.Info("tidb server shutdown complete")
 }
 
 func registerStores() {

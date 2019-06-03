@@ -34,7 +34,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	go func() {
 		if err := server.ListenAndServe(); err != nil {
 			if err == http.ErrServerClosed {
-				log.Info("web server closed")
+				log.Info("web server shutdown complete")
 			} else {
 				log.Errorf("web server closed unexpect: %s", err)
 			}
@@ -42,9 +42,9 @@ func Start(ctx context.Context, conf *config.Config) {
 	}()
 
 	<-ctx.Done()
-	log.Info("shutting down REST server...")
+	log.Info("shutting down web server")
 	err := server.Close()
 	if err != nil {
-		log.Errorf("failed to shutdown REST server: %v", err)
+		log.Errorf("web server shutdown failed: %v", err)
 	}
 }
