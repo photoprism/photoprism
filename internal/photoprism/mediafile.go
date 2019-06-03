@@ -132,7 +132,7 @@ func NewMediaFile(filename string) (*MediaFile, error) {
 	return instance, nil
 }
 
-// DateCreated returns the date on which a mediafile was created.
+// DateCreated returns the date on which the media file was created.
 func (m *MediaFile) DateCreated() time.Time {
 	if !m.dateCreated.IsZero() {
 		return m.dateCreated
