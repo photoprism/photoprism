@@ -5,6 +5,12 @@ process.env.CHROME_BIN = findChrome();
 
 module.exports = (config) => {
     config.set({
+        logLevel: config.LOG_INFO,
+
+        webpackMiddleware: {
+            stats: "errors-only"
+        },
+
         frameworks: ["mocha"],
 
         browsers: ["LocalChrome"],
@@ -41,7 +47,7 @@ module.exports = (config) => {
                     path.join(__dirname, "tests/unit"),
                 ],
                 alias: {
-                    vue: "vue/dist/vue.js",
+                    vue: "vue/dist/vue.min.js",
                 },
             },
             module: {
