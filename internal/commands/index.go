@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -20,13 +21,17 @@ func indexAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-
 	if err := conf.CreateDirectories(); err != nil {
 		return err
 	}
 
-	conf.MigrateDb()
+	cctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	if err := conf.Init(cctx); err != nil {
+		return err
+	}
 
+	conf.MigrateDb()
 	log.Infof("indexing photos in %s", conf.OriginalsPath())
 
 	tensorFlow := photoprism.NewTensorFlow(conf.TensorFlowModelPath())
@@ -38,8 +43,6 @@ func indexAction(ctx *cli.Context) error {
 	elapsed := time.Since(start)
 
 	log.Infof("indexed %d files in %s", len(files), elapsed)
-
 	conf.Shutdown()
-
 	return nil
 }

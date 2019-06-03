@@ -1,6 +1,12 @@
 package commands
 
 import (
+	"context"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -38,8 +44,9 @@ var startFlags = []cli.Flag{
 }
 
 func startAction(ctx *cli.Context) error {
+	// pass this context down the chain
+	cctx, cancel := context.WithCancel(context.Background())
 	conf := config.NewConfig(ctx)
-
 	if conf.HttpServerPort() < 1 {
 		log.Fatal("server port must be a positive integer")
 	}
@@ -48,11 +55,21 @@ func startAction(ctx *cli.Context) error {
 		log.Fatal(err)
 	}
 
+	if err := conf.Init(cctx); err != nil {
+		log.Fatal(err)
+	}
 	conf.MigrateDb()
 
 	log.Infof("starting web server at %s:%d", conf.HttpServerHost(), conf.HttpServerPort())
+	go server.Start(cctx, conf)
 
-	server.Start(conf)
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
+	<-quit
+	log.Info("Shutting down...")
+	conf.Shutdown()
+	cancel()
+	time.Sleep(3 * time.Second)
 	return nil
 }

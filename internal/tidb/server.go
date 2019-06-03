@@ -14,6 +14,7 @@
 package tidb
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -45,7 +46,6 @@ import (
 	"github.com/pingcap/tidb/store/tikv/gcworker"
 	"github.com/pingcap/tidb/util/logutil"
 	"github.com/pingcap/tidb/util/printer"
-	"github.com/pingcap/tidb/util/signal"
 	xserver "github.com/pingcap/tidb/x-server"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/push"
@@ -62,7 +62,7 @@ var (
 )
 
 // Start the TiDB server using the configuration provided
-func Start(path string, port uint, host string, debug bool) {
+func Start(ctx context.Context, path string, port uint, host string, debug bool) {
 	if err := logutil.SetLevel("fatal"); err != nil {
 		log.Error(err)
 	}
@@ -91,9 +91,7 @@ func Start(path string, port uint, host string, debug bool) {
 	cfg.Status.ReportStatus = false
 
 	validateConfig()
-
 	setGlobalVars()
-
 	setupTracing()
 
 	if debug {
@@ -104,23 +102,12 @@ func Start(path string, port uint, host string, debug bool) {
 	// setupMetrics()
 	createStoreAndDomain()
 	createServer()
+	go runServer()
 
-	/*
-		TODO: Use a Context for graceful shutdown of web and database servers (and other goroutines)
-
-		TODO: Add TiDB server tests
-
-		See
-		- https://github.com/gin-gonic/gin/blob/dfe37ea6f1b9127be4cff4822a1308b4349444e0/examples/graceful-shutdown/graceful-shutdown/server.go
-		- https://stackoverflow.com/questions/45500836/close-multiple-goroutine-if-an-error-occurs-in-one-in-go
-	*/
-	signal.SetupSignalHandler(serverShutdown)
-
-	runServer()
-
+	<-ctx.Done()
+	serverShutdown(true)
 	cleanup()
-
-	os.Exit(0)
+	log.Info("tidb server shutdown complete.")
 }
 
 func registerStores() {
@@ -353,12 +340,8 @@ func setupTracing() {
 
 func runServer() {
 	err := svr.Run()
-
-	terror.MustNil(err)
-
-	if cfg.XProtocol.XServer {
-		err := xsvr.Run()
-		terror.MustNil(err)
+	if err != nil {
+		log.Errorf("Server failed to run: %v", err)
 	}
 }
 

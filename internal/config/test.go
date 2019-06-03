@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -57,9 +58,12 @@ func NewTestConfig() *Config {
 	log.SetLevel(log.DebugLevel)
 
 	c := &Config{config: NewTestParams()}
+	err := c.Init(context.Background())
+	if err != nil {
+		log.Fatalf("failed init config: %v", err)
+	}
 
 	c.MigrateDb()
-
 	return c
 }
 

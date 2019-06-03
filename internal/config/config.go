@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"errors"
 	"os"
 	"time"
@@ -85,7 +86,7 @@ func (c *Config) CreateDirectories() error {
 // connectToDatabase establishes a database connection.
 // When used with the internal driver, it may create a new database server instance.
 // It tries to do this 12 times with a 5 second sleep interval in between.
-func (c *Config) connectToDatabase() error {
+func (c *Config) connectToDatabase(ctx context.Context) error {
 	dbDriver := c.DatabaseDriver()
 	dbDsn := c.DatabaseDsn()
 
@@ -106,12 +107,11 @@ func (c *Config) connectToDatabase() error {
 	}
 
 	db, err := gorm.Open(dbDriver, dbDsn)
-
 	if err != nil || db == nil {
 		if isTiDB {
 			log.Infof("starting database server at %s:%d\n", c.SqlServerHost(), c.SqlServerPort())
 
-			go tidb.Start(c.SqlServerPath(), c.SqlServerPort(), c.SqlServerHost(), c.Debug())
+			go tidb.Start(ctx, c.SqlServerPath(), c.SqlServerPort(), c.SqlServerHost(), c.Debug())
 		}
 
 		for i := 1; i <= 12; i++ {
@@ -140,7 +140,6 @@ func (c *Config) connectToDatabase() error {
 	}
 
 	c.db = db
-
 	return err
 }
 
@@ -324,9 +323,7 @@ func (c *Config) HttpStaticBuildPath() string {
 // Db returns the db connection.
 func (c *Config) Db() *gorm.DB {
 	if c.db == nil {
-		if err := c.connectToDatabase(); err != nil {
-			log.Fatal(err)
-		}
+		log.Fatal("database not initialised.")
 	}
 
 	return c.db
@@ -396,6 +393,11 @@ func (c *Config) ClientConfig() ClientConfig {
 	}
 
 	return result
+}
+
+// Init initialises the Database.
+func (c *Config) Init(ctx context.Context) error {
+	return c.connectToDatabase(ctx)
 }
 
 func (c *Config) Shutdown() {
