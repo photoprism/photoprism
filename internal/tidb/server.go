@@ -339,20 +339,9 @@ func setupTracing() {
 }
 
 func runServer() {
-	go func() {
-		err := svr.Run()
-		if err != nil {
-			log.Errorf("Server failed to run: %v", err)
-		}
-	}()
-
-	if cfg.XProtocol.XServer {
-		go func() {
-			err := xsvr.Run()
-			if err != nil {
-				log.Errorf("XServer failed to run: %v", err)
-			}
-		}()
+	err := svr.Run()
+	if err != nil {
+		log.Errorf("Server failed to run: %v", err)
 	}
 }
 
