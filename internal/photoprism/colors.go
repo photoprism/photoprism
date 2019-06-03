@@ -91,8 +91,8 @@ func (c IndexedColor) Hex() string {
 }
 
 func (c IndexedColors) Hex() (result string) {
-	for _, materialColor := range c {
-		result += materialColor.Hex()
+	for _, indexedColor := range c {
+		result += indexedColor.Hex()
 	}
 
 	return result
