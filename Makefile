@@ -50,23 +50,32 @@ build-go:
 watch-js:
 	(cd frontend &&	env NODE_ENV=development npm run dev)
 test-js:
+	$(info Running JS unit tests...)
 	(cd frontend &&	env NODE_ENV=development npm run test)
 test-chromium:
+	$(info Running JS acceptance tests in Chrome...)
 	(cd frontend &&	npm run test-chromium)
 test-firefox:
+	$(info Running JS acceptance tests in Firefox...)
 	(cd frontend &&	npm run test-firefox)
 test-go:
+	$(info Running all Go unit tests...)
 	$(GOTEST) -tags=slow -timeout 20m ./internal/...
 test-debug:
+	$(info Running all Go unit tests in verbose mode...)
 	$(GOTEST) -tags=slow -timeout 20m -v ./internal/...
 test-short:
+	$(info Running short Go unit tests in verbose mode...)
 	$(GOTEST) -short -timeout 5m -v ./internal/...
 test-race:
+	$(info Running all Go unit tests with race detection in verbose mode...)
 	$(GOTEST) -tags=slow -race -timeout 60m -v ./internal/...
 test-codecov:
+	$(info Running all Go unit tests with code coverage report for codecov...)
 	go test -tags=slow -timeout 30m -coverprofile=coverage.txt -covermode=atomic -v ./internal/...
 	scripts/codecov.sh
 test-coverage:
+	$(info Running all Go unit tests with code coverage report...)
 	go test -tags=slow -timeout 30m -coverprofile=coverage.txt -covermode=atomic -v ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
 clean:
