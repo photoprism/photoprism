@@ -100,3 +100,566 @@ mitten:
 
 bubble:
   tag: bubbles
+
+tench fish:
+  synonyms:
+    - fish
+    - animal
+
+goldfish:
+  synonyms:
+    - fish
+    - animal
+
+great white shark:
+  synonyms:
+    - fish
+    - animal
+    - shark
+
+tiger shark:
+  synonyms:
+    - fish
+    - animal
+    - shark
+
+hammerhead:
+  synonyms:
+    - fish
+    - animal
+    - shark
+
+electric ray:
+  synonyms:
+    - fish
+    - animal
+    - ray
+
+stingray:
+  synonyms:
+    - fish
+    - animal
+    - ray
+
+cock:
+  synonyms:
+    - bird
+    - animal
+
+hen:
+  synonyms:
+    - bird
+    - animal
+    - chicken
+
+ostrich:
+  synonyms:
+    - bird
+    - animal
+
+brambling bird:
+  synonyms:
+    - bird
+    - animal
+
+goldfinch bird:
+  synonyms:
+    - bird
+    - animal
+
+house finch bird:
+  synonyms:
+    - bird
+    - animal
+
+junco bird:
+  synonyms:
+    - bird
+    - animal
+
+indigo bunting bird:
+  synonyms:
+    - bird
+    - animal
+
+robin bird:
+  synonyms:
+    - bird
+    - animal
+
+bulbul bird:
+  synonyms:
+    - bird
+    - animal
+
+jay bird:
+  synonyms:
+    - bird
+    - animal
+
+magpie bird:
+  synonyms:
+    - bird
+    - animal
+
+chickadee bird:
+  synonyms:
+    - bird
+    - animal
+
+water ouzel bird:
+  synonyms:
+    - bird
+    - animal
+
+kite bird:
+  synonyms:
+    - bird
+    - animal
+
+bald eagle bird:
+  synonyms:
+    - bird
+    - animal
+
+vulture bird:
+  synonyms:
+    - bird
+    - animal
+
+great grey owl bird:
+  synonyms:
+    - bird
+    - animal
+
+European fire salamander:
+  synonyms:
+    - amphibians
+    - animal
+    - salamander
+
+common newt salamander:
+  synonyms:
+    - amphibians
+    - animal
+    - salamander
+
+spotted salamander:
+  synonyms:
+    - amphibians
+    - animal
+    - salamander
+
+eft:
+  synonyms:
+    - amphibians
+    - animal
+    - salamander
+
+axolotl:
+  synonyms:
+    - amphibians
+    - animal
+
+bullfrog:
+  synonyms:
+    - amphibians
+    - animal
+    - frog
+
+tree frog:
+  synonyms:
+    - amphibians
+    - animal
+    - frog
+
+tailed frog:
+  synonyms:
+    - amphibians
+    - animal
+    - frog
+
+loggerhead:
+  synonyms:
+    - reptiles
+    - animal
+    - turtle
+
+leatherback turtle:
+  synonyms:
+    - reptiles
+    - animal
+    - turtle
+
+mud turtle:
+  synonyms:
+    - reptiles
+    - animal
+    - turtle
+
+terrapin:
+  synonyms:
+    - reptiles
+    - animal
+    - turtle
+
+box turtle:
+  synonyms:
+    - reptiles
+    - animal
+    - turtle
+
+banded gecko:
+  synonyms:
+    - reptiles
+    - animal
+
+common iguana:
+  synonyms:
+    - reptiles
+    - animal
+
+American chameleon:
+  synonyms:
+    - reptiles
+    - animal
+    - chameleon
+
+whiptail:
+  synonyms:
+    - reptiles
+    - animal
+
+agama:
+  synonyms:
+    - reptiles
+    - animal
+
+frilled lizard:
+  synonyms:
+    - reptiles
+    - animal
+    - lizard
+
+alligator lizard:
+  synonyms:
+    - reptiles
+    - animal
+    - lizard
+
+Gila monster lizard:
+  synonyms:
+    - reptiles
+    - animal
+    - lizard
+
+green lizard:
+  synonyms:
+    - reptiles
+    - animal
+    - lizard
+
+African chameleon:
+  synonyms:
+    - reptiles
+    - animal
+    - chameleon
+
+Komodo dragon:
+  synonyms:
+    - reptiles
+    - animal
+
+African crocodile:
+  synonyms:
+    - reptiles
+    - animal
+    - crocodile
+    - alligator
+
+American alligator:
+  synonyms:
+    - reptiles
+    - animal
+    - crocodile
+    - alligator
+
+triceratops:
+  synonyms:
+    - reptiles
+    - animal
+
+thunder snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+ringneck snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+hognose snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+green snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+king snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+garter snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+water snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+vine snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+night snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+boa constrictor snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+rock python snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+Indian cobra snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+green mamba snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+sea snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+horned viper snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+diamondback snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+sidewinder snake:
+  synonyms:
+    - reptiles
+    - animal
+    - snake
+
+trilobite:
+  synonyms:
+    - animal
+
+harvestman:
+  synonyms:
+    - animal
+    - spider
+    - insect
+
+scorpion:
+  synonyms:
+    - animal
+    - spider
+    - insect
+
+black and gold garden spider:
+  synonyms:
+    - animal
+    - spider
+    - insect
+
+barn spider:
+  synonyms:
+    - animal
+    - spider
+    - insect
+
+garden spider:
+  synonyms:
+    - animal
+    - spider
+    - insect
+
+black widow:
+  synonyms:
+    - animal
+    - spider
+    - insect
+
+tarantula:
+  synonyms:
+    - animal
+    - spider
+    - insect
+
+wolf spider:
+  synonyms:
+    - animal
+    - spider
+    - insect
+
+harvestman:
+  synonyms:
+    - animal
+    - spider
+    - insect
+
+centipede:
+  synonyms:
+    - animal
+    - insect
+
+black grouse:
+  synonyms:
+    - animal
+    - bird
+    - chicken
+
+ptarmigan:
+  synonyms:
+    - animal
+    - bird
+    - chicken
+
+ruffed grouse:
+  synonyms:
+    - animal
+    - bird
+    - chicken
+
+prairie chicken:
+  synonyms:
+    - animal
+    - bird
+    - chicken
+
+peacock:
+  synonyms:
+    - animal
+    - bird
+
+quail:
+  synonyms:
+    - animal
+    - bird
+
+partridge:
+  synonyms:
+    - animal
+    - bird
+    - chicken
+
+African grey:
+  synonyms:
+    - animal
+    - bird
+    - parrot
+
+macaw:
+  synonyms:
+    - animal
+    - bird
+    - parrot
+
+sulphur-crested cockatoo:
+  synonyms:
+    - animal
+    - bird
+    - parrot
+
+lorikeet:
+  synonyms:
+    - animal
+    - bird
+    - parrot
+
+coucal:
+  synonyms:
+    - animal
+    - bird
+
+bee eater:
+  synonyms:
+    - animal
+    - bird
+
+hornbill:
+  synonyms:
+    - animal
+    - bird
+
+hummingbird:
+  synonyms:
+    - animal
+    - bird
+
+jacamar:
+  synonyms:
+    - animal
+    - bird
+
+toucan:
+  synonyms:
+    - animal
+    - bird
+
+drake:
+  synonyms:
+    - animal
+    - bird
+    - duck
+
+red-breasted merganser:
+  synonyms:
+    - animal
+    - duck
+
+goose:
+  synonyms:
+    - animal
+    - bird
