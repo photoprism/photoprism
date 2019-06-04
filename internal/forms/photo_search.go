@@ -33,7 +33,7 @@ type PhotoSearchForm struct {
 	Mono        bool      `form:"mono"`
 	Portrait    bool      `form:"portrait"`
 	Location    bool      `form:"location"`
-	Tags        string    `form:"tags"`
+	Label       string    `form:"label"`
 	Country     string    `form:"country"`
 	Color       string    `form:"color"`
 	Camera      int       `form:"camera"`

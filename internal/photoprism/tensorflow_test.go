@@ -8,14 +8,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTensorFlow_GetImageTagsFromFile(t *testing.T) {
+func TestTensorFlow_LabelsFromFile(t *testing.T) {
 	ctx := config.TestConfig()
 
 	ctx.InitializeTestData(t)
 
 	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
 
-	result, err := tensorFlow.GetImageTagsFromFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
+	result, err := tensorFlow.LabelsFromFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
 
 	assert.Nil(t, err)
 
@@ -25,19 +25,19 @@ func TestTensorFlow_GetImageTagsFromFile(t *testing.T) {
 	}
 
 	assert.NotNil(t, result)
-	assert.IsType(t, []TensorFlowLabel{}, result)
+	assert.IsType(t, Labels{}, result)
 	assert.Equal(t, 2, len(result))
 
 	t.Log(result)
 
-	assert.Equal(t, "tabby cat", result[0].Label)
-	assert.Equal(t, "tiger cat", result[1].Label)
+	assert.Equal(t, "tabby cat", result[0].Name)
+	assert.Equal(t, "tiger cat", result[1].Name)
 
-	assert.Equal(t, 68, result[0].Percent())
-	assert.Equal(t, 14, result[1].Percent())
+	assert.Equal(t, 32, result[0].Uncertainty)
+	assert.Equal(t, 86, result[1].Uncertainty)
 }
 
-func TestTensorFlow_GetImageTags(t *testing.T) {
+func TestTensorFlow_Labels(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -51,25 +51,25 @@ func TestTensorFlow_GetImageTags(t *testing.T) {
 	if imageBuffer, err := ioutil.ReadFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG"); err != nil {
 		t.Error(err)
 	} else {
-		result, err := tensorFlow.GetImageTags(imageBuffer)
+		result, err := tensorFlow.Labels(imageBuffer)
 
 		t.Log(result)
 
 		assert.NotNil(t, result)
 
 		assert.Nil(t, err)
-		assert.IsType(t, []TensorFlowLabel{}, result)
+		assert.IsType(t, Labels{}, result)
 		assert.Equal(t, 2, len(result))
 
-		assert.Equal(t, "tabby cat", result[0].Label)
-		assert.Equal(t, "tiger cat", result[1].Label)
+		assert.Equal(t, "tabby cat", result[0].Name)
+		assert.Equal(t, "tiger cat", result[1].Name)
 
-		assert.Equal(t, 68, result[0].Percent())
-		assert.Equal(t, 14, result[1].Percent())
+		assert.Equal(t, 100 - 68, result[0].Uncertainty)
+		assert.Equal(t, 100 - 14, result[1].Uncertainty)
 	}
 }
 
-func TestTensorFlow_GetImageTags_Dog(t *testing.T) {
+func TestTensorFlow_Labels_Dog(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -83,20 +83,20 @@ func TestTensorFlow_GetImageTags_Dog(t *testing.T) {
 	if imageBuffer, err := ioutil.ReadFile(ctx.ImportPath() + "/dog.jpg"); err != nil {
 		t.Error(err)
 	} else {
-		result, err := tensorFlow.GetImageTags(imageBuffer)
+		result, err := tensorFlow.Labels(imageBuffer)
 
 		t.Log(result)
 
 		assert.NotNil(t, result)
 
 		assert.Nil(t, err)
-		assert.IsType(t, []TensorFlowLabel{}, result)
+		assert.IsType(t, Labels{}, result)
 		assert.Equal(t, 3, len(result))
 
-		assert.Equal(t, "belt", result[0].Label)
-		assert.Equal(t, "beagle dog", result[1].Label)
+		assert.Equal(t, "belt", result[0].Name)
+		assert.Equal(t, "beagle dog", result[1].Name)
 
-		assert.Equal(t, 11, result[0].Percent())
-		assert.Equal(t, 9, result[1].Percent())
+		assert.Equal(t, 100 - 11, result[0].Uncertainty)
+		assert.Equal(t, 100 - 9, result[1].Uncertainty)
 	}
 }

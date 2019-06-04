@@ -36,8 +36,8 @@ func NewCountry(countryCode string, countryName string) *Country {
 	return result
 }
 
-func (c *Country) FirstOrCreate(db *gorm.DB) *Country {
-	db.FirstOrCreate(c, "id = ?", c.ID)
+func (m *Country) FirstOrCreate(db *gorm.DB) *Country {
+	db.FirstOrCreate(m, "id = ?", m.ID)
 
-	return c
+	return m
 }

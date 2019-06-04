@@ -7,7 +7,7 @@ import (
 
 // Camera lens (as extracted from EXIF metadata)
 type Lens struct {
-	gorm.Model
+	Model
 	LensSlug        string
 	LensModel       string
 	LensMake        string
@@ -37,8 +37,8 @@ func NewLens(modelName string, makeName string) *Lens {
 	return result
 }
 
-func (c *Lens) FirstOrCreate(db *gorm.DB) *Lens {
-	db.FirstOrCreate(c, "lens_model = ? AND lens_make = ?", c.LensModel, c.LensMake)
+func (m *Lens) FirstOrCreate(db *gorm.DB) *Lens {
+	db.FirstOrCreate(m, "lens_model = ? AND lens_make = ?", m.LensModel, m.LensMake)
 
-	return c
+	return m
 }

@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/util"
 )

@@ -14,7 +14,6 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/util"
-	log "github.com/sirupsen/logrus"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"gopkg.in/yaml.v2"
 )
@@ -25,14 +24,6 @@ type TensorFlow struct {
 	model      *tf.SavedModel
 	labels     []string
 	labelRules LabelRules
-}
-
-// TensorFlowLabel defines a Json struct with label and probability.
-type TensorFlowLabel struct {
-	Label       string  `json:"label"`
-	Probability float32 `json:"probability"`
-	Synonyms    []string
-	Priority    int
 }
 
 type LabelRule struct {
@@ -48,10 +39,6 @@ type LabelRules map[string]LabelRule
 // NewTensorFlow returns a new TensorFlow.
 func NewTensorFlow(tensorFlowModelPath string) *TensorFlow {
 	return &TensorFlow{modelPath: tensorFlowModelPath}
-}
-
-func (a *TensorFlowLabel) Percent() int {
-	return int(math.Round(float64(a.Probability * 100)))
 }
 
 func (t *TensorFlow) loadLabelRules() (err error) {
@@ -82,38 +69,25 @@ func (t *TensorFlow) loadLabelRules() (err error) {
 	return err
 }
 
-// TensorFlowLabels is a slice of tensorflow labels.
-type TensorFlowLabels []TensorFlowLabel
-
-func (a TensorFlowLabels) Len() int      { return len(a) }
-func (a TensorFlowLabels) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a TensorFlowLabels) Less(i, j int) bool {
-	if a[i].Priority == a[j].Priority {
-		return a[i].Probability > a[j].Probability
-	} else {
-		return a[i].Priority > a[j].Priority
-	}
-}
-
-// GetImageTagsFromFile returns tags for a jpeg image file.
-func (t *TensorFlow) GetImageTagsFromFile(filename string) (result []TensorFlowLabel, err error) {
+// LabelsFromFile returns tags for a jpeg image file.
+func (t *TensorFlow) LabelsFromFile(filename string) (result Labels, err error) {
 	imageBuffer, err := ioutil.ReadFile(filename)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return t.GetImageTags(imageBuffer)
+	return t.Labels(imageBuffer)
 }
 
-// GetImageTags returns tags for a jpeg image string.
-func (t *TensorFlow) GetImageTags(img []byte) (result []TensorFlowLabel, err error) {
+// Labels returns tags for a jpeg image string.
+func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 	if err := t.loadModel(); err != nil {
 		return nil, err
 	}
 
 	// Make tensor
-	tensor, err := t.makeTensorFromImage(img, "jpeg")
+	tensor, err := t.makeTensor(img, "jpeg")
 
 	if err != nil {
 		return nil, errors.New("invalid image")
@@ -138,7 +112,7 @@ func (t *TensorFlow) GetImageTags(img []byte) (result []TensorFlowLabel, err err
 	}
 
 	// Return best labels
-	result = t.findBestLabels(output[0].Value().([][]float32)[0])
+	result = t.bestLabels(output[0].Value().([][]float32)[0])
 
 	log.Debugf("labels: %v", result)
 
@@ -206,13 +180,13 @@ func (t *TensorFlow) labelRule(label string) LabelRule {
 	return LabelRule{Threshold: 0.08}
 }
 
-func (t *TensorFlow) findBestLabels(probabilities []float32) []TensorFlowLabel {
+func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 	if err := t.loadLabelRules(); err != nil {
 		log.Error(err)
 	}
 
 	// Make a list of label/probability pairs
-	var result []TensorFlowLabel
+	var result Labels
 
 	for i, p := range probabilities {
 		if i >= len(t.labels) {
@@ -235,11 +209,13 @@ func (t *TensorFlow) findBestLabels(probabilities []float32) []TensorFlowLabel {
 			labelText = rule.Tag
 		}
 
-		result = append(result, TensorFlowLabel{Label: labelText, Probability: p, Synonyms: rule.Synonyms, Priority: rule.Priority})
+		uncertainty := 100 - int(math.Round(float64(p * 100)))
+
+		result = append(result, Label{Name: labelText, Source: "image", Uncertainty: uncertainty, Priority: rule.Priority, Synonyms: rule.Synonyms})
 	}
 
 	// Sort by probability
-	sort.Sort(TensorFlowLabels(result))
+	sort.Sort(Labels(result))
 
 	if l := len(result); l < 5 {
 		return result[:l]
@@ -248,7 +224,7 @@ func (t *TensorFlow) findBestLabels(probabilities []float32) []TensorFlowLabel {
 	}
 }
 
-func (t *TensorFlow) makeTensorFromImage(image []byte, imageFormat string) (*tf.Tensor, error) {
+func (t *TensorFlow) makeTensor(image []byte, imageFormat string) (*tf.Tensor, error) {
 	img, err := imaging.Decode(bytes.NewReader(image), imaging.AutoOrientation(true))
 
 	if err != nil {

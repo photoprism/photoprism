@@ -10,7 +10,7 @@ import (
 
 // Camera model and make (as extracted from EXIF metadata)
 type Camera struct {
-	gorm.Model
+	Model
 	CameraSlug        string
 	CameraModel       string
 	CameraMake        string
@@ -46,17 +46,17 @@ func NewCamera(modelName string, makeName string) *Camera {
 	return result
 }
 
-func (c *Camera) FirstOrCreate(db *gorm.DB) *Camera {
-	db.FirstOrCreate(c, "camera_model = ? AND camera_make = ?", c.CameraModel, c.CameraMake)
+func (m *Camera) FirstOrCreate(db *gorm.DB) *Camera {
+	db.FirstOrCreate(m, "camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake)
 
-	return c
+	return m
 }
 
-func (c *Camera) String() string {
-	if c.CameraMake != "" && c.CameraModel != "" {
-		return fmt.Sprintf("%s %s", c.CameraMake, c.CameraModel)
-	} else if c.CameraModel != "" {
-		return c.CameraModel
+func (m *Camera) String() string {
+	if m.CameraMake != "" && m.CameraModel != "" {
+		return fmt.Sprintf("%s %s", m.CameraMake, m.CameraModel)
+	} else if m.CameraModel != "" {
+		return m.CameraModel
 	}
 
 	return ""

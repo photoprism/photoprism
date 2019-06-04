@@ -61,7 +61,7 @@ test-firefox:
 test-go:
 	$(info Running all Go unit tests...)
 	$(GOTEST) -tags=slow -timeout 20m ./internal/...
-test-debug:
+test-verbose:
 	$(info Running all Go unit tests in verbose mode...)
 	$(GOTEST) -tags=slow -timeout 20m -v ./internal/...
 test-short:

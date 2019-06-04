@@ -5,8 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // Converter wraps a darktable cli binary.

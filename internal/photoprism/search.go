@@ -121,16 +121,37 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		countries.country_name,
 		locations.loc_display_name, locations.loc_name, locations.loc_city, locations.loc_postcode, locations.loc_county, 
 		locations.loc_state, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type,
-		GROUP_CONCAT(tags.tag_label) AS tags`).
+		GROUP_CONCAT(labels.label_name) AS labels`).
 		Joins("JOIN files ON files.photo_id = photos.id AND files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
 		Joins("LEFT JOIN countries ON countries.id = photos.country_id").
 		Joins("LEFT JOIN locations ON locations.id = photos.location_id").
-		Joins("LEFT JOIN photo_tags ON photo_tags.photo_id = photos.id").
-		Joins("LEFT JOIN tags ON photo_tags.tag_id = tags.id").
+		Joins("LEFT JOIN photo_labels ON photo_labels.photo_id = photos.id").
+		Joins("LEFT JOIN labels ON photo_labels.label_id = labels.id").
 		Where("photos.deleted_at IS NULL AND files.file_missing = 0").
 		Group("photos.id, files.id")
+
+	var synonyms []models.Synonym
+	var label models.Label
+	var labelIds []uint
+
+	if form.Label != "" {
+		if result := s.db.First(&label, "label_slug = ?", form.Label); result.Error != nil {
+			log.Errorf("label \"%s\" not found", form.Label)
+			return results, fmt.Errorf("label \"%s\" not found", form.Label)
+		} else {
+			labelIds = append(labelIds, label.ID)
+
+			s.db.Where("synonym_id = ?", label.ID).Find(&synonyms)
+
+			for _, synonym := range synonyms {
+				labelIds = append(labelIds, synonym.LabelID)
+			}
+
+			q = q.Where("labels.id IN (?)", labelIds)
+		}
+	}
 
 	if form.Location == true {
 		q = q.Where("location_id > 0")
@@ -141,7 +162,25 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		}
 	} else if form.Query != "" {
 		likeString := "%" + strings.ToLower(form.Query) + "%"
-		q = q.Where("tags.tag_label LIKE ? OR LOWER(photo_title) LIKE ? OR LOWER(files.file_main_color) LIKE ?", likeString, likeString, likeString)
+
+		if result := s.db.First(&label, "LOWER(label_name) LIKE LOWER(?)", form.Query); result.Error != nil {
+			log.Infof("label \"%s\" not found", form.Query)
+
+			q = q.Where("LOWER(labels.label_name) LIKE ? OR LOWER(photo_title) LIKE ? OR LOWER(files.file_main_color) LIKE ?", likeString, likeString, likeString)
+		} else {
+			labelIds = append(labelIds, label.ID)
+
+			s.db.Where("synonym_id = ?", label.ID).Find(&synonyms)
+
+			for _, synonym := range synonyms {
+				labelIds = append(labelIds, synonym.LabelID)
+			}
+
+			log.Infof("searching for label IDs: %#v", form.Query)
+
+			q = q.Where("labels.id IN (?) OR LOWER(photo_title) LIKE ? OR LOWER(files.file_main_color) LIKE ?", labelIds, likeString, likeString)
+		}
+
 	}
 
 	if form.Camera > 0 {
@@ -158,10 +197,6 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 
 	if form.Country != "" {
 		q = q.Where("locations.loc_country_code = ?", form.Country)
-	}
-
-	if form.Tags != "" {
-		q = q.Where("tags.tag_label = ?", form.Tags)
 	}
 
 	if form.Title != "" {

@@ -346,11 +346,14 @@ func (c *Config) CloseDb() error {
 func (c *Config) MigrateDb() {
 	db := c.Db()
 
+	// db.LogMode(true)
+
 	db.AutoMigrate(
 		&models.File{},
 		&models.Photo{},
-		&models.Tag{},
-		&models.PhotoTag{},
+		&models.Label{},
+		&models.Synonym{},
+		&models.PhotoLabel{},
 		&models.Album{},
 		&models.Location{},
 		&models.Camera{},

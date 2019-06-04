@@ -11,7 +11,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/models"
-	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -46,9 +45,9 @@ func (i *Indexer) thumbnailsPath() string {
 	return i.conf.ThumbnailsPath()
 }
 
-// getImageTags returns all tags of a given mediafile. This function returns
+// classifyImage returns all tags of a given mediafile. This function returns
 // an empty list in the case of an error.
-func (i *Indexer) getImageTags(jpeg *MediaFile) (results []*models.Tag) {
+func (i *Indexer) classifyImage(jpeg *MediaFile) (results Labels) {
 	start := time.Now()
 
 	var thumbs []string
@@ -59,7 +58,7 @@ func (i *Indexer) getImageTags(jpeg *MediaFile) (results []*models.Tag) {
 		thumbs = []string{"tile_224", "left_224", "right_224"}
 	}
 
-	var allLabels TensorFlowLabels
+	var labels Labels
 
 	for _, thumb := range thumbs {
 		filename, err := jpeg.Thumbnail(i.thumbnailsPath(), thumb)
@@ -69,110 +68,143 @@ func (i *Indexer) getImageTags(jpeg *MediaFile) (results []*models.Tag) {
 			continue
 		}
 
-		labels, err := i.tensorFlow.GetImageTagsFromFile(filename)
+		imageLabels, err := i.tensorFlow.LabelsFromFile(filename)
 
 		if err != nil {
 			log.Error(err)
 			continue
 		}
 
-		allLabels = append(allLabels, labels...)
+
+		labels = append(labels, imageLabels...)
 	}
 
-	// Sort by probability
-	sort.Sort(TensorFlowLabels(allLabels))
+	// Sort by uncertainty
+	sort.Sort(labels)
 
-	var max float32 = -1
+	var confidence int
 
-	for _, l := range allLabels {
-		if max == -1 {
-			max = l.Probability
+	for _, label := range labels {
+		if confidence == 0 {
+			confidence = 100 - label.Uncertainty
 		}
 
-		if l.Probability > (max / 3) {
-			results = i.appendTag(results, l.Label)
+		if (100 - label.Uncertainty) > (confidence / 3) {
+			results = append(results, label)
 		}
 	}
 
 	elapsed := time.Since(start)
 
-	log.Infof("finding %+v labels for %s took %s", allLabels, jpeg.Filename(), elapsed)
+	log.Infof("finding %+v labels for %s took %s", results, jpeg.Filename(), elapsed)
 
 	return results
-}
-
-func (i *Indexer) appendTag(tags []*models.Tag, label string) []*models.Tag {
-	if label == "" {
-		return tags
-	}
-
-	label = strings.ToLower(label)
-
-	for _, tag := range tags {
-		if tag.TagLabel == label {
-			return tags
-		}
-	}
-
-	tag := models.NewTag(label).FirstOrCreate(i.db)
-
-	return append(tags, tag)
 }
 
 func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	var photo models.Photo
 	var file, primaryFile models.File
 	var isPrimary = false
-	var tags []*models.Tag
 
+	labels := Labels{}
 	canonicalName := mediaFile.CanonicalNameFromFile()
 	fileHash := mediaFile.Hash()
 	relativeFileName := mediaFile.RelativeFilename(i.originalsPath())
 
 	photoQuery := i.db.First(&photo, "photo_canonical_name = ?", canonicalName)
 
-	if photoQuery.Error != nil {
-		if jpeg, err := mediaFile.Jpeg(); err == nil {
-			// Geo Location
-			if exifData, err := jpeg.ExifData(); err == nil {
-				photo.PhotoLat = exifData.Lat
-				photo.PhotoLong = exifData.Long
-				photo.PhotoArtist = exifData.Artist
-			}
+	if photo.TakenAt.IsZero() && photo.TakenAtChanged == false {
+		photo.TakenAt = mediaFile.DateCreated()
+	}
 
-			// Tags (TensorFlow)
-			tags = i.getImageTags(jpeg)
+	if photo.PhotoCanonicalName == "" {
+		photo.PhotoCanonicalName = canonicalName
+	}
+
+	if jpeg, err := mediaFile.Jpeg(); err == nil {
+		// Image classification labels
+		labels = i.classifyImage(jpeg)
+
+		// Read Exif data
+		if exifData, err := jpeg.ExifData(); err == nil {
+			photo.PhotoLat = exifData.Lat
+			photo.PhotoLong = exifData.Long
+			photo.PhotoArtist = exifData.Artist
 		}
 
-		if location, err := mediaFile.Location(); err == nil {
-			i.db.FirstOrCreate(location, "id = ?", location.ID)
-			photo.Location = location
-			photo.Country = models.NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
+		// Set Camera, Lens, Focal Length and Aperture
+		photo.Camera = models.NewCamera(mediaFile.CameraModel(), mediaFile.CameraMake()).FirstOrCreate(i.db)
+		photo.Lens = models.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
+		photo.PhotoFocalLength = mediaFile.FocalLength()
+		photo.PhotoAperture = mediaFile.Aperture()
+	}
 
-			tags = i.appendTag(tags, location.LocCity)
-			tags = i.appendTag(tags, location.LocCounty)
-			tags = i.appendTag(tags, location.LocCountry)
-			tags = i.appendTag(tags, location.LocCategory)
-			tags = i.appendTag(tags, location.LocName)
-			tags = i.appendTag(tags, location.LocType)
+	if location, err := mediaFile.Location(); err == nil {
+		i.db.FirstOrCreate(location, "id = ?", location.ID)
+		photo.Location = location
+		photo.Country = models.NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
 
-			if photo.PhotoTitle == "" && location.LocName != "" && location.LocCity != "" { // TODO: User defined title format
-				if len(location.LocName) > 40 {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(location.LocName), mediaFile.DateCreated().Format("2006"))
-				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(location.LocName), location.LocCity, mediaFile.DateCreated().Format("2006"))
-				}
-			} else if photo.PhotoTitle == "" && location.LocCity != "" && location.LocCountry != "" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, mediaFile.DateCreated().Format("2006"))
-			} else if photo.PhotoTitle == "" && location.LocCounty != "" && location.LocCountry != "" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.DateCreated().Format("2006"))
+		// Append labels from OpenStreetMap
+		labels = append(labels, NewLocationLabel(location.LocCity, 0, 1))
+		labels = append(labels, NewLocationLabel(location.LocCounty, 0, 0))
+		labels = append(labels, NewLocationLabel(location.LocCountry, 0, 0))
+		labels = append(labels, NewLocationLabel(location.LocCategory, 0, 2))
+		labels = append(labels, NewLocationLabel(location.LocName, 0, 3))
+		labels = append(labels, NewLocationLabel(location.LocType, 0, 0))
+
+		if photo.PhotoTitle == "" && location.LocName != "" && location.LocCity != "" { // TODO: User defined title format
+			if len(location.LocName) > 40 {
+				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(location.LocName), mediaFile.DateCreated().Format("2006"))
+			} else {
+				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(location.LocName), location.LocCity, mediaFile.DateCreated().Format("2006"))
 			}
-		} else {
-			log.Debugf("location cannot be determined precisely: %s", err)
+		} else if photo.PhotoTitle == "" && location.LocCity != "" && location.LocCountry != "" {
+			photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, mediaFile.DateCreated().Format("2006"))
+		} else if photo.PhotoTitle == "" && location.LocCounty != "" && location.LocCountry != "" {
+			photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.DateCreated().Format("2006"))
+		}
+	} else {
+		log.Debugf("location cannot be determined precisely: %s", err)
+	}
 
+	if photo.PhotoTitle == "" {
+		if len(labels) > 0 { // TODO: User defined title format
+			photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(labels[0].Name), mediaFile.DateCreated().Format("2006"))
+		} else if photo.Camera.String() != "" && photo.Camera.String() != "Unknown" {
+			photo.PhotoTitle = fmt.Sprintf("%s / %s", photo.Camera, mediaFile.DateCreated().Format("2006"))
+		} else {
+			var daytimeString string
+			hour := mediaFile.DateCreated().Hour()
+
+			switch {
+			case hour < 8:
+				daytimeString = "Early Bird"
+			case hour < 12:
+				daytimeString = "Morning Mood"
+			case hour < 17:
+				daytimeString = "Daytime"
+			case hour < 20:
+				daytimeString = "Sunset"
+			default:
+				daytimeString = "Late Night"
+			}
+
+			photo.PhotoTitle = fmt.Sprintf("%s / %s", daytimeString, mediaFile.DateCreated().Format("2006"))
+		}
+	}
+
+	log.Debugf("title: \"%s\"", photo.PhotoTitle)
+
+	if photoQuery.Error != nil {
+		photo.PhotoFavorite = false
+
+		i.db.Create(&photo)
+	} else {
+		// Estimate location
+		if photo.LocationID == 0 {
 			var recentPhoto models.Photo
 
-			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", mediaFile.DateCreated())).Preload("Country").First(&recentPhoto); result.Error == nil {
+			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", photo.TakenAt)).Preload("Country").First(&recentPhoto); result.Error == nil {
 				if recentPhoto.Country != nil {
 					photo.Country = recentPhoto.Country
 					log.Debugf("approximate location: %s", recentPhoto.Country.CountryName)
@@ -180,72 +212,32 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			}
 		}
 
-		photo.Tags = tags
-
-		photo.Camera = models.NewCamera(mediaFile.CameraModel(), mediaFile.CameraMake()).FirstOrCreate(i.db)
-		photo.Lens = models.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
-		photo.PhotoFocalLength = mediaFile.FocalLength()
-		photo.PhotoAperture = mediaFile.Aperture()
-
-		photo.TakenAt = mediaFile.DateCreated()
-		photo.PhotoCanonicalName = canonicalName
-		photo.PhotoFavorite = false
-
-		if photo.PhotoTitle == "" {
-			if len(photo.Tags) > 0 { // TODO: User defined title format
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(photo.Tags[0].TagLabel), mediaFile.DateCreated().Format("2006"))
-			} else if photo.Camera.String() != "" && photo.Camera.String() != "Unknown" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", photo.Camera, mediaFile.DateCreated().Format("January 2006"))
-			} else {
-				var daytimeString string
-				hour := mediaFile.DateCreated().Hour()
-
-				switch {
-				case hour < 8:
-					daytimeString = "Early Bird"
-				case hour < 12:
-					daytimeString = "Morning Mood"
-				case hour < 17:
-					daytimeString = "Carpe Diem"
-				case hour < 20:
-					daytimeString = "Sunset"
-				default:
-					daytimeString = "Late Night"
-				}
-
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", daytimeString, mediaFile.DateCreated().Format("January 2006"))
-			}
-		}
-
-		log.Debugf("title: \"%s\"", photo.PhotoTitle)
-
-		i.db.Create(&photo)
-	} else if time.Now().Sub(photo.UpdatedAt).Minutes() > 10 { // If updated more than 10 minutes ago
-		if jpeg, err := mediaFile.Jpeg(); err == nil {
-			photo.Camera = models.NewCamera(mediaFile.CameraModel(), mediaFile.CameraMake()).FirstOrCreate(i.db)
-			photo.Lens = models.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
-			photo.PhotoFocalLength = mediaFile.FocalLength()
-			photo.PhotoAperture = mediaFile.Aperture()
-
-			// Geo Location
-			if exifData, err := jpeg.ExifData(); err == nil {
-				photo.PhotoLat = exifData.Lat
-				photo.PhotoLong = exifData.Long
-				photo.PhotoArtist = exifData.Artist
-			}
-		}
-
-		if photo.LocationID == 0 {
-			var recentPhoto models.Photo
-
-			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", photo.TakenAt)).Preload("Country").First(&recentPhoto); result.Error == nil {
-				if recentPhoto.Country != nil {
-					photo.Country = recentPhoto.Country
-				}
-			}
-		}
-
 		i.db.Save(&photo)
+	}
+
+	log.Infof("adding labels: %+v", labels)
+
+	for _, label := range labels {
+		lm := models.NewLabel(label.Name, label.Priority).FirstOrCreate(i.db)
+
+		if lm.LabelPriority != label.Priority {
+			lm.LabelPriority = label.Priority
+			i.db.Save(&lm)
+		}
+
+		plm := models.NewPhotoLabel(photo.ID, lm.ID, label.Uncertainty, label.Source).FirstOrCreate(i.db)
+
+		// Add synonyms
+		for _, synonym := range label.Synonyms {
+			sn := models.NewLabel(synonym, -1).FirstOrCreate(i.db)
+			i.db.Model(&lm).Association("LabelSynonyms").Append(sn)
+		}
+
+		if plm.LabelUncertainty > label.Uncertainty {
+			plm.LabelUncertainty = label.Uncertainty
+			plm.LabelSource = label.Source
+			i.db.Save(&plm)
+		}
 	}
 
 	if result := i.db.Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); result.Error != nil {

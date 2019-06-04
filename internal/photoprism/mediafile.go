@@ -14,8 +14,6 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/djherbis/times"
 	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/util"

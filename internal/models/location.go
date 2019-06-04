@@ -1,12 +1,8 @@
 package models
 
-import (
-	"github.com/jinzhu/gorm"
-)
-
 // Photo location
 type Location struct {
-	gorm.Model
+	Model
 	LocDisplayName string
 	LocLat         float64
 	LocLong        float64

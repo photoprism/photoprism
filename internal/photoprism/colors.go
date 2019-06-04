@@ -6,8 +6,6 @@ import (
 	"image/color"
 	"math"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/lucasb-eyer/go-colorful"
 )
 
