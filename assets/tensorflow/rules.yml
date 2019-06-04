@@ -663,3 +663,534 @@ goose:
   synonyms:
     - animal
     - bird
+
+black swan:
+  synonyms:
+    - animal
+    - bird
+
+tusker:
+  synonyms:
+    - animal
+    - elephant
+
+tusker:
+  synonyms:
+    - animal
+
+echidna:
+  synonyms:
+    - animal
+
+platypus:
+  synonyms:
+    - animal
+
+wallaby:
+  synonyms:
+    - animal
+
+koala:
+  synonyms:
+    - animal
+
+wombat:
+  synonyms:
+    - animal
+
+jellyfish:
+  synonyms:
+    - animal
+    - fish
+
+sea anemone:
+  synonyms:
+    - animal
+    - coral
+
+brain coral:
+  synonyms:
+    - animal
+    - coral
+
+flatworm:
+  synonyms:
+    - animal
+
+nematode:
+  synonyms:
+    - animal
+
+conch:
+  synonyms:
+    - animal
+
+snail:
+  synonyms:
+    - animal
+    - slug
+
+slug:
+  synonyms:
+    - animal
+
+sea slug:
+  synonyms:
+    - animal
+    - slug
+
+chambered nautilus:
+  synonyms:
+    - animal
+    - slug
+
+Dungeness crab:
+  synonyms:
+    - animal
+    - crab
+
+rock crab:
+  synonyms:
+    - animal
+    - crab
+
+fiddler crab:
+  synonyms:
+    - animal
+    - crab
+
+king crab:
+  synonyms:
+    - animal
+    - crab
+
+American lobster:
+  synonyms:
+    - animal
+    - crab
+
+spiny lobster:
+  synonyms:
+    - animal
+    - crab
+
+crayfish:
+  synonyms:
+    - animal
+    - crab
+
+hermit crab:
+  synonyms:
+    - animal
+    - crab
+
+isopod:
+  synonyms:
+    - animal
+    - insect
+
+white stork:
+  synonyms:
+    - animal
+    - bird
+    - storck
+
+black stork:
+  synonyms:
+    - animal
+    - bird
+    - storck
+
+spoonbill:
+  synonyms:
+    - animal
+    - bird
+
+flamingo:
+  synonyms:
+    - animal
+    - bird
+
+little blue heron:
+  synonyms:
+    - animal
+    - bird
+
+American egret:
+  synonyms:
+    - animal
+    - bird
+
+bittern:
+  synonyms:
+    - animal
+    - bird
+
+crane:
+  synonyms:
+    - animal
+    - bird
+
+limpkin:
+  synonyms:
+    - animal
+    - bird
+
+European gallinule:
+        synonyms:
+          - animal
+          - bird
+
+American coot:
+  synonyms:
+    - animal
+    - bird
+
+bustard:
+  synonyms:
+    - animal
+    - bird
+
+ruddy turnstone:
+  synonyms:
+    - animal
+    - bird
+
+red-backed sandpiper:
+  synonyms:
+    - animal
+    - bird
+
+redshank:
+  synonyms:
+    - animal
+    - bird
+
+dowitcher:
+  synonyms:
+    - animal
+    - bird
+
+oystercatcher:
+  synonyms:
+    - animal
+    - bird
+
+pelican:
+  synonyms:
+    - animal
+    - bird
+
+king penguin:
+  synonyms:
+    - animal
+    - bird
+    - penguin
+
+albatross:
+  synonyms:
+    - animal
+    - bird
+
+grey whale:
+  synonyms:
+    - animal
+    - whale
+
+killer whale:
+  synonyms:
+    - animal
+    - whale
+
+dugong:
+  synonyms:
+    - animal
+
+sea lion:
+  synonyms:
+    - animal
+
+Chihuahua dog:
+  synonyms:
+    - animal
+    - dog
+
+Japanese spaniel dog:
+  synonyms:
+    - animal
+    - dog
+
+Maltese dog:
+  synonyms:
+    - animal
+    - dog
+
+Pekinese dog:
+  synonyms:
+    - animal
+    - dog
+
+Shih-Tzu dog:
+  synonyms:
+    - animal
+    - dog
+
+Blenheim spaniel dog:
+  synonyms:
+    - animal
+    - dog
+
+papillon dog:
+  synonyms:
+    - animal
+    - dog
+
+toy terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Rhodesian ridgeback dog:
+  synonyms:
+    - animal
+    - dog
+
+Afghan hound dog:
+  synonyms:
+    - animal
+    - dog
+
+basset dog:
+  synonyms:
+    - animal
+    - dog
+
+beagle dog:
+  synonyms:
+    - animal
+    - dog
+
+bloodhound dog:
+  synonyms:
+    - animal
+    - dog
+
+bluetick dog:
+  synonyms:
+    - animal
+    - dog
+
+black-and-tan coonhound dog:
+  synonyms:
+    - animal
+    - dog
+
+Walker hound dog:
+  synonyms:
+    - animal
+    - dog
+
+English foxhound dog:
+  synonyms:
+    - animal
+    - dog
+
+redbone dog:
+  synonyms:
+    - animal
+    - dog
+
+borzoi dog:
+  synonyms:
+    - animal
+    - dog
+
+Irish wolfhound dog:
+  synonyms:
+    - animal
+    - dog
+
+Italian greyhound dog:
+  synonyms:
+    - animal
+    - dog
+
+whippet dog:
+  synonyms:
+    - animal
+    - dog
+
+Ibizan hound dog:
+  synonyms:
+    - animal
+    - dog
+
+Norwegian elkhound dog:
+  synonyms:
+    - animal
+    - dog
+
+otterhound dog:
+  synonyms:
+    - animal
+    - dog
+
+Saluki dog:
+  synonyms:
+    - animal
+    - dog
+
+Scottish deerhound dog:
+  synonyms:
+    - animal
+    - dog
+
+Weimaraner dog:
+  synonyms:
+    - animal
+    - dog
+
+Staffordshire bullterrier dog:
+  synonyms:
+    - animal
+    - dog
+
+American Staffordshire terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Bedlington terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Border terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Kerry blue terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Irish terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Norfolk terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Norwich terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Yorkshire terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+wire-haired fox terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Lakeland terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Sealyham terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Airedale dog:
+  synonyms:
+    - animal
+    - dog
+
+cairn dog:
+  synonyms:
+    - animal
+    - dog
+
+Australian terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Dandie Dinmont dog:
+  synonyms:
+    - animal
+    - dog
+
+Boston bull dog:
+  synonyms:
+    - animal
+    - dog
+
+miniature schnauzer dog:
+  synonyms:
+    - animal
+    - dog
+
+giant schnauzer dog:
+  synonyms:
+    - animal
+    - dog
+
+standard schnauzer dog:
+  synonyms:
+    - animal
+    - dog
+
+Scotch terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Tibetan terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+silky terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+soft-coated wheaten terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+West Highland white terrier dog:
+  synonyms:
+    - animal
+    - dog
+
+Lhasa dog:
+  synonyms:
+    - animal
+    - dog
+
+flat-coated retriever dog:
+  synonyms:
+    - animal
+    - dog
+
+curly-coated retriever dog:
+  synonyms:
+    - animal
+    - dog
+
+golden retriever dog:
+  synonyms:
+    - animal
+    - dog
