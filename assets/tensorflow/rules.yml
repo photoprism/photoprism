@@ -54,9 +54,6 @@ window shade:
     - window
     - building
 
-banded gecko:
-  tag: animal
-
 daisy:
   tag: flower
 
@@ -543,12 +540,6 @@ wolf spider:
     - spider
     - insect
 
-harvestman:
-  synonyms:
-    - animal
-    - spider
-    - insect
-
 centipede:
   synonyms:
     - animal
@@ -673,10 +664,6 @@ tusker:
   synonyms:
     - animal
     - elephant
-
-tusker:
-  synonyms:
-    - animal
 
 echidna:
   synonyms:
