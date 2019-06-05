@@ -1103,6 +1103,297 @@ curly-coated retriever dog:
 golden retriever dog:
   see: dog
 
+labrador retriever dog:
+  see: dog
+
+chesapeake Bay retriever dog:
+  see: dog
+
+German short-haired pointer dog:
+  see: dog
+
+Vizsla dog:
+  see: dog
+
+English setter dog:
+  see: dog
+
+Irish setter dog:
+  see: dog
+
+Gordon setter dog:
+  see: dog
+
+Brittany spaniel dog:
+  see: dog
+
+Clumber spaniel dog:
+  see: dog
+
+English springer dog:
+  see: dog
+
+Welsh springer spaniel dog:
+  see: dog
+
+cocker spaniel dog:
+  see: dog
+
+Sussex spaniel dog:
+  see: dog
+
+Irish water spaniel dog:
+  see: dog
+
+kuvasz dog:
+  see: dog
+
+schipperke dog:
+  see: dog
+
+groenendael dog:
+  see: dog
+
+malinois dog:
+  see: dog
+
+briard dog:
+  see: dog
+
+kelpie dog:
+  see: dog
+
+komondor dog:
+  see: dog
+
+Old English sheepdog:
+  see: dog
+
+Shetland sheepdog:
+  see: dog
+
+collie dog:
+  see: dog
+
+Border collie dog:
+  see: dog
+
+Bouvier des Flandres dog:
+  see: dog
+
+Rottweiler dog:
+  see: dog
+
+German shepherd dog:
+  see: dog
+
+Doberman dog:
+  see: dog
+
+miniature pinscher dog:
+  see: dog
+
+Greater Swiss Mountain dog:
+  see: dog
+
+Bernese mountain dog:
+  see: dog
+
+Appenzeller dog:
+  see: dog
+
+EntleBucher dog:
+  see: dog
+
+boxer dog:
+  see: dog
+
+bull mastiff dog:
+  see: dog
+
+Tibetan mastiff dog:
+  see: dog
+
+French bulldog dog:
+  see: dog
+
+Great Dane dog:
+  see: dog
+
+Saint Bernard dog:
+  see: dog
+
+Eskimo dog:
+  see: dog
+
+malamute dog:
+  see: dog
+
+Siberian husky dog:
+  see: dog
+
+dalmatian dog:
+  see: dog
+
+affenpinscher dog:
+  see: dog
+
+basenji dog:
+  see: dog
+
+pug dog:
+  see: dog
+
+Leonberg dog:
+  see: dog
+
+Newfoundland dog:
+  see: dog
+
+Great Pyrenees dog:
+  see: dog
+
+Samoyed dog:
+  see: dog
+
+Pomeranian dog:
+  see: dog
+
+chow dog:
+  see: dog
+
+keeshond dog:
+  see: dog
+
+Brabancon griffon dog:
+  see: dog
+
+Pembroke dog:
+  see: dog
+
+Cardigan dog:
+  see: dog
+
+toy poodle dog:
+  see: dog
+
+miniature poodle dog:
+  see: dog
+
+standard poodle dog:
+  see: dog
+
+Mexican hairless dog:
+  see: dog
+
+timber wolf:
+  synonyms:
+    - wolf
+    - dog
+    - animal
+
+white wolf:
+  synonyms:
+    - wolf
+    - dog
+    - animal
+
+red wolf:
+  synonyms:
+    - wolf
+    - dog
+    - animal
+
+coyote:
+  see: dog
+
+dingo:
+  see: dog
+
+dhole:
+  see: dog
+
+African hunting dog:
+  see: dog
+
+hyena:
+  see: dog
+
+red fox:
+  synonyms:
+    - fox
+    - animal
+
+kit fox:
+  synonyms:
+    - fox
+    - animal
+
+Arctic fox:
+  synonyms:
+    - fox
+    - animal
+
+rgrey fox:
+  synonyms:
+    - fox
+    - animal
+
+Persian cat:
+  see: cat
+
+Siamese cat:
+  see: cat
+
+Egyptian cat:
+  see: cat
+
+lynx:
+  see: cat
+
+leopard:
+  see: cat
+
+snow leopard:
+  see: cat
+
+jaguar:
+  see: cat
+
+lion:
+  see: cat
+
+cheetah:
+  see: cat
+
+brown bear:
+  synonyms:
+  - animal
+  - bear
+
+American black bear:
+  synonyms:
+    - animal
+    - bear
+
+ice bear:
+  synonyms:
+    - animal
+    - bear
+
+sloth bear:
+  synonyms:
+    - animal
+    - bear
+
+mongoose:
+  synonyms:
+    - animal
+
+meerkat:
+  synonyms:
+    - animal
+
 can opener:
   label: kitchen
 
