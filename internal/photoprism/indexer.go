@@ -175,7 +175,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			log.Infof("setting title based on the following labels: %#v", labels)
 			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 60 && labels[0].Name != "" { // TODO: User defined title format
 				log.Infof("label for title: %#v", labels[0])
-				if location.LocCity == "" || len(location.LocCity) > 16 {
+				if location.LocCity == "" || len(location.LocCity) > 16 || strings.Contains(labels[0].Name, location.LocCity) {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(labels[0].Name), location.LocCountry, photo.TakenAt.Format("2006"))
 				} else {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(labels[0].Name), location.LocCity, photo.TakenAt.Format("2006"))
