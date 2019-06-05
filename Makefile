@@ -15,7 +15,7 @@ endif
 all: dep build
 dep: dep-tensorflow dep-js dep-go
 build: build-js build-go
-install: install-bin install-assets install-config
+install: install-bin install-assets
 test: test-js test-go
 fmt: fmt-js fmt-go
 upgrade: upgrade-js upgrade-go
@@ -28,13 +28,10 @@ install-bin:
 install-assets:
 	mkdir -p /srv/photoprism/photos
 	mkdir -p /srv/photoprism/cache
-	mkdir -p /srv/photoprism/server/database
-	cp -r assets/server/static assets/server/templates /srv/photoprism/server
-	cp -r assets/tensorflow /srv/photoprism
+	mkdir -p /srv/photoprism/resources
+	mkdir -p /srv/photoprism/config
+	rsync -a -v --ignore-existing assets/config/*.yml /srv/photoprism/config
 	find /srv/photoprism -name '.*' -type f -delete
-install-config:
-	mkdir -p /etc/photoprism
-	test -e /etc/photoprism/photoprism.yml || cp -n configs/photoprism.yml /etc/photoprism/photoprism.yml
 dep-js:
 	(cd frontend &&	npm install)
 dep-go:
@@ -42,7 +39,7 @@ dep-go:
 dep-tensorflow:
 	scripts/download-nasnet.sh
 zip-nasnet:
-	(cd assets/tensorflow && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
+	(cd assets/resources && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
 build-js:
 	(cd frontend &&	env NODE_ENV=production npm run build)
 build-go:

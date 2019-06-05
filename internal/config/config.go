@@ -68,6 +68,10 @@ func (c *Config) CreateDirectories() error {
 		return err
 	}
 
+	if err := os.MkdirAll(c.ResourcesPath(), os.ModePerm); err != nil {
+		return err
+	}
+
 	if err := os.MkdirAll(c.SqlServerPath(), os.ModePerm); err != nil {
 		return err
 	}
@@ -181,9 +185,18 @@ func (c *Config) LogLevel() log.Level {
 	}
 }
 
-// TestConfigFile returns the config file name.
+// ConfigFile returns the config file name.
 func (c *Config) ConfigFile() string {
 	return c.config.ConfigFile
+}
+
+// ConfigPath returns the config path.
+func (c *Config) ConfigPath() string {
+	if c.config.ConfigPath == "" {
+		return c.AssetsPath() + "/config"
+	}
+
+	return c.config.ConfigPath
 }
 
 // SqlServerHost returns the built-in SQL server host name or IP address (empty for all interfaces).
@@ -202,7 +215,7 @@ func (c *Config) SqlServerPath() string {
 		return c.config.SqlServerPath
 	}
 
-	return c.ServerPath() + "/database"
+	return c.ResourcesPath() + "/database"
 }
 
 // SqlServerPassword returns the password for the built-in database server.
@@ -290,19 +303,28 @@ func (c *Config) AssetsPath() string {
 	return c.config.AssetsPath
 }
 
-// TensorFlowModelPath returns the tensorflow model path.
-func (c *Config) TensorFlowModelPath() string {
-	return c.AssetsPath() + "/tensorflow"
+// ResourcesPath returns the path to the app resources like static files.
+func (c *Config) ResourcesPath() string {
+	if c.config.ResourcesPath == "" {
+		return c.AssetsPath() + "/resources"
+	}
+
+	return c.config.ResourcesPath
 }
 
-// ServerPath returns the server assets path (static files, templates,...).
-func (c *Config) ServerPath() string {
-	return c.AssetsPath() + "/server"
+// ExamplesPath returns the example files path.
+func (c *Config) ExamplesPath() string {
+	return c.ResourcesPath() + "/examples"
+}
+
+// TensorFlowModelPath returns the tensorflow model path.
+func (c *Config) TensorFlowModelPath() string {
+	return c.ResourcesPath() + "/nasnet"
 }
 
 // HttpTemplatesPath returns the server templates path.
 func (c *Config) HttpTemplatesPath() string {
-	return c.ServerPath() + "/templates"
+	return c.ResourcesPath() + "/templates"
 }
 
 // HttpFaviconsPath returns the favicons path.
@@ -312,7 +334,7 @@ func (c *Config) HttpFaviconsPath() string {
 
 // HttpStaticPath returns the static server assets path (//server/static/*).
 func (c *Config) HttpStaticPath() string {
-	return c.ServerPath() + "/static"
+	return c.ResourcesPath() + "/static"
 }
 
 // HttpStaticBuildPath returns the static build path (//server/static/build/*).

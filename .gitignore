@@ -3,6 +3,8 @@
 /assets/photos/originals/*
 /assets/photos/import/*
 /assets/photos/export/*
+/assets/resources/database/*
+!/assets/resources/database/.gitignore
 /node_modules
 /frontend/.eslintcache
 /frontend/node_modules/*
@@ -11,7 +13,7 @@
 /frontend/tests/screenshots
 /assets/testdata
 /assets/backups
-/assets/tensorflow/nasnet
+/assets/resources/nasnet
 *.log
 
 # Binaries for programs and plugins

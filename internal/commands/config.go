@@ -25,6 +25,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("read-only             %t\n", conf.ReadOnly())
 	fmt.Printf("log-level             %s\n", conf.LogLevel())
 	fmt.Printf("config-file           %s\n", conf.ConfigFile())
+	fmt.Printf("config-path           %s\n", conf.ConfigPath())
 
 	fmt.Printf("database-driver       %s\n", conf.DatabaseDriver())
 	fmt.Printf("database-dsn          %s\n", conf.DatabaseDsn())
@@ -44,6 +45,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("export-path           %s\n", conf.ExportPath())
 	fmt.Printf("cache-path            %s\n", conf.CachePath())
 	fmt.Printf("thumbnails-path       %s\n", conf.ThumbnailsPath())
+	fmt.Printf("resources-path        %s\n", conf.ResourcesPath())
 	fmt.Printf("tf-model-path         %s\n", conf.TensorFlowModelPath())
 	fmt.Printf("templates-path        %s\n", conf.HttpTemplatesPath())
 	fmt.Printf("favicons-path         %s\n", conf.HttpFaviconsPath())

@@ -85,8 +85,8 @@ type PhotoSearchResult struct {
 	FileOrientation    int
 	FileAspectRatio    float64
 
-	// Tags
-	Tags string
+	// List of matching labels (tags)
+	Labels string
 }
 
 // NewSearch returns a new Search type with a given path and db instance.

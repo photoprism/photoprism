@@ -11,8 +11,8 @@ import (
 	"github.com/rwcarlsen/goexif/mknote"
 )
 
-// ExifData returns information about a single image.
-type ExifData struct {
+// Exif returns information about a single image.
+type Exif struct {
 	DateTime    time.Time
 	Artist      string
 	CameraMake  string
@@ -34,10 +34,17 @@ func init() {
 	exif.RegisterParsers(mknote.All...)
 }
 
-// ExifData return ExifData given a single mediaFile.
-func (m *MediaFile) ExifData() (*ExifData, error) {
+// Exif returns exif meta data of a media file.
+func (m *MediaFile) Exif() (result *Exif, err error) {
+	defer func() {
+		if e := recover(); e != nil {
+			result = m.exifData
+			err = fmt.Errorf("error while parsing exif data: %s", e)
+		}
+	}()
+
 	if m == nil {
-		return nil, errors.New("can't parse Exif data: file instance is null")
+		return nil, errors.New("can't parse exif data: file instance is null")
 	}
 
 	if m.exifData != nil {
@@ -45,10 +52,10 @@ func (m *MediaFile) ExifData() (*ExifData, error) {
 	}
 
 	if !m.IsPhoto() {
-		return nil, errors.New(fmt.Sprintf("file not compatible with Exif: \"%s\"", m.Filename()))
+		return nil, errors.New(fmt.Sprintf("media file not compatible with exif: \"%s\"", m.Filename()))
 	}
 
-	m.exifData = &ExifData{}
+	m.exifData = &Exif{}
 
 	file, err := m.openFile()
 
@@ -139,5 +146,5 @@ func (m *MediaFile) ExifData() (*ExifData, error) {
 		m.exifData.Orientation = 1
 	}
 
-	return m.exifData, nil
+	return m.exifData, err
 }

@@ -23,14 +23,24 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "config-file, c",
 		Usage:  "load configuration from `FILENAME`",
-		Value:  "/etc/photoprism/photoprism.yml",
+		Value:  "~/.config/photoprism/photoprism.yml",
 		EnvVar: "PHOTOPRISM_CONFIG_FILE",
+	},
+	cli.StringFlag{
+		Name:   "config-path",
+		Usage:  "config `PATH`",
+		EnvVar: "PHOTOPRISM_CONFIG_PATH",
 	},
 	cli.StringFlag{
 		Name:   "darktable-cli",
 		Usage:  "darktable command-line executable `FILENAME`",
 		Value:  "/usr/bin/darktable-cli",
 		EnvVar: "PHOTOPRISM_DARKTABLE_CLI",
+	},
+	cli.StringFlag{
+		Name:   "resources-path",
+		Usage:  "resources `PATH`",
+		EnvVar: "PHOTOPRISM_RESOURCES_PATH",
 	},
 	cli.StringFlag{
 		Name:   "originals-path",

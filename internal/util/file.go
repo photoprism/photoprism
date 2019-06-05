@@ -9,8 +9,6 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // Returns true if file exists
@@ -23,7 +21,6 @@ func Exists(filename string) bool {
 // Returns full path; ~ replaced with actual home directory
 func ExpandedFilename(filename string) string {
 	if filename == "" {
-		log.Debug("check configuration: empty file or directory name")
 		return ""
 	}
 

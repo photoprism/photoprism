@@ -31,7 +31,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=build /etc/apt/sources.list.d/pmjdebruijn-ubuntu-darktable-release-bionic.list /etc/apt/sources.list.d/pmjdebruijn-ubuntu-darktable-release-bionic.list
 COPY --from=build /etc/apt/trusted.gpg.d/pmjdebruijn_ubuntu_darktable-release.gpg /etc/apt/trusted.gpg.d/pmjdebruijn_ubuntu_darktable-release.gpg
 COPY --from=build /usr/local/bin/photoprism /usr/local/bin/photoprism
-COPY --from=build /etc/photoprism/photoprism.yml /etc/photoprism/photoprism.yml
 COPY --from=build /usr/local/lib/libtensorflow.so /usr/local/lib/libtensorflow.so
 COPY --from=build /usr/local/lib/libtensorflow_framework.so /usr/local/lib/libtensorflow_framework.so
 COPY --from=build /srv/photoprism /srv/photoprism

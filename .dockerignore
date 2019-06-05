@@ -1,13 +1,12 @@
 /assets/photos/*
 /assets/cache/*
-/assets/database/*
-/internal/photoprism/testdata/*
 /frontend/node_modules/*
 /node_modules
-/assets/server/static/build/*
+/assets/resources/database/*
+/assets/resources/static/build/*
+/assets/resources/nasnet
 /assets/testdata
 /assets/backups
-/assets/tensorflow/nasnet
 Dockerfile
 /photoprism
 docker-compose*

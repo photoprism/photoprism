@@ -35,7 +35,9 @@ type Params struct {
 	ReadOnly           bool   `yaml:"read-only" flag:"read-only"`
 	LogLevel           string `yaml:"log-level" flag:"log-level"`
 	ConfigFile         string
+	ConfigPath         string `yaml:"config-path" flag:"config-path"`
 	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`
+	ResourcesPath      string `yaml:"resources-path" flag:"resources-path"`
 	CachePath          string `yaml:"cache-path" flag:"cache-path"`
 	OriginalsPath      string `yaml:"originals-path" flag:"originals-path"`
 	ImportPath         string `yaml:"import-path" flag:"import-path"`
@@ -80,6 +82,8 @@ func NewParams(ctx *cli.Context) *Params {
 }
 
 func (c *Params) expandFilenames() {
+	c.ConfigPath = util.ExpandedFilename(c.ConfigPath)
+	c.ResourcesPath = util.ExpandedFilename(c.ResourcesPath)
 	c.AssetsPath = util.ExpandedFilename(c.AssetsPath)
 	c.CachePath = util.ExpandedFilename(c.CachePath)
 	c.OriginalsPath = util.ExpandedFilename(c.OriginalsPath)

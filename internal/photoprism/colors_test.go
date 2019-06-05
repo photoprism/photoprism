@@ -11,7 +11,9 @@ import (
 )
 
 func TestMediaFile_Colors_Testdata(t *testing.T) {
-	thumbsPath := "testdata/_tmp"
+	conf := config.TestConfig()
+
+	thumbsPath := conf.CachePath() + "/_tmp"
 
 	defer os.RemoveAll(thumbsPath)
 
@@ -51,7 +53,7 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 		},
 	}
 
-	err := filepath.Walk("testdata", func(filename string, fileInfo os.FileInfo, err error) error {
+	err := filepath.Walk(conf.ExamplesPath(), func(filename string, fileInfo os.FileInfo, err error) error {
 		if err != nil {
 			return nil
 		}

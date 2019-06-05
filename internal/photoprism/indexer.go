@@ -45,8 +45,7 @@ func (i *Indexer) thumbnailsPath() string {
 	return i.conf.ThumbnailsPath()
 }
 
-// classifyImage returns all tags of a given mediafile. This function returns
-// an empty list in the case of an error.
+// classifyImage returns all matching labels for a media file.
 func (i *Indexer) classifyImage(jpeg *MediaFile) (results Labels) {
 	start := time.Now()
 
@@ -125,7 +124,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		labels = i.classifyImage(jpeg)
 
 		// Read Exif data
-		if exifData, err := jpeg.ExifData(); err == nil {
+		if exifData, err := jpeg.Exif(); err == nil {
 			photo.PhotoLat = exifData.Lat
 			photo.PhotoLong = exifData.Long
 			photo.PhotoArtist = exifData.Artist

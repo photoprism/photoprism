@@ -17,6 +17,8 @@ services:
       PHOTOPRISM_SERVER_MODE: "debug"
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_CACHE_PATH: "/go/src/github.com/photoprism/photoprism/assets/cache"
+      PHOTOPRISM_RESOURCES_PATH: "/go/src/github.com/photoprism/photoprism/assets/resources"
+      PHOTOPRISM_CONFIG_PATH: "/go/src/github.com/photoprism/photoprism/assets/config"
       PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/import"
       PHOTOPRISM_EXPORT_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/export"
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/originals"

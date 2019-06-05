@@ -35,7 +35,7 @@ func importAction(ctx *cli.Context) error {
 
 	log.Infof("importing photos from %s", conf.ImportPath())
 
-	tensorFlow := photoprism.NewTensorFlow(conf.TensorFlowModelPath())
+	tensorFlow := photoprism.NewTensorFlow(conf)
 
 	indexer := photoprism.NewIndexer(conf, tensorFlow)
 

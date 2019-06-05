@@ -10,7 +10,7 @@ import (
 func TestNewImporter(t *testing.T) {
 	conf := config.TestConfig()
 
-	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(conf)
 
 	indexer := NewIndexer(conf, tensorFlow)
 
@@ -26,7 +26,7 @@ func TestImporter_DestinationFilename(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(conf)
 
 	indexer := NewIndexer(conf, tensorFlow)
 
@@ -54,7 +54,7 @@ func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(conf.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(conf)
 
 	indexer := NewIndexer(conf, tensorFlow)
 

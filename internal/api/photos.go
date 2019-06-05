@@ -18,7 +18,7 @@ import (
 //
 // Query:
 //   q:         string Query string
-//   tags:      string Tags
+//   label:     string Label
 //   cat:       string Category
 //   country:   string Country code
 //   camera:    int    Camera ID

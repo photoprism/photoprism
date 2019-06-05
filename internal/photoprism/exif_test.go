@@ -7,42 +7,42 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMediaFile_ExifData(t *testing.T) {
-	ctx := config.TestConfig()
+func TestMediaFile_Exif(t *testing.T) {
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	image1, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
+	image1, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
 
 	assert.Nil(t, err)
 
-	info, err := image1.ExifData()
+	info, err := image1.Exif()
 
 	assert.Empty(t, err)
 
-	assert.IsType(t, &ExifData{}, info)
+	assert.IsType(t, &Exif{}, info)
 
 	assert.Equal(t, "iPhone SE", info.CameraModel)
 }
 
-func TestMediaFile_ExifData_Slow(t *testing.T) {
+func TestMediaFile_Exif_Slow(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
 
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	image2, err := NewMediaFile(ctx.ImportPath() + "/raw/IMG_1435.CR2")
+	image2, err := NewMediaFile(conf.ImportPath() + "/raw/IMG_1435.CR2")
 
 	assert.Nil(t, err)
 
-	info, err := image2.ExifData()
+	info, err := image2.Exif()
 
 	assert.Empty(t, err)
 
-	assert.IsType(t, &ExifData{}, info)
+	assert.IsType(t, &Exif{}, info)
 
 	assert.Equal(t, "Canon EOS M10", info.CameraModel)
 }

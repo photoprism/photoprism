@@ -14,13 +14,14 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/config"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"gopkg.in/yaml.v2"
 )
 
-// TensorFlow if a tensorflow wrapper given a graph, labels and a modelPath.
+// TensorFlow if a wrapper for their low-level API.
 type TensorFlow struct {
-	modelPath  string
+	conf       *config.Config
 	model      *tf.SavedModel
 	labels     []string
 	labelRules LabelRules
@@ -37,8 +38,8 @@ type LabelRule struct {
 type LabelRules map[string]LabelRule
 
 // NewTensorFlow returns a new TensorFlow.
-func NewTensorFlow(tensorFlowModelPath string) *TensorFlow {
-	return &TensorFlow{modelPath: tensorFlowModelPath}
+func NewTensorFlow(conf *config.Config) *TensorFlow {
+	return &TensorFlow{conf: conf}
 }
 
 func (t *TensorFlow) loadLabelRules() (err error) {
@@ -48,7 +49,7 @@ func (t *TensorFlow) loadLabelRules() (err error) {
 
 	t.labelRules = make(LabelRules)
 
-	fileName := t.modelPath + "/rules.yml"
+	fileName := t.conf.ConfigPath() + "/labels.yml"
 
 	log.Debugf("loading label rules from \"%s\"", fileName)
 
@@ -69,7 +70,7 @@ func (t *TensorFlow) loadLabelRules() (err error) {
 	return err
 }
 
-// LabelsFromFile returns tags for a jpeg image file.
+// LabelsFromFile returns matching labels for a jpeg media file.
 func (t *TensorFlow) LabelsFromFile(filename string) (result Labels, err error) {
 	imageBuffer, err := ioutil.ReadFile(filename)
 
@@ -80,7 +81,7 @@ func (t *TensorFlow) LabelsFromFile(filename string) (result Labels, err error) 
 	return t.Labels(imageBuffer)
 }
 
-// Labels returns tags for a jpeg image string.
+// Labels returns matching labels for a jpeg media string.
 func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 	if err := t.loadModel(); err != nil {
 		return nil, err
@@ -125,7 +126,7 @@ func (t *TensorFlow) loadModel() error {
 		return nil
 	}
 
-	savedModel := t.modelPath + "/nasnet"
+	savedModel := t.conf.TensorFlowModelPath()
 	modelLabels := savedModel + "/labels.txt"
 
 	log.Infof("loading image classification model from \"%s\"", savedModel)

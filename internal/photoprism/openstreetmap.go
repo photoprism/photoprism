@@ -47,7 +47,7 @@ func (m *MediaFile) Location() (*models.Location, error) {
 		Address: &openstreetmapAddress{},
 	}
 
-	if exifData, err := m.ExifData(); err == nil {
+	if exifData, err := m.Exif(); err == nil {
 		if exifData.Lat == 0 && exifData.Long == 0 {
 			return nil, errors.New("no latitude and longitude in image metadata")
 		}

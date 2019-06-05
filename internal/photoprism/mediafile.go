@@ -3,9 +3,6 @@ package photoprism
 import (
 	"fmt"
 	"image"
-	_ "image/gif" // Import for image.
-	_ "image/jpeg"
-	_ "image/png"
 	"io"
 	"net/http"
 	"os"
@@ -19,88 +16,6 @@ import (
 	"github.com/photoprism/photoprism/internal/util"
 )
 
-const (
-	// FileTypeOther is an unkown file format.
-	FileTypeOther = "unknown"
-	// FileTypeYaml is a yaml file format.
-	FileTypeYaml = "yml"
-	// FileTypeJpeg is a jpeg file format.
-	FileTypeJpeg = "jpg"
-	// FileTypePng is a png file format.
-	FileTypePng = "png"
-	// FileTypeRaw is a raw file format.
-	FileTypeRaw = "raw"
-	// FileTypeXmp is an xmp file format.
-	FileTypeXmp = "xmp"
-	// FileTypeAae is an aae file format.
-	FileTypeAae = "aae"
-	// FileTypeMovie is a movie file format.
-	FileTypeMovie = "mov"
-	// FileTypeHEIF High Efficiency Image File Format
-	FileTypeHEIF = "heif" // High Efficiency Image File Format
-)
-
-const (
-	// MimeTypeJpeg is jpeg image type
-	MimeTypeJpeg = "image/jpeg"
-)
-
-// FileExtensions lists all the available and supported image file formats.
-var FileExtensions = map[string]string{
-	".crw":  FileTypeRaw,
-	".cr2":  FileTypeRaw,
-	".nef":  FileTypeRaw,
-	".arw":  FileTypeRaw,
-	".dng":  FileTypeRaw,
-	".mov":  FileTypeMovie,
-	".avi":  FileTypeMovie,
-	".yml":  FileTypeYaml,
-	".jpg":  FileTypeJpeg,
-	".thm":  FileTypeJpeg,
-	".jpeg": FileTypeJpeg,
-	".xmp":  FileTypeXmp,
-	".aae":  FileTypeAae,
-	".heif": FileTypeHEIF,
-	".heic": FileTypeHEIF,
-	".3fr":  FileTypeRaw,
-	".ari":  FileTypeRaw,
-	".bay":  FileTypeRaw,
-	".cr3":  FileTypeRaw,
-	".cap":  FileTypeRaw,
-	".data": FileTypeRaw,
-	".dcs":  FileTypeRaw,
-	".dcr":  FileTypeRaw,
-	".drf":  FileTypeRaw,
-	".eip":  FileTypeRaw,
-	".erf":  FileTypeRaw,
-	".fff":  FileTypeRaw,
-	".gpr":  FileTypeRaw,
-	".iiq":  FileTypeRaw,
-	".k25":  FileTypeRaw,
-	".kdc":  FileTypeRaw,
-	".mdc":  FileTypeRaw,
-	".mef":  FileTypeRaw,
-	".mos":  FileTypeRaw,
-	".mrw":  FileTypeRaw,
-	".nrw":  FileTypeRaw,
-	".obm":  FileTypeRaw,
-	".orf":  FileTypeRaw,
-	".pef":  FileTypeRaw,
-	".ptx":  FileTypeRaw,
-	".pxn":  FileTypeRaw,
-	".r3d":  FileTypeRaw,
-	".raf":  FileTypeRaw,
-	".raw":  FileTypeRaw,
-	".rwl":  FileTypeRaw,
-	".rw2":  FileTypeRaw,
-	".rwz":  FileTypeRaw,
-	".sr2":  FileTypeRaw,
-	".srf":  FileTypeRaw,
-	".srw":  FileTypeRaw,
-	".tif":  FileTypeRaw,
-	".x3f":  FileTypeRaw,
-}
-
 // MediaFile represents a single file.
 type MediaFile struct {
 	filename       string
@@ -109,10 +24,9 @@ type MediaFile struct {
 	fileType       string
 	mimeType       string
 	perceptualHash string
-	tags           []string
 	width          int
 	height         int
-	exifData       *ExifData
+	exifData       *Exif
 	location       *models.Location
 }
 
@@ -138,7 +52,7 @@ func (m *MediaFile) DateCreated() time.Time {
 
 	m.dateCreated = time.Now()
 
-	info, err := m.ExifData()
+	info, err := m.Exif()
 
 	if err == nil && !info.DateTime.IsZero() {
 		m.dateCreated = info.DateTime
@@ -165,7 +79,7 @@ func (m *MediaFile) DateCreated() time.Time {
 
 // CameraModel returns the camera model with which the mediafile was created.
 func (m *MediaFile) CameraModel() string {
-	info, err := m.ExifData()
+	info, err := m.Exif()
 
 	var result string
 
@@ -178,7 +92,7 @@ func (m *MediaFile) CameraModel() string {
 
 // CameraMake returns the make of the camera with which the file was created.
 func (m *MediaFile) CameraMake() string {
-	info, err := m.ExifData()
+	info, err := m.Exif()
 
 	var result string
 
@@ -191,7 +105,7 @@ func (m *MediaFile) CameraMake() string {
 
 // LensModel returns the lens model of a mediafile.
 func (m *MediaFile) LensModel() string {
-	info, err := m.ExifData()
+	info, err := m.Exif()
 
 	var result string
 
@@ -204,7 +118,7 @@ func (m *MediaFile) LensModel() string {
 
 // LensMake returns the make of the Lens.
 func (m *MediaFile) LensMake() string {
-	info, err := m.ExifData()
+	info, err := m.Exif()
 
 	var result string
 
@@ -217,7 +131,7 @@ func (m *MediaFile) LensMake() string {
 
 // FocalLength return the length of the focal for a file.
 func (m *MediaFile) FocalLength() float64 {
-	info, err := m.ExifData()
+	info, err := m.Exif()
 
 	var result float64
 
@@ -230,7 +144,7 @@ func (m *MediaFile) FocalLength() float64 {
 
 // Aperture returns the aperture with which the mediafile was created.
 func (m *MediaFile) Aperture() float64 {
-	info, err := m.ExifData()
+	info, err := m.Exif()
 
 	var result float64
 
@@ -527,7 +441,7 @@ func (m *MediaFile) decodeDimensions() error {
 
 	var width, height int
 
-	exif, err := m.ExifData()
+	exif, err := m.Exif()
 
 	if err == nil {
 		width = exif.Width
@@ -606,7 +520,7 @@ func (m *MediaFile) AspectRatio() float64 {
 
 // Orientation returns the orientation of a mediafile.
 func (m *MediaFile) Orientation() int {
-	if exif, err := m.ExifData(); err == nil {
+	if exif, err := m.Exif(); err == nil {
 		return exif.Orientation
 	}
 

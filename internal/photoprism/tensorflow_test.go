@@ -9,13 +9,13 @@ import (
 )
 
 func TestTensorFlow_LabelsFromFile(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(conf)
 
-	result, err := tensorFlow.LabelsFromFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
+	result, err := tensorFlow.LabelsFromFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
 
 	assert.Nil(t, err)
 
@@ -42,13 +42,13 @@ func TestTensorFlow_Labels(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(conf)
 
-	if imageBuffer, err := ioutil.ReadFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG"); err != nil {
+	if imageBuffer, err := ioutil.ReadFile(conf.ImportPath() + "/iphone/IMG_6788.JPG"); err != nil {
 		t.Error(err)
 	} else {
 		result, err := tensorFlow.Labels(imageBuffer)
@@ -74,13 +74,13 @@ func TestTensorFlow_Labels_Dog(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(ctx.TensorFlowModelPath())
+	tensorFlow := NewTensorFlow(conf)
 
-	if imageBuffer, err := ioutil.ReadFile(ctx.ImportPath() + "/dog.jpg"); err != nil {
+	if imageBuffer, err := ioutil.ReadFile(conf.ImportPath() + "/dog.jpg"); err != nil {
 		t.Error(err)
 	} else {
 		result, err := tensorFlow.Labels(imageBuffer)
