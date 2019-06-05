@@ -81,6 +81,9 @@ solar dish:
 
 grasshopper:
   priority: 1
+  synonyms:
+    - animal
+    - insect
 
 velvet:
   label: leaf
@@ -1393,6 +1396,502 @@ mongoose:
 meerkat:
   synonyms:
     - animal
+
+tiger beetle:
+  synonyms:
+    - animal
+    - beetle
+    - insect
+
+ladybug:
+  synonyms:
+    - animal
+    - beetle
+    - insect
+
+ground beetle:
+  synonyms:
+    - animal
+    - beetle
+    - insect
+
+long-horned beetle:
+  synonyms:
+    - animal
+    - beetle
+    - insect
+
+leaf beetle:
+  synonyms:
+    - animal
+    - beetle
+    - insect
+
+dung beetle:
+  synonyms:
+    - animal
+    - beetle
+    - insect
+
+rhinoceros beetle:
+  synonyms:
+    - animal
+    - beetle
+    - insect
+
+weevil:
+  synonyms:
+    - animal
+    - beetle
+    - insect
+
+fly:
+  synonyms:
+    - animal
+    - insect
+
+bee:
+  synonyms:
+    - animal
+    - insect
+
+ant:
+  synonyms:
+    - animal
+    - insect
+
+cricket:
+  synonyms:
+    - animal
+    - insect
+
+walking stick:
+  synonyms:
+    - animal
+    - insect
+
+cockroach:
+  synonyms:
+    - animal
+    - insect
+
+mantis:
+  synonyms:
+    - animal
+    - insect
+
+cicada:
+  synonyms:
+    - animal
+    - insect
+
+leafhopper:
+  synonyms:
+    - animal
+    - insect
+
+lacewing:
+  synonyms:
+    - animal
+    - insect
+
+dragonfly:
+  synonyms:
+    - animal
+    - insect
+
+damselfly:
+  synonyms:
+    - animal
+    - insect
+
+admiral:
+  synonyms:
+    - animal
+    - insect
+    - butterfly
+
+ringlet:
+  synonyms:
+    - animal
+    - insect
+    - butterfly
+
+monarch:
+  synonyms:
+    - animal
+    - insect
+    - butterfly
+
+cabbage butterfly:
+  synonyms:
+    - animal
+    - insect
+    - butterfly
+
+sulphur butterfly:
+  synonyms:
+    - animal
+    - insect
+    - butterfly
+
+lycaenid:
+  synonyms:
+    - animal
+    - insect
+    - butterfly
+
+starfish:
+  synonyms:
+    - water
+    - sea
+    - animal
+    - fish
+
+sea urchin:
+  synonyms:
+    - water
+    - sea
+    - animal
+
+sea cucumber:
+  synonyms:
+    - water
+    - sea
+    - animal
+
+wood rabbit:
+  synonyms:
+    - animal
+    - rodent
+    - rabbit
+
+hare:
+  synonyms:
+    - animal
+    - rodent
+    - rabbit
+
+Angora:
+  synonyms:
+    - animal
+    - rodent
+    - rabbit
+
+hamster:
+  synonyms:
+    - animal
+    - rodent
+
+porcupine:
+  synonyms:
+    - animal
+    - rodent
+
+fox squirrel:
+  synonyms:
+    - animal
+    - rodent
+
+marmot:
+  synonyms:
+    - animal
+    - rodent
+
+beaver:
+  synonyms:
+    - animal
+    - rodent
+
+guinea pig:
+  synonyms:
+    - animal
+    - rodent
+
+sorrel:
+  synonyms:
+    - animal
+
+zebra:
+  synonyms:
+    - animal
+
+hog:
+  synonyms:
+    - animal
+
+wild boar:
+  synonyms:
+    - animal
+
+warthog:
+  synonyms:
+    - animal
+
+hippopotamus:
+  synonyms:
+    - animal
+
+ox:
+  synonyms:
+    - animal
+
+water buffalo:
+  synonyms:
+    - animal
+
+bison:
+  synonyms:
+    - animal
+
+ram:
+  synonyms:
+    - animal
+
+bighorn:
+  synonyms:
+    - animal
+
+ibex:
+  synonyms:
+    - animal
+
+hartebeest:
+  synonyms:
+    - animal
+
+impala:
+  synonyms:
+    - animal
+
+gazelle:
+  synonyms:
+    - animal
+
+Arabian camel:
+  synonyms:
+    - animal
+
+llama:
+  synonyms:
+    - animal
+
+weasel:
+  synonyms:
+    - animal
+
+mink:
+  synonyms:
+    - animal
+
+polecat:
+  synonyms:
+    - animal
+
+black-footed ferret:
+  synonyms:
+    - animal
+
+otter:
+  synonyms:
+    - animal
+
+skunk:
+  synonyms:
+    - animal
+
+badger:
+  synonyms:
+    - animal
+
+armadillo:
+  synonyms:
+    - animal
+
+three-toed sloth:
+  synonyms:
+    - animal
+
+orangutan:
+  synonyms:
+    - animal
+    - monkey
+
+gorilla:
+  synonyms:
+    - animal
+    - monkey
+
+chimpanzee:
+  synonyms:
+    - animal
+    - monkey
+
+gibbon:
+  synonyms:
+    - animal
+    - monkey
+
+siamang:
+  synonyms:
+    - animal
+    - monkey
+
+guenon:
+  synonyms:
+    - animal
+    - monkey
+
+patas:
+  synonyms:
+    - animal
+    - monkey
+
+baboon:
+  synonyms:
+    - animal
+    - monkey
+
+macaque:
+  synonyms:
+    - animal
+    - monkey
+
+langur:
+  synonyms:
+    - animal
+    - monkey
+
+colobus:
+  synonyms:
+    - animal
+    - monkey
+
+proboscis monkey:
+  synonyms:
+    - animal
+    - monkey
+
+marmoset:
+  synonyms:
+    - animal
+    - monkey
+
+capuchin:
+  synonyms:
+    - animal
+    - monkey
+
+howler monkey:
+  synonyms:
+    - animal
+    - monkey
+
+titi:
+  synonyms:
+    - animal
+    - monkey
+
+spider monkey:
+  synonyms:
+    - animal
+    - monkey
+
+squirrel monkey:
+  synonyms:
+    - animal
+    - monkey
+
+fossa:
+  see: cat
+
+indri:
+  synonyms:
+    - animal
+    - monkey
+
+Indian elephant:
+  synonyms:
+    - animal
+    - elephant
+
+African elephant:
+  synonyms:
+    - animal
+    - elephant
+
+lesser panda:
+  synonyms:
+    - animal
+    - panda
+
+giant panda:
+  synonyms:
+    - animal
+    - panda
+
+barracouta:
+  synonyms:
+    - water
+    - sea
+    - animal
+    - fish
+
+jeel:
+  synonyms:
+    - water
+    - sea
+    - animal
+    - fish
+
+coho fish:
+  synonyms:
+    - water
+    - sea
+    - animal
+    - fish
+
+rock beauty fish:
+  synonyms:
+    - water
+    - sea
+    - animal
+    - fish
+
+anemone fish:
+  synonyms:
+    - water
+    - sea
+    - animal
+    - fish
+
+sturgeon fish:
+  synonyms:
+    - water
+    - sea
+    - animal
+    - fish
+
+gar fish:
+  synonyms:
+    - water
+    - sea
+    - animal
+    - fish
+
+lionfish:
+  synonyms:
+    - water
+    - sea
+    - animal
+    - fish
+
+puffer:
+  synonyms:
+    - water
+    - sea
+    - animal
+    - fish
 
 can opener:
   label: kitchen
