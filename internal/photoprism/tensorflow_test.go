@@ -93,10 +93,10 @@ func TestTensorFlow_Labels_Dog(t *testing.T) {
 		assert.IsType(t, Labels{}, result)
 		assert.Equal(t, 3, len(result))
 
-		assert.Equal(t, "belt", result[0].Name)
-		assert.Equal(t, "beagle dog", result[1].Name)
+		assert.Equal(t, "beagle dog", result[0].Name)
+		assert.Equal(t, "basset dog", result[1].Name)
 
-		assert.Equal(t, 100 - 11, result[0].Uncertainty)
-		assert.Equal(t, 100 - 9, result[1].Uncertainty)
+		assert.Equal(t, 91, result[0].Uncertainty)
+		assert.Equal(t, 92, result[1].Uncertainty)
 	}
 }

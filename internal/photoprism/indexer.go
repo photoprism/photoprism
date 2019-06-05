@@ -75,11 +75,10 @@ func (i *Indexer) classifyImage(jpeg *MediaFile) (results Labels) {
 			continue
 		}
 
-
 		labels = append(labels, imageLabels...)
 	}
 
-	// Sort by uncertainty
+	// Sort by priority and uncertainty
 	sort.Sort(labels)
 
 	var confidence int
@@ -96,7 +95,7 @@ func (i *Indexer) classifyImage(jpeg *MediaFile) (results Labels) {
 
 	elapsed := time.Since(start)
 
-	log.Infof("finding %+v labels for %s took %s", results, jpeg.Filename(), elapsed)
+	log.Debugf("finding %+v labels for %s took %s", results, jpeg.Filename(), elapsed)
 
 	return results
 }
@@ -145,48 +144,72 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		photo.Country = models.NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
 
 		// Append labels from OpenStreetMap
-		labels = append(labels, NewLocationLabel(location.LocCity, 0, 1))
-		labels = append(labels, NewLocationLabel(location.LocCounty, 0, 0))
-		labels = append(labels, NewLocationLabel(location.LocCountry, 0, 0))
-		labels = append(labels, NewLocationLabel(location.LocCategory, 0, 2))
-		labels = append(labels, NewLocationLabel(location.LocName, 0, 3))
-		labels = append(labels, NewLocationLabel(location.LocType, 0, 0))
+		if location.LocCity != "" {
+			labels = append(labels, NewLocationLabel(location.LocCity, 0, -3))
+		}
 
-		if photo.PhotoTitle == "" && location.LocName != "" && location.LocCity != "" { // TODO: User defined title format
-			if len(location.LocName) > 40 {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(location.LocName), mediaFile.DateCreated().Format("2006"))
-			} else {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(location.LocName), location.LocCity, mediaFile.DateCreated().Format("2006"))
+		if location.LocCounty != "" {
+			labels = append(labels, NewLocationLabel(location.LocCounty, 0, -3))
+		}
+
+		if location.LocCountry != "" {
+			labels = append(labels, NewLocationLabel(location.LocCountry, 0, -3))
+		}
+
+		if location.LocCategory != "" {
+			labels = append(labels, NewLocationLabel(location.LocCategory, 0, -2))
+		}
+
+		if location.LocName != "" {
+			labels = append(labels, NewLocationLabel(location.LocName, 50, 0))
+		}
+
+		if location.LocType != "" {
+			labels = append(labels, NewLocationLabel(location.LocType, 0, -1))
+		}
+
+		// Sort by priority and uncertainty
+		sort.Sort(labels)
+
+		if photo.PhotoTitleChanged == false {
+			log.Infof("setting title based on the following labels: %#v", labels)
+			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 60 && labels[0].Name != "" { // TODO: User defined title format
+				log.Infof("label for title: %#v", labels[0])
+				if location.LocCity == "" || len(location.LocCity) > 16 {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(labels[0].Name), location.LocCountry, photo.TakenAt.Format("2006"))
+				} else {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(labels[0].Name), location.LocCity, photo.TakenAt.Format("2006"))
+				}
+			} else if location.LocName != "" && location.LocCity != "" {
+				if len(location.LocName) > 40 {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(location.LocName), photo.TakenAt.Format("2006"))
+				} else {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(location.LocName), location.LocCity, photo.TakenAt.Format("2006"))
+				}
+			} else if location.LocCity != "" && location.LocCountry != "" {
+				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, photo.TakenAt.Format("2006"))
+			} else if location.LocCounty != "" && location.LocCountry != "" {
+				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, photo.TakenAt.Format("2006"))
 			}
-		} else if photo.PhotoTitle == "" && location.LocCity != "" && location.LocCountry != "" {
-			photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, mediaFile.DateCreated().Format("2006"))
-		} else if photo.PhotoTitle == "" && location.LocCounty != "" && location.LocCountry != "" {
-			photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, mediaFile.DateCreated().Format("2006"))
 		}
 	} else {
 		log.Debugf("location cannot be determined precisely: %s", err)
 	}
 
-	if photo.PhotoTitle == "" {
-		if len(labels) > 0 { // TODO: User defined title format
+	if photo.PhotoTitleChanged == false && photo.PhotoTitle == "" {
+		if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 80 && labels[0].Name != "" {
 			photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(labels[0].Name), mediaFile.DateCreated().Format("2006"))
-		} else if photo.Camera.String() != "" && photo.Camera.String() != "Unknown" {
-			photo.PhotoTitle = fmt.Sprintf("%s / %s", photo.Camera, mediaFile.DateCreated().Format("2006"))
 		} else {
 			var daytimeString string
 			hour := mediaFile.DateCreated().Hour()
 
 			switch {
-			case hour < 8:
-				daytimeString = "Early Bird"
-			case hour < 12:
-				daytimeString = "Morning Mood"
 			case hour < 17:
-				daytimeString = "Daytime"
+				daytimeString = "Unknown"
 			case hour < 20:
 				daytimeString = "Sunset"
 			default:
-				daytimeString = "Late Night"
+				daytimeString = "Unknown"
 			}
 
 			photo.PhotoTitle = fmt.Sprintf("%s / %s", daytimeString, mediaFile.DateCreated().Format("2006"))

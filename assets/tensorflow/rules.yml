@@ -2,8 +2,8 @@ tabby cat:
   see: cat
 
 tiger cat:
-  tag: tiger cat
-  priority: 3
+  label: tiger cat
+  priority: 5
   synonyms:
     - pussy
     - animal
@@ -15,25 +15,25 @@ analog clock:
     - chronograph
 
 tiger:
-  priority: 3
+  priority: 5
   synonyms:
     - cat
     - animal
 
 cat:
-  tag: tabby cat
-  priority: 3
+  label: tabby cat
+  priority: 5
   synonyms:
     - pussy
     - animal
     - miau
 
 racer:
-  tag: race car
+  label: race car
   priority: 1
 
 seashore:
-  priority: 1
+  priority: 2
   synonyms:
     - beach
     - waterfront
@@ -41,30 +41,37 @@ seashore:
     - water
 
 lakeside:
+  priority: 2
   synonyms:
     - water
     - waterfront
 
 cardoon:
-  tag: flower
+  label: flower
+
+window:
+  see: window shade
 
 window shade:
-  tag: house front
+  label: house front
   synonyms:
     - window
+    - house
     - building
 
 daisy:
-  tag: flower
+  label: flower
 
 stole:
   threshold: 0.2
+  priority: -1
 
 quilt:
   threshold: 0.2
+  priority: -1
 
 liner:
-  tag: ocean liner
+  label: ocean liner
   synonyms:
     - ship
     - boat
@@ -76,64 +83,75 @@ grasshopper:
   priority: 1
 
 velvet:
-  tag: velvet flower
+  label: leaf
+  synonyms:
+    - nature
+    - plant
 
 hair slide:
-  tag: jewelry
+  label: jewelry
   threshold: 0.4
 
 shower curtain:
-  tag: bathroom
+  label: bathroom
   threshold: 0.15
 
 windsor tie:
-  tag: people
+  priority: -1
 
 chainlink fence:
-  tag: fence
+  label: fence
 
 mitten:
-  tag: unknown
+  label: unknown
 
 bubble:
-  tag: bubbles
+  label: bubbles
 
 tench fish:
   synonyms:
+    - water
     - fish
     - animal
 
 goldfish:
   synonyms:
+    - water
     - fish
     - animal
 
 great white shark:
   synonyms:
+    - water
     - fish
     - animal
     - shark
 
 tiger shark:
   synonyms:
+    - water
     - fish
     - animal
     - shark
 
 hammerhead:
   synonyms:
+    - water
     - fish
     - animal
     - shark
 
 electric ray:
   synonyms:
+    - water
     - fish
     - animal
     - ray
 
 stingray:
   synonyms:
+    - water
+    - sea
     - fish
     - animal
     - ray
@@ -229,7 +247,7 @@ great grey owl bird:
     - bird
     - animal
 
-European fire salamander:
+european fire salamander:
   synonyms:
     - amphibians
     - animal
@@ -278,213 +296,214 @@ tailed frog:
 
 loggerhead:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - turtle
 
 leatherback turtle:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - turtle
 
 mud turtle:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - turtle
 
 terrapin:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - turtle
 
 box turtle:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - turtle
 
 banded gecko:
-  synonyms:
-    - reptiles
-    - animal
+  label: animal
 
 common iguana:
   synonyms:
-    - reptiles
+    - reptile
     - animal
 
-American chameleon:
+american chameleon:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - chameleon
 
 whiptail:
   synonyms:
-    - reptiles
+    - reptile
     - animal
 
 agama:
   synonyms:
-    - reptiles
+    - reptile
     - animal
 
 frilled lizard:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - lizard
 
 alligator lizard:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - lizard
 
-Gila monster lizard:
+gila monster lizard:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - lizard
 
 green lizard:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - lizard
 
-African chameleon:
+african chameleon:
+  label: chameleon
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - chameleon
 
-Komodo dragon:
+komodo dragon:
   synonyms:
-    - reptiles
+    - reptile
     - animal
 
-African crocodile:
+african crocodile:
+  label: crocodile
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - crocodile
     - alligator
 
-American alligator:
+american alligator:
+  label: alligator
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - crocodile
     - alligator
 
 triceratops:
   synonyms:
-    - reptiles
+    - reptile
     - animal
 
 thunder snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 ringneck snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 hognose snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 green snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 king snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 garter snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 water snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 vine snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 night snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 boa constrictor snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 rock python snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 Indian cobra snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 green mamba snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 sea snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 horned viper snake:
+  label: reptile
   synonyms:
-    - reptiles
     - animal
     - snake
 
 diamondback snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
 sidewinder snake:
   synonyms:
-    - reptiles
+    - reptile
     - animal
     - snake
 
@@ -687,6 +706,8 @@ wombat:
 
 jellyfish:
   synonyms:
+    - water
+    - sea
     - animal
     - fish
 
@@ -699,6 +720,12 @@ brain coral:
   synonyms:
     - animal
     - coral
+
+coral reef:
+  threshold: 0.6
+  synonyms:
+    - ocean
+    - water
 
 flatworm:
   synonyms:
@@ -731,7 +758,7 @@ chambered nautilus:
     - animal
     - slug
 
-Dungeness crab:
+dungeness crab:
   synonyms:
     - animal
     - crab
@@ -751,7 +778,7 @@ king crab:
     - animal
     - crab
 
-American lobster:
+american lobster:
   synonyms:
     - animal
     - crab
@@ -763,6 +790,7 @@ spiny lobster:
 
 crayfish:
   synonyms:
+    - water
     - animal
     - crab
 
@@ -803,7 +831,7 @@ little blue heron:
     - animal
     - bird
 
-American egret:
+american egret:
   synonyms:
     - animal
     - bird
@@ -824,9 +852,9 @@ limpkin:
     - bird
 
 European gallinule:
-        synonyms:
-          - animal
-          - bird
+  synonyms:
+    - animal
+    - bird
 
 American coot:
   synonyms:
@@ -897,287 +925,274 @@ sea lion:
   synonyms:
     - animal
 
-Chihuahua dog:
+dog:
+  priority: 5
   synonyms:
     - animal
     - dog
 
-Japanese spaniel dog:
-  synonyms:
-    - animal
-    - dog
+chihuahua dog:
+  see: dog
 
-Maltese dog:
-  synonyms:
-    - animal
-    - dog
+japanese spaniel dog:
+  see: dog
 
-Pekinese dog:
-  synonyms:
-    - animal
-    - dog
+maltese dog:
+  see: dog
 
-Shih-Tzu dog:
-  synonyms:
-    - animal
-    - dog
+pekinese dog:
+  see: dog
 
-Blenheim spaniel dog:
-  synonyms:
-    - animal
-    - dog
+sShih-Tzu dog:
+  see: dog
+
+blenheim spaniel dog:
+  see: dog
 
 papillon dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
 toy terrier dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
-Rhodesian ridgeback dog:
-  synonyms:
-    - animal
-    - dog
+rhodesian ridgeback dog:
+  see: dog
 
-Afghan hound dog:
-  synonyms:
-    - animal
-    - dog
+afghan hound dog:
+  see: dog
 
 basset dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
 beagle dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
 bloodhound dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
 bluetick dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
 black-and-tan coonhound dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
-Walker hound dog:
-  synonyms:
-    - animal
-    - dog
+walker hound dog:
+  see: dog
 
-English foxhound dog:
-  synonyms:
-    - animal
-    - dog
+english foxhound dog:
+  see: dog
 
 redbone dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
 borzoi dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
-Irish wolfhound dog:
-  synonyms:
-    - animal
-    - dog
+irish wolfhound dog:
+  see: dog
 
-Italian greyhound dog:
-  synonyms:
-    - animal
-    - dog
+italian greyhound dog:
+  see: dog
 
 whippet dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
-Ibizan hound dog:
-  synonyms:
-    - animal
-    - dog
+ibizan hound dog:
+  see: dog
 
-Norwegian elkhound dog:
-  synonyms:
-    - animal
-    - dog
+norwegian elkhound dog:
+  see: dog
 
 otterhound dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
-Saluki dog:
-  synonyms:
-    - animal
-    - dog
+saluki dog:
+  see: dog
 
-Scottish deerhound dog:
-  synonyms:
-    - animal
-    - dog
+scottish deerhound dog:
+  see: dog
 
-Weimaraner dog:
-  synonyms:
-    - animal
-    - dog
+weimaraner dog:
+  see: dog
 
-Staffordshire bullterrier dog:
-  synonyms:
-    - animal
-    - dog
+staffordshire bullterrier dog:
+  see: dog
 
-American Staffordshire terrier dog:
-  synonyms:
-    - animal
-    - dog
+american Staffordshire terrier dog:
+  see: dog
 
-Bedlington terrier dog:
-  synonyms:
-    - animal
-    - dog
+bedlington terrier dog:
+  see: dog
 
-Border terrier dog:
-  synonyms:
-    - animal
-    - dog
+border terrier dog:
+  see: dog
 
-Kerry blue terrier dog:
-  synonyms:
-    - animal
-    - dog
+kerry blue terrier dog:
+  see: dog
 
-Irish terrier dog:
-  synonyms:
-    - animal
-    - dog
+irish terrier dog:
+  see: dog
 
-Norfolk terrier dog:
-  synonyms:
-    - animal
-    - dog
+norfolk terrier dog:
+  see: dog
 
-Norwich terrier dog:
-  synonyms:
-    - animal
-    - dog
+nNorwich terrier dog:
+  see: dog
 
-Yorkshire terrier dog:
-  synonyms:
-    - animal
-    - dog
+yorkshire terrier dog:
+  see: dog
 
 wire-haired fox terrier dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
-Lakeland terrier dog:
-  synonyms:
-    - animal
-    - dog
+lakeland terrier dog:
+  priority: 5
+  see: dog
 
-Sealyham terrier dog:
-  synonyms:
-    - animal
-    - dog
+sealyham terrier dog:
+  see: dog
 
-Airedale dog:
-  synonyms:
-    - animal
-    - dog
+airedale dog:
+  see: dog
 
 cairn dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
-Australian terrier dog:
-  synonyms:
-    - animal
-    - dog
+australian terrier dog:
+  see: dog
 
-Dandie Dinmont dog:
-  synonyms:
-    - animal
-    - dog
+dandie Dinmont dog:
+  see: dog
 
-Boston bull dog:
-  synonyms:
-    - animal
-    - dog
+boston bull dog:
+  see: dog
 
 miniature schnauzer dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
 giant schnauzer dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
 standard schnauzer dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
 Scotch terrier dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
-Tibetan terrier dog:
-  synonyms:
-    - animal
-    - dog
+tibetan terrier dog:
+  see: dog
 
 silky terrier dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
 soft-coated wheaten terrier dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
-West Highland white terrier dog:
-  synonyms:
-    - animal
-    - dog
+west Highland white terrier dog:
+  see: dog
 
-Lhasa dog:
-  synonyms:
-    - animal
-    - dog
+lhasa dog:
+  see: dog
 
 flat-coated retriever dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
 curly-coated retriever dog:
-  synonyms:
-    - animal
-    - dog
+  see: dog
 
 golden retriever dog:
+  see: dog
+
+can opener:
+  label: kitchen
+
+cardigan:
+  priority: -2
+
+car mirror:
+  label: car
+
+maze:
+  label: landscape
+
+dishrag:
+  priority: -2
+
+dishwasher:
+  priority: -2
+
+disk brake:
+  label: car
+
+nail:
+  priority: -2
+
+neck brace:
+  priority: -2
+
+necklace:
+  priority: -2
+
+knee pad:
+  priority: -2
+
+knot:
+  threshold: 0.6
+
+arabian camel:
+  label: camel
   synonyms:
     - animal
-    - dog
+
+tile roof:
+  label: house
+  synonyms:
+    - building
+
+croquet ball:
+  label: pumpkin
+  synonyms:
+    - ball
+    - round
+    - sphere
+
+ball:
+  synonyms:
+    - ball
+    - round
+    - sphere
+
+baseball:
+  see: ball
+
+basketball:
+  see: ball
+
+golf ball:
+  see: ball
+
+ping-pong ball:
+  see: ball
+
+rugby ball:
+  see: ball
+
+soccer ball:
+  see: ball
+
+tennis ball:
+  see: ball
+
+volleyball:
+  see: ball
+
+spider web:
+  threshold: 0.6
+  priority: -1
+
+wool:
+  threshold: 0.5
+  priority: -1
+
+ear:
+  priority: -1

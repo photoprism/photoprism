@@ -91,6 +91,7 @@
     "sugarss": "^2.0.0",
     "svg-url-loader": "^2.3.2",
     "tar": "^4.4.9",
+    "truncate": "^2.1.0",
     "url-loader": "^1.1.2",
     "vue": "^2.6.10",
     "vue-fullscreen": "^2.1.5",

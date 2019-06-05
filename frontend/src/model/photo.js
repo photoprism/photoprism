@@ -1,5 +1,6 @@
 import Abstract from "model/abstract";
 import Api from "common/api";
+import truncate from "truncate";
 
 class Photo extends Abstract {
     getEntityName() {
@@ -97,10 +98,10 @@ class Photo extends Abstract {
 
         if (this.LocationID) {
             if (this.LocName && !this.LocCity && !this.LocCounty) {
-                location.push(this.LocName);
-            } else if (this.LocCity) {
+                location.push(truncate(this.LocName, 20));
+            } else if (this.LocCity && this.LocCity.length < 20) {
                 location.push(this.LocCity);
-            } else if (this.LocCounty) {
+            } else if (this.LocCounty && this.LocCity.length < 20) {
                 location.push(this.LocCounty);
             }
 

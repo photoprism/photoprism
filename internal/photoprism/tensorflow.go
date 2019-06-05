@@ -27,7 +27,7 @@ type TensorFlow struct {
 }
 
 type LabelRule struct {
-	Tag       string
+	Label     string
 	See       string
 	Threshold float32
 	Synonyms  []string
@@ -165,6 +165,8 @@ func (t *TensorFlow) loadModel() error {
 }
 
 func (t *TensorFlow) labelRule(label string) LabelRule {
+	label = strings.ToLower(label)
+
 	if err := t.loadLabelRules(); err != nil {
 		log.Error(err)
 	}
@@ -205,9 +207,11 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 			continue
 		}
 
-		if rule.Tag != "" {
-			labelText = rule.Tag
+		if rule.Label != "" {
+			labelText = rule.Label
 		}
+
+		labelText = strings.TrimSpace(labelText)
 
 		uncertainty := 100 - int(math.Round(float64(p * 100)))
 
