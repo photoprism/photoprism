@@ -2151,17 +2151,282 @@ cleaver:
     - knife
     - kitchen
 
+cliff dwelling:
+  categories:
+    - landscape
+
+clog:
+  categories:
+    - shoe
+
+cocktail shaker:
+  categories:
+    - drink
+    - alcohol
+
+coffee mug:
+  categories:
+    - mug
+    - drink
+
+coffeepot:
+  categoried:
+    - coffee
+    - drink
+
+combination lock:
+  label: lock
+
+computer keyboard:
+  label: keyboard
+  categories:
+    - computer
+    - laptop
+
+confectionery:
+  categorie:
+    - sweets
+    - food
+
+container ship:
+  label: ship
+  categories:
+    - boat
+
+convertible:
+  label: car
+
+cornet:
+  see: instrument
+
+cradle:
+  categories:
+    - furniture
+
+crash helmet:
+  categories:
+    - construction side
+
+crock pot:
+  categories:
+    - kitchen
+    - pot
+    - cooking
+
+dam:
+  categories:
+    - water
+
+desk:
+  categories:
+    - furniture
+    - table
+
+desktop computer:
+  label: computer
+
+dial telephone:
+  label: phone
+
+digital clock:
+  label: clock
+
+digital watch:
+  label: watch
+
+dining table:
+  categories:
+    - funriture
+    - desk
+    - table
+
 maze:
   label: landscape
 
 dishrag:
   priority: -2
+  categories:
+    - towel
 
 dishwasher:
   priority: -2
 
 disk brake:
   label: car
+
+dock:
+  categories:
+    - water
+    - sea
+
+dogsled:
+  categories:
+    - snow
+    - sports
+    - winter
+
+dome:
+  categories:
+    - building
+
+drilling platform:
+  categories:
+    - building
+    - water
+    - sea
+
+drum:
+  see: instrument
+
+dumbbell:
+  categories:
+    - fitness
+    - sports
+
+dutch oven:
+  categories:
+    - kitchen
+    - cooking
+
+electric guitar:
+  see: instrument
+
+electric locomotive:
+  categories:
+    - train
+    - travel
+
+entertainment center:
+  label: television
+
+espresso maker:
+  categories:
+    - coffee
+    - espresso
+    - kitchen
+
+face powder:
+  categories:
+    - make-up
+
+fireboat:
+  categories:
+    - boat
+    - fire fighters
+
+fire engine:
+  categories:
+    - car
+    - fire fighters
+
+flagpole:
+  categories:
+    - flag
+
+flute:
+  see: instrument
+
+folding chair:
+  categories:
+    - furniture
+    - chair
+
+football helmet:
+  categories:
+    - fottball
+    - sports
+    - helmet
+
+forklift:
+  categories:
+    - construction side
+
+fountain:
+  categories:
+    - water
+
+fountain pen:
+  label: pen
+
+four-poster:
+  label: bed
+  categories:
+    - bedroom
+    - furniture
+
+freight car:
+  catgories:
+    - train
+
+french horn:
+  see: instrument
+
+frying pan:
+  label: pan
+  categories:
+    - kitchen
+    - cooking
+
+garbage truck:
+  label: truck
+
+go-kart:
+  categories:
+    - car
+
+golfcart:
+  categories:
+    - golf
+    - car
+
+gondola:
+  catgories:
+    - water
+    - boat
+
+gong:
+  see: instrument
+
+gown:
+  label: dress
+
+grand piano:
+  see: instrument
+
+greenhouse:
+  categories:
+    - plants
+    - gardening
+
+grocery store:
+  categories:
+    - store
+    - shopping
+
+hammer:
+  categories:
+    - tool
+
+hand-held computer:
+  label: laptop
+
+harmonica:
+  see: instrument
+
+harp:
+  see: instrument
+
+hatchet:
+  categories:
+    - tool
+
+home theater:
+  label: television
+
+honeycomb:
+  categories:
+    - honey
+    - bee
 
 nail:
   priority: -2
