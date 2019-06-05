@@ -14,7 +14,6 @@ echo "Installing $MODEL_NAME for TensorFlow..."
 
 # Create directories
 mkdir -p /tmp/photoprism
-mkdir -p assets/resources/nasnet
 mkdir -p assets/backups
 
 # Check for update
@@ -41,7 +40,7 @@ if [[ -e ${MODEL_PATH} ]]; then
 fi
 
 # Unzip model
-unzip ${MODEL_ZIP} -d assets/resources/nasnet
+unzip ${MODEL_ZIP} -d assets/resources
 echo "$MODEL_NAME $TODAY $MODEL_HASH" > ${MODEL_VERSION}
 
 echo "Latest $MODEL_NAME installed."
