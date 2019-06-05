@@ -1906,6 +1906,190 @@ puffer:
     - animal
     - fish
 
+instrument:
+  categories:
+    - instrument
+    - music
+
+accordion:
+  see: instrument
+
+acoustic guitar:
+  see: instrument
+
+aircraft carrier:
+  categories:
+    - plain
+    - aircraft
+
+airliner:
+  categories:
+    - plain
+    - aircraft
+
+airship:
+  categories:
+    - plain
+    - aircraft
+
+ambulance:
+  categories:
+    - building
+    - medicin
+
+amphibian:
+  categories:
+    - animal
+
+assault rifle:
+  categories:
+    - weapon
+    - gun
+
+backpack:
+  categories:
+    - bag
+
+bakery:
+  categories:
+    - bread
+
+ballpoint:
+  categories:
+    - pen
+
+banjo:
+  see: instrument
+
+barbell:
+  categories:
+    - sports
+
+barber chair:
+  categories:
+    - chair
+    - barber
+    - hairdresser
+
+barbershop:
+  categories:
+    - chair
+    - barber
+    - hairdresser
+
+barn:
+  cateories:
+    - building
+
+bassoon:
+  see: instrument
+
+bathing cap:
+  categories:
+    - bathroom
+    - bathing
+
+bath towel:
+  categories:
+    - bathroom
+    - bathing
+    - towel
+
+bathtub:
+  categories:
+    - bathroom
+    - bathing
+
+beacon:
+  categories:
+    - buliding
+    - tower
+
+beer bottle:
+  categories:
+    - beer
+    - bottle
+    - drink
+    - alcohol
+
+beer glass:
+  categories:
+    - beer
+    - glass
+    - drink
+    - alcohol
+
+bell cote:
+  categories:
+    - bell
+    - ring
+
+bicycle-built-for-two:
+  categories:
+    - bicycle
+    - tandem
+    - sports
+
+bikini:
+  categories:
+    - swimming
+
+birdhouse:
+  categories:
+    - building
+    - house
+
+boathouse:
+  categories:
+    - building
+    - house
+
+bobsled:
+  categories:
+    - snow
+    - bob
+    - sports
+    - winter
+
+bookcase:
+  categories:
+    - furniture
+    - book
+
+bookshop:
+  categories:
+    - book
+
+breakwater:
+  categories:
+    - water
+    - see
+
+bullet train:
+  categories:
+    - train
+    - travel
+
+butcher shop:
+  categories:
+    - butcher
+    - meat
+
+cab:
+  categories:
+    - car
+    - travel
+
+cannon:
+  categories:
+    - weapon
+
+canoe:
+  categories:
+    - boat
+    - water
+    - sports
+
 can opener:
   label: kitchen
 
@@ -1914,6 +2098,58 @@ cardigan:
 
 car mirror:
   label: car
+
+carpenter's kit:
+  categories:
+    - tool
+    - tool kit
+
+car wheel:
+  categories:
+    - car
+
+castle:
+  - building
+
+catamaran:
+  categories:
+    - boat
+
+cello:
+  see: instrument
+
+cellular telephone:
+  categories:
+    - mobile phone
+    - handy
+    - phone
+
+chain saw:
+  cateories:
+    - tool
+
+chiffonier:
+  categories:
+    - furniture
+    - cupboard
+
+chime:
+  see: instrument
+
+china cabinet:
+  categories:
+    - furniture
+    - cupboard
+
+church:
+  categories:
+    - building
+    - religion
+
+cleaver:
+  categories:
+    - knife
+    - kitchen
 
 maze:
   label: landscape
@@ -1964,6 +2200,7 @@ ball:
     - ball
     - round
     - sphere
+    - sports
 
 baseball:
   see: ball
