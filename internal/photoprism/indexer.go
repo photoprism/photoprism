@@ -160,7 +160,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			labels = append(labels, NewLocationLabel(location.LocCategory, 0, -2))
 		}
 
-		if location.LocName != "" {
+		if location.LocName != "" && len(location.LocName) <= 25 {
 			labels = append(labels, NewLocationLabel(location.LocName, 50, 0))
 		}
 
@@ -181,7 +181,9 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(labels[0].Name), location.LocCity, photo.TakenAt.Format("2006"))
 				}
 			} else if location.LocName != "" && location.LocCity != "" {
-				if len(location.LocName) > 40 {
+				if len(location.LocName) > 45 {
+					photo.PhotoTitle = strings.Title(location.LocName)
+				} else if len(location.LocName) > 20 || len(location.LocCity) > 16 || strings.Contains(location.LocName, location.LocCity) {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(location.LocName), photo.TakenAt.Format("2006"))
 				} else {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(location.LocName), location.LocCity, photo.TakenAt.Format("2006"))

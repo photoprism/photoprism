@@ -61,6 +61,19 @@ window shade:
 
 daisy:
   label: flower
+  synonyms:
+    - nature
+    - plant
+
+rapeseed:
+  label: yellow flowers
+  synonyms:
+    - nature
+    - plant
+    - flower
+    - yellow
+    - rapeseed
+    - buttercup
 
 stole:
   threshold: 0.2

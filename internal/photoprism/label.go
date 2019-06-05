@@ -1,5 +1,7 @@
 package photoprism
 
+import "strings"
+
 type Label struct {
 	Name        string   `json:"label"`       // Label name
 	Source      string   `json:"source"`      // Where was this label found / detected?
@@ -9,6 +11,14 @@ type Label struct {
 }
 
 func NewLocationLabel(name string, uncertainty int, priority int) Label {
+	if index := strings.Index(name, " / "); index > 1 {
+		name = name[:index]
+	}
+
+	if index := strings.Index(name, " - "); index > 1 {
+		name = name[:index]
+	}
+
 	label := Label{Name: name, Source: "location", Uncertainty: uncertainty, Priority: priority}
 
 	return label
