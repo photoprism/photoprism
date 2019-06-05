@@ -30,7 +30,7 @@ type LabelRule struct {
 	Label     string
 	See       string
 	Threshold float32
-	Synonyms  []string
+	Categories  []string
 	Priority  int
 }
 
@@ -215,7 +215,7 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 
 		uncertainty := 100 - int(math.Round(float64(p * 100)))
 
-		result = append(result, Label{Name: labelText, Source: "image", Uncertainty: uncertainty, Priority: rule.Priority, Synonyms: rule.Synonyms})
+		result = append(result, Label{Name: labelText, Source: "image", Uncertainty: uncertainty, Priority: rule.Priority, Categories: rule.Categories})
 	}
 
 	// Sort by probability

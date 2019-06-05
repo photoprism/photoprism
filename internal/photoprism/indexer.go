@@ -252,10 +252,10 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 
 		plm := models.NewPhotoLabel(photo.ID, lm.ID, label.Uncertainty, label.Source).FirstOrCreate(i.db)
 
-		// Add synonyms
-		for _, synonym := range label.Synonyms {
-			sn := models.NewLabel(synonym, -1).FirstOrCreate(i.db)
-			i.db.Model(&lm).Association("LabelSynonyms").Append(sn)
+		// Add categories
+		for _, category := range label.Categories {
+			sn := models.NewLabel(category, -1).FirstOrCreate(i.db)
+			i.db.Model(&lm).Association("LabelCategories").Append(sn)
 		}
 
 		if plm.LabelUncertainty > label.Uncertainty {

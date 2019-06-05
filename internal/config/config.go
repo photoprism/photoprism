@@ -352,7 +352,7 @@ func (c *Config) MigrateDb() {
 		&models.File{},
 		&models.Photo{},
 		&models.Label{},
-		&models.Synonym{},
+		&models.Category{},
 		&models.PhotoLabel{},
 		&models.Album{},
 		&models.Location{},

@@ -15,7 +15,7 @@ type Label struct {
 	LabelPriority    int
 	LabelDescription string   `gorm:"type:text;"`
 	LabelNotes       string   `gorm:"type:text;"`
-	LabelSynonyms    []*Label `gorm:"many2many:synonyms;association_jointable_foreignkey:synonym_id"`
+	LabelCategories    []*Label `gorm:"many2many:categories;association_jointable_foreignkey:category_id"`
 }
 
 func NewLabel(labelName string, labelPriority int) *Label {

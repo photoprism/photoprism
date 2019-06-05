@@ -4,26 +4,26 @@ tabby cat:
 tiger cat:
   label: tiger cat
   priority: 5
-  synonyms:
+  categories:
     - pussy
     - animal
     - miau
 
 analog clock:
   priority: 2
-  synonyms:
+  categories:
     - chronograph
 
 tiger:
   priority: 5
-  synonyms:
+  categories:
     - cat
     - animal
 
 cat:
   label: tabby cat
   priority: 5
-  synonyms:
+  categories:
     - pussy
     - animal
     - miau
@@ -34,7 +34,7 @@ racer:
 
 seashore:
   priority: 2
-  synonyms:
+  categories:
     - beach
     - waterfront
     - coast
@@ -42,7 +42,7 @@ seashore:
 
 lakeside:
   priority: 2
-  synonyms:
+  categories:
     - water
     - waterfront
 
@@ -54,20 +54,20 @@ window:
 
 window shade:
   label: house front
-  synonyms:
+  categories:
     - window
     - house
     - building
 
 daisy:
   label: flower
-  synonyms:
+  categories:
     - nature
     - plant
 
 rapeseed:
   label: yellow flowers
-  synonyms:
+  categories:
     - nature
     - plant
     - flower
@@ -85,7 +85,7 @@ quilt:
 
 liner:
   label: ocean liner
-  synonyms:
+  categories:
     - ship
     - boat
 
@@ -94,13 +94,13 @@ solar dish:
 
 grasshopper:
   priority: 1
-  synonyms:
+  categories:
     - animal
     - insect
 
 velvet:
   label: leaf
-  synonyms:
+  categories:
     - nature
     - plant
 
@@ -125,47 +125,47 @@ bubble:
   label: bubbles
 
 tench fish:
-  synonyms:
+  categories:
     - water
     - fish
     - animal
 
 goldfish:
-  synonyms:
+  categories:
     - water
     - fish
     - animal
 
 great white shark:
-  synonyms:
+  categories:
     - water
     - fish
     - animal
     - shark
 
 tiger shark:
-  synonyms:
+  categories:
     - water
     - fish
     - animal
     - shark
 
 hammerhead:
-  synonyms:
+  categories:
     - water
     - fish
     - animal
     - shark
 
 electric ray:
-  synonyms:
+  categories:
     - water
     - fish
     - animal
     - ray
 
 stingray:
-  synonyms:
+  categories:
     - water
     - sea
     - fish
@@ -173,169 +173,169 @@ stingray:
     - ray
 
 cock:
-  synonyms:
+  categories:
     - bird
     - animal
 
 hen:
-  synonyms:
+  categories:
     - bird
     - animal
     - chicken
 
 ostrich:
-  synonyms:
+  categories:
     - bird
     - animal
 
 brambling bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 goldfinch bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 house finch bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 junco bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 indigo bunting bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 robin bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 bulbul bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 jay bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 magpie bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 chickadee bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 water ouzel bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 kite bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 bald eagle bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 vulture bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 great grey owl bird:
-  synonyms:
+  categories:
     - bird
     - animal
 
 european fire salamander:
-  synonyms:
+  categories:
     - amphibians
     - animal
     - salamander
 
 common newt salamander:
-  synonyms:
+  categories:
     - amphibians
     - animal
     - salamander
 
 spotted salamander:
-  synonyms:
+  categories:
     - amphibians
     - animal
     - salamander
 
 eft:
-  synonyms:
+  categories:
     - amphibians
     - animal
     - salamander
 
 axolotl:
-  synonyms:
+  categories:
     - amphibians
     - animal
 
 bullfrog:
-  synonyms:
+  categories:
     - amphibians
     - animal
     - frog
 
 tree frog:
-  synonyms:
+  categories:
     - amphibians
     - animal
     - frog
 
 tailed frog:
-  synonyms:
+  categories:
     - amphibians
     - animal
     - frog
 
 loggerhead:
-  synonyms:
+  categories:
     - reptile
     - animal
     - turtle
 
 leatherback turtle:
-  synonyms:
+  categories:
     - reptile
     - animal
     - turtle
 
 mud turtle:
-  synonyms:
+  categories:
     - reptile
     - animal
     - turtle
 
 terrapin:
-  synonyms:
+  categories:
     - reptile
     - animal
     - turtle
 
 box turtle:
-  synonyms:
+  categories:
     - reptile
     - animal
     - turtle
@@ -344,65 +344,65 @@ banded gecko:
   label: animal
 
 common iguana:
-  synonyms:
+  categories:
     - reptile
     - animal
 
 american chameleon:
-  synonyms:
+  categories:
     - reptile
     - animal
     - chameleon
 
 whiptail:
-  synonyms:
+  categories:
     - reptile
     - animal
 
 agama:
-  synonyms:
+  categories:
     - reptile
     - animal
 
 frilled lizard:
-  synonyms:
+  categories:
     - reptile
     - animal
     - lizard
 
 alligator lizard:
-  synonyms:
+  categories:
     - reptile
     - animal
     - lizard
 
 gila monster lizard:
-  synonyms:
+  categories:
     - reptile
     - animal
     - lizard
 
 green lizard:
-  synonyms:
+  categories:
     - reptile
     - animal
     - lizard
 
 african chameleon:
   label: chameleon
-  synonyms:
+  categories:
     - reptile
     - animal
     - chameleon
 
 komodo dragon:
-  synonyms:
+  categories:
     - reptile
     - animal
 
 african crocodile:
   label: crocodile
-  synonyms:
+  categories:
     - reptile
     - animal
     - crocodile
@@ -410,540 +410,540 @@ african crocodile:
 
 american alligator:
   label: alligator
-  synonyms:
+  categories:
     - reptile
     - animal
     - crocodile
     - alligator
 
 triceratops:
-  synonyms:
+  categories:
     - reptile
     - animal
 
 thunder snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 ringneck snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 hognose snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 green snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 king snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 garter snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 water snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 vine snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 night snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 boa constrictor snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 rock python snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 Indian cobra snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 green mamba snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 sea snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 horned viper snake:
   label: reptile
-  synonyms:
+  categories:
     - animal
     - snake
 
 diamondback snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 sidewinder snake:
-  synonyms:
+  categories:
     - reptile
     - animal
     - snake
 
 trilobite:
-  synonyms:
+  categories:
     - animal
 
 harvestman:
-  synonyms:
+  categories:
     - animal
     - spider
     - insect
 
 scorpion:
-  synonyms:
+  categories:
     - animal
     - spider
     - insect
 
 black and gold garden spider:
-  synonyms:
+  categories:
     - animal
     - spider
     - insect
 
 barn spider:
-  synonyms:
+  categories:
     - animal
     - spider
     - insect
 
 garden spider:
-  synonyms:
+  categories:
     - animal
     - spider
     - insect
 
 black widow:
-  synonyms:
+  categories:
     - animal
     - spider
     - insect
 
 tarantula:
-  synonyms:
+  categories:
     - animal
     - spider
     - insect
 
 wolf spider:
-  synonyms:
+  categories:
     - animal
     - spider
     - insect
 
 centipede:
-  synonyms:
+  categories:
     - animal
     - insect
 
 black grouse:
-  synonyms:
+  categories:
     - animal
     - bird
     - chicken
 
 ptarmigan:
-  synonyms:
+  categories:
     - animal
     - bird
     - chicken
 
 ruffed grouse:
-  synonyms:
+  categories:
     - animal
     - bird
     - chicken
 
 prairie chicken:
-  synonyms:
+  categories:
     - animal
     - bird
     - chicken
 
 peacock:
-  synonyms:
+  categories:
     - animal
     - bird
 
 quail:
-  synonyms:
+  categories:
     - animal
     - bird
 
 partridge:
-  synonyms:
+  categories:
     - animal
     - bird
     - chicken
 
 African grey:
-  synonyms:
+  categories:
     - animal
     - bird
     - parrot
 
 macaw:
-  synonyms:
+  categories:
     - animal
     - bird
     - parrot
 
 sulphur-crested cockatoo:
-  synonyms:
+  categories:
     - animal
     - bird
     - parrot
 
 lorikeet:
-  synonyms:
+  categories:
     - animal
     - bird
     - parrot
 
 coucal:
-  synonyms:
+  categories:
     - animal
     - bird
 
 bee eater:
-  synonyms:
+  categories:
     - animal
     - bird
 
 hornbill:
-  synonyms:
+  categories:
     - animal
     - bird
 
 hummingbird:
-  synonyms:
+  categories:
     - animal
     - bird
 
 jacamar:
-  synonyms:
+  categories:
     - animal
     - bird
 
 toucan:
-  synonyms:
+  categories:
     - animal
     - bird
 
 drake:
-  synonyms:
+  categories:
     - animal
     - bird
     - duck
 
 red-breasted merganser:
-  synonyms:
+  categories:
     - animal
     - duck
 
 goose:
-  synonyms:
+  categories:
     - animal
     - bird
 
 black swan:
-  synonyms:
+  categories:
     - animal
     - bird
 
 tusker:
-  synonyms:
+  categories:
     - animal
     - elephant
 
 echidna:
-  synonyms:
+  categories:
     - animal
 
 platypus:
-  synonyms:
+  categories:
     - animal
 
 wallaby:
-  synonyms:
+  categories:
     - animal
 
 koala:
-  synonyms:
+  categories:
     - animal
 
 wombat:
-  synonyms:
+  categories:
     - animal
 
 jellyfish:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
     - fish
 
 sea anemone:
-  synonyms:
+  categories:
     - animal
     - coral
 
 brain coral:
-  synonyms:
+  categories:
     - animal
     - coral
 
 coral reef:
   threshold: 0.6
-  synonyms:
+  categories:
     - ocean
     - water
 
 flatworm:
-  synonyms:
+  categories:
     - animal
 
 nematode:
-  synonyms:
+  categories:
     - animal
 
 conch:
-  synonyms:
+  categories:
     - animal
 
 snail:
-  synonyms:
+  categories:
     - animal
     - slug
 
 slug:
-  synonyms:
+  categories:
     - animal
 
 sea slug:
-  synonyms:
+  categories:
     - animal
     - slug
 
 chambered nautilus:
-  synonyms:
+  categories:
     - animal
     - slug
 
 dungeness crab:
-  synonyms:
+  categories:
     - animal
     - crab
 
 rock crab:
-  synonyms:
+  categories:
     - animal
     - crab
 
 fiddler crab:
-  synonyms:
+  categories:
     - animal
     - crab
 
 king crab:
-  synonyms:
+  categories:
     - animal
     - crab
 
 american lobster:
-  synonyms:
+  categories:
     - animal
     - crab
 
 spiny lobster:
-  synonyms:
+  categories:
     - animal
     - crab
 
 crayfish:
-  synonyms:
+  categories:
     - water
     - animal
     - crab
 
 hermit crab:
-  synonyms:
+  categories:
     - animal
     - crab
 
 isopod:
-  synonyms:
+  categories:
     - animal
     - insect
 
 white stork:
-  synonyms:
+  categories:
     - animal
     - bird
     - storck
 
 black stork:
-  synonyms:
+  categories:
     - animal
     - bird
     - storck
 
 spoonbill:
-  synonyms:
+  categories:
     - animal
     - bird
 
 flamingo:
-  synonyms:
+  categories:
     - animal
     - bird
 
 little blue heron:
-  synonyms:
+  categories:
     - animal
     - bird
 
 american egret:
-  synonyms:
+  categories:
     - animal
     - bird
 
 bittern:
-  synonyms:
+  categories:
     - animal
     - bird
 
 crane:
-  synonyms:
+  categories:
     - animal
     - bird
 
 limpkin:
-  synonyms:
+  categories:
     - animal
     - bird
 
 European gallinule:
-  synonyms:
+  categories:
     - animal
     - bird
 
 American coot:
-  synonyms:
+  categories:
     - animal
     - bird
 
 bustard:
-  synonyms:
+  categories:
     - animal
     - bird
 
 ruddy turnstone:
-  synonyms:
+  categories:
     - animal
     - bird
 
 red-backed sandpiper:
-  synonyms:
+  categories:
     - animal
     - bird
 
 redshank:
-  synonyms:
+  categories:
     - animal
     - bird
 
 dowitcher:
-  synonyms:
+  categories:
     - animal
     - bird
 
 oystercatcher:
-  synonyms:
+  categories:
     - animal
     - bird
 
 pelican:
-  synonyms:
+  categories:
     - animal
     - bird
 
 king penguin:
-  synonyms:
+  categories:
     - animal
     - bird
     - penguin
 
 albatross:
-  synonyms:
+  categories:
     - animal
     - bird
 
 grey whale:
-  synonyms:
+  categories:
     - animal
     - whale
 
 killer whale:
-  synonyms:
+  categories:
     - animal
     - whale
 
 dugong:
-  synonyms:
+  categories:
     - animal
 
 sea lion:
-  synonyms:
+  categories:
     - animal
 
 dog:
   priority: 5
-  synonyms:
+  categories:
     - animal
     - dog
 
@@ -1303,19 +1303,19 @@ mexican hairless dog:
   see: dog
 
 timber wolf:
-  synonyms:
+  categories:
     - wolf
     - dog
     - animal
 
 white wolf:
-  synonyms:
+  categories:
     - wolf
     - dog
     - animal
 
 red wolf:
-  synonyms:
+  categories:
     - wolf
     - dog
     - animal
@@ -1336,22 +1336,22 @@ hyena:
   see: dog
 
 red fox:
-  synonyms:
+  categories:
     - fox
     - animal
 
 kit fox:
-  synonyms:
+  categories:
     - fox
     - animal
 
 Arctic fox:
-  synonyms:
+  categories:
     - fox
     - animal
 
 rgrey fox:
-  synonyms:
+  categories:
     - fox
     - animal
 
@@ -1383,435 +1383,435 @@ cheetah:
   see: cat
 
 brown bear:
-  synonyms:
+  categories:
   - animal
   - bear
 
 American black bear:
-  synonyms:
+  categories:
     - animal
     - bear
 
 ice bear:
-  synonyms:
+  categories:
     - animal
     - bear
 
 sloth bear:
-  synonyms:
+  categories:
     - animal
     - bear
 
 mongoose:
-  synonyms:
+  categories:
     - animal
 
 meerkat:
-  synonyms:
+  categories:
     - animal
 
 tiger beetle:
-  synonyms:
+  categories:
     - animal
     - beetle
     - insect
 
 ladybug:
-  synonyms:
+  categories:
     - animal
     - beetle
     - insect
 
 ground beetle:
-  synonyms:
+  categories:
     - animal
     - beetle
     - insect
 
 long-horned beetle:
-  synonyms:
+  categories:
     - animal
     - beetle
     - insect
 
 leaf beetle:
-  synonyms:
+  categories:
     - animal
     - beetle
     - insect
 
 dung beetle:
-  synonyms:
+  categories:
     - animal
     - beetle
     - insect
 
 rhinoceros beetle:
-  synonyms:
+  categories:
     - animal
     - beetle
     - insect
 
 weevil:
-  synonyms:
+  categories:
     - animal
     - beetle
     - insect
 
 fly:
-  synonyms:
+  categories:
     - animal
     - insect
 
 bee:
-  synonyms:
+  categories:
     - animal
     - insect
 
 ant:
-  synonyms:
+  categories:
     - animal
     - insect
 
 cricket:
-  synonyms:
+  categories:
     - animal
     - insect
 
 walking stick:
-  synonyms:
+  categories:
     - animal
     - insect
 
 cockroach:
-  synonyms:
+  categories:
     - animal
     - insect
 
 mantis:
-  synonyms:
+  categories:
     - animal
     - insect
 
 cicada:
-  synonyms:
+  categories:
     - animal
     - insect
 
 leafhopper:
-  synonyms:
+  categories:
     - animal
     - insect
 
 lacewing:
-  synonyms:
+  categories:
     - animal
     - insect
 
 dragonfly:
-  synonyms:
+  categories:
     - animal
     - insect
 
 damselfly:
-  synonyms:
+  categories:
     - animal
     - insect
 
 admiral:
-  synonyms:
+  categories:
     - animal
     - insect
     - butterfly
 
 ringlet:
-  synonyms:
+  categories:
     - animal
     - insect
     - butterfly
 
 monarch:
-  synonyms:
+  categories:
     - animal
     - insect
     - butterfly
 
 cabbage butterfly:
-  synonyms:
+  categories:
     - animal
     - insect
     - butterfly
 
 sulphur butterfly:
-  synonyms:
+  categories:
     - animal
     - insect
     - butterfly
 
 lycaenid:
-  synonyms:
+  categories:
     - animal
     - insect
     - butterfly
 
 starfish:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
     - fish
 
 sea urchin:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
 
 sea cucumber:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
 
 wood rabbit:
-  synonyms:
+  categories:
     - animal
     - rodent
     - rabbit
 
 hare:
-  synonyms:
+  categories:
     - animal
     - rodent
     - rabbit
 
 Angora:
-  synonyms:
+  categories:
     - animal
     - rodent
     - rabbit
 
 hamster:
-  synonyms:
+  categories:
     - animal
     - rodent
 
 porcupine:
-  synonyms:
+  categories:
     - animal
     - rodent
 
 fox squirrel:
-  synonyms:
+  categories:
     - animal
     - rodent
 
 marmot:
-  synonyms:
+  categories:
     - animal
     - rodent
 
 beaver:
-  synonyms:
+  categories:
     - animal
     - rodent
 
 guinea pig:
-  synonyms:
+  categories:
     - animal
     - rodent
 
 sorrel:
-  synonyms:
+  categories:
     - animal
 
 zebra:
-  synonyms:
+  categories:
     - animal
 
 hog:
-  synonyms:
+  categories:
     - animal
 
 wild boar:
-  synonyms:
+  categories:
     - animal
 
 warthog:
-  synonyms:
+  categories:
     - animal
 
 hippopotamus:
-  synonyms:
+  categories:
     - animal
 
 ox:
-  synonyms:
+  categories:
     - animal
 
 water buffalo:
-  synonyms:
+  categories:
     - animal
 
 bison:
-  synonyms:
+  categories:
     - animal
 
 ram:
-  synonyms:
+  categories:
     - animal
 
 bighorn:
-  synonyms:
+  categories:
     - animal
 
 ibex:
-  synonyms:
+  categories:
     - animal
 
 hartebeest:
-  synonyms:
+  categories:
     - animal
 
 impala:
-  synonyms:
+  categories:
     - animal
 
 gazelle:
-  synonyms:
+  categories:
     - animal
 
 Arabian camel:
-  synonyms:
+  categories:
     - animal
 
 llama:
-  synonyms:
+  categories:
     - animal
 
 weasel:
-  synonyms:
+  categories:
     - animal
 
 mink:
-  synonyms:
+  categories:
     - animal
 
 polecat:
-  synonyms:
+  categories:
     - animal
 
 black-footed ferret:
-  synonyms:
+  categories:
     - animal
 
 otter:
-  synonyms:
+  categories:
     - animal
 
 skunk:
-  synonyms:
+  categories:
     - animal
 
 badger:
-  synonyms:
+  categories:
     - animal
 
 armadillo:
-  synonyms:
+  categories:
     - animal
 
 three-toed sloth:
-  synonyms:
+  categories:
     - animal
 
 orangutan:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 gorilla:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 chimpanzee:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 gibbon:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 siamang:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 guenon:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 patas:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 baboon:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 macaque:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 langur:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 colobus:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 proboscis monkey:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 marmoset:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 capuchin:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 howler monkey:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 titi:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 spider monkey:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 squirrel monkey:
-  synonyms:
+  categories:
     - animal
     - monkey
 
@@ -1819,88 +1819,88 @@ fossa:
   see: cat
 
 indri:
-  synonyms:
+  categories:
     - animal
     - monkey
 
 Indian elephant:
-  synonyms:
+  categories:
     - animal
     - elephant
 
 African elephant:
-  synonyms:
+  categories:
     - animal
     - elephant
 
 lesser panda:
-  synonyms:
+  categories:
     - animal
     - panda
 
 giant panda:
-  synonyms:
+  categories:
     - animal
     - panda
 
 barracouta:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
     - fish
 
 jeel:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
     - fish
 
 coho fish:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
     - fish
 
 rock beauty fish:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
     - fish
 
 anemone fish:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
     - fish
 
 sturgeon fish:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
     - fish
 
 gar fish:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
     - fish
 
 lionfish:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
     - fish
 
 puffer:
-  synonyms:
+  categories:
     - water
     - sea
     - animal
@@ -1944,23 +1944,23 @@ knot:
 
 arabian camel:
   label: camel
-  synonyms:
+  categories:
     - animal
 
 tile roof:
   label: house
-  synonyms:
+  categories:
     - building
 
 croquet ball:
   label: pumpkin
-  synonyms:
+  categories:
     - ball
     - round
     - sphere
 
 ball:
-  synonyms:
+  categories:
     - ball
     - round
     - sphere

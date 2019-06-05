@@ -132,7 +132,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		Where("photos.deleted_at IS NULL AND files.file_missing = 0").
 		Group("photos.id, files.id")
 
-	var synonyms []models.Synonym
+	var categories []models.Category
 	var label models.Label
 	var labelIds []uint
 
@@ -143,10 +143,10 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		} else {
 			labelIds = append(labelIds, label.ID)
 
-			s.db.Where("synonym_id = ?", label.ID).Find(&synonyms)
+			s.db.Where("category_id = ?", label.ID).Find(&categories)
 
-			for _, synonym := range synonyms {
-				labelIds = append(labelIds, synonym.LabelID)
+			for _, category := range categories {
+				labelIds = append(labelIds, category.LabelID)
 			}
 
 			q = q.Where("labels.id IN (?)", labelIds)
@@ -170,10 +170,10 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		} else {
 			labelIds = append(labelIds, label.ID)
 
-			s.db.Where("synonym_id = ?", label.ID).Find(&synonyms)
+			s.db.Where("category_id = ?", label.ID).Find(&categories)
 
-			for _, synonym := range synonyms {
-				labelIds = append(labelIds, synonym.LabelID)
+			for _, category := range categories {
+				labelIds = append(labelIds, category.LabelID)
 			}
 
 			log.Infof("searching for label IDs: %#v", form.Query)
