@@ -198,7 +198,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	}
 
 	if photo.PhotoTitleChanged == false && photo.PhotoTitle == "" {
-		if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 80 && labels[0].Name != "" {
+		if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 			photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(labels[0].Name), mediaFile.DateCreated().Format("2006"))
 		} else {
 			var daytimeString string
