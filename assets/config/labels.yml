@@ -3065,6 +3065,347 @@ water bottle:
   categories:
     - bottle
 
+water tower:
+  categories:
+    - tower
+
+wine bottle:
+  categories:
+    - bottle
+    - wine
+
+wok:
+  categories:
+    - kitchen
+    - cooking
+
+wooden spoon:
+  categories:
+    - kitchen
+    - cooking
+
+worm fence:
+  label: fence
+
+wreck:
+  categories:
+    - water
+    - sea
+    - ship
+
+yawl:
+  categories:
+    - ship
+    - boat
+    - water
+    - sea
+
+yurt:
+  categories:
+    - tent
+
+comic book:
+  categories:
+    - book
+
+book jacket:
+  label: book
+
+guacamole:
+  categories:
+    - avocado
+    - food
+
+consomme:
+  categories:
+    - soup
+    - food
+
+hot pot:
+  categories:
+    - soup
+    - food
+
+trifle:
+  categories:
+    - dessert
+    - food
+
+ice cream:
+  categories:
+    - dessert
+    - food
+
+ice lolly:
+  categories:
+    - desser
+    - food
+    - ice cream
+
+french loaf:
+  categories:
+    - food
+    - bread
+
+bagel:
+  categories:
+    - food
+    - bread
+
+pretzel:
+  categories:
+    - food
+    - bread
+
+cheeseburger:
+  categories:
+    - food
+    - burger
+
+hotdog:
+  categories:
+    - food
+
+mashed potato:
+  categories:
+    - potatoes
+    - food
+
+head cabbage:
+  categories:
+    - food
+    - vegetables
+
+broccoli:
+  categories:
+    - food
+    - vegetables
+
+cauliflower:
+  categories:
+    - food
+    - vegetables
+
+zucchini:
+  categories:
+    - food
+    - vegetable
+
+spaghetti squash:
+  categories:
+    - food
+    - vegetables
+    - squash
+
+acorn squash:
+  categories:
+    - food
+    - vegetables
+    - squash
+
+butternut squash:
+  categories:
+    - food
+    - vegetables
+    - squash
+
+cucumber:
+  categories:
+    - food
+    - vegetables
+
+artichoke:
+  categories:
+    - food
+    - vegetables
+
+bell pepper:
+  categories:
+    - food
+    - vegetables
+
+mushroom:
+  categories:
+    - food
+    - vegetables
+
+granny smith:
+  categories:
+    - food
+    - fruits
+    - apple
+
+strawberry:
+  categories:
+    - food
+    - fruits
+
+orange:
+  categories:
+    - food
+    - fruits
+
+lemon:
+  categories:
+    - food
+    - fruits
+
+fig:
+  categories:
+    - food
+    - fruits
+
+pineapple:
+  categories:
+    - food
+    - fruits
+
+banana:
+  categories:
+    - food
+    - fruits
+
+jackfruit:
+  categories:
+    - food
+    - fruits
+
+custard apple:
+  categories:
+    - food
+    - fruits
+
+pomegranate:
+  categories:
+    - food
+    - fruit
+
+carbonara:
+  categories:
+    - food
+    - noodles
+
+chocolate sauce:
+  categories:
+    - food
+    - dessert
+    - chocolate
+
+dough:
+  categories:
+    - food
+
+meat loaf:
+  categories:
+    - food
+    - meat
+
+pizza:
+  categories:
+    - food
+
+potpie:
+  categories:
+    - food
+    - pie
+
+burrito:
+  categories:
+    - food
+
+red wine:
+  categories:
+    - wine
+    - drink
+    - alcohol
+
+espresso:
+  categories:
+    - coffee
+    - drink
+
+eggnog:
+  categories:
+    - drink
+    - alcohol
+
+alp:
+  categories:
+    - landscape
+    - mountains
+
+cliff:
+  categories:
+    - landscape
+
+geyser:
+  categories:
+    - water
+
+promontory:
+  categories:
+    - landscape
+
+sandbar:
+  categories:
+    - sand
+
+valley:
+  categories:
+    - landscape
+    - nature
+
+yellow lady's slipper:
+  categories:
+    - shoe
+
+corn:
+  categories:
+    - food
+    - vegetable
+
+acorn:
+  categories:
+    - tree
+
+buckeye:
+  categories:
+    - tree
+
+coral fungus:
+  categories:
+    - coral
+
+agaric:
+  categories:
+    - fungus
+    - mushroom
+
+gyromitra:
+  categories:
+    - fungus
+    - mushroom
+
+stinkhorn:
+  categories:
+    - fungus
+    - mushroom
+
+earthstar:
+  categories:
+    - fungus
+    - mushroom
+
+hen-of-the-woods:
+  categories:
+    - fungus
+    - mushroom
+
+bolete:
+  categories:
+    - fungus
+    - mushroom
+
 knee pad:
   priority: -2
 
