@@ -2428,6 +2428,164 @@ honeycomb:
     - honey
     - bee
 
+jack-o'-lantern:
+  categories:
+    - halloween
+    - squash
+
+jeep:
+  categories:
+    - car
+
+jigsaw puzzle:
+  categories:
+    - game
+
+ladle:
+  categories:
+    - kitchen
+    - cooking
+
+lampshade:
+  categories:
+    - lamp
+    - light
+
+laptop:
+  categories:
+    - computer
+
+lawn mower:
+  categories:
+    - gardening
+
+lens cap:
+  categories:
+    - photography
+    - camera
+
+library:
+  categories:
+    - book
+
+lifeboat:
+  categories:
+    - water
+    - sea
+    - boat
+
+lighter:
+  categories:
+    - fire
+
+limousine:
+  categories:
+    - car
+
+lipstick:
+  categories:
+    - make-up
+
+loafer:
+  categories:
+    - shoes
+
+loudspeaker:
+  categories:
+    - speaker
+    - music
+
+magnetic compass:
+  categories:
+    - compass
+
+mailbag:
+  categories:
+    - bag
+
+maraca:
+  see: instrument
+
+marimba:
+  see: instrument
+
+matchstick:
+  categories:
+    - fire
+
+measuring cup:
+  categories:
+    - kitchen
+    - cooking
+
+medicine chest:
+  categories:
+    - furniture
+
+megalith:
+  categories:
+    - stone
+
+microphone:
+  categories:
+    - music
+    - singing
+
+microwave:
+  categories:
+    - kitchen
+    - cooking
+
+minibus:
+  categories:
+    - car
+
+minivan:
+  categories:
+    - car
+
+mixing bowl:
+  categories:
+    - kitchen
+    - cooking
+
+mobile home:
+  categories:
+    - house
+    - building
+
+Model T:
+  categories:
+    - car
+
+monastery:
+  categories:
+    - building
+
+monitor:
+  categories:
+    - computer
+
+mosque:
+  categories:
+    - building
+    - religion
+
+mountain bike:
+  categories:
+    - bycicle
+    - sports
+
+mountain tent:
+  categories:
+    - tent
+    - camping
+    - travel
+
+moving van:
+  categories:
+    - car
+
 nail:
   priority: -2
 
@@ -2436,6 +2594,64 @@ neck brace:
 
 necklace:
   priority: -2
+  categories:
+    - jewelery
+
+notebook:
+  categories:
+    - laptop
+    - computer
+
+obelisk:
+  categories:
+    - stone
+    - tower
+
+oboe:
+  see: instrument
+
+ocarina:
+  see: instrument
+
+odometer:
+  categories:
+    - car
+
+organ:
+  see: instrument
+
+oxcart:
+  categories:
+    - plane
+    - aircraft
+
+paddle:
+  categories:
+    - sport
+    - water
+    - sea
+
+paddlewheel:
+  categories:
+    - water
+    - sea
+
+padlock:
+  categories:
+    - lock
+
+paintbrush:
+  categories:
+    - drawing
+    - painting
+    - art
+
+palace:
+  categories:
+    - building
+
+panpipe:
+  see: instrument
 
 knee pad:
   priority: -2
