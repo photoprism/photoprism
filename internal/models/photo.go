@@ -34,6 +34,7 @@ type Photo struct {
 	LocationChanged    bool
 	TakenAt            time.Time
 	TakenAtChanged     bool
+	TimeZone           string
 	Labels             []*PhotoLabel
 	Files              []*File
 	Albums             []*Album `gorm:"many2many:album_photos;"`

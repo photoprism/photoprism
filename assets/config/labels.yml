@@ -12,6 +12,7 @@ cat:
     - kitty
     - mouser
     - stray
+    - mammal
 
 tabby cat:
   see: cat
@@ -35,16 +36,46 @@ tiger cat:
     - animal
     - miau
     - feline
+    - felidae
     - felis catus
     - kitty
     - mouser
     - stray
 
-tiger:
+wild cat:
   priority: 5
   categories:
-    - cat
     - animal
+    - cat
+    - feline
+    - felidae
+    - mammal
+    - mouser
+    - stray
+    - predator
+    - wild
+    - dangerous
+
+lynx:
+  see: wild cat
+
+leopard:
+  see: wild cat
+
+snow leopard:
+  see: wild cat
+
+jaguar:
+  see: wild cat
+
+lion:
+  see: wild cat
+
+cheetah:
+  see: wild cat
+
+tiger:
+  see: wild cat
 
 analog clock:
   priority: 2
@@ -81,6 +112,7 @@ window shade:
     - window
     - house
     - building
+    - architecture
 
 daisy:
   label: flower
@@ -950,11 +982,13 @@ grey whale:
   categories:
     - animal
     - whale
+    - mammal
 
 killer whale:
   categories:
     - animal
     - whale
+    - mammal
 
 dugong:
   categories:
@@ -969,6 +1003,7 @@ dog:
   categories:
     - animal
     - dog
+    - mammal
 
 chihuahua dog:
   see: dog
@@ -1377,33 +1412,6 @@ rgrey fox:
   categories:
     - fox
     - animal
-
-Persian cat:
-  see: cat
-
-Siamese cat:
-  see: cat
-
-Egyptian cat:
-  see: cat
-
-lynx:
-  see: cat
-
-leopard:
-  see: cat
-
-snow leopard:
-  see: cat
-
-jaguar:
-  see: cat
-
-lion:
-  see: cat
-
-cheetah:
-  see: cat
 
 brown bear:
   categories:
@@ -2132,7 +2140,10 @@ car wheel:
     - car
 
 castle:
-  - building
+  categories:
+    - building
+    - old
+    - architecture
 
 catamaran:
   categories:
@@ -2420,6 +2431,8 @@ greenhouse:
   categories:
     - plants
     - gardening
+    - architecture
+    - building
 
 grocery store:
   categories:
@@ -2593,6 +2606,7 @@ mosque:
   categories:
     - building
     - religion
+    - architecture
 
 mountain bike:
   categories:
@@ -2672,6 +2686,7 @@ paintbrush:
 palace:
   categories:
     - building
+    - architecture
 
 panpipe:
   see: instrument
@@ -3059,6 +3074,7 @@ typewriter keyboard:
 viaduct:
   categories:
     - building
+    - architecture
 
 violin:
   see: instrument
@@ -3444,6 +3460,7 @@ tile roof:
   label: house
   categories:
     - building
+    - architecture
 
 croquet ball:
   label: pumpkin

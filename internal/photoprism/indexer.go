@@ -113,6 +113,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 
 	if photo.TakenAt.IsZero() && photo.TakenAtChanged == false {
 		photo.TakenAt = mediaFile.DateCreated()
+		photo.TimeZone = mediaFile.TimeZone()
 	}
 
 	if photo.PhotoCanonicalName == "" {

@@ -14,6 +14,7 @@ import (
 // Exif returns information about a single image.
 type Exif struct {
 	DateTime    time.Time
+	TimeZone    string
 	Artist      string
 	CameraMake  string
 	CameraModel string
@@ -117,6 +118,10 @@ func (m *MediaFile) Exif() (result *Exif, err error) {
 
 	if tm, err := x.DateTime(); err == nil {
 		m.exifData.DateTime = tm
+	}
+
+	if tz, err := x.TimeZone(); err == nil {
+		m.exifData.TimeZone = tz.String()
 	}
 
 	if lat, long, err := x.LatLong(); err == nil {

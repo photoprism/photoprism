@@ -20,6 +20,7 @@ import (
 type MediaFile struct {
 	filename       string
 	dateCreated    time.Time
+	timeZone       string
 	hash           string
 	fileType       string
 	mimeType       string
@@ -75,6 +76,22 @@ func (m *MediaFile) DateCreated() time.Time {
 	}
 
 	return m.dateCreated
+}
+
+func (m *MediaFile) TimeZone() (result string) {
+	if m.timeZone != "" {
+		return m.timeZone
+	}
+
+	exif, err := m.Exif()
+
+	if err != nil || exif.TimeZone == "" {
+		result = "UTC"
+	} else {
+		result = exif.TimeZone
+	}
+
+	loc := m.Location()
 }
 
 // CameraModel returns the camera model with which the media file was created.

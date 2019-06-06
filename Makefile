@@ -48,7 +48,7 @@ build-js:
 build-go:
 	scripts/build.sh debug $(BINARY_NAME)
 watch-js:
-	(cd frontend &&	env NODE_ENV=development npm run dev)
+	(cd frontend &&	env NODE_ENV=development npm run watch)
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend &&	env NODE_ENV=development npm run test)

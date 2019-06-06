@@ -33,6 +33,7 @@ type PhotoSearchResult struct {
 	UpdatedAt          time.Time
 	DeletedAt          time.Time
 	TakenAt            time.Time
+	TimeZone           string
 	PhotoTitle         string
 	PhotoDescription   string
 	PhotoArtist        string

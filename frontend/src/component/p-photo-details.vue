@@ -63,7 +63,7 @@
                                     truncate(80) }}</h3>
                                 <div class="caption">
                                     <v-icon size="14">date_range</v-icon>
-                                    {{ photo.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}
+                                    {{ photo.getDateString() }}
                                     <br/>
                                     <v-icon size="14">photo_camera</v-icon>
                                     {{ photo.getCamera() }}
