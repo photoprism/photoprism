@@ -10,6 +10,8 @@ RUN make all install
 # Base base image as photoprism/development
 FROM ubuntu:18.04
 
+ENV DEBIAN_FRONTEND noninteractive
+
 WORKDIR /srv/photoprism
 
 # Hide TensorFlow warnings
