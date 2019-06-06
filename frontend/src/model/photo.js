@@ -1,7 +1,7 @@
 import Abstract from "model/abstract";
 import Api from "common/api";
 import truncate from "truncate";
-import moment from "moment-timezone";
+import moment from "moment";
 
 class Photo extends Abstract {
     getEntityName() {
@@ -91,9 +91,7 @@ class Photo extends Abstract {
     }
 
     getDateString() {
-        let m = moment(this.TakenAt).tz(this.TimeZone);
-
-        return m.format('LLL');
+        return moment(this.TakenAt).format('LLL');
     }
 
     hasLocation() {
