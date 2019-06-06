@@ -2874,6 +2874,197 @@ sleeping bag:
 sliding door:
   label: door
 
+snorkel:
+  categories:
+    - swimming
+    - water
+    - sea
+
+snowmobile:
+  categories:
+    - snow
+    - winter
+
+snowplow:
+  categories:
+    - snow
+    - winter
+    - car
+
+soap dispenser:
+  categories:
+    - soap
+    - cleaning
+
+sombrero:
+  categories:
+    - hat
+
+soup bowl:
+  categories:
+    - kitchen
+
+space heater:
+  label: heater
+
+spatula:
+  categories:
+    - kitchen
+    - cooking
+
+speedboat:
+  categories:
+    - water
+    - sea
+    - boat
+
+sports car:
+  categories:
+    - car
+
+spotlight:
+  categories:
+    - light
+
+steam locomotive:
+  categories:
+    - train
+    - travel
+
+steel arch bridge:
+  label: bridge
+
+steel drum:
+  see: instrument
+
+stove:
+  categories:
+    - kitchen
+    - cooking
+
+strainer:
+  categories:
+    - kitchen
+    - cooking
+
+streetcar:
+  categories:
+    - train
+    - travel
+
+studio couch:
+  label: couch
+  categories:
+    - furniture
+
+submarine:
+  categories:
+    - water
+    - sea
+    - boat
+
+suspension bridge:
+  categories:
+    - bridge
+
+swimming trunks:
+  categories:
+    - swimming
+
+table lamp:
+  categories:
+    - lamp
+    - light
+
+teapot:
+  categories:
+    - kitchen
+    - tea
+
+theater curtain:
+  label: curtain
+
+toaster:
+  categories:
+    - kitchen
+    - cooking
+
+toilet seat:
+  label: toilet
+
+torch:
+  categories:
+    - light
+    - lamp
+
+tow truck:
+  label: truck
+
+toyshop:
+  categories:
+    - shopping
+    - toys
+
+trailer truck:
+  label: truck
+
+trimaran:
+  categories:
+    - boat
+    - water
+    - sea
+
+triumphal arch:
+  categories:
+    - building
+    - arch
+
+trolleybus:
+  categories:
+    - bus
+
+trombone:
+  see: instrument
+
+tub:
+  categories:
+    - bathroom
+
+typewriter keyboard:
+  label: keyboard
+
+viaduct:
+  categories:
+    - building
+
+violin:
+  see: instrument
+
+waffle iron:
+  categories:
+    - kitchen
+    - cooking
+
+wall clock:
+  label: clock
+
+wardrobe:
+  categories:
+    - furniture
+
+warplane:
+  categories:
+    - plane
+    - aircraft
+
+washbasin:
+  categories:
+    - bathroom
+
+water bottle:
+  categories:
+    - bottle
+
 knee pad:
   priority: -2
 
