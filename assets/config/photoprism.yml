@@ -1,5 +1,4 @@
 debug: false
-darktable-cli: /usr/bin/darktable-cli
 assets-path: /srv/photoprism
 config-path: /srv/photoprism/config
 resources-path: /srv/photoprism/resources

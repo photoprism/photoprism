@@ -10,12 +10,12 @@ RUN make all install
 # Base base image as photoprism/development
 FROM ubuntu:18.04
 
+# Set environment variables
 ENV DEBIAN_FRONTEND noninteractive
+ENV TF_CPP_MIN_LOG_LEVEL 2
+ENV PHOTOPRISM_CONFIG_FILE /srv/photoprism/config/photoprism.yml
 
 WORKDIR /srv/photoprism
-
-# Hide TensorFlow warnings
-ENV TF_CPP_MIN_LOG_LEVEL 2
 
 # Install additional distribution packages
 RUN apt-get update && apt-get install -y --no-install-recommends \

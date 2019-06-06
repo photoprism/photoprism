@@ -24,12 +24,15 @@ start:
 migrate:
 	go run cmd/photoprism/photoprism.go migrate
 install-bin:
+	$(info Building prodution binary...)
 	scripts/build.sh prod /usr/local/bin/$(BINARY_NAME)
 install-assets:
+	$(info Installing assets in /srv/photoprism...)
+	mkdir -p /srv/photoprism/config
 	mkdir -p /srv/photoprism/photos
 	mkdir -p /srv/photoprism/cache
-	mkdir -p /srv/photoprism/resources
-	mkdir -p /srv/photoprism/config
+	mkdir -p /srv/photoprism/resources/database
+	cp -r assets/resources/static assets/resources/templates assets/resources/nasnet /srv/photoprism/resources
 	rsync -a -v --ignore-existing assets/config/*.yml /srv/photoprism/config
 	find /srv/photoprism -name '.*' -type f -delete
 dep-js:
