@@ -91,7 +91,7 @@ func (m *MediaFile) TimeZone() (result string) {
 		result = exif.TimeZone
 	}
 
-	loc := m.Location()
+	return result
 }
 
 // CameraModel returns the camera model with which the media file was created.
