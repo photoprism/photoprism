@@ -2653,6 +2653,227 @@ palace:
 panpipe:
   see: instrument
 
+paper towel:
+  categories:
+    - kitchen
+    - cleaning
+
+parachute:
+  categories:
+    - flying
+    - sports
+
+passenger car:
+  categories:
+    - car
+
+pay-phone:
+  categories:
+    - phone
+
+pencil sharpener:
+  categories:
+    - drawing
+
+petri dish:
+  categories:
+    - laboratory
+    - science
+    - research
+
+photocopier:
+  categories:
+    - office
+
+picket fence:
+  categories:
+    - fence
+
+pickup:
+  categories:
+    - car
+
+pier:
+  categories:
+    - water
+    - sea
+
+piggy bank:
+  categories:
+    - pig
+    - money
+
+pill bottle:
+  categories:
+    - pills
+    - medicine
+
+pillow:
+  categories:
+    - bedroom
+
+plane:
+  categories:
+    - travel
+    - aircraft
+
+plate rack:
+  categories:
+    - kitchen
+    - cleaning
+
+polaroid camera:
+  categories:
+    - photography
+    - camera
+
+police van:
+  categories:
+    - car
+    - police
+
+pool table:
+  categories:
+    - pool
+    - game
+
+pop bottle:
+  categories:
+    - bottle
+
+pot:
+  categories:
+    - kitchen
+    - cooking
+
+power drill:
+  categories:
+    - tool
+
+prayer rug:
+  categories:
+    - religion
+    - carpet
+
+printer:
+  categories:
+    - printer
+
+prison:
+  categories:
+    - building
+
+punching bag:
+  categories:
+    - boxing
+    - sports
+
+recreational vehicle:
+  categories:
+    - car
+
+reflex camera:
+  categories:
+    - camera
+    - photography
+
+refrigerator:
+  categories:
+    - kitchen
+
+restaurant:
+  categories:
+    - food
+
+revolver:
+  categories:
+    - weapon
+    - gun
+
+rifle:
+  categories:
+    - weapon
+    - gun
+
+rocking chair:
+  categories:
+    - chair
+    - furniture
+
+rotisserie:
+  categories:
+    - kitchen
+    - cooking
+
+rubber eraser:
+  categories:
+    - drawing
+
+running shoe:
+  categories:
+    - shoe
+
+saltshaker:
+  categories:
+    - kitchen
+    - cooking
+    - food
+
+sandal:
+  categories:
+    - shoe
+
+sax:
+  see: instrument
+
+school bus:
+  categories:
+    - car
+
+schooner:
+  categories:
+    - boat
+    - ship
+    - water
+    - sea
+
+screwdriver:
+  categories:
+    - tool
+
+shoe shop:
+  categories:
+    - shoe
+    - shopping
+
+shopping basket:
+  categories:
+    - basket
+    - shopping
+
+shopping cart:
+  categories:
+    - shopping
+
+shovel:
+  categories:
+    - tool
+    - gardening
+
+ski:
+  categories:
+    - winter
+    - snow
+    - sports
+
+sleeping bag:
+  categories:
+    - travel
+    - camping
+
+sliding door:
+  label: door
+
 knee pad:
   priority: -2
 
