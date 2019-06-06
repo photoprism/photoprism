@@ -1,48 +1,87 @@
 package photoprism
 
 import (
+	"os"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMediaFile_Exif(t *testing.T) {
+func TestMediaFile_Exif_JPEG(t *testing.T) {
 	conf := config.TestConfig()
 
-	conf.InitializeTestData(t)
-
-	image1, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
+	img, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 
 	assert.Nil(t, err)
 
-	info, err := image1.Exif()
+	info, err := img.Exif()
 
 	assert.Empty(t, err)
 
 	assert.IsType(t, &Exif{}, info)
 
-	assert.Equal(t, "iPhone SE", info.CameraModel)
+	assert.Equal(t, "Canon EOS 6D", info.CameraModel)
 }
 
-func TestMediaFile_Exif_Slow(t *testing.T) {
+func TestMediaFile_Exif_DNG(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
 
 	conf := config.TestConfig()
 
-	conf.InitializeTestData(t)
-
-	image2, err := NewMediaFile(conf.ImportPath() + "/raw/IMG_1435.CR2")
+	img, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")
 
 	assert.Nil(t, err)
 
-	info, err := image2.Exif()
+	info, err := img.Exif()
 
 	assert.Empty(t, err)
 
 	assert.IsType(t, &Exif{}, info)
 
-	assert.Equal(t, "Canon EOS M10", info.CameraModel)
+	assert.Equal(t, "Canon EOS 6D", info.CameraModel)
 }
+
+
+func TestMediaFile_Exif_HEIF(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	conf := config.TestConfig()
+
+	img, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+
+	assert.Nil(t, err)
+
+	info, err := img.Exif()
+
+	assert.IsType(t, &Exif{}, info)
+
+	assert.NotNil(t, err)
+
+	if err != nil {
+		assert.Contains(t, err.Error(), "media file not compatible with exif")
+	}
+
+	converter := NewConverter(conf)
+
+	jpeg, err := converter.ConvertToJpeg(img)
+
+	assert.Nil(t, err)
+
+	jpegInfo, err := jpeg.Exif()
+
+	assert.IsType(t, &Exif{}, jpegInfo)
+
+	assert.Nil(t, err)
+
+	assert.Equal(t, "iPhone 7", jpegInfo.CameraModel)
+
+	if err := os.Remove(conf.ExamplesPath() + "/iphone_7.jpg"); err != nil {
+		t.Error(err)
+	}
+}
+

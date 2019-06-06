@@ -1,4 +1,28 @@
+cat:
+  label: tabby cat
+  priority: 5
+  categories:
+    - pussy
+    - puss
+    - pussycat
+    - animal
+    - miau
+    - feline
+    - felis catus
+    - kitty
+    - mouser
+    - stray
+
 tabby cat:
+  see: cat
+
+persian cat:
+  see: cat
+
+siamese cat:
+  see: cat
+
+egyptian cat:
   see: cat
 
 tiger cat:
@@ -6,13 +30,15 @@ tiger cat:
   priority: 5
   categories:
     - pussy
+    - puss
+    - pussycat
     - animal
     - miau
-
-analog clock:
-  priority: 2
-  categories:
-    - chronograph
+    - feline
+    - felis catus
+    - kitty
+    - mouser
+    - stray
 
 tiger:
   priority: 5
@@ -20,13 +46,10 @@ tiger:
     - cat
     - animal
 
-cat:
-  label: tabby cat
-  priority: 5
+analog clock:
+  priority: 2
   categories:
-    - pussy
-    - animal
-    - miau
+    - chronograph
 
 racer:
   label: race car

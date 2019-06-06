@@ -52,7 +52,10 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("static-path           %s\n", conf.HttpStaticPath())
 	fmt.Printf("static-build-path     %s\n", conf.HttpStaticBuildPath())
 
-	fmt.Printf("darktable-cli         %s\n", conf.DarktableCli())
+	fmt.Printf("sips-bin              %s\n", conf.SipsBin())
+	fmt.Printf("darktable-bin         %s\n", conf.DarktableBin())
+	fmt.Printf("exiftool-bin          %s\n", conf.ExifToolBin())
+	fmt.Printf("heifconvert-bin       %s\n", conf.HeifConvertBin())
 
 	return nil
 }

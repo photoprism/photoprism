@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -32,6 +33,24 @@ func initLogger(debug bool) {
 	} else {
 		log.SetLevel(log.InfoLevel)
 	}
+}
+
+func findExecutable (configBin, defaultBin string) (result string) {
+	if configBin == "" {
+		result = defaultBin
+	} else {
+		result = configBin
+	}
+
+	if path, err := exec.LookPath(result); err == nil {
+		result = path
+	}
+
+	if !util.Exists(result) {
+		result = ""
+	}
+
+	return result
 }
 
 func NewConfig(ctx *cli.Context) *Config {
@@ -262,12 +281,24 @@ func (c *Config) ExportPath() string {
 	return c.config.ExportPath
 }
 
-// DarktableCli returns the darktable-cli binary file name.
-func (c *Config) DarktableCli() string {
-	if c.config.DarktableCli == "" {
-		return "/usr/bin/darktable-cli"
-	}
-	return c.config.DarktableCli
+// SipsBin returns the sips binary file name.
+func (c *Config) SipsBin() string {
+	return findExecutable(c.config.SipsBin, "sips")
+}
+
+// DarktableBin returns the darktable-cli binary file name.
+func (c *Config) DarktableBin() string {
+	return findExecutable(c.config.DarktableBin, "darktable-cli")
+}
+
+// HeifConvertBin returns the heif-convert binary file name.
+func (c *Config) HeifConvertBin() string {
+	return findExecutable(c.config.HeifConvertBin, "heif-convert")
+}
+
+// ExifToolBin returns the exiftool binary file name.
+func (c *Config) ExifToolBin() string {
+	return findExecutable(c.config.ExifToolBin, "exiftool")
 }
 
 // DatabaseDriver returns the database driver name.

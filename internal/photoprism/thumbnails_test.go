@@ -46,7 +46,7 @@ func TestCreateThumbnailsFromOriginals(t *testing.T) {
 
 	indexer := NewIndexer(conf, tensorFlow)
 
-	converter := NewConverter(conf.DarktableCli())
+	converter := NewConverter(conf)
 
 	importer := NewImporter(conf, indexer, converter)
 

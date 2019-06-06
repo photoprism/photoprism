@@ -6,7 +6,7 @@ MODEL_NAME="NASNet Mobile"
 MODEL_URL="https://dl.photoprism.org/tensorflow/nasnet.zip?$TODAY"
 MODEL_PATH="assets/resources/nasnet"
 MODEL_ZIP="/tmp/photoprism/nasnet.zip"
-MODEL_HASH="cb893eaa93d59eca9e63ab10f76ae60519ecee24  $MODEL_ZIP"
+MODEL_HASH="f18b801354e95cade497b4f12e8d2537d04c04f6  $MODEL_ZIP"
 MODEL_VERSION="$MODEL_PATH/version.txt"
 MODEL_BACKUP="assets/backups/nasnet-$TODAY"
 

@@ -10,9 +10,9 @@ import (
 )
 
 func TestNewConverter(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	converter := NewConverter(ctx.DarktableCli())
+	converter := NewConverter(conf)
 
 	assert.IsType(t, &Converter{}, converter)
 }
@@ -22,13 +22,13 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	converter := NewConverter(ctx.DarktableCli())
+	converter := NewConverter(conf)
 
-	jpegFilename := ctx.ImportPath() + "/iphone/IMG_6788.JPG"
+	jpegFilename := conf.ImportPath() + "/iphone/IMG_6788.JPG"
 
 	assert.Truef(t, util.Exists(jpegFilename), "file does not exist: %s", jpegFilename)
 
@@ -52,7 +52,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	assert.Equal(t, "iPhone SE", infoJpeg.CameraModel)
 
-	rawFilemame := ctx.ImportPath() + "/raw/IMG_1435.CR2"
+	rawFilemame := conf.ImportPath() + "/raw/IMG_1435.CR2"
 
 	t.Logf("Testing RAW to JPEG converter with %s", rawFilemame)
 
@@ -62,7 +62,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	imageRaw, _ := converter.ConvertToJpeg(rawMediaFile)
 
-	assert.True(t, util.Exists(ctx.ImportPath()+"/raw/IMG_1435.jpg"), "Jpeg file was not found - is Darktable installed?")
+	assert.True(t, util.Exists(conf.ImportPath()+"/raw/IMG_1435.jpg"), "Jpeg file was not found - is Darktable installed?")
 
 	assert.NotEqual(t, rawFilemame, imageRaw.filename)
 
@@ -78,15 +78,15 @@ func TestConverter_ConvertAll(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	converter := NewConverter(ctx.DarktableCli())
+	converter := NewConverter(conf)
 
-	converter.ConvertAll(ctx.ImportPath())
+	converter.ConvertAll(conf.ImportPath())
 
-	jpegFilename := ctx.ImportPath() + "/raw/IMG_1435.jpg"
+	jpegFilename := conf.ImportPath() + "/raw/IMG_1435.jpg"
 
 	assert.True(t, util.Exists(jpegFilename), "Jpeg file was not found - is Darktable installed?")
 
@@ -102,13 +102,13 @@ func TestConverter_ConvertAll(t *testing.T) {
 
 	assert.Equal(t, "Canon EOS M10", infoRaw.CameraModel, "Camera model should be Canon EOS M10")
 
-	existingJpegFilename := ctx.ImportPath() + "/raw/20140717_154212_1EC48F8489.jpg"
+	existingJpegFilename := conf.ImportPath() + "/raw/20140717_154212_1EC48F8489.jpg"
 
 	oldHash := util.Hash(existingJpegFilename)
 
 	os.Remove(existingJpegFilename)
 
-	converter.ConvertAll(ctx.ImportPath())
+	converter.ConvertAll(conf.ImportPath())
 
 	newHash := util.Hash(existingJpegFilename)
 

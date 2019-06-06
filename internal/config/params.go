@@ -50,9 +50,12 @@ type Params struct {
 	HttpServerPort     int    `yaml:"http-port" flag:"http-port"`
 	HttpServerMode     string `yaml:"http-mode" flag:"http-mode"`
 	HttpServerPassword string `yaml:"http-password" flag:"http-password"`
-	DarktableCli       string `yaml:"darktable-cli" flag:"darktable-cli"`
 	DatabaseDriver     string `yaml:"database-driver" flag:"database-driver"`
 	DatabaseDsn        string `yaml:"database-dsn" flag:"database-dsn"`
+	SipsBin            string `yaml:"sips-bin" flag:"sips-bin"`
+	DarktableBin       string `yaml:"darktable-bin" flag:"darktable-bin"`
+	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
+	HeifConvertBin     string `yaml:"heifconvert-bin" flag:"heifconvert-bin"`
 }
 
 // NewParams() creates a new configuration entity by using two methods:
@@ -89,7 +92,6 @@ func (c *Params) expandFilenames() {
 	c.OriginalsPath = util.ExpandedFilename(c.OriginalsPath)
 	c.ImportPath = util.ExpandedFilename(c.ImportPath)
 	c.ExportPath = util.ExpandedFilename(c.ExportPath)
-	c.DarktableCli = util.ExpandedFilename(c.DarktableCli)
 	c.SqlServerPath = util.ExpandedFilename(c.SqlServerPath)
 }
 

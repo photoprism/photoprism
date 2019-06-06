@@ -32,12 +32,6 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_CONFIG_PATH",
 	},
 	cli.StringFlag{
-		Name:   "darktable-cli",
-		Usage:  "darktable command-line executable `FILENAME`",
-		Value:  "/usr/bin/darktable-cli",
-		EnvVar: "PHOTOPRISM_DARKTABLE_CLI",
-	},
-	cli.StringFlag{
 		Name:   "resources-path",
 		Usage:  "resources `PATH`",
 		EnvVar: "PHOTOPRISM_RESOURCES_PATH",
@@ -132,4 +126,29 @@ var GlobalFlags = []cli.Flag{
 		Value:  "",
 		EnvVar: "PHOTOPRISM_SQL_PASSWORD",
 	},
+	cli.StringFlag{
+		Name:   "sips-bin",
+		Usage:  "sips cli binary `FILENAME`",
+		Value:  "sips",
+		EnvVar: "PHOTOPRISM_SIPS_BIN",
+	},
+	cli.StringFlag{
+		Name:   "darktable-bin",
+		Usage:  "darktable cli binary `FILENAME`",
+		Value:  "darktable-cli",
+		EnvVar: "PHOTOPRISM_DARKTABLE_BIN",
+	},
+	cli.StringFlag{
+		Name:   "exiftool-bin",
+		Usage:  "exiftool cli binary `FILENAME`",
+		Value:  "exiftool",
+		EnvVar: "PHOTOPRISM_EXIFTOOL_BIN",
+	},
+	cli.StringFlag{
+		Name:   "heifconvert-bin",
+		Usage:  "heif conversion cli binary `FILENAME`",
+		Value:  "heif-convert",
+		EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
+	},
+
 }

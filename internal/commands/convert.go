@@ -26,7 +26,7 @@ func convertAction(ctx *cli.Context) error {
 
 	log.Infof("converting RAW images in %s to JPEG", conf.OriginalsPath())
 
-	converter := photoprism.NewConverter(conf.DarktableCli())
+	converter := photoprism.NewConverter(conf)
 
 	converter.ConvertAll(conf.OriginalsPath())
 

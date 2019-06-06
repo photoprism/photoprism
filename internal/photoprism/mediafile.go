@@ -77,7 +77,7 @@ func (m *MediaFile) DateCreated() time.Time {
 	return m.dateCreated
 }
 
-// CameraModel returns the camera model with which the mediafile was created.
+// CameraModel returns the camera model with which the media file was created.
 func (m *MediaFile) CameraModel() string {
 	info, err := m.Exif()
 
@@ -103,7 +103,7 @@ func (m *MediaFile) CameraMake() string {
 	return result
 }
 
-// LensModel returns the lens model of a mediafile.
+// LensModel returns the lens model of a media file.
 func (m *MediaFile) LensModel() string {
 	info, err := m.Exif()
 
@@ -142,7 +142,7 @@ func (m *MediaFile) FocalLength() float64 {
 	return result
 }
 
-// Aperture returns the aperture with which the mediafile was created.
+// Aperture returns the aperture with which the media file was created.
 func (m *MediaFile) Aperture() float64 {
 	info, err := m.Exif()
 
@@ -155,7 +155,7 @@ func (m *MediaFile) Aperture() float64 {
 	return result
 }
 
-// CanonicalName returns the canonical name of a mediafile.
+// CanonicalName returns the canonical name of a media file.
 func (m *MediaFile) CanonicalName() string {
 	var postfix string
 
@@ -317,17 +317,17 @@ func (m *MediaFile) openFile() (*os.File, error) {
 	return handle, nil
 }
 
-// Exists checks if a mediafile exists by filename.
+// Exists checks if a media file exists by filename.
 func (m *MediaFile) Exists() bool {
 	return util.Exists(m.Filename())
 }
 
-// Remove a mediafile.
+// Remove a media file.
 func (m *MediaFile) Remove() error {
 	return os.Remove(m.Filename())
 }
 
-// HasSameFilename compares a mediafile with another mediafile and returns if
+// HasSameFilename compares a media file with another media file and returns if
 // their filenames are matching or not.
 func (m *MediaFile) HasSameFilename(other *MediaFile) bool {
 	return m.Filename() == other.Filename()
@@ -389,12 +389,12 @@ func (m *MediaFile) IsJpeg() bool {
 	return m.MimeType() == MimeTypeJpeg
 }
 
-// Type returns the type of the mediafile.
+// Type returns the type of the media file.
 func (m *MediaFile) Type() string {
 	return FileExtensions[m.Extension()]
 }
 
-// HasType checks whether a mediafile is of a given type.
+// HasType checks whether a media file is of a given type.
 func (m *MediaFile) HasType(typeString string) bool {
 	if typeString == FileTypeJpeg {
 		return m.IsJpeg()
@@ -403,22 +403,22 @@ func (m *MediaFile) HasType(typeString string) bool {
 	return m.Type() == typeString
 }
 
-// IsRaw check whether the given mediafile is of Raw type.
+// IsRaw check whether the given media file a RAW file.
 func (m *MediaFile) IsRaw() bool {
 	return m.HasType(FileTypeRaw)
 }
 
-// IsHighEfficiencyImageFile check if a given mediafile is of HEIF type.
-func (m *MediaFile) IsHighEfficiencyImageFile() bool {
+// IsHEIF check if a given media file is a High Efficiency Image File Format file.
+func (m *MediaFile) IsHEIF() bool {
 	return m.HasType(FileTypeHEIF)
 }
 
-// IsPhoto checks if a mediafile is a photo.
+// IsPhoto checks if a media file is a photo / image.
 func (m *MediaFile) IsPhoto() bool {
-	return m.IsJpeg() || m.IsRaw() || m.IsHighEfficiencyImageFile()
+	return m.IsJpeg() || m.IsRaw() || m.IsHEIF()
 }
 
-// Jpeg returns a new mediafile given the current one's canonical name
+// Jpeg returns a new media file given the current one's canonical name
 // plus the extension .jpg.
 func (m *MediaFile) Jpeg() (*MediaFile, error) {
 	if m.IsJpeg() {

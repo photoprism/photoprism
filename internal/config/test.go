@@ -33,7 +33,7 @@ func NewTestParams() *Params {
 	testDataPath := testDataPath(assetsPath)
 
 	c := &Params{
-		DarktableCli:   "/usr/bin/darktable-cli",
+		DarktableBin:   "/usr/bin/darktable-cli",
 		AssetsPath:     assetsPath,
 		CachePath:      testDataPath + "/cache",
 		OriginalsPath:  testDataPath + "/originals",
@@ -76,7 +76,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("config-file", config.ConfigFile, "doc")
 	globalSet.String("assets-path", config.AssetsPath, "doc")
 	globalSet.String("originals-path", config.OriginalsPath, "doc")
-	globalSet.String("darktable-cli", config.DarktableCli, "doc")
+	globalSet.String("darktable-cli", config.DarktableBin, "doc")
 
 	app := cli.NewApp()
 
@@ -85,7 +85,7 @@ func CliTestContext() *cli.Context {
 	c.Set("config-file", config.ConfigFile)
 	c.Set("assets-path", config.AssetsPath)
 	c.Set("originals-path", config.OriginalsPath)
-	c.Set("darktable-cli", config.DarktableCli)
+	c.Set("darktable-cli", config.DarktableBin)
 
 	return c
 }

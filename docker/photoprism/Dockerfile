@@ -1,4 +1,4 @@
-FROM photoprism/development:20190520 as build
+FROM photoprism/development:20190606 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -23,7 +23,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         wget \
         ca-certificates \
         tzdata \
-        && \
+        libheif-examples \
+        exiftool && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

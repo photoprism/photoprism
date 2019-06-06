@@ -32,6 +32,7 @@ RUN apt-get update && apt-get upgrade && \
     software-properties-common \
     rsync \
     unzip \
+    zip \
     g++ \
     gcc \
     libc6-dev \
@@ -46,9 +47,11 @@ RUN apt-get update && apt-get upgrade && \
     tzdata \
     gconf-service \
     chromium-browser \
-    firefox
+    firefox \
+    libheif-examples \
+    exiftool
 
-# Install darktable (RAW to JPEG converter)
+# Install RAW to JPEG converter
 RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
     apt-get update && \
     apt-get install darktable && \
@@ -100,7 +103,7 @@ RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism
 RUN wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip
 RUN wget "https://dl.photoprism.org/fixtures/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# Install goimports & richgo (colorizes "go test" output)
+# Install goimports and richgo (colorizes "go test" output)
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u golang.org/x/tools/cmd/goimports
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo
 RUN echo "alias go=richgo" > /root/.bash_aliases
