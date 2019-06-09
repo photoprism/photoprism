@@ -15,13 +15,5 @@ test('Navigate', async t => {
     await page.openNav();
     await t
         .click('a[href="/labels"]')
-        .expect(Selector('h1').innerText, {timeout: 9000}).contains('Labels');
-    await page.openNav();
-    await t
-        .click('a[href="/albums"]')
-        .expect(Selector('h1').innerText, {timeout: 9000}).contains('Albums');
-    await page.openNav();
-    await t
-        .click('a[href="/import"]')
-        .expect(Selector('h1').innerText, {timeout: 9000}).contains('Import');
+        .expect(Selector('main .p-page-labels').exists, {timeout: 5000}).ok();
 });

@@ -23,7 +23,7 @@
             <l-marker v-for="photo in photos" v-bind:data="photo"
                       v-bind:key="photo.index" :lat-lng="photo.location" :icon="photo.icon"
                       :options="photo.options" @click="openPhoto(photo.index)"></l-marker>
-            <l-marker v-if="position" :lat-lng="position" :z-index-offset="1"></l-marker>
+            <l-marker v-if="position" :lat-lng="position" :z-index-offset="100"></l-marker>
         </l-map>
     </v-container>
 </template>
@@ -163,8 +163,10 @@
                 this.results = results;
                 this.photos = photos;
 
-                this.center = photos[0].location;
-                this.bounds = [[this.maxLat, this.minLong], [this.minLat, this.maxLong]];
+                this.$nextTick(() => {
+                    this.center = photos[0].location;
+                    this.bounds = [[this.maxLat, this.minLong], [this.minLat, this.maxLong]];
+                });
 
                 if (photos.length > 100) {
                     this.$alert.info('More than 100 photos found');

@@ -12,10 +12,10 @@ import Alert from "common/alert";
 import Viewer from "common/viewer";
 import Session from "common/session";
 import Event from "pubsub-js";
-import Moment from "vue-moment";
-import InfiniteScroll from "vue-infinite-scroll";
-import VueTruncate from "vue-truncate-filter";
+import VueMoment from "vue-moment";
+import VueInfiniteScroll from "vue-infinite-scroll";
 import VueFullscreen from "vue-fullscreen";
+import VueFilters from "vue2-filters";
 
 // Initialize helpers
 const session = new Session(window.localStorage);
@@ -48,10 +48,10 @@ Vue.use(Vuetify, {
 });
 
 // Register other VueJS plugins
-Vue.use(Moment);
-Vue.use(InfiniteScroll);
-Vue.use(VueTruncate);
+Vue.use(VueMoment);
+Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);
+Vue.use(VueFilters);
 Vue.use(Components);
 Vue.use(Maps);
 Vue.use(Router);

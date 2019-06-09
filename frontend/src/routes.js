@@ -10,7 +10,8 @@ import Export from "pages/export.vue";
 import Settings from "pages/settings.vue";
 import Labels from "pages/labels.vue";
 import Todo from "pages/todo.vue";
-import Calendar from "pages/calendar.vue";
+import Events from "pages/events.vue";
+import People from "pages/people.vue";
 
 export default [
     {
@@ -38,9 +39,27 @@ export default [
         meta: {area: "Places"},
     },
     {
+        name: "Labels",
+        path: "/labels",
+        component: Labels,
+        meta: {area: "Labels"},
+    },
+    {
+        name: "Events",
+        path: "/events",
+        component: Events,
+        meta: {area: "Events"},
+    },
+    {
+        name: "People",
+        path: "/people",
+        component: People,
+        meta: {area: "People"},
+    },
+    {
         name: "PhotosEdit",
         path: "/photosEdit",
-        component: PhotosEdit,
+        component: Todo,
         meta: {area: "Photos"},
     },
     {
@@ -50,31 +69,12 @@ export default [
         meta: {area: "Filters"},
     },
     {
-        name: "Calendar",
-        path: "/calendar",
-        component: Calendar,
-        meta: {area: "Calendar"},
-    },
-    {
-        name: "Labels",
-        path: "/labels",
-        component: Labels,
-        meta: {area: "Labels"},
-    },
-    {
-        name: "Bookmarks",
-        path: "/bookmarks",
-        component: Todo,
-        meta: {area: "Bookmarks"},
-    },
-    {
         name: "Albums",
         path: "/albums",
-        component: Albums,
+        component: Todo,
         meta: {area: "Albums"},
     },
     {
-
         name: "Albums2",
         path: "/albums2",
         component: Albums2,
@@ -83,7 +83,7 @@ export default [
     {
         name: "Import",
         path: "/import",
-        component: Import,
+        component: Todo,
         meta: {area: "Import"},
     },
     {
@@ -99,13 +99,13 @@ export default [
     {
         name: "Export",
         path: "/export",
-        component: Export,
+        component: Todo,
         meta: {area: "Export"},
     },
     {
         name: "Settings",
         path: "/settings",
-        component: Settings,
+        component: Todo,
         meta: {area: "Settings"},
     },
     {

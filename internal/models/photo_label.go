@@ -6,8 +6,8 @@ import (
 
 // Photo labels are weighted by uncertainty (100 - confidence)
 type PhotoLabel struct {
-	PhotoID          uint `gorm:"primary_key;auto_increment:false"`
 	LabelID          uint `gorm:"primary_key;auto_increment:false"`
+	PhotoID          uint `gorm:"primary_key;auto_increment:false"`
 	LabelUncertainty int
 	LabelSource      string
 	Photo            *Photo
@@ -15,7 +15,7 @@ type PhotoLabel struct {
 }
 
 func (PhotoLabel) TableName() string {
-	return "photo_labels"
+	return "photos_labels"
 }
 
 func NewPhotoLabel(photoId, labelId uint, uncertainty int, source string) *PhotoLabel {

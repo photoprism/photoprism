@@ -21,7 +21,7 @@ test('Select photos', async t => {
     await page.openNav();
     await t
         .click('a[href="/labels"]')
-        .expect(Selector('h1').innerText, {timeout: 5000}).contains('Labels');
+        .expect(Selector('main .p-page-labels').exists, {timeout: 5000}).ok();
     await page.openNav();
     await t
         .click('a[href="/photos"]')

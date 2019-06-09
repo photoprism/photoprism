@@ -103,7 +103,7 @@
     "vue-router": "^3.0.6",
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.10",
-    "vue-truncate-filter": "^1.1.7",
+    "vue2-filters": "^0.6.0",
     "vue2-leaflet": "^2.1.1",
     "vuelidate": "^0.7.4",
     "vuetify": "^1.5.14",

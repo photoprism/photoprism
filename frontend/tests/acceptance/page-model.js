@@ -10,7 +10,8 @@ export default class Page {
     }
 
     async setFilter(filter, option) {
-        await t
+        await t;
+
         switch (filter) {
             case 'view':
                 await t

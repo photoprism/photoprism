@@ -29,6 +29,9 @@
         },
         watch: {
             '$route' () {
+                const query = this.$route.query;
+
+                this.filter.q = query['q'];
                 this.lastFilter = {};
                 this.search();
             }
@@ -66,6 +69,8 @@
                     return storedType;
                 } else if(window.innerWidth < 960) {
                     return 'mosaic';
+                } else if(window.innerWidth > 1600) {
+                    return 'details';
                 }
 
                 return 'tiles';

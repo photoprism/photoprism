@@ -4,6 +4,7 @@
 @import url("maps.css");
 @import url("viewer.css");
 @import url("photos.css");
+@import url("labels.css");
 
 body {
     background: rgb(250, 250, 250);

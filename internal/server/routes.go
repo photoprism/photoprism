@@ -18,11 +18,17 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// JSON-REST API Version 1
 	v1 := router.Group("/api/v1")
 	{
-		api.GetPhotos(v1, conf)
 		api.GetThumbnail(v1, conf)
 		api.GetDownload(v1, conf)
+
+		api.GetPhotos(v1, conf)
 		api.LikePhoto(v1, conf)
 		api.DislikePhoto(v1, conf)
+
+		api.GetLabels(v1, conf)
+		api.LikeLabel(v1, conf)
+		api.DislikeLabel(v1, conf)
+		api.LabelThumbnail(v1, conf)
 	}
 
 	// Default HTML page (client-side routing implemented via Vue.js)

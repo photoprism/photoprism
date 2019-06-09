@@ -85,13 +85,23 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/calendar" @click="" class="p-navigation-timeline">
+                <v-list-tile to="/events" @click="" class="p-navigation-events">
                     <v-list-tile-action>
                         <v-icon>date_range</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title>Timeline</v-list-tile-title>
+                        <v-list-tile-title>Events</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
+                <v-list-tile to="/people" @click="" class="p-navigation-people">
+                    <v-list-tile-action>
+                        <v-icon>people</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>People</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -112,18 +122,47 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile @click="">
+                    <v-list-tile :to="{ name: 'Photos', query: { q: 'lat:52.459714999999996 long:13.321887700000001 dist:20' }}" :exact="true" @click="">
                         <v-list-tile-content>
-                            <v-list-tile-title>Canon EOS 6D</v-list-tile-title>
+                            <v-list-tile-title>Berlin</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile @click="">
+                    <v-list-tile :to="{ name: 'Photos', query: { q: 'mono:true' }}" :exact="true" @click="">
                         <v-list-tile-content>
-                            <v-list-tile-title>iPhone</v-list-tile-title>
+                            <v-list-tile-title>Monochrome</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
+                    <v-list-tile :to="{ name: 'Photos', query: { q: 'label:cat' }}" :exact="true" @click="">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Cats</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile :to="{ name: 'Photos', query: { q: 'label:computer' }}" :exact="true" @click="">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Computers</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile :to="{ name: 'Photos', query: { q: 'color:magenta' }}" :exact="true" @click="">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Magenta</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile :to="{ name: 'Photos', query: { q: 'color:red' }}" :exact="true" @click="">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Red</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile :to="{ name: 'Photos', query: { q: 'chroma:4' }}" :exact="true" @click="">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Vibrant</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
                 </v-list-group>
 
                 <v-list-tile v-if="mini" to="/albums" @click="">
@@ -145,24 +184,8 @@
 
                     <v-list-tile @click="">
                         <v-list-tile-content>
-                            <v-list-tile-title>South Africa</v-list-tile-title>
+                            <v-list-tile-title>Not implemented yet</v-list-tile-title>
                         </v-list-tile-content>
-                    </v-list-tile>
-
-                    <v-list-tile @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Cats &amp; Dogs</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-
-                    <v-list-tile @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Create album</v-list-tile-title>
-                        </v-list-tile-content>
-
-                        <v-list-tile-action>
-                            <v-icon>add</v-icon>
-                        </v-list-tile-action>
                     </v-list-tile>
                 </v-list-group>
 
@@ -204,9 +227,11 @@
     export default {
         name: "p-navigation",
         data() {
+            let mini = (window.innerWidth < 1600);
+
             return {
                 drawer: null,
-                mini: false,
+                mini: mini,
             };
         },
         methods: {

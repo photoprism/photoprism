@@ -46,6 +46,7 @@ zip-nasnet:
 build-js:
 	(cd frontend &&	env NODE_ENV=production npm run build)
 build-go:
+	rm -f $(BINARY_NAME)
 	scripts/build.sh debug $(BINARY_NAME)
 watch-js:
 	(cd frontend &&	env NODE_ENV=development npm run watch)

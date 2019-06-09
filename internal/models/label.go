@@ -13,9 +13,10 @@ type Label struct {
 	LabelSlug        string `gorm:"type:varchar(128);index;"`
 	LabelName        string `gorm:"type:varchar(128);index;"`
 	LabelPriority    int
+	LabelFavorite    bool
 	LabelDescription string   `gorm:"type:text;"`
 	LabelNotes       string   `gorm:"type:text;"`
-	LabelCategories    []*Label `gorm:"many2many:categories;association_jointable_foreignkey:category_id"`
+	LabelCategories  []*Label `gorm:"many2many:categories;association_jointable_foreignkey:category_id"`
 }
 
 func NewLabel(labelName string, labelPriority int) *Label {
@@ -28,8 +29,8 @@ func NewLabel(labelName string, labelPriority int) *Label {
 	labelSlug := slug.Make(labelName)
 
 	result := &Label{
-		LabelName: labelName,
-		LabelSlug: labelSlug,
+		LabelName:     labelName,
+		LabelSlug:     labelSlug,
 		LabelPriority: labelPriority,
 	}
 

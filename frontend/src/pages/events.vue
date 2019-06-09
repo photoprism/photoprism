@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-toolbar flat color="blue-grey lighten-4">
-            <v-toolbar-title>Calendar</v-toolbar-title>
+            <v-toolbar-title>Events</v-toolbar-title>
 
             <v-spacer></v-spacer>
         </v-toolbar>
