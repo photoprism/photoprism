@@ -1,17 +1,11 @@
-import PhotosPage from "pages/photos.vue";
-import PlacesPage from "pages/places.vue";
-import PhotosEdit from "pages/photosEdit.vue";
-import Albums from "pages/albums.vue";
-import Albums2 from "pages/albums2.vue";
-import Import2 from "pages/import2.vue";
-import Import3 from "pages/import3.vue";
-import Import from "pages/import.vue";
-import Export from "pages/export.vue";
-import Settings from "pages/settings.vue";
+import Photos from "pages/photos.vue";
+import Places from "pages/places.vue";
 import Labels from "pages/labels.vue";
-import Todo from "pages/todo.vue";
 import Events from "pages/events.vue";
 import People from "pages/people.vue";
+import Share from "pages/share.vue";
+import Settings from "pages/settings.vue";
+import Todo from "pages/todo.vue";
 
 export default [
     {
@@ -22,20 +16,20 @@ export default [
     {
         name: "Photos",
         path: "/photos",
-        component: PhotosPage,
+        component: Photos,
         meta: {area: "Photos"},
     },
     {
         name: "Favorites",
         path: "/favorites",
-        component: PhotosPage,
+        component: Photos,
         meta: {area: "Favorites"},
         props: {staticFilter: {favorites: true}},
     },
     {
         name: "Places",
         path: "/places",
-        component: PlacesPage,
+        component: Places,
         meta: {area: "Places"},
     },
     {
@@ -57,12 +51,6 @@ export default [
         meta: {area: "People"},
     },
     {
-        name: "PhotosEdit",
-        path: "/photosEdit",
-        component: Todo,
-        meta: {area: "Photos"},
-    },
-    {
         name: "Filters",
         path: "/filters",
         component: Todo,
@@ -75,37 +63,21 @@ export default [
         meta: {area: "Albums"},
     },
     {
-        name: "Albums2",
-        path: "/albums2",
-        component: Albums2,
-        meta: {area: "Albums"},
-    },
-    {
         name: "Import",
         path: "/import",
         component: Todo,
         meta: {area: "Import"},
     },
     {
-        name: "Import2",
-        path: "/import2",
-        component: Import2, meta: {area: "Import"},
-    },
-    {
-        name: "Import3",
-        path: "/import3",
-        component: Import3, meta: {area: "Import"},
-    },
-    {
-        name: "Export",
-        path: "/export",
-        component: Todo,
-        meta: {area: "Export"},
+        name: "Share",
+        path: "/share",
+        component: Share,
+        meta: {area: "Share"},
     },
     {
         name: "Settings",
         path: "/settings",
-        component: Todo,
+        component: Settings,
         meta: {area: "Settings"},
     },
     {

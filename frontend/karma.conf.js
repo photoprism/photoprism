@@ -8,7 +8,7 @@ module.exports = (config) => {
         logLevel: config.LOG_INFO,
 
         webpackMiddleware: {
-            stats: "errors-only"
+            stats: "errors-only",
         },
 
         frameworks: ["mocha"],

@@ -44,7 +44,7 @@ class Label extends Abstract {
     }
 
     getDateString() {
-        return moment(this.CreatedAt).format('LLL');
+        return moment(this.CreatedAt).format("LLL");
     }
 
     toggleLike() {

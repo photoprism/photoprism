@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-toolbar flat color="blue-grey lighten-4">
-            <v-toolbar-title>Export</v-toolbar-title>
+            <v-toolbar-title>Not implemented yet</v-toolbar-title>
 
             <v-spacer></v-spacer>
         </v-toolbar>

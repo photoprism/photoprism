@@ -70,7 +70,7 @@
 
                                 <v-card-title primary-title class="pa-3">
                                     <div>
-                                        <h3 class="subheading mb-2">{{ label.LabelName | capitalize }}</h3>
+                                        <h3 class="subheading">{{ label.LabelName | capitalize }}</h3>
                                     </div>
                                 </v-card-title>
                             </v-card>
@@ -89,15 +89,6 @@
         name: 'p-page-labels',
         props: {
             staticFilter: Object
-        },
-        watch: {
-            '$route'() {
-                const query = this.$route.query;
-
-                this.filter.q = query['q'];
-                this.lastFilter = {};
-                this.search();
-            }
         },
         data() {
             const query = this.$route.query;
@@ -197,7 +188,7 @@
                     if (this.scrollDisabled) {
                         this.$alert.info(this.results.length + ' labels found');
                     } else {
-                        this.$alert.info('More than 50 labels found');
+                        this.$alert.info('More than 20 labels found');
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }

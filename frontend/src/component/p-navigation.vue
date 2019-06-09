@@ -191,7 +191,7 @@
 
                 <v-list-tile to="/import" @click="">
                     <v-list-tile-action>
-                        <v-icon>add_circle</v-icon>
+                        <v-icon>camera_roll</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
@@ -199,13 +199,13 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/export" @click="">
+                <v-list-tile to="/share" @click="">
                     <v-list-tile-action>
-                        <v-icon>save</v-icon>
+                        <v-icon>share</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title>Export</v-list-tile-title>
+                        <v-list-tile-title>Share</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 

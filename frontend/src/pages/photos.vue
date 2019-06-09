@@ -29,15 +29,21 @@
         },
         watch: {
             '$route' () {
+                if(this.routeName === this.$route.name) {
+                    return;
+                }
+
                 const query = this.$route.query;
 
                 this.filter.q = query['q'];
                 this.lastFilter = {};
+                this.routeName = this.$route.name;
                 this.search();
             }
         },
         data() {
             const query = this.$route.query;
+            const routeName = this.$route.name;
             const order = query['order'] ? query['order'] : 'newest';
             const camera = query['camera'] ? parseInt(query['camera']) : 0;
             const q = query['q'] ? query['q'] : '';
@@ -55,6 +61,7 @@
                 settings: settings,
                 filter: filter,
                 lastFilter: {},
+                routeName: routeName,
             };
         },
         methods: {

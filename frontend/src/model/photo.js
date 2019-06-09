@@ -91,7 +91,7 @@ class Photo extends Abstract {
     }
 
     getDateString() {
-        return moment(this.TakenAt).format('LLL');
+        return moment(this.TakenAt).format("LLL");
     }
 
     hasLocation() {
