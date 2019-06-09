@@ -11,6 +11,6 @@ import "github.com/sirupsen/logrus"
 
 var log *logrus.Logger
 
-func init () {
+func init() {
 	log = logrus.StandardLogger()
 }

@@ -44,7 +44,6 @@ func TestMediaFile_Exif_DNG(t *testing.T) {
 	assert.Equal(t, "Canon EOS 6D", info.CameraModel)
 }
 
-
 func TestMediaFile_Exif_HEIF(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
@@ -84,4 +83,3 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 		t.Error(err)
 	}
 }
-

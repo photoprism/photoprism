@@ -64,8 +64,8 @@ func TestTensorFlow_Labels(t *testing.T) {
 		assert.Equal(t, "tabby cat", result[0].Name)
 		assert.Equal(t, "tiger cat", result[1].Name)
 
-		assert.Equal(t, 100 - 68, result[0].Uncertainty)
-		assert.Equal(t, 100 - 14, result[1].Uncertainty)
+		assert.Equal(t, 100-68, result[0].Uncertainty)
+		assert.Equal(t, 100-14, result[1].Uncertainty)
 	}
 }
 

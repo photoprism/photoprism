@@ -35,7 +35,7 @@ func initLogger(debug bool) {
 	}
 }
 
-func findExecutable (configBin, defaultBin string) (result string) {
+func findExecutable(configBin, defaultBin string) (result string) {
 	if configBin == "" {
 		result = defaultBin
 	} else {

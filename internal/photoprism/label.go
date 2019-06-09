@@ -7,7 +7,7 @@ type Label struct {
 	Source      string   `json:"source"`      // Where was this label found / detected?
 	Uncertainty int      `json:"uncertainty"` // >= 0
 	Priority    int      `json:"priority"`    // >= 0
-	Categories    []string `json:"categories"`    // List of similar labels
+	Categories  []string `json:"categories"`  // List of similar labels
 }
 
 func NewLocationLabel(name string, uncertainty int, priority int) Label {

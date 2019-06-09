@@ -150,5 +150,4 @@ var GlobalFlags = []cli.Flag{
 		Value:  "heif-convert",
 		EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
 	},
-
 }

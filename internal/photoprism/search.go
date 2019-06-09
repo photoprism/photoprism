@@ -335,7 +335,7 @@ func (s *Search) Labels(form forms.LabelSearchForm) (results []LabelSearchResult
 		q = q.Where("labels.label_favorite = 1")
 	}
 
-	if form.Priority !=0 {
+	if form.Priority != 0 {
 		q = q.Where("labels.label_priority > ?", form.Priority)
 	} else {
 		q = q.Where("labels.label_priority >= -1")

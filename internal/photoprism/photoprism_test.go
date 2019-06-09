@@ -3,6 +3,7 @@ package photoprism
 import (
 	"os"
 	"testing"
+
 	"github.com/sirupsen/logrus"
 )
 

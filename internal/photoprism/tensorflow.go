@@ -13,8 +13,8 @@ import (
 	"strings"
 
 	"github.com/disintegration/imaging"
-	"github.com/photoprism/photoprism/internal/util"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/util"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"gopkg.in/yaml.v2"
 )
@@ -28,11 +28,11 @@ type TensorFlow struct {
 }
 
 type LabelRule struct {
-	Label     string
-	See       string
-	Threshold float32
-	Categories  []string
-	Priority  int
+	Label      string
+	See        string
+	Threshold  float32
+	Categories []string
+	Priority   int
 }
 
 type LabelRules map[string]LabelRule
@@ -214,7 +214,7 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 
 		labelText = strings.TrimSpace(labelText)
 
-		uncertainty := 100 - int(math.Round(float64(p * 100)))
+		uncertainty := 100 - int(math.Round(float64(p*100)))
 
 		result = append(result, Label{Name: labelText, Source: "image", Uncertainty: uncertainty, Priority: rule.Priority, Categories: rule.Categories})
 	}

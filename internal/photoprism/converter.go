@@ -11,12 +11,12 @@ import (
 
 // Converter wraps a darktable cli binary.
 type Converter struct {
-	conf     *config.Config
+	conf *config.Config
 }
 
 // NewConverter returns a new converter by setting the darktable
 // cli binary location.
-func NewConverter(conf     *config.Config) *Converter {
+func NewConverter(conf *config.Config) *Converter {
 	return &Converter{conf: conf}
 }
 
@@ -55,7 +55,7 @@ func (c *Converter) ConvertAll(path string) {
 func (c *Converter) ConvertCommand(image *MediaFile, jpegFilename string, xmpFilename string) (result *exec.Cmd, err error) {
 	if image.IsRaw() {
 		if c.conf.SipsBin() != "" {
-			result = exec.Command(c.conf.SipsBin(), "-s format jpeg", image.filename, "--out " + jpegFilename)
+			result = exec.Command(c.conf.SipsBin(), "-s format jpeg", image.filename, "--out "+jpegFilename)
 		} else if c.conf.DarktableBin() != "" && xmpFilename != "" {
 			result = exec.Command(c.conf.DarktableBin(), image.filename, xmpFilename, jpegFilename)
 		} else if c.conf.DarktableBin() != "" {

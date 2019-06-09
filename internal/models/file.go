@@ -6,7 +6,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 // An image or sidecar file that belongs to a photo
@@ -38,7 +38,6 @@ type File struct {
 func (m *File) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("FileUUID", uuid.NewV4().String())
 }
-
 
 func (m *File) DownloadFileName() string {
 	if m.Photo == nil {
