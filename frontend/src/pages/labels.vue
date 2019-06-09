@@ -2,7 +2,7 @@
     <div class="p-page p-page-labels" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
          :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <v-form ref="form" class="p-labels-search" lazy-validation @submit.prevent="search" dense>
+        <v-form ref="form" class="p-labels-search" lazy-validation @submit.prevent="updateQuery" dense>
             <v-toolbar flat color="blue-grey lighten-4">
                 <v-text-field class="pt-3 pr-3"
                               single-line
@@ -12,7 +12,7 @@
                               color="blue-grey"
                               @click:clear="clearQuery"
                               v-model="filter.q"
-                              @keyup.enter.native="search"
+                              @keyup.enter.native="updateQuery"
                               id="search"
                 ></v-text-field>
 
@@ -90,8 +90,19 @@
         props: {
             staticFilter: Object
         },
+        watch: {
+            '$route' () {
+                const query = this.$route.query;
+
+                this.filter.q = query['q'];
+                this.lastFilter = {};
+                this.routeName = this.$route.name;
+                this.search();
+            }
+        },
         data() {
             const query = this.$route.query;
+            const routeName = this.$route.name;
             const q = query['q'] ? query['q'] : '';
             const filter = {q: q};
             const settings = {};
@@ -105,6 +116,7 @@
                 settings: settings,
                 filter: filter,
                 lastFilter: {},
+                routeName: routeName,
             };
         },
         methods: {
@@ -147,6 +159,12 @@
 
                 Object.assign(query, this.filter);
 
+                for (let key in query) {
+                    if (query[key] === undefined || !query[key]) {
+                        delete query[key];
+                    }
+                }
+
                 this.$router.replace({query: query});
             },
             searchParams() {
@@ -175,8 +193,6 @@
                 Object.assign(this.lastFilter, this.filter);
 
                 this.offset = 0;
-
-                this.updateQuery();
 
                 const params = this.searchParams();
 

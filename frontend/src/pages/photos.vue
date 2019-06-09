@@ -2,7 +2,7 @@
     <div class="p-page p-page-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
          :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <p-photo-search :settings="settings" :filter="filter" :filter-change="search"
+        <p-photo-search :settings="settings" :filter="filter" :filter-change="updateQuery"
                         :settings-change="updateQuery"></p-photo-search>
 
         <v-container fluid>
@@ -29,13 +29,11 @@
         },
         watch: {
             '$route' () {
-                if(this.routeName === this.$route.name) {
-                    return;
-                }
-
                 const query = this.$route.query;
 
                 this.filter.q = query['q'];
+                this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
+                this.filter.country = query['country'] ? query['country'] : '';
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
                 this.search();
@@ -131,6 +129,12 @@
 
                 Object.assign(query, this.filter);
 
+                for (let key in query) {
+                    if (query[key] === undefined || !query[key]) {
+                        delete query[key];
+                    }
+                }
+
                 this.$router.replace({query: query});
             },
             searchParams() {
@@ -159,8 +163,6 @@
                 Object.assign(this.lastFilter, this.filter);
 
                 this.offset = 0;
-
-                this.updateQuery();
 
                 const params = this.searchParams();
 
