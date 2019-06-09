@@ -35,7 +35,7 @@
                             v-for="(label, index) in results"
                             :key="index"
                             class="p-label"
-                            xs12 sm6 md4 lg3 d-flex
+                            xs6 sm4 md3 lg2 d-flex
                     >
                         <v-hover>
                             <v-card tile slot-scope="{ hover }"
@@ -45,7 +45,7 @@
                                         aspect-ratio="1"
                                         style="cursor: pointer"
                                         class="grey lighten-2"
-                                        @click="openLabel(index)"
+                                        @click.prevent="openLabel(index)"
 
                                 >
                                     <v-layout
@@ -57,22 +57,17 @@
                                     >
                                         <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
                                     </v-layout>
-
-                                    <v-btn v-if="hover || label.LabelFavorite" :flat="!hover" :ripple="false"
-                                           icon large absolute
-                                           class="p-label-like"
-                                           @click.stop.prevent="label.toggleLike()">
-                                        <v-icon v-if="label.LabelFavorite" color="white">favorite
-                                        </v-icon>
-                                        <v-icon v-else color="grey lighten-3">favorite_border</v-icon>
-                                    </v-btn>
                                 </v-img>
 
-                                <v-card-title primary-title class="pa-3">
-                                    <div>
-                                        <h3 class="subheading">{{ label.LabelName | capitalize }}</h3>
-                                    </div>
-                                </v-card-title>
+                                <v-card-actions>
+                                    {{ label.LabelName | capitalize }}
+                                    <v-spacer></v-spacer>
+                                    <v-btn icon @click.stop.prevent="label.toggleLike()">
+                                        <v-icon v-if="label.LabelFavorite" color="#FFD600">star
+                                        </v-icon>
+                                        <v-icon v-else color="grey lighten-2">star</v-icon>
+                                    </v-btn>
+                                </v-card-actions>
                             </v-card>
                         </v-hover>
                     </v-flex>
