@@ -122,39 +122,15 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile :to="{ name: 'Photos', query: { q: 'lat:52.459714999999996 long:13.321887700000001 dist:20' }}" :exact="true" @click="">
+                    <v-list-tile :to="{ name: 'Photos', query: { q: 'label:animal' }}" :exact="true" @click="">
                         <v-list-tile-content>
-                            <v-list-tile-title>Berlin</v-list-tile-title>
+                            <v-list-tile-title>Animals</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
                     <v-list-tile :to="{ name: 'Photos', query: { q: 'mono:true' }}" :exact="true" @click="">
                         <v-list-tile-content>
                             <v-list-tile-title>Monochrome</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-
-                    <v-list-tile :to="{ name: 'Photos', query: { q: 'label:cat' }}" :exact="true" @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Cats</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-
-                    <v-list-tile :to="{ name: 'Photos', query: { q: 'label:computer' }}" :exact="true" @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Computers</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-
-                    <v-list-tile :to="{ name: 'Photos', query: { q: 'color:magenta' }}" :exact="true" @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Magenta</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-
-                    <v-list-tile :to="{ name: 'Photos', query: { q: 'color:red' }}" :exact="true" @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Red</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
