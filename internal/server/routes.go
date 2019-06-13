@@ -29,6 +29,8 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.LikeLabel(v1, conf)
 		api.DislikeLabel(v1, conf)
 		api.LabelThumbnail(v1, conf)
+
+		api.Upload(v1, conf)
 	}
 
 	// Default HTML page (client-side routing implemented via Vue.js)

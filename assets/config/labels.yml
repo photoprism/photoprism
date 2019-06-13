@@ -175,6 +175,7 @@ windsor tie:
 
 chainlink fence:
   label: fence
+  priority: -1
 
 mitten:
   label: unknown
@@ -2727,6 +2728,7 @@ photocopier:
     - office
 
 picket fence:
+  priority: -1
   categories:
     - fence
 
@@ -3128,6 +3130,7 @@ wooden spoon:
 
 worm fence:
   label: fence
+  priority: -1
 
 wreck:
   categories:
@@ -3513,3 +3516,15 @@ wool:
 
 ear:
   priority: -1
+
+sunglass:
+  label: sunglasses
+  priority: 2
+
+packet:
+  label: package
+  priority: 1
+
+swing:
+  label: relax
+  priority: 1

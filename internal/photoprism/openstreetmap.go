@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/util"
 	"github.com/pkg/errors"
 )
 
@@ -90,12 +91,11 @@ func (m *MediaFile) Location() (*models.Location, error) {
 		location.LocLong = lon
 	}
 
-	locationName := strings.ReplaceAll(openstreetmapLocation.Name, " - ", " / ")
-	locationName = strings.Title(strings.TrimSpace(strings.ReplaceAll(locationName, "_", " ")))
+	if len(openstreetmapLocation.Name) > 1 {
+		location.LocName = strings.ReplaceAll(openstreetmapLocation.Name, " - ", " / ")
+		location.LocName = util.Title(strings.TrimSpace(strings.ReplaceAll(location.LocName, "_", " ")))
+	}
 
-	locationCategory := strings.TrimSpace(strings.ReplaceAll(openstreetmapLocation.Category, "_", " "))
-
-	location.LocName = locationName
 	location.LocHouseNr = strings.TrimSpace(openstreetmapLocation.Address.HouseNumber)
 	location.LocStreet = strings.TrimSpace(openstreetmapLocation.Address.Road)
 	location.LocSuburb = strings.TrimSpace(openstreetmapLocation.Address.Suburb)
@@ -105,6 +105,8 @@ func (m *MediaFile) Location() (*models.Location, error) {
 	location.LocCountry = strings.TrimSpace(openstreetmapLocation.Address.Country)
 	location.LocCountryCode = strings.TrimSpace(openstreetmapLocation.Address.CountryCode)
 	location.LocDisplayName = strings.TrimSpace(openstreetmapLocation.DisplayName)
+
+	locationCategory := strings.TrimSpace(strings.ReplaceAll(openstreetmapLocation.Category, "_", " "))
 	location.LocCategory = locationCategory
 
 	if openstreetmapLocation.Type != "yes" && openstreetmapLocation.Type != "unclassified" {

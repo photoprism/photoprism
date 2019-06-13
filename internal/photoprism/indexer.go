@@ -11,6 +11,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/util"
 )
 
 const (
@@ -176,22 +177,30 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 60 && labels[0].Name != "" { // TODO: User defined title format
 				log.Infof("label for title: %#v", labels[0])
 				if location.LocCity == "" || len(location.LocCity) > 16 || strings.Contains(labels[0].Name, location.LocCity) {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(labels[0].Name), location.LocCountry, photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(labels[0].Name), location.LocCountry, photo.TakenAt.Format("2006"))
 				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(labels[0].Name), location.LocCity, photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(labels[0].Name), location.LocCity, photo.TakenAt.Format("2006"))
 				}
 			} else if location.LocName != "" && location.LocCity != "" {
 				if len(location.LocName) > 45 {
-					photo.PhotoTitle = strings.Title(location.LocName)
+					photo.PhotoTitle = util.Title(location.LocName)
 				} else if len(location.LocName) > 20 || len(location.LocCity) > 16 || strings.Contains(location.LocName, location.LocCity) {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(location.LocName), photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s", util.Title(location.LocName), photo.TakenAt.Format("2006"))
 				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", strings.Title(location.LocName), location.LocCity, photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(location.LocName), location.LocCity, photo.TakenAt.Format("2006"))
 				}
 			} else if location.LocCity != "" && location.LocCountry != "" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, photo.TakenAt.Format("2006"))
+				if len(location.LocCity) > 20 {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s", location.LocCity, photo.TakenAt.Format("2006"))
+				} else {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, photo.TakenAt.Format("2006"))
+				}
 			} else if location.LocCounty != "" && location.LocCountry != "" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, photo.TakenAt.Format("2006"))
+				if len(location.LocCounty) > 20 {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s", location.LocCounty, photo.TakenAt.Format("2006"))
+				} else {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, photo.TakenAt.Format("2006"))
+				}
 			}
 		}
 	} else {
@@ -200,7 +209,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 
 	if photo.PhotoTitleChanged == false && photo.PhotoTitle == "" {
 		if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
-			photo.PhotoTitle = fmt.Sprintf("%s / %s", strings.Title(labels[0].Name), mediaFile.DateCreated().Format("2006"))
+			photo.PhotoTitle = fmt.Sprintf("%s / %s", util.Title(labels[0].Name), mediaFile.DateCreated().Format("2006"))
 		} else {
 			var daytimeString string
 			hour := mediaFile.DateCreated().Hour()

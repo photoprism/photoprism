@@ -1,38 +1,136 @@
 <template>
-    <div>
-        <v-toolbar flat color="blue-grey lighten-4">
-            <h1>Import</h1>
-        </v-toolbar>
-    <v-container fluid>
-        <v-form>
-        <p class="md-subheading">
-            You have two possibilities to get your photos into photoprism.</p>
-            <h2>Import & Index</h2>
-            <p>Importing means the photos you upload are renamed (the naming schema you can define in settings), and moved to the originals folder sorted by year and month.
-                Additionally duplicates are removed and images get tagged and metadata (like location, camera model etc.) will be extracted. In case you have not supported file types
-                (e.g. videos) within the folder you import --> those are ignored. </p>
-            <v-btn color="success" @click="$refs.inputUpload.click()" type="file" class="importbtn">Import & Index</v-btn>
-            <input v-show="false" ref="inputUpload" type="file" >
+    <div class="p-page p-page-import">
+        <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
+            <input type="file" ref="upload" multiple @change.stop="upload()" class="d-none">
+
+            <v-toolbar flat color="blue-grey lighten-4">
+                <v-toolbar-title>Import</v-toolbar-title>
+
+                <v-spacer></v-spacer>
+
+                <v-btn icon @click.stop="uploadDialog()">
+                    <v-icon>cloud_upload</v-icon>
+                </v-btn>
+            </v-toolbar>
+
+            <v-container fluid>
+                <v-progress-linear color="accent" v-model="completed"></v-progress-linear>
+
+                <v-container grid-list-xs fluid class="pa-0 p-photos p-photo-mosaic">
+                    <p class="subheading" v-if="uploads.length === 0">
+                        Select photos to start import...
+                    </p>
+
+                    <v-layout row wrap>
+                        <v-flex
+                                v-for="(file, index) in uploads"
+                                :key="index"
+                                class="p-photo"
+                                xs4 sm3 md2 lg1 d-flex
+                        >
+                            <v-card tile class="elevation-2 ma-2">
+                                <v-img :src="file.data"
+                                       aspect-ratio="1"
+                                       :title="file.name"
+                                       class="grey lighten-2"
+                                >
+                                    <v-layout
+                                            slot="placeholder"
+                                            fill-height
+                                            align-center
+                                            justify-center
+                                            ma-0
+                                    >
+                                        <v-progress-circular indeterminate
+                                                             color="grey lighten-5"></v-progress-circular>
+                                    </v-layout>
+                                </v-img>
+                            </v-card>
+                        </v-flex>
+                    </v-layout>
+
+                    <p class="subheading" v-if="completed === 100">
+                        Done.
+                    </p>
+                </v-container>
+            </v-container>
         </v-form>
-    </v-container>
-        <v-container fluid>
-            <v-form>
-            <h2>Index</h2>
-            <p>In case you already have a nice folder structure you can only index the photos. Therefore in settings you need to set the base directory to the directory your photos
-            are in. The index functionality will then just tag the images and extract the metadata.
-        </p>
-             <v-btn color="success" @click="$refs.inputUpload.click()" type="file" class="importbtn">Index</v-btn>
-          </v-form>
-    </v-container>
-</div>
+    </div>
 </template>
 
 <script>
+    import axios from "axios";
+    import Event from "pubsub-js";
+
     export default {
-        name: 'import',
-        props: {},
+        name: 'p-page-import',
         data() {
-            return {}
+            return {
+                selected: [],
+                uploads: [],
+                busy: false,
+                current: 0,
+                total: 0,
+                completed: 0,
+            }
         },
+        methods: {
+            submit() {
+                console.log("SUBMIT");
+            },
+            uploadDialog() {
+                this.$refs.upload.click();
+            },
+            upload() {
+                this.$alert.info("Uploading photos...");
+
+                Event.publish("ajax.start");
+
+                this.selected = this.$refs.upload.files;
+                this.busy = true;
+                this.total = this.selected.length;
+                this.current = 0;
+                this.completed = 0;
+
+                async function performUpload(ctx) {
+                    for (let i = 0; i < ctx.selected.length; i++) {
+                        ctx.current = i + 1;
+                        ctx.completed = Math.round((ctx.current / ctx.total) * 100);
+                        let file = ctx.selected[i];
+                        let formData = new FormData();
+
+                        formData.append('files', file);
+
+                        if (file.type.match('image.*')) {
+                            const reader = new FileReader;
+
+                            reader.onload = e => {
+                                ctx.uploads.push({name: file.name, data: e.target.result});
+                            };
+
+                            reader.readAsDataURL(file)
+                        }
+
+                        await axios.post('/api/v1/upload',
+                            formData,
+                            {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
+                            }
+                        ).then(function () {
+                        }).catch(function () {
+                            Event.publish("alert.error", "Upload failed");
+                        });
+                    }
+                }
+
+                performUpload(this).then(() => {
+                    Event.publish("ajax.end");
+                    Event.publish("alert.success", "Photos uploaded and imported");
+                    this.busy = false;
+                });
+            },
+        }
     };
 </script>

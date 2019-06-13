@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="p-page p-page-todo">
         <v-toolbar flat color="blue-grey lighten-4">
             <v-toolbar-title>Not implemented yet</v-toolbar-title>
 
@@ -20,7 +20,7 @@
 
 <script>
     export default {
-        name: 'todo',
+        name: 'p-page-todo',
         data() {
             return {};
         },
