@@ -13,6 +13,7 @@ import (
 
 // Exif returns information about a single image.
 type Exif struct {
+	UUID        string
 	DateTime    time.Time
 	TimeZone    string
 	Artist      string
@@ -22,7 +23,6 @@ type Exif struct {
 	LensModel   string
 	Aperture    float64
 	FocalLength float64
-	UniqueID    string
 	Lat         float64
 	Long        float64
 	Thumbnail   []byte
@@ -134,7 +134,7 @@ func (m *MediaFile) Exif() (result *Exif, err error) {
 	}
 
 	if uniqueID, err := x.Get(exif.ImageUniqueID); err == nil {
-		m.exifData.UniqueID = uniqueID.String()
+		m.exifData.UUID = uniqueID.String()
 	}
 
 	if width, err := x.Get(exif.ImageWidth); err == nil {

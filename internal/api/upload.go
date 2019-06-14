@@ -52,6 +52,6 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Infof("%d files uploaded in %s", len(files), elapsed)
 
-		c.JSON(http.StatusOK,  gin.H{"message": fmt.Sprintf("%d files uploaded in %s", len(files), elapsed)})
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("%d files uploaded in %s", len(files), elapsed)})
 	})
 }

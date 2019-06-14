@@ -47,6 +47,6 @@ func Import(router *gin.RouterGroup, conf *config.Config) {
 
 		elapsed := time.Since(start)
 
-		c.JSON(http.StatusOK,  gin.H{"message": fmt.Sprintf("completed import in %s", elapsed)})
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("completed import in %s", elapsed)})
 	})
 }

@@ -130,6 +130,13 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			photo.PhotoLat = exifData.Lat
 			photo.PhotoLong = exifData.Long
 			photo.PhotoArtist = exifData.Artist
+
+			if exifData.UUID != "" {
+				log.Debugf("photo uuid: %s", exifData.UUID)
+				photo.PhotoUUID = exifData.UUID
+			} else {
+				log.Debug("no photo uuid")
+			}
 		}
 
 		// Set Camera, Lens, Focal Length and Aperture

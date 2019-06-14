@@ -3526,5 +3526,14 @@ packet:
   priority: 1
 
 swing:
-  label: relax
+  label: relaxation
   priority: 1
+  categories:
+    - outdoor
+    - furniture
+
+web site:
+  label: info
+  categories:
+    - sign
+    - screenshot
