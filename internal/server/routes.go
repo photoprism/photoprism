@@ -32,6 +32,9 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		api.Upload(v1, conf)
 		api.Import(v1, conf)
+
+		api.BatchPhotosDelete(v1, conf)
+		api.BatchPhotosLike(v1, conf)
 	}
 
 	// Default HTML page (client-side routing implemented via Vue.js)

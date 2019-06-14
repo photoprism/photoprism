@@ -6,7 +6,7 @@
                         :settings-change="updateQuery"></p-photo-search>
 
         <v-container fluid>
-            <p-photo-clipboard :selection="selection"></p-photo-clipboard>
+            <p-photo-clipboard :refresh="refresh" :selection="selection"></p-photo-clipboard>
 
             <p-photo-mosaic v-if="settings.view === 'mosaic'" :photos="results" :selection="selection"
                             :open-photo="openPhoto"></p-photo-mosaic>
@@ -150,6 +150,10 @@
                 }
 
                 return params;
+            },
+            refresh() {
+                this.lastFilter = {};
+                this.search();
             },
             search() {
                 this.scrollDisabled = true;

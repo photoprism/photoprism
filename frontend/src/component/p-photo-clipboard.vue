@@ -79,10 +79,14 @@
     </v-speed-dial>
 </template>
 <script>
+    import Event from "pubsub-js";
+    import axios from "axios";
+
     export default {
         name: 'p-photo-clipboard',
         props: {
             selection: Array,
+            refresh: Function,
         },
         data() {
             return {
@@ -95,12 +99,32 @@
                 this.expanded = false;
             },
             batchLike() {
-                this.$alert.warning("Not implemented yet");
-                this.expanded = false;
+                Event.publish("ajax.start");
+
+                const ctx = this;
+
+                axios.post("/api/v1/batch/photos/like", {"ids": this.selection}).then(function () {
+                    Event.publish("ajax.end");
+                    Event.publish("alert.success", "Photos liked");
+                    ctx.clearClipboard();
+                    ctx.refresh();
+                }).catch(() => {
+                    Event.publish("ajax.end");
+                });
             },
             batchDelete() {
-                this.$alert.warning("Not implemented yet");
-                this.expanded = false;
+                Event.publish("ajax.start");
+
+                const ctx = this;
+
+                axios.post("/api/v1/batch/photos/delete", {"ids": this.selection}).then(function () {
+                    Event.publish("ajax.end");
+                    Event.publish("alert.success", "Photos deleted");
+                    ctx.clearClipboard();
+                    ctx.refresh();
+                }).catch(() => {
+                    Event.publish("ajax.end");
+                });
             },
             batchTag() {
                 this.$alert.warning("Not implemented yet");
