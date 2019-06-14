@@ -87,16 +87,20 @@
                 this.$refs.upload.click();
             },
             upload() {
-                this.$alert.info("Uploading photos...");
-
-                Event.publish("ajax.start");
-
                 this.selected = this.$refs.upload.files;
                 this.busy = true;
                 this.total = this.selected.length;
                 this.current = 0;
                 this.completed = 0;
                 this.uploads = [];
+
+                if(!this.total) {
+                    return
+                }
+
+                this.$alert.info("Uploading photos...");
+
+                Event.publish("ajax.start");
 
                 async function performUpload(ctx) {
                     for (let i = 0; i < ctx.selected.length; i++) {
