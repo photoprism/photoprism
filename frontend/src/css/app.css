@@ -47,6 +47,14 @@ main {
     color: #00B8D4;
 }
 
+#photoprism main a.v-tabs__item {
+    color: #546E7A;
+}
+
+#photoprism main a.v-tabs__item--active {
+    color: #455A64;
+}
+
 #photoprism .v-badge__badge {
     font-size: 12px;
     height: 19px;

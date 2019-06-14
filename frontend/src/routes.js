@@ -3,7 +3,7 @@ import Places from "pages/places.vue";
 import Labels from "pages/labels.vue";
 import Events from "pages/events.vue";
 import People from "pages/people.vue";
-import Import from "pages/import.vue";
+import Library from "pages/library.vue";
 import Share from "pages/share.vue";
 import Settings from "pages/settings.vue";
 import Todo from "pages/todo.vue";
@@ -64,10 +64,10 @@ export default [
         meta: {area: "Albums"},
     },
     {
-        name: "Import",
-        path: "/import",
-        component: Import,
-        meta: {area: "Import"},
+        name: "Library",
+        path: "/library",
+        component: Library,
+        meta: {area: "Library"},
     },
     {
         name: "Share",

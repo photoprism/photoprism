@@ -9,33 +9,16 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/util"
-	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
-var importer *photoprism.Importer
-
-func initImporter(conf *config.Config) {
-	if importer != nil {
-		return
-	}
-
-	tensorFlow := photoprism.NewTensorFlow(conf)
-
-	indexer := photoprism.NewIndexer(conf, tensorFlow)
-
-	converter := photoprism.NewConverter(conf)
-
-	importer = photoprism.NewImporter(conf, indexer, converter)
-}
-
-// POST /api/v1/upload
+// POST /api/v1/upload/:path
 func Upload(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/upload", func(c *gin.Context) {
+	router.POST("/upload/:path", func(c *gin.Context) {
 		start := time.Now()
+		subPath := c.Param("path")
 
 		form, err := c.MultipartForm()
 
@@ -49,7 +32,7 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 
 		files := form.File["files"]
 
-		path := fmt.Sprintf("%s/uploads/%s", conf.ImportPath(), uuid.NewV4())
+		path := fmt.Sprintf("%s/upload/%s", conf.ImportPath(), subPath)
 
 		if err := os.MkdirAll(path, os.ModePerm); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
@@ -65,16 +48,10 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 			}
 		}
 
-		log.Infof("importing photos from %s", conf.ImportPath())
-
-		initImporter(conf)
-
-		importer.ImportPhotosFromDirectory(conf.ImportPath())
-
 		elapsed := time.Since(start)
 
-		log.Infof("%d files imported in %s", len(files), elapsed)
+		log.Infof("%d files uploaded in %s", len(files), elapsed)
 
-		c.JSON(http.StatusOK,  gin.H{"message": fmt.Sprintf("%d files imported in %s", len(files), elapsed)})
+		c.JSON(http.StatusOK,  gin.H{"message": fmt.Sprintf("%d files uploaded in %s", len(files), elapsed)})
 	})
 }

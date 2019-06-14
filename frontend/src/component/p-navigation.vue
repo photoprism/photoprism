@@ -165,13 +165,13 @@
                     </v-list-tile>
                 </v-list-group>
 
-                <v-list-tile to="/import" @click="">
+                <v-list-tile to="/library" @click="">
                     <v-list-tile-action>
                         <v-icon>camera_roll</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title>Import</v-list-tile-title>
+                        <v-list-tile-title>Library</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 

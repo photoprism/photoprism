@@ -31,6 +31,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.LabelThumbnail(v1, conf)
 
 		api.Upload(v1, conf)
+		api.Import(v1, conf)
 	}
 
 	// Default HTML page (client-side routing implemented via Vue.js)
