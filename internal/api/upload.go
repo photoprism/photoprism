@@ -27,9 +27,6 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		log.Debugf("Value: %#v", form.Value)
-		log.Debugf("File: %#v", form.File)
-
 		files := form.File["files"]
 
 		path := fmt.Sprintf("%s/upload/%s", conf.ImportPath(), subPath)
