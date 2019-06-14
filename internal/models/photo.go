@@ -32,6 +32,7 @@ type Photo struct {
 	Location           *Location
 	LocationID         uint
 	LocationChanged    bool
+	LocationEstimated  bool
 	TakenAt            time.Time
 	TakenAtChanged     bool
 	TimeZone           string

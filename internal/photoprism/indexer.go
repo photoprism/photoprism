@@ -149,6 +149,8 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	if location, err := mediaFile.Location(); err == nil {
 		i.db.FirstOrCreate(location, "id = ?", location.ID)
 		photo.Location = location
+		photo.LocationEstimated = false
+
 		photo.Country = models.NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
 
 		// Append labels from OpenStreetMap
@@ -248,6 +250,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", photo.TakenAt)).Preload("Country").First(&recentPhoto); result.Error == nil {
 				if recentPhoto.Country != nil {
 					photo.Country = recentPhoto.Country
+					photo.LocationEstimated = true
 					log.Debugf("approximate location: %s", recentPhoto.Country.CountryName)
 				}
 			}
