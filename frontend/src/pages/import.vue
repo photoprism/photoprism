@@ -7,20 +7,18 @@
                 <v-toolbar-title>Import</v-toolbar-title>
 
                 <v-spacer></v-spacer>
-
-                <v-btn icon @click.stop="uploadDialog()">
-                    <v-icon>cloud_upload</v-icon>
-                </v-btn>
             </v-toolbar>
 
             <v-container fluid>
-                <v-progress-linear color="accent" v-model="completed"></v-progress-linear>
+                <p class="subheading">
+                    <span v-if="total === 0">Select photos to start import...</span>
+                    <span v-else-if="total > 0 && completed < 100">Adding {{current}} of {{total}}...</span>
+                    <span v-else-if="completed === 100">Done.</span>
+                </p>
+
+                <v-progress-linear color="blue-grey" v-model="completed"></v-progress-linear>
 
                 <v-container grid-list-xs fluid class="pa-0 p-photos p-photo-mosaic">
-                    <p class="subheading" v-if="uploads.length === 0">
-                        Select photos to start import...
-                    </p>
-
                     <v-layout row wrap>
                         <v-flex
                                 v-for="(file, index) in uploads"
@@ -48,11 +46,18 @@
                             </v-card>
                         </v-flex>
                     </v-layout>
-
-                    <p class="subheading" v-if="completed === 100">
-                        Done.
-                    </p>
                 </v-container>
+
+                <v-btn
+                        :disabled="busy"
+                        color="blue-grey lighten-2"
+                        class="white--text ml-0"
+                        depressed
+                        @click.stop="uploadDialog()"
+                >
+                    Upload
+                    <v-icon right dark>cloud_upload</v-icon>
+                </v-btn>
             </v-container>
         </v-form>
     </div>
@@ -91,6 +96,7 @@
                 this.total = this.selected.length;
                 this.current = 0;
                 this.completed = 0;
+                this.uploads = [];
 
                 async function performUpload(ctx) {
                     for (let i = 0; i < ctx.selected.length; i++) {
