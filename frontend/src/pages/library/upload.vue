@@ -7,10 +7,11 @@
                 <p class="subheading">
                     <span v-if="total === 0">Select photos to start upload...</span>
                     <span v-else-if="total > 0 && completed < 100">Uploaded {{current}} of {{total}}...</span>
+                    <span v-else-if="indexing">Upload complete. Indexing...</span>
                     <span v-else-if="completed === 100">Done.</span>
                 </p>
 
-                <v-progress-linear color="blue-grey" v-model="completed"></v-progress-linear>
+                <v-progress-linear color="blue-grey" v-model="completed" :indeterminate="indexing"></v-progress-linear>
 
                 <v-btn
                         :disabled="busy"
@@ -38,6 +39,7 @@
                 selected: [],
                 uploads: [],
                 busy: false,
+                indexing: false,
                 current: 0,
                 total: 0,
                 completed: 0,
@@ -55,6 +57,7 @@
                 this.started = Date.now();
                 this.selected = this.$refs.upload.files;
                 this.busy = true;
+                this.indexing = false;
                 this.total = this.selected.length;
                 this.current = 0;
                 this.completed = 0;
@@ -92,13 +95,20 @@
                 }
 
                 performUpload(this).then(() => {
-                    axios.post('/api/v1/import/upload/'  + this.started).then(function () {
-                        Event.publish("alert.success", "Finished indexing upload");
+                    this.indexing = true;
+                    const ctx = this;
+
+                    axios.post('/api/v1/import/upload/' + this.started).then(function () {
+                        Event.publish("alert.success", "Import complete");
+                        ctx.busy = false;
+                        ctx.indexing = false;
+                    }).catch(function () {
+                        Event.publish("alert.error", "Import failed");
+                        ctx.busy = false;
+                        ctx.indexing = false;
                     });
 
                     Event.publish("ajax.end");
-                    Event.publish("alert.success", "Upload completed");
-                    this.busy = false;
                 });
             },
         }
