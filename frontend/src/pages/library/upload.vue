@@ -6,7 +6,7 @@
             <v-container fluid>
                 <p class="subheading">
                     <span v-if="total === 0">Select photos to start upload...</span>
-                    <span v-else-if="total > 0 && completed < 100">Uploaded {{current}} of {{total}}...</span>
+                    <span v-else-if="total > 0 && completed < 100">Uploading {{current}} of {{total}}...</span>
                     <span v-else-if="indexing">Upload complete. Indexing...</span>
                     <span v-else-if="completed === 100">Done.</span>
                 </p>
@@ -76,6 +76,8 @@
                         let file = ctx.selected[i];
                         let formData = new FormData();
 
+                        ctx.current = i + 1;
+
                         formData.append('files', file);
 
                         await axios.post('/api/v1/upload/' + ctx.started,
@@ -86,7 +88,6 @@
                                 }
                             }
                         ).then(function () {
-                            ctx.current = i + 1;
                             ctx.completed = Math.round((ctx.current / ctx.total) * 100);
                         }).catch(function () {
                             Event.publish("alert.error", "Upload failed");
