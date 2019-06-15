@@ -18,6 +18,8 @@ type Photo struct {
 	PhotoArtist        string
 	PhotoCanonicalName string
 	PhotoFavorite      bool
+	PhotoPrivate       bool
+	PhotoSensitive     bool
 	PhotoLat           float64
 	PhotoLong          float64
 	PhotoFocalLength   float64

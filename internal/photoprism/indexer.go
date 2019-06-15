@@ -110,7 +110,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	fileHash := mediaFile.Hash()
 	relativeFileName := mediaFile.RelativeFilename(i.originalsPath())
 
-	photoQuery := i.db.First(&photo, "photo_canonical_name = ?", canonicalName)
+	photoQuery := i.db.Unscoped().First(&photo, "photo_canonical_name = ?", canonicalName)
 
 	if photo.TakenAt.IsZero() && photo.TakenAtChanged == false {
 		photo.TakenAt = mediaFile.DateCreated()
@@ -247,7 +247,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		if photo.LocationID == 0 {
 			var recentPhoto models.Photo
 
-			if result := i.db.Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", photo.TakenAt)).Preload("Country").First(&recentPhoto); result.Error == nil {
+			if result := i.db.Unscoped().Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", photo.TakenAt)).Preload("Country").First(&recentPhoto); result.Error == nil {
 				if recentPhoto.Country != nil {
 					photo.Country = recentPhoto.Country
 					photo.LocationEstimated = true
@@ -256,7 +256,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			}
 		}
 
-		i.db.Save(&photo)
+		i.db.Unscoped().Save(&photo)
 	}
 
 	log.Infof("adding labels: %+v", labels)
@@ -290,7 +290,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		isPrimary = mediaFile.Type() == FileTypeJpeg && (relativeFileName == primaryFile.FileName || fileHash == primaryFile.FileHash)
 	}
 
-	fileQuery := i.db.First(&file, "file_hash = ? OR file_name = ?", fileHash, relativeFileName)
+	fileQuery := i.db.Unscoped().First(&file, "file_hash = ? OR file_name = ?", fileHash, relativeFileName)
 
 	file.PhotoID = photo.ID
 	file.FilePrimary = isPrimary
@@ -317,7 +317,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	}
 
 	if fileQuery.Error == nil {
-		i.db.Save(&file)
+		i.db.Unscoped().Save(&file)
 		return indexResultUpdated
 	}
 

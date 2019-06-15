@@ -1,7 +1,8 @@
 <template>
-    <v-form ref="form" class="p-photo-search" lazy-validation @submit.prevent="filterChange" dense>
+    <v-form ref="form" autocomplete="off" class="p-photo-search" lazy-validation @submit.prevent="filterChange" dense>
         <v-toolbar flat color="blue-grey lighten-4">
             <v-text-field class="pt-3 pr-3"
+                          autocomplete="off"
                           single-line
                           label="Search"
                           prepend-inner-icon="search"

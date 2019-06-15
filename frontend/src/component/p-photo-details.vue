@@ -59,8 +59,10 @@
 
                         <v-card-title primary-title class="pa-3">
                             <div>
-                                <h3 class="subheading mb-2" :title="photo.PhotoTitle">{{ photo.PhotoTitle |
-                                    truncate(80) }}</h3>
+                                <h3 class="subheading mb-2" :title="photo.PhotoTitle">
+                                    {{ photo.PhotoTitle | truncate(80) }}
+                                    <v-icon v-if="photo.PhotoPrivate" size="18">vpn_key</v-icon>
+                                </h3>
                                 <div class="caption">
                                     <v-icon size="14">date_range</v-icon>
                                     {{ photo.getDateString() }}

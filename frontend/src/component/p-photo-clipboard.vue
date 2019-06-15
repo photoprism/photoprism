@@ -23,10 +23,10 @@
                 dark
                 small
                 color="deep-purple lighten-2"
-                @click.stop="batchLike()"
-                :disabled="!selection.length"
+                @click.stop="batchPrivate()"
+                v-if="selection.length"
         >
-            <v-icon>favorite</v-icon>
+            <v-icon>vpn_key</v-icon>
         </v-btn>
         <v-btn
                 fab
@@ -62,7 +62,7 @@
                 small
                 color="delete"
                 @click.stop="batchDelete()"
-                :disabled="!selection.length"
+                v-if="selection.length"
         >
             <v-icon>delete</v-icon>
         </v-btn>
@@ -72,7 +72,7 @@
                 small
                 color="grey"
                 @click.stop="clearClipboard()"
-                :disabled="!selection.length"
+                v-if="selection.length"
         >
             <v-icon>clear</v-icon>
         </v-btn>
@@ -98,14 +98,14 @@
                 this.$clipboard.clear();
                 this.expanded = false;
             },
-            batchLike() {
+            batchPrivate() {
                 Event.publish("ajax.start");
 
                 const ctx = this;
 
-                axios.post("/api/v1/batch/photos/like", {"ids": this.selection}).then(function () {
+                axios.post("/api/v1/batch/photos/private", {"ids": this.selection}).then(function () {
                     Event.publish("ajax.end");
-                    Event.publish("alert.success", "Photos liked");
+                    Event.publish("alert.success", "Photos marked as private");
                     ctx.clearClipboard();
                     ctx.refresh();
                 }).catch(() => {

@@ -46,9 +46,9 @@ func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// POST /api/v1/batch/photos/like
-func BatchPhotosLike(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/batch/photos/like", func(c *gin.Context) {
+// POST /api/v1/batch/photos/private
+func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
+	router.POST("/batch/photos/private", func(c *gin.Context) {
 		start := time.Now()
 
 		var params BatchParams
@@ -62,14 +62,14 @@ func BatchPhotosLike(router *gin.RouterGroup, conf *config.Config) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst("no photos selected")})
 		}
 
-		log.Infof("liking photos: %#v", params.Ids)
+		log.Infof("marking photos as private: %#v", params.Ids)
 
 		db := conf.Db()
 
-		db.Model(models.Photo{}).Where("id IN (?)", params.Ids).Updates(models.Photo{PhotoFavorite: true})
+		db.Model(models.Photo{}).Where("id IN (?)", params.Ids).Updates(models.Photo{PhotoPrivate: true})
 
 		elapsed := time.Since(start)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos liked in %s", elapsed)})
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos marked as private in %s", elapsed)})
 	})
 }

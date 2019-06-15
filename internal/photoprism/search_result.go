@@ -21,6 +21,8 @@ type PhotoSearchResult struct {
 	PhotoLat           float64
 	PhotoLong          float64
 	PhotoFavorite      bool
+	PhotoPrivate       bool
+	PhotoSensitive     bool
 
 	// Camera
 	CameraID    uint
@@ -37,17 +39,19 @@ type PhotoSearchResult struct {
 	CountryName string
 
 	// Location
-	LocationID     uint
-	LocDisplayName string
-	LocName        string
-	LocCity        string
-	LocPostcode    string
-	LocCounty      string
-	LocState       string
-	LocCountry     string
-	LocCountryCode string
-	LocCategory    string
-	LocType        string
+	LocationID        uint
+	LocDisplayName    string
+	LocName           string
+	LocCity           string
+	LocPostcode       string
+	LocCounty         string
+	LocState          string
+	LocCountry        string
+	LocCountryCode    string
+	LocCategory       string
+	LocType           string
+	LocationChanged   bool
+	LocationEstimated bool
 
 	// File
 	FileID             uint
