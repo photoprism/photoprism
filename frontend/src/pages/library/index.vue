@@ -1,19 +1,25 @@
 <template>
     <div class="p-tab p-tab-index">
         <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit" dense>
-            <input type="file" ref="upload" multiple @change.stop="upload()" class="d-none">
-
             <v-container fluid>
-                <h3 class="subheading">Only available using the command-line interface at the moment</h3>
-                <p class="body-1 mt-2">
-                    Issues labeled <a href="https://github.com/photoprism/photoprism/labels/help%20wanted">help
-                    wanted</a> /
-                    <a href="https://github.com/photoprism/photoprism/labels/easy">easy</a> can be good (first)
-                    contributions.
-                    Our <a href="https://github.com/photoprism/photoprism/wiki">Developer Guide</a> contains all
-                    information
-                    necessary to get you started.
+                <p class="subheading">
+                    <span v-if="busy">Re-indexing existing files and photos...</span>
+                    <span v-else-if="completed">Done.</span>
+                    <span v-else>Press button to re-index existing files and photos...</span>
                 </p>
+
+                <v-progress-linear color="blue-grey" :value="completed" :indeterminate="busy"></v-progress-linear>
+
+                <v-btn
+                        :disabled="busy"
+                        color="blue-grey"
+                        class="white--text ml-0"
+                        depressed
+                        @click.stop="startIndexing()"
+                >
+                    Index
+                    <v-icon right dark>update</v-icon>
+                </v-btn>
             </v-container>
         </v-form>
     </div>
@@ -27,9 +33,34 @@
         name: 'p-tab-index',
         data() {
             return {
+                started: false,
+                busy: false,
+                completed: 0,
             }
         },
         methods: {
+            submit() {
+                console.log("SUBMIT");
+            },
+            startIndexing() {
+                this.started = Date.now();
+                this.busy = true;
+                this.completed = 0;
+
+                this.$alert.info("Indexing photos...");
+
+                const ctx = this;
+
+                axios.post('/api/v1/index').then(function () {
+                    Event.publish("alert.success", "Indexing complete");
+                    ctx.busy = false;
+                    ctx.completed = 100;
+                }).catch(function () {
+                    Event.publish("alert.error", "Indexing failed");
+                    ctx.busy = false;
+                    ctx.completed = 0;
+                });
+            },
         }
     };
 </script>

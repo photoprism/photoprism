@@ -19,9 +19,7 @@ func initImporter(conf *config.Config) {
 		return
 	}
 
-	tensorFlow := photoprism.NewTensorFlow(conf)
-
-	indexer := photoprism.NewIndexer(conf, tensorFlow)
+	initIndexer(conf)
 
 	converter := photoprism.NewConverter(conf)
 
