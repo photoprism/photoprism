@@ -45,7 +45,7 @@
                     </v-list-tile-action>
                 </v-list-tile>
 
-                <v-list-tile to="/photos" @click="" class="p-navigation-photos">
+                <v-list-tile v-if="mini" to="/photos" @click="" class="p-navigation-photos">
                     <v-list-tile-action>
                         <v-icon>photo</v-icon>
                     </v-list-tile-action>
@@ -55,7 +55,27 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/favorites" @click="">
+                <v-list-group v-if="!mini" prepend-icon="photo" no-action>
+                    <v-list-tile slot="activator" to="/photos" @click.stop="" class="p-navigation-photos">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Photos</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile :to="{ name: 'Photos', query: { q: 'mono:true' }}" :exact="true" @click="">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Monochrome</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile :to="{ name: 'Photos', query: { q: 'chroma:50' }}" :exact="true" @click="">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Vibrant</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list-group>
+
+                <v-list-tile to="/favorites" @click="" class="p-navigation-favorites">
                     <v-list-tile-action>
                         <v-icon>favorite</v-icon>
                     </v-list-tile-action>
@@ -105,41 +125,15 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile v-if="mini" to="/filters" @click="">
+                <v-list-tile to="/library" @click="" class="p-navigation-library">
                     <v-list-tile-action>
-                        <v-icon>search</v-icon>
+                        <v-icon>camera_roll</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title>Filters</v-list-tile-title>
+                        <v-list-tile-title>Library</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
-
-                <v-list-group v-if="!mini" prepend-icon="search" no-action>
-                    <v-list-tile slot="activator" to="/filters" @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Filters</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-
-                    <v-list-tile :to="{ name: 'Photos', query: { q: 'label:animal' }}" :exact="true" @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Animals</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-
-                    <v-list-tile :to="{ name: 'Photos', query: { q: 'mono:true' }}" :exact="true" @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Monochrome</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-
-                    <v-list-tile :to="{ name: 'Photos', query: { q: 'chroma:4' }}" :exact="true" @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Vibrant</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                </v-list-group>
 
                 <v-list-tile v-if="mini" to="/albums" @click="">
                     <v-list-tile-action>
@@ -165,27 +159,7 @@
                     </v-list-tile>
                 </v-list-group>
 
-                <v-list-tile to="/library" @click="">
-                    <v-list-tile-action>
-                        <v-icon>camera_roll</v-icon>
-                    </v-list-tile-action>
-
-                    <v-list-tile-content>
-                        <v-list-tile-title>Library</v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-
-                <v-list-tile to="/share" @click="">
-                    <v-list-tile-action>
-                        <v-icon>share</v-icon>
-                    </v-list-tile-action>
-
-                    <v-list-tile-content>
-                        <v-list-tile-title>Share</v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-
-                <v-list-tile to="/settings" @click="">
+                <v-list-tile v-if="mini" to="/settings" @click="">
                     <v-list-tile-action>
                         <v-icon>settings</v-icon>
                     </v-list-tile-action>
@@ -194,6 +168,20 @@
                         <v-list-tile-title>Settings</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
+
+                <v-list-group v-if="!mini" prepend-icon="settings" no-action>
+                    <v-list-tile slot="activator" to="/settings" @click.stop="" class="p-navigation-settings">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Settings</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile to="/share" @click="">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Sharing</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list-group>
             </v-list>
         </v-navigation-drawer>
     </div>

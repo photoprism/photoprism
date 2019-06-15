@@ -75,7 +75,7 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 
 			assert.Nil(t, err)
 			assert.True(t, p.Chroma.Int() >= 0)
-			assert.True(t, p.Chroma.Int() < 16)
+			assert.True(t, p.Chroma.Int() <= 100)
 			assert.NotEmpty(t, p.MainColor.Name())
 
 			if e, ok := expected[filename]; ok {
@@ -103,7 +103,7 @@ func TestMediaFile_Colors(t *testing.T) {
 			t.Log(p, err)
 
 			assert.Nil(t, err)
-			assert.Equal(t, 2, p.Chroma.Int())
+			assert.Equal(t, 11, p.Chroma.Int())
 			assert.IsType(t, IndexedColors{}, p.Colors)
 			assert.Equal(t, "brown", p.MainColor.Name())
 			assert.Equal(t, IndexedColors{0x1, 0x3, 0x1, 0x2, 0xe, 0x0, 0x2, 0x2, 0x0}, p.Colors)
@@ -120,7 +120,7 @@ func TestMediaFile_Colors(t *testing.T) {
 			t.Log(p, err)
 
 			assert.Nil(t, err)
-			assert.Equal(t, 3, p.Chroma.Int())
+			assert.Equal(t, 19, p.Chroma.Int())
 			assert.IsType(t, IndexedColors{}, p.Colors)
 			assert.Equal(t, "green", p.MainColor.Name())
 			assert.Equal(t, IndexedColors{0x9, 0x9, 0x9, 0x8, 0x9, 0x2, 0x9, 0x2, 0x9}, p.Colors)
@@ -137,7 +137,7 @@ func TestMediaFile_Colors(t *testing.T) {
 			t.Log(p, err)
 
 			assert.Nil(t, err)
-			assert.Equal(t, 3, p.Chroma.Int())
+			assert.Equal(t, 17, p.Chroma.Int())
 			assert.IsType(t, IndexedColors{}, p.Colors)
 			assert.Equal(t, "blue", p.MainColor.Name())
 			assert.Equal(t, IndexedColors{0x6, 0x6, 0x9, 0x1, 0x0, 0x2, 0x1, 0x1, 0x6}, p.Colors)
@@ -153,7 +153,7 @@ func TestMediaFile_Colors(t *testing.T) {
 			t.Log(p, err)
 
 			assert.Nil(t, err)
-			assert.Equal(t, 2, p.Chroma.Int())
+			assert.Equal(t, 14, p.Chroma.Int())
 			assert.IsType(t, IndexedColors{}, p.Colors)
 			assert.Equal(t, "green", p.MainColor.Name())
 

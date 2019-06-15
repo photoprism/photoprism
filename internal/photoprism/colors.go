@@ -455,7 +455,7 @@ func (m *MediaFile) Colors(thumbPath string) (perception ColorPerception, err er
 		}
 	}
 
-	perception.Chroma = Chroma(math.Round((chromaSum / pixels) * 15))
+	perception.Chroma = Chroma(math.Round((chromaSum / pixels) * 100))
 
 	return perception, nil
 }

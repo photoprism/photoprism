@@ -161,7 +161,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 
 	if form.Mono {
 		q = q.Where("files.file_chroma = 0")
-	} else if form.Chroma > 3 {
+	} else if form.Chroma > 9 {
 		q = q.Where("files.file_chroma > ?", form.Chroma)
 	} else if form.Chroma > 0 {
 		q = q.Where("files.file_chroma > 0 AND files.file_chroma <= ?", form.Chroma)
