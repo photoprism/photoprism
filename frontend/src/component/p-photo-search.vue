@@ -16,7 +16,11 @@
 
             <v-spacer></v-spacer>
 
-            <v-btn icon @click="searchExpanded = !searchExpanded" id="advancedMenu">
+            <v-btn icon @click.stop="refresh">
+                <v-icon>refresh</v-icon>
+            </v-btn>
+
+            <v-btn icon @click.stop="searchExpanded = !searchExpanded" id="advancedMenu">
                 <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
             </v-btn>
         </v-toolbar>
@@ -28,7 +32,7 @@
             <v-card-text>
                 <v-layout row wrap>
                     <v-flex xs12 sm6 md3 pa-2 id="countriesFlex">
-                        <v-select @change="filterChange"
+                        <v-select @change="dropdownChange"
                                   label="Country"
                                   flat solo hide-details
                                   color="blue-grey"
@@ -39,7 +43,7 @@
                         </v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md3 pa-2 id="cameraFlex">
-                        <v-select @change="filterChange"
+                        <v-select @change="dropdownChange"
                                   label="Camera"
                                   flat solo hide-details
                                   color="blue-grey"
@@ -50,7 +54,7 @@
                         </v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md3 pa-2 id="viewFlex">
-                        <v-select @change="settingsChange"
+                        <v-select @change="dropdownChange"
                                   label="View"
                                   flat solo hide-details
                                   color="blue-grey"
@@ -60,7 +64,7 @@
                         </v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md3 pa-2 id="timeFlex">
-                        <v-select @change="filterChange"
+                        <v-select @change="dropdownChange"
                                   label="Sort By"
                                   flat solo hide-details
                                   color="blue-grey"
@@ -79,8 +83,8 @@
         props: {
             filter: Object,
             settings: Object,
+            refresh: Function,
             filterChange: Function,
-            settingsChange: Function,
         },
         data() {
             const cameras = [{ID: 0, CameraModel: 'All Cameras'}].concat(this.$config.getValue('cameras'));
@@ -109,6 +113,13 @@
             };
         },
         methods: {
+            dropdownChange() {
+                this.filterChange();
+
+                if (window.innerWidth < 600) {
+                    this.searchExpanded = false;
+                }
+            },
             clearQuery() {
                 this.filter.q = '';
                 this.filterChange();

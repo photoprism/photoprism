@@ -3,7 +3,7 @@
          :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
         <p-photo-search :settings="settings" :filter="filter" :filter-change="updateQuery"
-                        :settings-change="updateQuery"></p-photo-search>
+                        :refresh="refresh"></p-photo-search>
 
         <v-container fluid>
             <p-photo-clipboard :refresh="refresh" :selection="selection"></p-photo-clipboard>
@@ -28,7 +28,7 @@
             staticFilter: Object
         },
         watch: {
-            '$route' () {
+            '$route'() {
                 const query = this.$route.query;
 
                 this.filter.q = query['q'];
@@ -67,14 +67,14 @@
                 let queryParam = this.$route.query['view'];
                 let storedType = window.localStorage.getItem("photo_view_type");
 
-                if(queryParam) {
+                if (queryParam) {
                     window.localStorage.setItem("photo_view_type", queryParam);
                     return queryParam;
-                } else if(storedType) {
+                } else if (storedType) {
                     return storedType;
-                } else if(window.innerWidth < 960) {
+                } else if (window.innerWidth < 960) {
                     return 'mosaic';
-                } else if(window.innerWidth > 1600) {
+                } else if (window.innerWidth > 1600) {
                     return 'details';
                 }
 
@@ -153,7 +153,11 @@
             },
             refresh() {
                 this.lastFilter = {};
+                const pageSize = this.pageSize;
+                this.pageSize = this.offset + pageSize;
                 this.search();
+                this.offset = this.pageSize;
+                this.pageSize = pageSize;
             },
             search() {
                 this.scrollDisabled = true;
