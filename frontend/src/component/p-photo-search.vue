@@ -16,23 +16,23 @@
 
             <v-spacer></v-spacer>
 
-            <v-btn icon @click.stop="refresh">
+            <v-btn icon @click.stop="refresh" class="hidden-xs-only">
                 <v-icon>refresh</v-icon>
             </v-btn>
 
-            <v-btn icon v-if="settings.view === 'tiles'" @click.stop="setView('details')" class="hidden-xs-only">
+            <v-btn icon v-if="settings.view === 'tiles'" @click.stop="setView('details')">
                 <v-icon>view_column</v-icon>
             </v-btn>
 
-            <v-btn icon v-if="settings.view === 'details'" @click.stop="setView('list')" class="hidden-xs-only">
+            <v-btn icon v-if="settings.view === 'details'" @click.stop="setView('list')">
                 <v-icon>view_list</v-icon>
             </v-btn>
 
-            <v-btn icon v-if="settings.view === 'list'" @click.stop="setView('mosaic')" class="hidden-xs-only">
+            <v-btn icon v-if="settings.view === 'list'" @click.stop="setView('mosaic')">
                 <v-icon>view_comfy</v-icon>
             </v-btn>
 
-            <v-btn icon v-if="settings.view === 'mosaic'" @click.stop="setView('tiles')" class="hidden-xs-only">
+            <v-btn icon v-if="settings.view === 'mosaic'" @click.stop="setView('tiles')">
                 <v-icon>view_module</v-icon>
             </v-btn>
 
