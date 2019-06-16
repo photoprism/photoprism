@@ -18,7 +18,7 @@
                 <v-hover>
                     <v-card tile slot-scope="{ hover }"
                             :dark="$clipboard.has(photo)"
-                            :class="$clipboard.has(photo) ? 'elevation-15 ma-1' : 'elevation-2 ma-2'">
+                            :class="$clipboard.has(photo) ? 'elevation-15 ma-0 grey darken-1 white--text' : 'elevation-0 ma-1 grey lighten-3'">
                         <v-img
                                 :src="photo.getThumbnailUrl('tile_500')"
                                 aspect-ratio="1"
@@ -56,10 +56,9 @@
                             </v-btn>
                         </v-img>
 
-
                         <v-card-title primary-title class="pa-3">
                             <div>
-                                <h3 class="subheading mb-2" :title="photo.PhotoTitle">
+                                <h3 class="body-2 mb-2" :title="photo.PhotoTitle">
                                     {{ photo.PhotoTitle | truncate(80) }}
                                     <v-icon v-if="photo.PhotoPrivate" size="18">vpn_key</v-icon>
                                 </h3>
