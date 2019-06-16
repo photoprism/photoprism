@@ -21,6 +21,8 @@
         </v-form>
 
         <v-container fluid class="pa-2">
+            <p-scroll-top></p-scroll-top>
+
             <v-container grid-list-xs fluid class="pa-0 p-labels p-labels-details">
                 <v-card v-if="results.length === 0" class="p-labels-empty" flat>
                     <v-card-title primary-title>

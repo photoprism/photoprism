@@ -8,6 +8,7 @@ import PPhotoList from "./p-photo-list.vue";
 import PPhotoViewer from "./p-photo-viewer.vue";
 import PPhotoSearch from "./p-photo-search.vue";
 import PPhotoClipboard from "./p-photo-clipboard.vue";
+import PScrollTop from "./p-scroll-top.vue";
 
 const components = {};
 
@@ -22,6 +23,7 @@ components.install = (Vue) => {
     Vue.component("p-photo-viewer", PPhotoViewer);
     Vue.component("p-photo-search", PPhotoSearch);
     Vue.component("p-photo-clipboard", PPhotoClipboard);
+    Vue.component("p-scroll-top", PScrollTop);
 };
 
 export default components;
