@@ -8,7 +8,7 @@
                 right
                 top
                 @click.stop="scrollToTop"
-                v-if="scrolled"
+                v-if="show"
         >
             <v-icon>arrow_upward</v-icon>
         </v-btn>
@@ -20,15 +20,23 @@
         name: 'p-scroll-top',
         data() {
             return {
-                scrolled: false
+                show: false,
+                maxY: 0,
             };
         },
         methods: {
             onScroll: function () {
-                this.scrolled = window.scrollY > 300;
+                if(window.scrollY > this.maxY) {
+                    this.maxY = window.scrollY;
+                    this.show = false;
+                } else if (window.scrollY < 300) {
+                    this.show = false;
+                    this.maxY = 0;
+                } else if ((this.maxY - window.scrollY) > 75) {
+                    this.show = true;
+                }
             },
             scrollToTop: function () {
-                console.log("scrollY:", window.scrollY);
                 return this.$vuetify.goTo(0);
             },
         },
