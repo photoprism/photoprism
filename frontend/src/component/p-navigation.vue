@@ -1,14 +1,10 @@
 <template>
     <div id="p-navigation">
-        <v-toolbar dark fixed color="grey darken-3" class="hidden-lg-and-up p-navigation-small" @click.stop="showNavigation()">
+        <v-toolbar dark scroll-toolbar-off-screen color="grey darken-3" class="hidden-lg-and-up p-navigation-small" @click.stop="showNavigation()">
             <v-toolbar-side-icon class="p-navigation-show"></v-toolbar-side-icon>
 
             <v-toolbar-title class="p-navigation-title">{{ $router.currentRoute.meta.area }}</v-toolbar-title>
 
-            <v-spacer></v-spacer>
-        </v-toolbar>
-        <v-toolbar flat color="transparent" class="hidden-lg-and-up">
-            <!-- empty spacer -->
             <v-spacer></v-spacer>
         </v-toolbar>
         <v-navigation-drawer
