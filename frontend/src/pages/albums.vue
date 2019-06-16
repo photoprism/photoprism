@@ -201,7 +201,7 @@
                 <v-card v-if="results.length === 0">
                     <v-card-title primary-title>
                         <div>
-                            <h3 class="headline mb-3">No photos matched your search</h3>
+                            <h3 class="title mb-3">No photos matched your search</h3>
                             <div>Try using other terms and search options such as category, country and camera.</div>
                         </div>
                     </v-card-title>

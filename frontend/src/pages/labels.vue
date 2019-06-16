@@ -27,8 +27,8 @@
                 <v-card v-if="results.length === 0" class="p-labels-empty" flat>
                     <v-card-title primary-title>
                         <div>
-                            <h3 class="headline mb-3">No labels matched your search</h3>
-                            <div>Try again using other terms.</div>
+                            <h3 class="title mb-3">No labels matched your search</h3>
+                            <div>Try again using a related or otherwise similar term.</div>
                         </div>
                     </v-card-title>
                 </v-card>
