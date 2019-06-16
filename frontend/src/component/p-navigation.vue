@@ -75,6 +75,30 @@
                     </v-list-tile>
                 </v-list-group>
 
+                <v-list-tile v-if="mini" to="/albums" @click="">
+                    <v-list-tile-action>
+                        <v-icon>folder</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>Albums</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
+                <v-list-group v-if="!mini" prepend-icon="folder" no-action>
+                    <v-list-tile slot="activator" to="/albums" @click="">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Albums</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile @click="">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Not implemented yet</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list-group>
+
                 <v-list-tile to="/favorites" @click="" class="p-navigation-favorites">
                     <v-list-tile-action>
                         <v-icon>favorite</v-icon>
@@ -135,31 +159,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile v-if="mini" to="/albums" @click="">
-                    <v-list-tile-action>
-                        <v-icon>folder</v-icon>
-                    </v-list-tile-action>
-
-                    <v-list-tile-content>
-                        <v-list-tile-title>Albums</v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-
-                <v-list-group v-if="!mini" prepend-icon="folder" no-action>
-                    <v-list-tile slot="activator" to="/albums" @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Albums</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-
-                    <v-list-tile @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Not implemented yet</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                </v-list-group>
-
-                <v-list-tile v-if="mini" to="/settings" @click="">
+                <v-list-tile to="/settings" @click="" class="p-navigation-settings">
                     <v-list-tile-action>
                         <v-icon>settings</v-icon>
                     </v-list-tile-action>
@@ -168,20 +168,6 @@
                         <v-list-tile-title>Settings</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
-
-                <v-list-group v-if="!mini" prepend-icon="settings" no-action>
-                    <v-list-tile slot="activator" to="/settings" @click.stop="" class="p-navigation-settings">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Settings</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-
-                    <v-list-tile to="/share" @click="">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Sharing</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                </v-list-group>
             </v-list>
         </v-navigation-drawer>
     </div>
