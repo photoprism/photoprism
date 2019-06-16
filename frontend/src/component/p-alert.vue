@@ -65,7 +65,7 @@
             },
 
             addWarningMessage: function (message) {
-                this.addMessage('warning', 'black--text', message, 4000);
+                this.addMessage('warning', 'black--text', message, 3000);
             },
 
             addErrorMessage: function (message) {
@@ -73,11 +73,11 @@
             },
 
             addSuccessMessage: function (message) {
-                this.addMessage('success', 'white--text', message, 3000);
+                this.addMessage('success', 'white--text', message, 2000);
             },
 
             addInfoMessage: function (message) {
-                this.addMessage('info', 'white--text', message, 3000);
+                this.addMessage('info', 'white--text', message, 1250);
             },
 
             addMessage: function (color, textColor, message, delay) {
