@@ -20,6 +20,22 @@
                 <v-icon>refresh</v-icon>
             </v-btn>
 
+            <v-btn icon v-if="settings.view === 'tiles'" @click.stop="setView('details')" class="hidden-xs-only">
+                <v-icon>view_column</v-icon>
+            </v-btn>
+
+            <v-btn icon v-if="settings.view === 'details'" @click.stop="setView('list')" class="hidden-xs-only">
+                <v-icon>view_list</v-icon>
+            </v-btn>
+
+            <v-btn icon v-if="settings.view === 'list'" @click.stop="setView('mosaic')" class="hidden-xs-only">
+                <v-icon>view_comfy</v-icon>
+            </v-btn>
+
+            <v-btn icon v-if="settings.view === 'mosaic'" @click.stop="setView('tiles')" class="hidden-xs-only">
+                <v-icon>view_module</v-icon>
+            </v-btn>
+
             <v-btn icon @click.stop="searchExpanded = !searchExpanded" id="advancedMenu">
                 <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
             </v-btn>
@@ -119,6 +135,10 @@
                 if (window.innerWidth < 600) {
                     this.searchExpanded = false;
                 }
+            },
+            setView(name) {
+                this.settings.view = name;
+                this.filterChange();
             },
             clearQuery() {
                 this.filter.q = '';
