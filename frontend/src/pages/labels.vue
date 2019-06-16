@@ -20,9 +20,9 @@
             </v-toolbar>
         </v-form>
 
-        <v-container fluid>
+        <v-container fluid class="pa-2">
             <v-container grid-list-xs fluid class="pa-0 p-labels p-labels-details">
-                <v-card v-if="results.length === 0" class="p-labels-empty">
+                <v-card v-if="results.length === 0" class="p-labels-empty" flat>
                     <v-card-title primary-title>
                         <div>
                             <h3 class="headline mb-3">No labels matched your search</h3>
@@ -38,15 +38,13 @@
                             xs6 sm4 md3 lg2 d-flex
                     >
                         <v-hover>
-                            <v-card tile slot-scope="{ hover }"
-                                    class="elevation-2 ma-2">
+                            <v-card tile class="elevation-0 ma-1 grey lighten-3">
                                 <v-img
                                         :src="label.getThumbnailUrl('tile_500')"
                                         aspect-ratio="1"
                                         style="cursor: pointer"
                                         class="grey lighten-2"
                                         @click.prevent="openLabel(index)"
-
                                 >
                                     <v-layout
                                             slot="placeholder"

@@ -5,7 +5,7 @@
         <p-photo-search :settings="settings" :filter="filter" :filter-change="updateQuery"
                         :refresh="refresh"></p-photo-search>
 
-        <v-container fluid>
+        <v-container fluid class="pa-2">
             <p-photo-clipboard :refresh="refresh" :selection="selection"></p-photo-clipboard>
 
             <p-photo-mosaic v-if="settings.view === 'mosaic'" :photos="results" :selection="selection"
