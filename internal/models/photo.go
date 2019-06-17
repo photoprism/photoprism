@@ -20,6 +20,7 @@ type Photo struct {
 	PhotoFavorite      bool
 	PhotoPrivate       bool
 	PhotoSensitive     bool
+	PhotoStory         bool
 	PhotoLat           float64
 	PhotoLong          float64
 	PhotoFocalLength   float64
