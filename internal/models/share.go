@@ -13,6 +13,7 @@ type Share struct {
 	ShareUUID     string `gorm:"primary_key;auto_increment:false"`
 	PhotoID       uint
 	AlbumID       uint
+	ShareViews    uint
 	ShareSecret   string
 	SharePassword string
 	ShareExpires  time.Time

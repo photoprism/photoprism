@@ -25,6 +25,7 @@ type Photo struct {
 	PhotoLong          float64
 	PhotoFocalLength   float64
 	PhotoAperture      float64
+	PhotoViews         uint
 	Camera             *Camera
 	CameraID           uint
 	Lens               *Lens

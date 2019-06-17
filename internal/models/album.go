@@ -13,6 +13,7 @@ type Album struct {
 	AlbumName        string
 	AlbumDescription string `gorm:"type:text;"`
 	AlbumNotes       string `gorm:"type:text;"`
+	AlbumViews       uint
 	AlbumPhoto       *Photo
 	AlbumPhotoID     uint
 	AlbumFavorite    bool
