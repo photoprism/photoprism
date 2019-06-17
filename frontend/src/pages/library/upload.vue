@@ -100,11 +100,11 @@
                     const ctx = this;
 
                     axios.post('/api/v1/import/upload/' + this.started).then(function () {
-                        Event.publish("alert.success", "Import complete");
+                        Event.publish("alert.success", "Upload complete");
                         ctx.busy = false;
                         ctx.indexing = false;
                     }).catch(function () {
-                        Event.publish("alert.error", "Import failed");
+                        Event.publish("alert.error", "Failure while importing uploaded files");
                         ctx.busy = false;
                         ctx.indexing = false;
                     });
