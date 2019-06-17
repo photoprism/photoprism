@@ -413,6 +413,7 @@ func (c *Config) MigrateDb() {
 		&models.Lens{},
 		&models.Country{},
 		&models.Share{},
+		&models.Event{},
 	)
 }
 

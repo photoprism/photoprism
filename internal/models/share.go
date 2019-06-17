@@ -19,6 +19,9 @@ type Share struct {
 	ShareExpires  time.Time
 	Photo         *Photo
 	Album         *Album
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+	DeletedAt     *time.Time `sql:"index"`
 }
 
 func (Share) TableName() string {
