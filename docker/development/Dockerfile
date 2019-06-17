@@ -76,16 +76,16 @@ RUN apt-get update && \
 
 # Install and configure NodeJS Package Manager (npm)
 ENV NODE_ENV production
-RUN npm install -g npm testcafe
+RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.12.5
+ENV GOLANG_VERSION 1.12.6
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "aea86e3c73495f205929cfebba0d63f1382c8ac59be081b6351681415f4063cf *go.tgz" | sha256sum -c -; \
+	echo "dbcf71a3c1ea53b8d54ef1b48c85a39a6c9a935d01fc8291ff2b92028e59913c *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
@@ -116,8 +116,8 @@ ENV BROADWAY_DISPLAY :5
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
-# Expose HTTP port plus 4000 for TiDB and 8080 for broadwayd (not running by default)
-EXPOSE 80 2342 4000 8080
+# Expose HTTP port plus 4000 for TiDB, 8080 for broadwayd and 9515 for chromedriver
+EXPOSE 80 2342 4000 8080 9515
 
 # Keep container running (services can be started manually using a terminal)
 CMD tail -f /dev/null
