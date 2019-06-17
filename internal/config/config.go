@@ -412,6 +412,7 @@ func (c *Config) MigrateDb() {
 		&models.Camera{},
 		&models.Lens{},
 		&models.Country{},
+		&models.Share{},
 	)
 }
 
