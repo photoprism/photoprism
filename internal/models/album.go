@@ -9,12 +9,13 @@ import (
 type Album struct {
 	Model
 	AlbumUUID        string `gorm:"unique_index;"`
-	AlbumSlug        string
+	AlbumSlug        string `gorm:"unique_index;"`
 	AlbumName        string
 	AlbumDescription string `gorm:"type:text;"`
 	AlbumNotes       string `gorm:"type:text;"`
 	AlbumPhoto       *Photo
 	AlbumPhotoID     uint
+	AlbumFavorite    bool
 	Photos           []Photo `gorm:"many2many:album_photos;"`
 }
 

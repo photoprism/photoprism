@@ -84,7 +84,7 @@ class Abstract {
     }
 
     static getCreateResource() {
-        return this.getCollectionResource() + "/new";
+        return this.getCollectionResource();
     }
 
     static getCreateForm() {

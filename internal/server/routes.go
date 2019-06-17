@@ -36,6 +36,12 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		api.BatchPhotosDelete(v1, conf)
 		api.BatchPhotosPrivate(v1, conf)
+
+		api.GetAlbums(v1, conf)
+		api.LikeAlbum(v1, conf)
+		api.DislikeAlbum(v1, conf)
+		api.AlbumThumbnail(v1, conf)
+		api.CreateAlbum(v1, conf)
 	}
 
 	// Default HTML page (client-side routing implemented via Vue.js)

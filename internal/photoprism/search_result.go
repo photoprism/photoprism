@@ -86,3 +86,18 @@ type LabelSearchResult struct {
 	LabelDescription string
 	LabelNotes       string
 }
+
+// AlbumSearchResult contains found albums
+type AlbumSearchResult struct {
+	ID               uint
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	DeletedAt        time.Time
+	AlbumUUID        string
+	AlbumSlug        string
+	AlbumName        string
+	AlbumCount       int
+	AlbumFavorite    bool
+	AlbumDescription string
+	AlbumNotes       string
+}

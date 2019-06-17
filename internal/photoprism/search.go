@@ -360,3 +360,75 @@ func (s *Search) Labels(form forms.LabelSearchForm) (results []LabelSearchResult
 
 	return results, nil
 }
+
+/***************** Albums  *****************/
+
+// FindAlbumByUUID returns a Album based on the UUID.
+func (s *Search) FindAlbumByUUID(albumUUID string) (album models.Album, err error) {
+	if err := s.db.Where("album_uuid = ?", albumUUID).First(&album).Error; err != nil {
+		return album, err
+	}
+
+	return album, nil
+}
+
+// FindAlbumThumbByUUID returns a album preview file based on the uuid.
+func (s *Search) FindAlbumThumbByUUID(albumUUID string) (file models.File, err error) {
+	// s.db.LogMode(true)
+
+	if err := s.db.Where("files.file_primary AND files.deleted_at IS NULL").
+		Joins("JOIN albums ON albums.album_uuid = ?", albumUUID).
+		Joins("JOIN album_photos ON album_photos.album_id = albums.id AND album_photos.photo_id = files.photo_id").
+		First(&file).Error; err != nil {
+		return file, err
+	}
+
+	return file, nil
+}
+
+// Albums searches albums based on their name.
+func (s *Search) Albums(form forms.AlbumSearchForm) (results []AlbumSearchResult, err error) {
+	if err := form.ParseQueryString(); err != nil {
+		return results, err
+	}
+
+	defer util.ProfileTime(time.Now(), fmt.Sprintf("search for %+v", form))
+
+	q := s.db.NewScope(nil).DB()
+
+	// q.LogMode(true)
+
+	q = q.Table("albums").
+		Select(`albums.*, COUNT(album_photos.album_id) AS album_count`).
+		Joins("LEFT JOIN album_photos ON album_photos.album_id = albums.id").
+		Where("albums.deleted_at IS NULL").
+		Group("albums.id")
+
+	if form.Query != "" {
+		likeString := "%" + strings.ToLower(form.Query) + "%"
+		q = q.Where("LOWER(albums.album_name) LIKE ?", likeString)
+	}
+
+	if form.Favorites {
+		q = q.Where("albums.album_favorite = 1")
+	}
+
+	switch form.Order {
+	case "slug":
+		q = q.Order("albums.album_favorite DESC, album_slug ASC")
+	default:
+		q = q.Order("albums.album_favorite DESC, album_count DESC, albums.created_at DESC")
+	}
+
+	if form.Count > 0 && form.Count <= 1000 {
+		q = q.Limit(form.Count).Offset(form.Offset)
+	} else {
+		q = q.Limit(100).Offset(0)
+	}
+
+	if result := q.Scan(&results); result.Error != nil {
+		return results, result.Error
+	}
+
+	return results, nil
+}

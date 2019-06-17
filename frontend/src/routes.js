@@ -1,4 +1,5 @@
 import Photos from "pages/photos.vue";
+import Albums from "pages/albums.vue";
 import Places from "pages/places.vue";
 import Labels from "pages/labels.vue";
 import Events from "pages/events.vue";
@@ -19,6 +20,12 @@ export default [
         path: "/photos",
         component: Photos,
         meta: {area: "Photos"},
+    },
+    {
+        name: "Albums",
+        path: "/albums",
+        component: Albums,
+        meta: {area: "Albums"},
     },
     {
         name: "Favorites",
@@ -56,12 +63,6 @@ export default [
         path: "/filters",
         component: Todo,
         meta: {area: "Filters"},
-    },
-    {
-        name: "Albums",
-        path: "/albums",
-        component: Todo,
-        meta: {area: "Albums"},
     },
     {
         name: "Library",
