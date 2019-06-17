@@ -2,22 +2,24 @@
     <div class="p-page p-page-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
          :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <p-photo-search :settings="settings" :filter="filter" :filter-change="updateQuery"
-                        :refresh="refresh"></p-photo-search>
+        <p-pull-refresh :on-refresh="refresh">
+            <p-photo-search :settings="settings" :filter="filter" :filter-change="updateQuery"
+                            :refresh="refresh"></p-photo-search>
 
-        <v-container fluid class="pa-2">
-            <p-scroll-top></p-scroll-top>
+            <v-container fluid class="pa-2">
+                <p-scroll-top></p-scroll-top>
 
-            <p-photo-clipboard :refresh="refresh" :selection="selection"></p-photo-clipboard>
+                <p-photo-clipboard :refresh="refresh" :selection="selection"></p-photo-clipboard>
 
-            <p-photo-mosaic v-if="settings.view === 'mosaic'" :photos="results" :selection="selection"
-                            :open-photo="openPhoto"></p-photo-mosaic>
-            <p-photo-list v-else-if="settings.view === 'list'" :photos="results" :selection="selection"
-                          :open-photo="openPhoto" :open-location="openLocation"></p-photo-list>
-            <p-photo-details v-else-if="settings.view === 'details'" :photos="results" :selection="selection"
-                             :open-photo="openPhoto" :open-location="openLocation"></p-photo-details>
-            <p-photo-tiles v-else :photos="results" :selection="selection" :open-photo="openPhoto"></p-photo-tiles>
-        </v-container>
+                <p-photo-mosaic v-if="settings.view === 'mosaic'" :photos="results" :selection="selection"
+                                :open-photo="openPhoto"></p-photo-mosaic>
+                <p-photo-list v-else-if="settings.view === 'list'" :photos="results" :selection="selection"
+                              :open-photo="openPhoto" :open-location="openLocation"></p-photo-list>
+                <p-photo-details v-else-if="settings.view === 'details'" :photos="results" :selection="selection"
+                                 :open-photo="openPhoto" :open-location="openLocation"></p-photo-details>
+                <p-photo-tiles v-else :photos="results" :selection="selection" :open-photo="openPhoto"></p-photo-tiles>
+            </v-container>
+        </p-pull-refresh>
     </div>
 </template>
 
