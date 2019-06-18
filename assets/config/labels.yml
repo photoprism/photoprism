@@ -3526,7 +3526,7 @@ packet:
   priority: 1
 
 swing:
-  label: relaxation
+  label: relax
   priority: 1
   categories:
     - outdoor
