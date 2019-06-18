@@ -23,6 +23,7 @@ type PhotoSearchResult struct {
 	PhotoFavorite      bool
 	PhotoPrivate       bool
 	PhotoSensitive     bool
+	PhotoStory         bool
 
 	// Camera
 	CameraID    uint

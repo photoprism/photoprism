@@ -33,9 +33,20 @@
                 dark
                 small
                 color="cyan accent-4"
-                @click.stop="batchTag()"
+                v-if="selection.length"
+                @click.stop="batchStory()"
         >
-            <v-icon>label</v-icon>
+            <v-icon>mms</v-icon>
+        </v-btn>
+        <v-btn
+                fab
+                dark
+                small
+                color="light-blue accent-4"
+                v-if="!selection.length"
+                @click.stop="openDocs()"
+        >
+            <v-icon>info</v-icon>
         </v-btn>
         <v-btn
                 fab
@@ -72,7 +83,6 @@
                 small
                 color="grey"
                 @click.stop="clearClipboard()"
-                v-if="selection.length"
         >
             <v-icon>clear</v-icon>
         </v-btn>
@@ -105,7 +115,21 @@
 
                 axios.post("/api/v1/batch/photos/private", {"ids": this.selection}).then(function () {
                     Event.publish("ajax.end");
-                    Event.publish("alert.success", "Photos marked as private");
+                    Event.publish("alert.success", "Toggled private flag");
+                    ctx.clearClipboard();
+                    ctx.refresh();
+                }).catch(() => {
+                    Event.publish("ajax.end");
+                });
+            },
+            batchStory() {
+                Event.publish("ajax.start");
+
+                const ctx = this;
+
+                axios.post("/api/v1/batch/photos/story", {"ids": this.selection}).then(function () {
+                    Event.publish("ajax.end");
+                    Event.publish("alert.success", "Toggled story flag");
                     ctx.clearClipboard();
                     ctx.refresh();
                 }).catch(() => {
@@ -137,6 +161,9 @@
             batchDownload() {
                 this.$alert.warning("Not implemented yet");
                 this.expanded = false;
+            },
+            openDocs() {
+                window.open('https://docs.photoprism.org/en/latest/', '_blank');
             },
         }
     };

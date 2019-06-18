@@ -32,7 +32,7 @@
                     <v-card-title primary-title>
                         <div>
                             <h3 class="title mb-3">No albums matched your search</h3>
-                            <div><v-btn @click.prevent.stop="create" small>Create a new album</v-btn> or try again using a different term.</div>
+                            <div>Try again using a different term or <v-btn @click.prevent.stop="create" small>create a new album</v-btn></div>
                         </div>
                     </v-card-title>
                 </v-card>

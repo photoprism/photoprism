@@ -60,7 +60,8 @@
                             <div>
                                 <h3 class="body-2 mb-2" :title="photo.PhotoTitle">
                                     {{ photo.PhotoTitle | truncate(80) }}
-                                    <v-icon v-if="photo.PhotoPrivate" size="18">vpn_key</v-icon>
+                                    <v-icon v-if="photo.PhotoPrivate" size="16" title="Private">vpn_key</v-icon>
+                                    <v-icon v-if="photo.PhotoStory" size="16" title="Shared with your friends in the story feed">mms</v-icon>
                                 </h3>
                                 <div class="caption">
                                     <v-icon size="14">date_range</v-icon>
