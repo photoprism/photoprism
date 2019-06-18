@@ -36,7 +36,7 @@
                 v-if="selection.length"
                 @click.stop="batchStory()"
         >
-            <v-icon>mms</v-icon>
+            <v-icon>wifi</v-icon>
         </v-btn>
         <v-btn
                 fab
