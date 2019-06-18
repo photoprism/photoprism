@@ -19,7 +19,7 @@
                 <v-spacer></v-spacer>
 
                 <v-btn icon @click.prevent="create">
-                    <v-icon>create_new_folder</v-icon>
+                    <v-icon>add</v-icon>
                 </v-btn>
             </v-toolbar>
         </v-form>
@@ -32,7 +32,7 @@
                     <v-card-title primary-title>
                         <div>
                             <h3 class="title mb-3">No albums matched your search</h3>
-                            <div>Try again using a different name or <a @click.prevent="create" href="#">create a new album</a>.</div>
+                            <div><v-btn @click.prevent.stop="create" small>Create a new album</v-btn> or try again using a different term.</div>
                         </div>
                     </v-card-title>
                 </v-card>
@@ -218,13 +218,16 @@
                 this.pageSize = pageSize;
             },
             create() {
-                const name = "New Album " + Date.now();
+                const name = "New Album";
                 const album = new Album({"AlbumName": name});
 
                 album.save().then(() => {
                     this.$alert.success(name + " created");
 
-                    this.refresh();
+                    this.filter.q = "";
+                    this.lastFilter = {};
+
+                    this.search();
                 })
             },
         },

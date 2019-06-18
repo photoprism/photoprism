@@ -129,6 +129,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums/:uuid/thumbnail/:type", func(c *gin.Context) {
 		typeName := c.Param("type")
+		uuid := c.Param("uuid")
 
 		thumbType, ok := photoprism.ThumbnailTypes[typeName]
 
@@ -140,15 +141,11 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 
-		// log.Infof("Searching for album uuid: %s", c.Param("uuid"))
-
-		file, err := search.FindAlbumThumbByUUID(c.Param("uuid"))
-
-		// log.Infof("Album thumb file: %#v", file)
+		file, err := search.FindAlbumThumbByUUID(uuid)
 
 		if err != nil {
-			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
-			// c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": util.UcFirst(err.Error())})
+			log.Debugf("album has no photos yet, using generic thumb image: %s", uuid)
+			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		}
 

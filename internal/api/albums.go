@@ -1,9 +1,11 @@
 package api
 
 import (
-	"github.com/photoprism/photoprism/internal/models"
+	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/photoprism/photoprism/internal/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -52,20 +54,18 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		if err := c.BindJSON(&params); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			return
 		}
 
-		if len(params.AlbumName) == 0 {
-			log.Error("album name empty")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst("album name empty")})
-		}
-
-		album := &models.Album{AlbumName: params.AlbumName}
+		album := models.NewAlbum(params.AlbumName)
 
 		if res := conf.Db().Create(album); res.Error != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(res.Error.Error())})
+			log.Error(res.Error.Error())
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("\"%s\" already exists", album.AlbumName)})
+			return
 		}
 
-		c.JSON(http.StatusOK, http.Response{})
+		c.JSON(http.StatusOK, album)
 	})
 }
 

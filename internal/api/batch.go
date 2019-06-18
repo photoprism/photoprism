@@ -26,11 +26,13 @@ func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		if err := c.BindJSON(&params); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			return
 		}
 
 		if len(params.Ids) == 0 {
 			log.Error("no photos selected")
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst("no photos selected")})
+			return
 		}
 
 		log.Infof("deleting photos: %#v", params.Ids)
@@ -55,11 +57,13 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 
 		if err := c.BindJSON(&params); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			return
 		}
 
 		if len(params.Ids) == 0 {
 			log.Error("no photos selected")
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst("no photos selected")})
+			return
 		}
 
 		log.Infof("marking photos as private: %#v", params.Ids)

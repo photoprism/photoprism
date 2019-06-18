@@ -88,9 +88,9 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile @click="">
+                    <v-list-tile @click.stop="$alert.warning('Work in progress')">
                         <v-list-tile-content>
-                            <v-list-tile-title>Not implemented yet</v-list-tile-title>
+                            <v-list-tile-title>Work in progress...</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list-group>
