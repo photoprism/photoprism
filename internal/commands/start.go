@@ -74,13 +74,18 @@ func startAction(ctx *cli.Context) error {
 		dctx.Args = ctx.Args()
 		conf.Shutdown()
 		cancel()
+
+		if pid, ok := childAlreadyRunning(conf.DaemonPIDPath()); ok {
+			log.Infof("Daemon already running with PID[%v]\n", pid)
+			return nil
+		}
+
 		child, err := dctx.Reborn()
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		if child != nil {
-			// TODO(ved): check if the child is already running
 			if !util.Overwrite(conf.DaemonPIDPath(), []byte(strconv.Itoa(child.Pid))) {
 				log.Fatal("failed to write PID to file")
 			}
@@ -104,4 +109,22 @@ func startAction(ctx *cli.Context) error {
 	cancel()
 	time.Sleep(3 * time.Second)
 	return nil
+}
+
+func childAlreadyRunning(filePath string) (pid int, running bool) {
+	if !util.Exists(filePath) {
+		return pid, false
+	}
+
+	pid, err := daemon.ReadPidFile(filePath)
+	if err != nil {
+		return pid, false
+	}
+
+	process, err := os.FindProcess(int(pid))
+	if err != nil {
+		return pid, false
+	}
+
+	return pid, process.Signal(syscall.Signal(0)) == nil
 }
