@@ -68,10 +68,11 @@ func startAction(ctx *cli.Context) error {
 	}
 	conf.MigrateDb()
 
+	dctx := new(daemon.Context)
+	dctx.LogFileName = conf.DaemonLogPath()
+	dctx.PidFileName = conf.DaemonPIDPath()
+	dctx.Args = ctx.Args()
 	if !daemon.WasReborn() && conf.ShouldDaemonize() {
-		dctx := new(daemon.Context)
-		dctx.LogFileName = conf.DaemonLogPath()
-		dctx.Args = ctx.Args()
 		conf.Shutdown()
 		cancel()
 
@@ -93,10 +94,7 @@ func startAction(ctx *cli.Context) error {
 			log.Infof("Daemon started with PID: %v\n", child.Pid)
 			return nil
 		}
-
-		defer dctx.Release()
 	}
-
 	log.Infof("starting web server at %s:%d", conf.HttpServerHost(), conf.HttpServerPort())
 	go server.Start(cctx, conf)
 
@@ -107,6 +105,10 @@ func startAction(ctx *cli.Context) error {
 	log.Info("Shutting down...")
 	conf.Shutdown()
 	cancel()
+	err := dctx.Release()
+	if err != nil {
+		log.Error(err)
+	}
 	time.Sleep(3 * time.Second)
 	return nil
 }
