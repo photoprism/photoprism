@@ -218,13 +218,22 @@ func (c *Config) ConfigPath() string {
 	return c.config.ConfigPath
 }
 
-// DaemonPath returns the filepath of the pid.
-func (c *Config) DaemonPath() string {
-	if c.config.DaemonPath == "" {
-		return c.ResourcesPath() + "/photoprism.pid"
+// DaemonPIDPath returns the filepath of the pid.
+func (c *Config) DaemonPIDPath() string {
+	if c.config.DaemonPIDPath == "" {
+		return c.AssetsPath() + "/photoprism.pid"
 	}
 
-	return c.config.DaemonPath
+	return c.config.DaemonPIDPath
+}
+
+// DaemonLogPath returns the filepath of the log.
+func (c *Config) DaemonLogPath() string {
+	if c.config.DaemonLogPath == "" {
+		return c.AssetsPath() + "/photoprism.log"
+	}
+
+	return c.config.DaemonLogPath
 }
 
 // ShouldDaemonize returns true if daemon mode is set to true.

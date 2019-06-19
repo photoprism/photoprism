@@ -70,8 +70,7 @@ func startAction(ctx *cli.Context) error {
 
 	if !daemon.WasReborn() && conf.ShouldDaemonize() {
 		dctx := new(daemon.Context)
-		// TODO(ved): add log file
-		dctx.LogFileName = "/srv/log.txt"
+		dctx.LogFileName = conf.DaemonLogPath()
 		dctx.Args = ctx.Args()
 		conf.Shutdown()
 		cancel()
@@ -81,7 +80,8 @@ func startAction(ctx *cli.Context) error {
 		}
 
 		if child != nil {
-			if !util.Overwrite(conf.DaemonPath(), []byte(strconv.Itoa(child.Pid))) {
+			// TODO(ved): check if the child is already running
+			if !util.Overwrite(conf.DaemonPIDPath(), []byte(strconv.Itoa(child.Pid))) {
 				log.Fatal("failed to write PID to file")
 			}
 

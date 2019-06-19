@@ -18,9 +18,9 @@ var StopCommand = cli.Command{
 
 func stopAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
-	log.Infof("Looking for PID from file: %v\n", conf.DaemonPath())
+	log.Infof("Looking for PID from file: %v\n", conf.DaemonPIDPath())
 	dcxt := new(daemon.Context)
-	dcxt.PidFileName = conf.DaemonPath()
+	dcxt.PidFileName = conf.DaemonPIDPath()
 	child, err := dcxt.Search()
 	if err != nil {
 		log.Fatal(err)

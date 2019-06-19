@@ -56,7 +56,8 @@ type Params struct {
 	DarktableBin       string `yaml:"darktable-bin" flag:"darktable-bin"`
 	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
 	HeifConvertBin     string `yaml:"heifconvert-bin" flag:"heifconvert-bin"`
-	DaemonPath         string `yaml:"daemon-path" flag:"daemon-path"`
+	DaemonPIDPath      string `yaml:"daemon-pid-path" flag:"daemon-pid-path"`
+	DaemonLogPath      string `yaml:"daemon-log-path" flag:"daemon-log-path"`
 	DaemonMode         bool   `yaml:"daemon-mode" flag:"daemonize"`
 }
 

@@ -153,10 +153,16 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
 	},
 	cli.StringFlag{
-		Name:   "daemon-path",
+		Name:   "daemon-pid-path",
 		Usage:  "File path to store daemon PID",
-		EnvVar: "PHOTOPRISM_DAEMON_PATH",
-		Value:  "/srv/photoprism/resources/photoprism.pid",
+		EnvVar: "PHOTOPRISM_DAEMON_PID_PATH",
+		Value:  "/srv/photoprism/photoprism.pid",
+	},
+	cli.StringFlag{
+		Name:   "daemon-log-path",
+		Usage:  "File path for daemon logs.",
+		EnvVar: "PHOTOPRISM_DAEMON_LOG_PATH",
+		Value:  "/srv/photoprism/photoprism.log",
 	},
 	cli.BoolFlag{
 		Name:   "daemonize, d",
