@@ -15,3 +15,5 @@ http-port: 80
 http-password:
 database-driver: internal
 database-dsn: root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true
+daemon-path: /srv/photoprism/resources/photoprism.pid
+daemon-mode: false

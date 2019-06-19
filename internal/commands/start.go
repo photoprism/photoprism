@@ -7,10 +7,10 @@ import (
 	"syscall"
 	"time"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/server"
+	daemon "github.com/sevlyar/go-daemon"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -41,6 +41,12 @@ var startFlags = []cli.Flag{
 		Value:  "",
 		EnvVar: "PHOTOPRISM_HTTP_MODE",
 	},
+
+	cli.BoolFlag{
+		Name:   "daemonize, d",
+		Usage:  "run Photoprism as Daemon",
+		EnvVar: "PHOTOPRISM_DAEMON_MODE",
+	},
 }
 
 func startAction(ctx *cli.Context) error {
@@ -59,6 +65,27 @@ func startAction(ctx *cli.Context) error {
 		log.Fatal(err)
 	}
 	conf.MigrateDb()
+
+	if !daemon.WasReborn() && conf.ShouldDaemonize() {
+		dctx := new(daemon.Context)
+		dctx.PidFileName = conf.DaemonPath()
+		// TODO(ved): add log file
+		dctx.LogFileName = "/srv/log.txt"
+		dctx.Args = ctx.Args()
+		conf.Shutdown()
+		cancel()
+		child, err := dctx.Reborn()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if child != nil {
+			log.Infof("Daemon started with PID: %v\n", child.Pid)
+			return nil
+		}
+
+		defer dctx.Release()
+	}
 
 	log.Infof("starting web server at %s:%d", conf.HttpServerHost(), conf.HttpServerPort())
 	go server.Start(cctx, conf)

@@ -56,6 +56,8 @@ type Params struct {
 	DarktableBin       string `yaml:"darktable-bin" flag:"darktable-bin"`
 	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
 	HeifConvertBin     string `yaml:"heifconvert-bin" flag:"heifconvert-bin"`
+	DaemonPath         string `yaml:"daemon-path" flag:"daemon-path"`
+	DaemonMode         bool   `yaml:"daemon-mode" flag:"daemonize"`
 }
 
 // NewParams() creates a new configuration entity by using two methods:

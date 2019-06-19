@@ -218,6 +218,20 @@ func (c *Config) ConfigPath() string {
 	return c.config.ConfigPath
 }
 
+// DaemonPath returns the filepath of the pid.
+func (c *Config) DaemonPath() string {
+	if c.config.DaemonPath == "" {
+		return c.ResourcesPath() + "/photoprism.pid"
+	}
+
+	return c.config.DaemonPath
+}
+
+// ShouldDaemonize returns true if daemon mode is set to true.
+func (c *Config) ShouldDaemonize() bool {
+	return c.config.DaemonMode
+}
+
 // SqlServerHost returns the built-in SQL server host name or IP address (empty for all interfaces).
 func (c *Config) SqlServerHost() string {
 	return c.config.SqlServerHost
