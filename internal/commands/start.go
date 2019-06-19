@@ -4,11 +4,13 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/server"
+	"github.com/photoprism/photoprism/internal/util"
 	daemon "github.com/sevlyar/go-daemon"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -68,7 +70,6 @@ func startAction(ctx *cli.Context) error {
 
 	if !daemon.WasReborn() && conf.ShouldDaemonize() {
 		dctx := new(daemon.Context)
-		dctx.PidFileName = conf.DaemonPath()
 		// TODO(ved): add log file
 		dctx.LogFileName = "/srv/log.txt"
 		dctx.Args = ctx.Args()
@@ -80,6 +81,10 @@ func startAction(ctx *cli.Context) error {
 		}
 
 		if child != nil {
+			if !util.Overwrite(conf.DaemonPath(), []byte(strconv.Itoa(child.Pid))) {
+				log.Fatal("failed to write PID to file")
+			}
+
 			log.Infof("Daemon started with PID: %v\n", child.Pid)
 			return nil
 		}

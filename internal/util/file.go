@@ -18,6 +18,17 @@ func Exists(filename string) bool {
 	return err == nil && !info.IsDir()
 }
 
+// Overwrite overwrites the file with data. Creates file if not present.
+func Overwrite(fileName string, data []byte) bool {
+	f, err := os.Create(fileName)
+	if err != nil {
+		return false
+	}
+
+	_, err = f.Write(data)
+	return err == nil
+}
+
 // Returns full path; ~ replaced with actual home directory
 func ExpandedFilename(filename string) string {
 	if filename == "" {
