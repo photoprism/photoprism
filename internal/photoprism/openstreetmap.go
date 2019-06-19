@@ -92,8 +92,8 @@ func (m *MediaFile) Location() (*models.Location, error) {
 	}
 
 	if len(openstreetmapLocation.Name) > 1 {
-		location.LocName = strings.ReplaceAll(openstreetmapLocation.Name, " - ", " / ")
-		location.LocName = util.Title(strings.TrimSpace(strings.ReplaceAll(location.LocName, "_", " ")))
+		location.LocName = strings.Replace(openstreetmapLocation.Name, " - ", " / ", -1)
+		location.LocName = util.Title(strings.TrimSpace(strings.Replace(location.LocName, "_", " ", -1)))
 	}
 
 	location.LocHouseNr = strings.TrimSpace(openstreetmapLocation.Address.HouseNumber)
@@ -106,11 +106,11 @@ func (m *MediaFile) Location() (*models.Location, error) {
 	location.LocCountryCode = strings.TrimSpace(openstreetmapLocation.Address.CountryCode)
 	location.LocDisplayName = strings.TrimSpace(openstreetmapLocation.DisplayName)
 
-	locationCategory := strings.TrimSpace(strings.ReplaceAll(openstreetmapLocation.Category, "_", " "))
+	locationCategory := strings.TrimSpace(strings.Replace(openstreetmapLocation.Category, "_", " ", -1))
 	location.LocCategory = locationCategory
 
 	if openstreetmapLocation.Type != "yes" && openstreetmapLocation.Type != "unclassified" {
-		locationType := strings.TrimSpace(strings.ReplaceAll(openstreetmapLocation.Type, "_", " "))
+		locationType := strings.TrimSpace(strings.Replace(openstreetmapLocation.Type, "_", " ", -1))
 		location.LocType = locationType
 	}
 
