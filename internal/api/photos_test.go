@@ -36,15 +36,15 @@ func TestGetPhotos(t *testing.T) {
 func TestLikePhoto(t *testing.T) {
 	app, router, ctx := NewApiTest()
 
-	photo1 := models.Photo{ID: 1}
-	ctx.Db.Create(&photo1)
+	photo1 := models.Photo{Model.ID: 1}
+	ctx.Db().Create(&photo1)
 
 	LikePhoto(router, ctx)
 
 	result := PerformRequest(app, "POST", "/api/v1/photos/1/like")
 	assert.Equal(t, http.StatusOK, result.Code)
 
-	result := PerformRequest(app, "POST", "/api/v1/photos/2/like")
+	result = PerformRequest(app, "POST", "/api/v1/photos/2/like")
 	assert.Equal(t, http.StatusNotFound, result.Code)
 }
 
