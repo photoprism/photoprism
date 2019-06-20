@@ -3,8 +3,10 @@ package api
 import (
 	"net/http"
 	"testing"
+	"encoding/json"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
 func TestGetPhotos(t *testing.T) {
@@ -15,6 +17,17 @@ func TestGetPhotos(t *testing.T) {
 	result := PerformRequest(app, "GET", "/api/v1/photos?count=10")
 
 	assert.Equal(t, http.StatusOK, result.Code)
+
+	var photoSearchRes []photoprism.PhotoSearchResult
+
+	jsonResult, err := ioutil.ReadAll(result.Body)
+		if err != nil {
+			t.Fail()
+		}
+
+	if err = json.Unmarshal(jsonResult, &photoSearchRes); err != nil {
+		t.Fail()
+	}
 }
 
 func TestLikePhoto(t *testing.T) {
