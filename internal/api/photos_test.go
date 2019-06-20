@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 	"encoding/json"
+	"io/ioutil"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/photoprism/photoprism/internal/photoprism"
