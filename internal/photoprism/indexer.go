@@ -129,6 +129,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		if exifData, err := jpeg.Exif(); err == nil {
 			photo.PhotoLat = exifData.Lat
 			photo.PhotoLong = exifData.Long
+			photo.PhotoAltitude = exifData.Altitude
 			photo.PhotoArtist = exifData.Artist
 
 			if exifData.UUID != "" {
@@ -144,6 +145,8 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		photo.Lens = models.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
 		photo.PhotoFocalLength = mediaFile.FocalLength()
 		photo.PhotoAperture = mediaFile.Aperture()
+		photo.PhotoIso = mediaFile.Iso()
+		photo.PhotoExposure = mediaFile.Exposure()
 	}
 
 	if location, err := mediaFile.Location(); err == nil {

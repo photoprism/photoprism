@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"strconv"
 	"strings"
 	"time"
 
-	"github.com/rwcarlsen/goexif/exif"
-	"github.com/rwcarlsen/goexif/mknote"
+	"github.com/dsoprea/go-exif"
 )
 
 // Exif returns information about a single image.
@@ -21,18 +21,33 @@ type Exif struct {
 	CameraModel string
 	LensMake    string
 	LensModel   string
+	FocalLength int
+	Exposure    string
 	Aperture    float64
-	FocalLength float64
+	Iso         int
 	Lat         float64
 	Long        float64
-	Thumbnail   []byte
+	Altitude    int
 	Width       int
 	Height      int
 	Orientation int
+	All         map[string]string
 }
 
-func init() {
-	exif.RegisterParsers(mknote.All...)
+var im *exif.IfdMapping
+
+func IfdMapping() *exif.IfdMapping {
+	if im != nil {
+		return im
+	}
+
+	im = exif.NewIfdMapping()
+
+	if err := exif.LoadStandardIfds(im); err != nil {
+		log.Errorf("could not parse exif config: %s", err.Error())
+	}
+
+	return im
 }
 
 // Exif returns exif meta data of a media file.
@@ -45,7 +60,7 @@ func (m *MediaFile) Exif() (result *Exif, err error) {
 	}()
 
 	if m == nil {
-		return nil, errors.New("can't parse exif data: file instance is null")
+		return nil, errors.New("can't parse exif data: file instance is nil")
 	}
 
 	if m.exifData != nil {
@@ -58,98 +73,158 @@ func (m *MediaFile) Exif() (result *Exif, err error) {
 
 	m.exifData = &Exif{}
 
-	file, err := m.openFile()
+	rawExif, err := exif.SearchFileAndExtractExif(m.Filename())
 
 	if err != nil {
-		return nil, err
+		return m.exifData, err
 	}
 
-	defer file.Close()
+	ti := exif.NewTagIndex()
 
-	x, err := exif.Decode(file)
+	tags := make(map[string]string)
+	im := IfdMapping()
+
+	visitor := func(fqIfdPath string, ifdIndex int, tagId uint16, tagType exif.TagType, valueContext exif.ValueContext) (err error) {
+		ifdPath, err := im.StripPathPhraseIndices(fqIfdPath)
+
+		if err != nil {
+			return nil
+		}
+
+		it, err := ti.Get(ifdPath, tagId)
+
+		if err != nil {
+			return nil
+		}
+
+		valueString := ""
+
+		if tagType.Type() != exif.TypeUndefined {
+			valueString, err = tagType.ResolveAsString(valueContext, true)
+
+			if err != nil {
+				log.Error(err)
+
+				return nil
+			}
+
+			if it.Name != "" && valueString != "" {
+				tags[it.Name] = valueString
+			}
+		}
+
+		return nil
+	}
+
+	_, err = exif.Visit(exif.IfdStandard, im, ti, rawExif, visitor)
 
 	if err != nil {
-		return nil, err
+		return m.exifData, err
 	}
 
-	if artist, err := x.Get(exif.Artist); err == nil {
-		m.exifData.Artist = strings.Replace(artist.String(), "\"", "", -1)
+	if value, ok := tags["Artist"]; ok {
+		m.exifData.Artist = strings.Replace(value, "\"", "", -1)
 	}
 
-	if camModel, err := x.Get(exif.Model); err == nil {
-		m.exifData.CameraModel = strings.Replace(camModel.String(), "\"", "", -1)
+	if value, ok := tags["Model"]; ok {
+		m.exifData.CameraModel = strings.Replace(value, "\"", "", -1)
 	}
 
-	if camMake, err := x.Get(exif.Make); err == nil {
-		m.exifData.CameraMake = strings.Replace(camMake.String(), "\"", "", -1)
+	if value, ok := tags["Make"]; ok {
+		m.exifData.CameraMake = strings.Replace(value, "\"", "", -1)
 	}
 
-	if lensMake, err := x.Get(exif.LensMake); err == nil {
-		m.exifData.LensMake = strings.Replace(lensMake.String(), "\"", "", -1)
+	if value, ok := tags["LensMake"]; ok {
+		m.exifData.LensMake = strings.Replace(value, "\"", "", -1)
 	}
 
-	if lensModel, err := x.Get(exif.LensModel); err == nil {
-		m.exifData.LensModel = strings.Replace(lensModel.String(), "\"", "", -1)
+	if value, ok := tags["LensModel"]; ok {
+		m.exifData.LensModel = strings.Replace(value, "\"", "", -1)
 	}
 
-	if aperture, err := x.Get(exif.ApertureValue); err == nil {
-		number, denom, _ := aperture.Rat2(0)
+	if value, ok := tags["ExposureTime"]; ok {
+		m.exifData.Exposure = value
+	}
 
-		if denom == 0 {
-			denom = 1
+	if value, ok := tags["ApertureValue"]; ok {
+		values := strings.Split(value, "/")
+
+		if len(values) == 2 && values[1] != "0" && values[1] != "" {
+			number, _ := strconv.ParseFloat(values[0], 64)
+			denom, _ := strconv.ParseFloat(values[1], 64)
+
+			m.exifData.Aperture = math.Round((number/denom)*1000) / 1000
 		}
-
-		value := float64(number) / float64(denom)
-
-		m.exifData.Aperture = math.Round(value*1000) / 1000
 	}
 
-	if focal, err := x.Get(exif.FocalLength); err == nil {
-		number, denom, _ := focal.Rat2(0)
-
-		if denom == 0 {
-			denom = 1
+	if value, ok := tags["FocalLengthIn35mmFilm"]; ok {
+		if i, err := strconv.Atoi(value); err == nil {
+			m.exifData.FocalLength = i
 		}
+	} else if value, ok := tags["FocalLength"]; ok {
+		values := strings.Split(value, "/")
 
-		value := float64(number) / float64(denom)
+		if len(values) == 2 && values[1] != "0" && values[1] != "" {
+			number, _ := strconv.ParseFloat(values[0], 64)
+			denom, _ := strconv.ParseFloat(values[1], 64)
 
-		m.exifData.FocalLength = math.Round(value*1000) / 1000
+			m.exifData.FocalLength = int(math.Round((number/denom)*1000) / 1000)
+		}
 	}
 
-	if tm, err := x.DateTime(); err == nil {
-		m.exifData.DateTime = tm
+	if value, ok := tags["ISOSpeedRatings"]; ok {
+		if i, err := strconv.Atoi(value); err == nil {
+			m.exifData.Iso = i
+		}
 	}
 
-	if tz, err := x.TimeZone(); err == nil {
-		m.exifData.TimeZone = tz.String()
+	if value, ok := tags["DateTimeOriginal"]; ok {
+		m.exifData.DateTime, _ = time.Parse("2006:01:02 15:04:05", value)
 	}
 
-	if lat, long, err := x.LatLong(); err == nil {
-		m.exifData.Lat = lat
-		m.exifData.Long = long
+	if value, ok := tags["TimeZoneOffset"]; ok {
+		m.exifData.TimeZone = value
 	}
 
-	if thumbnail, err := x.JpegThumbnail(); err == nil {
-		m.exifData.Thumbnail = thumbnail
+	if value, ok := tags["ImageUniqueID"]; ok {
+		m.exifData.UUID = value
 	}
 
-	if uniqueID, err := x.Get(exif.ImageUniqueID); err == nil {
-		m.exifData.UUID = uniqueID.String()
+	if value, ok := tags["ImageWidth"]; ok {
+		if i, err := strconv.Atoi(value); err == nil {
+			m.exifData.Width = i
+		}
 	}
 
-	if width, err := x.Get(exif.ImageWidth); err == nil {
-		m.exifData.Width, _ = width.Int(0)
+	if value, ok := tags["ImageLength"]; ok {
+		if i, err := strconv.Atoi(value); err == nil {
+			m.exifData.Width = i
+		}
 	}
 
-	if height, err := x.Get(exif.ImageLength); err == nil {
-		m.exifData.Height, _ = height.Int(0)
-	}
-
-	if orientation, err := x.Get(exif.Orientation); err == nil {
-		m.exifData.Orientation, _ = orientation.Int(0)
+	if value, ok := tags["Orientation"]; ok {
+		if i, err := strconv.Atoi(value); err == nil {
+			m.exifData.Orientation = i
+		}
 	} else {
 		m.exifData.Orientation = 1
 	}
 
-	return m.exifData, err
+	_, index, err := exif.Collect(im, ti, rawExif)
+
+	if err != nil {
+		return m.exifData, err
+	}
+
+	if ifd, err := index.RootIfd.ChildWithIfdPath(exif.IfdPathStandardGps); err == nil {
+		if gi, err := ifd.GpsInfo(); err == nil {
+			m.exifData.Lat = gi.Latitude.Decimal()
+			m.exifData.Long = gi.Longitude.Decimal()
+			m.exifData.Altitude = gi.Altitude
+		}
+	}
+
+	m.exifData.All = tags
+
+	return m.exifData, nil
 }

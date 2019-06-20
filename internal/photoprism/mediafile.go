@@ -147,10 +147,10 @@ func (m *MediaFile) LensMake() string {
 }
 
 // FocalLength return the length of the focal for a file.
-func (m *MediaFile) FocalLength() float64 {
+func (m *MediaFile) FocalLength() int {
 	info, err := m.Exif()
 
-	var result float64
+	var result int
 
 	if err == nil {
 		result = info.FocalLength
@@ -167,6 +167,32 @@ func (m *MediaFile) Aperture() float64 {
 
 	if err == nil {
 		result = info.Aperture
+	}
+
+	return result
+}
+
+// Iso returns the iso rating as int.
+func (m *MediaFile) Iso() int {
+	info, err := m.Exif()
+
+	var result int
+
+	if err == nil {
+		result = info.Iso
+	}
+
+	return result
+}
+
+// Exposure returns the exposure time as string.
+func (m *MediaFile) Exposure() string {
+	info, err := m.Exif()
+
+	var result string
+
+	if err == nil {
+		result = info.Exposure
 	}
 
 	return result

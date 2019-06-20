@@ -23,8 +23,11 @@ type Photo struct {
 	PhotoStory         bool
 	PhotoLat           float64
 	PhotoLong          float64
-	PhotoFocalLength   float64
+	PhotoAltitude      int
+	PhotoFocalLength   int
+	PhotoIso           int
 	PhotoAperture      float64
+	PhotoExposure      string
 	PhotoViews         uint
 	Camera             *Camera
 	CameraID           uint
