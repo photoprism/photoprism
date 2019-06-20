@@ -8,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/models"
 )
 
 func TestGetPhotos(t *testing.T) {
@@ -35,14 +36,16 @@ func TestGetPhotos(t *testing.T) {
 func TestLikePhoto(t *testing.T) {
 	app, router, ctx := NewApiTest()
 
+	photo1 := models.Photo{ID: 1}
+	ctx.Db.Create(&photo1)
+
 	LikePhoto(router, ctx)
 
 	result := PerformRequest(app, "POST", "/api/v1/photos/1/like")
+	assert.Equal(t, http.StatusOK, result.Code)
 
-	// TODO: Test database can be empty
-	if result.Code != http.StatusNotFound {
-		assert.Equal(t, http.StatusOK, result.Code)
-	}
+	result := PerformRequest(app, "POST", "/api/v1/photos/2/like")
+	assert.Equal(t, http.StatusNotFound, result.Code)
 }
 
 func TestDislikePhoto(t *testing.T) {
