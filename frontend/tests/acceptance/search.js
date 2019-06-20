@@ -14,6 +14,7 @@ fixture`Search photos`
 
 const page = new Page();
 
+
 test('Test search object', async t => {
     await page.search('label:cat');
     await t
