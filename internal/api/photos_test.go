@@ -21,6 +21,7 @@ func TestGetPhotos(t *testing.T) {
 
 	var photoSearchRes []photoprism.PhotoSearchResult
 
+	// Test if the response body is a json matching the PhotoSearchResult struct
 	jsonResult, err := ioutil.ReadAll(result.Body)
 		if err != nil {
 			t.Fail()
