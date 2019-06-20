@@ -40,6 +40,7 @@ func TestLikePhoto(t *testing.T) {
 		Model: models.Model{ID: 1},
 	}
 
+	ctx.Db().NewRecord(&photo1)
 	ctx.Db().Create(&photo1)
 
 	LikePhoto(router, ctx)
