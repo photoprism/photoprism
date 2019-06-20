@@ -37,7 +37,7 @@ func TestLikePhoto(t *testing.T) {
 	app, router, ctx := NewApiTest()
 
 	photo1 := models.Photo{
-		Model: Model{ID: 1}
+		Model: Model{ID: 1},
 	}
 
 	ctx.Db().Create(&photo1)
