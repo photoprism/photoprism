@@ -5,7 +5,7 @@ import (
 	"testing"
 	"encoding/json"
 	"io/ioutil"
-	// "time"
+	"fmt"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/photoprism/photoprism/internal/photoprism"
