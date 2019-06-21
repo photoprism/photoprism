@@ -5,7 +5,7 @@ import (
 	"testing"
 	"encoding/json"
 	"io/ioutil"
-	"time"
+	// "time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -42,7 +42,8 @@ func TestLikePhoto(t *testing.T) {
 	t.Run("Like Existing record", func(t *testing.T) {
 		// Ensure that at least one record exist in the test database
 		
-		photoFirst := ctx.Db().FirstOrCreate(models.Photo)
+		var photoFirst models.Photo
+		ctx.Db().FirstOrCreate(models.Photo)
 		idFirst := photoFirst.ID
 		t.Print(idfirst)
 		result := PerformRequest(app, "POST", "/api/v1/photos/1/like")
