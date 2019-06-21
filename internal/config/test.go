@@ -49,7 +49,6 @@ func NewTestParams() *Params {
 func TestConfig() *Config {
 	if testConfig == nil {
 		testConfig = NewTestConfig()
-		fmt.Print("initialise new TestConfig\n")
 	}
 
 	return testConfig

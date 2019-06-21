@@ -37,22 +37,28 @@ func TestGetPhotos(t *testing.T) {
 func TestLikePhoto(t *testing.T) {
 	app, router, ctx := NewApiTest()
 
-	// photo1 := models.Photo{
-	// 	Model: models.Model{ID: 1},
-	// 	TakenAt: time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC),
-	// }
-	// if ctx.Db().NewRecord(photo1){
-	// 	ctx.Db().Create(&photo1)
-	// }
 	LikePhoto(router, ctx)
-
+	
 	t.Run("Like Existing record", func(t *testing.T) {
+		// Ensure that at least one record exist in the test database
+		photo1 := models.Photo{
+			Model: models.Model{ID: 1},
+			TakenAt: time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC), // required as default value 0000-00-00 not accepted by the SQL database
+		}
+		if ctx.Db().NewRecord(photo1){
+			ctx.Db().Create(&photo1)
+		}
 		result := PerformRequest(app, "POST", "/api/v1/photos/1/like")
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
 
 	t.Run("Like Non-existing record", func(t *testing.T) {
-		result := PerformRequest(app, "POST", "/api/v1/photos/1224/like")
+		ctx.Db().Delete(
+			models.Photo{
+				models.Model{ID: 1},
+			},
+		)
+		result := PerformRequest(app, "POST", "/api/v1/photos/1/like")
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
 }
