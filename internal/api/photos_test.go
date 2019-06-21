@@ -41,9 +41,9 @@ func TestLikePhoto(t *testing.T) {
 		Model: models.Model{ID: 1},
 		TakenAt: time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC),
 	}
-	if ctx.Db().NewRecord(photo1){
-		ctx.Db().Create(&photo1)
-	}
+	// if ctx.Db().NewRecord(photo1){
+	// 	ctx.Db().Create(&photo1)
+	// }
 	LikePhoto(router, ctx)
 
 	t.Run("Like Existing record", func(t *testing.T) {
