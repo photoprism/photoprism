@@ -41,7 +41,7 @@ func TestLikePhoto(t *testing.T) {
 		Model: models.Model{ID: 1},
 		TakenAt: time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC),
 	}
-
+	ctx.Db().NewRecord(photo1)
 	ctx.Db().Create(&photo1)
 
 	LikePhoto(router, ctx)
