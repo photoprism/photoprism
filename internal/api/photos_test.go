@@ -44,14 +44,17 @@ func TestLikePhoto(t *testing.T) {
 	if ctx.Db().NewRecord(photo1){
 		ctx.Db().Create(&photo1)
 	}
-
 	LikePhoto(router, ctx)
 
-	result := PerformRequest(app, "POST", "/api/v1/photos/1/like")
-	assert.Equal(t, http.StatusOK, result.Code)
+	t.Run("Like Existing record", func(t *testing.T) {
+		result := PerformRequest(app, "POST", "/api/v1/photos/1/like")
+		assert.Equal(t, http.StatusOK, result.Code)
+	})
 
-	result = PerformRequest(app, "POST", "/api/v1/photos/2/like")
-	assert.Equal(t, http.StatusNotFound, result.Code)
+	t.Run("Like Non-existing record", func(t *testing.T) {
+		result = PerformRequest(app, "POST", "/api/v1/photos/1224/like")
+		assert.Equal(t, http.StatusNotFound, result.Code)
+	})
 }
 
 func TestDislikePhoto(t *testing.T) {
