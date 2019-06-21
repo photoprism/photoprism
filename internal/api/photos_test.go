@@ -5,11 +5,11 @@ import (
 	"testing"
 	"encoding/json"
 	"io/ioutil"
-	// "time"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	// "github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/models"
 )
 
 func TestGetPhotos(t *testing.T) {
