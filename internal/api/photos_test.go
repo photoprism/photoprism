@@ -55,7 +55,7 @@ func TestLikePhoto(t *testing.T) {
 	t.Run("Like Non-existing record", func(t *testing.T) {
 		ctx.Db().Delete(
 			models.Photo{
-				models.Model{ID: 1},
+				Model: models.Model{ID: 1},
 			},
 		)
 		result := PerformRequest(app, "POST", "/api/v1/photos/1/like")
