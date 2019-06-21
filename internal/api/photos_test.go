@@ -52,7 +52,7 @@ func TestLikePhoto(t *testing.T) {
 	})
 
 	t.Run("Like Non-existing record", func(t *testing.T) {
-		result = PerformRequest(app, "POST", "/api/v1/photos/1224/like")
+		result := PerformRequest(app, "POST", "/api/v1/photos/1224/like")
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
 }
