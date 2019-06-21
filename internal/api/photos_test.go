@@ -43,9 +43,9 @@ func TestLikePhoto(t *testing.T) {
 		// Ensure that at least one record exist in the test database
 		
 		var photoFirst models.Photo
-		ctx.Db().FirstOrCreate(models.Photo)
+		ctx.Db().FirstOrCreate(&photoFirst)
 		idFirst := photoFirst.ID
-		t.Print(idfirst)
+		fmt.Printfix(idFirst)
 		result := PerformRequest(app, "POST", "/api/v1/photos/1/like")
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
