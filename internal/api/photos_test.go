@@ -13,9 +13,10 @@ import (
 )
 
 func TestGetPhotos(t *testing.T) {
-	app, router, ctx := NewApiTest()
+	app, router, conf := NewApiTest()
+	conf.InitializeTestData(t)
 
-	GetPhotos(router, ctx)
+	GetPhotos(router, conf)
 
 	result := PerformRequest(app, "GET", "/api/v1/photos?count=10")
 
@@ -35,35 +36,45 @@ func TestGetPhotos(t *testing.T) {
 }
 
 func TestLikePhoto(t *testing.T) {
-	app, router, ctx := NewApiTest()
+	app, router, conf := NewApiTest()
+	conf.InitializeTestData(t)
 
-	LikePhoto(router, ctx)
+	LikePhoto(router, conf)
 	
 	t.Run("Like Existing record", func(t *testing.T) {
 		var photoFirst models.Photo
-		ctx.Db().FirstOrCreate(&photoFirst)
+		conf.Db().FirstOrCreate(&photoFirst)
 
 		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoFirst.ID))
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
 
-	t.Run("Like Non-existing record", func(t *testing.T) {
+	t.Run("Like missing record", func(t *testing.T) {
 		var photoLast models.Photo
-		ctx.Db().Last(&photoLast)
+		conf.Db().Last(&photoLast)
 		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoLast.ID + 1))
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
 }
 
 func TestDislikePhoto(t *testing.T) {
-	app, router, ctx := NewApiTest()
+	app, router, conf := NewApiTest()
+	conf.InitializeTestData(t)
 
-	DislikePhoto(router, ctx)
+	DislikePhoto(router, conf)
 
-	result := PerformRequest(app, "DELETE", "/api/v1/photos/1/like")
+	t.Run("Dislike Existing record", func(t *testing.T) {
+		var photoFirst models.Photo
+		conf.Db().FirstOrCreate(&photoFirst)
 
-	// TODO: Test database can be empty
-	if result.Code != http.StatusNotFound {
+		result := PerformRequest(app, "DELETE", fmt.Sprintf("/api/v1/photos/%d/like", photoFirst.ID))
 		assert.Equal(t, http.StatusOK, result.Code)
-	}
+	})
+
+	t.Run("Dislike missing record", func(t *testing.T) {
+		var photoLast models.Photo
+		conf.Db().Last(&photoLast)
+		result := PerformRequest(app, "DELETE", fmt.Sprintf("/api/v1/photos/%d/like", photoLast.ID + 1))
+		assert.Equal(t, http.StatusNotFound, result.Code)
+	})
 }
