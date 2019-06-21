@@ -43,14 +43,14 @@ func TestLikePhoto(t *testing.T) {
 		var photoFirst models.Photo
 		ctx.Db().FirstOrCreate(&photoFirst)
 
-		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoFirst.id))
+		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoFirst.ID))
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
 
 	t.Run("Like Non-existing record", func(t *testing.T) {
 		var photoLast models.Photo
 		ctx.Db().Last(&photoLast)
-		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoLast.id + 1))
+		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoLast.ID + 1))
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
 }
