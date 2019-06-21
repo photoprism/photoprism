@@ -1,7 +1,6 @@
 package config
 
 import (
-	"log"
 	"context"
 	"flag"
 	"fmt"
