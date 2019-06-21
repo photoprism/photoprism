@@ -40,23 +40,17 @@ func TestLikePhoto(t *testing.T) {
 	LikePhoto(router, ctx)
 	
 	t.Run("Like Existing record", func(t *testing.T) {
-		// Ensure that at least one record exist in the test database
-		
 		var photoFirst models.Photo
 		ctx.Db().FirstOrCreate(&photoFirst)
-		idFirst := photoFirst.ID
-		fmt.Printfix(idFirst)
-		result := PerformRequest(app, "POST", "/api/v1/photos/1/like")
+
+		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoFirst.id))
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
 
 	t.Run("Like Non-existing record", func(t *testing.T) {
-		ctx.Db().Delete(
-			models.Photo{
-				Model: models.Model{ID: 1},
-			},
-		)
-		result := PerformRequest(app, "POST", "/api/v1/photos/1/like")
+		var photoLast models.Photo
+		ctx.Db().Last(&photoLast)
+		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoLast.id + 1))
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
 }
