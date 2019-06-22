@@ -19,6 +19,7 @@ func TestGetPhotos(t *testing.T) {
 	var photoTest models.Photo
 	photoTest.TakenAt = time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC) // TakenAt required as SQL complains for default value 0000-00-00
 	conf.Db().Create(&photoTest)
+	defer conf.Db().Delete(&photoTest)
 
 	GetPhotos(router, conf)
 
@@ -35,7 +36,6 @@ func TestGetPhotos(t *testing.T) {
 		t.Error("Json does correspond to required struct")
 	}
 	fmt.Printf("%+v \n", photoSearchRes)
-	conf.Db().Delete(&photoTest)
 }
 
 func TestLikePhoto(t *testing.T) {
@@ -46,6 +46,7 @@ func TestLikePhoto(t *testing.T) {
 	var photoTest models.Photo
 	photoTest.TakenAt = time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC) // TakenAt required as SQL complains for default value 0000-00-00
 	conf.Db().Create(&photoTest)
+	defer conf.Db().Delete(&photoTest)
 
 	t.Run("Like Existing record", func(t *testing.T) {
 
@@ -65,7 +66,6 @@ func TestLikePhoto(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
 	
-	conf.Db().Delete(&photoTest)
 }
 
 func TestDislikePhoto(t *testing.T) {
@@ -77,6 +77,7 @@ func TestDislikePhoto(t *testing.T) {
 	photoTest.TakenAt = time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC) // TakenAt required as SQL complains for default value 0000-00-00
 	photoTest.PhotoFavorite = true
 	conf.Db().Create(&photoTest)
+	defer conf.Db().Delete(&photoTest)
 
 	t.Run("Dislike Existing record", func(t *testing.T) {
 
@@ -96,5 +97,4 @@ func TestDislikePhoto(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
 	
-	conf.Db().Delete(&photoTest)
 }
