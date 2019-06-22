@@ -48,6 +48,9 @@ build-js:
 build-go:
 	rm -f $(BINARY_NAME)
 	scripts/build.sh debug $(BINARY_NAME)
+build-static:
+	rm -f $(BINARY_NAME)
+	scripts/build.sh static $(BINARY_NAME)
 watch-js:
 	(cd frontend &&	env NODE_ENV=development npm run watch)
 test-js:
