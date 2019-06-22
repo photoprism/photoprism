@@ -10,29 +10,29 @@ export default class Page {
     }
 
     async setFilter(filter, option) {
-        await t;
 
+        const SelectOption = await Selector('a').withText(option);
         switch (filter) {
             case 'view':
                 await t
-                    .click(this.view);
+                    .click(this.view, {timeout: 15000});
                 break;
             case 'camera':
                 await t
-                    .click(this.camera);
+                    .click(this.camera, {timeout: 15000});
                 break;
             case 'time':
                 await t
-                    .click(this.time);
+                    .click(this.time, {timeout: 15000});
                 break;
             case 'countries':
                 await t
-                    .click(this.countries);
+                    .click(this.countries, {timeout: 15000});
                 break;
             default:
         }
         await t
-            .click(Selector('a').withText(option))
+            .click(Selector('a').withText(option), {timeout: 15000} )
     }
 
     async search(term) {
