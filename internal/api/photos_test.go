@@ -77,6 +77,8 @@ func TestDislikePhoto(t *testing.T) {
 		conf.Db().Create(&photoTest)
 
 		result := PerformRequest(app, "DELETE", fmt.Sprintf("/api/v1/photos/%d/like", photoTest.ID))
+
+		conf.Db().Take(&photoTest)
 		assert.Equal(t, http.StatusOK, result.Code)
 		assert.False(t, photoTest.PhotoFavorite)
 		
