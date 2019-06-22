@@ -15,7 +15,7 @@ import (
 
 func TestGetPhotos(t *testing.T) {
 	app, router, conf := NewApiTest()
-
+	conf.InitializeTestData(t)
 	GetPhotos(router, conf)
 
 	result := PerformRequest(app, "GET", "/api/v1/photos?count=10")
@@ -33,6 +33,8 @@ func TestGetPhotos(t *testing.T) {
 	if err = json.Unmarshal(jsonResult, &photoSearchRes); err != nil {
 		t.Fail()
 	}
+
+	conf = nil
 }
 
 func TestLikePhoto(t *testing.T) {
@@ -66,6 +68,7 @@ func TestLikePhoto(t *testing.T) {
 
 func TestDislikePhoto(t *testing.T) {
 	app, router, conf := NewApiTest()
+	
 
 	DislikePhoto(router, conf)
 
