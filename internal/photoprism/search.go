@@ -220,7 +220,6 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 	}
 
 	if result := q.Scan(&results); result.Error != nil {
-		fmt.Print("erreur here")
 		return results, result.Error
 	}
 
