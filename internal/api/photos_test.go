@@ -59,7 +59,6 @@ func TestLikePhoto(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
 
-	conf = nil
 }
 
 func TestDislikePhoto(t *testing.T) {
