@@ -17,11 +17,7 @@ func TestGetPhotos(t *testing.T) {
 	app, router, conf := NewApiTest()
 
 	GetPhotos(router, conf)
-
-	var photoTest models.Photo
-	photoTest.TakenAt = time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC) // TakenAt required as SQL complains for default value 0000-00-00
-	conf.Db().Create(&photoTest)
-
+	
 	result := PerformRequest(app, "GET", "/api/v1/photos?count=10")
 
 	assert.Equal(t, http.StatusOK, result.Code)
