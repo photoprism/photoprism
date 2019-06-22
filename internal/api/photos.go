@@ -36,7 +36,7 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 		err := c.MustBindWith(&form, binding.Form)
 
 		if err != nil {
-			c.AbortWithStatusJSON(423, gin.H{"error": util.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
