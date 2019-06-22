@@ -49,6 +49,7 @@ func TestLikePhoto(t *testing.T) {
 
 		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoFirst.ID))
 		assert.Equal(t, http.StatusOK, result.Code)
+		conf.Db().Delete(&photoFirst)
 	})
 
 	t.Run("Like missing record", func(t *testing.T) {
