@@ -18,6 +18,10 @@ func TestGetPhotos(t *testing.T) {
 
 	GetPhotos(router, conf)
 
+	var photoTest models.Photo
+	photoTest.TakenAt = time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC) // TakenAt required as SQL complains for default value 0000-00-00
+	conf.Db().Create(&photoTest)
+
 	result := PerformRequest(app, "GET", "/api/v1/photos?count=10")
 
 	assert.Equal(t, http.StatusOK, result.Code)
@@ -33,6 +37,8 @@ func TestGetPhotos(t *testing.T) {
 	if err = json.Unmarshal(jsonResult, &photoSearchRes); err != nil {
 		t.Fail()
 	}
+	ftm.Printf("%+v \n", photoSearchRes)
+	conf.Db().Delete(&photoTest)
 }
 
 func TestLikePhoto(t *testing.T) {
