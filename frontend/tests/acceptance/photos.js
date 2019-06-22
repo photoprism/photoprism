@@ -8,16 +8,29 @@ fixture`Test photos page`
 const page = new Page();
 
 test('Select photos', async t => {
+    const countSelected = await Selector('div.p-photo-clipboard').innerText;
+    const countSelectedInt = (Number.isInteger(parseInt(countSelected))) ? parseInt(countSelected) : 0;
+
     await t
         .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(0))
         .click(Selector('button.p-photo-select'))
         .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(2))
-        .click(Selector('button.p-photo-select').nth(1))
-        .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(3))
-        .click(Selector('button.p-photo-select').nth(2))
-        .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(4))
-        .click(Selector('button.p-photo-select').nth(3))
-        .expect(Selector('div.p-photo-clipboard').innerText).contains('4');
+        .click(Selector('button.p-photo-select').nth(1));
+
+    const countSelectedAfterLike = await Selector('div.p-photo-clipboard').innerText;
+    const countSelectedAfterLikeInt = (Number.isInteger(parseInt(countSelectedAfterLike))) ? parseInt(countSelectedAfterLike) : 0;
+
+    await t
+        .expect(countSelectedAfterLikeInt).eql(countSelectedInt + 2)
+        .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(0))
+        .click(Selector('button.p-photo-select'))
+
+    const countSelectedAfterDislike = await Selector('div.p-photo-clipboard').innerText;
+    const countSelectedAfterDislikeInt = (Number.isInteger(parseInt(countSelectedAfterDislike))) ? parseInt(countSelectedAfterDislike) : 0;
+
+    await t
+        .expect(countSelectedAfterDislikeInt).eql(countSelectedAfterLikeInt -1);
+
     await page.openNav();
     await t
         .click('a[href="/labels"]')
@@ -25,5 +38,5 @@ test('Select photos', async t => {
     await page.openNav();
     await t
         .click('a[href="/photos"]')
-        .expect(Selector('div.p-photo-clipboard').innerText).contains('4');
+        .expect(countSelectedAfterDislikeInt).eql(countSelectedAfterLikeInt -1);
 });

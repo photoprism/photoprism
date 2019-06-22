@@ -10,10 +10,18 @@ const page = new Page();
 test('Navigate', async t => {
     await page.openNav();
     await t
+        .click('a[href="/albums"]')
+        .expect(Selector('div.p-page-albums').exists, {timeout: 5000}).ok();
+    await page.openNav();
+    await t
         .click('a[href="/places"]')
         .expect(Selector('div.leaflet-map-pane').exists).ok();
     await page.openNav();
     await t
         .click('a[href="/labels"]')
-        .expect(Selector('main .p-page-labels').exists, {timeout: 5000}).ok();
+        .expect(Selector('div.p-page-labels').exists, {timeout: 5000}).ok();
+    await page.openNav();
+    await t
+        .click('a[href="/library"]')
+        .expect(Selector('div.p-tab-upload').exists, {timeout: 5000}).ok();
 });
