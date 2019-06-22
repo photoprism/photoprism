@@ -15,8 +15,12 @@ import (
 
 func TestGetPhotos(t *testing.T) {
 	app, router, conf := NewApiTest()
-	conf.InitializeTestData(t)
+
 	GetPhotos(router, conf)
+
+	var photoTest models.Photo
+	photoTest.TakenAt = time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC) // TakenAt required as SQL complains for default value 0000-00-00
+	conf.Db().Create(&photoTest)
 
 	result := PerformRequest(app, "GET", "/api/v1/photos?count=10")
 
@@ -33,8 +37,7 @@ func TestGetPhotos(t *testing.T) {
 	if err = json.Unmarshal(jsonResult, &photoSearchRes); err != nil {
 		t.Fail()
 	}
-
-	conf = nil
+	conf.Db().Delete(&photoTest)
 }
 
 func TestLikePhoto(t *testing.T) {
@@ -42,10 +45,11 @@ func TestLikePhoto(t *testing.T) {
 
 	LikePhoto(router, conf)
 	
+	var photoTest models.Photo
+	photoTest.TakenAt = time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC) // TakenAt required as SQL complains for default value 0000-00-00
+	conf.Db().Create(&photoTest)
+
 	t.Run("Like Existing record", func(t *testing.T) {
-		var photoTest models.Photo
-		photoTest.TakenAt = time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC) // TakenAt required as SQL complains for default value 0000-00-00
-		conf.Db().Create(&photoTest)
 
 		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoTest.ID))
 
@@ -54,16 +58,16 @@ func TestLikePhoto(t *testing.T) {
 		assert.Equal(t, http.StatusOK, result.Code)
 		assert.True(t, photoTest.PhotoFavorite)
 		
-		conf.Db().Delete(&photoTest)
 	})
-
+	
 	t.Run("Like missing record", func(t *testing.T) {
 		var photoLast models.Photo
 		conf.Db().Last(&photoLast)
 		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoLast.ID + 1))
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
-
+	
+	conf.Db().Delete(&photoTest)
 }
 
 func TestDislikePhoto(t *testing.T) {
@@ -71,12 +75,13 @@ func TestDislikePhoto(t *testing.T) {
 	
 
 	DislikePhoto(router, conf)
+	
+	var photoTest models.Photo
+	photoTest.TakenAt = time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC) // TakenAt required as SQL complains for default value 0000-00-00
+	photoTest.PhotoFavorite = true
+	conf.Db().Create(&photoTest)
 
 	t.Run("Dislike Existing record", func(t *testing.T) {
-		var photoTest models.Photo
-		photoTest.TakenAt = time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC) // TakenAt required as SQL complains for default value 0000-00-00
-		photoTest.PhotoFavorite = true
-		conf.Db().Create(&photoTest)
 
 		result := PerformRequest(app, "DELETE", fmt.Sprintf("/api/v1/photos/%d/like", photoTest.ID))
 
@@ -84,13 +89,14 @@ func TestDislikePhoto(t *testing.T) {
 		assert.Equal(t, http.StatusOK, result.Code)
 		assert.False(t, photoTest.PhotoFavorite)
 		
-		conf.Db().Delete(&photoTest)
 	})
-
+	
 	t.Run("Dislike missing record", func(t *testing.T) {
 		var photoLast models.Photo
 		conf.Db().Last(&photoLast)
 		result := PerformRequest(app, "DELETE", fmt.Sprintf("/api/v1/photos/%d/like", photoLast.ID + 1))
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
+
+	conf.Db().Delete(&photoTest)
 }
