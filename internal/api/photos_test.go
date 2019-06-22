@@ -66,7 +66,6 @@ func TestLikePhoto(t *testing.T) {
 
 func TestDislikePhoto(t *testing.T) {
 	app, router, conf := NewApiTest()
-	conf.InitializeTestData(t)
 
 	DislikePhoto(router, conf)
 
