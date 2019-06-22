@@ -37,7 +37,7 @@ func TestGetPhotos(t *testing.T) {
 	if err = json.Unmarshal(jsonResult, &photoSearchRes); err != nil {
 		t.Fail()
 	}
-	ftm.Printf("%+v \n", photoSearchRes)
+	fmt.Printf("%+v \n", photoSearchRes)
 	conf.Db().Delete(&photoTest)
 }
 
