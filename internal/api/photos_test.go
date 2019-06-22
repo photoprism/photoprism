@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"fmt"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -37,12 +38,13 @@ func TestGetPhotos(t *testing.T) {
 
 func TestLikePhoto(t *testing.T) {
 	app, router, conf := NewApiTest()
-	conf.InitializeTestData(t)
+	// conf.InitializeTestData(t)
 
 	LikePhoto(router, conf)
 	
 	t.Run("Like Existing record", func(t *testing.T) {
 		var photoFirst models.Photo
+		photoFirst.TakenAt = time.Date(2019, time.June, 6, 21, 0, 0, 0, time.UTC)
 		conf.Db().FirstOrCreate(&photoFirst)
 
 		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoFirst.ID))
@@ -55,6 +57,8 @@ func TestLikePhoto(t *testing.T) {
 		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoLast.ID + 1))
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
+
+	conf = nil
 }
 
 func TestDislikePhoto(t *testing.T) {
