@@ -27,11 +27,11 @@ func TestGetPhotos(t *testing.T) {
 	// Test if the response body is a json matching the PhotoSearchResult struct
 	jsonResult, err := ioutil.ReadAll(result.Body)
 		if err != nil {
-			t.Fail("Can't read JSON")
+			t.Fail()
 		}
 
 	if err = json.Unmarshal(jsonResult, &photoSearchRes); err != nil {
-		t.Fail("Json are not a photoSearchRes struct")
+		t.Fail()
 	}
 }
 
