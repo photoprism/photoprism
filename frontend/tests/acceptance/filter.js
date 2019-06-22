@@ -17,26 +17,33 @@ const page = new Page();
 test('Test camera filter', async t => {
     await t
         .click('#advancedMenu');
+    logger.clear();
     await page.setFilter('camera', 'iPhone 6');
+    const request = await logger.requests[1];
+    console.log(request);
     await t
-        .expect(logger.requests[1].response.statusCode).eql(200)
+        .expect(logger.requests[0].response.statusCode).eql(200)
         .expect(Selector('div.v-image__image').visible).ok();
 }),
     test('Test time filter', async t => {
         await t
             .click('#advancedMenu');
+        logger.clear();
         await page.setFilter('time', 'Oldest');
+        const request2 = await logger.requests[0];
         await t
-            .expect(logger.requests[1].response.statusCode).eql(200)
-            .expect(logger.requests[1].request.url).contains('order=oldest')
+            .expect(logger.requests[0].response.statusCode).eql(200)
+            .expect(logger.requests[0].request.url).contains('order=oldest')
             .expect(Selector('div.v-image__image').visible).ok();
     }),
     test('Test countries filter', async t => {
         await t
             .click('#advancedMenu');
+        logger.clear();
         await page.setFilter('countries', 'Cuba');
+        const request3 = await logger.requests[0];
         await t
-            .expect(logger.requests[1].response.statusCode).eql(200)
-            .expect(logger.requests[1].request.url).contains('country=cu')
+            .expect(logger.requests[0].response.statusCode).eql(200)
+            .expect(logger.requests[0].request.url).contains('country=cu')
             .expect(Selector('div.v-image__image').visible).ok();
     },);
