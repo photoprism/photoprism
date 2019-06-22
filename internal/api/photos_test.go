@@ -15,7 +15,6 @@ import (
 
 func TestGetPhotos(t *testing.T) {
 	app, router, conf := NewApiTest()
-	conf.InitializeTestData(t)
 
 	GetPhotos(router, conf)
 
@@ -28,11 +27,11 @@ func TestGetPhotos(t *testing.T) {
 	// Test if the response body is a json matching the PhotoSearchResult struct
 	jsonResult, err := ioutil.ReadAll(result.Body)
 		if err != nil {
-			t.Fail()
+			t.Fail("Can't read JSON")
 		}
 
 	if err = json.Unmarshal(jsonResult, &photoSearchRes); err != nil {
-		t.Fail()
+		t.Fail("Json are not a photoSearchRes struct")
 	}
 }
 
@@ -48,6 +47,8 @@ func TestLikePhoto(t *testing.T) {
 
 		result := PerformRequest(app, "POST", fmt.Sprintf("/api/v1/photos/%d/like", photoTest.ID))
 
+		
+		conf.Db().Take(&photoTest)
 		assert.Equal(t, http.StatusOK, result.Code)
 		assert.True(t, photoTest.PhotoFavorite)
 		
