@@ -24,21 +24,21 @@ func TestGetPhotos(t *testing.T) {
 
 	result := PerformRequest(app, "GET", "/api/v1/photos?count=10")
 
-	assert.Equal(t, http.StatusOK, result.Code)
-
+	
 	var photoSearchRes []photoprism.PhotoSearchResult
-
+	
 	// Test if the response body is a json matching the PhotoSearchResult struct
 	jsonResult, err := ioutil.ReadAll(result.Body)
-		if err != nil {
-			t.Fail()
-		}
-
+	if err != nil {
+		t.Fail()
+	}
+	
 	if err = json.Unmarshal(jsonResult, &photoSearchRes); err != nil {
 		t.Fail()
 	}
 	fmt.Printf("%+v \n", photoSearchRes)
 	conf.Db().Delete(&photoTest)
+	assert.Equal(t, http.StatusOK, result.Code)
 }
 
 func TestLikePhoto(t *testing.T) {
