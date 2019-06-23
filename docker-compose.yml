@@ -29,7 +29,7 @@ services:
       PHOTOPRISM_SQL_HOST: "0.0.0.0"
       PHOTOPRISM_SQL_PORT: 4000
       PHOTOPRISM_SQL_PASSWORD: "photoprism"
-      TF_CPP_MIN_LOG_LEVEL: 1
+      TF_CPP_MIN_LOG_LEVEL: 0
 
   photoprism-mysql:
     image: mysql:8.0.16
