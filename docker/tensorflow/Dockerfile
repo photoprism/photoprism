@@ -1,41 +1,55 @@
-FROM photoprism/development:20190617
+FROM ubuntu:18.04
 
-# Install Python and TensorFlow
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        python3 \
-        python-setuptools \
-        python3-dev \
-        && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
 
-RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
-    python get-pip.py && \
-    rm get-pip.py
+ENV DEBIAN_FRONTEND noninteractive
 
-RUN pip --no-cache-dir install --upgrade \
-        tensorflow \
-        requests \
-        Pillow \
-        h5py \
-        ipykernel \
-        jupyter \
-        keras_applications \
-        keras_preprocessing \
-        matplotlib \
-        numpy \
-        pandas \
-        scipy \
-        sklearn \
-        && \
-    python -m ipykernel.kernelspec
+# Configure apt-get
+RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry
+RUN echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends
+RUN echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests
+RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes
+RUN echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
+
+# Install dev / build dependencies
+RUN apt-get update && apt-get upgrade && \
+    apt-get install \
+    ca-certificates \
+    build-essential \
+    autoconf \
+    automake \
+    libtool \
+    g++-4.8 \
+    gcc-4.8 \
+    libc6-dev \
+    zlib1g-dev \
+    libssl-dev \
+    curl \
+    chrpath \
+    pkg-config \
+    unzip \
+    zip \
+    make \
+    nano \
+    wget \
+    git
+
+# Use GCC 4.8 as default compiler
+# See https://www.tensorflow.org/install/source#tested_build_configurations
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 10 && \
+    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 10
 
 # Set up project directory
-WORKDIR "/go/src/github.com/photoprism/photoprism"
-COPY . .
+WORKDIR "/home/tensorflow"
 
-# Build PhotoPrism
-RUN make all install
+# Download TensorFlow
+RUN wget https://github.com/tensorflow/tensorflow/archive/v1.13.1.tar.gz
+RUN tar -xzf v1.13.1.tar.gz
 
-# Start PhotoPrism server
-CMD photoprism start
+# Build TensorFlow
+WORKDIR "/home/tensorflow/tensorflow-1.13.1"
+COPY /docker/tensorflow/build_all_linux_arch.sh tensorflow/contrib/makefile/build_all_linux_arch.sh
+RUN env JOB_COUNT=1 ARCH=core-avx-i tensorflow/contrib/makefile/build_all_linux_arch.sh
+
+# Keep container running
+CMD tail -f /dev/null
