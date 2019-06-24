@@ -1,6 +1,8 @@
 package config
 
-import "github.com/urfave/cli"
+import (
+	"github.com/urfave/cli"
+)
 
 // Global CLI flags
 var GlobalFlags = []cli.Flag{
@@ -149,5 +151,22 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "heif conversion cli binary `FILENAME`",
 		Value:  "heif-convert",
 		EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
+	},
+	cli.StringFlag{
+		Name:   "daemon-pid-path",
+		Usage:  "File path to store daemon PID",
+		EnvVar: "PHOTOPRISM_DAEMON_PID_PATH",
+		Value:  "/srv/photoprism/photoprism.pid",
+	},
+	cli.StringFlag{
+		Name:   "daemon-log-path",
+		Usage:  "File path for daemon logs.",
+		EnvVar: "PHOTOPRISM_DAEMON_LOG_PATH",
+		Value:  "/srv/photoprism/photoprism.log",
+	},
+	cli.BoolFlag{
+		Name:   "daemonize, d",
+		Usage:  "run Photoprism as Daemon",
+		EnvVar: "PHOTOPRISM_DAEMON_MODE",
 	},
 }

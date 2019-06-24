@@ -42,9 +42,14 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	assert.Empty(t, err, "ConvertToJpeg() failed")
 
+
 	infoJpeg, err := imageJpeg.Exif()
 
-	assert.Emptyf(t, err, "Exif() failed")
+	assert.Nilf(t, err, "Exif() failed for " + imageJpeg.Filename())
+
+	if err != nil {
+		return
+	}
 
 	assert.Equal(t, jpegFilename, imageJpeg.filename)
 

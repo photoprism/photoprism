@@ -42,7 +42,7 @@ func TestImporter_DestinationFilename(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	assert.Equal(t, conf.OriginalsPath()+"/2018/02/20180204_170813_863A6248DCCA.cr2", filename)
+	assert.Equal(t, conf.OriginalsPath()+"/2018/02/20180204_180813_863A6248DCCA.cr2", filename)
 }
 
 func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
