@@ -37,7 +37,7 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/prometheus/client_golang v0.9.3-0.20190127221311-3c4408c8b829
 	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
-	github.com/remyoudompheng/bigfft v0.0.0-20170806203942-52369c62f446 // indirect
+	github.com/remyoudompheng/bigfft v0.0.0-20190806203942-babf20351dd7e3ac320adedbbe5eb311aec8763c // indirect
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/satori/go.uuid v1.2.0
 	github.com/simplereach/timeutils v1.2.0 // indirect
@@ -45,7 +45,7 @@ require (
 	github.com/soheilhy/cmux v0.1.4 // indirect
 	github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72 // indirect
 	github.com/stretchr/testify v1.3.0
-	github.com/tensorflow/tensorflow v1.13.1
+	github.com/tensorflow/tensorflow v1.14.0
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6 // indirect
 	github.com/twinj/uuid v1.0.0 // indirect
 	github.com/uber-go/atomic v1.3.2 // indirect
