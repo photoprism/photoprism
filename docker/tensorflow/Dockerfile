@@ -3,6 +3,8 @@ FROM ubuntu:18.04
 LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV TMP /tmp
+ENV EXTRA_BAZEL_ARGS "--host_javabase=@local_jdk//:jdk"
 
 # Configure apt-get
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry
@@ -32,24 +34,34 @@ RUN apt-get update && apt-get upgrade && \
     make \
     nano \
     wget \
-    git
+    git \
+    libtool \
+    python3 \
+    python3-git \
+    openjdk-8-jdk
 
-# Use GCC 4.8 as default compiler
+# Use GCC 4.8 and Python 3 as default
 # See https://www.tensorflow.org/install/source#tested_build_configurations
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 10 && \
-    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 10
+    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 10 && \
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.6 10
 
-# Set up project directory
+# Download Bazel & TensorFlow
 WORKDIR "/home/tensorflow"
+RUN wget https://github.com/tensorflow/tensorflow/archive/v1.14.0.tar.gz
+RUN wget https://github.com/bazelbuild/bazel/releases/download/0.24.1/bazel-0.24.1-dist.zip
+RUN tar -xzf v1.14.0.tar.gz
 
-# Download TensorFlow
-RUN wget https://github.com/tensorflow/tensorflow/archive/v1.13.1.tar.gz
-RUN tar -xzf v1.13.1.tar.gz
+# Build Bazel
+WORKDIR "/home/tensorflow/bazel-0.24.1"
+RUN unzip ../bazel-0.24.1-dist.zip
+RUN bash ./compile.sh
+RUN cp output/bazel /usr/local/bin/bazel
 
-# Build TensorFlow
-WORKDIR "/home/tensorflow/tensorflow-1.13.1"
-COPY /docker/tensorflow/build_all_linux_arch.sh tensorflow/contrib/makefile/build_all_linux_arch.sh
-RUN env JOB_COUNT=1 ARCH=core-avx-i tensorflow/contrib/makefile/build_all_linux_arch.sh
-
-# Keep container running
-CMD tail -f /dev/null
+# Configure TensorFlow
+WORKDIR "/home/tensorflow/tensorflow-1.14.0"
+COPY /docker/tensorflow/*.sh .
+COPY /docker/tensorflow/*.diff .
+COPY /docker/tensorflow/.tf_configure.bazelrc .tf_configure.bazelrc
+COPY /docker/tensorflow/Makefile Makefile
+RUN make patch
