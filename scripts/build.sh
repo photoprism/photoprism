@@ -26,13 +26,13 @@ else
 fi
 
 if [[ $1 == "debug" ]]; then
-    echo "Building development binary..."
+  echo "Building development binary..."
 	go build -ldflags "-X main.version=${PHOTOPRISM_DATE}-${PHOTOPRISM_VERSION}-${PHOTOPRISM_OS}-${PHOTOPRISM_ARCH}-DEBUG" -o $2 cmd/photoprism/photoprism.go
 	du -h $2
 	echo "Done."
 elif [[ $1 == "static" ]]; then
   echo "Building static production binary..."
-	go build -a -v -ldflags "-linkmode external -extldflags \"-static -L /usr/local/lib\" -s -w -X main.version=${PHOTOPRISM_DATE}-${PHOTOPRISM_VERSION}-${PHOTOPRISM_OS}-${PHOTOPRISM_ARCH}" -o $2 cmd/photoprism/photoprism.go
+	go build -a -v -ldflags "-linkmode external -extldflags \"-static -L /usr/lib -ltensorflow\" -s -w -X main.version=${PHOTOPRISM_DATE}-${PHOTOPRISM_VERSION}-${PHOTOPRISM_OS}-${PHOTOPRISM_ARCH}" -o $2 cmd/photoprism/photoprism.go
 	du -h $2
 	echo "Done."
 else
