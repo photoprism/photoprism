@@ -8,11 +8,12 @@ libtensorflow:
 static:
 	env JOB_COUNT=2 ARCH=core-avx-i ./build_static.sh
 archive:
-	mkdir -p archive/lib/
-	mkdir -p archive/include/tensorflow/c/eager/
-	cp bazel-bin/tensorflow/libtensorflow.so.$(TF_VERSION) archive/lib/libtensorflow.so
-	cp bazel-bin/tensorflow/libtensorflow_framework.so.$(TF_VERSION) archive/lib/libtensorflow_framework.so
-	cp tensorflow/c/eager/c_api.h archive/include/tensorflow/c/eager/
-	cp tensorflow/c/c_api.h tensorflow/c/c_api_experimental.h tensorflow/c/LICENSE archive/include/tensorflow/c/
-	(cd archive && tar -czf ../libtensorflow-cpu-linux-core-avx-i-$(TF_VERSION).tar.gz)
-	du -h libtensorflow-cpu-linux-core-avx-i-$(TF_VERSION).tar.gz
+	rm -rf tmp
+	mkdir -p tmp/lib/
+	mkdir -p tmp/include/tensorflow/c/eager/
+	cp bazel-bin/tensorflow/libtensorflow.so.$(TF_VERSION) tmp/lib/libtensorflow.so
+	cp bazel-bin/tensorflow/libtensorflow_framework.so.$(TF_VERSION) tmp/lib/libtensorflow_framework.so
+	cp tensorflow/c/eager/c_api.h tmp/include/tensorflow/c/eager/
+	cp tensorflow/c/c_api.h tensorflow/c/c_api_experimental.h LICENSE tmp/include/tensorflow/c/
+	(cd tmp && tar -czf ../libtensorflow-linux-x86_64-avx-$(TF_VERSION).tar.gz)
+	du -h libtensorflow-linux-x86_64-avx-$(TF_VERSION).tar.gz
