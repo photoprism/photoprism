@@ -16,7 +16,7 @@ const page = new Page();
 
 test('Test camera filter', async t => {
     await t
-        .click('#advancedMenu');
+        .click('button.p-expand-search');
     logger.clear();
     await page.setFilter('camera', 'iPhone 6');
     const request = await logger.requests[1];
@@ -27,7 +27,7 @@ test('Test camera filter', async t => {
 }),
     test('Test time filter', async t => {
         await t
-            .click('#advancedMenu');
+            .click('button.p-expand-search');
         logger.clear();
         await page.setFilter('time', 'Oldest');
         const request2 = await logger.requests[0];
@@ -38,7 +38,7 @@ test('Test camera filter', async t => {
     }),
     test('Test countries filter', async t => {
         await t
-            .click('#advancedMenu');
+            .click('button.p-expand-search');
         logger.clear();
         await page.setFilter('countries', 'Cuba');
         const request3 = await logger.requests[0];

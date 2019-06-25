@@ -1,7 +1,7 @@
 <template>
     <v-form ref="form" autocomplete="off" class="p-photo-search" lazy-validation @submit.prevent="filterChange" dense>
         <v-toolbar flat color="blue-grey lighten-4">
-            <v-text-field class="pt-3 pr-3"
+            <v-text-field class="pt-3 pr-3 p-search-field"
                           autocomplete="off"
                           single-line
                           label="Search"
@@ -11,7 +11,6 @@
                           @click:clear="clearQuery"
                           v-model="filter.q"
                           @keyup.enter.native="filterChange"
-                          id="search"
             ></v-text-field>
 
             <v-spacer></v-spacer>
@@ -36,7 +35,7 @@
                 <v-icon>view_module</v-icon>
             </v-btn>
 
-            <v-btn icon @click.stop="searchExpanded = !searchExpanded" id="advancedMenu">
+            <v-btn icon @click.stop="searchExpanded = !searchExpanded" class="p-expand-search">
                 <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
             </v-btn>
         </v-toolbar>
@@ -47,7 +46,7 @@
                 v-show="searchExpanded">
             <v-card-text>
                 <v-layout row wrap>
-                    <v-flex xs12 sm6 md3 pa-2 id="countriesFlex">
+                    <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
                         <v-select @change="dropdownChange"
                                   label="Country"
                                   flat solo hide-details
@@ -58,7 +57,7 @@
                                   :items="options.countries">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 id="cameraFlex">
+                    <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
                         <v-select @change="dropdownChange"
                                   label="Camera"
                                   flat solo hide-details
@@ -69,7 +68,7 @@
                                   :items="options.cameras">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 id="viewFlex">
+                    <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
                         <v-select @change="dropdownChange"
                                   label="View"
                                   flat solo hide-details
@@ -79,7 +78,7 @@
                                   id="viewSelect">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 id="timeFlex">
+                    <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
                         <v-select @change="dropdownChange"
                                   label="Sort By"
                                   flat solo hide-details

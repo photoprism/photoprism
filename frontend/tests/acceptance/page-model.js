@@ -2,11 +2,11 @@ import { Selector, t } from 'testcafe';
 
 export default class Page {
     constructor() {
-        this.view = Selector('#viewFlex', {timeout: 15000});
-        this.camera = Selector('#cameraFlex', {timeout: 15000});
-        this.countries = Selector('#countriesFlex', {timeout: 15000});
-        this.time = Selector('#timeFlex', {timeout: 15000});
-        this.search1 = Selector('#search', {timeout: 15000});
+        this.view = Selector('div.p-view-select', {timeout: 15000});
+        this.camera = Selector('div.p-camera-select', {timeout: 15000});
+        this.countries = Selector('div.p-countries-select', {timeout: 15000});
+        this.time = Selector('div.p-time-select', {timeout: 15000});
+        this.search1 = Selector('div.p-search-field input', {timeout: 15000});
     }
 
     async setFilter(filter, option) {

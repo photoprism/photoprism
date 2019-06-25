@@ -15,7 +15,7 @@ test('Open photo in fullscreen', async t => {
 }),
 test('Open details view via button', async t => {
     await t
-        .click('#advancedMenu')
+        .click('button.p-expand-search')
         .click(Selector('i').withText('view_column'))
         .expect(Selector('div.v-image__image').visible).ok()
         .expect(Selector('div.caption').visible).ok()
@@ -25,7 +25,7 @@ test('Open details view via button', async t => {
 }),
 test('Open mosaic view via select', async t => {
     await t
-        .click('#advancedMenu');
+        .click('button.p-expand-search');
     await page.setFilter('view', 'Mosaic');
     await t
         .expect(Selector('div.v-image__image').visible).ok()
@@ -35,7 +35,7 @@ test('Open mosaic view via select', async t => {
 }),
 test('Open list view via select', async t => {
     await t
-        .click('#advancedMenu');
+        .click('button.p-expand-search');
     await page.setFilter('view', 'List');
     await t
         .expect(Selector('table.v-datatable').visible).ok()
@@ -44,7 +44,7 @@ test('Open list view via select', async t => {
 }),
     test('Open tile view via select', async t => {
         await t
-            .click('#advancedMenu');
+            .click('button.p-expand-search');
         await page.setFilter('view', 'List');
         await t
             .expect(Selector('div.p-photo-list').visible).ok();
