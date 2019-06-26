@@ -60,8 +60,8 @@ RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
 
 # Install TensorFlow C library
 RUN curl -L \
-   "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.13.1.tar.gz" | \
-   tar -C "/usr/local" -xz
+   "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-avx-1.14.0.tar.gz" | \
+   tar -C "/usr" -xz
 RUN ldconfig
 
 # Show TensorFlow debug log
