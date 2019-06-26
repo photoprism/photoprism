@@ -15,5 +15,5 @@ archive:
 	cp bazel-bin/tensorflow/libtensorflow_framework.so.$(TF_VERSION) tmp/lib/libtensorflow_framework.so
 	cp tensorflow/c/eager/c_api.h tmp/include/tensorflow/c/eager/
 	cp tensorflow/c/c_api.h tensorflow/c/c_api_experimental.h LICENSE tmp/include/tensorflow/c/
-	(cd tmp && tar -czf ../libtensorflow-linux-avx-$(TF_VERSION).tar.gz)
+	(cd tmp && tar -czf ../libtensorflow-linux-avx-$(TF_VERSION).tar.gz .)
 	du -h libtensorflow-linux-avx-$(TF_VERSION).tar.gz
