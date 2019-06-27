@@ -19,8 +19,7 @@ test('Test camera filter', async t => {
         .click('button.p-expand-search');
     logger.clear();
     await page.setFilter('camera', 'iPhone 6');
-    const request = await logger.requests[1];
-    console.log(request);
+    const request = await logger.requests[0].responseBody;
     await t
         .expect(logger.requests[0].response.statusCode).eql(200)
         .expect(Selector('div.v-image__image').visible).ok();
@@ -30,7 +29,7 @@ test('Test camera filter', async t => {
             .click('button.p-expand-search');
         logger.clear();
         await page.setFilter('time', 'Oldest');
-        const request2 = await logger.requests[0];
+        const request2 = await logger.requests[0].responseBody;
         await t
             .expect(logger.requests[0].response.statusCode).eql(200)
             .expect(logger.requests[0].request.url).contains('order=oldest')
@@ -41,7 +40,7 @@ test('Test camera filter', async t => {
             .click('button.p-expand-search');
         logger.clear();
         await page.setFilter('countries', 'Cuba');
-        const request3 = await logger.requests[0];
+        const request3 = await logger.requests[0].responseBody;
         await t
             .expect(logger.requests[0].response.statusCode).eql(200)
             .expect(logger.requests[0].request.url).contains('country=cu')
