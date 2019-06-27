@@ -2,12 +2,12 @@ import { Selector } from 'testcafe';
 import testcafeconfig from './testcafeconfig';
 import Page from "./page-model";
 
-fixture`Test photos page`
+fixture`Test clipboard`
     .page`${testcafeconfig.url}`;
 
 const page = new Page();
 
-test('Select photos', async t => {
+test('Test selecting photos and clear clipboard', async t => {
     const countSelected = await Selector('div.p-photo-clipboard').innerText;
     const countSelectedInt = (Number.isInteger(parseInt(countSelected))) ? parseInt(countSelected) : 0;
 
@@ -38,5 +38,10 @@ test('Select photos', async t => {
     await page.openNav();
     await t
         .click('a[href="/photos"]')
-        .expect(countSelectedAfterDislikeInt).eql(countSelectedAfterLikeInt -1);
+        .expect(countSelectedAfterDislikeInt).eql(countSelectedAfterLikeInt -1)
+        .click(Selector('div.p-photo-clipboard'))
+        .click(Selector('.p-photo-clipboard-clear'), {timeout: 15000});
+    const countSelectedAfterClear = await Selector('div.p-photo-clipboard').innerText;
+    await t
+        .expect(countSelectedAfterClear).contains('menu');
 });
