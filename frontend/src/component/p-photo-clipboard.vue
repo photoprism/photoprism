@@ -50,6 +50,7 @@
                 color="light-blue accent-4"
                 v-if="!selection.length"
                 @click.stop="openDocs()"
+                class="p-photo-clipboard-docs"
         >
             <v-icon>info</v-icon>
         </v-btn>
