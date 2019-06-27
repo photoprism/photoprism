@@ -11,14 +11,10 @@ build --action_env TF_CUDA_CLANG="0"
 build --action_env TF_CUDA_VERSION="10"
 build --action_env GCC_HOST_COMPILER_PATH="/usr/bin/gcc-4.8"
 build --verbose_failures
-build:opt --copt=-march=core-avx-i
 build:opt --copt=-Wno-sign-compare
 build:opt --conlyopt=-std=c11
-# build:opt --conlyopt=-D_XOPEN_SOURCE=600
 build:opt --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0"
-build:opt --host_copt=-march=core-avx-i
 build:opt --host_conlyopt=-std=c11
-# build:opt --host_conlyopt=-D_XOPEN_SOURCE=600
 build:opt --host_cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0"
 build:opt --host_copt=-Wno-sign-compare
 build:opt --define with_default_optimizations=true
