@@ -1,4 +1,6 @@
 <template>
+    <div>
+    <v-container fluid class="pa-2">
     <v-speed-dial
             fixed
             bottom
@@ -13,6 +15,7 @@
                 color="grey darken-2"
                 dark
                 fab
+                class="p-photo-clipboard-menu"
         >
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else>{{ selection.length }}</span>
@@ -25,6 +28,7 @@
                 color="deep-purple lighten-2"
                 @click.stop="batchPrivate()"
                 v-if="selection.length"
+                class="p-photo-clipboard-private"
         >
             <v-icon>vpn_key</v-icon>
         </v-btn>
@@ -35,6 +39,7 @@
                 color="cyan accent-4"
                 v-if="selection.length"
                 @click.stop="batchStory()"
+                class="p-photo-clipboard-story"
         >
             <v-icon>wifi</v-icon>
         </v-btn>
@@ -54,6 +59,7 @@
                 small
                 color="teal accent-4"
                 @click.stop="batchDownload()"
+                class="p-photo-clipboard-download"
         >
             <v-icon>save</v-icon>
         </v-btn>
@@ -63,6 +69,7 @@
                 small
                 color="yellow accent-4"
                 @click.stop="batchAlbum()"
+                class="p-photo-clipboard-album"
         >
             <v-icon>create_new_folder</v-icon>
         </v-btn>
@@ -72,8 +79,9 @@
                 dark
                 small
                 color="delete"
-                @click.stop="batchDelete()"
+                @click.stop="dialog = true"
                 v-if="selection.length"
+                class="p-photo-clipboard-delete"
         >
             <v-icon>delete</v-icon>
         </v-btn>
@@ -83,10 +91,14 @@
                 small
                 color="grey"
                 @click.stop="clearClipboard()"
+                class="p-photo-clipboard-clear"
         >
             <v-icon>clear</v-icon>
         </v-btn>
     </v-speed-dial>
+    </v-container>
+    <p-dialog :dialog="dialog" @close="dialog = false" @agree="batchDelete" :count="selection.length.toString()"></p-dialog>
+    </div>
 </template>
 <script>
     import Event from "pubsub-js";
@@ -101,6 +113,7 @@
         data() {
             return {
                 expanded: false,
+                dialog: false,
             };
         },
         methods: {
@@ -149,6 +162,7 @@
                 }).catch(() => {
                     Event.publish("ajax.end");
                 });
+                this.dialog = false;
             },
             batchTag() {
                 this.$alert.warning("Not implemented yet");
