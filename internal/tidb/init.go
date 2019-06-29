@@ -8,7 +8,7 @@ import (
 )
 
 func InitDatabase(port uint, password string) error {
-	log.Info("initializing database...")
+	log.Info("init database")
 
 	db, err := sql.Open("mysql", fmt.Sprintf("root:@tcp(localhost:%d)/", port))
 
