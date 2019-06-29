@@ -31,6 +31,7 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "config-path",
 		Usage:  "config `PATH`",
+		Value:  "~/.config/photoprism",
 		EnvVar: "PHOTOPRISM_CONFIG_PATH",
 	},
 	cli.StringFlag{
@@ -41,31 +42,31 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "originals-path",
 		Usage:  "originals `PATH`",
-		Value:  "/srv/photoprism/photos/originals",
+		Value:  "~/Pictures/Originals",
 		EnvVar: "PHOTOPRISM_ORIGINALS_PATH",
 	},
 	cli.StringFlag{
 		Name:   "import-path",
 		Usage:  "import `PATH`",
-		Value:  "/srv/photoprism/photos/import",
+		Value:  "~/Pictures/Import",
 		EnvVar: "PHOTOPRISM_IMPORT_PATH",
 	},
 	cli.StringFlag{
 		Name:   "export-path",
 		Usage:  "export `PATH`",
-		Value:  "/srv/photoprism/photos/export",
+		Value:  "~/Pictures/Export",
 		EnvVar: "PHOTOPRISM_EXPORT_PATH",
 	},
 	cli.StringFlag{
 		Name:   "cache-path",
 		Usage:  "cache `PATH`",
-		Value:  "/srv/photoprism/cache",
+		Value:  "~/.cache/photoprism",
 		EnvVar: "PHOTOPRISM_CACHE_PATH",
 	},
 	cli.StringFlag{
 		Name:   "assets-path",
 		Usage:  "assets `PATH`",
-		Value:  "/srv/photoprism",
+		Value:  "~/.local/share/photoprism",
 		EnvVar: "PHOTOPRISM_ASSETS_PATH",
 	},
 	cli.StringFlag{
@@ -83,7 +84,7 @@ var GlobalFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "http-port, p",
 		Usage:  "HTTP server port",
-		Value:  80,
+		Value:  2342,
 		EnvVar: "PHOTOPRISM_HTTP_PORT",
 	},
 	cli.StringFlag{
@@ -156,13 +157,13 @@ var GlobalFlags = []cli.Flag{
 		Name:   "daemon-pid-path",
 		Usage:  "File path to store daemon PID",
 		EnvVar: "PHOTOPRISM_DAEMON_PID_PATH",
-		Value:  "/srv/photoprism/photoprism.pid",
+		Value:  "~/.local/share/photoprism/photoprism.pid",
 	},
 	cli.StringFlag{
 		Name:   "daemon-log-path",
 		Usage:  "File path for daemon logs.",
 		EnvVar: "PHOTOPRISM_DAEMON_LOG_PATH",
-		Value:  "/srv/photoprism/photoprism.log",
+		Value:  "~/.local/share/photoprism/photoprism.log",
 	},
 	cli.BoolFlag{
 		Name:   "daemonize, d",

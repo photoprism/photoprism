@@ -43,7 +43,6 @@ RUN apt-get update && apt-get upgrade && \
     wget \
     git \
     mysql-client \
-    libgtk-3-bin \
     tzdata \
     gconf-service \
     chromium-browser \
@@ -58,14 +57,13 @@ RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
     apt-get upgrade && \
     apt-get dist-upgrade
 
-# Install TensorFlow C library
+# Install & configure TensorFlow for C
+ENV LD_LIBRARY_PATH /root/.local/lib:/usr/local/lib:/usr/lib:/lib
+ENV TF_CPP_MIN_LOG_LEVEL 0
 RUN curl -L \
    "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-avx-1.14.0.tar.gz" | \
    tar -C "/usr" -xz
 RUN ldconfig
-
-# Show TensorFlow debug log
-ENV TF_CPP_MIN_LOG_LEVEL 0
 
 # Install NodeJS
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
@@ -94,7 +92,7 @@ RUN set -eux; \
 # Configure Go environment
 ENV GOPATH /go
 ENV GOBIN $GOPATH/bin
-ENV PATH $GOBIN:/usr/local/go/bin:$PATH
+ENV PATH $GOBIN:/usr/local/go/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV GO111MODULE on
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
@@ -108,16 +106,11 @@ RUN env GO111MODULE=off /usr/local/go/bin/go get -u golang.org/x/tools/cmd/goimp
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo
 RUN echo "alias go=richgo" > /root/.bash_aliases
 
-# Configure broadwayd (HTML5 display server)
-# Command: broadwayd -p 8080 -a 0.0.0.0 :5
-ENV GDK_BACKEND broadway
-ENV BROADWAY_DISPLAY :5
-
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
-# Expose HTTP port plus 4000 for TiDB, 8080 for broadwayd and 9515 for chromedriver
-EXPOSE 80 2342 4000 8080 9515
+# Expose HTTP port 2342 plus 4000 for TiDB and 9515 for chromedriver
+EXPOSE 2342 4000 9515
 
 # Keep container running (services can be started manually using a terminal)
 CMD tail -f /dev/null

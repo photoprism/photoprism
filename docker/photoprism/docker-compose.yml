@@ -1,22 +1,22 @@
 version: '3.3'
 
 # Example docker-compose config file for production use
+# Container image on Docker Hub: https://hub.docker.com/r/photoprism/photoprism/
+# To keep photoprism running, add "restart: always"
+#
 # Usage: docker-compose up
 
 services:
-  photoprism: # change if needed
-    image: photoprism/photoprism:latest # use pre-built image from docker hub: https://hub.docker.com/r/photoprism/photoprism/
-    restart: always
+  photoprism:
+    image: photoprism/photoprism:latest
     ports:
-      - 2342:80 # left side is your local port (change if port 2342 is already used or you want to use port 80)
+      - 2342:2342 # [local port]:[container port]
     volumes:
-      - "~/Photos:/srv/photoprism/photos" # change ~/Photos to whatever directory you want to use on your local computer
-      - "photoprism-cache:/srv/photoprism/cache" # keep this (thumbnail cache)
-      - "photoprism-database:/srv/photoprism/database" # keep this (database files)
-    environment:
-      PHOTOPRISM_IMPORT_PATH: /srv/photoprism/photos/Import # ~/Photos/Import (files to be imported to originals)
-      PHOTOPRISM_EXPORT_PATH: /srv/photoprism/photos/Export # ~/Photos/Export (files exported from originals)
-      PHOTOPRISM_ORIGINALS_PATH: /srv/photoprism/photos/Originals # ~/Photos/Originals (original jpeg, raw and meta files)
+      - "~/Pictures/Originals:/home/photoprism/Pictures/Originals" # [local path]:[container path]
+      - "~/Pictures/Import:/home/photoprism/Pictures/Import" # [local path]:[container path] (optional)
+      - "~/Pictures/Export:/home/photoprism/Pictures/Export" # [local path]:[container path] (optional)
+      - "photoprism-cache:/home/photoprism/.cache/photoprism" # keep thumbnail cache
+      - "photoprism-database:/home/photoprism/.local/share/photoprism/resources/database" # keep database files
 
 volumes: # keep this
   photoprism-cache:

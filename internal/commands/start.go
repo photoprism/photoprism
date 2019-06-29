@@ -102,7 +102,7 @@ func startAction(ctx *cli.Context) error {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 	<-quit
-	log.Info("Shutting down...")
+	log.Info("shutting down...")
 	conf.Shutdown()
 	cancel()
 	err := dctx.Release()
