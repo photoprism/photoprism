@@ -1,76 +1,42 @@
 <template>
-    <v-layout row justify-center>
-        <!--<v-dialog v-model="dialog" color="blue-grey lighten-5" persistent max-width="350" transition="dialog-right-transition">
-            <v-card raised>
-                <v-toolbar flat color="blue-grey lighten-4">
-                    <v-icon>delete</v-icon>
-                    <v-toolbar-title>Delete Photos</v-toolbar-title>
-                    <v-spacer></v-spacer>
-                </v-toolbar>
-                <v-card-text>You want to delete the {{ count }} selected items? You can't undo this action.</v-card-text>
-                <v-card-actions>
-                    <v-layout row align-center justify-center fill-height>
-                    <v-btn @click.stop="close" depressed color="teal accent-4">Keep</v-btn>
-                    <v-btn color="delete" @click.stop="agree">Delete<v-icon right dark>delete</v-icon></v-btn>
-                    <v-btn @click.stop="close" depressed color="teal accent-4"><v-icon left dark>clear</v-icon>Cancel</v-btn>
-                    <v-btn color="delete" @click.stop="agree"><v-icon left dark>done</v-icon> Confirm</v-btn>
-                    </v-layout>
-                </v-card-actions>
-            </v-card>-->
-       <v-dialog v-model="dialog" persistent max-width="350" transition="dialog-right-transition" class="p-photo-dialog">
-            <v-card raised elevation="24">
-                <v-layout row align-center justify-center>
-                    <v-icon size="60" color="grey lighten-1" class="ma-2 pt-3">error_outline</v-icon>
-                </v-layout>
-                <v-layout column align-center justify-center fill-height>
-                    <div class="headline my-1 mx-3">Are you sure?</div>
-                <span class="text-align-center p-photo-dialog-text my-3 mx-3">That you want to delete the {{ count }} selected items? You can't undo this action.</span>
-                    <v-spacer></v-spacer>
-                </v-layout>
-                <v-card-actions>
-                    <v-layout row align-center justify-center fill-height class="pa-2">
-                        <v-btn @click.stop="close" depressed color="grey darken-1" class="p-photo-dialog-cancel white--text">Cancel</v-btn>
-                        <v-btn color="delete" @click.stop="agree" class="p-photo-dialog-confirm white--text">Delete</v-btn>
-                    </v-layout>
-                </v-card-actions>
-            </v-card>
-    <!--<v-dialog v-model="dialog" persistent max-width="450" transition="dialog-right-transition">
+    <v-dialog v-model="show" persistent max-width="350" class="p-photo-dialog">
         <v-card raised elevation="24">
-            <v-layout row align-center justify-center fill-height>
-                <v-icon size="80" color="grey lighten-1" class="ma-3">error_outline</v-icon>
-            <v-layout column fill-height class="pa-3">
-                <div class="headline">Are you sure?</div>
-                <span>You want to delete the {{ count }} selected items? You can't undo this action.</span>
-                <v-spacer></v-spacer>
-            </v-layout>
-            </v-layout>
-            <v-card-actions>
-                <v-layout row align-center justify-center class="pb-2 ma-2">
-                <v-btn @click.stop="close" depressed color="grey lighten-1">Cancel</v-btn>
-                <v-btn color="delete" @click.stop="agree">Delete</v-btn>
-            </v-layout>
-            </v-card-actions>
-        </v-card>-->
-        </v-dialog>
-    </v-layout>
+            <v-container fluid class="pb-2 pr-2 pl-2">
+                <v-layout row wrap>
+                    <v-flex xs3 text-xs-center>
+                        <v-icon size="54" color="grey lighten-1">delete_outline</v-icon>
+                    </v-flex>
+                    <v-flex xs9 text-xs-left align-self-center>
+                        <div class="subheading pr-1">Are you sure you want to delete these photos?</div>
+                    </v-flex>
+                    <v-flex xs12 text-xs-right class="pt-3">
+                        <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="p-photo-dialog-cancel">
+                            Cancel
+                        </v-btn>
+                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
+                               class="p-photo-dialog-confirm">Delete
+                        </v-btn>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-card>
+    </v-dialog>
 </template>
 <script>
     export default {
         name: 'p-dialog',
         props: {
-            dialog: Boolean,
-            count: String,
+            show: Boolean,
         },
-        data () {
-            return {
-            }
+        data() {
+            return {}
         },
         methods: {
-            close() {
-                this.$emit('close');
+            cancel() {
+                this.$emit('cancel');
             },
-            agree() {
-                this.$emit('agree');
+            confirm() {
+                this.$emit('confirm');
             },
         }
     }

@@ -80,7 +80,7 @@
                 dark
                 small
                 color="delete"
-                @click.stop="dialog = true"
+                @click.stop="dialog.delete = true"
                 v-if="selection.length"
                 class="p-photo-clipboard-delete"
         >
@@ -98,7 +98,7 @@
         </v-btn>
     </v-speed-dial>
     </v-container>
-    <p-dialog :dialog="dialog" @close="dialog = false" @agree="batchDelete" :count="selection.length.toString()"></p-dialog>
+    <p-dialog :show="dialog.delete" @cancel="dialog.delete = false" @confirm="batchDelete"></p-dialog>
     </div>
 </template>
 <script>
@@ -114,7 +114,9 @@
         data() {
             return {
                 expanded: false,
-                dialog: false,
+                dialog: {
+                    delete: false
+                },
             };
         },
         methods: {
@@ -151,6 +153,8 @@
                 });
             },
             batchDelete() {
+                this.dialog.delete = false;
+
                 Event.publish("ajax.start");
 
                 const ctx = this;
@@ -163,7 +167,6 @@
                 }).catch(() => {
                     Event.publish("ajax.end");
                 });
-                this.dialog = false;
             },
             batchTag() {
                 this.$alert.warning("Not implemented yet");
