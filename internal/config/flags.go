@@ -23,6 +23,18 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_LOG_LEVEL",
 	},
 	cli.StringFlag{
+		Name:   "log-filename",
+		Usage:  "filename for storing server logs",
+		EnvVar: "PHOTOPRISM_LOG_FILENAME",
+		Value:  "~/.local/share/photoprism/photoprism.log",
+	},
+	cli.StringFlag{
+		Name:   "pid-filename",
+		Usage:  "filename for the server process id (pid)",
+		EnvVar: "PHOTOPRISM_PID_FILENAME",
+		Value:  "~/.local/share/photoprism/photoprism.pid",
+	},
+	cli.StringFlag{
 		Name:   "config-file, c",
 		Usage:  "load configuration from `FILENAME`",
 		Value:  "~/.config/photoprism/photoprism.yml",
@@ -81,54 +93,6 @@ var GlobalFlags = []cli.Flag{
 		Value:  "root:@tcp(localhost:4000)/photoprism?parseTime=true",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
-	cli.IntFlag{
-		Name:   "http-port, p",
-		Usage:  "HTTP server port",
-		Value:  2342,
-		EnvVar: "PHOTOPRISM_HTTP_PORT",
-	},
-	cli.StringFlag{
-		Name:   "http-host, i",
-		Usage:  "HTTP server host",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_HTTP_HOST",
-	},
-	cli.StringFlag{
-		Name:   "http-mode, m",
-		Usage:  "debug, release or test",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_HTTP_MODE",
-	},
-	cli.StringFlag{
-		Name:   "http-password",
-		Usage:  "HTTP server password (optional)",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_HTTP_PASSWORD",
-	},
-	cli.IntFlag{
-		Name:   "sql-port, s",
-		Usage:  "built-in SQL server port",
-		Value:  4000,
-		EnvVar: "PHOTOPRISM_SQL_PORT",
-	},
-	cli.StringFlag{
-		Name:   "sql-host",
-		Usage:  "built-in SQL server host",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_SQL_HOST",
-	},
-	cli.StringFlag{
-		Name:   "sql-path",
-		Usage:  "built-in SQL server storage path",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_SQL_PATH",
-	},
-	cli.StringFlag{
-		Name:   "sql-password",
-		Usage:  "built-in SQL server password",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_SQL_PASSWORD",
-	},
 	cli.StringFlag{
 		Name:   "sips-bin",
 		Usage:  "sips cli binary `FILENAME`",
@@ -152,22 +116,5 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "heif conversion cli binary `FILENAME`",
 		Value:  "heif-convert",
 		EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
-	},
-	cli.StringFlag{
-		Name:   "daemon-pid-path",
-		Usage:  "File path to store daemon PID",
-		EnvVar: "PHOTOPRISM_DAEMON_PID_PATH",
-		Value:  "~/.local/share/photoprism/photoprism.pid",
-	},
-	cli.StringFlag{
-		Name:   "daemon-log-path",
-		Usage:  "File path for daemon logs.",
-		EnvVar: "PHOTOPRISM_DAEMON_LOG_PATH",
-		Value:  "~/.local/share/photoprism/photoprism.log",
-	},
-	cli.BoolFlag{
-		Name:   "daemonize, d",
-		Usage:  "run Photoprism as Daemon",
-		EnvVar: "PHOTOPRISM_DAEMON_MODE",
 	},
 }

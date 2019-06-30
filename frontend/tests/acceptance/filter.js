@@ -39,10 +39,10 @@ test('Test camera filter', async t => {
         await t
             .click('button.p-expand-search');
         logger.clear();
-        await page.setFilter('countries', 'Cuba');
+        await page.setFilter('countries');
         const request3 = await logger.requests[0].responseBody;
         await t
             .expect(logger.requests[0].response.statusCode).eql(200)
-            .expect(logger.requests[0].request.url).contains('country=cu')
+            .expect(logger.requests[0].request.url).contains('country=')
             .expect(Selector('div.v-image__image').visible).ok();
     },);

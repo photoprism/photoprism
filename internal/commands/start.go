@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"strconv"
@@ -11,8 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/photoprism/photoprism/internal/util"
-	daemon "github.com/sevlyar/go-daemon"
-	log "github.com/sirupsen/logrus"
+	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
 )
 
@@ -28,35 +28,82 @@ var startFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "http-port, p",
 		Usage:  "HTTP server port",
-		Value:  80,
 		EnvVar: "PHOTOPRISM_HTTP_PORT",
 	},
 	cli.StringFlag{
 		Name:   "http-host, i",
 		Usage:  "HTTP server host",
-		Value:  "",
 		EnvVar: "PHOTOPRISM_HTTP_HOST",
 	},
 	cli.StringFlag{
 		Name:   "http-mode, m",
 		Usage:  "debug, release or test",
-		Value:  "",
 		EnvVar: "PHOTOPRISM_HTTP_MODE",
 	},
-
+	cli.StringFlag{
+		Name:   "http-password",
+		Usage:  "HTTP server password (optional)",
+		EnvVar: "PHOTOPRISM_HTTP_PASSWORD",
+	},
+	cli.IntFlag{
+		Name:   "sql-port, s",
+		Usage:  "built-in SQL server port",
+		EnvVar: "PHOTOPRISM_SQL_PORT",
+	},
+	cli.StringFlag{
+		Name:   "sql-host",
+		Usage:  "built-in SQL server host",
+		EnvVar: "PHOTOPRISM_SQL_HOST",
+	},
+	cli.StringFlag{
+		Name:   "sql-path",
+		Usage:  "built-in SQL server storage path",
+		EnvVar: "PHOTOPRISM_SQL_PATH",
+	},
+	cli.StringFlag{
+		Name:   "sql-password",
+		Usage:  "built-in SQL server password",
+		EnvVar: "PHOTOPRISM_SQL_PASSWORD",
+	},
 	cli.BoolFlag{
-		Name:   "daemonize, d",
-		Usage:  "run Photoprism as Daemon",
-		EnvVar: "PHOTOPRISM_DAEMON_MODE",
+		Name:   "detach-server, d",
+		Usage:  "detach from the console (daemon mode)",
+		EnvVar: "PHOTOPRISM_DETACH_SERVER",
+	},
+	cli.BoolFlag{
+		Name:   "config, c",
+		Usage:  "show config",
 	},
 }
 
 func startAction(ctx *cli.Context) error {
+	conf := config.NewConfig(ctx)
+
+	if err := conf.CreateDirectories(); err != nil {
+		return err
+	}
+
+	if ctx.IsSet("config") {
+		fmt.Printf("NAME                  VALUE\n")
+		fmt.Printf("detach-server         %t\n", conf.DetachServer())
+
+		fmt.Printf("http-host             %s\n", conf.HttpServerHost())
+		fmt.Printf("http-port             %d\n", conf.HttpServerPort())
+		fmt.Printf("http-mode             %s\n", conf.HttpServerMode())
+
+		fmt.Printf("sql-host              %s\n", conf.SqlServerHost())
+		fmt.Printf("sql-port              %d\n", conf.SqlServerPort())
+		fmt.Printf("sql-password          %s\n", conf.SqlServerPassword())
+		fmt.Printf("sql-path              %s\n", conf.SqlServerPath())
+
+		return nil
+	}
+
 	// pass this context down the chain
 	cctx, cancel := context.WithCancel(context.Background())
-	conf := config.NewConfig(ctx)
-	if conf.HttpServerPort() < 1 {
-		log.Fatal("server port must be a positive integer")
+
+	if conf.HttpServerPort() < 1 || conf.HttpServerPort() > 65535 {
+		log.Fatal("server port must be a number between 1 and 65535")
 	}
 
 	if err := conf.CreateDirectories(); err != nil {
@@ -69,15 +116,16 @@ func startAction(ctx *cli.Context) error {
 	conf.MigrateDb()
 
 	dctx := new(daemon.Context)
-	dctx.LogFileName = conf.DaemonLogPath()
-	dctx.PidFileName = conf.DaemonPIDPath()
+	dctx.LogFileName = conf.LogFilename()
+	dctx.PidFileName = conf.PIDFilename()
 	dctx.Args = ctx.Args()
-	if !daemon.WasReborn() && conf.ShouldDaemonize() {
+
+	if !daemon.WasReborn() && conf.DetachServer() {
 		conf.Shutdown()
 		cancel()
 
-		if pid, ok := childAlreadyRunning(conf.DaemonPIDPath()); ok {
-			log.Infof("Daemon already running with PID[%v]\n", pid)
+		if pid, ok := childAlreadyRunning(conf.PIDFilename()); ok {
+			log.Infof("daemon already running with process id %v\n", pid)
 			return nil
 		}
 
@@ -87,15 +135,17 @@ func startAction(ctx *cli.Context) error {
 		}
 
 		if child != nil {
-			if !util.Overwrite(conf.DaemonPIDPath(), []byte(strconv.Itoa(child.Pid))) {
-				log.Fatal("failed to write PID to file")
+			if !util.Overwrite(conf.PIDFilename(), []byte(strconv.Itoa(child.Pid))) {
+				log.Fatalf("failed writing process id to \"%s\"", conf.PIDFilename())
 			}
 
-			log.Infof("Daemon started with PID: %v\n", child.Pid)
+			log.Infof("daemon started with process id %v\n", child.Pid)
 			return nil
 		}
 	}
+
 	log.Infof("starting web server at %s:%d", conf.HttpServerHost(), conf.HttpServerPort())
+
 	go server.Start(cctx, conf)
 
 	quit := make(chan os.Signal)
@@ -106,10 +156,13 @@ func startAction(ctx *cli.Context) error {
 	conf.Shutdown()
 	cancel()
 	err := dctx.Release()
+
 	if err != nil {
 		log.Error(err)
 	}
+
 	time.Sleep(3 * time.Second)
+
 	return nil
 }
 

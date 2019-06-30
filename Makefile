@@ -18,10 +18,13 @@ dep: dep-tensorflow dep-js dep-go
 build: build-js build-go
 install: install-bin install-assets
 test: test-js test-go
+acceptance: start test-chromium test-firefox stop
 fmt: fmt-js fmt-go
 upgrade: upgrade-js upgrade-go
 start:
-	go run cmd/photoprism/photoprism.go start
+	go run cmd/photoprism/photoprism.go start -d
+stop:
+	go run cmd/photoprism/photoprism.go stop
 migrate:
 	go run cmd/photoprism/photoprism.go migrate
 install-bin:

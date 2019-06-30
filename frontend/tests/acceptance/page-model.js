@@ -1,4 +1,4 @@
-import { Selector, t } from 'testcafe';
+import {Selector, t} from 'testcafe';
 
 export default class Page {
     constructor() {
@@ -10,29 +10,35 @@ export default class Page {
     }
 
     async setFilter(filter, option) {
+        let filterSelector = "";
 
-        const SelectOption = await Selector('a').withText(option);
         switch (filter) {
             case 'view':
-                await t
-                    .click(this.view, {timeout: 15000});
+                filterSelector = 'div.p-view-select';
                 break;
             case 'camera':
-                await t
-                    .click(this.camera, {timeout: 15000});
+                filterSelector = 'div.p-camera-select';
                 break;
             case 'time':
-                await t
-                    .click(this.time, {timeout: 15000});
+                filterSelector = 'div.p-time-select';
                 break;
             case 'countries':
-                await t
-                    .click(this.countries, {timeout: 15000});
+                filterSelector = 'div.p-countries-select';
                 break;
             default:
+                throw "unknown filter";
         }
+
         await t
-            .click(Selector('a').withText(option), {timeout: 15000} )
+            .click(filterSelector, {timeout: 15000});
+
+        if (option) {
+            await t
+                .click(Selector('div.menuable__content__active div.v-select-list a').withText(option), {timeout: 15000})
+        } else {
+            await t
+                .click(Selector('div.menuable__content__active div.v-select-list a').nth(1), {timeout: 15000})
+        }
     }
 
     async search(term) {

@@ -15,6 +15,6 @@ http-port: 2342
 http-password:
 database-driver: internal
 database-dsn: root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true
-daemon-pid-path: ~/.local/share/photoprism/photoprism.pid
-daemon-log-path: ~/.local/share/photoprism/photoprism.log
-daemon-mode: false
+pid-filename: ~/.local/share/photoprism/photoprism.pid
+log-filename: ~/.local/share/photoprism/photoprism.log
+detach-server: false

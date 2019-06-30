@@ -6,3 +6,11 @@ Additional information concerning the command-line interface can be found in our
 https://github.com/photoprism/photoprism/wiki/Commands
 */
 package commands
+
+import "github.com/sirupsen/logrus"
+
+var log *logrus.Logger
+
+func init() {
+	log = logrus.StandardLogger()
+}
