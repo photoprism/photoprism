@@ -98,7 +98,7 @@
         </v-btn>
     </v-speed-dial>
     </v-container>
-    <p-dialog :show="dialog.delete" @cancel="dialog.delete = false" @confirm="batchDelete"></p-dialog>
+    <p-photo-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false" @confirm="batchDelete"></p-photo-delete-dialog>
     </div>
 </template>
 <script>

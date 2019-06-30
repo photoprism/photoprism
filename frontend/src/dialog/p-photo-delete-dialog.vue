@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="show" persistent max-width="350" class="p-photo-dialog">
+    <v-dialog v-model="show" persistent max-width="350" class="p-photo-delete-dialog">
         <v-card raised elevation="24">
             <v-container fluid class="pb-2 pr-2 pl-2">
                 <v-layout row wrap>
@@ -24,7 +24,7 @@
 </template>
 <script>
     export default {
-        name: 'p-dialog',
+        name: 'p-photo-delete-dialog',
         props: {
             show: Boolean,
         },
