@@ -11,25 +11,21 @@ test('Test selecting photos and clear clipboard', async t => {
     const countSelected = await Selector('div.p-photo-clipboard').innerText;
     const countSelectedInt = (Number.isInteger(parseInt(countSelected))) ? parseInt(countSelected) : 0;
 
-    await t
-        .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(0))
-        .click(Selector('button.p-photo-select'))
-        .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(2))
-        .click(Selector('button.p-photo-select').nth(1));
+    await page.selectPhoto(0);
+    await page.selectPhoto(2);
 
-    const countSelectedAfterLike = await Selector('div.p-photo-clipboard').innerText;
-    const countSelectedAfterLikeInt = (Number.isInteger(parseInt(countSelectedAfterLike))) ? parseInt(countSelectedAfterLike) : 0;
+    const countSelectedAfterSelect = await Selector('div.p-photo-clipboard').innerText;
+    const countSelectedAfterSelectInt = (Number.isInteger(parseInt(countSelectedAfterSelect))) ? parseInt(countSelectedAfterSelect) : 0;
 
     await t
-        .expect(countSelectedAfterLikeInt).eql(countSelectedInt + 2)
-        .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(0))
-        .click(Selector('button.p-photo-select'))
+        .expect(countSelectedAfterSelectInt).eql(countSelectedInt + 2)
+    await page.unselectPhoto(0);
 
-    const countSelectedAfterDislike = await Selector('div.p-photo-clipboard').innerText;
-    const countSelectedAfterDislikeInt = (Number.isInteger(parseInt(countSelectedAfterDislike))) ? parseInt(countSelectedAfterDislike) : 0;
+    const countSelectedAfterUnselect = await Selector('div.p-photo-clipboard').innerText;
+    const countSelectedAfterUnselectInt = (Number.isInteger(parseInt(countSelectedAfterUnselect))) ? parseInt(countSelectedAfterUnselect) : 0;
 
     await t
-        .expect(countSelectedAfterDislikeInt).eql(countSelectedAfterLikeInt -1);
+        .expect(countSelectedAfterUnselectInt).eql(countSelectedAfterSelectInt -1);
 
     await page.openNav();
     await t
@@ -38,7 +34,7 @@ test('Test selecting photos and clear clipboard', async t => {
     await page.openNav();
     await t
         .click('a[href="/photos"]')
-        .expect(countSelectedAfterDislikeInt).eql(countSelectedAfterLikeInt -1)
+        .expect(countSelectedAfterUnselectInt).eql(countSelectedAfterSelectInt -1)
         .click(Selector('div.p-photo-clipboard'))
         .click(Selector('.p-photo-clipboard-clear'), {timeout: 15000});
     const countSelectedAfterClear = await Selector('div.p-photo-clipboard').innerText;
