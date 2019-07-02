@@ -8,17 +8,17 @@
                 slider-color="blue-grey darken-1"
                 height="64"
         >
-            <v-tab id="tab-upload" ripple>
+            <v-tab id="tab-upload" v-if="!readonly" ripple>
                 Upload
             </v-tab>
-            <v-tab-item>
+            <v-tab-item v-if="!readonly">
                 <p-tab-upload></p-tab-upload>
             </v-tab-item>
 
-            <v-tab id="tab-import" ripple>
+            <v-tab id="tab-import" v-if="!readonly" ripple>
                 Import
             </v-tab>
-            <v-tab-item>
+            <v-tab-item v-if="!readonly">
                 <p-tab-import></p-tab-import>
             </v-tab-item>
 
@@ -46,6 +46,7 @@
         },
         data() {
             return {
+                readonly: this.$config.getValue("readonly"),
                 active: 0,
             }
         },

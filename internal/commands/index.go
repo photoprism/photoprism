@@ -34,6 +34,10 @@ func indexAction(ctx *cli.Context) error {
 	conf.MigrateDb()
 	log.Infof("indexing photos in %s", conf.OriginalsPath())
 
+	if conf.ReadOnly() {
+		log.Infof("read-only mode enabled")
+	}
+
 	tensorFlow := photoprism.NewTensorFlow(conf)
 
 	indexer := photoprism.NewIndexer(conf, tensorFlow)

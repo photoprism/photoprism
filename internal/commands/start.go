@@ -106,6 +106,10 @@ func startAction(ctx *cli.Context) error {
 
 	log.Infof("starting web server at %s:%d", conf.HttpServerHost(), conf.HttpServerPort())
 
+	if conf.ReadOnly() {
+		log.Infof("read-only mode enabled")
+	}
+
 	go server.Start(cctx, conf)
 
 	quit := make(chan os.Signal)
