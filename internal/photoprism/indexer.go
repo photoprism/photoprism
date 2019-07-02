@@ -306,9 +306,9 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	}
 
 	if result := i.db.Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); result.Error != nil {
-		isPrimary = mediaFile.Type() == FileTypeJpeg
+		isPrimary = mediaFile.IsJpeg()
 	} else {
-		isPrimary = mediaFile.Type() == FileTypeJpeg && (fileName == primaryFile.FileName || fileHash == primaryFile.FileHash)
+		isPrimary = mediaFile.IsJpeg() && (fileName == primaryFile.FileName || fileHash == primaryFile.FileHash)
 	}
 
 	file.PhotoID = photo.ID
