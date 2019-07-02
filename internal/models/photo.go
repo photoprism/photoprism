@@ -22,8 +22,8 @@ type Photo struct {
 	PhotoPrivate      bool
 	PhotoSensitive    bool
 	PhotoStory        bool
-	PhotoLat          float64 `gorm:"type:index;"`
-	PhotoLong         float64 `gorm:"type:index;"`
+	PhotoLat          float64 `gorm:"index;"`
+	PhotoLong         float64 `gorm:"index;"`
 	PhotoAltitude     int
 	PhotoFocalLength  int
 	PhotoIso          int
@@ -41,7 +41,7 @@ type Photo struct {
 	LocationID        uint
 	LocationChanged   bool
 	LocationEstimated bool
-	TakenAt           time.Time `gorm:"type:index;"`
+	TakenAt           time.Time `gorm:"index;"`
 	TakenAtChanged    bool
 	TimeZone          string
 	Labels            []*PhotoLabel
