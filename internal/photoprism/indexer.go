@@ -128,7 +128,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			photoQuery = i.db.Unscoped().First(&photo, "photo_lat = ? AND photo_long = ? AND taken_at = ?", exifData.Lat, exifData.Long, exifData.TakenAt)
 		}
 	} else {
-		photoQuery = i.db.Unscoped().First(&photo, "photo_id = ?", file.ID)
+		photoQuery = i.db.Unscoped().First(&photo, "id = ?", file.PhotoID)
 	}
 
 	photo.PhotoPath = filePath
