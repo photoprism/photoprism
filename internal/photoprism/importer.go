@@ -152,12 +152,6 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 // DestinationFilename get the destination of a media file.
 func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile) (string, error) {
 	fileName := mainFile.CanonicalName()
-	baseName := mainFile.Basename()
-
-	if fileName != baseName {
-		fileName += "." + baseName
-	}
-
 	fileExtension := mediaFile.Extension()
 	dateCreated := mainFile.DateCreated()
 

@@ -63,9 +63,9 @@ func TestMediaFile_EditedFilename(t *testing.T) {
 
 	ctx.InitializeTestData(t)
 
-	mediaFile1, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
+	mediaFile1, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_4120.JPG")
 	assert.Nil(t, err)
-	assert.Equal(t, ctx.ImportPath()+"/iphone/IMG_E6788.JPG", mediaFile1.EditedFilename())
+	assert.Equal(t, ctx.ImportPath()+"/iphone/IMG_E4120.JPG", mediaFile1.EditedFilename())
 
 	/* TODO: Add example files to import.zip
 	mediaFile2, err := NewMediaFile("/foo/bar/IMG_E1234.jpg")
