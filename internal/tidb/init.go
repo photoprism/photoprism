@@ -25,16 +25,18 @@ func InitDatabase(port uint, password string) error {
 		return err
 	}
 
-	log.Debug("set database password")
+	if password != "" {
+		log.Debug("set database password")
 
-	_, err = db.Exec(fmt.Sprintf("SET PASSWORD FOR 'root'@'%%' = '%s'", password))
+		_, err = db.Exec(fmt.Sprintf("SET PASSWORD FOR 'root'@'%%' = '%s'", password))
 
-	if err != nil {
-		log.Error(err.Error())
-	} else {
-		log.Debug("flush database privileges")
+		if err != nil {
+			log.Error(err.Error())
+		} else {
+			log.Debug("flush database privileges")
 
-		_, err = db.Exec("FLUSH PRIVILEGES")
+			_, err = db.Exec("FLUSH PRIVILEGES")
+		}
 	}
 
 	log.Debug("create database if not exists")

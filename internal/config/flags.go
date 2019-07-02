@@ -117,4 +117,44 @@ var GlobalFlags = []cli.Flag{
 		Value:  "heif-convert",
 		EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
 	},
+	cli.IntFlag{
+		Name:   "http-port, p",
+		Usage:  "HTTP server port",
+		EnvVar: "PHOTOPRISM_HTTP_PORT",
+	},
+	cli.StringFlag{
+		Name:   "http-host, i",
+		Usage:  "HTTP server host",
+		EnvVar: "PHOTOPRISM_HTTP_HOST",
+	},
+	cli.StringFlag{
+		Name:   "http-mode, m",
+		Usage:  "debug, release or test",
+		EnvVar: "PHOTOPRISM_HTTP_MODE",
+	},
+	cli.StringFlag{
+		Name:   "http-password",
+		Usage:  "HTTP server password (optional)",
+		EnvVar: "PHOTOPRISM_HTTP_PASSWORD",
+	},
+	cli.IntFlag{
+		Name:   "sql-port, s",
+		Usage:  "built-in SQL server port",
+		EnvVar: "PHOTOPRISM_SQL_PORT",
+	},
+	cli.StringFlag{
+		Name:   "sql-host",
+		Usage:  "built-in SQL server host",
+		EnvVar: "PHOTOPRISM_SQL_HOST",
+	},
+	cli.StringFlag{
+		Name:   "sql-path",
+		Usage:  "built-in SQL server storage path",
+		EnvVar: "PHOTOPRISM_SQL_PATH",
+	},
+	cli.StringFlag{
+		Name:   "sql-password",
+		Usage:  "built-in SQL server password",
+		EnvVar: "PHOTOPRISM_SQL_PASSWORD",
+	},
 }

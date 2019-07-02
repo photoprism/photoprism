@@ -82,7 +82,7 @@ func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 		return image, nil
 	}
 
-	baseFilename := image.CanonicalNameFromFileWithDirectory()
+	baseFilename := image.DirectoryBasename()
 
 	jpegFilename := baseFilename + ".jpg"
 

@@ -14,7 +14,7 @@ import (
 // Exif returns information about a single image.
 type Exif struct {
 	UUID        string
-	DateTime    time.Time
+	TakenAt     time.Time
 	TimeZone    string
 	Artist      string
 	CameraMake  string
@@ -179,7 +179,7 @@ func (m *MediaFile) Exif() (result *Exif, err error) {
 	}
 
 	if value, ok := tags["DateTimeOriginal"]; ok {
-		m.exifData.DateTime, _ = time.Parse("2006:01:02 15:04:05", value)
+		m.exifData.TakenAt, _ = time.Parse("2006:01:02 15:04:05", value)
 	}
 
 	if value, ok := tags["TimeZoneOffset"]; ok {

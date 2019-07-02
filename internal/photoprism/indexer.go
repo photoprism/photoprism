@@ -104,21 +104,39 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	var photo models.Photo
 	var file, primaryFile models.File
 	var isPrimary = false
+	var exifData *Exif
+	var photoQuery, fileQuery *gorm.DB
 
 	labels := Labels{}
-	canonicalName := mediaFile.CanonicalNameFromFile()
+	fileBase := mediaFile.Basename()
+	filePath := mediaFile.RelativePath(i.originalsPath())
+	fileName := mediaFile.RelativeFilename(i.originalsPath())
 	fileHash := mediaFile.Hash()
-	relativeFileName := mediaFile.RelativeFilename(i.originalsPath())
 
-	photoQuery := i.db.Unscoped().First(&photo, "photo_canonical_name = ?", canonicalName)
+	exifData, err := mediaFile.Exif()
+
+	if err != nil {
+		log.Debug(err)
+	}
+
+	fileQuery = i.db.Unscoped().First(&file, "file_hash = ? OR file_name = ?", fileHash, fileName)
+
+	if fileQuery.Error != nil {
+		photoQuery = i.db.Unscoped().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase)
+
+		if photoQuery.Error != nil && exifData != nil {
+			photoQuery = i.db.Unscoped().First(&photo, "photo_lat = ? AND photo_long = ? AND taken_at = ?", exifData.Lat, exifData.Long, exifData.TakenAt)
+		}
+	} else {
+		photoQuery = i.db.Unscoped().First(&photo, "photo_id = ?", file.ID)
+	}
+
+	photo.PhotoPath = filePath
+	photo.PhotoName = fileBase
 
 	if photo.TakenAt.IsZero() && photo.TakenAtChanged == false {
 		photo.TakenAt = mediaFile.DateCreated()
 		photo.TimeZone = mediaFile.TimeZone()
-	}
-
-	if photo.PhotoCanonicalName == "" {
-		photo.PhotoCanonicalName = canonicalName
 	}
 
 	if jpeg, err := mediaFile.Jpeg(); err == nil {
@@ -290,15 +308,13 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	if result := i.db.Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); result.Error != nil {
 		isPrimary = mediaFile.Type() == FileTypeJpeg
 	} else {
-		isPrimary = mediaFile.Type() == FileTypeJpeg && (relativeFileName == primaryFile.FileName || fileHash == primaryFile.FileHash)
+		isPrimary = mediaFile.Type() == FileTypeJpeg && (fileName == primaryFile.FileName || fileHash == primaryFile.FileHash)
 	}
-
-	fileQuery := i.db.Unscoped().First(&file, "file_hash = ? OR file_name = ?", fileHash, relativeFileName)
 
 	file.PhotoID = photo.ID
 	file.FilePrimary = isPrimary
 	file.FileMissing = false
-	file.FileName = relativeFileName
+	file.FileName = fileName
 	file.FileHash = fileHash
 	file.FileType = mediaFile.Type()
 	file.FileMime = mediaFile.MimeType()

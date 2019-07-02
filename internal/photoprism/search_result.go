@@ -5,25 +5,26 @@ import "time"
 // PhotoSearchResult contains found photos and their main file plus other meta data.
 type PhotoSearchResult struct {
 	// Photo
-	ID                 uint
-	CreatedAt          time.Time
-	UpdatedAt          time.Time
-	DeletedAt          time.Time
-	TakenAt            time.Time
-	TimeZone           string
-	PhotoTitle         string
-	PhotoDescription   string
-	PhotoArtist        string
-	PhotoKeywords      string
-	PhotoColors        string
-	PhotoColor         string
-	PhotoCanonicalName string
-	PhotoLat           float64
-	PhotoLong          float64
-	PhotoFavorite      bool
-	PhotoPrivate       bool
-	PhotoSensitive     bool
-	PhotoStory         bool
+	ID               uint
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	DeletedAt        time.Time
+	TakenAt          time.Time
+	TimeZone         string
+	PhotoPath        string
+	PhotoName        string
+	PhotoTitle       string
+	PhotoDescription string
+	PhotoArtist      string
+	PhotoKeywords    string
+	PhotoColors      string
+	PhotoColor       string
+	PhotoLat         float64
+	PhotoLong        float64
+	PhotoFavorite    bool
+	PhotoPrivate     bool
+	PhotoSensitive   bool
+	PhotoStory       bool
 
 	// Camera
 	CameraID    uint

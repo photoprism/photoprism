@@ -32,6 +32,15 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("database-driver       %s\n", conf.DatabaseDriver())
 	fmt.Printf("database-dsn          %s\n", conf.DatabaseDsn())
 
+	fmt.Printf("sql-host              %s\n", conf.SqlServerHost())
+	fmt.Printf("sql-port              %d\n", conf.SqlServerPort())
+	fmt.Printf("sql-password          %s\n", conf.SqlServerPassword())
+	fmt.Printf("sql-path              %s\n", conf.SqlServerPath())
+
+	fmt.Printf("http-host             %s\n", conf.HttpServerHost())
+	fmt.Printf("http-port             %d\n", conf.HttpServerPort())
+	fmt.Printf("http-mode             %s\n", conf.HttpServerMode())
+
 	fmt.Printf("assets-path           %s\n", conf.AssetsPath())
 	fmt.Printf("originals-path        %s\n", conf.OriginalsPath())
 	fmt.Printf("import-path           %s\n", conf.ImportPath())

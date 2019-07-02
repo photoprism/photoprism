@@ -151,7 +151,13 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 
 // DestinationFilename get the destination of a media file.
 func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile) (string, error) {
-	canonicalName := mainFile.CanonicalName()
+	fileName := mainFile.CanonicalName()
+	baseName := mainFile.Basename()
+
+	if fileName != baseName {
+		fileName += "." + baseName
+	}
+
 	fileExtension := mediaFile.Extension()
 	dateCreated := mainFile.DateCreated()
 
@@ -160,7 +166,7 @@ func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 	iteration := 0
 
-	result := pathName + "/" + canonicalName + fileExtension
+	result := pathName + "/" + fileName + fileExtension
 
 	for util.Exists(result) {
 		if mediaFile.Hash() == util.Hash(result) {
@@ -169,7 +175,7 @@ func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 		iteration++
 
-		result = pathName + "/" + canonicalName + "." + fmt.Sprintf("edited_%d", iteration) + fileExtension
+		result = pathName + "/" + fileName + "." + fmt.Sprintf("edited_%d", iteration) + fileExtension
 	}
 
 	return result, nil

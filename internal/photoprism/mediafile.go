@@ -55,8 +55,8 @@ func (m *MediaFile) DateCreated() time.Time {
 
 	info, err := m.Exif()
 
-	if err == nil && !info.DateTime.IsZero() {
-		m.dateCreated = info.DateTime
+	if err == nil && !info.TakenAt.IsZero() {
+		m.dateCreated = info.TakenAt
 
 		return m.dateCreated
 	}
@@ -242,19 +242,21 @@ func (m *MediaFile) Hash() string {
 }
 
 // EditedFilename When editing photos, iPhones create additional files like IMG_E12345.JPG
-func (m *MediaFile) EditedFilename() (result string) {
+func (m *MediaFile) EditedFilename() string {
 	basename := filepath.Base(m.filename)
 
 	if strings.ToUpper(basename[:4]) == "IMG_" && strings.ToUpper(basename[:5]) != "IMG_E" {
-		result = filepath.Dir(m.filename) + string(os.PathSeparator) + basename[:4] + "E" + basename[4:]
+		if filename := filepath.Dir(m.filename) + string(os.PathSeparator) + basename[:4] + "E" + basename[4:]; util.Exists(filename) {
+			return filename
+		}
 	}
 
-	return result
+	return ""
 }
 
-// RelatedFiles returns the mediafiles which are related to a given mediafile.
+// RelatedFiles returns files which are related to this file.
 func (m *MediaFile) RelatedFiles() (result MediaFiles, mainFile *MediaFile, err error) {
-	baseFilename := m.CanonicalNameFromFileWithDirectory()
+	baseFilename := m.DirectoryBasename()
 
 	matches, err := filepath.Glob(baseFilename + "*")
 
@@ -262,8 +264,8 @@ func (m *MediaFile) RelatedFiles() (result MediaFiles, mainFile *MediaFile, err 
 		return result, nil, err
 	}
 
-	if editedFilename := m.EditedFilename(); editedFilename != "" && util.Exists(editedFilename) {
-		matches = append(matches, editedFilename)
+	if filename := m.EditedFilename(); filename != "" {
+		matches = append(matches, filename)
 	}
 
 	for _, filename := range matches {
@@ -301,9 +303,7 @@ func (m *MediaFile) SetFilename(filename string) {
 
 // RelativeFilename returns the relative filename.
 func (m *MediaFile) RelativeFilename(directory string) string {
-	index := strings.Index(m.filename, directory)
-
-	if index == 0 {
+	if index := strings.Index(m.filename, directory); index == 0 {
 		pos := len(directory) + 1
 		return m.filename[pos:]
 	}
@@ -311,14 +311,51 @@ func (m *MediaFile) RelativeFilename(directory string) string {
 	return m.filename
 }
 
+// RelativePath returns the relative path without filename.
+func (m *MediaFile) RelativePath(directory string) string {
+	pathname := m.filename
+
+	if i := strings.Index(pathname, directory); i == 0 {
+		begin := len(directory) + 1
+		pathname = pathname[begin:]
+	}
+
+	if end := strings.LastIndex(pathname, string(os.PathSeparator)); end != -1 {
+		pathname = pathname[:end]
+	}
+
+	return pathname
+}
+
+// RelativeBasename returns the relative filename.
+func (m *MediaFile) RelativeBasename(directory string) string {
+	return m.RelativePath(directory) + string(os.PathSeparator) + m.Basename()
+}
+
 // Directory returns the directory
 func (m *MediaFile) Directory() string {
 	return filepath.Dir(m.filename)
 }
 
-// Basename returns the basename.
+// Basename returns the filename base without any extension and path.
 func (m *MediaFile) Basename() string {
-	return filepath.Base(m.filename)
+	basename := filepath.Base(m.Filename())
+
+	if end := strings.Index(basename, "."); end != -1 {
+		basename = basename[:end]
+	}
+
+	// File copies created by operating systems, example: IMG_1234 (2)
+	if end := strings.Index(basename, " ("); end != -1 {
+		basename = basename[:end]
+	}
+
+	return basename
+}
+
+// DirectoryBasename returns the directory and base filename without any extensions.
+func (m *MediaFile) DirectoryBasename() string {
+	return m.Directory() +  string(os.PathSeparator) + m.Basename()
 }
 
 // MimeType returns the mimetype.
@@ -461,14 +498,13 @@ func (m *MediaFile) IsPhoto() bool {
 	return m.IsJpeg() || m.IsRaw() || m.IsHEIF()
 }
 
-// Jpeg returns a new media file given the current one's canonical name
-// plus the extension .jpg.
+// Jpeg returns a the JPEG version of an image or sidecar file (if exists).
 func (m *MediaFile) Jpeg() (*MediaFile, error) {
 	if m.IsJpeg() {
 		return m, nil
 	}
 
-	jpegFilename := m.CanonicalNameFromFileWithDirectory() + ".jpg"
+	jpegFilename := m.DirectoryBasename() + ".jpg"
 
 	if !util.Exists(jpegFilename) {
 		return nil, fmt.Errorf("jpeg file does not exist: %s", jpegFilename)
