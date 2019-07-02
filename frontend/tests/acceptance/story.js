@@ -16,11 +16,9 @@ fixture`Test batch story`
 const page = new Page();
 
 test('Add stories flag to photos', async t => {
+    await page.selectPhoto(0);
+    await page.selectPhoto(2);
     await t
-        .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(0))
-        .click(Selector('button.p-photo-select'))
-        .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(2))
-        .click(Selector('button.p-photo-select').nth(1))
         .click(Selector('div.p-photo-clipboard'))
         .click(Selector('.p-photo-clipboard-story'), {timeout: 15000});
     const request = await logger.requests[0].responseBody;
