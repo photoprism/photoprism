@@ -21,9 +21,7 @@ test('Like photo', async t => {
     await t
         .navigateTo("../photos")
     const request = await logger.requests[0].responseBody;
-    await t
-        .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(5))
-        .click(Selector('button.p-photo-like'))
+    await page.likePhoto(5);
     logger.clear();
     await t
         .navigateTo("../favorites");
@@ -39,9 +37,7 @@ test('Like photo', async t => {
 test('Dislike photo', async t => {
 
     const FavoritesCount = await Selector('button.p-photo-like').count;
-    await t
-        .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(0))
-        .click(Selector('button.p-photo-like'))
+    await page.likePhoto(0);
     logger.clear();
     await t
         .navigateTo("../favorites");
