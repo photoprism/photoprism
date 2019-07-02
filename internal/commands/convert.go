@@ -20,6 +20,10 @@ func convertAction(ctx *cli.Context) error {
 
 	conf := config.NewConfig(ctx)
 
+	if conf.ReadOnly() {
+		return config.ErrReadOnly
+	}
+
 	if err := conf.CreateDirectories(); err != nil {
 		return err
 	}

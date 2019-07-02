@@ -75,7 +75,7 @@ func (c *Converter) ConvertCommand(image *MediaFile, jpegFilename string, xmpFil
 // ConvertToJpeg converts a single image the JPEG format.
 func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 	if !image.Exists() {
-		return nil, fmt.Errorf("can not convert, file does not exist: %s", image.Filename())
+		return nil, fmt.Errorf("can not convert to jpeg, file does not exist: %s", image.Filename())
 	}
 
 	if image.IsJpeg() {
@@ -90,6 +90,10 @@ func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 
 	if err == nil {
 		return mediaFile, nil
+	}
+
+	if c.conf.ReadOnly() {
+		return nil, fmt.Errorf("can not convert to jpeg in read only mode: %s", image.Filename())
 	}
 
 	log.Infof("converting \"%s\" to \"%s\"", image.filename, jpegFilename)
