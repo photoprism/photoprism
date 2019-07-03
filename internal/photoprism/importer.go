@@ -186,7 +186,7 @@ func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 		iteration++
 
-		result = pathName + string(os.PathSeparator) + fileName + string(os.PathSeparator) + fmt.Sprintf("edited_%d", iteration) + fileExtension
+		result = pathName + string(os.PathSeparator) + fileName + "." + fmt.Sprintf("edited_%d", iteration) + fileExtension
 	}
 
 	return result, nil
