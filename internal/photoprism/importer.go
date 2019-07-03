@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/models"
 
 	"github.com/photoprism/photoprism/internal/util"
 )
@@ -61,7 +62,9 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 		}
 
 		if i.removeDotFiles && strings.HasPrefix(filepath.Base(filename), ".") {
-			os.Remove(filename)
+			if err := os.Remove(filename); err != nil {
+				log.Errorf("could not remove \"%s\": %s", filename, err.Error())
+			}
 
 			return nil
 		}
@@ -81,20 +84,29 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 		}
 
 		for _, relatedMediaFile := range relatedFiles {
+			relativeFilename := relatedMediaFile.RelativeFilename(importPath)
+
 			if destinationFilename, err := i.DestinationFilename(mainFile, relatedMediaFile); err == nil {
-				os.MkdirAll(path.Dir(destinationFilename), os.ModePerm)
+				if err := os.MkdirAll(path.Dir(destinationFilename), os.ModePerm); err != nil {
+					log.Errorf("could not create directories: %s", err.Error())
+				}
 
 				if mainFile.HasSameFilename(relatedMediaFile) {
 					destinationMainFilename = destinationFilename
-					log.Infof("moving main %s file \"%s\" to \"%s\"", relatedMediaFile.Type(), relatedMediaFile.RelativeFilename(importPath), destinationFilename)
+					log.Infof("moving main %s file \"%s\" to \"%s\"", relatedMediaFile.Type(), relativeFilename, destinationFilename)
 				} else {
-					log.Infof("moving related %s file \"%s\" to \"%s\"", relatedMediaFile.Type(), relatedMediaFile.RelativeFilename(importPath), destinationFilename)
+					log.Infof("moving related %s file \"%s\" to \"%s\"", relatedMediaFile.Type(), relativeFilename, destinationFilename)
 				}
 
-				relatedMediaFile.Move(destinationFilename)
+				if err := relatedMediaFile.Move(destinationFilename); err != nil {
+					log.Errorf("could not move file to \"%s\": %s", destinationMainFilename, err.Error())
+				}
 			} else if i.removeExistingFiles {
-				relatedMediaFile.Remove()
-				log.Infof("deleted \"%s\" (already exists)", relatedMediaFile.RelativeFilename(importPath))
+				if err := relatedMediaFile.Remove(); err != nil {
+					log.Errorf("could not delete file \"%s\": %s", relatedMediaFile.Filename(), err.Error())
+				} else {
+					log.Infof("deleted \"%s\" (already exists)", relativeFilename)
+				}
 			}
 		}
 
@@ -154,6 +166,10 @@ func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	fileName := mainFile.CanonicalName()
 	fileExtension := mediaFile.Extension()
 	dateCreated := mainFile.DateCreated()
+
+	if file, err := models.FindFileByHash(i.conf.Db(), mediaFile.Hash()); err == nil {
+		return "", fmt.Errorf("\"%s\" is identical to \"%s\" (%s)", mediaFile.Filename(), file.FileName, mediaFile.Hash())
+	}
 
 	//	Mon Jan 2 15:04:05 -0700 MST 2006
 	pathName := i.originalsPath() + "/" + dateCreated.UTC().Format("2006/01")
