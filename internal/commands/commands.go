@@ -7,10 +7,35 @@ https://github.com/photoprism/photoprism/wiki/Commands
 */
 package commands
 
-import "github.com/sirupsen/logrus"
+import (
+	"os"
+	"syscall"
+
+	"github.com/photoprism/photoprism/internal/util"
+	"github.com/sevlyar/go-daemon"
+	"github.com/sirupsen/logrus"
+)
 
 var log *logrus.Logger
 
 func init() {
 	log = logrus.StandardLogger()
+}
+
+func childAlreadyRunning(filePath string) (pid int, running bool) {
+	if !util.Exists(filePath) {
+		return pid, false
+	}
+
+	pid, err := daemon.ReadPidFile(filePath)
+	if err != nil {
+		return pid, false
+	}
+
+	process, err := os.FindProcess(int(pid))
+	if err != nil {
+		return pid, false
+	}
+
+	return pid, process.Signal(syscall.Signal(0)) == nil
 }

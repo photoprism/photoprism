@@ -73,6 +73,7 @@ func startAction(ctx *cli.Context) error {
 	if err := conf.Init(cctx); err != nil {
 		log.Fatal(err)
 	}
+
 	conf.MigrateDb()
 
 	dctx := new(daemon.Context)
@@ -128,22 +129,4 @@ func startAction(ctx *cli.Context) error {
 	time.Sleep(3 * time.Second)
 
 	return nil
-}
-
-func childAlreadyRunning(filePath string) (pid int, running bool) {
-	if !util.Exists(filePath) {
-		return pid, false
-	}
-
-	pid, err := daemon.ReadPidFile(filePath)
-	if err != nil {
-		return pid, false
-	}
-
-	process, err := os.FindProcess(int(pid))
-	if err != nil {
-		return pid, false
-	}
-
-	return pid, process.Signal(syscall.Signal(0)) == nil
 }
