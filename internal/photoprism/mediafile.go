@@ -337,16 +337,20 @@ func (m *MediaFile) Directory() string {
 	return filepath.Dir(m.filename)
 }
 
-// Basename returns the filename base without any extension and path.
+// Basename returns the filename base without any extensions and path.
 func (m *MediaFile) Basename() string {
 	basename := filepath.Base(m.Filename())
 
 	if end := strings.Index(basename, "."); end != -1 {
+		// ignore everything behind the first dot in the file name
 		basename = basename[:end]
 	}
 
-	// File copies created by operating systems, example: IMG_1234 (2)
 	if end := strings.Index(basename, " ("); end != -1 {
+		// copies created by Chrome & Windows, example: IMG_1234 (2)
+		basename = basename[:end]
+	} else if end := strings.Index(basename, " copy"); end != -1 {
+		// copies created by OS X, example: IMG_1234 copy 2
 		basename = basename[:end]
 	}
 
