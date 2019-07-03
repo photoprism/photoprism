@@ -168,15 +168,16 @@ func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	dateCreated := mainFile.DateCreated()
 
 	if file, err := models.FindFileByHash(i.conf.Db(), mediaFile.Hash()); err == nil {
-		return "", fmt.Errorf("\"%s\" is identical to \"%s\" (%s)", mediaFile.Filename(), file.FileName, mediaFile.Hash())
+		existingFilename := i.conf.OriginalsPath() + string(os.PathSeparator) + file.FileName
+		return existingFilename, fmt.Errorf("\"%s\" is identical to \"%s\" (%s)", mediaFile.Filename(), file.FileName, mediaFile.Hash())
 	}
 
 	//	Mon Jan 2 15:04:05 -0700 MST 2006
-	pathName := i.originalsPath() + "/" + dateCreated.UTC().Format("2006/01")
+	pathName := i.originalsPath() + string(os.PathSeparator) + dateCreated.UTC().Format("2006/01")
 
 	iteration := 0
 
-	result := pathName + "/" + fileName + fileExtension
+	result := pathName + string(os.PathSeparator) + fileName + fileExtension
 
 	for util.Exists(result) {
 		if mediaFile.Hash() == util.Hash(result) {
@@ -185,7 +186,7 @@ func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 		iteration++
 
-		result = pathName + "/" + fileName + "." + fmt.Sprintf("edited_%d", iteration) + fileExtension
+		result = pathName + string(os.PathSeparator) + fileName + string(os.PathSeparator) + fmt.Sprintf("edited_%d", iteration) + fileExtension
 	}
 
 	return result, nil
