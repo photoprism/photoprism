@@ -279,6 +279,8 @@ func (m *MediaFile) RelatedFiles() (result MediaFiles, mainFile *MediaFile, err 
 			mainFile = resultFile
 		} else if resultFile.IsRaw() {
 			mainFile = resultFile
+		} else if resultFile.IsHEIF() {
+			mainFile = resultFile
 		} else if resultFile.IsJpeg() && len(mainFile.Filename()) > len(resultFile.Filename()) {
 			mainFile = resultFile
 		}
@@ -359,7 +361,7 @@ func (m *MediaFile) Basename() string {
 
 // DirectoryBasename returns the directory and base filename without any extensions.
 func (m *MediaFile) DirectoryBasename() string {
-	return m.Directory() +  string(os.PathSeparator) + m.Basename()
+	return m.Directory() + string(os.PathSeparator) + m.Basename()
 }
 
 // MimeType returns the mimetype.
