@@ -8,15 +8,13 @@ import (
 )
 
 func TestMediaFile_RelatedFiles(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
-
-	mediaFile, err := NewMediaFile(ctx.ImportPath() + "/raw/20140717_154212_1EC48F8489.cr2")
+	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")
 
 	assert.Nil(t, err)
 
-	expectedBaseFilename := ctx.ImportPath() + "/raw/20140717_154212_1EC48F8489"
+	expectedBaseFilename := conf.ExamplesPath() + "/canon_eos_6d"
 
 	related, _, err := mediaFile.RelatedFiles()
 
@@ -38,11 +36,9 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 }
 
 func TestMediaFile_RelatedFiles_Ordering(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
-
-	mediaFile, err := NewMediaFile(ctx.ImportPath() + "/20130203_193332_0AE340D280.jpg")
+	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/IMG_4120.JPG")
 
 	assert.Nil(t, err)
 
@@ -50,7 +46,10 @@ func TestMediaFile_RelatedFiles_Ordering(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	assert.Len(t, related, 2)
+	assert.Len(t, related, 5)
+
+	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.AAE", related[0].Filename())
+	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.JPG", related[1].Filename())
 
 	for _, result := range related {
 		filename := result.Filename()
@@ -59,48 +58,102 @@ func TestMediaFile_RelatedFiles_Ordering(t *testing.T) {
 }
 
 func TestMediaFile_EditedFilename(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
+	t.Run("IMG_4120.JPG", func(t *testing.T) {
+		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/IMG_4120.JPG"); err == nil {
 
-	mediaFile1, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_4120.JPG")
-	assert.Nil(t, err)
-	assert.Equal(t, ctx.ImportPath()+"/iphone/IMG_E4120.JPG", mediaFile1.EditedFilename())
+			assert.Nil(t, err)
+			assert.Equal(t, conf.ExamplesPath()+"/IMG_E4120.JPG", mediaFile.EditedFilename())
+		} else {
+			t.Error(err)
+		}
+	})
 
-	/* TODO: Add example files to import.zip
-	mediaFile2, err := NewMediaFile("/foo/bar/IMG_E1234.jpg")
-	assert.Nil(t, err)
-	assert.Equal(t, "", mediaFile2.EditedFilename())
-	*/
+	t.Run("fern_green.jpg", func(t *testing.T) {
+		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/fern_green.jpg"); err == nil {
 
-	mediaFile3, err := NewMediaFile(ctx.ImportPath() + "/raw/20140717_154212_1EC48F8489.jpg")
-	assert.Nil(t, err)
-	assert.Equal(t, "", mediaFile3.EditedFilename())
+			assert.Nil(t, err)
+			assert.Equal(t, "", mediaFile.EditedFilename())
+		} else {
+			t.Error(err)
+		}
+	})
 }
 
 func TestMediaFile_MimeType(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.InitializeTestData(t)
+	t.Run("elephants.jpg", func(t *testing.T) {
+		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg"); err == nil {
 
-	image1, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
-	assert.Nil(t, err)
-	assert.Equal(t, "image/jpeg", image1.MimeType())
+			assert.Nil(t, err)
+			assert.Equal(t, "image/jpeg", mediaFile.MimeType())
+		} else {
+			t.Error(err)
+		}
+	})
 
-	image2, err := NewMediaFile(ctx.ImportPath() + "/raw/20140717_154212_1EC48F8489.cr2")
-	assert.Nil(t, err)
-	assert.Equal(t, "application/octet-stream", image2.MimeType())
+	t.Run("canon_eos_6d.dng", func(t *testing.T) {
+		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng"); err == nil {
+
+			assert.Nil(t, err)
+			assert.Equal(t, "application/octet-stream", mediaFile.MimeType())
+		} else {
+			t.Error(err)
+		}
+	})
+
+	t.Run("iphone_7.xmp", func(t *testing.T) {
+		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.xmp"); err == nil {
+
+			assert.Nil(t, err)
+			assert.Equal(t, "text/plain; charset=utf-8", mediaFile.MimeType())
+		} else {
+			t.Error(err)
+		}
+	})
+
+	t.Run("iphone_7.json", func(t *testing.T) {
+		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.json"); err == nil {
+
+			assert.Nil(t, err)
+			assert.Equal(t, "text/plain; charset=utf-8", mediaFile.MimeType())
+		} else {
+			t.Error(err)
+		}
+	})
+
+	t.Run("iphone_7.heic", func(t *testing.T) {
+		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic"); err == nil {
+
+			assert.Nil(t, err)
+			assert.Equal(t, "application/octet-stream", mediaFile.MimeType())
+		} else {
+			t.Error(err)
+		}
+	})
+
+	t.Run("IMG_4120.AAE", func(t *testing.T) {
+		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/IMG_4120.AAE"); err == nil {
+
+			assert.Nil(t, err)
+			assert.Equal(t, "text/xml; charset=utf-8", mediaFile.MimeType())
+		} else {
+			t.Error(err)
+		}
+	})
 }
 
 func TestMediaFile_Exists(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	mediaFile, err := NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788.JPG")
+	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/cat_black.jpg")
 	assert.Nil(t, err)
 	assert.NotNil(t, mediaFile)
 	assert.True(t, mediaFile.Exists())
 
-	mediaFile, err = NewMediaFile(ctx.ImportPath() + "/iphone/IMG_6788_XYZ.JPG")
+	mediaFile, err = NewMediaFile(conf.ExamplesPath() + "/xxz.jpg")
 	assert.NotNil(t, err)
 	assert.Nil(t, mediaFile)
 }
