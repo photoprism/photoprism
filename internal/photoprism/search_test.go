@@ -8,13 +8,13 @@ import (
 )
 
 func TestSearch_Photos_Query(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.CreateDirectories()
+	conf.CreateDirectories()
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	search := NewSearch(ctx.OriginalsPath(), ctx.Db())
+	search := NewSearch(conf.OriginalsPath(), conf.Db())
 
 	var form forms.PhotoSearchForm
 
@@ -41,13 +41,13 @@ func TestSearch_Photos_Query(t *testing.T) {
 }
 
 func TestSearch_Photos_Camera(t *testing.T) {
-	ctx := config.TestConfig()
+	conf := config.TestConfig()
 
-	ctx.CreateDirectories()
+	conf.CreateDirectories()
 
-	ctx.InitializeTestData(t)
+	conf.InitializeTestData(t)
 
-	search := NewSearch(ctx.OriginalsPath(), ctx.Db())
+	search := NewSearch(conf.OriginalsPath(), conf.Db())
 
 	var form forms.PhotoSearchForm
 
