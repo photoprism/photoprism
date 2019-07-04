@@ -7,6 +7,7 @@ PhotoPrism: Browse your life in pictures
 [![Documentation](https://readthedocs.org/projects/photoprism-docs/badge/?version=latest&style=flat)][docs]
 [![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://github.com/photoprism/photoprism/graphs/contributors/)
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
+[![Twitter](https://img.shields.io/badge/follow-@browseyourlife-00acee.svg)][twitter]
 
 PhotoPrism is a server-based application for browsing, organizing and sharing your personal photo collection.
 It makes use of the latest technologies to automatically tag and find pictures without getting in your way.
@@ -88,3 +89,4 @@ See [SPONSORS.md](SPONSORS.md) for details.
 [docs]: https://docs.photoprism.org/en/latest/
 [issuehunt]: https://issuehunt.io/repos/119160553
 [chat]: https://gitter.im/browseyourlife/community
+[twitter]: https://twitter.com/browseyourlife
