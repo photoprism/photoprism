@@ -36,7 +36,7 @@ func (c *Converter) ConvertAll(path string) {
 
 		mediaFile, err := NewMediaFile(filename)
 
-		if err != nil || !mediaFile.IsRaw() {
+		if err != nil || !(mediaFile.IsRaw() || mediaFile.IsHEIF()) {
 			return nil
 		}
 
