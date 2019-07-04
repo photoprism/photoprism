@@ -59,11 +59,7 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 
 	assert.IsType(t, &Exif{}, info)
 
-	assert.NotNil(t, err)
-
-	if err != nil {
-		assert.Contains(t, err.Error(), "media file not compatible with exif")
-	}
+	assert.Nil(t, err)
 
 	converter := NewConverter(conf)
 

@@ -67,7 +67,7 @@ func (m *MediaFile) Exif() (result *Exif, err error) {
 		return m.exifData, nil
 	}
 
-	if !m.IsJpeg() && !m.IsRaw() {
+	if !m.IsJpeg() && !m.IsRaw() && !m.IsHEIF() {
 		return nil, errors.New(fmt.Sprintf("media file not compatible with exif: \"%s\"", m.Filename()))
 	}
 
