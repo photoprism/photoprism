@@ -124,6 +124,11 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 					log.Errorf("could not create jpeg from raw: %s", err)
 				}
 			}
+			if importedMainFile.IsHEIF() {
+				if _, err := i.converter.ConvertToJpeg(importedMainFile); err != nil {
+					log.Errorf("could not create jpeg from heif: %s", err)
+				}
+			}
 
 			if jpg, err := importedMainFile.Jpeg(); err != nil {
 				log.Error(err)
