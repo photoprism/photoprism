@@ -42,10 +42,9 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	assert.Empty(t, err, "ConvertToJpeg() failed")
 
-
 	infoJpeg, err := imageJpeg.Exif()
 
-	assert.Nilf(t, err, "Exif() failed for " + imageJpeg.Filename())
+	assert.Nilf(t, err, "Exif() failed for "+imageJpeg.Filename())
 
 	if err != nil {
 		return
@@ -57,11 +56,11 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	assert.Equal(t, "iPhone SE", infoJpeg.CameraModel)
 
-	rawFilemame := conf.ImportPath() + "/raw/IMG_1435.CR2"
+	rawFilename := conf.ImportPath() + "/raw/IMG_1435.CR2"
 
-	t.Logf("Testing RAW to JPEG converter with %s", rawFilemame)
+	t.Logf("Testing RAW to JPEG converter with %s", rawFilename)
 
-	rawMediaFile, err := NewMediaFile(rawFilemame)
+	rawMediaFile, err := NewMediaFile(rawFilename)
 
 	assert.Nil(t, err)
 
@@ -69,7 +68,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	assert.True(t, util.Exists(conf.ImportPath()+"/raw/IMG_1435.jpg"), "Jpeg file was not found - is Darktable installed?")
 
-	assert.NotEqual(t, rawFilemame, imageRaw.filename)
+	assert.NotEqual(t, rawFilename, imageRaw.filename)
 
 	infoRaw, err := imageRaw.Exif()
 
