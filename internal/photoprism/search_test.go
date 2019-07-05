@@ -12,13 +12,11 @@ func TestSearch_Photos_Query(t *testing.T) {
 
 	conf.CreateDirectories()
 
-	conf.InitializeTestData(t)
-
 	search := NewSearch(conf.OriginalsPath(), conf.Db())
 
 	var form forms.PhotoSearchForm
 
-	form.Query = "african"
+	form.Query = "animal"
 	form.Count = 3
 	form.Offset = 0
 
@@ -44,8 +42,6 @@ func TestSearch_Photos_Camera(t *testing.T) {
 	conf := config.TestConfig()
 
 	conf.CreateDirectories()
-
-	conf.InitializeTestData(t)
 
 	search := NewSearch(conf.OriginalsPath(), conf.Db())
 
