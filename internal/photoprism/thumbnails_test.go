@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"os"
 	"testing"
 
 	"github.com/disintegration/imaging"
@@ -17,12 +18,14 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 		t.Error(err)
 	}
 
-	conf.InitializeTestData(t)
+	thumbsPath := conf.CachePath() + "/_tmp"
 
-	image, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG")
+	defer os.RemoveAll(thumbsPath)
+
+	image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 	assert.Nil(t, err)
 
-	thumbnail, err := image.Thumbnail(conf.ThumbnailsPath(), "tile_500")
+	thumbnail, err := image.Thumbnail(thumbsPath, "tile_500")
 
 	assert.Empty(t, err)
 
@@ -62,18 +65,20 @@ func TestCreateThumbnailsFromOriginals(t *testing.T) {
 func TestResampleFile(t *testing.T) {
 	conf := config.TestConfig()
 
+	thumbsPath := conf.CachePath() + "/_tmp"
+
+	defer os.RemoveAll(thumbsPath)
+
 	if err := conf.CreateDirectories(); err != nil {
 		t.Error(err)
 	}
 
-	conf.InitializeTestData(t)
-
 	fileModel := &models.File{
-		FileName: conf.ImportPath() + "/dog.jpg",
-		FileHash: "123456789",
+		FileName: conf.ExamplesPath() + "/elephants.jpg",
+		FileHash: "1234568889",
 	}
 
-	thumb, err := ThumbnailFromFile(fileModel.FileName, fileModel.FileHash, conf.ThumbnailsPath(), 224, 224)
+	thumb, err := ThumbnailFromFile(fileModel.FileName, fileModel.FileHash, thumbsPath, 224, 224)
 	assert.Nil(t, err)
 
 	assert.IsType(t, "", thumb)
@@ -86,19 +91,21 @@ func TestCreateThumbnail(t *testing.T) {
 
 	conf := config.TestConfig()
 
+	thumbsPath := conf.CachePath() + "/_tmp"
+
+	defer os.RemoveAll(thumbsPath)
+
 	if err := conf.CreateDirectories(); err != nil {
 		t.Error(err)
 	}
 
-	conf.InitializeTestData(t)
-
-	expectedFilename, err := ThumbnailFilename("12345", conf.ThumbnailsPath(), 150, 150, ResampleFit, ResampleNearestNeighbor)
+	expectedFilename, err := ThumbnailFilename("12345", thumbsPath, 150, 150, ResampleFit, ResampleNearestNeighbor)
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	img, err := imaging.Open(conf.ImportPath()+"/dog.jpg", imaging.AutoOrientation(true))
+	img, err := imaging.Open(conf.ExamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
 
 	if err != nil {
 		t.Errorf("can't open original: %s", err)
@@ -113,7 +120,7 @@ func TestCreateThumbnail(t *testing.T) {
 	bounds := thumb.Bounds()
 
 	assert.Equal(t, 150, bounds.Dx())
-	assert.Equal(t, 106, bounds.Dy())
+	assert.Equal(t, 99, bounds.Dy())
 
 	assert.FileExists(t, expectedFilename)
 }
@@ -121,26 +128,28 @@ func TestCreateThumbnail(t *testing.T) {
 func TestMediaFile_CreateDefaultThumbnails(t *testing.T) {
 	conf := config.TestConfig()
 
+	thumbsPath := conf.CachePath() + "/_tmp"
+
+	defer os.RemoveAll(thumbsPath)
+
 	if err := conf.CreateDirectories(); err != nil {
 		t.Error(err)
 	}
 
-	conf.InitializeTestData(t)
-
-	m, err := NewMediaFile(conf.ImportPath() + "/dog.jpg")
+	m, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 	assert.Nil(t, err)
 
-	err = m.CreateDefaultThumbnails(conf.ThumbnailsPath(), true)
+	err = m.CreateDefaultThumbnails(thumbsPath, true)
 
 	assert.Empty(t, err)
 
-	thumbFilename, err := ThumbnailFilename(m.Hash(), conf.ThumbnailsPath(), ThumbnailTypes["tile_50"].Width, ThumbnailTypes["tile_50"].Height, ThumbnailTypes["tile_50"].Options...)
+	thumbFilename, err := ThumbnailFilename(m.Hash(), thumbsPath, ThumbnailTypes["tile_50"].Width, ThumbnailTypes["tile_50"].Height, ThumbnailTypes["tile_50"].Options...)
 
 	assert.Empty(t, err)
 
 	assert.FileExists(t, thumbFilename)
 
-	err = m.CreateDefaultThumbnails(conf.ThumbnailsPath(), false)
+	err = m.CreateDefaultThumbnails(thumbsPath, false)
 
 	assert.Empty(t, err)
 }
