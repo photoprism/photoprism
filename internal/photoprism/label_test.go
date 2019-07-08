@@ -12,20 +12,20 @@ func TestLabel_NewLocationLabel(t *testing.T) {
 	assert.Equal(t, 23, LocLabel.Uncertainty)
 	assert.Equal(t, "locationtest", LocLabel.Name)
 
-	t.Run("locationtest/slash/897", func(t *testing.T) {
-		LocLabel := NewLocationLabel("locationtest/slash/897", 24, -2)
+	t.Run("locationtest / slash", func(t *testing.T) {
+		LocLabel := NewLocationLabel("locationtest / slash", 24, -2)
 		t.Log(LocLabel)
 		assert.Equal(t, "location", LocLabel.Source)
 		assert.Equal(t, 24, LocLabel.Uncertainty)
-		assert.Equal(t, "locationtest/slash/897", LocLabel.Name)
+		assert.Equal(t, "locationtest", LocLabel.Name)
 	})
 
-	t.Run("locationtest-minus/slash", func(t *testing.T) {
-		LocLabel := NewLocationLabel("locationtest-minus/slash", 80, -2)
+	t.Run("locationtest - minus", func(t *testing.T) {
+		LocLabel := NewLocationLabel("locationtest - minus", 80, -2)
 		t.Log(LocLabel)
 		assert.Equal(t, "location", LocLabel.Source)
 		assert.Equal(t, 80, LocLabel.Uncertainty)
-		assert.Equal(t, "locationtest-minus/slash", LocLabel.Name)
+		assert.Equal(t, "locationtest", LocLabel.Name)
 	})
 }
 
