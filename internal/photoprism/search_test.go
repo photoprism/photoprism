@@ -240,9 +240,9 @@ func TestSearch_Photos_Query(t *testing.T) {
 
 		t.Log(photos)
 	})
-	t.Run("form.fmin Order:oldest", func(t *testing.T) {
+	t.Run("form.fmin and Order:oldest", func(t *testing.T) {
 		var form forms.PhotoSearchForm
-		form.Query = "Fmin:5"
+		form.Query = "Fmin:5 Order:oldest"
 		form.Count = 3
 		form.Offset = 0
 
@@ -254,9 +254,9 @@ func TestSearch_Photos_Query(t *testing.T) {
 
 		t.Log(photos)
 	})
-	t.Run("form.fmax Order:newest", func(t *testing.T) {
+	t.Run("form.fmax and Order:newest", func(t *testing.T) {
 		var form forms.PhotoSearchForm
-		form.Query = "Fmax:2"
+		form.Query = "Fmax:2 Order:newest"
 		form.Count = 3
 		form.Offset = 0
 
@@ -268,23 +268,9 @@ func TestSearch_Photos_Query(t *testing.T) {
 
 		t.Log(photos)
 	})
-	t.Run("form.Dist", func(t *testing.T) {
+	t.Run("form.Lat and form.Long and Order:imported", func(t *testing.T) {
 		var form forms.PhotoSearchForm
-		form.Query = "Dist:1000"
-		form.Count = 3
-		form.Offset = 0
-
-		photos, err := search.Photos(form)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		t.Log(photos)
-	})
-	t.Run("form.Lat and form.Long Order:imported", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "Lat:-33.45343166666667 Long:25.764711666666667"
+		form.Query = "Lat:33.45343166666667 Long:25.764711666666667 Dist:2000 Order:imported"
 		form.Count = 3
 		form.Offset = 0
 
