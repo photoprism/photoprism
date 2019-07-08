@@ -306,8 +306,13 @@ func (m *MediaFile) SetFilename(filename string) {
 // RelativeFilename returns the relative filename.
 func (m *MediaFile) RelativeFilename(directory string) string {
 	if index := strings.Index(m.filename, directory); index == 0 {
-		pos := len(directory) + 1
-		return m.filename[pos:]
+		if index := strings.LastIndex(directory, string(os.PathSeparator)); index == len(directory)-1 {
+			pos := len(directory)
+			return m.filename[pos:]
+		} else if index := strings.LastIndex(directory, string(os.PathSeparator)); index != len(directory) {
+			pos := len(directory) + 1
+			return m.filename[pos:]
+		}
 	}
 
 	return m.filename
@@ -318,12 +323,19 @@ func (m *MediaFile) RelativePath(directory string) string {
 	pathname := m.filename
 
 	if i := strings.Index(pathname, directory); i == 0 {
-		begin := len(directory) + 1
-		pathname = pathname[begin:]
+		if i := strings.LastIndex(directory, string(os.PathSeparator)); i == len(directory)-1 {
+			pathname = pathname[len(directory):]
+			log.Info(pathname)
+		} else if i := strings.LastIndex(directory, string(os.PathSeparator)); i != len(directory) {
+			pathname = pathname[len(directory)+1:]
+			log.Info(pathname)
+		}
 	}
 
 	if end := strings.LastIndex(pathname, string(os.PathSeparator)); end != -1 {
 		pathname = pathname[:end]
+	} else if end := strings.LastIndex(pathname, string(os.PathSeparator)); end == -1 {
+		pathname = ""
 	}
 
 	return pathname
@@ -331,7 +343,11 @@ func (m *MediaFile) RelativePath(directory string) string {
 
 // RelativeBasename returns the relative filename.
 func (m *MediaFile) RelativeBasename(directory string) string {
-	return m.RelativePath(directory) + string(os.PathSeparator) + m.Basename()
+	if relativePath := m.RelativePath(directory); relativePath != "" {
+		return relativePath + string(os.PathSeparator) + m.Basename()
+	}
+
+	return m.Basename()
 }
 
 // Directory returns the directory
