@@ -239,35 +239,84 @@ func TestMediaFile_Copy(t *testing.T) {
 
 }
 
+func TestMediaFile_RelativeBasename(t *testing.T) {
+	conf := config.TestConfig()
+
+	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/tree_white.jpg")
+	assert.Nil(t, err)
+
+	t.Run("directory with end slash", func(t *testing.T) {
+		basename := mediaFile.RelativeBasename("/go/src/github.com/photoprism/photoprism/assets/resources/")
+		assert.Equal(t, "examples/tree_white", basename)
+	})
+	t.Run("directory without end slash", func(t *testing.T) {
+		basename := mediaFile.RelativeBasename("/go/src/github.com/photoprism/photoprism/assets/resources")
+		assert.Equal(t, "examples/tree_white", basename)
+	})
+	t.Run("directory equals example path", func(t *testing.T) {
+		basename := mediaFile.RelativeBasename("/go/src/github.com/photoprism/photoprism/assets/resources/examples/")
+		assert.Equal(t, "tree_white", basename)
+	})
+
+}
+
+func TestMediaFile_RelativePath(t *testing.T) {
+
+	conf := config.TestConfig()
+
+	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/tree_white.jpg")
+	assert.Nil(t, err)
+
+	t.Run("directory with end slash", func(t *testing.T) {
+		path := mediaFile.RelativePath("/go/src/github.com/photoprism/photoprism/assets/resources/")
+		assert.Equal(t, "examples", path)
+	})
+	t.Run("directory without end slash", func(t *testing.T) {
+		path := mediaFile.RelativePath("/go/src/github.com/photoprism/photoprism/assets/resources")
+		assert.Equal(t, "examples", path)
+	})
+	t.Run("directory equals filepath", func(t *testing.T) {
+		path := mediaFile.RelativePath("/go/src/github.com/photoprism/photoprism/assets/resources/examples")
+		assert.Equal(t, "", path)
+	})
+	t.Run("directory does not match filepath", func(t *testing.T) {
+		path := mediaFile.RelativePath("xxx")
+		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/examples", path)
+	})
+}
+
+func TestMediaFile_RelativeFilename(t *testing.T) {
+	conf := config.TestConfig()
+
+	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/tree_white.jpg")
+	assert.Nil(t, err)
+
+	t.Run("directory with end slash", func(t *testing.T) {
+		filename := mediaFile.RelativeFilename("/go/src/github.com/photoprism/photoprism/assets/resources/")
+		assert.Equal(t, "examples/tree_white.jpg", filename)
+	})
+
+	t.Run("directory without end slash", func(t *testing.T) {
+		filename := mediaFile.RelativeFilename("/go/src/github.com/photoprism/photoprism/assets/resources")
+		assert.Equal(t, "examples/tree_white.jpg", filename)
+	})
+	t.Run("directory not part of filename", func(t *testing.T) {
+		filename := mediaFile.RelativeFilename("xxx/")
+		assert.Equal(t, conf.ExamplesPath()+"/tree_white.jpg", filename)
+	})
+	t.Run("directory equals example path", func(t *testing.T) {
+		filename := mediaFile.RelativeFilename("/go/src/github.com/photoprism/photoprism/assets/resources/examples")
+		assert.Equal(t, "tree_white.jpg", filename)
+	})
+}
+
 func TestMediaFile_DateCreated(t *testing.T) {
 	conf := config.TestConfig()
 
 	t.Run("iphone_7.heic", func(t *testing.T) {
 		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic"); err == nil {
-
-			info := mediaFile.CanonicalName()
-
-			t.Log(info)
-
-			exifinfo, err := mediaFile.Exif()
-
-			t.Log(exifinfo.TakenAt)
-
-			assert.Empty(t, err)
-		} else {
-			t.Error(err)
-		}
-	})
-	t.Run("clock_purple.jpg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/clock_purple.jpg"); err == nil {
-
-			info := mediaFile.CanonicalName()
-
-			t.Log(info)
-			exifinfo, err := mediaFile.Exif()
-
-			t.Log(exifinfo.TakenAt)
-
+			date := mediaFile.DateCreated().UTC()
+			assert.Equal(t, "2018-09-10 12:16:13 +0000 UTC", date.String())
 			assert.Empty(t, err)
 		} else {
 			t.Error(err)
@@ -275,15 +324,8 @@ func TestMediaFile_DateCreated(t *testing.T) {
 	})
 	t.Run("canon_eos_6d.dng", func(t *testing.T) {
 		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng"); err == nil {
-
-			info := mediaFile.DateCreated().UTC()
-
-			exifinfo, err := mediaFile.Exif()
-
-			t.Log(info)
-
-			t.Log(exifinfo.TakenAt)
-
+			date := mediaFile.DateCreated().UTC()
+			assert.Equal(t, "2019-06-06 07:29:51 +0000 UTC", date.String())
 			assert.Empty(t, err)
 		} else {
 			t.Error(err)
@@ -291,15 +333,8 @@ func TestMediaFile_DateCreated(t *testing.T) {
 	})
 	t.Run("elephants.jpg", func(t *testing.T) {
 		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg"); err == nil {
-
-			info := mediaFile.DateCreated().UTC()
-
-			exifinfo, err := mediaFile.Exif()
-
-			t.Log(info)
-
-			t.Log(exifinfo.TakenAt)
-
+			date := mediaFile.DateCreated().UTC()
+			assert.Equal(t, "2013-11-26 15:53:55 +0000 UTC", date.String())
 			assert.Empty(t, err)
 		} else {
 			t.Error(err)
