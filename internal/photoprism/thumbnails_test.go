@@ -22,14 +22,34 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 
 	defer os.RemoveAll(thumbsPath)
 
-	image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
-	assert.Nil(t, err)
+	t.Run("/elephants.jpg", func(t *testing.T) {
+		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
 
-	thumbnail, err := image.Thumbnail(thumbsPath, "tile_500")
+		thumbnail, err := image.Thumbnail(thumbsPath, "tile_500")
 
-	assert.Empty(t, err)
+		assert.Empty(t, err)
 
-	assert.FileExists(t, thumbnail)
+		assert.FileExists(t, thumbnail)
+	})
+	t.Run("invalid image format", func(t *testing.T) {
+		image, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.xmp")
+		assert.Nil(t, err)
+
+		thumbnail, err := image.Thumbnail(thumbsPath, "tile_500")
+
+		assert.Equal(t, "could not create thumbnail: image: unknown format", err.Error())
+		t.Log(thumbnail)
+	})
+	t.Run("invalid thumbnail type", func(t *testing.T) {
+		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+
+		thumbnail, err := image.Thumbnail(thumbsPath, "invalid_500")
+
+		assert.Equal(t, "invalid type: invalid_500", err.Error())
+		t.Log(thumbnail)
+	})
 }
 
 func TestCreateThumbnailsFromOriginals(t *testing.T) {
