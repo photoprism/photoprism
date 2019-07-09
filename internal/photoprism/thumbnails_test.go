@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMediaFile_Thumbnail(t *testing.T) {
+func TestThumbnails_Thumbnail(t *testing.T) {
 	conf := config.TestConfig()
 
 	if err := conf.CreateDirectories(); err != nil {
@@ -52,7 +52,7 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 	})
 }
 
-func TestCreateThumbnailsFromOriginals(t *testing.T) {
+func TestThumbnails_CreateThumbnailsFromOriginals(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -82,7 +82,75 @@ func TestCreateThumbnailsFromOriginals(t *testing.T) {
 	}
 }
 
-func TestResampleFile(t *testing.T) {
+func TestThumbnails_Resample(t *testing.T) {
+	conf := config.TestConfig()
+
+	if err := conf.CreateDirectories(); err != nil {
+		t.Error(err)
+	}
+
+	thumbsPath := conf.CachePath() + "/_tmp"
+
+	defer os.RemoveAll(thumbsPath)
+	t.Run("/elephants.jpg", func(t *testing.T) {
+		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+
+		thumbnail, err := image.Resample(thumbsPath, "tile_500")
+
+		assert.Empty(t, err)
+		assert.NotEmpty(t, thumbnail)
+
+	})
+	t.Run("invalid type", func(t *testing.T) {
+		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+
+		thumbnail, err := image.Resample(thumbsPath, "xxx_500")
+
+		assert.Equal(t, "invalid type: xxx_500", err.Error())
+		assert.Empty(t, thumbnail)
+
+	})
+
+}
+
+func TestThumbnails_ThumbnailFilename(t *testing.T) {
+	conf := config.TestConfig()
+
+	thumbsPath := conf.CachePath() + "/_tmp"
+
+	defer os.RemoveAll(thumbsPath)
+
+	if err := conf.CreateDirectories(); err != nil {
+		t.Error(err)
+	}
+
+	t.Run("", func(t *testing.T) {
+		filename, err := ThumbnailFilename("99988", thumbsPath, 150, 150, ResampleFit, ResampleNearestNeighbor)
+		assert.Nil(t, err)
+		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/testdata/cache/_tmp/9/9/9/99988_150x150_fit.jpg", filename)
+	})
+	t.Run("hash  to short", func(t *testing.T) {
+		_, err := ThumbnailFilename("999", thumbsPath, 150, 150, ResampleFit, ResampleNearestNeighbor)
+		assert.Equal(t, "file hash is empty or too short: 999", err.Error())
+	})
+	t.Run("invalid width", func(t *testing.T) {
+		_, err := ThumbnailFilename("99988", thumbsPath, -4, 150, ResampleFit, ResampleNearestNeighbor)
+		assert.Equal(t, "width has an invalid value: -4", err.Error())
+	})
+	t.Run("invalid height", func(t *testing.T) {
+		_, err := ThumbnailFilename("99988", thumbsPath, 200, -1, ResampleFit, ResampleNearestNeighbor)
+		assert.Equal(t, "height has an invalid value: -1", err.Error())
+	})
+	t.Run("empty thumbpath", func(t *testing.T) {
+		path := ""
+		_, err := ThumbnailFilename("99988", path, 200, 150, ResampleFit, ResampleNearestNeighbor)
+		assert.Equal(t, "thumbnail path is empty: ", err.Error())
+	})
+}
+
+func TestThumbnails_ThumbnailFromFile(t *testing.T) {
 	conf := config.TestConfig()
 
 	thumbsPath := conf.CachePath() + "/_tmp"
@@ -100,11 +168,10 @@ func TestResampleFile(t *testing.T) {
 
 	thumb, err := ThumbnailFromFile(fileModel.FileName, fileModel.FileHash, thumbsPath, 224, 224)
 	assert.Nil(t, err)
-
-	assert.IsType(t, "", thumb)
+	assert.FileExists(t, thumb)
 }
 
-func TestCreateThumbnail(t *testing.T) {
+func TestThumbnails_CreateThumbnail(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -145,7 +212,7 @@ func TestCreateThumbnail(t *testing.T) {
 	assert.FileExists(t, expectedFilename)
 }
 
-func TestMediaFile_CreateDefaultThumbnails(t *testing.T) {
+func TestThumbnails_CreateDefaultThumbnails(t *testing.T) {
 	conf := config.TestConfig()
 
 	thumbsPath := conf.CachePath() + "/_tmp"
