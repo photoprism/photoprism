@@ -125,3 +125,187 @@ func TestConfig_SqlServerPassword(t *testing.T) {
 	password := c.SqlServerPassword()
 	assert.Equal(t, "", password)
 }
+
+func TestConfig_HttpServerHost(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	host := c.HttpServerHost()
+	assert.Equal(t, "0.0.0.0", host)
+}
+
+func TestConfig_HttpServerPort(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	port := c.HttpServerPort()
+	assert.Equal(t, "2342", port)
+}
+
+func TestConfig_HttpServerMode(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	mode := c.HttpServerMode()
+	assert.Equal(t, "release", mode)
+}
+
+func TestConfig_HttpServerPassword(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	password := c.HttpServerPassword()
+	assert.Equal(t, "", password)
+}
+
+func TestConfig_OriginalsPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.OriginalsPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/testdata/originals", path)
+}
+
+func TestConfig_ImportPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.ImportPath()
+	assert.Equal(t, "", path)
+}
+
+func TestConfig_ExportPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.ExportPath()
+	assert.Equal(t, "", path)
+}
+
+func TestConfig_SipsBin(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	bin := c.SipsBin()
+	assert.Equal(t, "", bin)
+}
+
+func TestConfig_DarktableBin(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	bin := c.DarktableBin()
+	assert.Equal(t, "/usr/bin/darktable-cli", bin)
+}
+
+func TestConfig_HeifConvertBin(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	bin := c.HeifConvertBin()
+	assert.Equal(t, "/usr/bin/heif-convert", bin)
+}
+
+func TestConfig_ExifToolBin(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	bin := c.ExifToolBin()
+	assert.Equal(t, "/usr/bin/exiftool", bin)
+}
+
+func TestConfig_DatabaseDriver(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	driver := c.DatabaseDriver()
+	assert.Equal(t, "internal", driver)
+}
+
+func TestConfig_DatabaseDsn(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	dsn := c.DatabaseDriver()
+	assert.Equal(t, "internal", dsn)
+}
+
+func TestConfig_CachePath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.CachePath()
+	assert.Equal(t, "", path)
+}
+
+func TestConfig_ThumbnailsPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.ThumbnailsPath()
+	assert.Equal(t, "/thumbnails", path)
+}
+
+func TestConfig_AssetsPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.AssetsPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets", path)
+}
+
+func TestConfig_ResourcesPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.ResourcesPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources", path)
+}
+
+func TestConfig_ExamplesPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.ExamplesPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/examples", path)
+}
+
+func TestConfig_TensorFlowModelPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.TensorFlowModelPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/nasnet", path)
+}
+
+func TestConfig_HttpTemplatesPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.HttpTemplatesPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/templates", path)
+}
+
+func TestConfig_HttpFaviconsPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.HttpFaviconsPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/static/favicons", path)
+}
+
+func TestConfig_HttpStaticPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.HttpStaticPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/static", path)
+}
+
+func TestConfig_HttpStaticBuildPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.HttpStaticBuildPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/static/build", path)
+}
