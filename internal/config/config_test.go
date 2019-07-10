@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/util"
@@ -139,7 +140,7 @@ func TestConfig_HttpServerPort(t *testing.T) {
 	c := NewConfig(ctx)
 
 	port := c.HttpServerPort()
-	assert.Equal(t, "2342", port)
+	assert.Equal(t, 2342, port)
 }
 
 func TestConfig_HttpServerMode(t *testing.T) {
@@ -308,4 +309,40 @@ func TestConfig_HttpStaticBuildPath(t *testing.T) {
 
 	path := c.HttpStaticBuildPath()
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/static/build", path)
+}
+
+func TestConfig_Db(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+	db := c.Db()
+
+	assert.Nil(t, db)
+	assert.Nil(t, c.Init(context.TODO()))
+
+	assert.NotNil(t, c.Db())
+}
+
+func TestConfig_CloseDb(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+	assert.Nil(t, c.Init(context.TODO()))
+
+	assert.NotNil(t, c.Db())
+	db := c.CloseDb()
+	assert.Nil(t, db)
+}
+
+func TestConfig_ClientConfig(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+	assert.Nil(t, c.Init(context.TODO()))
+	context := c.ClientConfig()
+	assert.NotEmpty(t, context)
+	t.Log(context["countries"])
+}
+
+func TestConfig_Shutdown(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+	c.Shutdown()
 }
