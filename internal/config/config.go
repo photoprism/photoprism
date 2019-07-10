@@ -434,8 +434,7 @@ func (c *Config) HttpStaticBuildPath() string {
 // Db returns the db connection.
 func (c *Config) Db() *gorm.DB {
 	if c.db == nil {
-		log.Error("database not initialised.")
-		return nil
+		log.Fatal("database not initialised.")
 	}
 
 	return c.db

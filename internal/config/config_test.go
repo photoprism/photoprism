@@ -314,9 +314,6 @@ func TestConfig_HttpStaticBuildPath(t *testing.T) {
 func TestConfig_Db(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
-	db := c.Db()
-
-	assert.Nil(t, db)
 	assert.Nil(t, c.Init(context.TODO()))
 
 	assert.NotNil(t, c.Db())
@@ -338,7 +335,6 @@ func TestConfig_ClientConfig(t *testing.T) {
 	assert.Nil(t, c.Init(context.TODO()))
 	context := c.ClientConfig()
 	assert.NotEmpty(t, context)
-	t.Log(context["countries"])
 }
 
 func TestConfig_Shutdown(t *testing.T) {
