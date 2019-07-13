@@ -17,6 +17,11 @@ import (
 // POST /api/v1/upload/:path
 func Upload(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/upload/:path", func(c *gin.Context) {
+		if conf.ReadOnly() {
+			c.AbortWithStatusJSON(http.StatusForbidden, ErrReadOnly)
+			return
+		}
+
 		start := time.Now()
 		subPath := c.Param("path")
 

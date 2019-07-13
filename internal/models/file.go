@@ -35,6 +35,15 @@ type File struct {
 	FileNotes        string `gorm:"type:text"`
 }
 
+
+func FindFileByHash(db *gorm.DB, fileHash string) (File, error) {
+	var file File
+
+	q := db.Unscoped().First(&file, "file_hash = ?", fileHash)
+
+	return file, q.Error
+}
+
 func (m *File) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("FileUUID", uuid.NewV4().String())
 }

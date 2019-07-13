@@ -29,6 +29,11 @@ func initImporter(conf *config.Config) {
 // POST /api/v1/import
 func Import(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/import/*path", func(c *gin.Context) {
+		if conf.ReadOnly() {
+			c.AbortWithStatusJSON(http.StatusForbidden, ErrReadOnly)
+			return
+		}
+
 		start := time.Now()
 		path := conf.ImportPath()
 

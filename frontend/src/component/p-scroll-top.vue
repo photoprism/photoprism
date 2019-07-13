@@ -9,6 +9,7 @@
                 top
                 @click.stop="scrollToTop"
                 v-if="show"
+                class="p-photo-scroll-top"
         >
             <v-icon>arrow_upward</v-icon>
         </v-btn>

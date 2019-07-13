@@ -18,7 +18,7 @@ import (
 const (
 	TestDataZip  = "/tmp/photoprism/testdata.zip"
 	TestDataURL  = "https://dl.photoprism.org/fixtures/testdata.zip"
-	TestDataHash = "1a59b358b80221ab3e76efb683ad72402f0b0844"
+	TestDataHash = "a217ac5242de2189ffb414d819b628c7957c67d7"
 )
 
 var testConfig *Config

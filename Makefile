@@ -3,6 +3,7 @@ GOIMPORTS=goimports
 BINARY_NAME=photoprism
 DOCKER_TAG=`date -u +%Y%m%d`
 TIDB_VERSION=2.1.11
+TF_VERSION=1.14.0
 DARKTABLE_VERSION="$(awk '$2 == "DARKTABLE_VERSION" { print $3; exit }' docker/darktable/Dockerfile)"
 
 HASRICHGO := $(shell which richgo)
@@ -17,24 +18,28 @@ dep: dep-tensorflow dep-js dep-go
 build: build-js build-go
 install: install-bin install-assets
 test: test-js test-go
+acceptance: start test-chromium test-firefox stop
 fmt: fmt-js fmt-go
 upgrade: upgrade-js upgrade-go
 start:
-	go run cmd/photoprism/photoprism.go start
+	go run cmd/photoprism/photoprism.go start -d
+stop:
+	go run cmd/photoprism/photoprism.go stop
 migrate:
 	go run cmd/photoprism/photoprism.go migrate
 install-bin:
-	$(info Building prodution binary...)
-	scripts/build.sh prod /usr/local/bin/$(BINARY_NAME)
+	scripts/build.sh prod ~/.local/bin/$(BINARY_NAME)
 install-assets:
-	$(info Installing assets in /srv/photoprism...)
-	mkdir -p /srv/photoprism/config
-	mkdir -p /srv/photoprism/photos
-	mkdir -p /srv/photoprism/cache
-	mkdir -p /srv/photoprism/resources/database
-	cp -r assets/resources/static assets/resources/templates assets/resources/nasnet /srv/photoprism/resources
-	rsync -a -v --ignore-existing assets/config/*.yml /srv/photoprism/config
-	find /srv/photoprism -name '.*' -type f -delete
+	$(info Installing assets in ~/photoprism)
+	mkdir -p ~/.config/photoprism
+	mkdir -p ~/.cache/photoprism
+	mkdir -p ~/Pictures/Originals
+	mkdir -p ~/Pictures/Import
+	mkdir -p ~/Pictures/Export
+	mkdir -p ~/.local/share/photoprism/resources/database
+	cp -r assets/resources/static assets/resources/templates assets/resources/nasnet ~/.local/share/photoprism/resources
+	rsync -a -v --ignore-existing assets/config/*.yml ~/.config/photoprism
+	find ~/.local/share/photoprism -name '.*' -type f -delete
 dep-js:
 	(cd frontend &&	npm install)
 dep-go:
@@ -48,6 +53,9 @@ build-js:
 build-go:
 	rm -f $(BINARY_NAME)
 	scripts/build.sh debug $(BINARY_NAME)
+build-static:
+	rm -f $(BINARY_NAME)
+	scripts/build.sh static $(BINARY_NAME)
 watch-js:
 	(cd frontend &&	env NODE_ENV=development npm run watch)
 test-js:
@@ -96,8 +104,8 @@ docker-demo:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
 docker-tensorflow:
-	scripts/docker-build.sh tensorflow $(DOCKER_TAG)
-	scripts/docker-push.sh tensorflow $(DOCKER_TAG)
+	scripts/docker-build.sh tensorflow $(TF_VERSION)
+	scripts/docker-push.sh tensorflow $(TF_VERSION)
 docker-darktable:
 	scripts/docker-build.sh darktable $(DARKTABLE_VERSION)
 	scripts/docker-push.sh darktable $(DARKTABLE_VERSION)

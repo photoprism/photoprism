@@ -15,7 +15,7 @@
 
                     <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 
-                    <button class="pswp__button pswp__button--share" title="Share"></button>
+                    <button class="pswp__button pswp__button--share p-photo-download" title="Share"></button>
 
                     <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
 

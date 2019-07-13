@@ -6,8 +6,8 @@ import (
 
 // Photo labels are weighted by uncertainty (100 - confidence)
 type PhotoLabel struct {
-	LabelID          uint `gorm:"primary_key;auto_increment:false"`
 	PhotoID          uint `gorm:"primary_key;auto_increment:false"`
+	LabelID          uint `gorm:"primary_key;auto_increment:false;index"`
 	LabelUncertainty int
 	LabelSource      string
 	Photo            *Photo

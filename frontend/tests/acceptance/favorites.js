@@ -20,14 +20,12 @@ test('Like photo', async t => {
     logger.clear();
     await t
         .navigateTo("../photos")
-    const request = await logger.requests[0];
-    await t
-        .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(5))
-        .click(Selector('button.p-photo-like'))
+    const request = await logger.requests[0].responseBody;
+    await page.likePhoto(5);
     logger.clear();
     await t
         .navigateTo("../favorites");
-    const request2 = await logger.requests[1];
+    const request2 = await logger.requests[0].responseBody;
     logger.clear();
 
     const FavoritesCountAfterLike = await Selector('button.p-photo-like').count;
@@ -39,13 +37,11 @@ test('Like photo', async t => {
 test('Dislike photo', async t => {
 
     const FavoritesCount = await Selector('button.p-photo-like').count;
-    await t
-        .hover(Selector('div[class="v-image__image v-image__image--cover"]').nth(0))
-        .click(Selector('button.p-photo-like'))
+    await page.likePhoto(0);
     logger.clear();
     await t
         .navigateTo("../favorites");
-    const request3 = await logger.requests[0];
+    const request3 = await logger.requests[0].responseBody;
 
     const FavoritesCountAfterDislike = await Selector('button.p-photo-like').count;
     await t

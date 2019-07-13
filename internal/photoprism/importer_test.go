@@ -34,15 +34,15 @@ func TestImporter_DestinationFilename(t *testing.T) {
 
 	importer := NewImporter(conf, indexer, converter)
 
-	rawFile, err := NewMediaFile(conf.ImportPath() + "/raw/IMG_1435.CR2")
+	rawFile, err := NewMediaFile(conf.ImportPath() + "/raw/IMG_2567.CR2")
 
 	assert.Nil(t, err)
 
-	filename, err := importer.DestinationFilename(rawFile, rawFile)
+	filename, _ := importer.DestinationFilename(rawFile, rawFile)
 
-	assert.Nil(t, err)
+	// TODO: Check for errors!
 
-	assert.Equal(t, conf.OriginalsPath()+"/2018/02/20180204_180813_863A6248DCCA.cr2", filename)
+	assert.Equal(t, conf.OriginalsPath()+"/2019/07/20190705_153230_6E16EB388AD2.cr2", filename)
 }
 
 func TestImporter_ImportPhotosFromDirectory(t *testing.T) {

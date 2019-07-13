@@ -23,6 +23,18 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_LOG_LEVEL",
 	},
 	cli.StringFlag{
+		Name:   "log-filename",
+		Usage:  "filename for storing server logs",
+		EnvVar: "PHOTOPRISM_LOG_FILENAME",
+		Value:  "~/.local/share/photoprism/photoprism.log",
+	},
+	cli.StringFlag{
+		Name:   "pid-filename",
+		Usage:  "filename for the server process id (pid)",
+		EnvVar: "PHOTOPRISM_PID_FILENAME",
+		Value:  "~/.local/share/photoprism/photoprism.pid",
+	},
+	cli.StringFlag{
 		Name:   "config-file, c",
 		Usage:  "load configuration from `FILENAME`",
 		Value:  "~/.config/photoprism/photoprism.yml",
@@ -31,6 +43,7 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "config-path",
 		Usage:  "config `PATH`",
+		Value:  "~/.config/photoprism",
 		EnvVar: "PHOTOPRISM_CONFIG_PATH",
 	},
 	cli.StringFlag{
@@ -41,31 +54,31 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "originals-path",
 		Usage:  "originals `PATH`",
-		Value:  "/srv/photoprism/photos/originals",
+		Value:  "~/Pictures/Originals",
 		EnvVar: "PHOTOPRISM_ORIGINALS_PATH",
 	},
 	cli.StringFlag{
 		Name:   "import-path",
 		Usage:  "import `PATH`",
-		Value:  "/srv/photoprism/photos/import",
+		Value:  "~/Pictures/Import",
 		EnvVar: "PHOTOPRISM_IMPORT_PATH",
 	},
 	cli.StringFlag{
 		Name:   "export-path",
 		Usage:  "export `PATH`",
-		Value:  "/srv/photoprism/photos/export",
+		Value:  "~/Pictures/Export",
 		EnvVar: "PHOTOPRISM_EXPORT_PATH",
 	},
 	cli.StringFlag{
 		Name:   "cache-path",
 		Usage:  "cache `PATH`",
-		Value:  "/srv/photoprism/cache",
+		Value:  "~/.cache/photoprism",
 		EnvVar: "PHOTOPRISM_CACHE_PATH",
 	},
 	cli.StringFlag{
 		Name:   "assets-path",
 		Usage:  "assets `PATH`",
-		Value:  "/srv/photoprism",
+		Value:  "~/.local/share/photoprism",
 		EnvVar: "PHOTOPRISM_ASSETS_PATH",
 	},
 	cli.StringFlag{
@@ -79,54 +92,6 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "database data source name (`DSN`)",
 		Value:  "root:@tcp(localhost:4000)/photoprism?parseTime=true",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
-	},
-	cli.IntFlag{
-		Name:   "http-port, p",
-		Usage:  "HTTP server port",
-		Value:  80,
-		EnvVar: "PHOTOPRISM_HTTP_PORT",
-	},
-	cli.StringFlag{
-		Name:   "http-host, i",
-		Usage:  "HTTP server host",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_HTTP_HOST",
-	},
-	cli.StringFlag{
-		Name:   "http-mode, m",
-		Usage:  "debug, release or test",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_HTTP_MODE",
-	},
-	cli.StringFlag{
-		Name:   "http-password",
-		Usage:  "HTTP server password (optional)",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_HTTP_PASSWORD",
-	},
-	cli.IntFlag{
-		Name:   "sql-port, s",
-		Usage:  "built-in SQL server port",
-		Value:  4000,
-		EnvVar: "PHOTOPRISM_SQL_PORT",
-	},
-	cli.StringFlag{
-		Name:   "sql-host",
-		Usage:  "built-in SQL server host",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_SQL_HOST",
-	},
-	cli.StringFlag{
-		Name:   "sql-path",
-		Usage:  "built-in SQL server storage path",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_SQL_PATH",
-	},
-	cli.StringFlag{
-		Name:   "sql-password",
-		Usage:  "built-in SQL server password",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_SQL_PASSWORD",
 	},
 	cli.StringFlag{
 		Name:   "sips-bin",
@@ -152,21 +117,44 @@ var GlobalFlags = []cli.Flag{
 		Value:  "heif-convert",
 		EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
 	},
-	cli.StringFlag{
-		Name:   "daemon-pid-path",
-		Usage:  "File path to store daemon PID",
-		EnvVar: "PHOTOPRISM_DAEMON_PID_PATH",
-		Value:  "/srv/photoprism/photoprism.pid",
+	cli.IntFlag{
+		Name:   "http-port, p",
+		Usage:  "HTTP server port",
+		EnvVar: "PHOTOPRISM_HTTP_PORT",
 	},
 	cli.StringFlag{
-		Name:   "daemon-log-path",
-		Usage:  "File path for daemon logs.",
-		EnvVar: "PHOTOPRISM_DAEMON_LOG_PATH",
-		Value:  "/srv/photoprism/photoprism.log",
+		Name:   "http-host, i",
+		Usage:  "HTTP server host",
+		EnvVar: "PHOTOPRISM_HTTP_HOST",
 	},
-	cli.BoolFlag{
-		Name:   "daemonize, d",
-		Usage:  "run Photoprism as Daemon",
-		EnvVar: "PHOTOPRISM_DAEMON_MODE",
+	cli.StringFlag{
+		Name:   "http-mode, m",
+		Usage:  "debug, release or test",
+		EnvVar: "PHOTOPRISM_HTTP_MODE",
+	},
+	cli.StringFlag{
+		Name:   "http-password",
+		Usage:  "HTTP server password (optional)",
+		EnvVar: "PHOTOPRISM_HTTP_PASSWORD",
+	},
+	cli.IntFlag{
+		Name:   "sql-port, s",
+		Usage:  "built-in SQL server port",
+		EnvVar: "PHOTOPRISM_SQL_PORT",
+	},
+	cli.StringFlag{
+		Name:   "sql-host",
+		Usage:  "built-in SQL server host",
+		EnvVar: "PHOTOPRISM_SQL_HOST",
+	},
+	cli.StringFlag{
+		Name:   "sql-path",
+		Usage:  "built-in SQL server storage path",
+		EnvVar: "PHOTOPRISM_SQL_PATH",
+	},
+	cli.StringFlag{
+		Name:   "sql-password",
+		Usage:  "built-in SQL server password",
+		EnvVar: "PHOTOPRISM_SQL_PASSWORD",
 	},
 }

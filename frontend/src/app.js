@@ -7,6 +7,7 @@ import Api from "common/api";
 import Config from "common/config";
 import Clipboard from "common/clipboard";
 import Components from "component/components";
+import Dialogs from "dialog/dialogs";
 import Maps from "maps/components";
 import Alert from "common/alert";
 import Viewer from "common/viewer";
@@ -53,6 +54,7 @@ Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);
 Vue.use(VueFilters);
 Vue.use(Components);
+Vue.use(Dialogs);
 Vue.use(Maps);
 Vue.use(Router);
 

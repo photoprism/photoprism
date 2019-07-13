@@ -56,9 +56,9 @@ type Params struct {
 	DarktableBin       string `yaml:"darktable-bin" flag:"darktable-bin"`
 	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
 	HeifConvertBin     string `yaml:"heifconvert-bin" flag:"heifconvert-bin"`
-	DaemonPIDPath      string `yaml:"daemon-pid-path" flag:"daemon-pid-path"`
-	DaemonLogPath      string `yaml:"daemon-log-path" flag:"daemon-log-path"`
-	DaemonMode         bool   `yaml:"daemon-mode" flag:"daemonize"`
+	PIDFilename        string `yaml:"pid-filename" flag:"pid-filename"`
+	LogFilename        string `yaml:"log-filename" flag:"log-filename"`
+	DetachServer       bool   `yaml:"detach-server" flag:"detach-server"`
 }
 
 // NewParams() creates a new configuration entity by using two methods:
@@ -73,8 +73,9 @@ func NewParams(ctx *cli.Context) *Params {
 	c.Name = ctx.App.Name
 	c.Copyright = ctx.App.Copyright
 	c.Version = ctx.App.Version
+	c.ConfigFile = util.ExpandedFilename(ctx.GlobalString("config-file"))
 
-	if err := c.SetValuesFromFile(util.ExpandedFilename(ctx.GlobalString("config-file"))); err != nil {
+	if err := c.SetValuesFromFile(c.ConfigFile); err != nil {
 		log.Debug(err)
 	}
 
@@ -96,6 +97,8 @@ func (c *Params) expandFilenames() {
 	c.ImportPath = util.ExpandedFilename(c.ImportPath)
 	c.ExportPath = util.ExpandedFilename(c.ExportPath)
 	c.SqlServerPath = util.ExpandedFilename(c.SqlServerPath)
+	c.PIDFilename = util.ExpandedFilename(c.PIDFilename)
+	c.LogFilename = util.ExpandedFilename(c.LogFilename)
 }
 
 // SetValuesFromFile uses a yaml config file to initiate the configuration entity.
@@ -129,24 +132,36 @@ func (c *Params) SetValuesFromCliContext(ctx *cli.Context) error {
 			switch t := fieldValue.Interface().(type) {
 			case int, int64:
 				// Only if explicitly set or current value is empty (use default)
-				if ctx.GlobalIsSet(tagValue) || fieldValue.Int() == 0 {
+				if ctx.IsSet(tagValue) {
+					f := ctx.Int64(tagValue)
+					fieldValue.SetInt(f)
+				} else if ctx.GlobalIsSet(tagValue) || fieldValue.Int() == 0 {
 					f := ctx.GlobalInt64(tagValue)
 					fieldValue.SetInt(f)
 				}
 			case uint, uint64:
 				// Only if explicitly set or current value is empty (use default)
-				if ctx.GlobalIsSet(tagValue) || fieldValue.Uint() == 0 {
+				if ctx.IsSet(tagValue) {
+					f := ctx.Uint64(tagValue)
+					fieldValue.SetUint(f)
+				} else if ctx.GlobalIsSet(tagValue) || fieldValue.Uint() == 0 {
 					f := ctx.GlobalUint64(tagValue)
 					fieldValue.SetUint(f)
 				}
 			case string:
 				// Only if explicitly set or current value is empty (use default)
-				if ctx.GlobalIsSet(tagValue) || fieldValue.String() == "" {
+				if ctx.IsSet(tagValue) {
+					f := ctx.String(tagValue)
+					fieldValue.SetString(f)
+				} else if ctx.GlobalIsSet(tagValue) || fieldValue.String() == "" {
 					f := ctx.GlobalString(tagValue)
 					fieldValue.SetString(f)
 				}
 			case bool:
-				if ctx.GlobalIsSet(tagValue) {
+				if ctx.IsSet(tagValue) {
+					f := ctx.Bool(tagValue)
+					fieldValue.SetBool(f)
+				} else if ctx.GlobalIsSet(tagValue) {
 					f := ctx.GlobalBool(tagValue)
 					fieldValue.SetBool(f)
 				}

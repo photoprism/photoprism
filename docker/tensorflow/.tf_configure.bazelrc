@@ -1,0 +1,27 @@
+build --action_env PYTHON_BIN_PATH="/usr/bin/python3"
+build --action_env PYTHON_LIB_PATH="/usr/lib/python3/dist-packages"
+build --python_path="/usr/bin/python3"
+build --action_env TF_NEED_OPENCL_SYCL="0"
+build --action_env TF_NEED_ROCM="0"
+build --action_env TF_NEED_CUDA="0"
+build --action_env TF_NEED_TENSORRT="0"
+build --action_env CUDA_TOOLKIT_PATH="/usr/local/cuda"
+build --action_env TF_CUDA_COMPUTE_CAPABILITIES="5.3"
+build --action_env TF_CUDA_CLANG="0"
+build --action_env TF_CUDA_VERSION="10"
+build --action_env GCC_HOST_COMPILER_PATH="/usr/bin/gcc-4.8"
+build --verbose_failures
+build:opt --copt=-Wno-sign-compare
+build:opt --conlyopt=-std=c11
+build:opt --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0"
+build:opt --host_conlyopt=-std=c11
+build:opt --host_cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0"
+build:opt --host_copt=-Wno-sign-compare
+build:opt --define with_default_optimizations=true
+build:v2 --define=tf_api_version=2
+build:xla --define with_xla_support=true
+test --flaky_test_attempts=3
+test --test_size_filters=small,medium
+test --test_tag_filters=-benchmark-test,-no_oss,-oss_serial
+test --build_tag_filters=-benchmark-test,-no_oss
+build --action_env TF_CONFIGURE_IOS="0"

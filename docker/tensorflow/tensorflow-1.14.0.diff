@@ -1,0 +1,36 @@
+diff --git a/third_party/gif.BUILD b/third_party/gif.BUILD
+index cbe730fe10..9b6881891d 100644
+--- a/third_party/gif.BUILD
++++ b/third_party/gif.BUILD
+@@ -20,14 +20,11 @@ cc_library(
+         "lib/quantize.c",
+     ],
+     hdrs = ["lib/gif_lib.h"],
+-    defines = select({
+-        ":android": [
+-            "S_IREAD=S_IRUSR",
+-            "S_IWRITE=S_IWUSR",
+-            "S_IEXEC=S_IXUSR",
+-        ],
+-        "//conditions:default": [],
+-    }),
++    defines = [
++        "S_IREAD=S_IRUSR",
++        "S_IWRITE=S_IWUSR",
++        "S_IEXEC=S_IXUSR"
++    ],
+     includes = ["lib/."],
+     visibility = ["//visibility:public"],
+     deps = select({
+diff --git a/third_party/gpus/crosstool/BUILD.tpl b/third_party/gpus/crosstool/BUILD.tpl
+index f94be6de83..f16f87a2df 100644
+--- a/third_party/gpus/crosstool/BUILD.tpl
++++ b/third_party/gpus/crosstool/BUILD.tpl
+@@ -28,6 +28,7 @@ cc_toolchain_suite(
+         "darwin|compiler": ":cc-compiler-darwin",
+         "x64_windows|msvc-cl": ":cc-compiler-windows",
+         "x64_windows": ":cc-compiler-windows",
++        "aarch64": ":cc-compiler-local",
+         "arm": ":cc-compiler-local",
+         "k8": ":cc-compiler-local",
+         "piii": ":cc-compiler-local",

@@ -21,35 +21,35 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 		TODO: Add and compare other images in "testdata/"
 	*/
 	expected := map[string]ColorPerception{
-		"testdata/elephant_mono.jpg": {
+		"elephant_mono.jpg": {
 			Colors:    IndexedColors{0x2, 0x2, 0x0, 0x0, 0x2, 0x0, 0x0, 0x0, 0x0},
 			MainColor: 0,
 			Luminance: LightMap{0xa, 0x9, 0x0, 0x0, 0x6, 0x0, 0x0, 0x0, 0x0},
 			Chroma:    0,
 		},
-		"testdata/sharks_blue.jpg": {
+		"sharks_blue.jpg": {
 			Colors:    IndexedColors{0x6, 0x6, 0x6, 0x6, 0x6, 0x6, 0x4, 0x4, 0x6},
 			MainColor: 6,
 			Luminance: LightMap{0x9, 0x7, 0x5, 0x4, 0x3, 0x4, 0x3, 0x3, 0x3},
-			Chroma:    13,
+			Chroma:    89,
 		},
-		"testdata/cat_black.jpg": {
+		"cat_black.jpg": {
 			Colors:    IndexedColors{0x2, 0x1, 0x1, 0x1, 0x2, 0x1, 0x2, 0x5, 0x2},
 			MainColor: 1,
 			Luminance: LightMap{0x8, 0xc, 0x9, 0x4, 0x2, 0x7, 0xd, 0xd, 0x3},
-			Chroma:    1,
+			Chroma:    9,
 		},
-		"testdata/cat_brown.jpg": {
+		"cat_brown.jpg": {
 			Colors:    IndexedColors{0x9, 0x5, 0x1, 0x2, 0x2, 0x1, 0x0, 0x6, 0x2},
 			MainColor: 5,
 			Luminance: LightMap{0x4, 0x5, 0xb, 0x4, 0x7, 0x3, 0x2, 0x5, 0x7},
-			Chroma:    2,
+			Chroma:    13,
 		},
-		"testdata/cat_yellow_grey.jpg": {
+		"cat_yellow_grey.jpg": {
 			Colors:    IndexedColors{0x2, 0x1, 0x1, 0x9, 0x0, 0x5, 0xb, 0x0, 0x5},
 			MainColor: 5,
 			Luminance: LightMap{0x9, 0x5, 0xb, 0x6, 0x1, 0x6, 0xa, 0x1, 0x8},
-			Chroma:    3,
+			Chroma:    20,
 		},
 	}
 
@@ -71,6 +71,8 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 		t.Run(filename, func(t *testing.T) {
 			p, err := mediaFile.Colors(thumbsPath)
 
+			basename := filepath.Base(filename)
+
 			t.Log(p, err)
 
 			assert.Nil(t, err)
@@ -78,7 +80,7 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 			assert.True(t, p.Chroma.Int() <= 100)
 			assert.NotEmpty(t, p.MainColor.Name())
 
-			if e, ok := expected[filename]; ok {
+			if e, ok := expected[basename]; ok {
 				assert.Equal(t, e, p)
 			}
 		})
@@ -94,70 +96,72 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 func TestMediaFile_Colors(t *testing.T) {
 	conf := config.TestConfig()
 
-	conf.InitializeTestData(t)
-
-	t.Run("dog.jpg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(conf.ImportPath() + "/dog.jpg"); err == nil {
+	t.Run("cat_brown.jpg", func(t *testing.T) {
+		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/cat_brown.jpg"); err == nil {
 			p, err := mediaFile.Colors(conf.ThumbnailsPath())
 
 			t.Log(p, err)
 
 			assert.Nil(t, err)
-			assert.Equal(t, 11, p.Chroma.Int())
+			assert.Equal(t, 13, p.Chroma.Int())
+			assert.Equal(t, "D", p.Chroma.Hex())
 			assert.IsType(t, IndexedColors{}, p.Colors)
-			assert.Equal(t, "brown", p.MainColor.Name())
-			assert.Equal(t, IndexedColors{0x1, 0x3, 0x1, 0x2, 0xe, 0x0, 0x2, 0x2, 0x0}, p.Colors)
-			assert.Equal(t, LightMap{0x4, 0xf, 0x8, 0xc, 0x4, 0x2, 0x4, 0x3, 0x0}, p.Luminance)
+			assert.Equal(t, "gold", p.MainColor.Name())
+			assert.Equal(t, IndexedColors{0x9, 0x5, 0x1, 0x2, 0x2, 0x1, 0x0, 0x6, 0x2}, p.Colors)
+			assert.Equal(t, LightMap{0x4, 0x5, 0xb, 0x4, 0x7, 0x3, 0x2, 0x5, 0x7}, p.Luminance)
 		} else {
 			t.Error(err)
 		}
 	})
 
-	t.Run("ape.jpeg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(conf.ImportPath() + "/ape.jpeg"); err == nil {
+	t.Run("fern_green.jpg", func(t *testing.T) {
+		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/fern_green.jpg"); err == nil {
 			p, err := mediaFile.Colors(conf.ThumbnailsPath())
 
 			t.Log(p, err)
 
 			assert.Nil(t, err)
-			assert.Equal(t, 19, p.Chroma.Int())
+			assert.Equal(t, 51, p.Chroma.Int())
+			assert.Equal(t, "33", p.Chroma.Hex())
 			assert.IsType(t, IndexedColors{}, p.Colors)
-			assert.Equal(t, "green", p.MainColor.Name())
-			assert.Equal(t, IndexedColors{0x9, 0x9, 0x9, 0x8, 0x9, 0x2, 0x9, 0x2, 0x9}, p.Colors)
-			assert.Equal(t, LightMap{0x6, 0xb, 0x9, 0x7, 0x9, 0x6, 0x8, 0xa, 0xe}, p.Luminance)
+			assert.Equal(t, "lime", p.MainColor.Name())
+			assert.Equal(t, IndexedColors{0xa, 0x9, 0xa, 0x9, 0xa, 0xa, 0x9, 0x9, 0x9}, p.Colors)
+			assert.Equal(t, LightMap{0xb, 0x4, 0xa, 0x6, 0x9, 0x8, 0x2, 0x3, 0x4}, p.Luminance)
 		} else {
 			t.Error(err)
 		}
 	})
 
-	t.Run("iphone/IMG_6788.JPG", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(conf.ImportPath() + "/iphone/IMG_6788.JPG"); err == nil {
+	t.Run("IMG_4120.JPG", func(t *testing.T) {
+		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/IMG_4120.JPG"); err == nil {
 			p, err := mediaFile.Colors(conf.ThumbnailsPath())
 
 			t.Log(p, err)
 
 			assert.Nil(t, err)
-			assert.Equal(t, 17, p.Chroma.Int())
+			assert.Equal(t, 7, p.Chroma.Int())
+			assert.Equal(t, "7", p.Chroma.Hex())
 			assert.IsType(t, IndexedColors{}, p.Colors)
 			assert.Equal(t, "blue", p.MainColor.Name())
-			assert.Equal(t, IndexedColors{0x6, 0x6, 0x9, 0x1, 0x0, 0x2, 0x1, 0x1, 0x6}, p.Colors)
+			assert.Equal(t, IndexedColors{0x2, 0x6, 0x6, 0x2, 0x2, 0x9, 0x2, 0x0, 0x0}, p.Colors)
 		} else {
 			t.Error(err)
 		}
 	})
 
-	t.Run("raw/20140717_154212_1EC48F8489.jpg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(conf.ImportPath() + "/raw/20140717_154212_1EC48F8489.jpg"); err == nil {
+	t.Run("leaves_gold.jpg", func(t *testing.T) {
+		if mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/leaves_gold.jpg"); err == nil {
 			p, err := mediaFile.Colors(conf.ThumbnailsPath())
 
 			t.Log(p, err)
 
 			assert.Nil(t, err)
-			assert.Equal(t, 14, p.Chroma.Int())
+			assert.Equal(t, 16, p.Chroma.Int())
+			assert.Equal(t, "10", p.Chroma.Hex())
 			assert.IsType(t, IndexedColors{}, p.Colors)
-			assert.Equal(t, "green", p.MainColor.Name())
+			assert.Equal(t, "gold", p.MainColor.Name())
 
-			assert.Equal(t, IndexedColors{0x3, 0x3, 0x6, 0x1, 0x2, 0x2, 0x9, 0x9, 0x9}, p.Colors)
+			assert.Equal(t, IndexedColors{0x0, 0x0, 0x1, 0x5, 0x5, 0x0, 0x1, 0x5, 0x0}, p.Colors)
 		} else {
 			t.Error(err)
 		}

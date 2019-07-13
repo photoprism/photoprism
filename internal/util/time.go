@@ -2,8 +2,6 @@ package util
 
 import (
 	"time"
-
-	log "github.com/sirupsen/logrus"
 )
 
 func ProfileTime(start time.Time, name string) {

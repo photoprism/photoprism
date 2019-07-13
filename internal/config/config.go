@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -14,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/tidb"
 	"github.com/photoprism/photoprism/internal/util"
 	log "github.com/sirupsen/logrus"
+	tensorflow "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/urfave/cli"
 )
 
@@ -103,6 +105,14 @@ func (c *Config) CreateDirectories() error {
 		return err
 	}
 
+	if err := os.MkdirAll(filepath.Dir(c.PIDFilename()), os.ModePerm); err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(filepath.Dir(c.LogFilename()), os.ModePerm); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -176,6 +186,11 @@ func (c *Config) Version() string {
 	return c.config.Version
 }
 
+// TensorFlowVersion returns the TenorFlow framework version.
+func (c *Config) TensorFlowVersion() string {
+	return tensorflow.Version()
+}
+
 // Copyright returns the application copyright.
 func (c *Config) Copyright() string {
 	return c.config.Copyright
@@ -218,46 +233,54 @@ func (c *Config) ConfigPath() string {
 	return c.config.ConfigPath
 }
 
-// DaemonPIDPath returns the filepath of the pid.
-func (c *Config) DaemonPIDPath() string {
-	if c.config.DaemonPIDPath == "" {
+// PIDFilename returns the filename for storing the server process id (pid).
+func (c *Config) PIDFilename() string {
+	if c.config.PIDFilename == "" {
 		return c.AssetsPath() + "/photoprism.pid"
 	}
 
-	return c.config.DaemonPIDPath
+	return c.config.PIDFilename
 }
 
-// DaemonLogPath returns the filepath of the log.
-func (c *Config) DaemonLogPath() string {
-	if c.config.DaemonLogPath == "" {
+// LogFilename returns the filename for storing server logs.
+func (c *Config) LogFilename() string {
+	if c.config.LogFilename == "" {
 		return c.AssetsPath() + "/photoprism.log"
 	}
 
-	return c.config.DaemonLogPath
+	return c.config.LogFilename
 }
 
-// ShouldDaemonize returns true if daemon mode is set to true.
-func (c *Config) ShouldDaemonize() bool {
-	return c.config.DaemonMode
+// DetachServer returns true if server should detach from console (daemon mode).
+func (c *Config) DetachServer() bool {
+	return c.config.DetachServer
 }
 
 // SqlServerHost returns the built-in SQL server host name or IP address (empty for all interfaces).
 func (c *Config) SqlServerHost() string {
+	if c.config.SqlServerHost == "" {
+		return "127.0.0.1"
+	}
+
 	return c.config.SqlServerHost
 }
 
 // SqlServerPort returns the built-in SQL server port.
 func (c *Config) SqlServerPort() uint {
+	if c.config.SqlServerPort == 0 {
+		return 4000
+	}
+
 	return c.config.SqlServerPort
 }
 
 // SqlServerPath returns the database storage path for TiDB.
 func (c *Config) SqlServerPath() string {
-	if c.config.SqlServerPath != "" {
-		return c.config.SqlServerPath
+	if c.config.SqlServerPath == "" {
+		return c.ResourcesPath() + "/database"
 	}
 
-	return c.ResourcesPath() + "/database"
+	return c.config.SqlServerPath
 }
 
 // SqlServerPassword returns the password for the built-in database server.
@@ -276,11 +299,23 @@ func (c *Config) HttpServerHost() string {
 
 // HttpServerPort returns the built-in HTTP server port.
 func (c *Config) HttpServerPort() int {
+	if c.config.HttpServerPort == 0 {
+		return 2342
+	}
+
 	return c.config.HttpServerPort
 }
 
 // HttpServerMode returns the server mode.
 func (c *Config) HttpServerMode() string {
+	if c.config.HttpServerMode == "" {
+		if c.Debug() {
+			return "debug"
+		}
+
+		return "release"
+	}
+
 	return c.config.HttpServerMode
 }
 

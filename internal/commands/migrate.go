@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
-	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
