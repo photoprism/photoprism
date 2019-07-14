@@ -17,10 +17,10 @@ services:
       PHOTOPRISM_SQL_PORT: 4000
       PHOTOPRISM_SQL_PASSWORD: "photoprism"
       PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
-      PHOTOPRISM_DATABASE_DRIVER: internal
-      PHOTOPRISM_PID_FILENAME: photoprism.pid
-      PHOTOPRISM_LOG_FILENAME: photoprism.log
-      PHOTOPRISM_DETACH_SERVER: true
+      PHOTOPRISM_DATABASE_DRIVER: "internal"
+      PHOTOPRISM_PID_FILENAME: "photoprism.pid"
+      PHOTOPRISM_LOG_FILENAME: "photoprism.log"
+      PHOTOPRISM_DETACH_SERVER: "true"
       CODECOV_TOKEN:
       CODECOV_ENV:
       CODECOV_URL:
