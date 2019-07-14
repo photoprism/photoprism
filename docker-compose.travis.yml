@@ -4,6 +4,8 @@ services:
   photoprism:
     build: .
     image: photoprism/photoprism:develop
+    depends_on:
+      - photoprism-mysql
     command: tail -f /dev/null
     volumes:
       - "~/.cache/npm:/root/.cache/npm"
@@ -13,6 +15,7 @@ services:
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_SQL_HOST: "0.0.0.0"
       PHOTOPRISM_SQL_PORT: 4000
+      PHOTOPRISM_SQL_PASSWORD: "photoprism"
       CODECOV_TOKEN:
       CODECOV_ENV:
       CODECOV_URL:
