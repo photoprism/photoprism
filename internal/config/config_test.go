@@ -312,21 +312,18 @@ func TestConfig_HttpStaticBuildPath(t *testing.T) {
 }
 
 func TestConfig_Db(t *testing.T) {
-	ctx := CliTestContext()
-	c := NewConfig(ctx)
-	assert.Nil(t, c.Init(context.TODO()))
+	c := NewTestConfig()
 
 	assert.NotNil(t, c.Db())
 }
 
 func TestConfig_CloseDb(t *testing.T) {
-	ctx := CliTestContext()
-	c := NewConfig(ctx)
-	assert.Nil(t, c.Init(context.TODO()))
+	c := NewTestConfig()
 
 	assert.NotNil(t, c.Db())
-	db := c.CloseDb()
-	assert.Nil(t, db)
+
+	err := c.CloseDb()
+	assert.Nil(t, err)
 }
 
 func TestConfig_ClientConfig(t *testing.T) {
