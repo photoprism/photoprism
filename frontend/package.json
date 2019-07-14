@@ -69,6 +69,8 @@
     "karma-webdriver-launcher": "^1.0.5",
     "karma-webpack": "^4.0.2",
     "leaflet": "^1.5.1",
+    "lodash": "^4.17.14",
+    "lodash.template": "^4.5.0",
     "material-design-icons-iconfont": "^5.0.1",
     "mini-css-extract-plugin": "^0.7.0",
     "mocha": "^6.1.4",
