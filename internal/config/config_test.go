@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/util"
@@ -327,15 +326,23 @@ func TestConfig_CloseDb(t *testing.T) {
 }
 
 func TestConfig_ClientConfig(t *testing.T) {
-	ctx := CliTestContext()
-	c := NewConfig(ctx)
-	assert.Nil(t, c.Init(context.TODO()))
-	context := c.ClientConfig()
-	assert.NotEmpty(t, context)
+	c := NewTestConfig()
+
+	cc := c.ClientConfig()
+	assert.NotEmpty(t, cc)
+	assert.Contains(t, cc, "name")
+	assert.Contains(t, cc, "version")
+	assert.Contains(t, cc, "copyright")
+	assert.Contains(t, cc, "debug")
+	assert.Contains(t, cc, "readonly")
+	assert.Contains(t, cc, "cameras")
+	assert.Contains(t, cc, "countries")
+	assert.Contains(t, cc, "thumbnails")
+	assert.Contains(t, cc, "jsHash")
+	assert.Contains(t, cc, "cssHash")
 }
 
 func TestConfig_Shutdown(t *testing.T) {
-	ctx := CliTestContext()
-	c := NewConfig(ctx)
+	c := NewTestConfig()
 	c.Shutdown()
 }
