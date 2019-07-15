@@ -3,15 +3,8 @@ cat:
   priority: 5
   categories:
     - cat
-    - pussy
-    - pussycat
     - animal
-    - miau
-    - feline
-    - felis catus
     - kitty
-    - mouser
-    - stray
     - mammal
 
 tabby cat:
@@ -33,27 +26,15 @@ tiger cat:
     - cat
     - tiger
     - stripes
-    - pussy
-    - pussycat
     - animal
-    - miau
-    - feline
-    - felidae
-    - felis catus
     - kitty
-    - mouser
-    - stray
 
 wild cat:
   priority: 5
   categories:
     - cat
     - animal
-    - feline
-    - felidae
     - mammal
-    - mouser
-    - stray
     - predator
     - wild
     - wildlife
@@ -1419,8 +1400,8 @@ rgrey fox:
 
 brown bear:
   categories:
-  - animal
-  - bear
+    - animal
+    - bear
 
 American black bear:
   categories:

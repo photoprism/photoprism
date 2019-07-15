@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/forms"
 	"github.com/photoprism/photoprism/internal/models"
@@ -73,7 +74,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 	var labelIds []uint
 
 	if form.Label != "" {
-		if result := s.db.First(&label, "label_slug = ?", form.Label); result.Error != nil {
+		if result := s.db.First(&label, "label_slug = ?", strings.ToLower(form.Label)); result.Error != nil {
 			log.Errorf("label \"%s\" not found", form.Label)
 			return results, fmt.Errorf("label \"%s\" not found", form.Label)
 		} else {
@@ -97,12 +98,14 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 			q = q.Where("LOWER(locations.loc_display_name) LIKE ?", likeString)
 		}
 	} else if form.Query != "" {
-		likeString := "%" + strings.ToLower(form.Query) + "%"
+		slugString := slug.Make(form.Query)
+		lowerString := strings.ToLower(form.Query)
+		likeString := "%" + lowerString + "%"
 
-		if result := s.db.First(&label, "LOWER(label_name) LIKE LOWER(?)", form.Query); result.Error != nil {
+		if result := s.db.First(&label, "label_slug = ?", slugString); result.Error != nil {
 			log.Infof("label \"%s\" not found", form.Query)
 
-			q = q.Where("LOWER(labels.label_name) LIKE ? OR LOWER(photo_title) LIKE ? OR LOWER(files.file_main_color) LIKE ?", likeString, likeString, likeString)
+			q = q.Where("labels.label_slug = ? OR LOWER(photo_title) LIKE ? OR files.file_main_color = ?", slugString, likeString, lowerString)
 		} else {
 			labelIds = append(labelIds, label.ID)
 
@@ -114,7 +117,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 
 			log.Infof("searching for label IDs: %#v", form.Query)
 
-			q = q.Where("labels.id IN (?) OR LOWER(photo_title) LIKE ? OR LOWER(files.file_main_color) LIKE ?", labelIds, likeString, likeString)
+			q = q.Where("labels.id IN (?) OR LOWER(photo_title) LIKE ? OR files.file_main_color = ?", labelIds, likeString, lowerString)
 		}
 
 	}
@@ -124,7 +127,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 	}
 
 	if form.Color != "" {
-		q = q.Where("files.file_main_color = ?", form.Color)
+		q = q.Where("files.file_main_color = ?", strings.ToLower(form.Color))
 	}
 
 	if form.Favorites {

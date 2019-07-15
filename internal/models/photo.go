@@ -31,11 +31,11 @@ type Photo struct {
 	PhotoExposure     string
 	PhotoViews        uint
 	Camera            *Camera
-	CameraID          uint
+	CameraID          uint `gorm:"index;"`
 	Lens              *Lens
-	LensID            uint
+	LensID            uint `gorm:"index;"`
 	Country           *Country
-	CountryID         string
+	CountryID         string `gorm:"index;"`
 	CountryChanged    bool
 	Location          *Location
 	LocationID        uint

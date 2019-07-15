@@ -28,7 +28,7 @@ type File struct {
 	FileHeight       int
 	FileOrientation  int
 	FileAspectRatio  float64
-	FileMainColor    string
+	FileMainColor    string `gorm:"type:varchar(32);index;"`
 	FileColors       string
 	FileLuminance    string
 	FileChroma       uint
