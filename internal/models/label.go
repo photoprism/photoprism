@@ -11,7 +11,7 @@ import (
 type Label struct {
 	Model
 	LabelSlug        string `gorm:"type:varchar(128);index;"`
-	LabelName        string `gorm:"type:varchar(128);index;"`
+	LabelName        string `gorm:"type:varchar(128);"`
 	LabelPriority    int
 	LabelFavorite    bool
 	LabelDescription string   `gorm:"type:text;"`
