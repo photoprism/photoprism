@@ -58,10 +58,14 @@ RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
     apt-get dist-upgrade
 
 # Install & configure TensorFlow for C
+#
+# Please use other build if processor does not support AVX2:
+# https://dl.photoprism.org/tensorflow/linux/
+#
 ENV LD_LIBRARY_PATH /root/.local/lib:/usr/local/lib:/usr/lib:/lib
 ENV TF_CPP_MIN_LOG_LEVEL 0
 RUN curl -L \
-   "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-avx-1.14.0.tar.gz" | \
+   "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-avx2-1.14.0.tar.gz" | \
    tar -C "/usr" -xz
 RUN ldconfig
 
@@ -78,12 +82,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.12.6
+ENV GOLANG_VERSION 1.12.7
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "dbcf71a3c1ea53b8d54ef1b48c85a39a6c9a935d01fc8291ff2b92028e59913c *go.tgz" | sha256sum -c -; \
+	echo "66d83bfb5a9ede000e33c6579a91a29e6b101829ad41fffb5c5bb6c900e109d9 *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
