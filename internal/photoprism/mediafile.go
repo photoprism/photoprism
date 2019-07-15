@@ -78,6 +78,18 @@ func (m *MediaFile) DateCreated() time.Time {
 	return m.dateCreated
 }
 
+func (m *MediaFile) HasTimeAndPlace() bool {
+	exifData, err := m.Exif()
+
+	if err != nil {
+		return false
+	}
+
+	result := !exifData.TakenAt.IsZero() && exifData.Lat != 0 && exifData.Long != 0
+
+	return result
+}
+
 func (m *MediaFile) TimeZone() (result string) {
 	if m.timeZone != "" {
 		return m.timeZone

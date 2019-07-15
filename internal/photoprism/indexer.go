@@ -124,7 +124,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	if fileQuery.Error != nil {
 		photoQuery = i.db.Unscoped().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase)
 
-		if photoQuery.Error != nil && exifData != nil {
+		if photoQuery.Error != nil && mediaFile.HasTimeAndPlace() {
 			photoQuery = i.db.Unscoped().First(&photo, "photo_lat = ? AND photo_long = ? AND taken_at = ?", exifData.Lat, exifData.Long, exifData.TakenAt)
 		}
 	} else {
