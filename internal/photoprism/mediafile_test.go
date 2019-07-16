@@ -197,11 +197,21 @@ func TestMediaFileCanonicalName(t *testing.T) {
 }
 
 func TestMediaFileCanonicalNameFromFile(t *testing.T) {
-	conf := config.TestConfig()
+	t.Run("/beach_wood.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
 
-	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
-	assert.Nil(t, err)
-	assert.Equal(t, "beach_wood", mediaFile.CanonicalNameFromFile())
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, "beach_wood", mediaFile.CanonicalNameFromFile())
+	})
+	t.Run("/airport_grey", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/airport_grey")
+		assert.Nil(t, err)
+		assert.Equal(t, "airport_grey", mediaFile.CanonicalNameFromFile())
+	})
+
 }
 
 func TestMediaFile_CanonicalNameFromFileWithDirectory(t *testing.T) {
@@ -339,5 +349,70 @@ func TestMediaFile_DateCreated(t *testing.T) {
 		} else {
 			t.Error(err)
 		}
+	})
+}
+
+func TestMediaFile_Height(t *testing.T) {
+	t.Run("/Random.docx", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
+		assert.Nil(t, err)
+		height := mediaFile.Height()
+		assert.Equal(t, 0, height)
+	})
+	t.Run("/elephants.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+		height := mediaFile.Height()
+		assert.Equal(t, 331, height)
+	})
+}
+
+func TestMediaFile_AspectRatio(t *testing.T) {
+	t.Run("/iphone_7.heic", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+		assert.Nil(t, err)
+		ratio := mediaFile.AspectRatio()
+		assert.Equal(t, float64(0), ratio)
+	})
+	t.Run("/fern_green.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/fern_green.jpg")
+		assert.Nil(t, err)
+		ratio := mediaFile.AspectRatio()
+		assert.Equal(t, float64(1), ratio)
+	})
+	t.Run("/elephants.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+		ratio := mediaFile.AspectRatio()
+		assert.Equal(t, 1.501510574018127, ratio)
+	})
+}
+
+func TestMediaFile_Orientation(t *testing.T) {
+	t.Run("/iphone_7.heic", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+		assert.Nil(t, err)
+		orientation := mediaFile.Orientation()
+		assert.Equal(t, 6, orientation)
+	})
+	t.Run("/turtle_brown_blue.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/turtle_brown_blue.jpg")
+		assert.Nil(t, err)
+		orientation := mediaFile.Orientation()
+		assert.Equal(t, 1, orientation)
 	})
 }
