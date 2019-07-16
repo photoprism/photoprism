@@ -36,13 +36,23 @@ func TestNewCamera(t *testing.T) {
 		}
 		assert.Equal(t, expected, camera)
 	})
-	t.Run("model  make Unknown", func(t *testing.T) {
+	t.Run("model TG-4 make Unknown", func(t *testing.T) {
 		camera := NewCamera("TG-4", "")
 
 		expected := &Camera{
 			CameraModel: "TG-4",
 			CameraMake:  "",
 			CameraSlug:  "tg-4",
+		}
+		assert.Equal(t, expected, camera)
+	})
+	t.Run("model Unknown make Unknown", func(t *testing.T) {
+		camera := NewCamera("", "")
+
+		expected := &Camera{
+			CameraModel: "Unknown",
+			CameraMake:  "",
+			CameraSlug:  "unknown",
 		}
 		assert.Equal(t, expected, camera)
 	})
