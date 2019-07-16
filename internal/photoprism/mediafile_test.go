@@ -26,6 +26,22 @@ func TestMediaFile_TimeZone(t *testing.T) {
 	})
 }
 
+func TestMediaFile_HasTimeAndPlace(t *testing.T) {
+	t.Run("/beach_wood.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, true, mediaFile.HasTimeAndPlace())
+	})
+	t.Run("/peacock_blue.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/peacock_blue.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, false, mediaFile.HasTimeAndPlace())
+	})
+}
 func TestMediaFile_CameraModel(t *testing.T) {
 	t.Run("/beach_wood.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
@@ -108,6 +124,57 @@ func TestMediaFile_FocalLength(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 		assert.Nil(t, err)
 		assert.Equal(t, 111, mediaFile.FocalLength())
+	})
+}
+
+func TestMediaFile_Aperture(t *testing.T) {
+	t.Run("/cat_brown.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/cat_brown.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, 2.275, mediaFile.Aperture())
+	})
+	t.Run("/elephants.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, 6.644, mediaFile.Aperture())
+	})
+}
+
+func TestMediaFile_Iso(t *testing.T) {
+	t.Run("/cat_brown.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/cat_brown.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, 32, mediaFile.Iso())
+	})
+	t.Run("/elephants.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, 200, mediaFile.Iso())
+	})
+}
+
+func TestMediaFile_Exposure(t *testing.T) {
+	t.Run("/cat_brown.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/cat_brown.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, "1/50", mediaFile.Exposure())
+	})
+	t.Run("/elephants.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, "1/640", mediaFile.Exposure())
 	})
 }
 
