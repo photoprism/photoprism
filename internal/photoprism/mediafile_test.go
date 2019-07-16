@@ -9,6 +9,108 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMediaFile_TimeZone(t *testing.T) {
+	t.Run("/beach_wood.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, "UTC", mediaFile.TimeZone())
+	})
+	t.Run("/iphone_7.heic", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+		assert.Nil(t, err)
+		assert.Equal(t, "UTC", mediaFile.TimeZone())
+	})
+}
+
+func TestMediaFile_CameraModel(t *testing.T) {
+	t.Run("/beach_wood.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, "iPhone SE", mediaFile.CameraModel())
+	})
+	t.Run("/iphone_7.heic", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+		assert.Nil(t, err)
+		assert.Equal(t, "iPhone 7", mediaFile.CameraModel())
+	})
+}
+
+func TestMediaFile_CameraMake(t *testing.T) {
+	t.Run("/beach_wood.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, "Apple", mediaFile.CameraMake())
+	})
+	t.Run("/peacock_blue.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/peacock_blue.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, "", mediaFile.CameraMake())
+	})
+}
+
+func TestMediaFile_LensModel(t *testing.T) {
+	t.Run("/beach_wood.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, "iPhone SE back camera 4.15mm f/2.2", mediaFile.LensModel())
+	})
+	t.Run("/canon_eos_6d.dng", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")
+		assert.Nil(t, err)
+		assert.Equal(t, "EF24-105mm f/4L IS USM", mediaFile.LensModel())
+	})
+}
+
+func TestMediaFile_LensMake(t *testing.T) {
+	t.Run("/cat_brown.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/cat_brown.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, "Apple", mediaFile.LensMake())
+	})
+	t.Run("/elephants.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, "", mediaFile.LensMake())
+	})
+}
+
+func TestMediaFile_FocalLength(t *testing.T) {
+	t.Run("/cat_brown.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/cat_brown.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, 29, mediaFile.FocalLength())
+	})
+	t.Run("/elephants.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+		assert.Equal(t, 111, mediaFile.FocalLength())
+	})
+}
+
 func TestMediaFile_RelatedFiles(t *testing.T) {
 	conf := config.TestConfig()
 
