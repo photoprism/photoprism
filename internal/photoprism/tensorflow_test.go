@@ -184,3 +184,43 @@ func TestTensorFlow_LabelRule(t *testing.T) {
 		assert.Equal(t, 0, result.Priority)
 	})
 }
+
+func TestTensorFlow_BestLabels(t *testing.T) {
+	t.Run("labels not loaded", func(t *testing.T) {
+		conf := config.NewTestConfig()
+
+		tensorFlow := NewTensorFlow(conf)
+
+		p := make([]float32, 1000)
+
+		p[666] = 0.5
+
+		result := tensorFlow.bestLabels(p)
+		assert.Empty(t, result)
+	})
+	t.Run("labelsloaded", func(t *testing.T) {
+		conf := config.NewTestConfig()
+		path := conf.TensorFlowModelPath()
+		tensorFlow := NewTensorFlow(conf)
+		tensorFlow.loadLabels(path)
+
+		p := make([]float32, 1000)
+
+		p[8] = 0.7
+		p[1] = 0.5
+
+		result := tensorFlow.bestLabels(p)
+		assert.Equal(t, "hen", result[0].Name)
+		assert.Equal(t, "bird", result[0].Categories[0])
+		assert.Equal(t, "image", result[0].Source)
+		assert.Equal(t, "goldfish", result[1].Name)
+		assert.Equal(t, "animal", result[1].Categories[2])
+		assert.Equal(t, "image", result[1].Source)
+		t.Log(result)
+	})
+}
+
+func Test_ConvertTF(t *testing.T) {
+	result := convertTF(uint32(98765432))
+	assert.Equal(t, float32(3024.898), result)
+}
