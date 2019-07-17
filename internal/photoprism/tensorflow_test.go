@@ -144,6 +144,27 @@ func TestTensorFlow_Labels(t *testing.T) {
 	})
 }
 
+func TestTensorFlow_LoadLabels(t *testing.T) {
+	t.Run("labels.txt exists", func(t *testing.T) {
+		conf := config.NewTestConfig()
+
+		tensorFlow := NewTensorFlow(conf)
+		path := conf.TensorFlowModelPath()
+
+		result := tensorFlow.loadLabels(path)
+		assert.Nil(t, result)
+	})
+	t.Run("label.txt does not exist", func(t *testing.T) {
+		conf := config.NewTestErrorConfig()
+
+		tensorFlow := NewTensorFlow(conf)
+		path := conf.TensorFlowModelPath()
+
+		result := tensorFlow.loadLabels(path)
+		assert.Contains(t, result.Error(), "no such file or directory")
+	})
+}
+
 func TestTensorFlow_LoadModel(t *testing.T) {
 	t.Run("model path exists", func(t *testing.T) {
 		conf := config.NewTestConfig()
