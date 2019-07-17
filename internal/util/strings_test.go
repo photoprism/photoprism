@@ -10,7 +10,7 @@ func TestIsSeparator(t *testing.T) {
 		assert.Equal(t, false, isSeparator('A'))
 	})
 	t.Run("rune 99", func(t *testing.T) {
-		assert.Equal(t, false, isSeparator(99))
+		assert.Equal(t, false, isSeparator('9'))
 	})
 	t.Run("rune /", func(t *testing.T) {
 		assert.Equal(t, true, isSeparator('/'))
@@ -26,6 +26,9 @@ func TestIsSeparator(t *testing.T) {
 	})
 	t.Run("rune '", func(t *testing.T) {
 		assert.Equal(t, false, isSeparator('\''))
+	})
+	t.Run("rune ý", func(t *testing.T) {
+		assert.Equal(t, false, isSeparator('ý'))
 	})
 }
 
