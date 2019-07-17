@@ -51,7 +51,9 @@ func TestDirectoryIsEmpty(t *testing.T) {
 	t.Run("not existing path", func(t *testing.T) {
 		assert.Equal(t, false, DirectoryIsEmpty("./xxx"))
 	})
-	t.Run("photo-lover", func(t *testing.T) {
+	t.Run("empty path", func(t *testing.T) {
+		os.Mkdir("./testdata/emptyDir", 0777)
+		defer os.RemoveAll("./testdata/emptyDir")
 		assert.Equal(t, true, DirectoryIsEmpty("./testdata/emptyDir"))
 	})
 }
