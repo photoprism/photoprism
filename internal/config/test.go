@@ -46,6 +46,25 @@ func NewTestParams() *Params {
 	return c
 }
 
+func NewTestParamsError() *Params {
+	assetsPath := util.ExpandedFilename("../..")
+
+	testDataPath := testDataPath("../../assets")
+
+	c := &Params{
+		DarktableBin:   "/usr/bin/darktable-cli",
+		AssetsPath:     assetsPath,
+		CachePath:      testDataPath + "/cache",
+		OriginalsPath:  testDataPath + "/originals",
+		ImportPath:     testDataPath + "/import",
+		ExportPath:     testDataPath + "/export",
+		DatabaseDriver: "mysql",
+		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-mysql:4001)/photoprism?parseTime=true",
+	}
+
+	return c
+}
+
 func TestConfig() *Config {
 	if testConfig == nil {
 		testConfig = NewTestConfig()
@@ -58,6 +77,19 @@ func NewTestConfig() *Config {
 	log.SetLevel(log.DebugLevel)
 
 	c := &Config{config: NewTestParams()}
+	err := c.Init(context.Background())
+	if err != nil {
+		log.Fatalf("failed init config: %v", err)
+	}
+
+	c.MigrateDb()
+	return c
+}
+
+func NewTestErrorConfig() *Config {
+	log.SetLevel(log.DebugLevel)
+
+	c := &Config{config: NewTestParamsError()}
 	err := c.Init(context.Background())
 	if err != nil {
 		log.Fatalf("failed init config: %v", err)
