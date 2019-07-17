@@ -9,7 +9,7 @@ import (
 )
 
 func TestTensorFlow_LoadLabelRules(t *testing.T) {
-	t.Run("labels.yml exists", func(t *testing.T) {
+	t.Run("labels.txt exists", func(t *testing.T) {
 		conf := config.NewTestConfig()
 
 		tensorFlow := NewTensorFlow(conf)
@@ -17,7 +17,7 @@ func TestTensorFlow_LoadLabelRules(t *testing.T) {
 		result := tensorFlow.loadLabelRules()
 		assert.Nil(t, result)
 	})
-	t.Run("labels.yml not existing in config path", func(t *testing.T) {
+	t.Run("labels.txt not existing in config path", func(t *testing.T) {
 		conf := config.NewTestErrorConfig()
 
 		tensorFlow := NewTensorFlow(conf)
@@ -160,5 +160,27 @@ func TestTensorFlow_LoadModel(t *testing.T) {
 
 		result := tensorFlow.loadModel()
 		assert.Contains(t, result.Error(), "Could not find SavedModel")
+	})
+}
+
+func TestTensorFlow_LabelRule(t *testing.T) {
+	t.Run("label.txt exists", func(t *testing.T) {
+		conf := config.NewTestConfig()
+
+		tensorFlow := NewTensorFlow(conf)
+
+		result := tensorFlow.labelRule("cat")
+		assert.Equal(t, "tabby cat", result.Label)
+		assert.Equal(t, "kitty", result.Categories[2])
+		assert.Equal(t, 5, result.Priority)
+	})
+	t.Run("labels.txt not existing in config path", func(t *testing.T) {
+		conf := config.NewTestErrorConfig()
+
+		tensorFlow := NewTensorFlow(conf)
+
+		result := tensorFlow.labelRule("cat")
+		assert.Empty(t, result.Categories)
+		assert.Equal(t, 0, result.Priority)
 	})
 }
