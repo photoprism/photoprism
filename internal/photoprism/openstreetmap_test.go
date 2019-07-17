@@ -40,4 +40,13 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "building", location.LocCategory)
 		assert.Equal(t, 48.53870475, location.LocLat)
 	})
+	t.Run("/dog_orange.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/dog_orange.jpg")
+		assert.Nil(t, err)
+		location, err := mediaFile.Location()
+		assert.Nil(t, location)
+		assert.Equal(t, "no latitude and longitude in image metadata", err.Error())
+	})
 }
