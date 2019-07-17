@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	tensorflow "github.com/tensorflow/tensorflow/tensorflow/go"
 	"io/ioutil"
 	"testing"
 
@@ -219,7 +220,7 @@ func TestTensorFlow_BestLabels(t *testing.T) {
 		result := tensorFlow.bestLabels(p)
 		assert.Empty(t, result)
 	})
-	t.Run("labelsloaded", func(t *testing.T) {
+	t.Run("labels loaded", func(t *testing.T) {
 		conf := config.NewTestConfig()
 		path := conf.TensorFlowModelPath()
 		tensorFlow := NewTensorFlow(conf)
@@ -238,6 +239,32 @@ func TestTensorFlow_BestLabels(t *testing.T) {
 		assert.Equal(t, "animal", result[1].Categories[2])
 		assert.Equal(t, "image", result[1].Source)
 		t.Log(result)
+	})
+}
+
+func TestTensorFlow_MakeTensor(t *testing.T) {
+	t.Run("/cat_brown.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		tensorFlow := NewTensorFlow(conf)
+
+		imageBuffer, err := ioutil.ReadFile(conf.ExamplesPath() + "/cat_brown.jpg")
+		assert.Nil(t, err)
+		result, err := tensorFlow.makeTensor(imageBuffer, "jpeg")
+		assert.Equal(t, tensorflow.DataType(0x1), result.DataType())
+		assert.Equal(t, int64(1), result.Shape()[0])
+		assert.Equal(t, int64(224), result.Shape()[2])
+	})
+	t.Run("/Random.docx", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		tensorFlow := NewTensorFlow(conf)
+
+		imageBuffer, err := ioutil.ReadFile(conf.ExamplesPath() + "/Random.docx")
+		assert.Nil(t, err)
+		result, err := tensorFlow.makeTensor(imageBuffer, "jpeg")
+		assert.Empty(t, result)
+		assert.Equal(t, "image: unknown format", err.Error())
 	})
 }
 
