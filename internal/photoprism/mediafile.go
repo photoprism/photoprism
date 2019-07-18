@@ -538,7 +538,7 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 		return m, nil
 	}
 
-	jpegFilename := m.DirectoryBasename() + ".jpg"
+	jpegFilename := fmt.Sprintf("%s.%s", m.DirectoryBasename(), FileTypeJpeg)
 
 	if !util.Exists(jpegFilename) {
 		return nil, fmt.Errorf("jpeg file does not exist: %s", jpegFilename)

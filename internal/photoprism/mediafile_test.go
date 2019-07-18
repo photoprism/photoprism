@@ -729,14 +729,6 @@ func TestMediaFile_Jpeg(t *testing.T) {
 		assert.Nil(t, err)
 		assert.FileExists(t, file.filename)
 	})
-	t.Run("/IMG_4120.AAE", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/IMG_4120.AAE")
-		assert.Nil(t, err)
-		file, err := mediaFile.Jpeg()
-		assert.Nil(t, file)
-	})
 	t.Run("/iphone_7.json", func(t *testing.T) {
 		conf := config.TestConfig()
 
