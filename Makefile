@@ -60,7 +60,7 @@ watch-js:
 	(cd frontend &&	env NODE_ENV=development npm run watch)
 test-js:
 	$(info Running JS unit tests...)
-	(cd frontend &&	env NODE_ENV=development npm run test)
+	(cd frontend &&	env NODE_ENV=development BABEL_ENV=test npm run test)
 test-chromium:
 	$(info Running JS acceptance tests in Chrome...)
 	(cd frontend &&	npm run test-chromium)
