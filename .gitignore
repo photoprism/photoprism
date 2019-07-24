@@ -49,4 +49,5 @@ Thumbs.db
 .swp
 .tmp
 
-# Acceptance Test Screenshots
+#Karma Coverage Report
+frontend/coverage/
