@@ -78,13 +78,52 @@ describe('common/form', () => {
     it('setting and getting more values at once', () => {
         const def = {
             foo: { type: FormPropertyType.String, caption: 'Foo' },
+            baz: { type: FormPropertyType.String, caption: 'XX' },
         };
         const form = new Form();
 
         form.setDefinition(def);
-        form.setValues({ foo: 'test' });
+        form.setValues({ foo: 'test', baz: 'yyy'});
 
         const result = form.getValues();
         assert.equal(result.foo, 'test');
+        assert.equal(result.baz, 'yyy');
+    });
+
+    it('getting options of fieldname', () => {
+        const def = {
+            search: {
+                type: FormPropertyType.String,
+                caption: 'Search',
+                label: {options: 'tiles', text: 'Tiles'},
+                options: [
+                    {value: 'tiles', text: 'Tiles'},
+                    {value: 'mosaic', text: 'Mosaic'},
+                ],
+            },
+        };
+        const form = new Form();
+
+        form.setDefinition(def);
+
+        const result = form.getOptions("search");
+        assert.equal(result[0].value, "tiles");
+        assert.equal(result[1].text, "Mosaic");
+    });
+
+    it('getting not existing options returns empty object', () => {
+        const def = {
+            foo: {
+                type: FormPropertyType.Object,
+                caption: 'Foo',
+            },
+        };
+        const form = new Form();
+
+        form.setDefinition(def);
+
+        const result = form.getOptions("foo");
+        assert.equal(result[0].option, "");
+        assert.equal(result[0].label, "");
     });
 });
