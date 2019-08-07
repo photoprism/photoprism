@@ -183,4 +183,14 @@ describe("model/photo", () => {
         assert.equal(result, "Canon EOSD10");
     });
 
+    it("should get collection resource",  () => {
+        const result = Photo.getCollectionResource();
+        assert.equal(result, "photos");
+    });
+
+    it("should get model name",  () => {
+        const result = Photo.getModelName();
+        assert.equal(result, "Photo");
+    });
+
 });
