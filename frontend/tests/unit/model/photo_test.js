@@ -183,6 +183,13 @@ describe("model/photo", () => {
         assert.equal(result, "Canon EOSD10");
     });
 
+    it("should get camera",  () => {
+        const values = {ID: 5, PhotoTitle: "Crazy Cat"};
+        const photo = new Photo(values);
+        const result = photo.getCamera();
+        assert.equal(result, "Unknown");
+    });
+
     it("should get collection resource",  () => {
         const result = Photo.getCollectionResource();
         assert.equal(result, "photos");
