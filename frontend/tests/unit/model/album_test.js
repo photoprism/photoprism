@@ -66,7 +66,6 @@ describe("model/album", () => {
     it("should toggle like",  () => {
         Api.post('foo', postLikeEntity).then(
             (response) => {
-                console.log(response);
                 assert.equal(201, response.status);
                 assert.deepEqual(postLikeEntity, response.data);
                 done();
