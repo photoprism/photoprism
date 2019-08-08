@@ -44,7 +44,6 @@ describe("common/clipboard", () => {
         const clipboard = new Clipboard(storage, key);
         clipboard.clear();
         clipboard.add();
-        console.log(clipboard);
         assert.equal(clipboard.storageKey, "clipboard");
         assert.equal(clipboard.selection, "");
         //TO DO assert for not a model log
@@ -78,6 +77,40 @@ describe("common/clipboard", () => {
         const album = new Album(values2);
         const result2 = clipboard.has(album);
         assert.equal(result2, false);
+    });
+
+    it("should remove model",  () => {
+        const storage = window.localStorage;
+        const key = "clipboard";
+
+        const clipboard = new Clipboard(storage, key);
+        clipboard.clear();
+        clipboard.remove();
+        assert.equal(clipboard.storageKey, "clipboard");
+        assert.equal(clipboard.selection, "");
+        //TO DO assert for not a model log
+
+        const values = {ID: 5, PhotoTitle: "Crazy Cat", PhotoColor: "brown"};
+        const photo = new Photo(values);
+        clipboard.add(photo);
+        assert.equal(clipboard.selection[0], 5);
+
+        clipboard.remove(photo);
+        assert.equal(clipboard.selection, "");
+    });
+
+    it("should set and get",  () => {
+        const storage = window.localStorage;
+        const key = "clipboard";
+
+        const clipboard = new Clipboard(storage, key);
+        clipboard.clear();
+        clipboard.setIds([5, 6, 9]);
+        assert.equal(clipboard.selection[0], 5);
+        assert.equal(clipboard.selection[2], 9);
+        const result = clipboard.getIds();
+        assert.equal(result[1], 6);
+        assert.equal(result.length, 3);
     });
 
 });
