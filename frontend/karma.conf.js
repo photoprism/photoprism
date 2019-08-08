@@ -76,13 +76,13 @@ module.exports = (config) => {
                 },
                 // thresholds per file
                 each: {
-                    statements: 0,
-                    lines: 0,
-                    branches: 0,
-                    functions: 0,
+                    statements: 90,
+                    lines: 90,
+                    branches: 90,
+                    functions: 90,
                     overrides: {
                         "baz/component/**/*.js": {
-                            statements: 0,
+                            statements: 90,
                         },
                     },
                 },
