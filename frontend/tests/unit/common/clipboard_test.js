@@ -13,7 +13,7 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.selection, "");
     });
 
-    it("should toggle photos",  () => {
+    it("should toggle model",  () => {
         const storage = window.localStorage;
         const key = "clipboard";
 
@@ -37,6 +37,18 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.selection[0], 8);
     });
 
+    it("should toggle id",  () => {
+        const storage = window.localStorage;
+        const key = "clipboard";
+
+        const clipboard = new Clipboard(storage, key);
+        clipboard.clear();
+        clipboard.toggleId(3);
+        assert.equal(clipboard.selection[0], 3);
+        clipboard.toggleId(3);
+        assert.equal(clipboard.selection, "");
+    });
+
     it("should add model",  () => {
         const storage = window.localStorage;
         const key = "clipboard";
@@ -54,6 +66,16 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.selection[0], 5);
         clipboard.add(photo);
         assert.equal(clipboard.selection[0], 5);
+    });
+
+    it("should add id",  () => {
+        const storage = window.localStorage;
+        const key = "clipboard";
+
+        const clipboard = new Clipboard(storage, key);
+        clipboard.clear();
+        clipboard.addId(99);
+        assert.equal(clipboard.selection[0], 99);
     });
 
     it("should test whether clipboard has model",  () => {
@@ -79,6 +101,17 @@ describe("common/clipboard", () => {
         assert.equal(result2, false);
     });
 
+    it("should test whether clipboard has id",  () => {
+        const storage = window.localStorage;
+        const key = "clipboard";
+
+        const clipboard = new Clipboard(storage, key);
+        clipboard.clear();
+        clipboard.addId(77);
+        assert.equal(clipboard.hasId(77), true);
+        assert.equal(clipboard.hasId(78), false);
+    });
+
     it("should remove model",  () => {
         const storage = window.localStorage;
         const key = "clipboard";
@@ -97,9 +130,29 @@ describe("common/clipboard", () => {
 
         clipboard.remove(photo);
         assert.equal(clipboard.selection, "");
+        const values2 = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumUUID: 66};
+        const album = new Album(values2);
+        clipboard.remove(album);
+        assert.equal(clipboard.selection, "");
     });
 
-    it("should set and get",  () => {
+    it("should set and get ids",  () => {
+        const storage = window.localStorage;
+        const key = "clipboard";
+
+        const clipboard = new Clipboard(storage, key);
+        clipboard.clear();
+        clipboard.setIds(8);
+        assert.equal(clipboard.selection, "");
+        clipboard.setIds([5, 6, 9]);
+        assert.equal(clipboard.selection[0], 5);
+        assert.equal(clipboard.selection[2], 9);
+        const result = clipboard.getIds();
+        assert.equal(result[1], 6);
+        assert.equal(result.length, 3);
+    });
+
+    it("should clear",  () => {
         const storage = window.localStorage;
         const key = "clipboard";
 
@@ -107,10 +160,8 @@ describe("common/clipboard", () => {
         clipboard.clear();
         clipboard.setIds([5, 6, 9]);
         assert.equal(clipboard.selection[0], 5);
-        assert.equal(clipboard.selection[2], 9);
-        const result = clipboard.getIds();
-        assert.equal(result[1], 6);
-        assert.equal(result.length, 3);
+        clipboard.clear();
+        assert.equal(clipboard.selection, "");
     });
 
 });
