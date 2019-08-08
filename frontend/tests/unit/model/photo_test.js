@@ -69,8 +69,6 @@ describe("model/photo", () => {
         const values = {ID: 5, PhotoTitle: "Crazy Cat", FileHash: 345982};
         const photo = new Photo(values);
         const result = photo.getThumbnailSrcset();
-        console.log(result);
-        console.log(result[1]);
         assert.equal(result, "/api/v1/thumbnails/345982/fit_720 720w, /api/v1/thumbnails/345982/fit_1280 1280w, /api/v1/thumbnails/345982/fit_1920 1920w, /api/v1/thumbnails/345982/fit_2560 2560w, /api/v1/thumbnails/345982/fit_3840 3840w");
     });
 
