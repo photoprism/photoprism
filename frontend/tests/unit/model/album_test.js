@@ -10,7 +10,7 @@ const postLikeEntity = [
 ];
 mock.onPost("foo").reply(201, postLikeEntity);
 
-describe("model/album", () => {
+describe.only("model/album", () => {
     it("should get album entity name",  () => {
         const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019"};
         const album = new Album(values);
@@ -69,6 +69,32 @@ describe("model/album", () => {
     it("should get collection resource",  () => {
         const result = Album.getCollectionResource();
         assert.equal(result, "albums");
+    });
+
+    it("should like album",  () => {
+        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumFavorite: false};
+        const album = new Album(values);
+        assert.equal(album.AlbumFavorite, false);
+        album.like();
+        assert.equal(album.AlbumFavorite, true);
+    });
+
+    it("should unlike album",  () => {
+        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumFavorite: true};
+        const album = new Album(values);
+        assert.equal(album.AlbumFavorite, true);
+        album.unlike();
+        assert.equal(album.AlbumFavorite, false);
+    });
+
+    it("should toggle like",  () => {
+        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumFavorite: true};
+        const album = new Album(values);
+        assert.equal(album.AlbumFavorite, true);
+        album.toggleLike();
+        assert.equal(album.AlbumFavorite, false);
+        album.toggleLike();
+        assert.equal(album.AlbumFavorite, true);
     });
 
     it("should toggle like",  () => {
