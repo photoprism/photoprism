@@ -71,6 +71,32 @@ describe("model/label", () => {
         assert.equal(result, "labels");
     });
 
+    it("should like label",  () => {
+        const values = {ID: 5, LabelName: "Black Cat", LabelSlug: "black-cat", LabelFavorite: false};
+        const label = new Label(values);
+        assert.equal(label.LabelFavorite, false);
+        label.like();
+        assert.equal(label.LabelFavorite, true);
+    });
+
+    it("should unlike label",  () => {
+        const values = {ID: 5, LabelName: "Black Cat", LabelSlug: "black-cat", LabelFavorite: true};
+        const label = new Label(values);
+        assert.equal(label.LabelFavorite, true);
+        label.unlike();
+        assert.equal(label.LabelFavorite, false);
+    });
+
+    it("should toggle like",  () => {
+        const values = {ID: 5, LabelName: "Black Cat", LabelSlug: "black-cat", LabelFavorite: true};
+        const label = new Label(values);
+        assert.equal(label.LabelFavorite, true);
+        label.toggleLike();
+        assert.equal(label.LabelFavorite, false);
+        label.toggleLike();
+        assert.equal(label.LabelFavorite, true);
+    });
+
     it("should toggle like",  () => {
         Api.post('foo', postLikeEntity).then(
             (response) => {
