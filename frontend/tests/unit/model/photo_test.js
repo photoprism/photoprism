@@ -198,4 +198,30 @@ describe("model/photo", () => {
         assert.equal(result, "Photo");
     });
 
+    it("should like photo",  () => {
+        const values = {ID: 5, PhotoTitle: "Crazy Cat", CountryName: "Africa", PhotoFavorite: false};
+        const photo = new Photo(values);
+        assert.equal(photo.PhotoFavorite, false);
+        photo.like();
+        assert.equal(photo.PhotoFavorite, true);
+    });
+
+    it("should unlike photo",  () => {
+        const values = {ID: 5, PhotoTitle: "Crazy Cat", CountryName: "Africa", PhotoFavorite: true};
+        const photo = new Photo(values);
+        assert.equal(photo.PhotoFavorite, true);
+        photo.unlike();
+        assert.equal(photo.PhotoFavorite, false);
+    });
+
+    it("should toggle like",  () => {
+        const values = {ID: 5, PhotoTitle: "Crazy Cat", CountryName: "Africa", PhotoFavorite: true};
+        const photo = new Photo(values);
+        assert.equal(photo.PhotoFavorite, true);
+        photo.toggleLike();
+        assert.equal(photo.PhotoFavorite, false);
+        photo.toggleLike();
+        assert.equal(photo.PhotoFavorite, true);
+    });
+
 });
