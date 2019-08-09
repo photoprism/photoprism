@@ -20,7 +20,7 @@ class Config {
 
         for(let key in values) {
             if(values.hasOwnProperty(key)) {
-                this.setValue[key] = values[key];
+                this.setValue(key, values[key]);
             }
         }
 
