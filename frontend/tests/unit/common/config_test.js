@@ -1,6 +1,12 @@
 import assert from "assert";
 import Config from "common/config";
+import MockAdapter from "axios-mock-adapter";
+import Api from "common/api";
 
+const mock = new MockAdapter(Api);
+
+mock
+    .onGet("config").reply(200,  {fromServer: "yes"});
 
 describe("common/config", () => {
     it("should get all config values",  () => {
@@ -46,5 +52,17 @@ describe("common/config", () => {
         config.setValue("city", "Berlin");
         const result = config.getValue("city");
         assert.equal(result, "Berlin");
+    });
+
+    it("should pull from server",  async() => {
+        const storage = window.localStorage;
+        const values = {name: "testConfig", year: "2300"};
+
+        const config = new Config(storage, values);
+        const result = config.getValues();
+        assert.equal(result.name, "testConfig");
+        assert.equal(config.values.fromServer, undefined);
+        await config.pullFromServer();
+        assert.equal(config.values.fromServer, "yes");
     });
 });
