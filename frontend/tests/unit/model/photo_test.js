@@ -1,5 +1,14 @@
 import assert from "assert";
 import Photo from "model/photo";
+import MockAdapter from "axios-mock-adapter";
+import Api from "common/api";
+
+
+const mock = new MockAdapter(Api);
+
+mock
+    .onPost().reply(200)
+    .onDelete().reply(200);
 
 describe("model/photo", () => {
     it("should get photo entity name",  () => {
