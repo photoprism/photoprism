@@ -1,14 +1,14 @@
 import assert from "assert";
 import Album from "model/album";
-import Api from "common/api";
 import MockAdapter from "axios-mock-adapter";
+import Api from "common/api";
+
 
 const mock = new MockAdapter(Api);
 
-const postLikeEntity = [
-    {id: 5, AlbumFavorite: true},
-];
-mock.onPost("foo").reply(201, postLikeEntity);
+mock
+    .onPost().reply(200)
+    .onDelete().reply(200);
 
 describe("model/album", () => {
     it("should get album entity name",  () => {
@@ -96,20 +96,4 @@ describe("model/album", () => {
         album.toggleLike();
         assert.equal(album.AlbumFavorite, true);
     });
-
-    it("should toggle like",  () => {
-        Api.post('foo', postLikeEntity).then(
-            (response) => {
-                assert.equal(201, response.status);
-                assert.deepEqual(postLikeEntity, response.data);
-                done();
-            }
-        ).catch(
-            (error) => {
-                done(error);
-            }
-        );
-    });
-
-
 });
