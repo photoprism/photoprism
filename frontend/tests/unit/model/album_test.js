@@ -10,7 +10,7 @@ const postLikeEntity = [
 ];
 mock.onPost("foo").reply(201, postLikeEntity);
 
-describe.only("model/album", () => {
+describe("model/album", () => {
     it("should get album entity name",  () => {
         const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019"};
         const album = new Album(values);
