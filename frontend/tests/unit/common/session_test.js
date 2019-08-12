@@ -4,13 +4,10 @@ import User from 'model/user';
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
 
-const mock = new MockAdapter(Api);
-
-mock
-    .onPost("session").reply(200,  {token: "8877", user: {email: "test@test.com", password: "passwd"}})
-    .onDelete("session/8877").reply(200);
-
 describe('common/session', () => {
+
+    const mock = new MockAdapter(Api);
+
     beforeEach(() => {
         window.onbeforeunload = () => 'Oh no!';
     });
@@ -131,6 +128,9 @@ describe('common/session', () => {
     });
 
     it('should test login and logout',  async() => {
+        mock
+            .onPost("session").reply(200,  {token: "8877", user: {email: "test@test.com", password: "passwd"}})
+            .onDelete("session/8877").reply(200);
         const storage = window.localStorage;
         const session = new Session(storage);
         assert.equal(session.session_token, null);
@@ -140,6 +140,7 @@ describe('common/session', () => {
         assert.equal(session.storage.user, "{\"email\":\"test@test.com\",\"password\":\"passwd\"}");
         await session.logout();
         assert.equal(session.session_token, null);
+        mock.reset();
     });
 
 });
