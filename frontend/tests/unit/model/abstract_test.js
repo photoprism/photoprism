@@ -48,18 +48,6 @@ describe("model/abstract", () => {
         assert.equal(result, "Item");
     });
 
-   /*it("should find album",  async() => {
-        mock.onGet().reply(200);
-        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumUUID: 66};
-        const album = new Album(values);
-        const values2 = {id: 6, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumUUID: 66};
-        const album2 = new Album(values2);
-        const result = await album.find();
-        console.log(result);
-        mock.reset();
-        //assert.equal(result, 66);
-    });*/
-
     it("should update album",  async() => {
         mock.onPut().reply(200, {AlbumDescription: "Test description"});
         const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumUUID: 66};
@@ -122,7 +110,7 @@ describe("model/abstract", () => {
         mock.reset();
     });
 
-    it("should search",  async() => {
+    it("should search label",  async() => {
         mock.onAny().reply(200, {"ID":51,"CreatedAt":"2019-07-03T18:48:07Z","UpdatedAt":"2019-07-25T01:04:44Z","DeletedAt":"0001-01-01T00:00:00Z","LabelSlug":"tabby-cat","LabelName":"tabby cat","LabelPriority":5,"LabelCount":9,"LabelFavorite":false,"LabelDescription":"","LabelNotes":""});
         const result = await Album.search();
         assert.equal(result.data.ID, 51);
