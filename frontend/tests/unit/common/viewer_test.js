@@ -1,5 +1,7 @@
-import assert from "assert";
 import Viewer from "common/viewer";
+
+let chai = require('../../../node_modules/chai/chai');
+let assert = chai.assert;
 
 describe("common/viewer", () => {
     it("should construct viewer",  () => {
