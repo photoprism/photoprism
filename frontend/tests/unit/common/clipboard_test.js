@@ -1,7 +1,9 @@
-import assert from "assert";
 import Clipboard from "common/clipboard";
 import Photo from "model/photo";
 import Album from "model/album";
+
+let chai = require('../../../node_modules/chai/chai');
+let assert = chai.assert;
 
 describe("common/clipboard", () => {
     it("should construct clipboard",  () => {
