@@ -1,8 +1,10 @@
-import assert from 'assert';
 import Session from 'common/session';
 import User from 'model/user';
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
+
+let chai = require('../../../node_modules/chai/chai');
+let assert = chai.assert;
 
 describe('common/session', () => {
 
