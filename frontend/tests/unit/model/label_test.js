@@ -1,8 +1,9 @@
-import assert from "assert";
 import Label from "model/label";
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
 
+let chai = require('../../../node_modules/chai/chai');
+let assert = chai.assert;
 
 const mock = new MockAdapter(Api);
 
