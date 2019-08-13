@@ -85,6 +85,7 @@
     "puppeteer-core": "^1.18.1",
     "resolve-url-loader": "^3.1.0",
     "sass-loader": "^7.1.0",
+    "sinon": "^7.4.1",
     "style-loader": "^0.23.1",
     "sugarss": "^2.0.0",
     "svg-url-loader": "^2.3.3",
