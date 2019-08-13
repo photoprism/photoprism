@@ -1,7 +1,9 @@
-import assert from "assert";
 import Config from "common/config";
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
+
+let chai = require('../../../node_modules/chai/chai');
+let assert = chai.assert;
 
 describe("common/config", () => {
 
