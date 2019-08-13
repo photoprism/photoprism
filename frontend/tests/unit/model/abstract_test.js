@@ -1,9 +1,11 @@
-import assert from "assert";
 import Abstract from "model/abstract";
 import Album from "model/album";
 import Label from "model/label";
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
+
+let chai = require('../../../node_modules/chai/chai');
+let assert = chai.assert;
 
 describe("model/abstract", () => {
     const mock = new MockAdapter(Api);
@@ -118,4 +120,7 @@ describe("model/abstract", () => {
         mock.reset();
     });
 
+    it("should get collection resource",  () => {
+        assert.throws(() => Abstract.getCollectionResource(), Error, "getCollectionResource() needs to be implemented");
+    });
 });
