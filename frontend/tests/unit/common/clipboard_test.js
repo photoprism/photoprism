@@ -4,6 +4,7 @@ import Album from "model/album";
 
 let chai = require('../../../node_modules/chai/chai');
 let assert = chai.assert;
+let sinon = require("sinon");
 
 describe("common/clipboard", () => {
     it("should construct clipboard",  () => {
@@ -16,15 +17,16 @@ describe("common/clipboard", () => {
     });
 
     it("should toggle model",  () => {
+        let spy = sinon.spy(console, "log");
         const storage = window.localStorage;
         const key = "clipboard";
 
         const clipboard = new Clipboard(storage, key);
         clipboard.clear();
         clipboard.toggle();
+        assert(spy.calledWith("Clipboard::toggle() - not a model:"));
         assert.equal(clipboard.storageKey, "clipboard");
         assert.equal(clipboard.selection, "");
-        //TO DO assert for not a model log
 
         const values = {ID: 5, PhotoTitle: "Crazy Cat", PhotoColor: "brown"};
         const photo = new Photo(values);
@@ -37,6 +39,7 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.selection[1], 8);
         clipboard.toggle(photo);
         assert.equal(clipboard.selection[0], 8);
+        console.log.restore();
     });
 
     it("should toggle id",  () => {
@@ -52,6 +55,7 @@ describe("common/clipboard", () => {
     });
 
     it("should add model",  () => {
+        let spy = sinon.spy(console, "log");
         const storage = window.localStorage;
         const key = "clipboard";
 
@@ -60,7 +64,7 @@ describe("common/clipboard", () => {
         clipboard.add();
         assert.equal(clipboard.storageKey, "clipboard");
         assert.equal(clipboard.selection, "");
-        //TO DO assert for not a model log
+        assert(spy.calledWith("Clipboard::add() - not a model:"));
 
         const values = {ID: 5, PhotoTitle: "Crazy Cat", PhotoColor: "brown"};
         const photo = new Photo(values);
@@ -68,6 +72,7 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.selection[0], 5);
         clipboard.add(photo);
         assert.equal(clipboard.selection[0], 5);
+        console.log.restore();
     });
 
     it("should add id",  () => {
@@ -81,6 +86,7 @@ describe("common/clipboard", () => {
     });
 
     it("should test whether clipboard has model",  () => {
+        let spy = sinon.spy(console, "log");
         const storage = window.localStorage;
         const key = "clipboard";
 
@@ -89,7 +95,7 @@ describe("common/clipboard", () => {
         clipboard.has();
         assert.equal(clipboard.storageKey, "clipboard");
         assert.equal(clipboard.selection, "");
-        //TO DO assert for not a model log
+        assert(spy.calledWith("Clipboard::has() - not a model:"));
 
         const values = {ID: 5, PhotoTitle: "Crazy Cat", PhotoColor: "brown"};
         const photo = new Photo(values);
@@ -101,6 +107,7 @@ describe("common/clipboard", () => {
         const album = new Album(values2);
         const result2 = clipboard.has(album);
         assert.equal(result2, false);
+        console.log.restore();
     });
 
     it("should test whether clipboard has id",  () => {
@@ -115,6 +122,7 @@ describe("common/clipboard", () => {
     });
 
     it("should remove model",  () => {
+        let spy = sinon.spy(console, "log");
         const storage = window.localStorage;
         const key = "clipboard";
 
@@ -123,7 +131,7 @@ describe("common/clipboard", () => {
         clipboard.remove();
         assert.equal(clipboard.storageKey, "clipboard");
         assert.equal(clipboard.selection, "");
-        //TO DO assert for not a model log
+        assert(spy.calledWith("Clipboard::remove() - not a model:"));
 
         const values = {ID: 5, PhotoTitle: "Crazy Cat", PhotoColor: "brown"};
         const photo = new Photo(values);
@@ -136,6 +144,7 @@ describe("common/clipboard", () => {
         const album = new Album(values2);
         clipboard.remove(album);
         assert.equal(clipboard.selection, "");
+        console.log.restore();
     });
 
     it("should set and get ids",  () => {
