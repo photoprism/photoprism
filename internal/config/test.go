@@ -4,15 +4,17 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/jinzhu/gorm"
+	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/photoprism/photoprism/internal/util"
-	"github.com/urfave/cli"
-
 	log "github.com/sirupsen/logrus"
+	"github.com/urfave/cli"
 )
 
 const (
@@ -22,6 +24,7 @@ const (
 )
 
 var testConfig *Config
+var mockDB sqlmock.Sqlmock
 
 func testDataPath(assetsPath string) string {
 	return assetsPath + "/testdata"
@@ -65,6 +68,26 @@ func NewTestParamsError() *Params {
 	return c
 }
 
+// NewTestParamsMockDB create instance for *Params for testing with mock database
+func NewTestParamsMockDB() *Params {
+	assetsPath := util.ExpandedFilename("../../assets")
+
+	testDataPath := testDataPath(assetsPath)
+
+	c := &Params{
+		DarktableBin:   "/usr/bin/darktable-cli",
+		AssetsPath:     assetsPath,
+		CachePath:      testDataPath + "/cache",
+		OriginalsPath:  testDataPath + "/originals",
+		ImportPath:     testDataPath + "/import",
+		ExportPath:     testDataPath + "/export",
+		DatabaseDriver: "",
+		DatabaseDsn:    "",
+	}
+
+	return c
+}
+
 func TestConfig() *Config {
 	if testConfig == nil {
 		testConfig = NewTestConfig()
@@ -84,6 +107,28 @@ func NewTestConfig() *Config {
 
 	c.MigrateDb()
 	return c
+}
+
+func TestConfigMockDB(t *testing.T) (*Config, sqlmock.Sqlmock) {
+	if testConfig == nil {
+		testConfig, mockDB = NewTestConfigMockDB(t)
+	}
+
+	return testConfig, mockDB
+}
+
+// NewTestConfigMockDB create instance of *Config for testing with Mock database
+func NewTestConfigMockDB(t *testing.T) (*Config, sqlmock.Sqlmock) {
+	log.SetLevel(log.DebugLevel)
+
+	c := &Config{config: NewTestParams()}
+	mock := c.InitMockDB(t)
+
+	return c, mock
+}
+
+func CleanTestConfig() {
+	testConfig = nil
 }
 
 func NewTestErrorConfig() *Config {
@@ -162,4 +207,15 @@ func (c *Config) InitializeTestData(t *testing.T) {
 	c.DownloadTestData(t)
 
 	c.UnzipTestData(t)
+}
+
+func (c *Config) InitMockDB(t *testing.T) sqlmock.Sqlmock {
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+
+	c.db, err = gorm.Open("postgres", db)
+	require.NoError(t, err)
+
+	c.db.LogMode(true)
+	return mock
 }
