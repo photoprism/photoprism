@@ -72,19 +72,20 @@ module.exports = (config) => {
                     //statements: 90,
                     lines: 90,
                     //branches: 90,
-                    functions: 90,
+                    //functions: 90,
                 },
                 // thresholds per file
                 each: {
                     //statements: 90,
                     lines: 90,
                     //branches: 90,
-                    functions: 90,
-                    //overrides: {
-                        //"baz/component/**/*.js": {
-                          //  statements: 90,
-                        //},
-                   // },
+                    //functions: 90,
+                    overrides: {
+                        "src/common/viewer.js": {
+                            lines: 0,
+                            functions: 0,
+                        },
+                    },
                 },
             },
 
