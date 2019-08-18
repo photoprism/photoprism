@@ -65,7 +65,7 @@ RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
 ENV LD_LIBRARY_PATH /root/.local/lib:/usr/local/lib:/usr/lib:/lib
 ENV TF_CPP_MIN_LOG_LEVEL 0
 RUN curl -L \
-   "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-avx2-1.14.0.tar.gz" | \
+   "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-cpu-1.14.0.tar.gz" | \
    tar -C "/usr" -xz
 RUN ldconfig
 
