@@ -103,7 +103,6 @@
 </template>
 <script>
     import Event from "pubsub-js";
-    import axios from "axios";
 
     export default {
         name: 'p-photo-clipboard',
@@ -129,7 +128,7 @@
 
                 const ctx = this;
 
-                axios.post("/api/v1/batch/photos/private", {"ids": this.selection}).then(function () {
+                this.$api.post("/batch/photos/private", {"ids": this.selection}).then(function () {
                     Event.publish("ajax.end");
                     Event.publish("alert.success", "Toggled private flag");
                     ctx.clearClipboard();
@@ -143,7 +142,7 @@
 
                 const ctx = this;
 
-                axios.post("/api/v1/batch/photos/story", {"ids": this.selection}).then(function () {
+                this.$api.post("/batch/photos/story", {"ids": this.selection}).then(function () {
                     Event.publish("ajax.end");
                     Event.publish("alert.success", "Toggled story flag");
                     ctx.clearClipboard();
@@ -159,7 +158,7 @@
 
                 const ctx = this;
 
-                axios.post("/api/v1/batch/photos/delete", {"ids": this.selection}).then(function () {
+                this.$api.post("/batch/photos/delete", {"ids": this.selection}).then(function () {
                     Event.publish("ajax.end");
                     Event.publish("alert.success", "Photos deleted");
                     ctx.clearClipboard();

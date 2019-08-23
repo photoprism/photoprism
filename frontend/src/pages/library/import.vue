@@ -26,7 +26,6 @@
 </template>
 
 <script>
-    import axios from "axios";
     import Event from "pubsub-js";
 
     export default {
@@ -51,7 +50,7 @@
 
                 const ctx = this;
 
-                axios.post('/api/v1/import').then(function () {
+                this.$api.post('/import').then(function () {
                     Event.publish("alert.success", "Import complete");
                     ctx.busy = false;
                     ctx.completed = 100;

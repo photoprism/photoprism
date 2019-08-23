@@ -164,6 +164,16 @@
                         <v-list-tile-title>Settings</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
+
+                <v-list-tile v-show="!!$session.getKey()" @click="$session.logout()" class="p-navigation-settings">
+                    <v-list-tile-action>
+                        <v-icon>logout</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>Logout</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
             </v-list>
         </v-navigation-drawer>
     </div>

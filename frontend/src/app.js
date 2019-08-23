@@ -59,7 +59,7 @@ Vue.use(Maps);
 Vue.use(Router);
 
 // Configure client-side routing
-const router = new Router({
+export const router = new Router({
     routes: Routes,
     mode: "history",
     saveScrollPosition: true,

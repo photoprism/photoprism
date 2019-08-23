@@ -1,107 +1,56 @@
 import Api from "common/api";
-import User from "model/user";
 
 class Session {
     /**
      * @param {Storage} storage
      */
-    constructor(storage) {
+    constructor (storage) {
         this.storage = storage;
-        this.session_token = this.storage.getItem("session_token");
-
-        const userJson = this.storage.getItem("user");
-
-        this.user = userJson !== "undefined" ? new User(JSON.parse(userJson)) : null;
-    }
-
-    setToken(token) {
-        this.session_token = token;
-        this.storage.setItem("session_token", token);
-        Api.defaults.headers.common["X-Session-Token"] = token;
-    }
-
-    getToken() {
-        return this.session_token;
-    }
-
-    deleteToken() {
-        this.session_token = null;
-        this.storage.removeItem("session_token");
-        Api.defaults.headers.common["X-Session-Token"] = "";
-        this.deleteUser();
-    }
-
-    setUser(user) {
-        this.user = user;
-        this.storage.setItem("user", JSON.stringify(user.getValues()));
-    }
-
-    getUser() {
-        return this.user;
-    }
-
-    getEmail() {
-        if (this.isUser()) {
-            return this.user.userEmail;
+        this.storageKey = "session_key";
+        this.storageNoAuth = "session_no_auth";
+        const lastKey = this.getKey()
+        if (!!lastKey) {
+            this.setKey(lastKey);
         }
-
-        return "";
     }
 
-    getFullName() {
-        if (this.isUser()) {
-            return this.user.userFirstName + " " + this.user.userLastName;
+    setKey (token) {
+        this.storage.setItem(this.storageKey, token);
+        this.storage.removeItem(this.storageNoAuth);
+        Api.defaults.headers.common["X-Auth-Key"] = "default";
+        Api.defaults.headers.common["X-Auth-Secret"] = token;
+    }
+
+    getKey () {
+        return this.storage.getItem(this.storageKey);
+    }
+
+    deleteKey () {
+        this.storage.removeItem(this.storageKey);
+        delete Api.defaults.headers.common["X-Auth-Key"];
+        delete Api.defaults.headers.common["X-Auth-Secret"];
+    }
+
+    async isAuthed () {
+        try {
+            const resp = await Api.get("/ping")
+            return resp.status === 200
+        } catch (e) {
+            return false
         }
-
-        return "";
     }
 
-    getFirstName() {
-        if (this.isUser()) {
-            return this.user.userFirstName;
-        }
-
-        return "";
+    logout () {
+        this.deleteKey();
+        window.location = "/";
     }
 
-    isUser() {
-        return this.user.hasId();
+    setNoAuthMode (value) {
+        this.storage.setItem(this.storageNoAuth, value);
     }
 
-    isAdmin() {
-        return this.user.hasId() && this.user.userRole === "admin";
-    }
-
-    isAnonymous() {
-        return !this.user.hasId();
-    }
-
-    deleteUser() {
-        this.user = null;
-        this.storage.removeItem("user");
-    }
-
-    login(email, password) {
-        this.deleteToken();
-
-        return Api.post("session", { email: email, password: password }).then(
-            (result) => {
-                this.setToken(result.data.token);
-                this.setUser(new User(result.data.user));
-            }
-        );
-    }
-
-    logout() {
-        const token = this.getToken();
-
-        this.deleteToken();
-
-        Api.delete("session/" + token).then(
-            () => {
-                window.location = "/";
-            }
-        );
+    getNoAuthMode () {
+        return this.storage.getItem(this.storageNoAuth);
     }
 }
 
