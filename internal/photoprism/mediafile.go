@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -269,7 +270,8 @@ func (m *MediaFile) EditedFilename() string {
 // RelatedFiles returns files which are related to this file.
 func (m *MediaFile) RelatedFiles() (result MediaFiles, mainFile *MediaFile, err error) {
 	baseFilename := m.DirectoryBasename()
-
+	// escape any meta characters in the file name
+	baseFilename = regexp.QuoteMeta(baseFilename)
 	matches, err := filepath.Glob(baseFilename + "*")
 
 	if err != nil {
