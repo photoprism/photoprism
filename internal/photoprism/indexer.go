@@ -380,6 +380,11 @@ func (i *Indexer) IndexAll() map[string]bool {
 	indexed := make(map[string]bool)
 
 	err := filepath.Walk(i.originalsPath(), func(filename string, fileInfo os.FileInfo, err error) error {
+		defer func() {
+			if err := recover(); err != nil {
+				log.Printf("Could not index file %s due to an unexpected error: %s", filename, err)
+			}
+		}()
 		if err != nil || indexed[filename] {
 			return nil
 		}
