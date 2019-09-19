@@ -16,7 +16,7 @@ func TestMediaFile_DateCreated(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
 		assert.Nil(t, err)
 		date := mediaFile.DateCreated().UTC()
-		assert.Equal(t, "2018-09-10 12:16:13 +0000 UTC", date.String())
+		assert.Equal(t, "2018-09-10 03:16:13 +0000 UTC", date.String())
 		assert.Empty(t, err)
 	})
 	t.Run("canon_eos_6d.dng", func(t *testing.T) {
@@ -30,25 +30,8 @@ func TestMediaFile_DateCreated(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 		assert.Nil(t, err)
 		date := mediaFile.DateCreated().UTC()
-		assert.Equal(t, "2013-11-26 15:53:55 +0000 UTC", date.String())
+		assert.Equal(t, "2013-11-26 13:53:55 +0000 UTC", date.String())
 		assert.Empty(t, err)
-	})
-}
-
-func TestMediaFile_TimeZone(t *testing.T) {
-	t.Run("/beach_wood.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
-		assert.Nil(t, err)
-		assert.Equal(t, "UTC", mediaFile.TimeZone())
-	})
-	t.Run("/iphone_7.heic", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
-		assert.Nil(t, err)
-		assert.Equal(t, "UTC", mediaFile.TimeZone())
 	})
 }
 
@@ -209,7 +192,7 @@ func TestMediaFileCanonicalName(t *testing.T) {
 
 	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
 	assert.Nil(t, err)
-	assert.Equal(t, "20180111_130938_EB4B2A989C20", mediaFile.CanonicalName())
+	assert.Equal(t, "20180111_110938_EB4B2A989C20", mediaFile.CanonicalName())
 }
 
 func TestMediaFileCanonicalNameFromFile(t *testing.T) {

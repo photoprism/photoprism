@@ -1,6 +1,6 @@
 import Abstract from "model/abstract";
 import Api from "common/api";
-import moment from "moment";
+import { DateTime } from "luxon";
 
 class Album extends Abstract {
     getEntityName() {
@@ -44,7 +44,7 @@ class Album extends Abstract {
     }
 
     getDateString() {
-        return moment(this.CreatedAt).format("LLL");
+        return DateTime.fromISO(this.CreatedAt).toLocaleString(DateTime.DATETIME_MED);
     }
 
     toggleLike() {

@@ -171,7 +171,7 @@
                         ></v-checkbox>
                     </td>
                     <td>{{ props.item.PhotoTitle }}</td>
-                    <td>{{ props.item.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}</td>
+                    <td>{{ props.item.TakenAt | luxon:format('dd/MM/yyyy hh:mm:ss') }}</td>
                     <td>{{ props.item.LocCity }}</td>
                     <td>{{ props.item.LocCountry }}</td>
                     <td>{{ props.item.CameraModel }}</td>
@@ -240,7 +240,7 @@
                                             truncate(80) }}</h3>
                                         <div class="caption">
                                             <v-icon size="14">date_range</v-icon>
-                                            {{ photo.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}
+                                            {{ photo.TakenAt | luxon:format('dd/MM/yyyy hh:mm:ss') }}
                                             <br/>
                                             <v-icon size="14">photo_camera</v-icon>
                                             {{ photo.getCamera() }}

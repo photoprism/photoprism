@@ -114,11 +114,10 @@ describe("model/photo", () => {
     });
 
     it("should get date string",  () => {
-        const t = "2012-07-08 14:45:39";
-        const values = {ID: 5, PhotoTitle: "Crazy Cat", TakenAt: t};
+        const values = {ID: 5, PhotoTitle: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
         const photo = new Photo(values);
         const result = photo.getDateString();
-        assert.equal(result, "July 8, 2012 2:45 PM");
+        assert.equal(result, "July 8, 2012, 2:45 PM UTC");
     });
 
     it("should test whether photo has location",  () => {

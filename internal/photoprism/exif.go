@@ -9,29 +9,31 @@ import (
 	"time"
 
 	"github.com/dsoprea/go-exif"
+	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
 // Exif returns information about a single image.
 type Exif struct {
-	UUID        string
-	TakenAt     time.Time
-	TimeZone    string
-	Artist      string
-	CameraMake  string
-	CameraModel string
-	LensMake    string
-	LensModel   string
-	FocalLength int
-	Exposure    string
-	Aperture    float64
-	Iso         int
-	Lat         float64
-	Long        float64
-	Altitude    int
-	Width       int
-	Height      int
-	Orientation int
-	All         map[string]string
+	UUID         string
+	TakenAt      time.Time
+	TakenAtLocal time.Time
+	TimeZone     string
+	Artist       string
+	CameraMake   string
+	CameraModel  string
+	LensMake     string
+	LensModel    string
+	FocalLength  int
+	Exposure     string
+	Aperture     float64
+	Iso          int
+	Lat          float64
+	Long         float64
+	Altitude     int
+	Width        int
+	Height       int
+	Orientation  int
+	All          map[string]string
 }
 
 var im *exif.IfdMapping
@@ -178,14 +180,6 @@ func (m *MediaFile) Exif() (result *Exif, err error) {
 		}
 	}
 
-	if value, ok := tags["DateTimeOriginal"]; ok {
-		m.exifData.TakenAt, _ = time.Parse("2006:01:02 15:04:05", value)
-	}
-
-	if value, ok := tags["TimeZoneOffset"]; ok {
-		m.exifData.TimeZone = value
-	}
-
 	if value, ok := tags["ImageUniqueID"]; ok {
 		m.exifData.UUID = value
 	}
@@ -221,6 +215,34 @@ func (m *MediaFile) Exif() (result *Exif, err error) {
 			m.exifData.Lat = gi.Latitude.Decimal()
 			m.exifData.Long = gi.Longitude.Decimal()
 			m.exifData.Altitude = gi.Altitude
+		}
+	}
+
+	if m.exifData.Lat != 0 && m.exifData.Long != 0 {
+		zones, err := tz.GetZone(tz.Point{
+			Lat: m.exifData.Lat,
+			Lon: m.exifData.Long,
+		})
+
+		if err != nil {
+			m.exifData.TimeZone = "UTC"
+		}
+
+		m.exifData.TimeZone = zones[0]
+	}
+
+	if value, ok := tags["DateTimeOriginal"]; ok {
+		m.exifData.TakenAtLocal, _ = time.Parse("2006:01:02 15:04:05", value)
+
+		loc, err := time.LoadLocation(m.exifData.TimeZone)
+
+		if err != nil {
+			m.exifData.TakenAt = m.exifData.TakenAtLocal
+			log.Warnf("no location for timezone: %s", err.Error())
+		} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", value, loc); err == nil {
+			m.exifData.TakenAt = tl.UTC()
+		} else {
+			log.Warnf("could parse time: %s", err.Error())
 		}
 	}
 

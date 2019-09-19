@@ -22,6 +22,9 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 	assert.IsType(t, &Exif{}, info)
 
 	assert.Equal(t, "Canon EOS 6D", info.CameraModel)
+	assert.Equal(t, "Africa/Johannesburg", info.TimeZone)
+	t.Logf("UTC: %s", info.TakenAt.String())
+	t.Logf("Local: %s", info.TakenAtLocal.String())
 }
 
 func TestMediaFile_Exif_DNG(t *testing.T) {

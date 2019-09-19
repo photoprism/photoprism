@@ -42,6 +42,7 @@ type Photo struct {
 	LocationChanged   bool
 	LocationEstimated bool
 	TakenAt           time.Time `gorm:"index;"`
+	TakenAtLocal      time.Time
 	TakenAtChanged    bool
 	TimeZone          string
 	Labels            []*PhotoLabel

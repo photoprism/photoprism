@@ -134,11 +134,6 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	photo.PhotoPath = filePath
 	photo.PhotoName = fileBase
 
-	if photo.TakenAt.IsZero() && photo.TakenAtChanged == false {
-		photo.TakenAt = mediaFile.DateCreated()
-		photo.TimeZone = mediaFile.TimeZone()
-	}
-
 	if jpeg, err := mediaFile.Jpeg(); err == nil {
 		// Image classification labels
 		labels = i.classifyImage(jpeg)
@@ -147,6 +142,9 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		if exifData, err := jpeg.Exif(); err == nil {
 			photo.PhotoLat = exifData.Lat
 			photo.PhotoLong = exifData.Long
+			photo.TakenAt = exifData.TakenAt
+			photo.TakenAtLocal = exifData.TakenAtLocal
+			photo.TimeZone = exifData.TimeZone
 			photo.PhotoAltitude = exifData.Altitude
 			photo.PhotoArtist = exifData.Artist
 
@@ -165,6 +163,10 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		photo.PhotoAperture = mediaFile.Aperture()
 		photo.PhotoIso = mediaFile.Iso()
 		photo.PhotoExposure = mediaFile.Exposure()
+	}
+
+	if photo.TakenAt.IsZero() && photo.TakenAtChanged == false {
+		photo.TakenAt = mediaFile.DateCreated()
 	}
 
 	if location, err := mediaFile.Location(); err == nil {
@@ -240,9 +242,9 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	if photo.PhotoTitleChanged == false && photo.PhotoTitle == "" {
 		if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 			photo.PhotoTitle = fmt.Sprintf("%s / %s", util.Title(labels[0].Name), mediaFile.DateCreated().Format("2006"))
-		} else {
+		} else if !photo.TakenAtLocal.IsZero() {
 			var daytimeString string
-			hour := mediaFile.DateCreated().Hour()
+			hour := photo.TakenAtLocal.Hour()
 
 			switch {
 			case hour < 17:
@@ -253,7 +255,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 				daytimeString = "Unknown"
 			}
 
-			photo.PhotoTitle = fmt.Sprintf("%s / %s", daytimeString, mediaFile.DateCreated().Format("2006"))
+			photo.PhotoTitle = fmt.Sprintf("%s / %s", daytimeString, photo.TakenAtLocal.Format("2006"))
 		}
 	}
 

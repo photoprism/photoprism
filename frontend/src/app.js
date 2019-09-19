@@ -13,10 +13,11 @@ import Alert from "common/alert";
 import Viewer from "common/viewer";
 import Session from "common/session";
 import Event from "pubsub-js";
-import VueMoment from "vue-moment";
+import VueLuxon from "vue-luxon";
 import VueInfiniteScroll from "vue-infinite-scroll";
 import VueFullscreen from "vue-fullscreen";
 import VueFilters from "vue2-filters";
+import { Settings } from "luxon";
 
 // Initialize helpers
 const session = new Session(window.localStorage);
@@ -48,8 +49,10 @@ Vue.use(Vuetify, {
     },
 });
 
+Settings.defaultLocale = "en";
+
 // Register other VueJS plugins
-Vue.use(VueMoment);
+Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);
 Vue.use(VueFilters);

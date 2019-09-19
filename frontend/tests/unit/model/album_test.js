@@ -48,18 +48,17 @@ describe("model/album", () => {
     });
 
     it("should get thumbnail sizes",  () => {
-        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019"};
+        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", CreatedAt: "2012-07-08T14:45:39Z"};
         const album = new Album(values);
         const result = album.getThumbnailSizes();
         assert.equal(result, "(min-width: 2560px) 3840px, (min-width: 1920px) 2560px, (min-width: 1280px) 1920px, (min-width: 720px) 1280px, 720px");
     });
 
     it("should get date string",  () => {
-        const t = "2012-07-08 14:45:39";
-        const values = {ID: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", CreatedAt: t};
+        const values = {ID: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", CreatedAt: "2012-07-08T14:45:39Z"};
         const album = new Album(values);
         const result = album.getDateString();
-        assert.equal(result, "July 8, 2012 2:45 PM");
+        assert.equal(result, "Jul 8, 2012, 2:45 PM");
     });
 
     it("should get model name",  () => {
