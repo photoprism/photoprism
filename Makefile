@@ -25,6 +25,8 @@ start:
 	go run cmd/photoprism/photoprism.go start -d
 stop:
 	go run cmd/photoprism/photoprism.go stop
+terminal:
+	docker-compose exec photoprism bash
 migrate:
 	go run cmd/photoprism/photoprism.go migrate
 install-bin:
