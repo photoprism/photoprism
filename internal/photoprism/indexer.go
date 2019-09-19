@@ -165,8 +165,9 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		photo.PhotoExposure = mediaFile.Exposure()
 	}
 
-	if photo.TakenAt.IsZero() && photo.TakenAtChanged == false {
+	if photo.TakenAt.IsZero() || photo.TakenAtLocal.IsZero() {
 		photo.TakenAt = mediaFile.DateCreated()
+		photo.TakenAtLocal = photo.TakenAt
 	}
 
 	if location, err := mediaFile.Location(); err == nil {
