@@ -19,7 +19,7 @@
                 </v-btn>
             </td>
             <td @click="openPhoto(props.index)" class="p-pointer">{{ props.item.PhotoTitle }}</td>
-            <td>{{ props.item.TakenAt | moment('DD/MM/YYYY hh:mm:ss') }}</td>
+            <td>{{ props.item.TakenAt | luxon:format('dd/MM/yyyy hh:mm:ss') }}</td>
             <td @click="openLocation(props.index)" class="p-pointer">{{ props.item.LocCountry }}</td>
             <td>{{ props.item.CameraMake }} {{ props.item.CameraModel }}</td>
             <td><v-btn icon small flat :ripple="false"

@@ -91,22 +91,6 @@ func (m *MediaFile) HasTimeAndPlace() bool {
 	return result
 }
 
-func (m *MediaFile) TimeZone() (result string) {
-	if m.timeZone != "" {
-		return m.timeZone
-	}
-
-	exif, err := m.Exif()
-
-	if err != nil || exif.TimeZone == "" {
-		result = "UTC"
-	} else {
-		result = exif.TimeZone
-	}
-
-	return result
-}
-
 // CameraModel returns the camera model with which the media file was created.
 func (m *MediaFile) CameraModel() string {
 	info, err := m.Exif()

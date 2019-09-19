@@ -1,7 +1,7 @@
 import Abstract from "model/abstract";
 import Api from "common/api";
 import truncate from "truncate";
-import moment from "moment";
+import { DateTime } from "luxon";
 
 class Photo extends Abstract {
     getEntityName() {
@@ -91,7 +91,13 @@ class Photo extends Abstract {
     }
 
     getDateString() {
-        return moment(this.TakenAt).format("LLL");
+        if(this.TimeZone) {
+            return DateTime.fromISO(this.TakenAt).setZone(this.TimeZone).toLocaleString(DateTime.DATETIME_FULL);
+        } else if(this.TakenAt) {
+            return DateTime.fromISO(this.TakenAt).toLocaleString(DateTime.DATE_HUGE);
+        } else {
+            return "Unknown";
+        }
     }
 
     hasLocation() {

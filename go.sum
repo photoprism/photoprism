@@ -64,6 +64,8 @@ github.com/dsoprea/go-exif v0.0.0-20190527162249-17eaca42337c h1:XIvtrgkakwGk0Wz
 github.com/dsoprea/go-exif v0.0.0-20190527162249-17eaca42337c/go.mod h1:DmMpU91/Ax6BAwoRkjgRCr2rmgEgS4tsmatfV7M+U+c=
 github.com/dsoprea/go-exif v0.0.0-20190624162249-12b8993a44a567ccf02080c8e9cd0885c92a8e7a h1:ZBQj1uonO+8tjOSroKkZofHGrSAG0l+hMIOiDw5Zxiw=
 github.com/dsoprea/go-exif v0.0.0-20190624162249-12b8993a44a567ccf02080c8e9cd0885c92a8e7a/go.mod h1:DmMpU91/Ax6BAwoRkjgRCr2rmgEgS4tsmatfV7M+U+c=
+github.com/dsoprea/go-exif v0.0.0-20190901173045-3ce78807c90f h1:vqfYiZ+xF0xJvl9SZ1kovmMgKjaGZIz/Hn8JDQdyd9A=
+github.com/dsoprea/go-exif v0.0.0-20190901173045-3ce78807c90f/go.mod h1:DmMpU91/Ax6BAwoRkjgRCr2rmgEgS4tsmatfV7M+U+c=
 github.com/dsoprea/go-logging v0.0.0-20190409182557-13b4fff49234 h1:WPgjL7Z/Cn2a0kEVtwCqh8BqYjmY8RPGvor/jQZVmzk=
 github.com/dsoprea/go-logging v0.0.0-20190409182557-13b4fff49234/go.mod h1:Nm/x2ZUNRW6Fe5C3LxdY1PyZY5wmDv/s5dkPJ/VB3iA=
 github.com/dustin/go-humanize v0.0.0-20180421182945-02af3965c54e/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
@@ -168,6 +170,8 @@ github.com/lib/pq v1.1.0 h1:/5u4a+KGJptBRqGzPvYQL9p0d/tPR4S31+Tnzj9lEO4=
 github.com/lib/pq v1.1.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
 github.com/lucasb-eyer/go-colorful v1.0.2 h1:mCMFu6PgSozg9tDNMMK3g18oJBX7oYGrC09mS6CXfO4=
 github.com/lucasb-eyer/go-colorful v1.0.2/go.mod h1:0MS4r+7BZKSJ5mw4/S5MPN+qHFF1fYclkSPilDOKW0s=
+github.com/machinebox/progress v0.2.0/go.mod h1:hl4FywxSjfmkmCrersGhmJH7KwuKl+Ueq9BXkOny+iE=
+github.com/matryer/is v1.2.0/go.mod h1:2fLPjFQM9rhQ15aVEtbuwhJinnOqrmgXPNdZsdwlWXA=
 github.com/mattn/go-isatty v0.0.4 h1:bnP0vzxcAdeI1zdubAl5PjU6zsERjGZb7raWodagDYs=
 github.com/mattn/go-isatty v0.0.4/go.mod h1:M+lRXTBqGeGNdLjl/ufCoiOlB5xdOkqRJdNxMWT7Zi4=
 github.com/mattn/go-sqlite3 v1.10.0 h1:jbhqpg7tQe4SupckyijYiy0mJJ/pRyHvXf7JdWK860o=
@@ -254,6 +258,8 @@ github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be/go.mod h1:MIDF
 github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
 github.com/remyoudompheng/bigfft v0.0.0-20170806203942-52369c62f446 h1:/NRJ5vAYoqz+7sG51ubIDHXeWO8DlTSrToPu6q11ziA=
 github.com/remyoudompheng/bigfft v0.0.0-20170806203942-52369c62f446/go.mod h1:uYEyJGbgTkfkS4+E/PavXkNJcbFIpEtjt2B0KDQ5+9M=
+github.com/remyoudompheng/bigfft v0.0.0-20190512091148-babf20351dd7 h1:FUL3b97ZY2EPqg2NbXKuMHs5pXJB9hjj1fDHnF2vl28=
+github.com/remyoudompheng/bigfft v0.0.0-20190512091148-babf20351dd7/go.mod h1:qqbHyh8v60DhA7CoWK5oRCqLrMHRGoxYCSS9EjAz6Eo=
 github.com/remyoudompheng/bigfft v0.0.0-20190806203942-babf20351dd7e3ac320adedbbe5eb311aec8763c h1:eED6LswgZ3TfAl9fb+L2TfdSlXpYdg21iWZMdHuoSks=
 github.com/remyoudompheng/bigfft v0.0.0-20190806203942-babf20351dd7e3ac320adedbbe5eb311aec8763c/go.mod h1:qqbHyh8v60DhA7CoWK5oRCqLrMHRGoxYCSS9EjAz6Eo=
 github.com/satori/go.uuid v1.2.0 h1:0uYX9dsZ2yD7q2RtLRtPSdGDWzjeM3TbMJP9utgA0ww=
@@ -276,6 +282,8 @@ github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0 h1:TivCn/peBQ7UY8ooIcPgZFpTNSz0Q2U6UrFlUfqbe0Q=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
+github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
+github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/tensorflow/tensorflow v1.13.1 h1:ygn0+ztXusm6RGVP4Od5IF+8h5sAgD5qbeTvqYyMnjo=
 github.com/tensorflow/tensorflow v1.13.1/go.mod h1:itOSERT4trABok4UOoG+X4BoKds9F3rIsySdn+Lvu90=
 github.com/tensorflow/tensorflow v1.14.0 h1:g0W2+f/RybcvmrTjPLTwXkfr/BsDGUd8FKT6ZzojOMo=
@@ -402,6 +410,8 @@ gopkg.in/natefinch/lumberjack.v2 v2.0.0 h1:1Lc07Kr7qY4U2YPouBjpCLxpiyxIVoxqXgkXL
 gopkg.in/natefinch/lumberjack.v2 v2.0.0/go.mod h1:l0ndWWf7gzL7RNwBG7wST/UCcT4T24xpD6X8LsfU/+k=
 gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 h1:uRGJdciOHaEIrze2W8Q3AKkepLTh2hOroT7a+7czfdQ=
 gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7/go.mod h1:dt/ZhP58zS4L8KSrWDmTeBkI65Dw0HsyUHuEVlX15mw=
+gopkg.in/ugjka/go-tz.v2 v2.0.8 h1:EmQ1tY6aa9upe1EDqyPdyHgM9STimr2fw7+b/CuMQ94=
+gopkg.in/ugjka/go-tz.v2 v2.0.8/go.mod h1:l93M5EnjrSTTaABtGKIqNcl+z08IYbVDS7v1VA8+PgU=
 gopkg.in/yaml.v2 v2.2.1/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 gopkg.in/yaml.v2 v2.2.2 h1:ZCJp+EgiOT7lHqUV2J862kp8Qj64Jo6az82+3Td9dZw=
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
