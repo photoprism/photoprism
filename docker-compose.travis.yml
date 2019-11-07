@@ -5,7 +5,7 @@ services:
     build: .
     image: photoprism/photoprism:develop
     depends_on:
-      - photoprism-mysql
+      - photoprism-db
     command: tail -f /dev/null
     volumes:
       - "~/.cache/npm:/root/.cache/npm"
@@ -34,8 +34,8 @@ services:
       CI_BUILD_ID:
       CI_JOB_ID:
 
-  photoprism-mysql:
-    image: mysql:8.0.16
+  photoprism-db:
+    image: mariadb:10.4.8
     command: mysqld --port=4001 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
     expose:
       - "4001"

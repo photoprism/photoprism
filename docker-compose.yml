@@ -5,7 +5,7 @@ services:
     build: .
     image: photoprism/photoprism:develop
     depends_on:
-      - photoprism-mysql
+      - photoprism-db
     ports:
       - "2342:2342" # Web Server (PhotoPrism)
       - "4000:4000" # Database (MySQL compatible)
@@ -31,8 +31,8 @@ services:
       PHOTOPRISM_SQL_PASSWORD: "photoprism"
       TF_CPP_MIN_LOG_LEVEL: 0
 
-  photoprism-mysql:
-    image: mysql:8.0.16
+  photoprism-db:
+    image: mariadb:10.4.8
     command: mysqld --port=4001 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
     expose:
       - "4001"

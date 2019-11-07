@@ -40,7 +40,7 @@ func NewTestParams() *Params {
 		ImportPath:     testDataPath + "/import",
 		ExportPath:     testDataPath + "/export",
 		DatabaseDriver: "mysql",
-		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-mysql:4001)/photoprism?parseTime=true",
+		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
 	}
 
 	return c
@@ -59,7 +59,7 @@ func NewTestParamsError() *Params {
 		ImportPath:     testDataPath + "/import",
 		ExportPath:     testDataPath + "/export",
 		DatabaseDriver: "mysql",
-		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-mysql:4001)/photoprism?parseTime=true",
+		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
 	}
 
 	return c
