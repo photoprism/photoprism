@@ -27,7 +27,7 @@ type Photo struct {
 	PhotoAltitude     int
 	PhotoFocalLength  int
 	PhotoIso          int
-	PhotoAperture     float64
+	PhotoFNumber      float64
 	PhotoExposure     string
 	PhotoViews        uint
 	Camera            *Camera

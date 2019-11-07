@@ -156,11 +156,11 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			}
 		}
 
-		// Set Camera, Lens, Focal Length and Aperture
+		// Set Camera, Lens, Focal Length and F Number
 		photo.Camera = models.NewCamera(mediaFile.CameraModel(), mediaFile.CameraMake()).FirstOrCreate(i.db)
 		photo.Lens = models.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
 		photo.PhotoFocalLength = mediaFile.FocalLength()
-		photo.PhotoAperture = mediaFile.Aperture()
+		photo.PhotoFNumber = mediaFile.FNumber()
 		photo.PhotoIso = mediaFile.Iso()
 		photo.PhotoExposure = mediaFile.Exposure()
 	}

@@ -171,11 +171,11 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 	}
 
 	if form.Fmin > 0 {
-		q = q.Where("photos.photo_aperture >= ?", form.Fmin)
+		q = q.Where("photos.photo_f_number >= ?", form.Fmin)
 	}
 
 	if form.Fmax > 0 {
-		q = q.Where("photos.photo_aperture <= ?", form.Fmax)
+		q = q.Where("photos.photo_f_number <= ?", form.Fmax)
 	}
 
 	if form.Dist == 0 {

@@ -20,12 +20,17 @@ type PhotoSearchResult struct {
 	PhotoKeywords    string
 	PhotoColors      string
 	PhotoColor       string
-	PhotoLat         float64
-	PhotoLong        float64
 	PhotoFavorite    bool
 	PhotoPrivate     bool
 	PhotoSensitive   bool
 	PhotoStory       bool
+	PhotoLat         float64
+	PhotoLong        float64
+	PhotoAltitude    int
+	PhotoFocalLength int
+	PhotoIso         int
+	PhotoFNumber     float64
+	PhotoExposure    string
 
 	// Camera
 	CameraID    uint

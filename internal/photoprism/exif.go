@@ -28,6 +28,7 @@ type Exif struct {
 	FocalLength  int
 	Exposure     string
 	Aperture     float64
+	FNumber      float64
 	Iso          int
 	Lat          float64
 	Long         float64
@@ -148,6 +149,17 @@ func (m *MediaFile) Exif() (result *Exif, err error) {
 
 	if value, ok := tags["ExposureTime"]; ok {
 		m.exifData.Exposure = value
+	}
+
+	if value, ok := tags["FNumber"]; ok {
+		values := strings.Split(value, "/")
+
+		if len(values) == 2 && values[1] != "0" && values[1] != "" {
+			number, _ := strconv.ParseFloat(values[0], 64)
+			denom, _ := strconv.ParseFloat(values[1], 64)
+
+			m.exifData.FNumber = math.Round((number/denom)*1000) / 1000
+		}
 	}
 
 	if value, ok := tags["ApertureValue"]; ok {
