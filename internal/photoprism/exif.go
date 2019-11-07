@@ -21,8 +21,10 @@ type Exif struct {
 	Artist       string
 	CameraMake   string
 	CameraModel  string
+	Description  string
 	LensMake     string
 	LensModel    string
+	Flash        bool
 	FocalLength  int
 	Exposure     string
 	Aperture     float64
@@ -244,6 +246,16 @@ func (m *MediaFile) Exif() (result *Exif, err error) {
 		} else {
 			log.Warnf("could parse time: %s", err.Error())
 		}
+	}
+
+	if value, ok := tags["Flash"]; ok {
+		if i, err := strconv.Atoi(value); err == nil && i&1 == 1 {
+			m.exifData.Flash = true
+		}
+	}
+
+	if value, ok := tags["ImageDescription"]; ok {
+		m.exifData.Description = strings.Replace(value, "\"", "", -1)
 	}
 
 	m.exifData.All = tags
