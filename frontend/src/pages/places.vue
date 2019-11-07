@@ -175,7 +175,7 @@
                 }
             },
             updateQuery() {
-                this.$router.replace({query: this.query});
+                this.$router.replace({query: this.query}).catch(err => {});
 
                 if(this.query.lat && this.query.long) {
                     this.position = L.latLng(this.query.lat, this.query.long);
@@ -194,7 +194,7 @@
 
                 this.updateQuery();
 
-                this.$router.replace({query: this.query});
+                this.$router.replace({query: this.query}).catch(err => {});
 
                 const params = {
                     count: this.pageSize,

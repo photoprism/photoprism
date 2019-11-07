@@ -199,7 +199,7 @@ const config = {
 // No sourcemap for production
 if (isDev) {
     const devToolPlugin = new webpack.SourceMapDevToolPlugin({
-        filename: "[name].map",
+        filename: "[file].map",
     });
 
     config.plugins.push(devToolPlugin);

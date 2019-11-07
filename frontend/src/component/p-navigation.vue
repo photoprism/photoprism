@@ -1,6 +1,7 @@
 <template>
     <div id="p-navigation">
-        <v-toolbar dark scroll-off-screen color="grey darken-3" class="hidden-lg-and-up p-navigation-small" @click.stop="showNavigation()">
+        <v-toolbar dark scroll-off-screen color="grey darken-3" class="hidden-lg-and-up p-navigation-small"
+                   @click.stop="showNavigation()">
             <v-toolbar-side-icon class="p-navigation-show"></v-toolbar-side-icon>
 
             <v-toolbar-title class="p-navigation-title">{{ $router.currentRoute.meta.area }}</v-toolbar-title>
@@ -58,13 +59,13 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile :to="{ name: 'Photos', query: { q: 'mono:true' }}" :exact="true" @click="">
+                    <v-list-tile :to="{name: 'photos', query: { q: 'mono:true' }}" :exact="true" @click="">
                         <v-list-tile-content>
                             <v-list-tile-title>Monochrome</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile :to="{ name: 'Photos', query: { q: 'chroma:50' }}" :exact="true" @click="">
+                    <v-list-tile :to="{name: 'photos', query: { q: 'chroma:50' }}" :exact="true" @click="">
                         <v-list-tile-content>
                             <v-list-tile-title>Vibrant</v-list-tile-title>
                         </v-list-tile-content>

@@ -125,7 +125,7 @@
             },
             openAlbum(index) {
                 const album = this.results[index];
-                this.$router.push({name: 'Photos', query: {q: "album:" + album.AlbumSlug}});
+                this.$router.push({name: "photos", query: {q: "album:" + album.AlbumSlug}});
             },
             loadMore() {
                 if (this.scrollDisabled) return;

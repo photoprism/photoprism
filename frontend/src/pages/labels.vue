@@ -86,7 +86,7 @@
             staticFilter: Object
         },
         watch: {
-            '$route' () {
+            '$route'() {
                 const query = this.$route.query;
 
                 this.filter.q = query['q'];
@@ -121,7 +121,7 @@
             },
             openLabel(index) {
                 const label = this.results[index];
-                this.$router.push({name: 'Photos', query: {q: "label:" + label.LabelSlug}});
+                this.$router.push({name: "photos", query: {q: "label:" + label.LabelSlug}});
             },
             loadMore() {
                 if (this.scrollDisabled) return;

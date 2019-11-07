@@ -1,17 +1,33 @@
-import Api from "common/api";
-import User from "model/user";
+import Api from "./api";
+import User from "../model/user";
 
-class Session {
+export default class Session {
     /**
      * @param {Storage} storage
      */
     constructor(storage) {
-        this.storage = storage;
+        if(storage.getItem("session_storage") === "true") {
+            this.storage = window.sessionStorage;
+        } else {
+            this.storage = storage;
+        }
+
         this.session_token = this.storage.getItem("session_token");
 
         const userJson = this.storage.getItem("user");
 
         this.user = userJson !== "undefined" ? new User(JSON.parse(userJson)) : null;
+    }
+
+    useSessionStorage() {
+        this.deleteToken();
+        this.storage.setItem("session_storage", "true");
+        this.storage = window.sessionStorage;
+    }
+
+    useLocalStorage() {
+        this.storage.setItem("session_storage", "false");
+        this.storage = window.localStorage;
     }
 
     setToken(token) {
@@ -48,14 +64,6 @@ class Session {
         return "";
     }
 
-    getFullName() {
-        if (this.isUser()) {
-            return this.user.userFirstName + " " + this.user.userLastName;
-        }
-
-        return "";
-    }
-
     getFirstName() {
         if (this.isUser()) {
             return this.user.userFirstName;
@@ -64,16 +72,24 @@ class Session {
         return "";
     }
 
+    getFullName() {
+        if (this.isUser()) {
+            return this.user.userFirstName + " " + this.user.userLastName;
+        }
+
+        return "";
+    }
+
     isUser() {
-        return this.user.hasId();
+        return this.user && this.user.hasId();
     }
 
     isAdmin() {
-        return this.user.hasId() && this.user.userRole === "admin";
+        return this.user && this.user.hasId() && this.user.userRole === "admin";
     }
 
     isAnonymous() {
-        return !this.user.hasId();
+        return !this.user || !this.user.hasId();
     }
 
     deleteUser() {
@@ -104,5 +120,3 @@ class Session {
         );
     }
 }
-
-export default Session;
