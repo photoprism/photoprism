@@ -4,7 +4,7 @@ import Api from "common/api";
 
 class User extends Abstract {
     getEntityName() {
-        return this.userFirstName + " " + this.userLastName;
+        return this.FirstName + " " + this.LastName;
     }
 
     getId() {

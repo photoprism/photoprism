@@ -6,6 +6,8 @@ export default class Session {
      * @param {Storage} storage
      */
     constructor(storage) {
+        this.auth = false;
+
         if(storage.getItem("session_storage") === "true") {
             this.storage = window.sessionStorage;
         } else {
@@ -17,6 +19,10 @@ export default class Session {
         const userJson = this.storage.getItem("user");
 
         this.user = userJson !== "undefined" ? new User(JSON.parse(userJson)) : null;
+
+        if(this.isUser()) {
+            this.auth = true;
+        }
     }
 
     useSessionStorage() {
@@ -50,6 +56,7 @@ export default class Session {
     setUser(user) {
         this.user = user;
         this.storage.setItem("user", JSON.stringify(user.getValues()));
+        this.auth = true;
     }
 
     getUser() {
@@ -58,7 +65,7 @@ export default class Session {
 
     getEmail() {
         if (this.isUser()) {
-            return this.user.userEmail;
+            return this.user.Email;
         }
 
         return "";
@@ -66,7 +73,7 @@ export default class Session {
 
     getFirstName() {
         if (this.isUser()) {
-            return this.user.userFirstName;
+            return this.user.FirstName;
         }
 
         return "";
@@ -74,7 +81,7 @@ export default class Session {
 
     getFullName() {
         if (this.isUser()) {
-            return this.user.userFirstName + " " + this.user.userLastName;
+            return this.user.FirstName + " " + this.user.LastName;
         }
 
         return "";
@@ -85,7 +92,7 @@ export default class Session {
     }
 
     isAdmin() {
-        return this.user && this.user.hasId() && this.user.userRole === "admin";
+        return this.user && this.user.hasId() && this.user.Role === "admin";
     }
 
     isAnonymous() {
@@ -93,6 +100,7 @@ export default class Session {
     }
 
     deleteUser() {
+        this.auth = false;
         this.user = null;
         this.storage.removeItem("user");
     }

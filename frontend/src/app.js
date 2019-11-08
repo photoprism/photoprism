@@ -68,6 +68,30 @@ const router = new Router({
     saveScrollPosition: true,
 });
 
+router.beforeEach((to, from, next) => {
+    if(to.matched.some(record => record.meta.admin)) {
+        if (session.isAdmin()) {
+            next();
+        } else {
+            next({
+                name: "login",
+                params: { nextUrl: to.fullPath },
+            });
+        }
+    } else if(to.matched.some(record => record.meta.auth)) {
+        if (session.isUser()) {
+            next();
+        } else {
+            next({
+                name: "login",
+                params: { nextUrl: to.fullPath },
+            });
+        }
+    } else {
+        next();
+    }
+});
+
 // Run app
 /* eslint-disable no-unused-vars */
 const app = new Vue({

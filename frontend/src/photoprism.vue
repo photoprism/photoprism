@@ -22,14 +22,6 @@
     export default {
         name: 'photoprism',
         computed: {},
-        methods: {
-            login() {
-                // this.$refs.loginDialog.open();
-            },
-
-            logout() {
-                this.$session.logout();
-            },
-        },
+        methods: {},
     };
 </script>

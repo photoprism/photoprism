@@ -9,7 +9,6 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/util"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
 )

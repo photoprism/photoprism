@@ -17,10 +17,12 @@ import (
 	log "github.com/sirupsen/logrus"
 	tensorflow "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/urfave/cli"
+	gc "github.com/patrickmn/go-cache"
 )
 
 type Config struct {
 	db     *gorm.DB
+	cache *gc.Cache
 	config *Params
 }
 
@@ -204,6 +206,15 @@ func (c *Config) Debug() bool {
 // ReadOnly returns true if photo directories are write protected.
 func (c *Config) ReadOnly() bool {
 	return c.config.ReadOnly
+}
+
+// AdminPassword returns the admin password.
+func (c *Config) AdminPassword() string {
+	if c.config.AdminPassword == "" {
+		return "photoprism"
+	}
+
+	return c.config.AdminPassword
 }
 
 // LogLevel returns the logrus log level.
@@ -429,6 +440,15 @@ func (c *Config) HttpStaticPath() string {
 // HttpStaticBuildPath returns the static build path (//server/static/build/*).
 func (c *Config) HttpStaticBuildPath() string {
 	return c.HttpStaticPath() + "/build"
+}
+
+// Cache returns the in-memory cache.
+func (c *Config) Cache() *gc.Cache {
+	if c.cache == nil {
+		c.cache = gc.New(336*time.Hour, 30*time.Minute)
+	}
+
+	return c.cache
 }
 
 // Db returns the db connection.

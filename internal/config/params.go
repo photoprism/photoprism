@@ -33,6 +33,7 @@ type Params struct {
 	Copyright          string
 	Debug              bool   `yaml:"debug" flag:"debug"`
 	ReadOnly           bool   `yaml:"read-only" flag:"read-only"`
+	AdminPassword      string `yaml:"admin-password" flag:"admin-password"`
 	LogLevel           string `yaml:"log-level" flag:"log-level"`
 	ConfigFile         string
 	ConfigPath         string `yaml:"config-path" flag:"config-path"`

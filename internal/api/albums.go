@@ -13,8 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/forms"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/util"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // GET /api/v1/albums

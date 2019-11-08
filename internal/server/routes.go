@@ -18,6 +18,9 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// JSON-REST API Version 1
 	v1 := router.Group("/api/v1")
 	{
+		api.CreateSession(v1, conf)
+		api.DeleteSession(v1, conf)
+
 		api.GetThumbnail(v1, conf)
 		api.GetDownload(v1, conf)
 

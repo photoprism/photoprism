@@ -146,7 +146,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/library" @click="" class="p-navigation-library">
+                <v-list-tile to="/library" @click="" class="p-navigation-library" v-if="session.auth">
                     <v-list-tile-action>
                         <v-icon>camera_roll</v-icon>
                     </v-list-tile-action>
@@ -156,13 +156,33 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/settings" @click="" class="p-navigation-settings">
+                <v-list-tile to="/settings" @click="" class="p-navigation-settings" v-if="session.auth">
                     <v-list-tile-action>
                         <v-icon>settings</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
                         <v-list-tile-title>Settings</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
+                <v-list-tile @click="logout" class="p-navigation-logout" v-if="session.auth">
+                    <v-list-tile-action>
+                        <v-icon>power_settings_new</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>Logout</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
+                <v-list-tile to="/login" @click=""  class="p-navigation-login" v-if="!session.auth">
+                    <v-list-tile-action>
+                        <v-icon>lock</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>Login</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
             </v-list>
@@ -179,13 +199,17 @@
             return {
                 drawer: null,
                 mini: mini,
+                session: this.$session,
             };
         },
         methods: {
             showNavigation: function () {
                 this.drawer = true;
                 this.mini = false;
-            }
+            },
+            logout() {
+                this.$session.logout();
+            },
         }
     };
 </script>
