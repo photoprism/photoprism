@@ -20,8 +20,4 @@ test('Navigate', async t => {
     await t
         .click('a[href="/labels"]')
         .expect(Selector('div.p-page-labels').exists, {timeout: 5000}).ok();
-    await page.openNav();
-    await t
-        .click('a[href="/login"]')
-        .expect(Selector('div.p-page-login').exists, {timeout: 5000}).ok();
 });

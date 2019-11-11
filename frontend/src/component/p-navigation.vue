@@ -146,7 +146,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/library" @click="" class="p-navigation-library" v-if="session.auth">
+                <v-list-tile to="/library" @click="" class="p-navigation-library" v-if="session.auth || isPublic">
                     <v-list-tile-action>
                         <v-icon>camera_roll</v-icon>
                     </v-list-tile-action>
@@ -156,7 +156,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/settings" @click="" class="p-navigation-settings" v-if="session.auth">
+                <v-list-tile to="/settings" @click="" class="p-navigation-settings" v-if="session.auth || isPublic">
                     <v-list-tile-action>
                         <v-icon>settings</v-icon>
                     </v-list-tile-action>
@@ -166,7 +166,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile @click="logout" class="p-navigation-logout" v-if="session.auth">
+                <v-list-tile @click="logout" class="p-navigation-logout" v-if="!isPublic && session.auth">
                     <v-list-tile-action>
                         <v-icon>power_settings_new</v-icon>
                     </v-list-tile-action>
@@ -176,7 +176,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/login" @click=""  class="p-navigation-login" v-if="!session.auth">
+                <v-list-tile to="/login" @click=""  class="p-navigation-login" v-if="!isPublic && !session.auth">
                     <v-list-tile-action>
                         <v-icon>lock</v-icon>
                     </v-list-tile-action>
@@ -200,6 +200,7 @@
                 drawer: null,
                 mini: mini,
                 session: this.$session,
+                isPublic: this.$config.getValue("public"),
             };
         },
         methods: {

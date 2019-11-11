@@ -9,4 +9,4 @@ RUN wget -qO- https://dl.photoprism.org/fixtures/demo.tar.gz | tar xvz -C Pictur
 RUN photoprism import
 
 # Start PhotoPrism server
-CMD photoprism start
+CMD photoprism --public start

@@ -23,6 +23,7 @@ import { Settings } from "luxon";
 const config = new Config(window.localStorage, window.appConfig);
 const viewer = new Viewer();
 const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
+const isPublic = config.getValue("public");
 
 // Assign helpers to VueJS prototype
 Vue.prototype.$event = Event;
@@ -69,7 +70,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     if(to.matched.some(record => record.meta.admin)) {
-        if (Session.isAdmin()) {
+        if (isPublic || Session.isAdmin()) {
             next();
         } else {
             next({
@@ -78,7 +79,7 @@ router.beforeEach((to, from, next) => {
             });
         }
     } else if(to.matched.some(record => record.meta.auth)) {
-        if (Session.isUser()) {
+        if (isPublic || Session.isUser()) {
             next();
         } else {
             next({
