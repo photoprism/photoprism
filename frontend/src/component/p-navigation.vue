@@ -126,7 +126,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/events" @click="" class="p-navigation-events">
+                <!-- v-list-tile to="/events" @click="" class="p-navigation-events">
                     <v-list-tile-action>
                         <v-icon>date_range</v-icon>
                     </v-list-tile-action>
@@ -134,9 +134,9 @@
                     <v-list-tile-content>
                         <v-list-tile-title>Events</v-list-tile-title>
                     </v-list-tile-content>
-                </v-list-tile>
+                </v-list-tile -->
 
-                <v-list-tile to="/people" @click="" class="p-navigation-people">
+                <!-- v-list-tile to="/people" @click="" class="p-navigation-people">
                     <v-list-tile-action>
                         <v-icon>people</v-icon>
                     </v-list-tile-action>
@@ -144,7 +144,7 @@
                     <v-list-tile-content>
                         <v-list-tile-title>People</v-list-tile-title>
                     </v-list-tile-content>
-                </v-list-tile>
+                </v-list-tile -->
 
                 <v-list-tile to="/library" @click="" class="p-navigation-library" v-if="session.auth || isPublic">
                     <v-list-tile-action>
