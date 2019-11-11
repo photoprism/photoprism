@@ -5,9 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/config"
-
 	"github.com/gin-gonic/gin"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
@@ -26,6 +25,11 @@ func initIndexer(conf *config.Config) {
 // POST /api/v1/index
 func Index(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/index", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		start := time.Now()
 		path := conf.OriginalsPath()
 

@@ -20,7 +20,6 @@ Api.interceptors.request.use(function (config) {
 
 Api.interceptors.response.use(function (response) {
     Event.publish("ajax.end", response);
-
     return response;
 }, function (error) {
     if(console && console.log) {
@@ -38,10 +37,6 @@ Api.interceptors.response.use(function (response) {
 
     Event.publish("ajax.end");
     Event.publish("alert.error", errorMessage);
-
-    if(code === 401) {
-        window.location = "/";
-    }
 
     return Promise.reject(error);
 });

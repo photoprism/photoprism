@@ -55,3 +55,17 @@ func DeleteSession(router *gin.RouterGroup, conf *config.Config) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok", "token": token})
 	})
 }
+
+// Returns true, if user doesn't have a valid session token
+func Unauthorized(c *gin.Context, conf *config.Config) bool {
+	if conf.Public() {
+		return false
+	}
+
+	token := c.GetHeader("X-Session-Token")
+	gc := conf.Cache()
+
+	_, found := gc.Get(token)
+
+	return found
+}

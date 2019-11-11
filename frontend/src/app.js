@@ -11,7 +11,7 @@ import Dialogs from "dialog/dialogs";
 import Maps from "maps/components";
 import Alert from "common/alert";
 import Viewer from "common/viewer";
-import Session from "common/session";
+import Session from "session";
 import Event from "pubsub-js";
 import VueLuxon from "vue-luxon";
 import VueInfiniteScroll from "vue-infinite-scroll";
@@ -20,7 +20,6 @@ import VueFilters from "vue2-filters";
 import { Settings } from "luxon";
 
 // Initialize helpers
-const session = new Session(window.localStorage);
 const config = new Config(window.localStorage, window.appConfig);
 const viewer = new Viewer();
 const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
@@ -29,7 +28,7 @@ const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
 Vue.prototype.$event = Event;
 Vue.prototype.$alert = Alert;
 Vue.prototype.$viewer = viewer;
-Vue.prototype.$session = session;
+Vue.prototype.$session = Session;
 Vue.prototype.$api = Api;
 Vue.prototype.$config = config;
 Vue.prototype.$clipboard = clipboard;
@@ -70,7 +69,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     if(to.matched.some(record => record.meta.admin)) {
-        if (session.isAdmin()) {
+        if (Session.isAdmin()) {
             next();
         } else {
             next({
@@ -79,7 +78,7 @@ router.beforeEach((to, from, next) => {
             });
         }
     } else if(to.matched.some(record => record.meta.auth)) {
-        if (session.isUser()) {
+        if (Session.isUser()) {
             next();
         } else {
             next({

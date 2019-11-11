@@ -20,6 +20,11 @@ type BatchParams struct {
 // POST /api/v1/batch/photos/delete
 func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/batch/photos/delete", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		start := time.Now()
 
 		var params BatchParams
@@ -51,6 +56,11 @@ func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
 // POST /api/v1/batch/photos/private
 func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/batch/photos/private", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		start := time.Now()
 
 		var params BatchParams
@@ -81,6 +91,11 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 // POST /api/v1/batch/photos/story
 func BatchPhotosStory(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/batch/photos/story", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		start := time.Now()
 
 		var params BatchParams

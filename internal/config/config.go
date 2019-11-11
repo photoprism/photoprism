@@ -203,6 +203,11 @@ func (c *Config) Debug() bool {
 	return c.config.Debug
 }
 
+// Public returns true if app requires no authentication.
+func (c *Config) Public() bool {
+	return c.config.Public
+}
+
 // ReadOnly returns true if photo directories are write protected.
 func (c *Config) ReadOnly() bool {
 	return c.config.ReadOnly
@@ -521,6 +526,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		"copyright":  c.Copyright(),
 		"debug":      c.Debug(),
 		"readonly":   c.ReadOnly(),
+		"public":     c.Public(),
 		"cameras":    cameras,
 		"countries":  countries,
 		"thumbnails": Thumbnails,
