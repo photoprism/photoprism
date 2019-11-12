@@ -1,29 +1,38 @@
 <template>
-    <div>
-        <v-toolbar flat color="blue-grey lighten-4">
-            <v-toolbar-title>Not implemented yet</v-toolbar-title>
-
-            <v-spacer></v-spacer>
-        </v-toolbar>
-
-        <v-container>
-            <p>
-                Issues labeled <a href="https://github.com/photoprism/photoprism/labels/help%20wanted">help wanted</a> /
-                <a href="https://github.com/photoprism/photoprism/labels/easy">easy</a> can be good (first)
-                contributions.
-                Our <a href="https://github.com/photoprism/photoprism/wiki">Developer Guide</a> contains all information
-                necessary to get you started.
-            </p>
-        </v-container>
+    <div class="p-page p-page-settings">
+        <v-tabs
+                v-model="active"
+                flat
+                grow
+                color="blue-grey lighten-4"
+                slider-color="blue-grey darken-1"
+                height="64"
+        >
+            <v-tab id="tab-upload">
+                General
+            </v-tab>
+            <v-tab-item>
+                <p-tab-general></p-tab-general>
+            </v-tab-item>
+        </v-tabs>
     </div>
 </template>
 
 <script>
+    import tabGeneral from "pages/settings/general.vue";
+
     export default {
-        name: 'todo',
-        data() {
-            return {};
+        name: 'p-page-settings',
+        components: {
+            'p-tab-general': tabGeneral,
         },
-        methods: {}
+        data() {
+            return {
+                readonly: this.$config.getValue("readonly"),
+                active: 0,
+            }
+        },
+        methods: {
+        },
     };
 </script>

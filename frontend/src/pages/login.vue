@@ -7,8 +7,10 @@
         </v-toolbar>
 
         <v-container class="pt-5">
-            <p>Please enter the admin password to proceed:</p>
-            <v-form ref="form" autocomplete="off" class="p-form-login" dense>
+            <p class="subheading">
+                <span>Please enter the admin password to proceed...</span>
+            </p>
+            <v-form ref="form" autocomplete="off" class="p-form-login" @submit.prevent="login" dense>
                 <v-text-field
                         label="Password"
                         color="grey"

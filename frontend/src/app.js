@@ -17,6 +17,8 @@ import VueLuxon from "vue-luxon";
 import VueInfiniteScroll from "vue-infinite-scroll";
 import VueFullscreen from "vue-fullscreen";
 import VueFilters from "vue2-filters";
+import GetTextPlugin from "vue-gettext";
+import translations from "./i18n/translations.json";
 import { Settings } from "luxon";
 
 // Initialize helpers
@@ -49,9 +51,11 @@ Vue.use(Vuetify, {
     },
 });
 
-Settings.defaultLocale = "en";
+Vue.config.language = "en";
+Settings.defaultLocale = Vue.config.language;
 
 // Register other VueJS plugins
+Vue.use(GetTextPlugin, {translations: translations, silent: false, defaultLanguage: Vue.config.language});
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);

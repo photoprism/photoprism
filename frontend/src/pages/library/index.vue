@@ -13,7 +13,7 @@
                 <v-btn
                         :disabled="busy"
                         color="blue-grey"
-                        class="white--text ml-0"
+                        class="white--text ml-0 mt-2"
                         depressed
                         @click.stop="startIndexing()"
                 >

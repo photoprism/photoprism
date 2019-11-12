@@ -542,10 +542,16 @@ func (c *Config) Init(ctx context.Context) error {
 	return c.connectToDatabase(ctx)
 }
 
+// Shutdown closes open database connections.
 func (c *Config) Shutdown() {
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)
 	} else {
 		log.Info("closed database connection")
 	}
+}
+
+// Settings returns the current user settings.
+func (c *Config) Settings() *Settings {
+	return &Settings{}
 }
