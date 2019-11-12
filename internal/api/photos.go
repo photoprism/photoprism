@@ -58,6 +58,11 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 //   id: int Photo ID as returned by the API
 func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/photos/:id/like", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 		photoID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 
@@ -87,6 +92,11 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 //   id: int Photo ID as returned by the API
 func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 	router.DELETE("/photos/:id/like", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 

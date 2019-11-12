@@ -33,6 +33,11 @@ func Import(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		start := time.Now()
 		path := conf.ImportPath()
 

@@ -48,6 +48,11 @@ type CreateAlbumParams struct {
 // POST /api/v1/albums
 func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/albums", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		var params CreateAlbumParams
 
 		if err := c.BindJSON(&params); err != nil {
@@ -73,6 +78,11 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 //   uuid: string Album UUID
 func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/albums/:uuid/like", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 
 		album, err := search.FindAlbumByUUID(c.Param("uuid"))
@@ -95,6 +105,11 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 //   uuid: string Album UUID
 func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.DELETE("/albums/:uuid/like", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 
 		album, err := search.FindAlbumByUUID(c.Param("uuid"))

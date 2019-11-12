@@ -8,19 +8,18 @@ export default class Session {
     constructor(storage) {
         this.auth = false;
 
-        if(storage.getItem("session_storage") === "true") {
+        if (storage.getItem("session_storage") === "true") {
             this.storage = window.sessionStorage;
         } else {
             this.storage = storage;
         }
 
-        this.session_token = this.storage.getItem("session_token");
+        if (this.applyToken(this.storage.getItem("session_token"))) {
+            const userJson = this.storage.getItem("user");
+            this.user = userJson !== "undefined" ? new User(JSON.parse(userJson)) : null;
+        }
 
-        const userJson = this.storage.getItem("user");
-
-        this.user = userJson !== "undefined" ? new User(JSON.parse(userJson)) : null;
-
-        if(this.isUser()) {
+        if (this.isUser()) {
             this.auth = true;
         }
     }
@@ -36,10 +35,21 @@ export default class Session {
         this.storage = window.localStorage;
     }
 
-    setToken(token) {
+    applyToken(token) {
+        if (!token) {
+            this.deleteToken();
+            return false;
+        }
+
         this.session_token = token;
-        this.storage.setItem("session_token", token);
         Api.defaults.headers.common["X-Session-Token"] = token;
+
+        return true;
+    }
+
+    setToken(token) {
+        this.storage.setItem("session_token", token);
+        return this.applyToken(token);
     }
 
     getToken() {
@@ -49,7 +59,7 @@ export default class Session {
     deleteToken() {
         this.session_token = null;
         this.storage.removeItem("session_token");
-        Api.defaults.headers.common["X-Session-Token"] = "";
+        delete Api.defaults.headers.common["X-Session-Token"];
         this.deleteUser();
     }
 
@@ -108,7 +118,7 @@ export default class Session {
     login(email, password) {
         this.deleteToken();
 
-        return Api.post("session", { email: email, password: password }).then(
+        return Api.post("session", {email: email, password: password}).then(
             (result) => {
                 this.setToken(result.data.token);
                 this.setUser(new User(result.data.user));

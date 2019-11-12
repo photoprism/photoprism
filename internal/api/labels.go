@@ -44,6 +44,11 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 //   slug: string Label slug name
 func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/labels/:slug/like", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 
 		label, err := search.FindLabelBySlug(c.Param("slug"))
@@ -66,6 +71,11 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 //   slug: string Label slug name
 func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 	router.DELETE("/labels/:slug/like", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 
 		label, err := search.FindLabelBySlug(c.Param("slug"))

@@ -26,7 +26,7 @@
 </template>
 
 <script>
-    import axios from "axios";
+    import Api from "common/api";
     import Event from "pubsub-js";
 
     export default {
@@ -40,7 +40,7 @@
         },
         methods: {
             submit() {
-                console.log("SUBMIT");
+                // DO NOTHING
             },
             startIndexing() {
                 this.started = Date.now();
@@ -51,7 +51,7 @@
 
                 const ctx = this;
 
-                axios.post('/api/v1/index').then(function () {
+                Api.post('index').then(function () {
                     Event.publish("alert.success", "Indexing complete");
                     ctx.busy = false;
                     ctx.completed = 100;

@@ -35,7 +35,7 @@ describe('common/session', () => {
     it('should set, get and delete user',  () => {
         const storage = window.localStorage;
         const session = new Session(storage);
-        assert.equal(session.user.ID, undefined);
+        assert.equal(session.user, null);
         const values = {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user = new User(values);
         session.setUser(user);

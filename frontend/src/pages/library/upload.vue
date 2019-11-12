@@ -29,7 +29,7 @@
 </template>
 
 <script>
-    import axios from "axios";
+    import Api from "common/api";
     import Event from "pubsub-js";
 
     export default {
@@ -48,7 +48,7 @@
         },
         methods: {
             submit() {
-                // console.log("SUBMIT");
+                // DO NOTHING
             },
             uploadDialog() {
                 this.$refs.upload.click();
@@ -80,7 +80,7 @@
 
                         formData.append('files', file);
 
-                        await axios.post('/api/v1/upload/' + ctx.started,
+                        await Api.post('upload/' + ctx.started,
                             formData,
                             {
                                 headers: {
@@ -99,7 +99,7 @@
                     this.indexing = true;
                     const ctx = this;
 
-                    axios.post('/api/v1/import/upload/' + this.started).then(function () {
+                    Api.post('import/upload/' + this.started).then(function () {
                         Event.publish("alert.success", "Upload complete");
                         ctx.busy = false;
                         ctx.indexing = false;
