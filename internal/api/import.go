@@ -58,6 +58,7 @@ func Import(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Success(fmt.Sprintf("import completed in %d s", elapsed))
 		event.Publish("import.completed", event.Data{"path": path, "seconds": elapsed})
+		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("import completed in %d s", elapsed)})
 	})

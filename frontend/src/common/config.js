@@ -1,4 +1,4 @@
-import Api from "common/api";
+import Event from "pubsub-js";
 
 class Config {
     /**
@@ -11,15 +11,14 @@ class Config {
 
         this.values = values;
 
-        // this.setValues(JSON.parse(this.storage.getItem(this.storage_key)));
-        // this.setValues(values);
+        this.subscriptionId = Event.subscribe('config.updated', (ev, data) => this.setValues(data));
     }
 
     setValues(values) {
-        if(!values) return;
+        if (!values) return;
 
-        for(let key in values) {
-            if(values.hasOwnProperty(key)) {
+        for (let key in values) {
+            if (values.hasOwnProperty(key)) {
                 this.setValue(key, values[key]);
             }
         }
@@ -51,14 +50,6 @@ class Config {
         delete this.values[key];
 
         return this;
-    }
-
-    pullFromServer() {
-        return Api.get("config").then(
-            (result) => {
-                this.setValues(result.data);
-            }
-        );
     }
 }
 

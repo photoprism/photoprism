@@ -27,6 +27,7 @@
 </template>
 
 <script>
+    import Alert from "common/alert";
     import Event from "pubsub-js";
 
     export default {
@@ -55,12 +56,12 @@
                 this.$api.post('index').then(function () {
                     ctx.busy = false;
                     ctx.completed = 100;
-                    this.fileName = '';
+                    ctx.fileName = '';
                 }).catch(function () {
-                    this.$alert.error("Indexing failed");
+                    Alert.error("Indexing failed");
                     ctx.busy = false;
                     ctx.completed = 0;
-                    this.fileName = '';
+                    ctx.fileName = '';
                 });
             },
             handleEvent(ev, data) {
