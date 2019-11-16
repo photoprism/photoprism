@@ -30,6 +30,8 @@
 
 <script>
     import Event from "pubsub-js";
+    import Api from "common/api";
+    import Alert from "common/alert";
 
     export default {
         name: 'p-tab-upload',
@@ -66,7 +68,7 @@
                     return
                 }
 
-                this.$alert.info("Uploading photos...");
+                Alert.info("Uploading photos...");
 
                 Event.publish("ajax.start");
 
@@ -79,7 +81,7 @@
 
                         formData.append('files', file);
 
-                        await this.$api.post('upload/' + ctx.started,
+                        await Api.post('upload/' + ctx.started,
                             formData,
                             {
                                 headers: {
@@ -89,7 +91,7 @@
                         ).then(function () {
                             ctx.completed = Math.round((ctx.current / ctx.total) * 100);
                         }).catch(function () {
-                            this.$alert.error("Upload failed");
+                            Alert.error("Upload failed");
                         });
                     }
                 }
@@ -98,12 +100,12 @@
                     this.indexing = true;
                     const ctx = this;
 
-                    this.$api.post('import/upload/' + this.started).then(function () {
-                        this.$alert.success("Upload complete");
+                    Api.post('import/upload/' + this.started).then(function () {
+                        Alert.success("Upload complete");
                         ctx.busy = false;
                         ctx.indexing = false;
                     }).catch(function () {
-                        this.$alert.error("Failure while importing uploaded files");
+                        Alert.error("Failure while importing uploaded files");
                         ctx.busy = false;
                         ctx.indexing = false;
                     });
