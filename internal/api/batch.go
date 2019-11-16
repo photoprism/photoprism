@@ -117,7 +117,6 @@ func BatchPhotosStory(router *gin.RouterGroup, conf *config.Config) {
 
 		db.Model(models.Photo{}).Where("id IN (?)", params.Ids).Updates(map[string]interface{}{
 			"photo_story":   gorm.Expr("IF (`photo_story`, 0, 1)"),
-			"photo_private": "0",
 		})
 
 		elapsed := time.Since(start)
