@@ -68,7 +68,7 @@
                 }
 
                 Notify.info("Uploading photos...");
-                Notify.ajaxStart();
+                Notify.blockUI();
 
                 async function performUpload(ctx) {
                     for (let i = 0; i < ctx.selected.length; i++) {
@@ -99,16 +99,16 @@
                     const ctx = this;
 
                     Api.post('import/upload/' + this.started).then(function () {
+                        Notify.unblockUI();
                         Notify.success("Upload complete");
                         ctx.busy = false;
                         ctx.indexing = false;
                     }).catch(function () {
+                        Notify.unblockUI();
                         Notify.error("Failure while importing uploaded files");
                         ctx.busy = false;
                         ctx.indexing = false;
                     });
-
-                    Notify.ajaxEnd();
                 });
             },
         }

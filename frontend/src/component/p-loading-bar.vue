@@ -57,10 +57,6 @@
         },
 
         mounted () {
-            const overlay = document.createElement("div");
-            overlay.id = 'p-busy-overlay';
-            document.body.appendChild(overlay);
-
             let stackSize = 0;
 
             this.$event.subscribe('ajax.start', function () {
@@ -68,7 +64,6 @@
 
                 if(stackSize === 1) {
                     this.start();
-                    document.getElementById('p-busy-overlay').style.display = 'block';
                 }
             }.bind(this));
 
@@ -77,7 +72,6 @@
 
                 if (stackSize === 0) {
                     this.done();
-                    document.getElementById('p-busy-overlay').style.display = 'none';
                 }
             }.bind(this));
         },

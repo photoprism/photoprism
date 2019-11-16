@@ -86,6 +86,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 
 		event.Publish("import.file", event.Data{
 			"fileName": mainFile.Filename(),
+			"baseName": filepath.Base(mainFile.Filename()),
 		})
 
 		for _, relatedMediaFile := range relatedFiles {

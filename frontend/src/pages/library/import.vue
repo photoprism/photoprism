@@ -3,7 +3,7 @@
         <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="fileName">Indexed {{ fileName}}...</span>
+                    <span v-if="fileName">Importing {{ fileName }}...</span>
                     <span v-else-if="busy">Importing files from directory...</span>
                     <span v-else-if="completed">Done.</span>
                     <span v-else>Press button to import photos from directory...</span>
@@ -71,7 +71,7 @@
                     case 'file':
                         this.busy = true;
                         this.completed = 0;
-                        this.fileName = data.fileName;
+                        this.fileName = data.baseName;
                         break;
                     case 'completed':
                         this.busy = false;

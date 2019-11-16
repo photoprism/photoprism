@@ -344,6 +344,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		"filePrimary": file.FilePrimary,
 		"fileMissing":  file.FileMissing,
 		"fileName": file.FileName,
+		"baseName": filepath.Base(file.FileName),
 		"fileHash": file.FileHash,
 		"fileType": file.FileType,
 		"fileMime": file.FileMime,

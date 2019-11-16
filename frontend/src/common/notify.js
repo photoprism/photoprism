@@ -18,6 +18,20 @@ const Notify = {
     },
     ajaxEnd: function() {
         Event.publish("ajax.end");
+    },
+    blockUI: function() {
+        const el = document.getElementById('p-busy-overlay');
+
+        if(el) {
+            el.style.display = 'block';
+        }
+    },
+    unblockUI: function() {
+        const el = document.getElementById('p-busy-overlay');
+
+        if(el) {
+            el.style.display = 'none';
+        }
     }
 };
 
