@@ -29,7 +29,6 @@
 </template>
 
 <script>
-    import Api from "common/api";
     import Event from "pubsub-js";
 
     export default {
@@ -80,7 +79,7 @@
 
                         formData.append('files', file);
 
-                        await Api.post('upload/' + ctx.started,
+                        await this.$api.post('upload/' + ctx.started,
                             formData,
                             {
                                 headers: {
@@ -90,7 +89,7 @@
                         ).then(function () {
                             ctx.completed = Math.round((ctx.current / ctx.total) * 100);
                         }).catch(function () {
-                            Event.publish("alert.error", "Upload failed");
+                            this.$alert.error("Upload failed");
                         });
                     }
                 }
@@ -99,12 +98,12 @@
                     this.indexing = true;
                     const ctx = this;
 
-                    Api.post('import/upload/' + this.started).then(function () {
-                        Event.publish("alert.success", "Upload complete");
+                    this.$api.post('import/upload/' + this.started).then(function () {
+                        this.$alert.success("Upload complete");
                         ctx.busy = false;
                         ctx.indexing = false;
                     }).catch(function () {
-                        Event.publish("alert.error", "Failure while importing uploaded files");
+                        this.$alert.error("Failure while importing uploaded files");
                         ctx.busy = false;
                         ctx.indexing = false;
                     });

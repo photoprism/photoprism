@@ -15,6 +15,12 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Static assets like js and css files
 	router.Static("/static", conf.HttpStaticPath())
 
+	// socket.io
+	/* s := router.Group("/socket.io")
+	{
+		api.Socket(s, conf)
+	} */
+
 	// JSON-REST API Version 1
 	v1 := router.Group("/api/v1")
 	{
@@ -49,6 +55,8 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		api.GetSettings(v1, conf)
 		api.SaveSettings(v1, conf)
+
+		api.Websocket(v1, conf)
 	}
 
 	// Default HTML page (client-side routing implemented via Vue.js)

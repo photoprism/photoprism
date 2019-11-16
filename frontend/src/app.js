@@ -4,6 +4,7 @@ import Router from "vue-router";
 import PhotoPrism from "photoprism.vue";
 import Routes from "routes";
 import Api from "common/api";
+import Socket from "common/websocket";
 import Config from "common/config";
 import Clipboard from "common/clipboard";
 import Components from "component/components";
@@ -33,6 +34,7 @@ Vue.prototype.$alert = Alert;
 Vue.prototype.$viewer = viewer;
 Vue.prototype.$session = Session;
 Vue.prototype.$api = Api;
+Vue.prototype.$socket = Socket;
 Vue.prototype.$config = config;
 Vue.prototype.$clipboard = clipboard;
 

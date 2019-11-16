@@ -1,6 +1,7 @@
+import "@babel/polyfill/noConflict";
 import axios from "axios";
 import Event from "pubsub-js";
-import "@babel/polyfill/noConflict";
+import Alert from "common/alert";
 
 const Api = axios.create({
     baseURL: "/api/v1",
@@ -36,7 +37,7 @@ Api.interceptors.response.use(function (response) {
     }
 
     Event.publish("ajax.end");
-    Event.publish("alert.error", errorMessage);
+    Alert.error(errorMessage);
 
     return Promise.reject(error);
 });

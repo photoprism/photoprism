@@ -10,6 +10,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/util"
 )
@@ -337,6 +338,17 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		file.FileAspectRatio = mediaFile.AspectRatio()
 		file.FilePortrait = mediaFile.Width() < mediaFile.Height()
 	}
+
+	event.Publish("index.file", event.Data{
+		"photoID": file.PhotoID,
+		"filePrimary": file.FilePrimary,
+		"fileMissing":  file.FileMissing,
+		"fileName": file.FileName,
+		"fileHash": file.FileHash,
+		"fileType": file.FileType,
+		"fileMime": file.FileMime,
+		"updated": fileQuery.Error == nil,
+	})
 
 	if fileQuery.Error == nil {
 		i.db.Unscoped().Save(&file)

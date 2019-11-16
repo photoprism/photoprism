@@ -131,7 +131,7 @@
 
                 Api.post("batch/photos/private", {"ids": this.selection}).then(function () {
                     Event.publish("ajax.end");
-                    Event.publish("alert.success", "Toggled private flag");
+                    this.$alert.success("Toggled private flag");
                     ctx.clearClipboard();
                     ctx.refresh();
                 }).catch(() => {
@@ -145,7 +145,7 @@
 
                 Api.post("batch/photos/story", {"ids": this.selection}).then(function () {
                     Event.publish("ajax.end");
-                    Event.publish("alert.success", "Toggled story flag");
+                    this.$alert.success("Toggled story flag");
                     ctx.clearClipboard();
                     ctx.refresh();
                 }).catch(() => {
@@ -161,7 +161,7 @@
 
                 Api.post("batch/photos/delete", {"ids": this.selection}).then(function () {
                     Event.publish("ajax.end");
-                    Event.publish("alert.success", "Photos deleted");
+                    this.$alert.success("Photos deleted");
                     ctx.clearClipboard();
                     ctx.refresh();
                 }).catch(() => {

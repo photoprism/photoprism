@@ -3,7 +3,8 @@
         <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="busy">Importing files from directory...</span>
+                    <span v-if="fileName">Indexed {{ fileName}}...</span>
+                    <span v-else-if="busy">Importing files from directory...</span>
                     <span v-else-if="completed">Done.</span>
                     <span v-else>Press button to import photos from directory...</span>
                 </p>
@@ -26,7 +27,6 @@
 </template>
 
 <script>
-    import Api from "common/api";
     import Event from "pubsub-js";
 
     export default {
@@ -36,6 +36,8 @@
                 started: false,
                 busy: false,
                 completed: 0,
+                subscriptionId: '',
+                fileName: '',
             }
         },
         methods: {
@@ -46,21 +48,45 @@
                 this.started = Date.now();
                 this.busy = true;
                 this.completed = 0;
-
-                this.$alert.info("Importing photos...");
+                this.fileName = '';
 
                 const ctx = this;
 
-                Api.post('import').then(function () {
-                    Event.publish("alert.success", "Import complete");
+                this.$api.post('import').then(function () {
                     ctx.busy = false;
                     ctx.completed = 100;
+                    this.fileName = '';
                 }).catch(function () {
-                    Event.publish("alert.error", "Import failed");
+                    this.$alert.error("Import failed");
                     ctx.busy = false;
                     ctx.completed = 0;
+                    this.fileName = '';
                 });
             },
-        }
+            handleEvent(ev, data) {
+                const type = ev.split('.')[1];
+
+                switch (type) {
+                    case 'file':
+                        this.busy = true;
+                        this.completed = 0;
+                        this.fileName = data.fileName;
+                        break;
+                    case 'completed':
+                        this.busy = false;
+                        this.completed = 100;
+                        this.fileName = '';
+                        break;
+                    default:
+                        console.log(data)
+                }
+            },
+        },
+        created() {
+            this.subscriptionId = Event.subscribe('import', this.handleEvent);
+        },
+        destroyed() {
+            Event.unsubscribe(this.subscriptionId);
+        },
     };
 </script>

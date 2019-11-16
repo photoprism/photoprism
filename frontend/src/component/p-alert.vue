@@ -43,24 +43,30 @@
             Event.unsubscribe(this.subscriptionId);
         },
         methods: {
-            handleAlertEvent: function (ev, message) {
+            handleAlertEvent: function (ev, data) {
                 const type = ev.split('.')[1];
+
+                // get message from data object
+                let m = data.msg;
+
+                // first letter uppercase
+                m = m.replace(/^./, m[0].toUpperCase());
 
                 switch (type) {
                     case 'warning':
-                        this.addWarningMessage(message);
+                        this.addWarningMessage(m);
                         break;
                     case 'error':
-                        this.addErrorMessage(message);
+                        this.addErrorMessage(m);
                         break;
                     case 'success':
-                        this.addSuccessMessage(message);
+                        this.addSuccessMessage(m);
                         break;
                     case 'info':
-                        this.addInfoMessage(message);
+                        this.addInfoMessage(m);
                         break;
                     default:
-                        alert(message);
+                        alert(m);
                 }
             },
 
