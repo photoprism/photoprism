@@ -82,14 +82,14 @@
                 this.search();
             },
             currentPositionError(error) {
-                this.$alert.warning(error.message);
+                this.$notify.warning(error.message);
             },
             currentPosition() {
                 if ("geolocation" in navigator) {
-                    this.$alert.success('Finding your position...');
+                    this.$notify.success('Finding your position...');
                     navigator.geolocation.getCurrentPosition(this.currentPositionSuccess, this.currentPositionError);
                 } else {
-                    this.$alert.warning('Geolocation is not available');
+                    this.$notify.warning('Geolocation is not available');
                 }
             },
             formChange() {
@@ -156,7 +156,7 @@
                 }
 
                 if (photos.length === 0) {
-                    this.$alert.warning('No locations found');
+                    this.$notify.warning('No locations found');
                     return;
                 }
 
@@ -169,9 +169,9 @@
                 });
 
                 if (photos.length > 100) {
-                    this.$alert.info('More than 100 photos found');
+                    this.$notify.info('More than 100 photos found');
                 } else {
-                    this.$alert.info(photos.length + ' photos found');
+                    this.$notify.info(photos.length + ' photos found');
                 }
             },
             updateQuery() {
@@ -206,7 +206,7 @@
 
                 Photo.search(params).then(response => {
                     if (!response.models.length) {
-                        this.$alert.warning('No photos found');
+                        this.$notify.warning('No photos found');
                         return;
                     }
 

@@ -147,7 +147,7 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$alert.info('All ' + this.results.length + ' albums loaded');
+                        this.$notify.info('All ' + this.results.length + ' albums loaded');
                     }
                 });
             },
@@ -201,9 +201,9 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$alert.info(this.results.length + ' albums found');
+                        this.$notify.info(this.results.length + ' albums found');
                     } else {
-                        this.$alert.info('More than 20 albums found');
+                        this.$notify.info('More than 20 albums found');
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
@@ -222,7 +222,7 @@
                 const album = new Album({"AlbumName": name});
 
                 album.save().then(() => {
-                    this.$alert.success(name + " created");
+                    this.$notify.success(name + " created");
 
                     this.filter.q = "";
                     this.lastFilter = {};

@@ -102,9 +102,8 @@
     </div>
 </template>
 <script>
-    import Event from "pubsub-js";
     import Api from "common/api";
-    import Alert from "common/alert";
+    import Notify from "common/notify";
 
     export default {
         name: 'p-photo-clipboard',
@@ -126,59 +125,44 @@
                 this.expanded = false;
             },
             batchPrivate() {
-                Event.publish("ajax.start");
-
                 const ctx = this;
 
                 Api.post("batch/photos/private", {"ids": this.selection}).then(function () {
-                    Event.publish("ajax.end");
-                    Alert.success("Toggled private flag");
+                    Notify.success("Toggled private flag");
                     ctx.clearClipboard();
                     ctx.refresh();
-                }).catch(() => {
-                    Event.publish("ajax.end");
                 });
             },
             batchStory() {
-                Event.publish("ajax.start");
-
                 const ctx = this;
 
                 Api.post("batch/photos/story", {"ids": this.selection}).then(function () {
-                    Event.publish("ajax.end");
-                    Alert.success("Toggled story flag");
+                    Notify.success("Toggled story flag");
                     ctx.clearClipboard();
                     ctx.refresh();
-                }).catch(() => {
-                    Event.publish("ajax.end");
                 });
             },
             batchDelete() {
                 this.dialog.delete = false;
 
-                Event.publish("ajax.start");
-
                 const ctx = this;
 
                 Api.post("batch/photos/delete", {"ids": this.selection}).then(function () {
-                    Event.publish("ajax.end");
-                    Alert.success("Photos deleted");
+                    Notify.success("Photos deleted");
                     ctx.clearClipboard();
                     ctx.refresh();
-                }).catch(() => {
-                    Event.publish("ajax.end");
                 });
             },
             batchTag() {
-                Alert.warning("Not implemented yet");
+                Notify.warning("Not implemented yet");
                 this.expanded = false;
             },
             batchAlbum() {
-                Alert.warning("Not implemented yet");
+                Notify.warning("Not implemented yet");
                 this.expanded = false;
             },
             batchDownload() {
-                Alert.warning("Not implemented yet");
+                Notify.warning("Not implemented yet");
                 this.expanded = false;
             },
             openDocs() {

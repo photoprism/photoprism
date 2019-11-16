@@ -1,6 +1,6 @@
 <template>
     <v-snackbar
-            id="p-alert"
+            id="p-notify"
             v-model="visible"
             :color="color"
             :timeout="0"
@@ -23,7 +23,7 @@
     import Event from 'pubsub-js';
 
     export default {
-        name: 'p-alert',
+        name: 'p-notify',
         data() {
             return {
                 text: '',
@@ -37,13 +37,13 @@
             };
         },
         created() {
-            this.subscriptionId = Event.subscribe('alert', this.handleAlertEvent);
+            this.subscriptionId = Event.subscribe('notify', this.eventHandler);
         },
         destroyed() {
             Event.unsubscribe(this.subscriptionId);
         },
         methods: {
-            handleAlertEvent: function (ev, data) {
+            eventHandler: function (ev, data) {
                 const type = ev.split('.')[1];
 
                 // get message from data object
@@ -92,9 +92,15 @@
                 this.lastMessageId++;
                 this.lastMessage = message;
 
-                const alert = {'id': this.lastMessageId, 'color': color, 'textColor': textColor, 'delay': delay, 'msg': message};
+                const m = {
+                    'id': this.lastMessageId,
+                    'color': color,
+                    'textColor': textColor,
+                    'delay': delay,
+                    'msg': message
+                };
 
-                this.messages.push(alert);
+                this.messages.push(m);
 
                 if(!this.visible) {
                     this.show();

@@ -57,7 +57,7 @@
             },
             save() {
                 this.settings.save().then(() => {
-                    this.$alert.info("Settings saved");
+                    this.$notify.info("Settings saved");
                 })
             },
         },

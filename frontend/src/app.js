@@ -1,5 +1,5 @@
 import Api from "common/api";
-import Alert from "common/alert";
+import Notify from "common/notify";
 import Config from "common/config";
 import Clipboard from "common/clipboard";
 import Components from "component/components";
@@ -30,7 +30,7 @@ const isPublic = config.getValue("public");
 
 // Assign helpers to VueJS prototype
 Vue.prototype.$event = Event;
-Vue.prototype.$alert = Alert;
+Vue.prototype.$notify = Notify;
 Vue.prototype.$viewer = viewer;
 Vue.prototype.$session = Session;
 Vue.prototype.$api = Api;

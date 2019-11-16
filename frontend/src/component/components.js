@@ -1,4 +1,4 @@
-import PAlert from "./p-alert.vue";
+import PNotify from "./p-notify.vue";
 import PNavigation from "./p-navigation.vue";
 import PLoadingBar from "./p-loading-bar.vue";
 import PPhotoDetails from "./p-photo-details.vue";
@@ -13,7 +13,7 @@ import PScrollTop from "./p-scroll-top.vue";
 const components = {};
 
 components.install = (Vue) => {
-    Vue.component("p-alert", PAlert);
+    Vue.component("p-notify", PNotify);
     Vue.component("p-navigation", PNavigation);
     Vue.component("p-loading-bar", PLoadingBar);
     Vue.component("p-photo-details", PPhotoDetails);

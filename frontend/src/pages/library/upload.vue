@@ -29,9 +29,8 @@
 </template>
 
 <script>
-    import Event from "pubsub-js";
     import Api from "common/api";
-    import Alert from "common/alert";
+    import Notify from "common/notify";
 
     export default {
         name: 'p-tab-upload',
@@ -68,9 +67,8 @@
                     return
                 }
 
-                Alert.info("Uploading photos...");
-
-                Event.publish("ajax.start");
+                Notify.info("Uploading photos...");
+                Notify.ajaxStart();
 
                 async function performUpload(ctx) {
                     for (let i = 0; i < ctx.selected.length; i++) {
@@ -91,7 +89,7 @@
                         ).then(function () {
                             ctx.completed = Math.round((ctx.current / ctx.total) * 100);
                         }).catch(function () {
-                            Alert.error("Upload failed");
+                            Notify.error("Upload failed");
                         });
                     }
                 }
@@ -101,16 +99,16 @@
                     const ctx = this;
 
                     Api.post('import/upload/' + this.started).then(function () {
-                        Alert.success("Upload complete");
+                        Notify.success("Upload complete");
                         ctx.busy = false;
                         ctx.indexing = false;
                     }).catch(function () {
-                        Alert.error("Failure while importing uploaded files");
+                        Notify.error("Failure while importing uploaded files");
                         ctx.busy = false;
                         ctx.indexing = false;
                     });
 
-                    Event.publish("ajax.end");
+                    Notify.ajaxEnd();
                 });
             },
         }

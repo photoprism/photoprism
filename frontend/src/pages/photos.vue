@@ -120,7 +120,7 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$alert.info('All ' + this.results.length + ' photos loaded');
+                        this.$notify.info('All ' + this.results.length + ' photos loaded');
                     }
                 });
             },
@@ -182,9 +182,9 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$alert.info(this.results.length + ' photos found');
+                        this.$notify.info(this.results.length + ' photos found');
                     } else {
-                        this.$alert.info('More than 50 photos found');
+                        this.$notify.info('More than 50 photos found');
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }

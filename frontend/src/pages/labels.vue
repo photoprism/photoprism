@@ -143,7 +143,7 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$alert.info('All ' + this.results.length + ' labels loaded');
+                        this.$notify.info('All ' + this.results.length + ' labels loaded');
                     }
                 });
             },
@@ -197,9 +197,9 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$alert.info(this.results.length + ' labels found');
+                        this.$notify.info(this.results.length + ' labels found');
                     } else {
-                        this.$alert.info('More than 20 labels found');
+                        this.$notify.info('More than 20 labels found');
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }

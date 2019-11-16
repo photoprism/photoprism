@@ -27,7 +27,7 @@
 </template>
 
 <script>
-    import Alert from "common/alert";
+    import Notify from "common/notify";
     import Event from "pubsub-js";
 
     export default {
@@ -58,7 +58,7 @@
                     ctx.completed = 100;
                     ctx.fileName = '';
                 }).catch(function () {
-                    Alert.error("Indexing failed");
+                    Notify.error("Indexing failed");
                     ctx.busy = false;
                     ctx.completed = 0;
                     ctx.fileName = '';
