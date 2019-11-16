@@ -104,6 +104,7 @@
 <script>
     import Event from "pubsub-js";
     import Api from "common/api";
+    import Alert from "common/alert";
 
     export default {
         name: 'p-photo-clipboard',
@@ -131,7 +132,7 @@
 
                 Api.post("batch/photos/private", {"ids": this.selection}).then(function () {
                     Event.publish("ajax.end");
-                    this.$alert.success("Toggled private flag");
+                    Alert.success("Toggled private flag");
                     ctx.clearClipboard();
                     ctx.refresh();
                 }).catch(() => {
@@ -145,7 +146,7 @@
 
                 Api.post("batch/photos/story", {"ids": this.selection}).then(function () {
                     Event.publish("ajax.end");
-                    this.$alert.success("Toggled story flag");
+                    Alert.success("Toggled story flag");
                     ctx.clearClipboard();
                     ctx.refresh();
                 }).catch(() => {
@@ -161,7 +162,7 @@
 
                 Api.post("batch/photos/delete", {"ids": this.selection}).then(function () {
                     Event.publish("ajax.end");
-                    this.$alert.success("Photos deleted");
+                    Alert.success("Photos deleted");
                     ctx.clearClipboard();
                     ctx.refresh();
                 }).catch(() => {
@@ -169,15 +170,15 @@
                 });
             },
             batchTag() {
-                this.$alert.warning("Not implemented yet");
+                Alert.warning("Not implemented yet");
                 this.expanded = false;
             },
             batchAlbum() {
-                this.$alert.warning("Not implemented yet");
+                Alert.warning("Not implemented yet");
                 this.expanded = false;
             },
             batchDownload() {
-                this.$alert.warning("Not implemented yet");
+                Alert.warning("Not implemented yet");
                 this.expanded = false;
             },
             openDocs() {
