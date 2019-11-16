@@ -1,26 +1,26 @@
-import Vue from "vue";
-import Vuetify from "vuetify";
-import Router from "vue-router";
-import PhotoPrism from "photoprism.vue";
-import Routes from "routes";
 import Api from "common/api";
-import Socket from "common/websocket";
+import Alert from "common/alert";
 import Config from "common/config";
 import Clipboard from "common/clipboard";
 import Components from "component/components";
 import Dialogs from "dialog/dialogs";
-import Maps from "maps/components";
-import Alert from "common/alert";
-import Viewer from "common/viewer";
-import Session from "session";
 import Event from "pubsub-js";
-import VueLuxon from "vue-luxon";
-import VueInfiniteScroll from "vue-infinite-scroll";
-import VueFullscreen from "vue-fullscreen";
-import VueFilters from "vue2-filters";
 import GetTextPlugin from "vue-gettext";
-import translations from "./i18n/translations.json";
+import Maps from "maps/components";
+import PhotoPrism from "photoprism.vue";
+import Router from "vue-router";
+import Routes from "routes";
+import Session from "session";
 import { Settings } from "luxon";
+import Socket from "common/websocket";
+import Translations from "./i18n/translations.json";
+import Viewer from "common/viewer";
+import Vue from "vue";
+import Vuetify from "vuetify";
+import VueLuxon from "vue-luxon";
+import VueFilters from "vue2-filters";
+import VueFullscreen from "vue-fullscreen";
+import VueInfiniteScroll from "vue-infinite-scroll";
 
 // Initialize helpers
 const config = new Config(window.localStorage, window.appConfig);
@@ -57,7 +57,7 @@ Vue.config.language = "en";
 Settings.defaultLocale = Vue.config.language;
 
 // Register other VueJS plugins
-Vue.use(GetTextPlugin, {translations: translations, silent: false, defaultLanguage: Vue.config.language});
+Vue.use(GetTextPlugin, {translations: Translations, silent: false, defaultLanguage: Vue.config.language});
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);
