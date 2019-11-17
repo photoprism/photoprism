@@ -1,36 +1,40 @@
-import Vue from "vue";
-import Vuetify from "vuetify";
-import Router from "vue-router";
-import PhotoPrism from "photoprism.vue";
-import Routes from "routes";
 import Api from "common/api";
+import Notify from "common/notify";
 import Config from "common/config";
 import Clipboard from "common/clipboard";
 import Components from "component/components";
 import Dialogs from "dialog/dialogs";
-import Maps from "maps/components";
-import Alert from "common/alert";
-import Viewer from "common/viewer";
-import Session from "common/session";
 import Event from "pubsub-js";
-import VueLuxon from "vue-luxon";
-import VueInfiniteScroll from "vue-infinite-scroll";
-import VueFullscreen from "vue-fullscreen";
-import VueFilters from "vue2-filters";
+import GetTextPlugin from "vue-gettext";
+import Maps from "maps/components";
+import PhotoPrism from "photoprism.vue";
+import Router from "vue-router";
+import Routes from "routes";
+import Session from "session";
 import { Settings } from "luxon";
+import Socket from "common/websocket";
+import Translations from "./i18n/translations.json";
+import Viewer from "common/viewer";
+import Vue from "vue";
+import Vuetify from "vuetify";
+import VueLuxon from "vue-luxon";
+import VueFilters from "vue2-filters";
+import VueFullscreen from "vue-fullscreen";
+import VueInfiniteScroll from "vue-infinite-scroll";
 
 // Initialize helpers
-const session = new Session(window.localStorage);
 const config = new Config(window.localStorage, window.appConfig);
 const viewer = new Viewer();
 const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
+const isPublic = config.getValue("public");
 
 // Assign helpers to VueJS prototype
 Vue.prototype.$event = Event;
-Vue.prototype.$alert = Alert;
+Vue.prototype.$notify = Notify;
 Vue.prototype.$viewer = viewer;
-Vue.prototype.$session = session;
+Vue.prototype.$session = Session;
 Vue.prototype.$api = Api;
+Vue.prototype.$socket = Socket;
 Vue.prototype.$config = config;
 Vue.prototype.$clipboard = clipboard;
 
@@ -49,9 +53,11 @@ Vue.use(Vuetify, {
     },
 });
 
-Settings.defaultLocale = "en";
+Vue.config.language = "en";
+Settings.defaultLocale = Vue.config.language;
 
 // Register other VueJS plugins
+Vue.use(GetTextPlugin, {translations: Translations, silent: false, defaultLanguage: Vue.config.language});
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);
@@ -66,6 +72,30 @@ const router = new Router({
     routes: Routes,
     mode: "history",
     saveScrollPosition: true,
+});
+
+router.beforeEach((to, from, next) => {
+    if(to.matched.some(record => record.meta.admin)) {
+        if (isPublic || Session.isAdmin()) {
+            next();
+        } else {
+            next({
+                name: "login",
+                params: { nextUrl: to.fullPath },
+            });
+        }
+    } else if(to.matched.some(record => record.meta.auth)) {
+        if (isPublic || Session.isUser()) {
+            next();
+        } else {
+            next({
+                name: "login",
+                params: { nextUrl: to.fullPath },
+            });
+        }
+    } else {
+        next();
+    }
 });
 
 // Run app

@@ -1,8 +1,8 @@
-import axios from "axios";
-import Event from "pubsub-js";
 import "@babel/polyfill/noConflict";
+import Axios from "axios";
+import Notify from "common/notify";
 
-const Api = axios.create({
+const Api = Axios.create({
     baseURL: "/api/v1",
     headers: {common: {
         "X-Session-Token": window.localStorage.getItem("session_token"),
@@ -11,7 +11,7 @@ const Api = axios.create({
 
 Api.interceptors.request.use(function (config) {
     // Do something before request is sent
-    Event.publish("ajax.start", config);
+    Notify.ajaxStart();
     return config;
 }, function (error) {
     // Do something with request error
@@ -19,10 +19,15 @@ Api.interceptors.request.use(function (config) {
 });
 
 Api.interceptors.response.use(function (response) {
-    Event.publish("ajax.end", response);
-
+    Notify.ajaxEnd();
     return response;
 }, function (error) {
+    Notify.ajaxEnd();
+
+    if (Axios.isCancel(error)) {
+        return Promise.reject(error);
+    }
+
     if(console && console.log) {
         console.log(error);
     }
@@ -36,12 +41,7 @@ Api.interceptors.response.use(function (response) {
         errorMessage = data.message ? data.message : data.error;
     }
 
-    Event.publish("ajax.end");
-    Event.publish("alert.error", errorMessage);
-
-    if(code === 401) {
-        window.location = "/";
-    }
+    Notify.error(errorMessage);
 
     return Promise.reject(error);
 });

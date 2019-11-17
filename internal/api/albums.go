@@ -13,8 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/forms"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/util"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // GET /api/v1/albums
@@ -36,8 +34,8 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		c.Header("x-result-count", strconv.Itoa(form.Count))
-		c.Header("x-result-offset", strconv.Itoa(form.Offset))
+		c.Header("X-Result-Count", strconv.Itoa(form.Count))
+		c.Header("X-Result-Offset", strconv.Itoa(form.Offset))
 
 		c.JSON(http.StatusOK, result)
 	})
@@ -50,6 +48,11 @@ type CreateAlbumParams struct {
 // POST /api/v1/albums
 func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/albums", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		var params CreateAlbumParams
 
 		if err := c.BindJSON(&params); err != nil {
@@ -75,6 +78,11 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 //   uuid: string Album UUID
 func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/albums/:uuid/like", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 
 		album, err := search.FindAlbumByUUID(c.Param("uuid"))
@@ -97,6 +105,11 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 //   uuid: string Album UUID
 func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.DELETE("/albums/:uuid/like", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 
 		album, err := search.FindAlbumByUUID(c.Param("uuid"))

@@ -18,7 +18,8 @@
             >
                 <v-hover>
                     <v-card tile slot-scope="{ hover }"
-                            :class="$clipboard.has(photo) ? 'elevation-10 ma-0' : 'elevation-0 ma-1'">
+                            :class="$clipboard.has(photo) ? 'elevation-10 ma-0' : 'elevation-0 ma-1'"
+                            :title="photo.PhotoTitle">
                         <v-img :src="photo.getThumbnailUrl('tile_224')"
                                aspect-ratio="1"
                                class="grey lighten-2"

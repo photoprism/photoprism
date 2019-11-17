@@ -7,80 +7,87 @@ import People from "pages/people.vue";
 import Library from "pages/library.vue";
 import Share from "pages/share.vue";
 import Settings from "pages/settings.vue";
+import Login from "pages/login.vue";
 import Todo from "pages/todo.vue";
 
 export default [
     {
-        name: "Home",
+        name: "home",
         path: "/",
         redirect: "/photos",
     },
     {
-        name: "Photos",
+        name: "login",
+        path: "/login",
+        component: Login,
+        meta: {area: "Login"},
+    },
+    {
+        name: "photos",
         path: "/photos",
         component: Photos,
         meta: {area: "Photos"},
     },
     {
-        name: "Albums",
+        name: "albums",
         path: "/albums",
         component: Albums,
         meta: {area: "Albums"},
     },
     {
-        name: "Favorites",
+        name: "favorites",
         path: "/favorites",
         component: Photos,
         meta: {area: "Favorites"},
         props: {staticFilter: {favorites: true}},
     },
     {
-        name: "Places",
+        name: "places",
         path: "/places",
         component: Places,
         meta: {area: "Places"},
     },
     {
-        name: "Labels",
+        name: "labels",
         path: "/labels",
         component: Labels,
         meta: {area: "Labels"},
     },
     {
-        name: "Events",
+        name: "events",
         path: "/events",
         component: Events,
         meta: {area: "Events"},
     },
     {
-        name: "People",
+        name: "people",
         path: "/people",
         component: People,
         meta: {area: "People"},
     },
     {
-        name: "Filters",
+        name: "filters",
         path: "/filters",
         component: Todo,
         meta: {area: "Filters"},
     },
     {
-        name: "Library",
+        name: "library",
         path: "/library",
         component: Library,
-        meta: {area: "Library"},
+        meta: {area: "Library", auth: true},
     },
     {
-        name: "Share",
+        name: "share",
         path: "/share",
         component: Share,
-        meta: {area: "Share"},
+        meta: {area: "Share", auth: true},
     },
     {
-        name: "Settings",
+        name: "settings",
         path: "/settings",
         component: Settings,
-        meta: {area: "Settings"},
+        meta: {area: "Settings", auth: true},
     },
     {
         path: "*", redirect: "/photos",

@@ -3,10 +3,11 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
-	log "github.com/sirupsen/logrus"
+	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -34,6 +35,11 @@ func Import(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		start := time.Now()
 		path := conf.ImportPath()
 
@@ -42,14 +48,19 @@ func Import(router *gin.RouterGroup, conf *config.Config) {
 			path = path + subPath
 		}
 
-		log.Infof("importing photos from %s", path)
+		event.Info(fmt.Sprintf("importing photos from \"%s\"", filepath.Base(path)))
 
 		initImporter(conf)
 
 		importer.ImportPhotosFromDirectory(path)
 
-		elapsed := time.Since(start)
+		elapsed := int(time.Since(start).Seconds())
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("completed import in %s", elapsed)})
+		event.Success(fmt.Sprintf("import completed in %d s", elapsed))
+		event.Publish("import.completed", event.Data{"path": path, "seconds": elapsed})
+		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
+		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("import completed in %d s", elapsed)})
 	})
 }

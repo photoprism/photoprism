@@ -156,14 +156,14 @@ func (m *MediaFile) FocalLength() int {
 	return result
 }
 
-// Aperture returns the aperture with which the media file was created.
-func (m *MediaFile) Aperture() float64 {
+// FNumber returns the F number with which the media file was created.
+func (m *MediaFile) FNumber() float64 {
 	info, err := m.Exif()
 
 	var result float64
 
 	if err == nil {
-		result = info.Aperture
+		result = info.FNumber
 	}
 
 	return result

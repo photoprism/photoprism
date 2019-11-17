@@ -16,7 +16,7 @@
                 <v-btn
                         :disabled="busy"
                         color="blue-grey"
-                        class="white--text ml-0"
+                        class="white--text ml-0 mt-2"
                         depressed
                         @click.stop="uploadDialog()"
                 >
@@ -29,8 +29,8 @@
 </template>
 
 <script>
-    import axios from "axios";
-    import Event from "pubsub-js";
+    import Api from "common/api";
+    import Notify from "common/notify";
 
     export default {
         name: 'p-tab-upload',
@@ -48,7 +48,7 @@
         },
         methods: {
             submit() {
-                console.log("SUBMIT");
+                // DO NOTHING
             },
             uploadDialog() {
                 this.$refs.upload.click();
@@ -67,9 +67,8 @@
                     return
                 }
 
-                this.$alert.info("Uploading photos...");
-
-                Event.publish("ajax.start");
+                Notify.info("Uploading photos...");
+                Notify.blockUI();
 
                 async function performUpload(ctx) {
                     for (let i = 0; i < ctx.selected.length; i++) {
@@ -80,7 +79,7 @@
 
                         formData.append('files', file);
 
-                        await axios.post('/api/v1/upload/' + ctx.started,
+                        await Api.post('upload/' + ctx.started,
                             formData,
                             {
                                 headers: {
@@ -90,7 +89,7 @@
                         ).then(function () {
                             ctx.completed = Math.round((ctx.current / ctx.total) * 100);
                         }).catch(function () {
-                            Event.publish("alert.error", "Upload failed");
+                            Notify.error("Upload failed");
                         });
                     }
                 }
@@ -99,17 +98,17 @@
                     this.indexing = true;
                     const ctx = this;
 
-                    axios.post('/api/v1/import/upload/' + this.started).then(function () {
-                        Event.publish("alert.success", "Upload complete");
+                    Api.post('import/upload/' + this.started).then(function () {
+                        Notify.unblockUI();
+                        Notify.success("Upload complete");
                         ctx.busy = false;
                         ctx.indexing = false;
                     }).catch(function () {
-                        Event.publish("alert.error", "Failure while importing uploaded files");
+                        Notify.unblockUI();
+                        Notify.error("Failure while importing uploaded files");
                         ctx.busy = false;
                         ctx.indexing = false;
                     });
-
-                    Event.publish("ajax.end");
                 });
             },
         }

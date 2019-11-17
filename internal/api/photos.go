@@ -6,7 +6,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/util"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -46,8 +45,8 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		c.Header("x-result-count", strconv.Itoa(form.Count))
-		c.Header("x-result-offset", strconv.Itoa(form.Offset))
+		c.Header("X-Result-Count", strconv.Itoa(form.Count))
+		c.Header("X-Result-Offset", strconv.Itoa(form.Offset))
 
 		c.JSON(http.StatusOK, result)
 	})
@@ -59,6 +58,11 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 //   id: int Photo ID as returned by the API
 func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/photos/:id/like", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 		photoID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 
@@ -88,6 +92,11 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 //   id: int Photo ID as returned by the API
 func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 	router.DELETE("/photos/:id/like", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 

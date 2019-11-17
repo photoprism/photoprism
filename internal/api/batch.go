@@ -9,7 +9,6 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/util"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,6 +20,11 @@ type BatchParams struct {
 // POST /api/v1/batch/photos/delete
 func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/batch/photos/delete", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		start := time.Now()
 
 		var params BatchParams
@@ -52,6 +56,11 @@ func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
 // POST /api/v1/batch/photos/private
 func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/batch/photos/private", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		start := time.Now()
 
 		var params BatchParams
@@ -82,6 +91,11 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 // POST /api/v1/batch/photos/story
 func BatchPhotosStory(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/batch/photos/story", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		start := time.Now()
 
 		var params BatchParams
@@ -103,7 +117,6 @@ func BatchPhotosStory(router *gin.RouterGroup, conf *config.Config) {
 
 		db.Model(models.Photo{}).Where("id IN (?)", params.Ids).Updates(map[string]interface{}{
 			"photo_story":   gorm.Expr("IF (`photo_story`, 0, 1)"),
-			"photo_private": "0",
 		})
 
 		elapsed := time.Since(start)

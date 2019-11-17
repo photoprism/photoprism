@@ -2,7 +2,7 @@
     <div id="photoprism">
         <p-loading-bar height="4"></p-loading-bar>
 
-        <p-alert></p-alert>
+        <p-notify></p-notify>
 
         <v-app>
             <p-navigation></p-navigation>
@@ -22,14 +22,6 @@
     export default {
         name: 'photoprism',
         computed: {},
-        methods: {
-            login() {
-                // this.$refs.loginDialog.open();
-            },
-
-            logout() {
-                this.$session.logout();
-            },
-        },
+        methods: {},
     };
 </script>

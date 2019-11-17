@@ -35,15 +35,15 @@ describe('common/session', () => {
     it('should set, get and delete user',  () => {
         const storage = window.localStorage;
         const session = new Session(storage);
-        assert.equal(session.user.ID, undefined);
-        const values = {ID: 5, userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        assert.equal(session.user, null);
+        const values = {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user = new User(values);
         session.setUser(user);
-        assert.equal(session.user.userFirstName, "Max");
-        assert.equal(session.user.userRole, "admin");
+        assert.equal(session.user.FirstName, "Max");
+        assert.equal(session.user.Role, "admin");
         const result = session.getUser();
         assert.equal(result.ID, 5);
-        assert.equal(result.userEmail, "test@test.com");
+        assert.equal(result.Email, "test@test.com");
         session.deleteUser();
         assert.equal(session.user, null);
     });
@@ -51,12 +51,12 @@ describe('common/session', () => {
     it('should get user email',  () => {
         const storage = window.localStorage;
         const session = new Session(storage);
-        const values = {ID: 5, userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        const values = {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user = new User(values);
         session.setUser(user);
         const result = session.getEmail();
         assert.equal(result, "test@test.com");
-        const values2 = { userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        const values2 = { FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user2 = new User(values2);
         session.setUser(user2);
         const result2 = session.getEmail();
@@ -67,12 +67,12 @@ describe('common/session', () => {
     it('should get user firstname',  () => {
         const storage = window.localStorage;
         const session = new Session(storage);
-        const values = {ID: 5, userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        const values = {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user = new User(values);
         session.setUser(user);
         const result = session.getFirstName();
         assert.equal(result, "Max");
-        const values2 = { userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        const values2 = { FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user2 = new User(values2);
         session.setUser(user2);
         const result2 = session.getFirstName();
@@ -83,12 +83,12 @@ describe('common/session', () => {
     it('should get user full name',  () => {
         const storage = window.localStorage;
         const session = new Session(storage);
-        const values = {ID: 5, userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        const values = {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user = new User(values);
         session.setUser(user);
         const result = session.getFullName();
         assert.equal(result, "Max Last");
-        const values2 = { userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        const values2 = { FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user2 = new User(values2);
         session.setUser(user2);
         const result2 = session.getFullName();
@@ -99,7 +99,7 @@ describe('common/session', () => {
     it('should test whether user is set',  () => {
         const storage = window.localStorage;
         const session = new Session(storage);
-        const values = {ID: 5, userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        const values = {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user = new User(values);
         session.setUser(user);
         const result = session.isUser();
@@ -110,7 +110,7 @@ describe('common/session', () => {
     it('should test whether user is admin',  () => {
         const storage = window.localStorage;
         const session = new Session(storage);
-        const values = {ID: 5, userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        const values = {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user = new User(values);
         session.setUser(user);
         const result = session.isAdmin();
@@ -121,7 +121,7 @@ describe('common/session', () => {
     it('should test whether user is anonymous',  () => {
         const storage = window.localStorage;
         const session = new Session(storage);
-        const values = {ID: 5, userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        const values = {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user = new User(values);
         session.setUser(user);
         const result = session.isAnonymous();
@@ -131,7 +131,7 @@ describe('common/session', () => {
 
     it('should test login and logout',  async() => {
         mock
-            .onPost("session").reply(200,  {token: "8877", user: {email: "test@test.com", password: "passwd"}})
+            .onPost("session").reply(200,  {token: "8877", user: {ID: 1, Email: "test@test.com"}})
             .onDelete("session/8877").reply(200);
         const storage = window.localStorage;
         const session = new Session(storage);
@@ -139,7 +139,7 @@ describe('common/session', () => {
         assert.equal(session.storage.user, undefined);
         await session.login("test@test.com", "passwd");
         assert.equal(session.session_token, 8877);
-        assert.equal(session.storage.user, "{\"email\":\"test@test.com\",\"password\":\"passwd\"}");
+        assert.equal(session.storage.user, '{"ID":1,"Email":"test@test.com"}');
         await session.logout();
         assert.equal(session.session_token, null);
         mock.reset();

@@ -53,18 +53,4 @@ describe("common/config", () => {
         const result = config.getValue("city");
         assert.equal(result, "Berlin");
     });
-
-    it("should pull from server",  async() => {
-        mock.onGet("config").reply(200,  {fromServer: "yes"});
-        const storage = window.localStorage;
-        const values = {name: "testConfig", year: "2300"};
-
-        const config = new Config(storage, values);
-        const result = config.getValues();
-        assert.equal(result.name, "testConfig");
-        assert.equal(config.values.fromServer, undefined);
-        await config.pullFromServer();
-        assert.equal(config.values.fromServer, "yes");
-        mock.reset();
-    });
 });

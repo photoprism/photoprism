@@ -16,6 +16,17 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "run in read-only mode",
 		EnvVar: "PHOTOPRISM_READ_ONLY",
 	},
+	cli.BoolFlag{
+		Name:   "public",
+		Usage:  "no authentication required",
+		EnvVar: "PHOTOPRISM_PUBLIC",
+	},
+	cli.StringFlag{
+		Name:   "admin-password",
+		Usage:  "admin password",
+		Value:  "photoprism",
+		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
+	},
 	cli.StringFlag{
 		Name:   "log-level, l",
 		Usage:  "trace, debug, info, warning, error, fatal or panic",
@@ -131,11 +142,6 @@ var GlobalFlags = []cli.Flag{
 		Name:   "http-mode, m",
 		Usage:  "debug, release or test",
 		EnvVar: "PHOTOPRISM_HTTP_MODE",
-	},
-	cli.StringFlag{
-		Name:   "http-password",
-		Usage:  "HTTP server password (optional)",
-		EnvVar: "PHOTOPRISM_HTTP_PASSWORD",
 	},
 	cli.IntFlag{
 		Name:   "sql-port, s",

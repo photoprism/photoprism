@@ -3,7 +3,8 @@
         <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="busy">Importing files from directory...</span>
+                    <span v-if="fileName">Importing {{ fileName }}...</span>
+                    <span v-else-if="busy">Importing files from directory...</span>
                     <span v-else-if="completed">Done.</span>
                     <span v-else>Press button to import photos from directory...</span>
                 </p>
@@ -13,7 +14,7 @@
                 <v-btn
                         :disabled="busy"
                         color="blue-grey"
-                        class="white--text ml-0"
+                        class="white--text ml-0 mt-2"
                         depressed
                         @click.stop="startImport()"
                 >
@@ -26,7 +27,9 @@
 </template>
 
 <script>
-    import axios from "axios";
+    import Api from "common/api";
+    import Axios from "axios";
+    import Notify from "common/notify";
     import Event from "pubsub-js";
 
     export default {
@@ -36,31 +39,75 @@
                 started: false,
                 busy: false,
                 completed: 0,
+                subscriptionId: '',
+                fileName: '',
+                source: null,
             }
         },
         methods: {
             submit() {
-                console.log("SUBMIT");
+                // DO NOTHING
             },
             startImport() {
+                this.source = Axios.CancelToken.source();
                 this.started = Date.now();
                 this.busy = true;
                 this.completed = 0;
-
-                this.$alert.info("Importing photos...");
+                this.fileName = '';
 
                 const ctx = this;
+                Notify.blockUI();
 
-                axios.post('/api/v1/import').then(function () {
-                    Event.publish("alert.success", "Import complete");
+                Api.post('import', {}, { cancelToken: this.source.token }).then(function () {
+                    Notify.unblockUI();
                     ctx.busy = false;
                     ctx.completed = 100;
-                }).catch(function () {
-                    Event.publish("alert.error", "Import failed");
+                    ctx.fileName = '';
+                }).catch(function (e) {
+                    Notify.unblockUI();
+
+                    if (Axios.isCancel(e)) {
+                        // run in background
+                        return
+                    }
+
+                    Notify.error("Import failed");
+
                     ctx.busy = false;
                     ctx.completed = 0;
+                    ctx.fileName = '';
                 });
             },
-        }
+            handleEvent(ev, data) {
+                if(this.source) {
+                    this.source.cancel('run in background');
+                    this.source = null;
+                    Notify.unblockUI();
+                }
+
+                const type = ev.split('.')[1];
+
+                switch (type) {
+                    case 'file':
+                        this.busy = true;
+                        this.completed = 0;
+                        this.fileName = data.baseName;
+                        break;
+                    case 'completed':
+                        this.busy = false;
+                        this.completed = 100;
+                        this.fileName = '';
+                        break;
+                    default:
+                        console.log(data)
+                }
+            },
+        },
+        created() {
+            this.subscriptionId = Event.subscribe('import', this.handleEvent);
+        },
+        destroyed() {
+            Event.unsubscribe(this.subscriptionId);
+        },
     };
 </script>

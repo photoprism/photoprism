@@ -9,14 +9,14 @@ describe("model/user", () => {
     const mock = new MockAdapter(Api);
 
     it("should get entity name",  () => {
-        const values = {ID: 5, userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        const values = {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user = new User(values);
         const result = user.getEntityName();
         assert.equal(result, "Max Last");
     });
 
     it("should get id",  () => {
-        const values = {ID: 5, userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        const values = {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user = new User(values);
         const result = user.getId();
         assert.equal(result, 5);
@@ -34,7 +34,7 @@ describe("model/user", () => {
 
    it("should get register form",  async() => {
        mock.onAny("users/52/register").reply(200, "registerForm");
-        const values = {ID: 52, userFirstName: "Max"};
+        const values = {ID: 52, FirstName: "Max"};
         const user = new User(values);
         const result = await user.getRegisterForm();
         assert.equal(result.definition, "registerForm");
@@ -43,7 +43,7 @@ describe("model/user", () => {
 
     it("should get profile form",  async() => {
         mock.onAny("users/53/profile").reply(200, "profileForm");
-        const values = {ID: 53, userFirstName: "Max"};
+        const values = {ID: 53, FirstName: "Max"};
         const user = new User(values);
         const result = await user.getProfileForm();
         assert.equal(result.definition, "profileForm");
@@ -52,20 +52,20 @@ describe("model/user", () => {
 
     it("should get change password",  async() => {
         mock.onPut("users/54/password").reply(200,  {password: "old", new_password: "new"});
-        const values = {ID: 54, userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        const values = {ID: 54, FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user = new User(values);
         const result = await user.changePassword("old", "new");
         assert.equal(result.new_password, "new");
     });
 
     it("should save profile",  async() => {
-        mock.onPost("users/55/profile").reply(200,  {userFirstName: "MaxNew", userLastName: "LastNew"});
-        const values = {ID: 55, userFirstName: "Max", userLastName: "Last", userEmail: "test@test.com", userRole: "admin"};
+        mock.onPost("users/55/profile").reply(200,  {FirstName: "MaxNew", LastName: "LastNew"});
+        const values = {ID: 55, FirstName: "Max", LastName: "Last", Email: "test@test.com", Role: "admin"};
         const user = new User(values);
-        assert.equal(user.userFirstName, "Max");
-        assert.equal(user.userLastName, "Last");
+        assert.equal(user.FirstName, "Max");
+        assert.equal(user.LastName, "Last");
         await user.saveProfile();
-        assert.equal(user.userFirstName, "MaxNew");
-        assert.equal(user.userLastName, "LastNew");
+        assert.equal(user.FirstName, "MaxNew");
+        assert.equal(user.LastName, "LastNew");
     });
 });

@@ -86,7 +86,7 @@
             staticFilter: Object
         },
         watch: {
-            '$route' () {
+            '$route'() {
                 const query = this.$route.query;
 
                 this.filter.q = query['q'];
@@ -121,7 +121,7 @@
             },
             openLabel(index) {
                 const label = this.results[index];
-                this.$router.push({name: 'Photos', query: {q: "label:" + label.LabelSlug}});
+                this.$router.push({name: "photos", query: {q: "label:" + label.LabelSlug}});
             },
             loadMore() {
                 if (this.scrollDisabled) return;
@@ -143,7 +143,7 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$alert.info('All ' + this.results.length + ' labels loaded');
+                        this.$notify.info('All ' + this.results.length + ' labels loaded');
                     }
                 });
             },
@@ -197,9 +197,9 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$alert.info(this.results.length + ' labels found');
+                        this.$notify.info(this.results.length + ' labels found');
                     } else {
-                        this.$alert.info('More than 20 labels found');
+                        this.$notify.info('More than 20 labels found');
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }

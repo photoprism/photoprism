@@ -33,14 +33,16 @@
 
   <script>
       window.appConfig = {
-          name: "{{ .name }}",
-          version: "{{ .version }}",
-          copyright: "{{ .copyright }}",
-          debug: {{ .debug }},
-          readonly: {{ .readonly }},
-          cameras: {{ .cameras }},
-          countries: {{ .countries }},
-          thumbnails: {{ .thumbnails }}
+          "name": "{{ .name }}",
+          "version": "{{ .version }}",
+          "copyright": "{{ .copyright }}",
+          "debug": {{ .debug }},
+          "readonly": {{ .readonly }},
+          "public": {{ .public }},
+          "cameras": {{ .cameras }},
+          "countries": {{ .countries }},
+          "thumbnails": {{ .thumbnails }},
+          "settings": {{ .settings }},
       };
   </script>
 </head>
@@ -62,6 +64,8 @@
     </div>
   </div>
 </div>
+
+<div id="p-busy-overlay"></div>
 
 <script src="/static/build/app.js?{{ .jsHash }}"></script>
 </body>

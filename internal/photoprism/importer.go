@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/models"
 
 	"github.com/photoprism/photoprism/internal/util"
@@ -78,10 +79,15 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 		relatedFiles, mainFile, err := mediaFile.RelatedFiles()
 
 		if err != nil {
-			log.Errorf("could not import \"%s\": %s", mediaFile.RelativeFilename(importPath), err.Error())
+			event.Error(fmt.Sprintf("could not import \"%s\": %s", mediaFile.RelativeFilename(importPath), err.Error()))
 
 			return nil
 		}
+
+		event.Publish("import.file", event.Data{
+			"fileName": mainFile.Filename(),
+			"baseName": filepath.Base(mainFile.Filename()),
+		})
 
 		for _, relatedMediaFile := range relatedFiles {
 			relativeFilename := relatedMediaFile.RelativeFilename(importPath)

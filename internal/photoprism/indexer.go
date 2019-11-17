@@ -10,6 +10,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/util"
 )
@@ -113,6 +114,12 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	fileName := mediaFile.RelativeFilename(i.originalsPath())
 	fileHash := mediaFile.Hash()
 
+	event.Publish("index.file", event.Data{
+		"fileHash": fileHash,
+		"fileName": fileName,
+		"baseName": filepath.Base(fileName),
+	})
+
 	exifData, err := mediaFile.Exif()
 
 	if err != nil {
@@ -156,11 +163,11 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 			}
 		}
 
-		// Set Camera, Lens, Focal Length and Aperture
+		// Set Camera, Lens, Focal Length and F Number
 		photo.Camera = models.NewCamera(mediaFile.CameraModel(), mediaFile.CameraMake()).FirstOrCreate(i.db)
 		photo.Lens = models.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
 		photo.PhotoFocalLength = mediaFile.FocalLength()
-		photo.PhotoAperture = mediaFile.Aperture()
+		photo.PhotoFNumber = mediaFile.FNumber()
 		photo.PhotoIso = mediaFile.Iso()
 		photo.PhotoExposure = mediaFile.Exposure()
 	}

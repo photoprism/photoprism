@@ -3,12 +3,12 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/config"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/gin-gonic/gin"
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
@@ -27,17 +27,26 @@ func initIndexer(conf *config.Config) {
 // POST /api/v1/index
 func Index(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/index", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		start := time.Now()
 		path := conf.OriginalsPath()
 
-		log.Infof("indexing photos in %s", path)
+		event.Info(fmt.Sprintf("indexing photos in \"%s\"", filepath.Base(path)))
 
 		initIndexer(conf)
 
 		indexer.IndexAll()
 
-		elapsed := time.Since(start)
+		elapsed := int(time.Since(start).Seconds())
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("indexing completed in %s", elapsed)})
+		event.Success(fmt.Sprintf("indexing completed in %d s", elapsed))
+		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
+		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("indexing completed in %d s", elapsed)})
 	})
 }

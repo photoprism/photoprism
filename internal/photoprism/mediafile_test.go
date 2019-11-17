@@ -136,20 +136,20 @@ func TestMediaFile_FocalLength(t *testing.T) {
 	})
 }
 
-func TestMediaFile_Aperture(t *testing.T) {
+func TestMediaFile_FNumber(t *testing.T) {
 	t.Run("/cat_brown.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/cat_brown.jpg")
 		assert.Nil(t, err)
-		assert.Equal(t, 2.275, mediaFile.Aperture())
+		assert.Equal(t, 2.2, mediaFile.FNumber())
 	})
 	t.Run("/elephants.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 		assert.Nil(t, err)
-		assert.Equal(t, 6.644, mediaFile.Aperture())
+		assert.Equal(t, 10.0, mediaFile.FNumber())
 	})
 }
 

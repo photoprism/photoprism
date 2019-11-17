@@ -1,6 +1,7 @@
 <template>
     <div id="p-navigation">
-        <v-toolbar dark scroll-off-screen color="grey darken-3" class="hidden-lg-and-up p-navigation-small" @click.stop="showNavigation()">
+        <v-toolbar dark scroll-off-screen color="grey darken-3" class="hidden-lg-and-up p-navigation-small"
+                   @click.stop="showNavigation()">
             <v-toolbar-side-icon class="p-navigation-show"></v-toolbar-side-icon>
 
             <v-toolbar-title class="p-navigation-title">{{ $router.currentRoute.meta.area }}</v-toolbar-title>
@@ -58,13 +59,13 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile :to="{ name: 'Photos', query: { q: 'mono:true' }}" :exact="true" @click="">
+                    <v-list-tile :to="{name: 'photos', query: { q: 'mono:true' }}" :exact="true" @click="">
                         <v-list-tile-content>
                             <v-list-tile-title>Monochrome</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile :to="{ name: 'Photos', query: { q: 'chroma:50' }}" :exact="true" @click="">
+                    <v-list-tile :to="{name: 'photos', query: { q: 'chroma:50' }}" :exact="true" @click="">
                         <v-list-tile-content>
                             <v-list-tile-title>Vibrant</v-list-tile-title>
                         </v-list-tile-content>
@@ -88,7 +89,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile @click.stop="$alert.warning('Work in progress')">
+                    <v-list-tile @click.stop="$notify.warning('Work in progress')">
                         <v-list-tile-content>
                             <v-list-tile-title>Work in progress...</v-list-tile-title>
                         </v-list-tile-content>
@@ -125,7 +126,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/events" @click="" class="p-navigation-events">
+                <!-- v-list-tile to="/events" @click="" class="p-navigation-events">
                     <v-list-tile-action>
                         <v-icon>date_range</v-icon>
                     </v-list-tile-action>
@@ -133,9 +134,9 @@
                     <v-list-tile-content>
                         <v-list-tile-title>Events</v-list-tile-title>
                     </v-list-tile-content>
-                </v-list-tile>
+                </v-list-tile -->
 
-                <v-list-tile to="/people" @click="" class="p-navigation-people">
+                <!-- v-list-tile to="/people" @click="" class="p-navigation-people">
                     <v-list-tile-action>
                         <v-icon>people</v-icon>
                     </v-list-tile-action>
@@ -143,9 +144,9 @@
                     <v-list-tile-content>
                         <v-list-tile-title>People</v-list-tile-title>
                     </v-list-tile-content>
-                </v-list-tile>
+                </v-list-tile -->
 
-                <v-list-tile to="/library" @click="" class="p-navigation-library">
+                <v-list-tile to="/library" @click="" class="p-navigation-library" v-if="session.auth || isPublic">
                     <v-list-tile-action>
                         <v-icon>camera_roll</v-icon>
                     </v-list-tile-action>
@@ -155,13 +156,33 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/settings" @click="" class="p-navigation-settings">
+                <v-list-tile to="/settings" @click="" class="p-navigation-settings" v-if="session.auth || isPublic">
                     <v-list-tile-action>
                         <v-icon>settings</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
                         <v-list-tile-title>Settings</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
+                <v-list-tile @click="logout" class="p-navigation-logout" v-if="!isPublic && session.auth">
+                    <v-list-tile-action>
+                        <v-icon>power_settings_new</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>Logout</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
+                <v-list-tile to="/login" @click=""  class="p-navigation-login" v-if="!isPublic && !session.auth">
+                    <v-list-tile-action>
+                        <v-icon>lock</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>Login</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
             </v-list>
@@ -178,13 +199,18 @@
             return {
                 drawer: null,
                 mini: mini,
+                session: this.$session,
+                isPublic: this.$config.getValue("public"),
             };
         },
         methods: {
             showNavigation: function () {
                 this.drawer = true;
                 this.mini = false;
-            }
+            },
+            logout() {
+                this.$session.logout();
+            },
         }
     };
 </script>

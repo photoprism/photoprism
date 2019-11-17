@@ -9,7 +9,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/util"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,6 +18,11 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/upload/:path", func(c *gin.Context) {
 		if conf.ReadOnly() {
 			c.AbortWithStatusJSON(http.StatusForbidden, ErrReadOnly)
+			return
+		}
+
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 

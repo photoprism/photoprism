@@ -1,4 +1,7 @@
 debug: false
+read-only: false
+public: false
+admin-password: photoprism
 config-path: ~/.config/photoprism
 cache-path: ~/.cache/photoprism
 assets-path: ~/.local/share/photoprism
@@ -12,7 +15,6 @@ sql-password: photoprism
 http-host:
 http-mode: release
 http-port: 2342
-http-password:
 database-driver: internal
 database-dsn: root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true
 pid-filename: ~/.local/share/photoprism/photoprism.pid

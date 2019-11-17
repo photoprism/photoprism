@@ -17,10 +17,12 @@ import (
 	log "github.com/sirupsen/logrus"
 	tensorflow "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/urfave/cli"
+	gc "github.com/patrickmn/go-cache"
 )
 
 type Config struct {
 	db     *gorm.DB
+	cache *gc.Cache
 	config *Params
 }
 
@@ -201,9 +203,23 @@ func (c *Config) Debug() bool {
 	return c.config.Debug
 }
 
+// Public returns true if app requires no authentication.
+func (c *Config) Public() bool {
+	return c.config.Public
+}
+
 // ReadOnly returns true if photo directories are write protected.
 func (c *Config) ReadOnly() bool {
 	return c.config.ReadOnly
+}
+
+// AdminPassword returns the admin password.
+func (c *Config) AdminPassword() string {
+	if c.config.AdminPassword == "" {
+		return "photoprism"
+	}
+
+	return c.config.AdminPassword
 }
 
 // LogLevel returns the logrus log level.
@@ -222,6 +238,11 @@ func (c *Config) LogLevel() log.Level {
 // ConfigFile returns the config file name.
 func (c *Config) ConfigFile() string {
 	return c.config.ConfigFile
+}
+
+// SettingsFile returns the user settings file name.
+func (c *Config) SettingsFile() string {
+	return c.ConfigPath() + "/settings.yml"
 }
 
 // ConfigPath returns the config path.
@@ -431,6 +452,15 @@ func (c *Config) HttpStaticBuildPath() string {
 	return c.HttpStaticPath() + "/build"
 }
 
+// Cache returns the in-memory cache.
+func (c *Config) Cache() *gc.Cache {
+	if c.cache == nil {
+		c.cache = gc.New(336*time.Hour, 30*time.Minute)
+	}
+
+	return c.cache
+}
+
 // Db returns the db connection.
 func (c *Config) Db() *gorm.DB {
 	if c.db == nil {
@@ -501,11 +531,13 @@ func (c *Config) ClientConfig() ClientConfig {
 		"copyright":  c.Copyright(),
 		"debug":      c.Debug(),
 		"readonly":   c.ReadOnly(),
+		"public":     c.Public(),
 		"cameras":    cameras,
 		"countries":  countries,
 		"thumbnails": Thumbnails,
 		"jsHash":     jsHash,
 		"cssHash":    cssHash,
+		"settings":   c.Settings(),
 	}
 
 	return result
@@ -516,10 +548,23 @@ func (c *Config) Init(ctx context.Context) error {
 	return c.connectToDatabase(ctx)
 }
 
+// Shutdown closes open database connections.
 func (c *Config) Shutdown() {
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)
 	} else {
 		log.Info("closed database connection")
 	}
+}
+
+// Settings returns the current user settings.
+func (c *Config) Settings() *Settings {
+	s := NewSettings()
+	p := c.SettingsFile()
+
+	if err := s.SetValuesFromFile(p); err != nil {
+		log.Error(err)
+	}
+
+	return s
 }

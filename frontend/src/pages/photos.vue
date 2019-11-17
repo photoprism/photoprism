@@ -86,15 +86,15 @@
                 const photo = this.results[index];
 
                 if (photo.PhotoLat && photo.PhotoLong) {
-                    this.$router.push({name: 'Places', query: {lat: photo.PhotoLat, long: photo.PhotoLong}});
+                    this.$router.push({name: "places", query: {lat: photo.PhotoLat, long: photo.PhotoLong}});
                 } else if (photo.LocName) {
-                    this.$router.push({name: 'Places', query: {q: photo.LocName}});
+                    this.$router.push({name: "places", query: {q: photo.LocName}});
                 } else if (photo.LocCity) {
-                    this.$router.push({name: 'Places', query: {q: photo.LocCity}});
+                    this.$router.push({name: "places", query: {q: photo.LocCity}});
                 } else if (photo.LocCountry) {
-                    this.$router.push({name: 'Places', query: {q: photo.LocCountry}});
+                    this.$router.push({name: "places", query: {q: photo.LocCountry}});
                 } else {
-                    this.$router.push({name: 'Places', query: {q: photo.CountryName}});
+                    this.$router.push({name: "places", query: {q: photo.CountryName}});
                 }
             },
             openPhoto(index) {
@@ -120,7 +120,7 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$alert.info('All ' + this.results.length + ' photos loaded');
+                        this.$notify.info('All ' + this.results.length + ' photos loaded');
                     }
                 });
             },
@@ -182,9 +182,9 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$alert.info(this.results.length + ' photos found');
+                        this.$notify.info(this.results.length + ' photos found');
                     } else {
-                        this.$alert.info('More than 50 photos found');
+                        this.$notify.info('More than 50 photos found');
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
