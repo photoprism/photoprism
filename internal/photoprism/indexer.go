@@ -114,6 +114,12 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	fileName := mediaFile.RelativeFilename(i.originalsPath())
 	fileHash := mediaFile.Hash()
 
+	event.Publish("index.file", event.Data{
+		"fileHash": fileHash,
+		"fileName": fileName,
+		"baseName": filepath.Base(fileName),
+	})
+
 	exifData, err := mediaFile.Exif()
 
 	if err != nil {
@@ -338,18 +344,6 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		file.FileAspectRatio = mediaFile.AspectRatio()
 		file.FilePortrait = mediaFile.Width() < mediaFile.Height()
 	}
-
-	event.Publish("index.file", event.Data{
-		"photoID": file.PhotoID,
-		"filePrimary": file.FilePrimary,
-		"fileMissing":  file.FileMissing,
-		"fileName": file.FileName,
-		"baseName": filepath.Base(file.FileName),
-		"fileHash": file.FileHash,
-		"fileType": file.FileType,
-		"fileMime": file.FileMime,
-		"updated": fileQuery.Error == nil,
-	})
 
 	if fileQuery.Error == nil {
 		i.db.Unscoped().Save(&file)

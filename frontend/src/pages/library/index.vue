@@ -3,7 +3,7 @@
         <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit" dense>
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="fileName">Indexed {{ fileName}}...</span>
+                    <span v-if="fileName">Indexing {{ fileName }}...</span>
                     <span v-else-if="busy">Re-indexing existing files and photos...</span>
                     <span v-else-if="completed">Done.</span>
                     <span v-else>Press button to re-index existing files and photos...</span>
@@ -27,6 +27,8 @@
 </template>
 
 <script>
+    import Api from "common/api";
+    import Axios from "axios";
     import Notify from "common/notify";
     import Event from "pubsub-js";
 
@@ -39,6 +41,7 @@
                 completed: 0,
                 subscriptionId: '',
                 fileName: '',
+                source: null,
             }
         },
         methods: {
@@ -46,25 +49,42 @@
                 // DO NOTHING
             },
             startIndexing() {
+                this.source = Axios.CancelToken.source();
                 this.started = Date.now();
                 this.busy = true;
                 this.completed = 0;
                 this.fileName = '';
 
                 const ctx = this;
+                Notify.blockUI();
 
-                this.$api.post('index').then(function () {
+                Api.post('index', {}, { cancelToken: this.source.token }).then(function () {
+                    Notify.unblockUI();
                     ctx.busy = false;
                     ctx.completed = 100;
                     ctx.fileName = '';
-                }).catch(function () {
+                }).catch(function (e) {
+                    Notify.unblockUI();
+
+                    if (Axios.isCancel(e)) {
+                        // run in background
+                        return
+                    }
+
                     Notify.error("Indexing failed");
+
                     ctx.busy = false;
                     ctx.completed = 0;
                     ctx.fileName = '';
                 });
             },
             handleEvent(ev, data) {
+                if(this.source) {
+                    this.source.cancel('run in background');
+                    this.source = null;
+                    Notify.unblockUI();
+                }
+
                 const type = ev.split('.')[1];
 
                 switch (type) {

@@ -24,6 +24,10 @@ Api.interceptors.response.use(function (response) {
 }, function (error) {
     Notify.ajaxEnd();
 
+    if (Axios.isCancel(error)) {
+        return Promise.reject(error);
+    }
+
     if(console && console.log) {
         console.log(error);
     }
