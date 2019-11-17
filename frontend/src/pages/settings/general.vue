@@ -8,7 +8,7 @@
                                 :items="languages"
                                 label="Language"
                                 color="blue-grey"
-                                value="en"
+                                v-model="settings.language"
                                 flat
                         ></v-select>
                     </v-flex>
@@ -18,7 +18,7 @@
                                 :items="themes"
                                 label="Theme"
                                 color="blue-grey"
-                                value=""
+                                v-model="settings.theme"
                                 flat
                         ></v-select>
                     </v-flex>
@@ -45,9 +45,9 @@
             return {
                 readonly: this.$config.getValue("readonly"),
                 active: 0,
-                settings: new Settings(),
+                settings: new Settings(this.$config.values.settings),
                 list: {},
-                themes: [{text: "Default", value: ""}],
+                themes: [{text: "Dark", value: "dark"}, {text: "Light", value: "light"}],
                 languages: [{text: "English", value: "en"}],
             };
         },

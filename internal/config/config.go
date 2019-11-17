@@ -240,6 +240,11 @@ func (c *Config) ConfigFile() string {
 	return c.config.ConfigFile
 }
 
+// SettingsFile returns the user settings file name.
+func (c *Config) SettingsFile() string {
+	return c.ConfigPath() + "/settings.yml"
+}
+
 // ConfigPath returns the config path.
 func (c *Config) ConfigPath() string {
 	if c.config.ConfigPath == "" {
@@ -532,6 +537,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		"thumbnails": Thumbnails,
 		"jsHash":     jsHash,
 		"cssHash":    cssHash,
+		"settings":   c.Settings(),
 	}
 
 	return result
@@ -553,5 +559,12 @@ func (c *Config) Shutdown() {
 
 // Settings returns the current user settings.
 func (c *Config) Settings() *Settings {
-	return &Settings{}
+	s := NewSettings()
+	p := c.SettingsFile()
+
+	if err := s.SetValuesFromFile(p); err != nil {
+		log.Error(err)
+	}
+
+	return s
 }

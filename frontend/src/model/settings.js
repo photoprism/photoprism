@@ -4,9 +4,16 @@ class Settings {
     constructor(values) {
         this.__originalValues = {};
 
-        if (values) {
-            this.setValues(values);
+        if (!values) {
+            values = {
+                theme: "dark",
+                language: "en",
+            };
         }
+
+        console.log("config values", values);
+
+        this.setValues(values);
     }
 
     setValues(values) {
@@ -41,6 +48,7 @@ class Settings {
     }
 
     save() {
+
         return Api.post("settings", this.getValues()).then((response) => Promise.resolve(this.setValues(response.data)));
     }
 }
