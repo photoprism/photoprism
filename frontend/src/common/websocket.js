@@ -2,7 +2,9 @@ import Sockette from "sockette";
 import Event from "pubsub-js";
 
 const host = window.location.host;
-const Socket = new Sockette("ws://" + host + "/api/v1/ws", {
+const prot = ('https:' === document.location.protocol ? 'wss://' : 'ws://');
+
+const Socket = new Sockette(prot + host + "/api/v1/ws", {
     timeout: 5e3,
     onopen: e => {
         console.log('Connected!', e);
