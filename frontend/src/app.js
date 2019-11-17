@@ -23,7 +23,7 @@ import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
 
 // Initialize helpers
-const config = new Config(window.localStorage, window.appConfig);
+const config = new Config(window.localStorage, window.clientConfig);
 const viewer = new Viewer();
 const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
 const isPublic = config.getValue("public");

@@ -19,7 +19,7 @@ class Viewer {
             original_h: photo.FileHeight,
         };
 
-        const thumbs = window.appConfig.thumbnails;
+        const thumbs = window.clientConfig.thumbnails;
 
         for (let i = 0; i < thumbs.length; i++) {
             let size = photo.calculateSize(thumbs[i].Width, thumbs[i].Height);
@@ -140,7 +140,7 @@ class Viewer {
     }
 
     static mapViewportToImageSize(viewportWidth, viewportHeight) {
-        const thumbs = window.appConfig.thumbnails;
+        const thumbs = window.clientConfig.thumbnails;
 
         for (let i = 0; i < thumbs.length; i++) {
             if (thumbs[i].Width >= viewportWidth || thumbs[i].Height >= viewportHeight) {

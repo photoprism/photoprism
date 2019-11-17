@@ -32,18 +32,7 @@
   <link rel="manifest" href="/static/manifest.json">
 
   <script>
-      window.appConfig = {
-          "name": "{{ .name }}",
-          "version": "{{ .version }}",
-          "copyright": "{{ .copyright }}",
-          "debug": {{ .debug }},
-          "readonly": {{ .readonly }},
-          "public": {{ .public }},
-          "cameras": {{ .cameras }},
-          "countries": {{ .countries }},
-          "thumbnails": {{ .thumbnails }},
-          "settings": {{ .settings }},
-      };
+      window.clientConfig = {{ .clientConfig }};
   </script>
 </head>
 <body>
