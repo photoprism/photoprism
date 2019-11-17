@@ -33,7 +33,7 @@
     "browserslist": "^4.7.2",
     "chai": "^4.2.0",
     "chalk": "^2.4.2",
-    "chart.js": "^2.9.2",
+    "chart.js": "^2.9.3",
     "chrome-finder": "^1.0.6",
     "clean-webpack-plugin": "^3.0.0",
     "connect-history-api-fallback": "^1.3.0",
