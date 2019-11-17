@@ -8,13 +8,17 @@
                 </div>
             </v-card-title>
         </v-card>
-        <v-layout row wrap>
-            <v-flex
+        <v-row wrap>
+            <v-col
                     v-for="(photo, index) in photos"
                     :key="index"
                     v-bind:class="{ selected: $clipboard.has(photo) }"
                     class="p-photo"
-                    xs12 sm6 md3 lg2 d-flex
+                    cols="12"
+                    sm="6"
+                    md="3"
+                    lg="2"
+                    d-flex
             >
                 <v-hover>
                     <v-card tile slot-scope="{ hover }"
@@ -26,7 +30,7 @@
                                style="cursor: pointer"
                                @click="openPhoto(index)"
                         >
-                            <v-layout
+                            <v-row
                                     slot="placeholder"
                                     fill-height
                                     align-center
@@ -35,9 +39,9 @@
                             >
                                 <v-progress-circular indeterminate
                                                      color="grey lighten-5"></v-progress-circular>
-                            </v-layout>
+                            </v-row>
 
-                            <v-btn v-if="hover || $clipboard.has(photo)" :flat="!hover" :ripple="false"
+                            <v-btn v-if="hover || $clipboard.has(photo)" :text="!hover" :ripple="false"
                                    icon large absolute
                                    class="p-photo-select"
                                    @click.stop.prevent="$clipboard.toggle(photo)">
@@ -45,7 +49,7 @@
                                 <v-icon v-else-if="!$clipboard.has(photo)" color="grey lighten-3">radio_button_off</v-icon>
                             </v-btn>
 
-                            <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" :ripple="false"
+                            <v-btn v-if="hover || photo.PhotoFavorite" :text="!hover" :ripple="false"
                                    icon large absolute
                                    class="p-photo-like"
                                    @click.stop.prevent="photo.toggleLike()">
@@ -56,8 +60,8 @@
 
                     </v-card>
                 </v-hover>
-            </v-flex>
-        </v-layout>
+            </v-col>
+        </v-row>
     </v-container>
 </template>
 <script>

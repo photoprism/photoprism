@@ -12,7 +12,7 @@
         <v-btn
                 :class="textColor + ' pr-0'"
                 icon
-                flat
+                text
                 @click="close"
         >
             <v-icon>close</v-icon>

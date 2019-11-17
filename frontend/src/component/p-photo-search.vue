@@ -45,8 +45,8 @@
                 color="blue-grey lighten-5"
                 v-show="searchExpanded">
             <v-card-text>
-                <v-layout row wrap>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
+                <v-row wrap>
+                    <v-col xs12 sm6 md3 pa-2 class="p-countries-select">
                         <v-select @change="dropdownChange"
                                   label="Country"
                                   flat solo hide-details
@@ -56,8 +56,8 @@
                                   v-model="filter.country"
                                   :items="options.countries">
                         </v-select>
-                    </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
+                    </v-col>
+                    <v-col xs12 sm6 md3 pa-2 class="p-camera-select">
                         <v-select @change="dropdownChange"
                                   label="Camera"
                                   flat solo hide-details
@@ -67,8 +67,8 @@
                                   v-model="filter.camera"
                                   :items="options.cameras">
                         </v-select>
-                    </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
+                    </v-col>
+                    <v-col xs12 sm6 md3 pa-2 class="p-view-select">
                         <v-select @change="dropdownChange"
                                   label="View"
                                   flat solo hide-details
@@ -77,8 +77,8 @@
                                   :items="options.views"
                                   id="viewSelect">
                         </v-select>
-                    </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
+                    </v-col>
+                    <v-col xs12 sm6 md3 pa-2 class="p-time-select">
                         <v-select @change="dropdownChange"
                                   label="Sort By"
                                   flat solo hide-details
@@ -86,8 +86,8 @@
                                   v-model="filter.order"
                                   :items="options.sorting">
                         </v-select>
-                    </v-flex>
-                </v-layout>
+                    </v-col>
+                </v-row>
             </v-card-text>
         </v-card>
     </v-form>

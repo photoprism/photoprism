@@ -7,8 +7,8 @@
         </v-toolbar>
 
         <v-container>
-            <v-layout wrap>
-                <v-flex
+            <v-row wrap>
+                <v-col
                         xs12
                         class="mb-3"
                 >
@@ -21,9 +21,9 @@
                                 color="primary"
                         ></v-calendar>
                     </v-sheet>
-                </v-flex>
+                </v-col>
 
-                <v-flex
+                <v-col
                         sm4
                         xs12
                         class="text-sm-left text-xs-center"
@@ -37,8 +37,8 @@
                         </v-icon>
                         Prev
                     </v-btn>
-                </v-flex>
-                <v-flex
+                </v-col>
+                <v-col
                         sm4
                         xs12
                         class="text-xs-center"
@@ -48,8 +48,8 @@
                             :items="typeOptions"
                             label="Type"
                     ></v-select>
-                </v-flex>
-                <v-flex
+                </v-col>
+                <v-col
                         sm4
                         xs12
                         class="text-sm-right text-xs-center"
@@ -63,8 +63,8 @@
                             keyboard_arrow_right
                         </v-icon>
                     </v-btn>
-                </v-flex>
-            </v-layout>
+                </v-col>
+            </v-row>
         </v-container>
     </div>
 </template>

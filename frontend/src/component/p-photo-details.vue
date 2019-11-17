@@ -8,12 +8,17 @@
                 </div>
             </v-card-title>
         </v-card>
-        <v-layout row wrap>
-            <v-flex
+        <v-row row wrap>
+            <v-col
                     v-for="(photo, index) in photos"
                     :key="index"
                     class="p-photo"
-                    xs12 sm6 md4 lg3 d-flex
+                    cols="12"
+                    sm="6"
+                    md="4"
+                    lg="3"
+                    xl="2"
+                    d-flex
             >
                 <v-hover>
                     <v-card tile slot-scope="{ hover }"
@@ -28,7 +33,7 @@
                                 @click="openPhoto(index)"
 
                         >
-                            <v-layout
+                            <v-row
                                     slot="placeholder"
                                     fill-height
                                     align-center
@@ -36,9 +41,9 @@
                                     ma-0
                             >
                                 <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                            </v-layout>
+                            </v-row>
 
-                            <v-btn v-if="hover || $clipboard.has(photo)" :flat="!hover" :ripple="false"
+                            <v-btn v-if="hover || $clipboard.has(photo)" :text="!hover" :ripple="false"
                                    icon large absolute
                                    class="p-photo-select"
                                    @click.stop.prevent="$clipboard.toggle(photo)">
@@ -46,7 +51,7 @@
                                 <v-icon v-else color="grey lighten-3">radio_button_off</v-icon>
                             </v-btn>
 
-                            <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" :ripple="false"
+                            <v-btn v-if="hover || photo.PhotoFavorite" :text="!hover" :ripple="false"
                                    icon large absolute
                                    class="p-photo-like"
                                    @click.stop.prevent="photo.toggleLike()">
@@ -78,8 +83,8 @@
                         </v-card-title>
                     </v-card>
                 </v-hover>
-            </v-flex>
-        </v-layout>
+            </v-col>
+        </v-row>
     </v-container>
 </template>
 <script>

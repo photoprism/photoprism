@@ -32,8 +32,8 @@
                         </div>
                     </v-card-title>
                 </v-card>
-                <v-layout row wrap>
-                    <v-flex
+                <v-row wrap>
+                    <v-col
                             v-for="(label, index) in results"
                             :key="index"
                             class="p-label"
@@ -48,7 +48,7 @@
                                         class="grey lighten-2"
                                         @click.prevent="openLabel(index)"
                                 >
-                                    <v-layout
+                                    <v-row
                                             slot="placeholder"
                                             fill-height
                                             align-center
@@ -56,7 +56,7 @@
                                             ma-0
                                     >
                                         <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                                    </v-layout>
+                                    </v-row>
                                 </v-img>
 
                                 <v-card-actions>
@@ -70,8 +70,8 @@
                                 </v-card-actions>
                             </v-card>
                         </v-hover>
-                    </v-flex>
-                </v-layout>
+                    </v-col>
+                </v-row>
             </v-container>
         </v-container>
     </div>

@@ -1,5 +1,6 @@
 import Api from "common/api";
 import Notify from "common/notify";
+// import Colors from "vuetify/lib/util/colors";
 import Config from "common/config";
 import Clipboard from "common/clipboard";
 import Components from "component/components";
@@ -11,7 +12,7 @@ import PhotoPrism from "photoprism.vue";
 import Router from "vue-router";
 import Routes from "routes";
 import Session from "session";
-import { Settings } from "luxon";
+import {Settings} from "luxon";
 import Socket from "common/websocket";
 import Translations from "./i18n/translations.json";
 import Viewer from "common/viewer";
@@ -38,20 +39,40 @@ Vue.prototype.$socket = Socket;
 Vue.prototype.$config = config;
 Vue.prototype.$clipboard = clipboard;
 
-// Register Vuetify
-Vue.use(Vuetify, {
-    theme: {
-        primary: "#FFD600",
-        secondary: "#b0bec5",
-        accent: "#00B8D4",
-        error: "#E57373",
-        info: "#00B8D4",
-        success: "#00BFA5",
-        warning: "#FFD600",
-        delete: "#E57373",
-        love: "#EF5350",
+// Configure Vuetify
+const vueOpts = {
+    icons: {
+        iconfont: "mdiSvg",
     },
-});
+    theme: {
+        themes: {
+            light: {
+                primary: "#FFD600",
+                secondary: "#b0bec5",
+                accent: "#00B8D4",
+                error: "#E57373",
+                info: "#00B8D4",
+                success: "#00BFA5",
+                warning: "#FFD600",
+                delete: "#E57373",
+                love: "#EF5350",
+            },
+            dark: {
+                primary: "#FFD600",
+                secondary: "#b0bec5",
+                accent: "#00B8D4",
+                error: "#E57373",
+                info: "#00B8D4",
+                success: "#00BFA5",
+                warning: "#FFD600",
+                delete: "#E57373",
+                love: "#EF5350",
+            },
+        },
+    },
+};
+
+Vue.use(Vuetify);
 
 Vue.config.language = "en";
 Settings.defaultLocale = Vue.config.language;
@@ -75,22 +96,22 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-    if(to.matched.some(record => record.meta.admin)) {
+    if (to.matched.some(record => record.meta.admin)) {
         if (isPublic || Session.isAdmin()) {
             next();
         } else {
             next({
                 name: "login",
-                params: { nextUrl: to.fullPath },
+                params: {nextUrl: to.fullPath},
             });
         }
-    } else if(to.matched.some(record => record.meta.auth)) {
+    } else if (to.matched.some(record => record.meta.auth)) {
         if (isPublic || Session.isUser()) {
             next();
         } else {
             next({
                 name: "login",
-                params: { nextUrl: to.fullPath },
+                params: {nextUrl: to.fullPath},
             });
         }
     } else {
@@ -99,9 +120,9 @@ router.beforeEach((to, from, next) => {
 });
 
 // Run app
-/* eslint-disable no-unused-vars */
-const app = new Vue({
+new Vue({
     el: "#photoprism",
+    vuetify: new Vuetify(vueOpts),
     router,
     render: h => h(PhotoPrism),
-});
+}).$mount("#photoprism");

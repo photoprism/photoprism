@@ -22,7 +22,7 @@
             <td>{{ props.item.TakenAt | luxon:format('dd/MM/yyyy hh:mm:ss') }}</td>
             <td @click="openLocation(props.index)" class="p-pointer">{{ props.item.LocCountry }}</td>
             <td>{{ props.item.CameraMake }} {{ props.item.CameraModel }}</td>
-            <td><v-btn icon small flat :ripple="false"
+            <td><v-btn icon small text :ripple="false"
                        class="p-photo-like"
                        @click.stop.prevent="props.item.toggleLike()">
                 <v-icon v-if="props.item.PhotoFavorite" color="pink lighten-3">favorite</v-icon>

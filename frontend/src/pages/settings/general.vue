@@ -2,8 +2,8 @@
     <div class="p-tab p-tab-general">
         <v-container fluid>
             <v-form ref="form" class="p-form-settings" lazy-validation @submit.prevent="save" dense>
-                <v-layout wrap align-center>
-                    <v-flex xs12 sm6 class="pr-3">
+                <v-row wrap align-center>
+                    <v-col xs12 sm6 class="pr-3">
                         <v-select
                                 :items="languages"
                                 label="Language"
@@ -11,9 +11,9 @@
                                 v-model="settings.language"
                                 flat
                         ></v-select>
-                    </v-flex>
+                    </v-col>
 
-                    <v-flex xs12 sm6 class="pr-3">
+                    <v-col xs12 sm6 class="pr-3">
                         <v-select
                                 :items="themes"
                                 label="Theme"
@@ -21,8 +21,8 @@
                                 v-model="settings.theme"
                                 flat
                         ></v-select>
-                    </v-flex>
-                </v-layout>
+                    </v-col>
+                </v-row>
 
                 <v-btn color="blue-grey"
                        class="white--text ml-0 mt-2"
