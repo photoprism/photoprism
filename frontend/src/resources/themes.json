@@ -1,0 +1,24 @@
+{
+  "default": {
+    "primary": "#FFD600",
+    "secondary": "#b0bec5",
+    "accent": "#00B8D4",
+    "error": "#E57373",
+    "info": "#00B8D4",
+    "success": "#00BFA5",
+    "warning": "#FFD600",
+    "delete": "#E57373",
+    "love": "#EF5350"
+  },
+  "pink": {
+    "primary": "#ff4081",
+    "secondary": "#b0bec5",
+    "accent": "#00B8D4",
+    "error": "#E57373",
+    "info": "#00B8D4",
+    "success": "#00BFA5",
+    "warning": "#FFD600",
+    "delete": "#E57373",
+    "love": "#EF5350"
+  }
+}

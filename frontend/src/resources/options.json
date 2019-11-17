@@ -1,0 +1,18 @@
+{
+  "languages": [
+    {
+      "text": "English",
+      "value": "en"
+    }
+  ],
+  "themes": [
+    {
+      "text": "Amber",
+      "value": "default"
+    },
+    {
+      "text": "Pink",
+      "value": "pink"
+    }
+  ]
+}

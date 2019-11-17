@@ -11,9 +11,8 @@ import PhotoPrism from "photoprism.vue";
 import Router from "vue-router";
 import Routes from "routes";
 import Session from "session";
-import { Settings } from "luxon";
+import {Settings} from "luxon";
 import Socket from "common/websocket";
-import Translations from "./i18n/translations.json";
 import Viewer from "common/viewer";
 import Vue from "vue";
 import Vuetify from "vuetify";
@@ -21,6 +20,10 @@ import VueLuxon from "vue-luxon";
 import VueFilters from "vue2-filters";
 import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
+
+// Resources
+import themes from "./resources/themes.json";
+import translations from "./resources/translations.json";
 
 // Initialize helpers
 const config = new Config(window.localStorage, window.clientConfig);
@@ -38,26 +41,18 @@ Vue.prototype.$socket = Socket;
 Vue.prototype.$config = config;
 Vue.prototype.$clipboard = clipboard;
 
+// Theme config
+const themeSetting = config.getValue("settings").theme;
+const theme = themes[themeSetting] ? themes[themeSetting] : themes["default"];
+
 // Register Vuetify
-Vue.use(Vuetify, {
-    theme: {
-        primary: "#FFD600",
-        secondary: "#b0bec5",
-        accent: "#00B8D4",
-        error: "#E57373",
-        info: "#00B8D4",
-        success: "#00BFA5",
-        warning: "#FFD600",
-        delete: "#E57373",
-        love: "#EF5350",
-    },
-});
+Vue.use(Vuetify, { theme });
 
 Vue.config.language = "en";
 Settings.defaultLocale = Vue.config.language;
 
 // Register other VueJS plugins
-Vue.use(GetTextPlugin, {translations: Translations, silent: false, defaultLanguage: Vue.config.language});
+Vue.use(GetTextPlugin, {translations: translations, silent: false, defaultLanguage: Vue.config.language});
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);
@@ -75,22 +70,22 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-    if(to.matched.some(record => record.meta.admin)) {
+    if (to.matched.some(record => record.meta.admin)) {
         if (isPublic || Session.isAdmin()) {
             next();
         } else {
             next({
                 name: "login",
-                params: { nextUrl: to.fullPath },
+                params: {nextUrl: to.fullPath},
             });
         }
-    } else if(to.matched.some(record => record.meta.auth)) {
+    } else if (to.matched.some(record => record.meta.auth)) {
         if (isPublic || Session.isUser()) {
             next();
         } else {
             next({
                 name: "login",
-                params: { nextUrl: to.fullPath },
+                params: {nextUrl: to.fullPath},
             });
         }
     } else {
@@ -99,9 +94,7 @@ router.beforeEach((to, from, next) => {
 });
 
 // Run app
-/* eslint-disable no-unused-vars */
-const app = new Vue({
-    el: "#photoprism",
+new Vue({
     router,
     render: h => h(PhotoPrism),
-});
+}).$mount("#photoprism");

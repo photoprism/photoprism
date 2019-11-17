@@ -5,7 +5,7 @@
                 <v-layout wrap align-center>
                     <v-flex xs12 sm6 class="pr-3">
                         <v-select
-                                :items="languages"
+                                :items="options.languages"
                                 label="Language"
                                 color="blue-grey"
                                 v-model="settings.language"
@@ -15,7 +15,7 @@
 
                     <v-flex xs12 sm6 class="pr-3">
                         <v-select
-                                :items="themes"
+                                :items="options.themes"
                                 label="Theme"
                                 color="blue-grey"
                                 v-model="settings.theme"
@@ -38,22 +38,20 @@
 
 <script>
     import Settings from "model/settings";
+    import options from "resources/options.json";
 
     export default {
         name: 'p-tab-general',
         data() {
             return {
                 readonly: this.$config.getValue("readonly"),
-                active: 0,
                 settings: new Settings(this.$config.values.settings),
-                list: {},
-                themes: [{text: "Dark", value: "dark"}, {text: "Light", value: "light"}],
-                languages: [{text: "English", value: "en"}],
+                options: options,
             };
         },
         methods: {
             load() {
-                this.settings.load().then((r) => { this.list = r.getValues(); });
+                this.settings.load();
             },
             save() {
                 this.settings.save().then(() => {
