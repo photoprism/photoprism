@@ -82,4 +82,15 @@ export default class Page {
         const countSelectedInt = (Number.isInteger(parseInt(countSelected))) ? parseInt(countSelected) : 0;
         return countSelectedInt;
     }
+
+    async login(password) {
+        await t
+            .typeText(Selector('input[type="password"]'), password)
+            .pressKey('enter');
+    }
+
+    async logout() {
+        await t
+            .click(Selector('div.p-navigation-logout'));
+    }
 }
