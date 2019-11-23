@@ -1,4 +1,5 @@
 import Api from "./api";
+import Event from "pubsub-js";
 import User from "../model/user";
 
 export default class Session {
@@ -22,6 +23,8 @@ export default class Session {
         if (this.isUser()) {
             this.auth = true;
         }
+
+        Event.subscribe('session.logout', this.onLogout.bind(this));
     }
 
     useSessionStorage() {
@@ -124,6 +127,11 @@ export default class Session {
                 this.setUser(new User(result.data.user));
             }
         );
+    }
+
+    onLogout() {
+        this.deleteToken();
+        window.location = "/";
     }
 
     logout() {

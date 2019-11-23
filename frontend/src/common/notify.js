@@ -13,6 +13,10 @@ const Notify = {
     success: function (message) {
         Event.publish("notify.success", {msg: message});
     },
+    logout: function (message) {
+        Event.publish("notify.error", {msg: message});
+        Event.publish("session.logout");
+    },
     ajaxStart: function() {
         Event.publish("ajax.start");
     },

@@ -41,7 +41,11 @@ Api.interceptors.response.use(function (response) {
         errorMessage = data.message ? data.message : data.error;
     }
 
-    Notify.error(errorMessage);
+    if (code === 401) {
+        Notify.logout(errorMessage);
+    } else {
+        Notify.error(errorMessage);
+    }
 
     return Promise.reject(error);
 });

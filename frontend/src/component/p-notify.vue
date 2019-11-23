@@ -37,13 +37,13 @@
             };
         },
         created() {
-            this.subscriptionId = Event.subscribe('notify', this.eventHandler);
+            this.subscriptionId = Event.subscribe('notify', this.onNotify);
         },
         destroyed() {
             Event.unsubscribe(this.subscriptionId);
         },
         methods: {
-            eventHandler: function (ev, data) {
+            onNotify: function (ev, data) {
                 const type = ev.split('.')[1];
 
                 // get message from data object
