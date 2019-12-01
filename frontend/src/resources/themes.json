@@ -8,10 +8,13 @@
     "success": "#00BFA5",
     "warning": "#FFD600",
     "delete": "#E57373",
-    "love": "#EF5350"
+    "love": "#EF5350",
+    "dark-background": "#424242",
+    "medium-background": "#CFD8DC",
+    "light-background": "#ECEFF1"
   },
-  "pink": {
-    "primary": "#ff4081",
+  "whale": {
+    "primary": "#82B1FF",
     "secondary": "#b0bec5",
     "accent": "#00B8D4",
     "error": "#E57373",
@@ -19,6 +22,23 @@
     "success": "#00BFA5",
     "warning": "#FFD600",
     "delete": "#E57373",
-    "love": "#EF5350"
+    "love": "#EF5350",
+    "dark-background": "#616161",
+    "medium-background": "#E0E0E0",
+    "light-background": "#EEEEEE"
+  },
+  "raspberry": {
+    "primary": "#F48FB1",
+    "secondary": "#b0bec5",
+    "accent": "#00B8D4",
+    "error": "#E57373",
+    "info": "#00B8D4",
+    "success": "#00BFA5",
+    "warning": "#FFD600",
+    "delete": "#E57373",
+    "love": "#EF5350",
+    "dark-background": "#616161",
+    "medium-background": "#E0E0E0",
+    "light-background": "#EEEEEE"
   }
 }

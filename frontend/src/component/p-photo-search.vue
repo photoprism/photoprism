@@ -1,6 +1,6 @@
 <template>
     <v-form ref="form" autocomplete="off" class="p-photo-search" lazy-validation @submit.prevent="filterChange" dense>
-        <v-toolbar flat color="blue-grey lighten-4">
+        <v-toolbar flat color="medium-background">
             <v-text-field class="pt-3 pr-3 p-search-field"
                           autocomplete="off"
                           single-line
@@ -42,7 +42,7 @@
 
         <v-card class="pt-1"
                 flat
-                color="blue-grey lighten-5"
+                color="light-background"
                 v-show="searchExpanded">
             <v-card-text>
                 <v-layout row wrap>

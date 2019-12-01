@@ -7,12 +7,16 @@
   ],
   "themes": [
     {
-      "text": "Amber",
+      "text": "Default",
       "value": "default"
     },
     {
-      "text": "Pink",
-      "value": "pink"
+      "text": "Whale",
+      "value": "whale"
+    },
+    {
+      "text": "Raspberry",
+      "value": "raspberry"
     }
   ]
 }
