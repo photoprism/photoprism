@@ -447,9 +447,13 @@ func (m *MediaFile) Move(newFilename string) error {
 		return err
 	}
 
+	if err := os.Remove(m.filename); err != nil {
+		return err
+	}
+
 	m.filename = newFilename
 
-	return os.Remove(m.filename)
+	return nil
 }
 
 // Copy a mediafile to another file by destinationFilename.
