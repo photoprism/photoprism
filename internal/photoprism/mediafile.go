@@ -433,15 +433,23 @@ func (m *MediaFile) HasSameFilename(other *MediaFile) bool {
 	return m.Filename() == other.Filename()
 }
 
-// Move a mediafile to a new file with the filename provided in parameter.
+// Move file to a new destination with the filename provided in parameter.
 func (m *MediaFile) Move(newFilename string) error {
 	if err := os.Rename(m.filename, newFilename); err != nil {
+		log.Debugf("could not rename file, falling back to copy and delete: %s", err.Error())
+ 	} else {
+		m.filename = newFilename
+
+		return nil
+	}
+
+	if err := m.Copy(newFilename); err != nil {
 		return err
 	}
 
 	m.filename = newFilename
 
-	return nil
+	return os.Remove(m.filename)
 }
 
 // Copy a mediafile to another file by destinationFilename.

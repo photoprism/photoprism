@@ -492,19 +492,46 @@ func TestMediaFile_Exists(t *testing.T) {
 	assert.Nil(t, mediaFile)
 }
 
+func TestMediaFile_Move(t *testing.T) {
+	conf := config.TestConfig()
+
+	tmpPath := conf.CachePath() + "/_tmp/TestMediaFile_Move"
+	origName := tmpPath  + "/original.jpg"
+	destName := tmpPath  + "/destination.jpg"
+
+	os.MkdirAll(tmpPath, os.ModePerm)
+
+	defer os.RemoveAll(tmpPath)
+
+	f, err := NewMediaFile(conf.ExamplesPath() + "/table_white.jpg")
+	assert.Nil(t, err)
+	f.Copy(origName)
+	assert.True(t, util.Exists(origName))
+
+	m, err := NewMediaFile(origName)
+	assert.Nil(t, err)
+
+	if err = m.Move(destName); err != nil {
+		t.Errorf("failed to move: %s", err)
+	}
+
+	assert.True(t, util.Exists(destName))
+	assert.Equal(t, destName, m.Filename())
+}
+
 func TestMediaFile_Copy(t *testing.T) {
 	conf := config.TestConfig()
 
-	thumbsPath := conf.CachePath() + "/_tmp"
+	tmpPath := conf.CachePath() + "/_tmp/TestMediaFile_Copy"
 
-	os.MkdirAll(thumbsPath, os.ModePerm)
+	os.MkdirAll(tmpPath, os.ModePerm)
 
-	defer os.RemoveAll(thumbsPath)
+	defer os.RemoveAll(tmpPath)
 
 	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/table_white.jpg")
 	assert.Nil(t, err)
-	mediaFile.Copy(thumbsPath + "table_whitecopy.jpg")
-	assert.True(t, util.Exists(thumbsPath+"table_whitecopy.jpg"))
+	mediaFile.Copy(tmpPath + "table_whitecopy.jpg")
+	assert.True(t, util.Exists(tmpPath+"table_whitecopy.jpg"))
 }
 
 func TestMediaFile_Extension(t *testing.T) {
