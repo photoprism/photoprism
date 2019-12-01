@@ -5,13 +5,8 @@ class Settings {
         this.__originalValues = {};
 
         if (!values) {
-            values = {
-                theme: "dark",
-                language: "en",
-            };
+            throw "can't create settings with empty values"
         }
-
-        console.log("config values", values);
 
         this.setValues(values);
     }
@@ -48,7 +43,6 @@ class Settings {
     }
 
     save() {
-
         return Api.post("settings", this.getValues()).then((response) => Promise.resolve(this.setValues(response.data)));
     }
 }

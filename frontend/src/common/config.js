@@ -1,4 +1,6 @@
 import Event from "pubsub-js";
+import themes from "../resources/themes.json";
+import translations from "../resources/translations.json";
 
 class Config {
     /**
@@ -9,9 +11,16 @@ class Config {
         this.storage = storage;
         this.storage_key = "config";
 
+        this.translations = translations;
         this.values = values;
 
         this.subscriptionId = Event.subscribe('config.updated', (ev, data) => this.setValues(data));
+
+        if(this.hasValue("settings")) {
+            this.setTheme(this.getValue("settings").theme);
+        } else {
+            this.setTheme("default");
+        }
     }
 
     setValues(values) {
@@ -23,6 +32,17 @@ class Config {
             }
         }
 
+        return this;
+    }
+
+    updateSettings(values, $vuetify) {
+        this.setValue("settings", values);
+        this.setTheme(values.theme);
+        $vuetify.theme = this.theme;
+    }
+
+    setTheme(name) {
+        this.theme = themes[name] ? themes[name] : themes["default"];
         return this;
     }
 
@@ -40,6 +60,10 @@ class Config {
         this.values[key] = value;
 
         return this;
+    }
+
+    hasValue(key) {
+        return !!this.values[key];
     }
 
     getValue(key) {

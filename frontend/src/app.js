@@ -21,10 +21,6 @@ import VueFilters from "vue2-filters";
 import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
 
-// Resources
-import themes from "./resources/themes.json";
-import translations from "./resources/translations.json";
-
 // Initialize helpers
 const config = new Config(window.localStorage, window.clientConfig);
 const viewer = new Viewer();
@@ -41,18 +37,14 @@ Vue.prototype.$socket = Socket;
 Vue.prototype.$config = config;
 Vue.prototype.$clipboard = clipboard;
 
-// Theme config
-const themeSetting = config.getValue("settings").theme;
-const theme = themes[themeSetting] ? themes[themeSetting] : themes["default"];
-
 // Register Vuetify
-Vue.use(Vuetify, { theme });
+Vue.use(Vuetify, { "theme": config.theme });
 
 Vue.config.language = "en";
 Settings.defaultLocale = Vue.config.language;
 
 // Register other VueJS plugins
-Vue.use(GetTextPlugin, {translations: translations, silent: false, defaultLanguage: Vue.config.language});
+Vue.use(GetTextPlugin, {translations: config.translations, silent: false, defaultLanguage: Vue.config.language});
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);

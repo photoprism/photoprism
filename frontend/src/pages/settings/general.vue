@@ -54,7 +54,8 @@
                 this.settings.load();
             },
             save() {
-                this.settings.save().then(() => {
+                this.settings.save().then((s) => {
+                    this.$config.updateSettings(s.getValues(), this.$vuetify);
                     this.$notify.info("Settings saved");
                 })
             },
