@@ -11,31 +11,34 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	gc "github.com/patrickmn/go-cache"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/tidb"
 	"github.com/photoprism/photoprism/internal/util"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	tensorflow "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/urfave/cli"
-	gc "github.com/patrickmn/go-cache"
 )
+
+var log = event.Log
 
 type Config struct {
 	db     *gorm.DB
-	cache *gc.Cache
+	cache  *gc.Cache
 	config *Params
 }
 
 func initLogger(debug bool) {
-	log.SetFormatter(&log.TextFormatter{
+	log.SetFormatter(&logrus.TextFormatter{
 		DisableColors: false,
 		FullTimestamp: true,
 	})
 
 	if debug {
-		log.SetLevel(log.DebugLevel)
+		log.SetLevel(logrus.DebugLevel)
 	} else {
-		log.SetLevel(log.InfoLevel)
+		log.SetLevel(logrus.InfoLevel)
 	}
 }
 
@@ -223,15 +226,15 @@ func (c *Config) AdminPassword() string {
 }
 
 // LogLevel returns the logrus log level.
-func (c *Config) LogLevel() log.Level {
+func (c *Config) LogLevel() logrus.Level {
 	if c.Debug() {
 		c.config.LogLevel = "debug"
 	}
 
-	if logLevel, err := log.ParseLevel(c.config.LogLevel); err == nil {
+	if logLevel, err := logrus.ParseLevel(c.config.LogLevel); err == nil {
 		return logLevel
 	} else {
-		return log.InfoLevel
+		return logrus.InfoLevel
 	}
 }
 

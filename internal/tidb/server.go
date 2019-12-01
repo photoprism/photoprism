@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/opentracing/opentracing-go"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/pingcap/errors"
 	"github.com/pingcap/parser/mysql"
 	"github.com/pingcap/parser/terror"
@@ -49,8 +50,9 @@ import (
 	xserver "github.com/pingcap/tidb/x-server"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/push"
-	log "github.com/sirupsen/logrus"
 )
+
+var log = event.Log
 
 var (
 	cfg      *config.Config

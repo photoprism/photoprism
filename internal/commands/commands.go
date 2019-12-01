@@ -11,16 +11,12 @@ import (
 	"os"
 	"syscall"
 
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/util"
 	"github.com/sevlyar/go-daemon"
-	"github.com/sirupsen/logrus"
 )
 
-var log *logrus.Logger
-
-func init() {
-	log = logrus.StandardLogger()
-}
+var log = event.Log
 
 func childAlreadyRunning(filePath string) (pid int, running bool) {
 	if !util.Exists(filePath) {

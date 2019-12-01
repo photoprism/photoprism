@@ -7,8 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
-	log "github.com/sirupsen/logrus"
+	"github.com/photoprism/photoprism/internal/event"
 )
+
+var log = event.Log
 
 // Start the REST API server using the configuration provided
 func Start(ctx context.Context, conf *config.Config) {

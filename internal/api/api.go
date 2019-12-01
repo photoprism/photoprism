@@ -7,10 +7,8 @@ https://github.com/photoprism/photoprism/wiki
 */
 package api
 
-import "github.com/sirupsen/logrus"
+import (
+	"github.com/photoprism/photoprism/internal/event"
+)
 
-var log *logrus.Logger
-
-func init() {
-	log = logrus.StandardLogger()
-}
+var log = event.Log

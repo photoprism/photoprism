@@ -10,9 +10,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/photoprism/photoprism/internal/util"
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
-
-	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -76,7 +75,7 @@ func TestConfig() *Config {
 }
 
 func NewTestConfig() *Config {
-	log.SetLevel(log.DebugLevel)
+	log.SetLevel(logrus.DebugLevel)
 
 	c := &Config{config: NewTestParams()}
 	err := c.Init(context.Background())
@@ -89,7 +88,7 @@ func NewTestConfig() *Config {
 }
 
 func NewTestErrorConfig() *Config {
-	log.SetLevel(log.DebugLevel)
+	log.SetLevel(logrus.DebugLevel)
 
 	c := &Config{config: NewTestParamsError()}
 	err := c.Init(context.Background())

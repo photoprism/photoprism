@@ -3,8 +3,6 @@ package tidb
 import (
 	"database/sql"
 	"fmt"
-
-	log "github.com/sirupsen/logrus"
 )
 
 func InitDatabase(port uint, password string) error {

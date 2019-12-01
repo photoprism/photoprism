@@ -2,19 +2,15 @@ package event
 
 import (
 	"github.com/leandro-lugaresi/hub"
-	"github.com/sirupsen/logrus"
 )
 
 type Hub = hub.Hub
 type Data = hub.Fields
 type Message = hub.Message
-var log *logrus.Logger
+
 var channelCap = 10
 var sharedHub = NewHub()
 
-func init() {
-	log = logrus.StandardLogger()
-}
 
 func NewHub () *Hub {
 	return hub.New()
@@ -25,27 +21,26 @@ func SharedHub() *Hub {
 }
 
 func Error(msg string) {
-	log.Error(msg)
+	Log.Error(msg)
 	Publish("notify.error", Data{"msg": msg})
 }
 
 func Success(msg string) {
-	log.Info(msg)
+	Log.Info(msg)
 	Publish("notify.success", Data{"msg": msg})
 }
 
 func Info(msg string) {
-	log.Info(msg)
+	Log.Info(msg)
 	Publish("notify.info", Data{"msg": msg})
 }
 
 func Warning(msg string) {
-	log.Warn(msg)
+	Log.Warn(msg)
 	Publish("notify.warning", Data{"msg": msg})
 }
 
 func Publish (event string, data Data) {
-	log.Infof("publish %s: %v", event, data)
 	SharedHub().Publish(Message{
 		Name:   event,
 		Fields: data,
