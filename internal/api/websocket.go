@@ -49,7 +49,7 @@ func wsWriter(ws *websocket.Conn, conf *config.Config) {
 			ws.SetWriteDeadline(time.Now().Add(10 * time.Second))
 
 			if err := ws.WriteJSON(gin.H{"event": msg.Name, "data": msg.Fields}); err != nil {
-				log.Errorf("write json: %s", err)
+				log.Debug(err)
 				return
 			}
 		}

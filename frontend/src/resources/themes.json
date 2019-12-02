@@ -9,6 +9,7 @@
     "warning": "#FFD600",
     "delete": "#E57373",
     "love": "#EF5350",
+    "terminal": "#333333",
     "dark-background": "#424242",
     "medium-background": "#CFD8DC",
     "light-background": "#ECEFF1"
@@ -23,6 +24,7 @@
     "warning": "#FFD600",
     "delete": "#E57373",
     "love": "#EF5350",
+    "terminal": "#333333",
     "dark-background": "#616161",
     "medium-background": "#E0E0E0",
     "light-background": "#EEEEEE"
@@ -37,6 +39,7 @@
     "warning": "#FFD600",
     "delete": "#E57373",
     "love": "#EF5350",
+    "terminal": "#333333",
     "dark-background": "#616161",
     "medium-background": "#E0E0E0",
     "light-background": "#EEEEEE"

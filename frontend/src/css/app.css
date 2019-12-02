@@ -66,3 +66,55 @@ main {
 #photoprism .p-pointer {
     cursor: pointer;
 }
+
+
+#photoprism .p-tab-logs {
+    max-width: 99%;
+    margin: 8px;
+    padding: 4px;
+}
+
+#photoprism .p-logs {
+    box-sizing: border-box;
+    width: auto;
+    margin: 0;
+    height: 100%;
+    padding: 10px;
+    color: white;
+    overflow-y: auto;
+}
+
+#photoprism .p-log-message {
+    display: block;
+    text-align: left;
+    font-size: 1em;
+    font-family: monospace;
+    white-space: normal;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+    margin: 0;
+}
+
+#photoprism .p-log-message span {
+    color: #FEFEFE;
+    font-weight: normal;
+}
+
+#photoprism .p-log-fatal,
+#photoprism .p-log-critical,
+#photoprism .p-log-error {
+    color: #F48FB1;
+}
+
+#photoprism .p-log-fatal {
+    color: #FFECB3;
+}
+
+#photoprism .p-log-info {
+    color: #82B1FF;
+}
+
+#photoprism .p-log-debug {
+    color: #EEEEEE;
+}
