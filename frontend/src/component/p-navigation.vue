@@ -16,7 +16,7 @@
                 fixed dark app
         >
             <v-toolbar flat>
-                <v-list>
+                <v-list class="navigation-home">
                     <v-list-tile class="p-navigation-logo">
                         <v-list-tile-avatar>
                             <img src="/static/img/logo.png">
