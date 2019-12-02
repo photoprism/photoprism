@@ -42,8 +42,8 @@ Vue.prototype.$clipboard = clipboard;
 // Register Vuetify
 Vue.use(Vuetify, { "theme": config.theme });
 
-Vue.config.language = "en";
-Settings.defaultLocale = Vue.config.language;
+Vue.config.language = config.values.settings.language;
+Settings.defaultLocale = config.values.settings.language;
 
 // Register other VueJS plugins
 Vue.use(GetTextPlugin, {translations: config.translations, silent: false, defaultLanguage: Vue.config.language});
