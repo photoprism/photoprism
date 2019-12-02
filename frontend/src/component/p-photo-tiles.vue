@@ -1,5 +1,5 @@
 <template>
-    <v-container grid-list-xs fluid class="pa-0 p-photos p-photo-tiles">
+    <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-tiles">
         <v-card v-if="photos.length === 0" class="p-photos-empty" flat>
             <v-card-title primary-title>
                 <div>

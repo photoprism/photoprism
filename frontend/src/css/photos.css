@@ -25,10 +25,6 @@
     right: 4px; bottom: 4px;
 }
 
-#photoprism .p-photo-list .v-datatable {
-    border-radius: 10px;
-}
-
 #photoprism .p-photo-clipboard {
     right: 8px;
     bottom: 8px;

@@ -1,6 +1,6 @@
 <template>
     <div>
-    <v-container fluid class="pa-2">
+    <v-container fluid class="pa-0">
     <v-speed-dial
             fixed
             bottom

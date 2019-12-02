@@ -5,7 +5,7 @@
         <p-photo-search :settings="settings" :filter="filter" :filter-change="updateQuery"
                         :refresh="refresh"></p-photo-search>
 
-        <v-container fluid class="pa-2">
+        <v-container fluid class="pa-0">
             <p-scroll-top></p-scroll-top>
 
             <p-photo-clipboard :refresh="refresh" :selection="selection"></p-photo-clipboard>
