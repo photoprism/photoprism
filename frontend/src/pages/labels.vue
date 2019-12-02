@@ -3,13 +3,13 @@
          :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
         <v-form ref="form" class="p-labels-search" lazy-validation @submit.prevent="updateQuery" dense>
-            <v-toolbar flat color="blue-grey lighten-4">
+            <v-toolbar flat color="secondary">
                 <v-text-field class="pt-3 pr-3"
                               single-line
                               label="Search"
                               prepend-inner-icon="search"
                               clearable
-                              color="blue-grey"
+                              color="secondary-dark"
                               @click:clear="clearQuery"
                               v-model="filter.q"
                               @keyup.enter.native="updateQuery"
@@ -40,12 +40,12 @@
                             xs6 sm4 md3 lg2 d-flex
                     >
                         <v-hover>
-                            <v-card tile class="elevation-0 ma-1 grey lighten-3">
+                            <v-card tile class="elevation-0 ma-1 accent lighten-3">
                                 <v-img
                                         :src="label.getThumbnailUrl('tile_500')"
                                         aspect-ratio="1"
                                         style="cursor: pointer"
-                                        class="grey lighten-2"
+                                        class="accent lighten-2"
                                         @click.prevent="openLabel(index)"
                                 >
                                     <v-layout
@@ -55,7 +55,7 @@
                                             justify-center
                                             ma-0
                                     >
-                                        <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                        <v-progress-circular indeterminate color="accent lighten-5"></v-progress-circular>
                                     </v-layout>
                                 </v-img>
 
@@ -65,7 +65,7 @@
                                     <v-btn icon @click.stop.prevent="label.toggleLike()">
                                         <v-icon v-if="label.LabelFavorite" color="#FFD600">star
                                         </v-icon>
-                                        <v-icon v-else color="grey lighten-2">star</v-icon>
+                                        <v-icon v-else color="accent lighten-2">star</v-icon>
                                     </v-btn>
                                 </v-card-actions>
                             </v-card>

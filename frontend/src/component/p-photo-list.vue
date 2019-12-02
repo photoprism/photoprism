@@ -14,8 +14,8 @@
                 <v-btn icon small :ripple="false"
                        class="p-photo-select"
                        @click.stop.prevent="$clipboard.toggle(props.item)">
-                    <v-icon v-if="selection.length && $clipboard.has(props.item)" color="grey darken-2">check_circle</v-icon>
-                    <v-icon v-else-if="!$clipboard.has(props.item)" color="grey lighten-4">radio_button_off</v-icon>
+                    <v-icon v-if="selection.length && $clipboard.has(props.item)" color="accent darken-2">check_circle</v-icon>
+                    <v-icon v-else-if="!$clipboard.has(props.item)" color="accent lighten-4">radio_button_off</v-icon>
                 </v-btn>
             </td>
             <td @click="openPhoto(props.index)" class="p-pointer">{{ props.item.PhotoTitle }}</td>
@@ -26,7 +26,7 @@
                        class="p-photo-like"
                        @click.stop.prevent="props.item.toggleLike()">
                 <v-icon v-if="props.item.PhotoFavorite" color="pink lighten-3">favorite</v-icon>
-                <v-icon v-else color="grey lighten-4">favorite_border</v-icon>
+                <v-icon v-else color="accent lighten-4">favorite_border</v-icon>
                 </v-btn>
             </td>
         </template>

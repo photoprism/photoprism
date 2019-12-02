@@ -1,6 +1,6 @@
 <template>
     <div class="p-page p-page-todo">
-        <v-toolbar flat color="blue-grey lighten-4">
+        <v-toolbar flat color="secondary">
             <v-toolbar-title>Not implemented yet</v-toolbar-title>
 
             <v-spacer></v-spacer>

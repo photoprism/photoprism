@@ -12,7 +12,7 @@
     >
         <v-btn
                 slot="activator"
-                color="grey darken-2"
+                color="accent darken-2"
                 dark
                 fab
                 class="p-photo-clipboard-menu"
@@ -90,7 +90,7 @@
                 fab
                 dark
                 small
-                color="grey"
+                color="accent"
                 @click.stop="clearClipboard()"
                 class="p-photo-clipboard-clear"
         >

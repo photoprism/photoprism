@@ -4,8 +4,8 @@
                 v-model="active"
                 flat
                 grow
-                color="blue-grey lighten-4"
-                slider-color="blue-grey darken-1"
+                color="secondary"
+                slider-color="secondary-dark"
                 height="64"
         >
             <v-tab id="tab-upload" v-if="!readonly" ripple @click="changePath('/library/upload')">

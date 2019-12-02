@@ -7,7 +7,7 @@
                         <v-select
                                 :items="options.languages"
                                 label="Language"
-                                color="blue-grey"
+                                color="secondary-dark"
                                 v-model="settings.language"
                                 flat
                         ></v-select>
@@ -17,14 +17,14 @@
                         <v-select
                                 :items="options.themes"
                                 label="Theme"
-                                color="blue-grey"
+                                color="secondary-dark"
                                 v-model="settings.theme"
                                 flat
                         ></v-select>
                     </v-flex>
                 </v-layout>
 
-                <v-btn color="blue-grey"
+                <v-btn color="secondary-dark"
                        class="white--text ml-0 mt-2"
                        depressed
                        @click.stop="save">

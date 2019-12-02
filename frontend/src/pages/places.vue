@@ -2,7 +2,7 @@
     <v-container fluid fill-height class="pa-0 p-page p-page-places">
         <l-map :zoom="zoom" :center="center" :bounds="bounds" :options="options">
             <l-control position="bottomright">
-                <v-toolbar dense floating color="grey lighten-4" v-on:dblclick.stop v-on:click.stop>
+                <v-toolbar dense floating color="accent lighten-4" v-on:dblclick.stop v-on:click.stop>
                     <v-btn icon v-on:click="currentPosition()">
                         <v-icon>my_location</v-icon>
                     </v-btn>
@@ -12,7 +12,7 @@
                                   label="Search"
                                   prepend-inner-icon="search"
                                   clearable
-                                  color="blue-grey"
+                                  color="secondary-dark"
                                   @click:clear="clearQuery"
                                   v-model="query.q"
                                   @keyup.enter.native="formChange"

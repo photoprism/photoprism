@@ -1,8 +1,10 @@
 {
   "default": {
     "primary": "#FFD600",
-    "secondary": "#b0bec5",
-    "accent": "#00B8D4",
+    "secondary-dark": "#607D8B",
+    "secondary": "#CFD8DC",
+    "secondary-light": "#ECEFF1",
+    "accent": "#9E9E9E",
     "error": "#E57373",
     "info": "#00B8D4",
     "success": "#00BFA5",
@@ -10,14 +12,14 @@
     "delete": "#E57373",
     "love": "#EF5350",
     "terminal": "#333333",
-    "dark-background": "#424242",
-    "medium-background": "#CFD8DC",
-    "light-background": "#ECEFF1"
+    "navigation": "#424242"
   },
   "whale": {
     "primary": "#82B1FF",
-    "secondary": "#b0bec5",
-    "accent": "#00B8D4",
+    "secondary-dark": "#757575",
+    "secondary": "#E0E0E0",
+    "secondary-light": "#EEEEEE",
+    "accent": "#9E9E9E",
     "error": "#E57373",
     "info": "#00B8D4",
     "success": "#00BFA5",
@@ -25,14 +27,14 @@
     "delete": "#E57373",
     "love": "#EF5350",
     "terminal": "#333333",
-    "dark-background": "#616161",
-    "medium-background": "#E0E0E0",
-    "light-background": "#EEEEEE"
+    "navigation": "#616161"
   },
   "raspberry": {
     "primary": "#F48FB1",
-    "secondary": "#b0bec5",
-    "accent": "#00B8D4",
+    "secondary-dark": "#757575",
+    "secondary": "#E0E0E0",
+    "secondary-light": "#EEEEEE",
+    "accent": "#9E9E9E",
     "error": "#E57373",
     "info": "#00B8D4",
     "success": "#00BFA5",
@@ -40,8 +42,6 @@
     "delete": "#E57373",
     "love": "#EF5350",
     "terminal": "#333333",
-    "dark-background": "#616161",
-    "medium-background": "#E0E0E0",
-    "light-background": "#EEEEEE"
+    "navigation": "#616161"
   }
 }

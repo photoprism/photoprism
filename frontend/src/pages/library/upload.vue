@@ -11,11 +11,11 @@
                     <span v-else-if="completed === 100">Done.</span>
                 </p>
 
-                <v-progress-linear color="blue-grey" v-model="completed" :indeterminate="indexing"></v-progress-linear>
+                <v-progress-linear color="secondary-dark" v-model="completed" :indeterminate="indexing"></v-progress-linear>
 
                 <v-btn
                         :disabled="busy"
-                        color="blue-grey"
+                        color="secondary-dark"
                         class="white--text ml-0 mt-2"
                         depressed
                         @click.stop="uploadDialog()"

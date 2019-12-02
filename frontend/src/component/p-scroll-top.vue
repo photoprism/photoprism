@@ -1,7 +1,7 @@
 <template>
     <transition name="fade-transition">
         <v-btn
-                color="grey darken-2"
+                color="accent darken-2"
                 dark
                 fab
                 fixed

@@ -1,13 +1,13 @@
 <template>
     <v-form ref="form" autocomplete="off" class="p-photo-search" lazy-validation @submit.prevent="filterChange" dense>
-        <v-toolbar flat color="medium-background">
+        <v-toolbar flat color="secondary">
             <v-text-field class="pt-3 pr-3 p-search-field"
                           autocomplete="off"
                           single-line
                           label="Search"
                           prepend-inner-icon="search"
                           clearable
-                          color="blue-grey"
+                          color="secondary-dark"
                           @click:clear="clearQuery"
                           v-model="filter.q"
                           @keyup.enter.native="filterChange"
@@ -42,7 +42,7 @@
 
         <v-card class="pt-1"
                 flat
-                color="light-background"
+                color="secondary-light"
                 v-show="searchExpanded">
             <v-card-text>
                 <v-layout row wrap>
@@ -50,7 +50,7 @@
                         <v-select @change="dropdownChange"
                                   label="Country"
                                   flat solo hide-details
-                                  color="blue-grey"
+                                  color="secondary-dark"
                                   item-value="LocCountryCode"
                                   item-text="LocCountry"
                                   v-model="filter.country"
@@ -61,7 +61,7 @@
                         <v-select @change="dropdownChange"
                                   label="Camera"
                                   flat solo hide-details
-                                  color="blue-grey"
+                                  color="secondary-dark"
                                   item-value="ID"
                                   item-text="CameraModel"
                                   v-model="filter.camera"
@@ -72,7 +72,7 @@
                         <v-select @change="dropdownChange"
                                   label="View"
                                   flat solo hide-details
-                                  color="blue-grey"
+                                  color="secondary-dark"
                                   v-model="settings.view"
                                   :items="options.views"
                                   id="viewSelect">
@@ -82,7 +82,7 @@
                         <v-select @change="dropdownChange"
                                   label="Sort By"
                                   flat solo hide-details
-                                  color="blue-grey"
+                                  color="secondary-dark"
                                   v-model="filter.order"
                                   :items="options.sorting">
                         </v-select>

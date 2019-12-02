@@ -22,7 +22,7 @@
                             :title="photo.PhotoTitle">
                         <v-img :src="photo.getThumbnailUrl('tile_500')"
                                aspect-ratio="1"
-                               class="grey lighten-2"
+                               class="accent lighten-2"
                                style="cursor: pointer"
                                @click="openPhoto(index)"
                         >
@@ -34,7 +34,7 @@
                                     ma-0
                             >
                                 <v-progress-circular indeterminate
-                                                     color="grey lighten-5"></v-progress-circular>
+                                                     color="accent lighten-5"></v-progress-circular>
                             </v-layout>
 
                             <v-btn v-if="hover || $clipboard.has(photo)" :flat="!hover" :ripple="false"
@@ -42,7 +42,7 @@
                                    class="p-photo-select"
                                    @click.stop.prevent="$clipboard.toggle(photo)">
                                 <v-icon v-if="selection.length && $clipboard.has(photo)" color="white">check_circle</v-icon>
-                                <v-icon v-else-if="!$clipboard.has(photo)" color="grey lighten-3">radio_button_off</v-icon>
+                                <v-icon v-else-if="!$clipboard.has(photo)" color="accent lighten-3">radio_button_off</v-icon>
                             </v-btn>
 
                             <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" :ripple="false"
@@ -50,7 +50,7 @@
                                    class="p-photo-like"
                                    @click.stop.prevent="photo.toggleLike()">
                                 <v-icon v-if="photo.PhotoFavorite" color="white">favorite</v-icon>
-                                <v-icon v-else color="grey lighten-3">favorite_border</v-icon>
+                                <v-icon v-else color="accent lighten-3">favorite_border</v-icon>
                             </v-btn>
                         </v-img>
 

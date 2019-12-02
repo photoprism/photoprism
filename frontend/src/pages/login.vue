@@ -1,6 +1,6 @@
 <template>
     <div class="p-page p-page-login">
-        <v-toolbar flat color="blue-grey lighten-4">
+        <v-toolbar flat color="secondary">
             <v-toolbar-title>Login</v-toolbar-title>
 
             <v-spacer></v-spacer>
@@ -13,7 +13,7 @@
             <v-form ref="form" autocomplete="off" class="p-form-login" @submit.prevent="login" dense>
                 <v-text-field
                         label="Password"
-                        color="grey"
+                        color="accent"
                         v-model="password"
                         solo
                         flat
@@ -21,7 +21,7 @@
                         :type="showPassword ? 'text' : 'password'"
                         @click:append="showPassword = !showPassword"
                 ></v-text-field>
-                <v-btn color="blue-grey"
+                <v-btn color="secondary-dark"
                        class="white--text ml-0"
                        depressed
                        @click.stop="login">

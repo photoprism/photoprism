@@ -18,13 +18,13 @@
                 <v-hover>
                     <v-card tile slot-scope="{ hover }"
                             :dark="$clipboard.has(photo)"
-                            :class="$clipboard.has(photo) ? 'elevation-10 ma-0 grey darken-1 white--text' : 'elevation-0 ma-1 grey lighten-3'">
+                            :class="$clipboard.has(photo) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'">
                         <v-img
                                 :src="photo.getThumbnailUrl('tile_500')"
                                 aspect-ratio="1"
                                 v-bind:class="{ selected: $clipboard.has(photo) }"
                                 style="cursor: pointer"
-                                class="grey lighten-2"
+                                class="accent lighten-2"
                                 @click="openPhoto(index)"
 
                         >
@@ -35,7 +35,7 @@
                                     justify-center
                                     ma-0
                             >
-                                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                <v-progress-circular indeterminate color="accent lighten-5"></v-progress-circular>
                             </v-layout>
 
                             <v-btn v-if="hover || $clipboard.has(photo)" :flat="!hover" :ripple="false"
@@ -43,7 +43,7 @@
                                    class="p-photo-select"
                                    @click.stop.prevent="$clipboard.toggle(photo)">
                                 <v-icon v-if="selection.length && $clipboard.has(photo)" color="white">check_circle</v-icon>
-                                <v-icon v-else color="grey lighten-3">radio_button_off</v-icon>
+                                <v-icon v-else color="accent lighten-3">radio_button_off</v-icon>
                             </v-btn>
 
                             <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" :ripple="false"
@@ -52,7 +52,7 @@
                                    @click.stop.prevent="photo.toggleLike()">
                                 <v-icon v-if="photo.PhotoFavorite" color="white">favorite
                                 </v-icon>
-                                <v-icon v-else color="grey lighten-3">favorite_border</v-icon>
+                                <v-icon v-else color="accent lighten-3">favorite_border</v-icon>
                             </v-btn>
                         </v-img>
 
