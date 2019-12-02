@@ -82,8 +82,8 @@
   "night": {
     "primary": "#778899",
     "secondary-dark": "#000000",
-    "secondary": "#757575",
-    "secondary-light": "#757575",
+    "secondary": "#BDBDBD",
+    "secondary-light": "#E0E0E0",
     "accent": "#424242",
     "error": "#E57373",
     "info": "#0097A7",
