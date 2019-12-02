@@ -17,6 +17,18 @@
     {
       "text": "Raspberry",
       "value": "raspberry"
+    },
+    {
+      "text": "Teal",
+      "value": "teal"
+    },
+    {
+      "text": "Purple",
+      "value": "purple"
+    },
+    {
+      "text": "Black",
+      "value": "black"
     }
   ]
 }
