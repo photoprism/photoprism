@@ -8,21 +8,21 @@
                 slider-color="blue-grey darken-1"
                 height="64"
         >
-            <v-tab id="tab-upload" v-if="!readonly" ripple>
+            <v-tab id="tab-upload" v-if="!readonly" ripple @click="changePath('/library/upload')">
                 Upload
             </v-tab>
             <v-tab-item v-if="!readonly">
                 <p-tab-upload></p-tab-upload>
             </v-tab-item>
 
-            <v-tab id="tab-import" v-if="!readonly" ripple>
+            <v-tab id="tab-import" v-if="!readonly" ripple @click="changePath('/library/import')">
                 Import
             </v-tab>
             <v-tab-item v-if="!readonly">
                 <p-tab-import></p-tab-import>
             </v-tab-item>
 
-            <v-tab id="tab-index" ripple>
+            <v-tab id="tab-index" ripple @click="changePath('/library/index')">
                 Index
             </v-tab>
             <v-tab-item>
@@ -39,6 +39,9 @@
 
     export default {
         name: 'p-page-library',
+        props: {
+            tab: Number
+        },
         components: {
             'p-tab-upload': uploadTab,
             'p-tab-import': importTab,
@@ -47,9 +50,15 @@
         data() {
             return {
                 readonly: this.$config.getValue("readonly"),
-                active: 0,
+                active: this.tab,
             }
         },
-        methods: {}
+        methods: {
+            changePath: function(path) {
+                if (this.$route.path !== path) {
+                    this.$router.replace(path)
+                }
+            }
+        }
     };
 </script>

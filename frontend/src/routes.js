@@ -76,6 +76,28 @@ export default [
         path: "/library",
         component: Library,
         meta: {area: "Library", auth: true},
+        props: {tab: 0},
+    },
+    {
+        name: "library_upload",
+        path: "/library/upload",
+        component: Library,
+        meta: {area: "Library", auth: true},
+        props: {tab: 0},
+    },
+    {
+        name: "library_import",
+        path: "/library/import",
+        component: Library,
+        meta: {area: "Library", auth: true},
+        props: {tab: 1},
+    },
+    {
+        name: "library_index",
+        path: "/library/index",
+        component: Library,
+        meta: {area: "Library", auth: true},
+        props: {tab: 2},
     },
     {
         name: "share",
@@ -88,6 +110,14 @@ export default [
         path: "/settings",
         component: Settings,
         meta: {area: "Settings", auth: true},
+        props: {tab: 0},
+    },
+    {
+        name: "settings_logs",
+        path: "/settings/logs",
+        component: Settings,
+        meta: {area: "Settings", auth: true},
+        props: {tab: 1},
     },
     {
         path: "*", redirect: "/photos",
