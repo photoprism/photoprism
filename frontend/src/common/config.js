@@ -1,6 +1,7 @@
 import Event from "pubsub-js";
 import themes from "../resources/themes.json";
 import translations from "../resources/translations.json";
+import Vue from "vue";
 
 class Config {
     /**
