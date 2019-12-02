@@ -47,9 +47,9 @@
     "navigation": "#616161",
     "navigation-home": "#000000"
   },
-  "teal": {
-    "primary": "#00897B",
-    "secondary-dark": "#00897B",
+  "seaweed": {
+    "primary": "#26A69A",
+    "secondary-dark": "#26A69A",
     "secondary": "#B0BEC5",
     "secondary-light": "#B0BEC5",
     "accent": "#B0BEC5",
@@ -63,9 +63,9 @@
     "navigation": "#37474F",
     "navigation-home": "#263238"
   },
-  "purple": {
-    "primary": "#5C6BC0",
-    "secondary-dark": "#5C6BC0",
+  "lavender": {
+    "primary": "#8C9EFF",
+    "secondary-dark": "#8C9EFF",
     "secondary": "#B0BEC5",
     "secondary-light": "#B0BEC5",
     "accent": "#B0BEC5",
@@ -79,7 +79,7 @@
     "navigation": "#37474F",
     "navigation-home": "#263238"
   },
-  "black": {
+  "night": {
     "primary": "#778899",
     "secondary-dark": "#000000",
     "secondary": "#757575",

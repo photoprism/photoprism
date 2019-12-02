@@ -67,21 +67,8 @@ main {
     cursor: pointer;
 }
 
-
-#photoprism .p-tab-logs {
-    max-width: 99%;
-    margin: 8px;
-    padding: 4px;
-}
-
 #photoprism .p-logs {
-    box-sizing: border-box;
-    width: auto;
-    margin: 0;
-    height: 100%;
-    padding: 10px;
     color: white;
-    overflow-y: auto;
 }
 
 #photoprism .p-log-message {
@@ -92,7 +79,7 @@ main {
     white-space: normal;
     color: white;
     font-weight: bold;
-    padding: 5px;
+    padding: 4px;
     margin: 0;
 }
 
