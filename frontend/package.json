@@ -12,8 +12,8 @@
     "test": "karma start",
     "test-chromium": "testcafe \"chromium:headless --disable-dev-shm-usage\" --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
     "test-firefox": "testcafe firefox:headless --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
-    "gettest-extract": "gettext-extract --attribute v-translate --output src/resources/translations.pot $(find src/ -type f -name '*.vue')",
-    "gettest-compile": "gettext-compile --output src/resources/translations.json src/resources/*.po"
+    "gettext-extract": "gettext-extract --attribute v-translate --output src/resources/translations.pot $(find src/ -type f -name '*.vue')",
+    "gettext-compile": "gettext-compile --output src/resources/translations.json src/resources/*.po"
   },
   "dependencies": {
     "@babel/cli": "^7.7.4",
