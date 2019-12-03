@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/models"
 
 	"github.com/gin-gonic/gin"
@@ -100,6 +101,8 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		m.AlbumName = params.AlbumName
 		conf.Db().Save(&m)
 
+		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+
 		c.JSON(http.StatusOK, m)
 	})
 }
@@ -127,6 +130,8 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		album.AlbumFavorite = true
 		conf.Db().Save(&album)
 
+		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+
 		c.JSON(http.StatusOK, http.Response{})
 	})
 }
@@ -153,6 +158,8 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		album.AlbumFavorite = false
 		conf.Db().Save(&album)
+
+		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
 		c.JSON(http.StatusOK, http.Response{})
 	})

@@ -513,6 +513,7 @@ func (c *Config) ClientConfig() ClientConfig {
 	db := c.Db()
 
 	var cameras []*models.Camera
+	var albums []*models.Album
 
 	type country struct {
 		LocCountry     string
@@ -524,6 +525,7 @@ func (c *Config) ClientConfig() ClientConfig {
 	db.Model(&models.Location{}).Select("DISTINCT loc_country_code, loc_country").Scan(&countries)
 
 	db.Where("deleted_at IS NULL").Limit(1000).Order("camera_model").Find(&cameras)
+	db.Where("deleted_at IS NULL AND album_favorite = 1").Limit(20).Order("album_name").Find(&albums)
 
 	jsHash := util.Hash(c.HttpStaticBuildPath() + "/app.js")
 	cssHash := util.Hash(c.HttpStaticBuildPath() + "/app.css")
@@ -535,6 +537,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		"debug":      c.Debug(),
 		"readonly":   c.ReadOnly(),
 		"public":     c.Public(),
+		"albums":     albums,
 		"cameras":    cameras,
 		"countries":  countries,
 		"thumbnails": Thumbnails,

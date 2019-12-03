@@ -1,5 +1,6 @@
 import Photos from "pages/photos.vue";
 import Albums from "pages/albums.vue";
+import AlbumsView from "pages/albums/view.vue";
 import Places from "pages/places.vue";
 import Labels from "pages/labels.vue";
 import Events from "pages/events.vue";
@@ -33,6 +34,12 @@ export default [
         path: "/albums",
         component: Albums,
         meta: {area: "Albums"},
+    },
+    {
+        name: "albums_view",
+        path: "/albums/:id",
+        component: AlbumsView,
+        meta: {area: "View Album"},
     },
     {
         name: "favorites",

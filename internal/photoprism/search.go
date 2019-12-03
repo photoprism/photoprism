@@ -68,7 +68,6 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		Joins("LEFT JOIN labels ON photos_labels.label_id = labels.id").
 		Where("photos.deleted_at IS NULL AND files.file_missing = 0").
 		Group("photos.id, files.id")
-
 	var categories []models.Category
 	var label models.Label
 	var labelIds []uint
@@ -120,6 +119,10 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 			q = q.Where("labels.id IN (?) OR LOWER(photo_title) LIKE ? OR files.file_main_color = ?", labelIds, likeString, lowerString)
 		}
 
+	}
+
+	if form.Album > 0 {
+		q = q.Joins("JOIN album_photos ON album_photos.photo_id = photos.id").Where("album_photos.album_id = ?", form.Album)
 	}
 
 	if form.Camera > 0 {

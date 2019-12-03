@@ -71,7 +71,6 @@
                                             :return-value.sync="album.AlbumName"
                                             lazy
                                             @save="onSave(album)"
-                                            @cancel="onCancel"
                                             class="p-inline-edit"
                                     >
                                         <span v-if="album.AlbumName">
@@ -157,7 +156,7 @@
             },
             openAlbum(index) {
                 const album = this.results[index];
-                this.$router.push({name: "photos", query: {q: "album:" + album.AlbumSlug}});
+                this.$router.push({name: "albums_view", params: {id: album.ID}});
             },
             loadMore() {
                 if (this.scrollDisabled) return;

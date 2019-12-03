@@ -83,15 +83,17 @@
                 </v-list-tile>
 
                 <v-list-group v-if="!mini" prepend-icon="folder" no-action>
-                    <v-list-tile slot="activator" to="/albums" @click="">
+                    <v-list-tile slot="activator" to="/albums" @click.stop="">
                         <v-list-tile-content>
                             <v-list-tile-title v-translate>Albums</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile @click.stop="$notify.warning('Work in progress')">
+                    <v-list-tile v-for="(album, index) in config.albums"
+                                 :key="index" :to="{ name: 'albums_view', params: { id: album.ID } }">
                         <v-list-tile-content>
-                            <v-list-tile-title v-translate>Work in progress...</v-list-tile-title>
+                            <v-list-tile-title v-if="album.AlbumName">{{ album.AlbumName }}</v-list-tile-title>
+                            <v-list-tile-title v-else>Untitled</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list-group>
@@ -201,6 +203,7 @@
                 mini: mini,
                 session: this.$session,
                 isPublic: this.$config.getValue("public"),
+                config: this.$config.values,
             };
         },
         methods: {

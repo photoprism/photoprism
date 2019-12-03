@@ -13,6 +13,7 @@ class Config {
 
         this.translations = translations;
         this.values = values;
+        this.debug = !!values.debug;
 
         this.subscriptionId = Event.subscribe("config.updated", (ev, data) => this.setValues(data));
 
@@ -25,6 +26,10 @@ class Config {
 
     setValues(values) {
         if (!values) return;
+
+        if (this.debug) {
+            console.log("new config values", values)
+        }
 
         for (let key in values) {
             if (values.hasOwnProperty(key)) {
