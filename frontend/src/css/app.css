@@ -51,7 +51,8 @@ main {
     color: #333333;
 }
 
-#photoprism main .p-inline-edit a {
+#photoprism main .p-inline-edit a,
+#photoprism main .p-inline-edit a span {
     color: #333333;
     cursor: text;
 }
