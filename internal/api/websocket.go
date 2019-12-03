@@ -24,7 +24,7 @@ func wsReader(ws *websocket.Conn) {
 		if err != nil {
 			break
 		}
-		log.Infof("received: %s", m)
+		log.Debugf("websocket: received %d bytes", len(m))
 	}
 }
 
@@ -64,13 +64,13 @@ func Websocket(router *gin.RouterGroup, conf *config.Config) {
 
 		ws, err := wsConnection.Upgrade(w, r, nil)
 		if err != nil {
-			log.Errorf("upgrade error: %s", err)
+			log.Error(err)
 			return
 		}
 
 		defer ws.Close()
 
-		log.Infof("websocket connected: %s", c.Request.RemoteAddr)
+		log.Debug("websocket: connected")
 
 		go wsWriter(ws, conf)
 

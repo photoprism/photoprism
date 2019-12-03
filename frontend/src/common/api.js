@@ -6,6 +6,8 @@ const Api = Axios.create({
     baseURL: "/api/v1",
     headers: {common: {
         "X-Session-Token": window.localStorage.getItem("session_token"),
+        "X-Client-Hash": window.clientConfig.jsHash,
+        "X-Client-Version": window.clientConfig.version,
     }},
 });
 

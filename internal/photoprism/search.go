@@ -42,7 +42,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		return results, err
 	}
 
-	defer util.ProfileTime(time.Now(), fmt.Sprintf("search for %+v", form))
+	defer util.ProfileTime(time.Now(), fmt.Sprintf("search: %+v", form))
 
 	q := s.db.NewScope(nil).DB()
 
@@ -75,7 +75,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 
 	if form.Label != "" {
 		if result := s.db.First(&label, "label_slug = ?", strings.ToLower(form.Label)); result.Error != nil {
-			log.Errorf("label \"%s\" not found", form.Label)
+			log.Errorf("search: label \"%s\" not found", form.Label)
 			return results, fmt.Errorf("label \"%s\" not found", form.Label)
 		} else {
 			labelIds = append(labelIds, label.ID)
@@ -103,7 +103,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		likeString := "%" + lowerString + "%"
 
 		if result := s.db.First(&label, "label_slug = ?", slugString); result.Error != nil {
-			log.Infof("label \"%s\" not found", form.Query)
+			log.Infof("search: label \"%s\" not found", form.Query)
 
 			q = q.Where("labels.label_slug = ? OR LOWER(photo_title) LIKE ? OR files.file_main_color = ?", slugString, likeString, lowerString)
 		} else {
@@ -115,7 +115,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 				labelIds = append(labelIds, category.LabelID)
 			}
 
-			log.Infof("searching for label IDs: %#v", form.Query)
+			log.Infof("search: labels %#v", form.Query)
 
 			q = q.Where("labels.id IN (?) OR LOWER(photo_title) LIKE ? OR files.file_main_color = ?", labelIds, likeString, lowerString)
 		}
@@ -296,7 +296,7 @@ func (s *Search) Labels(form forms.LabelSearchForm) (results []LabelSearchResult
 		return results, err
 	}
 
-	defer util.ProfileTime(time.Now(), fmt.Sprintf("search for %+v", form))
+	defer util.ProfileTime(time.Now(), fmt.Sprintf("search: %+v", form))
 
 	q := s.db.NewScope(nil).DB()
 
@@ -316,7 +316,7 @@ func (s *Search) Labels(form forms.LabelSearchForm) (results []LabelSearchResult
 		likeString := "%" + strings.ToLower(form.Query) + "%"
 
 		if result := s.db.First(&label, "LOWER(label_name) LIKE LOWER(?)", form.Query); result.Error != nil {
-			log.Infof("label \"%s\" not found", form.Query)
+			log.Infof("search: label \"%s\" not found", form.Query)
 
 			q = q.Where("LOWER(labels.label_name) LIKE ?", likeString)
 		} else {
@@ -328,7 +328,7 @@ func (s *Search) Labels(form forms.LabelSearchForm) (results []LabelSearchResult
 				labelIds = append(labelIds, category.LabelID)
 			}
 
-			log.Infof("searching for label IDs: %#v", form.Query)
+			log.Infof("search: labels %#v", form.Query)
 
 			q = q.Where("labels.id IN (?) OR LOWER(labels.label_name) LIKE ?", labelIds, likeString)
 		}
@@ -395,7 +395,7 @@ func (s *Search) Albums(form forms.AlbumSearchForm) (results []AlbumSearchResult
 		return results, err
 	}
 
-	defer util.ProfileTime(time.Now(), fmt.Sprintf("search for %+v", form))
+	defer util.ProfileTime(time.Now(), fmt.Sprintf("search: %+v", form))
 
 	q := s.db.NewScope(nil).DB()
 

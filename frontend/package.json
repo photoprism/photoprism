@@ -41,6 +41,7 @@
     "connect-history-api-fallback": "^1.3.0",
     "copy-webpack-plugin": "^5.0.5",
     "cross-env": "^5.2.1",
+    "crypto-random-string": "^3.0.1",
     "css-loader": "^2.1.1",
     "cssnano": "^4.1.10",
     "easygettext": "^2.7.0",
