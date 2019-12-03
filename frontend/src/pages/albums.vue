@@ -32,7 +32,9 @@
                     <v-card-title primary-title>
                         <div>
                             <h3 class="title mb-3">No albums matched your search</h3>
-                            <div>Try again using a different term or <v-btn @click.prevent.stop="create" small>create a new album</v-btn></div>
+                            <div>Try again using a different term or
+                                <v-btn @click.prevent.stop="create" small>create a new album</v-btn>
+                            </div>
                         </div>
                     </v-card-title>
                 </v-card>
@@ -59,7 +61,8 @@
                                             justify-center
                                             ma-0
                                     >
-                                        <v-progress-circular indeterminate color="accent lighten-5"></v-progress-circular>
+                                        <v-progress-circular indeterminate
+                                                             color="accent lighten-5"></v-progress-circular>
                                     </v-layout>
                                 </v-img>
 
@@ -69,11 +72,14 @@
                                             lazy
                                             @save="onSave(album)"
                                             @cancel="onCancel"
-                                            @open="onDialogOpen"
-                                            @close="onDialogClose"
                                             class="p-inline-edit"
                                     >
-                                        {{ album.AlbumName | capitalize }}
+                                        <span v-if="album.AlbumName">
+                                            {{ album.AlbumName }}
+                                        </span>
+                                        <span v-else>
+                                            <v-icon>edit</v-icon>
+                                        </span>
                                         <template v-slot:input>
                                             <div class="mt-3 title">Change Title</div>
                                         </template>
@@ -107,6 +113,7 @@
 
 <script>
     import Album from "model/album";
+    import Notify from "common/notify";
 
     export default {
         name: 'p-page-albums',
@@ -114,7 +121,7 @@
             staticFilter: Object
         },
         watch: {
-            '$route' () {
+            '$route'() {
                 const query = this.$route.query;
 
                 this.filter.q = query['q'];
@@ -255,18 +262,8 @@
                     this.search();
                 })
             },
-            onSave (album) {
-                console.log('onSave', album);
-                album.update().then(() => this.$notify.success("All changes saved"));
-            },
-            onCancel () {
-                console.log('onCancel', arguments)
-            },
-            onDialogOpen () {
-                console.log('onDialogOpen', arguments)
-            },
-            onDialogClose () {
-                console.log('onDialogClose', arguments)
+            onSave(album) {
+                album.update().then(() => Notify.success("All changes saved"));
             },
         },
         created() {

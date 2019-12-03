@@ -15,8 +15,12 @@
       "value": "default"
     },
     {
-      "text": "Whale",
-      "value": "whale"
+      "text": "Charcoal",
+      "value": "charcoal"
+    },
+    {
+      "text": "Lavender",
+      "value": "lavender"
     },
     {
       "text": "Raspberry",
@@ -27,12 +31,8 @@
       "value": "seaweed"
     },
     {
-      "text": "Lavender",
-      "value": "lavender"
-    },
-    {
-      "text": "Charcoal",
-      "value": "charcoal"
+      "text": "Whale",
+      "value": "whale"
     }
   ]
 }

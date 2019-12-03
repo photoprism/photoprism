@@ -28,7 +28,7 @@ Api.interceptors.response.use(function (response) {
 
     if(typeof response.data == "string") {
         Notify.error("Request failed - invalid response");
-        console.warn("WARNING: Server returned HTML instead of JSON - API not implemented?")
+        console.warn("WARNING: Server returned HTML instead of JSON - API not implemented?");
     }
 
     return response;
