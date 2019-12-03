@@ -46,7 +46,7 @@ Vue.config.language = config.values.settings.language;
 Settings.defaultLocale = config.values.settings.language;
 
 // Register other VueJS plugins
-Vue.use(GetTextPlugin, {translations: config.translations, silent: false, defaultLanguage: Vue.config.language});
+Vue.use(GetTextPlugin, {translations: config.translations, silent: !config.values.debug, defaultLanguage: Vue.config.language});
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);

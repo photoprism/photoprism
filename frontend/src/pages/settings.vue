@@ -8,14 +8,14 @@
                 slider-color="secondary-dark"
                 height="64"
         >
-            <v-tab id="tab-settings-general" @click="changePath('/settings')" v-translate>
+            <v-tab id="tab-settings-general" ripple @click="changePath('/settings')">
                 General
             </v-tab>
             <v-tab-item>
                 <p-tab-general></p-tab-general>
             </v-tab-item>
 
-            <v-tab id="tab-settings-logs" @click="changePath('/settings/logs')" v-translate>
+            <v-tab id="tab-settings-logs" ripple @click="changePath('/settings/logs')">
                 Logs
             </v-tab>
             <v-tab-item>
