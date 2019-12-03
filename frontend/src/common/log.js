@@ -2,6 +2,7 @@ import Event from "pubsub-js";
 
 class Log {
     constructor() {
+        this.cap = 100;
         this.created = new Date;
         this.logs = [
             /* EXAMPLE LOG MESSAGE
@@ -20,7 +21,12 @@ class Log {
 
     onLog(ev, data) {
         data.id = this.logId++;
+
         this.logs.unshift(data);
+
+        if(this.logs.length > this.cap) {
+            this.logs.splice(this.cap);
+        }
     }
 }
 
