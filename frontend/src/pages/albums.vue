@@ -36,7 +36,7 @@
                         </div>
                     </v-card-title>
                 </v-card>
-                <v-layout row wrap>
+                <v-layout row wrap class="p-results">
                     <v-flex
                             v-for="(album, index) in results"
                             :key="index"
@@ -64,7 +64,31 @@
                                 </v-img>
 
                                 <v-card-actions>
-                                    {{ album.AlbumName | capitalize }}
+                                    <v-edit-dialog
+                                            :return-value.sync="album.AlbumName"
+                                            lazy
+                                            @save="onSave(album)"
+                                            @cancel="onCancel"
+                                            @open="onDialogOpen"
+                                            @close="onDialogClose"
+                                            class="p-inline-edit"
+                                    >
+                                        {{ album.AlbumName | capitalize }}
+                                        <template v-slot:input>
+                                            <div class="mt-3 title">Change Title</div>
+                                        </template>
+                                        <template v-slot:input>
+                                            <v-text-field
+                                                    v-model="album.AlbumName"
+                                                    :rules="[titleRule]"
+                                                    label="Title"
+                                                    color="secondary-dark"
+                                                    single-line
+                                                    autofocus
+                                            ></v-text-field>
+                                        </template>
+                                    </v-edit-dialog>
+
                                     <v-spacer></v-spacer>
                                     <v-btn icon @click.stop.prevent="album.toggleLike()">
                                         <v-icon v-if="album.AlbumFavorite" color="#FFD600">star
@@ -116,6 +140,7 @@
                 filter: filter,
                 lastFilter: {},
                 routeName: routeName,
+                titleRule: v => v.length <= 25 || 'Title too long',
             };
         },
         methods: {
@@ -229,6 +254,19 @@
 
                     this.search();
                 })
+            },
+            onSave (album) {
+                console.log('onSave', album);
+                album.update().then(() => this.$notify.success("All changes saved"));
+            },
+            onCancel () {
+                console.log('onCancel', arguments)
+            },
+            onDialogOpen () {
+                console.log('onDialogOpen', arguments)
+            },
+            onDialogClose () {
+                console.log('onDialogClose', arguments)
             },
         },
         created() {

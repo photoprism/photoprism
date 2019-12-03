@@ -8,7 +8,7 @@
                 </div>
             </v-card-title>
         </v-card>
-        <v-layout row wrap>
+        <v-layout row wrap class="p-results">
             <v-flex
                     v-for="(photo, index) in photos"
                     :key="index"

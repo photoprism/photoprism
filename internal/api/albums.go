@@ -41,7 +41,7 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-type CreateAlbumParams struct {
+type AlbumParams struct {
 	AlbumName string `json:"AlbumName"`
 }
 
@@ -53,7 +53,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		var params CreateAlbumParams
+		var params AlbumParams
 
 		if err := c.BindJSON(&params); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
@@ -69,6 +69,38 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		c.JSON(http.StatusOK, album)
+	})
+}
+
+// PUT /api/v1/albums/:uuid
+func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
+	router.PUT("/albums/:uuid", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		var params AlbumParams
+
+		if err := c.BindJSON(&params); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		id := c.Param("uuid")
+		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+
+		m, err := search.FindAlbumByUUID(id)
+
+		if err != nil {
+			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		m.AlbumName = params.AlbumName
+		conf.Db().Save(&m)
+
+		c.JSON(http.StatusOK, m)
 	})
 }
 

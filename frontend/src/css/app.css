@@ -47,6 +47,15 @@ main {
     color: #00B8D4;
 }
 
+#photoprism main .p-results a {
+    color: #333333;
+}
+
+#photoprism main .p-inline-edit a {
+    color: #333333;
+    cursor: text;
+}
+
 #photoprism main a.v-tabs__item {
     color: #546E7A;
 }
