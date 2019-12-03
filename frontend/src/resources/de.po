@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: easygettext\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 2.2.4\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de\n"
+
+#: src/component/p-navigation.vue:80 src/component/p-navigation.vue:87
+msgid "Albums"
+msgstr "Alben"
+
+#: src/component/p-navigation.vue:104
+msgid "Favorites"
+msgstr "Favoriten"
+
+#: src/pages/settings.vue:10
+msgid "General"
+msgstr "Allgemein"
+
+#: src/component/p-navigation.vue:124
+msgid "Labels"
+msgstr "Labels"
+
+#: src/component/p-navigation.vue:154
+msgid "Library"
+msgstr "Bibliothek"
+
+#: src/component/p-navigation.vue:184
+msgid "Login"
+msgstr "Anmelden"
+
+#: src/component/p-navigation.vue:174
+msgid "Logout"
+msgstr "Abmelden"
+
+#: src/pages/settings.vue:17
+msgid "Logs"
+msgstr "Logs"
+
+#: src/component/p-navigation.vue:63
+msgid "Monochrome"
+msgstr "Einfarbig"
+
+#: src/component/p-navigation.vue:50 src/component/p-navigation.vue:57
+msgid "Photos"
+msgstr "Fotos"
+
+#: src/component/p-navigation.vue:114
+msgid "Places"
+msgstr "Orte"
+
+#: src/component/p-navigation.vue:164
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: src/component/p-navigation.vue:69
+msgid "Vibrant"
+msgstr "Kräftige Farben"
+
+#: src/component/p-navigation.vue:93
+msgid "Work in progress..."
+msgstr "In Arbeit…"
