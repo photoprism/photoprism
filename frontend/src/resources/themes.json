@@ -80,11 +80,11 @@
     "navigation-home": "#263238"
   },
   "charcoal": {
-    "primary": "#778899",
-    "secondary-dark": "#000000",
+    "primary": "#8899AA",
+    "secondary-dark": "#212121",
     "secondary": "#BDBDBD",
     "secondary-light": "#E0E0E0",
-    "accent": "#424242",
+    "accent": "#757575",
     "error": "#E57373",
     "info": "#0097A7",
     "success": "#00BFA5",
