@@ -71,7 +71,8 @@ main {
     color: white;
 }
 
-#photoprism .p-log-message {
+#photoprism .p-log-empty,
+#photoprism .p-log-message{
     display: block;
     text-align: left;
     font-size: 1em;
