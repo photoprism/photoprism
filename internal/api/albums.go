@@ -98,7 +98,7 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		m.AlbumName = params.AlbumName
+		m.Rename(params.AlbumName)
 		conf.Db().Save(&m)
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))

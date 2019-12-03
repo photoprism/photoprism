@@ -156,7 +156,7 @@
             },
             openAlbum(index) {
                 const album = this.results[index];
-                this.$router.push({name: "albums_view", params: {id: album.ID}});
+                this.$router.push({name: "albums_view", params: {id: album.ID, slug: album.AlbumSlug}});
             },
             loadMore() {
                 if (this.scrollDisabled) return;

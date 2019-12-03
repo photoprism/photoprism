@@ -45,3 +45,8 @@ func NewAlbum(albumName string) *Album {
 
 	return result
 }
+
+func (m *Album) Rename(albumName string) {
+	m.AlbumName = strings.TrimSpace(albumName)
+	m.AlbumSlug = slug.Make(m.AlbumName)
+}
