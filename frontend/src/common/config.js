@@ -28,7 +28,7 @@ class Config {
         if (!values) return;
 
         if (this.debug) {
-            console.log("new config values", values)
+            console.log("new config values", values);
         }
 
         for (let key in values) {
