@@ -1,7 +1,6 @@
 import Event from "pubsub-js";
 import themes from "../resources/themes.json";
 import translations from "../resources/translations.json";
-import Vue from "vue";
 
 class Config {
     /**
@@ -15,7 +14,7 @@ class Config {
         this.translations = translations;
         this.values = values;
 
-        this.subscriptionId = Event.subscribe('config.updated', (ev, data) => this.setValues(data));
+        this.subscriptionId = Event.subscribe("config.updated", (ev, data) => this.setValues(data));
 
         if(this.hasValue("settings")) {
             this.setTheme(this.getValue("settings").theme);

@@ -5,7 +5,7 @@ class Settings {
         this.__originalValues = {};
 
         if (!values) {
-            throw "can't create settings with empty values"
+            throw "can't create settings with empty values";
         }
 
         this.setValues(values);

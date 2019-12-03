@@ -24,7 +24,7 @@ export default class Session {
             this.auth = true;
         }
 
-        Event.subscribe('session.logout', this.onLogout.bind(this));
+        Event.subscribe("session.logout", this.onLogout.bind(this));
     }
 
     useSessionStorage() {

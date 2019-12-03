@@ -24,19 +24,19 @@ const Notify = {
         Event.publish("ajax.end");
     },
     blockUI: function() {
-        const el = document.getElementById('p-busy-overlay');
+        const el = document.getElementById("p-busy-overlay");
 
         if(el) {
-            el.style.display = 'block';
+            el.style.display = "block";
         }
     },
     unblockUI: function() {
-        const el = document.getElementById('p-busy-overlay');
+        const el = document.getElementById("p-busy-overlay");
 
         if(el) {
-            el.style.display = 'none';
+            el.style.display = "none";
         }
-    }
+    },
 };
 
 export default Notify;

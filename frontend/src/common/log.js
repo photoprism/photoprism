@@ -5,7 +5,7 @@ class Log {
         this.logs = [];
         this.logId = 0;
 
-        Event.subscribe('log', this.onLog.bind(this));
+        Event.subscribe("log", this.onLog.bind(this));
     }
 
     onLog(ev, data) {

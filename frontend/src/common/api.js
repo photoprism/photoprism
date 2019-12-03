@@ -2,12 +2,15 @@ import "@babel/polyfill/noConflict";
 import Axios from "axios";
 import Notify from "common/notify";
 
+const testConfig = {"jsHash": "test", "version": "test"};
+const config = window.clientConfig ? window.clientConfig : testConfig;
+
 const Api = Axios.create({
     baseURL: "/api/v1",
     headers: {common: {
         "X-Session-Token": window.localStorage.getItem("session_token"),
-        "X-Client-Hash": window.clientConfig.jsHash,
-        "X-Client-Version": window.clientConfig.version,
+        "X-Client-Hash": config.jsHash,
+        "X-Client-Version": config.version,
     }},
 });
 
