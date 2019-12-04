@@ -16,7 +16,7 @@ import (
 )
 
 type BatchParams struct {
-	Photos []int `json:"photos"`
+	Photos []string `json:"photos"`
 }
 
 // POST /api/v1/batch/photos/delete

@@ -52,70 +52,54 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// POST /api/v1/photos/:id/like
+// POST /api/v1/photos/:uuid/like
 //
 // Parameters:
-//   id: int Photo ID as returned by the API
+//   uuid: string PhotoUUID as returned by the API
 func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/photos/:id/like", func(c *gin.Context) {
+	router.POST("/photos/:uuid/like", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		photoID, err := strconv.ParseUint(c.Param("id"), 10, 64)
-
-		if err != nil {
-			log.Errorf("could not find image for id: %s", err.Error())
-			c.Data(http.StatusNotFound, "image", []byte(""))
-			return
-		}
-
-		photo, err := search.FindPhotoByID(photoID)
+		m, err := search.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		photo.PhotoFavorite = true
-		conf.Db().Save(&photo)
+		m.PhotoFavorite = true
+		conf.Db().Save(&m)
 
-		c.JSON(http.StatusOK, http.Response{})
+		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
 }
 
-// DELETE /api/v1/photos/:photoId/like
+// DELETE /api/v1/photos/:uuid/like
 //
 // Parameters:
-//   id: int Photo ID as returned by the API
+//   uuid: string PhotoUUID as returned by the API
 func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
-	router.DELETE("/photos/:id/like", func(c *gin.Context) {
+	router.DELETE("/photos/:uuid/like", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
-
-		if err != nil {
-			log.Errorf("could not find image for id: %s", err.Error())
-			c.Data(http.StatusNotFound, "image", []byte(""))
-			return
-		}
-
-		photo, err := search.FindPhotoByID(id)
+		m, err := search.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		photo.PhotoFavorite = false
-		conf.Db().Save(&photo)
+		m.PhotoFavorite = false
+		conf.Db().Save(&m)
 
-		c.JSON(http.StatusOK, http.Response{})
+		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
 }
