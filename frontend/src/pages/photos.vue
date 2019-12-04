@@ -182,7 +182,13 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$notify.info(this.results.length + ' photos found');
+                        if (!this.results.length) {
+                            this.$notify.warning("No photos found");
+                        } else if (this.results.length === 1) {
+                            this.$notify.info("One photo found");
+                        } else {
+                            this.$notify.info(this.results.length + " photos found");
+                        }
                     } else {
                         this.$notify.info('More than 50 photos found');
 
