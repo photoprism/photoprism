@@ -122,7 +122,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 	}
 
 	if form.Album > 0 {
-		q = q.Joins("JOIN album_photos ON album_photos.photo_id = photos.id").Where("album_photos.album_id = ?", form.Album)
+		q = q.Joins("JOIN albums_photos ON albums_photos.photo_id = photos.id").Where("albums_photos.album_id = ?", form.Album)
 	}
 
 	if form.Camera > 0 {
@@ -384,7 +384,7 @@ func (s *Search) FindAlbumThumbByUUID(albumUUID string) (file models.File, err e
 
 	if err := s.db.Where("files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN albums ON albums.album_uuid = ?", albumUUID).
-		Joins("JOIN album_photos ON album_photos.album_id = albums.id AND album_photos.photo_id = files.photo_id").
+		Joins("JOIN albums_photos ON albums_photos.album_id = albums.id AND albums_photos.photo_id = files.photo_id").
 		First(&file).Error; err != nil {
 		return file, err
 	}
@@ -405,8 +405,8 @@ func (s *Search) Albums(form forms.AlbumSearchForm) (results []AlbumSearchResult
 	// q.LogMode(true)
 
 	q = q.Table("albums").
-		Select(`albums.*, COUNT(album_photos.album_id) AS album_count`).
-		Joins("LEFT JOIN album_photos ON album_photos.album_id = albums.id").
+		Select(`albums.*, COUNT(albums_photos.album_id) AS album_count`).
+		Joins("LEFT JOIN albums_photos ON albums_photos.album_id = albums.id").
 		Where("albums.deleted_at IS NULL").
 		Group("albums.id")
 

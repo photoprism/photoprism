@@ -20,7 +20,7 @@ type Album struct {
 	AlbumPhoto       *Photo
 	AlbumPhotoID     uint
 	AlbumFavorite    bool
-	Photos           []Photo `gorm:"many2many:album_photos;"`
+	Photos           []Photo `gorm:"many2many:albums_photos;"`
 }
 
 func (m *Album) BeforeCreate(scope *gorm.Scope) error {

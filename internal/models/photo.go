@@ -47,7 +47,7 @@ type Photo struct {
 	TimeZone          string
 	Labels            []*PhotoLabel
 	Files             []*File
-	Albums            []*Album `gorm:"many2many:album_photos;"`
+	Albums            []*Album `gorm:"many2many:albums_photos;"`
 }
 
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {

@@ -124,3 +124,43 @@ func BatchPhotosStory(router *gin.RouterGroup, conf *config.Config) {
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos marked as story in %s", elapsed)})
 	})
 }
+
+type BatchPhotosAlbumParams struct {
+	Ids []int `json:"ids"`
+	AlbumID int `json:"albumId"`
+}
+
+// POST /api/v1/batch/photos/album
+func BatchPhotosAlbum(router *gin.RouterGroup, conf *config.Config) {
+	router.POST("/batch/photos/album", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		var params BatchPhotosAlbumParams
+
+		if err := c.BindJSON(&params); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		if params.AlbumID < 1 {
+			log.Error("no album selected")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst("no album selected")})
+			return
+		}
+
+		if len(params.Ids) == 0 {
+			log.Error("no photos selected")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst("no photos selected")})
+			return
+		}
+
+		log.Infof("adding photos to album %d: %#v", params.AlbumID, params.Ids)
+
+		/* TODO: Add photos to album */
+
+		c.JSON(http.StatusOK, gin.H{"message": "photos added to album"})
+	})
+}
