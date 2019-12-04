@@ -61,15 +61,17 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		album := models.NewAlbum(params.AlbumName)
+		m := models.NewAlbum(params.AlbumName)
 
-		if res := conf.Db().Create(album); res.Error != nil {
+		if res := conf.Db().Create(m); res.Error != nil {
 			log.Error(res.Error.Error())
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("\"%s\" already exists", album.AlbumName)})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("\"%s\" already exists", m.AlbumName)})
 			return
 		}
 
-		c.JSON(http.StatusOK, album)
+		event.Success(fmt.Sprintf("Album %s created", m.AlbumName))
+
+		c.JSON(http.StatusOK, m)
 	})
 }
 
@@ -102,6 +104,7 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		conf.Db().Save(&m)
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		event.Success(fmt.Sprintf("Album %s updated", m.AlbumName))
 
 		c.JSON(http.StatusOK, m)
 	})

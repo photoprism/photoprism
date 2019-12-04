@@ -1,8 +1,10 @@
 package models
 
 import (
+	"github.com/gosimple/slug"
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 func TestNewAlbum(t *testing.T) {
@@ -13,7 +15,11 @@ func TestNewAlbum(t *testing.T) {
 	})
 	t.Run("name empty", func(t *testing.T) {
 		album := NewAlbum("")
-		assert.Equal(t, "New Album", album.AlbumName)
-		assert.Equal(t, "new-album", album.AlbumSlug)
+
+		defaultName := time.Now().Format("January 2006")
+		defaultSlug := slug.Make(defaultName)
+
+		assert.Equal(t, defaultName, album.AlbumName)
+		assert.Equal(t, defaultSlug, album.AlbumSlug)
 	})
 }

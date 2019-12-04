@@ -113,6 +113,7 @@
 <script>
     import Album from "model/album";
     import Notify from "common/notify";
+    import {DateTime} from "luxon";
 
     export default {
         name: 'p-page-albums',
@@ -146,7 +147,7 @@
                 filter: filter,
                 lastFilter: {},
                 routeName: routeName,
-                titleRule: v => v.length <= 25 || 'Title too long',
+                titleRule: v => v.length <= 25 || "Title too long",
             };
         },
         methods: {
@@ -178,7 +179,7 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$notify.info('All ' + this.results.length + ' albums loaded');
+                        this.$notify.info("All " + this.results.length + " albums loaded");
                     }
                 });
             },
@@ -232,7 +233,13 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$notify.info(this.results.length + ' albums found');
+                        if (!this.results.length) {
+                            this.$notify.warning("No albums found");
+                        } else if (this.results.length === 1) {
+                            this.$notify.info("One album found");
+                        } else {
+                            this.$notify.info(this.results.length + " albums found");
+                        }
                     } else {
                         this.$notify.info('More than 20 albums found');
 
@@ -249,12 +256,10 @@
                 this.pageSize = pageSize;
             },
             create() {
-                const name = "New Album";
+                const name = DateTime.local().toFormat("LLLL yyyy");
                 const album = new Album({"AlbumName": name});
 
                 album.save().then(() => {
-                    this.$notify.success(name + " created");
-
                     this.filter.q = "";
                     this.lastFilter = {};
 
@@ -262,7 +267,7 @@
                 })
             },
             onSave(album) {
-                album.update().then(() => Notify.success("All changes saved"));
+                album.update();
             },
         },
         created() {

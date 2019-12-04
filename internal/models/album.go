@@ -2,6 +2,7 @@ package models
 
 import (
 	"strings"
+	"time"
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
@@ -31,7 +32,7 @@ func NewAlbum(albumName string) *Album {
 	albumName = strings.TrimSpace(albumName)
 
 	if albumName == "" {
-		albumName = "New Album"
+		albumName = time.Now().Format("January 2006")
 	}
 
 	albumSlug := slug.Make(albumName)
@@ -47,6 +48,10 @@ func NewAlbum(albumName string) *Album {
 }
 
 func (m *Album) Rename(albumName string) {
+	if albumName == "" {
+		albumName = m.CreatedAt.Format("January 2006")
+	}
+
 	m.AlbumName = strings.TrimSpace(albumName)
 	m.AlbumSlug = slug.Make(m.AlbumName)
 }
