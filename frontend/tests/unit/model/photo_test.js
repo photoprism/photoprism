@@ -19,11 +19,11 @@ describe("model/photo", () => {
         assert.equal(result, "Crazy Cat");
     });
 
-    it("should get photo id",  () => {
+    it("should get photo uuid",  () => {
         const values = {ID: 5, PhotoTitle: "Crazy Cat", PhotoUUID: 789};
         const photo = new Photo(values);
         const result = photo.getId();
-        assert.equal(result, 5);
+        assert.equal(result, 789);
     });
 
     it("should get photo title",  () => {

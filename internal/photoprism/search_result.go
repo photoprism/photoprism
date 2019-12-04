@@ -12,6 +12,7 @@ type PhotoSearchResult struct {
 	TakenAt          time.Time
 	TakenAtLocal     time.Time
 	TimeZone         string
+	PhotoUUID        string
 	PhotoPath        string
 	PhotoName        string
 	PhotoTitle       string
@@ -63,6 +64,7 @@ type PhotoSearchResult struct {
 
 	// File
 	FileID             uint
+	FileUUID           string
 	FilePrimary        bool
 	FileMissing        bool
 	FileName           string

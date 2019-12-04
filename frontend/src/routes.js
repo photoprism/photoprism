@@ -37,7 +37,7 @@ export default [
     },
     {
         name: "albums_view",
-        path: "/albums/:id/:slug",
+        path: "/albums/:uuid/:slug",
         component: AlbumsView,
         meta: {area: "View Album"},
     },

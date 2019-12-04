@@ -9,7 +9,7 @@ class Photo extends Abstract {
     }
 
     getId() {
-        return this.ID;
+        return this.PhotoUUID;
     }
 
     getTitle() {

@@ -33,7 +33,7 @@
             '$route'() {
                 const query = this.$route.query;
 
-                this.id = this.$route.params.id;
+                this.uuid = this.$route.params.uuid;
                 this.filter.q = query['q'];
                 this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
                 this.filter.country = query['country'] ? query['country'] : '';
@@ -43,7 +43,7 @@
             }
         },
         data() {
-            const id = this.$route.params.id;
+            const uuid = this.$route.params.uuid;
             const query = this.$route.query;
             const routeName = this.$route.name;
             const order = query['order'] ? query['order'] : 'newest';
@@ -55,7 +55,7 @@
             const settings = {view: view};
 
             return {
-                id: id,
+                uuid: uuid,
                 results: [],
                 scrollDisabled: true,
                 pageSize: 60,
@@ -146,7 +146,7 @@
                 const params = {
                     count: this.pageSize,
                     offset: this.offset,
-                    album: this.id,
+                    album: this.uuid,
                 };
 
                 Object.assign(params, this.filter);

@@ -29,7 +29,7 @@ func CreateSession(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		token, _ := util.RandomToken(16)
+		token := util.RandomToken(16)
 
 		c.Header("X-Session-Token", token)
 

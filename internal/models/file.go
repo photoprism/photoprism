@@ -14,6 +14,7 @@ type File struct {
 	Model
 	Photo            *Photo
 	PhotoID          uint
+	PhotoUUID        string
 	FileUUID         string `gorm:"unique_index;"`
 	FileName         string `gorm:"type:varchar(512);unique_index"` // max 3072 bytes / 4 bytes for utf8mb4 = 768 chars
 	FileHash         string `gorm:"type:varchar(128);unique_index"`

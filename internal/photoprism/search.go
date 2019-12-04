@@ -50,7 +50,7 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 
 	q = q.Table("photos").
 		Select(`photos.*,
-		files.id AS file_id, files.file_primary, files.file_missing, files.file_name, files.file_hash, 
+		files.id AS file_id, files.file_uuid, files.file_primary, files.file_missing, files.file_name, files.file_hash, 
 		files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, 
 		files.file_orientation, files.file_main_color, files.file_colors, files.file_luminance, files.file_chroma,
 		cameras.camera_make, cameras.camera_model,
@@ -121,8 +121,8 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 
 	}
 
-	if form.Album > 0 {
-		q = q.Joins("JOIN albums_photos ON albums_photos.photo_id = photos.id").Where("albums_photos.album_id = ?", form.Album)
+	if form.Album != "" {
+		q = q.Joins("JOIN photos_albums ON photos_albums.photo_uuid = photos.photo_uuid").Where("photos_albums.album_uuid = ?", form.Album)
 	}
 
 	if form.Camera > 0 {
@@ -269,6 +269,15 @@ func (s *Search) FindPhotoByID(photoID uint64) (photo models.Photo, err error) {
 	return photo, nil
 }
 
+// FindPhotoByUUID returns a Photo based on the UUID.
+func (s *Search) FindPhotoByUUID(photoUUID string) (photo models.Photo, err error) {
+	if err := s.db.Where("photo_uuid = ?", photoUUID).First(&photo).Error; err != nil {
+		return photo, err
+	}
+
+	return photo, nil
+}
+
 // FindLabelBySlug returns a Label based on the slug name.
 func (s *Search) FindLabelBySlug(labelSlug string) (label models.Label, err error) {
 	if err := s.db.Where("label_slug = ?", labelSlug).First(&label).Error; err != nil {
@@ -384,7 +393,7 @@ func (s *Search) FindAlbumThumbByUUID(albumUUID string) (file models.File, err e
 
 	if err := s.db.Where("files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN albums ON albums.album_uuid = ?", albumUUID).
-		Joins("JOIN albums_photos ON albums_photos.album_id = albums.id AND albums_photos.photo_id = files.photo_id").
+		Joins("JOIN photos_albums pa ON pa.album_uuid = albums.album_uuid AND pa.photo_uuid = files.photo_uuid").
 		First(&file).Error; err != nil {
 		return file, err
 	}
@@ -405,8 +414,8 @@ func (s *Search) Albums(form forms.AlbumSearchForm) (results []AlbumSearchResult
 	// q.LogMode(true)
 
 	q = q.Table("albums").
-		Select(`albums.*, COUNT(albums_photos.album_id) AS album_count`).
-		Joins("LEFT JOIN albums_photos ON albums_photos.album_id = albums.id").
+		Select(`albums.*, COUNT(photos_albums.album_uuid) AS album_count`).
+		Joins("LEFT JOIN photos_albums ON photos_albums.album_uuid = albums.album_uuid").
 		Where("albums.deleted_at IS NULL").
 		Group("albums.id")
 

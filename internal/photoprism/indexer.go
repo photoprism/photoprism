@@ -322,6 +322,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	}
 
 	file.PhotoID = photo.ID
+	file.PhotoUUID = photo.PhotoUUID
 	file.FilePrimary = isPrimary
 	file.FileMissing = false
 	file.FileName = fileName

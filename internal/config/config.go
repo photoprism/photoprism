@@ -495,16 +495,17 @@ func (c *Config) MigrateDb() {
 	db.AutoMigrate(
 		&models.File{},
 		&models.Photo{},
+		&models.Album{},
+		&models.Event{},
 		&models.Label{},
 		&models.Category{},
 		&models.PhotoLabel{},
-		&models.Album{},
+		&models.PhotoAlbum{},
 		&models.Location{},
 		&models.Camera{},
 		&models.Lens{},
 		&models.Country{},
 		&models.Share{},
-		&models.Event{},
 	)
 }
 

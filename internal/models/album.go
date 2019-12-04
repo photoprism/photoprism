@@ -6,6 +6,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/util"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -14,14 +15,15 @@ type Album struct {
 	Model
 	AlbumUUID        string `gorm:"unique_index;"`
 	AlbumSlug        string `gorm:"index;"`
-	AlbumName        string
+	AlbumSecret      string `gorm:"type:varchar(64);"`
+	AlbumName        string `gorm:"type:varchar(128);"`
 	AlbumDescription string `gorm:"type:text;"`
 	AlbumNotes       string `gorm:"type:text;"`
 	AlbumViews       uint
 	AlbumPhoto       *Photo
 	AlbumPhotoID     uint
 	AlbumFavorite    bool
-	Photos           []Photo `gorm:"many2many:albums_photos;"`
+	AlbumPublic      bool
 }
 
 func (m *Album) BeforeCreate(scope *gorm.Scope) error {
@@ -37,10 +39,12 @@ func NewAlbum(albumName string) *Album {
 
 	albumSlug := slug.Make(albumName)
 	albumUUID := uuid.NewV4().String()
+	albumSecret := util.RandomToken(10)
 
 	result := &Album{
 		AlbumUUID: albumUUID,
 		AlbumSlug: albumSlug,
+		AlbumSecret: albumSecret,
 		AlbumName: albumName,
 	}
 

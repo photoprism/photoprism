@@ -127,7 +127,7 @@
             batchPrivate() {
                 const ctx = this;
 
-                Api.post("batch/photos/private", {"ids": this.selection}).then(function () {
+                Api.post("batch/photos/private", {"photos": this.selection}).then(function () {
                     Notify.success("Toggled private flag");
                     ctx.clearClipboard();
                     ctx.refresh();
@@ -136,7 +136,7 @@
             batchStory() {
                 const ctx = this;
 
-                Api.post("batch/photos/story", {"ids": this.selection}).then(function () {
+                Api.post("batch/photos/story", {"photos": this.selection}).then(function () {
                     Notify.success("Toggled story flag");
                     ctx.clearClipboard();
                     ctx.refresh();
@@ -147,7 +147,7 @@
 
                 const ctx = this;
 
-                Api.post("batch/photos/delete", {"ids": this.selection}).then(function () {
+                Api.post("batch/photos/delete", {"photos": this.selection}).then(function () {
                     Notify.success("Photos deleted");
                     ctx.clearClipboard();
                     ctx.refresh();
