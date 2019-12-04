@@ -87,6 +87,48 @@
                                   :items="options.sorting">
                         </v-select>
                     </v-flex>
+                    <v-flex xs12 sm6 md3 pa-2 class="p-time-after">
+                        <v-menu v-model="showAfterPicker"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="290px"
+                        >
+                            <template v-slot:activator="{ on }">
+                                <v-text-field v-model="filter.after"
+                                            label="After"
+                                            prepend-icon="event"
+                                            readonly
+                                            v-on="on"
+                                ></v-text-field>
+                            </template>
+                            <v-date-picker v-model="filter.after"
+                                           @input="showAfterPicker = false; dropdownChange();">
+                            </v-date-picker>
+                        </v-menu>
+                    </v-flex>
+                    <v-flex xs12 sm6 md3 pa-2 class="p-time-before">
+                        <v-menu v-model="showBeforePicker"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="290px"
+                        >
+                            <template v-slot:activator="{ on }">
+                                <v-text-field v-model="filter.before"
+                                            label="Before"
+                                            prepend-icon="event"
+                                            readonly
+                                            v-on="on"
+                                ></v-text-field>
+                            </template>
+                            <v-date-picker v-model="filter.before"
+                                           @input="showBeforePicker = false; dropdownChange();">
+                            </v-date-picker>
+                        </v-menu>
+                    </v-flex>
                 </v-layout>
             </v-card-text>
         </v-card>
@@ -125,6 +167,8 @@
                         {value: 'imported', text: 'Recently imported'},
                     ],
                 },
+                showAfterPicker: false,
+                showBeforePicker: false,
             };
         },
         methods: {
