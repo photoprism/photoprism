@@ -167,3 +167,97 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		c.JSON(http.StatusOK, http.Response{})
 	})
 }
+
+// POST /api/v1/albums/:uuid/photos
+func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
+	router.POST("/albums/:uuid/photos", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		var params PhotoUUIDs
+
+		if err := c.BindJSON(&params); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		if len(params.Photos) == 0 {
+			log.Error("no photos selected")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst("no photos selected")})
+			return
+		}
+
+		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		a, err := search.FindAlbumByUUID(c.Param("uuid"))
+
+		if err != nil {
+			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		log.Infof("adding %d photos to album %s", len(params.Photos), a.AlbumName)
+
+		db := conf.Db()
+		var added []*models.PhotoAlbum
+		var failed []string
+
+		for _, photoUUID := range params.Photos {
+			if p, err := search.FindPhotoByUUID(photoUUID); err != nil {
+				failed = append(failed, photoUUID)
+			} else {
+				added = append(added, models.NewPhotoAlbum(p.PhotoUUID, a.AlbumUUID).FirstOrCreate(db))
+			}
+		}
+
+		if len(added) == 1 {
+			event.Success(fmt.Sprintf("one photo added to %s", a.AlbumName))
+		} else {
+			event.Success(fmt.Sprintf("%d photos added to %s", len(added), a.AlbumName))
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "photos added to album", "album": a, "added": added, "failed": failed})
+	})
+}
+
+// DELETE /api/v1/albums/:uuid/photos
+func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
+	router.DELETE("/albums/:uuid/photos", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		var params PhotoUUIDs
+
+		if err := c.BindJSON(&params); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		if len(params.Photos) == 0 {
+			log.Error("no photos selected")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst("no photos selected")})
+			return
+		}
+
+		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		a, err := search.FindAlbumByUUID(c.Param("uuid"))
+
+		if err != nil {
+			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		log.Infof("adding %d photos to album %s", len(params.Photos), a.AlbumName)
+
+		db := conf.Db()
+
+		db.Where("album_uuid = ? AND photo_uuid IN (?)", a.AlbumUUID, params.Photos).Delete(&models.PhotoAlbum{})
+
+		event.Success(fmt.Sprintf("photos removed from %s", a.AlbumName))
+
+		c.JSON(http.StatusOK, gin.H{"message": "photos removed from album", "album": a, "photos": params.Photos})
+	})
+}

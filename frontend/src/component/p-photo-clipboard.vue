@@ -99,11 +99,11 @@
             </v-speed-dial>
         </v-container>
         <p-photo-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false"
-                               @confirm="batchDelete"></p-photo-delete-dialog>
+                               @confirm="batchDeletePhotos"></p-photo-delete-dialog>
         <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false"
-                              @confirm="batchAlbum"></p-photo-album-dialog>
+                              @confirm="batchAddToAlbum"></p-photo-album-dialog>
         <p-photo-edit-dialog :show="dialog.edit" @cancel="dialog.edit = false"
-                             @confirm="batchEdit"></p-photo-edit-dialog>
+                             @confirm="batchEditPhotos"></p-photo-edit-dialog>
     </div>
 </template>
 <script>
@@ -147,7 +147,7 @@
                 this.clearClipboard();
                 this.refresh();
             },
-            batchDelete() {
+            batchDeletePhotos() {
                 this.dialog.delete = false;
 
                 Api.post("batch/photos/delete", {"photos": this.selection}).then(this.onDeleted.bind(this));
@@ -161,17 +161,16 @@
                 Notify.warning("Not implemented yet");
                 this.expanded = false;
             },
-            batchAlbum(albumUUID) {
-                console.log("batchAlbum", albumUUID);
+            batchAddToAlbum(albumUUID) {
                 this.dialog.album = false;
 
-                Api.post("batch/photos/album", {"photos": this.selection, "album": albumUUID}).then(this.onAddedToAlbum.bind(this));
+                Api.post(`albums/${albumUUID}/photos`, {"photos": this.selection}).then(this.onAddedToAlbum.bind(this));
             },
             onAddedToAlbum() {
                 this.clearClipboard();
                 this.refresh();
             },
-            batchEdit() {
+            batchEditPhotos() {
                 this.dialog.edit = false;
                 Notify.warning("Not implemented yet");
                 this.expanded = false;

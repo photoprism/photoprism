@@ -113,6 +113,7 @@
 <script>
     import Album from "model/album";
     import {DateTime} from "luxon";
+    import Util from "common/util";
 
     export default {
         name: 'p-page-albums',
@@ -156,7 +157,7 @@
             },
             openAlbum(index) {
                 const album = this.results[index];
-                this.$router.push({name: "album", params: { uuid: album.AlbumUUID, slug: album.AlbumSlug }});
+                this.$router.push({name: "album", params: {uuid: album.AlbumUUID, slug: album.AlbumSlug}});
             },
             loadMore() {
                 if (this.scrollDisabled) return;
@@ -255,7 +256,14 @@
                 this.pageSize = pageSize;
             },
             create() {
-                const name = DateTime.local().toFormat("LLLL yyyy");
+                let name = DateTime.local().toFormat("LLLL yyyy");
+
+                if(this.results.findIndex(a => a.AlbumName.startsWith(name)) !== -1) {
+                    name = "New Album";
+                    const existing = this.results.filter(a => a.AlbumName.startsWith(name));
+                    name += " " + Util.arabicToRoman(existing.length)
+                }
+
                 const album = new Album({"AlbumName": name});
 
                 album.save().then(() => {
