@@ -23,6 +23,8 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		api.GetThumbnail(v1, conf)
 		api.GetDownload(v1, conf)
+		api.CreateZip(v1, conf)
+		api.DownloadZip(v1, conf)
 
 		api.GetPhotos(v1, conf)
 		api.LikePhoto(v1, conf)

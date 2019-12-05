@@ -10,6 +10,10 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
+// TODO: GET /api/v1/dl/file/:hash
+// TODO: GET /api/v1/dl/photo/:uuid
+// TODO: GET /api/v1/dl/album/:uuid
+
 // GET /api/v1/download/:hash
 //
 // Parameters:

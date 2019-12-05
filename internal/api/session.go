@@ -6,25 +6,21 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/patrickmn/go-cache"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/util"
 )
-
-type CreateSessionParams struct {
-	Email string `json:"email"`
-	Password string `json:"password"`
-}
 
 // POST /api/v1/session
 func CreateSession(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/session", func(c *gin.Context) {
-		var params CreateSessionParams
+		var f form.Login
 
-		if err := c.BindJSON(&params); err != nil {
+		if err := c.BindJSON(&f); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		if params.Password != conf.AdminPassword() {
+		if f.Password != conf.AdminPassword() {
 			c.AbortWithStatusJSON(400, gin.H{"error": "Invalid password"})
 			return
 		}

@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/photoprism/photoprism/internal/forms"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
@@ -29,24 +29,24 @@ import (
 //   favorites: bool   Find favorites only
 func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/photos", func(c *gin.Context) {
-		var form forms.PhotoSearchForm
+		var f form.PhotoSearch
 
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		err := c.MustBindWith(&form, binding.Form)
+		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		result, err := search.Photos(form)
+		result, err := search.Photos(f)
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		c.Header("X-Result-Count", strconv.Itoa(form.Count))
-		c.Header("X-Result-Offset", strconv.Itoa(form.Offset))
+		c.Header("X-Result-Count", strconv.Itoa(f.Count))
+		c.Header("X-Result-Offset", strconv.Itoa(f.Offset))
 
 		c.JSON(http.StatusOK, result)
 	})

@@ -1,4 +1,4 @@
-package forms
+package form
 
 import (
 	"bytes"
@@ -15,7 +15,7 @@ import (
 )
 
 // Query parameters for GET /api/v1/albums
-type AlbumSearchForm struct {
+type AlbumSearch struct {
 	Query string `form:"q"`
 
 	Slug      string `form:"slug"`
@@ -27,7 +27,7 @@ type AlbumSearchForm struct {
 	Order  string `form:"order"`
 }
 
-func (f *AlbumSearchForm) ParseQueryString() (result error) {
+func (f *AlbumSearch) ParseQueryString() (result error) {
 	var key, value []byte
 	var escaped, isKeyValue bool
 

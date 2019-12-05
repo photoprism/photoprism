@@ -1,4 +1,4 @@
-package forms
+package form
 
 import (
 	"bytes"
@@ -15,7 +15,7 @@ import (
 )
 
 // Query parameters for GET /api/v1/labels
-type LabelSearchForm struct {
+type LabelSearch struct {
 	Query string `form:"q"`
 
 	Slug      string `form:"slug"`
@@ -28,7 +28,7 @@ type LabelSearchForm struct {
 	Order  string `form:"order"`
 }
 
-func (f *LabelSearchForm) ParseQueryString() (result error) {
+func (f *LabelSearch) ParseQueryString() (result error) {
 	var key, value []byte
 	var escaped, isKeyValue bool
 

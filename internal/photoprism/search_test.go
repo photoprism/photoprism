@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/forms"
+	"github.com/photoprism/photoprism/internal/form"
 )
 
 func TestSearch_Photos_Query(t *testing.T) {
@@ -16,12 +16,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 	search := NewSearch(conf.OriginalsPath(), conf.Db())
 
 	t.Run("normal query", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "animal"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "animal"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -30,12 +30,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos[0])
 	})
 	t.Run("label query", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "label:dog"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "label:dog"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -44,25 +44,25 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("invalid label query", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "label:xxx"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "label:xxx"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		assert.Equal(t, err.Error(), "label \"xxx\" not found")
 
 		t.Log(photos)
 	})
 	t.Run("form.location true", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = ""
-		form.Count = 3
-		form.Offset = 0
-		form.Location = true
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Count = 3
+		f.Offset = 0
+		f.Location = true
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -71,13 +71,13 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.camera", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = ""
-		form.Count = 3
-		form.Offset = 0
-		form.Camera = 2
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Count = 3
+		f.Offset = 0
+		f.Camera = 2
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -86,13 +86,13 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.color", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = ""
-		form.Count = 3
-		form.Offset = 0
-		form.Color = "blue"
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Count = 3
+		f.Offset = 0
+		f.Color = "blue"
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -101,12 +101,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.favorites", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "favorites:true"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "favorites:true"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -115,12 +115,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.country", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "country:de"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "country:de"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -129,12 +129,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.title", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "title:Pug Dog"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "title:Pug Dog"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -143,12 +143,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.description", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "description:xxx"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "description:xxx"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -157,12 +157,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.notes", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "notes:xxx"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "notes:xxx"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -171,12 +171,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.hash", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "hash:xxx"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "hash:xxx"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -185,12 +185,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.duplicate", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "duplicate:true"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "duplicate:true"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -199,12 +199,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.portrait", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "portrait:true"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "portrait:true"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -213,12 +213,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.mono", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "mono:true"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "mono:true"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -227,12 +227,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.chroma", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "chroma:50"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "chroma:50"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -241,12 +241,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.fmin and Order:oldest", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "Fmin:5 Order:oldest"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "Fmin:5 Order:oldest"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -255,12 +255,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.fmax and Order:newest", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "Fmax:2 Order:newest"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "Fmax:2 Order:newest"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -269,12 +269,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.Lat and form.Long and Order:imported", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "Lat:33.45343166666667 Long:25.764711666666667 Dist:2000 Order:imported"
-		form.Count = 3
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "Lat:33.45343166666667 Long:25.764711666666667 Dist:2000 Order:imported"
+		f.Count = 3
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -283,12 +283,12 @@ func TestSearch_Photos_Query(t *testing.T) {
 		t.Log(photos)
 	})
 	t.Run("form.Before and form.After", func(t *testing.T) {
-		var form forms.PhotoSearchForm
-		form.Query = "Before:2005-01-01 After:2003-01-01"
-		form.Count = 5000
-		form.Offset = 0
+		var f form.PhotoSearch
+		f.Query = "Before:2005-01-01 After:2003-01-01"
+		f.Count = 5000
+		f.Offset = 0
 
-		photos, err := search.Photos(form)
+		photos, err := search.Photos(f)
 
 		if err != nil {
 			t.Fatal(err)

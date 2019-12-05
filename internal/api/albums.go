@@ -6,12 +6,12 @@ import (
 	"strconv"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/forms"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/util"
 )
@@ -19,24 +19,24 @@ import (
 // GET /api/v1/albums
 func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums", func(c *gin.Context) {
-		var form forms.AlbumSearchForm
+		var f form.AlbumSearch
 
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		err := c.MustBindWith(&form, binding.Form)
+		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		result, err := search.Albums(form)
+		result, err := search.Albums(f)
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		c.Header("X-Result-Count", strconv.Itoa(form.Count))
-		c.Header("X-Result-Offset", strconv.Itoa(form.Offset))
+		c.Header("X-Result-Count", strconv.Itoa(f.Count))
+		c.Header("X-Result-Offset", strconv.Itoa(f.Offset))
 
 		c.JSON(http.StatusOK, result)
 	})
@@ -58,10 +58,6 @@ func GetAlbum(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-type AlbumParams struct {
-	AlbumName string `json:"AlbumName"`
-}
-
 // POST /api/v1/albums
 func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/albums", func(c *gin.Context) {
@@ -70,14 +66,14 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		var params AlbumParams
+		var f form.Album
 
-		if err := c.BindJSON(&params); err != nil {
+		if err := c.BindJSON(&f); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		m := models.NewAlbum(params.AlbumName)
+		m := models.NewAlbum(f.AlbumName)
 
 		if res := conf.Db().Create(m); res.Error != nil {
 			log.Error(res.Error.Error())
@@ -99,9 +95,9 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		var params AlbumParams
+		var f form.Album
 
-		if err := c.BindJSON(&params); err != nil {
+		if err := c.BindJSON(&f); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
@@ -116,7 +112,7 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		m.Rename(params.AlbumName)
+		m.Rename(f.AlbumName)
 		conf.Db().Save(&m)
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
@@ -192,14 +188,14 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		var params PhotoUUIDs
+		var f form.PhotoUUIDs
 
-		if err := c.BindJSON(&params); err != nil {
+		if err := c.BindJSON(&f); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		if len(params.Photos) == 0 {
+		if len(f.Photos) == 0 {
 			log.Error("no photos selected")
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst("no photos selected")})
 			return
@@ -213,13 +209,11 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		log.Infof("adding %d photos to album %s", len(params.Photos), a.AlbumName)
-
 		db := conf.Db()
 		var added []*models.PhotoAlbum
 		var failed []string
 
-		for _, photoUUID := range params.Photos {
+		for _, photoUUID := range f.Photos {
 			if p, err := search.FindPhotoByUUID(photoUUID); err != nil {
 				failed = append(failed, photoUUID)
 			} else {
@@ -245,14 +239,14 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		var params PhotoUUIDs
+		var f form.PhotoUUIDs
 
-		if err := c.BindJSON(&params); err != nil {
+		if err := c.BindJSON(&f); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		if len(params.Photos) == 0 {
+		if len(f.Photos) == 0 {
 			log.Error("no photos selected")
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst("no photos selected")})
 			return
@@ -266,14 +260,12 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		log.Infof("adding %d photos to album %s", len(params.Photos), a.AlbumName)
-
 		db := conf.Db()
 
-		db.Where("album_uuid = ? AND photo_uuid IN (?)", a.AlbumUUID, params.Photos).Delete(&models.PhotoAlbum{})
+		db.Where("album_uuid = ? AND photo_uuid IN (?)", a.AlbumUUID, f.Photos).Delete(&models.PhotoAlbum{})
 
 		event.Success(fmt.Sprintf("photos removed from %s", a.AlbumName))
 
-		c.JSON(http.StatusOK, gin.H{"message": "photos removed from album", "album": a, "photos": params.Photos})
+		c.JSON(http.StatusOK, gin.H{"message": "photos removed from album", "album": a, "photos": f.Photos})
 	})
 }

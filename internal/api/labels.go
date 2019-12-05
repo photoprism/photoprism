@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/forms"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/util"
 )
@@ -15,24 +15,24 @@ import (
 // GET /api/v1/labels
 func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/labels", func(c *gin.Context) {
-		var form forms.LabelSearchForm
+		var f form.LabelSearch
 
 		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		err := c.MustBindWith(&form, binding.Form)
+		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		result, err := search.Labels(form)
+		result, err := search.Labels(f)
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		c.Header("X-Result-Count", strconv.Itoa(form.Count))
-		c.Header("X-Result-Offset", strconv.Itoa(form.Offset))
+		c.Header("X-Result-Count", strconv.Itoa(f.Count))
+		c.Header("X-Result-Offset", strconv.Itoa(f.Offset))
 
 		c.JSON(http.StatusOK, result)
 	})

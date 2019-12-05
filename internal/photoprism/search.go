@@ -7,7 +7,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/forms"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/util"
 )
@@ -37,12 +37,12 @@ func NewSearch(originalsPath string, db *gorm.DB) *Search {
 }
 
 // Photos searches for photos based on a Form and returns a PhotoSearchResult slice.
-func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult, err error) {
-	if err := form.ParseQueryString(); err != nil {
+func (s *Search) Photos(f form.PhotoSearch) (results []PhotoSearchResult, err error) {
+	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
 
-	defer util.ProfileTime(time.Now(), fmt.Sprintf("search: %+v", form))
+	defer util.ProfileTime(time.Now(), fmt.Sprintf("search: %+v", f))
 
 	q := s.db.NewScope(nil).DB()
 
@@ -72,10 +72,10 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 	var label models.Label
 	var labelIds []uint
 
-	if form.Label != "" {
-		if result := s.db.First(&label, "label_slug = ?", strings.ToLower(form.Label)); result.Error != nil {
-			log.Errorf("search: label \"%s\" not found", form.Label)
-			return results, fmt.Errorf("label \"%s\" not found", form.Label)
+	if f.Label != "" {
+		if result := s.db.First(&label, "label_slug = ?", strings.ToLower(f.Label)); result.Error != nil {
+			log.Errorf("search: label \"%s\" not found", f.Label)
+			return results, fmt.Errorf("label \"%s\" not found", f.Label)
 		} else {
 			labelIds = append(labelIds, label.ID)
 
@@ -89,24 +89,24 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		}
 	}
 
-	if form.Location == true {
+	if f.Location == true {
 		q = q.Where("location_id > 0")
 
-		if form.Query != "" {
-			likeString := "%" + strings.ToLower(form.Query) + "%"
+		if f.Query != "" {
+			likeString := "%" + strings.ToLower(f.Query) + "%"
 			q = q.Where("LOWER(locations.loc_display_name) LIKE ?", likeString)
 		}
-	} else if form.Query != "" {
-		slugString := slug.Make(form.Query)
-		lowerString := strings.ToLower(form.Query)
+	} else if f.Query != "" {
+		slugString := slug.Make(f.Query)
+		lowerString := strings.ToLower(f.Query)
 		likeString := "%" + lowerString + "%"
 
 		if result := s.db.First(&label, "label_slug = ?", slugString); result.Error != nil {
-			log.Infof("search: label \"%s\" not found", form.Query)
+			log.Infof("search: label \"%s\" not found", f.Query)
 
 			q = q.Where("labels.label_slug = ? OR LOWER(photo_title) LIKE ? OR files.file_main_color = ?", slugString, likeString, lowerString)
 		} else {
-			log.Infof("search: label \"%s\"", form.Query)
+			log.Infof("search: label \"%s\"", f.Query)
 
 			labelIds = append(labelIds, label.ID)
 
@@ -121,94 +121,94 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 
 	}
 
-	if form.Album != "" {
-		q = q.Joins("JOIN photos_albums ON photos_albums.photo_uuid = photos.photo_uuid").Where("photos_albums.album_uuid = ?", form.Album)
+	if f.Album != "" {
+		q = q.Joins("JOIN photos_albums ON photos_albums.photo_uuid = photos.photo_uuid").Where("photos_albums.album_uuid = ?", f.Album)
 	}
 
-	if form.Camera > 0 {
-		q = q.Where("photos.camera_id = ?", form.Camera)
+	if f.Camera > 0 {
+		q = q.Where("photos.camera_id = ?", f.Camera)
 	}
 
-	if form.Color != "" {
-		q = q.Where("files.file_main_color = ?", strings.ToLower(form.Color))
+	if f.Color != "" {
+		q = q.Where("files.file_main_color = ?", strings.ToLower(f.Color))
 	}
 
-	if form.Favorites {
+	if f.Favorites {
 		q = q.Where("photos.photo_favorite = 1")
 	}
 
-	if form.Country != "" {
-		q = q.Where("locations.loc_country_code = ?", form.Country)
+	if f.Country != "" {
+		q = q.Where("locations.loc_country_code = ?", f.Country)
 	}
 
-	if form.Title != "" {
-		q = q.Where("LOWER(photos.photo_title) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(form.Title)))
+	if f.Title != "" {
+		q = q.Where("LOWER(photos.photo_title) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(f.Title)))
 	}
 
-	if form.Description != "" {
-		q = q.Where("LOWER(photos.photo_description) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(form.Description)))
+	if f.Description != "" {
+		q = q.Where("LOWER(photos.photo_description) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(f.Description)))
 	}
 
-	if form.Notes != "" {
-		q = q.Where("LOWER(photos.photo_notes) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(form.Notes)))
+	if f.Notes != "" {
+		q = q.Where("LOWER(photos.photo_notes) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(f.Notes)))
 	}
 
-	if form.Hash != "" {
-		q = q.Where("files.file_hash = ?", form.Hash)
+	if f.Hash != "" {
+		q = q.Where("files.file_hash = ?", f.Hash)
 	}
 
-	if form.Duplicate {
+	if f.Duplicate {
 		q = q.Where("files.file_duplicate = 1")
 	}
 
-	if form.Portrait {
+	if f.Portrait {
 		q = q.Where("files.file_portrait = 1")
 	}
 
-	if form.Mono {
+	if f.Mono {
 		q = q.Where("files.file_chroma = 0")
-	} else if form.Chroma > 9 {
-		q = q.Where("files.file_chroma > ?", form.Chroma)
-	} else if form.Chroma > 0 {
-		q = q.Where("files.file_chroma > 0 AND files.file_chroma <= ?", form.Chroma)
+	} else if f.Chroma > 9 {
+		q = q.Where("files.file_chroma > ?", f.Chroma)
+	} else if f.Chroma > 0 {
+		q = q.Where("files.file_chroma > 0 AND files.file_chroma <= ?", f.Chroma)
 	}
 
-	if form.Fmin > 0 {
-		q = q.Where("photos.photo_f_number >= ?", form.Fmin)
+	if f.Fmin > 0 {
+		q = q.Where("photos.photo_f_number >= ?", f.Fmin)
 	}
 
-	if form.Fmax > 0 {
-		q = q.Where("photos.photo_f_number <= ?", form.Fmax)
+	if f.Fmax > 0 {
+		q = q.Where("photos.photo_f_number <= ?", f.Fmax)
 	}
 
-	if form.Dist == 0 {
-		form.Dist = 20
-	} else if form.Dist > 1000 {
-		form.Dist = 1000
+	if f.Dist == 0 {
+		f.Dist = 20
+	} else if f.Dist > 1000 {
+		f.Dist = 1000
 	}
 
 	// Inaccurate distance search, but probably 'good enough' for now
-	if form.Lat > 0 {
-		latMin := form.Lat - SearchRadius*float64(form.Dist)
-		latMax := form.Lat + SearchRadius*float64(form.Dist)
+	if f.Lat > 0 {
+		latMin := f.Lat - SearchRadius*float64(f.Dist)
+		latMax := f.Lat + SearchRadius*float64(f.Dist)
 		q = q.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
 	}
 
-	if form.Long > 0 {
-		longMin := form.Long - SearchRadius*float64(form.Dist)
-		longMax := form.Long + SearchRadius*float64(form.Dist)
+	if f.Long > 0 {
+		longMin := f.Long - SearchRadius*float64(f.Dist)
+		longMax := f.Long + SearchRadius*float64(f.Dist)
 		q = q.Where("photos.photo_long BETWEEN ? AND ?", longMin, longMax)
 	}
 
-	if !form.Before.IsZero() {
-		q = q.Where("photos.taken_at <= ?", form.Before.Format("2006-01-02"))
+	if !f.Before.IsZero() {
+		q = q.Where("photos.taken_at <= ?", f.Before.Format("2006-01-02"))
 	}
 
-	if !form.After.IsZero() {
-		q = q.Where("photos.taken_at >= ?", form.After.Format("2006-01-02"))
+	if !f.After.IsZero() {
+		q = q.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
 	}
 
-	switch form.Order {
+	switch f.Order {
 	case "newest":
 		q = q.Order("taken_at DESC")
 	case "oldest":
@@ -219,8 +219,8 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 		q = q.Order("taken_at DESC")
 	}
 
-	if form.Count > 0 && form.Count <= 1000 {
-		q = q.Limit(form.Count).Offset(form.Offset)
+	if f.Count > 0 && f.Count <= 1000 {
+		q = q.Limit(f.Count).Offset(f.Offset)
 	} else {
 		q = q.Limit(100).Offset(0)
 	}
@@ -236,6 +236,15 @@ func (s *Search) Photos(form forms.PhotoSearchForm) (results []PhotoSearchResult
 // and finding them from an offest defined by offset.
 func (s *Search) FindFiles(limit int, offset int) (files []models.File, err error) {
 	if err := s.db.Where(&models.File{}).Limit(limit).Offset(offset).Find(&files).Error; err != nil {
+		return files, err
+	}
+
+	return files, nil
+}
+
+// FindFilesByUUID
+func (s *Search) FindFilesByUUID(u []string, limit int, offset int) (files []models.File, err error) {
+	if err := s.db.Where("(photo_uuid IN (?) AND file_primary = 1) OR file_uuid IN (?)", u, u).Preload("Photo").Limit(limit).Offset(offset).Find(&files).Error; err != nil {
 		return files, err
 	}
 
@@ -303,12 +312,12 @@ func (s *Search) FindLabelThumbBySlug(labelSlug string) (file models.File, err e
 }
 
 // Labels searches labels based on their name.
-func (s *Search) Labels(form forms.LabelSearchForm) (results []LabelSearchResult, err error) {
-	if err := form.ParseQueryString(); err != nil {
+func (s *Search) Labels(f form.LabelSearch) (results []LabelSearchResult, err error) {
+	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
 
-	defer util.ProfileTime(time.Now(), fmt.Sprintf("search: %+v", form))
+	defer util.ProfileTime(time.Now(), fmt.Sprintf("search: %+v", f))
 
 	q := s.db.NewScope(nil).DB()
 
@@ -320,15 +329,15 @@ func (s *Search) Labels(form forms.LabelSearchForm) (results []LabelSearchResult
 		Where("labels.deleted_at IS NULL").
 		Group("labels.id")
 
-	if form.Query != "" {
+	if f.Query != "" {
 		var labelIds []uint
 		var categories []models.Category
 		var label models.Label
 
-		likeString := "%" + strings.ToLower(form.Query) + "%"
+		likeString := "%" + strings.ToLower(f.Query) + "%"
 
-		if result := s.db.First(&label, "LOWER(label_name) LIKE LOWER(?)", form.Query); result.Error != nil {
-			log.Infof("search: label \"%s\" not found", form.Query)
+		if result := s.db.First(&label, "LOWER(label_name) LIKE LOWER(?)", f.Query); result.Error != nil {
+			log.Infof("search: label \"%s\" not found", f.Query)
 
 			q = q.Where("LOWER(labels.label_name) LIKE ?", likeString)
 		} else {
@@ -340,31 +349,31 @@ func (s *Search) Labels(form forms.LabelSearchForm) (results []LabelSearchResult
 				labelIds = append(labelIds, category.LabelID)
 			}
 
-			log.Infof("search: labels %#v", form.Query)
+			log.Infof("search: labels %#v", f.Query)
 
 			q = q.Where("labels.id IN (?) OR LOWER(labels.label_name) LIKE ?", labelIds, likeString)
 		}
 	}
 
-	if form.Favorites {
+	if f.Favorites {
 		q = q.Where("labels.label_favorite = 1")
 	}
 
-	if form.Priority != 0 {
-		q = q.Where("labels.label_priority > ?", form.Priority)
+	if f.Priority != 0 {
+		q = q.Where("labels.label_priority > ?", f.Priority)
 	} else {
 		q = q.Where("labels.label_priority >= -1")
 	}
 
-	switch form.Order {
+	switch f.Order {
 	case "slug":
 		q = q.Order("labels.label_favorite DESC, label_slug ASC")
 	default:
 		q = q.Order("labels.label_favorite DESC, labels.label_priority DESC, label_count DESC, labels.created_at DESC")
 	}
 
-	if form.Count > 0 && form.Count <= 1000 {
-		q = q.Limit(form.Count).Offset(form.Offset)
+	if f.Count > 0 && f.Count <= 1000 {
+		q = q.Limit(f.Count).Offset(f.Offset)
 	} else {
 		q = q.Limit(100).Offset(0)
 	}
@@ -402,12 +411,12 @@ func (s *Search) FindAlbumThumbByUUID(albumUUID string) (file models.File, err e
 }
 
 // Albums searches albums based on their name.
-func (s *Search) Albums(form forms.AlbumSearchForm) (results []AlbumSearchResult, err error) {
-	if err := form.ParseQueryString(); err != nil {
+func (s *Search) Albums(f form.AlbumSearch) (results []AlbumSearchResult, err error) {
+	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
 
-	defer util.ProfileTime(time.Now(), fmt.Sprintf("search: %+v", form))
+	defer util.ProfileTime(time.Now(), fmt.Sprintf("search: %+v", f))
 
 	q := s.db.NewScope(nil).DB()
 
@@ -419,24 +428,24 @@ func (s *Search) Albums(form forms.AlbumSearchForm) (results []AlbumSearchResult
 		Where("albums.deleted_at IS NULL").
 		Group("albums.id")
 
-	if form.Query != "" {
-		likeString := "%" + strings.ToLower(form.Query) + "%"
+	if f.Query != "" {
+		likeString := "%" + strings.ToLower(f.Query) + "%"
 		q = q.Where("LOWER(albums.album_name) LIKE ?", likeString)
 	}
 
-	if form.Favorites {
+	if f.Favorites {
 		q = q.Where("albums.album_favorite = 1")
 	}
 
-	switch form.Order {
+	switch f.Order {
 	case "slug":
 		q = q.Order("albums.album_favorite DESC, album_slug ASC")
 	default:
 		q = q.Order("albums.album_favorite DESC, album_count DESC, albums.created_at DESC")
 	}
 
-	if form.Count > 0 && form.Count <= 1000 {
-		q = q.Limit(form.Count).Offset(form.Offset)
+	if f.Count > 0 && f.Count <= 1000 {
+		q = q.Limit(f.Count).Offset(f.Offset)
 	} else {
 		q = q.Limit(100).Offset(0)
 	}

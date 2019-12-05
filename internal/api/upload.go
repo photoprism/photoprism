@@ -29,14 +29,14 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 		start := time.Now()
 		subPath := c.Param("path")
 
-		form, err := c.MultipartForm()
+		f, err := c.MultipartForm()
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		files := form.File["files"]
+		files := f.File["files"]
 
 		path := fmt.Sprintf("%s/upload/%s", conf.ImportPath(), subPath)
 
