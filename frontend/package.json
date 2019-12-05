@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.7.4",
     "@babel/register": "^7.7.4",
     "@fortawesome/fontawesome-free": "^5.11.2",
-    "@types/leaflet": "^1.5.5",
+    "@types/leaflet": "^1.5.6",
     "acorn": "^6.4.0",
     "ajv": "^6.10.2",
     "autoprefixer": "^9.7.3",
