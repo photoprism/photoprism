@@ -1,3 +1,5 @@
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 import Api from "common/api";
 import Notify from "common/notify";
 import Config from "common/config";

@@ -1,4 +1,3 @@
-import "@babel/polyfill/noConflict";
 import Axios from "axios";
 import Notify from "common/notify";
 
