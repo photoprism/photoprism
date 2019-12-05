@@ -40,6 +40,7 @@
                 this.filter.country = query['country'] ? query['country'] : '';
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
+                this.findAlbum();
                 this.search();
             }
         },
@@ -202,13 +203,16 @@
                     }
                 });
             },
+            findAlbum() {
+                this.model.find(this.uuid).then(m => {
+                    this.model = m;
+                    this.$config.page.title = this.model.AlbumName;
+                    window.document.title = this.model.AlbumName;
+                });
+            },
         },
         created() {
-            this.model.find(this.uuid).then(m => {
-                this.model = m;
-                this.$config.page.title = this.model.AlbumName;
-                window.document.title = this.model.AlbumName;
-            });
+            this.findAlbum();
             this.search();
         },
     };
