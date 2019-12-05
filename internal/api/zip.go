@@ -45,8 +45,9 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		zipPath := path.Join(conf.ExportPath(), "zip")
-		zipDate := time.Now().Format("20060201-150405")
-		zipBaseName := fmt.Sprintf("photos-%s.zip", zipDate)
+		zipToken := util.RandomToken(3)
+		zipYear := time.Now().Format("January-2006")
+		zipBaseName := fmt.Sprintf("Photos-%s-%s.zip", zipYear, zipToken)
 		zipFileName := fmt.Sprintf("%s/%s", zipPath, zipBaseName)
 
 		if err := os.MkdirAll(zipPath, 0700); err != nil {
@@ -112,6 +113,9 @@ func DownloadZip(router *gin.RouterGroup, conf *config.Config) {
 
 		c.File(zipFileName)
 
+		if err := os.Remove(zipFileName); err != nil {
+			log.Errorf("zip: could not remove \"%s\" %s", zipFileName, err.Error())
+		}
 	})
 }
 
