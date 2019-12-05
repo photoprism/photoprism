@@ -41,6 +41,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.BatchPhotosPrivate(v1, conf)
 		api.BatchPhotosStory(v1, conf)
 
+		api.GetAlbum(v1, conf)
 		api.GetAlbums(v1, conf)
 		api.LikeAlbum(v1, conf)
 		api.DislikeAlbum(v1, conf)

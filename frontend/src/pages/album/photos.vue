@@ -8,7 +8,7 @@
         <v-container fluid class="pa-0">
             <p-scroll-top></p-scroll-top>
 
-            <p-album-photo-clipboard :refresh="refresh" :selection="selection"></p-album-photo-clipboard>
+            <p-photo-clipboard :refresh="refresh" :selection="selection" :album="model"></p-photo-clipboard>
 
             <p-album-photo-mosaic v-if="settings.view === 'mosaic'" :photos="results" :selection="selection"
                             :open-photo="openPhoto"></p-album-photo-mosaic>
@@ -23,6 +23,7 @@
 
 <script>
     import Photo from "model/photo";
+    import Album from "model/album";
 
     export default {
         name: 'p-page-album-photos',
@@ -55,6 +56,7 @@
             const settings = {view: view};
 
             return {
+                model: new Album(),
                 uuid: uuid,
                 results: [],
                 scrollDisabled: true,
@@ -202,6 +204,11 @@
             },
         },
         created() {
+            this.model.find(this.uuid).then(m => {
+                this.model = m;
+                this.$config.page.title = this.model.AlbumName;
+                window.document.title = this.model.AlbumName;
+            });
             this.search();
         },
     };

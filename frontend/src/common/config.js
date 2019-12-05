@@ -14,6 +14,9 @@ class Config {
         this.translations = translations;
         this.values = values;
         this.debug = !!values.debug;
+        this.page = {
+            title: "PhotoPrism"
+        };
 
         this.subscriptionId = Event.subscribe("config.updated", (ev, data) => this.setValues(data));
 

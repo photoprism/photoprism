@@ -66,6 +66,14 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+    if(to.meta.title) {
+        config.page.title = to.meta.title;
+        window.document.title = "PhotoPrism: " + to.meta.title;
+    } else {
+        config.page.title = "";
+        window.document.title = "PhotoPrism";
+    }
+
     if (to.matched.some(record => record.meta.admin)) {
         if (isPublic || Session.isAdmin()) {
             next();

@@ -4,7 +4,7 @@
                    @click.stop="showNavigation()">
             <v-toolbar-side-icon class="p-navigation-show"></v-toolbar-side-icon>
 
-            <v-toolbar-title class="p-navigation-title">{{ $router.currentRoute.meta.area }}</v-toolbar-title>
+            <v-toolbar-title class="p-navigation-title">{{ page.title }}</v-toolbar-title>
 
             <v-spacer></v-spacer>
         </v-toolbar>
@@ -204,6 +204,7 @@
                 session: this.$session,
                 isPublic: this.$config.getValue("public"),
                 config: this.$config.values,
+                page: this.$config.page,
             };
         },
         methods: {

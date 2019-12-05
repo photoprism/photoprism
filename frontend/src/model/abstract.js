@@ -44,7 +44,7 @@ class Abstract {
     }
 
     find(id, params) {
-        return Api.get(this.getEntityResource(id), params).then((response) => Promise.resolve(new this(response.data)));
+        return Api.get(this.getEntityResource(id), params).then((response) => Promise.resolve(new this.constructor(response.data)));
     }
 
     save() {

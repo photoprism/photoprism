@@ -29,3 +29,7 @@
     right: 8px;
     bottom: 8px;
 }
+
+#photoprism .p-photo-clipboard .v-btn.v-btn--disabled:not(.v-btn--icon):not(.v-btn--flat):not(.v-btn--outline) {
+    background-color: rgba(100,100,100,0.5) !important;
+}

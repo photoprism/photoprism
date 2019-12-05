@@ -25,9 +25,10 @@
                         fab
                         dark
                         small
+                        title="Toggle private flag"
                         color="deep-purple lighten-2"
                         @click.stop="batchPrivate()"
-                        v-if="selection.length"
+                        :disabled="selection.length === 0"
                         class="p-photo-clipboard-private"
                 >
                     <v-icon>vpn_key</v-icon>
@@ -36,28 +37,29 @@
                         fab
                         dark
                         small
+                        title="Toggle story flag"
                         color="cyan accent-4"
-                        v-if="selection.length"
+                        :disabled="selection.length === 0"
                         @click.stop="batchStory()"
                         class="p-photo-clipboard-story"
                 >
                     <v-icon>wifi</v-icon>
                 </v-btn>
-                <v-btn
+                <!-- v-btn
                         fab
                         dark
                         small
                         color="light-blue accent-4"
-                        v-if="!selection.length"
                         @click.stop="openDocs()"
                         class="p-photo-clipboard-docs"
                 >
                     <v-icon>info</v-icon>
-                </v-btn>
+                </v-btn -->
                 <v-btn
                         fab
                         dark
                         small
+                        title="Download"
                         color="teal accent-4"
                         @click.stop="batchDownload()"
                         class="p-photo-clipboard-download"
@@ -68,7 +70,9 @@
                         fab
                         dark
                         small
+                        title="Add to album"
                         color="yellow accent-4"
+                        :disabled="selection.length === 0"
                         @click.stop="dialog.album = true"
                         class="p-photo-clipboard-album"
                 >
@@ -80,11 +84,27 @@
                         dark
                         small
                         color="delete"
+                        title="Delete photos"
                         @click.stop="dialog.delete = true"
-                        v-if="selection.length"
+                        :disabled="selection.length === 0"
+                        v-if="!album"
                         class="p-photo-clipboard-delete"
                 >
                     <v-icon>delete</v-icon>
+                </v-btn>
+
+                <v-btn
+                        fab
+                        dark
+                        small
+                        title="Remove from album"
+                        color="delete"
+                        @click.stop="removeFromAlbum"
+                        :disabled="selection.length === 0"
+                        v-if="album"
+                        class="p-photo-clipboard-delete"
+                >
+                    <v-icon>remove_circle</v-icon>
                 </v-btn>
                 <v-btn
                         fab
@@ -98,10 +118,10 @@
                 </v-btn>
             </v-speed-dial>
         </v-container>
+        <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false"
+                              @confirm="addToAlbum"></p-photo-album-dialog>
         <p-photo-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false"
                                @confirm="batchDeletePhotos"></p-photo-delete-dialog>
-        <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false"
-                              @confirm="batchAddToAlbum"></p-photo-album-dialog>
         <p-photo-edit-dialog :show="dialog.edit" @cancel="dialog.edit = false"
                              @confirm="batchEditPhotos"></p-photo-edit-dialog>
     </div>
@@ -115,6 +135,7 @@
         props: {
             selection: Array,
             refresh: Function,
+            album: Object,
         },
         data() {
             return {
@@ -161,12 +182,28 @@
                 Notify.warning("Not implemented yet");
                 this.expanded = false;
             },
-            batchAddToAlbum(albumUUID) {
+            addToAlbum(albumUUID) {
                 this.dialog.album = false;
 
-                Api.post(`albums/${albumUUID}/photos`, {"photos": this.selection}).then(this.onAddedToAlbum.bind(this));
+                Api.post(`albums/${albumUUID}/photos`, {"photos": this.selection}).then(this.onAdded.bind(this));
             },
-            onAddedToAlbum() {
+            onAdded() {
+                this.clearClipboard();
+                this.refresh();
+            },
+            removeFromAlbum() {
+                if(!this.album) {
+                    this.$notify.error("remove failed: unknown album");
+                    return
+                }
+
+                const albumUUID = this.album.AlbumUUID;
+
+                this.dialog.album = false;
+
+                Api.delete(`albums/${albumUUID}/photos`, {"data": {"photos": this.selection}}).then(this.onRemoved.bind(this));
+            },
+            onRemoved() {
                 this.clearClipboard();
                 this.refresh();
             },

@@ -42,6 +42,22 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
+// GET /api/v1/albums/:uuid
+func GetAlbum(router *gin.RouterGroup, conf *config.Config) {
+	router.GET("/albums/:uuid", func(c *gin.Context) {
+		id := c.Param("uuid")
+		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		m, err := search.FindAlbumByUUID(id)
+
+		if err != nil {
+			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		c.JSON(http.StatusOK, m)
+	})
+}
+
 type AlbumParams struct {
 	AlbumName string `json:"AlbumName"`
 }
