@@ -68,9 +68,11 @@ to receive regular project updates and discuss development related topics. Don't
 
 ## Donations ##
 
-We don't want to ask individuals for a donation at the moment. Please leave a star if you like this project, it provides enough motivation to keep going. Thank you very much! <3
+You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero). They will match your donation in the first year.
 
-If you still want to donate, you can do so via [Liberapay][donations] and [PayPal][paypal]. It really means a lot to us as we haven't received any major financial support so far and are funding this project from our personal savings.
+Also please leave a star if you like this project, it provides enough motivation to keep going. Thank you very much! <3
+
+In addition, you can find us on [Patreon][donations] and [PayPal][paypal]. It really means a lot to us as we haven't received any major financial support so far and are funding this project from our personal savings.
 
 ## Sponsorship ##
 
@@ -81,7 +83,7 @@ We'll be happy to mention your contribution plus you'll get a direct line to [ou
 See [SPONSORS.md](SPONSORS.md) for details.
 
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
-[donations]: https://en.liberapay.com/photoprism
+[donations]: https://www.patreon.com/photoprism
 [paypal]: https://www.paypal.me/photoprism
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [coverage]: https://codecov.io/gh/photoprism/photoprism
