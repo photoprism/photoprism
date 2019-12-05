@@ -61,7 +61,7 @@
                         small
                         title="Download"
                         color="teal accent-4"
-                        @click.stop="downloadZip()"
+                        @click.stop="download()"
                         class="p-photo-clipboard-download"
                 >
                     <v-icon>save</v-icon>
@@ -212,14 +212,20 @@
                 Notify.warning("Not implemented yet");
                 this.expanded = false;
             },
-            downloadZip() {
-                Api.post("zip", {"photos": this.selection}).then(this.onDownload.bind(this));
+            download() {
+                if(this.selection.length === 1) {
+                    this.onDownload(`/api/v1/photos/${this.selection[0]}/download`);
+                } else {
+                    Api.post("zip", {"photos": this.selection}).then(r => {
+                        this.onDownload("/api/v1/zip/" + r.data.filename);
+                    });
+                }
+
                 this.expanded = false;
             },
-            onDownload(r) {
-                console.log("onDownload", r);
-                Notify.success(r.data.message);
-                window.open("/api/v1/zip/" + r.data.filename, "_blank");
+            onDownload(path) {
+                Notify.success("Downloading...");
+                window.open(path, "_blank");
             },
             openDocs() {
                 window.open('https://docs.photoprism.org/en/latest/', '_blank');

@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/util"
@@ -69,10 +68,9 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 		zipWriter := zip.NewWriter(newZipFile)
 		defer zipWriter.Close()
 
-		for i, file := range files {
+		for _, file := range files {
 			fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
-			fileSlug := slug.MakeLang(file.Photo.PhotoTitle, "en")
-			fileAlias := fmt.Sprintf("%05d-%s.%s", i, fileSlug, file.FileType)
+			fileAlias := file.DownloadFileName()
 
 			if util.Exists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
@@ -80,9 +78,9 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": util.UcFirst("failed to create zip file")})
 					return
 				}
-				log.Infof("zip: added %s as %s", file.FileName, fileAlias)
+				log.Infof("zip: added \"%s\" as \"%s\"", file.FileName, fileAlias)
 			} else {
-				log.Warnf("zip: %s is missing", file.FileName)
+				log.Warnf("zip: \"%s\" is missing", file.FileName)
 				file.FileMissing = true
 				conf.Db().Save(&file)
 			}
@@ -90,7 +88,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 
 		elapsed := int(time.Since(start).Seconds())
 
-		log.Infof("zip: archive %s created in %s", zipBaseName, time.Since(start))
+		log.Infof("zip: archive \"%s\" created in %s", zipBaseName, time.Since(start))
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("zip created in %d s", elapsed), "filename": zipBaseName})
 	})

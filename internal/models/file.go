@@ -57,7 +57,7 @@ func (m *File) DownloadFileName() string {
 	var name string
 
 	if m.Photo.PhotoTitle != "" {
-		name = strings.Title(slug.Make(m.Photo.PhotoTitle))
+		name = strings.Title(slug.MakeLang(m.Photo.PhotoTitle, "en"))
 	} else {
 		name = string(m.PhotoID)
 	}

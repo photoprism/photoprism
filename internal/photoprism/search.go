@@ -251,6 +251,15 @@ func (s *Search) FindFilesByUUID(u []string, limit int, offset int) (files []mod
 	return files, nil
 }
 
+// FindFileByPhotoUUID
+func (s *Search) FindFileByPhotoUUID(u string) (file models.File, err error) {
+	if err := s.db.Where("photo_uuid = ? AND file_primary = 1", u).Preload("Photo").First(&file).Error; err != nil {
+		return file, err
+	}
+
+	return file, nil
+}
+
 // FindFileByID returns a mediafile given a certain ID.
 func (s *Search) FindFileByID(id string) (file models.File, err error) {
 	if err := s.db.Where("id = ?", id).Preload("Photo").First(&file).Error; err != nil {

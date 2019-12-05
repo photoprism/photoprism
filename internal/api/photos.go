@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -49,6 +50,40 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 		c.Header("X-Result-Offset", strconv.Itoa(f.Offset))
 
 		c.JSON(http.StatusOK, result)
+	})
+}
+
+// GET /api/v1/photos/:uuid/download
+//
+// Parameters:
+//   uuid: string PhotoUUID as returned by the API
+func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
+	router.GET("/photos/:uuid/download", func(c *gin.Context) {
+		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		file, err := search.FindFileByPhotoUUID(c.Param("uuid"))
+
+		if err != nil {
+			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
+			return
+		}
+
+		fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
+
+		if !util.Exists(fileName) {
+			log.Errorf("could not find original: %s", c.Param("uuid"))
+			c.Data(404, "image/svg+xml", photoIconSvg)
+
+			// Set missing flag so that the file doesn't show up in search results anymore
+			file.FileMissing = true
+			conf.Db().Save(&file)
+			return
+		}
+
+		downloadFileName := file.DownloadFileName()
+
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFileName))
+
+		c.File(fileName)
 	})
 }
 

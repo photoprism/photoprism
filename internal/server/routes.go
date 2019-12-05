@@ -27,6 +27,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DownloadZip(v1, conf)
 
 		api.GetPhotos(v1, conf)
+		api.GetPhotoDownload(v1, conf)
 		api.LikePhoto(v1, conf)
 		api.DislikePhoto(v1, conf)
 
