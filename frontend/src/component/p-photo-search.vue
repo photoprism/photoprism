@@ -2,7 +2,7 @@
     <v-form ref="form" autocomplete="off" class="p-photo-search" lazy-validation @submit.prevent="filterChange" dense>
         <v-toolbar flat color="secondary">
             <v-text-field class="pt-3 pr-3 p-search-field"
-                          autocomplete="off"
+                          browser-autocomplete="off"
                           single-line
                           label="Search"
                           prepend-inner-icon="search"

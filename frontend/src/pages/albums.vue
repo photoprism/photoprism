@@ -112,7 +112,6 @@
 
 <script>
     import Album from "model/album";
-    import Notify from "common/notify";
     import {DateTime} from "luxon";
 
     export default {

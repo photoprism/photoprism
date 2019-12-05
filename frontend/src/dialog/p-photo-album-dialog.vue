@@ -7,16 +7,19 @@
                         <v-icon size="54" color="grey lighten-1">folder</v-icon>
                     </v-flex>
                     <v-flex xs9 text-xs-left align-self-center>
-                        <v-select
-                                  label="Album"
-                                  flat solo hide-details
-                                  color="secondary-dark"
-                                  item-value="AlbumUUID"
-                                  item-text="AlbumName"
-                                  v-model="album"
-                                  :items="config.albums">
-                        </v-select>
-                        <!-- div class="subheading pr-1">Add to album</div -->
+                        <v-autocomplete
+                                v-model="album"
+                                :items="albums"
+                                :search-input.sync="search"
+                                :loading="loading"
+                                hide-details
+                                item-text="AlbumName"
+                                item-value="AlbumUUID"
+                                label="Select album"
+                                color="secondary-dark"
+                                flat solo
+                        >
+                        </v-autocomplete>
                     </v-flex>
                     <v-flex xs12 text-xs-right class="pt-3">
                         <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="p-photo-dialog-cancel">
@@ -32,17 +35,19 @@
     </v-dialog>
 </template>
 <script>
+    import Album from "../model/album";
+
     export default {
         name: 'p-photo-album-dialog',
         props: {
             show: Boolean,
         },
         data() {
-            const defaultAlbum = this.$config.values.albums[0];
-
             return {
-                album: defaultAlbum.AlbumUUID,
-                config: this.$config.values,
+                loading: true,
+                search: null,
+                album: "",
+                albums: [],
             }
         },
         methods: {
@@ -52,6 +57,27 @@
             confirm() {
                 this.$emit('confirm', this.album);
             },
-        }
+        },
+        updated() {
+            if(this.albums.length > 0) {
+                this.loading = false;
+                return;
+            }
+
+            const params = {
+                q: "",
+                count: 1000,
+                offset: 0,
+            };
+
+            Album.search(params).then(response => {
+                if(response.models.length > 0) {
+                    this.album = response.models[0].AlbumUUID;
+                }
+
+                this.albums = response.models;
+                this.loading = false;
+            });
+        },
     }
 </script>
