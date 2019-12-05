@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-container fluid class="pa-0">
+        <v-container fluid class="pa-0" v-if="selection.length > 0">
             <v-speed-dial
                     fixed
                     bottom
@@ -25,7 +25,7 @@
                         fab
                         dark
                         small
-                        title="Toggle private flag"
+                        title="Private"
                         color="deep-purple lighten-2"
                         @click.stop="batchPrivate()"
                         :disabled="selection.length === 0"
@@ -37,7 +37,7 @@
                         fab
                         dark
                         small
-                        title="Toggle story flag"
+                        title="Story"
                         color="cyan accent-4"
                         :disabled="selection.length === 0"
                         @click.stop="batchStory()"
@@ -84,7 +84,7 @@
                         dark
                         small
                         color="delete"
-                        title="Delete photos"
+                        title="Delete"
                         @click.stop="dialog.delete = true"
                         :disabled="selection.length === 0"
                         v-if="!album"
