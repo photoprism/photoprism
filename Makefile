@@ -18,7 +18,8 @@ dep: dep-tensorflow dep-js dep-go
 build: build-js build-go
 install: install-bin install-assets
 test: test-js test-go
-acceptance: start test-chromium test-firefox stop
+acceptance-all: start acceptance acceptance-firefox stop
+test-all: test acceptance-all
 fmt: fmt-js fmt-go
 upgrade: upgrade-js upgrade-go
 start:
@@ -63,12 +64,12 @@ watch-js:
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend &&	env NODE_ENV=development BABEL_ENV=test npm run test)
-test-chromium:
+acceptance:
 	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	npm run test-chromium)
-test-firefox:
+	(cd frontend &&	npm run acceptance)
+acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
-	(cd frontend &&	npm run test-firefox)
+	(cd frontend &&	npm run acceptance-firefox)
 test-go:
 	$(info Running all Go unit tests...)
 	$(GOTEST) -count=1 -tags=slow -timeout 20m ./internal/...

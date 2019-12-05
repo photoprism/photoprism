@@ -157,7 +157,7 @@
             },
             openAlbum(index) {
                 const album = this.results[index];
-                this.$router.push({name: "albums_view", params: { uuid: album.AlbumUUID, slug: album.AlbumSlug }});
+                this.$router.push({name: "album", params: { uuid: album.AlbumUUID, slug: album.AlbumSlug }});
             },
             loadMore() {
                 if (this.scrollDisabled) return;

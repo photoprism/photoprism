@@ -5,7 +5,7 @@ process.env.CHROME_BIN = findChrome();
 
 module.exports = (config) => {
     config.set({
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_ERROR,
 
         webpackMiddleware: {
             stats: "errors-only",
@@ -24,6 +24,7 @@ module.exports = (config) => {
 
         files: [
             {pattern: "tests/unit/**/*_test.js", watched: false},
+            'node_modules/@babel/polyfill/dist/polyfill.js',
         ],
 
         // Preprocess through webpack

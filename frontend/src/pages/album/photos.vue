@@ -1,5 +1,5 @@
 <template>
-    <div class="p-page p-page-albums-view" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
+    <div class="p-page p-page-album-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
          :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
         <p-album-photo-search :settings="settings" :filter="filter" :filter-change="updateQuery"
@@ -25,7 +25,7 @@
     import Photo from "model/photo";
 
     export default {
-        name: 'p-page-albums-view',
+        name: 'p-page-album-photos',
         props: {
             staticFilter: Object
         },

@@ -90,7 +90,7 @@
                     </v-list-tile>
 
                     <v-list-tile v-for="(album, index) in config.albums"
-                                 :key="index" :to="{ name: 'albums_view', params: { uuid: album.AlbumUUID, slug: album.AlbumSlug } }">
+                                 :key="index" :to="{ name: 'album', params: { uuid: album.AlbumUUID, slug: album.AlbumSlug } }">
                         <v-list-tile-content>
                             <v-list-tile-title v-if="album.AlbumName">{{ album.AlbumName }}</v-list-tile-title>
                             <v-list-tile-title v-else>Untitled</v-list-tile-title>
