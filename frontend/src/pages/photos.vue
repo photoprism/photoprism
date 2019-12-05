@@ -47,9 +47,11 @@
             const order = query['order'] ? query['order'] : 'newest';
             const camera = query['camera'] ? parseInt(query['camera']) : 0;
             const q = query['q'] ? query['q'] : '';
+            const before = query['before'] ? query['before'] : '';
+            const after = query['after'] ? query['after'] : '';
             const country = query['country'] ? query['country'] : '';
             const view = this.viewType();
-            const filter = {country: country, camera: camera, order: order, q: q};
+            const filter = {country: country, camera: camera, order: order, q: q, before: before, after: after};
             const settings = {view: view};
 
             return {
