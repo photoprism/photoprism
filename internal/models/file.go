@@ -59,7 +59,7 @@ func (m *File) DownloadFileName() string {
 	if m.Photo.PhotoTitle != "" {
 		name = strings.Title(slug.MakeLang(m.Photo.PhotoTitle, "en"))
 	} else {
-		name = string(m.PhotoID)
+		name = m.PhotoUUID
 	}
 
 	taken := m.Photo.TakenAt.Format("20060102-150405")

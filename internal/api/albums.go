@@ -1,9 +1,14 @@
 package api
 
 import (
+	"archive/zip"
 	"fmt"
 	"net/http"
+	"os"
+	"path"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -294,5 +299,93 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 		event.Success(fmt.Sprintf("photos removed from %s", a.AlbumName))
 
 		c.JSON(http.StatusOK, gin.H{"message": "photos removed from album", "album": a, "photos": f.Photos})
+	})
+}
+
+// GET /albums/:uuid/download
+func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
+	router.GET("/albums/:uuid/download", func(c *gin.Context) {
+
+		start := time.Now()
+
+		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		a, err := search.FindAlbumByUUID(c.Param("uuid"))
+
+		if err != nil {
+			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		p, err := search.Photos(form.PhotoSearch{
+			Album:  a.AlbumUUID,
+			Count:  10000,
+			Offset: 0,
+		})
+
+		if err != nil {
+			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		zipPath := path.Join(conf.ExportPath(), "album")
+		zipToken := util.RandomToken(3)
+		zipBaseName := fmt.Sprintf("%s-%s.zip", strings.Title(a.AlbumSlug), zipToken)
+		zipFileName := fmt.Sprintf("%s/%s", zipPath, zipBaseName)
+
+		if err := os.MkdirAll(zipPath, 0700); err != nil {
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": util.UcFirst("failed to create zip directory")})
+			return
+		}
+
+		newZipFile, err := os.Create(zipFileName)
+
+		if err != nil {
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		defer newZipFile.Close()
+
+		zipWriter := zip.NewWriter(newZipFile)
+		defer zipWriter.Close()
+
+		for _, file := range p {
+			fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
+			fileAlias := file.DownloadFileName()
+
+			if util.Exists(fileName) {
+				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
+					log.Error(err)
+					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": util.UcFirst("failed to create zip file")})
+					return
+				}
+				log.Infof("album: added \"%s\" as \"%s\"", file.FileName, fileAlias)
+			} else {
+				log.Warnf("album: \"%s\" is missing", file.FileName)
+				file.FileMissing = true
+				conf.Db().Save(&file)
+			}
+		}
+
+		log.Infof("album: archive \"%s\" created in %s", zipBaseName, time.Since(start))
+
+		zipWriter.Close()
+		newZipFile.Close()
+
+		if !util.Exists(zipFileName) {
+			log.Errorf("could not find zip file: %s", zipFileName)
+			c.Data(404, "image/svg+xml", photoIconSvg)
+			return
+		}
+
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", zipBaseName))
+
+		c.File(zipFileName)
+
+		if err := os.Remove(zipFileName); err != nil {
+			log.Errorf("album: could not remove \"%s\" %s", zipFileName, err.Error())
+		}
 	})
 }

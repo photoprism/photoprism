@@ -7,6 +7,7 @@ import PPhotoDetails from "./p-photo-details.vue";
 import PPhotoTiles from "./p-photo-tiles.vue";
 import PPhotoMosaic from "./p-photo-mosaic.vue";
 import PPhotoList from "./p-photo-list.vue";
+import PAlbumClipboard from "./p-album-clipboard.vue";
 import PAlbumPhotoSearch from "./album/p-photo-search.vue";
 import PAlbumPhotoDetails from "./album/p-photo-details.vue";
 import PAlbumPhotoTiles from "./album/p-photo-tiles.vue";
@@ -28,6 +29,7 @@ components.install = (Vue) => {
     Vue.component("p-photo-list", PPhotoList);
     Vue.component("p-photo-search", PPhotoSearch);
     Vue.component("p-photo-clipboard", PPhotoClipboard);
+    Vue.component("p-album-clipboard", PAlbumClipboard);
     Vue.component("p-album-photo-details", PAlbumPhotoDetails);
     Vue.component("p-album-photo-tiles", PAlbumPhotoTiles);
     Vue.component("p-album-photo-mosaic", PAlbumPhotoMosaic);

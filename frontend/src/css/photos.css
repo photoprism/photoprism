@@ -20,16 +20,16 @@
 
 #photoprism .p-photo-tiles .p-photo-select,
 #photoprism .p-photo-details .p-photo-select,
-#photoprism .p-photo-mosaic .p-photo-select
-{
+#photoprism .p-photo-mosaic .p-photo-select,
+#photoprism .p-albums-details .p-album-select {
     right: 4px; bottom: 4px;
 }
 
-#photoprism .p-photo-clipboard {
+#photoprism .p-clipboard {
     right: 8px;
     bottom: 8px;
 }
 
-#photoprism .p-photo-clipboard .v-btn.v-btn--disabled:not(.v-btn--icon):not(.v-btn--flat):not(.v-btn--outline) {
+#photoprism .p-clipboard .v-btn.v-btn--disabled:not(.v-btn--icon):not(.v-btn--flat):not(.v-btn--outline) {
     background-color: rgba(100,100,100,0.5) !important;
 }

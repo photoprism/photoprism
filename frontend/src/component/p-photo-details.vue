@@ -38,7 +38,7 @@
                                 <v-progress-circular indeterminate color="accent lighten-5"></v-progress-circular>
                             </v-layout>
 
-                            <v-btn v-if="hover || $clipboard.has(photo)" :flat="!hover" :ripple="false"
+                            <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
                                    icon large absolute
                                    class="p-photo-select"
                                    @click.stop.prevent="$clipboard.toggle(photo)">

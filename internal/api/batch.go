@@ -7,6 +7,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/util"
@@ -43,9 +44,43 @@ func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		db.Where("photo_uuid IN (?)", f.Photos).Delete(&models.Photo{})
 
-		elapsed := time.Since(start)
+		elapsed := int(time.Since(start).Seconds())
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos deleted in %s", elapsed)})
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos deleted in %d s", elapsed)})
+	})
+}
+
+// POST /api/v1/batch/albums/delete
+func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
+	router.POST("/batch/albums/delete", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		var f form.AlbumUUIDs
+
+		if err := c.BindJSON(&f); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		if len(f.Albums) == 0 {
+			log.Error("no albums selected")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst("no albums selected")})
+			return
+		}
+
+		log.Infof("deleting albums: %#v", f.Albums)
+
+		db := conf.Db()
+
+		db.Where("album_uuid IN (?)", f.Albums).Delete(&models.Album{})
+		db.Where("album_uuid IN (?)", f.Albums).Delete(&models.PhotoAlbum{})
+
+		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("albums deleted")})
 	})
 }
 

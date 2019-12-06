@@ -1,6 +1,12 @@
 package photoprism
 
-import "time"
+import (
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/gosimple/slug"
+)
 
 // PhotoSearchResult contains found photos and their main file plus other meta data.
 type PhotoSearchResult struct {
@@ -79,6 +85,22 @@ type PhotoSearchResult struct {
 
 	// List of matching labels (tags)
 	Labels string
+}
+
+func (m *PhotoSearchResult) DownloadFileName() string {
+	var name string
+
+	if m.PhotoTitle != "" {
+		name = strings.Title(slug.MakeLang(m.PhotoTitle, "en"))
+	} else {
+		name = m.PhotoUUID
+	}
+
+	taken := m.TakenAt.Format("20060102-150405")
+
+	result := fmt.Sprintf("%s-%s.%s", taken, name, m.FileType)
+
+	return result
 }
 
 // LabelSearchResult contains found labels

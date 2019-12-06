@@ -27,6 +27,8 @@
         <v-container fluid class="pa-2">
             <p-scroll-top></p-scroll-top>
 
+            <p-album-clipboard :refresh="refresh" :selection="selection"></p-album-clipboard>
+
             <v-container grid-list-xs fluid class="pa-0 p-albums p-albums-details">
                 <v-card v-if="results.length === 0" class="p-albums-empty" flat>
                     <v-card-title primary-title>
@@ -46,7 +48,10 @@
                             xs6 sm4 md3 lg2 d-flex
                     >
                         <v-hover>
-                            <v-card tile class="elevation-0 ma-1 accent lighten-3">
+                            <v-card tile class="accent lighten-3"
+                                    slot-scope="{ hover }"
+                                    :class="selection.includes(album.AlbumUUID) ? 'elevation-10 ma-0' : 'elevation-0 ma-1'"
+                            >
                                 <v-img
                                         :src="album.getThumbnailUrl('tile_500')"
                                         aspect-ratio="1"
@@ -64,6 +69,14 @@
                                         <v-progress-circular indeterminate
                                                              color="accent lighten-5"></v-progress-circular>
                                     </v-layout>
+
+                                    <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
+                                           icon small absolute
+                                           class="p-album-select"
+                                           @click.stop.prevent="toggleSelection(album.AlbumUUID)">
+                                        <v-icon v-if="selection.includes(album.AlbumUUID)" color="white">check_circle</v-icon>
+                                        <v-icon v-else color="accent lighten-3">radio_button_off</v-icon>
+                                    </v-btn>
                                 </v-img>
 
                                 <v-card-actions>
@@ -142,7 +155,7 @@
                 scrollDisabled: true,
                 pageSize: 24,
                 offset: 0,
-                selection: this.$clipboard.selection,
+                selection: [],
                 settings: settings,
                 filter: filter,
                 lastFilter: {},
@@ -276,6 +289,15 @@
             onSave(album) {
                 album.update();
             },
+            toggleSelection(uuid) {
+                const pos = this.selection.indexOf(uuid);
+
+                if(pos !== -1) {
+                    this.selection.splice(pos, 1);
+                } else {
+                    this.selection.push(uuid)
+                }
+            }
         },
         created() {
             this.search();

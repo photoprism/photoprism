@@ -8,7 +8,7 @@
                     direction="top"
                     v-model="expanded"
                     transition="slide-y-reverse-transition"
-                    class="p-photo-clipboard"
+                    class="p-clipboard p-photo-clipboard"
             >
                 <v-btn
                         slot="activator"
