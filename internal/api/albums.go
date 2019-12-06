@@ -81,7 +81,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		event.Success(fmt.Sprintf("Album %s created", m.AlbumName))
+		event.Success(fmt.Sprintf("album \"%s\" created", m.AlbumName))
 
 		c.JSON(http.StatusOK, m)
 	})
@@ -116,7 +116,34 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		conf.Db().Save(&m)
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
-		event.Success(fmt.Sprintf("Album %s updated", m.AlbumName))
+		event.Success(fmt.Sprintf("album \"%s\" updated", m.AlbumName))
+
+		c.JSON(http.StatusOK, m)
+	})
+}
+
+// DELETE /api/v1/albums/:uuid
+func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
+	router.DELETE("/albums/:uuid", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		id := c.Param("uuid")
+		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+
+		m, err := search.FindAlbumByUUID(id)
+
+		if err != nil {
+			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		conf.Db().Delete(&m)
+
+		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		event.Success(fmt.Sprintf("album \"%s\" deleted", m.AlbumName))
 
 		c.JSON(http.StatusOK, m)
 	})

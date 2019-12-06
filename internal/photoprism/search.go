@@ -106,8 +106,6 @@ func (s *Search) Photos(f form.PhotoSearch) (results []PhotoSearchResult, err er
 
 			q = q.Where("labels.label_slug = ? OR LOWER(photo_title) LIKE ? OR files.file_main_color = ?", slugString, likeString, lowerString)
 		} else {
-			log.Infof("search: label \"%s\"", f.Query)
-
 			labelIds = append(labelIds, label.ID)
 
 			s.db.Where("category_id = ?", label.ID).Find(&categories)
@@ -115,6 +113,8 @@ func (s *Search) Photos(f form.PhotoSearch) (results []PhotoSearchResult, err er
 			for _, category := range categories {
 				labelIds = append(labelIds, category.LabelID)
 			}
+
+			log.Infof("search: label \"%s\" includes %d categories", label.LabelName, len(labelIds))
 
 			q = q.Where("labels.id IN (?) OR LOWER(photo_title) LIKE ? OR files.file_main_color = ?", labelIds, likeString, lowerString)
 		}
@@ -358,7 +358,7 @@ func (s *Search) Labels(f form.LabelSearch) (results []LabelSearchResult, err er
 				labelIds = append(labelIds, category.LabelID)
 			}
 
-			log.Infof("search: labels %#v", f.Query)
+			log.Infof("search: label \"%s\" includes %d categories", label.LabelName, len(labelIds))
 
 			q = q.Where("labels.id IN (?) OR LOWER(labels.label_name) LIKE ?", labelIds, likeString)
 		}
