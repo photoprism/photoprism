@@ -87,7 +87,7 @@
                                   :items="options.sorting">
                         </v-select>
                     </v-flex>
-                    <v-flex xs6 sm3 md3 pa-2 class="p-time-after">
+                    <v-flex xs6 pa-2 class="p-time-after">
                         <v-menu v-model="showAfterPicker"
                                 :close-on-content-click="false"
                                 :nudge-right="40"
@@ -98,7 +98,7 @@
                             <template v-slot:activator="{ on }">
                                 <v-text-field v-model="filter.after"
                                               label="Taken after"
-                                              prepend-inner-icon="event"
+                                              prepend-inner-icon="date_range"
                                               clearable
                                               flat solo hide-details
                                               @change="datepickerChange"
@@ -112,7 +112,7 @@
                             </v-date-picker>
                         </v-menu>
                     </v-flex>
-                    <v-flex xs6 sm3 md3 pa-2 class="p-time-before">
+                    <v-flex xs6 pa-2 class="p-time-before">
                         <v-menu v-model="showBeforePicker"
                                 :close-on-content-click="false"
                                 :nudge-right="40"
@@ -123,7 +123,7 @@
                             <template v-slot:activator="{ on }">
                                 <v-text-field v-model="filter.before"
                                               label="Taken before"
-                                              prepend-inner-icon="event"
+                                              prepend-inner-icon="date_range"
                                               flat solo hide-details
                                               clearable
                                               color="secondary-dark"
