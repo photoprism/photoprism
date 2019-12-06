@@ -36,6 +36,8 @@
                 this.filter.q = query['q'];
                 this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
                 this.filter.country = query['country'] ? query['country'] : '';
+                this.filter.before = query['before'] ? query['before'] : '';
+                this.filter.after = query['after'] ? query['after'] : '';
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
                 this.search();

@@ -87,7 +87,7 @@
                                   :items="options.sorting">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-time-after">
+                    <v-flex xs6 sm3 md3 pa-2 class="p-time-after">
                         <v-menu v-model="showAfterPicker"
                                 :close-on-content-click="false"
                                 :nudge-right="40"
@@ -97,18 +97,22 @@
                         >
                             <template v-slot:activator="{ on }">
                                 <v-text-field v-model="filter.after"
-                                            label="After"
-                                            prepend-icon="event"
-                                            readonly
-                                            v-on="on"
+                                              label="Taken after"
+                                              prepend-inner-icon="event"
+                                              clearable
+                                              flat solo hide-details
+                                              @change="datepickerChange"
+                                              @click:clear="clearAfter"
+                                              color="secondary-dark"
+                                              v-on="on"
                                 ></v-text-field>
                             </template>
-                            <v-date-picker v-model="filter.after"
-                                           @input="showAfterPicker = false; dropdownChange();">
+                            <v-date-picker v-model="filter.after" color="secondary-dark"
+                                           @input="datepickerChange">
                             </v-date-picker>
                         </v-menu>
                     </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-time-before">
+                    <v-flex xs6 sm3 md3 pa-2 class="p-time-before">
                         <v-menu v-model="showBeforePicker"
                                 :close-on-content-click="false"
                                 :nudge-right="40"
@@ -118,14 +122,18 @@
                         >
                             <template v-slot:activator="{ on }">
                                 <v-text-field v-model="filter.before"
-                                            label="Before"
-                                            prepend-icon="event"
-                                            readonly
-                                            v-on="on"
+                                              label="Taken before"
+                                              prepend-inner-icon="event"
+                                              flat solo hide-details
+                                              clearable
+                                              color="secondary-dark"
+                                              @change="datepickerChange"
+                                              @click:clear="clearBefore"
+                                              v-on="on"
                                 ></v-text-field>
                             </template>
-                            <v-date-picker v-model="filter.before"
-                                           @input="showBeforePicker = false; dropdownChange();">
+                            <v-date-picker v-model="filter.before" color="secondary-dark"
+                                           @input="datepickerChange">
                             </v-date-picker>
                         </v-menu>
                     </v-flex>
@@ -179,9 +187,23 @@
                     this.searchExpanded = false;
                 }
             },
+            datepickerChange() {
+                this.showAfterPicker = false;
+                this.showBeforePicker = false;
+
+                this.dropdownChange();
+            },
             setView(name) {
                 this.settings.view = name;
                 this.filterChange();
+            },
+            clearBefore() {
+                this.filter.before = '';
+                this.datepickerChange();
+            },
+            clearAfter() {
+                this.filter.after = '';
+                this.datepickerChange();
             },
             clearQuery() {
                 this.filter.q = '';
