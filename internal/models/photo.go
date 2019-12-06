@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/util"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -11,6 +12,7 @@ import (
 type Photo struct {
 	Model
 	PhotoUUID         string `gorm:"unique_index;"`
+	PhotoToken        string `gorm:"type:varchar(64);"`
 	PhotoPath         string `gorm:"type:varchar(128);index;"`
 	PhotoName         string
 	PhotoTitle        string
@@ -20,7 +22,7 @@ type Photo struct {
 	PhotoArtist       string
 	PhotoFavorite     bool
 	PhotoPrivate      bool
-	PhotoSensitive    bool
+	PhotoNSFW         bool
 	PhotoStory        bool
 	PhotoLat          float64 `gorm:"index;"`
 	PhotoLong         float64 `gorm:"index;"`
@@ -51,5 +53,13 @@ type Photo struct {
 }
 
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("PhotoUUID", uuid.NewV4().String())
+	if err := scope.SetColumn("PhotoUUID", uuid.NewV4().String()); err != nil {
+		return err
+	}
+
+	if err := scope.SetColumn("PhotoToken", util.RandomToken(4)); err != nil {
+		return err
+	}
+
+	return nil
 }

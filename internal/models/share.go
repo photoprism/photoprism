@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/util"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -11,11 +12,12 @@ import (
 // Shared photos and/or albums
 type Share struct {
 	ShareUUID     string `gorm:"primary_key;auto_increment:false"`
-	PhotoID       uint
-	AlbumID       uint
+	PhotoUUID     string
+	AlbumUUID     string
 	ShareViews    uint
-	ShareSecret   string
-	SharePassword string
+	ShareUrl      string `gorm:"type:varchar(64);"`
+	ShareToken    string `gorm:"type:varchar(64);"`
+	SharePassword string `gorm:"type:varchar(128);"`
 	ShareExpires  time.Time
 	Photo         *Photo
 	Album         *Album
@@ -29,5 +31,13 @@ func (Share) TableName() string {
 }
 
 func (s *Share) BeforeCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("ShareUUID", uuid.NewV4().String())
+	if err := scope.SetColumn("ShareUUID", uuid.NewV4().String()); err != nil {
+		return err
+	}
+
+	if err := scope.SetColumn("ShareToken", util.RandomToken(4)); err != nil {
+		return err
+	}
+
+	return nil
 }

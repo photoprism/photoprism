@@ -13,21 +13,33 @@ import (
 // Photo album
 type Album struct {
 	Model
+	CoverUUID        string `gorm:"type:varchar(64);"`
 	AlbumUUID        string `gorm:"unique_index;"`
+	AlbumToken       string `gorm:"type:varchar(64);"`
 	AlbumSlug        string `gorm:"index;"`
-	AlbumSecret      string `gorm:"type:varchar(64);"`
 	AlbumName        string `gorm:"type:varchar(128);"`
 	AlbumDescription string `gorm:"type:text;"`
 	AlbumNotes       string `gorm:"type:text;"`
 	AlbumViews       uint
-	AlbumPhoto       *Photo
-	AlbumPhotoID     uint
 	AlbumFavorite    bool
 	AlbumPublic      bool
+	AlbumLat         float64
+	AlbumLong        float64
+	AlbumRadius      float64
+	AlbumOrder       string `gorm:"type:varchar(16);"`
+	AlbumTemplate    string `gorm:"type:varchar(128);"`
 }
 
 func (m *Album) BeforeCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("AlbumUUID", uuid.NewV4().String())
+	if err := scope.SetColumn("AlbumUUID", uuid.NewV4().String()); err != nil {
+		return err
+	}
+
+	if err := scope.SetColumn("AlbumToken", util.RandomToken(4)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func NewAlbum(albumName string) *Album {
@@ -38,13 +50,9 @@ func NewAlbum(albumName string) *Album {
 	}
 
 	albumSlug := slug.Make(albumName)
-	albumUUID := uuid.NewV4().String()
-	albumSecret := util.RandomToken(10)
 
 	result := &Album{
-		AlbumUUID: albumUUID,
 		AlbumSlug: albumSlug,
-		AlbumSecret: albumSecret,
 		AlbumName: albumName,
 	}
 
