@@ -93,13 +93,10 @@
                                             <v-icon>edit</v-icon>
                                         </span>
                                         <template v-slot:input>
-                                            <div class="mt-3 title">Change Title</div>
-                                        </template>
-                                        <template v-slot:input>
                                             <v-text-field
                                                     v-model="album.AlbumName"
                                                     :rules="[titleRule]"
-                                                    label="Title"
+                                                    label="Album Name"
                                                     color="secondary-dark"
                                                     single-line
                                                     autofocus

@@ -67,6 +67,7 @@
             photos: Array,
             selection: Array,
             openPhoto: Function,
+            album: Object,
         },
         methods: {
         }

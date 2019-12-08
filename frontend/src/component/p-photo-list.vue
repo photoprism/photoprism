@@ -40,6 +40,7 @@
             selection: Array,
             openPhoto: Function,
             openLocation: Function,
+            album: Object,
         },
         data() {
             return {

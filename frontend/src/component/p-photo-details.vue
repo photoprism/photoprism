@@ -90,6 +90,7 @@
             selection: Array,
             openPhoto: Function,
             openLocation: Function,
+            album: Object,
         },
         methods: {
         }
