@@ -132,6 +132,7 @@
                 const params = {
                     count: this.pageSize,
                     offset: this.offset,
+                    album: this.uuid,
                 };
 
                 Object.assign(params, this.lastFilter);
