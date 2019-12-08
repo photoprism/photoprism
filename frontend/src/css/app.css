@@ -89,9 +89,16 @@ main {
     font-family: monospace;
     white-space: normal;
     color: white;
-    font-weight: bold;
     padding: 4px;
     margin: 0;
+}
+
+#photoprism .p-log-empty {
+    font-weight: normal;
+}
+
+#photoprism .p-log-message {
+    font-weight: bold;
 }
 
 #photoprism .p-log-message span {
