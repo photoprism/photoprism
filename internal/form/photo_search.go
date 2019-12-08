@@ -1,7 +1,6 @@
 package form
 
 import (
-	"bytes"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -48,7 +47,7 @@ type PhotoSearch struct {
 }
 
 func (f *PhotoSearch) ParseQueryString() (result error) {
-	var key, value []byte
+	var key, value []rune
 	var escaped, isKeyValue bool
 
 	query := f.Query
@@ -62,9 +61,9 @@ func (f *PhotoSearch) ParseQueryString() (result error) {
 	for _, char := range query {
 		if unicode.IsSpace(char) && !escaped {
 			if isKeyValue {
-				fieldName := string(bytes.Title(bytes.ToLower(key)))
+				fieldName := strings.Title(string(key))
 				field := formValues.FieldByName(fieldName)
-				stringValue := string(bytes.ToLower(value))
+				stringValue := string(value)
 
 				if field.CanSet() {
 					switch field.Interface().(type) {
@@ -109,7 +108,7 @@ func (f *PhotoSearch) ParseQueryString() (result error) {
 					result = fmt.Errorf("unknown filter: %s", fieldName)
 				}
 			} else {
-				f.Query = string(bytes.ToLower(key))
+				f.Query = string(key)
 			}
 
 			escaped = false
@@ -121,9 +120,9 @@ func (f *PhotoSearch) ParseQueryString() (result error) {
 		} else if char == '"' {
 			escaped = !escaped
 		} else if isKeyValue {
-			value = append(value, byte(char))
+			value = append(value, unicode.ToLower(char))
 		} else {
-			key = append(key, byte(char))
+			key = append(key, unicode.ToLower(char))
 		}
 	}
 

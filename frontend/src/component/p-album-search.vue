@@ -1,5 +1,7 @@
 <template>
-    <v-form ref="form" autocomplete="off" class="p-photo-search p-album-photo-search" lazy-validation @submit.prevent="filterChange" dense>
+    <v-form lazy-validation dense
+            ref="form" autocomplete="off" class="p-photo-search p-album-photo-search" accept-charset="UTF-8"
+            @submit.prevent="filterChange">
         <v-toolbar flat color="secondary">
             <v-text-field class="pt-3 pr-3 p-search-field"
                           browser-autocomplete="off"

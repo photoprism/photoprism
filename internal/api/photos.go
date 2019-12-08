@@ -41,6 +41,7 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		result, err := search.Photos(f)
+
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": util.UcFirst(err.Error())})
 			return

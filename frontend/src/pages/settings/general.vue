@@ -1,7 +1,9 @@
 <template>
     <div class="p-tab p-tab-general">
         <v-container fluid>
-            <v-form ref="form" class="p-form-settings" lazy-validation @submit.prevent="save" dense>
+            <v-form lazy-validation dense
+                    ref="form" class="p-form-settings" accept-charset="UTF-8"
+                    @submit.prevent="save">
                 <v-layout wrap align-center>
                     <v-flex xs12 sm6 class="pr-3">
                         <v-select

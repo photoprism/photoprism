@@ -106,7 +106,7 @@
                 const photo = this.results[index];
 
                 if (photo.PhotoLat && photo.PhotoLong) {
-                    this.$router.push({name: "places", query: {lat: photo.PhotoLat, long: photo.PhotoLong}});
+                    this.$router.push({name: "places", query: {lat: String(photo.PhotoLat), long: String(photo.PhotoLong)}});
                 } else if (photo.LocName) {
                     this.$router.push({name: "places", query: {q: photo.LocName}});
                 } else if (photo.LocCity) {
@@ -155,6 +155,10 @@
                     if (query[key] === undefined || !query[key]) {
                         delete query[key];
                     }
+                }
+
+                if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
+                    return
                 }
 
                 this.$router.replace({query: query});
