@@ -24,7 +24,7 @@
                                aspect-ratio="1"
                                class="accent lighten-2"
                                style="cursor: pointer"
-                               @click="openPhoto(index)"
+                               @click.exact="openPhoto(index)"
                         >
                             <v-layout
                                     slot="placeholder"
@@ -40,7 +40,8 @@
                             <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
                                    icon small absolute
                                    class="p-photo-select"
-                                   @click.stop.prevent="$clipboard.toggle(photo)">
+                                   @click.shift.prevent="selectRange(photo)"
+                                   @click.exact.stop.prevent="$clipboard.toggle(photo)">
                                 <v-icon v-if="selection.length && $clipboard.has(photo)" color="white">check_circle</v-icon>
                                 <v-icon v-else color="accent lighten-3">radio_button_off</v-icon>
                             </v-btn>
@@ -70,6 +71,27 @@
             album: Object,
         },
         methods: {
+            selectRange(photo) {
+                var selection = this.$clipboard.getIds();
+                if (selection.length) {
+                    var lastAddedId = selection[selection.length - 1];
+                    var rangeStart = this.photos.findIndex((photo) => photo.getId() == lastAddedId);
+                    var rangeEnd = this.photos.indexOf(photo);
+                    console.log(Math.min(rangeStart, rangeEnd), Math.max(rangeStart, rangeEnd))
+                    for (var i=Math.min(rangeStart, rangeEnd); i<=Math.max(rangeStart, rangeEnd); i++) {
+                        this.$clipboard.addId(this.photos[i].getId());
+                    }
+                } else {
+                    this.$clipboard.addId(photo.getId());
+                }
+            }
+        },
+        created: function () {
+            window.addEventListener('keydown', (e) => {
+                if (e.key == "Escape") {
+                    this.$clipboard.clear();
+                }
+            });
         }
     };
 </script>
