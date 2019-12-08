@@ -1,6 +1,7 @@
 package models
 
 import (
+	"sort"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -62,4 +63,34 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 	}
 
 	return nil
+}
+
+func (m *Photo) IndexKeywords(keywords []string, db *gorm.DB) {
+	var keywordIds []uint
+
+	// Index title and description
+	keywords = append(keywords, util.Keywords(m.PhotoTitle)...)
+	keywords = append(keywords, util.Keywords(m.PhotoDescription)...)
+	last := ""
+
+	sort.Strings(keywords)
+
+	for _, w := range keywords {
+		if len(w) < 3 || w == last {
+			continue
+		}
+
+		last = w
+		kw := NewKeyword(w).FirstOrCreate(db)
+
+		if kw.Skip {
+			continue
+		}
+
+		keywordIds = append(keywordIds, kw.ID)
+
+		NewPhotoKeyword(m.ID, kw.ID).FirstOrCreate(db)
+	}
+
+	db.Where("photo_id = ? AND keyword_id NOT IN (?)", m.ID, keywordIds).Delete(&PhotoKeyword{})
 }

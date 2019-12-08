@@ -58,7 +58,8 @@ func (s *Search) Photos(f form.PhotoSearch) (results []PhotoSearchResult, err er
 		countries.country_name,
 		locations.loc_display_name, locations.loc_name, locations.loc_city, locations.loc_postcode, locations.loc_county, 
 		locations.loc_state, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type,
-		GROUP_CONCAT(labels.label_name) AS labels`).
+		GROUP_CONCAT(labels.label_name) AS labels,
+		GROUP_CONCAT(keywords.keyword) AS keywords`).
 		Joins("JOIN files ON files.photo_id = photos.id AND files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
@@ -66,6 +67,8 @@ func (s *Search) Photos(f form.PhotoSearch) (results []PhotoSearchResult, err er
 		Joins("LEFT JOIN locations ON locations.id = photos.location_id").
 		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id").
 		Joins("LEFT JOIN labels ON photos_labels.label_id = labels.id").
+		Joins("LEFT JOIN photos_keywords ON photos_keywords.photo_id = photos.id").
+		Joins("LEFT JOIN keywords ON photos_keywords.keyword_id = keywords.id").
 		Where("photos.deleted_at IS NULL AND files.file_missing = 0").
 		Group("photos.id, files.id")
 	var categories []models.Category
@@ -99,12 +102,11 @@ func (s *Search) Photos(f form.PhotoSearch) (results []PhotoSearchResult, err er
 	} else if f.Query != "" {
 		slugString := slug.Make(f.Query)
 		lowerString := strings.ToLower(f.Query)
-		likeString := "%" + lowerString + "%"
 
 		if result := s.db.First(&label, "label_slug = ?", slugString); result.Error != nil {
 			log.Infof("search: label \"%s\" not found", f.Query)
 
-			q = q.Where("labels.label_slug = ? OR LOWER(photo_title) LIKE ? OR files.file_main_color = ?", slugString, likeString, lowerString)
+			q = q.Where("labels.label_slug = ? OR keywords.keyword = ? OR files.file_main_color = ?", slugString, lowerString, lowerString)
 		} else {
 			labelIds = append(labelIds, label.ID)
 
@@ -116,9 +118,8 @@ func (s *Search) Photos(f form.PhotoSearch) (results []PhotoSearchResult, err er
 
 			log.Infof("search: label \"%s\" includes %d categories", label.LabelName, len(labelIds))
 
-			q = q.Where("labels.id IN (?) OR LOWER(photo_title) LIKE ? OR files.file_main_color = ?", labelIds, likeString, lowerString)
+			q = q.Where("labels.id IN (?) OR keywords.keyword = ? OR files.file_main_color = ?", labelIds, lowerString, lowerString)
 		}
-
 	}
 
 	if f.Album != "" {
@@ -371,7 +372,7 @@ func (s *Search) Labels(f form.LabelSearch) (results []LabelSearchResult, err er
 	if f.Priority != 0 {
 		q = q.Where("labels.label_priority > ?", f.Priority)
 	} else {
-		q = q.Where("labels.label_priority >= -1")
+		q = q.Where("labels.label_priority >= -2")
 	}
 
 	switch f.Order {

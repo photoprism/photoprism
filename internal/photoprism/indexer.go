@@ -107,6 +107,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 	var isPrimary = false
 	var exifData *Exif
 	var photoQuery, fileQuery *gorm.DB
+	var keywords []string
 
 	labels := Labels{}
 	fileBase := mediaFile.Basename()
@@ -184,25 +185,19 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 
 		photo.Country = models.NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
 
+		keywords = append(keywords, util.Keywords(location.LocDisplayName)...)
+
 		// Append labels from OpenStreetMap
 		if location.LocCity != "" {
-			labels = append(labels, NewLocationLabel(location.LocCity, 0, -3))
-		}
-
-		if location.LocCounty != "" {
-			labels = append(labels, NewLocationLabel(location.LocCounty, 0, -3))
+			labels = append(labels, NewLocationLabel(location.LocCity, 0, -2))
 		}
 
 		if location.LocCountry != "" {
-			labels = append(labels, NewLocationLabel(location.LocCountry, 0, -3))
+			labels = append(labels, NewLocationLabel(location.LocCountry, 0, -2))
 		}
 
 		if location.LocCategory != "" {
 			labels = append(labels, NewLocationLabel(location.LocCategory, 0, -2))
-		}
-
-		if location.LocName != "" && len(location.LocName) <= 25 {
-			labels = append(labels, NewLocationLabel(location.LocName, 50, 0))
 		}
 
 		if location.LocType != "" {
@@ -319,6 +314,10 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile) string {
 		isPrimary = mediaFile.IsJpeg()
 	} else {
 		isPrimary = mediaFile.IsJpeg() && (fileName == primaryFile.FileName || fileHash == primaryFile.FileHash)
+	}
+
+	if isPrimary {
+		photo.IndexKeywords(keywords, i.db)
 	}
 
 	file.PhotoID = photo.ID

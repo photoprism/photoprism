@@ -83,8 +83,9 @@ type PhotoSearchResult struct {
 	FileOrientation    int
 	FileAspectRatio    float64
 
-	// List of matching labels (tags)
+	// List of matching labels and keywords
 	Labels string
+	Keywords string
 }
 
 func (m *PhotoSearchResult) DownloadFileName() string {

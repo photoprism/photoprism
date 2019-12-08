@@ -1,7 +1,7 @@
 <template>
     <v-container fluid fill-height class="pa-0 ma-0 p-tab p-tab-logs">
-        <v-layout row wrap fill-height class="pa-0 ma-2">
-            <v-flex grow xs12 class="pa-2 terminal elevation-2 p-logs">
+        <v-layout row wrap fill-height class="pa-0 ma-3">
+            <v-flex grow xs12 class="pa-2 terminal elevation-0 p-logs">
                 <p v-if="logs.length === 0" class="p-log-empty">
                     Nothing to see here yet. Be patient.
                 </p>

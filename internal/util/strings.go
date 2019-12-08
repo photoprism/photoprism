@@ -1,6 +1,7 @@
 package util
 
 import (
+	"regexp"
 	"strings"
 	"unicode"
 )
@@ -48,4 +49,19 @@ func Title(s string) string {
 			return r
 		},
 		s)
+}
+
+func Keywords(s string) (results []string) {
+	r := regexp.MustCompile("[\\p{L}\\d]{3,}")
+	all := r.FindAllString(s, -1)
+
+	for _, w := range all {
+		w = strings.ToLower(w)
+
+		if _, ok := Stopwords[w]; ok == false {
+			results = append(results, w)
+		}
+	}
+
+	return results
 }
