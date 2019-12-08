@@ -5,7 +5,10 @@
         <p-album-search :settings="settings" :filter="filter" :filter-change="updateQuery"
                               :refresh="refresh"></p-album-search>
 
-        <v-container fluid class="pa-0">
+        <v-container fluid class="pa-4" v-if="loading">
+            <v-progress-linear color="secondary-dark"  :indeterminate="true"></v-progress-linear>
+        </v-container>
+        <v-container fluid class="pa-0" v-else>
             <p-scroll-top></p-scroll-top>
 
             <p-photo-clipboard :refresh="refresh"
@@ -55,6 +58,7 @@
                 this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
                 this.filter.country = query['country'] ? query['country'] : '';
                 this.lastFilter = {};
+                this.loading = true;
                 this.routeName = this.$route.name;
                 this.findAlbum();
                 this.search();
@@ -84,6 +88,7 @@
                 filter: filter,
                 lastFilter: {},
                 routeName: routeName,
+                loading: true
             };
         },
         methods: {
@@ -201,6 +206,7 @@
                 const params = this.searchParams();
 
                 Photo.search(params).then(response => {
+                    this.loading = false;
                     this.results = response.models;
 
                     this.scrollDisabled = (response.models.length < this.pageSize);
