@@ -21,7 +21,7 @@ import (
 //   label:     string Label
 //   cat:       string Category
 //   country:   string Country code
-//   camera:    int    Camera ID
+//   camera:    int    UpdateCamera ID
 //   order:     string Sort order
 //   count:     int    Max result count (required)
 //   offset:    int    Result offset

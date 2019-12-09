@@ -15,7 +15,7 @@ class Config {
         this.values = values;
         this.debug = !!values.debug;
         this.page = {
-            title: "PhotoPrism"
+            title: "PhotoPrism",
         };
 
         this.subscriptionId = Event.subscribe("config.updated", (ev, data) => this.setValues(data));

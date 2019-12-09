@@ -42,17 +42,17 @@
                                    icon large absolute
                                    class="p-photo-select"
                                    @click.stop.prevent="$clipboard.toggle(photo)">
-                                <v-icon v-if="selection.length && $clipboard.has(photo)" color="white">check_circle</v-icon>
-                                <v-icon v-else color="accent lighten-3">radio_button_off</v-icon>
+                                <v-icon v-if="selection.length && $clipboard.has(photo)" color="white" class="p-photo-select-on">check_circle</v-icon>
+                                <v-icon v-else color="accent lighten-3" class="p-photo-select-off">radio_button_off</v-icon>
                             </v-btn>
 
                             <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" :ripple="false"
                                    icon large absolute
                                    class="p-photo-like"
                                    @click.stop.prevent="photo.toggleLike()">
-                                <v-icon v-if="photo.PhotoFavorite" color="white">favorite
+                                <v-icon v-if="photo.PhotoFavorite" color="white" class="p-photo-like-on">favorite
                                 </v-icon>
-                                <v-icon v-else color="accent lighten-3">favorite_border</v-icon>
+                                <v-icon v-else color="accent lighten-3" class="p-photo-like-off">favorite_border</v-icon>
                             </v-btn>
                         </v-img>
 

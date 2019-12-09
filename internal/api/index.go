@@ -9,7 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/util"
 )
 
 var indexer *photoprism.Indexer
@@ -33,13 +35,25 @@ func Index(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		start := time.Now()
+
+		var f form.IndexerOptions
+
+		if err := c.BindJSON(&f); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
 		path := conf.OriginalsPath()
 
 		event.Info(fmt.Sprintf("indexing photos in \"%s\"", filepath.Base(path)))
 
 		initIndexer(conf)
 
-		indexer.IndexAll()
+		if f.SkipExisting {
+			indexer.IndexOriginals(photoprism.IndexerOptionsNone())
+		} else {
+			indexer.IndexOriginals(photoprism.IndexerOptionsAll())
+		}
 
 		elapsed := int(time.Since(start).Seconds())
 

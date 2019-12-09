@@ -47,6 +47,7 @@ func (i *Importer) originalsPath() string {
 // This function ignores errors.
 func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 	var directories []string
+	options := IndexerOptionsAll()
 
 	err := filepath.Walk(importPath, func(filename string, fileInfo os.FileInfo, err error) error {
 		var destinationMainFilename string
@@ -144,7 +145,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 				}
 			}
 
-			i.indexer.IndexRelated(importedMainFile)
+			i.indexer.IndexRelated(importedMainFile, options)
 		}
 
 		return nil

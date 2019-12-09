@@ -4,12 +4,21 @@
             <v-container fluid>
                 <p class="subheading">
                     <span v-if="fileName">Indexing {{ fileName }}...</span>
-                    <span v-else-if="busy">Re-indexing existing files and photos...</span>
+                    <span v-else-if="busy">Indexing photos and sidecar files...</span>
                     <span v-else-if="completed">Done.</span>
-                    <span v-else>Press button to re-index existing files and photos...</span>
+                    <span v-else>Press button to start indexing...</span>
                 </p>
 
-                <v-progress-linear color="secondary-dark" :value="completed" :indeterminate="busy"></v-progress-linear>
+                <p class="options">
+                    <v-progress-linear color="secondary-dark" :value="completed" :indeterminate="busy"></v-progress-linear>
+                </p>
+
+                <v-checkbox
+                        v-model="options.skip"
+                        color="secondary-dark"
+                        :disabled="busy"
+                        label="Skip existing photos and sidecar files"
+                ></v-checkbox>
 
                 <v-btn
                         :disabled="busy"
@@ -41,6 +50,9 @@
                 completed: 0,
                 subscriptionId: '',
                 fileName: '',
+                options: {
+                    skip: true
+                },
                 source: null,
             }
         },
@@ -58,7 +70,7 @@
                 const ctx = this;
                 Notify.blockUI();
 
-                Api.post('index', {}, { cancelToken: this.source.token }).then(function () {
+                Api.post('index', this.options, { cancelToken: this.source.token }).then(function () {
                     Notify.unblockUI();
                     ctx.busy = false;
                     ctx.completed = 100;

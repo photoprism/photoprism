@@ -8,7 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// Camera model and make (as extracted from EXIF metadata)
+// Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
 	Model
 	CameraSlug        string
