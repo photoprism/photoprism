@@ -1,34 +1,11 @@
 @import url("../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/leaflet/dist/leaflet.css");
+@import url("colorchange.css");
 @import url("maps.css");
 @import url("viewer.css");
 @import url("photos.css");
 @import url("labels.css");
-
-@keyframes colorchange
-{
-    0%   {background: #EF5350;}
-    25%  {background: #FFD600;}
-    50%  {background: #00ACC1;}
-    75%  {background: #00BFA5;}
-    100% {background: #E57373;}
-}
-
-@-webkit-keyframes colorchange /* Safari and Chrome - necessary duplicate */
-{
-    0%   {background: #EF5350;}
-    25%  {background: #FFD600;}
-    50%  {background: #00ACC1;}
-    75%  {background: #00BFA5;}
-    100% {background: #E57373;}
-}
-
-.colorchange {
-    animation: colorchange 5s infinite; /* animation-name followed by duration in seconds*/
-    /* you could also use milliseconds (ms) or something like 2.5s */
-    -webkit-animation: colorchange 5s infinite; /* Chrome and Safari */
-}
 
 body {
     background: rgb(250, 250, 250);
@@ -69,6 +46,14 @@ main {
 
 #photoprism div.loading p {
     color: #616161;
+}
+
+#photoprism div.loading div.bar {
+    margin: 0;
+    width: 100%;
+    height: 8px;
+    animation: colorchange 3s infinite;
+    -webkit-animation: colorchange 3s infinite;
 }
 
 #photoprism main a {

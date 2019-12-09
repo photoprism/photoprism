@@ -1,0 +1,45 @@
+@keyframes colorchange
+{
+    0%   {background: #EF5350;}
+    25%  {background: #FFD600;}
+    50%  {background: #00ACC1;}
+    75%  {background: #00BFA5;}
+    100% {background: #E57373;}
+}
+
+@-webkit-keyframes colorchange
+{
+    0%   {background: #EF5350;}
+    25%  {background: #FFD600;}
+    50%  {background: #00ACC1;}
+    75%  {background: #00BFA5;}
+    100% {background: #E57373;}
+}
+
+.colorchange {
+    animation: colorchange 3s infinite;
+    -webkit-animation: colorchange 3s infinite;
+}
+
+@keyframes colorchange--text
+{
+    0%   {color: #EF5350;}
+    25%  {color: #FFD600;}
+    50%  {color: #00ACC1;}
+    75%  {color: #00BFA5;}
+    100% {color: #E57373;}
+}
+
+@-webkit-keyframes colorchange--text
+{
+    0%   {color: #EF5350;}
+    25%  {color: #FFD600;}
+    50%  {color: #00ACC1;}
+    75%  {color: #00BFA5;}
+    100% {color: #E57373;}
+}
+
+.colorchange--text {
+    animation: colorchange--text 5s infinite;
+    -webkit-animation: colorchange--text 5s infinite;
+}
