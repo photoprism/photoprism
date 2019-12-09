@@ -3,10 +3,10 @@
         <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit" dense>
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="fileName">Indexing {{ fileName }}...</span>
-                    <span v-else-if="busy">Indexing photos and sidecar files...</span>
-                    <span v-else-if="completed">Done.</span>
-                    <span v-else>Press button to start indexing...</span>
+                    <span v-if="fileName"><translate>Indexing</translate> {{ fileName }}...</span>
+                    <span v-else-if="busy"><translate>Indexing photos and sidecar files...</translate></span>
+                    <span v-else-if="completed"><translate>Done.</translate></span>
+                    <span v-else><translate>Press button to start indexing...</translate></span>
                 </p>
 
                 <p class="options">
@@ -17,7 +17,7 @@
                         v-model="options.skip"
                         color="secondary-dark"
                         :disabled="busy"
-                        label="Skip existing photos and sidecar files"
+                        :label="labels.skip"
                 ></v-checkbox>
 
                 <v-btn
@@ -27,7 +27,7 @@
                         depressed
                         @click.stop="startIndexing()"
                 >
-                    Start
+                    <translate>Start</translate>
                     <v-icon right dark>update</v-icon>
                 </v-btn>
             </v-container>
@@ -50,10 +50,13 @@
                 completed: 0,
                 subscriptionId: '',
                 fileName: '',
+                source: null,
                 options: {
                     skip: true
                 },
-                source: null,
+                labels: {
+                    skip: this.$gettext("Skip existing photos and sidecar files"),
+                }
             }
         },
         methods: {
@@ -83,7 +86,7 @@
                         return
                     }
 
-                    Notify.error("Indexing failed");
+                    Notify.error(this.$gettext("Indexing failed"));
 
                     ctx.busy = false;
                     ctx.completed = 0;

@@ -3,10 +3,10 @@
         <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="fileName">Importing {{ fileName }}...</span>
-                    <span v-else-if="busy">Importing files from directory...</span>
-                    <span v-else-if="completed">Done.</span>
-                    <span v-else>Press button to import photos from directory...</span>
+                    <span v-if="fileName"><translate>Importing</translate> {{ fileName }}...</span>
+                    <span v-else-if="busy"><translate>Importing files from directory...</translate></span>
+                    <span v-else-if="completed"><translate>Done.</translate></span>
+                    <span v-else><translate>Press button to import photos from directory...</translate></span>
                 </p>
 
                 <v-progress-linear color="secondary-dark" :value="completed" :indeterminate="busy"></v-progress-linear>
@@ -18,7 +18,7 @@
                         depressed
                         @click.stop="startImport()"
                 >
-                    Import
+                    <translate>Import</translate>
                     <v-icon right dark>create_new_folder</v-icon>
                 </v-btn>
             </v-container>
@@ -71,7 +71,7 @@
                         return
                     }
 
-                    Notify.error("Import failed");
+                    Notify.error(this.$gettext("Import failed"));
 
                     ctx.busy = false;
                     ctx.completed = 0;
