@@ -8,11 +8,11 @@
                 slider-color="secondary-dark"
                 height="64"
         >
-            <v-tab id="tab-upload" v-if="!readonly" ripple @click="changePath('/library/upload')">
-                Upload
+            <v-tab id="tab-maintenance" ripple @click="changePath('/library')">
+                Maintenance
             </v-tab>
-            <v-tab-item v-if="!readonly">
-                <p-tab-upload></p-tab-upload>
+            <v-tab-item>
+                <p-tab-maintenance></p-tab-maintenance>
             </v-tab-item>
 
             <v-tab id="tab-import" v-if="!readonly" ripple @click="changePath('/library/import')">
@@ -22,11 +22,11 @@
                 <p-tab-import></p-tab-import>
             </v-tab-item>
 
-            <v-tab id="tab-index" ripple @click="changePath('/library/index')">
-                Index
+            <v-tab id="tab-upload" v-if="!readonly" ripple @click="changePath('/library/upload')">
+                Upload
             </v-tab>
-            <v-tab-item>
-                <p-tab-index></p-tab-index>
+            <v-tab-item v-if="!readonly">
+                <p-tab-upload></p-tab-upload>
             </v-tab-item>
         </v-tabs>
     </div>
@@ -35,7 +35,7 @@
 <script>
     import uploadTab from "pages/library/upload.vue";
     import importTab from "pages/library/import.vue";
-    import indexTab from "pages/library/index.vue";
+    import maintenanceTab from "pages/library/maintenance.vue";
 
     export default {
         name: 'p-page-library',
@@ -43,9 +43,9 @@
             tab: Number
         },
         components: {
-            'p-tab-upload': uploadTab,
+            'p-tab-maintenance': maintenanceTab,
             'p-tab-import': importTab,
-            'p-tab-index': indexTab,
+            'p-tab-upload': uploadTab,
         },
         data() {
             return {

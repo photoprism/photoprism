@@ -27,7 +27,7 @@
                         depressed
                         @click.stop="startIndexing()"
                 >
-                    Index
+                    Start
                     <v-icon right dark>update</v-icon>
                 </v-btn>
             </v-container>

@@ -79,18 +79,11 @@ export default [
         meta: {title: "Filters"},
     },
     {
-        name: "library",
-        path: "/library",
-        component: Library,
-        meta: {title: "Library", auth: true},
-        props: {tab: 0},
-    },
-    {
         name: "library_upload",
         path: "/library/upload",
         component: Library,
         meta: {title: "Library", auth: true},
-        props: {tab: 0},
+        props: {tab: 2},
     },
     {
         name: "library_import",
@@ -100,11 +93,11 @@ export default [
         props: {tab: 1},
     },
     {
-        name: "library_index",
-        path: "/library/index",
+        name: "library",
+        path: "/library",
         component: Library,
         meta: {title: "Library", auth: true},
-        props: {tab: 2},
+        props: {tab: 0},
     },
     {
         name: "share",
