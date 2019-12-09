@@ -1745,91 +1745,109 @@ orangutan:
   categories:
     - animal
     - monkey
+    - ape
 
 gorilla:
   categories:
     - animal
     - monkey
+    - ape
 
 chimpanzee:
   categories:
     - animal
     - monkey
+    - ape
 
 gibbon:
   categories:
     - animal
     - monkey
+    - ape
 
 siamang:
   categories:
     - animal
     - monkey
+    - ape
 
 guenon:
   categories:
     - animal
     - monkey
+    - ape
 
 patas:
   categories:
     - animal
     - monkey
+    - ape
 
 baboon:
   categories:
     - animal
     - monkey
+    - ape
 
 macaque:
   categories:
     - animal
     - monkey
+    - ape
 
 langur:
   categories:
     - animal
     - monkey
+    - ape
 
 colobus:
   categories:
     - animal
     - monkey
+    - ape
 
 proboscis monkey:
   categories:
     - animal
     - monkey
+    - ape
 
 marmoset:
   categories:
     - animal
     - monkey
+    - ape
 
 capuchin:
   categories:
     - animal
     - monkey
+    - ape
 
 howler monkey:
   categories:
     - animal
     - monkey
+    - ape
 
 titi:
   categories:
     - animal
     - monkey
+    - ape
 
 spider monkey:
   categories:
     - animal
     - monkey
+    - ape
 
 squirrel monkey:
   categories:
     - animal
     - monkey
+    - ape
 
 fossa:
   see: cat
@@ -1838,6 +1856,7 @@ indri:
   categories:
     - animal
     - monkey
+    - ape
 
 Indian elephant:
   categories:
