@@ -6,6 +6,30 @@
 @import url("photos.css");
 @import url("labels.css");
 
+@keyframes colorchange
+{
+    0%   {background: #EF5350;}
+    25%  {background: #FFD600;}
+    50%  {background: #00ACC1;}
+    75%  {background: #00BFA5;}
+    100% {background: #E57373;}
+}
+
+@-webkit-keyframes colorchange /* Safari and Chrome - necessary duplicate */
+{
+    0%   {background: #EF5350;}
+    25%  {background: #FFD600;}
+    50%  {background: #00ACC1;}
+    75%  {background: #00BFA5;}
+    100% {background: #E57373;}
+}
+
+.colorchange {
+    animation: colorchange 5s infinite; /* animation-name followed by duration in seconds*/
+    /* you could also use milliseconds (ms) or something like 2.5s */
+    -webkit-animation: colorchange 5s infinite; /* Chrome and Safari */
+}
+
 body {
     background: rgb(250, 250, 250);
     color: #333333;
@@ -41,6 +65,10 @@ main {
 #photoprism div.loading {
     text-align: center;
     margin: 50px 20px;
+}
+
+#photoprism div.loading p {
+    color: #616161;
 }
 
 #photoprism main a {
