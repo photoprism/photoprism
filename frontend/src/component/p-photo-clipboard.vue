@@ -64,14 +64,14 @@
                         @click.stop="download()"
                         class="p-photo-clipboard-download"
                 >
-                    <v-icon>save</v-icon>
+                    <v-icon>cloud_download</v-icon>
                 </v-btn>
                 <v-btn
                         fab
                         dark
                         small
                         :title="labels.addToAlbum"
-                        color="yellow accent-4"
+                        color="amber accent-4"
                         :disabled="selection.length === 0"
                         @click.stop="dialog.album = true"
                         class="p-photo-clipboard-album"
