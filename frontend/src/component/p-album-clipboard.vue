@@ -31,7 +31,7 @@
                         class="p-album-clipboard-download"
                         :disabled="selection.length !== 1"
                 >
-                    <v-icon>save</v-icon>
+                    <v-icon>cloud_download</v-icon>
                 </v-btn>
 
                 <v-btn
