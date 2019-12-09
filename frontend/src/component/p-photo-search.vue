@@ -6,7 +6,7 @@
             <v-text-field class="pt-3 pr-3 p-search-field"
                           browser-autocomplete="off"
                           single-line
-                          label="Search"
+                          :label="labels.search"
                           prepend-inner-icon="search"
                           clearable
                           color="secondary-dark"
@@ -50,7 +50,7 @@
                 <v-layout row wrap>
                     <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
                         <v-select @change="dropdownChange"
-                                  label="Country"
+                                  :label="labels.country"
                                   flat solo hide-details
                                   color="secondary-dark"
                                   item-value="LocCountryCode"
@@ -61,7 +61,7 @@
                     </v-flex>
                     <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
                         <v-select @change="dropdownChange"
-                                  label="Camera"
+                                  :label="labels.camera"
                                   flat solo hide-details
                                   color="secondary-dark"
                                   item-value="ID"
@@ -72,7 +72,7 @@
                     </v-flex>
                     <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
                         <v-select @change="dropdownChange"
-                                  label="View"
+                                  :label="labels.view"
                                   flat solo hide-details
                                   color="secondary-dark"
                                   v-model="settings.view"
@@ -82,7 +82,7 @@
                     </v-flex>
                     <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
                         <v-select @change="dropdownChange"
-                                  label="Sort By"
+                                  :label="labels.sort"
                                   flat solo hide-details
                                   color="secondary-dark"
                                   v-model="filter.order"
@@ -99,7 +99,7 @@
                         >
                             <template v-slot:activator="{ on }">
                                 <v-text-field v-model="filter.after"
-                                              label="Taken after"
+                                              :label="labels.after"
                                               prepend-inner-icon="date_range"
                                               clearable
                                               flat solo hide-details
@@ -124,7 +124,7 @@
                         >
                             <template v-slot:activator="{ on }">
                                 <v-text-field v-model="filter.before"
-                                              label="Taken before"
+                                              :label="labels.before"
                                               prepend-inner-icon="date_range"
                                               flat solo hide-details
                                               clearable
@@ -154,31 +154,40 @@
             filterChange: Function,
         },
         data() {
-            const cameras = [{ID: 0, CameraModel: 'All Cameras'}].concat(this.$config.getValue('cameras'));
+            const cameras = [{ID: 0, CameraModel: this.$gettext('All Cameras')}].concat(this.$config.getValue('cameras'));
             const countries = [{
                 LocCountryCode: '',
-                LocCountry: 'All Countries'
+                LocCountry: this.$gettext('All Countries')
             }].concat(this.$config.getValue('countries'));
 
             return {
                 searchExpanded: false,
                 options: {
                     'views': [
-                        {value: 'tiles', text: 'Tiles'},
-                        {value: 'mosaic', text: 'Mosaic'},
-                        {value: 'details', text: 'Details'},
-                        {value: 'list', text: 'List'},
+                        {value: 'tiles', text: this.$gettext('Tiles')},
+                        {value: 'mosaic', text: this.$gettext('Mosaic')},
+                        {value: 'details', text: this.$gettext('Details')},
+                        {value: 'list', text: this.$gettext('List')},
                     ],
                     'countries': countries,
                     'cameras': cameras,
                     'sorting': [
-                        {value: 'newest', text: 'Newest first'},
-                        {value: 'oldest', text: 'Oldest first'},
-                        {value: 'imported', text: 'Recently imported'},
+                        {value: 'newest', text: this.$gettext('Newest first')},
+                        {value: 'oldest', text: this.$gettext('Oldest first')},
+                        {value: 'imported', text: this.$gettext('Recently imported')},
                     ],
                 },
                 showAfterPicker: false,
                 showBeforePicker: false,
+                labels: {
+                    search: this.$gettext("Search"),
+                    view: this.$gettext("View"),
+                    country: this.$gettext("Country"),
+                    camera: this.$gettext("Camera"),
+                    sort: this.$gettext("Sort By"),
+                    before: this.$gettext("Taken before"),
+                    after: this.$gettext("Taken after"),
+                },
             };
         },
         methods: {

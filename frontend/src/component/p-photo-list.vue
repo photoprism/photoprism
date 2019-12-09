@@ -7,7 +7,7 @@
             disable-initial-sort
             item-key="ID"
             v-model="selected"
-            :no-data-text="'No photos matched your search'"
+            :no-data-text="this.$gettext('No photos matched your search')"
     >
         <template slot="items" slot-scope="props" class="p-photo">
             <td>
@@ -47,11 +47,11 @@
                 'selected': [],
                 'listColumns': [
                     {text: '', value: '', align: 'center', sortable: false, class: 'p-col-select'},
-                    {text: 'Title', value: 'PhotoTitle'},
-                    {text: 'Taken At', value: 'TakenAt'},
-                    {text: 'Country', value: 'LocCountry'},
-                    {text: 'Camera', value: 'CameraModel'},
-                    {text: 'Favorite', value: 'PhotoFavorite', align: 'left'},
+                    {text: this.$gettext('Title'), value: 'PhotoTitle'},
+                    {text: this.$gettext('Taken At'), value: 'TakenAt'},
+                    {text: this.$gettext('Country'), value: 'LocCountry'},
+                    {text: this.$gettext('Camera'), value: 'CameraModel'},
+                    {text: this.$gettext('Favorite'), value: 'PhotoFavorite', align: 'left'},
                 ],
             };
         },

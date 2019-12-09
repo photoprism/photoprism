@@ -48,26 +48,27 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title v-translate>Photos</v-list-tile-title>
+                        <v-list-tile-title>
+                            <translate>Photos</translate></v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
                 <v-list-group v-if="!mini" prepend-icon="photo" no-action>
                     <v-list-tile slot="activator" to="/photos" @click.stop="" class="p-navigation-photos">
                         <v-list-tile-content>
-                            <v-list-tile-title v-translate>Photos</v-list-tile-title>
+                            <v-list-tile-title><translate>Photos</translate></v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
                     <v-list-tile :to="{name: 'photos', query: { q: 'mono:true' }}" :exact="true" @click="">
                         <v-list-tile-content>
-                            <v-list-tile-title v-translate>Monochrome</v-list-tile-title>
+                            <v-list-tile-title><translate>Monochrome</translate></v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
                     <v-list-tile :to="{name: 'photos', query: { q: 'chroma:50' }}" :exact="true" @click="">
                         <v-list-tile-content>
-                            <v-list-tile-title v-translate>Vibrant</v-list-tile-title>
+                            <v-list-tile-title><translate>Vibrant</translate></v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list-group>
@@ -78,14 +79,14 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title v-translate>Albums</v-list-tile-title>
+                        <v-list-tile-title><translate>Albums</translate></v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
                 <v-list-group v-if="!mini" prepend-icon="folder" no-action>
                     <v-list-tile slot="activator" to="/albums" @click.stop="">
                         <v-list-tile-content>
-                            <v-list-tile-title v-translate>Albums</v-list-tile-title>
+                            <v-list-tile-title><translate>Albums</translate></v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
@@ -104,7 +105,7 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title v-translate>Favorites</v-list-tile-title>
+                        <v-list-tile-title><translate>Favorites</translate></v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -114,7 +115,7 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title v-translate>Places</v-list-tile-title>
+                        <v-list-tile-title><translate>Places</translate></v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -124,7 +125,7 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title v-translate>Labels</v-list-tile-title>
+                        <v-list-tile-title><translate>Labels</translate></v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -154,7 +155,7 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title v-translate>Library</v-list-tile-title>
+                        <v-list-tile-title><translate>Library</translate></v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -164,7 +165,7 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title v-translate>Settings</v-list-tile-title>
+                        <v-list-tile-title><translate>Settings</translate></v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -174,7 +175,7 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title v-translate>Logout</v-list-tile-title>
+                        <v-list-tile-title><translate>Logout</translate></v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -184,7 +185,7 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title v-translate>Login</v-list-tile-title>
+                        <v-list-tile-title><translate>Login</translate></v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
             </v-list>

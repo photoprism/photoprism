@@ -3,8 +3,8 @@
         <v-card v-if="photos.length === 0" class="p-photos-empty" flat>
             <v-card-title primary-title>
                 <div>
-                    <h3 class="title mb-3">No photos matched your search</h3>
-                    <div>Try using other terms and search options such as category, country and camera.</div>
+                    <h3 class="title mb-3"><translate>No photos matched your search</translate></h3>
+                    <div><translate>Try using other terms and search options such as category, country and camera.</translate></div>
                 </div>
             </v-card-title>
         </v-card>

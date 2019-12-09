@@ -25,7 +25,7 @@
                         fab
                         dark
                         small
-                        title="Download"
+                        :title="labels.download"
                         color="teal accent-4"
                         @click.stop="download()"
                         class="p-album-clipboard-download"
@@ -39,7 +39,7 @@
                         dark
                         small
                         color="delete"
-                        title="Delete"
+                        :title="labels.delete"
                         @click.stop="dialog.delete = true"
                         :disabled="selection.length === 0"
                         class="p-album-clipboard-delete"
@@ -80,6 +80,11 @@
                     delete: false,
                     edit: false,
                 },
+                labels: {
+                    download: this.$gettext("Download"),
+                    delete: this.$gettext("Delete"),
+                },
+
             };
         },
         methods: {
@@ -93,13 +98,13 @@
                 Api.post("batch/albums/delete", {"albums": this.selection}).then(this.onDeleted.bind(this));
             },
             onDeleted() {
-                Notify.success("Albums deleted");
+                Notify.success(this.$gettext("Albums deleted"));
                 this.clearClipboard();
                 this.refresh();
             },
             download() {
                 if(this.selection.length !== 1) {
-                    Notify.error("You can only download one album");
+                    Notify.error(this.$gettext("You can only download one album"));
                     return;
                 }
 
@@ -108,7 +113,7 @@
                 this.expanded = false;
             },
             onDownload(path) {
-                Notify.success("Downloading...");
+                Notify.success(this.$gettext("Downloading..."));
                 window.open(path, "_blank");
             },
         }
