@@ -9,21 +9,21 @@
                 height="64"
         >
             <v-tab id="tab-maintenance" ripple @click="changePath('/library')">
-                Maintenance
+                <translate>Maintenance</translate>
             </v-tab>
             <v-tab-item>
                 <p-tab-maintenance></p-tab-maintenance>
             </v-tab-item>
 
             <v-tab id="tab-import" v-if="!readonly" ripple @click="changePath('/library/import')">
-                Import
+                <translate>Import</translate>
             </v-tab>
             <v-tab-item v-if="!readonly">
                 <p-tab-import></p-tab-import>
             </v-tab-item>
 
             <v-tab id="tab-upload" v-if="!readonly" ripple @click="changePath('/library/upload')">
-                Upload
+                <translate>Upload</translate>
             </v-tab>
             <v-tab-item v-if="!readonly">
                 <p-tab-upload></p-tab-upload>

@@ -6,7 +6,7 @@
             <v-toolbar flat color="secondary">
                 <v-text-field class="pt-3 pr-3"
                               single-line
-                              label="Search"
+                              :label="labels.search"
                               prepend-inner-icon="search"
                               clearable
                               color="secondary-dark"
@@ -33,9 +33,9 @@
                 <v-card v-if="results.length === 0" class="p-albums-empty" flat>
                     <v-card-title primary-title>
                         <div>
-                            <h3 class="title mb-3">No albums matched your search</h3>
-                            <div>Try again using a different term or
-                                <v-btn @click.prevent.stop="create" small>create a new album</v-btn>
+                            <h3 class="title mb-3"><translate>No albums matched your search</translate></h3>
+                            <div><translate>Try again using a different term or</translate>
+                                <v-btn @click.prevent.stop="create" small><translate>create a new album</translate></v-btn>
                             </div>
                         </div>
                     </v-card-title>
@@ -96,7 +96,7 @@
                                             <v-text-field
                                                     v-model="album.AlbumName"
                                                     :rules="[titleRule]"
-                                                    label="Album Name"
+                                                    :label="labels.name"
                                                     color="secondary-dark"
                                                     single-line
                                                     autofocus
@@ -157,7 +157,11 @@
                 filter: filter,
                 lastFilter: {},
                 routeName: routeName,
-                titleRule: v => v.length <= 25 || "Title too long",
+                titleRule: v => v.length <= 25 || this.$gettext("Title too long"),
+                labels: {
+                    search: this.$gettext("Search"),
+                    name: this.$gettext("Album Name"),
+                },
             };
         },
         methods: {
@@ -189,7 +193,7 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$notify.info("All " + this.results.length + " albums loaded");
+                        this.$notify.info(this.$gettext("All ") + this.results.length + this.$gettext(" albums loaded"));
                     }
                 });
             },
@@ -244,14 +248,14 @@
 
                     if (this.scrollDisabled) {
                         if (!this.results.length) {
-                            this.$notify.warning("No albums found");
+                            this.$notify.warning(this.$gettext("No albums found"));
                         } else if (this.results.length === 1) {
-                            this.$notify.info("One album found");
+                            this.$notify.info(this.$gettext("One album found"));
                         } else {
-                            this.$notify.info(this.results.length + " albums found");
+                            this.$notify.info(this.results.length + this.$gettext(" albums found"));
                         }
                     } else {
-                        this.$notify.info('More than 20 albums found');
+                        this.$notify.info(this.$gettext('More than 20 albums found'));
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
@@ -269,7 +273,7 @@
                 let name = DateTime.local().toFormat("LLLL yyyy");
 
                 if(this.results.findIndex(a => a.AlbumName.startsWith(name)) !== -1) {
-                    name = "New Album";
+                    name = this.$gettext("New Album");
                     const existing = this.results.filter(a => a.AlbumName.startsWith(name));
                     name += " " + Util.arabicToRoman(existing.length)
                 }

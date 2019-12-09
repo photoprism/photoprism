@@ -9,14 +9,14 @@
                 height="64"
         >
             <v-tab id="tab-settings-general" ripple @click="changePath('/settings')">
-                General
+                <translate>General</translate>
             </v-tab>
             <v-tab-item>
                 <p-tab-general></p-tab-general>
             </v-tab-item>
 
             <v-tab id="tab-settings-logs" ripple @click="changePath('/settings/logs')">
-                Logs
+                <translate>Logs</translate>
             </v-tab>
             <v-tab-item>
                 <p-tab-logs></p-tab-logs>

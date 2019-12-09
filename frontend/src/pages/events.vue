@@ -35,7 +35,7 @@
                         >
                             keyboard_arrow_left
                         </v-icon>
-                        Prev
+                        <translate>Prev</translate>
                     </v-btn>
                 </v-flex>
                 <v-flex
@@ -46,7 +46,7 @@
                     <v-select
                             v-model="type"
                             :items="typeOptions"
-                            label="Type"
+                            :label="labels.type"
                     ></v-select>
                 </v-flex>
                 <v-flex
@@ -55,7 +55,7 @@
                         class="text-sm-right text-xs-center"
                 >
                     <v-btn @click="$refs.calendar.next()">
-                        Next
+                        <translate>Next</translate>
                         <v-icon
                                 right
                                 dark
@@ -77,13 +77,16 @@
             start: '2019-01-01',
             end: '2019-01-06',
             typeOptions: [
-                {text: 'Day', value: 'day'},
-                {text: '4 Day', value: '4day'},
-                {text: 'Week', value: 'week'},
-                {text: 'Month', value: 'month'},
-                {text: 'Custom Daily', value: 'custom-daily'},
-                {text: 'Custom Weekly', value: 'custom-weekly'}
-            ]
+                {text: this.$gettext('Day'), value: 'day'},
+                {text: this.$gettext('4 Day'), value: '4day'},
+                {text: this.$gettext('Week'), value: 'week'},
+                {text: this.$gettext('Month'), value: 'month'},
+                {text: this.$gettext('Custom Daily'), value: 'custom-daily'},
+                {text: this.$gettext('Custom Weekly'), value: 'custom-weekly'}
+            ],
+            labels: {
+                type: this.$gettext("Type"),
+            },
         }),
         methods: {}
     };
