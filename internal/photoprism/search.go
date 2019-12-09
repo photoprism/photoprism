@@ -58,8 +58,8 @@ func (s *Search) Photos(f form.PhotoSearch) (results []PhotoSearchResult, err er
 		countries.country_name,
 		locations.loc_display_name, locations.loc_name, locations.loc_city, locations.loc_postcode, locations.loc_county, 
 		locations.loc_state, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type,
-		GROUP_CONCAT(labels.label_name) AS labels,
-		GROUP_CONCAT(keywords.keyword) AS keywords`).
+		GROUP_CONCAT(DISTINCT labels.label_name) AS labels,
+		GROUP_CONCAT(DISTINCT keywords.keyword) AS keywords`).
 		Joins("JOIN files ON files.photo_id = photos.id AND files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
