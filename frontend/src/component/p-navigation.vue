@@ -49,26 +49,33 @@
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <translate>Photos</translate></v-list-tile-title>
+                            <translate>Photos</translate>
+                        </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
                 <v-list-group v-if="!mini" prepend-icon="photo" no-action>
                     <v-list-tile slot="activator" to="/photos" @click.stop="" class="p-navigation-photos">
                         <v-list-tile-content>
-                            <v-list-tile-title><translate>Photos</translate></v-list-tile-title>
+                            <v-list-tile-title>
+                                <translate>Photos</translate>
+                            </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
                     <v-list-tile :to="{name: 'photos', query: { q: 'mono:true' }}" :exact="true" @click="">
                         <v-list-tile-content>
-                            <v-list-tile-title><translate>Monochrome</translate></v-list-tile-title>
+                            <v-list-tile-title>
+                                <translate>Monochrome</translate>
+                            </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
                     <v-list-tile :to="{name: 'photos', query: { q: 'chroma:50' }}" :exact="true" @click="">
                         <v-list-tile-content>
-                            <v-list-tile-title><translate>Vibrant</translate></v-list-tile-title>
+                            <v-list-tile-title>
+                                <translate>Vibrant</translate>
+                            </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list-group>
@@ -79,19 +86,24 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title><translate>Albums</translate></v-list-tile-title>
+                        <v-list-tile-title>
+                            <translate>Albums</translate>
+                        </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
                 <v-list-group v-if="!mini" prepend-icon="folder" no-action>
                     <v-list-tile slot="activator" to="/albums" @click.stop="">
                         <v-list-tile-content>
-                            <v-list-tile-title><translate>Albums</translate></v-list-tile-title>
+                            <v-list-tile-title>
+                                <translate>Albums</translate>
+                            </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
                     <v-list-tile v-for="(album, index) in config.albums"
-                                 :key="index" :to="{ name: 'album', params: { uuid: album.AlbumUUID, slug: album.AlbumSlug } }">
+                                 :key="index"
+                                 :to="{ name: 'album', params: { uuid: album.AlbumUUID, slug: album.AlbumSlug } }">
                         <v-list-tile-content>
                             <v-list-tile-title v-if="album.AlbumName">{{ album.AlbumName }}</v-list-tile-title>
                             <v-list-tile-title v-else>Untitled</v-list-tile-title>
@@ -105,7 +117,9 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title><translate>Favorites</translate></v-list-tile-title>
+                        <v-list-tile-title>
+                            <translate>Favorites</translate>
+                        </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -115,7 +129,9 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title><translate>Places</translate></v-list-tile-title>
+                        <v-list-tile-title>
+                            <translate>Places</translate>
+                        </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -125,7 +141,9 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title><translate>Labels</translate></v-list-tile-title>
+                        <v-list-tile-title>
+                            <translate>Labels</translate>
+                        </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -155,7 +173,9 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title><translate>Library</translate></v-list-tile-title>
+                        <v-list-tile-title>
+                            <translate>Library</translate>
+                        </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -165,7 +185,9 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title><translate>Settings</translate></v-list-tile-title>
+                        <v-list-tile-title>
+                            <translate>Settings</translate>
+                        </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -175,17 +197,21 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title><translate>Logout</translate></v-list-tile-title>
+                        <v-list-tile-title>
+                            <translate>Logout</translate>
+                        </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/login" @click=""  class="p-navigation-login" v-if="!isPublic && !session.auth">
+                <v-list-tile to="/login" @click="" class="p-navigation-login" v-if="!isPublic && !session.auth">
                     <v-list-tile-action>
                         <v-icon>lock</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title><translate>Login</translate></v-list-tile-title>
+                        <v-list-tile-title>
+                            <translate>Login</translate>
+                        </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
             </v-list>
