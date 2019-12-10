@@ -64,10 +64,13 @@
 
                 this.settings.save().then((s) => {
                     this.$config.updateSettings(s.getValues(), this.$vuetify);
-                    this.$notify.info(this.$gettext("Settings saved"));
 
                     if(reload) {
+                        this.$notify.info(this.$gettext("Reloading..."));
+                        this.$notify.blockUI();
                         setTimeout(() => window.location.reload(), 100);
+                    } else {
+                        this.$notify.info(this.$gettext("Settings saved"));
                     }
                 })
             },
