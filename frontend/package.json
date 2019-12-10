@@ -12,6 +12,7 @@
     "test": "karma start",
     "acceptance": "testcafe \"chromium:headless --disable-dev-shm-usage\" --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
     "acceptance-firefox": "testcafe firefox:headless --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
+    "acceptance-local": "testcafe chrome --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
     "gettext-extract": "gettext-extract --output src/resources/translations.pot $(find src/ -type f -name '*.vue')",
     "gettext-compile": "gettext-compile --output src/resources/translations.json src/resources/*.po"
   },

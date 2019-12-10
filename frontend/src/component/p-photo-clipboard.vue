@@ -9,6 +9,7 @@
                     v-model="expanded"
                     transition="slide-y-reverse-transition"
                     class="p-clipboard p-photo-clipboard"
+                    id="t-clipboard"
             >
                 <v-btn
                         slot="activator"
@@ -18,7 +19,7 @@
                         class="p-photo-clipboard-menu"
                 >
                     <v-icon v-if="selection.length === 0">menu</v-icon>
-                    <span v-else>{{ selection.length }}</span>
+                    <span v-else class="t-clipboard-count">{{ selection.length }}</span>
                 </v-btn>
 
                 <v-btn
