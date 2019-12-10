@@ -102,11 +102,12 @@ func (s *Search) Photos(f form.PhotoSearch) (results []PhotoSearchResult, err er
 	} else if f.Query != "" {
 		slugString := slug.Make(f.Query)
 		lowerString := strings.ToLower(f.Query)
+		likeString := lowerString + "%"
 
 		if result := s.db.First(&label, "label_slug = ?", slugString); result.Error != nil {
 			log.Infof("search: label \"%s\" not found", f.Query)
 
-			q = q.Where("labels.label_slug = ? OR keywords.keyword = ? OR files.file_main_color = ?", slugString, lowerString, lowerString)
+			q = q.Where("labels.label_slug = ? OR keywords.keyword LIKE ? OR files.file_main_color = ?", slugString, likeString, lowerString)
 		} else {
 			labelIds = append(labelIds, label.ID)
 
@@ -118,7 +119,7 @@ func (s *Search) Photos(f form.PhotoSearch) (results []PhotoSearchResult, err er
 
 			log.Infof("search: label \"%s\" includes %d categories", label.LabelName, len(labelIds))
 
-			q = q.Where("labels.id IN (?) OR keywords.keyword = ? OR files.file_main_color = ?", labelIds, lowerString, lowerString)
+			q = q.Where("labels.id IN (?) OR keywords.keyword LIKE ? OR files.file_main_color = ?", labelIds, likeString, lowerString)
 		}
 	}
 
