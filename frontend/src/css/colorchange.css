@@ -1,3 +1,28 @@
+@-webkit-keyframes rainbow-animation {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-moz-keyframes rainbow-animation {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@keyframes rainbow-animation {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+.rainbow {
+    background: linear-gradient(270deg, #2acea4, #ffe300, #2a6fce, #8c2ace, #8c2ace, #ce2a78);
+    background-size: 1200% 1200%;
+
+    -webkit-animation: rainbow-animation 10s ease infinite;
+    -moz-animation: rainbow-animation 10s ease infinite;
+    animation: rainbow-animation 10s ease infinite;
+}
+
 @keyframes colorchange
 {
     0%   {background: #EF5350;}

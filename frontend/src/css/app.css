@@ -40,8 +40,11 @@ main {
 }
 
 #photoprism div.loading {
-    text-align: center;
-    margin: 50px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 #photoprism div.loading p {
