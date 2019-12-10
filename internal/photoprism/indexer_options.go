@@ -29,7 +29,7 @@ func (o *IndexerOptions) UpdateAny() bool {
 	return false
 }
 
-func (o *IndexerOptions) SkipExisting() bool {
+func (o *IndexerOptions) SkipUnchanged() bool {
 	return !o.UpdateAny()
 }
 

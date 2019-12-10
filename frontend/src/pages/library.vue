@@ -9,7 +9,7 @@
                 height="64"
         >
             <v-tab id="tab-maintenance" ripple @click="changePath('/library')">
-                <translate>Maintenance</translate>
+                <translate>Originals</translate>
             </v-tab>
             <v-tab-item>
                 <p-tab-maintenance></p-tab-maintenance>

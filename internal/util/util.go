@@ -11,4 +11,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
+//go:generate go run gen.go
+
 var log = event.Log

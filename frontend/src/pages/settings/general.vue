@@ -60,9 +60,15 @@
                 this.settings.load();
             },
             save() {
+                const reload = this.settings.changed("language");
+
                 this.settings.save().then((s) => {
                     this.$config.updateSettings(s.getValues(), this.$vuetify);
                     this.$notify.info(this.$gettext("Settings saved"));
+
+                    if(reload) {
+                        setTimeout(() => window.location.reload(), 100);
+                    }
                 })
             },
         },

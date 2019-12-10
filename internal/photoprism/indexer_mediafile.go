@@ -88,10 +88,9 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 	filePath := mediaFile.RelativePath(i.originalsPath())
 	fileName := mediaFile.RelativeFilename(i.originalsPath())
 	fileHash := mediaFile.Hash()
+	fileChanged := true
 	fileExists := false
 	photoExists := false
-	exists := false
-	isNew := true
 
 	event.Publish("index.file", event.Data{
 		"fileHash": fileHash,
@@ -116,14 +115,12 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 		}
 	} else {
 		photoQuery = i.db.Unscoped().First(&photo, "id = ?", file.PhotoID)
+		fileChanged = file.FileHash != fileHash
 	}
 
 	photoExists = photoQuery.Error == nil
 
-	exists = fileExists && photoExists
-	isNew = !exists
-
-	if exists && o.SkipExisting() {
+	if !fileChanged && photoExists && o.SkipUnchanged() {
 		return indexResultSkipped
 	}
 
@@ -132,12 +129,12 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 
 	if jpeg, err := mediaFile.Jpeg(); err == nil {
 
-		if isNew || o.UpdateLabels {
+		if fileChanged || o.UpdateLabels {
 			// Image classification labels
 			labels = i.classifyImage(jpeg)
 		}
 
-		if isNew || o.UpdateExif {
+		if fileChanged || o.UpdateExif {
 			// Read UpdateExif data
 			if exifData, err := jpeg.Exif(); err == nil {
 				photo.PhotoLat = exifData.Lat
@@ -157,7 +154,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 			}
 		}
 
-		if isNew || o.UpdateCamera {
+		if fileChanged || o.UpdateCamera {
 			// Set UpdateCamera, Lens, Focal Length and F Number
 			photo.Camera = models.NewCamera(mediaFile.CameraModel(), mediaFile.CameraMake()).FirstOrCreate(i.db)
 			photo.Lens = models.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
@@ -168,14 +165,14 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 		}
 	}
 
-	if isNew || o.UpdateDate {
+	if fileChanged || o.UpdateDate {
 		if photo.TakenAt.IsZero() || photo.TakenAtLocal.IsZero() {
 			photo.TakenAt = mediaFile.DateCreated()
 			photo.TakenAtLocal = photo.TakenAt
 		}
 	}
 
-	if isNew || o.UpdateLocation {
+	if fileChanged || o.UpdateLocation {
 		if location, err := mediaFile.Location(); err == nil {
 			i.db.FirstOrCreate(location, "id = ?", location.ID)
 			photo.Location = location
@@ -206,7 +203,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 			sort.Sort(labels)
 
 
-			if (isNew || o.UpdateTitle) && photo.PhotoTitleChanged == false {
+			if (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false {
 				log.Infof("setting title based on the following labels: %#v", labels)
 				if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 60 && labels[0].Name != "" { // TODO: User defined title format
 					log.Infof("label for title: %#v", labels[0])
@@ -242,7 +239,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 		}
 	}
 
-	if (isNew || o.UpdateTitle) && photo.PhotoTitleChanged == false && photo.PhotoTitle == "" {
+	if (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false && photo.PhotoTitle == "" {
 		if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 			photo.PhotoTitle = fmt.Sprintf("%s / %s", util.Title(labels[0].Name), mediaFile.DateCreated().Format("2006"))
 		} else if !photo.TakenAtLocal.IsZero() {
@@ -287,7 +284,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 
 	log.Infof("adding labels: %+v", labels)
 
-	if isNew || o.UpdateLabels {
+	if fileChanged || o.UpdateLabels {
 		for _, label := range labels {
 			lm := models.NewLabel(label.Name, label.Priority).FirstOrCreate(i.db)
 
@@ -318,7 +315,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 		isPrimary = mediaFile.IsJpeg() && (fileName == primaryFile.FileName || fileHash == primaryFile.FileHash)
 	}
 
-	if (isNew || o.UpdateKeywords) && isPrimary {
+	if (fileChanged || o.UpdateKeywords) && isPrimary {
 		photo.IndexKeywords(keywords, i.db)
 	}
 
@@ -332,7 +329,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 	file.FileMime = mediaFile.MimeType()
 	file.FileOrientation = mediaFile.Orientation()
 
-	if isNew || o.UpdateColors {
+	if fileChanged || o.UpdateColors {
 		// Color information
 		if p, err := mediaFile.Colors(i.thumbnailsPath()); err == nil {
 			file.FileMainColor = p.MainColor.Name()
@@ -342,7 +339,7 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 		}
 	}
 
-	if isNew || o.UpdateSize {
+	if fileChanged || o.UpdateSize {
 		if mediaFile.Width() > 0 && mediaFile.Height() > 0 {
 			file.FileWidth = mediaFile.Width()
 			file.FileHeight = mediaFile.Height()

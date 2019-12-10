@@ -3,10 +3,10 @@
         <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="fileName"><translate>Importing</translate> {{ fileName }}...</span>
-                    <span v-else-if="busy"><translate>Importing files from directory...</translate></span>
-                    <span v-else-if="completed"><translate>Done.</translate></span>
-                    <span v-else><translate>Press button to import photos from directory...</translate></span>
+                    <span v-if="fileName">Importing {{fileName}}...</span>
+                    <span v-else-if="busy">Importing files from directory...</span>
+                    <span v-else-if="completed">Done.</span>
+                    <span v-else>Press button to import photos from directory...</span>
                 </p>
 
                 <v-progress-linear color="secondary-dark" :value="completed" :indeterminate="busy"></v-progress-linear>
@@ -58,7 +58,7 @@
                 const ctx = this;
                 Notify.blockUI();
 
-                Api.post('import', {}, { cancelToken: this.source.token }).then(function () {
+                Api.post('import', {}, {cancelToken: this.source.token}).then(function () {
                     Notify.unblockUI();
                     ctx.busy = false;
                     ctx.completed = 100;
@@ -79,7 +79,7 @@
                 });
             },
             handleEvent(ev, data) {
-                if(this.source) {
+                if (this.source) {
                     this.source.cancel('run in background');
                     this.source = null;
                     Notify.unblockUI();

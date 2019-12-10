@@ -3,10 +3,10 @@
         <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit" dense>
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="fileName"><translate>Indexing</translate> {{ fileName }}...</span>
-                    <span v-else-if="busy"><translate>Indexing photos and sidecar files...</translate></span>
-                    <span v-else-if="completed"><translate>Done.</translate></span>
-                    <span v-else><translate>Press button to start indexing...</translate></span>
+                    <span v-if="fileName">Indexing {{ fileName }}...</span>
+                    <span v-else-if="busy">Indexing photos and sidecar files...</span>
+                    <span v-else-if="completed">Done.</span>
+                    <span v-else>Press button to start indexing...</span>
                 </p>
 
                 <p class="options">
@@ -55,7 +55,7 @@
                     skip: true
                 },
                 labels: {
-                    skip: this.$gettext("Skip existing photos and sidecar files"),
+                    skip: this.$gettext("Skip unchanged photos and sidecar files"),
                 }
             }
         },

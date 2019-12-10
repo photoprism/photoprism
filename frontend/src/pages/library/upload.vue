@@ -5,13 +5,16 @@
 
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="total === 0"><translate>Select photos to start upload...</translate></span>
-                    <span v-else-if="total > 0 && completed < 100"><translate>Uploading</translate> {{current}} <translate>of</translate> {{total}}...</span>
-                    <span v-else-if="indexing"><translate>Upload complete. Indexing...</translate></span>
-                    <span v-else-if="completed === 100"><translate>Done.</translate></span>
+                    <span v-if="total === 0">Select photos to start upload...</span>
+                    <span v-else-if="total > 0 && completed < 100">
+                        Uploading {{current}} of {{total}}...
+                    </span>
+                    <span v-else-if="indexing">Upload complete. Indexing...</span>
+                    <span v-else-if="completed === 100">Done.</span>
                 </p>
 
-                <v-progress-linear color="secondary-dark" v-model="completed" :indeterminate="indexing"></v-progress-linear>
+                <v-progress-linear color="secondary-dark" v-model="completed"
+                                   :indeterminate="indexing"></v-progress-linear>
 
                 <v-btn
                         :disabled="busy"
@@ -89,7 +92,7 @@
                         ).then(function () {
                             ctx.completed = Math.round((ctx.current / ctx.total) * 100);
                         }).catch(function () {
-                            Notify.error(this.$gettext("Upload failed"));
+                            Notify.error(ctx.$gettext("Upload failed"));
                         });
                     }
                 }
@@ -100,12 +103,12 @@
 
                     Api.post('import/upload/' + this.started).then(function () {
                         Notify.unblockUI();
-                        Notify.success(this.$gettext("Upload complete"));
+                        Notify.success(ctx.$gettext("Upload complete"));
                         ctx.busy = false;
                         ctx.indexing = false;
                     }).catch(function () {
                         Notify.unblockUI();
-                        Notify.error(this.$gettext("Failure while importing uploaded files"));
+                        Notify.error(ctx.$gettext("Failure while importing uploaded files"));
                         ctx.busy = false;
                         ctx.indexing = false;
                     });
