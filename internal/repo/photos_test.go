@@ -1,4 +1,4 @@
-package photoprism
+package repo
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -13,7 +13,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 
 	conf.CreateDirectories()
 
-	search := NewSearch(conf.OriginalsPath(), conf.Db())
+	search := New(conf.OriginalsPath(), conf.Db())
 
 	t.Run("normal query", func(t *testing.T) {
 		var f form.PhotoSearch

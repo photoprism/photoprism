@@ -19,13 +19,13 @@ type Indexer struct {
 // NewIndexer returns a new indexer.
 // TODO: Is it really necessary to return a pointer?
 func NewIndexer(conf *config.Config, tensorFlow *TensorFlow) *Indexer {
-	instance := &Indexer{
+	i := &Indexer{
 		conf:       conf,
 		tensorFlow: tensorFlow,
 		db:         conf.Db(),
 	}
 
-	return instance
+	return i
 }
 
 func (i *Indexer) originalsPath() string {

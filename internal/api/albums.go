@@ -13,11 +13,11 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/repo"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
@@ -26,7 +26,7 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums", func(c *gin.Context) {
 		var f form.AlbumSearch
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		r := repo.New(conf.OriginalsPath(), conf.Db())
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -34,7 +34,7 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		result, err := search.Albums(f)
+		result, err := r.Albums(f)
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": util.UcFirst(err.Error())})
 			return
@@ -51,8 +51,8 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 func GetAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums/:uuid", func(c *gin.Context) {
 		id := c.Param("uuid")
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		m, err := search.FindAlbumByUUID(id)
+		r := repo.New(conf.OriginalsPath(), conf.Db())
+		m, err := r.FindAlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -112,9 +112,9 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		r := repo.New(conf.OriginalsPath(), conf.Db())
 
-		m, err := search.FindAlbumByUUID(id)
+		m, err := r.FindAlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -140,9 +140,9 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		r := repo.New(conf.OriginalsPath(), conf.Db())
 
-		m, err := search.FindAlbumByUUID(id)
+		m, err := r.FindAlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -169,9 +169,9 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		r := repo.New(conf.OriginalsPath(), conf.Db())
 
-		album, err := search.FindAlbumByUUID(c.Param("uuid"))
+		album, err := r.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -198,9 +198,8 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-
-		album, err := search.FindAlbumByUUID(c.Param("uuid"))
+		r := repo.New(conf.OriginalsPath(), conf.Db())
+		album, err := r.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -237,8 +236,8 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		a, err := search.FindAlbumByUUID(c.Param("uuid"))
+		r := repo.New(conf.OriginalsPath(), conf.Db())
+		a, err := r.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -250,7 +249,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 		var failed []string
 
 		for _, photoUUID := range f.Photos {
-			if p, err := search.FindPhotoByUUID(photoUUID); err != nil {
+			if p, err := r.FindPhotoByUUID(photoUUID); err != nil {
 				failed = append(failed, photoUUID)
 			} else {
 				added = append(added, models.NewPhotoAlbum(p.PhotoUUID, a.AlbumUUID).FirstOrCreate(db))
@@ -288,8 +287,8 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		a, err := search.FindAlbumByUUID(c.Param("uuid"))
+		r := repo.New(conf.OriginalsPath(), conf.Db())
+		a, err := r.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -312,15 +311,15 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		start := time.Now()
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		a, err := search.FindAlbumByUUID(c.Param("uuid"))
+		r := repo.New(conf.OriginalsPath(), conf.Db())
+		a, err := r.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		p, err := search.Photos(form.PhotoSearch{
+		p, err := r.Photos(form.PhotoSearch{
 			Album:  a.AlbumUUID,
 			Count:  10000,
 			Offset: 0,

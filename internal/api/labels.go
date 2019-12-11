@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/repo"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
@@ -17,7 +17,7 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/labels", func(c *gin.Context) {
 		var f form.LabelSearch
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		r := repo.New(conf.OriginalsPath(), conf.Db())
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -25,7 +25,7 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		result, err := search.Labels(f)
+		result, err := r.Labels(f)
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": util.UcFirst(err.Error())})
 			return
@@ -49,9 +49,9 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		r := repo.New(conf.OriginalsPath(), conf.Db())
 
-		label, err := search.FindLabelBySlug(c.Param("slug"))
+		label, err := r.FindLabelBySlug(c.Param("slug"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -76,9 +76,9 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		r := repo.New(conf.OriginalsPath(), conf.Db())
 
-		label, err := search.FindLabelBySlug(c.Param("slug"))
+		label, err := r.FindLabelBySlug(c.Param("slug"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})

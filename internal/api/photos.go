@@ -7,12 +7,12 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/repo"
 	"github.com/photoprism/photoprism/internal/util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
 // GET /api/v1/photos
@@ -33,7 +33,7 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/photos", func(c *gin.Context) {
 		var f form.PhotoSearch
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		r := repo.New(conf.OriginalsPath(), conf.Db())
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -41,7 +41,7 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		result, err := search.Photos(f)
+		result, err := r.Photos(f)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": util.UcFirst(err.Error())})
@@ -61,8 +61,8 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 //   uuid: string PhotoUUID as returned by the API
 func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/photos/:uuid/download", func(c *gin.Context) {
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		file, err := search.FindFileByPhotoUUID(c.Param("uuid"))
+		r := repo.New(conf.OriginalsPath(), conf.Db())
+		file, err := r.FindFileByPhotoUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
@@ -100,8 +100,8 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		m, err := search.FindPhotoByUUID(c.Param("uuid"))
+		r := repo.New(conf.OriginalsPath(), conf.Db())
+		m, err := r.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -130,8 +130,8 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		m, err := search.FindPhotoByUUID(c.Param("uuid"))
+		r := repo.New(conf.OriginalsPath(), conf.Db())
+		m, err := r.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
