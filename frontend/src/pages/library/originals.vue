@@ -22,11 +22,10 @@
                         :label="labels.skipUnchanged"
                 ></v-checkbox>
                 <v-checkbox
-                        v-if="!readonly"
                         class="ma-0 pa-0"
                         v-model="options.convertRaw"
                         color="secondary-dark"
-                        :disabled="busy"
+                        :disabled="busy || readonly"
                         :label="labels.convertRaw"
                 ></v-checkbox>
                 <v-checkbox
