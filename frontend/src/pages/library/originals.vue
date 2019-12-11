@@ -3,21 +3,39 @@
         <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit" dense>
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="fileName">Indexing {{ fileName }}...</span>
+                    <span v-if="fileName">{{ action }} {{ fileName }}...</span>
                     <span v-else-if="busy">Indexing photos and sidecar files...</span>
                     <span v-else-if="completed">Done.</span>
                     <span v-else>Press button to start indexing...</span>
                 </p>
 
                 <p class="options">
-                    <v-progress-linear color="secondary-dark" :value="completed" :indeterminate="busy"></v-progress-linear>
+                    <v-progress-linear color="secondary-dark" :value="completed"
+                                       :indeterminate="busy"></v-progress-linear>
                 </p>
 
                 <v-checkbox
-                        v-model="options.skip"
+                        class="mb-0 mt-4 pa-0"
+                        v-model="options.skipUnchanged"
                         color="secondary-dark"
                         :disabled="busy"
-                        :label="labels.skip"
+                        :label="labels.skipUnchanged"
+                ></v-checkbox>
+                <v-checkbox
+                        v-if="!readonly"
+                        class="ma-0 pa-0"
+                        v-model="options.convertRaw"
+                        color="secondary-dark"
+                        :disabled="busy"
+                        :label="labels.convertRaw"
+                ></v-checkbox>
+                <v-checkbox
+                        v-if="!readonly"
+                        class="ma-0 pa-0"
+                        v-model="options.createThumbs"
+                        color="secondary-dark"
+                        :disabled="busy"
+                        :label="labels.createThumbs"
                 ></v-checkbox>
 
                 <v-btn
@@ -27,7 +45,7 @@
                         depressed
                         @click.stop="startIndexing()"
                 >
-                    <translate>Start</translate>
+                    <translate>Index</translate>
                     <v-icon right dark>update</v-icon>
                 </v-btn>
             </v-container>
@@ -45,17 +63,23 @@
         name: 'p-tab-index',
         data() {
             return {
+                readonly: this.$config.getValue("readonly"),
                 started: false,
                 busy: false,
                 completed: 0,
-                subscriptionId: '',
-                fileName: '',
+                subscriptionId: "",
+                action: "",
+                fileName: "",
                 source: null,
                 options: {
-                    skip: true
+                    skipUnchanged: true,
+                    createThumbs: false,
+                    convertRaw: false,
                 },
                 labels: {
-                    skip: this.$gettext("Skip unchanged photos and sidecar files"),
+                    skipUnchanged: this.$gettext("Skip unchanged files"),
+                    createThumbs: this.$gettext("Pre-render thumbnails"),
+                    convertRaw: this.$gettext("Convert RAW to JPEG"),
                 }
             }
         },
@@ -73,7 +97,7 @@
                 const ctx = this;
                 Notify.blockUI();
 
-                Api.post('index', this.options, { cancelToken: this.source.token }).then(function () {
+                Api.post('index', this.options, {cancelToken: this.source.token}).then(function () {
                     Notify.unblockUI();
                     ctx.busy = false;
                     ctx.completed = 100;
@@ -94,7 +118,7 @@
                 });
             },
             handleEvent(ev, data) {
-                if(this.source) {
+                if (this.source) {
                     this.source.cancel('run in background');
                     this.source = null;
                     Notify.unblockUI();
@@ -103,12 +127,26 @@
                 const type = ev.split('.')[1];
 
                 switch (type) {
-                    case 'file':
+                    case "indexing":
+                        this.action = "Indexing";
+                        this.busy = true;
+                        this.completed = 0;
+                        this.fileName = data.fileName;
+                        break;
+                    case "converting":
+                        this.action = "Converting";
+                        this.busy = true;
+                        this.completed = 0;
+                        this.fileName = data.fileName;
+                        break;
+                    case "thumbnails":
+                        this.action = "Creating thumbnails for";
                         this.busy = true;
                         this.completed = 0;
                         this.fileName = data.fileName;
                         break;
                     case 'completed':
+                        this.action = "";
                         this.busy = false;
                         this.completed = 100;
                         this.fileName = '';

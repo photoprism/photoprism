@@ -323,10 +323,8 @@ func (m *MediaFile) RelativePath(directory string) string {
 	if i := strings.Index(pathname, directory); i == 0 {
 		if i := strings.LastIndex(directory, string(os.PathSeparator)); i == len(directory)-1 {
 			pathname = pathname[len(directory):]
-			log.Info(pathname)
 		} else if i := strings.LastIndex(directory, string(os.PathSeparator)); i != len(directory) {
 			pathname = pathname[len(directory)+1:]
-			log.Info(pathname)
 		}
 	}
 

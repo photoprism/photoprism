@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"math"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -51,11 +52,12 @@ func (t *TensorFlow) loadLabelRules() (err error) {
 
 	fileName := t.conf.ConfigPath() + "/labels.yml"
 
-	log.Debugf("loading label rules from \"%s\"", fileName)
+	log.Debugf("tensorflow: loading label rules from \"%s\"", filepath.Base(fileName))
 
 	if !util.Exists(fileName) {
-		log.Errorf("label rules file not found: \"%s\"", fileName)
-		return fmt.Errorf("label rules file not found: \"%s\"", fileName)
+		e := fmt.Errorf("tensorflow: label rules file not found in \"%s\"", filepath.Base(fileName))
+		log.Error(e.Error())
+		return e
 	}
 
 	yamlConfig, err := ioutil.ReadFile(fileName)
@@ -115,7 +117,9 @@ func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 	// Return best labels
 	result = t.bestLabels(output[0].Value().([][]float32)[0])
 
-	log.Debugf("labels: %v", result)
+	if len(result) > 0 {
+		log.Debugf("tensorflow: image classified as %+v", result)
+	}
 
 	return result, nil
 }
@@ -123,7 +127,7 @@ func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 func (t *TensorFlow) loadLabels(path string) error {
 	modelLabels := path + "/labels.txt"
 
-	log.Infof("loading classification labels from \"%s\"", modelLabels)
+	log.Infof("tensorflow: loading classification labels from labels.txt")
 
 	// Load labels
 	f, err := os.Open(modelLabels)
@@ -156,7 +160,7 @@ func (t *TensorFlow) loadModel() error {
 
 	path := t.conf.TensorFlowModelPath()
 
-	log.Infof("loading image classification model from \"%s\"", path)
+	log.Infof("tensorflow: loading image classification model from \"%s\"", filepath.Base(path))
 
 	// Load model
 	model, err := tf.LoadSavedModel(path, []string{"photoprism"}, nil)

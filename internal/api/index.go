@@ -47,9 +47,20 @@ func Index(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Info(fmt.Sprintf("indexing photos in \"%s\"", filepath.Base(path)))
 
+		if f.ConvertRaw {
+			converter := photoprism.NewConverter(conf)
+			converter.ConvertAll(conf.OriginalsPath())
+		}
+
+		if f.CreateThumbs {
+			if err := photoprism.CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), false); err != nil {
+				event.Error(err.Error())
+			}
+		}
+
 		initIndexer(conf)
 
-		if f.SkipExisting {
+		if f.SkipUnchanged {
 			indexer.IndexOriginals(photoprism.IndexerOptionsNone())
 		} else {
 			indexer.IndexOriginals(photoprism.IndexerOptionsAll())

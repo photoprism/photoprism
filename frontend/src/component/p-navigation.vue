@@ -59,6 +59,7 @@
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate>Photos</translate>
+                                <span v-if="config.count.photos > 0" class="p-navigation-count">{{ config.count.photos }}</span>
                             </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
@@ -97,6 +98,7 @@
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate>Albums</translate>
+                                <span v-if="config.count.albums > 0" class="p-navigation-count">{{ config.count.albums }}</span>
                             </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
@@ -119,18 +121,7 @@
                     <v-list-tile-content>
                         <v-list-tile-title>
                             <translate>Favorites</translate>
-                        </v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-
-                <v-list-tile to="/places" @click="" class="p-navigation-places">
-                    <v-list-tile-action>
-                        <v-icon>place</v-icon>
-                    </v-list-tile-action>
-
-                    <v-list-tile-content>
-                        <v-list-tile-title>
-                            <translate>Places</translate>
+                            <span v-if="config.count.favorites > 0" class="p-navigation-count">{{ config.count.favorites }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
@@ -143,6 +134,20 @@
                     <v-list-tile-content>
                         <v-list-tile-title>
                             <translate>Labels</translate>
+                            <span v-if="config.count.labels > 0" class="p-navigation-count">{{ config.count.labels }}</span>
+                        </v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
+                <v-list-tile to="/places" @click="" class="p-navigation-places">
+                    <v-list-tile-action>
+                        <v-icon>place</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>
+                            <translate>Places</translate>
+                            <span v-if="config.count.countries > 0" class="p-navigation-count">{{ config.count.countries }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
@@ -223,7 +228,7 @@
     export default {
         name: "p-navigation",
         data() {
-            let mini = (window.innerWidth < 1600);
+            let mini = (window.innerWidth < 1400);
 
             return {
                 drawer: null,

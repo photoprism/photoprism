@@ -51,7 +51,7 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile, o IndexerOptions) map[strin
 	mainIndexResult := i.indexMediaFile(mainFile, o)
 	indexed[mainFile.Filename()] = true
 
-	log.Infof("%s main %s file \"%s\"", mainIndexResult, mainFile.Type(), mainFile.RelativeFilename(i.originalsPath()))
+	log.Infof("index: %s main %s file \"%s\"", mainIndexResult, mainFile.Type(), mainFile.RelativeFilename(i.originalsPath()))
 
 	for _, relatedMediaFile := range relatedFiles {
 		if indexed[relatedMediaFile.Filename()] {
@@ -61,7 +61,7 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile, o IndexerOptions) map[strin
 		indexResult := i.indexMediaFile(relatedMediaFile, o)
 		indexed[relatedMediaFile.Filename()] = true
 
-		log.Infof("%s related %s file \"%s\"", indexResult, relatedMediaFile.Type(), relatedMediaFile.RelativeFilename(i.originalsPath()))
+		log.Infof("index: %s related %s file \"%s\"", indexResult, relatedMediaFile.Type(), relatedMediaFile.RelativeFilename(i.originalsPath()))
 	}
 
 	return indexed

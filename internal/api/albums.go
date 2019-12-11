@@ -86,6 +86,10 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		event.Publish("count.albums", event.Data{
+			"count": 1,
+		})
+
 		event.Success(fmt.Sprintf("album \"%s\" created", m.AlbumName))
 
 		c.JSON(http.StatusOK, m)

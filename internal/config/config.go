@@ -525,11 +525,46 @@ func (c *Config) ClientConfig() ClientConfig {
 	}
 
 	var countries []country
+	var count = struct {
+		Photos    uint `json:"photos"`
+		Favorites uint `json:"favorites"`
+		Private   uint `json:"private"`
+		Stories   uint `json:"stories"`
+		Labels    uint `json:"labels"`
+		Albums    uint `json:"albums"`
+		Countries    uint `json:"countries"`
+	}{}
 
-	db.Model(&models.Location{}).Select("DISTINCT loc_country_code, loc_country").Scan(&countries)
+	db.Table("photos").
+		Select("COUNT(*) AS photos, SUM(photo_favorite) AS favorites, SUM(photo_private) AS private, SUM(photo_story) AS stories").
+		Where("deleted_at IS NULL").
+		Take(&count)
 
-	db.Where("deleted_at IS NULL").Limit(1000).Order("camera_model").Find(&cameras)
-	db.Where("deleted_at IS NULL AND album_favorite = 1").Limit(20).Order("album_name").Find(&albums)
+	db.Table("labels").
+		Select("COUNT(*) AS labels").
+		Where("deleted_at IS NULL").
+		Take(&count)
+
+	db.Table("albums").
+		Select("COUNT(*) AS albums").
+		Where("deleted_at IS NULL").
+		Take(&count)
+
+	db.Table("countries").
+		Select("COUNT(*) AS countries").
+		Take(&count)
+
+	db.Model(&models.Location{}).
+		Select("DISTINCT loc_country_code, loc_country").
+		Scan(&countries)
+
+	db.Where("deleted_at IS NULL").
+		Limit(1000).Order("camera_model").
+		Find(&cameras)
+
+	db.Where("deleted_at IS NULL AND album_favorite = 1").
+		Limit(20).Order("album_name").
+		Find(&albums)
 
 	jsHash := util.Hash(c.HttpStaticBuildPath() + "/app.js")
 	cssHash := util.Hash(c.HttpStaticBuildPath() + "/app.css")
@@ -548,6 +583,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		"jsHash":     jsHash,
 		"cssHash":    cssHash,
 		"settings":   c.Settings(),
+		"count":      count,
 	}
 
 	return result

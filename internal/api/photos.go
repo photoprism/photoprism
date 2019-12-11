@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/util"
 
 	"github.com/gin-gonic/gin"
@@ -110,6 +111,10 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		m.PhotoFavorite = true
 		conf.Db().Save(&m)
 
+		event.Publish("count.favorites", event.Data{
+			"count": 1,
+		})
+
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
 }
@@ -135,6 +140,10 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 
 		m.PhotoFavorite = false
 		conf.Db().Save(&m)
+
+		event.Publish("count.favorites", event.Data{
+			"count": -1,
+		})
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})

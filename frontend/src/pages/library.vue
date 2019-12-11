@@ -8,11 +8,11 @@
                 slider-color="secondary-dark"
                 height="64"
         >
-            <v-tab id="tab-maintenance" ripple @click="changePath('/library')">
+            <v-tab id="tab-originals" ripple @click="changePath('/library')">
                 <translate>Originals</translate>
             </v-tab>
             <v-tab-item>
-                <p-tab-maintenance></p-tab-maintenance>
+                <p-tab-originals></p-tab-originals>
             </v-tab-item>
 
             <v-tab id="tab-import" v-if="!readonly" ripple @click="changePath('/library/import')">
@@ -35,7 +35,7 @@
 <script>
     import uploadTab from "pages/library/upload.vue";
     import importTab from "pages/library/import.vue";
-    import maintenanceTab from "pages/library/maintenance.vue";
+    import originalsTab from "pages/library/originals.vue";
 
     export default {
         name: 'p-page-library',
@@ -43,7 +43,7 @@
             tab: Number
         },
         components: {
-            'p-tab-maintenance': maintenanceTab,
+            'p-tab-originals': originalsTab,
             'p-tab-import': importTab,
             'p-tab-upload': uploadTab,
         },

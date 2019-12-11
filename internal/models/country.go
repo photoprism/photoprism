@@ -13,6 +13,7 @@ type Country struct {
 	CountryNotes       string `gorm:"type:text;"`
 	CountryPhoto       *Photo
 	CountryPhotoID     uint
+	New                bool `gorm:"-"`
 }
 
 // Create a new country
@@ -40,4 +41,8 @@ func (m *Country) FirstOrCreate(db *gorm.DB) *Country {
 	db.FirstOrCreate(m, "id = ?", m.ID)
 
 	return m
+}
+
+func (m *Country) AfterCreate(scope *gorm.Scope) error {
+	return scope.SetColumn("New", true)
 }

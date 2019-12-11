@@ -39,6 +39,15 @@ main {
     z-index: 10;
 }
 
+#p-navigation .p-navigation-count {
+    opacity: 0.5;
+    position: absolute;
+    left: 80px;
+    width: 40px;
+    display: inline-block;
+    text-align: right;
+}
+
 #photoprism div.loading {
     position: fixed;
     top: 0;
@@ -128,6 +137,10 @@ main {
     color: #F48FB1;
 }
 
+#photoprism .p-log-warning {
+    color: #FFD600;
+}
+
 #photoprism .p-log-fatal {
     color: #FFECB3;
 }
@@ -137,5 +150,5 @@ main {
 }
 
 #photoprism .p-log-debug {
-    color: #EEEEEE;
+    color: #DDDDDD;
 }

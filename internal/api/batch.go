@@ -46,6 +46,10 @@ func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		elapsed := int(time.Since(start).Seconds())
 
+		event.Publish("count.photos", event.Data{
+			"count": len(f.Photos) * -1,
+		})
+
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos deleted in %d s", elapsed)})
 	})
 }

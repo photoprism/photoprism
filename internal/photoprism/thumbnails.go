@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/util"
@@ -92,6 +93,14 @@ func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, 
 		if err != nil || !mediaFile.IsJpeg() {
 			return nil
 		}
+
+		fileName := mediaFile.RelativeFilename(originalsPath)
+
+		event.Publish("index.thumbnails", event.Data{
+			"fileName": fileName,
+			"baseName": filepath.Base(fileName),
+			"force":    force,
+		})
 
 		if err := mediaFile.CreateDefaultThumbnails(thumbnailsPath, force); err != nil {
 			log.Errorf("could not create default thumbnails: %s", err)

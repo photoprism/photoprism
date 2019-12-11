@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 )
 
 // Converter wraps a darktable cli binary.
@@ -98,11 +99,20 @@ func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 
 	log.Infof("converting \"%s\" to \"%s\"", image.filename, jpegFilename)
 
+	fileName := image.RelativeFilename(c.conf.OriginalsPath())
+
 	xmpFilename := baseFilename + ".xmp"
 
 	if _, err := os.Stat(xmpFilename); err != nil {
 		xmpFilename = ""
 	}
+
+	event.Publish("index.converting", event.Data{
+		"fileType": image.Type(),
+		"fileName": fileName,
+		"baseName": filepath.Base(fileName),
+		"xmpName": filepath.Base(xmpFilename),
+	})
 
 	if convertCommand, err := c.ConvertCommand(image, jpegFilename, xmpFilename); err != nil {
 		return nil, err

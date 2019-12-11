@@ -1,5 +1,7 @@
 package form
 
 type IndexerOptions struct {
-	SkipExisting bool `json:"skip"`
+	SkipUnchanged bool `json:"skipUnchanged"`
+	CreateThumbs  bool `json:"createThumbs"`
+	ConvertRaw    bool `json:"convertRaw"`
 }

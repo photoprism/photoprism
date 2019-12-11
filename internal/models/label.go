@@ -17,6 +17,7 @@ type Label struct {
 	LabelDescription string   `gorm:"type:text;"`
 	LabelNotes       string   `gorm:"type:text;"`
 	LabelCategories  []*Label `gorm:"many2many:categories;association_jointable_foreignkey:category_id"`
+	New              bool     `gorm:"-"`
 }
 
 func NewLabel(labelName string, labelPriority int) *Label {
@@ -41,4 +42,8 @@ func (m *Label) FirstOrCreate(db *gorm.DB) *Label {
 	db.FirstOrCreate(m, "label_slug = ?", m.LabelSlug)
 
 	return m
+}
+
+func (m *Label) AfterCreate(scope *gorm.Scope) error {
+	return scope.SetColumn("New", true)
 }
