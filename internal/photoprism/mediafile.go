@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/djherbis/times"
-	"github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
@@ -29,7 +29,7 @@ type MediaFile struct {
 	width          int
 	height         int
 	exifData       *Exif
-	location       *models.Location
+	location       *entity.Location
 }
 
 // NewMediaFile returns a new MediaFile.

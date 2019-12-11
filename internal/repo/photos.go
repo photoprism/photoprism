@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
@@ -133,8 +133,8 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id").
 		Where("photos.deleted_at IS NULL AND files.file_missing = 0").
 		Group("photos.id, files.id")
-	var categories []models.Category
-	var label models.Label
+	var categories []entity.Category
+	var label entity.Label
 	var labelIds []uint
 
 	if f.Label != "" {
@@ -320,7 +320,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 }
 
 // FindPhotoByID returns a Photo based on the ID.
-func (s *Repo) FindPhotoByID(photoID uint64) (photo models.Photo, err error) {
+func (s *Repo) FindPhotoByID(photoID uint64) (photo entity.Photo, err error) {
 	if err := s.db.Where("id = ?", photoID).First(&photo).Error; err != nil {
 		return photo, err
 	}
@@ -329,7 +329,7 @@ func (s *Repo) FindPhotoByID(photoID uint64) (photo models.Photo, err error) {
 }
 
 // FindPhotoByUUID returns a Photo based on the UUID.
-func (s *Repo) FindPhotoByUUID(photoUUID string) (photo models.Photo, err error) {
+func (s *Repo) FindPhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
 	if err := s.db.Where("photo_uuid = ?", photoUUID).First(&photo).Error; err != nil {
 		return photo, err
 	}

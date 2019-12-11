@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/models"
 
 	"github.com/photoprism/photoprism/internal/util"
 )
@@ -179,7 +179,7 @@ func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	fileExtension := mediaFile.Extension()
 	dateCreated := mainFile.DateCreated()
 
-	if file, err := models.FindFileByHash(i.conf.Db(), mediaFile.Hash()); err == nil {
+	if file, err := entity.FindFileByHash(i.conf.Db(), mediaFile.Hash()); err == nil {
 		existingFilename := i.conf.OriginalsPath() + string(os.PathSeparator) + file.FileName
 		return existingFilename, fmt.Errorf("\"%s\" is identical to \"%s\" (%s)", mediaFile.Filename(), file.FileName, mediaFile.Hash())
 	}

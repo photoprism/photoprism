@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
@@ -27,7 +27,7 @@ type LabelResult struct {
 }
 
 // FindLabelBySlug returns a Label based on the slug name.
-func (s *Repo) FindLabelBySlug(labelSlug string) (label models.Label, err error) {
+func (s *Repo) FindLabelBySlug(labelSlug string) (label entity.Label, err error) {
 	if err := s.db.Where("label_slug = ?", labelSlug).First(&label).Error; err != nil {
 		return label, err
 	}
@@ -36,7 +36,7 @@ func (s *Repo) FindLabelBySlug(labelSlug string) (label models.Label, err error)
 }
 
 // FindLabelThumbBySlug returns a label preview file based on the slug name.
-func (s *Repo) FindLabelThumbBySlug(labelSlug string) (file models.File, err error) {
+func (s *Repo) FindLabelThumbBySlug(labelSlug string) (file entity.File, err error) {
 	// s.db.LogMode(true)
 
 	if err := s.db.Where("files.file_primary AND files.deleted_at IS NULL").
@@ -70,8 +70,8 @@ func (s *Repo) Labels(f form.LabelSearch) (results []LabelResult, err error) {
 
 	if f.Query != "" {
 		var labelIds []uint
-		var categories []models.Category
-		var label models.Label
+		var categories []entity.Category
+		var label entity.Label
 
 		likeString := "%" + strings.ToLower(f.Query) + "%"
 

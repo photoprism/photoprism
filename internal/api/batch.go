@@ -7,9 +7,9 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/util"
 
 	"github.com/gin-gonic/gin"
@@ -42,7 +42,7 @@ func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		db := conf.Db()
 
-		db.Where("photo_uuid IN (?)", f.Photos).Delete(&models.Photo{})
+		db.Where("photo_uuid IN (?)", f.Photos).Delete(&entity.Photo{})
 
 		elapsed := int(time.Since(start).Seconds())
 
@@ -79,8 +79,8 @@ func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		db := conf.Db()
 
-		db.Where("album_uuid IN (?)", f.Albums).Delete(&models.Album{})
-		db.Where("album_uuid IN (?)", f.Albums).Delete(&models.PhotoAlbum{})
+		db.Where("album_uuid IN (?)", f.Albums).Delete(&entity.Album{})
+		db.Where("album_uuid IN (?)", f.Albums).Delete(&entity.PhotoAlbum{})
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
@@ -115,7 +115,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 
 		db := conf.Db()
 
-		db.Model(models.Photo{}).Where("photo_uuid IN (?)", f.Photos).UpdateColumn("photo_private", gorm.Expr("IF (`photo_private`, 0, 1)"))
+		db.Model(entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).UpdateColumn("photo_private", gorm.Expr("IF (`photo_private`, 0, 1)"))
 
 		elapsed := time.Since(start)
 
@@ -150,7 +150,7 @@ func BatchPhotosStory(router *gin.RouterGroup, conf *config.Config) {
 
 		db := conf.Db()
 
-		db.Model(models.Photo{}).Where("photo_uuid IN (?)", f.Photos).Updates(map[string]interface{}{
+		db.Model(entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).Updates(map[string]interface{}{
 			"photo_story": gorm.Expr("IF (`photo_story`, 0, 1)"),
 		})
 

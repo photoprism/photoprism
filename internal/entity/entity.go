@@ -7,4 +7,4 @@ Additional information concerning data storage can be found in our Developer Gui
 
 https://github.com/photoprism/photoprism/wiki/Storage
 */
-package models
+package entity

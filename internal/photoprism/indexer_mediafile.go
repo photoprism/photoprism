@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
@@ -22,8 +22,8 @@ const (
 type IndexResult string
 
 func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexResult {
-	var photo models.Photo
-	var file, primaryFile models.File
+	var photo entity.Photo
+	var file, primaryFile entity.File
 	var isPrimary = false
 	var exifData *Exif
 	var photoQuery, fileQuery *gorm.DB
@@ -98,8 +98,8 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 
 			if fileChanged || o.UpdateCamera {
 				// Set UpdateCamera, Lens, Focal Length and F Number
-				photo.Camera = models.NewCamera(mediaFile.CameraModel(), mediaFile.CameraMake()).FirstOrCreate(i.db)
-				photo.Lens = models.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
+				photo.Camera = entity.NewCamera(mediaFile.CameraModel(), mediaFile.CameraMake()).FirstOrCreate(i.db)
+				photo.Lens = entity.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
 				photo.PhotoFocalLength = mediaFile.FocalLength()
 				photo.PhotoFNumber = mediaFile.FNumber()
 				photo.PhotoIso = mediaFile.Iso()
@@ -273,7 +273,7 @@ func (i *Indexer) classifyImage(jpeg *MediaFile) (results Labels) {
 
 func (i *Indexer) addLabels(photoId uint, labels Labels) {
 	for _, label := range labels {
-		lm := models.NewLabel(label.Name, label.Priority).FirstOrCreate(i.db)
+		lm := entity.NewLabel(label.Name, label.Priority).FirstOrCreate(i.db)
 
 		if lm.New {
 			event.Publish("count.labels", event.Data{
@@ -286,11 +286,11 @@ func (i *Indexer) addLabels(photoId uint, labels Labels) {
 			i.db.Save(&lm)
 		}
 
-		plm := models.NewPhotoLabel(photoId, lm.ID, label.Uncertainty, label.Source).FirstOrCreate(i.db)
+		plm := entity.NewPhotoLabel(photoId, lm.ID, label.Uncertainty, label.Source).FirstOrCreate(i.db)
 
 		// Add categories
 		for _, category := range label.Categories {
-			sn := models.NewLabel(category, -1).FirstOrCreate(i.db)
+			sn := entity.NewLabel(category, -1).FirstOrCreate(i.db)
 			i.db.Model(&lm).Association("LabelCategories").Append(sn)
 		}
 
@@ -302,13 +302,13 @@ func (i *Indexer) addLabels(photoId uint, labels Labels) {
 	}
 }
 
-func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *models.Photo, keywords []string, labels Labels, fileChanged bool, o IndexerOptions) ([]string, Labels) {
+func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, keywords []string, labels Labels, fileChanged bool, o IndexerOptions) ([]string, Labels) {
 	if location, err := mediaFile.Location(); err == nil {
 		i.db.FirstOrCreate(location, "id = ?", location.ID)
 		photo.Location = location
 		photo.LocationEstimated = false
 
-		photo.Country = models.NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
+		photo.Country = entity.NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
 
 		if photo.Country.New {
 			event.Publish("count.countries", event.Data{
@@ -381,8 +381,8 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *models.Photo, keywo
 	return keywords, labels
 }
 
-func (i *Indexer) estimateLocation(photo *models.Photo) {
-	var recentPhoto models.Photo
+func (i *Indexer) estimateLocation(photo *entity.Photo) {
+	var recentPhoto entity.Photo
 
 	if result := i.db.Unscoped().Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", photo.TakenAt)).Preload("Country").First(&recentPhoto); result.Error == nil {
 		if recentPhoto.Country != nil {

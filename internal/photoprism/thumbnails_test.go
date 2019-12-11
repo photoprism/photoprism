@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/disintegration/imaging"
-	"github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/entity"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
@@ -162,7 +162,7 @@ func TestThumbnails_ThumbnailFromFile(t *testing.T) {
 	}
 
 	t.Run("valid parameter", func(t *testing.T) {
-		fileModel := &models.File{
+		fileModel := &entity.File{
 			FileName: conf.ExamplesPath() + "/elephants.jpg",
 			FileHash: "1234568889",
 		}
@@ -173,7 +173,7 @@ func TestThumbnails_ThumbnailFromFile(t *testing.T) {
 	})
 
 	t.Run("hash too short", func(t *testing.T) {
-		fileModel := &models.File{
+		fileModel := &entity.File{
 			FileName: conf.ExamplesPath() + "/elephants.jpg",
 			FileHash: "123",
 		}
@@ -182,7 +182,7 @@ func TestThumbnails_ThumbnailFromFile(t *testing.T) {
 		assert.Equal(t, "file hash is empty or too short: 123", err.Error())
 	})
 	t.Run("filename too short", func(t *testing.T) {
-		fileModel := &models.File{
+		fileModel := &entity.File{
 			FileName: "xxx",
 			FileHash: "12367890",
 		}

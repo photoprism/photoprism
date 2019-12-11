@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
@@ -26,7 +26,7 @@ type AlbumResult struct {
 }
 
 // FindAlbumByUUID returns a Album based on the UUID.
-func (s *Repo) FindAlbumByUUID(albumUUID string) (album models.Album, err error) {
+func (s *Repo) FindAlbumByUUID(albumUUID string) (album entity.Album, err error) {
 	if err := s.db.Where("album_uuid = ?", albumUUID).First(&album).Error; err != nil {
 		return album, err
 	}
@@ -35,7 +35,7 @@ func (s *Repo) FindAlbumByUUID(albumUUID string) (album models.Album, err error)
 }
 
 // FindAlbumThumbByUUID returns a album preview file based on the uuid.
-func (s *Repo) FindAlbumThumbByUUID(albumUUID string) (file models.File, err error) {
+func (s *Repo) FindAlbumThumbByUUID(albumUUID string) (file entity.File, err error) {
 	// s.db.LogMode(true)
 
 	if err := s.db.Where("files.file_primary AND files.deleted_at IS NULL").

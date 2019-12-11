@@ -12,8 +12,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	gc "github.com/patrickmn/go-cache"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/tidb"
 	"github.com/photoprism/photoprism/internal/util"
 	"github.com/sirupsen/logrus"
@@ -531,22 +531,22 @@ func (c *Config) MigrateDb() {
 	// db.LogMode(true)
 
 	db.AutoMigrate(
-		&models.File{},
-		&models.Photo{},
-		&models.Event{},
-		&models.Location{},
-		&models.Camera{},
-		&models.Lens{},
-		&models.Country{},
-		&models.Share{},
+		&entity.File{},
+		&entity.Photo{},
+		&entity.Event{},
+		&entity.Location{},
+		&entity.Camera{},
+		&entity.Lens{},
+		&entity.Country{},
+		&entity.Share{},
 
-		&models.Album{},
-		&models.PhotoAlbum{},
-		&models.Label{},
-		&models.Category{},
-		&models.PhotoLabel{},
-		&models.Keyword{},
-		&models.PhotoKeyword{},
+		&entity.Album{},
+		&entity.PhotoAlbum{},
+		&entity.Label{},
+		&entity.Category{},
+		&entity.PhotoLabel{},
+		&entity.Keyword{},
+		&entity.PhotoKeyword{},
 	)
 }
 
@@ -554,8 +554,8 @@ func (c *Config) MigrateDb() {
 func (c *Config) ClientConfig() ClientConfig {
 	db := c.Db()
 
-	var cameras []*models.Camera
-	var albums []*models.Album
+	var cameras []*entity.Camera
+	var albums []*entity.Album
 
 	type country struct {
 		LocCountry     string
@@ -592,7 +592,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		Select("COUNT(*) AS countries").
 		Take(&count)
 
-	db.Model(&models.Location{}).
+	db.Model(&entity.Location{}).
 		Select("DISTINCT loc_country_code, loc_country").
 		Scan(&countries)
 

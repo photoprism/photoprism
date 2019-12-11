@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/repo"
 
 	"github.com/gin-gonic/gin"
@@ -78,7 +78,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		m := models.NewAlbum(f.AlbumName)
+		m := entity.NewAlbum(f.AlbumName)
 
 		if res := conf.Db().Create(m); res.Error != nil {
 			log.Error(res.Error.Error())
@@ -245,14 +245,14 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		db := conf.Db()
-		var added []*models.PhotoAlbum
+		var added []*entity.PhotoAlbum
 		var failed []string
 
 		for _, photoUUID := range f.Photos {
 			if p, err := r.FindPhotoByUUID(photoUUID); err != nil {
 				failed = append(failed, photoUUID)
 			} else {
-				added = append(added, models.NewPhotoAlbum(p.PhotoUUID, a.AlbumUUID).FirstOrCreate(db))
+				added = append(added, entity.NewPhotoAlbum(p.PhotoUUID, a.AlbumUUID).FirstOrCreate(db))
 			}
 		}
 
@@ -297,7 +297,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		db := conf.Db()
 
-		db.Where("album_uuid = ? AND photo_uuid IN (?)", a.AlbumUUID, f.Photos).Delete(&models.PhotoAlbum{})
+		db.Where("album_uuid = ? AND photo_uuid IN (?)", a.AlbumUUID, f.Photos).Delete(&entity.PhotoAlbum{})
 
 		event.Success(fmt.Sprintf("photos removed from %s", a.AlbumName))
 

@@ -1,4 +1,4 @@
-package models
+package entity
 
 // Labels can have zero or more categories with the same or a similar meaning
 type Category struct {

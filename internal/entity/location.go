@@ -1,4 +1,4 @@
-package models
+package entity
 
 // Photo location
 type Location struct {
