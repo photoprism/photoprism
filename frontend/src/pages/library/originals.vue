@@ -30,12 +30,18 @@
                         :label="labels.convertRaw"
                 ></v-checkbox>
                 <v-checkbox
-                        v-if="!readonly"
                         class="ma-0 pa-0"
                         v-model="options.createThumbs"
                         color="secondary-dark"
                         :disabled="busy"
                         :label="labels.createThumbs"
+                ></v-checkbox>
+                <v-checkbox
+                        class="ma-0 pa-0"
+                        v-model="options.groomMetadata"
+                        color="secondary-dark"
+                        :disabled="busy"
+                        :label="labels.groomMetadata"
                 ></v-checkbox>
 
                 <v-btn
@@ -75,11 +81,13 @@
                     skipUnchanged: true,
                     createThumbs: false,
                     convertRaw: false,
+                    groomMetadata: false,
                 },
                 labels: {
                     skipUnchanged: this.$gettext("Skip unchanged files"),
                     createThumbs: this.$gettext("Pre-render thumbnails"),
                     convertRaw: this.$gettext("Convert RAW to JPEG"),
+                    groomMetadata: this.$gettext("Groom metadata and estimate locations"),
                 }
             }
         },
