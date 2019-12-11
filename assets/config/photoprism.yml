@@ -1,7 +1,7 @@
 url: "https://demo.photoprism.org/"
 title: "PhotoPrism"
 subtitle: "Browse your life"
-description: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin."
+description: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source."
 author: "Anonymous"
 twitter: "@browseyourlife"
 debug: false
