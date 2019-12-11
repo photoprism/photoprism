@@ -68,7 +68,12 @@ to receive regular project updates and discuss development related topics. Don't
 
 ## Donations ##
 
-You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero). They will match your donation in the first year.
+PhotoPrism is a non-profit project run entirely by volunteers. We need your funds to pay for 
+[organizing meetups](https://github.com/photoprism/photoprism/wiki/Meetups),
+[running our servers](https://github.com/photoprism/photoprism/wiki/Infrastructure),
+visiting conferences, buying test devices, offering rewards for contributions, and covering our cost of living.
+
+You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero). They will match every donation in the first year.
 
 Also please leave a star if you like this project, it provides enough motivation to keep going. Thank you very much! <3
 
