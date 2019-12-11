@@ -131,9 +131,9 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 			} else {
 				photo.PhotoTitle = "Unknown"
 			}
-		}
 
-		log.Debugf("index: changed photo title to \"%s\"", photo.PhotoTitle)
+			log.Infof("index: changed empty photo title to \"%s\"", photo.PhotoTitle)
+		}
 	}
 
 	// This should never happen
