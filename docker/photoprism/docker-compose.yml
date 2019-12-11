@@ -15,7 +15,7 @@ services:
       PHOTOPRISM_URL: "https://demo.photoprism.org/"
       PHOTOPRISM_TITLE: "PhotoPrism"
       PHOTOPRISM_SUBTITLE: "Browse your life"
-      PHOTOPRISM_DESCRIPTION: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin."
+      PHOTOPRISM_DESCRIPTION: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source."
       PHOTOPRISM_AUTHOR: "Anonymous"
       PHOTOPRISM_TWITTER: "@browseyourlife"
       PHOTOPRISM_IMPORT_PATH: "/home/photoprism/Pictures/Import"
