@@ -40,6 +40,9 @@ type PhotoSearch struct {
 	Before      time.Time `form:"before" time_format:"2006-01-02"`
 	After       time.Time `form:"after" time_format:"2006-01-02"`
 	Favorites   bool      `form:"favorites"`
+	Public      bool      `form:"public"`
+	Story       bool      `form:"story"`
+	Safe        bool      `form:"safe"`
 
 	Count  int    `form:"count" binding:"required"`
 	Offset int    `form:"offset"`

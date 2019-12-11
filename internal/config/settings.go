@@ -47,4 +47,3 @@ func (s *Settings) WriteValuesToFile(fileName string) error {
 
 	return ioutil.WriteFile(fileName, data, os.ModePerm)
 }
-

@@ -435,7 +435,7 @@ func (m *MediaFile) HasSameFilename(other *MediaFile) bool {
 func (m *MediaFile) Move(newFilename string) error {
 	if err := os.Rename(m.filename, newFilename); err != nil {
 		log.Debugf("could not rename file, falling back to copy and delete: %s", err.Error())
- 	} else {
+	} else {
 		m.filename = newFilename
 
 		return nil

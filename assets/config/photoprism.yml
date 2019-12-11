@@ -1,3 +1,9 @@
+url: "https://demo.photoprism.org/"
+title: "PhotoPrism"
+subtitle: "Browse your life"
+description: "Personal Photo Management"
+author: "Anonymous"
+twitter: "@browseyourlife"
 debug: false
 read-only: false
 public: false

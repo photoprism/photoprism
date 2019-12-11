@@ -2,9 +2,10 @@ package util
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestProfileTime(t *testing.T) {

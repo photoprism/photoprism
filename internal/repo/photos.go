@@ -85,10 +85,6 @@ type PhotoResult struct {
 	FileHeight         int
 	FileOrientation    int
 	FileAspectRatio    float64
-
-	// List of matching labels and keywords
-	Labels string
-	Keywords string
 }
 
 func (m *PhotoResult) DownloadFileName() string {
@@ -128,18 +124,13 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		lenses.lens_make, lenses.lens_model,
 		countries.country_name,
 		locations.loc_display_name, locations.loc_name, locations.loc_city, locations.loc_postcode, locations.loc_county, 
-		locations.loc_state, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type,
-		GROUP_CONCAT(DISTINCT labels.label_name) AS labels,
-		GROUP_CONCAT(DISTINCT keywords.keyword) AS keywords`).
+		locations.loc_state, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type`).
 		Joins("JOIN files ON files.photo_id = photos.id AND files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
 		Joins("LEFT JOIN countries ON countries.id = photos.country_id").
 		Joins("LEFT JOIN locations ON locations.id = photos.location_id").
 		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id").
-		Joins("LEFT JOIN labels ON photos_labels.label_id = labels.id").
-		Joins("LEFT JOIN photos_keywords ON photos_keywords.photo_id = photos.id").
-		Joins("LEFT JOIN keywords ON photos_keywords.keyword_id = keywords.id").
 		Where("photos.deleted_at IS NULL AND files.file_missing = 0").
 		Group("photos.id, files.id")
 	var categories []models.Category
@@ -159,7 +150,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 				labelIds = append(labelIds, category.LabelID)
 			}
 
-			q = q.Where("labels.id IN (?)", labelIds)
+			q = q.Where("photos_labels.label_id IN (?)", labelIds)
 		}
 	}
 
@@ -167,18 +158,27 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		q = q.Where("location_id > 0")
 
 		if f.Query != "" {
-			likeString := "%" + strings.ToLower(f.Query) + "%"
-			q = q.Where("LOWER(locations.loc_display_name) LIKE ?", likeString)
+			q = q.Joins("LEFT JOIN photos_keywords ON photos_keywords.photo_id = photos.id").
+				Joins("LEFT JOIN keywords ON photos_keywords.keyword_id = keywords.id").
+				Where("keywords.keyword LIKE ?", strings.ToLower(f.Query)+"%")
 		}
 	} else if f.Query != "" {
+		if len(f.Query) < 2 {
+			return results, fmt.Errorf("query too short")
+		}
+
 		slugString := slug.Make(f.Query)
 		lowerString := strings.ToLower(f.Query)
 		likeString := lowerString + "%"
 
-		if result := s.db.First(&label, "label_slug = ?", slugString); result.Error != nil {
-			log.Infof("search: label \"%s\" not found", f.Query)
+		q = q.Joins("LEFT JOIN photos_keywords ON photos_keywords.photo_id = photos.id").
+			Joins("LEFT JOIN keywords ON photos_keywords.keyword_id = keywords.id")
 
-			q = q.Where("labels.label_slug = ? OR keywords.keyword LIKE ? OR files.file_main_color = ?", slugString, likeString, lowerString)
+		if result := s.db.First(&label, "label_slug = ?", slugString); result.Error != nil {
+			log.Infof("search: label \"%s\" not found, using fuzzy search", f.Query)
+
+			q = q.Joins("LEFT JOIN labels ON photos_labels.label_id = labels.id").
+				Where("labels.label_name LIKE ? OR keywords.keyword LIKE ? OR files.file_main_color = ?", likeString, likeString, lowerString)
 		} else {
 			labelIds = append(labelIds, label.ID)
 
@@ -190,7 +190,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 
 			log.Infof("search: label \"%s\" includes %d categories", label.LabelName, len(labelIds))
 
-			q = q.Where("labels.id IN (?) OR keywords.keyword LIKE ? OR files.file_main_color = ?", labelIds, likeString, lowerString)
+			q = q.Where("photos_labels.label_id IN (?) OR keywords.keyword LIKE ? OR files.file_main_color = ?", labelIds, likeString, lowerString)
 		}
 	}
 
@@ -208,6 +208,18 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 
 	if f.Favorites {
 		q = q.Where("photos.photo_favorite = 1")
+	}
+
+	if f.Public {
+		q = q.Where("photos.photo_private = 0")
+	}
+
+	if f.Safe {
+		q = q.Where("photos.photo_nsfw = 0")
+	}
+
+	if f.Story {
+		q = q.Where("photos.photo_story = 1")
 	}
 
 	if f.Country != "" {
@@ -282,6 +294,8 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 	}
 
 	switch f.Order {
+	case "relevance":
+		q = q.Order("photo_story DESC, photo_favorite DESC, taken_at DESC")
 	case "newest":
 		q = q.Order("taken_at DESC")
 	case "oldest":

@@ -111,7 +111,7 @@ func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
 		"fileType": image.Type(),
 		"fileName": fileName,
 		"baseName": filepath.Base(fileName),
-		"xmpName": filepath.Base(xmpFilename),
+		"xmpName":  filepath.Base(xmpFilename),
 	})
 
 	if convertCommand, err := c.ConvertCommand(image, jpegFilename, xmpFilename); err != nil {

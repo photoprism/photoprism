@@ -31,7 +31,7 @@ func CreateSession(router *gin.RouterGroup, conf *config.Config) {
 
 		gc := conf.Cache()
 
-		gc.Set(token, 1, cache.DefaultExpiration);
+		gc.Set(token, 1, cache.DefaultExpiration)
 
 		s := gin.H{"token": token, "user": gin.H{"ID": 1, "FirstName": "Admin", "LastName": "", "Role": "admin", "Email": "photoprism@localhost"}}
 

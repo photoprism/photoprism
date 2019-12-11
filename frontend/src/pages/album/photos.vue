@@ -228,7 +228,7 @@
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
-                });
+                }).catch(() => this.loading = false);
             },
             findAlbum() {
                 this.model.find(this.uuid).then(m => {

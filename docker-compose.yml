@@ -13,6 +13,12 @@ services:
       - ".:/go/src/github.com/photoprism/photoprism"
     shm_size: "2gb"
     environment:
+      PHOTOPRISM_URL: "http://localhost:2342/"
+      PHOTOPRISM_TITLE: "PhotoPrism"
+      PHOTOPRISM_SUBTITLE: "Browse your life"
+      PHOTOPRISM_DESCRIPTION: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin."
+      PHOTOPRISM_AUTHOR: "PhotoPrism.org"
+      PHOTOPRISM_TWITTER: "@browseyourlife"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_SERVER_MODE: "debug"
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"

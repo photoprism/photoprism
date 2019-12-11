@@ -302,7 +302,7 @@ func (i *Indexer) addLabels(photoId uint, labels Labels) {
 	}
 }
 
-func (i *Indexer) indexLocation (mediaFile *MediaFile, photo *models.Photo, keywords []string, labels Labels, fileChanged bool, o IndexerOptions) ([]string, Labels){
+func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *models.Photo, keywords []string, labels Labels, fileChanged bool, o IndexerOptions) ([]string, Labels) {
 	if location, err := mediaFile.Location(); err == nil {
 		i.db.FirstOrCreate(location, "id = ?", location.ID)
 		photo.Location = location
@@ -337,7 +337,6 @@ func (i *Indexer) indexLocation (mediaFile *MediaFile, photo *models.Photo, keyw
 
 		// Sort by priority and uncertainty
 		sort.Sort(labels)
-
 
 		if (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false {
 			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 60 && labels[0].Name != "" { // TODO: User defined title format

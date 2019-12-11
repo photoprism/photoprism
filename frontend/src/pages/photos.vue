@@ -219,7 +219,7 @@
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
-                });
+                }).catch(() => this.loading = false);
             },
         },
         created() {

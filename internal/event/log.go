@@ -9,7 +9,6 @@ import (
 
 var Log *logrus.Logger
 
-
 type Hook struct {
 	hub *hub.Hub
 }
@@ -20,11 +19,11 @@ func NewHook(hub *hub.Hub) *Hook {
 
 func (h *Hook) Fire(entry *logrus.Entry) error {
 	h.hub.Publish(Message{
-		Name:   "log." + entry.Level.String(),
+		Name: "log." + entry.Level.String(),
 		Fields: Data{
-			"time": entry.Time,
+			"time":  entry.Time,
 			"level": entry.Level.String(),
-			"msg": entry.Message,
+			"msg":   entry.Message,
 		},
 	})
 

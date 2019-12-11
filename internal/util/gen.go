@@ -5,8 +5,8 @@ package main
 
 import (
 	"bufio"
-	"os"
 	"io"
+	"os"
 	"text/template"
 )
 

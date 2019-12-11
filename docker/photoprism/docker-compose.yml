@@ -11,6 +11,16 @@ services:
     image: photoprism/photoprism:latest
     ports:
       - 2342:2342 # [local port]:[container port]
+    environment: # Run "photoprism help" and "photoprism config" too see all config options and current values
+      PHOTOPRISM_URL: "https://demo.photoprism.org/"
+      PHOTOPRISM_TITLE: "PhotoPrism"
+      PHOTOPRISM_SUBTITLE: "Browse your life"
+      PHOTOPRISM_DESCRIPTION: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin."
+      PHOTOPRISM_AUTHOR: "Anonymous"
+      PHOTOPRISM_TWITTER: "@browseyourlife"
+      PHOTOPRISM_IMPORT_PATH: "/home/photoprism/Pictures/Import"
+      PHOTOPRISM_EXPORT_PATH: "/home/photoprism/Pictures/Export"
+      PHOTOPRISM_ORIGINALS_PATH: "/home/photoprism/Pictures/Originals"
     volumes:
       - "~/Pictures/Originals:/home/photoprism/Pictures/Originals" # [local path]:[container path]
       - "~/Pictures/Import:/home/photoprism/Pictures/Import" # [local path]:[container path] (optional)

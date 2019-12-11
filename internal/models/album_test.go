@@ -1,10 +1,11 @@
 package models
 
 import (
-	"github.com/gosimple/slug"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/gosimple/slug"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewAlbum(t *testing.T) {

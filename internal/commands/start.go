@@ -31,8 +31,8 @@ var startFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DETACH_SERVER",
 	},
 	cli.BoolFlag{
-		Name:   "config, c",
-		Usage:  "show config",
+		Name:  "config, c",
+		Usage: "show config",
 	},
 }
 

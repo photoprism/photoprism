@@ -1,10 +1,11 @@
 package photoprism
 
 import (
-	"github.com/disintegration/imaging"
-	"github.com/photoprism/photoprism/internal/models"
 	"os"
 	"testing"
+
+	"github.com/disintegration/imaging"
+	"github.com/photoprism/photoprism/internal/models"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"

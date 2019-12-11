@@ -186,6 +186,44 @@ func (c *Config) Name() string {
 	return c.config.Name
 }
 
+// Url returns the public server URL (default is "http://localhost:2342/").
+func (c *Config) Url() string {
+	if c.config.Url == "" {
+		return "http://localhost:2342/"
+	}
+
+	return c.config.Url
+}
+
+// Title returns the site title (default is application name).
+func (c *Config) Title() string {
+	if c.config.Title == "" {
+		return c.Name()
+	}
+
+	return c.config.Title
+}
+
+// Subtitle returns the site title.
+func (c *Config) Subtitle() string {
+	return c.config.Subtitle
+}
+
+// Description returns the site title.
+func (c *Config) Description() string {
+	return c.config.Description
+}
+
+// Author returns the site author / copyright.
+func (c *Config) Author() string {
+	return c.config.Author
+}
+
+// Description returns the twitter handle for sharing.
+func (c *Config) Twitter() string {
+	return c.config.Twitter
+}
+
 // Version returns the application version.
 func (c *Config) Version() string {
 	return c.config.Version
@@ -532,7 +570,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		Stories   uint `json:"stories"`
 		Labels    uint `json:"labels"`
 		Albums    uint `json:"albums"`
-		Countries    uint `json:"countries"`
+		Countries uint `json:"countries"`
 	}{}
 
 	db.Table("photos").
@@ -570,20 +608,26 @@ func (c *Config) ClientConfig() ClientConfig {
 	cssHash := util.Hash(c.HttpStaticBuildPath() + "/app.css")
 
 	result := ClientConfig{
-		"name":       c.Name(),
-		"version":    c.Version(),
-		"copyright":  c.Copyright(),
-		"debug":      c.Debug(),
-		"readonly":   c.ReadOnly(),
-		"public":     c.Public(),
-		"albums":     albums,
-		"cameras":    cameras,
-		"countries":  countries,
-		"thumbnails": Thumbnails,
-		"jsHash":     jsHash,
-		"cssHash":    cssHash,
-		"settings":   c.Settings(),
-		"count":      count,
+		"name":        c.Name(),
+		"url":         c.Url(),
+		"title":       c.Title(),
+		"subtitle":    c.Subtitle(),
+		"description": c.Description(),
+		"author":      c.Author(),
+		"twitter":     c.Twitter(),
+		"version":     c.Version(),
+		"copyright":   c.Copyright(),
+		"debug":       c.Debug(),
+		"readonly":    c.ReadOnly(),
+		"public":      c.Public(),
+		"albums":      albums,
+		"cameras":     cameras,
+		"countries":   countries,
+		"thumbnails":  Thumbnails,
+		"jsHash":      jsHash,
+		"cssHash":     cssHash,
+		"settings":    c.Settings(),
+		"count":       count,
 	}
 
 	return result

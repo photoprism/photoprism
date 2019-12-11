@@ -1,8 +1,9 @@
 package photoprism
 
 import (
-	"github.com/photoprism/photoprism/internal/config"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 func TestIndexer_IndexAll(t *testing.T) {

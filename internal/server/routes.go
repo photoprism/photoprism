@@ -21,6 +21,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.CreateSession(v1, conf)
 		api.DeleteSession(v1, conf)
 
+		api.GetPreview(v1, conf)
 		api.GetThumbnail(v1, conf)
 		api.GetDownload(v1, conf)
 		api.CreateZip(v1, conf)

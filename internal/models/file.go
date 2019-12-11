@@ -36,7 +36,6 @@ type File struct {
 	FileNotes        string `gorm:"type:text"`
 }
 
-
 func FindFileByHash(db *gorm.DB, fileHash string) (File, error) {
 	var file File
 

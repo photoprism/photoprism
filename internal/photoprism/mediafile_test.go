@@ -1,9 +1,10 @@
 package photoprism
 
 import (
-	"github.com/photoprism/photoprism/internal/util"
 	"os"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/util"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
@@ -496,8 +497,8 @@ func TestMediaFile_Move(t *testing.T) {
 	conf := config.TestConfig()
 
 	tmpPath := conf.CachePath() + "/_tmp/TestMediaFile_Move"
-	origName := tmpPath  + "/original.jpg"
-	destName := tmpPath  + "/destination.jpg"
+	origName := tmpPath + "/original.jpg"
+	destName := tmpPath + "/destination.jpg"
 
 	os.MkdirAll(tmpPath, os.ModePerm)
 

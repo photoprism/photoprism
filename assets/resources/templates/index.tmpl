@@ -5,24 +5,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>{{ .clientConfig.name }}</title>
+  <title>{{ .clientConfig.title }}</title>
 
-  <meta property="og:title" content="PhotoPrism: Try our demo! 🌈"/>
-  <meta property="og:image" content="https://dl.photoprism.org/assets/img/preview.jpg"/>
-  <meta property="og:url" content="https://demo.photoprism.org/"/>
-  <meta property="og:description"
-        content="Personal Photo Management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin."/>
+  <meta property="og:title" content="{{ .clientConfig.title }}: {{ .clientConfig.subtitle }}"/>
+  <meta property="og:image" content="{{ .clientConfig.url }}api/v1/preview"/>
+  <meta property="og:url" content="{{ .clientConfig.url }}"/>
+  <meta property="og:description" content="{{ .clientConfig.description }}"/>
 
   <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="PhotoPrism: Try our demo! 🌈"/>
-  <meta name="twitter:description"
-        content="Personal Photo Management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin."/>
-  <meta name="twitter:image" content="https://dl.photoprism.org/assets/img/preview.jpg"/>
-  <meta name="twitter:site" content="@browseyourlife"/>
+  <meta name="twitter:title" content="{{ .clientConfig.title }}: {{ .clientConfig.subtitle }}"/>
+  <meta name="twitter:description" content="{{ .clientConfig.description }}"/>
+  <meta name="twitter:image" content="{{ .clientConfig.url }}api/v1/preview"/>
+  <meta name="twitter:site" content="{{ .clientConfig.twitter }}"/>
 
-  <meta name="author" content="PhotoPrism.org">
-  <meta name="description"
-        content="Personal Photo Management powered by Go and Google TensorFlow. Free and open-source. Made with ❤️ in Berlin."/>
+  <meta name="author" content="{{ .clientConfig.author }}">
+  <meta name="description" content="{{ .clientConfig.description }}"/>
 
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/static/favicons/favicon.png">
