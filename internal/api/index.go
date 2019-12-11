@@ -47,7 +47,7 @@ func Index(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Info(fmt.Sprintf("indexing photos in \"%s\"", filepath.Base(path)))
 
-		if f.ConvertRaw {
+		if f.ConvertRaw && !conf.ReadOnly() {
 			converter := photoprism.NewConverter(conf)
 			converter.ConvertAll(conf.OriginalsPath())
 		}
