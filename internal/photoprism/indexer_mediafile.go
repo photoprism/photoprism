@@ -128,10 +128,12 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 				}
 
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", daytimeString, photo.TakenAtLocal.Format("2006"))
+			} else {
+				photo.PhotoTitle = "Unknown"
 			}
 		}
 
-		log.Debugf("index: changed empty photo title to \"%s\"", photo.PhotoTitle)
+		log.Debugf("index: changed photo title to \"%s\"", photo.PhotoTitle)
 	}
 
 	// This should never happen
@@ -367,7 +369,11 @@ func (i *Indexer) indexLocation (mediaFile *MediaFile, photo *models.Photo, keyw
 				}
 			}
 
-			log.Infof("index: new photo title is \"%s\"", photo.PhotoTitle)
+			if photo.PhotoTitle == "" {
+				log.Warnf("index: could not set photo title based on location or labels for \"%s\"", filepath.Base(mediaFile.Filename()))
+			} else {
+				log.Infof("index: new photo title is \"%s\"", photo.PhotoTitle)
+			}
 		}
 	} else {
 		log.Debugf("index: location cannot be determined precisely (%s)", err.Error())
