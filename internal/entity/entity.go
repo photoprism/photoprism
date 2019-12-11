@@ -8,3 +8,16 @@ Additional information concerning data storage can be found in our Developer Gui
 https://github.com/photoprism/photoprism/wiki/Storage
 */
 package entity
+
+import (
+	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/event"
+)
+
+var log = event.Log
+
+func logError(result *gorm.DB) {
+	if result.Error != nil {
+		log.Error(result.Error.Error())
+	}
+}
