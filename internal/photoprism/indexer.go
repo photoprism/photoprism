@@ -74,7 +74,7 @@ func (i *Indexer) IndexOriginals(o IndexerOptions) map[string]bool {
 	err := filepath.Walk(i.originalsPath(), func(filename string, fileInfo os.FileInfo, err error) error {
 		defer func() {
 			if err := recover(); err != nil {
-				log.Printf("Could not index file %s due to an unexpected error: %s", filename, err)
+				log.Errorf("index: panic %s", err)
 			}
 		}()
 		if err != nil || indexed[filename] {
