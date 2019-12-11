@@ -27,7 +27,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos[0])
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("label query", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -41,7 +41,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("invalid label query", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -53,7 +53,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 
 		assert.Equal(t, err.Error(), "label \"xxx\" not found")
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.location true", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -68,7 +68,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.camera", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -83,7 +83,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.color", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -98,7 +98,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.favorites", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -112,7 +112,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.country", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -126,7 +126,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.title", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -140,7 +140,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.description", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -154,7 +154,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.notes", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -168,7 +168,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.hash", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -182,7 +182,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.duplicate", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -196,7 +196,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.portrait", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -210,7 +210,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.mono", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -224,7 +224,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.chroma", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -238,7 +238,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.fmin and Order:oldest", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -252,7 +252,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.fmax and Order:newest", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -266,7 +266,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.Lat and form.Long and Order:imported", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -280,7 +280,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 	t.Run("form.Before and form.After", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -294,7 +294,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(photos)
+		t.Logf("results: %+v", photos)
 	})
 
 }
