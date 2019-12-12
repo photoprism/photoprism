@@ -23,7 +23,7 @@ export default [
         name: "login",
         path: "/login",
         component: Login,
-        meta: {title: `${c.name} Login`},
+        meta: {title: "Sign In"},
     },
     {
         name: "photos",
@@ -84,7 +84,7 @@ export default [
         name: "library_logs",
         path: "/library/logs",
         component: Library,
-        meta: {title: `${c.name} Server`, auth: true},
+        meta: {title: "Server Logs", auth: true},
         props: {tab: 3},
     },
     {
@@ -112,7 +112,7 @@ export default [
         name: "share",
         path: "/share",
         component: Share,
-        meta: {title: "Share", auth: true},
+        meta: {title: "Share with friends", auth: true},
     },
     {
         name: "settings",
