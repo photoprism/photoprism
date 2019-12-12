@@ -11,6 +11,8 @@ import Settings from "pages/settings.vue";
 import Login from "pages/login.vue";
 import Todo from "pages/todo.vue";
 
+const c = window.clientConfig;
+
 export default [
     {
         name: "home",
@@ -21,19 +23,19 @@ export default [
         name: "login",
         path: "/login",
         component: Login,
-        meta: {title: "Login"},
+        meta: {title: `${c.name} Login`},
     },
     {
         name: "photos",
         path: "/photos",
         component: Photos,
-        meta: {title: "Browse your life"},
+        meta: {title: c.subtitle},
     },
     {
         name: "albums",
         path: "/albums",
         component: Albums,
-        meta: {title: "Albums"},
+        meta: {title: "Photo Albums"},
     },
     {
         name: "album",
@@ -52,7 +54,7 @@ export default [
         name: "places",
         path: "/places",
         component: Places,
-        meta: {title: "Places"},
+        meta: {title: "Where you've been"},
     },
     {
         name: "labels",
@@ -79,24 +81,31 @@ export default [
         meta: {title: "Filters"},
     },
     {
+        name: "library_logs",
+        path: "/library/logs",
+        component: Library,
+        meta: {title: `${c.name} Server`, auth: true},
+        props: {tab: 3},
+    },
+    {
         name: "library_upload",
         path: "/library/upload",
         component: Library,
-        meta: {title: "Library", auth: true},
+        meta: {title: "Photo Upload", auth: true},
         props: {tab: 2},
     },
     {
         name: "library_import",
         path: "/library/import",
         component: Library,
-        meta: {title: "Library", auth: true},
+        meta: {title: "Import Photos", auth: true},
         props: {tab: 1},
     },
     {
         name: "library",
         path: "/library",
         component: Library,
-        meta: {title: "Library", auth: true},
+        meta: {title: "Photo Library", auth: true},
         props: {tab: 0},
     },
     {
@@ -109,15 +118,8 @@ export default [
         name: "settings",
         path: "/settings",
         component: Settings,
-        meta: {title: "Settings", auth: true},
+        meta: {title: "Application Settings", auth: true},
         props: {tab: 0},
-    },
-    {
-        name: "settings_logs",
-        path: "/settings/logs",
-        component: Settings,
-        meta: {title: "Settings", auth: true},
-        props: {tab: 1},
     },
     {
         path: "*", redirect: "/photos",

@@ -15,12 +15,13 @@
     "navigation": "#424242",
     "navigation-home": "#000000"
   },
-  "whale": {
-    "primary": "#82B1FF",
+  "cyano": {
+    "application": "#ECEFF1",
+    "primary": "#80DEEA",
     "secondary-dark": "#757575",
-    "secondary": "#E0E0E0",
+    "secondary": "#B0BEC5",
     "secondary-light": "#EEEEEE",
-    "accent": "#9E9E9E",
+    "accent": "#757575",
     "error": "#E57373",
     "info": "#00ACC1",
     "success": "#00BFA5",
@@ -28,13 +29,13 @@
     "delete": "#E57373",
     "love": "#EF5350",
     "terminal": "#333333",
-    "navigation": "#616161",
-    "navigation-home": "#000000"
+    "navigation": "#006064",
+    "navigation-home": "#37474F"
   },
   "raspberry": {
-    "primary": "#F48FB1",
+    "primary": "#ffb3cc",
     "secondary-dark": "#757575",
-    "secondary": "#E0E0E0",
+    "secondary": "#FCE4EC",
     "secondary-light": "#EEEEEE",
     "accent": "#9E9E9E",
     "error": "#E57373",
@@ -43,9 +44,9 @@
     "warning": "#FFD600",
     "delete": "#E57373",
     "love": "#EF5350",
-    "terminal": "#333333",
-    "navigation": "#616161",
-    "navigation-home": "#000000"
+    "terminal": "#616161",
+    "navigation": "#a40e52",
+    "navigation-home": "#880E4F"
   },
   "seaweed": {
     "primary": "#26A69A",
@@ -80,7 +81,8 @@
     "navigation-home": "#263238"
   },
   "charcoal": {
-    "primary": "#8899AA",
+    "application": "#EEEEEE",
+    "primary": "#a5b3c0",
     "secondary-dark": "#212121",
     "secondary": "#BDBDBD",
     "secondary-light": "#E0E0E0",

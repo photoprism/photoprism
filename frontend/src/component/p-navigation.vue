@@ -1,6 +1,6 @@
 <template>
     <div id="p-navigation">
-        <v-toolbar dark scroll-off-screen color="navigation" class="hidden-lg-and-up p-navigation-small"
+        <v-toolbar dark scroll-off-screen color="navigation darken-1" class="hidden-lg-and-up p-navigation-small"
                    @click.stop="showNavigation()">
             <v-toolbar-side-icon class="p-navigation-show"></v-toolbar-side-icon>
 

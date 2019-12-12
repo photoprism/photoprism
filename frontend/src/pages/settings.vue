@@ -14,20 +14,12 @@
             <v-tab-item>
                 <p-tab-general></p-tab-general>
             </v-tab-item>
-
-            <v-tab id="tab-settings-logs" ripple @click="changePath('/settings/logs')">
-                <translate>Logs</translate>
-            </v-tab>
-            <v-tab-item>
-                <p-tab-logs></p-tab-logs>
-            </v-tab-item>
         </v-tabs>
     </div>
 </template>
 
 <script>
     import tabGeneral from "pages/settings/general.vue";
-    import tabLogs from "pages/settings/logs.vue";
 
     export default {
         name: 'p-page-settings',
@@ -36,7 +28,6 @@
         },
         components: {
             'p-tab-general': tabGeneral,
-            'p-tab-logs': tabLogs,
         },
         data() {
             return {
