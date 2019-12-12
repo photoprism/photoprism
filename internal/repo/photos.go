@@ -178,7 +178,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 			log.Infof("search: label \"%s\" not found, using fuzzy search", f.Query)
 
 			q = q.Joins("LEFT JOIN labels ON photos_labels.label_id = labels.id").
-				Where("labels.label_name LIKE ? OR keywords.keyword LIKE ? OR files.file_main_color = ?", likeString, likeString, lowerString)
+				Where("labels.label_name LIKE ? OR keywords.keyword LIKE ?", likeString, likeString)
 		} else {
 			labelIds = append(labelIds, label.ID)
 
@@ -190,7 +190,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 
 			log.Infof("search: label \"%s\" includes %d categories", label.LabelName, len(labelIds))
 
-			q = q.Where("photos_labels.label_id IN (?) OR keywords.keyword LIKE ? OR files.file_main_color = ?", labelIds, likeString, lowerString)
+			q = q.Where("photos_labels.label_id IN (?) OR keywords.keyword LIKE ?", labelIds, likeString)
 		}
 	}
 

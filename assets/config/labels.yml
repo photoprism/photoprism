@@ -145,11 +145,11 @@ velvet:
 
 hair slide:
   label: jewelry
-  threshold: 0.4
+  threshold: 0.6
 
 shower curtain:
   label: bathroom
-  threshold: 0.15
+  threshold: 0.6
 
 windsor tie:
   priority: -1
@@ -770,18 +770,14 @@ jellyfish:
 sea anemone:
   categories:
     - animal
-    - coral
+    - water
 
 brain coral:
-  categories:
-    - animal
-    - coral
+  label: nature
 
 coral reef:
+  label: nature
   threshold: 0.6
-  categories:
-    - ocean
-    - water
 
 flatworm:
   categories:
@@ -2222,9 +2218,10 @@ computer keyboard:
     - laptop
 
 confectionery:
+  label: shop
   categorie:
-    - sweets
-    - food
+    - store
+    - commercial
 
 container ship:
   label: ship
@@ -2476,10 +2473,6 @@ jack-o'-lantern:
 jeep:
   categories:
     - car
-
-jigsaw puzzle:
-  categories:
-    - game
 
 ladle:
   categories:
@@ -2794,6 +2787,8 @@ power drill:
     - tool
 
 prayer rug:
+  threshold: 0.6
+  priority: -1
   categories:
     - religion
     - carpet
@@ -3007,8 +3002,10 @@ submarine:
     - boat
 
 suspension bridge:
+  label: architecture
   categories:
     - bridge
+    - building
 
 swimming trunks:
   categories:
@@ -3419,7 +3416,8 @@ buckeye:
 
 coral fungus:
   categories:
-    - coral
+    - plant
+    - mushroom
 
 agaric:
   categories:
@@ -3537,3 +3535,15 @@ web site:
   categories:
     - sign
     - screenshot
+
+crossword puzzle:
+  threshold: 0.6
+  priority: -1
+  categories:
+    - game
+
+jigsaw puzzle:
+  threshold: 0.6
+  priority: -1
+  categories:
+    - game

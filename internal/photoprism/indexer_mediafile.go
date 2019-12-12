@@ -21,19 +21,18 @@ const (
 
 type IndexResult string
 
-func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexResult {
+func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 	var photo entity.Photo
 	var file, primaryFile entity.File
-	var isPrimary = false
 	var exifData *Exif
 	var photoQuery, fileQuery *gorm.DB
 	var keywords []string
 
 	labels := Labels{}
-	fileBase := mediaFile.Basename()
-	filePath := mediaFile.RelativePath(i.originalsPath())
-	fileName := mediaFile.RelativeFilename(i.originalsPath())
-	fileHash := mediaFile.Hash()
+	fileBase := m.Basename()
+	filePath := m.RelativePath(i.originalsPath())
+	fileName := m.RelativeFilename(i.originalsPath())
+	fileHash := m.Hash()
 	fileChanged := true
 	fileExists := false
 	photoExists := false
@@ -50,70 +49,80 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 	if !fileExists {
 		photoQuery = i.db.Unscoped().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase)
 
-		if photoQuery.Error != nil && mediaFile.HasTimeAndPlace() {
-			exifData, _ = mediaFile.Exif()
+		if photoQuery.Error != nil && m.HasTimeAndPlace() {
+			exifData, _ = m.Exif()
 			photoQuery = i.db.Unscoped().First(&photo, "photo_lat = ? AND photo_long = ? AND taken_at = ?", exifData.Lat, exifData.Long, exifData.TakenAt)
 		}
 	} else {
 		photoQuery = i.db.Unscoped().First(&photo, "id = ?", file.PhotoID)
 		fileChanged = file.FileHash != fileHash
-		isPrimary = file.FilePrimary
 	}
 
 	photoExists = photoQuery.Error == nil
 
-	if !fileChanged && photoExists && !photo.TakenAt.IsZero() && o.SkipUnchanged() {
+	if !fileChanged && photoExists && o.SkipUnchanged() {
 		return indexResultSkipped
+	}
+
+	if !file.FilePrimary {
+		if photoExists {
+			if q := i.db.Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); q.Error != nil {
+				file.FilePrimary = m.IsJpeg()
+			}
+		} else {
+			file.FilePrimary = m.IsJpeg()
+		}
+	}
+
+	if file.FilePrimary {
+		primaryFile = file
 	}
 
 	photo.PhotoPath = filePath
 	photo.PhotoName = fileBase
 
-	if isPrimary || !photoExists || photo.TakenAt.IsZero() {
-		if jpeg, err := mediaFile.Jpeg(); err == nil {
-			if fileChanged || o.UpdateLabels || o.UpdateTitle {
-				// Image classification labels
-				labels = i.classifyImage(jpeg)
-			}
+	if file.FilePrimary {
+		if fileChanged || o.UpdateLabels || o.UpdateTitle {
+			// Image classification labels
+			labels = i.classifyImage(m)
+		}
 
-			if fileChanged || o.UpdateExif {
-				// Read UpdateExif data
-				if exifData, err := jpeg.Exif(); err == nil {
-					photo.PhotoLat = exifData.Lat
-					photo.PhotoLong = exifData.Long
-					photo.TakenAt = exifData.TakenAt
-					photo.TakenAtLocal = exifData.TakenAtLocal
-					photo.TimeZone = exifData.TimeZone
-					photo.PhotoAltitude = exifData.Altitude
-					photo.PhotoArtist = exifData.Artist
+		if fileChanged || o.UpdateExif {
+			// Read UpdateExif data
+			if exifData, err := m.Exif(); err == nil {
+				photo.PhotoLat = exifData.Lat
+				photo.PhotoLong = exifData.Long
+				photo.TakenAt = exifData.TakenAt
+				photo.TakenAtLocal = exifData.TakenAtLocal
+				photo.TimeZone = exifData.TimeZone
+				photo.PhotoAltitude = exifData.Altitude
+				photo.PhotoArtist = exifData.Artist
 
-					if exifData.UUID != "" {
-						log.Debugf("index: photo uuid \"%s\"", exifData.UUID)
-						photo.PhotoUUID = exifData.UUID
-					} else {
-						log.Debug("index: no photo uuid in exif data")
-					}
+				if len(exifData.UUID) > 15 {
+					log.Debugf("index: file uuid \"%s\"", exifData.UUID)
+
+					file.FileUUID = exifData.UUID
 				}
-			}
-
-			if fileChanged || o.UpdateCamera {
-				// Set UpdateCamera, Lens, Focal Length and F Number
-				photo.Camera = entity.NewCamera(mediaFile.CameraModel(), mediaFile.CameraMake()).FirstOrCreate(i.db)
-				photo.Lens = entity.NewLens(mediaFile.LensModel(), mediaFile.LensMake()).FirstOrCreate(i.db)
-				photo.PhotoFocalLength = mediaFile.FocalLength()
-				photo.PhotoFNumber = mediaFile.FNumber()
-				photo.PhotoIso = mediaFile.Iso()
-				photo.PhotoExposure = mediaFile.Exposure()
 			}
 		}
 
-		if fileChanged || o.UpdateLocation || o.UpdateTitle {
-			keywords, labels = i.indexLocation(mediaFile, &photo, keywords, labels, fileChanged, o)
+		if fileChanged || o.UpdateCamera {
+			// Set UpdateCamera, Lens, Focal Length and F Number
+			photo.Camera = entity.NewCamera(m.CameraModel(), m.CameraMake()).FirstOrCreate(i.db)
+			photo.Lens = entity.NewLens(m.LensModel(), m.LensMake()).FirstOrCreate(i.db)
+			photo.PhotoFocalLength = m.FocalLength()
+			photo.PhotoFNumber = m.FNumber()
+			photo.PhotoIso = m.Iso()
+			photo.PhotoExposure = m.Exposure()
+		}
+
+		if fileChanged || o.UpdateKeywords || o.UpdateLocation || o.UpdateTitle {
+			keywords, labels = i.indexLocation(m, &photo, keywords, labels, fileChanged, o)
 		}
 
 		if (fileChanged || o.UpdateTitle) && photo.PhotoTitle == "" {
 			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", util.Title(labels[0].Name), mediaFile.DateCreated().Format("2006"))
+				photo.PhotoTitle = fmt.Sprintf("%s / %s", util.Title(labels[0].Name), m.DateCreated().Format("2006"))
 			} else if !photo.TakenAtLocal.IsZero() {
 				var daytimeString string
 				hour := photo.TakenAtLocal.Hour()
@@ -134,14 +143,11 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 
 			log.Infof("index: changed empty photo title to \"%s\"", photo.PhotoTitle)
 		}
-	}
 
-	// This should never happen
-	if photo.TakenAt.IsZero() || photo.TakenAtLocal.IsZero() {
-		photo.TakenAt = mediaFile.DateCreated()
-		photo.TakenAtLocal = photo.TakenAt
-
-		log.Warnf("index: %s has invalid date, set to \"%s\"", filepath.Base(mediaFile.Filename()), photo.TakenAt.Format("2006-01-02 15:04:05"))
+		if photo.TakenAt.IsZero() || photo.TakenAtLocal.IsZero() {
+			photo.TakenAt = m.DateCreated()
+			photo.TakenAtLocal = photo.TakenAt
+		}
 	}
 
 	if photoExists {
@@ -163,35 +169,23 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 
 	if len(labels) > 0 {
 		log.Infof("index: adding labels %+v", labels)
-	}
-
-	if fileChanged || o.UpdateLabels {
 		i.addLabels(photo.ID, labels)
-	}
-
-	if result := i.db.Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); result.Error != nil {
-		isPrimary = mediaFile.IsJpeg()
-	} else {
-		isPrimary = mediaFile.IsJpeg() && (fileName == primaryFile.FileName || fileHash == primaryFile.FileHash)
-	}
-
-	if (fileChanged || o.UpdateKeywords || o.UpdateTitle) && isPrimary {
-		photo.IndexKeywords(keywords, i.db)
 	}
 
 	file.PhotoID = photo.ID
 	file.PhotoUUID = photo.PhotoUUID
-	file.FilePrimary = isPrimary
+	file.FileSidecar = m.IsSidecar()
+	file.FileVideo = m.IsVideo()
 	file.FileMissing = false
 	file.FileName = fileName
 	file.FileHash = fileHash
-	file.FileType = mediaFile.Type()
-	file.FileMime = mediaFile.MimeType()
-	file.FileOrientation = mediaFile.Orientation()
+	file.FileType = string(m.Type())
+	file.FileMime = m.MimeType()
+	file.FileOrientation = m.Orientation()
 
-	if fileChanged || o.UpdateColors {
+	if m.IsJpeg() && (fileChanged || o.UpdateColors) {
 		// Color information
-		if p, err := mediaFile.Colors(i.thumbnailsPath()); err == nil {
+		if p, err := m.Colors(i.thumbnailsPath()); err == nil {
 			file.FileMainColor = p.MainColor.Name()
 			file.FileColors = p.Colors.Hex()
 			file.FileLuminance = p.Luminance.Hex()
@@ -199,13 +193,18 @@ func (i *Indexer) indexMediaFile(mediaFile *MediaFile, o IndexerOptions) IndexRe
 		}
 	}
 
-	if fileChanged || o.UpdateSize {
-		if mediaFile.Width() > 0 && mediaFile.Height() > 0 {
-			file.FileWidth = mediaFile.Width()
-			file.FileHeight = mediaFile.Height()
-			file.FileAspectRatio = mediaFile.AspectRatio()
-			file.FilePortrait = mediaFile.Width() < mediaFile.Height()
+	if m.IsJpeg() && (fileChanged || o.UpdateSize) {
+		if m.Width() > 0 && m.Height() > 0 {
+			file.FileWidth = m.Width()
+			file.FileHeight = m.Height()
+			file.FileAspectRatio = m.AspectRatio()
+			file.FilePortrait = m.Width() < m.Height()
 		}
+	}
+
+	if file.FilePrimary && (fileChanged || o.UpdateKeywords || o.UpdateTitle) {
+		keywords = append(keywords, file.FileMainColor)
+		photo.IndexKeywords(keywords, i.db)
 	}
 
 	if fileQuery.Error == nil {
@@ -327,11 +326,13 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, keywo
 			labels = append(labels, NewLocationLabel(location.LocCountry, 0, -2))
 		}
 
-		if location.LocCategory != "" {
+		// TODO: Needs refactoring
+		if location.LocCategory != "" && location.LocCategory != "highway" && location.LocCategory != "tourism" {
 			labels = append(labels, NewLocationLabel(location.LocCategory, 0, -2))
 		}
 
-		if location.LocType != "" {
+		// TODO: Needs refactoring
+		if location.LocType != "" && location.LocType != "tertiary" && location.LocType != "attraction" {
 			labels = append(labels, NewLocationLabel(location.LocType, 0, -1))
 		}
 

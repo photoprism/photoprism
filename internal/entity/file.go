@@ -22,6 +22,8 @@ type File struct {
 	FileType         string `gorm:"type:varchar(32)"`
 	FileMime         string `gorm:"type:varchar(64)"`
 	FilePrimary      bool
+	FileSidecar      bool
+	FileVideo        bool
 	FileMissing      bool
 	FileDuplicate    bool
 	FilePortrait     bool

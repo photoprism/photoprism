@@ -6,25 +6,33 @@ import (
 	_ "image/png"
 )
 
+type FileType string
+
 const (
-	// FileTypeOther is an unkown file format.
-	FileTypeOther = "unknown"
-	// FileTypeYaml is a yaml file format.
-	FileTypeYaml = "yml"
-	// FileTypeJpeg is a jpeg file format.
-	FileTypeJpeg = "jpg"
-	// FileTypePng is a png file format.
-	FileTypePng = "png"
-	// FileTypeRaw is a raw file format.
-	FileTypeRaw = "raw"
-	// FileTypeXmp is an xmp file format.
-	FileTypeXmp = "xmp"
-	// FileTypeAae is an aae file format.
-	FileTypeAae = "aae"
-	// FileTypeMovie is a movie file format.
-	FileTypeMovie = "mov"
-	// FileTypeHEIF High Efficiency Image File Format
-	FileTypeHEIF = "heif" // High Efficiency Image File Format
+	// JPEG image file.
+	FileTypeJpeg FileType = "jpg"
+	// PNG image file.
+	FileTypePng FileType = "png"
+	// RAW image file.
+	FileTypeRaw FileType = "raw"
+	// High Efficiency Image File Format.
+	FileTypeHEIF FileType = "heif" // High Efficiency Image File Format
+	// Movie file.
+	FileTypeMovie FileType = "mov"
+	// Adobe XMP sidecar file (XML).
+	FileTypeXMP FileType = "xmp"
+	// Apple sidecar file (XML).
+	FileTypeAAE FileType = "aae"
+	// XML metadata / config / sidecar file.
+	FileTypeXML FileType = "xml"
+	// YAML metadata / config / sidecar file.
+	FileTypeYaml FileType = "yml"
+	// Text config / sidecar file.
+	FileTypeText FileType = "txt"
+	// Markdown text sidecar file.
+	FileTypeMarkdown FileType = "md"
+	// Unknown file format.
+	FileTypeOther FileType = "unknown"
 )
 
 const (
@@ -33,7 +41,7 @@ const (
 )
 
 // FileExtensions lists all the available and supported image file formats.
-var FileExtensions = map[string]string{
+var FileExtensions = map[string]FileType{
 	".crw":  FileTypeRaw,
 	".cr2":  FileTypeRaw,
 	".nef":  FileTypeRaw,
@@ -45,8 +53,8 @@ var FileExtensions = map[string]string{
 	".jpg":  FileTypeJpeg,
 	".thm":  FileTypeJpeg,
 	".jpeg": FileTypeJpeg,
-	".xmp":  FileTypeXmp,
-	".aae":  FileTypeAae,
+	".xmp":  FileTypeXMP,
+	".aae":  FileTypeAAE,
 	".heif": FileTypeHEIF,
 	".heic": FileTypeHEIF,
 	".3fr":  FileTypeRaw,
