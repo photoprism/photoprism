@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"path"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/repo"
@@ -38,7 +39,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
+		fileName := path.Join(conf.OriginalsPath(), file.FileName)
 
 		if !util.Exists(fileName) {
 			log.Errorf("could not find original for thumbnail: %s", fileName)
@@ -97,7 +98,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
+		fileName := path.Join(conf.OriginalsPath(), file.FileName)
 
 		if !util.Exists(fileName) {
 			log.Errorf("could not find original for thumbnail: %s", fileName)
@@ -149,7 +150,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
+		fileName := path.Join(conf.OriginalsPath(), file.FileName)
 
 		if !util.Exists(fileName) {
 			log.Errorf("could not find original for thumbnail: %s", fileName)

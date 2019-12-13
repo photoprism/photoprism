@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"time"
 
@@ -38,15 +39,15 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 
 		files := f.File["files"]
 
-		path := fmt.Sprintf("%s/upload/%s", conf.ImportPath(), subPath)
+		p := path.Join(conf.ImportPath(), "upload", subPath)
 
-		if err := os.MkdirAll(path, os.ModePerm); err != nil {
+		if err := os.MkdirAll(p, os.ModePerm); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
 		for _, file := range files {
-			filename := fmt.Sprintf("%s/%s", path, filepath.Base(file.Filename))
+			filename := path.Join(p, filepath.Base(file.Filename))
 
 			if err := c.SaveUploadedFile(file, filename); err != nil {
 				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})

@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"path"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/repo"
@@ -30,7 +31,7 @@ func GetDownload(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
+		fileName := path.Join(conf.OriginalsPath(), file.FileName)
 
 		if !util.Exists(fileName) {
 			log.Errorf("could not find original: %s", fileHash)

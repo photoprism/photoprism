@@ -6,6 +6,7 @@ import (
 	"image/color"
 	"net/http"
 	"os"
+	"path"
 	"time"
 
 	"github.com/disintegration/imaging"
@@ -22,15 +23,15 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/preview", func(c *gin.Context) {
 		// TODO: proof of concept - code needs refactoring!
 		t := time.Now().Format("20060102")
-		path := fmt.Sprintf("%s/preview/%s/%s", conf.ThumbnailsPath(), t[0:4], t[4:6])
+		thumbPath := path.Join(conf.ThumbnailsPath(), "preview", t[0:4], t[4:6])
 
-		if err := os.MkdirAll(path, os.ModePerm); err != nil {
+		if err := os.MkdirAll(thumbPath, os.ModePerm); err != nil {
 			log.Error(err)
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 			return
 		}
 
-		previewFilename := fmt.Sprintf("%s/%s.jpg", path, t[6:8])
+		previewFilename := fmt.Sprintf("%s/%s.jpg", thumbPath, t[6:8])
 
 		if util.Exists(previewFilename) {
 			c.File(previewFilename)
@@ -62,7 +63,7 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 		thumbType, _ := photoprism.ThumbnailTypes["tile_224"]
 
 		for _, file := range p {
-			fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
+			fileName := path.Join(conf.OriginalsPath(), file.FileName)
 
 			if !util.Exists(fileName) {
 				log.Errorf("could not find original for thumbnail: %s", fileName)

@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"math"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -24,6 +25,8 @@ import (
 type TensorFlow struct {
 	conf       *config.Config
 	model      *tf.SavedModel
+	modelName  string
+	modelTags  []string
 	labels     []string
 	labelRules LabelRules
 }
@@ -38,10 +41,17 @@ type LabelRule struct {
 
 type LabelRules map[string]LabelRule
 
-// NewTensorFlow returns a new TensorFlow.
+// NewTensorFlow returns new TensorFlow instance with Nasnet model.
 func NewTensorFlow(conf *config.Config) *TensorFlow {
-	return &TensorFlow{conf: conf}
+	return &TensorFlow{conf: conf, modelName: "nasnet", modelTags: []string{"photoprism"}}
 }
+
+// NewTensorFlowNSFW returns new TensorFlow instance with NSFW model.
+/* TODO: Need to convert model to tagged .pb file before we can test
+func NewTensorFlowNSFW(conf *config.Config) *TensorFlow {
+	return &TensorFlow{conf: conf, modelName: "nsfw", modelTags: []string{"photoprism"}}
+}
+*/
 
 func (t *TensorFlow) loadLabelRules() (err error) {
 	if len(t.labelRules) > 0 {
@@ -158,12 +168,12 @@ func (t *TensorFlow) loadModel() error {
 		return nil
 	}
 
-	path := t.conf.TensorFlowModelPath()
+	modelPath := path.Join(t.conf.ResourcesPath(), t.modelName)
 
-	log.Infof("tensorflow: loading image classification model from \"%s\"", filepath.Base(path))
+	log.Infof("tensorflow: loading image classification model from \"%s\"", filepath.Base(modelPath))
 
 	// Load model
-	model, err := tf.LoadSavedModel(path, []string{"photoprism"}, nil)
+	model, err := tf.LoadSavedModel(modelPath, t.modelTags, nil)
 
 	if err != nil {
 		return err
@@ -171,7 +181,7 @@ func (t *TensorFlow) loadModel() error {
 
 	t.model = model
 
-	return t.loadLabels(path)
+	return t.loadLabels(modelPath)
 }
 
 func (t *TensorFlow) labelRule(label string) LabelRule {

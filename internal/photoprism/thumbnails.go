@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/png"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -222,13 +223,13 @@ func ThumbnailFilename(hash string, thumbPath string, width, height int, opts ..
 	}
 
 	postfix := ThumbnailPostfix(width, height, opts...)
-	path := fmt.Sprintf("%s/%s/%s/%s", thumbPath, hash[0:1], hash[1:2], hash[2:3])
+	p := path.Join(thumbPath, hash[0:1], hash[1:2], hash[2:3])
 
-	if err := os.MkdirAll(path, os.ModePerm); err != nil {
+	if err := os.MkdirAll(p, os.ModePerm); err != nil {
 		return "", err
 	}
 
-	filename = fmt.Sprintf("%s/%s_%s", path, hash, postfix)
+	filename = fmt.Sprintf("%s/%s_%s", p, hash, postfix)
 
 	return filename, nil
 }

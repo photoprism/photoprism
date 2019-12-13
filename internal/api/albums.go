@@ -333,7 +333,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		zipPath := path.Join(conf.ExportPath(), "album")
 		zipToken := util.RandomToken(3)
 		zipBaseName := fmt.Sprintf("%s-%s.zip", strings.Title(a.AlbumSlug), zipToken)
-		zipFileName := fmt.Sprintf("%s/%s", zipPath, zipBaseName)
+		zipFileName := path.Join(zipPath, zipBaseName)
 
 		if err := os.MkdirAll(zipPath, 0700); err != nil {
 			log.Error(err)
@@ -355,7 +355,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		defer zipWriter.Close()
 
 		for _, file := range p {
-			fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
+			fileName := path.Join(conf.OriginalsPath(), file.FileName)
 			fileAlias := file.DownloadFileName()
 
 			if util.Exists(fileName) {

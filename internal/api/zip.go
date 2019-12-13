@@ -47,7 +47,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 		zipToken := util.RandomToken(3)
 		zipYear := time.Now().Format("January-2006")
 		zipBaseName := fmt.Sprintf("Photos-%s-%s.zip", zipYear, zipToken)
-		zipFileName := fmt.Sprintf("%s/%s", zipPath, zipBaseName)
+		zipFileName := path.Join(zipPath, zipBaseName)
 
 		if err := os.MkdirAll(zipPath, 0700); err != nil {
 			log.Error(err)
@@ -69,7 +69,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 		defer zipWriter.Close()
 
 		for _, file := range files {
-			fileName := fmt.Sprintf("%s/%s", conf.OriginalsPath(), file.FileName)
+			fileName := path.Join(conf.OriginalsPath(), file.FileName)
 			fileAlias := file.DownloadFileName()
 
 			if util.Exists(fileName) {
@@ -99,7 +99,7 @@ func DownloadZip(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/zip/:filename", func(c *gin.Context) {
 		zipBaseName := filepath.Base(c.Param("filename"))
 		zipPath := path.Join(conf.ExportPath(), "zip")
-		zipFileName := fmt.Sprintf("%s/%s", zipPath, zipBaseName)
+		zipFileName := path.Join(zipPath, zipBaseName)
 
 		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", zipBaseName))
 
