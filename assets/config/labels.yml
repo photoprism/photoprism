@@ -117,7 +117,7 @@ rapeseed:
 fashion:
   label: fashion
   priority: -1
-  category:
+  categories:
     - person
     - people
     - face
@@ -3653,7 +3653,7 @@ band aid:
 
 face:
   label: face
-  category:
+  categories:
     - person
     - people
 
@@ -3668,7 +3668,7 @@ ski mask:
 
 heritage:
   label: people
-  category:
+  categories:
     - person
     - face
 
@@ -3685,12 +3685,12 @@ beaker:
 
 vestment:
   label: uniform
-  category:
+  categories:
     - military
 
 bassinet:
   label: baby
-  category:
+  categories:
     - person
     - child
     - people
