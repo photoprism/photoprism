@@ -3639,7 +3639,7 @@ bearskin:
   threshold: 0.3
 
 ballplayer:
-  label: people
+  label: portrait
 
 crutch:
   priority: -1
@@ -3650,27 +3650,29 @@ mousetrap:
   threshold: 0.3
 
 band aid:
-  label: people
+  label: portrait
   threshold: 0.3
 
-people:
-  label: people
+portrait:
+  label: portrait
   categories:
     - person
     - face
+    - people
 
 oxygen mask:
-  see: people
+  see: portrait
 
 wig:
-  see: people
+  see: portrait
 
 ski mask:
-  see: people
+  see: portrait
 
 heritage:
-  label: people
+  label: portrait
   categories:
+    - people
     - person
     - face
 
@@ -3695,6 +3697,6 @@ bassinet:
   categories:
     - person
     - child
-    - people
+    - portrait
     - face
 
