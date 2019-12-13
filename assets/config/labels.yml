@@ -114,12 +114,36 @@ rapeseed:
     - rapeseed
     - buttercup
 
+fashion:
+  label: fashion
+  priority: -1
+  category:
+    - person
+    - people
+    - face
+
+sock:
+  see: fashion
+
+sweatshirt:
+  see: fashion
+
+suit:
+  see: fashion
+
+bow tie:
+  see: fashion
+
+belt:
+  see: fashion
+
 stole:
   label: fashion
   threshold: 0.5
   priority: -1
 
 quilt:
+  label: fashion
   threshold: 0.5
   priority: -1
 
@@ -153,7 +177,7 @@ shower curtain:
   threshold: 0.6
 
 windsor tie:
-  priority: -1
+  see: fashion
 
 chainlink fence:
   label: fence
@@ -931,9 +955,9 @@ red-backed sandpiper:
     - bird
 
 redshank:
+  label: plant
   categories:
-    - animal
-    - bird
+    - nature
 
 dowitcher:
   categories:
@@ -1958,6 +1982,7 @@ instrument:
   categories:
     - instrument
     - music
+    - entertainment
 
 accordion:
   see: instrument
@@ -2036,7 +2061,7 @@ barn:
     - building
 
 bassoon:
-  see: instrument
+  label: entertainment
 
 bathing cap:
   categories:
@@ -2122,8 +2147,8 @@ breakwater:
     - see
 
 bullet train:
+  label: train
   categories:
-    - train
     - travel
 
 butcher shop:
@@ -2489,6 +2514,8 @@ home theater:
   label: television
 
 honeycomb:
+  priority: -1
+  threshold: 0.3
   categories:
     - honey
     - bee
@@ -2602,6 +2629,7 @@ microwave:
 minibus:
   categories:
     - car
+    - auto
 
 minivan:
   categories:
@@ -2626,7 +2654,9 @@ monastery:
     - building
 
 monitor:
+  label: display
   categories:
+    - monitor
     - computer
 
 mosque:
@@ -2637,6 +2667,7 @@ mosque:
     - architecture
 
 mountain bike:
+  threshold: 0.3
   categories:
     - bycicle
     - sports
@@ -2687,15 +2718,15 @@ organ:
   see: instrument
 
 oxcart:
+  label: cart
   categories:
-    - plane
-    - aircraft
+    - cattle
+    - cow
 
 paddle:
+  threshold: 0.3
   categories:
-    - sport
-    - water
-    - sea
+    - sports
 
 paddlewheel:
   categories:
@@ -2721,9 +2752,7 @@ panpipe:
   see: instrument
 
 paper towel:
-  categories:
-    - kitchen
-    - cleaning
+  label: paper
 
 parachute:
   categories:
@@ -2743,10 +2772,10 @@ pencil sharpener:
     - drawing
 
 petri dish:
+  label: dish
   categories:
-    - laboratory
-    - science
-    - research
+    - cup
+    - bowl
 
 photocopier:
   categories:
@@ -2772,9 +2801,10 @@ piggy bank:
     - money
 
 pill bottle:
+  label: bottle
   categories:
-    - pills
-    - medicine
+    - mug
+    - cup
 
 pillow:
   threshold: 0.5
@@ -2856,6 +2886,7 @@ refrigerator:
 restaurant:
   categories:
     - food
+    - lunch
 
 revolver:
   categories:
@@ -2902,7 +2933,9 @@ sax:
 
 school bus:
   categories:
+    - bus
     - car
+    - auto
 
 schooner:
   categories:
@@ -3098,8 +3131,10 @@ triumphal arch:
     - arch
 
 trolleybus:
+  label: bus
   categories:
-    - bus
+    - car
+    - auto
 
 trombone:
   see: instrument
@@ -3257,6 +3292,8 @@ head cabbage:
     - vegetables
 
 broccoli:
+  priority: -1
+  threshold: 0.3
   categories:
     - food
     - vegetables
@@ -3440,8 +3477,10 @@ yellow lady's slipper:
     - shoe
 
 corn:
+  label: food
   categories:
-    - food
+    - corn
+    - lunch
     - vegetable
 
 acorn:
@@ -3491,7 +3530,8 @@ knee pad:
   priority: -2
 
 knot:
-  threshold: 0.6
+  priority: -1
+  threshold: 0.7
 
 arabian camel:
   label: camel
@@ -3564,8 +3604,7 @@ packet:
   priority: 1
 
 swing:
-  label: Cosy
-  priority: 1
+  label: cosy
   categories:
     - outdoor
     - furniture
@@ -3573,7 +3612,6 @@ swing:
 web site:
   label: info
   categories:
-    - sign
     - screenshot
 
 crossword puzzle:
@@ -3593,3 +3631,67 @@ chain mail:
 
 pinwheel:
   threshold: 0.5
+
+bearskin:
+  priority: -1
+  threshold: 0.3
+
+ballplayer:
+  label: person
+
+crutch:
+  priority: -1
+  threshold: 0.3
+
+mousetrap:
+  priority: -1
+  threshold: 0.3
+
+band aid:
+  label: person
+  threshold: 0.3
+
+face:
+  label: face
+  category:
+    - person
+    - people
+
+oxygen mask:
+  see: face
+
+wig:
+  see: face
+
+ski mask:
+  see: face
+
+heritage:
+  label: people
+  category:
+    - person
+    - face
+
+safety pin:
+  priority: -1
+  threshold: 0.3
+
+beaker:
+  label: cup
+  categories:
+    - kitchen
+    - coffee
+    - tea
+
+vestment:
+  label: uniform
+  category:
+    - military
+
+bassinet:
+  label: baby
+  category:
+    - person
+    - child
+    - people
+    - face

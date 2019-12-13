@@ -6,7 +6,7 @@
                     <span v-if="fileName">Importing {{fileName}}...</span>
                     <span v-else-if="busy">Importing files from directory...</span>
                     <span v-else-if="completed">Done.</span>
-                    <span v-else>Press button to import photos from directory...</span>
+                    <span v-else>Press button to move and index photos from import directory...</span>
                 </p>
 
                 <v-progress-linear color="secondary-dark" :value="completed" :indeterminate="busy"></v-progress-linear>
