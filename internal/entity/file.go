@@ -12,6 +12,8 @@ import (
 // An image or sidecar file that belongs to a photo
 type File struct {
 	Model
+	CreatedIn        int64
+	UpdatedIn        int64
 	Photo            *Photo
 	PhotoID          uint   `gorm:"index;"`
 	PhotoUUID        string `gorm:"index;"`

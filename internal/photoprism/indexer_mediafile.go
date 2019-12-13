@@ -22,6 +22,8 @@ const (
 type IndexResult string
 
 func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
+	start := time.Now()
+
 	var photo entity.Photo
 	var file, primaryFile entity.File
 	var exifData *Exif
@@ -211,9 +213,12 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 	}
 
 	if fileQuery.Error == nil {
+		file.UpdatedIn = int64(time.Since(start))
 		i.db.Unscoped().Save(&file)
 		return indexResultUpdated
 	}
+
+	file.CreatedIn = int64(time.Since(start))
 
 	i.db.Create(&file)
 	return indexResultAdded
