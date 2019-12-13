@@ -115,12 +115,15 @@ rapeseed:
     - buttercup
 
 fashion:
-  label: fashion
+  label: people
   priority: -1
   categories:
+    - fashion
     - person
-    - people
     - face
+
+jean:
+  see: fashion
 
 sock:
   see: fashion
@@ -3637,7 +3640,7 @@ bearskin:
   threshold: 0.3
 
 ballplayer:
-  label: person
+  label: people
 
 crutch:
   priority: -1
@@ -3648,23 +3651,23 @@ mousetrap:
   threshold: 0.3
 
 band aid:
-  label: person
+  label: people
   threshold: 0.3
 
-face:
-  label: face
+people:
+  label: people
   categories:
     - person
-    - people
+    - face
 
 oxygen mask:
-  see: face
+  see: people
 
 wig:
-  see: face
+  see: people
 
 ski mask:
-  see: face
+  see: people
 
 heritage:
   label: people
@@ -3695,3 +3698,4 @@ bassinet:
     - child
     - people
     - face
+
