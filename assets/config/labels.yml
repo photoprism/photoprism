@@ -151,10 +151,17 @@ quilt:
   priority: -1
 
 liner:
-  label: ocean liner
+  see: ship
+
+pirate:
+  see: ship
+
+ship:
+  label: ship
   categories:
-    - ship
+    - ocean
     - boat
+    - water
 
 solar dish:
   threshold: 0.5
@@ -2279,9 +2286,7 @@ confectionery:
     - store
 
 container ship:
-  label: ship
-  categories:
-    - boat
+  see: ship
 
 convertible:
   label: car
@@ -2657,8 +2662,9 @@ monastery:
     - building
 
 monitor:
-  label: display
+  label: screen
   categories:
+    - display
     - monitor
     - computer
 
@@ -2941,11 +2947,7 @@ school bus:
     - auto
 
 schooner:
-  categories:
-    - boat
-    - ship
-    - water
-    - sea
+  see: ship
 
 screwdriver:
   categories:
@@ -3206,10 +3208,7 @@ worm fence:
   priority: -1
 
 wreck:
-  categories:
-    - water
-    - sea
-    - ship
+  see: ship
 
 yawl:
   categories:
