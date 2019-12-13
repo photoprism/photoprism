@@ -7,14 +7,7 @@ cat:
     - mammal
 
 tabby cat:
-  label: tabby cat
-  priority: 5
-  categories:
-    - cat
-    - animal
-    - kitty
-    - mammal
-    - stripes
+  see: cat
 
 persian cat:
   see: cat
@@ -26,7 +19,6 @@ egyptian cat:
   see: cat
 
 tiger cat:
-  label: tiger cat
   priority: 5
   categories:
     - cat
@@ -43,8 +35,6 @@ wild cat:
     - mammal
     - predator
     - wild
-    - wildlife
-    - dangerous
 
 lynx:
   see: wild cat
