@@ -1,4 +1,12 @@
 cat:
+  label: cat
+  priority: 5
+  categories:
+    - animal
+    - kitty
+    - mammal
+
+tabby cat:
   label: tabby cat
   priority: 5
   categories:
@@ -6,9 +14,7 @@ cat:
     - animal
     - kitty
     - mammal
-
-tabby cat:
-  see: cat
+    - stripes
 
 persian cat:
   see: cat
@@ -90,13 +96,17 @@ cardoon:
 window:
   see: window shade
 
+bannister:
+  label: stairs
+  categories:
+    - architecture
+
 window shade:
-  label: house front
+  label: architecture
   categories:
     - window
     - house
     - building
-    - architecture
 
 daisy:
   label: flower
@@ -115,11 +125,12 @@ rapeseed:
     - buttercup
 
 stole:
-  threshold: 0.2
+  label: fashion
+  threshold: 0.5
   priority: -1
 
 quilt:
-  threshold: 0.2
+  threshold: 0.5
   priority: -1
 
 liner:
@@ -224,6 +235,7 @@ hen:
     - chicken
 
 ostrich:
+  threshold: 0.5
   categories:
     - bird
     - animal
@@ -389,6 +401,7 @@ common iguana:
     - animal
 
 american chameleon:
+  threshold: 0.4
   categories:
     - reptile
     - animal
@@ -429,6 +442,7 @@ green lizard:
     - lizard
 
 african chameleon:
+  threshold: 0.4
   label: chameleon
   categories:
     - reptile
@@ -768,9 +782,7 @@ jellyfish:
     - fish
 
 sea anemone:
-  categories:
-    - animal
-    - water
+  label: nature
 
 brain coral:
   label: nature
@@ -980,10 +992,11 @@ sea lion:
     - animal
 
 dog:
+  label: dog
   priority: 5
   categories:
     - animal
-    - dog
+    - puppy
     - mammal
 
 chihuahua dog:
@@ -1658,48 +1671,62 @@ hippopotamus:
     - animal
 
 ox:
+  label: cattle
+  priority: 3
   categories:
     - animal
+    - mammal
+    - cow
 
 water buffalo:
   categories:
     - animal
+    - mammal
 
 bison:
   categories:
     - animal
+    - mammal
 
 ram:
   categories:
     - animal
+    - mammal
 
 bighorn:
   categories:
     - animal
+    - mammal
 
 ibex:
   categories:
     - animal
+    - mammal
 
 hartebeest:
   categories:
     - animal
+    - mammal
 
 impala:
   categories:
     - animal
+    - mammal
 
 gazelle:
   categories:
     - animal
+    - mammal
 
 Arabian camel:
   categories:
     - animal
+    - mammal
 
 llama:
   categories:
     - animal
+    - mammal
 
 weasel:
   categories:
@@ -1949,19 +1976,22 @@ acoustic guitar:
   see: instrument
 
 aircraft carrier:
+  threshold: 0.5
   categories:
-    - plain
     - aircraft
+    - marine
+    - military
 
 airliner:
   categories:
-    - plain
     - aircraft
+    - fly
 
 airship:
+  threshold: 0.5
   categories:
-    - plain
     - aircraft
+    - fly
 
 ambulance:
   categories:
@@ -1976,6 +2006,7 @@ assault rifle:
   categories:
     - weapon
     - gun
+    - military
 
 backpack:
   categories:
@@ -1984,6 +2015,8 @@ backpack:
 bakery:
   categories:
     - bread
+    - shop
+    - store
 
 ballpoint:
   categories:
@@ -2074,6 +2107,7 @@ boathouse:
   categories:
     - building
     - house
+    - water
 
 bobsled:
   categories:
@@ -2089,7 +2123,8 @@ bookcase:
 
 bookshop:
   categories:
-    - book
+    - shop
+    - store
 
 breakwater:
   categories:
@@ -2105,6 +2140,7 @@ butcher shop:
   categories:
     - butcher
     - meat
+    - store
 
 cab:
   categories:
@@ -2114,6 +2150,7 @@ cab:
 cannon:
   categories:
     - weapon
+    - military
 
 canoe:
   categories:
@@ -2216,12 +2253,12 @@ computer keyboard:
   categories:
     - computer
     - laptop
+    - notebook
 
 confectionery:
   label: shop
   categorie:
     - store
-    - commercial
 
 container ship:
   label: ship
@@ -2423,29 +2460,30 @@ gong:
   see: instrument
 
 gown:
-  label: dress
+  label: fashion
 
 grand piano:
   see: instrument
 
 greenhouse:
   categories:
-    - plants
-    - gardening
     - architecture
     - building
 
 grocery store:
   categories:
     - store
-    - shopping
+    - shop
 
 hammer:
   categories:
     - tool
 
 hand-held computer:
-  label: laptop
+  label: computer
+  categories:
+    - laptop
+    - notebook
 
 harmonica:
   see: instrument
@@ -2485,8 +2523,10 @@ lampshade:
     - light
 
 laptop:
+  label: computer
   categories:
-    - computer
+    - notebook
+    - laptop
 
 lawn mower:
   categories:
@@ -2600,6 +2640,7 @@ monitor:
     - computer
 
 mosque:
+  label: towers
   categories:
     - building
     - religion
@@ -2632,9 +2673,10 @@ necklace:
     - jewelery
 
 notebook:
+  label: computer
   categories:
     - laptop
-    - computer
+    - notebook
 
 obelisk:
   categories:
@@ -2745,6 +2787,7 @@ pill bottle:
     - medicine
 
 pillow:
+  threshold: 0.5
   categories:
     - bedroom
 
@@ -2778,9 +2821,10 @@ pop bottle:
     - bottle
 
 pot:
+  label: plant
   categories:
-    - kitchen
-    - cooking
+    - nature
+    - weed
 
 power drill:
   categories:
@@ -2827,11 +2871,13 @@ revolver:
   categories:
     - weapon
     - gun
+    - military
 
 rifle:
   categories:
     - weapon
     - gun
+    - military
 
 rocking chair:
   categories:
@@ -2881,17 +2927,18 @@ screwdriver:
 
 shoe shop:
   categories:
-    - shoe
-    - shopping
+    - store
 
 shopping basket:
   categories:
     - basket
-    - shopping
+    - shop
+    - store
 
 shopping cart:
   categories:
-    - shopping
+    - shop
+    - store
 
 shovel:
   categories:
@@ -3042,7 +3089,8 @@ tow truck:
 
 toyshop:
   categories:
-    - shopping
+    - shop
+    - store
     - toys
 
 trailer truck:
@@ -3461,10 +3509,10 @@ arabian camel:
     - animal
 
 tile roof:
-  label: house
+  label: architecture
   categories:
     - building
-    - architecture
+    - house
 
 croquet ball:
   label: pumpkin
@@ -3474,11 +3522,13 @@ croquet ball:
     - sphere
 
 ball:
+  priority: -1
   categories:
     - ball
     - round
     - sphere
     - sports
+    - game
 
 baseball:
   see: ball
@@ -3505,7 +3555,7 @@ volleyball:
   see: ball
 
 spider web:
-  threshold: 0.6
+  threshold: 0.7
   priority: -1
 
 wool:
@@ -3547,3 +3597,9 @@ jigsaw puzzle:
   priority: -1
   categories:
     - game
+
+chain mail:
+  threshold: 0.6
+
+pinwheel:
+  threshold: 0.5

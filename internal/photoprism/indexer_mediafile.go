@@ -82,7 +82,7 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 	photo.PhotoName = fileBase
 
 	if file.FilePrimary {
-		if fileChanged || o.UpdateLabels || o.UpdateTitle {
+		if fileChanged || o.UpdateKeywords || o.UpdateLabels || o.UpdateTitle {
 			// Image classification labels
 			labels = i.classifyImage(m)
 		}
@@ -117,7 +117,9 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 		}
 
 		if fileChanged || o.UpdateKeywords || o.UpdateLocation || o.UpdateTitle {
-			keywords, labels = i.indexLocation(m, &photo, keywords, labels, fileChanged, o)
+			locKeywords, locLabels := i.indexLocation(m, &photo, labels, fileChanged, o)
+			keywords = append(keywords, locKeywords...)
+			labels = append(labels, locLabels...)
 		}
 
 		if (fileChanged || o.UpdateTitle) && photo.PhotoTitle == "" {
@@ -204,6 +206,7 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 
 	if file.FilePrimary && (fileChanged || o.UpdateKeywords || o.UpdateTitle) {
 		keywords = append(keywords, file.FileMainColor)
+		keywords = append(keywords, labels.Keywords()...)
 		photo.IndexKeywords(keywords, i.db)
 	}
 
@@ -289,7 +292,7 @@ func (i *Indexer) addLabels(photoId uint, labels Labels) {
 
 		// Add categories
 		for _, category := range label.Categories {
-			sn := entity.NewLabel(category, -1).FirstOrCreate(i.db)
+			sn := entity.NewLabel(category, -3).FirstOrCreate(i.db)
 			i.db.Model(&lm).Association("LabelCategories").Append(sn)
 		}
 
@@ -301,7 +304,9 @@ func (i *Indexer) addLabels(photoId uint, labels Labels) {
 	}
 }
 
-func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, keywords []string, labels Labels, fileChanged bool, o IndexerOptions) ([]string, Labels) {
+func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, labels Labels, fileChanged bool, o IndexerOptions) ([]string, Labels) {
+	var keywords []string
+
 	if location, err := mediaFile.Location(); err == nil {
 		i.db.FirstOrCreate(location, "id = ?", location.ID)
 		photo.Location = location
@@ -336,16 +341,13 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, keywo
 			labels = append(labels, NewLocationLabel(location.LocType, 0, -1))
 		}
 
-		// Sort by priority and uncertainty
-		sort.Sort(labels)
-
 		if (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false {
-			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 60 && labels[0].Name != "" { // TODO: User defined title format
-				log.Infof("index: using label %s to create photo title (%d%% uncertainty)", labels[0].Name, labels[0].Uncertainty)
-				if location.LocCity == "" || len(location.LocCity) > 16 || strings.Contains(labels[0].Name, location.LocCity) {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(labels[0].Name), location.LocCountry, photo.TakenAt.Format("2006"))
+			if title := labels.Title(location.LocName); title != "" { // TODO: User defined title format
+				log.Infof("index: using label \"%s\" to create photo title", title)
+				if location.LocCity == "" || len(location.LocCity) > 16 || strings.Contains(title, location.LocCity) {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), location.LocCountry, photo.TakenAt.Format("2006"))
 				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(labels[0].Name), location.LocCity, photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), location.LocCity, photo.TakenAt.Format("2006"))
 				}
 			} else if location.LocName != "" && location.LocCity != "" {
 				if len(location.LocName) > 45 {

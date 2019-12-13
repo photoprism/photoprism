@@ -580,7 +580,7 @@ func (c *Config) ClientConfig() ClientConfig {
 
 	db.Table("labels").
 		Select("COUNT(*) AS labels").
-		Where("deleted_at IS NULL").
+		Where("label_priority >= -2 && deleted_at IS NULL").
 		Take(&count)
 
 	db.Table("albums").

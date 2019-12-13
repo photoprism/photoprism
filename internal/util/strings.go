@@ -6,6 +6,12 @@ import (
 	"unicode"
 )
 
+var ContainsNumberRegexp = regexp.MustCompile("\\d+")
+
+func ContainsNumber(s string) bool {
+	return ContainsNumberRegexp.MatchString(s)
+}
+
 // isSeparator reports whether the rune could mark a word boundary.
 func isSeparator(r rune) bool {
 	// ASCII alphanumerics and underscore are not separators
@@ -49,19 +55,4 @@ func Title(s string) string {
 			return r
 		},
 		s)
-}
-
-func Keywords(s string) (results []string) {
-	r := regexp.MustCompile("[\\p{L}\\d]{3,}")
-	all := r.FindAllString(s, -1)
-
-	for _, w := range all {
-		w = strings.ToLower(w)
-
-		if _, ok := Stopwords[w]; ok == false {
-			results = append(results, w)
-		}
-	}
-
-	return results
 }

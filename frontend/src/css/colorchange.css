@@ -15,12 +15,12 @@
 }
 
 .rainbow {
-    background: linear-gradient(270deg, #2acea4, #ffe300, #2a6fce, #8c2ace, #8c2ace, #ce2a78);
-    background-size: 1200% 1200%;
+    background: repeating-linear-gradient(45deg, #FF9AA2, #FFB7B2, #FFDAC1, #E2F0CB, #B5EAD7, #C7CEEA);
+    background-size: 200% 200%;
 
-    -webkit-animation: rainbow-animation 10s ease infinite;
-    -moz-animation: rainbow-animation 10s ease infinite;
-    animation: rainbow-animation 10s ease infinite;
+    -webkit-animation: rainbow-animation 6s ease infinite;
+    -moz-animation: rainbow-animation 6s ease infinite;
+    animation: rainbow-animation 6s ease infinite;
 }
 
 @keyframes colorchange

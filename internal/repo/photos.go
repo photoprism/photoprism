@@ -177,8 +177,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		if result := s.db.First(&label, "label_slug = ?", slugString); result.Error != nil {
 			log.Infof("search: label \"%s\" not found, using fuzzy search", f.Query)
 
-			q = q.Joins("LEFT JOIN labels ON photos_labels.label_id = labels.id").
-				Where("labels.label_name LIKE ? OR keywords.keyword LIKE ?", likeString, likeString)
+			q = q.Where("keywords.keyword LIKE ?", likeString)
 		} else {
 			labelIds = append(labelIds, label.ID)
 
