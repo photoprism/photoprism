@@ -27,19 +27,17 @@ func (l *Labels) IsSafe() bool {
 }
 
 func (l *Labels) NSFW() bool {
-	if l.Neutral > 0.25 && l.Porn < 0.75 {
+	if l.Neutral > 0.25 {
 		return false
 	}
-	if l.Porn > 0.4 {
+
+	if l.Porn > 0.75 {
 		return true
 	}
-	if l.Sexy > 0.5 {
+	if l.Sexy > 0.75 {
 		return true
 	}
 	if l.Hentai > 0.75 {
-		return true
-	}
-	if l.Drawing > 0.9 {
 		return true
 	}
 

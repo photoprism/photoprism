@@ -7,22 +7,25 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/nsfw"
 )
 
 // Indexer defines an indexer with originals path tensorflow and a db.
 type Indexer struct {
-	conf       *config.Config
-	tensorFlow *TensorFlow
-	db         *gorm.DB
+	conf         *config.Config
+	tensorFlow   *TensorFlow
+	nsfwDetector *nsfw.Detector
+	db           *gorm.DB
 }
 
 // NewIndexer returns a new indexer.
 // TODO: Is it really necessary to return a pointer?
-func NewIndexer(conf *config.Config, tensorFlow *TensorFlow) *Indexer {
+func NewIndexer(conf *config.Config, tensorFlow *TensorFlow, nsfwDetector *nsfw.Detector) *Indexer {
 	i := &Indexer{
-		conf:       conf,
-		tensorFlow: tensorFlow,
-		db:         conf.Db(),
+		conf:         conf,
+		tensorFlow:   tensorFlow,
+		nsfwDetector: nsfwDetector,
+		db:           conf.Db(),
 	}
 
 	return i

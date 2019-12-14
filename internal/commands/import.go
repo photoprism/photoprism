@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/urfave/cli"
 )
@@ -40,8 +41,9 @@ func importAction(ctx *cli.Context) error {
 	log.Infof("importing photos from %s", conf.ImportPath())
 
 	tensorFlow := photoprism.NewTensorFlow(conf)
+	nsfwDetector := nsfw.NewDetector(conf.NSFWModelPath())
 
-	indexer := photoprism.NewIndexer(conf, tensorFlow)
+	indexer := photoprism.NewIndexer(conf, tensorFlow, nsfwDetector)
 
 	converter := photoprism.NewConverter(conf)
 

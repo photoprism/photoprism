@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,8 +12,9 @@ func TestNewImporter(t *testing.T) {
 	conf := config.TestConfig()
 
 	tensorFlow := NewTensorFlow(conf)
+	nsfwDetector := nsfw.NewDetector(conf.NSFWModelPath())
 
-	indexer := NewIndexer(conf, tensorFlow)
+	indexer := NewIndexer(conf, tensorFlow, nsfwDetector)
 
 	converter := NewConverter(conf)
 
@@ -27,8 +29,9 @@ func TestImporter_DestinationFilename(t *testing.T) {
 	conf.InitializeTestData(t)
 
 	tensorFlow := NewTensorFlow(conf)
+	nsfwDetector := nsfw.NewDetector(conf.NSFWModelPath())
 
-	indexer := NewIndexer(conf, tensorFlow)
+	indexer := NewIndexer(conf, tensorFlow, nsfwDetector)
 
 	converter := NewConverter(conf)
 
@@ -55,8 +58,9 @@ func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
 	conf.InitializeTestData(t)
 
 	tensorFlow := NewTensorFlow(conf)
+	nsfwDetector := nsfw.NewDetector(conf.NSFWModelPath())
 
-	indexer := NewIndexer(conf, tensorFlow)
+	indexer := NewIndexer(conf, tensorFlow, nsfwDetector)
 
 	converter := NewConverter(conf)
 

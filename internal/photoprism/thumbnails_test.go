@@ -6,6 +6,7 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/nsfw"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
@@ -66,8 +67,9 @@ func TestThumbnails_CreateThumbnailsFromOriginals(t *testing.T) {
 	conf.InitializeTestData(t)
 
 	tensorFlow := NewTensorFlow(conf)
+	nsfwDetector := nsfw.NewDetector(conf.NSFWModelPath())
 
-	indexer := NewIndexer(conf, tensorFlow)
+	indexer := NewIndexer(conf, tensorFlow, nsfwDetector)
 
 	converter := NewConverter(conf)
 

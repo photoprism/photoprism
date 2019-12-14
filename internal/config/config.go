@@ -473,6 +473,11 @@ func (c *Config) TensorFlowModelPath() string {
 	return c.ResourcesPath() + "/nasnet"
 }
 
+// NSFWModelPath returns the NSFW tensorflow model path.
+func (c *Config) NSFWModelPath() string {
+	return c.ResourcesPath() + "/nsfw"
+}
+
 // HttpTemplatesPath returns the server templates path.
 func (c *Config) HttpTemplatesPath() string {
 	return c.ResourcesPath() + "/templates"

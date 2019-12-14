@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/nsfw"
 )
 
 func TestIndexer_IndexAll(t *testing.T) {
@@ -16,8 +17,9 @@ func TestIndexer_IndexAll(t *testing.T) {
 	conf.InitializeTestData(t)
 
 	tensorFlow := NewTensorFlow(conf)
+	nsfwDetector := nsfw.NewDetector(conf.NSFWModelPath())
 
-	indexer := NewIndexer(conf, tensorFlow)
+	indexer := NewIndexer(conf, tensorFlow, nsfwDetector)
 
 	converter := NewConverter(conf)
 

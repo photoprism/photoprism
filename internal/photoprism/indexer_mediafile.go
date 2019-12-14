@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"fmt"
+	"math"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -29,6 +30,7 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 	var exifData *Exif
 	var photoQuery, fileQuery *gorm.DB
 	var keywords []string
+	var isNSFW bool
 
 	labels := Labels{}
 	fileBase := m.Basename()
@@ -86,7 +88,8 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 	if file.FilePrimary {
 		if fileChanged || o.UpdateKeywords || o.UpdateLabels || o.UpdateTitle {
 			// Image classification labels
-			labels = i.classifyImage(m)
+			labels, isNSFW = i.classifyImage(m)
+			photo.PhotoNSFW = isNSFW
 		}
 
 		if fileChanged || o.UpdateExif {
@@ -225,7 +228,7 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 }
 
 // classifyImage returns all matching labels for a media file.
-func (i *Indexer) classifyImage(jpeg *MediaFile) (results Labels) {
+func (i *Indexer) classifyImage(jpeg *MediaFile) (results Labels, isNSFW bool) {
 	start := time.Now()
 
 	var thumbs []string
@@ -256,6 +259,25 @@ func (i *Indexer) classifyImage(jpeg *MediaFile) (results Labels) {
 		labels = append(labels, imageLabels...)
 	}
 
+	if filename, err := jpeg.Thumbnail(i.thumbnailsPath(), "fit_720"); err != nil {
+		log.Error(err)
+	} else {
+		if nsfwLabels, err := i.nsfwDetector.LabelsFromFile(filename); err != nil {
+			log.Error(err)
+		} else {
+			log.Infof("nsfw: %+v", nsfwLabels)
+
+			if nsfwLabels.NSFW() {
+				isNSFW = true
+			}
+
+			if nsfwLabels.Sexy > 0.2 {
+				uncertainty := 100 - int(math.Round(float64(nsfwLabels.Sexy*100)))
+				labels = append(labels, Label{Name: "sexy", Source: "nsfw", Uncertainty: uncertainty, Priority: -1})
+			}
+		}
+	}
+
 	// Sort by priority and uncertainty
 	sort.Sort(labels)
 
@@ -271,11 +293,15 @@ func (i *Indexer) classifyImage(jpeg *MediaFile) (results Labels) {
 		}
 	}
 
+	if isNSFW {
+		log.Info("index: image might contain sexually explicit content")
+	}
+
 	elapsed := time.Since(start)
 
 	log.Debugf("index: image classification took %s", elapsed)
 
-	return results
+	return results, isNSFW
 }
 
 func (i *Indexer) addLabels(photoId uint, labels Labels) {

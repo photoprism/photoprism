@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/util"
 )
@@ -22,8 +23,9 @@ func initIndexer(conf *config.Config) {
 	}
 
 	tensorFlow := photoprism.NewTensorFlow(conf)
+	nsfwDetector := nsfw.NewDetector(conf.NSFWModelPath())
 
-	indexer = photoprism.NewIndexer(conf, tensorFlow)
+	indexer = photoprism.NewIndexer(conf, tensorFlow, nsfwDetector)
 }
 
 // POST /api/v1/index
