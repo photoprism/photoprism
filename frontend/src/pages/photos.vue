@@ -232,7 +232,7 @@
             window.addEventListener('keydown', this.onKeypress);
         },
         destroyed() {
-            window.removeEventListener('scroll', this.onKeypress);
+            window.removeEventListener('keydown', this.onKeypress);
         }
     };
 </script>
