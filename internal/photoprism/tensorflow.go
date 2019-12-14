@@ -46,13 +46,6 @@ func NewTensorFlow(conf *config.Config) *TensorFlow {
 	return &TensorFlow{conf: conf, modelName: "nasnet", modelTags: []string{"photoprism"}}
 }
 
-// NewTensorFlowNSFW returns new TensorFlow instance with NSFW model.
-/* TODO: Need to convert model to tagged .pb file before we can test
-func NewTensorFlowNSFW(conf *config.Config) *TensorFlow {
-	return &TensorFlow{conf: conf, modelName: "nsfw", modelTags: []string{"photoprism"}}
-}
-*/
-
 func (t *TensorFlow) loadLabelRules() (err error) {
 	if len(t.labelRules) > 0 {
 		return nil
@@ -103,6 +96,7 @@ func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 	tensor, err := t.makeTensor(img, "jpeg")
 
 	if err != nil {
+		log.Error(err)
 		return nil, errors.New("invalid image")
 	}
 
@@ -117,6 +111,7 @@ func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 		nil)
 
 	if err != nil {
+		log.Error(err)
 		return result, errors.New("could not run inference")
 	}
 
@@ -239,7 +234,7 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 	}
 
 	// Sort by probability
-	sort.Sort(Labels(result))
+	sort.Sort(result)
 
 	if l := len(result); l < 5 {
 		return result[:l]

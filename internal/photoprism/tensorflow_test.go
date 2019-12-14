@@ -273,30 +273,3 @@ func Test_ConvertTF(t *testing.T) {
 	result := convertTF(uint32(98765432))
 	assert.Equal(t, float32(3024.898), result)
 }
-
-/* TODO: Need to convert model to tagged .pb file before we can test
-func TestTensorFlow_NSFW(t *testing.T) {
-	t.Run("/chameleon_lime.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		conf.TensorFlowModelPath()
-
-		tensorFlow := NewTensorFlowNSFW(conf)
-
-		result, err := tensorFlow.LabelsFromFile(conf.ExamplesPath() + "/chameleon_lime.jpg")
-
-		assert.Nil(t, err)
-
-		if err != nil {
-			t.Log(err.Error())
-			t.Fail()
-		}
-
-		assert.NotNil(t, result)
-		assert.IsType(t, Labels{}, result)
-		assert.Equal(t, 1, len(result))
-
-		t.Log(result)
-	})
-}
-*/
