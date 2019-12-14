@@ -1,18 +1,18 @@
 <template>
     <div class="p-page p-page-login">
         <v-toolbar flat color="secondary">
-            <v-toolbar-title>Login</v-toolbar-title>
+            <v-toolbar-title><translate>Login</translate></v-toolbar-title>
 
             <v-spacer></v-spacer>
         </v-toolbar>
 
         <v-container class="pt-5">
             <p class="subheading">
-                <span>Please enter the admin password to proceed...</span>
+                <span><translate>Please enter the admin password to proceed...</translate></span>
             </p>
             <v-form ref="form" autocomplete="off" class="p-form-login" @submit.prevent="login" dense>
                 <v-text-field
-                        label="Password"
+                        :label="labels.password"
                         color="accent"
                         v-model="password"
                         solo
@@ -25,7 +25,7 @@
                        class="white--text ml-0"
                        depressed
                        @click.stop="login">
-                    Sign in
+                    <translate>Sign in</translate>
                     <v-icon right dark>vpn_key</v-icon>
                 </v-btn>
             </v-form>
@@ -41,6 +41,9 @@
                 showPassword: false,
                 password: '',
                 nextUrl: this.$route.params.nextUrl ? this.$route.params.nextUrl : "/",
+                labels: {
+                    password: this.$gettext("Password"),
+                }
             };
         },
         methods: {

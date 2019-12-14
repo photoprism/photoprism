@@ -11,6 +11,12 @@ services:
       - "~/.cache/npm:/root/.cache/npm"
       - "~/.cache/go-mod:/go/pkg/mod"
     environment:
+      PHOTOPRISM_URL: "http://localhost:2342/"
+      PHOTOPRISM_TITLE: "PhotoPrism"
+      PHOTOPRISM_SUBTITLE: "Browse your life"
+      PHOTOPRISM_DESCRIPTION: "Personal Photo Management tested by Travis CI."
+      PHOTOPRISM_AUTHOR: "PhotoPrism.org"
+      PHOTOPRISM_TWITTER: "@browseyourlife"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_SQL_HOST: "0.0.0.0"

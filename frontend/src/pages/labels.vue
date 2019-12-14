@@ -6,7 +6,7 @@
             <v-toolbar flat color="secondary">
                 <v-text-field class="pt-3 pr-3"
                               single-line
-                              label="Search"
+                              :label="labels.search"
                               prepend-inner-icon="search"
                               clearable
                               color="secondary-dark"
@@ -27,8 +27,8 @@
                 <v-card v-if="results.length === 0" class="p-labels-empty" flat>
                     <v-card-title primary-title>
                         <div>
-                            <h3 class="title mb-3">No labels matched your search</h3>
-                            <div>Try again using a related or otherwise similar term.</div>
+                            <h3 class="title mb-3"><translate>No labels matched your search</translate></h3>
+                            <div><translate>Try again using a related or otherwise similar term.</translate></div>
                         </div>
                     </v-card-title>
                 </v-card>
@@ -112,6 +112,9 @@
                 filter: filter,
                 lastFilter: {},
                 routeName: routeName,
+                labels: {
+                    search: this.$gettext("Search"),
+                },
             };
         },
         methods: {
@@ -143,7 +146,7 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$notify.info('All ' + this.results.length + ' labels loaded');
+                        this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' labels loaded'));
                     }
                 });
             },
@@ -197,9 +200,9 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$notify.info(this.results.length + ' labels found');
+                        this.$notify.info(this.results.length + this.$gettext(' labels found'));
                     } else {
-                        this.$notify.info('More than 20 labels found');
+                        this.$notify.info(this.$gettext('More than 20 labels found'));
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }

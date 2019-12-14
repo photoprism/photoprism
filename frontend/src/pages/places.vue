@@ -9,7 +9,7 @@
                     <v-spacer></v-spacer>
                     <v-text-field class="pt-3 pr-3"
                                   single-line
-                                  label="Search"
+                                  :label="labels.search"
                                   prepend-inner-icon="search"
                                   clearable
                                   color="secondary-dark"
@@ -69,6 +69,9 @@
                 maxLat: null,
                 minLong: null,
                 maxLong: null,
+                labels: {
+                    search: this.$gettext("Search"),
+                },
             }
         },
         methods: {
@@ -86,10 +89,10 @@
             },
             currentPosition() {
                 if ("geolocation" in navigator) {
-                    this.$notify.success('Finding your position...');
+                    this.$notify.success(this.$gettext('Finding your position...'));
                     navigator.geolocation.getCurrentPosition(this.currentPositionSuccess, this.currentPositionError);
                 } else {
-                    this.$notify.warning('Geolocation is not available');
+                    this.$notify.warning(this.$gettext('Geolocation is not available'));
                 }
             },
             formChange() {
@@ -156,7 +159,7 @@
                 }
 
                 if (photos.length === 0) {
-                    this.$notify.warning('No locations found');
+                    this.$notify.warning(this.$gettext('No locations found'));
                     return;
                 }
 
@@ -169,9 +172,9 @@
                 });
 
                 if (photos.length > 100) {
-                    this.$notify.info('More than 100 photos found');
+                    this.$notify.info(this.$gettext('More than 100 photos found'));
                 } else {
-                    this.$notify.info(photos.length + ' photos found');
+                    this.$notify.info(photos.length + this.$gettext(' photos found'));
                 }
             },
             updateQuery() {
@@ -206,7 +209,7 @@
 
                 Photo.search(params).then(response => {
                     if (!response.models.length) {
-                        this.$notify.warning('No photos found');
+                        this.$notify.warning(this.$gettext('No photos found'));
                         return;
                     }
 

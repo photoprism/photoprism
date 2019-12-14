@@ -24,7 +24,7 @@ module.exports = (config) => {
 
         files: [
             {pattern: "tests/unit/**/*_test.js", watched: false},
-            'node_modules/@babel/polyfill/dist/polyfill.js',
+            "node_modules/@babel/polyfill/dist/polyfill.js",
         ],
 
         // Preprocess through webpack

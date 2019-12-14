@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/models"
 
 	"github.com/photoprism/photoprism/internal/util"
 )
@@ -47,6 +47,7 @@ func (i *Importer) originalsPath() string {
 // This function ignores errors.
 func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 	var directories []string
+	options := IndexerOptionsAll()
 
 	err := filepath.Walk(importPath, func(filename string, fileInfo os.FileInfo, err error) error {
 		var destinationMainFilename string
@@ -144,7 +145,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 				}
 			}
 
-			i.indexer.IndexRelated(importedMainFile)
+			i.indexer.IndexRelated(importedMainFile, options)
 		}
 
 		return nil
@@ -178,7 +179,7 @@ func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	fileExtension := mediaFile.Extension()
 	dateCreated := mainFile.DateCreated()
 
-	if file, err := models.FindFileByHash(i.conf.Db(), mediaFile.Hash()); err == nil {
+	if file, err := entity.FindFileByHash(i.conf.Db(), mediaFile.Hash()); err == nil {
 		existingFilename := i.conf.OriginalsPath() + string(os.PathSeparator) + file.FileName
 		return existingFilename, fmt.Errorf("\"%s\" is identical to \"%s\" (%s)", mediaFile.Filename(), file.FileName, mediaFile.Hash())
 	}

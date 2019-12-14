@@ -19,6 +19,12 @@ func configAction(ctx *cli.Context) error {
 
 	fmt.Printf("NAME                  VALUE\n")
 	fmt.Printf("name                  %s\n", conf.Name())
+	fmt.Printf("url                   %s\n", conf.Url())
+	fmt.Printf("title                 %s\n", conf.Title())
+	fmt.Printf("subtitle              %s\n", conf.Subtitle())
+	fmt.Printf("description           %s\n", conf.Description())
+	fmt.Printf("author                %s\n", conf.Author())
+	fmt.Printf("twitter               %s\n", conf.Twitter())
 	fmt.Printf("version               %s\n", conf.Version())
 	fmt.Printf("copyright             %s\n", conf.Copyright())
 	fmt.Printf("debug                 %t\n", conf.Debug())

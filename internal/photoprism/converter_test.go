@@ -44,7 +44,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	infoJpeg, err := imageJpeg.Exif()
 
-	assert.Nilf(t, err, "Exif() failed for "+imageJpeg.Filename())
+	assert.Nilf(t, err, "UpdateExif() failed for "+imageJpeg.Filename())
 
 	if err != nil {
 		return
@@ -52,7 +52,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	assert.Equal(t, jpegFilename, imageJpeg.filename)
 
-	assert.False(t, infoJpeg == nil || err != nil, "Could not read EXIF data of JPEG image")
+	assert.False(t, infoJpeg == nil || err != nil, "Could not read UpdateExif data of JPEG image")
 
 	assert.Equal(t, "Canon EOS 7D", infoJpeg.CameraModel)
 
@@ -72,7 +72,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	infoRaw, err := imageRaw.Exif()
 
-	assert.False(t, infoRaw == nil || err != nil, "Could not read EXIF data of RAW image")
+	assert.False(t, infoRaw == nil || err != nil, "Could not read UpdateExif data of RAW image")
 
 	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel)
 }
@@ -102,9 +102,9 @@ func TestConverter_ConvertAll(t *testing.T) {
 
 	infoRaw, err := image.Exif()
 
-	assert.False(t, infoRaw == nil || err != nil, "Could not read EXIF data of RAW image")
+	assert.False(t, infoRaw == nil || err != nil, "Could not read UpdateExif data of RAW image")
 
-	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel, "Camera model should be Canon EOS M10")
+	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel, "UpdateCamera model should be Canon EOS M10")
 
 	existingJpegFilename := conf.ImportPath() + "/raw/IMG_2567.jpg"
 

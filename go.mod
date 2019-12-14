@@ -27,6 +27,7 @@ require (
 	github.com/jinzhu/gorm v1.9.5
 	github.com/json-iterator/go v1.1.5 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
+	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/leandro-lugaresi/hub v1.1.0
 	github.com/lucasb-eyer/go-colorful v1.0.2
@@ -50,7 +51,7 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/simplereach/timeutils v1.2.0 // indirect
-	github.com/sirupsen/logrus v1.2.0
+	github.com/sirupsen/logrus v1.4.2
 	github.com/soheilhy/cmux v0.1.4 // indirect
 	github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72 // indirect
 	github.com/stretchr/testify v1.4.0
@@ -64,11 +65,12 @@ require (
 	github.com/unrolled/render v0.0.0-20181210145518-4c664cb3ad2f // indirect
 	github.com/urfave/cli v1.20.0
 	go.uber.org/atomic v1.4.0 // indirect
-	golang.org/x/crypto v0.0.0-20190424203555-c05e17bb3b2d // indirect
+	golang.org/x/crypto v0.0.0-20190621222207-cc06ce4a13d4 // indirect
 	golang.org/x/image v0.0.0-20181116024801-cd38e8056d9b // indirect
 	golang.org/x/sys v0.0.0-20190813064441-fde4db37ae7a // indirect
 	golang.org/x/text v0.3.1 // indirect
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4 // indirect
+	golang.org/x/tools v0.0.0-20190624180213-70d37148ca0c // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20180705113604-9856a29383ce // indirect

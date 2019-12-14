@@ -15,7 +15,7 @@
                                 hide-details
                                 item-text="AlbumName"
                                 item-value="AlbumUUID"
-                                label="Select album"
+                                :label="labels.select"
                                 color="secondary-dark"
                                 flat solo
                         >
@@ -23,10 +23,10 @@
                     </v-flex>
                     <v-flex xs12 text-xs-right class="pt-3">
                         <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="p-photo-dialog-cancel">
-                            Cancel
+                            <translate>Cancel</translate>
                         </v-btn>
                         <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
-                               class="p-photo-dialog-confirm">Add to album
+                               class="p-photo-dialog-confirm"><translate>Add to album</translate>
                         </v-btn>
                     </v-flex>
                 </v-layout>
@@ -48,6 +48,9 @@
                 search: null,
                 album: "",
                 albums: [],
+                labels: {
+                    select: this.$gettext("Select album"),
+                }
             }
         },
         methods: {

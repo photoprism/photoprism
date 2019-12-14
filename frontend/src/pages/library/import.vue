@@ -3,10 +3,10 @@
         <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="fileName">Importing {{ fileName }}...</span>
+                    <span v-if="fileName">Importing {{fileName}}...</span>
                     <span v-else-if="busy">Importing files from directory...</span>
                     <span v-else-if="completed">Done.</span>
-                    <span v-else>Press button to import photos from directory...</span>
+                    <span v-else>Press button to move and index photos from import directory...</span>
                 </p>
 
                 <v-progress-linear color="secondary-dark" :value="completed" :indeterminate="busy"></v-progress-linear>
@@ -18,7 +18,7 @@
                         depressed
                         @click.stop="startImport()"
                 >
-                    Import
+                    <translate>Import</translate>
                     <v-icon right dark>create_new_folder</v-icon>
                 </v-btn>
             </v-container>
@@ -58,7 +58,7 @@
                 const ctx = this;
                 Notify.blockUI();
 
-                Api.post('import', {}, { cancelToken: this.source.token }).then(function () {
+                Api.post('import', {}, {cancelToken: this.source.token}).then(function () {
                     Notify.unblockUI();
                     ctx.busy = false;
                     ctx.completed = 100;
@@ -71,7 +71,7 @@
                         return
                     }
 
-                    Notify.error("Import failed");
+                    Notify.error(this.$gettext("Import failed"));
 
                     ctx.busy = false;
                     ctx.completed = 0;
@@ -79,7 +79,7 @@
                 });
             },
             handleEvent(ev, data) {
-                if(this.source) {
+                if (this.source) {
                     this.source.cancel('run in background');
                     this.source = null;
                     Notify.unblockUI();

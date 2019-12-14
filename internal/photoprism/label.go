@@ -1,6 +1,11 @@
 package photoprism
 
-import "strings"
+import (
+	"sort"
+	"strings"
+
+	"github.com/photoprism/photoprism/internal/util"
+)
 
 type Label struct {
 	Name        string   `json:"label"`       // Label name
@@ -42,4 +47,42 @@ func (l Labels) AppendLabel(label Label) Labels {
 	}
 
 	return append(l, label)
+}
+
+func (l Labels) Keywords() (result []string) {
+	for _, label := range l {
+		result = append(result, util.Keywords(label.Name)...)
+
+		for _, c := range label.Categories {
+			result = append(result, util.Keywords(c)...)
+		}
+	}
+
+	return result
+}
+
+func (l Labels) Title(fallback string) string {
+	if len(fallback) > 25 || util.ContainsNumber(fallback) {
+		fallback = ""
+	}
+
+	if len(l) == 0 {
+		return fallback
+	}
+
+	// Sort by priority and uncertainty
+	sort.Sort(l)
+
+	// Get best label (at the top)
+	label := l[0]
+
+	if fallback != "" && label.Priority < 0 {
+		return fallback
+	} else if fallback != "" && label.Priority == 0 && label.Uncertainty > 50 {
+		return fallback
+	} else if label.Priority >= -1 && label.Uncertainty <= 60 {
+		return label.Name
+	}
+
+	 return fallback
 }

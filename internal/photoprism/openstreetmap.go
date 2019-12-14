@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/util"
 	"github.com/pkg/errors"
 )
@@ -37,12 +37,12 @@ type openstreetmapLocation struct {
 }
 
 // Location See https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding
-func (m *MediaFile) Location() (*models.Location, error) {
+func (m *MediaFile) Location() (*entity.Location, error) {
 	if m.location != nil {
 		return m.location, nil
 	}
 
-	location := &models.Location{}
+	location := &entity.Location{}
 
 	openstreetmapLocation := &openstreetmapLocation{
 		Address: &openstreetmapAddress{},

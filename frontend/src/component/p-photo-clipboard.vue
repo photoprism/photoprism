@@ -9,6 +9,7 @@
                     v-model="expanded"
                     transition="slide-y-reverse-transition"
                     class="p-clipboard p-photo-clipboard"
+                    id="t-clipboard"
             >
                 <v-btn
                         slot="activator"
@@ -18,14 +19,14 @@
                         class="p-photo-clipboard-menu"
                 >
                     <v-icon v-if="selection.length === 0">menu</v-icon>
-                    <span v-else>{{ selection.length }}</span>
+                    <span v-else class="t-clipboard-count">{{ selection.length }}</span>
                 </v-btn>
 
                 <v-btn
                         fab
                         dark
                         small
-                        title="Private"
+                        :title="labels.private"
                         color="deep-purple lighten-2"
                         @click.stop="batchPrivate()"
                         :disabled="selection.length === 0"
@@ -37,7 +38,7 @@
                         fab
                         dark
                         small
-                        title="Story"
+                        :title="labels.story"
                         color="cyan accent-4"
                         :disabled="selection.length === 0"
                         @click.stop="batchStory()"
@@ -59,19 +60,19 @@
                         fab
                         dark
                         small
-                        title="Download"
+                        :title="labels.download"
                         color="teal accent-4"
                         @click.stop="download()"
                         class="p-photo-clipboard-download"
                 >
-                    <v-icon>save</v-icon>
+                    <v-icon>cloud_download</v-icon>
                 </v-btn>
                 <v-btn
                         fab
                         dark
                         small
-                        title="Add to album"
-                        color="yellow accent-4"
+                        :title="labels.addToAlbum"
+                        color="amber accent-4"
                         :disabled="selection.length === 0"
                         @click.stop="dialog.album = true"
                         class="p-photo-clipboard-album"
@@ -84,7 +85,7 @@
                         dark
                         small
                         color="delete"
-                        title="Delete"
+                        :title="labels.delete"
                         @click.stop="dialog.delete = true"
                         :disabled="selection.length === 0"
                         v-if="!album"
@@ -97,7 +98,7 @@
                         fab
                         dark
                         small
-                        title="Remove from album"
+                        :title="labels.removeFromAlbum"
                         color="delete"
                         @click.stop="removeFromAlbum"
                         :disabled="selection.length === 0"
@@ -145,6 +146,14 @@
                     album: false,
                     edit: false,
                 },
+                labels: {
+                    private: this.$gettext("Private"),
+                    story: this.$gettext("Story"),
+                    addToAlbum: this.$gettext("Add to album"),
+                    removeFromAlbum: this.$gettext("Remove from album"),
+                    delete: this.$gettext("Delete"),
+                    download: this.$gettext("Download"),
+                },
             };
         },
         methods: {
@@ -156,7 +165,7 @@
                 Api.post("batch/photos/private", {"photos": this.selection}).then(this.onPrivateToggled.bind(this));
             },
             onPrivateToggled() {
-                Notify.success("Toggled private flag");
+                Notify.success(this.$gettext("Toggled private flag"));
                 this.clearClipboard();
                 this.refresh();
             },
@@ -164,7 +173,7 @@
                 Api.post("batch/photos/story", {"photos": this.selection}).then(this.onStoryToggled.bind(this));
             },
             onStoryToggled() {
-                Notify.success("Toggled story flag");
+                Notify.success(this.$gettext("Toggled story flag"));
                 this.clearClipboard();
                 this.refresh();
             },
@@ -174,12 +183,12 @@
                 Api.post("batch/photos/delete", {"photos": this.selection}).then(this.onDeleted.bind(this));
             },
             onDeleted() {
-                Notify.success("Photos deleted");
+                Notify.success(this.$gettext("Photos deleted"));
                 this.clearClipboard();
                 this.refresh();
             },
             batchTag() {
-                Notify.warning("Not implemented yet");
+                Notify.warning(this.$gettext("Not implemented yet"));
                 this.expanded = false;
             },
             addToAlbum(albumUUID) {
@@ -193,7 +202,7 @@
             },
             removeFromAlbum() {
                 if(!this.album) {
-                    this.$notify.error("remove failed: unknown album");
+                    this.$notify.error(this.$gettext("remove failed: unknown album"));
                     return
                 }
 
@@ -209,7 +218,7 @@
             },
             batchEditPhotos() {
                 this.dialog.edit = false;
-                Notify.warning("Not implemented yet");
+                Notify.warning(this.$gettext("Not implemented yet"));
                 this.expanded = false;
             },
             download() {
@@ -224,7 +233,7 @@
                 this.expanded = false;
             },
             onDownload(path) {
-                Notify.success("Downloading...");
+                Notify.success(this.$gettext("Downloading..."));
                 window.open(path, "_blank");
             },
             openDocs() {

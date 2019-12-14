@@ -56,31 +56,21 @@ export default class Page {
     }
 
     async selectPhoto(nPhoto) {
-        const count = await this.getSelectedCount();
         await t
         .hover(Selector('div[class="v-image__image v-image__image--cover"]', {timeout:4000}).nth(nPhoto))
-        .click(Selector('button.p-photo-select').nth(count));
+        .click(Selector('.t-select.t-off'));
     }
 
     async unselectPhoto(nPhoto) {
-        const count = await this.getSelectedCount();
-        const nButton = count -1;
         await t
             .hover(Selector('div[class="v-image__image v-image__image--cover"]', {timeout:4000}).nth(nPhoto))
-            .click(Selector('button.p-photo-select').nth(nButton));
+            .click(Selector('.t-select.t-on'));
     }
 
     async likePhoto(nPhoto) {
-        const count = await this.getSelectedCount();
         await t
             .hover(Selector('div[class="v-image__image v-image__image--cover"]', {timeout:4000}).nth(nPhoto))
-            .click(Selector('button.p-photo-like').nth(count));
-    }
-
-    async getSelectedCount() {
-        const countSelected = await Selector('div.p-photo-clipboard').innerText;
-        const countSelectedInt = (Number.isInteger(parseInt(countSelected))) ? parseInt(countSelected) : 0;
-        return countSelectedInt;
+            .click(Selector('.t-like.t-off'));
     }
 
     async login(password) {

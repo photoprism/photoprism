@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/djherbis/times"
-	"github.com/photoprism/photoprism/internal/models"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
@@ -23,13 +23,13 @@ type MediaFile struct {
 	dateCreated    time.Time
 	timeZone       string
 	hash           string
-	fileType       string
+	fileType       FileType
 	mimeType       string
 	perceptualHash string
 	width          int
 	height         int
 	exifData       *Exif
-	location       *models.Location
+	location       *entity.Location
 }
 
 // NewMediaFile returns a new MediaFile.
@@ -323,10 +323,8 @@ func (m *MediaFile) RelativePath(directory string) string {
 	if i := strings.Index(pathname, directory); i == 0 {
 		if i := strings.LastIndex(directory, string(os.PathSeparator)); i == len(directory)-1 {
 			pathname = pathname[len(directory):]
-			log.Info(pathname)
 		} else if i := strings.LastIndex(directory, string(os.PathSeparator)); i != len(directory) {
 			pathname = pathname[len(directory)+1:]
-			log.Info(pathname)
 		}
 	}
 
@@ -437,7 +435,7 @@ func (m *MediaFile) HasSameFilename(other *MediaFile) bool {
 func (m *MediaFile) Move(newFilename string) error {
 	if err := os.Rename(m.filename, newFilename); err != nil {
 		log.Debugf("could not rename file, falling back to copy and delete: %s", err.Error())
- 	} else {
+	} else {
 		m.filename = newFilename
 
 		return nil
@@ -486,12 +484,12 @@ func (m *MediaFile) Copy(destinationFilename string) error {
 	return nil
 }
 
-// Extension returns the extension of a mediafile.
+// Extension returns the filename extension of this media file.
 func (m *MediaFile) Extension() string {
 	return strings.ToLower(filepath.Ext(m.filename))
 }
 
-// IsJpeg return true if the given mediafile is of mimetype Jpeg.
+// IsJpeg return true if this media file is a JPEG image.
 func (m *MediaFile) IsJpeg() bool {
 	// Don't import/use existing thumbnail files (we create our own)
 	if m.Extension() == ".thm" {
@@ -502,30 +500,60 @@ func (m *MediaFile) IsJpeg() bool {
 }
 
 // Type returns the type of the media file.
-func (m *MediaFile) Type() string {
+func (m *MediaFile) Type() FileType {
 	return FileExtensions[m.Extension()]
 }
 
-// HasType checks whether a media file is of a given type.
-func (m *MediaFile) HasType(typeString string) bool {
-	if typeString == FileTypeJpeg {
+// HasType returns true if this media file is of a given type.
+func (m *MediaFile) HasType(t FileType) bool {
+	if t == FileTypeJpeg {
 		return m.IsJpeg()
 	}
 
-	return m.Type() == typeString
+	return m.Type() == t
 }
 
-// IsRaw check whether the given media file a RAW file.
+// IsRaw returns true if this media file a RAW file.
 func (m *MediaFile) IsRaw() bool {
 	return m.HasType(FileTypeRaw)
 }
 
-// IsHEIF check if a given media file is a High Efficiency Image File Format file.
+// IsHEIF returns true if this media file is a High Efficiency Image File Format file.
 func (m *MediaFile) IsHEIF() bool {
 	return m.HasType(FileTypeHEIF)
 }
 
-// IsPhoto checks if a media file is a photo / image.
+// IsSidecar returns true if this media file is a sidecar file (containing metadata).
+func (m *MediaFile) IsSidecar() bool {
+	switch m.Type() {
+	case FileTypeXMP:
+		return true
+	case FileTypeAAE:
+		return true
+	case FileTypeXML:
+		return true
+	case FileTypeYaml:
+		return true
+	case FileTypeText:
+		return true
+	case FileTypeMarkdown:
+		return true
+	default:
+		return false
+	}
+}
+
+// IsVideo returns true if this media file is a video file.
+func (m *MediaFile) IsVideo() bool {
+	switch m.Type() {
+	case FileTypeMovie:
+		return true
+	}
+
+	return false
+}
+
+// IsPhoto checks if this media file is a photo / image.
 func (m *MediaFile) IsPhoto() bool {
 	return m.IsJpeg() || m.IsRaw() || m.IsHEIF()
 }

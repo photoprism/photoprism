@@ -36,6 +36,10 @@ class Settings {
         return result;
     }
 
+    changed(key) {
+        return (this[key] !== this.__originalValues[key]);
+    }
+
     load() {
         return Api.get("settings").then((response) => {
             return Promise.resolve(this.setValues(response.data));

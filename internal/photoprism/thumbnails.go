@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/util"
@@ -93,6 +94,14 @@ func CreateThumbnailsFromOriginals(originalsPath string, thumbnailsPath string, 
 			return nil
 		}
 
+		fileName := mediaFile.RelativeFilename(originalsPath)
+
+		event.Publish("index.thumbnails", event.Data{
+			"fileName": fileName,
+			"baseName": filepath.Base(fileName),
+			"force":    force,
+		})
+
 		if err := mediaFile.CreateDefaultThumbnails(thumbnailsPath, force); err != nil {
 			log.Errorf("could not create default thumbnails: %s", err)
 			return err
@@ -138,7 +147,7 @@ func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err
 	return imaging.Open(filename, imaging.AutoOrientation(true))
 }
 
-func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format string) {
+func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format FileType) {
 	method = ResampleFit
 	filter = imaging.Lanczos
 	format = FileTypeJpeg
@@ -271,7 +280,7 @@ func CreateThumbnail(img image.Image, fileName string, width, height int, opts .
 
 	var saveOption imaging.EncodeOption
 
-	if filepath.Ext(fileName) == "."+FileTypePng {
+	if filepath.Ext(fileName) == "."+string(FileTypePng) {
 		saveOption = imaging.PNGCompressionLevel(png.DefaultCompression)
 	} else if width <= 150 && height <= 150 {
 		saveOption = imaging.JPEGQuality(JpegQualitySmall)

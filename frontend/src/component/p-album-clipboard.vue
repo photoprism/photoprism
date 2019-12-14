@@ -9,6 +9,7 @@
                     v-model="expanded"
                     transition="slide-y-reverse-transition"
                     class="p-clipboard p-album-clipboard"
+                    id="t-clipboard"
             >
                 <v-btn
                         slot="activator"
@@ -18,20 +19,20 @@
                         class="p-album-clipboard-menu"
                 >
                     <v-icon v-if="selection.length === 0">menu</v-icon>
-                    <span v-else>{{ selection.length }}</span>
+                    <span v-else  class="t-clipboard-count">{{ selection.length }}</span>
                 </v-btn>
 
                 <v-btn
                         fab
                         dark
                         small
-                        title="Download"
+                        :title="labels.download"
                         color="teal accent-4"
                         @click.stop="download()"
                         class="p-album-clipboard-download"
                         :disabled="selection.length !== 1"
                 >
-                    <v-icon>save</v-icon>
+                    <v-icon>cloud_download</v-icon>
                 </v-btn>
 
                 <v-btn
@@ -39,7 +40,7 @@
                         dark
                         small
                         color="delete"
-                        title="Delete"
+                        :title="labels.delete"
                         @click.stop="dialog.delete = true"
                         :disabled="selection.length === 0"
                         class="p-album-clipboard-delete"
@@ -80,6 +81,11 @@
                     delete: false,
                     edit: false,
                 },
+                labels: {
+                    download: this.$gettext("Download"),
+                    delete: this.$gettext("Delete"),
+                },
+
             };
         },
         methods: {
@@ -93,13 +99,13 @@
                 Api.post("batch/albums/delete", {"albums": this.selection}).then(this.onDeleted.bind(this));
             },
             onDeleted() {
-                Notify.success("Albums deleted");
+                Notify.success(this.$gettext("Albums deleted"));
                 this.clearClipboard();
                 this.refresh();
             },
             download() {
                 if(this.selection.length !== 1) {
-                    Notify.error("You can only download one album");
+                    Notify.error(this.$gettext("You can only download one album"));
                     return;
                 }
 
@@ -108,7 +114,7 @@
                 this.expanded = false;
             },
             onDownload(path) {
-                Notify.success("Downloading...");
+                Notify.success(this.$gettext("Downloading..."));
                 window.open(path, "_blank");
             },
         }

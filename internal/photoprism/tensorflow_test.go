@@ -1,9 +1,10 @@
 package photoprism
 
 import (
-	tensorflow "github.com/tensorflow/tensorflow/tensorflow/go"
 	"io/ioutil"
 	"testing"
+
+	tensorflow "github.com/tensorflow/tensorflow/tensorflow/go"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
@@ -110,8 +111,8 @@ func TestTensorFlow_Labels(t *testing.T) {
 			assert.IsType(t, Labels{}, result)
 			assert.Equal(t, 2, len(result))
 
-			assert.Equal(t, "chihuahua dog", result[0].Name)
-			assert.Equal(t, "pembroke dog", result[1].Name)
+			assert.Equal(t, "dog", result[0].Name)
+			assert.Equal(t, "dog", result[1].Name)
 
 			assert.Equal(t, 34, result[0].Uncertainty)
 			assert.Equal(t, 91, result[1].Uncertainty)
@@ -192,8 +193,8 @@ func TestTensorFlow_LabelRule(t *testing.T) {
 		tensorFlow := NewTensorFlow(conf)
 
 		result := tensorFlow.labelRule("cat")
-		assert.Equal(t, "tabby cat", result.Label)
-		assert.Equal(t, "kitty", result.Categories[2])
+		assert.Equal(t, "cat", result.Label)
+		assert.Equal(t, "animal", result.Categories[0])
 		assert.Equal(t, 5, result.Priority)
 	})
 	t.Run("labels.txt not existing in config path", func(t *testing.T) {

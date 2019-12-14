@@ -1,6 +1,7 @@
 @import url("../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/leaflet/dist/leaflet.css");
+@import url("colorchange.css");
 @import url("maps.css");
 @import url("viewer.css");
 @import url("photos.css");
@@ -38,9 +39,33 @@ main {
     z-index: 10;
 }
 
+#p-navigation .p-navigation-count {
+    opacity: 0.5;
+    position: absolute;
+    left: 80px;
+    width: 40px;
+    display: inline-block;
+    text-align: right;
+}
+
 #photoprism div.loading {
-    text-align: center;
-    margin: 50px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#photoprism div.loading p {
+    color: #616161;
+}
+
+#photoprism div.loading div.bar {
+    margin: 0;
+    width: 100%;
+    height: 8px;
+    animation: colorchange 3s infinite;
+    -webkit-animation: colorchange 3s infinite;
 }
 
 #photoprism main a {
@@ -89,9 +114,16 @@ main {
     font-family: monospace;
     white-space: normal;
     color: white;
-    font-weight: bold;
     padding: 4px;
     margin: 0;
+}
+
+#photoprism .p-log-empty {
+    font-weight: normal;
+}
+
+#photoprism .p-log-message {
+    font-weight: bold;
 }
 
 #photoprism .p-log-message span {
@@ -105,6 +137,10 @@ main {
     color: #F48FB1;
 }
 
+#photoprism .p-log-warning {
+    color: #FFD600;
+}
+
 #photoprism .p-log-fatal {
     color: #FFECB3;
 }
@@ -114,5 +150,5 @@ main {
 }
 
 #photoprism .p-log-debug {
-    color: #EEEEEE;
+    color: #DDDDDD;
 }

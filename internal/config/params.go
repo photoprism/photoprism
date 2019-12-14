@@ -28,6 +28,12 @@ const (
 // See https://github.com/photoprism/photoprism/issues/50#issuecomment-433856358
 type Params struct {
 	Name               string
+	Url                string `yaml:"url" flag:"url"`
+	Title              string `yaml:"title" flag:"title"`
+	Subtitle           string `yaml:"subtitle" flag:"subtitle"`
+	Description        string `yaml:"description" flag:"description"`
+	Author             string `yaml:"author" flag:"author"`
+	Twitter            string `yaml:"twitter" flag:"twitter"`
 	Version            string
 	Copyright          string
 	Debug              bool   `yaml:"debug" flag:"debug"`

@@ -14,7 +14,7 @@ export default class Util {
             IX: 9,
             V: 5,
             IV: 4,
-            I: 1
+            I: 1,
         };
         let a;
         if (number < 1 || number > 3999)

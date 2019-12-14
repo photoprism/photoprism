@@ -19,6 +19,10 @@
       "value": "charcoal"
     },
     {
+      "text": "Cyano",
+      "value": "cyano"
+    },
+    {
       "text": "Lavender",
       "value": "lavender"
     },
@@ -29,10 +33,6 @@
     {
       "text": "Seaweed",
       "value": "seaweed"
-    },
-    {
-      "text": "Whale",
-      "value": "whale"
     }
   ]
 }

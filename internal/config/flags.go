@@ -22,6 +22,42 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_PUBLIC",
 	},
 	cli.StringFlag{
+		Name:   "url",
+		Usage:  "canonical site URL",
+		Value:  "http://localhost:2342/",
+		EnvVar: "PHOTOPRISM_URL",
+	},
+	cli.StringFlag{
+		Name:   "title",
+		Usage:  "site title",
+		Value:  "PhotoPrism",
+		EnvVar: "PHOTOPRISM_TITLE",
+	},
+	cli.StringFlag{
+		Name:   "subtitle",
+		Usage:  "site subtitle",
+		Value:  "Browse your life",
+		EnvVar: "PHOTOPRISM_SUBTITLE",
+	},
+	cli.StringFlag{
+		Name:   "description",
+		Usage:  "site description",
+		Value:  "Personal Photo Management",
+		EnvVar: "PHOTOPRISM_DESCRIPTION",
+	},
+	cli.StringFlag{
+		Name:   "author",
+		Usage:  "site owner / copyright",
+		Value:  "Anonymous",
+		EnvVar: "PHOTOPRISM_AUTHOR",
+	},
+	cli.StringFlag{
+		Name:   "twitter",
+		Usage:  "twitter handle for sharing",
+		Value:  "@browseyourlife",
+		EnvVar: "PHOTOPRISM_TWITTER",
+	},
+	cli.StringFlag{
 		Name:   "admin-password",
 		Usage:  "admin password",
 		Value:  "photoprism",

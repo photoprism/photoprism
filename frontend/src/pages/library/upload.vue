@@ -6,12 +6,15 @@
             <v-container fluid>
                 <p class="subheading">
                     <span v-if="total === 0">Select photos to start upload...</span>
-                    <span v-else-if="total > 0 && completed < 100">Uploading {{current}} of {{total}}...</span>
+                    <span v-else-if="total > 0 && completed < 100">
+                        Uploading {{current}} of {{total}}...
+                    </span>
                     <span v-else-if="indexing">Upload complete. Indexing...</span>
                     <span v-else-if="completed === 100">Done.</span>
                 </p>
 
-                <v-progress-linear color="secondary-dark" v-model="completed" :indeterminate="indexing"></v-progress-linear>
+                <v-progress-linear color="secondary-dark" v-model="completed"
+                                   :indeterminate="indexing"></v-progress-linear>
 
                 <v-btn
                         :disabled="busy"
@@ -20,7 +23,7 @@
                         depressed
                         @click.stop="uploadDialog()"
                 >
-                    Upload
+                    <translate>Upload</translate>
                     <v-icon right dark>cloud_upload</v-icon>
                 </v-btn>
             </v-container>
@@ -67,7 +70,7 @@
                     return
                 }
 
-                Notify.info("Uploading photos...");
+                Notify.info(this.$gettext("Uploading photos..."));
                 Notify.blockUI();
 
                 async function performUpload(ctx) {
@@ -89,7 +92,7 @@
                         ).then(function () {
                             ctx.completed = Math.round((ctx.current / ctx.total) * 100);
                         }).catch(function () {
-                            Notify.error("Upload failed");
+                            Notify.error(ctx.$gettext("Upload failed"));
                         });
                     }
                 }
@@ -100,12 +103,12 @@
 
                     Api.post('import/upload/' + this.started).then(function () {
                         Notify.unblockUI();
-                        Notify.success("Upload complete");
+                        Notify.success(ctx.$gettext("Upload complete"));
                         ctx.busy = false;
                         ctx.indexing = false;
                     }).catch(function () {
                         Notify.unblockUI();
-                        Notify.error("Failure while importing uploaded files");
+                        Notify.error(ctx.$gettext("Failure while importing uploaded files"));
                         ctx.busy = false;
                         ctx.indexing = false;
                     });

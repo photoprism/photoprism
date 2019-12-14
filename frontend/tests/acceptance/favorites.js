@@ -16,19 +16,17 @@ const page = new Page();
 
 test('Like photo', async t => {
 
-    const FavoritesCount = await Selector('button.p-photo-like').count;
+    const FavoritesCount = await Selector('.t-like.t-on').count;
     logger.clear();
-    await t
-        .navigateTo("../photos")
+    await t.navigateTo("../photos")
     const request = await logger.requests[0].responseBody;
     await page.likePhoto(5);
     logger.clear();
-    await t
-        .navigateTo("../favorites");
+    await t.navigateTo("../favorites");
     const request2 = await logger.requests[0].responseBody;
     logger.clear();
 
-    const FavoritesCountAfterLike = await Selector('button.p-photo-like').count;
+    const FavoritesCountAfterLike = await Selector('.t-like.t-on').count;
     await t
         .expect(FavoritesCountAfterLike).eql(FavoritesCount + 1)
         .expect(Selector('div.v-image__image').visible).ok();
@@ -36,14 +34,14 @@ test('Like photo', async t => {
 
 test('Dislike photo', async t => {
 
-    const FavoritesCount = await Selector('button.p-photo-like').count;
-    await page.likePhoto(0);
-    logger.clear();
+    const FavoritesCount = await Selector('.t-like.t-on').count;
     await t
-        .navigateTo("../favorites");
+        .click(Selector('.t-like.t-on'));
+    logger.clear();
+    await t.navigateTo("../favorites");
     const request3 = await logger.requests[0].responseBody;
 
-    const FavoritesCountAfterDislike = await Selector('button.p-photo-like').count;
+    const FavoritesCountAfterDislike = await Selector('.t-like.t-on').count;
     await t
         .expect(FavoritesCountAfterDislike).eql(FavoritesCount - 1);
 });

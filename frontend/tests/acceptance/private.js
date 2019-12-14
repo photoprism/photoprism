@@ -25,7 +25,5 @@ test('Make photos private', async t => {
     await t
         .expect(logger.requests[0].response.statusCode).eql(200)
         .expect(logger.requests[0].response.body).contains('photos marked as private');
-    const countSelected = await Selector('div.p-photo-clipboard').innerText;
-    await t
-        .expect(countSelected).contains('menu')
+    await t.expect(Selector('#t-clipboard').exists).eql(false);
 });

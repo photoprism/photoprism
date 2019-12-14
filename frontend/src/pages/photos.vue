@@ -5,7 +5,10 @@
         <p-photo-search :settings="settings" :filter="filter" :filter-change="updateQuery"
                         :refresh="refresh"></p-photo-search>
 
-        <v-container fluid class="pa-0">
+        <v-container fluid class="pa-4" v-if="loading">
+            <v-progress-linear color="secondary-dark"  :indeterminate="true"></v-progress-linear>
+        </v-container>
+        <v-container fluid class="pa-0" v-else>
             <p-scroll-top></p-scroll-top>
 
             <p-photo-clipboard :refresh="refresh" :selection="selection"></p-photo-clipboard>
@@ -50,6 +53,7 @@
                 this.filter.before = query['before'] ? query['before'] : '';
                 this.filter.after = query['after'] ? query['after'] : '';
                 this.lastFilter = {};
+                this.loading = true;
                 this.routeName = this.$route.name;
                 this.search();
             }
@@ -77,6 +81,7 @@
                 filter: filter,
                 lastFilter: {},
                 routeName: routeName,
+                loading: true
             };
         },
         methods: {
@@ -101,7 +106,7 @@
                 const photo = this.results[index];
 
                 if (photo.PhotoLat && photo.PhotoLong) {
-                    this.$router.push({name: "places", query: {lat: photo.PhotoLat, long: photo.PhotoLong}});
+                    this.$router.push({name: "places", query: {lat: String(photo.PhotoLat), long: String(photo.PhotoLong)}});
                 } else if (photo.LocName) {
                     this.$router.push({name: "places", query: {q: photo.LocName}});
                 } else if (photo.LocCity) {
@@ -135,7 +140,7 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$notify.info('All ' + this.results.length + ' photos loaded');
+                        this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' photos loaded'));
                     }
                 });
             },
@@ -150,6 +155,10 @@
                     if (query[key] === undefined || !query[key]) {
                         delete query[key];
                     }
+                }
+
+                if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
+                    return
                 }
 
                 this.$router.replace({query: query});
@@ -192,24 +201,25 @@
                 const params = this.searchParams();
 
                 Photo.search(params).then(response => {
+                    this.loading = false;
                     this.results = response.models;
 
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
                         if (!this.results.length) {
-                            this.$notify.warning("No photos found");
+                            this.$notify.warning(this.$gettext("No photos found"));
                         } else if (this.results.length === 1) {
-                            this.$notify.info("One photo found");
+                            this.$notify.info(this.$gettext("One photo found"));
                         } else {
-                            this.$notify.info(this.results.length + " photos found");
+                            this.$notify.info(this.results.length + this.$gettext(" photos found"));
                         }
                     } else {
-                        this.$notify.info('More than 50 photos found');
+                        this.$notify.info(this.$gettext('More than 50 photos found'));
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
-                });
+                }).catch(() => this.loading = false);
             },
             onKeypress(event) {
                 if (event.key == "Escape") {

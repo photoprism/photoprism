@@ -1,12 +1,14 @@
 <template>
     <div class="p-tab p-tab-general">
         <v-container fluid>
-            <v-form ref="form" class="p-form-settings" lazy-validation @submit.prevent="save" dense>
+            <v-form lazy-validation dense
+                    ref="form" class="p-form-settings" accept-charset="UTF-8"
+                    @submit.prevent="save">
                 <v-layout wrap align-center>
                     <v-flex xs12 sm6 class="pr-3">
                         <v-select
                                 :items="options.languages"
-                                label="Language"
+                                :label="labels.language"
                                 color="secondary-dark"
                                 v-model="settings.language"
                                 flat
@@ -16,7 +18,7 @@
                     <v-flex xs12 sm6 class="pr-3">
                         <v-select
                                 :items="options.themes"
-                                label="Theme"
+                                :label="labels.theme"
                                 color="secondary-dark"
                                 v-model="settings.theme"
                                 flat
@@ -28,7 +30,7 @@
                        class="white--text ml-0 mt-2"
                        depressed
                        @click.stop="save">
-                    Save
+                    <translate>Save</translate>
                     <v-icon right dark>save</v-icon>
                 </v-btn>
             </v-form>
@@ -47,6 +49,10 @@
                 readonly: this.$config.getValue("readonly"),
                 settings: new Settings(this.$config.values.settings),
                 options: options,
+                labels: {
+                    language: this.$gettext("Language"),
+                    theme: this.$gettext("Theme"),
+                },
             };
         },
         methods: {
@@ -54,9 +60,18 @@
                 this.settings.load();
             },
             save() {
+                const reload = this.settings.changed("language");
+
                 this.settings.save().then((s) => {
                     this.$config.updateSettings(s.getValues(), this.$vuetify);
-                    this.$notify.info("Settings saved");
+
+                    if(reload) {
+                        this.$notify.info(this.$gettext("Reloading..."));
+                        this.$notify.blockUI();
+                        setTimeout(() => window.location.reload(), 100);
+                    } else {
+                        this.$notify.info(this.$gettext("Settings saved"));
+                    }
                 })
             },
         },

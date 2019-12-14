@@ -8,25 +8,32 @@
                 slider-color="secondary-dark"
                 height="64"
         >
-            <v-tab id="tab-upload" v-if="!readonly" ripple @click="changePath('/library/upload')">
-                Upload
+            <v-tab id="tab-originals" ripple @click="changePath('/library')">
+                <translate>Originals</translate>
             </v-tab>
-            <v-tab-item v-if="!readonly">
-                <p-tab-upload></p-tab-upload>
+            <v-tab-item>
+                <p-tab-originals></p-tab-originals>
             </v-tab-item>
 
-            <v-tab id="tab-import" v-if="!readonly" ripple @click="changePath('/library/import')">
-                Import
+            <v-tab id="tab-import" :disabled="readonly" ripple @click="changePath('/library/import')">
+                <translate>Import</translate>
             </v-tab>
-            <v-tab-item v-if="!readonly">
+            <v-tab-item :disabled="readonly">
                 <p-tab-import></p-tab-import>
             </v-tab-item>
 
-            <v-tab id="tab-index" ripple @click="changePath('/library/index')">
-                Index
+            <v-tab id="tab-upload" :disabled="readonly" ripple @click="changePath('/library/upload')">
+                <translate>Upload</translate>
+            </v-tab>
+            <v-tab-item :disabled="readonly">
+                <p-tab-upload></p-tab-upload>
+            </v-tab-item>
+
+            <v-tab id="tab-logs" ripple @click="changePath('/library/logs')">
+                <translate>Logs</translate>
             </v-tab>
             <v-tab-item>
-                <p-tab-index></p-tab-index>
+                <p-tab-logs></p-tab-logs>
             </v-tab-item>
         </v-tabs>
     </div>
@@ -35,7 +42,8 @@
 <script>
     import uploadTab from "pages/library/upload.vue";
     import importTab from "pages/library/import.vue";
-    import indexTab from "pages/library/index.vue";
+    import originalsTab from "pages/library/originals.vue";
+    import tabLogs from "pages/library/logs.vue";
 
     export default {
         name: 'p-page-library',
@@ -43,9 +51,10 @@
             tab: Number
         },
         components: {
-            'p-tab-upload': uploadTab,
+            'p-tab-originals': originalsTab,
             'p-tab-import': importTab,
-            'p-tab-index': indexTab,
+            'p-tab-upload': uploadTab,
+            'p-tab-logs': tabLogs,
         },
         data() {
             return {

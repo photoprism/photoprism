@@ -42,7 +42,8 @@ func indexAction(ctx *cli.Context) error {
 
 	indexer := photoprism.NewIndexer(conf, tensorFlow)
 
-	files := indexer.IndexAll()
+	options := photoprism.IndexerOptionsAll()
+	files := indexer.IndexOriginals(options)
 
 	elapsed := time.Since(start)
 

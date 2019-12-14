@@ -11,8 +11,7 @@ type Message = hub.Message
 var channelCap = 10
 var sharedHub = NewHub()
 
-
-func NewHub () *Hub {
+func NewHub() *Hub {
 	return hub.New()
 }
 
@@ -40,7 +39,7 @@ func Warning(msg string) {
 	Publish("notify.warning", Data{"msg": msg})
 }
 
-func Publish (event string, data Data) {
+func Publish(event string, data Data) {
 	SharedHub().Publish(Message{
 		Name:   event,
 		Fields: data,

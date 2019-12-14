@@ -6,7 +6,7 @@ PhotoPrism is a non-profit project run entirely by volunteers. We need your fund
 [running our servers](https://github.com/photoprism/photoprism/wiki/Infrastructure),
 visiting conferences, buying test devices, offering rewards for contributions, and covering our cost of living.
 
-You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero). They will match your donation in the first year.
+You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero). They will match every donation in the first year.
 
 You can also [become a sponsor on Patreon](https://www.patreon.com/photoprism), [fund issues](https://issuehunt.io/repos/119160553), [donate via PayPal](https://www.paypal.me/photoprism) or [get in touch with us](mailto:hello@photoprism.org) to discuss further details.
 Thank you very much! 💎

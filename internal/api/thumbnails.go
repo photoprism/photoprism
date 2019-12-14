@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/repo"
 	"github.com/photoprism/photoprism/internal/util"
 
 	"github.com/gin-gonic/gin"
@@ -29,8 +30,8 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
-		file, err := search.FindFileByHash(fileHash)
+		r := repo.New(conf.OriginalsPath(), conf.Db())
+		file, err := r.FindFileByHash(fileHash)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -83,11 +84,11 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		r := repo.New(conf.OriginalsPath(), conf.Db())
 
 		// log.Infof("Searching for label slug: %s", c.Param("slug"))
 
-		file, err := search.FindLabelThumbBySlug(c.Param("slug"))
+		file, err := r.FindLabelThumbBySlug(c.Param("slug"))
 
 		// log.Infof("Label thumb file: %#v", file)
 
@@ -138,9 +139,9 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		search := photoprism.NewSearch(conf.OriginalsPath(), conf.Db())
+		r := repo.New(conf.OriginalsPath(), conf.Db())
 
-		file, err := search.FindAlbumThumbByUUID(uuid)
+		file, err := r.FindAlbumThumbByUUID(uuid)
 
 		if err != nil {
 			log.Debugf("album has no photos yet, using generic thumb image: %s", uuid)

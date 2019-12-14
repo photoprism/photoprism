@@ -1,8 +1,9 @@
 package photoprism
 
 import (
-	"github.com/photoprism/photoprism/internal/config"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 func TestIndexer_IndexAll(t *testing.T) {
@@ -24,5 +25,7 @@ func TestIndexer_IndexAll(t *testing.T) {
 
 	importer.ImportPhotosFromDirectory(conf.ImportPath())
 
-	indexer.IndexAll()
+	options := IndexerOptionsAll()
+
+	indexer.IndexOriginals(options)
 }

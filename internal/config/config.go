@@ -12,8 +12,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	gc "github.com/patrickmn/go-cache"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/models"
 	"github.com/photoprism/photoprism/internal/tidb"
 	"github.com/photoprism/photoprism/internal/util"
 	"github.com/sirupsen/logrus"
@@ -184,6 +184,44 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 // Name returns the application name.
 func (c *Config) Name() string {
 	return c.config.Name
+}
+
+// Url returns the public server URL (default is "http://localhost:2342/").
+func (c *Config) Url() string {
+	if c.config.Url == "" {
+		return "http://localhost:2342/"
+	}
+
+	return c.config.Url
+}
+
+// Title returns the site title (default is application name).
+func (c *Config) Title() string {
+	if c.config.Title == "" {
+		return c.Name()
+	}
+
+	return c.config.Title
+}
+
+// Subtitle returns the site title.
+func (c *Config) Subtitle() string {
+	return c.config.Subtitle
+}
+
+// Description returns the site title.
+func (c *Config) Description() string {
+	return c.config.Description
+}
+
+// Author returns the site author / copyright.
+func (c *Config) Author() string {
+	return c.config.Author
+}
+
+// Description returns the twitter handle for sharing.
+func (c *Config) Twitter() string {
+	return c.config.Twitter
 }
 
 // Version returns the application version.
@@ -493,22 +531,22 @@ func (c *Config) MigrateDb() {
 	// db.LogMode(true)
 
 	db.AutoMigrate(
-		&models.File{},
-		&models.Photo{},
-		&models.Event{},
-		&models.Location{},
-		&models.Camera{},
-		&models.Lens{},
-		&models.Country{},
-		&models.Share{},
+		&entity.File{},
+		&entity.Photo{},
+		&entity.Event{},
+		&entity.Location{},
+		&entity.Camera{},
+		&entity.Lens{},
+		&entity.Country{},
+		&entity.Share{},
 
-		&models.Album{},
-		&models.PhotoAlbum{},
-		&models.Label{},
-		&models.Category{},
-		&models.PhotoLabel{},
-		&models.Keyword{},
-		&models.PhotoKeyword{},
+		&entity.Album{},
+		&entity.PhotoAlbum{},
+		&entity.Label{},
+		&entity.Category{},
+		&entity.PhotoLabel{},
+		&entity.Keyword{},
+		&entity.PhotoKeyword{},
 	)
 }
 
@@ -516,8 +554,8 @@ func (c *Config) MigrateDb() {
 func (c *Config) ClientConfig() ClientConfig {
 	db := c.Db()
 
-	var cameras []*models.Camera
-	var albums []*models.Album
+	var cameras []*entity.Camera
+	var albums []*entity.Album
 
 	type country struct {
 		LocCountry     string
@@ -525,29 +563,71 @@ func (c *Config) ClientConfig() ClientConfig {
 	}
 
 	var countries []country
+	var count = struct {
+		Photos    uint `json:"photos"`
+		Favorites uint `json:"favorites"`
+		Private   uint `json:"private"`
+		Stories   uint `json:"stories"`
+		Labels    uint `json:"labels"`
+		Albums    uint `json:"albums"`
+		Countries uint `json:"countries"`
+	}{}
 
-	db.Model(&models.Location{}).Select("DISTINCT loc_country_code, loc_country").Scan(&countries)
+	db.Table("photos").
+		Select("COUNT(*) AS photos, SUM(photo_favorite) AS favorites, SUM(photo_private) AS private, SUM(photo_story) AS stories").
+		Where("deleted_at IS NULL").
+		Take(&count)
 
-	db.Where("deleted_at IS NULL").Limit(1000).Order("camera_model").Find(&cameras)
-	db.Where("deleted_at IS NULL AND album_favorite = 1").Limit(20).Order("album_name").Find(&albums)
+	db.Table("labels").
+		Select("COUNT(*) AS labels").
+		Where("label_priority >= -2 && deleted_at IS NULL").
+		Take(&count)
+
+	db.Table("albums").
+		Select("COUNT(*) AS albums").
+		Where("deleted_at IS NULL").
+		Take(&count)
+
+	db.Table("countries").
+		Select("COUNT(*) AS countries").
+		Take(&count)
+
+	db.Model(&entity.Location{}).
+		Select("DISTINCT loc_country_code, loc_country").
+		Scan(&countries)
+
+	db.Where("deleted_at IS NULL").
+		Limit(1000).Order("camera_model").
+		Find(&cameras)
+
+	db.Where("deleted_at IS NULL AND album_favorite = 1").
+		Limit(20).Order("album_name").
+		Find(&albums)
 
 	jsHash := util.Hash(c.HttpStaticBuildPath() + "/app.js")
 	cssHash := util.Hash(c.HttpStaticBuildPath() + "/app.css")
 
 	result := ClientConfig{
-		"name":       c.Name(),
-		"version":    c.Version(),
-		"copyright":  c.Copyright(),
-		"debug":      c.Debug(),
-		"readonly":   c.ReadOnly(),
-		"public":     c.Public(),
-		"albums":     albums,
-		"cameras":    cameras,
-		"countries":  countries,
-		"thumbnails": Thumbnails,
-		"jsHash":     jsHash,
-		"cssHash":    cssHash,
-		"settings":   c.Settings(),
+		"name":        c.Name(),
+		"url":         c.Url(),
+		"title":       c.Title(),
+		"subtitle":    c.Subtitle(),
+		"description": c.Description(),
+		"author":      c.Author(),
+		"twitter":     c.Twitter(),
+		"version":     c.Version(),
+		"copyright":   c.Copyright(),
+		"debug":       c.Debug(),
+		"readonly":    c.ReadOnly(),
+		"public":      c.Public(),
+		"albums":      albums,
+		"cameras":     cameras,
+		"countries":   countries,
+		"thumbnails":  Thumbnails,
+		"jsHash":      jsHash,
+		"cssHash":     cssHash,
+		"settings":    c.Settings(),
+		"count":       count,
 	}
 
 	return result
