@@ -77,21 +77,14 @@
                     var lastAddedId = selection[selection.length - 1];
                     var rangeStart = this.photos.findIndex((photo) => photo.getId() == lastAddedId);
                     var rangeEnd = this.photos.indexOf(photo);
-                    console.log(Math.min(rangeStart, rangeEnd), Math.max(rangeStart, rangeEnd))
-                    for (var i=Math.min(rangeStart, rangeEnd); i<=Math.max(rangeStart, rangeEnd); i++) {
-                        this.$clipboard.addId(this.photos[i].getId());
+                    var photosToBeAdded = this.photos.slice(Math.min(rangeStart, rangeEnd), Math.max(rangeStart, rangeEnd) + 1);
+                    for (var photo of photosToBeAdded) {
+                        this.$clipboard.add(photo);
                     }
                 } else {
                     this.$clipboard.addId(photo.getId());
                 }
             }
         },
-        created: function () {
-            window.addEventListener('keydown', (e) => {
-                if (e.key == "Escape") {
-                    this.$clipboard.clear();
-                }
-            });
-        }
     };
 </script>

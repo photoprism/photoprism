@@ -211,9 +211,18 @@
                     }
                 });
             },
+            onKeypress(event) {
+                if (event.key == "Escape") {
+                    this.$clipboard.clear();
+                }
+            },
         },
         created() {
             this.search();
+            window.addEventListener('keydown', this.onKeypress);
         },
+        destroyed() {
+            window.removeEventListener('scroll', this.onKeypress);
+        }
     };
 </script>
