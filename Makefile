@@ -40,7 +40,7 @@ install-assets:
 	mkdir -p ~/Pictures/Import
 	mkdir -p ~/Pictures/Export
 	mkdir -p ~/.local/share/photoprism/resources/database
-	cp -r assets/resources/static assets/resources/templates assets/resources/nasnet ~/.local/share/photoprism/resources
+	cp -r assets/resources/static assets/resources/templates assets/resources/nasnet assets/resources/nsfw ~/.local/share/photoprism/resources
 	rsync -a -v --ignore-existing assets/config/*.yml ~/.config/photoprism
 	find ~/.local/share/photoprism -name '.*' -type f -delete
 dep-js:
@@ -49,8 +49,11 @@ dep-go:
 	go build -v ./...
 dep-tensorflow:
 	scripts/download-nasnet.sh
+	scripts/download-nsfw.sh
 zip-nasnet:
 	(cd assets/resources && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
+zip-nsfw:
+	(cd assets/resources && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
 build-js:
 	(cd frontend &&	env NODE_ENV=production npm run build)
 build-go:

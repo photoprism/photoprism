@@ -14,6 +14,7 @@
 /assets/testdata
 /assets/backups
 /assets/resources/nasnet
+/assets/resources/nsfw
 *.log
 
 # Binaries for programs and plugins

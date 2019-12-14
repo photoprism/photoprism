@@ -5,6 +5,7 @@
 /assets/resources/database/*
 /assets/resources/static/build/*
 /assets/resources/nasnet
+/assets/resources/nsfw
 /assets/testdata
 /assets/backups
 Dockerfile
