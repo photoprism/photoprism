@@ -1732,12 +1732,11 @@ hippopotamus:
     - animal
 
 ox:
-  label: cattle
+  label: cow
   priority: 3
   categories:
     - animal
     - mammal
-    - cow
     - farm
 
 water buffalo:
@@ -2756,7 +2755,6 @@ organ:
 oxcart:
   label: cart
   categories:
-    - cattle
     - cow
     - farm
 
