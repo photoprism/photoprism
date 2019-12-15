@@ -222,7 +222,7 @@
                 }).catch(() => this.loading = false);
             },
             onKeypress(event) {
-                if (event.key == "Escape") {
+                if (event.key === "Escape") {
                     this.$clipboard.clear();
                 }
             },

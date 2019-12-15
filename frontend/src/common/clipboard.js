@@ -11,6 +11,7 @@ class Clipboard {
         this.storage = storage;
         this.selectionMap = {};
         this.selection = [];
+        this.lastId = "";
 
         this.loadFromStorage();
     }
@@ -43,9 +44,11 @@ class Clipboard {
         if (index === -1) {
             this.selection.push(id);
             this.selectionMap["id:" + id] = true;
+            this.lastId = id;
         } else {
             this.selection.splice(index, 1);
             delete this.selectionMap["id:" + id];
+            this.lastId = "";
         }
 
         this.saveToStorage();
@@ -67,8 +70,35 @@ class Clipboard {
 
         this.selection.push(id);
         this.selectionMap["id:" + id] = true;
+        this.lastId = id;
 
         this.saveToStorage();
+    }
+
+    addRange(rangeEnd, models) {
+        if(!models || !models[rangeEnd] || !(models[rangeEnd] instanceof Abstract)) {
+            console.warn("Clipboard::addRange() - invalid arguments:", rangeEnd, models);
+            return;
+        }
+
+        let rangeStart = models.findIndex((photo) => photo.PhotoUUID === this.lastId);
+
+        if(rangeStart === -1) {
+            this.toggle(models[rangeEnd]);
+            return 1;
+        }
+
+        if (rangeStart > rangeEnd) {
+            const newEnd = rangeStart;
+            rangeStart = rangeEnd;
+            rangeEnd = newEnd;
+        }
+
+        for (let i = rangeStart; i <= rangeEnd; i++) {
+            this.add(models[i])
+        }
+
+        return (rangeEnd - rangeStart) + 1;
     }
 
     has(model) {
@@ -97,6 +127,7 @@ class Clipboard {
         const index = this.selection.indexOf(id);
 
         this.selection.splice(index, 1);
+        this.lastId = "";
         delete this.selectionMap["id:" + id];
 
         this.saveToStorage();
@@ -111,6 +142,7 @@ class Clipboard {
 
         this.selection = ids;
         this.selectionMap = {};
+        this.lastId = "";
 
         for (let i = 0; i < this.selection.length; i++) {
             this.selectionMap["id:" + this.selection[i]] = true;
@@ -118,6 +150,7 @@ class Clipboard {
     }
 
     clear() {
+        this.lastId = "";
         this.selectionMap = {};
         this.selection.splice(0, this.selection.length);
         this.storage.removeItem(this.storageKey);
