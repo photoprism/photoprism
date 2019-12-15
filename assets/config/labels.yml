@@ -115,12 +115,29 @@ rapeseed:
     - buttercup
 
 fashion:
-  label: people
-  priority: -1
+  label: portrait
   categories:
     - fashion
     - person
     - face
+
+bikini:
+  see: fashion
+
+maillot:
+  see: fashion
+
+nail:
+  see: fashion
+
+neck brace:
+  see: fashion
+
+necklace:
+  see: fashion
+
+hair slide:
+  see: fashion
 
 jean:
   see: fashion
@@ -135,6 +152,12 @@ suit:
   see: fashion
 
 bow tie:
+  see: fashion
+
+bolo tie:
+  see: fashion
+
+brassiere:
   see: fashion
 
 belt:
@@ -174,13 +197,10 @@ grasshopper:
 
 velvet:
   label: leaf
+  threshold: 0.5
   categories:
     - nature
     - plant
-
-hair slide:
-  label: jewelry
-  threshold: 0.6
 
 shower curtain:
   label: bathroom
@@ -2119,10 +2139,6 @@ bicycle-built-for-two:
     - tandem
     - sports
 
-bikini:
-  categories:
-    - swimming
-
 birdhouse:
   categories:
     - building
@@ -2691,17 +2707,6 @@ moving van:
   categories:
     - car
 
-nail:
-  priority: -2
-
-neck brace:
-  priority: -2
-
-necklace:
-  priority: -2
-  categories:
-    - jewelery
-
 notebook:
   label: computer
   categories:
@@ -3083,7 +3088,10 @@ suspension bridge:
     - building
 
 swimming trunks:
+  label: water sports
   categories:
+    - people
+    - portrait
     - swimming
 
 table lamp:
@@ -3533,7 +3541,7 @@ knee pad:
 
 knot:
   priority: -1
-  threshold: 0.7
+  threshold: 0.9
 
 arabian camel:
   label: camel
@@ -3699,4 +3707,3 @@ bassinet:
     - child
     - portrait
     - face
-

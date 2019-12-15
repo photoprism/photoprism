@@ -127,7 +127,7 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 			labels = append(labels, locLabels...)
 		}
 
-		if (fileChanged || o.UpdateTitle) && photo.PhotoTitle == "" {
+		if (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false && photo.LocationID == 0 {
 			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", util.Title(labels[0].Name), m.DateCreated().Format("2006"))
 			} else if !photo.TakenAtLocal.IsZero() {
@@ -341,6 +341,7 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 	if location, err := mediaFile.Location(); err == nil {
 		i.db.FirstOrCreate(location, "id = ?", location.ID)
 		photo.Location = location
+		photo.LocationID = location.ID
 		photo.LocationEstimated = false
 
 		photo.Country = entity.NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
@@ -363,12 +364,18 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 		}
 
 		// TODO: Needs refactoring
-		if location.LocCategory != "" && location.LocCategory != "highway" && location.LocCategory != "tourism" {
+		if location.LocCategory != "" &&
+			location.LocCategory != "highway" &&
+			location.LocCategory != "tourism" &&
+			location.LocCategory != "building" {
 			labels = append(labels, NewLocationLabel(location.LocCategory, 0, -2))
 		}
 
 		// TODO: Needs refactoring
-		if location.LocType != "" && location.LocType != "tertiary" && location.LocType != "attraction" {
+		if location.LocType != "" &&
+			location.LocType != "tertiary" &&
+			location.LocType != "attraction" &&
+			location.LocType != "yes" {
 			labels = append(labels, NewLocationLabel(location.LocType, 0, -1))
 		}
 
