@@ -121,6 +121,9 @@ fashion:
     - person
     - face
 
+hoopskirt:
+  see: fashion
+
 cardigan:
   see: fashion
 
@@ -2039,10 +2042,11 @@ acoustic guitar:
   see: instrument
 
 aircraft carrier:
+  label: ship
   threshold: 0.5
   categories:
     - aircraft
-    - marine
+    - water
     - military
 
 airliner:
@@ -2397,6 +2401,7 @@ dome:
     - building
 
 drilling platform:
+  label: industrial
   categories:
     - building
     - water
@@ -2470,6 +2475,7 @@ forklift:
     - construction side
 
 fountain:
+  label: lights
   categories:
     - water
 
@@ -2793,8 +2799,7 @@ parachute:
     - sports
 
 passenger car:
-  categories:
-    - car
+  label: car
 
 pay-phone:
   categories:
@@ -3035,8 +3040,7 @@ soap dispenser:
     - cleaning
 
 sombrero:
-  categories:
-    - hat
+  see: fashion
 
 soup bowl:
   categories:
@@ -3749,3 +3753,9 @@ shoji:
 stupa:
   label: architecture
   priority: 2
+
+abacus:
+  priority: -1
+
+horizontal bar:
+  label: podium
