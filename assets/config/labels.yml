@@ -105,21 +105,23 @@ daisy:
     - plant
 
 rapeseed:
-  label: yellow flowers
+  label: flowers
+  threshold: 0.4
   categories:
     - nature
     - plant
-    - flower
     - yellow
-    - rapeseed
-    - buttercup
 
 fashion:
   label: portrait
+  threshold: 0.1
   categories:
     - fashion
     - person
     - face
+
+poncho:
+  see: fashion
 
 hoopskirt:
   see: fashion
@@ -236,12 +238,10 @@ mitten:
 
 bubble:
   label: bubbles
+  priority: -1
 
 tench fish:
-  categories:
-    - water
-    - fish
-    - animal
+  see: fish
 
 goldfish:
   categories:
@@ -301,80 +301,60 @@ ostrich:
     - bird
     - animal
 
-brambling bird:
+bird:
+  label: bird
+  threshold: 0.25
   categories:
-    - bird
     - animal
+
+brambling bird:
+  see: bird
 
 goldfinch bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 house finch bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 junco bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 indigo bunting bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 robin bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 bulbul bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 jay bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 magpie bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 chickadee bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 water ouzel bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 kite bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 bald eagle bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 vulture bird:
-  categories:
-    - bird
-    - animal
+  see: bird
 
 great grey owl bird:
+  label: owl
+  threshold: 0.2
   categories:
-    - bird
     - animal
+    - bird
 
 european fire salamander:
   categories:
@@ -423,38 +403,26 @@ tailed frog:
     - animal
     - frog
 
-loggerhead:
+turtle:
+  label: turtle
   categories:
     - reptile
     - animal
-    - turtle
+
+loggerhead:
+  see: turtle
 
 leatherback turtle:
-  categories:
-    - reptile
-    - animal
-    - turtle
+  see: turtle
 
 mud turtle:
-  categories:
-    - reptile
-    - animal
-    - turtle
+  see: turtle
 
 terrapin:
-  categories:
-    - reptile
-    - animal
-    - turtle
+  see: turtle
 
 box turtle:
-  categories:
-    - reptile
-    - animal
-    - turtle
-
-banded gecko:
-  label: animal
+  see: turtle
 
 common iguana:
   categories:
@@ -468,39 +436,35 @@ american chameleon:
     - animal
     - chameleon
 
-whiptail:
-  categories:
-    - reptile
-    - animal
-
 agama:
   categories:
     - reptile
     - animal
 
-frilled lizard:
+lizard:
+  label: lizard
+  threshold: 0.2
   categories:
     - reptile
     - animal
-    - lizard
+
+whiptail:
+  see: lizard
+
+banded gecko:
+  see: lizard
+
+frilled lizard:
+  see: lizard
 
 alligator lizard:
-  categories:
-    - reptile
-    - animal
-    - lizard
+  see: lizard
 
 gila monster lizard:
-  categories:
-    - reptile
-    - animal
-    - lizard
+  see: lizard
 
 green lizard:
-  categories:
-    - reptile
-    - animal
-    - lizard
+  see: lizard
 
 african chameleon:
   threshold: 0.4
@@ -532,13 +496,14 @@ american alligator:
     - alligator
 
 triceratops:
+  priority: -1
   categories:
     - reptile
     - animal
 
 snake:
   label: snake
-  priority: 2
+  threshold: 0.2
   categories:
     - reptile
     - animal
@@ -652,109 +617,109 @@ centipede:
     - insect
 
 black grouse:
+  threshold: 0.3
   categories:
     - animal
     - bird
     - chicken
 
 ptarmigan:
+  threshold: 0.3
   categories:
     - animal
     - bird
     - chicken
 
 ruffed grouse:
+  threshold: 0.3
   categories:
     - animal
     - bird
     - chicken
 
 prairie chicken:
+  threshold: 0.3
   categories:
     - animal
     - bird
     - chicken
 
 peacock:
+  threshold: 0.3
   categories:
     - animal
     - bird
 
 quail:
+  threshold: 0.3
   categories:
     - animal
     - bird
 
 partridge:
+  threshold: 0.3
   categories:
     - animal
     - bird
     - chicken
 
-African grey:
+parrot:
+  label: parrot
+  threshold: 0.3
   categories:
     - animal
     - bird
-    - parrot
+
+african grey:
+  see: parrot
 
 macaw:
-  categories:
-    - animal
-    - bird
-    - parrot
+  see: parrot
 
 sulphur-crested cockatoo:
-  categories:
-    - animal
-    - bird
-    - parrot
+  see: parrot
 
 lorikeet:
-  categories:
-    - animal
-    - bird
-    - parrot
+  see: parrot
 
 coucal:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 bee eater:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 hornbill:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 hummingbird:
+  threshold: 0.3
+  priority: 1
   categories:
     - animal
     - bird
 
 jacamar:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 toucan:
+  threshold: 0.3
   categories:
     - animal
     - bird
 
 drake:
+  threshold: 0.3
   categories:
     - animal
     - bird
     - duck
 
 red-breasted merganser:
+  label: duck
+  threshold: 0.2
   categories:
     - animal
-    - duck
+    - bird
 
 goose:
   categories:
@@ -762,32 +727,33 @@ goose:
     - bird
 
 black swan:
+  threshold: 0.2
   categories:
     - animal
     - bird
 
-tusker:
-  categories:
-    - animal
-    - elephant
-
 echidna:
+  threshold: 0.2
   categories:
     - animal
 
 platypus:
+  threshold: 0.2
   categories:
     - animal
 
 wallaby:
+  threshold: 0.2
   categories:
     - animal
 
 koala:
+  threshold: 0.2
   categories:
     - animal
 
 wombat:
+  threshold: 0.2
   categories:
     - animal
 
@@ -830,6 +796,7 @@ slug:
     - animal
 
 sea slug:
+  priority: -1
   categories:
     - animal
     - slug
@@ -886,16 +853,16 @@ isopod:
     - insect
 
 white stork:
+  label: storck
   categories:
     - animal
     - bird
-    - storck
 
 black stork:
+  label: storck
   categories:
     - animal
     - bird
-    - storck
 
 spoonbill:
   categories:
@@ -908,54 +875,34 @@ flamingo:
     - bird
 
 little blue heron:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 american egret:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 bittern:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 crane:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 limpkin:
-  categories:
-    - animal
-    - bird
+  see: bird
 
-European gallinule:
-  categories:
-    - animal
-    - bird
+european gallinule:
+  see: bird
 
-American coot:
-  categories:
-    - animal
-    - bird
+american coot:
+  see: bird
 
 bustard:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 ruddy turnstone:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 red-backed sandpiper:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 redshank:
   label: plant
@@ -1510,6 +1457,9 @@ bee:
     - animal
     - insect
 
+apiary:
+  priority: -1
+
 ant:
   categories:
     - animal
@@ -1521,9 +1471,7 @@ cricket:
     - insect
 
 walking stick:
-  categories:
-    - animal
-    - insect
+  priority: -1
 
 cockroach:
   categories:
@@ -1615,23 +1563,20 @@ sea cucumber:
     - sea
     - animal
 
-wood rabbit:
+rabbit:
+  label: rabbit
+  threshold: 0.3
   categories:
     - animal
-    - rodent
-    - rabbit
+
+wood rabbit:
+  see: rabbit
 
 hare:
-  categories:
-    - animal
-    - rodent
-    - rabbit
+  see: rabbit
 
-Angora:
-  categories:
-    - animal
-    - rodent
-    - rabbit
+angora:
+  see: rabbit
 
 hamster:
   categories:
@@ -1644,6 +1589,8 @@ porcupine:
     - rodent
 
 fox squirrel:
+  label: squirrel
+  threshold: 0.2
   categories:
     - animal
     - rodent
@@ -1684,12 +1631,13 @@ warthog:
     - animal
 
 hippopotamus:
+  label: hippo
   categories:
     - animal
 
 ox:
   label: cow
-  priority: 3
+  threshold: 0.2
   categories:
     - animal
     - mammal
@@ -1708,6 +1656,7 @@ bison:
 
 ram:
   label: sheep
+  threshold: 0.2
   categories:
     - farm
     - animal
@@ -1734,11 +1683,6 @@ impala:
     - mammal
 
 gazelle:
-  categories:
-    - animal
-    - mammal
-
-Arabian camel:
   categories:
     - animal
     - mammal
@@ -1784,142 +1728,119 @@ three-toed sloth:
   categories:
     - animal
 
-orangutan:
+ape:
+  priority: 2
   categories:
-    - animal
     - monkey
+    - animal
     - ape
+
+orangutan:
+  see: ape
 
 gorilla:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: ape
 
 chimpanzee:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: ape
 
 gibbon:
+  see: ape
+
+monkey:
+  label: monkey
+  priority: 2
   categories:
     - animal
-    - monkey
     - ape
 
 siamang:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: monkey
 
 guenon:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: monkey
 
 patas:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: monkey
 
 baboon:
+  priority: 2
   categories:
     - animal
-    - monkey
     - ape
+    - monkey
 
 macaque:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: monkey
 
 langur:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: monkey
 
 colobus:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: monkey
 
 proboscis monkey:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: monkey
 
 marmoset:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: monkey
 
 capuchin:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: monkey
 
 howler monkey:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: monkey
 
 titi:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: monkey
 
 spider monkey:
-  categories:
-    - animal
-    - monkey
-    - ape
+  see: monkey
 
 squirrel monkey:
+  see: monkey
+
+indri:
+  threshold: 0.3
   categories:
-    - animal
-    - monkey
     - ape
+    - monkey
 
 fossa:
   see: cat
 
-indri:
-  categories:
-    - animal
-    - monkey
-    - ape
-
-Indian elephant:
+indian elephant:
+  priority: 2
+  threshold: 0.3
   categories:
     - animal
     - elephant
 
-African elephant:
+african elephant:
+  priority: 2
+  threshold: 0.3
   categories:
     - animal
     - elephant
+
+tusker:
+  priority: 2
+  threshold: 0.3
+  categories:
+    - animal
+    - elephant
+
+panda:
+  label: panda
+  priority: 2
+  categories:
+    - animal
 
 lesser panda:
-  categories:
-    - animal
-    - panda
+  see: panda
 
 giant panda:
-  categories:
-    - animal
-    - panda
+  see: panda
 
 barracouta:
   categories:
@@ -1928,19 +1849,19 @@ barracouta:
     - animal
     - fish
 
-jeel:
+fish:
+  label: fish
+  threshold: 0.3
   categories:
     - water
     - sea
     - animal
-    - fish
+
+eel:
+  see: fish
 
 coho fish:
-  categories:
-    - water
-    - sea
-    - animal
-    - fish
+  see: fish
 
 rock beauty fish:
   categories:
@@ -1957,25 +1878,13 @@ anemone fish:
     - fish
 
 sturgeon fish:
-  categories:
-    - water
-    - sea
-    - animal
-    - fish
+  see: fish
 
 gar fish:
-  categories:
-    - water
-    - sea
-    - animal
-    - fish
+  see: fish
 
 lionfish:
-  categories:
-    - water
-    - sea
-    - animal
-    - fish
+  see: fish
 
 puffer:
   categories:
@@ -2140,9 +2049,10 @@ bookcase:
     - book
 
 bookshop:
-  categories:
-    - shop
-    - store
+  label: shop
+
+tobacco shop:
+  label: shop
 
 breakwater:
   categories:
@@ -2303,13 +2213,10 @@ dam:
   categories:
     - water
 
-desk:
-  categories:
-    - furniture
-    - table
-
 desktop computer:
   label: computer
+  categories:
+    - office
 
 dial telephone:
   label: phone
@@ -2500,12 +2407,21 @@ hand-held computer:
   categories:
     - laptop
     - notebook
+    - office
 
 harmonica:
-  see: instrument
+  priority: -1
+  threshold: 0.3
+  categories:
+    - music
+    - instrument
 
 harp:
-  see: instrument
+  priority: -1
+  threshold: 0.3
+  categories:
+    - music
+    - instrument
 
 hatchet:
   categories:
@@ -2642,6 +2558,7 @@ mixing bowl:
     - cooking
 
 mobile home:
+  priority: -1
   categories:
     - house
     - building
@@ -2742,25 +2659,29 @@ palace:
 
 panpipe:
   label: goods
+  threshold: 0.2
 
 paper towel:
-  label: paper
+  label: towel
+  threshold: 0.2
 
 parachute:
   categories:
     - flying
     - sports
 
-passenger car:
+car:
   label: car
+
+passenger car:
+  see: car
+
+beach wagon:
+  see: car
 
 pay-phone:
   categories:
     - phone
-
-pencil sharpener:
-  categories:
-    - drawing
 
 petri dish:
   label: dish
@@ -2783,9 +2704,7 @@ pickup:
     - car
 
 pier:
-  categories:
-    - water
-    - sea
+  threshold: 0.3
 
 piggy bank:
   categories:
@@ -3101,10 +3020,9 @@ tow truck:
   label: truck
 
 toyshop:
+  label: shop
   categories:
-    - shop
     - store
-    - toys
 
 trailer truck:
   label: truck
@@ -3153,8 +3071,7 @@ wall clock:
   label: clock
 
 wardrobe:
-  categories:
-    - furniture
+  label: furniture
 
 warplane:
   categories:
@@ -3209,8 +3126,7 @@ yurt:
     - tent
 
 comic book:
-  categories:
-    - book
+  label: colorful
 
 book jacket:
   label: book
@@ -3298,22 +3214,13 @@ zucchini:
     - vegetable
 
 spaghetti squash:
-  categories:
-    - food
-    - vegetables
-    - squash
+  label: food
 
 acorn squash:
-  categories:
-    - food
-    - vegetables
-    - squash
+  label: food
 
 butternut squash:
-  categories:
-    - food
-    - vegetables
-    - squash
+  label: food
 
 cucumber:
   categories:
@@ -3453,8 +3360,7 @@ promontory:
     - landscape
 
 sandbar:
-  categories:
-    - sand
+  label: sand
 
 valley:
   categories:
@@ -3524,6 +3430,7 @@ knot:
 
 arabian camel:
   label: camel
+  threshold: 0.4
   categories:
     - animal
 
@@ -3574,8 +3481,8 @@ volleyball:
   see: ball
 
 spider web:
-  threshold: 0.7
-  priority: -1
+  threshold: 0.5
+  priority: -2
 
 wool:
   threshold: 0.5
@@ -3592,7 +3499,7 @@ sunglass:
 
 packet:
   label: package
-  priority: 0
+  priority: -1
 
 swing:
   label: cosy
@@ -3692,7 +3599,6 @@ bassinet:
 
 patio:
   label: building
-  priority: -1
 
 scoreboard:
   label: urban scenery
@@ -3709,9 +3615,43 @@ stupa:
 
 abacus:
   label: goods
+  threshold: 0.2
 
 horizontal bar:
   label: podium
 
 coil:
   priority: -1
+
+wallet:
+  priority: -1
+
+handkerchief:
+  priority: -1
+
+radiator:
+  priority: -1
+
+doormat:
+  priority: -1
+
+vault:
+  label: building
+
+office:
+  label: office
+
+desk:
+  label: office
+
+pencil box:
+  see: office
+
+pencil sharpener:
+  see: office
+
+volcano:
+  threshold: 0.5
+
+radio telescope:
+  threshold: 0.5

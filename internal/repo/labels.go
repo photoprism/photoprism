@@ -108,7 +108,7 @@ func (s *Repo) Labels(f form.LabelSearch) (results []LabelResult, err error) {
 	case "slug":
 		q = q.Order("labels.label_favorite DESC, label_slug ASC")
 	default:
-		q = q.Order("labels.label_favorite DESC, labels.label_priority DESC, label_count DESC, labels.created_at DESC")
+		q = q.Order("labels.label_favorite DESC, label_slug ASC")
 	}
 
 	if f.Count > 0 && f.Count <= 1000 {
