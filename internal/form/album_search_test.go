@@ -41,6 +41,16 @@ func TestParseQueryStringAlbum(t *testing.T) {
 		assert.Equal(t, "newest", form.Order)
 		assert.Equal(t, "query text", form.Query)
 	})
+	t.Run("valid query with umlauts", func(t *testing.T) {
+		form := &AlbumSearch{Query: "query:\"tübingen\""}
+
+		err := form.ParseQueryString()
+
+		log.Debugf("%+v\n", form)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "tübingen", form.Query)
+	})
 	t.Run("query for invalid filter", func(t *testing.T) {
 		form := &AlbumSearch{Query: "xxx:false"}
 
