@@ -92,11 +92,11 @@ bannister:
     - architecture
 
 window shade:
-  label: architecture
+  label: building
   categories:
     - window
     - house
-    - building
+    - architecture
 
 daisy:
   label: flower
@@ -120,6 +120,18 @@ fashion:
     - fashion
     - person
     - face
+
+cardigan:
+  see: fashion
+
+kimono:
+  see: fashion
+
+miniskirt:
+  see: fashion
+
+bonnet:
+  see: fashion
 
 bikini:
   see: fashion
@@ -197,6 +209,7 @@ grasshopper:
 
 velvet:
   label: leaf
+  priority: -1
   threshold: 0.5
   categories:
     - nature
@@ -210,8 +223,10 @@ windsor tie:
   see: fashion
 
 chainlink fence:
-  label: fence
+  label: outdoor
   priority: -1
+  categories:
+    - fence
 
 mitten:
   label: unknown
@@ -268,15 +283,14 @@ stingray:
     - ray
 
 cock:
+  label: chicken
   categories:
     - bird
     - animal
+    - farm
 
 hen:
-  categories:
-    - bird
-    - animal
-    - chicken
+  see: cock
 
 ostrich:
   threshold: 0.5
@@ -1721,11 +1735,13 @@ ox:
     - animal
     - mammal
     - cow
+    - farm
 
 water buffalo:
   categories:
     - animal
     - mammal
+    - farm
 
 bison:
   categories:
@@ -1733,7 +1749,9 @@ bison:
     - mammal
 
 ram:
+  label: sheep
   categories:
+    - farm
     - animal
     - mammal
 
@@ -2129,9 +2147,9 @@ beer glass:
     - alcohol
 
 bell cote:
+  label: church
   categories:
     - bell
-    - ring
 
 bicycle-built-for-two:
   categories:
@@ -2202,9 +2220,6 @@ canoe:
 can opener:
   label: kitchen
 
-cardigan:
-  priority: -2
-
 car mirror:
   label: car
 
@@ -2241,8 +2256,9 @@ chain saw:
     - tool
 
 chiffonier:
+  label: furniture
   categories:
-    - furniture
+    - indoor
     - cupboard
 
 chime:
@@ -2421,9 +2437,10 @@ face powder:
     - make-up
 
 fireboat:
+  threshold: 0.7
   categories:
     - boat
-    - fire fighters
+    - water
 
 fire engine:
   categories:
@@ -2736,6 +2753,7 @@ oxcart:
   categories:
     - cattle
     - cow
+    - farm
 
 paddle:
   threshold: 0.3
@@ -2758,12 +2776,13 @@ paintbrush:
     - art
 
 palace:
+  label: historic architecture
   categories:
     - building
-    - architecture
+    - house
 
 panpipe:
-  see: instrument
+  label: goods
 
 paper towel:
   label: paper
@@ -2796,6 +2815,7 @@ photocopier:
     - office
 
 picket fence:
+  label: outdoor
   priority: -1
   categories:
     - fence
@@ -3212,8 +3232,10 @@ wooden spoon:
     - cooking
 
 worm fence:
-  label: fence
+  label: outdoor
   priority: -1
+  categories:
+    - fence
 
 wreck:
   see: ship
@@ -3549,9 +3571,9 @@ arabian camel:
     - animal
 
 tile roof:
-  label: architecture
+  label: building
   categories:
-    - building
+    - architecture
     - house
 
 croquet ball:
@@ -3707,3 +3729,20 @@ bassinet:
     - child
     - portrait
     - face
+
+patio:
+  label: building
+  priority: -1
+
+scoreboard:
+  label: urban scenery
+
+racket:
+  label: outdoor
+
+shoji:
+  label: indoor
+
+stupa:
+  label: architecture
+  priority: 2
