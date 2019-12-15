@@ -405,6 +405,7 @@ tailed frog:
 
 turtle:
   label: turtle
+  threshold: 0.2
   categories:
     - reptile
     - animal
