@@ -2475,7 +2475,6 @@ forklift:
     - construction side
 
 fountain:
-  label: lights
   categories:
     - water
 
