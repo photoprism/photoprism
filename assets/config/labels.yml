@@ -536,107 +536,63 @@ triceratops:
     - reptile
     - animal
 
-thunder snake:
+snake:
+  label: snake
+  priority: 2
   categories:
     - reptile
     - animal
-    - snake
+
+thunder snake:
+  see: snake
 
 ringneck snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 hognose snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 green snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 king snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 garter snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 water snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 vine snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 night snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 boa constrictor snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 rock python snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
-Indian cobra snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+indian cobra snake:
+  see: snake
 
 green mamba snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 sea snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 horned viper snake:
-  label: reptile
-  categories:
-    - animal
-    - snake
+  see: snake
 
 diamondback snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 sidewinder snake:
-  categories:
-    - reptile
-    - animal
-    - snake
+  see: snake
 
 trilobite:
   categories:
@@ -3756,3 +3712,6 @@ abacus:
 
 horizontal bar:
   label: podium
+
+coil:
+  priority: -1
