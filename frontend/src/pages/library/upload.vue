@@ -17,6 +17,12 @@
                 <v-progress-linear color="secondary-dark" v-model="completed"
                                    :indeterminate="indexing"></v-progress-linear>
 
+
+                <p class="subheading" v-if="safe">
+                    Please don't upload photos containing offensive content. Uploads
+                    that may contain such images will be rejected automatically.
+                </p>
+
                 <v-btn
                         :disabled="busy"
                         color="secondary-dark"
@@ -49,6 +55,7 @@
                 total: 0,
                 completed: 0,
                 started: 0,
+                safe: !this.$config.getValue("uploadNSFW")
             }
         },
         methods: {
