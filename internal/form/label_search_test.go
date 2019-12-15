@@ -42,6 +42,16 @@ func TestParseQueryStringLabel(t *testing.T) {
 		assert.Equal(t, 2, form.Offset)
 		assert.Equal(t, "oldest", form.Order)
 	})
+	t.Run("valid query with umlauts", func(t *testing.T) {
+		form := &LabelSearch{Query: "query:\"tübingen\""}
+
+		err := form.ParseQueryString()
+
+		log.Debugf("%+v\n", form)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "tübingen", form.Query)
+	})
 	t.Run("query for invalid filter", func(t *testing.T) {
 		form := &LabelSearch{Query: "xxx:false"}
 
@@ -52,7 +62,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 		assert.Equal(t, "unknown filter: Xxx", err.Error())
 	})
 	t.Run("query for favorites with invalid type", func(t *testing.T) {
-		form := &LabelSearch{Query: "favorites:cat"}
+		form := &LabelSearch{Query: "favorites:0.99"}
 
 		err := form.ParseQueryString()
 
@@ -61,12 +71,12 @@ func TestParseQueryStringLabel(t *testing.T) {
 		assert.Equal(t, "not a bool value: Favorites", err.Error())
 	})
 	t.Run("query for count with invalid type", func(t *testing.T) {
-		form := &LabelSearch{Query: "count:cat"}
+		form := &LabelSearch{Query: "count:2019-01-15"}
 
 		err := form.ParseQueryString()
 
 		log.Debugf("%+v\n", form)
 
-		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
+		assert.Equal(t, "strconv.Atoi: parsing \"2019-01-15\": invalid syntax", err.Error())
 	})
 }
