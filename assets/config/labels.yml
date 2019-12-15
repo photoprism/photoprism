@@ -3627,13 +3627,15 @@ wool:
 ear:
   priority: -1
 
-sunglass:
-  label: sunglasses
+sunglasses:
   priority: 2
+
+sunglass:
+  see: sunglasses
 
 packet:
   label: package
-  priority: 1
+  priority: 0
 
 swing:
   label: cosy
@@ -3676,6 +3678,7 @@ crutch:
   threshold: 0.3
 
 mousetrap:
+  label: object
   priority: -1
   threshold: 0.3
 

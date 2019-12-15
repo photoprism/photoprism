@@ -101,7 +101,7 @@ func (s *Repo) Labels(f form.LabelSearch) (results []LabelResult, err error) {
 	if f.Priority != 0 {
 		q = q.Where("labels.label_priority > ?", f.Priority)
 	} else {
-		q = q.Where("labels.label_priority >= -2")
+		q = q.Where("labels.label_priority >= 0")
 	}
 
 	switch f.Order {
