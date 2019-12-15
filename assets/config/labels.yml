@@ -3754,7 +3754,7 @@ stupa:
   priority: 2
 
 abacus:
-  priority: -1
+  label: goods
 
 horizontal bar:
   label: podium
