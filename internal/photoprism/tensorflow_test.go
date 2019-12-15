@@ -233,7 +233,7 @@ func TestTensorFlow_BestLabels(t *testing.T) {
 		p[1] = 0.5
 
 		result := tensorFlow.bestLabels(p)
-		assert.Equal(t, "hen", result[0].Name)
+		assert.Equal(t, "chicken", result[0].Name)
 		assert.Equal(t, "bird", result[0].Categories[0])
 		assert.Equal(t, "image", result[0].Source)
 		assert.Equal(t, "goldfish", result[1].Name)
