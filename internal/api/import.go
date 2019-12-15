@@ -3,11 +3,14 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -40,10 +43,12 @@ func Import(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		subPath := ""
 		start := time.Now()
 		path := conf.ImportPath()
 
-		if subPath := c.Param("path"); subPath != "" {
+		if subPath = c.Param("path"); subPath != "" {
+			subPath = strings.Replace(subPath, ".", "", -1)
 			log.Debugf("import sub path: %s", subPath)
 			path = path + subPath
 		}
@@ -53,6 +58,14 @@ func Import(router *gin.RouterGroup, conf *config.Config) {
 		initImporter(conf)
 
 		importer.ImportPhotosFromDirectory(path)
+
+		if subPath != "" && util.DirectoryIsEmpty(path) {
+			if err := os.Remove(path); err != nil {
+				log.Errorf("import: could not deleted empty directory \"%s\": %s", path, err)
+			} else {
+				log.Infof("import: deleted empty directory \"%s\"", path)
+			}
+		}
 
 		elapsed := int(time.Since(start).Seconds())
 
