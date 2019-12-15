@@ -47,6 +47,16 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, false, form.Duplicate)
 		assert.Equal(t, 33.45343166666667, form.Long)
 	})
+	t.Run("valid query with umlauts", func(t *testing.T) {
+		form := &PhotoSearch{Query: "description:\"tübingen\""}
+
+		err := form.ParseQueryString()
+
+		log.Debugf("%+v\n", form)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "tübingen", form.Description)
+	})
 	t.Run("query for invalid filter", func(t *testing.T) {
 		form := &PhotoSearch{Query: "xxx:false"}
 
