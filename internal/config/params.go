@@ -66,6 +66,8 @@ type Params struct {
 	PIDFilename        string `yaml:"pid-filename" flag:"pid-filename"`
 	LogFilename        string `yaml:"log-filename" flag:"log-filename"`
 	DetachServer       bool   `yaml:"detach-server" flag:"detach-server"`
+	HideNSFW           bool   `yaml:"hide-nsfw" flag:"hide-nsfw"`
+	UploadNSFW         bool   `yaml:"upload-nsfw" flag:"upload-nsfw"`
 }
 
 // NewParams() creates a new configuration entity by using two methods:

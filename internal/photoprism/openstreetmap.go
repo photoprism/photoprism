@@ -92,15 +92,23 @@ func (m *MediaFile) Location() (*entity.Location, error) {
 	}
 
 	if len(openstreetmapLocation.Name) > 1 {
-		location.LocName = strings.Replace(openstreetmapLocation.Name, " - ", " / ", -1)
-		location.LocName = util.Title(strings.TrimSpace(strings.Replace(location.LocName, "_", " ", -1)))
+		s := openstreetmapLocation.Name
+		s = strings.Replace(s, " - ", " / ", -1)
+		s = strings.Replace(s, ", ", " / ", -1)
+		location.LocName = util.Title(strings.TrimSpace(strings.Replace(s, "_", " ", -1)))
+	}
+
+	if len(openstreetmapLocation.Address.County) > 1 {
+		s := openstreetmapLocation.Address.County
+		s = strings.Replace(s, " - ", " / ", -1)
+		s = strings.Replace(s, ", ", " / ", -1)
+		location.LocCounty = util.Title(strings.TrimSpace(strings.Replace(s, "_", " ", -1)))
 	}
 
 	location.LocHouseNr = strings.TrimSpace(openstreetmapLocation.Address.HouseNumber)
 	location.LocStreet = strings.TrimSpace(openstreetmapLocation.Address.Road)
 	location.LocSuburb = strings.TrimSpace(openstreetmapLocation.Address.Suburb)
 	location.LocPostcode = strings.TrimSpace(openstreetmapLocation.Address.Postcode)
-	location.LocCounty = strings.TrimSpace(openstreetmapLocation.Address.County)
 	location.LocState = strings.TrimSpace(openstreetmapLocation.Address.State)
 	location.LocCountry = strings.TrimSpace(openstreetmapLocation.Address.Country)
 	location.LocCountryCode = strings.TrimSpace(openstreetmapLocation.Address.CountryCode)

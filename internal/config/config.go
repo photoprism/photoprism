@@ -254,6 +254,16 @@ func (c *Config) ReadOnly() bool {
 	return c.config.ReadOnly
 }
 
+// HideNSFW returns true if NSFW photos are hidden by default.
+func (c *Config) HideNSFW() bool {
+	return c.config.HideNSFW
+}
+
+// UploadNSFW returns true if NSFW photos can be uploaded.
+func (c *Config) UploadNSFW() bool {
+	return c.config.UploadNSFW
+}
+
 // AdminPassword returns the admin password.
 func (c *Config) AdminPassword() string {
 	if c.config.AdminPassword == "" {
@@ -624,6 +634,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		"copyright":   c.Copyright(),
 		"debug":       c.Debug(),
 		"readonly":    c.ReadOnly(),
+		"uploadNSFW":  c.UploadNSFW(),
 		"public":      c.Public(),
 		"albums":      albums,
 		"cameras":     cameras,

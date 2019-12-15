@@ -199,4 +199,14 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "built-in SQL server password",
 		EnvVar: "PHOTOPRISM_SQL_PASSWORD",
 	},
+	cli.BoolFlag{
+		Name:   "hide-nsfw",
+		Usage:  "run in read-only mode",
+		EnvVar: "PHOTOPRISM_HIDE_NSFW",
+	},
+	cli.BoolFlag{
+		Name:   "upload-nsfw",
+		Usage:  "run in read-only mode",
+		EnvVar: "PHOTOPRISM_UPLOAD_NSFW",
+	},
 }

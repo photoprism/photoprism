@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"image"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -382,26 +381,7 @@ func (m *MediaFile) MimeType() string {
 		return m.mimeType
 	}
 
-	handle, err := m.openFile()
-
-	if err != nil {
-		log.Errorf("could not read file to determine mime type: %s", m.Filename())
-		return ""
-	}
-
-	defer handle.Close()
-
-	// Only the first 512 bytes are used to sniff the content type.
-	buffer := make([]byte, 512)
-
-	_, err = handle.Read(buffer)
-
-	if err != nil {
-		log.Errorf("could not read file to determine mime type: %s", m.Filename())
-		return ""
-	}
-
-	m.mimeType = http.DetectContentType(buffer)
+	m.mimeType = util.MimeType(m.Filename())
 
 	return m.mimeType
 }

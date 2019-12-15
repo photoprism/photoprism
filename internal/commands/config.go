@@ -68,5 +68,8 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("exiftool-bin          %s\n", conf.ExifToolBin())
 	fmt.Printf("heifconvert-bin       %s\n", conf.HeifConvertBin())
 
+	fmt.Printf("hide-nsfw             %t\n", conf.HideNSFW())
+	fmt.Printf("upload-nsfw           %t\n", conf.UploadNSFW())
+
 	return nil
 }

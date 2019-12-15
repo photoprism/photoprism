@@ -38,6 +38,8 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		files := f.File["files"]
+		uploaded := len(files)
+		var uploads []string
 
 		p := path.Join(conf.ImportPath(), "upload", subPath)
 
@@ -49,16 +51,54 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 		for _, file := range files {
 			filename := path.Join(p, filepath.Base(file.Filename))
 
+			log.Debugf("upload: saving file \"%s\"", file.Filename)
+
 			if err := c.SaveUploadedFile(file, filename); err != nil {
 				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+				return
+			}
+
+			uploads = append(uploads, filename)
+		}
+
+		if !conf.UploadNSFW() {
+			initNsfwDetector(conf)
+
+			containsNSFW := false
+
+			for _, filename := range uploads {
+				labels, err := nsfwDetector.LabelsFromFile(filename)
+
+				if err != nil {
+					log.Debug(err)
+					continue
+				}
+
+				if labels.IsSafe() {
+					continue
+				}
+
+				log.Infof("nsfw: \"%s\" might be offensive", filename)
+
+				containsNSFW = true
+			}
+
+			if containsNSFW {
+				for _, filename := range uploads {
+					if err := os.Remove(filename); err != nil {
+						log.Errorf("nsfw: could not delete \"%s\"", filename)
+					}
+				}
+
+				c.AbortWithStatusJSON(http.StatusForbidden, ErrUploadNSFW)
 				return
 			}
 		}
 
 		elapsed := time.Since(start)
 
-		log.Infof("%d files uploaded in %s", len(files), elapsed)
+		log.Infof("%d files uploaded in %s", uploaded, elapsed)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("%d files uploaded in %s", len(files), elapsed)})
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("%d files uploaded in %s", uploaded, elapsed)})
 	})
 }

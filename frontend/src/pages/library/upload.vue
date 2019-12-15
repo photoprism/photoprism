@@ -6,6 +6,7 @@
             <v-container fluid>
                 <p class="subheading">
                     <span v-if="total === 0">Select photos to start upload...</span>
+                    <span v-else-if="failed">Upload failed</span>
                     <span v-else-if="total > 0 && completed < 100">
                         Uploading {{current}} of {{total}}...
                     </span>
@@ -43,6 +44,7 @@
                 uploads: [],
                 busy: false,
                 indexing: false,
+                failed: false,
                 current: 0,
                 total: 0,
                 completed: 0,
@@ -61,6 +63,7 @@
                 this.selected = this.$refs.upload.files;
                 this.busy = true;
                 this.indexing = false;
+                this.failed = false;
                 this.total = this.selected.length;
                 this.current = 0;
                 this.completed = 0;
@@ -89,10 +92,15 @@
                                     'Content-Type': 'multipart/form-data'
                                 }
                             }
-                        ).then(function () {
+                        ).then(() => {
                             ctx.completed = Math.round((ctx.current / ctx.total) * 100);
-                        }).catch(function () {
-                            Notify.error(ctx.$gettext("Upload failed"));
+                        }).catch(() => {
+                            ctx.busy = false;
+                            ctx.indexing = false;
+                            ctx.completed = 100;
+                            ctx.failed = true;
+                            Notify.unblockUI();
+                            throw Error("upload failed");
                         });
                     }
                 }
@@ -101,12 +109,12 @@
                     this.indexing = true;
                     const ctx = this;
 
-                    Api.post('import/upload/' + this.started).then(function () {
+                    Api.post('import/upload/' + this.started).then(() => {
                         Notify.unblockUI();
                         Notify.success(ctx.$gettext("Upload complete"));
                         ctx.busy = false;
                         ctx.indexing = false;
-                    }).catch(function () {
+                    }).catch(() => {
                         Notify.unblockUI();
                         Notify.error(ctx.$gettext("Failure while importing uploaded files"));
                         ctx.busy = false;

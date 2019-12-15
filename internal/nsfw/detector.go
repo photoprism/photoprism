@@ -3,10 +3,12 @@ package nsfw
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
+	"github.com/photoprism/photoprism/internal/util"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/tensorflow/tensorflow/tensorflow/go/op"
 )
@@ -26,6 +28,10 @@ func NewDetector(modelPath string) *Detector {
 
 // LabelsFromFile returns matching labels for a jpeg media file.
 func (t *Detector) LabelsFromFile(filename string) (result Labels, err error) {
+	if util.MimeType(filename) != "image/jpeg" {
+		return result, fmt.Errorf("nsfw: \"%s\" is not a jpeg file", filename)
+	}
+
 	imageBuffer, err := ioutil.ReadFile(filename)
 
 	if err != nil {

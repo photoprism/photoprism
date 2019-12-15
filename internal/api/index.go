@@ -16,16 +16,26 @@ import (
 )
 
 var indexer *photoprism.Indexer
+var nsfwDetector *nsfw.Detector
 
 func initIndexer(conf *config.Config) {
 	if indexer != nil {
 		return
 	}
 
+	initNsfwDetector(conf)
+
 	tensorFlow := photoprism.NewTensorFlow(conf)
-	nsfwDetector := nsfw.NewDetector(conf.NSFWModelPath())
 
 	indexer = photoprism.NewIndexer(conf, tensorFlow, nsfwDetector)
+}
+
+func initNsfwDetector(conf *config.Config) {
+	if nsfwDetector != nil {
+		return
+	}
+
+	nsfwDetector = nsfw.NewDetector(conf.NSFWModelPath())
 }
 
 // POST /api/v1/index

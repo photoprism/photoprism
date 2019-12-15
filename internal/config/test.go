@@ -34,6 +34,8 @@ func NewTestParams() *Params {
 	c := &Params{
 		Public:         true,
 		ReadOnly:       false,
+		HideNSFW:       false,
+		UploadNSFW:     false,
 		DarktableBin:   "/usr/bin/darktable-cli",
 		AssetsPath:     assetsPath,
 		CachePath:      testDataPath + "/cache",

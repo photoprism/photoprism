@@ -9,4 +9,5 @@ import (
 var (
 	ErrReadOnly     = gin.H{"code": 403, "error": util.UcFirst(config.ErrReadOnly.Error())}
 	ErrUnauthorized = gin.H{"code": 401, "error": util.UcFirst(config.ErrUnauthorized.Error())}
+	ErrUploadNSFW   = gin.H{"code": 403, "error": util.UcFirst(config.ErrUploadNSFW.Error())}
 )
