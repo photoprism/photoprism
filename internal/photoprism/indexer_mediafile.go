@@ -314,7 +314,7 @@ func (i *Indexer) addLabels(photoId uint, labels Labels) {
 	for _, label := range labels {
 		lm := entity.NewLabel(label.Name, label.Priority).FirstOrCreate(i.db)
 
-		if lm.New {
+		if lm.New && label.Priority >= 0 {
 			event.Publish("count.labels", event.Data{
 				"count": 1,
 			})
