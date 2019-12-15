@@ -15,8 +15,12 @@ Thank you very much! 💎
 
 [![Liquid Bytes](https://blog.liquidbytes.net/img/logo-retina.png)](https://blog.liquidbytes.net/)
 
-[Sid Karunaratne](https://github.com/sakaru)
+[Greg](https://github.com/oziee) (GitHub Sponsors, December 2019)
+
+[Simen Eriksen](https://github.com/dennorske) (GitHub Sponsors, December 2019)
+
+[Sid Karunaratne](https://github.com/sakaru) (Patreon, May 2019)
 
 ## Donations ##
 
-[David Pennington](https://github.com/Xeoncross), Jun Li, Jonas Aaberg, Dmitry
+[David Pennington](https://github.com/Xeoncross), Jun Li, Jonas Aaberg, Dmitry, Fabian Graf
