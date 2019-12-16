@@ -35,9 +35,9 @@ Developers can skip this and move on to the [Developer Guide](https://github.com
 
 All you need is a Web browser and [Docker](https://store.docker.com/search?type=edition&offering=community)
 to run the server. It is available for Mac, Linux and Windows.
-Note that we just [started working](https://github.com/photoprism/photoprism/wiki/Project-Status) 
-on the UI and features are neither complete nor stable. 
-We plan to ship the final app as a single binary including all dependencies.
+
+Note that this is work in progress. We do our best to provide a complete, stable version. 
+Financial [support](SPONSORS.md) makes a huge difference and enables us to spend more time with this project.
 
 If you have a question, don't hesitate to ask in our [help forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help) 
 or [contact us via email](mailto:hello@photoprism.org).
@@ -79,7 +79,7 @@ Also please leave a star if you like this project, it provides enough motivation
 
 In addition, you can find us on [Patreon][donations] and [PayPal][paypal]. It really means a lot to us as we haven't received any major financial support so far and are funding this project from our personal savings.
 
-## Sponsorship ##
+## Corporate Sponsorship ##
 
 Please [reach out to us](mailto:hello@photoprism.org) if you work for an organization that can [support our project](https://dl.photoprism.org/slides/PhotoPrism.pdf)
 as we are looking for a way to continue doing this full-time.
