@@ -61,7 +61,7 @@
         data() {
             const query = this.$route.query;
             const routeName = this.$route.name;
-            const order = query['order'] ? query['order'] : 'newest';
+            const order = query['order'] ? query['order'] : 'imported';
             const camera = query['camera'] ? parseInt(query['camera']) : 0;
             const q = query['q'] ? query['q'] : '';
             const before = query['before'] ? query['before'] : '';
