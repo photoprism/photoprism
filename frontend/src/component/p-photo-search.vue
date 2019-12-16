@@ -172,9 +172,9 @@
                     'countries': countries,
                     'cameras': cameras,
                     'sorting': [
+                        {value: 'imported', text: this.$gettext('Recently imported')},
                         {value: 'newest', text: this.$gettext('Newest first')},
                         {value: 'oldest', text: this.$gettext('Oldest first')},
-                        {value: 'imported', text: this.$gettext('Recently imported')},
                     ],
                 },
                 showAfterPicker: false,
