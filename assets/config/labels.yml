@@ -26,6 +26,7 @@ tiger cat:
     - stripes
     - animal
     - kitty
+    - mammal
 
 wild cat:
   priority: 5
@@ -1623,6 +1624,7 @@ wild boar:
     - animal
 
 warthog:
+  threshold: 0.66
   categories:
     - animal
 
@@ -1727,9 +1729,9 @@ three-toed sloth:
 ape:
   priority: 2
   categories:
-    - monkey
     - animal
     - ape
+    - mammal
 
 orangutan:
   see: ape
@@ -1748,7 +1750,7 @@ monkey:
   priority: 2
   categories:
     - animal
-    - ape
+    - mammal
 
 siamang:
   see: monkey
@@ -1763,7 +1765,6 @@ baboon:
   priority: 2
   categories:
     - animal
-    - ape
     - monkey
 
 macaque:
@@ -1807,17 +1808,19 @@ fossa:
 
 indian elephant:
   priority: 2
-  threshold: 0.3
+  threshold: 0.47
   categories:
     - animal
     - elephant
+    - mammal
 
 african elephant:
   priority: 2
-  threshold: 0.3
+  threshold: 0.47
   categories:
     - animal
     - elephant
+    - mammal
 
 tusker:
   priority: 2
@@ -1825,12 +1828,14 @@ tusker:
   categories:
     - animal
     - elephant
+    - mammal
 
 panda:
   label: panda
   priority: 2
   categories:
     - animal
+    - mammal
 
 lesser panda:
   see: panda
@@ -2063,11 +2068,11 @@ bullet train:
 
 butcher shop:
   categories:
-    - butcher
-    - meat
+    - shop
     - store
 
 cab:
+  threshold: 0.6
   categories:
     - car
     - street
@@ -2681,6 +2686,7 @@ car:
 
 racer:
   label: race car
+  threshold: 0.2
   categories:
     - car
     - street
@@ -3451,7 +3457,7 @@ knot:
 
 arabian camel:
   label: camel
-  threshold: 0.4
+  threshold: 0.6
   categories:
     - animal
 
