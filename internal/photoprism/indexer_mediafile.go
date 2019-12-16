@@ -379,7 +379,11 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 
 		// TODO: Needs refactoring
 		if location.LocType != "" &&
+			location.LocType != "primary" &&
+			location.LocType != "secondary" &&
 			location.LocType != "tertiary" &&
+			location.LocType != "unclassified" &&
+			location.LocType != "trunk" &&
 			location.LocType != "attraction" &&
 			location.LocType != "yes" {
 			labels = append(labels, NewLocationLabel(location.LocType, 0, -1))
