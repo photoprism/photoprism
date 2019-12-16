@@ -207,10 +207,14 @@ solar dish:
   threshold: 0.5
 
 grasshopper:
+  label: grasshopper
   priority: 1
   categories:
     - animal
     - insect
+
+cricket:
+  see: grasshopper
 
 velvet:
   label: leaf
@@ -1466,11 +1470,6 @@ ant:
     - animal
     - insect
 
-cricket:
-  categories:
-    - animal
-    - insect
-
 walking stick:
   priority: -1
 
@@ -2643,8 +2642,7 @@ paddlewheel:
     - sea
 
 padlock:
-  categories:
-    - lock
+  priority: -1
 
 paintbrush:
   categories:
@@ -3656,3 +3654,9 @@ volcano:
 
 radio telescope:
   threshold: 0.5
+
+thimble:
+  priority: -1
+
+slot:
+  priority: -1
