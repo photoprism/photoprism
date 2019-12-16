@@ -36,6 +36,7 @@ type openstreetmapLocation struct {
 	Address     *openstreetmapAddress `json:"address"`
 }
 
+
 // Location See https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding
 func (m *MediaFile) Location() (*entity.Location, error) {
 	if m.location != nil {
@@ -117,10 +118,8 @@ func (m *MediaFile) Location() (*entity.Location, error) {
 	locationCategory := strings.TrimSpace(strings.Replace(openstreetmapLocation.Category, "_", " ", -1))
 	location.LocCategory = locationCategory
 
-	if openstreetmapLocation.Type != "yes" && openstreetmapLocation.Type != "unclassified" {
-		locationType := strings.TrimSpace(strings.Replace(openstreetmapLocation.Type, "_", " ", -1))
-		location.LocType = locationType
-	}
+	locationType := strings.TrimSpace(strings.Replace(openstreetmapLocation.Type, "_", " ", -1))
+	location.LocType = locationType
 
 	m.location = location
 

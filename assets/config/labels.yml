@@ -30,12 +30,12 @@ tiger cat:
 
 wild cat:
   priority: 5
+  threshold: 0.2
   categories:
     - cat
     - animal
     - mammal
-    - predator
-    - wild
+    - wildlife
 
 lynx:
   see: wild cat
@@ -59,23 +59,19 @@ tiger:
   see: wild cat
 
 analog clock:
-  priority: 2
-  categories:
-    - chronograph
+  threshold: 0.3
 
 seashore:
-  priority: 2
+  threshold: 0.3
   categories:
     - beach
-    - waterfront
     - coast
     - water
 
 lakeside:
-  priority: 2
+  threshold: 0.3
   categories:
     - water
-    - waterfront
 
 cardoon:
   label: flower
@@ -199,6 +195,7 @@ ship:
     - ocean
     - boat
     - water
+    - vehicle
 
 solar dish:
   threshold: 0.5
@@ -245,12 +242,10 @@ tench fish:
   see: fish
 
 goldfish:
-  categories:
-    - water
-    - fish
-    - animal
+  see: fish
 
 great white shark:
+  threshold: 0.2
   categories:
     - water
     - fish
@@ -258,6 +253,7 @@ great white shark:
     - shark
 
 tiger shark:
+  threshold: 0.2
   categories:
     - water
     - fish
@@ -265,6 +261,7 @@ tiger shark:
     - shark
 
 hammerhead:
+  threshold: 0.2
   categories:
     - water
     - fish
@@ -272,6 +269,7 @@ hammerhead:
     - shark
 
 electric ray:
+  threshold: 0.2
   categories:
     - water
     - fish
@@ -279,6 +277,7 @@ electric ray:
     - ray
 
 stingray:
+  threshold: 0.2
   categories:
     - water
     - sea
@@ -287,6 +286,7 @@ stingray:
     - ray
 
 cock:
+  threshold: 0.2
   label: chicken
   categories:
     - bird
@@ -431,24 +431,27 @@ common iguana:
     - reptile
     - animal
 
-american chameleon:
+african chameleon:
   threshold: 0.4
+  label: chameleon
+  priority: 1
   categories:
     - reptile
     - animal
-    - chameleon
 
-agama:
-  categories:
-    - reptile
-    - animal
+american chameleon:
+  see: african chameleon
 
 lizard:
   label: lizard
-  threshold: 0.2
+  threshold: 0.4
+  priority: 1
   categories:
     - reptile
     - animal
+
+agama:
+  see: lizard
 
 whiptail:
   see: lizard
@@ -467,14 +470,6 @@ gila monster lizard:
 
 green lizard:
   see: lizard
-
-african chameleon:
-  threshold: 0.4
-  label: chameleon
-  categories:
-    - reptile
-    - animal
-    - chameleon
 
 komodo dragon:
   categories:
@@ -1587,7 +1582,7 @@ porcupine:
 
 fox squirrel:
   label: squirrel
-  threshold: 0.2
+  threshold: 0.4
   categories:
     - animal
     - rodent
@@ -1614,19 +1609,26 @@ sorrel:
 zebra:
   categories:
     - animal
+    - mammal
 
 hog:
+  threshold: 0.66
   categories:
     - animal
+    - pig
+    - mammal
 
 wild boar:
+  threshold: 0.66
   categories:
     - animal
+    - mammal
 
 warthog:
   threshold: 0.66
   categories:
     - animal
+    - mammal
 
 hippopotamus:
   label: hippo
@@ -1671,30 +1673,38 @@ ibex:
     - mammal
 
 hartebeest:
+  threshold: 0.4
   categories:
     - animal
     - mammal
 
 impala:
+  threshold: 0.4
   categories:
     - animal
     - mammal
+    - wildlife
 
 gazelle:
+  threshold: 0.4
   categories:
     - animal
     - mammal
+    - wildlife
 
 llama:
+  threshold: 0.4
   categories:
     - animal
     - mammal
 
 weasel:
+  threshold: 0.4
   categories:
     - animal
 
 mink:
+  threshold: 0.4
   categories:
     - animal
 
@@ -1703,20 +1713,26 @@ polecat:
     - animal
 
 black-footed ferret:
+  threshold: 0.4
   categories:
     - animal
 
 otter:
+  threshold: 0.4
   categories:
     - animal
+    - mammal
 
 skunk:
+  threshold: 0.4
   categories:
     - animal
 
 badger:
+  threshold: 0.4
   categories:
     - animal
+    - mammal
 
 armadillo:
   categories:
@@ -1813,6 +1829,7 @@ indian elephant:
     - animal
     - elephant
     - mammal
+    - wildlife
 
 african elephant:
   priority: 2
@@ -1821,13 +1838,14 @@ african elephant:
     - animal
     - elephant
     - mammal
+    - wildlife
 
 tusker:
-  priority: 2
+  label: wildlife
+  priority: 1
   threshold: 0.3
   categories:
     - animal
-    - elephant
     - mammal
 
 panda:
@@ -1843,20 +1861,16 @@ lesser panda:
 giant panda:
   see: panda
 
-barracouta:
-  categories:
-    - water
-    - sea
-    - animal
-    - fish
-
 fish:
   label: fish
-  threshold: 0.3
+  threshold: 0.2
   categories:
     - water
     - sea
     - animal
+
+barracouta:
+  see: fish
 
 eel:
   see: fish
@@ -1865,18 +1879,10 @@ coho fish:
   see: fish
 
 rock beauty fish:
-  categories:
-    - water
-    - sea
-    - animal
-    - fish
+  see: fish
 
 anemone fish:
-  categories:
-    - water
-    - sea
-    - animal
-    - fish
+  see: fish
 
 sturgeon fish:
   see: fish
@@ -1888,11 +1894,7 @@ lionfish:
   see: fish
 
 puffer:
-  categories:
-    - water
-    - sea
-    - animal
-    - fish
+  see: fish
 
 instrument:
   categories:
@@ -1913,27 +1915,32 @@ aircraft carrier:
     - aircraft
     - water
     - military
+    - vehicle
 
 airliner:
   categories:
     - aircraft
     - fly
+    - vehicle
 
 airship:
   threshold: 0.5
   categories:
     - aircraft
     - fly
+    - vehicle
 
 ambulance:
   label: van
   categories:
     - street
     - car
+    - vehicle
 
 amphibian:
   categories:
     - animal
+    - vehicle
 
 assault rifle:
   categories:
@@ -1999,8 +2006,9 @@ bathtub:
 
 beacon:
   categories:
-    - buliding
+    - building
     - tower
+    - architecture
 
 beer bottle:
   categories:
@@ -2064,7 +2072,7 @@ breakwater:
 bullet train:
   label: train
   categories:
-    - travel
+    - vehicle
 
 butcher shop:
   categories:
@@ -2290,7 +2298,7 @@ electric guitar:
 electric locomotive:
   categories:
     - train
-    - travel
+    - vehicle
 
 entertainment center:
   label: television
@@ -2354,6 +2362,7 @@ four-poster:
 freight car:
   catgories:
     - train
+    - vehicle
     - street
 
 french horn:
@@ -2586,10 +2595,12 @@ monitor:
     - computer
 
 mosque:
-  label: towers
+  label: tower
   categories:
     - building
-    - religion
+    - church
+    - mosque
+    - chapel
     - architecture
 
 mountain bike:
@@ -2599,8 +2610,8 @@ mountain bike:
     - sports
 
 mountain tent:
+  label: tent
   categories:
-    - tent
     - camping
     - travel
 
@@ -2618,9 +2629,9 @@ notebook:
     - notebook
 
 obelisk:
+  label: tower
   categories:
-    - stone
-    - tower
+    - architecture
 
 oboe:
   see: instrument
@@ -2683,18 +2694,21 @@ car:
   label: car
   categories:
     - street
+    - vehicle
 
 racer:
   label: race car
   threshold: 0.2
   categories:
     - car
+    - vehicle
     - street
 
 passenger car:
   see: car
   categories:
     - street
+    - vehicle
 
 beach wagon:
   see: car
@@ -2744,8 +2758,8 @@ pillow:
 
 plane:
   categories:
-    - travel
     - aircraft
+    - vehicle
 
 plate rack:
   categories:
@@ -2808,6 +2822,7 @@ recreational vehicle:
   categories:
     - bus
     - van
+    - vehicle
     - street
 
 reflex camera:
@@ -2960,6 +2975,7 @@ speedboat:
 sports car:
   categories:
     - car
+    - vehicle
     - street
 
 spotlight:
@@ -2969,7 +2985,7 @@ spotlight:
 steam locomotive:
   categories:
     - train
-    - travel
+    - vehicle
 
 steel arch bridge:
   label: bridge
@@ -2990,7 +3006,7 @@ strainer:
 streetcar:
   categories:
     - train
-    - travel
+    - vehicle
     - street
 
 studio couch:
@@ -3104,6 +3120,7 @@ warplane:
   categories:
     - plane
     - aircraft
+    - vehicle
 
 washbasin:
   categories:
@@ -3114,8 +3131,9 @@ water bottle:
     - bottle
 
 water tower:
+  label: tower
   categories:
-    - tower
+    - architecture
 
 wine bottle:
   categories:
@@ -3147,10 +3165,10 @@ yawl:
     - boat
     - water
     - sea
+    - vehicle
 
 yurt:
-  categories:
-    - tent
+  label: tent
 
 comic book:
   label: colorful
@@ -3387,7 +3405,9 @@ promontory:
     - landscape
 
 sandbar:
-  label: sand
+  label: beach
+  categories:
+    - sand
 
 valley:
   categories:
@@ -3688,3 +3708,6 @@ thimble:
 
 slot:
   priority: -1
+
+carousel:
+  label: theme park

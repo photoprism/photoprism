@@ -194,7 +194,7 @@ func (t *TensorFlow) labelRule(label string) LabelRule {
 		return t.labelRules[label]
 	}
 
-	return LabelRule{Threshold: 0.08}
+	return LabelRule{Threshold: 0.1}
 }
 
 func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
@@ -210,7 +210,7 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 			break
 		}
 
-		if p < 0.08 {
+		if p < 0.1 {
 			continue
 		}
 

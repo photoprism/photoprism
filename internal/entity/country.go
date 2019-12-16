@@ -5,6 +5,12 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+var altCountryNames = map[string]string{
+	"United States of America": "USA",
+	"United States":            "USA",
+	"":                         "Unknown",
+}
+
 type Country struct {
 	ID                 string `gorm:"primary_key"`
 	CountrySlug        string
@@ -22,8 +28,8 @@ func NewCountry(countryCode string, countryName string) *Country {
 		countryCode = "zz"
 	}
 
-	if countryName == "" {
-		countryName = "Unknown"
+	if altName, ok := altCountryNames[countryName]; ok {
+		countryName = altName
 	}
 
 	countrySlug := slug.MakeLang(countryName, "en")

@@ -1,5 +1,46 @@
 package entity
 
+var locTypeLabels = map[string]string{
+	"bay": "bay",
+	"art": "art exhibition",
+	"fire station": "fire station",
+	"hairdresser": "hairdresser",
+	"cape": "cape",
+	"coastline": "coastline",
+	"cliff": "cliff",
+	"wetland": "wetland",
+	"nature reserve": "nature reserve",
+	"beach": "beach",
+	"cafe": "cafe",
+	"internet cafe": "cafe",
+	"ice cream": "ice cream parlor",
+	"bistro": "restaurant",
+	"restaurant": "restaurant",
+	"ship": "ship",
+	"wholesale": "shop",
+	"food": "shop",
+	"supermarket": "supermarket",
+	"florist": "florist",
+	"pharmacy": "pharmacy",
+	"seafood": "seafood",
+	"clothes": "clothing store",
+	"residential": "residential area",
+	"museum": "museum",
+	"castle": "castle",
+	"terminal": "airport terminal",
+	"ferry terminal": "ferry terminal",
+	"bridge": "bridge",
+	"university": "university",
+	"mall": "mall",
+	"marina": "marina",
+	"garden": "garden",
+	"pedestrian": "shopping area",
+	"bunker": "bunker",
+	"viewpoint": "viewpoint",
+	"train station": "train station",
+	"farm": "farm",
+}
+
 // Photo location
 type Location struct {
 	Model
@@ -23,4 +64,8 @@ type Location struct {
 	LocPhoto       *Photo
 	LocPhotoID     uint
 	LocFavorite    bool
+}
+
+func (m *Location) Label() string {
+	return locTypeLabels[m.LocType]
 }

@@ -109,13 +109,11 @@ func TestTensorFlow_Labels(t *testing.T) {
 
 			assert.Nil(t, err)
 			assert.IsType(t, Labels{}, result)
-			assert.Equal(t, 2, len(result))
+			assert.Equal(t, 1, len(result))
 
 			assert.Equal(t, "dog", result[0].Name)
-			assert.Equal(t, "dog", result[1].Name)
 
 			assert.Equal(t, 34, result[0].Uncertainty)
-			assert.Equal(t, 91, result[1].Uncertainty)
 		}
 	})
 	t.Run("/Random.docx", func(t *testing.T) {
@@ -236,7 +234,7 @@ func TestTensorFlow_BestLabels(t *testing.T) {
 		assert.Equal(t, "chicken", result[0].Name)
 		assert.Equal(t, "bird", result[0].Categories[0])
 		assert.Equal(t, "image", result[0].Source)
-		assert.Equal(t, "goldfish", result[1].Name)
+		assert.Equal(t, "fish", result[1].Name)
 		assert.Equal(t, "animal", result[1].Categories[2])
 		assert.Equal(t, "image", result[1].Source)
 		t.Log(result)

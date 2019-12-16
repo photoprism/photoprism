@@ -358,42 +358,22 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 			})
 		}
 
+		countryName := photo.Country.CountryName
+		locLabel := location.Label()
+
 		keywords = append(keywords, util.Keywords(location.LocDisplayName)...)
 
-		// Append labels from OpenStreetMap
-		if location.LocCity != "" {
-			labels = append(labels, NewLocationLabel(location.LocCity, 0, -2))
-		}
-
-		if location.LocCountry != "" {
-			labels = append(labels, NewLocationLabel(location.LocCountry, 0, -2))
-		}
-
-		// TODO: Needs refactoring
-		if location.LocCategory != "" &&
-			location.LocCategory != "highway" &&
-			location.LocCategory != "tourism" &&
-			location.LocCategory != "building" {
-			labels = append(labels, NewLocationLabel(location.LocCategory, 0, -2))
-		}
-
-		// TODO: Needs refactoring
-		if location.LocType != "" &&
-			location.LocType != "primary" &&
-			location.LocType != "secondary" &&
-			location.LocType != "tertiary" &&
-			location.LocType != "unclassified" &&
-			location.LocType != "trunk" &&
-			location.LocType != "attraction" &&
-			location.LocType != "yes" {
-			labels = append(labels, NewLocationLabel(location.LocType, 0, -1))
+		// Append label from OpenStreetMap
+		if locLabel != "" {
+			keywords = append(keywords, locLabel)
+			labels = append(labels, NewLocationLabel(locLabel, 0, -1))
 		}
 
 		if (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false {
 			if title := labels.Title(location.LocName); title != "" { // TODO: User defined title format
 				log.Infof("index: using label \"%s\" to create photo title", title)
 				if location.LocCity == "" || len(location.LocCity) > 16 || strings.Contains(title, location.LocCity) {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), location.LocCountry, photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), countryName, photo.TakenAt.Format("2006"))
 				} else {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), location.LocCity, photo.TakenAt.Format("2006"))
 				}
@@ -405,17 +385,17 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 				} else {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(location.LocName), location.LocCity, photo.TakenAt.Format("2006"))
 				}
-			} else if location.LocCity != "" && location.LocCountry != "" {
+			} else if location.LocCity != "" && countryName != "" {
 				if len(location.LocCity) > 20 {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s", location.LocCity, photo.TakenAt.Format("2006"))
 				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, location.LocCountry, photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, countryName, photo.TakenAt.Format("2006"))
 				}
-			} else if location.LocCounty != "" && location.LocCountry != "" {
+			} else if location.LocCounty != "" && countryName != "" {
 				if len(location.LocCounty) > 20 {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s", location.LocCounty, photo.TakenAt.Format("2006"))
 				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, location.LocCountry, photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, countryName, photo.TakenAt.Format("2006"))
 				}
 			}
 
