@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/repo"
 
 	"github.com/gin-gonic/gin"
@@ -389,6 +390,62 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		if err := os.Remove(zipFileName); err != nil {
 			log.Errorf("album: could not remove \"%s\" %s", zipFileName, err.Error())
+		}
+	})
+}
+
+
+// POST /api/v1/albums/:uuid/thumbnail/:type
+//
+// Parameters:
+//   uuid: string Album UUID
+//   type: string Thumbnail type, see photoprism.ThumbnailTypes
+func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
+	router.GET("/albums/:uuid/thumbnail/:type", func(c *gin.Context) {
+		typeName := c.Param("type")
+		uuid := c.Param("uuid")
+
+		thumbType, ok := photoprism.ThumbnailTypes[typeName]
+
+		if !ok {
+			log.Errorf("invalid type: %s", typeName)
+			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
+			return
+		}
+
+		r := repo.New(conf.OriginalsPath(), conf.Db())
+
+		file, err := r.FindAlbumThumbByUUID(uuid)
+
+		if err != nil {
+			log.Debugf("album has no photos yet, using generic thumb image: %s", uuid)
+			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
+			return
+		}
+
+		fileName := path.Join(conf.OriginalsPath(), file.FileName)
+
+		if !util.Exists(fileName) {
+			log.Errorf("could not find original for thumbnail: %s", fileName)
+			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
+
+			// Set missing flag so that the file doesn't show up in search results anymore
+			file.FileMissing = true
+			conf.Db().Save(&file)
+			return
+		}
+
+		if thumbnail, err := photoprism.ThumbnailFromFile(fileName, file.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
+			if c.Query("download") != "" {
+				downloadFileName := file.DownloadFileName()
+
+				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFileName))
+			}
+
+			c.File(thumbnail)
+		} else {
+			log.Errorf("could not create thumbnail: %s", err)
+			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
 		}
 	})
 }

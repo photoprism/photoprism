@@ -58,3 +58,20 @@ func TestDislikeLabel(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
 }
+
+func TestLabelThumbnail(t *testing.T) {
+	t.Run("invalid type", func(t *testing.T) {
+		app, router, ctx := NewApiTest()
+		LabelThumbnail(router, ctx)
+		result := PerformRequest(app, "GET", "/api/v1/labels/dog/thumbnail/xxx")
+
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+	})
+	t.Run("invalid label", func(t *testing.T) {
+		app, router, ctx := NewApiTest()
+		LabelThumbnail(router, ctx)
+		result := PerformRequest(app, "GET", "/api/v1/labels/xxx/thumbnail/tile_500")
+
+		assert.Equal(t, http.StatusNotFound, result.Code)
+	})
+}

@@ -57,3 +57,21 @@ func TestDislikeAlbum(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
 }
+
+
+func TestAlbumThumbnail(t *testing.T) {
+	t.Run("invalid type", func(t *testing.T) {
+		app, router, ctx := NewApiTest()
+		AlbumThumbnail(router, ctx)
+		result := PerformRequest(app, "GET", "/api/v1/albums/1/thumbnail/xxx")
+
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+	})
+	t.Run("album has no photo (because is not existing)", func(t *testing.T) {
+		app, router, ctx := NewApiTest()
+		AlbumThumbnail(router, ctx)
+		result := PerformRequest(app, "GET", "/api/v1/albums/987-986435/thumbnail/tile_500")
+
+		assert.Equal(t, http.StatusOK, result.Code)
+	})
+}
