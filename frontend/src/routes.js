@@ -54,7 +54,7 @@ export default [
         name: "places",
         path: "/places",
         component: Places,
-        meta: {title: "Where you've been"},
+        meta: {title: "Places"},
     },
     {
         name: "labels",
