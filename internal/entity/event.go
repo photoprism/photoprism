@@ -4,8 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-
-	uuid "github.com/satori/go.uuid"
+	"github.com/photoprism/photoprism/internal/util"
 )
 
 // Events
@@ -31,5 +30,5 @@ func (Event) TableName() string {
 }
 
 func (e *Event) BeforeCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("EventUUID", uuid.NewV4().String())
+	return scope.SetColumn("EventUUID", util.UUID())
 }

@@ -7,6 +7,7 @@
                 <v-text-field class="pt-3 pr-3"
                               single-line
                               :label="labels.search"
+                              browser-autocomplete="off"
                               prepend-inner-icon="search"
                               clearable
                               color="secondary-dark"
@@ -18,18 +19,25 @@
 
                 <v-spacer></v-spacer>
 
+                <v-btn icon @click.stop="refresh" class="hidden-xs-only">
+                    <v-icon>refresh</v-icon>
+                </v-btn>
+
                 <v-btn icon @click.prevent="create">
                     <v-icon>add</v-icon>
                 </v-btn>
             </v-toolbar>
         </v-form>
 
-        <v-container fluid class="pa-2">
+        <v-container fluid class="pa-4" v-if="loading">
+            <v-progress-linear color="secondary-dark"  :indeterminate="true"></v-progress-linear>
+        </v-container>
+        <v-container fluid class="pa-0" v-else>
             <p-scroll-top></p-scroll-top>
 
             <p-album-clipboard :refresh="refresh" :selection="selection"></p-album-clipboard>
 
-            <v-container grid-list-xs fluid class="pa-0 p-albums p-albums-details">
+            <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-details">
                 <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1" flat>
                     <v-card-title primary-title>
                         <div>
@@ -134,7 +142,7 @@
             '$route'() {
                 const query = this.$route.query;
 
-                this.filter.q = query['q'];
+                this.filter.q = query['q'] ? query['q'] : '';
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
                 this.search();
@@ -149,6 +157,7 @@
 
             return {
                 results: [],
+                loading: true,
                 scrollDisabled: true,
                 pageSize: 24,
                 offset: 0,
@@ -210,6 +219,10 @@
                     }
                 }
 
+                if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
+                    return
+                }
+
                 this.$router.replace({query: query});
             },
             searchParams() {
@@ -238,10 +251,12 @@
                 Object.assign(this.lastFilter, this.filter);
 
                 this.offset = 0;
+                this.loading = true;
 
                 const params = this.searchParams();
 
                 Album.search(params).then(response => {
+                    this.loading = false;
                     this.results = response.models;
 
                     this.scrollDisabled = (response.models.length < this.pageSize);
@@ -259,7 +274,7 @@
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
-                });
+                }).catch(() => this.loading = false);
             },
             refresh() {
                 this.lastFilter = {};

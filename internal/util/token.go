@@ -3,6 +3,8 @@ package util
 import (
 	"crypto/rand"
 	"fmt"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 func RandomToken(size int) string {
@@ -13,4 +15,8 @@ func RandomToken(size int) string {
 	}
 
 	return fmt.Sprintf("%x", b)
+}
+
+func UUID() string {
+	return uuid.NewV4().String()
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/util"
-	uuid "github.com/satori/go.uuid"
 )
 
 // Photo album
@@ -31,7 +30,7 @@ type Album struct {
 }
 
 func (m *Album) BeforeCreate(scope *gorm.Scope) error {
-	if err := scope.SetColumn("AlbumUUID", uuid.NewV4().String()); err != nil {
+	if err := scope.SetColumn("AlbumUUID", util.UUID()); err != nil {
 		return err
 	}
 

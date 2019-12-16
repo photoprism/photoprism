@@ -47,13 +47,13 @@
             '$route'() {
                 const query = this.$route.query;
 
-                this.filter.q = query['q'];
+                this.filter.q = query['q'] ? query['q'] : '';
                 this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
                 this.filter.country = query['country'] ? query['country'] : '';
                 this.filter.before = query['before'] ? query['before'] : '';
                 this.filter.after = query['after'] ? query['after'] : '';
+                this.settings.view = this.viewType();
                 this.lastFilter = {};
-                this.loading = true;
                 this.routeName = this.$route.name;
                 this.search();
             }
@@ -197,6 +197,7 @@
                 Object.assign(this.lastFilter, this.filter);
 
                 this.offset = 0;
+                this.loading = true;
 
                 const params = this.searchParams();
 

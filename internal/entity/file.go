@@ -6,7 +6,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
-	uuid "github.com/satori/go.uuid"
+	"github.com/photoprism/photoprism/internal/util"
 )
 
 // An image or sidecar file that belongs to a photo
@@ -49,7 +49,7 @@ func FindFileByHash(db *gorm.DB, fileHash string) (File, error) {
 }
 
 func (m *File) BeforeCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("FileUUID", uuid.NewV4().String())
+	return scope.SetColumn("FileUUID", util.UUID())
 }
 
 func (m *File) DownloadFileName() string {

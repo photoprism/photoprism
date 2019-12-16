@@ -54,11 +54,11 @@
                 const query = this.$route.query;
 
                 this.uuid = this.$route.params.uuid;
-                this.filter.q = query['q'];
+                this.filter.q = query['q'] ? query['q'] : '';
                 this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
                 this.filter.country = query['country'] ? query['country'] : '';
+                this.settings.view = this.viewType();
                 this.lastFilter = {};
-                this.loading = true;
                 this.routeName = this.$route.name;
                 this.findAlbum();
                 this.search();
@@ -94,10 +94,10 @@
         methods: {
             viewType() {
                 let queryParam = this.$route.query['view'];
-                let storedType = window.localStorage.getItem("photo_view_type");
+                let storedType = window.localStorage.getItem("album_view_type");
 
                 if (queryParam) {
-                    window.localStorage.setItem("photo_view_type", queryParam);
+                    window.localStorage.setItem("album_view_type", queryParam);
                     return queryParam;
                 } else if (storedType) {
                     return storedType;
@@ -206,6 +206,7 @@
                 Object.assign(this.lastFilter, this.filter);
 
                 this.offset = 0;
+                this.loading = true;
 
                 const params = this.searchParams();
 

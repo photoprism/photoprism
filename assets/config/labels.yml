@@ -1610,6 +1610,7 @@ zebra:
   categories:
     - animal
     - mammal
+    - wildlife
 
 hog:
   threshold: 0.66
@@ -1629,11 +1630,13 @@ warthog:
   categories:
     - animal
     - mammal
+    - wildlife
 
 hippopotamus:
   label: hippo
   categories:
     - animal
+    - wildlife
 
 ox:
   label: cow
@@ -1743,10 +1746,10 @@ three-toed sloth:
     - animal
 
 ape:
+  label: ape
   priority: 2
   categories:
     - animal
-    - ape
     - mammal
 
 orangutan:
@@ -1782,6 +1785,7 @@ baboon:
   categories:
     - animal
     - monkey
+    - wildlife
 
 macaque:
   see: monkey

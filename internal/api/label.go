@@ -2,13 +2,16 @@ package api
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"path"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/repo"
@@ -41,12 +44,12 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// POST /api/v1/labels/:slug/like
+// POST /api/v1/labels/:uuid/like
 //
 // Parameters:
-//   slug: string Label slug name
+//   uuid: string Label UUID
 func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/labels/:slug/like", func(c *gin.Context) {
+	router.POST("/labels/:uuid/like", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -54,7 +57,7 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 
 		r := repo.New(conf.OriginalsPath(), conf.Db())
 
-		label, err := r.FindLabelBySlug(c.Param("slug"))
+		label, err := r.FindLabelByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -64,16 +67,22 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		label.LabelFavorite = true
 		conf.Db().Save(&label)
 
+		if label.LabelPriority < 0 {
+			event.Publish("count.labels", event.Data{
+				"count": 1,
+			})
+		}
+
 		c.JSON(http.StatusOK, http.Response{})
 	})
 }
 
-// DELETE /api/v1/labels/:slug/like
+// DELETE /api/v1/labels/:uuid/like
 //
 // Parameters:
-//   slug: string Label slug name
+//   uuid: string Label UUID
 func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.DELETE("/labels/:slug/like", func(c *gin.Context) {
+	router.DELETE("/labels/:uuid/like", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -81,7 +90,7 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 
 		r := repo.New(conf.OriginalsPath(), conf.Db())
 
-		label, err := r.FindLabelBySlug(c.Param("slug"))
+		label, err := r.FindLabelByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -91,20 +100,28 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		label.LabelFavorite = false
 		conf.Db().Save(&label)
 
+		if label.LabelPriority < 0 {
+			event.Publish("count.labels", event.Data{
+				"count": -1,
+			})
+		}
+
 		c.JSON(http.StatusOK, http.Response{})
 	})
 }
 
-// GET /api/v1/labels/:slug/thumbnail/:type
+// GET /api/v1/labels/:uuid/thumbnail/:type
 //
 // Example: /api/v1/labels/cheetah/thumbnail/tile_500
 //
 // Parameters:
-//   slug: string Label slug name
+//   uuid: string Label UUID
 //   type: string Thumbnail type, see photoprism.ThumbnailTypes
 func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/labels/:slug/thumbnail/:type", func(c *gin.Context) {
+	router.GET("/labels/:uuid/thumbnail/:type", func(c *gin.Context) {
 		typeName := c.Param("type")
+		labelUUID := c.Param("uuid")
+		start := time.Now()
 
 		thumbType, ok := photoprism.ThumbnailTypes[typeName]
 
@@ -116,11 +133,16 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		r := repo.New(conf.OriginalsPath(), conf.Db())
 
-		// log.Infof("Searching for label slug: %s", c.Param("slug"))
+		gc := conf.Cache()
+		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", labelUUID, typeName)
 
-		file, err := r.FindLabelThumbBySlug(c.Param("slug"))
+		if cacheData, ok := gc.Get(cacheKey); ok {
+			log.Debugf("%s cache hit [%s]", cacheKey, time.Since(start))
+			c.Data(http.StatusOK, "image/jpeg", cacheData.([]byte))
+			return
+		}
 
-		// log.Infof("Label thumb file: %#v", file)
+		file, err := r.FindLabelThumbByUUID(labelUUID)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": util.UcFirst(err.Error())})
@@ -140,16 +162,24 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if thumbnail, err := photoprism.ThumbnailFromFile(fileName, file.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
-			if c.Query("download") != "" {
-				downloadFileName := file.DownloadFileName()
+			thumbData, err := ioutil.ReadFile(thumbnail)
 
-				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFileName))
+			if err != nil {
+				log.Errorf("could not read thumbnail: %s", err)
+				c.Data(http.StatusInternalServerError, "image/svg+xml", photoIconSvg)
+				return
 			}
 
-			c.File(thumbnail)
+			gc.Set(cacheKey, thumbData, time.Hour * 4)
+
+			log.Debugf("%s cached [%s]", cacheKey, time.Since(start))
+
+			c.Data(http.StatusOK, "image/jpeg", thumbData)
 		} else {
 			log.Errorf("could not create thumbnail: %s", err)
-			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
+
+			c.Data(http.StatusInternalServerError, "image/svg+xml", photoIconSvg)
+			return
 		}
 	})
 }

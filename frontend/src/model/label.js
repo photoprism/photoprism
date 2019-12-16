@@ -8,7 +8,7 @@ class Label extends Abstract {
     }
 
     getId() {
-        return this.LabelSlug;
+        return this.LabelUUID;
     }
 
     getTitle() {

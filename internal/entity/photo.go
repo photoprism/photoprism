@@ -6,7 +6,6 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/util"
-	uuid "github.com/satori/go.uuid"
 )
 
 // A photo can have multiple images and sidecar files
@@ -55,7 +54,7 @@ type Photo struct {
 }
 
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
-	if err := scope.SetColumn("PhotoUUID", uuid.NewV4().String()); err != nil {
+	if err := scope.SetColumn("PhotoUUID", util.UUID()); err != nil {
 		return err
 	}
 

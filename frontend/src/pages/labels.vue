@@ -8,6 +8,7 @@
                               single-line
                               :label="labels.search"
                               prepend-inner-icon="search"
+                              browser-autocomplete="off"
                               clearable
                               color="secondary-dark"
                               @click:clear="clearQuery"
@@ -17,14 +18,21 @@
                 ></v-text-field>
 
                 <v-spacer></v-spacer>
+
+                <v-btn icon @click.stop="refresh" class="hidden-xs-only">
+                    <v-icon>refresh</v-icon>
+                </v-btn>
             </v-toolbar>
         </v-form>
 
-        <v-container fluid class="pa-2">
+        <v-container fluid class="pa-4" v-if="loading">
+            <v-progress-linear color="secondary-dark"  :indeterminate="true"></v-progress-linear>
+        </v-container>
+        <v-container fluid class="pa-0" v-else>
             <p-scroll-top></p-scroll-top>
 
-            <v-container grid-list-xs fluid class="pa-0 p-labels p-labels-details">
-                <v-card v-if="results.length === 0" class="p-labels-empty" flat>
+            <v-container grid-list-xs fluid class="pa-2 p-labels p-labels-details">
+                <v-card v-if="results.length === 0" class="p-labels-empty secondary-light lighten-1" flat>
                     <v-card-title primary-title>
                         <div>
                             <h3 class="title mb-3"><translate>No labels matched your search</translate></h3>
@@ -89,7 +97,7 @@
             '$route'() {
                 const query = this.$route.query;
 
-                this.filter.q = query['q'];
+                this.filter.q = query['q'] ? query['q'] : '';
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
                 this.search();
@@ -105,6 +113,7 @@
             return {
                 results: [],
                 scrollDisabled: true,
+                loading: true,
                 pageSize: 24,
                 offset: 0,
                 selection: this.$clipboard.selection,
@@ -120,7 +129,7 @@
         methods: {
             clearQuery() {
                 this.filter.q = '';
-                this.search();
+                this.updateQuery();
             },
             openLabel(index) {
                 const label = this.results[index];
@@ -163,6 +172,10 @@
                     }
                 }
 
+                if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
+                    return
+                }
+
                 this.$router.replace({query: query});
             },
             searchParams() {
@@ -179,6 +192,14 @@
 
                 return params;
             },
+            refresh() {
+                this.lastFilter = {};
+                const pageSize = this.pageSize;
+                this.pageSize = this.offset + pageSize;
+                this.search();
+                this.offset = this.pageSize;
+                this.pageSize = pageSize;
+            },
             search() {
                 this.scrollDisabled = true;
 
@@ -191,10 +212,13 @@
                 Object.assign(this.lastFilter, this.filter);
 
                 this.offset = 0;
+                this.loading = true;
 
                 const params = this.searchParams();
 
                 Label.search(params).then(response => {
+                    this.loading = false;
+
                     this.results = response.models;
 
                     this.scrollDisabled = (response.models.length < this.pageSize);
@@ -206,7 +230,7 @@
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
-                });
+                }).catch(() => this.loading = false);
             },
         },
         created() {
