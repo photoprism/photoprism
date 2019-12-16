@@ -62,10 +62,6 @@ analog clock:
   categories:
     - chronograph
 
-racer:
-  label: race car
-  priority: 1
-
 seashore:
   priority: 2
   categories:
@@ -1925,9 +1921,10 @@ airship:
     - fly
 
 ambulance:
+  label: van
   categories:
-    - building
-    - medicin
+    - street
+    - car
 
 amphibian:
   categories:
@@ -2073,7 +2070,7 @@ butcher shop:
 cab:
   categories:
     - car
-    - travel
+    - street
 
 cannon:
   categories:
@@ -2352,6 +2349,7 @@ four-poster:
 freight car:
   catgories:
     - train
+    - street
 
 french horn:
   see: instrument
@@ -2546,11 +2544,15 @@ microwave:
 minibus:
   categories:
     - car
-    - auto
+    - van
+    - street
 
 minivan:
+  label: van
   categories:
+    - street
     - car
+    - bus
 
 mixing bowl:
   categories:
@@ -2598,8 +2600,11 @@ mountain tent:
     - travel
 
 moving van:
+  label: van
   categories:
+    - street
     - car
+    - bus
 
 notebook:
   label: computer
@@ -2671,9 +2676,19 @@ parachute:
 
 car:
   label: car
+  categories:
+    - street
+
+racer:
+  label: race car
+  categories:
+    - car
+    - street
 
 passenger car:
   see: car
+  categories:
+    - street
 
 beach wagon:
   see: car
@@ -2737,9 +2752,11 @@ polaroid camera:
     - camera
 
 police van:
+  label: van
   categories:
+    - street
     - car
-    - police
+    - bus
 
 pool table:
   categories:
@@ -2781,8 +2798,11 @@ punching bag:
     - sports
 
 recreational vehicle:
+  label: camper
   categories:
-    - car
+    - bus
+    - van
+    - street
 
 reflex camera:
   categories:
@@ -2844,8 +2864,8 @@ sax:
 school bus:
   categories:
     - bus
-    - car
-    - auto
+    - van
+    - street
 
 schooner:
   see: ship
@@ -2934,6 +2954,7 @@ speedboat:
 sports car:
   categories:
     - car
+    - street
 
 spotlight:
   categories:
@@ -2964,6 +2985,7 @@ streetcar:
   categories:
     - train
     - travel
+    - street
 
 studio couch:
   label: couch
@@ -3040,8 +3062,8 @@ triumphal arch:
 trolleybus:
   label: bus
   categories:
-    - car
-    - auto
+    - van
+    - street
 
 trombone:
   see: instrument
