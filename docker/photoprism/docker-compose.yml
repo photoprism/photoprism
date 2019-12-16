@@ -21,6 +21,7 @@ services:
       PHOTOPRISM_IMPORT_PATH: "/home/photoprism/Pictures/Import"
       PHOTOPRISM_EXPORT_PATH: "/home/photoprism/Pictures/Export"
       PHOTOPRISM_ORIGINALS_PATH: "/home/photoprism/Pictures/Originals"
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"
     volumes:
       - "~/Pictures/Originals:/home/photoprism/Pictures/Originals" # [local path]:[container path]
       - "~/Pictures/Import:/home/photoprism/Pictures/Import" # [local path]:[container path] (optional)
