@@ -13,3 +13,10 @@ func TestNewPhotoAlbum(t *testing.T) {
 		assert.Equal(t, "EFG", m.AlbumUUID)
 	})
 }
+
+func TestPhotoAlbum_TableName(t *testing.T) {
+	photoAlbum := &PhotoAlbum{}
+	tableName := photoAlbum.TableName()
+
+	assert.Equal(t, "photos_albums", tableName)
+}
