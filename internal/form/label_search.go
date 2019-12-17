@@ -19,7 +19,7 @@ type LabelSearch struct {
 
 	Slug      string `form:"slug"`
 	Name      string `form:"name"`
-	Priority  int    `form:"priority"`
+	All       bool   `form:"all"`
 	Favorites bool   `form:"favorites"`
 
 	Count  int    `form:"count" binding:"required"`

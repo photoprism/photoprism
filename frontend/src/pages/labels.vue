@@ -19,6 +19,13 @@
 
                 <v-spacer></v-spacer>
 
+                <v-btn v-if="!filter.all" icon @click.stop="showAll" class="hidden-xs-only">
+                    <v-icon>visibility</v-icon>
+                </v-btn>
+                <v-btn v-else icon @click.stop="showImportant" class="hidden-xs-only">
+                    <v-icon>visibility_off</v-icon>
+                </v-btn>
+
                 <v-btn icon @click.stop="refresh" class="hidden-xs-only">
                     <v-icon>refresh</v-icon>
                 </v-btn>
@@ -98,6 +105,7 @@
                 const query = this.$route.query;
 
                 this.filter.q = query['q'] ? query['q'] : '';
+                this.filter.all = query['all'] ? query['all'] : '';
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
                 this.search();
@@ -107,7 +115,8 @@
             const query = this.$route.query;
             const routeName = this.$route.name;
             const q = query['q'] ? query['q'] : '';
-            const filter = {q: q};
+            const all = query['all'] ? query['all'] : '';
+            const filter = {q: q, all: all};
             const settings = {};
 
             return {
@@ -127,6 +136,14 @@
             };
         },
         methods: {
+            showAll() {
+                this.filter.all = "true";
+                this.updateQuery();
+            },
+            showImportant() {
+                this.filter.all = "";
+                this.updateQuery();
+            },
             clearQuery() {
                 this.filter.q = '';
                 this.updateQuery();

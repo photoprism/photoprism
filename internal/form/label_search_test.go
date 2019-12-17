@@ -16,7 +16,7 @@ func TestLabelSearchForm(t *testing.T) {
 func TestParseQueryStringLabel(t *testing.T) {
 
 	t.Run("valid query", func(t *testing.T) {
-		form := &LabelSearch{Query: "name:cat favorites:true count:10 priority:4 query:\"query text\""}
+		form := &LabelSearch{Query: "name:cat favorites:true count:10 all:false query:\"query text\""}
 
 		err := form.ParseQueryString()
 
@@ -26,7 +26,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 		assert.Equal(t, "cat", form.Name)
 		assert.Equal(t, true, form.Favorites)
 		assert.Equal(t, 10, form.Count)
-		assert.Equal(t, 4, form.Priority)
+		assert.Equal(t, false, form.All)
 		assert.Equal(t, "query text", form.Query)
 	})
 	t.Run("valid query 2", func(t *testing.T) {

@@ -133,9 +133,7 @@ func (s *Repo) Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		q = q.Where("labels.label_favorite = 1")
 	}
 
-	if f.Priority != 0 {
-		q = q.Where("labels.label_priority > ?", f.Priority)
-	} else {
+	if !f.All {
 		q = q.Where("labels.label_priority >= 0 OR labels.label_favorite = 1")
 	}
 
