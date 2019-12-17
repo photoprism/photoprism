@@ -2,8 +2,7 @@
     <v-container fluid fill-height class="pa-0 p-page p-page-places">
         <l-map :zoom="zoom" :center="center" :bounds="bounds" :options="options"
                @update:zoom="onZoom"
-               @update:center="onCenter"
-               @update:bounds="onBounds">
+               @update:center="onCenter">
 
             <l-control position="bottomright">
                 <!-- v-container class="pb-0 pt-0 pl-3 pr-3 mb-0 mt-0" v-if="loading">
@@ -120,20 +119,21 @@
                 return 2500;
             },
             onZoom(zoom) {
+                if(this.query.zoom === zoom.toString()) return;
+
                 this.query.zoom = zoom.toString();
                 this.query.dist = this.getDistance(zoom).toString();
 
                 this.search();
             },
-            onBounds() {
-            },
             onCenter(pos) {
-                if (this.query.lat === pos.lat.toString() && this.query.long === pos.lng.toString()) {
-                    return;
-                }
+                const changed = Math.abs(this.query.lat - pos.lat) > 0.001 ||
+                    Math.abs(this.query.long - pos.lng) > 0.001;
 
                 this.query.lat = pos.lat.toString();
                 this.query.long = pos.lng.toString();
+
+                if(!changed) return;
 
                 this.search();
             },
@@ -167,11 +167,8 @@
             },
             onPosition(position) {
                 this.position = L.latLng(position.coords.latitude, position.coords.longitude);
-                this.query.lat = position.coords.latitude.toString();
-                this.query.long = position.coords.longitude.toString();
+                this.center = L.latLng(position.coords.latitude, position.coords.longitude);
                 this.query.q = "";
-
-                this.search();
             },
             onPositionError(error) {
                 this.$notify.warning(error.message);
@@ -261,7 +258,6 @@
                 const query = Object(this.query);
 
                 if (this.query.lat && this.query.long) {
-                    this.center = L.latLng(parseFloat(this.query.lat), parseFloat(this.query.long));
                     window.localStorage.setItem("lat", this.query.lat.toString());
                     window.localStorage.setItem("long", this.query.long.toString());
                 } else {
