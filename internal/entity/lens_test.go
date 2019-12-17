@@ -20,3 +20,9 @@ func TestNewLens(t *testing.T) {
 		assert.Equal(t, "unknown", lens.LensSlug)
 	})
 }
+
+func TestLens_TableName(t *testing.T) {
+	lens := NewLens("F500-99", "Canon")
+	tableName := lens.TableName()
+	assert.Equal(t, "lenses", tableName)
+}
