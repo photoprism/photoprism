@@ -220,21 +220,16 @@
                 }
             },
             updateMap(results) {
-                const firstResult = [];
-
-                // this.resetBoundingBox();
-
                 for (let i = 0, len = results.length; i < len; i++) {
                     let result = results[i];
 
                     if (!result.hasLocation()) continue;
 
-                    // this.fitBoundingBox(result.PhotoLat, result.PhotoLong);
-
                     let index = this.results.findIndex((p) => p.PhotoUUID === result.PhotoUUID);
 
                     if (index !== -1) continue;
 
+                    this.results.push(result);
                     this.photos.push({
                         id: result.getId(),
                         options: {
@@ -252,7 +247,7 @@
                 }
 
                 if (this.photos.length === 0) {
-                    this.$notify.warning(this.$gettext('No locations found'));
+                    this.$notify.warning(this.$gettext('Nothing to see here'));
                     return;
                 }
 
