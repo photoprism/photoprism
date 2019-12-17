@@ -19,14 +19,14 @@
 
                 <v-spacer></v-spacer>
 
-                <v-btn v-if="!filter.all" icon @click.stop="showAll" class="hidden-xs-only">
+                <v-btn v-if="!filter.all" icon @click.stop="showAll">
                     <v-icon>visibility</v-icon>
                 </v-btn>
-                <v-btn v-else icon @click.stop="showImportant" class="hidden-xs-only">
+                <v-btn v-else icon @click.stop="showImportant">
                     <v-icon>visibility_off</v-icon>
                 </v-btn>
 
-                <v-btn icon @click.stop="refresh" class="hidden-xs-only">
+                <v-btn icon @click.stop="refresh">
                     <v-icon>refresh</v-icon>
                 </v-btn>
             </v-toolbar>
