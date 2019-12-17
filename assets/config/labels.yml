@@ -101,6 +101,7 @@ rapeseed:
   label: flowers
   threshold: 0.4
   categories:
+    - flower
     - nature
     - plant
     - yellow
