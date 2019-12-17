@@ -130,10 +130,10 @@
                 const changed = Math.abs(this.query.lat - pos.lat) > 0.001 ||
                     Math.abs(this.query.long - pos.lng) > 0.001;
 
+                if(!changed) return;
+
                 this.query.lat = pos.lat.toString();
                 this.query.long = pos.lng.toString();
-
-                if(!changed) return;
 
                 this.search();
             },
