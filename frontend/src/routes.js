@@ -35,7 +35,7 @@ export default [
         name: "albums",
         path: "/albums",
         component: Albums,
-        meta: {title: "Photo Albums"},
+        meta: {title: "Albums"},
     },
     {
         name: "album",

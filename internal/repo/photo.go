@@ -267,8 +267,8 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 
 	if f.Dist == 0 {
 		f.Dist = 20
-	} else if f.Dist > 1000 {
-		f.Dist = 1000
+	} else if f.Dist > 5000 {
+		f.Dist = 5000
 	}
 
 	// Inaccurate distance search, but probably 'good enough' for now

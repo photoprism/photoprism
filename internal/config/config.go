@@ -577,6 +577,21 @@ func (c *Config) ClientConfig() ClientConfig {
 		LocCountryCode string
 	}
 
+	var position struct {
+		PhotoUUID    string    `json:"uuid"`
+		PhotoLat     float64   `json:"lat"`
+		PhotoLong    float64   `json:"long"`
+		TakenAt      time.Time `json:"utc"`
+		TakenAtLocal time.Time `json:"time"`
+	}
+
+	db.Table("photos").
+		Select("photo_uuid, photo_lat, photo_long, taken_at, taken_at_local").
+		Where("deleted_at IS NULL AND photo_lat != 0 AND photo_long != 0").
+		Order("taken_at DESC").
+		Limit(1).Offset(0).
+		Take(&position)
+
 	var countries []country
 	var count = struct {
 		Photos    uint `json:"photos"`
@@ -644,6 +659,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		"cssHash":     cssHash,
 		"settings":    c.Settings(),
 		"count":       count,
+		"pos":         position,
 	}
 
 	return result
