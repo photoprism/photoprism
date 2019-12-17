@@ -94,6 +94,7 @@
         methods: {
             viewType() {
                 let queryParam = this.$route.query['view'];
+                let defaultType = window.localStorage.getItem("photo_view_type");
                 let storedType = window.localStorage.getItem("album_view_type");
 
                 if (queryParam) {
@@ -101,6 +102,8 @@
                     return queryParam;
                 } else if (storedType) {
                     return storedType;
+                } else if (defaultType) {
+                    return defaultType;
                 } else if (window.innerWidth < 960) {
                     return 'mosaic';
                 } else if (window.innerWidth > 1600) {

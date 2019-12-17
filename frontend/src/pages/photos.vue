@@ -223,17 +223,17 @@
                 }).catch(() => this.loading = false);
             },
             onKeypress(event) {
-                if (event.key === "Escape") {
+                /* if (event.key === "Escape") {
                     this.$clipboard.clear();
-                }
+                } */
             },
         },
         created() {
             this.search();
-            window.addEventListener('keydown', this.onKeypress);
+            // window.addEventListener('keydown', this.onKeypress);
         },
         destroyed() {
-            window.removeEventListener('keydown', this.onKeypress);
+            // window.removeEventListener('keydown', this.onKeypress);
         }
     };
 </script>

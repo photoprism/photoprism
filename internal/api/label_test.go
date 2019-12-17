@@ -65,13 +65,13 @@ func TestLabelThumbnail(t *testing.T) {
 		LabelThumbnail(router, ctx)
 		result := PerformRequest(app, "GET", "/api/v1/labels/dog/thumbnail/xxx")
 
-		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.Equal(t, http.StatusOK, result.Code)
 	})
 	t.Run("invalid label", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		LabelThumbnail(router, ctx)
 		result := PerformRequest(app, "GET", "/api/v1/labels/xxx/thumbnail/tile_500")
 
-		assert.Equal(t, http.StatusNotFound, result.Code)
+		assert.Equal(t, http.StatusOK, result.Code)
 	})
 }

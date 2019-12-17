@@ -63,17 +63,26 @@ func (s *Repo) FindLabelThumbBySlug(labelSlug string) (file entity.File, err err
 
 // FindLabelThumbByUUID returns a label preview file based on the label UUID.
 func (s *Repo) FindLabelThumbByUUID(labelUUID string) (file entity.File, err error) {
-	// s.db.LogMode(true)
-
-	if err := s.db.Where("files.file_primary AND files.deleted_at IS NULL").
+	// Search matching label
+	err = s.db.Where("files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN labels ON labels.label_uuid = ?", labelUUID).
 		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = files.photo_id").
 		Order("photos_labels.label_uncertainty ASC").
-		First(&file).Error; err != nil {
-		return file, err
+		First(&file).Error
+
+	if err == nil {
+		return file, nil
 	}
 
-	return file, nil
+	// If failed, search for category instead
+	err = s.db.Where("files.file_primary AND files.deleted_at IS NULL").
+		Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id").
+		Joins("JOIN categories c ON photos_labels.label_id = c.label_id").
+		Joins("JOIN labels ON c.category_id = labels.id AND labels.label_uuid= ?", labelUUID).
+		Order("photos_labels.label_uncertainty ASC").
+		First(&file).Error
+
+	return file, err
 }
 
 // Labels searches labels based on their name.

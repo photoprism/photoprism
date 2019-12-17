@@ -77,7 +77,7 @@
                         @click.stop="dialog.album = true"
                         class="p-photo-clipboard-album"
                 >
-                    <v-icon>create_new_folder</v-icon>
+                    <v-icon>folder</v-icon>
                 </v-btn>
 
                 <v-btn
@@ -105,7 +105,7 @@
                         v-if="album"
                         class="p-photo-clipboard-delete"
                 >
-                    <v-icon>remove_circle</v-icon>
+                    <v-icon>delete_outline</v-icon>
                 </v-btn>
                 <v-btn
                         fab

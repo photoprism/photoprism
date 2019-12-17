@@ -132,6 +132,7 @@
     import Album from "model/album";
     import {DateTime} from "luxon";
     import Util from "common/util";
+    import Event from "pubsub-js";
 
     export default {
         name: 'p-page-albums',
@@ -156,6 +157,7 @@
             const settings = {};
 
             return {
+                subId: null,
                 results: [],
                 loading: true,
                 scrollDisabled: true,
@@ -313,10 +315,17 @@
                 } else {
                     this.selection.push(uuid)
                 }
+            },
+            onCount() {
+                // TODO
             }
         },
         created() {
             this.search();
+            this.subId = Event.subscribe("count.albums", (ev, data) => this.onCount(ev, data));
+        },
+        destroyed() {
+            Event.unsubscribe(this.subId);
         },
     };
 </script>

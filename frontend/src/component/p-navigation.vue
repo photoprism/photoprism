@@ -103,6 +103,13 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
+                    <!-- v-list-tile v-if="config.albums.length === 0"
+                                 @click.stop="createAlbum">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Create Album</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile -->
+
                     <v-list-tile v-for="(album, index) in config.albums"
                                  :key="index"
                                  :to="{ name: 'album', params: { uuid: album.AlbumUUID, slug: album.AlbumSlug } }">
@@ -225,6 +232,9 @@
 </template>
 
 <script>
+    import Album from "../model/album";
+    import {DateTime} from "luxon";
+
     export default {
         name: "p-navigation",
         data() {
@@ -240,9 +250,16 @@
             };
         },
         methods: {
-            showNavigation: function () {
+            showNavigation () {
                 this.drawer = true;
                 this.mini = false;
+            },
+            createAlbum() {
+                let name = DateTime.local().toFormat("LLLL yyyy");
+                const album = new Album({AlbumName: name, AlbumFavorite: true});
+                album.save().then((a) => {
+                    console.log("created", a)
+                });
             },
             logout() {
                 this.$session.logout();

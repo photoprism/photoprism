@@ -127,7 +127,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		if !ok {
 			log.Errorf("invalid type: %s", typeName)
-			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
+			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}
 
@@ -145,7 +145,8 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		file, err := r.FindLabelThumbByUUID(labelUUID)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": util.UcFirst(err.Error())})
+			log.Errorf(err.Error())
+			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}
 
@@ -153,7 +154,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		if !util.Exists(fileName) {
 			log.Errorf("could not find original for thumbnail: %s", fileName)
-			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
+			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			file.FileMissing = true
@@ -166,7 +167,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 			if err != nil {
 				log.Errorf("could not read thumbnail: %s", err)
-				c.Data(http.StatusInternalServerError, "image/svg+xml", photoIconSvg)
+				c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 				return
 			}
 
@@ -178,7 +179,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		} else {
 			log.Errorf("could not create thumbnail: %s", err)
 
-			c.Data(http.StatusInternalServerError, "image/svg+xml", photoIconSvg)
+			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}
 	})

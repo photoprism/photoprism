@@ -80,6 +80,9 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		m := entity.NewAlbum(f.AlbumName)
+		m.AlbumFavorite = f.AlbumFavorite
+
+		log.Debugf("create album: %+v %+v", f, m)
 
 		if res := conf.Db().Create(m); res.Error != nil {
 			log.Error(res.Error.Error())
@@ -92,6 +95,8 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		})
 
 		event.Success(fmt.Sprintf("album \"%s\" created", m.AlbumName))
+
+		// event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
 		c.JSON(http.StatusOK, m)
 	})
