@@ -15,3 +15,9 @@ func TestNewPhotoLabel(t *testing.T) {
 		assert.Equal(t, "source", photoLabel.LabelSource)
 	})
 }
+func TestPhotoLabel_TableName(t *testing.T) {
+	photoLabel := &PhotoLabel{}
+	tableName := photoLabel.TableName()
+
+	assert.Equal(t, "photos_labels", tableName)
+}

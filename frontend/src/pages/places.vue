@@ -44,7 +44,7 @@
             const pos = this.startPos();
             const query = this.$route.query;
             const q = query['q'] ? query['q'] : "";
-            const zoom = query['zoom'] ? parseInt(query['zoom']) : 15;
+            const zoom = query['zoom'] ? parseInt(query['zoom']) : 12;
             const dist = this.getDistance(zoom);
 
             return {

@@ -24,3 +24,23 @@ func TestNewAlbum(t *testing.T) {
 		assert.Equal(t, defaultSlug, album.AlbumSlug)
 	})
 }
+
+func TestRename(t *testing.T) {
+	t.Run("valid name", func(t *testing.T) {
+		album := NewAlbum("initial name")
+		assert.Equal(t, "initial name", album.AlbumName)
+		assert.Equal(t, "initial-name", album.AlbumSlug)
+		album.Rename("new album name")
+		assert.Equal(t, "new album name", album.AlbumName)
+		assert.Equal(t, "new-album-name", album.AlbumSlug)
+	})
+	t.Run("empty name", func(t *testing.T) {
+		album := NewAlbum("initial name")
+		assert.Equal(t, "initial name", album.AlbumName)
+		assert.Equal(t, "initial-name", album.AlbumSlug)
+		t.Log(album.CreatedAt)
+		album.Rename("")
+		assert.Equal(t, "January 0001", album.AlbumName)
+		assert.Equal(t, "january-0001", album.AlbumSlug)
+	})
+}

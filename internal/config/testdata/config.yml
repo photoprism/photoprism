@@ -14,3 +14,5 @@ http-port: 81
 http-password:
 database-driver: internal
 database-dsn: root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true
+theme: lavendel
+language: english
