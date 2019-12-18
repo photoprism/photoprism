@@ -44,7 +44,7 @@ install-assets:
 	rsync -a -v --ignore-existing assets/config/*.yml ~/.config/photoprism
 	find ~/.local/share/photoprism -name '.*' -type f -delete
 dep-js:
-	(cd frontend &&	npm install)
+	(cd frontend &&	npm install --silent)
 dep-go:
 	go build -v ./...
 dep-tensorflow:
@@ -128,7 +128,7 @@ fmt-go:
 tidy:
 	go mod tidy
 upgrade-js:
-	(cd frontend &&	npm update --depth 1)
+	(cd frontend &&	npm --depth 2 update)
 upgrade-go:
 	go mod tidy
 	go get -u
