@@ -3440,7 +3440,7 @@ spider web:
   priority: -2
 
 wool:
-  label: fur
+  label: animal fur
   threshold: 0.5
   priority: -1
   categories:
