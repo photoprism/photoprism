@@ -3493,7 +3493,7 @@ spider web:
   priority: -2
 
 wool:
-  label: furry animal
+  label: fur
   threshold: 0.5
   priority: -1
   categories:
