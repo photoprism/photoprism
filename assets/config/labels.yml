@@ -229,8 +229,6 @@ windsor tie:
 chainlink fence:
   label: outdoor
   priority: -1
-  categories:
-    - fence
 
 mitten:
   label: unknown
@@ -305,7 +303,7 @@ ostrich:
 
 bird:
   label: bird
-  threshold: 0.25
+  threshold: 0.3
   categories:
     - animal
 
@@ -2278,11 +2276,7 @@ dome:
     - building
 
 drilling platform:
-  label: industrial
-  categories:
-    - building
-    - water
-    - sea
+  label: building
 
 drum:
   see: instrument
@@ -2615,10 +2609,9 @@ mountain bike:
     - sports
 
 mountain tent:
-  label: tent
+  label: camping
   categories:
-    - camping
-    - travel
+    - outdoor
 
 moving van:
   label: van
@@ -2735,8 +2728,6 @@ photocopier:
 picket fence:
   label: outdoor
   priority: -1
-  categories:
-    - fence
 
 pickup:
   categories:
@@ -2925,11 +2916,12 @@ ski:
     - winter
     - snow
     - sports
+    - outdoor
 
 sleeping bag:
   categories:
-    - travel
     - camping
+    - outdoor
 
 sliding door:
   label: door
@@ -3158,8 +3150,6 @@ wooden spoon:
 worm fence:
   label: outdoor
   priority: -1
-  categories:
-    - fence
 
 wreck:
   see: ship
@@ -3173,7 +3163,9 @@ yawl:
     - vehicle
 
 yurt:
-  label: tent
+  label: camping
+  categories:
+    - outdoor
 
 comic book:
   label: colorful
@@ -3544,7 +3536,9 @@ ear:
   priority: -1
 
 sunglasses:
+  label: sunny day
   priority: 2
+  threshold: 0.2
 
 sunglass:
   see: sunglasses
@@ -3554,10 +3548,9 @@ packet:
   priority: -1
 
 swing:
-  label: cosy
+  label: moment
   categories:
     - outdoor
-    - furniture
 
 web site:
   label: info
@@ -3725,3 +3718,13 @@ groom:
   label: wedding
   categories:
     - event
+
+maypole:
+  label: festival
+  categories:
+    - event
+
+puck:
+  label: sports
+  threshold: 0.5
+  priority: -1
