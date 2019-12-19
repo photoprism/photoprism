@@ -32,6 +32,7 @@ require (
 	github.com/leandro-lugaresi/hub v1.1.0
 	github.com/lucasb-eyer/go-colorful v1.0.2
 	github.com/mattn/go-isatty v0.0.4 // indirect
+	github.com/melihmucuk/geocache v0.0.0-20160621165317-521b336a001c
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/montanaflynn/stats v0.0.0-20181214052348-945b007cb92f // indirect
@@ -50,6 +51,7 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20190512091148-babf20351dd7 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sevlyar/go-daemon v0.1.5
+	github.com/shopspring/decimal v0.0.0-20191130220710-360f2bc03045 // indirect
 	github.com/simplereach/timeutils v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/soheilhy/cmux v0.1.4 // indirect
