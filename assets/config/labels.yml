@@ -437,6 +437,7 @@ african chameleon:
   categories:
     - reptile
     - animal
+    - lizard
 
 american chameleon:
   see: african chameleon
@@ -471,9 +472,7 @@ green lizard:
   see: lizard
 
 komodo dragon:
-  categories:
-    - reptile
-    - animal
+  see: lizard
 
 african crocodile:
   label: crocodile
@@ -571,46 +570,32 @@ scorpion:
     - spider
     - insect
 
-black and gold garden spider:
+spider:
+  label: spider
   categories:
     - animal
-    - spider
-    - insect
+
+black and gold garden spider:
+  see: spider
 
 barn spider:
-  categories:
-    - animal
-    - spider
-    - insect
+  see: spider
 
 garden spider:
-  categories:
-    - animal
-    - spider
-    - insect
+  see: spider
 
 black widow:
-  categories:
-    - animal
-    - spider
-    - insect
+  see: spider
 
 tarantula:
-  categories:
-    - animal
-    - spider
-    - insect
+  see: spider
 
 wolf spider:
-  categories:
-    - animal
-    - spider
-    - insect
+  see: spider
 
 centipede:
   categories:
     - animal
-    - insect
 
 black grouse:
   threshold: 0.3
@@ -647,10 +632,10 @@ peacock:
     - bird
 
 quail:
+  label: bird
   threshold: 0.3
   categories:
     - animal
-    - bird
 
 partridge:
   threshold: 0.3
@@ -846,7 +831,6 @@ hermit crab:
 isopod:
   categories:
     - animal
-    - insect
 
 white stork:
   label: storck
@@ -1395,63 +1379,43 @@ meerkat:
   categories:
     - animal
 
-tiger beetle:
+beetle:
   categories:
     - animal
-    - beetle
-    - insect
+
+tiger beetle:
+  see: beetle
 
 ladybug:
-  categories:
-    - animal
-    - beetle
-    - insect
+  see: beetle
 
 ground beetle:
-  categories:
-    - animal
-    - beetle
-    - insect
+  see: beetle
 
 long-horned beetle:
-  categories:
-    - animal
-    - beetle
-    - insect
+  see: beetle
 
 leaf beetle:
-  categories:
-    - animal
-    - beetle
-    - insect
+  see: beetle
 
 dung beetle:
   categories:
     - animal
     - beetle
-    - insect
 
 rhinoceros beetle:
-  categories:
-    - animal
-    - beetle
-    - insect
+  see: beetle
 
 weevil:
-  categories:
-    - animal
-    - beetle
-    - insect
+  see: beetle
 
 fly:
   categories:
     - animal
-    - insect
 
 bee:
   categories:
     - animal
-    - insect
 
 apiary:
   priority: -1
@@ -1536,6 +1500,7 @@ lycaenid:
     - butterfly
 
 starfish:
+  threshold: 0.5
   categories:
     - water
     - sea
@@ -2695,11 +2660,10 @@ car:
     - vehicle
 
 racer:
-  label: race car
+  label: vehicle
   threshold: 0.2
   categories:
     - car
-    - vehicle
     - street
 
 passenger car:
@@ -3529,8 +3493,11 @@ spider web:
   priority: -2
 
 wool:
+  label: furry animal
   threshold: 0.5
   priority: -1
+  categories:
+    - animal
 
 ear:
   priority: -1
@@ -3587,9 +3554,9 @@ crutch:
   threshold: 0.3
 
 mousetrap:
-  label: object
+  label: unknown
   priority: -1
-  threshold: 0.3
+  threshold: 0.5
 
 band aid:
   label: portrait
@@ -3727,4 +3694,8 @@ maypole:
 puck:
   label: sports
   threshold: 0.5
+  priority: -1
+
+mosquito net:
+  label: outdoor
   priority: -1
