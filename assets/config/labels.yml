@@ -1902,6 +1902,7 @@ puffer:
   see: fish
 
 instrument:
+  threshold: 0.5
   categories:
     - instrument
     - music
@@ -3716,3 +3717,8 @@ slot:
 
 carousel:
   label: theme park
+
+groom:
+  label: wedding
+  categories:
+    - celebration

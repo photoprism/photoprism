@@ -43,8 +43,8 @@ type Photo struct {
 	LocationID        uint
 	LocationChanged   bool
 	LocationEstimated bool
-	TakenAt           time.Time `gorm:"index;"`
-	TakenAtLocal      time.Time
+	TakenAt           time.Time `gorm:"type:datetime;index;"`
+	TakenAtLocal      time.Time `gorm:"type:datetime;"`
 	TakenAtChanged    bool
 	TimeZone          string
 	Files             []File

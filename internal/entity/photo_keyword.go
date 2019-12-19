@@ -21,7 +21,9 @@ func NewPhotoKeyword(photoID, keywordID uint) *PhotoKeyword {
 }
 
 func (m *PhotoKeyword) FirstOrCreate(db *gorm.DB) *PhotoKeyword {
-	db.FirstOrCreate(m, "photo_id = ? AND keyword_id = ?", m.PhotoID, m.KeywordID)
+	if err := db.FirstOrCreate(m, "photo_id = ? AND keyword_id = ?", m.PhotoID, m.KeywordID).Error; err != nil {
+		log.Errorf("photo keyword: %s", err)
+	}
 
 	return m
 }

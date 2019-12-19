@@ -15,8 +15,8 @@ type Event struct {
 	EventType        string
 	EventDescription string `gorm:"type:text;"`
 	EventNotes       string `gorm:"type:text;"`
-	EventBegin       time.Time
-	EventEnd         time.Time
+	EventBegin       time.Time `gorm:"type:datetime;"`
+	EventEnd         time.Time `gorm:"type:datetime;"`
 	EventLat         float64
 	EventLong        float64
 	EventDist        float64

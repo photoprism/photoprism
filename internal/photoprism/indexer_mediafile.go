@@ -18,6 +18,7 @@ const (
 	indexResultUpdated IndexResult = "updated"
 	indexResultAdded   IndexResult = "added"
 	indexResultSkipped IndexResult = "skipped"
+	indexResultFailed  IndexResult = "failed"
 )
 
 type IndexResult string
@@ -163,7 +164,10 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 			i.estimateLocation(&photo)
 		}
 
-		i.db.Unscoped().Save(&photo)
+		if err := i.db.Unscoped().Save(&photo).Error; err != nil {
+			log.Errorf("index: %s", err)
+			return indexResultFailed
+		}
 	} else {
 		event.Publish("count.photos", event.Data{
 			"count": 1,
@@ -171,7 +175,10 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 
 		photo.PhotoFavorite = false
 
-		i.db.Create(&photo)
+		if err := i.db.Create(&photo).Error; err != nil {
+			log.Errorf("index: %s", err)
+			return indexResultFailed
+		}
 	}
 
 	if len(labels) > 0 {
@@ -217,13 +224,22 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 
 	if fileQuery.Error == nil {
 		file.UpdatedIn = int64(time.Since(start))
-		i.db.Unscoped().Save(&file)
+
+		if err := i.db.Unscoped().Save(&file).Error; err != nil {
+			log.Errorf("index: %s", err)
+			return indexResultFailed
+		}
+
 		return indexResultUpdated
 	}
 
 	file.CreatedIn = int64(time.Since(start))
 
-	i.db.Create(&file)
+	if err := i.db.Create(&file).Error; err != nil {
+		log.Errorf("index: %s", err)
+		return indexResultFailed
+	}
+
 	return indexResultAdded
 }
 
@@ -322,7 +338,10 @@ func (i *Indexer) addLabels(photoId uint, labels Labels) {
 
 		if lm.LabelPriority != label.Priority {
 			lm.LabelPriority = label.Priority
-			i.db.Save(&lm)
+
+			if err := i.db.Save(&lm).Error; err != nil {
+				log.Errorf("index: %s", err)
+			}
 		}
 
 		plm := entity.NewPhotoLabel(photoId, lm.ID, label.Uncertainty, label.Source).FirstOrCreate(i.db)
@@ -330,13 +349,17 @@ func (i *Indexer) addLabels(photoId uint, labels Labels) {
 		// Add categories
 		for _, category := range label.Categories {
 			sn := entity.NewLabel(category, -3).FirstOrCreate(i.db)
-			i.db.Model(&lm).Association("LabelCategories").Append(sn)
+			if err := i.db.Model(&lm).Association("LabelCategories").Append(sn).Error; err != nil {
+				log.Errorf("index: %s", err)
+			}
 		}
 
 		if plm.LabelUncertainty > label.Uncertainty {
 			plm.LabelUncertainty = label.Uncertainty
 			plm.LabelSource = label.Source
-			i.db.Save(&plm)
+			if err := i.db.Save(&plm).Error; err != nil {
+				log.Errorf("index: %s", err)
+			}
 		}
 	}
 }

@@ -44,7 +44,9 @@ func NewCountry(countryCode string, countryName string) *Country {
 }
 
 func (m *Country) FirstOrCreate(db *gorm.DB) *Country {
-	db.FirstOrCreate(m, "id = ?", m.ID)
+	if err := db.FirstOrCreate(m, "id = ?", m.ID).Error; err != nil {
+		log.Errorf("country: %s", err)
+	}
 
 	return m
 }
