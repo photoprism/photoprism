@@ -1904,7 +1904,6 @@ puffer:
 instrument:
   threshold: 0.5
   categories:
-    - instrument
     - music
     - entertainment
 
@@ -3708,6 +3707,8 @@ volcano:
 
 radio telescope:
   threshold: 0.5
+  categories:
+    - science
 
 thimble:
   priority: -1
@@ -3717,8 +3718,10 @@ slot:
 
 carousel:
   label: theme park
+  categories:
+    - entertainment
 
 groom:
   label: wedding
   categories:
-    - celebration
+    - event
