@@ -3,7 +3,6 @@ cat:
   priority: 5
   categories:
     - animal
-    - kitty
 
 tabby cat:
   see: cat
@@ -23,7 +22,6 @@ tiger cat:
     - cat
     - tiger
     - animal
-    - kitty
 
 wild cat:
   priority: 5
@@ -1320,7 +1318,7 @@ hyena:
 
 fox:
   label: fox
-  threshold: 0.25
+  threshold: 0.3
   categories:
     - animal
 
@@ -1338,7 +1336,7 @@ grey fox:
 
 bear:
   label: bear
-  threshold: 0.25
+  threshold: 0.3
   categories:
     - animal
 
@@ -1394,40 +1392,50 @@ weevil:
   see: beetle
 
 fly:
+  threshold: 0.3
   categories:
     - animal
 
 bee:
+  threshold: 0.3
   categories:
     - animal
 
 apiary:
+  label: beehive
+  threshold: 0.3
   priority: -1
 
 ant:
+  threshold: 0.3
   categories:
     - animal
     - insect
 
 walking stick:
+  threshold: 0.3
   priority: -1
 
 cockroach:
+  threshold: 0.3
   categories:
     - animal
     - insect
 
 mantis:
+  threshold: 0.3
   categories:
     - animal
     - insect
 
 cicada:
+  threshold: 0.3
   categories:
     - animal
     - insect
 
 leafhopper:
+  threshold: 0.3
   categories:
     - animal
     - insect
@@ -2215,7 +2223,7 @@ electric locomotive:
     - vehicle
 
 entertainment center:
-  label: television
+  label: screen
 
 espresso maker:
   categories:
@@ -2354,7 +2362,7 @@ hatchet:
     - tool
 
 home theater:
-  label: television
+  label: screen
 
 honeycomb:
   priority: -1
@@ -2505,7 +2513,6 @@ monitor:
   label: screen
   categories:
     - display
-    - monitor
     - computer
 
 mosque:
@@ -3553,7 +3560,7 @@ patio:
   label: building
 
 scoreboard:
-  label: urban scenery
+  label: scenery
 
 racket:
   label: outdoor
