@@ -1843,16 +1843,16 @@ aircraft carrier:
     - vehicle
 
 airliner:
+  label: aircraft
   categories:
-    - aircraft
-    - fly
+    - airport
     - vehicle
 
 airship:
+  label: aircraft
   threshold: 0.5
   categories:
-    - aircraft
-    - fly
+    - airport
     - vehicle
 
 ambulance:
