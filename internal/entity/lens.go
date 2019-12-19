@@ -38,7 +38,9 @@ func NewLens(modelName string, makeName string) *Lens {
 }
 
 func (m *Lens) FirstOrCreate(db *gorm.DB) *Lens {
-	db.FirstOrCreate(m, "lens_model = ? AND lens_make = ?", m.LensModel, m.LensMake)
+	if err := db.FirstOrCreate(m, "lens_model = ? AND lens_make = ?", m.LensModel, m.LensMake).Error; err != nil {
+		log.Errorf("lens: %s", err)
+	}
 
 	return m
 }

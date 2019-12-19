@@ -3,8 +3,6 @@ cat:
   priority: 5
   categories:
     - animal
-    - kitty
-    - mammal
 
 tabby cat:
   see: cat
@@ -23,10 +21,7 @@ tiger cat:
   categories:
     - cat
     - tiger
-    - stripes
     - animal
-    - kitty
-    - mammal
 
 wild cat:
   priority: 5
@@ -34,7 +29,6 @@ wild cat:
   categories:
     - cat
     - animal
-    - mammal
     - wildlife
 
 lynx:
@@ -200,6 +194,7 @@ ship:
 
 solar dish:
   threshold: 0.5
+  priority: -1
 
 grasshopper:
   label: grasshopper
@@ -229,8 +224,6 @@ windsor tie:
 chainlink fence:
   label: outdoor
   priority: -1
-  categories:
-    - fence
 
 mitten:
   label: unknown
@@ -305,7 +298,7 @@ ostrich:
 
 bird:
   label: bird
-  threshold: 0.25
+  threshold: 0.3
   categories:
     - animal
 
@@ -387,23 +380,19 @@ axolotl:
     - amphibians
     - animal
 
-bullfrog:
+frog:
+  label: frog
   categories:
-    - amphibians
     - animal
-    - frog
+
+bullfrog:
+  see: frog
 
 tree frog:
-  categories:
-    - amphibians
-    - animal
-    - frog
+  see: frog
 
 tailed frog:
-  categories:
-    - amphibians
-    - animal
-    - frog
+  see: frog
 
 turtle:
   label: turtle
@@ -439,6 +428,7 @@ african chameleon:
   categories:
     - reptile
     - animal
+    - lizard
 
 american chameleon:
   see: african chameleon
@@ -473,12 +463,11 @@ green lizard:
   see: lizard
 
 komodo dragon:
-  categories:
-    - reptile
-    - animal
+  see: lizard
 
 african crocodile:
   label: crocodile
+  threshold: 0.25
   categories:
     - reptile
     - animal
@@ -573,46 +562,32 @@ scorpion:
     - spider
     - insect
 
-black and gold garden spider:
+spider:
+  label: spider
   categories:
     - animal
-    - spider
-    - insect
+
+black and gold garden spider:
+  see: spider
 
 barn spider:
-  categories:
-    - animal
-    - spider
-    - insect
+  see: spider
 
 garden spider:
-  categories:
-    - animal
-    - spider
-    - insect
+  see: spider
 
 black widow:
-  categories:
-    - animal
-    - spider
-    - insect
+  see: spider
 
 tarantula:
-  categories:
-    - animal
-    - spider
-    - insect
+  see: spider
 
 wolf spider:
-  categories:
-    - animal
-    - spider
-    - insect
+  see: spider
 
 centipede:
   categories:
     - animal
-    - insect
 
 black grouse:
   threshold: 0.3
@@ -649,10 +624,10 @@ peacock:
     - bird
 
 quail:
+  label: bird
   threshold: 0.3
   categories:
     - animal
-    - bird
 
 partridge:
   threshold: 0.3
@@ -706,11 +681,11 @@ toucan:
     - bird
 
 drake:
+  label: duck
   threshold: 0.3
   categories:
     - animal
     - bird
-    - duck
 
 red-breasted merganser:
   label: duck
@@ -736,7 +711,7 @@ echidna:
     - animal
 
 platypus:
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - animal
 
@@ -804,51 +779,48 @@ chambered nautilus:
     - animal
     - slug
 
-dungeness crab:
+crab:
+  label: crab
   categories:
     - animal
-    - crab
+
+dungeness crab:
+  see: crab
 
 rock crab:
-  categories:
-    - animal
-    - crab
+  see: crab
 
 fiddler crab:
-  categories:
-    - animal
-    - crab
+  see: crab
 
 king crab:
+  see: crab
+
+hermit crab:
+  see: crab
+
+lobster:
+  label: lobster
   categories:
     - animal
-    - crab
+    - food
+    - water
 
 american lobster:
-  categories:
-    - animal
-    - crab
+  see: lobster
 
 spiny lobster:
-  categories:
-    - animal
-    - crab
+  see: lobster
 
 crayfish:
   categories:
     - water
     - animal
-    - crab
-
-hermit crab:
-  categories:
-    - animal
-    - crab
+    - lobster
 
 isopod:
   categories:
     - animal
-    - insect
 
 white stork:
   label: storck
@@ -908,14 +880,10 @@ redshank:
     - nature
 
 dowitcher:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 oystercatcher:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 pelican:
   categories:
@@ -933,17 +901,17 @@ albatross:
     - animal
     - bird
 
-grey whale:
+whale:
+  label: whale
   categories:
     - animal
-    - whale
-    - mammal
+    - water
+
+grey whale:
+  see: whale
 
 killer whale:
-  categories:
-    - animal
-    - whale
-    - mammal
+  see: whale
 
 dugong:
   categories:
@@ -959,7 +927,6 @@ dog:
   categories:
     - animal
     - puppy
-    - mammal
 
 chihuahua dog:
   see: dog
@@ -1349,45 +1316,41 @@ African hunting dog:
 hyena:
   see: dog
 
-red fox:
+fox:
+  label: fox
+  threshold: 0.3
   categories:
-    - fox
     - animal
+
+red fox:
+  see: fox
 
 kit fox:
-  categories:
-    - fox
-    - animal
+  see: fox
 
-Arctic fox:
-  categories:
-    - fox
-    - animal
+arctic fox:
+  see: fox
 
-rgrey fox:
+grey fox:
+  see: fox
+
+bear:
+  label: bear
+  threshold: 0.3
   categories:
-    - fox
     - animal
 
 brown bear:
-  categories:
-    - animal
-    - bear
+  see: bear
 
-American black bear:
-  categories:
-    - animal
-    - bear
+american black bear:
+  see: bear
 
 ice bear:
-  categories:
-    - animal
-    - bear
+  see: bear
 
 sloth bear:
-  categories:
-    - animal
-    - bear
+  see: bear
 
 mongoose:
   categories:
@@ -1397,91 +1360,82 @@ meerkat:
   categories:
     - animal
 
-tiger beetle:
+beetle:
+  label: beetle
   categories:
     - animal
-    - beetle
-    - insect
+
+tiger beetle:
+  see: beetle
 
 ladybug:
-  categories:
-    - animal
-    - beetle
-    - insect
+  see: beetle
 
 ground beetle:
-  categories:
-    - animal
-    - beetle
-    - insect
+  see: beetle
 
 long-horned beetle:
-  categories:
-    - animal
-    - beetle
-    - insect
+  see: beetle
 
 leaf beetle:
-  categories:
-    - animal
-    - beetle
-    - insect
+  see: beetle
 
 dung beetle:
   categories:
     - animal
     - beetle
-    - insect
 
 rhinoceros beetle:
-  categories:
-    - animal
-    - beetle
-    - insect
+  see: beetle
 
 weevil:
-  categories:
-    - animal
-    - beetle
-    - insect
+  see: beetle
 
 fly:
+  threshold: 0.3
   categories:
     - animal
-    - insect
 
 bee:
+  threshold: 0.3
   categories:
     - animal
-    - insect
 
 apiary:
+  label: beehive
+  threshold: 0.3
   priority: -1
 
 ant:
+  threshold: 0.3
   categories:
     - animal
     - insect
 
 walking stick:
+  threshold: 0.3
   priority: -1
 
 cockroach:
+  threshold: 0.3
   categories:
     - animal
     - insect
 
 mantis:
+  threshold: 0.3
   categories:
     - animal
     - insect
 
 cicada:
+  threshold: 0.3
   categories:
     - animal
     - insect
 
 leafhopper:
+  threshold: 0.3
   categories:
     - animal
     - insect
@@ -1501,43 +1455,31 @@ damselfly:
     - animal
     - insect
 
-admiral:
+butterfly:
+  label: butterfly
   categories:
     - animal
-    - insect
-    - butterfly
+
+admiral:
+  see: butterfly
 
 ringlet:
-  categories:
-    - animal
-    - insect
-    - butterfly
+  see: butterfly
 
 monarch:
-  categories:
-    - animal
-    - insect
-    - butterfly
+  see: butterfly
 
 cabbage butterfly:
-  categories:
-    - animal
-    - insect
-    - butterfly
+  see: butterfly
 
 sulphur butterfly:
-  categories:
-    - animal
-    - insect
-    - butterfly
+  see: butterfly
 
 lycaenid:
-  categories:
-    - animal
-    - insect
-    - butterfly
+  see: butterfly
 
 starfish:
+  threshold: 0.5
   categories:
     - water
     - sea
@@ -1610,7 +1552,6 @@ sorrel:
 zebra:
   categories:
     - animal
-    - mammal
     - wildlife
 
 hog:
@@ -1618,19 +1559,16 @@ hog:
   categories:
     - animal
     - pig
-    - mammal
 
 wild boar:
   threshold: 0.66
   categories:
     - animal
-    - mammal
 
 warthog:
   threshold: 0.66
   categories:
     - animal
-    - mammal
     - wildlife
 
 hippopotamus:
@@ -1644,19 +1582,16 @@ ox:
   threshold: 0.2
   categories:
     - animal
-    - mammal
     - farm
 
 water buffalo:
   categories:
     - animal
-    - mammal
     - farm
 
 bison:
   categories:
     - animal
-    - mammal
 
 ram:
   label: sheep
@@ -1664,43 +1599,36 @@ ram:
   categories:
     - farm
     - animal
-    - mammal
 
 bighorn:
   categories:
     - animal
-    - mammal
 
 ibex:
   categories:
     - animal
-    - mammal
 
 hartebeest:
   threshold: 0.4
   categories:
     - animal
-    - mammal
 
 impala:
   threshold: 0.4
   categories:
     - animal
-    - mammal
     - wildlife
 
 gazelle:
   threshold: 0.4
   categories:
     - animal
-    - mammal
     - wildlife
 
 llama:
   threshold: 0.4
   categories:
     - animal
-    - mammal
 
 weasel:
   threshold: 0.4
@@ -1725,7 +1653,6 @@ otter:
   threshold: 0.4
   categories:
     - animal
-    - mammal
 
 skunk:
   threshold: 0.4
@@ -1736,7 +1663,6 @@ badger:
   threshold: 0.4
   categories:
     - animal
-    - mammal
 
 armadillo:
   categories:
@@ -1751,7 +1677,6 @@ ape:
   priority: 2
   categories:
     - animal
-    - mammal
 
 orangutan:
   see: ape
@@ -1770,7 +1695,6 @@ monkey:
   priority: 2
   categories:
     - animal
-    - mammal
 
 siamang:
   see: monkey
@@ -1828,12 +1752,11 @@ fossa:
   see: cat
 
 indian elephant:
+  label: elephant
   priority: 2
   threshold: 0.47
   categories:
     - animal
-    - elephant
-    - mammal
     - wildlife
 
 african elephant:
@@ -1842,7 +1765,6 @@ african elephant:
   categories:
     - animal
     - elephant
-    - mammal
     - wildlife
 
 tusker:
@@ -1851,14 +1773,12 @@ tusker:
   threshold: 0.3
   categories:
     - animal
-    - mammal
 
 panda:
   label: panda
   priority: 2
   categories:
     - animal
-    - mammal
 
 lesser panda:
   see: panda
@@ -1902,8 +1822,8 @@ puffer:
   see: fish
 
 instrument:
+  threshold: 0.5
   categories:
-    - instrument
     - music
     - entertainment
 
@@ -2103,6 +2023,8 @@ canoe:
 
 can opener:
   label: kitchen
+  categories:
+    - cooking
 
 car mirror:
   label: car
@@ -2219,10 +2141,9 @@ crash helmet:
     - construction side
 
 crock pot:
+  label: cooking
   categories:
     - kitchen
-    - pot
-    - cooking
 
 dam:
   categories:
@@ -2278,11 +2199,7 @@ dome:
     - building
 
 drilling platform:
-  label: industrial
-  categories:
-    - building
-    - water
-    - sea
+  label: building
 
 drum:
   see: instrument
@@ -2306,7 +2223,7 @@ electric locomotive:
     - vehicle
 
 entertainment center:
-  label: television
+  label: screen
 
 espresso maker:
   categories:
@@ -2445,7 +2362,7 @@ hatchet:
     - tool
 
 home theater:
-  label: television
+  label: screen
 
 honeycomb:
   priority: -1
@@ -2596,7 +2513,6 @@ monitor:
   label: screen
   categories:
     - display
-    - monitor
     - computer
 
 mosque:
@@ -2615,10 +2531,9 @@ mountain bike:
     - sports
 
 mountain tent:
-  label: tent
+  label: camping
   categories:
-    - camping
-    - travel
+    - outdoor
 
 moving van:
   label: van
@@ -2702,11 +2617,10 @@ car:
     - vehicle
 
 racer:
-  label: race car
+  label: vehicle
   threshold: 0.2
   categories:
     - car
-    - vehicle
     - street
 
 passenger car:
@@ -2735,8 +2649,6 @@ photocopier:
 picket fence:
   label: outdoor
   priority: -1
-  categories:
-    - fence
 
 pickup:
   categories:
@@ -2862,9 +2774,10 @@ rocking chair:
     - furniture
 
 rotisserie:
+  threshold: 0.5
   categories:
-    - kitchen
     - cooking
+    - restaurant
 
 rubber eraser:
   categories:
@@ -2876,9 +2789,7 @@ running shoe:
 
 saltshaker:
   categories:
-    - kitchen
     - cooking
-    - food
 
 sandal:
   categories:
@@ -2925,11 +2836,12 @@ ski:
     - winter
     - snow
     - sports
+    - outdoor
 
 sleeping bag:
   categories:
-    - travel
     - camping
+    - outdoor
 
 sliding door:
   label: door
@@ -2969,7 +2881,6 @@ space heater:
 spatula:
   categories:
     - kitchen
-    - cooking
 
 speedboat:
   categories:
@@ -3001,12 +2912,10 @@ steel drum:
 stove:
   categories:
     - kitchen
-    - cooking
 
 strainer:
   categories:
     - kitchen
-    - cooking
 
 streetcar:
   categories:
@@ -3054,7 +2963,6 @@ theater curtain:
 toaster:
   categories:
     - kitchen
-    - cooking
 
 toilet seat:
   label: toilet
@@ -3113,7 +3021,6 @@ violin:
 waffle iron:
   categories:
     - kitchen
-    - cooking
 
 wall clock:
   label: clock
@@ -3148,18 +3055,14 @@ wine bottle:
 wok:
   categories:
     - kitchen
-    - cooking
 
 wooden spoon:
   categories:
     - kitchen
-    - cooking
 
 worm fence:
   label: outdoor
   priority: -1
-  categories:
-    - fence
 
 wreck:
   see: ship
@@ -3173,7 +3076,9 @@ yawl:
     - vehicle
 
 yurt:
-  label: tent
+  label: camping
+  categories:
+    - outdoor
 
 comic book:
   label: colorful
@@ -3459,9 +3364,7 @@ stinkhorn:
     - mushroom
 
 earthstar:
-  categories:
-    - fungus
-    - mushroom
+  label: nature
 
 hen-of-the-woods:
   categories:
@@ -3537,14 +3440,19 @@ spider web:
   priority: -2
 
 wool:
+  label: fur
   threshold: 0.5
   priority: -1
+  categories:
+    - animal
 
 ear:
   priority: -1
 
 sunglasses:
+  label: sunny day
   priority: 2
+  threshold: 0.2
 
 sunglass:
   see: sunglasses
@@ -3554,10 +3462,9 @@ packet:
   priority: -1
 
 swing:
-  label: cosy
+  label: moment
   categories:
     - outdoor
-    - furniture
 
 web site:
   label: info
@@ -3594,9 +3501,9 @@ crutch:
   threshold: 0.3
 
 mousetrap:
-  label: object
+  label: unknown
   priority: -1
-  threshold: 0.3
+  threshold: 0.5
 
 band aid:
   label: portrait
@@ -3653,7 +3560,7 @@ patio:
   label: building
 
 scoreboard:
-  label: urban scenery
+  label: scenery
 
 racket:
   label: outdoor
@@ -3707,6 +3614,8 @@ volcano:
 
 radio telescope:
   threshold: 0.5
+  categories:
+    - science
 
 thimble:
   priority: -1
@@ -3716,3 +3625,24 @@ slot:
 
 carousel:
   label: theme park
+  categories:
+    - entertainment
+
+groom:
+  label: wedding
+  categories:
+    - event
+
+maypole:
+  label: festival
+  categories:
+    - event
+
+puck:
+  label: sports
+  threshold: 0.5
+  priority: -1
+
+mosquito net:
+  label: outdoor
+  priority: -1

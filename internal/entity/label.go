@@ -24,6 +24,7 @@ type Label struct {
 
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
 	if err := scope.SetColumn("LabelUUID", util.UUID()); err != nil {
+		log.Errorf("label: %s", err)
 		return err
 	}
 
@@ -49,7 +50,9 @@ func NewLabel(labelName string, labelPriority int) *Label {
 }
 
 func (m *Label) FirstOrCreate(db *gorm.DB) *Label {
-	db.FirstOrCreate(m, "label_slug = ?", m.LabelSlug)
+	if err := db.FirstOrCreate(m, "label_slug = ?", m.LabelSlug).Error; err != nil {
+		log.Errorf("label: %s", err)
+	}
 
 	return m
 }

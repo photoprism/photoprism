@@ -30,7 +30,9 @@ func NewPhotoLabel(photoId, labelId uint, uncertainty int, source string) *Photo
 }
 
 func (m *PhotoLabel) FirstOrCreate(db *gorm.DB) *PhotoLabel {
-	db.FirstOrCreate(m, "photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID)
+	if err := db.FirstOrCreate(m, "photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).Error; err != nil {
+		log.Errorf("photo label: %s", err)
+	}
 
 	return m
 }

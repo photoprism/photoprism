@@ -41,7 +41,7 @@ services:
       CI_JOB_ID:
 
   photoprism-db:
-    image: mariadb:10.4.8
+    image: mariadb:10.4.11
     command: mysqld --port=4001 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
     expose:
       - "4001"
