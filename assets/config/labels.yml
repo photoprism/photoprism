@@ -4,7 +4,6 @@ cat:
   categories:
     - animal
     - kitty
-    - mammal
 
 tabby cat:
   see: cat
@@ -23,10 +22,8 @@ tiger cat:
   categories:
     - cat
     - tiger
-    - stripes
     - animal
     - kitty
-    - mammal
 
 wild cat:
   priority: 5
@@ -34,7 +31,6 @@ wild cat:
   categories:
     - cat
     - animal
-    - mammal
     - wildlife
 
 lynx:
@@ -200,6 +196,7 @@ ship:
 
 solar dish:
   threshold: 0.5
+  priority: -1
 
 grasshopper:
   label: grasshopper
@@ -385,23 +382,19 @@ axolotl:
     - amphibians
     - animal
 
-bullfrog:
+frog:
+  label: frog
   categories:
-    - amphibians
     - animal
-    - frog
+
+bullfrog:
+  see: frog
 
 tree frog:
-  categories:
-    - amphibians
-    - animal
-    - frog
+  see: frog
 
 tailed frog:
-  categories:
-    - amphibians
-    - animal
-    - frog
+  see: frog
 
 turtle:
   label: turtle
@@ -476,6 +469,7 @@ komodo dragon:
 
 african crocodile:
   label: crocodile
+  threshold: 0.25
   categories:
     - reptile
     - animal
@@ -689,11 +683,11 @@ toucan:
     - bird
 
 drake:
+  label: duck
   threshold: 0.3
   categories:
     - animal
     - bird
-    - duck
 
 red-breasted merganser:
   label: duck
@@ -719,7 +713,7 @@ echidna:
     - animal
 
 platypus:
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - animal
 
@@ -787,46 +781,44 @@ chambered nautilus:
     - animal
     - slug
 
-dungeness crab:
+crab:
+  label: crab
   categories:
     - animal
-    - crab
+
+dungeness crab:
+  see: crab
 
 rock crab:
-  categories:
-    - animal
-    - crab
+  see: crab
 
 fiddler crab:
-  categories:
-    - animal
-    - crab
+  see: crab
 
 king crab:
+  see: crab
+
+hermit crab:
+  see: crab
+
+lobster:
+  label: lobster
   categories:
     - animal
-    - crab
+    - food
+    - water
 
 american lobster:
-  categories:
-    - animal
-    - crab
+  see: lobster
 
 spiny lobster:
-  categories:
-    - animal
-    - crab
+  see: lobster
 
 crayfish:
   categories:
     - water
     - animal
-    - crab
-
-hermit crab:
-  categories:
-    - animal
-    - crab
+    - lobster
 
 isopod:
   categories:
@@ -890,14 +882,10 @@ redshank:
     - nature
 
 dowitcher:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 oystercatcher:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 pelican:
   categories:
@@ -915,17 +903,17 @@ albatross:
     - animal
     - bird
 
-grey whale:
+whale:
+  label: whale
   categories:
     - animal
-    - whale
-    - mammal
+    - water
+
+grey whale:
+  see: whale
 
 killer whale:
-  categories:
-    - animal
-    - whale
-    - mammal
+  see: whale
 
 dugong:
   categories:
@@ -941,7 +929,6 @@ dog:
   categories:
     - animal
     - puppy
-    - mammal
 
 chihuahua dog:
   see: dog
@@ -1331,45 +1318,41 @@ African hunting dog:
 hyena:
   see: dog
 
-red fox:
+fox:
+  label: fox
+  threshold: 0.25
   categories:
-    - fox
     - animal
+
+red fox:
+  see: fox
 
 kit fox:
-  categories:
-    - fox
-    - animal
+  see: fox
 
-Arctic fox:
-  categories:
-    - fox
-    - animal
+arctic fox:
+  see: fox
 
-rgrey fox:
+grey fox:
+  see: fox
+
+bear:
+  label: bear
+  threshold: 0.25
   categories:
-    - fox
     - animal
 
 brown bear:
-  categories:
-    - animal
-    - bear
+  see: bear
 
-American black bear:
-  categories:
-    - animal
-    - bear
+american black bear:
+  see: bear
 
 ice bear:
-  categories:
-    - animal
-    - bear
+  see: bear
 
 sloth bear:
-  categories:
-    - animal
-    - bear
+  see: bear
 
 mongoose:
   categories:
@@ -1380,6 +1363,7 @@ meerkat:
     - animal
 
 beetle:
+  label: beetle
   categories:
     - animal
 
@@ -1463,41 +1447,28 @@ damselfly:
     - animal
     - insect
 
-admiral:
+butterfly:
+  label: butterfly
   categories:
     - animal
-    - insect
-    - butterfly
+
+admiral:
+  see: butterfly
 
 ringlet:
-  categories:
-    - animal
-    - insect
-    - butterfly
+  see: butterfly
 
 monarch:
-  categories:
-    - animal
-    - insect
-    - butterfly
+  see: butterfly
 
 cabbage butterfly:
-  categories:
-    - animal
-    - insect
-    - butterfly
+  see: butterfly
 
 sulphur butterfly:
-  categories:
-    - animal
-    - insect
-    - butterfly
+  see: butterfly
 
 lycaenid:
-  categories:
-    - animal
-    - insect
-    - butterfly
+  see: butterfly
 
 starfish:
   threshold: 0.5
@@ -1573,7 +1544,6 @@ sorrel:
 zebra:
   categories:
     - animal
-    - mammal
     - wildlife
 
 hog:
@@ -1581,19 +1551,16 @@ hog:
   categories:
     - animal
     - pig
-    - mammal
 
 wild boar:
   threshold: 0.66
   categories:
     - animal
-    - mammal
 
 warthog:
   threshold: 0.66
   categories:
     - animal
-    - mammal
     - wildlife
 
 hippopotamus:
@@ -1607,19 +1574,16 @@ ox:
   threshold: 0.2
   categories:
     - animal
-    - mammal
     - farm
 
 water buffalo:
   categories:
     - animal
-    - mammal
     - farm
 
 bison:
   categories:
     - animal
-    - mammal
 
 ram:
   label: sheep
@@ -1627,43 +1591,36 @@ ram:
   categories:
     - farm
     - animal
-    - mammal
 
 bighorn:
   categories:
     - animal
-    - mammal
 
 ibex:
   categories:
     - animal
-    - mammal
 
 hartebeest:
   threshold: 0.4
   categories:
     - animal
-    - mammal
 
 impala:
   threshold: 0.4
   categories:
     - animal
-    - mammal
     - wildlife
 
 gazelle:
   threshold: 0.4
   categories:
     - animal
-    - mammal
     - wildlife
 
 llama:
   threshold: 0.4
   categories:
     - animal
-    - mammal
 
 weasel:
   threshold: 0.4
@@ -1688,7 +1645,6 @@ otter:
   threshold: 0.4
   categories:
     - animal
-    - mammal
 
 skunk:
   threshold: 0.4
@@ -1699,7 +1655,6 @@ badger:
   threshold: 0.4
   categories:
     - animal
-    - mammal
 
 armadillo:
   categories:
@@ -1714,7 +1669,6 @@ ape:
   priority: 2
   categories:
     - animal
-    - mammal
 
 orangutan:
   see: ape
@@ -1733,7 +1687,6 @@ monkey:
   priority: 2
   categories:
     - animal
-    - mammal
 
 siamang:
   see: monkey
@@ -1791,12 +1744,11 @@ fossa:
   see: cat
 
 indian elephant:
+  label: elephant
   priority: 2
   threshold: 0.47
   categories:
     - animal
-    - elephant
-    - mammal
     - wildlife
 
 african elephant:
@@ -1805,7 +1757,6 @@ african elephant:
   categories:
     - animal
     - elephant
-    - mammal
     - wildlife
 
 tusker:
@@ -1814,14 +1765,12 @@ tusker:
   threshold: 0.3
   categories:
     - animal
-    - mammal
 
 panda:
   label: panda
   priority: 2
   categories:
     - animal
-    - mammal
 
 lesser panda:
   see: panda
@@ -2066,6 +2015,8 @@ canoe:
 
 can opener:
   label: kitchen
+  categories:
+    - cooking
 
 car mirror:
   label: car
@@ -2182,10 +2133,9 @@ crash helmet:
     - construction side
 
 crock pot:
+  label: cooking
   categories:
     - kitchen
-    - pot
-    - cooking
 
 dam:
   categories:
@@ -2817,9 +2767,10 @@ rocking chair:
     - furniture
 
 rotisserie:
+  threshold: 0.5
   categories:
-    - kitchen
     - cooking
+    - restaurant
 
 rubber eraser:
   categories:
@@ -2831,9 +2782,7 @@ running shoe:
 
 saltshaker:
   categories:
-    - kitchen
     - cooking
-    - food
 
 sandal:
   categories:
@@ -2925,7 +2874,6 @@ space heater:
 spatula:
   categories:
     - kitchen
-    - cooking
 
 speedboat:
   categories:
@@ -2957,12 +2905,10 @@ steel drum:
 stove:
   categories:
     - kitchen
-    - cooking
 
 strainer:
   categories:
     - kitchen
-    - cooking
 
 streetcar:
   categories:
@@ -3010,7 +2956,6 @@ theater curtain:
 toaster:
   categories:
     - kitchen
-    - cooking
 
 toilet seat:
   label: toilet
@@ -3069,7 +3014,6 @@ violin:
 waffle iron:
   categories:
     - kitchen
-    - cooking
 
 wall clock:
   label: clock
@@ -3104,12 +3048,10 @@ wine bottle:
 wok:
   categories:
     - kitchen
-    - cooking
 
 wooden spoon:
   categories:
     - kitchen
-    - cooking
 
 worm fence:
   label: outdoor
@@ -3415,9 +3357,7 @@ stinkhorn:
     - mushroom
 
 earthstar:
-  categories:
-    - fungus
-    - mushroom
+  label: nature
 
 hen-of-the-woods:
   categories:
