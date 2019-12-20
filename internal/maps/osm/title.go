@@ -12,15 +12,15 @@ var labelTitles = map[string]string{
 }
 
 func (o Location) Title() (result string) {
-	result = o.Label()
+	result = o.Category()
 
 	if title, ok := labelTitles[result]; ok {
-		title = strings.Replace(title, "%name%", o.Name, 1)
+		title = strings.Replace(title, "%name%", o.LocTitle, 1)
 		return title
 	}
 
-	if o.Name != "" {
-		result = o.Name
+	if o.LocTitle != "" {
+		result = o.LocTitle
 	}
 
 	result = strings.Replace(result, "_", " ", -1)

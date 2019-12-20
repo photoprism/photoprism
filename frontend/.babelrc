@@ -4,11 +4,10 @@
       "presets": [
         "@babel/preset-env"
       ],
-      "plugins": [ ["istanbul", {
-        "exclude": [
-          "**/*_test.js"
-        ]
-      }] ]
+      "plugins": [
+        ["@babel/plugin-transform-runtime"],
+        ["istanbul", {"exclude": ["**/*_test.js"]}]
+      ]
     }
   },
   "presets": [

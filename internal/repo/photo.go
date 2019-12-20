@@ -54,17 +54,15 @@ type PhotoResult struct {
 
 	// Country
 	CountryID   string
-	CountryName string
 
 	// Location
 	LocationID        string
 	LocTitle          string
+	LocDescription    string
 	LocCity           string
 	LocSuburb         string
 	LocState          string
-	LocCountryCode    string
-	LocRegion         string
-	LocLabel          string
+	LocCategory       string
 	LocSource         string
 	LocationChanged   bool
 	LocationEstimated bool
@@ -120,13 +118,11 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		files.file_orientation, files.file_main_color, files.file_colors, files.file_luminance, files.file_chroma,
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
-		countries.country_name,
-		locations.loc_title, locations.loc_city, locations.loc_suburb, locations.loc_state, locations.loc_country_code, 
-		locations.loc_region, locations.loc_label, locations.loc_source`).
+		locations.loc_title, locations.loc_description, locations.loc_city, locations.loc_suburb, locations.loc_state, 
+		locations.loc_category, locations.loc_source`).
 		Joins("JOIN files ON files.photo_id = photos.id AND files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
-		Joins("LEFT JOIN countries ON countries.id = photos.country_id").
 		Joins("LEFT JOIN locations ON locations.id = photos.location_id").
 		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id").
 		Where("photos.deleted_at IS NULL AND files.file_missing = 0").
@@ -215,12 +211,16 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		q = q.Where("photos.photo_nsfw = 0")
 	}
 
+	if f.NSFW {
+		q = q.Where("photos.photo_nsfw = 1")
+	}
+
 	if f.Story {
 		q = q.Where("photos.photo_story = 1")
 	}
 
 	if f.Country != "" {
-		q = q.Where("locations.loc_country_code = ?", f.Country)
+		q = q.Where("photos.country_id = ?", f.Country)
 	}
 
 	if f.Title != "" {

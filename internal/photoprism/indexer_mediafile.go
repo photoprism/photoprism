@@ -388,14 +388,14 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 		}
 
 		countryName := photo.Country.CountryName
-		locLabel := location.Label()
+		locCategory := location.Category()
 
 		keywords = append(keywords, location.Keywords()...)
 
-		// Append label from OpenStreetMap
-		if locLabel != "" {
-			keywords = append(keywords, locLabel)
-			labels = append(labels, NewLocationLabel(locLabel, 0, -1))
+		// Append category from reverse location lookup
+		if locCategory != "" {
+			keywords = append(keywords, locCategory)
+			labels = append(labels, NewLocationLabel(locCategory, 0, -1))
 		}
 
 		if (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false {

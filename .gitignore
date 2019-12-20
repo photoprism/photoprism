@@ -15,6 +15,7 @@
 /assets/backups
 /assets/resources/nasnet
 /assets/resources/nsfw
+/package-lock.json
 *.log
 
 # Binaries for programs and plugins

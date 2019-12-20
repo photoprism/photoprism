@@ -19,7 +19,7 @@ func TestFindLocation(t *testing.T) {
 
 		assert.False(t, l.Cached)
 		assert.Equal(t, 189675302, l.PlaceID)
-		assert.Equal(t, "Fernsehturm Berlin", l.Name)
+		assert.Equal(t, "Fernsehturm Berlin", l.LocTitle)
 		assert.Equal(t, "10178", l.Address.Postcode)
 		assert.Equal(t, "Berlin", l.Address.State)
 		assert.Equal(t, "de", l.Address.CountryCode)
@@ -37,7 +37,7 @@ func TestFindLocation(t *testing.T) {
 
 		assert.True(t, cached.Cached)
 		assert.Equal(t, 189675302, cached.PlaceID)
-		assert.Equal(t, l.Name, cached.Name)
+		assert.Equal(t, l.LocTitle, cached.LocTitle)
 		assert.Equal(t, l.Address.Postcode, cached.Address.Postcode)
 		assert.Equal(t, l.Address.State, cached.Address.State)
 		assert.Equal(t, l.Address.CountryCode, cached.Address.CountryCode)
@@ -56,7 +56,7 @@ func TestFindLocation(t *testing.T) {
 
 		assert.False(t, l.Cached)
 		assert.Equal(t, 48287001, l.PlaceID)
-		assert.Equal(t, "Menschen Museum", l.Name)
+		assert.Equal(t, "Menschen Museum", l.LocTitle)
 		assert.Equal(t, "10178", l.Address.Postcode)
 		assert.Equal(t, "Berlin", l.Address.State)
 		assert.Equal(t, "de", l.Address.CountryCode)

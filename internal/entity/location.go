@@ -4,7 +4,6 @@ import (
 	"strings"
 	"time"
 
-	olc "github.com/google/open-location-code/go"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/internal/util"
@@ -13,7 +12,6 @@ import (
 // Photo location
 type Location struct {
 	maps.Location
-	LocDescription string `gorm:"type:text;"`
 	LocNotes       string `gorm:"type:text;"`
 	LocFavorite    bool
 	CreatedAt      time.Time
@@ -23,19 +21,19 @@ type Location struct {
 func NewLocation(lat, lng float64) *Location {
 	result := &Location{}
 
-	result.ID = olc.Encode(lat, lng, 11)
+	result.ID = maps.OlcEncode(lat, lng)
 	result.LocLat = lat
 	result.LocLng = lng
 
 	return result
 }
 
-func (m *Location) Label() string {
-	return m.LocLabel
+func (m *Location) Category() string {
+	return m.LocCategory
 }
 
 func (m *Location) Find(db *gorm.DB) error {
-	if err := db.First(m, "id = ?", m.ID).Error; err == nil {
+	if err := db.First(m, "id LIKE ?", m.ID + "%").Error; err == nil {
 		return err
 	}
 
@@ -57,7 +55,7 @@ func (m *Location) Keywords() []string {
 		strings.ToLower(m.LocSuburb),
 		strings.ToLower(m.LocState),
 		strings.ToLower(m.CountryName()),
-		strings.ToLower(m.LocLabel),
+		strings.ToLower(m.LocCategory),
 	}
 
 	result = append(result, util.Keywords(m.LocTitle)...)

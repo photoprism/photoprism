@@ -109,8 +109,6 @@
                     this.$router.push({name: "places", query: {lat: String(photo.PhotoLat), lng: String(photo.PhotoLng)}});
                 } else if (photo.LocCity) {
                     this.$router.push({name: "places", query: {q: photo.LocCity}});
-                } else {
-                    this.$router.push({name: "places", query: {q: photo.CountryName}});
                 }
             },
             openPhoto(index) {

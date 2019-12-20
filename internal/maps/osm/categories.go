@@ -1,8 +1,6 @@
 package osm
 
-import "fmt"
-
-var locationLabels = map[string]string{
+var osmCategories = map[string]string{
 	"aeroway=*":                "airport",
 	"natural=bay":              "bay",
 	"natural=peninsula":        "peninsula",
@@ -158,22 +156,4 @@ var locationLabels = map[string]string{
 	"*=swimming_pool":          "swimming",
 	"*=water_park":             "water park",
 	"*=wildlife_hide":          "wildlife",
-}
-
-func (o Location) Label() (result string) {
-	key := fmt.Sprintf("%s=%s", o.Category, o.Type)
-	catKey := fmt.Sprintf("%s=*", o.Category)
-	typeKey := fmt.Sprintf("*=%s", o.Type)
-
-	if result, ok := locationLabels[key]; ok {
-		return result
-	} else if result, ok := locationLabels[catKey]; ok {
-		return result
-	} else if result, ok := locationLabels[typeKey]; ok {
-		return result
-	}
-
-	log.Debugf("osm: no label found for %s", key)
-
-	return ""
 }

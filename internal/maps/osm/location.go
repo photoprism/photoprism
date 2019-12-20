@@ -13,15 +13,15 @@ import (
 )
 
 type Location struct {
-	PlaceID     int    `json:"place_id"`
-	Lat         string  `json:"lat"`
-	Lon         string  `json:"lon"`
-	Name        string  `json:"name"`
-	Category    string  `json:"category"`
-	Type        string  `json:"type"`
-	DisplayName string  `json:"display_name"`
-	Address     Address `json:"address"`
-	Cached      bool
+	PlaceID        int     `json:"place_id"`
+	LocLat         string  `json:"lat"`
+	LocLng         string  `json:"lon"`
+	LocTitle       string  `json:"name"`
+	LocCategory    string  `json:"category"`
+	LocType        string  `json:"type"`
+	LocDisplayName string  `json:"display_name"`
+	Address        Address `json:"address"`
+	Cached         bool
 }
 
 var ReverseLookupURL = "https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=jsonv2&accept-language=en&zoom=18"
@@ -99,7 +99,7 @@ func (o Location) CountryCode() (result string) {
 }
 
 func (o Location) Latitude() (result float64) {
-	result, err := strconv.ParseFloat(o.Lat, 64)
+	result, err := strconv.ParseFloat(o.LocLat, 64)
 
 	if err != nil {
 		log.Errorf("osm: %s", err.Error())
@@ -109,7 +109,7 @@ func (o Location) Latitude() (result float64) {
 }
 
 func (o Location) Longitude() (result float64) {
-	result, err := strconv.ParseFloat(o.Lon, 64)
+	result, err := strconv.ParseFloat(o.LocLng, 64)
 
 	if err != nil {
 		log.Errorf("osm: %s", err.Error())
@@ -119,7 +119,7 @@ func (o Location) Longitude() (result float64) {
 }
 
 func (o Location) Keywords() (result []string) {
-	return util.Keywords(o.DisplayName)
+	return util.Keywords(o.LocDisplayName)
 }
 
 func (o Location) Source() string {

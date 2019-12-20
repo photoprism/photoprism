@@ -17,24 +17,24 @@ import (
 type PhotoSearch struct {
 	Query string `form:"q"`
 
-	Title       string  `form:"title"`
-	Description string  `form:"description"`
-	Notes       string  `form:"notes"`
-	Artist      string  `form:"artist"`
-	Hash        string  `form:"hash"`
-	Duplicate   bool    `form:"duplicate"`
-	Lat         float64 `form:"lat"`
-	Lng         float64 `form:"lng"`
-	Dist        uint    `form:"dist"`
-	Fmin        float64 `form:"fmin"`
-	Fmax        float64 `form:"fmax"`
-	Chroma      uint    `form:"chroma"`
-	Mono        bool    `form:"mono"`
-	Portrait    bool    `form:"portrait"`
-	Location    bool    `form:"location"`
-	Album       string  `form:"album"`
-	Label       string  `form:"label"`
-	Country     string  `form:"country"`
+	Title       string    `form:"title"`
+	Description string    `form:"description"`
+	Notes       string    `form:"notes"`
+	Artist      string    `form:"artist"`
+	Hash        string    `form:"hash"`
+	Duplicate   bool      `form:"duplicate"`
+	Lat         float64   `form:"lat"`
+	Lng         float64   `form:"lng"`
+	Dist        uint      `form:"dist"`
+	Fmin        float64   `form:"fmin"`
+	Fmax        float64   `form:"fmax"`
+	Chroma      uint      `form:"chroma"`
+	Mono        bool      `form:"mono"`
+	Portrait    bool      `form:"portrait"`
+	Location    bool      `form:"location"`
+	Album       string    `form:"album"`
+	Label       string    `form:"label"`
+	Country     string    `form:"country"`
 	Color       string    `form:"color"`
 	Camera      int       `form:"camera"`
 	Before      time.Time `form:"before" time_format:"2006-01-02"`
@@ -43,6 +43,7 @@ type PhotoSearch struct {
 	Public      bool      `form:"public"`
 	Story       bool      `form:"story"`
 	Safe        bool      `form:"safe"`
+	NSFW        bool      `form:"nsfw"`
 
 	Count  int    `form:"count" binding:"required"`
 	Offset int    `form:"offset"`
