@@ -53,8 +53,8 @@
                                   :label="labels.country"
                                   flat solo hide-details
                                   color="secondary-dark"
-                                  item-value="LocCountryCode"
-                                  item-text="LocCountry"
+                                  item-value="code"
+                                  item-text="name"
                                   v-model="filter.country"
                                   :items="options.countries">
                         </v-select>
@@ -156,8 +156,8 @@
         data() {
             const cameras = [{ID: 0, CameraModel: this.$gettext('All Cameras')}].concat(this.$config.getValue('cameras'));
             const countries = [{
-                LocCountryCode: '',
-                LocCountry: this.$gettext('All Countries')
+                code: '',
+                name: this.$gettext('All Countries')
             }].concat(this.$config.getValue('countries'));
 
             return {

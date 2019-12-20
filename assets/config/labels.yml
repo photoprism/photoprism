@@ -382,6 +382,7 @@ axolotl:
 
 frog:
   label: frog
+  threshold: 0.3
   categories:
     - animal
 
@@ -594,21 +595,18 @@ black grouse:
   categories:
     - animal
     - bird
-    - chicken
 
 ptarmigan:
   threshold: 0.3
   categories:
     - animal
     - bird
-    - chicken
 
 ruffed grouse:
   threshold: 0.3
   categories:
     - animal
     - bird
-    - chicken
 
 prairie chicken:
   threshold: 0.3
@@ -1318,7 +1316,7 @@ hyena:
 
 fox:
   label: fox
-  threshold: 0.3
+  threshold: 0.5
   categories:
     - animal
 
@@ -1414,7 +1412,7 @@ ant:
 
 walking stick:
   threshold: 0.3
-  priority: -1
+  priority: -2
 
 cockroach:
   threshold: 0.3
@@ -1858,7 +1856,7 @@ airship:
 ambulance:
   label: van
   categories:
-    - street
+    - road
     - car
     - vehicle
 
@@ -2008,7 +2006,7 @@ cab:
   threshold: 0.6
   categories:
     - car
-    - street
+    - road
 
 cannon:
   categories:
@@ -2285,7 +2283,7 @@ freight car:
   catgories:
     - train
     - vehicle
-    - street
+    - road
 
 french horn:
   see: instrument
@@ -2363,6 +2361,11 @@ hatchet:
 
 home theater:
   label: screen
+  threshold: 0.3
+
+television:
+  label: screen
+  threshold: 0.3
 
 honeycomb:
   priority: -1
@@ -2481,12 +2484,12 @@ minibus:
   categories:
     - car
     - van
-    - street
+    - road
 
 minivan:
   label: van
   categories:
-    - street
+    - road
     - car
     - bus
 
@@ -2538,7 +2541,7 @@ mountain tent:
 moving van:
   label: van
   categories:
-    - street
+    - road
     - car
     - bus
 
@@ -2583,13 +2586,16 @@ paddlewheel:
     - sea
 
 padlock:
+  label: tool
+  threshold: 0.5
   priority: -1
 
 paintbrush:
+  threshold: 0.3
   categories:
     - drawing
     - painting
-    - art
+    - exhibition
 
 palace:
   label: historic architecture
@@ -2613,7 +2619,7 @@ parachute:
 car:
   label: car
   categories:
-    - street
+    - road
     - vehicle
 
 racer:
@@ -2621,12 +2627,12 @@ racer:
   threshold: 0.2
   categories:
     - car
-    - street
+    - road
 
 passenger car:
   see: car
   categories:
-    - street
+    - road
     - vehicle
 
 beach wagon:
@@ -2691,7 +2697,7 @@ polaroid camera:
 police van:
   label: van
   categories:
-    - street
+    - road
     - car
     - bus
 
@@ -2740,7 +2746,7 @@ recreational vehicle:
     - bus
     - van
     - vehicle
-    - street
+    - road
 
 reflex camera:
   categories:
@@ -2802,7 +2808,7 @@ school bus:
   categories:
     - bus
     - van
-    - street
+    - road
 
 schooner:
   see: ship
@@ -2892,7 +2898,7 @@ sports car:
   categories:
     - car
     - vehicle
-    - street
+    - road
 
 spotlight:
   categories:
@@ -2921,7 +2927,7 @@ streetcar:
   categories:
     - train
     - vehicle
-    - street
+    - road
 
 studio couch:
   label: couch
@@ -2998,7 +3004,7 @@ trolleybus:
   label: bus
   categories:
     - van
-    - street
+    - road
 
 trombone:
   see: instrument
@@ -3298,6 +3304,7 @@ eggnog:
     - alcohol
 
 alp:
+  label: alpine hut
   categories:
     - landscape
     - mountains

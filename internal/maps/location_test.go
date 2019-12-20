@@ -12,9 +12,9 @@ func TestLocation_Query(t *testing.T) {
 		lat := 52.5208
 		lng := 13.40953
 
-		var l Location
+		l := NewLocation(lat, lng)
 
-		if err := l.Query(lat, lng); err != nil {
+		if err := l.Query(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -23,7 +23,7 @@ func TestLocation_Query(t *testing.T) {
 	})
 }
 
-func TestLocation_OpenStreetMap(t *testing.T) {
+func TestLocation_Assign(t *testing.T) {
 	t.Run("BerlinFernsehturm", func(t *testing.T) {
 		lat := 52.5208
 		lng := 13.40953
@@ -223,7 +223,7 @@ func TestLocation_OpenStreetMap(t *testing.T) {
 		}
 
 		assert.Equal(t, "4GWF24FX+F5H", l.ID)
-		assert.Equal(t, "Route R411", l.LocTitle)
+		assert.Equal(t, "R411", l.LocTitle)
 		assert.Equal(t, "Eastern Cape, South Africa", l.LocRegion)
 	})
 }

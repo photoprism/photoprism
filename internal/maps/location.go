@@ -8,21 +8,19 @@ import (
 	"github.com/photoprism/photoprism/internal/maps/osm"
 )
 
-const SourceOSM = "osm"
-
 // Photo location
 type Location struct {
-	ID         string `gorm:"primary_key"`
-	LocLat     float64
-	LocLng     float64
-	LocTitle   string
-	LocCity    string
-	LocSuburb  string
-	LocState   string
-	LocCountry string
-	LocRegion  string
-	LocLabel   string
-	LocSource  string
+	ID             string `gorm:"primary_key"`
+	LocLat         float64
+	LocLng         float64
+	LocTitle       string
+	LocRegion      string
+	LocCity        string
+	LocSuburb      string
+	LocState       string
+	LocCountryCode string
+	LocLabel       string
+	LocSource      string
 }
 
 type LocationSource interface {
@@ -32,13 +30,25 @@ type LocationSource interface {
 	City() string
 	Suburb() string
 	State() string
-	Country() string
+	CountryCode() string
 	Label() string
 	Source() string
 }
 
-func (l *Location) Query(lat, lng float64) error {
-	o, err := osm.FindLocation(lat, lng)
+func NewLocation (lat, lng float64) *Location {
+	id := olc.Encode(lat, lng, 11)
+
+	result := &Location{
+		ID: id,
+		LocLat: lat,
+		LocLng: lng,
+	}
+
+	return result
+}
+
+func (l *Location) Query() error {
+	o, err := osm.FindLocation(l.LocLat, l.LocLng)
 
 	if err != nil {
 		return err
@@ -49,22 +59,24 @@ func (l *Location) Query(lat, lng float64) error {
 
 func (l *Location) Assign(s LocationSource) error {
 	l.LocSource = s.Source()
-	l.LocLat = s.Latitude()
-	l.LocLng = s.Longitude()
+
+	if l.LocLat == 0 { l.LocLat = s.Latitude()	}
+	if l.LocLng == 0 { l.LocLng = s.Longitude() }
 
 	if l.Unknown() {
 		l.LocLabel = "unknown"
 		return errors.New("maps: unknown location")
 	}
 
-	l.ID = olc.Encode(l.LocLat, l.LocLng, 11)
+	if l.ID == "" { l.ID = olc.Encode(l.LocLat, l.LocLng, 11) }
+
 	l.LocTitle = s.Title()
 	l.LocCity = s.City()
 	l.LocSuburb = s.Suburb()
 	l.LocState = s.State()
-	l.LocCountry = s.Country()
-	l.LocRegion = l.region()
+	l.LocCountryCode = s.CountryCode()
 	l.LocLabel = s.Label()
+	l.LocRegion = l.region()
 
 	return nil
 }
@@ -82,8 +94,9 @@ func (l *Location) region() string {
 		return "Unknown"
 	}
 
-	var countryName = Countries[l.LocCountry]
+	var countryName = l.CountryName()
 	var loc []string
+
 	shortCountry := len([]rune(countryName)) <= 20
 	shortCity := len([]rune(l.LocCity)) <= 20
 
@@ -100,4 +113,48 @@ func (l *Location) region() string {
 	}
 
 	return strings.Join(loc[:], ", ")
+}
+
+func (l Location) Latitude() float64 {
+	return l.LocLat
+}
+
+func (l Location) Longitude() float64 {
+	return l.LocLng
+}
+
+func (l Location) Title() string {
+	return l.LocTitle
+}
+
+func (l Location) City() string {
+	return l.LocCity
+}
+
+func (l Location) Suburb() string {
+	return l.LocSuburb
+}
+
+func (l Location) State() string {
+	return l.LocState
+}
+
+func (l Location) Label() string {
+	return l.LocLabel
+}
+
+func (l Location) Source() string {
+	return l.LocSource
+}
+
+func (l Location) Region() string {
+	return l.LocRegion
+}
+
+func (l Location) CountryCode() string {
+	return l.LocCountryCode
+}
+
+func (l Location) CountryName() string {
+	return CountryNames[l.LocCountryCode]
 }

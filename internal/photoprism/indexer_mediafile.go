@@ -56,7 +56,7 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 
 		if photoQuery.Error != nil && m.HasTimeAndPlace() {
 			exifData, _ = m.Exif()
-			photoQuery = i.db.Unscoped().First(&photo, "photo_lat = ? AND photo_long = ? AND taken_at = ?", exifData.Lat, exifData.Long, exifData.TakenAt)
+			photoQuery = i.db.Unscoped().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ?", exifData.Lat, exifData.Lng, exifData.TakenAt)
 		}
 	} else {
 		photoQuery = i.db.Unscoped().First(&photo, "id = ?", file.PhotoID)
@@ -97,7 +97,7 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 			// Read UpdateExif data
 			if exifData, err := m.Exif(); err == nil {
 				photo.PhotoLat = exifData.Lat
-				photo.PhotoLong = exifData.Long
+				photo.PhotoLng = exifData.Lng
 				photo.TakenAt = exifData.TakenAt
 				photo.TakenAtLocal = exifData.TakenAtLocal
 				photo.TimeZone = exifData.TimeZone
@@ -128,7 +128,7 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 			labels = append(labels, locLabels...)
 		}
 
-		if photo.PhotoTitle == "" || (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false && photo.LocationID == 0 {
+		if photo.PhotoTitle == "" || (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false && photo.LocationID == "" {
 			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", util.Title(labels[0].Name), m.DateCreated().Format("2006"))
 			} else if !photo.TakenAtLocal.IsZero() {
@@ -160,7 +160,7 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 
 	if photoExists {
 		// Estimate location
-		if o.UpdateLocation && photo.LocationID == 0 {
+		if o.UpdateLocation && photo.LocationID == "" {
 			i.estimateLocation(&photo)
 		}
 
@@ -368,12 +368,18 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 	var keywords []string
 
 	if location, err := mediaFile.Location(); err == nil {
-		i.db.FirstOrCreate(location, "id = ?", location.ID)
+		err := location.Find(i.db)
+
+		if err != nil {
+			log.Error(err)
+			return keywords, labels
+		}
+
 		photo.Location = location
 		photo.LocationID = location.ID
 		photo.LocationEstimated = false
 
-		photo.Country = entity.NewCountry(location.LocCountryCode, location.LocCountry).FirstOrCreate(i.db)
+		photo.Country = entity.NewCountry(location.CountryCode(), location.CountryName()).FirstOrCreate(i.db)
 
 		if photo.Country.New {
 			event.Publish("count.countries", event.Data{
@@ -384,7 +390,7 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 		countryName := photo.Country.CountryName
 		locLabel := location.Label()
 
-		keywords = append(keywords, util.Keywords(location.LocDisplayName)...)
+		keywords = append(keywords, location.Keywords()...)
 
 		// Append label from OpenStreetMap
 		if locLabel != "" {
@@ -393,32 +399,26 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 		}
 
 		if (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false {
-			if title := labels.Title(location.LocName); title != "" { // TODO: User defined title format
+			if title := labels.Title(location.Title()); title != "" { // TODO: User defined title format
 				log.Infof("index: using label \"%s\" to create photo title", title)
 				if location.LocCity == "" || len(location.LocCity) > 16 || strings.Contains(title, location.LocCity) {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), countryName, photo.TakenAt.Format("2006"))
 				} else {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), location.LocCity, photo.TakenAt.Format("2006"))
 				}
-			} else if location.LocName != "" && location.LocCity != "" {
-				if len(location.LocName) > 45 {
-					photo.PhotoTitle = util.Title(location.LocName)
-				} else if len(location.LocName) > 20 || len(location.LocCity) > 16 || strings.Contains(location.LocName, location.LocCity) {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s", util.Title(location.LocName), photo.TakenAt.Format("2006"))
+			} else if location.Title() != "" && location.City() != "" {
+				if len(location.Title()) > 45 {
+					photo.PhotoTitle = util.Title(location.Title())
+				} else if len(location.Title()) > 20 || len(location.City()) > 16 || strings.Contains(location.Title(), location.City()) {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s", location.Title(), photo.TakenAt.Format("2006"))
 				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(location.LocName), location.LocCity, photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.Title(), location.LocCity, photo.TakenAt.Format("2006"))
 				}
-			} else if location.LocCity != "" && countryName != "" {
-				if len(location.LocCity) > 20 {
+			} else if location.City() != "" && countryName != "" {
+				if len(location.City()) > 20 {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s", location.LocCity, photo.TakenAt.Format("2006"))
 				} else {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, countryName, photo.TakenAt.Format("2006"))
-				}
-			} else if location.LocCounty != "" && countryName != "" {
-				if len(location.LocCounty) > 20 {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s", location.LocCounty, photo.TakenAt.Format("2006"))
-				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCounty, countryName, photo.TakenAt.Format("2006"))
 				}
 			}
 

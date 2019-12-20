@@ -23,7 +23,7 @@ type Album struct {
 	AlbumFavorite    bool
 	AlbumPublic      bool
 	AlbumLat         float64
-	AlbumLong        float64
+	AlbumLng         float64
 	AlbumRadius      float64
 	AlbumOrder       string `gorm:"type:varchar(16);"`
 	AlbumTemplate    string `gorm:"type:varchar(128);"`

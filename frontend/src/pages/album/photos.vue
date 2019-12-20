@@ -115,14 +115,10 @@
             openLocation(index) {
                 const photo = this.results[index];
 
-                if (photo.PhotoLat && photo.PhotoLong) {
-                    this.$router.push({name: "places", query: {lat: String(photo.PhotoLat), long: String(photo.PhotoLong)}});
-                } else if (photo.LocName) {
-                    this.$router.push({name: "places", query: {q: photo.LocName}});
+                if (photo.PhotoLat && photo.PhotoLng) {
+                    this.$router.push({name: "places", query: {lat: String(photo.PhotoLat), lng: String(photo.PhotoLng)}});
                 } else if (photo.LocCity) {
                     this.$router.push({name: "places", query: {q: photo.LocCity}});
-                } else if (photo.LocCountry) {
-                    this.$router.push({name: "places", query: {q: photo.LocCountry}});
                 } else {
                     this.$router.push({name: "places", query: {q: photo.CountryName}});
                 }

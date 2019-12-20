@@ -92,7 +92,7 @@ func (o Location) Suburb() (result string) {
 	return strings.TrimSpace(result)
 }
 
-func (o Location) Country() (result string) {
+func (o Location) CountryCode() (result string) {
 	result = o.Address.CountryCode
 
 	return strings.ToLower(strings.TrimSpace(result))

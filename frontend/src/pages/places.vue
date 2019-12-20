@@ -51,7 +51,7 @@
                 loading: false,
                 zoom: zoom,
                 position: null,
-                center: L.latLng(parseFloat(pos.lat), parseFloat(pos.long)),
+                center: L.latLng(parseFloat(pos.lat), parseFloat(pos.lng)),
                 url: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
                 options: {
@@ -65,7 +65,7 @@
                 query: {
                     q: q,
                     lat: pos.lat,
-                    long: pos.long,
+                    lng: pos.lng,
                     dist: dist.toString(),
                     zoom: zoom.toString(),
                 },
@@ -75,8 +75,8 @@
                 bounds: null,
                 minLat: null,
                 maxLat: null,
-                minLong: null,
-                maxLong: null,
+                minLng: null,
+                maxLng: null,
                 labels: {
                     search: this.$gettext("Search"),
                 },
@@ -128,12 +128,12 @@
             },
             onCenter(pos) {
                 const changed = Math.abs(this.query.lat - pos.lat) > 0.001 ||
-                    Math.abs(this.query.long - pos.lng) > 0.001;
+                    Math.abs(this.query.lng - pos.lng) > 0.001;
 
                 if(!changed) return;
 
                 this.query.lat = pos.lat.toString();
-                this.query.long = pos.lng.toString();
+                this.query.lng = pos.lng.toString();
 
                 this.search();
             },
@@ -143,21 +143,21 @@
 
                 let result = {
                     lat: pos.lat.toString(),
-                    long: pos.long.toString(),
+                    lng: pos.lng.toString(),
                 };
 
                 const queryLat = query['lat'];
-                const queryLong = query['long'];
+                const queryLng = query['lng'];
 
                 let storedLat = window.localStorage.getItem("lat");
-                let storedLong = window.localStorage.getItem("long");
+                let storedLng = window.localStorage.getItem("lng");
 
-                if (queryLat && queryLong) {
+                if (queryLat && queryLng) {
                     result.lat = queryLat;
-                    result.long = queryLong;
-                } else if (storedLat && storedLong) {
+                    result.lng = queryLng;
+                } else if (storedLat && storedLng) {
                     result.lat = storedLat;
-                    result.long = storedLong;
+                    result.lng = storedLng;
                 }
 
                 return result;
@@ -183,23 +183,23 @@
             },
             formChange() {
                 this.query.lat = "";
-                this.query.long = "";
+                this.query.lng = "";
                 this.search();
             },
             clearQuery() {
                 this.position = null;
                 this.query.q = "";
                 this.query.lat = "";
-                this.query.long = "";
+                this.query.lng = "";
                 this.search();
             },
             resetBoundingBox() {
                 this.minLat = null;
                 this.maxLat = null;
-                this.minLong = null;
-                this.maxLong = null;
+                this.minLng = null;
+                this.maxLng = null;
             },
-            fitBoundingBox(lat, long) {
+            fitBoundingBox(lat, lng) {
                 if (this.maxLat === null || lat > this.maxLat) {
                     this.maxLat = lat;
                 }
@@ -208,12 +208,12 @@
                     this.minLat = lat;
                 }
 
-                if (this.maxLong === null || long > this.maxLong) {
-                    this.maxLong = long;
+                if (this.maxLng === null || lng > this.maxLng) {
+                    this.maxLng = lng;
                 }
 
-                if (this.minLong === null || long < this.minLong) {
-                    this.minLong = long;
+                if (this.minLng === null || lng < this.minLng) {
+                    this.minLng = lng;
                 }
             },
             updateMap(results) {
@@ -239,7 +239,7 @@
                             iconSize: [50, 50],
                             className: 'leaflet-marker-photo',
                         }),
-                        location: L.latLng(result.PhotoLat, result.PhotoLong),
+                        location: L.latLng(result.PhotoLat, result.PhotoLng),
                     });
                 }
 
@@ -257,9 +257,9 @@
             updateQuery() {
                 const query = Object(this.query);
 
-                if (this.query.lat && this.query.long) {
+                if (this.query.lat && this.query.lng) {
                     window.localStorage.setItem("lat", this.query.lat.toString());
-                    window.localStorage.setItem("long", this.query.long.toString());
+                    window.localStorage.setItem("lng", this.query.lng.toString());
                 } else {
                     this.position = null;
                 }

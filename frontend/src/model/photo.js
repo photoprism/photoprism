@@ -33,7 +33,7 @@ class Photo extends Abstract {
     }
 
     getGoogleMapsLink() {
-        return "https://www.google.com/maps/place/" + this.PhotoLat + "," + this.PhotoLong;
+        return "https://www.google.com/maps/place/" + this.PhotoLat + "," + this.PhotoLng;
     }
 
     getThumbnailUrl(type) {
@@ -101,71 +101,17 @@ class Photo extends Abstract {
     }
 
     hasLocation() {
-        return this.PhotoLat !== 0 || this.PhotoLong !== 0;
+        return this.PhotoLat !== 0 || this.PhotoLng !== 0;
     }
 
     getLocation() {
-        const location = [];
-
-        if (this.LocationID) {
-            if (this.LocName && !this.LocCity && !this.LocCounty) {
-                location.push(truncate(this.LocName, 20));
-            } else if (this.LocCity && this.LocCity.length < 20) {
-                location.push(this.LocCity);
-            } else if (this.LocCounty && this.LocCity.length < 20) {
-                location.push(this.LocCounty);
-            }
-
-            if (this.LocState && this.LocState !== this.LocCity) {
-                location.push(this.LocState);
-            }
-
-            if (this.LocCountry) {
-                location.push(this.LocCountry);
-            }
+        if (this.LocRegion) {
+            return this.LocRegion
         } else if (this.CountryName) {
-            location.push(this.CountryName);
-        } else {
-            location.push("Unknown");
+            return this.CountryName;
         }
 
-        return location.join(", ");
-    }
-
-    getFullLocation() {
-        const location = [];
-
-        if (this.LocationID) {
-            if (this.LocName) {
-                location.push(this.LocName);
-            }
-
-            if (this.LocCity) {
-                location.push(this.LocCity);
-            }
-
-            if (this.LocPostcode) {
-                location.push(this.LocPostcode);
-            }
-
-            if (this.LocCounty) {
-                location.push(this.LocCounty);
-            }
-
-            if (this.LocState) {
-                location.push(this.LocState);
-            }
-
-            if (this.LocCountry) {
-                location.push(this.LocCountry);
-            }
-        } else if (this.CountryName) {
-            location.push(this.CountryName);
-        } else {
-            location.push("Unknown");
-        }
-
-        return location.join(", ");
+        return "Unknown"
     }
 
     getCamera() {

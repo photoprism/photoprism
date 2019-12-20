@@ -1,71 +1,68 @@
 package entity
 
-var locTypeLabels = map[string]string{
-	"bay": "bay",
-	"art": "art exhibition",
-	"fire station": "fire station",
-	"hairdresser": "hairdresser",
-	"cape": "cape",
-	"coastline": "coastline",
-	"cliff": "cliff",
-	"wetland": "wetland",
-	"nature reserve": "nature reserve",
-	"beach": "beach",
-	"cafe": "cafe",
-	"internet cafe": "cafe",
-	"ice cream": "ice cream parlor",
-	"bistro": "restaurant",
-	"restaurant": "restaurant",
-	"ship": "ship",
-	"wholesale": "shop",
-	"food": "shop",
-	"supermarket": "supermarket",
-	"florist": "florist",
-	"pharmacy": "pharmacy",
-	"seafood": "seafood",
-	"clothes": "clothing store",
-	"residential": "residential area",
-	"museum": "museum",
-	"castle": "castle",
-	"terminal": "airport",
-	"ferry terminal": "harbor",
-	"bridge": "bridge",
-	"university": "university",
-	"mall": "mall",
-	"marina": "marina",
-	"garden": "garden",
-	"pedestrian": "shopping area",
-	"bunker": "bunker",
-	"viewpoint": "viewpoint",
-	"train station": "train station",
-	"farm": "farm",
-}
+import (
+	"strings"
+	"time"
+
+	olc "github.com/google/open-location-code/go"
+	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/internal/util"
+)
 
 // Photo location
 type Location struct {
-	Model
-	LocDisplayName string
-	LocLat         float64
-	LocLong        float64
-	LocCategory    string
-	LocType        string
-	LocName        string
-	LocHouseNr     string
-	LocStreet      string
-	LocSuburb      string
-	LocCity        string
-	LocPostcode    string
-	LocCounty      string
-	LocState       string
-	LocCountry     string
-	LocCountryCode string
+	maps.Location
 	LocDescription string `gorm:"type:text;"`
 	LocNotes       string `gorm:"type:text;"`
-	LocPhoto       *Photo
-	LocPhotoID     uint
 	LocFavorite    bool
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+}
+
+func NewLocation(lat, lng float64) *Location {
+	result := &Location{}
+
+	result.ID = olc.Encode(lat, lng, 11)
+	result.LocLat = lat
+	result.LocLng = lng
+
+	return result
 }
 
 func (m *Location) Label() string {
-	return locTypeLabels[m.LocType]
+	return m.LocLabel
+}
+
+func (m *Location) Find(db *gorm.DB) error {
+	if err := db.First(m, "id = ?", m.ID).Error; err == nil {
+		return err
+	}
+
+	if err := m.Query(); err != nil {
+		return err
+	}
+
+	if err := db.Create(m).Error; err != nil {
+		log.Errorf("location: %s", err)
+		return err
+	}
+
+	return nil
+}
+
+func (m *Location) Keywords() []string {
+	result := []string{
+		strings.ToLower(m.LocCity),
+		strings.ToLower(m.LocSuburb),
+		strings.ToLower(m.LocState),
+		strings.ToLower(m.CountryName()),
+		strings.ToLower(m.LocLabel),
+	}
+
+	result = append(result, util.Keywords(m.LocTitle)...)
+	result = append(result, util.Keywords(m.LocDescription)...)
+	result = append(result, util.Keywords(m.LocNotes)...)
+
+	return result
 }

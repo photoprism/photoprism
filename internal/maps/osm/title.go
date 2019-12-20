@@ -8,7 +8,7 @@ import (
 
 var labelTitles = map[string]string{
 	"airport": "Airport",
-	"highway": "Route %name%",
+	"visitor center": "Visitor Center",
 }
 
 func (o Location) Title() (result string) {

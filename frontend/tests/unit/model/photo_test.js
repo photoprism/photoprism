@@ -55,7 +55,7 @@ describe("model/photo", () => {
     });
 
     it("should get photo maps link",  () => {
-        const values = {ID: 5, PhotoTitle: "Crazy Cat", PhotoLat: 36.442881666666665, PhotoLong: 28.229493333333334};
+        const values = {ID: 5, PhotoTitle: "Crazy Cat", PhotoLat: 36.442881666666665, PhotoLng: 28.229493333333334};
         const photo = new Photo(values);
         const result = photo.getGoogleMapsLink();
         assert.equal(result, "https://www.google.com/maps/place/36.442881666666665,28.229493333333334");
@@ -121,35 +121,35 @@ describe("model/photo", () => {
     });
 
     it("should test whether photo has location",  () => {
-        const values = {ID: 5, PhotoTitle: "Crazy Cat", PhotoLat: 36.442881666666665, PhotoLong: 28.229493333333334};
+        const values = {ID: 5, PhotoTitle: "Crazy Cat", PhotoLat: 36.442881666666665, PhotoLng: 28.229493333333334};
         const photo = new Photo(values);
         const result = photo.hasLocation();
         assert.equal(result, true);
     });
 
     it("should test whether photo has location",  () => {
-        const values = {ID: 5, PhotoTitle: "Crazy Cat", PhotoLat: 0, PhotoLong: 0};
+        const values = {ID: 5, PhotoTitle: "Crazy Cat", PhotoLat: 0, PhotoLng: 0};
         const photo = new Photo(values);
         const result = photo.hasLocation();
         assert.equal(result, false);
     });
 
     it("should get location",  () => {
-        const values = {ID: 5, PhotoTitle: "Crazy Cat", LocationID: 6, LocType: "viewpoint", LocName: "Cape Point", LocCountry: "Africa"};
+        const values = {ID: 5, PhotoTitle: "Crazy Cat", LocationID: 6, LocType: "viewpoint", LocRegion: "Cape Point, South Africa", LocCountry: "South Africa"};
         const photo = new Photo(values);
         const result = photo.getLocation();
-        assert.equal(result, "Cape Point, Africa");
+        assert.equal(result, "Cape Point, South Africa");
     });
 
     it("should get location",  () => {
-        const values = {ID: 5, PhotoTitle: "Crazy Cat", LocationID: 6, LocType: "viewpoint", LocCountry: "Africa", LocCity: "Cape Town", LocCounty: "County", LocState: "State"};
+        const values = {ID: 5, PhotoTitle: "Crazy Cat", LocationID: 6, LocType: "viewpoint", LocRegion: "Cape Point, State, South Africa", LocCountry: "South Africa", LocCity: "Cape Town", LocCounty: "County", LocState: "State"};
         const photo = new Photo(values);
         const result = photo.getLocation();
-        assert.equal(result, "Cape Town, State, Africa");
+        assert.equal(result, "Cape Point, State, South Africa");
     });
 
     it("should get location",  () => {
-        const values = {ID: 5, PhotoTitle: "Crazy Cat", LocType: "viewpoint", LocName: "Cape Point", LocCountry: "Africa", LocCity: "Cape Town", LocCounty: "County", LocState: "State"};
+        const values = {ID: 5, PhotoTitle: "Crazy Cat", LocType: "viewpoint", LocTitle: "Cape Point", LocCountry: "Africa", LocCity: "Cape Town", LocCounty: "County", LocState: "State"};
         const photo = new Photo(values);
         const result = photo.getLocation();
         assert.equal(result, "Unknown");
@@ -160,27 +160,6 @@ describe("model/photo", () => {
         const photo = new Photo(values);
         const result = photo.getLocation();
         assert.equal(result, "Africa");
-    });
-
-    it("should get full location",  () => {
-        const values = {ID: 5, PhotoTitle: "Crazy Cat", LocationID: 55, LocName: "Cape Point", LocCountry: "Africa", LocCity: "Cape Town", LocCounty: "County", LocState: "State", LocPostcode: 12345};
-        const photo = new Photo(values);
-        const result = photo.getFullLocation();
-        assert.equal(result, "Cape Point, Cape Town, 12345, County, State, Africa");
-    });
-
-    it("should get full location",  () => {
-        const values = {ID: 5, PhotoTitle: "Crazy Cat", CountryName: "Africa"};
-        const photo = new Photo(values);
-        const result = photo.getFullLocation();
-        assert.equal(result, "Africa");
-    });
-
-    it("should get full location",  () => {
-        const values = {ID: 5, PhotoTitle: "Crazy Cat", LocCity: "Cape Town"};
-        const photo = new Photo(values);
-        const result = photo.getFullLocation();
-        assert.equal(result, "Unknown");
     });
 
     it("should get camera",  () => {

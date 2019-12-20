@@ -14,12 +14,12 @@ func (m *MediaFile) TimeZone() (string, error) {
 		return "UTC", errors.New("no image metadata")
 	}
 
-	if meta.Lat == 0 && meta.Long == 0 {
+	if meta.Lat == 0 && meta.Lng == 0 {
 		return "UTC", errors.New("no latitude and longitude in image metadata")
 	}
 
 	zones, err := tz.GetZone(tz.Point{
-		Lon: meta.Long, Lat: meta.Lat,
+		Lon: meta.Lng, Lat: meta.Lat,
 	})
 
 	if err != nil {

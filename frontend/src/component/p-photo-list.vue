@@ -20,7 +20,7 @@
             </td>
             <td @click="openPhoto(props.index)" class="p-pointer">{{ props.item.PhotoTitle }}</td>
             <td>{{ props.item.TakenAt | luxon:format('dd/MM/yyyy hh:mm:ss') }}</td>
-            <td @click="openLocation(props.index)" class="p-pointer">{{ props.item.LocCountry }}</td>
+            <td @click="openLocation(props.index)" class="p-pointer">{{ props.item.getLocation() }}</td>
             <td>{{ props.item.CameraMake }} {{ props.item.CameraModel }}</td>
             <td><v-btn icon small flat :ripple="false"
                        class="p-photo-like"
@@ -49,7 +49,7 @@
                     {text: '', value: '', align: 'center', sortable: false, class: 'p-col-select'},
                     {text: this.$gettext('Title'), value: 'PhotoTitle'},
                     {text: this.$gettext('Taken At'), value: 'TakenAt'},
-                    {text: this.$gettext('Country'), value: 'LocCountry'},
+                    {text: this.$gettext('Location'), value: 'LocRegion'},
                     {text: this.$gettext('Camera'), value: 'CameraModel'},
                     {text: this.$gettext('Favorite'), value: 'PhotoFavorite', align: 'left'},
                 ],

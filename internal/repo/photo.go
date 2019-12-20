@@ -35,7 +35,7 @@ type PhotoResult struct {
 	PhotoSensitive   bool
 	PhotoStory       bool
 	PhotoLat         float64
-	PhotoLong        float64
+	PhotoLng         float64
 	PhotoAltitude    int
 	PhotoFocalLength int
 	PhotoIso         int
@@ -57,17 +57,15 @@ type PhotoResult struct {
 	CountryName string
 
 	// Location
-	LocationID        uint
-	LocDisplayName    string
-	LocName           string
+	LocationID        string
+	LocTitle          string
 	LocCity           string
-	LocPostcode       string
-	LocCounty         string
+	LocSuburb         string
 	LocState          string
-	LocCountry        string
 	LocCountryCode    string
-	LocCategory       string
-	LocType           string
+	LocRegion         string
+	LocLabel          string
+	LocSource         string
 	LocationChanged   bool
 	LocationEstimated bool
 
@@ -123,8 +121,8 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
 		countries.country_name,
-		locations.loc_display_name, locations.loc_name, locations.loc_city, locations.loc_postcode, locations.loc_county, 
-		locations.loc_state, locations.loc_country, locations.loc_country_code, locations.loc_category, locations.loc_type`).
+		locations.loc_title, locations.loc_city, locations.loc_suburb, locations.loc_state, locations.loc_country_code, 
+		locations.loc_region, locations.loc_label, locations.loc_source`).
 		Joins("JOIN files ON files.photo_id = photos.id AND files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
@@ -278,10 +276,10 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		q = q.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
 	}
 
-	if f.Long > 0 {
-		longMin := f.Long - SearchRadius*float64(f.Dist)
-		longMax := f.Long + SearchRadius*float64(f.Dist)
-		q = q.Where("photos.photo_long BETWEEN ? AND ?", longMin, longMax)
+	if f.Lng > 0 {
+		lngMin := f.Lng - SearchRadius*float64(f.Dist)
+		lngMax := f.Lng + SearchRadius*float64(f.Dist)
+		q = q.Where("photos.photo_lng BETWEEN ? AND ?", lngMin, lngMax)
 	}
 
 	if !f.Before.IsZero() {
