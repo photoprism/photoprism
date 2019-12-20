@@ -7,11 +7,11 @@ import (
 )
 
 func TestFindLocation(t *testing.T) {
-	t.Run("Fernsehturm Berlin", func(t *testing.T) {
+	t.Run("BerlinFernsehturm", func(t *testing.T) {
 		lat := 52.5208
-		long := 13.40953
+		lng := 13.40953
 
-		l, err := FindLocation(lat, long)
+		l, err := FindLocation(lat, lng)
 
 		if err != nil {
 			t.Fatal(err)
@@ -29,7 +29,7 @@ func TestFindLocation(t *testing.T) {
 
 		assert.Equal(t, 123456, l.PlaceID)
 
-		cached, err := FindLocation(lat, long)
+		cached, err := FindLocation(lat, lng)
 
 		if err != nil {
 			t.Fatal(err)
@@ -44,11 +44,11 @@ func TestFindLocation(t *testing.T) {
 		assert.Equal(t, l.Address.Country, cached.Address.Country)
 	})
 
-	t.Run("Menschen Museum", func(t *testing.T) {
+	t.Run("BerlinMuseum", func(t *testing.T) {
 		lat := 52.52057
-		long := 13.40889
+		lng := 13.40889
 
-		l, err := FindLocation(lat, long)
+		l, err := FindLocation(lat, lng)
 
 		if err != nil {
 			t.Fatal(err)
@@ -65,15 +65,15 @@ func TestFindLocation(t *testing.T) {
 
 	t.Run("No Location", func(t *testing.T) {
 		lat := 0.0
-		long := 0.0
+		lng := 0.0
 
-		l, err := FindLocation(lat, long)
+		l, err := FindLocation(lat, lng)
 
 		if err == nil {
 			t.Fatal("err should not be nil")
 		}
 
-		assert.Equal(t, "osm: skipping lat 0.000000 / long 0.000000", err.Error())
+		assert.Equal(t, "osm: skipping lat 0.000000 / lng 0.000000", err.Error())
 		assert.False(t, l.Cached)
 	})
 }
