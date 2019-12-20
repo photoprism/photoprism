@@ -23,22 +23,6 @@ func TestLocation_Query(t *testing.T) {
 	})
 }
 
-func TestLocation_QueryOpenStreetMap(t *testing.T) {
-	t.Run("BerlinFernsehturm", func(t *testing.T) {
-		lat := 52.5208
-		lng := 13.40953
-
-		var l Location
-
-		if err := l.QueryOpenStreetMap(lat, lng); err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Equal(t, "Fernsehturm Berlin", l.LocTitle)
-		assert.Equal(t, "Berlin, Germany", l.LocRegion)
-	})
-}
-
 func TestLocation_OpenStreetMap(t *testing.T) {
 	t.Run("BerlinFernsehturm", func(t *testing.T) {
 		lat := 52.5208
@@ -59,7 +43,7 @@ func TestLocation_OpenStreetMap(t *testing.T) {
 
 		var l Location
 
-		if err := l.OpenStreetMap(o); err != nil {
+		if err := l.Assign(o); err != nil {
 			t.Fatal(err)
 		}
 
@@ -87,7 +71,7 @@ func TestLocation_OpenStreetMap(t *testing.T) {
 
 		var l Location
 
-		if err := l.OpenStreetMap(o); err != nil {
+		if err := l.Assign(o); err != nil {
 			t.Fatal(err)
 		}
 
@@ -116,7 +100,7 @@ func TestLocation_OpenStreetMap(t *testing.T) {
 
 		var l Location
 
-		if err := l.OpenStreetMap(o); err != nil {
+		if err := l.Assign(o); err != nil {
 			t.Fatal(err)
 		}
 
@@ -145,7 +129,7 @@ func TestLocation_OpenStreetMap(t *testing.T) {
 
 		var l Location
 
-		if err := l.OpenStreetMap(o); err != nil {
+		if err := l.Assign(o); err != nil {
 			t.Fatal(err)
 		}
 
@@ -174,7 +158,7 @@ func TestLocation_OpenStreetMap(t *testing.T) {
 
 		var l Location
 
-		if err := l.OpenStreetMap(o); err != nil {
+		if err := l.Assign(o); err != nil {
 			t.Fatal(err)
 		}
 
@@ -204,7 +188,7 @@ func TestLocation_OpenStreetMap(t *testing.T) {
 
 		var l Location
 
-		if err := l.OpenStreetMap(o); err != nil {
+		if err := l.Assign(o); err != nil {
 			t.Fatal(err)
 		}
 
@@ -234,7 +218,7 @@ func TestLocation_OpenStreetMap(t *testing.T) {
 
 		var l Location
 
-		if err := l.OpenStreetMap(o); err != nil {
+		if err := l.Assign(o); err != nil {
 			t.Fatal(err)
 		}
 

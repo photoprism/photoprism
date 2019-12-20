@@ -44,7 +44,7 @@ var locationLabels = map[string]string{
 	"highway=secondary":     "highway",
 }
 
-func (o *Location) Label() (result string) {
+func (o Location) Label() (result string) {
 	key := fmt.Sprintf("%s=%s", o.Category, o.Type)
 	catKey := fmt.Sprintf("%s=*", o.Category)
 	typeKey := fmt.Sprintf("*=%s", o.Type)

@@ -25,26 +25,32 @@ type Location struct {
 	LocSource  string
 }
 
-func (l *Location) Query(lat, lng float64) error {
-	return l.QueryOpenStreetMap(lat, lng)
+type LocationSource interface {
+	Latitude() float64
+	Longitude() float64
+	Title() string
+	City() string
+	Suburb() string
+	State() string
+	Country() string
+	Label() string
+	Source() string
 }
 
-func (l *Location) QueryOpenStreetMap(lat, lng float64) error {
+func (l *Location) Query(lat, lng float64) error {
 	o, err := osm.FindLocation(lat, lng)
 
 	if err != nil {
 		return err
 	}
 
-	return l.OpenStreetMap(o)
+	return l.Assign(o)
 }
 
-
-func (l *Location) OpenStreetMap(o osm.Location) error {
-	l.LocSource = SourceOSM
-
-	l.LocLat = o.Latitude()
-	l.LocLng = o.Longitude()
+func (l *Location) Assign(s LocationSource) error {
+	l.LocSource = s.Source()
+	l.LocLat = s.Latitude()
+	l.LocLng = s.Longitude()
 
 	if l.Unknown() {
 		l.LocLabel = "unknown"
@@ -52,13 +58,13 @@ func (l *Location) OpenStreetMap(o osm.Location) error {
 	}
 
 	l.ID = olc.Encode(l.LocLat, l.LocLng, 11)
-	l.LocTitle = o.Title()
-	l.LocCity = o.City()
-	l.LocSuburb = o.Suburb()
-	l.LocState = o.State()
-	l.LocCountry = o.Country()
+	l.LocTitle = s.Title()
+	l.LocCity = s.City()
+	l.LocSuburb = s.Suburb()
+	l.LocState = s.State()
+	l.LocCountry = s.Country()
 	l.LocRegion = l.region()
-	l.LocLabel = o.Label()
+	l.LocLabel = s.Label()
 
 	return nil
 }

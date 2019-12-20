@@ -66,13 +66,13 @@ func FindLocation(lat, lng float64) (result Location, err error) {
 	return result, nil
 }
 
-func (o *Location) State() (result string) {
+func (o Location) State() (result string) {
 	result = o.Address.State
 
 	return strings.TrimSpace(result)
 }
 
-func (o *Location) City() (result string) {
+func (o Location) City() (result string) {
 	if o.Address.City != "" {
 		result = o.Address.City
 	} else if o.Address.Town != "" {
@@ -86,19 +86,19 @@ func (o *Location) City() (result string) {
 	return strings.TrimSpace(result)
 }
 
-func (o *Location) Suburb() (result string) {
+func (o Location) Suburb() (result string) {
 	result = o.Address.Suburb
 
 	return strings.TrimSpace(result)
 }
 
-func (o *Location) Country() (result string) {
+func (o Location) Country() (result string) {
 	result = o.Address.CountryCode
 
 	return strings.ToLower(strings.TrimSpace(result))
 }
 
-func (o *Location) Latitude() (result float64) {
+func (o Location) Latitude() (result float64) {
 	result, err := strconv.ParseFloat(o.Lat, 64)
 
 	if err != nil {
@@ -108,7 +108,7 @@ func (o *Location) Latitude() (result float64) {
 	return result
 }
 
-func (o *Location) Longitude() (result float64) {
+func (o Location) Longitude() (result float64) {
 	result, err := strconv.ParseFloat(o.Lon, 64)
 
 	if err != nil {
@@ -118,6 +118,10 @@ func (o *Location) Longitude() (result float64) {
 	return result
 }
 
-func (o *Location) Keywords() (result []string) {
+func (o Location) Keywords() (result []string) {
 	return util.Keywords(o.DisplayName)
+}
+
+func (o Location) Source() string {
+	return "osm"
 }

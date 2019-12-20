@@ -11,7 +11,7 @@ var labelTitles = map[string]string{
 	"highway": "Route %name%",
 }
 
-func (o *Location) Title() (result string) {
+func (o Location) Title() (result string) {
 	result = o.Label()
 
 	if title, ok := labelTitles[result]; ok {
