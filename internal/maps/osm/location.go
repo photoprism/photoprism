@@ -29,13 +29,13 @@ var ReverseLookupURL = "https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%
 // API docs see https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding
 func FindLocation(lat, lng float64) (result Location, err error) {
 	if lat == 0.0 || lng == 0.0 {
-		return result, fmt.Errorf("osm: skipping lat %f / lng %f", lat, lng)
+		return result, fmt.Errorf("osm: skipping lat %f, lng %f", lat, lng)
 	}
 
 	point := geocache.GeoPoint{Latitude: lat, Longitude: lng}
 
 	if hit, ok := geoCache.Get(point); ok {
-		log.Debugf("osm: cache hit for lat %f / lng %f", lat, lng)
+		log.Debugf("osm: cache hit for lat %f, lng %f", lat, lng)
 		result = hit.(Location)
 		result.Cached = true
 		return result, nil

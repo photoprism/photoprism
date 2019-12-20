@@ -1,48 +1,70 @@
 package maps
 
 import (
+	"errors"
 	"strings"
 
 	olc "github.com/google/open-location-code/go"
 	"github.com/photoprism/photoprism/internal/maps/osm"
 )
 
+const SourceOSM = "osm"
+
 // Photo location
 type Location struct {
-	ID      string `gorm:"primary_key"`
-	Lat     float64
-	Lng     float64
-	Title   string
-	City    string
-	Suburb  string
-	State   string
-	Country string
-	Region  string
-	Label   string
+	ID         string `gorm:"primary_key"`
+	LocLat     float64
+	LocLng     float64
+	LocTitle   string
+	LocCity    string
+	LocSuburb  string
+	LocState   string
+	LocCountry string
+	LocRegion  string
+	LocLabel   string
+	LocSource  string
 }
 
-func (l *Location) FromOSM(o osm.Location) {
-	l.Lat = o.Latitude()
-	l.Lng = o.Longitude()
+func (l *Location) Query(lat, lng float64) error {
+	return l.QueryOpenStreetMap(lat, lng)
+}
 
-	if l.Unknown() {
-		log.Warnf("maps: unknown location")
-		l.Label = "unknown"
-		return
+func (l *Location) QueryOpenStreetMap(lat, lng float64) error {
+	o, err := osm.FindLocation(lat, lng)
+
+	if err != nil {
+		return err
 	}
 
-	l.ID = olc.Encode(l.Lat, l.Lng, 11)
-	l.Title = o.Title()
-	l.City = o.City()
-	l.Suburb = o.Suburb()
-	l.State = o.State()
-	l.Country = o.Country()
-	l.Region = l.region()
-	l.Label = o.Label()
+	return l.OpenStreetMap(o)
+}
+
+
+func (l *Location) OpenStreetMap(o osm.Location) error {
+	l.LocSource = SourceOSM
+
+	l.LocLat = o.Latitude()
+	l.LocLng = o.Longitude()
+
+	if l.Unknown() {
+		l.LocLabel = "unknown"
+		return errors.New("maps: unknown location")
+	}
+
+	l.ID = olc.Encode(l.LocLat, l.LocLng, 11)
+	l.LocTitle = o.Title()
+	l.LocCity = o.City()
+	l.LocSuburb = o.Suburb()
+	l.LocState = o.State()
+	l.LocCountry = o.Country()
+	l.LocRegion = l.region()
+	l.LocLabel = o.Label()
+
+	return nil
 }
 
 func (l *Location) Unknown() bool {
-	if l.Lng == 0.0 && l.Lat == 0.0 {
+	if l.LocLng == 0.0 && l.LocLat == 0.0 {
 		return true
 	}
 
@@ -54,17 +76,17 @@ func (l *Location) region() string {
 		return "Unknown"
 	}
 
-	var countryName = Countries[l.Country]
+	var countryName = Countries[l.LocCountry]
 	var loc []string
 	shortCountry := len([]rune(countryName)) <= 20
-	shortCity := len([]rune(l.City)) <= 20
+	shortCity := len([]rune(l.LocCity)) <= 20
 
-	if shortCity && l.City != "" {
-		loc = append(loc, l.City)
+	if shortCity && l.LocCity != "" {
+		loc = append(loc, l.LocCity)
 	}
 
-	if shortCountry && l.State != "" && l.City != l.State {
-		loc = append(loc, l.State)
+	if shortCountry && l.LocState != "" && l.LocCity != l.LocState {
+		loc = append(loc, l.LocState)
 	}
 
 	if countryName != "" {

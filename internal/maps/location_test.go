@@ -7,7 +7,39 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFindLocation(t *testing.T) {
+func TestLocation_Query(t *testing.T) {
+	t.Run("BerlinFernsehturm", func(t *testing.T) {
+		lat := 52.5208
+		lng := 13.40953
+
+		var l Location
+
+		if err := l.Query(lat, lng); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Fernsehturm Berlin", l.LocTitle)
+		assert.Equal(t, "Berlin, Germany", l.LocRegion)
+	})
+}
+
+func TestLocation_QueryOpenStreetMap(t *testing.T) {
+	t.Run("BerlinFernsehturm", func(t *testing.T) {
+		lat := 52.5208
+		lng := 13.40953
+
+		var l Location
+
+		if err := l.QueryOpenStreetMap(lat, lng); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Fernsehturm Berlin", l.LocTitle)
+		assert.Equal(t, "Berlin, Germany", l.LocRegion)
+	})
+}
+
+func TestLocation_OpenStreetMap(t *testing.T) {
 	t.Run("BerlinFernsehturm", func(t *testing.T) {
 		lat := 52.5208
 		lng := 13.40953
@@ -18,7 +50,6 @@ func TestFindLocation(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.False(t, o.Cached)
 		assert.Equal(t, 189675302, o.PlaceID)
 		assert.Equal(t, "Fernsehturm Berlin", o.Name)
 		assert.Equal(t, "10178", o.Address.Postcode)
@@ -28,10 +59,12 @@ func TestFindLocation(t *testing.T) {
 
 		var l Location
 
-		l.FromOSM(o)
+		if err := l.OpenStreetMap(o); err != nil {
+			t.Fatal(err)
+		}
 
-		assert.Equal(t, "Fernsehturm Berlin", l.Title)
-		assert.Equal(t, "Berlin, Germany", l.Region)
+		assert.Equal(t, "Fernsehturm Berlin", l.LocTitle)
+		assert.Equal(t, "Berlin, Germany", l.LocRegion)
 	})
 
 	t.Run("SantaMonica", func(t *testing.T) {
@@ -54,10 +87,12 @@ func TestFindLocation(t *testing.T) {
 
 		var l Location
 
-		l.FromOSM(o)
+		if err := l.OpenStreetMap(o); err != nil {
+			t.Fatal(err)
+		}
 
-		assert.Equal(t, "Santa Monica Pier", l.Title)
-		assert.Equal(t, "Santa Monica, California, USA", l.Region)
+		assert.Equal(t, "Santa Monica Pier", l.LocTitle)
+		assert.Equal(t, "Santa Monica, California, USA", l.LocRegion)
 	})
 
 	t.Run("AirportZurich", func(t *testing.T) {
@@ -81,10 +116,12 @@ func TestFindLocation(t *testing.T) {
 
 		var l Location
 
-		l.FromOSM(o)
+		if err := l.OpenStreetMap(o); err != nil {
+			t.Fatal(err)
+		}
 
-		assert.Equal(t, "Airport", l.Title)
-		assert.Equal(t, "Kloten, Zurich, Switzerland", l.Region)
+		assert.Equal(t, "Airport", l.LocTitle)
+		assert.Equal(t, "Kloten, Zurich, Switzerland", l.LocRegion)
 	})
 
 	t.Run("AirportTegel", func(t *testing.T) {
@@ -108,10 +145,12 @@ func TestFindLocation(t *testing.T) {
 
 		var l Location
 
-		l.FromOSM(o)
+		if err := l.OpenStreetMap(o); err != nil {
+			t.Fatal(err)
+		}
 
-		assert.Equal(t, "Airport", l.Title)
-		assert.Equal(t, "Berlin, Germany", l.Region)
+		assert.Equal(t, "Airport", l.LocTitle)
+		assert.Equal(t, "Berlin, Germany", l.LocRegion)
 	})
 
 	t.Run("PinkBeach", func(t *testing.T) {
@@ -135,11 +174,13 @@ func TestFindLocation(t *testing.T) {
 
 		var l Location
 
-		l.FromOSM(o)
+		if err := l.OpenStreetMap(o); err != nil {
+			t.Fatal(err)
+		}
 
 		assert.Equal(t, "8G757G9P+R5C", l.ID)
-		assert.Equal(t, "Pink Beach", l.Title)
-		assert.Equal(t, "Crete, Greece", l.Region)
+		assert.Equal(t, "Pink Beach", l.LocTitle)
+		assert.Equal(t, "Crete, Greece", l.LocRegion)
 	})
 
 	t.Run("NewJersey", func(t *testing.T) {
@@ -163,11 +204,13 @@ func TestFindLocation(t *testing.T) {
 
 		var l Location
 
-		l.FromOSM(o)
+		if err := l.OpenStreetMap(o); err != nil {
+			t.Fatal(err)
+		}
 
 		assert.Equal(t, "87G7PXV2+4G9", l.ID)
-		assert.Equal(t, "", l.Title)
-		assert.Equal(t, "Jersey City, New Jersey, USA", l.Region)
+		assert.Equal(t, "", l.LocTitle)
+		assert.Equal(t, "Jersey City, New Jersey, USA", l.LocRegion)
 	})
 
 	t.Run("SouthAfrica", func(t *testing.T) {
@@ -191,10 +234,12 @@ func TestFindLocation(t *testing.T) {
 
 		var l Location
 
-		l.FromOSM(o)
+		if err := l.OpenStreetMap(o); err != nil {
+			t.Fatal(err)
+		}
 
 		assert.Equal(t, "4GWF24FX+F5H", l.ID)
-		assert.Equal(t, "Route R411", l.Title)
-		assert.Equal(t, "Eastern Cape, South Africa", l.Region)
+		assert.Equal(t, "Route R411", l.LocTitle)
+		assert.Equal(t, "Eastern Cape, South Africa", l.LocRegion)
 	})
 }

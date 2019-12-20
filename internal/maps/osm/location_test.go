@@ -73,7 +73,7 @@ func TestFindLocation(t *testing.T) {
 			t.Fatal("err should not be nil")
 		}
 
-		assert.Equal(t, "osm: skipping lat 0.000000 / lng 0.000000", err.Error())
+		assert.Equal(t, "osm: skipping lat 0.000000, lng 0.000000", err.Error())
 		assert.False(t, l.Cached)
 	})
 }
