@@ -24,7 +24,7 @@ type PhotoSearch struct {
 	Hash        string    `form:"hash"`
 	Duplicate   bool      `form:"duplicate"`
 	Lat         float64   `form:"lat"`
-	Long        float64   `form:"long"`
+	Lng         float64   `form:"lng"`
 	Dist        uint      `form:"dist"`
 	Fmin        float64   `form:"fmin"`
 	Fmax        float64   `form:"fmax"`
@@ -43,6 +43,7 @@ type PhotoSearch struct {
 	Public      bool      `form:"public"`
 	Story       bool      `form:"story"`
 	Safe        bool      `form:"safe"`
+	NSFW        bool      `form:"nsfw"`
 
 	Count  int    `form:"count" binding:"required"`
 	Offset int    `form:"offset"`

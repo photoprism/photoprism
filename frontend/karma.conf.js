@@ -23,8 +23,9 @@ module.exports = (config) => {
         },
 
         files: [
-            {pattern: "tests/unit/**/*_test.js", watched: false},
             "node_modules/@babel/polyfill/dist/polyfill.js",
+            "node_modules/regenerator-runtime/runtime/runtime.js",
+            {pattern: "tests/unit/**/*_test.js", watched: false},
         ],
 
         // Preprocess through webpack

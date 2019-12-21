@@ -270,9 +270,9 @@ func TestSearch_Photos_Query(t *testing.T) {
 
 		t.Logf("results: %+v", photos)
 	})
-	t.Run("form.Lat and form.Long and Order:imported", func(t *testing.T) {
+	t.Run("form.Lat and form.Lng and Order:imported", func(t *testing.T) {
 		var f form.PhotoSearch
-		f.Query = "Lat:33.45343166666667 Long:25.764711666666667 Dist:2000 Order:imported"
+		f.Query = "Lat:33.45343166666667 Lng:25.764711666666667 Dist:2000 Order:imported"
 		f.Count = 3
 		f.Offset = 0
 

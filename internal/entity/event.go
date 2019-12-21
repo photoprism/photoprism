@@ -18,7 +18,7 @@ type Event struct {
 	EventBegin       time.Time `gorm:"type:datetime;"`
 	EventEnd         time.Time `gorm:"type:datetime;"`
 	EventLat         float64
-	EventLong        float64
+	EventLng         float64
 	EventDist        float64
 	CreatedAt        time.Time
 	UpdatedAt        time.Time

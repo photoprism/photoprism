@@ -572,27 +572,22 @@ func (c *Config) ClientConfig() ClientConfig {
 	var cameras []*entity.Camera
 	var albums []*entity.Album
 
-	type country struct {
-		LocCountry     string
-		LocCountryCode string
-	}
-
 	var position struct {
 		PhotoUUID    string    `json:"uuid"`
+		LocationID   string    `json:"olc"`
 		PhotoLat     float64   `json:"lat"`
-		PhotoLong    float64   `json:"long"`
+		PhotoLng     float64   `json:"lng"`
 		TakenAt      time.Time `json:"utc"`
 		TakenAtLocal time.Time `json:"time"`
 	}
 
 	db.Table("photos").
-		Select("photo_uuid, photo_lat, photo_long, taken_at, taken_at_local").
-		Where("deleted_at IS NULL AND photo_lat != 0 AND photo_long != 0").
+		Select("photo_uuid, location_id, photo_lat, photo_lng, taken_at, taken_at_local").
+		Where("deleted_at IS NULL AND photo_lat != 0 AND photo_lng != 0").
 		Order("taken_at DESC").
 		Limit(1).Offset(0).
 		Take(&position)
 
-	var countries []country
 	var count = struct {
 		Photos    uint `json:"photos"`
 		Favorites uint `json:"favorites"`
@@ -622,8 +617,15 @@ func (c *Config) ClientConfig() ClientConfig {
 		Select("COUNT(*) AS countries").
 		Take(&count)
 
-	db.Model(&entity.Location{}).
-		Select("DISTINCT loc_country_code, loc_country").
+	type country struct {
+		ID          string `json:"code"`
+		CountryName string `json:"name"`
+	}
+
+	var countries []country
+
+	db.Model(&entity.Country{}).
+		Select("DISTINCT id, country_name").
 		Scan(&countries)
 
 	db.Where("deleted_at IS NULL").

@@ -85,7 +85,7 @@ func (m *MediaFile) HasTimeAndPlace() bool {
 		return false
 	}
 
-	result := !exifData.TakenAt.IsZero() && exifData.Lat != 0 && exifData.Long != 0
+	result := !exifData.TakenAt.IsZero() && exifData.Lat != 0 && exifData.Lng != 0
 
 	return result
 }

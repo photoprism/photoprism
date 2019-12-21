@@ -6,8 +6,9 @@ import (
 )
 
 func TestLocation_Label(t *testing.T) {
-	location := &Location{LocCategory: "restaurant", LocType: "bistro"}
-	result := location.Label()
+	l := NewLocation(1,1)
+	l.LocCategory = "restaurant"
+	result := l.Category()
 
 	assert.Equal(t, "restaurant", result)
 }

@@ -21,22 +21,22 @@ type Exif struct {
 	Artist       string
 	CameraMake   string
 	CameraModel  string
-	Description  string
-	LensMake     string
-	LensModel    string
-	Flash        bool
-	FocalLength  int
-	Exposure     string
-	Aperture     float64
-	FNumber      float64
-	Iso          int
-	Lat          float64
-	Long         float64
-	Altitude     int
-	Width        int
-	Height       int
-	Orientation  int
-	All          map[string]string
+	Description string
+	LensMake    string
+	LensModel   string
+	Flash       bool
+	FocalLength int
+	Exposure    string
+	Aperture    float64
+	FNumber     float64
+	Iso         int
+	Lat         float64
+	Lng         float64
+	Altitude    int
+	Width       int
+	Height      int
+	Orientation int
+	All         map[string]string
 }
 
 var im *exif.IfdMapping
@@ -227,15 +227,15 @@ func (m *MediaFile) Exif() (result *Exif, err error) {
 	if ifd, err := index.RootIfd.ChildWithIfdPath(exif.IfdPathStandardGps); err == nil {
 		if gi, err := ifd.GpsInfo(); err == nil {
 			m.exifData.Lat = gi.Latitude.Decimal()
-			m.exifData.Long = gi.Longitude.Decimal()
+			m.exifData.Lng = gi.Longitude.Decimal()
 			m.exifData.Altitude = gi.Altitude
 		}
 	}
 
-	if m.exifData.Lat != 0 && m.exifData.Long != 0 {
+	if m.exifData.Lat != 0 && m.exifData.Lng != 0 {
 		zones, err := tz.GetZone(tz.Point{
 			Lat: m.exifData.Lat,
-			Lon: m.exifData.Long,
+			Lon: m.exifData.Lng,
 		})
 
 		if err != nil {

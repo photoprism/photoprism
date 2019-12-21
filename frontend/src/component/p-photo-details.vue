@@ -72,7 +72,7 @@
                                     {{ photo.getCamera() }}
                                     <br/>
                                     <v-icon size="14">location_on</v-icon>
-                                    <span class="p-pointer" :title="photo.getFullLocation()"
+                                    <span class="p-pointer" :title="photo.LocationID"
                                           @click.stop="openLocation(index)">{{ photo.getLocation() }}</span>
                                 </div>
                             </div>

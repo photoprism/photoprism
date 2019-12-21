@@ -25,7 +25,7 @@ type Photo struct {
 	PhotoNSFW         bool    `json:"PhotoNSFW"`
 	PhotoStory        bool    `json:"PhotoStory"`
 	PhotoLat          float64 `gorm:"index;"`
-	PhotoLong         float64 `gorm:"index;"`
+	PhotoLng          float64 `gorm:"index;"`
 	PhotoAltitude     int
 	PhotoFocalLength  int
 	PhotoIso          int
@@ -40,7 +40,7 @@ type Photo struct {
 	CountryID         string `gorm:"index;"`
 	CountryChanged    bool
 	Location          *Location
-	LocationID        uint
+	LocationID        string
 	LocationChanged   bool
 	LocationEstimated bool
 	TakenAt           time.Time `gorm:"type:datetime;index;"`
