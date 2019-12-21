@@ -290,9 +290,8 @@
                 let name = DateTime.local().toFormat("LLLL yyyy");
 
                 if(this.results.findIndex(a => a.AlbumName.startsWith(name)) !== -1) {
-                    name = this.$gettext("New Album");
                     const existing = this.results.filter(a => a.AlbumName.startsWith(name));
-                    name += " " + Util.arabicToRoman(existing.length)
+                    name = `${name} (${existing.length + 1})`
                 }
 
                 const album = new Album({"AlbumName": name});
