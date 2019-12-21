@@ -43,10 +43,10 @@ const (
 )
 
 var IndexedColorNames = map[IndexedColor]string{
-	Black:   "black",   // 0
+	Black:   "dark",    // 0
 	Brown:   "brown",   // 1
 	Grey:    "grey",    // 2
-	White:   "white",   // 3
+	White:   "bright",  // 3
 	Purple:  "purple",  // 4
 	Gold:    "gold",    // 5
 	Blue:    "blue",    // 6
