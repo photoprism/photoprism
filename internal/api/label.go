@@ -171,7 +171,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 				return
 			}
 
-			gc.Set(cacheKey, thumbData, time.Hour * 4)
+			gc.Set(cacheKey, thumbData, time.Hour*4)
 
 			log.Debugf("%s cached [%s]", cacheKey, time.Since(start))
 

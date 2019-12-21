@@ -53,7 +53,7 @@ type PhotoResult struct {
 	LensMake  string
 
 	// Country
-	CountryID   string
+	CountryID string
 
 	// Location
 	LocationID        string

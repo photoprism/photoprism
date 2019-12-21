@@ -84,5 +84,5 @@ func (l Labels) Title(fallback string) string {
 		return label.Name
 	}
 
-	 return fallback
+	return fallback
 }

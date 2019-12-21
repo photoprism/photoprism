@@ -1,12 +1,13 @@
 package entity
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLocation_Label(t *testing.T) {
-	l := NewLocation(1,1)
+	l := NewLocation(1, 1)
 	l.LocCategory = "restaurant"
 	result := l.Category()
 

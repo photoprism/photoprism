@@ -94,7 +94,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		event.Publish("count.albums", event.Data{
 			"count": 1,
 		})
-		 */
+		*/
 
 		event.Success(fmt.Sprintf("album \"%s\" created", m.AlbumName))
 
@@ -400,7 +400,6 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 	})
 }
-
 
 // POST /api/v1/albums/:uuid/thumbnail/:type
 //

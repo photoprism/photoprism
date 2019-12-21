@@ -12,10 +12,10 @@ import (
 // Photo location
 type Location struct {
 	maps.Location
-	LocNotes       string `gorm:"type:text;"`
-	LocFavorite    bool
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	LocNotes    string `gorm:"type:text;"`
+	LocFavorite bool
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func NewLocation(lat, lng float64) *Location {
@@ -33,7 +33,7 @@ func (m *Location) Category() string {
 }
 
 func (m *Location) Find(db *gorm.DB) error {
-	if err := db.First(m, "id LIKE ?", m.ID + "%").Error; err == nil {
+	if err := db.First(m, "id LIKE ?", m.ID+"%").Error; err == nil {
 		return err
 	}
 

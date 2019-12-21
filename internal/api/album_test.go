@@ -58,7 +58,6 @@ func TestDislikeAlbum(t *testing.T) {
 	})
 }
 
-
 func TestAlbumThumbnail(t *testing.T) {
 	t.Run("invalid type", func(t *testing.T) {
 		app, router, ctx := NewApiTest()

@@ -1,6 +1,5 @@
 import Abstract from "model/abstract";
 import Api from "common/api";
-import truncate from "truncate";
 import { DateTime } from "luxon";
 
 class Photo extends Abstract {
@@ -106,10 +105,10 @@ class Photo extends Abstract {
 
     getLocation() {
         if (this.LocDescription) {
-            return this.LocDescription
+            return this.LocDescription;
         }
 
-        return "Unknown"
+        return "Unknown";
     }
 
     getCamera() {

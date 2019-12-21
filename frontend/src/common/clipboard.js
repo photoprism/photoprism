@@ -95,7 +95,7 @@ class Clipboard {
         }
 
         for (let i = rangeStart; i <= rangeEnd; i++) {
-            this.add(models[i])
+            this.add(models[i]);
         }
 
         return (rangeEnd - rangeStart) + 1;

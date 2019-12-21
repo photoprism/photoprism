@@ -7,7 +7,7 @@ import (
 )
 
 var labelTitles = map[string]string{
-	"airport": "Airport",
+	"airport":        "Airport",
 	"visitor center": "Visitor Center",
 }
 

@@ -21,22 +21,22 @@ type Exif struct {
 	Artist       string
 	CameraMake   string
 	CameraModel  string
-	Description string
-	LensMake    string
-	LensModel   string
-	Flash       bool
-	FocalLength int
-	Exposure    string
-	Aperture    float64
-	FNumber     float64
-	Iso         int
-	Lat         float64
-	Lng         float64
-	Altitude    int
-	Width       int
-	Height      int
-	Orientation int
-	All         map[string]string
+	Description  string
+	LensMake     string
+	LensModel    string
+	Flash        bool
+	FocalLength  int
+	Exposure     string
+	Aperture     float64
+	FNumber      float64
+	Iso          int
+	Lat          float64
+	Lng          float64
+	Altitude     int
+	Width        int
+	Height       int
+	Orientation  int
+	All          map[string]string
 }
 
 var im *exif.IfdMapping

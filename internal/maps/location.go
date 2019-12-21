@@ -34,11 +34,11 @@ type LocationSource interface {
 	Source() string
 }
 
-func NewLocation (lat, lng float64) *Location {
+func NewLocation(lat, lng float64) *Location {
 	id := OlcEncode(lat, lng)
 
 	result := &Location{
-		ID: id,
+		ID:     id,
 		LocLat: lat,
 		LocLng: lng,
 	}
@@ -59,15 +59,21 @@ func (l *Location) Query() error {
 func (l *Location) Assign(s LocationSource) error {
 	l.LocSource = s.Source()
 
-	if l.LocLat == 0 { l.LocLat = s.Latitude()	}
-	if l.LocLng == 0 { l.LocLng = s.Longitude() }
+	if l.LocLat == 0 {
+		l.LocLat = s.Latitude()
+	}
+	if l.LocLng == 0 {
+		l.LocLng = s.Longitude()
+	}
 
 	if l.Unknown() {
 		l.LocCategory = "unknown"
 		return errors.New("maps: unknown location")
 	}
 
-	if l.ID == "" { l.ID = OlcEncode(l.LocLat, l.LocLng) }
+	if l.ID == "" {
+		l.ID = OlcEncode(l.LocLat, l.LocLng)
+	}
 
 	l.LocTitle = s.Title()
 	l.LocCity = s.City()
