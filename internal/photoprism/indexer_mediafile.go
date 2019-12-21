@@ -291,12 +291,6 @@ func (i *Indexer) classifyImage(jpeg *MediaFile) (results Labels, isNSFW bool) {
 				uncertainty := 100 - int(math.Round(float64(nsfwLabels.Sexy*100)))
 				labels = append(labels, Label{Name: "sexy", Source: "nsfw", Uncertainty: uncertainty, Priority: -1})
 			}
-
-			if nsfwLabels.Drawing > 0.85 {
-				uncertainty := 100 - int(math.Round(float64(nsfwLabels.Drawing*100)))
-				categories := []string{"painting", "art"}
-				labels = append(labels, Label{Name: "drawing", Source: "nsfw", Uncertainty: uncertainty, Priority: -1, Categories: categories})
-			}
 		}
 	}
 
