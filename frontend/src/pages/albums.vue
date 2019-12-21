@@ -30,7 +30,7 @@
         </v-form>
 
         <v-container fluid class="pa-4" v-if="loading">
-            <v-progress-linear color="secondary-dark"  :indeterminate="true"></v-progress-linear>
+            <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
         </v-container>
         <v-container fluid class="pa-0" v-else>
             <p-scroll-top></p-scroll-top>
@@ -41,9 +41,14 @@
                 <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1" flat>
                     <v-card-title primary-title>
                         <div>
-                            <h3 class="title mb-3"><translate>No albums matched your search</translate></h3>
-                            <div><translate>Try again using a different term or</translate>
-                                <v-btn @click.prevent.stop="create" small><translate>create a new album</translate></v-btn>
+                            <h3 class="title mb-3">
+                                <translate>No albums matched your search</translate>
+                            </h3>
+                            <div>
+                                <translate>Try again using a different term or</translate>
+                                <v-btn @click.prevent.stop="create" small>
+                                    <translate>create a new album</translate>
+                                </v-btn>
                             </div>
                         </div>
                     </v-card-title>
@@ -82,7 +87,8 @@
                                            icon small absolute
                                            class="p-album-select"
                                            @click.stop.prevent="toggleSelection(album.AlbumUUID)">
-                                        <v-icon v-if="selection.includes(album.AlbumUUID)" color="white">check_circle</v-icon>
+                                        <v-icon v-if="selection.includes(album.AlbumUUID)" color="white">check_circle
+                                        </v-icon>
                                         <v-icon v-else color="accent lighten-3">radio_button_off</v-icon>
                                     </v-btn>
                                 </v-img>
@@ -131,7 +137,6 @@
 <script>
     import Album from "model/album";
     import {DateTime} from "luxon";
-    import Util from "common/util";
     import Event from "pubsub-js";
 
     export default {
@@ -289,12 +294,12 @@
             create() {
                 let name = DateTime.local().toFormat("LLLL yyyy");
 
-                if(this.results.findIndex(a => a.AlbumName.startsWith(name)) !== -1) {
+                if (this.results.findIndex(a => a.AlbumName.startsWith(name)) !== -1) {
                     const existing = this.results.filter(a => a.AlbumName.startsWith(name));
                     name = `${name} (${existing.length + 1})`
                 }
 
-                const album = new Album({"AlbumName": name});
+                const album = new Album({"AlbumName": name, "AlbumFavorite": true});
 
                 album.save().then(() => {
                     this.filter.q = "";
@@ -309,7 +314,7 @@
             toggleSelection(uuid) {
                 const pos = this.selection.indexOf(uuid);
 
-                if(pos !== -1) {
+                if (pos !== -1) {
                     this.selection.splice(pos, 1);
                 } else {
                     this.selection.push(uuid)

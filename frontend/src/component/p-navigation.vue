@@ -255,11 +255,9 @@
                 this.mini = false;
             },
             createAlbum() {
-                let name = DateTime.local().toFormat("LLLL yyyy");
+                let name = "New Album";
                 const album = new Album({AlbumName: name, AlbumFavorite: true});
-                album.save().then((a) => {
-                    console.log("created", a)
-                });
+                album.save();
             },
             logout() {
                 this.$session.logout();
