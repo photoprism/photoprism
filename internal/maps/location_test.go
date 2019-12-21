@@ -164,7 +164,7 @@ func TestLocation_Assign(t *testing.T) {
 
 		assert.Equal(t, "8G757G9P+", l.ID)
 		assert.Equal(t, "Pink Beach", l.LocTitle)
-		assert.Equal(t, "Crete, Greece", l.LocDescription)
+		assert.Equal(t, "Chrisoskalitissa, Crete, Greece", l.LocDescription)
 	})
 
 	t.Run("NewJersey", func(t *testing.T) {

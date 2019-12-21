@@ -77,6 +77,8 @@ func (o Location) City() (result string) {
 		result = o.Address.City
 	} else if o.Address.Town != "" {
 		result = o.Address.Town
+	} else if o.Address.Village != "" {
+		result = o.Address.Village
 	} else if o.Address.County != "" {
 		result = o.Address.County
 	} else if o.Address.State != "" {

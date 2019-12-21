@@ -5,6 +5,7 @@ type Address struct {
 	Road        string `json:"road"`
 	Suburb      string `json:"suburb"`
 	Town        string `json:"town"`
+	Village     string `json:"village"`
 	City        string `json:"city"`
 	Postcode    string `json:"postcode"`
 	County      string `json:"county"`
