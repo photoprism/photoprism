@@ -262,6 +262,30 @@ func TestConfig_ResourcesPath(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources", path)
 }
 
+func TestConfig_HideNSFW(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	hideNSFW := c.HideNSFW()
+	assert.Equal(t, false, hideNSFW)
+}
+
+func TestConfig_AdminPassword(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	hideNSFW := c.AdminPassword()
+	assert.Equal(t, "photoprism", hideNSFW)
+}
+
+func TestConfig_NSFWModelPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	hideNSFW := c.NSFWModelPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/nsfw", hideNSFW)
+}
+
 func TestConfig_ExamplesPath(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
