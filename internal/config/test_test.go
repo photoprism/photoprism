@@ -37,3 +37,21 @@ func TestNewTestConfig(t *testing.T) {
 
 	assert.IsType(t, &gorm.DB{}, db)
 }
+
+func TestNewTestParamsError(t *testing.T) {
+	c := NewTestParamsError()
+
+	assert.IsType(t, new(Params), c)
+
+	assert.Equal(t, util.ExpandedFilename("../.."), c.AssetsPath)
+	assert.Equal(t, "../../assets/testdata/cache", c.CachePath)
+	assert.False(t, c.Debug)
+}
+
+func TestNewTestErrorConfig(t *testing.T) {
+	c := NewTestErrorConfig()
+
+	db := c.Db()
+
+	assert.IsType(t, &gorm.DB{}, db)
+}
