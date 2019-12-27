@@ -11,7 +11,7 @@ func OlcEncode(lat, lng float64) string {
 	}
 
 	if lng < -180 || lng > 180 {
-		log.Warnf("olc: longitude out of range (%f)", lat)
+		log.Warnf("olc: longitude out of range (%f)", lng)
 		return ""
 	}
 
