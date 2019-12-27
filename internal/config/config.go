@@ -630,7 +630,8 @@ func (c *Config) ClientConfig() ClientConfig {
 	var countries []country
 
 	db.Model(&entity.Country{}).
-		Select("DISTINCT id, country_name").
+		Select("id, country_name").
+		Order("country_name").
 		Scan(&countries)
 
 	db.Where("deleted_at IS NULL").
