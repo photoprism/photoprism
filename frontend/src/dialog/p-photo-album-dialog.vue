@@ -16,6 +16,7 @@
                                 :search-input.sync="search"
                                 :loading="loading"
                                 hide-details
+                                hide-no-data
                                 item-text="AlbumName"
                                 item-value="AlbumUUID"
                                 :label="labels.select"
@@ -56,7 +57,7 @@
                 albums: [],
                 items: [],
                 labels: {
-                    select: this.$gettext("Select album"),
+                    select: this.$gettext("Album Name"),
                     addToAlbum: this.$gettext("Add to album"),
                     createAlbum: this.$gettext("Create album"),
                 }
@@ -68,7 +69,6 @@
             },
             confirm() {
                 if(this.album === "" && this.newAlbum) {
-                    console.log("NEW", this.album, this.newAlbum);
                     this.loading = true;
 
                     this.newAlbum.save().then((a) => {
@@ -76,7 +76,6 @@
                         this.$emit('confirm', a.AlbumUUID);
                     });
                 } else {
-                    console.log("OLD", this.album, this.newAlbum);
                     this.$emit('confirm', this.album);
                 }
             },
@@ -113,7 +112,7 @@
                     this.items = this.albums;
                     this.newAlbum = null;
                 } else {
-                    this.newAlbum = new Album({AlbumName: q, AlbumUUID: ""});
+                    this.newAlbum = new Album({AlbumName: q, AlbumUUID: "", AlbumFavorite: true});
                     this.items = this.albums.concat([this.newAlbum]);
                 }
             },
