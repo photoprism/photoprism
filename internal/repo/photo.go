@@ -56,7 +56,7 @@ type PhotoResult struct {
 	CountryID string
 
 	// Location
-	LocationID        string
+	LocationID        uint64
 	LocName           string
 	LocPlace          string
 	LocCity           string

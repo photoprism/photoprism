@@ -9,7 +9,7 @@ import (
 
 // Photo location
 type Location struct {
-	ID          string `gorm:"type:varbinary(16);primary_key;"`
+	ID          uint64 `gorm:"type:BIGINT;primary_key;auto_increment:false;"`
 	LocLat      float64
 	LocLng      float64
 	LocName     string `gorm:"type:varchar(100);"`
@@ -35,7 +35,7 @@ type LocationSource interface {
 }
 
 func NewLocation(lat, lng float64) *Location {
-	id := ID(lat, lng)
+	id := S2Encode(lat, lng)
 
 	result := &Location{
 		ID:     id,
@@ -71,8 +71,8 @@ func (l *Location) Assign(s LocationSource) error {
 		return errors.New("maps: unknown location")
 	}
 
-	if l.ID == "" {
-		l.ID = ID(l.LocLat, l.LocLng)
+	if l.ID == 0 {
+		l.ID = S2Encode(l.LocLat, l.LocLng)
 	}
 
 	l.LocName = s.Name()

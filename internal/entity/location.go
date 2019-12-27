@@ -21,7 +21,7 @@ type Location struct {
 func NewLocation(lat, lng float64) *Location {
 	result := &Location{}
 
-	result.ID = maps.ID(lat, lng)
+	result.ID = maps.S2Encode(lat, lng)
 	result.LocLat = lat
 	result.LocLng = lng
 
@@ -33,7 +33,7 @@ func (m *Location) Category() string {
 }
 
 func (m *Location) Find(db *gorm.DB) error {
-	if err := db.First(m, "id LIKE ?", m.ID+"%").Error; err == nil {
+	if err := db.First(m, "id = ?", m.ID).Error; err == nil {
 		return err
 	}
 

@@ -574,7 +574,7 @@ func (c *Config) ClientConfig() ClientConfig {
 
 	var position struct {
 		PhotoUUID    string    `json:"photo"`
-		LocationID   string    `json:"location"`
+		LocationID   uint64    `json:"location"`
 		TakenAt      time.Time `json:"utc"`
 		PhotoLat     float64   `json:"lat"`
 		PhotoLng     float64   `json:"lng"`

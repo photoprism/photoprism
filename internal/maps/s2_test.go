@@ -68,21 +68,21 @@ func TestS2EncodeLevel(t *testing.T) {
 
 func TestS2Token(t *testing.T) {
 	t.Run("Wildgehege", func(t *testing.T) {
-		plusCode := ID(48.56344833333333, 8.996878333333333)
+		plusCode := S2Token(48.56344833333333, 8.996878333333333)
 		expected := "4799e370c"
 
 		assert.Equal(t, expected, plusCode)
 	})
 
 	t.Run("LatOverflow", func(t *testing.T) {
-		plusCode := ID(548.56344833333333, 8.996878333333333)
+		plusCode := S2Token(548.56344833333333, 8.996878333333333)
 		expected := ""
 
 		assert.Equal(t, expected, plusCode)
 	})
 
 	t.Run("LongOverflow", func(t *testing.T) {
-		plusCode := ID(48.56344833333333, 258.996878333333333)
+		plusCode := S2Token(48.56344833333333, 258.996878333333333)
 		expected := ""
 
 		assert.Equal(t, expected, plusCode)

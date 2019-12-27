@@ -6,7 +6,7 @@ import (
 
 var S2Level = 15
 
-func ID(lat, lng float64) string {
+func S2Token(lat, lng float64) string {
 	return S2TokenLevel(lat, lng, S2Level)
 }
 
@@ -17,7 +17,7 @@ func S2TokenLevel(lat, lng float64, level int) string {
 	}
 
 	if lng < -180 || lng > 180 {
-		log.Warnf("olc: longitude out of range (%f)", lat)
+		log.Warnf("olc: longitude out of range (%f)", lng)
 		return ""
 	}
 
@@ -36,7 +36,7 @@ func S2EncodeLevel(lat, lng float64, level int) uint64 {
 	}
 
 	if lng < -180 || lng > 180 {
-		log.Warnf("olc: longitude out of range (%f)", lat)
+		log.Warnf("olc: longitude out of range (%f)", lng)
 		return 0
 	}
 

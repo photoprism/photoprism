@@ -39,7 +39,7 @@ type Photo struct {
 	CountryID         string `gorm:"type:binary(2);index;"`
 	CountryChanged    bool
 	Location          *Location
-	LocationID        string `gorm:"type:varbinary(16);index;"`
+	LocationID        uint64 `gorm:"type:BIGINT;index;"`
 	LocationChanged   bool
 	LocationEstimated bool
 	TakenAt           time.Time `gorm:"type:datetime;index;"`
