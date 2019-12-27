@@ -60,7 +60,7 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 
 		conf.Db().Save(&m)
 
-		event.Success("photo updated")
+		event.Success("photo saved")
 
 		c.JSON(http.StatusOK, m)
 	})

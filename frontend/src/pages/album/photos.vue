@@ -231,8 +231,7 @@
             findAlbum() {
                 this.model.find(this.uuid).then(m => {
                     this.model = m;
-                    this.$config.page.title = this.model.AlbumName;
-                    window.document.title = this.model.AlbumName;
+                    window.document.title = `PhotoPrism: ${this.model.AlbumName}`;
                 });
             },
         },

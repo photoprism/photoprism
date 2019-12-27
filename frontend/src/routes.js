@@ -41,7 +41,7 @@ export default [
         name: "album",
         path: "/albums/:uuid",
         component: AlbumPhotos,
-        meta: {title: ""},
+        meta: {title: "Album"},
     },
     {
         name: "favorites",

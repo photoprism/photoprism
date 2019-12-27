@@ -3,7 +3,28 @@
             ref="form" autocomplete="off" class="p-photo-search p-album-toolbar" accept-charset="UTF-8"
             @submit.prevent="filterChange">
         <v-toolbar flat color="secondary">
-            <v-toolbar-title>{{ album.AlbumName }}</v-toolbar-title>
+            <v-edit-dialog
+                    :return-value.sync="album.AlbumName"
+                    lazy
+                    @save="onSave(album)"
+                    class="p-inline-edit">
+                                        <v-toolbar-title v-if="album.AlbumName">
+                                            {{ album.AlbumName }}
+                                        </v-toolbar-title>
+                <v-toolbar-title v-else>
+                                            <v-icon>edit</v-icon>
+                                        </v-toolbar-title>
+                <template v-slot:input>
+                    <v-text-field
+                            v-model="album.AlbumName"
+                            :rules="[titleRule]"
+                            :label="labels.name"
+                            color="secondary-dark"
+                            single-line
+                            autofocus
+                    ></v-text-field>
+                </template>
+            </v-edit-dialog>
 
             <v-spacer></v-spacer>
 
@@ -38,10 +59,9 @@
                 v-show="searchExpanded">
             <v-card-text>
                 <v-layout row wrap>
-                    <v-flex xs12 pt-2 pl-2 pr-2 pb-0>
-                        <v-text-field flat solo
+                    <v-flex xs12 pa-2>
+                        <v-text-field flat solo hide-details
                                       browser-autocomplete="off"
-                                      single-line
                                       :label="labels.search"
                                       prepend-inner-icon="search"
                                       clearable
@@ -137,7 +157,9 @@
                     country: this.$gettext("Country"),
                     camera: this.$gettext("Camera"),
                     sort: this.$gettext("Sort By"),
+                    name: this.$gettext("Album Name"),
                 },
+                titleRule: v => v.length <= 25 || this.$gettext("Title too long"),
             };
         },
         methods: {
@@ -155,6 +177,9 @@
             clearQuery() {
                 this.filter.q = '';
                 this.filterChange();
+            },
+            onSave(album) {
+                album.update().then((a) => window.document.title = `PhotoPrism: ${a.AlbumName}`);
             },
         }
     };
