@@ -573,16 +573,15 @@ func (c *Config) ClientConfig() ClientConfig {
 	var albums []*entity.Album
 
 	var position struct {
-		PhotoUUID    string    `json:"uuid"`
-		LocationID   string    `json:"olc"`
+		PhotoUUID    string    `json:"photo"`
+		LocationID   string    `json:"location"`
+		TakenAt      time.Time `json:"utc"`
 		PhotoLat     float64   `json:"lat"`
 		PhotoLng     float64   `json:"lng"`
-		TakenAt      time.Time `json:"utc"`
-		TakenAtLocal time.Time `json:"time"`
 	}
 
 	db.Table("photos").
-		Select("photo_uuid, location_id, photo_lat, photo_lng, taken_at, taken_at_local").
+		Select("photo_uuid, location_id, photo_lat, photo_lng, taken_at").
 		Where("deleted_at IS NULL AND photo_lat != 0 AND photo_lng != 0").
 		Order("taken_at DESC").
 		Limit(1).Offset(0).
