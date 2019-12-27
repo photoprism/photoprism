@@ -9,7 +9,7 @@ import (
 func TestS2Encode(t *testing.T) {
 	t.Run("Wildgehege", func(t *testing.T) {
 		plusCode := S2Encode(48.56344833333333, 8.996878333333333)
-		expected := uint64(0x799e370d0000000)
+		expected := uint64(0x799e370c0000000)
 
 		assert.Equal(t, expected, plusCode)
 	})
@@ -69,7 +69,7 @@ func TestS2EncodeLevel(t *testing.T) {
 func TestS2Token(t *testing.T) {
 	t.Run("Wildgehege", func(t *testing.T) {
 		plusCode := ID(48.56344833333333, 8.996878333333333)
-		expected := "4799e370d"
+		expected := "4799e370c"
 
 		assert.Equal(t, expected, plusCode)
 	})

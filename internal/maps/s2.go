@@ -4,7 +4,7 @@ import (
 	"github.com/golang/geo/s2"
 )
 
-var S2Level = 16
+var S2Level = 15
 
 func ID(lat, lng float64) string {
 	return S2TokenLevel(lat, lng, S2Level)

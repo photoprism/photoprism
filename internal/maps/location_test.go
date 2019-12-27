@@ -162,7 +162,7 @@ func TestLocation_Assign(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "149ce7851", l.ID)
+		assert.Equal(t, "149ce7854", l.ID)
 		assert.Equal(t, "Pink Beach", l.LocName)
 		assert.Equal(t, "Chrisoskalitissa, Crete, Greece", l.LocPlace)
 	})
@@ -192,7 +192,7 @@ func TestLocation_Assign(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "89c257419", l.ID)
+		assert.Equal(t, "89c25741c", l.ID)
 		assert.Equal(t, "", l.LocName)
 		assert.Equal(t, "Jersey City, New Jersey, USA", l.LocPlace)
 	})
@@ -222,7 +222,7 @@ func TestLocation_Assign(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "1e5e4205b", l.ID)
+		assert.Equal(t, "1e5e4205c", l.ID)
 		assert.Equal(t, "R411", l.LocName)
 		assert.Equal(t, "Eastern Cape, South Africa", l.LocPlace)
 	})
