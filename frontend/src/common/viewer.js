@@ -40,7 +40,7 @@ class Viewer {
 
             if (this.el === null) {
                 let err = "no photo viewer element found";
-                console.log(err);
+                console.warn(err);
                 throw err;
             }
         }
@@ -67,7 +67,7 @@ class Viewer {
 
         const options = {
             index: index,
-            history: false,
+            history: true,
             preload: [1, 1],
             focus: true,
             modal: true,
@@ -127,7 +127,6 @@ class Viewer {
 
             photoSrcWillChange = false;
         });
-
 
         gallery.listen("gettingData", function (index, item) {
             item.src = item[nextSize].src;
