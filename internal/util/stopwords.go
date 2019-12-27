@@ -2,6 +2,11 @@
 package util
 
 var Stopwords = map[string]bool{
+	"img":              true,
+	"src":              true,
+	"photo":            true,
+	"image":            true,
+	"file":             true,
 	"'ll":              true,
 	"'tis":             true,
 	"'twas":            true,

@@ -3,6 +3,7 @@ package entity
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
@@ -10,7 +11,7 @@ import (
 
 // Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
-	Model
+	ID                uint `gorm:"primary_key"`
 	CameraSlug        string
 	CameraModel       string
 	CameraMake        string
@@ -18,6 +19,9 @@ type Camera struct {
 	CameraOwner       string
 	CameraDescription string `gorm:"type:text;"`
 	CameraNotes       string `gorm:"type:text;"`
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
+	DeletedAt         *time.Time `sql:"index"`
 }
 
 func NewCamera(modelName string, makeName string) *Camera {

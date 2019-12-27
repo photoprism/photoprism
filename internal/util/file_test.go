@@ -2,6 +2,7 @@ package util
 
 import (
 	"os"
+	"os/user"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -38,8 +39,10 @@ func TestExpandedFilename(t *testing.T) {
 		assert.IsType(t, "", filename)
 	})
 	t.Run("~ in filename", func(t *testing.T) {
+		usr, _ := user.Current()
+		expected := usr.HomeDir + "/test.jpg"
 		filename := ExpandedFilename("~/test.jpg")
-		assert.Equal(t, "/root/test.jpg", filename)
+		assert.Equal(t, expected, filename)
 		assert.IsType(t, "", filename)
 	})
 }

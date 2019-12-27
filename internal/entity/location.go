@@ -21,7 +21,7 @@ type Location struct {
 func NewLocation(lat, lng float64) *Location {
 	result := &Location{}
 
-	result.ID = maps.OlcEncode(lat, lng)
+	result.ID = maps.ID(lat, lng)
 	result.LocLat = lat
 	result.LocLng = lng
 
@@ -58,8 +58,8 @@ func (m *Location) Keywords() []string {
 		strings.ToLower(m.LocCategory),
 	}
 
-	result = append(result, util.Keywords(m.LocTitle)...)
-	result = append(result, util.Keywords(m.LocDescription)...)
+	result = append(result, util.Keywords(m.LocName)...)
+	result = append(result, util.Keywords(m.LocPlace)...)
 	result = append(result, util.Keywords(m.LocNotes)...)
 
 	return result

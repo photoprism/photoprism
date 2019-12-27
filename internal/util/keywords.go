@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-var KeywordsRegexp = regexp.MustCompile("[\\p{L}\\d]{3,}")
+var KeywordsRegexp = regexp.MustCompile("[\\p{L}]{3,}")
 
 func Keywords(s string) (results []string) {
 	all := KeywordsRegexp.FindAllString(s, -1)

@@ -6,15 +6,13 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/util"
 )
 
 // Photo album
 type Album struct {
-	Model
-	CoverUUID        string `gorm:"type:varchar(64);"`
-	AlbumUUID        string `gorm:"unique_index;"`
-	AlbumToken       string `gorm:"type:varchar(64);"`
+	ID               uint   `gorm:"primary_key"`
+	CoverUUID        string `gorm:"type:varbinary(36);"`
+	AlbumUUID        string `gorm:"type:varbinary(36);unique_index;"`
 	AlbumSlug        string `gorm:"index;"`
 	AlbumName        string `gorm:"type:varchar(128);"`
 	AlbumDescription string `gorm:"type:text;"`
@@ -27,14 +25,13 @@ type Album struct {
 	AlbumRadius      float64
 	AlbumOrder       string `gorm:"type:varchar(16);"`
 	AlbumTemplate    string `gorm:"type:varchar(128);"`
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	DeletedAt        *time.Time `sql:"index"`
 }
 
 func (m *Album) BeforeCreate(scope *gorm.Scope) error {
-	if err := scope.SetColumn("AlbumUUID", util.UUID()); err != nil {
-		return err
-	}
-
-	if err := scope.SetColumn("AlbumToken", util.RandomToken(4)); err != nil {
+	if err := scope.SetColumn("AlbumUUID", ID('a')); err != nil {
 		return err
 	}
 

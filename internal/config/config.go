@@ -596,6 +596,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		Labels    uint `json:"labels"`
 		Albums    uint `json:"albums"`
 		Countries uint `json:"countries"`
+		Places    uint `json:"places"`
 	}{}
 
 	db.Table("photos").
@@ -615,6 +616,10 @@ func (c *Config) ClientConfig() ClientConfig {
 
 	db.Table("countries").
 		Select("COUNT(*) AS countries").
+		Take(&count)
+
+	db.Table("locations").
+		Select("COUNT(DISTINCT loc_place) AS places").
 		Take(&count)
 
 	type country struct {

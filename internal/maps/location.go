@@ -9,17 +9,17 @@ import (
 
 // Photo location
 type Location struct {
-	ID             string `gorm:"primary_key"`
-	CountryID      string
-	LocLat         float64
-	LocLng         float64
-	LocCategory    string
-	LocTitle       string
-	LocDescription string
-	LocCity        string
-	LocSuburb      string
-	LocState       string
-	LocSource      string
+	ID          string `gorm:"type:varbinary(16);primary_key;"`
+	LocLat      float64
+	LocLng      float64
+	LocName     string `gorm:"type:varchar(100);"`
+	LocCategory string `gorm:"type:varchar(50);"`
+	LocSuburb   string `gorm:"type:varchar(100);"`
+	LocPlace    string `gorm:"type:varbinary(500);index;"`
+	LocCity     string `gorm:"type:varchar(100);"`
+	LocState    string `gorm:"type:varchar(100);"`
+	LocCountry  string `gorm:"type:binary(2);"`
+	LocSource   string `gorm:"type:varbinary(16);"`
 }
 
 type LocationSource interface {
@@ -27,7 +27,7 @@ type LocationSource interface {
 	Latitude() float64
 	Longitude() float64
 	Category() string
-	Title() string
+	Name() string
 	City() string
 	Suburb() string
 	State() string
@@ -35,7 +35,7 @@ type LocationSource interface {
 }
 
 func NewLocation(lat, lng float64) *Location {
-	id := OlcEncode(lat, lng)
+	id := ID(lat, lng)
 
 	result := &Location{
 		ID:     id,
@@ -72,16 +72,16 @@ func (l *Location) Assign(s LocationSource) error {
 	}
 
 	if l.ID == "" {
-		l.ID = OlcEncode(l.LocLat, l.LocLng)
+		l.ID = ID(l.LocLat, l.LocLng)
 	}
 
-	l.LocTitle = s.Title()
+	l.LocName = s.Name()
 	l.LocCity = s.City()
 	l.LocSuburb = s.Suburb()
 	l.LocState = s.State()
-	l.CountryID = s.CountryCode()
+	l.LocCountry = s.CountryCode()
 	l.LocCategory = s.Category()
-	l.LocDescription = l.description()
+	l.LocPlace = l.place()
 
 	return nil
 }
@@ -94,7 +94,7 @@ func (l *Location) Unknown() bool {
 	return false
 }
 
-func (l *Location) description() string {
+func (l *Location) place() string {
 	if l.Unknown() {
 		return "Unknown"
 	}
@@ -128,8 +128,8 @@ func (l Location) Longitude() float64 {
 	return l.LocLng
 }
 
-func (l Location) Title() string {
-	return l.LocTitle
+func (l Location) Name() string {
+	return l.LocName
 }
 
 func (l Location) City() string {
@@ -152,14 +152,14 @@ func (l Location) Source() string {
 	return l.LocSource
 }
 
-func (l Location) Region() string {
-	return l.LocDescription
+func (l Location) Place() string {
+	return l.LocPlace
 }
 
 func (l Location) CountryCode() string {
-	return l.CountryID
+	return l.LocCountry
 }
 
 func (l Location) CountryName() string {
-	return CountryNames[l.CountryID]
+	return CountryNames[l.LocCountry]
 }

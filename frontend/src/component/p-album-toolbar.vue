@@ -1,19 +1,9 @@
 <template>
     <v-form lazy-validation dense
-            ref="form" autocomplete="off" class="p-photo-search p-album-photo-search" accept-charset="UTF-8"
+            ref="form" autocomplete="off" class="p-photo-search p-album-toolbar" accept-charset="UTF-8"
             @submit.prevent="filterChange">
         <v-toolbar flat color="secondary">
-            <v-text-field class="pt-3 pr-3 p-search-field"
-                          browser-autocomplete="off"
-                          single-line
-                          :label="labels.search"
-                          prepend-inner-icon="search"
-                          clearable
-                          color="secondary-dark"
-                          @click:clear="clearQuery"
-                          v-model="filter.q"
-                          @keyup.enter.native="filterChange"
-            ></v-text-field>
+            <v-toolbar-title>{{ album.AlbumName }}</v-toolbar-title>
 
             <v-spacer></v-spacer>
 
@@ -48,6 +38,19 @@
                 v-show="searchExpanded">
             <v-card-text>
                 <v-layout row wrap>
+                    <v-flex xs12 pt-2 pl-2 pr-2 pb-0>
+                        <v-text-field flat solo
+                                      browser-autocomplete="off"
+                                      single-line
+                                      :label="labels.search"
+                                      prepend-inner-icon="search"
+                                      clearable
+                                      color="secondary-dark"
+                                      @click:clear="clearQuery"
+                                      v-model="filter.q"
+                                      @keyup.enter.native="filterChange"
+                        ></v-text-field>
+                    </v-flex>
                     <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
                         <v-select @change="dropdownChange"
                                   :label="labels.country"
@@ -96,8 +99,9 @@
 </template>
 <script>
     export default {
-        name: 'p-album-photo-search',
+        name: 'p-album-toolbar',
         props: {
+            album: Object,
             filter: Object,
             settings: Object,
             refresh: Function,

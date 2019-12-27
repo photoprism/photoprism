@@ -16,7 +16,7 @@ require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.3.0
 	github.com/go-errors/errors v1.0.1 // indirect
-	github.com/golang/geo v0.0.0-20190507233405-a0e886e97a51 // indirect
+	github.com/golang/geo v0.0.0-20190916061304-5b978397cfec
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
@@ -60,7 +60,7 @@ require (
 	github.com/stretchr/testify v1.4.0
 	github.com/tensorflow/tensorflow v1.14.0
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6 // indirect
-	github.com/twinj/uuid v1.0.0 // indirect
+	github.com/twinj/uuid v1.0.0
 	github.com/uber-go/atomic v1.3.2 // indirect
 	github.com/uber/jaeger-client-go v2.15.0+incompatible // indirect
 	github.com/uber/jaeger-lib v1.5.0 // indirect

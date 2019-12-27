@@ -39,7 +39,7 @@ export default [
     },
     {
         name: "album",
-        path: "/albums/:uuid/:slug",
+        path: "/albums/:uuid",
         component: AlbumPhotos,
         meta: {title: ""},
     },

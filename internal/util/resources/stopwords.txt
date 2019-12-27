@@ -1,3 +1,8 @@
+img
+src
+photo
+image
+file
 'll
 'tis
 'twas

@@ -3,26 +3,24 @@ package entity
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/util"
 )
 
 // An image or sidecar file that belongs to a photo
 type File struct {
-	Model
-	CreatedIn        int64
-	UpdatedIn        int64
+	ID               uint `gorm:"primary_key"`
 	Photo            *Photo
 	PhotoID          uint   `gorm:"index;"`
-	PhotoUUID        string `gorm:"index;"`
-	FileUUID         string `gorm:"unique_index;"`
-	FileName         string `gorm:"type:varchar(512);unique_index"` // max 3072 bytes / 4 bytes for utf8mb4 = 768 chars
-	FileHash         string `gorm:"type:varchar(128);unique_index"`
+	PhotoUUID        string `gorm:"type:varbinary(36);index;"`
+	FileUUID         string `gorm:"type:varbinary(36);unique_index;"`
+	FileName         string `gorm:"type:varbinary(600);unique_index"`
+	FileHash         string `gorm:"type:varbinary(128);unique_index"`
 	FileOriginalName string
-	FileType         string `gorm:"type:varchar(32)"`
-	FileMime         string `gorm:"type:varchar(64)"`
+	FileType         string `gorm:"type:varbinary(32)"`
+	FileMime         string `gorm:"type:varbinary(64)"`
 	FilePrimary      bool
 	FileSidecar      bool
 	FileVideo        bool
@@ -33,11 +31,16 @@ type File struct {
 	FileHeight       int
 	FileOrientation  int
 	FileAspectRatio  float64
-	FileMainColor    string `gorm:"type:varchar(32);index;"`
-	FileColors       string
-	FileLuminance    string
+	FileMainColor    string `gorm:"type:varbinary(16);index;"`
+	FileColors       string `gorm:"type:binary(9);"`
+	FileLuminance    string `gorm:"type:binary(9);"`
 	FileChroma       uint
 	FileNotes        string `gorm:"type:text"`
+	CreatedAt        time.Time
+	CreatedIn        int64
+	UpdatedAt        time.Time
+	UpdatedIn        int64
+	DeletedAt        *time.Time `sql:"index"`
 }
 
 func FindFileByHash(db *gorm.DB, fileHash string) (File, error) {
@@ -49,7 +52,7 @@ func FindFileByHash(db *gorm.DB, fileHash string) (File, error) {
 }
 
 func (m *File) BeforeCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("FileUUID", util.UUID())
+	return scope.SetColumn("FileUUID", ID('f'))
 }
 
 func (m *File) DownloadFileName() string {

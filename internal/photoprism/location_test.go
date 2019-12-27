@@ -8,7 +8,7 @@ import (
 )
 
 func TestMediaFile_Location(t *testing.T) {
-	t.Run("/iphone_7.heic", func(t *testing.T) {
+	t.Run("iphone_7.heic", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
@@ -32,7 +32,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "Japan", location.CountryName())
 		assert.Equal(t, "", location.Category())
 		assert.Equal(t, 34.79745, location.Latitude())
-		assert.Equal(t, "8Q6PQQW7+", location.ID)
+		assert.Equal(t, "3554df45d", location.ID)
 		location2, err := mediaFile.Location()
 
 		if err != nil {
@@ -46,7 +46,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "Himeji", location2.LocCity)
 		assert.Equal(t, "Kinki Region", location2.LocState)
 	})
-	t.Run("/cat_brown.jpg", func(t *testing.T) {
+	t.Run("cat_brown.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/cat_brown.jpg")
@@ -68,9 +68,9 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "de", location.CountryCode())
 		assert.Equal(t, "Germany", location.CountryName())
 		assert.Equal(t, 48.53870833333333, location.Latitude())
-		assert.Equal(t, "8FWFG2Q6+", location.ID)
+		assert.Equal(t, "4799e4a5b", location.ID)
 	})
-	t.Run("/dog_orange.jpg", func(t *testing.T) {
+	t.Run("dog_orange.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/dog_orange.jpg")

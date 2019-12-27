@@ -57,8 +57,8 @@ type PhotoResult struct {
 
 	// Location
 	LocationID        string
-	LocTitle          string
-	LocDescription    string
+	LocName           string
+	LocPlace          string
 	LocCity           string
 	LocSuburb         string
 	LocState          string
@@ -118,7 +118,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		files.file_orientation, files.file_main_color, files.file_colors, files.file_luminance, files.file_chroma,
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
-		locations.loc_title, locations.loc_description, locations.loc_city, locations.loc_suburb, locations.loc_state, 
+		locations.loc_name, locations.loc_place, locations.loc_city, locations.loc_suburb, locations.loc_state, 
 		locations.loc_category, locations.loc_source`).
 		Joins("JOIN files ON files.photo_id = photos.id AND files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").

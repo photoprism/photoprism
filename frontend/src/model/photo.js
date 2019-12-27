@@ -104,8 +104,8 @@ class Photo extends Abstract {
     }
 
     getLocation() {
-        if (this.LocDescription) {
-            return this.LocDescription;
+        if (this.LocPlace) {
+            return this.LocPlace;
         }
 
         return "Unknown";

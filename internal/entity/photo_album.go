@@ -8,8 +8,8 @@ import (
 
 // Photos can be added to multiple albums
 type PhotoAlbum struct {
-	PhotoUUID string `gorm:"primary_key;auto_increment:false"`
-	AlbumUUID string `gorm:"primary_key;auto_increment:false;index"`
+	PhotoUUID string `gorm:"type:varbinary(36);primary_key;auto_increment:false"`
+	AlbumUUID string `gorm:"type:varbinary(36);primary_key;auto_increment:false;index"`
 	Order     int
 	CreatedAt time.Time
 	UpdatedAt time.Time

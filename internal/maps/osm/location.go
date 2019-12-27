@@ -16,7 +16,7 @@ type Location struct {
 	PlaceID        int     `json:"place_id"`
 	LocLat         string  `json:"lat"`
 	LocLng         string  `json:"lon"`
-	LocTitle       string  `json:"name"`
+	LocName        string  `json:"name"`
 	LocCategory    string  `json:"category"`
 	LocType        string  `json:"type"`
 	LocDisplayName string  `json:"display_name"`
@@ -101,6 +101,11 @@ func (o Location) CountryCode() (result string) {
 }
 
 func (o Location) Latitude() (result float64) {
+	if o.LocLat == "" {
+		log.Warn("osm: no latitude")
+		return 0.0
+	}
+
 	result, err := strconv.ParseFloat(o.LocLat, 64)
 
 	if err != nil {
@@ -111,6 +116,11 @@ func (o Location) Latitude() (result float64) {
 }
 
 func (o Location) Longitude() (result float64) {
+	if o.LocLng == "" {
+		log.Warn("osm: no longitude")
+		return 0.0
+	}
+
 	result, err := strconv.ParseFloat(o.LocLng, 64)
 
 	if err != nil {

@@ -154,7 +154,7 @@
                     <v-list-tile-content>
                         <v-list-tile-title>
                             <translate>Places</translate>
-                            <span v-if="config.count.countries > 0" class="p-navigation-count">{{ config.count.countries }}</span>
+                            <span v-if="config.count.places > 0" class="p-navigation-count">{{ config.count.places }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>

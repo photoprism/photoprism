@@ -4,12 +4,11 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/util"
 )
 
 // Events
 type Event struct {
-	EventUUID        string `gorm:"primary_key;auto_increment:false"`
+	EventUUID        string `gorm:"type:varbinary(36);unique_index;"`
 	EventSlug        string
 	EventName        string
 	EventType        string
@@ -30,5 +29,5 @@ func (Event) TableName() string {
 }
 
 func (e *Event) BeforeCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("EventUUID", util.UUID())
+	return scope.SetColumn("EventUUID", ID('e'))
 }

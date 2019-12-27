@@ -10,11 +10,10 @@ import (
 
 // A photo can have multiple images and sidecar files
 type Photo struct {
-	Model
-	PhotoUUID         string `gorm:"unique_index;"`
-	PhotoToken        string `gorm:"type:varchar(64);"`
-	PhotoPath         string `gorm:"type:varchar(128);index;"`
-	PhotoName         string
+	ID                uint   `gorm:"primary_key"`
+	PhotoUUID         string `gorm:"type:varbinary(36);unique_index;"`
+	PhotoPath         string `gorm:"type:varbinary(400);index;"`
+	PhotoName         string `gorm:"type:varbinary(200);"`
 	PhotoTitle        string `json:"PhotoTitle"`
 	PhotoTitleChanged bool
 	PhotoDescription  string  `gorm:"type:text;"`
@@ -30,35 +29,34 @@ type Photo struct {
 	PhotoFocalLength  int
 	PhotoIso          int
 	PhotoFNumber      float64
-	PhotoExposure     string
+	PhotoExposure     string `gorm:"type:varbinary(16);"`
 	PhotoViews        uint
 	Camera            *Camera
 	CameraID          uint `gorm:"index;"`
 	Lens              *Lens
 	LensID            uint `gorm:"index;"`
 	Country           *Country
-	CountryID         string `gorm:"index;"`
+	CountryID         string `gorm:"type:binary(2);index;"`
 	CountryChanged    bool
 	Location          *Location
-	LocationID        string
+	LocationID        string `gorm:"type:varbinary(16);index;"`
 	LocationChanged   bool
 	LocationEstimated bool
 	TakenAt           time.Time `gorm:"type:datetime;index;"`
 	TakenAtLocal      time.Time `gorm:"type:datetime;"`
 	TakenAtChanged    bool
-	TimeZone          string
+	TimeZone          string `gorm:"type:varbinary(64);"`
 	Files             []File
 	Labels            []Label
 	Keywords          []Keyword
 	Albums            []Album
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
+	DeletedAt         *time.Time `sql:"index"`
 }
 
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
-	if err := scope.SetColumn("PhotoUUID", util.UUID()); err != nil {
-		return err
-	}
-
-	if err := scope.SetColumn("PhotoToken", util.RandomToken(4)); err != nil {
+	if err := scope.SetColumn("PhotoUUID", ID('p')); err != nil {
 		return err
 	}
 

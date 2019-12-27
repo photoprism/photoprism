@@ -2,8 +2,8 @@
     <div class="p-page p-page-album-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
          :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <p-album-search :settings="settings" :filter="filter" :filter-change="updateQuery"
-                              :refresh="refresh"></p-album-search>
+        <p-album-toolbar :album="model" :settings="settings" :filter="filter" :filter-change="updateQuery"
+                              :refresh="refresh"></p-album-toolbar>
 
         <v-container fluid class="pa-4" v-if="loading">
             <v-progress-linear color="secondary-dark"  :indeterminate="true"></v-progress-linear>
@@ -77,7 +77,7 @@
             const settings = {view: view};
 
             return {
-                model: new Album(),
+                model: new Album({AlbumName:""}),
                 uuid: uuid,
                 results: [],
                 scrollDisabled: true,

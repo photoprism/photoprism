@@ -2,16 +2,16 @@ package entity
 
 import (
 	"strings"
+	"time"
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/util"
 )
 
 // Labels for photo, album and location categorization
 type Label struct {
-	Model
-	LabelUUID        string `gorm:"unique_index;"`
+	ID               uint   `gorm:"primary_key"`
+	LabelUUID        string `gorm:"type:varbinary(36);unique_index;"`
 	LabelSlug        string `gorm:"type:varchar(128);index;"`
 	LabelName        string `gorm:"type:varchar(128);"`
 	LabelPriority    int
@@ -19,11 +19,14 @@ type Label struct {
 	LabelDescription string   `gorm:"type:text;"`
 	LabelNotes       string   `gorm:"type:text;"`
 	LabelCategories  []*Label `gorm:"many2many:categories;association_jointable_foreignkey:category_id"`
-	New              bool     `gorm:"-"`
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	DeletedAt        *time.Time `sql:"index"`
+	New              bool       `gorm:"-"`
 }
 
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
-	if err := scope.SetColumn("LabelUUID", util.UUID()); err != nil {
+	if err := scope.SetColumn("LabelUUID", ID('l')); err != nil {
 		log.Errorf("label: %s", err)
 		return err
 	}

@@ -1,13 +1,15 @@
 package entity
 
 import (
+	"time"
+
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 )
 
 // Camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
-	Model
+	ID              uint `gorm:"primary_key"`
 	LensSlug        string
 	LensModel       string
 	LensMake        string
@@ -15,6 +17,9 @@ type Lens struct {
 	LensOwner       string
 	LensDescription string `gorm:"type:text;"`
 	LensNotes       string `gorm:"type:text;"`
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	DeletedAt       *time.Time `sql:"index"`
 }
 
 func (Lens) TableName() string {
