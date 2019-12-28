@@ -201,12 +201,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "hide-nsfw",
-		Usage:  "run in read-only mode",
+		Usage:  "hide photos that may be offensive",
 		EnvVar: "PHOTOPRISM_HIDE_NSFW",
 	},
 	cli.BoolFlag{
 		Name:   "upload-nsfw",
-		Usage:  "run in read-only mode",
+		Usage:  "allow uploads that may contain offensive content",
 		EnvVar: "PHOTOPRISM_UPLOAD_NSFW",
 	},
 }
