@@ -1967,11 +1967,9 @@ boathouse:
     - water
 
 bobsled:
+  label: sports
   categories:
     - snow
-    - bob
-    - sports
-    - winter
 
 bookcase:
   categories:
@@ -2259,6 +2257,8 @@ forklift:
     - construction side
 
 fountain:
+  label: outdoor
+  threshold: 0.4
   categories:
     - water
 
@@ -2272,10 +2272,9 @@ four-poster:
     - furniture
 
 freight car:
+  label: vehicle
   catgories:
     - train
-    - vehicle
-    - road
 
 french horn:
   see: instrument
@@ -2462,9 +2461,9 @@ megalith:
     - stone
 
 microphone:
+  threshold: 0.6
   categories:
     - music
-    - singing
 
 microwave:
   categories:
@@ -2603,9 +2602,10 @@ paper towel:
   threshold: 0.2
 
 parachute:
+  label: sports
+  threshold: 0.3
   categories:
-    - flying
-    - sports
+    - outdoor
 
 car:
   label: car
@@ -2805,6 +2805,7 @@ schooner:
   see: ship
 
 screwdriver:
+  threshold: 0.5
   categories:
     - tool
 
@@ -3279,6 +3280,9 @@ red wine:
     - alcohol
 
 beverage:
+  label: beverage
+
+goblet:
   label: beverage
 
 espresso:
