@@ -253,9 +253,13 @@
             },
             yearOptions() {
                 let result = [{"year": 0, "label": "All Years"}];
-                for (let i = 0; i < this.config.years.length; i++) {
-                    result.push({"year": this.config.years[i], "label": this.config.years[i].toString()});
+
+                if (this.config.years) {
+                    for (let i = 0; i < this.config.years.length; i++) {
+                        result.push({"year": this.config.years[i], "label": this.config.years[i].toString()});
+                    }
                 }
+
                 return result;
             },
         },
