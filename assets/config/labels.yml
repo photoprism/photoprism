@@ -59,7 +59,6 @@ seashore:
   threshold: 0.3
   categories:
     - beach
-    - coast
     - water
 
 lakeside:
@@ -104,9 +103,7 @@ fashion:
   label: portrait
   threshold: 0.1
   categories:
-    - fashion
-    - person
-    - face
+    - people
 
 poncho:
   see: fashion
@@ -274,10 +271,8 @@ stingray:
   threshold: 0.2
   categories:
     - water
-    - sea
     - fish
     - animal
-    - ray
 
 cock:
   threshold: 0.2
@@ -731,7 +726,6 @@ wombat:
 jellyfish:
   categories:
     - water
-    - sea
     - animal
     - fish
 
@@ -1480,20 +1474,17 @@ starfish:
   threshold: 0.5
   categories:
     - water
-    - sea
     - animal
     - fish
 
 sea urchin:
   categories:
     - water
-    - sea
     - animal
 
 sea cucumber:
   categories:
     - water
-    - sea
     - animal
 
 rabbit:
@@ -1789,7 +1780,6 @@ fish:
   threshold: 0.2
   categories:
     - water
-    - sea
     - animal
 
 barracouta:
@@ -1903,7 +1893,7 @@ barbershop:
 
 barn:
   cateories:
-    - building
+    - architecture
 
 bassoon:
   label: entertainment
@@ -1926,7 +1916,6 @@ bathtub:
 
 beacon:
   categories:
-    - building
     - tower
     - architecture
 
@@ -1945,7 +1934,6 @@ beer glass:
 bell cote:
   label: church
   categories:
-    - building
     - architecture
 
 bicycle-built-for-two:
@@ -1956,13 +1944,12 @@ bicycle-built-for-two:
 
 birdhouse:
   categories:
-    - building
-    - house
+    - bird
+    - outdoor
 
 boathouse:
   categories:
-    - building
-    - house
+    - architecture
     - water
 
 bobsled:
@@ -2030,9 +2017,7 @@ car wheel:
 
 castle:
   categories:
-    - building
-    - old
-    - architecture
+    - historic
 
 catamaran:
   categories:
@@ -2169,7 +2154,6 @@ disk brake:
 dock:
   categories:
     - water
-    - sea
 
 dogsled:
   categories:
@@ -2389,7 +2373,6 @@ library:
 lifeboat:
   categories:
     - water
-    - sea
     - boat
 
 lighter:
@@ -2457,13 +2440,11 @@ microwave:
 minibus:
   label: bus
   categories:
-    - van
     - vehicle
 
 minivan:
   label: van
   categories:
-    - car
     - vehicle
 
 mixing bowl:
@@ -2511,7 +2492,6 @@ moving van:
   label: van
   categories:
     - vehicle
-    - bus
 
 notebook:
   label: computer
@@ -2548,7 +2528,6 @@ paddle:
 paddlewheel:
   categories:
     - water
-    - sea
 
 padlock:
   label: tool
@@ -2565,7 +2544,7 @@ paintbrush:
 palace:
   label: historic architecture
   categories:
-    - building
+    - historic
 
 panpipe:
   label: goods
@@ -2657,7 +2636,6 @@ police van:
   label: van
   categories:
     - vehicle
-    - bus
 
 pool table:
   categories:
@@ -2699,8 +2677,6 @@ punching bag:
 recreational vehicle:
   label: camper
   categories:
-    - bus
-    - van
     - vehicle
 
 reflex camera:
@@ -2806,7 +2782,6 @@ snorkel:
   categories:
     - swimming
     - water
-    - sea
 
 snowmobile:
   categories:
@@ -2841,7 +2816,6 @@ spatula:
 speedboat:
   categories:
     - water
-    - sea
     - boat
 
 sports car:
@@ -2885,7 +2859,6 @@ studio couch:
 submarine:
   categories:
     - water
-    - sea
     - boat
 
 suspension bridge:
@@ -2939,7 +2912,6 @@ trimaran:
   categories:
     - boat
     - water
-    - sea
 
 triumphal arch:
   categories:
@@ -2949,7 +2921,6 @@ triumphal arch:
 trolleybus:
   label: bus
   categories:
-    - van
     - vehicle
 
 trombone:
@@ -3022,10 +2993,8 @@ wreck:
 
 yawl:
   categories:
-    - ship
     - boat
     - water
-    - sea
     - vehicle
 
 yurt:
@@ -3347,7 +3316,6 @@ tile roof:
   label: building
   categories:
     - architecture
-    - house
 
 croquet ball:
   label: pumpkin
@@ -3463,8 +3431,6 @@ band aid:
 portrait:
   label: portrait
   categories:
-    - person
-    - face
     - people
 
 oxygen mask:
@@ -3480,8 +3446,6 @@ heritage:
   label: portrait
   categories:
     - people
-    - person
-    - face
 
 safety pin:
   priority: -1
@@ -3500,10 +3464,7 @@ vestment:
 bassinet:
   label: baby
   categories:
-    - person
-    - child
-    - portrait
-    - face
+    - people
 
 patio:
   label: building

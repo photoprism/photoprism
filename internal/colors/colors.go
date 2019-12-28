@@ -61,17 +61,17 @@ var All = Colors{
 	Cyan,
 	Blue,
 	Purple,
-	Brown,
 	White,
 	Grey,
 	Black,
+	Brown,
 }
 
 var Names = map[Color]string{
 	Black:   "dark",    // 0
 	Brown:   "brown",   // 1
 	Grey:    "grey",    // 2
-	White:   "bright",  // 3
+	White:   "white",   // 3
 	Purple:  "purple",  // 4
 	Gold:    "gold",    // 5
 	Blue:    "blue",    // 6

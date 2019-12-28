@@ -35,8 +35,11 @@ type PhotoSearch struct {
 	Album       string    `form:"album"`
 	Label       string    `form:"label"`
 	Country     string    `form:"country"`
+	Year        uint      `form:"year"`
+	Month       uint      `form:"month"`
 	Color       string    `form:"color"`
 	Camera      int       `form:"camera"`
+	Lens        int       `form:"lens"`
 	Before      time.Time `form:"before" time_format:"2006-01-02"`
 	After       time.Time `form:"after" time_format:"2006-01-02"`
 	Favorites   bool      `form:"favorites"`

@@ -50,8 +50,14 @@
                 this.filter.q = query['q'] ? query['q'] : '';
                 this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
                 this.filter.country = query['country'] ? query['country'] : '';
-                this.filter.before = query['before'] ? query['before'] : '';
-                this.filter.after = query['after'] ? query['after'] : '';
+                this.filter.lens = query['lens'] ? parseInt(query['lens']) : 0;
+                this.filter.year = query['year'] ? parseInt(query['year']) : 0;
+                this.filter.color = query['color'] ? query['color'] : '';
+                this.filter.label = query['label'] ? query['label'] : '';
+
+                // this.filter.before = query['before'] ? query['before'] : '';
+                // this.filter.after = query['after'] ? query['after'] : '';
+
                 this.settings.view = this.viewType();
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
@@ -64,11 +70,28 @@
             const order = query['order'] ? query['order'] : 'imported';
             const camera = query['camera'] ? parseInt(query['camera']) : 0;
             const q = query['q'] ? query['q'] : '';
-            const before = query['before'] ? query['before'] : '';
-            const after = query['after'] ? query['after'] : '';
+
+            // const before = query['before'] ? query['before'] : '';
+            // const after = query['after'] ? query['after'] : '';
+
             const country = query['country'] ? query['country'] : '';
+            const lens = query['lens'] ? parseInt(query['lens']) : 0;
+            const year = query['year'] ? parseInt(query['year']) : 0;
+            const color = query['color'] ? query['color'] : '';
+            const label = query['label'] ? query['label'] : '';
             const view = this.viewType();
-            const filter = {country: country, camera: camera, order: order, q: q, before: before, after: after};
+            const filter = {
+                country: country,
+                camera: camera,
+                lens: lens,
+                label: label,
+                year: year,
+                color: color,
+                order: order,
+                q: q,
+                /* before: before,
+                after: after, */
+            };
             const settings = {view: view};
 
             return {

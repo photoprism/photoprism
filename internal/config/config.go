@@ -652,7 +652,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		Limit(20).Order("album_name").
 		Find(&albums)
 
-	var years []string
+	var years []int
 
 	db.Table("photos").
 		Order("photo_year DESC").

@@ -193,6 +193,18 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		q = q.Where("photos.camera_id = ?", f.Camera)
 	}
 
+	if f.Lens > 0 {
+		q = q.Where("photos.lens_id = ?", f.Lens)
+	}
+
+	if f.Year > 0 {
+		q = q.Where("photos.photo_year = ?", f.Year)
+	}
+
+	if f.Month > 0 {
+		q = q.Where("photos.photo_month = ?", f.Month)
+	}
+
 	if f.Color != "" {
 		q = q.Where("files.file_main_color = ?", strings.ToLower(f.Color))
 	}
