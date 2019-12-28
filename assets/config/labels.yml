@@ -609,11 +609,11 @@ ruffed grouse:
     - bird
 
 prairie chicken:
+  label: chicken
   threshold: 0.3
   categories:
     - animal
     - bird
-    - chicken
 
 peacock:
   threshold: 0.3
@@ -1934,7 +1934,7 @@ beer:
   label: beer
   categories:
     - beverage
-    - alcohol
+    - drinks
 
 beer bottle:
   see: beer
@@ -1945,7 +1945,8 @@ beer glass:
 bell cote:
   label: church
   categories:
-    - bell
+    - building
+    - architecture
 
 bicycle-built-for-two:
   categories:
@@ -1983,7 +1984,6 @@ tobacco shop:
 breakwater:
   categories:
     - water
-    - see
 
 bullet train:
   label: train
@@ -2055,20 +2055,19 @@ chiffonier:
   label: furniture
   categories:
     - indoor
-    - cupboard
 
 chime:
   see: instrument
 
 china cabinet:
+  label: furniture
   categories:
-    - furniture
-    - cupboard
+    - indoor
 
 church:
   categories:
     - building
-    - religion
+    - architecture
 
 cleaver:
   categories:
@@ -2086,7 +2085,7 @@ clog:
 cocktail shaker:
   categories:
     - beverage
-    - alcohol
+    - drinks
 
 coffee mug:
   categories:
@@ -2103,8 +2102,6 @@ computer keyboard:
   label: keyboard
   categories:
     - computer
-    - laptop
-    - notebook
 
 confectionery:
   label: shop
@@ -2245,10 +2242,7 @@ folding chair:
     - chair
 
 football helmet:
-  categories:
-    - fottball
-    - sports
-    - helmet
+  label: sports
 
 forklift:
   categories:
@@ -2325,8 +2319,6 @@ hammer:
 hand-held computer:
   label: computer
   categories:
-    - laptop
-    - notebook
     - office
 
 harmonica:
@@ -2356,11 +2348,8 @@ television:
   threshold: 0.3
 
 honeycomb:
-  priority: -1
+  priority: -2
   threshold: 0.6
-  categories:
-    - honey
-    - bee
 
 jack-o'-lantern:
   categories:
@@ -2383,9 +2372,6 @@ lampshade:
 
 laptop:
   label: computer
-  categories:
-    - notebook
-    - laptop
 
 lawn mower:
   categories:
@@ -2502,16 +2488,12 @@ monastery:
 monitor:
   label: screen
   categories:
-    - display
     - computer
 
 mosque:
   label: tower
   categories:
     - building
-    - church
-    - mosque
-    - chapel
     - architecture
 
 mountain bike:
@@ -2533,9 +2515,6 @@ moving van:
 
 notebook:
   label: computer
-  categories:
-    - laptop
-    - notebook
 
 obelisk:
   label: tower
@@ -2587,7 +2566,6 @@ palace:
   label: historic architecture
   categories:
     - building
-    - house
 
 panpipe:
   label: goods
@@ -2628,9 +2606,6 @@ pay-phone:
 
 petri dish:
   label: dish
-  categories:
-    - cup
-    - bowl
 
 photocopier:
   categories:
@@ -2697,7 +2672,6 @@ pot:
   label: plant
   categories:
     - nature
-    - weed
 
 power drill:
   categories:
@@ -2717,6 +2691,7 @@ printer:
 prison:
   categories:
     - building
+    - architecture
 
 punching bag:
   label: sports
@@ -3028,7 +3003,7 @@ wine bottle:
   label: wine
   categories:
     - beverage
-    - alcohol
+    - drinks
 
 wok:
   categories:
@@ -3144,7 +3119,7 @@ cauliflower:
 zucchini:
   categories:
     - food
-    - vegetable
+    - vegetables
 
 spaghetti squash:
   label: food
@@ -3263,7 +3238,7 @@ red wine:
   categories:
     - wine
     - beverage
-    - alcohol
+    - drinks
 
 beverage:
   label: beverage
@@ -3312,9 +3287,7 @@ yellow lady's slipper:
 corn:
   label: food
   categories:
-    - corn
-    - lunch
-    - vegetable
+    - vegetables
 
 acorn:
   categories:
@@ -3379,18 +3352,11 @@ tile roof:
 croquet ball:
   label: pumpkin
   categories:
-    - ball
     - round
-    - sphere
 
 ball:
+  label: sports
   priority: -1
-  categories:
-    - ball
-    - round
-    - sphere
-    - sports
-    - game
 
 baseball:
   see: ball
