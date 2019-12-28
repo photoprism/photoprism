@@ -22,15 +22,15 @@
                           :selection="selection"
                           :open-photo="openPhoto"
                           :open-location="openLocation"></p-photo-list>
-            <p-photo-details v-else-if="settings.view === 'details'"
+            <p-photo-details v-else
                              :photos="results"
                              :selection="selection"
                              :open-photo="openPhoto"
                              :open-location="openLocation"></p-photo-details>
-            <p-photo-tiles v-else
+            <!-- p-photo-tiles v-else
                            :photos="results"
                            :selection="selection"
-                           :open-photo="openPhoto"></p-photo-tiles>
+                           :open-photo="openPhoto"></p-photo-tiles -->
         </v-container>
     </div>
 </template>
@@ -96,11 +96,9 @@
                     return storedType;
                 } else if (window.innerWidth < 960) {
                     return 'mosaic';
-                } else if (window.innerWidth > 1600) {
-                    return 'details';
                 }
 
-                return 'tiles';
+                return 'details';
             },
             openLocation(index) {
                 const photo = this.results[index];

@@ -21,20 +21,18 @@
                 <v-icon>refresh</v-icon>
             </v-btn>
 
-            <v-btn icon v-if="settings.view === 'tiles'" @click.stop="setView('details')">
+            <!-- v-btn icon v-if="settings.view === 'tiles'" @click.stop="setView('details')">
                 <v-icon>view_column</v-icon>
-            </v-btn>
+            </v-btn -->
 
             <v-btn icon v-if="settings.view === 'details'" @click.stop="setView('list')">
                 <v-icon>view_list</v-icon>
             </v-btn>
-
-            <v-btn icon v-if="settings.view === 'list'" @click.stop="setView('mosaic')">
+            <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')">
                 <v-icon>view_comfy</v-icon>
             </v-btn>
-
-            <v-btn icon v-if="settings.view === 'mosaic'" @click.stop="setView('tiles')">
-                <v-icon>view_module</v-icon>
+            <v-btn icon v-else @click.stop="setView('details')">
+                <v-icon>view_column</v-icon>
             </v-btn>
 
             <v-btn icon @click.stop="searchExpanded = !searchExpanded" class="p-expand-search">
@@ -164,7 +162,7 @@
                 searchExpanded: false,
                 options: {
                     'views': [
-                        {value: 'tiles', text: this.$gettext('Tiles')},
+                        // {value: 'tiles', text: this.$gettext('Tiles')},
                         {value: 'mosaic', text: this.$gettext('Mosaic')},
                         {value: 'details', text: this.$gettext('Details')},
                         {value: 'list', text: this.$gettext('List')},
