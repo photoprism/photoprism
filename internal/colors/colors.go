@@ -156,22 +156,22 @@ func (m LightMap) Hex() (result string) {
 }
 
 var ColorExamples = map[Color]string{
-	Red: "#E57373",
+	Red:     "#E57373",
 	Magenta: "#FF00FF",
-	Pink: "#F06292",
-	Orange: "#FFB74D",
-	Brown: "#A1887F",
-	Gold: "#FFD54F",
-	Yellow: "#FFF176",
-	Lime: "#DCE775",
-	Green: "#81C784",
-	Teal: "#4DB6AC",
-	Cyan: "#4DD0E1",
-	Blue: "#64B5F6",
-	Purple: "#BA68C8",
-	White: "#F5F5F5",
-	Grey: "#BDBDBD",
-	Black: "#333333",
+	Pink:    "#F06292",
+	Orange:  "#FFB74D",
+	Brown:   "#A1887F",
+	Gold:    "#FFD54F",
+	Yellow:  "#FFF176",
+	Lime:    "#DCE775",
+	Green:   "#81C784",
+	Teal:    "#4DB6AC",
+	Cyan:    "#4DD0E1",
+	Blue:    "#64B5F6",
+	Purple:  "#BA68C8",
+	White:   "#F5F5F5",
+	Grey:    "#BDBDBD",
+	Black:   "#333333",
 }
 
 var ColorMap = map[color.RGBA]Color{

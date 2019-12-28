@@ -5,14 +5,12 @@ import (
 )
 
 type CategoryLabel struct {
-	Name string
+	Name  string
 	Title string
 }
 
 func (s *Repo) CategoryLabels(limit, offset int) (results []CategoryLabel) {
 	q := s.db.NewScope(nil).DB()
-
-	// q.LogMode(true)
 
 	q = q.Table("categories").
 		Select("label_name AS name").

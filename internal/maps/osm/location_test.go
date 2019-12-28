@@ -86,6 +86,7 @@ func TestOSM_State(t *testing.T) {
 		assert.Equal(t, "Berlin", l.State())
 	})
 }
+
 /*
 func TestOSM_City(t *testing.T) {
 	t.Run("Berlin", func(t *testing.T) {

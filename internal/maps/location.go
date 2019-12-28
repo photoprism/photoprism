@@ -19,8 +19,7 @@ import (
         HAVING photo_count > 10)
 ORDER BY loc_country, album_name, taken_year;
 
- */
-
+*/
 
 // Photo location
 type Location struct {

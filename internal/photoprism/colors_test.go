@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/colors"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
-	"github.com/photoprism/photoprism/internal/colors"
 )
 
 func TestMediaFile_Colors_Testdata(t *testing.T) {
