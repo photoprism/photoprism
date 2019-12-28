@@ -2719,9 +2719,7 @@ prison:
     - building
 
 punching bag:
-  categories:
-    - boxing
-    - sports
+  label: sports
 
 recreational vehicle:
   label: camper
