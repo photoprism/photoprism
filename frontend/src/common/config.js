@@ -60,6 +60,9 @@ class Config {
         case "countries":
             this.values.count.countries += data.count;
             break;
+        case "places":
+            this.values.count.places += data.count;
+            break;
         case "labels":
             this.values.count.labels += data.count;
             break;

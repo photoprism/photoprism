@@ -251,4 +251,5 @@ var CountryNames = map[string]string{
 	"ye": "Yemen",
 	"zm": "Zambia",
 	"zw": "Zimbabwe",
+	"zz": "Unknown",
 }

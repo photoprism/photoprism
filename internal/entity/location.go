@@ -12,18 +12,14 @@ import (
 // Photo location
 type Location struct {
 	ID          uint64 `gorm:"type:BIGINT;primary_key;auto_increment:false;"`
+	PlaceID     uint64 `gorm:"type:BIGINT;"`
+	Place       *Place
 	LocLat      float64
 	LocLng      float64
 	LocName     string `gorm:"type:varchar(100);"`
 	LocCategory string `gorm:"type:varchar(50);"`
 	LocSuburb   string `gorm:"type:varchar(100);"`
-	LocPlace    string `gorm:"type:varbinary(500);index;"`
-	LocCity     string `gorm:"type:varchar(100);"`
-	LocState    string `gorm:"type:varchar(100);"`
-	LocCountry  string `gorm:"type:binary(2);"`
 	LocSource   string `gorm:"type:varbinary(16);"`
-	LocNotes    string `gorm:"type:text;"`
-	LocFavorite bool
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -40,6 +36,7 @@ func NewLocation(lat, lng float64) *Location {
 
 func (m *Location) Find(db *gorm.DB) error {
 	if err := db.First(m, "id = ?", m.ID).Error; err == nil {
+		m.Place = FindPlace(m.PlaceID, db)
 		return nil
 	}
 
@@ -53,13 +50,19 @@ func (m *Location) Find(db *gorm.DB) error {
 		return err
 	}
 
+	m.Place = FindPlaceByLabel(l.ID, l.LocLabel, db)
+
+	if m.Place.NoID() {
+		m.Place.ID = l.ID
+		m.Place.LocLabel = l.LocLabel
+		m.Place.LocCity = l.LocCity
+		m.Place.LocState = l.LocState
+		m.Place.LocCountry = l.LocCountry
+	}
+
 	m.LocName = l.LocName
 	m.LocCategory = l.LocCategory
 	m.LocSuburb = l.LocSuburb
-	m.LocPlace = l.LocPlace
-	m.LocCity = l.LocCity
-	m.LocState = l.LocState
-	m.LocCountry = l.LocCountry
 	m.LocSource = l.LocSource
 
 	if err := db.Create(m).Error; err != nil {
@@ -72,16 +75,16 @@ func (m *Location) Find(db *gorm.DB) error {
 
 func (m *Location) Keywords() []string {
 	result := []string{
-		strings.ToLower(m.LocCity),
-		strings.ToLower(m.LocSuburb),
-		strings.ToLower(m.LocState),
+		strings.ToLower(m.City()),
+		strings.ToLower(m.Suburb()),
+		strings.ToLower(m.State()),
 		strings.ToLower(m.CountryName()),
-		strings.ToLower(m.LocCategory),
+		strings.ToLower(m.Category()),
 	}
 
-	result = append(result, util.Keywords(m.LocName)...)
-	result = append(result, util.Keywords(m.LocPlace)...)
-	result = append(result, util.Keywords(m.LocNotes)...)
+	result = append(result, util.Keywords(m.Name())...)
+	result = append(result, util.Keywords(m.Label())...)
+	result = append(result, util.Keywords(m.Notes())...)
 
 	return result
 }
@@ -102,32 +105,64 @@ func (m *Location) Name() string {
 	return m.LocName
 }
 
+func (m *Location) NoName() bool {
+	return m.LocName == ""
+}
+
 func (m *Location) Category() string {
 	return m.LocCategory
+}
+
+func (m *Location) NoCategory() bool {
+	return m.LocCategory == ""
 }
 
 func (m *Location) Suburb() string {
 	return m.LocSuburb
 }
 
-func (m *Location) Place() string {
-	return m.LocPlace
+func (m *Location) NoSuburb() bool {
+	return m.LocSuburb == ""
+}
+
+func (m *Location) Label() string {
+	return m.Place.Label()
 }
 
 func (m *Location) City() string {
-	return m.LocCity
+	return m.Place.City()
+}
+
+func (m *Location) LongCity() bool {
+	return len(m.City()) > 16
+}
+
+func (m *Location) NoCity() bool {
+	return m.City() == ""
+}
+
+func (m *Location) CityContains(text string) bool {
+	return strings.Contains(text, m.City())
 }
 
 func (m *Location) State() string {
-	return m.LocState
+	return m.Place.State()
+}
+
+func (m *Location) NoState() bool {
+	return m.Place.State() == ""
 }
 
 func (m *Location) CountryCode() string {
-	return m.LocCountry
+	return m.Place.CountryCode()
 }
 
 func (m *Location) CountryName() string {
-	return maps.CountryNames[m.LocCountry]
+	return m.Place.CountryName()
+}
+
+func (m *Location) Notes() string {
+	return m.Place.Notes()
 }
 
 func (m *Location) Source() string {

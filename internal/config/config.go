@@ -6,12 +6,14 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	gc "github.com/patrickmn/go-cache"
+	"github.com/photoprism/photoprism/internal/colors"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/tidb"
@@ -549,6 +551,7 @@ func (c *Config) MigrateDb() {
 		&entity.File{},
 		&entity.Photo{},
 		&entity.Event{},
+		&entity.Place{},
 		&entity.Location{},
 		&entity.Camera{},
 		&entity.Lens{},
@@ -563,6 +566,9 @@ func (c *Config) MigrateDb() {
 		&entity.Keyword{},
 		&entity.PhotoKeyword{},
 	)
+
+	entity.CreateUnknownPlace(db)
+	entity.CreateUnknownCountry(db)
 }
 
 // ClientConfig returns a loaded and set configuration entity.
@@ -570,6 +576,7 @@ func (c *Config) ClientConfig() ClientConfig {
 	db := c.Db()
 
 	var cameras []*entity.Camera
+	var lenses []*entity.Lens
 	var albums []*entity.Album
 
 	var position struct {
@@ -614,11 +621,11 @@ func (c *Config) ClientConfig() ClientConfig {
 		Take(&count)
 
 	db.Table("countries").
-		Select("COUNT(*) AS countries").
+		Select("(COUNT(*) - 1) AS countries").
 		Take(&count)
 
-	db.Table("locations").
-		Select("COUNT(DISTINCT loc_place) AS places").
+	db.Table("places").
+		Select("(COUNT(*) - 1) AS places").
 		Take(&count)
 
 	type country struct {
@@ -637,9 +644,38 @@ func (c *Config) ClientConfig() ClientConfig {
 		Limit(1000).Order("camera_model").
 		Find(&cameras)
 
+	db.Where("deleted_at IS NULL").
+		Limit(1000).Order("lens_model").
+		Find(&lenses)
+
 	db.Where("deleted_at IS NULL AND album_favorite = 1").
 		Limit(20).Order("album_name").
 		Find(&albums)
+
+	var years []string
+
+	db.Table("photos").
+		Order("photo_year DESC").
+		Pluck("DISTINCT photo_year", &years)
+
+	type CategoryLabel struct {
+		LabelName string
+		Title     string
+	}
+
+	var categories []CategoryLabel
+
+	db.Table("categories").
+		Select("l.label_name").
+		Joins("JOIN labels l ON categories.category_id = l.id").
+		Group("l.label_name").
+		Order("l.label_name").
+		Limit(1000).Offset(0).
+		Scan(&categories)
+
+	for i, l := range categories {
+		categories[i].Title = strings.Title(l.LabelName)
+	}
 
 	jsHash := util.Hash(c.HttpStaticBuildPath() + "/app.js")
 	cssHash := util.Hash(c.HttpStaticBuildPath() + "/app.css")
@@ -660,6 +696,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		"public":      c.Public(),
 		"albums":      albums,
 		"cameras":     cameras,
+		"lenses":      lenses,
 		"countries":   countries,
 		"thumbnails":  Thumbnails,
 		"jsHash":      jsHash,
@@ -667,6 +704,9 @@ func (c *Config) ClientConfig() ClientConfig {
 		"settings":    c.Settings(),
 		"count":       count,
 		"pos":         position,
+		"years":       years,
+		"colors":      colors.All.List(),
+		"categories":  categories,
 	}
 
 	return result

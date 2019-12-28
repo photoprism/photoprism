@@ -158,6 +158,9 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 		}
 	}
 
+	photo.PhotoYear = photo.TakenAt.Year()
+	photo.PhotoMonth = int(photo.TakenAt.Month())
+
 	if photoExists {
 		// Estimate location
 		if o.UpdateLocation && photo.NoLocation() {
@@ -369,21 +372,27 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 			return keywords, labels
 		}
 
+		if location.Place.New {
+			event.Publish("count.places", event.Data{
+				"count": 1,
+			})
+		}
+
 		photo.Location = location
 		photo.LocationID = location.ID
+		photo.Place = location.Place
+		photo.PlaceID = location.PlaceID
 		photo.LocationEstimated = false
 
-		photo.Country = entity.NewCountry(location.CountryCode(), location.CountryName()).FirstOrCreate(i.db)
+		country := entity.NewCountry(location.CountryCode(), location.CountryName()).FirstOrCreate(i.db)
 
-		if photo.Country.New {
+		if country.New {
 			event.Publish("count.countries", event.Data{
 				"count": 1,
 			})
 		}
 
-		countryName := photo.Country.CountryName
 		locCategory := location.Category()
-
 		keywords = append(keywords, location.Keywords()...)
 
 		// Append category from reverse location lookup
@@ -395,10 +404,10 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 		if (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false {
 			if title := labels.Title(location.Name()); title != "" { // TODO: User defined title format
 				log.Infof("index: using label \"%s\" to create photo title", title)
-				if location.LocCity == "" || len(location.LocCity) > 16 || strings.Contains(title, location.LocCity) {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), countryName, photo.TakenAt.Format("2006"))
+				if location.NoCity() || location.LongCity() || location.CityContains(title) {
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), location.CountryName(), photo.TakenAt.Format("2006"))
 				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), location.LocCity, photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), location.City(), photo.TakenAt.Format("2006"))
 				}
 			} else if location.Name() != "" && location.City() != "" {
 				if len(location.Name()) > 45 {
@@ -406,13 +415,13 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 				} else if len(location.Name()) > 20 || len(location.City()) > 16 || strings.Contains(location.Name(), location.City()) {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s", location.Name(), photo.TakenAt.Format("2006"))
 				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.Name(), location.LocCity, photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.Name(), location.City(), photo.TakenAt.Format("2006"))
 				}
-			} else if location.City() != "" && countryName != "" {
+			} else if location.City() != "" && location.CountryName() != "" {
 				if len(location.City()) > 20 {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s", location.LocCity, photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s", location.City(), photo.TakenAt.Format("2006"))
 				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.LocCity, countryName, photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", location.City(), location.CountryName(), photo.TakenAt.Format("2006"))
 				}
 			}
 
@@ -424,7 +433,11 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 		}
 	} else {
 		log.Debugf("index: location cannot be determined precisely (%s)", err.Error())
+		photo.Place = entity.UnknownPlace
+		photo.PlaceID = entity.UnknownPlace.ID
 	}
+
+	photo.PhotoCountry = photo.Place.LocCountry
 
 	return keywords, labels
 }
@@ -432,11 +445,12 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 func (i *Indexer) estimateLocation(photo *entity.Photo) {
 	var recentPhoto entity.Photo
 
-	if result := i.db.Unscoped().Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", photo.TakenAt)).Preload("Country").First(&recentPhoto); result.Error == nil {
-		if recentPhoto.Country != nil {
-			photo.Country = recentPhoto.Country
+	if result := i.db.Unscoped().Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", photo.TakenAt)).Preload("Place").First(&recentPhoto); result.Error == nil {
+		if recentPhoto.HasPlace() {
+			photo.Place = recentPhoto.Place
+			photo.PhotoCountry = photo.Place.LocCountry
 			photo.LocationEstimated = true
-			log.Debugf("index: approximate location is \"%s\"", recentPhoto.Country.CountryName)
+			log.Debugf("index: approximate location is \"%s\"", recentPhoto.Place.Label())
 		}
 	}
 }

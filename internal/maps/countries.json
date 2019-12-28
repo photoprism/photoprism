@@ -994,5 +994,9 @@
   {
     "Code": "ZW",
     "Name": "Zimbabwe"
+  },
+  {
+    "Code": "ZZ",
+    "Name": "Unknown"
   }
 ]

@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/maps"
 )
 
 var altCountryNames = map[string]string{
@@ -20,6 +21,12 @@ type Country struct {
 	CountryPhoto       *Photo
 	CountryPhotoID     uint
 	New                bool `gorm:"-"`
+}
+
+var UnknownCountry = NewCountry("zz", maps.CountryNames["zz"])
+
+func CreateUnknownCountry(db *gorm.DB) {
+	UnknownCountry.FirstOrCreate(db)
 }
 
 // Create a new country
@@ -53,4 +60,12 @@ func (m *Country) FirstOrCreate(db *gorm.DB) *Country {
 
 func (m *Country) AfterCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("New", true)
+}
+
+func (m *Country) Code() string {
+	return m.ID
+}
+
+func (m *Country) Name() string {
+	return m.CountryName
 }

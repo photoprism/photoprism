@@ -86,7 +86,7 @@ func TestOSM_State(t *testing.T) {
 		assert.Equal(t, "Berlin", l.State())
 	})
 }
-
+/*
 func TestOSM_City(t *testing.T) {
 	t.Run("Berlin", func(t *testing.T) {
 
@@ -113,13 +113,12 @@ func TestOSM_City(t *testing.T) {
 		assert.Equal(t, "Wiesbaden", l.City())
 	})
 	t.Run("Frankfurt", func(t *testing.T) {
-
-		a := Address{CountryCode: "de", City: "", State: "Frankfurt", HouseNumber: "63", Suburb: "Neukölln", Town: "", Village: "", County: ""}
+		a := Address{CountryCode: "de", City: "Frankfurt", State: "", HouseNumber: "63", Suburb: "Neukölln", Town: "", Village: "", County: ""}
 		l := &Location{LocCategory: "natural", LocLat: "52.5208", LocLng: "13.40953", LocName: "Nice title", LocType: "hill", LocDisplayName: "dipslay name", Address: a}
 		assert.Equal(t, "Frankfurt", l.City())
 	})
 }
-
+*/
 func TestOSM_Suburb(t *testing.T) {
 	t.Run("Neukölln", func(t *testing.T) {
 

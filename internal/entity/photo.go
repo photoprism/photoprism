@@ -32,16 +32,19 @@ type Photo struct {
 	PhotoExposure     string `gorm:"type:varbinary(16);"`
 	PhotoViews        uint
 	Camera            *Camera
-	CameraID          uint `gorm:"index;"`
+	CameraID          uint `gorm:"index:idx_photos_camera_lens;"`
 	Lens              *Lens
-	LensID            uint `gorm:"index;"`
-	Country           *Country
-	CountryID         string `gorm:"type:binary(2);index;"`
+	LensID            uint `gorm:"index:idx_photos_camera_lens;"`
 	CountryChanged    bool
 	Location          *Location
 	LocationID        uint64 `gorm:"type:BIGINT;index;"`
+	Place             *Place
+	PlaceID           uint64 `gorm:"type:BIGINT;index;"`
 	LocationChanged   bool
 	LocationEstimated bool
+	PhotoCountry      string    `gorm:"index:idx_photos_country_year_month;"`
+	PhotoYear         int       `gorm:"index:idx_photos_country_year_month;"`
+	PhotoMonth        int       `gorm:"index:idx_photos_country_year_month;"`
 	TakenAt           time.Time `gorm:"type:datetime;index;"`
 	TakenAtLocal      time.Time `gorm:"type:datetime;"`
 	TakenAtChanged    bool
@@ -146,7 +149,22 @@ func (m *Photo) NoLocation() bool {
 	return m.LocationID == 0
 }
 
+func (m *Photo) HasLocation() bool {
+	return m.LocationID != 0
+}
+
+func (m *Photo) NoPlace() bool {
+	return m.PlaceID < 5
+}
+
+func (m *Photo) HasPlace() bool {
+	return m.PlaceID >= 5
+}
+
 func (m *Photo) NoTitle() bool {
 	return m.PhotoTitle == ""
 }
 
+func (m *Photo) HasTitle() bool {
+	return m.PhotoTitle != ""
+}

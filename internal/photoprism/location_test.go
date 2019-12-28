@@ -43,8 +43,8 @@ func TestMediaFile_Location(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Himeji", location2.LocCity)
-		assert.Equal(t, "Kinki Region", location2.LocState)
+		assert.Equal(t, "Himeji", location2.City())
+		assert.Equal(t, "Kinki Region", location2.State())
 	})
 	t.Run("cat_brown.jpg", func(t *testing.T) {
 		conf := config.TestConfig()

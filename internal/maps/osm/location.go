@@ -85,6 +85,10 @@ func (o Location) City() (result string) {
 		result = o.Address.State
 	}
 
+	if len([]rune(result)) > 19 {
+		result = ""
+	}
+
 	return strings.TrimSpace(result)
 }
 

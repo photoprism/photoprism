@@ -49,7 +49,7 @@
                     {text: '', value: '', align: 'center', sortable: false, class: 'p-col-select'},
                     {text: this.$gettext('Title'), value: 'PhotoTitle'},
                     {text: this.$gettext('Taken At'), value: 'TakenAt'},
-                    {text: this.$gettext('Location'), value: 'LocPlace'},
+                    {text: this.$gettext('Location'), value: 'LocLabel'},
                     {text: this.$gettext('Camera'), value: 'CameraModel'},
                     {text: this.$gettext('Favorite'), value: 'PhotoFavorite', align: 'left'},
                 ],
