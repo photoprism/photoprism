@@ -1879,7 +1879,6 @@ bakery:
   categories:
     - bread
     - shop
-    - store
 
 ballpoint:
   categories:
@@ -1998,7 +1997,6 @@ bullet train:
 butcher shop:
   categories:
     - shop
-    - store
 
 cab:
   threshold: 0.6
@@ -2114,8 +2112,6 @@ computer keyboard:
 
 confectionery:
   label: shop
-  categorie:
-    - store
 
 container ship:
   see: ship
@@ -2323,7 +2319,6 @@ greenhouse:
 
 grocery store:
   categories:
-    - store
     - shop
 
 hammer:
@@ -2814,19 +2809,15 @@ screwdriver:
     - tool
 
 shoe shop:
-  categories:
-    - store
+  label: shop
 
 shopping basket:
   categories:
     - basket
     - shop
-    - store
 
 shopping cart:
-  categories:
-    - shop
-    - store
+  label: shop
 
 shovel:
   categories:
@@ -2835,7 +2826,6 @@ shovel:
 
 ski:
   categories:
-    - winter
     - snow
     - sports
     - outdoor
@@ -2979,8 +2969,6 @@ tow truck:
 
 toyshop:
   label: shop
-  categories:
-    - store
 
 trailer truck:
   label: truck
@@ -3459,6 +3447,10 @@ sunglasses:
 
 sunglass:
   see: sunglasses
+
+hourglass:
+  label: glass
+  threshold: 0.2
 
 packet:
   label: package
