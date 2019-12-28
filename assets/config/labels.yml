@@ -20,7 +20,6 @@ tiger cat:
   priority: 5
   categories:
     - cat
-    - tiger
     - animal
 
 wild cat:
@@ -80,8 +79,6 @@ bannister:
 window shade:
   label: building
   categories:
-    - window
-    - house
     - architecture
 
 daisy:
@@ -97,7 +94,6 @@ rapeseed:
     - flower
     - nature
     - plant
-    - yellow
 
 fashion:
   label: portrait
@@ -754,22 +750,17 @@ conch:
 snail:
   categories:
     - animal
-    - slug
 
 slug:
+  priority: -1
   categories:
     - animal
 
 sea slug:
-  priority: -1
-  categories:
-    - animal
-    - slug
+  see: slug
 
 chambered nautilus:
-  categories:
-    - animal
-    - slug
+  see: snail
 
 crab:
   label: crab
@@ -795,7 +786,7 @@ lobster:
   label: lobster
   categories:
     - animal
-    - food
+    - cooking
     - water
 
 american lobster:
@@ -918,7 +909,6 @@ dog:
   priority: 5
   categories:
     - animal
-    - puppy
 
 chihuahua dog:
   see: dog
@@ -1865,7 +1855,6 @@ backpack:
 
 bakery:
   categories:
-    - bread
     - shop
 
 ballpoint:
@@ -1900,19 +1889,17 @@ bassoon:
 
 bathing cap:
   categories:
-    - bathroom
-    - bathing
+    - people
+    - water
 
 bath towel:
   categories:
-    - bathroom
-    - bathing
-    - towel
+    - water
 
 bathtub:
   categories:
-    - bathroom
-    - bathing
+    - water
+    - indoor
 
 beacon:
   categories:
@@ -1999,29 +1986,30 @@ canoe:
     - sports
 
 can opener:
-  label: kitchen
-  categories:
-    - cooking
+  label: cooking
 
 car mirror:
   label: car
 
 carpenter's kit:
-  categories:
-    - tool
+  label: tool
     - tool kit
 
 car wheel:
+  label: car
   categories:
-    - car
+    - vehicle
 
 castle:
   categories:
     - historic
+    - architecture
 
 catamaran:
   categories:
     - boat
+    - vehicle
+    - water
 
 cello:
   see: instrument
@@ -2056,8 +2044,7 @@ church:
 
 cleaver:
   categories:
-    - knife
-    - kitchen
+    - cooking
 
 cliff dwelling:
   categories:
@@ -2110,8 +2097,6 @@ crash helmet:
 
 crock pot:
   label: cooking
-  categories:
-    - kitchen
 
 dam:
   categories:
@@ -2143,7 +2128,7 @@ maze:
 dishrag:
   priority: -2
   categories:
-    - towel
+    - indoor
 
 dishwasher:
   priority: -2
@@ -2178,7 +2163,6 @@ dumbbell:
 
 dutch oven:
   categories:
-    - kitchen
     - cooking
 
 electric guitar:
@@ -2194,9 +2178,7 @@ entertainment center:
 
 espresso maker:
   categories:
-    - coffee
-    - espresso
-    - kitchen
+    - beverage
 
 face powder:
   categories:
@@ -2258,7 +2240,6 @@ french horn:
 frying pan:
   label: pan
   categories:
-    - kitchen
     - cooking
 
 garbage truck:
@@ -2336,9 +2317,9 @@ honeycomb:
   threshold: 0.6
 
 jack-o'-lantern:
+  label: pumpkin
   categories:
-    - halloween
-    - squash
+    - vegetables
 
 jeep:
   categories:
@@ -2346,7 +2327,6 @@ jeep:
 
 ladle:
   categories:
-    - kitchen
     - cooking
 
 lampshade:
@@ -2416,7 +2396,6 @@ matchstick:
 
 measuring cup:
   categories:
-    - kitchen
     - cooking
 
 medicine chest:
@@ -2434,7 +2413,6 @@ microphone:
 
 microwave:
   categories:
-    - kitchen
     - cooking
 
 minibus:
@@ -2449,13 +2427,11 @@ minivan:
 
 mixing bowl:
   categories:
-    - kitchen
     - cooking
 
 mobile home:
   priority: -1
   categories:
-    - house
     - building
 
 Model T:
@@ -2545,6 +2521,7 @@ palace:
   label: historic architecture
   categories:
     - historic
+    - architecture
 
 panpipe:
   label: goods
@@ -2608,9 +2585,6 @@ piggy bank:
 
 pill bottle:
   label: bottle
-  categories:
-    - mug
-    - cup
 
 pillow:
   threshold: 0.5
@@ -2624,7 +2598,6 @@ plane:
 
 plate rack:
   categories:
-    - kitchen
     - cleaning
 
 polaroid camera:
@@ -2686,12 +2659,11 @@ reflex camera:
 
 refrigerator:
   categories:
-    - kitchen
+    - indoor
 
 restaurant:
   categories:
-    - food
-    - lunch
+    - cooking
 
 revolver:
   categories:
@@ -2804,14 +2776,14 @@ sombrero:
 
 soup bowl:
   categories:
-    - kitchen
+    - cooking
 
 space heater:
   label: heater
 
 spatula:
   categories:
-    - kitchen
+    - cooking
 
 speedboat:
   categories:
@@ -2840,11 +2812,11 @@ steel drum:
 
 stove:
   categories:
-    - kitchen
+    - cooking
 
 strainer:
   categories:
-    - kitchen
+    - cooking
 
 streetcar:
   categories:
@@ -2881,15 +2853,15 @@ table lamp:
 
 teapot:
   categories:
-    - kitchen
-    - tea
+    - cooking
 
 theater curtain:
   label: curtain
 
 toaster:
   categories:
-    - kitchen
+    - cooking
+    - indoor
 
 toilet seat:
   label: toilet
@@ -2943,7 +2915,7 @@ violin:
 
 waffle iron:
   categories:
-    - kitchen
+    - cooking
 
 wall clock:
   label: clock
@@ -2971,18 +2943,18 @@ water tower:
     - architecture
 
 wine bottle:
-  label: wine
+  label: bottle
   categories:
     - beverage
     - drinks
 
 wok:
   categories:
-    - kitchen
+    - cooking
 
 wooden spoon:
   categories:
-    - kitchen
+    - cooking
 
 worm fence:
   label: outdoor
@@ -3010,202 +2982,183 @@ book jacket:
 
 guacamole:
   categories:
-    - avocado
-    - food
+    - vegetables
+    - cooking
 
 consomme:
   categories:
-    - soup
-    - food
+    - cooking
 
 hot pot:
   categories:
-    - soup
-    - food
+    - cooking
 
 trifle:
   categories:
-    - dessert
-    - food
+    - cooking
 
 ice cream:
   categories:
-    - dessert
-    - food
+    - sweets
 
 ice lolly:
   categories:
-    - desser
-    - food
-    - ice cream
+    - sweets
 
 french loaf:
   categories:
-    - food
-    - bread
+    - bakery
 
 bagel:
   categories:
-    - food
-    - bread
+    - bakery
 
 pretzel:
   categories:
-    - food
-    - bread
+    - bakery
 
 cheeseburger:
   categories:
-    - food
-    - burger
+    - fast food
 
 hotdog:
   categories:
-    - food
+    - fast food
 
 mashed potato:
   categories:
-    - potatoes
-    - food
+    - cooking
+    - vegetables
 
 head cabbage:
   categories:
-    - food
+    - cooking
     - vegetables
 
 broccoli:
   priority: -1
   threshold: 0.3
   categories:
-    - food
+    - cooking
     - vegetables
 
 cauliflower:
   categories:
-    - food
+    - cooking
     - vegetables
 
 zucchini:
   categories:
-    - food
+    - cooking
     - vegetables
 
 spaghetti squash:
-  label: food
+  threshold: 0.4
+  prority: -1
+  category:
+    - cooking
 
 acorn squash:
-  label: food
+  prority: -1
+  threshold: 0.4
+  category:
+    - cooking
 
 butternut squash:
-  label: food
+  threshold: 0.4
+  prority: -1
+  category:
+    - cooking
 
 cucumber:
   categories:
-    - food
     - vegetables
 
 artichoke:
   categories:
-    - food
     - vegetables
 
 bell pepper:
   categories:
-    - food
     - vegetables
 
 mushroom:
   categories:
-    - food
     - vegetables
 
 granny smith:
+  label: apple
   categories:
-    - food
-    - fruits
-    - apple
+    - fruit
 
 strawberry:
   categories:
-    - food
-    - fruits
+    - fruit
 
 orange:
   categories:
-    - food
-    - fruits
+    - fruit
 
 lemon:
   categories:
-    - food
-    - fruits
+    - fruit
 
 fig:
   categories:
-    - food
-    - fruits
+    - fruit
 
 pineapple:
   categories:
-    - food
-    - fruits
+    - fruit
 
 banana:
   categories:
-    - food
-    - fruits
+    - fruit
 
 jackfruit:
   categories:
-    - food
-    - fruits
+    - fruit
 
 custard apple:
   categories:
-    - food
-    - fruits
+    - fruit
 
 pomegranate:
   categories:
-    - food
     - fruit
 
 carbonara:
+  label: pasta
   categories:
-    - food
-    - noodles
+    - cooking
 
 chocolate sauce:
+  label: chocolate
   categories:
-    - food
-    - dessert
-    - chocolate
+    - sweets
 
 dough:
   categories:
-    - food
+    - cooking
 
 meat loaf:
   categories:
-    - food
-    - meat
+    - cooking
 
 pizza:
   categories:
-    - food
+    - fast food
 
 potpie:
   categories:
-    - food
-    - pie
+    - cooking
 
 burrito:
   categories:
-    - food
+    - cooking
 
 red wine:
   categories:
-    - wine
     - beverage
     - drinks
 
@@ -3296,8 +3249,7 @@ hen-of-the-woods:
 
 bolete:
   categories:
-    - fungus
-    - mushroom
+    - vegetables
 
 knee pad:
   priority: -2
@@ -3325,6 +3277,8 @@ croquet ball:
 ball:
   label: sports
   priority: -1
+  categories:
+    - round
 
 baseball:
   see: ball
