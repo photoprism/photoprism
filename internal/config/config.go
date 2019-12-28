@@ -573,11 +573,11 @@ func (c *Config) ClientConfig() ClientConfig {
 	var albums []*entity.Album
 
 	var position struct {
-		PhotoUUID    string    `json:"photo"`
-		LocationID   uint64    `json:"location"`
-		TakenAt      time.Time `json:"utc"`
-		PhotoLat     float64   `json:"lat"`
-		PhotoLng     float64   `json:"lng"`
+		PhotoUUID  string    `json:"photo"`
+		LocationID uint64    `json:"location"`
+		TakenAt    time.Time `json:"utc"`
+		PhotoLat   float64   `json:"lat"`
+		PhotoLng   float64   `json:"lng"`
 	}
 
 	db.Table("photos").

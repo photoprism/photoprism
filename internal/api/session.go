@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/patrickmn/go-cache"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/session"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
@@ -25,15 +25,13 @@ func CreateSession(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		token := util.RandomToken(16)
+		user := gin.H{"ID": 1, "FirstName": "Admin", "LastName": "", "Role": "admin", "Email": "photoprism@localhost"}
+
+		token := session.Create(user)
 
 		c.Header("X-Session-Token", token)
 
-		gc := conf.Cache()
-
-		gc.Set(token, 1, cache.DefaultExpiration)
-
-		s := gin.H{"token": token, "user": gin.H{"ID": 1, "FirstName": "Admin", "LastName": "", "Role": "admin", "Email": "photoprism@localhost"}}
+		s := gin.H{"token": token, "user": user}
 
 		c.JSON(http.StatusOK, s)
 	})
@@ -44,9 +42,7 @@ func DeleteSession(router *gin.RouterGroup, conf *config.Config) {
 	router.DELETE("/session/:token", func(c *gin.Context) {
 		token := c.Param("token")
 
-		gc := conf.Cache()
-
-		gc.Delete(token)
+		session.Delete(token)
 
 		c.JSON(http.StatusOK, gin.H{"status": "ok", "token": token})
 	})
@@ -61,11 +57,7 @@ func Unauthorized(c *gin.Context, conf *config.Config) bool {
 
 	// Get session token from HTTP header
 	token := c.GetHeader("X-Session-Token")
-	log.Debugf("X-Session-Token: %s", token)
 
 	// Check if session token is valid
-	gc := conf.Cache()
-	_, found := gc.Get(token)
-
-	return !found
+	return !session.Exists(token)
 }
