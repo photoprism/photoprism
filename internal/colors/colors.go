@@ -53,6 +53,7 @@ var All = Colors{
 	Magenta,
 	Pink,
 	Orange,
+	Brown,
 	Gold,
 	Yellow,
 	Lime,
@@ -64,7 +65,6 @@ var All = Colors{
 	White,
 	Grey,
 	Black,
-	Brown,
 }
 
 var Names = map[Color]string{
