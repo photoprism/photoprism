@@ -1933,19 +1933,17 @@ beacon:
     - tower
     - architecture
 
-beer bottle:
+beer:
+  label: beer
   categories:
-    - beer
-    - bottle
-    - drink
+    - beverage
     - alcohol
 
+beer bottle:
+  see: beer
+
 beer glass:
-  categories:
-    - beer
-    - glass
-    - drink
-    - alcohol
+  see: beer
 
 bell cote:
   label: church
@@ -2093,18 +2091,16 @@ clog:
 
 cocktail shaker:
   categories:
-    - drink
+    - beverage
     - alcohol
 
 coffee mug:
   categories:
-    - mug
-    - drink
+    - beverage
 
 coffeepot:
   categoried:
-    - coffee
-    - drink
+    - beverage
 
 combination lock:
   label: lock
@@ -2369,7 +2365,7 @@ television:
 
 honeycomb:
   priority: -1
-  threshold: 0.3
+  threshold: 0.6
   categories:
     - honey
     - bee
@@ -3054,9 +3050,10 @@ water tower:
     - architecture
 
 wine bottle:
+  label: wine
   categories:
-    - bottle
-    - wine
+    - beverage
+    - alcohol
 
 wok:
   categories:
@@ -3290,18 +3287,17 @@ burrito:
 red wine:
   categories:
     - wine
-    - drink
+    - beverage
     - alcohol
+
+beverage:
+  label: beverage
 
 espresso:
-  categories:
-    - coffee
-    - drink
+  see: beverage
 
 eggnog:
-  categories:
-    - drink
-    - alcohol
+  see: beverage
 
 alp:
   label: alpine hut
@@ -3546,9 +3542,7 @@ safety pin:
 beaker:
   label: cup
   categories:
-    - kitchen
-    - coffee
-    - tea
+    - beverage
 
 vestment:
   label: uniform
