@@ -1856,8 +1856,6 @@ airship:
 ambulance:
   label: van
   categories:
-    - road
-    - car
     - vehicle
 
 amphibian:
@@ -2000,7 +1998,7 @@ cab:
   threshold: 0.6
   categories:
     - car
-    - road
+    - vehicle
 
 cannon:
   categories:
@@ -2471,17 +2469,16 @@ microwave:
     - cooking
 
 minibus:
+  label: bus
   categories:
-    - car
     - van
-    - road
+    - vehicle
 
 minivan:
   label: van
   categories:
-    - road
     - car
-    - bus
+    - vehicle
 
 mixing bowl:
   categories:
@@ -2531,8 +2528,7 @@ mountain tent:
 moving van:
   label: van
   categories:
-    - road
-    - car
+    - vehicle
     - bus
 
 notebook:
@@ -2610,7 +2606,6 @@ parachute:
 car:
   label: car
   categories:
-    - road
     - vehicle
 
 racer:
@@ -2618,12 +2613,10 @@ racer:
   threshold: 0.2
   categories:
     - car
-    - road
 
 passenger car:
   see: car
   categories:
-    - road
     - vehicle
 
 beach wagon:
@@ -2688,8 +2681,7 @@ polaroid camera:
 police van:
   label: van
   categories:
-    - road
-    - car
+    - vehicle
     - bus
 
 pool table:
@@ -2737,7 +2729,6 @@ recreational vehicle:
     - bus
     - van
     - vehicle
-    - road
 
 reflex camera:
   categories:
@@ -2796,10 +2787,9 @@ sax:
   see: instrument
 
 school bus:
+  label: bus
   categories:
-    - bus
-    - van
-    - road
+    - vehicle
 
 schooner:
   see: ship
@@ -2885,7 +2875,6 @@ sports car:
   categories:
     - car
     - vehicle
-    - road
 
 spotlight:
   categories:
@@ -2914,7 +2903,6 @@ streetcar:
   categories:
     - train
     - vehicle
-    - road
 
 studio couch:
   label: couch
@@ -2989,7 +2977,7 @@ trolleybus:
   label: bus
   categories:
     - van
-    - road
+    - vehicle
 
 trombone:
   see: instrument
