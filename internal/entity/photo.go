@@ -141,3 +141,12 @@ func (m *Photo) PreloadMany(db *gorm.DB) {
 	m.PreloadKeywords(db)
 	m.PreloadAlbums(db)
 }
+
+func (m *Photo) NoLocation() bool {
+	return m.LocationID == 0
+}
+
+func (m *Photo) NoTitle() bool {
+	return m.PhotoTitle == ""
+}
+

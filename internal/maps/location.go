@@ -9,17 +9,17 @@ import (
 
 // Photo location
 type Location struct {
-	ID          uint64 `gorm:"type:BIGINT;primary_key;auto_increment:false;"`
+	ID          uint64
 	LocLat      float64
 	LocLng      float64
-	LocName     string `gorm:"type:varchar(100);"`
-	LocCategory string `gorm:"type:varchar(50);"`
-	LocSuburb   string `gorm:"type:varchar(100);"`
-	LocPlace    string `gorm:"type:varbinary(500);index;"`
-	LocCity     string `gorm:"type:varchar(100);"`
-	LocState    string `gorm:"type:varchar(100);"`
-	LocCountry  string `gorm:"type:binary(2);"`
-	LocSource   string `gorm:"type:varbinary(16);"`
+	LocName     string
+	LocCategory string
+	LocSuburb   string
+	LocPlace    string
+	LocCity     string
+	LocState    string
+	LocCountry  string
+	LocSource   string
 }
 
 type LocationSource interface {
@@ -132,28 +132,24 @@ func (l Location) Name() string {
 	return l.LocName
 }
 
-func (l Location) City() string {
-	return l.LocCity
+func (l Location) Category() string {
+	return l.LocCategory
 }
 
 func (l Location) Suburb() string {
 	return l.LocSuburb
 }
 
-func (l Location) State() string {
-	return l.LocState
-}
-
-func (l Location) Category() string {
-	return l.LocCategory
-}
-
-func (l Location) Source() string {
-	return l.LocSource
-}
-
 func (l Location) Place() string {
 	return l.LocPlace
+}
+
+func (l Location) City() string {
+	return l.LocCity
+}
+
+func (l Location) State() string {
+	return l.LocState
 }
 
 func (l Location) CountryCode() string {
@@ -162,4 +158,8 @@ func (l Location) CountryCode() string {
 
 func (l Location) CountryName() string {
 	return CountryNames[l.LocCountry]
+}
+
+func (l Location) Source() string {
+	return l.LocSource
 }

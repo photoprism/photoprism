@@ -128,7 +128,7 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 			labels = append(labels, locLabels...)
 		}
 
-		if photo.PhotoTitle == "" || (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false && photo.LocationID == 0 {
+		if photo.NoTitle() || (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false && photo.NoLocation() {
 			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", util.Title(labels[0].Name), m.DateCreated().Format("2006"))
 			} else if !photo.TakenAtLocal.IsZero() {
@@ -160,7 +160,7 @@ func (i *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 
 	if photoExists {
 		// Estimate location
-		if o.UpdateLocation && photo.LocationID == 0 {
+		if o.UpdateLocation && photo.NoLocation() {
 			i.estimateLocation(&photo)
 		}
 
@@ -416,7 +416,7 @@ func (i *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 				}
 			}
 
-			if photo.PhotoTitle == "" {
+			if photo.NoTitle() {
 				log.Warnf("index: could not set photo title based on location or labels for \"%s\"", filepath.Base(mediaFile.Filename()))
 			} else {
 				log.Infof("index: new photo title is \"%s\"", photo.PhotoTitle)
