@@ -68,7 +68,7 @@ var All = Colors{
 }
 
 var Names = map[Color]string{
-	Black:   "dark",    // 0
+	Black:   "black",   // 0
 	Brown:   "brown",   // 1
 	Grey:    "grey",    // 2
 	White:   "white",   // 3
