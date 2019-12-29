@@ -159,6 +159,18 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
+                <v-list-tile to="/discover" @click="" class="p-navigation-discover">
+                    <v-list-tile-action>
+                        <v-icon>color_lens</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>
+                            <translate>Discover</translate>
+                        </v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
                 <!-- v-list-tile to="/events" @click="" class="p-navigation-events">
                     <v-list-tile-action>
                         <v-icon>date_range</v-icon>

@@ -9,6 +9,7 @@ import Library from "pages/library.vue";
 import Share from "pages/share.vue";
 import Settings from "pages/settings.vue";
 import Login from "pages/login.vue";
+import Discover from "pages/discover.vue";
 import Todo from "pages/todo.vue";
 
 const c = window.clientConfig;
@@ -120,6 +121,34 @@ export default [
         component: Settings,
         meta: {title: "Application Settings", auth: true},
         props: {tab: 0},
+    },
+    {
+        name: "discover",
+        path: "/discover",
+        component: Discover,
+        meta: {title: "Discover", auth: false},
+        props: {tab: 0},
+    },
+    {
+        name: "discover_similar",
+        path: "/discover/similar",
+        component: Discover,
+        meta: {title: "Discover", auth: false},
+        props: {tab: 1},
+    },
+    {
+        name: "discover_season",
+        path: "/discover/season",
+        component: Discover,
+        meta: {title: "Discover", auth: false},
+        props: {tab: 2},
+    },
+    {
+        name: "discover_random",
+        path: "/discover/random",
+        component: Discover,
+        meta: {title: "Discover", auth: false},
+        props: {tab: 3},
     },
     {
         path: "*", redirect: "/photos",

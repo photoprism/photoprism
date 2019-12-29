@@ -49,11 +49,11 @@ const (
 )
 
 var All = Colors{
-	Red,
+	Purple,
 	Magenta,
 	Pink,
+	Red,
 	Orange,
-	Brown,
 	Gold,
 	Yellow,
 	Lime,
@@ -61,7 +61,7 @@ var All = Colors{
 	Teal,
 	Cyan,
 	Blue,
-	Purple,
+	Brown,
 	White,
 	Grey,
 	Black,
@@ -156,22 +156,22 @@ func (m LightMap) Hex() (result string) {
 }
 
 var ColorExamples = map[Color]string{
-	Red:     "#E57373",
+	Purple:  "#AB47BC",
 	Magenta: "#FF00FF",
-	Pink:    "#F06292",
-	Orange:  "#FFB74D",
+	Pink:    "#EC407A",
+	Red:     "#EF5350",
+	Orange:  "#FFA726",
 	Brown:   "#A1887F",
-	Gold:    "#FFD54F",
-	Yellow:  "#FFF176",
-	Lime:    "#DCE775",
-	Green:   "#81C784",
-	Teal:    "#4DB6AC",
-	Cyan:    "#4DD0E1",
-	Blue:    "#64B5F6",
-	Purple:  "#BA68C8",
+	Gold:    "#D4AF37",
+	Yellow:  "#FDD835",
+	Lime:    "#CDDC39",
+	Green:   "#66BB6A",
+	Teal:    "#009688",
+	Cyan:    "#00BCD4",
+	Blue:    "#2196F3",
 	White:   "#F5F5F5",
-	Grey:    "#BDBDBD",
-	Black:   "#333333",
+	Grey:    "#9E9E9E",
+	Black:   "#212121",
 }
 
 var ColorMap = map[color.RGBA]Color{

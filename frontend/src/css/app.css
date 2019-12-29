@@ -68,10 +68,6 @@ main {
     -webkit-animation: colorchange 3s infinite;
 }
 
-#photoprism main a {
-    color: #00B8D4;
-}
-
 #photoprism main .p-results a {
     color: #333333;
 }
@@ -151,4 +147,12 @@ main {
 
 #photoprism .p-log-debug {
     color: #DDDDDD;
+}
+
+#photoprism .p-clickable {
+    cursor: pointer;
+}
+
+#photoprism .p-rounded {
+    border-radius: 50%;
 }
