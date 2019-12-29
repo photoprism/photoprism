@@ -3,7 +3,7 @@
         <v-container grid-list-xs text-xs-center fluid>
             <p class="subheading pb-3">
                 This is a very first draft for a "Discover" area where you can find photos by
-                similarity, by color, by season or just randomly. Feedback welcome.
+                color, by similarity, by season or just randomly. Feedback and contributions welcome.
             </p>
 
             <v-layout row wrap class="p-colors">
