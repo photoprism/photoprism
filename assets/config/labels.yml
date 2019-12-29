@@ -3054,19 +3054,19 @@ zucchini:
 
 spaghetti squash:
   threshold: 0.4
-  prority: -1
+  priority: -1
   category:
     - cooking
 
 acorn squash:
-  prority: -1
+  priority: -1
   threshold: 0.4
   category:
     - cooking
 
 butternut squash:
   threshold: 0.4
-  prority: -1
+  priority: -1
   category:
     - cooking
 
