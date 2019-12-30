@@ -156,3 +156,19 @@ main {
 #photoprism .p-rounded {
     border-radius: 50%;
 }
+
+/* Feature Flags */
+
+.p-experimental,
+.p-debug,
+.p-public,
+.p-readonly {
+    display: none;
+}
+
+body.experimental #photoprism .p-experimental,
+body.debug #photoprism .p-debug,
+body.public #photoprism .p-public,
+body.readonly #photoprism .p-readonly {
+    display: block;
+}

@@ -21,6 +21,11 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "no authentication required",
 		EnvVar: "PHOTOPRISM_PUBLIC",
 	},
+	cli.BoolFlag{
+		Name:   "experimental, e",
+		Usage:  "enable experimental features",
+		EnvVar: "PHOTOPRISM_EXPERIMENTAL",
+	},
 	cli.StringFlag{
 		Name:   "url",
 		Usage:  "canonical site URL",

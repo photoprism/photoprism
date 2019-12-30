@@ -30,6 +30,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("debug                 %t\n", conf.Debug())
 	fmt.Printf("read-only             %t\n", conf.ReadOnly())
 	fmt.Printf("public                %t\n", conf.Public())
+	fmt.Printf("experimental          %t\n", conf.Experimental())
 	fmt.Printf("admin-password        %s\n", conf.AdminPassword())
 	fmt.Printf("log-level             %s\n", conf.LogLevel())
 	fmt.Printf("log-filename          %s\n", conf.LogFilename())

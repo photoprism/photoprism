@@ -251,6 +251,11 @@ func (c *Config) Public() bool {
 	return c.config.Public
 }
 
+// Experimental returns true if experimental features should be enabled.
+func (c *Config) Experimental() bool {
+	return c.config.Experimental
+}
+
 // ReadOnly returns true if photo directories are write protected.
 func (c *Config) ReadOnly() bool {
 	return c.config.ReadOnly
@@ -680,33 +685,51 @@ func (c *Config) ClientConfig() ClientConfig {
 	jsHash := util.Hash(c.HttpStaticBuildPath() + "/app.js")
 	cssHash := util.Hash(c.HttpStaticBuildPath() + "/app.css")
 
+	// Feature Flags
+	var flags []string
+
+	if c.Public() {
+		flags = append(flags, "public")
+	}
+	if c.Debug() {
+		flags = append(flags, "debug")
+	}
+	if c.Experimental() {
+		flags = append(flags, "experimental")
+	}
+	if c.ReadOnly() {
+		flags = append(flags, "readonly")
+	}
+
 	result := ClientConfig{
-		"name":        c.Name(),
-		"url":         c.Url(),
-		"title":       c.Title(),
-		"subtitle":    c.Subtitle(),
-		"description": c.Description(),
-		"author":      c.Author(),
-		"twitter":     c.Twitter(),
-		"version":     c.Version(),
-		"copyright":   c.Copyright(),
-		"debug":       c.Debug(),
-		"readonly":    c.ReadOnly(),
-		"uploadNSFW":  c.UploadNSFW(),
-		"public":      c.Public(),
-		"albums":      albums,
-		"cameras":     cameras,
-		"lenses":      lenses,
-		"countries":   countries,
-		"thumbnails":  Thumbnails,
-		"jsHash":      jsHash,
-		"cssHash":     cssHash,
-		"settings":    c.Settings(),
-		"count":       count,
-		"pos":         position,
-		"years":       years,
-		"colors":      colors.All.List(),
-		"categories":  categories,
+		"flags":        strings.Join(flags, " "),
+		"name":         c.Name(),
+		"url":          c.Url(),
+		"title":        c.Title(),
+		"subtitle":     c.Subtitle(),
+		"description":  c.Description(),
+		"author":       c.Author(),
+		"twitter":      c.Twitter(),
+		"version":      c.Version(),
+		"copyright":    c.Copyright(),
+		"debug":        c.Debug(),
+		"readonly":     c.ReadOnly(),
+		"uploadNSFW":   c.UploadNSFW(),
+		"public":       c.Public(),
+		"experimental": c.Experimental(),
+		"albums":       albums,
+		"cameras":      cameras,
+		"lenses":       lenses,
+		"countries":    countries,
+		"thumbnails":   Thumbnails,
+		"jsHash":       jsHash,
+		"cssHash":      cssHash,
+		"settings":     c.Settings(),
+		"count":        count,
+		"pos":          position,
+		"years":        years,
+		"colors":       colors.All.List(),
+		"categories":   categories,
 	}
 
 	return result

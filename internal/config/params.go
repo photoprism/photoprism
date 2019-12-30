@@ -37,6 +37,7 @@ type Params struct {
 	Version            string
 	Copyright          string
 	Debug              bool   `yaml:"debug" flag:"debug"`
+	Experimental       bool   `yaml:"experimental" flag:"experimental"`
 	ReadOnly           bool   `yaml:"read-only" flag:"read-only"`
 	Public             bool   `yaml:"public" flag:"public"`
 	AdminPassword      string `yaml:"admin-password" flag:"admin-password"`

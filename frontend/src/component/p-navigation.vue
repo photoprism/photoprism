@@ -159,7 +159,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/discover" @click="" class="p-navigation-discover">
+                <v-list-tile to="/discover" @click="" class="p-navigation-discover" v-if="config.experimental">
                     <v-list-tile-action>
                         <v-icon>color_lens</v-icon>
                     </v-list-tile-action>
