@@ -10,7 +10,7 @@ you have the opportunity to learn Docker, Go, TensorFlow and much more.
 
 ## Questions? ##
 
-Join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers)
+Follow us on [Twitter][twitter] and join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers)
 to receive regular project updates, get in contact with other contributors and discuss your ideas. Don't be afraid to ask stupid questions.
 
 ## Pull requests ##
@@ -44,3 +44,5 @@ for collecting interesting ideas and feedback, e.g.
 Please use the [GitHub issue tracker](https://github.com/photoprism/photoprism/issues) to report clearly identified bugs and impediments to us.
 If you're not sure, start by asking in our [help forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help) or [contact us via email](mailto:help@photoprism.org).
 When reporting an issue, please provide the version in use and information about your environment like browser, operating system, installed memory, and processor type.
+
+[twitter]: https://twitter.com/browseyourlife

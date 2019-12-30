@@ -71,7 +71,7 @@ all [acceptance criteria](https://github.com/photoprism/photoprism/wiki/Issues#u
 MUST are met and your [pull request](https://github.com/photoprism/photoprism/wiki/Pull-Requests) 
 was successfully merged.
 
-Please join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
+Please follow us on [Twitter][twitter] and join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
 to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
 
 ## Donations ##
