@@ -33,7 +33,7 @@ migrate:
 install-bin:
 	scripts/build.sh prod ~/.local/bin/$(BINARY_NAME)
 install-assets:
-	$(info Installing assets in ~/photoprism)
+	$(info Installing assets)
 	mkdir -p ~/.config/photoprism
 	mkdir -p ~/.cache/photoprism
 	mkdir -p ~/Pictures/Originals
