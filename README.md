@@ -39,19 +39,22 @@ to run the server. It is available for Mac, Linux and Windows.
 Note that this is work in progress. We do our best to provide a complete, stable version. 
 Financial [support](SPONSORS.md) makes a huge difference and enables us to spend more time with this project.
 
-If you have a question, don't hesitate to ask in our [help forum](https://groups.google.com/a/photoprism.org/forum/#!forum/help) 
+If you have a question, don't hesitate to ask in our [help forum][help] 
 or [contact us via email](mailto:hello@photoprism.org).
 
 ## Why this has to be free software ##
 
 The development of every commercial product is focused on monetization.
-We've [built similar apps more than once](https://github.com/photoprism/photoprism/wiki/Mediencenter) and every single time the constraints of working
+We've [built similar apps more than once](https://github.com/photoprism/photoprism/wiki/Mediencenter) 
+and every single time the constraints of working
 in a profit-oriented corporate environment were an impediment.
 
-We are sure we can do better with only a fraction of the budget. Simplicity - the art of maximizing the amount of work not done - can be very powerful.
+We are sure we can do better with only a fraction of the budget. Simplicity - the art of maximizing the 
+amount of work not done - can be very powerful.
 Go itself is a [great example](https://talks.golang.org/2015/simplicity-is-complicated.slide).
 
-Our long-term goal is to become an open platform for machine learning [research](https://github.com/photoprism/photoprism/wiki/Research) based on real-world photo collections.
+Our long-term goal is to become an open platform for machine 
+learning [research](https://github.com/photoprism/photoprism/wiki/Research) based on real-world photo collections.
 
 ## How to contribute ##
 
@@ -61,7 +64,12 @@ Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/hel
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
 good (first) contributions. 
 
-You'll get a small reward for working on [funded issues](https://github.com/photoprism/photoprism/labels/funded), see [issuehunt.io](https://issuehunt.io/repos/119160553) for details. Note that issue descriptions may be outdated on their site. Rewards are paid out when all [acceptance criteria](https://github.com/photoprism/photoprism/wiki/Issues#user-stories) prioritized as MUST are met and your [pull request](https://github.com/photoprism/photoprism/wiki/Pull-Requests) was successfully merged.
+You'll get a small reward for working on [funded issues](https://github.com/photoprism/photoprism/labels/funded), 
+see [issuehunt.io](https://issuehunt.io/repos/119160553) for details. 
+Note that issue descriptions may be outdated on their site. Rewards are paid out when 
+all [acceptance criteria](https://github.com/photoprism/photoprism/wiki/Issues#user-stories) prioritized as 
+MUST are met and your [pull request](https://github.com/photoprism/photoprism/wiki/Pull-Requests) 
+was successfully merged.
 
 Please join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
 to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
@@ -75,21 +83,26 @@ visiting conferences, buying test devices, offering rewards for contributions, a
 
 You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
 especially if you need help with using our software. They will match every donation in the first year.
+In addition, you can find us on [Patreon][patreon] and [PayPal][paypal]. 
 
 Also please leave a star if you like this project, it provides enough motivation to keep going. Thank you very much! <3
 
-In addition, you can find us on [Patreon][donations] and [PayPal][paypal]. It really means a lot to us as we haven't received any major financial support so far and are funding this project from our personal savings.
+Feature requests backed by sponsors are marked with a golden [sponsor][sponsored issues] label.
+Let us know if we mistakenly label an idea as [unfunded][unfunded issues].
 
 ## Corporate Sponsorship ##
 
-Please [reach out to us](mailto:hello@photoprism.org) if you work for an organization that can [support our project](https://dl.photoprism.org/slides/PhotoPrism.pdf)
+Please [reach out to us](mailto:hello@photoprism.org) if you work for an organization that 
+can [support our project](https://dl.photoprism.org/slides/PhotoPrism.pdf)
 as we are looking for a way to continue doing this full-time.
-We'll be happy to mention your contribution plus you'll get a direct line to [our team](https://docs.photoprism.org/en/latest/team/) of top-class engineers and scientists.
+We'll be happy to mention your contribution plus you'll get a direct line 
+to [our team](https://docs.photoprism.org/en/latest/team/) of top-class engineers and scientists.
 
 See [SPONSORS.md](SPONSORS.md) for details.
 
+[help]: https://groups.google.com/a/photoprism.org/forum/#!forum/help
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
-[donations]: https://www.patreon.com/photoprism
+[patreon]: https://www.patreon.com/photoprism
 [paypal]: https://www.paypal.me/photoprism
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [coverage]: https://codecov.io/gh/photoprism/photoprism
@@ -98,3 +111,5 @@ See [SPONSORS.md](SPONSORS.md) for details.
 [issuehunt]: https://issuehunt.io/repos/119160553
 [chat]: https://gitter.im/browseyourlife/community
 [twitter]: https://twitter.com/browseyourlife
+[unfunded issues]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded
+[sponsored issues]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor
