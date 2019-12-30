@@ -10,7 +10,7 @@ File bugs or feature requests at:
 
 https://github.com/photoprism/photoprism/issues
 
-Copyright © 2018 The PhotoPrism contributors.
+Copyright © 2018 - 2020 The PhotoPrism contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
