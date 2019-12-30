@@ -1,15 +1,5 @@
 /*
 
-PhotoPrism is a server-based application for browsing, organizing and sharing
-your personal photo collection. It makes use of the latest technologies to
-automatically tag and find pictures without getting in your way.
-
-For more information see https://photoprism.org/
-
-File bugs or feature requests at:
-
-https://github.com/photoprism/photoprism/issues
-
 Copyright © 2018 - 2020 The PhotoPrism contributors.
 
 This program is free software: you can redistribute it and/or modify
@@ -24,6 +14,9 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+File bugs or feature requests at:
+https://github.com/photoprism/photoprism/issues
 
 */
 package main
