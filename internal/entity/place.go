@@ -9,7 +9,7 @@ import (
 
 // Photo place
 type Place struct {
-	ID          uint64 `gorm:"type:BIGINT;primary_key;auto_increment:false;"`
+	ID          string `gorm:"type:varbinary(16);primary_key;auto_increment:false;"`
 	LocLabel    string `gorm:"type:varbinary(500);unique_index;"`
 	LocCity     string `gorm:"type:varchar(100);"`
 	LocState    string `gorm:"type:varchar(100);"`
@@ -21,7 +21,7 @@ type Place struct {
 	New         bool `gorm:"-"`
 }
 
-var UnknownPlace = NewPlace(1, "Unknown", "Unknown", "Unknown", "zz")
+var UnknownPlace = NewPlace("-", "Unknown", "Unknown", "Unknown", "zz")
 
 func CreateUnknownPlace(db *gorm.DB) {
 	UnknownPlace.FirstOrCreate(db)
@@ -31,29 +31,29 @@ func (m *Place) AfterCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("New", true)
 }
 
-func FindPlace(id uint64, db *gorm.DB) *Place {
+func FindPlace(token string, db *gorm.DB) *Place {
 	place := &Place{}
 
-	if err := db.First(place, "id = ?", id).Error; err != nil {
-		log.Debugf("place: %s for id %d", err.Error(), id)
+	if err := db.First(place, "id = ?", token).Error; err != nil {
+		log.Debugf("place: %s for token %s", err.Error(), token)
 	}
 
 	return place
 }
 
-func FindPlaceByLabel(id uint64, label string, db *gorm.DB) *Place {
+func FindPlaceByLabel(token string, label string, db *gorm.DB) *Place {
 	place := &Place{}
 
-	if err := db.First(place, "id = ? OR loc_label = ?", id, label).Error; err != nil {
-		log.Debugf("place: %s for id %d or label \"%s\"", err.Error(), id, label)
+	if err := db.First(place, "id = ? OR loc_label = ?", token, label).Error; err != nil {
+		log.Debugf("place: %s for token %s or label \"%s\"", err.Error(), token, label)
 	}
 
 	return place
 }
 
-func NewPlace(id uint64, label, city, state, countryCode string) *Place {
+func NewPlace(token, label, city, state, countryCode string) *Place {
 	result := &Place{
-		ID:         id,
+		ID:         token,
 		LocLabel:   label,
 		LocCity:    city,
 		LocState:   state,
@@ -73,14 +73,14 @@ func (m *Place) Find(db *gorm.DB) error {
 
 func (m *Place) FirstOrCreate(db *gorm.DB) *Place {
 	if err := db.FirstOrCreate(m, "id = ? OR loc_label = ?", m.ID, m.LocLabel).Error; err != nil {
-		log.Debugf("place: %s for id %d or label \"%s\"", err.Error(), m.ID, m.LocLabel)
+		log.Debugf("place: %s for token %s or label \"%s\"", err.Error(), m.ID, m.LocLabel)
 	}
 
 	return m
 }
 
 func (m *Place) NoID() bool {
-	return m.ID == 0
+	return m.ID == ""
 }
 
 func (m *Place) Label() string {

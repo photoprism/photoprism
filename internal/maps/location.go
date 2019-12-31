@@ -23,7 +23,7 @@ ORDER BY loc_country, album_name, taken_year;
 
 // Photo location
 type Location struct {
-	ID          uint64
+	ID          string
 	LocLat      float64
 	LocLng      float64
 	LocName     string
@@ -49,7 +49,7 @@ type LocationSource interface {
 }
 
 func NewLocation(lat, lng float64) *Location {
-	id := S2Encode(lat, lng)
+	id := S2Token(lat, lng)
 
 	result := &Location{
 		ID:     id,
@@ -85,8 +85,8 @@ func (l *Location) Assign(s LocationSource) error {
 		return errors.New("maps: unknown location")
 	}
 
-	if l.ID == 0 {
-		l.ID = S2Encode(l.LocLat, l.LocLng)
+	if l.ID == "" {
+		l.ID = S2Token(l.LocLat, l.LocLng)
 	}
 
 	l.LocName = s.Name()

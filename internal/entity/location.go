@@ -11,8 +11,8 @@ import (
 
 // Photo location
 type Location struct {
-	ID          uint64 `gorm:"type:BIGINT;primary_key;auto_increment:false;"`
-	PlaceID     uint64 `gorm:"type:BIGINT;"`
+	ID          string `gorm:"type:varbinary(16);primary_key;auto_increment:false;"`
+	PlaceID     string `gorm:"type:varbinary(16);"`
 	Place       *Place
 	LocLat      float64
 	LocLng      float64
@@ -27,7 +27,7 @@ type Location struct {
 func NewLocation(lat, lng float64) *Location {
 	result := &Location{}
 
-	result.ID = maps.S2Encode(lat, lng)
+	result.ID = maps.S2Token(lat, lng)
 	result.LocLat = lat
 	result.LocLng = lng
 
@@ -90,7 +90,7 @@ func (m *Location) Keywords() []string {
 }
 
 func (m *Location) Unknown() bool {
-	return m.ID == 0
+	return m.ID == ""
 }
 
 func (m *Location) Latitude() float64 {

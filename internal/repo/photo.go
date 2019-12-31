@@ -56,8 +56,8 @@ type PhotoResult struct {
 	LensMake  string
 
 	// Location
-	LocationID        uint64
-	PlaceID           uint64
+	LocationID        string
+	PlaceID           string
 	LocLabel          string
 	LocCity           string
 	LocState          string

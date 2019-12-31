@@ -37,9 +37,9 @@ type Photo struct {
 	LensID            uint `gorm:"index:idx_photos_camera_lens;"`
 	CountryChanged    bool
 	Location          *Location
-	LocationID        uint64 `gorm:"type:BIGINT;index;"`
+	LocationID        string `gorm:"type:varbinary(16);index;"`
 	Place             *Place
-	PlaceID           uint64 `gorm:"type:BIGINT;index;"`
+	PlaceID           string `gorm:"type:varbinary(16);index;"`
 	LocationChanged   bool
 	LocationEstimated bool
 	PhotoCountry      string    `gorm:"index:idx_photos_country_year_month;"`
@@ -146,19 +146,19 @@ func (m *Photo) PreloadMany(db *gorm.DB) {
 }
 
 func (m *Photo) NoLocation() bool {
-	return m.LocationID == 0
+	return m.LocationID == ""
 }
 
 func (m *Photo) HasLocation() bool {
-	return m.LocationID != 0
+	return m.LocationID != ""
 }
 
 func (m *Photo) NoPlace() bool {
-	return m.PlaceID < 5
+	return len(m.PlaceID) < 2
 }
 
 func (m *Photo) HasPlace() bool {
-	return m.PlaceID >= 5
+	return len(m.PlaceID) >= 2
 }
 
 func (m *Photo) NoTitle() bool {
