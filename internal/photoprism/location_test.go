@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -31,8 +32,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "Kinki Region", location.State())
 		assert.Equal(t, "Japan", location.CountryName())
 		assert.Equal(t, "", location.Category())
-		assert.Equal(t, 34.79745, location.Latitude())
-		assert.Equal(t, "3554df45c", location.ID)
+		assert.True(t, strings.HasPrefix(location.ID, "3554df45"))
 		location2, err := mediaFile.Location()
 
 		if err != nil {
@@ -67,8 +67,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "Tübingen", location.City())
 		assert.Equal(t, "de", location.CountryCode())
 		assert.Equal(t, "Germany", location.CountryName())
-		assert.Equal(t, 48.53870833333333, location.Latitude())
-		assert.Equal(t, "4799e4a5c", location.ID)
+		assert.True(t, strings.HasPrefix(location.ID, "4799e4a5"))
 	})
 	t.Run("dog_orange.jpg", func(t *testing.T) {
 		conf := config.TestConfig()

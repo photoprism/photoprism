@@ -475,10 +475,8 @@ american alligator:
     - alligator
 
 triceratops:
+  label: animal
   priority: -1
-  categories:
-    - reptile
-    - animal
 
 snake:
   label: snake

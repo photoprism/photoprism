@@ -1,20 +1,40 @@
 package maps
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/maps/osm"
+	"github.com/photoprism/photoprism/internal/s2"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLocation_Query(t *testing.T) {
+func TestLocation_QueryPlaces(t *testing.T) {
+	t.Run("U Berliner Rathaus", func(t *testing.T) {
+		lat := 52.51961810676184
+		lng := 13.40806264572578
+		id := s2.Token(lat, lng)
+
+		l := NewLocation(id)
+
+		if err := l.QueryPlaces(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "U Berliner Rathaus", l.LocName)
+		assert.Equal(t, "Berlin, Germany", l.LocLabel)
+	})
+}
+
+func TestLocation_QueryOSM(t *testing.T) {
 	t.Run("BerlinFernsehturm", func(t *testing.T) {
 		lat := 52.5208
 		lng := 13.40953
+		id := s2.Token(lat, lng)
 
-		l := NewLocation(lat, lng)
+		l := NewLocation(id)
 
-		if err := l.Query(); err != nil {
+		if err := l.QueryOSM(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -27,8 +47,9 @@ func TestLocation_Assign(t *testing.T) {
 	t.Run("BerlinFernsehturm", func(t *testing.T) {
 		lat := 52.5208
 		lng := 13.40953
+		id := s2.Token(lat, lng)
 
-		o, err := osm.FindLocation(lat, lng)
+		o, err := osm.FindLocation(id)
 
 		if err != nil {
 			t.Fatal(err)
@@ -54,8 +75,9 @@ func TestLocation_Assign(t *testing.T) {
 	t.Run("SantaMonica", func(t *testing.T) {
 		lat := 34.00909444444444
 		lng := -118.49700833333334
+		id := s2.Token(lat, lng)
 
-		o, err := osm.FindLocation(lat, lng)
+		o, err := osm.FindLocation(id)
 
 		if err != nil {
 			t.Fatal(err)
@@ -82,8 +104,9 @@ func TestLocation_Assign(t *testing.T) {
 	t.Run("AirportZurich", func(t *testing.T) {
 		lat := 47.45401666666667
 		lng := 8.557494444444446
+		id := s2.Token(lat, lng)
 
-		o, err := osm.FindLocation(lat, lng)
+		o, err := osm.FindLocation(id)
 
 		if err != nil {
 			t.Fatal(err)
@@ -111,8 +134,9 @@ func TestLocation_Assign(t *testing.T) {
 	t.Run("AirportTegel", func(t *testing.T) {
 		lat := 52.559864397033024
 		lng := 13.28895092010498
+		id := s2.Token(lat, lng)
 
-		o, err := osm.FindLocation(lat, lng)
+		o, err := osm.FindLocation(id)
 
 		if err != nil {
 			t.Fatal(err)
@@ -140,8 +164,9 @@ func TestLocation_Assign(t *testing.T) {
 	t.Run("PinkBeach", func(t *testing.T) {
 		lat := 35.26967222222222
 		lng := 23.53711666666667
+		id := s2.Token(lat, lng)
 
-		o, err := osm.FindLocation(lat, lng)
+		o, err := osm.FindLocation(id)
 
 		if err != nil {
 			t.Fatal(err)
@@ -162,7 +187,7 @@ func TestLocation_Assign(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "149ce7854", l.ID)
+		assert.True(t, strings.HasPrefix(l.ID, "149ce785"))
 		assert.Equal(t, "Pink Beach", l.LocName)
 		assert.Equal(t, "Chrisoskalitissa, Crete, Greece", l.LocLabel)
 	})
@@ -170,8 +195,9 @@ func TestLocation_Assign(t *testing.T) {
 	t.Run("NewJersey", func(t *testing.T) {
 		lat := 40.74290
 		lng := -74.04862
+		id := s2.Token(lat, lng)
 
-		o, err := osm.FindLocation(lat, lng)
+		o, err := osm.FindLocation(id)
 
 		if err != nil {
 			t.Fatal(err)
@@ -192,7 +218,7 @@ func TestLocation_Assign(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "89c25741c", l.ID)
+		assert.True(t, strings.HasPrefix(l.ID, "89c25741"))
 		assert.Equal(t, "", l.LocName)
 		assert.Equal(t, "Jersey City, New Jersey, USA", l.LocLabel)
 	})
@@ -200,8 +226,9 @@ func TestLocation_Assign(t *testing.T) {
 	t.Run("SouthAfrica", func(t *testing.T) {
 		lat := -31.976301666666668
 		lng := 29.148046666666666
+		id := s2.Token(lat, lng)
 
-		o, err := osm.FindLocation(lat, lng)
+		o, err := osm.FindLocation(id)
 
 		if err != nil {
 			t.Fatal(err)
@@ -222,7 +249,7 @@ func TestLocation_Assign(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "1e5e4205c", l.ID)
+		assert.True(t, strings.HasPrefix(l.ID, "1e5e4205"))
 		assert.Equal(t, "R411", l.LocName)
 		assert.Equal(t, "Eastern Cape, South Africa", l.LocLabel)
 	})
@@ -230,11 +257,14 @@ func TestLocation_Assign(t *testing.T) {
 	t.Run("Unknown", func(t *testing.T) {
 		lat := -21.976301666666668
 		lng := 49.148046666666666
+		id := s2.Token(lat, lng)
+		log.Printf("ID: %s", id)
+		o, err := osm.FindLocation(id)
 
-		o, err := osm.FindLocation(lat, lng)
+		log.Printf("Output: %+v", o)
 
-		if err != nil {
-			t.Fatal(err)
+		if err == nil {
+			t.Fatal("expected error")
 		}
 
 		assert.False(t, o.Cached)
@@ -250,16 +280,18 @@ func TestLocation_Unknown(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
 		lat := 0.0
 		lng := 0.0
+		id := s2.Token(lat, lng)
 
-		l := NewLocation(lat, lng)
+		l := NewLocation(id)
 
 		assert.Equal(t, true, l.Unknown())
 	})
 	t.Run("false", func(t *testing.T) {
 		lat := -31.976301666666668
 		lng := 29.148046666666666
+		id := s2.Token(lat, lng)
 
-		l := NewLocation(lat, lng)
+		l := NewLocation(id)
 
 		assert.Equal(t, false, l.Unknown())
 	})
@@ -269,49 +301,22 @@ func TestLocation_place(t *testing.T) {
 	t.Run("unknown", func(t *testing.T) {
 		lat := 0.0
 		lng := 0.0
+		id := s2.Token(lat, lng)
 
-		l := NewLocation(lat, lng)
+		l := NewLocation(id)
 
 		assert.Equal(t, "Unknown", l.label())
 	})
 	t.Run("Nürnberg, Bayern, Germany", func(t *testing.T) {
-		lat := -31.976301666666668
-		lng := 29.148046666666666
+		l := &Location{LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern"}
 
-		l := &Location{LocLat: lat, LocLng: lng, LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern"}
-
-		assert.Equal(t, "Nürnberg, Bayern, Germany", l.label())
-	})
-}
-
-func TestLocation_Latitude(t *testing.T) {
-	t.Run("-31.976301666666668", func(t *testing.T) {
-		lat := -31.976301666666668
-		lng := 29.148046666666666
-
-		l := &Location{LocLat: lat, LocLng: lng, LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern"}
-
-		assert.Equal(t, -31.976301666666668, l.Latitude())
-	})
-}
-
-func TestLocation_Longitude(t *testing.T) {
-	t.Run("29.148046666666666", func(t *testing.T) {
-		lat := -31.976301666666668
-		lng := 29.148046666666666
-
-		l := &Location{LocLat: lat, LocLng: lng, LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern"}
-
-		assert.Equal(t, 29.148046666666666, l.Longitude())
+		assert.Equal(t, "Unknown", l.label())
 	})
 }
 
 func TestLocation_Name(t *testing.T) {
 	t.Run("Christkindlesmarkt", func(t *testing.T) {
-		lat := -31.976301666666668
-		lng := 29.148046666666666
-
-		l := &Location{LocLat: lat, LocLng: lng, LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern", LocName: "Christkindlesmarkt"}
+		l := &Location{LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern", LocName: "Christkindlesmarkt"}
 
 		assert.Equal(t, "Christkindlesmarkt", l.Name())
 	})
@@ -319,10 +324,7 @@ func TestLocation_Name(t *testing.T) {
 
 func TestLocation_City(t *testing.T) {
 	t.Run("Nürnberg", func(t *testing.T) {
-		lat := -31.976301666666668
-		lng := 29.148046666666666
-
-		l := &Location{LocLat: lat, LocLng: lng, LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern", LocName: "Christkindlesmarkt"}
+		l := &Location{LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern", LocName: "Christkindlesmarkt"}
 
 		assert.Equal(t, "Nürnberg", l.City())
 	})
@@ -330,10 +332,7 @@ func TestLocation_City(t *testing.T) {
 
 func TestLocation_Suburb(t *testing.T) {
 	t.Run("Hauptmarkt", func(t *testing.T) {
-		lat := -31.976301666666668
-		lng := 29.148046666666666
-
-		l := &Location{LocLat: lat, LocLng: lng, LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt"}
+		l := &Location{LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt"}
 
 		assert.Equal(t, "Hauptmarkt", l.Suburb())
 	})
@@ -341,10 +340,7 @@ func TestLocation_Suburb(t *testing.T) {
 
 func TestLocation_State(t *testing.T) {
 	t.Run("Bayern", func(t *testing.T) {
-		lat := -31.976301666666668
-		lng := 29.148046666666666
-
-		l := &Location{LocLat: lat, LocLng: lng, LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt"}
+		l := &Location{LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt"}
 
 		assert.Equal(t, "Bayern", l.State())
 	})
@@ -352,10 +348,7 @@ func TestLocation_State(t *testing.T) {
 
 func TestLocation_Category(t *testing.T) {
 	t.Run("test", func(t *testing.T) {
-		lat := -31.976301666666668
-		lng := 29.148046666666666
-
-		l := &Location{LocCategory: "test", LocLat: lat, LocLng: lng, LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt"}
+		l := &Location{LocCategory: "test", LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt"}
 
 		assert.Equal(t, "test", l.Category())
 	})
@@ -363,10 +356,7 @@ func TestLocation_Category(t *testing.T) {
 
 func TestLocation_Source(t *testing.T) {
 	t.Run("source", func(t *testing.T) {
-		lat := -31.976301666666668
-		lng := 29.148046666666666
-
-		l := &Location{LocCategory: "test", LocLat: lat, LocLng: lng, LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt", LocSource: "source"}
+		l := &Location{LocCategory: "test", LocCountry: "de", LocCity: "Nürnberg", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt", LocSource: "source"}
 
 		assert.Equal(t, "source", l.Source())
 	})
@@ -374,10 +364,7 @@ func TestLocation_Source(t *testing.T) {
 
 func TestLocation_Place(t *testing.T) {
 	t.Run("test-label", func(t *testing.T) {
-		lat := -31.976301666666668
-		lng := 29.148046666666666
-
-		l := &Location{LocCategory: "test", LocLat: lat, LocLng: lng, LocCountry: "de", LocCity: "Nürnberg", LocLabel: "test-label", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt"}
+		l := &Location{LocCategory: "test", LocCountry: "de", LocCity: "Nürnberg", LocLabel: "test-label", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt"}
 
 		assert.Equal(t, "test-label", l.Label())
 	})
@@ -385,10 +372,7 @@ func TestLocation_Place(t *testing.T) {
 
 func TestLocation_CountryCode(t *testing.T) {
 	t.Run("de", func(t *testing.T) {
-		lat := -31.976301666666668
-		lng := 29.148046666666666
-
-		l := &Location{LocCategory: "test", LocLat: lat, LocLng: lng, LocCountry: "de", LocCity: "Nürnberg", LocLabel: "test-label", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt"}
+		l := &Location{LocCategory: "test", LocCountry: "de", LocCity: "Nürnberg", LocLabel: "test-label", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt"}
 
 		assert.Equal(t, "de", l.CountryCode())
 	})
@@ -396,10 +380,7 @@ func TestLocation_CountryCode(t *testing.T) {
 
 func TestLocation_CountryName(t *testing.T) {
 	t.Run("Germany", func(t *testing.T) {
-		lat := -31.976301666666668
-		lng := 29.148046666666666
-
-		l := &Location{LocCategory: "test", LocLat: lat, LocLng: lng, LocCountry: "de", LocCity: "Nürnberg", LocLabel: "test-label", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt"}
+		l := &Location{LocCategory: "test", LocCountry: "de", LocCity: "Nürnberg", LocLabel: "test-label", LocState: "Bayern", LocName: "Christkindlesmarkt", LocSuburb: "Hauptmarkt"}
 
 		assert.Equal(t, "Germany", l.CountryName())
 	})

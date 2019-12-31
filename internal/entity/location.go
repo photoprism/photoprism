@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/internal/s2"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
@@ -14,8 +15,6 @@ type Location struct {
 	ID          string `gorm:"type:varbinary(16);primary_key;auto_increment:false;"`
 	PlaceID     string `gorm:"type:varbinary(16);"`
 	Place       *Place
-	LocLat      float64
-	LocLng      float64
 	LocName     string `gorm:"type:varchar(100);"`
 	LocCategory string `gorm:"type:varchar(50);"`
 	LocSuburb   string `gorm:"type:varchar(100);"`
@@ -27,9 +26,7 @@ type Location struct {
 func NewLocation(lat, lng float64) *Location {
 	result := &Location{}
 
-	result.ID = maps.S2Token(lat, lng)
-	result.LocLat = lat
-	result.LocLng = lng
+	result.ID = s2.Token(lat, lng)
 
 	return result
 }
@@ -42,11 +39,9 @@ func (m *Location) Find(db *gorm.DB) error {
 
 	l := &maps.Location{
 		ID:     m.ID,
-		LocLat: m.LocLat,
-		LocLng: m.LocLng,
 	}
 
-	if err := l.Query(); err != nil {
+	if err := l.QueryPlaces(); err != nil {
 		return err
 	}
 
@@ -91,14 +86,6 @@ func (m *Location) Keywords() []string {
 
 func (m *Location) Unknown() bool {
 	return m.ID == ""
-}
-
-func (m *Location) Latitude() float64 {
-	return m.LocLat
-}
-
-func (m *Location) Longitude() float64 {
-	return m.LocLng
 }
 
 func (m *Location) Name() string {

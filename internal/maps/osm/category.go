@@ -2,10 +2,10 @@ package osm
 
 import "fmt"
 
-func (o Location) Category() (result string) {
-	key := fmt.Sprintf("%s=%s", o.LocCategory, o.LocType)
-	catKey := fmt.Sprintf("%s=*", o.LocCategory)
-	typeKey := fmt.Sprintf("*=%s", o.LocType)
+func (l Location) Category() (result string) {
+	key := fmt.Sprintf("%s=%s", l.LocCategory, l.LocType)
+	catKey := fmt.Sprintf("%s=*", l.LocCategory)
+	typeKey := fmt.Sprintf("*=%s", l.LocType)
 
 	if result, ok := osmCategories[key]; ok {
 		return result

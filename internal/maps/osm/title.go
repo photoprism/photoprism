@@ -11,16 +11,16 @@ var labelTitles = map[string]string{
 	"visitor center": "Visitor Center",
 }
 
-func (o Location) Name() (result string) {
-	result = o.Category()
+func (l Location) Name() (result string) {
+	result = l.Category()
 
 	if title, ok := labelTitles[result]; ok {
-		title = strings.Replace(title, "%name%", o.LocName, 1)
+		title = strings.Replace(title, "%name%", l.LocName, 1)
 		return title
 	}
 
-	if o.LocName != "" {
-		result = o.LocName
+	if l.LocName != "" {
+		result = l.LocName
 	}
 
 	result = strings.Replace(result, "_", " ", -1)

@@ -7,7 +7,7 @@ COPY . .
 # Build PhotoPrism
 RUN make dep build-js install
 
-# Base base image as photoprism/development
+# Same base image as photoprism/development
 FROM ubuntu:18.04
 
 # Set environment variables

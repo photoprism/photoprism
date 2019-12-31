@@ -2,20 +2,20 @@ package osm
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/melihmucuk/geocache"
+	"github.com/photoprism/photoprism/internal/s2"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
 type Location struct {
+	ID             string  `json:"-"`
 	PlaceID        int     `json:"place_id"`
-	LocLat         string  `json:"lat"`
-	LocLng         string  `json:"lon"`
 	LocName        string  `json:"name"`
 	LocCategory    string  `json:"category"`
 	LocType        string  `json:"type"`
@@ -27,7 +27,13 @@ type Location struct {
 var ReverseLookupURL = "https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=jsonv2&accept-language=en&zoom=18"
 
 // API docs see https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding
-func FindLocation(lat, lng float64) (result Location, err error) {
+func FindLocation(id string) (result Location, err error) {
+	if len(id) > 16 || len(id) == 0 {
+		return result, errors.New("osm: invalid location id")
+	}
+
+	lat, lng := s2.LatLng(id)
+
 	if lat == 0.0 || lng == 0.0 {
 		return result, fmt.Errorf("osm: skipping lat %f, lng %f", lat, lng)
 	}
@@ -59,6 +65,14 @@ func FindLocation(lat, lng float64) (result Location, err error) {
 		return result, err
 	}
 
+	if result.PlaceID == 0 {
+		result.ID = ""
+
+		return result, fmt.Errorf("osm: no result for %s", id)
+	}
+
+	result.ID = id
+
 	geoCache.Set(point, result, time.Hour)
 
 	result.Cached = false
@@ -66,23 +80,27 @@ func FindLocation(lat, lng float64) (result Location, err error) {
 	return result, nil
 }
 
-func (o Location) State() (result string) {
-	result = o.Address.State
+func (l Location) CellID() (result string) {
+	return l.ID
+}
+
+func (l Location) State() (result string) {
+	result = l.Address.State
 
 	return strings.TrimSpace(result)
 }
 
-func (o Location) City() (result string) {
-	if o.Address.City != "" {
-		result = o.Address.City
-	} else if o.Address.Town != "" {
-		result = o.Address.Town
-	} else if o.Address.Village != "" {
-		result = o.Address.Village
-	} else if o.Address.County != "" {
-		result = o.Address.County
-	} else if o.Address.State != "" {
-		result = o.Address.State
+func (l Location) City() (result string) {
+	if l.Address.City != "" {
+		result = l.Address.City
+	} else if l.Address.Town != "" {
+		result = l.Address.Town
+	} else if l.Address.Village != "" {
+		result = l.Address.Village
+	} else if l.Address.County != "" {
+		result = l.Address.County
+	} else if l.Address.State != "" {
+		result = l.Address.State
 	}
 
 	if len([]rune(result)) > 19 {
@@ -92,52 +110,22 @@ func (o Location) City() (result string) {
 	return strings.TrimSpace(result)
 }
 
-func (o Location) Suburb() (result string) {
-	result = o.Address.Suburb
+func (l Location) Suburb() (result string) {
+	result = l.Address.Suburb
 
 	return strings.TrimSpace(result)
 }
 
-func (o Location) CountryCode() (result string) {
-	result = o.Address.CountryCode
+func (l Location) CountryCode() (result string) {
+	result = l.Address.CountryCode
 
 	return strings.ToLower(strings.TrimSpace(result))
 }
 
-func (o Location) Latitude() (result float64) {
-	if o.LocLat == "" {
-		log.Warn("osm: no latitude")
-		return 0.0
-	}
-
-	result, err := strconv.ParseFloat(o.LocLat, 64)
-
-	if err != nil {
-		log.Errorf("osm: %s", err.Error())
-	}
-
-	return result
+func (l Location) Keywords() (result []string) {
+	return util.Keywords(l.LocDisplayName)
 }
 
-func (o Location) Longitude() (result float64) {
-	if o.LocLng == "" {
-		log.Warn("osm: no longitude")
-		return 0.0
-	}
-
-	result, err := strconv.ParseFloat(o.LocLng, 64)
-
-	if err != nil {
-		log.Errorf("osm: %s", err.Error())
-	}
-
-	return result
-}
-
-func (o Location) Keywords() (result []string) {
-	return util.Keywords(o.LocDisplayName)
-}
-
-func (o Location) Source() string {
+func (l Location) Source() string {
 	return "osm"
 }

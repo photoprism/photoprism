@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/maps/osm"
+	"github.com/photoprism/photoprism/internal/maps/places"
 )
 
 /* TODO
@@ -24,8 +25,6 @@ ORDER BY loc_country, album_name, taken_year;
 // Photo location
 type Location struct {
 	ID          string
-	LocLat      float64
-	LocLng      float64
 	LocName     string
 	LocCategory string
 	LocSuburb   string
@@ -37,9 +36,8 @@ type Location struct {
 }
 
 type LocationSource interface {
+	CellID() string
 	CountryCode() string
-	Latitude() float64
-	Longitude() float64
 	Category() string
 	Name() string
 	City() string
@@ -48,45 +46,51 @@ type LocationSource interface {
 	Source() string
 }
 
-func NewLocation(lat, lng float64) *Location {
-	id := S2Token(lat, lng)
-
+func NewLocation(id string) *Location {
 	result := &Location{
-		ID:     id,
-		LocLat: lat,
-		LocLng: lng,
+		ID: id,
 	}
 
 	return result
 }
 
-func (l *Location) Query() error {
-	o, err := osm.FindLocation(l.LocLat, l.LocLng)
+func (l *Location) QueryPlaces() error {
+	s, err := places.FindLocation(l.ID)
 
 	if err != nil {
 		return err
 	}
 
-	return l.Assign(o)
+	l.LocSource = s.Source()
+	l.LocName = s.Name()
+	l.LocCity = s.City()
+	l.LocSuburb = s.Suburb()
+	l.LocState = s.State()
+	l.LocCountry = s.CountryCode()
+	l.LocCategory = s.Category()
+	l.LocLabel = s.Label()
+
+	return nil
+}
+
+func (l *Location) QueryOSM() error {
+	s, err := osm.FindLocation(l.ID)
+
+	if err != nil {
+		return err
+	}
+
+	return l.Assign(s)
 }
 
 func (l *Location) Assign(s LocationSource) error {
 	l.LocSource = s.Source()
 
-	if l.LocLat == 0 {
-		l.LocLat = s.Latitude()
-	}
-	if l.LocLng == 0 {
-		l.LocLng = s.Longitude()
-	}
+	l.ID = s.CellID()
 
 	if l.Unknown() {
 		l.LocCategory = "unknown"
 		return errors.New("maps: unknown location")
-	}
-
-	if l.ID == "" {
-		l.ID = S2Token(l.LocLat, l.LocLng)
 	}
 
 	l.LocName = s.Name()
@@ -101,11 +105,7 @@ func (l *Location) Assign(s LocationSource) error {
 }
 
 func (l *Location) Unknown() bool {
-	if l.LocLng == 0.0 && l.LocLat == 0.0 {
-		return true
-	}
-
-	return false
+	return l.ID == ""
 }
 
 func (l *Location) label() string {
@@ -131,14 +131,6 @@ func (l *Location) label() string {
 	}
 
 	return strings.Join(loc[:], ", ")
-}
-
-func (l Location) Latitude() float64 {
-	return l.LocLat
-}
-
-func (l Location) Longitude() float64 {
-	return l.LocLng
 }
 
 func (l Location) Name() string {
