@@ -621,7 +621,6 @@ partridge:
   categories:
     - animal
     - bird
-    - chicken
 
 parrot:
   label: parrot
@@ -800,25 +799,16 @@ crayfish:
     - lobster
 
 isopod:
-  categories:
-    - animal
+  label: animal
 
 white stork:
-  label: storck
-  categories:
-    - animal
-    - bird
+  see: bird
 
 black stork:
-  label: storck
-  categories:
-    - animal
-    - bird
+  see: bird
 
 spoonbill:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 flamingo:
   categories:
