@@ -370,3 +370,10 @@ func TestConfig_Shutdown(t *testing.T) {
 	c := NewTestConfig()
 	c.Shutdown()
 }
+
+func TestConfig_Workers(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	assert.GreaterOrEqual(t, c.Workers(), 1)
+}

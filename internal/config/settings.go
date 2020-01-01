@@ -47,3 +47,15 @@ func (s *Settings) WriteValuesToFile(fileName string) error {
 
 	return ioutil.WriteFile(fileName, data, os.ModePerm)
 }
+
+// Settings returns the current user settings.
+func (c *Config) Settings() *Settings {
+	s := NewSettings()
+	p := c.SettingsFile()
+
+	if err := s.SetValuesFromFile(p); err != nil {
+		log.Error(err)
+	}
+
+	return s
+}
