@@ -1718,7 +1718,7 @@ indri:
 fossa:
   see: cat
 
-indian elephant:
+elephant:
   label: elephant
   priority: 2
   threshold: 0.47
@@ -1726,13 +1726,11 @@ indian elephant:
     - animal
     - wildlife
 
+indian elephant:
+  see: elephant
+
 african elephant:
-  priority: 2
-  threshold: 0.47
-  categories:
-    - animal
-    - elephant
-    - wildlife
+  see: elephant
 
 tusker:
   label: wildlife
