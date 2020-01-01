@@ -3195,9 +3195,7 @@ yellow lady's slipper:
     - shoe
 
 corn:
-  label: food
-  categories:
-    - vegetables
+  label: vegetables
 
 acorn:
   categories:
