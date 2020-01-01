@@ -249,13 +249,13 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 
 		expectedBaseFilename := conf.ExamplesPath() + "/canon_eos_6d"
 
-		related, _, err := mediaFile.RelatedFiles()
+		related, err := mediaFile.RelatedFiles()
 
 		assert.Nil(t, err)
 
-		assert.Len(t, related, 3)
+		assert.Len(t, related.files, 3)
 
-		for _, result := range related {
+		for _, result := range related.files {
 			t.Logf("Filename: %s", result.Filename())
 
 			filename := result.Filename()
@@ -275,13 +275,13 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 
 		expectedBaseFilename := conf.ExamplesPath() + "/iphone_7"
 
-		related, _, err := mediaFile.RelatedFiles()
+		related, err := mediaFile.RelatedFiles()
 
 		assert.Nil(t, err)
 
-		assert.Len(t, related, 3)
+		assert.Len(t, related.files, 3)
 
-		for _, result := range related {
+		for _, result := range related.files {
 			t.Logf("Filename: %s", result.Filename())
 
 			filename := result.Filename()
@@ -302,16 +302,16 @@ func TestMediaFile_RelatedFiles_Ordering(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	related, _, err := mediaFile.RelatedFiles()
+	related, err := mediaFile.RelatedFiles()
 
 	assert.Nil(t, err)
 
-	assert.Len(t, related, 5)
+	assert.Len(t, related.files, 5)
 
-	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.AAE", related[0].Filename())
-	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.JPG", related[1].Filename())
+	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.AAE", related.files[0].Filename())
+	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.JPG", related.files[1].Filename())
 
-	for _, result := range related {
+	for _, result := range related.files {
 		filename := result.Filename()
 		t.Logf("Filename: %s", filename)
 	}

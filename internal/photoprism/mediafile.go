@@ -251,14 +251,14 @@ func (m *MediaFile) EditedFilename() string {
 }
 
 // RelatedFiles returns files which are related to this file.
-func (m *MediaFile) RelatedFiles() (result MediaFiles, mainFile *MediaFile, err error) {
+func (m *MediaFile) RelatedFiles() (result RelatedFiles, err error) {
 	baseFilename := m.DirectoryBasename()
 	// escape any meta characters in the file name
 	baseFilename = regexp.QuoteMeta(baseFilename)
 	matches, err := filepath.Glob(baseFilename + "*")
 
 	if err != nil {
-		return result, nil, err
+		return result, err
 	}
 
 	if filename := m.EditedFilename(); filename != "" {
@@ -272,22 +272,22 @@ func (m *MediaFile) RelatedFiles() (result MediaFiles, mainFile *MediaFile, err 
 			continue
 		}
 
-		if mainFile == nil && resultFile.IsJpeg() {
-			mainFile = resultFile
+		if result.main == nil && resultFile.IsJpeg() {
+			result.main = resultFile
 		} else if resultFile.IsRaw() {
-			mainFile = resultFile
+			result.main = resultFile
 		} else if resultFile.IsHEIF() {
-			mainFile = resultFile
-		} else if resultFile.IsJpeg() && len(mainFile.Filename()) > len(resultFile.Filename()) {
-			mainFile = resultFile
+			result.main = resultFile
+		} else if resultFile.IsJpeg() && len(result.main.Filename()) > len(resultFile.Filename()) {
+			result.main = resultFile
 		}
 
-		result = append(result, resultFile)
+		result.files = append(result.files, resultFile)
 	}
 
-	sort.Sort(result)
+	sort.Sort(result.files)
 
-	return result, mainFile, nil
+	return result, nil
 }
 
 // Filename returns the filename.

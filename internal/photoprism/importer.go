@@ -77,7 +77,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 			return nil
 		}
 
-		relatedFiles, mainFile, err := mediaFile.RelatedFiles()
+		related, err := mediaFile.RelatedFiles()
 
 		if err != nil {
 			event.Error(fmt.Sprintf("could not import \"%s\": %s", mediaFile.RelativeFilename(importPath), err.Error()))
@@ -86,19 +86,19 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 		}
 
 		event.Publish("import.file", event.Data{
-			"fileName": mainFile.Filename(),
-			"baseName": filepath.Base(mainFile.Filename()),
+			"fileName": related.main.Filename(),
+			"baseName": filepath.Base(related.main.Filename()),
 		})
 
-		for _, relatedMediaFile := range relatedFiles {
+		for _, relatedMediaFile := range related.files {
 			relativeFilename := relatedMediaFile.RelativeFilename(importPath)
 
-			if destinationFilename, err := i.DestinationFilename(mainFile, relatedMediaFile); err == nil {
+			if destinationFilename, err := i.DestinationFilename(related.main, relatedMediaFile); err == nil {
 				if err := os.MkdirAll(path.Dir(destinationFilename), os.ModePerm); err != nil {
 					log.Errorf("could not create directories: %s", err.Error())
 				}
 
-				if mainFile.HasSameFilename(relatedMediaFile) {
+				if related.main.HasSameFilename(relatedMediaFile) {
 					destinationMainFilename = destinationFilename
 					log.Infof("moving main %s file \"%s\" to \"%s\"", relatedMediaFile.Type(), relativeFilename, destinationFilename)
 				} else {

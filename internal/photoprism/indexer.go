@@ -43,7 +43,7 @@ func (i *Indexer) thumbnailsPath() string {
 func (i *Indexer) IndexRelated(mediaFile *MediaFile, o IndexerOptions) map[string]bool {
 	indexed := make(map[string]bool)
 
-	relatedFiles, mainFile, err := mediaFile.RelatedFiles()
+	related, err := mediaFile.RelatedFiles()
 
 	if err != nil {
 		log.Warnf("could not index \"%s\": %s", mediaFile.RelativeFilename(i.originalsPath()), err.Error())
@@ -51,12 +51,12 @@ func (i *Indexer) IndexRelated(mediaFile *MediaFile, o IndexerOptions) map[strin
 		return indexed
 	}
 
-	mainIndexResult := i.indexMediaFile(mainFile, o)
-	indexed[mainFile.Filename()] = true
+	mainIndexResult := i.indexMediaFile(related.main, o)
+	indexed[related.main.Filename()] = true
 
-	log.Infof("index: %s main %s file \"%s\"", mainIndexResult, mainFile.Type(), mainFile.RelativeFilename(i.originalsPath()))
+	log.Infof("index: %s main %s file \"%s\"", mainIndexResult, related.main.Type(), related.main.RelativeFilename(i.originalsPath()))
 
-	for _, relatedMediaFile := range relatedFiles {
+	for _, relatedMediaFile := range related.files {
 		if indexed[relatedMediaFile.Filename()] {
 			continue
 		}
