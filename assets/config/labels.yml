@@ -3339,8 +3339,17 @@ swing:
 
 web site:
   label: info
+
+menu:
+  label: document
   categories:
-    - screenshot
+    - info
+
+envelope:
+  label: office
+
+binder:
+  label: office
 
 crossword puzzle:
   threshold: 0.6
