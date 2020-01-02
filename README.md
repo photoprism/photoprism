@@ -22,7 +22,6 @@ More screenshots: https://photoprism.org/#screenshots
 * Clearly structured Web interface for browsing, organizing and sharing your personal photo collection.
 * Import everything without worrying about duplicates or RAW to JPEG conversion.
 * Reverse geocoding and automated tagging based on Google TensorFlow.
-* No monthly costs. No proprietary formats. No privacy concerns.
 
 ## For the early birds ##
 
