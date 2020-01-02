@@ -78,7 +78,6 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-
 // DELETE /api/v1/import
 func CancelImport(router *gin.RouterGroup, conf *config.Config) {
 	router.DELETE("/import", func(c *gin.Context) {

@@ -38,7 +38,7 @@ func (m *Location) Find(db *gorm.DB) error {
 	}
 
 	l := &maps.Location{
-		ID:     m.ID,
+		ID: m.ID,
 	}
 
 	if err := l.QueryPlaces(); err != nil {

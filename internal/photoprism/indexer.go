@@ -24,7 +24,6 @@ type Indexer struct {
 }
 
 // NewIndexer returns a new indexer.
-// TODO: Is it really necessary to return a pointer?
 func NewIndexer(conf *config.Config, tensorFlow *TensorFlow, nsfwDetector *nsfw.Detector) *Indexer {
 	i := &Indexer{
 		conf:         conf,
@@ -88,7 +87,7 @@ func (ind *Indexer) Start(options IndexerOptions) map[string]bool {
 	err := filepath.Walk(ind.originalsPath(), func(filename string, fileInfo os.FileInfo, err error) error {
 		defer func() {
 			if err := recover(); err != nil {
-				log.Errorf("index: panic %s", err)
+				log.Errorf("index: %s [panic]", err)
 			}
 		}()
 
@@ -113,7 +112,7 @@ func (ind *Indexer) Start(options IndexerOptions) map[string]bool {
 		related, err := mediaFile.RelatedFiles()
 
 		if err != nil {
-			log.Warnf("could not index \"%s\": %s", mediaFile.RelativeFilename(ind.originalsPath()), err.Error())
+			log.Warnf("index: %s", err.Error())
 
 			return nil
 		}

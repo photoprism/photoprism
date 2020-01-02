@@ -11,7 +11,7 @@ func TestFindLocation(t *testing.T) {
 	t.Run("U Berliner Rathaus", func(t *testing.T) {
 		lat := 52.51961810676184
 		lng := 13.40806264572578
-		id :=  s2.Token(lat, lng)
+		id := s2.Token(lat, lng)
 
 		l, err := FindLocation(id)
 

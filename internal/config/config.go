@@ -182,6 +182,6 @@ func (c *Config) Shutdown() {
 }
 
 // Workers returns the number of workers e.g. for indexing files.
-func(c *Config) Workers() int {
+func (c *Config) Workers() int {
 	return runtime.NumCPU()
 }

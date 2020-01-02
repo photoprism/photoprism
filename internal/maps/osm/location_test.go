@@ -11,7 +11,7 @@ func TestFindLocation(t *testing.T) {
 	t.Run("Fernsehturm Berlin 1", func(t *testing.T) {
 		lat := 52.5208
 		lng := 13.40953
-		id :=  s2.Token(lat, lng)
+		id := s2.Token(lat, lng)
 
 		l, err := FindLocation(id)
 
@@ -49,7 +49,7 @@ func TestFindLocation(t *testing.T) {
 	t.Run("Fernsehturm Berlin 2", func(t *testing.T) {
 		lat := 52.52057
 		lng := 13.40889
-		id :=  s2.Token(lat, lng)
+		id := s2.Token(lat, lng)
 
 		l, err := FindLocation(id)
 
@@ -69,7 +69,7 @@ func TestFindLocation(t *testing.T) {
 	t.Run("No Location", func(t *testing.T) {
 		lat := 0.0
 		lng := 0.0
-		id :=  s2.Token(lat, lng)
+		id := s2.Token(lat, lng)
 
 		l, err := FindLocation(id)
 

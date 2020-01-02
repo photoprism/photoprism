@@ -87,7 +87,7 @@ func (imp *Importer) Start(importPath string) {
 	err := filepath.Walk(importPath, func(filename string, fileInfo os.FileInfo, err error) error {
 		defer func() {
 			if err := recover(); err != nil {
-				log.Errorf("import: panic %s", err)
+				log.Errorf("import: %s [panic]", err)
 			}
 		}()
 
@@ -109,7 +109,7 @@ func (imp *Importer) Start(importPath string) {
 		if imp.removeDotFiles && strings.HasPrefix(filepath.Base(filename), ".") {
 			done[filename] = true
 			if err := os.Remove(filename); err != nil {
-				log.Errorf("could not remove \"%s\": %s", filename, err.Error())
+				log.Errorf("import: could not remove \"%s\" (%s)", filename, err.Error())
 			}
 
 			return nil
@@ -124,7 +124,7 @@ func (imp *Importer) Start(importPath string) {
 		related, err := mediaFile.RelatedFiles()
 
 		if err != nil {
-			event.Error(fmt.Sprintf("could not import \"%s\": %s", mediaFile.RelativeFilename(importPath), err.Error()))
+			event.Error(fmt.Sprintf("import: %s", err.Error()))
 
 			return nil
 		}
@@ -134,10 +134,10 @@ func (imp *Importer) Start(importPath string) {
 		}
 
 		jobs <- ImportJob{
-			related: related,
-			options: options,
+			related:    related,
+			options:    options,
 			importPath: importPath,
-			imp:     imp,
+			imp:        imp,
 		}
 
 		return nil
@@ -155,9 +155,9 @@ func (imp *Importer) Start(importPath string) {
 		for _, directory := range directories {
 			if util.DirectoryIsEmpty(directory) {
 				if err := os.Remove(directory); err != nil {
-					log.Errorf("could not deleted empty directory \"%s\": %s", directory, err)
+					log.Errorf("import: could not deleted empty directory \"%s\" (%s)", directory, err)
 				} else {
-					log.Infof("deleted empty directory \"%s\"", directory)
+					log.Infof("import: deleted empty directory \"%s\"", directory)
 				}
 			}
 		}
