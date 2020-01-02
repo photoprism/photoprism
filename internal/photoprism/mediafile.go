@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/util"
 )
 
-// MediaFile represents a single file.
+// MediaFile represents a single photo, video or sidecar file.
 type MediaFile struct {
 	filename       string
 	dateCreated    time.Time
@@ -222,13 +222,13 @@ func (m *MediaFile) CanonicalNameFromFile() string {
 	return basename
 }
 
-// CanonicalNameFromFileWithDirectory gets the canonical name for a mediafile
+// CanonicalNameFromFileWithDirectory gets the canonical name for a MediaFile
 // including the directory.
 func (m *MediaFile) CanonicalNameFromFileWithDirectory() string {
 	return m.Directory() + string(os.PathSeparator) + m.CanonicalNameFromFile()
 }
 
-// Hash return a sha1 hash of a mediafile based on the filename.
+// Hash return a sha1 hash of a MediaFile based on the filename.
 func (m *MediaFile) Hash() string {
 	if len(m.hash) == 0 {
 		m.hash = util.Hash(m.Filename())
@@ -434,7 +434,7 @@ func (m *MediaFile) Move(newFilename string) error {
 	return nil
 }
 
-// Copy a mediafile to another file by destinationFilename.
+// Copy a MediaFile to another file by destinationFilename.
 func (m *MediaFile) Copy(destinationFilename string) error {
 	file, err := m.openFile()
 
@@ -593,7 +593,7 @@ func (m *MediaFile) decodeDimensions() error {
 	return nil
 }
 
-// Width return the width dimension of a mediafile.
+// Width return the width dimension of a MediaFile.
 func (m *MediaFile) Width() int {
 	if !m.IsPhoto() {
 		return 0
@@ -608,7 +608,7 @@ func (m *MediaFile) Width() int {
 	return m.width
 }
 
-// Height returns the height dimension of a mediafile.
+// Height returns the height dimension of a MediaFile.
 func (m *MediaFile) Height() int {
 	if !m.IsPhoto() {
 		return 0
@@ -623,7 +623,7 @@ func (m *MediaFile) Height() int {
 	return m.height
 }
 
-// AspectRatio returns the aspect ratio of a mediafile.
+// AspectRatio returns the aspect ratio of a MediaFile.
 func (m *MediaFile) AspectRatio() float64 {
 	width := float64(m.Width())
 	height := float64(m.Height())
@@ -637,7 +637,7 @@ func (m *MediaFile) AspectRatio() float64 {
 	return aspectRatio
 }
 
-// Orientation returns the orientation of a mediafile.
+// Orientation returns the orientation of a MediaFile.
 func (m *MediaFile) Orientation() int {
 	if exif, err := m.Exif(); err == nil {
 		return exif.Orientation

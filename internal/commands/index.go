@@ -39,13 +39,13 @@ func indexAction(ctx *cli.Context) error {
 		log.Infof("read-only mode enabled")
 	}
 
-	tensorFlow := photoprism.NewTensorFlow(conf)
-	nsfwDetector := nsfw.NewDetector(conf.NSFWModelPath())
+	tf := photoprism.NewTensorFlow(conf)
+	nd := nsfw.NewDetector(conf.NSFWModelPath())
 
-	indexer := photoprism.NewIndexer(conf, tensorFlow, nsfwDetector)
+	ind := photoprism.NewIndex(conf, tf, nd)
 
-	options := photoprism.IndexerOptionsAll()
-	files := indexer.Start(options)
+	opt := photoprism.IndexOptionsAll()
+	files := ind.Start(opt)
 
 	elapsed := time.Since(start)
 

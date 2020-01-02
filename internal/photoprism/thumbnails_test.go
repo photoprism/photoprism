@@ -66,16 +66,16 @@ func TestThumbnails_CreateThumbnailsFromOriginals(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tensorFlow := NewTensorFlow(conf)
-	nsfwDetector := nsfw.NewDetector(conf.NSFWModelPath())
+	tf := NewTensorFlow(conf)
+	nd := nsfw.NewDetector(conf.NSFWModelPath())
 
-	indexer := NewIndexer(conf, tensorFlow, nsfwDetector)
+	ind := NewIndex(conf, tf, nd)
 
-	converter := NewConverter(conf)
+	convert := NewConvert(conf)
 
-	importer := NewImporter(conf, indexer, converter)
+	imp := NewImport(conf, ind, convert)
 
-	importer.Start(conf.ImportPath())
+	imp.Start(conf.ImportPath())
 
 	err := CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), true)
 

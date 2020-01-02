@@ -15,32 +15,32 @@ import (
 	"github.com/photoprism/photoprism/internal/util"
 )
 
-var indexer *photoprism.Indexer
-var nsfwDetector *nsfw.Detector
+var ind *photoprism.Index
+var nd *nsfw.Detector
 
-func initIndexer(conf *config.Config) {
-	if indexer != nil {
+func initIndex(conf *config.Config) {
+	if ind != nil {
 		return
 	}
 
 	initNsfwDetector(conf)
 
-	tensorFlow := photoprism.NewTensorFlow(conf)
+	tf := photoprism.NewTensorFlow(conf)
 
-	indexer = photoprism.NewIndexer(conf, tensorFlow, nsfwDetector)
+	ind = photoprism.NewIndex(conf, tf, nd)
 }
 
 func initNsfwDetector(conf *config.Config) {
-	if nsfwDetector != nil {
+	if nd != nil {
 		return
 	}
 
-	nsfwDetector = nsfw.NewDetector(conf.NSFWModelPath())
+	nd = nsfw.NewDetector(conf.NSFWModelPath())
 }
 
-// POST /api/v1/index
+// POST /api/v1/ind
 func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/index", func(c *gin.Context) {
+	router.POST("/ind", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -48,7 +48,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 
 		start := time.Now()
 
-		var f form.IndexerOptions
+		var f form.IndexOptions
 
 		if err := c.BindJSON(&f); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
@@ -60,8 +60,8 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 		event.Info(fmt.Sprintf("indexing photos in \"%s\"", filepath.Base(path)))
 
 		if f.ConvertRaw && !conf.ReadOnly() {
-			converter := photoprism.NewConverter(conf)
-			converter.ConvertAll(conf.OriginalsPath())
+			convert := photoprism.NewConvert(conf)
+			convert.Path(conf.OriginalsPath())
 		}
 
 		if f.CreateThumbs {
@@ -70,35 +70,35 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 			}
 		}
 
-		initIndexer(conf)
+		initIndex(conf)
 
 		if f.SkipUnchanged {
-			indexer.Start(photoprism.IndexerOptionsNone())
+			ind.Start(photoprism.IndexOptionsNone())
 		} else {
-			indexer.Start(photoprism.IndexerOptionsAll())
+			ind.Start(photoprism.IndexOptionsAll())
 		}
 
 		elapsed := int(time.Since(start).Seconds())
 
 		event.Success(fmt.Sprintf("indexing completed in %d s", elapsed))
-		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
+		event.Publish("ind.completed", event.Data{"path": path, "seconds": elapsed})
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("indexing completed in %d s", elapsed)})
 	})
 }
 
-// DELETE /api/v1/index
+// DELETE /api/v1/ind
 func CancelIndexing(router *gin.RouterGroup, conf *config.Config) {
-	router.DELETE("/index", func(c *gin.Context) {
+	router.DELETE("/ind", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
-		initIndexer(conf)
+		initIndex(conf)
 
-		indexer.Cancel()
+		ind.Cancel()
 
 		c.JSON(http.StatusOK, gin.H{"message": "indexing canceled"})
 	})

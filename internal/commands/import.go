@@ -43,13 +43,13 @@ func importAction(ctx *cli.Context) error {
 	tensorFlow := photoprism.NewTensorFlow(conf)
 	nsfwDetector := nsfw.NewDetector(conf.NSFWModelPath())
 
-	indexer := photoprism.NewIndexer(conf, tensorFlow, nsfwDetector)
+	ind := photoprism.NewIndex(conf, tensorFlow, nsfwDetector)
 
-	converter := photoprism.NewConverter(conf)
+	convert := photoprism.NewConvert(conf)
 
-	importer := photoprism.NewImporter(conf, indexer, converter)
+	imp := photoprism.NewImport(conf, ind, convert)
 
-	importer.Start(conf.ImportPath())
+	imp.Start(conf.ImportPath())
 
 	elapsed := time.Since(start)
 

@@ -10,20 +10,18 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
-// Converter wraps a darktable cli binary.
-type Converter struct {
+// Convert represents a converter that can convert RAW/HEIF images to JPEG.
+type Convert struct {
 	conf *config.Config
 }
 
-// NewConverter returns a new converter by setting the darktable
-// cli binary location.
-func NewConverter(conf *config.Config) *Converter {
-	return &Converter{conf: conf}
+// NewConvert returns a new converter and expects the config as argument.
+func NewConvert(conf *config.Config) *Convert {
+	return &Convert{conf: conf}
 }
 
-// ConvertAll converts all the files given a path to JPEG. This function
-// ignores error during this process.
-func (c *Converter) ConvertAll(path string) {
+// Path converts all files in a directory to JPEG if possible.
+func (c *Convert) Path(path string) {
 	err := filepath.Walk(path, func(filename string, fileInfo os.FileInfo, err error) error {
 
 		if err != nil {
@@ -41,7 +39,7 @@ func (c *Converter) ConvertAll(path string) {
 			return nil
 		}
 
-		if _, err := c.ConvertToJpeg(mediaFile); err != nil {
+		if _, err := c.ToJpeg(mediaFile); err != nil {
 			log.Warnf("file could not be converted to JPEG: \"%s\"", filename)
 		}
 
@@ -53,7 +51,8 @@ func (c *Converter) ConvertAll(path string) {
 	}
 }
 
-func (c *Converter) ConvertCommand(image *MediaFile, jpegFilename string, xmpFilename string) (result *exec.Cmd, err error) {
+// ConvertCommand returns the command for converting files to JPEG, depending on the format.
+func (c *Convert) ConvertCommand(image *MediaFile, jpegFilename string, xmpFilename string) (result *exec.Cmd, err error) {
 	if image.IsRaw() {
 		if c.conf.SipsBin() != "" {
 			result = exec.Command(c.conf.SipsBin(), "-s format jpeg", image.filename, "--out "+jpegFilename)
@@ -73,8 +72,8 @@ func (c *Converter) ConvertCommand(image *MediaFile, jpegFilename string, xmpFil
 	return result, nil
 }
 
-// ConvertToJpeg converts a single image the JPEG format.
-func (c *Converter) ConvertToJpeg(image *MediaFile) (*MediaFile, error) {
+// ToJpeg converts a single image file to JPEG if possible.
+func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	if !image.Exists() {
 		return nil, fmt.Errorf("can not convert to jpeg, file does not exist: %s", image.Filename())
 	}

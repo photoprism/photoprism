@@ -13,8 +13,8 @@ import (
 	"github.com/photoprism/photoprism/internal/nsfw"
 )
 
-// Indexer defines an indexer with originals path tensorflow and a db.
-type Indexer struct {
+// Index represents an indexer that indexes files in the originals directory.
+type Index struct {
 	conf         *config.Config
 	tensorFlow   *TensorFlow
 	nsfwDetector *nsfw.Detector
@@ -23,9 +23,9 @@ type Indexer struct {
 	canceled     bool
 }
 
-// NewIndexer returns a new indexer.
-func NewIndexer(conf *config.Config, tensorFlow *TensorFlow, nsfwDetector *nsfw.Detector) *Indexer {
-	i := &Indexer{
+// NewIndex returns a new indexer and expects its dependencies as arguments.
+func NewIndex(conf *config.Config, tensorFlow *TensorFlow, nsfwDetector *nsfw.Detector) *Index {
+	i := &Index{
 		conf:         conf,
 		tensorFlow:   tensorFlow,
 		nsfwDetector: nsfwDetector,
@@ -35,25 +35,25 @@ func NewIndexer(conf *config.Config, tensorFlow *TensorFlow, nsfwDetector *nsfw.
 	return i
 }
 
-func (ind *Indexer) originalsPath() string {
+func (ind *Index) originalsPath() string {
 	return ind.conf.OriginalsPath()
 }
 
-func (ind *Indexer) thumbnailsPath() string {
+func (ind *Index) thumbnailsPath() string {
 	return ind.conf.ThumbnailsPath()
 }
 
 // Cancel stops the current indexing operation.
-func (ind *Indexer) Cancel() {
+func (ind *Index) Cancel() {
 	ind.canceled = true
 }
 
-// Start will index mediafiles in the originals directory.
-func (ind *Indexer) Start(options IndexerOptions) map[string]bool {
+// Start will index MediaFiles in the originals directory.
+func (ind *Index) Start(options IndexOptions) map[string]bool {
 	done := make(map[string]bool)
 
 	if ind.running {
-		event.Error("indexer already running")
+		event.Error("index already running")
 		return done
 	}
 
@@ -79,7 +79,7 @@ func (ind *Indexer) Start(options IndexerOptions) map[string]bool {
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
-			indexerWorker(jobs) // HLc
+			indexWorker(jobs) // HLc
 			wg.Done()
 		}()
 	}
@@ -123,7 +123,7 @@ func (ind *Indexer) Start(options IndexerOptions) map[string]bool {
 
 		jobs <- IndexJob{
 			related: related,
-			options: options,
+			opt:     options,
 			ind:     ind,
 		}
 

@@ -137,9 +137,9 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	converter := NewConverter(conf)
+	convert := NewConvert(conf)
 
-	jpeg, err := converter.ConvertToJpeg(img)
+	jpeg, err := convert.ToJpeg(img)
 
 	assert.Nil(t, err)
 

@@ -12,7 +12,7 @@ import (
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
-// Exif returns information about a single image.
+// Exif represents MediaFile metadata.
 type Exif struct {
 	UUID         string
 	TakenAt      time.Time

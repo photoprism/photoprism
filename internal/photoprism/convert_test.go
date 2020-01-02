@@ -9,15 +9,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewConverter(t *testing.T) {
+func TestNewConvert(t *testing.T) {
 	conf := config.TestConfig()
 
-	converter := NewConverter(conf)
+	convert := NewConvert(conf)
 
-	assert.IsType(t, &Converter{}, converter)
+	assert.IsType(t, &Convert{}, convert)
 }
 
-func TestConverter_ConvertToJpeg(t *testing.T) {
+func TestConvert_ToJpeg(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -26,21 +26,21 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	converter := NewConverter(conf)
+	convert := NewConvert(conf)
 
 	jpegFilename := conf.ImportPath() + "/fern_green.jpg"
 
 	assert.Truef(t, util.Exists(jpegFilename), "file does not exist: %s", jpegFilename)
 
-	t.Logf("Testing RAW to JPEG converter with %s", jpegFilename)
+	t.Logf("Testing RAW to JPEG convert with %s", jpegFilename)
 
 	jpegMediaFile, err := NewMediaFile(jpegFilename)
 
 	assert.Nil(t, err)
 
-	imageJpeg, err := converter.ConvertToJpeg(jpegMediaFile)
+	imageJpeg, err := convert.ToJpeg(jpegMediaFile)
 
-	assert.Empty(t, err, "ConvertToJpeg() failed")
+	assert.Empty(t, err, "ToJpeg() failed")
 
 	infoJpeg, err := imageJpeg.Exif()
 
@@ -58,13 +58,13 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 
 	rawFilename := conf.ImportPath() + "/raw/IMG_2567.CR2"
 
-	t.Logf("Testing RAW to JPEG converter with %s", rawFilename)
+	t.Logf("Testing RAW to JPEG convert with %s", rawFilename)
 
 	rawMediaFile, err := NewMediaFile(rawFilename)
 
 	assert.Nil(t, err)
 
-	imageRaw, _ := converter.ConvertToJpeg(rawMediaFile)
+	imageRaw, _ := convert.ToJpeg(rawMediaFile)
 
 	assert.True(t, util.Exists(conf.ImportPath()+"/raw/IMG_2567.jpg"), "Jpeg file was not found - is Darktable installed?")
 
@@ -77,7 +77,7 @@ func TestConverter_ConvertToJpeg(t *testing.T) {
 	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel)
 }
 
-func TestConverter_ConvertAll(t *testing.T) {
+func TestConvert_Path(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -86,9 +86,9 @@ func TestConverter_ConvertAll(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	converter := NewConverter(conf)
+	convert := NewConvert(conf)
 
-	converter.ConvertAll(conf.ImportPath())
+	convert.Path(conf.ImportPath())
 
 	jpegFilename := conf.ImportPath() + "/raw/canon_eos_6d.jpg"
 
@@ -112,7 +112,7 @@ func TestConverter_ConvertAll(t *testing.T) {
 
 	os.Remove(existingJpegFilename)
 
-	converter.ConvertAll(conf.ImportPath())
+	convert.Path(conf.ImportPath())
 
 	newHash := util.Hash(existingJpegFilename)
 

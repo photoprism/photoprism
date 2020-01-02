@@ -23,7 +23,7 @@ const (
 
 type IndexResult string
 
-func (ind *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
+func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 	start := time.Now()
 
 	var photo entity.Photo
@@ -247,7 +247,7 @@ func (ind *Indexer) indexMediaFile(m *MediaFile, o IndexerOptions) IndexResult {
 }
 
 // classifyImage returns all matching labels for a media file.
-func (ind *Indexer) classifyImage(jpeg *MediaFile) (results Labels, isNSFW bool) {
+func (ind *Index) classifyImage(jpeg *MediaFile) (results Labels, isNSFW bool) {
 	start := time.Now()
 
 	var thumbs []string
@@ -323,7 +323,7 @@ func (ind *Indexer) classifyImage(jpeg *MediaFile) (results Labels, isNSFW bool)
 	return results, isNSFW
 }
 
-func (ind *Indexer) addLabels(photoId uint, labels Labels) {
+func (ind *Index) addLabels(photoId uint, labels Labels) {
 	for _, label := range labels {
 		lm := entity.NewLabel(label.Name, label.Priority).FirstOrCreate(ind.db)
 
@@ -361,7 +361,7 @@ func (ind *Indexer) addLabels(photoId uint, labels Labels) {
 	}
 }
 
-func (ind *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, labels Labels, fileChanged bool, o IndexerOptions) ([]string, Labels) {
+func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, labels Labels, fileChanged bool, o IndexOptions) ([]string, Labels) {
 	var keywords []string
 
 	if location, err := mediaFile.Location(); err == nil {
@@ -442,7 +442,7 @@ func (ind *Indexer) indexLocation(mediaFile *MediaFile, photo *entity.Photo, lab
 	return keywords, labels
 }
 
-func (ind *Indexer) estimateLocation(photo *entity.Photo) {
+func (ind *Index) estimateLocation(photo *entity.Photo) {
 	var recentPhoto entity.Photo
 
 	if result := ind.db.Unscoped().Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", photo.TakenAt)).Preload("Place").First(&recentPhoto); result.Error == nil {

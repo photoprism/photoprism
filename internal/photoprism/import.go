@@ -16,22 +16,22 @@ import (
 	"github.com/photoprism/photoprism/internal/util"
 )
 
-// Importer is responsible for importing new files to originals.
-type Importer struct {
+// Import represents an importer that can copy/move MediaFiles to the originals directory.
+type Import struct {
 	conf                   *config.Config
-	indexer                *Indexer
-	converter              *Converter
+	index                  *Index
+	convert                *Convert
 	removeDotFiles         bool
 	removeExistingFiles    bool
 	removeEmptyDirectories bool
 }
 
-// NewImporter returns a new importer.
-func NewImporter(conf *config.Config, indexer *Indexer, converter *Converter) *Importer {
-	instance := &Importer{
+// NewImport returns a new importer and expects its dependencies as arguments.
+func NewImport(conf *config.Config, index *Index, convert *Convert) *Import {
+	instance := &Import{
 		conf:                   conf,
-		indexer:                indexer,
-		converter:              converter,
+		index:                  index,
+		convert:                convert,
 		removeDotFiles:         true,
 		removeExistingFiles:    true,
 		removeEmptyDirectories: true,
@@ -40,19 +40,18 @@ func NewImporter(conf *config.Config, indexer *Indexer, converter *Converter) *I
 	return instance
 }
 
-func (imp *Importer) originalsPath() string {
+func (imp *Import) originalsPath() string {
 	return imp.conf.OriginalsPath()
 }
 
-// Start imports all the photos from a given directory path.
-// This function ignores errors.
-func (imp *Importer) Start(importPath string) {
+// Start imports MediaFiles from a directory and converts/indexes them as needed.
+func (imp *Import) Start(importPath string) {
 	var directories []string
 	done := make(map[string]bool)
-	ind := imp.indexer
+	ind := imp.index
 
 	if ind.running {
-		event.Error("indexer already running")
+		event.Error("index already running")
 		return
 	}
 
@@ -77,12 +76,12 @@ func (imp *Importer) Start(importPath string) {
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
-			importerWorker(jobs) // HLc
+			importWorker(jobs) // HLc
 			wg.Done()
 		}()
 	}
 
-	options := IndexerOptionsAll()
+	options := IndexOptionsAll()
 
 	err := filepath.Walk(importPath, func(filename string, fileInfo os.FileInfo, err error) error {
 		defer func() {
@@ -134,10 +133,10 @@ func (imp *Importer) Start(importPath string) {
 		}
 
 		jobs <- ImportJob{
-			related:    related,
-			options:    options,
-			importPath: importPath,
-			imp:        imp,
+			related: related,
+			opt:     options,
+			path:    importPath,
+			imp:     imp,
 		}
 
 		return nil
@@ -169,12 +168,12 @@ func (imp *Importer) Start(importPath string) {
 }
 
 // Cancel stops the current import operation.
-func (imp *Importer) Cancel() {
-	imp.indexer.Cancel()
+func (imp *Import) Cancel() {
+	imp.index.Cancel()
 }
 
-// DestinationFilename get the destination of a media file.
-func (imp *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile) (string, error) {
+// DestinationFilename returns the destination filename of a MediaFile to be imported.
+func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile) (string, error) {
 	fileName := mainFile.CanonicalName()
 	fileExtension := mediaFile.Extension()
 	dateCreated := mainFile.DateCreated()

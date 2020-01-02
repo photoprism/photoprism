@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-type IndexerOptions struct {
+type IndexOptions struct {
 	UpdateDate     bool
 	UpdateColors   bool
 	UpdateSize     bool
@@ -17,7 +17,7 @@ type IndexerOptions struct {
 	UpdateExif     bool
 }
 
-func (o *IndexerOptions) UpdateAny() bool {
+func (o *IndexOptions) UpdateAny() bool {
 	v := reflect.ValueOf(o).Elem()
 
 	for i := 0; i < v.NumField(); i++ {
@@ -29,13 +29,13 @@ func (o *IndexerOptions) UpdateAny() bool {
 	return false
 }
 
-func (o *IndexerOptions) SkipUnchanged() bool {
+func (o *IndexOptions) SkipUnchanged() bool {
 	return !o.UpdateAny()
 }
 
-// IndexerOptionsAll returns new indexer options with all options set to true.
-func IndexerOptionsAll() IndexerOptions {
-	instance := IndexerOptions{
+// IndexOptionsAll returns new index options with all options set to true.
+func IndexOptionsAll() IndexOptions {
+	result := IndexOptions{
 		UpdateDate:     true,
 		UpdateColors:   true,
 		UpdateSize:     true,
@@ -48,12 +48,12 @@ func IndexerOptionsAll() IndexerOptions {
 		UpdateExif:     true,
 	}
 
-	return instance
+	return result
 }
 
-// IndexerOptionsNone returns new indexer options with all options set to false.
-func IndexerOptionsNone() IndexerOptions {
-	instance := IndexerOptions{}
+// IndexOptionsNone returns new index options with all options set to false.
+func IndexOptionsNone() IndexOptions {
+	result := IndexOptions{}
 
-	return instance
+	return result
 }

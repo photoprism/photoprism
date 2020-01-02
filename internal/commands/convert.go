@@ -30,9 +30,9 @@ func convertAction(ctx *cli.Context) error {
 
 	log.Infof("converting RAW images in %s to JPEG", conf.OriginalsPath())
 
-	converter := photoprism.NewConverter(conf)
+	convert := photoprism.NewConvert(conf)
 
-	converter.ConvertAll(conf.OriginalsPath())
+	convert.Path(conf.OriginalsPath())
 
 	elapsed := time.Since(start)
 

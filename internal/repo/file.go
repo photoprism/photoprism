@@ -30,7 +30,7 @@ func (s *Repo) FindFileByPhotoUUID(u string) (file entity.File, err error) {
 	return file, nil
 }
 
-// FindFileByID returns a mediafile given a certain ID.
+// FindFileByID returns a MediaFile given a certain ID.
 func (s *Repo) FindFileByID(id string) (file entity.File, err error) {
 	if err := s.db.Where("id = ?", id).Preload("Photo").First(&file).Error; err != nil {
 		return file, err

@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/colors"
 )
 
-// Colors returns color information for a media file.
+// Colors returns the ColorPerception of an image (only JPEG supported).
 func (m *MediaFile) Colors(thumbPath string) (perception colors.ColorPerception, err error) {
 	if !m.IsJpeg() {
 		return perception, errors.New("no color information: not a JPEG file")

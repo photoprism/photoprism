@@ -16,18 +16,18 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
-var importer *photoprism.Importer
+var imp *photoprism.Import
 
-func initImporter(conf *config.Config) {
-	if importer != nil {
+func initImport(conf *config.Config) {
+	if imp != nil {
 		return
 	}
 
-	initIndexer(conf)
+	initIndex(conf)
 
-	converter := photoprism.NewConverter(conf)
+	convert := photoprism.NewConvert(conf)
 
-	importer = photoprism.NewImporter(conf, indexer, converter)
+	imp = photoprism.NewImport(conf, ind, convert)
 }
 
 // POST /api/v1/import*
@@ -55,9 +55,9 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Info(fmt.Sprintf("importing photos from \"%s\"", filepath.Base(path)))
 
-		initImporter(conf)
+		initImport(conf)
 
-		importer.Start(path)
+		imp.Start(path)
 
 		if subPath != "" && util.DirectoryIsEmpty(path) {
 			if err := os.Remove(path); err != nil {
@@ -71,7 +71,7 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Success(fmt.Sprintf("import completed in %d s", elapsed))
 		event.Publish("import.completed", event.Data{"path": path, "seconds": elapsed})
-		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
+		event.Publish("ind.completed", event.Data{"path": path, "seconds": elapsed})
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("import completed in %d s", elapsed)})
@@ -86,9 +86,9 @@ func CancelImport(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		initImporter(conf)
+		initImport(conf)
 
-		importer.Cancel()
+		imp.Cancel()
 
 		c.JSON(http.StatusOK, gin.H{"message": "import canceled"})
 	})

@@ -67,7 +67,7 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 			containsNSFW := false
 
 			for _, filename := range uploads {
-				labels, err := nsfwDetector.LabelsFromFile(filename)
+				labels, err := nd.LabelsFromFile(filename)
 
 				if err != nil {
 					log.Debug(err)
