@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/photoprism/photoprism/internal/util"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
@@ -19,6 +20,7 @@ type Detector struct {
 	modelPath string
 	modelTags []string
 	labels    []string
+	mutex     sync.Mutex
 }
 
 // NewDetector returns a new detector instance.
@@ -113,6 +115,9 @@ func (t *Detector) loadLabels(path string) error {
 }
 
 func (t *Detector) loadModel() error {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+
 	if t.model != nil {
 		// Already loaded
 		return nil
