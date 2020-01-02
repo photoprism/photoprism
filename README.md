@@ -83,8 +83,9 @@ visiting conferences, buying test devices, offering rewards for contributions, a
 
 You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
 especially if you need help with using our software. They will match every donation in the first year.
-In addition, you can find us on [Patreon][patreon] and [PayPal][paypal]. Our sponsors will get for free whatever we have 
-to charge for a geodata, public events and maps subscription later.
+In addition, you can find us on [Patreon][patreon] and [PayPal][paypal].
+Our sponsors and contributors will get for free whatever we have to charge for a geodata, 
+public events and maps subscription later.
 
 Also please leave a star if you like this project, it provides enough motivation to keep going. Thank you very much! <3
 
