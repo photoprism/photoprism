@@ -45,7 +45,7 @@ func (ind *Indexer) thumbnailsPath() string {
 }
 
 // IndexRelated will index all mediafiles which has relate to a given mediafile.
-func (ind *Indexer) IndexRelated(mediaFile *MediaFile, o IndexerOptions) map[string]bool {
+/* func (ind *Indexer) IndexRelated(mediaFile *MediaFile, o IndexerOptions) map[string]bool {
 	indexed := make(map[string]bool)
 
 	related, err := mediaFile.RelatedFiles()
@@ -73,7 +73,7 @@ func (ind *Indexer) IndexRelated(mediaFile *MediaFile, o IndexerOptions) map[str
 	}
 
 	return indexed
-}
+} */
 
 // Cancel stops the current indexing operation.
 func (ind *Indexer) Cancel() {
@@ -81,12 +81,12 @@ func (ind *Indexer) Cancel() {
 }
 
 // Start will index mediafiles in the originals directory.
-func (ind *Indexer) Start(o IndexerOptions) map[string]bool {
-	indexed := make(map[string]bool)
+func (ind *Indexer) Start(options IndexerOptions) map[string]bool {
+	done := make(map[string]bool)
 
 	if ind.running {
 		event.Error("indexer already running")
-		return indexed
+		return done
 	}
 
 	ind.running = true
@@ -100,7 +100,7 @@ func (ind *Indexer) Start(o IndexerOptions) map[string]bool {
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("index: %s", err.Error())
 
-		return indexed
+		return done
 	}
 
 	jobs := make(chan IndexJob)
@@ -127,7 +127,7 @@ func (ind *Indexer) Start(o IndexerOptions) map[string]bool {
 			return errors.New("indexing canceled")
 		}
 
-		if err != nil || indexed[filename] {
+		if err != nil || done[filename] {
 			return nil
 		}
 
@@ -150,13 +150,13 @@ func (ind *Indexer) Start(o IndexerOptions) map[string]bool {
 		}
 
 		for _, f := range related.files {
-			indexed[f.Filename()] = true
+			done[f.Filename()] = true
 		}
 
 		jobs <- IndexJob{
-			r: related,
-			o: o,
-			i: ind,
+			related: related,
+			options: options,
+			ind:     ind,
 		}
 
 		return nil
@@ -169,5 +169,5 @@ func (ind *Indexer) Start(o IndexerOptions) map[string]bool {
 		log.Error(err.Error())
 	}
 
-	return indexed
+	return done
 }

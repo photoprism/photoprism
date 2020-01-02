@@ -48,7 +48,7 @@ func TestImporter_DestinationFilename(t *testing.T) {
 	assert.Equal(t, conf.OriginalsPath()+"/2019/07/20190705_153230_6E16EB388AD2.cr2", filename)
 }
 
-func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
+func TestImporter_Start(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -66,5 +66,5 @@ func TestImporter_ImportPhotosFromDirectory(t *testing.T) {
 
 	importer := NewImporter(conf, indexer, converter)
 
-	importer.ImportPhotosFromDirectory(conf.ImportPath())
+	importer.Start(conf.ImportPath())
 }

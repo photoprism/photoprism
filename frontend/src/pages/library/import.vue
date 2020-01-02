@@ -12,6 +12,16 @@
                 <v-progress-linear color="secondary-dark" :value="completed" :indeterminate="busy"></v-progress-linear>
 
                 <v-btn
+                        :disabled="!busy"
+                        color="secondary-dark"
+                        class="white--text ml-0 mt-2"
+                        depressed
+                        @click.stop="cancelImport()"
+                >
+                    <translate>Cancel</translate>
+                </v-btn>
+
+                <v-btn
                         :disabled="busy"
                         color="secondary-dark"
                         class="white--text ml-0 mt-2"
@@ -47,6 +57,9 @@
         methods: {
             submit() {
                 // DO NOTHING
+            },
+            cancelImport() {
+                Api.delete('import');
             },
             startImport() {
                 this.source = Axios.CancelToken.source();

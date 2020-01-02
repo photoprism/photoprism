@@ -30,8 +30,8 @@ func initImporter(conf *config.Config) {
 	importer = photoprism.NewImporter(conf, indexer, converter)
 }
 
-// POST /api/v1/import
-func Import(router *gin.RouterGroup, conf *config.Config) {
+// POST /api/v1/import*
+func StartImport(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/import/*path", func(c *gin.Context) {
 		if conf.ReadOnly() {
 			c.AbortWithStatusJSON(http.StatusForbidden, ErrReadOnly)
@@ -57,7 +57,7 @@ func Import(router *gin.RouterGroup, conf *config.Config) {
 
 		initImporter(conf)
 
-		importer.ImportPhotosFromDirectory(path)
+		importer.Start(path)
 
 		if subPath != "" && util.DirectoryIsEmpty(path) {
 			if err := os.Remove(path); err != nil {
@@ -75,5 +75,22 @@ func Import(router *gin.RouterGroup, conf *config.Config) {
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("import completed in %d s", elapsed)})
+	})
+}
+
+
+// DELETE /api/v1/import
+func CancelImport(router *gin.RouterGroup, conf *config.Config) {
+	router.DELETE("/import", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		initImporter(conf)
+
+		importer.Cancel()
+
+		c.JSON(http.StatusOK, gin.H{"message": "import canceled"})
 	})
 }

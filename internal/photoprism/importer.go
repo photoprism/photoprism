@@ -1,12 +1,13 @@
 package photoprism
 
 import (
+	"errors"
 	"fmt"
 	"os"
-	"path"
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -43,16 +44,58 @@ func (imp *Importer) originalsPath() string {
 	return imp.conf.OriginalsPath()
 }
 
-// ImportPhotosFromDirectory imports all the photos from a given directory path.
+// Start imports all the photos from a given directory path.
 // This function ignores errors.
-func (imp *Importer) ImportPhotosFromDirectory(importPath string) {
+func (imp *Importer) Start(importPath string) {
 	var directories []string
+	done := make(map[string]bool)
+	ind := imp.indexer
+
+	if ind.running {
+		event.Error("indexer already running")
+		return
+	}
+
+	ind.running = true
+	ind.canceled = false
+
+	defer func() {
+		ind.running = false
+		ind.canceled = false
+	}()
+
+	if err := ind.tensorFlow.Init(); err != nil {
+		log.Errorf("import: %s", err.Error())
+		return
+	}
+
+	jobs := make(chan ImportJob)
+
+	// Start a fixed number of goroutines to read and digest files.
+	var wg sync.WaitGroup
+	var numWorkers = ind.conf.Workers()
+	wg.Add(numWorkers)
+	for i := 0; i < numWorkers; i++ {
+		go func() {
+			importerWorker(jobs) // HLc
+			wg.Done()
+		}()
+	}
+
 	options := IndexerOptionsAll()
 
 	err := filepath.Walk(importPath, func(filename string, fileInfo os.FileInfo, err error) error {
-		var destinationMainFilename string
+		defer func() {
+			if err := recover(); err != nil {
+				log.Errorf("import: panic %s", err)
+			}
+		}()
 
-		if err != nil {
+		if ind.canceled {
+			return errors.New("importing canceled")
+		}
+
+		if err != nil || done[filename] {
 			return nil
 		}
 
@@ -64,6 +107,7 @@ func (imp *Importer) ImportPhotosFromDirectory(importPath string) {
 		}
 
 		if imp.removeDotFiles && strings.HasPrefix(filepath.Base(filename), ".") {
+			done[filename] = true
 			if err := os.Remove(filename); err != nil {
 				log.Errorf("could not remove \"%s\": %s", filename, err.Error())
 			}
@@ -85,71 +129,22 @@ func (imp *Importer) ImportPhotosFromDirectory(importPath string) {
 			return nil
 		}
 
-		event.Publish("import.file", event.Data{
-			"fileName": related.main.Filename(),
-			"baseName": filepath.Base(related.main.Filename()),
-		})
-
-		for _, relatedMediaFile := range related.files {
-			relativeFilename := relatedMediaFile.RelativeFilename(importPath)
-
-			if destinationFilename, err := imp.DestinationFilename(related.main, relatedMediaFile); err == nil {
-				if err := os.MkdirAll(path.Dir(destinationFilename), os.ModePerm); err != nil {
-					log.Errorf("could not create directories: %s", err.Error())
-				}
-
-				if related.main.HasSameFilename(relatedMediaFile) {
-					destinationMainFilename = destinationFilename
-					log.Infof("moving main %s file \"%s\" to \"%s\"", relatedMediaFile.Type(), relativeFilename, destinationFilename)
-				} else {
-					log.Infof("moving related %s file \"%s\" to \"%s\"", relatedMediaFile.Type(), relativeFilename, destinationFilename)
-				}
-
-				if err := relatedMediaFile.Move(destinationFilename); err != nil {
-					log.Errorf("could not move file to \"%s\": %s", destinationMainFilename, err.Error())
-				}
-			} else if imp.removeExistingFiles {
-				if err := relatedMediaFile.Remove(); err != nil {
-					log.Errorf("could not delete file \"%s\": %s", relatedMediaFile.Filename(), err.Error())
-				} else {
-					log.Infof("deleted \"%s\" (already exists)", relativeFilename)
-				}
-			}
+		for _, f := range related.files {
+			done[f.Filename()] = true
 		}
 
-		if destinationMainFilename != "" {
-			importedMainFile, err := NewMediaFile(destinationMainFilename)
-
-			if err != nil {
-				log.Errorf("could not index \"%s\" after import: %s", destinationMainFilename, err.Error())
-
-				return nil
-			}
-
-			if importedMainFile.IsRaw() {
-				if _, err := imp.converter.ConvertToJpeg(importedMainFile); err != nil {
-					log.Errorf("could not create jpeg from raw: %s", err)
-				}
-			}
-			if importedMainFile.IsHEIF() {
-				if _, err := imp.converter.ConvertToJpeg(importedMainFile); err != nil {
-					log.Errorf("could not create jpeg from heif: %s", err)
-				}
-			}
-
-			if jpg, err := importedMainFile.Jpeg(); err != nil {
-				log.Error(err)
-			} else {
-				if err := jpg.CreateDefaultThumbnails(imp.conf.ThumbnailsPath(), false); err != nil {
-					log.Errorf("could not create default thumbnails: %s", err)
-				}
-			}
-
-			imp.indexer.IndexRelated(importedMainFile, options)
+		jobs <- ImportJob{
+			related: related,
+			options: options,
+			importPath: importPath,
+			imp:     imp,
 		}
 
 		return nil
 	})
+
+	close(jobs)
+	wg.Wait()
 
 	sort.Slice(directories, func(i, j int) bool {
 		return len(directories[i]) > len(directories[j])
@@ -171,6 +166,11 @@ func (imp *Importer) ImportPhotosFromDirectory(importPath string) {
 	if err != nil {
 		log.Error(err.Error())
 	}
+}
+
+// Cancel stops the current import operation.
+func (imp *Importer) Cancel() {
+	imp.indexer.Cancel()
 }
 
 // DestinationFilename get the destination of a media file.

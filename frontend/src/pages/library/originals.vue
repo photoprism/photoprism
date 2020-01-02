@@ -44,6 +44,16 @@
                 ></v-checkbox>
 
                 <v-btn
+                        :disabled="!busy"
+                        color="secondary-dark"
+                        class="white--text ml-0 mt-2"
+                        depressed
+                        @click.stop="cancelIndexing()"
+                >
+                    <translate>Cancel</translate>
+                </v-btn>
+
+                <v-btn
                         :disabled="busy"
                         color="secondary-dark"
                         class="white--text ml-0 mt-2"
@@ -93,6 +103,9 @@
         methods: {
             submit() {
                 // DO NOTHING
+            },
+            cancelIndexing() {
+                Api.delete('index');
             },
             startIndexing() {
                 this.source = Axios.CancelToken.source();

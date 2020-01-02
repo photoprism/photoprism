@@ -1,32 +1,32 @@
 package photoprism
 
 type IndexJob struct {
-	r RelatedFiles
-	o IndexerOptions
-	i *Indexer
+	related RelatedFiles
+	options IndexerOptions
+	ind     *Indexer
 }
 
 func indexerWorker(jobs <-chan IndexJob) {
 	for job := range jobs {
 		indexed := make(map[string]bool)
-		r := job.r
-		o := job.o
-		i := job.i
+		related := job.related
+		options := job.options
+		ind := job.ind
 
-		mainIndexResult := i.indexMediaFile(r.main, o)
-		indexed[r.main.Filename()] = true
+		mainIndexResult := ind.indexMediaFile(related.main, options)
+		indexed[related.main.Filename()] = true
 
-		log.Infof("index: %s main %s file \"%s\"", mainIndexResult, r.main.Type(), r.main.RelativeFilename(i.originalsPath()))
+		log.Infof("index: %s main %s file \"%s\"", mainIndexResult, related.main.Type(), related.main.RelativeFilename(ind.originalsPath()))
 
-		for _, relatedMediaFile := range r.files {
+		for _, relatedMediaFile := range related.files {
 			if indexed[relatedMediaFile.Filename()] {
 				continue
 			}
 
-			indexResult := i.indexMediaFile(relatedMediaFile, o)
+			indexResult := ind.indexMediaFile(relatedMediaFile, options)
 			indexed[relatedMediaFile.Filename()] = true
 
-			log.Infof("index: %s related %s file \"%s\"", indexResult, relatedMediaFile.Type(), relatedMediaFile.RelativeFilename(i.originalsPath()))
+			log.Infof("index: %s related %s file \"%s\"", indexResult, relatedMediaFile.Type(), relatedMediaFile.RelativeFilename(ind.originalsPath()))
 		}
 	}
 

@@ -75,7 +75,7 @@ func TestThumbnails_CreateThumbnailsFromOriginals(t *testing.T) {
 
 	importer := NewImporter(conf, indexer, converter)
 
-	importer.ImportPhotosFromDirectory(conf.ImportPath())
+	importer.Start(conf.ImportPath())
 
 	err := CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), true)
 

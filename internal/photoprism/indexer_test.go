@@ -25,7 +25,7 @@ func TestIndexer_Start(t *testing.T) {
 
 	importer := NewImporter(conf, indexer, converter)
 
-	importer.ImportPhotosFromDirectory(conf.ImportPath())
+	importer.Start(conf.ImportPath())
 
 	options := IndexerOptionsAll()
 

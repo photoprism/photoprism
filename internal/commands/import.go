@@ -49,7 +49,7 @@ func importAction(ctx *cli.Context) error {
 
 	importer := photoprism.NewImporter(conf, indexer, converter)
 
-	importer.ImportPhotosFromDirectory(conf.ImportPath())
+	importer.Start(conf.ImportPath())
 
 	elapsed := time.Since(start)
 
