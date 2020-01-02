@@ -81,7 +81,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 		elapsed := int(time.Since(start).Seconds())
 
 		event.Success(fmt.Sprintf("indexing completed in %d s", elapsed))
-		event.Publish("ind.completed", event.Data{"path": path, "seconds": elapsed})
+		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("indexing completed in %d s", elapsed)})

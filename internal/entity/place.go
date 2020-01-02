@@ -41,19 +41,19 @@ func FindPlace(token string, db *gorm.DB) *Place {
 	return place
 }
 
-func FindPlaceByLabel(token string, label string, db *gorm.DB) *Place {
+func FindPlaceByLabel(id string, label string, db *gorm.DB) *Place {
 	place := &Place{}
 
-	if err := db.First(place, "id = ? OR loc_label = ?", token, label).Error; err != nil {
-		log.Debugf("place: %s for token %s or label \"%s\"", err.Error(), token, label)
+	if err := db.First(place, "id = ? OR loc_label = ?", id, label).Error; err != nil {
+		log.Debugf("place: %s for id %s or label \"%s\"", err.Error(), id, label)
 	}
 
 	return place
 }
 
-func NewPlace(token, label, city, state, countryCode string) *Place {
+func NewPlace(id, label, city, state, countryCode string) *Place {
 	result := &Place{
-		ID:         token,
+		ID:         id,
 		LocLabel:   label,
 		LocCity:    city,
 		LocState:   state,

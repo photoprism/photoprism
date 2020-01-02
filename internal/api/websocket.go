@@ -30,7 +30,7 @@ func wsReader(ws *websocket.Conn) {
 
 func wsWriter(ws *websocket.Conn, conf *config.Config) {
 	pingTicker := time.NewTicker(10 * time.Second)
-	s := event.Subscribe("log.*", "notify.*", "ind.*", "upload.*", "import.*", "config.*", "count.*")
+	s := event.Subscribe("log.*", "notify.*", "index.*", "upload.*", "import.*", "config.*", "count.*")
 
 	defer func() {
 		pingTicker.Stop()
