@@ -90,7 +90,7 @@ Also please leave a star if you like this project, it provides enough motivation
 Ideas backed by a sponsor are marked with a golden [sponsor][sponsored issues] label.
 Let us know if we mistakenly label an idea as [unfunded][unfunded issues].
 
-## Sponsorship ##
+## Public and corporate sponsorship ##
 
 Our software is now almost done after two years of hard work, some days 16 to 20 hours on top of other projects we
 did to finance this. We spent weeks asking organizations like [The Prototype Fund](https://prototypefund.de/en/) 
