@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/util"
 )
 
+// Label represents a MediaFile label (automatically created).
 type Label struct {
 	Name        string   `json:"label"`       // Label name
 	Source      string   `json:"source"`      // Where was this label found / detected?
@@ -15,6 +16,7 @@ type Label struct {
 	Categories  []string `json:"categories"`  // List of similar labels
 }
 
+// NewLocationLabel returns a new labels for a location and expects name, uncertainty and priority as arguments.
 func NewLocationLabel(name string, uncertainty int, priority int) Label {
 	if index := strings.Index(name, " / "); index > 1 {
 		name = name[:index]
@@ -29,6 +31,7 @@ func NewLocationLabel(name string, uncertainty int, priority int) Label {
 	return label
 }
 
+// Labels is list of MediaFile labels.
 type Labels []Label
 
 func (l Labels) Len() int      { return len(l) }

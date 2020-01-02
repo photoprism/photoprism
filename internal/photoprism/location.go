@@ -5,6 +5,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Location returns the Location of a MediaFile.
 func (m *MediaFile) Location() (*entity.Location, error) {
 	if m.location != nil {
 		return m.location, nil

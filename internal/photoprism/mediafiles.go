@@ -1,14 +1,14 @@
 package photoprism
 
-// MediaFiles provides a Collection for MediaFiles.
+// MediaFiles represents a slice of files.
 type MediaFiles []*MediaFile
 
-// Len returns the length of the MediaFile collection.
+// Len returns the length of the file slice.
 func (f MediaFiles) Len() int {
 	return len(f)
 }
 
-// Less compares two MediaFiles based on filename length.
+// Less compares two files based on the filename.
 func (f MediaFiles) Less(i, j int) bool {
 	fileName1 := f[i].Filename()
 	fileName2 := f[j].Filename()
@@ -20,7 +20,7 @@ func (f MediaFiles) Less(i, j int) bool {
 	return len(fileName1) < len(fileName2)
 }
 
-// Swap changes two files order around.
+// Swap the position of two files in the slice.
 func (f MediaFiles) Swap(i, j int) {
 	f[i], f[j] = f[j], f[i]
 }

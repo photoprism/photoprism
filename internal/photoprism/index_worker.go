@@ -29,5 +29,4 @@ func indexWorker(jobs <-chan IndexJob) {
 			log.Infof("index: %s related %s file \"%s\"", res, f.Type(), f.RelativeFilename(ind.originalsPath()))
 		}
 	}
-
 }
