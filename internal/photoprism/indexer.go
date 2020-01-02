@@ -44,37 +44,6 @@ func (ind *Indexer) thumbnailsPath() string {
 	return ind.conf.ThumbnailsPath()
 }
 
-// IndexRelated will index all mediafiles which has relate to a given mediafile.
-/* func (ind *Indexer) IndexRelated(mediaFile *MediaFile, o IndexerOptions) map[string]bool {
-	indexed := make(map[string]bool)
-
-	related, err := mediaFile.RelatedFiles()
-
-	if err != nil {
-		log.Warnf("could not index \"%s\": %s", mediaFile.RelativeFilename(ind.originalsPath()), err.Error())
-
-		return indexed
-	}
-
-	mainIndexResult := ind.indexMediaFile(related.main, o)
-	indexed[related.main.Filename()] = true
-
-	log.Infof("index: %s main %s file \"%s\"", mainIndexResult, related.main.Type(), related.main.RelativeFilename(ind.originalsPath()))
-
-	for _, relatedMediaFile := range related.files {
-		if indexed[relatedMediaFile.Filename()] {
-			continue
-		}
-
-		indexResult := ind.indexMediaFile(relatedMediaFile, o)
-		indexed[relatedMediaFile.Filename()] = true
-
-		log.Infof("index: %s related %s file \"%s\"", indexResult, relatedMediaFile.Type(), relatedMediaFile.RelativeFilename(ind.originalsPath()))
-	}
-
-	return indexed
-} */
-
 // Cancel stops the current indexing operation.
 func (ind *Indexer) Cancel() {
 	ind.canceled = true
