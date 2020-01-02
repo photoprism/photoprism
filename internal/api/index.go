@@ -38,9 +38,9 @@ func initNsfwDetector(conf *config.Config) {
 	nd = nsfw.NewDetector(conf.NSFWModelPath())
 }
 
-// POST /api/v1/ind
+// POST /api/v1/index
 func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/ind", func(c *gin.Context) {
+	router.POST("/index", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -88,9 +88,9 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// DELETE /api/v1/ind
+// DELETE /api/v1/index
 func CancelIndexing(router *gin.RouterGroup, conf *config.Config) {
-	router.DELETE("/ind", func(c *gin.Context) {
+	router.DELETE("/index", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
