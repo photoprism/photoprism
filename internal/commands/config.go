@@ -27,6 +27,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("twitter               %s\n", conf.Twitter())
 	fmt.Printf("version               %s\n", conf.Version())
 	fmt.Printf("copyright             %s\n", conf.Copyright())
+	fmt.Printf("workers               %d\n", conf.Workers())
 	fmt.Printf("debug                 %t\n", conf.Debug())
 	fmt.Printf("read-only             %t\n", conf.ReadOnly())
 	fmt.Printf("public                %t\n", conf.Public())

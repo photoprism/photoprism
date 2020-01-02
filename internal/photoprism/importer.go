@@ -39,13 +39,13 @@ func NewImporter(conf *config.Config, indexer *Indexer, converter *Converter) *I
 	return instance
 }
 
-func (i *Importer) originalsPath() string {
-	return i.conf.OriginalsPath()
+func (imp *Importer) originalsPath() string {
+	return imp.conf.OriginalsPath()
 }
 
 // ImportPhotosFromDirectory imports all the photos from a given directory path.
 // This function ignores errors.
-func (i *Importer) ImportPhotosFromDirectory(importPath string) {
+func (imp *Importer) ImportPhotosFromDirectory(importPath string) {
 	var directories []string
 	options := IndexerOptionsAll()
 
@@ -63,7 +63,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 			return nil
 		}
 
-		if i.removeDotFiles && strings.HasPrefix(filepath.Base(filename), ".") {
+		if imp.removeDotFiles && strings.HasPrefix(filepath.Base(filename), ".") {
 			if err := os.Remove(filename); err != nil {
 				log.Errorf("could not remove \"%s\": %s", filename, err.Error())
 			}
@@ -93,7 +93,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 		for _, relatedMediaFile := range related.files {
 			relativeFilename := relatedMediaFile.RelativeFilename(importPath)
 
-			if destinationFilename, err := i.DestinationFilename(related.main, relatedMediaFile); err == nil {
+			if destinationFilename, err := imp.DestinationFilename(related.main, relatedMediaFile); err == nil {
 				if err := os.MkdirAll(path.Dir(destinationFilename), os.ModePerm); err != nil {
 					log.Errorf("could not create directories: %s", err.Error())
 				}
@@ -108,7 +108,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 				if err := relatedMediaFile.Move(destinationFilename); err != nil {
 					log.Errorf("could not move file to \"%s\": %s", destinationMainFilename, err.Error())
 				}
-			} else if i.removeExistingFiles {
+			} else if imp.removeExistingFiles {
 				if err := relatedMediaFile.Remove(); err != nil {
 					log.Errorf("could not delete file \"%s\": %s", relatedMediaFile.Filename(), err.Error())
 				} else {
@@ -127,12 +127,12 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 			}
 
 			if importedMainFile.IsRaw() {
-				if _, err := i.converter.ConvertToJpeg(importedMainFile); err != nil {
+				if _, err := imp.converter.ConvertToJpeg(importedMainFile); err != nil {
 					log.Errorf("could not create jpeg from raw: %s", err)
 				}
 			}
 			if importedMainFile.IsHEIF() {
-				if _, err := i.converter.ConvertToJpeg(importedMainFile); err != nil {
+				if _, err := imp.converter.ConvertToJpeg(importedMainFile); err != nil {
 					log.Errorf("could not create jpeg from heif: %s", err)
 				}
 			}
@@ -140,12 +140,12 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 			if jpg, err := importedMainFile.Jpeg(); err != nil {
 				log.Error(err)
 			} else {
-				if err := jpg.CreateDefaultThumbnails(i.conf.ThumbnailsPath(), false); err != nil {
+				if err := jpg.CreateDefaultThumbnails(imp.conf.ThumbnailsPath(), false); err != nil {
 					log.Errorf("could not create default thumbnails: %s", err)
 				}
 			}
 
-			i.indexer.IndexRelated(importedMainFile, options)
+			imp.indexer.IndexRelated(importedMainFile, options)
 		}
 
 		return nil
@@ -155,7 +155,7 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 		return len(directories[i]) > len(directories[j])
 	})
 
-	if i.removeEmptyDirectories {
+	if imp.removeEmptyDirectories {
 		// Remove empty directories from import path
 		for _, directory := range directories {
 			if util.DirectoryIsEmpty(directory) {
@@ -174,18 +174,18 @@ func (i *Importer) ImportPhotosFromDirectory(importPath string) {
 }
 
 // DestinationFilename get the destination of a media file.
-func (i *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile) (string, error) {
+func (imp *Importer) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile) (string, error) {
 	fileName := mainFile.CanonicalName()
 	fileExtension := mediaFile.Extension()
 	dateCreated := mainFile.DateCreated()
 
-	if file, err := entity.FindFileByHash(i.conf.Db(), mediaFile.Hash()); err == nil {
-		existingFilename := i.conf.OriginalsPath() + string(os.PathSeparator) + file.FileName
+	if file, err := entity.FindFileByHash(imp.conf.Db(), mediaFile.Hash()); err == nil {
+		existingFilename := imp.conf.OriginalsPath() + string(os.PathSeparator) + file.FileName
 		return existingFilename, fmt.Errorf("\"%s\" is identical to \"%s\" (%s)", mediaFile.Filename(), file.FileName, mediaFile.Hash())
 	}
 
 	//	Mon Jan 2 15:04:05 -0700 MST 2006
-	pathName := i.originalsPath() + string(os.PathSeparator) + dateCreated.UTC().Format("2006/01")
+	pathName := imp.originalsPath() + string(os.PathSeparator) + dateCreated.UTC().Format("2006/01")
 
 	iteration := 0
 

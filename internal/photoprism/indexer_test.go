@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/nsfw"
 )
 
-func TestIndexer_IndexAll(t *testing.T) {
+func TestIndexer_Start(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -29,5 +29,5 @@ func TestIndexer_IndexAll(t *testing.T) {
 
 	options := IndexerOptionsAll()
 
-	indexer.IndexOriginals(options)
+	indexer.Start(options)
 }

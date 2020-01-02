@@ -46,6 +46,14 @@ func NewTensorFlow(conf *config.Config) *TensorFlow {
 	return &TensorFlow{conf: conf, modelName: "nasnet", modelTags: []string{"photoprism"}}
 }
 
+func (t *TensorFlow) Init() (err error) {
+	if err := t.loadModel(); err != nil {
+		return err
+	}
+
+	return t.loadLabelRules()
+}
+
 func (t *TensorFlow) loadLabelRules() (err error) {
 	if len(t.labelRules) > 0 {
 		return nil

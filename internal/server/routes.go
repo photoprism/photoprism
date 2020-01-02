@@ -41,7 +41,8 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		api.Upload(v1, conf)
 		api.Import(v1, conf)
-		api.Index(v1, conf)
+		api.StartIndexing(v1, conf)
+		api.CancelIndexing(v1, conf)
 
 		api.BatchPhotosDelete(v1, conf)
 		api.BatchPhotosPrivate(v1, conf)

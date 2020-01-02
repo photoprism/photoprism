@@ -39,7 +39,7 @@ func initNsfwDetector(conf *config.Config) {
 }
 
 // POST /api/v1/index
-func Index(router *gin.RouterGroup, conf *config.Config) {
+func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/index", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
@@ -73,9 +73,9 @@ func Index(router *gin.RouterGroup, conf *config.Config) {
 		initIndexer(conf)
 
 		if f.SkipUnchanged {
-			indexer.IndexOriginals(photoprism.IndexerOptionsNone())
+			indexer.Start(photoprism.IndexerOptionsNone())
 		} else {
-			indexer.IndexOriginals(photoprism.IndexerOptionsAll())
+			indexer.Start(photoprism.IndexerOptionsAll())
 		}
 
 		elapsed := int(time.Since(start).Seconds())
@@ -85,5 +85,21 @@ func Index(router *gin.RouterGroup, conf *config.Config) {
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("indexing completed in %d s", elapsed)})
+	})
+}
+
+// DELETE /api/v1/index
+func CancelIndexing(router *gin.RouterGroup, conf *config.Config) {
+	router.DELETE("/index", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		initIndexer(conf)
+
+		indexer.Cancel()
+
+		c.JSON(http.StatusOK, gin.H{"message": "indexing canceled"})
 	})
 }
