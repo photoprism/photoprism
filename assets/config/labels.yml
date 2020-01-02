@@ -3189,8 +3189,9 @@ valley:
     - nature
 
 yellow lady's slipper:
+  label: flower
   categories:
-    - shoe
+    - plant
 
 corn:
   label: vegetables
@@ -3332,6 +3333,9 @@ menu:
     - info
 
 envelope:
+  label: office
+
+slide rule:
   label: office
 
 binder:
@@ -3503,3 +3507,7 @@ puck:
 mosquito net:
   label: outdoor
   priority: -1
+
+sundial:
+  label: outdoor
+  threshold: 0.5
