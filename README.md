@@ -90,15 +90,14 @@ Also please leave a star if you like this project, it provides enough motivation
 Feature requests backed by sponsors are marked with a golden [sponsor][sponsored issues] label.
 Let us know if we mistakenly label an idea as [unfunded][unfunded issues].
 
-## Corporate Sponsorship ##
+## Sponsorship ##
 
-Please [reach out to us](mailto:hello@photoprism.org) if you work for an organization that 
-can [support our project](https://dl.photoprism.org/slides/PhotoPrism.pdf)
-as we are looking for a way to continue doing this full-time.
-We'll be happy to mention your contribution plus you'll get a direct line 
-to [our team](https://docs.photoprism.org/en/latest/team/) of top-class engineers and scientists.
+Our software is now almost done after two years of hard work, some days 16 to 20 hours on top of other projects we
+did to finance this. We spent weeks asking organizations like [The Prototype Fund](https://prototypefund.de/en/) 
+for help and also tried to cooperate with companies like Mapbox and Cewe. We have been ignored and even given
+the advice that what we do "already exists in America".
 
-See [SPONSORS.md](SPONSORS.md) for details.
+If any of those organizations changes their mind, they are welcome to [reach out to us](mailto:hello@photoprism.org).
 
 [help]: https://groups.google.com/a/photoprism.org/forum/#!forum/help
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
