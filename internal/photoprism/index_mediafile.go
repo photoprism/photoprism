@@ -365,6 +365,9 @@ func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 	var keywords []string
 
 	if location, err := mediaFile.Location(); err == nil {
+		location.Lock()
+		defer location.Unlock()
+
 		err := location.Find(ind.db)
 
 		if err != nil {

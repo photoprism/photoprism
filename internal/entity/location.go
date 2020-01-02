@@ -2,6 +2,7 @@ package entity
 
 import (
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -9,6 +10,8 @@ import (
 	"github.com/photoprism/photoprism/internal/s2"
 	"github.com/photoprism/photoprism/internal/util"
 )
+
+var locationMutex = sync.Mutex{}
 
 // Photo location
 type Location struct {
@@ -21,6 +24,16 @@ type Location struct {
 	LocSource   string `gorm:"type:varbinary(16);"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+}
+
+// Locks locations for updates
+func (Location) Lock() {
+	locationMutex.Lock()
+}
+
+// Unlock locations for updates
+func (Location) Unlock() {
+	locationMutex.Unlock()
 }
 
 func NewLocation(lat, lng float64) *Location {
