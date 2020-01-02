@@ -13,7 +13,7 @@ You can also [become a sponsor on Patreon][patreon], [fund issues][issuehunt], [
 or [get in touch with us](mailto:hello@photoprism.org) to discuss further details.
 Thank you very much! 💎
 
-Feature requests backed by sponsors are marked with a golden [sponsor][sponsored issues] label.
+Ideas backed by a sponsor are marked with a golden [sponsor][sponsored issues] label.
 Let us know if we mistakenly label an idea as [unfunded][unfunded issues].
 
 ## Sponsors ##

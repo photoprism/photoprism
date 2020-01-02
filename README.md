@@ -87,7 +87,7 @@ In addition, you can find us on [Patreon][patreon] and [PayPal][paypal].
 
 Also please leave a star if you like this project, it provides enough motivation to keep going. Thank you very much! <3
 
-Feature requests backed by sponsors are marked with a golden [sponsor][sponsored issues] label.
+Ideas backed by a sponsor are marked with a golden [sponsor][sponsored issues] label.
 Let us know if we mistakenly label an idea as [unfunded][unfunded issues].
 
 ## Sponsorship ##
