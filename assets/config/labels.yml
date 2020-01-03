@@ -3054,8 +3054,8 @@ wok:
     - cooking
 
 wooden spoon:
-  categories:
-    - cooking
+  label: spoon
+  threshold: 0.2
 
 worm fence:
   label: outdoor
@@ -3610,6 +3610,7 @@ carousel:
 
 groom:
   label: wedding
+  threshold: 0.2
   categories:
     - event
 
@@ -3937,3 +3938,6 @@ traffic light:
 turnstile:
   label: public transport
   threshold: 0.3
+
+whistle:
+  threshold: 0.7
