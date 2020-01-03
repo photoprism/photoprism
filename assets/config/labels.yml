@@ -770,7 +770,7 @@ hermit crab:
 
 lobster:
   label: lobster
-    threshold: 0.5
+  threshold: 0.5
   categories:
     - animal
     - cooking
