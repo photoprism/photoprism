@@ -2566,8 +2566,7 @@ palace:
   see: historic architecture
 
 panpipe:
-  label: goods
-  threshold: 0.5
+  see: ignore
 
 paper towel:
   label: paper
@@ -3549,8 +3548,7 @@ stupa:
   priority: 2
 
 abacus:
-  label: goods
-  threshold: 0.5
+  see: ignore
 
 horizontal bar:
   label: podium
