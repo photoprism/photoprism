@@ -2656,7 +2656,7 @@ pill bottle:
   see: bottle
 
 pillow:
-  see: living
+  see: ignore
 
 plane:
   label: aircraft
