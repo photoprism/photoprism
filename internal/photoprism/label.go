@@ -65,7 +65,9 @@ func (l Labels) Keywords() (result []string) {
 }
 
 func (l Labels) Title(fallback string) string {
-	if len(fallback) > 25 || util.ContainsNumber(fallback) {
+	fallbackRunes := len([]rune(fallback))
+
+	if fallbackRunes < 2 || fallbackRunes > 25 || util.ContainsNumber(fallback) {
 		fallback = ""
 	}
 
@@ -78,6 +80,11 @@ func (l Labels) Title(fallback string) string {
 
 	// Get best label (at the top)
 	label := l[0]
+
+	// Get second best label in case the first has high uncertainty
+	if len(l) > 1 && l[0].Uncertainty > 60 && l[1].Uncertainty <= 60 {
+		label = l[1]
+	}
 
 	if fallback != "" && label.Priority < 0 {
 		return fallback

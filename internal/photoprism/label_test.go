@@ -54,3 +54,29 @@ func TestLabel_AppendLabel(t *testing.T) {
 	})
 
 }
+
+func TestLabels_Title(t *testing.T) {
+	t.Run("first", func(t *testing.T) {
+		cat := Label{Name: "cat", Source: "location", Uncertainty: 59, Priority: 5}
+		dog := Label{Name: "dog", Source: "location", Uncertainty: 10, Priority: 4}
+		labels := Labels{cat, dog}
+
+		assert.Equal(t, "cat", labels.Title("fallback"))
+	})
+
+	t.Run("second", func(t *testing.T) {
+		cat := Label{Name: "cat", Source: "location", Uncertainty: 61, Priority: 5}
+		dog := Label{Name: "dog", Source: "location", Uncertainty: 10, Priority: 4}
+		labels := Labels{cat, dog}
+
+		assert.Equal(t, "dog", labels.Title("fallback"))
+	})
+
+	t.Run("fallback", func(t *testing.T) {
+		cat := Label{Name: "cat", Source: "location", Uncertainty: 80, Priority: 5}
+		dog := Label{Name: "dog", Source: "location", Uncertainty: 80, Priority: 4}
+		labels := Labels{cat, dog}
+
+		assert.Equal(t, "fallback", labels.Title("fallback"))
+	})
+}
