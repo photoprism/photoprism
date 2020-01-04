@@ -3679,7 +3679,7 @@ balance beam:
   threshold: 0.2
 
 balloon:
-  threshold: 0.4
+  threshold: 0.5
 
 display:
   label: display
