@@ -1887,6 +1887,7 @@ beacon:
 
 beer:
   label: beer
+  threshold: 0.25
   categories:
     - beverage
     - drinks
@@ -2133,6 +2134,9 @@ digital clock:
 digital watch:
   see: display
 
+oscilloscope:
+  see: display
+
 dining table:
   categories:
     - funriture
@@ -2227,7 +2231,7 @@ fountain:
     - water
 
 fountain pen:
-  label: pen
+  see: ignore
 
 four-poster:
   label: apartment
@@ -2881,7 +2885,7 @@ sports car:
     - vehicle
 
 spotlight:
-  label: light
+  see: ignore
 
 steam locomotive:
   label: train
@@ -2946,27 +2950,31 @@ theater curtain:
   threshold: 0.2
 
 toaster:
+  threshold: 0.2
   categories:
     - cooking
     - indoor
 
 toilet seat:
-  label: toilet
+  see: ignore
 
 torch:
-  label: light
-  threshold: 0.5
+  see: ignore
 
 tow truck:
+  threshold: 0.2
   label: truck
 
 toyshop:
+  threshold: 0.2
   label: shop
 
 trailer truck:
+  threshold: 0.2
   label: truck
 
 trimaran:
+  threshold: 0.3
   categories:
     - boat
     - water
@@ -3015,8 +3023,10 @@ washbasin:
     - bathroom
 
 water bottle:
+  label: bottle
+  threshold: 0.2
   categories:
-    - bottle
+    - beverage
 
 water tower:
   label: tower
@@ -3025,6 +3035,7 @@ water tower:
 
 wine bottle:
   label: bottle
+  threshold: 0.2
   categories:
     - beverage
     - drinks
@@ -3467,7 +3478,7 @@ chain mail:
   see: fashion
 
 pinwheel:
-  threshold: 0.5
+  threshold: 0.8
 
 bearskin:
   priority: -1
@@ -3675,6 +3686,12 @@ oil filter:
   see: ignore
 
 parallel bars:
+  see: ignore
+
+loupe:
+  see: ignore
+
+fire screen:
   see: ignore
 
 balance beam:
@@ -3888,6 +3905,9 @@ upright:
 washer:
   see: ignore
 
+buckle:
+  see: ignore
+
 toilet tissue:
   label: paper
   threshold: 0.5
@@ -3920,3 +3940,5 @@ turnstile:
 whistle:
   threshold: 0.7
 
+umbrella:
+  threshold: 0.5
