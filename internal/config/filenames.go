@@ -114,17 +114,17 @@ func (c *Config) LogFilename() string {
 
 // OriginalsPath returns the originals.
 func (c *Config) OriginalsPath() string {
-	return c.config.OriginalsPath
+	return filepath.Clean(c.config.OriginalsPath)
 }
 
 // ImportPath returns the import directory.
 func (c *Config) ImportPath() string {
-	return c.config.ImportPath
+	return filepath.Clean(c.config.ImportPath)
 }
 
 // ExportPath returns the export directory.
 func (c *Config) ExportPath() string {
-	return c.config.ExportPath
+	return filepath.Clean(c.config.ExportPath)
 }
 
 // SipsBin returns the sips binary file name.

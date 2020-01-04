@@ -103,13 +103,13 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 			return nil
 		}
 
-		mediaFile, err := NewMediaFile(filename)
+		mf, err := NewMediaFile(filename)
 
-		if err != nil || !mediaFile.IsPhoto() {
+		if err != nil || !mf.IsPhoto() {
 			return nil
 		}
 
-		related, err := mediaFile.RelatedFiles()
+		related, err := mf.RelatedFiles()
 
 		if err != nil {
 			log.Warnf("index: %s", err.Error())
@@ -117,9 +117,18 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 			return nil
 		}
 
+		var files MediaFiles
+
 		for _, f := range related.files {
+			if done[f.Filename()] { continue }
+
+			files = append(files, f)
 			done[f.Filename()] = true
 		}
+
+		done[mf.Filename()] = true
+
+		related.files = files
 
 		jobs <- IndexJob{
 			related: related,

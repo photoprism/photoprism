@@ -47,11 +47,13 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 		start := time.Now()
 		path := conf.ImportPath()
 
-		if subPath = c.Param("path"); subPath != "" {
+		if subPath = c.Param("path"); subPath != "" && subPath != "/" {
 			subPath = strings.Replace(subPath, ".", "", -1)
 			log.Debugf("import sub path: %s", subPath)
 			path = path + subPath
 		}
+
+		path = filepath.Clean(path)
 
 		event.Info(fmt.Sprintf("importing photos from \"%s\"", filepath.Base(path)))
 
@@ -59,7 +61,7 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 
 		imp.Start(path)
 
-		if subPath != "" && util.DirectoryIsEmpty(path) {
+		if subPath != "" && path != conf.ImportPath() && util.DirectoryIsEmpty(path) {
 			if err := os.Remove(path); err != nil {
 				log.Errorf("import: could not deleted empty directory \"%s\": %s", path, err)
 			} else {
