@@ -3037,6 +3037,7 @@ wooden spoon:
 fence:
   label: outdoor
   threshold: 0.2
+  priority: -1
 
 worm fence:
   see: fence
