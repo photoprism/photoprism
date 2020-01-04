@@ -2202,11 +2202,13 @@ electric guitar:
 
 electric locomotive:
   label: train
+  threshold: 0.2
   categories:
     - vehicle
 
 entertainment center:
   label: screen
+  threshold: 0.3
 
 espresso maker:
   see: coffee
@@ -2219,6 +2221,7 @@ fireboat:
 
 fire engine:
   label: vehicle
+  threshold: 0.3
 
 flagpole:
   label: flag
@@ -2259,6 +2262,7 @@ frying pan:
 
 garbage truck:
   label: truck
+  threshold: 0.3
 
 go-kart:
   label: outdoor
@@ -2305,6 +2309,7 @@ pick:
 
 hand-held computer:
   label: computer
+  threshold: 0.2
   categories:
     - office
 
@@ -2360,6 +2365,7 @@ lampshade:
 
 laptop:
   label: computer
+  threshold: 0.2
 
 lawn mower:
   label: outdoor
@@ -2393,6 +2399,7 @@ lighter:
   see: ignore
 
 limousine:
+  threshold: 0.2
   categories:
     - vehicle
 
@@ -2433,6 +2440,7 @@ missile:
 
 measuring cup:
   label: cup
+  threshold: 0.2
 
 medicine chest:
   see: ignore
@@ -2455,16 +2463,19 @@ microwave:
 
 minibus:
   label: bus
+  threshold: 0.2
   categories:
     - vehicle
 
 minivan:
   label: van
+  threshold: 0.2
   categories:
     - vehicle
 
 mixing bowl:
   label: bowl
+  threshold: 0.2
   categories:
     - cooking
 
@@ -2480,16 +2491,21 @@ model t:
     - vehicle
 
 monastery:
+  threshold: 0.2
   categories:
     - building
+    - architecture
+    - historic
 
 monitor:
   label: screen
+  threshold: 0.2
   categories:
     - computer
 
 mosque:
   label: tower
+  threshold: 0.2
   categories:
     - building
     - architecture
@@ -2522,19 +2538,23 @@ motor scooter:
 
 mountain tent:
   label: camping
+  threshold: 0.2
   categories:
     - outdoor
 
 moving van:
   label: van
+  threshold: 0.2
   categories:
     - vehicle
 
 notebook:
   label: computer
+  threshold: 0.2
 
 obelisk:
   label: tower
+  threshold: 0.2
   categories:
     - architecture
 
@@ -2561,13 +2581,10 @@ oxcart:
     - farm
 
 paddle:
-  threshold: 0.3
-  categories:
-    - sports
+  see: boat
 
 paddlewheel:
-  categories:
-    - water
+  see: boat
 
 padlock:
   see: lock
@@ -2960,6 +2977,7 @@ suspension bridge:
 
 swimming trunks:
   label: sunny day
+  threshold: 0.2
   categories:
     - people
     - portrait
