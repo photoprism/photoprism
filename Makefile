@@ -22,6 +22,8 @@ acceptance-all: start acceptance acceptance-firefox stop
 test-all: test acceptance-all
 fmt: fmt-js fmt-go
 upgrade: upgrade-js upgrade-go
+clean-local: clean-local-config clean-local-share clean-local-cache
+clean-install: clean-local dep build-js install-bin install-assets
 start:
 	go run cmd/photoprism/photoprism.go start -d
 stop:
@@ -43,6 +45,12 @@ install-assets:
 	cp -r assets/resources/static assets/resources/templates assets/resources/nasnet assets/resources/nsfw ~/.local/share/photoprism/resources
 	rsync -a -v --ignore-existing assets/config/*.yml ~/.config/photoprism
 	find ~/.local/share/photoprism -name '.*' -type f -delete
+clean-local-share:
+	rm -rf ~/.local/share/photoprism
+clean-local-cache:
+	rm -rf ~/.cache/photoprism
+clean-local-config:
+	rm -f ~/.config/photoprism/*
 dep-js:
 	(cd frontend &&	npm install --silent)
 dep-go:
