@@ -2320,6 +2320,7 @@ honeycomb:
 
 jack-o'-lantern:
   label: pumpkin
+  threshold: 0.2
   categories:
     - vegetables
 
@@ -3078,6 +3079,7 @@ book jacket:
 
 guacamole:
   label: vegetables
+  threshold: 0.2
   categories:
     - cooking
 
@@ -3290,21 +3292,23 @@ cliff:
     - rocks
 
 geyser:
+  label: water
   threshold: 0.4
-  categories:
-    - water
 
 promontory:
   label: rocks
+  threshold: 0.2
   categories:
     - landscape
 
 sandbar:
   label: beach
+  threshold: 0.2
   categories:
     - sand
 
 valley:
+  threshold: 0.2
   categories:
     - landscape
     - nature
@@ -3315,11 +3319,11 @@ yellow lady's slipper:
     - plant
 
 corn:
-  label: vegetables
+  see: vegetables
 
 acorn:
   label: tree
-  threshold: 0.5
+  threshold: 0.8
   categories:
     - plant
 
@@ -3361,10 +3365,8 @@ knot:
   see: ignore
 
 arabian camel:
-  label: camel
-  threshold: 0.8
-  categories:
-    - animal
+  label: animal
+  threshold: 0.7
 
 tile roof:
   label: building
@@ -3777,8 +3779,7 @@ chest:
   threshold: 0.5
 
 christmas stocking:
-  label: christmas
-  threshold: 0.3
+  see: ignore
 
 cinema:
   threshold: 0.5
