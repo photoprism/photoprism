@@ -1489,7 +1489,7 @@ hog:
   threshold: 0.66
   categories:
     - animal
-    - pig
+    - farm
 
 wild boar:
   threshold: 0.66
@@ -1504,6 +1504,7 @@ warthog:
 
 hippopotamus:
   label: hippo
+  threshold: 0.2
   categories:
     - animal
     - wildlife
@@ -2629,9 +2630,7 @@ pier:
   threshold: 0.3
 
 piggy bank:
-  categories:
-    - pig
-    - money
+  threshold: 0.5
 
 bottle:
   label: bottle
