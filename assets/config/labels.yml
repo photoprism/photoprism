@@ -459,14 +459,14 @@ komodo dragon:
 
 african crocodile:
   label: crocodile
-  threshold: 0.4
+  threshold: 0.5
   categories:
     - reptile
     - animal
 
 american alligator:
   label: alligator
-  threshold: 0.4
+  threshold: 0.5
   categories:
     - reptile
     - animal
@@ -547,7 +547,7 @@ scorpion:
 
 spider:
   label: spider
-  threshold: 0.4
+  threshold: 0.5
   categories:
     - animal
 
@@ -587,7 +587,7 @@ prairie chicken:
   see: bird
 
 peacock:
-  threshold: 0.5
+  threshold: 0.6
   categories:
     - animal
     - bird
@@ -630,10 +630,7 @@ jacamar:
   see: bird
 
 toucan:
-  threshold: 0.3
-  categories:
-    - animal
-    - bird
+  see: bird
 
 drake:
   label: duck
@@ -650,16 +647,13 @@ red-breasted merganser:
     - bird
 
 goose:
+  threshold: 0.4
   categories:
     - animal
     - bird
 
 black swan:
-  label: swan
-  threshold: 0.2
-  categories:
-    - animal
-    - bird
+  see: bird
 
 echidna:
   threshold: 0.2
@@ -778,6 +772,7 @@ crayfish:
     - lobster
 
 isopod:
+  threshold: 0.4
   label: animal
 
 white stork:
@@ -790,10 +785,7 @@ spoonbill:
   see: bird
 
 flamingo:
-  threshold: 0.5
-  categories:
-    - animal
-    - bird
+  see: bird
 
 little blue heron:
   see: bird
@@ -837,20 +829,17 @@ oystercatcher:
   see: bird
 
 pelican:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 king penguin:
+  label: penguin
+  threshold: 0.5
   categories:
     - animal
     - bird
-    - penguin
 
 albatross:
-  categories:
-    - animal
-    - bird
+  see: bird
 
 whale:
   label: whale
@@ -1423,18 +1412,19 @@ lycaenid:
   see: butterfly
 
 starfish:
-  threshold: 0.75
+  threshold: 0.8
   categories:
     - water
     - animal
 
 sea urchin:
-  threshold: 0.75
+  threshold: 0.8
   categories:
     - water
     - animal
 
 sea cucumber:
+  threshold: 0.8
   categories:
     - water
     - animal
@@ -1455,11 +1445,13 @@ angora:
   see: rabbit
 
 hamster:
+  threshold: 0.4
   categories:
     - animal
     - rodent
 
 porcupine:
+  threshold: 0.4
   label: animal
 
 fox squirrel:
@@ -1470,25 +1462,25 @@ fox squirrel:
     - rodent
 
 marmot:
+  threshold: 0.4
   categories:
     - animal
-    - rodent
 
 beaver:
+  threshold: 0.4
   categories:
     - animal
-    - rodent
 
 guinea pig:
+  threshold: 0.4
   categories:
     - animal
-    - rodent
 
 sorrel:
-  label: plant
-  threshold: 0.5
+  see: ignore
 
 zebra:
+  threshold: 0.4
   categories:
     - animal
     - wildlife
@@ -1524,6 +1516,7 @@ ox:
     - farm
 
 water buffalo:
+  threshold: 0.2
   categories:
     - animal
     - farm
@@ -1542,12 +1535,13 @@ ram:
     - animal
 
 bighorn:
+  threshold: 0.3
   categories:
     - animal
 
 ibex:
-  categories:
-    - animal
+  label: animal
+  threshold: 0.3
 
 hartebeest:
   threshold: 0.4
@@ -1582,6 +1576,7 @@ mink:
     - animal
 
 polecat:
+  threshold: 0.4
   categories:
     - animal
 
@@ -1860,8 +1855,10 @@ bathing cap:
   see: fashion
 
 bath towel:
-  label: towel
-  threshold: 0.5
+  see: ignore
+
+chiton:
+  see: ignore
 
 living:
   label: living
@@ -1982,11 +1979,15 @@ castle:
     - historic
     - architecture
 
-catamaran:
+boat:
+  label: boat
+  threshold: 0.4
   categories:
-    - boat
     - vehicle
     - water
+
+catamaran:
+  see: boat
 
 cello:
   see: instrument
@@ -2006,8 +2007,13 @@ chiffonier:
     - indoor
 
 chime:
-  label: bell
-  threshold: 0.4
+  see: ignore
+
+barrow:
+  see: ignore
+
+bottlecap:
+  see: ignore
 
 china cabinet:
   label: furniture
@@ -2015,6 +2021,7 @@ china cabinet:
     - indoor
 
 church:
+  label: church
   threshold: 0.3
   categories:
     - building
@@ -2155,6 +2162,7 @@ dogsled:
     - winter
 
 dome:
+  label: dome
   threshold: 0.2
   categories:
     - building
@@ -2196,11 +2204,7 @@ face powder:
   see: ignore
 
 fireboat:
-  label: boat
-  threshold: 0.7
-  categories:
-    - water
-    - vehicle
+  see: boat
 
 fire engine:
   label: vehicle
@@ -2219,8 +2223,7 @@ football helmet:
   label: sports
 
 forklift:
-  categories:
-    - construction side
+  see: ignore
 
 fountain:
   label: outdoor
@@ -2370,9 +2373,7 @@ library:
     - architecture
 
 lifeboat:
-  categories:
-    - water
-    - boat
+  see: boat
 
 lighter:
   see: ignore
@@ -2683,9 +2684,7 @@ police van:
     - vehicle
 
 pool table:
-  categories:
-    - pool
-    - game
+  see: ignore
 
 pop bottle:
   see: bottle
@@ -2873,9 +2872,7 @@ spatula:
   threshold: 0.2
 
 speedboat:
-  categories:
-    - water
-    - boat
+  see: boat
 
 sports car:
   label: car
@@ -2972,10 +2969,7 @@ trailer truck:
   label: truck
 
 trimaran:
-  threshold: 0.3
-  categories:
-    - boat
-    - water
+  see: boat
 
 triumphal arch:
   see: historic architecture
@@ -3198,12 +3192,12 @@ strawberry:
     - fruit
 
 orange:
-  threshold: 0.3
+  threshold: 0.4
   categories:
     - fruit
 
 lemon:
-  threshold: 0.3
+  threshold: 0.4
   categories:
     - fruit
 
@@ -3502,6 +3496,9 @@ portrait:
 oxygen mask:
   see: portrait
 
+gasmask:
+  see: portrait
+
 wig:
   see: portrait
 
@@ -3561,7 +3558,7 @@ abacus:
   see: ignore
 
 horizontal bar:
-  label: podium
+  see: ignore
 
 vault:
   label: building
@@ -3630,7 +3627,7 @@ altar:
 
 ignore:
   threshold: 1
-  priority: -1
+  priority: -2
 
 ashcan:
   see: ignore
@@ -3767,11 +3764,11 @@ joystick:
   see: electronics
 
 chain:
-  threshold: 0.3
+  threshold: 0.5
 
 chest:
   label: box
-  threshold: 0.3
+  threshold: 0.5
 
 christmas stocking:
   label: christmas
@@ -3779,6 +3776,8 @@ christmas stocking:
 
 cinema:
   threshold: 0.5
+  category:
+    - theater
 
 cowboy hat:
   label: hat
@@ -3788,6 +3787,7 @@ cowboy boot:
   see: shoe
 
 crib:
+  threshold: 0.3
   label: stained glass
 
 drumstick:
@@ -3797,6 +3797,7 @@ guillotine:
   see: ignore
 
 hand blower:
+  threshold: 0.3
   label: portrait
 
 fire-screen:
@@ -3819,6 +3820,7 @@ hamper:
   see: basket
 
 hay:
+  threshold: 0.2
   label: farm
 
 hip:
@@ -3945,4 +3947,10 @@ vending machine:
   see: ignore
 
 stage:
+  threshold: 0.5
+
+tick:
+  see: ignore
+
+carton:
   threshold: 0.5
