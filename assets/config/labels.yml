@@ -2800,7 +2800,10 @@ shoe shop:
 
 basket:
   label: basket
-  threshold: 0.3
+  threshold: 0.4
+
+crate:
+  see: basket
 
 shopping basket:
   see: basket
@@ -3916,3 +3919,4 @@ turnstile:
 
 whistle:
   threshold: 0.7
+
