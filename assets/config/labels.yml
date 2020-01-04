@@ -3402,7 +3402,7 @@ wool:
     - animal
 
 ear:
-  priority: -1
+  see: ignore
 
 sunglasses:
   label: sunny day
