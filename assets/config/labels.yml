@@ -214,7 +214,7 @@ pirate:
 
 ship:
   label: ship
-  threshold: 0.3
+  threshold: 0.15
   categories:
     - water
     - vehicle
@@ -3113,6 +3113,11 @@ ice lolly:
   label: dessert
   threshold: 0.4
 
+chocolate sauce:
+  label: chocolate
+  categories:
+    - dessert
+
 french loaf:
   threshold: 0.4
   categories:
@@ -3128,15 +3133,15 @@ pretzel:
   categories:
     - bakery
 
+fast food:
+  label: fast food
+  threshold: 0.3
+
 cheeseburger:
-  threshold: 0.4
-  categories:
-    - fast food
+  see: fast food
 
 hotdog:
-  threshold: 0.4
-  categories:
-    - fast food
+  see: fast food
 
 vegetables:
   label: vegetables
@@ -3159,39 +3164,35 @@ cauliflower:
 zucchini:
   see: vegetables
 
-spaghetti squash:
-  threshold: 0.4
-  priority: -1
-  categories:
-    - cooking
-
-acorn squash:
-  priority: -1
-  threshold: 0.4
-  categories:
-    - cooking
-
-butternut squash:
-  threshold: 0.4
-  priority: -1
-  categories:
-    - cooking
-
-cucumber:
-  categories:
-    - vegetables
-
 artichoke:
-  categories:
-    - vegetables
+  see: vegetables
 
 bell pepper:
+  see: vegetables
+
+cucumber:
+  see: vegetables
+
+squash:
+  label: squash
+  threshold: 0.4
+  priority: -1
   categories:
+    - cooking
     - vegetables
 
-mushroom:
-  threshold: 0.5
+spaghetti squash:
+  see: squash
+
+butternut squash:
+  see: squash
+
+acorn squash:
+  label: pumpkin
+  priority: -1
+  threshold: 0.4
   categories:
+    - cooking
     - vegetables
 
 granny smith:
@@ -3246,13 +3247,9 @@ carbonara:
   categories:
     - cooking
 
-chocolate sauce:
-  label: chocolate
-  categories:
-    - sweets
-
 dough:
   label: cooking
+  threshold: 0.2
 
 meat loaf:
   label: meat
@@ -3264,8 +3261,8 @@ pizza:
     - fast food
 
 potpie:
-  categories:
-    - cooking
+  label: cooking
+  threshold: 0.2
 
 burrito:
   categories:
@@ -3284,7 +3281,7 @@ goblet:
   label: beverage
 
 espresso:
-  see: beverage
+  see: coffee
 
 eggnog:
   see: beverage
@@ -3336,6 +3333,12 @@ acorn:
 buckeye:
   label: plant
   threshold: 0.5
+
+mushroom:
+  label: mushroom
+  threshold: 0.4
+  categories:
+    - vegetables
 
 coral fungus:
   see: mushroom
