@@ -1964,16 +1964,8 @@ canoe:
 can opener:
   label: cooking
 
-car mirror:
-  label: car
-
 carpenter's kit:
   see: tool
-
-car wheel:
-  label: car
-  categories:
-    - vehicle
 
 castle:
   categories:
@@ -2082,6 +2074,7 @@ container ship:
 
 convertible:
   label: car
+  threshold: 0.6
 
 cornet:
   see: instrument
@@ -2151,6 +2144,7 @@ dishwasher:
 
 disk brake:
   label: car
+  threshold: 0.6
 
 dock:
   categories:
@@ -2240,6 +2234,7 @@ four-poster:
 
 freight car:
   label: vehicle
+  threshold: 0.3
   catgories:
     - train
 
@@ -2254,11 +2249,13 @@ garbage truck:
 
 go-kart:
   label: outdoor
+  threshold: 0.3
   categories:
     - vehicle
 
 golfcart:
   label: outdoor
+  threshold: 0.3
   categories:
     - vehicle
 
@@ -2462,6 +2459,7 @@ mobile home:
 
 model t:
   label: car
+  threshold: 0.3
   categories:
     - vehicle
 
@@ -2541,6 +2539,7 @@ organ:
 
 oxcart:
   label: cart
+  threshold: 0.2
   categories:
     - cow
     - farm
@@ -2583,8 +2582,15 @@ parachute:
 
 car:
   label: car
+  threshold: 0.3
   categories:
     - vehicle
+
+car mirror:
+  see: car
+
+car wheel:
+  see: car
 
 grille:
   see: car
@@ -2601,11 +2607,10 @@ moped:
 
 passenger car:
   see: car
-  categories:
-    - vehicle
 
 beach wagon:
-  see: car
+  label: vehicle
+  threshold: 0.3
 
 pay-phone:
   see: electronics
@@ -2875,6 +2880,7 @@ speedboat:
 
 sports car:
   label: car
+  threshold: 0.3
   categories:
     - vehicle
 
@@ -2903,6 +2909,7 @@ strainer:
   threshold: 0.4
 
 streetcar:
+  threshold: 0.2
   categories:
     - train
     - vehicle
