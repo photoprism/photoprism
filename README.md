@@ -92,7 +92,7 @@ every week when it is done.
 
 Specific solutions could be to...
 
-  - sell a paid, tested & supported version in the app store while our contributors and other developers can 
+  - sell a tested & supported version in the app store while our contributors and other developers can 
     continue to use Docker or build from source
   - offer a geodata, public events and maps subscription since OpenStreetMap doesn't want us to use 
     their development API for production
