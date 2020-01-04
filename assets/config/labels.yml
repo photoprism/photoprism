@@ -1798,6 +1798,7 @@ airship:
 
 ambulance:
   label: van
+  threshold: 0.3
   categories:
     - vehicle
 
@@ -1826,6 +1827,7 @@ backpack:
   threshold: 0.2
 
 bakery:
+  threshold: 0.3
   categories:
     - shop
 
@@ -1837,12 +1839,10 @@ banjo:
   see: instrument
 
 barbell:
-  label: sports
-  threshold: 0.5
+  see: ignore
 
 barber chair:
-  label: shop
-  threshold: 0.3
+  see: ignore
 
 barbershop:
   label: shop
@@ -1991,16 +1991,18 @@ cello:
   see: instrument
 
 cellular telephone:
-  label: electronics
+  see: electronics
 
 phone:
-  label: electronics
+  see: electronics
 
 chain saw:
   label: outdoor
+  threshold: 0.3
 
 chiffonier:
   label: furniture
+  threshold: 0.3
   categories:
     - indoor
 
@@ -2072,6 +2074,7 @@ mouse:
   threshold: 0.2
 
 confectionery:
+  threshold: 0.2
   label: shop
 
 container ship:
@@ -2084,37 +2087,41 @@ convertible:
 cornet:
   see: instrument
 
-cradle:
-  categories:
-    - furniture
+helmet:
+  label: helmet
+  threshold: 0.3
 
 crash helmet:
-  label: helmet
-  threshold: 0.3
+  see: helmet
 
 pickelhaube:
-  label: helmet
-  threshold: 0.3
+  see: helmet
+
+football helmet:
+  see: helmet
 
 crock pot:
+  threshold: 0.3
   label: cooking
 
 dam:
   label: wall
+  threshold: 0.3
   categories:
     - water
 
 desktop computer:
   label: computer
+  threshold: 0.3
   categories:
     - office
 
 dial telephone:
-  label: phone
+  see: electronics
 
 clock:
   label: clock
-  threshold: 0.3
+  threshold: 0.4
 
 analog clock:
   see: clock
@@ -2132,6 +2139,7 @@ oscilloscope:
   see: display
 
 dining table:
+  threshold: 0.3
   categories:
     - funriture
     - desk
@@ -2152,14 +2160,16 @@ disk brake:
   threshold: 0.6
 
 dock:
+  threshold: 0.3
   categories:
     - water
 
 dogsled:
+  label: snow
+  threshold: 0.3
   categories:
-    - snow
-    - sports
-    - winter
+    - animal
+    - dog
 
 dome:
   label: dome
@@ -2172,6 +2182,7 @@ planetarium:
 
 drilling platform:
   label: building
+  threshold: 0.2
 
 drum:
   see: instrument
@@ -2218,9 +2229,6 @@ flute:
 folding chair:
   label: furniture
   threshold: 0.4
-
-football helmet:
-  label: sports
 
 forklift:
   see: ignore
@@ -2272,18 +2280,20 @@ gong:
   see: instrument
 
 gown:
-  label: fashion
+  see: fashion
 
 grand piano:
   see: instrument
 
 greenhouse:
+  threshold: 0.3
   categories:
     - architecture
     - building
 
 grocery store:
   label: store
+  threshold: 0.3
   categories:
     - shop
 
@@ -3578,6 +3588,12 @@ baby:
   categories:
     - people
 
+cradle:
+  label: cradle
+  threshold: 0.6
+  categories:
+    - baby
+
 bassinet:
   see: baby
 
@@ -3594,9 +3610,11 @@ scoreboard:
 
 racket:
   label: outdoor
+  threshold: 0.3
 
 shoji:
   label: indoor
+  threshold: 0.3
 
 stupa:
   label: architecture
@@ -3611,6 +3629,7 @@ horizontal bar:
 
 vault:
   label: building
+  threshold: 0.3
 
 office:
   label: office
@@ -3764,6 +3783,7 @@ bow:
 
 caldron:
   label: cooking
+  threshold: 0.3
 
 cash machine:
   label: building
@@ -3980,6 +4000,7 @@ throne:
 
 traffic light:
   label: traffic
+  threshold: 0.4
 
 turnstile:
   label: public transport
