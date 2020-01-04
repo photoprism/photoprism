@@ -72,22 +72,26 @@ lakeside:
 
 cardoon:
   label: flower
+  threshold: 0.2
 
 window:
   see: window shade
 
 bannister:
   label: stairs
+  threshold: 0.2
   categories:
     - architecture
 
 window shade:
   label: building
+  threshold: 0.3
   categories:
     - architecture
 
 daisy:
   label: flower
+  threshold: 0.2
   categories:
     - nature
     - plant
@@ -221,6 +225,7 @@ solar dish:
 grasshopper:
   label: grasshopper
   priority: 1
+  threshold: 0.2
   categories:
     - animal
     - insect
@@ -2696,6 +2701,7 @@ pop bottle:
 
 pot:
   label: plant
+  threshold: 0.3
   categories:
     - nature
 
@@ -2710,12 +2716,14 @@ printer:
   threshold: 0.3
 
 prison:
+  label: building
+  threshold: 0.3
   categories:
-    - building
     - architecture
 
 punching bag:
   label: sports
+  threshold: 0.3
 
 harvester:
   label: vehicle
@@ -2738,6 +2746,7 @@ tractor:
 
 recreational vehicle:
   label: camper
+  threshold: 0.2
   categories:
     - vehicle
 
@@ -2800,6 +2809,7 @@ screwdriver:
 
 shoe shop:
   label: shop
+  threshold: 0.3
 
 basket:
   label: basket
@@ -2813,6 +2823,7 @@ shopping basket:
 
 shopping cart:
   label: shop
+  threshold: 0.3
 
 shovel:
   see: tool
@@ -2848,6 +2859,7 @@ snowplow:
 
 plow:
   label: farm
+  threshold: 0.3
   categories:
     - vehicle
 
@@ -2890,11 +2902,13 @@ spotlight:
 
 steam locomotive:
   label: train
+  threshold: 0.2
   categories:
     - vehicle
 
 steel arch bridge:
   label: bridge
+  threshold: 0.4
 
 steel drum:
   see: instrument
@@ -2922,13 +2936,14 @@ studio couch:
     - furniture
 
 submarine:
-  threshold: 0.4
+  threshold: 0.6
   categories:
     - water
     - ship
 
 suspension bridge:
   label: architecture
+  threshold: 0.5
   categories:
     - bridge
     - building
@@ -2944,6 +2959,7 @@ table lamp:
   see: living
 
 teapot:
+  threshold: 0.3
   categories:
     - cooking
 
@@ -2983,6 +2999,7 @@ triumphal arch:
 
 trolleybus:
   label: bus
+  threshold: 0.5
   categories:
     - vehicle
 
@@ -2994,10 +3011,12 @@ tub:
 
 typewriter keyboard:
   label: keyboard
+  threshold: 0.3
 
 viaduct:
+  label: building
+  threshold: 0.3
   categories:
-    - building
     - architecture
 
 violin:
@@ -3028,6 +3047,7 @@ water bottle:
 
 water tower:
   label: tower
+  threshold: 0.3
   categories:
     - architecture
 
@@ -3039,6 +3059,7 @@ wine bottle:
     - drinks
 
 wok:
+  threshold: 0.2
   categories:
     - cooking
     - kitchen
@@ -3059,13 +3080,15 @@ wreck:
   see: ship
 
 yawl:
+  label: boat
+  threshold: 0.3
   categories:
-    - boat
     - water
     - vehicle
 
 yurt:
   label: camping
+  threshold: 0.2
   categories:
     - outdoor
 
@@ -3085,16 +3108,19 @@ guacamole:
 
 consomme:
   label: soup
+  threshold: 0.2
   categories:
     - cooking
 
 hot pot:
   label: soup
+  threshold: 0.2
   categories:
     - cooking
 
 trifle:
   label: dessert
+  threshold: 0.2
   categories:
     - cooking
 
@@ -3110,6 +3136,7 @@ ice lolly:
 
 chocolate sauce:
   label: chocolate
+  threshold: 0.2
   categories:
     - dessert
 
@@ -3237,6 +3264,7 @@ pomegranate:
 
 carbonara:
   label: pasta
+  threshold: 0.2
   categories:
     - cooking
 
@@ -3246,10 +3274,12 @@ dough:
 
 meat loaf:
   label: meat
+  threshold: 0.2
   categories:
     - cooking
 
 pizza:
+  threshold: 0.2
   categories:
     - fast food
 
@@ -3258,20 +3288,22 @@ potpie:
   threshold: 0.2
 
 burrito:
-  categories:
-    - cooking
+  see: fast food
 
 red wine:
   label: wine
+  threshold: 0.2
   categories:
     - beverage
     - drinks
 
 beverage:
   label: beverage
+  threshold: 0.2
 
 goblet:
   label: beverage
+  threshold: 0.2
 
 espresso:
   see: coffee
@@ -3281,6 +3313,7 @@ eggnog:
 
 alp:
   label: alpine hut
+  threshold: 0.2
   categories:
     - landscape
     - mountains
@@ -3315,6 +3348,7 @@ valley:
 
 yellow lady's slipper:
   label: flower
+  threshold: 0.2
   categories:
     - plant
 
@@ -3485,6 +3519,7 @@ bearskin:
 
 ballplayer:
   label: portrait
+  threshold: 0.2
 
 crutch:
   see: ignore
@@ -3498,6 +3533,7 @@ band aid:
 
 portrait:
   label: portrait
+  threshold: 0.3
   categories:
     - people
 
@@ -3523,6 +3559,7 @@ safety pin:
 
 beaker:
   label: cup
+  threshold: 0.2
   categories:
     - beverage
 
@@ -3531,6 +3568,7 @@ bucket:
 
 vestment:
   label: uniform
+  threshold: 0.3
   categories:
     - military
 
@@ -3548,9 +3586,11 @@ diaper:
 
 patio:
   label: building
+  threshold: 0.3
 
 scoreboard:
   label: scenery
+  threshold: 0.3
 
 racket:
   label: outdoor
@@ -3561,6 +3601,7 @@ shoji:
 stupa:
   label: architecture
   priority: 2
+  threshold: 0.5
 
 abacus:
   see: ignore
@@ -3573,9 +3614,10 @@ vault:
 
 office:
   label: office
+  threshold: 0.3
 
 desk:
-  label: office
+  see: office
 
 pencil box:
   see: office
@@ -3584,12 +3626,10 @@ pencil sharpener:
   see: office
 
 volcano:
-  threshold: 0.5
+  see: ignore
 
 radio telescope:
-  threshold: 0.5
-  categories:
-    - science
+  threshold: 0.8
 
 thimble:
   see: ignore
@@ -3599,12 +3639,13 @@ slot:
 
 carousel:
   label: theme park
+  threshold: 0.2
   categories:
     - entertainment
 
 groom:
   label: wedding
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - event
 
