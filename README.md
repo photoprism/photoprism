@@ -105,10 +105,12 @@ In addition, you can find us on [Patreon][patreon] and [PayPal][paypal].
 Our sponsors and contributors will get for free whatever we might have to charge for a geodata subscription later.
 
 Also please leave a [star](https://github.com/photoprism/photoprism/stargazers) here on GitHub if you like this project, 
-it provides enough motivation to keep going. Thank you very much! <3
+it provides additional motivation to keep going.
 
 Ideas backed by a sponsor are marked with a golden [sponsor][sponsored issues] label.
 Let us know if we mistakenly label an idea as [unfunded][unfunded issues].
+
+Thank you very much! <3
 
 ## Public and corporate sponsorship ##
 
