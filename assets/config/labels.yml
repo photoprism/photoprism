@@ -1539,9 +1539,9 @@ water buffalo:
     - farm
 
 bison:
+  label: animal
   threshold: 0.5
   categories:
-    - animal
     - farm
 
 ram:
@@ -1773,7 +1773,7 @@ puffer:
 
 instrument:
   label: instrument
-  threshold: 0.5
+  threshold: 0.6
   categories:
     - music
     - entertainment
@@ -1874,11 +1874,12 @@ bath towel:
   label: towel
   threshold: 0.5
 
-bathtub:
-  label: apartment
+living:
+  label: living
   threshold: 0.2
-  categories:
-    - indoor
+
+bathtub:
+  see: living
 
 beacon:
   categories:
@@ -2031,9 +2032,7 @@ church:
     - architecture
 
 cleaver:
-  threshold: 0.5
-  categories:
-    - cooking
+  see: ignore
 
 cliff dwelling:
   label: building
@@ -2168,8 +2167,12 @@ dogsled:
     - winter
 
 dome:
+  threshold: 0.2
   categories:
     - building
+
+planetarium:
+  see: dome
 
 drilling platform:
   label: building
@@ -2179,6 +2182,8 @@ drum:
 
 dutch oven:
   label: cooking
+  categories:
+    - kitchen
 
 electric guitar:
   see: instrument
@@ -2234,10 +2239,7 @@ fountain pen:
   see: ignore
 
 four-poster:
-  label: apartment
-  threshold: 0.2
-  categories:
-    - indoor
+  see: living
 
 freight car:
   label: vehicle
@@ -2248,9 +2250,7 @@ french horn:
   see: instrument
 
 frying pan:
-  label: pan
-  categories:
-    - cooking
+  see: cooking
 
 garbage truck:
   label: truck
@@ -2658,10 +2658,7 @@ pill bottle:
   see: bottle
 
 pillow:
-  label: apartment
-  threshold: 0.5
-  categories:
-    - indoor
+  see: living
 
 plane:
   label: aircraft
@@ -2744,8 +2741,9 @@ recreational vehicle:
     - vehicle
 
 refrigerator:
+  threshold: 0.2
   categories:
-    - indoor
+    - kitchen
 
 restaurant:
   categories:
@@ -2864,6 +2862,9 @@ overskirt:
 sarong:
   see: fashion
 
+fur coat:
+  see: fashion
+
 soup bowl:
   label: bowl
   threshold: 0.2
@@ -2899,6 +2900,7 @@ steel drum:
   see: instrument
 
 stove:
+  label: kitchen
   threshold: 0.2
   categories:
     - cooking
@@ -2938,8 +2940,7 @@ swimming trunks:
     - swimming
 
 table lamp:
-  label: room
-  threshold: 0.2
+  see: living
 
 teapot:
   categories:
@@ -2991,7 +2992,7 @@ trombone:
   see: instrument
 
 tub:
-  label: room
+  see: living
 
 typewriter keyboard:
   label: keyboard
@@ -3019,8 +3020,7 @@ warplane:
     - vehicle
 
 washbasin:
-  categories:
-    - bathroom
+  see: living
 
 water bottle:
   label: bottle
@@ -3043,6 +3043,7 @@ wine bottle:
 wok:
   categories:
     - cooking
+    - kitchen
 
 wooden spoon:
   label: spoon
@@ -3478,7 +3479,7 @@ chain mail:
   see: fashion
 
 pinwheel:
-  threshold: 0.8
+  see: ignore
 
 bearskin:
   priority: -1
@@ -3692,6 +3693,9 @@ loupe:
   see: ignore
 
 fire screen:
+  see: ignore
+
+bulletproof vest:
   see: ignore
 
 balance beam:
@@ -3942,3 +3946,6 @@ whistle:
 
 umbrella:
   threshold: 0.5
+
+vending machine:
+  see: ignore
