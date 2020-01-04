@@ -1,17 +1,15 @@
 Let's join forces
 =================
 
-PhotoPrism is a non-profit project run entirely by volunteers. We need your funds to pay for 
-[organizing meetups][meetups],
-[running our servers][infrastructure],
-visiting conferences, buying test devices, offering rewards for contributions, and covering our cost of living.
-
 You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
 especially if you need help with using our software. They will match every donation in the first year.
+In addition, you can find us on [Patreon][patreon] and [PayPal][paypal].
+Our sponsors and contributors will get for free whatever we might have to 
+[charge](http://docs.photoprism.org/en/latest/funding/) for a geodata, public events and maps 
+subscription later.
 
-You can also [become a sponsor on Patreon][patreon], [fund issues][issuehunt], [donate via PayPal][paypal] 
-or [get in touch with us](mailto:hello@photoprism.org) to discuss further details.
-Thank you very much! 💎
+Also please leave a [star](https://github.com/photoprism/photoprism/stargazers) here on GitHub if you like this project, 
+it provides enough motivation to keep going. Thank you very much! <3
 
 Ideas backed by a sponsor are marked with a golden [sponsor][sponsored issues] label.
 Let us know if we mistakenly label an idea as [unfunded][unfunded issues].
