@@ -197,14 +197,10 @@ belt:
   see: fashion
 
 stole:
-  label: fashion
-  threshold: 0.5
-  priority: -1
+  see: ignore
 
 quilt:
-  label: fashion
-  threshold: 0.5
-  priority: -1
+  see: ignore
 
 liner:
   see: ship
@@ -233,16 +229,12 @@ cricket:
   see: grasshopper
 
 velvet:
-  label: leaf
+  label: nature
   priority: -1
   threshold: 0.5
-  categories:
-    - nature
-    - plant
 
 shower curtain:
-  label: curtain
-  threshold: 0.5
+  see: living
 
 windsor tie:
   see: fashion
@@ -297,7 +289,7 @@ hen:
   see: cock
 
 ostrich:
-  threshold: 0.5
+  threshold: 0.6
   categories:
     - bird
     - animal
@@ -481,11 +473,11 @@ american alligator:
 
 triceratops:
   label: animal
-  priority: -1
+  threshold: 0.5
 
 snake:
   label: snake
-  threshold: 0.4
+  threshold: 0.5
   categories:
     - reptile
     - animal
@@ -542,8 +534,8 @@ sidewinder snake:
   see: snake
 
 trilobite:
-  categories:
-    - animal
+  label: animal
+  threshold: 0.5
 
 harvestman:
   see: spider
@@ -1361,9 +1353,7 @@ bee:
     - animal
 
 apiary:
-  label: beehive
-  threshold: 0.3
-  priority: -1
+  see: ignore
 
 ant:
   threshold: 0.3
@@ -1372,8 +1362,7 @@ ant:
     - insect
 
 walking stick:
-  threshold: 0.3
-  priority: -2
+  see: ignore
 
 cockroach:
   threshold: 0.3
@@ -1382,6 +1371,7 @@ cockroach:
     - insect
 
 insect:
+  label: insect
   threshold: 0.3
   categories:
     - animal
@@ -1785,12 +1775,10 @@ acoustic guitar:
   see: instrument
 
 aircraft carrier:
-  label: ship
-  threshold: 0.5
+  label: runway
+  threshold: 0.6
   categories:
-    - aircraft
-    - water
-    - military
+    - airport
     - vehicle
 
 airliner:
@@ -1827,7 +1815,8 @@ tank:
   threshold: 0.3
 
 weapon:
-  threshold: 0.5
+  label: weapon
+  threshold: 0.75
 
 assault rifle:
   see: weapon
@@ -2146,12 +2135,11 @@ maze:
   label: landscape
 
 dishrag:
-  priority: -2
-  categories:
-    - indoor
+  see: ignore
 
 dishwasher:
-  priority: -2
+  label: kitchen
+  threshold: 0.5
 
 disk brake:
   label: car
@@ -2182,8 +2170,13 @@ drum:
 
 dutch oven:
   label: cooking
+  threshold: 0.2
   categories:
     - kitchen
+
+tray:
+  label: kitchen
+  threshold: 0.2
 
 electric guitar:
   see: instrument
@@ -2322,8 +2315,7 @@ television:
   threshold: 0.3
 
 honeycomb:
-  priority: -2
-  threshold: 0.6
+  see: ignore
 
 jack-o'-lantern:
   label: pumpkin
@@ -2361,6 +2353,11 @@ photography:
   label: photography
   threshold: 0.2
 
+tripod:
+  threshold: 0.6
+  categories:
+    - photography
+
 lens cap:
   see: photography
 
@@ -2368,8 +2365,9 @@ reflex camera:
   see: photography
 
 library:
+  threshold: 0.3
   categories:
-    - book
+    - architecture
 
 lifeboat:
   categories:
@@ -2394,11 +2392,11 @@ loudspeaker:
 
 magnetic compass:
   label: display
-  threshold: 0.2
+  threshold: 0.3
 
 bag:
   label: bag
-  threshold: 0.2
+  threshold: 0.5
 
 mailbag:
   see: bag
@@ -2422,13 +2420,11 @@ measuring cup:
   label: cup
 
 medicine chest:
-  threshold: 0.6
-  categories:
-    - furniture
+  see: ignore
 
 megalith:
-  categories:
-    - stone
+  label: rocks
+  threshold: 0.2
 
 microphone:
   threshold: 0.6
@@ -2437,6 +2433,7 @@ microphone:
 
 microwave:
   label: kitchen
+  threshold: 0.2
   categories:
     - cooking
     - electronics
@@ -2533,7 +2530,7 @@ ocarina:
 
 odometer:
   label: display
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - car
 
@@ -3287,8 +3284,10 @@ alp:
     - mountains
 
 cliff:
+  threshold: 0.2
   categories:
     - landscape
+    - rocks
 
 geyser:
   threshold: 0.4
@@ -3356,11 +3355,10 @@ bolete:
   see: mushroom
 
 knee pad:
-  priority: -2
+  see: ignore
 
 knot:
-  priority: -1
-  threshold: 0.9
+  see: ignore
 
 arabian camel:
   label: camel
@@ -3407,8 +3405,7 @@ volleyball:
   see: ball
 
 spider web:
-  threshold: 0.5
-  priority: -2
+  see: ignore
 
 wool:
   label: animal fur
@@ -3482,15 +3479,13 @@ pinwheel:
   see: ignore
 
 bearskin:
-  priority: -1
-  threshold: 0.3
+  see: ignore
 
 ballplayer:
   label: portrait
 
 crutch:
-  priority: -1
-  threshold: 0.3
+  see: ignore
 
 mousetrap:
   see: ignore
@@ -3519,8 +3514,7 @@ heritage:
     - people
 
 safety pin:
-  priority: -1
-  threshold: 0.3
+  see: ignore
 
 beaker:
   label: cup
@@ -3945,7 +3939,10 @@ whistle:
   threshold: 0.7
 
 umbrella:
-  threshold: 0.5
+  threshold: 0.6
 
 vending machine:
   see: ignore
+
+stage:
+  threshold: 0.5
