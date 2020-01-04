@@ -171,7 +171,7 @@ func TestConfig_ImportPath(t *testing.T) {
 	c := NewConfig(ctx)
 
 	path := c.ImportPath()
-	assert.Equal(t, "", path)
+	assert.Equal(t, ".", path)
 }
 
 func TestConfig_ExportPath(t *testing.T) {
@@ -179,7 +179,7 @@ func TestConfig_ExportPath(t *testing.T) {
 	c := NewConfig(ctx)
 
 	path := c.ExportPath()
-	assert.Equal(t, "", path)
+	assert.Equal(t, ".", path)
 }
 
 func TestConfig_SipsBin(t *testing.T) {
