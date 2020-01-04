@@ -220,9 +220,7 @@ ship:
     - vehicle
 
 solar dish:
-  label: dish
-  threshold: 0.5
-  priority: -1
+  see: ignore
 
 grasshopper:
   label: grasshopper
@@ -250,15 +248,13 @@ windsor tie:
   see: fashion
 
 chainlink fence:
-  label: outdoor
-  priority: -1
+  see: fence
 
 mitten:
   see: ignore
 
 bubble:
-  label: bubbles
-  priority: -1
+  see: ignore
 
 tench fish:
   see: fish
@@ -1910,19 +1906,18 @@ bell cote:
 bicycle-built-for-two:
   see: bike
 
-thatch:
+shelter:
   label: shelter
   threshold: 0.2
   categories:
     - outdoor
     - architecture
 
+thatch:
+  see: shelter
+
 birdhouse:
-  label: shelter
-  threshold: 0.2
-  categories:
-    - outdoor
-    - architecture
+  see: shelter
 
 boathouse:
   threshold: 0.2
@@ -2196,8 +2191,7 @@ espresso maker:
   see: coffee
 
 face powder:
-  threshold: 0.9
-  priority: -1
+  see: ignore
 
 fireboat:
   label: boat
@@ -2302,18 +2296,10 @@ hand-held computer:
     - office
 
 harmonica:
-  priority: -1
-  threshold: 0.3
-  categories:
-    - music
-    - instrument
+  see: instrument
 
 harp:
-  priority: -1
-  threshold: 0.3
-  categories:
-    - music
-    - instrument
+  see: instrument
 
 tool:
   label: tool
@@ -2387,16 +2373,14 @@ lifeboat:
     - boat
 
 lighter:
-  threshold: 1
-  priority: -1
+  see: ignore
 
 limousine:
   categories:
     - vehicle
 
 lipstick:
-  threshold: 0.5
-  priority: -1
+  see: ignore
 
 loafer:
   see: shoe
@@ -2574,9 +2558,8 @@ paintbrush:
   see: ignore
 
 historic architecture:
-  label: historic architecture
+  label: historic
   categories:
-    - historic
     - architecture
 
 palace:
@@ -2633,8 +2616,7 @@ photocopier:
   threshold: 0.2
 
 picket fence:
-  label: outdoor
-  priority: -1
+  see: fence
 
 pickup:
   threshold: 0.2
@@ -2720,11 +2702,7 @@ power drill:
   see: tool
 
 prayer rug:
-  threshold: 0.6
-  priority: -1
-  categories:
-    - religion
-    - carpet
+  see: ignore
 
 printer:
   label: office
@@ -3057,9 +3035,12 @@ wooden spoon:
   label: spoon
   threshold: 0.2
 
-worm fence:
+fence:
   label: outdoor
-  priority: -1
+  threshold: 0.2
+
+worm fence:
+  see: fence
 
 wreck:
   see: ship
@@ -3176,7 +3157,6 @@ cucumber:
 squash:
   label: squash
   threshold: 0.4
-  priority: -1
   categories:
     - cooking
     - vegetables
@@ -3189,7 +3169,6 @@ butternut squash:
 
 acorn squash:
   label: pumpkin
-  priority: -1
   threshold: 0.4
   categories:
     - cooking
@@ -3470,17 +3449,16 @@ binder:
 letter opener:
   label: office
 
-crossword puzzle:
-  threshold: 0.6
+puzzle:
+  label: puzzle
+  threshold: 0.5
   priority: -1
-  categories:
-    - game
+
+crossword puzzle:
+  see: puzzle
 
 jigsaw puzzle:
-  threshold: 0.6
-  priority: -1
-  categories:
-    - game
+  see: puzzle
 
 chain mail:
   see: fashion
@@ -3601,10 +3579,10 @@ radio telescope:
     - science
 
 thimble:
-  priority: -1
+  see: ignore
 
 slot:
-  priority: -1
+  see: ignore
 
 carousel:
   label: theme park
@@ -3629,13 +3607,11 @@ totem pole:
     - outdoor
 
 puck:
-  label: sports
-  threshold: 0.5
-  priority: -1
+  see: ignore
 
 mosquito net:
   label: outdoor
-  priority: -1
+  threshold: 0.5
 
 sundial:
   label: outdoor
@@ -3798,19 +3774,16 @@ crib:
   label: stained glass
 
 drumstick:
-  threshold: 1
-  priority: -1
+  see: ignore
 
 guillotine:
-  threshold: 1
-  priority: -1
+  see: ignore
 
 hand blower:
   label: portrait
 
 fire-screen:
-  threshold: 1
-  priority: -1
+  see: ignore
 
 electric fan:
   label: fan
