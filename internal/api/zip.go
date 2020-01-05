@@ -12,7 +12,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/repo"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/util"
 
 	"github.com/gin-gonic/gin"
@@ -35,8 +35,8 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
-		files, err := r.FindFilesByUUID(f.Photos, 1000, 0)
+		q := query.New(conf.OriginalsPath(), conf.Db())
+		files, err := q.FindFilesByUUID(f.Photos, 1000, 0)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})

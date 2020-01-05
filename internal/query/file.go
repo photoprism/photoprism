@@ -1,4 +1,4 @@
-package repo
+package query
 
 import "github.com/photoprism/photoprism/internal/entity"
 

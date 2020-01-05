@@ -14,7 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/repo"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
@@ -45,8 +45,8 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 		f.Count = 12
 		f.Order = "relevance"
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
-		p, err := r.Photos(f)
+		q := query.New(conf.OriginalsPath(), conf.Db())
+		p, err := q.Photos(f)
 
 		if err != nil {
 			log.Error(err)

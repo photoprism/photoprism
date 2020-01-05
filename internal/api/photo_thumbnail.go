@@ -6,7 +6,7 @@ import (
 	"path"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/repo"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/util"
 
 	"github.com/gin-gonic/gin"
@@ -31,8 +31,8 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
-		file, err := r.FindFileByHash(fileHash)
+		q := query.New(conf.OriginalsPath(), conf.Db())
+		file, err := q.FindFileByHash(fileHash)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})

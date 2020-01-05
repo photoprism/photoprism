@@ -1,4 +1,4 @@
-package repo
+package query
 
 import (
 	"testing"

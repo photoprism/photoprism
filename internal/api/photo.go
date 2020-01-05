@@ -7,7 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/repo"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/util"
 
 	"github.com/gin-gonic/gin"
@@ -24,8 +24,8 @@ func GetPhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
-		p, err := r.PreloadPhotoByUUID(c.Param("uuid"))
+		q := query.New(conf.OriginalsPath(), conf.Db())
+		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
@@ -44,9 +44,9 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.OriginalsPath(), conf.Db())
 
-		m, err := r.FindPhotoByUUID(c.Param("uuid"))
+		m, err := q.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -72,8 +72,8 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 //   uuid: string PhotoUUID as returned by the API
 func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/photos/:uuid/download", func(c *gin.Context) {
-		r := repo.New(conf.OriginalsPath(), conf.Db())
-		file, err := r.FindFileByPhotoUUID(c.Param("uuid"))
+		q := query.New(conf.OriginalsPath(), conf.Db())
+		file, err := q.FindFileByPhotoUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
@@ -111,8 +111,8 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
-		m, err := r.FindPhotoByUUID(c.Param("uuid"))
+		q := query.New(conf.OriginalsPath(), conf.Db())
+		m, err := q.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -141,8 +141,8 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
-		m, err := r.FindPhotoByUUID(c.Param("uuid"))
+		q := query.New(conf.OriginalsPath(), conf.Db())
+		m, err := q.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
