@@ -5,7 +5,7 @@ Additional information can be found in our Developer Guide:
 
 https://github.com/photoprism/photoprism/wiki
 */
-package repo
+package query
 
 import (
 	"github.com/photoprism/photoprism/internal/event"

@@ -10,11 +10,12 @@ import (
 
 // A photo can have multiple images and sidecar files
 type Photo struct {
-	ID                uint   `gorm:"primary_key"`
-	PhotoUUID         string `gorm:"type:varbinary(36);unique_index;"`
-	PhotoPath         string `gorm:"type:varbinary(400);index;"`
-	PhotoName         string `gorm:"type:varbinary(200);"`
-	PhotoTitle        string `json:"PhotoTitle"`
+	ID                uint      `gorm:"primary_key"`
+	TakenAt           time.Time `gorm:"type:datetime;index:idx_photos_taken_uuid;"`
+	PhotoUUID         string    `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;"`
+	PhotoPath         string    `gorm:"type:varbinary(400);index;"`
+	PhotoName         string    `gorm:"type:varbinary(200);"`
+	PhotoTitle        string    `json:"PhotoTitle"`
 	PhotoTitleChanged bool
 	PhotoDescription  string  `gorm:"type:text;"`
 	PhotoNotes        string  `gorm:"type:text;"`
@@ -45,7 +46,6 @@ type Photo struct {
 	PhotoCountry      string    `gorm:"index:idx_photos_country_year_month;"`
 	PhotoYear         int       `gorm:"index:idx_photos_country_year_month;"`
 	PhotoMonth        int       `gorm:"index:idx_photos_country_year_month;"`
-	TakenAt           time.Time `gorm:"type:datetime;index;"`
 	TakenAtLocal      time.Time `gorm:"type:datetime;"`
 	TakenAtChanged    bool
 	TimeZone          string `gorm:"type:varbinary(64);"`

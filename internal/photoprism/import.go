@@ -132,7 +132,9 @@ func (imp *Import) Start(importPath string) {
 		var files MediaFiles
 
 		for _, f := range related.files {
-			if done[f.Filename()] { continue }
+			if done[f.Filename()] {
+				continue
+			}
 
 			files = append(files, f)
 			done[f.Filename()] = true

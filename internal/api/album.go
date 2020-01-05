@@ -14,7 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/repo"
+	"github.com/photoprism/photoprism/internal/query"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -27,7 +27,7 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums", func(c *gin.Context) {
 		var f form.AlbumSearch
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.OriginalsPath(), conf.Db())
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -35,7 +35,7 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		result, err := r.Albums(f)
+		result, err := q.Albums(f)
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": util.UcFirst(err.Error())})
 			return
@@ -52,8 +52,8 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 func GetAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums/:uuid", func(c *gin.Context) {
 		id := c.Param("uuid")
-		r := repo.New(conf.OriginalsPath(), conf.Db())
-		m, err := r.FindAlbumByUUID(id)
+		q := query.New(conf.OriginalsPath(), conf.Db())
+		m, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -120,9 +120,9 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		r := repo.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.OriginalsPath(), conf.Db())
 
-		m, err := r.FindAlbumByUUID(id)
+		m, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -148,9 +148,9 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		r := repo.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.OriginalsPath(), conf.Db())
 
-		m, err := r.FindAlbumByUUID(id)
+		m, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -177,9 +177,9 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.OriginalsPath(), conf.Db())
 
-		album, err := r.FindAlbumByUUID(c.Param("uuid"))
+		album, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -206,8 +206,8 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
-		album, err := r.FindAlbumByUUID(c.Param("uuid"))
+		q := query.New(conf.OriginalsPath(), conf.Db())
+		album, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -244,8 +244,8 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
-		a, err := r.FindAlbumByUUID(c.Param("uuid"))
+		q := query.New(conf.OriginalsPath(), conf.Db())
+		a, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -257,7 +257,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 		var failed []string
 
 		for _, photoUUID := range f.Photos {
-			if p, err := r.FindPhotoByUUID(photoUUID); err != nil {
+			if p, err := q.FindPhotoByUUID(photoUUID); err != nil {
 				failed = append(failed, photoUUID)
 			} else {
 				added = append(added, entity.NewPhotoAlbum(p.PhotoUUID, a.AlbumUUID).FirstOrCreate(db))
@@ -295,8 +295,8 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
-		a, err := r.FindAlbumByUUID(c.Param("uuid"))
+		q := query.New(conf.OriginalsPath(), conf.Db())
+		a, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
@@ -319,15 +319,15 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		start := time.Now()
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
-		a, err := r.FindAlbumByUUID(c.Param("uuid"))
+		q := query.New(conf.OriginalsPath(), conf.Db())
+		a, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
 			return
 		}
 
-		p, err := r.Photos(form.PhotoSearch{
+		p, err := q.Photos(form.PhotoSearch{
 			Album:  a.AlbumUUID,
 			Count:  10000,
 			Offset: 0,
@@ -419,9 +419,9 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		r := repo.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.OriginalsPath(), conf.Db())
 
-		file, err := r.FindAlbumThumbByUUID(uuid)
+		file, err := q.FindAlbumThumbByUUID(uuid)
 
 		if err != nil {
 			log.Debugf("album has no photos yet, using generic thumb image: %s", uuid)
