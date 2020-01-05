@@ -57,15 +57,15 @@ func (f *PhotoSearch) ParseQueryString() (result error) {
 	var key, value []rune
 	var escaped, isKeyValue bool
 
-	query := f.Query
+	q := f.Query
 
 	f.Query = ""
 
 	formValues := reflect.ValueOf(f).Elem()
 
-	query = strings.TrimSpace(query) + "\n"
+	q = strings.TrimSpace(q) + "\n"
 
-	for _, char := range query {
+	for _, char := range q {
 		if unicode.IsSpace(char) && !escaped {
 			if isKeyValue {
 				fieldName := strings.Title(string(key))

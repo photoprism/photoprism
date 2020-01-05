@@ -304,13 +304,13 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 	case "relevance":
 		q = q.Order("photo_story DESC, photo_favorite DESC, taken_at DESC")
 	case "newest":
-		q = q.Order("taken_at DESC, photos.id DESC")
+		q = q.Order("taken_at DESC, photos.photo_uuid")
 	case "oldest":
-		q = q.Order("taken_at, photos.id")
+		q = q.Order("taken_at, photos.photo_uuid")
 	case "imported":
 		q = q.Order("photos.id DESC")
 	default:
-		q = q.Order("taken_at DESC, photos.id DESC")
+		q = q.Order("taken_at DESC, photos.photo_uuid")
 	}
 
 	if f.Count > 0 && f.Count <= 1000 {
