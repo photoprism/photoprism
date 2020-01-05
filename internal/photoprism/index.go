@@ -120,7 +120,9 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 		var files MediaFiles
 
 		for _, f := range related.files {
-			if done[f.Filename()] { continue }
+			if done[f.Filename()] {
+				continue
+			}
 
 			files = append(files, f)
 			done[f.Filename()] = true

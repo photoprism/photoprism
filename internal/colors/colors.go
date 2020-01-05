@@ -1,5 +1,5 @@
 /*
-This package encapsulates session storage.
+This package encapsulates color classification.
 
 Additional information can be found in our Developer Guide:
 
