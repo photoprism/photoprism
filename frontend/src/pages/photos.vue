@@ -27,10 +27,6 @@
                              :selection="selection"
                              :open-photo="openPhoto"
                              :open-location="openLocation"></p-photo-details>
-            <!-- p-photo-tiles v-else
-                           :photos="results"
-                           :selection="selection"
-                           :open-photo="openPhoto"></p-photo-tiles -->
         </v-container>
     </div>
 </template>
@@ -54,10 +50,6 @@
                 this.filter.year = query['year'] ? parseInt(query['year']) : 0;
                 this.filter.color = query['color'] ? query['color'] : '';
                 this.filter.label = query['label'] ? query['label'] : '';
-
-                // this.filter.before = query['before'] ? query['before'] : '';
-                // this.filter.after = query['after'] ? query['after'] : '';
-
                 this.settings.view = this.viewType();
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
@@ -67,13 +59,9 @@
         data() {
             const query = this.$route.query;
             const routeName = this.$route.name;
-            const order = query['order'] ? query['order'] : 'imported';
+            const order = query['order'] ? query['order'] : 'newest';
             const camera = query['camera'] ? parseInt(query['camera']) : 0;
             const q = query['q'] ? query['q'] : '';
-
-            // const before = query['before'] ? query['before'] : '';
-            // const after = query['after'] ? query['after'] : '';
-
             const country = query['country'] ? query['country'] : '';
             const lens = query['lens'] ? parseInt(query['lens']) : 0;
             const year = query['year'] ? parseInt(query['year']) : 0;
@@ -237,18 +225,11 @@
                     }
                 }).catch(() => this.loading = false);
             },
-            onKeypress(event) {
-                /* if (event.key === "Escape") {
-                    this.$clipboard.clear();
-                } */
-            },
         },
         created() {
             this.search();
-            // window.addEventListener('keydown', this.onKeypress);
         },
         destroyed() {
-            // window.removeEventListener('keydown', this.onKeypress);
         }
     };
 </script>

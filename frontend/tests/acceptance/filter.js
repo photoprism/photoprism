@@ -18,7 +18,7 @@ test('Test camera filter', async t => {
     await t
         .click('button.p-expand-search');
     logger.clear();
-    await page.setFilter('camera', 'iPhone 6');
+    await page.setFilter('camera', 'iPhone SE');
     const request = await logger.requests[0].responseBody;
     await t
         .expect(logger.requests[0].response.statusCode).eql(200)

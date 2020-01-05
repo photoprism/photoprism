@@ -57,7 +57,7 @@
                                   :items="countryOptions">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
+                    <v-flex xs12 sm6 md3 pa-2 class="p-year-select">
                         <v-select @change="dropdownChange"
                                   :label="labels.year"
                                   flat solo hide-details
@@ -98,7 +98,7 @@
                                   :items="cameraOptions">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
+                    <v-flex xs12 sm6 md3 pa-2 class="p-lens-select">
                         <v-select @change="dropdownChange"
                                   :label="labels.lens"
                                   flat solo hide-details
@@ -109,7 +109,7 @@
                                   :items="lensOptions">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
+                    <v-flex xs12 sm6 md3 pa-2 class="p-color-select">
                         <v-select @change="dropdownChange"
                                   :label="labels.color"
                                   flat solo hide-details
@@ -120,7 +120,7 @@
                                   :items="colorOptions">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
+                    <v-flex xs12 sm6 md3 pa-2 class="p-category-select">
                         <v-select @change="dropdownChange"
                                   :label="labels.category"
                                   flat solo hide-details
