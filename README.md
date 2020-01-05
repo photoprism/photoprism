@@ -36,7 +36,7 @@ All you need is a Web browser and [Docker](https://store.docker.com/search?type=
 to run the server. It is available for Mac, Linux and Windows.
 
 Note that this is work in progress. We do our best to provide a complete, stable version. 
-Financial [support](SPONSORS.md) makes a huge difference and enables us to spend more time with this project.
+[Financial support](SPONSORS.md) makes a huge difference and enables us to spend more time with this project.
 
 If you have a question, don't hesitate to ask in our [help forum][help] 
 or [contact us via email](mailto:hello@photoprism.org).
@@ -104,7 +104,7 @@ especially if you need help with using our software. They will match every donat
 In addition, you can find us on [Patreon][patreon] and [PayPal][paypal].
 Our sponsors and contributors will get for free whatever we might have to charge for a geodata subscription later.
 
-Also please leave a [star](https://github.com/photoprism/photoprism/stargazers) here on GitHub if you like this project, 
+Also please [leave a star](https://github.com/photoprism/photoprism/stargazers) here on GitHub if you like this project, 
 it provides additional motivation to keep going.
 
 Ideas backed by a sponsor are marked with a golden [sponsor][sponsored issues] label.
