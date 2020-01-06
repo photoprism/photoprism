@@ -1,6 +1,7 @@
 package thumb
 
 import (
+	"errors"
 	"fmt"
 	"image"
 	"image/png"
@@ -72,19 +73,19 @@ func Postfix(width, height int, opts ...ResampleOption) (result string) {
 
 func Filename(hash string, thumbPath string, width, height int, opts ...ResampleOption) (filename string, err error) {
 	if width < 0 || width > MaxWidth {
-		return "", fmt.Errorf("width has an invalid value: %d", width)
+		return "", fmt.Errorf("thumbs: width has an invalid value (%d)", width)
 	}
 
 	if height < 0 || height > MaxHeight {
-		return "", fmt.Errorf("height has an invalid value: %d", height)
+		return "", fmt.Errorf("thumbs: height has an invalid value (%d)", height)
 	}
 
 	if len(hash) < 4 {
-		return "", fmt.Errorf("file hash is empty or too short: %s", hash)
+		return "", fmt.Errorf("thumbs: file hash is empty or too short (\"%s\")", hash)
 	}
 
 	if len(thumbPath) == 0 {
-		return "", fmt.Errorf("thumbnail path is empty: %s", thumbPath)
+		return "", errors.New("thumbs: path is empty")
 	}
 
 	postfix := Postfix(width, height, opts...)
@@ -101,17 +102,17 @@ func Filename(hash string, thumbPath string, width, height int, opts ...Resample
 
 func FromFile(imageFilename string, hash string, thumbPath string, width, height int, opts ...ResampleOption) (fileName string, err error) {
 	if len(hash) < 4 {
-		return "", fmt.Errorf("file hash is empty or too short: %s", hash)
+		return "", fmt.Errorf("thumbs: file hash is empty or too short (\"%s\")", hash)
 	}
 
 	if len(imageFilename) < 4 {
-		return "", fmt.Errorf("image filename is empty or too short: %s", imageFilename)
+		return "", fmt.Errorf("thumbs: image filename is empty or too short (\"%s\")", imageFilename)
 	}
 
 	fileName, err = Filename(hash, thumbPath, width, height, opts...)
 
 	if err != nil {
-		log.Errorf("can't determine thumb filename: %s", err)
+		log.Errorf("thumbs: can't determine filename (%s)", err)
 		return "", err
 	}
 
@@ -135,11 +136,11 @@ func FromFile(imageFilename string, hash string, thumbPath string, width, height
 
 func Create(img image.Image, fileName string, width, height int, opts ...ResampleOption) (result image.Image, err error) {
 	if width < 0 || width > MaxWidth {
-		return img, fmt.Errorf("width has an invalid value: %d", width)
+		return img, fmt.Errorf("thumbs: width has an invalid value (%d)", width)
 	}
 
 	if height < 0 || height > MaxHeight {
-		return img, fmt.Errorf("height has an invalid value: %d", height)
+		return img, fmt.Errorf("thumbs: height has an invalid value (%d)", height)
 	}
 
 	result = Resample(img, width, height, opts...)
@@ -157,7 +158,7 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 	err = imaging.Save(result, fileName, saveOption)
 
 	if err != nil {
-		log.Errorf("failed to save thumbnail: %v", err)
+		log.Errorf("thumbs: failed to save %s", fileName)
 		return result, err
 	}
 

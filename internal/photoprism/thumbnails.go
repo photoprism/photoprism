@@ -83,14 +83,14 @@ func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err
 }
 
 func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err error) {
-	defer capture.Time(time.Now(), fmt.Sprintf("creating thumbnails for \"%s\"", m.Filename()))
+	defer capture.Time(time.Now(), fmt.Sprintf("thumbs: creating thumbnails for \"%s\"", m.Filename()))
 
 	hash := m.Hash()
 
 	img, err := imaging.Open(m.Filename(), imaging.AutoOrientation(true))
 
 	if err != nil {
-		log.Errorf("can't open original: %s", err)
+		log.Errorf("thumbs: can't open original \"%s\"", err)
 		return err
 	}
 
@@ -106,7 +106,7 @@ func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err e
 		}
 
 		if fileName, err := thumb.Filename(hash, thumbPath, thumbType.Width, thumbType.Height, thumbType.Options...); err != nil {
-			log.Errorf("could not create %s thumbnail: \"%s\"", name, err)
+			log.Errorf("thumbs: could not create \"%s\" (%s)", name, err)
 
 			return err
 		} else {
@@ -126,7 +126,7 @@ func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err e
 			}
 
 			if err != nil {
-				log.Errorf("could not create %s thumbnail: \"%s\"", name, err)
+				log.Errorf("thumbs: could not create \"%s\" (%s)", name, err)
 				return err
 			}
 		}

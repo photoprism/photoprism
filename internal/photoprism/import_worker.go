@@ -64,14 +64,9 @@ func importWorker(jobs <-chan ImportJob) {
 				continue
 			}
 
-			if importedMainFile.IsRaw() {
+			if importedMainFile.IsRaw() || importedMainFile.IsHEIF() || importedMainFile.IsImageOther() {
 				if _, err := imp.convert.ToJpeg(importedMainFile); err != nil {
-					log.Errorf("import: could not create jpeg from raw (%s)", err)
-				}
-			}
-			if importedMainFile.IsHEIF() {
-				if _, err := imp.convert.ToJpeg(importedMainFile); err != nil {
-					log.Errorf("import: could not create jpeg from heif (%s)", err)
+					log.Errorf("import: could not create jpeg from \"%s\"", err)
 				}
 			}
 

@@ -55,8 +55,10 @@ func (m *MediaFile) DateCreated() time.Time {
 
 	info, err := m.Exif()
 
-	if err == nil && !info.TakenAt.IsZero() {
+	if err == nil && !info.TakenAt.IsZero() && info.TakenAt.Year() > 1000 {
 		m.dateCreated = info.TakenAt
+
+		log.Infof("exif: taken at %s", m.dateCreated.String())
 
 		return m.dateCreated
 	}
@@ -74,6 +76,8 @@ func (m *MediaFile) DateCreated() time.Time {
 	} else {
 		m.dateCreated = t.ModTime()
 	}
+
+	log.Infof("file: taken at %s", m.dateCreated.String())
 
 	return m.dateCreated
 }
@@ -279,6 +283,8 @@ func (m *MediaFile) RelatedFiles() (result RelatedFiles, err error) {
 		} else if resultFile.IsHEIF() {
 			result.main = resultFile
 		} else if resultFile.IsJpeg() && len(result.main.Filename()) > len(resultFile.Filename()) {
+			result.main = resultFile
+		}  else if resultFile.IsImageOther() {
 			result.main = resultFile
 		}
 
@@ -498,6 +504,32 @@ func (m *MediaFile) IsRaw() bool {
 	return m.HasType(file.TypeRaw)
 }
 
+// IsPng returns true if this media file a PNG file.
+func (m *MediaFile) IsPng() bool {
+	return m.HasType(file.TypePng)
+}
+
+// IsTiff returns true if this media file a TIFF file.
+func (m *MediaFile) IsTiff() bool {
+	return m.HasType(file.TypeTiff)
+}
+
+// IsImageOther returns true this media file a PNG, GIF, BMP or TIFF file.
+func (m *MediaFile) IsImageOther() bool {
+	switch m.Type() {
+	case file.TypeBitmap:
+		return true
+	case file.TypeGif:
+		return true
+	case file.TypePng:
+		return true
+	case file.TypeTiff:
+		return true
+	default:
+		return false
+	}
+}
+
 // IsHEIF returns true if this media file is a High Efficiency Image File Format file.
 func (m *MediaFile) IsHEIF() bool {
 	return m.HasType(file.TypeHEIF)
@@ -535,7 +567,7 @@ func (m *MediaFile) IsVideo() bool {
 
 // IsPhoto checks if this media file is a photo / image.
 func (m *MediaFile) IsPhoto() bool {
-	return m.IsJpeg() || m.IsRaw() || m.IsHEIF()
+	return m.IsJpeg() || m.IsRaw() || m.IsHEIF() || m.IsImageOther()
 }
 
 // Jpeg returns a the JPEG version of an image or sidecar file (if exists).

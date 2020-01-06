@@ -63,8 +63,37 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 		return err
 	}
 
+	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
+		now := time.Now()
+
+		if err := scope.SetColumn("TakenAt", now); err != nil {
+			return err
+		}
+
+		if err := scope.SetColumn("TakenAtLocal",now); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
+
+func (m *Photo) BeforeSave(scope *gorm.Scope) error {
+	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
+		now := time.Now()
+
+		if err := scope.SetColumn("TakenAt", now); err != nil {
+			return err
+		}
+
+		if err := scope.SetColumn("TakenAtLocal",now); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 
 func (m *Photo) IndexKeywords(keywords []string, db *gorm.DB) {
 	var keywordIds []uint

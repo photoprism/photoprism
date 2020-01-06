@@ -13,6 +13,12 @@ const (
 	TypeJpeg Type = "jpg"
 	// PNG image file.
 	TypePng Type = "png"
+	// GIF image file.
+	TypeGif Type = "gif"
+	// TIFF image file.
+	TypeTiff Type = "tiff"
+	// BMP image file.
+	TypeBitmap Type = "bmp"
 	// RAW image file.
 	TypeRaw Type = "raw"
 	// High Efficiency Image File Format.
@@ -42,6 +48,10 @@ const (
 
 // Ext lists all the available and supported image file formats.
 var Ext = map[string]Type{
+	".bmp":  TypeBitmap,
+	".gif":  TypeGif,
+	".tiff": TypeTiff,
+	".png":  TypePng,
 	".crw":  TypeRaw,
 	".cr2":  TypeRaw,
 	".nef":  TypeRaw,

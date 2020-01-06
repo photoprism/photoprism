@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/thumb"
 )
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
@@ -35,7 +36,7 @@ func (c *Convert) Path(path string) {
 
 		mediaFile, err := NewMediaFile(filename)
 
-		if err != nil || !(mediaFile.IsRaw() || mediaFile.IsHEIF()) {
+		if err != nil || !(mediaFile.IsRaw() || mediaFile.IsHEIF() || mediaFile.IsImageOther()) {
 			return nil
 		}
 
@@ -112,6 +113,16 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		"baseName": filepath.Base(fileName),
 		"xmpName":  filepath.Base(xmpFilename),
 	})
+
+	if image.IsImageOther() {
+		_, err = thumb.Jpeg(image.Filename(), jpegFilename)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return NewMediaFile(jpegFilename)
+	}
 
 	if convertCommand, err := c.ConvertCommand(image, jpegFilename, xmpFilename); err != nil {
 		return nil, err
