@@ -79,6 +79,14 @@
                             </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
+
+                    <v-list-tile to="/hidden" @click="" class="p-navigation-hidden">
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                <translate>Hidden</translate>
+                            </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
                 </v-list-group>
 
                 <v-list-tile v-if="mini" to="/albums" @click="">

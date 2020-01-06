@@ -123,7 +123,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
 		Joins("JOIN places ON photos.place_id = places.id").
 		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id").
-		Where("photos.deleted_at IS NULL AND files.file_missing = 0").
+		Where("files.file_missing = 0").
 		Group("photos.id, files.id")
 	var categories []entity.Category
 	var label entity.Label
@@ -185,6 +185,12 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		}
 	}
 
+	if f.Hidden {
+		q = q.Where("photos.deleted_at IS NOT NULL")
+	} else {
+		q = q.Where("photos.deleted_at IS NULL")
+	}
+
 	if f.Album != "" {
 		q = q.Joins("JOIN photos_albums ON photos_albums.photo_uuid = photos.photo_uuid").Where("photos_albums.album_uuid = ?", f.Album)
 	}
@@ -221,7 +227,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		q = q.Where("photos.photo_nsfw = 0")
 	}
 
-	if f.NSFW {
+	if f.Nsfw {
 		q = q.Where("photos.photo_nsfw = 1")
 	}
 

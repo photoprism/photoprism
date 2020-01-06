@@ -11,7 +11,7 @@
         <v-container fluid class="pa-0" v-else>
             <p-scroll-top></p-scroll-top>
 
-            <p-photo-clipboard :refresh="refresh" :selection="selection"></p-photo-clipboard>
+            <p-photo-clipboard :refresh="refresh" :selection="selection" :context="context"></p-photo-clipboard>
 
             <p-photo-mosaic v-if="settings.view === 'mosaic'"
                             :photos="results"
@@ -94,6 +94,21 @@
                 routeName: routeName,
                 loading: true
             };
+        },
+        computed: {
+            context: function () {
+                if(!this.staticFilter) {
+                    return "photos"
+                }
+
+                if(this.staticFilter.hidden) {
+                    return "hidden"
+                } else if (this.staticFilter.favorites) {
+                    return "favorites"
+                }
+
+                return ""
+            }
         },
         methods: {
             viewType() {

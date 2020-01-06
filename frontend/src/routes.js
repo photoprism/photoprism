@@ -52,6 +52,13 @@ export default [
         props: {staticFilter: {favorites: true}},
     },
     {
+        name: "hidden",
+        path: "/hidden",
+        component: Photos,
+        meta: {title: "Hidden"},
+        props: {staticFilter: {hidden: true}},
+    },
+    {
         name: "places",
         path: "/places",
         component: Places,

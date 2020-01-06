@@ -46,13 +46,50 @@ func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		elapsed := int(time.Since(start).Seconds())
 
-		event.Publish("count.photos", event.Data{
-			"count": len(f.Photos) * -1,
-		})
+		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos deleted in %d s", elapsed)})
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos hidden in %d s", elapsed)})
 	})
 }
+
+// POST /api/v1/batch/photos/restore
+func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
+	router.POST("/batch/photos/restore", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		start := time.Now()
+
+		var f form.PhotoUUIDs
+
+		if err := c.BindJSON(&f); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			return
+		}
+
+		if len(f.Photos) == 0 {
+			log.Error("no photos selected")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst("no photos selected")})
+			return
+		}
+
+		log.Infof("restoring photos: %#v", f.Photos)
+
+		db := conf.Db()
+
+		db.Unscoped().Model(&entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).
+			UpdateColumn("deleted_at", gorm.Expr("NULL"))
+
+		elapsed := int(time.Since(start).Seconds())
+
+		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos restored in %d s", elapsed)})
+	})
+}
+
 
 // POST /api/v1/batch/albums/delete
 func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {

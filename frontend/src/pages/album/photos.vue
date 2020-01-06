@@ -13,7 +13,7 @@
 
             <p-photo-clipboard :refresh="refresh"
                                :selection="selection"
-                               :album="model"></p-photo-clipboard>
+                               :album="model" context="album"></p-photo-clipboard>
 
             <p-photo-mosaic v-if="settings.view === 'mosaic'"
                             :photos="results"

@@ -23,6 +23,7 @@ type PhotoSearch struct {
 	Artist      string    `form:"artist"`
 	Hash        string    `form:"hash"`
 	Duplicate   bool      `form:"duplicate"`
+	Hidden      bool      `form:"hidden"`
 	Lat         float64   `form:"lat"`
 	Lng         float64   `form:"lng"`
 	Dist        uint      `form:"dist"`
@@ -46,7 +47,7 @@ type PhotoSearch struct {
 	Public      bool      `form:"public"`
 	Story       bool      `form:"story"`
 	Safe        bool      `form:"safe"`
-	NSFW        bool      `form:"nsfw"`
+	Nsfw        bool      `form:"nsfw"`
 
 	Count  int    `form:"count" binding:"required"`
 	Offset int    `form:"offset"`

@@ -30,6 +30,7 @@
                         color="deep-purple lighten-2"
                         @click.stop="batchPrivate()"
                         :disabled="selection.length === 0"
+                        v-if="context !== 'hidden'"
                         class="p-photo-clipboard-private"
                 >
                     <v-icon>vpn_key</v-icon>
@@ -42,6 +43,7 @@
                         color="cyan accent-4"
                         :disabled="selection.length === 0"
                         @click.stop="batchStory()"
+                        v-if="context !== 'hidden'"
                         class="p-photo-clipboard-story"
                 >
                     <v-icon>wifi</v-icon>
@@ -63,6 +65,7 @@
                         :title="labels.download"
                         color="teal accent-4"
                         @click.stop="download()"
+                        v-if="context !== 'hidden'"
                         class="p-photo-clipboard-download"
                 >
                     <v-icon>cloud_download</v-icon>
@@ -75,6 +78,7 @@
                         color="amber accent-4"
                         :disabled="selection.length === 0"
                         @click.stop="dialog.album = true"
+                        v-if="context !== 'hidden'"
                         class="p-photo-clipboard-album"
                 >
                     <v-icon>folder</v-icon>
@@ -88,10 +92,24 @@
                         :title="labels.delete"
                         @click.stop="dialog.delete = true"
                         :disabled="selection.length === 0"
-                        v-if="!album"
+                        v-if="!album && context !== 'hidden'"
                         class="p-photo-clipboard-delete"
                 >
-                    <v-icon>delete</v-icon>
+                    <v-icon>visibility_off</v-icon>
+                </v-btn>
+
+                <v-btn
+                        fab
+                        dark
+                        small
+                        color="purple lighten-2"
+                        :title="labels.restore"
+                        @click.stop="batchRestorePhotos"
+                        :disabled="selection.length === 0"
+                        v-if="!album && context === 'hidden'"
+                        class="p-photo-clipboard-restore"
+                >
+                    <v-icon>visibility</v-icon>
                 </v-btn>
 
                 <v-btn
@@ -105,7 +123,7 @@
                         v-if="album"
                         class="p-photo-clipboard-delete"
                 >
-                    <v-icon>delete_outline</v-icon>
+                    <v-icon>delete</v-icon>
                 </v-btn>
                 <v-btn
                         fab
@@ -137,6 +155,7 @@
             selection: Array,
             refresh: Function,
             album: Object,
+            context: String,
         },
         data() {
             return {
@@ -150,8 +169,9 @@
                     private: this.$gettext("Private"),
                     story: this.$gettext("Story"),
                     addToAlbum: this.$gettext("Add to album"),
-                    removeFromAlbum: this.$gettext("Remove from album"),
-                    delete: this.$gettext("Delete"),
+                    removeFromAlbum: this.$gettext("Remove"),
+                    delete: this.$gettext("Hide"),
+                    restore: this.$gettext("Restore"),
                     download: this.$gettext("Download"),
                 },
             };
@@ -162,7 +182,7 @@
                 this.expanded = false;
             },
             batchPrivate() {
-                Api.post("batch/photos/private", {"photos": this.selection}).then(this.onPrivateToggled.bind(this));
+                Api.post("batch/photos/private", {"photos": this.selection}).then(() => this.onPrivateToggled());
             },
             onPrivateToggled() {
                 Notify.success(this.$gettext("Toggled private flag"));
@@ -170,7 +190,7 @@
                 this.refresh();
             },
             batchStory() {
-                Api.post("batch/photos/story", {"photos": this.selection}).then(this.onStoryToggled.bind(this));
+                Api.post("batch/photos/story", {"photos": this.selection}).then(() => this.onStoryToggled());
             },
             onStoryToggled() {
                 Notify.success(this.$gettext("Toggled story flag"));
@@ -180,10 +200,18 @@
             batchDeletePhotos() {
                 this.dialog.delete = false;
 
-                Api.post("batch/photos/delete", {"photos": this.selection}).then(this.onDeleted.bind(this));
+                Api.post("batch/photos/delete", {"photos": this.selection}).then(() => this.onDeleted());
             },
             onDeleted() {
-                Notify.success(this.$gettext("Photos deleted"));
+                Notify.success(this.$gettext("Photos hidden"));
+                this.clearClipboard();
+                this.refresh();
+            },
+            batchRestorePhotos() {
+                Api.post("batch/photos/restore", {"photos": this.selection}).then(() => this.onRestored());
+            },
+            onRestored() {
+                Notify.success(this.$gettext("Photos restored"));
                 this.clearClipboard();
                 this.refresh();
             },
@@ -194,7 +222,7 @@
             addToAlbum(albumUUID) {
                 this.dialog.album = false;
 
-                Api.post(`albums/${albumUUID}/photos`, {"photos": this.selection}).then(this.onAdded.bind(this));
+                Api.post(`albums/${albumUUID}/photos`, {"photos": this.selection}).then(() => this.onAdded());
             },
             onAdded() {
                 this.clearClipboard();
@@ -210,7 +238,7 @@
 
                 this.dialog.album = false;
 
-                Api.delete(`albums/${albumUUID}/photos`, {"data": {"photos": this.selection}}).then(this.onRemoved.bind(this));
+                Api.delete(`albums/${albumUUID}/photos`, {"data": {"photos": this.selection}}).then(() => this.onRemoved());
             },
             onRemoved() {
                 this.clearClipboard();
