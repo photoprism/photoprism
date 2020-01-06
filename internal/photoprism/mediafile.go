@@ -476,7 +476,7 @@ func (m *MediaFile) IsJpeg() bool {
 		return false
 	}
 
-	return m.MimeType() == MimeTypeJpeg
+	return m.MimeType() == file.MimeTypeJpeg
 }
 
 // Type returns the type of the media file.
