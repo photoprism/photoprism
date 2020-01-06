@@ -51,6 +51,8 @@ func NewCamera(modelName string, makeName string) *Camera {
 }
 
 func (m *Camera) FirstOrCreate(db *gorm.DB) *Camera {
+	writeMutex.Lock()
+	defer writeMutex.Unlock()
 	if err := db.FirstOrCreate(m, "camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).Error; err != nil {
 		log.Errorf("camera: %s", err)
 	}

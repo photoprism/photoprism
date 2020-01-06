@@ -51,6 +51,8 @@ func NewCountry(countryCode string, countryName string) *Country {
 }
 
 func (m *Country) FirstOrCreate(db *gorm.DB) *Country {
+	writeMutex.Lock()
+	defer writeMutex.Unlock()
 	if err := db.FirstOrCreate(m, "id = ?", m.ID).Error; err != nil {
 		log.Errorf("country: %s", err)
 	}

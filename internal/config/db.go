@@ -177,6 +177,7 @@ func (c *Config) ImportSQL(filename string) {
 	}
 
 	statements := strings.Split(string(contents), ";\n")
+	q := c.Db().Unscoped()
 
 	for _, stmt := range statements {
 		// Skip empty lines and comments
@@ -184,7 +185,11 @@ func (c *Config) ImportSQL(filename string) {
 			continue
 		}
 
-		if _, err := c.Db().CommonDB().Query(stmt); err != nil {
+		var result struct {}
+
+		err := q.Raw(stmt).Scan(&result).Error
+
+		if err != nil {
 			log.Error(err)
 		}
 	}

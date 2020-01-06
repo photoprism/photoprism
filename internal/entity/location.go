@@ -45,6 +45,9 @@ func NewLocation(lat, lng float64) *Location {
 }
 
 func (m *Location) Find(db *gorm.DB) error {
+	writeMutex.Lock()
+	defer writeMutex.Unlock()
+
 	if err := db.First(m, "id = ?", m.ID).Error; err == nil {
 		m.Place = FindPlace(m.PlaceID, db)
 		return nil

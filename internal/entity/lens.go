@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"strings"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -27,6 +28,9 @@ func (Lens) TableName() string {
 }
 
 func NewLens(modelName string, makeName string) *Lens {
+	modelName = strings.TrimSpace(modelName)
+	makeName = strings.TrimSpace(makeName)
+
 	if modelName == "" {
 		modelName = "Unknown"
 	}
@@ -43,7 +47,9 @@ func NewLens(modelName string, makeName string) *Lens {
 }
 
 func (m *Lens) FirstOrCreate(db *gorm.DB) *Lens {
-	if err := db.FirstOrCreate(m, "lens_model = ? AND lens_make = ?", m.LensModel, m.LensMake).Error; err != nil {
+	writeMutex.Lock()
+	defer writeMutex.Unlock()
+	if err := db.FirstOrCreate(m, "lens_slug = ?", m.LensSlug).Error; err != nil {
 		log.Errorf("lens: %s", err)
 	}
 

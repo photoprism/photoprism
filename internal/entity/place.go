@@ -72,6 +72,8 @@ func (m *Place) Find(db *gorm.DB) error {
 }
 
 func (m *Place) FirstOrCreate(db *gorm.DB) *Place {
+	writeMutex.Lock()
+	defer writeMutex.Unlock()
 	if err := db.FirstOrCreate(m, "id = ? OR loc_label = ?", m.ID, m.LocLabel).Error; err != nil {
 		log.Debugf("place: %s for token %s or label \"%s\"", err.Error(), m.ID, m.LocLabel)
 	}

@@ -34,6 +34,13 @@ func TestMediaFile_DateCreated(t *testing.T) {
 		assert.Equal(t, "2013-11-26 13:53:55 +0000 UTC", date.String())
 		assert.Empty(t, err)
 	})
+	t.Run("dog_created_1919.jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/dog_created_1919.jpg")
+		assert.Nil(t, err)
+		date := mediaFile.DateCreated().UTC()
+		assert.Equal(t, "1919-05-04 05:59:26 +0000 UTC", date.String())
+		assert.Empty(t, err)
+	})
 }
 
 func TestMediaFile_HasTimeAndPlace(t *testing.T) {

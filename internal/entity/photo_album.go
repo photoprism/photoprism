@@ -31,6 +31,8 @@ func NewPhotoAlbum(photoUUID, albumUUID string) *PhotoAlbum {
 }
 
 func (m *PhotoAlbum) FirstOrCreate(db *gorm.DB) *PhotoAlbum {
+	writeMutex.Lock()
+	defer writeMutex.Unlock()
 	if err := db.FirstOrCreate(m, "photo_uuid = ? AND album_uuid = ?", m.PhotoUUID, m.AlbumUUID).Error; err != nil {
 		log.Errorf("photo album: %s", err)
 	}

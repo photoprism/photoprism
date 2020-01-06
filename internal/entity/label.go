@@ -53,6 +53,8 @@ func NewLabel(labelName string, labelPriority int) *Label {
 }
 
 func (m *Label) FirstOrCreate(db *gorm.DB) *Label {
+	writeMutex.Lock()
+	defer writeMutex.Unlock()
 	if err := db.FirstOrCreate(m, "label_slug = ?", m.LabelSlug).Error; err != nil {
 		log.Errorf("label: %s", err)
 	}

@@ -11,6 +11,7 @@ package entity
 
 import (
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -19,6 +20,7 @@ import (
 )
 
 var log = event.Log
+var writeMutex = sync.Mutex{}
 
 func logError(result *gorm.DB) {
 	if result.Error != nil {

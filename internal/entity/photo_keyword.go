@@ -21,6 +21,8 @@ func NewPhotoKeyword(photoID, keywordID uint) *PhotoKeyword {
 }
 
 func (m *PhotoKeyword) FirstOrCreate(db *gorm.DB) *PhotoKeyword {
+	writeMutex.Lock()
+	defer writeMutex.Unlock()
 	if err := db.FirstOrCreate(m, "photo_id = ? AND keyword_id = ?", m.PhotoID, m.KeywordID).Error; err != nil {
 		log.Errorf("photo keyword: %s", err)
 	}
