@@ -69,6 +69,10 @@ type Params struct {
 	DetachServer       bool   `yaml:"detach-server" flag:"detach-server"`
 	HideNSFW           bool   `yaml:"hide-nsfw" flag:"hide-nsfw"`
 	UploadNSFW         bool   `yaml:"upload-nsfw" flag:"upload-nsfw"`
+	DisableTensorFlow  bool   `yaml:"tf-disabled" flag:"tf-disabled"`
+	GeoCodingApi       string `yaml:"geocoding-api" flag:"geocoding-api"`
+	ThumbQuality       int    `yaml:"thumb-quality" flag:"thumb-quality"`
+	ThumbSize          int    `yaml:"thumb-size" flag:"thumb-size"`
 }
 
 // NewParams() creates a new configuration entity by using two methods:

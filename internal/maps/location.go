@@ -54,6 +54,17 @@ func NewLocation(id string) *Location {
 	return result
 }
 
+func (l *Location) Query(api string) error {
+	switch api {
+	case "osm":
+		return l.QueryOSM()
+	case "places":
+		return l.QueryPlaces()
+	}
+
+	return errors.New("maps: reverse lookup disabled")
+}
+
 func (l *Location) QueryPlaces() error {
 	s, err := places.FindLocation(l.ID)
 

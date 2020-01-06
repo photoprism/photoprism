@@ -17,7 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/util"
 )
 
-const (
+var (
 	MaxThumbWidth    = 8192
 	MaxThumbHeight   = 8192
 	JpegQuality      = 95
@@ -316,6 +316,11 @@ func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err e
 
 	for _, name := range DefaultThumbnails {
 		thumbType := ThumbnailTypes[name]
+
+		if thumbType.Height > MaxThumbHeight || thumbType.Width > MaxThumbWidth {
+			log.Debugf("thumbs: size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
+			continue
+		}
 
 		if fileName, err := ThumbnailFilename(hash, thumbPath, thumbType.Width, thumbType.Height, thumbType.Options...); err != nil {
 			log.Errorf("could not create %s thumbnail: \"%s\"", name, err)

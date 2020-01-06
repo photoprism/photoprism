@@ -44,7 +44,7 @@ func NewLocation(lat, lng float64) *Location {
 	return result
 }
 
-func (m *Location) Find(db *gorm.DB) error {
+func (m *Location) Find(db *gorm.DB, api string) error {
 	writeMutex.Lock()
 	defer writeMutex.Unlock()
 
@@ -57,7 +57,7 @@ func (m *Location) Find(db *gorm.DB) error {
 		ID: m.ID,
 	}
 
-	if err := l.QueryPlaces(); err != nil {
+	if err := l.Query(api); err != nil {
 		return err
 	}
 

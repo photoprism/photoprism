@@ -47,6 +47,10 @@ func NewTensorFlow(conf *config.Config) *TensorFlow {
 }
 
 func (t *TensorFlow) Init() (err error) {
+	if t.conf.TensorFlowDisabled() {
+		return nil
+	}
+
 	if err := t.loadModel(); err != nil {
 		return err
 	}
@@ -85,6 +89,10 @@ func (t *TensorFlow) loadLabelRules() (err error) {
 
 // LabelsFromFile returns matching labels for a jpeg media file.
 func (t *TensorFlow) LabelsFromFile(filename string) (result Labels, err error) {
+	if t.conf.TensorFlowDisabled() {
+		return result, nil
+	}
+
 	imageBuffer, err := ioutil.ReadFile(filename)
 
 	if err != nil {
@@ -96,6 +104,10 @@ func (t *TensorFlow) LabelsFromFile(filename string) (result Labels, err error) 
 
 // Labels returns matching labels for a jpeg media string.
 func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
+	if t.conf.TensorFlowDisabled() {
+		return result, nil
+	}
+
 	if err := t.loadModel(); err != nil {
 		return nil, err
 	}

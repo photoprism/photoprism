@@ -32,6 +32,10 @@ func thumbnailsAction(ctx *cli.Context) error {
 
 	log.Infof("creating thumbnails in \"%s\"", conf.ThumbnailsPath())
 
+	photoprism.JpegQuality = conf.ThumbQuality()
+	photoprism.MaxThumbWidth = conf.ThumbSize()
+	photoprism.MaxThumbHeight = conf.ThumbSize()
+
 	if err := photoprism.CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), ctx.Bool("force")); err != nil {
 		log.Error(err)
 		return err

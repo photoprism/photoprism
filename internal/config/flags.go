@@ -214,4 +214,27 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "allow uploads that may contain offensive content",
 		EnvVar: "PHOTOPRISM_UPLOAD_NSFW",
 	},
+	cli.BoolFlag{
+		Name:   "tf-disabled, t",
+		Usage:  "don't use TensorFlow for image classification",
+		EnvVar: "PHOTOPRISM_TF_DISABLED",
+	},
+	cli.StringFlag{
+		Name:   "geocoding-api, g",
+		Usage:  "geocoding api (none, osm or places)",
+		Value:  "places",
+		EnvVar: "PHOTOPRISM_GEOCODING_API",
+	},
+	cli.IntFlag{
+		Name:   "thumb-quality, q",
+		Usage:  "jpeg quality of thumbnails (0-100)",
+		Value:  95,
+		EnvVar: "PHOTOPRISM_THUMB_QUALITY",
+	},
+	cli.IntFlag{
+		Name:   "thumb-size",
+		Usage:  "max thumbnail size in pixels",
+		Value:  8192,
+		EnvVar: "PHOTOPRISM_THUMB_SIZE",
+	},
 }

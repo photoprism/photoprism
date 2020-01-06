@@ -87,7 +87,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 	photo.PhotoName = fileBase
 
 	if file.FilePrimary {
-		if fileChanged || o.UpdateKeywords || o.UpdateLabels || o.UpdateTitle {
+		if !ind.conf.TensorFlowDisabled() && (fileChanged || o.UpdateKeywords || o.UpdateLabels || o.UpdateTitle) {
 			// Image classification labels
 			labels, isNSFW = ind.classifyImage(m)
 			photo.PhotoNSFW = isNSFW
@@ -368,10 +368,10 @@ func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 		location.Lock()
 		defer location.Unlock()
 
-		err := location.Find(ind.db)
+		err := location.Find(ind.db, ind.conf.GeoCodingApi())
 
 		if err != nil {
-			log.Error(err)
+			log.Warn(err)
 			return keywords, labels
 		}
 

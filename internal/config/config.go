@@ -11,7 +11,6 @@ import (
 	gc "github.com/patrickmn/go-cache"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/sirupsen/logrus"
-	tensorflow "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/urfave/cli"
 )
 
@@ -94,11 +93,6 @@ func (c *Config) Twitter() string {
 // Version returns the application version.
 func (c *Config) Version() string {
 	return c.config.Version
-}
-
-// TensorFlowVersion returns the TenorFlow framework version.
-func (c *Config) TensorFlowVersion() string {
-	return tensorflow.Version()
 }
 
 // Copyright returns the application copyright.
@@ -184,4 +178,26 @@ func (c *Config) Shutdown() {
 // Workers returns the number of workers e.g. for indexing files.
 func (c *Config) Workers() int {
 	return runtime.NumCPU()
+}
+
+// ThumbQuality returns the thumbnail jpeg quality setting (0-100).
+func (c *Config) ThumbQuality() int {
+	return c.config.ThumbQuality
+}
+
+// ThumbSize returns the thumbnail size limit in pixels.
+func (c *Config) ThumbSize() int {
+	return c.config.ThumbSize
+}
+
+
+// GeoCodingApi returns the preferred geo coding api (none, osm or places).
+func (c *Config) GeoCodingApi() string {
+	switch c.config.GeoCodingApi {
+	case "places":
+		return "places"
+	case "osm":
+		return "osm"
+	}
+	return ""
 }

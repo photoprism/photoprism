@@ -60,6 +60,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("resources-path        %s\n", conf.ResourcesPath())
 	fmt.Printf("tf-version            %s\n", conf.TensorFlowVersion())
 	fmt.Printf("tf-model-path         %s\n", conf.TensorFlowModelPath())
+	fmt.Printf("tf-disabled           %t\n", conf.TensorFlowDisabled())
 	fmt.Printf("templates-path        %s\n", conf.HttpTemplatesPath())
 	fmt.Printf("favicons-path         %s\n", conf.HttpFaviconsPath())
 	fmt.Printf("static-path           %s\n", conf.HttpStaticPath())
@@ -72,6 +73,9 @@ func configAction(ctx *cli.Context) error {
 
 	fmt.Printf("hide-nsfw             %t\n", conf.HideNSFW())
 	fmt.Printf("upload-nsfw           %t\n", conf.UploadNSFW())
+	fmt.Printf("geocoding-api         %s\n", conf.GeoCodingApi())
+	fmt.Printf("thumb-quality         %d\n", conf.ThumbQuality())
+	fmt.Printf("thumb-size            %d\n", conf.ThumbSize())
 
 	return nil
 }
