@@ -1,10 +1,10 @@
-package util
+package capture
 
 import (
 	"time"
 )
 
-func ProfileTime(start time.Time, name string) {
+func Time(start time.Time, name string) {
 	elapsed := time.Since(start)
 	log.Debugf("%s [%s]", name, elapsed)
 }

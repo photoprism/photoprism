@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/capture"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/file"
 	"github.com/photoprism/photoprism/internal/thumb"
 
 	"github.com/disintegration/imaging"
-	"github.com/photoprism/photoprism/internal/util"
 )
 
 // CreateThumbnailsFromOriginals creates default thumbnails for all originals.
@@ -83,7 +83,7 @@ func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err
 }
 
 func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err error) {
-	defer util.ProfileTime(time.Now(), fmt.Sprintf("creating thumbnails for \"%s\"", m.Filename()))
+	defer capture.Time(time.Now(), fmt.Sprintf("creating thumbnails for \"%s\"", m.Filename()))
 
 	hash := m.Hash()
 

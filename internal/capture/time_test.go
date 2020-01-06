@@ -1,4 +1,4 @@
-package util
+package capture
 
 import (
 	"fmt"
@@ -8,9 +8,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestProfileTime(t *testing.T) {
+func TestTime(t *testing.T) {
 	start := time.Now()
 	time.Sleep(1 * time.Millisecond)
-	ProfileTime(start, fmt.Sprintf("%s", "Successful test"))
+	Time(start, fmt.Sprintf("%s", "Successful test"))
 	assert.Contains(t, logBuffer.String(), "Successful test [")
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/internal/s2"
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/ling"
 )
 
 var locationMutex = sync.Mutex{}
@@ -93,9 +93,9 @@ func (m *Location) Keywords() []string {
 		strings.ToLower(m.Category()),
 	}
 
-	result = append(result, util.Keywords(m.Name())...)
-	result = append(result, util.Keywords(m.Label())...)
-	result = append(result, util.Keywords(m.Notes())...)
+	result = append(result, ling.Keywords(m.Name())...)
+	result = append(result, ling.Keywords(m.Label())...)
+	result = append(result, ling.Keywords(m.Notes())...)
 
 	return result
 }

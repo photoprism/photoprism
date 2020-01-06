@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
+	"github.com/photoprism/photoprism/internal/capture"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/util"
 )
 
 // LabelResult contains found labels
@@ -91,7 +91,7 @@ func (s *Repo) Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		return results, err
 	}
 
-	defer util.ProfileTime(time.Now(), fmt.Sprintf("search: %+v", f))
+	defer capture.Time(time.Now(), fmt.Sprintf("search: %+v", f))
 
 	q := s.db.NewScope(nil).DB()
 

@@ -1,4 +1,4 @@
-package util
+package capture
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 )
 
 // Returns output to stdout and stderr for testing
-func CaptureOutput(f func()) string {
+func Output(f func()) string {
 	r, w, err := os.Pipe()
 	if err != nil {
 		panic(err)

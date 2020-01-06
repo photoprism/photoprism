@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/file"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/ling"
 
 	"github.com/gin-gonic/gin"
 )
@@ -50,12 +50,12 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
 			return
 		}
 
 		if err := c.BindJSON(&m); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
 			return
 		}
 
@@ -116,7 +116,7 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
 			return
 		}
 
@@ -146,7 +146,7 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
 			return
 		}
 

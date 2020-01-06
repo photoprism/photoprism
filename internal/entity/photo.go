@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/ling"
 )
 
 // A photo can have multiple images and sidecar files
@@ -70,8 +70,8 @@ func (m *Photo) IndexKeywords(keywords []string, db *gorm.DB) {
 	var keywordIds []uint
 
 	// Index title and description
-	keywords = append(keywords, util.Keywords(m.PhotoTitle)...)
-	keywords = append(keywords, util.Keywords(m.PhotoDescription)...)
+	keywords = append(keywords, ling.Keywords(m.PhotoTitle)...)
+	keywords = append(keywords, ling.Keywords(m.PhotoDescription)...)
 	last := ""
 
 	sort.Strings(keywords)

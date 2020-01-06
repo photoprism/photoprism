@@ -1,4 +1,4 @@
-package util
+package capture
 
 import (
 	"fmt"
@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCaptureOutput(t *testing.T) {
-	result := CaptureOutput(func() {
+func TestOutput(t *testing.T) {
+	result := Output(func() {
 		fmt.Fprint(os.Stdout, "foo")
 		fmt.Fprint(os.Stderr, "bar")
 	})

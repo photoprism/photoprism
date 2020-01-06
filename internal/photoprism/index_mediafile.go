@@ -11,7 +11,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/ling"
 )
 
 const (
@@ -130,7 +130,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 
 		if photo.NoTitle() || (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false && photo.NoLocation() {
 			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", util.Title(labels[0].Name), m.DateCreated().Format("2006"))
+				photo.PhotoTitle = fmt.Sprintf("%s / %s", ling.Title(labels[0].Name), m.DateCreated().Format("2006"))
 			} else if !photo.TakenAtLocal.IsZero() {
 				var daytimeString string
 				hour := photo.TakenAtLocal.Hour()
@@ -407,13 +407,13 @@ func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 			if title := labels.Title(location.Name()); title != "" { // TODO: User defined title format
 				log.Infof("index: using label \"%s\" to create photo title", title)
 				if location.NoCity() || location.LongCity() || location.CityContains(title) {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), location.CountryName(), photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", ling.Title(title), location.CountryName(), photo.TakenAt.Format("2006"))
 				} else {
-					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", util.Title(title), location.City(), photo.TakenAt.Format("2006"))
+					photo.PhotoTitle = fmt.Sprintf("%s / %s / %s", ling.Title(title), location.City(), photo.TakenAt.Format("2006"))
 				}
 			} else if location.Name() != "" && location.City() != "" {
 				if len(location.Name()) > 45 {
-					photo.PhotoTitle = util.Title(location.Name())
+					photo.PhotoTitle = ling.Title(location.Name())
 				} else if len(location.Name()) > 20 || len(location.City()) > 16 || strings.Contains(location.Name(), location.City()) {
 					photo.PhotoTitle = fmt.Sprintf("%s / %s", location.Name(), photo.TakenAt.Format("2006"))
 				} else {

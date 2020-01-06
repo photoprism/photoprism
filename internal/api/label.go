@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/ling"
 )
 
 // GET /api/v1/labels
@@ -28,13 +28,13 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
 			return
 		}
 
 		result, err := q.Labels(f)
 		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": util.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(400, gin.H{"error": ling.UcFirst(err.Error())})
 			return
 		}
 
@@ -61,7 +61,7 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		label, err := q.FindLabelByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
 			return
 		}
 
@@ -94,7 +94,7 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		label, err := q.FindLabelByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": util.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
 			return
 		}
 

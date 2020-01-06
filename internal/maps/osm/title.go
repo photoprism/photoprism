@@ -3,7 +3,7 @@ package osm
 import (
 	"strings"
 
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/ling"
 )
 
 var labelTitles = map[string]string{
@@ -33,5 +33,5 @@ func (l Location) Name() (result string) {
 		result = result[:i]
 	}
 
-	return util.Title(strings.TrimSpace(result))
+	return ling.Title(strings.TrimSpace(result))
 }

@@ -1,16 +1,14 @@
 /*
-Package config contains filesystem related utility functions.
+This package contains profiling functions, mainly for testing.
 
 Additional information can be found in our Developer Guide:
 
 https://github.com/photoprism/photoprism/wiki
 */
-package util
+package capture
 
 import (
 	"github.com/photoprism/photoprism/internal/event"
 )
-
-//go:generate go run gen.go
 
 var log = event.Log

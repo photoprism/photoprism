@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/capture"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/util"
 )
 
 // AlbumResult contains found albums
@@ -54,7 +54,7 @@ func (s *Repo) Albums(f form.AlbumSearch) (results []AlbumResult, err error) {
 		return results, err
 	}
 
-	defer util.ProfileTime(time.Now(), fmt.Sprintf("search: %+v", f))
+	defer capture.Time(time.Now(), fmt.Sprintf("search: %+v", f))
 
 	q := s.db.NewScope(nil).DB()
 

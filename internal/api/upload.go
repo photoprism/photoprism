@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/ling"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,7 +33,7 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 		f, err := c.MultipartForm()
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
 			return
 		}
 
@@ -44,7 +44,7 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 		p := path.Join(conf.ImportPath(), "upload", subPath)
 
 		if err := os.MkdirAll(p, os.ModePerm); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
 			return
 		}
 
@@ -54,7 +54,7 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 			log.Debugf("upload: saving file \"%s\"", file.Filename)
 
 			if err := c.SaveUploadedFile(file, filename); err != nil {
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.UcFirst(err.Error())})
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
 				return
 			}
 

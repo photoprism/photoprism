@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
+	"github.com/photoprism/photoprism/internal/capture"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/util"
 )
 
 // PhotoResult contains found photos and their main file plus other meta data.
@@ -103,7 +103,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		return results, err
 	}
 
-	defer util.ProfileTime(time.Now(), fmt.Sprintf("search: %+v", f))
+	defer capture.Time(time.Now(), fmt.Sprintf("search: %+v", f))
 
 	q := s.db.NewScope(nil).DB()
 
