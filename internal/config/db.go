@@ -3,6 +3,8 @@ package config
 import (
 	"context"
 	"errors"
+	"io/ioutil"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -33,7 +35,7 @@ func (c *Config) DatabaseDsn() string {
 // Db returns the db connection.
 func (c *Config) Db() *gorm.DB {
 	if c.db == nil {
-		log.Fatal("database not initialised.")
+		log.Fatal("config: database not initialised")
 	}
 
 	return c.db
@@ -55,8 +57,6 @@ func (c *Config) CloseDb() error {
 // MigrateDb will start a migration process.
 func (c *Config) MigrateDb() {
 	db := c.Db()
-
-	// db.LogMode(true)
 
 	db.AutoMigrate(
 		&entity.File{},
@@ -90,11 +90,11 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 	dbDsn := c.DatabaseDsn()
 
 	if dbDriver == "" {
-		return errors.New("can't connect: database driver not specified")
+		return errors.New("config: database driver not specified")
 	}
 
 	if dbDsn == "" {
-		return errors.New("can't connect: database DSN not specified")
+		return errors.New("config: database DSN not specified")
 	}
 
 	isTiDB := false
@@ -140,4 +140,52 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 
 	c.db = db
 	return err
+}
+
+// DropTables drops all tables in the currently configured database (be careful!).
+func (c *Config) DropTables() {
+	db := c.Db()
+
+	db.DropTableIfExists(
+		&entity.File{},
+		&entity.Photo{},
+		&entity.Event{},
+		&entity.Place{},
+		&entity.Location{},
+		&entity.Camera{},
+		&entity.Lens{},
+		&entity.Country{},
+		&entity.Share{},
+
+		&entity.Album{},
+		&entity.PhotoAlbum{},
+		&entity.Label{},
+		&entity.Category{},
+		&entity.PhotoLabel{},
+		&entity.Keyword{},
+		&entity.PhotoKeyword{},
+	)
+}
+
+// ImportSQL imports a file to the currently configured database.
+func (c *Config) ImportSQL(filename string) {
+	contents, err := ioutil.ReadFile(filename)
+
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	statements := strings.Split(string(contents), ";\n")
+
+	for _, stmt := range statements {
+		// Skip empty lines and comments
+		if len(stmt) < 3 || stmt[0] == '#' || stmt[0] == ';' {
+			continue
+		}
+
+		if _, err := c.Db().CommonDB().Query(stmt); err != nil {
+			log.Error(err)
+		}
+	}
 }

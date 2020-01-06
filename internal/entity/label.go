@@ -12,7 +12,7 @@ import (
 type Label struct {
 	ID               uint   `gorm:"primary_key"`
 	LabelUUID        string `gorm:"type:varbinary(36);unique_index;"`
-	LabelSlug        string `gorm:"type:varchar(128);index;"`
+	LabelSlug        string `gorm:"type:varbinary(128);index;"`
 	LabelName        string `gorm:"type:varchar(128);"`
 	LabelPriority    int
 	LabelFavorite    bool

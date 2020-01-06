@@ -59,19 +59,6 @@ func TestNewCamera(t *testing.T) {
 	})
 }
 
-/* TODO find way to initialize db independently from config
-func TestCamera_FirstOrCreate(t *testing.T) {
-	t.Run("model random make Nikon", func(t *testing.T) {
-		currentTime := time.Now()
-		modelName := currentTime.String()
-		camera := NewCamera(modelName, "Nikon")
-		assert.Equal(t, uint(0x0), camera.ID)
-		c := config.NewTestConfig()
-		camera.FirstOrCreate(c.Db())
-		t.Log(camera.ID)
-	})
-}*/
-
 func TestCamera_String(t *testing.T) {
 	t.Run("model XXX make Nikon", func(t *testing.T) {
 		camera := NewCamera("XXX", "Nikon")

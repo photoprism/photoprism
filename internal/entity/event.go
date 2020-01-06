@@ -9,7 +9,7 @@ import (
 // Events
 type Event struct {
 	EventUUID        string `gorm:"type:varbinary(36);unique_index;"`
-	EventSlug        string
+	EventSlug        string `gorm:"type:varbinary(128);unique_index;"`
 	EventName        string
 	EventType        string
 	EventDescription string    `gorm:"type:text;"`

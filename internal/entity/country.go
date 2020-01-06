@@ -14,7 +14,7 @@ var altCountryNames = map[string]string{
 
 type Country struct {
 	ID                 string `gorm:"primary_key"`
-	CountrySlug        string
+	CountrySlug        string `gorm:"type:varbinary(128);unique_index;"`
 	CountryName        string
 	CountryDescription string `gorm:"type:text;"`
 	CountryNotes       string `gorm:"type:text;"`

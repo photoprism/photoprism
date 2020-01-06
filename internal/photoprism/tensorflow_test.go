@@ -12,7 +12,7 @@ import (
 
 func TestTensorFlow_LoadLabelRules(t *testing.T) {
 	t.Run("labels.txt exists", func(t *testing.T) {
-		conf := config.NewTestConfig()
+		conf := config.TestConfig()
 
 		tensorFlow := NewTensorFlow(conf)
 
@@ -146,7 +146,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 
 func TestTensorFlow_LoadLabels(t *testing.T) {
 	t.Run("labels.txt exists", func(t *testing.T) {
-		conf := config.NewTestConfig()
+		conf := config.TestConfig()
 
 		tensorFlow := NewTensorFlow(conf)
 		path := conf.TensorFlowModelPath()
@@ -167,7 +167,7 @@ func TestTensorFlow_LoadLabels(t *testing.T) {
 
 func TestTensorFlow_LoadModel(t *testing.T) {
 	t.Run("model path exists", func(t *testing.T) {
-		conf := config.NewTestConfig()
+		conf := config.TestConfig()
 
 		tensorFlow := NewTensorFlow(conf)
 
@@ -186,7 +186,7 @@ func TestTensorFlow_LoadModel(t *testing.T) {
 
 func TestTensorFlow_LabelRule(t *testing.T) {
 	t.Run("label.txt exists", func(t *testing.T) {
-		conf := config.NewTestConfig()
+		conf := config.TestConfig()
 
 		tensorFlow := NewTensorFlow(conf)
 
@@ -208,7 +208,7 @@ func TestTensorFlow_LabelRule(t *testing.T) {
 
 func TestTensorFlow_BestLabels(t *testing.T) {
 	t.Run("labels not loaded", func(t *testing.T) {
-		conf := config.NewTestConfig()
+		conf := config.TestConfig()
 
 		tensorFlow := NewTensorFlow(conf)
 
@@ -220,7 +220,7 @@ func TestTensorFlow_BestLabels(t *testing.T) {
 		assert.Empty(t, result)
 	})
 	t.Run("labels loaded", func(t *testing.T) {
-		conf := config.NewTestConfig()
+		conf := config.TestConfig()
 		path := conf.TensorFlowModelPath()
 		tensorFlow := NewTensorFlow(conf)
 		tensorFlow.loadLabels(path)

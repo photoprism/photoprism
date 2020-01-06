@@ -13,7 +13,7 @@ type Album struct {
 	ID               uint   `gorm:"primary_key"`
 	CoverUUID        string `gorm:"type:varbinary(36);"`
 	AlbumUUID        string `gorm:"type:varbinary(36);unique_index;"`
-	AlbumSlug        string `gorm:"index;"`
+	AlbumSlug        string `gorm:"type:varbinary(128);index;"`
 	AlbumName        string `gorm:"type:varchar(128);"`
 	AlbumDescription string `gorm:"type:text;"`
 	AlbumNotes       string `gorm:"type:text;"`

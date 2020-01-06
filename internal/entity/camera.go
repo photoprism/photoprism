@@ -11,8 +11,8 @@ import (
 
 // Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
-	ID                uint `gorm:"primary_key"`
-	CameraSlug        string
+	ID                uint   `gorm:"primary_key"`
+	CameraSlug        string `gorm:"type:varbinary(128);unique_index;"`
 	CameraModel       string
 	CameraMake        string
 	CameraType        string

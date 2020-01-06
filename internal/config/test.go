@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"sync"
 	"testing"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -21,6 +22,7 @@ const (
 )
 
 var testConfig *Config
+var once sync.Once
 
 func testDataPath(assetsPath string) string {
 	return assetsPath + "/testdata"
@@ -69,9 +71,9 @@ func NewTestParamsError() *Params {
 }
 
 func TestConfig() *Config {
-	if testConfig == nil {
+	once.Do(func() {
 		testConfig = NewTestConfig()
-	}
+	})
 
 	return testConfig
 }
@@ -85,7 +87,12 @@ func NewTestConfig() *Config {
 		log.Fatalf("failed init config: %v", err)
 	}
 
+	c.DropTables()
+
 	c.MigrateDb()
+
+	c.ImportSQL(c.ExamplesPath() + "/fixtures.sql")
+
 	return c
 }
 
