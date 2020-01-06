@@ -12,8 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/file"
 )
 
 // Import represents an importer that can copy/move MediaFiles to the originals directory.
@@ -164,7 +163,7 @@ func (imp *Import) Start(importPath string) {
 	if imp.removeEmptyDirectories {
 		// Remove empty directories from import path
 		for _, directory := range directories {
-			if util.DirectoryIsEmpty(directory) {
+			if file.IsEmpty(directory) {
 				if err := os.Remove(directory); err != nil {
 					log.Errorf("import: could not deleted empty directory \"%s\" (%s)", directory, err)
 				} else {
@@ -202,8 +201,8 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 	result := pathName + string(os.PathSeparator) + fileName + fileExtension
 
-	for util.Exists(result) {
-		if mediaFile.Hash() == util.Hash(result) {
+	for file.Exists(result) {
+		if mediaFile.Hash() == file.Hash(result) {
 			return result, fmt.Errorf("file already exists: %s", result)
 		}
 

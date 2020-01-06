@@ -8,11 +8,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/util"
-
-	"github.com/gin-gonic/gin"
+	"github.com/photoprism/photoprism/internal/file"
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
@@ -61,7 +60,7 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 
 		imp.Start(path)
 
-		if subPath != "" && path != conf.ImportPath() && util.DirectoryIsEmpty(path) {
+		if subPath != "" && path != conf.ImportPath() && file.IsEmpty(path) {
 			if err := os.Remove(path); err != nil {
 				log.Errorf("import: could not deleted empty directory \"%s\": %s", path, err)
 			} else {

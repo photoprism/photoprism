@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/file"
 )
 
 func findExecutable(configBin, defaultBin string) (result string) {
@@ -19,7 +19,7 @@ func findExecutable(configBin, defaultBin string) (result string) {
 		result = path
 	}
 
-	if !util.Exists(result) {
+	if !file.Exists(result) {
 		result = ""
 	}
 

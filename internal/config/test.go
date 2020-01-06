@@ -10,7 +10,8 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -29,7 +30,7 @@ func testDataPath(assetsPath string) string {
 }
 
 func NewTestParams() *Params {
-	assetsPath := util.ExpandedFilename("../../assets")
+	assetsPath := file.ExpandFilename("../../assets")
 
 	testDataPath := testDataPath(assetsPath)
 
@@ -52,7 +53,7 @@ func NewTestParams() *Params {
 }
 
 func NewTestParamsError() *Params {
-	assetsPath := util.ExpandedFilename("../..")
+	assetsPath := file.ExpandFilename("../..")
 
 	testDataPath := testDataPath("../../assets")
 
@@ -92,6 +93,10 @@ func NewTestConfig() *Config {
 	c.MigrateDb()
 
 	c.ImportSQL(c.ExamplesPath() + "/fixtures.sql")
+
+	thumb.JpegQuality = c.ThumbQuality()
+	thumb.MaxWidth = c.ThumbSize()
+	thumb.MaxHeight = c.ThumbSize()
 
 	return c
 }
@@ -140,8 +145,8 @@ func (c *Config) RemoveTestData(t *testing.T) {
 }
 
 func (c *Config) DownloadTestData(t *testing.T) {
-	if util.Exists(TestDataZip) {
-		hash := util.Hash(TestDataZip)
+	if file.Exists(TestDataZip) {
+		hash := file.Hash(TestDataZip)
 
 		if hash != TestDataHash {
 			os.Remove(TestDataZip)
@@ -149,17 +154,17 @@ func (c *Config) DownloadTestData(t *testing.T) {
 		}
 	}
 
-	if !util.Exists(TestDataZip) {
+	if !file.Exists(TestDataZip) {
 		fmt.Printf("downloading latest test data zip file from %s\n", TestDataURL)
 
-		if err := util.Download(TestDataZip, TestDataURL); err != nil {
+		if err := file.Download(TestDataZip, TestDataURL); err != nil {
 			fmt.Printf("Download failed: %s\n", err.Error())
 		}
 	}
 }
 
 func (c *Config) UnzipTestData(t *testing.T) {
-	if _, err := util.Unzip(TestDataZip, testDataPath(c.AssetsPath())); err != nil {
+	if _, err := file.Unzip(TestDataZip, testDataPath(c.AssetsPath())); err != nil {
 		t.Logf("could not unzip test data: %s\n", err.Error())
 	}
 }

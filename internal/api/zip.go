@@ -11,8 +11,10 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/file"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/rnd"
 	"github.com/photoprism/photoprism/internal/util"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +46,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		zipPath := path.Join(conf.ExportPath(), "zip")
-		zipToken := util.RandomToken(3)
+		zipToken := rnd.Token(3)
 		zipYear := time.Now().Format("January-2006")
 		zipBaseName := fmt.Sprintf("Photos-%s-%s.zip", zipYear, zipToken)
 		zipFileName := path.Join(zipPath, zipBaseName)
@@ -68,21 +70,21 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 		zipWriter := zip.NewWriter(newZipFile)
 		defer zipWriter.Close()
 
-		for _, file := range files {
-			fileName := path.Join(conf.OriginalsPath(), file.FileName)
-			fileAlias := file.DownloadFileName()
+		for _, f := range files {
+			fileName := path.Join(conf.OriginalsPath(), f.FileName)
+			fileAlias := f.DownloadFileName()
 
-			if util.Exists(fileName) {
+			if file.Exists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
 					log.Error(err)
 					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": util.UcFirst("failed to create zip file")})
 					return
 				}
-				log.Infof("zip: added \"%s\" as \"%s\"", file.FileName, fileAlias)
+				log.Infof("zip: added \"%s\" as \"%s\"", f.FileName, fileAlias)
 			} else {
-				log.Warnf("zip: \"%s\" is missing", file.FileName)
-				file.FileMissing = true
-				conf.Db().Save(&file)
+				log.Warnf("zip: \"%s\" is missing", f.FileName)
+				f.FileMissing = true
+				conf.Db().Save(&f)
 			}
 		}
 
@@ -103,7 +105,7 @@ func DownloadZip(router *gin.RouterGroup, conf *config.Config) {
 
 		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", zipBaseName))
 
-		if !util.Exists(zipFileName) {
+		if !file.Exists(zipFileName) {
 			log.Errorf("could not find zip file: %s", zipFileName)
 			c.Data(404, "image/svg+xml", photoIconSvg)
 			return

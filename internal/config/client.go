@@ -6,7 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/colors"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/file"
 )
 
 // HTTP client / Web UI config values
@@ -118,8 +118,8 @@ func (c *Config) ClientConfig() ClientConfig {
 		categories[i].Title = strings.Title(l.LabelName)
 	}
 
-	jsHash := util.Hash(c.HttpStaticBuildPath() + "/app.js")
-	cssHash := util.Hash(c.HttpStaticBuildPath() + "/app.css")
+	jsHash := file.Hash(c.HttpStaticBuildPath() + "/app.js")
+	cssHash := file.Hash(c.HttpStaticBuildPath() + "/app.css")
 
 	// Feature Flags
 	var flags []string

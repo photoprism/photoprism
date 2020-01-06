@@ -10,6 +10,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	gc "github.com/patrickmn/go-cache"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -20,6 +21,15 @@ type Config struct {
 	db     *gorm.DB
 	cache  *gc.Cache
 	config *Params
+}
+
+func init() {
+	for name, t := range thumb.Types {
+		if t.Public {
+			thumbnail := Thumbnail{Name: name, Width: t.Width, Height: t.Height}
+			Thumbnails = append(Thumbnails, thumbnail)
+		}
+	}
 }
 
 func initLogger(debug bool) {
@@ -43,6 +53,10 @@ func NewConfig(ctx *cli.Context) *Config {
 	}
 
 	log.SetLevel(c.LogLevel())
+
+	thumb.JpegQuality = c.ThumbQuality()
+	thumb.MaxWidth = c.ThumbSize()
+	thumb.MaxHeight = c.ThumbSize()
 
 	return c
 }
@@ -180,16 +194,31 @@ func (c *Config) Workers() int {
 	return runtime.NumCPU()
 }
 
-// ThumbQuality returns the thumbnail jpeg quality setting (0-100).
+// ThumbQuality returns the thumbnail jpeg quality setting (25-100).
 func (c *Config) ThumbQuality() int {
+	if c.config.ThumbQuality > 100 {
+		return 100
+	}
+
+	if c.config.ThumbQuality < 25 {
+		return 25
+	}
+
 	return c.config.ThumbQuality
 }
 
-// ThumbSize returns the thumbnail size limit in pixels.
+// ThumbSize returns the thumbnail size limit in pixels (720-16384).
 func (c *Config) ThumbSize() int {
+	if c.config.ThumbSize > 16384 {
+		return 16384
+	}
+
+	if c.config.ThumbSize < 720 {
+		return 720
+	}
+
 	return c.config.ThumbSize
 }
-
 
 // GeoCodingApi returns the preferred geo coding api (none, osm or places).
 func (c *Config) GeoCodingApi() string {

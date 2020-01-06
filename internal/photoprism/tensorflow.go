@@ -16,7 +16,7 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/file"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"gopkg.in/yaml.v2"
 )
@@ -69,7 +69,7 @@ func (t *TensorFlow) loadLabelRules() (err error) {
 
 	log.Debugf("tensorflow: loading label rules from \"%s\"", filepath.Base(fileName))
 
-	if !util.Exists(fileName) {
+	if !file.Exists(fileName) {
 		e := fmt.Errorf("tensorflow: label rules file not found in \"%s\"", filepath.Base(fileName))
 		log.Error(e.Error())
 		return e

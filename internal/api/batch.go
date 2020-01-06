@@ -90,7 +90,6 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-
 // POST /api/v1/batch/albums/delete
 func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/batch/albums/delete", func(c *gin.Context) {

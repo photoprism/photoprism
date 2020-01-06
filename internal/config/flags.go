@@ -227,13 +227,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "thumb-quality, q",
-		Usage:  "jpeg quality of thumbnails (0-100)",
+		Usage:  "jpeg quality of thumbnails (25-100)",
 		Value:  95,
 		EnvVar: "PHOTOPRISM_THUMB_QUALITY",
 	},
 	cli.IntFlag{
 		Name:   "thumb-size",
-		Usage:  "max thumbnail size in pixels",
+		Usage:  "max thumbnail size in pixels (720-16384)",
 		Value:  8192,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE",
 	},

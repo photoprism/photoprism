@@ -1,4 +1,4 @@
-package util
+package rnd
 
 import (
 	"crypto/rand"
@@ -9,7 +9,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func RandomToken(size uint) string {
+func Token(size uint) string {
 	if size > 10 || size < 1 {
 		log.Fatalf("size out of range: %d", size)
 	}
@@ -32,14 +32,14 @@ func RandomToken(size uint) string {
 	return string(result[:size])
 }
 
-func RandomPassword() string {
-	return RandomToken(8)
+func Password() string {
+	return Token(8)
 }
 
 func ID() string {
 	result := make([]byte, 0, 16)
 	result = append(result, strconv.FormatInt(time.Now().UTC().Unix(), 36)[0:6]...)
-	result = append(result, RandomToken(10)...)
+	result = append(result, Token(10)...)
 
 	return string(result)
 }

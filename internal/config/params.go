@@ -8,7 +8,7 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/file"
 	"github.com/urfave/cli"
 	"gopkg.in/yaml.v2"
 )
@@ -87,7 +87,7 @@ func NewParams(ctx *cli.Context) *Params {
 	c.Name = ctx.App.Name
 	c.Copyright = ctx.App.Copyright
 	c.Version = ctx.App.Version
-	c.ConfigFile = util.ExpandedFilename(ctx.GlobalString("config-file"))
+	c.ConfigFile = file.ExpandFilename(ctx.GlobalString("config-file"))
 
 	if err := c.SetValuesFromFile(c.ConfigFile); err != nil {
 		log.Debug(err)
@@ -103,21 +103,21 @@ func NewParams(ctx *cli.Context) *Params {
 }
 
 func (c *Params) expandFilenames() {
-	c.ConfigPath = util.ExpandedFilename(c.ConfigPath)
-	c.ResourcesPath = util.ExpandedFilename(c.ResourcesPath)
-	c.AssetsPath = util.ExpandedFilename(c.AssetsPath)
-	c.CachePath = util.ExpandedFilename(c.CachePath)
-	c.OriginalsPath = util.ExpandedFilename(c.OriginalsPath)
-	c.ImportPath = util.ExpandedFilename(c.ImportPath)
-	c.ExportPath = util.ExpandedFilename(c.ExportPath)
-	c.SqlServerPath = util.ExpandedFilename(c.SqlServerPath)
-	c.PIDFilename = util.ExpandedFilename(c.PIDFilename)
-	c.LogFilename = util.ExpandedFilename(c.LogFilename)
+	c.ConfigPath = file.ExpandFilename(c.ConfigPath)
+	c.ResourcesPath = file.ExpandFilename(c.ResourcesPath)
+	c.AssetsPath = file.ExpandFilename(c.AssetsPath)
+	c.CachePath = file.ExpandFilename(c.CachePath)
+	c.OriginalsPath = file.ExpandFilename(c.OriginalsPath)
+	c.ImportPath = file.ExpandFilename(c.ImportPath)
+	c.ExportPath = file.ExpandFilename(c.ExportPath)
+	c.SqlServerPath = file.ExpandFilename(c.SqlServerPath)
+	c.PIDFilename = file.ExpandFilename(c.PIDFilename)
+	c.LogFilename = file.ExpandFilename(c.LogFilename)
 }
 
 // SetValuesFromFile uses a yaml config file to initiate the configuration entity.
 func (c *Params) SetValuesFromFile(fileName string) error {
-	if !util.Exists(fileName) {
+	if !file.Exists(fileName) {
 		return errors.New(fmt.Sprintf("config file not found: \"%s\"", fileName))
 	}
 

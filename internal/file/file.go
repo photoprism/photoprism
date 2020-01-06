@@ -1,4 +1,11 @@
-package util
+/*
+This package encapsulates file related constants and functions.
+
+Additional information can be found in our Developer Guide:
+
+https://github.com/photoprism/photoprism/wiki
+*/
+package file
 
 import (
 	"archive/zip"
@@ -9,7 +16,11 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
+
+	"github.com/photoprism/photoprism/internal/event"
 )
+
+var log = event.Log
 
 // Returns true if file exists
 func Exists(filename string) bool {
@@ -30,7 +41,7 @@ func Overwrite(fileName string, data []byte) bool {
 }
 
 // Returns full path; ~ replaced with actual home directory
-func ExpandedFilename(filename string) string {
+func ExpandFilename(filename string) string {
 	if filename == "" {
 		return ""
 	}
@@ -48,32 +59,6 @@ func ExpandedFilename(filename string) string {
 	}
 
 	return result
-}
-
-// Extract Zip file in destination directory
-func Unzip(src, dest string) (fileNames []string, err error) {
-	r, err := zip.OpenReader(src)
-	if err != nil {
-		return fileNames, err
-	}
-
-	defer r.Close()
-
-	for _, f := range r.File {
-		// Skip directories like __OSX
-		if strings.HasPrefix(f.Name, "__") {
-			continue
-		}
-
-		fn, err := copyToFile(f, dest)
-		if err != nil {
-			return fileNames, err
-		}
-
-		fileNames = append(fileNames, fn)
-	}
-
-	return fileNames, nil
 }
 
 // copyToFile copies the zip file to destination
@@ -151,7 +136,7 @@ func Download(filepath string, url string) error {
 	return nil
 }
 
-func DirectoryIsEmpty(path string) bool {
+func IsEmpty(path string) bool {
 	f, err := os.Open(path)
 
 	if err != nil {

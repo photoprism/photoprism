@@ -55,11 +55,6 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		// Set thumbnails JPEG quality and size
-		photoprism.JpegQuality = conf.ThumbQuality()
-		photoprism.MaxThumbWidth = conf.ThumbSize()
-		photoprism.MaxThumbHeight = conf.ThumbSize()
-
 		path := conf.OriginalsPath()
 
 		event.Info(fmt.Sprintf("indexing photos in \"%s\"", filepath.Base(path)))

@@ -7,6 +7,7 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/nsfw"
+	"github.com/photoprism/photoprism/internal/thumb"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
@@ -117,7 +118,7 @@ func TestThumbnails_Resample(t *testing.T) {
 
 }
 
-func TestThumbnails_ThumbnailFilename(t *testing.T) {
+func TestThumbnails_Filename(t *testing.T) {
 	conf := config.TestConfig()
 
 	thumbsPath := conf.CachePath() + "/_tmp"
@@ -129,25 +130,25 @@ func TestThumbnails_ThumbnailFilename(t *testing.T) {
 	}
 
 	t.Run("", func(t *testing.T) {
-		filename, err := ThumbnailFilename("99988", thumbsPath, 150, 150, ResampleFit, ResampleNearestNeighbor)
+		filename, err := thumb.Filename("99988", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		assert.Nil(t, err)
 		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/testdata/cache/_tmp/9/9/9/99988_150x150_fit.jpg", filename)
 	})
 	t.Run("hash too short", func(t *testing.T) {
-		_, err := ThumbnailFilename("999", thumbsPath, 150, 150, ResampleFit, ResampleNearestNeighbor)
+		_, err := thumb.Filename("999", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		assert.Equal(t, "file hash is empty or too short: 999", err.Error())
 	})
 	t.Run("invalid width", func(t *testing.T) {
-		_, err := ThumbnailFilename("99988", thumbsPath, -4, 150, ResampleFit, ResampleNearestNeighbor)
+		_, err := thumb.Filename("99988", thumbsPath, -4, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		assert.Equal(t, "width has an invalid value: -4", err.Error())
 	})
 	t.Run("invalid height", func(t *testing.T) {
-		_, err := ThumbnailFilename("99988", thumbsPath, 200, -1, ResampleFit, ResampleNearestNeighbor)
+		_, err := thumb.Filename("99988", thumbsPath, 200, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		assert.Equal(t, "height has an invalid value: -1", err.Error())
 	})
 	t.Run("empty thumbpath", func(t *testing.T) {
 		path := ""
-		_, err := ThumbnailFilename("99988", path, 200, 150, ResampleFit, ResampleNearestNeighbor)
+		_, err := thumb.Filename("99988", path, 200, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		assert.Equal(t, "thumbnail path is empty: ", err.Error())
 	})
 }
@@ -169,9 +170,9 @@ func TestThumbnails_ThumbnailFromFile(t *testing.T) {
 			FileHash: "1234568889",
 		}
 
-		thumb, err := ThumbnailFromFile(fileModel.FileName, fileModel.FileHash, thumbsPath, 224, 224)
+		thumbnail, err := thumb.FromFile(fileModel.FileName, fileModel.FileHash, thumbsPath, 224, 224)
 		assert.Nil(t, err)
-		assert.FileExists(t, thumb)
+		assert.FileExists(t, thumbnail)
 	})
 
 	t.Run("hash too short", func(t *testing.T) {
@@ -180,7 +181,7 @@ func TestThumbnails_ThumbnailFromFile(t *testing.T) {
 			FileHash: "123",
 		}
 
-		_, err := ThumbnailFromFile(fileModel.FileName, fileModel.FileHash, thumbsPath, 224, 224)
+		_, err := thumb.FromFile(fileModel.FileName, fileModel.FileHash, thumbsPath, 224, 224)
 		assert.Equal(t, "file hash is empty or too short: 123", err.Error())
 	})
 	t.Run("filename too short", func(t *testing.T) {
@@ -189,7 +190,7 @@ func TestThumbnails_ThumbnailFromFile(t *testing.T) {
 			FileHash: "12367890",
 		}
 
-		_, err := ThumbnailFromFile(fileModel.FileName, fileModel.FileHash, thumbsPath, 224, 224)
+		_, err := thumb.FromFile(fileModel.FileName, fileModel.FileHash, thumbsPath, 224, 224)
 		assert.Equal(t, "image filename is empty or too short: xxx", err.Error())
 	})
 }
@@ -210,7 +211,7 @@ func TestThumbnails_CreateThumbnail(t *testing.T) {
 	}
 
 	t.Run("valid parameter", func(t *testing.T) {
-		expectedFilename, err := ThumbnailFilename("12345", thumbsPath, 150, 150, ResampleFit, ResampleNearestNeighbor)
+		expectedFilename, err := thumb.Filename("12345", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil {
 			t.Error(err)
@@ -222,13 +223,13 @@ func TestThumbnails_CreateThumbnail(t *testing.T) {
 			t.Errorf("can't open original: %s", err)
 		}
 
-		thumb, err := CreateThumbnail(img, expectedFilename, 150, 150, ResampleFit, ResampleNearestNeighbor)
+		thumbnail, err := thumb.Create(img, expectedFilename, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		assert.Empty(t, err)
 
-		assert.NotNil(t, thumb)
+		assert.NotNil(t, thumbnail)
 
-		bounds := thumb.Bounds()
+		bounds := thumbnail.Bounds()
 
 		assert.Equal(t, 150, bounds.Dx())
 		assert.Equal(t, 99, bounds.Dy())
@@ -236,7 +237,7 @@ func TestThumbnails_CreateThumbnail(t *testing.T) {
 		assert.FileExists(t, expectedFilename)
 	})
 	t.Run("invalid width", func(t *testing.T) {
-		expectedFilename, err := ThumbnailFilename("12345", thumbsPath, 150, 150, ResampleFit, ResampleNearestNeighbor)
+		expectedFilename, err := thumb.Filename("12345", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil {
 			t.Error(err)
@@ -248,7 +249,7 @@ func TestThumbnails_CreateThumbnail(t *testing.T) {
 			t.Errorf("can't open original: %s", err)
 		}
 
-		thumbnail, err := CreateThumbnail(img, expectedFilename, -1, 150, ResampleFit, ResampleNearestNeighbor)
+		thumbnail, err := thumb.Create(img, expectedFilename, -1, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		assert.Equal(t, "width has an invalid value: -1", err.Error())
 		bounds := thumbnail.Bounds()
@@ -256,7 +257,7 @@ func TestThumbnails_CreateThumbnail(t *testing.T) {
 	})
 
 	t.Run("invalid height", func(t *testing.T) {
-		expectedFilename, err := ThumbnailFilename("12345", thumbsPath, 150, 150, ResampleFit, ResampleNearestNeighbor)
+		expectedFilename, err := thumb.Filename("12345", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil {
 			t.Error(err)
@@ -268,7 +269,7 @@ func TestThumbnails_CreateThumbnail(t *testing.T) {
 			t.Errorf("can't open original: %s", err)
 		}
 
-		thumbnail, err := CreateThumbnail(img, expectedFilename, 150, -1, ResampleFit, ResampleNearestNeighbor)
+		thumbnail, err := thumb.Create(img, expectedFilename, 150, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		assert.Equal(t, "height has an invalid value: -1", err.Error())
 		bounds := thumbnail.Bounds()
@@ -294,7 +295,7 @@ func TestThumbnails_CreateDefaultThumbnails(t *testing.T) {
 
 	assert.Empty(t, err)
 
-	thumbFilename, err := ThumbnailFilename(m.Hash(), thumbsPath, ThumbnailTypes["tile_50"].Width, ThumbnailTypes["tile_50"].Height, ThumbnailTypes["tile_50"].Options...)
+	thumbFilename, err := thumb.Filename(m.Hash(), thumbsPath, thumb.Types["tile_50"].Width, thumb.Types["tile_50"].Height, thumb.Types["tile_50"].Options...)
 
 	assert.Empty(t, err)
 

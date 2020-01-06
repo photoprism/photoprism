@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/file"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/tensorflow/tensorflow/tensorflow/go/op"
 )
@@ -30,7 +30,7 @@ func NewDetector(modelPath string) *Detector {
 
 // LabelsFromFile returns matching labels for a jpeg media file.
 func (t *Detector) LabelsFromFile(filename string) (result Labels, err error) {
-	if util.MimeType(filename) != "image/jpeg" {
+	if file.MimeType(filename) != "image/jpeg" {
 		return result, fmt.Errorf("nsfw: \"%s\" is not a jpeg file", filename)
 	}
 

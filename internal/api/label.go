@@ -12,9 +12,10 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/file"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/util"
 )
 
@@ -123,7 +124,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		labelUUID := c.Param("uuid")
 		start := time.Now()
 
-		thumbType, ok := photoprism.ThumbnailTypes[typeName]
+		thumbType, ok := thumb.Types[typeName]
 
 		if !ok {
 			log.Errorf("invalid type: %s", typeName)
@@ -142,7 +143,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		file, err := q.FindLabelThumbByUUID(labelUUID)
+		f, err := q.FindLabelThumbByUUID(labelUUID)
 
 		if err != nil {
 			log.Errorf(err.Error())
@@ -150,19 +151,19 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		fileName := path.Join(conf.OriginalsPath(), file.FileName)
+		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
-		if !util.Exists(fileName) {
+		if !file.Exists(fileName) {
 			log.Errorf("could not find original for thumbnail: %s", fileName)
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
-			file.FileMissing = true
-			conf.Db().Save(&file)
+			f.FileMissing = true
+			conf.Db().Save(&f)
 			return
 		}
 
-		if thumbnail, err := photoprism.ThumbnailFromFile(fileName, file.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
+		if thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
 			thumbData, err := ioutil.ReadFile(thumbnail)
 
 			if err != nil {

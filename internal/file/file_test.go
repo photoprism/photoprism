@@ -1,4 +1,4 @@
-package util
+package file
 
 import (
 	"os"
@@ -29,19 +29,19 @@ func TestOverwrite(t *testing.T) {
 
 func TestExpandedFilename(t *testing.T) {
 	t.Run("test.jpg", func(t *testing.T) {
-		filename := ExpandedFilename("./testdata/test.jpg")
+		filename := ExpandFilename("./testdata/test.jpg")
 		assert.Contains(t, filename, "/testdata/test.jpg")
 		assert.IsType(t, "", filename)
 	})
 	t.Run("empty filename", func(t *testing.T) {
-		filename := ExpandedFilename("")
+		filename := ExpandFilename("")
 		assert.Equal(t, "", filename)
 		assert.IsType(t, "", filename)
 	})
 	t.Run("~ in filename", func(t *testing.T) {
 		usr, _ := user.Current()
 		expected := usr.HomeDir + "/test.jpg"
-		filename := ExpandedFilename("~/test.jpg")
+		filename := ExpandFilename("~/test.jpg")
 		assert.Equal(t, expected, filename)
 		assert.IsType(t, "", filename)
 	})
@@ -49,14 +49,14 @@ func TestExpandedFilename(t *testing.T) {
 
 func TestDirectoryIsEmpty(t *testing.T) {
 	t.Run("not empty path", func(t *testing.T) {
-		assert.Equal(t, false, DirectoryIsEmpty("./testdata"))
+		assert.Equal(t, false, IsEmpty("./testdata"))
 	})
 	t.Run("not existing path", func(t *testing.T) {
-		assert.Equal(t, false, DirectoryIsEmpty("./xxx"))
+		assert.Equal(t, false, IsEmpty("./xxx"))
 	})
 	t.Run("empty path", func(t *testing.T) {
 		os.Mkdir("./testdata/emptyDir", 0777)
 		defer os.RemoveAll("./testdata/emptyDir")
-		assert.Equal(t, true, DirectoryIsEmpty("./testdata/emptyDir"))
+		assert.Equal(t, true, IsEmpty("./testdata/emptyDir"))
 	})
 }

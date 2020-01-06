@@ -138,6 +138,9 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 		}
 	}
 
+	db.LogMode(false)
+	db.SetLogger(log)
+
 	c.db = db
 	return err
 }
@@ -185,7 +188,7 @@ func (c *Config) ImportSQL(filename string) {
 			continue
 		}
 
-		var result struct {}
+		var result struct{}
 
 		err := q.Raw(stmt).Scan(&result).Error
 

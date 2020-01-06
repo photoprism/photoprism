@@ -5,12 +5,11 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/util"
-
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/thumb"
 )
 
 // GET /api/v1/thumbnails/:hash/:type
@@ -23,7 +22,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		fileHash := c.Param("hash")
 		typeName := c.Param("type")
 
-		thumbType, ok := photoprism.ThumbnailTypes[typeName]
+		thumbType, ok := thumb.Types[typeName]
 
 		if !ok {
 			log.Errorf("invalid type: %s", typeName)
@@ -32,28 +31,28 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		q := query.New(conf.OriginalsPath(), conf.Db())
-		file, err := q.FindFileByHash(fileHash)
+		f, err := q.FindFileByHash(fileHash)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
 
-		fileName := path.Join(conf.OriginalsPath(), file.FileName)
+		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
-		if !util.Exists(fileName) {
+		if !file.Exists(fileName) {
 			log.Errorf("could not find original for thumbnail: %s", fileName)
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
-			file.FileMissing = true
-			conf.Db().Save(&file)
+			f.FileMissing = true
+			conf.Db().Save(&f)
 			return
 		}
 
-		if thumbnail, err := photoprism.ThumbnailFromFile(fileName, file.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
+		if thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
 			if c.Query("download") != "" {
-				downloadFileName := file.DownloadFileName()
+				downloadFileName := f.DownloadFileName()
 
 				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFileName))
 			}

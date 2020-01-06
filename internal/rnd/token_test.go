@@ -1,4 +1,4 @@
-package util
+package rnd
 
 import (
 	"testing"
@@ -8,24 +8,24 @@ import (
 
 func TestRandomToken(t *testing.T) {
 	t.Run("size 4", func(t *testing.T) {
-		token := RandomToken(4)
+		token := Token(4)
 		assert.NotEmpty(t, token)
 	})
 	t.Run("size 8", func(t *testing.T) {
-		token := RandomToken(9)
+		token := Token(9)
 		assert.NotEmpty(t, token)
 	})
 }
 
 func TestRandomPassword(t *testing.T) {
-	pw := RandomPassword()
+	pw := Password()
 	t.Logf("password: %s", pw)
 	assert.Equal(t, 8, len(pw))
 }
 
 func BenchmarkRandomPassword(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		RandomPassword()
+		Password()
 	}
 }
 
@@ -45,12 +45,12 @@ func BenchmarkUUID(b *testing.B) {
 
 func BenchmarkRandomToken4(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		RandomToken(4)
+		Token(4)
 	}
 }
 
 func BenchmarkRandomToken3(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		RandomToken(3)
+		Token(3)
 	}
 }

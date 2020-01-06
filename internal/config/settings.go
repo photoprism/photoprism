@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/file"
 	"gopkg.in/yaml.v2"
 )
 
@@ -20,7 +20,7 @@ func NewSettings() *Settings {
 
 // SetValuesFromFile uses a yaml config file to initiate the configuration entity.
 func (s *Settings) SetValuesFromFile(fileName string) error {
-	if !util.Exists(fileName) {
+	if !file.Exists(fileName) {
 		return fmt.Errorf("settings file not found: \"%s\"", fileName)
 	}
 
@@ -35,7 +35,7 @@ func (s *Settings) SetValuesFromFile(fileName string) error {
 
 // WriteValuesToFile uses a yaml config file to initiate the configuration entity.
 func (s *Settings) WriteValuesToFile(fileName string) error {
-	if !util.Exists(fileName) {
+	if !file.Exists(fileName) {
 		return fmt.Errorf("settings file not found: \"%s\"", fileName)
 	}
 

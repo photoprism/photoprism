@@ -12,10 +12,10 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/file"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/thumb"
 )
 
 // GET /api/v1/preview
@@ -33,7 +33,7 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 
 		previewFilename := fmt.Sprintf("%s/%s.jpg", thumbPath, t[6:8])
 
-		if util.Exists(previewFilename) {
+		if file.Exists(previewFilename) {
 			c.File(previewFilename)
 			return
 		}
@@ -60,22 +60,22 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 		y := 0
 
 		preview := imaging.New(width, height, color.NRGBA{255, 255, 255, 255})
-		thumbType, _ := photoprism.ThumbnailTypes["tile_224"]
+		thumbType, _ := thumb.Types["tile_224"]
 
-		for _, file := range p {
-			fileName := path.Join(conf.OriginalsPath(), file.FileName)
+		for _, f := range p {
+			fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
-			if !util.Exists(fileName) {
+			if !file.Exists(fileName) {
 				log.Errorf("could not find original for thumbnail: %s", fileName)
 				c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 
 				// Set missing flag so that the file doesn't show up in search results anymore
-				file.FileMissing = true
-				conf.Db().Save(&file)
+				f.FileMissing = true
+				conf.Db().Save(&f)
 				return
 			}
 
-			thumbnail, err := photoprism.ThumbnailFromFile(fileName, file.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 
 			if err != nil {
 				log.Error(err)

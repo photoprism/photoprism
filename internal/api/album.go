@@ -12,9 +12,11 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/file"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/rnd"
+	"github.com/photoprism/photoprism/internal/thumb"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -339,7 +341,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		zipPath := path.Join(conf.ExportPath(), "album")
-		zipToken := util.RandomToken(3)
+		zipToken := rnd.Token(3)
 		zipBaseName := fmt.Sprintf("%s-%s.zip", strings.Title(a.AlbumSlug), zipToken)
 		zipFileName := path.Join(zipPath, zipBaseName)
 
@@ -362,21 +364,21 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		zipWriter := zip.NewWriter(newZipFile)
 		defer zipWriter.Close()
 
-		for _, file := range p {
-			fileName := path.Join(conf.OriginalsPath(), file.FileName)
-			fileAlias := file.DownloadFileName()
+		for _, f := range p {
+			fileName := path.Join(conf.OriginalsPath(), f.FileName)
+			fileAlias := f.DownloadFileName()
 
-			if util.Exists(fileName) {
+			if file.Exists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
 					log.Error(err)
 					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": util.UcFirst("failed to create zip file")})
 					return
 				}
-				log.Infof("album: added \"%s\" as \"%s\"", file.FileName, fileAlias)
+				log.Infof("album: added \"%s\" as \"%s\"", f.FileName, fileAlias)
 			} else {
-				log.Warnf("album: \"%s\" is missing", file.FileName)
-				file.FileMissing = true
-				conf.Db().Save(&file)
+				log.Warnf("album: \"%s\" is missing", f.FileName)
+				f.FileMissing = true
+				conf.Db().Save(&f)
 			}
 		}
 
@@ -385,7 +387,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		zipWriter.Close()
 		newZipFile.Close()
 
-		if !util.Exists(zipFileName) {
+		if !file.Exists(zipFileName) {
 			log.Errorf("could not find zip file: %s", zipFileName)
 			c.Data(404, "image/svg+xml", photoIconSvg)
 			return
@@ -411,7 +413,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		typeName := c.Param("type")
 		uuid := c.Param("uuid")
 
-		thumbType, ok := photoprism.ThumbnailTypes[typeName]
+		thumbType, ok := thumb.Types[typeName]
 
 		if !ok {
 			log.Errorf("invalid type: %s", typeName)
@@ -421,7 +423,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		q := query.New(conf.OriginalsPath(), conf.Db())
 
-		file, err := q.FindAlbumThumbByUUID(uuid)
+		f, err := q.FindAlbumThumbByUUID(uuid)
 
 		if err != nil {
 			log.Debugf("album has no photos yet, using generic thumb image: %s", uuid)
@@ -429,21 +431,21 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		fileName := path.Join(conf.OriginalsPath(), file.FileName)
+		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
-		if !util.Exists(fileName) {
+		if !file.Exists(fileName) {
 			log.Errorf("could not find original for thumbnail: %s", fileName)
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
-			file.FileMissing = true
-			conf.Db().Save(&file)
+			f.FileMissing = true
+			conf.Db().Save(&f)
 			return
 		}
 
-		if thumbnail, err := photoprism.ThumbnailFromFile(fileName, file.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
+		if thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
 			if c.Query("download") != "" {
-				downloadFileName := file.DownloadFileName()
+				downloadFileName := f.DownloadFileName()
 
 				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFileName))
 			}

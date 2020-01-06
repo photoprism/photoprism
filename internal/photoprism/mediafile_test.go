@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/file"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
@@ -514,7 +514,7 @@ func TestMediaFile_Move(t *testing.T) {
 	f, err := NewMediaFile(conf.ExamplesPath() + "/table_white.jpg")
 	assert.Nil(t, err)
 	f.Copy(origName)
-	assert.True(t, util.Exists(origName))
+	assert.True(t, file.Exists(origName))
 
 	m, err := NewMediaFile(origName)
 	assert.Nil(t, err)
@@ -523,7 +523,7 @@ func TestMediaFile_Move(t *testing.T) {
 		t.Errorf("failed to move: %s", err)
 	}
 
-	assert.True(t, util.Exists(destName))
+	assert.True(t, file.Exists(destName))
 	assert.Equal(t, destName, m.Filename())
 }
 
@@ -539,7 +539,7 @@ func TestMediaFile_Copy(t *testing.T) {
 	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/table_white.jpg")
 	assert.Nil(t, err)
 	mediaFile.Copy(tmpPath + "table_whitecopy.jpg")
-	assert.True(t, util.Exists(tmpPath+"table_whitecopy.jpg"))
+	assert.True(t, file.Exists(tmpPath+"table_whitecopy.jpg"))
 }
 
 func TestMediaFile_Extension(t *testing.T) {

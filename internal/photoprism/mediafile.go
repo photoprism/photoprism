@@ -13,7 +13,7 @@ import (
 
 	"github.com/djherbis/times"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/util"
+	"github.com/photoprism/photoprism/internal/file"
 )
 
 // MediaFile represents a single photo, video or sidecar file.
@@ -22,7 +22,7 @@ type MediaFile struct {
 	dateCreated    time.Time
 	timeZone       string
 	hash           string
-	fileType       FileType
+	fileType       file.Type
 	mimeType       string
 	perceptualHash string
 	width          int
@@ -33,13 +33,13 @@ type MediaFile struct {
 
 // NewMediaFile returns a new MediaFile.
 func NewMediaFile(filename string) (*MediaFile, error) {
-	if !util.Exists(filename) {
+	if !file.Exists(filename) {
 		return nil, fmt.Errorf("file does not exist: %s", filename)
 	}
 
 	instance := &MediaFile{
 		filename: filename,
-		fileType: FileTypeOther,
+		fileType: file.TypeOther,
 	}
 
 	return instance, nil
@@ -231,7 +231,7 @@ func (m *MediaFile) CanonicalNameFromFileWithDirectory() string {
 // Hash return a sha1 hash of a MediaFile based on the filename.
 func (m *MediaFile) Hash() string {
 	if len(m.hash) == 0 {
-		m.hash = util.Hash(m.Filename())
+		m.hash = file.Hash(m.Filename())
 	}
 
 	return m.hash
@@ -242,7 +242,7 @@ func (m *MediaFile) EditedFilename() string {
 	basename := filepath.Base(m.filename)
 
 	if strings.ToUpper(basename[:4]) == "IMG_" && strings.ToUpper(basename[:5]) != "IMG_E" {
-		if filename := filepath.Dir(m.filename) + string(os.PathSeparator) + basename[:4] + "E" + basename[4:]; util.Exists(filename) {
+		if filename := filepath.Dir(m.filename) + string(os.PathSeparator) + basename[:4] + "E" + basename[4:]; file.Exists(filename) {
 			return filename
 		}
 	}
@@ -381,7 +381,7 @@ func (m *MediaFile) MimeType() string {
 		return m.mimeType
 	}
 
-	m.mimeType = util.MimeType(m.Filename())
+	m.mimeType = file.MimeType(m.Filename())
 
 	return m.mimeType
 }
@@ -397,7 +397,7 @@ func (m *MediaFile) openFile() (*os.File, error) {
 
 // Exists checks if a media file exists by filename.
 func (m *MediaFile) Exists() bool {
-	return util.Exists(m.Filename())
+	return file.Exists(m.Filename())
 }
 
 // Remove a media file.
@@ -480,13 +480,13 @@ func (m *MediaFile) IsJpeg() bool {
 }
 
 // Type returns the type of the media file.
-func (m *MediaFile) Type() FileType {
-	return FileExtensions[m.Extension()]
+func (m *MediaFile) Type() file.Type {
+	return file.Ext[m.Extension()]
 }
 
 // HasType returns true if this media file is of a given type.
-func (m *MediaFile) HasType(t FileType) bool {
-	if t == FileTypeJpeg {
+func (m *MediaFile) HasType(t file.Type) bool {
+	if t == file.TypeJpeg {
 		return m.IsJpeg()
 	}
 
@@ -495,28 +495,28 @@ func (m *MediaFile) HasType(t FileType) bool {
 
 // IsRaw returns true if this media file a RAW file.
 func (m *MediaFile) IsRaw() bool {
-	return m.HasType(FileTypeRaw)
+	return m.HasType(file.TypeRaw)
 }
 
 // IsHEIF returns true if this media file is a High Efficiency Image File Format file.
 func (m *MediaFile) IsHEIF() bool {
-	return m.HasType(FileTypeHEIF)
+	return m.HasType(file.TypeHEIF)
 }
 
 // IsSidecar returns true if this media file is a sidecar file (containing metadata).
 func (m *MediaFile) IsSidecar() bool {
 	switch m.Type() {
-	case FileTypeXMP:
+	case file.TypeXMP:
 		return true
-	case FileTypeAAE:
+	case file.TypeAAE:
 		return true
-	case FileTypeXML:
+	case file.TypeXML:
 		return true
-	case FileTypeYaml:
+	case file.TypeYaml:
 		return true
-	case FileTypeText:
+	case file.TypeText:
 		return true
-	case FileTypeMarkdown:
+	case file.TypeMarkdown:
 		return true
 	default:
 		return false
@@ -526,7 +526,7 @@ func (m *MediaFile) IsSidecar() bool {
 // IsVideo returns true if this media file is a video file.
 func (m *MediaFile) IsVideo() bool {
 	switch m.Type() {
-	case FileTypeMovie:
+	case file.TypeMovie:
 		return true
 	}
 
@@ -544,9 +544,9 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 		return m, nil
 	}
 
-	jpegFilename := fmt.Sprintf("%s.%s", m.DirectoryBasename(), FileTypeJpeg)
+	jpegFilename := fmt.Sprintf("%s.%s", m.DirectoryBasename(), file.TypeJpeg)
 
-	if !util.Exists(jpegFilename) {
+	if !file.Exists(jpegFilename) {
 		return nil, fmt.Errorf("jpeg file does not exist: %s", jpegFilename)
 	}
 
