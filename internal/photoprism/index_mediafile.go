@@ -364,17 +364,16 @@ func (ind *Index) addLabels(photoId uint, labels Labels) {
 func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, labels Labels, fileChanged bool, o IndexOptions) ([]string, Labels) {
 	var keywords []string
 
-	if location, err := mediaFile.Location(); err == nil {
+	location, err := mediaFile.Location()
+
+	if err == nil {
 		location.Lock()
 		defer location.Unlock()
 
-		err := location.Find(ind.db, ind.conf.GeoCodingApi())
+		err = location.Find(ind.db, ind.conf.GeoCodingApi())
+	}
 
-		if err != nil {
-			log.Warn(err)
-			return keywords, labels
-		}
-
+	if err == nil {
 		if location.Place.New {
 			event.Publish("count.places", event.Data{
 				"count": 1,
@@ -435,7 +434,8 @@ func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 			}
 		}
 	} else {
-		log.Debugf("index: location cannot be determined precisely (%s)", err.Error())
+		log.Warn(err)
+
 		photo.Place = entity.UnknownPlace
 		photo.PlaceID = entity.UnknownPlace.ID
 	}
