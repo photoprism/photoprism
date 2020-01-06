@@ -191,6 +191,10 @@ func (c *Config) Shutdown() {
 
 // Workers returns the number of workers e.g. for indexing files.
 func (c *Config) Workers() int {
+	if c.config.Workers > 0 && c.config.Workers <= runtime.NumCPU() {
+		return c.config.Workers
+	}
+
 	return runtime.NumCPU()
 }
 

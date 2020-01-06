@@ -50,6 +50,7 @@ const (
 var Ext = map[string]Type{
 	".bmp":  TypeBitmap,
 	".gif":  TypeGif,
+	".tif":  TypeTiff,
 	".tiff": TypeTiff,
 	".png":  TypePng,
 	".crw":  TypeRaw,
@@ -102,6 +103,5 @@ var Ext = map[string]Type{
 	".sr2":  TypeRaw,
 	".srf":  TypeRaw,
 	".srw":  TypeRaw,
-	".tif":  TypeRaw,
 	".x3f":  TypeRaw,
 }

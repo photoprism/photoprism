@@ -26,6 +26,11 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "enable experimental features",
 		EnvVar: "PHOTOPRISM_EXPERIMENTAL",
 	},
+	cli.IntFlag{
+		Name:   "workers, w",
+		Usage:  "number of workers for indexing",
+		EnvVar: "PHOTOPRISM_WORKERS",
+	},
 	cli.StringFlag{
 		Name:   "url",
 		Usage:  "canonical site URL",
