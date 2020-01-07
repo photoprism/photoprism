@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/ling"
+	"github.com/photoprism/photoprism/internal/txt"
 )
 
 // GET /api/v1/settings
@@ -34,7 +34,7 @@ func SaveSettings(router *gin.RouterGroup, conf *config.Config) {
 		s := conf.Settings()
 
 		if err := c.BindJSON(s); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 

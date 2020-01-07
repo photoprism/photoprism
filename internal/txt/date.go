@@ -1,4 +1,4 @@
-package ling
+package txt
 
 var Months = [...]string{
 	"Unknown",

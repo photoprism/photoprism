@@ -12,7 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/ling"
+	"github.com/photoprism/photoprism/internal/txt"
 )
 
 var ind *photoprism.Index
@@ -51,7 +51,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 		var f form.IndexOptions
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 

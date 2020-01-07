@@ -4,7 +4,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/photoprism/photoprism/internal/ling"
+	"github.com/photoprism/photoprism/internal/txt"
 )
 
 // Label represents a MediaFile label (automatically created).
@@ -54,10 +54,10 @@ func (l Labels) AppendLabel(label Label) Labels {
 
 func (l Labels) Keywords() (result []string) {
 	for _, label := range l {
-		result = append(result, ling.Keywords(label.Name)...)
+		result = append(result, txt.Keywords(label.Name)...)
 
 		for _, c := range label.Categories {
-			result = append(result, ling.Keywords(c)...)
+			result = append(result, txt.Keywords(c)...)
 		}
 	}
 
@@ -67,7 +67,7 @@ func (l Labels) Keywords() (result []string) {
 func (l Labels) Title(fallback string) string {
 	fallbackRunes := len([]rune(fallback))
 
-	if fallbackRunes < 2 || fallbackRunes > 25 || ling.ContainsNumber(fallback) {
+	if fallbackRunes < 2 || fallbackRunes > 25 || txt.ContainsNumber(fallback) {
 		fallback = ""
 	}
 

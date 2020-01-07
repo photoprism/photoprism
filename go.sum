@@ -302,6 +302,8 @@ github.com/tensorflow/tensorflow v1.14.0 h1:g0W2+f/RybcvmrTjPLTwXkfr/BsDGUd8FKT6
 github.com/tensorflow/tensorflow v1.14.0/go.mod h1:itOSERT4trABok4UOoG+X4BoKds9F3rIsySdn+Lvu90=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6 h1:lYIiVDtZnyTWlNwiAxLj0bbpTcx1BWCFhXjfsvmPdNc=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
+github.com/trimmer-io/go-xmp v0.0.0-20181216222714-4f6a2fb384a3 h1:jN+H2fxdZsqXxFSbbW1YjiTGrTSCSbQNkH4TY9a5iCc=
+github.com/trimmer-io/go-xmp v0.0.0-20181216222714-4f6a2fb384a3/go.mod h1:lb8FauZV1fPjnYqLIgeqc3Xj+0xpp5d8gQ4ya14cX2c=
 github.com/twinj/uuid v0.0.0-20150629100731-70cac2bcd273/go.mod h1:mMgcE1RHFUFqe5AfiwlINXisXfDGro23fWdPUfOMjRY=
 github.com/twinj/uuid v1.0.0 h1:fzz7COZnDrXGTAOHGuUGYd6sG+JMq+AoE7+Jlu0przk=
 github.com/twinj/uuid v1.0.0/go.mod h1:mMgcE1RHFUFqe5AfiwlINXisXfDGro23fWdPUfOMjRY=
@@ -442,3 +444,5 @@ gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 honnef.co/go/tools v0.0.0-20180728063816-88497007e858/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.0-20190106161140-3f1c8253044a/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
+trimmer.io/go-xmp v0.0.0-20181216222714-4f6a2fb384a3 h1:Eoi62HBpULakI5UOxj198gFRK4J4GFNEVekzHY4eKGs=
+trimmer.io/go-xmp v0.0.0-20181216222714-4f6a2fb384a3/go.mod h1:SMaHrR8/c7YtKZ2zt8r9n93tJjQQOGAagAewi9axCj4=

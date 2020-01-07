@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/rnd"
-	"github.com/photoprism/photoprism/internal/ling"
+	"github.com/photoprism/photoprism/internal/txt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,13 +27,13 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 		start := time.Now()
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
 		if len(f.Photos) == 0 {
 			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst("no photos selected")})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
 			return
 		}
 
@@ -53,7 +53,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 
 		if err := os.MkdirAll(zipPath, 0700); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": ling.UcFirst("failed to create zip directory")})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip directory")})
 			return
 		}
 
@@ -61,7 +61,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 
 		if err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -77,7 +77,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 			if file.Exists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
 					log.Error(err)
-					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": ling.UcFirst("failed to create zip file")})
+					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip file")})
 					return
 				}
 				log.Infof("zip: added \"%s\" as \"%s\"", f.FileName, fileAlias)

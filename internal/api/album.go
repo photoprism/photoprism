@@ -21,7 +21,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/ling"
+	"github.com/photoprism/photoprism/internal/txt"
 )
 
 // GET /api/v1/albums
@@ -33,13 +33,13 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
 		result, err := q.Albums(f)
 		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -58,7 +58,7 @@ func GetAlbum(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -77,7 +77,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		var f form.Album
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -117,7 +117,7 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		var f form.Album
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -127,7 +127,7 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -155,7 +155,7 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -184,7 +184,7 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		album, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -212,7 +212,7 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		album, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -236,13 +236,13 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 		var f form.PhotoUUIDs
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
 		if len(f.Photos) == 0 {
 			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst("no photos selected")})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
 			return
 		}
 
@@ -250,7 +250,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 		a, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -287,13 +287,13 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 		var f form.PhotoUUIDs
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
 		if len(f.Photos) == 0 {
 			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst("no photos selected")})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
 			return
 		}
 
@@ -301,7 +301,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 		a, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -325,7 +325,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		a, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -336,7 +336,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		})
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -347,7 +347,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		if err := os.MkdirAll(zipPath, 0700); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": ling.UcFirst("failed to create zip directory")})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip directory")})
 			return
 		}
 
@@ -355,7 +355,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		if err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -371,7 +371,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 			if file.Exists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
 					log.Error(err)
-					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": ling.UcFirst("failed to create zip file")})
+					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip file")})
 					return
 				}
 				log.Infof("album: added \"%s\" as \"%s\"", f.FileName, fileAlias)

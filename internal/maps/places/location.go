@@ -7,7 +7,7 @@ import (
 
 	gc "github.com/patrickmn/go-cache"
 	"github.com/photoprism/photoprism/internal/s2"
-	"github.com/photoprism/photoprism/internal/ling"
+	"github.com/photoprism/photoprism/internal/txt"
 )
 
 // Location
@@ -113,7 +113,7 @@ func (l Location) Longitude() (result float64) {
 }
 
 func (l Location) Keywords() (result []string) {
-	return ling.Keywords(l.Label())
+	return txt.Keywords(l.Label())
 }
 
 func (l Location) Source() string {

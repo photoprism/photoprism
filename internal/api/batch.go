@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/ling"
+	"github.com/photoprism/photoprism/internal/txt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,13 +28,13 @@ func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
 		var f form.PhotoUUIDs
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
 		if len(f.Photos) == 0 {
 			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst("no photos selected")})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
 			return
 		}
 
@@ -65,13 +65,13 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 		var f form.PhotoUUIDs
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
 		if len(f.Photos) == 0 {
 			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst("no photos selected")})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
 			return
 		}
 
@@ -101,13 +101,13 @@ func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
 		var f form.AlbumUUIDs
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
 		if len(f.Albums) == 0 {
 			log.Error("no albums selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst("no albums selected")})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no albums selected")})
 			return
 		}
 
@@ -137,13 +137,13 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 		var f form.PhotoUUIDs
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
 		if len(f.Photos) == 0 {
 			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst("no photos selected")})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
 			return
 		}
 
@@ -172,13 +172,13 @@ func BatchPhotosStory(router *gin.RouterGroup, conf *config.Config) {
 		var f form.PhotoUUIDs
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
 		if len(f.Photos) == 0 {
 			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ling.UcFirst("no photos selected")})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
 			return
 		}
 
