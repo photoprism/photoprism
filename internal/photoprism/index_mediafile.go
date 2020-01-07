@@ -11,6 +11,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/txt"
 )
 
@@ -28,7 +29,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 
 	var photo entity.Photo
 	var file, primaryFile entity.File
-	var exifData *Exif
+	var metaData meta.Data
 	var photoQuery, fileQuery *gorm.DB
 	var keywords []string
 	var isNSFW bool
@@ -55,8 +56,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 		photoQuery = ind.db.Unscoped().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase)
 
 		if photoQuery.Error != nil && m.HasTimeAndPlace() {
-			exifData, _ = m.Exif()
-			photoQuery = ind.db.Unscoped().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ?", exifData.Lat, exifData.Lng, exifData.TakenAt)
+			metaData, _ = m.MetaData()
+			photoQuery = ind.db.Unscoped().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ?", metaData.Lat, metaData.Lng, metaData.TakenAt)
 		}
 	} else {
 		photoQuery = ind.db.Unscoped().First(&photo, "id = ?", file.PhotoID)
@@ -95,19 +96,19 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 
 		if fileChanged || o.UpdateExif {
 			// Read UpdateExif data
-			if exifData, err := m.Exif(); err == nil {
-				photo.PhotoLat = exifData.Lat
-				photo.PhotoLng = exifData.Lng
-				photo.TakenAt = exifData.TakenAt
-				photo.TakenAtLocal = exifData.TakenAtLocal
-				photo.TimeZone = exifData.TimeZone
-				photo.PhotoAltitude = exifData.Altitude
-				photo.PhotoArtist = exifData.Artist
+			if metaData, err := m.MetaData(); err == nil {
+				photo.PhotoLat = metaData.Lat
+				photo.PhotoLng = metaData.Lng
+				photo.TakenAt = metaData.TakenAt
+				photo.TakenAtLocal = metaData.TakenAtLocal
+				photo.TimeZone = metaData.TimeZone
+				photo.PhotoAltitude = metaData.Altitude
+				photo.PhotoArtist = metaData.Artist
 
-				if len(exifData.UUID) > 15 {
-					log.Debugf("index: file uuid \"%s\"", exifData.UUID)
+				if len(metaData.UUID) > 15 {
+					log.Debugf("index: file uuid \"%s\"", metaData.UUID)
 
-					file.FileUUID = exifData.UUID
+					file.FileUUID = metaData.UUID
 				}
 			}
 		}

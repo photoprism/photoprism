@@ -2,29 +2,15 @@ package photoprism
 
 import (
 	"errors"
-
-	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
 // TimeZone returns the time zone where the photo was taken.
 func (m *MediaFile) TimeZone() (string, error) {
-	meta, err := m.Exif()
+	meta, err := m.MetaData()
 
 	if err != nil {
-		return "UTC", errors.New("no image metadata")
+		return "UTC", errors.New("file: unknown time zone, using UTC")
 	}
 
-	if meta.Lat == 0 && meta.Lng == 0 {
-		return "UTC", errors.New("no latitude and longitude in image metadata")
-	}
-
-	zones, err := tz.GetZone(tz.Point{
-		Lon: meta.Lng, Lat: meta.Lat,
-	})
-
-	if err != nil {
-		return "UTC", errors.New("no matching zone found")
-	}
-
-	return zones[0], nil
+	return meta.TimeZone, nil
 }

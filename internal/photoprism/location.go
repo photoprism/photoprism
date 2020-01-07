@@ -11,7 +11,7 @@ func (m *MediaFile) Location() (*entity.Location, error) {
 		return m.location, nil
 	}
 
-	data, err := m.Exif()
+	data, err := m.MetaData()
 
 	if err != nil {
 		return nil, err

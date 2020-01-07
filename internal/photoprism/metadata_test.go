@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,11 +17,11 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 
 		assert.Nil(t, err)
 
-		info, err := img.Exif()
+		info, err := img.MetaData()
 
 		assert.Empty(t, err)
 
-		assert.IsType(t, &Exif{}, info)
+		assert.IsType(t, meta.Data{}, info)
 
 		assert.Equal(t, "", info.UUID)
 		assert.Equal(t, "2013-11-26 13:53:55 +0000 UTC", info.TakenAt.String())
@@ -40,8 +41,8 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		assert.Equal(t, -33.45347, info.Lat)
 		assert.Equal(t, 25.764645, info.Lng)
 		assert.Equal(t, 190, info.Altitude)
-		assert.Equal(t, 1365, info.Width)
-		assert.Equal(t, 0, info.Height)
+		assert.Equal(t, 2048, info.Width)
+		assert.Equal(t, 1365, info.Height)
 		assert.Equal(t, false, info.Flash)
 		assert.Equal(t, "", info.Description)
 		t.Logf("UTC: %s", info.TakenAt.String())
@@ -53,11 +54,11 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 
 		assert.Nil(t, err)
 
-		info, err := img.Exif()
+		info, err := img.MetaData()
 
 		assert.Empty(t, err)
 
-		assert.IsType(t, &Exif{}, info)
+		assert.IsType(t, meta.Data{}, info)
 
 		assert.Equal(t, "", info.UUID)
 		assert.Equal(t, 1, info.Orientation)
@@ -74,7 +75,7 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		assert.Equal(t, 200, info.Iso)
 		assert.Equal(t, 0, info.Altitude)
 		assert.Equal(t, 2048, info.Width)
-		assert.Equal(t, 0, info.Height)
+		assert.Equal(t, 2048, info.Height)
 		assert.Equal(t, true, info.Flash)
 		assert.Equal(t, "", info.Description)
 		t.Logf("UTC: %s", info.TakenAt.String())
@@ -93,11 +94,11 @@ func TestMediaFile_Exif_DNG(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	info, err := img.Exif()
+	info, err := img.MetaData()
 
 	assert.Empty(t, err)
 
-	assert.IsType(t, &Exif{}, info)
+	assert.IsType(t, meta.Data{}, info)
 
 	assert.Equal(t, "", info.UUID)
 	assert.Equal(t, "2019-06-06 07:29:51 +0000 UTC", info.TakenAt.String())
@@ -114,8 +115,8 @@ func TestMediaFile_Exif_DNG(t *testing.T) {
 	assert.Equal(t, 0.0, info.Lat)
 	assert.Equal(t, 0.0, info.Lng)
 	assert.Equal(t, 0, info.Altitude)
-	assert.Equal(t, 171, info.Width)
-	assert.Equal(t, 0, info.Height)
+	assert.Equal(t, 256, info.Width)
+	assert.Equal(t, 171, info.Height)
 	assert.Equal(t, false, info.Flash)
 	assert.Equal(t, "", info.Description)
 }
@@ -131,9 +132,9 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	info, err := img.Exif()
+	info, err := img.MetaData()
 
-	assert.IsType(t, &Exif{}, info)
+	assert.IsType(t, meta.Data{}, info)
 
 	assert.Nil(t, err)
 
@@ -143,9 +144,9 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	jpegInfo, err := jpeg.Exif()
+	jpegInfo, err := jpeg.MetaData()
 
-	assert.IsType(t, &Exif{}, jpegInfo)
+	assert.IsType(t, meta.Data{}, jpegInfo)
 
 	assert.Nil(t, err)
 

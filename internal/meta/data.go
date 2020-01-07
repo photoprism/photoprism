@@ -7,6 +7,7 @@ import (
 	"trimmer.io/go-xmp/xmp"
 )
 
+// Data represents image meta data.
 type Data struct {
 	UUID         string
 	TakenAt      time.Time

@@ -12,7 +12,7 @@ import (
 	"trimmer.io/go-xmp/xmp"
 )
 
-// Exif returns parses an XMP and returns its data.
+// XMP parses an XMP file and returns a Data struct.
 func XMP(filename string) (data Data, err error) {
 	defer func() {
 		if e := recover(); e != nil {

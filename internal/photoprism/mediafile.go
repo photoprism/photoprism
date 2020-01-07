@@ -9,11 +9,13 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/djherbis/times"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/internal/meta"
 )
 
 // MediaFile represents a single photo, video or sidecar file.
@@ -27,7 +29,8 @@ type MediaFile struct {
 	perceptualHash string
 	width          int
 	height         int
-	exifData       *Exif
+	once           sync.Once
+	metaData       meta.Data
 	location       *entity.Location
 }
 
@@ -53,7 +56,7 @@ func (m *MediaFile) DateCreated() time.Time {
 
 	m.dateCreated = time.Now()
 
-	info, err := m.Exif()
+	info, err := m.MetaData()
 
 	if err == nil && !info.TakenAt.IsZero() && info.TakenAt.Year() > 1000 {
 		m.dateCreated = info.TakenAt
@@ -83,7 +86,7 @@ func (m *MediaFile) DateCreated() time.Time {
 }
 
 func (m *MediaFile) HasTimeAndPlace() bool {
-	exifData, err := m.Exif()
+	exifData, err := m.MetaData()
 
 	if err != nil {
 		return false
@@ -96,7 +99,7 @@ func (m *MediaFile) HasTimeAndPlace() bool {
 
 // CameraModel returns the camera model with which the media file was created.
 func (m *MediaFile) CameraModel() string {
-	info, err := m.Exif()
+	info, err := m.MetaData()
 
 	var result string
 
@@ -109,7 +112,7 @@ func (m *MediaFile) CameraModel() string {
 
 // CameraMake returns the make of the camera with which the file was created.
 func (m *MediaFile) CameraMake() string {
-	info, err := m.Exif()
+	info, err := m.MetaData()
 
 	var result string
 
@@ -122,7 +125,7 @@ func (m *MediaFile) CameraMake() string {
 
 // LensModel returns the lens model of a media file.
 func (m *MediaFile) LensModel() string {
-	info, err := m.Exif()
+	info, err := m.MetaData()
 
 	var result string
 
@@ -135,7 +138,7 @@ func (m *MediaFile) LensModel() string {
 
 // LensMake returns the make of the Lens.
 func (m *MediaFile) LensMake() string {
-	info, err := m.Exif()
+	info, err := m.MetaData()
 
 	var result string
 
@@ -148,7 +151,7 @@ func (m *MediaFile) LensMake() string {
 
 // FocalLength return the length of the focal for a file.
 func (m *MediaFile) FocalLength() int {
-	info, err := m.Exif()
+	info, err := m.MetaData()
 
 	var result int
 
@@ -161,7 +164,7 @@ func (m *MediaFile) FocalLength() int {
 
 // FNumber returns the F number with which the media file was created.
 func (m *MediaFile) FNumber() float64 {
-	info, err := m.Exif()
+	info, err := m.MetaData()
 
 	var result float64
 
@@ -174,7 +177,7 @@ func (m *MediaFile) FNumber() float64 {
 
 // Iso returns the iso rating as int.
 func (m *MediaFile) Iso() int {
-	info, err := m.Exif()
+	info, err := m.MetaData()
 
 	var result int
 
@@ -187,7 +190,7 @@ func (m *MediaFile) Iso() int {
 
 // Exposure returns the exposure time as string.
 func (m *MediaFile) Exposure() string {
-	info, err := m.Exif()
+	info, err := m.MetaData()
 
 	var result string
 
@@ -284,7 +287,7 @@ func (m *MediaFile) RelatedFiles() (result RelatedFiles, err error) {
 			result.main = resultFile
 		} else if resultFile.IsJpeg() && len(result.main.Filename()) > len(resultFile.Filename()) {
 			result.main = resultFile
-		}  else if resultFile.IsImageOther() {
+		} else if resultFile.IsImageOther() {
 			result.main = resultFile
 		}
 
@@ -592,7 +595,7 @@ func (m *MediaFile) decodeDimensions() error {
 
 	var width, height int
 
-	exif, err := m.Exif()
+	exif, err := m.MetaData()
 
 	if err == nil {
 		width = exif.Width
@@ -671,7 +674,7 @@ func (m *MediaFile) AspectRatio() float64 {
 
 // Orientation returns the orientation of a MediaFile.
 func (m *MediaFile) Orientation() int {
-	if exif, err := m.Exif(); err == nil {
+	if exif, err := m.MetaData(); err == nil {
 		return exif.Orientation
 	}
 

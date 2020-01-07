@@ -42,7 +42,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 	assert.Empty(t, err, "ToJpeg() failed")
 
-	infoJpeg, err := imageJpeg.Exif()
+	infoJpeg, err := imageJpeg.MetaData()
 
 	assert.Nilf(t, err, "UpdateExif() failed for "+imageJpeg.Filename())
 
@@ -51,8 +51,6 @@ func TestConvert_ToJpeg(t *testing.T) {
 	}
 
 	assert.Equal(t, jpegFilename, imageJpeg.filename)
-
-	assert.False(t, infoJpeg == nil || err != nil, "Could not read UpdateExif data of JPEG image")
 
 	assert.Equal(t, "Canon EOS 7D", infoJpeg.CameraModel)
 
@@ -70,9 +68,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 	assert.NotEqual(t, rawFilename, imageRaw.filename)
 
-	infoRaw, err := imageRaw.Exif()
-
-	assert.False(t, infoRaw == nil || err != nil, "Could not read UpdateExif data of RAW image")
+	infoRaw, err := imageRaw.MetaData()
 
 	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel)
 }
@@ -100,9 +96,7 @@ func TestConvert_Path(t *testing.T) {
 
 	assert.Equal(t, jpegFilename, image.filename, "FileName must be the same")
 
-	infoRaw, err := image.Exif()
-
-	assert.False(t, infoRaw == nil || err != nil, "Could not read UpdateExif data of RAW image")
+	infoRaw, err := image.MetaData()
 
 	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel, "UpdateCamera model should be Canon EOS M10")
 

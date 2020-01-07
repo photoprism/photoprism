@@ -14,7 +14,7 @@ import (
 	"trimmer.io/go-xmp/xmp"
 )
 
-// Exif parses an image file and returns its Exif data.
+// Exif parses an image file for Exif meta data and returns as Data struct.
 func Exif(filename string) (data Data, err error) {
 	defer func() {
 		if e := recover(); e != nil {
