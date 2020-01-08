@@ -126,7 +126,7 @@ as a Twitter user suggested. We just state the fact that even a non-commercial a
 for production, which is perfectly OK. 
 On the other hand, it also doesn't mean we have to provide this service for free to our users. 
 We've learned that money is a very sensitive topic most of our users don't engage with and even try to avoid. 
-No wonder most founders go the easy way, take venture capital and sell licenses for their software.
+No wonder many founders go the easy way, take venture capital and sell licenses for their software.
 
 ## Public and corporate sponsorship ##
 
