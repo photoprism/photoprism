@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // Photo place
@@ -72,8 +73,9 @@ func (m *Place) Find(db *gorm.DB) error {
 }
 
 func (m *Place) FirstOrCreate(db *gorm.DB) *Place {
-	writeMutex.Lock()
-	defer writeMutex.Unlock()
+	mutex.Db.Lock()
+	defer mutex.Db.Unlock()
+
 	if err := db.FirstOrCreate(m, "id = ? OR loc_label = ?", m.ID, m.LocLabel).Error; err != nil {
 		log.Debugf("place: %s for token %s or label \"%s\"", err.Error(), m.ID, m.LocLabel)
 	}

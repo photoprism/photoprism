@@ -4,6 +4,7 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 var altCountryNames = map[string]string{
@@ -51,8 +52,9 @@ func NewCountry(countryCode string, countryName string) *Country {
 }
 
 func (m *Country) FirstOrCreate(db *gorm.DB) *Country {
-	writeMutex.Lock()
-	defer writeMutex.Unlock()
+	mutex.Db.Lock()
+	defer mutex.Db.Unlock()
+
 	if err := db.FirstOrCreate(m, "id = ?", m.ID).Error; err != nil {
 		log.Errorf("country: %s", err)
 	}

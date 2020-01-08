@@ -6,6 +6,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // Labels for photo, album and location categorization
@@ -53,8 +54,9 @@ func NewLabel(labelName string, labelPriority int) *Label {
 }
 
 func (m *Label) FirstOrCreate(db *gorm.DB) *Label {
-	writeMutex.Lock()
-	defer writeMutex.Unlock()
+	mutex.Db.Lock()
+	defer mutex.Db.Unlock()
+
 	if err := db.FirstOrCreate(m, "label_slug = ?", m.LabelSlug).Error; err != nil {
 		log.Errorf("label: %s", err)
 	}

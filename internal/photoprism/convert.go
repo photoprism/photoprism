@@ -24,7 +24,6 @@ func NewConvert(conf *config.Config) *Convert {
 // Path converts all files in a directory to JPEG if possible.
 func (c *Convert) Path(path string) {
 	err := filepath.Walk(path, func(filename string, fileInfo os.FileInfo, err error) error {
-
 		if err != nil {
 			log.Error("Walk", err.Error())
 			return nil

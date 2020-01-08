@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // Keyword for full text search
@@ -24,8 +25,9 @@ func NewKeyword(keyword string) *Keyword {
 }
 
 func (m *Keyword) FirstOrCreate(db *gorm.DB) *Keyword {
-	writeMutex.Lock()
-	defer writeMutex.Unlock()
+	mutex.Db.Lock()
+	defer mutex.Db.Unlock()
+
 	if err := db.FirstOrCreate(m, "keyword = ?", m.Keyword).Error; err != nil {
 		log.Errorf("keyword: %s", err)
 	}

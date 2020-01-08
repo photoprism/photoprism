@@ -2,6 +2,7 @@ package entity
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // Photo labels are weighted by uncertainty (100 - confidence)
@@ -30,8 +31,9 @@ func NewPhotoLabel(photoId, labelId uint, uncertainty int, source string) *Photo
 }
 
 func (m *PhotoLabel) FirstOrCreate(db *gorm.DB) *PhotoLabel {
-	writeMutex.Lock()
-	defer writeMutex.Unlock()
+	mutex.Db.Lock()
+	defer mutex.Db.Unlock()
+
 	if err := db.FirstOrCreate(m, "photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).Error; err != nil {
 		log.Errorf("photo label: %s", err)
 	}

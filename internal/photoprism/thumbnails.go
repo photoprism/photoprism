@@ -101,7 +101,7 @@ func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err e
 		thumbType := thumb.Types[name]
 
 		if thumbType.Height > thumb.MaxHeight || thumbType.Width > thumb.MaxWidth {
-			log.Debugf("thumbs: size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
+			// Skip, size exceeds limit
 			continue
 		}
 

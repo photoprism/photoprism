@@ -11,6 +11,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/tidb"
 )
 
@@ -86,6 +87,9 @@ func (c *Config) MigrateDb() {
 // When used with the internal driver, it may create a new database server instance.
 // It tries to do this 12 times with a 5 second sleep interval in between.
 func (c *Config) connectToDatabase(ctx context.Context) error {
+	mutex.Db.Lock()
+	defer mutex.Db.Unlock()
+
 	dbDriver := c.DatabaseDriver()
 	dbDsn := c.DatabaseDsn()
 

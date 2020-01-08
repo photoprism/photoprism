@@ -140,11 +140,11 @@ func TestThumbnails_Filename(t *testing.T) {
 	})
 	t.Run("invalid width", func(t *testing.T) {
 		_, err := thumb.Filename("99988", thumbsPath, -4, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
-		assert.Equal(t, "thumbs: width has an invalid value (-4)", err.Error())
+		assert.Equal(t, "thumbs: width exceeds limit (-4)", err.Error())
 	})
 	t.Run("invalid height", func(t *testing.T) {
 		_, err := thumb.Filename("99988", thumbsPath, 200, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
-		assert.Equal(t, "thumbs: height has an invalid value (-1)", err.Error())
+		assert.Equal(t, "thumbs: height exceeds limit (-1)", err.Error())
 	})
 	t.Run("empty thumbpath", func(t *testing.T) {
 		path := ""

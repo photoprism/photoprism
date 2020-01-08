@@ -6,6 +6,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // Camera lens (as extracted from UpdateExif metadata)
@@ -47,8 +48,9 @@ func NewLens(modelName string, makeName string) *Lens {
 }
 
 func (m *Lens) FirstOrCreate(db *gorm.DB) *Lens {
-	writeMutex.Lock()
-	defer writeMutex.Unlock()
+	mutex.Db.Lock()
+	defer mutex.Db.Unlock()
+
 	if err := db.FirstOrCreate(m, "lens_slug = ?", m.LensSlug).Error; err != nil {
 		log.Errorf("lens: %s", err)
 	}

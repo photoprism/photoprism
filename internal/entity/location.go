@@ -7,6 +7,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/s2"
 	"github.com/photoprism/photoprism/internal/txt"
 )
@@ -45,8 +46,8 @@ func NewLocation(lat, lng float64) *Location {
 }
 
 func (m *Location) Find(db *gorm.DB, api string) error {
-	writeMutex.Lock()
-	defer writeMutex.Unlock()
+	mutex.Db.Lock()
+	defer mutex.Db.Unlock()
 
 	if err := db.First(m, "id = ?", m.ID).Error; err == nil {
 		m.Place = FindPlace(m.PlaceID, db)

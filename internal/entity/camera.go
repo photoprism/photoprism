@@ -7,6 +7,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // Camera model and make (as extracted from UpdateExif metadata)
@@ -51,8 +52,9 @@ func NewCamera(modelName string, makeName string) *Camera {
 }
 
 func (m *Camera) FirstOrCreate(db *gorm.DB) *Camera {
-	writeMutex.Lock()
-	defer writeMutex.Unlock()
+	mutex.Db.Lock()
+	defer mutex.Db.Unlock()
+
 	if err := db.FirstOrCreate(m, "camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).Error; err != nil {
 		log.Errorf("camera: %s", err)
 	}

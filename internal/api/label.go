@@ -163,6 +163,15 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
+		if thumbType.Height > thumb.MaxHeight || thumbType.Width > thumb.MaxWidth {
+			log.Debugf("label: using original, thumbnail size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
+
+			c.File(fileName)
+
+			return
+		}
+
 		if thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
 			thumbData, err := ioutil.ReadFile(thumbnail)
 

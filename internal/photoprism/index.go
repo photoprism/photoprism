@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,6 +11,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/nsfw"
 )
 
@@ -19,8 +21,6 @@ type Index struct {
 	tensorFlow   *TensorFlow
 	nsfwDetector *nsfw.Detector
 	db           *gorm.DB
-	running      bool
-	canceled     bool
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
@@ -45,25 +45,19 @@ func (ind *Index) thumbnailsPath() string {
 
 // Cancel stops the current indexing operation.
 func (ind *Index) Cancel() {
-	ind.canceled = true
+	mutex.Worker.Cancel()
 }
 
 // Start will index MediaFiles in the originals directory.
 func (ind *Index) Start(options IndexOptions) map[string]bool {
 	done := make(map[string]bool)
 
-	if ind.running {
-		event.Error("index already running")
+	if err := mutex.Worker.Start(); err != nil {
+		event.Error(fmt.Sprintf("index: %s", err.Error()))
 		return done
 	}
 
-	ind.running = true
-	ind.canceled = false
-
-	defer func() {
-		ind.running = false
-		ind.canceled = false
-	}()
+	defer mutex.Worker.Stop()
 
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("index: %s", err.Error())
@@ -91,7 +85,7 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 			}
 		}()
 
-		if ind.canceled {
+		if mutex.Worker.Canceled() {
 			return errors.New("indexing canceled")
 		}
 

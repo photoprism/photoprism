@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // Import represents an importer that can copy/move MediaFiles to the originals directory.
@@ -49,18 +50,12 @@ func (imp *Import) Start(importPath string) {
 	done := make(map[string]bool)
 	ind := imp.index
 
-	if ind.running {
-		event.Error("index already running")
+	if err := mutex.Worker.Start(); err != nil {
+		event.Error(fmt.Sprintf("import: %s", err.Error()))
 		return
 	}
 
-	ind.running = true
-	ind.canceled = false
-
-	defer func() {
-		ind.running = false
-		ind.canceled = false
-	}()
+	defer mutex.Worker.Stop()
 
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("import: %s", err.Error())
@@ -89,7 +84,7 @@ func (imp *Import) Start(importPath string) {
 			}
 		}()
 
-		if ind.canceled {
+		if mutex.Worker.Canceled() {
 			return errors.New("importing canceled")
 		}
 
@@ -180,7 +175,7 @@ func (imp *Import) Start(importPath string) {
 
 // Cancel stops the current import operation.
 func (imp *Import) Cancel() {
-	imp.index.Cancel()
+	mutex.Worker.Cancel()
 }
 
 // DestinationFilename returns the destination filename of a MediaFile to be imported.
@@ -189,9 +184,9 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	fileExtension := mediaFile.Extension()
 	dateCreated := mainFile.DateCreated()
 
-	if file, err := entity.FindFileByHash(imp.conf.Db(), mediaFile.Hash()); err == nil {
-		existingFilename := imp.conf.OriginalsPath() + string(os.PathSeparator) + file.FileName
-		return existingFilename, fmt.Errorf("\"%s\" is identical to \"%s\" (%s)", mediaFile.Filename(), file.FileName, mediaFile.Hash())
+	if f, err := entity.FindFileByHash(imp.conf.Db(), mediaFile.Hash()); err == nil {
+		existingFilename := imp.conf.OriginalsPath() + string(os.PathSeparator) + f.FileName
+		return existingFilename, fmt.Errorf("\"%s\" is identical to \"%s\" (%s)", mediaFile.Filename(), f.FileName, mediaFile.Hash())
 	}
 
 	//	Mon Jan 2 15:04:05 -0700 MST 2006

@@ -1,6 +1,9 @@
 package entity
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/mutex"
+)
 
 type PhotoKeyword struct {
 	PhotoID   uint `gorm:"primary_key;auto_increment:false"`
@@ -21,8 +24,9 @@ func NewPhotoKeyword(photoID, keywordID uint) *PhotoKeyword {
 }
 
 func (m *PhotoKeyword) FirstOrCreate(db *gorm.DB) *PhotoKeyword {
-	writeMutex.Lock()
-	defer writeMutex.Unlock()
+	mutex.Db.Lock()
+	defer mutex.Db.Unlock()
+
 	if err := db.FirstOrCreate(m, "photo_id = ? AND keyword_id = ?", m.PhotoID, m.KeywordID).Error; err != nil {
 		log.Errorf("photo keyword: %s", err)
 	}

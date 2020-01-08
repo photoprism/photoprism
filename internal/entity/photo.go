@@ -30,7 +30,7 @@ type Photo struct {
 	PhotoFocalLength  int
 	PhotoIso          int
 	PhotoFNumber      float64
-	PhotoExposure     string `gorm:"type:varbinary(16);"`
+	PhotoExposure     string `gorm:"type:varbinary(32);"`
 	PhotoViews        uint
 	Camera            *Camera
 	CameraID          uint `gorm:"index:idx_photos_camera_lens;"`

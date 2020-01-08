@@ -73,11 +73,11 @@ func Postfix(width, height int, opts ...ResampleOption) (result string) {
 
 func Filename(hash string, thumbPath string, width, height int, opts ...ResampleOption) (filename string, err error) {
 	if width < 0 || width > MaxWidth {
-		return "", fmt.Errorf("thumbs: width has an invalid value (%d)", width)
+		return "", fmt.Errorf("thumbs: width exceeds limit (%d)", width)
 	}
 
 	if height < 0 || height > MaxHeight {
-		return "", fmt.Errorf("thumbs: height has an invalid value (%d)", height)
+		return "", fmt.Errorf("thumbs: height exceeds limit (%d)", height)
 	}
 
 	if len(hash) < 4 {

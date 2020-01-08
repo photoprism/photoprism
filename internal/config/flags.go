@@ -17,7 +17,7 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_READ_ONLY",
 	},
 	cli.BoolFlag{
-		Name:   "public",
+		Name:   "public, p",
 		Usage:  "no authentication required",
 		EnvVar: "PHOTOPRISM_PUBLIC",
 	},
@@ -175,12 +175,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
 	},
 	cli.IntFlag{
-		Name:   "http-port, p",
+		Name:   "http-port",
 		Usage:  "HTTP server port",
 		EnvVar: "PHOTOPRISM_HTTP_PORT",
 	},
 	cli.StringFlag{
-		Name:   "http-host, i",
+		Name:   "http-host",
 		Usage:  "HTTP server host",
 		EnvVar: "PHOTOPRISM_HTTP_HOST",
 	},
@@ -190,7 +190,7 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_HTTP_MODE",
 	},
 	cli.IntFlag{
-		Name:   "sql-port, s",
+		Name:   "sql-port",
 		Usage:  "built-in SQL server port",
 		EnvVar: "PHOTOPRISM_SQL_PORT",
 	},
@@ -237,7 +237,7 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_THUMB_QUALITY",
 	},
 	cli.IntFlag{
-		Name:   "thumb-size",
+		Name:   "thumb-size, s",
 		Usage:  "max thumbnail size in pixels (720-16384)",
 		Value:  8192,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE",

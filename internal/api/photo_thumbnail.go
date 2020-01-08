@@ -50,11 +50,22 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
+		if thumbType.Height > thumb.MaxHeight || thumbType.Width > thumb.MaxWidth {
+			log.Debugf("photo: using original, thumbnail size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
+
+			if c.Query("download") != "" {
+				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.DownloadFileName()))
+			}
+
+			c.File(fileName)
+
+			return
+		}
+
 		if thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
 			if c.Query("download") != "" {
-				downloadFileName := f.DownloadFileName()
-
-				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFileName))
+				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.DownloadFileName()))
 			}
 
 			c.File(thumbnail)

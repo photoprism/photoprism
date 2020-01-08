@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // Photos can be added to multiple albums
@@ -31,8 +32,9 @@ func NewPhotoAlbum(photoUUID, albumUUID string) *PhotoAlbum {
 }
 
 func (m *PhotoAlbum) FirstOrCreate(db *gorm.DB) *PhotoAlbum {
-	writeMutex.Lock()
-	defer writeMutex.Unlock()
+	mutex.Db.Lock()
+	defer mutex.Db.Unlock()
+
 	if err := db.FirstOrCreate(m, "photo_uuid = ? AND album_uuid = ?", m.PhotoUUID, m.AlbumUUID).Error; err != nil {
 		log.Errorf("photo album: %s", err)
 	}
