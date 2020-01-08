@@ -36,7 +36,6 @@ All you need is a Web browser and [Docker](https://store.docker.com/search?type=
 to run the server. It is available for Mac, Linux and Windows.
 
 Note that this is work in progress. We do our best to provide a complete, stable version.
-
 If you have a question, don't hesitate to ask in our [help forum][help] 
 or [contact us via email](mailto:hello@photoprism.org).
 
@@ -85,7 +84,7 @@ Every politician wants to support Open Source and warns social media is bad for 
 few are willing to help those that actually do something.
 
 The consequence is that we are forced to think about monetization. We honestly didn't expect this will be an issue 
-and didn't ask for anything the first year. Thank you very much to our few sponsors! 
+and didn't ask for anything the first year. Thank you very much to our few [sponsors](SPONSORS.md)! 
 We still love each and everyone of you, even those that send multiple pages of written requirements and then ask 
 every week when it is done.
 
@@ -116,7 +115,7 @@ Thank you very much! <3
 ## Lessons learned ##
 
 Having done mostly commercial projects in the last 10+ years, it is important for us to explore various forms of funding
-and communication for independent Open Source projects. Note that many of today's popular projects are funded by 
+and communication for independent Open Source projects. Note that many of today's popular projects are backed by 
 corporations like Google, Facebook, Microsoft or Intel.
 
 That's a good thing and we profit from it, but doesn't mean independent developers should not do this full-time or pay 
@@ -126,14 +125,14 @@ development expenses if you look at [Indiegogo](https://www.indiegogo.com/) or [
 In no way do we spurn other OSS projects like [OpenStreetMap](https://www.openstreetmap.org/), 
 as a Twitter user suggested. We just state the fact that even a non-commercial app can't use their API 
 for production, which is perfectly OK.
-
 On the other hand, it also doesn't mean we have to provide this service for free to our users. 
-We've learned that money is a very sensitive topic most of our users don't engage with and even try to avoid. 
-No wonder many founders go the easy way, take venture capital and sell licenses for their software.
+
+We've learned that money is a very sensitive topic most of our users don't engage with and even try to avoid.
+For this reason, we'll exclude this topic from our social media communication from now on.
 
 ## Public and corporate sponsorship ##
 
-Our software is now almost done after two years of hard work, some days 16 to 20 hours on top of other projects we
+Our app is now almost done after two years of hard work, some days 16 to 20 hours on top of other projects we
 did to finance this. We spent weeks asking organizations like [The Prototype Fund](https://prototypefund.de/en/) 
 for help and also tried to cooperate with companies like Mapbox and Cewe. We have been ignored and even given
 the advice that what we do "already exists in America".
