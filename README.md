@@ -112,6 +112,22 @@ Let us know if we mistakenly label an idea as [unfunded][unfunded issues].
 
 Thank you very much! <3
 
+## Lessons learned ##
+
+Having done mostly commercial projects in the last 10+ years, it is important for us to explore various forms of funding
+and communication for independent Open Source projects. Note that many of today's popular projects are funded by 
+corporations like Google, Facebook, Microsoft or Intel. That's a good thing and we profit from it, but doesn't 
+mean independent developers should not do this full-time or pay everything themselves without asking the community for
+support. In fact, crowdfunding is a pretty common way to cover development expenses if you look at 
+[Indiegogo](https://www.indiegogo.com/) or [Kickstarter](https://www.kickstarter.com/).
+
+In no way do we spurn other OSS projects like [OpenStreetMap](https://www.openstreetmap.org/), 
+as a Twitter user suggested. We just state the fact that even a non-commercial app can't use their API 
+for production, which is perfectly OK. 
+On the other hand, it also doesn't mean we have to provide this service for free to our users. 
+We've learned that money is a very sensitive topic most of our users don't engage with and even try to avoid. 
+No wonder most founders go the easy way, take venture capital and sell licenses for their software.
+
 ## Public and corporate sponsorship ##
 
 Our software is now almost done after two years of hard work, some days 16 to 20 hours on top of other projects we
