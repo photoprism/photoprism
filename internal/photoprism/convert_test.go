@@ -73,7 +73,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel)
 }
 
-func TestConvert_Path(t *testing.T) {
+func TestConvert_Start(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -84,7 +84,7 @@ func TestConvert_Path(t *testing.T) {
 
 	convert := NewConvert(conf)
 
-	convert.Path(conf.ImportPath())
+	convert.Start(conf.ImportPath())
 
 	jpegFilename := conf.ImportPath() + "/raw/canon_eos_6d.jpg"
 
@@ -92,7 +92,9 @@ func TestConvert_Path(t *testing.T) {
 
 	image, err := NewMediaFile(jpegFilename)
 
-	assert.Nil(t, err)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
 
 	assert.Equal(t, jpegFilename, image.filename, "FileName must be the same")
 
@@ -106,7 +108,7 @@ func TestConvert_Path(t *testing.T) {
 
 	os.Remove(existingJpegFilename)
 
-	convert.Path(conf.ImportPath())
+	convert.Start(conf.ImportPath())
 
 	newHash := file.Hash(existingJpegFilename)
 

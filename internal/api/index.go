@@ -61,7 +61,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 
 		if f.ConvertRaw && !conf.ReadOnly() {
 			convert := photoprism.NewConvert(conf)
-			convert.Path(conf.OriginalsPath())
+			convert.Start(conf.OriginalsPath())
 		}
 
 		if f.CreateThumbs {

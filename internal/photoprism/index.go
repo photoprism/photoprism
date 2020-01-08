@@ -86,7 +86,7 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 		}()
 
 		if mutex.Worker.Canceled() {
-			return errors.New("indexing canceled")
+			return errors.New("index: canceled")
 		}
 
 		if err != nil || done[filename] {

@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
@@ -21,11 +23,27 @@ func NewConvert(conf *config.Config) *Convert {
 	return &Convert{conf: conf}
 }
 
-// Path converts all files in a directory to JPEG if possible.
-func (c *Convert) Path(path string) {
+// Start converts all files in a directory to JPEG if possible.
+func (c *Convert) Start(path string) {
+	if err := mutex.Worker.Start(); err != nil {
+		event.Error(fmt.Sprintf("convert: %s", err.Error()))
+		return
+	}
+
+	defer mutex.Worker.Stop()
+
 	err := filepath.Walk(path, func(filename string, fileInfo os.FileInfo, err error) error {
+		defer func() {
+			if err := recover(); err != nil {
+				log.Errorf("convert: %s [panic]", err)
+			}
+		}()
+
+		if mutex.Worker.Canceled() {
+			return errors.New("convert: canceled")
+		}
+
 		if err != nil {
-			log.Error("Walk", err.Error())
 			return nil
 		}
 
@@ -33,14 +51,14 @@ func (c *Convert) Path(path string) {
 			return nil
 		}
 
-		mediaFile, err := NewMediaFile(filename)
+		mf, err := NewMediaFile(filename)
 
-		if err != nil || !(mediaFile.IsRaw() || mediaFile.IsHEIF() || mediaFile.IsImageOther()) {
+		if err != nil || !(mf.IsRaw() || mf.IsHEIF() || mf.IsImageOther()) {
 			return nil
 		}
 
-		if _, err := c.ToJpeg(mediaFile); err != nil {
-			log.Warnf("file could not be converted to JPEG: \"%s\"", filename)
+		if _, err := c.ToJpeg(mf); err != nil {
+			log.Warnf("convert: %s (%s)", err.Error(), filename)
 		}
 
 		return nil
@@ -56,17 +74,19 @@ func (c *Convert) ConvertCommand(image *MediaFile, jpegFilename string, xmpFilen
 	if image.IsRaw() {
 		if c.conf.SipsBin() != "" {
 			result = exec.Command(c.conf.SipsBin(), "-s format jpeg", image.filename, "--out "+jpegFilename)
-		} else if c.conf.DarktableBin() != "" && xmpFilename != "" {
-			result = exec.Command(c.conf.DarktableBin(), image.filename, xmpFilename, jpegFilename)
 		} else if c.conf.DarktableBin() != "" {
-			result = exec.Command(c.conf.DarktableBin(), image.filename, jpegFilename)
+			if xmpFilename != "" {
+				result = exec.Command(c.conf.DarktableBin(), image.filename, xmpFilename, jpegFilename)
+			} else {
+				result = exec.Command(c.conf.DarktableBin(), image.filename, jpegFilename)
+			}
 		} else {
-			return nil, fmt.Errorf("no binary for raw to jpeg conversion could be found: %s", image.Filename())
+			return nil, fmt.Errorf("convert: no binary for raw to jpeg could be found (%s)", image.Filename())
 		}
 	} else if image.IsHEIF() {
 		result = exec.Command(c.conf.HeifConvertBin(), image.filename, jpegFilename)
 	} else {
-		return nil, fmt.Errorf("image type not supported for conversion: %s", image.Type())
+		return nil, fmt.Errorf("convert: image type not supported for conversion (%s)", image.Type())
 	}
 
 	return result, nil
@@ -75,7 +95,7 @@ func (c *Convert) ConvertCommand(image *MediaFile, jpegFilename string, xmpFilen
 // ToJpeg converts a single image file to JPEG if possible.
 func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	if !image.Exists() {
-		return nil, fmt.Errorf("can not convert to jpeg, file does not exist: %s", image.Filename())
+		return nil, fmt.Errorf("convert: can not convert to jpeg, file does not exist (%s)", image.Filename())
 	}
 
 	if image.IsJpeg() {
@@ -93,10 +113,10 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	}
 
 	if c.conf.ReadOnly() {
-		return nil, fmt.Errorf("can not convert to jpeg in read only mode: %s", image.Filename())
+		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.Filename())
 	}
 
-	log.Infof("converting \"%s\" to \"%s\"", image.filename, jpegFilename)
+	log.Infof("convert: \"%s\" -> \"%s\"", image.filename, jpegFilename)
 
 	fileName := image.RelativeFilename(c.conf.OriginalsPath())
 

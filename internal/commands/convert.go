@@ -32,7 +32,7 @@ func convertAction(ctx *cli.Context) error {
 
 	convert := photoprism.NewConvert(conf)
 
-	convert.Path(conf.OriginalsPath())
+	convert.Start(conf.OriginalsPath())
 
 	elapsed := time.Since(start)
 
