@@ -127,14 +127,13 @@ as a Twitter user suggested. We just state the fact that even a non-commercial a
 for production, which is perfectly OK.
 On the other hand, it also doesn't mean we have to provide this service for free to our users. 
 
-We've learned that money is a very sensitive topic most of our users don't engage with and even try to avoid.
+We understand money is a very sensitive topic most of our users don't engage with and even try to avoid.
 For this reason, we'll exclude this topic from our social media communication from now on.
 
 ## Public and corporate sponsorship ##
 
-Our app is now almost done after two years of hard work, some days 16 to 20 hours on top of other projects we
-did to finance this. We spent weeks asking organizations like [The Prototype Fund](https://prototypefund.de/en/) 
-for help and also tried to cooperate with companies like Mapbox and Cewe. We have been ignored and even given
+We spent weeks asking organizations like [The Prototype Fund](https://prototypefund.de/en/) for help 
+and also tried to cooperate with companies like Mapbox and Cewe. We have been ignored and even given
 the advice that what we do "already exists in America".
 
 If any of those organizations changes their mind, they are welcome to [reach out to us](mailto:hello@photoprism.org).
