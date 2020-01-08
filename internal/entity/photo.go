@@ -70,7 +70,7 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 			return err
 		}
 
-		if err := scope.SetColumn("TakenAtLocal",now); err != nil {
+		if err := scope.SetColumn("TakenAtLocal", now); err != nil {
 			return err
 		}
 	}
@@ -86,14 +86,13 @@ func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 			return err
 		}
 
-		if err := scope.SetColumn("TakenAtLocal",now); err != nil {
+		if err := scope.SetColumn("TakenAtLocal", now); err != nil {
 			return err
 		}
 	}
 
 	return nil
 }
-
 
 func (m *Photo) IndexKeywords(keywords []string, db *gorm.DB) {
 	var keywordIds []uint

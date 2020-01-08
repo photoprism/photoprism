@@ -15,24 +15,24 @@ func TestXMP(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	val := data.Exif
+	info := data.exifInfo
 
-	assert.Equal(t, "Michael Mayer", val.Artist)
-	assert.Equal(t, xmp.StringList{"Michael Mayer"}, val.ArtistXMP)
-	assert.Equal(t, "This is an (edited) legal notice", val.Copyright)
-	assert.Equal(t, "2020-01-01T17:28:23Z", val.DateTime.Value().Format("2006-01-02T15:04:05Z"))
-	assert.Equal(t, "Example file for development", val.ImageDescription)
-	assert.Equal(t, 2736, val.ImageLength)
-	assert.Equal(t, 3648, val.ImageWidth)
-	assert.Equal(t, "HUAWEI", val.Make)
-	assert.Equal(t, "ELE-L29", val.Model)
-	assert.Equal(t, 0, int(val.Orientation))
-	assert.Equal(t, 1.0, val.GPSAltitude.Value()) // TODO: Is this correct?
+	assert.Equal(t, "Michael Mayer", info.Artist)
+	assert.Equal(t, xmp.StringList{"Michael Mayer"}, info.ArtistXMP)
+	assert.Equal(t, "This is an (edited) legal notice", info.Copyright)
+	assert.Equal(t, "2020-01-01T17:28:23Z", info.DateTime.Value().Format("2006-01-02T15:04:05Z"))
+	assert.Equal(t, "Example file for development", info.ImageDescription)
+	assert.Equal(t, 2736, info.ImageLength)
+	assert.Equal(t, 3648, info.ImageWidth)
+	assert.Equal(t, "HUAWEI", info.Make)
+	assert.Equal(t, "ELE-L29", info.Model)
+	assert.Equal(t, 0, int(info.Orientation))
+	assert.Equal(t, 1.0, info.GPSAltitude.Value()) // TODO: Is this correct?
 
 	// TODO: Values are empty - why?
-	// assert.Equal(t, "52.459690093888895", val.GPSLongitudeCoord.Value())
-	// assert.Equal(t, "13.321831703055555", val.GPSLatitudeCoord.Value())
-	// assert.Equal(t, 27, val.FocalLengthIn35mmFilm)
+	// assert.Equal(t, "52.459690093888895", info.GPSLongitudeCoord.Value())
+	// assert.Equal(t, "13.321831703055555", info.GPSLatitudeCoord.Value())
+	// assert.Equal(t, 27, info.FocalLengthIn35mmFilm)
 
 	assert.Equal(t, "Michael Mayer", data.Artist)
 	assert.Equal(t, "2020-01-01T17:28:23Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))

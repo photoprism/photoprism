@@ -33,8 +33,8 @@ type Data struct {
 	Height       int
 	Orientation  int
 	All          map[string]string
-	Xmp          *xmp.Document
-	Exif         *model.ExifInfo
-	ExifEX       *model.ExifEXInfo
-	ExifAux      *model.ExifAuxInfo
+	xmpDoc       *xmp.Document
+	exifInfo     *model.ExifInfo
+	exifAux      *model.ExifAuxInfo
+	exifEx       *model.ExifEXInfo
 }

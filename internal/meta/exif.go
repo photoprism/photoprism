@@ -9,9 +9,6 @@ import (
 
 	"github.com/dsoprea/go-exif"
 	"gopkg.in/ugjka/go-tz.v2/tz"
-
-	model "trimmer.io/go-xmp/models/exif"
-	"trimmer.io/go-xmp/xmp"
 )
 
 // Exif parses an image file for Exif meta data and returns as Data struct.
@@ -22,9 +19,6 @@ func Exif(filename string) (data Data, err error) {
 			err = fmt.Errorf("meta: %s", e)
 		}
 	}()
-
-	data.Xmp = xmp.NewDocument()
-	data.Exif = &model.ExifInfo{}
 
 	// TODO: Requires refactoring and performance optimization
 	// See GitHub: https://github.com/photoprism/photoprism/issues/172

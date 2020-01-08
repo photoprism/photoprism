@@ -21,10 +21,10 @@ func XMP(filename string) (data Data, err error) {
 		}
 	}()
 
-	data.Xmp = xmp.NewDocument()
-	data.Exif = &model.ExifInfo{}
-	data.ExifEX = &model.ExifEXInfo{}
-	data.ExifAux = &model.ExifAuxInfo{}
+	data.xmpDoc = xmp.NewDocument()
+	data.exifInfo = &model.ExifInfo{}
+	data.exifEx = &model.ExifEXInfo{}
+	data.exifAux = &model.ExifAuxInfo{}
 
 	f, err := os.Open(filename)
 
@@ -36,35 +36,35 @@ func XMP(filename string) (data Data, err error) {
 
 	dec := xmp.NewDecoder(f)
 
-	if err := dec.Decode(data.Xmp); err != nil {
+	if err := dec.Decode(data.xmpDoc); err != nil {
 		return data, err
 	}
 
-	if err := data.Exif.SyncFromXMP(data.Xmp); err != nil {
+	if err := data.exifInfo.SyncFromXMP(data.xmpDoc); err != nil {
 		return data, err
 	}
 
-	if err := data.ExifEX.SyncFromXMP(data.Xmp); err != nil {
+	if err := data.exifEx.SyncFromXMP(data.xmpDoc); err != nil {
 		return data, err
 	}
 
-	if err := data.ExifAux.SyncFromXMP(data.Xmp); err != nil {
+	if err := data.exifAux.SyncFromXMP(data.xmpDoc); err != nil {
 		return data, err
 	}
 
-	data.Artist = data.Exif.Artist
-	data.Copyright = data.Exif.Copyright
-	data.TakenAtLocal = data.Exif.DateTime.Value()
-	data.Description = data.Exif.ImageDescription
-	data.Height = data.Exif.ImageLength
-	data.Width = data.Exif.ImageWidth
-	data.CameraMake = data.Exif.Make
-	data.CameraModel = data.Exif.Model
-	data.LensModel = data.ExifAux.Lens
-	data.Orientation = int(data.Exif.Orientation)
-	data.Lat = 0 //data.Exif.GPSLatitudeCoord.Value()
-	data.Lng = 0 //data.Exif.GPSLongitudeCoord.Value()
-	data.Altitude = int(data.Exif.GPSAltitude.Value())
+	data.Artist = data.exifInfo.Artist
+	data.Copyright = data.exifInfo.Copyright
+	data.TakenAtLocal = data.exifInfo.DateTime.Value()
+	data.Description = data.exifInfo.ImageDescription
+	data.Height = data.exifInfo.ImageLength
+	data.Width = data.exifInfo.ImageWidth
+	data.CameraMake = data.exifInfo.Make
+	data.CameraModel = data.exifInfo.Model
+	data.LensModel = data.exifAux.Lens
+	data.Orientation = int(data.exifInfo.Orientation)
+	data.Lat = 0 //data.exifInfo.GPSLatitudeCoord.Value()
+	data.Lng = 0 //data.exifInfo.GPSLongitudeCoord.Value()
+	data.Altitude = int(data.exifInfo.GPSAltitude.Value())
 	data.TimeZone = "UTC"
 
 	if data.Lat != 0 && data.Lng != 0 {

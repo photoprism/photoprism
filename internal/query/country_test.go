@@ -1,9 +1,10 @@
 package query
 
 import (
+	"testing"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -24,12 +25,14 @@ func TestNewCountry(t *testing.T) {
 }
 func TestCountry_FirstOrCreate(t *testing.T) {
 	t.Run("country already existing", func(t *testing.T) {
-		country := entity.NewCountry("pp", "PhotoPrism")
+		country := entity.NewCountry("de", "Germany")
 		c := config.TestConfig()
 		country.FirstOrCreate(c.Db())
-		assert.Equal(t, "pp", country.Code())
-		assert.Equal(t, "PhotoPrism", country.Name())
-
+		assert.Equal(t, "de", country.Code())
+		assert.Equal(t, "Germany", country.Name())
+		assert.Equal(t, "Country Description", country.CountryDescription)
+		assert.Equal(t, "Country Notes", country.CountryNotes)
+		assert.Equal(t, uint(0), country.CountryPhotoID)
 	})
 	t.Run("country not yet existing", func(t *testing.T) {
 		country := entity.NewCountry("wl", "Wonder Land")
