@@ -124,7 +124,7 @@ development expenses if you look at [Indiegogo](https://www.indiegogo.com/) or [
 
 In no way do we spurn other OSS projects like [OpenStreetMap](https://www.openstreetmap.org/), 
 as a Twitter user suggested. We just state the fact that even a non-commercial app can't use their API 
-for production, which is perfectly OK.
+for production, which is perfectly fine.
 On the other hand, it also doesn't mean we have to provide this service for free to our users. 
 
 We understand money is a very sensitive topic most of our users don't engage with and even try to avoid.
