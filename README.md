@@ -35,8 +35,7 @@ Developers can skip this and move on to the [Developer Guide](https://github.com
 All you need is a Web browser and [Docker](https://store.docker.com/search?type=edition&offering=community)
 to run the server. It is available for Mac, Linux and Windows.
 
-Note that this is work in progress. We do our best to provide a complete, stable version. 
-[Financial support](SPONSORS.md) makes a huge difference and enables us to spend more time with this project.
+Note that this is work in progress. We do our best to provide a complete, stable version.
 
 If you have a question, don't hesitate to ask in our [help forum][help] 
 or [contact us via email](mailto:hello@photoprism.org).
@@ -102,7 +101,8 @@ Specific solutions could be to...
 You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
 especially if you need help with using our software. They will match every donation in the first year.
 In addition, you can find us on [Patreon][patreon] and [PayPal][paypal].
-Our sponsors and contributors will get for free whatever we might have to charge for a geodata subscription later.
+Our [sponsors](SPONSORS.md) and [contributors](https://github.com/photoprism/photoprism/graphs/contributors/)
+will get for free whatever we might have to charge for a geodata subscription later.
 
 Also please [leave a star](https://github.com/photoprism/photoprism/stargazers) here on GitHub if you like this project, 
 it provides additional motivation to keep going.
