@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/internal/thumb"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
@@ -867,4 +868,107 @@ func TestMediaFile_Orientation(t *testing.T) {
 		orientation := mediaFile.Orientation()
 		assert.Equal(t, 1, orientation)
 	})
+}
+
+func TestMediaFile_Thumbnail(t *testing.T) {
+	conf := config.TestConfig()
+
+	if err := conf.CreateDirectories(); err != nil {
+		t.Error(err)
+	}
+
+	thumbsPath := conf.CachePath() + "/_tmp"
+
+	defer os.RemoveAll(thumbsPath)
+
+	t.Run("/elephants.jpg", func(t *testing.T) {
+		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+
+		thumbnail, err := image.Thumbnail(thumbsPath, "tile_500")
+
+		assert.Empty(t, err)
+
+		assert.FileExists(t, thumbnail)
+	})
+	t.Run("invalid image format", func(t *testing.T) {
+		image, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.xmp")
+		assert.Nil(t, err)
+
+		thumbnail, err := image.Thumbnail(thumbsPath, "tile_500")
+
+		assert.Equal(t, "could not create thumbnail: image: unknown format", err.Error())
+		t.Log(thumbnail)
+	})
+	t.Run("invalid thumbnail type", func(t *testing.T) {
+		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+
+		thumbnail, err := image.Thumbnail(thumbsPath, "invalid_500")
+
+		assert.Equal(t, "invalid type: invalid_500", err.Error())
+		t.Log(thumbnail)
+	})
+}
+
+func TestMediaFile_Resample(t *testing.T) {
+	conf := config.TestConfig()
+
+	if err := conf.CreateDirectories(); err != nil {
+		t.Error(err)
+	}
+
+	thumbsPath := conf.CachePath() + "/_tmp"
+
+	defer os.RemoveAll(thumbsPath)
+	t.Run("/elephants.jpg", func(t *testing.T) {
+		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+
+		thumbnail, err := image.Resample(thumbsPath, "tile_500")
+
+		assert.Empty(t, err)
+		assert.NotEmpty(t, thumbnail)
+
+	})
+	t.Run("invalid type", func(t *testing.T) {
+		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		assert.Nil(t, err)
+
+		thumbnail, err := image.Resample(thumbsPath, "xxx_500")
+
+		assert.Equal(t, "invalid type: xxx_500", err.Error())
+		assert.Empty(t, thumbnail)
+
+	})
+
+}
+
+func TestMediaFile_CreateDefaultThumbnails(t *testing.T) {
+	conf := config.TestConfig()
+
+	thumbsPath := conf.CachePath() + "/_tmp"
+
+	defer os.RemoveAll(thumbsPath)
+
+	if err := conf.CreateDirectories(); err != nil {
+		t.Error(err)
+	}
+
+	m, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+	assert.Nil(t, err)
+
+	err = m.CreateDefaultThumbnails(thumbsPath, true)
+
+	assert.Empty(t, err)
+
+	thumbFilename, err := thumb.Filename(m.Hash(), thumbsPath, thumb.Types["tile_50"].Width, thumb.Types["tile_50"].Height, thumb.Types["tile_50"].Options...)
+
+	assert.Empty(t, err)
+
+	assert.FileExists(t, thumbFilename)
+
+	err = m.CreateDefaultThumbnails(thumbsPath, false)
+
+	assert.Empty(t, err)
 }

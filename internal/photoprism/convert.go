@@ -24,10 +24,9 @@ func NewConvert(conf *config.Config) *Convert {
 }
 
 // Start converts all files in a directory to JPEG if possible.
-func (c *Convert) Start(path string) {
+func (c *Convert) Start(path string) error {
 	if err := mutex.Worker.Start(); err != nil {
-		event.Error(fmt.Sprintf("convert: %s", err.Error()))
-		return
+		return err
 	}
 
 	defer mutex.Worker.Stop()
@@ -64,9 +63,7 @@ func (c *Convert) Start(path string) {
 		return nil
 	})
 
-	if err != nil {
-		log.Error(err.Error())
-	}
+	return err
 }
 
 // ConvertCommand returns the command for converting files to JPEG, depending on the format.

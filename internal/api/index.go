@@ -59,14 +59,27 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Info(fmt.Sprintf("indexing photos in \"%s\"", filepath.Base(path)))
 
+		cancel := func(err error) {
+			log.Error(err.Error())
+			event.Publish("index.completed", event.Data{"path": path, "seconds": int(time.Since(start).Seconds())})
+			c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+		}
+
 		if f.ConvertRaw && !conf.ReadOnly() {
 			convert := photoprism.NewConvert(conf)
-			convert.Start(conf.OriginalsPath())
+
+			if err := convert.Start(conf.OriginalsPath()); err != nil {
+				cancel(err)
+				return
+			}
 		}
 
 		if f.CreateThumbs {
-			if err := photoprism.CreateThumbnailsFromOriginals(conf.OriginalsPath(), conf.ThumbnailsPath(), false); err != nil {
-				event.Error(err.Error())
+			thumbnails := photoprism.NewThumbnails(conf)
+
+			if err := thumbnails.Start(false); err != nil {
+				cancel(err)
+				return
 			}
 		}
 

@@ -85,7 +85,7 @@ func (imp *Import) Start(importPath string) {
 		}()
 
 		if mutex.Worker.Canceled() {
-			return errors.New("import: canceled")
+			return errors.New("import canceled")
 		}
 
 		if err != nil || done[filename] {

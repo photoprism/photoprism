@@ -12,10 +12,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/disintegration/imaging"
 	"github.com/djherbis/times"
+	"github.com/photoprism/photoprism/internal/capture"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/file"
 	"github.com/photoprism/photoprism/internal/meta"
+	"github.com/photoprism/photoprism/internal/thumb"
 )
 
 // MediaFile represents a single photo, video or sidecar file.
@@ -679,4 +682,87 @@ func (m *MediaFile) Orientation() int {
 	}
 
 	return 1
+}
+
+// Thumbnail returns a thumbnail filename.
+func (m *MediaFile) Thumbnail(path string, typeName string) (filename string, err error) {
+	thumbType, ok := thumb.Types[typeName]
+
+	if !ok {
+		log.Errorf("invalid type: %s", typeName)
+		return "", fmt.Errorf("invalid type: %s", typeName)
+	}
+
+	thumbnail, err := thumb.FromFile(m.Filename(), m.Hash(), path, thumbType.Width, thumbType.Height, thumbType.Options...)
+
+	if err != nil {
+		log.Errorf("could not create thumbnail: %s", err)
+		return "", fmt.Errorf("could not create thumbnail: %s", err)
+	}
+
+	return thumbnail, nil
+}
+
+// Thumbnail returns a resampled image of the file.
+func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err error) {
+	filename, err := m.Thumbnail(path, typeName)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return imaging.Open(filename, imaging.AutoOrientation(true))
+}
+
+func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err error) {
+	defer capture.Time(time.Now(), fmt.Sprintf("thumbs: created for \"%s\"", m.Filename()))
+
+	hash := m.Hash()
+
+	img, err := imaging.Open(m.Filename(), imaging.AutoOrientation(true))
+
+	if err != nil {
+		log.Errorf("thumbs: can't open original \"%s\"", err)
+		return err
+	}
+
+	var sourceImg image.Image
+	var sourceImgType string
+
+	for _, name := range thumb.DefaultTypes {
+		thumbType := thumb.Types[name]
+
+		if thumbType.Height > thumb.MaxHeight || thumbType.Width > thumb.MaxWidth {
+			// Skip, size exceeds limit
+			continue
+		}
+
+		if fileName, err := thumb.Filename(hash, thumbPath, thumbType.Width, thumbType.Height, thumbType.Options...); err != nil {
+			log.Errorf("thumbs: could not create \"%s\" (%s)", name, err)
+
+			return err
+		} else {
+			if !force && file.Exists(fileName) {
+				continue
+			}
+
+			if thumbType.Source != "" {
+				if thumbType.Source == sourceImgType && sourceImg != nil {
+					_, err = thumb.Create(sourceImg, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+				} else {
+					_, err = thumb.Create(img, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+				}
+			} else {
+				sourceImg, err = thumb.Create(img, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+				sourceImgType = name
+			}
+
+			if err != nil {
+				log.Errorf("thumbs: could not create \"%s\" (%s)", name, err)
+				return err
+			}
+		}
+	}
+
+	return nil
 }
