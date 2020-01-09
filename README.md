@@ -138,6 +138,12 @@ do "already exists in America". You would think it's easier to get a few dollars
 
 If any of those organizations changes their mind, they are welcome to [reach out to us](mailto:hello@photoprism.org).
 
+## Disclaimer ##
+
+We'd like to remind everyone that we are no full-time marketing specialists but developers that work a lot and 
+enjoy a bit of sarcasm from time to time. Please let us know when there is an issue with our "nuance and tone" 
+and we'll find a solution.
+
 [help]: https://groups.google.com/a/photoprism.org/forum/#!forum/help
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
 [patreon]: https://www.patreon.com/photoprism
