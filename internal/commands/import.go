@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -40,8 +41,8 @@ func importAction(ctx *cli.Context) error {
 
 	log.Infof("importing photos from %s", conf.ImportPath())
 
-	tensorFlow := photoprism.NewTensorFlow(conf)
-	nsfwDetector := nsfw.NewDetector(conf.NSFWModelPath())
+	tensorFlow := classify.New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+	nsfwDetector := nsfw.New(conf.NSFWModelPath())
 
 	ind := photoprism.NewIndex(conf, tensorFlow, nsfwDetector)
 

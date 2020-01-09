@@ -1,10 +1,9 @@
-package photoprism
+package classify
 
 import (
 	"bufio"
 	"bytes"
 	"errors"
-	"fmt"
 	"image"
 	"io/ioutil"
 	"math"
@@ -16,80 +15,36 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/file"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
-	"gopkg.in/yaml.v2"
 )
 
 // TensorFlow if a wrapper for their low-level API.
 type TensorFlow struct {
 	conf       *config.Config
 	model      *tf.SavedModel
+	modelsPath string
+	disabled   bool
 	modelName  string
 	modelTags  []string
 	labels     []string
-	labelRules LabelRules
 }
 
-type LabelRule struct {
-	Label      string
-	See        string
-	Threshold  float32
-	Categories []string
-	Priority   int
-}
-
-type LabelRules map[string]LabelRule
-
-// NewTensorFlow returns new TensorFlow instance with Nasnet model.
-func NewTensorFlow(conf *config.Config) *TensorFlow {
-	return &TensorFlow{conf: conf, modelName: "nasnet", modelTags: []string{"photoprism"}}
+// New returns new TensorFlow instance with Nasnet model.
+func New(modelsPath string, disabled bool) *TensorFlow {
+	return &TensorFlow{modelsPath: modelsPath, disabled: disabled, modelName: "nasnet", modelTags: []string{"photoprism"}}
 }
 
 func (t *TensorFlow) Init() (err error) {
-	if t.conf.TensorFlowDisabled() {
+	if t.disabled {
 		return nil
 	}
 
-	if err := t.loadModel(); err != nil {
-		return err
-	}
-
-	return t.loadLabelRules()
+	return t.loadModel()
 }
 
-func (t *TensorFlow) loadLabelRules() (err error) {
-	if len(t.labelRules) > 0 {
-		return nil
-	}
-
-	t.labelRules = make(LabelRules)
-
-	fileName := t.conf.ConfigPath() + "/labels.yml"
-
-	log.Debugf("tensorflow: loading label rules from \"%s\"", filepath.Base(fileName))
-
-	if !file.Exists(fileName) {
-		e := fmt.Errorf("tensorflow: label rules file not found in \"%s\"", filepath.Base(fileName))
-		log.Error(e.Error())
-		return e
-	}
-
-	yamlConfig, err := ioutil.ReadFile(fileName)
-
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-
-	err = yaml.Unmarshal(yamlConfig, t.labelRules)
-
-	return err
-}
-
-// LabelsFromFile returns matching labels for a jpeg media file.
-func (t *TensorFlow) LabelsFromFile(filename string) (result Labels, err error) {
-	if t.conf.TensorFlowDisabled() {
+// File returns matching labels for a jpeg media file.
+func (t *TensorFlow) File(filename string) (result Labels, err error) {
+	if t.disabled {
 		return result, nil
 	}
 
@@ -104,7 +59,7 @@ func (t *TensorFlow) LabelsFromFile(filename string) (result Labels, err error) 
 
 // Labels returns matching labels for a jpeg media string.
 func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
-	if t.conf.TensorFlowDisabled() {
+	if t.disabled {
 		return result, nil
 	}
 
@@ -183,7 +138,7 @@ func (t *TensorFlow) loadModel() error {
 		return nil
 	}
 
-	modelPath := path.Join(t.conf.ResourcesPath(), t.modelName)
+	modelPath := path.Join(t.modelsPath, t.modelName)
 
 	log.Infof("tensorflow: loading image classification model from \"%s\"", filepath.Base(modelPath))
 
@@ -199,29 +154,7 @@ func (t *TensorFlow) loadModel() error {
 	return t.loadLabels(modelPath)
 }
 
-func (t *TensorFlow) labelRule(label string) LabelRule {
-	label = strings.ToLower(label)
-
-	if err := t.loadLabelRules(); err != nil {
-		log.Error(err)
-	}
-
-	if rule, ok := t.labelRules[label]; ok {
-		if rule.See != "" {
-			return t.labelRule(rule.See)
-		}
-
-		return t.labelRules[label]
-	}
-
-	return LabelRule{Threshold: 0.1}
-}
-
 func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
-	if err := t.loadLabelRules(); err != nil {
-		log.Error(err)
-	}
-
 	// Make a list of label/probability pairs
 	var result Labels
 
@@ -236,7 +169,7 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 
 		labelText := strings.ToLower(t.labels[i])
 
-		rule := t.labelRule(labelText)
+		rule := rules.Find(labelText)
 
 		if p < rule.Threshold {
 			continue

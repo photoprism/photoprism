@@ -11,11 +11,11 @@ import (
 
 var modelPath, _ = filepath.Abs("../../assets/resources/nsfw")
 
-var detector = NewDetector(modelPath)
+var detector = New(modelPath)
 
 func TestNSFW(t *testing.T) {
 	detect := func(filename string) Labels {
-		result, err := detector.LabelsFromFile(filename)
+		result, err := detector.File(filename)
 
 		if err != nil {
 			t.Fatalf(err.Error())

@@ -23,13 +23,13 @@ type Detector struct {
 	mutex     sync.Mutex
 }
 
-// NewDetector returns a new detector instance.
-func NewDetector(modelPath string) *Detector {
+// New returns a new detector instance.
+func New(modelPath string) *Detector {
 	return &Detector{modelPath: modelPath, modelTags: []string{"serve"}}
 }
 
-// LabelsFromFile returns matching labels for a jpeg media file.
-func (t *Detector) LabelsFromFile(filename string) (result Labels, err error) {
+// File returns matching labels for a jpeg media file.
+func (t *Detector) File(filename string) (result Labels, err error) {
 	if file.MimeType(filename) != "image/jpeg" {
 		return result, fmt.Errorf("nsfw: \"%s\" is not a jpeg file", filename)
 	}

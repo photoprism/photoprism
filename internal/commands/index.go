@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -39,8 +40,8 @@ func indexAction(ctx *cli.Context) error {
 		log.Infof("read-only mode enabled")
 	}
 
-	tf := photoprism.NewTensorFlow(conf)
-	nd := nsfw.NewDetector(conf.NSFWModelPath())
+	tf := classify.New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+	nd := nsfw.New(conf.NSFWModelPath())
 
 	ind := photoprism.NewIndex(conf, tf, nd)
 

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/meta"
@@ -34,7 +35,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 	var keywords []string
 	var isNSFW bool
 
-	labels := Labels{}
+	labels := classify.Labels{}
 	fileBase := m.Basename()
 	filePath := m.RelativePath(ind.originalsPath())
 	fileName := m.RelativeFilename(ind.originalsPath())
@@ -248,7 +249,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 }
 
 // classifyImage returns all matching labels for a media file.
-func (ind *Index) classifyImage(jpeg *MediaFile) (results Labels, isNSFW bool) {
+func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels, isNSFW bool) {
 	start := time.Now()
 
 	var thumbs []string
@@ -259,7 +260,7 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results Labels, isNSFW bool) {
 		thumbs = []string{"tile_224", "left_224", "right_224"}
 	}
 
-	var labels Labels
+	var labels classify.Labels
 
 	for _, thumb := range thumbs {
 		filename, err := jpeg.Thumbnail(ind.thumbnailsPath(), thumb)
@@ -269,7 +270,7 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results Labels, isNSFW bool) {
 			continue
 		}
 
-		imageLabels, err := ind.tensorFlow.LabelsFromFile(filename)
+		imageLabels, err := ind.tensorFlow.File(filename)
 
 		if err != nil {
 			log.Error(err)
@@ -282,7 +283,7 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results Labels, isNSFW bool) {
 	if filename, err := jpeg.Thumbnail(ind.thumbnailsPath(), "fit_720"); err != nil {
 		log.Error(err)
 	} else {
-		if nsfwLabels, err := ind.nsfwDetector.LabelsFromFile(filename); err != nil {
+		if nsfwLabels, err := ind.nsfwDetector.File(filename); err != nil {
 			log.Error(err)
 		} else {
 			log.Infof("nsfw: %+v", nsfwLabels)
@@ -293,7 +294,7 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results Labels, isNSFW bool) {
 
 			if nsfwLabels.Sexy > 0.85 {
 				uncertainty := 100 - int(math.Round(float64(nsfwLabels.Sexy*100)))
-				labels = append(labels, Label{Name: "sexy", Source: "nsfw", Uncertainty: uncertainty, Priority: -1})
+				labels = append(labels, classify.Label{Name: "sexy", Source: "nsfw", Uncertainty: uncertainty, Priority: -1})
 			}
 		}
 	}
@@ -324,7 +325,7 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results Labels, isNSFW bool) {
 	return results, isNSFW
 }
 
-func (ind *Index) addLabels(photoId uint, labels Labels) {
+func (ind *Index) addLabels(photoId uint, labels classify.Labels) {
 	for _, label := range labels {
 		lm := entity.NewLabel(label.Name, label.Priority).FirstOrCreate(ind.db)
 
@@ -362,7 +363,7 @@ func (ind *Index) addLabels(photoId uint, labels Labels) {
 	}
 }
 
-func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, labels Labels, fileChanged bool, o IndexOptions) ([]string, Labels) {
+func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, labels classify.Labels, fileChanged bool, o IndexOptions) ([]string, classify.Labels) {
 	var keywords []string
 
 	location, err := mediaFile.Location()
@@ -401,7 +402,7 @@ func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 		// Append category from reverse location lookup
 		if locCategory != "" {
 			keywords = append(keywords, locCategory)
-			labels = append(labels, NewLocationLabel(locCategory, 0, -1))
+			labels = append(labels, classify.LocationLabel(locCategory, 0, -1))
 		}
 
 		if (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false {

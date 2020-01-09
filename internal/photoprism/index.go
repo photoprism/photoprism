@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -18,13 +19,13 @@ import (
 // Index represents an indexer that indexes files in the originals directory.
 type Index struct {
 	conf         *config.Config
-	tensorFlow   *TensorFlow
+	tensorFlow   *classify.TensorFlow
 	nsfwDetector *nsfw.Detector
 	db           *gorm.DB
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
-func NewIndex(conf *config.Config, tensorFlow *TensorFlow, nsfwDetector *nsfw.Detector) *Index {
+func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector) *Index {
 	i := &Index{
 		conf:         conf,
 		tensorFlow:   tensorFlow,

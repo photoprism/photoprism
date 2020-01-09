@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -25,7 +26,7 @@ func initIndex(conf *config.Config) {
 
 	initNsfwDetector(conf)
 
-	tf := photoprism.NewTensorFlow(conf)
+	tf := classify.New(conf.ResourcesPath(), conf.TensorFlowDisabled())
 
 	ind = photoprism.NewIndex(conf, tf, nd)
 }
@@ -35,7 +36,7 @@ func initNsfwDetector(conf *config.Config) {
 		return
 	}
 
-	nd = nsfw.NewDetector(conf.NSFWModelPath())
+	nd = nsfw.New(conf.NSFWModelPath())
 }
 
 // POST /api/v1/index

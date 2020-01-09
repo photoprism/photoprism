@@ -1,0 +1,73 @@
+package classify
+
+import (
+	"sort"
+
+	"github.com/photoprism/photoprism/internal/txt"
+)
+
+// Labels is list of MediaFile labels.
+type Labels []Label
+
+func (l Labels) Len() int      { return len(l) }
+func (l Labels) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
+func (l Labels) Less(i, j int) bool {
+	if l[i].Priority == l[j].Priority {
+		return l[i].Uncertainty < l[j].Uncertainty
+	} else {
+		return l[i].Priority > l[j].Priority
+	}
+}
+
+func (l Labels) AppendLabel(label Label) Labels {
+	if label.Name == "" {
+		return l
+	}
+
+	return append(l, label)
+}
+
+func (l Labels) Keywords() (result []string) {
+	for _, label := range l {
+		result = append(result, txt.Keywords(label.Name)...)
+
+		for _, c := range label.Categories {
+			result = append(result, txt.Keywords(c)...)
+		}
+	}
+
+	return result
+}
+
+func (l Labels) Title(fallback string) string {
+	fallbackRunes := len([]rune(fallback))
+
+	if fallbackRunes < 2 || fallbackRunes > 25 || txt.ContainsNumber(fallback) {
+		fallback = ""
+	}
+
+	if len(l) == 0 {
+		return fallback
+	}
+
+	// Sort by priority and uncertainty
+	sort.Sort(l)
+
+	// Get best label (at the top)
+	label := l[0]
+
+	// Get second best label in case the first has high uncertainty
+	if len(l) > 1 && l[0].Uncertainty > 60 && l[1].Uncertainty <= 60 {
+		label = l[1]
+	}
+
+	if fallback != "" && label.Priority < 0 {
+		return fallback
+	} else if fallback != "" && label.Priority == 0 && label.Uncertainty > 50 {
+		return fallback
+	} else if label.Priority >= -1 && label.Uncertainty <= 60 {
+		return label.Name
+	}
+
+	return fallback
+}
