@@ -133,10 +133,11 @@ For this reason, we'll exclude this topic from our social media communication fr
 ## Public and corporate sponsorship ##
 
 We spent weeks asking organizations like [The Prototype Fund](https://prototypefund.de/en/) for help 
-and also tried to cooperate with companies like Mapbox and Cewe. Some conversations were good without leading
-to a sponsorship yet. Others have given us the advice that what we do "already exists in America".
-You would think it's easier to get a few dollars with [our background](http://docs.photoprism.org/en/latest/team/) 
-and a [working demo](https://demo.photoprism.org/).
+and also tried to cooperate with companies like Mapbox and Cewe.
+
+Some conversations were good without leading to a sponsorship yet. Others have given us the advice that what we 
+do "already exists in America". You would think it's easier to get a few dollars with 
+[our background](http://docs.photoprism.org/en/latest/team/) and a [working demo](https://demo.photoprism.org/).
 
 If any of those organizations changes their mind, they are welcome to [reach out to us](mailto:hello@photoprism.org).
 
