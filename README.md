@@ -52,6 +52,7 @@ Go itself is a [great example](https://talks.golang.org/2015/simplicity-is-compl
 
 Our long-term goal is to become an open platform for machine 
 learning [research](https://github.com/photoprism/photoprism/wiki/Research) based on real-world photo collections.
+We're already in contact with data scientists who like our idea.
 
 ## How to contribute ##
 
@@ -73,24 +74,20 @@ to receive regular project updates and discuss development related topics. Don't
 
 ## Free beer ##
 
-This project is about freedom but not necessarily about free beer. We feel like it was a mistake on 
+This project is about freedom and privacy but not necessarily about free beer. We feel like it was a mistake on 
 our side to state there will be no costs, because clearly we have huge expenses, your server hardware
-is not for free and then maybe you'd like to have some extra features that need to be developed.
+will have a price tag and then maybe you'd like to have some extra features that need to be developed.
 
-It's fair to say that users with basic needs will have no monthly costs. We are also way more productive and effective 
-per dollar (or euro) than commercial projects. If you include development time, hardware and travel expenses, 
-we'll have spent $100k+ when this is done.
-
-You're invited to come to our place and work for free if you think time and travel expenses should not be counted. 
-Please also bring some free test devices and use the internet on your mobile phone while working 16 to 20 hours per day. 
-Just to give you an idea, please don't feel sorry for us! We're adults and are fully aware what we have gotten ourselves into.
+It's fair to say that users with basic needs will have no monthly costs. We were also way more 
+productive and effective per dollar (or euro) than commercial projects and learned a lot on top of it.
+An earlier version of this document contained a rough number, but at the end of the day it doesn't matter.
 
 Basically all established OSS companies make 90% of their revenue with enterprise customers, that's why private users 
-and single developers typically get everything for free. Obviously that doesn't work if you have only private users. 
-In our opinion it makes the most sense to finance this like all public infrastructure, our expenses are peanuts compared 
-to building a road.
+and single developers typically get everything for free. Obviously that doesn't work if you have only private users
+that refuse to share their data on top of it. In our opinion it would have made sense to finance this like all 
+public infrastructure, our expenses are peanuts compared to building a road.
 
-Other specific solutions could be to...
+Looking forward, specific solutions for funding development and maintenance could be to...
 
   - sell a tested & supported version in the app store while our contributors and other developers can 
     continue to use Docker or build from source
@@ -119,9 +116,9 @@ Thank you very much! <3
 We spent weeks asking organizations like [The Prototype Fund](https://prototypefund.de/en/) for help 
 and also tried to cooperate with companies like Mapbox and Cewe.
 
-Some conversations were good without leading to a sponsorship yet. Others have given us the advice that what we 
-do "already exists in America". You would think it's easier to get a few dollars with 
-[our background](http://docs.photoprism.org/en/latest/team/) and a [working demo](https://demo.photoprism.org/).
+Some conversations were good without leading to a sponsorship yet, others were a waste of time.
+You would think it's easier to get a few dollars with [our background](http://docs.photoprism.org/en/latest/team/) 
+and [working code](https://demo.photoprism.org/).
 
 If any of those organizations changes their mind, they are welcome to [reach out to us](mailto:hello@photoprism.org).
 
