@@ -77,19 +77,25 @@ This project is about freedom but not necessarily about free beer. We feel like 
 our side to state there will be no costs, because clearly we have huge expenses, your server hardware
 is not for free and then maybe you'd like to have some extra features that need to be developed.
 
-We do this because we think it's important.
-It's somewhat disappointing how little support we get by companies and especially public organizations who should
-share similar goals. Not a single dollar. 
+It's fair to say that users with basic needs will have no monthly costs. We are also way more productive and effective 
+per dollar (or euro) than commercial projects. If you include development time, hardware and travel expenses, 
+we'll have spent $100k+ when this is done.
 
-The consequence is that we are forced to think about monetization. We honestly didn't expect this will be an issue 
-and didn't ask for anything the first year.
+You're invited to come to our place and work for free if you think time and travel expenses should not be counted. 
+Please also bring some free test devices and use the internet on your mobile phone while working 16 to 20 hours per day. 
+Just to give you an idea, please don't feel sorry for us! We're adults and are fully aware what we have gotten ourselves into.
 
-Specific solutions could be to...
+Basically all established OSS companies make 90% of their revenue with enterprise customers, that's why private users 
+and single developers typically get everything for free. Obviously that doesn't work if you have only private users. 
+In our opinion it makes the most sense to finance this like all public infrastructure, our expenses are peanuts compared 
+to building a road.
+
+Other specific solutions could be to...
 
   - sell a tested & supported version in the app store while our contributors and other developers can 
     continue to use Docker or build from source
   - offer a geodata, public events and maps subscription since OpenStreetMap doesn't want us to use their development 
-    API for production
+    API for production, which is perfectly fine
 
 ## Donations ##
 
@@ -103,29 +109,10 @@ have to charge for a geodata subscription later.
 Also please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project, 
 it provides additional motivation to keep going.
 
-Financial support makes a huge difference and enables us to spend more time with the features you care about.
 Ideas backed by a sponsor are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
 Let us know if we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
 Thank you very much! <3
-
-## Lessons learned ##
-
-Having done mostly commercial projects in the last 10+ years, it is important for us to explore various forms of funding
-and communication for independent Open Source projects. Note that many of today's popular projects are backed by 
-corporations like Google, Facebook, Microsoft or Intel.
-
-That's a good thing and we profit from it, but doesn't mean independent developers should not do this full-time or pay 
-everything themselves without asking the community for support. In fact, crowdfunding is a common way to cover 
-development expenses and it's strange to criticize us for not delivering a complete product before we ask.
-
-In no way do we spurn other OSS projects like [OpenStreetMap](https://www.openstreetmap.org/), 
-as a Twitter user suggested. We just state the fact that even a non-commercial app can't use their API 
-for production, which is perfectly fine.
-On the other hand, that doesn't mean we have to provide this service for free to our users. 
-
-We understand money is a very sensitive topic most of our users don't engage with.
-For this reason, we'll exclude this topic from our social media communication from now on.
 
 ## Public and corporate sponsorship ##
 
