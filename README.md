@@ -81,9 +81,6 @@ We do this because we think it's important.
 It's somewhat disappointing how little support we get by companies and especially public organizations who should
 share similar goals. Not a single dollar. 
 
-Every politician wants to support Open Source and warns social media is bad for your privacy, but only very 
-few are willing to help those that actually do something.
-
 The consequence is that we are forced to think about monetization. We honestly didn't expect this will be an issue 
 and didn't ask for anything the first year.
 
