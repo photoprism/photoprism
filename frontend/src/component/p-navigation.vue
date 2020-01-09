@@ -80,14 +80,26 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile to="/hidden" @click="" class="p-navigation-hidden">
+                    <v-list-tile to="/archive" @click="" class="p-navigation-archive">
                         <v-list-tile-content>
                             <v-list-tile-title>
-                                <translate>Hidden</translate>
+                                <translate>Archive</translate>
                             </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list-group>
+
+                <v-list-tile v-if="mini" to="/archive" @click="" class="p-navigation-archive">
+                    <v-list-tile-action>
+                        <v-icon>archive</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>
+                            <translate>Archive</translate>
+                        </v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
 
                 <v-list-tile v-if="mini" to="/albums" @click="">
                     <v-list-tile-action>

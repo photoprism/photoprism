@@ -23,7 +23,7 @@ type PhotoSearch struct {
 	Artist      string    `form:"artist"`
 	Hash        string    `form:"hash"`
 	Duplicate   bool      `form:"duplicate"`
-	Hidden      bool      `form:"hidden"`
+	Archived    bool      `form:"archived"`
 	Lat         float64   `form:"lat"`
 	Lng         float64   `form:"lng"`
 	Dist        uint      `form:"dist"`

@@ -101,8 +101,8 @@
                     return "photos"
                 }
 
-                if(this.staticFilter.hidden) {
-                    return "hidden"
+                if(this.staticFilter.archived) {
+                    return "archive"
                 } else if (this.staticFilter.favorites) {
                     return "favorites"
                 }

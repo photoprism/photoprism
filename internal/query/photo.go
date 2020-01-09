@@ -185,7 +185,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		}
 	}
 
-	if f.Hidden {
+	if f.Archived {
 		q = q.Where("photos.deleted_at IS NOT NULL")
 	} else {
 		q = q.Where("photos.deleted_at IS NULL")

@@ -15,9 +15,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// POST /api/v1/batch/photos/delete
-func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/batch/photos/delete", func(c *gin.Context) {
+// POST /api/v1/batch/photos/archive
+func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
+	router.POST("/batch/photos/archive", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -48,7 +48,7 @@ func BatchPhotosDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos hidden in %d s", elapsed)})
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos archived in %d s", elapsed)})
 	})
 }
 

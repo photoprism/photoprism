@@ -30,7 +30,7 @@
                         color="deep-purple lighten-2"
                         @click.stop="batchPrivate()"
                         :disabled="selection.length === 0"
-                        v-if="context !== 'hidden'"
+                        v-if="context !== 'archive'"
                         class="p-photo-clipboard-private"
                 >
                     <v-icon>vpn_key</v-icon>
@@ -43,7 +43,7 @@
                         color="cyan accent-4"
                         :disabled="selection.length === 0"
                         @click.stop="batchStory()"
-                        v-if="context !== 'hidden'"
+                        v-if="context !== 'archive'"
                         class="p-photo-clipboard-story"
                 >
                     <v-icon>wifi</v-icon>
@@ -65,7 +65,7 @@
                         :title="labels.download"
                         color="teal accent-4"
                         @click.stop="download()"
-                        v-if="context !== 'hidden'"
+                        v-if="context !== 'archive'"
                         class="p-photo-clipboard-download"
                 >
                     <v-icon>cloud_download</v-icon>
@@ -78,7 +78,7 @@
                         color="amber accent-4"
                         :disabled="selection.length === 0"
                         @click.stop="dialog.album = true"
-                        v-if="context !== 'hidden'"
+                        v-if="context !== 'archive'"
                         class="p-photo-clipboard-album"
                 >
                     <v-icon>folder</v-icon>
@@ -89,27 +89,27 @@
                         dark
                         small
                         color="delete"
-                        :title="labels.delete"
-                        @click.stop="dialog.delete = true"
+                        :title="labels.archive"
+                        @click.stop="dialog.archive = true"
                         :disabled="selection.length === 0"
-                        v-if="!album && context !== 'hidden'"
-                        class="p-photo-clipboard-delete"
+                        v-if="!album && context !== 'archive'"
+                        class="p-photo-clipboard-archive"
                 >
-                    <v-icon>visibility_off</v-icon>
+                    <v-icon>archive</v-icon>
                 </v-btn>
 
                 <v-btn
                         fab
                         dark
                         small
-                        color="purple lighten-2"
+                        color="blue lighten-2"
                         :title="labels.restore"
                         @click.stop="batchRestorePhotos"
                         :disabled="selection.length === 0"
-                        v-if="!album && context === 'hidden'"
+                        v-if="!album && context === 'archive'"
                         class="p-photo-clipboard-restore"
                 >
-                    <v-icon>visibility</v-icon>
+                    <v-icon>unarchive</v-icon>
                 </v-btn>
 
                 <v-btn
@@ -139,8 +139,8 @@
         </v-container>
         <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false"
                               @confirm="addToAlbum"></p-photo-album-dialog>
-        <p-photo-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false"
-                               @confirm="batchDeletePhotos"></p-photo-delete-dialog>
+        <p-photo-archive-dialog :show="dialog.archive" @cancel="dialog.archive = false"
+                               @confirm="batchArchivePhotos"></p-photo-archive-dialog>
         <p-photo-edit-dialog :show="dialog.edit" @cancel="dialog.edit = false"
                              @confirm="batchEditPhotos"></p-photo-edit-dialog>
     </div>
@@ -161,7 +161,7 @@
             return {
                 expanded: false,
                 dialog: {
-                    delete: false,
+                    archive: false,
                     album: false,
                     edit: false,
                 },
@@ -170,7 +170,7 @@
                     story: this.$gettext("Story"),
                     addToAlbum: this.$gettext("Add to album"),
                     removeFromAlbum: this.$gettext("Remove"),
-                    delete: this.$gettext("Hide"),
+                    archive: this.$gettext("Archive"),
                     restore: this.$gettext("Restore"),
                     download: this.$gettext("Download"),
                 },
@@ -197,13 +197,13 @@
                 this.clearClipboard();
                 this.refresh();
             },
-            batchDeletePhotos() {
-                this.dialog.delete = false;
+            batchArchivePhotos() {
+                this.dialog.archive = false;
 
-                Api.post("batch/photos/delete", {"photos": this.selection}).then(() => this.onDeleted());
+                Api.post("batch/photos/archive", {"photos": this.selection}).then(() => this.onArchived());
             },
-            onDeleted() {
-                Notify.success(this.$gettext("Photos hidden"));
+            onArchived() {
+                Notify.success(this.$gettext("Photos archived"));
                 this.clearClipboard();
                 this.refresh();
             },

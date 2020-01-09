@@ -52,11 +52,11 @@ export default [
         props: {staticFilter: {favorites: true}},
     },
     {
-        name: "hidden",
-        path: "/hidden",
+        name: "archive",
+        path: "/archive",
         component: Photos,
-        meta: {title: "Hidden"},
-        props: {staticFilter: {hidden: true}},
+        meta: {title: "Archive"},
+        props: {staticFilter: {archived: true}},
     },
     {
         name: "places",
