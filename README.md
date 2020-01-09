@@ -127,14 +127,16 @@ as a Twitter user suggested. We just state the fact that even a non-commercial a
 for production, which is perfectly fine.
 On the other hand, it also doesn't mean we have to provide this service for free to our users. 
 
-We understand money is a very sensitive topic most of our users don't engage with and even try to avoid.
+We understand money is a very sensitive topic most of our users don't engage with.
 For this reason, we'll exclude this topic from our social media communication from now on.
 
 ## Public and corporate sponsorship ##
 
 We spent weeks asking organizations like [The Prototype Fund](https://prototypefund.de/en/) for help 
-and also tried to cooperate with companies like Mapbox and Cewe. We have been ignored and even given
-the advice that what we do "already exists in America".
+and also tried to cooperate with companies like Mapbox and Cewe. Some conversations were good without leading
+to a sponsorship yet. Others have given us the advice that what we do "already exists in America".
+You would think it's easier to get a few dollars with [our background](http://docs.photoprism.org/en/latest/team/) 
+and a [working demo](https://demo.photoprism.org/).
 
 If any of those organizations changes their mind, they are welcome to [reach out to us](mailto:hello@photoprism.org).
 
