@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GET /api/v1/photo/:uuid
+// GET /api/v1/photos/:uuid
 //
 // Parameters:
 //   uuid: string PhotoUUID as returned by the API
