@@ -27,7 +27,6 @@ type Location struct {
 	ID          string
 	LocName     string
 	LocCategory string
-	LocSuburb   string
 	LocLabel    string
 	LocCity     string
 	LocState    string
@@ -41,7 +40,6 @@ type LocationSource interface {
 	Category() string
 	Name() string
 	City() string
-	Suburb() string
 	State() string
 	Source() string
 }
@@ -54,7 +52,7 @@ func NewLocation(id string) *Location {
 	return result
 }
 
-func (l *Location) Query(api string) error {
+func (l *Location) QueryApi(api string) error {
 	switch api {
 	case "osm":
 		return l.QueryOSM()
@@ -75,7 +73,6 @@ func (l *Location) QueryPlaces() error {
 	l.LocSource = s.Source()
 	l.LocName = s.Name()
 	l.LocCity = s.City()
-	l.LocSuburb = s.Suburb()
 	l.LocState = s.State()
 	l.LocCountry = s.CountryCode()
 	l.LocCategory = s.Category()
@@ -106,7 +103,6 @@ func (l *Location) Assign(s LocationSource) error {
 
 	l.LocName = s.Name()
 	l.LocCity = s.City()
-	l.LocSuburb = s.Suburb()
 	l.LocState = s.State()
 	l.LocCountry = s.CountryCode()
 	l.LocCategory = s.Category()
@@ -150,10 +146,6 @@ func (l Location) Name() string {
 
 func (l Location) Category() string {
 	return l.LocCategory
-}
-
-func (l Location) Suburb() string {
-	return l.LocSuburb
 }
 
 func (l Location) Label() string {

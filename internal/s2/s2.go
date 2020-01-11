@@ -6,7 +6,7 @@ import (
 )
 
 var log = event.Log
-var Level = 18
+var Level = 21
 
 func Token(lat, lng float64) string {
 	return TokenLevel(lat, lng, Level)

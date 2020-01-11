@@ -1,3 +1,5 @@
+// +build osm
+
 package osm
 
 import (

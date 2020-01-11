@@ -17,7 +17,6 @@ type Location struct {
 	LocLng      float64 `json:"lng"`
 	LocName     string  `json:"name"`
 	LocCategory string  `json:"category"`
-	LocSuburb   string  `json:"suburb"`
 	Place       Place   `json:"place"`
 	Cached      bool    `json:"-"`
 }
@@ -94,10 +93,6 @@ func (l Location) State() (result string) {
 
 func (l Location) City() (result string) {
 	return l.Place.LocCity
-}
-
-func (l Location) Suburb() (result string) {
-	return l.LocSuburb
 }
 
 func (l Location) CountryCode() (result string) {

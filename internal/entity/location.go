@@ -21,7 +21,6 @@ type Location struct {
 	Place       *Place
 	LocName     string `gorm:"type:varchar(100);"`
 	LocCategory string `gorm:"type:varchar(50);"`
-	LocSuburb   string `gorm:"type:varchar(100);"`
 	LocSource   string `gorm:"type:varbinary(16);"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
@@ -58,7 +57,7 @@ func (m *Location) Find(db *gorm.DB, api string) error {
 		ID: m.ID,
 	}
 
-	if err := l.Query(api); err != nil {
+	if err := l.QueryApi(api); err != nil {
 		return err
 	}
 
@@ -74,7 +73,6 @@ func (m *Location) Find(db *gorm.DB, api string) error {
 
 	m.LocName = l.LocName
 	m.LocCategory = l.LocCategory
-	m.LocSuburb = l.LocSuburb
 	m.LocSource = l.LocSource
 
 	if err := db.Create(m).Error; err != nil {
@@ -88,7 +86,6 @@ func (m *Location) Find(db *gorm.DB, api string) error {
 func (m *Location) Keywords() []string {
 	result := []string{
 		strings.ToLower(m.City()),
-		strings.ToLower(m.Suburb()),
 		strings.ToLower(m.State()),
 		strings.ToLower(m.CountryName()),
 		strings.ToLower(m.Category()),
@@ -119,14 +116,6 @@ func (m *Location) Category() string {
 
 func (m *Location) NoCategory() bool {
 	return m.LocCategory == ""
-}
-
-func (m *Location) Suburb() string {
-	return m.LocSuburb
-}
-
-func (m *Location) NoSuburb() bool {
-	return m.LocSuburb == ""
 }
 
 func (m *Location) Label() string {

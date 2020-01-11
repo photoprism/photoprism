@@ -20,7 +20,7 @@ func TestFindLocation(t *testing.T) {
 		}
 
 		assert.False(t, l.Cached)
-		assert.Equal(t, "U Berliner Rathaus", l.Name())
+		assert.Equal(t, "Alt-Berlin", l.Name())
 		assert.Equal(t, "Berlin", l.City())
 		assert.Equal(t, "de", l.CountryCode())
 	})
