@@ -351,10 +351,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"ball": {
-		Label:      "sports",
-		Threshold:  0.000000,
-		Priority:   -1,
-		Categories: []string{"round"},
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"balloon": {
 		Label:      "",
@@ -453,10 +453,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"baseball": {
-		Label:      "sports",
-		Threshold:  0.000000,
-		Priority:   -1,
-		Categories: []string{"round"},
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"basenji dog": {
 		Label:      "dog",
@@ -471,10 +471,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"basketball": {
-		Label:      "sports",
-		Threshold:  0.000000,
-		Priority:   -1,
-		Categories: []string{"round"},
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"basset dog": {
 		Label:      "dog",
@@ -574,19 +574,19 @@ var rules = LabelRules{
 	},
 	"beer": {
 		Label:      "beer",
-		Threshold:  0.250000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"beverage", "drinks"},
 	},
 	"beer bottle": {
 		Label:      "beer",
-		Threshold:  0.250000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"beverage", "drinks"},
 	},
 	"beer glass": {
 		Label:      "beer",
-		Threshold:  0.250000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"beverage", "drinks"},
 	},
@@ -1516,7 +1516,7 @@ var rules = LabelRules{
 	},
 	"cooking": {
 		Label:      "cooking",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -2236,7 +2236,7 @@ var rules = LabelRules{
 	},
 	"frying pan": {
 		Label:      "cooking",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -2361,10 +2361,10 @@ var rules = LabelRules{
 		Categories: []string{"water", "animal"},
 	},
 	"golf ball": {
-		Label:      "sports",
-		Threshold:  0.000000,
-		Priority:   -1,
-		Categories: []string{"round"},
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"golfcart": {
 		Label:      "outdoor",
@@ -3148,7 +3148,7 @@ var rules = LabelRules{
 	},
 	"ladle": {
 		Label:      "cooking",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -3994,7 +3994,7 @@ var rules = LabelRules{
 	},
 	"pan": {
 		Label:      "cooking",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -4209,10 +4209,10 @@ var rules = LabelRules{
 		Categories: []string{"fruit"},
 	},
 	"ping-pong ball": {
-		Label:      "sports",
-		Threshold:  0.000000,
-		Priority:   -1,
-		Categories: []string{"round"},
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"pinwheel": {
 		Label:      "",
@@ -4707,10 +4707,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"rugby ball": {
-		Label:      "sports",
-		Threshold:  0.000000,
-		Priority:   -1,
-		Categories: []string{"round"},
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"rule": {
 		Label:      "",
@@ -5097,10 +5097,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"soccer ball": {
-		Label:      "sports",
-		Threshold:  0.000000,
-		Priority:   -1,
-		Categories: []string{"round"},
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"sock": {
 		Label:      "portrait",
@@ -5529,10 +5529,10 @@ var rules = LabelRules{
 		Categories: []string{"water", "animal"},
 	},
 	"tennis ball": {
-		Label:      "sports",
-		Threshold:  0.000000,
-		Priority:   -1,
-		Categories: []string{"round"},
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"terrapin": {
 		Label:      "turtle",
@@ -5919,10 +5919,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"volleyball": {
-		Label:      "sports",
-		Threshold:  0.000000,
-		Priority:   -1,
-		Categories: []string{"round"},
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"vulture bird": {
 		Label:      "bird",

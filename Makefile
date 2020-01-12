@@ -21,7 +21,7 @@ test: test-js test-go
 acceptance-all: start acceptance acceptance-firefox stop
 test-all: test acceptance-all
 fmt: fmt-js fmt-go
-upgrade: upgrade-js upgrade-go
+upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-share clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets
 start:
@@ -55,6 +55,10 @@ dep-js:
 	(cd frontend &&	npm install --silent)
 dep-go:
 	go build -v ./...
+dep-upgrade:
+	go get -u -t ./...
+dep-upgrade-js:
+	(cd frontend &&	npm --depth 3 update)
 dep-tensorflow:
 	scripts/download-nasnet.sh
 	scripts/download-nsfw.sh
@@ -135,8 +139,3 @@ fmt-go:
 	go fmt ./pkg/... ./internal/... ./cmd/...
 tidy:
 	go mod tidy
-upgrade-js:
-	(cd frontend &&	npm --depth 2 update)
-upgrade-go:
-	go mod tidy
-	go get -u

@@ -1880,7 +1880,7 @@ beacon:
 
 beer:
   label: beer
-  threshold: 0.25
+  threshold: 0.4
   categories:
     - beverage
     - drinks
@@ -2352,7 +2352,7 @@ jeep:
 
 cooking:
   label: cooking
-  threshold: 0.2
+  threshold: 0.4
 
 pan:
   see: cooking
