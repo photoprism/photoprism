@@ -11,6 +11,6 @@ import (
 func TestTime(t *testing.T) {
 	start := time.Now()
 	time.Sleep(1 * time.Millisecond)
-	Time(start, fmt.Sprintf("%s", "Successful test"))
-	assert.Contains(t, logBuffer.String(), "Successful test [")
+	result := Time(start, fmt.Sprintf("%s", "Successful test"))
+	assert.Contains(t, result, "Successful test [")
 }

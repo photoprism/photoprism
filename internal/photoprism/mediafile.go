@@ -14,7 +14,7 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/djherbis/times"
-	"github.com/photoprism/photoprism/internal/capture"
+	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/meta"
@@ -715,7 +715,7 @@ func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err
 }
 
 func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err error) {
-	defer capture.Time(time.Now(), fmt.Sprintf("thumbs: created for \"%s\"", m.Filename()))
+	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("thumbs: created for \"%s\"", m.Filename())))
 
 	hash := m.Hash()
 

@@ -3,7 +3,7 @@ package commands
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/capture"
+	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
 )
