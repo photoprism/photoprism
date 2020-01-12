@@ -7,6 +7,7 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/rnd"
 )
 
 // Labels for photo, album and location categorization
@@ -27,7 +28,7 @@ type Label struct {
 }
 
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
-	if err := scope.SetColumn("LabelUUID", ID('l')); err != nil {
+	if err := scope.SetColumn("LabelUUID", rnd.PPID('l')); err != nil {
 		log.Errorf("label: %s", err)
 		return err
 	}

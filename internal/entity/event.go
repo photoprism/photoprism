@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/rnd"
 )
 
 // Events
@@ -29,5 +30,5 @@ func (Event) TableName() string {
 }
 
 func (e *Event) BeforeCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("EventUUID", ID('e'))
+	return scope.SetColumn("EventUUID", rnd.PPID('e'))
 }

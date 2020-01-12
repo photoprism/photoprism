@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/rnd"
 	"github.com/photoprism/photoprism/internal/txt"
 )
 
@@ -59,7 +60,7 @@ type Photo struct {
 }
 
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
-	if err := scope.SetColumn("PhotoUUID", ID('p')); err != nil {
+	if err := scope.SetColumn("PhotoUUID", rnd.PPID('p')); err != nil {
 		return err
 	}
 

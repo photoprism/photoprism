@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/rnd"
 )
 
 // Shared photos and/or albums
@@ -26,7 +27,7 @@ func (Share) TableName() string {
 }
 
 func (s *Share) BeforeCreate(scope *gorm.Scope) error {
-	if err := scope.SetColumn("ShareUUID", ID('s')); err != nil {
+	if err := scope.SetColumn("ShareUUID", rnd.PPID('s')); err != nil {
 		return err
 	}
 

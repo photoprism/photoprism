@@ -54,3 +54,18 @@ func BenchmarkRandomToken3(b *testing.B) {
 		Token(3)
 	}
 }
+
+
+func TestPPID(t *testing.T) {
+	for n := 0; n < 5; n++ {
+		uuid := PPID('x')
+		t.Logf("id: %s", uuid)
+		assert.Equal(t, len(uuid), 17)
+	}
+}
+
+func BenchmarkPPID(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		PPID('x')
+	}
+}

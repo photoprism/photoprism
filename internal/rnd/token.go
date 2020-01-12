@@ -36,8 +36,9 @@ func Password() string {
 	return Token(8)
 }
 
-func ID() string {
-	result := make([]byte, 0, 16)
+func PPID(prefix rune) string {
+	result := make([]byte, 0, 17)
+	result = append(result, byte(prefix))
 	result = append(result, strconv.FormatInt(time.Now().UTC().Unix(), 36)[0:6]...)
 	result = append(result, Token(10)...)
 
