@@ -3438,10 +3438,8 @@ croquet ball:
   see: ignore
 
 ball:
-  label: sports
-  priority: -1
-  categories:
-    - round
+  threshold: 1
+  priority: -2
 
 baseball:
   see: ball
