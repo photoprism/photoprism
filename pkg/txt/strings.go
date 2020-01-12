@@ -8,6 +8,7 @@ import (
 
 var ContainsNumberRegexp = regexp.MustCompile("\\d+")
 
+// ContainsNumber returns true if string contains a number.
 func ContainsNumber(s string) bool {
 	return ContainsNumberRegexp.MatchString(s)
 }
@@ -36,6 +37,7 @@ func isSeparator(r rune) bool {
 	return unicode.IsSpace(r)
 }
 
+// UcFirst returns the string with the first character converted to uppercase.
 func UcFirst(str string) string {
 	for i, v := range str {
 		return string(unicode.ToUpper(v)) + str[i+1:]
@@ -43,6 +45,7 @@ func UcFirst(str string) string {
 	return ""
 }
 
+// Title returns the string with all the first character of each word converted to uppercase.
 func Title(s string) string {
 	prev := ' '
 	return strings.Map(

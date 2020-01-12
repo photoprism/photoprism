@@ -1,4 +1,4 @@
-package file
+package fs
 
 import (
 	_ "image/gif" // Import for image.
@@ -42,11 +42,10 @@ const (
 )
 
 const (
-	// MimeTypeJpeg is jpeg image type
 	MimeTypeJpeg = "image/jpeg"
 )
 
-// Ext lists all the available and supported image file formats.
+// Ext contains the filename extensions of file formats known to PhotoPrism.
 var Ext = map[string]Type{
 	".bmp":  TypeBitmap,
 	".gif":  TypeGif,

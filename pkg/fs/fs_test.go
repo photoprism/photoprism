@@ -1,4 +1,4 @@
-package file
+package fs
 
 import (
 	"os"
@@ -9,8 +9,8 @@ import (
 )
 
 func TestExists(t *testing.T) {
-	assert.True(t, Exists("./testdata/test.jpg"))
-	assert.False(t, Exists("./foo.jpg"))
+	assert.True(t, FileExists("./testdata/test.jpg"))
+	assert.False(t, FileExists("./foo.jpg"))
 }
 
 func TestOverwrite(t *testing.T) {

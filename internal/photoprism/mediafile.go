@@ -16,7 +16,7 @@ import (
 	"github.com/djherbis/times"
 	"github.com/photoprism/photoprism/internal/capture"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
@@ -27,7 +27,7 @@ type MediaFile struct {
 	dateCreated    time.Time
 	timeZone       string
 	hash           string
-	fileType       file.Type
+	fileType       fs.Type
 	mimeType       string
 	perceptualHash string
 	width          int
@@ -39,13 +39,13 @@ type MediaFile struct {
 
 // NewMediaFile returns a new MediaFile.
 func NewMediaFile(filename string) (*MediaFile, error) {
-	if !file.Exists(filename) {
+	if !fs.FileExists(filename) {
 		return nil, fmt.Errorf("file does not exist: %s", filename)
 	}
 
 	instance := &MediaFile{
 		filename: filename,
-		fileType: file.TypeOther,
+		fileType: fs.TypeOther,
 	}
 
 	return instance, nil
@@ -241,7 +241,7 @@ func (m *MediaFile) CanonicalNameFromFileWithDirectory() string {
 // Hash return a sha1 hash of a MediaFile based on the filename.
 func (m *MediaFile) Hash() string {
 	if len(m.hash) == 0 {
-		m.hash = file.Hash(m.Filename())
+		m.hash = fs.Hash(m.Filename())
 	}
 
 	return m.hash
@@ -252,7 +252,7 @@ func (m *MediaFile) EditedFilename() string {
 	basename := filepath.Base(m.filename)
 
 	if strings.ToUpper(basename[:4]) == "IMG_" && strings.ToUpper(basename[:5]) != "IMG_E" {
-		if filename := filepath.Dir(m.filename) + string(os.PathSeparator) + basename[:4] + "E" + basename[4:]; file.Exists(filename) {
+		if filename := filepath.Dir(m.filename) + string(os.PathSeparator) + basename[:4] + "E" + basename[4:]; fs.FileExists(filename) {
 			return filename
 		}
 	}
@@ -393,7 +393,7 @@ func (m *MediaFile) MimeType() string {
 		return m.mimeType
 	}
 
-	m.mimeType = file.MimeType(m.Filename())
+	m.mimeType = fs.MimeType(m.Filename())
 
 	return m.mimeType
 }
@@ -409,7 +409,7 @@ func (m *MediaFile) openFile() (*os.File, error) {
 
 // Exists checks if a media file exists by filename.
 func (m *MediaFile) Exists() bool {
-	return file.Exists(m.Filename())
+	return fs.FileExists(m.Filename())
 }
 
 // Remove a media file.
@@ -488,17 +488,17 @@ func (m *MediaFile) IsJpeg() bool {
 		return false
 	}
 
-	return m.MimeType() == file.MimeTypeJpeg
+	return m.MimeType() == fs.MimeTypeJpeg
 }
 
 // Type returns the type of the media file.
-func (m *MediaFile) Type() file.Type {
-	return file.Ext[m.Extension()]
+func (m *MediaFile) Type() fs.Type {
+	return fs.Ext[m.Extension()]
 }
 
 // HasType returns true if this media file is of a given type.
-func (m *MediaFile) HasType(t file.Type) bool {
-	if t == file.TypeJpeg {
+func (m *MediaFile) HasType(t fs.Type) bool {
+	if t == fs.TypeJpeg {
 		return m.IsJpeg()
 	}
 
@@ -507,29 +507,29 @@ func (m *MediaFile) HasType(t file.Type) bool {
 
 // IsRaw returns true if this media file a RAW file.
 func (m *MediaFile) IsRaw() bool {
-	return m.HasType(file.TypeRaw)
+	return m.HasType(fs.TypeRaw)
 }
 
 // IsPng returns true if this media file a PNG file.
 func (m *MediaFile) IsPng() bool {
-	return m.HasType(file.TypePng)
+	return m.HasType(fs.TypePng)
 }
 
 // IsTiff returns true if this media file a TIFF file.
 func (m *MediaFile) IsTiff() bool {
-	return m.HasType(file.TypeTiff)
+	return m.HasType(fs.TypeTiff)
 }
 
 // IsImageOther returns true this media file a PNG, GIF, BMP or TIFF file.
 func (m *MediaFile) IsImageOther() bool {
 	switch m.Type() {
-	case file.TypeBitmap:
+	case fs.TypeBitmap:
 		return true
-	case file.TypeGif:
+	case fs.TypeGif:
 		return true
-	case file.TypePng:
+	case fs.TypePng:
 		return true
-	case file.TypeTiff:
+	case fs.TypeTiff:
 		return true
 	default:
 		return false
@@ -538,23 +538,23 @@ func (m *MediaFile) IsImageOther() bool {
 
 // IsHEIF returns true if this media file is a High Efficiency Image File Format file.
 func (m *MediaFile) IsHEIF() bool {
-	return m.HasType(file.TypeHEIF)
+	return m.HasType(fs.TypeHEIF)
 }
 
 // IsSidecar returns true if this media file is a sidecar file (containing metadata).
 func (m *MediaFile) IsSidecar() bool {
 	switch m.Type() {
-	case file.TypeXMP:
+	case fs.TypeXMP:
 		return true
-	case file.TypeAAE:
+	case fs.TypeAAE:
 		return true
-	case file.TypeXML:
+	case fs.TypeXML:
 		return true
-	case file.TypeYaml:
+	case fs.TypeYaml:
 		return true
-	case file.TypeText:
+	case fs.TypeText:
 		return true
-	case file.TypeMarkdown:
+	case fs.TypeMarkdown:
 		return true
 	default:
 		return false
@@ -564,7 +564,7 @@ func (m *MediaFile) IsSidecar() bool {
 // IsVideo returns true if this media file is a video file.
 func (m *MediaFile) IsVideo() bool {
 	switch m.Type() {
-	case file.TypeMovie:
+	case fs.TypeMovie:
 		return true
 	}
 
@@ -582,9 +582,9 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 		return m, nil
 	}
 
-	jpegFilename := fmt.Sprintf("%s.%s", m.DirectoryBasename(), file.TypeJpeg)
+	jpegFilename := fmt.Sprintf("%s.%s", m.DirectoryBasename(), fs.TypeJpeg)
 
-	if !file.Exists(jpegFilename) {
+	if !fs.FileExists(jpegFilename) {
 		return nil, fmt.Errorf("jpeg file does not exist: %s", jpegFilename)
 	}
 
@@ -742,7 +742,7 @@ func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err e
 
 			return err
 		} else {
-			if !force && file.Exists(fileName) {
+			if !force && fs.FileExists(fileName) {
 				continue
 			}
 

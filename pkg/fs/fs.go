@@ -1,11 +1,11 @@
 /*
-This package encapsulates file related constants and functions.
+Package fs provides filesystem related constants and functions.
 
 Additional information can be found in our Developer Guide:
 
 https://github.com/photoprism/photoprism/wiki
 */
-package file
+package fs
 
 import (
 	"archive/zip"
@@ -16,14 +16,10 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
-
-	"github.com/photoprism/photoprism/internal/event"
 )
 
-var log = event.Log
-
-// Returns true if file exists
-func Exists(filename string) bool {
+// FileExists returns true if file exists (false for directories).
+func FileExists(filename string) bool {
 	info, err := os.Stat(filename)
 
 	return err == nil && !info.IsDir()
@@ -40,7 +36,7 @@ func Overwrite(fileName string, data []byte) bool {
 	return err == nil
 }
 
-// Returns full path; ~ replaced with actual home directory
+// Returns full path of a file, "~" is replaced with home directory
 func ExpandFilename(filename string) string {
 	if filename == "" {
 		return ""
@@ -104,7 +100,7 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 	return fileName, nil
 }
 
-// Download a file from a URL
+// Download downloads a file from a URL.
 func Download(filepath string, url string) error {
 	os.MkdirAll("/tmp/photoprism", os.ModePerm)
 
@@ -136,6 +132,7 @@ func Download(filepath string, url string) error {
 	return nil
 }
 
+// IsEmpty returns true if a directory is empty.
 func IsEmpty(path string) bool {
 	f, err := os.Open(path)
 

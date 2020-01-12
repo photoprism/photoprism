@@ -1,15 +1,15 @@
-package file
+package fs
 
 import (
 	"net/http"
 	"os"
 )
 
+// MimeType returns the mime type of a file, empty string if unknown.
 func MimeType(filename string) string {
 	handle, err := os.Open(filename)
 
 	if err != nil {
-		log.Error(err.Error())
 		return ""
 	}
 
@@ -21,7 +21,6 @@ func MimeType(filename string) string {
 	_, err = handle.Read(buffer)
 
 	if err != nil {
-		log.Errorf("could not read file to determine mime type: %s", filename)
 		return ""
 	}
 

@@ -6,7 +6,7 @@ import (
 	"math"
 
 	"github.com/lucasb-eyer/go-colorful"
-	"github.com/photoprism/photoprism/internal/colors"
+	"github.com/photoprism/photoprism/pkg/colors"
 )
 
 // Colors returns the ColorPerception of an image (only JPEG supported).

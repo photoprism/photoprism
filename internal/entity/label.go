@@ -7,7 +7,7 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/rnd"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Labels for photo, album and location categorization

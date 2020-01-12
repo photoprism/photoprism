@@ -9,20 +9,20 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/disintegration/imaging"
 )
 
-func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format file.Type) {
+func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format fs.Type) {
 	method = ResampleFit
 	filter = imaging.Lanczos
-	format = file.TypeJpeg
+	format = fs.TypeJpeg
 
 	for _, option := range opts {
 		switch option {
 		case ResamplePng:
-			format = file.TypePng
+			format = fs.TypePng
 		case ResampleNearestNeighbor:
 			filter = imaging.NearestNeighbor
 		case ResampleLanczos:
@@ -116,7 +116,7 @@ func FromFile(imageFilename string, hash string, thumbPath string, width, height
 		return "", err
 	}
 
-	if file.Exists(fileName) {
+	if fs.FileExists(fileName) {
 		return fileName, nil
 	}
 
@@ -147,7 +147,7 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 
 	var saveOption imaging.EncodeOption
 
-	if filepath.Ext(fileName) == "."+string(file.TypePng) {
+	if filepath.Ext(fileName) == "."+string(fs.TypePng) {
 		saveOption = imaging.PNGCompressionLevel(png.DefaultCompression)
 	} else if width <= 150 && height <= 150 {
 		saveOption = imaging.JPEGQuality(JpegQualitySmall)

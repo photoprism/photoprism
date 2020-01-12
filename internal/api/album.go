@@ -12,16 +12,16 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/rnd"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/internal/thumb"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/txt"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GET /api/v1/albums
@@ -368,7 +368,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 			fileName := path.Join(conf.OriginalsPath(), f.FileName)
 			fileAlias := f.DownloadFileName()
 
-			if file.Exists(fileName) {
+			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
 					log.Error(err)
 					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip file")})
@@ -387,7 +387,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		zipWriter.Close()
 		newZipFile.Close()
 
-		if !file.Exists(zipFileName) {
+		if !fs.FileExists(zipFileName) {
 			log.Errorf("could not find zip file: %s", zipFileName)
 			c.Data(404, "image/svg+xml", photoIconSvg)
 			return
@@ -433,7 +433,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
-		if !file.Exists(fileName) {
+		if !fs.FileExists(fileName) {
 			log.Errorf("could not find original for thumbnail: %s", fileName)
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 

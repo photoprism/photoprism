@@ -8,8 +8,8 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/s2"
-	"github.com/photoprism/photoprism/internal/txt"
+	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 var locationMutex = sync.Mutex{}

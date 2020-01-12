@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/rnd"
-	"github.com/photoprism/photoprism/internal/txt"
+	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // A photo can have multiple images and sidecar files

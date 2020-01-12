@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	gc "github.com/patrickmn/go-cache"
-	"github.com/photoprism/photoprism/internal/s2"
-	"github.com/photoprism/photoprism/internal/txt"
+	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Location

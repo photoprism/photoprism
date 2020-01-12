@@ -8,7 +8,7 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/urfave/cli"
 	"gopkg.in/yaml.v2"
 )
@@ -88,7 +88,7 @@ func NewParams(ctx *cli.Context) *Params {
 	c.Name = ctx.App.Name
 	c.Copyright = ctx.App.Copyright
 	c.Version = ctx.App.Version
-	c.ConfigFile = file.ExpandFilename(ctx.GlobalString("config-file"))
+	c.ConfigFile = fs.ExpandFilename(ctx.GlobalString("config-file"))
 
 	if err := c.SetValuesFromFile(c.ConfigFile); err != nil {
 		log.Debug(err)
@@ -104,21 +104,21 @@ func NewParams(ctx *cli.Context) *Params {
 }
 
 func (c *Params) expandFilenames() {
-	c.ConfigPath = file.ExpandFilename(c.ConfigPath)
-	c.ResourcesPath = file.ExpandFilename(c.ResourcesPath)
-	c.AssetsPath = file.ExpandFilename(c.AssetsPath)
-	c.CachePath = file.ExpandFilename(c.CachePath)
-	c.OriginalsPath = file.ExpandFilename(c.OriginalsPath)
-	c.ImportPath = file.ExpandFilename(c.ImportPath)
-	c.ExportPath = file.ExpandFilename(c.ExportPath)
-	c.SqlServerPath = file.ExpandFilename(c.SqlServerPath)
-	c.PIDFilename = file.ExpandFilename(c.PIDFilename)
-	c.LogFilename = file.ExpandFilename(c.LogFilename)
+	c.ConfigPath = fs.ExpandFilename(c.ConfigPath)
+	c.ResourcesPath = fs.ExpandFilename(c.ResourcesPath)
+	c.AssetsPath = fs.ExpandFilename(c.AssetsPath)
+	c.CachePath = fs.ExpandFilename(c.CachePath)
+	c.OriginalsPath = fs.ExpandFilename(c.OriginalsPath)
+	c.ImportPath = fs.ExpandFilename(c.ImportPath)
+	c.ExportPath = fs.ExpandFilename(c.ExportPath)
+	c.SqlServerPath = fs.ExpandFilename(c.SqlServerPath)
+	c.PIDFilename = fs.ExpandFilename(c.PIDFilename)
+	c.LogFilename = fs.ExpandFilename(c.LogFilename)
 }
 
 // SetValuesFromFile uses a yaml config file to initiate the configuration entity.
 func (c *Params) SetValuesFromFile(fileName string) error {
-	if !file.Exists(fileName) {
+	if !fs.FileExists(fileName) {
 		return errors.New(fmt.Sprintf("config file not found: \"%s\"", fileName))
 	}
 

@@ -3,22 +3,21 @@ package rnd
 import (
 	"crypto/rand"
 	"encoding/binary"
+	"fmt"
 	"strconv"
-	"time"
-
-	uuid "github.com/satori/go.uuid"
 )
 
+// Token returns a random token with length of up to 10 characters.
 func Token(size uint) string {
 	if size > 10 || size < 1 {
-		log.Fatalf("size out of range: %d", size)
+		panic(fmt.Sprintf("size out of range: %d", size))
 	}
 
 	result := make([]byte, 0, 14)
 	b := make([]byte, 8)
 
 	if _, err := rand.Read(b); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	randomInt := binary.BigEndian.Uint64(b)
@@ -30,21 +29,4 @@ func Token(size uint) string {
 	}
 
 	return string(result[:size])
-}
-
-func Password() string {
-	return Token(8)
-}
-
-func PPID(prefix rune) string {
-	result := make([]byte, 0, 17)
-	result = append(result, byte(prefix))
-	result = append(result, strconv.FormatInt(time.Now().UTC().Unix(), 36)[0:6]...)
-	result = append(result, Token(10)...)
-
-	return string(result)
-}
-
-func UUID() string {
-	return uuid.NewV4().String()
 }

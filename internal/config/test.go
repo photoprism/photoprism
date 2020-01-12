@@ -10,7 +10,7 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -30,7 +30,7 @@ func testDataPath(assetsPath string) string {
 }
 
 func NewTestParams() *Params {
-	assetsPath := file.ExpandFilename("../../assets")
+	assetsPath := fs.ExpandFilename("../../assets")
 
 	testDataPath := testDataPath(assetsPath)
 
@@ -53,7 +53,7 @@ func NewTestParams() *Params {
 }
 
 func NewTestParamsError() *Params {
-	assetsPath := file.ExpandFilename("../..")
+	assetsPath := fs.ExpandFilename("../..")
 
 	testDataPath := testDataPath("../../assets")
 
@@ -145,8 +145,8 @@ func (c *Config) RemoveTestData(t *testing.T) {
 }
 
 func (c *Config) DownloadTestData(t *testing.T) {
-	if file.Exists(TestDataZip) {
-		hash := file.Hash(TestDataZip)
+	if fs.FileExists(TestDataZip) {
+		hash := fs.Hash(TestDataZip)
 
 		if hash != TestDataHash {
 			os.Remove(TestDataZip)
@@ -154,17 +154,17 @@ func (c *Config) DownloadTestData(t *testing.T) {
 		}
 	}
 
-	if !file.Exists(TestDataZip) {
+	if !fs.FileExists(TestDataZip) {
 		fmt.Printf("downloading latest test data zip file from %s\n", TestDataURL)
 
-		if err := file.Download(TestDataZip, TestDataURL); err != nil {
+		if err := fs.Download(TestDataZip, TestDataURL); err != nil {
 			fmt.Printf("Download failed: %s\n", err.Error())
 		}
 	}
 }
 
 func (c *Config) UnzipTestData(t *testing.T) {
-	if _, err := file.Unzip(TestDataZip, testDataPath(c.AssetsPath())); err != nil {
+	if _, err := fs.Unzip(TestDataZip, testDataPath(c.AssetsPath())); err != nil {
 		t.Logf("could not unzip test data: %s\n", err.Error())
 	}
 }

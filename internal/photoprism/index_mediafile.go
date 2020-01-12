@@ -13,7 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/meta"
-	"github.com/photoprism/photoprism/internal/txt"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 const (

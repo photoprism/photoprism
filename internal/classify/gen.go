@@ -11,7 +11,7 @@ import (
 	"text/template"
 	"unicode"
 
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"gopkg.in/yaml.v2"
 )
 
@@ -30,7 +30,7 @@ func main() {
 
 	fileName := "rules.yml"
 
-	if !file.Exists(fileName) {
+	if !fs.FileExists(fileName) {
 		log.Panicf("tensorflow: label rules file not found in \"%s\"", filepath.Base(fileName))
 	}
 

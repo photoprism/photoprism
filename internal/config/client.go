@@ -4,9 +4,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/colors"
+	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // HTTP client / Web UI config values
@@ -118,8 +118,8 @@ func (c *Config) ClientConfig() ClientConfig {
 		categories[i].Title = strings.Title(l.LabelName)
 	}
 
-	jsHash := file.Hash(c.HttpStaticBuildPath() + "/app.js")
-	cssHash := file.Hash(c.HttpStaticBuildPath() + "/app.css")
+	jsHash := fs.Hash(c.HttpStaticBuildPath() + "/app.js")
+	cssHash := fs.Hash(c.HttpStaticBuildPath() + "/app.css")
 
 	// Feature Flags
 	var flags []string

@@ -12,11 +12,11 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
-	"github.com/photoprism/photoprism/internal/txt"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GET /api/v1/labels
@@ -153,7 +153,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
-		if !file.Exists(fileName) {
+		if !fs.FileExists(fileName) {
 			log.Errorf("could not find original for thumbnail: %s", fileName)
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 

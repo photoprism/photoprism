@@ -12,7 +12,7 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -33,7 +33,7 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 
 		previewFilename := fmt.Sprintf("%s/%s.jpg", thumbPath, t[6:8])
 
-		if file.Exists(previewFilename) {
+		if fs.FileExists(previewFilename) {
 			c.File(previewFilename)
 			return
 		}
@@ -65,7 +65,7 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 		for _, f := range p {
 			fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
-			if !file.Exists(fileName) {
+			if !fs.FileExists(fileName) {
 				log.Errorf("could not find original for thumbnail: %s", fileName)
 				c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 

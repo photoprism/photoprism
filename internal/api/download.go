@@ -5,7 +5,7 @@ import (
 	"path"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/query"
 
 	"github.com/gin-gonic/gin"
@@ -33,7 +33,7 @@ func GetDownload(router *gin.RouterGroup, conf *config.Config) {
 
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
-		if !file.Exists(fileName) {
+		if !fs.FileExists(fileName) {
 			log.Errorf("could not find original: %s", fileHash)
 			c.Data(404, "image/svg+xml", photoIconSvg)
 

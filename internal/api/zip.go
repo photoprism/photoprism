@@ -11,11 +11,11 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/rnd"
-	"github.com/photoprism/photoprism/internal/txt"
+	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -74,7 +74,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 			fileName := path.Join(conf.OriginalsPath(), f.FileName)
 			fileAlias := f.DownloadFileName()
 
-			if file.Exists(fileName) {
+			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
 					log.Error(err)
 					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip file")})
@@ -105,7 +105,7 @@ func DownloadZip(router *gin.RouterGroup, conf *config.Config) {
 
 		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", zipBaseName))
 
-		if !file.Exists(zipFileName) {
+		if !fs.FileExists(zipFileName) {
 			log.Errorf("could not find zip file: %s", zipFileName)
 			c.Data(404, "image/svg+xml", photoIconSvg)
 			return

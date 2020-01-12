@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
@@ -96,7 +96,7 @@ func startAction(ctx *cli.Context) error {
 		}
 
 		if child != nil {
-			if !file.Overwrite(conf.PIDFilename(), []byte(strconv.Itoa(child.Pid))) {
+			if !fs.Overwrite(conf.PIDFilename(), []byte(strconv.Itoa(child.Pid))) {
 				log.Fatalf("failed writing process id to \"%s\"", conf.PIDFilename())
 			}
 

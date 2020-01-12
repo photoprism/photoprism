@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,7 +30,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 	jpegFilename := conf.ImportPath() + "/fern_green.jpg"
 
-	assert.Truef(t, file.Exists(jpegFilename), "file does not exist: %s", jpegFilename)
+	assert.Truef(t, fs.FileExists(jpegFilename), "file does not exist: %s", jpegFilename)
 
 	t.Logf("Testing RAW to JPEG convert with %s", jpegFilename)
 
@@ -64,7 +64,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 	imageRaw, _ := convert.ToJpeg(rawMediaFile)
 
-	assert.True(t, file.Exists(conf.ImportPath()+"/raw/IMG_2567.jpg"), "Jpeg file was not found - is Darktable installed?")
+	assert.True(t, fs.FileExists(conf.ImportPath()+"/raw/IMG_2567.jpg"), "Jpeg file was not found - is Darktable installed?")
 
 	assert.NotEqual(t, rawFilename, imageRaw.filename)
 
@@ -88,7 +88,7 @@ func TestConvert_Start(t *testing.T) {
 
 	jpegFilename := conf.ImportPath() + "/raw/canon_eos_6d.jpg"
 
-	assert.True(t, file.Exists(jpegFilename), "Jpeg file was not found - is Darktable installed?")
+	assert.True(t, fs.FileExists(jpegFilename), "Jpeg file was not found - is Darktable installed?")
 
 	image, err := NewMediaFile(jpegFilename)
 
@@ -104,15 +104,15 @@ func TestConvert_Start(t *testing.T) {
 
 	existingJpegFilename := conf.ImportPath() + "/raw/IMG_2567.jpg"
 
-	oldHash := file.Hash(existingJpegFilename)
+	oldHash := fs.Hash(existingJpegFilename)
 
 	os.Remove(existingJpegFilename)
 
 	convert.Start(conf.ImportPath())
 
-	newHash := file.Hash(existingJpegFilename)
+	newHash := fs.Hash(existingJpegFilename)
 
-	assert.True(t, file.Exists(existingJpegFilename), "Jpeg file was not found - is Darktable installed?")
+	assert.True(t, fs.FileExists(existingJpegFilename), "Jpeg file was not found - is Darktable installed?")
 
 	assert.NotEqual(t, oldHash, newHash, "Fingerprint of old and new JPEG file must not be the same")
 }

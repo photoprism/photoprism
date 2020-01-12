@@ -87,3 +87,11 @@ func TestTokenLevel(t *testing.T) {
 		assert.Equal(t, expected, token)
 	})
 }
+
+func TestLatLng(t *testing.T) {
+	t.Run("Wildgehege", func(t *testing.T) {
+		lat, lng := LatLng("4799e370ca54c8b9")
+		assert.Equal(t, 48.56344835921243, lat)
+		assert.Equal(t, 8.996878323369781, lng)
+	})
+}

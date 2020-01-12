@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
@@ -40,7 +40,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
-		if !file.Exists(fileName) {
+		if !fs.FileExists(fileName) {
 			log.Errorf("could not find original for thumbnail: %s", fileName)
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 

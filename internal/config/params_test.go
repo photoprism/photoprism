@@ -3,7 +3,7 @@ package config
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/file"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +17,7 @@ func TestNewParams(t *testing.T) {
 
 	assert.IsType(t, new(Params), c)
 
-	assert.Equal(t, file.ExpandFilename("../../assets"), c.AssetsPath)
+	assert.Equal(t, fs.ExpandFilename("../../assets"), c.AssetsPath)
 	assert.False(t, c.Debug)
 	assert.False(t, c.ReadOnly)
 }

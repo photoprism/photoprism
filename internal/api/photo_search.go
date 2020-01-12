@@ -6,7 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/txt"
+	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

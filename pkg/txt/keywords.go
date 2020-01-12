@@ -7,6 +7,7 @@ import (
 
 var KeywordsRegexp = regexp.MustCompile("[\\p{L}]{3,}")
 
+// Keywords extracts keywords for indexing and returns them as string slice.
 func Keywords(s string) (results []string) {
 	all := KeywordsRegexp.FindAllString(s, -1)
 

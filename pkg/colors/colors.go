@@ -1,5 +1,5 @@
 /*
-This package encapsulates color classification.
+Package colors provides types and functions for color classification.
 
 Additional information can be found in our Developer Guide:
 
@@ -15,6 +15,7 @@ import (
 	"github.com/lucasb-eyer/go-colorful"
 )
 
+// TODO: Requires documentation
 type ColorPerception struct {
 	Colors    Colors
 	MainColor Color

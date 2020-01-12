@@ -4,7 +4,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/photoprism/photoprism/internal/txt"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Label represents a MediaFile label (automatically created).

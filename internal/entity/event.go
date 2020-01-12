@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/rnd"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Events

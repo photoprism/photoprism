@@ -7,7 +7,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/rnd"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // An image or sidecar file that belongs to a photo

@@ -1,5 +1,6 @@
 package txt
 
+// Months contains all month names in English.
 var Months = [...]string{
 	"Unknown",
 	"January",
