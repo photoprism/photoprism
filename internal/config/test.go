@@ -37,7 +37,7 @@ func NewTestParams() *Params {
 	c := &Params{
 		Public:         true,
 		ReadOnly:       false,
-		HideNSFW:       false,
+		DetectNSFW:     true,
 		UploadNSFW:     false,
 		DarktableBin:   "/usr/bin/darktable-cli",
 		AssetsPath:     assetsPath,
@@ -125,6 +125,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("assets-path", config.AssetsPath, "doc")
 	globalSet.String("originals-path", config.OriginalsPath, "doc")
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
+	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
 
 	app := cli.NewApp()
 
@@ -134,6 +135,7 @@ func CliTestContext() *cli.Context {
 	c.Set("assets-path", config.AssetsPath)
 	c.Set("originals-path", config.OriginalsPath)
 	c.Set("darktable-cli", config.DarktableBin)
+	c.Set("detect-nsfw", "true")
 
 	return c
 }

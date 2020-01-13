@@ -136,9 +136,9 @@ func (c *Config) ReadOnly() bool {
 	return c.config.ReadOnly
 }
 
-// HideNSFW returns true if NSFW photos are hidden by default.
-func (c *Config) HideNSFW() bool {
-	return c.config.HideNSFW
+// DetectNSFW returns true if NSFW photos should be detected and flagged.
+func (c *Config) DetectNSFW() bool {
+	return c.config.DetectNSFW
 }
 
 // UploadNSFW returns true if NSFW photos can be uploaded.

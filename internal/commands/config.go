@@ -71,7 +71,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("exiftool-bin          %s\n", conf.ExifToolBin())
 	fmt.Printf("heifconvert-bin       %s\n", conf.HeifConvertBin())
 
-	fmt.Printf("hide-nsfw             %t\n", conf.HideNSFW())
+	fmt.Printf("detect-nsfw           %t\n", conf.DetectNSFW())
 	fmt.Printf("upload-nsfw           %t\n", conf.UploadNSFW())
 	fmt.Printf("geocoding-api         %s\n", conf.GeoCodingApi())
 	fmt.Printf("thumb-quality         %d\n", conf.ThumbQuality())

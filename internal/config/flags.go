@@ -210,9 +210,9 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_SQL_PASSWORD",
 	},
 	cli.BoolFlag{
-		Name:   "hide-nsfw",
-		Usage:  "hide photos that may be offensive",
-		EnvVar: "PHOTOPRISM_HIDE_NSFW",
+		Name:   "detect-nsfw",
+		Usage:  "flag photos that may be offensive",
+		EnvVar: "PHOTOPRISM_DETECT_NSFW",
 	},
 	cli.BoolFlag{
 		Name:   "upload-nsfw",

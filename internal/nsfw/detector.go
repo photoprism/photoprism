@@ -76,8 +76,6 @@ func (t *Detector) Labels(img []byte) (result Labels, err error) {
 		return result, errors.New("result is empty")
 	}
 
-	log.Infof("output: %+v", output[0].Value())
-
 	// Return best labels
 	result = t.getLabels(output[0].Value().([][]float32)[0])
 

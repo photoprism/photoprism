@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"fmt"
-	"math"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -33,7 +32,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 	var metaData meta.Data
 	var photoQuery, fileQuery *gorm.DB
 	var keywords []string
-	var isNSFW bool
 
 	labels := classify.Labels{}
 	fileBase := m.Basename()
@@ -90,9 +88,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 
 	if file.FilePrimary {
 		if !ind.conf.TensorFlowDisabled() && (fileChanged || o.UpdateKeywords || o.UpdateLabels || o.UpdateTitle) {
-			// Image classification labels
-			labels, isNSFW = ind.classifyImage(m)
-			photo.PhotoNSFW = isNSFW
+			// Image classification via TensorFlow
+			labels = ind.classifyImage(m)
+			photo.PhotoNSFW = ind.isNSFW(m)
 		}
 
 		if fileChanged || o.UpdateExif {
@@ -248,8 +246,34 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 	return indexResultAdded
 }
 
+// isNSFW returns true if media file might be offensive and detection is enabled.
+func (ind *Index) isNSFW(jpeg *MediaFile) bool {
+	if !ind.conf.DetectNSFW() {
+		return false
+	}
+
+	filename, err := jpeg.Thumbnail(ind.thumbnailsPath(), "fit_720")
+
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+
+	if nsfwLabels, err := ind.nsfwDetector.File(filename); err != nil {
+		log.Error(err)
+		return false
+	} else {
+		if nsfwLabels.NSFW() {
+			log.Warnf("index: \"%s\" might contain offensive content", jpeg.Filename())
+			return true
+		}
+	}
+
+	return false
+}
+
 // classifyImage returns all matching labels for a media file.
-func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels, isNSFW bool) {
+func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 	start := time.Now()
 
 	var thumbs []string
@@ -280,25 +304,6 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels, isNSF
 		labels = append(labels, imageLabels...)
 	}
 
-	if filename, err := jpeg.Thumbnail(ind.thumbnailsPath(), "fit_720"); err != nil {
-		log.Error(err)
-	} else {
-		if nsfwLabels, err := ind.nsfwDetector.File(filename); err != nil {
-			log.Error(err)
-		} else {
-			log.Infof("nsfw: %+v", nsfwLabels)
-
-			if nsfwLabels.NSFW() {
-				isNSFW = true
-			}
-
-			if nsfwLabels.Sexy > 0.85 {
-				uncertainty := 100 - int(math.Round(float64(nsfwLabels.Sexy*100)))
-				labels = append(labels, classify.Label{Name: "sexy", Source: "nsfw", Uncertainty: uncertainty, Priority: -1})
-			}
-		}
-	}
-
 	// Sort by priority and uncertainty
 	sort.Sort(labels)
 
@@ -314,15 +319,11 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels, isNSF
 		}
 	}
 
-	if isNSFW {
-		log.Info("index: image might contain offensive content")
-	}
-
 	elapsed := time.Since(start)
 
 	log.Debugf("index: image classification took %s", elapsed)
 
-	return results, isNSFW
+	return results
 }
 
 func (ind *Index) addLabels(photoId uint, labels classify.Labels) {
