@@ -59,8 +59,8 @@ github.com/disintegration/imaging v1.6.0 h1:nVPXRUUQ36Z7MNf0O77UzgnOb1mkMMor7lmJ
 github.com/disintegration/imaging v1.6.0/go.mod h1:xuIt+sRxDFrHS0drzXUlCJthkJ8k7lkkUojDSR247MQ=
 github.com/djherbis/times v1.1.0 h1:NFhBDODme0XNX+/5ETW9qL6v3Ty57psiXIQBrzzg44E=
 github.com/djherbis/times v1.1.0/go.mod h1:CGMZlo255K5r4Yw0b9RRfFQpM2y7uOmxg4jm9HsaVf8=
-github.com/dsoprea/go-exif v0.0.0-20190901173045-3ce78807c90f h1:vqfYiZ+xF0xJvl9SZ1kovmMgKjaGZIz/Hn8JDQdyd9A=
-github.com/dsoprea/go-exif v0.0.0-20190901173045-3ce78807c90f/go.mod h1:DmMpU91/Ax6BAwoRkjgRCr2rmgEgS4tsmatfV7M+U+c=
+github.com/dsoprea/go-exif/v2 v2.0.0-20200113231207-0bbb7a3584f7 h1:+koSu4BOaLu+dy50WEj+ltzEjMzK5evzPawKxgIQerw=
+github.com/dsoprea/go-exif/v2 v2.0.0-20200113231207-0bbb7a3584f7/go.mod h1:Lm2lMM2zx8p4a34ZemkaUV95AnMl4ZvLbCUbwOvLC2E=
 github.com/dsoprea/go-logging v0.0.0-20190409182557-13b4fff49234 h1:WPgjL7Z/Cn2a0kEVtwCqh8BqYjmY8RPGvor/jQZVmzk=
 github.com/dsoprea/go-logging v0.0.0-20190409182557-13b4fff49234/go.mod h1:Nm/x2ZUNRW6Fe5C3LxdY1PyZY5wmDv/s5dkPJ/VB3iA=
 github.com/dustin/go-humanize v0.0.0-20180421182945-02af3965c54e/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
