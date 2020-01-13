@@ -867,6 +867,7 @@ sea lion:
 
 dog:
   label: dog
+  threshold: 0.2
   priority: 5
   categories:
     - animal
@@ -1913,7 +1914,7 @@ birdhouse:
   see: shelter
 
 boathouse:
-  threshold: 0.2
+  threshold: 0.5
   categories:
     - architecture
     - water
@@ -2665,7 +2666,7 @@ piggy bank:
 
 bottle:
   label: bottle
-  threshold: 0.2
+  threshold: 0.3
 
 sunscreen:
   see: bottle
@@ -2801,14 +2802,14 @@ rubber eraser:
 
 shoe:
   label: shoe
-  threshold: 0.3
+  threshold: 0.4
 
 running shoe:
   see: shoe
 
 saltshaker:
-  categories:
-    - cooking
+  label: cooking
+  threshold: 0.7
 
 sandal:
   see: shoe
@@ -2818,6 +2819,7 @@ sax:
 
 school bus:
   label: bus
+  threshold: 0.2
   categories:
     - vehicle
     - public transport
@@ -2850,11 +2852,10 @@ shovel:
   see: tool
 
 ski:
-  threshold: 0.2
+  threshold: 0.33
   categories:
     - snow
     - sports
-    - outdoor
 
 sleeping bag:
   label: camping
@@ -3052,7 +3053,7 @@ wardrobe:
 
 warplane:
   label: aircraft
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - vehicle
 
@@ -3061,7 +3062,7 @@ washbasin:
 
 water bottle:
   label: bottle
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - beverage
 
@@ -3073,7 +3074,7 @@ water tower:
 
 wine bottle:
   label: bottle
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - beverage
     - drinks
@@ -3196,10 +3197,12 @@ head cabbage:
   see: vegetables
 
 broccoli:
-  see: vegetables
+  label: vegetables
+  threshold: 0.8
 
 cauliflower:
-  see: vegetables
+  label: vegetables
+  threshold: 0.8
 
 zucchini:
   see: vegetables
@@ -3609,8 +3612,7 @@ patio:
   threshold: 0.3
 
 scoreboard:
-  label: scenery
-  threshold: 0.3
+  see: ignore
 
 racket:
   label: outdoor
@@ -4027,3 +4029,7 @@ tick:
 
 carton:
   threshold: 0.5
+
+teddy:
+  label: toy
+  threshold: 0.2
