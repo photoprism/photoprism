@@ -156,6 +156,25 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 			photo.TakenAt = m.DateCreated()
 			photo.TakenAtLocal = photo.TakenAt
 		}
+	} else if m.IsXMP() {
+		// TODO: Proof-of-concept for indexing XMP sidecar files
+		if data, err := meta.XMP(m.Filename()); err == nil {
+			if data.Title != "" && !photo.PhotoTitleChanged {
+				photo.PhotoTitle = data.Title
+			}
+
+			if data.Copyright != "" {
+				photo.PhotoCopyright = data.Copyright
+			}
+
+			if data.Artist != "" {
+				photo.PhotoArtist = data.Artist
+			}
+
+			if data.Description != "" {
+				photo.PhotoDescription = data.Description
+			}
+		}
 	}
 
 	photo.PhotoYear = photo.TakenAt.Year()

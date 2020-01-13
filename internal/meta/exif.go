@@ -70,6 +70,10 @@ func Exif(filename string) (data Data, err error) {
 		return data, err
 	}
 
+	if value, ok := tags["Title"]; ok {
+		data.Artist = strings.Replace(value, "\"", "", -1)
+	}
+
 	if value, ok := tags["Artist"]; ok {
 		data.Artist = strings.Replace(value, "\"", "", -1)
 	}

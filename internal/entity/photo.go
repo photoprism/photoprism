@@ -21,6 +21,7 @@ type Photo struct {
 	PhotoDescription  string  `gorm:"type:text;"`
 	PhotoNotes        string  `gorm:"type:text;"`
 	PhotoArtist       string  `json:"PhotoArtist"`
+	PhotoCopyright    string  `json:"PhotoCopyright"`
 	PhotoFavorite     bool    `json:"PhotoFavorite"`
 	PhotoPrivate      bool    `json:"PhotoPrivate"`
 	PhotoNSFW         bool    `json:"PhotoNSFW"`

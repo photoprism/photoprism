@@ -541,6 +541,11 @@ func (m *MediaFile) IsHEIF() bool {
 	return m.HasType(fs.TypeHEIF)
 }
 
+// IsXMP returns true if this file is a XMP sidecar file.
+func (m *MediaFile) IsXMP() bool {
+	return m.Type() == fs.TypeXMP
+}
+
 // IsSidecar returns true if this media file is a sidecar file (containing metadata).
 func (m *MediaFile) IsSidecar() bool {
 	switch m.Type() {

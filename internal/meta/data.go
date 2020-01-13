@@ -2,9 +2,6 @@ package meta
 
 import (
 	"time"
-
-	model "trimmer.io/go-xmp/models/exif"
-	"trimmer.io/go-xmp/xmp"
 )
 
 // Data represents image meta data.
@@ -13,28 +10,25 @@ type Data struct {
 	TakenAt      time.Time
 	TakenAtLocal time.Time
 	TimeZone     string
+	Title        string
 	Artist       string
+	Description  string
 	Copyright    string
 	CameraMake   string
 	CameraModel  string
-	Description  string
 	LensMake     string
 	LensModel    string
 	Flash        bool
 	FocalLength  int
 	Exposure     string
-	Aperture     float64
-	FNumber      float64
-	Iso          int
-	Lat          float64
-	Lng          float64
-	Altitude     int
-	Width        int
-	Height       int
-	Orientation  int
-	All          map[string]string
-	xmpDoc       *xmp.Document
-	exifInfo     *model.ExifInfo
-	exifAux      *model.ExifAuxInfo
-	exifEx       *model.ExifEXInfo
+	Aperture    float64
+	FNumber     float64
+	Iso         int
+	Lat         float64
+	Lng         float64
+	Altitude    int
+	Width       int
+	Height      int
+	Orientation int
+	All         map[string]string
 }
