@@ -26,7 +26,7 @@ func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imag
 		case ResampleNearestNeighbor:
 			filter = imaging.NearestNeighbor
 		case ResampleDefault:
-			filter = Algorithm.Filter()
+			filter = Filter.Imaging()
 		case ResampleFillTopLeft:
 			method = ResampleFillTopLeft
 		case ResampleFillCenter:

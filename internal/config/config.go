@@ -58,7 +58,7 @@ func NewConfig(ctx *cli.Context) *Config {
 	thumb.JpegQuality = c.ThumbQuality()
 	thumb.PreRenderSize = c.ThumbSize()
 	thumb.MaxRenderSize = c.ThumbLimit()
-	thumb.Algorithm = c.ThumbAlgorithm()
+	thumb.Filter = c.ThumbFilter()
 
 	return c
 }
@@ -239,9 +239,9 @@ func (c *Config) ThumbLimit() int {
 	return c.config.ThumbLimit
 }
 
-// ThumbAlgorithm returns the thumbnail resample algorithm (blackman, lanczos, cubic or linear).
-func (c *Config) ThumbAlgorithm() thumb.ResampleAlgorithm {
-	switch strings.ToLower(c.config.ThumbAlgorithm) {
+// ThumbFilter returns the thumbnail resample filter (blackman, lanczos, cubic or linear).
+func (c *Config) ThumbFilter() thumb.ResampleFilter {
+	switch strings.ToLower(c.config.ThumbFilter) {
 	case "blackman":
 		return thumb.ResampleBlackman
 	case "lanczos":

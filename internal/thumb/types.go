@@ -7,19 +7,19 @@ var (
 	MaxRenderSize    = 3840
 	JpegQuality      = 95
 	JpegQualitySmall = 80
-	Algorithm        = ResampleLanczos
+	Filter           = ResampleLanczos
 )
 
 const (
-	ResampleBlackman ResampleAlgorithm = "blackman"
-	ResampleLanczos  ResampleAlgorithm = "lanczos"
-	ResampleCubic    ResampleAlgorithm = "cubic"
-	ResampleLinear   ResampleAlgorithm = "linear"
+	ResampleBlackman ResampleFilter = "blackman"
+	ResampleLanczos  ResampleFilter = "lanczos"
+	ResampleCubic    ResampleFilter = "cubic"
+	ResampleLinear   ResampleFilter = "linear"
 )
 
-type ResampleAlgorithm string
+type ResampleFilter string
 
-func (a ResampleAlgorithm) Filter() imaging.ResampleFilter {
+func (a ResampleFilter) Imaging() imaging.ResampleFilter {
 	switch a {
 	case ResampleBlackman:
 		return imaging.Blackman

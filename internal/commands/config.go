@@ -77,7 +77,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("thumb-quality         %d\n", conf.ThumbQuality())
 	fmt.Printf("thumb-size            %d\n", conf.ThumbSize())
 	fmt.Printf("thumb-limit           %d\n", conf.ThumbLimit())
-	fmt.Printf("thumb-algorithm       %s\n", conf.ThumbAlgorithm())
+	fmt.Printf("thumb-filter          %s\n", conf.ThumbFilter())
 
 	return nil
 }

@@ -249,9 +249,9 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_THUMB_LIMIT",
 	},
 	cli.StringFlag{
-		Name:   "thumb-algorithm, a",
-		Usage:  "resample algorithm (blackman, lanczos, cubic or linear)",
+		Name:   "thumb-filter, f",
+		Usage:  "resample filter (blackman, lanczos, cubic or linear)",
 		Value:  "cubic",
-		EnvVar: "PHOTOPRISM_THUMB_ALGORITHM",
+		EnvVar: "PHOTOPRISM_THUMB_FILTER",
 	},
 }
