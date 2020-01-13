@@ -82,12 +82,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.13.5
+ENV GOLANG_VERSION 1.13.6
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "512103d7ad296467814a6e3f635631bd35574cab3369a97a323c9a585ccaa569 *go.tgz" | sha256sum -c -; \
+	echo "a1bc06deb070155c4f67c579f896a45eeda5a8fa54f35ba233304074c4abbbbd *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
@@ -106,8 +106,10 @@ RUN wget "https://dl.photoprism.org/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/ph
 RUN wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip
 RUN wget "https://dl.photoprism.org/fixtures/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# Install goimports and richgo (colorizes "go test" output)
+# Install additional tools for development
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u golang.org/x/tools/cmd/goimports
+RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/miku/zek/cmd/...
+RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tsliwowicz/go-wrk
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo
 RUN echo "alias go=richgo" > /root/.bash_aliases
 
