@@ -15,7 +15,7 @@ endif
 
 all: dep build
 dep: dep-tensorflow dep-js dep-go
-build: build-js build-go
+build: generate build-js build-go
 install: install-bin install-assets
 test: test-js test-go
 acceptance-all: start acceptance acceptance-firefox stop
@@ -32,6 +32,9 @@ terminal:
 	docker-compose exec photoprism bash
 migrate:
 	go run cmd/photoprism/photoprism.go migrate
+generate:
+	go generate ./pkg/... ./internal/...
+	go fmt ./pkg/... ./internal/...
 install-bin:
 	scripts/build.sh prod ~/.local/bin/$(BINARY_NAME)
 install-assets:

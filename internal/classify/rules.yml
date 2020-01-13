@@ -1764,7 +1764,7 @@ puffer:
 
 instrument:
   label: instrument
-  threshold: 0.6
+  threshold: 0.7
   categories:
     - music
     - entertainment
@@ -1879,11 +1879,10 @@ beacon:
     - architecture
 
 beer:
-  label: beer
+  label: drinks
   threshold: 0.4
   categories:
     - beverage
-    - drinks
 
 beer bottle:
   see: beer
@@ -2139,10 +2138,9 @@ oscilloscope:
   see: display
 
 dining table:
+  label: dining
   threshold: 0.3
   categories:
-    - funriture
-    - desk
     - table
 
 maze:
@@ -2480,9 +2478,7 @@ mixing bowl:
     - cooking
 
 mobile home:
-  priority: -1
-  categories:
-    - building
+  see: recreational vehicle
 
 model t:
   label: car
@@ -2565,10 +2561,7 @@ ocarina:
   see: instrument
 
 odometer:
-  label: display
-  threshold: 0.3
-  categories:
-    - car
+  see: display
 
 organ:
   see: instrument
@@ -2783,8 +2776,9 @@ refrigerator:
     - kitchen
 
 restaurant:
+  threshold: 0.2
   categories:
-    - cooking
+    - dining
 
 revolver:
   see: weapon
@@ -2909,7 +2903,7 @@ soup bowl:
   label: bowl
   threshold: 0.2
   categories:
-    - cooking
+    - dining
 
 spatula:
   label: cooking
@@ -2988,7 +2982,7 @@ table lamp:
 teapot:
   threshold: 0.3
   categories:
-    - cooking
+    - beverage
 
 theater curtain:
   label: theater
@@ -2998,7 +2992,6 @@ toaster:
   threshold: 0.2
   categories:
     - cooking
-    - indoor
 
 toilet seat:
   see: ignore
@@ -3137,25 +3130,23 @@ consomme:
   label: soup
   threshold: 0.2
   categories:
-    - cooking
+    - dining
 
 hot pot:
   label: soup
   threshold: 0.2
   categories:
-    - cooking
+    - dining
 
 trifle:
   label: dessert
   threshold: 0.2
   categories:
-    - cooking
+    - dining
 
 ice cream:
   label: dessert
   threshold: 0.3
-  categories:
-    - cooking
 
 ice lolly:
   label: dessert
@@ -3184,7 +3175,7 @@ pretzel:
 
 fast food:
   label: fast food
-  threshold: 0.3
+  threshold: 0.33
 
 cheeseburger:
   see: fast food
@@ -3194,9 +3185,9 @@ hotdog:
 
 vegetables:
   label: vegetables
-  threshold: 0.3
+  threshold: 0.33
   categories:
-    - cooking
+    - dining
 
 mashed potato:
   see: vegetables
@@ -3223,11 +3214,10 @@ cucumber:
   see: vegetables
 
 squash:
-  label: squash
+  label: vegetables
   threshold: 0.4
   categories:
-    - cooking
-    - vegetables
+    - dining
 
 spaghetti squash:
   see: squash
@@ -3239,7 +3229,6 @@ acorn squash:
   label: pumpkin
   threshold: 0.4
   categories:
-    - cooking
     - vegetables
 
 granny smith:
@@ -3293,7 +3282,7 @@ carbonara:
   label: pasta
   threshold: 0.2
   categories:
-    - cooking
+    - dining
 
 dough:
   label: cooking
@@ -3802,11 +3791,11 @@ caldron:
 
 cash machine:
   label: building
-  threshold: 0.2
+  threshold: 0.3
 
 electronics:
   label: electronics
-  threshold: 0.3
+  threshold: 0.4
 
 switch:
   see: electronics

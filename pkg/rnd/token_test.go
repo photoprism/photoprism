@@ -55,7 +55,6 @@ func BenchmarkRandomToken3(b *testing.B) {
 	}
 }
 
-
 func TestPPID(t *testing.T) {
 	for n := 0; n < 5; n++ {
 		uuid := PPID('x')
