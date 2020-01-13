@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -55,8 +56,9 @@ func NewConfig(ctx *cli.Context) *Config {
 	log.SetLevel(c.LogLevel())
 
 	thumb.JpegQuality = c.ThumbQuality()
-	thumb.MaxWidth = c.ThumbSize()
-	thumb.MaxHeight = c.ThumbSize()
+	thumb.PreRenderSize = c.ThumbSize()
+	thumb.MaxRenderSize = c.ThumbLimit()
+	thumb.Algorithm = c.ThumbAlgorithm()
 
 	return c
 }
@@ -211,10 +213,10 @@ func (c *Config) ThumbQuality() int {
 	return c.config.ThumbQuality
 }
 
-// ThumbSize returns the thumbnail size limit in pixels (720-16384).
+// ThumbSize returns the pre-rendered thumbnail size limit in pixels (720-3840).
 func (c *Config) ThumbSize() int {
-	if c.config.ThumbSize > 16384 {
-		return 16384
+	if c.config.ThumbSize > 3840 {
+		return 3840
 	}
 
 	if c.config.ThumbSize < 720 {
@@ -222,6 +224,33 @@ func (c *Config) ThumbSize() int {
 	}
 
 	return c.config.ThumbSize
+}
+
+// ThumbLimit returns the on-demand thumbnail size limit in pixels (720-3840).
+func (c *Config) ThumbLimit() int {
+	if c.config.ThumbLimit > 3840 {
+		return 3840
+	}
+
+	if c.config.ThumbLimit < 720 {
+		return 720
+	}
+
+	return c.config.ThumbLimit
+}
+
+// ThumbAlgorithm returns the thumbnail algorithm name (lanczos, cubic or linear).
+func (c *Config) ThumbAlgorithm() thumb.ResampleAlgorithm {
+	switch strings.ToLower(c.config.ThumbAlgorithm) {
+	case "lanczos":
+		return thumb.ResampleLanczos
+	case "cubic":
+		return thumb.ResampleCubic
+	case "linear":
+		return thumb.ResampleLinear
+	default:
+		return thumb.ResampleLanczos
+	}
 }
 
 // GeoCodingApi returns the preferred geo coding api (none, osm or places).

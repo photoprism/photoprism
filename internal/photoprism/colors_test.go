@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/stretchr/testify/assert"
 )
 

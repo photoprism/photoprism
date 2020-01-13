@@ -74,6 +74,8 @@ type Params struct {
 	GeoCodingApi       string `yaml:"geocoding-api" flag:"geocoding-api"`
 	ThumbQuality       int    `yaml:"thumb-quality" flag:"thumb-quality"`
 	ThumbSize          int    `yaml:"thumb-size" flag:"thumb-size"`
+	ThumbLimit         int    `yaml:"thumb-limit" flag:"thumb-limit"`
+	ThumbAlgorithm     string `yaml:"thumb-algorithm" flag:"thumb-algorithm"`
 }
 
 // NewParams() creates a new configuration entity by using two methods:

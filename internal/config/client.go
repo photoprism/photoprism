@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 

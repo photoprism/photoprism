@@ -14,11 +14,11 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/djherbis/times"
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/capture"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // MediaFile represents a single photo, video or sidecar file.
@@ -714,7 +714,7 @@ func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err
 	return imaging.Open(filename, imaging.AutoOrientation(true))
 }
 
-func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err error) {
+func (m *MediaFile) RenderDefaultThumbnails(thumbPath string, force bool) (err error) {
 	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("thumbs: created for \"%s\"", m.Filename())))
 
 	hash := m.Hash()
@@ -732,7 +732,7 @@ func (m *MediaFile) CreateDefaultThumbnails(thumbPath string, force bool) (err e
 	for _, name := range thumb.DefaultTypes {
 		thumbType := thumb.Types[name]
 
-		if thumbType.Height > thumb.MaxHeight || thumbType.Width > thumb.MaxWidth {
+		if thumbType.SkipPreRender() {
 			// Skip, size exceeds limit
 			continue
 		}

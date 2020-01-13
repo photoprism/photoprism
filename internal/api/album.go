@@ -12,11 +12,11 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -444,12 +444,8 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if thumbType.Height > thumb.MaxHeight || thumbType.Width > thumb.MaxWidth {
+		if thumbType.ExceedsLimit() && c.Query("download") == "" {
 			log.Debugf("album: using original, thumbnail size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
-
-			if c.Query("download") != "" {
-				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.DownloadFileName()))
-			}
 
 			c.File(fileName)
 

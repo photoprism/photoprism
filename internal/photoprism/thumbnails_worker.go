@@ -8,7 +8,7 @@ type ThumbnailsJob struct {
 
 func thumbnailsWorker(jobs <-chan ThumbnailsJob) {
 	for job := range jobs {
-		if err := job.mediaFile.CreateDefaultThumbnails(job.path, job.force); err != nil {
+		if err := job.mediaFile.RenderDefaultThumbnails(job.path, job.force); err != nil {
 			log.Errorf("thumbs: %s", err)
 		}
 	}

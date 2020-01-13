@@ -11,8 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 var imp *photoprism.Import

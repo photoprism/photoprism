@@ -73,7 +73,7 @@ func importWorker(jobs <-chan ImportJob) {
 			if jpg, err := importedMainFile.Jpeg(); err != nil {
 				log.Error(err)
 			} else {
-				if err := jpg.CreateDefaultThumbnails(imp.conf.ThumbnailsPath(), false); err != nil {
+				if err := jpg.RenderDefaultThumbnails(imp.conf.ThumbnailsPath(), false); err != nil {
 					log.Errorf("import: could not create default thumbnails (%s)", err)
 				}
 			}

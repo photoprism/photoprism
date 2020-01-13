@@ -10,8 +10,8 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -95,8 +95,9 @@ func NewTestConfig() *Config {
 	c.ImportSQL(c.ExamplesPath() + "/fixtures.sql")
 
 	thumb.JpegQuality = c.ThumbQuality()
-	thumb.MaxWidth = c.ThumbSize()
-	thumb.MaxHeight = c.ThumbSize()
+	thumb.PreRenderSize = c.ThumbSize()
+	thumb.MaxRenderSize = c.ThumbLimit()
+	thumb.Algorithm = c.ThumbAlgorithm()
 
 	return c
 }

@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/capture"
 )
 
 // PhotoResult contains found photos and their main file plus other meta data.

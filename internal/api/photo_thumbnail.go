@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // GET /api/v1/thumbnails/:hash/:type
@@ -51,12 +51,8 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if thumbType.Height > thumb.MaxHeight || thumbType.Width > thumb.MaxWidth {
+		if thumbType.ExceedsLimit() && c.Query("download") == "" {
 			log.Debugf("photo: using original, thumbnail size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
-
-			if c.Query("download") != "" {
-				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.DownloadFileName()))
-			}
 
 			c.File(fileName)
 

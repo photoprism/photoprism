@@ -12,10 +12,10 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -164,7 +164,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if thumbType.Height > thumb.MaxHeight || thumbType.Width > thumb.MaxWidth {
+		if thumbType.ExceedsLimit() {
 			log.Debugf("label: using original, thumbnail size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
 
 			c.File(fileName)

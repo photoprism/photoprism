@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/server"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
 )

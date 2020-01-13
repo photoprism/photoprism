@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/maps/osm"
+	"github.com/photoprism/photoprism/internal/maps/places"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/stretchr/testify/assert"
 )
@@ -49,17 +50,15 @@ func TestLocation_Assign(t *testing.T) {
 		lng := 13.40953
 		id := s2.Token(lat, lng)
 
-		o, err := osm.FindLocation(id)
+		o, err := places.FindLocation(id)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Fernsehturm Berlin", o.LocName)
-		assert.Equal(t, "10178", o.Address.Postcode)
-		assert.Equal(t, "Berlin", o.Address.State)
-		assert.Equal(t, "de", o.Address.CountryCode)
-		assert.Equal(t, "Germany", o.Address.Country)
+		assert.Equal(t, "Fernsehturm Berlin", o.Name())
+		assert.Equal(t, "Berlin", o.State())
+		assert.Equal(t, "de", o.CountryCode())
 
 		var l Location
 
@@ -157,72 +156,12 @@ func TestLocation_Assign(t *testing.T) {
 		assert.Equal(t, "Berlin, Germany", l.LocLabel)
 	})
 
-	t.Run("PinkBeach", func(t *testing.T) {
-		lat := 35.26967222222222
-		lng := 23.53711666666667
-		id := s2.Token(lat, lng)
-
-		o, err := osm.FindLocation(id)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.False(t, o.Cached)
-
-		assert.Equal(t, "Pink Beach", o.LocName)
-		assert.Equal(t, "", o.Address.Postcode)
-		assert.Equal(t, "Crete", o.Address.State)
-		assert.Equal(t, "gr", o.Address.CountryCode)
-		assert.Equal(t, "Greece", o.Address.Country)
-
-		var l Location
-
-		if err := l.Assign(o); err != nil {
-			t.Fatal(err)
-		}
-
-		assert.True(t, strings.HasPrefix(l.ID, "149ce785"))
-		assert.Equal(t, "Pink Beach", l.LocName)
-		assert.Equal(t, "Chrisoskalitissa, Crete, Greece", l.LocLabel)
-	})
-
-	t.Run("NewJersey", func(t *testing.T) {
-		lat := 40.74290
-		lng := -74.04862
-		id := s2.Token(lat, lng)
-
-		o, err := osm.FindLocation(id)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.False(t, o.Cached)
-
-		assert.Equal(t, "", o.LocName)
-		assert.Equal(t, "07307", o.Address.Postcode)
-		assert.Equal(t, "New Jersey", o.Address.State)
-		assert.Equal(t, "us", o.Address.CountryCode)
-		assert.Equal(t, "United States of America", o.Address.Country)
-
-		var l Location
-
-		if err := l.Assign(o); err != nil {
-			t.Fatal(err)
-		}
-
-		assert.True(t, strings.HasPrefix(l.ID, "89c25741"))
-		assert.Equal(t, "", l.LocName)
-		assert.Equal(t, "Jersey City, New Jersey, USA", l.LocLabel)
-	})
-
 	t.Run("SouthAfrica", func(t *testing.T) {
 		lat := -31.976301666666668
 		lng := 29.148046666666666
 		id := s2.Token(lat, lng)
 
-		o, err := osm.FindLocation(id)
+		o, err := places.FindLocation(id)
 
 		if err != nil {
 			t.Fatal(err)
@@ -230,11 +169,9 @@ func TestLocation_Assign(t *testing.T) {
 
 		assert.False(t, o.Cached)
 
-		assert.Equal(t, "R411", o.LocName)
-		assert.Equal(t, "", o.Address.Postcode)
-		assert.Equal(t, "Eastern Cape", o.Address.State)
-		assert.Equal(t, "za", o.Address.CountryCode)
-		assert.Equal(t, "South Africa", o.Address.Country)
+		assert.Equal(t, "", o.Name())
+		assert.Equal(t, "Eastern Cape", o.State())
+		assert.Equal(t, "za", o.CountryCode())
 
 		var l Location
 
@@ -243,29 +180,34 @@ func TestLocation_Assign(t *testing.T) {
 		}
 
 		assert.True(t, strings.HasPrefix(l.ID, "1e5e4205"))
-		assert.Equal(t, "R411", l.LocName)
+		assert.Equal(t, "", l.LocName)
 		assert.Equal(t, "Eastern Cape, South Africa", l.LocLabel)
 	})
 
-	t.Run("Unknown", func(t *testing.T) {
+	t.Run("ocean", func(t *testing.T) {
 		lat := -21.976301666666668
 		lng := 49.148046666666666
 		id := s2.Token(lat, lng)
 		log.Printf("ID: %s", id)
-		o, err := osm.FindLocation(id)
+		o, err := places.FindLocation(id)
 
 		log.Printf("Output: %+v", o)
 
-		if err == nil {
-			t.Fatal("expected error")
+		if err != nil {
+			t.Fatal(err)
 		}
-
-		assert.False(t, o.Cached)
 
 		var l Location
 
-		assert.Error(t, l.Assign(o))
-		assert.Equal(t, "unknown", l.LocCategory)
+		if err := l.Assign(o); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Indian Ocean", l.LocName)
+		assert.Equal(t, "", l.LocCategory)
+		assert.Equal(t, "", l.LocCity)
+		// TODO: Should be zz for international waters, fixed in places server
+		// assert.Equal(t, "", l.LocCountry)
 	})
 }
 

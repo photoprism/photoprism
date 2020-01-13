@@ -25,8 +25,8 @@ func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imag
 			format = fs.TypePng
 		case ResampleNearestNeighbor:
 			filter = imaging.NearestNeighbor
-		case ResampleLanczos:
-			filter = imaging.Lanczos
+		case ResampleDefault:
+			filter = Algorithm.Filter()
 		case ResampleFillTopLeft:
 			method = ResampleFillTopLeft
 		case ResampleFillCenter:
@@ -72,11 +72,11 @@ func Postfix(width, height int, opts ...ResampleOption) (result string) {
 }
 
 func Filename(hash string, thumbPath string, width, height int, opts ...ResampleOption) (filename string, err error) {
-	if width < 0 || width > MaxWidth {
+	if width < 0 || width > MaxRenderSize {
 		return "", fmt.Errorf("thumbs: width exceeds limit (%d)", width)
 	}
 
-	if height < 0 || height > MaxHeight {
+	if height < 0 || height > MaxRenderSize {
 		return "", fmt.Errorf("thumbs: height exceeds limit (%d)", height)
 	}
 
@@ -135,11 +135,11 @@ func FromFile(imageFilename string, hash string, thumbPath string, width, height
 }
 
 func Create(img image.Image, fileName string, width, height int, opts ...ResampleOption) (result image.Image, err error) {
-	if width < 0 || width > MaxWidth {
+	if width < 0 || width > MaxRenderSize {
 		return img, fmt.Errorf("thumbs: width has an invalid value (%d)", width)
 	}
 
-	if height < 0 || height > MaxHeight {
+	if height < 0 || height > MaxRenderSize {
 		return img, fmt.Errorf("thumbs: height has an invalid value (%d)", height)
 	}
 

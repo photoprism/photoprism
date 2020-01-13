@@ -233,13 +233,25 @@ var GlobalFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "thumb-quality, q",
 		Usage:  "jpeg quality of thumbnails (25-100)",
-		Value:  95,
+		Value:  90,
 		EnvVar: "PHOTOPRISM_THUMB_QUALITY",
 	},
 	cli.IntFlag{
 		Name:   "thumb-size, s",
-		Usage:  "max thumbnail size in pixels (720-16384)",
-		Value:  8192,
+		Usage:  "pre-rendered thumbnail size limit in pixels (720-3840)",
+		Value:  2048,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE",
+	},
+	cli.IntFlag{
+		Name:   "thumb-limit, x",
+		Usage:  "on-demand thumbnail size limit in pixels (720-3840)",
+		Value:  3840,
+		EnvVar: "PHOTOPRISM_THUMB_LIMIT",
+	},
+	cli.StringFlag{
+		Name:   "thumb-algorithm, a",
+		Usage:  "thumbnail algorithm (lanczos, cubic or linear)",
+		Value:  "lanczos",
+		EnvVar: "PHOTOPRISM_THUMB_ALGORITHM",
 	},
 }

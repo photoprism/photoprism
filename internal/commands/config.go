@@ -76,6 +76,8 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("geocoding-api         %s\n", conf.GeoCodingApi())
 	fmt.Printf("thumb-quality         %d\n", conf.ThumbQuality())
 	fmt.Printf("thumb-size            %d\n", conf.ThumbSize())
+	fmt.Printf("thumb-limit           %d\n", conf.ThumbLimit())
+	fmt.Printf("thumb-algorithm       %s\n", conf.ThumbAlgorithm())
 
 	return nil
 }

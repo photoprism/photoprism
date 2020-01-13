@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
@@ -958,7 +958,7 @@ func TestMediaFile_CreateDefaultThumbnails(t *testing.T) {
 	m, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 	assert.Nil(t, err)
 
-	err = m.CreateDefaultThumbnails(thumbsPath, true)
+	err = m.RenderDefaultThumbnails(thumbsPath, true)
 
 	assert.Empty(t, err)
 
@@ -968,7 +968,7 @@ func TestMediaFile_CreateDefaultThumbnails(t *testing.T) {
 
 	assert.FileExists(t, thumbFilename)
 
-	err = m.CreateDefaultThumbnails(thumbsPath, false)
+	err = m.RenderDefaultThumbnails(thumbsPath, false)
 
 	assert.Empty(t, err)
 }
