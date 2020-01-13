@@ -7,7 +7,7 @@ import (
 )
 
 func TestExif(t *testing.T) {
-	data, err := Exif("testdata/example.jpg")
+	data, err := Exif("testdata/photoshop.jpg")
 
 	if err != nil {
 		t.Fatal(err)

@@ -7,8 +7,8 @@ import (
 )
 
 func TestXMP(t *testing.T) {
-	t.Run("example", func(t *testing.T) {
-		data, err := XMP("testdata/example.xmp")
+	t.Run("photoshop", func(t *testing.T) {
+		data, err := XMP("testdata/photoshop.xmp")
 
 		if err != nil {
 			t.Fatal(err)
