@@ -22,9 +22,9 @@ var rules = LabelRules{
 	},
 	"accordion": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"acorn": {
 		Label:      "tree",
@@ -40,9 +40,9 @@ var rules = LabelRules{
 	},
 	"acoustic guitar": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"admiral": {
 		Label:      "butterfly",
@@ -394,9 +394,9 @@ var rules = LabelRules{
 	},
 	"banjo": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"bannister": {
 		Label:      "stairs",
@@ -489,9 +489,9 @@ var rules = LabelRules{
 		Categories: []string{"people"},
 	},
 	"bassoon": {
-		Label:      "entertainment",
-		Threshold:  0.000000,
-		Priority:   0,
+		Label:      "instrument",
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"bath towel": {
@@ -1128,7 +1128,7 @@ var rules = LabelRules{
 		Label:      "theme park",
 		Threshold:  0.200000,
 		Priority:   0,
-		Categories: []string{"entertainment"},
+		Categories: []string{},
 	},
 	"carpenter's kit": {
 		Label:      "tool",
@@ -1192,9 +1192,9 @@ var rules = LabelRules{
 	},
 	"cello": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"cellular telephone": {
 		Label:      "electronics",
@@ -1311,10 +1311,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"chocolate sauce": {
-		Label:      "chocolate",
+		Label:      "dessert",
 		Threshold:  0.200000,
 		Priority:   0,
-		Categories: []string{"dessert"},
+		Categories: []string{},
 	},
 	"chow dog": {
 		Label:      "dog",
@@ -1540,9 +1540,9 @@ var rules = LabelRules{
 	},
 	"cornet": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"coucal": {
 		Label:      "bird",
@@ -1737,8 +1737,8 @@ var rules = LabelRules{
 		Categories: []string{"people"},
 	},
 	"digital clock": {
-		Label:      "clock",
-		Threshold:  0.400000,
+		Label:      "display",
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -1812,7 +1812,7 @@ var rules = LabelRules{
 		Label:      "dome",
 		Threshold:  0.200000,
 		Priority:   0,
-		Categories: []string{"building"},
+		Categories: []string{"architecture"},
 	},
 	"doormat": {
 		Label:      "",
@@ -1852,9 +1852,9 @@ var rules = LabelRules{
 	},
 	"drum": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"drumstick": {
 		Label:      "",
@@ -1942,9 +1942,9 @@ var rules = LabelRules{
 	},
 	"electric guitar": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"electric locomotive": {
 		Label:      "train",
@@ -2134,9 +2134,9 @@ var rules = LabelRules{
 	},
 	"flute": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"fly": {
 		Label:      "",
@@ -2212,9 +2212,9 @@ var rules = LabelRules{
 	},
 	"french horn": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"french loaf": {
 		Label:      "",
@@ -2380,9 +2380,9 @@ var rules = LabelRules{
 	},
 	"gong": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"goose": {
 		Label:      "",
@@ -2410,9 +2410,9 @@ var rules = LabelRules{
 	},
 	"grand piano": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"granny smith": {
 		Label:      "apple",
@@ -2626,15 +2626,15 @@ var rules = LabelRules{
 	},
 	"harmonica": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"harp": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"hartebeest": {
 		Label:      "",
@@ -2896,9 +2896,9 @@ var rules = LabelRules{
 	},
 	"instrument": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"ipod": {
 		Label:      "electronics",
@@ -3472,15 +3472,15 @@ var rules = LabelRules{
 	},
 	"maraca": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"marimba": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"marmoset": {
 		Label:      "monkey",
@@ -3844,15 +3844,15 @@ var rules = LabelRules{
 	},
 	"oboe": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"ocarina": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"odometer": {
 		Label:      "display",
@@ -3892,9 +3892,9 @@ var rules = LabelRules{
 	},
 	"organ": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"oscilloscope": {
 		Label:      "display",
@@ -4242,7 +4242,7 @@ var rules = LabelRules{
 		Label:      "dome",
 		Threshold:  0.200000,
 		Priority:   0,
-		Categories: []string{"building"},
+		Categories: []string{"architecture"},
 	},
 	"plastic bag": {
 		Label:      "",
@@ -4780,9 +4780,9 @@ var rules = LabelRules{
 	},
 	"sax": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"schipperke dog": {
 		Label:      "dog",
@@ -5290,9 +5290,9 @@ var rules = LabelRules{
 	},
 	"steel drum": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"stethoscope": {
 		Label:      "",
@@ -5806,9 +5806,9 @@ var rules = LabelRules{
 	},
 	"trombone": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"tub": {
 		Label:      "living",
@@ -5908,9 +5908,9 @@ var rules = LabelRules{
 	},
 	"violin": {
 		Label:      "instrument",
-		Threshold:  0.700000,
-		Priority:   0,
-		Categories: []string{"music", "entertainment"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"vizsla dog": {
 		Label:      "dog",

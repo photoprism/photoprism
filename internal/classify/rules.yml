@@ -1765,10 +1765,8 @@ puffer:
 
 instrument:
   label: instrument
-  threshold: 0.7
-  categories:
-    - music
-    - entertainment
+  threshold: 1
+  priority: -2
 
 accordion:
   see: instrument
@@ -1856,7 +1854,7 @@ barn:
     - architecture
 
 bassoon:
-  label: entertainment
+  see: instrument
 
 bathing cap:
   see: fashion
@@ -2130,7 +2128,7 @@ wall clock:
   see: clock
 
 digital clock:
-  see: clock
+  see: display
 
 digital watch:
   see: display
@@ -2174,7 +2172,7 @@ dome:
   label: dome
   threshold: 0.2
   categories:
-    - building
+    - architecture
 
 planetarium:
   see: dome
@@ -3154,10 +3152,8 @@ ice lolly:
   threshold: 0.4
 
 chocolate sauce:
-  label: chocolate
+  label: dessert
   threshold: 0.2
-  categories:
-    - dessert
 
 french loaf:
   threshold: 0.4
@@ -3665,8 +3661,6 @@ slot:
 carousel:
   label: theme park
   threshold: 0.2
-  categories:
-    - entertainment
 
 groom:
   label: wedding
