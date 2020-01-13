@@ -11,15 +11,18 @@ var (
 )
 
 const (
-	ResampleLanczos ResampleAlgorithm = "lanczos"
-	ResampleCubic                     = "cubic"
-	ResampleLinear                    = "linear"
+	ResampleBlackman ResampleAlgorithm = "blackman"
+	ResampleLanczos  ResampleAlgorithm = "lanczos"
+	ResampleCubic    ResampleAlgorithm = "cubic"
+	ResampleLinear   ResampleAlgorithm = "linear"
 )
 
 type ResampleAlgorithm string
 
 func (a ResampleAlgorithm) Filter() imaging.ResampleFilter {
 	switch a {
+	case ResampleBlackman:
+		return imaging.Blackman
 	case ResampleLanczos:
 		return imaging.Lanczos
 	case ResampleCubic:

@@ -239,9 +239,11 @@ func (c *Config) ThumbLimit() int {
 	return c.config.ThumbLimit
 }
 
-// ThumbAlgorithm returns the thumbnail algorithm name (lanczos, cubic or linear).
+// ThumbAlgorithm returns the thumbnail resample algorithm (blackman, lanczos, cubic or linear).
 func (c *Config) ThumbAlgorithm() thumb.ResampleAlgorithm {
 	switch strings.ToLower(c.config.ThumbAlgorithm) {
+	case "blackman":
+		return thumb.ResampleBlackman
 	case "lanczos":
 		return thumb.ResampleLanczos
 	case "cubic":
@@ -249,7 +251,7 @@ func (c *Config) ThumbAlgorithm() thumb.ResampleAlgorithm {
 	case "linear":
 		return thumb.ResampleLinear
 	default:
-		return thumb.ResampleLanczos
+		return thumb.ResampleCubic
 	}
 }
 
