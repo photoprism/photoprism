@@ -3,11 +3,15 @@ package meta
 import (
 	"fmt"
 	"math"
+	"path"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/dsoprea/go-exif"
+	"github.com/dsoprea/go-exif/v2"
+	"github.com/dsoprea/go-exif/v2/common"
+	"github.com/dsoprea/go-jpeg-image-structure"
+	"github.com/dsoprea/go-png-image-structure"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
@@ -20,19 +24,63 @@ func Exif(filename string) (data Data, err error) {
 		}
 	}()
 
-	// TODO: Requires refactoring and performance optimization
-	// See GitHub: https://github.com/photoprism/photoprism/issues/172
-	rawExif, err := exif.SearchFileAndExtractExif(filename)
+	// Extract raw EXIF block.
 
-	if err != nil {
-		return data, err
+	var rawExif []byte
+
+	fileExtension := path.Ext(filename)
+	fileExtension = strings.ToLower(fileExtension)
+
+	if fileExtension == ".jpg" || fileExtension == ".jpeg" {
+		jmp := jpegstructure.NewJpegMediaParser()
+
+		sl, err := jmp.ParseFile(filename)
+
+		if err != nil {
+			return data, err
+		}
+
+		_, rawExif, err = sl.Exif()
+
+		if err != nil {
+			return data, err
+		}
+	} else if fileExtension == ".png" {
+		pmp := pngstructure.NewPngMediaParser()
+
+		cs, err := pmp.ParseFile(filename)
+
+		if err != nil {
+			return data, err
+		}
+
+		_, rawExif, err = cs.Exif()
+
+		if err != nil {
+			return data, err
+		}
+	} else {
+		// Fallback to an optimistic, brute-force search.
+
+		var err error
+
+		rawExif, err = exif.SearchFileAndExtractExif(filename)
+
+		if err != nil {
+			return data, err
+		}
 	}
+
+	// Enumerate tags in EXIF block.
 
 	ti := exif.NewTagIndex()
 
 	tags := make(map[string]string)
 
-	visitor := func(fqIfdPath string, ifdIndex int, tagId uint16, tagType exif.TagType, valueContext exif.ValueContext) (err error) {
+	visitor := func(fqIfdPath string, ifdIndex int, ite *exif.IfdTagEntry) (err error) {
+		tagId := ite.TagId()
+		tagType := ite.TagType()
+
 		ifdPath, err := im.StripPathPhraseIndices(fqIfdPath)
 
 		if err != nil {
@@ -47,8 +95,8 @@ func Exif(filename string) (data Data, err error) {
 
 		valueString := ""
 
-		if tagType.Type() != exif.TypeUndefined {
-			valueString, err = tagType.ResolveAsString(valueContext, true)
+		if tagType != exifcommon.TypeUndefined {
+			valueString, err = ite.FormatFirst()
 
 			if err != nil {
 				log.Error(err)
@@ -64,11 +112,13 @@ func Exif(filename string) (data Data, err error) {
 		return nil
 	}
 
-	_, err = exif.Visit(exif.IfdStandard, im, ti, rawExif, visitor)
+	_, err = exif.Visit(exifcommon.IfdStandard, im, ti, rawExif, visitor)
 
 	if err != nil {
 		return data, err
 	}
+
+	// Cherry-pick the values that we care about.
 
 	if value, ok := tags["Artist"]; ok {
 		data.Artist = strings.Replace(value, "\"", "", -1)
@@ -171,7 +221,7 @@ func Exif(filename string) (data Data, err error) {
 		return data, err
 	}
 
-	if ifd, err := index.RootIfd.ChildWithIfdPath(exif.IfdPathStandardGps); err == nil {
+	if ifd, err := index.RootIfd.ChildWithIfdPath(exifcommon.IfdPathStandardGps); err == nil {
 		if gi, err := ifd.GpsInfo(); err == nil {
 			data.Lat = gi.Latitude.Decimal()
 			data.Lng = gi.Longitude.Decimal()

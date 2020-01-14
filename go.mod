@@ -10,7 +10,7 @@ require (
 	github.com/cznic/sortutil v0.0.0-20181122101858-f5f958428db8 // indirect
 	github.com/disintegration/imaging v1.6.0
 	github.com/djherbis/times v1.1.0
-	github.com/dsoprea/go-exif v0.0.0-20190901173045-3ce78807c90f
+	github.com/dsoprea/go-exif/v2 v2.0.0-20200113231207-0bbb7a3584f7
 	github.com/dsoprea/go-logging v0.0.0-20190409182557-13b4fff49234 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
