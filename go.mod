@@ -11,11 +11,11 @@ require (
 	github.com/disintegration/imaging v1.6.0
 	github.com/djherbis/times v1.1.0
 	github.com/dsoprea/go-exif/v2 v2.0.0-20200113231207-0bbb7a3584f7
-	github.com/dsoprea/go-logging v0.0.0-20190409182557-13b4fff49234 // indirect
+	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200113231507-4c1dccae8069
+	github.com/dsoprea/go-png-image-structure v0.0.0-20200113231611-5ee8d5825a92
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.3.0
-	github.com/go-errors/errors v1.0.1 // indirect
 	github.com/golang/geo v0.0.0-20190916061304-5b978397cfec
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
@@ -78,7 +78,7 @@ require (
 	gopkg.in/mgo.v2 v2.0.0-20180705113604-9856a29383ce // indirect
 	gopkg.in/stretchr/testify.v1 v1.2.2 // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.8
-	gopkg.in/yaml.v2 v2.2.2
+	gopkg.in/yaml.v2 v2.2.7
 	trimmer.io/go-xmp v0.0.0-20181216222714-4f6a2fb384a3
 )
 
