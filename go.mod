@@ -79,7 +79,6 @@ require (
 	gopkg.in/stretchr/testify.v1 v1.2.2 // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.8
 	gopkg.in/yaml.v2 v2.2.7
-	trimmer.io/go-xmp v0.0.0-20181216222714-4f6a2fb384a3
 )
 
 go 1.13

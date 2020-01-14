@@ -10,7 +10,6 @@ package meta
 import (
 	"github.com/dsoprea/go-exif/v2"
 	"github.com/photoprism/photoprism/internal/event"
-	_ "trimmer.io/go-xmp/models"
 )
 
 var log = event.Log
