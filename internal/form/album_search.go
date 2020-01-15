@@ -2,15 +2,13 @@ package form
 
 // AlbumSearch represents search form fields for "/api/v1/albums".
 type AlbumSearch struct {
-	Query string  `form:"q"`
-
+	Query     string `form:"q"`
 	Slug      string `form:"slug"`
 	Name      string `form:"name"`
 	Favorites bool   `form:"favorites"`
-
-	Count  int    `form:"count" binding:"required"`
-	Offset int    `form:"offset"`
-	Order  string `form:"order"`
+	Count     int    `form:"count" binding:"required"`
+	Offset    int    `form:"offset"`
+	Order     string `form:"order"`
 }
 
 func (f *AlbumSearch) GetQuery() string {

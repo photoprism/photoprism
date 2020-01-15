@@ -192,8 +192,7 @@ type XmpDocument struct {
 	} `xml:"RDF" json:"rdf,omitempty"`
 }
 
-
-func(doc *XmpDocument) Load(filename string) error {
+func (doc *XmpDocument) Load(filename string) error {
 	data, err := ioutil.ReadFile(filename)
 
 	if err != nil {

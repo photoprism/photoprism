@@ -21,14 +21,14 @@ type Data struct {
 	Flash        bool
 	FocalLength  int
 	Exposure     string
-	Aperture    float64
-	FNumber     float64
-	Iso         int
-	Lat         float64
-	Lng         float64
-	Altitude    int
-	Width       int
-	Height      int
-	Orientation int
-	All         map[string]string
+	Aperture     float64
+	FNumber      float64
+	Iso          int
+	Lat          float64
+	Lng          float64
+	Altitude     int
+	Width        int
+	Height       int
+	Orientation  int
+	All          map[string]string
 }

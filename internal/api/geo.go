@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/form"
 
-	"github.com/paulmach/go.geojson"
+	geojson "github.com/paulmach/go.geojson"
 )
 
 // GET /api/v1/geo
@@ -38,13 +38,13 @@ func GetGeo(router *gin.RouterGroup, conf *config.Config) {
 
 		bbox := make([]float64, 4)
 
-		bboxMin := func (pos int, val float64) {
+		bboxMin := func(pos int, val float64) {
 			if bbox[pos] == 0.0 || bbox[pos] > val {
 				bbox[pos] = val
 			}
 		}
 
-		bboxMax := func (pos int, val float64) {
+		bboxMax := func(pos int, val float64) {
 			if bbox[pos] == 0.0 || bbox[pos] < val {
 				bbox[pos] = val
 			}

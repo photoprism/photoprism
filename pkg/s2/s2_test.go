@@ -152,5 +152,3 @@ func TestRange(t *testing.T) {
 		assert.Equal(t, "", max)
 	})
 }
-
-

@@ -6,8 +6,7 @@ import (
 
 // PhotoSearch represents search form fields for "/api/v1/photos".
 type PhotoSearch struct {
-	Query string  `form:"q"`
-
+	Query       string    `form:"q"`
 	Title       string    `form:"title"`
 	Description string    `form:"description"`
 	Notes       string    `form:"notes"`
@@ -39,10 +38,9 @@ type PhotoSearch struct {
 	Story       bool      `form:"story"`
 	Safe        bool      `form:"safe"`
 	Nsfw        bool      `form:"nsfw"`
-
-	Count  int    `form:"count" binding:"required"`
-	Offset int    `form:"offset"`
-	Order  string `form:"order"`
+	Count       int       `form:"count" binding:"required"`
+	Offset      int       `form:"offset"`
+	Order       string    `form:"order"`
 }
 
 func (f *PhotoSearch) GetQuery() string {

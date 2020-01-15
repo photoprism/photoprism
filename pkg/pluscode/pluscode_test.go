@@ -28,7 +28,6 @@ func TestEncode(t *testing.T) {
 	})
 }
 
-
 func TestEncodeLength(t *testing.T) {
 	t.Run("germany_9", func(t *testing.T) {
 		plusCode, err := EncodeLength(48.56344833333333, 8.996878333333333, 9)
@@ -83,7 +82,7 @@ func TestEncodeLength(t *testing.T) {
 	})
 
 	t.Run("lng_overflow", func(t *testing.T) {
-		plusCode, err := EncodeLength(48.56344833333333, 258.996878333333333,7)
+		plusCode, err := EncodeLength(48.56344833333333, 258.996878333333333, 7)
 		if err == nil {
 			t.Fatal("encode should return error")
 		}
@@ -98,4 +97,3 @@ func TestS2(t *testing.T) {
 		assert.Equal(t, "4799e3772d14", token)
 	})
 }
-
