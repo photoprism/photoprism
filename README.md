@@ -20,8 +20,8 @@ More screenshots: https://photoprism.org/#screenshots
 ## What to expect ##
 
 * Clearly structured [Web interface][wiki:screenshots] for browsing, organizing and sharing your personal photo collection
-* Import everything without worrying about duplicates or [RAW to JPEG][wiki:raw] conversion
-* [Geocoding][wiki:geocoding], [XMP][wiki:xmp] support and [automated tagging][wiki:classification] 
+* Import everything without worrying about duplicates or [RAW to JPEG conversion][wiki:raw]
+* [Geocoding][wiki:geocoding], [XMP support][wiki:xmp]  and [automated tagging][wiki:classification] 
   based on Google TensorFlow
 
 ## For the early birds ##
@@ -62,13 +62,6 @@ We welcome contributions of any kind. If you have a bug or an idea, read our
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
 good (first) contributions. 
-
-You'll get a small reward for working on [funded issues](https://github.com/photoprism/photoprism/labels/funded), 
-see [issuehunt.io](https://issuehunt.io/repos/119160553) for details. 
-Note that issue descriptions may be outdated on their site. Rewards are paid out when 
-all [acceptance criteria](https://github.com/photoprism/photoprism/wiki/Issues#user-stories) prioritized as 
-MUST are met and your [pull request](https://github.com/photoprism/photoprism/wiki/Pull-Requests) 
-was successfully merged.
 
 Please follow us on [Twitter][twitter] and join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
 to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
