@@ -78,6 +78,14 @@ func importWorker(jobs <-chan ImportJob) {
 				}
 			}
 
+			related, err := importedMainFile.RelatedFiles()
+
+			if err != nil {
+				log.Errorf("import: could not index \"%s\" (%s)", destinationMainFilename, err.Error())
+
+				continue
+			}
+
 			done := make(map[string]bool)
 			ind := imp.index
 			res := ind.MediaFile(related.main, opt)
