@@ -13,4 +13,5 @@
     color: rgba(0, 0, 0, 0.87);
     display: block;
     border-radius: 50%;
+    cursor: pointer;
 }

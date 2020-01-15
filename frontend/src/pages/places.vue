@@ -70,11 +70,11 @@
                 return this.$route.params.q ? this.$route.params.q : "";
             },
             openPhoto(id) {
-                if(!this.photos || !this.photos.length) {
+                if (!this.photos || !this.photos.length) {
                     this.photos = this.result.features.map((f) => new Photo(f.properties));
                 }
 
-                if(this.photos.length > 0) {
+                if (this.photos.length > 0) {
                     const index = this.photos.findIndex((p) => p.PhotoUUID === id);
 
                     this.$viewer.show(this.photos, index)
@@ -94,7 +94,7 @@
                     if (this.filter.q) {
                         this.$router.replace({name: "place", params: {q: this.filter.q}});
                     } else {
-                        this.$router.replace({name: "places" });
+                        this.$router.replace({name: "places"});
                     }
                 }
             },
@@ -113,32 +113,27 @@
                 };
 
                 return Api.get("geo", options).then((response) => {
-                    if(response.data.features && response.data.features.length > 0) {
-                        this.markers = {};
+                    if (!response.data.features || response.data.features.length === 0) {
+                        this.loading = false;
 
-                        for (let id in this.markersOnScreen) {
-                            this.markersOnScreen[id].remove();
-                        }
-
-                        this.markersOnScreen = {};
-
-                        this.photos = {};
-                        this.result = response.data;
-
-                        this.map.getSource("photos").setData(this.result);
-
-                        if(this.filter.q || !this.initialized) {
-                            this.map.fitBounds(this.result.bbox, {maxZoom: 19});
-                        }
-
-                        this.initialized = true;
-
-                        this.updateMarkers();
-                    } else {
                         this.$notify.warning("No photos found");
+
+                        return;
                     }
 
+                    this.photos = {};
+                    this.result = response.data;
+
+                    this.map.getSource("photos").setData(this.result);
+
+                    if (this.filter.q || !this.initialized) {
+                        this.map.fitBounds(this.result.bbox, {maxZoom: 18, padding: 30});
+                    }
+
+                    this.initialized = true;
                     this.loading = false;
+
+                    this.updateMarkers();
                 }).catch(() => this.loading = false);
             },
             renderMap() {
@@ -156,7 +151,7 @@
                 this.map.on("load", () => this.onMapLoad());
             },
             updateMarkers() {
-                if(this.loading) return;
+                if (this.loading) return;
                 let newMarkers = {};
                 let features = this.map.querySourceFeatures("photos");
 
@@ -164,7 +159,7 @@
                     let coords = features[i].geometry.coordinates;
                     let props = features[i].properties;
                     if (props.cluster) continue;
-                    let id = props.PhotoUUID;
+                    let id = features[i].id;
 
                     let marker = this.markers[id];
                     if (!marker) {
@@ -181,7 +176,10 @@
                         marker = this.markers[id] = new mapboxgl.Marker({
                             element: el
                         }).setLngLat(coords);
+                    } else {
+                        marker.setLngLat(coords);
                     }
+
                     newMarkers[id] = marker;
 
                     if (!this.markersOnScreen[id]) {
@@ -196,17 +194,6 @@
                 this.markersOnScreen = newMarkers;
             },
             onMapLoad() {
-                this.map.on("styleimagemissing", e => {
-                    if (!e.id.startsWith("/")) return;
-                    this.map.loadImage(e.id, (err, data) => {
-                        if (!err) {
-                            if (!this.map.hasImage(e.id)) {
-                                this.map.addImage(e.id, data);
-                            }
-                        }
-                    });
-                });
-
                 this.map.addSource('photos', {
                     type: 'geojson',
                     data: null,
@@ -254,14 +241,7 @@
                     }
                 });
 
-                this.map.on('data', (e) => {
-                    if (e.sourceId !== 'photos' || !e.isSourceLoaded) return;
-
-                    //this.map.on('move', this.updateMarkers);
-                    this.map.on('moveend', this.updateMarkers);
-                    this.map.on('render', this.updateMarkers);
-                    this.updateMarkers();
-                });
+                this.map.on('render', this.updateMarkers);
 
                 this.map.on('click', 'clusters', (e) => {
                     const features = this.map.queryRenderedFeatures(e.point, {
@@ -277,8 +257,6 @@
                                 center: features[0].geometry.coordinates,
                                 zoom: zoom
                             });
-
-
                         }
                     );
                 });

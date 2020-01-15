@@ -13,6 +13,7 @@ import (
 
 // GeoResult represents a photo for displaying it on a map.
 type GeoResult struct {
+	ID         string    `json:"ID"`
 	PhotoLat   float64   `json:"Lat"`
 	PhotoLng   float64   `json:"Lng"`
 	PhotoUUID  string    `json:"PhotoUUID"`
@@ -33,16 +34,13 @@ func (s *Repo) Geo(f form.GeoSearch) (results []GeoResult, err error) {
 
 	q := s.db.NewScope(nil).DB()
 
-	// q.LogMode(true)
-
 	q = q.Table("photos").
-		Select(`photos.photo_uuid, photos.photo_lat, photos.photo_lng, photos.photo_title, photos.taken_at, 
+		Select(`photos.id, photos.photo_uuid, photos.photo_lat, photos.photo_lng, photos.photo_title, photos.taken_at, 
 		files.file_hash, files.file_width, files.file_height`).
 		Joins(`JOIN files ON files.photo_id = photos.id 
 		AND files.file_missing = 0 AND files.file_primary AND files.deleted_at IS NULL`).
 		Where("photos.photo_lat <> 0").
 		Group("photos.id, files.id")
-
 
 	if f.Query != "" {
 		q = q.Joins("LEFT JOIN photos_keywords ON photos_keywords.photo_id = photos.id").

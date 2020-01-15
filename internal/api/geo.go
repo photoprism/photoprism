@@ -57,6 +57,7 @@ func GetGeo(router *gin.RouterGroup, conf *config.Config) {
 			bboxMax(3, p.PhotoLat)
 
 			feat := geojson.NewPointFeature([]float64{p.PhotoLng, p.PhotoLat})
+			feat.ID = p.ID
 			feat.Properties = gin.H{
 				"PhotoUUID":  p.PhotoUUID,
 				"PhotoTitle": p.PhotoTitle,
