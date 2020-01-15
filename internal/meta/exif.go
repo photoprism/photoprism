@@ -9,6 +9,9 @@ import (
 	"time"
 
 	"github.com/dsoprea/go-exif/v2"
+	"github.com/dsoprea/go-exif/v2/common"
+	"github.com/dsoprea/go-jpeg-image-structure"
+	"github.com/dsoprea/go-png-image-structure"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
