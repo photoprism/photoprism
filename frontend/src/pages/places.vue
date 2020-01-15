@@ -113,8 +113,6 @@
                 };
 
                 return Api.get("geo", options).then((response) => {
-                    this.loading = false;
-
                     if(response.data.features && response.data.features.length > 0) {
                         this.markers = {};
 
@@ -133,12 +131,14 @@
                             this.map.fitBounds(this.result.bbox, {maxZoom: 19});
                         }
 
+                        this.initialized = true;
+
                         this.updateMarkers();
                     } else {
                         this.$notify.warning("No photos found");
                     }
 
-                    this.initialized = true;
+                    this.loading = false;
                 }).catch(() => this.loading = false);
             },
             renderMap() {
