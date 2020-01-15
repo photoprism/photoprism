@@ -39,6 +39,7 @@
         },
         data() {
             return {
+                initialized: false,
                 map: null,
                 markers: {},
                 markersOnScreen: {},
@@ -122,12 +123,16 @@
 
                         this.map.getSource("photos").setData(this.result);
 
-                        this.map.fitBounds(this.result.bbox, {maxZoom: 19});
+                        if(this.filter.q || !this.initialized) {
+                            this.map.fitBounds(this.result.bbox, {maxZoom: 19});
+                        }
 
                         this.updateMarkers();
                     } else {
                         this.$notify.warning("No photos found");
                     }
+
+                    this.initialized = true;
                 }).catch(() => this.loading = false);
             },
             renderMap() {
