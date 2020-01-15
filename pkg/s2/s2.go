@@ -71,7 +71,10 @@ func Range(token string, levelUp int) (min, max string) {
 		return min, max
 	}
 
-	parent := c.Parent(c.Level() - levelUp)
+	// See https://s2geometry.io/resources/s2cell_statistics.html
+	lvl := c.Level()
 
-	return parent.Prev().ToToken(), parent.Next().ToToken()
+	parent := c.Parent(lvl - levelUp)
+
+	return parent.Prev().ChildBeginAtLevel(lvl).ToToken(), parent.Next().ChildBeginAtLevel(lvl).ToToken()
 }

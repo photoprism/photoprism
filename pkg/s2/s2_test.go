@@ -121,10 +121,30 @@ func TestIsZero(t *testing.T) {
 }
 
 func TestRange(t *testing.T) {
-	t.Run("valid", func(t *testing.T) {
+	t.Run("valid_1", func(t *testing.T) {
 		min, max := Range("4799e370ca54c8b9", 1)
-		assert.Equal(t, "4799e370ca54c8b4", min)
-		assert.Equal(t, "4799e370ca54c8c4", max)
+		assert.Equal(t, "4799e370ca54c8b1", min)
+		assert.Equal(t, "4799e370ca54c8c1", max)
+	})
+	t.Run("valid_2", func(t *testing.T) {
+		min, max := Range("4799e370ca54c8b9", 2)
+		assert.Equal(t, "4799e370ca54c881", min)
+		assert.Equal(t, "4799e370ca54c8c1", max)
+	})
+	t.Run("valid_3", func(t *testing.T) {
+		min, max := Range("4799e370ca54c8b9", 3)
+		assert.Equal(t, "4799e370ca54c801", min)
+		assert.Equal(t, "4799e370ca54c901", max)
+	})
+	t.Run("valid_4", func(t *testing.T) {
+		min, max := Range("4799e370ca54c8b9", 4)
+		assert.Equal(t, "4799e370ca54c601", min)
+		assert.Equal(t, "4799e370ca54ca01", max)
+	})
+	t.Run("valid_5", func(t *testing.T) {
+		min, max := Range("4799e370ca54c8b9", 5)
+		assert.Equal(t, "4799e370ca54c001", min)
+		assert.Equal(t, "4799e370ca54d001", max)
 	})
 	t.Run("invalid", func(t *testing.T) {
 		min, max := Range("4799e370ca5q", 1)

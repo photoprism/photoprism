@@ -51,10 +51,10 @@ func (s *Repo) Geo(f form.GeoSearch) (results []GeoResult, err error) {
 	}
 
 	if f.S2 != "" {
-		s2Min, s2Max := s2.Range(f.S2, 1)
+		s2Min, s2Max := s2.Range(f.S2, 5)
 		q = q.Where("photos.location_id BETWEEN ? AND ?", s2Min, s2Max)
 	} else if f.Olc != "" {
-		s2Min, s2Max := s2.Range(pluscode.S2(f.Olc), 1)
+		s2Min, s2Max := s2.Range(pluscode.S2(f.Olc), 5)
 		q = q.Where("photos.location_id BETWEEN ? AND ?", s2Min, s2Max)
 	} else {
 		// Inaccurate distance search, but probably 'good enough' for now
