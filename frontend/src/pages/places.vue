@@ -117,7 +117,13 @@
 
                     if(response.data.features && response.data.features.length > 0) {
                         this.markers = {};
+
+                        for (let id in this.markersOnScreen) {
+                            this.markersOnScreen[id].remove();
+                        }
+
                         this.markersOnScreen = {};
+
                         this.photos = {};
                         this.result = response.data;
 
