@@ -166,7 +166,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/places" @click="" class="p-navigation-places">
+                <v-list-tile :to="{ name: 'places' }" @click="" class="p-navigation-places">
                     <v-list-tile-action>
                         <v-icon>place</v-icon>
                     </v-list-tile-action>

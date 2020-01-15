@@ -1,82 +1,63 @@
 <template>
     <v-container fluid fill-height class="pa-0 p-page p-page-places">
-        <l-map :zoom="zoom" :center="center" :bounds="bounds" :options="options"
-               @update:zoom="onZoom"
-               @update:center="onCenter">
-
-            <l-control position="bottomright">
-                <!-- v-container class="pb-0 pt-0 pl-3 pr-3 mb-0 mt-0" v-if="loading">
-                    <v-progress-linear :indeterminate="true" color="light-blue lighten-1"></v-progress-linear>
-                </v-container -->
-                <v-toolbar dense floating color="accent lighten-4 mt-0" v-on:dblclick.stop v-on:click.stop>
-                    <v-btn icon v-on:click="currentPosition()">
-                        <v-icon>my_location</v-icon>
-                    </v-btn>
-                    <v-spacer></v-spacer>
-                    <v-text-field class="pt-3 pr-3"
+        <div id="map" style="width: 100%; height: 100%;">
+            <div class="p-map-control">
+                <div class="mapboxgl-ctrl mapboxgl-ctrl-group">
+                    <v-text-field class="pa-0 ma-0"
                                   single-line
+                                  solo
+                                  flat
                                   :label="labels.search"
                                   prepend-inner-icon="search"
                                   clearable
+                                  hide-details
+                                  browser-autocomplete="off"
                                   color="secondary-dark"
                                   @click:clear="clearQuery"
-                                  v-model="query.q"
+                                  v-model="filter.q"
                                   @keyup.enter.native="formChange"
                     ></v-text-field>
-                </v-toolbar>
-            </l-control>
-            <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-            <l-marker v-for="(photo, index) in photos" v-bind:data="photo"
-                      v-bind:key="index" :lat-lng="photo.location" :icon="photo.icon"
-                      :options="photo.options" @click="openPhoto(index)"></l-marker>
-            <l-marker v-if="position" :lat-lng="position" :z-index-offset="100"></l-marker>
-        </l-map>
+                </div>
+            </div>
+        </div>
     </v-container>
 </template>
 
 <script>
-    import * as L from "leaflet";
     import Photo from "model/photo";
+    import mapboxgl from "mapbox-gl";
+    import Api from "../common/api";
 
     export default {
         name: 'p-page-places',
+        watch: {
+            '$route'() {
+                this.filter.q = this.query();
+                this.lastFilter = {};
+                this.search();
+            }
+        },
         data() {
-            const pos = this.startPos();
-            const query = this.$route.query;
-            const q = query['q'] ? query['q'] : "";
-            const zoom = query['zoom'] ? parseInt(query['zoom']) : 12;
-            const dist = this.getDistance(zoom);
-
             return {
+                map: null,
+                markers: {},
+                markersOnScreen: {},
                 loading: false,
-                zoom: zoom,
-                position: null,
-                center: L.latLng(parseFloat(pos.lat), parseFloat(pos.lng)),
-                url: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+                url: 'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=xCDwZsNKW3rlveVG0WUU',
+                attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
                 options: {
-                    icon: {
-                        iconSize: [50, 50]
-                    },
-                    minZoom: 3,
+                    container: "map",
+                    style: "https://api.maptiler.com/maps/streets/style.json?key=xCDwZsNKW3rlveVG0WUU",
+                    attributionControl: true,
+                    customAttribution: this.attribution,
+                    zoom: 0,
                 },
                 photos: [],
-                results: [],
-                query: {
-                    q: q,
-                    lat: pos.lat,
-                    lng: pos.lng,
-                    dist: dist.toString(),
-                    zoom: zoom.toString(),
+                result: {},
+                filter: {
+                    q: this.query(),
                 },
-                offset: 0,
-                pageSize: 101,
-                lastQuery: {},
-                bounds: null,
-                minLat: null,
-                maxLat: null,
-                minLng: null,
-                maxLng: null,
+                lastFilter: {},
                 labels: {
                     search: this.$gettext("Search"),
                 },
@@ -84,224 +65,225 @@
             }
         },
         methods: {
-            getDistance(zoom) {
-                switch (zoom) {
-                    case 18:
-                        return 1;
-                    case 17:
-                        return 3;
-                    case 16:
-                        return 5;
-                    case 15:
-                        return 6;
-                    case 14:
-                        return 10;
-                    case 13:
-                        return 15;
-                    case 12:
-                        return 30;
-                    case 11:
-                        return 60;
-                    case 10:
-                        return 100;
-                    case 9:
-                        return 300;
-                    case 8:
-                        return 400;
-                    case 7:
-                        return 800;
-                    case 6:
-                        return 1600;
-                    case 5:
-                        return 2000;
+            query: function () {
+                return this.$route.params.q ? this.$route.params.q : "";
+            },
+            openPhoto(id) {
+                if(!this.photos || !this.photos.length) {
+                    this.photos = this.result.features.map((f) => new Photo(f.properties));
                 }
 
-                return 2500;
-            },
-            onZoom(zoom) {
-                if(this.query.zoom === zoom.toString()) return;
+                if(this.photos.length > 0) {
+                    const index = this.photos.findIndex((p) => p.PhotoUUID === id);
 
-                this.query.zoom = zoom.toString();
-                this.query.dist = this.getDistance(zoom).toString();
-
-                this.search();
-            },
-            onCenter(pos) {
-                const changed = Math.abs(this.query.lat - pos.lat) > 0.001 ||
-                    Math.abs(this.query.lng - pos.lng) > 0.001;
-
-                if(!changed) return;
-
-                this.query.lat = pos.lat.toString();
-                this.query.lng = pos.lng.toString();
-
-                this.search();
-            },
-            startPos() {
-                const pos = this.$config.getValue("pos");
-                const query = this.$route.query;
-
-                let result = {
-                    lat: pos.lat.toString(),
-                    lng: pos.lng.toString(),
-                };
-
-                const queryLat = query['lat'];
-                const queryLng = query['lng'];
-
-                let storedLat = window.localStorage.getItem("lat");
-                let storedLng = window.localStorage.getItem("lng");
-
-                if (queryLat && queryLng) {
-                    result.lat = queryLat;
-                    result.lng = queryLng;
-                } else if (storedLat && storedLng) {
-                    result.lat = storedLat;
-                    result.lng = storedLng;
-                }
-
-                return result;
-            },
-            openPhoto(index) {
-                this.$viewer.show(this.results, index)
-            },
-            onPosition(position) {
-                this.position = L.latLng(position.coords.latitude, position.coords.longitude);
-                this.center = L.latLng(position.coords.latitude, position.coords.longitude);
-                this.query.q = "";
-            },
-            onPositionError(error) {
-                this.$notify.warning(error.message);
-            },
-            currentPosition() {
-                if ("geolocation" in navigator) {
-                    this.$notify.success(this.$gettext('Finding your position...'));
-                    navigator.geolocation.getCurrentPosition(this.onPosition.bind(this), this.onPositionError.bind(this));
+                    this.$viewer.show(this.photos, index)
                 } else {
-                    this.$notify.warning(this.$gettext('Geolocation is not available'));
+                    this.$notify.warning("No photos found");
                 }
             },
             formChange() {
-                this.query.lat = "";
-                this.query.lng = "";
                 this.search();
             },
             clearQuery() {
-                this.position = null;
-                this.query.q = "";
-                this.query.lat = "";
-                this.query.lng = "";
+                this.filter.q = "";
                 this.search();
             },
-            resetBoundingBox() {
-                this.minLat = null;
-                this.maxLat = null;
-                this.minLng = null;
-                this.maxLng = null;
-            },
-            fitBoundingBox(lat, lng) {
-                if (this.maxLat === null || lat > this.maxLat) {
-                    this.maxLat = lat;
-                }
-
-                if (this.minLat === null || lat < this.minLat) {
-                    this.minLat = lat;
-                }
-
-                if (this.maxLng === null || lng > this.maxLng) {
-                    this.maxLng = lng;
-                }
-
-                if (this.minLng === null || lng < this.minLng) {
-                    this.minLng = lng;
-                }
-            },
-            updateMap(results) {
-                for (let i = 0, len = results.length; i < len; i++) {
-                    let result = results[i];
-
-                    if (!result.hasLocation()) continue;
-
-                    let index = this.results.findIndex((p) => p.PhotoUUID === result.PhotoUUID);
-
-                    if (index !== -1) continue;
-
-                    this.results.push(result);
-                    this.photos.push({
-                        id: result.getId(),
-                        options: {
-                            title: result.getTitle(),
-                            clickable: true,
-                        },
-                        icon: L.icon({
-                            iconUrl: result.getThumbnailUrl('tile_50'),
-                            iconRetinaUrl: result.getThumbnailUrl('tile_100'),
-                            iconSize: [50, 50],
-                            className: 'leaflet-marker-photo',
-                        }),
-                        location: L.latLng(result.PhotoLat, result.PhotoLng),
-                    });
-                }
-
-                if (this.photos.length === 0) {
-                    this.$notify.warning(this.$gettext('Nothing to see here'));
-                    return;
-                }
-
-                this.$nextTick(() => {
-                    if(!this.query.q) return;
-                    this.center = this.photos[this.photos.length - 1].location;
-                    this.position = this.photos[this.photos.length - 1].location;
-                });
-            },
             updateQuery() {
-                const query = Object(this.query);
-
-                if (this.query.lat && this.query.lng) {
-                    window.localStorage.setItem("lat", this.query.lat.toString());
-                    window.localStorage.setItem("lng", this.query.lng.toString());
-                } else {
-                    this.position = null;
-                }
-
-                if (JSON.stringify(this.$route.query) !== JSON.stringify(query)) {
-                    this.$router.replace({query: query});
+                if (this.query() !== this.filter.q) {
+                    if (this.filter.q) {
+                        this.$router.replace({name: "place", params: {q: this.filter.q}});
+                    } else {
+                        this.$router.replace({name: "places" });
+                    }
                 }
             },
             search() {
                 if (this.loading) return;
-
                 // Don't query the same data more than once
-                if (JSON.stringify(this.lastQuery) === JSON.stringify(this.query)) return;
-
-                this.offset = 0;
+                if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) return;
                 this.loading = true;
 
-                Object.assign(this.lastQuery, this.query);
+                Object.assign(this.lastFilter, this.filter);
 
                 this.updateQuery();
 
-                const params = {
-                    count: this.pageSize,
-                    offset: this.offset,
-                    location: 1,
+                const options = {
+                    params: this.filter,
                 };
 
-                Object.assign(params, this.query);
-
-                Photo.search(params).then(response => {
+                return Api.get("geo", options).then((response) => {
                     this.loading = false;
 
-                    if (!response.models.length) {
-                        return;
-                    }
+                    if(response.data.features && response.data.features.length > 0) {
+                        this.markers = {};
+                        this.markersOnScreen = {};
+                        this.photos = {};
+                        this.result = response.data;
 
-                    this.updateMap(response.models);
+                        this.map.getSource("photos").setData(this.result);
+
+                        this.map.fitBounds(this.result.bbox, {maxZoom: 19});
+
+                        this.updateMarkers();
+                    } else {
+                        this.$notify.warning("No photos found");
+                    }
                 }).catch(() => this.loading = false);
             },
+            renderMap() {
+                this.map = new mapboxgl.Map(this.options);
+
+                this.map.addControl(new mapboxgl.NavigationControl({showCompass: false}, 'top-right'));
+                this.map.addControl(new mapboxgl.FullscreenControl({container: document.querySelector('body')}));
+                this.map.addControl(new mapboxgl.GeolocateControl({
+                    positionOptions: {
+                        enableHighAccuracy: true
+                    },
+                    trackUserLocation: true
+                }));
+
+                this.map.on("load", () => this.onMapLoad());
+            },
+            updateMarkers() {
+                if(this.loading) return;
+                let newMarkers = {};
+                let features = this.map.querySourceFeatures("photos");
+
+                for (let i = 0; i < features.length; i++) {
+                    let coords = features[i].geometry.coordinates;
+                    let props = features[i].properties;
+                    if (props.cluster) continue;
+                    let id = props.PhotoUUID;
+
+                    let marker = this.markers[id];
+                    if (!marker) {
+                        let el = document.createElement('div');
+                        el.className = 'marker';
+                        el.title = props.PhotoTitle;
+                        el.style.backgroundImage =
+                            'url(/api/v1/thumbnails/' +
+                            props.FileHash + '/tile_50)';
+                        el.style.width = '50px';
+                        el.style.height = '50px';
+
+                        el.addEventListener('click', () => this.openPhoto(props.PhotoUUID));
+                        marker = this.markers[id] = new mapboxgl.Marker({
+                            element: el
+                        }).setLngLat(coords);
+                    }
+                    newMarkers[id] = marker;
+
+                    if (!this.markersOnScreen[id]) {
+                        marker.addTo(this.map);
+                    }
+                }
+                for (let id in this.markersOnScreen) {
+                    if (!newMarkers[id]) {
+                        this.markersOnScreen[id].remove();
+                    }
+                }
+                this.markersOnScreen = newMarkers;
+            },
+            onMapLoad() {
+                this.map.on("styleimagemissing", e => {
+                    if (!e.id.startsWith("/")) return;
+                    this.map.loadImage(e.id, (err, data) => {
+                        if (!err) {
+                            if (!this.map.hasImage(e.id)) {
+                                this.map.addImage(e.id, data);
+                            }
+                        }
+                    });
+                });
+
+                this.map.addSource('photos', {
+                    type: 'geojson',
+                    data: null,
+                    cluster: true,
+                    clusterMaxZoom: 14, // Max zoom to cluster points on
+                    clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+                });
+
+                this.map.addLayer({
+                    id: 'clusters',
+                    type: 'circle',
+                    source: 'photos',
+                    filter: ['has', 'point_count'],
+                    paint: {
+                        'circle-color': [
+                            'step',
+                            ['get', 'point_count'],
+                            '#2DC4B2',
+                            100,
+                            '#3BB3C3',
+                            750,
+                            '#669EC4'
+                        ],
+                        'circle-radius': [
+                            'step',
+                            ['get', 'point_count'],
+                            20,
+                            100,
+                            30,
+                            750,
+                            40
+                        ]
+                    }
+                });
+
+                this.map.addLayer({
+                    id: 'cluster-count',
+                    type: 'symbol',
+                    source: 'photos',
+                    filter: ['has', 'point_count'],
+                    layout: {
+                        'text-field': '{point_count_abbreviated}',
+                        'text-font': ['Roboto', 'sans-serif'],
+                        'text-size': 13
+                    }
+                });
+
+                this.map.on('data', (e) => {
+                    if (e.sourceId !== 'photos' || !e.isSourceLoaded) return;
+
+                    //this.map.on('move', this.updateMarkers);
+                    this.map.on('moveend', this.updateMarkers);
+                    this.map.on('render', this.updateMarkers);
+                    this.updateMarkers();
+                });
+
+                this.map.on('click', 'clusters', (e) => {
+                    const features = this.map.queryRenderedFeatures(e.point, {
+                        layers: ['clusters']
+                    });
+                    const clusterId = features[0].properties.cluster_id;
+                    this.map.getSource('photos').getClusterExpansionZoom(
+                        clusterId,
+                        (err, zoom) => {
+                            if (err) return;
+
+                            this.map.easeTo({
+                                center: features[0].geometry.coordinates,
+                                zoom: zoom
+                            });
+
+
+                        }
+                    );
+                });
+
+                this.map.on('mouseenter', 'clusters', () => {
+                    this.map.getCanvas().style.cursor = 'pointer';
+                });
+                this.map.on('mouseleave', 'clusters', () => {
+                    this.map.getCanvas().style.cursor = '';
+                });
+
+                this.search();
+            },
         },
-        created() {
-            this.search();
+        mounted() {
+            this.renderMap();
         },
     };
 </script>

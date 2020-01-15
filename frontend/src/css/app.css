@@ -1,6 +1,6 @@
 @import url("../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
-@import url("../../node_modules/leaflet/dist/leaflet.css");
+@import url("../../node_modules/mapbox-gl/dist/mapbox-gl.css");
 @import url("colorchange.css");
 @import url("maps.css");
 @import url("viewer.css");

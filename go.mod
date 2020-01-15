@@ -20,6 +20,7 @@ require (
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
+	github.com/google/open-location-code/go v0.0.0-20191230190541-a6eb95b4d2f9
 	github.com/gorilla/websocket v1.4.1
 	github.com/gosimple/slug v1.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.1-0.20190118093823-f849b5445de4 // indirect
@@ -39,6 +40,7 @@ require (
 	github.com/myesui/uuid v1.0.0 // indirect
 	github.com/opentracing/opentracing-go v1.0.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/paulmach/go.geojson v1.4.0
 	github.com/pingcap/errors v0.11.1
 	github.com/pingcap/goleveldb v0.0.0-20171020122428-b9ff6c35079e // indirect
 	github.com/pingcap/parser v0.0.0-20190529073816-0550d84c65ad

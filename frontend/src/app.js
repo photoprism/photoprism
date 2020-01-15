@@ -9,7 +9,6 @@ import Dialogs from "dialog/dialogs";
 import Event from "pubsub-js";
 import GetTextPlugin from "vue-gettext";
 import Log from "common/log";
-import Maps from "maps/components";
 import PhotoPrism from "photoprism.vue";
 import Router from "vue-router";
 import Routes from "routes";
@@ -55,7 +54,6 @@ Vue.use(VueFullscreen);
 Vue.use(VueFilters);
 Vue.use(Components);
 Vue.use(Dialogs);
-Vue.use(Maps);
 Vue.use(Router);
 
 // Configure client-side routing

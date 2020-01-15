@@ -65,6 +65,12 @@ export default [
         meta: {title: "Places"},
     },
     {
+        name: "place",
+        path: "/places/:q",
+        component: Places,
+        meta: {title: "Places"},
+    },
+    {
         name: "labels",
         path: "/labels",
         component: Labels,

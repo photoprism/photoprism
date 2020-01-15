@@ -6,7 +6,7 @@
                         :refresh="refresh"></p-photo-search>
 
         <v-container fluid class="pa-4" v-if="loading">
-            <v-progress-linear color="secondary-dark"  :indeterminate="true"></v-progress-linear>
+            <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
         </v-container>
         <v-container fluid class="pa-0" v-else>
             <p-scroll-top></p-scroll-top>
@@ -97,11 +97,11 @@
         },
         computed: {
             context: function () {
-                if(!this.staticFilter) {
+                if (!this.staticFilter) {
                     return "photos"
                 }
 
-                if(this.staticFilter.archived) {
+                if (this.staticFilter.archived) {
                     return "archive"
                 } else if (this.staticFilter.favorites) {
                     return "favorites"
@@ -129,10 +129,10 @@
             openLocation(index) {
                 const photo = this.results[index];
 
-                if (photo.PhotoLat && photo.PhotoLng) {
-                    this.$router.push({name: "places", query: {lat: String(photo.PhotoLat), lng: String(photo.PhotoLng)}});
-                } else if (photo.LocCity) {
-                    this.$router.push({name: "places", query: {q: photo.LocCity}});
+                if (photo.LocationID) {
+                    this.$router.push({name: "place", params: {q: "s2:" + photo.LocationID}});
+                } else if (photo.PlaceID && photo.PlaceID !== "-") {
+                    this.$router.push({name: "place", params: {q: "s2:" + photo.PlaceID}});
                 }
             },
             openPhoto(index) {

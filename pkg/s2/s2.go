@@ -49,6 +49,29 @@ func LatLng(token string) (lat, lng float64) {
 	}
 
 	c := gs2.CellIDFromToken(token)
+
+	if !c.IsValid() {
+		return 0.0, 0.0
+	}
+
 	l := c.LatLng()
 	return l.Lat.Degrees(), l.Lng.Degrees()
+}
+
+// IsZero returns true if the coordinates are both empty.
+func IsZero(lat, lng float64) bool {
+	return lat == 0.0 && lng == 0.0
+}
+
+// Range returns a token range for finding nearby locations.
+func Range(token string, levelUp int) (min, max string) {
+	c := gs2.CellIDFromToken(token)
+
+	if !c.IsValid() {
+		return min, max
+	}
+
+	parent := c.Parent(c.Level() - levelUp)
+
+	return parent.Prev().ToToken(), parent.Next().ToToken()
 }
