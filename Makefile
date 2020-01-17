@@ -137,8 +137,9 @@ lint-js:
 	(cd frontend &&	npm run lint)
 fmt-js:
 	(cd frontend &&	npm run fmt)
-fmt-go:
+fmt-imports:
 	goimports -w pkg internal cmd
+fmt-go:
 	go fmt ./pkg/... ./internal/... ./cmd/...
 tidy:
 	go mod tidy

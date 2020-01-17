@@ -66,7 +66,7 @@ func importWorker(jobs <-chan ImportJob) {
 
 			if importedMainFile.IsRaw() || importedMainFile.IsHEIF() || importedMainFile.IsImageOther() {
 				if _, err := imp.convert.ToJpeg(importedMainFile); err != nil {
-					log.Errorf("import: could not create jpeg from \"%s\"", err)
+					log.Errorf("import: creating jpeg failed (%s)", err.Error())
 				}
 			}
 
@@ -74,7 +74,7 @@ func importWorker(jobs <-chan ImportJob) {
 				log.Error(err)
 			} else {
 				if err := jpg.RenderDefaultThumbnails(imp.conf.ThumbnailsPath(), false); err != nil {
-					log.Errorf("import: could not create default thumbnails (%s)", err)
+					log.Errorf("import: could not create default thumbnails (%s)", err.Error())
 				}
 			}
 

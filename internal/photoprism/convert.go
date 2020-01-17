@@ -1,11 +1,14 @@
 package photoprism
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
+	"sync"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
@@ -15,7 +18,8 @@ import (
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
 type Convert struct {
-	conf *config.Config
+	conf     *config.Config
+	cmdMutex sync.Mutex
 }
 
 // NewConvert returns a new converter and expects the config as argument.
@@ -140,10 +144,30 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return NewMediaFile(jpegFilename)
 	}
 
-	if convertCommand, err := c.ConvertCommand(image, jpegFilename, xmpFilename); err != nil {
+	cmd, err := c.ConvertCommand(image, jpegFilename, xmpFilename)
+
+	if err != nil {
 		return nil, err
-	} else if err := convertCommand.Run(); err != nil {
-		return nil, err
+	}
+
+	// Unclear if this is really necessary here, but safe is safe.
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	// Make sure only one command is executed at a time.
+	// See https://photo.stackexchange.com/questions/105969/darktable-cli-fails-because-of-locked-database-file
+	c.cmdMutex.Lock()
+	defer c.cmdMutex.Unlock()
+
+	// Fetch command output.
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+
+	// Run convert command.
+	if err := cmd.Run(); err != nil {
+		return nil, errors.New(stderr.String())
 	}
 
 	return NewMediaFile(jpegFilename)

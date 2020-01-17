@@ -51,7 +51,8 @@ RUN apt-get update && apt-get upgrade && \
     exiftool
 
 # Install RAW to JPEG converter
-RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
+RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktable:/master/xUbuntu_18.04/ /' > /etc/apt/sources.list.d/graphics:darktable:master.list" && \
+    wget -qO - https://download.opensuse.org/repositories/graphics:darktable:master/xUbuntu_18.04/Release.key | apt-key add - && \
     apt-get update && \
     apt-get install darktable && \
     apt-get upgrade && \
