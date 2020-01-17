@@ -127,7 +127,7 @@
                     this.map.getSource("photos").setData(this.result);
 
                     if (this.filter.q || !this.initialized) {
-                        this.map.fitBounds(this.result.bbox, {maxZoom: 15, padding: 100});
+                        this.map.fitBounds(this.result.bbox, {maxZoom: 16, padding: 100});
                     }
 
                     this.initialized = true;
