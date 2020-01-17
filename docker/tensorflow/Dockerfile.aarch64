@@ -60,6 +60,6 @@ RUN mv bazel-0.24.1-aarch64 /usr/local/bin/bazel && chmod 755 /usr/local/bin/baz
 WORKDIR "/home/tensorflow/tensorflow-1.14.0"
 COPY ./*.sh ./
 COPY ./*.diff ./
-COPY ./.tf_configure.bazelrc .tf_configure.bazelrc
+COPY ./tf_configure.bazelrc .tf_configure.bazelrc
 COPY ./Makefile.aarch64 Makefile
 RUN make patch
