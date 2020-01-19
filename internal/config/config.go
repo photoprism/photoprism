@@ -11,6 +11,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	gc "github.com/patrickmn/go-cache"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -182,8 +183,10 @@ func (c *Config) Init(ctx context.Context) error {
 	return c.connectToDatabase(ctx)
 }
 
-// Shutdown closes open database connections.
+// Shutdown services and workers.
 func (c *Config) Shutdown() {
+	mutex.Worker.Cancel()
+
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)
 	} else {

@@ -64,13 +64,13 @@ func (imp *Import) Start(importPath string) {
 
 	jobs := make(chan ImportJob)
 
-	// Start a fixed number of goroutines to read and digest files.
+	// Start a fixed number of goroutines to import files.
 	var wg sync.WaitGroup
 	var numWorkers = ind.conf.Workers()
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
-			importWorker(jobs) // HLc
+			importWorker(jobs)
 			wg.Done()
 		}()
 	}

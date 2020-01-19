@@ -35,6 +35,19 @@ func (c *Convert) Start(path string) error {
 
 	defer mutex.Worker.Stop()
 
+	jobs := make(chan ConvertJob)
+
+	// Start a fixed number of goroutines to convert files.
+	var wg sync.WaitGroup
+	var numWorkers = c.conf.Workers()
+	wg.Add(numWorkers)
+	for i := 0; i < numWorkers; i++ {
+		go func() {
+			convertWorker(jobs)
+			wg.Done()
+		}()
+	}
+
 	err := filepath.Walk(path, func(filename string, fileInfo os.FileInfo, err error) error {
 		defer func() {
 			if err := recover(); err != nil {
@@ -60,12 +73,16 @@ func (c *Convert) Start(path string) error {
 			return nil
 		}
 
-		if _, err := c.ToJpeg(mf); err != nil {
-			log.Warnf("convert: %s (%s)", err.Error(), filename)
+		jobs <- ConvertJob{
+			image:   mf,
+			convert: c,
 		}
 
 		return nil
 	})
+
+	close(jobs)
+	wg.Wait()
 
 	return err
 }

@@ -68,7 +68,7 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 
 	jobs := make(chan IndexJob)
 
-	// Start a fixed number of goroutines to read and digest files.
+	// Start a fixed number of goroutines to index files.
 	var wg sync.WaitGroup
 	var numWorkers = ind.conf.Workers()
 	wg.Add(numWorkers)
