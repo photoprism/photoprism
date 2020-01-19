@@ -96,5 +96,22 @@
     "terminal": "#333333",
     "navigation": "#212121",
     "navigation-home": "#000000"
+  },
+  "onyx": {
+    "application": "#959899",
+    "primary": "#a5b3c0",
+    "secondary-dark": "#343434",
+    "secondary": "#656869",
+    "secondary-light": "#757879",
+    "accent": "#656565",
+    "error": "#E57373",
+    "info": "#00ACC1",
+    "success": "#00BFA5",
+    "warning": "#FFAB00",
+    "delete": "#E57373",
+    "love": "#EF5350",
+    "terminal": "#333333",
+    "navigation": "#353839",
+    "navigation-home": "#212121"
   }
 }
