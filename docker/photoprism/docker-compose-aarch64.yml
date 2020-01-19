@@ -1,0 +1,44 @@
+version: '3.3'
+
+# Example docker-compose config file for production use
+# Container image on Docker Hub: https://hub.docker.com/r/photoprism/photoprism/
+# To keep photoprism running, add "restart: always"
+#
+# Usage: docker-compose up
+
+services:
+  photoprism:
+    security_opt:
+      - seccomp:unconfined
+    image: guysoft/photoprisimpi:latest
+    ports:
+      - 2342:2342 # [local port]:[container port]
+    environment: # Run "photoprism help" and "photoprism config" too see all config options and current values
+      PHOTOPRISM_URL: "https://demo.photoprism.org/"
+      PHOTOPRISM_TITLE: "PhotoPrism"
+      PHOTOPRISM_SUBTITLE: "Browse your life"
+      PHOTOPRISM_DESCRIPTION: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source."
+      PHOTOPRISM_AUTHOR: "Anonymous"
+      PHOTOPRISM_TWITTER: "@browseyourlife"
+      PHOTOPRISM_IMPORT_PATH: "/home/photoprism/Pictures/Import"
+      PHOTOPRISM_EXPORT_PATH: "/home/photoprism/Pictures/Export"
+      PHOTOPRISM_ORIGINALS_PATH: "/home/photoprism/Pictures/Originals"
+      PHOTOPRISM_UPLOAD_NSFW: "true"
+      PHOTOPRISM_HIDE_NSFW: "false"
+      PHOTOPRISM_EXPERIMENTAL: "false"
+      PHOTOPRISM_DEBUG: "false"
+      PHOTOPRISM_READONLY: "false"
+      PHOTOPRISM_PUBLIC: "false"
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"
+    volumes:
+      - "~/Pictures/Originals:/home/photoprism/Pictures/Originals" # [local path]:[container path]
+      - "~/Pictures/Import:/home/photoprism/Pictures/Import" # [local path]:[container path] (optional)
+      - "~/Pictures/Export:/home/photoprism/Pictures/Export" # [local path]:[container path] (optional)
+      - "photoprism-cache:/home/photoprism/.cache/photoprism" # keep thumbnail cache
+      - "photoprism-database:/home/photoprism/.local/share/photoprism/resources/database" # keep database files
+
+volumes: # keep this
+  photoprism-cache:
+    driver: local
+  photoprism-database:
+    driver: local

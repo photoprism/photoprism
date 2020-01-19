@@ -1,0 +1,14 @@
+version: '3.6'
+
+services:
+  build:
+    build:
+      context: .
+      dockerfile: Dockerfile.aarch64
+    container_name: tensorflow-build
+    tty: true
+    restart: always
+    volumes:
+      - ./out:/output
+
+
