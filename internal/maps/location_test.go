@@ -4,7 +4,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/maps/osm"
 	"github.com/photoprism/photoprism/internal/maps/places"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/stretchr/testify/assert"
@@ -23,23 +22,6 @@ func TestLocation_QueryPlaces(t *testing.T) {
 		}
 
 		assert.Equal(t, "Alt-Berlin", l.LocName)
-		assert.Equal(t, "Berlin, Germany", l.LocLabel)
-	})
-}
-
-func TestLocation_QueryOSM(t *testing.T) {
-	t.Run("BerlinFernsehturm", func(t *testing.T) {
-		lat := 52.5208
-		lng := 13.40953
-		id := s2.Token(lat, lng)
-
-		l := NewLocation(id)
-
-		if err := l.QueryOSM(); err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Equal(t, "Fernsehturm Berlin", l.LocName)
 		assert.Equal(t, "Berlin, Germany", l.LocLabel)
 	})
 }
@@ -75,18 +57,15 @@ func TestLocation_Assign(t *testing.T) {
 		lng := -118.49700833333334
 		id := s2.Token(lat, lng)
 
-		o, err := osm.FindLocation(id)
+		o, err := places.FindLocation(id)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		assert.False(t, o.Cached)
-		assert.Equal(t, "Santa Monica Pier", o.LocName)
-		assert.Equal(t, "90401", o.Address.Postcode)
-		assert.Equal(t, "California", o.Address.State)
-		assert.Equal(t, "us", o.Address.CountryCode)
-		assert.Equal(t, "United States of America", o.Address.Country)
+		assert.Equal(t, "California", o.State())
+		assert.Equal(t, "us", o.CountryCode())
 
 		var l Location
 
@@ -94,7 +73,6 @@ func TestLocation_Assign(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Santa Monica Pier", l.LocName)
 		assert.Equal(t, "Santa Monica, California, USA", l.LocLabel)
 	})
 
@@ -103,19 +81,11 @@ func TestLocation_Assign(t *testing.T) {
 		lng := 8.557494444444446
 		id := s2.Token(lat, lng)
 
-		o, err := osm.FindLocation(id)
+		o, err := places.FindLocation(id)
 
 		if err != nil {
 			t.Fatal(err)
 		}
-
-		assert.False(t, o.Cached)
-
-		assert.Equal(t, "Dock A", o.LocName)
-		assert.Equal(t, "8302", o.Address.Postcode)
-		assert.Equal(t, "Zurich", o.Address.State)
-		assert.Equal(t, "ch", o.Address.CountryCode)
-		assert.Equal(t, "Switzerland", o.Address.Country)
 
 		var l Location
 
@@ -132,19 +102,11 @@ func TestLocation_Assign(t *testing.T) {
 		lng := 13.28895092010498
 		id := s2.Token(lat, lng)
 
-		o, err := osm.FindLocation(id)
+		o, err := places.FindLocation(id)
 
 		if err != nil {
 			t.Fatal(err)
 		}
-
-		assert.False(t, o.Cached)
-
-		assert.Equal(t, "TGL", o.LocName)
-		assert.Equal(t, "13405", o.Address.Postcode)
-		assert.Equal(t, "Berlin", o.Address.State)
-		assert.Equal(t, "de", o.Address.CountryCode)
-		assert.Equal(t, "Germany", o.Address.Country)
 
 		var l Location
 
