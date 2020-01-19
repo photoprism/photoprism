@@ -7,12 +7,9 @@ Big thank you to [Guy Sheffer](https://github.com/guysoft) for
 Simply download `docker-compose.yml` (edit to change directories) and run `docker-compose up` to start PhotoPrism:
 
 ```
-wget https://raw.githubusercontent.com/photoprism/photoprism/develop/docker/photoprism-arm64/docker-compose.yml
+wget https://dl.photoprism.org/docker/arm64/docker-compose.yml
 sudo docker-compose up
 ```
-
-*Note: This is work in progress and we'll shorten the URL as soon as possible.
-Please read the following OS and hardware requirements before starting the app.*
 
 ## Operating System and Hardware Requirements ##
 

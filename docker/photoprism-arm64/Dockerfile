@@ -45,8 +45,6 @@ RUN apt-get update && apt-get upgrade && \
     mysql-client \
     tzdata \
     gconf-service \
-    chromium-browser \
-    firefox \
     libheif-examples \
     darktable \
     exiftool
@@ -64,7 +62,7 @@ RUN curl -L \
 RUN ldconfig
 
 # Install NodeJS
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get update && \
     apt-get install nodejs && \
     apt-get clean && \
@@ -72,7 +70,7 @@ RUN apt-get update && \
 
 # Install and configure NodeJS Package Manager (npm)
 ENV NODE_ENV production
-RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver
+RUN npm install --unsafe-perm=true --allow-root -g npm
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
@@ -98,12 +96,6 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism
 RUN wget "https://dl.photoprism.org/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip
 RUN wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip
-RUN wget "https://dl.photoprism.org/fixtures/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
-
-# Install goimports and richgo (colorizes "go test" output)
-RUN env GO111MODULE=off /usr/local/go/bin/go get -u golang.org/x/tools/cmd/goimports
-RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo
-RUN echo "alias go=richgo" > /root/.bash_aliases
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -117,6 +109,13 @@ FROM ubuntu:18.04
 
 # Set environment variables
 ENV DEBIAN_FRONTEND noninteractive
+
+# Configure apt-get
+RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry
+RUN echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends
+RUN echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests
+RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes
+RUN echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
 
 # Install additional distribution packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
