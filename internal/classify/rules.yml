@@ -1890,7 +1890,7 @@ beer glass:
   see: beer
 
 bell cote:
-  label: church
+  label: tower
   threshold: 0.3
   categories:
     - architecture
@@ -1919,9 +1919,7 @@ boathouse:
     - outdoor
 
 bobsled:
-  label: sports
-  categories:
-    - snow
+  see: ignore
 
 bookcase:
   categories:
@@ -1962,7 +1960,6 @@ canoe:
   categories:
     - boat
     - water
-    - sports
 
 can opener:
   label: cooking
@@ -2600,10 +2597,8 @@ paper towel:
   threshold: 0.5
 
 parachute:
-  label: sports
+  label: outdoor
   threshold: 0.3
-  categories:
-    - outdoor
 
 car:
   label: car
@@ -2741,8 +2736,7 @@ prison:
     - architecture
 
 punching bag:
-  label: sports
-  threshold: 0.3
+  see: ignore
 
 harvester:
   label: vehicle
@@ -2853,7 +2847,6 @@ ski:
   threshold: 0.33
   categories:
     - snow
-    - sports
 
 sleeping bag:
   label: camping

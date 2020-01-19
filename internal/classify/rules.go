@@ -597,7 +597,7 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"bell cote": {
-		Label:      "church",
+		Label:      "tower",
 		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{"architecture"},
@@ -771,10 +771,10 @@ var rules = LabelRules{
 		Categories: []string{"architecture", "water", "outdoor"},
 	},
 	"bobsled": {
-		Label:      "sports",
-		Threshold:  0.000000,
-		Priority:   0,
-		Categories: []string{"snow"},
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"bolete": {
 		Label:      "mushroom",
@@ -1074,7 +1074,7 @@ var rules = LabelRules{
 		Label:      "",
 		Threshold:  0.000000,
 		Priority:   0,
-		Categories: []string{"boat", "water", "sports"},
+		Categories: []string{"boat", "water"},
 	},
 	"capuchin": {
 		Label:      "monkey",
@@ -4023,10 +4023,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"parachute": {
-		Label:      "sports",
+		Label:      "outdoor",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{"outdoor"},
+		Categories: []string{},
 	},
 	"parallel bars": {
 		Label:      "",
@@ -4443,9 +4443,9 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"punching bag": {
-		Label:      "sports",
-		Threshold:  0.300000,
-		Priority:   0,
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"purse": {
@@ -5004,7 +5004,7 @@ var rules = LabelRules{
 		Label:      "",
 		Threshold:  0.330000,
 		Priority:   0,
-		Categories: []string{"snow", "sports"},
+		Categories: []string{"snow"},
 	},
 	"ski mask": {
 		Label:      "portrait",
