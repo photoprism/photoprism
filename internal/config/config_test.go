@@ -46,6 +46,14 @@ func TestConfig_TensorFlowVersion(t *testing.T) {
 	assert.Equal(t, "1.14.0", version)
 }
 
+func TestConfig_TensorFlowDisabled(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	version := c.TensorFlowDisabled()
+	assert.Equal(t, false, version)
+}
+
 func TestConfig_Copyright(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)

@@ -44,9 +44,16 @@ type LocationSource interface {
 	Source() string
 }
 
-func NewLocation(id string) *Location {
+func NewLocation(id string, name string, category string, label string, city string, state string, country string, source string) *Location {
 	result := &Location{
-		ID: id,
+		ID:          id,
+		LocName:     name,
+		LocCategory: category,
+		LocLabel:    label,
+		LocCity:     city,
+		LocState:    state,
+		LocCountry:  country,
+		LocSource:   source,
 	}
 
 	return result

@@ -23,6 +23,19 @@ type Location struct {
 
 var ReverseLookupURL = "https://places.photoprism.org/v1/location/%s"
 
+func NewLocation(id string, lat float64, lng float64, name string, category string, place Place, cached bool) *Location {
+	result := &Location{
+		ID:          id,
+		LocLat:      lat,
+		LocLng:      lng,
+		LocName:     name,
+		LocCategory: category,
+		Place:       place,
+		Cached:      cached,
+	}
+
+	return result
+}
 func FindLocation(id string) (result Location, err error) {
 	if len(id) > 16 || len(id) == 0 {
 		return result, fmt.Errorf("places: invalid location id %s", id)
