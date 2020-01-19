@@ -8,9 +8,9 @@ version: '3.3'
 
 services:
   photoprism:
+    image: photoprism/photoprism-arm64:latest
     security_opt:
       - seccomp:unconfined
-    image: guysoft/photoprisimpi:latest
     ports:
       - 2342:2342 # [local port]:[container port]
     environment: # Run "photoprism help" and "photoprism config" too see all config options and current values

@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 as build
 
 LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
 
@@ -48,24 +48,18 @@ RUN apt-get update && apt-get upgrade && \
     chromium-browser \
     firefox \
     libheif-examples \
+    darktable \
     exiftool
-
-# Install RAW to JPEG converter
-RUN add-apt-repository ppa:pmjdebruijn/darktable-release && \
-    apt-get update && \
-    apt-get install darktable && \
-    apt-get upgrade && \
-    apt-get dist-upgrade
 
 # Install & configure TensorFlow for C
 #
-# Please use other build if processor does not support AVX2:
-# https://dl.photoprism.org/tensorflow/linux/
+# Big thank you to Guy Sheffer for building this!
+# https://github.com/guysoft
 #
 ENV LD_LIBRARY_PATH /root/.local/lib:/usr/local/lib:/usr/lib:/lib
 ENV TF_CPP_MIN_LOG_LEVEL 0
 RUN curl -L \
-   "http://unofficialpi.org/photoprisim/libtensorflow-aarch64-1.14.0.tar.gz" | \
+   "https://dl.photoprism.org/tensorflow/arm64/libtensorflow-arm64-1.14.0.tar.gz" | \
    tar -C "/usr" -xz
 RUN ldconfig
 
@@ -113,9 +107,70 @@ RUN echo "alias go=richgo" > /root/.bash_aliases
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
+COPY . .
 
-# Expose HTTP port 2342 plus 4000 for TiDB and 9515 for chromedriver
-EXPOSE 2342 4000 9515
+# Build PhotoPrism
+RUN make dep build-js install
 
-# Keep container running (services can be started manually using a terminal)
-CMD tail -f /dev/null
+# Same base image as photoprism/development
+FROM ubuntu:18.04
+
+# Set environment variables
+ENV DEBIAN_FRONTEND noninteractive
+
+# Install additional distribution packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl \
+        unzip \
+        nano \
+        wget \
+        ca-certificates \
+        tzdata \
+        libheif-examples \
+        darktable \
+        exiftool && \
+    apt-get update && \
+    apt-get upgrade && \
+    apt-get dist-upgrade && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy dependencies
+COPY --from=build /usr/lib/libtensorflow.so /usr/lib/libtensorflow.so
+COPY --from=build /usr/lib/libtensorflow_framework.so /usr/lib/libtensorflow_framework.so
+
+RUN ldconfig
+
+# Create and configure photoprism user
+RUN useradd -ms /bin/bash photoprism
+USER photoprism
+
+WORKDIR /home/photoprism
+ENV PATH /home/photoprism/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV TF_CPP_MIN_LOG_LEVEL 2
+ENV PHOTOPRISM_CONFIG_FILE /home/photoprism/.config/photoprism/photoprism.yml
+
+# Copy assets to /home/photoprism
+COPY --chown=photoprism --from=build /root/.local/bin/photoprism /home/photoprism/.local/bin/photoprism
+COPY --chown=photoprism --from=build /root/.local/share/photoprism /home/photoprism/.local/share/photoprism
+COPY --chown=photoprism --from=build /root/.config/photoprism /home/photoprism/.config/photoprism
+
+# Create directories
+RUN mkdir -p /home/photoprism/.cache/photoprism \
+    /home/photoprism/Pictures/Originals \
+    /home/photoprism/Pictures/Import \
+    /home/photoprism/Pictures/Export
+
+# Fix permissions
+USER root
+RUN chown -R photoprism:photoprism /home/photoprism
+USER photoprism
+
+# Show photoprism version
+RUN photoprism -v
+
+# Expose http and database ports
+EXPOSE 2342 4000
+
+# Run server
+CMD photoprism start

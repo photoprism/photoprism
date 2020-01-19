@@ -4,7 +4,6 @@ BINARY_NAME=photoprism
 DOCKER_TAG=`date -u +%Y%m%d`
 TIDB_VERSION=2.1.11
 TF_VERSION=1.14.0
-DARKTABLE_VERSION="$(awk '$2 == "DARKTABLE_VERSION" { print $3; exit }' docker/darktable/Dockerfile)"
 
 HASRICHGO := $(shell which richgo)
 ifdef HASRICHGO
@@ -121,15 +120,15 @@ docker-development:
 docker-photoprism:
 	scripts/docker-build.sh photoprism $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism $(DOCKER_TAG)
+docker-photoprism-arm64:
+	scripts/docker-build.sh photoprism-arm64 $(DOCKER_TAG)
+	scripts/docker-push.sh photoprism-arm64 $(DOCKER_TAG)
 docker-demo:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
 docker-tensorflow:
 	scripts/docker-build.sh tensorflow $(TF_VERSION)
 	scripts/docker-push.sh tensorflow $(TF_VERSION)
-docker-darktable:
-	scripts/docker-build.sh darktable $(DARKTABLE_VERSION)
-	scripts/docker-push.sh darktable $(DARKTABLE_VERSION)
 docker-tidb:
 	scripts/docker-build.sh tidb $(TIDB_VERSION)
 	scripts/docker-push.sh tidb $(TIDB_VERSION)
