@@ -167,4 +167,12 @@ func TestMediaFile_Colors(t *testing.T) {
 			t.Error(err)
 		}
 	})
+
+	t.Run("Random.docx", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
+		p, err := mediaFile.Colors(conf.ThumbnailsPath())
+		assert.Error(t, err, "no color information: not a JPEG file")
+		t.Log(p)
+
+	})
 }
