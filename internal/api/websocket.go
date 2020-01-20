@@ -1,6 +1,7 @@
 package api
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,11 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
-var wsConnection = websocket.Upgrader{}
+var wsConnection = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
 var wsTimeout = 60 * time.Second
 
 func wsReader(ws *websocket.Conn) {
@@ -28,7 +33,7 @@ func wsReader(ws *websocket.Conn) {
 	}
 }
 
-func wsWriter(ws *websocket.Conn, conf *config.Config) {
+func wsWriter(ws *websocket.Conn) {
 	pingTicker := time.NewTicker(10 * time.Second)
 	s := event.Subscribe("log.*", "notify.*", "index.*", "upload.*", "import.*", "config.*", "count.*")
 
@@ -72,7 +77,7 @@ func Websocket(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Debug("websocket: connected")
 
-		go wsWriter(ws, conf)
+		go wsWriter(ws)
 
 		wsReader(ws)
 	})
