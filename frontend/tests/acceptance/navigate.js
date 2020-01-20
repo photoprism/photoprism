@@ -15,7 +15,7 @@ test('Navigate', async t => {
     await page.openNav();
     await t
         .click('a[href="/places"]')
-        .expect(Selector('div.leaflet-map-pane').exists).ok();
+        .expect(Selector('#map').exists).ok();
     await page.openNav();
     await t
         .click('a[href="/labels"]')
