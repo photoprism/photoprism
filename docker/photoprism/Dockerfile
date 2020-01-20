@@ -29,6 +29,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         tzdata \
         libheif-examples \
+        gnupg \
+        gpg-agent \
+        apt-utils \
+        add-apt-key \
         exiftool
 
 # Copy dependencies
