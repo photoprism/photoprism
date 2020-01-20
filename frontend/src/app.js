@@ -41,13 +41,18 @@ Vue.prototype.$config = config;
 Vue.prototype.$clipboard = clipboard;
 
 // Register Vuetify
-Vue.use(Vuetify, { "theme": config.theme });
+Vue.use(Vuetify, {"theme": config.theme});
 
 Vue.config.language = config.values.settings.language;
 Settings.defaultLocale = config.values.settings.language;
 
 // Register other VueJS plugins
-Vue.use(GetTextPlugin, {translations: config.translations, silent: !config.values.debug, defaultLanguage: Vue.config.language});
+Vue.use(GetTextPlugin, {
+    translations: config.translations,
+    silent: !config.values.debug,
+    defaultLanguage: Vue.config.language,
+});
+
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);
@@ -64,14 +69,6 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-    if(to.meta.title) {
-        config.page.title = to.meta.title;
-        window.document.title = "PhotoPrism: " + to.meta.title;
-    } else {
-        config.page.title = "";
-        window.document.title = "PhotoPrism";
-    }
-
     if (to.matched.some(record => record.meta.admin)) {
         if (isPublic || Session.isAdmin()) {
             next();
@@ -92,6 +89,16 @@ router.beforeEach((to, from, next) => {
         }
     } else {
         next();
+    }
+});
+
+router.afterEach((to) => {
+    if (to.meta.title) {
+        config.page.title = to.meta.title;
+        window.document.title = "PhotoPrism: " + to.meta.title;
+    } else {
+        config.page.title = "";
+        window.document.title = "PhotoPrism";
     }
 });
 

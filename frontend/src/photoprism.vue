@@ -4,7 +4,7 @@
 
         <p-notify></p-notify>
 
-        <v-app>
+        <v-app :class="$route.meta.background">
             <p-navigation></p-navigation>
 
             <v-content>

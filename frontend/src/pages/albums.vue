@@ -45,10 +45,7 @@
                                 <translate>No albums matched your search</translate>
                             </h3>
                             <div>
-                                <translate>Try again using a different term or</translate>
-                                <v-btn @click.prevent.stop="create" small>
-                                    <translate>create a new album</translate>
-                                </v-btn>
+                                <translate>Try again using a different term or create a new album</translate>
                             </div>
                         </div>
                     </v-card-title>
