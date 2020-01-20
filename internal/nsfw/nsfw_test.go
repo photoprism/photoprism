@@ -13,7 +13,7 @@ var modelPath, _ = filepath.Abs("../../assets/resources/nsfw")
 
 var detector = New(modelPath)
 
-func TestNSFW(t *testing.T) {
+func TestIsSafe(t *testing.T) {
 	detect := func(filename string) Labels {
 		result, err := detector.File(filename)
 
@@ -99,4 +99,15 @@ func TestNSFW(t *testing.T) {
 	if err != nil {
 		t.Log(err.Error())
 	}
+}
+
+func TestNSFW(t *testing.T) {
+	porn := Labels{0, 0, 0.11, 0.88, 0}
+	sexy := Labels{0, 0, 0.2, 0.59, 0.98}
+	hentai := Labels{0, 0.98, 0.2, 0, 0}
+
+	assert.Equal(t, true, porn.NSFW())
+	assert.Equal(t, true, sexy.NSFW())
+	assert.Equal(t, true, hentai.NSFW())
+
 }
