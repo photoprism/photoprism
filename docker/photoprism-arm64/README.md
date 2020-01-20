@@ -25,6 +25,8 @@ Make sure your docker compose configuration contains the following setting:
       - seccomp:unconfined
 ```
 
-You can also use [UbuntuDockerPi](https://github.com/guysoft/UbuntuDockerPi) to run the image.
+Alternatively, you can run the image on [UbuntuDockerPi](https://github.com/guysoft/UbuntuDockerPi). It's a 64bit Ubuntu Server with Docker pre-installed.
 
+See also:
+https://www.raspberrypi.org/documentation/installation/installing-images/README.md
 
