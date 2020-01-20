@@ -117,7 +117,7 @@ If any of those organizations changes their mind, they are welcome to [reach out
 
 ## Disclaimer ##
 
-We'd like to remind everyone that we are no full-time marketing specialists but developers that work a lot and 
+We'd like to remind everyone that we are no full-time marketing specialists but developers who work a lot and 
 enjoy a bit of sarcasm from time to time. Please let us know when there is an issue with our "nuance and tone" 
 and we'll find a solution.
 
