@@ -47,7 +47,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 	assert.Nilf(t, err, "UpdateExif() failed for "+imageJpeg.Filename())
 
 	if err != nil {
-		return
+		t.Fatalf("%s for %s", err.Error(), imageJpeg.Filename())
 	}
 
 	assert.Equal(t, jpegFilename, imageJpeg.filename)
@@ -60,11 +60,21 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 	rawMediaFile, err := NewMediaFile(rawFilename)
 
-	assert.Nil(t, err)
+	if err != nil {
+		t.Fatalf("%s for %s", err.Error(), rawFilename)
+	}
 
-	imageRaw, _ := convert.ToJpeg(rawMediaFile)
+	imageRaw, err := convert.ToJpeg(rawMediaFile)
+
+	if err != nil {
+		t.Fatalf("%s for %s", err.Error(), rawFilename)
+	}
 
 	assert.True(t, fs.FileExists(conf.ImportPath()+"/raw/IMG_2567.jpg"), "Jpeg file was not found - is Darktable installed?")
+
+	if imageRaw == nil {
+		t.Fatal("imageRaw is nil")
+	}
 
 	assert.NotEqual(t, rawFilename, imageRaw.filename)
 
