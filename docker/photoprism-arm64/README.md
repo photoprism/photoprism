@@ -4,7 +4,8 @@ PhotoPrism for Raspberry Pi (64bit)
 Big thank you to [Guy Sheffer](https://github.com/guysoft) for 
 [building](https://github.com/photoprism/photoprism/issues/109) this!
 
-Simply download `docker-compose.yml` (edit to change config) and run `docker-compose up` to start PhotoPrism:
+Simply download our [`docker-compose.yml`](https://dl.photoprism.org/docker/arm64/docker-compose.yml) (edit to 
+change config) and run `docker-compose up` to start PhotoPrism:
 
 ```
 wget https://dl.photoprism.org/docker/arm64/docker-compose.yml
