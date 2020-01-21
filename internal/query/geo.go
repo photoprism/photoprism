@@ -39,6 +39,7 @@ func (s *Repo) Geo(f form.GeoSearch) (results []GeoResult, err error) {
 		files.file_hash, files.file_width, files.file_height`).
 		Joins(`JOIN files ON files.photo_id = photos.id 
 		AND files.file_missing = 0 AND files.file_primary AND files.deleted_at IS NULL`).
+		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0").
 		Group("photos.id, files.id")
 
