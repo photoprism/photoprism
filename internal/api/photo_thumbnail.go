@@ -25,7 +25,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		thumbType, ok := thumb.Types[typeName]
 
 		if !ok {
-			log.Errorf("invalid type: %s", typeName)
+			log.Errorf("thumbs: invalid type \"%s\"", typeName)
 			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
 			return
 		}

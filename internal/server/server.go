@@ -14,6 +14,12 @@ var log = event.Log
 
 // Start the REST API server using the configuration provided
 func Start(ctx context.Context, conf *config.Config) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Error(err)
+		}
+	}()
+
 	if conf.HttpServerMode() != "" {
 		gin.SetMode(conf.HttpServerMode())
 	} else if conf.Debug() == false {
@@ -21,7 +27,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	}
 
 	router := gin.New()
-	router.Use(gin.Logger(), gin.Recovery())
+	router.Use(Logger(), Recovery())
 
 	// Set template directory
 	router.LoadHTMLGlob(conf.HttpTemplatesPath() + "/*")
