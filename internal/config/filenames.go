@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -26,50 +27,58 @@ func findExecutable(configBin, defaultBin string) (result string) {
 	return result
 }
 
-// CreateDirectories creates all the folders that photoprism needs. These are:
-// OriginalsPath
-// ThumbnailsPath
-// ImportPath
-// ExportPath
+// CreateDirectories creates directories for storing photos, metadata and cache files.
 func (c *Config) CreateDirectories() error {
+	createError := func(path string, err error) (result error) {
+		if fs.FileExists(path) {
+			result = fmt.Errorf("\"%s\" is a file, not a directory: please check your configuration", path)
+		} else {
+			result = fmt.Errorf("can't create \"%s\": please check configuration and permissions", path)
+		}
+
+		log.Debug(err)
+
+		return result
+	}
+
 	if err := os.MkdirAll(c.OriginalsPath(), os.ModePerm); err != nil {
-		return err
+		return createError(c.OriginalsPath(), err)
 	}
 
 	if err := os.MkdirAll(c.ImportPath(), os.ModePerm); err != nil {
-		return err
+		return createError(c.ImportPath(), err)
 	}
 
 	if err := os.MkdirAll(c.ExportPath(), os.ModePerm); err != nil {
-		return err
+		return createError(c.ExportPath(), err)
 	}
 
 	if err := os.MkdirAll(c.ThumbnailsPath(), os.ModePerm); err != nil {
-		return err
+		return createError(c.ThumbnailsPath(), err)
 	}
 
 	if err := os.MkdirAll(c.ResourcesPath(), os.ModePerm); err != nil {
-		return err
+		return createError(c.ResourcesPath(), err)
 	}
 
 	if err := os.MkdirAll(c.SqlServerPath(), os.ModePerm); err != nil {
-		return err
+		return createError(c.SqlServerPath(), err)
 	}
 
 	if err := os.MkdirAll(c.TensorFlowModelPath(), os.ModePerm); err != nil {
-		return err
+		return createError(c.TensorFlowModelPath(), err)
 	}
 
 	if err := os.MkdirAll(c.HttpStaticBuildPath(), os.ModePerm); err != nil {
-		return err
+		return createError(c.HttpStaticBuildPath(), err)
 	}
 
 	if err := os.MkdirAll(filepath.Dir(c.PIDFilename()), os.ModePerm); err != nil {
-		return err
+		return createError(filepath.Dir(c.PIDFilename()), err)
 	}
 
 	if err := os.MkdirAll(filepath.Dir(c.LogFilename()), os.ModePerm); err != nil {
-		return err
+		return createError(filepath.Dir(c.LogFilename()), err)
 	}
 
 	return nil

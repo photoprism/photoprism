@@ -5,11 +5,12 @@ import (
 
 	"github.com/photoprism/photoprism/internal/commands"
 	"github.com/photoprism/photoprism/internal/config"
-	log "github.com/sirupsen/logrus"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/urfave/cli"
 )
 
 var version = "development"
+var log = event.Log
 
 func main() {
 	app := cli.NewApp()
