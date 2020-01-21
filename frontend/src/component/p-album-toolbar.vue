@@ -132,7 +132,6 @@
                 searchExpanded: false,
                 options: {
                     'views': [
-                        // {value: 'tiles', text: this.$gettext('Tiles')},
                         {value: 'mosaic', text: this.$gettext('Mosaic')},
                         {value: 'details', text: this.$gettext('Details')},
                         {value: 'list', text: this.$gettext('List')},

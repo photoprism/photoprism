@@ -123,13 +123,6 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <!-- v-list-tile v-if="config.albums.length === 0"
-                                 @click.stop="createAlbum">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Create Album</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile -->
-
                     <v-list-tile v-for="(album, index) in config.albums"
                                  :key="index"
                                  :to="{ name: 'album', params: { uuid: album.AlbumUUID, slug: album.AlbumSlug } }">
