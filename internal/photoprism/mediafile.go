@@ -727,7 +727,7 @@ func (m *MediaFile) RenderDefaultThumbnails(thumbPath string, force bool) (err e
 	img, err := imaging.Open(m.Filename(), imaging.AutoOrientation(true))
 
 	if err != nil {
-		log.Errorf("thumbs: can't open original \"%s\"", err)
+		log.Errorf("thumbs: can't open \"%s\" (%s)", m.Filename(), err.Error())
 		return err
 	}
 

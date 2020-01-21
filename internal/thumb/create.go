@@ -123,7 +123,7 @@ func FromFile(imageFilename string, hash string, thumbPath string, width, height
 	img, err := imaging.Open(imageFilename, imaging.AutoOrientation(true))
 
 	if err != nil {
-		log.Errorf("can't open original: %s", err)
+		log.Errorf("thumbs: can't open \"%s\" (%s)", imageFilename, err.Error())
 		return "", err
 	}
 
