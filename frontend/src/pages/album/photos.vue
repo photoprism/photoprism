@@ -6,7 +6,7 @@
                               :refresh="refresh"></p-album-toolbar>
 
         <v-container fluid class="pa-4" v-if="loading">
-            <v-progress-linear color="secondary-dark"  :indeterminate="true"></v-progress-linear>
+            <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
         </v-container>
         <v-container fluid class="pa-0" v-else>
             <p-scroll-top></p-scroll-top>

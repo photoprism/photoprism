@@ -8,12 +8,9 @@
                     lazy
                     @save="onSave(album)"
                     class="p-inline-edit">
-                                        <v-toolbar-title v-if="album.AlbumName">
-                                            {{ album.AlbumName }}
-                                        </v-toolbar-title>
-                <v-toolbar-title v-else>
-                                            <v-icon>edit</v-icon>
-                                        </v-toolbar-title>
+                <v-toolbar-title>
+                    {{ album.AlbumName }}
+                </v-toolbar-title>
                 <template v-slot:input>
                     <v-text-field
                             v-model="album.AlbumName"
@@ -122,7 +119,10 @@
             filterChange: Function,
         },
         data() {
-            const cameras = [{ID: 0, CameraModel: this.$gettext('All Cameras')}].concat(this.$config.getValue('cameras'));
+            const cameras = [{
+                ID: 0,
+                CameraModel: this.$gettext('All Cameras')
+            }].concat(this.$config.getValue('cameras'));
             const countries = [{
                 code: '',
                 name: this.$gettext('All Countries')
