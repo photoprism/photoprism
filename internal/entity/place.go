@@ -11,10 +11,10 @@ import (
 // Photo place
 type Place struct {
 	ID          string `gorm:"type:varbinary(16);primary_key;auto_increment:false;"`
-	LocLabel    string `gorm:"type:varbinary(500);unique_index;"`
-	LocCity     string `gorm:"type:varchar(100);"`
-	LocState    string `gorm:"type:varchar(100);"`
-	LocCountry  string `gorm:"type:binary(2);"`
+	LocLabel    string `gorm:"type:varbinary(512);unique_index;"`
+	LocCity     string `gorm:"type:varchar(128);"`
+	LocState    string `gorm:"type:varchar(128);"`
+	LocCountry  string `gorm:"type:varbinary(2);"`
 	LocNotes    string `gorm:"type:text;"`
 	LocFavorite bool
 	CreatedAt   time.Time

@@ -42,7 +42,7 @@
                     </v-list-tile-action>
                 </v-list-tile>
 
-                <v-list-tile v-if="mini" to="/photos" @click="" class="p-navigation-photos">
+                <v-list-tile v-if="mini && auth" to="/photos" @click="" class="p-navigation-photos">
                     <v-list-tile-action>
                         <v-icon>photo</v-icon>
                     </v-list-tile-action>
@@ -54,7 +54,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-group v-if="!mini" prepend-icon="photo" no-action>
+                <v-list-group v-if="!mini && auth" prepend-icon="photo" no-action>
                     <v-list-tile slot="activator" to="/photos" @click.stop="" class="p-navigation-photos">
                         <v-list-tile-content>
                             <v-list-tile-title>
@@ -89,7 +89,7 @@
                     </v-list-tile>
                 </v-list-group>
 
-                <v-list-tile v-if="mini" to="/archive" @click="" class="p-navigation-archive">
+                <v-list-tile v-if="mini && auth" to="/archive" @click="" class="p-navigation-archive">
                     <v-list-tile-action>
                         <v-icon>archive</v-icon>
                     </v-list-tile-action>
@@ -101,7 +101,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile v-if="mini" to="/albums" @click="">
+                <v-list-tile v-if="mini && auth" to="/albums" @click="">
                     <v-list-tile-action>
                         <v-icon>folder</v-icon>
                     </v-list-tile-action>
@@ -113,7 +113,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-group v-if="!mini" prepend-icon="folder" no-action>
+                <v-list-group v-if="!mini && auth" prepend-icon="folder" no-action>
                     <v-list-tile slot="activator" to="/albums" @click.stop="">
                         <v-list-tile-content>
                             <v-list-tile-title>
@@ -133,7 +133,7 @@
                     </v-list-tile>
                 </v-list-group>
 
-                <v-list-tile to="/favorites" @click="" class="p-navigation-favorites">
+                <v-list-tile to="/favorites" @click="" class="p-navigation-favorites" v-if="auth">
                     <v-list-tile-action>
                         <v-icon>favorite</v-icon>
                     </v-list-tile-action>
@@ -146,7 +146,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/labels" @click="" class="p-navigation-labels">
+                <v-list-tile to="/labels" @click="" class="p-navigation-labels" v-if="auth">
                     <v-list-tile-action>
                         <v-icon>label</v-icon>
                     </v-list-tile-action>
@@ -159,7 +159,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile :to="{ name: 'places' }" @click="" class="p-navigation-places">
+                <v-list-tile :to="{ name: 'places' }" @click="" class="p-navigation-places"  v-if="auth">
                     <v-list-tile-action>
                         <v-icon>place</v-icon>
                     </v-list-tile-action>
@@ -172,7 +172,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/discover" @click="" class="p-navigation-discover" v-if="config.experimental">
+                <v-list-tile to="/discover" @click="" class="p-navigation-discover" v-if="config.experimental && auth">
                     <v-list-tile-action>
                         <v-icon>color_lens</v-icon>
                     </v-list-tile-action>
@@ -184,7 +184,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <!-- v-list-tile to="/events" @click="" class="p-navigation-events">
+                <!-- v-list-tile to="/events" @click="" class="p-navigation-events" v-if="auth">
                     <v-list-tile-action>
                         <v-icon>date_range</v-icon>
                     </v-list-tile-action>
@@ -194,7 +194,7 @@
                     </v-list-tile-content>
                 </v-list-tile -->
 
-                <!-- v-list-tile to="/people" @click="" class="p-navigation-people">
+                <!-- v-list-tile to="/people" @click="" class="p-navigation-people" v-if="auth">
                     <v-list-tile-action>
                         <v-icon>people</v-icon>
                     </v-list-tile-action>
@@ -204,7 +204,7 @@
                     </v-list-tile-content>
                 </v-list-tile -->
 
-                <v-list-tile to="/library" @click="" class="p-navigation-library" v-if="session.auth || isPublic">
+                <v-list-tile to="/library" @click="" class="p-navigation-library" v-if="auth">
                     <v-list-tile-action>
                         <v-icon>camera_roll</v-icon>
                     </v-list-tile-action>
@@ -216,7 +216,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/settings" @click="" class="p-navigation-settings" v-if="session.auth || isPublic">
+                <v-list-tile to="/settings" @click="" class="p-navigation-settings" v-if="auth">
                     <v-list-tile-action>
                         <v-icon>settings</v-icon>
                     </v-list-tile-action>
@@ -228,7 +228,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile @click="logout" class="p-navigation-logout" v-if="!isPublic && session.auth">
+                <v-list-tile @click="logout" class="p-navigation-logout" v-if="!isPublic && auth">
                     <v-list-tile-action>
                         <v-icon>power_settings_new</v-icon>
                     </v-list-tile-action>
@@ -240,7 +240,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/login" @click="" class="p-navigation-login" v-if="!isPublic && !session.auth">
+                <v-list-tile to="/login" @click="" class="p-navigation-login" v-if="!auth">
                     <v-list-tile-action>
                         <v-icon>lock</v-icon>
                     </v-list-tile-action>
@@ -273,6 +273,11 @@
                 config: this.$config.values,
                 page: this.$config.page,
             };
+        },
+        computed: {
+            auth() {
+                return this.session.auth || this.isPublic
+            },
         },
         methods: {
             showNavigation () {

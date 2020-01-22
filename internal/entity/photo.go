@@ -14,8 +14,8 @@ type Photo struct {
 	ID                uint      `gorm:"primary_key"`
 	TakenAt           time.Time `gorm:"type:datetime;index:idx_photos_taken_uuid;"`
 	PhotoUUID         string    `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;"`
-	PhotoPath         string    `gorm:"type:varbinary(400);index;"`
-	PhotoName         string    `gorm:"type:varbinary(200);"`
+	PhotoPath         string    `gorm:"type:varbinary(512);index;"`
+	PhotoName         string    `gorm:"type:varbinary(256);"`
 	PhotoTitle        string    `json:"PhotoTitle"`
 	PhotoTitleChanged bool
 	PhotoDescription  string  `gorm:"type:text;"`
@@ -32,7 +32,7 @@ type Photo struct {
 	PhotoFocalLength  int
 	PhotoIso          int
 	PhotoFNumber      float64
-	PhotoExposure     string `gorm:"type:varbinary(32);"`
+	PhotoExposure     string `gorm:"type:varbinary(64);"`
 	PhotoViews        uint
 	Camera            *Camera
 	CameraID          uint `gorm:"index:idx_photos_camera_lens;"`

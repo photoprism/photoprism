@@ -21,7 +21,7 @@ func Logger() gin.HandlerFunc {
 		end := time.Now()
 		latency := end.Sub(start)
 
-		clientIP := c.ClientIP()
+		// clientIP := c.ClientIP()
 		method := c.Request.Method
 		statusCode := c.Writer.Status()
 
@@ -30,18 +30,16 @@ func Logger() gin.HandlerFunc {
 		}
 
 		if statusCode >= 400 {
-			log.Errorf("%s %s: %s (%3d) [%v]",
+			log.Errorf("%s %s (%3d) [%v]",
 				method,
 				path,
-				clientIP,
 				statusCode,
 				latency,
 			)
 		} else {
-			log.Debugf("%s %s: %s (%3d) [%v]",
+			log.Debugf("%s %s (%3d) [%v]",
 				method,
 				path,
-				clientIP,
 				statusCode,
 				latency,
 			)

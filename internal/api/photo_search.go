@@ -29,6 +29,11 @@ import (
 //   favorites: bool   Find favorites only
 func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/photos", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		var f form.PhotoSearch
 
 		q := query.New(conf.OriginalsPath(), conf.Db())

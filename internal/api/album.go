@@ -27,6 +27,11 @@ import (
 // GET /api/v1/albums
 func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		var f form.AlbumSearch
 
 		q := query.New(conf.OriginalsPath(), conf.Db())
@@ -318,7 +323,6 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 // GET /albums/:uuid/download
 func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums/:uuid/download", func(c *gin.Context) {
-
 		start := time.Now()
 
 		q := query.New(conf.OriginalsPath(), conf.Db())
@@ -403,7 +407,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// POST /api/v1/albums/:uuid/thumbnail/:type
+// GET /api/v1/albums/:uuid/thumbnail/:type
 //
 // Parameters:
 //   uuid: string Album UUID

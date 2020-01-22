@@ -1,14 +1,14 @@
 <template>
     <div class="p-page p-page-login">
         <v-toolbar flat color="secondary">
-            <v-toolbar-title><translate>Login</translate></v-toolbar-title>
+            <v-toolbar-title><translate>Authentication required</translate></v-toolbar-title>
 
             <v-spacer></v-spacer>
         </v-toolbar>
 
         <v-container class="pt-5">
             <p class="subheading">
-                <span><translate>Please enter the admin password to proceed...</translate></span>
+                <span><translate>Please enter your password to proceed:</translate></span>
             </p>
             <v-form ref="form" autocomplete="off" class="p-form-login" @submit.prevent="login" dense>
                 <v-text-field

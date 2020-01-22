@@ -22,6 +22,11 @@ import (
 // GET /api/v1/labels
 func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/labels", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		var f form.LabelSearch
 
 		q := query.New(conf.OriginalsPath(), conf.Db())

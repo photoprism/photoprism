@@ -17,6 +17,11 @@ import (
 // GET /api/v1/geo
 func GetGeo(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/geo", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		var f form.GeoSearch
 
 		q := query.New(conf.OriginalsPath(), conf.Db())

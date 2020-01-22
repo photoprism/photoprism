@@ -23,6 +23,11 @@ import (
 // POST /api/v1/zip
 func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/zip", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		var f form.PhotoUUIDs
 		start := time.Now()
 
