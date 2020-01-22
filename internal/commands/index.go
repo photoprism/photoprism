@@ -14,7 +14,7 @@ import (
 // indexes all photos in originals directory (photo library)
 var IndexCommand = cli.Command{
 	Name:   "index",
-	Usage:  "indexes all originals",
+	Usage:  "Indexes originals",
 	Flags:  indexFlags,
 	Action: indexAction,
 }
@@ -22,7 +22,7 @@ var IndexCommand = cli.Command{
 var indexFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "all, a",
-		Usage: "re-index all originals, including unchanged ones",
+		Usage: "re-index all originals, including unchanged files",
 	},
 }
 
@@ -50,16 +50,17 @@ func indexAction(ctx *cli.Context) error {
 
 	tf := classify.New(conf.ResourcesPath(), conf.TensorFlowDisabled())
 	nd := nsfw.New(conf.NSFWModelPath())
-
 	ind := photoprism.NewIndex(conf, tf, nd)
 
-	var files map[string]bool
+	var opt photoprism.IndexOptions
+
 	if ctx.Bool("all") {
-		files = ind.Start(photoprism.IndexOptionsAll())
+		opt = photoprism.IndexOptionsAll()
 	} else {
-		files = ind.Start(photoprism.IndexOptionsNone())
+		opt = photoprism.IndexOptionsNone()
 	}
 
+	files := ind.Start(opt)
 	elapsed := time.Since(start)
 
 	log.Infof("indexed %d files in %s", len(files), elapsed)

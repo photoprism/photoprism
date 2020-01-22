@@ -11,7 +11,7 @@ import (
 // Automatically migrates / initializes database
 var MigrateCommand = cli.Command{
 	Name:   "migrate",
-	Usage:  "Automatically migrates / initializes database",
+	Usage:  "Automatically initializes and migrates the database",
 	Action: migrateAction,
 }
 

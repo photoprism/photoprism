@@ -11,7 +11,7 @@ import (
 // StopCommand stops the daemon if running.
 var StopCommand = cli.Command{
 	Name:   "stop",
-	Usage:  "Stops daemon",
+	Usage:  "Stops web server in daemon mode",
 	Action: stopAction,
 }
 

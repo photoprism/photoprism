@@ -11,7 +11,7 @@ import (
 // Converts RAW files to JPEG images, if no JPEG already exists
 var ConvertCommand = cli.Command{
 	Name:   "convert",
-	Usage:  "Converts RAW originals to JPEG",
+	Usage:  "Converts originals in other formats to JPEG",
 	Action: convertAction,
 }
 

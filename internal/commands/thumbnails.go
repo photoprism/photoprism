@@ -11,11 +11,11 @@ import (
 // Pre-renders thumbnails
 var ThumbnailsCommand = cli.Command{
 	Name:  "thumbnails",
-	Usage: "Render thumbnails for all originals",
+	Usage: "Pre-render thumbnails to boost performance",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",
-			Usage: "Re-create existing thumbnails",
+			Usage: "re-create existing thumbnails",
 		},
 	},
 	Action: thumbnailsAction,
