@@ -1,13 +1,17 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/session"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 var wsConnection = websocket.Upgrader{
@@ -17,7 +21,19 @@ var wsConnection = websocket.Upgrader{
 }
 var wsTimeout = 60 * time.Second
 
-func wsReader(ws *websocket.Conn) {
+type clientInfo struct {
+	SessionToken string `json:"session"`
+	JsHash       string `json:"js"`
+	CssHash      string `json:"css"`
+	Version      string `json:"version"`
+}
+
+var wsAuth = struct {
+	authenticated map[string]bool
+	mutex         sync.RWMutex
+}{authenticated: make(map[string]bool)}
+
+func wsReader(ws *websocket.Conn, connId string) {
 	defer ws.Close()
 
 	ws.SetReadLimit(512)
@@ -26,14 +42,30 @@ func wsReader(ws *websocket.Conn) {
 
 	for {
 		_, m, err := ws.ReadMessage()
+
 		if err != nil {
 			break
 		}
+
 		log.Debugf("websocket: received %d bytes", len(m))
+
+		var info clientInfo
+
+		if err := json.Unmarshal(m, &info); err != nil {
+			log.Error(err)
+		} else {
+			log.Debugf("websocket: %+v", info)
+
+			if session.Exists(info.SessionToken) {
+				wsAuth.mutex.Lock()
+				wsAuth.authenticated[connId] = true
+				wsAuth.mutex.Unlock()
+			}
+		}
 	}
 }
 
-func wsWriter(ws *websocket.Conn) {
+func wsWriter(ws *websocket.Conn, connId string) {
 	pingTicker := time.NewTicker(10 * time.Second)
 	s := event.Subscribe("log.*", "notify.*", "index.*", "upload.*", "import.*", "config.*", "count.*")
 
@@ -41,6 +73,10 @@ func wsWriter(ws *websocket.Conn) {
 		pingTicker.Stop()
 		event.Unsubscribe(s)
 		ws.Close()
+
+		wsAuth.mutex.Lock()
+		wsAuth.authenticated[connId] = false
+		wsAuth.mutex.Unlock()
 	}()
 
 	for {
@@ -51,11 +87,17 @@ func wsWriter(ws *websocket.Conn) {
 				return
 			}
 		case msg := <-s.Receiver:
-			ws.SetWriteDeadline(time.Now().Add(10 * time.Second))
+			wsAuth.mutex.RLock()
+			auth := wsAuth.authenticated[connId]
+			wsAuth.mutex.RUnlock()
 
-			if err := ws.WriteJSON(gin.H{"event": msg.Name, "data": msg.Fields}); err != nil {
-				log.Debug(err)
-				return
+			if auth {
+				ws.SetWriteDeadline(time.Now().Add(10 * time.Second))
+
+				if err := ws.WriteJSON(gin.H{"event": msg.Name, "data": msg.Fields}); err != nil {
+					log.Debug(err)
+					return
+				}
 			}
 		}
 	}
@@ -63,6 +105,16 @@ func wsWriter(ws *websocket.Conn) {
 
 // GET /api/v1/ws
 func Websocket(router *gin.RouterGroup, conf *config.Config) {
+	if router == nil {
+		log.Error("websocket: router is nil")
+		return
+	}
+
+	if conf == nil {
+		log.Error("websocket: conf is nil")
+		return
+	}
+
 	router.GET("/ws", func(c *gin.Context) {
 		w := c.Writer
 		r := c.Request
@@ -75,10 +127,18 @@ func Websocket(router *gin.RouterGroup, conf *config.Config) {
 
 		defer ws.Close()
 
+		connId := rnd.UUID()
+
+		if conf.Public() {
+			wsAuth.mutex.Lock()
+			wsAuth.authenticated[connId] = true
+			wsAuth.mutex.Unlock()
+		}
+
 		log.Debug("websocket: connected")
 
-		go wsWriter(ws)
+		go wsWriter(ws, connId)
 
-		wsReader(ws)
+		wsReader(ws, connId)
 	})
 }

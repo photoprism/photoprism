@@ -1,22 +1,15 @@
 import Sockette from "sockette";
 import Event from "pubsub-js";
-import randomString from "crypto-random-string";
 
-export const token = randomString({length: 16});
 const host = window.location.host;
 const prot = ("https:" === document.location.protocol ? "wss://" : "ws://");
 const url = prot + host + "/api/v1/ws";
-const clientInfo = {
-    "token": token,
-    "hash": window.clientConfig.jsHash,
-    "version": window.clientConfig.version,
-};
 
 const Socket = new Sockette(url, {
     timeout: 5e3,
     onopen: e => {
         console.log("websocket: connected", e);
-        Socket.send(JSON.stringify(clientInfo));
+        Event.publish("websocket.connected", e);
     },
     onmessage: e => {
         const m = JSON.parse(e.data);

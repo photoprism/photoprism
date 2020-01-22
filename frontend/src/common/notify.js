@@ -15,7 +15,7 @@ const Notify = {
     },
     logout: function (message) {
         Event.publish("notify.error", {msg: message});
-        Event.publish("session.logout");
+        Event.publish("session.logout", {msg: message});
     },
     ajaxStart: function() {
         Event.publish("ajax.start");

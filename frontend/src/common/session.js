@@ -1,6 +1,7 @@
 import Api from "./api";
 import Event from "pubsub-js";
 import User from "../model/user";
+import Socket from "./websocket";
 
 export default class Session {
     /**
@@ -24,7 +25,15 @@ export default class Session {
             this.auth = true;
         }
 
-        Event.subscribe("session.logout", this.onLogout.bind(this));
+        Event.subscribe("session.logout", () => {
+            this.onLogout()
+        });
+
+        Event.subscribe("websocket.connected", () => {
+            this.sendClientInfo()
+        });
+
+        this.sendClientInfo()
     }
 
     useSessionStorage() {
@@ -118,6 +127,21 @@ export default class Session {
         this.storage.removeItem("user");
     }
 
+    sendClientInfo() {
+        const clientInfo = {
+            "session": this.getToken(),
+            "js": window.clientConfig.jsHash,
+            "css": window.clientConfig.cssHash,
+            "version": window.clientConfig.version,
+        };
+
+        try {
+            Socket.send(JSON.stringify(clientInfo));
+        } catch(e) {
+            console.log("can't send client info, websocket not connected (yet)")
+        }
+    }
+
     login(email, password) {
         this.deleteToken();
 
@@ -125,11 +149,13 @@ export default class Session {
             (result) => {
                 this.setToken(result.data.token);
                 this.setUser(new User(result.data.user));
+                this.sendClientInfo();
             }
         );
     }
 
     onLogout() {
+        console.log("ON LOGOUT");
         this.deleteToken();
         window.location = "/";
     }

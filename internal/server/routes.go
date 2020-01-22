@@ -72,6 +72,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Default HTML page (client-side routing implemented via Vue.js)
 	router.NoRoute(func(c *gin.Context) {
+		// Todo: Use PublicClientConfig()
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{"clientConfig": conf.ClientConfig()})
 	})
 }

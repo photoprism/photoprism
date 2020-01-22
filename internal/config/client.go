@@ -12,6 +12,84 @@ import (
 // HTTP client / Web UI config values
 type ClientConfig map[string]interface{}
 
+// PublicClientConfig returns reduced config values for non-public sites.
+func (c *Config) PublicClientConfig() ClientConfig {
+	if c.Public() {
+		return c.ClientConfig()
+	}
+
+	jsHash := fs.Hash(c.HttpStaticBuildPath() + "/app.js")
+	cssHash := fs.Hash(c.HttpStaticBuildPath() + "/app.css")
+
+	// Feature Flags
+	var flags []string
+
+	if c.Public() {
+		flags = append(flags, "public")
+	}
+	if c.Debug() {
+		flags = append(flags, "debug")
+	}
+	if c.Experimental() {
+		flags = append(flags, "experimental")
+	}
+	if c.ReadOnly() {
+		flags = append(flags, "readonly")
+	}
+
+	var noPos = struct {
+		PhotoUUID  string    `json:"photo"`
+		LocationID string    `json:"location"`
+		TakenAt    time.Time `json:"utc"`
+		PhotoLat   float64   `json:"lat"`
+		PhotoLng   float64   `json:"lng"`
+	}{}
+
+	var count = struct {
+		Photos    uint `json:"photos"`
+		Favorites uint `json:"favorites"`
+		Private   uint `json:"private"`
+		Stories   uint `json:"stories"`
+		Labels    uint `json:"labels"`
+		Albums    uint `json:"albums"`
+		Countries uint `json:"countries"`
+		Places    uint `json:"places"`
+	}{}
+
+	result := ClientConfig{
+		"flags":        strings.Join(flags, " "),
+		"name":         c.Name(),
+		"url":          c.Url(),
+		"title":        c.Title(),
+		"subtitle":     c.Subtitle(),
+		"description":  c.Description(),
+		"author":       c.Author(),
+		"twitter":      c.Twitter(),
+		"version":      c.Version(),
+		"copyright":    c.Copyright(),
+		"debug":        c.Debug(),
+		"readonly":     c.ReadOnly(),
+		"uploadNSFW":   c.UploadNSFW(),
+		"public":       c.Public(),
+		"experimental": c.Experimental(),
+		"albums":       []string{},
+		"cameras":      []string{},
+		"lenses":       []string{},
+		"countries":    []string{},
+		"thumbnails":   Thumbnails,
+		"jsHash":       jsHash,
+		"cssHash":      cssHash,
+		"settings":     c.Settings(),
+		"count":        count,
+		"pos":          noPos,
+		"years":        []int{},
+		"colors":       colors.All.List(),
+		"categories":   []string{},
+	}
+
+	return result
+}
+
 // ClientConfig returns a loaded and set configuration entity.
 func (c *Config) ClientConfig() ClientConfig {
 	db := c.Db()
