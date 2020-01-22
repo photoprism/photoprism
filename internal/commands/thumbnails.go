@@ -11,7 +11,7 @@ import (
 // Pre-renders thumbnails
 var ThumbnailsCommand = cli.Command{
 	Name:  "thumbnails",
-	Usage: "Pre-render thumbnails to boost performance",
+	Usage: "Pre-renders thumbnails to boost performance",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",
