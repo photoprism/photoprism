@@ -23,7 +23,7 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 
 		assert.IsType(t, meta.Data{}, info)
 
-		assert.Equal(t, "", info.UUID)
+		assert.Equal(t, "", info.UniqueID)
 		assert.Equal(t, "2013-11-26 13:53:55 +0000 UTC", info.TakenAt.String())
 		assert.Equal(t, "2013-11-26 15:53:55 +0000 UTC", info.TakenAtLocal.String())
 		assert.Equal(t, 1, info.Orientation)
@@ -60,7 +60,7 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 
 		assert.IsType(t, meta.Data{}, info)
 
-		assert.Equal(t, "", info.UUID)
+		assert.Equal(t, "", info.UniqueID)
 		assert.Equal(t, 1, info.Orientation)
 		assert.Equal(t, "Canon EOS 7D", info.CameraModel)
 		assert.Equal(t, "Canon", info.CameraMake)
@@ -100,7 +100,7 @@ func TestMediaFile_Exif_DNG(t *testing.T) {
 
 	assert.IsType(t, meta.Data{}, info)
 
-	assert.Equal(t, "", info.UUID)
+	assert.Equal(t, "", info.UniqueID)
 	assert.Equal(t, "2019-06-06 07:29:51 +0000 UTC", info.TakenAt.String())
 	assert.Equal(t, "2019-06-06 07:29:51 +0000 UTC", info.TakenAtLocal.String())
 	assert.Equal(t, 1, info.Orientation)
@@ -150,7 +150,7 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	assert.Equal(t, "", jpegInfo.UUID)
+	assert.Equal(t, "", jpegInfo.UniqueID)
 	assert.Equal(t, "2018-09-10 03:16:13 +0000 UTC", jpegInfo.TakenAt.String())
 	assert.Equal(t, "2018-09-10 12:16:13 +0000 UTC", jpegInfo.TakenAtLocal.String())
 	assert.Equal(t, 6, jpegInfo.Orientation)

@@ -192,7 +192,7 @@ func Exif(filename string) (data Data, err error) {
 	}
 
 	if value, ok := tags["ImageUniqueID"]; ok {
-		data.UUID = value
+		data.UniqueID = value
 	}
 
 	if value, ok := tags["ImageWidth"]; ok {

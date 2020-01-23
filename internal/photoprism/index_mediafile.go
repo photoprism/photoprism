@@ -104,10 +104,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 				photo.PhotoAltitude = metaData.Altitude
 				photo.PhotoArtist = metaData.Artist
 
-				if len(metaData.UUID) > 15 {
-					log.Debugf("index: file uuid \"%s\"", metaData.UUID)
+				if len(metaData.UniqueID) > 15 {
+					log.Debugf("index: file uuid \"%s\"", metaData.UniqueID)
 
-					file.FileUUID = metaData.UUID
+					file.FileUUID = metaData.UniqueID
 				}
 			}
 		}

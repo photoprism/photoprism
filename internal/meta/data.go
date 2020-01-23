@@ -6,7 +6,7 @@ import (
 
 // Data represents image meta data.
 type Data struct {
-	UUID         string
+	UniqueID     string
 	TakenAt      time.Time
 	TakenAtLocal time.Time
 	TimeZone     string
