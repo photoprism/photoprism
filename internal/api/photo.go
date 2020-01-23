@@ -29,7 +29,7 @@ func GetPhoto(router *gin.RouterGroup, conf *config.Config) {
 		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
 
@@ -50,7 +50,7 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
 			return
 		}
 
@@ -77,7 +77,7 @@ func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
 		f, err := q.FindFileByPhotoUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
 			return
 		}
 
@@ -85,7 +85,7 @@ func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
 
 		if !fs.FileExists(fileName) {
 			log.Errorf("could not find original: %s", c.Param("uuid"))
-			c.Data(404, "image/svg+xml", photoIconSvg)
+			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			f.FileMissing = true
@@ -116,7 +116,7 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
 			return
 		}
 
@@ -146,7 +146,7 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
 			return
 		}
 

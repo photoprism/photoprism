@@ -63,7 +63,7 @@ func GetAlbum(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -132,7 +132,7 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -160,7 +160,7 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -189,7 +189,7 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		album, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
 			return
 		}
 
@@ -217,7 +217,7 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		album, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
 			return
 		}
 
@@ -255,7 +255,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 		a, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
 			return
 		}
 
@@ -306,7 +306,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 		a, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
 			return
 		}
 
@@ -329,7 +329,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		a, err := q.FindAlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
 			return
 		}
 
@@ -340,7 +340,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		})
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -393,7 +393,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		if !fs.FileExists(zipFileName) {
 			log.Errorf("could not find zip file: %s", zipFileName)
-			c.Data(404, "image/svg+xml", photoIconSvg)
+			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 			return
 		}
 
