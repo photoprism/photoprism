@@ -27,7 +27,7 @@
                         dark
                         small
                         :title="labels.download"
-                        color="teal accent-4"
+                        color="download"
                         @click.stop="download()"
                         class="p-album-clipboard-download"
                         :disabled="selection.length !== 1"

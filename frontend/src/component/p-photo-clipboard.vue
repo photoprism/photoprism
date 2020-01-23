@@ -27,26 +27,26 @@
                         dark
                         small
                         :title="labels.private"
-                        color="deep-purple lighten-2"
+                        color="share"
                         @click.stop="batchPrivate()"
                         :disabled="selection.length === 0"
                         v-if="context !== 'archive'"
                         class="p-photo-clipboard-private"
                 >
-                    <v-icon>vpn_key</v-icon>
+                    <v-icon>share</v-icon>
                 </v-btn>
                 <v-btn
                         fab
                         dark
                         small
                         :title="labels.story"
-                        color="cyan accent-4"
+                        color="edit"
                         :disabled="selection.length === 0"
                         @click.stop="batchStory()"
                         v-if="context !== 'archive'"
                         class="p-photo-clipboard-story"
                 >
-                    <v-icon>wifi</v-icon>
+                    <v-icon>edit</v-icon>
                 </v-btn>
                 <!-- v-btn
                         fab
@@ -63,7 +63,7 @@
                         dark
                         small
                         :title="labels.download"
-                        color="teal accent-4"
+                        color="download"
                         @click.stop="download()"
                         v-if="context !== 'archive'"
                         class="p-photo-clipboard-download"
@@ -75,7 +75,7 @@
                         dark
                         small
                         :title="labels.addToAlbum"
-                        color="amber accent-4"
+                        color="album"
                         :disabled="selection.length === 0"
                         @click.stop="dialog.album = true"
                         v-if="context !== 'archive'"
@@ -88,7 +88,7 @@
                         fab
                         dark
                         small
-                        color="delete"
+                        color="archive"
                         :title="labels.archive"
                         @click.stop="dialog.archive = true"
                         :disabled="selection.length === 0"
@@ -102,7 +102,7 @@
                         fab
                         dark
                         small
-                        color="blue lighten-2"
+                        color="restore"
                         :title="labels.restore"
                         @click.stop="batchRestorePhotos"
                         :disabled="selection.length === 0"
