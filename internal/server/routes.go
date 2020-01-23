@@ -34,6 +34,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetPhotoDownload(v1, conf)
 		api.LikePhoto(v1, conf)
 		api.DislikePhoto(v1, conf)
+		api.GetMomentsTime(v1, conf)
 
 		api.GetLabels(v1, conf)
 		api.LikeLabel(v1, conf)
