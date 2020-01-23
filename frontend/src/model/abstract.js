@@ -7,6 +7,8 @@ class Abstract {
 
         if (values) {
             this.setValues(values);
+        } else {
+            this.setValues(this.getDefaults());
         }
     }
 
@@ -33,6 +35,10 @@ class Abstract {
         }
 
         return result;
+    }
+
+    getDefaults() {
+        return {};
     }
 
     getId() {

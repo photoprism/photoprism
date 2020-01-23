@@ -3,6 +3,23 @@ import Api from "common/api";
 import { DateTime } from "luxon";
 
 class Label extends Abstract {
+    getDefaults() {
+        return {
+            ID: 0,
+            CreatedAt: "",
+            UpdatedAt: "",
+            DeletedAt: "",
+            LabelUUID: "",
+            LabelSlug: "",
+            LabelName: "",
+            LabelPriority: 0,
+            LabelCount: 0,
+            LabelFavorite: false,
+            LabelDescription: "",
+            LabelNotes: "",
+        }
+    }
+
     getEntityName() {
         return this.LabelSlug;
     }

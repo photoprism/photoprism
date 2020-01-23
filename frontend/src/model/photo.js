@@ -1,8 +1,60 @@
 import Abstract from "model/abstract";
 import Api from "common/api";
-import { DateTime } from "luxon";
+import {DateTime} from "luxon";
 
 class Photo extends Abstract {
+    getDefaults() {
+        return {
+            ID: 0,
+            TakenAt: "",
+            PhotoUUID: "",
+            PhotoPath: "",
+            PhotoName: "",
+            PhotoTitle: "",
+            PhotoTitleChanged: false,
+            PhotoDescription: "",
+            PhotoNotes: "",
+            PhotoArtist: "",
+            PhotoCopyright: "",
+            PhotoFavorite: false,
+            PhotoPrivate: false,
+            PhotoNSFW: false,
+            PhotoStory: false,
+            PhotoLat: 0.0,
+            PhotoLng: 0.0,
+            PhotoAltitude: 0,
+            PhotoFocalLength: 0,
+            PhotoIso: 0,
+            PhotoFNumber: 0,
+            PhotoExposure: "",
+            PhotoViews: 0,
+            Camera: {},
+            CameraID: 0,
+            Lens: {},
+            LensID: 0,
+            CountryChanged: false,
+            Location: null,
+            LocationID: "",
+            Place: null,
+            PlaceID: "",
+            LocationChanged: false,
+            LocationEstimated: false,
+            PhotoCountry: "",
+            PhotoYear: 0,
+            PhotoMonth: 0,
+            TakenAtLocal: "",
+            TakenAtChanged: false,
+            TimeZone: "",
+            Files: [],
+            Labels: [],
+            Keywords: [],
+            Albums: [],
+            CreatedAt: "",
+            UpdatedAt: "",
+            DeletedAt: null,
+        };
+    }
+
     getEntityName() {
         return this.PhotoTitle;
     }
@@ -17,13 +69,13 @@ class Photo extends Abstract {
 
     getColor() {
         switch (this.PhotoColor) {
-        case "brown":
-        case "black":
-        case "white":
-        case "grey":
-            return "grey lighten-2";
-        default:
-            return this.PhotoColor + " lighten-4";
+            case "brown":
+            case "black":
+            case "white":
+            case "grey":
+                return "grey lighten-2";
+            default:
+                return this.PhotoColor + " lighten-4";
         }
     }
 
@@ -39,6 +91,14 @@ class Photo extends Abstract {
         return "/api/v1/thumbnails/" + this.FileHash + "/" + type;
     }
 
+    getFileThumbUrl(index, type) {
+        if(!this.Files || !this.Files[index]) {
+            return "";
+        }
+
+        return "/api/v1/thumbnails/" + this.Files[index].FileHash + "/" + type;
+    }
+
     getDownloadUrl() {
         return "/api/v1/download/" + this.FileHash;
     }
@@ -46,7 +106,7 @@ class Photo extends Abstract {
     getThumbnailSrcset() {
         const result = [];
 
-        result.push(this.getThumbnailUrl("fit_720")  + " 720w");
+        result.push(this.getThumbnailUrl("fit_720") + " 720w");
         result.push(this.getThumbnailUrl("fit_1280") + " 1280w");
         result.push(this.getThumbnailUrl("fit_1920") + " 1920w");
         result.push(this.getThumbnailUrl("fit_2560") + " 2560w");
@@ -56,7 +116,7 @@ class Photo extends Abstract {
     }
 
     calculateSize(width, height) {
-        if(width >= this.FileWidth && height >= this.FileHeight) { // Smaller
+        if (width >= this.FileWidth && height >= this.FileHeight) { // Smaller
             return {width: this.FileWidth, height: this.FileHeight};
         }
 
@@ -90,9 +150,9 @@ class Photo extends Abstract {
     }
 
     getDateString() {
-        if(this.TimeZone) {
+        if (this.TimeZone) {
             return DateTime.fromISO(this.TakenAt).setZone(this.TimeZone).toLocaleString(DateTime.DATETIME_FULL);
-        } else if(this.TakenAt) {
+        } else if (this.TakenAt) {
             return DateTime.fromISO(this.TakenAt).toLocaleString(DateTime.DATE_HUGE);
         } else {
             return "Unknown";
@@ -122,7 +182,7 @@ class Photo extends Abstract {
     toggleLike() {
         this.PhotoFavorite = !this.PhotoFavorite;
 
-        if(this.PhotoFavorite) {
+        if (this.PhotoFavorite) {
             return Api.post(this.getEntityResource() + "/like");
         } else {
             return Api.delete(this.getEntityResource() + "/like");

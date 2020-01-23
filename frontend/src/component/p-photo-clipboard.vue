@@ -26,9 +26,9 @@
                         fab
                         dark
                         small
-                        :title="labels.private"
+                        :title="labels.share"
                         color="share"
-                        @click.stop="batchPrivate()"
+                        @click.stop="dialog.share = true"
                         :disabled="selection.length === 0"
                         v-if="context !== 'archive'"
                         class="p-photo-clipboard-private"
@@ -39,12 +39,12 @@
                         fab
                         dark
                         small
-                        :title="labels.story"
+                        :title="labels.edit"
                         color="edit"
                         :disabled="selection.length === 0"
-                        @click.stop="batchStory()"
+                        @click.stop="dialog.edit = true"
                         v-if="context !== 'archive'"
-                        class="p-photo-clipboard-story"
+                        class="p-photo-clipboard-edit"
                 >
                     <v-icon>edit</v-icon>
                 </v-btn>
@@ -141,8 +141,10 @@
                               @confirm="addToAlbum"></p-photo-album-dialog>
         <p-photo-archive-dialog :show="dialog.archive" @cancel="dialog.archive = false"
                                @confirm="batchArchivePhotos"></p-photo-archive-dialog>
-        <p-photo-edit-dialog :show="dialog.edit" @cancel="dialog.edit = false"
-                             @confirm="batchEditPhotos"></p-photo-edit-dialog>
+        <p-photo-edit-dialog :show="dialog.edit" :selection="selection" :album="album" @cancel="dialog.edit = false"
+                             @confirm="dialog.edit = fals"></p-photo-edit-dialog>
+        <p-photo-share-dialog :show="dialog.share" :selection="selection" :album="album" @cancel="dialog.share = false"
+                             @confirm="dialog.share = false"></p-photo-share-dialog>
     </div>
 </template>
 <script>
@@ -164,9 +166,11 @@
                     archive: false,
                     album: false,
                     edit: false,
+                    share: false,
                 },
                 labels: {
-                    private: this.$gettext("Private"),
+                    share: this.$gettext("Share"),
+                    edit: this.$gettext("Edit"),
                     story: this.$gettext("Story"),
                     addToAlbum: this.$gettext("Add to album"),
                     removeFromAlbum: this.$gettext("Remove"),

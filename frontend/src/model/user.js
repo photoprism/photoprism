@@ -3,6 +3,14 @@ import Form from "common/form";
 import Api from "common/api";
 
 class User extends Abstract {
+    getDefaults() {
+        return {
+            ID: 0,
+            FirstName: "",
+            LastName: "",
+        }
+    }
+
     getEntityName() {
         return this.FirstName + " " + this.LastName;
     }

@@ -1,5 +1,7 @@
 {
   "default": {
+    "application": "#fafafa",
+    "form": "#fafafa",
     "primary": "#FFD600",
     "secondary-dark": "#607D8B",
     "secondary": "#CFD8DC",
@@ -23,6 +25,7 @@
   },
   "cyano": {
     "application": "#ECEFF1",
+    "form": "#ECEFF1",
     "primary": "#80DEEA",
     "secondary-dark": "#757575",
     "secondary": "#B0BEC5",
@@ -45,6 +48,8 @@
     "navigation-home": "#37474F"
   },
   "raspberry": {
+    "application": "#fafafa",
+    "form": "#fafafa",
     "primary": "#ffb3cc",
     "secondary-dark": "#757575",
     "secondary": "#FCE4EC",
@@ -67,6 +72,8 @@
     "navigation-home": "#880E4F"
   },
   "seaweed": {
+    "application": "#fafafa",
+    "form": "#fafafa",
     "primary": "#26A69A",
     "secondary-dark": "#26A69A",
     "secondary": "#B0BEC5",
@@ -89,6 +96,8 @@
     "navigation-home": "#263238"
   },
   "lavender": {
+    "application": "#fafafa",
+    "form": "#fafafa",
     "primary": "#8C9EFF",
     "secondary-dark": "#8C9EFF",
     "secondary": "#B0BEC5",
@@ -112,6 +121,7 @@
   },
   "moonlight": {
     "application": "#EEEEEE",
+    "form": "#EEEEEE",
     "primary": "#a5b3c0",
     "secondary-dark": "#212121",
     "secondary": "#BDBDBD",
@@ -135,7 +145,7 @@
   },
   "onyx": {
     "application": "#E5E4E2",
-    "application-light": "#E5E4E2",
+    "form": "#E5E4E2",
     "primary": "#B2BEB5",
     "secondary-dark": "#353839",
     "secondary": "#989898",

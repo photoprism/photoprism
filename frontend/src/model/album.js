@@ -3,6 +3,29 @@ import Api from "common/api";
 import { DateTime } from "luxon";
 
 class Album extends Abstract {
+    getDefaults() {
+        return {
+            ID: 0,
+            CoverUUID: "",
+            AlbumUUID: "",
+            AlbumSlug: "",
+            AlbumName: "",
+            AlbumDescription: "",
+            AlbumNotes: "",
+            AlbumViews: 0,
+            AlbumFavorite: true,
+            AlbumPublic: false,
+            AlbumLat: 0,
+            AlbumLng: 0,
+            AlbumRadius: 0,
+            AlbumOrder: "",
+            AlbumTemplate: "",
+            CreatedAt: "",
+            UpdatedAt: "",
+            DeletedAt: null
+        }
+    }
+
     getEntityName() {
         return this.AlbumSlug;
     }
