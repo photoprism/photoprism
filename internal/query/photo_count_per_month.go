@@ -12,6 +12,7 @@ func (s *Repo) GetPhotoCountPerMonth() (results []PhotoCountResult, err error) {
 	q := s.db.NewScope(nil).DB()
 
 	q = q.Table("photos").
+		Where("deleted_at IS NULL").
 		Select("photos.photo_year, photos.photo_month, COUNT(*) AS count").
 		Group("photos.photo_year, photos.photo_month").
 		Order("photos.photo_year DESC, photos.photo_month DESC")

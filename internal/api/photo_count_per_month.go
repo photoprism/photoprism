@@ -10,9 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GET /api/v1/photoCountPerMonth
+// GET /api/v1/moments/time
 func GetPhotoCountPerMonth(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/photoCountPerMonth", func(c *gin.Context) {
+	router.GET("/moments/time", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -22,7 +22,7 @@ func GetPhotoCountPerMonth(router *gin.RouterGroup, conf *config.Config) {
 
 		result, err := q.GetPhotoCountPerMonth()
 		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
