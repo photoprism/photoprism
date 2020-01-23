@@ -1,14 +1,14 @@
 package query
 
-// PhotoCountResult contains photos per month
-type PhotoCountResult struct {
+// MomentsTimeResult contains photo counts per month and year
+type MomentsTimeResult struct {
 	PhotoYear  int
 	PhotoMonth int
 	Count      int
 }
 
-// GetPhotoCountPerMonth couts photos per month and year
-func (s *Repo) GetPhotoCountPerMonth() (results []PhotoCountResult, err error) {
+// GetMomentsTime counts photos per month and year
+func (s *Repo) GetMomentsTime() (results []MomentsTimeResult, err error) {
 	q := s.db.NewScope(nil).DB()
 
 	q = q.Table("photos").

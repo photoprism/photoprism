@@ -11,7 +11,7 @@ import (
 )
 
 // GET /api/v1/moments/time
-func GetPhotoCountPerMonth(router *gin.RouterGroup, conf *config.Config) {
+func GetMomentsTime(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/moments/time", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
@@ -20,7 +20,7 @@ func GetPhotoCountPerMonth(router *gin.RouterGroup, conf *config.Config) {
 
 		q := query.New(conf.OriginalsPath(), conf.Db())
 
-		result, err := q.GetPhotoCountPerMonth()
+		result, err := q.GetMomentsTime()
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
