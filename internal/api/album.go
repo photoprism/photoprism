@@ -63,7 +63,7 @@ func GetAlbum(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
 			return
 		}
 
@@ -132,7 +132,7 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
 			return
 		}
 
@@ -160,7 +160,7 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
 			return
 		}
 

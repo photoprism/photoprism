@@ -29,7 +29,7 @@ func GetPhoto(router *gin.RouterGroup, conf *config.Config) {
 		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
 			return
 		}
 
