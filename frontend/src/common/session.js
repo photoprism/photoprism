@@ -6,9 +6,11 @@ import Socket from "./websocket";
 export default class Session {
     /**
      * @param {Storage} storage
+     * @param {Config} config
      */
-    constructor(storage) {
+    constructor(storage, config) {
         this.auth = false;
+        this.config = config;
 
         if (storage.getItem("session_storage") === "true") {
             this.storage = window.sessionStorage;
@@ -26,14 +28,14 @@ export default class Session {
         }
 
         Event.subscribe("session.logout", () => {
-            this.onLogout()
+            this.onLogout();
         });
 
         Event.subscribe("websocket.connected", () => {
-            this.sendClientInfo()
+            this.sendClientInfo();
         });
 
-        this.sendClientInfo()
+        this.sendClientInfo();
     }
 
     useSessionStorage() {
@@ -62,6 +64,10 @@ export default class Session {
     setToken(token) {
         this.storage.setItem("session_token", token);
         return this.applyToken(token);
+    }
+
+    setConfig(values) {
+        this.config.setValues(values);
     }
 
     getToken() {
@@ -138,7 +144,7 @@ export default class Session {
         try {
             Socket.send(JSON.stringify(clientInfo));
         } catch(e) {
-            console.log("can't send client info, websocket not connected (yet)")
+            console.log("can't send client info, websocket not connected (yet)");
         }
     }
 
@@ -147,6 +153,7 @@ export default class Session {
 
         return Api.post("session", {email: email, password: password}).then(
             (result) => {
+                this.setConfig(result.data.config);
                 this.setToken(result.data.token);
                 this.setUser(new User(result.data.user));
                 this.sendClientInfo();

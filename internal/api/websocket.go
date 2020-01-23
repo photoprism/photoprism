@@ -19,7 +19,7 @@ var wsConnection = websocket.Upgrader{
 		return true
 	},
 }
-var wsTimeout = 60 * time.Second
+var wsTimeout = 90 * time.Second
 
 type clientInfo struct {
 	SessionToken string `json:"session"`
@@ -33,7 +33,7 @@ var wsAuth = struct {
 	mutex         sync.RWMutex
 }{authenticated: make(map[string]bool)}
 
-func wsReader(ws *websocket.Conn, connId string) {
+func wsReader(ws *websocket.Conn, connId string, conf *config.Config) {
 	defer ws.Close()
 
 	ws.SetReadLimit(512)
@@ -54,19 +54,25 @@ func wsReader(ws *websocket.Conn, connId string) {
 		if err := json.Unmarshal(m, &info); err != nil {
 			log.Error(err)
 		} else {
-			log.Debugf("websocket: %+v", info)
-
 			if session.Exists(info.SessionToken) {
+				log.Debug("websocket: authenticated")
+
 				wsAuth.mutex.Lock()
 				wsAuth.authenticated[connId] = true
 				wsAuth.mutex.Unlock()
+
+				ws.SetWriteDeadline(time.Now().Add(30 * time.Second))
+
+				if err := ws.WriteJSON(gin.H{"event": "config.updated", "data": event.Data(conf.ClientConfig())}); err != nil {
+					log.Error(err)
+				}
 			}
 		}
 	}
 }
 
 func wsWriter(ws *websocket.Conn, connId string) {
-	pingTicker := time.NewTicker(10 * time.Second)
+	pingTicker := time.NewTicker(15 * time.Second)
 	s := event.Subscribe("log.*", "notify.*", "index.*", "upload.*", "import.*", "config.*", "count.*")
 
 	defer func() {
@@ -82,7 +88,7 @@ func wsWriter(ws *websocket.Conn, connId string) {
 	for {
 		select {
 		case <-pingTicker.C:
-			ws.SetWriteDeadline(time.Now().Add(10 * time.Second))
+			ws.SetWriteDeadline(time.Now().Add(30 * time.Second))
 			if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 				return
 			}
@@ -92,7 +98,7 @@ func wsWriter(ws *websocket.Conn, connId string) {
 			wsAuth.mutex.RUnlock()
 
 			if auth {
-				ws.SetWriteDeadline(time.Now().Add(10 * time.Second))
+				ws.SetWriteDeadline(time.Now().Add(30 * time.Second))
 
 				if err := ws.WriteJSON(gin.H{"event": msg.Name, "data": msg.Fields}); err != nil {
 					log.Debug(err)
@@ -139,6 +145,6 @@ func Websocket(router *gin.RouterGroup, conf *config.Config) {
 
 		go wsWriter(ws, connId)
 
-		wsReader(ws, connId)
+		wsReader(ws, connId, conf)
 	})
 }

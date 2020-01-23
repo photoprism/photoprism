@@ -2,7 +2,6 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 import Api from "common/api";
 import Notify from "common/notify";
-import Config from "common/config";
 import Clipboard from "common/clipboard";
 import Components from "component/components";
 import Dialogs from "dialog/dialogs";
@@ -12,7 +11,7 @@ import Log from "common/log";
 import PhotoPrism from "photoprism.vue";
 import Router from "vue-router";
 import Routes from "routes";
-import Session from "session";
+import {session, config} from "session";
 import {Settings} from "luxon";
 import Socket from "common/websocket";
 import Viewer from "common/viewer";
@@ -24,7 +23,6 @@ import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
 
 // Initialize helpers
-const config = new Config(window.localStorage, window.clientConfig);
 const viewer = new Viewer();
 const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
 const isPublic = config.getValue("public");
@@ -33,7 +31,7 @@ const isPublic = config.getValue("public");
 Vue.prototype.$event = Event;
 Vue.prototype.$notify = Notify;
 Vue.prototype.$viewer = viewer;
-Vue.prototype.$session = Session;
+Vue.prototype.$session = session;
 Vue.prototype.$api = Api;
 Vue.prototype.$log = Log;
 Vue.prototype.$socket = Socket;
@@ -70,7 +68,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.admin)) {
-        if (isPublic || Session.isAdmin()) {
+        if (isPublic || session.isAdmin()) {
             next();
         } else {
             next({
@@ -79,7 +77,7 @@ router.beforeEach((to, from, next) => {
             });
         }
     } else if (to.matched.some(record => record.meta.auth)) {
-        if (isPublic || Session.isUser()) {
+        if (isPublic || session.isUser()) {
             next();
         } else {
             next({

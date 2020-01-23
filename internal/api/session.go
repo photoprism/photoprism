@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/session"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -32,9 +31,7 @@ func CreateSession(router *gin.RouterGroup, conf *config.Config) {
 
 		c.Header("X-Session-Token", token)
 
-		s := gin.H{"token": token, "user": user}
-
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		s := gin.H{"token": token, "user": user, "config": conf.ClientConfig()}
 
 		c.JSON(http.StatusOK, s)
 	})
