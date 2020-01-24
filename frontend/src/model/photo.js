@@ -87,16 +87,28 @@ class Photo extends Abstract {
         return "https://www.google.com/maps/place/" + this.PhotoLat + "," + this.PhotoLng;
     }
 
-    getThumbnailUrl(type) {
-        return "/api/v1/thumbnails/" + this.FileHash + "/" + type;
-    }
-
-    getFileThumbUrl(index, type) {
-        if(!this.Files || !this.Files[index]) {
-            return "";
+    refreshFileAttr() {
+        if(!this.Files) {
+            return
         }
 
-        return "/api/v1/thumbnails/" + this.Files[index].FileHash + "/" + type;
+        const primary = this.Files.find(f => f.FilePrimary === true);
+
+        if(!primary) {
+            return
+        }
+
+        this.FileHash = primary.FileHash;
+        this.FileWidth = primary.FileWidth;
+        this.FileHeight = primary.FileHeight;
+    }
+
+    getThumbnailUrl(type) {
+        if(this.FileHash) {
+            return "/api/v1/thumbnails/" + this.FileHash + "/" + type;
+        }
+
+        return "/api/v1/svg/photo";
     }
 
     getDownloadUrl() {

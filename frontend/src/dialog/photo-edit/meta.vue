@@ -12,7 +12,7 @@
                         <v-card tile
                                 class="ma-1 elevation-0"
                                 :title="model.PhotoTitle">
-                            <v-img :src="model.getFileThumbUrl(0, 'tile_500')"
+                            <v-img :src="model.getThumbnailUrl('tile_500')"
                                    aspect-ratio="1"
                                    class="accent lighten-2 elevation-0"
                                    style="cursor: pointer"
@@ -286,7 +286,7 @@
                             </v-flex>
                             <v-flex xs12 text-xs-right class="pt-3">
                                 <span class="subheading pb-3">
-                                    Note: This is a first draft and may contain bugs.
+                                    Note: This is a first draft and may contain bugs
                                 </span>
                                 <v-btn @click.stop="cancel" depressed color="secondary-light" class="p-photo-dialog-cancel">
                                     <translate>Cancel</translate>
@@ -379,26 +379,17 @@
         },
         methods: {
             openPhoto() {
-                const file = this.model.Files[0];
-
-                const values = [new Photo({
-                    PhotoUUID: this.model.PhotoUUID,
-                    PhotoTitle: this.model.PhotoTitle,
-                    FileHash: file.FileHash,
-                    FileWidth: file.FileWidth,
-                    FileHeight: file.FileHeight,
-                })];
-
-                this.$viewer.show(values, 0)
+                this.$viewer.show([this.model], 0)
             },
             refresh(model) {
                 if(!model.hasId()) return;
+
+                model.refreshFileAttr();
 
                 if(model.TakenAt) {
                     this.date = DateTime.fromISO(model.TakenAt).toISODate();
 
                     this.time = DateTime.fromISO(model.TakenAt).toFormat("HH:mm:ss");
-                    console.log("TIME", this.time);
                 }
             },
             save() {

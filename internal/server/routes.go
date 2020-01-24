@@ -68,6 +68,8 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetSettings(v1, conf)
 		api.SaveSettings(v1, conf)
 
+		api.GetSvg(v1)
+
 		api.Websocket(v1, conf)
 	}
 
