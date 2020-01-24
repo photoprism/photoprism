@@ -15,7 +15,7 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 
 ![](https://dl.photoprism.org/assets/img/preview.jpg)
 
-More screenshots: https://photoprism.org/#screenshots
+More screenshots: https://github.com/photoprism/photoprism/wiki/Screenshots
 
 ## What to expect ##
 
