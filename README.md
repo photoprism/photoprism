@@ -29,9 +29,9 @@ More screenshots: https://github.com/photoprism/photoprism/wiki/Screenshots
 You're welcome to play with our demo at [demo.photoprism.org](https://demo.photoprism.org).
 Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
 
-Step-by-step [installation instructions](https://docs.photoprism.org/en/latest/setup/) can be found
+Step-by-step [installation instructions](https://docs.photoprism.org/en/latest/getting-started/) can be found
 in our [User Guide](https://docs.photoprism.org/en/latest/).
-Developers can skip this and move on to the [Developer Guide](https://github.com/photoprism/photoprism/wiki).
+Developers can skip this and move on to the [Developer Guide](https://docs.photoprism.org/en/latest/developer-guide/).
 
 All you need is a Web browser and [Docker](https://store.docker.com/search?type=edition&offering=community)
 to run the server. It is available for Mac, Linux and Windows.
@@ -58,7 +58,7 @@ We're already in contact with data scientists who like our idea.
 ## How to contribute ##
 
 We welcome contributions of any kind. If you have a bug or an idea, read our 
-[guide](https://docs.photoprism.org/en/latest/contribute/) before opening an issue.
+[guide](https://docs.photoprism.org/en/latest/developer-guide/) before opening an issue.
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
 good (first) contributions. 
