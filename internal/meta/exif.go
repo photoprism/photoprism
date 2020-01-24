@@ -99,7 +99,7 @@ func Exif(filename string) (data Data, err error) {
 			valueString, err = ite.FormatFirst()
 
 			if err != nil {
-				log.Error(err)
+				log.Errorf("exif: %s", err.Error())
 
 				return nil
 			}
