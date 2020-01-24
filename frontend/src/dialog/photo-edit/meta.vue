@@ -381,8 +381,6 @@
             refresh(model) {
                 if(!model.hasId()) return;
 
-                model.refreshFileAttr();
-
                 if(model.TakenAt) {
                     const date = DateTime.fromISO(model.TakenAt).toUTC();
                     this.date = date.toISODate();

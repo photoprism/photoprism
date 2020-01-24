@@ -1,6 +1,6 @@
 <template>
     <v-dialog fullscreen hide-overlay scrollable lazy
-            v-model="show" persistent class="p-photo-edit-dialog" @keydown.esc="cancel">
+              v-model="show" persistent class="p-photo-edit-dialog" @keydown.esc="cancel">
         <v-card color="application">
             <v-toolbar dark color="navigation">
                 <v-btn icon dark @click.stop="cancel">
@@ -29,33 +29,33 @@
                     height="64"
                     class="form"
             >
-                <v-tab id="tab-edit-general" ripple @click="changePath('/settings')">
+                <v-tab id="tab-edit-general" ripple>
                     <translate>General</translate>
                 </v-tab>
                 <v-tab-item>
                     <p-tab-photo-edit-meta :model="model" ref="meta" @cancel="cancel"></p-tab-photo-edit-meta>
                 </v-tab-item>
 
-                <v-tab id="tab-edit-labels" ripple @click="changePath('/settings')">
+                <v-tab id="tab-edit-labels" ripple>
                     <translate>Labels</translate>
                 </v-tab>
                 <v-tab-item lazy>
-                    <p-tab-photo-edit-todo :model="model"></p-tab-photo-edit-todo>
+                    <p-tab-photo-edit-labels :model="model"></p-tab-photo-edit-labels>
                 </v-tab-item>
 
-                <v-tab id="tab-edit-files" ripple @click="changePath('/settings')">
+                <v-tab id="tab-edit-files" ripple>
                     <translate>Files</translate>
                 </v-tab>
                 <v-tab-item lazy>
-                    <p-tab-photo-edit-todo :model="model"></p-tab-photo-edit-todo>
+                    <p-tab-photo-edit-files :model="model"></p-tab-photo-edit-files>
                 </v-tab-item>
 
-                <v-tab id="tab-edit-sharing" ripple @click="changePath('/settings')">
+                <!-- v-tab id="tab-edit-sharing" ripple @click="changePath('/settings')">
                     <translate>Sharing</translate>
                 </v-tab>
                 <v-tab-item lazy>
                     <p-tab-photo-edit-todo :model="model"></p-tab-photo-edit-todo>
-                </v-tab-item>
+                </v-tab-item -->
             </v-tabs>
         </v-card>
     </v-dialog>
@@ -63,6 +63,8 @@
 <script>
     import Photo from "../model/photo";
     import PhotoEditMeta from "./photo-edit/meta.vue";
+    import PhotoEditLabels from "./photo-edit/labels.vue";
+    import PhotoEditFiles from "./photo-edit/files.vue";
     import PhotoEditTodo from "./photo-edit/todo.vue";
 
     export default {
@@ -74,6 +76,8 @@
         },
         components: {
             'p-tab-photo-edit-meta': PhotoEditMeta,
+            'p-tab-photo-edit-labels': PhotoEditLabels,
+            'p-tab-photo-edit-files': PhotoEditFiles,
             'p-tab-photo-edit-todo': PhotoEditTodo,
         },
         data() {
@@ -101,12 +105,12 @@
                 this.$emit('confirm');
             },
             prev() {
-                if(this.selected > 0) {
+                if (this.selected > 0) {
                     this.find(this.selected - 1);
                 }
             },
             next() {
-                if(this.selected < this.selection.length) {
+                if (this.selected < this.selection.length) {
                     this.find(this.selected + 1);
                 }
             },
@@ -115,7 +119,7 @@
                     return;
                 }
 
-                if(!this.selection || !this.selection[index]) {
+                if (!this.selection || !this.selection[index]) {
                     this.$notify.error("Invalid photo selected");
                     return
                 }
@@ -125,6 +129,7 @@
                 this.selectedId = this.selection[index];
 
                 this.model.find(this.selectedId).then(model => {
+                    model.refreshFileAttr();
                     this.model = model;
                     this.$refs.meta.refresh(model);
                     this.loading = false;

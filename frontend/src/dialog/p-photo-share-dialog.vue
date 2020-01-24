@@ -119,6 +119,7 @@
                 this.selectedId = this.selection[index];
 
                 this.model.find(this.selectedId).then(model => {
+                    model.refreshFileAttr();
                     this.model = model;
                     this.$refs.meta.refresh(model);
                     this.loading = false;
