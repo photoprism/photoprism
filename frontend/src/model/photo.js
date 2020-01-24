@@ -25,7 +25,7 @@ class Photo extends Abstract {
             PhotoAltitude: 0,
             PhotoFocalLength: 0,
             PhotoIso: 0,
-            PhotoFNumber: 0,
+            PhotoFNumber: 0.0,
             PhotoExposure: "",
             PhotoViews: 0,
             Camera: {},

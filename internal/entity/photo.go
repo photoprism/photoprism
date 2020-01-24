@@ -12,49 +12,49 @@ import (
 // A photo can have multiple images and sidecar files
 type Photo struct {
 	ID                uint      `gorm:"primary_key"`
-	TakenAt           time.Time `gorm:"type:datetime;index:idx_photos_taken_uuid;"`
+	TakenAt           time.Time `gorm:"type:datetime;index:idx_photos_taken_uuid;" json:"TakenAt"`
 	PhotoUUID         string    `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;"`
 	PhotoPath         string    `gorm:"type:varbinary(512);index;"`
 	PhotoName         string    `gorm:"type:varbinary(256);"`
 	PhotoTitle        string    `json:"PhotoTitle"`
-	PhotoTitleChanged bool
-	PhotoDescription  string  `gorm:"type:text;"`
-	PhotoNotes        string  `gorm:"type:text;"`
-	PhotoArtist       string  `json:"PhotoArtist"`
-	PhotoCopyright    string  `json:"PhotoCopyright"`
-	PhotoFavorite     bool    `json:"PhotoFavorite"`
-	PhotoPrivate      bool    `json:"PhotoPrivate"`
-	PhotoNSFW         bool    `json:"PhotoNSFW"`
-	PhotoStory        bool    `json:"PhotoStory"`
-	PhotoLat          float64 `gorm:"index;"`
-	PhotoLng          float64 `gorm:"index;"`
-	PhotoAltitude     int
-	PhotoFocalLength  int
-	PhotoIso          int
-	PhotoFNumber      float64
-	PhotoExposure     string `gorm:"type:varbinary(64);"`
-	PhotoViews        uint
-	Camera            *Camera
-	CameraID          uint `gorm:"index:idx_photos_camera_lens;"`
-	Lens              *Lens
-	LensID            uint `gorm:"index:idx_photos_camera_lens;"`
-	CountryChanged    bool
-	Location          *Location
-	LocationID        string `gorm:"type:varbinary(16);index;"`
-	Place             *Place
-	PlaceID           string `gorm:"type:varbinary(16);index;"`
-	LocationChanged   bool
-	LocationEstimated bool
-	PhotoCountry      string    `gorm:"index:idx_photos_country_year_month;"`
+	PhotoTitleChanged bool      `json:"PhotoTitleChanged"`
+	PhotoDescription  string    `gorm:"type:text;" json:"PhotoDescription"`
+	PhotoNotes        string    `gorm:"type:text;" json:"PhotoNotes"`
+	PhotoArtist       string    `json:"PhotoArtist"`
+	PhotoCopyright    string    `json:"PhotoCopyright"`
+	PhotoFavorite     bool      `json:"PhotoFavorite"`
+	PhotoPrivate      bool      `json:"PhotoPrivate"`
+	PhotoNSFW         bool      `json:"PhotoNSFW"`
+	PhotoStory        bool      `json:"PhotoStory"`
+	PhotoLat          float64   `gorm:"index;" json:"PhotoLat"`
+	PhotoLng          float64   `gorm:"index;" json:"PhotoLng"`
+	PhotoAltitude     int       `json:"PhotoAltitude"`
+	PhotoFocalLength  int       `json:"PhotoFocalLength"`
+	PhotoIso          int       `json:"PhotoIso"`
+	PhotoFNumber      float64   `json:"PhotoFNumber"`
+	PhotoExposure     string    `gorm:"type:varbinary(64);" json:"PhotoExposure"`
+	CameraID          uint      `gorm:"index:idx_photos_camera_lens;" json:"CameraID"`
+	LensID            uint      `gorm:"index:idx_photos_camera_lens;" json:"LensID"`
+	LocationID        string    `gorm:"type:varbinary(16);index;" json:"LocationID"`
+	PlaceID           string    `gorm:"type:varbinary(16);index;" json:"PlaceID"`
+	LocationChanged   bool      `json:"LocationChanged"`
+	LocationEstimated bool      `json:"LocationEstimated"`
+	PhotoCountry      string    `gorm:"index:idx_photos_country_year_month;" json:"PhotoCountry"`
 	PhotoYear         int       `gorm:"index:idx_photos_country_year_month;"`
 	PhotoMonth        int       `gorm:"index:idx_photos_country_year_month;"`
+	TimeZone          string    `gorm:"type:varbinary(64);" json:"TimeZone"`
 	TakenAtLocal      time.Time `gorm:"type:datetime;"`
 	TakenAtChanged    bool
-	TimeZone          string `gorm:"type:varbinary(64);"`
+	PhotoViews        uint
+	CountryChanged    bool
+	Camera            *Camera   `json:"-"`
+	Lens              *Lens     `json:"-"`
+	Location          *Location `json:"-"`
+	Place             *Place    `json:"-"`
 	Files             []File
 	Labels            []Label
-	Keywords          []Keyword
-	Albums            []Album
+	Keywords          []Keyword `json:"-"`
+	Albums            []Album   `json:"-"`
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 	DeletedAt         *time.Time `sql:"index"`

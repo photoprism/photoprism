@@ -2,7 +2,7 @@
     <div class="p-tab p-tab-photo-edit-todo">
         <v-container fluid>
             <p class="subheading pb-3">
-                This is a first draft for an edit dialog. Feedback and contributions welcome.
+                This is work in progress. Feedback and contributions welcome.
             </p>
         </v-container>
     </div>

@@ -168,7 +168,16 @@
                                         v-model="model.PhotoAltitude"
                                 ></v-text-field>
                             </v-flex>
-
+                            <v-flex xs12 sm6 md3 class="pa-2">
+                                <v-text-field
+                                        disabled
+                                        hide-details
+                                        label="Views"
+                                        placeholder=""
+                                        color="secondary-dark"
+                                        v-model="model.PhotoViews"
+                                ></v-text-field>
+                            </v-flex>
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
@@ -207,17 +216,6 @@
                                         v-model="model.PhotoExposure"
                                 ></v-text-field>
                             </v-flex>
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        disabled
-                                        hide-details
-                                        label="Views"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.PhotoViews"
-                                ></v-text-field>
-                            </v-flex>
-
 
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
@@ -285,11 +283,8 @@
                                 ></v-textarea>
                             </v-flex>
                             <v-flex xs12 text-xs-right class="pt-3">
-                                <span class="subheading pb-3">
-                                    Note: This is a first draft and may contain bugs
-                                </span>
                                 <v-btn @click.stop="cancel" depressed color="secondary-light" class="p-photo-dialog-cancel">
-                                    <translate>Cancel</translate>
+                                    <translate>Close</translate>
                                 </v-btn>
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save"
                                        class="p-photo-dialog-confirm">
@@ -353,12 +348,14 @@
                 if(!this.date) {
                     return "";
                 }
+
                 return DateTime.fromISO(this.date).toLocaleString(DateTime.DATE_FULL);
             },
             timeFormatted() {
                 if(!this.time) {
                     return "";
                 }
+
                 return DateTime.fromISO(this.time).toLocaleString(DateTime.TIME_24_WITH_SECONDS);
             },
             countryOptions() {
@@ -387,12 +384,16 @@
                 model.refreshFileAttr();
 
                 if(model.TakenAt) {
-                    this.date = DateTime.fromISO(model.TakenAt).toISODate();
-
-                    this.time = DateTime.fromISO(model.TakenAt).toFormat("HH:mm:ss");
+                    const date = DateTime.fromISO(model.TakenAt).toUTC();
+                    this.date = date.toISODate();
+                    this.time = date.toFormat("HH:mm:ss");
                 }
             },
             save() {
+                if(this.time && this.date) {
+                    this.model.TakenAt = this.date + "T" + this.time + "Z";
+                }
+
                 this.model.update();
             },
             cancel() {

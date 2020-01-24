@@ -13,10 +13,10 @@ class Abstract {
     }
 
     setValues(values) {
-        if(!values) return;
+        if (!values) return;
 
-        for(let key in values) {
-            if(values.hasOwnProperty(key) && key !== "__originalValues") {
+        for (let key in values) {
+            if (values.hasOwnProperty(key) && key !== "__originalValues") {
                 this[key] = values[key];
                 this.__originalValues[key] = values[key];
             }
@@ -25,12 +25,32 @@ class Abstract {
         return this;
     }
 
-    getValues() {
+    getValues(changed) {
         const result = {};
+        const defaults = this.getDefaults();
 
-        for(let key in this.__originalValues) {
-            if(this.__originalValues.hasOwnProperty(key) && key !== "__originalValues") {
-                result[key] = this[key];
+        for (let key in this.__originalValues) {
+            if (this.__originalValues.hasOwnProperty(key) && key !== "__originalValues") {
+                let val;
+                if (defaults.hasOwnProperty(key)) {
+                    switch (typeof defaults[key]) {
+                        case "bigint":
+                        case "number":
+                            val = parseFloat(this[key]);
+                            break;
+                        case "boolean":
+                            val = !!this[key];
+                            break;
+                        default:
+                            val = this[key];
+                    }
+                } else {
+                    val = this[key];
+                }
+
+                if(!changed || val !== this.__originalValues[key]) {
+                    result[key] = val;
+                }
             }
         }
 
@@ -62,7 +82,7 @@ class Abstract {
     }
 
     update() {
-        return Api.put(this.getEntityResource(), this.getValues()).then((response) => Promise.resolve(this.setValues(response.data)));
+        return Api.put(this.getEntityResource(), this.getValues(true)).then((response) => Promise.resolve(this.setValues(response.data)));
     }
 
     remove() {
@@ -113,7 +133,7 @@ class Abstract {
         return Api.get(this.getCollectionResource(), options).then((response) => {
             response.models = [];
 
-            for(let i = 0; i < response.data.length; i++) {
+            for (let i = 0; i < response.data.length; i++) {
                 response.models.push(new this(response.data[i]));
             }
 
