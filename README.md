@@ -19,7 +19,7 @@ More screenshots: https://github.com/photoprism/photoprism/wiki/Screenshots
 
 ## What to expect ##
 
-* Clearly structured [Web interface][wiki:screenshots] for browsing, organizing and sharing your personal photo collection
+* Clearly structured Web interface for browsing, organizing and sharing your personal photo collection
 * Import everything without worrying about duplicates or [RAW to JPEG conversion][wiki:raw]
 * [Geocoding][wiki:geocoding], [XMP support][wiki:xmp]  and [automated tagging][wiki:classification] 
   based on Google TensorFlow
@@ -121,7 +121,6 @@ We'd like to remind everyone that we are no full-time marketing specialists but 
 enjoy a bit of sarcasm from time to time. Please let us know when there is an issue with our "nuance and tone" 
 and we'll find a solution.
 
-[wiki:screenshots]: https://github.com/photoprism/photoprism/wiki/Screenshots
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
 [wiki:xmp]: https://github.com/photoprism/photoprism/wiki/XMP
 [wiki:geocoding]: https://github.com/photoprism/photoprism/wiki/Geocoding
