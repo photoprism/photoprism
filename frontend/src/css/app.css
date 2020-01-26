@@ -164,3 +164,8 @@ body.public #photoprism .p-public,
 body.readonly #photoprism .p-readonly {
     display: block;
 }
+
+div.v-dialog table.v-table thead th,
+div.v-dialog table.v-table tbody td {
+    padding: 0 16px;
+}
