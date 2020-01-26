@@ -72,8 +72,8 @@ This project is about freedom and privacy but not necessarily about free beer. W
 would be a mistake to state there will be no costs, because clearly we have huge expenses, your server hardware
 will have a price tag and then maybe you'd like to have some extra features that need to be developed.
 
-It's fair to say that users with basic needs will have no monthly costs. We were also way more 
-productive and effective per dollar than commercial projects and learned a lot on top of it.
+It's fair to say that users with basic needs will have no monthly costs. We were also way more effective 
+per dollar than commercial projects and learned a lot on top of it.
 An earlier version of this document contained a rough number, but at the end of the day it doesn't matter.
 
 Basically all established OSS companies make 90% of their revenue with enterprise customers, that's why private users 
