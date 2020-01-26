@@ -30,7 +30,7 @@
                     class="form"
             >
                 <v-tab id="tab-edit-general" ripple>
-                    <translate>General</translate>
+                    <translate>Details</translate>
                 </v-tab>
                 <v-tab-item>
                     <p-tab-photo-edit-meta :model="model" ref="meta" @cancel="cancel"></p-tab-photo-edit-meta>

@@ -43,6 +43,18 @@
                                         v-model="model.PhotoTitle"
                                 ></v-text-field>
                             </v-flex>
+
+                            <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
+
+                                <v-text-field
+                                        :value="timeLocalFormatted"
+                                        label="Local Time"
+                                        readonly
+                                        hide-details
+                                        color="secondary-dark"
+                                ></v-text-field>
+
+                            </v-flex>
                             <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
                                 <v-menu
                                         v-model="showTimePicker"
@@ -53,7 +65,7 @@
                                     <template v-slot:activator="{ on }">
                                         <v-text-field
                                                 :value="timeFormatted"
-                                                label="Time (UTC)"
+                                                label="UTC Time"
                                                 readonly
                                                 hide-details
                                                 v-on="on"
@@ -71,7 +83,6 @@
                             </v-flex>
                             <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
                                 <v-menu
-                                        v-model="showDatePicker"
                                         :close-on-content-click="false"
                                         full-width
                                         max-width="290"
@@ -79,7 +90,7 @@
                                     <template v-slot:activator="{ on }">
                                         <v-text-field
                                                 :value="dateFormatted"
-                                                label="Date"
+                                                label="UTC Date"
                                                 readonly
                                                 hide-details
                                                 v-on="on"
@@ -104,18 +115,6 @@
                                         v-model="model.TimeZone"
                                         :items="timeZones">
                                 </v-autocomplete>
-                            </v-flex>
-
-                            <v-flex xs12 md3 pa-2 class="p-countries-select">
-                                <v-select
-                                        :label="labels.country"
-                                        hide-details
-                                        color="secondary-dark"
-                                        item-value="code"
-                                        item-text="name"
-                                        v-model="model.PhotoCountry"
-                                        :items="countryOptions">
-                                </v-select>
                             </v-flex>
 
                             <v-flex xs12 md6 pa-2 class="p-camera-select">
@@ -168,16 +167,19 @@
                                         v-model="model.PhotoAltitude"
                                 ></v-text-field>
                             </v-flex>
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        disabled
+
+                            <v-flex xs12 sm6 md3 class="pa-2 p-countries-select">
+                                <v-select
+                                        :label="labels.country"
                                         hide-details
-                                        label="Views"
-                                        placeholder=""
                                         color="secondary-dark"
-                                        v-model="model.PhotoViews"
-                                ></v-text-field>
+                                        item-value="code"
+                                        item-text="name"
+                                        v-model="model.PhotoCountry"
+                                        :items="countryOptions">
+                                </v-select>
                             </v-flex>
+
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
@@ -217,6 +219,18 @@
                                 ></v-text-field>
                             </v-flex>
 
+                            <v-flex xs12 class="pa-2">
+                                <v-textarea
+                                        hide-details
+                                        auto-grow
+                                        label="Description"
+                                        placeholder=""
+                                        :rows="1"
+                                        color="secondary-dark"
+                                        v-model="model.PhotoDescription"
+                                ></v-textarea>
+                            </v-flex>
+
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
@@ -237,53 +251,21 @@
                                 ></v-text-field>
                             </v-flex>
 
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        disabled
-                                        hide-details
-                                        label="Path"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.PhotoPath"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        disabled
-                                        hide-details
-                                        label="Name"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.PhotoName"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 md6 class="pa-2">
-                                <v-textarea
-                                        hide-details
-                                        auto-grow
-                                        label="Description"
-                                        placeholder=""
-                                        :rows="2"
-                                        color="secondary-dark"
-                                        v-model="model.PhotoDescription"
-                                ></v-textarea>
-                            </v-flex>
-
                             <v-flex xs12 md6 class="pa-2">
                                 <v-textarea
                                         hide-details
                                         auto-grow
                                         label="Notes"
                                         placeholder=""
-                                        :rows="2"
+                                        :rows="1"
                                         color="secondary-dark"
                                         v-model="model.PhotoNotes"
                                 ></v-textarea>
                             </v-flex>
+
                             <v-flex xs12 text-xs-right class="pt-3">
-                                <v-btn @click.stop="cancel" depressed color="secondary-light" class="p-photo-dialog-cancel">
+                                <v-btn @click.stop="cancel" depressed color="secondary-light"
+                                       class="p-photo-dialog-cancel">
                                     <translate>Close</translate>
                                 </v-btn>
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save"
@@ -304,7 +286,6 @@
     import options from "resources/options.json";
     import {DateTime} from "luxon";
     import moment from "moment-timezone"
-    import Photo from "model/photo"
 
     export default {
         name: 'p-tab-photo-edit-meta',
@@ -345,18 +326,38 @@
         },
         computed: {
             dateFormatted() {
-                if(!this.date) {
+                if (!this.date) {
                     return "";
                 }
 
                 return DateTime.fromISO(this.date).toLocaleString(DateTime.DATE_FULL);
             },
             timeFormatted() {
-                if(!this.time) {
+                if (!this.time) {
                     return "";
                 }
 
                 return DateTime.fromISO(this.time).toLocaleString(DateTime.TIME_24_WITH_SECONDS);
+            },
+            timeLocalFormatted() {
+                if (!this.time || !this.date) {
+                    return ""
+                }
+
+                const utcDate = this.date + "T" + this.time + "Z";
+
+                this.model.TakenAt = utcDate;
+
+                const localDate = DateTime.fromISO(utcDate).setZone(this.model.TimeZone);
+
+                this.model.TakenAtLocal = localDate.toISO({
+                    suppressMilliseconds: true,
+                    includeOffset: false,
+                }) + "Z";
+
+                console.log(this.model.TakenAt, this.model.TakenAtLocal);
+
+                return localDate.toLocaleString(DateTime.TIME_24_WITH_SECONDS);
             },
             countryOptions() {
                 return this.all.countries.concat(this.config.countries);
@@ -379,16 +380,16 @@
                 this.$viewer.show([this.model], 0)
             },
             refresh(model) {
-                if(!model.hasId()) return;
+                if (!model.hasId()) return;
 
-                if(model.TakenAt) {
+                if (model.TakenAt) {
                     const date = DateTime.fromISO(model.TakenAt).toUTC();
                     this.date = date.toISODate();
                     this.time = date.toFormat("HH:mm:ss");
                 }
             },
             save() {
-                if(this.time && this.date) {
+                if (this.time && this.date) {
                     this.model.TakenAt = this.date + "T" + this.time + "Z";
                 }
 
