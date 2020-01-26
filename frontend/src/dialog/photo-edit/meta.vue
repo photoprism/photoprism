@@ -193,6 +193,16 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
+                                        label="F Number"
+                                        placeholder=""
+                                        color="secondary-dark"
+                                        v-model="model.PhotoFNumber"
+                                ></v-text-field>
+                            </v-flex>
+
+                            <v-flex xs12 sm6 md3 class="pa-2">
+                                <v-text-field
+                                        hide-details
                                         label="ISO"
                                         placeholder=""
                                         color="secondary-dark"
@@ -200,15 +210,6 @@
                                 ></v-text-field>
                             </v-flex>
 
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        hide-details
-                                        label="F Number"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.PhotoFNumber"
-                                ></v-text-field>
-                            </v-flex>
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
