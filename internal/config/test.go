@@ -19,7 +19,7 @@ import (
 const (
 	TestDataZip  = "/tmp/photoprism/testdata.zip"
 	TestDataURL  = "https://dl.photoprism.org/fixtures/testdata.zip"
-	TestDataHash = "a217ac5242de2189ffb414d819b628c7957c67d7"
+	TestDataHash = "be394d5bee8a5634d415e9e0663eef20b5604510" // sha1sum
 )
 
 var testConfig *Config
