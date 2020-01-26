@@ -12,8 +12,8 @@
         >
             <template slot="items" slot-scope="props" class="p-file">
                 <td>{{ props.item.LabelName }}</td>
-                <td>{{ props.item.LabelPriority }}</td>
-                <td align="left">{{ props.item.CreatedAt | luxon:format('dd/MM/yyyy hh:mm:ss') }}</td>
+                <td class="text-xs-center">{{ props.item.LabelPriority }}</td>
+                <td>{{ props.item.CreatedAt | luxon:format('dd/MM/yyyy') }}</td>
             </template>
         </v-data-table>
     </div>
@@ -31,9 +31,9 @@
                 readonly: this.$config.getValue("readonly"),
                 selected: [],
                 listColumns: [
-                    {text: this.$gettext('Label'), value: 'LabelName', align: 'left'},
-                    {text: this.$gettext('Priority'), value: 'LabelPriority'},
-                    {text: this.$gettext('Added'), value: 'CreatedAt', align: 'left'},
+                    {text: this.$gettext('Label'), value: 'LabelName', sortable: false, align: 'left'},
+                    {text: this.$gettext('Priority'), value: 'LabelPriority', sortable: false, align: 'center'},
+                    {text: this.$gettext('Added'), value: 'CreatedAt', sortable: false, align: 'left'},
                 ],
             };
         },
