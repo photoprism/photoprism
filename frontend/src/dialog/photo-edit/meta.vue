@@ -81,7 +81,7 @@
                                     ></v-time-picker>
                                 </v-menu>
                             </v-flex>
-                            <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
+                            <v-flex xs12 sm6 md3 class="pa-2 p-date-select">
                                 <v-menu
                                         :close-on-content-click="false"
                                         full-width
@@ -105,7 +105,7 @@
                                 </v-menu>
                             </v-flex>
 
-                            <v-flex xs12 md3 pa-2 class="p-timezone-select">
+                            <v-flex xs12 sm6 md3 class="pa-2 p-timezone-select">
                                 <v-autocomplete
                                         :label="labels.timezone"
                                         hide-details
