@@ -20,9 +20,11 @@ Thank you very much to all of our sponsors and donors (including those that want
 
 [![Liquid Bytes](https://blog.liquidbytes.net/img/logo-retina.png)](https://blog.liquidbytes.net/)
 
+[Sid Karunaratne](https://github.com/sakaru) (Patreon, May 2019)
+
 [Simen Eriksen](https://github.com/dennorske) (GitHub Sponsors, December 2019)
 
-[Sid Karunaratne](https://github.com/sakaru) (Patreon, May 2019)
+[Alex Leahu](https://github.com/alxjsn) (GitHub Sponsors, January 2020)
 
 For a full list of GitHub sponsors, see https://github.com/sponsors/lastzero.
 
