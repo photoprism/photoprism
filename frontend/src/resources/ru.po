@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: easygettext\n"
+"Generated-By: usercopypaste\n"
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "X-Generator: Poedit 2.2.4\n"
-"Last-Translator: \n"
+"Last-Translator: sashikknox <sashikknox@gmail.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language: ru\n"
 
@@ -103,11 +103,11 @@ msgstr "создать новый альбом"
 
 #: src/pages/events.vue:84
 msgid "Custom Daily"
-msgstr "Custom Daily"
+msgstr "Произвольное ежедневно"
 
 #: src/pages/events.vue:85
 msgid "Custom Weekly"
-msgstr "Custom Weekly"
+msgstr "Произвольное еженедельно"
 
 #: src/pages/events.vue:80
 msgid "Day"
@@ -146,11 +146,11 @@ msgstr "Импортирование загруженных файлов не у
 
 #: src/component/p-photo-list.vue:54
 msgid "Favorite"
-msgstr "Избранная"
+msgstr "В избранном"
 
 #: src/component/p-navigation.vue:107
 msgid "Favorites"
-msgstr "Изюранное"
+msgstr "Избранное"
 
 #: src/pages/places.vue:92
 msgid "Finding your position..."
@@ -222,11 +222,11 @@ msgstr "Журнал"
 
 #: src/pages/library.vue:11
 msgid "Maintenance"
-msgstr "Maintenance"
+msgstr "Поддержка"
 
 #: src/component/p-navigation.vue:64
 msgid "Monochrome"
-msgstr "Monochrome"
+msgstr "Монохром"
 
 #: src/pages/events.vue:83
 msgid "Month"
@@ -234,159 +234,159 @@ msgstr "Месяц"
 
 #: src/pages/places.vue:175
 msgid "More than 100 photos found"
-msgstr "More than 100 photos found"
+msgstr "Более 100 фотографий найдено"
 
 #: src/pages/albums.vue:258
 msgid "More than 20 albums found"
-msgstr "More than 20 albums found"
+msgstr "Более 20 альбомов найдено"
 
 #: src/pages/labels.vue:205
 msgid "More than 20 labels found"
-msgstr "More than 20 labels found"
+msgstr "Более 20 меток найдено"
 
 #: src/pages/album/photos.vue:227 src/pages/photos.vue:218
 msgid "More than 50 photos found"
-msgstr "More than 50 photos found"
+msgstr "Более 50 фотографий найдено"
 
 #: src/component/p-album-search.vue:118 src/component/p-photo-search.vue:168
 msgid "Mosaic"
-msgstr "Mosaic"
+msgstr "Мозайка"
 
 #: src/pages/albums.vue:276
 msgid "New Album"
-msgstr "New Album"
+msgstr "Новый Альбом"
 
 #: src/component/p-album-search.vue:125 src/component/p-photo-search.vue:175
 msgid "Newest first"
-msgstr "Newest first"
+msgstr "Сначала новые"
 
 #: src/pages/events.vue:57
 msgid "Next"
-msgstr "Next"
+msgstr "Следующее"
 
 #: src/pages/albums.vue:251
 msgid "No albums found"
-msgstr "No albums found"
+msgstr "Альбомов не найдено"
 
 #: src/pages/albums.vue:35
 msgid "No albums matched your search"
-msgstr "No albums matched your search"
+msgstr "Нет совпадений среди альбовом по Вашему запросу"
 
 #: src/pages/labels.vue:29
 msgid "No labels matched your search"
-msgstr "No labels matched your search"
+msgstr "Нет совпадений меток по Вашему запросу"
 
 #: src/pages/places.vue:162
 msgid "No locations found"
-msgstr "No locations found"
+msgstr "Местоположений не найдено"
 
 #: src/pages/album/photos.vue:220 src/pages/photos.vue:211
 #: src/pages/places.vue:212
 msgid "No photos found"
-msgstr "No photos found"
+msgstr "Фотографии не найдены"
 
 #: src/component/p-photo-details.vue:5 src/component/p-photo-mosaic.vue:5
 #: src/component/p-photo-tiles.vue:5
 msgid "No photos matched your search"
-msgstr "No photos matched your search"
+msgstr "Нет совпадений среди фотографий по Вашему запросу"
 
 #: src/component/p-photo-clipboard.vue:190
 #: src/component/p-photo-clipboard.vue:220 src/pages/people.vue:3
 msgid "Not implemented yet"
-msgstr "Not implemented yet"
+msgstr "Еще не реализованно"
 
 #: src/pages/settings/logs.vue:5
 msgid "Nothing to see here yet. Be patient."
-msgstr "Nothing to see here yet. Be patient."
+msgstr "Пока что тут нечего смотреть. Будьте терпеливы."
 
 #: src/pages/library/upload.vue:8
 msgid "of"
-msgstr "of"
+msgstr "из"
 
 #: src/component/p-album-search.vue:126 src/component/p-photo-search.vue:176
 msgid "Oldest first"
-msgstr "Oldest first"
+msgstr "Сначала старые"
 
 #: src/pages/albums.vue:253
 msgid "One album found"
-msgstr "One album found"
+msgstr "Один альбом найден"
 
 #: src/pages/photos.vue:213
 msgid "One photo found"
-msgstr "One photo found"
+msgstr "Одна фотография найдена"
 
 #: src/pages/login.vue:45
 msgid "Password"
-msgstr "Password"
+msgstr "Пароль"
 
 #: src/component/p-navigation.vue:51 src/component/p-navigation.vue:58
 msgid "Photos"
-msgstr "Photos"
+msgstr "Фотографии"
 
 #: src/component/p-photo-clipboard.vue:185
 msgid "Photos deleted"
-msgstr "Photos deleted"
+msgstr "Фотографии удалены"
 
 #: src/component/p-navigation.vue:117
 msgid "Places"
-msgstr "Places"
+msgstr "Места"
 
 #: src/pages/login.vue:10
 msgid "Please enter the admin password to proceed..."
-msgstr "Please enter the admin password to proceed…"
+msgstr "Пожалуйста, введите пароль администратора что бы продолжить..."
 
 #: src/pages/library/import.vue:8
 msgid "Press button to import photos from directory..."
-msgstr "Press button to import photos from directory…"
+msgstr "Нажмите кнопку что бы импортировать фотографии из папки..."
 
 #: src/pages/library/maintenance.vue:8
 msgid "Press button to start indexing..."
-msgstr "Press button to start indexing…"
+msgstr "Нажмите кнопку что бы начать индексирование..."
 
 #: src/pages/events.vue:37
 msgid "Prev"
-msgstr "Prev"
+msgstr "Предыдущая"
 
 #: src/component/p-photo-clipboard.vue:149
 msgid "Private"
-msgstr "Private"
+msgstr "Приватный"
 
 #: src/component/p-album-search.vue:127 src/component/p-photo-search.vue:177
 msgid "Recently imported"
-msgstr "Recently imported"
+msgstr "Недавно импортированные"
 
 #: src/component/p-photo-clipboard.vue:204
 msgid "remove failed: unknown album"
-msgstr "remove failed: unknown album"
+msgstr "не могу удалить: неизвестный альбом"
 
 #: src/component/p-photo-clipboard.vue:152
 msgid "Remove from album"
-msgstr "Remove from album"
+msgstr "Удалить из альбома"
 
 #: src/pages/settings/general.vue:32
 msgid "Save"
-msgstr "Save"
+msgstr "Сохранить"
 
 #: src/component/p-album-search.vue:131 src/component/p-photo-search.vue:183
 #: src/pages/albums.vue:162 src/pages/labels.vue:116 src/pages/places.vue:73
 msgid "Search"
-msgstr "Search"
+msgstr "Поиск"
 
 #: src/dialog/p-photo-album-dialog.vue:52
 msgid "Select album"
-msgstr "Select album"
+msgstr "Выбрать альбом"
 
 #: src/pages/library/upload.vue:7
 msgid "Select photos to start upload..."
-msgstr "Select photos to start upload…"
+msgstr "Выберите фотографии для загрузки..."
 
 #: src/component/p-navigation.vue:167
 msgid "Settings"
-msgstr "Settings"
+msgstr "Настройки"
 
 #: src/pages/settings/general.vue:65
 msgid "Settings saved"
-msgstr "Settings saved"
+msgstr "Настрокйки сохранены"
 
 #: src/pages/login.vue:27
 msgid "Sign in"
@@ -394,7 +394,7 @@ msgstr "Войти"
 
 #: src/pages/library/maintenance.vue:58
 msgid "Skip existing photos and sidecar files"
-msgstr "Skip existing photos and sidecar files"
+msgstr "Пропустить существующие фотографии и файлы sidecar"
 
 #: src/component/p-album-search.vue:135 src/component/p-photo-search.vue:187
 msgid "Sort By"
@@ -438,19 +438,19 @@ msgstr "Название слишком длинное"
 
 #: src/component/p-photo-clipboard.vue:167
 msgid "Toggled private flag"
-msgstr "Toggled private flag"
+msgstr "Включен флаг приватности"
 
 #: src/component/p-photo-clipboard.vue:175
 msgid "Toggled story flag"
-msgstr "Toggled story flag"
+msgstr "Фключен флаг История"
 
 #: src/pages/albums.vue:36
 msgid "Try again using a different term or"
-msgstr "Try again using a different term or"
+msgstr "Попробуйте еще раз, используя другой запрос или"
 
 #: src/pages/labels.vue:30
 msgid "Try again using a related or otherwise similar term."
-msgstr "Try again using a related or otherwise similar term."
+msgstr "Попробуйте еще раз использовать смежный или похожий запрос."
 
 #: src/component/p-photo-details.vue:6 src/component/p-photo-mosaic.vue:6
 #: src/component/p-photo-tiles.vue:6
@@ -458,8 +458,8 @@ msgid ""
 "Try using other terms and search options such as category, country and "
 "camera."
 msgstr ""
-"Try using other terms and search options such as category, country and "
-"camera."
+"Попробуйте другой запрос или опции поиска, такие как категория, страна и "
+"камера."
 
 #: src/pages/events.vue:88
 msgid "Type"
@@ -491,16 +491,16 @@ msgstr "Загрузка фотографий..."
 
 #: src/component/p-navigation.vue:70
 msgid "Vibrant"
-msgstr "Vibrant"
+msgstr "Вибрант"
 
 #: src/component/p-album-search.vue:132 src/component/p-photo-search.vue:184
 msgid "View"
-msgstr "View"
+msgstr "Обзор"
 
 #: src/pages/events.vue:82
 msgid "Week"
-msgstr "Week"
+msgstr "Неделя"
 
 #: src/component/p-album-clipboard.vue:107
 msgid "You can only download one album"
-msgstr "You can only download one album"
+msgstr "Вы можете загрузить только один альбом"
