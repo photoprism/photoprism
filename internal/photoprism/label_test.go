@@ -152,11 +152,13 @@ func TestLabels_Less(t *testing.T) {
 }
 
 func TestLabels_Keywords(t *testing.T) {
-	cat := Label{Name: "cat", Source: "location", Uncertainty: 59, Priority: 5}
-	dog := Label{Name: "dog", Source: "location", Uncertainty: 10, Priority: 5}
+	cat := Label{Name: "cat", Source: "location", Uncertainty: 59, Priority: 5, Categories: []string{"animal"}}
+	dog := Label{Name: "dog", Source: "location", Uncertainty: 10, Priority: 5, Categories: []string{"animal"}}
 	labels := Labels{cat, dog}
 	result := labels.Keywords()
 	assert.Equal(t, "cat", result[0])
-	assert.Equal(t, "dog", result[1])
+	assert.Equal(t, "animal", result[1])
+	assert.Equal(t, "dog", result[2])
+	assert.Equal(t, "animal", result[3])
 
 }
