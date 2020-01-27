@@ -11,5 +11,8 @@ INSERT INTO albums (id, album_uuid, cover_uuid, album_name, album_slug, album_fa
 INSERT INTO photos_albums (album_uuid, photo_uuid) VALUES ('4', '654');
 INSERT INTO files (id, photo_id, photo_uuid, file_name, file_primary) VALUES ('1', '1', '654', 'exampleFileName.jpg', 1);
 INSERT INTO photos (id, photo_uuid) VALUES ('1', '654');
+INSERT INTO categories (label_id, category_id) VALUES ('1', '1');
+INSERT INTO labels (id, label_name) VALUES ('1', 'flower');
+
 
 

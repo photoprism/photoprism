@@ -1,6 +1,7 @@
 package query
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -13,5 +14,5 @@ func TestRepo_CategoryLabels(t *testing.T) {
 
 	categories := search.CategoryLabels(1000, 0)
 
-	t.Logf("categories: %+v", categories)
+	assert.Equal(t, "Flower", categories[0].Title)
 }
