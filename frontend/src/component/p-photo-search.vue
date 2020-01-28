@@ -148,8 +148,8 @@
                 all: {
                     countries: [{ code: "", name: this.$gettext("All Countries")}],
                     cameras: [{ID: 0, CameraModel: this.$gettext("All Cameras")}],
-                    lenses: [{ID: 0, LensModel: "All Lenses"}],
-                    colors: [{label: "All Colors", name: ""}],
+                    lenses: [{ID: 0, LensModel: this.$gettext("All Lenses")}],
+                    colors: [{label: this.$gettext("All Colors"), name: ""}],
                     categories: [{LabelName: "", Title: this.$gettext("All Categories")}],
                 },
                 options: {
@@ -196,7 +196,7 @@
                 return this.all.categories.concat(this.config.categories);
             },
             yearOptions() {
-                let result = [{"year": 0, "label": "All Years"}];
+                let result = [{"year": 0, "label": this.$gettext("All Years")}];
 
                 if (this.config.years) {
                     for (let i = 0; i < this.config.years.length; i++) {

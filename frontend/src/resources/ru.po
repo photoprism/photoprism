@@ -1,0 +1,658 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: sashikknox <sashikknox@gmail.com>\n"
+"Language-Team: \n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: usercopypaste\n"
+"X-Generator: Poedit 2.2.4\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/pages/albums.vue:274
+msgid " albums found"
+msgstr " альбомов найдено"
+
+#: src/pages/albums.vue:209
+msgid " albums loaded"
+msgstr " альбомов загружено"
+
+#: src/pages/labels.vue:244
+msgid " labels found"
+msgstr " меток найдено"
+
+#: src/pages/labels.vue:175
+msgid " labels loaded"
+msgstr " метки загружены"
+
+#: src/pages/album/photos.vue:222 src/pages/photos.vue:234
+msgid " photos found"
+msgstr " фотографий найдено"
+
+#: src/pages/album/photos.vue:148 src/pages/photos.vue:161
+msgid " photos loaded"
+msgstr " фотографий загружено"
+
+#: src/pages/events.vue:81
+msgid "4 Day"
+msgstr "4 Дня"
+
+#: src/component/p-photo-clipboard.vue:175
+#: src/dialog/p-photo-album-dialog.vue:61
+msgid "Add to album"
+msgstr "Добавить в альбом"
+
+#: src/dialog/photo-edit/labels.vue:36
+msgid "Added"
+msgstr "Добавлено"
+
+#: src/component/p-album-toolbar.vue:153 src/dialog/p-photo-album-dialog.vue:60
+#: src/pages/albums.vue:176
+msgid "Album Name"
+msgstr "Названия альбома"
+
+#: src/component/p-navigation.vue:110 src/component/p-navigation.vue:119
+msgid "Albums"
+msgstr "Альбомы"
+
+#: src/component/p-album-clipboard.vue:102
+msgid "Albums deleted"
+msgstr "Альбом удален"
+
+#: src/pages/album/photos.vue:148 src/pages/albums.vue:209
+#: src/pages/labels.vue:175 src/pages/photos.vue:161
+msgid "All "
+msgstr "Все "
+
+#: src/component/p-album-toolbar.vue:124 src/component/p-photo-search.vue:150
+msgid "All Cameras"
+msgstr "Все Камеры"
+
+#: src/component/p-photo-search.vue:153
+msgid "All Categories"
+msgstr "Все Категории"
+
+#: src/component/p-photo-search.vue:152
+msgid "All Colors"
+msgstr "Все Цвета"
+
+#: src/component/p-album-toolbar.vue:128 src/component/p-photo-search.vue:149
+msgid "All Countries"
+msgstr "Все Страны"
+
+#: src/component/p-photo-search.vue:151
+msgid "All Lenses"
+msgstr "Все Объективы"
+
+#: src/component/p-photo-search.vue:199
+msgid "All Years"
+msgstr "Все Года"
+
+#: src/component/p-navigation.vue:85 src/component/p-navigation.vue:98
+#: src/component/p-photo-clipboard.vue:177
+#: src/dialog/p-photo-archive-dialog.vue:16
+msgid "Archive"
+msgstr "Архив"
+
+#: src/dialog/p-photo-archive-dialog.vue:9
+msgid "Are you sure you want to archive these photos?"
+msgstr "Вы действительно хотите архивировать эти фотографии?"
+
+#: src/dialog/p-album-delete-dialog.vue:9
+msgid "Are you sure you want to delete these albums?"
+msgstr "Вы действительно хотите удалить эти альбомы?"
+
+#: src/pages/login.vue:3
+msgid "Authentication required"
+msgstr "Требуется авторизация"
+
+#: src/component/p-album-toolbar.vue:151 src/component/p-photo-list.vue:53
+#: src/component/p-photo-search.vue:171 src/dialog/photo-edit/meta.vue:311
+#: src/dialog/photo-edit/todo.vue:34
+msgid "Camera"
+msgstr "Камера"
+
+#: src/dialog/p-album-delete-dialog.vue:13
+#: src/dialog/p-photo-album-dialog.vue:29
+#: src/dialog/p-photo-archive-dialog.vue:13 src/pages/library/import.vue:20
+#: src/pages/library/originals.vue:52
+msgid "Cancel"
+msgstr "Отменить"
+
+#: src/component/p-photo-search.vue:175 src/dialog/photo-edit/meta.vue:315
+#: src/dialog/photo-edit/todo.vue:38
+msgid "Category"
+msgstr "Категория"
+
+#: src/dialog/photo-edit/meta.vue:269
+msgid "Close"
+msgstr "Закрыть"
+
+#: src/component/p-photo-search.vue:174 src/dialog/photo-edit/meta.vue:314
+#: src/dialog/photo-edit/todo.vue:37
+msgid "Color"
+msgstr "Цвет"
+
+#: src/pages/discover.vue:11
+msgid "Colors"
+msgstr "Цвета"
+
+#: src/pages/library/originals.vue:98
+msgid "Convert RAW to JPEG"
+msgstr "Конвертировать RAW в JPEG"
+
+#: src/component/p-album-toolbar.vue:150 src/component/p-photo-search.vue:170
+#: src/dialog/photo-edit/meta.vue:310 src/dialog/photo-edit/todo.vue:33
+msgid "Country"
+msgstr "Страна"
+
+#: src/dialog/p-photo-album-dialog.vue:62
+msgid "Create album"
+msgstr "Создать альбом"
+
+#: src/pages/events.vue:84
+msgid "Custom Daily"
+msgstr "Произвольное ежедневно"
+
+#: src/pages/events.vue:85
+msgid "Custom Weekly"
+msgstr "Произвольное еженедельно"
+
+#: src/pages/events.vue:80
+msgid "Day"
+msgstr "День"
+
+#: src/component/p-album-clipboard.vue:86
+#: src/dialog/p-album-delete-dialog.vue:16
+msgid "Delete"
+msgstr "Удалить"
+
+#: src/component/p-album-toolbar.vue:136 src/component/p-photo-search.vue:158
+#: src/dialog/p-photo-edit-dialog.vue:32
+msgid "Details"
+msgstr "Подробно"
+
+#: src/component/p-navigation.vue:181
+msgid "Discover"
+msgstr "Исследование"
+
+#: src/component/p-album-clipboard.vue:85
+#: src/component/p-photo-clipboard.vue:179
+msgid "Download"
+msgstr "Скачать"
+
+#: src/component/p-album-clipboard.vue:117
+#: src/component/p-photo-clipboard.vue:268
+msgid "Downloading..."
+msgstr "Скачивание…"
+
+#: src/dialog/photo-edit/files.vue:62
+msgid "Duplicate"
+msgstr "Дубликат"
+
+#: src/component/p-photo-clipboard.vue:173
+msgid "Edit"
+msgstr "Редактировать"
+
+#: src/pages/library/upload.vue:126
+msgid "Failure while importing uploaded files"
+msgstr "Импортирование загруженных файлов не удалось"
+
+#: src/component/p-photo-list.vue:54
+msgid "Favorite"
+msgstr "В избранном"
+
+#: src/component/p-navigation.vue:142
+msgid "Favorites"
+msgstr "Избранное"
+
+#: src/dialog/p-photo-edit-dialog.vue:46
+msgid "Files"
+msgstr "Файлы"
+
+#: src/pages/settings.vue:11
+msgid "General"
+msgstr "Основные"
+
+#: src/pages/library/originals.vue:99
+msgid "Groom metadata and estimate locations"
+msgstr "Извлечь метаданные и определить местоположение"
+
+#: src/dialog/photo-edit/files.vue:58
+msgid "Height"
+msgstr "Высота"
+
+#: src/pages/library.vue:18 src/pages/library/import.vue:30
+msgid "Import"
+msgstr "Импортировать"
+
+#: src/pages/library/import.vue:87
+msgid "Import failed"
+msgstr "Импортирование не удалось"
+
+#: src/pages/library/originals.vue:62
+msgid "Index"
+msgstr "Индексировать"
+
+#: src/pages/library/originals.vue:133
+msgid "Indexing failed"
+msgstr "Индексирование не удалось"
+
+#: src/dialog/photo-edit/labels.vue:34
+msgid "Label"
+msgstr "Метка"
+
+#: src/component/p-navigation.vue:155 src/dialog/p-photo-edit-dialog.vue:39
+msgid "Labels"
+msgstr "Метки"
+
+#: src/dialog/photo-edit/meta.vue:319 src/dialog/photo-edit/todo.vue:42
+#: src/pages/settings/general.vue:53
+msgid "Language"
+msgstr "Язык"
+
+#: src/component/p-photo-search.vue:172 src/dialog/photo-edit/meta.vue:312
+#: src/dialog/photo-edit/todo.vue:35
+msgid "Lens"
+msgstr "Объектив"
+
+#: src/component/p-navigation.vue:213
+msgid "Library"
+msgstr "Библиотека"
+
+#: src/component/p-album-toolbar.vue:137 src/component/p-photo-search.vue:159
+msgid "List"
+msgstr "Список"
+
+#: src/component/p-photo-list.vue:52
+msgid "Location"
+msgstr "Местоположение"
+
+#: src/component/p-navigation.vue:249
+msgid "Login"
+msgstr "Login"
+
+#: src/component/p-navigation.vue:237
+msgid "Logout"
+msgstr "Выйти"
+
+#: src/pages/library.vue:32
+msgid "Logs"
+msgstr "Журнал"
+
+#: src/dialog/photo-edit/files.vue:61
+msgid "Missing"
+msgstr "Пропущенно"
+
+#: src/component/p-navigation.vue:69
+msgid "Monochrome"
+msgstr "Монохром"
+
+#: src/pages/events.vue:83
+msgid "Month"
+msgstr "Месяц"
+
+#: src/pages/albums.vue:277
+msgid "More than 20 albums found"
+msgstr "Более 20 альбомов найдено"
+
+#: src/pages/labels.vue:246
+msgid "More than 20 labels found"
+msgstr "Более 20 меток найдено"
+
+#: src/pages/album/photos.vue:225 src/pages/photos.vue:237
+msgid "More than 50 photos found"
+msgstr "Более 50 фотографий найдено"
+
+#: src/component/p-album-toolbar.vue:135 src/component/p-photo-search.vue:157
+msgid "Mosaic"
+msgstr "Мозайка"
+
+#: src/dialog/photo-edit/files.vue:55
+msgid "Name"
+msgstr "Название"
+
+#: src/component/p-album-toolbar.vue:143 src/component/p-photo-search.vue:163
+msgid "Newest first"
+msgstr "Сначала новые"
+
+#: src/pages/events.vue:57
+msgid "Next"
+msgstr "Следующее"
+
+#: src/pages/albums.vue:270
+msgid "No albums found"
+msgstr "Альбомов не найдено"
+
+#: src/pages/albums.vue:44
+msgid "No albums matched your search"
+msgstr "Нет совпадений среди альбовом по Вашему запросу"
+
+#: src/pages/labels.vue:44
+msgid "No labels matched your search"
+msgstr "Нет совпадений меток по Вашему запросу"
+
+#: src/pages/album/photos.vue:218 src/pages/photos.vue:230
+msgid "No photos found"
+msgstr "Фотографии не найдены"
+
+#: src/component/p-photo-details.vue:5 src/component/p-photo-mosaic.vue:5
+#: src/component/p-photo-tiles.vue:5
+msgid "No photos matched your search"
+msgstr "Нет совпадений среди фотографий по Вашему запросу"
+
+#: src/component/p-photo-clipboard.vue:223
+#: src/component/p-photo-clipboard.vue:253 src/pages/people.vue:3
+msgid "Not implemented yet"
+msgstr "Еще не реализованно"
+
+#: src/pages/library/logs.vue:5
+msgid "Nothing to see here yet. Be patient."
+msgstr "Пока что тут нечего смотреть. Будьте терпеливы."
+
+#: src/component/p-album-toolbar.vue:144 src/component/p-photo-search.vue:164
+msgid "Oldest first"
+msgstr "Сначала старые"
+
+#: src/pages/albums.vue:272
+msgid "One album found"
+msgstr "Один альбом найден"
+
+#: src/pages/photos.vue:232
+msgid "One photo found"
+msgstr "Одна фотография найдена"
+
+#: src/pages/library.vue:11
+msgid "Originals"
+msgstr "Оригиналы"
+
+#: src/pages/login.vue:45
+msgid "Password"
+msgstr "Пароль"
+
+#: src/component/p-navigation.vue:51 src/component/p-navigation.vue:60
+msgid "Photos"
+msgstr "Фотографии"
+
+#: src/component/p-photo-clipboard.vue:210
+msgid "Photos archived"
+msgstr "Фотографии архивированы"
+
+#: src/component/p-photo-clipboard.vue:218
+msgid "Photos restored"
+msgstr "Фотографии востановлены"
+
+#: src/component/p-navigation.vue:168
+msgid "Places"
+msgstr "Места"
+
+#: src/pages/login.vue:10
+msgid "Please enter your password to proceed:"
+msgstr "Пожалуйста, введите пароль что бы продолжить:"
+
+#: src/pages/library/originals.vue:97
+msgid "Pre-render thumbnails"
+msgstr "Сформировать предпросмотр"
+
+#: src/pages/events.vue:37
+msgid "Prev"
+msgstr "Предыдущая"
+
+#: src/dialog/photo-edit/files.vue:59
+msgid "Primary"
+msgstr "Главная"
+
+#: src/dialog/photo-edit/labels.vue:35
+msgid "Priority"
+msgstr "Приоритет"
+
+#: src/pages/discover.vue:29
+msgid "Random"
+msgstr "Случайно"
+
+#: src/component/p-album-toolbar.vue:142 src/component/p-photo-search.vue:162
+msgid "Recently imported"
+msgstr "Недавно добавленные"
+
+#: src/pages/settings/general.vue:69
+msgid "Reloading..."
+msgstr "Перезагрузка…"
+
+#: src/component/p-photo-clipboard.vue:176
+msgid "Remove"
+msgstr "Удалить"
+
+#: src/component/p-photo-clipboard.vue:237
+msgid "remove failed: unknown album"
+msgstr "не могу удалить: неизвестный альбом"
+
+#: src/component/p-photo-clipboard.vue:178
+msgid "Restore"
+msgstr "Восстановить"
+
+#: src/pages/settings/general.vue:32
+msgid "Save"
+msgstr "Сохранить"
+
+#: src/component/p-album-toolbar.vue:148 src/component/p-photo-search.vue:168
+#: src/dialog/photo-edit/meta.vue:308 src/dialog/photo-edit/todo.vue:31
+#: src/pages/albums.vue:175 src/pages/labels.vue:134 src/pages/places.vue:63
+msgid "Search"
+msgstr "Поиск"
+
+#: src/pages/discover.vue:23
+msgid "Season"
+msgstr "Сезон"
+
+#: src/component/p-navigation.vue:225
+msgid "Settings"
+msgstr "Настройки"
+
+#: src/pages/settings/general.vue:73
+msgid "Settings saved"
+msgstr "Настрокйки сохранены"
+
+#: src/component/p-photo-clipboard.vue:172
+msgid "Share"
+msgstr "Поделиться"
+
+#: src/dialog/p-photo-edit-dialog.vue:2
+msgid "Sharing"
+msgstr "Поделиться"
+
+#: src/dialog/photo-edit/files.vue:60
+msgid "Sidecar"
+msgstr ""
+
+#: src/pages/login.vue:27
+msgid "Sign in"
+msgstr "Войти"
+
+#: src/pages/discover.vue:17
+msgid "Similar"
+msgstr "Похожие"
+
+#: src/pages/library/originals.vue:96
+msgid "Skip unchanged files"
+msgstr "Пропустить не измененные файлы"
+
+#: src/component/p-album-toolbar.vue:152 src/component/p-photo-search.vue:176
+#: src/dialog/photo-edit/meta.vue:316 src/dialog/photo-edit/todo.vue:39
+msgid "Sort By"
+msgstr "Сортировать по"
+
+#: src/component/p-photo-clipboard.vue:174
+msgid "Story"
+msgstr "История"
+
+#: src/component/p-photo-search.vue:178 src/dialog/photo-edit/meta.vue:318
+#: src/dialog/photo-edit/todo.vue:41
+msgid "Taken after"
+msgstr "Снято после"
+
+#: src/component/p-photo-list.vue:51
+msgid "Taken At"
+msgstr "Дата съемки"
+
+#: src/component/p-photo-search.vue:177 src/dialog/photo-edit/meta.vue:317
+#: src/dialog/photo-edit/todo.vue:40
+msgid "Taken before"
+msgstr "Снято до"
+
+#: src/dialog/photo-edit/todo.vue:43 src/pages/settings/general.vue:54
+msgid "Theme"
+msgstr "Тема"
+
+#: src/dialog/photo-edit/meta.vue:320
+msgid "Time Zone"
+msgstr "Часовой пояс"
+
+#: src/component/p-photo-list.vue:50
+msgid "Title"
+msgstr "Название"
+
+#: src/component/p-album-toolbar.vue:155 src/pages/albums.vue:173
+msgid "Title too long"
+msgstr "Название слишком длинное"
+
+#: src/component/p-photo-clipboard.vue:192
+msgid "Toggled private flag"
+msgstr "Включен флаг приватности"
+
+#: src/component/p-photo-clipboard.vue:200
+msgid "Toggled story flag"
+msgstr "Фключен флаг История"
+
+#: src/pages/albums.vue:47
+msgid "Try again using a different term or create a new album"
+msgstr "Попробуйте еще раз, используя другой запрос или создайте новый альбом"
+
+#: src/pages/labels.vue:45
+msgid "Try again using a related or otherwise similar term."
+msgstr "Попробуйте еще раз использовать смежный или похожий запрос."
+
+#: src/component/p-photo-details.vue:6 src/component/p-photo-mosaic.vue:6
+#: src/component/p-photo-tiles.vue:6
+msgid ""
+"Try using other terms and search options such as category, country and "
+"camera."
+msgstr ""
+"Попробуйте другой запрос или опции поиска, такие как категория, страна и "
+"камера."
+
+#: src/dialog/photo-edit/files.vue:56 src/pages/events.vue:88
+msgid "Type"
+msgstr "Тип"
+
+#: src/dialog/photo-edit/meta.vue:300 src/dialog/photo-edit/meta.vue:301
+#: src/dialog/photo-edit/todo.vue:23 src/dialog/photo-edit/todo.vue:24
+msgid "Unknown"
+msgstr "Неизвестно"
+
+#: src/pages/library.vue:25 src/pages/library/upload.vue:32
+msgid "Upload"
+msgstr "Загрузка"
+
+#: src/pages/library/upload.vue:121
+msgid "Upload complete"
+msgstr "Загрузка завершена"
+
+#: src/pages/library/upload.vue:83
+msgid "Uploading photos..."
+msgstr "Загрузка фотографий..."
+
+#: src/component/p-navigation.vue:77
+msgid "Vibrant"
+msgstr "Вибрант"
+
+#: src/component/p-album-toolbar.vue:149 src/component/p-photo-search.vue:169
+#: src/dialog/photo-edit/meta.vue:309 src/dialog/photo-edit/todo.vue:32
+msgid "View"
+msgstr "Обзор"
+
+#: src/pages/events.vue:82
+msgid "Week"
+msgstr "Неделя"
+
+#: src/dialog/photo-edit/files.vue:57
+msgid "Width"
+msgstr "Ширина"
+
+#: src/component/p-photo-search.vue:173 src/dialog/photo-edit/meta.vue:313
+#: src/dialog/photo-edit/todo.vue:36
+msgid "Year"
+msgstr "Год"
+
+#: src/component/p-album-clipboard.vue:108
+msgid "You can only download one album"
+msgstr "Вы можете загрузить только один альбом"
+
+#~ msgid "Done."
+#~ msgstr "Готово."
+
+#~ msgid "Finding your position..."
+#~ msgstr "Поиск вашего метоположения..."
+
+#~ msgid "Geolocation is not available"
+#~ msgstr "Геолокация не доступна"
+
+#~ msgid "Importing"
+#~ msgstr "Импортирование"
+
+#~ msgid "Importing files from directory..."
+#~ msgstr "Импортирование файлов из папки..."
+
+#~ msgid "Indexing photos and sidecar files..."
+#~ msgstr "Индексирование фотографий и sidecar файлов..."
+
+#~ msgid "Maintenance"
+#~ msgstr "Поддержка"
+
+#~ msgid "More than 100 photos found"
+#~ msgstr "Более 100 фотографий найдено"
+
+#~ msgid "New Album"
+#~ msgstr "Новый Альбом"
+
+#~ msgid "No locations found"
+#~ msgstr "Местоположений не найдено"
+
+#~ msgid "of"
+#~ msgstr "из"
+
+#~ msgid "Press button to import photos from directory..."
+#~ msgstr "Нажмите кнопку что бы импортировать фотографии из папки..."
+
+#~ msgid "Press button to start indexing..."
+#~ msgstr "Нажмите кнопку что бы начать индексирование..."
+
+#~ msgid "Private"
+#~ msgstr "Приватный"
+
+#~ msgid "Remove from album"
+#~ msgstr "Удалить из альбома"
+
+#~ msgid "Select album"
+#~ msgstr "Выбрать альбом"
+
+#~ msgid "Select photos to start upload..."
+#~ msgstr "Выберите фотографии для загрузки..."
+
+#~ msgid "Skip existing photos and sidecar files"
+#~ msgstr "Пропустить существующие фотографии и файлы sidecar"
+
+#~ msgid "Start"
+#~ msgstr "Начать"
+
+#~ msgid "Upload complete. Indexing..."
+#~ msgstr "Загрузка завершена. Индексирование..."
+
+#~ msgid "Upload failed"
+#~ msgstr "Загрузка не удалась"
+
+#~ msgid "Uploading"
+#~ msgstr "Загрузка"
