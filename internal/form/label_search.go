@@ -23,3 +23,7 @@ func (f *LabelSearch) SetQuery(q string) {
 func (f *LabelSearch) ParseQueryString() error {
 	return ParseQueryString(f)
 }
+
+func NewLabelSearch(query string) LabelSearch {
+	return LabelSearch{Query: query}
+}
