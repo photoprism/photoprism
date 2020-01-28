@@ -103,4 +103,7 @@ var Ext = map[string]Type{
 	".srf":  TypeRaw,
 	".srw":  TypeRaw,
 	".x3f":  TypeRaw,
+	".xml":  TypeXML,
+	".txt":  TypeText,
+	".md":   TypeMarkdown,
 }

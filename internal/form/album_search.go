@@ -22,3 +22,7 @@ func (f *AlbumSearch) SetQuery(q string) {
 func (f *AlbumSearch) ParseQueryString() error {
 	return ParseQueryString(f)
 }
+
+func NewAlbumSearch(query string) AlbumSearch {
+	return AlbumSearch{Query: query}
+}

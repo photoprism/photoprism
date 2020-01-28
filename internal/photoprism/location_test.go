@@ -84,4 +84,19 @@ func TestMediaFile_Location(t *testing.T) {
 			assert.Equal(t, "file: no latitude and longitude in metadata", err.Error())
 		}
 	})
+	t.Run("Random.docx", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		location, err := mediaFile.Location()
+
+		assert.Error(t, err, "meta: no exif data")
+		assert.Nil(t, location)
+
+	})
 }
