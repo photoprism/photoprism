@@ -9,10 +9,20 @@ INSERT INTO countries (id, country_slug, country_name, country_description, coun
 INSERT INTO albums (id, album_uuid, album_name, album_slug, album_favorite) VALUES ('2', '3', 'Christmas2030', 'christmas2030', 0);
 INSERT INTO albums (id, album_uuid, cover_uuid, album_name, album_slug, album_favorite) VALUES ('1', '4', '654', 'Holiday2030', 'holiday-2030', 1);
 INSERT INTO photos_albums (album_uuid, photo_uuid) VALUES ('4', '654');
-INSERT INTO files (id, photo_id, photo_uuid, file_name, file_primary) VALUES ('1', '1', '654', 'exampleFileName.jpg', 1);
-INSERT INTO photos (id, photo_uuid) VALUES ('1', '654');
+INSERT INTO files (id, photo_id, photo_uuid, file_name, file_primary, file_hash) VALUES ('1', '1', '654', 'exampleFileName.jpg', 1, '123xxx');
+INSERT INTO files (id, photo_id, photo_uuid, file_name, file_primary, file_hash) VALUES ('2', '2', '655', 'exampleDNGFile.dng', 1, '124xxx');
+INSERT INTO files (id, photo_id, photo_uuid, file_name, file_primary, file_hash) VALUES ('3', '2', '655', 'exampleXmpFile.xmp', 0, '125xxx');
+INSERT INTO photos (id, photo_uuid, photo_year, photo_month) VALUES ('1', '654', 2790, 2);
+INSERT INTO photos (id, photo_uuid, photo_year, photo_month) VALUES ('2', '655', 2790, 2);
+INSERT INTO photos (id, photo_uuid, photo_year, photo_month) VALUES ('3', '656', 1990, 3);
+INSERT INTO photos (id, photo_uuid, photo_year, photo_month) VALUES ('4', '657', 1990, 4);
 INSERT INTO categories (label_id, category_id) VALUES ('1', '1');
-INSERT INTO labels (id, label_name) VALUES ('1', 'flower');
+INSERT INTO labels (id, label_uuid, label_slug, label_name, label_priority, label_favorite) VALUES ('1', '12', 'flower', 'Flower', 1, 1);
+INSERT INTO labels (id, label_uuid, label_slug, label_name, label_priority, label_favorite) VALUES ('2', '13', 'cake', 'Cake', 5, 0);
+INSERT INTO labels (id, label_uuid, label_slug, label_name, label_priority, label_favorite) VALUES ('3', '14', 'cow', 'COW', -1, 1);
+INSERT INTO photos_labels (photo_id, label_id, label_uncertainty, label_source) VALUES ('1', '1', '38', 'image');
+INSERT INTO photos_labels (photo_id, label_id, label_uncertainty, label_source) VALUES ('1', '2', '10', 'image');
+
 
 
 
