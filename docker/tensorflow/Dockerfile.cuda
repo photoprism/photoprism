@@ -1,0 +1,59 @@
+ARG CUDA_IMAGE=10.1
+
+FROM nvidia/cuda:$CUDA_IMAGE-devel-ubuntu18.04
+
+# SET NVIDIA driver libraries required at runtime
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES video,compute,utility
+
+ARG CUDA=10-1
+
+# Install reqs with cross compile support
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    pkg-config zip zlib1g-dev unzip wget bash-completion git curl \
+    build-essential patch g++ python python-future python-numpy python-six python3 \
+    cuda-command-line-tools-10.1 cuda-cufft-10.1 cuda-curand-10.1 \
+    cuda-cusolver-10.1 cuda-cusparse-10.1 cuda-npp-dev-10.1 \
+    libcudnn7=7.6.4.38-1+cuda10.1 libcudnn7-dev=7.6.4.38-1+cuda10.1 \
+    cmake ca-certificates libc6-dev libstdc++6 libusb-1.0-0
+
+# Install protoc
+RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.9.1/protoc-3.9.1-linux-x86_64.zip && \
+    unzip protoc-3.9.1-linux-x86_64.zip -d /usr/local && \
+    rm /usr/local/readme.txt && \
+    rm protoc-3.9.1-linux-x86_64.zip
+
+# Install bazel
+ARG BAZEL_VERSION="0.24.1"
+ENV BAZEL_VERSION $BAZEL_VERSION
+RUN wget https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION/bazel_$BAZEL_VERSION-linux-x86_64.deb && \
+    dpkg -i bazel_$BAZEL_VERSION-linux-x86_64.deb && \
+    rm bazel_$BAZEL_VERSION-linux-x86_64.deb
+
+# Download tensorflow sources
+ARG TF_VERSION="v1.14.0"
+ENV TF_VERSION $TF_VERSION
+RUN cd /opt && git clone https://github.com/tensorflow/tensorflow.git --branch $TF_VERSION --single-branch
+
+# Configure tensorflow
+ENV TF_NEED_GDR=0 TF_NEED_AWS=0 TF_NEED_GCP=0 TF_NEED_CUDA=1 TF_NEED_HDFS=0 TF_NEED_OPENCL_SYCL=0 TF_NEED_VERBS=0 TF_NEED_MPI=0 TF_NEED_MKL=0 TF_NEED_JEMALLOC=1 TF_ENABLE_XLA=0 TF_NEED_S3=0 TF_NEED_KAFKA=0 TF_NEED_IGNITE=0 TF_NEED_ROCM=0
+RUN cd /opt/tensorflow && yes '' | ./configure
+
+# Tensorflow build flags for rpi
+ENV BAZEL_COPT_FLAGS="--local_resources 16000,16,1 --config monolithic --copt=-O3 --copt=-fomit-frame-pointer --copt=-mfpmath=both --copt=-mavx --copt=-msse4.2 --incompatible_no_support_tools_in_action_inputs=false --config=noaws --config=nohdfs --config=cuda"
+ENV BAZEL_EXTRA_FLAGS=""
+
+# Compile and build tensorflow lite
+RUN cd /opt/tensorflow && \
+    bazel build --jobs 2 -c opt  --verbose_failures  //tensorflow/lite:libtensorflowlite.so && \
+    install bazel-bin/tensorflow/lite/libtensorflowlite.so /usr/local/lib/libtensorflowlite.so && \
+    bazel build -c opt  --verbose_failures  //tensorflow/lite/experimental/c:libtensorflowlite_c.so && \
+    install bazel-bin/tensorflow/lite/experimental/c/libtensorflowlite_c.so /usr/local/lib/libtensorflowlite_c.so && \
+    mkdir -p /usr/local/include/flatbuffers && \
+    cp bazel-tensorflow/external/flatbuffers/include/flatbuffers/* /usr/local/include/flatbuffers
+
+# Compile and install tensorflow shared library
+RUN cd /opt/tensorflow && \
+    bazel build --jobs 2 -c opt  --verbose_failures  //tensorflow:libtensorflow.so && \
+    install bazel-bin/tensorflow/libtensorflow.so /usr/local/lib/libtensorflow.so && \
+    ln -rs /usr/local/lib/libtensorflow.so /usr/local/lib/libtensorflow.so.1
