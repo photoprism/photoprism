@@ -20,7 +20,7 @@ func CreateSession(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if f.Password != conf.AdminPassword() {
+		if !conf.CheckPassword(f.Password) {
 			c.AbortWithStatusJSON(400, gin.H{"error": "Invalid password"})
 			return
 		}
