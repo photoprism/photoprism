@@ -16,7 +16,7 @@ func TestRepo_FindFiles(t *testing.T) {
 		files, err := search.FindFiles(1000, 0)
 
 		assert.Nil(t, err)
-		assert.Equal(t, 3, len(files))
+		assert.Equal(t, 5, len(files))
 	})
 }
 

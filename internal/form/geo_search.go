@@ -28,3 +28,7 @@ func (f *GeoSearch) SetQuery(q string) {
 func (f *GeoSearch) ParseQueryString() error {
 	return ParseQueryString(f)
 }
+
+func NewGeoSearch(query string) GeoSearch {
+	return GeoSearch{Query: query}
+}
