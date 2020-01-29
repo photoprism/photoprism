@@ -52,7 +52,7 @@ type Photo struct {
 	Location          *Location `json:"-"`
 	Place             *Place    `json:"-"`
 	Files             []File
-	Labels            []Label
+	Labels            []PhotoLabel
 	Keywords          []Keyword `json:"-"`
 	Albums            []Album   `json:"-"`
 	CreatedAt         time.Time
@@ -136,7 +136,7 @@ func (m *Photo) PreloadFiles(db *gorm.DB) {
 	logError(q.Scan(&m.Files))
 }
 
-func (m *Photo) PreloadLabels(db *gorm.DB) {
+/* func (m *Photo) PreloadLabels(db *gorm.DB) {
 	q := db.NewScope(nil).DB().
 		Table("labels").
 		Select(`labels.*`).
@@ -145,7 +145,7 @@ func (m *Photo) PreloadLabels(db *gorm.DB) {
 		Order("labels.label_name ASC")
 
 	logError(q.Scan(&m.Labels))
-}
+} */
 
 func (m *Photo) PreloadKeywords(db *gorm.DB) {
 	q := db.NewScope(nil).DB().
@@ -170,7 +170,7 @@ func (m *Photo) PreloadAlbums(db *gorm.DB) {
 
 func (m *Photo) PreloadMany(db *gorm.DB) {
 	m.PreloadFiles(db)
-	m.PreloadLabels(db)
+	// m.PreloadLabels(db)
 	m.PreloadKeywords(db)
 	m.PreloadAlbums(db)
 }

@@ -1,5 +1,5 @@
 <template>
-    <div class="p-tab p-tab-photo-edit-meta">
+    <div class="p-tab p-tab-photo-edit-details">
         <v-container fluid>
             <v-form lazy-validation dense
                     ref="form" class="p-form-photo-edit-meta" accept-charset="UTF-8"
@@ -265,8 +265,8 @@
                             </v-flex>
 
                             <v-flex xs12 text-xs-right class="pt-3">
-                                <v-btn @click.stop="cancel" depressed color="secondary-light"
-                                       class="p-photo-dialog-cancel">
+                                <v-btn @click.stop="close" depressed color="secondary-light"
+                                       class="p-photo-dialog-close">
                                     <translate>Close</translate>
                                 </v-btn>
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save"
@@ -289,7 +289,7 @@
     import moment from "moment-timezone"
 
     export default {
-        name: 'p-tab-photo-edit-meta',
+        name: 'p-tab-photo-edit-details',
         props: {
             model: Object,
         },
@@ -396,7 +396,7 @@
 
                 this.model.update();
             },
-            cancel() {
+            close() {
                 this.$emit('cancel');
             },
         },

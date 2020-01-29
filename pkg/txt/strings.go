@@ -45,7 +45,7 @@ func UcFirst(str string) string {
 	return ""
 }
 
-// Title returns the string with all the first character of each word converted to uppercase.
+// Title returns the string with the first characters of each word converted to uppercase.
 func Title(s string) string {
 	prev := ' '
 	return strings.Map(

@@ -347,7 +347,7 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 
 func (ind *Index) addLabels(photoId uint, labels classify.Labels) {
 	for _, label := range labels {
-		lm := entity.NewLabel(label.Name, label.Priority).FirstOrCreate(ind.db)
+		lm := entity.NewLabel(txt.Title(label.Name), label.Priority).FirstOrCreate(ind.db)
 
 		if lm.New && label.Priority >= 0 {
 			event.Publish("count.labels", event.Data{
@@ -367,7 +367,7 @@ func (ind *Index) addLabels(photoId uint, labels classify.Labels) {
 
 		// Add categories
 		for _, category := range label.Categories {
-			sn := entity.NewLabel(category, -3).FirstOrCreate(ind.db)
+			sn := entity.NewLabel(txt.Title(category), -3).FirstOrCreate(ind.db)
 			if err := ind.db.Model(&lm).Association("LabelCategories").Append(sn).Error; err != nil {
 				log.Errorf("index: %s", err)
 			}

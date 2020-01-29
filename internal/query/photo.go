@@ -352,7 +352,12 @@ func (s *Repo) FindPhotoByUUID(photoUUID string) (photo entity.Photo, err error)
 
 // PreloadPhotoByUUID returns a Photo based on the UUID with all dependencies preloaded.
 func (s *Repo) PreloadPhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
-	if err := s.db.Where("photo_uuid = ?", photoUUID).Preload("Camera").Preload("Lens").First(&photo).Error; err != nil {
+	if err := s.db.Where("photo_uuid = ?", photoUUID).
+		Preload("Labels").
+		Preload("Labels.Label").
+		Preload("Camera").
+		Preload("Lens").
+		First(&photo).Error; err != nil {
 		return photo, err
 	}
 

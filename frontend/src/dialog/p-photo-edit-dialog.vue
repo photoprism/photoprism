@@ -16,8 +16,6 @@
                     <v-btn icon @click.stop="next" :disabled="selected >= selection.length - 1">
                         <v-icon>navigate_next</v-icon>
                     </v-btn>
-
-                    <!-- v-btn dark flat @click.stop="confirm">Save</v-btn -->
                 </v-toolbar-items>
             </v-toolbar>
             <v-tabs
@@ -29,11 +27,11 @@
                     height="64"
                     class="form"
             >
-                <v-tab id="tab-edit-general" ripple>
+                <v-tab id="tab-edit-details" ripple>
                     <translate>Details</translate>
                 </v-tab>
                 <v-tab-item>
-                    <p-tab-photo-edit-meta :model="model" ref="meta" @cancel="cancel"></p-tab-photo-edit-meta>
+                    <p-tab-photo-edit-details :model="model" ref="details" @cancel="cancel"></p-tab-photo-edit-details>
                 </v-tab-item>
 
                 <v-tab id="tab-edit-labels" ripple>
@@ -49,23 +47,15 @@
                 <v-tab-item lazy>
                     <p-tab-photo-edit-files :model="model"></p-tab-photo-edit-files>
                 </v-tab-item>
-
-                <!-- v-tab id="tab-edit-sharing" ripple @click="changePath('/settings')">
-                    <translate>Sharing</translate>
-                </v-tab>
-                <v-tab-item lazy>
-                    <p-tab-photo-edit-todo :model="model"></p-tab-photo-edit-todo>
-                </v-tab-item -->
             </v-tabs>
         </v-card>
     </v-dialog>
 </template>
 <script>
     import Photo from "../model/photo";
-    import PhotoEditMeta from "./photo-edit/meta.vue";
+    import PhotoEditDetails from "./photo-edit/details.vue";
     import PhotoEditLabels from "./photo-edit/labels.vue";
     import PhotoEditFiles from "./photo-edit/files.vue";
-    import PhotoEditTodo from "./photo-edit/todo.vue";
 
     export default {
         name: 'p-photo-edit-dialog',
@@ -75,10 +65,9 @@
             album: Object,
         },
         components: {
-            'p-tab-photo-edit-meta': PhotoEditMeta,
+            'p-tab-photo-edit-details': PhotoEditDetails,
             'p-tab-photo-edit-labels': PhotoEditLabels,
             'p-tab-photo-edit-files': PhotoEditFiles,
-            'p-tab-photo-edit-todo': PhotoEditTodo,
         },
         data() {
             return {
@@ -131,7 +120,7 @@
                 this.model.find(this.selectedId).then(model => {
                     model.refreshFileAttr();
                     this.model = model;
-                    this.$refs.meta.refresh(model);
+                    this.$refs.details.refresh(model);
                     this.loading = false;
                 }).catch(() => this.loading = false);
             },

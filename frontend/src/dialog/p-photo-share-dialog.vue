@@ -68,7 +68,7 @@
 </template>
 <script>
     import Photo from "../model/photo";
-    import PhotoEditTodo from "./photo-edit/todo.vue";
+    import PhotoShareTodo from "./photo-share/todo.vue";
 
     export default {
         name: 'p-photo-edit-dialog',
@@ -78,7 +78,7 @@
             album: Object,
         },
         components: {
-            'p-tab-photo-edit-todo': PhotoEditTodo,
+            'p-tab-photo-share-todo': PhotoShareTodo,
         },
         data() {
             return {

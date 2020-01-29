@@ -211,6 +211,16 @@ class Photo extends Abstract {
         return Api.delete(this.getEntityResource() + "/like");
     }
 
+    addLabel(name) {
+        return Api.post(this.getEntityResource() + "/label", {LabelName: name})
+            .then((response) => Promise.resolve(this.setValues(response.data)));
+    }
+
+    removeLabel(id) {
+        return Api.delete(this.getEntityResource() + "/label/" + id)
+            .then((response) => Promise.resolve(this.setValues(response.data)));
+    }
+
     static getCollectionResource() {
         return "photos";
     }
