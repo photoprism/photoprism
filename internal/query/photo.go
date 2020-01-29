@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
+	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/capture"
@@ -353,7 +354,9 @@ func (s *Repo) FindPhotoByUUID(photoUUID string) (photo entity.Photo, err error)
 // PreloadPhotoByUUID returns a Photo based on the UUID with all dependencies preloaded.
 func (s *Repo) PreloadPhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
 	if err := s.db.Where("photo_uuid = ?", photoUUID).
-		Preload("Labels").
+		Preload("Labels", func(db *gorm.DB) *gorm.DB {
+			return db.Order("photos_labels.label_uncertainty ASC, photos_labels.label_id")
+		}).
 		Preload("Labels.Label").
 		Preload("Camera").
 		Preload("Lens").

@@ -14,7 +14,6 @@
                 <td>{{ props.item.Label.LabelName }}</td>
                 <td class="text-xs-left">{{ props.item.LabelSource }}</td>
                 <td class="text-xs-center">{{ 100 - props.item.LabelUncertainty }}%</td>
-                <td class="text-xs-center">{{ props.item.Label.LabelPriority }}</td>
                 <td class="text-xs-center"><v-btn icon small flat :ripple="false"
                                                   class="p-photo-label-remove"
                                                   @click.stop.prevent="removeLabel(props.item.Label)">
@@ -27,6 +26,7 @@
                             v-model="newLabel"
                             :rules="[nameRule]"
                             color="secondary-dark"
+                            :label="labels.addLabel"
                             single-line
                             flat solo hide-details
                             autofocus
@@ -34,7 +34,6 @@
                 </td>
                 <td class="text-xs-left">manual</td>
                 <td class="text-xs-center">100%</td>
-                <td class="text-xs-center"></td>
                 <td class="text-xs-center"><v-btn icon small flat :ripple="false"
                                                   class="p-photo-label-remove"
                                                   @click.stop.prevent="addLabel">
@@ -63,11 +62,10 @@
                     {text: this.$gettext('Label'), value: '', sortable: false, align: 'left'},
                     {text: this.$gettext('Source'), value: 'LabelSource', sortable: false, align: 'left'},
                     {text: this.$gettext('Confidence'), value: 'LabelUncertainty', sortable: false, align: 'center'},
-                    {text: this.$gettext('Priority'), value: 'LabelPriority', sortable: false, align: 'center'},
                     {text: this.$gettext('Action'), value: '', sortable: false, align: 'center'},
                 ],
                 labels: {
-                    labelName: this.$gettext("Label Name"),
+                    addLabel: "",
                 },
                 nameRule: v => v.length <= 25 || this.$gettext("Name too long"),
             };
