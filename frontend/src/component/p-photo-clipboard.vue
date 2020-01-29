@@ -88,7 +88,7 @@
                         fab
                         dark
                         small
-                        color="archive"
+                        color="remove"
                         :title="labels.archive"
                         @click.stop="dialog.archive = true"
                         :disabled="selection.length === 0"
@@ -117,13 +117,13 @@
                         dark
                         small
                         :title="labels.removeFromAlbum"
-                        color="delete"
+                        color="remove"
                         @click.stop="removeFromAlbum"
                         :disabled="selection.length === 0"
                         v-if="album"
                         class="p-photo-clipboard-delete"
                 >
-                    <v-icon>delete</v-icon>
+                    <v-icon>remove</v-icon>
                 </v-btn>
                 <v-btn
                         fab

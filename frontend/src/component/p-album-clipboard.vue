@@ -39,7 +39,7 @@
                         fab
                         dark
                         small
-                        color="delete"
+                        color="remove"
                         :title="labels.delete"
                         @click.stop="dialog.delete = true"
                         :disabled="selection.length === 0"
