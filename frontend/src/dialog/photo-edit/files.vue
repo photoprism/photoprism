@@ -16,25 +16,10 @@
                         {{ props.item.FileName }}
                     </a>
                 </td>
-                <td>{{ props.item.FileType }}</td>
                 <td>{{ props.item.FileWidth ? props.item.FileWidth : "" }}</td>
                 <td>{{ props.item.FileHeight ? props.item.FileHeight : "" }}</td>
-                <td class="text-xs-center">
-                    <v-icon v-if="props.item.FilePrimary" color="secondary-dark">check_box</v-icon>
-                    <v-icon v-else color="secondary-dark">check_box_outline_blank</v-icon>
-                </td>
-                <td class="text-xs-center">
-                    <v-icon v-if="props.item.FileSidecar" color="secondary-dark">check_box</v-icon>
-                    <v-icon v-else color="secondary-dark">check_box_outline_blank</v-icon>
-                </td>
-                <td class="text-xs-center">
-                    <v-icon v-if="props.item.FileMissing" color="secondary-dark">check_box</v-icon>
-                    <v-icon v-else color="secondary-dark">check_box_outline_blank</v-icon>
-                </td>
-                <td class="text-xs-center">
-                    <v-icon v-if="props.item.FileDuplicate" color="secondary-dark">check_box</v-icon>
-                    <v-icon v-else color="secondary-dark">check_box_outline_blank</v-icon>
-                </td>
+                <td>{{ fileType(props.item) }}</td>
+                <td>{{ fileStatus(props.item) }}</td>
             </template>
         </v-data-table>
     </div>
@@ -53,13 +38,10 @@
                 selected: [],
                 listColumns: [
                     {text: this.$gettext('Name'), value: 'FileName', sortable: false, align: 'left'},
-                    {text: this.$gettext('Type'), value: 'FileType', sortable: false},
                     {text: this.$gettext('Width'), value: 'FileWidth', sortable: false},
                     {text: this.$gettext('Height'), value: 'FileHeight', sortable: false},
-                    {text: this.$gettext('Primary'), value: 'FilePrimary', sortable: false, align: 'center'},
-                    {text: this.$gettext('Sidecar'), value: 'FileSidecar', sortable: false, align: 'center'},
-                    {text: this.$gettext('Missing'), value: 'FileMissing', sortable: false, align: 'center'},
-                    {text: this.$gettext('Duplicate'), value: 'FileDuplicate', sortable: false, align: 'center'},
+                    {text: this.$gettext('Type'), value: '', sortable: false, align: 'left'},
+                    {text: this.$gettext('Status'), value: '', sortable: false, align: 'left'},
                 ],
             };
         },
@@ -68,7 +50,27 @@
             openPhoto() {
                 this.$viewer.show([this.model], 0)
             },
-            changePrimary() {
+            fileType(file) {
+                if (file.FilePrimary) {
+                    return this.$gettext("Primary");
+                } else if (file.FileVideo) {
+                    return this.$gettext("Video");
+                } else if (file.FileSidecar) {
+                    return this.$gettext("Sidecar");
+                }
+
+                return file.FileType.toUpperCase();
+            },
+            fileStatus(file) {
+                if (file.FileMissing) {
+                    return this.$gettext("Missing");
+                } else if (file.FileError) {
+                    return file.FileError;
+                } else if (file.Duplicate) {
+                    return this.$gettext("Duplicate");
+                }
+
+                return "OK";
             },
             refresh() {
             },
