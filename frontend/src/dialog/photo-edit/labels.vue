@@ -30,6 +30,7 @@
                             single-line
                             flat solo hide-details
                             autofocus
+                            @keyup.enter.native="addLabel"
                     ></v-text-field>
                 </td>
                 <td class="text-xs-left">manual</td>
@@ -76,6 +77,10 @@
             refresh() {
             },
             removeLabel(label) {
+                if(!label) {
+                    return
+                }
+
                 const name = label.LabelName;
 
                 this.model.removeLabel(label.ID).then((m) => {
@@ -83,6 +88,10 @@
                 });
             },
             addLabel() {
+                if(!this.newLabel) {
+                    return
+                }
+
                 this.model.addLabel(this.newLabel).then((m) => {
                     this.$notify.success("added " + this.newLabel);
 
