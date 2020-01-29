@@ -2483,11 +2483,7 @@ model t:
     - vehicle
 
 monastery:
-  threshold: 0.2
-  categories:
-    - building
-    - architecture
-    - historic
+  see: historic architecture
 
 monitor:
   label: screen
