@@ -192,6 +192,10 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		q = q.Where("photos.deleted_at IS NULL")
 	}
 
+	if f.Error {
+		q = q.Where("files.file_error <> ''")
+	}
+
 	if f.Album != "" {
 		q = q.Joins("JOIN photos_albums ON photos_albums.photo_uuid = photos.photo_uuid").Where("photos_albums.album_uuid = ?", f.Album)
 	}
@@ -355,7 +359,7 @@ func (s *Repo) FindPhotoByUUID(photoUUID string) (photo entity.Photo, err error)
 func (s *Repo) PreloadPhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
 	if err := s.db.Where("photo_uuid = ?", photoUUID).
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
-			return db.Order("photos_labels.label_uncertainty ASC, photos_labels.label_id")
+			return db.Order("photos_labels.label_uncertainty ASC, photos_labels.label_id DESC")
 		}).
 		Preload("Labels.Label").
 		Preload("Camera").

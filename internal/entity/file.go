@@ -37,6 +37,7 @@ type File struct {
 	FileLuminance    string `gorm:"type:binary(9);"`
 	FileChroma       uint
 	FileNotes        string `gorm:"type:text"`
+	FileError        string `gorm:"type:varbinary(512)"`
 	CreatedAt        time.Time
 	CreatedIn        int64
 	UpdatedAt        time.Time

@@ -14,6 +14,7 @@ type PhotoSearch struct {
 	Hash        string    `form:"hash"`
 	Duplicate   bool      `form:"duplicate"`
 	Archived    bool      `form:"archived"`
+	Error       bool      `form:"error"`
 	Lat         float64   `form:"lat"`
 	Lng         float64   `form:"lng"`
 	Dist        uint      `form:"dist"`

@@ -30,11 +30,17 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		db := conf.Db()
+		q := query.New(conf.OriginalsPath(), db)
 		f, err := q.FindFileByHash(fileHash)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
+			return
+		}
+
+		if f.FileError != "" {
+			c.Data(http.StatusBadRequest, "image/svg+xml", brokenIconSvg)
 			return
 		}
 
@@ -46,7 +52,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			f.FileMissing = true
-			conf.Db().Save(&f)
+			db.Save(&f)
 			return
 		}
 
@@ -66,8 +72,10 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 			c.File(thumbnail)
 		} else {
-			log.Errorf("could not create thumbnail: %s", err)
-			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
+			f.FileError = err.Error()
+			db.Save(&f)
+
+			c.Data(http.StatusBadRequest, "image/svg+xml", brokenIconSvg)
 		}
 	})
 }
