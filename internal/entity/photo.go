@@ -17,7 +17,6 @@ type Photo struct {
 	PhotoPath         string    `gorm:"type:varbinary(512);index;"`
 	PhotoName         string    `gorm:"type:varbinary(256);"`
 	PhotoTitle        string    `json:"PhotoTitle"`
-	PhotoTitleChanged bool      `json:"PhotoTitleChanged"`
 	PhotoDescription  string    `gorm:"type:text;" json:"PhotoDescription"`
 	PhotoNotes        string    `gorm:"type:text;" json:"PhotoNotes"`
 	PhotoArtist       string    `json:"PhotoArtist"`
@@ -37,16 +36,16 @@ type Photo struct {
 	LensID            uint      `gorm:"index:idx_photos_camera_lens;" json:"LensID"`
 	LocationID        string    `gorm:"type:varbinary(16);index;" json:"LocationID"`
 	PlaceID           string    `gorm:"type:varbinary(16);index;" json:"PlaceID"`
-	LocationChanged   bool      `json:"LocationChanged"`
 	LocationEstimated bool      `json:"LocationEstimated"`
 	PhotoCountry      string    `gorm:"index:idx_photos_country_year_month;" json:"PhotoCountry"`
 	PhotoYear         int       `gorm:"index:idx_photos_country_year_month;"`
 	PhotoMonth        int       `gorm:"index:idx_photos_country_year_month;"`
 	TimeZone          string    `gorm:"type:varbinary(64);" json:"TimeZone"`
 	TakenAtLocal      time.Time `gorm:"type:datetime;"`
-	TakenAtChanged    bool
-	PhotoViews        uint
-	CountryChanged    bool
+	ModifiedTitle     bool      `json:"ModifiedTitle"`
+	ModifiedDetails   bool      `json:"ModifiedDetails"`
+	ModifiedLocation  bool      `json:"ModifiedLocation"`
+	ModifiedDate      bool      `json:"ModifiedDate"`
 	Camera            *Camera   `json:"Camera"`
 	Lens              *Lens     `json:"Lens"`
 	Location          *Location `json:"-"`

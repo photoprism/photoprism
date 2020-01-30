@@ -79,10 +79,6 @@ class Photo extends Abstract {
         }
     }
 
-    getColors() {
-        return this.PhotoColors;
-    }
-
     getGoogleMapsLink() {
         return "https://www.google.com/maps/place/" + this.PhotoLat + "," + this.PhotoLng;
     }
@@ -215,12 +211,12 @@ class Photo extends Abstract {
 
     addLabel(name) {
         return Api.post(this.getEntityResource() + "/label", {LabelName: name})
-            .then((response) => Promise.resolve(this.publishValues(response.data)));
+            .then((response) => Promise.resolve(this.setValues(response.data)));
     }
 
     removeLabel(id) {
         return Api.delete(this.getEntityResource() + "/label/" + id)
-            .then((response) => Promise.resolve(this.publishValues(response.data)));
+            .then((response) => Promise.resolve(this.setValues(response.data)));
     }
 
     static getCollectionResource() {

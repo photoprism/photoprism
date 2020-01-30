@@ -1,6 +1,5 @@
 import Api from "common/api";
 import Form from "common/form";
-import Event from "pubsub-js";
 
 class Abstract {
     constructor(values) {
@@ -21,18 +20,6 @@ class Abstract {
                 this[key] = values[key];
                 this.__originalValues[key] = values[key];
             }
-        }
-
-        return this;
-    }
-
-    publishValues(values) {
-        if (!values) return;
-
-        this.setValues(values);
-
-        if(this.hasId()) {
-            Event.publish(`model.${this.constructor.getCollectionResource()}.${this.getId()}`, this.getValues());
         }
 
         return this;
@@ -91,11 +78,11 @@ class Abstract {
             return this.update();
         }
 
-        return Api.post(this.constructor.getCollectionResource(), this.getValues()).then((response) => Promise.resolve(this.publishValues(response.data)));
+        return Api.post(this.constructor.getCollectionResource(), this.getValues()).then((response) => Promise.resolve(this.setValues(response.data)));
     }
 
     update() {
-        return Api.put(this.getEntityResource(), this.getValues(true)).then((response) => Promise.resolve(this.publishValues(response.data)));
+        return Api.put(this.getEntityResource(), this.getValues(true)).then((response) => Promise.resolve(this.setValues(response.data)));
     }
 
     remove() {

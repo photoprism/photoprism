@@ -7,12 +7,28 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gin-gonic/gin"
 )
+
+func PublishPhotoUpdate(uuid string, c *gin.Context, q *query.Repo) {
+	f := form.PhotoSearch{ID: uuid}
+	result, err := q.Photos(f)
+
+	if err != nil {
+		log.Error(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, ErrUnexpectedError)
+		return
+	}
+
+	event.Publish("photos.updated", event.Data{
+		"entities": result,
+	})
+}
 
 // GET /api/v1/photos/:uuid
 //
@@ -45,9 +61,10 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		uuid := c.Param("uuid")
 		q := query.New(conf.OriginalsPath(), conf.Db())
 
-		m, err := q.FindPhotoByUUID(c.Param("uuid"))
+		m, err := q.FindPhotoByUUID(uuid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -61,9 +78,11 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 
 		conf.Db().Save(&m)
 
+		PublishPhotoUpdate(uuid, c, q)
+
 		event.Success("photo saved")
 
-		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
+		p, err := q.PreloadPhotoByUUID(uuid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -119,8 +138,9 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		uuid := c.Param("uuid")
 		q := query.New(conf.OriginalsPath(), conf.Db())
-		m, err := q.FindPhotoByUUID(c.Param("uuid"))
+		m, err := q.FindPhotoByUUID(uuid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -133,6 +153,8 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		event.Publish("count.favorites", event.Data{
 			"count": 1,
 		})
+
+		PublishPhotoUpdate(uuid, c, q)
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
@@ -149,8 +171,9 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		uuid := c.Param("uuid")
 		q := query.New(conf.OriginalsPath(), conf.Db())
-		m, err := q.FindPhotoByUUID(c.Param("uuid"))
+		m, err := q.FindPhotoByUUID(uuid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -163,6 +186,8 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		event.Publish("count.favorites", event.Data{
 			"count": -1,
 		})
+
+		PublishPhotoUpdate(uuid, c, q)
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})

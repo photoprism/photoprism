@@ -70,7 +70,7 @@
                         this.$notify.blockUI();
                         setTimeout(() => window.location.reload(), 100);
                     } else {
-                        this.$notify.info(this.$gettext("Settings saved"));
+                        this.$notify.success(this.$gettext("Settings saved"));
                     }
                 })
             },

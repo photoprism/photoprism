@@ -126,6 +126,17 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id").
 		Where("files.file_missing = 0").
 		Group("photos.id, files.id")
+
+	if f.ID != "" {
+		q = q.Where("photos.photo_uuid = ?", f.ID)
+
+		if result := q.Scan(&results); result.Error != nil {
+			return results, result.Error
+		}
+
+		return results, nil
+	}
+
 	var categories []entity.Category
 	var label entity.Label
 	var labelIds []uint

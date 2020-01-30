@@ -133,7 +133,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 			labels = append(labels, locLabels...)
 		}
 
-		if photo.NoTitle() || (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false && photo.NoLocation() {
+		if photo.NoTitle() || (fileChanged || o.UpdateTitle) && photo.ModifiedTitle == false && photo.NoLocation() {
 			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.DateCreated().Format("2006"))
 			} else if !photo.TakenAtLocal.IsZero() {
@@ -164,7 +164,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 	} else if m.IsXMP() {
 		// TODO: Proof-of-concept for indexing XMP sidecar files
 		if data, err := meta.XMP(m.Filename()); err == nil {
-			if data.Title != "" && !photo.PhotoTitleChanged {
+			if data.Title != "" && !photo.ModifiedTitle {
 				photo.PhotoTitle = data.Title
 			}
 
@@ -430,7 +430,7 @@ func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 			labels = append(labels, classify.LocationLabel(locCategory, 0, -1))
 		}
 
-		if (fileChanged || o.UpdateTitle) && photo.PhotoTitleChanged == false {
+		if (fileChanged || o.UpdateTitle) && photo.ModifiedTitle == false {
 			if title := labels.Title(location.Name()); title != "" { // TODO: User defined title format
 				log.Infof("index: using label \"%s\" to create photo title", title)
 				if location.NoCity() || location.LongCity() || location.CityContains(title) {

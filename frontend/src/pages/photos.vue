@@ -255,24 +255,28 @@
             onImportCompleted() {
                 this.dirty = true;
 
-                if(this.selection.length === 0 && this.offset === 0) {
+                if (this.selection.length === 0 && this.offset === 0) {
                     this.refresh();
                 }
             },
             onCount() {
                 this.dirty = true;
             },
-            onModelUpdate(ev, data) {
-                if(!this.listen) {
+            onPhotosUpdated(ev, data) {
+                if (!data || !data.entities) {
+                    console.warn("onPhotosUpdated(): no entities found in event data");
                     return
                 }
 
-                const found  = this.results.find((m) => m.ID === data.ID);
+                for (let i = 0; i < data.entities.length; i++) {
+                    const values = data.entities[i];
+                    const model = this.results.find((m) => m.ID === values.ID);
 
-                if(found) {
-                    found.setValues(data);
-                    this.$forceUpdate();
-                    this.$forceUpdate();
+                    for (let key in values) {
+                        if (values.hasOwnProperty(key)) {
+                            model[key] = values[key];
+                        }
+                    }
                 }
             }
         },
@@ -281,7 +285,7 @@
 
             this.uploadSubId = Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data));
             this.countSubId = Event.subscribe("count.photos", (ev, data) => this.onCount(ev, data));
-            this.modelSubId = Event.subscribe("model.photos", (ev, data) => this.onModelUpdate(ev, data));
+            this.modelSubId = Event.subscribe("photos.updated", (ev, data) => this.onPhotosUpdated(ev, data));
         },
         destroyed() {
             Event.unsubscribe(this.uploadSubId);
