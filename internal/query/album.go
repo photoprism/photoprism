@@ -54,17 +54,25 @@ func (s *Repo) Albums(f form.AlbumSearch) (results []AlbumResult, err error) {
 		return results, err
 	}
 
-	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("search: %+v", f)))
+	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("albums: %+v", f)))
 
 	q := s.db.NewScope(nil).DB()
-
-	// q.LogMode(true)
 
 	q = q.Table("albums").
 		Select(`albums.*, COUNT(photos_albums.album_uuid) AS album_count`).
 		Joins("LEFT JOIN photos_albums ON photos_albums.album_uuid = albums.album_uuid").
 		Where("albums.deleted_at IS NULL").
 		Group("albums.id")
+
+	if f.ID != "" {
+		q = q.Where("albums.album_uuid = ?", f.ID)
+
+		if result := q.Scan(&results); result.Error != nil {
+			return results, result.Error
+		}
+
+		return results, nil
+	}
 
 	if f.Query != "" {
 		likeString := "%" + strings.ToLower(f.Query) + "%"

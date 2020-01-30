@@ -104,7 +104,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		return results, err
 	}
 
-	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("search: %+v", f)))
+	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("photos: %+v", f)))
 
 	q := s.db.NewScope(nil).DB()
 

@@ -86,6 +86,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		q := query.New(conf.OriginalsPath(), conf.Db())
 		m := entity.NewAlbum(f.AlbumName)
 		m.AlbumFavorite = f.AlbumFavorite
 
@@ -106,6 +107,8 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		event.Success(fmt.Sprintf("album \"%s\" created", m.AlbumName))
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+
+		PublishAlbumEvent(EntityCreated, m.AlbumUUID, c, q)
 
 		c.JSON(http.StatusOK, m)
 	})
@@ -142,6 +145,8 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 		event.Success(fmt.Sprintf("album \"%s\" saved", m.AlbumName))
 
+		PublishAlbumEvent(EntityUpdated, id, c, q)
+
 		c.JSON(http.StatusOK, m)
 	})
 }
@@ -164,6 +169,8 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		PublishAlbumEvent(EntityDeleted, id, c, q)
+
 		conf.Db().Delete(&m)
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
@@ -184,9 +191,10 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		id := c.Param("uuid")
 		q := query.New(conf.OriginalsPath(), conf.Db())
 
-		album, err := q.FindAlbumByUUID(c.Param("uuid"))
+		album, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
@@ -197,6 +205,7 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		conf.Db().Save(&album)
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		PublishAlbumEvent(EntityUpdated, id, c, q)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})
@@ -213,8 +222,9 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		id := c.Param("uuid")
 		q := query.New(conf.OriginalsPath(), conf.Db())
-		album, err := q.FindAlbumByUUID(c.Param("uuid"))
+		album, err := q.FindAlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
@@ -225,6 +235,7 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		conf.Db().Save(&album)
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		PublishAlbumEvent(EntityUpdated, id, c, q)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})

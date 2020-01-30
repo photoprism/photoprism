@@ -262,21 +262,74 @@
             onCount() {
                 this.dirty = true;
             },
-            onPhotosUpdated(ev, data) {
+            onPhotos(ev, data) {
                 if (!data || !data.entities) {
-                    console.warn("onPhotosUpdated(): no entities found in event data");
+                    console.warn("onPhotos(): no entities found in event data");
                     return
                 }
 
-                for (let i = 0; i < data.entities.length; i++) {
-                    const values = data.entities[i];
-                    const model = this.results.find((m) => m.ID === values.ID);
+                const type = ev.split('.')[1];
 
-                    for (let key in values) {
-                        if (values.hasOwnProperty(key)) {
-                            model[key] = values[key];
+                console.log("onPhotos(): ", ev, type, data);
+
+                switch (type) {
+                    case 'updated':
+                        for (let i = 0; i < data.entities.length; i++) {
+                            const values = data.entities[i];
+                            const model = this.results.find((m) => m.ID === values.ID);
+
+                            for (let key in values) {
+                                if (values.hasOwnProperty(key)) {
+                                    model[key] = values[key];
+                                }
+                            }
                         }
-                    }
+                        break;
+                    case 'restored':
+                        if(this.context === "archive") {
+                            this.dirty = false;
+
+                            for (let i = 0; i < data.entities.length; i++) {
+                                const uuid = data.entities[i];
+                                const index = this.results.findIndex((m) => m.PhotoUUID === uuid);
+                                if (index >= 0) {
+                                    this.results.splice(index, 1);
+                                }
+                            }
+                        } else {
+                            this.dirty = true;
+                        }
+                        break;
+                    case 'archived':
+                        if(this.context === "photos") {
+                            this.dirty = false;
+
+                            for (let i = 0; i < data.entities.length; i++) {
+                                const uuid = data.entities[i];
+                                const index = this.results.findIndex((m) => m.PhotoUUID === uuid);
+                                if (index >= 0) {
+                                    this.results.splice(index, 1);
+                                }
+                            }
+                        } else {
+                            this.dirty = true;
+                        }
+                        break;
+                    case 'created':
+                        if(this.order === "imported" && JSON.stringify(this.filter) === "{}") {
+                            this.dirty = false;
+
+                            for (let i = 0; i < data.entities.length; i++) {
+                                const values = data.entities[i];
+                                const index = this.results.findIndex((m) => m.ID === values.ID);
+                                if(index === -1) {
+                                    this.results.unshift(new Photo(values));
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        console.warn("unexpected event type", ev);
                 }
             }
         },
@@ -285,7 +338,7 @@
 
             this.uploadSubId = Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data));
             this.countSubId = Event.subscribe("count.photos", (ev, data) => this.onCount(ev, data));
-            this.modelSubId = Event.subscribe("photos.updated", (ev, data) => this.onPhotosUpdated(ev, data));
+            this.modelSubId = Event.subscribe("photos", (ev, data) => this.onPhotos(ev, data));
         },
         destroyed() {
             Event.unsubscribe(this.uploadSubId);

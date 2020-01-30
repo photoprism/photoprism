@@ -3,6 +3,7 @@ package form
 // PhotoSearch represents search form fields for "/api/v1/labels".
 type LabelSearch struct {
 	Query     string `form:"q"`
+	ID        string `form:"id"`
 	Slug      string `form:"slug"`
 	Name      string `form:"name"`
 	All       bool   `form:"all"`

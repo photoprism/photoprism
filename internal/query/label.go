@@ -91,7 +91,7 @@ func (s *Repo) Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		return results, err
 	}
 
-	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("search: %+v", f)))
+	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("labels: %+v", f)))
 
 	q := s.db.NewScope(nil).DB()
 
@@ -101,6 +101,16 @@ func (s *Repo) Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		Select(`labels.*`).
 		Where("labels.deleted_at IS NULL").
 		Group("labels.id")
+
+	if f.ID != "" {
+		q = q.Where("labels.label_uuid = ?", f.ID)
+
+		if result := q.Scan(&results); result.Error != nil {
+			return results, result.Error
+		}
+
+		return results, nil
+	}
 
 	if f.Query != "" {
 		var labelIds []uint
