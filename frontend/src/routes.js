@@ -99,13 +99,6 @@ export default [
         path: "/library/logs",
         component: Library,
         meta: {title: "Server Logs", auth: true, background: "application-light"},
-        props: {tab: 3},
-    },
-    {
-        name: "library_upload",
-        path: "/library/upload",
-        component: Library,
-        meta: {title: "Photo Upload", auth: true, background: "application-light"},
         props: {tab: 2},
     },
     {

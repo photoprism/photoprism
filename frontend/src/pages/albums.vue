@@ -19,7 +19,7 @@
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon @click.stop="refresh">
+                <v-btn icon @click.stop="refresh" :class="dirty ? 'secondary-light': ''">
                     <v-icon>refresh</v-icon>
                 </v-btn>
 
@@ -160,6 +160,7 @@
 
             return {
                 subId: null,
+                dirty: false,
                 results: [],
                 loading: true,
                 scrollDisabled: true,
@@ -261,6 +262,7 @@
 
                 Album.search(params).then(response => {
                     this.loading = false;
+                    this.dirty = false;
                     this.results = response.models;
 
                     this.scrollDisabled = (response.models.length < this.pageSize);
@@ -318,7 +320,11 @@
                 }
             },
             onCount() {
-                // TODO
+                this.dirty = true;
+
+                if(!this.selection && this.offset === 0) {
+                    this.refresh();
+                }
             }
         },
         created() {

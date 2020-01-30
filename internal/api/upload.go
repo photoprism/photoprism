@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gin-gonic/gin"
@@ -36,6 +37,8 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
+
+		event.Publish("upload.start", event.Data{"time": start})
 
 		files := f.File["files"]
 		uploaded := len(files)

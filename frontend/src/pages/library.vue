@@ -22,12 +22,12 @@
                 <p-tab-import></p-tab-import>
             </v-tab-item>
 
-            <v-tab id="tab-upload" :disabled="readonly" ripple @click="changePath('/library/upload')">
+            <!-- v-tab id="tab-upload" :disabled="readonly" ripple @click="changePath('/library/upload')">
                 <translate>Upload</translate>
             </v-tab>
             <v-tab-item :disabled="readonly">
                 <p-tab-upload></p-tab-upload>
-            </v-tab-item>
+            </v-tab-item -->
 
             <v-tab id="tab-logs" ripple @click="changePath('/library/logs')">
                 <translate>Logs</translate>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-    import uploadTab from "pages/library/upload.vue";
+    // import uploadTab from "pages/library/upload.vue";
     import importTab from "pages/library/import.vue";
     import originalsTab from "pages/library/originals.vue";
     import tabLogs from "pages/library/logs.vue";
@@ -53,7 +53,7 @@
         components: {
             'p-tab-originals': originalsTab,
             'p-tab-import': importTab,
-            'p-tab-upload': uploadTab,
+            // 'p-tab-upload': uploadTab,
             'p-tab-logs': tabLogs,
         },
         data() {

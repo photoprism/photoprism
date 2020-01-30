@@ -2,7 +2,7 @@
     <div class="p-page p-page-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
          :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <p-photo-search :settings="settings" :filter="filter" :filter-change="updateQuery"
+        <p-photo-search :settings="settings" :filter="filter" :filter-change="updateQuery" :dirty="dirty"
                         :refresh="refresh"></p-photo-search>
 
         <v-container fluid class="pa-4" v-if="loading">
@@ -33,6 +33,7 @@
 
 <script>
     import Photo from "model/photo";
+    import Event from "pubsub-js";
 
     export default {
         name: 'p-page-photos',
@@ -83,6 +84,9 @@
             const settings = {view: view};
 
             return {
+                uploadSubId: null,
+                countSubId: null,
+                dirty: false,
                 results: [],
                 scrollDisabled: true,
                 pageSize: 60,
@@ -221,6 +225,7 @@
 
                 Photo.search(params).then(response => {
                     this.loading = false;
+                    this.dirty = false;
                     this.results = response.models;
 
                     this.scrollDisabled = (response.models.length < this.pageSize);
@@ -240,11 +245,29 @@
                     }
                 }).catch(() => this.loading = false);
             },
+            onImportCompleted() {
+                this.dirty = true;
+
+                console.log("onImportCompleted", this.selection, this.offset);
+
+                if(this.selection.length === 0 && this.offset === 0) {
+                    console.log("REFRESH");
+                    this.refresh();
+                }
+            },
+            onCount() {
+                this.dirty = true;
+            }
         },
         created() {
             this.search();
+
+            this.uploadSubId = Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data));
+            this.countSubId = Event.subscribe("count.photos", (ev, data) => this.onCount(ev, data));
         },
         destroyed() {
+            Event.unsubscribe(this.uploadSubId);
+            Event.unsubscribe(this.countSubId);
         }
     };
 </script>

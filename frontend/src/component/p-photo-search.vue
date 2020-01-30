@@ -17,7 +17,7 @@
 
             <v-spacer></v-spacer>
 
-            <v-btn icon @click.stop="refresh" class="hidden-xs-only">
+            <v-btn icon @click.stop="refresh" class="hidden-xs-only" :class="dirty ? 'secondary-light': ''">
                 <v-icon>refresh</v-icon>
             </v-btn>
 
@@ -29,6 +29,10 @@
             </v-btn>
             <v-btn icon v-else @click.stop="setView('details')">
                 <v-icon>view_column</v-icon>
+            </v-btn>
+
+            <v-btn icon @click.stop="showUpload()" v-if="!this.$config.values.readonly" class="hidden-md-and-down">
+                <v-icon>cloud_upload</v-icon>
             </v-btn>
 
             <v-btn icon @click.stop="searchExpanded = !searchExpanded" class="p-expand-search">
@@ -133,9 +137,12 @@
     </v-form>
 </template>
 <script>
+    import Event from "pubsub-js";
+
     export default {
         name: 'p-photo-search',
         props: {
+            dirty: Boolean,
             filter: Object,
             settings: Object,
             refresh: Function,
@@ -223,6 +230,9 @@
                 this.filter.q = '';
                 this.filterChange();
             },
+            showUpload() {
+                Event.publish("upload.show");
+            }
         },
     };
 </script>

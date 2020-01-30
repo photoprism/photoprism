@@ -7,6 +7,12 @@
             <v-toolbar-title class="p-navigation-title">{{ page.title }}</v-toolbar-title>
 
             <v-spacer></v-spacer>
+
+            <v-toolbar-items>
+                <v-btn icon @click.stop="showUpload = true" v-if="!readonly">
+                    <v-icon>cloud_upload</v-icon>
+                </v-btn>
+            </v-toolbar-items>
         </v-toolbar>
         <v-navigation-drawer
                 v-model="drawer"
@@ -172,7 +178,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/discover" @click="" class="p-navigation-discover" v-if="config.experimental">
+                <!-- v-list-tile to="/discover" @click="" class="p-navigation-discover" v-if="config.experimental">
                     <v-list-tile-action>
                         <v-icon>color_lens</v-icon>
                     </v-list-tile-action>
@@ -182,7 +188,7 @@
                             <translate>Discover</translate>
                         </v-list-tile-title>
                     </v-list-tile-content>
-                </v-list-tile>
+                </v-list-tile -->
 
                 <!-- v-list-tile to="/events" @click="" class="p-navigation-events">
                     <v-list-tile-action>
@@ -228,7 +234,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile @click="logout" class="p-navigation-logout" v-if="!isPublic && auth">
+                <v-list-tile @click="logout" class="p-navigation-logout" v-if="!public && auth">
                     <v-list-tile-action>
                         <v-icon>power_settings_new</v-icon>
                     </v-list-tile-action>
@@ -251,14 +257,18 @@
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
+
             </v-list>
         </v-navigation-drawer>
+        <p-upload-dialog :show="showUpload" @cancel="showUpload = false"
+                              @confirm="showUpload = false"></p-upload-dialog>
     </div>
 </template>
 
 <script>
     import Album from "../model/album";
     import {DateTime} from "luxon";
+    import Event from "pubsub-js";
 
     export default {
         name: "p-navigation",
@@ -269,14 +279,17 @@
                 drawer: null,
                 mini: mini,
                 session: this.$session,
-                isPublic: this.$config.getValue("public"),
+                public: this.$config.getValue("public"),
+                readonly: this.$config.getValue("readonly"),
                 config: this.$config.values,
                 page: this.$config.page,
+                showUpload: false,
+                uploadSubId: null,
             };
         },
         computed: {
             auth() {
-                return this.session.auth || this.isPublic
+                return this.session.auth || this.public
             },
         },
         methods: {
@@ -292,6 +305,12 @@
             logout() {
                 this.$session.logout();
             },
+        },
+        created() {
+            this.uploadSubId = Event.subscribe("upload.show", () => this.showUpload = true);
+        },
+        destroyed() {
+            Event.unsubscribe(this.uploadSubId);
         }
     };
 </script>

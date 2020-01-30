@@ -35,13 +35,13 @@
                         :disabled="busy"
                         :label="labels.createThumbs"
                 ></v-checkbox>
-                <v-checkbox
+                <!-- v-checkbox
                         class="ma-0 pa-0"
                         v-model="options.groomMetadata"
                         color="secondary-dark"
                         :disabled="busy"
                         :label="labels.groomMetadata"
-                ></v-checkbox>
+                ></v-checkbox -->
 
                 <v-btn
                         :disabled="!busy"
