@@ -184,7 +184,9 @@ class Photo extends Abstract {
     }
 
     getCamera() {
-        if (this.CameraModel) {
+        if(this.Camera) {
+            return this.Camera.CameraMake + " " + this.Camera.CameraModel;
+        } else if (this.CameraModel) {
             return this.CameraMake + " " + this.CameraModel;
         }
 
@@ -213,12 +215,12 @@ class Photo extends Abstract {
 
     addLabel(name) {
         return Api.post(this.getEntityResource() + "/label", {LabelName: name})
-            .then((response) => Promise.resolve(this.setValues(response.data)));
+            .then((response) => Promise.resolve(this.publishValues(response.data)));
     }
 
     removeLabel(id) {
         return Api.delete(this.getEntityResource() + "/label/" + id)
-            .then((response) => Promise.resolve(this.setValues(response.data)));
+            .then((response) => Promise.resolve(this.publishValues(response.data)));
     }
 
     static getCollectionResource() {

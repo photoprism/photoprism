@@ -47,8 +47,8 @@ type Photo struct {
 	TakenAtChanged    bool
 	PhotoViews        uint
 	CountryChanged    bool
-	Camera            *Camera   `json:"-"`
-	Lens              *Lens     `json:"-"`
+	Camera            *Camera   `json:"Camera"`
+	Lens              *Lens     `json:"Lens"`
 	Location          *Location `json:"-"`
 	Place             *Place    `json:"-"`
 	Files             []File

@@ -86,6 +86,8 @@
             return {
                 uploadSubId: null,
                 countSubId: null,
+                modelSubId: null,
+                listen: false,
                 dirty: false,
                 results: [],
                 scrollDisabled: true,
@@ -156,6 +158,8 @@
 
                 Object.assign(params, this.lastFilter);
 
+                this.listen = false;
+
                 Photo.search(params).then(response => {
                     this.results = this.results.concat(response.models);
 
@@ -164,7 +168,7 @@
                     if (this.scrollDisabled) {
                         this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' photos loaded'));
                     }
-                });
+                }).finally(() => this.listen = true);
             },
             updateQuery() {
                 const query = {
@@ -220,12 +224,11 @@
 
                 this.offset = 0;
                 this.loading = true;
+                this.listen = false;
 
                 const params = this.searchParams();
 
                 Photo.search(params).then(response => {
-                    this.loading = false;
-                    this.dirty = false;
                     this.results = response.models;
 
                     this.scrollDisabled = (response.models.length < this.pageSize);
@@ -243,20 +246,34 @@
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
-                }).catch(() => this.loading = false);
+                }).finally(() => {
+                    this.dirty = false;
+                    this.loading = false;
+                    this.listen = true;
+                });
             },
             onImportCompleted() {
                 this.dirty = true;
 
-                console.log("onImportCompleted", this.selection, this.offset);
-
                 if(this.selection.length === 0 && this.offset === 0) {
-                    console.log("REFRESH");
                     this.refresh();
                 }
             },
             onCount() {
                 this.dirty = true;
+            },
+            onModelUpdate(ev, data) {
+                if(!this.listen) {
+                    return
+                }
+
+                const found  = this.results.find((m) => m.ID === data.ID);
+
+                if(found) {
+                    found.setValues(data);
+                    this.$forceUpdate();
+                    this.$forceUpdate();
+                }
             }
         },
         created() {
@@ -264,10 +281,12 @@
 
             this.uploadSubId = Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data));
             this.countSubId = Event.subscribe("count.photos", (ev, data) => this.onCount(ev, data));
+            this.modelSubId = Event.subscribe("model.photos", (ev, data) => this.onModelUpdate(ev, data));
         },
         destroyed() {
             Event.unsubscribe(this.uploadSubId);
             Event.unsubscribe(this.countSubId);
+            Event.unsubscribe(this.modelSubId);
         }
     };
 </script>

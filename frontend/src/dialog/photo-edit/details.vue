@@ -349,14 +349,18 @@
 
                 this.model.TakenAt = utcDate;
 
-                const localDate = DateTime.fromISO(utcDate).setZone(this.model.TimeZone);
+                let localDate = DateTime.fromISO(utcDate);
+
+                if(this.model.TimeZone) {
+                    localDate = localDate.setZone(this.model.TimeZone);
+                } else {
+                    localDate = localDate.toUTC(0);
+                }
 
                 this.model.TakenAtLocal = localDate.toISO({
                     suppressMilliseconds: true,
                     includeOffset: false,
                 }) + "Z";
-
-                console.log(this.model.TakenAt, this.model.TakenAtLocal);
 
                 return localDate.toLocaleString(DateTime.TIME_24_WITH_SECONDS);
             },

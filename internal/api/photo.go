@@ -63,7 +63,14 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Success("photo saved")
 
-		c.JSON(http.StatusOK, m)
+		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			return
+		}
+
+		c.JSON(http.StatusOK, p)
 	})
 }
 
