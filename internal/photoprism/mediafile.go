@@ -303,7 +303,7 @@ func (m *MediaFile) RelatedFiles() (result RelatedFiles, err error) {
 }
 
 // Filename returns the filename.
-func (m *MediaFile) Filename() string {
+func (m MediaFile) Filename() string {
 	return m.filename
 }
 
@@ -313,7 +313,7 @@ func (m *MediaFile) SetFilename(filename string) {
 }
 
 // RelativeFilename returns the relative filename.
-func (m *MediaFile) RelativeFilename(directory string) string {
+func (m MediaFile) RelativeFilename(directory string) string {
 	if index := strings.Index(m.filename, directory); index == 0 {
 		if index := strings.LastIndex(directory, string(os.PathSeparator)); index == len(directory)-1 {
 			pos := len(directory)
@@ -328,7 +328,7 @@ func (m *MediaFile) RelativeFilename(directory string) string {
 }
 
 // RelativePath returns the relative path without filename.
-func (m *MediaFile) RelativePath(directory string) string {
+func (m MediaFile) RelativePath(directory string) string {
 	pathname := m.filename
 
 	if i := strings.Index(pathname, directory); i == 0 {
@@ -349,7 +349,7 @@ func (m *MediaFile) RelativePath(directory string) string {
 }
 
 // RelativeBasename returns the relative filename.
-func (m *MediaFile) RelativeBasename(directory string) string {
+func (m MediaFile) RelativeBasename(directory string) string {
 	if relativePath := m.RelativePath(directory); relativePath != "" {
 		return relativePath + string(os.PathSeparator) + m.Basename()
 	}
@@ -358,12 +358,12 @@ func (m *MediaFile) RelativeBasename(directory string) string {
 }
 
 // Directory returns the directory
-func (m *MediaFile) Directory() string {
+func (m MediaFile) Directory() string {
 	return filepath.Dir(m.filename)
 }
 
 // Basename returns the filename base without any extensions and path.
-func (m *MediaFile) Basename() string {
+func (m MediaFile) Basename() string {
 	basename := filepath.Base(m.Filename())
 
 	if end := strings.Index(basename, "."); end != -1 {
@@ -383,7 +383,7 @@ func (m *MediaFile) Basename() string {
 }
 
 // DirectoryBasename returns the directory and base filename without any extensions.
-func (m *MediaFile) DirectoryBasename() string {
+func (m MediaFile) DirectoryBasename() string {
 	return m.Directory() + string(os.PathSeparator) + m.Basename()
 }
 
@@ -408,18 +408,18 @@ func (m *MediaFile) openFile() (*os.File, error) {
 }
 
 // Exists checks if a media file exists by filename.
-func (m *MediaFile) Exists() bool {
+func (m MediaFile) Exists() bool {
 	return fs.FileExists(m.Filename())
 }
 
 // Remove a media file.
-func (m *MediaFile) Remove() error {
+func (m MediaFile) Remove() error {
 	return os.Remove(m.Filename())
 }
 
 // HasSameFilename compares a media file with another media file and returns if
 // their filenames are matching or not.
-func (m *MediaFile) HasSameFilename(other *MediaFile) bool {
+func (m MediaFile) HasSameFilename(other *MediaFile) bool {
 	return m.Filename() == other.Filename()
 }
 
@@ -477,12 +477,12 @@ func (m *MediaFile) Copy(destinationFilename string) error {
 }
 
 // Extension returns the filename extension of this media file.
-func (m *MediaFile) Extension() string {
+func (m MediaFile) Extension() string {
 	return strings.ToLower(filepath.Ext(m.filename))
 }
 
 // IsJpeg return true if this media file is a JPEG image.
-func (m *MediaFile) IsJpeg() bool {
+func (m MediaFile) IsJpeg() bool {
 	// Don't import/use existing thumbnail files (we create our own)
 	if m.Extension() == ".thm" {
 		return false
@@ -492,12 +492,12 @@ func (m *MediaFile) IsJpeg() bool {
 }
 
 // Type returns the type of the media file.
-func (m *MediaFile) Type() fs.Type {
+func (m MediaFile) Type() fs.Type {
 	return fs.Ext[m.Extension()]
 }
 
 // HasType returns true if this media file is of a given type.
-func (m *MediaFile) HasType(t fs.Type) bool {
+func (m MediaFile) HasType(t fs.Type) bool {
 	if t == fs.TypeJpeg {
 		return m.IsJpeg()
 	}
@@ -506,22 +506,22 @@ func (m *MediaFile) HasType(t fs.Type) bool {
 }
 
 // IsRaw returns true if this media file a RAW file.
-func (m *MediaFile) IsRaw() bool {
+func (m MediaFile) IsRaw() bool {
 	return m.HasType(fs.TypeRaw)
 }
 
 // IsPng returns true if this media file a PNG file.
-func (m *MediaFile) IsPng() bool {
+func (m MediaFile) IsPng() bool {
 	return m.HasType(fs.TypePng)
 }
 
 // IsTiff returns true if this media file a TIFF file.
-func (m *MediaFile) IsTiff() bool {
+func (m MediaFile) IsTiff() bool {
 	return m.HasType(fs.TypeTiff)
 }
 
 // IsImageOther returns true this media file a PNG, GIF, BMP or TIFF file.
-func (m *MediaFile) IsImageOther() bool {
+func (m MediaFile) IsImageOther() bool {
 	switch m.Type() {
 	case fs.TypeBitmap:
 		return true
@@ -537,17 +537,17 @@ func (m *MediaFile) IsImageOther() bool {
 }
 
 // IsHEIF returns true if this media file is a High Efficiency Image File Format file.
-func (m *MediaFile) IsHEIF() bool {
+func (m MediaFile) IsHEIF() bool {
 	return m.HasType(fs.TypeHEIF)
 }
 
 // IsXMP returns true if this file is a XMP sidecar file.
-func (m *MediaFile) IsXMP() bool {
+func (m MediaFile) IsXMP() bool {
 	return m.Type() == fs.TypeXMP
 }
 
 // IsSidecar returns true if this media file is a sidecar file (containing metadata).
-func (m *MediaFile) IsSidecar() bool {
+func (m MediaFile) IsSidecar() bool {
 	switch m.Type() {
 	case fs.TypeXMP:
 		return true
@@ -567,7 +567,7 @@ func (m *MediaFile) IsSidecar() bool {
 }
 
 // IsVideo returns true if this media file is a video file.
-func (m *MediaFile) IsVideo() bool {
+func (m MediaFile) IsVideo() bool {
 	switch m.Type() {
 	case fs.TypeMovie:
 		return true
@@ -577,13 +577,17 @@ func (m *MediaFile) IsVideo() bool {
 }
 
 // IsPhoto checks if this media file is a photo / image.
-func (m *MediaFile) IsPhoto() bool {
+func (m MediaFile) IsPhoto() bool {
 	return m.IsJpeg() || m.IsRaw() || m.IsHEIF() || m.IsImageOther()
 }
 
 // Jpeg returns a the JPEG version of an image or sidecar file (if exists).
 func (m *MediaFile) Jpeg() (*MediaFile, error) {
 	if m.IsJpeg() {
+		if !fs.FileExists(m.Filename()) {
+			return nil, fmt.Errorf("jpeg file should exist, but does not: %s", m.Filename())
+		}
+
 		return m, nil
 	}
 

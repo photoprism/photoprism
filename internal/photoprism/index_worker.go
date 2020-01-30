@@ -1,9 +1,10 @@
 package photoprism
 
 type IndexJob struct {
-	related RelatedFiles
-	opt     IndexOptions
-	ind     *Index
+	filename string
+	related  RelatedFiles
+	opt      IndexOptions
+	ind      *Index
 }
 
 func indexWorker(jobs <-chan IndexJob) {
@@ -13,10 +14,14 @@ func indexWorker(jobs <-chan IndexJob) {
 		opt := job.opt
 		ind := job.ind
 
-		res := ind.MediaFile(related.main, opt)
-		done[related.main.Filename()] = true
+		if related.main != nil {
+			res := ind.MediaFile(related.main, opt)
+			done[related.main.Filename()] = true
 
-		log.Infof("index: %s main %s file \"%s\"", res, related.main.Type(), related.main.RelativeFilename(ind.originalsPath()))
+			log.Infof("index: %s main %s file \"%s\"", res, related.main.Type(), related.main.RelativeFilename(ind.originalsPath()))
+		} else {
+			log.Warnf("index: no main file for %s (conversion to jpeg failed?)", job.filename)
+		}
 
 		for _, f := range related.files {
 			if done[f.Filename()] {

@@ -139,6 +139,7 @@ func (imp *Import) Start(importPath string) {
 		related.files = files
 
 		jobs <- ImportJob{
+			filename: filename,
 			related: related,
 			opt:     options,
 			path:    importPath,

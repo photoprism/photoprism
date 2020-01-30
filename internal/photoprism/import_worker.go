@@ -9,10 +9,11 @@ import (
 )
 
 type ImportJob struct {
-	related RelatedFiles
-	opt     IndexOptions
-	path    string
-	imp     *Import
+	filename string
+	related  RelatedFiles
+	opt      IndexOptions
+	path     string
+	imp      *Import
 }
 
 func importWorker(jobs <-chan ImportJob) {
@@ -88,12 +89,20 @@ func importWorker(jobs <-chan ImportJob) {
 
 			done := make(map[string]bool)
 			ind := imp.index
-			res := ind.MediaFile(related.main, opt)
-			done[related.main.Filename()] = true
 
-			log.Infof("import: %s main %s file \"%s\"", res, related.main.Type(), related.main.RelativeFilename(ind.originalsPath()))
+			if related.main != nil {
+				res := ind.MediaFile(related.main, opt)
+				log.Infof("import: %s main %s file \"%s\"", res, related.main.Type(), related.main.RelativeFilename(ind.originalsPath()))
+				done[related.main.Filename()] = true
+			} else {
+				log.Warnf("import: no main file for %s (conversion to jpeg failed?)", destinationMainFilename)
+			}
 
 			for _, f := range related.files {
+				if f == nil {
+					continue
+				}
+
 				if done[f.Filename()] {
 					continue
 				}

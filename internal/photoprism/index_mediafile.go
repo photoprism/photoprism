@@ -25,6 +25,11 @@ const (
 type IndexResult string
 
 func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
+	if m == nil {
+		log.Error("index: media file is nil - you might have found a bug")
+		return indexResultFailed
+	}
+
 	start := time.Now()
 
 	var photo entity.Photo

@@ -128,6 +128,7 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 		related.files = files
 
 		jobs <- IndexJob{
+			filename: mf.Filename(),
 			related: related,
 			opt:     options,
 			ind:     ind,
