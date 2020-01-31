@@ -9,8 +9,8 @@ import (
 )
 
 // Pre-renders thumbnails
-var ThumbnailsCommand = cli.Command{
-	Name:  "thumbnails",
+var ThumbsCommand = cli.Command{
+	Name:  "thumbs",
 	Usage: "Pre-renders thumbnails to boost performance",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
@@ -18,10 +18,10 @@ var ThumbnailsCommand = cli.Command{
 			Usage: "re-create existing thumbnails",
 		},
 	},
-	Action: thumbnailsAction,
+	Action: thumbsAction,
 }
 
-func thumbnailsAction(ctx *cli.Context) error {
+func thumbsAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
@@ -32,9 +32,9 @@ func thumbnailsAction(ctx *cli.Context) error {
 
 	log.Infof("creating thumbnails in \"%s\"", conf.ThumbnailsPath())
 
-	thumbnails := photoprism.NewThumbnails(conf)
+	rs := photoprism.NewResample(conf)
 
-	if err := thumbnails.Start(ctx.Bool("force")); err != nil {
+	if err := rs.Start(ctx.Bool("force")); err != nil {
 		log.Error(err)
 		return err
 	}

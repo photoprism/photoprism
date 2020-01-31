@@ -1090,7 +1090,7 @@ func TestMediaFile_Resample(t *testing.T) {
 
 }
 
-func TestMediaFile_CreateDefaultThumbnails(t *testing.T) {
+func TestMediaFile_RenderDefaultThumbs(t *testing.T) {
 	conf := config.TestConfig()
 
 	thumbsPath := conf.CachePath() + "/_tmp"
@@ -1104,7 +1104,7 @@ func TestMediaFile_CreateDefaultThumbnails(t *testing.T) {
 	m, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 	assert.Nil(t, err)
 
-	err = m.RenderDefaultThumbnails(thumbsPath, true)
+	err = m.ResampleDefault(thumbsPath, true)
 
 	assert.Empty(t, err)
 
@@ -1114,7 +1114,7 @@ func TestMediaFile_CreateDefaultThumbnails(t *testing.T) {
 
 	assert.FileExists(t, thumbFilename)
 
-	err = m.RenderDefaultThumbnails(thumbsPath, false)
+	err = m.ResampleDefault(thumbsPath, false)
 
 	assert.Empty(t, err)
 }

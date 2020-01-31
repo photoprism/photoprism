@@ -18,11 +18,11 @@ import (
 
 // Starts web server (user interface)
 var StartCommand = cli.Command{
-	Name:   "start",
+	Name:    "start",
 	Aliases: []string{"up"},
-	Usage:  "Starts web server",
-	Flags:  startFlags,
-	Action: startAction,
+	Usage:   "Starts web server",
+	Flags:   startFlags,
+	Action:  startAction,
 }
 
 var startFlags = []cli.Flag{

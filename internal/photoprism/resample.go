@@ -12,36 +12,36 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
-// Thumbnails represents a thumbnail generator.
-type Thumbnails struct {
+// Resample represents a thumbnail generator.
+type Resample struct {
 	conf *config.Config
 }
 
-// NewThumbnails returns a new thumbnail generator and expects the config as argument.
-func NewThumbnails(conf *config.Config) *Thumbnails {
-	return &Thumbnails{conf: conf}
+// NewResample returns a new thumbnail generator and expects the config as argument.
+func NewResample(conf *config.Config) *Resample {
+	return &Resample{conf: conf}
 }
 
 // Start creates default thumbnails for all files in originalsPath.
-func (t *Thumbnails) Start(force bool) error {
+func (rs *Resample) Start(force bool) error {
 	if err := mutex.Worker.Start(); err != nil {
 		return err
 	}
 
 	defer mutex.Worker.Stop()
 
-	originalsPath := t.conf.OriginalsPath()
-	thumbnailsPath := t.conf.ThumbnailsPath()
+	originalsPath := rs.conf.OriginalsPath()
+	thumbnailsPath := rs.conf.ThumbnailsPath()
 
-	jobs := make(chan ThumbnailsJob)
+	jobs := make(chan ResampleJob)
 
 	// Start a fixed number of goroutines to read and digest files.
 	var wg sync.WaitGroup
-	var numWorkers = t.conf.Workers()
+	var numWorkers = rs.conf.Workers()
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
-			thumbnailsWorker(jobs) // HLc
+			resampleWorker(jobs)
 			wg.Done()
 		}()
 	}
@@ -49,12 +49,12 @@ func (t *Thumbnails) Start(force bool) error {
 	err := filepath.Walk(originalsPath, func(filename string, fileInfo os.FileInfo, err error) error {
 		defer func() {
 			if err := recover(); err != nil {
-				log.Errorf("thumbs: %s [panic]", err)
+				log.Errorf("resample: %s [panic]", err)
 			}
 		}()
 
 		if mutex.Worker.Canceled() {
-			return errors.New("thumbs: canceled")
+			return errors.New("resample: canceled")
 		}
 
 		if err != nil || fileInfo.IsDir() || strings.HasPrefix(filepath.Base(filename), ".") {
@@ -75,7 +75,7 @@ func (t *Thumbnails) Start(force bool) error {
 			"force":    force,
 		})
 
-		jobs <- ThumbnailsJob{
+		jobs <- ResampleJob{
 			mediaFile: mf,
 			path:      thumbnailsPath,
 			force:     force,

@@ -76,9 +76,9 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if f.CreateThumbs {
-			thumbnails := photoprism.NewThumbnails(conf)
+			rs := photoprism.NewResample(conf)
 
-			if err := thumbnails.Start(false); err != nil {
+			if err := rs.Start(false); err != nil {
 				cancel(err)
 				return
 			}

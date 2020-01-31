@@ -10,10 +10,10 @@ import (
 
 // StopCommand stops the daemon if running.
 var StopCommand = cli.Command{
-	Name:   "stop",
+	Name:    "stop",
 	Aliases: []string{"down"},
-	Usage:  "Stops web server (only in daemon mode)",
-	Action: stopAction,
+	Usage:   "Stops web server (only in daemon mode)",
+	Action:  stopAction,
 }
 
 func stopAction(ctx *cli.Context) error {

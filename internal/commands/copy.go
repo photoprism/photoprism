@@ -15,10 +15,10 @@ import (
 )
 
 var CopyCommand = cli.Command{
-	Name:   "copy",
+	Name:    "copy",
 	Aliases: []string{"cp"},
-	Usage:  "Copies files to originals path, converts and indexes them as needed",
-	Action: copyAction,
+	Usage:   "Copies files to originals path, converts and indexes them as needed",
+	Action:  copyAction,
 }
 
 // Copies photos to originals path.

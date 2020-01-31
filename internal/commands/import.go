@@ -14,15 +14,15 @@ import (
 	"github.com/urfave/cli"
 )
 
-var MoveCommand = cli.Command{
-	Name:   "move",
+var ImportCommand = cli.Command{
+	Name:    "import",
 	Aliases: []string{"mv"},
-	Usage:  "Moves files to originals path, converts and indexes them as needed",
-	Action: moveAction,
+	Usage:   "Moves files to originals path, converts and indexes them as needed",
+	Action:  importAction,
 }
 
 // Moves photos to originals path.
-func moveAction(ctx *cli.Context) error {
+func importAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)

@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestThumbnails_Start(t *testing.T) {
+func TestResample_Start(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -39,16 +39,16 @@ func TestThumbnails_Start(t *testing.T) {
 
 	imp.Start(opt)
 
-	thumbnails := NewThumbnails(conf)
+	rs := NewResample(conf)
 
-	err := thumbnails.Start(true)
+	err := rs.Start(true)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
-func TestThumbnails_Filename(t *testing.T) {
+func TestThumb_Filename(t *testing.T) {
 	conf := config.TestConfig()
 
 	thumbsPath := conf.CachePath() + "/_tmp"
@@ -96,7 +96,7 @@ func TestThumbnails_Filename(t *testing.T) {
 	})
 }
 
-func TestThumbnails_ThumbnailFromFile(t *testing.T) {
+func TestThumb_FromFile(t *testing.T) {
 	conf := config.TestConfig()
 
 	thumbsPath := conf.CachePath() + "/_tmp"
@@ -144,7 +144,7 @@ func TestThumbnails_ThumbnailFromFile(t *testing.T) {
 	})
 }
 
-func TestThumbnails_CreateThumbnail(t *testing.T) {
+func TestThumb_Create(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}

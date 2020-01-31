@@ -21,7 +21,7 @@ More screenshots: https://github.com/photoprism/photoprism/wiki/Screenshots
 
 * Clearly structured Web interface for browsing, organizing and sharing your personal photo collection
 * Import everything without worrying about duplicates or [RAW to JPEG conversion][wiki:raw]
-* [Geocoding][wiki:geocoding], [XMP support][wiki:xmp]  and [automated tagging][wiki:classification] 
+* [Geocoding][wiki:geocoding], [XMP support][wiki:xmp] and [automated tagging][wiki:classification] 
   based on Google TensorFlow
 
 ## For the early birds ##
