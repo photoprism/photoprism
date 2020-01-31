@@ -251,7 +251,7 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "thumb-filter, f",
 		Usage:  "resample filter (blackman, lanczos, cubic or linear)",
-		Value:  "cubic",
+		Value:  "lanczos",
 		EnvVar: "PHOTOPRISM_THUMB_FILTER",
 	},
 }
