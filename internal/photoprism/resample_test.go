@@ -125,9 +125,11 @@ func TestThumb_FromFile(t *testing.T) {
 		}
 
 		_, err := thumb.FromFile(fileModel.FileName, fileModel.FileHash, thumbsPath, 224, 224)
+
 		if err == nil {
-			t.FailNow()
+			t.Fatal("err should NOT be nil")
 		}
+
 		assert.Equal(t, "thumbs: file hash is empty or too short (\"123\")", err.Error())
 	})
 	t.Run("filename too short", func(t *testing.T) {
@@ -172,12 +174,13 @@ func TestThumb_Create(t *testing.T) {
 			t.Errorf("can't open original: %s", err)
 		}
 
-		thumbnail, err := thumb.Create(img, expectedFilename, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		res, err := thumb.Create(&img, expectedFilename, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
-		assert.Empty(t, err)
+		if err != nil || res == nil{
+			t.Fatal("err should be nil and res should NOT be nil")
+		}
 
-		assert.NotNil(t, thumbnail)
-
+		thumbnail := *res
 		bounds := thumbnail.Bounds()
 
 		assert.Equal(t, 150, bounds.Dx())
@@ -198,10 +201,14 @@ func TestThumb_Create(t *testing.T) {
 			t.Errorf("can't open original: %s", err)
 		}
 
-		thumbnail, err := thumb.Create(img, expectedFilename, -1, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
-		if err == nil {
-			t.FailNow()
+		res, err := thumb.Create(&img, expectedFilename, -1, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+
+		if err == nil || res == nil{
+			t.Fatal("err and res should NOT be nil")
 		}
+
+		thumbnail := *res
+
 		assert.Equal(t, "thumbs: width has an invalid value (-1)", err.Error())
 		bounds := thumbnail.Bounds()
 		assert.NotEqual(t, 150, bounds.Dx())
@@ -220,10 +227,14 @@ func TestThumb_Create(t *testing.T) {
 			t.Errorf("can't open original: %s", err)
 		}
 
-		thumbnail, err := thumb.Create(img, expectedFilename, 150, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
-		if err == nil {
-			t.FailNow()
+		res, err := thumb.Create(&img, expectedFilename, 150, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+
+		if err == nil || res == nil {
+			t.Fatal("err and res should NOT be nil")
 		}
+
+		thumbnail := *res
+
 		assert.Equal(t, "thumbs: height has an invalid value (-1)", err.Error())
 		bounds := thumbnail.Bounds()
 		assert.NotEqual(t, 150, bounds.Dx())

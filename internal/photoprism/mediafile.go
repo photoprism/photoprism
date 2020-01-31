@@ -724,18 +724,21 @@ func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err
 }
 
 func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
-	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("thumbnail created for \"%s\"", m.Filename())))
+	count := 0
+	start := time.Now()
+
+	defer func() {
+		switch count {
+		case 0: log.Debug(capture.Time(start, fmt.Sprintf("no new thumbnails created for %s", m.Basename())))
+		case 1: log.Debug(capture.Time(start, fmt.Sprintf("one thumbnail created for %s", m.Basename())))
+		default: log.Debug(capture.Time(start, fmt.Sprintf("%d thumbnails created for %s", count, m.Basename())))
+		}
+	}()
 
 	hash := m.Hash()
 
-	img, err := imaging.Open(m.Filename(), imaging.AutoOrientation(true))
-
-	if err != nil {
-		log.Errorf("resample: can't open \"%s\" (%s)", m.Filename(), err.Error())
-		return err
-	}
-
-	var sourceImg image.Image
+	var originalImg *image.Image
+	var sourceImg *image.Image
 	var sourceImgType string
 
 	for _, name := range thumb.DefaultTypes {
@@ -755,14 +758,25 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 				continue
 			}
 
+			if originalImg == nil {
+				img, err := imaging.Open(m.Filename(), imaging.AutoOrientation(true))
+
+				if err != nil {
+					log.Errorf("resample: can't open \"%s\" (%s)", m.Filename(), err.Error())
+					return err
+				}
+
+				originalImg = &img
+			}
+
 			if thumbType.Source != "" {
 				if thumbType.Source == sourceImgType && sourceImg != nil {
 					_, err = thumb.Create(sourceImg, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
 				} else {
-					_, err = thumb.Create(img, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+					_, err = thumb.Create(originalImg, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
 				}
 			} else {
-				sourceImg, err = thumb.Create(img, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+				sourceImg, err = thumb.Create(originalImg, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
 				sourceImgType = name
 			}
 
@@ -770,6 +784,8 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 				log.Errorf("resample: could not create \"%s\" (%s)", name, err)
 				return err
 			}
+
+			count++
 		}
 	}
 
