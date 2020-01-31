@@ -67,5 +67,7 @@ func TestImport_Start(t *testing.T) {
 
 	imp := NewImport(conf, ind, convert)
 
-	imp.Start(conf.ImportPath())
+	opt := ImportOptionsMove(conf.ImportPath())
+
+	imp.Start(opt)
 }

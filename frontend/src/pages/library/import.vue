@@ -9,7 +9,17 @@
                     <span v-else>Press button to move and index photos from import directory...</span>
                 </p>
 
-                <v-progress-linear color="secondary-dark" :value="completed" :indeterminate="busy"></v-progress-linear>
+                <p class="options">
+                    <v-progress-linear color="secondary-dark" :value="completed" :indeterminate="busy"></v-progress-linear>
+                </p>
+
+                <v-checkbox
+                        class="mb-0 mt-4 pa-0"
+                        v-model="options.move"
+                        color="secondary-dark"
+                        :disabled="busy"
+                        :label="labels.move"
+                ></v-checkbox>
 
                 <v-btn
                         :disabled="!busy"
@@ -52,6 +62,12 @@
                 subscriptionId: '',
                 fileName: '',
                 source: null,
+                options: {
+                    move: true,
+                },
+                labels: {
+                    move: this.$gettext("Move files to save storage and boost performance"),
+                }
             }
         },
         methods: {
@@ -71,7 +87,7 @@
                 const ctx = this;
                 Notify.blockUI();
 
-                Api.post('import', {}, {cancelToken: this.source.token}).then(function () {
+                Api.post('import', this.options, {cancelToken: this.source.token}).then(function () {
                     Notify.unblockUI();
                     ctx.busy = false;
                     ctx.completed = 100;

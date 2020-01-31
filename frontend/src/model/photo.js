@@ -69,13 +69,13 @@ class Photo extends Abstract {
 
     getColor() {
         switch (this.PhotoColor) {
-            case "brown":
-            case "black":
-            case "white":
-            case "grey":
-                return "grey lighten-2";
-            default:
-                return this.PhotoColor + " lighten-4";
+        case "brown":
+        case "black":
+        case "white":
+        case "grey":
+            return "grey lighten-2";
+        default:
+            return this.PhotoColor + " lighten-4";
         }
     }
 
@@ -85,13 +85,13 @@ class Photo extends Abstract {
 
     refreshFileAttr() {
         if(!this.Files) {
-            return
+            return;
         }
 
         const primary = this.Files.find(f => f.FilePrimary === true);
 
         if(!primary) {
-            return
+            return;
         }
 
         this.FileHash = primary.FileHash;

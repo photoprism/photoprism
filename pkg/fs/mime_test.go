@@ -8,12 +8,12 @@ import (
 
 func TestMimeType(t *testing.T) {
 	t.Run("jpg", func(t *testing.T) {
-		filename := ExpandFilename("./testdata/test.jpg")
+		filename := Abs("./testdata/test.jpg")
 		mimeType := MimeType(filename)
 		assert.Equal(t, "image/jpeg", mimeType)
 	})
 	t.Run("not existing filename", func(t *testing.T) {
-		filename := ExpandFilename("./testdata/xxx.jpg")
+		filename := Abs("./testdata/xxx.jpg")
 		mimeType := MimeType(filename)
 		assert.Equal(t, "", mimeType)
 	})

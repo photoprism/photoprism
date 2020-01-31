@@ -90,7 +90,7 @@ func NewParams(ctx *cli.Context) *Params {
 	c.Name = ctx.App.Name
 	c.Copyright = ctx.App.Copyright
 	c.Version = ctx.App.Version
-	c.ConfigFile = fs.ExpandFilename(ctx.GlobalString("config-file"))
+	c.ConfigFile = fs.Abs(ctx.GlobalString("config-file"))
 
 	if err := c.SetValuesFromFile(c.ConfigFile); err != nil {
 		log.Debug(err)
@@ -100,22 +100,20 @@ func NewParams(ctx *cli.Context) *Params {
 		log.Error(err)
 	}
 
-	c.expandFilenames()
-
 	return c
 }
 
 func (c *Params) expandFilenames() {
-	c.ConfigPath = fs.ExpandFilename(c.ConfigPath)
-	c.ResourcesPath = fs.ExpandFilename(c.ResourcesPath)
-	c.AssetsPath = fs.ExpandFilename(c.AssetsPath)
-	c.CachePath = fs.ExpandFilename(c.CachePath)
-	c.OriginalsPath = fs.ExpandFilename(c.OriginalsPath)
-	c.ImportPath = fs.ExpandFilename(c.ImportPath)
-	c.ExportPath = fs.ExpandFilename(c.ExportPath)
-	c.SqlServerPath = fs.ExpandFilename(c.SqlServerPath)
-	c.PIDFilename = fs.ExpandFilename(c.PIDFilename)
-	c.LogFilename = fs.ExpandFilename(c.LogFilename)
+	c.ConfigPath = fs.Abs(c.ConfigPath)
+	c.ResourcesPath = fs.Abs(c.ResourcesPath)
+	c.AssetsPath = fs.Abs(c.AssetsPath)
+	c.CachePath = fs.Abs(c.CachePath)
+	c.OriginalsPath = fs.Abs(c.OriginalsPath)
+	c.ImportPath = fs.Abs(c.ImportPath)
+	c.ExportPath = fs.Abs(c.ExportPath)
+	c.SqlServerPath = fs.Abs(c.SqlServerPath)
+	c.PIDFilename = fs.Abs(c.PIDFilename)
+	c.LogFilename = fs.Abs(c.LogFilename)
 }
 
 // SetValuesFromFile uses a yaml config file to initiate the configuration entity.

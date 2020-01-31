@@ -25,10 +25,11 @@ func TestIndex_Start(t *testing.T) {
 	convert := NewConvert(conf)
 
 	imp := NewImport(conf, ind, convert)
+	opt := ImportOptionsMove(conf.ImportPath())
 
-	imp.Start(conf.ImportPath())
+	imp.Start(opt)
 
-	opt := IndexOptionsAll()
+	indexOpt := IndexOptionsAll()
 
-	ind.Start(opt)
+	ind.Start(indexOpt)
 }

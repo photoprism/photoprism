@@ -1,5 +1,7 @@
 package config
 
+import "github.com/photoprism/photoprism/pkg/fs"
+
 // DetachServer returns true if server should detach from console (daemon mode).
 func (c *Config) DetachServer() bool {
 	return c.config.DetachServer
@@ -85,7 +87,7 @@ func (c *Config) SqlServerPath() string {
 		return c.ResourcesPath() + "/database"
 	}
 
-	return c.config.SqlServerPath
+	return fs.Abs(c.config.SqlServerPath)
 }
 
 // SqlServerPassword returns the password for the built-in database server.

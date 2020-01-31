@@ -18,11 +18,18 @@ import (
 	"strings"
 )
 
-// FileExists returns true if file exists (false for directories).
+// FileExists returns true if file exists and is not a directory.
 func FileExists(filename string) bool {
 	info, err := os.Stat(filename)
 
 	return err == nil && !info.IsDir()
+}
+
+// PathExists returns true if path exists and is a directory.
+func PathExists(path string) bool {
+	info, err := os.Stat(path)
+
+	return err == nil && info.IsDir()
 }
 
 // Overwrite overwrites the file with data. Creates file if not present.
@@ -36,19 +43,19 @@ func Overwrite(fileName string, data []byte) bool {
 	return err == nil
 }
 
-// Returns full path of a file, "~" is replaced with home directory
-func ExpandFilename(filename string) string {
-	if filename == "" {
+// Abs returns the full path of a file or directory, "~" is replaced with home.
+func Abs(name string) string {
+	if name == "" {
 		return ""
 	}
 
-	if len(filename) > 2 && filename[:2] == "~/" {
+	if len(name) > 2 && name[:2] == "~/" {
 		if usr, err := user.Current(); err == nil {
-			filename = filepath.Join(usr.HomeDir, filename[2:])
+			name = filepath.Join(usr.HomeDir, name[2:])
 		}
 	}
 
-	result, err := filepath.Abs(filename)
+	result, err := filepath.Abs(name)
 
 	if err != nil {
 		panic(err)

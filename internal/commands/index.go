@@ -14,7 +14,7 @@ import (
 // indexes all photos in originals directory (photo library)
 var IndexCommand = cli.Command{
 	Name:   "index",
-	Usage:  "Indexes originals",
+	Usage:  "Indexes media files in originals path",
 	Flags:  indexFlags,
 	Action: indexAction,
 }

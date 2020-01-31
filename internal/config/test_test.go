@@ -26,7 +26,7 @@ func TestNewTestParams(t *testing.T) {
 
 	assert.IsType(t, new(Params), c)
 
-	assert.Equal(t, fs.ExpandFilename("../../assets"), c.AssetsPath)
+	assert.Equal(t, fs.Abs("../../assets"), c.AssetsPath)
 	assert.False(t, c.Debug)
 }
 
@@ -43,7 +43,7 @@ func TestNewTestParamsError(t *testing.T) {
 
 	assert.IsType(t, new(Params), c)
 
-	assert.Equal(t, fs.ExpandFilename("../.."), c.AssetsPath)
+	assert.Equal(t, fs.Abs("../.."), c.AssetsPath)
 	assert.Equal(t, "../../assets/testdata/cache", c.CachePath)
 	assert.False(t, c.Debug)
 }

@@ -47,7 +47,7 @@ Settings.defaultLocale = config.values.settings.language;
 // Register other VueJS plugins
 Vue.use(GetTextPlugin, {
     translations: config.translations,
-    silent: !config.values.debug,
+    silent: true, // !config.values.debug,
     defaultLanguage: Vue.config.language,
 });
 

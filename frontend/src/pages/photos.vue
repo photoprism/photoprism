@@ -78,8 +78,6 @@
                 color: color,
                 order: order,
                 q: q,
-                /* before: before,
-                after: after, */
             };
             const settings = {view: view};
 
@@ -98,7 +96,7 @@
                 filter: filter,
                 lastFilter: {},
                 routeName: routeName,
-                loading: true
+                loading: true,
             };
         },
         computed: {

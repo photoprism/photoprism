@@ -100,7 +100,7 @@ func (c *Config) ConfigPath() string {
 		return c.AssetsPath() + "/config"
 	}
 
-	return c.config.ConfigPath
+	return fs.Abs(c.config.ConfigPath)
 }
 
 // PIDFilename returns the filename for storing the server process id (pid).
@@ -109,7 +109,7 @@ func (c *Config) PIDFilename() string {
 		return c.AssetsPath() + "/photoprism.pid"
 	}
 
-	return c.config.PIDFilename
+	return fs.Abs(c.config.PIDFilename)
 }
 
 // LogFilename returns the filename for storing server logs.
@@ -118,22 +118,22 @@ func (c *Config) LogFilename() string {
 		return c.AssetsPath() + "/photoprism.log"
 	}
 
-	return c.config.LogFilename
+	return fs.Abs(c.config.LogFilename)
 }
 
 // OriginalsPath returns the originals.
 func (c *Config) OriginalsPath() string {
-	return filepath.Clean(c.config.OriginalsPath)
+	return fs.Abs(c.config.OriginalsPath)
 }
 
 // ImportPath returns the import directory.
 func (c *Config) ImportPath() string {
-	return filepath.Clean(c.config.ImportPath)
+	return fs.Abs(c.config.ImportPath)
 }
 
 // ExportPath returns the export directory.
 func (c *Config) ExportPath() string {
-	return filepath.Clean(c.config.ExportPath)
+	return fs.Abs(c.config.ExportPath)
 }
 
 // SipsBin returns the sips binary file name.
@@ -158,7 +158,7 @@ func (c *Config) ExifToolBin() string {
 
 // CachePath returns the path to the cache.
 func (c *Config) CachePath() string {
-	return c.config.CachePath
+	return fs.Abs(c.config.CachePath)
 }
 
 // ThumbnailsPath returns the path to the cached thumbnails.
@@ -168,7 +168,7 @@ func (c *Config) ThumbnailsPath() string {
 
 // AssetsPath returns the path to the assets.
 func (c *Config) AssetsPath() string {
-	return c.config.AssetsPath
+	return fs.Abs(c.config.AssetsPath)
 }
 
 // ResourcesPath returns the path to the app resources like static files.
@@ -177,7 +177,7 @@ func (c *Config) ResourcesPath() string {
 		return c.AssetsPath() + "/resources"
 	}
 
-	return c.config.ResourcesPath
+	return fs.Abs(c.config.ResourcesPath)
 }
 
 // ExamplesPath returns the example files path.

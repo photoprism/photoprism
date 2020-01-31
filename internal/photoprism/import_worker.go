@@ -9,11 +9,12 @@ import (
 )
 
 type ImportJob struct {
-	filename string
-	related  RelatedFiles
-	opt      IndexOptions
-	path     string
-	imp      *Import
+	filename  string
+	related   RelatedFiles
+	indexOpt  IndexOptions
+	importOpt ImportOptions
+	path      string
+	imp       *Import
 }
 
 func importWorker(jobs <-chan ImportJob) {
@@ -21,8 +22,9 @@ func importWorker(jobs <-chan ImportJob) {
 		var destinationMainFilename string
 		related := job.related
 		imp := job.imp
-		opt := job.opt
-		importPath := job.path
+		opt := job.importOpt
+		indexOpt := job.indexOpt
+		importPath := job.importOpt.Path
 
 		event.Publish("import.file", event.Data{
 			"fileName": related.main.Filename(),
@@ -44,10 +46,16 @@ func importWorker(jobs <-chan ImportJob) {
 					log.Infof("import: moving related %s file \"%s\" to \"%s\"", f.Type(), relativeFilename, destinationFilename)
 				}
 
-				if err := f.Move(destinationFilename); err != nil {
-					log.Errorf("import: could not move file to \"%s\" (%s)", destinationMainFilename, err.Error())
+				if opt.Move {
+					if err := f.Move(destinationFilename); err != nil {
+						log.Errorf("import: could not move file to \"%s\" (%s)", destinationMainFilename, err.Error())
+					}
+				} else {
+					if err := f.Copy(destinationFilename); err != nil {
+						log.Errorf("import: could not copy file to \"%s\" (%s)", destinationMainFilename, err.Error())
+					}
 				}
-			} else if imp.removeExistingFiles {
+			} else if opt.RemoveExistingFiles {
 				if err := f.Remove(); err != nil {
 					log.Errorf("import: could not delete file \"%s\" (%s)", f.Filename(), err.Error())
 				} else {
@@ -91,7 +99,7 @@ func importWorker(jobs <-chan ImportJob) {
 			ind := imp.index
 
 			if related.main != nil {
-				res := ind.MediaFile(related.main, opt)
+				res := ind.MediaFile(related.main, indexOpt)
 				log.Infof("import: %s main %s file \"%s\"", res, related.main.Type(), related.main.RelativeFilename(ind.originalsPath()))
 				done[related.main.Filename()] = true
 			} else {
@@ -107,7 +115,7 @@ func importWorker(jobs <-chan ImportJob) {
 					continue
 				}
 
-				res := ind.MediaFile(f, opt)
+				res := ind.MediaFile(f, indexOpt)
 				done[f.Filename()] = true
 
 				log.Infof("import: %s related %s file \"%s\"", res, f.Type(), f.RelativeFilename(ind.originalsPath()))

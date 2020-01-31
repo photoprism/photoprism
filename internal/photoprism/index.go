@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/nsfw"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Index represents an indexer that indexes files in the originals directory.
@@ -49,9 +50,15 @@ func (ind *Index) Cancel() {
 	mutex.Worker.Cancel()
 }
 
-// Start will index MediaFiles in the originals directory.
+// Start indexes media files in the originals directory.
 func (ind *Index) Start(options IndexOptions) map[string]bool {
 	done := make(map[string]bool)
+	originalsPath := ind.originalsPath()
+
+	if !fs.PathExists(originalsPath) {
+		event.Error(fmt.Sprintf("index: %s does not exist", originalsPath))
+		return done
+	}
 
 	if err := mutex.Worker.Start(); err != nil {
 		event.Error(fmt.Sprintf("index: %s", err.Error()))
@@ -79,7 +86,7 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 		}()
 	}
 
-	err := filepath.Walk(ind.originalsPath(), func(filename string, fileInfo os.FileInfo, err error) error {
+	err := filepath.Walk(originalsPath, func(filename string, fileInfo os.FileInfo, err error) error {
 		defer func() {
 			if err := recover(); err != nil {
 				log.Errorf("index: %s [panic]", err)
@@ -129,9 +136,9 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 
 		jobs <- IndexJob{
 			filename: mf.Filename(),
-			related: related,
-			opt:     options,
-			ind:     ind,
+			related:  related,
+			opt:      options,
+			ind:      ind,
 		}
 
 		return nil

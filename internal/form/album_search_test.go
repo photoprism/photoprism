@@ -34,7 +34,10 @@ func TestParseQueryStringAlbum(t *testing.T) {
 
 		log.Debugf("%+v\n", form)
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal("err should be nil")
+		}
+
 		assert.Equal(t, "album1", form.Name)
 		assert.Equal(t, false, form.Favorites)
 		assert.Equal(t, 100, form.Offset)
@@ -48,7 +51,10 @@ func TestParseQueryStringAlbum(t *testing.T) {
 
 		log.Debugf("%+v\n", form)
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal("err should be nil")
+		}
+
 		assert.Equal(t, "tübingen", form.Query)
 	})
 	t.Run("query for invalid filter", func(t *testing.T) {
@@ -56,23 +62,33 @@ func TestParseQueryStringAlbum(t *testing.T) {
 
 		err := form.ParseQueryString()
 
+		if err == nil {
+			t.FailNow()
+		}
+
 		log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "unknown filter: Xxx", err.Error())
 	})
-	t.Run("query for favorites with invalid type", func(t *testing.T) {
+	t.Run("query for favorites with uncommon bool value", func(t *testing.T) {
 		form := &AlbumSearch{Query: "favorites:cat"}
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		if err != nil {
+			t.Fatal("err should be nil")
+		}
 
-		assert.Equal(t, "not a bool value: Favorites", err.Error())
+		assert.True(t, form.Favorites)
 	})
 	t.Run("query for count with invalid type", func(t *testing.T) {
 		form := &AlbumSearch{Query: "count:cat"}
 
 		err := form.ParseQueryString()
+
+		if err == nil {
+			t.FailNow()
+		}
 
 		log.Debugf("%+v\n", form)
 

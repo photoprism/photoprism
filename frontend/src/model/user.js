@@ -8,7 +8,7 @@ class User extends Abstract {
             ID: 0,
             FirstName: "",
             LastName: "",
-        }
+        };
     }
 
     getEntityName() {

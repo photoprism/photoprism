@@ -12,9 +12,9 @@ import (
 type EntityEvent string
 
 const (
-	EntityUpdated  EntityEvent = "updated"
-	EntityCreated  EntityEvent = "created"
-	EntityDeleted  EntityEvent = "deleted"
+	EntityUpdated EntityEvent = "updated"
+	EntityCreated EntityEvent = "created"
+	EntityDeleted EntityEvent = "deleted"
 )
 
 func PublishPhotoEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Repo) {

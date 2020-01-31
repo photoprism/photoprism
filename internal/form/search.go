@@ -8,6 +8,7 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/photoprism/photoprism/pkg/txt"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/araddon/dateparse"
@@ -66,13 +67,7 @@ func ParseQueryString(f SearchForm) (result error) {
 					case string:
 						field.SetString(stringValue)
 					case bool:
-						if stringValue == "1" || stringValue == "true" || stringValue == "yes" {
-							field.SetBool(true)
-						} else if stringValue == "0" || stringValue == "false" || stringValue == "no" {
-							field.SetBool(false)
-						} else {
-							result = fmt.Errorf("not a bool value: %s", fieldName)
-						}
+						field.SetBool(txt.Bool(stringValue))
 					default:
 						result = fmt.Errorf("unsupported type: %s", fieldName)
 					}

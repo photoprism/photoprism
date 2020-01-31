@@ -1,6 +1,7 @@
 package config
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -17,7 +18,7 @@ func TestNewConfig(t *testing.T) {
 
 	assert.IsType(t, new(Config), c)
 
-	assert.Equal(t, fs.ExpandFilename("../../assets"), c.AssetsPath())
+	assert.Equal(t, fs.Abs("../../assets"), c.AssetsPath())
 	assert.False(t, c.Debug())
 	assert.False(t, c.ReadOnly())
 }
@@ -170,24 +171,27 @@ func TestConfig_OriginalsPath(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	path := c.OriginalsPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/testdata/originals", path)
+	result := c.OriginalsPath()
+	assert.True(t, strings.HasPrefix(result, "/"))
+	assert.True(t, strings.HasSuffix(result, "assets/testdata/originals"))
 }
 
 func TestConfig_ImportPath(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	path := c.ImportPath()
-	assert.Equal(t, ".", path)
+	result := c.ImportPath()
+	assert.True(t, strings.HasPrefix(result, "/"))
+	assert.True(t, strings.HasSuffix(result, "assets/testdata/import"))
 }
 
 func TestConfig_ExportPath(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	path := c.ExportPath()
-	assert.Equal(t, ".", path)
+	result := c.ExportPath()
+	assert.True(t, strings.HasPrefix(result, "/"))
+	assert.True(t, strings.HasSuffix(result, "assets/testdata/export"))
 }
 
 func TestConfig_SipsBin(t *testing.T) {
@@ -242,16 +246,15 @@ func TestConfig_CachePath(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	path := c.CachePath()
-	assert.Equal(t, "", path)
+	assert.True(t, strings.HasSuffix(c.CachePath(), "assets/testdata/cache"))
 }
 
 func TestConfig_ThumbnailsPath(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	path := c.ThumbnailsPath()
-	assert.Equal(t, "/thumbnails", path)
+	assert.True(t, strings.HasPrefix(c.ThumbnailsPath(), "/"))
+	assert.True(t, strings.HasSuffix(c.ThumbnailsPath(), "assets/testdata/cache/thumbnails"))
 }
 
 func TestConfig_AssetsPath(t *testing.T) {

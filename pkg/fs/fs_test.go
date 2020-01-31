@@ -8,9 +8,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestExists(t *testing.T) {
+func TestFileExists(t *testing.T) {
 	assert.True(t, FileExists("./testdata/test.jpg"))
 	assert.False(t, FileExists("./foo.jpg"))
+}
+
+func TestPathExists(t *testing.T) {
+	assert.True(t, PathExists("./testdata"))
+	assert.False(t, PathExists("./testdata/test.jpg"))
+	assert.False(t, PathExists("./testdata3ggdtgdg"))
 }
 
 func TestOverwrite(t *testing.T) {
@@ -23,25 +29,24 @@ func TestOverwrite(t *testing.T) {
 	defer os.RemoveAll(tmpPath)
 	result := Overwrite("./testdata/_tmp/notyetexisting.jpg", data)
 	assert.FileExists(t, "./testdata/_tmp/notyetexisting.jpg")
-	t.Log(result)
-
+	assert.True(t, result)
 }
 
 func TestExpandedFilename(t *testing.T) {
 	t.Run("test.jpg", func(t *testing.T) {
-		filename := ExpandFilename("./testdata/test.jpg")
+		filename := Abs("./testdata/test.jpg")
 		assert.Contains(t, filename, "/testdata/test.jpg")
 		assert.IsType(t, "", filename)
 	})
 	t.Run("empty filename", func(t *testing.T) {
-		filename := ExpandFilename("")
+		filename := Abs("")
 		assert.Equal(t, "", filename)
 		assert.IsType(t, "", filename)
 	})
 	t.Run("~ in filename", func(t *testing.T) {
 		usr, _ := user.Current()
 		expected := usr.HomeDir + "/test.jpg"
-		filename := ExpandFilename("~/test.jpg")
+		filename := Abs("~/test.jpg")
 		assert.Equal(t, expected, filename)
 		assert.IsType(t, "", filename)
 	})

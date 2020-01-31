@@ -136,7 +136,9 @@
                     this.indexing = true;
                     const ctx = this;
 
-                    Api.post('import/upload/' + this.started).then(() => {
+                    Api.post('import/upload/' + this.started, {
+                        move: true,
+                    }).then(() => {
                         Notify.unblockUI();
                         Notify.success(ctx.$gettext("Upload complete"));
                         ctx.busy = false;

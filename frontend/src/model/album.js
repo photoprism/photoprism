@@ -22,8 +22,8 @@ class Album extends Abstract {
             AlbumTemplate: "",
             CreatedAt: "",
             UpdatedAt: "",
-            DeletedAt: null
-        }
+            DeletedAt: null,
+        };
     }
 
     getEntityName() {

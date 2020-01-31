@@ -2,6 +2,9 @@ package commands
 
 import (
 	"context"
+	"errors"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/classify"
@@ -11,14 +14,15 @@ import (
 	"github.com/urfave/cli"
 )
 
-// Imports photos from path defined in command-line args
-var ImportCommand = cli.Command{
-	Name:   "import",
-	Usage:  "Moves and indexes photos from import directory",
-	Action: importAction,
+var MoveCommand = cli.Command{
+	Name:   "move",
+	Aliases: []string{"mv"},
+	Usage:  "Moves files to originals path, converts and indexes them as needed",
+	Action: moveAction,
 }
 
-func importAction(ctx *cli.Context) error {
+// Moves photos to originals path.
+func moveAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
@@ -39,7 +43,25 @@ func importAction(ctx *cli.Context) error {
 
 	conf.MigrateDb()
 
-	log.Infof("importing photos from %s", conf.ImportPath())
+	sourcePath := strings.TrimSpace(ctx.Args().First())
+
+	if sourcePath == "" {
+		sourcePath = conf.ImportPath()
+	} else {
+		abs, err := filepath.Abs(sourcePath)
+
+		if err != nil {
+			return err
+		}
+
+		sourcePath = abs
+	}
+
+	if sourcePath == conf.OriginalsPath() {
+		return errors.New("import path is identical with originals path")
+	}
+
+	log.Infof("moving media files from %s to %s", sourcePath, conf.OriginalsPath())
 
 	tensorFlow := classify.New(conf.ResourcesPath(), conf.TensorFlowDisabled())
 	nsfwDetector := nsfw.New(conf.NSFWModelPath())
@@ -49,12 +71,13 @@ func importAction(ctx *cli.Context) error {
 	convert := photoprism.NewConvert(conf)
 
 	imp := photoprism.NewImport(conf, ind, convert)
+	opt := photoprism.ImportOptionsMove(sourcePath)
 
-	imp.Start(conf.ImportPath())
+	imp.Start(opt)
 
 	elapsed := time.Since(start)
 
-	log.Infof("photo import completed in %s", elapsed)
+	log.Infof("import completed in %s", elapsed)
 	conf.Shutdown()
 	return nil
 }

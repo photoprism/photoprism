@@ -36,7 +36,9 @@ func TestParseQueryStringLabel(t *testing.T) {
 
 		log.Debugf("%+v\n", form)
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal("err should be nil")
+		}
 		assert.Equal(t, "cat", form.Slug)
 		assert.Equal(t, false, form.Favorites)
 		assert.Equal(t, 2, form.Offset)
@@ -49,7 +51,10 @@ func TestParseQueryStringLabel(t *testing.T) {
 
 		log.Debugf("%+v\n", form)
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal("err should be nil")
+		}
+
 		assert.Equal(t, "tübingen", form.Query)
 	})
 	t.Run("query for invalid filter", func(t *testing.T) {
@@ -57,23 +62,33 @@ func TestParseQueryStringLabel(t *testing.T) {
 
 		err := form.ParseQueryString()
 
+		if err == nil {
+			t.Fatal("err should NOT be nil")
+		}
+
 		log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "unknown filter: Xxx", err.Error())
 	})
-	t.Run("query for favorites with invalid type", func(t *testing.T) {
+	t.Run("query for favorites with uncommon bool value", func(t *testing.T) {
 		form := &LabelSearch{Query: "favorites:0.99"}
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		if err != nil {
+			t.Fatal("err should be nil")
+		}
 
-		assert.Equal(t, "not a bool value: Favorites", err.Error())
+		assert.True(t, form.Favorites)
 	})
 	t.Run("query for count with invalid type", func(t *testing.T) {
 		form := &LabelSearch{Query: "count:2019-01-15"}
 
 		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal("err should NOT be nil")
+		}
 
 		log.Debugf("%+v\n", form)
 

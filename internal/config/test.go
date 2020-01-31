@@ -30,7 +30,7 @@ func testDataPath(assetsPath string) string {
 }
 
 func NewTestParams() *Params {
-	assetsPath := fs.ExpandFilename("../../assets")
+	assetsPath := fs.Abs("../../assets")
 
 	testDataPath := testDataPath(assetsPath)
 
@@ -53,7 +53,7 @@ func NewTestParams() *Params {
 }
 
 func NewTestParamsError() *Params {
-	assetsPath := fs.ExpandFilename("../..")
+	assetsPath := fs.Abs("../..")
 
 	testDataPath := testDataPath("../../assets")
 
@@ -124,6 +124,9 @@ func CliTestContext() *cli.Context {
 	globalSet.String("config-file", config.ConfigFile, "doc")
 	globalSet.String("assets-path", config.AssetsPath, "doc")
 	globalSet.String("originals-path", config.OriginalsPath, "doc")
+	globalSet.String("import-path", config.OriginalsPath, "doc")
+	globalSet.String("export-path", config.OriginalsPath, "doc")
+	globalSet.String("cache-path", config.OriginalsPath, "doc")
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
 
@@ -134,6 +137,9 @@ func CliTestContext() *cli.Context {
 	c.Set("config-file", config.ConfigFile)
 	c.Set("assets-path", config.AssetsPath)
 	c.Set("originals-path", config.OriginalsPath)
+	c.Set("import-path", config.ImportPath)
+	c.Set("export-path", config.ExportPath)
+	c.Set("cache-path", config.CachePath)
 	c.Set("darktable-cli", config.DarktableBin)
 	c.Set("detect-nsfw", "true")
 

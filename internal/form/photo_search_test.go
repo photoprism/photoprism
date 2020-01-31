@@ -24,7 +24,10 @@ func TestParseQueryString(t *testing.T) {
 
 		log.Debugf("%+v\n", form)
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal("err should be nil")
+		}
+
 		assert.Equal(t, "cat", form.Label)
 		assert.Equal(t, "foobar baz", form.Query)
 		assert.Equal(t, 23, form.Camera)
@@ -40,7 +43,10 @@ func TestParseQueryString(t *testing.T) {
 
 		log.Debugf("%+v\n", form)
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal("err should be nil")
+		}
+
 		assert.Equal(t, uint(0x258), form.Chroma)
 		assert.Equal(t, "test", form.Description)
 		assert.Equal(t, time.Date(2018, 01, 15, 0, 0, 0, 0, time.UTC), form.After)
@@ -54,7 +60,10 @@ func TestParseQueryString(t *testing.T) {
 
 		log.Debugf("%+v\n", form)
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal("err should be nil")
+		}
+
 		assert.Equal(t, "tübingen", form.Description)
 	})
 	t.Run("query for invalid filter", func(t *testing.T) {
@@ -62,23 +71,33 @@ func TestParseQueryString(t *testing.T) {
 
 		err := form.ParseQueryString()
 
+		if err == nil {
+			t.Fatal("err should NOT be nil")
+		}
+
 		log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "unknown filter: Xxx", err.Error())
 	})
-	t.Run("query for favorites with invalid type", func(t *testing.T) {
+	t.Run("query for favorites with uncommon bool value", func(t *testing.T) {
 		form := &PhotoSearch{Query: "favorites:cat"}
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		if err != nil {
+			t.Fatal("err should NOT be nil")
+		}
 
-		assert.Equal(t, "not a bool value: Favorites", err.Error())
+		assert.True(t, form.Favorites)
 	})
 	t.Run("query for lat with invalid type", func(t *testing.T) {
 		form := &PhotoSearch{Query: "lat:cat"}
 
 		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal("err should NOT be nil")
+		}
 
 		log.Debugf("%+v\n", form)
 
@@ -89,6 +108,10 @@ func TestParseQueryString(t *testing.T) {
 
 		err := form.ParseQueryString()
 
+		if err == nil {
+			t.Fatal("err should NOT be nil")
+		}
+
 		log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
@@ -98,6 +121,10 @@ func TestParseQueryString(t *testing.T) {
 
 		err := form.ParseQueryString()
 
+		if err == nil {
+			t.Fatal("err should NOT be nil")
+		}
+
 		log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
@@ -106,6 +133,10 @@ func TestParseQueryString(t *testing.T) {
 		form := &PhotoSearch{Query: "before:cat"}
 
 		err := form.ParseQueryString()
+
+		if err == nil {
+			t.Fatal("err should NOT be nil")
+		}
 
 		log.Debugf("%+v\n", form)
 

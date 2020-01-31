@@ -4,6 +4,7 @@ import (
 	"context"
 	"runtime"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -35,16 +36,20 @@ func init() {
 }
 
 func initLogger(debug bool) {
-	log.SetFormatter(&logrus.TextFormatter{
-		DisableColors: false,
-		FullTimestamp: true,
-	})
+	var once sync.Once
 
-	if debug {
-		log.SetLevel(logrus.DebugLevel)
-	} else {
-		log.SetLevel(logrus.InfoLevel)
-	}
+	once.Do(func() {
+		log.SetFormatter(&logrus.TextFormatter{
+			DisableColors: false,
+			FullTimestamp: true,
+		})
+
+		if debug {
+			log.SetLevel(logrus.DebugLevel)
+		} else {
+			log.SetLevel(logrus.InfoLevel)
+		}
+	})
 }
 
 func NewConfig(ctx *cli.Context) *Config {

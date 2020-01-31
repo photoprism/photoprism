@@ -34,15 +34,15 @@ class Abstract {
                 let val;
                 if (defaults.hasOwnProperty(key)) {
                     switch (typeof defaults[key]) {
-                        case "bigint":
-                        case "number":
-                            val = parseFloat(this[key]);
-                            break;
-                        case "boolean":
-                            val = !!this[key];
-                            break;
-                        default:
-                            val = this[key];
+                    case "bigint":
+                    case "number":
+                        val = parseFloat(this[key]);
+                        break;
+                    case "boolean":
+                        val = !!this[key];
+                        break;
+                    default:
+                        val = this[key];
                     }
                 } else {
                     val = this[key];

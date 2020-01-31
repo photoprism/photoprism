@@ -18,37 +18,38 @@ import (
 
 // Import represents an importer that can copy/move MediaFiles to the originals directory.
 type Import struct {
-	conf                   *config.Config
-	index                  *Index
-	convert                *Convert
-	removeDotFiles         bool
-	removeExistingFiles    bool
-	removeEmptyDirectories bool
+	conf    *config.Config
+	index   *Index
+	convert *Convert
 }
 
 // NewImport returns a new importer and expects its dependencies as arguments.
 func NewImport(conf *config.Config, index *Index, convert *Convert) *Import {
 	instance := &Import{
-		conf:                   conf,
-		index:                  index,
-		convert:                convert,
-		removeDotFiles:         true,
-		removeExistingFiles:    true,
-		removeEmptyDirectories: true,
+		conf:    conf,
+		index:   index,
+		convert: convert,
 	}
 
 	return instance
 }
 
+// originalsPath returns the original media files path as string.
 func (imp *Import) originalsPath() string {
 	return imp.conf.OriginalsPath()
 }
 
-// Start imports MediaFiles from a directory and converts/indexes them as needed.
-func (imp *Import) Start(importPath string) {
+// Start imports media files from a directory and converts/indexes them as needed.
+func (imp *Import) Start(opt ImportOptions) {
 	var directories []string
 	done := make(map[string]bool)
 	ind := imp.index
+	importPath := opt.Path
+
+	if !fs.PathExists(importPath) {
+		event.Error(fmt.Sprintf("import: %s does not exist", importPath))
+		return
+	}
 
 	if err := mutex.Worker.Start(); err != nil {
 		event.Error(fmt.Sprintf("import: %s", err.Error()))
@@ -75,7 +76,7 @@ func (imp *Import) Start(importPath string) {
 		}()
 	}
 
-	options := IndexOptionsAll()
+	indexOpt := IndexOptionsAll()
 
 	err := filepath.Walk(importPath, func(filename string, fileInfo os.FileInfo, err error) error {
 		defer func() {
@@ -100,8 +101,13 @@ func (imp *Import) Start(importPath string) {
 			return nil
 		}
 
-		if imp.removeDotFiles && strings.HasPrefix(filepath.Base(filename), ".") {
+		if strings.HasPrefix(filepath.Base(filename), ".") {
 			done[filename] = true
+
+			if !opt.RemoveDotFiles {
+				return nil
+			}
+
 			if err := os.Remove(filename); err != nil {
 				log.Errorf("import: could not remove \"%s\" (%s)", filename, err.Error())
 			}
@@ -139,11 +145,11 @@ func (imp *Import) Start(importPath string) {
 		related.files = files
 
 		jobs <- ImportJob{
-			filename: filename,
-			related: related,
-			opt:     options,
-			path:    importPath,
-			imp:     imp,
+			filename:  filename,
+			related:   related,
+			indexOpt:  indexOpt,
+			importOpt: opt,
+			imp:       imp,
 		}
 
 		return nil
@@ -156,7 +162,7 @@ func (imp *Import) Start(importPath string) {
 		return len(directories[i]) > len(directories[j])
 	})
 
-	if imp.removeEmptyDirectories {
+	if opt.RemoveEmptyDirectories {
 		// Remove empty directories from import path
 		for _, directory := range directories {
 			if fs.IsEmpty(directory) {
