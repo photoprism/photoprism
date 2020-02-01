@@ -91,7 +91,7 @@ func (c *Convert) Start(path string) error {
 func (c *Convert) ConvertCommand(image *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, err error) {
 	if image.IsRaw() {
 		if c.conf.SipsBin() != "" {
-			result = exec.Command(c.conf.SipsBin(), "-s format jpeg", image.fileName, "--out "+jpegName)
+			result = exec.Command(c.conf.SipsBin(), "-s", "format", "jpeg", "--out", jpegName, image.fileName)
 		} else if c.conf.DarktableBin() != "" {
 			if xmpName != "" {
 				result = exec.Command(c.conf.DarktableBin(), image.fileName, xmpName, jpegName)
@@ -184,7 +184,11 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 
 	// Run convert command.
 	if err := cmd.Run(); err != nil {
-		return nil, errors.New(stderr.String())
+		if stderr.String() != "" {
+			return nil, errors.New(stderr.String())
+		} else {
+			return nil, err
+		}
 	}
 
 	return NewMediaFile(jpegName)
