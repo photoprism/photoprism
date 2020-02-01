@@ -83,7 +83,7 @@ func (m *MediaFile) DateCreated() time.Time {
 		m.dateCreated = t.ModTime()
 	}
 
-	log.Infof("file: taken at %s", m.dateCreated.String())
+	log.Infof("mediafile: taken at %s", m.dateCreated.String())
 
 	return m.dateCreated
 }
@@ -206,19 +206,7 @@ func (m *MediaFile) Exposure() string {
 
 // CanonicalName returns the canonical name of a media file.
 func (m *MediaFile) CanonicalName() string {
-	var postfix string
-
-	dateCreated := m.DateCreated().UTC()
-
-	if fileHash := m.Hash(); len(fileHash) > 12 {
-		postfix = strings.ToUpper(fileHash[:12])
-	} else {
-		postfix = "NOTFOUND"
-	}
-
-	result := dateCreated.Format("20060102_150405_") + postfix
-
-	return result
+	return CanonicalName(m.DateCreated().UTC(), m.Hash())
 }
 
 // CanonicalNameFromFile returns the canonical name of a file derived from the image name.
@@ -698,15 +686,15 @@ func (m *MediaFile) Thumbnail(path string, typeName string) (filename string, er
 	thumbType, ok := thumb.Types[typeName]
 
 	if !ok {
-		log.Errorf("invalid type: %s", typeName)
-		return "", fmt.Errorf("invalid type: %s", typeName)
+		log.Errorf("mediafile: invalid type %s", typeName)
+		return "", fmt.Errorf("mediafile: invalid type %s", typeName)
 	}
 
 	thumbnail, err := thumb.FromFile(m.Filename(), m.Hash(), path, thumbType.Width, thumbType.Height, thumbType.Options...)
 
 	if err != nil {
-		log.Errorf("could not create thumbnail: %s", err)
-		return "", fmt.Errorf("could not create thumbnail: %s", err)
+		log.Errorf("mediafile: could not create thumbnail (%s)", err)
+		return "", fmt.Errorf("mediafile: could not create thumbnail (%s)", err)
 	}
 
 	return thumbnail, nil
@@ -729,9 +717,9 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 
 	defer func() {
 		switch count {
-		case 0: log.Debug(capture.Time(start, fmt.Sprintf("no new thumbnails created for %s", m.Basename())))
-		case 1: log.Debug(capture.Time(start, fmt.Sprintf("one thumbnail created for %s", m.Basename())))
-		default: log.Debug(capture.Time(start, fmt.Sprintf("%d thumbnails created for %s", count, m.Basename())))
+		case 0: log.Debug(capture.Time(start, fmt.Sprintf("mediafile: no new thumbnails created for %s", m.Basename())))
+		case 1: log.Debug(capture.Time(start, fmt.Sprintf("mediafile: one thumbnail created for %s", m.Basename())))
+		default: log.Debug(capture.Time(start, fmt.Sprintf("mediafile: %d thumbnails created for %s", count, m.Basename())))
 		}
 	}()
 
@@ -750,7 +738,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 		}
 
 		if fileName, err := thumb.Filename(hash, thumbPath, thumbType.Width, thumbType.Height, thumbType.Options...); err != nil {
-			log.Errorf("resample: could not create \"%s\" (%s)", name, err)
+			log.Errorf("mediafile: could not create \"%s\" (%s)", name, err)
 
 			return err
 		} else {
@@ -762,7 +750,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 				img, err := imaging.Open(m.Filename(), imaging.AutoOrientation(true))
 
 				if err != nil {
-					log.Errorf("resample: can't open \"%s\" (%s)", m.Filename(), err.Error())
+					log.Errorf("mediafile: can't open \"%s\" (%s)", m.Filename(), err.Error())
 					return err
 				}
 
@@ -781,7 +769,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 			}
 
 			if err != nil {
-				log.Errorf("resample: could not create \"%s\" (%s)", name, err)
+				log.Errorf("mediafile: could not create \"%s\" (%s)", name, err)
 				return err
 			}
 

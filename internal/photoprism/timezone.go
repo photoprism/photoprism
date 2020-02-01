@@ -9,7 +9,7 @@ func (m *MediaFile) TimeZone() (string, error) {
 	meta, err := m.MetaData()
 
 	if err != nil {
-		return "UTC", errors.New("file: unknown time zone, using UTC")
+		return "UTC", errors.New("mediafile: unknown time zone, using UTC")
 	}
 
 	return meta.TimeZone, nil

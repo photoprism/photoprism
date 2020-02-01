@@ -1043,7 +1043,7 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 
 		thumbnail, err := image.Thumbnail(thumbsPath, "tile_500")
 
-		assert.Equal(t, "could not create thumbnail: image: unknown format", err.Error())
+		assert.Equal(t, "mediafile: could not create thumbnail (image: unknown format)", err.Error())
 		t.Log(thumbnail)
 	})
 	t.Run("invalid thumbnail type", func(t *testing.T) {
@@ -1052,7 +1052,7 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 
 		thumbnail, err := image.Thumbnail(thumbsPath, "invalid_500")
 
-		assert.Equal(t, "invalid type: invalid_500", err.Error())
+		assert.Equal(t, "mediafile: invalid type invalid_500", err.Error())
 		t.Log(thumbnail)
 	})
 }
@@ -1083,7 +1083,7 @@ func TestMediaFile_Resample(t *testing.T) {
 
 		thumbnail, err := image.Resample(thumbsPath, "xxx_500")
 
-		assert.Equal(t, "invalid type: xxx_500", err.Error())
+		assert.Equal(t, "mediafile: invalid type xxx_500", err.Error())
 		assert.Empty(t, thumbnail)
 
 	})

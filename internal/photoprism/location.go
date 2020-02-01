@@ -18,7 +18,7 @@ func (m *MediaFile) Location() (*entity.Location, error) {
 	}
 
 	if data.Lat == 0 && data.Lng == 0 {
-		return nil, errors.New("file: no latitude and longitude in metadata")
+		return nil, errors.New("mediafile: no latitude and longitude in metadata")
 	}
 
 	m.location = entity.NewLocation(data.Lat, data.Lng)

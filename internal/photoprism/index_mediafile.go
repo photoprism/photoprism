@@ -86,12 +86,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 
 	if file.FilePrimary {
 		primaryFile = file
-	}
 
-	photo.PhotoPath = filePath
-	photo.PhotoName = fileBase
+		photo.PhotoPath = filePath
+		photo.PhotoName = fileBase
 
-	if file.FilePrimary {
 		if !ind.conf.TensorFlowDisabled() && (fileChanged || o.UpdateKeywords || o.UpdateLabels || o.UpdateTitle) {
 			// Image classification via TensorFlow
 			labels = ind.classifyImage(m)
@@ -244,6 +242,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 	}
 
 	if file.FilePrimary && (fileChanged || o.UpdateKeywords || o.UpdateTitle) {
+		if NonCanonical(fileBase) {
+			log.Debugf("index: extracting keywords from non-canonical file name (%s)", fileBase)
+			keywords = append(keywords, txt.Keywords(filePath)...)
+			keywords = append(keywords, txt.Keywords(fileBase)...)
+		}
+
 		keywords = append(keywords, file.FileMainColor)
 		keywords = append(keywords, labels.Keywords()...)
 		photo.IndexKeywords(keywords, ind.db)
