@@ -9,11 +9,10 @@ import (
 )
 
 type ImportJob struct {
-	filename  string
+	fileName  string
 	related   RelatedFiles
 	indexOpt  IndexOptions
 	importOpt ImportOptions
-	path      string
 	imp       *Import
 }
 
@@ -26,20 +25,27 @@ func importWorker(jobs <-chan ImportJob) {
 		indexOpt := job.indexOpt
 		importPath := job.importOpt.Path
 
+		if related.main == nil {
+			log.Warnf("import: no main file found for %s", job.fileName)
+			continue
+		}
+
+		originalName := related.main.RelativeName(importPath)
+
 		event.Publish("import.file", event.Data{
-			"fileName": related.main.Filename(),
-			"baseName": filepath.Base(related.main.Filename()),
+			"fileName": originalName,
+			"baseName": filepath.Base(related.main.FileName()),
 		})
 
 		for _, f := range related.files {
-			relativeFilename := f.RelativeFilename(importPath)
+			relativeFilename := f.RelativeName(importPath)
 
 			if destinationFilename, err := imp.DestinationFilename(related.main, f); err == nil {
 				if err := os.MkdirAll(path.Dir(destinationFilename), os.ModePerm); err != nil {
 					log.Errorf("import: could not create directories (%s)", err.Error())
 				}
 
-				if related.main.HasSameFilename(f) {
+				if related.main.HasSameName(f) {
 					destinationMainFilename = destinationFilename
 					log.Infof("import: moving main %s file \"%s\" to \"%s\"", f.Type(), relativeFilename, destinationFilename)
 				} else {
@@ -48,18 +54,18 @@ func importWorker(jobs <-chan ImportJob) {
 
 				if opt.Move {
 					if err := f.Move(destinationFilename); err != nil {
-						log.Errorf("import: could not move file to \"%s\" (%s)", destinationMainFilename, err.Error())
+						log.Errorf("import: could not move file to %s (%s)", destinationMainFilename, err.Error())
 					}
 				} else {
 					if err := f.Copy(destinationFilename); err != nil {
-						log.Errorf("import: could not copy file to \"%s\" (%s)", destinationMainFilename, err.Error())
+						log.Errorf("import: could not copy file to %s (%s)", destinationMainFilename, err.Error())
 					}
 				}
 			} else if opt.RemoveExistingFiles {
 				if err := f.Remove(); err != nil {
-					log.Errorf("import: could not delete file \"%s\" (%s)", f.Filename(), err.Error())
+					log.Errorf("import: could not delete %s (%s)", f.FileName(), err.Error())
 				} else {
-					log.Infof("import: deleted \"%s\" (already exists)", relativeFilename)
+					log.Infof("import: deleted %s (already exists)", relativeFilename)
 				}
 			}
 		}
@@ -99,9 +105,9 @@ func importWorker(jobs <-chan ImportJob) {
 			ind := imp.index
 
 			if related.main != nil {
-				res := ind.MediaFile(related.main, indexOpt)
-				log.Infof("import: %s main %s file \"%s\"", res, related.main.Type(), related.main.RelativeFilename(ind.originalsPath()))
-				done[related.main.Filename()] = true
+				res := ind.MediaFile(related.main, indexOpt, originalName)
+				log.Infof("import: %s main %s file \"%s\"", res, related.main.Type(), related.main.RelativeName(ind.originalsPath()))
+				done[related.main.FileName()] = true
 			} else {
 				log.Warnf("import: no main file for %s (conversion to jpeg failed?)", destinationMainFilename)
 			}
@@ -111,14 +117,14 @@ func importWorker(jobs <-chan ImportJob) {
 					continue
 				}
 
-				if done[f.Filename()] {
+				if done[f.FileName()] {
 					continue
 				}
 
-				res := ind.MediaFile(f, indexOpt)
-				done[f.Filename()] = true
+				res := ind.MediaFile(f, indexOpt, "")
+				done[f.FileName()] = true
 
-				log.Infof("import: %s related %s file \"%s\"", res, f.Type(), f.RelativeFilename(ind.originalsPath()))
+				log.Infof("import: %s related %s file \"%s\"", res, f.Type(), f.RelativeName(ind.originalsPath()))
 			}
 		}
 	}

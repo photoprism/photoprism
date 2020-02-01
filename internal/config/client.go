@@ -18,8 +18,8 @@ func (c *Config) PublicClientConfig() ClientConfig {
 		return c.ClientConfig()
 	}
 
-	jsHash := fs.Hash(c.HttpStaticBuildPath() + "/app.js")
-	cssHash := fs.Hash(c.HttpStaticBuildPath() + "/app.css")
+	jsHash := fs.Checksum(c.HttpStaticBuildPath() + "/app.js")
+	cssHash := fs.Checksum(c.HttpStaticBuildPath() + "/app.css")
 
 	// Feature Flags
 	var flags []string
@@ -196,8 +196,8 @@ func (c *Config) ClientConfig() ClientConfig {
 		categories[i].Title = strings.Title(l.LabelName)
 	}
 
-	jsHash := fs.Hash(c.HttpStaticBuildPath() + "/app.js")
-	cssHash := fs.Hash(c.HttpStaticBuildPath() + "/app.css")
+	jsHash := fs.Checksum(c.HttpStaticBuildPath() + "/app.js")
+	cssHash := fs.Checksum(c.HttpStaticBuildPath() + "/app.css")
 
 	// Feature Flags
 	var flags []string

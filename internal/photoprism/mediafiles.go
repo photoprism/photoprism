@@ -10,8 +10,8 @@ func (f MediaFiles) Len() int {
 
 // Less compares two files based on the filename.
 func (f MediaFiles) Less(i, j int) bool {
-	fileName1 := f[i].Filename()
-	fileName2 := f[j].Filename()
+	fileName1 := f[i].FileName()
+	fileName2 := f[j].FileName()
 
 	if len(fileName1) == len(fileName2) {
 		return fileName1 < fileName2

@@ -3119,61 +3119,74 @@ consomme:
   threshold: 0.2
   categories:
     - dining
+    - food
 
 hot pot:
   label: soup
   threshold: 0.2
   categories:
     - dining
+    - food
 
 trifle:
   label: dessert
   threshold: 0.2
   categories:
     - dining
+    - food
 
 ice cream:
   label: dessert
   threshold: 0.3
+  categories:
+    - food
 
 ice lolly:
   label: dessert
   threshold: 0.4
+  categories:
+    - food
 
 chocolate sauce:
   label: dessert
   threshold: 0.2
+  categories:
+    - food
 
 french loaf:
   threshold: 0.4
   categories:
     - bakery
+    - food
 
 bagel:
   threshold: 0.4
   categories:
     - bakery
+    - food
 
 pretzel:
   threshold: 0.4
   categories:
     - bakery
+    - food
 
-fast food:
-  label: fast food
+food:
+  label: food
   threshold: 0.33
 
 cheeseburger:
-  see: fast food
+  see: food
 
 hotdog:
-  see: fast food
+  see: food
 
 vegetables:
   label: vegetables
   threshold: 0.33
   categories:
     - dining
+    - food
 
 mashed potato:
   see: vegetables
@@ -3205,7 +3218,7 @@ squash:
   label: vegetables
   threshold: 0.4
   categories:
-    - dining
+    - food
 
 spaghetti squash:
   see: squash
@@ -3218,59 +3231,56 @@ acorn squash:
   threshold: 0.4
   categories:
     - vegetables
+    - food
+
+fruits:
+  label: fruits
+  threshold: 0.3
+  categories:
+    - food
 
 granny smith:
-  label: apple
-  threshold: 0.3
-  categories:
-    - fruit
+  see: fruits
 
 strawberry:
-  threshold: 0.3
-  categories:
-    - fruit
+  see: fruits
 
 orange:
-  threshold: 0.4
-  categories:
-    - fruit
+  see: fruits
 
 lemon:
-  threshold: 0.4
-  categories:
-    - fruit
+  see: fruits
 
 fig:
-  label: fruit
-  threshold: 0.3
+  see: fruits
 
 pineapple:
   threshold: 0.3
   categories:
-    - fruit
+    - fruits
+    - food
 
 banana:
   threshold: 0.3
   categories:
-    - fruit
+    - fruits
+    - food
 
 jackfruit:
-  label: fruit
-  threshold: 0.5
+  see: fruits
 
 custard apple:
-  label: fruit
-  threshold: 0.2
+  see: fruits
 
 pomegranate:
-  label: fruit
-  threshold: 0.3
+  see: fruits
 
 carbonara:
   label: pasta
   threshold: 0.2
   categories:
     - dining
+    - food
 
 dough:
   label: cooking
@@ -3281,18 +3291,21 @@ meat loaf:
   threshold: 0.2
   categories:
     - cooking
+    - food
 
 pizza:
   threshold: 0.2
   categories:
-    - fast food
+    - food
 
 potpie:
   label: cooking
   threshold: 0.2
+  categories:
+    - food
 
 burrito:
-  see: fast food
+  see: food
 
 red wine:
   label: wine

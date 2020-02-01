@@ -201,7 +201,7 @@ func TestMediaFileCanonicalName(t *testing.T) {
 
 	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
 	assert.Nil(t, err)
-	assert.Equal(t, "20180111_110938_EB4B2A989C20", mediaFile.CanonicalName())
+	assert.Equal(t, "20180111_110938_B6B8AB4F", mediaFile.CanonicalName())
 }
 
 func TestMediaFileCanonicalNameFromFile(t *testing.T) {
@@ -236,14 +236,14 @@ func TestMediaFile_EditedFilename(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/IMG_4120.JPG")
 		assert.Nil(t, err)
 		assert.Nil(t, err)
-		assert.Equal(t, conf.ExamplesPath()+"/IMG_E4120.JPG", mediaFile.EditedFilename())
+		assert.Equal(t, conf.ExamplesPath()+"/IMG_E4120.JPG", mediaFile.EditedName())
 	})
 
 	t.Run("fern_green.jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/fern_green.jpg")
 		assert.Nil(t, err)
 		assert.Nil(t, err)
-		assert.Equal(t, "", mediaFile.EditedFilename())
+		assert.Equal(t, "", mediaFile.EditedName())
 	})
 }
 
@@ -264,9 +264,9 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		assert.Len(t, related.files, 3)
 
 		for _, result := range related.files {
-			t.Logf("Filename: %s", result.Filename())
+			t.Logf("FileName: %s", result.FileName())
 
-			filename := result.Filename()
+			filename := result.FileName()
 
 			extension := result.Extension()
 
@@ -290,9 +290,9 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		assert.Len(t, related.files, 3)
 
 		for _, result := range related.files {
-			t.Logf("Filename: %s", result.Filename())
+			t.Logf("FileName: %s", result.FileName())
 
-			filename := result.Filename()
+			filename := result.FileName()
 
 			extension := result.Extension()
 
@@ -316,12 +316,12 @@ func TestMediaFile_RelatedFiles_Ordering(t *testing.T) {
 
 	assert.Len(t, related.files, 5)
 
-	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.AAE", related.files[0].Filename())
-	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.JPG", related.files[1].Filename())
+	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.AAE", related.files[0].FileName())
+	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.JPG", related.files[1].FileName())
 
 	for _, result := range related.files {
-		filename := result.Filename()
-		t.Logf("Filename: %s", filename)
+		filename := result.FileName()
+		t.Logf("FileName: %s", filename)
 	}
 }
 
@@ -330,10 +330,10 @@ func TestMediaFile_SetFilename(t *testing.T) {
 
 	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/turtle_brown_blue.jpg")
 	assert.Nil(t, err)
-	mediaFile.SetFilename("newFilename")
-	assert.Equal(t, "newFilename", mediaFile.filename)
-	mediaFile.SetFilename("turtle_brown_blue")
-	assert.Equal(t, "turtle_brown_blue", mediaFile.filename)
+	mediaFile.SetFileName("newFilename")
+	assert.Equal(t, "newFilename", mediaFile.fileName)
+	mediaFile.SetFileName("turtle_brown_blue")
+	assert.Equal(t, "turtle_brown_blue", mediaFile.fileName)
 }
 
 func TestMediaFile_RelativeFilename(t *testing.T) {
@@ -343,20 +343,20 @@ func TestMediaFile_RelativeFilename(t *testing.T) {
 	assert.Nil(t, err)
 
 	t.Run("directory with end slash", func(t *testing.T) {
-		filename := mediaFile.RelativeFilename("/go/src/github.com/photoprism/photoprism/assets/resources/")
+		filename := mediaFile.RelativeName("/go/src/github.com/photoprism/photoprism/assets/resources/")
 		assert.Equal(t, "examples/tree_white.jpg", filename)
 	})
 
 	t.Run("directory without end slash", func(t *testing.T) {
-		filename := mediaFile.RelativeFilename("/go/src/github.com/photoprism/photoprism/assets/resources")
+		filename := mediaFile.RelativeName("/go/src/github.com/photoprism/photoprism/assets/resources")
 		assert.Equal(t, "examples/tree_white.jpg", filename)
 	})
 	t.Run("directory not part of filename", func(t *testing.T) {
-		filename := mediaFile.RelativeFilename("xxx/")
+		filename := mediaFile.RelativeName("xxx/")
 		assert.Equal(t, conf.ExamplesPath()+"/tree_white.jpg", filename)
 	})
 	t.Run("directory equals example path", func(t *testing.T) {
-		filename := mediaFile.RelativeFilename("/go/src/github.com/photoprism/photoprism/assets/resources/examples")
+		filename := mediaFile.RelativeName("/go/src/github.com/photoprism/photoprism/assets/resources/examples")
 		assert.Equal(t, "tree_white.jpg", filename)
 	})
 }
@@ -393,15 +393,15 @@ func TestMediaFile_RelativeBasename(t *testing.T) {
 	assert.Nil(t, err)
 
 	t.Run("directory with end slash", func(t *testing.T) {
-		basename := mediaFile.RelativeBasename("/go/src/github.com/photoprism/photoprism/assets/resources/")
+		basename := mediaFile.RelativeBase("/go/src/github.com/photoprism/photoprism/assets/resources/")
 		assert.Equal(t, "examples/tree_white", basename)
 	})
 	t.Run("directory without end slash", func(t *testing.T) {
-		basename := mediaFile.RelativeBasename("/go/src/github.com/photoprism/photoprism/assets/resources")
+		basename := mediaFile.RelativeBase("/go/src/github.com/photoprism/photoprism/assets/resources")
 		assert.Equal(t, "examples/tree_white", basename)
 	})
 	t.Run("directory equals example path", func(t *testing.T) {
-		basename := mediaFile.RelativeBasename("/go/src/github.com/photoprism/photoprism/assets/resources/examples/")
+		basename := mediaFile.RelativeBase("/go/src/github.com/photoprism/photoprism/assets/resources/examples/")
 		assert.Equal(t, "tree_white", basename)
 	})
 
@@ -423,21 +423,21 @@ func TestMediaFile_Basename(t *testing.T) {
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/limes.jpg")
 		assert.Nil(t, err)
-		assert.Equal(t, "limes", mediaFile.Basename())
+		assert.Equal(t, "limes", mediaFile.Base())
 	})
 	t.Run("/IMG_4120 copy.JPG", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/IMG_4120 copy.JPG")
 		assert.Nil(t, err)
-		assert.Equal(t, "IMG_4120", mediaFile.Basename())
+		assert.Equal(t, "IMG_4120", mediaFile.Base())
 	})
 	t.Run("/IMG_4120 (1).JPG", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/IMG_4120 (1).JPG")
 		assert.Nil(t, err)
-		assert.Equal(t, "IMG_4120", mediaFile.Basename())
+		assert.Equal(t, "IMG_4120", mediaFile.Base())
 	})
 }
 
@@ -525,7 +525,7 @@ func TestMediaFile_Move(t *testing.T) {
 	}
 
 	assert.True(t, fs.FileExists(destName))
-	assert.Equal(t, destName, m.Filename())
+	assert.Equal(t, destName, m.FileName())
 }
 
 func TestMediaFile_Copy(t *testing.T) {
@@ -892,7 +892,7 @@ func TestMediaFile_Jpeg(t *testing.T) {
 		assert.Nil(t, err)
 		file, err := mediaFile.Jpeg()
 		assert.Nil(t, err)
-		assert.FileExists(t, file.filename)
+		assert.FileExists(t, file.fileName)
 	})
 	t.Run("/iphone_7.json", func(t *testing.T) {
 		conf := config.TestConfig()

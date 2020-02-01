@@ -86,7 +86,7 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 		}()
 	}
 
-	err := filepath.Walk(originalsPath, func(filename string, fileInfo os.FileInfo, err error) error {
+	err := filepath.Walk(originalsPath, func(fileName string, fileInfo os.FileInfo, err error) error {
 		defer func() {
 			if err := recover(); err != nil {
 				log.Errorf("index: %s [panic]", err)
@@ -97,15 +97,15 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 			return errors.New("indexing canceled")
 		}
 
-		if err != nil || done[filename] {
+		if err != nil || done[fileName] {
 			return nil
 		}
 
-		if fileInfo.IsDir() || strings.HasPrefix(filepath.Base(filename), ".") {
+		if fileInfo.IsDir() || strings.HasPrefix(filepath.Base(fileName), ".") {
 			return nil
 		}
 
-		mf, err := NewMediaFile(filename)
+		mf, err := NewMediaFile(fileName)
 
 		if err != nil || !mf.IsPhoto() {
 			return nil
@@ -122,20 +122,20 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 		var files MediaFiles
 
 		for _, f := range related.files {
-			if done[f.Filename()] {
+			if done[f.FileName()] {
 				continue
 			}
 
 			files = append(files, f)
-			done[f.Filename()] = true
+			done[f.FileName()] = true
 		}
 
-		done[mf.Filename()] = true
+		done[mf.FileName()] = true
 
 		related.files = files
 
 		jobs <- IndexJob{
-			filename: mf.Filename(),
+			filename: mf.FileName(),
 			related:  related,
 			opt:      options,
 			ind:      ind,

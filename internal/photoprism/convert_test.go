@@ -44,13 +44,13 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 	infoJpeg, err := imageJpeg.MetaData()
 
-	assert.Nilf(t, err, "UpdateExif() failed for "+imageJpeg.Filename())
+	assert.Nilf(t, err, "UpdateExif() failed for "+imageJpeg.FileName())
 
 	if err != nil {
-		t.Fatalf("%s for %s", err.Error(), imageJpeg.Filename())
+		t.Fatalf("%s for %s", err.Error(), imageJpeg.FileName())
 	}
 
-	assert.Equal(t, jpegFilename, imageJpeg.filename)
+	assert.Equal(t, jpegFilename, imageJpeg.fileName)
 
 	assert.Equal(t, "Canon EOS 7D", infoJpeg.CameraModel)
 
@@ -76,7 +76,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 		t.Fatal("imageRaw is nil")
 	}
 
-	assert.NotEqual(t, rawFilename, imageRaw.filename)
+	assert.NotEqual(t, rawFilename, imageRaw.fileName)
 
 	infoRaw, err := imageRaw.MetaData()
 
@@ -106,7 +106,7 @@ func TestConvert_Start(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	assert.Equal(t, jpegFilename, image.filename, "FileName must be the same")
+	assert.Equal(t, jpegFilename, image.fileName, "FileName must be the same")
 
 	infoRaw, err := image.MetaData()
 

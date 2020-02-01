@@ -33,6 +33,8 @@ const (
 	TypeXML Type = "xml"
 	// YAML metadata / config / sidecar file.
 	TypeYaml Type = "yml"
+	// JSON metadata / config / sidecar file.
+	TypeJson Type = "json"
 	// Text config / sidecar file.
 	TypeText Type = "txt"
 	// Markdown text sidecar file.
@@ -106,4 +108,5 @@ var Ext = map[string]Type{
 	".xml":  TypeXML,
 	".txt":  TypeText,
 	".md":   TypeMarkdown,
+	".json": TypeJson,
 }

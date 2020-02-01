@@ -16,3 +16,14 @@ func TestHash(t *testing.T) {
 		assert.Equal(t, "", hash)
 	})
 }
+
+func TestChecksum(t *testing.T) {
+	t.Run("existing image", func(t *testing.T) {
+		hash := Checksum("testdata/test.jpg")
+		assert.Equal(t, "5239d867", hash)
+	})
+	t.Run("not existing image", func(t *testing.T) {
+		hash := Checksum("testdata/xxx.jpg")
+		assert.Equal(t, "", hash)
+	})
+}

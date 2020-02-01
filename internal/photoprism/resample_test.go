@@ -176,7 +176,7 @@ func TestThumb_Create(t *testing.T) {
 
 		res, err := thumb.Create(&img, expectedFilename, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
-		if err != nil || res == nil{
+		if err != nil || res == nil {
 			t.Fatal("err should be nil and res should NOT be nil")
 		}
 
@@ -203,7 +203,7 @@ func TestThumb_Create(t *testing.T) {
 
 		res, err := thumb.Create(&img, expectedFilename, -1, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
-		if err == nil || res == nil{
+		if err == nil || res == nil {
 			t.Fatal("err and res should NOT be nil")
 		}
 

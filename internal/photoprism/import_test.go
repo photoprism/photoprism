@@ -46,7 +46,7 @@ func TestImport_DestinationFilename(t *testing.T) {
 
 	// TODO: Check for errors!
 
-	assert.Equal(t, conf.OriginalsPath()+"/2019/07/20190705_153230_6E16EB388AD2.cr2", filename)
+	assert.Equal(t, conf.OriginalsPath()+"/2019/07/20190705_153230_C167C6FD.cr2", filename)
 }
 
 func TestImport_Start(t *testing.T) {

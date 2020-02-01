@@ -6,6 +6,6 @@ import (
 
 // MetaData returns exif meta data of a media file.
 func (m *MediaFile) MetaData() (result meta.Data, err error) {
-	m.once.Do(func() { m.metaData, err = meta.Exif(m.Filename()) })
+	m.once.Do(func() { m.metaData, err = meta.Exif(m.FileName()) })
 	return m.metaData, err
 }

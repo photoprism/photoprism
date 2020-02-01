@@ -48,7 +48,7 @@ func (c *Convert) Start(path string) error {
 		}()
 	}
 
-	err := filepath.Walk(path, func(filename string, fileInfo os.FileInfo, err error) error {
+	err := filepath.Walk(path, func(fileName string, fileInfo os.FileInfo, err error) error {
 		defer func() {
 			if err := recover(); err != nil {
 				log.Errorf("convert: %s [panic]", err)
@@ -67,7 +67,7 @@ func (c *Convert) Start(path string) error {
 			return nil
 		}
 
-		mf, err := NewMediaFile(filename)
+		mf, err := NewMediaFile(fileName)
 
 		if err != nil || !(mf.IsRaw() || mf.IsHEIF() || mf.IsImageOther()) {
 			return nil
@@ -88,21 +88,21 @@ func (c *Convert) Start(path string) error {
 }
 
 // ConvertCommand returns the command for converting files to JPEG, depending on the format.
-func (c *Convert) ConvertCommand(image *MediaFile, jpegFilename string, xmpFilename string) (result *exec.Cmd, err error) {
+func (c *Convert) ConvertCommand(image *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, err error) {
 	if image.IsRaw() {
 		if c.conf.SipsBin() != "" {
-			result = exec.Command(c.conf.SipsBin(), "-s format jpeg", image.filename, "--out "+jpegFilename)
+			result = exec.Command(c.conf.SipsBin(), "-s format jpeg", image.fileName, "--out "+jpegName)
 		} else if c.conf.DarktableBin() != "" {
-			if xmpFilename != "" {
-				result = exec.Command(c.conf.DarktableBin(), image.filename, xmpFilename, jpegFilename)
+			if xmpName != "" {
+				result = exec.Command(c.conf.DarktableBin(), image.fileName, xmpName, jpegName)
 			} else {
-				result = exec.Command(c.conf.DarktableBin(), image.filename, jpegFilename)
+				result = exec.Command(c.conf.DarktableBin(), image.fileName, jpegName)
 			}
 		} else {
-			return nil, fmt.Errorf("convert: no binary for raw to jpeg could be found (%s)", image.Filename())
+			return nil, fmt.Errorf("convert: no binary for raw to jpeg could be found (%s)", image.FileName())
 		}
 	} else if image.IsHEIF() {
-		result = exec.Command(c.conf.HeifConvertBin(), image.filename, jpegFilename)
+		result = exec.Command(c.conf.HeifConvertBin(), image.fileName, jpegName)
 	} else {
 		return nil, fmt.Errorf("convert: image type not supported for conversion (%s)", image.Type())
 	}
@@ -113,55 +113,55 @@ func (c *Convert) ConvertCommand(image *MediaFile, jpegFilename string, xmpFilen
 // ToJpeg converts a single image file to JPEG if possible.
 func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	if !image.Exists() {
-		return nil, fmt.Errorf("convert: can not convert to jpeg, file does not exist (%s)", image.Filename())
+		return nil, fmt.Errorf("convert: can not convert to jpeg, file does not exist (%s)", image.FileName())
 	}
 
 	if image.IsJpeg() {
 		return image, nil
 	}
 
-	baseFilename := image.DirectoryBasename()
+	base := image.AbsBase()
 
-	jpegFilename := baseFilename + ".jpg"
+	jpegName := base + ".jpg"
 
-	mediaFile, err := NewMediaFile(jpegFilename)
+	mediaFile, err := NewMediaFile(jpegName)
 
 	if err == nil {
 		return mediaFile, nil
 	}
 
 	if c.conf.ReadOnly() {
-		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.Filename())
+		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.FileName())
 	}
 
-	log.Infof("convert: \"%s\" -> \"%s\"", image.filename, jpegFilename)
+	fileName := image.RelativeName(c.conf.OriginalsPath())
 
-	fileName := image.RelativeFilename(c.conf.OriginalsPath())
+	log.Infof("convert: %s -> %s", fileName, jpegName)
 
-	xmpFilename := baseFilename + ".xmp"
+	xmpName := base + ".xmp"
 
-	if _, err := os.Stat(xmpFilename); err != nil {
-		xmpFilename = ""
+	if _, err := os.Stat(xmpName); err != nil {
+		xmpName = ""
 	}
 
 	event.Publish("index.converting", event.Data{
 		"fileType": image.Type(),
 		"fileName": fileName,
 		"baseName": filepath.Base(fileName),
-		"xmpName":  filepath.Base(xmpFilename),
+		"xmpName":  filepath.Base(xmpName),
 	})
 
 	if image.IsImageOther() {
-		_, err = thumb.Jpeg(image.Filename(), jpegFilename)
+		_, err = thumb.Jpeg(image.FileName(), jpegName)
 
 		if err != nil {
 			return nil, err
 		}
 
-		return NewMediaFile(jpegFilename)
+		return NewMediaFile(jpegName)
 	}
 
-	cmd, err := c.ConvertCommand(image, jpegFilename, xmpFilename)
+	cmd, err := c.ConvertCommand(image, jpegName, xmpName)
 
 	if err != nil {
 		return nil, err
@@ -187,5 +187,5 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return nil, errors.New(stderr.String())
 	}
 
-	return NewMediaFile(jpegFilename)
+	return NewMediaFile(jpegName)
 }

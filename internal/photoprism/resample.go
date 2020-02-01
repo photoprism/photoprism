@@ -67,7 +67,7 @@ func (rs *Resample) Start(force bool) error {
 			return nil
 		}
 
-		fileName := mf.RelativeFilename(originalsPath)
+		fileName := mf.RelativeName(originalsPath)
 
 		event.Publish("index.thumbnails", event.Data{
 			"fileName": fileName,

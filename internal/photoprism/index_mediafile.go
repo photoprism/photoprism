@@ -24,7 +24,7 @@ const (
 
 type IndexResult string
 
-func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
+func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) IndexResult {
 	if m == nil {
 		log.Error("index: media file is nil - you might have found a bug")
 		return indexResultFailed
@@ -39,22 +39,30 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 	var keywords []string
 
 	labels := classify.Labels{}
-	fileBase := m.Basename()
+	fileBase := m.Base()
 	filePath := m.RelativePath(ind.originalsPath())
-	fileName := m.RelativeFilename(ind.originalsPath())
-	fileHash := m.Hash()
+	fileName := m.RelativeName(ind.originalsPath())
+	fileHash := ""
+	fileSize, fileModified := m.Stat()
 	fileChanged := true
 	fileExists := false
 	photoExists := false
 
 	event.Publish("index.indexing", event.Data{
 		"fileHash": fileHash,
+		"fileSize": fileSize,
 		"fileName": fileName,
 		"baseName": filepath.Base(fileName),
 	})
 
-	fileQuery = ind.db.Unscoped().First(&file, "file_hash = ? OR file_name = ?", fileHash, fileName)
+	fileQuery = ind.db.Unscoped().First(&file, "file_name = ?", fileName)
 	fileExists = fileQuery.Error == nil
+
+	if !fileExists && !m.IsSidecar() {
+		fileHash = m.Hash()
+		fileQuery = ind.db.Unscoped().First(&file, "file_hash = ?", fileHash)
+		fileExists = fileQuery.Error == nil
+	}
 
 	if !fileExists {
 		photoQuery = ind.db.Unscoped().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase)
@@ -65,13 +73,23 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 		}
 	} else {
 		photoQuery = ind.db.Unscoped().First(&photo, "id = ?", file.PhotoID)
-		fileChanged = file.FileHash != fileHash
+
+		fileChanged = file.Changed(fileSize, fileModified)
 	}
 
 	photoExists = photoQuery.Error == nil
 
 	if !fileChanged && photoExists && o.SkipUnchanged() {
 		return indexResultSkipped
+	}
+
+	if fileHash == "" {
+		fileHash = m.Hash()
+	}
+
+	if !photoExists {
+		photo.PhotoPath = filePath
+		photo.PhotoName = fileBase
 	}
 
 	if !file.FilePrimary {
@@ -161,7 +179,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 		}
 	} else if m.IsXMP() {
 		// TODO: Proof-of-concept for indexing XMP sidecar files
-		if data, err := meta.XMP(m.Filename()); err == nil {
+		if data, err := meta.XMP(m.FileName()); err == nil {
 			if data.Title != "" && !photo.ModifiedTitle {
 				photo.PhotoTitle = data.Title
 			}
@@ -211,6 +229,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 		ind.addLabels(photo.ID, labels)
 	}
 
+	if originalName != "" {
+		file.OriginalName = originalName
+	}
+
 	file.PhotoID = photo.ID
 	file.PhotoUUID = photo.PhotoUUID
 	file.FileSidecar = m.IsSidecar()
@@ -218,6 +240,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 	file.FileMissing = false
 	file.FileName = fileName
 	file.FileHash = fileHash
+	file.FileSize = fileSize
+	file.FileModified = fileModified
 	file.FileType = string(m.Type())
 	file.FileMime = m.MimeType()
 	file.FileOrientation = m.Orientation()
@@ -246,6 +270,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions) IndexResult {
 			log.Debugf("index: extracting keywords from non-canonical file name (%s)", fileBase)
 			keywords = append(keywords, txt.Keywords(filePath)...)
 			keywords = append(keywords, txt.Keywords(fileBase)...)
+		}
+
+		if file.OriginalName != "" {
+			log.Debugf("index: extracting keywords from original file name (%s)", file.OriginalName)
+			keywords = append(keywords, txt.Keywords(file.OriginalName)...)
 		}
 
 		keywords = append(keywords, file.FileMainColor)
@@ -292,7 +321,7 @@ func (ind *Index) isNSFW(jpeg *MediaFile) bool {
 		return false
 	} else {
 		if nsfwLabels.NSFW() {
-			log.Warnf("index: \"%s\" might contain offensive content", jpeg.Filename())
+			log.Warnf("index: \"%s\" might contain offensive content", jpeg.FileName())
 			return true
 		}
 	}
@@ -459,7 +488,7 @@ func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 			}
 
 			if photo.NoTitle() {
-				log.Warnf("index: could not set photo title based on location or labels for \"%s\"", filepath.Base(mediaFile.Filename()))
+				log.Warnf("index: could not set photo title based on location or labels for \"%s\"", filepath.Base(mediaFile.FileName()))
 			} else {
 				log.Infof("index: new photo title is \"%s\"", photo.PhotoTitle)
 			}
