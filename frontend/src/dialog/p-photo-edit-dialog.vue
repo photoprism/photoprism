@@ -6,7 +6,7 @@
                 <v-btn icon dark @click.stop="cancel">
                     <v-icon>close</v-icon>
                 </v-btn>
-                <v-toolbar-title>Edit Photo</v-toolbar-title>
+                <v-toolbar-title>{{ title }}</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-toolbar-items>
                     <v-btn icon disabled @click.stop="prev" :disabled="selected < 1">
@@ -68,6 +68,15 @@
             'p-tab-photo-edit-details': PhotoEditDetails,
             'p-tab-photo-edit-labels': PhotoEditLabels,
             'p-tab-photo-edit-files': PhotoEditFiles,
+        },
+        computed: {
+            title: function() {
+                if(this.model && this.model.PhotoTitle) {
+                    return this.model.PhotoTitle
+                }
+
+                this.$gettext("Edit Photo");
+            },
         },
         data() {
             return {
