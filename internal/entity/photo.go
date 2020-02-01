@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// A photo can have multiple images and sidecar files
+// Photo represents a photo that can have multiple image or sidecar files.
 type Photo struct {
 	ID                uint      `gorm:"primary_key"`
 	TakenAt           time.Time `gorm:"type:datetime;index:idx_photos_taken_uuid;" json:"TakenAt"`
@@ -36,6 +36,7 @@ type Photo struct {
 	LensID            uint      `gorm:"index:idx_photos_camera_lens;" json:"LensID"`
 	LocationID        string    `gorm:"type:varbinary(16);index;" json:"LocationID"`
 	PlaceID           string    `gorm:"type:varbinary(16);index;" json:"PlaceID"`
+	AccountID         uint      `json:"AccountID"`
 	LocationEstimated bool      `json:"LocationEstimated"`
 	PhotoCountry      string    `gorm:"index:idx_photos_country_year_month;" json:"PhotoCountry"`
 	PhotoYear         int       `gorm:"index:idx_photos_country_year_month;"`
@@ -50,6 +51,7 @@ type Photo struct {
 	Lens              *Lens     `json:"Lens"`
 	Location          *Location `json:"-"`
 	Place             *Place    `json:"-"`
+	Account           *Account  `json:"-"`
 	Files             []File
 	Labels            []PhotoLabel
 	Keywords          []Keyword `json:"-"`

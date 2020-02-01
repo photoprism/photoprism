@@ -25,7 +25,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		thumbType, ok := thumb.Types[typeName]
 
 		if !ok {
-			log.Errorf("thumbs: invalid type \"%s\"", typeName)
+			log.Errorf("photo: invalid thumb type \"%s\"", typeName)
 			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
 			return
 		}
@@ -47,7 +47,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("could not find original for thumbnail: %s", fileName)
+			log.Errorf("photo: could not find original for %s", fileName)
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
@@ -72,6 +72,8 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 			c.File(thumbnail)
 		} else {
+			log.Errorf("photo: %s", err)
+
 			f.FileError = err.Error()
 			db.Save(&f)
 

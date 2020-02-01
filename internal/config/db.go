@@ -60,6 +60,7 @@ func (c *Config) MigrateDb() {
 	db := c.Db()
 
 	db.AutoMigrate(
+		&entity.Account{},
 		&entity.File{},
 		&entity.Photo{},
 		&entity.Event{},
@@ -68,7 +69,6 @@ func (c *Config) MigrateDb() {
 		&entity.Camera{},
 		&entity.Lens{},
 		&entity.Country{},
-		&entity.Share{},
 
 		&entity.Album{},
 		&entity.PhotoAlbum{},
@@ -154,6 +154,7 @@ func (c *Config) DropTables() {
 	db := c.Db()
 
 	db.DropTableIfExists(
+		&entity.Account{},
 		&entity.File{},
 		&entity.Photo{},
 		&entity.Event{},
@@ -162,7 +163,6 @@ func (c *Config) DropTables() {
 		&entity.Camera{},
 		&entity.Lens{},
 		&entity.Country{},
-		&entity.Share{},
 
 		&entity.Album{},
 		&entity.PhotoAlbum{},

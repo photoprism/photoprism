@@ -132,7 +132,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		thumbType, ok := thumb.Types[typeName]
 
 		if !ok {
-			log.Errorf("thumbs: invalid type \"%s\"", typeName)
+			log.Errorf("label: invalid thumb type \"%s\"", typeName)
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}
@@ -143,7 +143,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", labelUUID, typeName)
 
 		if cacheData, ok := gc.Get(cacheKey); ok {
-			log.Debugf("%s cache hit [%s]", cacheKey, time.Since(start))
+			log.Debugf("label: %s cache hit [%s]", cacheKey, time.Since(start))
 			c.Data(http.StatusOK, "image/jpeg", cacheData.([]byte))
 			return
 		}
@@ -159,7 +159,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("could not find original for thumbnail: %s", fileName)
+			log.Errorf("label: could not find original for %s", fileName)
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
@@ -181,18 +181,18 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			thumbData, err := ioutil.ReadFile(thumbnail)
 
 			if err != nil {
-				log.Errorf("could not read thumbnail: %s", err)
+				log.Errorf("label: %s", err)
 				c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 				return
 			}
 
 			gc.Set(cacheKey, thumbData, time.Hour*4)
 
-			log.Debugf("%s cached [%s]", cacheKey, time.Since(start))
+			log.Debugf("label: %s cached [%s]", cacheKey, time.Since(start))
 
 			c.Data(http.StatusOK, "image/jpeg", thumbData)
 		} else {
-			log.Errorf("could not create thumbnail: %s", err)
+			log.Errorf("label: %s", err)
 
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return

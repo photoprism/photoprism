@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"database/sql"
 	"strings"
 	"time"
 
@@ -18,14 +19,11 @@ type Album struct {
 	AlbumName        string `gorm:"type:varchar(128);"`
 	AlbumDescription string `gorm:"type:text;"`
 	AlbumNotes       string `gorm:"type:text;"`
-	AlbumViews       uint
 	AlbumFavorite    bool
-	AlbumPublic      bool
-	AlbumLat         float64
-	AlbumLng         float64
-	AlbumRadius      float64
-	AlbumOrder       string `gorm:"type:varchar(16);"`
-	AlbumTemplate    string `gorm:"type:varchar(128);"`
+	AlbumOrder       string `gorm:"type:varbinary(32);"`
+	ShareTemplate    string `gorm:"type:varbinary(256);"`
+	SharePassword    string `gorm:"type:varbinary(256);"`
+	ShareExpires     sql.NullTime
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 	DeletedAt        *time.Time `sql:"index"`

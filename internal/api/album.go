@@ -3,6 +3,7 @@ package api
 import (
 	"archive/zip"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -427,21 +428,31 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums/:uuid/thumbnail/:type", func(c *gin.Context) {
 		typeName := c.Param("type")
 		uuid := c.Param("uuid")
+		start := time.Now()
 
 		thumbType, ok := thumb.Types[typeName]
 
 		if !ok {
-			log.Errorf("thumbs: invalid type \"%s\"", typeName)
+			log.Errorf("album: invalid thumb type %s", typeName)
 			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
 			return
 		}
 
 		q := query.New(conf.OriginalsPath(), conf.Db())
 
+		gc := conf.Cache()
+		cacheKey := fmt.Sprintf("album-thumbnail:%s:%s", uuid, typeName)
+
+		if cacheData, ok := gc.Get(cacheKey); ok {
+			log.Debugf("album: %s cache hit [%s]", cacheKey, time.Since(start))
+			c.Data(http.StatusOK, "image/jpeg", cacheData.([]byte))
+			return
+		}
+
 		f, err := q.FindAlbumThumbByUUID(uuid)
 
 		if err != nil {
-			log.Debugf("album has no photos yet, using generic thumb image: %s", uuid)
+			log.Debugf("album: no photos yet, using generic image for %s", uuid)
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		}
@@ -449,7 +460,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("could not find original for thumbnail: %s", fileName)
+			log.Errorf("album: could not find original for %s", fileName)
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
@@ -472,9 +483,21 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.DownloadFileName()))
 			}
 
-			c.File(thumbnail)
+			thumbData, err := ioutil.ReadFile(thumbnail)
+
+			if err != nil {
+				log.Errorf("album: %s", err)
+				c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
+				return
+			}
+
+			gc.Set(cacheKey, thumbData, time.Hour)
+
+			log.Debugf("album: %s cached [%s]", cacheKey, time.Since(start))
+
+			c.Data(http.StatusOK, "image/jpeg", thumbData)
 		} else {
-			log.Errorf("could not create thumbnail: %s", err)
+			log.Errorf("album: %s", err)
 			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
 		}
 	})
