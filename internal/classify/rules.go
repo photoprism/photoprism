@@ -262,7 +262,7 @@ var rules = LabelRules{
 	},
 	"armadillo": {
 		Label:      "animal",
-		Threshold:  0.200000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -316,7 +316,7 @@ var rules = LabelRules{
 	},
 	"badger": {
 		Label:      "",
-		Threshold:  0.400000,
+		Threshold:  0.800000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -446,6 +446,12 @@ var rules = LabelRules{
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
+	"barrel": {
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
+	},
 	"barrow": {
 		Label:      "",
 		Threshold:  1.000000,
@@ -549,10 +555,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"beaver": {
-		Label:      "",
+		Label:      "animal",
 		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{"animal"},
+		Categories: []string{},
 	},
 	"bedlington terrier dog": {
 		Label:      "dog",
@@ -642,7 +648,7 @@ var rules = LabelRules{
 		Label:      "",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{"animal"},
+		Categories: []string{"animal", "wildlife"},
 	},
 	"bike": {
 		Label:      "bike",
@@ -730,7 +736,7 @@ var rules = LabelRules{
 	},
 	"black-footed ferret": {
 		Label:      "animal",
-		Threshold:  0.750000,
+		Threshold:  0.800000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -753,10 +759,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"boa constrictor snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"boat": {
 		Label:      "boat",
@@ -1731,10 +1737,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"diamondback snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"diaper": {
 		Label:      "",
@@ -2205,10 +2211,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"fox squirrel": {
-		Label:      "squirrel",
+		Label:      "animal",
 		Threshold:  0.500000,
 		Priority:   0,
-		Categories: []string{"animal", "rodent"},
+		Categories: []string{},
 	},
 	"freight car": {
 		Label:      "vehicle",
@@ -2283,10 +2289,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"garter snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"gas pump": {
 		Label:      "gas station",
@@ -2302,7 +2308,7 @@ var rules = LabelRules{
 	},
 	"gazelle": {
 		Label:      "",
-		Threshold:  0.400000,
+		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{"animal", "wildlife"},
 	},
@@ -2481,16 +2487,16 @@ var rules = LabelRules{
 		Categories: []string{"reptile", "animal"},
 	},
 	"green mamba snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"green snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"greenhouse": {
 		Label:      "",
@@ -2559,10 +2565,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"guinea pig": {
-		Label:      "",
+		Label:      "animal",
 		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{"animal"},
+		Categories: []string{},
 	},
 	"gyromitra": {
 		Label:      "mushroom",
@@ -2607,10 +2613,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"hamster": {
-		Label:      "",
+		Label:      "animal",
 		Threshold:  0.500000,
 		Priority:   0,
-		Categories: []string{"animal", "rodent"},
+		Categories: []string{},
 	},
 	"hand blower": {
 		Label:      "portrait",
@@ -2658,7 +2664,7 @@ var rules = LabelRules{
 		Label:      "",
 		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{"animal"},
+		Categories: []string{"animal", "wildlife"},
 	},
 	"harvester": {
 		Label:      "vehicle",
@@ -2745,10 +2751,10 @@ var rules = LabelRules{
 		Categories: []string{"animal", "farm"},
 	},
 	"hognose snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"holster": {
 		Label:      "",
@@ -2793,10 +2799,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"horned viper snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"horse cart": {
 		Label:      "",
@@ -2850,7 +2856,7 @@ var rules = LabelRules{
 		Label:      "animal",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"wildlife"},
 	},
 	"ibizan hound dog": {
 		Label:      "dog",
@@ -2884,15 +2890,15 @@ var rules = LabelRules{
 	},
 	"impala": {
 		Label:      "",
-		Threshold:  0.400000,
+		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{"animal", "wildlife"},
 	},
 	"indian cobra snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"indian elephant": {
 		Label:      "elephant",
@@ -3022,7 +3028,7 @@ var rules = LabelRules{
 	},
 	"jellyfish": {
 		Label:      "",
-		Threshold:  0.000000,
+		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{"water", "animal", "fish"},
 	},
@@ -3099,10 +3105,10 @@ var rules = LabelRules{
 		Categories: []string{"animal", "bird"},
 	},
 	"king snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"kit fox": {
 		Label:      "fox",
@@ -3352,7 +3358,7 @@ var rules = LabelRules{
 	},
 	"llama": {
 		Label:      "",
-		Threshold:  0.400000,
+		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -3519,10 +3525,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"marmot": {
-		Label:      "",
+		Label:      "animal",
 		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{"animal"},
+		Categories: []string{},
 	},
 	"mashed potato": {
 		Label:      "vegetables",
@@ -3646,7 +3652,7 @@ var rules = LabelRules{
 	},
 	"mink": {
 		Label:      "animal",
-		Threshold:  0.400000,
+		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -3831,10 +3837,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"night snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"nipple": {
 		Label:      "bottle",
@@ -3940,7 +3946,7 @@ var rules = LabelRules{
 	},
 	"otter": {
 		Label:      "",
-		Threshold:  0.400000,
+		Threshold:  0.800000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -4000,8 +4006,8 @@ var rules = LabelRules{
 	},
 	"padlock": {
 		Label:      "",
-		Threshold:  0.000000,
-		Priority:   0,
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"paintbrush": {
@@ -4324,7 +4330,7 @@ var rules = LabelRules{
 	},
 	"polecat": {
 		Label:      "animal",
-		Threshold:  0.400000,
+		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -4677,10 +4683,10 @@ var rules = LabelRules{
 		Categories: []string{"animal", "insect"},
 	},
 	"ringneck snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"robin bird": {
 		Label:      "bird",
@@ -4701,10 +4707,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"rock python snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"rocking chair": {
 		Label:      "furniture",
@@ -4911,10 +4917,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"sea snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"sea urchin": {
 		Label:      "",
@@ -5031,10 +5037,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"sidewinder snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"silky terrier dog": {
 		Label:      "dog",
@@ -5056,7 +5062,7 @@ var rules = LabelRules{
 	},
 	"skunk": {
 		Label:      "",
-		Threshold:  0.750000,
+		Threshold:  0.800000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -5103,10 +5109,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"snorkel": {
 		Label:      "diving",
@@ -5608,7 +5614,7 @@ var rules = LabelRules{
 	},
 	"three-toed sloth": {
 		Label:      "animal",
-		Threshold:  0.200000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -5625,10 +5631,10 @@ var rules = LabelRules{
 		Categories: []string{"furniture"},
 	},
 	"thunder snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"tibetan mastiff dog": {
 		Label:      "dog",
@@ -5949,10 +5955,10 @@ var rules = LabelRules{
 		Categories: []string{"architecture"},
 	},
 	"vine snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"violin": {
 		Label:      "instrument",
@@ -6075,10 +6081,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"water snake": {
-		Label:      "snake",
-		Threshold:  0.750000,
+		Label:      "animal",
+		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"water tower": {
 		Label:      "tower",
@@ -6094,7 +6100,7 @@ var rules = LabelRules{
 	},
 	"weasel": {
 		Label:      "",
-		Threshold:  0.600000,
+		Threshold:  0.800000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},

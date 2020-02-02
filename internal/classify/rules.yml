@@ -482,11 +482,8 @@ triceratops:
   threshold: 0.5
 
 snake:
-  label: snake
-  threshold: 0.75
-  categories:
-    - reptile
-    - animal
+  label: animal
+  threshold: 0.9
 
 thunder snake:
   see: snake
@@ -686,6 +683,7 @@ wombat:
     - animal
 
 jellyfish:
+  threshold: 0.5
   categories:
     - water
     - animal
@@ -1444,36 +1442,28 @@ angora:
   see: rabbit
 
 hamster:
+  label: animal
   threshold: 0.5
-  categories:
-    - animal
-    - rodent
 
 porcupine:
-  threshold: 0.5
   label: animal
+  threshold: 0.5
 
 fox squirrel:
-  label: squirrel
+  label: animal
   threshold: 0.5
-  categories:
-    - animal
-    - rodent
 
 marmot:
+  label: animal
   threshold: 0.4
-  categories:
-    - animal
 
 beaver:
+  label: animal
   threshold: 0.4
-  categories:
-    - animal
 
 guinea pig:
+  label: animal
   threshold: 0.4
-  categories:
-    - animal
 
 sorrel:
   see: ignore
@@ -1538,72 +1528,76 @@ bighorn:
   threshold: 0.3
   categories:
     - animal
+    - wildlife
 
 ibex:
   label: animal
   threshold: 0.3
+  categories:
+    - wildlife
 
 hartebeest:
   threshold: 0.4
   categories:
     - animal
+    - wildlife
 
 impala:
-  threshold: 0.4
+  threshold: 0.5
   categories:
     - animal
     - wildlife
 
 gazelle:
-  threshold: 0.4
+  threshold: 0.5
   categories:
     - animal
     - wildlife
 
 llama:
-  threshold: 0.4
+  threshold: 0.5
   categories:
     - animal
 
 weasel:
-  threshold: 0.6
+  threshold: 0.8
   categories:
     - animal
 
 mink:
   label: animal
-  threshold: 0.4
+  threshold: 0.5
 
 polecat:
   label: animal
-  threshold: 0.4
+  threshold: 0.5
 
 black-footed ferret:
   label: animal
-  threshold: 0.75
+  threshold: 0.8
 
 otter:
-  threshold: 0.4
+  threshold: 0.8
   categories:
     - animal
 
 skunk:
-  threshold: 0.75
+  threshold: 0.8
   categories:
     - animal
 
 badger:
-  threshold: 0.4
+  threshold: 0.8
   categories:
     - animal
 
 armadillo:
   label: animal
-  threshold: 0.2
+  threshold: 0.3
 
 three-toed sloth:
   label: animal
-  threshold: 0.2
+  threshold: 0.3
 
 ape:
   label: ape
@@ -3975,6 +3969,9 @@ toilet tissue:
   see: ignore
 
 rain barrel:
+  see: ignore
+
+barrel:
   see: ignore
 
 scuba diver:
