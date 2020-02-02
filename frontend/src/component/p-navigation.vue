@@ -23,9 +23,9 @@
         >
             <v-toolbar flat>
                 <v-list class="navigation-home">
-                    <v-list-tile class="p-navigation-logo">
+                    <v-list-tile class="p-navigation-logo" href="https://docs.photoprism.org/" target="_blank">
                         <v-list-tile-avatar>
-                            <img src="/static/img/logo.png">
+                            <img src="/static/img/logo.png" alt="Logo">
                         </v-list-tile-avatar>
                         <v-list-tile-content>
                             <v-list-tile-title class="title">
