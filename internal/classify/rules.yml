@@ -1932,6 +1932,7 @@ breakwater:
 
 bullet train:
   label: train
+  threshold: 0.35
   categories:
     - vehicle
 
@@ -1947,11 +1948,12 @@ cab:
     - vehicle
 
 cannon:
+  threshold: 0.3
   categories:
     - weapon
-    - military
 
 canoe:
+  threshold: 0.3
   categories:
     - boat
     - water
@@ -1963,6 +1965,7 @@ carpenter's kit:
   see: tool
 
 castle:
+  threshold: 0.2
   categories:
     - historic
     - architecture
@@ -2048,11 +2051,10 @@ coffeepot:
   see: coffee
 
 lock:
-  label: lock
-  threshold: 0.5
+  see: ignore
 
 combination lock:
-  see: lock
+  see: ignore
 
 computer keyboard:
   label: keyboard
@@ -2082,7 +2084,7 @@ cornet:
 
 helmet:
   label: helmet
-  threshold: 0.3
+  threshold: 0.5
 
 crash helmet:
   see: helmet
@@ -2197,7 +2199,7 @@ electric guitar:
 
 electric locomotive:
   label: train
-  threshold: 0.2
+  threshold: 0.35
   categories:
     - vehicle
 
@@ -2245,7 +2247,7 @@ four-poster:
 
 freight car:
   label: vehicle
-  threshold: 0.3
+  threshold: 0.35
   catgories:
     - train
 
@@ -2912,7 +2914,7 @@ spotlight:
 
 steam locomotive:
   label: train
-  threshold: 0.2
+  threshold: 0.35
   categories:
     - vehicle
 

@@ -988,7 +988,7 @@ var rules = LabelRules{
 	},
 	"bullet train": {
 		Label:      "train",
-		Threshold:  0.000000,
+		Threshold:  0.350000,
 		Priority:   0,
 		Categories: []string{"vehicle"},
 	},
@@ -1066,13 +1066,13 @@ var rules = LabelRules{
 	},
 	"cannon": {
 		Label:      "",
-		Threshold:  0.000000,
+		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{"weapon", "military"},
+		Categories: []string{"weapon"},
 	},
 	"canoe": {
 		Label:      "",
-		Threshold:  0.000000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{"boat", "water"},
 	},
@@ -1162,7 +1162,7 @@ var rules = LabelRules{
 	},
 	"castle": {
 		Label:      "",
-		Threshold:  0.000000,
+		Threshold:  0.200000,
 		Priority:   0,
 		Categories: []string{"historic", "architecture"},
 	},
@@ -1455,9 +1455,9 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"combination lock": {
-		Label:      "lock",
-		Threshold:  0.500000,
-		Priority:   0,
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"comic book": {
@@ -1600,7 +1600,7 @@ var rules = LabelRules{
 	},
 	"crash helmet": {
 		Label:      "helmet",
-		Threshold:  0.300000,
+		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -1954,7 +1954,7 @@ var rules = LabelRules{
 	},
 	"electric locomotive": {
 		Label:      "train",
-		Threshold:  0.200000,
+		Threshold:  0.350000,
 		Priority:   0,
 		Categories: []string{"vehicle"},
 	},
@@ -2164,7 +2164,7 @@ var rules = LabelRules{
 	},
 	"football helmet": {
 		Label:      "helmet",
-		Threshold:  0.300000,
+		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -2212,7 +2212,7 @@ var rules = LabelRules{
 	},
 	"freight car": {
 		Label:      "vehicle",
-		Threshold:  0.300000,
+		Threshold:  0.350000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -2692,7 +2692,7 @@ var rules = LabelRules{
 	},
 	"helmet": {
 		Label:      "helmet",
-		Threshold:  0.300000,
+		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -3369,9 +3369,9 @@ var rules = LabelRules{
 		Categories: []string{"animal", "cooking", "water"},
 	},
 	"lock": {
-		Label:      "lock",
-		Threshold:  0.500000,
-		Priority:   0,
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"loggerhead": {
@@ -3999,9 +3999,9 @@ var rules = LabelRules{
 		Categories: []string{"vehicle", "water"},
 	},
 	"padlock": {
-		Label:      "lock",
-		Threshold:  0.500000,
-		Priority:   0,
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"paintbrush": {
@@ -4192,7 +4192,7 @@ var rules = LabelRules{
 	},
 	"pickelhaube": {
 		Label:      "helmet",
-		Threshold:  0.300000,
+		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -5320,7 +5320,7 @@ var rules = LabelRules{
 	},
 	"steam locomotive": {
 		Label:      "train",
-		Threshold:  0.200000,
+		Threshold:  0.350000,
 		Priority:   0,
 		Categories: []string{"vehicle"},
 	},
