@@ -77,4 +77,10 @@ func TestRepo_Albums(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(result))
 	})
+	t.Run("search with invalid query string", func(t *testing.T) {
+		query := form.NewAlbumSearch("xxx:bla")
+		result, err := search.Albums(query)
+		assert.Error(t, err, "unknown filter")
+		t.Log(result)
+	})
 }
