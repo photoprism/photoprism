@@ -82,7 +82,7 @@ func TestDislikeAlbum(t *testing.T) {
 	t.Run("dislike not existing album", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 
-		LikeAlbum(router, conf)
+		DislikeAlbum(router, conf)
 
 		result := PerformRequest(app, "DELETE", "/api/v1/albums/5678/like")
 		assert.Equal(t, http.StatusNotFound, result.Code)
@@ -90,14 +90,39 @@ func TestDislikeAlbum(t *testing.T) {
 	t.Run("dislike existing album", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 
-		LikeAlbum(router, conf)
+		DislikeAlbum(router, conf)
 
 		result := PerformRequest(app, "DELETE", "/api/v1/albums/4/like")
+		assert.Equal(t, http.StatusOK, result.Code)
+	})
+}
+
+func TestDownloadAlbum(t *testing.T) {
+	t.Run("download not existing album", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+
+		DownloadAlbum(router, conf)
+
+		result := PerformRequest(app, "GET", "/api/v1/albums/5678/download")
 		assert.Equal(t, http.StatusNotFound, result.Code)
+	})
+	t.Run("download existing album", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+
+		DownloadAlbum(router, conf)
+
+		result := PerformRequest(app, "GET", "/api/v1/albums/4/download")
+		assert.Equal(t, http.StatusOK, result.Code)
 	})
 }
 
 func TestAlbumThumbnail(t *testing.T) {
+	t.Run("could not find original", func(t *testing.T) {
+		app, router, ctx := NewApiTest()
+		AlbumThumbnail(router, ctx)
+		result := PerformRequest(app, "GET", "/api/v1/albums/4/thumbnail/tile_500")
+		assert.Equal(t, http.StatusNotFound, result.Code)
+	})
 	t.Run("invalid type", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		AlbumThumbnail(router, ctx)

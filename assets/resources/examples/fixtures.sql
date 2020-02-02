@@ -10,6 +10,7 @@ INSERT INTO albums (id, album_uuid, album_name, album_slug, album_favorite) VALU
 INSERT INTO albums (id, album_uuid, cover_uuid, album_name, album_slug, album_favorite) VALUES ('1', '4', '654', 'Holiday2030', 'holiday-2030', 1);
 INSERT INTO albums (id, album_uuid, cover_uuid, album_name, album_slug, album_favorite) VALUES ('3', '5', '654', 'Berlin2019', 'berlin-2019', 0);
 INSERT INTO photos_albums (album_uuid, photo_uuid) VALUES ('4', '654');
+INSERT INTO photos_albums (album_uuid, photo_uuid) VALUES ('5', '658');
 INSERT INTO files (id, photo_id, photo_uuid, file_name, file_primary, file_hash, file_missing) VALUES ('1', '1', '654', 'exampleFileName.jpg', 1, '123xxx', 0);
 INSERT INTO files (id, photo_id, photo_uuid, file_name, file_primary, file_hash, file_missing) VALUES ('2', '2', '655', 'exampleDNGFile.dng', 1, '124xxx', 0);
 INSERT INTO files (id, photo_id, photo_uuid, file_name, file_primary, file_hash, file_missing) VALUES ('3', '2', '655', 'exampleXmpFile.xmp', 0, '125xxx', 0);
