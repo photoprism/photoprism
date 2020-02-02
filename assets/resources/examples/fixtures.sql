@@ -8,6 +8,7 @@ INSERT INTO cameras (id, camera_slug, camera_model, camera_make, camera_type, ca
 INSERT INTO countries (id, country_slug, country_name, country_description, country_notes, country_photo_id) VALUES ('de', 'germany', 'Germany', 'Country Description', 'Country Notes', 0);
 INSERT INTO albums (id, album_uuid, album_name, album_slug, album_favorite) VALUES ('2', '3', 'Christmas2030', 'christmas2030', 0);
 INSERT INTO albums (id, album_uuid, cover_uuid, album_name, album_slug, album_favorite) VALUES ('1', '4', '654', 'Holiday2030', 'holiday-2030', 1);
+INSERT INTO albums (id, album_uuid, cover_uuid, album_name, album_slug, album_favorite) VALUES ('3', '5', '654', 'Berlin2019', 'berlin-2019', 0);
 INSERT INTO photos_albums (album_uuid, photo_uuid) VALUES ('4', '654');
 INSERT INTO files (id, photo_id, photo_uuid, file_name, file_primary, file_hash, file_missing) VALUES ('1', '1', '654', 'exampleFileName.jpg', 1, '123xxx', 0);
 INSERT INTO files (id, photo_id, photo_uuid, file_name, file_primary, file_hash, file_missing) VALUES ('2', '2', '655', 'exampleDNGFile.dng', 1, '124xxx', 0);
