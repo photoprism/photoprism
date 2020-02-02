@@ -23,8 +23,8 @@
         >
             <v-toolbar flat>
                 <v-list class="navigation-home">
-                    <v-list-tile class="p-navigation-logo" href="https://docs.photoprism.org/" target="_blank">
-                        <v-list-tile-avatar>
+                    <v-list-tile class="p-navigation-logo">
+                        <v-list-tile-avatar class="p-pointer" @click.stop.prevent="openDocs">
                             <img src="/static/img/logo.png" alt="Logo">
                         </v-list-tile-avatar>
                         <v-list-tile-content>
@@ -160,7 +160,8 @@
                     <v-list-tile-content>
                         <v-list-tile-title>
                             <translate>Labels</translate>
-                            <span v-if="config.count.labels > 0" class="p-navigation-count">{{ config.count.labels }}</span>
+                            <span v-if="config.count.labels > 0"
+                                  class="p-navigation-count">{{ config.count.labels }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
@@ -173,7 +174,8 @@
                     <v-list-tile-content>
                         <v-list-tile-title>
                             <translate>Places</translate>
-                            <span v-if="config.count.places > 0" class="p-navigation-count">{{ config.count.places }}</span>
+                            <span v-if="config.count.places > 0"
+                                  class="p-navigation-count">{{ config.count.places }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
@@ -261,13 +263,12 @@
             </v-list>
         </v-navigation-drawer>
         <p-upload-dialog :show="showUpload" @cancel="showUpload = false"
-                              @confirm="showUpload = false"></p-upload-dialog>
+                         @confirm="showUpload = false"></p-upload-dialog>
     </div>
 </template>
 
 <script>
     import Album from "../model/album";
-    import {DateTime} from "luxon";
     import Event from "pubsub-js";
 
     export default {
@@ -293,7 +294,10 @@
             },
         },
         methods: {
-            showNavigation () {
+            openDocs() {
+                window.open("https://docs.photoprism.org/", "_blank");
+            },
+            showNavigation() {
                 this.drawer = true;
                 this.mini = false;
             },
