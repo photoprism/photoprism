@@ -56,3 +56,7 @@ func (f *PhotoSearch) SetQuery(q string) {
 func (f *PhotoSearch) ParseQueryString() error {
 	return ParseQueryString(f)
 }
+
+func NewPhotoSearch(query string) PhotoSearch {
+	return PhotoSearch{Query: query}
+}
