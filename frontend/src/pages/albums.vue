@@ -61,13 +61,12 @@
                             <v-card tile class="accent lighten-3"
                                     slot-scope="{ hover }"
                                     :class="selection.includes(album.AlbumUUID) ? 'elevation-10 ma-0' : 'elevation-0 ma-1'"
+                                    :to="{name: 'album', params: {uuid: album.AlbumUUID, slug: album.AlbumSlug}}"
                             >
                                 <v-img
                                         :src="album.getThumbnailUrl('tile_500')"
                                         aspect-ratio="1"
-                                        style="cursor: pointer"
                                         class="accent lighten-2"
-                                        @click.prevent="openAlbum(index)"
                                 >
                                     <v-layout
                                             slot="placeholder"
@@ -90,7 +89,7 @@
                                     </v-btn>
                                 </v-img>
 
-                                <v-card-actions>
+                                <v-card-actions @click.stop.prevent="">
                                     <v-edit-dialog
                                             :return-value.sync="album.AlbumName"
                                             lazy
@@ -182,10 +181,6 @@
             clearQuery() {
                 this.filter.q = '';
                 this.search();
-            },
-            openAlbum(index) {
-                const album = this.results[index];
-                this.$router.push({name: "album", params: {uuid: album.AlbumUUID, slug: album.AlbumSlug}});
             },
             loadMore() {
                 if (this.scrollDisabled) return;

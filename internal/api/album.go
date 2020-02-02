@@ -144,7 +144,7 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		conf.Db().Save(&m)
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
-		event.Success(fmt.Sprintf("album \"%s\" saved", m.AlbumName))
+		event.Success("album saved")
 
 		PublishAlbumEvent(EntityUpdated, id, c, q)
 

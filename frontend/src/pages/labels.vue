@@ -33,7 +33,7 @@
         </v-form>
 
         <v-container fluid class="pa-4" v-if="loading">
-            <v-progress-linear color="secondary-dark"  :indeterminate="true"></v-progress-linear>
+            <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
         </v-container>
         <v-container fluid class="pa-0" v-else>
             <p-scroll-top></p-scroll-top>
@@ -42,8 +42,12 @@
                 <v-card v-if="results.length === 0" class="p-labels-empty secondary-light lighten-1" flat>
                     <v-card-title primary-title>
                         <div>
-                            <h3 class="title mb-3"><translate>No labels matched your search</translate></h3>
-                            <div><translate>Try again using a related or otherwise similar term.</translate></div>
+                            <h3 class="title mb-3">
+                                <translate>No labels matched your search</translate>
+                            </h3>
+                            <div>
+                                <translate>Try again using a related or otherwise similar term.</translate>
+                            </div>
                         </div>
                     </v-card-title>
                 </v-card>
@@ -55,13 +59,12 @@
                             xs6 sm4 md3 lg2 d-flex
                     >
                         <v-hover>
-                            <v-card tile class="elevation-0 ma-1 accent lighten-3">
+                            <v-card tile class="elevation-0 ma-1 accent lighten-3"
+                                    :to="{name: 'photos', query: {q: 'label:' + label.LabelSlug}}">
                                 <v-img
                                         :src="label.getThumbnailUrl('tile_500')"
                                         aspect-ratio="1"
-                                        style="cursor: pointer"
                                         class="accent lighten-2"
-                                        @click.prevent="openLabel(index)"
                                 >
                                     <v-layout
                                             slot="placeholder"
@@ -70,12 +73,35 @@
                                             justify-center
                                             ma-0
                                     >
-                                        <v-progress-circular indeterminate color="accent lighten-5"></v-progress-circular>
+                                        <v-progress-circular indeterminate
+                                                             color="accent lighten-5"></v-progress-circular>
                                     </v-layout>
                                 </v-img>
 
-                                <v-card-actions>
-                                    {{ label.LabelName | capitalize }}
+                                <v-card-actions @click.stop.prevent="">
+                                    <v-edit-dialog
+                                            :return-value.sync="label.LabelName"
+                                            lazy
+                                            @save="onSave(label)"
+                                            class="p-inline-edit"
+                                    >
+                                        <span v-if="label.LabelName">
+                                            {{ label.LabelName | capitalize }}
+                                        </span>
+                                        <span v-else>
+                                            <v-icon>edit</v-icon>
+                                        </span>
+                                        <template v-slot:input>
+                                            <v-text-field
+                                                    v-model="label.LabelName"
+                                                    :rules="[titleRule]"
+                                                    :label="labels.name"
+                                                    color="secondary-dark"
+                                                    single-line
+                                                    autofocus
+                                            ></v-text-field>
+                                        </template>
+                                    </v-edit-dialog>
                                     <v-spacer></v-spacer>
                                     <v-btn icon @click.stop.prevent="label.toggleLike()">
                                         <v-icon v-if="label.LabelFavorite" color="#FFD600">star
@@ -132,10 +158,15 @@
                 routeName: routeName,
                 labels: {
                     search: this.$gettext("Search"),
+                    name: this.$gettext("Label Name"),
                 },
+                titleRule: v => v.length <= 25 || this.$gettext("Name too long"),
             };
         },
         methods: {
+            onSave(label) {
+                label.update();
+            },
             showAll() {
                 this.filter.all = "true";
                 this.updateQuery();
@@ -147,10 +178,6 @@
             clearQuery() {
                 this.filter.q = '';
                 this.updateQuery();
-            },
-            openLabel(index) {
-                const label = this.results[index];
-                this.$router.push({name: "photos", query: {q: "label:" + label.LabelSlug}});
             },
             loadMore() {
                 if (this.scrollDisabled) return;

@@ -14,5 +14,6 @@ var (
 	ErrUploadNSFW      = gin.H{"code": http.StatusForbidden, "error": txt.UcFirst(config.ErrUploadNSFW.Error())}
 	ErrAlbumNotFound   = gin.H{"code": http.StatusNotFound, "error": "Album not found"}
 	ErrPhotoNotFound   = gin.H{"code": http.StatusNotFound, "error": "Photo not found"}
+	ErrLabelNotFound   = gin.H{"code": http.StatusNotFound, "error": "Label not found"}
 	ErrUnexpectedError = gin.H{"code": http.StatusInternalServerError, "error": "Unexpected error"}
 )

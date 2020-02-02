@@ -50,6 +50,42 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
+// PUT /api/v1/labels/:uuid
+func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
+	router.PUT("/labels/:uuid", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		var f form.Label
+
+		if err := c.BindJSON(&f); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		id := c.Param("uuid")
+		q := query.New(conf.OriginalsPath(), conf.Db())
+
+		m, err := q.FindLabelByUUID(id)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrLabelNotFound)
+			return
+		}
+
+		m.Rename(f.LabelName)
+		conf.Db().Save(&m)
+
+		event.Success("label saved")
+
+		PublishLabelEvent(EntityUpdated, id, c, q)
+
+		c.JSON(http.StatusOK, m)
+	})
+}
+
 // POST /api/v1/labels/:uuid/like
 //
 // Parameters:

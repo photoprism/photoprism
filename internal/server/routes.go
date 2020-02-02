@@ -39,6 +39,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetMomentsTime(v1, conf)
 
 		api.GetLabels(v1, conf)
+		api.UpdateLabel(v1, conf)
 		api.LikeLabel(v1, conf)
 		api.DislikeLabel(v1, conf)
 		api.LabelThumbnail(v1, conf)

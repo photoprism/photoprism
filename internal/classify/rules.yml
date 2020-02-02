@@ -417,7 +417,7 @@ common iguana:
 
 chameleon:
   label: chameleon
-  threshold: 0.5
+  threshold: 0.9
   priority: 1
   categories:
     - reptile
@@ -1578,19 +1578,16 @@ weasel:
     - animal
 
 mink:
+  label: animal
   threshold: 0.4
-  categories:
-    - animal
 
 polecat:
+  label: animal
   threshold: 0.4
-  categories:
-    - animal
 
 black-footed ferret:
+  label: animal
   threshold: 0.4
-  categories:
-    - animal
 
 otter:
   threshold: 0.4
@@ -1873,6 +1870,7 @@ bathtub:
   see: living
 
 beacon:
+  threshold: 0.4
   categories:
     - tower
     - architecture
@@ -3603,7 +3601,7 @@ bassinet:
   see: baby
 
 diaper:
-  see: baby
+  see: ignore
 
 patio:
   label: building
@@ -3693,7 +3691,9 @@ sundial:
   threshold: 0.5
 
 altar:
-  threshold: 0.3
+  threshold: 0.5
+  categories:
+    - church
 
 ignore:
   threshold: 1
@@ -3777,11 +3777,10 @@ barometer:
   see: display
 
 binoculars:
-  threshold: 0.5
+  see: ignore
 
 bow:
-  label: portrait
-  threshold: 0.2
+  see: ignore
 
 caldron:
   label: cooking
