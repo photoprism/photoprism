@@ -18,13 +18,14 @@ egyptian cat:
 
 tiger cat:
   priority: 5
+  threshold: 0.6
   categories:
     - cat
     - animal
 
 wild cat:
   priority: 5
-  threshold: 0.2
+  threshold: 0.6
   categories:
     - cat
     - animal
@@ -32,7 +33,7 @@ wild cat:
 
 cougar:
   label: puma
-  threshold: 0.3
+  threshold: 0.6
   priority: 4
   categories:
     - cat
@@ -60,7 +61,7 @@ tiger:
   see: wild cat
 
 seashore:
-  threshold: 0.3
+  threshold: 0.38
   categories:
     - beach
     - water
@@ -85,7 +86,7 @@ bannister:
 
 window shade:
   label: building
-  threshold: 0.3
+  threshold: 0.4
   categories:
     - architecture
 
@@ -301,7 +302,7 @@ ostrich:
 
 bird:
   label: bird
-  threshold: 0.3
+  threshold: 0.45
   categories:
     - animal
 
@@ -356,7 +357,7 @@ great grey owl bird:
 
 salamander:
   label: salamander
-  threshold: 0.2
+  threshold: 0.5
   categories:
     - animal
 
@@ -377,7 +378,7 @@ axolotl:
 
 frog:
   label: frog
-  threshold: 0.3
+  threshold: 0.5
   categories:
     - animal
 
@@ -413,7 +414,7 @@ box turtle:
   see: turtle
 
 common iguana:
-  label: lizard
+  see: lizard
 
 chameleon:
   label: chameleon
@@ -432,7 +433,7 @@ american chameleon:
 
 lizard:
   label: lizard
-  threshold: 0.4
+  threshold: 0.5
   priority: 1
   categories:
     - reptile
@@ -482,7 +483,7 @@ triceratops:
 
 snake:
   label: snake
-  threshold: 0.5
+  threshold: 0.75
   categories:
     - reptile
     - animal
@@ -552,7 +553,7 @@ scorpion:
 
 spider:
   label: spider
-  threshold: 0.5
+  threshold: 0.75
   categories:
     - animal
 
@@ -575,7 +576,7 @@ wolf spider:
   see: spider
 
 centipede:
-  threshold: 0.4
+  threshold: 0.5
   categories:
     - animal
 
@@ -666,9 +667,8 @@ echidna:
     - animal
 
 platypus:
-  threshold: 0.3
-  categories:
-    - animal
+  label: animal
+  threshold: 0.7
 
 wallaby:
   threshold: 0.2
@@ -703,9 +703,8 @@ coral reef:
 
 worm:
   label: worm
-  threshold: 0.5
-  categories:
-    - animal
+  threshold: 1
+  priority: -2
 
 flatworm:
   see: worm
@@ -715,28 +714,26 @@ nematode:
 
 conch:
   label: shell
-  threshold: 0.4
+  threshold: 0.5
 
 snail:
   label: snail
-  threshold: 0.3
+  threshold: 0.5
   categories:
     - animal
 
 slug:
-  priority: -1
-  categories:
-    - animal
+  see: ignore
 
 sea slug:
-  see: slug
+  see: ignore
 
 chambered nautilus:
   see: snail
 
 crab:
   label: crab
-  threshold: 0.5
+  threshold: 0.75
   categories:
     - animal
 
@@ -757,7 +754,7 @@ hermit crab:
 
 lobster:
   label: lobster
-  threshold: 0.5
+  threshold: 0.75
   categories:
     - animal
     - cooking
@@ -770,14 +767,14 @@ spiny lobster:
   see: lobster
 
 crayfish:
-  threshold: 0.5
+  threshold: 0.75
   categories:
     - water
     - animal
     - lobster
 
 isopod:
-  threshold: 0.4
+  threshold: 0.75
   label: animal
 
 white stork:
@@ -848,6 +845,7 @@ albatross:
 
 whale:
   label: whale
+  threshold: 0.75
   categories:
     - animal
     - water
@@ -1227,23 +1225,20 @@ standard poodle dog:
 mexican hairless dog:
   see: dog
 
-timber wolf:
+wolf:
+  label: wolf
+  threshold: 0.5
   categories:
-    - wolf
-    - dog
     - animal
+
+timber wolf:
+  see: wolf
 
 white wolf:
-  categories:
-    - wolf
-    - dog
-    - animal
+  see: wolf
 
 red wolf:
-  categories:
-    - wolf
-    - dog
-    - animal
+  see: wolf
 
 coyote:
   see: dog
@@ -1262,7 +1257,7 @@ hyena:
 
 fox:
   label: fox
-  threshold: 0.5
+  threshold: 0.6
   categories:
     - animal
 
@@ -1308,6 +1303,7 @@ meerkat:
 
 beetle:
   label: beetle
+  threshold: 0.35
   categories:
     - animal
 
@@ -1351,7 +1347,7 @@ apiary:
   see: ignore
 
 ant:
-  threshold: 0.3
+  threshold: 0.45
   categories:
     - animal
     - insect
@@ -1437,7 +1433,7 @@ sea cucumber:
 
 rabbit:
   label: rabbit
-  threshold: 0.3
+  threshold: 0.7
   categories:
     - animal
 
@@ -1451,18 +1447,18 @@ angora:
   see: rabbit
 
 hamster:
-  threshold: 0.4
+  threshold: 0.5
   categories:
     - animal
     - rodent
 
 porcupine:
-  threshold: 0.4
+  threshold: 0.5
   label: animal
 
 fox squirrel:
   label: squirrel
-  threshold: 0.4
+  threshold: 0.5
   categories:
     - animal
     - rodent
@@ -1517,7 +1513,7 @@ hippopotamus:
 
 ox:
   label: cow
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - animal
     - farm
@@ -1573,7 +1569,7 @@ llama:
     - animal
 
 weasel:
-  threshold: 0.4
+  threshold: 0.6
   categories:
     - animal
 
@@ -1587,7 +1583,7 @@ polecat:
 
 black-footed ferret:
   label: animal
-  threshold: 0.4
+  threshold: 0.75
 
 otter:
   threshold: 0.4
@@ -1595,7 +1591,7 @@ otter:
     - animal
 
 skunk:
-  threshold: 0.4
+  threshold: 0.75
   categories:
     - animal
 
@@ -1920,6 +1916,7 @@ bobsled:
   see: ignore
 
 bookcase:
+  threshold: 0.4
   categories:
     - furniture
     - book
@@ -2131,6 +2128,9 @@ digital watch:
 oscilloscope:
   see: display
 
+scale:
+  see: display
+
 dining table:
   label: dining
   threshold: 0.3
@@ -2165,7 +2165,7 @@ dogsled:
 
 dome:
   label: dome
-  threshold: 0.2
+  threshold: 0.4
   categories:
     - architecture
 
@@ -2174,7 +2174,7 @@ planetarium:
 
 drilling platform:
   label: building
-  threshold: 0.2
+  threshold: 0.3
 
 drum:
   see: instrument
@@ -2472,7 +2472,7 @@ mixing bowl:
     - cooking
 
 mobile home:
-  see: recreational vehicle
+  see: ignore
 
 model t:
   label: car
@@ -2558,7 +2558,7 @@ organ:
 
 oxcart:
   label: cart
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - cow
     - farm
@@ -2587,8 +2587,7 @@ panpipe:
   see: ignore
 
 paper towel:
-  label: paper
-  threshold: 0.5
+  see: ignore
 
 parachute:
   label: outdoor
@@ -2630,7 +2629,7 @@ pay-phone:
   see: electronics
 
 petri dish:
-  label: dish
+  see: ignore
 
 photocopier:
   label: office
@@ -2692,9 +2691,10 @@ plate rack:
   see: ignore
 
 polaroid camera:
+  label: camera
+  threshold: 0.5
   categories:
     - photography
-    - camera
 
 police van:
   label: van
@@ -2938,12 +2938,12 @@ streetcar:
 
 studio couch:
   label: couch
-  threshold: 0.2
+  threshold: 0.4
   categories:
     - furniture
 
 submarine:
-  threshold: 0.6
+  threshold: 0.75
   categories:
     - water
     - ship
@@ -3231,51 +3231,51 @@ acorn squash:
     - vegetables
     - food
 
-fruits:
-  label: fruits
+fruit:
+  label: fruit
   threshold: 0.3
   categories:
     - food
 
 granny smith:
-  see: fruits
+  see: fruit
 
 strawberry:
-  see: fruits
+  see: fruit
 
 orange:
-  see: fruits
+  see: fruit
 
 lemon:
-  see: fruits
+  see: fruit
 
 fig:
-  see: fruits
+  see: fruit
 
 pineapple:
-  threshold: 0.3
+  threshold: 0.45
   categories:
-    - fruits
+    - fruit
     - food
 
 banana:
-  threshold: 0.3
+  threshold: 0.45
   categories:
-    - fruits
+    - fruit
     - food
 
 jackfruit:
-  see: fruits
+  see: fruit
 
 custard apple:
-  see: fruits
+  see: fruit
 
 pomegranate:
-  see: fruits
+  see: fruit
 
 carbonara:
   label: pasta
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - dining
     - food
@@ -3315,6 +3315,12 @@ red wine:
 beverage:
   label: beverage
   threshold: 0.2
+
+water jug:
+  see: beverage
+
+pitcher:
+  see: beverage
 
 goblet:
   label: beverage
@@ -3419,6 +3425,7 @@ arabian camel:
 
 tile roof:
   label: building
+  threshold: 0.4
   categories:
     - architecture
 
@@ -3581,9 +3588,7 @@ bucket:
 
 vestment:
   label: uniform
-  threshold: 0.3
-  categories:
-    - military
+  threshold: 0.5
 
 baby:
   label: baby
@@ -3605,7 +3610,7 @@ diaper:
 
 patio:
   label: building
-  threshold: 0.3
+  threshold: 0.4
 
 scoreboard:
   see: ignore
@@ -3631,7 +3636,7 @@ horizontal bar:
 
 vault:
   label: building
-  threshold: 0.3
+  threshold: 0.4
 
 office:
   label: office
@@ -3650,7 +3655,7 @@ volcano:
   see: ignore
 
 radio telescope:
-  threshold: 0.8
+  threshold: 0.9
 
 thimble:
   see: ignore
@@ -3787,8 +3792,7 @@ caldron:
   threshold: 0.3
 
 cash machine:
-  label: building
-  threshold: 0.3
+  see: ignore
 
 electronics:
   label: electronics
@@ -3978,14 +3982,10 @@ buckle:
   see: ignore
 
 toilet tissue:
-  label: paper
-  threshold: 0.5
+  see: ignore
 
 rain barrel:
-  label: barrel
-  threshold: 0.2
-  categories:
-    - outdoor
+  see: ignore
 
 scuba diver:
   label: diving
@@ -4028,3 +4028,20 @@ carton:
 teddy:
   label: toy
   threshold: 0.2
+
+corkscrew:
+  see: ignore
+
+feather boa:
+  see: ignore
+
+vacuum:
+  see: ignore
+
+horse cart:
+  threshold: 0.7
+  categories:
+    - vehicle
+
+mailbox:
+  threshold: 0.5
