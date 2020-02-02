@@ -2038,6 +2038,9 @@ coffee:
   categories:
     - beverage
 
+espresso:
+  see: coffee
+
 coffee mug:
   see: coffee
 
@@ -3323,37 +3326,33 @@ pitcher:
   see: beverage
 
 goblet:
-  label: beverage
-  threshold: 0.2
-
-espresso:
-  see: coffee
+  see: beverage
 
 eggnog:
   see: beverage
 
 alp:
-  label: alpine hut
+  label: alpine
   threshold: 0.2
   categories:
     - landscape
     - mountains
 
 cliff:
+  label: landscape
   threshold: 0.2
   categories:
-    - landscape
+    - water
     - rocks
 
-geyser:
-  label: water
-  threshold: 0.4
-
 promontory:
-  label: rocks
-  threshold: 0.2
+  see: cliff
+
+geyser:
+  label: landscape
+  threshold: 0.4
   categories:
-    - landscape
+    - water
 
 sandbar:
   label: beach

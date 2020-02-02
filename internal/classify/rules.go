@@ -141,7 +141,7 @@ var rules = LabelRules{
 		Categories: []string{"reptile", "animal"},
 	},
 	"alp": {
-		Label:      "alpine hut",
+		Label:      "alpine",
 		Threshold:  0.200000,
 		Priority:   0,
 		Categories: []string{"landscape", "mountains"},
@@ -1353,10 +1353,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"cliff": {
-		Label:      "",
+		Label:      "landscape",
 		Threshold:  0.200000,
 		Priority:   0,
-		Categories: []string{"landscape", "rocks"},
+		Categories: []string{"water", "rocks"},
 	},
 	"cliff dwelling": {
 		Label:      "building",
@@ -2319,10 +2319,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"geyser": {
-		Label:      "water",
+		Label:      "landscape",
 		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"water"},
 	},
 	"giant panda": {
 		Label:      "panda",
@@ -4449,10 +4449,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"promontory": {
-		Label:      "rocks",
+		Label:      "landscape",
 		Threshold:  0.200000,
 		Priority:   0,
-		Categories: []string{"landscape"},
+		Categories: []string{"water", "rocks"},
 	},
 	"ptarmigan": {
 		Label:      "bird",
