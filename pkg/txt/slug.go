@@ -10,4 +10,3 @@ func SlugToTitle(s string) string {
 
 	return Title(strings.Join(Words(s), " "))
 }
-

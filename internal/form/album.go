@@ -1,5 +1,6 @@
 package form
 
+// Album represents an album edit form.
 type Album struct {
 	AlbumName        string `json:"AlbumName"`
 	AlbumDescription string `json:"AlbumDescription"`

@@ -5,8 +5,10 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/ulule/deepcopier"
 )
 
 // Photo represents a photo that can have multiple image or sidecar files.
@@ -34,9 +36,9 @@ type Photo struct {
 	PhotoExposure     string    `gorm:"type:varbinary(64);" json:"PhotoExposure"`
 	CameraID          uint      `gorm:"index:idx_photos_camera_lens;" json:"CameraID"`
 	LensID            uint      `gorm:"index:idx_photos_camera_lens;" json:"LensID"`
-	LocationID        string    `gorm:"type:varbinary(16);index;" json:"LocationID"`
-	PlaceID           string    `gorm:"type:varbinary(16);index;" json:"PlaceID"`
 	AccountID         uint      `json:"AccountID"`
+	PlaceID           string    `gorm:"type:varbinary(16);index;" json:"PlaceID"`
+	LocationID        string    `gorm:"type:varbinary(16);index;" json:"LocationID"`
 	LocationEstimated bool      `json:"LocationEstimated"`
 	PhotoCountry      string    `gorm:"index:idx_photos_country_year_month;" json:"PhotoCountry"`
 	PhotoYear         int       `gorm:"index:idx_photos_country_year_month;"`
@@ -59,6 +61,15 @@ type Photo struct {
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 	DeletedAt         *time.Time `sql:"index"`
+}
+
+// SavePhoto updates a model using form data and persists it in the database.
+func SavePhoto(model Photo, form form.Photo, db *gorm.DB) error {
+	if err := deepcopier.Copy(&model).From(form); err != nil {
+		return err
+	}
+
+	return db.Save(&model).Error
 }
 
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {

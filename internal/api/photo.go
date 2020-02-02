@@ -5,13 +5,14 @@ import (
 	"net/http"
 	"path"
 
+	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
-
-	"github.com/gin-gonic/gin"
 )
 
 // GET /api/v1/photos/:uuid
@@ -55,12 +56,26 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := c.BindJSON(&m); err != nil {
+		// TODO: Proof-of-concept for form handling - might need refactoring
+		// 1) Init form with model values
+		f, err := form.NewPhoto(m)
+
+		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
-		conf.Db().Save(&m)
+		// 2) Update form with values from request
+		if err := c.BindJSON(&f); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		// 3) Save model with values from form
+		if err := entity.SavePhoto(m, f, conf.Db()); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
 
 		PublishPhotoEvent(EntityUpdated, id, c, q)
 

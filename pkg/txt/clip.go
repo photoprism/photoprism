@@ -11,7 +11,7 @@ func Clip(s string, size int) string {
 	runes := []rune(s)
 
 	if len(runes) > size {
-		s = string(runes[0:size-1])
+		s = string(runes[0 : size-1])
 	}
 
 	return s

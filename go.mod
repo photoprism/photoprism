@@ -66,6 +66,7 @@ require (
 	github.com/uber/jaeger-client-go v2.15.0+incompatible // indirect
 	github.com/uber/jaeger-lib v1.5.0 // indirect
 	github.com/ugorji/go v1.1.7 // indirect
+	github.com/ulule/deepcopier v0.0.0-20200117111125-792cfb847af8
 	github.com/unrolled/render v0.0.0-20181210145518-4c664cb3ad2f // indirect
 	github.com/urfave/cli v1.20.0
 	go.uber.org/atomic v1.4.0 // indirect
