@@ -798,9 +798,6 @@ american egret:
 bittern:
   see: bird
 
-crane:
-  see: bird
-
 limpkin:
   see: bird
 
@@ -1644,6 +1641,7 @@ patas:
   see: monkey
 
 baboon:
+  threshold: 0.4
   priority: 2
   categories:
     - animal
@@ -1931,10 +1929,8 @@ breakwater:
   label: water
 
 bullet train:
-  label: train
+  label: vehicle
   threshold: 0.35
-  categories:
-    - vehicle
 
 butcher shop:
   label: butcher
@@ -1951,12 +1947,6 @@ cannon:
   threshold: 0.3
   categories:
     - weapon
-
-canoe:
-  threshold: 0.3
-  categories:
-    - boat
-    - water
 
 can opener:
   label: cooking
@@ -1976,6 +1966,9 @@ boat:
   categories:
     - vehicle
     - water
+
+canoe:
+  see: boat
 
 catamaran:
   see: boat
@@ -2139,8 +2132,6 @@ scale:
 dining table:
   label: dining
   threshold: 0.3
-  categories:
-    - table
 
 maze:
   label: landscape
@@ -2248,8 +2239,6 @@ four-poster:
 freight car:
   label: vehicle
   threshold: 0.35
-  catgories:
-    - train
 
 french horn:
   see: instrument
@@ -4037,6 +4026,9 @@ feather boa:
   see: ignore
 
 vacuum:
+  see: ignore
+
+crane:
   see: ignore
 
 horse cart:

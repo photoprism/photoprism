@@ -298,7 +298,7 @@ var rules = LabelRules{
 	},
 	"baboon": {
 		Label:      "",
-		Threshold:  0.000000,
+		Threshold:  0.400000,
 		Priority:   2,
 		Categories: []string{"animal", "monkey", "wildlife"},
 	},
@@ -987,10 +987,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"bullet train": {
-		Label:      "train",
+		Label:      "vehicle",
 		Threshold:  0.350000,
 		Priority:   0,
-		Categories: []string{"vehicle"},
+		Categories: []string{},
 	},
 	"bulletproof vest": {
 		Label:      "",
@@ -1071,10 +1071,10 @@ var rules = LabelRules{
 		Categories: []string{"weapon"},
 	},
 	"canoe": {
-		Label:      "",
-		Threshold:  0.300000,
+		Label:      "boat",
+		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{"boat", "water"},
+		Categories: []string{"vehicle", "water"},
 	},
 	"capuchin": {
 		Label:      "monkey",
@@ -1593,10 +1593,10 @@ var rules = LabelRules{
 		Categories: []string{"baby"},
 	},
 	"crane": {
-		Label:      "bird",
-		Threshold:  0.450000,
-		Priority:   0,
-		Categories: []string{"animal"},
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"crash helmet": {
 		Label:      "helmet",
@@ -1764,7 +1764,7 @@ var rules = LabelRules{
 		Label:      "dining",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{"table"},
+		Categories: []string{},
 	},
 	"dishrag": {
 		Label:      "",
@@ -4000,8 +4000,8 @@ var rules = LabelRules{
 	},
 	"padlock": {
 		Label:      "",
-		Threshold:  1.000000,
-		Priority:   -2,
+		Threshold:  0.000000,
+		Priority:   0,
 		Categories: []string{},
 	},
 	"paintbrush": {
