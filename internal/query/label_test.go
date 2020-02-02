@@ -112,4 +112,18 @@ func TestRepo_Labels(t *testing.T) {
 		assert.Equal(t, "Flower", result[1].LabelName)
 		assert.Equal(t, "COW", result[0].LabelName)
 	})
+
+	t.Run("search with empty query", func(t *testing.T) {
+		query := form.NewLabelSearch("")
+		result, err := search.Labels(query)
+		assert.Nil(t, err)
+		assert.Equal(t, 3, len(result))
+	})
+
+	t.Run("search with invalid query string", func(t *testing.T) {
+		query := form.NewLabelSearch("xxx:bla")
+		result, err := search.Labels(query)
+		assert.Error(t, err, "unknown filter")
+		t.Log(result)
+	})
 }
