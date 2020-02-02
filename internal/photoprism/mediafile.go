@@ -744,11 +744,11 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	defer func() {
 		switch count {
 		case 0:
-			log.Debug(capture.Time(start, fmt.Sprintf("mediafile: no new thumbnails created for %s", m.Base())))
+			log.Info(capture.Time(start, fmt.Sprintf("mediafile: no new thumbnails created for %s", m.Base())))
 		case 1:
-			log.Debug(capture.Time(start, fmt.Sprintf("mediafile: one thumbnail created for %s", m.Base())))
+			log.Info(capture.Time(start, fmt.Sprintf("mediafile: one thumbnail created for %s", m.Base())))
 		default:
-			log.Debug(capture.Time(start, fmt.Sprintf("mediafile: %d thumbnails created for %s", count, m.Base())))
+			log.Info(capture.Time(start, fmt.Sprintf("mediafile: %d thumbnails created for %s", count, m.Base())))
 		}
 	}()
 
