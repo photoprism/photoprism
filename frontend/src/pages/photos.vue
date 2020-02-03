@@ -82,9 +82,7 @@
             const settings = {view: view};
 
             return {
-                uploadSubId: null,
-                countSubId: null,
-                modelSubId: null,
+                subscriptions: [],
                 listen: false,
                 dirty: false,
                 results: [],
@@ -278,7 +276,7 @@
                 this.dirty = true;
                 this.scrollDisabled = false;
             },
-            onPhotos(ev, data) {
+            onUpdate(ev, data) {
                 if (!this.listen) return;
 
                 if (!data || !data.entities) {
@@ -349,14 +347,14 @@
         created() {
             this.search();
 
-            this.uploadSubId = Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data));
-            this.countSubId = Event.subscribe("count.photos", (ev, data) => this.onCount(ev, data));
-            this.modelSubId = Event.subscribe("photos", (ev, data) => this.onPhotos(ev, data));
+            this.subscriptions.push(Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data)));
+            this.subscriptions.push(Event.subscribe("count.photos", (ev, data) => this.onCount(ev, data)));
+            this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
         },
         destroyed() {
-            Event.unsubscribe(this.uploadSubId);
-            Event.unsubscribe(this.countSubId);
-            Event.unsubscribe(this.modelSubId);
-        }
+            for(let i = 0; i < this.subscriptions.length; i++) {
+                Event.unsubscribe(this.subscriptions[i]);
+            }
+        },
     };
 </script>

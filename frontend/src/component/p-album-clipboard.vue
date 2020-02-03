@@ -101,7 +101,6 @@
             onDeleted() {
                 Notify.success(this.$gettext("Albums deleted"));
                 this.clearClipboard();
-                this.refresh();
             },
             download() {
                 if(this.selection.length !== 1) {

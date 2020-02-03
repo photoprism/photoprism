@@ -158,13 +158,15 @@
             const settings = {};
 
             return {
-                subId: null,
+                subscriptions: [],
+                listen: false,
                 dirty: false,
                 results: [],
                 loading: true,
                 scrollDisabled: true,
                 pageSize: 24,
                 offset: 0,
+                page: 0,
                 selection: [],
                 settings: settings,
                 filter: filter,
@@ -186,24 +188,35 @@
                 if (this.scrollDisabled) return;
 
                 this.scrollDisabled = true;
+                this.listen = false;
 
-                this.offset += this.pageSize;
+                const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
+                const offset = this.dirty ? 0 : this.offset;
 
                 const params = {
-                    count: this.pageSize,
-                    offset: this.offset,
+                    count: count,
+                    offset: offset,
                 };
 
                 Object.assign(params, this.lastFilter);
 
                 Album.search(params).then(response => {
-                    this.results = this.results.concat(response.models);
+                    this.page++;
+                    this.offset += this.pageSize;
 
-                    this.scrollDisabled = (response.models.length < this.pageSize);
+                    this.results = this.dirty ? response.models : this.results.concat(response.models);
+
+                    this.scrollDisabled = (response.models.length < count);
 
                     if (this.scrollDisabled) {
                         this.$notify.info(this.$gettext("All ") + this.results.length + this.$gettext(" albums loaded"));
                     }
+                }).catch(() => {
+                    this.scrollDisabled = false;
+                }).finally(() => {
+                    this.dirty = false;
+                    this.loading = false;
+                    this.listen = true;
                 });
             },
             updateQuery() {
@@ -251,13 +264,15 @@
                 Object.assign(this.lastFilter, this.filter);
 
                 this.offset = 0;
+                this.page = 0;
                 this.loading = true;
+                this.listen = false;
 
                 const params = this.searchParams();
 
                 Album.search(params).then(response => {
-                    this.loading = false;
-                    this.dirty = false;
+                    this.offset = this.pageSize;
+                    
                     this.results = response.models;
 
                     this.scrollDisabled = (response.models.length < this.pageSize);
@@ -275,7 +290,11 @@
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
-                }).catch(() => this.loading = false);
+                }).finally(() => {
+                    this.dirty = false;
+                    this.loading = false;
+                    this.listen = true;
+                });
             },
             refresh() {
                 this.lastFilter = {};
@@ -320,14 +339,67 @@
                 if(!this.selection && this.offset === 0) {
                     this.refresh();
                 }
+            },
+            onUpdate(ev, data) {
+                if (!this.listen) return;
+
+                if (!data || !data.entities) {
+                    return
+                }
+
+                const type = ev.split('.')[1];
+
+                switch (type) {
+                    case 'updated':
+                        for (let i = 0; i < data.entities.length; i++) {
+                            const values = data.entities[i];
+                            const model = this.results.find((m) => m.AlbumUUID === values.AlbumUUID);
+
+                            for (let key in values) {
+                                if (values.hasOwnProperty(key)) {
+                                    model[key] = values[key];
+                                }
+                            }
+                        }
+                        break;
+                    case 'deleted':
+                        this.dirty = true;
+
+                        for (let i = 0; i < data.entities.length; i++) {
+                            const uuid = data.entities[i];
+                            const index = this.results.findIndex((m) => m.AlbumUUID === uuid);
+                            if (index >= 0) {
+                                this.results.splice(index, 1);
+                            }
+                        }
+
+                        break;
+                    case 'created':
+                        this.dirty = true;
+
+                        for (let i = 0; i < data.entities.length; i++) {
+                            const values = data.entities[i];
+                            const index = this.results.findIndex((m) => m.AlbumUUID === values.AlbumUUID);
+                            if(index === -1) {
+                                this.results.unshift(new Album(values));
+                            }
+                        }
+                        break;
+                    default:
+                        console.warn("unexpected event type", ev);
+                }
             }
         },
         created() {
             this.search();
-            this.subId = Event.subscribe("count.albums", (ev, data) => this.onCount(ev, data));
+
+            this.subscriptions.push(Event.subscribe("count.albums", (ev, data) => this.onCount(ev, data)));
+            this.subscriptions.push(Event.subscribe("albums", (ev, data) => this.onUpdate(ev, data)));
         },
         destroyed() {
-            Event.unsubscribe(this.subId);
+            for(let i = 0; i < this.subscriptions.length; i++) {
+                Event.unsubscribe(this.subscriptions[i]);
+            }
         },
     };
 </script>
