@@ -22,4 +22,11 @@ func TestGetThumbnail(t *testing.T) {
 
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
+	t.Run("could not find original", func(t *testing.T) {
+		app, router, ctx := NewApiTest()
+		GetThumbnail(router, ctx)
+		result := PerformRequest(app, "GET", "/api/v1/thumbnails/123xxx/tile_500")
+
+		assert.Equal(t, http.StatusNotFound, result.Code)
+	})
 }
