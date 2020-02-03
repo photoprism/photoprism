@@ -393,7 +393,7 @@ tailed frog:
 
 turtle:
   label: turtle
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - reptile
     - animal
@@ -702,7 +702,7 @@ coral reef:
 worm:
   label: worm
   threshold: 1
-  priority: -2
+  priority: -3
 
 flatworm:
   see: worm
@@ -1270,7 +1270,7 @@ grey fox:
 
 bear:
   label: bear
-  threshold: 0.3
+  threshold: 0.5
   categories:
     - animal
 
@@ -1761,7 +1761,7 @@ acoustic guitar:
 
 aircraft carrier:
   label: runway
-  threshold: 0.6
+  threshold: 0.79
   categories:
     - airport
     - vehicle
@@ -1811,7 +1811,7 @@ backpack:
   threshold: 0.2
 
 bakery:
-  threshold: 0.3
+  threshold: 0.5
   categories:
     - shop
 
@@ -1852,7 +1852,7 @@ chiton:
 
 living:
   label: living
-  threshold: 0.2
+  threshold: 0.67
 
 bathtub:
   see: living
@@ -1908,7 +1908,7 @@ bobsled:
   see: ignore
 
 bookcase:
-  threshold: 0.4
+  threshold: 0.7
   categories:
     - furniture
     - book
@@ -2148,7 +2148,7 @@ dock:
 
 dogsled:
   label: snow
-  threshold: 0.3
+  threshold: 0.4
   categories:
     - animal
     - dog
@@ -2289,7 +2289,7 @@ pick:
 
 hand-held computer:
   label: computer
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - office
 
@@ -2368,7 +2368,7 @@ reflex camera:
   see: photography
 
 library:
-  threshold: 0.3
+  threshold: 0.7
   categories:
     - architecture
 
@@ -2486,7 +2486,7 @@ mosque:
 
 bike:
   label: bike
-  threshold: 0.3
+  threshold: 0.6
   categories:
     - vehicle
 
@@ -2621,7 +2621,7 @@ petri dish:
 
 photocopier:
   label: office
-  threshold: 0.2
+  threshold: 0.4
 
 picket fence:
   see: fence
@@ -2671,7 +2671,7 @@ plane:
 
 space shuttle:
   label: aircraft
-  threshold: 0.25
+  threshold: 0.65
   categories:
     - vehicle
 
@@ -2709,7 +2709,7 @@ prayer rug:
 
 printer:
   label: office
-  threshold: 0.3
+  threshold: 0.4
 
 prison:
   label: building
@@ -2741,7 +2741,7 @@ tractor:
 
 recreational vehicle:
   label: camper
-  threshold: 0.2
+  threshold: 0.5
   categories:
     - vehicle
 
@@ -2844,13 +2844,13 @@ snorkel:
 
 snowmobile:
   label: vehicle
-  threshold: 0.2
+  threshold: 0.4
   categories:
     - snow
 
 snowplow:
   label: snow
-  threshold: 0.2
+  threshold: 0.4
 
 plow:
   label: farm
@@ -3318,7 +3318,7 @@ eggnog:
 
 alp:
   label: alpine
-  threshold: 0.2
+  threshold: 0.4
   categories:
     - landscape
     - mountains
@@ -3467,7 +3467,7 @@ sunglass:
 
 hourglass:
   label: glass
-  threshold: 0.2
+  threshold: 0.6
 
 packet:
   label: package
@@ -3624,7 +3624,7 @@ vault:
 
 office:
   label: office
-  threshold: 0.3
+  threshold: 0.4
 
 desk:
   see: office
@@ -3992,7 +3992,7 @@ traffic light:
 
 turnstile:
   label: public transport
-  threshold: 0.3
+  threshold: 0.45
 
 whistle:
   threshold: 0.7
@@ -4029,7 +4029,7 @@ crane:
   see: ignore
 
 horse cart:
-  threshold: 0.7
+  threshold: 0.8
   categories:
     - vehicle
 
