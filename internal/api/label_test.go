@@ -48,7 +48,7 @@ func TestLikeLabel(t *testing.T) {
 
 		LikeLabel(router, ctx)
 
-		result := PerformRequest(app, "POST", "/api/v1/labels/12/like")
+		result := PerformRequest(app, "POST", "/api/v1/labels/14/like")
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
 
@@ -68,7 +68,7 @@ func TestDislikeLabel(t *testing.T) {
 
 		DislikeLabel(router, ctx)
 
-		result := PerformRequest(app, "DELETE", "/api/v1/labels/13/like")
+		result := PerformRequest(app, "DELETE", "/api/v1/labels/14/like")
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
 }
