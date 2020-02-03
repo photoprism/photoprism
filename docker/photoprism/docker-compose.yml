@@ -27,7 +27,7 @@ services:
       PHOTOPRISM_DEBUG: "false"
       PHOTOPRISM_READONLY: "false"
       PHOTOPRISM_PUBLIC: "false"
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism" #Also supports bcrypt hashes. Replace all "$" with "$$".
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # Plain text or bcrypt hash (escape "$" with "$$")
     volumes:
       - "~/Pictures/Originals:/home/photoprism/Pictures/Originals" # [local path]:[container path]
       - "~/Pictures/Import:/home/photoprism/Pictures/Import" # [local path]:[container path] (optional)

@@ -39,16 +39,10 @@ RUN apt-get update && apt-get upgrade && \
     gpg-agent \
     apt-utils \
     make \
-    nano \
     wget \
     git \
-    mysql-client \
     tzdata \
-    gconf-service \
-    libheif-examples \
-    darktable \
-    exiftool \
-    ffmpeg
+    gconf-service
 
 # Install & configure TensorFlow for C
 #
@@ -120,15 +114,12 @@ RUN echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
 
 # Install additional distribution packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        curl \
-        unzip \
-        nano \
-        wget \
         ca-certificates \
         tzdata \
         libheif-examples \
         darktable \
-        exiftool && \
+        exiftool \
+        ffmpeg && \
     apt-get update && \
     apt-get upgrade && \
     apt-get dist-upgrade && \
