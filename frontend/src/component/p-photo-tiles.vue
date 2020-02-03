@@ -1,6 +1,6 @@
 <template>
     <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-tiles">
-        <v-card v-if="photos.length === 0" class="p-photos-empty secondary-light lighten-1" flat>
+        <v-card v-if="photos.length === 0" class="p-photos-empty secondary-light lighten-1 ma-1" flat>
             <v-card-title primary-title>
                 <div>
                     <h3 class="title mb-3"><translate>No photos matched your search</translate></h3>

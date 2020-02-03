@@ -38,7 +38,7 @@
             <p-album-clipboard :refresh="refresh" :selection="selection"></p-album-clipboard>
 
             <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-details">
-                <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1" flat>
+                <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1 ma-1" flat>
                     <v-card-title primary-title>
                         <div>
                             <h3 class="title mb-3">
