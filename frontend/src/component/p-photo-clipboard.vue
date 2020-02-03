@@ -48,16 +48,6 @@
                 >
                     <v-icon>edit</v-icon>
                 </v-btn>
-                <!-- v-btn
-                        fab
-                        dark
-                        small
-                        color="light-blue accent-4"
-                        @click.stop="openDocs()"
-                        class="p-photo-clipboard-docs"
-                >
-                    <v-icon>info</v-icon>
-                </v-btn -->
                 <v-btn
                         fab
                         dark
@@ -185,22 +175,6 @@
                 this.$clipboard.clear();
                 this.expanded = false;
             },
-            batchPrivate() {
-                Api.post("batch/photos/private", {"photos": this.selection}).then(() => this.onPrivateToggled());
-            },
-            onPrivateToggled() {
-                Notify.success(this.$gettext("Toggled private flag"));
-                this.clearClipboard();
-                this.refresh();
-            },
-            batchStory() {
-                Api.post("batch/photos/story", {"photos": this.selection}).then(() => this.onStoryToggled());
-            },
-            onStoryToggled() {
-                Notify.success(this.$gettext("Toggled story flag"));
-                this.clearClipboard();
-                this.refresh();
-            },
             batchArchivePhotos() {
                 this.dialog.archive = false;
 
@@ -209,7 +183,6 @@
             onArchived() {
                 Notify.success(this.$gettext("Photos archived"));
                 this.clearClipboard();
-                this.refresh();
             },
             batchRestorePhotos() {
                 Api.post("batch/photos/restore", {"photos": this.selection}).then(() => this.onRestored());
@@ -217,11 +190,6 @@
             onRestored() {
                 Notify.success(this.$gettext("Photos restored"));
                 this.clearClipboard();
-                this.refresh();
-            },
-            batchTag() {
-                Notify.warning(this.$gettext("Not implemented yet"));
-                this.expanded = false;
             },
             addToAlbum(albumUUID) {
                 this.dialog.album = false;
@@ -230,7 +198,6 @@
             },
             onAdded() {
                 this.clearClipboard();
-                this.refresh();
             },
             removeFromAlbum() {
                 if(!this.album) {
@@ -246,12 +213,6 @@
             },
             onRemoved() {
                 this.clearClipboard();
-                this.refresh();
-            },
-            batchEditPhotos() {
-                this.dialog.edit = false;
-                Notify.warning(this.$gettext("Not implemented yet"));
-                this.expanded = false;
             },
             download() {
                 if(this.selection.length === 1) {
@@ -267,9 +228,6 @@
             onDownload(path) {
                 Notify.success(this.$gettext("Downloading..."));
                 window.open(path, "_blank");
-            },
-            openDocs() {
-                window.open('https://docs.photoprism.org/en/latest/', '_blank');
             },
         }
     };

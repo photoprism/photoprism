@@ -91,6 +91,7 @@
                 scrollDisabled: true,
                 pageSize: 60,
                 offset: 0,
+                page: 0,
                 selection: this.$clipboard.selection,
                 settings: settings,
                 filter: filter,
@@ -146,27 +147,36 @@
                 if (this.scrollDisabled) return;
 
                 this.scrollDisabled = true;
+                this.listen = false;
 
-                this.offset += this.pageSize;
+                const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
+                const offset = this.dirty ? 0 : this.offset;
 
                 const params = {
-                    count: this.pageSize,
-                    offset: this.offset,
+                    count: count,
+                    offset: offset,
                 };
 
                 Object.assign(params, this.lastFilter);
 
-                this.listen = false;
-
                 Photo.search(params).then(response => {
-                    this.results = this.results.concat(response.models);
+                    this.page++;
+                    this.offset += this.pageSize;
 
-                    this.scrollDisabled = (response.models.length < this.pageSize);
+                    this.results = this.dirty ? response.models : this.results.concat(response.models);
+
+                    this.scrollDisabled = (response.models.length < count);
 
                     if (this.scrollDisabled) {
                         this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' photos loaded'));
                     }
-                }).finally(() => this.listen = true);
+                }).catch(() => {
+                    this.scrollDisabled = false;
+                }).finally(() => {
+                    this.dirty = false;
+                    this.loading = false;
+                    this.listen = true;
+                });
             },
             updateQuery() {
                 const query = {
@@ -221,12 +231,15 @@
                 Object.assign(this.lastFilter, this.filter);
 
                 this.offset = 0;
+                this.page = 0;
                 this.loading = true;
                 this.listen = false;
 
                 const params = this.searchParams();
 
                 Photo.search(params).then(response => {
+                    this.offset = this.pageSize;
+
                     this.results = response.models;
 
                     this.scrollDisabled = (response.models.length < this.pageSize);
@@ -251,24 +264,28 @@
                 });
             },
             onImportCompleted() {
+                if (!this.listen) return;
+
                 this.dirty = true;
 
-                if (this.selection.length === 0 && this.offset === 0) {
+                if (this.selection.length === 0 && this.offset < 1) {
                     this.refresh();
                 }
             },
             onCount() {
+                if (!this.listen) return;
+
                 this.dirty = true;
+                this.scrollDisabled = false;
             },
             onPhotos(ev, data) {
+                if (!this.listen) return;
+
                 if (!data || !data.entities) {
-                    console.warn("onPhotos(): no entities found in event data");
                     return
                 }
 
                 const type = ev.split('.')[1];
-
-                console.log("onPhotos(): ", ev, type, data);
 
                 switch (type) {
                     case 'updated':
@@ -284,34 +301,32 @@
                         }
                         break;
                     case 'restored':
-                        if(this.context === "archive") {
-                            this.dirty = false;
+                        this.dirty = true;
 
-                            for (let i = 0; i < data.entities.length; i++) {
-                                const uuid = data.entities[i];
-                                const index = this.results.findIndex((m) => m.PhotoUUID === uuid);
-                                if (index >= 0) {
-                                    this.results.splice(index, 1);
-                                }
+                        if(this.context !== "archive") break;
+
+                        for (let i = 0; i < data.entities.length; i++) {
+                            const uuid = data.entities[i];
+                            const index = this.results.findIndex((m) => m.PhotoUUID === uuid);
+                            if (index >= 0) {
+                                this.results.splice(index, 1);
                             }
-                        } else {
-                            this.dirty = true;
                         }
+
                         break;
                     case 'archived':
-                        if(this.context === "photos") {
-                            this.dirty = false;
+                        this.dirty = true;
 
-                            for (let i = 0; i < data.entities.length; i++) {
-                                const uuid = data.entities[i];
-                                const index = this.results.findIndex((m) => m.PhotoUUID === uuid);
-                                if (index >= 0) {
-                                    this.results.splice(index, 1);
-                                }
+                        if(this.context !== "photos") break;
+
+                        for (let i = 0; i < data.entities.length; i++) {
+                            const uuid = data.entities[i];
+                            const index = this.results.findIndex((m) => m.PhotoUUID === uuid);
+                            if (index >= 0) {
+                                this.results.splice(index, 1);
                             }
-                        } else {
-                            this.dirty = true;
                         }
+
                         break;
                     case 'created':
                         if(this.order === "imported" && JSON.stringify(this.filter) === "{}") {

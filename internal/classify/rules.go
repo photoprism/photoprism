@@ -4006,8 +4006,8 @@ var rules = LabelRules{
 	},
 	"padlock": {
 		Label:      "",
-		Threshold:  0.000000,
-		Priority:   0,
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"paintbrush": {

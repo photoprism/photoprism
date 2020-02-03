@@ -17,7 +17,7 @@
 
             <v-spacer></v-spacer>
 
-            <v-btn icon @click.stop="refresh" class="hidden-xs-only" :class="dirty ? 'secondary-light': ''">
+            <v-btn icon @click.stop="refresh" class="hidden-xs-only">
                 <v-icon>refresh</v-icon>
             </v-btn>
 

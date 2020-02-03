@@ -1,4 +1,4 @@
-FROM photoprism/development:20200126 as build
+FROM photoprism/development:20200203 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -33,7 +33,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         gpg-agent \
         apt-utils \
         add-apt-key \
-        exiftool
+        exiftool \
+        ffmpeg
 
 # Copy dependencies
 COPY --from=build /usr/lib/libtensorflow.so /usr/lib/libtensorflow.so

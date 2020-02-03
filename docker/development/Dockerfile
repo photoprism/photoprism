@@ -48,7 +48,8 @@ RUN apt-get update && apt-get upgrade && \
     chromium-browser \
     firefox \
     libheif-examples \
-    exiftool
+    exiftool \
+    ffmpeg
 
 # Install RAW to JPEG converter
 RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_18.04/ /' > /etc/apt/sources.list.d/graphics:darktable.list" && \
@@ -83,12 +84,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.13.6
+ENV GOLANG_VERSION 1.13.7
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "a1bc06deb070155c4f67c579f896a45eeda5a8fa54f35ba233304074c4abbbbd *go.tgz" | sha256sum -c -; \
+	echo "b3dd4bd781a0271b33168e627f7f43886b4c5d1c794a4015abf34e99c6526ca3 *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \

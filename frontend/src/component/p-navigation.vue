@@ -119,7 +119,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-group v-if="!mini" prepend-icon="folder" no-action>
+                <v-list-group v-if="!mini" prepend-icon="folder" no-action :append-icon="albumExpandIcon">
                     <v-list-tile slot="activator" to="/albums" @click.stop="">
                         <v-list-tile-content>
                             <v-list-tile-title>
@@ -291,6 +291,13 @@
         computed: {
             auth() {
                 return this.session.auth || this.public
+            },
+            albumExpandIcon() {
+                if(this.config.count.albums > 0) {
+                    return this.$vuetify.icons.expand
+                }
+
+                return ""
             },
         },
         methods: {
