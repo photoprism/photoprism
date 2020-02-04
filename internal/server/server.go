@@ -40,6 +40,8 @@ func Start(ctx context.Context, conf *config.Config) {
 	}
 
 	go func() {
+		log.Infof("starting web server at %s", server.Addr)
+
 		if err := server.ListenAndServe(); err != nil {
 			if err == http.ErrServerClosed {
 				log.Info("web server shutdown complete")
