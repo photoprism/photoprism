@@ -19,7 +19,7 @@
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon @click.stop="refresh" :class="dirty ? 'secondary-light': ''">
+                <v-btn icon @click.stop="refresh">
                     <v-icon>refresh</v-icon>
                 </v-btn>
 
@@ -272,7 +272,7 @@
 
                 Album.search(params).then(response => {
                     this.offset = this.pageSize;
-                    
+
                     this.results = response.models;
 
                     this.scrollDisabled = (response.models.length < this.pageSize);
@@ -314,12 +314,7 @@
 
                 const album = new Album({"AlbumName": name, "AlbumFavorite": true});
 
-                album.save().then(() => {
-                    this.filter.q = "";
-                    this.lastFilter = {};
-
-                    this.search();
-                })
+                album.save();
             },
             onSave(album) {
                 album.update();
@@ -331,13 +326,6 @@
                     this.selection.splice(pos, 1);
                 } else {
                     this.selection.push(uuid)
-                }
-            },
-            onCount() {
-                this.dirty = true;
-
-                if(!this.selection && this.offset === 0) {
-                    this.refresh();
                 }
             },
             onUpdate(ev, data) {
@@ -393,7 +381,6 @@
         created() {
             this.search();
 
-            this.subscriptions.push(Event.subscribe("count.albums", (ev, data) => this.onCount(ev, data)));
             this.subscriptions.push(Event.subscribe("albums", (ev, data) => this.onUpdate(ev, data)));
         },
         destroyed() {

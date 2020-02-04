@@ -315,7 +315,7 @@
                     case 'archived':
                         this.dirty = true;
 
-                        if(this.context !== "photos") break;
+                        if(this.context === "archive") break;
 
                         for (let i = 0; i < data.entities.length; i++) {
                             const uuid = data.entities[i];
@@ -325,19 +325,6 @@
                             }
                         }
 
-                        break;
-                    case 'created':
-                        if(this.order === "imported" && JSON.stringify(this.filter) === "{}") {
-                            this.dirty = false;
-
-                            for (let i = 0; i < data.entities.length; i++) {
-                                const values = data.entities[i];
-                                const index = this.results.findIndex((m) => m.ID === values.ID);
-                                if(index === -1) {
-                                    this.results.unshift(new Photo(values));
-                                }
-                            }
-                        }
                         break;
                     default:
                         console.warn("unexpected event type", ev);

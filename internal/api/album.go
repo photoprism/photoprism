@@ -99,13 +99,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		/* TODO: Not needed if we send config.updated
-		event.Publish("count.albums", event.Data{
-			"count": 1,
-		})
-		*/
-
-		event.Success(fmt.Sprintf("album \"%s\" created", m.AlbumName))
+		event.Success("album created")
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
