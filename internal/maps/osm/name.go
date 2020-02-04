@@ -33,5 +33,7 @@ func (l Location) Name() (result string) {
 		result = result[:i]
 	}
 
+	result = strings.SplitN(result, "/", 2)[0]
+
 	return txt.Title(strings.TrimSpace(result))
 }

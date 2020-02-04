@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	gc "github.com/patrickmn/go-cache"
 	"github.com/photoprism/photoprism/pkg/s2"
@@ -89,7 +90,7 @@ func (l Location) CellID() (result string) {
 }
 
 func (l Location) Name() (result string) {
-	return l.LocName
+	return strings.SplitN(l.LocName, "/", 2)[0]
 }
 
 func (l Location) Category() (result string) {

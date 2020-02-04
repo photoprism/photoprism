@@ -50,7 +50,7 @@
                         </div>
                     </v-card-title>
                 </v-card>
-                <v-layout row wrap class="p-results">
+                <v-layout row wrap class="p-album-results">
                     <v-flex
                             v-for="(album, index) in results"
                             :key="index"
@@ -60,7 +60,8 @@
                         <v-hover>
                             <v-card tile class="accent lighten-3"
                                     slot-scope="{ hover }"
-                                    :class="selection.includes(album.AlbumUUID) ? 'elevation-10 ma-0' : 'elevation-0 ma-1'"
+                                    :dark="selection.includes(album.AlbumUUID)"
+                                    :class="selection.includes(album.AlbumUUID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
                                     :to="{name: 'album', params: {uuid: album.AlbumUUID, slug: album.AlbumSlug}}"
                             >
                                 <v-img
@@ -80,7 +81,7 @@
                                     </v-layout>
 
                                     <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
-                                           icon small absolute
+                                           icon large absolute
                                            class="p-album-select"
                                            @click.stop.prevent="toggleSelection(album.AlbumUUID)">
                                         <v-icon v-if="selection.includes(album.AlbumUUID)" color="white">check_circle
@@ -328,6 +329,13 @@
                     this.selection.push(uuid)
                 }
             },
+            removeSelection(uuid) {
+                const pos = this.selection.indexOf(uuid);
+
+                if (pos !== -1) {
+                    this.selection.splice(pos, 1);
+                }
+            },
             onUpdate(ev, data) {
                 if (!this.listen) return;
 
@@ -356,9 +364,12 @@
                         for (let i = 0; i < data.entities.length; i++) {
                             const uuid = data.entities[i];
                             const index = this.results.findIndex((m) => m.AlbumUUID === uuid);
+
                             if (index >= 0) {
                                 this.results.splice(index, 1);
                             }
+
+                            this.removeSelection(uuid)
                         }
 
                         break;

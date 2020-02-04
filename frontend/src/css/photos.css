@@ -20,8 +20,12 @@
 
 #photoprism .p-photo-tiles .p-photo-select,
 #photoprism .p-photo-details .p-photo-select,
-#photoprism .p-photo-mosaic .p-photo-select,
-#photoprism .p-albums-details .p-album-select {
+#photoprism .p-photo-mosaic .p-photo-select {
+    right: 4px; bottom: 4px;
+}
+
+#photoprism .p-albums-details .p-album-select,
+#photoprism .p-labels-details .p-label-select {
     right: 4px; bottom: 4px;
 }
 

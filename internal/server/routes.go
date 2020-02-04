@@ -55,6 +55,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.BatchPhotosPrivate(v1, conf)
 		api.BatchPhotosStory(v1, conf)
 		api.BatchAlbumsDelete(v1, conf)
+		api.BatchLabelsDelete(v1, conf)
 
 		api.GetAlbum(v1, conf)
 		api.CreateAlbum(v1, conf)

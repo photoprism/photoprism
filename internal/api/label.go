@@ -97,9 +97,10 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		id := c.Param("uuid")
 		q := query.New(conf.OriginalsPath(), conf.Db())
 
-		label, err := q.FindLabelByUUID(c.Param("uuid"))
+		label, err := q.FindLabelByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
@@ -114,6 +115,8 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 				"count": 1,
 			})
 		}
+
+		PublishLabelEvent(EntityUpdated, id, c, q)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})
@@ -130,9 +133,10 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		id := c.Param("uuid")
 		q := query.New(conf.OriginalsPath(), conf.Db())
 
-		label, err := q.FindLabelByUUID(c.Param("uuid"))
+		label, err := q.FindLabelByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
@@ -147,6 +151,8 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 				"count": -1,
 			})
 		}
+
+		PublishLabelEvent(EntityUpdated, id, c, q)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})

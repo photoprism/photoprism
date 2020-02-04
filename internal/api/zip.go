@@ -28,7 +28,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		var f form.PhotoUUIDs
+		var f form.Selection
 		start := time.Now()
 
 		if err := c.BindJSON(&f); err != nil {

@@ -25,7 +25,7 @@ func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
 
 		start := time.Now()
 
-		var f form.PhotoUUIDs
+		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
@@ -66,7 +66,7 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 
 		start := time.Now()
 
-		var f form.PhotoUUIDs
+		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
@@ -106,7 +106,7 @@ func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		var f form.AlbumUUIDs
+		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
@@ -146,7 +146,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 
 		start := time.Now()
 
-		var f form.PhotoUUIDs
+		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
@@ -181,7 +181,7 @@ func BatchPhotosStory(router *gin.RouterGroup, conf *config.Config) {
 
 		start := time.Now()
 
-		var f form.PhotoUUIDs
+		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
@@ -205,5 +205,42 @@ func BatchPhotosStory(router *gin.RouterGroup, conf *config.Config) {
 		elapsed := time.Since(start)
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos marked as story in %s", elapsed)})
+	})
+}
+
+// POST /api/v1/batch/labels/delete
+func BatchLabelsDelete(router *gin.RouterGroup, conf *config.Config) {
+	router.POST("/batch/labels/delete", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		var f form.Selection
+
+		if err := c.BindJSON(&f); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		if len(f.Labels) == 0 {
+			log.Error("no labels selected")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no labels selected")})
+			return
+		}
+
+		log.Infof("deleting labels: %#v", f.Labels)
+
+		db := conf.Db()
+
+		db.Where("label_uuid IN (?)", f.Labels).Delete(&entity.Label{})
+
+		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+
+		event.Publish("labels.deleted", event.Data{
+			"entities": f.Labels,
+		})
+
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("labels deleted")})
 	})
 }
