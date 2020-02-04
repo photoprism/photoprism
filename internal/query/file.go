@@ -39,7 +39,7 @@ func (s *Repo) FindFileByID(id string) (file entity.File, err error) {
 	return file, nil
 }
 
-// FindFileByHash finds a file with a given hash string.
+// FirstFileByHash finds a file with a given hash string.
 func (s *Repo) FindFileByHash(fileHash string) (file entity.File, err error) {
 	if err := s.db.Where("file_hash = ?", fileHash).Preload("Photo").First(&file).Error; err != nil {
 		return file, err

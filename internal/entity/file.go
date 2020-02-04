@@ -19,7 +19,7 @@ type File struct {
 	FileUUID        string `gorm:"type:varbinary(36);unique_index;"`
 	FileName        string `gorm:"type:varbinary(600);unique_index"`
 	OriginalName    string `gorm:"type:varbinary(600);"`
-	FileHash        string `gorm:"type:varbinary(128);unique_index"`
+	FileHash        string `gorm:"type:varbinary(128);index"`
 	FileModified    time.Time
 	FileSize        int64
 	FileType        string `gorm:"type:varbinary(32)"`
@@ -47,7 +47,7 @@ type File struct {
 	DeletedAt       *time.Time `sql:"index"`
 }
 
-func FindFileByHash(db *gorm.DB, fileHash string) (File, error) {
+func FirstFileByHash(db *gorm.DB, fileHash string) (File, error) {
 	var file File
 
 	q := db.Unscoped().First(&file, "file_hash = ?", fileHash)
