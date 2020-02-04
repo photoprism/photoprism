@@ -107,7 +107,7 @@ rapeseed:
 
 fashion:
   label: portrait
-  threshold: 0.2
+  threshold: 0.35
   categories:
     - people
 
@@ -1781,16 +1781,12 @@ airship:
     - vehicle
 
 ambulance:
-  label: van
+  label: vehicle
   threshold: 0.3
-  categories:
-    - vehicle
 
 amphibian:
   label: vehicle
   threshold: 0.3
-  categories:
-    - military
 
 half track:
   label: vehicle
@@ -2102,14 +2098,13 @@ dial telephone:
   see: electronics
 
 clock:
-  label: clock
-  threshold: 0.4
+  see: display
 
 analog clock:
-  see: clock
+  see: display
 
 wall clock:
-  see: clock
+  see: display
 
 digital clock:
   see: display
@@ -2270,14 +2265,14 @@ grand piano:
   see: instrument
 
 greenhouse:
-  threshold: 0.3
+  threshold: 0.5
   categories:
     - architecture
     - building
 
 grocery store:
   label: store
-  threshold: 0.3
+  threshold: 0.4
   categories:
     - shop
 
@@ -2442,16 +2437,12 @@ microwave:
     - electronics
 
 minibus:
-  label: bus
+  label: vehicle
   threshold: 0.2
-  categories:
-    - vehicle
 
 minivan:
-  label: van
+  label: vehicle
   threshold: 0.2
-  categories:
-    - vehicle
 
 mixing bowl:
   label: bowl
@@ -2517,10 +2508,8 @@ mountain tent:
     - outdoor
 
 moving van:
-  label: van
+  label: vehicle
   threshold: 0.2
-  categories:
-    - vehicle
 
 notebook:
   label: computer
@@ -2640,7 +2629,7 @@ piggy bank:
 
 bottle:
   label: bottle
-  threshold: 0.3
+  threshold: 0.33
 
 sunscreen:
   see: bottle
@@ -2685,9 +2674,7 @@ polaroid camera:
     - photography
 
 police van:
-  label: van
-  categories:
-    - vehicle
+  label: vehicle
 
 pool table:
   see: ignore
@@ -2751,9 +2738,8 @@ refrigerator:
     - kitchen
 
 restaurant:
+  label: dining
   threshold: 0.2
-  categories:
-    - dining
 
 revolver:
   see: weapon
@@ -2792,11 +2778,8 @@ sax:
   see: instrument
 
 school bus:
-  label: bus
+  label: vehicle
   threshold: 0.2
-  categories:
-    - vehicle
-    - public transport
 
 schooner:
   see: ship
@@ -2835,7 +2818,7 @@ sleeping bag:
   threshold: 0.2
 
 sliding door:
-  label: door
+  label: building
   threshold: 0.2
 
 snorkel:
@@ -2843,10 +2826,10 @@ snorkel:
   threshold: 0.2
 
 snowmobile:
-  label: vehicle
-  threshold: 0.4
+  label: snowmobile
+  threshold: 0.5
   categories:
-    - snow
+    - vehicle
 
 snowplow:
   label: snow
@@ -2855,8 +2838,6 @@ snowplow:
 plow:
   label: farm
   threshold: 0.3
-  categories:
-    - vehicle
 
 soap dispenser:
   see: bottle
@@ -2944,7 +2925,7 @@ suspension bridge:
     - building
 
 swimming trunks:
-  label: sunny day
+  label: sunshine
   threshold: 0.2
   categories:
     - people
@@ -2992,10 +2973,8 @@ triumphal arch:
   see: historic architecture
 
 trolleybus:
-  label: bus
+  label: vehicle
   threshold: 0.5
-  categories:
-    - vehicle
 
 trombone:
   see: instrument
@@ -3372,7 +3351,7 @@ buckeye:
 
 mushroom:
   label: mushroom
-  threshold: 0.4
+  threshold: 0.5
   categories:
     - vegetables
 
@@ -3458,7 +3437,7 @@ ear:
   see: ignore
 
 sunglasses:
-  label: sunny day
+  label: sunshine
   priority: 2
   threshold: 0.2
 
@@ -3486,6 +3465,7 @@ brass:
 
 menu:
   label: document
+  threshold: 0.5
   categories:
     - info
 
@@ -3503,7 +3483,7 @@ letter opener:
 
 puzzle:
   label: puzzle
-  threshold: 0.5
+  threshold: 1
   priority: -1
 
 crossword puzzle:
@@ -3523,7 +3503,7 @@ bearskin:
 
 ballplayer:
   label: portrait
-  threshold: 0.2
+  threshold: 0.5
 
 crutch:
   see: ignore
@@ -3531,15 +3511,14 @@ crutch:
 mousetrap:
   see: ignore
 
-band aid:
-  label: portrait
-  threshold: 0.3
-
 portrait:
   label: portrait
   threshold: 0.3
   categories:
     - people
+
+band aid:
+  see: portrait
 
 oxygen mask:
   see: portrait
@@ -3554,9 +3533,7 @@ ski mask:
   see: portrait
 
 heritage:
-  label: portrait
-  categories:
-    - people
+  see: portrait
 
 safety pin:
   see: ignore
@@ -3749,11 +3726,10 @@ bulletproof vest:
   see: ignore
 
 balance beam:
-  label: portrait
-  threshold: 0.2
+  see: ignore
 
 balloon:
-  threshold: 0.5
+  threshold: 0.6
 
 display:
   label: display
@@ -3854,8 +3830,7 @@ guillotine:
   see: ignore
 
 hand blower:
-  threshold: 0.3
-  label: portrait
+  see: ignore
 
 fire-screen:
   see: ignore
