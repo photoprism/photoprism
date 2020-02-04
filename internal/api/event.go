@@ -27,9 +27,7 @@ func PublishPhotoEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Repo
 		return
 	}
 
-	event.Publish("photos."+string(e), event.Data{
-		"entities": result,
-	})
+	event.PublishEntities("photos", string(e), result)
 }
 
 func PublishAlbumEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Repo) {
@@ -42,9 +40,7 @@ func PublishAlbumEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Repo
 		return
 	}
 
-	event.Publish("albums."+string(e), event.Data{
-		"entities": result,
-	})
+	event.PublishEntities("albums", string(e), result)
 }
 
 func PublishLabelEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Repo) {
@@ -57,7 +53,5 @@ func PublishLabelEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Repo
 		return
 	}
 
-	event.Publish("labels."+string(e), event.Data{
-		"entities": result,
-	})
+	event.PublishEntities("labels", string(e), result)
 }

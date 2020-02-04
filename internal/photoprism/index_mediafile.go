@@ -387,10 +387,14 @@ func (ind *Index) addLabels(photoId uint, labels classify.Labels) {
 	for _, label := range labels {
 		lm := entity.NewLabel(txt.Title(label.Name), label.Priority).FirstOrCreate(ind.db)
 
-		if lm.New && label.Priority >= 0 {
-			event.Publish("count.labels", event.Data{
-				"count": 1,
-			})
+		if lm.New {
+			event.EntitiesCreated("labels", []*entity.Label{lm})
+
+			if label.Priority >= 0 {
+				event.Publish("count.labels", event.Data{
+					"count": 1,
+				})
+			}
 		}
 
 		if lm.LabelPriority != label.Priority {

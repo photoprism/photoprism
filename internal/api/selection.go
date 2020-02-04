@@ -48,9 +48,7 @@ func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
-		event.Publish("photos.archived", event.Data{
-			"entities": f.Photos,
-		})
+		event.EntitiesArchived("photos", f.Photos)
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos archived in %d s", elapsed)})
 	})
@@ -90,9 +88,7 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
-		event.Publish("photos.restored", event.Data{
-			"entities": f.Photos,
-		})
+		event.EntitiesRestored("photos", f.Photos)
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos restored in %d s", elapsed)})
 	})
@@ -128,9 +124,7 @@ func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
-		event.Publish("albums.deleted", event.Data{
-			"entities": f.Albums,
-		})
+		event.EntitiesDeleted("albums", f.Albums)
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("albums deleted")})
 	})
@@ -237,9 +231,7 @@ func BatchLabelsDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
-		event.Publish("labels.deleted", event.Data{
-			"entities": f.Labels,
-		})
+		event.EntitiesDeleted("labels", f.Labels)
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("labels deleted")})
 	})
