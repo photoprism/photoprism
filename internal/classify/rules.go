@@ -310,7 +310,7 @@ var rules = LabelRules{
 	},
 	"backpack": {
 		Label:      "",
-		Threshold:  0.200000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -1108,7 +1108,7 @@ var rules = LabelRules{
 	},
 	"carbonara": {
 		Label:      "pasta",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"dining", "food"},
 	},
@@ -1216,8 +1216,8 @@ var rules = LabelRules{
 	},
 	"chain": {
 		Label:      "",
-		Threshold:  0.500000,
-		Priority:   0,
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"chain mail": {
@@ -1336,7 +1336,7 @@ var rules = LabelRules{
 	},
 	"church": {
 		Label:      "church",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"building", "architecture"},
 	},
@@ -1575,9 +1575,9 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"cowboy hat": {
-		Label:      "hat",
-		Threshold:  0.300000,
-		Priority:   0,
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"coyote": {
@@ -1698,7 +1698,7 @@ var rules = LabelRules{
 		Label:      "wall",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{"water"},
+		Categories: []string{"architecture"},
 	},
 	"damselfly": {
 		Label:      "insect",
@@ -2308,7 +2308,7 @@ var rules = LabelRules{
 	},
 	"gazelle": {
 		Label:      "",
-		Threshold:  0.500000,
+		Threshold:  0.600000,
 		Priority:   0,
 		Categories: []string{"animal", "wildlife"},
 	},
@@ -3285,10 +3285,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"library": {
-		Label:      "",
-		Threshold:  0.700000,
+		Label:      "architecture",
+		Threshold:  0.500000,
 		Priority:   0,
-		Categories: []string{"architecture"},
+		Categories: []string{},
 	},
 	"lifeboat": {
 		Label:      "boat",
@@ -3358,7 +3358,7 @@ var rules = LabelRules{
 	},
 	"llama": {
 		Label:      "",
-		Threshold:  0.500000,
+		Threshold:  0.600000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -3609,8 +3609,8 @@ var rules = LabelRules{
 		Categories: []string{"cooking", "electronics"},
 	},
 	"military uniform": {
-		Label:      "uniform",
-		Threshold:  0.000000,
+		Label:      "portrait",
+		Threshold:  0.350000,
 		Priority:   0,
 		Categories: []string{"people"},
 	},
@@ -3633,10 +3633,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"minibus": {
-		Label:      "vehicle",
-		Threshold:  0.200000,
+		Label:      "bus",
+		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"vehicle"},
 	},
 	"miniskirt": {
 		Label:      "portrait",
@@ -4569,10 +4569,10 @@ var rules = LabelRules{
 		Categories: []string{"farm", "animal"},
 	},
 	"rapeseed": {
-		Label:      "flowers",
+		Label:      "field",
 		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{"flower", "nature", "plant"},
+		Categories: []string{"farm", "landscape"},
 	},
 	"recreational vehicle": {
 		Label:      "camper",
@@ -4839,10 +4839,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"school bus": {
-		Label:      "vehicle",
+		Label:      "bus",
 		Threshold:  0.200000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"vehicle"},
 	},
 	"schooner": {
 		Label:      "ship",
@@ -5366,6 +5366,12 @@ var rules = LabelRules{
 		Priority:   -2,
 		Categories: []string{},
 	},
+	"stone wall": {
+		Label:      "wall",
+		Threshold:  0.300000,
+		Priority:   0,
+		Categories: []string{"architecture"},
+	},
 	"stopwatch": {
 		Label:      "display",
 		Threshold:  0.300000,
@@ -5625,10 +5631,10 @@ var rules = LabelRules{
 		Categories: []string{"farm"},
 	},
 	"throne": {
-		Label:      "castle",
-		Threshold:  0.500000,
+		Label:      "",
+		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{"furniture"},
+		Categories: []string{"historic"},
 	},
 	"thunder snake": {
 		Label:      "animal",
@@ -5847,10 +5853,10 @@ var rules = LabelRules{
 		Categories: []string{"architecture"},
 	},
 	"trolleybus": {
-		Label:      "vehicle",
-		Threshold:  0.500000,
+		Label:      "bus",
+		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"vehicle"},
 	},
 	"trombone": {
 		Label:      "instrument",
@@ -5943,10 +5949,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"vestment": {
-		Label:      "uniform",
-		Threshold:  0.500000,
+		Label:      "portrait",
+		Threshold:  0.350000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"people"},
 	},
 	"viaduct": {
 		Label:      "building",
@@ -6211,6 +6217,12 @@ var rules = LabelRules{
 		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{"beverage", "drinks"},
+	},
+	"wing": {
+		Label:      "",
+		Threshold:  0.150000,
+		Priority:   0,
+		Categories: []string{"aircraft"},
 	},
 	"wire-haired fox terrier dog": {
 		Label:      "dog",

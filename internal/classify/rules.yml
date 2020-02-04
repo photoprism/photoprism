@@ -98,18 +98,20 @@ daisy:
     - plant
 
 rapeseed:
-  label: flowers
+  label: field
   threshold: 0.4
   categories:
-    - flower
-    - nature
-    - plant
+    - farm
+    - landscape
 
 fashion:
   label: portrait
   threshold: 0.35
   categories:
     - people
+
+vestment:
+  see: fashion
 
 trench coat:
   see: ignore
@@ -1549,13 +1551,13 @@ impala:
     - wildlife
 
 gazelle:
-  threshold: 0.5
+  threshold: 0.6
   categories:
     - animal
     - wildlife
 
 llama:
-  threshold: 0.5
+  threshold: 0.6
   categories:
     - animal
 
@@ -1780,6 +1782,11 @@ airship:
     - airport
     - vehicle
 
+wing:
+  threshold: 0.15
+  categories:
+    - aircraft
+
 ambulance:
   label: vehicle
   threshold: 0.3
@@ -1804,7 +1811,7 @@ assault rifle:
   see: weapon
 
 backpack:
-  threshold: 0.2
+  threshold: 0.3
 
 bakery:
   threshold: 0.5
@@ -1998,7 +2005,7 @@ china cabinet:
 
 church:
   label: church
-  threshold: 0.3
+  threshold: 0.4
   categories:
     - building
     - architecture
@@ -2086,7 +2093,13 @@ dam:
   label: wall
   threshold: 0.3
   categories:
-    - water
+    - architecture
+
+stone wall:
+  label: wall
+  threshold: 0.3
+  categories:
+    - architecture
 
 desktop computer:
   label: computer
@@ -2363,9 +2376,8 @@ reflex camera:
   see: photography
 
 library:
-  threshold: 0.7
-  categories:
-    - architecture
+  label: architecture
+  threshold: 0.5
 
 lifeboat:
   see: boat
@@ -2437,8 +2449,10 @@ microwave:
     - electronics
 
 minibus:
-  label: vehicle
-  threshold: 0.2
+  label: bus
+  threshold: 0.4
+  categories:
+    - vehicle
 
 minivan:
   label: vehicle
@@ -2778,8 +2792,10 @@ sax:
   see: instrument
 
 school bus:
-  label: vehicle
+  label: bus
   threshold: 0.2
+  categories:
+    - vehicle
 
 schooner:
   see: ship
@@ -2973,8 +2989,10 @@ triumphal arch:
   see: historic architecture
 
 trolleybus:
-  label: vehicle
-  threshold: 0.5
+  label: bus
+  threshold: 0.4
+  categories:
+    - vehicle
 
 trombone:
   see: instrument
@@ -3242,7 +3260,7 @@ pomegranate:
 
 carbonara:
   label: pasta
-  threshold: 0.3
+  threshold: 0.4
   categories:
     - dining
     - food
@@ -3547,10 +3565,6 @@ beaker:
 bucket:
   threshold: 0.5
 
-vestment:
-  label: uniform
-  threshold: 0.5
-
 baby:
   label: baby
   threshold: 0.25
@@ -3798,7 +3812,7 @@ joystick:
   see: electronics
 
 chain:
-  threshold: 0.5
+  see: ignore
 
 chest:
   label: box
@@ -3813,8 +3827,7 @@ cinema:
     - theater
 
 cowboy hat:
-  label: hat
-  threshold: 0.3
+  see: ignore
 
 cowboy boot:
   see: shoe
@@ -3870,9 +3883,7 @@ lumbermill:
   label: wood
 
 military uniform:
-  label: uniform
-  categories:
-    - people
+  see: fashion
 
 park bench:
   label: bench
@@ -3956,10 +3967,9 @@ scuba diver:
     - water
 
 throne:
-  label: castle
-  threshold: 0.5
+  threshold: 0.4
   categories:
-    - furniture
+    - historic
 
 traffic light:
   label: traffic
