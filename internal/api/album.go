@@ -281,6 +281,8 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 			event.Success(fmt.Sprintf("%d photos added to %s", len(added), a.AlbumName))
 		}
 
+		PublishAlbumEvent(EntityUpdated, a.AlbumUUID, c, q)
+
 		c.JSON(http.StatusOK, gin.H{"message": "photos added to album", "album": a, "added": added})
 	})
 }
@@ -319,6 +321,8 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 		db.Where("album_uuid = ? AND photo_uuid IN (?)", a.AlbumUUID, f.Photos).Delete(&entity.PhotoAlbum{})
 
 		event.Success(fmt.Sprintf("photos removed from %s", a.AlbumName))
+
+		PublishAlbumEvent(EntityUpdated, a.AlbumUUID, c, q)
 
 		c.JSON(http.StatusOK, gin.H{"message": "photos removed from album", "album": a, "photos": f.Photos})
 	})

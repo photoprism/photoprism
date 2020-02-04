@@ -157,16 +157,24 @@
 
                 Object.assign(params, this.lastFilter);
 
-                Photo.search(params).then(response => {
-                    this.page++;
-                    this.offset += this.pageSize;
+                if (this.staticFilter) {
+                    Object.assign(params, this.staticFilter);
+                }
 
+                Photo.search(params).then(response => {
                     this.results = this.dirty ? response.models : this.results.concat(response.models);
 
                     this.scrollDisabled = (response.models.length < count);
 
                     if (this.scrollDisabled) {
-                        this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' photos loaded'));
+                        this.offset = offset;
+
+                        if(this.results.length > 1) {
+                            this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' photos loaded'));
+                        }
+                    } else {
+                        this.offset = offset + count;
+                        this.page++;
                     }
                 }).catch(() => {
                     this.scrollDisabled = false;
@@ -210,12 +218,12 @@
                 return params;
             },
             refresh() {
-                this.lastFilter = {};
-                const pageSize = this.pageSize;
-                this.pageSize = this.offset + pageSize;
-                this.search();
-                this.offset = this.pageSize;
-                this.pageSize = pageSize;
+                if(this.loading) return;
+                this.loading = true;
+                this.page = 0;
+                this.dirty = true;
+                this.scrollDisabled = false;
+                this.loadMore();
             },
             search() {
                 this.scrollDisabled = true;

@@ -201,16 +201,24 @@
 
                 Object.assign(params, this.lastFilter);
 
-                Album.search(params).then(response => {
-                    this.page++;
-                    this.offset += this.pageSize;
+                if (this.staticFilter) {
+                    Object.assign(params, this.staticFilter);
+                }
 
+                Album.search(params).then(response => {
                     this.results = this.dirty ? response.models : this.results.concat(response.models);
 
                     this.scrollDisabled = (response.models.length < count);
 
                     if (this.scrollDisabled) {
-                        this.$notify.info(this.$gettext("All ") + this.results.length + this.$gettext(" albums loaded"));
+                        this.offset = offset;
+
+                        if(this.results.length > 1) {
+                            this.$notify.info(this.$gettext("All ") + this.results.length + this.$gettext(" albums loaded"));
+                        }
+                    } else {
+                        this.offset = offset + count;
+                        this.page++;
                     }
                 }).catch(() => {
                     this.scrollDisabled = false;
@@ -298,12 +306,12 @@
                 });
             },
             refresh() {
-                this.lastFilter = {};
-                const pageSize = this.pageSize;
-                this.pageSize = this.offset + pageSize;
-                this.search();
-                this.offset = this.pageSize;
-                this.pageSize = pageSize;
+                if(this.loading) return;
+                this.loading = true;
+                this.page = 0;
+                this.dirty = true;
+                this.scrollDisabled = false;
+                this.loadMore();
             },
             create() {
                 let name = DateTime.local().toFormat("LLLL yyyy");

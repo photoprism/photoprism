@@ -3,7 +3,7 @@
          :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
         <p-album-toolbar :album="model" :settings="settings" :filter="filter" :filter-change="updateQuery"
-                              :refresh="refresh"></p-album-toolbar>
+                         :refresh="refresh"></p-album-toolbar>
 
         <v-container fluid class="pa-4" v-if="loading">
             <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
@@ -43,6 +43,7 @@
 <script>
     import Photo from "model/photo";
     import Album from "model/album";
+    import Event from "pubsub-js";
 
     export default {
         name: 'p-page-album-photos',
@@ -77,12 +78,16 @@
             const settings = {view: view};
 
             return {
-                model: new Album({AlbumName:""}),
+                subscriptions: [],
+                listen: false,
+                dirty: false,
+                model: new Album(),
                 uuid: uuid,
                 results: [],
                 scrollDisabled: true,
                 pageSize: 60,
                 offset: 0,
+                page: 0,
                 selection: this.$clipboard.selection,
                 settings: settings,
                 filter: filter,
@@ -128,25 +133,44 @@
                 if (this.scrollDisabled) return;
 
                 this.scrollDisabled = true;
+                this.listen = false;
 
-                this.offset += this.pageSize;
+                const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
+                const offset = this.dirty ? 0 : this.offset;
 
                 const params = {
-                    count: this.pageSize,
-                    offset: this.offset,
+                    count: count,
+                    offset: offset,
                     album: this.uuid,
                 };
 
                 Object.assign(params, this.lastFilter);
 
-                Photo.search(params).then(response => {
-                    this.results = this.results.concat(response.models);
+                if (this.staticFilter) {
+                    Object.assign(params, this.staticFilter);
+                }
 
-                    this.scrollDisabled = (response.models.length < this.pageSize);
+                Photo.search(params).then(response => {
+                    this.results = this.dirty ? response.models : this.results.concat(response.models);
+
+                    this.scrollDisabled = (response.models.length < count);
 
                     if (this.scrollDisabled) {
-                        this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' photos loaded'));
+                        this.offset = offset;
+
+                        if(this.results.length > 1) {
+                            this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' photos loaded'));
+                        }
+                    } else {
+                        this.offset = offset + count;
+                        this.page++;
                     }
+                }).catch(() => {
+                    this.scrollDisabled = false;
+                }).finally(() => {
+                    this.dirty = false;
+                    this.loading = false;
+                    this.listen = true;
                 });
             },
             updateQuery() {
@@ -184,12 +208,12 @@
                 return params;
             },
             refresh() {
-                this.lastFilter = {};
-                const pageSize = this.pageSize;
-                this.pageSize = this.offset + pageSize;
-                this.search();
-                this.offset = this.pageSize;
-                this.pageSize = pageSize;
+                if(this.loading) return;
+                this.loading = true;
+                this.page = 0;
+                this.dirty = true;
+                this.scrollDisabled = false;
+                this.loadMore();
             },
             search() {
                 this.scrollDisabled = true;
@@ -203,12 +227,15 @@
                 Object.assign(this.lastFilter, this.filter);
 
                 this.offset = 0;
+                this.page = 0;
                 this.loading = true;
+                this.listen = false;
 
                 const params = this.searchParams();
 
                 Photo.search(params).then(response => {
-                    this.loading = false;
+                    this.offset = this.pageSize;
+
                     this.results = response.models;
 
                     this.scrollDisabled = (response.models.length < this.pageSize);
@@ -226,7 +253,11 @@
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
-                }).catch(() => this.loading = false);
+                }).finally(() => {
+                    this.dirty = false;
+                    this.loading = false;
+                    this.listen = true;
+                });
             },
             findAlbum() {
                 this.model.find(this.uuid).then(m => {
@@ -234,10 +265,87 @@
                     window.document.title = `PhotoPrism: ${this.model.AlbumName}`;
                 });
             },
+            onAlbumsUpdated(ev, data) {
+                if (!this.listen) return;
+
+                if (!data || !data.entities) {
+                    return
+                }
+
+                for (let i = 0; i < data.entities.length; i++) {
+                    const values = data.entities[i];
+
+                    if (this.model.AlbumUUID === data.entities[i].AlbumUUID) {
+                        for (let key in values) {
+                            if (values.hasOwnProperty(key)) {
+                                this.model[key] = values[key];
+                            }
+                        }
+
+                        this.dirty = true;
+                        this.scrollDisabled = false;
+
+                        this.loadMore();
+
+                        return;
+                    }
+                }
+            },
+            onUpdate(ev, data) {
+                if (!this.listen) return;
+
+                if (!data || !data.entities) {
+                    return
+                }
+
+                const type = ev.split('.')[1];
+
+                switch (type) {
+                    case 'updated':
+                        for (let i = 0; i < data.entities.length; i++) {
+                            const values = data.entities[i];
+                            const model = this.results.find((m) => m.ID === values.ID);
+
+                            for (let key in values) {
+                                if (values.hasOwnProperty(key)) {
+                                    model[key] = values[key];
+                                }
+                            }
+                        }
+                        break;
+                    case 'restored':
+                        this.dirty = true;
+                        this.scrollDisabled = false;
+
+                        this.loadMore();
+
+                        break;
+                    case 'archived':
+                        this.dirty = true;
+
+                        for (let i = 0; i < data.entities.length; i++) {
+                            const uuid = data.entities[i];
+                            const index = this.results.findIndex((m) => m.PhotoUUID === uuid);
+                            if (index >= 0) {
+                                this.results.splice(index, 1);
+                            }
+                        }
+
+                        break;
+                }
+            }
         },
         created() {
             this.findAlbum();
             this.search();
+
+            this.subscriptions.push(Event.subscribe("albums.updated", (ev, data) => this.onAlbumsUpdated(ev, data)));
+            this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
+        },
+        destroyed() {
+            for (let i = 0; i < this.subscriptions.length; i++) {
+                Event.unsubscribe(this.subscriptions[i]);
+            }
         },
     };
 </script>
