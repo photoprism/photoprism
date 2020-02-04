@@ -212,16 +212,18 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 			return indexResultFailed
 		}
 	} else {
-		event.Publish("count.photos", event.Data{
-			"count": 1,
-		})
-
 		photo.PhotoFavorite = false
 
 		if err := ind.db.Create(&photo).Error; err != nil {
 			log.Errorf("index: %s", err)
 			return indexResultFailed
 		}
+
+		event.Publish("count.photos", event.Data{
+			"count": 1,
+		})
+
+		event.EntitiesCreated("photos", []entity.Photo{photo})
 	}
 
 	if len(labels) > 0 {

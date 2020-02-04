@@ -264,17 +264,7 @@
             onImportCompleted() {
                 if (!this.listen) return;
 
-                this.dirty = true;
-
-                if (this.selection.length === 0 && this.offset < 1) {
-                    this.refresh();
-                }
-            },
-            onCount() {
-                if (!this.listen) return;
-
-                this.dirty = true;
-                this.scrollDisabled = false;
+                this.loadMore();
             },
             onUpdate(ev, data) {
                 if (!this.listen) return;
@@ -326,6 +316,11 @@
                         }
 
                         break;
+                    case 'created':
+                        this.dirty = true;
+                        this.scrollDisabled = false;
+
+                        break;
                     default:
                         console.warn("unexpected event type", ev);
                 }
@@ -335,7 +330,6 @@
             this.search();
 
             this.subscriptions.push(Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data)));
-            this.subscriptions.push(Event.subscribe("count.photos", (ev, data) => this.onCount(ev, data)));
             this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
         },
         destroyed() {

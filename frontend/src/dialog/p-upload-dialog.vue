@@ -3,7 +3,7 @@
               v-model="show" persistent class="p-upload-dialog" @keydown.esc="cancel">
         <v-card color="application">
             <v-toolbar dark color="navigation">
-                <v-btn icon dark @click.stop="cancel" :disabled="busy">
+                <v-btn icon dark @click.stop="cancel">
                     <v-icon>close</v-icon>
                 </v-btn>
                 <v-toolbar-title><translate>Upload</translate></v-toolbar-title>
@@ -74,9 +74,19 @@
         },
         methods: {
             cancel() {
+                if(this.busy) {
+                    Notify.info(this.$gettext("Uploading photos..."));
+                    return;
+                }
+
                 this.$emit('cancel');
             },
             confirm() {
+                if(this.busy) {
+                    Notify.info(this.$gettext("Uploading photos..."));
+                    return;
+                }
+
                 this.$emit('confirm');
             },
             submit() {
@@ -101,7 +111,6 @@
                 }
 
                 Notify.info(this.$gettext("Uploading photos..."));
-                Notify.blockUI();
 
                 async function performUpload(ctx) {
                     for (let i = 0; i < ctx.selected.length; i++) {
@@ -126,7 +135,7 @@
                             ctx.indexing = false;
                             ctx.completed = 100;
                             ctx.failed = true;
-                            Notify.unblockUI();
+
                             throw Error("upload failed");
                         });
                     }
@@ -139,13 +148,11 @@
                     Api.post('import/upload/' + this.started, {
                         move: true,
                     }).then(() => {
-                        Notify.unblockUI();
                         Notify.success(ctx.$gettext("Upload complete"));
                         ctx.busy = false;
                         ctx.indexing = false;
                         ctx.$emit('confirm');
                     }).catch(() => {
-                        Notify.unblockUI();
                         Notify.error(ctx.$gettext("Failure while importing uploaded files"));
                         ctx.busy = false;
                         ctx.indexing = false;
