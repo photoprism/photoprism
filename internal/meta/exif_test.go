@@ -26,11 +26,42 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 0, data.Altitude)
 		assert.Equal(t, "HUAWEI", data.CameraMake)
 		assert.Equal(t, "ELE-L29", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
 		assert.Equal(t, 27, data.FocalLength)
 		assert.Equal(t, 1, int(data.Orientation))
 
 		// TODO: Values are empty - why?
 		// assert.Equal(t, "HUAWEI P30 Rear Main Camera", data.LensModel)
+	})
+
+	t.Run("ladybug jpg file", func(t *testing.T) {
+		data, err := Exif("testdata/ladybug.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "Photographer: TMB", data.Artist)
+		assert.Equal(t, "2011-07-10T17:34:28Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2011-07-10T19:34:28Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "", data.Title)    // Should be "Ladybug"
+		assert.Equal(t, "", data.Keywords) // Should be "Ladybug"
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, 540, data.Height)
+		assert.Equal(t, 720, data.Width)
+		assert.Equal(t, 51.25485166666667, data.Lat)
+		assert.Equal(t, 7.389468333333333, data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "Canon", data.CameraMake)
+		assert.Equal(t, "Canon EOS 50D", data.CameraModel)
+		assert.Equal(t, "Thomas Meyer-Boudnik", data.CameraOwner)
+		assert.Equal(t, "2260716910", data.CameraSerial)
+		assert.Equal(t, 100, data.FocalLength)
+		assert.Equal(t, 1, int(data.Orientation))
 	})
 
 	t.Run("png file without exif", func(t *testing.T) {

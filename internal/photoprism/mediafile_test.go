@@ -977,7 +977,7 @@ func TestMediaFile_AspectRatio(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
 		assert.Nil(t, err)
 		ratio := mediaFile.AspectRatio()
-		assert.Equal(t, float64(0), ratio)
+		assert.Equal(t, 0.75, ratio)
 	})
 	t.Run("/fern_green.jpg", func(t *testing.T) {
 		conf := config.TestConfig()

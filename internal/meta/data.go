@@ -11,11 +11,16 @@ type Data struct {
 	TakenAtLocal time.Time
 	TimeZone     string
 	Title        string
+	Subject      string
+	Keywords     string
+	Comment      string
 	Artist       string
 	Description  string
 	Copyright    string
 	CameraMake   string
 	CameraModel  string
+	CameraOwner  string
+	CameraSerial string
 	LensMake     string
 	LensModel    string
 	Flash        bool

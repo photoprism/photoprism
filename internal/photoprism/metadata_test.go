@@ -167,8 +167,8 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 	assert.Equal(t, 34.79745, jpegInfo.Lat)
 	assert.Equal(t, 134.76463333333334, jpegInfo.Lng)
 	assert.Equal(t, 0, jpegInfo.Altitude)
-	assert.Equal(t, 0, jpegInfo.Width)
-	assert.Equal(t, 0, jpegInfo.Height)
+	assert.Equal(t, 4032, jpegInfo.Width)
+	assert.Equal(t, 3024, jpegInfo.Height)
 	assert.Equal(t, false, jpegInfo.Flash)
 	assert.Equal(t, "", jpegInfo.Description)
 

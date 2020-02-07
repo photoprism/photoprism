@@ -136,6 +136,14 @@ func Exif(filename string) (data Data, err error) {
 		data.CameraMake = strings.Replace(value, "\"", "", -1)
 	}
 
+	if value, ok := tags["CameraOwnerName"]; ok {
+		data.CameraOwner = strings.Replace(value, "\"", "", -1)
+	}
+
+	if value, ok := tags["BodySerialNumber"]; ok {
+		data.CameraSerial = strings.Replace(value, "\"", "", -1)
+	}
+
 	if value, ok := tags["LensMake"]; ok {
 		data.LensMake = strings.Replace(value, "\"", "", -1)
 	}
@@ -199,9 +207,17 @@ func Exif(filename string) (data Data, err error) {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Width = i
 		}
+	} else if value, ok := tags["PixelXDimension"]; ok {
+		if i, err := strconv.Atoi(value); err == nil {
+			data.Width = i
+		}
 	}
 
 	if value, ok := tags["ImageLength"]; ok {
+		if i, err := strconv.Atoi(value); err == nil {
+			data.Height = i
+		}
+	} else if value, ok := tags["PixelYDimension"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Height = i
 		}
