@@ -11,7 +11,6 @@ class Photo extends Abstract {
             PhotoPath: "",
             PhotoName: "",
             PhotoTitle: "",
-            PhotoTitleChanged: false,
             PhotoDescription: "",
             PhotoNotes: "",
             PhotoArtist: "",
@@ -37,13 +36,15 @@ class Photo extends Abstract {
             LocationID: "",
             Place: null,
             PlaceID: "",
-            LocationChanged: false,
             LocationEstimated: false,
             PhotoCountry: "",
             PhotoYear: 0,
             PhotoMonth: 0,
             TakenAtLocal: "",
-            TakenAtChanged: false,
+            ModifiedDate: false,
+            ModifiedTitle: false,
+            ModifiedDetails: false,
+            ModifiedLocation: false,
             TimeZone: "",
             Files: [],
             Labels: [],
@@ -217,6 +218,28 @@ class Photo extends Abstract {
     removeLabel(id) {
         return Api.delete(this.getEntityResource() + "/label/" + id)
             .then((response) => Promise.resolve(this.setValues(response.data)));
+    }
+
+    update() {
+        const values = this.getValues(true);
+
+        if(values.PhotoTitle) {
+            values.ModifiedTitle = true
+        }
+
+        if(values.PhotoLat || values.PhotoLng || values.PhotoAltitude) {
+            values.ModifiedLocation = true
+        }
+
+        if(values.TakenAt || values.TimeZone) {
+            values.ModifiedDate = true
+        }
+
+        if(values.CameraID || values.LensID || values.PhotoCountry) {
+            values.ModifiedDetails = true
+        }
+
+        return Api.put(this.getEntityResource(), values).then((response) => Promise.resolve(this.setValues(response.data)));
     }
 
     static getCollectionResource() {
