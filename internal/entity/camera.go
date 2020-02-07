@@ -14,10 +14,9 @@ import (
 type Camera struct {
 	ID                uint   `gorm:"primary_key"`
 	CameraSlug        string `gorm:"type:varbinary(128);unique_index;"`
-	CameraModel       string
-	CameraMake        string
-	CameraType        string
-	CameraOwner       string
+	CameraModel       string `gorm:"type:varchar(128);"`
+	CameraMake        string `gorm:"type:varchar(128);"`
+	CameraType        string `gorm:"type:varchar(128);"`
 	CameraDescription string `gorm:"type:text;"`
 	CameraNotes       string `gorm:"type:text;"`
 	CreatedAt         time.Time

@@ -14,6 +14,6 @@ func TestCamera_FirstOrCreate(t *testing.T) {
 		camera := entity.NewCamera("iPhone SE", "Apple")
 		c := config.TestConfig()
 		camera.FirstOrCreate(c.Db())
-		assert.Equal(t, uint(2), camera.ID)
+		assert.GreaterOrEqual(t, camera.ID, uint(1))
 	})
 }

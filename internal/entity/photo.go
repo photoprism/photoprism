@@ -19,10 +19,13 @@ type Photo struct {
 	PhotoPath         string    `gorm:"type:varbinary(512);index;"`
 	PhotoName         string    `gorm:"type:varbinary(256);"`
 	PhotoTitle        string    `json:"PhotoTitle"`
+	PhotoSubject      string    `json:"PhotoSubject"`
+	PhotoKeywords     string    `json:"PhotoKeywords"`
 	PhotoDescription  string    `gorm:"type:text;" json:"PhotoDescription"`
 	PhotoNotes        string    `gorm:"type:text;" json:"PhotoNotes"`
 	PhotoArtist       string    `json:"PhotoArtist"`
 	PhotoCopyright    string    `json:"PhotoCopyright"`
+	PhotoLicense      string    `json:"PhotoLicense"`
 	PhotoFavorite     bool      `json:"PhotoFavorite"`
 	PhotoPrivate      bool      `json:"PhotoPrivate"`
 	PhotoNSFW         bool      `json:"PhotoNSFW"`
@@ -35,6 +38,7 @@ type Photo struct {
 	PhotoFNumber      float64   `json:"PhotoFNumber"`
 	PhotoExposure     string    `gorm:"type:varbinary(64);" json:"PhotoExposure"`
 	CameraID          uint      `gorm:"index:idx_photos_camera_lens;" json:"CameraID"`
+	CameraSerial      string    `gorm:"type:varbinary(128);" json:"CameraSerial"`
 	LensID            uint      `gorm:"index:idx_photos_camera_lens;" json:"LensID"`
 	AccountID         uint      `json:"AccountID"`
 	PlaceID           string    `gorm:"type:varbinary(16);index;" json:"PlaceID"`
@@ -111,8 +115,11 @@ func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 func (m *Photo) IndexKeywords(keywords []string, db *gorm.DB) {
 	var keywordIds []uint
 
-	// Index title and description
+	// Add title, description and other keywords
 	keywords = append(keywords, txt.Keywords(m.PhotoTitle)...)
+	keywords = append(keywords, txt.Keywords(m.PhotoKeywords)...)
+	keywords = append(keywords, txt.Keywords(m.PhotoSubject)...)
+	keywords = append(keywords, txt.Keywords(m.PhotoArtist)...)
 	keywords = append(keywords, txt.Keywords(m.PhotoDescription)...)
 	last := ""
 
@@ -205,6 +212,34 @@ func (m *Photo) HasPlace() bool {
 
 func (m *Photo) NoTitle() bool {
 	return m.PhotoTitle == ""
+}
+
+func (m *Photo) NoDescription() bool {
+	return m.PhotoDescription == ""
+}
+
+func (m *Photo) NoNotes() bool {
+	return m.PhotoNotes == ""
+}
+
+func (m *Photo) NoArtist() bool {
+	return m.PhotoArtist == ""
+}
+
+func (m *Photo) NoCopyright() bool {
+	return m.PhotoCopyright == ""
+}
+
+func (m *Photo) NoSubject() bool {
+	return m.PhotoSubject == ""
+}
+
+func (m *Photo) NoKeywords() bool {
+	return m.PhotoKeywords == ""
+}
+
+func (m *Photo) NoCameraSerial() bool {
+	return m.CameraSerial == ""
 }
 
 func (m *Photo) HasTitle() bool {
