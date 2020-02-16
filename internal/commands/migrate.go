@@ -8,13 +8,14 @@ import (
 	"github.com/urfave/cli"
 )
 
-// Automatically migrates / initializes database
+// MigrateCommand is used to register the migrate cli command
 var MigrateCommand = cli.Command{
 	Name:   "migrate",
 	Usage:  "Automatically initializes and migrates the database",
 	Action: migrateAction,
 }
 
+// migrateAction automatically migrates or initializes database
 func migrateAction(ctx *cli.Context) error {
 	start := time.Now()
 

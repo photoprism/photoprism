@@ -11,7 +11,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// indexes all photos in originals directory (photo library)
+// IndexCommand is used to register the index cli command
 var IndexCommand = cli.Command{
 	Name:   "index",
 	Usage:  "Indexes media files in originals path",
@@ -26,6 +26,7 @@ var indexFlags = []cli.Flag{
 	},
 }
 
+// indexAction indexes all photos in originals directory (photo library)
 func indexAction(ctx *cli.Context) error {
 	start := time.Now()
 
