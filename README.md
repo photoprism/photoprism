@@ -36,6 +36,8 @@ Developers can skip this and move on to the [Developer Guide](https://docs.photo
 All you need is a Web browser and [Docker](https://store.docker.com/search?type=edition&offering=community)
 to run the server. It is available for Mac, Linux and Windows.
 
+There is also a [pre-installed Raspberry Pi image here](https://github.com/guysoft/PhotoPrismPi).
+
 Note that this is work in progress. We do our best to provide a complete, stable version.
 If you have a question, don't hesitate to ask in our [help forum][help] 
 or [contact us via email](mailto:hello@photoprism.org).
