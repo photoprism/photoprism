@@ -7,13 +7,14 @@ import (
 	"github.com/urfave/cli"
 )
 
-// Prints current version
+// VersionCommand is used to register the version cli command
 var VersionCommand = cli.Command{
 	Name:   "version",
 	Usage:  "Shows version information",
 	Action: versionAction,
 }
 
+// versionAction prints the current version
 func versionAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 

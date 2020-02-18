@@ -14,6 +14,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// CopyCommand is used to register the copy cli command
 var CopyCommand = cli.Command{
 	Name:    "copy",
 	Aliases: []string{"cp"},
@@ -21,12 +22,13 @@ var CopyCommand = cli.Command{
 	Action:  copyAction,
 }
 
-// Copies photos to originals path.
+// copyAction copies photos to originals path. Default import path is used if no path argument provided
 func copyAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
 
+	// very if copy directory exist and is writable
 	if conf.ReadOnly() {
 		return config.ErrReadOnly
 	}
@@ -43,6 +45,7 @@ func copyAction(ctx *cli.Context) error {
 
 	conf.MigrateDb()
 
+	// get cli first argument
 	sourcePath := strings.TrimSpace(ctx.Args().First())
 
 	if sourcePath == "" {

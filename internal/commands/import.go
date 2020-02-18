@@ -14,6 +14,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// ImportCommand is used to register the import cli command
 var ImportCommand = cli.Command{
 	Name:    "import",
 	Aliases: []string{"mv"},
@@ -21,12 +22,13 @@ var ImportCommand = cli.Command{
 	Action:  importAction,
 }
 
-// Moves photos to originals path.
+// importAction moves photos to originals path. Default import path is used if no path argument provided
 func importAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
 
+	// very if copy directory exist and is writable
 	if conf.ReadOnly() {
 		return config.ErrReadOnly
 	}
@@ -43,6 +45,7 @@ func importAction(ctx *cli.Context) error {
 
 	conf.MigrateDb()
 
+	// get cli first argument
 	sourcePath := strings.TrimSpace(ctx.Args().First())
 
 	if sourcePath == "" {

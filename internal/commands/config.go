@@ -7,13 +7,14 @@ import (
 	"github.com/urfave/cli"
 )
 
-// Prints current configuration
+// ConfigCommand is used to register the display config cli command
 var ConfigCommand = cli.Command{
 	Name:   "config",
 	Usage:  "Displays global configuration values",
 	Action: configAction,
 }
 
+// configAction prints current configuration
 func configAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 

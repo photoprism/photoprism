@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// Pre-renders thumbnails
+// ThumbsCommand is used to register the thumbs cli command
 var ThumbsCommand = cli.Command{
 	Name:  "thumbs",
 	Usage: "Pre-renders thumbnails to boost performance",
@@ -21,6 +21,7 @@ var ThumbsCommand = cli.Command{
 	Action: thumbsAction,
 }
 
+// thumbsAction pre-render the thumbnails
 func thumbsAction(ctx *cli.Context) error {
 	start := time.Now()
 

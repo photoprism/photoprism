@@ -1,5 +1,5 @@
 /*
-This package contains commands and flags used by the photoprism application.
+Package commands contains commands and flags used by the photoprism application.
 
 Additional information concerning the command-line interface can be found in our Developer Guide:
 
@@ -18,6 +18,8 @@ import (
 
 var log = event.Log
 
+// chilAlreadyRunning test if a .pid file at filePath is a running proccess.
+// it returns the pid value and the running status (true or false).
 func childAlreadyRunning(filePath string) (pid int, running bool) {
 	if !fs.FileExists(filePath) {
 		return pid, false

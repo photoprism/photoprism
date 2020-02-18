@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// StopCommand stops the daemon if running.
+// StopCommand is used to register the stop cli command
 var StopCommand = cli.Command{
 	Name:    "stop",
 	Aliases: []string{"down"},
@@ -16,6 +16,7 @@ var StopCommand = cli.Command{
 	Action:  stopAction,
 }
 
+// stopAction stops the daemon if it is running.
 func stopAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 

@@ -16,7 +16,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// Starts web server (user interface)
+// StartCommand is used to register the start cli command
 var StartCommand = cli.Command{
 	Name:    "start",
 	Aliases: []string{"up"},
@@ -37,6 +37,7 @@ var startFlags = []cli.Flag{
 	},
 }
 
+// startAction start the web server and initializes the daemon
 func startAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 
@@ -74,9 +75,10 @@ func startAction(ctx *cli.Context) error {
 	if err := conf.Init(cctx); err != nil {
 		log.Fatal(err)
 	}
-
+	// initialize the database
 	conf.MigrateDb()
 
+	// check if daemon is running, if not initialize the daemon
 	dctx := new(daemon.Context)
 	dctx.LogFileName = conf.LogFilename()
 	dctx.PidFileName = conf.PIDFilename()
@@ -110,8 +112,10 @@ func startAction(ctx *cli.Context) error {
 		log.Infof("read-only mode enabled")
 	}
 
+	// start web server
 	go server.Start(cctx, conf)
 
+	// set up proper shutdown of daemon and web server
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
