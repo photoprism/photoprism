@@ -1,5 +1,5 @@
 /*
-This package contains models for data storage based on GORM.
+Package entity contains models for data storage based on GORM.
 
 See http://gorm.io/docs/ for more information about GORM.
 
