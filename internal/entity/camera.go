@@ -51,7 +51,7 @@ func NewCamera(modelName string, makeName string) *Camera {
 	return result
 }
 
-// FirstOrCreate check wether the camera model exist already in the database
+// FirstOrCreate checks wether the camera model exist already in the database
 func (m *Camera) FirstOrCreate(db *gorm.DB) *Camera {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
@@ -63,7 +63,7 @@ func (m *Camera) FirstOrCreate(db *gorm.DB) *Camera {
 	return m
 }
 
-// String return a string designing the given Camera entity
+// String returns a string designing the given Camera entity
 func (m *Camera) String() string {
 	if m.CameraMake != "" && m.CameraModel != "" {
 		return fmt.Sprintf("%s %s", m.CameraMake, m.CameraModel)

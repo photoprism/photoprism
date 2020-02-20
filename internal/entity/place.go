@@ -25,12 +25,12 @@ type Place struct {
 // UnknownPlace is the default unknown place
 var UnknownPlace = NewPlace("-", "Unknown", "Unknown", "Unknown", "zz")
 
-// CreateUnknownPlace initialize default place in the database
+// CreateUnknownPlace initializes default place in the database
 func CreateUnknownPlace(db *gorm.DB) {
 	UnknownPlace.FirstOrCreate(db)
 }
 
-// AfterCreate set the New column used for database callback
+// AfterCreate sets the New column used for database callback
 func (m *Place) AfterCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("New", true)
 }
@@ -57,7 +57,7 @@ func FindPlaceByLabel(id string, label string, db *gorm.DB) *Place {
 	return place
 }
 
-// NewPlace register a new place in database
+// NewPlace registers a new place in database
 func NewPlace(id, label, city, state, countryCode string) *Place {
 	result := &Place{
 		ID:         id,
@@ -70,7 +70,7 @@ func NewPlace(id, label, city, state, countryCode string) *Place {
 	return result
 }
 
-// Find return db record of place
+// Find returns db record of place
 func (m *Place) Find(db *gorm.DB) error {
 	if err := db.First(m, "id = ?", m.ID).Error; err != nil {
 		return err
@@ -79,7 +79,7 @@ func (m *Place) Find(db *gorm.DB) error {
 	return nil
 }
 
-// FirstOrCreate check wether the place already exists in the database
+// FirstOrCreate checks wether the place already exists in the database
 func (m *Place) FirstOrCreate(db *gorm.DB) *Place {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
@@ -91,37 +91,37 @@ func (m *Place) FirstOrCreate(db *gorm.DB) *Place {
 	return m
 }
 
-// NoID check is the place has no id
+// NoID checks is the place has no id
 func (m *Place) NoID() bool {
 	return m.ID == ""
 }
 
-// Label return place label
+// Label returns place label
 func (m *Place) Label() string {
 	return m.LocLabel
 }
 
-// City return place City
+// City returns place City
 func (m *Place) City() string {
 	return m.LocCity
 }
 
-// State return place State
+// State returns place State
 func (m *Place) State() string {
 	return m.LocState
 }
 
-// CountryCode return place CountryCode
+// CountryCode returns place CountryCode
 func (m *Place) CountryCode() string {
 	return m.LocCountry
 }
 
-// CountryName return place CountryName
+// CountryName returns place CountryName
 func (m *Place) CountryName() string {
 	return maps.CountryNames[m.LocCountry]
 }
 
-// Notes return place Notes
+// Notes returns place Notes
 func (m *Place) Notes() string {
 	return m.LocNotes
 }

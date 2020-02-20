@@ -9,7 +9,7 @@ import (
 // Labels is list of MediaFile labels.
 type Labels []Label
 
-// Implement functions for the Sort Interface. Default Labels sort is by priority and uncertainty
+// Implements functions for the Sort Interface. Default Labels sort is by priority and uncertainty
 func (l Labels) Len() int      { return len(l) }
 func (l Labels) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
 func (l Labels) Less(i, j int) bool {
@@ -20,7 +20,7 @@ func (l Labels) Less(i, j int) bool {
 	}
 }
 
-// AppendLabel extend append func by not appending empty label
+// AppendLabel extends append func by not appending empty label
 func (l Labels) AppendLabel(label Label) Labels {
 	if label.Name == "" {
 		return l
@@ -29,7 +29,7 @@ func (l Labels) AppendLabel(label Label) Labels {
 	return append(l, label)
 }
 
-// Keywords return all keywords contains in Labels and theire categories
+// Keywords returns all keywords contains in Labels and theire categories
 func (l Labels) Keywords() (result []string) {
 	for _, label := range l {
 		result = append(result, txt.Keywords(label.Name)...)
@@ -42,7 +42,7 @@ func (l Labels) Keywords() (result []string) {
 	return result
 }
 
-// Title get the best label out a list of labels or fallback to compute a meaningfull default title.
+// Title gets the best label out a list of labels or fallback to compute a meaningfull default title.
 func (l Labels) Title(fallback string) string {
 	fallbackRunes := len([]rune(fallback))
 

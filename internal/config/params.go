@@ -104,7 +104,7 @@ func NewParams(ctx *cli.Context) *Params {
 	return c
 }
 
-// expandFilenames convert path in config to absolute path
+// expandFilenames converts path in config to absolute path
 func (c *Params) expandFilenames() {
 	c.ConfigPath = fs.Abs(c.ConfigPath)
 	c.ResourcesPath = fs.Abs(c.ResourcesPath)

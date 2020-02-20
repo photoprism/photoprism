@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// Album represent a photo album
+// Album represents a photo album
 type Album struct {
 	ID               uint   `gorm:"primary_key"`
 	CoverUUID        string `gorm:"type:varbinary(36);"`
@@ -29,7 +29,7 @@ type Album struct {
 	DeletedAt        *time.Time `sql:"index"`
 }
 
-// BeforeCreate compute a random UUID when a new album is created in database
+// BeforeCreate computes a random UUID when a new album is created in database
 func (m *Album) BeforeCreate(scope *gorm.Scope) error {
 	if err := scope.SetColumn("AlbumUUID", rnd.PPID('a')); err != nil {
 		return err
@@ -38,7 +38,7 @@ func (m *Album) BeforeCreate(scope *gorm.Scope) error {
 	return nil
 }
 
-// NewAlbum Create a new album; default name is current month and year
+// NewAlbum creates a new album; default name is current month and year
 func NewAlbum(albumName string) *Album {
 	albumName = strings.TrimSpace(albumName)
 

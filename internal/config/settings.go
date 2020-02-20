@@ -15,7 +15,7 @@ type Settings struct {
 	Language string `json:"language" yaml:"language" flag:"language"`
 }
 
-// NewSettings return a empty Settings
+// NewSettings returns a empty Settings
 func NewSettings() *Settings {
 	return &Settings{}
 }

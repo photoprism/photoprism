@@ -34,7 +34,7 @@ func New(modelsPath string, disabled bool) *TensorFlow {
 	return &TensorFlow{modelsPath: modelsPath, disabled: disabled, modelName: "nasnet", modelTags: []string{"photoprism"}}
 }
 
-// Init initialise tensorflow models if not disabled
+// Init initialises tensorflow models if not disabled
 func (t *TensorFlow) Init() (err error) {
 	if t.disabled {
 		return nil
@@ -155,7 +155,7 @@ func (t *TensorFlow) loadModel() error {
 	return t.loadLabels(modelPath)
 }
 
-// besLabels returns the best 5 labels (if enough high probability labels) from the prediction of the model
+// bestLabels returns the best 5 labels (if enough high probability labels) from the prediction of the model
 func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 	var result Labels
 

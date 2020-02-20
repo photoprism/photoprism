@@ -28,7 +28,7 @@ type Label struct {
 	New              bool       `gorm:"-"`
 }
 
-// BeforeCreate compute a random UUID when a new label is created in database
+// BeforeCreate computes a random UUID when a new label is created in database
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
 	if err := scope.SetColumn("LabelUUID", rnd.PPID('l')); err != nil {
 		log.Errorf("label: %s", err)
@@ -38,7 +38,7 @@ func (m *Label) BeforeCreate(scope *gorm.Scope) error {
 	return nil
 }
 
-// NewLabel create a label in database with a given name and priority
+// NewLabel creates a label in database with a given name and priority
 func NewLabel(labelName string, labelPriority int) *Label {
 	labelName = strings.TrimSpace(labelName)
 
@@ -57,7 +57,7 @@ func NewLabel(labelName string, labelPriority int) *Label {
 	return result
 }
 
-// FirstOrCreate check wether the label already exists in the database
+// FirstOrCreate checks wether the label already exists in the database
 func (m *Label) FirstOrCreate(db *gorm.DB) *Label {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
@@ -69,7 +69,7 @@ func (m *Label) FirstOrCreate(db *gorm.DB) *Label {
 	return m
 }
 
-// AfterCreate set the New column used for database callback
+// AfterCreate sets the New column used for database callback
 func (m *Label) AfterCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("New", true)
 }

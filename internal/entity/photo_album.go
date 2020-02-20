@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
-// PhotoAlbum represent the many_to_many relation between Photo and Album
+// PhotoAlbum represents the many_to_many relation between Photo and Album
 type PhotoAlbum struct {
 	PhotoUUID string `gorm:"type:varbinary(36);primary_key;auto_increment:false"`
 	AlbumUUID string `gorm:"type:varbinary(36);primary_key;auto_increment:false;index"`
@@ -23,7 +23,7 @@ func (PhotoAlbum) TableName() string {
 	return "photos_albums"
 }
 
-// NewPhotoAlbum register an photo and album association using UUID
+// NewPhotoAlbum registers an photo and album association using UUID
 func NewPhotoAlbum(photoUUID, albumUUID string) *PhotoAlbum {
 	result := &PhotoAlbum{
 		PhotoUUID: photoUUID,
@@ -33,7 +33,7 @@ func NewPhotoAlbum(photoUUID, albumUUID string) *PhotoAlbum {
 	return result
 }
 
-// FirstOrCreate check wether the PhotoAlbum relation already exist in the database before the creation
+// FirstOrCreate checks wether the PhotoAlbum relation already exist in the database before the creation
 func (m *PhotoAlbum) FirstOrCreate(db *gorm.DB) *PhotoAlbum {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()

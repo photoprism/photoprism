@@ -31,7 +31,7 @@ func (Location) Lock() {
 	locationMutex.Lock()
 }
 
-// Unlock locations for updates
+// Unlock location for updates
 func (Location) Unlock() {
 	locationMutex.Unlock()
 }
@@ -45,7 +45,7 @@ func NewLocation(lat, lng float64) *Location {
 	return result
 }
 
-// Find get the location using either the db or the api if not in the db
+// Find gets the location using either the db or the api if not in the db
 func (m *Location) Find(db *gorm.DB, api string) error {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
@@ -85,7 +85,7 @@ func (m *Location) Find(db *gorm.DB, api string) error {
 	return nil
 }
 
-// Keywords compute keyword based on a Location
+// Keywords computes keyword based on a Location
 func (m *Location) Keywords() []string {
 	result := []string{
 		strings.ToLower(m.City()),
@@ -101,62 +101,62 @@ func (m *Location) Keywords() []string {
 	return result
 }
 
-// Unknown check if the location has no id
+// Unknown checks if the location has no id
 func (m *Location) Unknown() bool {
 	return m.ID == ""
 }
 
-// Name return name of location
+// Name returns name of location
 func (m *Location) Name() string {
 	return m.LocName
 }
 
-// NoName check if the location has no name
+// NoName checks if the location has no name
 func (m *Location) NoName() bool {
 	return m.LocName == ""
 }
 
-// Category return the location category
+// Category returns the location category
 func (m *Location) Category() string {
 	return m.LocCategory
 }
 
-// NoCategory check id the location has no category
+// NoCategory checks id the location has no category
 func (m *Location) NoCategory() bool {
 	return m.LocCategory == ""
 }
 
-// Label return the location place label
+// Label returns the location place label
 func (m *Location) Label() string {
 	return m.Place.Label()
 }
 
-// City return the location place city
+// City returns the location place city
 func (m *Location) City() string {
 	return m.Place.City()
 }
 
-// LongCity check if the city name is more than 16 char
+// LongCity checks if the city name is more than 16 char
 func (m *Location) LongCity() bool {
 	return len(m.City()) > 16
 }
 
-// NoCity check if the location has no city
+// NoCity checks if the location has no city
 func (m *Location) NoCity() bool {
 	return m.City() == ""
 }
 
-// CityContains check if the location city contains the text string
+// CityContains checks if the location city contains the text string
 func (m *Location) CityContains(text string) bool {
 	return strings.Contains(text, m.City())
 }
 
-// State return the location place state
+// State returns the location place state
 func (m *Location) State() string {
 	return m.Place.State()
 }
 
-// NoState check if the location place has no state
+// NoState checks if the location place has no state
 func (m *Location) NoState() bool {
 	return m.Place.State() == ""
 }
@@ -176,7 +176,7 @@ func (m *Location) Notes() string {
 	return m.Place.Notes()
 }
 
-// Source return the source of location information
+// Source returns the source of location information
 func (m *Location) Source() string {
 	return m.LocSource
 }

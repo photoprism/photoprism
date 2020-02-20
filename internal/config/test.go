@@ -30,7 +30,7 @@ func testDataPath(assetsPath string) string {
 	return assetsPath + "/testdata"
 }
 
-// NewTestParams init valid params used for testing
+// NewTestParams inits valid params used for testing
 func NewTestParams() *Params {
 	assetsPath := fs.Abs("../../assets")
 
@@ -54,7 +54,7 @@ func NewTestParams() *Params {
 	return c
 }
 
-// NewTestParamsError init invalid params used for testing
+// NewTestParamsError inits invalid params used for testing
 func NewTestParamsError() *Params {
 	assetsPath := fs.Abs("../..")
 
@@ -74,7 +74,7 @@ func NewTestParamsError() *Params {
 	return c
 }
 
-// TestConfig init the global testConfig if it was not already initialised
+// TestConfig inits the global testConfig if it was not already initialised
 func TestConfig() *Config {
 	once.Do(func() {
 		testConfig = NewTestConfig()
@@ -83,7 +83,7 @@ func TestConfig() *Config {
 	return testConfig
 }
 
-// NewTestConfig init valid config used for testing
+// NewTestConfig inits valid config used for testing
 func NewTestConfig() *Config {
 	log.SetLevel(logrus.DebugLevel)
 
@@ -107,7 +107,7 @@ func NewTestConfig() *Config {
 	return c
 }
 
-// NewTestErrorConfig init invalid config used for testing
+// NewTestErrorConfig inits invalid config used for testing
 func NewTestErrorConfig() *Config {
 	log.SetLevel(logrus.DebugLevel)
 
@@ -152,7 +152,7 @@ func CliTestContext() *cli.Context {
 	return c
 }
 
-// RemoveTestData delete files in import, export, originals and cache folders
+// RemoveTestData deletes files in import, export, originals and cache folders
 func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.ImportPath())
 	os.RemoveAll(c.ExportPath())
@@ -160,7 +160,7 @@ func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.CachePath())
 }
 
-// DownloadTestData download test data from photoprism.org server
+// DownloadTestData downloads test data from photoprism.org server
 func (c *Config) DownloadTestData(t *testing.T) {
 	if fs.FileExists(TestDataZip) {
 		hash := fs.Hash(TestDataZip)

@@ -14,7 +14,7 @@ type Keyword struct {
 	Skip    bool
 }
 
-// NewKeyword register a new keyword in database
+// NewKeyword registers a new keyword in database
 func NewKeyword(keyword string) *Keyword {
 	keyword = strings.ToLower(strings.TrimSpace(keyword))
 
@@ -25,7 +25,7 @@ func NewKeyword(keyword string) *Keyword {
 	return result
 }
 
-// FirstOrCreate check wether the keyword already exist in the database
+// FirstOrCreate checks wether the keyword already exist in the database
 func (m *Keyword) FirstOrCreate(db *gorm.DB) *Keyword {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()

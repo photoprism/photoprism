@@ -20,7 +20,7 @@ import (
 
 var log = event.Log
 
-// Config hold database, cache and all parameters of photoprism
+// Config holds database, cache and all parameters of photoprism
 type Config struct {
 	db     *gorm.DB
 	cache  *gc.Cache

@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// File represent an image or sidecar file that belongs to a photo
+// File represents an image or sidecar file that belongs to a photo
 type File struct {
 	ID              uint `gorm:"primary_key"`
 	Photo           *Photo
@@ -47,7 +47,7 @@ type File struct {
 	DeletedAt       *time.Time `sql:"index"`
 }
 
-// FirstFileByHash get a file in db from its hash
+// FirstFileByHash gets a file in db from its hash
 func FirstFileByHash(db *gorm.DB, fileHash string) (File, error) {
 	var file File
 
@@ -56,12 +56,12 @@ func FirstFileByHash(db *gorm.DB, fileHash string) (File, error) {
 	return file, q.Error
 }
 
-// BeforeCreate compute a random UUID when a new file is created in database
+// BeforeCreate computes a random UUID when a new file is created in database
 func (m *File) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("FileUUID", rnd.PPID('f'))
 }
 
-// DownloadFileName return a name useful for download links
+// DownloadFileName returns a name useful for download links
 func (m *File) DownloadFileName() string {
 	if m.Photo == nil {
 		return fmt.Sprintf("%s.%s", m.FileHash, m.FileType)
@@ -82,7 +82,7 @@ func (m *File) DownloadFileName() string {
 	return result
 }
 
-// Changed check wether given filesize or modified time are matching the current File
+// Changed checks wether given filesize or modified time are matching the current File
 func (m File) Changed(fileSize int64, fileModified time.Time) bool {
 	if m.FileSize != fileSize {
 		return true

@@ -1,6 +1,6 @@
 package config
 
-// Thumbnail give direct access to width and height for a thumbnail setting
+// Thumbnail gives direct access to width and height for a thumbnail setting
 type Thumbnail struct {
 	Name   string
 	Width  int

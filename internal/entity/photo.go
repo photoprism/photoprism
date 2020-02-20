@@ -76,7 +76,7 @@ func SavePhoto(model Photo, form form.Photo, db *gorm.DB) error {
 	return db.Save(&model).Error
 }
 
-// BeforeCreate compute a unique UUID, and set a default takenAt before indexing a new photo
+// BeforeCreate computes a unique UUID, and set a default takenAt before indexing a new photo
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 	if err := scope.SetColumn("PhotoUUID", rnd.PPID('p')); err != nil {
 		return err
@@ -97,7 +97,7 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 	return nil
 }
 
-// BeforeSave ensure the existence of TakenAt properties before indexing or updating a photo
+// BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo
 func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
 		now := time.Now()
@@ -114,7 +114,7 @@ func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 	return nil
 }
 
-// IndexKeywords add given keywords to the photo entry
+// IndexKeywords adds given keywords to the photo entry
 func (m *Photo) IndexKeywords(keywords []string, db *gorm.DB) {
 	var keywordIds []uint
 
@@ -148,7 +148,7 @@ func (m *Photo) IndexKeywords(keywords []string, db *gorm.DB) {
 	db.Where("photo_id = ? AND keyword_id NOT IN (?)", m.ID, keywordIds).Delete(&PhotoKeyword{})
 }
 
-// PreloadFiles prepare gorm scope to retrieve photo file
+// PreloadFiles prepares gorm scope to retrieve photo file
 func (m *Photo) PreloadFiles(db *gorm.DB) {
 	q := db.NewScope(nil).DB().
 		Table("files").
@@ -170,7 +170,7 @@ func (m *Photo) PreloadFiles(db *gorm.DB) {
 	logError(q.Scan(&m.Labels))
 } */
 
-// PreloadKeywords prepare gorm scope to retrieve photo keywords
+// PreloadKeywords prepares gorm scope to retrieve photo keywords
 func (m *Photo) PreloadKeywords(db *gorm.DB) {
 	q := db.NewScope(nil).DB().
 		Table("keywords").
@@ -181,7 +181,7 @@ func (m *Photo) PreloadKeywords(db *gorm.DB) {
 	logError(q.Scan(&m.Keywords))
 }
 
-// PreloadAlbums prepare gorm scope to retrieve photo albums
+// PreloadAlbums prepares gorm scope to retrieve photo albums
 func (m *Photo) PreloadAlbums(db *gorm.DB) {
 	q := db.NewScope(nil).DB().
 		Table("albums").
@@ -193,7 +193,7 @@ func (m *Photo) PreloadAlbums(db *gorm.DB) {
 	logError(q.Scan(&m.Albums))
 }
 
-// PreloadMany prepare gorm scope to retrieve photo file, albums and keywords
+// PreloadMany prepares gorm scope to retrieve photo file, albums and keywords
 func (m *Photo) PreloadMany(db *gorm.DB) {
 	m.PreloadFiles(db)
 	// m.PreloadLabels(db)
@@ -201,67 +201,67 @@ func (m *Photo) PreloadMany(db *gorm.DB) {
 	m.PreloadAlbums(db)
 }
 
-// NoLocation check if the photo has no location
+// NoLocation checks if the photo has no location
 func (m *Photo) NoLocation() bool {
 	return m.LocationID == ""
 }
 
-// HasLocation check if the photo has a location
+// HasLocation checks if the photo has a location
 func (m *Photo) HasLocation() bool {
 	return m.LocationID != ""
 }
 
-// NoPlace check if the photo has no Place
+// NoPlace checks if the photo has no Place
 func (m *Photo) NoPlace() bool {
 	return len(m.PlaceID) < 2
 }
 
-// HasPlace check if the photo has a Place
+// HasPlace checks if the photo has a Place
 func (m *Photo) HasPlace() bool {
 	return len(m.PlaceID) >= 2
 }
 
-// NoTitle check if the photo has no Title
+// NoTitle checks if the photo has no Title
 func (m *Photo) NoTitle() bool {
 	return m.PhotoTitle == ""
 }
 
-// NoDescription check if the photo has no Description
+// NoDescription checks if the photo has no Description
 func (m *Photo) NoDescription() bool {
 	return m.PhotoDescription == ""
 }
 
-// NoNotes check if the photo has no Notes
+// NoNotes checks if the photo has no Notes
 func (m *Photo) NoNotes() bool {
 	return m.PhotoNotes == ""
 }
 
-// NoArtist check if the photo has no Artist
+// NoArtist checks if the photo has no Artist
 func (m *Photo) NoArtist() bool {
 	return m.PhotoArtist == ""
 }
 
-// NoCopyright check if the photo has no Copyright
+// NoCopyright checks if the photo has no Copyright
 func (m *Photo) NoCopyright() bool {
 	return m.PhotoCopyright == ""
 }
 
-// NoSubject check if the photo has no Subject
+// NoSubject checks if the photo has no Subject
 func (m *Photo) NoSubject() bool {
 	return m.PhotoSubject == ""
 }
 
-// NoKeywords check if the photo has no Keywords
+// NoKeywords checks if the photo has no Keywords
 func (m *Photo) NoKeywords() bool {
 	return m.PhotoKeywords == ""
 }
 
-// NoCameraSerial check if the photo has no CameraSerial
+// NoCameraSerial checks if the photo has no CameraSerial
 func (m *Photo) NoCameraSerial() bool {
 	return m.CameraSerial == ""
 }
 
-// HasTitle check if the photo has a  Title
+// HasTitle checks if the photo has a  Title
 func (m *Photo) HasTitle() bool {
 	return m.PhotoTitle != ""
 }

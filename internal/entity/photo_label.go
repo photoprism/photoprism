@@ -21,7 +21,7 @@ func (PhotoLabel) TableName() string {
 	return "photos_labels"
 }
 
-// NewPhotoLabel register a new PhotoLabel relation with an uncertainty and a source of label
+// NewPhotoLabel registers a new PhotoLabel relation with an uncertainty and a source of label
 func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *PhotoLabel {
 	result := &PhotoLabel{
 		PhotoID:          photoID,
@@ -33,7 +33,7 @@ func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *Photo
 	return result
 }
 
-// FirstOrCreate check wether the PhotoLabel relation already exist in the database before the creation
+// FirstOrCreate checks wether the PhotoLabel relation already exist in the database before the creation
 func (m *PhotoLabel) FirstOrCreate(db *gorm.DB) *PhotoLabel {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()

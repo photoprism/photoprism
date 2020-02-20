@@ -1,6 +1,6 @@
 package classify
 
-// LabelRule define the rule for a given Label
+// LabelRule defines the rule for a given Label
 type LabelRule struct {
 	Label      string
 	Threshold  float32

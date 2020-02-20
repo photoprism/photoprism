@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// Event define temporal event that can be used to link photos together
+// Event defines temporal event that can be used to link photos together
 type Event struct {
 	EventUUID        string `gorm:"type:varbinary(36);unique_index;"`
 	EventSlug        string `gorm:"type:varbinary(128);unique_index;"`
@@ -30,7 +30,7 @@ func (Event) TableName() string {
 	return "events"
 }
 
-// BeforeCreate compute a random UUID when a new event is created in database
+// BeforeCreate computes a random UUID when a new event is created in database
 func (e *Event) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("EventUUID", rnd.PPID('e'))
 }
