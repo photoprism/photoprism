@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// HTTP client / Web UI config values
+// ClientConfig contains HTTP client / Web UI config values
 type ClientConfig map[string]interface{}
 
 // PublicClientConfig returns reduced config values for non-public sites.
