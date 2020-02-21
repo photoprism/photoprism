@@ -8,7 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
-// Photo place
+// Place used to associate photos to places
 type Place struct {
 	ID          string `gorm:"type:varbinary(16);primary_key;auto_increment:false;"`
 	LocLabel    string `gorm:"type:varbinary(512);unique_index;"`
@@ -22,16 +22,20 @@ type Place struct {
 	New         bool `gorm:"-"`
 }
 
+// UnknownPlace is the default unknown place
 var UnknownPlace = NewPlace("-", "Unknown", "Unknown", "Unknown", "zz")
 
+// CreateUnknownPlace initializes default place in the database
 func CreateUnknownPlace(db *gorm.DB) {
 	UnknownPlace.FirstOrCreate(db)
 }
 
+// AfterCreate sets the New column used for database callback
 func (m *Place) AfterCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("New", true)
 }
 
+// FindPlace returns place from a token
 func FindPlace(token string, db *gorm.DB) *Place {
 	place := &Place{}
 
@@ -42,6 +46,7 @@ func FindPlace(token string, db *gorm.DB) *Place {
 	return place
 }
 
+// FindPlaceByLabel returns a place from an id or a label
 func FindPlaceByLabel(id string, label string, db *gorm.DB) *Place {
 	place := &Place{}
 
@@ -52,6 +57,7 @@ func FindPlaceByLabel(id string, label string, db *gorm.DB) *Place {
 	return place
 }
 
+// NewPlace registers a new place in database
 func NewPlace(id, label, city, state, countryCode string) *Place {
 	result := &Place{
 		ID:         id,
@@ -64,6 +70,7 @@ func NewPlace(id, label, city, state, countryCode string) *Place {
 	return result
 }
 
+// Find returns db record of place
 func (m *Place) Find(db *gorm.DB) error {
 	if err := db.First(m, "id = ?", m.ID).Error; err != nil {
 		return err
@@ -72,6 +79,7 @@ func (m *Place) Find(db *gorm.DB) error {
 	return nil
 }
 
+// FirstOrCreate checks wether the place already exists in the database
 func (m *Place) FirstOrCreate(db *gorm.DB) *Place {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
@@ -83,30 +91,37 @@ func (m *Place) FirstOrCreate(db *gorm.DB) *Place {
 	return m
 }
 
+// NoID checks is the place has no id
 func (m *Place) NoID() bool {
 	return m.ID == ""
 }
 
+// Label returns place label
 func (m *Place) Label() string {
 	return m.LocLabel
 }
 
+// City returns place City
 func (m *Place) City() string {
 	return m.LocCity
 }
 
+// State returns place State
 func (m *Place) State() string {
 	return m.LocState
 }
 
+// CountryCode returns place CountryCode
 func (m *Place) CountryCode() string {
 	return m.LocCountry
 }
 
+// CountryName returns place CountryName
 func (m *Place) CountryName() string {
 	return maps.CountryNames[m.LocCountry]
 }
 
+// Notes returns place Notes
 func (m *Place) Notes() string {
 	return m.LocNotes
 }

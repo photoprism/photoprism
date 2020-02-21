@@ -9,11 +9,13 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// Settings contains Web UI settings
 type Settings struct {
 	Theme    string `json:"theme" yaml:"theme" flag:"theme"`
 	Language string `json:"language" yaml:"language" flag:"language"`
 }
 
+// NewSettings returns a empty Settings
 func NewSettings() *Settings {
 	return &Settings{}
 }

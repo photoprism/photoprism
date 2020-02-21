@@ -24,6 +24,7 @@ type Camera struct {
 	DeletedAt         *time.Time `sql:"index"`
 }
 
+// NewCamera creates a camera entity from a model name and a make name.
 func NewCamera(modelName string, makeName string) *Camera {
 	makeName = strings.TrimSpace(makeName)
 
@@ -50,6 +51,7 @@ func NewCamera(modelName string, makeName string) *Camera {
 	return result
 }
 
+// FirstOrCreate checks wether the camera model exist already in the database
 func (m *Camera) FirstOrCreate(db *gorm.DB) *Camera {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
@@ -61,6 +63,7 @@ func (m *Camera) FirstOrCreate(db *gorm.DB) *Camera {
 	return m
 }
 
+// String returns a string designing the given Camera entity
 func (m *Camera) String() string {
 	if m.CameraMake != "" && m.CameraModel != "" {
 		return fmt.Sprintf("%s %s", m.CameraMake, m.CameraModel)

@@ -20,6 +20,7 @@ import (
 
 var log = event.Log
 
+// Config holds database, cache and all parameters of photoprism
 type Config struct {
 	db     *gorm.DB
 	cache  *gc.Cache
@@ -27,6 +28,7 @@ type Config struct {
 }
 
 func init() {
+	// initialize the Thumbnails global variable
 	for name, t := range thumb.Types {
 		if t.Public {
 			thumbnail := Thumbnail{Name: name, Width: t.Width, Height: t.Height}
@@ -52,6 +54,7 @@ func initLogger(debug bool) {
 	})
 }
 
+// NewConfig initialises a new configuration file
 func NewConfig(ctx *cli.Context) *Config {
 	initLogger(ctx.GlobalBool("debug"))
 
@@ -107,7 +110,7 @@ func (c *Config) Author() string {
 	return c.config.Author
 }
 
-// Description returns the twitter handle for sharing.
+// Twitter returns the twitter handle for sharing.
 func (c *Config) Twitter() string {
 	return c.config.Twitter
 }

@@ -13,6 +13,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// define database drivers const
 const (
 	DbTiDB  = "internal"
 	DbMySQL = "mysql"
@@ -78,7 +79,7 @@ type Params struct {
 	ThumbFilter        string `yaml:"thumb-filter" flag:"thumb-filter"`
 }
 
-// NewParams() creates a new configuration entity by using two methods:
+// NewParams creates a new configuration entity by using two methods:
 //
 // 1. SetValuesFromFile: This will initialize values from a yaml config file.
 //
@@ -103,6 +104,7 @@ func NewParams(ctx *cli.Context) *Params {
 	return c
 }
 
+// expandFilenames converts path in config to absolute path
 func (c *Params) expandFilenames() {
 	c.ConfigPath = fs.Abs(c.ConfigPath)
 	c.ResourcesPath = fs.Abs(c.ResourcesPath)

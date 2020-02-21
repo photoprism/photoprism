@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Labels for photo, album and location categorization
+// Label is used for photo, album and location categorization
 type Label struct {
 	ID               uint   `gorm:"primary_key"`
 	LabelUUID        string `gorm:"type:varbinary(36);unique_index;"`
@@ -28,6 +28,7 @@ type Label struct {
 	New              bool       `gorm:"-"`
 }
 
+// BeforeCreate computes a random UUID when a new label is created in database
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
 	if err := scope.SetColumn("LabelUUID", rnd.PPID('l')); err != nil {
 		log.Errorf("label: %s", err)
@@ -37,6 +38,7 @@ func (m *Label) BeforeCreate(scope *gorm.Scope) error {
 	return nil
 }
 
+// NewLabel creates a label in database with a given name and priority
 func NewLabel(labelName string, labelPriority int) *Label {
 	labelName = strings.TrimSpace(labelName)
 
@@ -55,6 +57,7 @@ func NewLabel(labelName string, labelPriority int) *Label {
 	return result
 }
 
+// FirstOrCreate checks wether the label already exists in the database
 func (m *Label) FirstOrCreate(db *gorm.DB) *Label {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
@@ -66,10 +69,12 @@ func (m *Label) FirstOrCreate(db *gorm.DB) *Label {
 	return m
 }
 
+// AfterCreate sets the New column used for database callback
 func (m *Label) AfterCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("New", true)
 }
 
+// Rename an existing label
 func (m *Label) Rename(name string) {
 	name = txt.Clip(name, 128)
 

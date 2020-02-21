@@ -18,7 +18,7 @@ import (
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
-// TensorFlow if a wrapper for their low-level API.
+// TensorFlow is a wrapper for tensorflow low-level API.
 type TensorFlow struct {
 	conf       *config.Config
 	model      *tf.SavedModel
@@ -34,6 +34,7 @@ func New(modelsPath string, disabled bool) *TensorFlow {
 	return &TensorFlow{modelsPath: modelsPath, disabled: disabled, modelName: "nasnet", modelTags: []string{"photoprism"}}
 }
 
+// Init initialises tensorflow models if not disabled
 func (t *TensorFlow) Init() (err error) {
 	if t.disabled {
 		return nil
@@ -154,15 +155,17 @@ func (t *TensorFlow) loadModel() error {
 	return t.loadLabels(modelPath)
 }
 
+// bestLabels returns the best 5 labels (if enough high probability labels) from the prediction of the model
 func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
-	// Make a list of label/probability pairs
 	var result Labels
 
 	for i, p := range probabilities {
 		if i >= len(t.labels) {
+			// break if probabilities and labels does not match
 			break
 		}
 
+		// discard labels with low probabilities
 		if p < 0.1 {
 			continue
 		}
@@ -171,10 +174,12 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 
 		rule := rules.Find(labelText)
 
+		// discard labels that don't met the threshold
 		if p < rule.Threshold {
 			continue
 		}
 
+		// Get rule label name instead of t.labels name if it exists
 		if rule.Label != "" {
 			labelText = rule.Label
 		}
@@ -189,6 +194,7 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 	// Sort by probability
 	sort.Sort(result)
 
+	// return only the 5 best labels
 	if l := len(result); l < 5 {
 		return result[:l]
 	} else {
@@ -196,6 +202,7 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 	}
 }
 
+// makeTensor converts bytes jpeg image in a tensor object required as tensorflow model input
 func (t *TensorFlow) makeTensor(image []byte, imageFormat string) (*tf.Tensor, error) {
 	img, err := imaging.Decode(bytes.NewReader(image), imaging.AutoOrientation(true))
 

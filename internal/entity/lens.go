@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
-// Camera lens (as extracted from UpdateExif metadata)
+// Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
 	ID              uint   `gorm:"primary_key"`
 	LensSlug        string `gorm:"type:varbinary(128);unique_index;"`
@@ -24,10 +24,12 @@ type Lens struct {
 	DeletedAt       *time.Time `sql:"index"`
 }
 
+// TableName returns Lens table identifier "lens"
 func (Lens) TableName() string {
 	return "lenses"
 }
 
+// NewLens creates a new lens in database
 func NewLens(modelName string, makeName string) *Lens {
 	modelName = strings.TrimSpace(modelName)
 	makeName = strings.TrimSpace(makeName)
@@ -47,6 +49,7 @@ func NewLens(modelName string, makeName string) *Lens {
 	return result
 }
 
+// FirstOrCreate checks wether the lens already exists in the database
 func (m *Lens) FirstOrCreate(db *gorm.DB) *Lens {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()

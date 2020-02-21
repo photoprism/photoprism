@@ -4,7 +4,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// Global CLI flags
+// GlobalFlags lists all CLI flags
 var GlobalFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:   "debug",

@@ -14,6 +14,7 @@ func isBcrypt(s string) bool {
 	return b
 }
 
+// CheckPassword compares given password p with the admin password
 func (c *Config) CheckPassword(p string) bool {
 	ap := c.AdminPassword()
 

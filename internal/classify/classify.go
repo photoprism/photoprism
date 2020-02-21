@@ -1,5 +1,5 @@
 /*
-This package encapsulates image classification using TensorFlow
+Package classify encapsulates image classification functionnality using TensorFlow
 
 Additional information can be found in our Developer Guide:
 

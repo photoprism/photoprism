@@ -15,6 +15,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// LabelRule defines the rule for a given Label
 type LabelRule struct {
 	Label      string
 	See        string
@@ -25,6 +26,7 @@ type LabelRule struct {
 
 type LabelRules map[string]LabelRule
 
+// This function generates the rules.go file containing rule extracted from rules.yml file
 func main() {
 	rules := make(LabelRules)
 

@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
-// Photos can be added to multiple albums
+// PhotoAlbum represents the many_to_many relation between Photo and Album
 type PhotoAlbum struct {
 	PhotoUUID string `gorm:"type:varbinary(36);primary_key;auto_increment:false"`
 	AlbumUUID string `gorm:"type:varbinary(36);primary_key;auto_increment:false;index"`
@@ -18,10 +18,12 @@ type PhotoAlbum struct {
 	Album     *Album
 }
 
+// TableName returns PhotoAlbum table identifier "photos_albums"
 func (PhotoAlbum) TableName() string {
 	return "photos_albums"
 }
 
+// NewPhotoAlbum registers an photo and album association using UUID
 func NewPhotoAlbum(photoUUID, albumUUID string) *PhotoAlbum {
 	result := &PhotoAlbum{
 		PhotoUUID: photoUUID,
@@ -31,6 +33,7 @@ func NewPhotoAlbum(photoUUID, albumUUID string) *PhotoAlbum {
 	return result
 }
 
+// FirstOrCreate checks wether the PhotoAlbum relation already exist in the database before the creation
 func (m *PhotoAlbum) FirstOrCreate(db *gorm.DB) *PhotoAlbum {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()

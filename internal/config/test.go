@@ -16,6 +16,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// define constants used for testing the config package
 const (
 	TestDataZip  = "/tmp/photoprism/testdata.zip"
 	TestDataURL  = "https://dl.photoprism.org/fixtures/testdata.zip"
@@ -29,6 +30,7 @@ func testDataPath(assetsPath string) string {
 	return assetsPath + "/testdata"
 }
 
+// NewTestParams inits valid params used for testing
 func NewTestParams() *Params {
 	assetsPath := fs.Abs("../../assets")
 
@@ -52,6 +54,7 @@ func NewTestParams() *Params {
 	return c
 }
 
+// NewTestParamsError inits invalid params used for testing
 func NewTestParamsError() *Params {
 	assetsPath := fs.Abs("../..")
 
@@ -71,6 +74,7 @@ func NewTestParamsError() *Params {
 	return c
 }
 
+// TestConfig inits the global testConfig if it was not already initialised
 func TestConfig() *Config {
 	once.Do(func() {
 		testConfig = NewTestConfig()
@@ -79,6 +83,7 @@ func TestConfig() *Config {
 	return testConfig
 }
 
+// NewTestConfig inits valid config used for testing
 func NewTestConfig() *Config {
 	log.SetLevel(logrus.DebugLevel)
 
@@ -102,6 +107,7 @@ func NewTestConfig() *Config {
 	return c
 }
 
+// NewTestErrorConfig inits invalid config used for testing
 func NewTestErrorConfig() *Config {
 	log.SetLevel(logrus.DebugLevel)
 
@@ -115,7 +121,7 @@ func NewTestErrorConfig() *Config {
 	return c
 }
 
-// Returns example cli config for testing
+// CliTestContext returns example cli config for testing
 func CliTestContext() *cli.Context {
 	config := NewTestParams()
 
@@ -146,6 +152,7 @@ func CliTestContext() *cli.Context {
 	return c
 }
 
+// RemoveTestData deletes files in import, export, originals and cache folders
 func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.ImportPath())
 	os.RemoveAll(c.ExportPath())
@@ -153,6 +160,7 @@ func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.CachePath())
 }
 
+// DownloadTestData downloads test data from photoprism.org server
 func (c *Config) DownloadTestData(t *testing.T) {
 	if fs.FileExists(TestDataZip) {
 		hash := fs.Hash(TestDataZip)
@@ -172,12 +180,14 @@ func (c *Config) DownloadTestData(t *testing.T) {
 	}
 }
 
+// UnzipTestData in default test folder
 func (c *Config) UnzipTestData(t *testing.T) {
 	if _, err := fs.Unzip(TestDataZip, testDataPath(c.AssetsPath())); err != nil {
 		t.Logf("could not unzip test data: %s\n", err.Error())
 	}
 }
 
+// InitializeTestData using testing constant
 func (c *Config) InitializeTestData(t *testing.T) {
 	t.Log("initializing test data")
 

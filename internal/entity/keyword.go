@@ -7,13 +7,14 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
-// Keyword for full text search
+// Keyword used for full text search
 type Keyword struct {
 	ID      uint   `gorm:"primary_key"`
 	Keyword string `gorm:"type:varchar(64);index;"`
 	Skip    bool
 }
 
+// NewKeyword registers a new keyword in database
 func NewKeyword(keyword string) *Keyword {
 	keyword = strings.ToLower(strings.TrimSpace(keyword))
 
@@ -24,6 +25,7 @@ func NewKeyword(keyword string) *Keyword {
 	return result
 }
 
+// FirstOrCreate checks wether the keyword already exist in the database
 func (m *Keyword) FirstOrCreate(db *gorm.DB) *Keyword {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
