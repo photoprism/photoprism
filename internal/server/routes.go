@@ -77,6 +77,35 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.Websocket(v1, conf)
 	}
 
+	// WebDAV server for file management / sharing
+	if conf.WebDAVPassword() != "" {
+		log.Info("webdav: enabled, username: photoprism")
+
+		WebDAV(conf.OriginalsPath(), router.Group("/originals", gin.BasicAuth(gin.Accounts{
+			"photoprism": conf.WebDAVPassword(),
+		})), conf)
+
+		log.Info("webdav: /originals available")
+
+		WebDAV(conf.ExportPath(), router.Group("/export", gin.BasicAuth(gin.Accounts{
+			"photoprism": conf.WebDAVPassword(),
+		})), conf)
+
+		log.Info("webdav: /export available")
+
+		if conf.ReadOnly() {
+			log.Info("webdav: /import not available in read-only mode")
+		} else {
+			WebDAV(conf.ImportPath(), router.Group("/import", gin.BasicAuth(gin.Accounts{
+				"photoprism": conf.WebDAVPassword(),
+			})), conf)
+
+			log.Info("webdav: /import available")
+		}
+	} else {
+		log.Info("webdav: disabled (no password set)")
+	}
+
 	// Default HTML page (client-side routing implemented via Vue.js)
 	router.NoRoute(func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{"clientConfig": conf.PublicClientConfig()})

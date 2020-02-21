@@ -164,6 +164,11 @@ func (c *Config) AdminPassword() string {
 	return c.config.AdminPassword
 }
 
+// WebDAVPassword returns the WebDAV password for remote access.
+func (c *Config) WebDAVPassword() string {
+	return c.config.WebDAVPassword
+}
+
 // LogLevel returns the logrus log level.
 func (c *Config) LogLevel() logrus.Level {
 	if c.Debug() {

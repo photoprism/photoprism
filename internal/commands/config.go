@@ -34,6 +34,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("experimental          %t\n", conf.Experimental())
 	fmt.Printf("workers               %d\n", conf.Workers())
 	fmt.Printf("admin-password        %s\n", conf.AdminPassword())
+	fmt.Printf("webdav-password       %s\n", conf.WebDAVPassword())
 	fmt.Printf("log-level             %s\n", conf.LogLevel())
 	fmt.Printf("log-filename          %s\n", conf.LogFilename())
 	fmt.Printf("pid-filename          %s\n", conf.PIDFilename())

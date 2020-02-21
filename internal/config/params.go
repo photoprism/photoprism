@@ -43,6 +43,7 @@ type Params struct {
 	Experimental       bool   `yaml:"experimental" flag:"experimental"`
 	Workers            int    `yaml:"workers" flag:"workers"`
 	AdminPassword      string `yaml:"admin-password" flag:"admin-password"`
+	WebDAVPassword     string `yaml:"webdav-password" flag:"webdav-password"`
 	LogLevel           string `yaml:"log-level" flag:"log-level"`
 	ConfigFile         string
 	ConfigPath         string `yaml:"config-path" flag:"config-path"`

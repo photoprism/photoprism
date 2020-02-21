@@ -74,6 +74,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.StringFlag{
+		Name:   "webdav-password",
+		Usage:  "WebDAV password (none to disable)",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_WEBDAV_PASSWORD",
+	},
+	cli.StringFlag{
 		Name:   "log-level, l",
 		Usage:  "trace, debug, info, warning, error, fatal or panic",
 		Value:  "info",
