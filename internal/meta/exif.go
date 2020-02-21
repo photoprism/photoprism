@@ -75,6 +75,10 @@ func Exif(filename string) (data Data, err error) {
 
 	ti := exif.NewTagIndex()
 
+	if err := exif.LoadStandardTags(ti); err != nil {
+		return data, err
+	}
+
 	tags := make(map[string]string)
 
 	visitor := func(fqIfdPath string, ifdIndex int, ite *exif.IfdTagEntry) (err error) {
@@ -105,7 +109,7 @@ func Exif(filename string) (data Data, err error) {
 			}
 
 			if it.Name != "" && valueString != "" {
-				tags[it.Name] = valueString
+				tags[it.Name] = strings.Split(valueString, "\x00")[0]
 			}
 		}
 

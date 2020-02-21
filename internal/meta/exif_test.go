@@ -64,6 +64,34 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 1, int(data.Orientation))
 	})
 
+	t.Run("GoPro HD2 jpg file", func(t *testing.T) {
+		data, err := Exif("testdata/gopro_hd2.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "", data.Artist)
+		assert.Equal(t, "2017-12-21T05:17:28Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2017-12-21T05:17:28Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "", data.Title)    // Should be "Ladybug"
+		assert.Equal(t, "", data.Keywords) // Should be "Ladybug"
+		assert.Equal(t, "DCIM\\100GOPRO", data.Description)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, 2880, data.Height)
+		assert.Equal(t, 3840, data.Width)
+		assert.Equal(t, 0.0, data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "GoPro", data.CameraMake)
+		assert.Equal(t, "HD2", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, 16, data.FocalLength)
+		assert.Equal(t, 1, int(data.Orientation))
+	})
+
 	t.Run("png file without exif", func(t *testing.T) {
 		_, err := Exif("testdata/tweethog.png")
 
