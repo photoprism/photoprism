@@ -209,11 +209,17 @@ func (c *Config) Shutdown() {
 
 // Workers returns the number of workers e.g. for indexing files.
 func (c *Config) Workers() int {
-	if c.config.Workers > 0 && c.config.Workers <= runtime.NumCPU() {
+	numCPU := runtime.NumCPU()
+
+	if c.config.Workers > 0 && c.config.Workers <= numCPU {
 		return c.config.Workers
 	}
 
-	return runtime.NumCPU()
+	if numCPU > 1 {
+		return numCPU - 1
+	}
+
+	return 1
 }
 
 // ThumbQuality returns the thumbnail jpeg quality setting (25-100).
