@@ -4,7 +4,7 @@ import "fmt"
 
 func PublishEntities(name, ev string, entities interface{}) {
 	SharedHub().Publish(Message{
-		Name:   fmt.Sprintf("%s.%s", name, ev),
+		Name: fmt.Sprintf("%s.%s", name, ev),
 		Fields: Data{
 			"entities": entities,
 		},

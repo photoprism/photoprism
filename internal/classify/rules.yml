@@ -2561,7 +2561,7 @@ paddlewheel:
   see: boat
 
 padlock:
-  see: lock
+  see: ignore
 
 paintbrush:
   see: ignore

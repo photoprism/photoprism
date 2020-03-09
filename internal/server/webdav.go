@@ -23,7 +23,7 @@ func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
 	f := webdav.Dir(path)
 
 	srv := &webdav.Handler{
-		Prefix: router.BasePath(),
+		Prefix:     router.BasePath(),
 		FileSystem: f,
 		LockSystem: webdav.NewMemLS(),
 		Logger: func(r *http.Request, err error) {
