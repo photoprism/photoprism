@@ -1,4 +1,4 @@
-FROM photoprism/development:20200203 as build
+FROM photoprism/development:20200323 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -48,30 +48,36 @@ RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktab
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Create and configure photoprism user
-RUN useradd -ms /bin/bash photoprism
-USER photoprism
+WORKDIR /photoprism
 
-WORKDIR /home/photoprism
-ENV PATH /home/photoprism/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV TF_CPP_MIN_LOG_LEVEL 2
-ENV PHOTOPRISM_CONFIG_FILE /home/photoprism/.config/photoprism/photoprism.yml
 
-# Copy assets to /home/photoprism
-COPY --chown=photoprism --from=build /root/.local/bin/photoprism /home/photoprism/.local/bin/photoprism
-COPY --chown=photoprism --from=build /root/.local/share/photoprism /home/photoprism/.local/share/photoprism
-COPY --chown=photoprism --from=build /root/.config/photoprism /home/photoprism/.config/photoprism
+ENV PATH /photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+ENV PHOTOPRISM_CONFIG_FILE /photoprism/config/photoprism.yml
+ENV PHOTOPRISM_IMPORT_PATH /photoprism/import
+ENV PHOTOPRISM_EXPORT_PATH /photoprism/export
+ENV PHOTOPRISM_ORIGINALS_PATH /photoprism/originals
+ENV PHOTOPRISM_DATABASE_PATH /photoprism/database
+ENV PHOTOPRISM_CACHE_PATH /photoprism/cache
+ENV PHOTOPRISM_ASSETS_PATH /photoprism/assets
+ENV PHOTOPRISM_RESOURCES_PATH /photoprism/assets/resources
+ENV PHOTOPRISM_LOG_FILENAME /photoprism/photoprism.log
+ENV PHOTOPRISM_PID_FILENAME /photoprism/photoprism.pid
+
+# Copy files to /photoprism
+COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism
+COPY --from=build /root/.local/share/photoprism /photoprism/assets
+COPY --from=build /root/.config/photoprism /photoprism/config
 
 # Create directories
-RUN mkdir -p /home/photoprism/.cache/photoprism \
-    /home/photoprism/Pictures/Originals \
-    /home/photoprism/Pictures/Import \
-    /home/photoprism/Pictures/Export
+RUN mkdir -p /photoprism/cache \
+    /photoprism/database \
+    /photoprism/originals \
+    /photoprism/import \
+    /photoprism/export
 
-# Fix permissions
-USER root
-RUN chown -R photoprism:photoprism /home/photoprism
-USER photoprism
+RUN chmod -R 777 /photoprism
 
 # Show photoprism version
 RUN photoprism -v

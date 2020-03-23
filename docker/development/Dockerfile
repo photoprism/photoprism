@@ -84,12 +84,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.13.7
+ENV GOLANG_VERSION 1.14.1
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "b3dd4bd781a0271b33168e627f7f43886b4c5d1c794a4015abf34e99c6526ca3 *go.tgz" | sha256sum -c -; \
+	echo "2f49eb17ce8b48c680cdb166ffd7389702c0dec6effa090c324804a5cac8a7f8 *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \

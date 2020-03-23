@@ -41,18 +41,6 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("config-file           %s\n", conf.ConfigFile())
 	fmt.Printf("config-path           %s\n", conf.ConfigPath())
 
-	fmt.Printf("database-driver       %s\n", conf.DatabaseDriver())
-	fmt.Printf("database-dsn          %s\n", conf.DatabaseDsn())
-
-	fmt.Printf("sql-host              %s\n", conf.SqlServerHost())
-	fmt.Printf("sql-port              %d\n", conf.SqlServerPort())
-	fmt.Printf("sql-password          %s\n", conf.SqlServerPassword())
-	fmt.Printf("sql-path              %s\n", conf.SqlServerPath())
-
-	fmt.Printf("http-host             %s\n", conf.HttpServerHost())
-	fmt.Printf("http-port             %d\n", conf.HttpServerPort())
-	fmt.Printf("http-mode             %s\n", conf.HttpServerMode())
-
 	fmt.Printf("assets-path           %s\n", conf.AssetsPath())
 	fmt.Printf("originals-path        %s\n", conf.OriginalsPath())
 	fmt.Printf("import-path           %s\n", conf.ImportPath())
@@ -67,6 +55,18 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("favicons-path         %s\n", conf.HttpFaviconsPath())
 	fmt.Printf("static-path           %s\n", conf.HttpStaticPath())
 	fmt.Printf("static-build-path     %s\n", conf.HttpStaticBuildPath())
+
+	fmt.Printf("database-path         %s\n", conf.DatabasePath())
+	fmt.Printf("database-driver       %s\n", conf.DatabaseDriver())
+	fmt.Printf("database-dsn          %s\n", conf.DatabaseDsn())
+
+	fmt.Printf("sql-host              %s\n", conf.SqlServerHost())
+	fmt.Printf("sql-port              %d\n", conf.SqlServerPort())
+	fmt.Printf("sql-password          %s\n", conf.SqlServerPassword())
+
+	fmt.Printf("http-host             %s\n", conf.HttpServerHost())
+	fmt.Printf("http-port             %d\n", conf.HttpServerPort())
+	fmt.Printf("http-mode             %s\n", conf.HttpServerMode())
 
 	fmt.Printf("sips-bin              %s\n", conf.SipsBin())
 	fmt.Printf("darktable-bin         %s\n", conf.DarktableBin())

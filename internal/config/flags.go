@@ -145,6 +145,11 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_ASSETS_PATH",
 	},
 	cli.StringFlag{
+		Name:   "database-path",
+		Usage:  "built-in database server storage path",
+		EnvVar: "PHOTOPRISM_DATABASE_PATH",
+	},
+	cli.StringFlag{
 		Name:   "database-driver",
 		Usage:  "database `DRIVER` (internal or mysql)",
 		Value:  "internal",
@@ -204,11 +209,6 @@ var GlobalFlags = []cli.Flag{
 		Name:   "sql-host",
 		Usage:  "built-in SQL server host",
 		EnvVar: "PHOTOPRISM_SQL_HOST",
-	},
-	cli.StringFlag{
-		Name:   "sql-path",
-		Usage:  "built-in SQL server storage path",
-		EnvVar: "PHOTOPRISM_SQL_PATH",
 	},
 	cli.StringFlag{
 		Name:   "sql-password",

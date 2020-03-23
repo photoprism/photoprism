@@ -18,9 +18,6 @@ services:
       PHOTOPRISM_DESCRIPTION: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source."
       PHOTOPRISM_AUTHOR: "Anonymous"
       PHOTOPRISM_TWITTER: "@browseyourlife"
-      PHOTOPRISM_IMPORT_PATH: "/home/photoprism/Pictures/Import"
-      PHOTOPRISM_EXPORT_PATH: "/home/photoprism/Pictures/Export"
-      PHOTOPRISM_ORIGINALS_PATH: "/home/photoprism/Pictures/Originals"
       PHOTOPRISM_UPLOAD_NSFW: "true"
       PHOTOPRISM_HIDE_NSFW: "false"
       PHOTOPRISM_EXPERIMENTAL: "false"
@@ -28,12 +25,13 @@ services:
       PHOTOPRISM_READONLY: "false"
       PHOTOPRISM_PUBLIC: "false"
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # Plain text or bcrypt hash (escape "$" with "$$")
+      PHOTOPRISM_WEBDAV_PASSWORD: "photoprism" # Plain text only (username "photoprism")
     volumes:
-      - "~/Pictures/Originals:/home/photoprism/Pictures/Originals" # [local path]:[container path]
-      - "~/Pictures/Import:/home/photoprism/Pictures/Import" # [local path]:[container path] (optional)
-      - "~/Pictures/Export:/home/photoprism/Pictures/Export" # [local path]:[container path] (optional)
-      - "photoprism-cache:/home/photoprism/.cache/photoprism" # keep thumbnail cache
-      - "photoprism-database:/home/photoprism/.local/share/photoprism/resources/database" # keep database files
+      - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
+      - "~/Pictures/Import:/photoprism/import" # [local path]:[container path] (optional)
+      - "~/Pictures/Export:/photoprism/export" # [local path]:[container path] (optional)
+      - "photoprism-cache:/photoprism/cache" # keep thumbnail cache
+      - "photoprism-database:/photoprism/database" # keep database files
 
 volumes: # keep this
   photoprism-cache:

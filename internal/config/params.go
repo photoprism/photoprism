@@ -47,22 +47,22 @@ type Params struct {
 	LogLevel           string `yaml:"log-level" flag:"log-level"`
 	ConfigFile         string
 	ConfigPath         string `yaml:"config-path" flag:"config-path"`
-	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`
-	ResourcesPath      string `yaml:"resources-path" flag:"resources-path"`
 	CachePath          string `yaml:"cache-path" flag:"cache-path"`
 	OriginalsPath      string `yaml:"originals-path" flag:"originals-path"`
 	ImportPath         string `yaml:"import-path" flag:"import-path"`
 	ExportPath         string `yaml:"export-path" flag:"export-path"`
+	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`
+	ResourcesPath      string `yaml:"resources-path" flag:"resources-path"`
+	DatabasePath       string `yaml:"database-path" flag:"database-path"`
+	DatabaseDriver     string `yaml:"database-driver" flag:"database-driver"`
+	DatabaseDsn        string `yaml:"database-dsn" flag:"database-dsn"`
 	SqlServerHost      string `yaml:"sql-host" flag:"sql-host"`
 	SqlServerPort      uint   `yaml:"sql-port" flag:"sql-port"`
-	SqlServerPath      string `yaml:"sql-path" flag:"sql-path"`
 	SqlServerPassword  string `yaml:"sql-password" flag:"sql-password"`
 	HttpServerHost     string `yaml:"http-host" flag:"http-host"`
 	HttpServerPort     int    `yaml:"http-port" flag:"http-port"`
 	HttpServerMode     string `yaml:"http-mode" flag:"http-mode"`
 	HttpServerPassword string `yaml:"http-password" flag:"http-password"`
-	DatabaseDriver     string `yaml:"database-driver" flag:"database-driver"`
-	DatabaseDsn        string `yaml:"database-dsn" flag:"database-dsn"`
 	SipsBin            string `yaml:"sips-bin" flag:"sips-bin"`
 	DarktableBin       string `yaml:"darktable-bin" flag:"darktable-bin"`
 	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
@@ -114,7 +114,7 @@ func (c *Params) expandFilenames() {
 	c.OriginalsPath = fs.Abs(c.OriginalsPath)
 	c.ImportPath = fs.Abs(c.ImportPath)
 	c.ExportPath = fs.Abs(c.ExportPath)
-	c.SqlServerPath = fs.Abs(c.SqlServerPath)
+	c.DatabasePath = fs.Abs(c.DatabasePath)
 	c.PIDFilename = fs.Abs(c.PIDFilename)
 	c.LogFilename = fs.Abs(c.LogFilename)
 }

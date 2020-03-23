@@ -123,7 +123,7 @@ func TestConfig_SqlServerPath(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	path := c.SqlServerPath()
+	path := c.DatabasePath()
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/database", path)
 }
 
