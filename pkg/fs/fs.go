@@ -25,11 +25,17 @@ func FileExists(filename string) bool {
 	return err == nil && !info.IsDir()
 }
 
-// PathExists returns true if path exists and is a directory.
+// PathExists returns true if path exists and is a directory or symlink.
 func PathExists(path string) bool {
 	info, err := os.Stat(path)
 
-	return err == nil && info.IsDir()
+	if err != nil {
+		return false
+	}
+
+	m := info.Mode()
+
+	return m&os.ModeDir != 0 || m&os.ModeSymlink != 0
 }
 
 // Overwrite overwrites the file with data. Creates file if not present.
