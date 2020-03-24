@@ -7,11 +7,15 @@
 @import url("photos.css");
 @import url("labels.css");
 
+html,
+body {
+    overscroll-behavior-y: contain;
+}
+
 body {
     background: rgb(250, 250, 250);
     color: #333333;
     font-family: Roboto, sans-serif;
-    -webkit-user-drag: none;
 }
 
 footer {
