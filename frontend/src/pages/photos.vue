@@ -339,10 +339,11 @@
             },
             onTouchMove(e) {
                 const y = e.touches[0].pageY;
+                const h = window.document.documentElement.scrollHeight - window.document.documentElement.clientHeight;
 
-                if(window.scrollY >= window.innerHeight && y < this.touchStart + 200) {
+                if(window.scrollY >= h - 200 && y < this.touchStart + 100) {
                     this.loadMore();
-                } else if (window.scrollY === 0 && y > this.touchStart + 200) {
+                } else if (window.scrollY === 0 && y > this.touchStart + 250) {
                     this.refresh();
                 }
             },
