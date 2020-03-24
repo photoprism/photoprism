@@ -96,6 +96,7 @@
                 lastFilter: {},
                 routeName: routeName,
                 loading: true,
+                touchStart: 0,
             };
         },
         computed: {
@@ -332,15 +333,33 @@
                     default:
                         console.warn("unexpected event type", ev);
                 }
-            }
+            },
+            onTouchStart(e) {
+                this.touchStart = e.touches[0].pageY;
+            },
+            onTouchMove(e) {
+                const y = e.touches[0].pageY;
+
+                if(window.scrollY >= window.innerHeight && y < this.touchStart + 200) {
+                    this.loadMore();
+                } else if (window.scrollY === 0 && y > this.touchStart + 200) {
+                    this.refresh();
+                }
+            },
         },
         created() {
             this.search();
 
             this.subscriptions.push(Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data)));
             this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
+
+            window.addEventListener('touchstart', (e) => this.onTouchStart(e), {passive: true});
+            window.addEventListener('touchmove', (e) => this.onTouchMove(e), {passive: true});
         },
         destroyed() {
+            window.removeEventListener('touchstart', (e) => this.onTouchStart(e), false);
+            window.removeEventListener('touchmove', (e) => this.onTouchMove(e), false);
+
             for(let i = 0; i < this.subscriptions.length; i++) {
                 Event.unsubscribe(this.subscriptions[i]);
             }
