@@ -3458,9 +3458,11 @@ ear:
   see: ignore
 
 sunglasses:
-  label: sunshine
+  label: sunglasses
   priority: 2
   threshold: 0.2
+  categories:
+    - portrait
 
 sunglass:
   see: sunglasses

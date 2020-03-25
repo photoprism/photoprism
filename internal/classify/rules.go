@@ -5457,16 +5457,16 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"sunglass": {
-		Label:      "sunshine",
+		Label:      "sunglasses",
 		Threshold:  0.200000,
 		Priority:   2,
-		Categories: []string{},
+		Categories: []string{"portrait"},
 	},
 	"sunglasses": {
-		Label:      "sunshine",
+		Label:      "sunglasses",
 		Threshold:  0.200000,
 		Priority:   2,
-		Categories: []string{},
+		Categories: []string{"portrait"},
 	},
 	"sunscreen": {
 		Label:      "bottle",

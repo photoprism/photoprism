@@ -228,6 +228,10 @@ class Photo extends Abstract {
             values.ModifiedTitle = true
         }
 
+        if(values.PhotoKeywords) {
+            values.ModifiedKeywords = true
+        }
+
         if(values.PhotoLat || values.PhotoLng || values.PhotoAltitude) {
             values.ModifiedLocation = true
         }

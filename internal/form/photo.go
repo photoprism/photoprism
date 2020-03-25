@@ -34,6 +34,7 @@ type Photo struct {
 	TimeZone         string    `json:"TimeZone"`
 	TakenAtLocal     time.Time `json:"TakenAtLocal"`
 	ModifiedTitle    bool      `json:"ModifiedTitle"`
+	ModifiedKeywords bool      `json:"ModifiedKeywords"`
 	ModifiedDetails  bool      `json:"ModifiedDetails"`
 	ModifiedLocation bool      `json:"ModifiedLocation"`
 	ModifiedDate     bool      `json:"ModifiedDate"`

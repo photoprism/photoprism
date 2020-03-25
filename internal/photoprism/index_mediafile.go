@@ -36,7 +36,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 	var file, primaryFile entity.File
 	var metaData meta.Data
 	var photoQuery, fileQuery *gorm.DB
-	var keywords []string
+	var locKeywords []string
 
 	labels := classify.Labels{}
 	fileBase := m.Base()
@@ -179,12 +179,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 		}
 
 		if fileChanged || o.UpdateKeywords || o.UpdateLocation || o.UpdateTitle {
-			locKeywords, locLabels := ind.indexLocation(m, &photo, labels, fileChanged, o)
-			keywords = append(keywords, locKeywords...)
+			var locLabels classify.Labels
+			locKeywords, locLabels = ind.indexLocation(m, &photo, labels, fileChanged, o)
 			labels = append(labels, locLabels...)
 		}
 
-		if photo.NoTitle() || (fileChanged || o.UpdateTitle) && photo.ModifiedTitle == false && photo.NoLocation() {
+		if photo.NoTitle() || (fileChanged || o.UpdateTitle) && !photo.ModifiedTitle && photo.NoLocation() {
 			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.DateCreated().Format("2006"))
 			} else if !photo.TakenAtLocal.IsZero() {
@@ -273,14 +273,17 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 	if file.FilePrimary && (fileChanged || o.UpdateKeywords) {
 		w := txt.Keywords(photo.PhotoKeywords)
 
-		if NonCanonical(fileBase) {
-			w = append(w, txt.Keywords(filePath)...)
-			w = append(w, txt.Keywords(fileBase)...)
-		}
+		if !photo.ModifiedKeywords {
+			if NonCanonical(fileBase) {
+				w = append(w, txt.Keywords(filePath)...)
+				w = append(w, txt.Keywords(fileBase)...)
+			}
 
-		w = append(w, txt.Keywords(file.OriginalName)...)
-		w = append(w, file.FileMainColor)
-		w = append(w, labels.Keywords()...)
+			w = append(w, locKeywords...)
+			w = append(w, txt.Keywords(file.OriginalName)...)
+			w = append(w, file.FileMainColor)
+			w = append(w, labels.Keywords()...)
+		}
 
 		photo.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
 
@@ -325,7 +328,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 	file.PhotoUUID = photo.PhotoUUID
 
 	if file.FilePrimary && (fileChanged || o.UpdateKeywords) {
-		photo.IndexKeywords(keywords, ind.db)
+		photo.IndexKeywords(ind.db)
 	}
 
 	if fileQuery.Error == nil {
@@ -512,7 +515,7 @@ func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 			labels = append(labels, classify.LocationLabel(locCategory, 0, -1))
 		}
 
-		if (fileChanged || o.UpdateTitle) && photo.ModifiedTitle == false {
+		if (fileChanged || o.UpdateTitle) && !photo.ModifiedTitle {
 			if title := labels.Title(location.Name()); title != "" { // TODO: User defined title format
 				log.Infof("index: using label \"%s\" to create photo title", title)
 				if location.NoCity() || location.LongCity() || location.CityContains(title) {

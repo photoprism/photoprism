@@ -51,6 +51,7 @@ type Photo struct {
 	ModifiedTitle     bool      `json:"ModifiedTitle"`
 	ModifiedDetails   bool      `json:"ModifiedDetails"`
 	ModifiedLocation  bool      `json:"ModifiedLocation"`
+	ModifiedKeywords  bool      `json:"ModifiedKeywords"`
 	ModifiedDate      bool      `json:"ModifiedDate"`
 	Camera            *Camera   `json:"Camera"`
 	Lens              *Lens     `json:"Lens"`
@@ -71,6 +72,8 @@ func SavePhoto(model Photo, form form.Photo, db *gorm.DB) error {
 	if err := deepcopier.Copy(&model).From(form); err != nil {
 		return err
 	}
+
+	model.IndexKeywords(db)
 
 	return db.Save(&model).Error
 }
@@ -114,8 +117,9 @@ func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 }
 
 // IndexKeywords adds given keywords to the photo entry
-func (m *Photo) IndexKeywords(keywords []string, db *gorm.DB) {
+func (m *Photo) IndexKeywords(db *gorm.DB) {
 	var keywordIds []uint
+	var keywords []string
 
 	// Add title, description and other keywords
 	keywords = append(keywords, txt.Keywords(m.PhotoTitle)...)

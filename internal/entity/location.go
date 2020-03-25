@@ -86,17 +86,17 @@ func (m *Location) Find(db *gorm.DB, api string) error {
 }
 
 // Keywords computes keyword based on a Location
-func (m *Location) Keywords() []string {
-	result := []string{
-		strings.ToLower(m.City()),
-		strings.ToLower(m.State()),
-		strings.ToLower(m.CountryName()),
-		strings.ToLower(m.Category()),
-	}
+func (m *Location) Keywords() (result []string) {
+	result = append(result, txt.Keywords(m.City())...)
+	result = append(result, txt.Keywords(m.State())...)
+	result = append(result, txt.Keywords(m.CountryName())...)
+	result = append(result, txt.Keywords(m.Category())...)
 
 	result = append(result, txt.Keywords(m.Name())...)
 	result = append(result, txt.Keywords(m.Label())...)
 	result = append(result, txt.Keywords(m.Notes())...)
+
+	result = txt.UniqueWords(result)
 
 	return result
 }
