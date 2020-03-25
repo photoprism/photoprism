@@ -13,6 +13,7 @@ type Photo struct {
 	PhotoDescription string    `json:"PhotoDescription"`
 	PhotoNotes       string    `json:"PhotoNotes"`
 	PhotoArtist      string    `json:"PhotoArtist"`
+	PhotoKeywords    string    `json:"PhotoKeywords"`
 	PhotoCopyright   string    `json:"PhotoCopyright"`
 	PhotoFavorite    bool      `json:"PhotoFavorite"`
 	PhotoPrivate     bool      `json:"PhotoPrivate"`

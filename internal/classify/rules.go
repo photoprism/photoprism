@@ -6195,7 +6195,7 @@ var rules = LabelRules{
 		Categories: []string{"cat", "animal", "wildlife"},
 	},
 	"window": {
-		Label:      "building",
+		Label:      "window",
 		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"architecture"},

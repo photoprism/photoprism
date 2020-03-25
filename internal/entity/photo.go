@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"sort"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -124,16 +123,10 @@ func (m *Photo) IndexKeywords(keywords []string, db *gorm.DB) {
 	keywords = append(keywords, txt.Keywords(m.PhotoSubject)...)
 	keywords = append(keywords, txt.Keywords(m.PhotoArtist)...)
 	keywords = append(keywords, txt.Keywords(m.PhotoDescription)...)
-	last := ""
 
-	sort.Strings(keywords)
+	keywords = txt.UniqueWords(keywords)
 
 	for _, w := range keywords {
-		if len(w) < 3 || w == last {
-			continue
-		}
-
-		last = w
 		kw := NewKeyword(w).FirstOrCreate(db)
 
 		if kw.Skip {

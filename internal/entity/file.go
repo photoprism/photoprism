@@ -82,13 +82,13 @@ func (m *File) DownloadFileName() string {
 	return result
 }
 
-// Changed checks wether given filesize or modified time are matching the current File
+// Changed returns true if new and old file size or modified time are different.
 func (m File) Changed(fileSize int64, fileModified time.Time) bool {
 	if m.FileSize != fileSize {
 		return true
 	}
 
-	if m.FileModified != fileModified {
+	if m.FileModified.Format("2006-01-02 15:04:05") != fileModified.Format("2006-01-02 15:04:05") {
 		return true
 	}
 

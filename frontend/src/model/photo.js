@@ -13,6 +13,7 @@ class Photo extends Abstract {
             PhotoTitle: "",
             PhotoDescription: "",
             PhotoNotes: "",
+            PhotoKeywords: "",
             PhotoArtist: "",
             PhotoCopyright: "",
             PhotoFavorite: false,

@@ -75,6 +75,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 		photoQuery = ind.db.Unscoped().First(&photo, "id = ?", file.PhotoID)
 
 		fileChanged = file.Changed(fileSize, fileModified)
+
+		if fileChanged {
+			log.Debugf("index: file was modified (new size %d, old size %d, new date %s, old date %s)", fileSize, file.FileSize, fileModified, file.FileModified)
+		}
 	}
 
 	photoExists = photoQuery.Error == nil
@@ -232,42 +236,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 	photo.PhotoYear = photo.TakenAt.Year()
 	photo.PhotoMonth = int(photo.TakenAt.Month())
 
-	if photoExists {
-		// Estimate location
-		if o.UpdateLocation && photo.NoLocation() {
-			ind.estimateLocation(&photo)
-		}
-
-		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
-			log.Errorf("index: %s", err)
-			return indexResultFailed
-		}
-	} else {
-		photo.PhotoFavorite = false
-
-		if err := ind.db.Create(&photo).Error; err != nil {
-			log.Errorf("index: %s", err)
-			return indexResultFailed
-		}
-
-		event.Publish("count.photos", event.Data{
-			"count": 1,
-		})
-
-		event.EntitiesCreated("photos", []entity.Photo{photo})
-	}
-
-	if len(labels) > 0 {
-		log.Infof("index: adding labels %+v", labels)
-		ind.addLabels(photo.ID, labels)
-	}
-
 	if originalName != "" {
 		file.OriginalName = originalName
 	}
 
-	file.PhotoID = photo.ID
-	file.PhotoUUID = photo.PhotoUUID
 	file.FileSidecar = m.IsSidecar()
 	file.FileVideo = m.IsVideo()
 	file.FileMissing = false
@@ -298,20 +270,61 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 		}
 	}
 
-	if file.FilePrimary && (fileChanged || o.UpdateKeywords || o.UpdateTitle) {
+	if file.FilePrimary && (fileChanged || o.UpdateKeywords) {
+		w := txt.Keywords(photo.PhotoKeywords)
+
 		if NonCanonical(fileBase) {
-			log.Debugf("index: extracting keywords from non-canonical file name (%s)", fileBase)
-			keywords = append(keywords, txt.Keywords(filePath)...)
-			keywords = append(keywords, txt.Keywords(fileBase)...)
+			w = append(w, txt.Keywords(filePath)...)
+			w = append(w, txt.Keywords(fileBase)...)
 		}
 
-		if file.OriginalName != "" {
-			log.Debugf("index: extracting keywords from original file name (%s)", file.OriginalName)
-			keywords = append(keywords, txt.Keywords(file.OriginalName)...)
+		w = append(w, txt.Keywords(file.OriginalName)...)
+		w = append(w, file.FileMainColor)
+		w = append(w, labels.Keywords()...)
+
+		photo.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
+
+		if photo.PhotoKeywords != "" {
+			log.Debugf("index: updated photo keywords (%s)", photo.PhotoKeywords)
+		} else {
+			log.Debug("index: no photo keywords")
+		}
+	}
+
+	if photoExists {
+		// Estimate location
+		if o.UpdateLocation && photo.NoLocation() {
+			ind.estimateLocation(&photo)
 		}
 
-		keywords = append(keywords, file.FileMainColor)
-		keywords = append(keywords, labels.Keywords()...)
+		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
+			log.Errorf("index: %s", err)
+			return indexResultFailed
+		}
+	} else {
+		photo.PhotoFavorite = false
+
+		if err := ind.db.Create(&photo).Error; err != nil {
+			log.Errorf("index: %s", err)
+			return indexResultFailed
+		}
+
+		event.Publish("count.photos", event.Data{
+			"count": 1,
+		})
+
+		event.EntitiesCreated("photos", []entity.Photo{photo})
+	}
+
+	if len(labels) > 0 {
+		log.Infof("index: adding labels %+v", labels)
+		ind.addLabels(photo.ID, labels)
+	}
+
+	file.PhotoID = photo.ID
+	file.PhotoUUID = photo.PhotoUUID
+
+	if file.FilePrimary && (fileChanged || o.UpdateKeywords) {
 		photo.IndexKeywords(keywords, ind.db)
 	}
 
@@ -496,7 +509,6 @@ func (ind *Index) indexLocation(mediaFile *MediaFile, photo *entity.Photo, label
 
 		// Append category from reverse location lookup
 		if locCategory != "" {
-			keywords = append(keywords, locCategory)
 			labels = append(labels, classify.LocationLabel(locCategory, 0, -1))
 		}
 

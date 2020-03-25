@@ -76,7 +76,10 @@ cardoon:
   threshold: 0.2
 
 window:
-  see: window shade
+  label: window
+  threshold: 0.4
+  categories:
+    - architecture
 
 bannister:
   label: stairs

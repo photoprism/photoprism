@@ -232,6 +232,18 @@
                                 ></v-textarea>
                             </v-flex>
 
+                            <v-flex xs12 class="pa-2">
+                                <v-textarea
+                                        hide-details
+                                        auto-grow
+                                        label="Keywords"
+                                        placeholder=""
+                                        :rows="1"
+                                        color="secondary-dark"
+                                        v-model="model.PhotoKeywords"
+                                ></v-textarea>
+                            </v-flex>
+
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
