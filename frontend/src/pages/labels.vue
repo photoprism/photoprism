@@ -384,6 +384,9 @@
             this.search();
 
             this.subscriptions.push(Event.subscribe("labels", (ev, data) => this.onUpdate(ev, data)));
+
+            this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
+            this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
         },
         destroyed() {
             for(let i = 0; i < this.subscriptions.length; i++) {

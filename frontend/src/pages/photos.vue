@@ -96,7 +96,6 @@
                 lastFilter: {},
                 routeName: routeName,
                 loading: true,
-                touchStart: 0,
             };
         },
         computed: {
@@ -334,19 +333,6 @@
                         console.warn("unexpected event type", ev);
                 }
             },
-            onTouchStart(e) {
-                this.touchStart = e.touches[0].pageY;
-            },
-            onTouchMove(e) {
-                const y = e.touches[0].pageY;
-                const h = window.document.documentElement.scrollHeight - window.document.documentElement.clientHeight;
-
-                if(window.scrollY >= h - 200 && y < this.touchStart + 100) {
-                    this.loadMore();
-                } else if (window.scrollY === 0 && y > this.touchStart + 250) {
-                    this.refresh();
-                }
-            },
         },
         created() {
             this.search();
@@ -354,13 +340,10 @@
             this.subscriptions.push(Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data)));
             this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
 
-            window.addEventListener('touchstart', (e) => this.onTouchStart(e), {passive: true});
-            window.addEventListener('touchmove', (e) => this.onTouchMove(e), {passive: true});
+            this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
+            this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
         },
         destroyed() {
-            window.removeEventListener('touchstart', (e) => this.onTouchStart(e), false);
-            window.removeEventListener('touchmove', (e) => this.onTouchMove(e), false);
-
             for(let i = 0; i < this.subscriptions.length; i++) {
                 Event.unsubscribe(this.subscriptions[i]);
             }
