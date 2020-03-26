@@ -18,7 +18,12 @@ class Abstract {
         for (let key in values) {
             if (values.hasOwnProperty(key) && key !== "__originalValues") {
                 this[key] = values[key];
-                this.__originalValues[key] = values[key];
+                if(typeof values[key] === "object") {
+                    this.__originalValues[key] = JSON.parse(JSON.stringify(values[key]));
+                } else {
+                    this.__originalValues[key] = values[key];
+                }
+
             }
         }
 
@@ -48,7 +53,7 @@ class Abstract {
                     val = this[key];
                 }
 
-                if(!changed || val !== this.__originalValues[key]) {
+                if(!changed || JSON.stringify(val) !== JSON.stringify(this.__originalValues[key])) {
                     result[key] = val;
                 }
             }

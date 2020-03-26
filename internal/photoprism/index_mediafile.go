@@ -33,6 +33,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 	start := time.Now()
 
 	var photo entity.Photo
+	var description entity.Description
 	var file, primaryFile entity.File
 	var metaData meta.Data
 	var photoQuery, fileQuery *gorm.DB
@@ -87,6 +88,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 		return indexResultSkipped
 	}
 
+	if photoExists {
+		ind.db.Model(&photo).Related(&description)
+	}
+
 	if fileHash == "" {
 		fileHash = m.Hash()
 	}
@@ -132,28 +137,28 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 					photo.PhotoTitle = metaData.Title
 				}
 
-				if photo.NoDescription() {
-					photo.PhotoDescription = metaData.Description
+				if photo.Description.NoDescription() {
+					photo.Description.PhotoDescription = metaData.Description
 				}
 
-				if photo.NoNotes() {
-					photo.PhotoNotes = metaData.Comment
+				if photo.Description.NoNotes() {
+					photo.Description.PhotoNotes = metaData.Comment
 				}
 
-				if photo.NoSubject() {
-					photo.PhotoSubject = metaData.Subject
+				if photo.Description.NoSubject() {
+					photo.Description.PhotoSubject = metaData.Subject
 				}
 
-				if photo.NoKeywords() {
-					photo.PhotoKeywords = metaData.Keywords
+				if photo.Description.NoKeywords() {
+					photo.Description.PhotoKeywords = metaData.Keywords
 				}
 
-				if photo.NoArtist() && metaData.Artist != "" {
-					photo.PhotoArtist = metaData.Artist
+				if photo.Description.NoArtist() && metaData.Artist != "" {
+					photo.Description.PhotoArtist = metaData.Artist
 				}
 
-				if photo.NoArtist() && metaData.CameraOwner != "" {
-					photo.PhotoArtist = metaData.CameraOwner
+				if photo.Description.NoArtist() && metaData.CameraOwner != "" {
+					photo.Description.PhotoArtist = metaData.CameraOwner
 				}
 
 				if photo.NoCameraSerial() {
@@ -168,7 +173,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 			}
 		}
 
-		if !photo.ModifiedDetails && (fileChanged || o.UpdateCamera) {
+		if !photo.ModifiedCamera && (fileChanged || o.UpdateCamera) {
 			// Set UpdateCamera, Lens, Focal Length and F Number
 			photo.Camera = entity.NewCamera(m.CameraModel(), m.CameraMake()).FirstOrCreate(ind.db)
 			photo.Lens = entity.NewLens(m.LensModel(), m.LensMake()).FirstOrCreate(ind.db)
@@ -219,16 +224,20 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 				photo.PhotoTitle = data.Title
 			}
 
-			if photo.NoCopyright() && data.Copyright != "" {
-				photo.PhotoCopyright = data.Copyright
+			if photo.Description.NoCopyright() && data.Copyright != "" {
+				photo.Description.PhotoCopyright = data.Copyright
 			}
 
-			if photo.NoArtist() && data.Artist != "" {
-				photo.PhotoArtist = data.Artist
+			if photo.Description.NoArtist() && data.Artist != "" {
+				photo.Description.PhotoArtist = data.Artist
 			}
 
-			if photo.NoDescription() && data.Description != "" {
-				photo.PhotoDescription = data.Description
+			if photo.Description.NoDescription() && data.Description != "" {
+				photo.Description.PhotoDescription = data.Description
+			}
+
+			if photo.Description.NoNotes() && data.Comment != "" {
+				photo.Description.PhotoNotes = data.Comment
 			}
 		}
 	}
@@ -271,24 +280,22 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 	}
 
 	if file.FilePrimary && (fileChanged || o.UpdateKeywords) {
-		w := txt.Keywords(photo.PhotoKeywords)
+		w := txt.Keywords(photo.Description.PhotoKeywords)
 
-		if !photo.ModifiedKeywords {
-			if NonCanonical(fileBase) {
-				w = append(w, txt.Keywords(filePath)...)
-				w = append(w, txt.Keywords(fileBase)...)
-			}
-
-			w = append(w, locKeywords...)
-			w = append(w, txt.Keywords(file.OriginalName)...)
-			w = append(w, file.FileMainColor)
-			w = append(w, labels.Keywords()...)
+		if NonCanonical(fileBase) {
+			w = append(w, txt.Keywords(filePath)...)
+			w = append(w, txt.Keywords(fileBase)...)
 		}
 
-		photo.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
+		w = append(w, locKeywords...)
+		w = append(w, txt.Keywords(file.OriginalName)...)
+		w = append(w, file.FileMainColor)
+		w = append(w, labels.Keywords()...)
 
-		if photo.PhotoKeywords != "" {
-			log.Debugf("index: updated photo keywords (%s)", photo.PhotoKeywords)
+		photo.Description.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
+
+		if photo.Description.PhotoKeywords != "" {
+			log.Debugf("index: updated photo keywords (%s)", photo.Description.PhotoKeywords)
 		} else {
 			log.Debug("index: no photo keywords")
 		}

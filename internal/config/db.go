@@ -63,6 +63,7 @@ func (c *Config) MigrateDb() {
 		&entity.Account{},
 		&entity.File{},
 		&entity.Photo{},
+		&entity.Description{},
 		&entity.Event{},
 		&entity.Place{},
 		&entity.Location{},

@@ -228,11 +228,11 @@
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
-                                        v-model="model.PhotoDescription"
+                                        v-model="model.Description.PhotoDescription"
                                 ></v-textarea>
                             </v-flex>
 
-                            <v-flex xs12 class="pa-2">
+                            <v-flex xs12 md6 class="pa-2">
                                 <v-textarea
                                         hide-details
                                         auto-grow
@@ -240,28 +240,8 @@
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
-                                        v-model="model.PhotoKeywords"
+                                        v-model="model.Description.PhotoKeywords"
                                 ></v-textarea>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        hide-details
-                                        label="Copyright"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.PhotoCopyright"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        hide-details
-                                        label="Artist"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.PhotoArtist"
-                                ></v-text-field>
                             </v-flex>
 
                             <v-flex xs12 md6 class="pa-2">
@@ -272,7 +252,51 @@
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
-                                        v-model="model.PhotoNotes"
+                                        v-model="model.Description.PhotoNotes"
+                                ></v-textarea>
+                            </v-flex>
+
+                            <v-flex xs12 sm6 md3 class="pa-2">
+                                <v-textarea
+                                        hide-details
+                                        auto-grow
+                                        label="Subject"
+                                        placeholder=""
+                                        :rows="1"
+                                        color="secondary-dark"
+                                        v-model="model.Description.PhotoSubject"
+                                ></v-textarea>
+                            </v-flex>
+
+                            <v-flex xs12 sm6 md3 class="pa-2">
+                                <v-text-field
+                                        hide-details
+                                        label="Artist"
+                                        placeholder=""
+                                        color="secondary-dark"
+                                        v-model="model.Description.PhotoArtist"
+                                ></v-text-field>
+                            </v-flex>
+
+                            <v-flex xs12 sm6 md3 class="pa-2">
+                                <v-text-field
+                                        hide-details
+                                        label="Copyright"
+                                        placeholder=""
+                                        color="secondary-dark"
+                                        v-model="model.Description.PhotoCopyright"
+                                ></v-text-field>
+                            </v-flex>
+
+                            <v-flex xs12 sm6 md3 class="pa-2">
+                                <v-textarea
+                                        hide-details
+                                        auto-grow
+                                        label="License"
+                                        placeholder=""
+                                        :rows="1"
+                                        color="secondary-dark"
+                                        v-model="model.Description.PhotoLicense"
                                 ></v-textarea>
                             </v-flex>
 
@@ -309,9 +333,7 @@
             return {
                 config: this.$config.values,
                 all: {
-                    countries: [{code: "", name: this.$gettext("Unknown")}],
-                    cameras: [{ID: 0, CameraModel: this.$gettext("Unknown")}],
-                    lenses: [{ID: 0, LensModel: "Unknown"}],
+                    countries: [{code: "", name: ""}],
                     colors: [{label: "Unknown", name: ""}],
                 },
                 readonly: this.$config.getValue("readonly"),
@@ -380,10 +402,10 @@
                 return this.all.countries.concat(this.config.countries);
             },
             cameraOptions() {
-                return this.all.cameras.concat(this.config.cameras);
+                return this.config.cameras;
             },
             lensOptions() {
-                return this.all.lenses.concat(this.config.lenses);
+                return this.config.lenses;
             },
             colorOptions() {
                 return this.all.colors.concat(this.config.colors);

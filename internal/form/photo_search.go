@@ -9,9 +9,6 @@ type PhotoSearch struct {
 	Query       string    `form:"q"`
 	ID          string    `form:"id"`
 	Title       string    `form:"title"`
-	Description string    `form:"description"`
-	Notes       string    `form:"notes"`
-	Artist      string    `form:"artist"`
 	Hash        string    `form:"hash"`
 	Duplicate   bool      `form:"duplicate"`
 	Archived    bool      `form:"archived"`

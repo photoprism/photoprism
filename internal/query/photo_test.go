@@ -216,34 +216,6 @@ func TestSearch_Photos_Query(t *testing.T) {
 
 		t.Logf("results: %+v", photos)
 	})
-	t.Run("form.description", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = "description:xxx"
-		f.Count = 3
-		f.Offset = 0
-
-		photos, err := search.Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		t.Logf("results: %+v", photos)
-	})
-	t.Run("form.notes", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = "notes:xxx"
-		f.Count = 3
-		f.Offset = 0
-
-		photos, err := search.Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		t.Logf("results: %+v", photos)
-	})
 	t.Run("form.hash", func(t *testing.T) {
 		var f form.PhotoSearch
 		f.Query = "hash:xxx"

@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -18,13 +19,6 @@ type Photo struct {
 	PhotoPath         string    `gorm:"type:varbinary(512);index;"`
 	PhotoName         string    `gorm:"type:varbinary(256);"`
 	PhotoTitle        string    `json:"PhotoTitle"`
-	PhotoSubject      string    `json:"PhotoSubject"`
-	PhotoKeywords     string    `json:"PhotoKeywords"`
-	PhotoDescription  string    `gorm:"type:text;" json:"PhotoDescription"`
-	PhotoNotes        string    `gorm:"type:text;" json:"PhotoNotes"`
-	PhotoArtist       string    `json:"PhotoArtist"`
-	PhotoCopyright    string    `json:"PhotoCopyright"`
-	PhotoLicense      string    `json:"PhotoLicense"`
 	PhotoFavorite     bool      `json:"PhotoFavorite"`
 	PhotoPrivate      bool      `json:"PhotoPrivate"`
 	PhotoNSFW         bool      `json:"PhotoNSFW"`
@@ -39,30 +33,31 @@ type Photo struct {
 	CameraID          uint      `gorm:"index:idx_photos_camera_lens;" json:"CameraID"`
 	CameraSerial      string    `gorm:"type:varbinary(128);" json:"CameraSerial"`
 	LensID            uint      `gorm:"index:idx_photos_camera_lens;" json:"LensID"`
-	AccountID         uint      `json:"AccountID"`
-	PlaceID           string    `gorm:"type:varbinary(16);index;" json:"PlaceID"`
-	LocationID        string    `gorm:"type:varbinary(16);index;" json:"LocationID"`
-	LocationEstimated bool      `json:"LocationEstimated"`
-	PhotoCountry      string    `gorm:"index:idx_photos_country_year_month;" json:"PhotoCountry"`
-	PhotoYear         int       `gorm:"index:idx_photos_country_year_month;"`
-	PhotoMonth        int       `gorm:"index:idx_photos_country_year_month;"`
-	TimeZone          string    `gorm:"type:varbinary(64);" json:"TimeZone"`
-	TakenAtLocal      time.Time `gorm:"type:datetime;"`
-	ModifiedTitle     bool      `json:"ModifiedTitle"`
-	ModifiedDetails   bool      `json:"ModifiedDetails"`
-	ModifiedLocation  bool      `json:"ModifiedLocation"`
-	ModifiedKeywords  bool      `json:"ModifiedKeywords"`
-	ModifiedDate      bool      `json:"ModifiedDate"`
-	Camera            *Camera   `json:"Camera"`
-	Lens              *Lens     `json:"Lens"`
-	Location          *Location `json:"-"`
-	Place             *Place    `json:"-"`
-	Account           *Account  `json:"-"`
-	Files             []File
-	Labels            []PhotoLabel
-	Keywords          []Keyword `json:"-"`
-	Albums            []Album   `json:"-"`
-	CreatedAt         time.Time
+	AccountID           uint        `json:"AccountID"`
+	PlaceID             string      `gorm:"type:varbinary(16);index;" json:"PlaceID"`
+	LocationID          string      `gorm:"type:varbinary(16);index;" json:"LocationID"`
+	LocationEstimated   bool        `json:"LocationEstimated"`
+	PhotoCountry        string      `gorm:"index:idx_photos_country_year_month;" json:"PhotoCountry"`
+	PhotoYear           int         `gorm:"index:idx_photos_country_year_month;"`
+	PhotoMonth          int         `gorm:"index:idx_photos_country_year_month;"`
+	TimeZone            string      `gorm:"type:varbinary(64);" json:"TimeZone"`
+	TakenAtLocal        time.Time   `gorm:"type:datetime;"`
+	ModifiedTitle       bool        `json:"ModifiedTitle"`
+	ModifiedDescription bool        `json:"ModifiedDescription"`
+	ModifiedDate        bool        `json:"ModifiedDate"`
+	ModifiedLocation    bool        `json:"ModifiedLocation"`
+	ModifiedCamera      bool        `json:"ModifiedCamera"`
+	Description         Description `json:"Description"`
+	Camera              *Camera     `json:"Camera"`
+	Lens                *Lens       `json:"Lens"`
+	Location            *Location   `json:"-"`
+	Place               *Place      `json:"-"`
+	Account             *Account    `json:"-"`
+	Files               []File
+	Labels           []PhotoLabel
+	Keywords         []Keyword `json:"-"`
+	Albums           []Album   `json:"-"`
+	CreatedAt        time.Time
 	UpdatedAt         time.Time
 	DeletedAt         *time.Time `sql:"index"`
 }
@@ -72,6 +67,16 @@ func SavePhoto(model Photo, form form.Photo, db *gorm.DB) error {
 	if err := deepcopier.Copy(&model).From(form); err != nil {
 		return err
 	}
+
+	if form.Description.PhotoID == model.ID {
+		if err := deepcopier.Copy(&model.Description).From(form.Description); err != nil {
+			return err
+		}
+
+		model.Description.PhotoKeywords = strings.Join(txt.UniqueKeywords(model.Description.PhotoKeywords), ", ")
+	}
+
+	log.Debugf("model: %+v", model)
 
 	model.IndexKeywords(db)
 
@@ -123,10 +128,10 @@ func (m *Photo) IndexKeywords(db *gorm.DB) {
 
 	// Add title, description and other keywords
 	keywords = append(keywords, txt.Keywords(m.PhotoTitle)...)
-	keywords = append(keywords, txt.Keywords(m.PhotoKeywords)...)
-	keywords = append(keywords, txt.Keywords(m.PhotoSubject)...)
-	keywords = append(keywords, txt.Keywords(m.PhotoArtist)...)
-	keywords = append(keywords, txt.Keywords(m.PhotoDescription)...)
+	keywords = append(keywords, txt.Keywords(m.Description.PhotoDescription)...)
+	keywords = append(keywords, txt.Keywords(m.Description.PhotoKeywords)...)
+	keywords = append(keywords, txt.Keywords(m.Description.PhotoSubject)...)
+	keywords = append(keywords, txt.Keywords(m.Description.PhotoArtist)...)
 
 	keywords = txt.UniqueWords(keywords)
 
@@ -221,36 +226,6 @@ func (m *Photo) HasPlace() bool {
 // NoTitle checks if the photo has no Title
 func (m *Photo) NoTitle() bool {
 	return m.PhotoTitle == ""
-}
-
-// NoDescription checks if the photo has no Description
-func (m *Photo) NoDescription() bool {
-	return m.PhotoDescription == ""
-}
-
-// NoNotes checks if the photo has no Notes
-func (m *Photo) NoNotes() bool {
-	return m.PhotoNotes == ""
-}
-
-// NoArtist checks if the photo has no Artist
-func (m *Photo) NoArtist() bool {
-	return m.PhotoArtist == ""
-}
-
-// NoCopyright checks if the photo has no Copyright
-func (m *Photo) NoCopyright() bool {
-	return m.PhotoCopyright == ""
-}
-
-// NoSubject checks if the photo has no Subject
-func (m *Photo) NoSubject() bool {
-	return m.PhotoSubject == ""
-}
-
-// NoKeywords checks if the photo has no Keywords
-func (m *Photo) NoKeywords() bool {
-	return m.PhotoKeywords == ""
 }
 
 // NoCameraSerial checks if the photo has no CameraSerial

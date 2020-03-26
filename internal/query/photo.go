@@ -26,14 +26,9 @@ type PhotoResult struct {
 	PhotoPath        string
 	PhotoName        string
 	PhotoTitle       string
-	PhotoDescription string
 	PhotoYear        int
 	PhotoMonth       int
 	PhotoCountry     string
-	PhotoArtist      string
-	PhotoKeywords    string
-	PhotoColors      string
-	PhotoColor       string
 	PhotoFavorite    bool
 	PhotoPrivate     bool
 	PhotoSensitive   bool
@@ -259,14 +254,6 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		q = q.Where("LOWER(photos.photo_title) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(f.Title)))
 	}
 
-	if f.Description != "" {
-		q = q.Where("LOWER(photos.photo_description) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(f.Description)))
-	}
-
-	if f.Notes != "" {
-		q = q.Where("LOWER(photos.photo_notes) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(f.Notes)))
-	}
-
 	if f.Hash != "" {
 		q = q.Where("files.file_hash = ?", f.Hash)
 	}
@@ -350,7 +337,7 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 
 // FindPhotoByID returns a Photo based on the ID.
 func (s *Repo) FindPhotoByID(photoID uint64) (photo entity.Photo, err error) {
-	if err := s.db.Where("id = ?", photoID).First(&photo).Error; err != nil {
+	if err := s.db.Where("id = ?", photoID).Preload("Description").First(&photo).Error; err != nil {
 		return photo, err
 	}
 
@@ -359,7 +346,7 @@ func (s *Repo) FindPhotoByID(photoID uint64) (photo entity.Photo, err error) {
 
 // FindPhotoByUUID returns a Photo based on the UUID.
 func (s *Repo) FindPhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
-	if err := s.db.Where("photo_uuid = ?", photoUUID).First(&photo).Error; err != nil {
+	if err := s.db.Where("photo_uuid = ?", photoUUID).Preload("Description").First(&photo).Error; err != nil {
 		return photo, err
 	}
 
@@ -375,6 +362,7 @@ func (s *Repo) PreloadPhotoByUUID(photoUUID string) (photo entity.Photo, err err
 		Preload("Labels.Label").
 		Preload("Camera").
 		Preload("Lens").
+		Preload("Description").
 		First(&photo).Error; err != nil {
 		return photo, err
 	}

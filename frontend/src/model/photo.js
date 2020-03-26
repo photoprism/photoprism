@@ -11,11 +11,6 @@ class Photo extends Abstract {
             PhotoPath: "",
             PhotoName: "",
             PhotoTitle: "",
-            PhotoDescription: "",
-            PhotoNotes: "",
-            PhotoKeywords: "",
-            PhotoArtist: "",
-            PhotoCopyright: "",
             PhotoFavorite: false,
             PhotoPrivate: false,
             PhotoNSFW: false,
@@ -42,11 +37,21 @@ class Photo extends Abstract {
             PhotoYear: 0,
             PhotoMonth: 0,
             TakenAtLocal: "",
-            ModifiedDate: false,
             ModifiedTitle: false,
-            ModifiedDetails: false,
+            ModifiedDescription: false,
+            ModifiedDate: false,
             ModifiedLocation: false,
+            ModifiedCamera: false,
             TimeZone: "",
+            Description: {
+                PhotoDescription: "",
+                PhotoKeywords: "",
+                PhotoNotes: "",
+                PhotoSubject: "",
+                PhotoArtist: "",
+                PhotoCopyright: "",
+                PhotoLicense: "",
+            },
             Files: [],
             Labels: [],
             Keywords: [],
@@ -228,11 +233,11 @@ class Photo extends Abstract {
             values.ModifiedTitle = true
         }
 
-        if(values.PhotoKeywords) {
-            values.ModifiedKeywords = true
+        if(values.Description) {
+            values.ModifiedDescription = true
         }
 
-        if(values.PhotoLat || values.PhotoLng || values.PhotoAltitude) {
+        if(values.PhotoLat || values.PhotoLng || values.PhotoAltitude || values.PhotoCountry) {
             values.ModifiedLocation = true
         }
 
@@ -240,8 +245,8 @@ class Photo extends Abstract {
             values.ModifiedDate = true
         }
 
-        if(values.CameraID || values.LensID || values.PhotoCountry) {
-            values.ModifiedDetails = true
+        if(values.CameraID || values.LensID) {
+            values.ModifiedCamera = true
         }
 
         return Api.put(this.getEntityResource(), values).then((response) => Promise.resolve(this.setValues(response.data)));
