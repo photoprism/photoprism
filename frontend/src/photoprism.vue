@@ -38,7 +38,7 @@
                 const y = e.touches[0].pageY;
                 const h = window.document.documentElement.scrollHeight - window.document.documentElement.clientHeight;
 
-                if(window.scrollY >= h - 200 && y < this.touchStart + 20) {
+                if(window.scrollY >= h - 200 && y < this.touchStart) {
                     Event.publish("touchmove.bottom");
                     this.touchStart = 0;
                 } else if (window.scrollY === 0 && y > this.touchStart + 200) {
