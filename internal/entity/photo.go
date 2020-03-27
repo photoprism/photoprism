@@ -13,27 +13,26 @@ import (
 
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
-	ID                uint      `gorm:"primary_key"`
-	TakenAt           time.Time `gorm:"type:datetime;index:idx_photos_taken_uuid;" json:"TakenAt"`
-	PhotoUUID         string    `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;"`
-	PhotoPath         string    `gorm:"type:varbinary(512);index;"`
-	PhotoName         string    `gorm:"type:varbinary(256);"`
-	PhotoTitle        string    `json:"PhotoTitle"`
-	PhotoFavorite     bool      `json:"PhotoFavorite"`
-	PhotoPrivate      bool      `json:"PhotoPrivate"`
-	PhotoNSFW         bool      `json:"PhotoNSFW"`
-	PhotoStory        bool      `json:"PhotoStory"`
-	PhotoLat          float64   `gorm:"index;" json:"PhotoLat"`
-	PhotoLng          float64   `gorm:"index;" json:"PhotoLng"`
-	PhotoAltitude     int       `json:"PhotoAltitude"`
-	PhotoFocalLength  int       `json:"PhotoFocalLength"`
-	PhotoIso          int       `json:"PhotoIso"`
-	PhotoFNumber      float64   `json:"PhotoFNumber"`
-	PhotoExposure     string    `gorm:"type:varbinary(64);" json:"PhotoExposure"`
-	CameraID          uint      `gorm:"index:idx_photos_camera_lens;" json:"CameraID"`
-	CameraSerial      string    `gorm:"type:varbinary(128);" json:"CameraSerial"`
-	LensID            uint      `gorm:"index:idx_photos_camera_lens;" json:"LensID"`
-	AccountID           uint        `json:"AccountID"`
+	ID                  uint        `gorm:"primary_key"`
+	TakenAt             time.Time   `gorm:"type:datetime;index:idx_photos_taken_uuid;" json:"TakenAt"`
+	PhotoUUID           string      `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;"`
+	PhotoPath           string      `gorm:"type:varbinary(512);index;"`
+	PhotoName           string      `gorm:"type:varbinary(256);"`
+	PhotoTitle          string      `json:"PhotoTitle"`
+	PhotoFavorite       bool        `json:"PhotoFavorite"`
+	PhotoPrivate        bool        `json:"PhotoPrivate"`
+	PhotoNSFW           bool        `json:"PhotoNSFW"`
+	PhotoStory          bool        `json:"PhotoStory"`
+	PhotoLat            float64     `gorm:"index;" json:"PhotoLat"`
+	PhotoLng            float64     `gorm:"index;" json:"PhotoLng"`
+	PhotoAltitude       int         `json:"PhotoAltitude"`
+	PhotoFocalLength    int         `json:"PhotoFocalLength"`
+	PhotoIso            int         `json:"PhotoIso"`
+	PhotoFNumber        float64     `json:"PhotoFNumber"`
+	PhotoExposure       string      `gorm:"type:varbinary(64);" json:"PhotoExposure"`
+	CameraID            uint        `gorm:"index:idx_photos_camera_lens;" json:"CameraID"`
+	CameraSerial        string      `gorm:"type:varbinary(128);" json:"CameraSerial"`
+	LensID              uint        `gorm:"index:idx_photos_camera_lens;" json:"LensID"`
 	PlaceID             string      `gorm:"type:varbinary(16);index;" json:"PlaceID"`
 	LocationID          string      `gorm:"type:varbinary(16);index;" json:"LocationID"`
 	LocationEstimated   bool        `json:"LocationEstimated"`
@@ -52,14 +51,13 @@ type Photo struct {
 	Lens                *Lens       `json:"Lens"`
 	Location            *Location   `json:"-"`
 	Place               *Place      `json:"-"`
-	Account             *Account    `json:"-"`
+	Keywords            []Keyword   `json:"-"`
+	Albums              []Album     `json:"-"`
 	Files               []File
-	Labels           []PhotoLabel
-	Keywords         []Keyword `json:"-"`
-	Albums           []Album   `json:"-"`
-	CreatedAt        time.Time
-	UpdatedAt         time.Time
-	DeletedAt         *time.Time `sql:"index"`
+	Labels              []PhotoLabel
+	CreatedAt           time.Time
+	UpdatedAt           time.Time
+	DeletedAt           *time.Time `sql:"index"`
 }
 
 // SavePhoto updates a model using form data and persists it in the database.

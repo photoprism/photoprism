@@ -62,6 +62,8 @@ func (c *Config) MigrateDb() {
 	db.AutoMigrate(
 		&entity.Account{},
 		&entity.File{},
+		&entity.FilePush{},
+		&entity.FileSync{},
 		&entity.Photo{},
 		&entity.Description{},
 		&entity.Event{},

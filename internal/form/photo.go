@@ -20,15 +20,15 @@ type Photo struct {
 		PhotoCopyright   string `json:"PhotoCopyright"`
 		PhotoLicense     string `json:"PhotoLicense"`
 	} `json:"Description"`
-	PhotoFavorite    bool      `json:"PhotoFavorite"`
-	PhotoPrivate     bool      `json:"PhotoPrivate"`
-	PhotoNSFW        bool      `json:"PhotoNSFW"`
-	PhotoStory       bool      `json:"PhotoStory"`
-	PhotoLat         float64   `json:"PhotoLat"`
-	PhotoLng         float64   `json:"PhotoLng"`
-	PhotoAltitude    int       `json:"PhotoAltitude"`
-	PhotoFocalLength int       `json:"PhotoFocalLength"`
-	PhotoIso         int       `json:"PhotoIso"`
+	PhotoFavorite       bool      `json:"PhotoFavorite"`
+	PhotoPrivate        bool      `json:"PhotoPrivate"`
+	PhotoNSFW           bool      `json:"PhotoNSFW"`
+	PhotoStory          bool      `json:"PhotoStory"`
+	PhotoLat            float64   `json:"PhotoLat"`
+	PhotoLng            float64   `json:"PhotoLng"`
+	PhotoAltitude       int       `json:"PhotoAltitude"`
+	PhotoFocalLength    int       `json:"PhotoFocalLength"`
+	PhotoIso            int       `json:"PhotoIso"`
 	PhotoFNumber        float64   `json:"PhotoFNumber"`
 	PhotoExposure       string    `json:"PhotoExposure"`
 	CameraID            uint      `json:"CameraID"`

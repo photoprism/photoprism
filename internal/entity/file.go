@@ -40,6 +40,8 @@ type File struct {
 	FileChroma      uint
 	FileNotes       string `gorm:"type:text"`
 	FileError       string `gorm:"type:varbinary(512)"`
+	FilePush        []FilePush
+	FileSync        []FileSync
 	CreatedAt       time.Time
 	CreatedIn       int64
 	UpdatedAt       time.Time

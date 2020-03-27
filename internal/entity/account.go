@@ -8,23 +8,31 @@ import (
 // Account represents a remote service account for uploading, downloading or syncing media files.
 type Account struct {
 	ID           uint   `gorm:"primary_key"`
-	Name         string `gorm:"type:varchar(128);"`
-	URL          string `gorm:"type:varbinary(512);"`
-	Protocol     string `gorm:"type:varbinary(256);"`
-	ApiKey       string `gorm:"type:varbinary(256);"`
-	Username     string `gorm:"type:varbinary(256);"`
-	Password     string `gorm:"type:varbinary(256);"`
-	LastError    string `gorm:"type:varbinary(256);"`
-	IgnoreErrors bool
+	AccName      string `gorm:"type:varchar(128);"`
+	AccOwner     string `gorm:"type:varchar(128);"`
+	AccURL       string `gorm:"type:varbinary(512);"`
+	AccType      string `gorm:"type:varbinary(256);"`
+	AccKey       string `gorm:"type:varbinary(256);"`
+	AccUser      string `gorm:"type:varbinary(256);"`
+	AccPass      string `gorm:"type:varbinary(256);"`
+	AccError     string `gorm:"type:varbinary(512);"`
+	AccPush      bool
+	AccSync      bool
+	RetryLimit   uint
+	PushPath     string `gorm:"type:varbinary(256);"`
 	PushSize     string `gorm:"type:varbinary(16);"`
+	PushExpires  uint
 	PushExif     bool
-	PushDelete   bool
 	PushSidecar  bool
-	SyncPush     bool
-	SyncPull     bool
-	SyncPaused   int
-	SyncInterval int
-	SyncRetry    int
+	SyncPath     string `gorm:"type:varbinary(256);"`
+	SyncInterval uint
+	SyncUpload   bool
+	SyncDownload bool
+	SyncDelete   bool
+	SyncRaw      bool
+	SyncVideo    bool
+	SyncSidecar  bool
+	SyncStart    sql.NullTime
 	SyncedAt     sql.NullTime
 	CreatedAt    time.Time
 	UpdatedAt    time.Time

@@ -54,4 +54,3 @@ func (m *Description) NoArtist() bool {
 func (m *Description) NoCopyright() bool {
 	return m.PhotoCopyright == ""
 }
-

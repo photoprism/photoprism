@@ -49,7 +49,9 @@ func (c Client) Files(path string) (result []string, err error) {
 	}
 
 	for _, file := range files {
-		if !file.Mode().IsRegular() { continue }
+		if !file.Mode().IsRegular() {
+			continue
+		}
 		result = append(result, fmt.Sprintf("%s/%s", path, file.Name()))
 	}
 
@@ -65,7 +67,9 @@ func (c Client) Directories(path string, recursive bool) (result []string, err e
 	}
 
 	for _, file := range files {
-		if !file.Mode().IsDir() { continue }
+		if !file.Mode().IsDir() {
+			continue
+		}
 
 		dir := fmt.Sprintf("%s/%s", path, file.Name())
 		result = append(result, dir)
