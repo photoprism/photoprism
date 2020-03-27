@@ -59,6 +59,7 @@ require (
 	github.com/soheilhy/cmux v0.1.4 // indirect
 	github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72 // indirect
 	github.com/stretchr/testify v1.4.0
+	github.com/studio-b12/gowebdav v0.0.0-20200303150724-9380631c29a1
 	github.com/tensorflow/tensorflow v1.14.0
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6 // indirect
 	github.com/twinj/uuid v1.0.0 // indirect

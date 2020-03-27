@@ -50,3 +50,6 @@ services:
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
+
+  webdav-dummy:
+    image: photoprism/webdav:20200327

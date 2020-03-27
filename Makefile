@@ -132,6 +132,9 @@ docker-tensorflow:
 docker-tidb:
 	scripts/docker-build.sh tidb $(TIDB_VERSION)
 	scripts/docker-push.sh tidb $(TIDB_VERSION)
+docker-webdav:
+	scripts/docker-build.sh webdav $(DOCKER_TAG)
+	scripts/docker-push.sh webdav $(DOCKER_TAG)
 lint-js:
 	(cd frontend &&	npm run lint)
 fmt-js:
