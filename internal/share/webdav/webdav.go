@@ -32,9 +32,17 @@ func Connect(url, user, pass string) Client {
 	return result
 }
 
+func (c Client) readDir(path string) ([]os.FileInfo, error) {
+	if path == "" {
+		path = "/"
+	}
+
+	return c.client.ReadDir(path)
+}
+
 // Files returns all files in path as string slice.
 func (c Client) Files(path string) (result []string, err error) {
-	files, err := c.client.ReadDir(path)
+	files, err := c.readDir(path)
 
 	if err != nil {
 		return result, err
@@ -49,8 +57,8 @@ func (c Client) Files(path string) (result []string, err error) {
 }
 
 // Directories returns all sub directories in path as string slice.
-func (c Client) Directories(path string) (result []string, err error) {
-	files, err := c.client.ReadDir(path)
+func (c Client) Directories(path string, recursive bool) (result []string, err error) {
+	files, err := c.readDir(path)
 
 	if err != nil {
 		return result, err
@@ -58,7 +66,19 @@ func (c Client) Directories(path string) (result []string, err error) {
 
 	for _, file := range files {
 		if !file.Mode().IsDir() { continue }
-		result = append(result, fmt.Sprintf("%s/%s", path, file.Name()))
+
+		dir := fmt.Sprintf("%s/%s", path, file.Name())
+		result = append(result, dir)
+
+		if recursive {
+			subDirs, err := c.Directories(dir, true)
+
+			if err != nil {
+				return result, err
+			}
+
+			result = append(result, subDirs...)
+		}
 	}
 
 	return result, nil
@@ -118,7 +138,7 @@ func (c Client) DownloadDir(from, to string, recursive bool) (errs []error) {
 		return errs
 	}
 
-	dirs, err := c.Directories(from)
+	dirs, err := c.Directories(from, false)
 
 	for _, dir := range dirs {
 		errs = append(errs, c.DownloadDir(dir, to, true)...)

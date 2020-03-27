@@ -37,6 +37,38 @@ func TestClient_Files(t *testing.T) {
 	}
 }
 
+func TestClient_Directories(t *testing.T) {
+	c := Connect(testUrl, testUser, testPass)
+
+	assert.IsType(t, Client{}, c)
+
+	t.Run("non-recursive", func(t *testing.T) {
+		dirs, err := c.Directories("", false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(dirs) == 0 {
+			t.Fatal("no directories found")
+		}
+
+		assert.Equal(t, "/Photos", dirs[0])
+	})
+
+	t.Run("recursive", func(t *testing.T) {
+		dirs, err := c.Directories("", true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(dirs) < 2 {
+			t.Fatal("at least 2 directories expected")
+		}
+	})
+}
+
 func TestClient_Download(t *testing.T) {
 	c := Connect(testUrl, testUser, testPass)
 
