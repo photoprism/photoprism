@@ -143,6 +143,7 @@ ENV PHOTOPRISM_IMPORT_PATH /photoprism/import
 ENV PHOTOPRISM_EXPORT_PATH /photoprism/export
 ENV PHOTOPRISM_DATABASE_PATH /photoprism/database
 ENV PHOTOPRISM_CACHE_PATH /photoprism/cache
+ENV PHOTOPRISM_CONFIG_PATH /photoprism/config
 ENV PHOTOPRISM_CONFIG_FILE /photoprism/config/photoprism.yml
 ENV PHOTOPRISM_ASSETS_PATH /photoprism/assets
 ENV PHOTOPRISM_RESOURCES_PATH /photoprism/assets/resources
