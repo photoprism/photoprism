@@ -230,23 +230,23 @@ class Photo extends Abstract {
         const values = this.getValues(true);
 
         if(values.PhotoTitle) {
-            values.ModifiedTitle = true
+            values.ModifiedTitle = true;
         }
 
         if(values.Description) {
-            values.ModifiedDescription = true
+            values.ModifiedDescription = true;
         }
 
         if(values.PhotoLat || values.PhotoLng || values.PhotoAltitude || values.PhotoCountry) {
-            values.ModifiedLocation = true
+            values.ModifiedLocation = true;
         }
 
         if(values.TakenAt || values.TimeZone) {
-            values.ModifiedDate = true
+            values.ModifiedDate = true;
         }
 
         if(values.CameraID || values.LensID) {
-            values.ModifiedCamera = true
+            values.ModifiedCamera = true;
         }
 
         return Api.put(this.getEntityResource(), values).then((response) => Promise.resolve(this.setValues(response.data)));
