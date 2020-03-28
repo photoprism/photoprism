@@ -20,8 +20,8 @@ func NewSettings() *Settings {
 	return &Settings{}
 }
 
-// SetValuesFromFile uses a yaml config file to initiate the configuration entity.
-func (s *Settings) SetValuesFromFile(fileName string) error {
+// Load uses a yaml config file to initiate the configuration entity.
+func (s *Settings) Load(fileName string) error {
 	if !fs.FileExists(fileName) {
 		return fmt.Errorf("settings file not found: \"%s\"", fileName)
 	}
@@ -35,12 +35,8 @@ func (s *Settings) SetValuesFromFile(fileName string) error {
 	return yaml.Unmarshal(yamlConfig, s)
 }
 
-// WriteValuesToFile uses a yaml config file to initiate the configuration entity.
-func (s *Settings) WriteValuesToFile(fileName string) error {
-	if !fs.FileExists(fileName) {
-		return fmt.Errorf("settings file not found: \"%s\"", fileName)
-	}
-
+// Save uses a yaml config file to initiate the configuration entity.
+func (s *Settings) Save(fileName string) error {
 	data, err := yaml.Marshal(s)
 
 	if err != nil {
@@ -55,7 +51,7 @@ func (c *Config) Settings() *Settings {
 	s := NewSettings()
 	p := c.SettingsFile()
 
-	if err := s.SetValuesFromFile(p); err != nil {
+	if err := s.Load(p); err != nil {
 		log.Error(err)
 	}
 

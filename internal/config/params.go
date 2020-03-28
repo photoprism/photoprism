@@ -82,9 +82,9 @@ type Params struct {
 
 // NewParams creates a new configuration entity by using two methods:
 //
-// 1. SetValuesFromFile: This will initialize values from a yaml config file.
+// 1. Load: This will initialize values from a yaml config file.
 //
-// 2. SetValuesFromCliContext: Which comes after SetValuesFromFile and overrides
+// 2. SetContext: Which comes after Load and overrides
 //    any previous values giving an option two override file configs through the CLI.
 func NewParams(ctx *cli.Context) *Params {
 	c := &Params{}
@@ -94,11 +94,11 @@ func NewParams(ctx *cli.Context) *Params {
 	c.Version = ctx.App.Version
 	c.ConfigFile = fs.Abs(ctx.GlobalString("config-file"))
 
-	if err := c.SetValuesFromFile(c.ConfigFile); err != nil {
+	if err := c.Load(c.ConfigFile); err != nil {
 		log.Debug(err)
 	}
 
-	if err := c.SetValuesFromCliContext(ctx); err != nil {
+	if err := c.SetContext(ctx); err != nil {
 		log.Error(err)
 	}
 
@@ -119,8 +119,8 @@ func (c *Params) expandFilenames() {
 	c.LogFilename = fs.Abs(c.LogFilename)
 }
 
-// SetValuesFromFile uses a yaml config file to initiate the configuration entity.
-func (c *Params) SetValuesFromFile(fileName string) error {
+// Load uses a yaml config file to initiate the configuration entity.
+func (c *Params) Load(fileName string) error {
 	if !fs.FileExists(fileName) {
 		return errors.New(fmt.Sprintf("config file not found: \"%s\"", fileName))
 	}
@@ -134,9 +134,9 @@ func (c *Params) SetValuesFromFile(fileName string) error {
 	return yaml.Unmarshal(yamlConfig, c)
 }
 
-// SetValuesFromCliContext uses values from the CLI to setup configuration overrides
+// SetContext uses values from the CLI to setup configuration overrides
 // for the entity.
-func (c *Params) SetValuesFromCliContext(ctx *cli.Context) error {
+func (c *Params) SetContext(ctx *cli.Context) error {
 	v := reflect.ValueOf(c).Elem()
 
 	// Iterate through all config fields

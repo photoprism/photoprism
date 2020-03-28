@@ -38,7 +38,7 @@ func SaveSettings(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := s.WriteValuesToFile(conf.SettingsFile()); err != nil {
+		if err := s.Save(conf.SettingsFile()); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}

@@ -25,7 +25,7 @@ func TestNewParams(t *testing.T) {
 func TestParams_SetValuesFromFile(t *testing.T) {
 	c := NewParams(CliTestContext())
 
-	err := c.SetValuesFromFile("testdata/config.yml")
+	err := c.Load("testdata/config.yml")
 
 	assert.Nil(t, err)
 
