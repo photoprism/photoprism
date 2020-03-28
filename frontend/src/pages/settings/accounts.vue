@@ -17,6 +17,19 @@
                 <td>{{ formatDate(props.item.AccSyncedAt) }}</td>
             </template>
         </v-data-table>
+        <v-container fluid>
+            <v-form lazy-validation dense
+                    ref="form" class="p-form-settings" accept-charset="UTF-8"
+                    @submit.prevent="add">
+                <v-btn color="secondary-dark"
+                       class="white--text ml-0 mt-2"
+                       depressed
+                       @click.stop="add">
+                    <translate>Add</translate>
+                    <v-icon right dark>add</v-icon>
+                </v-btn>
+            </v-form>
+        </v-container>
     </div>
 </template>
 
@@ -65,6 +78,10 @@
                 Account.search({count: 100}).then(r => this.accounts = r.models);
             },
             save() {
+                this.$notify.warning("Work in progress...");
+            },
+            add() {
+                this.$notify.warning("Work in progress...");
             },
         },
         created() {
