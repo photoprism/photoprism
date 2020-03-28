@@ -8,10 +8,10 @@ import (
 
 // Account represents a remote service account form for uploading, downloading or syncing media files.
 type Account struct {
-	AccName      string `json:"AccName"`
-	AccOwner     string `json:"AccOwner"`
-	AccURL       string `json:"AccURL"`
-	AccType      string `json:"AccType"`
+	AccName      string       `json:"AccName"`
+	AccOwner     string       `json:"AccOwner"`
+	AccURL       string       `json:"AccURL"`
+	AccType      string       `json:"AccType"`
 	AccKey       string       `json:"AccKey"`
 	AccUser      string       `json:"AccUser"`
 	AccPass      string       `json:"AccPass"`
