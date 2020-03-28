@@ -94,7 +94,7 @@ func (m *PhotoResult) DownloadFileName() string {
 }
 
 // Photos searches for photos based on a Form and returns a PhotoResult slice.
-func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
+func (s *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
@@ -335,8 +335,8 @@ func (s *Repo) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 	return results, nil
 }
 
-// FindPhotoByID returns a Photo based on the ID.
-func (s *Repo) FindPhotoByID(photoID uint64) (photo entity.Photo, err error) {
+// PhotoByID returns a Photo based on the ID.
+func (s *Query) PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 	if err := s.db.Where("id = ?", photoID).Preload("Description").First(&photo).Error; err != nil {
 		return photo, err
 	}
@@ -344,8 +344,8 @@ func (s *Repo) FindPhotoByID(photoID uint64) (photo entity.Photo, err error) {
 	return photo, nil
 }
 
-// FindPhotoByUUID returns a Photo based on the UUID.
-func (s *Repo) FindPhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
+// PhotoByUUID returns a Photo based on the UUID.
+func (s *Query) PhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
 	if err := s.db.Where("photo_uuid = ?", photoUUID).Preload("Description").First(&photo).Error; err != nil {
 		return photo, err
 	}
@@ -354,7 +354,7 @@ func (s *Repo) FindPhotoByUUID(photoUUID string) (photo entity.Photo, err error)
 }
 
 // PreloadPhotoByUUID returns a Photo based on the UUID with all dependencies preloaded.
-func (s *Repo) PreloadPhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
+func (s *Query) PreloadPhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
 	if err := s.db.Where("photo_uuid = ?", photoUUID).
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.label_uncertainty ASC, photos_labels.label_id DESC")

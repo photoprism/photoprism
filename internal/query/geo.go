@@ -25,7 +25,7 @@ type GeoResult struct {
 }
 
 // Geo searches for photos based on a Form and returns a PhotoResult slice.
-func (s *Repo) Geo(f form.GeoSearch) (results []GeoResult, err error) {
+func (s *Query) Geo(f form.GeoSearch) (results []GeoResult, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}

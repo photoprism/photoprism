@@ -18,7 +18,7 @@ func GetMomentsTime(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 
 		result, err := q.GetMomentsTime()
 		if err != nil {

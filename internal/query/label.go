@@ -28,8 +28,8 @@ type LabelResult struct {
 	LabelNotes       string
 }
 
-// FindLabelBySlug returns a Label based on the slug name.
-func (s *Repo) FindLabelBySlug(labelSlug string) (label entity.Label, err error) {
+// LabelBySlug returns a Label based on the slug name.
+func (s *Query) LabelBySlug(labelSlug string) (label entity.Label, err error) {
 	if err := s.db.Where("label_slug = ?", labelSlug).First(&label).Error; err != nil {
 		return label, err
 	}
@@ -37,8 +37,8 @@ func (s *Repo) FindLabelBySlug(labelSlug string) (label entity.Label, err error)
 	return label, nil
 }
 
-// FindLabelByUUID returns a Label based on the label UUID.
-func (s *Repo) FindLabelByUUID(labelUUID string) (label entity.Label, err error) {
+// LabelByUUID returns a Label based on the label UUID.
+func (s *Query) LabelByUUID(labelUUID string) (label entity.Label, err error) {
 	if err := s.db.Where("label_uuid = ?", labelUUID).First(&label).Error; err != nil {
 		return label, err
 	}
@@ -46,8 +46,8 @@ func (s *Repo) FindLabelByUUID(labelUUID string) (label entity.Label, err error)
 	return label, nil
 }
 
-// FindLabelThumbBySlug returns a label preview file based on the slug name.
-func (s *Repo) FindLabelThumbBySlug(labelSlug string) (file entity.File, err error) {
+// LabelThumbBySlug returns a label preview file based on the slug name.
+func (s *Query) LabelThumbBySlug(labelSlug string) (file entity.File, err error) {
 	// s.db.LogMode(true)
 
 	if err := s.db.Where("files.file_primary AND files.deleted_at IS NULL").
@@ -61,8 +61,8 @@ func (s *Repo) FindLabelThumbBySlug(labelSlug string) (file entity.File, err err
 	return file, nil
 }
 
-// FindLabelThumbByUUID returns a label preview file based on the label UUID.
-func (s *Repo) FindLabelThumbByUUID(labelUUID string) (file entity.File, err error) {
+// LabelThumbByUUID returns a label preview file based on the label UUID.
+func (s *Query) LabelThumbByUUID(labelUUID string) (file entity.File, err error) {
 	// Search matching label
 	err = s.db.Where("files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN labels ON labels.label_uuid = ?", labelUUID).
@@ -86,7 +86,7 @@ func (s *Repo) FindLabelThumbByUUID(labelUUID string) (file entity.File, err err
 }
 
 // Labels searches labels based on their name.
-func (s *Repo) Labels(f form.LabelSearch) (results []LabelResult, err error) {
+func (s *Query) Labels(f form.LabelSearch) (results []LabelResult, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}

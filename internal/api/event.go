@@ -17,7 +17,7 @@ const (
 	EntityDeleted EntityEvent = "deleted"
 )
 
-func PublishPhotoEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Repo) {
+func PublishPhotoEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Query) {
 	f := form.PhotoSearch{ID: uuid}
 	result, err := q.Photos(f)
 
@@ -30,7 +30,7 @@ func PublishPhotoEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Repo
 	event.PublishEntities("photos", string(e), result)
 }
 
-func PublishAlbumEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Repo) {
+func PublishAlbumEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Query) {
 	f := form.AlbumSearch{ID: uuid}
 	result, err := q.Albums(f)
 
@@ -43,7 +43,7 @@ func PublishAlbumEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Repo
 	event.PublishEntities("albums", string(e), result)
 }
 
-func PublishLabelEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Repo) {
+func PublishLabelEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Query) {
 	f := form.LabelSearch{ID: uuid}
 	result, err := q.Labels(f)
 

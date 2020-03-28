@@ -74,8 +74,6 @@ func SavePhoto(model Photo, form form.Photo, db *gorm.DB) error {
 		model.Description.PhotoKeywords = strings.Join(txt.UniqueKeywords(model.Description.PhotoKeywords), ", ")
 	}
 
-	log.Debugf("model: %+v", model)
-
 	model.IndexKeywords(db)
 
 	return db.Save(&model).Error

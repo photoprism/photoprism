@@ -3,6 +3,10 @@ package entity
 import (
 	"database/sql"
 	"time"
+
+	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/ulule/deepcopier"
 )
 
 // Account represents a remote service account for uploading, downloading or syncing media files.
@@ -37,4 +41,31 @@ type Account struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    *time.Time `sql:"index"`
+}
+
+// CreateAccount creates a new account entity in the database.
+func CreateAccount(form form.Account, db *gorm.DB) (model *Account, err error) {
+	model = &Account{}
+
+	if err := deepcopier.Copy(&model).From(form); err != nil {
+		return model, err
+	}
+
+	err = db.Save(&model).Error
+
+	return model, err
+}
+
+// Save updates the entity using form data and stores it in the database.
+func (m *Account) Save(form form.Account, db *gorm.DB) error {
+	if err := deepcopier.Copy(m).From(form); err != nil {
+		return err
+	}
+
+	return db.Save(m).Error
+}
+
+// Delete deletes the entity from the database.
+func (m *Account) Delete(db *gorm.DB) error {
+	return db.Delete(m).Error
 }

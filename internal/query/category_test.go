@@ -10,7 +10,7 @@ import (
 func TestRepo_CategoryLabels(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	categories := search.CategoryLabels(1000, 0)
 

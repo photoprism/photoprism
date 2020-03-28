@@ -11,16 +11,16 @@ import (
 func TestRepo_FindAlbumByUUID(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("existing uuid", func(t *testing.T) {
-		albums, err := search.FindAlbumByUUID("3")
+		albums, err := search.AlbumByUUID("3")
 		assert.Nil(t, err)
 		assert.Equal(t, "Christmas2030", albums.AlbumName)
 	})
 
 	t.Run("not existing uuid", func(t *testing.T) {
-		albums, err := search.FindAlbumByUUID("3765")
+		albums, err := search.AlbumByUUID("3765")
 		assert.Error(t, err, "record not found")
 		t.Log(albums)
 	})
@@ -29,16 +29,16 @@ func TestRepo_FindAlbumByUUID(t *testing.T) {
 func TestRepo_FindAlbumThumbByUUID(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("existing uuid", func(t *testing.T) {
-		file, err := search.FindAlbumThumbByUUID("4")
+		file, err := search.AlbumThumbByUUID("4")
 		assert.Nil(t, err)
 		assert.Equal(t, "exampleFileName.jpg", file.FileName)
 	})
 
 	t.Run("not existing uuid", func(t *testing.T) {
-		file, err := search.FindAlbumThumbByUUID("3765")
+		file, err := search.AlbumThumbByUUID("3765")
 		assert.Error(t, err, "record not found")
 		t.Log(file)
 	})
@@ -47,7 +47,7 @@ func TestRepo_FindAlbumThumbByUUID(t *testing.T) {
 func TestRepo_Albums(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("search with string", func(t *testing.T) {
 		query := form.NewAlbumSearch("chr")

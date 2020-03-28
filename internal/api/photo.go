@@ -26,7 +26,7 @@ func GetPhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
@@ -47,9 +47,9 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 
-		m, err := q.FindPhotoByUUID(id)
+		m, err := q.PhotoByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -98,8 +98,8 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 //   uuid: string PhotoUUID as returned by the API
 func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/photos/:uuid/download", func(c *gin.Context) {
-		q := query.New(conf.OriginalsPath(), conf.Db())
-		f, err := q.FindFileByPhotoUUID(c.Param("uuid"))
+		q := query.New(conf.Db())
+		f, err := q.FileByPhotoUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -138,8 +138,8 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.OriginalsPath(), conf.Db())
-		m, err := q.FindPhotoByUUID(id)
+		q := query.New(conf.Db())
+		m, err := q.PhotoByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -171,8 +171,8 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.OriginalsPath(), conf.Db())
-		m, err := q.FindPhotoByUUID(id)
+		q := query.New(conf.Db())
+		m, err := q.PhotoByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)

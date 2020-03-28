@@ -70,6 +70,12 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.AddPhotosToAlbum(v1, conf)
 		api.RemovePhotosFromAlbum(v1, conf)
 
+		api.GetAccounts(v1, conf)
+		api.GetAccount(v1, conf)
+		api.CreateAccount(v1, conf)
+		api.DeleteAccount(v1, conf)
+		api.UpdateAccount(v1, conf)
+
 		api.GetSettings(v1, conf)
 		api.SaveSettings(v1, conf)
 

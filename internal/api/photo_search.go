@@ -36,7 +36,7 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 
 		var f form.PhotoSearch
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {

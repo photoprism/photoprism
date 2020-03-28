@@ -19,8 +19,8 @@ func GetFile(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
-		p, err := q.FindFileByHash(c.Param("hash"))
+		q := query.New(conf.Db())
+		p, err := q.FileByHash(c.Param("hash"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)

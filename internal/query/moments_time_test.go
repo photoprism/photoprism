@@ -10,7 +10,7 @@ import (
 func TestRepo_GetMomentsTime(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("result found", func(t *testing.T) {
 		result, err := search.GetMomentsTime()

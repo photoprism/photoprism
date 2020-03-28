@@ -11,7 +11,7 @@ import (
 func TestRepo_Geo(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("search all photos", func(t *testing.T) {
 		query := form.NewGeoSearch("")

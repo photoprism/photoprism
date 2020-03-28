@@ -29,7 +29,7 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 
 		var f form.LabelSearch
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -66,9 +66,9 @@ func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 
-		m, err := q.FindLabelByUUID(id)
+		m, err := q.LabelByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrLabelNotFound)
@@ -98,9 +98,9 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 
-		label, err := q.FindLabelByUUID(id)
+		label, err := q.LabelByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
@@ -134,9 +134,9 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 
-		label, err := q.FindLabelByUUID(id)
+		label, err := q.LabelByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
@@ -179,7 +179,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 
 		gc := conf.Cache()
 		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", labelUUID, typeName)
@@ -190,7 +190,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		f, err := q.FindLabelThumbByUUID(labelUUID)
+		f, err := q.LabelThumbByUUID(labelUUID)
 
 		if err != nil {
 			log.Errorf(err.Error())

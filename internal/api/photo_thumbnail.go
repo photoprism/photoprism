@@ -31,8 +31,8 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		db := conf.Db()
-		q := query.New(conf.OriginalsPath(), db)
-		f, err := q.FindFileByHash(fileHash)
+		q := query.New(db)
+		f, err := q.FileByHash(fileHash)
 
 		if err != nil {
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)

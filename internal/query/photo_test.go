@@ -31,16 +31,16 @@ import (
 func TestRepo_FindPhotoByID(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("photo found", func(t *testing.T) {
-		result, err := search.FindPhotoByID(1)
+		result, err := search.PhotoByID(1)
 		assert.Nil(t, err)
 		assert.Equal(t, 2790, result.PhotoYear)
 	})
 
 	t.Run("no photo found", func(t *testing.T) {
-		result, err := search.FindPhotoByID(99999)
+		result, err := search.PhotoByID(99999)
 		assert.Error(t, err, "record not found")
 		t.Log(result)
 	})
@@ -49,16 +49,16 @@ func TestRepo_FindPhotoByID(t *testing.T) {
 func TestRepo_FindPhotoByUUID(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("photo found", func(t *testing.T) {
-		result, err := search.FindPhotoByUUID("659")
+		result, err := search.PhotoByUUID("659")
 		assert.Nil(t, err)
 		assert.Equal(t, "Reunion", result.PhotoTitle)
 	})
 
 	t.Run("no photo found", func(t *testing.T) {
-		result, err := search.FindPhotoByUUID("99999")
+		result, err := search.PhotoByUUID("99999")
 		assert.Error(t, err, "record not found")
 		t.Log(result)
 	})
@@ -67,7 +67,7 @@ func TestRepo_FindPhotoByUUID(t *testing.T) {
 func TestRepo_PreloadPhotoByUUID(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("photo found", func(t *testing.T) {
 		result, err := search.PreloadPhotoByUUID("659")
@@ -86,7 +86,7 @@ func TestSearch_Photos_Query(t *testing.T) {
 
 	conf.CreateDirectories()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("normal query", func(t *testing.T) {
 		var f form.PhotoSearch

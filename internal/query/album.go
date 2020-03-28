@@ -25,8 +25,8 @@ type AlbumResult struct {
 	AlbumNotes       string
 }
 
-// FindAlbumByUUID returns a Album based on the UUID.
-func (s *Repo) FindAlbumByUUID(albumUUID string) (album entity.Album, err error) {
+// AlbumByUUID returns a Album based on the UUID.
+func (s *Query) AlbumByUUID(albumUUID string) (album entity.Album, err error) {
 	if err := s.db.Where("album_uuid = ?", albumUUID).First(&album).Error; err != nil {
 		return album, err
 	}
@@ -34,8 +34,8 @@ func (s *Repo) FindAlbumByUUID(albumUUID string) (album entity.Album, err error)
 	return album, nil
 }
 
-// FindAlbumThumbByUUID returns a album preview file based on the uuid.
-func (s *Repo) FindAlbumThumbByUUID(albumUUID string) (file entity.File, err error) {
+// AlbumThumbByUUID returns a album preview file based on the uuid.
+func (s *Query) AlbumThumbByUUID(albumUUID string) (file entity.File, err error) {
 	// s.db.LogMode(true)
 
 	if err := s.db.Where("files.file_primary AND files.deleted_at IS NULL").
@@ -49,7 +49,7 @@ func (s *Repo) FindAlbumThumbByUUID(albumUUID string) (file entity.File, err err
 }
 
 // Albums searches albums based on their name.
-func (s *Repo) Albums(f form.AlbumSearch) (results []AlbumResult, err error) {
+func (s *Query) Albums(f form.AlbumSearch) (results []AlbumResult, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}

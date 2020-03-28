@@ -24,8 +24,8 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
-		m, err := q.FindPhotoByUUID(c.Param("uuid"))
+		q := query.New(conf.Db())
+		m, err := q.PhotoByUUID(c.Param("uuid"))
 		db := conf.Db()
 
 		if err != nil {
@@ -84,8 +84,8 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
-		m, err := q.FindPhotoByUUID(c.Param("uuid"))
+		q := query.New(conf.Db())
+		m, err := q.PhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)

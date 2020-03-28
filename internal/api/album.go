@@ -35,7 +35,7 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 
 		var f form.AlbumSearch
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -60,8 +60,8 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 func GetAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums/:uuid", func(c *gin.Context) {
 		id := c.Param("uuid")
-		q := query.New(conf.OriginalsPath(), conf.Db())
-		m, err := q.FindAlbumByUUID(id)
+		q := query.New(conf.Db())
+		m, err := q.AlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
@@ -87,7 +87,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 		m := entity.NewAlbum(f.AlbumName)
 		m.AlbumFavorite = f.AlbumFavorite
 
@@ -125,9 +125,9 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 
-		m, err := q.FindAlbumByUUID(id)
+		m, err := q.AlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
@@ -155,9 +155,9 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 
-		m, err := q.FindAlbumByUUID(id)
+		m, err := q.AlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
@@ -187,9 +187,9 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 
-		album, err := q.FindAlbumByUUID(id)
+		album, err := q.AlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
@@ -218,8 +218,8 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.OriginalsPath(), conf.Db())
-		album, err := q.FindAlbumByUUID(id)
+		q := query.New(conf.Db())
+		album, err := q.AlbumByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
@@ -252,8 +252,8 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		uuid := c.Param("uuid")
-		q := query.New(conf.OriginalsPath(), conf.Db())
-		a, err := q.FindAlbumByUUID(uuid)
+		q := query.New(conf.Db())
+		a, err := q.AlbumByUUID(uuid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
@@ -308,8 +308,8 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
-		a, err := q.FindAlbumByUUID(c.Param("uuid"))
+		q := query.New(conf.Db())
+		a, err := q.AlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
@@ -333,8 +333,8 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums/:uuid/download", func(c *gin.Context) {
 		start := time.Now()
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
-		a, err := q.FindAlbumByUUID(c.Param("uuid"))
+		q := query.New(conf.Db())
+		a, err := q.AlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
@@ -434,7 +434,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
+		q := query.New(conf.Db())
 
 		gc := conf.Cache()
 		cacheKey := fmt.Sprintf("album-thumbnail:%s:%s", uuid, typeName)
@@ -445,7 +445,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		f, err := q.FindAlbumThumbByUUID(uuid)
+		f, err := q.AlbumThumbByUUID(uuid)
 
 		if err != nil {
 			log.Debugf("album: no photos yet, using generic image for %s", uuid)

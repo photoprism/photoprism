@@ -23,8 +23,8 @@ func GetDownload(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/download/:hash", func(c *gin.Context) {
 		fileHash := c.Param("hash")
 
-		q := query.New(conf.OriginalsPath(), conf.Db())
-		f, err := q.FindFileByHash(fileHash)
+		q := query.New(conf.Db())
+		f, err := q.FileByHash(fileHash)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})

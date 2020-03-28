@@ -11,17 +11,17 @@ import (
 func TestRepo_FindLabelBySlug(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		label, err := search.FindLabelBySlug("flower")
+		label, err := search.LabelBySlug("flower")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "Flower", label.LabelName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		label, err := search.FindLabelBySlug("111")
+		label, err := search.LabelBySlug("111")
 
 		assert.Error(t, err, "record not found")
 		t.Log(label)
@@ -31,17 +31,17 @@ func TestRepo_FindLabelBySlug(t *testing.T) {
 func TestRepo_FindLabelByUUID(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		label, err := search.FindLabelByUUID("14")
+		label, err := search.LabelByUUID("14")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "COW", label.LabelName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		label, err := search.FindLabelByUUID("111")
+		label, err := search.LabelByUUID("111")
 
 		assert.Error(t, err, "record not found")
 		t.Log(label)
@@ -51,17 +51,17 @@ func TestRepo_FindLabelByUUID(t *testing.T) {
 func TestRepo_FindLabelThumbBySlug(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		file, err := search.FindLabelThumbBySlug("flower")
+		file, err := search.LabelThumbBySlug("flower")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "exampleFileName.jpg", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		file, err := search.FindLabelThumbBySlug("cow")
+		file, err := search.LabelThumbBySlug("cow")
 
 		assert.Error(t, err, "record not found")
 		t.Log(file)
@@ -71,17 +71,17 @@ func TestRepo_FindLabelThumbBySlug(t *testing.T) {
 func TestRepo_FindLabelThumbByUUID(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		file, err := search.FindLabelThumbByUUID("13")
+		file, err := search.LabelThumbByUUID("13")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "exampleFileName.jpg", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		file, err := search.FindLabelThumbByUUID("14")
+		file, err := search.LabelThumbByUUID("14")
 
 		assert.Error(t, err, "record not found")
 		t.Log(file)
@@ -91,7 +91,7 @@ func TestRepo_FindLabelThumbByUUID(t *testing.T) {
 func TestRepo_Labels(t *testing.T) {
 	conf := config.TestConfig()
 
-	search := New(conf.OriginalsPath(), conf.Db())
+	search := New(conf.Db())
 
 	t.Run("search with query", func(t *testing.T) {
 		query := form.NewLabelSearch("Query:C Count:1005 Order:slug")

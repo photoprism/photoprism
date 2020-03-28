@@ -9,7 +9,7 @@ type CategoryLabel struct {
 	Title string
 }
 
-func (s *Repo) CategoryLabels(limit, offset int) (results []CategoryLabel) {
+func (s *Query) CategoryLabels(limit, offset int) (results []CategoryLabel) {
 	q := s.db.NewScope(nil).DB()
 
 	q = q.Table("categories").

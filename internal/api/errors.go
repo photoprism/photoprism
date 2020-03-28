@@ -12,6 +12,7 @@ var (
 	ErrUnauthorized    = gin.H{"code": http.StatusUnauthorized, "error": txt.UcFirst(config.ErrUnauthorized.Error())}
 	ErrReadOnly        = gin.H{"code": http.StatusForbidden, "error": txt.UcFirst(config.ErrReadOnly.Error())}
 	ErrUploadNSFW      = gin.H{"code": http.StatusForbidden, "error": txt.UcFirst(config.ErrUploadNSFW.Error())}
+	ErrAccountNotFound = gin.H{"code": http.StatusNotFound, "error": "Account not found"}
 	ErrAlbumNotFound   = gin.H{"code": http.StatusNotFound, "error": "Album not found"}
 	ErrPhotoNotFound   = gin.H{"code": http.StatusNotFound, "error": "Photo not found"}
 	ErrLabelNotFound   = gin.H{"code": http.StatusNotFound, "error": "Label not found"}

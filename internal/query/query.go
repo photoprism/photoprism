@@ -18,10 +18,9 @@ var log = event.Log
 // About 1km ('good enough' for now)
 const SearchRadius = 0.009
 
-// Repo searches given an originals path and a db instance.
-type Repo struct {
-	originalsPath string
-	db            *gorm.DB
+// Query searches given an originals path and a db instance.
+type Query struct {
+	db *gorm.DB
 }
 
 // SearchCount is the total number of search hits.
@@ -29,12 +28,11 @@ type SearchCount struct {
 	Total int
 }
 
-// New returns a new Repo type with a given path and db instance.
-func New(originalsPath string, db *gorm.DB) *Repo {
-	instance := &Repo{
-		originalsPath: originalsPath,
-		db:            db,
+// New returns a new Query type with a given path and db instance.
+func New(db *gorm.DB) *Query {
+	q := &Query{
+		db: db,
 	}
 
-	return instance
+	return q
 }

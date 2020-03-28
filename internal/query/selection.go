@@ -8,7 +8,7 @@ import (
 )
 
 // PhotoSelection returns all selected photos.
-func (s *Repo) PhotoSelection(f form.Selection) (results []entity.Photo, err error) {
+func (s *Query) PhotoSelection(f form.Selection) (results []entity.Photo, err error) {
 	if f.Empty() {
 		return results, errors.New("no photos selected")
 	}
