@@ -34,6 +34,7 @@
             },
             onTouchMove(e) {
                 if(!this.touchStart) return;
+                if(document.querySelector('.v-dialog--active') !== null) return;
 
                 const y = e.touches[0].pageY;
                 const h = window.document.documentElement.scrollHeight - window.document.documentElement.clientHeight;
