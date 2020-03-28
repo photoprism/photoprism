@@ -12,7 +12,7 @@
         >
             <template slot="items" slot-scope="props" class="p-account">
                 <td>{{ props.item.AccName }}</td>
-                <td>{{ formatBool(props.item.AccPush) }}</td>
+                <td>{{ formatBool(props.item.AccShare) }}</td>
                 <td>{{ formatBool(props.item.AccSync) }}</td>
                 <td>{{ formatDate(props.item.AccSyncedAt) }}</td>
             </template>
@@ -40,7 +40,7 @@
                 selected: [],
                 listColumns: [
                     {text: this.$gettext('Name'), value: 'AccName', sortable: false, align: 'left'},
-                    {text: this.$gettext('Share'), value: 'AccPush', sortable: false},
+                    {text: this.$gettext('Share'), value: 'AccShare', sortable: false},
                     {text: this.$gettext('Sync'), value: 'AccSync', sortable: false},
                     {text: this.$gettext('Synced'), value: 'AccSyncedAt', sortable: false, align: 'left'},
                 ],

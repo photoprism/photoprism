@@ -8,22 +8,22 @@ import (
 
 // Account represents a remote service account form for uploading, downloading or syncing media files.
 type Account struct {
-	AccName      string       `json:"AccName"`
-	AccOwner     string       `json:"AccOwner"`
-	AccURL       string       `json:"AccURL"`
-	AccType      string       `json:"AccType"`
+	AccName      string `json:"AccName"`
+	AccOwner     string `json:"AccOwner"`
+	AccURL       string `json:"AccURL"`
+	AccType      string `json:"AccType"`
 	AccKey       string       `json:"AccKey"`
 	AccUser      string       `json:"AccUser"`
 	AccPass      string       `json:"AccPass"`
 	AccError     string       `json:"AccError"`
-	AccPush      bool         `json:"AccPush"`
+	AccShare     bool         `json:"AccShare"`
 	AccSync      bool         `json:"AccSync"`
 	RetryLimit   uint         `json:"RetryLimit"`
-	PushPath     string       `json:"PushPath"`
-	PushSize     string       `json:"PushSize"`
-	PushExpires  uint         `json:"PushExpires"`
-	PushExif     bool         `json:"PushExif"`
-	PushSidecar  bool         `json:"PushSidecar"`
+	SharePath    string       `json:"SharePath"`
+	ShareSize    string       `json:"ShareSize"`
+	ShareExpires uint         `json:"ShareExpires"`
+	ShareExif    bool         `json:"ShareExif"`
+	ShareSidecar bool         `json:"ShareSidecar"`
 	SyncPath     string       `json:"SyncPath"`
 	SyncInterval uint         `json:"SyncInterval"`
 	SyncUpload   bool         `json:"SyncUpload"`

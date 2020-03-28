@@ -20,14 +20,14 @@ type Account struct {
 	AccUser      string `gorm:"type:varbinary(256);"`
 	AccPass      string `gorm:"type:varbinary(256);"`
 	AccError     string `gorm:"type:varbinary(512);"`
-	AccPush      bool
+	AccShare     bool
 	AccSync      bool
 	RetryLimit   uint
-	PushPath     string `gorm:"type:varbinary(256);"`
-	PushSize     string `gorm:"type:varbinary(16);"`
-	PushExpires  uint
-	PushExif     bool
-	PushSidecar  bool
+	SharePath    string `gorm:"type:varbinary(256);"`
+	ShareSize    string `gorm:"type:varbinary(16);"`
+	ShareExpires uint
+	ShareExif    bool
+	ShareSidecar bool
 	SyncPath     string `gorm:"type:varbinary(256);"`
 	SyncInterval uint
 	SyncUpload   bool
