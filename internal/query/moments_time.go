@@ -8,16 +8,16 @@ type MomentsTimeResult struct {
 }
 
 // GetMomentsTime counts photos per month and year
-func (s *Query) GetMomentsTime() (results []MomentsTimeResult, err error) {
-	q := s.db.NewScope(nil).DB()
+func (q *Query) GetMomentsTime() (results []MomentsTimeResult, err error) {
+	s := q.db.NewScope(nil).DB()
 
-	q = q.Table("photos").
+	s = s.Table("photos").
 		Where("deleted_at IS NULL").
 		Select("photos.photo_year, photos.photo_month, COUNT(*) AS count").
 		Group("photos.photo_year, photos.photo_month").
 		Order("photos.photo_year DESC, photos.photo_month DESC")
 
-	if result := q.Scan(&results); result.Error != nil {
+	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error
 	}
 

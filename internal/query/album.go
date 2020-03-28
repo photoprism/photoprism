@@ -26,8 +26,8 @@ type AlbumResult struct {
 }
 
 // AlbumByUUID returns a Album based on the UUID.
-func (s *Query) AlbumByUUID(albumUUID string) (album entity.Album, err error) {
-	if err := s.db.Where("album_uuid = ?", albumUUID).First(&album).Error; err != nil {
+func (q *Query) AlbumByUUID(albumUUID string) (album entity.Album, err error) {
+	if err := q.db.Where("album_uuid = ?", albumUUID).First(&album).Error; err != nil {
 		return album, err
 	}
 
@@ -35,10 +35,10 @@ func (s *Query) AlbumByUUID(albumUUID string) (album entity.Album, err error) {
 }
 
 // AlbumThumbByUUID returns a album preview file based on the uuid.
-func (s *Query) AlbumThumbByUUID(albumUUID string) (file entity.File, err error) {
-	// s.db.LogMode(true)
+func (q *Query) AlbumThumbByUUID(albumUUID string) (file entity.File, err error) {
+	// q.db.LogMode(true)
 
-	if err := s.db.Where("files.file_primary AND files.deleted_at IS NULL").
+	if err := q.db.Where("files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN albums ON albums.album_uuid = ?", albumUUID).
 		Joins("JOIN photos_albums pa ON pa.album_uuid = albums.album_uuid AND pa.photo_uuid = files.photo_uuid").
 		First(&file).Error; err != nil {
@@ -49,25 +49,25 @@ func (s *Query) AlbumThumbByUUID(albumUUID string) (file entity.File, err error)
 }
 
 // Albums searches albums based on their name.
-func (s *Query) Albums(f form.AlbumSearch) (results []AlbumResult, err error) {
+func (q *Query) Albums(f form.AlbumSearch) (results []AlbumResult, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
 
 	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("albums: %+v", f)))
 
-	q := s.db.NewScope(nil).DB()
+	s := q.db.NewScope(nil).DB()
 
-	q = q.Table("albums").
+	s = s.Table("albums").
 		Select(`albums.*, COUNT(photos_albums.album_uuid) AS album_count`).
 		Joins("LEFT JOIN photos_albums ON photos_albums.album_uuid = albums.album_uuid").
 		Where("albums.deleted_at IS NULL").
 		Group("albums.id")
 
 	if f.ID != "" {
-		q = q.Where("albums.album_uuid = ?", f.ID)
+		s = s.Where("albums.album_uuid = ?", f.ID)
 
-		if result := q.Scan(&results); result.Error != nil {
+		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
 		}
 
@@ -76,27 +76,27 @@ func (s *Query) Albums(f form.AlbumSearch) (results []AlbumResult, err error) {
 
 	if f.Query != "" {
 		likeString := "%" + strings.ToLower(f.Query) + "%"
-		q = q.Where("LOWER(albums.album_name) LIKE ?", likeString)
+		s = s.Where("LOWER(albums.album_name) LIKE ?", likeString)
 	}
 
 	if f.Favorites {
-		q = q.Where("albums.album_favorite = 1")
+		s = s.Where("albums.album_favorite = 1")
 	}
 
 	switch f.Order {
 	case "slug":
-		q = q.Order("albums.album_favorite DESC, album_slug ASC")
+		s = s.Order("albums.album_favorite DESC, album_slug ASC")
 	default:
-		q = q.Order("albums.album_favorite DESC, album_count DESC, albums.created_at DESC")
+		s = s.Order("albums.album_favorite DESC, album_count DESC, albums.created_at DESC")
 	}
 
 	if f.Count > 0 && f.Count <= 1000 {
-		q = q.Limit(f.Count).Offset(f.Offset)
+		s = s.Limit(f.Count).Offset(f.Offset)
 	} else {
-		q = q.Limit(100).Offset(0)
+		s = s.Limit(100).Offset(0)
 	}
 
-	if result := q.Scan(&results); result.Error != nil {
+	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error
 	}
 

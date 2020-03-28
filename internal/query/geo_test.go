@@ -8,7 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-func TestRepo_Geo(t *testing.T) {
+func TestQuery_Geo(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())

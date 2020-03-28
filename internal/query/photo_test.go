@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 )
 
-/*func TestRepo_Photos(t *testing.T) {
+/*func TestQuery_Photos(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.OriginalsPath(), conf.Db())
@@ -28,7 +28,7 @@ import (
 	})
 }*/
 
-func TestRepo_FindPhotoByID(t *testing.T) {
+func TestQuery_PhotoByID(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())
@@ -46,7 +46,7 @@ func TestRepo_FindPhotoByID(t *testing.T) {
 	})
 }
 
-func TestRepo_FindPhotoByUUID(t *testing.T) {
+func TestQuery_PhotoByUUID(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())
@@ -64,7 +64,7 @@ func TestRepo_FindPhotoByUUID(t *testing.T) {
 	})
 }
 
-func TestRepo_PreloadPhotoByUUID(t *testing.T) {
+func TestQuery_PreloadPhotoByUUID(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())
@@ -81,7 +81,8 @@ func TestRepo_PreloadPhotoByUUID(t *testing.T) {
 		t.Log(result)
 	})
 }
-func TestSearch_Photos_Query(t *testing.T) {
+
+func TestSearch_Photos(t *testing.T) {
 	conf := config.TestConfig()
 
 	conf.CreateDirectories()

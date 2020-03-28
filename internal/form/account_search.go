@@ -2,10 +2,10 @@ package form
 
 // AccountSearch represents search form fields for "/api/v1/accounts".
 type AccountSearch struct {
-	Query     string    `form:"q"`
-	Count     int       `form:"count" binding:"required"`
-	Offset    int       `form:"offset"`
-	Order     string    `form:"order"`
+	Query  string `form:"q"`
+	Count  int    `form:"count" binding:"required"`
+	Offset int    `form:"offset"`
+	Order  string `form:"order"`
 }
 
 func (f *AccountSearch) GetQuery() string {

@@ -8,23 +8,23 @@ import (
 )
 
 // PhotoSelection returns all selected photos.
-func (s *Query) PhotoSelection(f form.Selection) (results []entity.Photo, err error) {
+func (q *Query) PhotoSelection(f form.Selection) (results []entity.Photo, err error) {
 	if f.Empty() {
 		return results, errors.New("no photos selected")
 	}
 
-	q := s.db.NewScope(nil).DB()
+	s := q.db.NewScope(nil).DB()
 
-	q = q.Table("photos").
+	s = s.Table("photos").
 		Select("photos.*").
 		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id").
 		Joins("LEFT JOIN labels ON photos_labels.label_id = labels.id AND labels.deleted_at IS NULL").
 		Where("photos.deleted_at IS NULL").
 		Group("photos.id")
 
-	q = q.Where("photos.photo_uuid IN (?) OR labels.label_uuid IN (?)", f.Photos, f.Labels)
+	s = s.Where("photos.photo_uuid IN (?) OR labels.label_uuid IN (?)", f.Photos, f.Labels)
 
-	if result := q.Scan(&results); result.Error != nil {
+	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error
 	}
 

@@ -8,7 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-func TestRepo_FindAlbumByUUID(t *testing.T) {
+func TestQuery_AlbumByUUID(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())
@@ -26,7 +26,7 @@ func TestRepo_FindAlbumByUUID(t *testing.T) {
 	})
 }
 
-func TestRepo_FindAlbumThumbByUUID(t *testing.T) {
+func TestQuery_AlbumThumbByUUID(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())
@@ -44,7 +44,7 @@ func TestRepo_FindAlbumThumbByUUID(t *testing.T) {
 	})
 }
 
-func TestRepo_Albums(t *testing.T) {
+func TestQuery_Albums(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())

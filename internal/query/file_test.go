@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-func TestRepo_FindFiles(t *testing.T) {
+func TestQuery_Files(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())
@@ -20,7 +20,7 @@ func TestRepo_FindFiles(t *testing.T) {
 	})
 }
 
-func TestRepo_FindFilesByUUID(t *testing.T) {
+func TestQuery_FilesByUUID(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())
@@ -34,7 +34,7 @@ func TestRepo_FindFilesByUUID(t *testing.T) {
 	})
 }
 
-func TestRepo_FindFileByPhotoUUID(t *testing.T) {
+func TestQuery_FileByPhotoUUID(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())
@@ -54,7 +54,7 @@ func TestRepo_FindFileByPhotoUUID(t *testing.T) {
 	})
 }
 
-func TestRepo_FindFileByID(t *testing.T) {
+func TestQuery_FileByID(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())
@@ -74,7 +74,7 @@ func TestRepo_FindFileByID(t *testing.T) {
 	})
 }
 
-func TestRepo_FindFileByHash(t *testing.T) {
+func TestQuery_FileByHash(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())
