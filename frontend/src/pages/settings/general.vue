@@ -1,5 +1,5 @@
 <template>
-    <div class="p-tab p-tab-general">
+    <div class="p-tab p-settings-general">
         <v-container fluid>
             <v-form lazy-validation dense
                     ref="form" class="p-form-settings" accept-charset="UTF-8"
@@ -43,7 +43,7 @@
     import options from "resources/options.json";
 
     export default {
-        name: 'p-tab-general',
+        name: 'p-settings-general',
         data() {
             return {
                 readonly: this.$config.getValue("readonly"),

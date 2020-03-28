@@ -11,8 +11,15 @@
             <v-tab id="tab-settings-general" ripple @click="changePath('/settings')">
                 <translate>General</translate>
             </v-tab>
-            <v-tab-item>
-                <p-tab-general></p-tab-general>
+            <v-tab-item lazy>
+                <p-settings-general></p-settings-general>
+            </v-tab-item>
+
+            <v-tab id="tab-settings-accounts" ripple @click="changePath('/settings/accounts')">
+                <translate>Accounts</translate>
+            </v-tab>
+            <v-tab-item lazy>
+                <p-settings-accounts></p-settings-accounts>
             </v-tab-item>
         </v-tabs>
     </div>
@@ -20,6 +27,7 @@
 
 <script>
     import tabGeneral from "pages/settings/general.vue";
+    import tabAccounts from "pages/settings/accounts.vue";
 
     export default {
         name: 'p-page-settings',
@@ -27,7 +35,8 @@
             tab: Number
         },
         components: {
-            'p-tab-general': tabGeneral,
+            'p-settings-general': tabGeneral,
+            'p-settings-accounts': tabAccounts,
         },
         data() {
             return {
