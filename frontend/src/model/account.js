@@ -1,4 +1,6 @@
 import Abstract from "model/abstract";
+import Api from "../common/api";
+import {DateTime} from "luxon";
 
 class Account extends Abstract {
     getDefaults() {
@@ -12,15 +14,15 @@ class Account extends Abstract {
             AccUser: "",
             AccPass: "",
             AccError: "",
-            AccShare: false,
+            AccShare: true,
             AccSync: false,
             RetryLimit: 3,
-            SharePath: "",
-            ShareSize: "",
+            SharePath: "/",
+            ShareSize: "fit_2048",
             ShareExpires: 0,
             ShareExif: true,
             ShareSidecar: false,
-            SyncPath: "",
+            SyncPath: "/",
             SyncInterval: 86400,
             SyncUpload: false,
             SyncDownload: true,
@@ -42,6 +44,18 @@ class Account extends Abstract {
 
     getId() {
         return this.ID;
+    }
+
+    toggleShare() {
+        const values = { AccShare: !this.AccShare };
+
+        return Api.put(this.getEntityResource(), values).then((response) => Promise.resolve(this.setValues(response.data)));
+    }
+
+    toggleSync() {
+        const values = { AccSync: !this.AccSync };
+
+        return Api.put(this.getEntityResource(), values).then((response) => Promise.resolve(this.setValues(response.data)));
     }
 
     static getCollectionResource() {

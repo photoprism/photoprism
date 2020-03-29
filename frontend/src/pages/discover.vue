@@ -11,27 +11,36 @@
             <v-tab id="tab-discover-colors" ripple @click="changePath('/discover')">
                 <translate>Colors</translate>
             </v-tab>
-            <v-tab-item>
-                <p-tab-discover-colors></p-tab-discover-colors>
-            </v-tab-item>
+
             <v-tab id="tab-discover-similar" ripple @click="changePath('/discover/similar')">
                 <translate>Similar</translate>
             </v-tab>
-            <v-tab-item>
-                <p-tab-discover-todo></p-tab-discover-todo>
-            </v-tab-item>
+
             <v-tab id="tab-discover-season" ripple @click="changePath('/discover/season')">
                 <translate>Season</translate>
             </v-tab>
-            <v-tab-item>
-                <p-tab-discover-todo></p-tab-discover-todo>
-            </v-tab-item>
+
             <v-tab id="tab-discover-random" ripple @click="changePath('/discover/random')">
                 <translate>Random</translate>
             </v-tab>
-            <v-tab-item>
-                <p-tab-discover-todo></p-tab-discover-todo>
-            </v-tab-item>
+
+            <v-tabs-items touchless>
+                <v-tab-item>
+                    <p-tab-discover-colors></p-tab-discover-colors>
+                </v-tab-item>
+
+                <v-tab-item>
+                    <p-tab-discover-todo></p-tab-discover-todo>
+                </v-tab-item>
+
+                <v-tab-item>
+                    <p-tab-discover-todo></p-tab-discover-todo>
+                </v-tab-item>
+
+                <v-tab-item>
+                    <p-tab-discover-todo></p-tab-discover-todo>
+                </v-tab-item>
+            </v-tabs-items>
         </v-tabs>
     </div>
 </template>
@@ -56,7 +65,7 @@
             }
         },
         methods: {
-            changePath: function(path) {
+            changePath: function (path) {
                 if (this.$route.path !== path) {
                     this.$router.replace(path)
                 }

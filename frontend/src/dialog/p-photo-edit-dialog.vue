@@ -30,23 +30,29 @@
                 <v-tab id="tab-edit-details" ripple>
                     <translate>Details</translate>
                 </v-tab>
-                <v-tab-item>
-                    <p-tab-photo-edit-details :model="model" ref="details" @cancel="cancel"></p-tab-photo-edit-details>
-                </v-tab-item>
 
                 <v-tab id="tab-edit-labels" ripple>
                     <translate>Labels</translate>
                 </v-tab>
-                <v-tab-item lazy>
-                    <p-tab-photo-edit-labels :model="model"></p-tab-photo-edit-labels>
-                </v-tab-item>
 
                 <v-tab id="tab-edit-files" ripple>
                     <translate>Files</translate>
                 </v-tab>
-                <v-tab-item lazy>
-                    <p-tab-photo-edit-files :model="model"></p-tab-photo-edit-files>
-                </v-tab-item>
+
+                <v-tabs-items touchless>
+                    <v-tab-item>
+                        <p-tab-photo-edit-details :model="model" ref="details"
+                                                  @cancel="cancel"></p-tab-photo-edit-details>
+                    </v-tab-item>
+
+                    <v-tab-item lazy>
+                        <p-tab-photo-edit-labels :model="model"></p-tab-photo-edit-labels>
+                    </v-tab-item>
+
+                    <v-tab-item lazy>
+                        <p-tab-photo-edit-files :model="model"></p-tab-photo-edit-files>
+                    </v-tab-item>
+                </v-tabs-items>
             </v-tabs>
         </v-card>
     </v-dialog>
@@ -70,8 +76,8 @@
             'p-tab-photo-edit-files': PhotoEditFiles,
         },
         computed: {
-            title: function() {
-                if(this.model && this.model.PhotoTitle) {
+            title: function () {
+                if (this.model && this.model.PhotoTitle) {
                     return this.model.PhotoTitle
                 }
 

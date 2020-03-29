@@ -37,17 +37,17 @@ type Account struct {
 	SyncVideo    bool
 	SyncSidecar  bool
 	SyncStart    sql.NullTime
-	SyncedAt     sql.NullTime
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	DeletedAt    *time.Time `sql:"index"`
+	SyncedAt     sql.NullTime `deepcopier:"skip"`
+	CreatedAt    time.Time `deepcopier:"skip"`
+	UpdatedAt    time.Time `deepcopier:"skip"`
+	DeletedAt    *time.Time `deepcopier:"skip" sql:"index"`
 }
 
 // CreateAccount creates a new account entity in the database.
 func CreateAccount(form form.Account, db *gorm.DB) (model *Account, err error) {
 	model = &Account{}
 
-	if err := deepcopier.Copy(&model).From(form); err != nil {
+	if err := deepcopier.Copy(model).From(form); err != nil {
 		return model, err
 	}
 

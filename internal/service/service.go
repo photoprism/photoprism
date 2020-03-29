@@ -8,7 +8,7 @@ https://github.com/photoprism/photoprism/wiki
 package service
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 	"net/url"
 	"strings"
@@ -113,6 +113,10 @@ func (h Heuristic) Discover(rawUrl, user string) *url.URL {
 }
 
 func Discover(rawUrl, user, pass string) (result Account, err error) {
+	if rawUrl == "" {
+		return result, errors.New("service URL is empty")
+	}
+
 	u, err := url.Parse(rawUrl)
 
 	if err != nil {
@@ -157,5 +161,5 @@ func Discover(rawUrl, user, pass string) (result Account, err error) {
 		}
 	}
 
-	return result, fmt.Errorf("no supported service found at %s", rawUrl)
+	return result, errors.New("could not connect")
 }

@@ -74,6 +74,10 @@ class Abstract {
         return !!this.getId();
     }
 
+    clone() {
+        return new this.constructor(this.getValues());
+    }
+
     find(id, params) {
         return Api.get(this.getEntityResource(id), params).then((response) => Promise.resolve(new this.constructor(response.data)));
     }

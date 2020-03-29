@@ -85,7 +85,7 @@ func CreateAccount(router *gin.RouterGroup, conf *config.Config) {
 
 		if err := f.ServiceDiscovery(); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -95,7 +95,7 @@ func CreateAccount(router *gin.RouterGroup, conf *config.Config) {
 
 		if err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
@@ -182,7 +182,7 @@ func DeleteAccount(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if err := m.Delete(conf.Db()); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, txt.UcFirst(err.Error()))
 			return
 		}
 

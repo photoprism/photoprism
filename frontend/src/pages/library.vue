@@ -11,23 +11,28 @@
             <v-tab id="tab-originals" ripple @click="changePath('/library')">
                 <translate>Originals</translate>
             </v-tab>
-            <v-tab-item>
-                <p-tab-originals></p-tab-originals>
-            </v-tab-item>
 
             <v-tab id="tab-import" :disabled="readonly" ripple @click="changePath('/library/import')">
                 <translate>Import</translate>
             </v-tab>
-            <v-tab-item :disabled="readonly">
-                <p-tab-import></p-tab-import>
-            </v-tab-item>
 
             <v-tab id="tab-logs" ripple @click="changePath('/library/logs')">
                 <translate>Logs</translate>
             </v-tab>
-            <v-tab-item>
-                <p-tab-logs></p-tab-logs>
-            </v-tab-item>
+
+            <v-tabs-items touchless>
+                <v-tab-item>
+                    <p-tab-originals></p-tab-originals>
+                </v-tab-item>
+
+                <v-tab-item :disabled="readonly">
+                    <p-tab-import></p-tab-import>
+                </v-tab-item>
+
+                <v-tab-item>
+                    <p-tab-logs></p-tab-logs>
+                </v-tab-item>
+            </v-tabs-items>
         </v-tabs>
     </div>
 </template>
