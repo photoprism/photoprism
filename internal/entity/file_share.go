@@ -10,18 +10,17 @@ import (
 
 // FileShare represents a one-to-many relation between File and Account for pushing files to remote services.
 type FileShare struct {
-	FileID      uint   `gorm:"primary_key;auto_increment:false"`
-	AccountID   uint   `gorm:"primary_key;auto_increment:false"`
-	RemoteName  string `gorm:"primary_key;auto_increment:false;type:varbinary(256)"`
-	ShareStatus string `gorm:"type:varbinary(16);"`
-	ShareError  string `gorm:"type:varbinary(512);"`
-	RetryCount  uint
-	File        *File
-	Account     *Account
-	RemoveAt    sql.NullTime
-	PushedAt    sql.NullTime
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	FileID     uint   `gorm:"primary_key;auto_increment:false"`
+	AccountID  uint   `gorm:"primary_key;auto_increment:false"`
+	RemoteName string `gorm:"primary_key;auto_increment:false;type:varbinary(256)"`
+	Status     string `gorm:"type:varbinary(16);"`
+	Error      string `gorm:"type:varbinary(512);"`
+	File       *File
+	Account    *Account
+	SharedAt   sql.NullTime
+	ExpiresAt  sql.NullTime
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 // TableName returns the entity database table name.

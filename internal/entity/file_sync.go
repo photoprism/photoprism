@@ -10,12 +10,11 @@ import (
 
 // FileSync represents a one-to-many relation between File and Account for syncing with remote services.
 type FileSync struct {
-	FileID     uint   `gorm:"primary_key;auto_increment:false"`
+	FileID     uint   `gorm:"index;"`
 	AccountID  uint   `gorm:"primary_key;auto_increment:false"`
-	RemoteName string `gorm:"type:varbinary(256);"`
-	SyncStatus string `gorm:"type:varbinary(16);"`
-	SyncError  string `gorm:"type:varbinary(512);"`
-	RetryCount uint
+	RemoteName string `gorm:"type:varbinary(256);primary_key;auto_increment:false"`
+	Status     string `gorm:"type:varbinary(16);"`
+	Error      string `gorm:"type:varbinary(512);"`
 	File       *File
 	Account    *Account
 	SyncedAt   sql.NullTime
@@ -29,10 +28,10 @@ func (FileSync) TableName() string {
 }
 
 // NewFileSync creates a new entity.
-func NewFileSync(fileID, accountID uint) *FileSync {
+func NewFileSync(accountID uint, remoteName string) *FileSync {
 	result := &FileSync{
-		FileID:    fileID,
 		AccountID: accountID,
+		RemoteName:    remoteName,
 	}
 
 	return result
@@ -43,7 +42,7 @@ func (m *FileSync) FirstOrCreate(db *gorm.DB) *FileSync {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
 
-	if err := db.FirstOrCreate(m, "file_id = ? AND account_id = ?", m.FileID, m.AccountID).Error; err != nil {
+	if err := db.FirstOrCreate(m, "account_id = ? AND remote_name = ?", m.AccountID, m.RemoteName).Error; err != nil {
 		log.Errorf("file sync: %s", err)
 	}
 
