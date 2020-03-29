@@ -30,8 +30,8 @@ func (FileSync) TableName() string {
 // NewFileSync creates a new entity.
 func NewFileSync(accountID uint, remoteName string) *FileSync {
 	result := &FileSync{
-		AccountID: accountID,
-		RemoteName:    remoteName,
+		AccountID:  accountID,
+		RemoteName: remoteName,
 	}
 
 	return result

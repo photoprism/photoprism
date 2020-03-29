@@ -19,7 +19,6 @@ func TestDiscover(t *testing.T) {
 		assert.Equal(t, "http://webdav-dummy/", r.AccURL)
 		assert.Equal(t, "admin", r.AccUser)
 		assert.Equal(t, "photoprism", r.AccPass)
-		assert.Equal(t, uint(3), r.RetryLimit)
 	})
 
 	t.Run("webdav password", func(t *testing.T) {
@@ -34,7 +33,6 @@ func TestDiscover(t *testing.T) {
 		assert.Equal(t, "http://webdav-dummy/", r.AccURL)
 		assert.Equal(t, "admin", r.AccUser)
 		assert.Equal(t, "photoprism", r.AccPass)
-		assert.Equal(t, uint(3), r.RetryLimit)
 	})
 
 	t.Run("https", func(t *testing.T) {
@@ -49,7 +47,6 @@ func TestDiscover(t *testing.T) {
 		assert.Equal(t, "https://dl.photoprism.org/fixtures/testdata/import/", r.AccURL)
 		assert.Equal(t, "", r.AccUser)
 		assert.Equal(t, "", r.AccPass)
-		assert.Equal(t, uint(3), r.RetryLimit)
 	})
 
 	t.Run("facebook", func(t *testing.T) {
@@ -64,6 +61,5 @@ func TestDiscover(t *testing.T) {
 		assert.Equal(t, "https://www.facebook.com/ob.boris.palmer", r.AccURL)
 		assert.Equal(t, "", r.AccUser)
 		assert.Equal(t, "", r.AccPass)
-		assert.Equal(t, uint(3), r.RetryLimit)
 	})
 }

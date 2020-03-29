@@ -3,6 +3,7 @@ package form
 import (
 	"database/sql"
 
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/ulule/deepcopier"
 )
 
@@ -39,4 +40,16 @@ func NewAccount(m interface{}) (f Account, err error) {
 	err = deepcopier.Copy(m).To(&f)
 
 	return f, err
+}
+
+func (f *Account) ServiceDiscovery() error {
+	acc, err := service.Discover(f.AccURL, f.AccUser, f.AccPass)
+
+	if err != nil {
+		return err
+	}
+
+	err = deepcopier.Copy(acc).To(f)
+
+	return err
 }

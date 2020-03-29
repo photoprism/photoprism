@@ -33,16 +33,12 @@ const (
 )
 
 type Account struct {
-	AccName    string
-	AccOwner   string
-	AccURL     string
-	AccType    string
-	AccKey     string
-	AccUser    string
-	AccPass    string
-	AccShare   bool
-	AccSync    bool
-	RetryLimit uint
+	AccName string
+	AccURL  string
+	AccType string
+	AccKey  string
+	AccUser string
+	AccPass string
 }
 
 type Heuristic struct {
@@ -153,10 +149,9 @@ func Discover(rawUrl, user, pass string) (result Account, err error) {
 
 		if serviceUrl := h.Discover(u.String(), result.AccUser); serviceUrl != nil {
 			serviceUrl.User = nil
-			result.AccURL = serviceUrl.String()
-			result.RetryLimit = 3
 			result.AccName = serviceUrl.Host
 			result.AccType = string(h.ServiceType)
+			result.AccURL = serviceUrl.String()
 
 			return result, nil
 		}

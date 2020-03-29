@@ -83,6 +83,12 @@ func CreateAccount(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		if err := f.ServiceDiscovery(); err != nil {
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+			return
+		}
+
 		m, err := entity.CreateAccount(f, conf.Db())
 
 		log.Debugf("create account: %+v %+v", f, m)
