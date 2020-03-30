@@ -39,9 +39,9 @@ type Account struct {
 	SyncSidecar  bool
 	SyncStart    sql.NullTime
 	SyncedAt     sql.NullTime `deepcopier:"skip"`
-	CreatedAt    time.Time `deepcopier:"skip"`
-	UpdatedAt    time.Time `deepcopier:"skip"`
-	DeletedAt    *time.Time `deepcopier:"skip" sql:"index"`
+	CreatedAt    time.Time    `deepcopier:"skip"`
+	UpdatedAt    time.Time    `deepcopier:"skip"`
+	DeletedAt    *time.Time   `deepcopier:"skip" sql:"index"`
 }
 
 // CreateAccount creates a new account entity in the database.
