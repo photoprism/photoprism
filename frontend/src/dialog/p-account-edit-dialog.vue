@@ -4,7 +4,7 @@
             <v-card-title primary-title>
                 <v-layout row wrap v-if="scope === 'sharing'">
                     <v-flex xs9>
-                        <h3 class="headline mb-0">Upload Settings</h3>
+                        <h3 class="headline mb-0">Share Settings</h3>
                     </v-flex>
                     <v-flex xs3 text-xs-right>
                         <v-switch
@@ -362,7 +362,7 @@
                     owner: this.$gettext("Owner"),
                     apiKey: this.$gettext("API Key"),
                     AccType: this.$gettext("Type"),
-                    SharePath: this.$gettext("Default Directory"),
+                    SharePath: this.$gettext("Default Location"),
                     ShareSize: this.$gettext("Size"),
                     ShareExpires: this.$gettext("Expires"),
                     ShareExif: this.$gettext("Include metadata"),
@@ -370,7 +370,7 @@
                     SyncPath: this.$gettext("Remote Directory"),
                     SyncInterval: this.$gettext("Interval"),
                     SyncStart: this.$gettext("Start"),
-                    SyncDownload: this.$gettext("Download new files"),
+                    SyncDownload: this.$gettext("Import remote files"),
                     SyncUpload: this.$gettext("Upload local files"),
                     SyncDelete: this.$gettext("Remote delete"),
                     SyncRaw: this.$gettext("Sync RAW images"),
