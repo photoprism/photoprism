@@ -96,6 +96,19 @@
                     </v-list-tile>
                 </v-list-group>
 
+                <v-list-tile to="/favorites" @click="" class="p-navigation-favorites">
+                    <v-list-tile-action>
+                        <v-icon>favorite</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>
+                            <translate>Favorites</translate>
+                            <span v-if="config.count.favorites > 0" class="p-navigation-count">{{ config.count.favorites }}</span>
+                        </v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
                 <v-list-tile v-if="mini" to="/archive" @click="" class="p-navigation-archive">
                     <v-list-tile-action>
                         <v-icon>archive</v-icon>
@@ -139,19 +152,6 @@
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list-group>
-
-                <v-list-tile to="/favorites" @click="" class="p-navigation-favorites">
-                    <v-list-tile-action>
-                        <v-icon>favorite</v-icon>
-                    </v-list-tile-action>
-
-                    <v-list-tile-content>
-                        <v-list-tile-title>
-                            <translate>Favorites</translate>
-                            <span v-if="config.count.favorites > 0" class="p-navigation-count">{{ config.count.favorites }}</span>
-                        </v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
 
                 <v-list-tile to="/labels" @click="" class="p-navigation-labels">
                     <v-list-tile-action>
