@@ -9,7 +9,7 @@
                     <v-flex xs3 text-xs-right>
                         <v-switch
                                 v-model="model.AccShare"
-                                color="success"
+                                color="secondary-dark"
                                 :true-value="true"
                                 :false-value="false"
                                 :label="model.AccShare ? 'enabled' : 'disabled'"
@@ -19,7 +19,7 @@
                         ></v-switch>
                         <v-switch
                                 v-model="model.AccShare"
-                                color="success"
+                                color="secondary-dark"
                                 :true-value="true"
                                 :false-value="false"
                                 :disabled="model.AccType !== 'webdav'"
@@ -35,7 +35,7 @@
                     <v-flex xs3 text-xs-right>
                         <v-switch
                                 v-model="model.AccSync"
-                                color="success"
+                                color="secondary-dark"
                                 :true-value="true"
                                 :false-value="false"
                                 :label="model.AccSync ? 'enabled' : 'disabled'"
@@ -45,7 +45,7 @@
                         ></v-switch>
                         <v-switch
                                 v-model="model.AccSync"
-                                color="success"
+                                color="secondary-dark"
                                 :true-value="true"
                                 :false-value="false"
                                 :disabled="model.AccType !== 'webdav'"
@@ -62,7 +62,7 @@
                         <v-btn icon flat :ripple="false"
                                class="action-remove mt-0"
                                @click.stop.prevent="remove()">
-                            <v-icon color="remove">delete</v-icon>
+                            <v-icon color="secondary-dark">delete</v-icon>
                         </v-btn>
                     </v-flex>
                 </v-layout>
@@ -277,11 +277,11 @@
                 </v-layout>
                 <v-layout row wrap>
                     <v-flex xs12 text-xs-right class="pt-3">
-                        <v-btn @click.stop="cancel" depressed color="grey lighten-3"
+                        <v-btn @click.stop="cancel" depressed color="secondary-light"
                                class="action-cancel">
                             <span>{{ label.cancel }}</span>
                         </v-btn>
-                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="save"
+                        <v-btn depressed dark color="secondary-dark" @click.stop="save"
                                class="action-save">
                             <span>{{ label.save }}</span>
                         </v-btn>

@@ -39,11 +39,11 @@
                         ></v-text-field>
                     </v-flex>
                     <v-flex xs12 text-xs-right class="pt-3">
-                        <v-btn @click.stop="cancel" depressed color="grey lighten-3"
+                        <v-btn @click.stop="cancel" depressed color="secondary-light"
                                class="p-account-create-dialog-cancel">
                             <span>{{ label.cancel }}</span>
                         </v-btn>
-                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
+                        <v-btn depressed dark color="secondary-dark" @click.stop="confirm"
                                class="p-account-create-dialog-confirm">
                             <span>{{ label.confirm }}</span>
                         </v-btn>

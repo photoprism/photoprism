@@ -10,10 +10,10 @@
                         <div class="subheading pr-1"><translate>Are you sure you want to delete this account?</translate></div>
                     </v-flex>
                     <v-flex xs12 text-xs-right class="pt-3">
-                        <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="action-cancel">
+                        <v-btn @click.stop="cancel" depressed color="secondary-light" class="action-cancel">
                             <translate>Cancel</translate>
                         </v-btn>
-                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
+                        <v-btn depressed dark color="secondary-dark" @click.stop="confirm"
                                class="action-confirm"><translate>Delete</translate>
                         </v-btn>
                     </v-flex>
