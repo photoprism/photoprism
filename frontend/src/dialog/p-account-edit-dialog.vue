@@ -150,7 +150,7 @@
                     </v-flex>
                     <v-flex xs12 sm6 class="px-2">
                         <v-checkbox
-                                :disabled="!model.AccSync"
+                                :disabled="!model.AccSync || readonly"
                                 hide-details
                                 color="secondary-dark"
                                 :label="label.SyncDownload"
