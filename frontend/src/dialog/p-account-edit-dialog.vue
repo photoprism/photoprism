@@ -4,7 +4,7 @@
             <v-card-title primary-title>
                 <v-layout row wrap v-if="scope === 'sharing'">
                     <v-flex xs9>
-                        <h3 class="headline mb-0">Share Settings</h3>
+                        <h3 class="headline mb-0">Sharing</h3>
                     </v-flex>
                     <v-flex xs3 text-xs-right>
                         <v-switch
@@ -30,7 +30,7 @@
                 </v-layout>
                 <v-layout row wrap v-else-if="scope === 'sync'">
                     <v-flex xs9>
-                        <h3 class="headline mb-0">Sync Settings</h3>
+                        <h3 class="headline mb-0">Remote Sync</h3>
                     </v-flex>
                     <v-flex xs3 text-xs-right>
                         <v-switch
@@ -81,7 +81,7 @@
                                 required
                         ></v-text-field>
                     </v-flex>
-                    <v-flex xs12 sm6 pa-2 class="input-share-size">
+                    <v-flex xs12 sm6 class="pa-2 input-share-size">
                         <v-select
                                 :disabled="!model.AccShare"
                                 :label="label.ShareSize"
@@ -105,7 +105,7 @@
                                 :items="items.expires">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 class="pa-2">
+                    <v-flex xs12 sm6 class="px-2">
                         <v-checkbox
                                 :disabled="!model.AccShare"
                                 hide-details
@@ -114,7 +114,7 @@
                                 v-model="model.ShareExif"
                         ></v-checkbox>
                     </v-flex>
-                    <v-flex xs12 sm6 class="pa-2">
+                    <v-flex xs12 sm6 class="px-2">
                         <v-checkbox
                                 :disabled="!model.AccShare"
                                 hide-details
@@ -166,14 +166,6 @@
                                 v-model="model.SyncUpload"
                         ></v-checkbox>
                     </v-flex>
-                    <!-- v-flex xs12 sm6 class="px-2">
-                        <v-checkbox
-                                hide-details
-                                color="secondary-dark"
-                                :label="label.SyncDelete"
-                                v-model="model.SyncDelete"
-                        ></v-checkbox>
-                    </v-flex -->
                     <v-flex xs12 sm6 class="px-2">
                         <v-checkbox
                                 :disabled="!model.AccSync"
@@ -264,16 +256,6 @@
                                 :items="items.types">
                         </v-select>
                     </v-flex>
-                    <!-- v-flex xs12 sm6 class="pa-2">
-                        <v-text-field
-                                hide-details
-                                :label="label.owner"
-                                placeholder="optional"
-                                color="secondary-dark"
-                                v-model="model.AccOwner"
-                                required
-                        ></v-text-field>
-                    </v-flex -->
                 </v-layout>
                 <v-layout row wrap>
                     <v-flex xs12 text-xs-right class="pt-3">
@@ -367,7 +349,7 @@
                     ShareExpires: this.$gettext("Expires"),
                     ShareExif: this.$gettext("Include metadata"),
                     ShareSidecar: this.$gettext("Include sidecar files"),
-                    SyncPath: this.$gettext("Remote Directory"),
+                    SyncPath: this.$gettext("Location"),
                     SyncInterval: this.$gettext("Interval"),
                     SyncStart: this.$gettext("Start"),
                     SyncDownload: this.$gettext("Import remote files"),
