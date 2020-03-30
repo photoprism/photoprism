@@ -355,7 +355,7 @@
                     SyncDownload: this.$gettext("Download new files"),
                     SyncUpload: this.$gettext("Upload local files"),
                     SyncDelete: this.$gettext("Remote delete"),
-                    SyncRaw: this.$gettext("Sync RAW photos"),
+                    SyncRaw: this.$gettext("Sync RAW images"),
                     SyncVideo: this.$gettext("Sync videos"),
                     SyncSidecar: this.$gettext("Sync sidecar files"),
                 }
