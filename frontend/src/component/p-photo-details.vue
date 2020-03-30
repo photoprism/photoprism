@@ -3,8 +3,13 @@
         <v-card v-if="photos.length === 0" class="p-photos-empty secondary-light lighten-1 ma-1" flat>
             <v-card-title primary-title>
                 <div>
-                    <h3 class="title mb-3"><translate>No photos matched your search</translate></h3>
-                    <div><translate>Try using other terms and search options such as category, country and camera.</translate></div>
+                    <h3 class="title mb-3">
+                        <translate>No photos matched your search</translate>
+                    </h3>
+                    <div>
+                        <translate>Try using other terms and search options such as category, country and camera.
+                        </translate>
+                    </div>
                 </div>
             </v-card-title>
         </v-card>
@@ -43,7 +48,9 @@
                                    class="p-photo-select"
                                    @click.shift.prevent="$clipboard.addRange(index, photos)"
                                    @click.exact.stop.prevent="$clipboard.toggle(photo)">
-                                <v-icon v-if="selection.length && $clipboard.has(photo)" color="white" class="t-select t-on">check_circle</v-icon>
+                                <v-icon v-if="selection.length && $clipboard.has(photo)" color="white"
+                                        class="t-select t-on">check_circle
+                                </v-icon>
                                 <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
                             </v-btn>
 
@@ -51,8 +58,7 @@
                                    icon large absolute
                                    class="p-photo-like"
                                    @click.stop.prevent="photo.toggleLike()">
-                                <v-icon v-if="photo.PhotoFavorite" color="white" class="t-like t-on">favorite
-                                </v-icon>
+                                <v-icon v-if="photo.PhotoFavorite" color="white" class="t-like t-on">favorite</v-icon>
                                 <v-icon v-else color="accent lighten-3" class="t-like t-off">favorite_border</v-icon>
                             </v-btn>
                         </v-img>
@@ -60,20 +66,25 @@
                         <v-card-title primary-title class="pa-3">
                             <div>
                                 <h3 class="body-2 mb-2" :title="photo.PhotoTitle">
-                                    {{ photo.PhotoTitle | truncate(80) }}
+                                    <button @click.exact="editPhoto(index)">{{ photo.PhotoTitle | truncate(80) }}
+                                    </button>
                                     <v-icon v-if="photo.PhotoPrivate" size="16" title="Private">vpn_key</v-icon>
-                                    <v-icon v-if="photo.PhotoStory" size="16" title="Shared with your friends in the story feed">wifi</v-icon>
+                                    <v-icon v-if="photo.PhotoStory" size="16"
+                                            title="Shared with your friends in the story feed">wifi
+                                    </v-icon>
                                 </h3>
                                 <div class="caption">
                                     <v-icon size="14">date_range</v-icon>
-                                    {{ photo.getDateString() }}
+                                    <button @click.exact="editPhoto(index)">{{ photo.getDateString() }}</button>
                                     <br/>
                                     <v-icon size="14">photo_camera</v-icon>
-                                    {{ photo.getCamera() }}
+                                    <button @click.exact="editPhoto(index)">{{ photo.getCamera() }}</button>
                                     <br/>
                                     <v-icon size="14">location_on</v-icon>
-                                    <span class="p-pointer"
-                                          @click.stop="openLocation(index)">{{ photo.getLocation() }}</span>
+                                    <button @click.exact="openLocation(index)" v-if="photo.LocationID">{{
+                                        photo.getLocation() }}
+                                    </button>
+                                    <span v-else>Unknown</span>
                                 </div>
                             </div>
                         </v-card-title>
@@ -90,10 +101,10 @@
             photos: Array,
             selection: Array,
             openPhoto: Function,
+            editPhoto: Function,
             openLocation: Function,
             album: Object,
         },
-        methods: {
-        }
+        methods: {}
     };
 </script>

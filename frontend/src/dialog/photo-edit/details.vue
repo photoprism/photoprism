@@ -305,10 +305,14 @@
                                        class="p-photo-dialog-close">
                                     <translate>Close</translate>
                                 </v-btn>
-                                <v-btn color="secondary-dark" depressed dark @click.stop="save"
+                                <v-btn color="secondary-dark" depressed dark @click.stop="save(false)"
                                        class="p-photo-dialog-confirm">
-                                    <span>Save</span>
-                                    <v-icon right dark>save</v-icon>
+                                    <span>Apply</span>
+                                </v-btn>
+                                <v-btn color="secondary-dark" depressed dark @click.stop="save(true)"
+                                       class="p-photo-dialog-confirm hidden-xs-only">
+                                    <span>OK</span>
+                                    <v-icon right dark>done</v-icon>
                                 </v-btn>
                             </v-flex>
                         </v-layout>
@@ -427,15 +431,19 @@
                     this.time = date.toFormat("HH:mm:ss");
                 }
             },
-            save() {
+            save(close) {
                 if (this.time && this.date) {
                     this.model.TakenAt = this.date + "T" + this.time + "Z";
                 }
 
-                this.model.update();
+                this.model.update().then(() => {
+                   if (close) {
+                       this.$emit('close');
+                   }
+                });
             },
             close() {
-                this.$emit('cancel');
+                this.$emit('close');
             },
         },
     };

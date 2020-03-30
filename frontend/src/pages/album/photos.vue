@@ -25,18 +25,22 @@
                           :selection="selection"
                           :album="model"
                           :open-photo="openPhoto"
+                          :edit-photo="editPhoto"
                           :open-location="openLocation"></p-photo-list>
             <p-photo-details v-else-if="settings.view === 'details'"
                              :photos="results"
                              :selection="selection"
                              :album="model"
                              :open-photo="openPhoto"
+                             :edit-photo="editPhoto"
                              :open-location="openLocation"></p-photo-details>
             <p-photo-tiles v-else :photos="results"
                            :selection="selection"
                            :album="model"
                            :open-photo="openPhoto"></p-photo-tiles>
         </v-container>
+        <p-photo-edit-dialog :show="edit.dialog" :selection="edit.selection"
+                             @close="edit.dialog = false"></p-photo-edit-dialog>
     </div>
 </template>
 
@@ -94,6 +98,10 @@
                 lastFilter: {},
                 routeName: routeName,
                 loading: true,
+                edit: {
+                    dialog: false,
+                    selection: []
+                }
             };
         },
         methods: {
@@ -125,6 +133,10 @@
                 } else if (photo.PlaceID && photo.PlaceID !== "-") {
                     this.$router.push({name: "place", params: {q: "s2:" + photo.PlaceID}});
                 }
+            },
+            editPhoto(index) {
+                this.edit.selection = [this.results[index].getId()];
+                this.edit.dialog = true;
             },
             openPhoto(index) {
                 this.$viewer.show(this.results, index)

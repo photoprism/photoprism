@@ -1,14 +1,14 @@
 <template>
     <v-dialog fullscreen hide-overlay scrollable lazy
-              v-model="show" persistent class="p-photo-edit-dialog" @keydown.esc="cancel">
+              v-model="show" persistent class="p-photo-edit-dialog" @keydown.esc="close">
         <v-card color="application">
             <v-toolbar dark color="navigation">
-                <v-btn icon dark @click.stop="cancel">
+                <v-btn icon dark @click.stop="close">
                     <v-icon>close</v-icon>
                 </v-btn>
                 <v-toolbar-title>{{ title }}</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-toolbar-items>
+                <v-toolbar-items v-if="selection.length > 1">
                     <v-btn icon disabled @click.stop="prev" :disabled="selected < 1">
                         <v-icon>navigate_before</v-icon>
                     </v-btn>
@@ -42,7 +42,7 @@
                 <v-tabs-items touchless>
                     <v-tab-item>
                         <p-tab-photo-edit-details :model="model" ref="details"
-                                                  @cancel="cancel"></p-tab-photo-edit-details>
+                                                  @close="close"></p-tab-photo-edit-details>
                     </v-tab-item>
 
                     <v-tab-item lazy>
@@ -102,11 +102,8 @@
                     this.$router.replace(path)
                 } */
             },
-            cancel() {
-                this.$emit('cancel');
-            },
-            confirm() {
-                this.$emit('confirm');
+            close() {
+                this.$emit('close');
             },
             prev() {
                 if (this.selected > 0) {

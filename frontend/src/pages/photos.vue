@@ -21,13 +21,17 @@
                           :photos="results"
                           :selection="selection"
                           :open-photo="openPhoto"
+                          :edit-photo="editPhoto"
                           :open-location="openLocation"></p-photo-list>
             <p-photo-details v-else
                              :photos="results"
                              :selection="selection"
                              :open-photo="openPhoto"
+                             :edit-photo="editPhoto"
                              :open-location="openLocation"></p-photo-details>
         </v-container>
+        <p-photo-edit-dialog :show="edit.dialog" :selection="edit.selection"
+                             @close="edit.dialog = false"></p-photo-edit-dialog>
     </div>
 </template>
 
@@ -96,6 +100,10 @@
                 lastFilter: {},
                 routeName: routeName,
                 loading: true,
+                edit: {
+                    dialog: false,
+                    selection: []
+                }
             };
         },
         computed: {
@@ -138,6 +146,10 @@
                     this.$router.push({name: "place", params: {q: "s2:" + photo.PlaceID}});
                 }
             },
+            editPhoto(index) {
+                this.edit.selection = [this.results[index].getId()];
+                this.edit.dialog = true;
+            },
             openPhoto(index) {
                 this.$viewer.show(this.results, index)
             },
@@ -169,7 +181,7 @@
                     if (this.scrollDisabled) {
                         this.offset = offset;
 
-                        if(this.results.length > 1) {
+                        if (this.results.length > 1) {
                             this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' photos loaded'));
                         }
                     } else {
@@ -218,7 +230,7 @@
                 return params;
             },
             refresh() {
-                if(this.loading) return;
+                if (this.loading) return;
                 this.loading = true;
                 this.page = 0;
                 this.dirty = true;
@@ -299,7 +311,7 @@
                     case 'restored':
                         this.dirty = true;
 
-                        if(this.context !== "archive") break;
+                        if (this.context !== "archive") break;
 
                         for (let i = 0; i < data.entities.length; i++) {
                             const uuid = data.entities[i];
@@ -313,7 +325,7 @@
                     case 'archived':
                         this.dirty = true;
 
-                        if(this.context === "archive") break;
+                        if (this.context === "archive") break;
 
                         for (let i = 0; i < data.entities.length; i++) {
                             const uuid = data.entities[i];
@@ -344,7 +356,7 @@
             this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
         },
         destroyed() {
-            for(let i = 0; i < this.subscriptions.length; i++) {
+            for (let i = 0; i < this.subscriptions.length; i++) {
                 Event.unsubscribe(this.subscriptions[i]);
             }
         },

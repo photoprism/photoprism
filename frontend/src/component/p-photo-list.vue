@@ -18,10 +18,17 @@
                     <v-icon v-else-if="!$clipboard.has(props.item)" color="accent lighten-4">radio_button_off</v-icon>
                 </v-btn>
             </td>
-            <td @click="openPhoto(props.index)" class="p-pointer">{{ props.item.PhotoTitle }}</td>
-            <td>{{ props.item.TakenAt | luxon:format('dd/MM/yyyy hh:mm:ss') }}</td>
-            <td @click="openLocation(props.index)" class="p-pointer">{{ props.item.getLocation() }}</td>
+            <td @click="editPhoto(props.index)" class="p-pointer">{{ props.item.PhotoTitle }}</td>
+            <td>
+                <button v-if="props.item.LocationID" @click.stop.prevent="openLocation(props.index)">
+                    {{ props.item.getLocation() }}
+                </button>
+                <span v-else>
+                    {{ props.item.getLocation() }}
+                </span>
+            </td>
             <td>{{ props.item.CameraMake }} {{ props.item.CameraModel }}</td>
+            <td>{{ props.item.TakenAt | luxon:format('dd/MM/yyyy hh:mm:ss') }}</td>
             <td><v-btn icon small flat :ripple="false"
                        class="p-photo-like"
                        @click.stop.prevent="props.item.toggleLike()">
@@ -39,6 +46,7 @@
             photos: Array,
             selection: Array,
             openPhoto: Function,
+            editPhoto: Function,
             openLocation: Function,
             album: Object,
         },
@@ -48,9 +56,9 @@
                 'listColumns': [
                     {text: '', value: '', align: 'center', sortable: false, class: 'p-col-select'},
                     {text: this.$gettext('Title'), value: 'PhotoTitle'},
-                    {text: this.$gettext('Taken At'), value: 'TakenAt'},
                     {text: this.$gettext('Location'), value: 'LocLabel'},
                     {text: this.$gettext('Camera'), value: 'CameraModel'},
+                    {text: this.$gettext('Taken At'), value: 'TakenAt'},
                     {text: this.$gettext('Favorite'), value: 'PhotoFavorite', align: 'left'},
                 ],
             };

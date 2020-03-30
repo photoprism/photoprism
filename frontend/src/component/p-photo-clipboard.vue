@@ -131,8 +131,8 @@
                               @confirm="addToAlbum"></p-photo-album-dialog>
         <p-photo-archive-dialog :show="dialog.archive" @cancel="dialog.archive = false"
                                @confirm="batchArchivePhotos"></p-photo-archive-dialog>
-        <p-photo-edit-dialog :show="dialog.edit" :selection="selection" :album="album" @cancel="dialog.edit = false"
-                             @confirm="dialog.edit = fals"></p-photo-edit-dialog>
+        <p-photo-edit-dialog :show="dialog.edit" :selection="selection" :album="album"
+                             @close="dialog.edit = false"></p-photo-edit-dialog>
         <p-photo-share-dialog :show="dialog.share" :selection="selection" :album="album" @cancel="dialog.share = false"
                              @confirm="dialog.share = false"></p-photo-share-dialog>
     </div>
