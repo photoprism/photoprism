@@ -19,7 +19,7 @@
                 </v-btn>
             </td>
             <td @click="editPhoto(props.index)" class="p-pointer">{{ props.item.PhotoTitle }}</td>
-            <td>
+            <td class="hidden-xs-only">
                 <button v-if="props.item.LocationID" @click.stop.prevent="openLocation(props.index)">
                     {{ props.item.getLocation() }}
                 </button>
@@ -27,8 +27,8 @@
                     {{ props.item.getLocation() }}
                 </span>
             </td>
-            <td>{{ props.item.CameraMake }} {{ props.item.CameraModel }}</td>
-            <td>{{ props.item.TakenAt | luxon:format('dd/MM/yyyy hh:mm:ss') }}</td>
+            <td class="hidden-sm-and-down">{{ props.item.CameraMake }} {{ props.item.CameraModel }}</td>
+            <td :title="props.item.TakenAt | luxon:format('dd/MM/yyyy hh:mm:ss')">{{ props.item.TakenAt | luxon:format('dd/MM/yyyy') }}</td>
             <td><v-btn icon small flat :ripple="false"
                        class="p-photo-like"
                        @click.stop.prevent="props.item.toggleLike()">
@@ -56,9 +56,9 @@
                 'listColumns': [
                     {text: '', value: '', align: 'center', sortable: false, class: 'p-col-select'},
                     {text: this.$gettext('Title'), value: 'PhotoTitle'},
-                    {text: this.$gettext('Location'), value: 'LocLabel'},
-                    {text: this.$gettext('Camera'), value: 'CameraModel'},
-                    {text: this.$gettext('Taken At'), value: 'TakenAt'},
+                    {text: this.$gettext('Location'), class: 'hidden-xs-only', value: 'LocLabel'},
+                    {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel'},
+                    {text: this.$gettext('Taken'), value: 'TakenAt'},
                     {text: this.$gettext('Favorite'), value: 'PhotoFavorite', align: 'left'},
                 ],
             };
