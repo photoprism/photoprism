@@ -3536,6 +3536,12 @@ var rules = LabelRules{
 		Priority:   0,
 		Categories: []string{"dining", "food"},
 	},
+	"mask": {
+		Label:      "",
+		Threshold:  0.300000,
+		Priority:   0,
+		Categories: []string{"portrait"},
+	},
 	"matchstick": {
 		Label:      "",
 		Threshold:  1.000000,

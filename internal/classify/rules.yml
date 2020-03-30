@@ -3534,6 +3534,11 @@ crutch:
 mousetrap:
   see: ignore
 
+mask:
+  threshold: 0.3
+  categories:
+    - portrait
+
 portrait:
   label: portrait
   threshold: 0.3
