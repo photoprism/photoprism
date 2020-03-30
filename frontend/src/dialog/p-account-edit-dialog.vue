@@ -125,7 +125,7 @@
                     </v-flex>
                 </v-layout>
                 <v-layout row wrap v-else-if="scope === 'sync'">
-                    <v-flex xs12 sm6 class="px-2">
+                    <v-flex xs12 sm6 class="pa-2">
                         <v-text-field
                                 :disabled="!model.AccSync"
                                 hide-details
@@ -136,7 +136,7 @@
                                 required
                         ></v-text-field>
                     </v-flex>
-                    <v-flex xs12 sm6 class="px-2">
+                    <v-flex xs12 sm6 class="pa-2">
                         <v-select
                                 :disabled="!model.AccSync"
                                 :label="label.SyncInterval"
