@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 var log = event.Log
@@ -27,6 +28,10 @@ const (
 	TypeFacebook     Type = "facebook"
 	TypeTwitter      Type = "twitter"
 	TypeFlickr       Type = "flickr"
+	TypeInstagram    Type = "instagram"
+	TypeEyeEm        Type = "eyeem"
+	TypeTelegram     Type = "telegram"
+	TypeWhatsApp     Type = "whatsapp"
 	TypeGooglePhotos Type = "gphotos"
 	TypeGoogleDrive  Type = "gdrive"
 	TypeOneDrive     Type = "onedrive"
@@ -52,6 +57,10 @@ var Heuristics = []Heuristic{
 	{TypeFacebook, []string{"facebook.com", "www.facebook.com"}, []string{}, "GET"},
 	{TypeTwitter, []string{"twitter.com"}, []string{}, "GET"},
 	{TypeFlickr, []string{"flickr.com", "www.flickr.com"}, []string{}, "GET"},
+	{TypeInstagram, []string{"instagram.com", "www.instagram.com"}, []string{}, "GET"},
+	{TypeEyeEm, []string{"eyeem.com", "www.eyeem.com"}, []string{}, "GET"},
+	{TypeTelegram, []string{"web.telegram.org", "www.telegram.org", "telegram.org"}, []string{}, "GET"},
+	{TypeWhatsApp, []string{"web.whatsapp.com", "www.whatsapp.com", "whatsapp.com"}, []string{}, "GET"},
 	{TypeOneDrive, []string{"onedrive.live.com"}, []string{}, "GET"},
 	{TypeGoogleDrive, []string{"drive.google.com"}, []string{}, "GET"},
 	{TypeGooglePhotos, []string{"photos.google.com"}, []string{}, "GET"},
@@ -153,7 +162,13 @@ func Discover(rawUrl, user, pass string) (result Account, err error) {
 
 		if serviceUrl := h.Discover(u.String(), result.AccUser); serviceUrl != nil {
 			serviceUrl.User = nil
-			result.AccName = serviceUrl.Host
+
+			if w := txt.Keywords(serviceUrl.Host); len(w) > 0 {
+				result.AccName = strings.Title(w[0])
+			} else {
+				result.AccName = serviceUrl.Host
+			}
+
 			result.AccType = string(h.ServiceType)
 			result.AccURL = serviceUrl.String()
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/ulule/deepcopier"
 )
 
@@ -47,11 +48,7 @@ type Account struct {
 func CreateAccount(form form.Account, db *gorm.DB) (model *Account, err error) {
 	model = &Account{}
 
-	if err := deepcopier.Copy(model).From(form); err != nil {
-		return model, err
-	}
-
-	err = db.Save(&model).Error
+	err = model.Save(form, db)
 
 	return model, err
 }
@@ -60,6 +57,20 @@ func CreateAccount(form form.Account, db *gorm.DB) (model *Account, err error) {
 func (m *Account) Save(form form.Account, db *gorm.DB) error {
 	if err := deepcopier.Copy(m).From(form); err != nil {
 		return err
+	}
+
+	if m.AccType != string(service.TypeWebDAV) {
+		// TODO: Only WebDAV supported at the moment
+		m.AccShare = false
+		m.AccSync = false
+	}
+
+	if m.SharePath == "" {
+		m.SharePath = "/"
+	}
+
+	if m.SyncPath == "" {
+		m.SyncPath = "/"
 	}
 
 	return db.Save(m).Error

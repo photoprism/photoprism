@@ -30,8 +30,8 @@
                     <v-icon v-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
                     <v-icon v-else color="secondary-dark">sync_disabled</v-icon>
                 </v-btn></td>
-                <td class="hidden-md-and-down">{{ formatDate(props.item.SyncedAt) }}</td>
-                <!-- td class="text-xs-right" nowrap>
+                <td class="hidden-sm-and-down">{{ formatDate(props.item.SyncedAt) }}</td>
+                <td class="hidden-xs-only text-xs-right" nowrap>
                     <v-btn icon small flat :ripple="false"
                            class="p-account-remove"
                            @click.stop.prevent="remove(props.item)">
@@ -42,7 +42,7 @@
                            @click.stop.prevent="edit(props.item)">
                         <v-icon color="secondary-dark">edit</v-icon>
                     </v-btn>
-                </td -->
+                </td>
             </template>
         </v-data-table>
         <v-container fluid>
@@ -62,7 +62,7 @@
                                  @confirm="onAdded"></p-account-add-dialog>
         <p-account-remove-dialog :show="dialog.remove" :model="model" @cancel="onCancel('remove')"
                                  @confirm="onRemoved"></p-account-remove-dialog>
-        <p-account-edit-dialog :show="dialog.edit" :model="model" :scope="editScope" @cancel="onCancel('edit')"
+        <p-account-edit-dialog :show="dialog.edit" :model="model" :scope="editScope" @remove="remove(model)" @cancel="onCancel('edit')"
                                  @confirm="onEdited"></p-account-edit-dialog>
     </div>
 </template>
@@ -94,8 +94,8 @@
                     {text: this.$gettext('Name'), value: 'AccName', sortable: false, align: 'left'},
                     {text: this.$gettext('Share'), value: 'AccShare', sortable: false, align: 'center'},
                     {text: this.$gettext('Sync'), value: 'AccSync', sortable: false, align: 'center'},
-                    {text: this.$gettext('Synced'), value: 'SyncedAt', sortable: false, class: 'hidden-md-and-down', align: 'left'},
-                    //{text: '', value: '', sortable: false, align: 'right'},
+                    {text: this.$gettext('Synced'), value: 'SyncedAt', sortable: false, class: 'hidden-sm-and-down', align: 'left'},
+                    {text: '', value: '', sortable: false, class: 'hidden-xs-only', align: 'right'},
                 ],
             };
         },
@@ -113,13 +113,15 @@
                 Account.search({count: 100}).then(r => this.results = r.models);
             },
             remove(model) {
-                this.model = model;
+                this.model = model.clone();
 
+                this.dialog.edit = false;
                 this.dialog.remove = true;
             },
             onRemoved() {
                 this.dialog.remove = false;
                 this.model = {};
+                this.load();
             },
             editSharing(model) {
                 this.model = model.clone();

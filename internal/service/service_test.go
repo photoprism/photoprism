@@ -14,7 +14,7 @@ func TestDiscover(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "webdav-dummy", r.AccName)
+		assert.Equal(t, "Webdav", r.AccName)
 		assert.Equal(t, "webdav", r.AccType)
 		assert.Equal(t, "http://webdav-dummy/", r.AccURL)
 		assert.Equal(t, "admin", r.AccUser)
@@ -28,7 +28,7 @@ func TestDiscover(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "webdav-dummy", r.AccName)
+		assert.Equal(t, "Webdav", r.AccName)
 		assert.Equal(t, "webdav", r.AccType)
 		assert.Equal(t, "http://webdav-dummy/", r.AccURL)
 		assert.Equal(t, "admin", r.AccUser)
@@ -42,7 +42,7 @@ func TestDiscover(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "dl.photoprism.org", r.AccName)
+		assert.Equal(t, "Photoprism", r.AccName)
 		assert.Equal(t, "web", r.AccType)
 		assert.Equal(t, "https://dl.photoprism.org/fixtures/testdata/import/", r.AccURL)
 		assert.Equal(t, "", r.AccUser)
@@ -56,7 +56,7 @@ func TestDiscover(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "www.facebook.com", r.AccName)
+		assert.Equal(t, "Facebook", r.AccName)
 		assert.Equal(t, "facebook", r.AccType)
 		assert.Equal(t, "https://www.facebook.com/ob.boris.palmer", r.AccURL)
 		assert.Equal(t, "", r.AccUser)

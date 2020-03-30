@@ -2,16 +2,59 @@
     <v-dialog lazy v-model="show" persistent max-width="500" class="p-account-edit-dialog" @keydown.esc="cancel">
         <v-card raised elevation="24">
             <v-card-title primary-title>
-                <div>
-                    <h3 class="headline mb-0" v-if="scope === 'sharing'">Upload Settings</h3>
-                    <h3 class="headline mb-0" v-else-if="scope === 'sync'">Continuous Sync</h3>
-                    <h3 class="headline mb-0" v-else>Edit Account</h3>
-                </div>
+                <v-layout row wrap v-if="scope === 'sharing'">
+                    <v-flex xs9>
+                        <h3 class="headline mb-0">Upload Settings</h3>
+                    </v-flex>
+                    <v-flex xs3 text-xs-right>
+                        <v-switch
+                                v-model="model.AccShare"
+                                color="success"
+                                :true-value="true"
+                                :false-value="false"
+                                :label="model.AccShare ? 'enabled' : 'disabled'"
+                                :disabled="model.AccType !== 'webdav'"
+                                class="mt-0"
+                                hide-details
+                        ></v-switch>
+                    </v-flex>
+                </v-layout>
+                <v-layout row wrap v-else-if="scope === 'sync'">
+                    <v-flex xs9>
+                        <h3 class="headline mb-0">Sync Settings</h3>
+                    </v-flex>
+                    <v-flex xs3 text-xs-right>
+                        <v-switch
+                                v-model="model.AccSync"
+                                color="success"
+                                :true-value="true"
+                                :false-value="false"
+                                :label="model.AccSync ? 'enabled' : 'disabled'"
+                                :disabled="model.AccType !== 'webdav'"
+                                class="mt-0"
+                                hide-details
+                        ></v-switch>
+                    </v-flex>
+                </v-layout>
+                <v-layout row wrap v-else>
+                    <v-flex xs10>
+                        <h3 class="headline mb-0">Edit Account</h3>
+                    </v-flex>
+                    <v-flex xs2 text-xs-right>
+                        <v-btn icon flat :ripple="false"
+                               class="action-remove mt-0"
+                               @click.stop.prevent="remove()">
+                            <v-icon color="remove">delete</v-icon>
+                        </v-btn>
+                    </v-flex>
+                </v-layout>
+                <h3 class="headline mb-0" v-else>Edit Account</h3>
             </v-card-title>
             <v-container fluid class="pt-0 pb-2 pr-2 pl-2">
                 <v-layout row wrap v-if="scope === 'sharing'">
                     <v-flex xs12 class="pa-2">
                         <v-text-field
+                                :disabled="!model.AccShare"
                                 hide-details
                                 :label="label.SharePath"
                                 placeholder=""
@@ -22,6 +65,7 @@
                     </v-flex>
                     <v-flex xs12 sm6 pa-2 class="input-share-size">
                         <v-select
+                                :disabled="!model.AccShare"
                                 :label="label.ShareSize"
                                 hide-details
                                 color="secondary-dark"
@@ -33,6 +77,7 @@
                     </v-flex>
                     <v-flex xs12 sm6 class="pa-2">
                         <v-select
+                                :disabled="!model.AccShare"
                                 :label="label.ShareExpires"
                                 hide-details
                                 color="secondary-dark"
@@ -44,6 +89,7 @@
                     </v-flex>
                     <v-flex xs12 sm6 class="pa-2">
                         <v-checkbox
+                                :disabled="!model.AccShare"
                                 hide-details
                                 color="secondary-dark"
                                 :label="label.ShareExif"
@@ -52,6 +98,7 @@
                     </v-flex>
                     <v-flex xs12 sm6 class="pa-2">
                         <v-checkbox
+                                :disabled="!model.AccShare"
                                 hide-details
                                 color="secondary-dark"
                                 :label="label.ShareSidecar"
@@ -60,8 +107,9 @@
                     </v-flex>
                 </v-layout>
                 <v-layout row wrap v-else-if="scope === 'sync'">
-                    <v-flex xs12 class="pa-2">
+                    <v-flex xs12 sm6 class="px-2">
                         <v-text-field
+                                :disabled="!model.AccSync"
                                 hide-details
                                 :label="label.SyncPath"
                                 placeholder=""
@@ -71,7 +119,20 @@
                         ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 class="px-2">
+                        <v-select
+                                :disabled="!model.AccSync"
+                                :label="label.SyncInterval"
+                                hide-details
+                                color="secondary-dark"
+                                item-text="text"
+                                item-value="value"
+                                v-model="model.SyncInterval"
+                                :items="items.intervals">
+                        </v-select>
+                    </v-flex>
+                    <v-flex xs12 sm6 class="px-2">
                         <v-checkbox
+                                :disabled="!model.AccSync"
                                 hide-details
                                 color="secondary-dark"
                                 :label="label.SyncDownload"
@@ -80,6 +141,7 @@
                     </v-flex>
                     <v-flex xs12 sm6 class="px-2">
                         <v-checkbox
+                                :disabled="!model.AccSync"
                                 hide-details
                                 color="secondary-dark"
                                 :label="label.SyncUpload"
@@ -96,6 +158,7 @@
                     </v-flex -->
                     <v-flex xs12 sm6 class="px-2">
                         <v-checkbox
+                                :disabled="!model.AccSync"
                                 hide-details
                                 color="secondary-dark"
                                 :label="label.SyncRaw"
@@ -104,6 +167,7 @@
                     </v-flex>
                     <v-flex xs12 sm6 class="px-2">
                         <v-checkbox
+                                :disabled="!model.AccSync"
                                 hide-details
                                 color="secondary-dark"
                                 :label="label.SyncVideo"
@@ -112,6 +176,7 @@
                     </v-flex>
                     <v-flex xs12 sm6 class="px-2">
                         <v-checkbox
+                                :disabled="!model.AccSync"
                                 hide-details
                                 color="secondary-dark"
                                 :label="label.SyncSidecar"
@@ -170,6 +235,17 @@
                                 required
                         ></v-text-field>
                     </v-flex>
+                    <v-flex xs12 sm6 pa-2 class="input-account-type">
+                        <v-select
+                                :label="label.AccType"
+                                hide-details
+                                color="secondary-dark"
+                                item-text="text"
+                                item-value="value"
+                                v-model="model.AccType"
+                                :items="items.types">
+                        </v-select>
+                    </v-flex>
                     <!-- v-flex xs12 sm6 class="pa-2">
                         <v-text-field
                                 hide-details
@@ -184,35 +260,11 @@
                 <v-layout row wrap>
                     <v-flex xs12 text-xs-right class="pt-3">
                         <v-btn @click.stop="cancel" depressed color="grey lighten-3"
-                               class="action-cancel">
+                               class="action-cancel hidden-xs-only">
                             <span>{{ label.cancel }}</span>
                         </v-btn>
-                        <v-btn @click.stop="disable('AccShare')" depressed color="grey lighten-3"
-                               class="action-disable" v-if="model.AccShare && scope === 'sharing'">
-                            <span>{{ label.disable }}</span>
-                        </v-btn>
-                        <v-btn @click.stop="disable('AccSync')" depressed color="grey lighten-3"
-                               class="action-disable" v-if="model.AccSync && scope === 'sync'">
-                            <span>{{ label.disable }}</span>
-                        </v-btn>
-                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="enable('AccShare')"
-                               class="action-enable" v-if="!model.AccShare && scope === 'sharing'">
-                            <span>{{ label.enable }}</span>
-                        </v-btn>
-                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="enable('AccSync')"
-                               class="action-enable" v-if="!model.AccSync && scope === 'sync'">
-                            <span>{{ label.enable }}</span>
-                        </v-btn>
-                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
-                               class="action-confirm" v-if="model.AccShare && scope === 'sharing'">
-                            <span>{{ label.save }}</span>
-                        </v-btn>
-                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
-                               class="action-confirm" v-if="model.AccSync && scope === 'sync'">
-                            <span>{{ label.save }}</span>
-                        </v-btn>
-                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
-                               class="action-confirm" v-if="scope === 'account'">
+                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="save"
+                               class="action-save">
                             <span>{{ label.save }}</span>
                         </v-btn>
                     </v-flex>
@@ -243,15 +295,38 @@
                 items: {
                     thumbs: thumbs,
                     sizes: this.sizes(thumbs),
+                    types: [
+                        {"value": "web", "text": "Web"},
+                        {"value": "webdav", "text": "WebDAV / Nextcloud"},
+                        {"value": "facebook", "text": "Facebook"},
+                        {"value": "twitter", "text": "Twitter"},
+                        {"value": "flickr", "text": "Flickr"},
+                        {"value": "instagram", "text": "Instagram"},
+                        {"value": "eyeem", "text": "EyeEm"},
+                        {"value": "telegram", "text": "Telegram"},
+                        {"value": "whatsapp", "text": "WhatsApp"},
+                        {"value": "gphotos", "text": "Google Photos"},
+                        {"value": "gdrive", "text": "Google Drive"},
+                        {"value": "onedrive", "text": "Microsoft OneDrive"},
+                    ],
+                    intervals: [
+                        {"value": 0, "text": "Never"},
+                        {"value": 3600, "text": "1 hour"},
+                        {"value": 3600 * 4, "text": "4 hours"},
+                        {"value": 3600 * 12, "text": "12 hours"},
+                        {"value": 86400, "text": "Daily"},
+                        {"value": 86400 * 2, "text": "Every two days"},
+                        {"value": 86400 * 7, "text": "Once a week"},
+                    ],
                     expires: [
-                        { "value": 0, "text": "Never" },
-                        { "value": 86400, "text": "After 1 day" },
-                        { "value": 86400 * 3, "text": "After 3 days" },
-                        { "value": 86400 * 7, "text": "After 7 days" },
-                        { "value": 86400 * 14, "text": "After two weeks" },
-                        { "value": 86400 * 31, "text": "After one month" },
-                        { "value": 86400 * 60, "text": "After two months" },
-                        { "value": 86400 * 365, "text": "After one year" },
+                        {"value": 0, "text": "Never"},
+                        {"value": 86400, "text": "After 1 day"},
+                        {"value": 86400 * 3, "text": "After 3 days"},
+                        {"value": 86400 * 7, "text": "After 7 days"},
+                        {"value": 86400 * 14, "text": "After two weeks"},
+                        {"value": 86400 * 31, "text": "After one month"},
+                        {"value": 86400 * 60, "text": "After two months"},
+                        {"value": 86400 * 365, "text": "After one year"},
                     ],
                 },
                 readonly: this.$config.getValue("readonly"),
@@ -268,18 +343,19 @@
                     pass: this.$gettext("Password"),
                     owner: this.$gettext("Owner"),
                     apiKey: this.$gettext("API Key"),
-                    SharePath: this.$gettext("Folder"),
+                    AccType: this.$gettext("Type"),
+                    SharePath: this.$gettext("Default Directory"),
                     ShareSize: this.$gettext("Size"),
                     ShareExpires: this.$gettext("Expires"),
                     ShareExif: this.$gettext("Include metadata"),
                     ShareSidecar: this.$gettext("Include sidecar files"),
-                    SyncPath: this.$gettext("Folder"),
+                    SyncPath: this.$gettext("Remote Directory"),
                     SyncInterval: this.$gettext("Interval"),
                     SyncStart: this.$gettext("Start"),
                     SyncDownload: this.$gettext("Download new files"),
                     SyncUpload: this.$gettext("Upload local files"),
                     SyncDelete: this.$gettext("Remote delete"),
-                    SyncRaw: this.$gettext("Sync RAW images"),
+                    SyncRaw: this.$gettext("Sync RAW photos"),
                     SyncVideo: this.$gettext("Sync videos"),
                     SyncSidecar: this.$gettext("Sync sidecar files"),
                 }
@@ -288,6 +364,9 @@
         methods: {
             cancel() {
                 this.$emit('cancel');
+            },
+            remove() {
+                this.$emit('remove');
             },
             confirm() {
                 this.model.AccShare = true;
@@ -311,12 +390,12 @@
             },
             sizes(thumbs) {
                 const result = [
-                    {"text" : this.$gettext("Original"), "value": ""}
+                    {"text": this.$gettext("Original"), "value": ""}
                 ];
 
-                for(let i in thumbs) {
+                for (let i in thumbs) {
                     const s = thumbs[i];
-                    result.push({"text" : s["Width"] + 'x' + s["Height"], "value": s["Name"]});
+                    result.push({"text": s["Width"] + 'x' + s["Height"], "value": s["Name"]});
                 }
 
                 return result;
