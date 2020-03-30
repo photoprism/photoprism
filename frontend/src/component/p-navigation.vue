@@ -1,6 +1,6 @@
 <template>
     <div id="p-navigation">
-        <v-toolbar dark scroll-off-screen color="navigation darken-1" class="hidden-lg-and-up p-navigation-small"
+        <v-toolbar dark scroll-off-screen color="navigation darken-1" class="hidden-md-and-up p-navigation-small"
                    @click.stop="showNavigation()">
             <v-toolbar-side-icon class="p-navigation-show"></v-toolbar-side-icon>
 
@@ -17,8 +17,9 @@
         <v-navigation-drawer
                 v-model="drawer"
                 :mini-variant="mini || !auth"
+                :width="270"
+                :mobile-break-point="960"
                 class="p-navigation-sidebar navigation"
-                width="270"
                 fixed dark app
         >
             <v-toolbar flat>
@@ -32,7 +33,7 @@
                                 PhotoPrism
                             </v-list-tile-title>
                         </v-list-tile-content>
-                        <v-list-tile-action class="hidden-md-and-down">
+                        <v-list-tile-action class="hidden-sm-and-down">
                             <v-btn icon @click.stop="mini = !mini" class="p-navigation-minimize">
                                 <v-icon>chevron_left</v-icon>
                             </v-btn>
