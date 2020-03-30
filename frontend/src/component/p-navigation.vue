@@ -274,11 +274,9 @@
     export default {
         name: "p-navigation",
         data() {
-            let mini = (window.innerWidth < 1400);
-
             return {
                 drawer: null,
-                mini: mini,
+                mini: true,
                 session: this.$session,
                 public: this.$config.getValue("public"),
                 readonly: this.$config.getValue("readonly"),
