@@ -14,7 +14,16 @@
                                 :false-value="false"
                                 :label="model.AccShare ? 'enabled' : 'disabled'"
                                 :disabled="model.AccType !== 'webdav'"
-                                class="mt-0"
+                                class="mt-0 hidden-xs-only"
+                                hide-details
+                        ></v-switch>
+                        <v-switch
+                                v-model="model.AccShare"
+                                color="success"
+                                :true-value="true"
+                                :false-value="false"
+                                :disabled="model.AccType !== 'webdav'"
+                                class="mt-0 hidden-sm-and-up"
                                 hide-details
                         ></v-switch>
                     </v-flex>
@@ -31,7 +40,16 @@
                                 :false-value="false"
                                 :label="model.AccSync ? 'enabled' : 'disabled'"
                                 :disabled="model.AccType !== 'webdav'"
-                                class="mt-0"
+                                class="mt-0 hidden-xs-only"
+                                hide-details
+                        ></v-switch>
+                        <v-switch
+                                v-model="model.AccSync"
+                                color="success"
+                                :true-value="true"
+                                :false-value="false"
+                                :disabled="model.AccType !== 'webdav'"
+                                class="mt-0 hidden-sm-and-up"
                                 hide-details
                         ></v-switch>
                     </v-flex>
@@ -260,7 +278,7 @@
                 <v-layout row wrap>
                     <v-flex xs12 text-xs-right class="pt-3">
                         <v-btn @click.stop="cancel" depressed color="grey lighten-3"
-                               class="action-cancel hidden-xs-only">
+                               class="action-cancel">
                             <span>{{ label.cancel }}</span>
                         </v-btn>
                         <v-btn color="blue-grey lighten-2" depressed dark @click.stop="save"
@@ -360,6 +378,8 @@
                     SyncSidecar: this.$gettext("Sync sidecar files"),
                 }
             }
+        },
+        computed: {
         },
         methods: {
             cancel() {
