@@ -1,4 +1,5 @@
 theme: default
 language: en
 maps:
-  animate: 5000
+  animate: 0
+  style: streets

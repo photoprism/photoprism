@@ -54,15 +54,33 @@
     },
     {
       "text": "Fast",
-      "value": 5000
+      "value": 2500
     },
     {
       "text": "Medium",
-      "value": 10000
+      "value": 6250
     },
     {
       "text": "Slow",
-      "value": 15000
+      "value": 10000
+    }
+  ],
+  "mapsStyle": [
+    {
+      "text": "Streets",
+      "value": "streets"
+    },
+    {
+      "text": "Hybrid",
+      "value": "hybrid"
+    },
+    {
+      "text": "Topographic",
+      "value": "topo"
+    },
+    {
+      "text": "Moonlight",
+      "value": "darkmatter"
     }
   ]
 }

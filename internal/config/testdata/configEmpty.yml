@@ -2,3 +2,4 @@ theme: lavendel
 language: german
 maps:
   animate: 0
+  style: streets

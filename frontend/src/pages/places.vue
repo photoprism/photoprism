@@ -38,17 +38,19 @@
             }
         },
         data() {
+            const s = this.$config.values.settings.maps;
+
             return {
                 initialized: false,
                 map: null,
                 markers: {},
                 markersOnScreen: {},
                 loading: false,
-                url: 'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=xCDwZsNKW3rlveVG0WUU',
+                url: 'https://api.maptiler.com/maps/' + s.style + '/{z}/{x}/{y}.png?key=xCDwZsNKW3rlveVG0WUU',
                 attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
                 options: {
                     container: "map",
-                    style: "https://api.maptiler.com/maps/streets/style.json?key=xCDwZsNKW3rlveVG0WUU",
+                    style: "https://api.maptiler.com/maps/" + s.style + "/style.json?key=xCDwZsNKW3rlveVG0WUU",
                     attributionControl: true,
                     customAttribution: this.attribution,
                     zoom: 0,
@@ -63,7 +65,7 @@
                     search: this.$gettext("Search"),
                 },
                 config: this.$config.values,
-                settings: this.$config.values.settings.maps,
+                settings: s,
             }
         },
         methods: {

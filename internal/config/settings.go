@@ -10,14 +10,15 @@ import (
 )
 
 type MapsSettings struct {
-	Animate int `json:"animate" yaml:"animate"`
+	Animate int    `json:"animate" yaml:"animate"`
+	Style   string `json:"style" yaml:"style"`
 }
 
 // Settings contains Web UI settings
 type Settings struct {
-	Theme        string       `json:"theme" yaml:"theme"`
-	Language     string       `json:"language" yaml:"language"`
-	Maps         MapsSettings `json:"maps" yaml:"maps"`
+	Theme    string       `json:"theme" yaml:"theme"`
+	Language string       `json:"language" yaml:"language"`
+	Maps     MapsSettings `json:"maps" yaml:"maps"`
 }
 
 // NewSettings returns a empty Settings
@@ -27,6 +28,7 @@ func NewSettings() *Settings {
 		Language: "en",
 		Maps: MapsSettings{
 			Animate: 0,
+			Style:   "streets",
 		},
 	}
 }

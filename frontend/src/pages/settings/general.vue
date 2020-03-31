@@ -1,50 +1,78 @@
 <template>
     <div class="p-tab p-settings-general">
-        <v-container fluid>
-            <v-form lazy-validation dense
-                    ref="form" class="p-form-settings" accept-charset="UTF-8"
-                    @submit.prevent="save">
-                <v-layout wrap align-center>
-                    <v-flex xs12 sm6 class="pr-3">
-                        <v-select
-                                :items="options.languages"
-                                :label="labels.language"
-                                color="secondary-dark"
-                                v-model="settings.language"
-                                flat
-                        ></v-select>
-                    </v-flex>
+        <v-form lazy-validation dense
+                ref="form" class="p-form-settings" accept-charset="UTF-8"
+                @submit.prevent="save">
+            <v-card flat tile class="px-1 application">
+                <v-card-title primary-title>
+                    <h3 class="body-2 mb-0">User Interface</h3>
+                </v-card-title>
 
-                    <v-flex xs12 sm6 class="pr-3">
-                        <v-select
-                                :items="options.themes"
-                                :label="labels.theme"
-                                color="secondary-dark"
-                                v-model="settings.theme"
-                                flat
-                        ></v-select>
-                    </v-flex>
+                <v-card-actions>
+                    <v-layout wrap align-center>
+                        <v-flex xs12 sm6 class="px-2">
+                            <v-select
+                                    :items="options.languages"
+                                    :label="labels.language"
+                                    color="secondary-dark"
+                                    v-model="settings.language"
+                                    flat
+                            ></v-select>
+                        </v-flex>
 
-                    <v-flex xs12 sm6 class="pr-3">
-                        <v-select
-                                :items="options.mapsAnimate"
-                                :label="labels.mapsAnimate"
-                                color="secondary-dark"
-                                v-model="settings.maps.animate"
-                                flat
-                        ></v-select>
-                    </v-flex>
-                </v-layout>
+                        <v-flex xs12 sm6 class="px-2">
+                            <v-select
+                                    :items="options.themes"
+                                    :label="labels.theme"
+                                    color="secondary-dark"
+                                    v-model="settings.theme"
+                                    flat
+                            ></v-select>
+                        </v-flex>
+                    </v-layout>
+                </v-card-actions>
+            </v-card>
 
+            <v-card flat tile class="mt-0 px-1 application">
+                <v-card-title primary-title>
+                    <h3 class="body-2 mb-0">Places</h3>
+                </v-card-title>
+
+                <v-card-actions>
+                    <v-layout wrap align-center>
+                        <v-flex xs12 sm6 class="px-2">
+                            <v-select
+                                    :items="options.mapsAnimate"
+                                    :label="labels.mapsAnimate"
+                                    color="secondary-dark"
+                                    v-model="settings.maps.animate"
+                                    flat
+                            ></v-select>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 class="px-2">
+                            <v-select
+                                    :items="options.mapsStyle"
+                                    :label="labels.mapsStyle"
+                                    color="secondary-dark"
+                                    v-model="settings.maps.style"
+                                    flat
+                            ></v-select>
+                        </v-flex>
+                    </v-layout>
+                </v-card-actions>
+            </v-card>
+
+            <v-container fluid>
                 <v-btn color="secondary-dark"
-                       class="white--text ml-0 mt-2"
-                       depressed
+                       class="ml-1 mt-0"
+                       depressed dark
                        @click.stop="save">
                     <translate>Save</translate>
                     <v-icon right dark>save</v-icon>
                 </v-btn>
-            </v-form>
-        </v-container>
+            </v-container>
+        </v-form>
     </div>
 </template>
 
@@ -62,7 +90,8 @@
                 labels: {
                     language: this.$gettext("Language"),
                     theme: this.$gettext("Theme"),
-                    mapsAnimate: this.$gettext("Maps Animation"),
+                    mapsAnimate: this.$gettext("Animation"),
+                    mapsStyle: this.$gettext("Style"),
                 },
             };
         },
@@ -76,7 +105,7 @@
                 this.settings.save().then((s) => {
                     this.$config.updateSettings(s.getValues(), this.$vuetify);
 
-                    if(reload) {
+                    if (reload) {
                         this.$notify.info(this.$gettext("Reloading..."));
                         this.$notify.blockUI();
                         setTimeout(() => window.location.reload(), 100);
