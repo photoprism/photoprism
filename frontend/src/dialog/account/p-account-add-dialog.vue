@@ -54,7 +54,7 @@
     </v-dialog>
 </template>
 <script>
-    import Account from "../model/account";
+    import Account from "model/account";
 
     export default {
         name: 'p-account-create-dialog',

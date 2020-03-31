@@ -1,135 +1,142 @@
 <template>
-    <v-dialog fullscreen hide-overlay scrollable lazy
-              v-model="show" persistent class="p-photo-share-dialog" @keydown.esc="cancel">
-        <v-card color="application">
-            <v-toolbar dark color="navigation">
-                <v-btn icon dark @click.stop="cancel">
-                    <v-icon>close</v-icon>
-                </v-btn>
-                <v-toolbar-title>Share Photo</v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-toolbar-items>
-                    <v-btn icon disabled>
-                        <v-icon>navigate_before</v-icon>
-                    </v-btn>
+    <v-dialog lazy v-model="show" persistent max-width="400" class="p-photo-share-dialog" @keydown.esc="cancel">
+        <v-card raised elevation="24">
+            <v-container fluid class="pb-2 pr-2 pl-2">
+                <v-layout row wrap>
+                    <v-flex xs3 text-xs-center>
+                        <v-icon size="54" color="grey lighten-1">share</v-icon>
+                    </v-flex>
+                    <v-flex xs9 text-xs-left align-self-center>
+                        <v-select
+                                color="secondary-dark"
+                                class="mr-2"
+                                hide-details flat
+                                :label="labels.account"
+                                item-text="AccName"
+                                item-value="ID"
+                                @change="onChange"
+                                return-object
+                                v-model="account"
+                                :items="accounts">
+                        </v-select>
 
-                    <v-btn icon disabled>
-                        <v-icon>navigate_next</v-icon>
-                    </v-btn>
-                </v-toolbar-items>
-            </v-toolbar>
-            <v-container grid-list-xs text-xs-center fluid>
-                <v-form lazy-validation dense
-                        ref="form" class="p-form-photo-edit-meta" accept-charset="UTF-8"
-                        @submit.prevent="confirm">
-                    <v-layout row wrap align-center fill-height>
-                        <v-flex
-                                class="p-photo pa-2"
-                                xs12 sm4 md2
+                        <v-autocomplete
+                                color="secondary-dark"
+                                class="mt-3 mr-2"
+                                hide-details hide-no-data flat
+                                v-model="path"
+                                browser-autocomplete="off"
+                                hint="Location"
+                                :search-input.sync="search"
+                                :items="pathItems"
+                                :loading="loading"
+                                :disabled="loading"
+                                item-text="text"
+                                item-value="value"
+                                :label="labels.path"
                         >
-                            <v-card tile
-                                    class="ma-1 elevation-0"
-                                    :title="model.PhotoTitle">
-                                <v-img :src="model.getThumbnailUrl('tile_500')"
-                                       aspect-ratio="1"
-                                       class="accent lighten-2 elevation-0"
-                                       style="cursor: pointer"
-                                       @click.exact="openPhoto()"
-                                >
-                                    <v-layout
-                                            slot="placeholder"
-                                            fill-height
-                                            align-center
-                                            justify-center
-                                            ma-0
-                                    >
-                                        <v-progress-circular indeterminate
-                                                             color="accent lighten-5"></v-progress-circular>
-                                    </v-layout>
-                                </v-img>
-
-                            </v-card>
-                        </v-flex>
-                        <v-flex xs12 sm8 md10 fill-height>
-                            <v-layout row wrap>
-                                <v-flex xs12 class="pa-2">
-                                    <p class="subheading pb-3">
-                                        This is a very first draft for a share dialog. Feedback and contributions welcome.
-                                    </p>
-                                </v-flex>
-                            </v-layout>
-                        </v-flex>
-                    </v-layout>
-                </v-form>
-
+                        </v-autocomplete>
+                    </v-flex>
+                    <v-flex xs12 text-xs-right class="pt-3">
+                        <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="p-photo-dialog-cancel">
+                            <translate>Cancel</translate>
+                        </v-btn>
+                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
+                               class="p-photo-dialog-confirm">
+                            <span>{{ labels.upload }}</span>
+                        </v-btn>
+                    </v-flex>
+                </v-layout>
             </v-container>
         </v-card>
     </v-dialog>
 </template>
 <script>
-    import Photo from "../model/photo";
-    import PhotoShareTodo from "./photo-share/todo.vue";
+    import Account from "../model/account";
 
     export default {
-        name: 'p-photo-edit-dialog',
+        name: 'p-photo-share-dialog',
         props: {
             show: Boolean,
-            selection: Array,
-            album: Object,
-        },
-        components: {
-            'p-tab-photo-share-todo': PhotoShareTodo,
         },
         data() {
             return {
-                selected: 0,
-                selectedId: "",
-                model: new Photo,
-                loading: false,
+                loading: true,
                 search: null,
-                items: [],
-                readonly: this.$config.getValue("readonly"),
-                active: this.tab,
+                account: {},
+                accounts: [],
+                path: "/",
+                paths: [
+                    {"text": "/", "value": "/"}
+                ],
+                pathItems: [],
+                newPath: "",
+                labels: {
+                    account: this.$gettext("Account"),
+                    path: this.$gettext("Location"),
+                    upload: this.$gettext("Upload"),
+                }
             }
         },
         methods: {
-            changePath: function (path) {
-                /* if (this.$route.path !== path) {
-                    this.$router.replace(path)
-                } */
-            },
             cancel() {
                 this.$emit('cancel');
             },
             confirm() {
-                this.$emit('confirm');
-            },
-            find(index) {
                 if (this.loading) {
+                    this.$notify.wait();
                     return;
                 }
 
-                if(!this.selection || !this.selection[index]) {
-                    this.$notify.error("Invalid photo selected");
-                    return
-                }
+                this.$emit('confirm', this.account);
+            },
+            onChange() {
+                this.paths = [{"text": "/", "value": "/"}];
 
                 this.loading = true;
-                this.selected = index;
-                this.selectedId = this.selection[index];
+                this.account.Ls().then(l => {
+                    console.log("result", l);
+                    for (let i = 0; i < l.length; i++) {
+                        this.paths.push({"text": l[i], "value": l[i]});
+                    }
 
-                this.model.find(this.selectedId).then(model => {
-                    model.refreshFileAttr();
-                    this.model = model;
-                    this.$refs.meta.refresh(model);
-                    this.loading = false;
-                }).catch(() => this.loading = false);
+                    this.pathItems = [...this.paths];
+                    this.path = this.account.SharePath;
+                }).finally(() => this.loading = false);
+            },
+            load() {
+                this.loading = true;
+
+                const params = {
+                    share: true,
+                    count: 1000,
+                    offset: 0,
+                };
+
+                Account.search(params).then(response => {
+                    this.account = response.models[0];
+                    this.accounts = response.models;
+                    this.onChange();
+                }).catch(() => this.loading = false)
             },
         },
         watch: {
+            search(q) {
+                if (this.loading) return;
+
+                const exists = this.paths.findIndex((p) => p.value === q);
+
+                if (exists !== -1 || !q) {
+                    this.pathItems = this.paths;
+                    this.newPath = "";
+                } else {
+                    this.newPath = q;
+                    this.pathItems = this.paths.concat([{"text": q, "value": q}]);
+                }
+            },
             show: function (show) {
                 if (show) {
-                    this.find(0);
+                    this.load();
                 }
             }
         },

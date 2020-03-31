@@ -68,6 +68,39 @@ func GetAccount(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
+// GET /api/v1/accounts/:id/ls
+//
+// Parameters:
+//   id: string Account ID as returned by the API
+func GetAccountLs(router *gin.RouterGroup, conf *config.Config) {
+	router.GET("/accounts/:id/ls", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		q := query.New(conf.Db())
+		id := ParseUint(c.Param("id"))
+
+		m, err := q.AccountByID(id)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
+			return
+		}
+
+		list, err := m.Ls()
+
+		if err != nil {
+			log.Errorf("account: %s", err.Error())
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrConnectionFailed)
+			return
+		}
+
+		c.JSON(http.StatusOK, list)
+	})
+}
+
 // POST /api/v1/accounts
 func CreateAccount(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/accounts", func(c *gin.Context) {

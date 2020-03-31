@@ -71,15 +71,21 @@
             <v-container fluid class="pt-0 pb-2 pr-2 pl-2">
                 <v-layout row wrap v-if="scope === 'sharing'">
                     <v-flex xs12 class="pa-2">
-                        <v-text-field
-                                :disabled="!model.AccShare"
-                                hide-details
-                                :label="label.SharePath"
-                                placeholder=""
+                        <v-autocomplete
                                 color="secondary-dark"
+                                hide-details hide-no-data flat
                                 v-model="model.SharePath"
-                                required
-                        ></v-text-field>
+                                browser-autocomplete="off"
+                                hint="Location"
+                                :search-input.sync="search"
+                                :items="pathItems"
+                                :loading="loading"
+                                item-text="text"
+                                item-value="value"
+                                :label="label.SharePath"
+                                :disabled="!model.AccShare || loading"
+                        >
+                        </v-autocomplete>
                     </v-flex>
                     <v-flex xs12 sm6 class="pa-2 input-share-size">
                         <v-select
@@ -126,15 +132,21 @@
                 </v-layout>
                 <v-layout row wrap v-else-if="scope === 'sync'">
                     <v-flex xs12 sm6 class="pa-2">
-                        <v-text-field
-                                :disabled="!model.AccSync"
-                                hide-details
-                                :label="label.SyncPath"
-                                placeholder=""
+                        <v-autocomplete
                                 color="secondary-dark"
+                                hide-details hide-no-data flat
                                 v-model="model.SyncPath"
-                                required
-                        ></v-text-field>
+                                browser-autocomplete="off"
+                                hint="Location"
+                                :search-input.sync="search"
+                                :items="pathItems"
+                                :loading="loading"
+                                item-text="text"
+                                item-value="value"
+                                :label="label.SyncPath"
+                                :disabled="!model.AccSync || loading"
+                        >
+                        </v-autocomplete>
                     </v-flex>
                     <v-flex xs12 sm6 class="pa-2">
                         <v-select
@@ -274,7 +286,7 @@
     </v-dialog>
 </template>
 <script>
-    import options from "../resources/options";
+    import options from "resources/options";
 
     export default {
         name: 'p-account-edit-dialog',
@@ -292,6 +304,12 @@
                 showPassword: false,
                 loading: false,
                 search: null,
+                path: "/",
+                paths: [
+                    {"text": "/", "value": "/"}
+                ],
+                pathItems: [],
+                newPath: "",
                 items: {
                     thumbs: thumbs,
                     sizes: this.sizes(thumbs),
@@ -383,6 +401,11 @@
                 this.model[prop] = true;
             },
             save() {
+                if (this.loading) {
+                    this.$notify.wait();
+                    return;
+                }
+
                 this.loading = true;
 
                 this.model.update().then(() => {
@@ -402,9 +425,38 @@
 
                 return result;
             },
+            onChange() {
+                this.paths = [{"text": "/", "value": "/"}];
+
+                this.loading = true;
+                this.model.Ls().then(l => {
+                    for (let i = 0; i < l.length; i++) {
+                        this.paths.push({"text": l[i], "value": l[i]});
+                    }
+
+                    this.pathItems = [...this.paths];
+                    this.path = this.model.SharePath;
+                }).finally(() => this.loading = false);
+            },
         },
         watch: {
+            search(q) {
+                if (this.loading) return;
+
+                const exists = this.paths.findIndex((p) => p.value === q);
+
+                if (exists !== -1 || !q) {
+                    this.pathItems = this.paths;
+                    this.newPath = "";
+                } else {
+                    this.newPath = q;
+                    this.pathItems = this.paths.concat([{"text": q, "value": q}]);
+                }
+            },
             show: function (show) {
+                if(show) {
+                    this.onChange();
+                }
             }
         },
     }

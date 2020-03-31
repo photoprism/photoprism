@@ -41,8 +41,8 @@ func (c Client) readDir(path string) ([]os.FileInfo, error) {
 }
 
 // Files returns all files in path as string slice.
-func (c Client) Files(path string) (result []string, err error) {
-	files, err := c.readDir(path)
+func (c Client) Files(dir string) (result []string, err error) {
+	files, err := c.readDir(dir)
 
 	if err != nil {
 		return result, err
@@ -52,18 +52,22 @@ func (c Client) Files(path string) (result []string, err error) {
 		if !file.Mode().IsRegular() {
 			continue
 		}
-		result = append(result, fmt.Sprintf("%s/%s", path, file.Name()))
+		result = append(result, fmt.Sprintf("%s/%s", dir, file.Name()))
 	}
 
 	return result, nil
 }
 
 // Directories returns all sub directories in path as string slice.
-func (c Client) Directories(path string, recursive bool) (result []string, err error) {
-	files, err := c.readDir(path)
+func (c Client) Directories(root string, recursive bool) (result []string, err error) {
+	files, err := c.readDir(root)
 
 	if err != nil {
 		return result, err
+	}
+
+	if root == "/" {
+		root = ""
 	}
 
 	for _, file := range files {
@@ -71,7 +75,8 @@ func (c Client) Directories(path string, recursive bool) (result []string, err e
 			continue
 		}
 
-		dir := fmt.Sprintf("%s/%s", path, file.Name())
+		dir := fmt.Sprintf("%s/%s", root, file.Name())
+
 		result = append(result, dir)
 
 		if recursive {

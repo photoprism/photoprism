@@ -58,6 +58,10 @@ class Account extends Abstract {
         return Api.put(this.getEntityResource(), values).then((response) => Promise.resolve(this.setValues(response.data)));
     }
 
+    Ls() {
+        return Api.get(this.getEntityResource() + "/ls").then((response) => Promise.resolve(response.data));
+    }
+
     static getCollectionResource() {
         return "accounts";
     }

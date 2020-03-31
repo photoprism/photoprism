@@ -1,12 +1,12 @@
-import PAccountAddDialog from "./p-account-add-dialog.vue";
-import PAccountRemoveDialog from "./p-account-remove-dialog.vue";
-import PAccountEditDialog from "./p-account-edit-dialog.vue";
+import PAccountAddDialog from "./account/p-account-add-dialog.vue";
+import PAccountRemoveDialog from "./account/p-account-remove-dialog.vue";
+import PAccountEditDialog from "./account/p-account-edit-dialog.vue";
 import PPhotoArchiveDialog from "./p-photo-archive-dialog.vue";
 import PPhotoAlbumDialog from "./p-photo-album-dialog.vue";
 import PPhotoEditDialog from "./p-photo-edit-dialog.vue";
 import PPhotoShareDialog from "./p-photo-share-dialog.vue";
-import PAlbumDeleteDialog from "./p-album-delete-dialog.vue";
-import PLabelDeleteDialog from "./p-label-delete-dialog.vue";
+import PAlbumDeleteDialog from "./album/p-album-delete-dialog.vue";
+import PLabelDeleteDialog from "./label/p-label-delete-dialog.vue";
 import PUploadDialog from "./p-upload-dialog.vue";
 
 const dialogs = {};

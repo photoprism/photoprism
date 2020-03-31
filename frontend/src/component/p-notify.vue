@@ -49,6 +49,11 @@
                 // get message from data object
                 let m = data.msg;
 
+                if (!m || !m.length) {
+                    console.warn("notify: error message missing in api response");
+                    return;
+                }
+
                 // first letter uppercase
                 m = m.replace(/^./, m[0].toUpperCase());
 

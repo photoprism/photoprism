@@ -37,6 +37,9 @@ const Notify = {
             el.style.display = "none";
         }
     },
+    wait: function () {
+        this.warning("Busy, please wait...");
+    },
 };
 
 export default Notify;

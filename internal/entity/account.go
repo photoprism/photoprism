@@ -2,11 +2,13 @@ package entity
 
 import (
 	"database/sql"
+	"sort"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/ulule/deepcopier"
 )
 
@@ -79,4 +81,16 @@ func (m *Account) Save(form form.Account, db *gorm.DB) error {
 // Delete deletes the entity from the database.
 func (m *Account) Delete(db *gorm.DB) error {
 	return db.Delete(m).Error
+}
+
+// Ls returns a list of directories or albums in an account.
+func (m *Account) Ls() (result []string, err error) {
+	if m.AccType == string(service.TypeWebDAV) {
+		c := webdav.Connect(m.AccURL, m.AccUser, m.AccPass)
+		result, err = c.Directories("/", true)
+	}
+
+	sort.Strings(result)
+
+	return result, err
 }

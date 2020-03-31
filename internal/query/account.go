@@ -7,7 +7,25 @@ import (
 
 // Accounts returns a list of accounts.
 func (q *Query) Accounts(f form.AccountSearch) (result []entity.Account, err error) {
-	if err := q.db.Where(&entity.Account{}).Limit(f.Count).Offset(f.Offset).Find(&result).Error; err != nil {
+	s := q.db.Where(&entity.Account{})
+
+	if f.Share {
+		s = s.Where("acc_share = 1")
+	}
+
+	if f.Sync {
+		s = s.Where("acc_sync = 1")
+	}
+
+	s = s.Order("acc_name ASC")
+
+	if f.Count > 0 && f.Count <= 1000 {
+		s = s.Limit(f.Count).Offset(f.Offset)
+	} else {
+		s = s.Limit(1000).Offset(0)
+	}
+
+	if err := s.Find(&result).Error; err != nil {
 		return result, err
 	}
 

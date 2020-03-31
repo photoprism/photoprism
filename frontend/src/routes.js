@@ -129,7 +129,7 @@ export default [
         props: {tab: 0},
     },
     {
-        name: "settings",
+        name: "settings_accounts",
         path: "/settings/accounts",
         component: Settings,
         meta: {title: "Settings", auth: true, background: "application-light"},
