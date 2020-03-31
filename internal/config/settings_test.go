@@ -1,6 +1,7 @@
 package config
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -29,8 +30,8 @@ func TestSettings_Load(t *testing.T) {
 
 		assert.Error(t, err)
 
-		assert.Equal(t, "", c.Theme)
-		assert.Equal(t, "", c.Language)
+		assert.Equal(t, "default", c.Theme)
+		assert.Equal(t, "en", c.Language)
 	})
 }
 func TestSettings_Save(t *testing.T) {
@@ -56,6 +57,12 @@ func TestSettings_Save(t *testing.T) {
 
 		err := c.Save("testdata/configEmpty123.yml")
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := os.Remove("testdata/configEmpty123.yml"); err != nil {
+			t.Fatal(err)
+		}
 	})
 }

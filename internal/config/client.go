@@ -57,6 +57,7 @@ func (c *Config) PublicClientConfig() ClientConfig {
 	}{}
 
 	result := ClientConfig{
+		"settings":     c.Settings(),
 		"flags":        strings.Join(flags, " "),
 		"name":         c.Name(),
 		"url":          c.Url(),
@@ -79,7 +80,6 @@ func (c *Config) PublicClientConfig() ClientConfig {
 		"thumbnails":   Thumbnails,
 		"jsHash":       jsHash,
 		"cssHash":      cssHash,
-		"settings":     c.Settings(),
 		"count":        count,
 		"pos":          noPos,
 		"years":        []int{},

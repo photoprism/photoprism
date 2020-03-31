@@ -9,15 +9,26 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type MapsSettings struct {
+	Animate int `json:"animate" yaml:"animate"`
+}
+
 // Settings contains Web UI settings
 type Settings struct {
-	Theme    string `json:"theme" yaml:"theme" flag:"theme"`
-	Language string `json:"language" yaml:"language" flag:"language"`
+	Theme        string       `json:"theme" yaml:"theme"`
+	Language     string       `json:"language" yaml:"language"`
+	Maps         MapsSettings `json:"maps" yaml:"maps"`
 }
 
 // NewSettings returns a empty Settings
 func NewSettings() *Settings {
-	return &Settings{}
+	return &Settings{
+		Theme:    "default",
+		Language: "en",
+		Maps: MapsSettings{
+			Animate: 0,
+		},
+	}
 }
 
 // Load uses a yaml config file to initiate the configuration entity.

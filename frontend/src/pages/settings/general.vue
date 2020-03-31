@@ -24,6 +24,16 @@
                                 flat
                         ></v-select>
                     </v-flex>
+
+                    <v-flex xs12 sm6 class="pr-3">
+                        <v-select
+                                :items="options.mapsAnimate"
+                                :label="labels.mapsAnimate"
+                                color="secondary-dark"
+                                v-model="settings.maps.animate"
+                                flat
+                        ></v-select>
+                    </v-flex>
                 </v-layout>
 
                 <v-btn color="secondary-dark"
@@ -52,6 +62,7 @@
                 labels: {
                     language: this.$gettext("Language"),
                     theme: this.$gettext("Theme"),
+                    mapsAnimate: this.$gettext("Maps Animation"),
                 },
             };
         },

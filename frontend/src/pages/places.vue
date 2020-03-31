@@ -63,6 +63,7 @@
                     search: this.$gettext("Search"),
                 },
                 config: this.$config.values,
+                settings: this.$config.values.settings.maps,
             }
         },
         methods: {
@@ -127,7 +128,7 @@
                     this.map.getSource("photos").setData(this.result);
 
                     if (this.filter.q || !this.initialized) {
-                        this.map.fitBounds(this.result.bbox, {maxZoom: 17, padding: 100, duration: 15000, essential: false, animate: true});
+                        this.map.fitBounds(this.result.bbox, {maxZoom: 17, padding: 100, duration: this.settings.animate, essential: false, animate: this.settings.animate > 0});
                     }
 
                     this.initialized = true;

@@ -46,5 +46,23 @@
       "text": "Seaweed",
       "value": "seaweed"
     }
+  ],
+  "mapsAnimate": [
+    {
+      "text": "None",
+      "value": 0
+    },
+    {
+      "text": "Fast",
+      "value": 5000
+    },
+    {
+      "text": "Medium",
+      "value": 10000
+    },
+    {
+      "text": "Slow",
+      "value": 15000
+    }
   ]
 }

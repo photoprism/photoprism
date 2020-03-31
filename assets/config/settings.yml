@@ -1,2 +1,4 @@
 theme: default
 language: en
+maps:
+  animate: 5000
