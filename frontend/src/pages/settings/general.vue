@@ -4,29 +4,29 @@
                 ref="form" class="p-form-settings" accept-charset="UTF-8"
                 @submit.prevent="save">
             <v-card flat tile class="px-1 application">
-                <v-card-title primary-title>
+                <v-card-title primary-title class="pb-2">
                     <h3 class="body-2 mb-0">User Interface</h3>
                 </v-card-title>
 
                 <v-card-actions>
                     <v-layout wrap align-center>
-                        <v-flex xs12 sm6 class="px-2">
-                            <v-select
-                                    :items="options.languages"
-                                    :label="labels.language"
-                                    color="secondary-dark"
-                                    v-model="settings.language"
-                                    flat
-                            ></v-select>
-                        </v-flex>
-
-                        <v-flex xs12 sm6 class="px-2">
+                        <v-flex xs12 sm6 class="px-2 pb-2">
                             <v-select
                                     :items="options.themes"
                                     :label="labels.theme"
                                     color="secondary-dark"
                                     v-model="settings.theme"
-                                    flat
+                                    hide-details box
+                            ></v-select>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 class="px-2 pb-2">
+                            <v-select
+                                    :items="options.languages"
+                                    :label="labels.language"
+                                    color="secondary-dark"
+                                    v-model="settings.language"
+                                    hide-details box
                             ></v-select>
                         </v-flex>
                     </v-layout>
@@ -34,38 +34,38 @@
             </v-card>
 
             <v-card flat tile class="mt-0 px-1 application">
-                <v-card-title primary-title>
+                <v-card-title primary-title class="pb-2">
                     <h3 class="body-2 mb-0">Places</h3>
                 </v-card-title>
 
                 <v-card-actions>
                     <v-layout wrap align-center>
-                        <v-flex xs12 sm6 class="px-2">
-                            <v-select
-                                    :items="options.mapsAnimate"
-                                    :label="labels.mapsAnimate"
-                                    color="secondary-dark"
-                                    v-model="settings.maps.animate"
-                                    flat
-                            ></v-select>
-                        </v-flex>
-
-                        <v-flex xs12 sm6 class="px-2">
+                        <v-flex xs12 sm6 class="px-2 pb-2">
                             <v-select
                                     :items="options.mapsStyle"
                                     :label="labels.mapsStyle"
                                     color="secondary-dark"
                                     v-model="settings.maps.style"
-                                    flat
+                                    hide-details box
+                            ></v-select>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 class="px-2 pb-2">
+                            <v-select
+                                    :items="options.mapsAnimate"
+                                    :label="labels.mapsAnimate"
+                                    color="secondary-dark"
+                                    v-model="settings.maps.animate"
+                                    hide-details box
                             ></v-select>
                         </v-flex>
                     </v-layout>
                 </v-card-actions>
             </v-card>
 
-            <v-container fluid>
+            <v-container fluid class="mt-1">
                 <v-btn color="secondary-dark"
-                       class="ml-1 mt-0"
+                       class="ml-1"
                        depressed dark
                        @click.stop="save">
                     <translate>Save</translate>
