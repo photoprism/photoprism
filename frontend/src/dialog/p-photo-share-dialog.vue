@@ -63,6 +63,7 @@
         name: 'p-photo-share-dialog',
         props: {
             show: Boolean,
+            selection: Array,
         },
         data() {
             return {
@@ -98,7 +99,14 @@
                     return;
                 }
 
-                this.$emit('confirm', this.account);
+                this.loading = true;
+                this.account.Share(this.selection, this.path).then(
+                    (files) => {
+                        this.loading = false;
+                        this.$notify.success(files.length + " files uploaded");
+                        this.$emit('confirm', this.account);
+                    }
+                ).catch(() => this.loading = false);
             },
             onChange() {
                 this.paths = [{"text": "/", "value": "/"}];

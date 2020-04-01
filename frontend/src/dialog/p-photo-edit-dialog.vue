@@ -59,9 +59,9 @@
 </template>
 <script>
     import Photo from "../model/photo";
-    import PhotoEditDetails from "./photo-edit/details.vue";
-    import PhotoEditLabels from "./photo-edit/labels.vue";
-    import PhotoEditFiles from "./photo-edit/files.vue";
+    import PhotoEditDetails from "./photo/details.vue";
+    import PhotoEditLabels from "./photo/labels.vue";
+    import PhotoEditFiles from "./photo/files.vue";
 
     export default {
         name: 'p-photo-edit-dialog',

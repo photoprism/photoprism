@@ -62,6 +62,12 @@ class Account extends Abstract {
         return Api.get(this.getEntityResource() + "/ls").then((response) => Promise.resolve(response.data));
     }
 
+    Share(UUIDs, dest) {
+        const values = { Photos: UUIDs, Destination: dest };
+
+        return Api.post(this.getEntityResource() + "/share", values).then((response) => Promise.resolve(response.data));
+    }
+
     static getCollectionResource() {
         return "accounts";
     }

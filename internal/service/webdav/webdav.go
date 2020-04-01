@@ -156,6 +156,15 @@ func (c Client) DownloadDir(from, to string, recursive bool) (errs []error) {
 	return errs
 }
 
+// CreateDir recursively creates directories if they don't exist.
+func (c Client) CreateDir(dir string) error {
+	if dir == "" || dir == "/" {
+		return nil
+	}
+
+	return c.client.MkdirAll(dir, os.ModePerm)
+}
+
 // Upload uploads a single file to the remote server.
 func (c Client) Upload(from, to string) error {
 	file, err := os.Open(from)

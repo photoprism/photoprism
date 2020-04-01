@@ -63,8 +63,8 @@ func (m *File) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("FileUUID", rnd.PPID('f'))
 }
 
-// DownloadFileName returns a name useful for download links
-func (m *File) DownloadFileName() string {
+// ShareFileName returns a meaningful file name useful for sharing.
+func (m *File) ShareFileName() string {
 	if m.Photo == nil {
 		return fmt.Sprintf("%s.%s", m.FileHash, m.FileType)
 	}

@@ -77,7 +77,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 
 		for _, f := range files {
 			fileName := path.Join(conf.OriginalsPath(), f.FileName)
-			fileAlias := f.DownloadFileName()
+			fileAlias := f.ShareFileName()
 
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {

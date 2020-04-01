@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -72,7 +74,7 @@ func GetAccount(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func GetAccountLs(router *gin.RouterGroup, conf *config.Config) {
+func LsAccount(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/accounts/:id/ls", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
@@ -98,6 +100,62 @@ func GetAccountLs(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		c.JSON(http.StatusOK, list)
+	})
+}
+
+// GET /api/v1/accounts/:id/share
+//
+// Parameters:
+//   id: string Account ID as returned by the API
+func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
+	router.POST("/accounts/:id/share", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		q := query.New(conf.Db())
+		id := ParseUint(c.Param("id"))
+
+		m, err := q.AccountByID(id)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
+			return
+		}
+
+		var f form.AccountShare
+
+		if err := c.BindJSON(&f); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		dst := f.Destination
+		files, err := q.FilesByUUID(f.Photos, 1000, 0)
+
+		if err != nil {
+			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
+			return
+		}
+
+		w := webdav.Connect(m.AccURL, m.AccUser, m.AccPass)
+
+		if err := w.CreateDir(dst); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		for _, file := range files {
+			srcFileName := conf.OriginalsPath() + string(os.PathSeparator) + file.FileName
+			dstFileName := dst + "/" + file.ShareFileName()
+
+			if err := w.Upload(srcFileName, dstFileName); err != nil {
+				log.Error("upload failed: %s", err.Error())
+			}
+		}
+
+		c.JSON(http.StatusOK, files)
 	})
 }
 

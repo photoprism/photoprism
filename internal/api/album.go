@@ -476,7 +476,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		if thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
 			if c.Query("download") != "" {
-				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.DownloadFileName()))
+				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.ShareFileName()))
 			}
 
 			thumbData, err := ioutil.ReadFile(thumbnail)
