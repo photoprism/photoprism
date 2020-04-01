@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -147,12 +146,10 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		for _, file := range files {
-			srcFileName := conf.OriginalsPath() + string(os.PathSeparator) + file.FileName
 			dstFileName := dst + "/" + file.ShareFileName()
 
-			if err := w.Upload(srcFileName, dstFileName); err != nil {
-				log.Errorf("upload failed: %s", err.Error())
-			}
+			fileShare := entity.NewFileShare(file.ID, m.ID, dstFileName)
+			fileShare.FirstOrCreate(conf.Db())
 		}
 
 		c.JSON(http.StatusOK, files)
