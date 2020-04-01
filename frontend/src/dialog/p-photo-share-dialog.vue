@@ -10,12 +10,13 @@
                         <v-select
                                 color="secondary-dark"
                                 class="mr-2"
-                                hide-details flat
+                                hide-details hide-no-data flat
                                 :label="labels.account"
                                 item-text="AccName"
                                 item-value="ID"
                                 @change="onChange"
                                 return-object
+                                :disabled="loading || noAccounts"
                                 v-model="account"
                                 :items="accounts">
                         </v-select>
@@ -30,7 +31,7 @@
                                 :search-input.sync="search"
                                 :items="pathItems"
                                 :loading="loading"
-                                :disabled="loading"
+                                :disabled="loading || noAccounts"
                                 item-text="text"
                                 item-value="value"
                                 :label="labels.path"
@@ -38,11 +39,15 @@
                         </v-autocomplete>
                     </v-flex>
                     <v-flex xs12 text-xs-right class="pt-3">
-                        <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="p-photo-dialog-cancel">
+                        <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="action-cancel">
                             <translate>Cancel</translate>
                         </v-btn>
+                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="setup"
+                               class="action-setup" v-if="noAccounts">
+                            <span>{{ labels.setup }}</span>
+                        </v-btn>
                         <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
-                               class="p-photo-dialog-confirm">
+                               class="action-upload" v-else>
                             <span>{{ labels.upload }}</span>
                         </v-btn>
                     </v-flex>
@@ -61,6 +66,7 @@
         },
         data() {
             return {
+                noAccounts: false,
                 loading: true,
                 search: null,
                 account: {},
@@ -75,12 +81,16 @@
                     account: this.$gettext("Account"),
                     path: this.$gettext("Location"),
                     upload: this.$gettext("Upload"),
+                    setup: this.$gettext("Setup"),
                 }
             }
         },
         methods: {
             cancel() {
                 this.$emit('cancel');
+            },
+            setup() {
+                this.$router.push({name: "settings_accounts"});
             },
             confirm() {
                 if (this.loading) {
@@ -114,9 +124,14 @@
                 };
 
                 Account.search(params).then(response => {
-                    this.account = response.models[0];
-                    this.accounts = response.models;
-                    this.onChange();
+                    if (!response.models.length) {
+                        this.noAccounts = true;
+                        this.loading = false;
+                    } else {
+                        this.account = response.models[0];
+                        this.accounts = response.models;
+                        this.onChange();
+                    }
                 }).catch(() => this.loading = false)
             },
         },
