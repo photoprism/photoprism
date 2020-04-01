@@ -26,6 +26,7 @@
                             v-model="newLabel"
                             :rules="[nameRule]"
                             color="secondary-dark"
+                            browser-autocomplete="off"
                             :label="labels.addLabel"
                             single-line
                             flat solo hide-details

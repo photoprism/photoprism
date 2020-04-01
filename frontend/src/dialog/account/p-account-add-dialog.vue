@@ -11,6 +11,7 @@
                     <v-flex xs12 class="pa-2">
                         <v-text-field
                                 hide-details
+                                browser-autocomplete="off"
                                 :label="label.url"
                                 placeholder="https://www.example.com/"
                                 color="secondary-dark"
@@ -20,6 +21,7 @@
                     <v-flex xs12 sm6 class="pa-2">
                         <v-text-field
                                 hide-details
+                                browser-autocomplete="off"
                                 :label="label.user"
                                 placeholder="optional"
                                 color="secondary-dark"
@@ -29,6 +31,7 @@
                     <v-flex xs12 sm6 class="pa-2">
                         <v-text-field
                                 hide-details
+                                browser-autocomplete="off"
                                 :label="label.pass"
                                 placeholder="optional"
                                 color="secondary-dark"

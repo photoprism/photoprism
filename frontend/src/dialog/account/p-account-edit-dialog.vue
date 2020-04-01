@@ -91,6 +91,7 @@
                         <v-select
                                 :disabled="!model.AccShare"
                                 :label="label.ShareSize"
+                                browser-autocomplete="off"
                                 hide-details
                                 color="secondary-dark"
                                 item-text="text"
@@ -103,6 +104,7 @@
                         <v-select
                                 :disabled="!model.AccShare"
                                 :label="label.ShareExpires"
+                                browser-autocomplete="off"
                                 hide-details
                                 color="secondary-dark"
                                 item-text="text"
@@ -114,6 +116,7 @@
                     <v-flex xs12 sm6 class="px-2">
                         <v-checkbox
                                 :disabled="!model.AccShare"
+                                browser-autocomplete="off"
                                 hide-details
                                 color="secondary-dark"
                                 :label="label.ShareExif"
@@ -123,6 +126,7 @@
                     <v-flex xs12 sm6 class="px-2">
                         <v-checkbox
                                 :disabled="!model.AccShare"
+                                browser-autocomplete="off"
                                 hide-details
                                 color="secondary-dark"
                                 :label="label.ShareSidecar"
@@ -152,6 +156,7 @@
                         <v-select
                                 :disabled="!model.AccSync"
                                 :label="label.SyncInterval"
+                                browser-autocomplete="off"
                                 hide-details
                                 color="secondary-dark"
                                 item-text="text"
@@ -210,6 +215,7 @@
                     <v-flex xs12 class="pa-2">
                         <v-text-field
                                 hide-details
+                                browser-autocomplete="off"
                                 :label="label.name"
                                 placeholder=""
                                 color="secondary-dark"
@@ -220,6 +226,7 @@
                     <v-flex xs12 class="pa-2">
                         <v-text-field
                                 hide-details
+                                browser-autocomplete="off"
                                 :label="label.url"
                                 placeholder="https://www.example.com/"
                                 color="secondary-dark"
@@ -229,6 +236,7 @@
                     <v-flex xs12 sm6 class="pa-2">
                         <v-text-field
                                 hide-details
+                                browser-autocomplete="off"
                                 :label="label.user"
                                 placeholder="optional"
                                 color="secondary-dark"
@@ -238,6 +246,7 @@
                     <v-flex xs12 sm6 class="pa-2">
                         <v-text-field
                                 hide-details
+                                browser-autocomplete="off"
                                 :label="label.pass"
                                 placeholder="optional"
                                 color="secondary-dark"
@@ -250,6 +259,7 @@
                     <v-flex xs12 sm6 class="pa-2">
                         <v-text-field
                                 hide-details
+                                browser-autocomplete="off"
                                 :label="label.apiKey"
                                 placeholder="optional"
                                 color="secondary-dark"
@@ -260,6 +270,7 @@
                     <v-flex xs12 sm6 pa-2 class="input-account-type">
                         <v-select
                                 :label="label.AccType"
+                                browser-autocomplete="off"
                                 hide-details
                                 color="secondary-dark"
                                 item-text="text"

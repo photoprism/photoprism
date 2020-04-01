@@ -40,6 +40,7 @@
                                         label="Title"
                                         placeholder=""
                                         color="secondary-dark"
+                                        browser-autocomplete="off"
                                         v-model="model.PhotoTitle"
                                 ></v-text-field>
                             </v-flex>
@@ -48,6 +49,7 @@
 
                                 <v-text-field
                                         :value="timeLocalFormatted"
+                                        browser-autocomplete="off"
                                         label="Local Time"
                                         readonly
                                         hide-details
@@ -90,6 +92,7 @@
                                     <template v-slot:activator="{ on }">
                                         <v-text-field
                                                 :value="dateFormatted"
+                                                browser-autocomplete="off"
                                                 label="UTC Date"
                                                 readonly
                                                 hide-details
@@ -120,6 +123,7 @@
                             <v-flex xs12 md6 pa-2 class="p-camera-select">
                                 <v-select
                                         :label="labels.camera"
+                                        browser-autocomplete="off"
                                         hide-details
                                         color="secondary-dark"
                                         item-value="ID"
@@ -131,6 +135,7 @@
                             <v-flex xs12 md6 pa-2 class="p-lens-select">
                                 <v-select
                                         :label="labels.lens"
+                                        browser-autocomplete="off"
                                         hide-details
                                         color="secondary-dark"
                                         item-value="ID"
@@ -143,6 +148,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
+                                        browser-autocomplete="off"
                                         label="Latitude"
                                         placeholder=""
                                         color="secondary-dark"
@@ -152,6 +158,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
+                                        browser-autocomplete="off"
                                         label="Longitude"
                                         placeholder=""
                                         color="secondary-dark"
@@ -161,6 +168,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
+                                        browser-autocomplete="off"
                                         label="Altitude (m)"
                                         placeholder=""
                                         color="secondary-dark"
@@ -172,6 +180,7 @@
                                 <v-select
                                         :label="labels.country"
                                         hide-details
+                                        browser-autocomplete="off"
                                         color="secondary-dark"
                                         item-value="code"
                                         item-text="name"
@@ -183,6 +192,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
+                                        browser-autocomplete="off"
                                         label="Focal Length"
                                         placeholder=""
                                         color="secondary-dark"
@@ -193,6 +203,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
+                                        browser-autocomplete="off"
                                         label="F Number"
                                         placeholder=""
                                         color="secondary-dark"
@@ -203,6 +214,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
+                                        browser-autocomplete="off"
                                         label="ISO"
                                         placeholder=""
                                         color="secondary-dark"
@@ -213,6 +225,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
+                                        browser-autocomplete="off"
                                         label="Exposure"
                                         placeholder=""
                                         color="secondary-dark"
@@ -223,6 +236,7 @@
                             <v-flex xs12 class="pa-2">
                                 <v-textarea
                                         hide-details
+                                        browser-autocomplete="off"
                                         auto-grow
                                         label="Description"
                                         placeholder=""
@@ -235,6 +249,7 @@
                             <v-flex xs12 md6 class="pa-2">
                                 <v-textarea
                                         hide-details
+                                        browser-autocomplete="off"
                                         auto-grow
                                         label="Keywords"
                                         placeholder=""
@@ -247,6 +262,7 @@
                             <v-flex xs12 md6 class="pa-2">
                                 <v-textarea
                                         hide-details
+                                        browser-autocomplete="off"
                                         auto-grow
                                         label="Notes"
                                         placeholder=""
@@ -259,6 +275,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-textarea
                                         hide-details
+                                        browser-autocomplete="off"
                                         auto-grow
                                         label="Subject"
                                         placeholder=""
@@ -271,6 +288,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
+                                        browser-autocomplete="off"
                                         label="Artist"
                                         placeholder=""
                                         color="secondary-dark"
@@ -281,6 +299,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         hide-details
+                                        browser-autocomplete="off"
                                         label="Copyright"
                                         placeholder=""
                                         color="secondary-dark"
@@ -291,6 +310,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-textarea
                                         hide-details
+                                        browser-autocomplete="off"
                                         auto-grow
                                         label="License"
                                         placeholder=""
