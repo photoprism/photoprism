@@ -15,6 +15,7 @@
                                     :items="options.themes"
                                     :label="labels.theme"
                                     color="secondary-dark"
+                                    background-color="secondary-light"
                                     v-model="settings.theme"
                                     hide-details box
                             ></v-select>
@@ -25,6 +26,7 @@
                                     :items="options.languages"
                                     :label="labels.language"
                                     color="secondary-dark"
+                                    background-color="secondary-light"
                                     v-model="settings.language"
                                     hide-details box
                             ></v-select>
@@ -45,6 +47,7 @@
                                     :items="options.mapsStyle"
                                     :label="labels.mapsStyle"
                                     color="secondary-dark"
+                                    background-color="secondary-light"
                                     v-model="settings.maps.style"
                                     hide-details box
                             ></v-select>
@@ -55,6 +58,7 @@
                                     :items="options.mapsAnimate"
                                     :label="labels.mapsAnimate"
                                     color="secondary-dark"
+                                    background-color="secondary-light"
                                     v-model="settings.maps.animate"
                                     hide-details box
                             ></v-select>
