@@ -151,7 +151,7 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 			dstFileName := dst + "/" + file.ShareFileName()
 
 			if err := w.Upload(srcFileName, dstFileName); err != nil {
-				log.Error("upload failed: %s", err.Error())
+				log.Errorf("upload failed: %s", err.Error())
 			}
 		}
 
