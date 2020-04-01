@@ -103,7 +103,13 @@
                 this.account.Share(this.selection, this.path).then(
                     (files) => {
                         this.loading = false;
-                        this.$notify.success(files.length + " files uploaded");
+
+                        if(files.length === 1) {
+                            this.$notify.success("One photo shared");
+                        } else {
+                            this.$notify.success(files.length + " photos shared");
+                        }
+
                         this.$emit('confirm', this.account);
                     }
                 ).catch(() => this.loading = false);
