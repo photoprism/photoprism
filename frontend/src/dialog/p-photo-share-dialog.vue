@@ -32,8 +32,8 @@
                                 :items="pathItems"
                                 :loading="loading"
                                 :disabled="loading || noAccounts"
-                                item-text="text"
-                                item-value="value"
+                                item-text="abs"
+                                item-value="abs"
                                 :label="labels.path"
                         >
                         </v-autocomplete>
@@ -74,7 +74,7 @@
                 accounts: [],
                 path: "/",
                 paths: [
-                    {"text": "/", "value": "/"}
+                    {"abs": "/"}
                 ],
                 pathItems: [],
                 newPath: "",
@@ -104,7 +104,7 @@
                     (files) => {
                         this.loading = false;
 
-                        if(files.length === 1) {
+                        if (files.length === 1) {
                             this.$notify.success("One photo shared");
                         } else {
                             this.$notify.success(files.length + " photos shared");
@@ -115,13 +115,12 @@
                 ).catch(() => this.loading = false);
             },
             onChange() {
-                this.paths = [{"text": "/", "value": "/"}];
+                this.paths = [{"abs": "/"}];
 
                 this.loading = true;
-                this.account.Ls().then(l => {
-                    console.log("result", l);
-                    for (let i = 0; i < l.length; i++) {
-                        this.paths.push({"text": l[i], "value": l[i]});
+                this.account.Dirs().then(p => {
+                    for (let i = 0; i < p.length; i++) {
+                        this.paths.push(p[i]);
                     }
 
                     this.pathItems = [...this.paths];
@@ -160,7 +159,7 @@
                     this.newPath = "";
                 } else {
                     this.newPath = q;
-                    this.pathItems = this.paths.concat([{"text": q, "value": q}]);
+                    this.pathItems = this.paths.concat([{"abs": q}]);
                 }
             },
             show: function (show) {

@@ -14,6 +14,7 @@ import (
 	"path"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/studio-b12/gowebdav"
 )
 
@@ -41,7 +42,7 @@ func (c Client) readDir(path string) ([]os.FileInfo, error) {
 }
 
 // Files returns all files in path as string slice.
-func (c Client) Files(dir string) (result []string, err error) {
+func (c Client) Files(dir string) (result fs.FileInfos, err error) {
 	files, err := c.readDir(dir)
 
 	if err != nil {
@@ -52,14 +53,17 @@ func (c Client) Files(dir string) (result []string, err error) {
 		if !file.Mode().IsRegular() {
 			continue
 		}
-		result = append(result, fmt.Sprintf("%s/%s", dir, file.Name()))
+
+		info := fs.NewFileInfo(file, dir)
+
+		result = append(result, info)
 	}
 
 	return result, nil
 }
 
 // Directories returns all sub directories in path as string slice.
-func (c Client) Directories(root string, recursive bool) (result []string, err error) {
+func (c Client) Directories(root string, recursive bool) (result fs.FileInfos, err error) {
 	files, err := c.readDir(root)
 
 	if err != nil {
@@ -75,12 +79,12 @@ func (c Client) Directories(root string, recursive bool) (result []string, err e
 			continue
 		}
 
-		dir := fmt.Sprintf("%s/%s", root, file.Name())
+		info := fs.NewFileInfo(file, root)
 
-		result = append(result, dir)
+		result = append(result, info)
 
 		if recursive {
-			subDirs, err := c.Directories(dir, true)
+			subDirs, err := c.Directories(info.Abs, true)
 
 			if err != nil {
 				return result, err
@@ -125,7 +129,7 @@ func (c Client) DownloadDir(from, to string, recursive bool) (errs []error) {
 	}
 
 	for _, file := range files {
-		dest := to + string(os.PathSeparator) + file
+		dest := to + string(os.PathSeparator) + file.Abs
 
 		if _, err := os.Stat(dest); err == nil {
 			// File exists
@@ -135,7 +139,7 @@ func (c Client) DownloadDir(from, to string, recursive bool) (errs []error) {
 			continue
 		}
 
-		if err := c.Download(file, dest); err != nil {
+		if err := c.Download(file.Abs, dest); err != nil {
 			msg := fmt.Errorf("webdav: %s", err)
 			errs = append(errs, msg)
 			log.Error(msg)
@@ -150,7 +154,7 @@ func (c Client) DownloadDir(from, to string, recursive bool) (errs []error) {
 	dirs, err := c.Directories(from, false)
 
 	for _, dir := range dirs {
-		errs = append(errs, c.DownloadDir(dir, to, true)...)
+		errs = append(errs, c.DownloadDir(dir.Abs, to, true)...)
 	}
 
 	return errs

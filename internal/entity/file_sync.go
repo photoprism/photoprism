@@ -13,6 +13,8 @@ type FileSync struct {
 	FileID     uint   `gorm:"index;"`
 	AccountID  uint   `gorm:"primary_key;auto_increment:false"`
 	RemoteName string `gorm:"type:varbinary(256);primary_key;auto_increment:false"`
+	RemoteDate time.Time
+	RemoteSize int64
 	Status     string `gorm:"type:varbinary(16);"`
 	Error      string `gorm:"type:varbinary(512);"`
 	File       *File
@@ -32,6 +34,7 @@ func NewFileSync(accountID uint, remoteName string) *FileSync {
 	result := &FileSync{
 		AccountID:  accountID,
 		RemoteName: remoteName,
+		Status:     "new",
 	}
 
 	return result

@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/service/webdav"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/ulule/deepcopier"
 )
 
@@ -83,14 +84,14 @@ func (m *Account) Delete(db *gorm.DB) error {
 	return db.Delete(m).Error
 }
 
-// Ls returns a list of directories or albums in an account.
-func (m *Account) Ls() (result []string, err error) {
+// Directories returns a list of directories or albums in an account.
+func (m *Account) Directories() (result fs.FileInfos, err error) {
 	if m.AccType == string(service.TypeWebDAV) {
 		c := webdav.Connect(m.AccURL, m.AccUser, m.AccPass)
 		result, err = c.Directories("/", true)
 	}
 
-	sort.Strings(result)
+	sort.Sort(result)
 
 	return result, err
 }

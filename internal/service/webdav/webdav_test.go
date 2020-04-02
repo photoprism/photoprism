@@ -53,7 +53,11 @@ func TestClient_Directories(t *testing.T) {
 			t.Fatal("no directories found")
 		}
 
-		assert.Equal(t, "/Photos", dirs[0])
+		assert.IsType(t, fs.FileInfo{}, dirs[0])
+		assert.Equal(t, "Photos", dirs[0].Name)
+		assert.Equal(t, "/Photos", dirs[0].Abs)
+		assert.Equal(t, true, dirs[0].Dir)
+		assert.Equal(t, int64(0), dirs[0].Size)
 	})
 
 	t.Run("recursive", func(t *testing.T) {
@@ -87,7 +91,7 @@ func TestClient_Download(t *testing.T) {
 		t.Fatal("no files to download")
 	}
 
-	if err := c.Download(files[0], tempFile); err != nil {
+	if err := c.Download(files[0].Abs, tempFile); err != nil {
 		t.Fatal(err)
 	}
 

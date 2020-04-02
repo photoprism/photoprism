@@ -80,8 +80,8 @@
                                 :search-input.sync="search"
                                 :items="pathItems"
                                 :loading="loading"
-                                item-text="text"
-                                item-value="value"
+                                item-text="abs"
+                                item-value="abs"
                                 :label="label.SharePath"
                                 :disabled="!model.AccShare || loading"
                         >
@@ -145,8 +145,8 @@
                                 :search-input.sync="search"
                                 :items="pathItems"
                                 :loading="loading"
-                                item-text="text"
-                                item-value="value"
+                                item-text="abs"
+                                item-value="abs"
                                 :label="label.SyncPath"
                                 :disabled="!model.AccSync || loading"
                         >
@@ -317,7 +317,7 @@
                 search: null,
                 path: "/",
                 paths: [
-                    {"text": "/", "value": "/"}
+                    {"abs": "/"}
                 ],
                 pathItems: [],
                 newPath: "",
@@ -390,8 +390,7 @@
                 }
             }
         },
-        computed: {
-        },
+        computed: {},
         methods: {
             cancel() {
                 this.$emit('cancel');
@@ -437,12 +436,12 @@
                 return result;
             },
             onChange() {
-                this.paths = [{"text": "/", "value": "/"}];
+                this.paths = [{"abs": "/"}];
 
                 this.loading = true;
-                this.model.Ls().then(l => {
-                    for (let i = 0; i < l.length; i++) {
-                        this.paths.push({"text": l[i], "value": l[i]});
+                this.model.Dirs().then(p => {
+                    for (let i = 0; i < p.length; i++) {
+                        this.paths.push(p[i]);
                     }
 
                     this.pathItems = [...this.paths];
@@ -461,11 +460,11 @@
                     this.newPath = "";
                 } else {
                     this.newPath = q;
-                    this.pathItems = this.paths.concat([{"text": q, "value": q}]);
+                    this.pathItems = this.paths.concat([{"abs": q}]);
                 }
             },
             show: function (show) {
-                if(show) {
+                if (show) {
                     this.onChange();
                 }
             }

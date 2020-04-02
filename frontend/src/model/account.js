@@ -46,20 +46,8 @@ class Account extends Abstract {
         return this.ID;
     }
 
-    toggleShare() {
-        const values = { AccShare: !this.AccShare };
-
-        return Api.put(this.getEntityResource(), values).then((response) => Promise.resolve(this.setValues(response.data)));
-    }
-
-    toggleSync() {
-        const values = { AccSync: !this.AccSync };
-
-        return Api.put(this.getEntityResource(), values).then((response) => Promise.resolve(this.setValues(response.data)));
-    }
-
-    Ls() {
-        return Api.get(this.getEntityResource() + "/ls").then((response) => Promise.resolve(response.data));
+    Dirs() {
+        return Api.get(this.getEntityResource() + "/dirs").then((response) => Promise.resolve(response.data));
     }
 
     Share(UUIDs, dest) {

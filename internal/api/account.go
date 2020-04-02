@@ -69,12 +69,12 @@ func GetAccount(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// GET /api/v1/accounts/:id/ls
+// GET /api/v1/accounts/:id/dirs
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func LsAccount(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/accounts/:id/ls", func(c *gin.Context) {
+func GetAccountDirs(router *gin.RouterGroup, conf *config.Config) {
+	router.GET("/accounts/:id/dirs", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -90,7 +90,7 @@ func LsAccount(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		list, err := m.Ls()
+		list, err := m.Directories()
 
 		if err != nil {
 			log.Errorf("account: %s", err.Error())
