@@ -26,13 +26,12 @@ type Account struct {
 	AccError     string `gorm:"type:varbinary(512);"`
 	AccShare     bool
 	AccSync      bool
-	RetryLimit   uint
+	RetryLimit   int
 	SharePath    string `gorm:"type:varbinary(256);"`
 	ShareSize    string `gorm:"type:varbinary(16);"`
 	ShareExpires uint
-	ShareExif    bool
-	ShareSidecar bool
 	SyncPath     string `gorm:"type:varbinary(256);"`
+	SyncStatus   string `gorm:"type:varbinary(16);"`
 	SyncInterval uint
 	SyncUpload   bool
 	SyncDownload bool
@@ -87,7 +86,7 @@ func (m *Account) Delete(db *gorm.DB) error {
 // Directories returns a list of directories or albums in an account.
 func (m *Account) Directories() (result fs.FileInfos, err error) {
 	if m.AccType == string(service.TypeWebDAV) {
-		c := webdav.Connect(m.AccURL, m.AccUser, m.AccPass)
+		c := webdav.New(m.AccURL, m.AccUser, m.AccPass)
 		result, err = c.Directories("/", true)
 	}
 

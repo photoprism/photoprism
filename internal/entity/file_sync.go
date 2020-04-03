@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -17,9 +16,9 @@ type FileSync struct {
 	RemoteSize int64
 	Status     string `gorm:"type:varbinary(16);"`
 	Error      string `gorm:"type:varbinary(512);"`
+	Errors     int
 	File       *File
 	Account    *Account
-	SyncedAt   sql.NullTime
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

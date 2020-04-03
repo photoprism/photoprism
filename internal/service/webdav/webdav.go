@@ -24,8 +24,8 @@ type Client struct {
 	client *gowebdav.Client
 }
 
-// Connect creates a new WebDAV client.
-func Connect(url, user, pass string) Client {
+// New creates a new WebDAV client.
+func New(url, user, pass string) Client {
 	clt := gowebdav.NewClient(url, user, pass)
 
 	result := Client{client: clt}

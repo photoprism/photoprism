@@ -199,6 +199,8 @@ func (c *Config) Init(ctx context.Context) error {
 // Shutdown services and workers.
 func (c *Config) Shutdown() {
 	mutex.Worker.Cancel()
+	mutex.Share.Cancel()
+	mutex.Sync.Cancel()
 
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)

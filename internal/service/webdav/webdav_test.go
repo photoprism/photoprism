@@ -16,13 +16,13 @@ const (
 )
 
 func TestConnect(t *testing.T) {
-	c := Connect(testUrl, testUser, testPass)
+	c := New(testUrl, testUser, testPass)
 
 	assert.IsType(t, Client{}, c)
 }
 
 func TestClient_Files(t *testing.T) {
-	c := Connect(testUrl, testUser, testPass)
+	c := New(testUrl, testUser, testPass)
 
 	assert.IsType(t, Client{}, c)
 
@@ -38,7 +38,7 @@ func TestClient_Files(t *testing.T) {
 }
 
 func TestClient_Directories(t *testing.T) {
-	c := Connect(testUrl, testUser, testPass)
+	c := New(testUrl, testUser, testPass)
 
 	assert.IsType(t, Client{}, c)
 
@@ -74,7 +74,7 @@ func TestClient_Directories(t *testing.T) {
 }
 
 func TestClient_Download(t *testing.T) {
-	c := Connect(testUrl, testUser, testPass)
+	c := New(testUrl, testUser, testPass)
 
 	assert.IsType(t, Client{}, c)
 
@@ -105,7 +105,7 @@ func TestClient_Download(t *testing.T) {
 }
 
 func TestClient_DownloadDir(t *testing.T) {
-	c := Connect(testUrl, testUser, testPass)
+	c := New(testUrl, testUser, testPass)
 
 	assert.IsType(t, Client{}, c)
 
@@ -135,7 +135,7 @@ func TestClient_DownloadDir(t *testing.T) {
 }
 
 func TestClient_UploadAndDelete(t *testing.T) {
-	c := Connect(testUrl, testUser, testPass)
+	c := New(testUrl, testUser, testPass)
 
 	assert.IsType(t, Client{}, c)
 

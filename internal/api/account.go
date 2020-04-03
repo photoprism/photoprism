@@ -138,7 +138,7 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		w := webdav.Connect(m.AccURL, m.AccUser, m.AccPass)
+		w := webdav.New(m.AccURL, m.AccUser, m.AccPass)
 
 		if err := w.CreateDir(dst); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})

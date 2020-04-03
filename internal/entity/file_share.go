@@ -1,11 +1,17 @@
 package entity
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/mutex"
+)
+
+const (
+	FileShareNew     = "new"
+	FileShareError   = "error"
+	FileShareShared  = "shared"
+	FileShareRemoved = "removed"
 )
 
 // FileShare represents a one-to-many relation between File and Account for pushing files to remote services.
@@ -15,10 +21,9 @@ type FileShare struct {
 	RemoteName string `gorm:"primary_key;auto_increment:false;type:varbinary(256)"`
 	Status     string `gorm:"type:varbinary(16);"`
 	Error      string `gorm:"type:varbinary(512);"`
+	Errors     int
 	File       *File
 	Account    *Account
-	SharedAt   sql.NullTime
-	ExpiresAt  sql.NullTime
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

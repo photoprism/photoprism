@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/sevlyar/go-daemon"
@@ -115,11 +116,15 @@ func startAction(ctx *cli.Context) error {
 	// start web server
 	go server.Start(cctx, conf)
 
+	// start share & sync service workers
+	stop := photoprism.ServiceWorkers(conf)
+
 	// set up proper shutdown of daemon and web server
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 	<-quit
+	stop <- true
 	log.Info("shutting down...")
 	conf.Shutdown()
 	cancel()

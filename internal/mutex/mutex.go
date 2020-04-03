@@ -4,6 +4,9 @@ import (
 	"sync"
 )
 
-var Db = sync.Mutex{}
-
-var Worker = Busy{}
+var (
+	Db     = sync.Mutex{}
+	Worker = Busy{}
+	Sync   = Busy{}
+	Share  = Busy{}
+)

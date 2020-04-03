@@ -20,21 +20,19 @@ import (
 var log = event.Log
 var client = &http.Client{}
 
-type Type string
-
 const (
-	TypeWeb          Type = "web"
-	TypeWebDAV       Type = "webdav"
-	TypeFacebook     Type = "facebook"
-	TypeTwitter      Type = "twitter"
-	TypeFlickr       Type = "flickr"
-	TypeInstagram    Type = "instagram"
-	TypeEyeEm        Type = "eyeem"
-	TypeTelegram     Type = "telegram"
-	TypeWhatsApp     Type = "whatsapp"
-	TypeGooglePhotos Type = "gphotos"
-	TypeGoogleDrive  Type = "gdrive"
-	TypeOneDrive     Type = "onedrive"
+	TypeWeb          = "web"
+	TypeWebDAV       = "webdav"
+	TypeFacebook     = "facebook"
+	TypeTwitter      = "twitter"
+	TypeFlickr       = "flickr"
+	TypeInstagram    = "instagram"
+	TypeEyeEm        = "eyeem"
+	TypeTelegram     = "telegram"
+	TypeWhatsApp     = "whatsapp"
+	TypeGooglePhotos = "gphotos"
+	TypeGoogleDrive  = "gdrive"
+	TypeOneDrive     = "onedrive"
 )
 
 type Account struct {
@@ -47,7 +45,7 @@ type Account struct {
 }
 
 type Heuristic struct {
-	ServiceType Type
+	ServiceType string
 	Domains     []string
 	Paths       []string
 	Method      string

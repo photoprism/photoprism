@@ -23,8 +23,6 @@ type Account struct {
 	SharePath    string       `json:"SharePath"`
 	ShareSize    string       `json:"ShareSize"`
 	ShareExpires uint         `json:"ShareExpires"`
-	ShareExif    bool         `json:"ShareExif"`
-	ShareSidecar bool         `json:"ShareSidecar"`
 	SyncPath     string       `json:"SyncPath"`
 	SyncInterval uint         `json:"SyncInterval"`
 	SyncUpload   bool         `json:"SyncUpload"`

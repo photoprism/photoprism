@@ -113,26 +113,6 @@
                                 :items="items.expires">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 class="px-2">
-                        <v-checkbox
-                                :disabled="!model.AccShare"
-                                browser-autocomplete="off"
-                                hide-details
-                                color="secondary-dark"
-                                :label="label.ShareExif"
-                                v-model="model.ShareExif"
-                        ></v-checkbox>
-                    </v-flex>
-                    <v-flex xs12 sm6 class="px-2">
-                        <v-checkbox
-                                :disabled="!model.AccShare"
-                                browser-autocomplete="off"
-                                hide-details
-                                color="secondary-dark"
-                                :label="label.ShareSidecar"
-                                v-model="model.ShareSidecar"
-                        ></v-checkbox>
-                    </v-flex>
                 </v-layout>
                 <v-layout row wrap v-else-if="scope === 'sync'">
                     <v-flex xs12 sm6 class="pa-2">
@@ -376,8 +356,6 @@
                     SharePath: this.$gettext("Default Location"),
                     ShareSize: this.$gettext("Size"),
                     ShareExpires: this.$gettext("Expires"),
-                    ShareExif: this.$gettext("Include metadata"),
-                    ShareSidecar: this.$gettext("Include sidecar files"),
                     SyncPath: this.$gettext("Location"),
                     SyncInterval: this.$gettext("Interval"),
                     SyncStart: this.$gettext("Start"),
