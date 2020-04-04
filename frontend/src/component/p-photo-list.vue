@@ -28,7 +28,7 @@
                 </span>
             </td>
             <td class="hidden-sm-and-down">{{ props.item.CameraMake }} {{ props.item.CameraModel }}</td>
-            <td :title="props.item.TakenAt | luxon:format('dd/MM/yyyy hh:mm:ss')">{{ props.item.TakenAt | luxon:format('dd/MM/yyyy') }}</td>
+            <td :title="props.item.TakenAt | luxon:format('dd/MM/yyyy HH:mm:ss')">{{ props.item.TakenAt | luxon:locale }}</td>
             <td><v-btn icon small flat :ripple="false"
                        class="p-photo-like"
                        @click.stop.prevent="props.item.toggleLike()">

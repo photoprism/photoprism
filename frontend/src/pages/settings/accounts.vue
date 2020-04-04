@@ -107,7 +107,7 @@
 
                 const time = d.Time ? d.Time : d;
 
-                return DateTime.fromISO(time).toFormat('dd/MM/yyyy hh:mm:ss');
+                return DateTime.fromISO(time).toLocaleString(DateTime.DATE_FULL);
             },
             load() {
                 Account.search({count: 100}).then(r => this.results = r.models);
