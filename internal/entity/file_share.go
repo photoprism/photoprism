@@ -41,6 +41,7 @@ func NewFileShare(fileID, accountID uint, remoteName string) *FileShare {
 		RemoteName: remoteName,
 		Status:     "new",
 		Error:      "",
+		Errors:     0,
 	}
 
 	return result

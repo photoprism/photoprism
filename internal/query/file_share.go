@@ -1,8 +1,12 @@
 package query
 
-import "github.com/photoprism/photoprism/internal/entity"
+import (
+	"time"
 
-// FileShares
+	"github.com/photoprism/photoprism/internal/entity"
+)
+
+// FileShares returns up to 100 file shares for a given account id and status.
 func (q *Query) FileShares(accountId uint, status string) (result []entity.FileShare, err error) {
 	s := q.db.Where(&entity.FileShare{})
 
@@ -15,6 +19,32 @@ func (q *Query) FileShares(accountId uint, status string) (result []entity.FileS
 	}
 
 	s = s.Order("created_at ASC")
+	s = s.Limit(100).Offset(0)
+
+	s = s.Preload("File")
+
+	if err := s.Find(&result).Error; err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+// ExpiredFileShares returns up to 100 expired file shares for a given account.
+func (q *Query) ExpiredFileShares(account entity.Account) (result []entity.FileShare, err error) {
+	if account.ShareExpires <= 0 {
+		return result, nil
+	}
+
+	s := q.db.Where(&entity.FileShare{})
+
+	exp := time.Now().Add(time.Duration(account.ShareExpires)*time.Second)
+
+	s = s.Where("account_id = ?", account.ID)
+	s = s.Where("status = ?", entity.FileShareShared)
+	s = s.Where("updated_at < ?", exp)
+
+	s = s.Order("updated_at ASC")
 	s = s.Limit(100).Offset(0)
 
 	s = s.Preload("File")

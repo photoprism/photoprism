@@ -19,12 +19,12 @@ type Account struct {
 	AccError     string       `json:"AccError"`
 	AccShare     bool         `json:"AccShare"`
 	AccSync      bool         `json:"AccSync"`
-	RetryLimit   uint         `json:"RetryLimit"`
+	RetryLimit   int          `json:"RetryLimit"`
 	SharePath    string       `json:"SharePath"`
 	ShareSize    string       `json:"ShareSize"`
-	ShareExpires uint         `json:"ShareExpires"`
+	ShareExpires int          `json:"ShareExpires"`
 	SyncPath     string       `json:"SyncPath"`
-	SyncInterval uint         `json:"SyncInterval"`
+	SyncInterval int          `json:"SyncInterval"`
 	SyncUpload   bool         `json:"SyncUpload"`
 	SyncDownload bool         `json:"SyncDownload"`
 	SyncDelete   bool         `json:"SyncDelete"`

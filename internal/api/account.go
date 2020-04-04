@@ -11,7 +11,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -135,13 +134,6 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
-			return
-		}
-
-		w := webdav.New(m.AccURL, m.AccUser, m.AccPass)
-
-		if err := w.CreateDir(dst); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
