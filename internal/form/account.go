@@ -1,37 +1,34 @@
 package form
 
 import (
-	"database/sql"
-
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/ulule/deepcopier"
 )
 
 // Account represents a remote service account form for uploading, downloading or syncing media files.
 type Account struct {
-	AccName      string       `json:"AccName"`
-	AccOwner     string       `json:"AccOwner"`
-	AccURL       string       `json:"AccURL"`
-	AccType      string       `json:"AccType"`
-	AccKey       string       `json:"AccKey"`
-	AccUser      string       `json:"AccUser"`
-	AccPass      string       `json:"AccPass"`
-	AccError     string       `json:"AccError"`
-	AccShare     bool         `json:"AccShare"`
-	AccSync      bool         `json:"AccSync"`
-	RetryLimit   int          `json:"RetryLimit"`
-	SharePath    string       `json:"SharePath"`
-	ShareSize    string       `json:"ShareSize"`
-	ShareExpires int          `json:"ShareExpires"`
-	SyncPath     string       `json:"SyncPath"`
-	SyncInterval int          `json:"SyncInterval"`
-	SyncUpload   bool         `json:"SyncUpload"`
-	SyncDownload bool         `json:"SyncDownload"`
-	SyncDelete   bool         `json:"SyncDelete"`
-	SyncRaw      bool         `json:"SyncRaw"`
-	SyncVideo    bool         `json:"SyncVideo"`
-	SyncSidecar  bool         `json:"SyncSidecar"`
-	SyncStart    sql.NullTime `json:"SyncStart"`
+	AccName       string `json:"AccName"`
+	AccOwner      string `json:"AccOwner"`
+	AccURL        string `json:"AccURL"`
+	AccType       string `json:"AccType"`
+	AccKey        string `json:"AccKey"`
+	AccUser       string `json:"AccUser"`
+	AccPass       string `json:"AccPass"`
+	AccError      string `json:"AccError"`
+	AccShare      bool   `json:"AccShare"`
+	AccSync       bool   `json:"AccSync"`
+	RetryLimit    int    `json:"RetryLimit"`
+	SharePath     string `json:"SharePath"`
+	ShareSize     string `json:"ShareSize"`
+	ShareExpires  int    `json:"ShareExpires"`
+	SyncPath      string `json:"SyncPath"`
+	SyncInterval  int    `json:"SyncInterval"`
+	SyncUpload    bool   `json:"SyncUpload"`
+	SyncDownload  bool   `json:"SyncDownload"`
+	SyncFilenames bool   `json:"SyncFilenames"`
+	SyncRaw       bool   `json:"SyncRaw"`
+	SyncVideo     bool   `json:"SyncVideo"`
+	SyncSidecar   bool   `json:"SyncSidecar"`
 }
 
 func NewAccount(m interface{}) (f Account, err error) {

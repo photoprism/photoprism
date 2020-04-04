@@ -45,6 +45,10 @@ func (s *Share) Start() (err error) {
 	accounts, err := q.Accounts(f)
 
 	for _, a := range accounts {
+		if mutex.Share.Canceled() {
+			return nil
+		}
+
 		if a.AccType != service.TypeWebDAV {
 			continue
 		}
@@ -65,6 +69,10 @@ func (s *Share) Start() (err error) {
 		existingDirs := make(map[string]string)
 
 		for _, file := range files {
+			if mutex.Share.Canceled() {
+				return nil
+			}
+
 			dir := filepath.Dir(file.RemoteName)
 
 			if _, ok := existingDirs[dir]; ok == false && dir != "/" && dir != "." {
@@ -106,6 +114,10 @@ func (s *Share) Start() (err error) {
 				file.Status = entity.FileShareError
 			}
 
+			if mutex.Share.Canceled() {
+				return nil
+			}
+
 			if err := db.Save(&file).Error; err != nil {
 				log.Errorf("share: %s", err.Error())
 			}
@@ -113,6 +125,10 @@ func (s *Share) Start() (err error) {
 	}
 
 	for _, a := range accounts {
+		if mutex.Share.Canceled() {
+			return nil
+		}
+
 		if a.AccType != service.TypeWebDAV {
 			continue
 		}
@@ -132,6 +148,10 @@ func (s *Share) Start() (err error) {
 		client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
 
 		for _, file := range files {
+			if mutex.Share.Canceled() {
+				return nil
+			}
+
 			if err := client.Delete(file.RemoteName); err != nil {
 				file.Errors++
 				file.Error = err.Error()

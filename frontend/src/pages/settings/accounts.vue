@@ -30,7 +30,7 @@
                     <v-icon v-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
                     <v-icon v-else color="secondary-dark">sync_disabled</v-icon>
                 </v-btn></td>
-                <td class="hidden-sm-and-down">{{ formatDate(props.item.SyncedAt) }}</td>
+                <td class="hidden-sm-and-down">{{ formatDate(props.item.SyncDate) }}</td>
                 <td class="hidden-xs-only text-xs-right" nowrap>
                     <v-btn icon small flat :ripple="false"
                            class="p-account-remove"
@@ -94,7 +94,7 @@
                     {text: this.$gettext('Name'), value: 'AccName', sortable: false, align: 'left'},
                     {text: this.$gettext('Sharing'), value: 'AccShare', sortable: false, align: 'center'},
                     {text: this.$gettext('Sync'), value: 'AccSync', sortable: false, align: 'center'},
-                    {text: this.$gettext('Synced'), value: 'SyncedAt', sortable: false, class: 'hidden-sm-and-down', align: 'left'},
+                    {text: this.$gettext('Synced'), value: 'SyncDate', sortable: false, class: 'hidden-sm-and-down', align: 'left'},
                     {text: '', value: '', sortable: false, class: 'hidden-xs-only', align: 'right'},
                 ],
             };

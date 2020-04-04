@@ -3,6 +3,22 @@ package txt
 
 // Stopwords contains a list of stopwords for full-text indexing.
 var Stopwords = map[string]bool{
+	"sync":             true,
+	"upload":           true,
+	"download":         true,
+	"temp":             true,
+	"user":             true,
+	"users":            true,
+	"var":              true,
+	"lib":              true,
+	"share":            true,
+	"thumb":            true,
+	"thumbs":           true,
+	"thumbnail":        true,
+	"thumbnails":       true,
+	"photos":           true,
+	"import":           true,
+	"export":           true,
 	"abc":              true,
 	"xyz":              true,
 	"jpg":              true,

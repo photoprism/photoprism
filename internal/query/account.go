@@ -17,6 +17,10 @@ func (q *Query) Accounts(f form.AccountSearch) (result []entity.Account, err err
 		s = s.Where("acc_sync = 1")
 	}
 
+	if f.Status != "" {
+		s = s.Where("sync_status = ?", f.Status)
+	}
+
 	s = s.Order("acc_name ASC")
 
 	if f.Count > 0 && f.Count <= 1000 {

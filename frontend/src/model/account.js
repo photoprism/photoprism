@@ -1,6 +1,5 @@
 import Abstract from "model/abstract";
 import Api from "../common/api";
-import {DateTime} from "luxon";
 
 class Account extends Abstract {
     getDefaults() {
@@ -14,6 +13,7 @@ class Account extends Abstract {
             AccUser: "",
             AccPass: "",
             AccError: "",
+            AccErrors: 0,
             AccShare: true,
             AccSync: false,
             RetryLimit: 3,
@@ -21,15 +21,15 @@ class Account extends Abstract {
             ShareSize: "",
             ShareExpires: 0,
             SyncPath: "/",
+            SyncStatus: "",
             SyncInterval: 86400,
+            SyncDate: null,
+            SyncFilenames: false,
             SyncUpload: false,
             SyncDownload: true,
-            SyncDelete: false,
             SyncRaw: true,
             SyncVideo: true,
             SyncSidecar: true,
-            SyncStart: null,
-            SyncedAt: null,
             CreatedAt: "",
             UpdatedAt: "",
             DeletedAt: null,
@@ -49,7 +49,7 @@ class Account extends Abstract {
     }
 
     Share(UUIDs, dest) {
-        const values = { Photos: UUIDs, Destination: dest };
+        const values = {Photos: UUIDs, Destination: dest};
 
         return Api.post(this.getEntityResource() + "/share", values).then((response) => Promise.resolve(response.data));
     }

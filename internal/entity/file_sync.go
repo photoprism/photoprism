@@ -7,6 +7,12 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
+const (
+	FileSyncNew        = "new"
+	FileSyncDownloaded = "downloaded"
+	FileSyncUploaded   = "uploaded"
+)
+
 // FileSync represents a one-to-many relation between File and Account for syncing with remote services.
 type FileSync struct {
 	FileID     uint   `gorm:"index;"`
@@ -33,7 +39,7 @@ func NewFileSync(accountID uint, remoteName string) *FileSync {
 	result := &FileSync{
 		AccountID:  accountID,
 		RemoteName: remoteName,
-		Status:     "new",
+		Status:     FileSyncNew,
 	}
 
 	return result

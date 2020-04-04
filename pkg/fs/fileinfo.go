@@ -30,7 +30,7 @@ func NewFileInfo(info os.FileInfo, dir string) FileInfo {
 
 	result := FileInfo{
 		Name: info.Name(),
-		Abs: fmt.Sprintf("%s/%s", dir, info.Name()),
+		Abs:  fmt.Sprintf("%s/%s", dir, info.Name()),
 		Size: info.Size(),
 		Date: info.ModTime(),
 		Dir:  info.IsDir(),
@@ -45,6 +45,13 @@ func (infos FileInfos) Len() int      { return len(infos) }
 func (infos FileInfos) Swap(i, j int) { infos[i], infos[j] = infos[j], infos[i] }
 func (infos FileInfos) Less(i, j int) bool {
 	return strings.Compare(infos[i].Abs, infos[j].Abs) == -1
+}
+func (infos FileInfos) Abs() (result []string) {
+	for _, info := range infos {
+		result = append(result, info.Abs)
+	}
+
+	return result
 }
 
 func NewFileInfos(infos []os.FileInfo, dir string) FileInfos {

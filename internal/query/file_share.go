@@ -38,7 +38,7 @@ func (q *Query) ExpiredFileShares(account entity.Account) (result []entity.FileS
 
 	s := q.db.Where(&entity.FileShare{})
 
-	exp := time.Now().Add(time.Duration(account.ShareExpires)*time.Second)
+	exp := time.Now().Add(time.Duration(-1*account.ShareExpires) * time.Second)
 
 	s = s.Where("account_id = ?", account.ID)
 	s = s.Where("status = ?", entity.FileShareShared)

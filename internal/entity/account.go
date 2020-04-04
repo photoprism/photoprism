@@ -13,42 +13,54 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
+const (
+	AccountSyncStatusRefresh  = "refresh"
+	AccountSyncStatusDownload = "download"
+	AccountSyncStatusUpload   = "upload"
+	AccountSyncStatusSynced   = "synced"
+)
+
 // Account represents a remote service account for uploading, downloading or syncing media files.
 type Account struct {
-	ID           uint   `gorm:"primary_key"`
-	AccName      string `gorm:"type:varchar(128);"`
-	AccOwner     string `gorm:"type:varchar(128);"`
-	AccURL       string `gorm:"type:varbinary(512);"`
-	AccType      string `gorm:"type:varbinary(256);"`
-	AccKey       string `gorm:"type:varbinary(256);"`
-	AccUser      string `gorm:"type:varbinary(256);"`
-	AccPass      string `gorm:"type:varbinary(256);"`
-	AccError     string `gorm:"type:varbinary(512);"`
-	AccShare     bool
-	AccSync      bool
-	RetryLimit   int
-	SharePath    string `gorm:"type:varbinary(256);"`
-	ShareSize    string `gorm:"type:varbinary(16);"`
-	ShareExpires int
-	SyncPath     string `gorm:"type:varbinary(256);"`
-	SyncStatus   string `gorm:"type:varbinary(16);"`
-	SyncInterval int
-	SyncUpload   bool
-	SyncDownload bool
-	SyncDelete   bool
-	SyncRaw      bool
-	SyncVideo    bool
-	SyncSidecar  bool
-	SyncStart    sql.NullTime
-	SyncedAt     sql.NullTime `deepcopier:"skip"`
-	CreatedAt    time.Time    `deepcopier:"skip"`
-	UpdatedAt    time.Time    `deepcopier:"skip"`
-	DeletedAt    *time.Time   `deepcopier:"skip" sql:"index"`
+	ID            uint   `gorm:"primary_key"`
+	AccName       string `gorm:"type:varchar(128);"`
+	AccOwner      string `gorm:"type:varchar(128);"`
+	AccURL        string `gorm:"type:varbinary(512);"`
+	AccType       string `gorm:"type:varbinary(256);"`
+	AccKey        string `gorm:"type:varbinary(256);"`
+	AccUser       string `gorm:"type:varbinary(256);"`
+	AccPass       string `gorm:"type:varbinary(256);"`
+	AccError      string `gorm:"type:varbinary(512);"`
+	AccErrors     int
+	AccShare      bool
+	AccSync       bool
+	RetryLimit    int
+	SharePath     string `gorm:"type:varbinary(256);"`
+	ShareSize     string `gorm:"type:varbinary(16);"`
+	ShareExpires  int
+	SyncPath      string `gorm:"type:varbinary(256);"`
+	SyncStatus    string `gorm:"type:varbinary(16);"`
+	SyncInterval  int
+	SyncDate      sql.NullTime `deepcopier:"skip"`
+	SyncUpload    bool
+	SyncDownload  bool
+	SyncFilenames bool
+	SyncRaw       bool
+	SyncVideo     bool
+	SyncSidecar   bool
+	CreatedAt     time.Time  `deepcopier:"skip"`
+	UpdatedAt     time.Time  `deepcopier:"skip"`
+	DeletedAt     *time.Time `deepcopier:"skip" sql:"index"`
 }
 
 // CreateAccount creates a new account entity in the database.
 func CreateAccount(form form.Account, db *gorm.DB) (model *Account, err error) {
-	model = &Account{}
+	model = &Account{
+		ShareSize:    "",
+		ShareExpires: 0,
+		RetryLimit:   3,
+		SyncStatus:   AccountSyncStatusRefresh,
+	}
 
 	err = model.Save(form, db)
 

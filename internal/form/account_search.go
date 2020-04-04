@@ -5,6 +5,7 @@ type AccountSearch struct {
 	Query  string `form:"q"`
 	Share  bool   `form:"share"`
 	Sync   bool   `form:"sync"`
+	Status string `form:"status"`
 	Count  int    `form:"count" binding:"required"`
 	Offset int    `form:"offset"`
 	Order  string `form:"order"`

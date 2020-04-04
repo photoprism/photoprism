@@ -159,6 +159,15 @@
                                 :disabled="!model.AccSync"
                                 hide-details
                                 color="secondary-dark"
+                                :label="label.SyncFilenames"
+                                v-model="model.SyncFilenames"
+                        ></v-checkbox>
+                    </v-flex>
+                    <v-flex xs12 sm6 class="px-2">
+                        <v-checkbox
+                                :disabled="!model.AccSync"
+                                hide-details
+                                color="secondary-dark"
                                 :label="label.SyncUpload"
                                 v-model="model.SyncUpload"
                         ></v-checkbox>
@@ -358,8 +367,9 @@
                     ShareExpires: this.$gettext("Expires"),
                     SyncPath: this.$gettext("Location"),
                     SyncInterval: this.$gettext("Interval"),
+                    SyncFilenames: this.$gettext("Preserve remote filenames"),
                     SyncStart: this.$gettext("Start"),
-                    SyncDownload: this.$gettext("Import remote files"),
+                    SyncDownload: this.$gettext("Download remote files"),
                     SyncUpload: this.$gettext("Upload local files"),
                     SyncDelete: this.$gettext("Remote delete"),
                     SyncRaw: this.$gettext("Sync RAW images"),

@@ -8,14 +8,14 @@ import (
 )
 
 func ServiceWorkers(conf *config.Config) chan bool {
-	ticker := time.NewTicker(5 * time.Minute)
+	ticker := time.NewTicker(1 * time.Minute) // TODO
 	stop := make(chan bool, 1)
 
 	go func() {
 		for {
 			select {
 			case <-stop:
-				log.Info("stopping service workers")
+				log.Info("shutting down service workers")
 				ticker.Stop()
 				mutex.Share.Cancel()
 				mutex.Sync.Cancel()
