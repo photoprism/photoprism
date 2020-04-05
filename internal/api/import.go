@@ -13,23 +13,10 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
-
-var imp *photoprism.Import
-
-func initImport(conf *config.Config) {
-	if imp != nil {
-		return
-	}
-
-	initIndex(conf)
-
-	convert := photoprism.NewConvert(conf)
-
-	imp = photoprism.NewImport(conf, ind, convert)
-}
 
 // POST /api/v1/import*
 func StartImport(router *gin.RouterGroup, conf *config.Config) {
@@ -64,7 +51,7 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 
 		path = filepath.Clean(path)
 
-		initImport(conf)
+		imp := service.Import()
 
 		var opt photoprism.ImportOptions
 
@@ -105,7 +92,7 @@ func CancelImport(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		initImport(conf)
+		imp := service.Import()
 
 		imp.Cancel()
 

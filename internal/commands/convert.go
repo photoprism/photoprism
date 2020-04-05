@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/urfave/cli"
 )
 
@@ -20,6 +20,7 @@ func convertAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
+	service.SetConfig(conf)
 
 	if conf.ReadOnly() {
 		return config.ErrReadOnly
@@ -31,9 +32,11 @@ func convertAction(ctx *cli.Context) error {
 
 	log.Infof("converting RAW images in %s to JPEG", conf.OriginalsPath())
 
-	convert := photoprism.NewConvert(conf)
+	convert := service.Convert()
 
-	convert.Start(conf.OriginalsPath())
+	if err := convert.Start(conf.OriginalsPath()); err != nil {
+		log.Error(err)
+	}
 
 	elapsed := time.Since(start)
 

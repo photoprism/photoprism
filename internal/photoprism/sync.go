@@ -10,8 +10,8 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/internal/service/webdav"
+	"github.com/photoprism/photoprism/internal/remote"
+	"github.com/photoprism/photoprism/internal/remote/webdav"
 )
 
 // Sync represents a sync worker.
@@ -43,7 +43,7 @@ func (s *Sync) Start() (err error) {
 	accounts, err := q.Accounts(f)
 
 	for _, a := range accounts {
-		if a.AccType != service.TypeWebDAV {
+		if a.AccType != remote.ServiceWebDAV {
 			continue
 		}
 
@@ -112,7 +112,7 @@ func (s *Sync) Start() (err error) {
 }
 
 func (s *Sync) getRemoteFiles(a entity.Account) (complete bool, err error) {
-	if a.AccType != service.TypeWebDAV {
+	if a.AccType != remote.ServiceWebDAV {
 		return false, nil
 	}
 
@@ -221,5 +221,6 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 }
 
 func (s *Sync) upload(a entity.Account) (complete bool, err error) {
+	// TODO: Not implemented yet
 	return false, nil
 }

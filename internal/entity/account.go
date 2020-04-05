@@ -7,8 +7,8 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/internal/service/webdav"
+	"github.com/photoprism/photoprism/internal/remote"
+	"github.com/photoprism/photoprism/internal/remote/webdav"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/ulule/deepcopier"
 )
@@ -73,7 +73,7 @@ func (m *Account) Save(form form.Account, db *gorm.DB) error {
 		return err
 	}
 
-	if m.AccType != string(service.TypeWebDAV) {
+	if m.AccType != string(remote.ServiceWebDAV) {
 		// TODO: Only WebDAV supported at the moment
 		m.AccShare = false
 		m.AccSync = false
@@ -97,7 +97,7 @@ func (m *Account) Delete(db *gorm.DB) error {
 
 // Directories returns a list of directories or albums in an account.
 func (m *Account) Directories() (result fs.FileInfos, err error) {
-	if m.AccType == service.TypeWebDAV {
+	if m.AccType == remote.ServiceWebDAV {
 		c := webdav.New(m.AccURL, m.AccUser, m.AccPass)
 		result, err = c.Directories("/", true)
 	}

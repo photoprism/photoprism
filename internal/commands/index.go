@@ -4,10 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/urfave/cli"
 )
 
@@ -31,6 +30,7 @@ func indexAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
+	service.SetConfig(conf)
 
 	if err := conf.CreateDirectories(); err != nil {
 		return err
@@ -49,9 +49,7 @@ func indexAction(ctx *cli.Context) error {
 		log.Infof("read-only mode enabled")
 	}
 
-	tf := classify.New(conf.ResourcesPath(), conf.TensorFlowDisabled())
-	nd := nsfw.New(conf.NSFWModelPath())
-	ind := photoprism.NewIndex(conf, tf, nd)
+	ind := service.Index()
 
 	var opt photoprism.IndexOptions
 

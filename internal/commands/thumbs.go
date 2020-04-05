@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/urfave/cli"
 )
 
@@ -26,6 +26,7 @@ func thumbsAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
+	service.SetConfig(conf)
 
 	if err := conf.CreateDirectories(); err != nil {
 		return err
@@ -33,7 +34,7 @@ func thumbsAction(ctx *cli.Context) error {
 
 	log.Infof("creating thumbnails in \"%s\"", conf.ThumbnailsPath())
 
-	rs := photoprism.NewResample(conf)
+	rs := service.Resample()
 
 	if err := rs.Start(ctx.Bool("force")); err != nil {
 		log.Error(err)

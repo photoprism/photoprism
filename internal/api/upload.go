@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gin-gonic/gin"
@@ -65,7 +66,7 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if !conf.UploadNSFW() {
-			initNsfwDetector(conf)
+			nd := service.NsfwDetector()
 
 			containsNSFW := false
 

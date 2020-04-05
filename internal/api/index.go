@@ -7,37 +7,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
-
-var ind *photoprism.Index
-var nd *nsfw.Detector
-
-func initIndex(conf *config.Config) {
-	if ind != nil {
-		return
-	}
-
-	initNsfwDetector(conf)
-
-	tf := classify.New(conf.ResourcesPath(), conf.TensorFlowDisabled())
-
-	ind = photoprism.NewIndex(conf, tf, nd)
-}
-
-func initNsfwDetector(conf *config.Config) {
-	if nd != nil {
-		return
-	}
-
-	nd = nsfw.New(conf.NSFWModelPath())
-}
 
 // POST /api/v1/index
 func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
@@ -67,7 +43,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if f.ConvertRaw && !conf.ReadOnly() {
-			convert := photoprism.NewConvert(conf)
+			convert := service.Convert()
 
 			if err := convert.Start(conf.OriginalsPath()); err != nil {
 				cancel(err)
@@ -76,7 +52,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if f.CreateThumbs {
-			rs := photoprism.NewResample(conf)
+			rs := service.Resample()
 
 			if err := rs.Start(false); err != nil {
 				cancel(err)
@@ -84,7 +60,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 			}
 		}
 
-		initIndex(conf)
+		ind := service.Index()
 
 		if f.SkipUnchanged {
 			ind.Start(photoprism.IndexOptionsNone())
@@ -110,7 +86,7 @@ func CancelIndexing(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		initIndex(conf)
+		ind := service.Index()
 
 		ind.Cancel()
 

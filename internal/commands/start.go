@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/server"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
@@ -41,6 +42,7 @@ var startFlags = []cli.Flag{
 // startAction start the web server and initializes the daemon
 func startAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
+	service.SetConfig(conf)
 
 	if err := conf.CreateDirectories(); err != nil {
 		return err

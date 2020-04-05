@@ -11,8 +11,8 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/internal/service/webdav"
+	"github.com/photoprism/photoprism/internal/remote"
+	"github.com/photoprism/photoprism/internal/remote/webdav"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
@@ -49,7 +49,7 @@ func (s *Share) Start() (err error) {
 			return nil
 		}
 
-		if a.AccType != service.TypeWebDAV {
+		if a.AccType != remote.ServiceWebDAV {
 			continue
 		}
 
@@ -129,7 +129,7 @@ func (s *Share) Start() (err error) {
 			return nil
 		}
 
-		if a.AccType != service.TypeWebDAV {
+		if a.AccType != remote.ServiceWebDAV {
 			continue
 		}
 

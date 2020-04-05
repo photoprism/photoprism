@@ -1,7 +1,7 @@
 package form
 
 import (
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/remote"
 	"github.com/ulule/deepcopier"
 )
 
@@ -38,7 +38,7 @@ func NewAccount(m interface{}) (f Account, err error) {
 }
 
 func (f *Account) ServiceDiscovery() error {
-	acc, err := service.Discover(f.AccURL, f.AccUser, f.AccPass)
+	acc, err := remote.Discover(f.AccURL, f.AccUser, f.AccPass)
 
 	if err != nil {
 		return err

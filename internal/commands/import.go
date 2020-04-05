@@ -7,10 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/urfave/cli"
 )
 
@@ -27,6 +26,7 @@ func importAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
+	service.SetConfig(conf)
 
 	// very if copy directory exist and is writable
 	if conf.ReadOnly() {
@@ -66,14 +66,7 @@ func importAction(ctx *cli.Context) error {
 
 	log.Infof("moving media files from %s to %s", sourcePath, conf.OriginalsPath())
 
-	tensorFlow := classify.New(conf.ResourcesPath(), conf.TensorFlowDisabled())
-	nsfwDetector := nsfw.New(conf.NSFWModelPath())
-
-	ind := photoprism.NewIndex(conf, tensorFlow, nsfwDetector)
-
-	convert := photoprism.NewConvert(conf)
-
-	imp := photoprism.NewImport(conf, ind, convert)
+	imp := service.Import()
 	opt := photoprism.ImportOptionsMove(sourcePath)
 
 	imp.Start(opt)
