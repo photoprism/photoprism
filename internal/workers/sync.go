@@ -184,19 +184,23 @@ func (s *Sync) getRemoteFiles(a entity.Account) (complete bool, err error) {
 
 func (s *Sync) relatedDownloads(a entity.Account) (result Downloads, err error) {
 	result = make(Downloads)
+	maxResults := 1000
 
-	files, err := s.q.FileSyncs(a.ID, entity.FileSyncNew)
+	// Get remote files from database
+	files, err := s.q.FileSyncs(a.ID, entity.FileSyncNew, maxResults)
 
 	if err != nil {
 		return result, err
 	}
 
+	// Group results by directory and base name
 	for i, file := range files {
 		k := fs.AbsBase(file.RemoteName)
 
 		result[k] = append(result[k], file)
 
-		if i > 990 {
+		// Skip last 50 to make sure we see all related files
+		if i > (maxResults - 50) {
 			return result, nil
 		}
 	}
@@ -314,11 +318,11 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 			} else {
 				log.Infof("sync: importing %s and related files", file.RemoteName)
 				importJobs <- photoprism.ImportJob{
-					FileName: mf.FileName(),
-					Related:  related,
-					IndexOpt: photoprism.IndexOptionsAll(),
+					FileName:  mf.FileName(),
+					Related:   related,
+					IndexOpt:  photoprism.IndexOptionsAll(),
 					ImportOpt: photoprism.ImportOptionsMove(baseDir),
-					Imp:      service.Import(),
+					Imp:       service.Import(),
 				}
 			}
 		}

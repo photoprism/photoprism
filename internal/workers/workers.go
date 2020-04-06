@@ -11,7 +11,7 @@ import (
 var log = event.Log
 var stop = make(chan bool, 1)
 
-// Start runs the service workers every 10 minutes.
+// Start runs PhotoPrism background workers every wakeup interval.
 func Start(conf *config.Config) {
 	ticker := time.NewTicker(conf.WakeupInterval())
 

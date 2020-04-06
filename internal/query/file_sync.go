@@ -8,7 +8,7 @@ import (
 )
 
 // FileSyncs returns up to 100 file syncs for a given account id and status.
-func (q *Query) FileSyncs(accountId uint, status string) (result []entity.FileSync, err error) {
+func (q *Query) FileSyncs(accountId uint, status string, limit int) (result []entity.FileSync, err error) {
 	s := q.db.Where(&entity.FileSync{})
 
 	if accountId > 0 {
@@ -20,7 +20,10 @@ func (q *Query) FileSyncs(accountId uint, status string) (result []entity.FileSy
 	}
 
 	s = s.Order("remote_name ASC")
-	s = s.Limit(1000).Offset(0)
+
+	if limit > 0 {
+		s = s.Limit(limit).Offset(0)
+	}
 
 	s = s.Preload("File")
 

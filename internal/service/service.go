@@ -18,7 +18,7 @@ var services struct {
 	Classify *classify.TensorFlow
 }
 
-func SetConfig(c *config.Config)  {
+func SetConfig(c *config.Config) {
 	if c == nil {
 		panic("config is nil")
 	}

@@ -36,7 +36,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("public                %t\n", conf.Public())
 	fmt.Printf("experimental          %t\n", conf.Experimental())
 	fmt.Printf("workers               %d\n", conf.Workers())
-	fmt.Printf("wakeup-interval       %d\n", conf.WakeupInterval() / time.Second)
+	fmt.Printf("wakeup-interval       %d\n", conf.WakeupInterval()/time.Second)
 	fmt.Printf("log-level             %s\n", conf.LogLevel())
 	fmt.Printf("log-filename          %s\n", conf.LogFilename())
 	fmt.Printf("pid-filename          %s\n", conf.PIDFilename())
