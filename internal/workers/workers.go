@@ -11,8 +11,9 @@ import (
 var log = event.Log
 var stop = make(chan bool, 1)
 
+// Start runs the service workers every 10 minutes.
 func Start(conf *config.Config) {
-	ticker := time.NewTicker(15 * time.Minute)
+	ticker := time.NewTicker(10 * time.Minute)
 
 	go func() {
 		for {
@@ -31,6 +32,12 @@ func Start(conf *config.Config) {
 	}()
 }
 
+// Stop shuts down all service workers.
+func Stop() {
+	stop <- true
+}
+
+// StartShare runs the share worker once.
 func StartShare(conf *config.Config) {
 	if !mutex.Share.Busy() {
 		go func() {
@@ -42,6 +49,7 @@ func StartShare(conf *config.Config) {
 	}
 }
 
+// StartShare runs the sync worker once.
 func StartSync(conf *config.Config) {
 	if !mutex.Sync.Busy() {
 		go func() {
@@ -51,8 +59,4 @@ func StartSync(conf *config.Config) {
 			}
 		}()
 	}
-}
-
-func Stop() {
-	stop <- true
 }

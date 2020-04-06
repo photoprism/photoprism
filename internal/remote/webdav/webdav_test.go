@@ -91,7 +91,7 @@ func TestClient_Download(t *testing.T) {
 		t.Fatal("no files to download")
 	}
 
-	if err := c.Download(files[0].Abs, tempFile); err != nil {
+	if err := c.Download(files[0].Abs, tempFile, false); err != nil {
 		t.Fatal(err)
 	}
 
@@ -112,7 +112,7 @@ func TestClient_DownloadDir(t *testing.T) {
 	t.Run("non-recursive", func(t *testing.T) {
 		tempDir := os.TempDir() + rnd.UUID()
 
-		if errs := c.DownloadDir("Photos", tempDir, false); len(errs) > 0 {
+		if errs := c.DownloadDir("Photos", tempDir, false, false); len(errs) > 0 {
 			t.Fatal(errs)
 		}
 
@@ -124,7 +124,7 @@ func TestClient_DownloadDir(t *testing.T) {
 	t.Run("recursive", func(t *testing.T) {
 		tempDir := os.TempDir() + rnd.UUID()
 
-		if errs := c.DownloadDir("Photos", tempDir, true); len(errs) > 0 {
+		if errs := c.DownloadDir("Photos", tempDir, true, false); len(errs) > 0 {
 			t.Fatal(errs)
 		}
 

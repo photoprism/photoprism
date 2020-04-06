@@ -45,6 +45,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("originals-path        %s\n", conf.OriginalsPath())
 	fmt.Printf("import-path           %s\n", conf.ImportPath())
 	fmt.Printf("export-path           %s\n", conf.ExportPath())
+	fmt.Printf("temp-path             %s\n", conf.TempPath())
 	fmt.Printf("cache-path            %s\n", conf.CachePath())
 	fmt.Printf("thumbnails-path       %s\n", conf.ThumbnailsPath())
 	fmt.Printf("resources-path        %s\n", conf.ResourcesPath())

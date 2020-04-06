@@ -58,6 +58,7 @@ ENV PHOTOPRISM_ORIGINALS_PATH /photoprism/originals
 ENV PHOTOPRISM_IMPORT_PATH /photoprism/import
 ENV PHOTOPRISM_EXPORT_PATH /photoprism/export
 ENV PHOTOPRISM_DATABASE_PATH /photoprism/database
+ENV PHOTOPRISM_TEMP_PATH /photoprism/temp
 ENV PHOTOPRISM_CACHE_PATH /photoprism/cache
 ENV PHOTOPRISM_CONFIG_PATH /photoprism/config
 ENV PHOTOPRISM_CONFIG_FILE /photoprism/config/photoprism.yml
@@ -77,6 +78,7 @@ RUN mkdir -p \
     /photoprism/import \
     /photoprism/export \
     /photoprism/database \
+    /photoprism/temp \
     /photoprism/cache
 
 RUN chmod -R 777 /photoprism

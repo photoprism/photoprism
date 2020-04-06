@@ -9,9 +9,11 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
+	"github.com/photoprism/photoprism/internal/service"
 )
 
 // Sync represents a sync worker.
@@ -22,6 +24,11 @@ type Sync struct {
 // NewSync returns a new service sync worker.
 func NewSync(conf *config.Config) *Sync {
 	return &Sync{conf: conf}
+}
+
+// DownloadPath returns a temporary download path.
+func (s *Sync) DownloadPath() string {
+	return s.conf.TempPath() + "/sync"
 }
 
 // Start starts the sync worker.
@@ -39,6 +46,9 @@ func (s *Sync) Start() (err error) {
 
 	db := s.conf.Db()
 	q := query.New(db)
+
+	runImport := false
+	runIndex := false
 
 	accounts, err := q.Accounts(f)
 
@@ -75,18 +85,28 @@ func (s *Sync) Start() (err error) {
 			if complete, err := s.download(a); err != nil {
 				a.AccErrors++
 				a.AccError = err.Error()
-			} else if complete && a.SyncUpload {
-				a.SyncStatus = entity.AccountSyncStatusUpload
 			} else if complete {
-				a.SyncStatus = entity.AccountSyncStatusSynced
-				a.SyncDate.Time = time.Now()
-				a.SyncDate.Valid = true
+				if a.SyncFilenames {
+					runIndex = true
+				} else {
+					runImport = true
+				}
+
+				if a.SyncUpload {
+					a.SyncStatus = entity.AccountSyncStatusUpload
+				} else {
+					event.Publish("sync.synced", event.Data{"account": a})
+					a.SyncStatus = entity.AccountSyncStatusSynced
+					a.SyncDate.Time = time.Now()
+					a.SyncDate.Valid = true
+				}
 			}
 		case entity.AccountSyncStatusUpload:
 			if complete, err := s.upload(a); err != nil {
 				a.AccErrors++
 				a.AccError = err.Error()
 			} else if complete {
+				event.Publish("sync.synced", event.Data{"account": a})
 				a.SyncStatus = entity.AccountSyncStatusSynced
 				a.SyncDate.Time = time.Now()
 				a.SyncDate.Valid = true
@@ -106,6 +126,16 @@ func (s *Sync) Start() (err error) {
 		if err := db.Save(&a).Error; err != nil {
 			log.Errorf("sync: %s", err.Error())
 		}
+	}
+
+	if runImport {
+		opt := photoprism.ImportOptionsMove(s.DownloadPath())
+		service.Import().Start(opt)
+	}
+
+	if runIndex {
+		opt := photoprism.IndexOptionsNone()
+		service.Index().Start(opt)
 	}
 
 	return err
@@ -174,7 +204,6 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 	}
 
 	if len(files) == 0 {
-		// TODO: Subscribe event to start indexing / importing
 		event.Publish("sync.downloaded", event.Data{"account": a})
 		return true, nil
 	}
@@ -186,7 +215,7 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 	if a.SyncFilenames {
 		baseDir = s.conf.OriginalsPath()
 	} else {
-		baseDir = fmt.Sprintf("%s/sync/%d", s.conf.ImportPath(), a.ID)
+		baseDir = fmt.Sprintf("%s/%d", s.DownloadPath(), a.ID)
 	}
 
 	for _, file := range files {
@@ -201,10 +230,12 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 
 		localName := baseDir + file.RemoteName
 
-		if err := client.Download(file.RemoteName, localName); err != nil {
+		if err := client.Download(file.RemoteName, localName, false); err != nil {
+			log.Errorf("sync: %s", err.Error())
 			file.Errors++
 			file.Error = err.Error()
 		} else {
+			log.Infof("sync: downloaded %s from %s", file.RemoteName, a.AccName)
 			file.Status = entity.FileSyncDownloaded
 		}
 

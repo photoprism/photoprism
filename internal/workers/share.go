@@ -42,8 +42,10 @@ func (s *Share) Start() (err error) {
 	db := s.conf.Db()
 	q := query.New(db)
 
+	// Find accounts for which sharing is enabled
 	accounts, err := q.Accounts(f)
 
+	// Upload newly shared files
 	for _, a := range accounts {
 		if mutex.Share.Canceled() {
 			return nil
@@ -61,7 +63,7 @@ func (s *Share) Start() (err error) {
 		}
 
 		if len(files) == 0 {
-			// No files to upload
+			// No files to upload for this account
 			continue
 		}
 
@@ -125,6 +127,7 @@ func (s *Share) Start() (err error) {
 		}
 	}
 
+	// Remove previously shared files if expired
 	for _, a := range accounts {
 		if mutex.Share.Canceled() {
 			return nil
@@ -142,7 +145,7 @@ func (s *Share) Start() (err error) {
 		}
 
 		if len(files) == 0 {
-			// No files to remove
+			// No files to remove for this account
 			continue
 		}
 

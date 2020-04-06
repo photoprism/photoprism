@@ -98,7 +98,11 @@ func (c Client) Directories(root string, recursive bool) (result fs.FileInfos, e
 }
 
 // Download downloads a single file to the given location.
-func (c Client) Download(from, to string) error {
+func (c Client) Download(from, to string, force bool) error {
+	if _, err := os.Stat(to); err == nil && !force {
+		return fmt.Errorf("webdav: download skipped, %s already exists", to)
+	}
+
 	dir := path.Dir(to)
 	dirInfo, err := os.Stat(dir)
 
@@ -121,7 +125,7 @@ func (c Client) Download(from, to string) error {
 }
 
 // DownloadDir downloads all files from a remote to a local directory.
-func (c Client) DownloadDir(from, to string, recursive bool) (errs []error) {
+func (c Client) DownloadDir(from, to string, recursive, force bool) (errs []error) {
 	files, err := c.Files(from)
 
 	if err != nil {
@@ -139,7 +143,7 @@ func (c Client) DownloadDir(from, to string, recursive bool) (errs []error) {
 			continue
 		}
 
-		if err := c.Download(file.Abs, dest); err != nil {
+		if err := c.Download(file.Abs, dest, force); err != nil {
 			msg := fmt.Errorf("webdav: %s", err)
 			errs = append(errs, msg)
 			log.Error(msg)
@@ -154,7 +158,7 @@ func (c Client) DownloadDir(from, to string, recursive bool) (errs []error) {
 	dirs, err := c.Directories(from, false)
 
 	for _, dir := range dirs {
-		errs = append(errs, c.DownloadDir(dir.Abs, to, true)...)
+		errs = append(errs, c.DownloadDir(dir.Abs, to, true, force)...)
 	}
 
 	return errs

@@ -47,6 +47,7 @@ type Params struct {
 	LogLevel           string `yaml:"log-level" flag:"log-level"`
 	ConfigFile         string
 	ConfigPath         string `yaml:"config-path" flag:"config-path"`
+	TempPath           string `yaml:"temp-path" flag:"temp-path"`
 	CachePath          string `yaml:"cache-path" flag:"cache-path"`
 	OriginalsPath      string `yaml:"originals-path" flag:"originals-path"`
 	ImportPath         string `yaml:"import-path" flag:"import-path"`

@@ -53,6 +53,10 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.ExportPath(), err)
 	}
 
+	if err := os.MkdirAll(c.TempPath(), os.ModePerm); err != nil {
+		return createError(c.TempPath(), err)
+	}
+
 	if err := os.MkdirAll(c.ThumbnailsPath(), os.ModePerm); err != nil {
 		return createError(c.ThumbnailsPath(), err)
 	}
@@ -154,6 +158,15 @@ func (c *Config) HeifConvertBin() string {
 // ExifToolBin returns the exiftool binary file name.
 func (c *Config) ExifToolBin() string {
 	return findExecutable(c.config.ExifToolBin, "exiftool")
+}
+
+// TempPath returns a temporary directory name for uploads and downloads.
+func (c *Config) TempPath() string {
+	if c.config.TempPath == "" {
+		return os.TempDir() + "/photoprism"
+	}
+
+	return fs.Abs(c.config.TempPath)
 }
 
 // CachePath returns the path to the cache.
