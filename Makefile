@@ -42,7 +42,6 @@ install-assets:
 	mkdir -p ~/.cache/photoprism
 	mkdir -p ~/Pictures/Originals
 	mkdir -p ~/Pictures/Import
-	mkdir -p ~/Pictures/Export
 	mkdir -p ~/.local/share/photoprism/resources/database
 	cp -r assets/resources/static assets/resources/templates assets/resources/nasnet assets/resources/nsfw ~/.local/share/photoprism/resources
 	rsync -a -v --ignore-existing assets/config/*.yml ~/.config/photoprism

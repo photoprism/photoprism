@@ -140,7 +140,6 @@ ENV PATH /photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin
 
 ENV PHOTOPRISM_ORIGINALS_PATH /photoprism/originals
 ENV PHOTOPRISM_IMPORT_PATH /photoprism/import
-ENV PHOTOPRISM_EXPORT_PATH /photoprism/export
 ENV PHOTOPRISM_DATABASE_PATH /photoprism/database
 ENV PHOTOPRISM_TEMP_PATH /photoprism/temp
 ENV PHOTOPRISM_CACHE_PATH /photoprism/cache
@@ -160,7 +159,6 @@ COPY --from=build /root/.config/photoprism /photoprism/config
 RUN mkdir -p \
     /photoprism/originals \
     /photoprism/import \
-    /photoprism/export \
     /photoprism/database \
     /photoprism/temp \
     /photoprism/cache

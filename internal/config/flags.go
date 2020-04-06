@@ -132,12 +132,6 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_IMPORT_PATH",
 	},
 	cli.StringFlag{
-		Name:   "export-path",
-		Usage:  "export `PATH`",
-		Value:  "~/Pictures/Export",
-		EnvVar: "PHOTOPRISM_EXPORT_PATH",
-	},
-	cli.StringFlag{
 		Name:   "temp-path",
 		Usage:  "temporary `PATH` for uploads and downloads",
 		Value:  "",

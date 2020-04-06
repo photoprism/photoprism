@@ -52,7 +52,6 @@ type Params struct {
 	CachePath          string `yaml:"cache-path" flag:"cache-path"`
 	OriginalsPath      string `yaml:"originals-path" flag:"originals-path"`
 	ImportPath         string `yaml:"import-path" flag:"import-path"`
-	ExportPath         string `yaml:"export-path" flag:"export-path"`
 	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`
 	ResourcesPath      string `yaml:"resources-path" flag:"resources-path"`
 	DatabasePath       string `yaml:"database-path" flag:"database-path"`
@@ -115,7 +114,7 @@ func (c *Params) expandFilenames() {
 	c.CachePath = fs.Abs(c.CachePath)
 	c.OriginalsPath = fs.Abs(c.OriginalsPath)
 	c.ImportPath = fs.Abs(c.ImportPath)
-	c.ExportPath = fs.Abs(c.ExportPath)
+	c.TempPath = fs.Abs(c.TempPath)
 	c.DatabasePath = fs.Abs(c.DatabasePath)
 	c.PIDFilename = fs.Abs(c.PIDFilename)
 	c.LogFilename = fs.Abs(c.LogFilename)

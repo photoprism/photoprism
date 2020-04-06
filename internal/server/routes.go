@@ -96,12 +96,6 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		log.Info("webdav: /originals available")
 
-		WebDAV(conf.ExportPath(), router.Group("/export", gin.BasicAuth(gin.Accounts{
-			"photoprism": conf.WebDAVPassword(),
-		})), conf)
-
-		log.Info("webdav: /export available")
-
 		if conf.ReadOnly() {
 			log.Info("webdav: /import not available in read-only mode")
 		} else {

@@ -49,10 +49,6 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.ImportPath(), err)
 	}
 
-	if err := os.MkdirAll(c.ExportPath(), os.ModePerm); err != nil {
-		return createError(c.ExportPath(), err)
-	}
-
 	if err := os.MkdirAll(c.TempPath(), os.ModePerm); err != nil {
 		return createError(c.TempPath(), err)
 	}
@@ -133,11 +129,6 @@ func (c *Config) OriginalsPath() string {
 // ImportPath returns the import directory.
 func (c *Config) ImportPath() string {
 	return fs.Abs(c.config.ImportPath)
-}
-
-// ExportPath returns the export directory.
-func (c *Config) ExportPath() string {
-	return fs.Abs(c.config.ExportPath)
 }
 
 // SipsBin returns the sips binary file name.

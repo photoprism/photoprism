@@ -30,7 +30,7 @@ services:
       PHOTOPRISM_RESOURCES_PATH: "/go/src/github.com/photoprism/photoprism/assets/resources"
       PHOTOPRISM_CONFIG_PATH: "/go/src/github.com/photoprism/photoprism/assets/config"
       PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/import"
-      PHOTOPRISM_EXPORT_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/export"
+      PHOTOPRISM_TEMP_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/temp"
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/originals"
       PHOTOPRISM_DATABASE_DRIVER: "internal"
       PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"

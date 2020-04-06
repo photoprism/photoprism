@@ -4,7 +4,7 @@ assets-path: /srv/photoprism
 cache-path: /srv/photoprism/cache
 originals-path: /srv/photoprism/photos/originals
 import-path: /srv/photoprism/photos/import
-export-path: /srv/photoprism/photos/export
+temp-path: /srv/photoprism/temp
 sql-host: localhost
 sql-port: 4000
 sql-password: photoprism

@@ -46,7 +46,6 @@ func NewTestParams() *Params {
 		CachePath:      testDataPath + "/cache",
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
-		ExportPath:     testDataPath + "/export",
 		TempPath:       testDataPath + "/temp",
 		DatabaseDriver: "mysql",
 		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
@@ -67,7 +66,6 @@ func NewTestParamsError() *Params {
 		CachePath:      testDataPath + "/cache",
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
-		ExportPath:     testDataPath + "/export",
 		TempPath:       testDataPath + "/temp",
 		DatabaseDriver: "mysql",
 		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
@@ -133,7 +131,6 @@ func CliTestContext() *cli.Context {
 	globalSet.String("assets-path", config.AssetsPath, "doc")
 	globalSet.String("originals-path", config.OriginalsPath, "doc")
 	globalSet.String("import-path", config.OriginalsPath, "doc")
-	globalSet.String("export-path", config.OriginalsPath, "doc")
 	globalSet.String("temp-path", config.OriginalsPath, "doc")
 	globalSet.String("cache-path", config.OriginalsPath, "doc")
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
@@ -148,7 +145,6 @@ func CliTestContext() *cli.Context {
 	c.Set("assets-path", config.AssetsPath)
 	c.Set("originals-path", config.OriginalsPath)
 	c.Set("import-path", config.ImportPath)
-	c.Set("export-path", config.ExportPath)
 	c.Set("temp-path", config.TempPath)
 	c.Set("cache-path", config.CachePath)
 	c.Set("darktable-cli", config.DarktableBin)
@@ -160,7 +156,6 @@ func CliTestContext() *cli.Context {
 // RemoveTestData deletes files in import, export, originals and cache folders
 func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.ImportPath())
-	os.RemoveAll(c.ExportPath())
 	os.RemoveAll(c.TempPath())
 	os.RemoveAll(c.OriginalsPath())
 	os.RemoveAll(c.CachePath())

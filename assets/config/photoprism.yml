@@ -15,7 +15,6 @@ assets-path: ~/.local/share/photoprism
 resources-path: ~/.local/share/photoprism/resources
 originals-path: ~/Pictures/Originals
 import-path: ~/Pictures/Import
-export-path: ~/Pictures/Export
 sql-host: localhost
 sql-port: 4000
 sql-password: photoprism

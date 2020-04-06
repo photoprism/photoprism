@@ -185,15 +185,6 @@ func TestConfig_ImportPath(t *testing.T) {
 	assert.True(t, strings.HasSuffix(result, "assets/testdata/import"))
 }
 
-func TestConfig_ExportPath(t *testing.T) {
-	ctx := CliTestContext()
-	c := NewConfig(ctx)
-
-	result := c.ExportPath()
-	assert.True(t, strings.HasPrefix(result, "/"))
-	assert.True(t, strings.HasSuffix(result, "assets/testdata/export"))
-}
-
 func TestConfig_SipsBin(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)

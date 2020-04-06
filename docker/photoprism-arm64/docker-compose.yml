@@ -31,7 +31,6 @@ services:
     volumes:
       - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
       - "~/Pictures/Import:/photoprism/import" # [local path]:[container path] (optional)
-      - "~/Pictures/Export:/photoprism/export" # [local path]:[container path] (optional)
       - "photoprism-cache:/photoprism/cache" # keep thumbnail cache
       - "photoprism-database:/photoprism/database" # keep database files
 
