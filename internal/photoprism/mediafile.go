@@ -290,22 +290,22 @@ func (m *MediaFile) RelatedFiles() (result RelatedFiles, err error) {
 			continue
 		}
 
-		if result.main == nil && resultFile.IsJpeg() {
-			result.main = resultFile
+		if result.Main == nil && resultFile.IsJpeg() {
+			result.Main = resultFile
 		} else if resultFile.IsRaw() {
-			result.main = resultFile
+			result.Main = resultFile
 		} else if resultFile.IsHEIF() {
-			result.main = resultFile
-		} else if resultFile.IsJpeg() && len(result.main.FileName()) > len(resultFile.FileName()) {
-			result.main = resultFile
+			result.Main = resultFile
+		} else if resultFile.IsJpeg() && len(result.Main.FileName()) > len(resultFile.FileName()) {
+			result.Main = resultFile
 		} else if resultFile.IsImageOther() {
-			result.main = resultFile
+			result.Main = resultFile
 		}
 
-		result.files = append(result.files, resultFile)
+		result.Files = append(result.Files, resultFile)
 	}
 
-	sort.Sort(result.files)
+	sort.Sort(result.Files)
 
 	return result, nil
 }
@@ -372,22 +372,7 @@ func (m MediaFile) Directory() string {
 
 // Base returns the filename base without any extensions and path.
 func (m MediaFile) Base() string {
-	basename := filepath.Base(m.FileName())
-
-	if end := strings.Index(basename, "."); end != -1 {
-		// ignore everything behind the first dot in the file name
-		basename = basename[:end]
-	}
-
-	if end := strings.Index(basename, " ("); end != -1 {
-		// copies created by Chrome & Windows, example: IMG_1234 (2)
-		basename = basename[:end]
-	} else if end := strings.Index(basename, " copy"); end != -1 {
-		// copies created by OS X, example: IMG_1234 copy 2
-		basename = basename[:end]
-	}
-
-	return basename
+	return fs.Base(m.FileName())
 }
 
 // AbsBase returns the directory and base filename without any extensions.

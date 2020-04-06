@@ -224,6 +224,15 @@ func (c *Config) Workers() int {
 	return 1
 }
 
+// WakeupInterval returns the background worker wakeup interval.
+func (c *Config) WakeupInterval() time.Duration {
+	if c.config.WakeupInterval <= 0 {
+		return 5 * time.Minute
+	}
+
+	return time.Duration(c.config.WakeupInterval) * time.Second
+}
+
 // ThumbQuality returns the thumbnail jpeg quality setting (25-100).
 func (c *Config) ThumbQuality() int {
 	if c.config.ThumbQuality > 100 {

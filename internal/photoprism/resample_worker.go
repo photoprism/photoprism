@@ -6,7 +6,7 @@ type ResampleJob struct {
 	force     bool
 }
 
-func resampleWorker(jobs <-chan ResampleJob) {
+func ResampleWorker(jobs <-chan ResampleJob) {
 	for job := range jobs {
 		mf := job.mediaFile
 

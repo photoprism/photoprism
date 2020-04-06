@@ -71,7 +71,7 @@ func (imp *Import) Start(opt ImportOptions) {
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
-			importWorker(jobs)
+			ImportWorker(jobs)
 			wg.Done()
 		}()
 	}
@@ -131,7 +131,7 @@ func (imp *Import) Start(opt ImportOptions) {
 
 		var files MediaFiles
 
-		for _, f := range related.files {
+		for _, f := range related.Files {
 			if done[f.FileName()] {
 				continue
 			}
@@ -142,14 +142,14 @@ func (imp *Import) Start(opt ImportOptions) {
 
 		done[mf.FileName()] = true
 
-		related.files = files
+		related.Files = files
 
 		jobs <- ImportJob{
-			fileName:  fileName,
-			related:   related,
-			indexOpt:  indexOpt,
-			importOpt: opt,
-			imp:       imp,
+			FileName:  fileName,
+			Related:   related,
+			IndexOpt:  indexOpt,
+			ImportOpt: opt,
+			Imp:       imp,
 		}
 
 		return nil

@@ -13,13 +13,13 @@ var stop = make(chan bool, 1)
 
 // Start runs the service workers every 10 minutes.
 func Start(conf *config.Config) {
-	ticker := time.NewTicker(10 * time.Minute)
+	ticker := time.NewTicker(conf.WakeupInterval())
 
 	go func() {
 		for {
 			select {
 			case <-stop:
-				log.Info("shutting down service workers")
+				log.Info("shutting down workers")
 				ticker.Stop()
 				mutex.Share.Cancel()
 				mutex.Sync.Cancel()

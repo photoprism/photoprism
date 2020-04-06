@@ -1,29 +1,29 @@
 package photoprism
 
 type IndexJob struct {
-	filename string
-	related  RelatedFiles
-	opt      IndexOptions
-	ind      *Index
+	FileName string
+	Related  RelatedFiles
+	IndexOpt IndexOptions
+	Ind      *Index
 }
 
-func indexWorker(jobs <-chan IndexJob) {
+func IndexWorker(jobs <-chan IndexJob) {
 	for job := range jobs {
 		done := make(map[string]bool)
-		related := job.related
-		opt := job.opt
-		ind := job.ind
+		related := job.Related
+		opt := job.IndexOpt
+		ind := job.Ind
 
-		if related.main != nil {
-			res := ind.MediaFile(related.main, opt, "")
-			done[related.main.FileName()] = true
+		if related.Main != nil {
+			res := ind.MediaFile(related.Main, opt, "")
+			done[related.Main.FileName()] = true
 
-			log.Infof("index: %s main %s file \"%s\"", res, related.main.Type(), related.main.RelativeName(ind.originalsPath()))
+			log.Infof("index: %s main %s file \"%s\"", res, related.Main.Type(), related.Main.RelativeName(ind.originalsPath()))
 		} else {
-			log.Warnf("index: no main file for %s (conversion to jpeg failed?)", job.filename)
+			log.Warnf("index: no main file for %s (conversion to jpeg failed?)", job.FileName)
 		}
 
-		for _, f := range related.files {
+		for _, f := range related.Files {
 			if done[f.FileName()] {
 				continue
 			}

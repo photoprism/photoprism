@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"sort"
@@ -16,18 +17,38 @@ import (
 )
 
 const (
-	indexResultUpdated IndexResult = "updated"
-	indexResultAdded   IndexResult = "added"
-	indexResultSkipped IndexResult = "skipped"
-	indexResultFailed  IndexResult = "failed"
+	IndexUpdated IndexStatus = "updated"
+	IndexAdded   IndexStatus = "added"
+	IndexSkipped IndexStatus = "skipped"
+	IndexFailed  IndexStatus = "failed"
 )
 
-type IndexResult string
+type IndexStatus string
 
-func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) IndexResult {
+type IndexResult struct {
+	Status    IndexStatus
+	Error     error
+	FileID    uint
+	FileUUID  string
+	PhotoID   uint
+	PhotoUUID string
+}
+
+func (r IndexResult) String() string {
+	return string(r.Status)
+}
+
+func (r IndexResult) Success() bool {
+	return r.Error == nil && r.FileID > 0
+}
+
+func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (result IndexResult) {
 	if m == nil {
-		log.Error("index: media file is nil - you might have found a bug")
-		return indexResultFailed
+		err := errors.New("index: media file is nil - you might have found a bug")
+		log.Error(err)
+		result.Error = err
+		result.Status = IndexFailed
+		return result
 	}
 
 	start := time.Now()
@@ -85,7 +106,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 	photoExists = photoQuery.Error == nil
 
 	if !fileChanged && photoExists && o.SkipUnchanged() {
-		return indexResultSkipped
+		result.Status = IndexSkipped
+		return result
 	}
 
 	if photoExists {
@@ -309,14 +331,18 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 
 		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
 			log.Errorf("index: %s", err)
-			return indexResultFailed
+			result.Status = IndexFailed
+			result.Error = err
+			return result
 		}
 	} else {
 		photo.PhotoFavorite = false
 
 		if err := ind.db.Create(&photo).Error; err != nil {
 			log.Errorf("index: %s", err)
-			return indexResultFailed
+			result.Status = IndexFailed
+			result.Error = err
+			return result
 		}
 
 		event.Publish("count.photos", event.Data{
@@ -332,31 +358,53 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) I
 	}
 
 	file.PhotoID = photo.ID
+	result.PhotoID = photo.ID
+
 	file.PhotoUUID = photo.PhotoUUID
+	result.PhotoUUID = photo.PhotoUUID
 
 	if file.FilePrimary && (fileChanged || o.UpdateKeywords) {
 		photo.IndexKeywords(ind.db)
 	}
+
+	result.Status = IndexUpdated
 
 	if fileQuery.Error == nil {
 		file.UpdatedIn = int64(time.Since(start))
 
 		if err := ind.db.Unscoped().Save(&file).Error; err != nil {
 			log.Errorf("index: %s", err)
-			return indexResultFailed
+			result.Status = IndexFailed
+			result.Error = err
+			return result
+		}
+	} else {
+		file.CreatedIn = int64(time.Since(start))
+
+		if err := ind.db.Create(&file).Error; err != nil {
+			log.Errorf("index: %s", err)
+			result.Status = IndexFailed
+			result.Error = err
+			return result
 		}
 
-		return indexResultUpdated
+		result.Status = IndexAdded
 	}
 
-	file.CreatedIn = int64(time.Since(start))
+	result.FileID = file.ID
+	result.FileUUID = file.FileUUID
 
-	if err := ind.db.Create(&file).Error; err != nil {
+	downloadedAs := fileName
+
+	if originalName != "" {
+		downloadedAs = originalName
+	}
+
+	if err := ind.q.SetDownloadFileID(downloadedAs, file.ID); err != nil {
 		log.Errorf("index: %s", err)
-		return indexResultFailed
 	}
 
-	return indexResultAdded
+	return result
 }
 
 // isNSFW returns true if media file might be offensive and detection is enabled.

@@ -14,16 +14,23 @@ import (
 	"github.com/photoprism/photoprism/internal/remote"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Sync represents a sync worker.
 type Sync struct {
 	conf *config.Config
+	q    *query.Query
 }
+
+type Downloads map[string][]entity.FileSync
 
 // NewSync returns a new service sync worker.
 func NewSync(conf *config.Config) *Sync {
-	return &Sync{conf: conf}
+	return &Sync{
+		conf: conf,
+		q:    query.New(conf.Db()),
+	}
 }
 
 // DownloadPath returns a temporary download path.
@@ -45,10 +52,7 @@ func (s *Sync) Start() (err error) {
 	}
 
 	db := s.conf.Db()
-	q := query.New(db)
-
-	runImport := false
-	runIndex := false
+	q := s.q
 
 	accounts, err := q.Accounts(f)
 
@@ -80,18 +84,14 @@ func (s *Sync) Start() (err error) {
 					a.SyncDate.Time = time.Now()
 					a.SyncDate.Valid = true
 				}
+
+				event.Publish("sync.refreshed", event.Data{"account": a})
 			}
 		case entity.AccountSyncStatusDownload:
 			if complete, err := s.download(a); err != nil {
 				a.AccErrors++
 				a.AccError = err.Error()
 			} else if complete {
-				if a.SyncFilenames {
-					runIndex = true
-				} else {
-					runImport = true
-				}
-
 				if a.SyncUpload {
 					a.SyncStatus = entity.AccountSyncStatusUpload
 				} else {
@@ -126,16 +126,6 @@ func (s *Sync) Start() (err error) {
 		if err := db.Save(&a).Error; err != nil {
 			log.Errorf("sync: %s", err.Error())
 		}
-	}
-
-	if runImport {
-		opt := photoprism.ImportOptionsMove(s.DownloadPath())
-		service.Import().Start(opt)
-	}
-
-	if runIndex {
-		opt := photoprism.IndexOptionsNone()
-		service.Index().Start(opt)
 	}
 
 	return err
@@ -192,21 +182,55 @@ func (s *Sync) getRemoteFiles(a entity.Account) (complete bool, err error) {
 	return true, nil
 }
 
+func (s *Sync) relatedDownloads(a entity.Account) (result Downloads, err error) {
+	result = make(Downloads)
+
+	files, err := s.q.FileSyncs(a.ID, entity.FileSyncNew)
+
+	if err != nil {
+		return result, err
+	}
+
+	for i, file := range files {
+		k := fs.AbsBase(file.RemoteName)
+
+		result[k] = append(result[k], file)
+
+		if i > 990 {
+			return result, nil
+		}
+	}
+
+	return result, nil
+}
+
 func (s *Sync) download(a entity.Account) (complete bool, err error) {
 	db := s.conf.Db()
-	q := query.New(db)
 
-	files, err := q.FileSyncs(a.ID, entity.FileSyncNew)
+	// Set up index worker
+	indexJobs := make(chan photoprism.IndexJob)
+	go photoprism.IndexWorker(indexJobs)
+	defer close(indexJobs)
+
+	// Set up import worker
+	importJobs := make(chan photoprism.ImportJob)
+	go photoprism.ImportWorker(importJobs)
+	defer close(importJobs)
+
+	relatedFiles, err := s.relatedDownloads(a)
 
 	if err != nil {
 		log.Errorf("sync: %s", err.Error())
 		return false, err
 	}
 
-	if len(files) == 0 {
+	if len(relatedFiles) == 0 {
+		log.Infof("sync: download complete for %s", a.AccName)
 		event.Publish("sync.downloaded", event.Data{"account": a})
 		return true, nil
 	}
+
+	log.Infof("sync: downloading from %s", a.AccName)
 
 	client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
 
@@ -218,33 +242,85 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 		baseDir = fmt.Sprintf("%s/%d", s.DownloadPath(), a.ID)
 	}
 
-	for _, file := range files {
-		if mutex.Sync.Canceled() {
-			return false, nil
+	done := make(map[string]bool)
+
+	for _, files := range relatedFiles {
+		for _, file := range files {
+			if mutex.Sync.Canceled() {
+				return false, nil
+			}
+
+			if file.Errors > a.RetryLimit {
+				log.Warnf("sync: downloading %s failed more than %d times", file.RemoteName, a.RetryLimit)
+				continue
+			}
+
+			localName := baseDir + file.RemoteName
+
+			if err := client.Download(file.RemoteName, localName, false); err != nil {
+				log.Errorf("sync: %s", err.Error())
+				file.Errors++
+				file.Error = err.Error()
+			} else {
+				log.Infof("sync: downloaded %s from %s", file.RemoteName, a.AccName)
+				file.Status = entity.FileSyncDownloaded
+			}
+
+			if mutex.Sync.Canceled() {
+				return false, nil
+			}
+
+			if err := db.Save(&file).Error; err != nil {
+				log.Errorf("sync: %s", err.Error())
+			}
 		}
 
-		if file.Errors > a.RetryLimit {
-			log.Warnf("sync: downloading %s failed more than %d times", file.RemoteName, a.RetryLimit)
-			continue
-		}
+		for _, file := range files {
+			mf, err := photoprism.NewMediaFile(baseDir + file.RemoteName)
 
-		localName := baseDir + file.RemoteName
+			if err != nil || !mf.IsPhoto() {
+				continue
+			}
 
-		if err := client.Download(file.RemoteName, localName, false); err != nil {
-			log.Errorf("sync: %s", err.Error())
-			file.Errors++
-			file.Error = err.Error()
-		} else {
-			log.Infof("sync: downloaded %s from %s", file.RemoteName, a.AccName)
-			file.Status = entity.FileSyncDownloaded
-		}
+			related, err := mf.RelatedFiles()
 
-		if mutex.Sync.Canceled() {
-			return false, nil
-		}
+			if err != nil {
+				log.Warnf("sync: %s", err.Error())
+				continue
+			}
 
-		if err := db.Save(&file).Error; err != nil {
-			log.Errorf("sync: %s", err.Error())
+			var rf photoprism.MediaFiles
+
+			for _, f := range related.Files {
+				if done[f.FileName()] {
+					continue
+				}
+
+				rf = append(rf, f)
+				done[f.FileName()] = true
+			}
+
+			done[mf.FileName()] = true
+			related.Files = rf
+
+			if a.SyncFilenames {
+				log.Infof("sync: indexing %s and related files", file.RemoteName)
+				indexJobs <- photoprism.IndexJob{
+					FileName: mf.FileName(),
+					Related:  related,
+					IndexOpt: photoprism.IndexOptionsAll(),
+					Ind:      service.Index(),
+				}
+			} else {
+				log.Infof("sync: importing %s and related files", file.RemoteName)
+				importJobs <- photoprism.ImportJob{
+					FileName: mf.FileName(),
+					Related:  related,
+					IndexOpt: photoprism.IndexOptionsAll(),
+					ImportOpt: photoprism.ImportOptionsMove(baseDir),
+					Imp:      service.Import(),
+				}
+			}
 		}
 	}
 

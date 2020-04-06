@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/nsfw"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -23,6 +24,7 @@ type Index struct {
 	tensorFlow   *classify.TensorFlow
 	nsfwDetector *nsfw.Detector
 	db           *gorm.DB
+	q            *query.Query
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
@@ -32,6 +34,7 @@ func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector
 		tensorFlow:   tensorFlow,
 		nsfwDetector: nsfwDetector,
 		db:           conf.Db(),
+		q:            query.New(conf.Db()),
 	}
 
 	return i
@@ -81,7 +84,7 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
-			indexWorker(jobs) // HLc
+			IndexWorker(jobs) // HLc
 			wg.Done()
 		}()
 	}
@@ -127,7 +130,7 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 
 		var files MediaFiles
 
-		for _, f := range related.files {
+		for _, f := range related.Files {
 			if done[f.FileName()] {
 				continue
 			}
@@ -138,13 +141,13 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 
 		done[mf.FileName()] = true
 
-		related.files = files
+		related.Files = files
 
 		jobs <- IndexJob{
-			filename: mf.FileName(),
-			related:  related,
-			opt:      options,
-			ind:      ind,
+			FileName: mf.FileName(),
+			Related:  related,
+			IndexOpt: options,
+			Ind:      ind,
 		}
 
 		return nil

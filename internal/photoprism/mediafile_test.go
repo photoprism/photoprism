@@ -261,9 +261,9 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 
 		assert.Nil(t, err)
 
-		assert.Len(t, related.files, 3)
+		assert.Len(t, related.Files, 3)
 
-		for _, result := range related.files {
+		for _, result := range related.Files {
 			t.Logf("FileName: %s", result.FileName())
 
 			filename := result.FileName()
@@ -287,9 +287,9 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 
 		assert.Nil(t, err)
 
-		assert.Len(t, related.files, 3)
+		assert.Len(t, related.Files, 3)
 
-		for _, result := range related.files {
+		for _, result := range related.Files {
 			t.Logf("FileName: %s", result.FileName())
 
 			filename := result.FileName()
@@ -314,12 +314,12 @@ func TestMediaFile_RelatedFiles_Ordering(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	assert.Len(t, related.files, 5)
+	assert.Len(t, related.Files, 5)
 
-	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.AAE", related.files[0].FileName())
-	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.JPG", related.files[1].FileName())
+	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.AAE", related.Files[0].FileName())
+	assert.Equal(t, conf.ExamplesPath()+"/IMG_4120.JPG", related.Files[1].FileName())
 
-	for _, result := range related.files {
+	for _, result := range related.Files {
 		filename := result.FileName()
 		t.Logf("FileName: %s", filename)
 	}

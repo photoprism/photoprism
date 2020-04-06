@@ -79,12 +79,18 @@ func (m *Account) Save(form form.Account, db *gorm.DB) error {
 		m.AccSync = false
 	}
 
+	// Set defaults
 	if m.SharePath == "" {
 		m.SharePath = "/"
 	}
 
 	if m.SyncPath == "" {
 		m.SyncPath = "/"
+	}
+
+	// Refresh after performing changes
+	if m.AccSync && m.SyncStatus == AccountSyncStatusSynced {
+		m.SyncStatus = AccountSyncStatusRefresh
 	}
 
 	return db.Save(m).Error

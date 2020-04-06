@@ -41,7 +41,7 @@ func (rs *Resample) Start(force bool) error {
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
-			resampleWorker(jobs)
+			ResampleWorker(jobs)
 			wg.Done()
 		}()
 	}

@@ -6,6 +6,18 @@ import (
 
 // GlobalFlags lists all CLI flags
 var GlobalFlags = []cli.Flag{
+	cli.StringFlag{
+		Name:   "admin-password",
+		Usage:  "admin password",
+		Value:  "photoprism",
+		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
+	},
+	cli.StringFlag{
+		Name:   "webdav-password",
+		Usage:  "WebDAV password (none to disable)",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_WEBDAV_PASSWORD",
+	},
 	cli.BoolFlag{
 		Name:   "debug",
 		Usage:  "run in debug mode",
@@ -30,6 +42,11 @@ var GlobalFlags = []cli.Flag{
 		Name:   "workers, w",
 		Usage:  "number of workers for indexing",
 		EnvVar: "PHOTOPRISM_WORKERS",
+	},
+	cli.IntFlag{
+		Name:   "wakeup-interval",
+		Usage:  "background worker wakeup interval in seconds",
+		EnvVar: "PHOTOPRISM_WAKEUP_INTERVAL",
 	},
 	cli.StringFlag{
 		Name:   "url",
@@ -66,18 +83,6 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "twitter handle for sharing",
 		Value:  "@browseyourlife",
 		EnvVar: "PHOTOPRISM_TWITTER",
-	},
-	cli.StringFlag{
-		Name:   "admin-password",
-		Usage:  "admin password",
-		Value:  "photoprism",
-		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
-	},
-	cli.StringFlag{
-		Name:   "webdav-password",
-		Usage:  "WebDAV password (none to disable)",
-		Value:  "",
-		EnvVar: "PHOTOPRISM_WEBDAV_PASSWORD",
 	},
 	cli.StringFlag{
 		Name:   "log-level, l",

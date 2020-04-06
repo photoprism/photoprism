@@ -9,43 +9,43 @@ import (
 )
 
 type ImportJob struct {
-	fileName  string
-	related   RelatedFiles
-	indexOpt  IndexOptions
-	importOpt ImportOptions
-	imp       *Import
+	FileName  string
+	Related   RelatedFiles
+	IndexOpt  IndexOptions
+	ImportOpt ImportOptions
+	Imp       *Import
 }
 
-func importWorker(jobs <-chan ImportJob) {
+func ImportWorker(jobs <-chan ImportJob) {
 	for job := range jobs {
 		var destinationMainFilename string
-		related := job.related
-		imp := job.imp
-		opt := job.importOpt
-		indexOpt := job.indexOpt
-		importPath := job.importOpt.Path
+		related := job.Related
+		imp := job.Imp
+		opt := job.ImportOpt
+		indexOpt := job.IndexOpt
+		importPath := job.ImportOpt.Path
 
-		if related.main == nil {
-			log.Warnf("import: no main file found for %s", job.fileName)
+		if related.Main == nil {
+			log.Warnf("import: no main file found for %s", job.FileName)
 			continue
 		}
 
-		originalName := related.main.RelativeName(importPath)
+		originalName := related.Main.RelativeName(importPath)
 
 		event.Publish("import.file", event.Data{
 			"fileName": originalName,
-			"baseName": filepath.Base(related.main.FileName()),
+			"baseName": filepath.Base(related.Main.FileName()),
 		})
 
-		for _, f := range related.files {
+		for _, f := range related.Files {
 			relativeFilename := f.RelativeName(importPath)
 
-			if destinationFilename, err := imp.DestinationFilename(related.main, f); err == nil {
+			if destinationFilename, err := imp.DestinationFilename(related.Main, f); err == nil {
 				if err := os.MkdirAll(path.Dir(destinationFilename), os.ModePerm); err != nil {
 					log.Errorf("import: could not create directories (%s)", err.Error())
 				}
 
-				if related.main.HasSameName(f) {
+				if related.Main.HasSameName(f) {
 					destinationMainFilename = destinationFilename
 					log.Infof("import: moving main %s file \"%s\" to \"%s\"", f.Type(), relativeFilename, destinationFilename)
 				} else {
@@ -104,15 +104,15 @@ func importWorker(jobs <-chan ImportJob) {
 			done := make(map[string]bool)
 			ind := imp.index
 
-			if related.main != nil {
-				res := ind.MediaFile(related.main, indexOpt, originalName)
-				log.Infof("import: %s main %s file \"%s\"", res, related.main.Type(), related.main.RelativeName(ind.originalsPath()))
-				done[related.main.FileName()] = true
+			if related.Main != nil {
+				res := ind.MediaFile(related.Main, indexOpt, originalName)
+				log.Infof("import: %s main %s file \"%s\"", res, related.Main.Type(), related.Main.RelativeName(ind.originalsPath()))
+				done[related.Main.FileName()] = true
 			} else {
 				log.Warnf("import: no main file for %s (conversion to jpeg failed?)", destinationMainFilename)
 			}
 
-			for _, f := range related.files {
+			for _, f := range related.Files {
 				if f == nil {
 					continue
 				}

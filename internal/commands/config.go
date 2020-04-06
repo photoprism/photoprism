@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/urfave/cli"
@@ -19,6 +20,8 @@ func configAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 
 	fmt.Printf("NAME                  VALUE\n")
+	fmt.Printf("admin-password        %s\n", conf.AdminPassword())
+	fmt.Printf("webdav-password       %s\n", conf.WebDAVPassword())
 	fmt.Printf("name                  %s\n", conf.Name())
 	fmt.Printf("url                   %s\n", conf.Url())
 	fmt.Printf("title                 %s\n", conf.Title())
@@ -33,8 +36,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("public                %t\n", conf.Public())
 	fmt.Printf("experimental          %t\n", conf.Experimental())
 	fmt.Printf("workers               %d\n", conf.Workers())
-	fmt.Printf("admin-password        %s\n", conf.AdminPassword())
-	fmt.Printf("webdav-password       %s\n", conf.WebDAVPassword())
+	fmt.Printf("wakeup-interval       %d\n", conf.WakeupInterval() / time.Second)
 	fmt.Printf("log-level             %s\n", conf.LogLevel())
 	fmt.Printf("log-filename          %s\n", conf.LogFilename())
 	fmt.Printf("pid-filename          %s\n", conf.PIDFilename())

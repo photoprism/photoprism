@@ -43,7 +43,7 @@ func (c *Convert) Start(path string) error {
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
-			convertWorker(jobs)
+			ConvertWorker(jobs)
 			wg.Done()
 		}()
 	}
