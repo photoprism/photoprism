@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -143,6 +144,8 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 			fileShare := entity.NewFileShare(file.ID, m.ID, dstFileName)
 			fileShare.FirstOrCreate(conf.Db())
 		}
+
+		workers.StartShare(conf)
 
 		c.JSON(http.StatusOK, files)
 	})

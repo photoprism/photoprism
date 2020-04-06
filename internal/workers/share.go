@@ -105,6 +105,7 @@ func (s *Share) Start() (err error) {
 				file.Errors++
 				file.Error = err.Error()
 			} else {
+				log.Infof("share: uploaded %s to %s", file.RemoteName, a.AccName)
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareShared
@@ -156,6 +157,7 @@ func (s *Share) Start() (err error) {
 				file.Errors++
 				file.Error = err.Error()
 			} else {
+				log.Infof("share: removed %s from %s", file.RemoteName, a.AccName)
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareRemoved
