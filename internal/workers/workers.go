@@ -1,15 +1,18 @@
-package photoprism
+package workers
 
 import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
-func ServiceWorkers(conf *config.Config) chan bool {
-	ticker := time.NewTicker(1 * time.Minute) // TODO
-	stop := make(chan bool, 1)
+var log = event.Log
+var stop = make(chan bool, 1)
+
+func Start(conf *config.Config) {
+	ticker := time.NewTicker(5 * time.Minute) // TODO
 
 	go func() {
 		for {
@@ -43,6 +46,8 @@ func ServiceWorkers(conf *config.Config) chan bool {
 			}
 		}
 	}()
+}
 
-	return stop
+func Stop() {
+	stop <- true
 }

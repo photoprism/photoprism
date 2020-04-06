@@ -1,4 +1,4 @@
-package photoprism
+package workers
 
 import (
 	"fmt"
