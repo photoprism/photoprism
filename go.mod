@@ -13,7 +13,7 @@ require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.2.0
 	github.com/dsoprea/go-exif/v2 v2.0.0-20200321225314-640175a69fe4
-	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200401235850-9261959559e1
+	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200113231507-4c1dccae8069
 	github.com/dsoprea/go-logging v0.0.0-20200401235223-7e979d0e0d02 // indirect
 	github.com/dsoprea/go-png-image-structure v0.0.0-20200402000326-c0fdb803026f
 	github.com/dsoprea/go-utility v0.0.0-20200322184706-df132586647c // indirect
