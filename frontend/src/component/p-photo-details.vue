@@ -63,28 +63,29 @@
                             </v-btn>
                         </v-img>
 
-                        <v-card-title primary-title class="pa-3">
+                        <v-card-title primary-title class="pa-3 p-photo-details-desc">
                             <div>
                                 <h3 class="body-2 mb-2" :title="photo.PhotoTitle">
-                                    <button @click.exact="editPhoto(index)">{{ photo.PhotoTitle | truncate(80) }}
+                                    <button @click.exact="editPhoto(index)">
+                                        {{ photo.PhotoTitle | truncate(80) }}
+                                        <v-icon v-if="photo.PhotoPrivate" size="16" title="Private">vpn_key</v-icon>
+                                        <v-icon v-if="photo.PhotoStory" size="16"
+                                                title="Shared with your friends in the story feed">wifi
+                                        </v-icon>
                                     </button>
-                                    <v-icon v-if="photo.PhotoPrivate" size="16" title="Private">vpn_key</v-icon>
-                                    <v-icon v-if="photo.PhotoStory" size="16"
-                                            title="Shared with your friends in the story feed">wifi
-                                    </v-icon>
                                 </h3>
                                 <div class="caption">
-                                    <v-icon size="14">date_range</v-icon>
-                                    <button @click.exact="editPhoto(index)">{{ photo.getDateString() }}</button>
-                                    <br/>
-                                    <v-icon size="14">photo_camera</v-icon>
-                                    <button @click.exact="editPhoto(index)">{{ photo.getCamera() }}</button>
-                                    <br/>
-                                    <v-icon size="14">location_on</v-icon>
-                                    <button @click.exact="openLocation(index)" v-if="photo.LocationID">{{
-                                        photo.getLocation() }}
+                                    <button @click.exact="editPhoto(index)">
+                                        <v-icon size="14">date_range</v-icon> {{ photo.getDateString() }}
                                     </button>
-                                    <span v-else>Unknown</span>
+                                    <br/>
+                                    <button @click.exact="editPhoto(index)">
+                                        <v-icon size="14">photo_camera</v-icon> {{ photo.getCamera() }}
+                                    </button>
+                                    <br/>
+                                    <button @click.exact="openLocation(index)" v-if="photo.LocationID">
+                                        <v-icon size="14">location_on</v-icon> {{ photo.getLocation() }}
+                                    </button>
                                 </div>
                             </div>
                         </v-card-title>
