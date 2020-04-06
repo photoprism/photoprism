@@ -101,7 +101,13 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 			return nil
 		}
 
-		if fileInfo.IsDir() || strings.HasPrefix(filepath.Base(fileName), ".") {
+		hidden := strings.HasPrefix(filepath.Base(fileName), ".")
+
+		if fileInfo.IsDir() && hidden {
+			return filepath.SkipDir
+		}
+
+		if fileInfo.IsDir() || hidden {
 			return nil
 		}
 
