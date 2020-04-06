@@ -352,7 +352,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		zipPath := path.Join(conf.ExportPath(), "album")
+		zipPath := path.Join(conf.TempPath(), "album")
 		zipToken := rnd.Token(3)
 		zipBaseName := fmt.Sprintf("%s-%s.zip", strings.Title(a.AlbumSlug), zipToken)
 		zipFileName := path.Join(zipPath, zipBaseName)

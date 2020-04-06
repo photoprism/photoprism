@@ -47,6 +47,7 @@ func NewTestParams() *Params {
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
 		ExportPath:     testDataPath + "/export",
+		TempPath:       testDataPath + "/temp",
 		DatabaseDriver: "mysql",
 		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
 	}
@@ -67,6 +68,7 @@ func NewTestParamsError() *Params {
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
 		ExportPath:     testDataPath + "/export",
+		TempPath:       testDataPath + "/temp",
 		DatabaseDriver: "mysql",
 		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
 	}
@@ -132,6 +134,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("originals-path", config.OriginalsPath, "doc")
 	globalSet.String("import-path", config.OriginalsPath, "doc")
 	globalSet.String("export-path", config.OriginalsPath, "doc")
+	globalSet.String("temp-path", config.OriginalsPath, "doc")
 	globalSet.String("cache-path", config.OriginalsPath, "doc")
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
@@ -146,6 +149,7 @@ func CliTestContext() *cli.Context {
 	c.Set("originals-path", config.OriginalsPath)
 	c.Set("import-path", config.ImportPath)
 	c.Set("export-path", config.ExportPath)
+	c.Set("temp-path", config.TempPath)
 	c.Set("cache-path", config.CachePath)
 	c.Set("darktable-cli", config.DarktableBin)
 	c.Set("detect-nsfw", "true")
@@ -157,6 +161,7 @@ func CliTestContext() *cli.Context {
 func (c *Config) RemoveTestData(t *testing.T) {
 	os.RemoveAll(c.ImportPath())
 	os.RemoveAll(c.ExportPath())
+	os.RemoveAll(c.TempPath())
 	os.RemoveAll(c.OriginalsPath())
 	os.RemoveAll(c.CachePath())
 }

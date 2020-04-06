@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/tidb"
+	"github.com/sirupsen/logrus"
 )
 
 // DatabaseDriver returns the database driver name.
@@ -156,10 +157,17 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 func (c *Config) DropTables() {
 	db := c.Db()
 
+	log.SetLevel(logrus.FatalLevel)
+	db.SetLogger(log)
+	db.LogMode(false)
+
 	db.DropTableIfExists(
 		&entity.Account{},
 		&entity.File{},
+		&entity.FileShare{},
+		&entity.FileSync{},
 		&entity.Photo{},
+		&entity.Description{},
 		&entity.Event{},
 		&entity.Place{},
 		&entity.Location{},

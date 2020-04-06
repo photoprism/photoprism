@@ -50,7 +50,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		zipPath := path.Join(conf.ExportPath(), "zip")
+		zipPath := path.Join(conf.TempPath(), "zip")
 		zipToken := rnd.Token(3)
 		zipYear := time.Now().Format("January-2006")
 		zipBaseName := fmt.Sprintf("Photos-%s-%s.zip", zipYear, zipToken)
@@ -105,7 +105,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 func DownloadZip(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/zip/:filename", func(c *gin.Context) {
 		zipBaseName := filepath.Base(c.Param("filename"))
-		zipPath := path.Join(conf.ExportPath(), "zip")
+		zipPath := path.Join(conf.TempPath(), "zip")
 		zipFileName := path.Join(zipPath, zipBaseName)
 
 		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", zipBaseName))
