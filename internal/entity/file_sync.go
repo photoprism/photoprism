@@ -9,15 +9,16 @@ import (
 
 const (
 	FileSyncNew        = "new"
+	FileSyncIgnore     = "ignore"
 	FileSyncDownloaded = "downloaded"
 	FileSyncUploaded   = "uploaded"
 )
 
 // FileSync represents a one-to-many relation between File and Account for syncing with remote services.
 type FileSync struct {
-	FileID     uint   `gorm:"index;"`
+	RemoteName string `gorm:"primary_key;auto_increment:false;type:varbinary(256)"`
 	AccountID  uint   `gorm:"primary_key;auto_increment:false"`
-	RemoteName string `gorm:"type:varbinary(256);primary_key;auto_increment:false"`
+	FileID     uint   `gorm:"index;"`
 	RemoteDate time.Time
 	RemoteSize int64
 	Status     string `gorm:"type:varbinary(16);"`

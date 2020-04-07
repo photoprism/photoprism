@@ -47,9 +47,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if related.Main.HasSameName(f) {
 					destinationMainFilename = destinationFilename
-					log.Infof("import: moving main %s file \"%s\" to \"%s\"", f.Type(), relativeFilename, destinationFilename)
+					log.Infof("import: moving main %s file \"%s\" to \"%s\"", f.FileType(), relativeFilename, destinationFilename)
 				} else {
-					log.Infof("import: moving related %s file \"%s\" to \"%s\"", f.Type(), relativeFilename, destinationFilename)
+					log.Infof("import: moving related %s file \"%s\" to \"%s\"", f.FileType(), relativeFilename, destinationFilename)
 				}
 
 				if opt.Move {
@@ -106,7 +106,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			if related.Main != nil {
 				res := ind.MediaFile(related.Main, indexOpt, originalName)
-				log.Infof("import: %s main %s file \"%s\"", res, related.Main.Type(), related.Main.RelativeName(ind.originalsPath()))
+				log.Infof("import: %s main %s file \"%s\"", res, related.Main.FileType(), related.Main.RelativeName(ind.originalsPath()))
 				done[related.Main.FileName()] = true
 			} else {
 				log.Warnf("import: no main file for %s (conversion to jpeg failed?)", destinationMainFilename)
@@ -124,7 +124,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				res := ind.MediaFile(f, indexOpt, "")
 				done[f.FileName()] = true
 
-				log.Infof("import: %s related %s file \"%s\"", res, f.Type(), f.RelativeName(ind.originalsPath()))
+				log.Infof("import: %s related %s file \"%s\"", res, f.FileType(), f.RelativeName(ind.originalsPath()))
 			}
 		}
 	}

@@ -38,7 +38,7 @@ func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		log.Infof("deleting photos: %#v", f.Photos)
+		log.Infof("photos: archiving %#v", f.Photos)
 
 		db := conf.Db()
 
@@ -115,7 +115,7 @@ func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		log.Infof("deleting albums: %#v", f.Albums)
+		log.Infof("albums: deleting %#v", f.Albums)
 
 		db := conf.Db()
 
@@ -223,7 +223,7 @@ func BatchLabelsDelete(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		log.Infof("deleting labels: %#v", f.Labels)
+		log.Infof("labels: deleting %#v", f.Labels)
 
 		db := conf.Db()
 

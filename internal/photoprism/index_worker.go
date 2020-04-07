@@ -18,7 +18,7 @@ func IndexWorker(jobs <-chan IndexJob) {
 			res := ind.MediaFile(related.Main, opt, "")
 			done[related.Main.FileName()] = true
 
-			log.Infof("index: %s main %s file \"%s\"", res, related.Main.Type(), related.Main.RelativeName(ind.originalsPath()))
+			log.Infof("index: %s main %s file \"%s\"", res, related.Main.FileType(), related.Main.RelativeName(ind.originalsPath()))
 		} else {
 			log.Warnf("index: no main file for %s (conversion to jpeg failed?)", job.FileName)
 		}
@@ -31,7 +31,7 @@ func IndexWorker(jobs <-chan IndexJob) {
 			res := ind.MediaFile(f, opt, "")
 			done[f.FileName()] = true
 
-			log.Infof("index: %s related %s file \"%s\"", res, f.Type(), f.RelativeName(ind.originalsPath()))
+			log.Infof("index: %s related %s file \"%s\"", res, f.FileType(), f.RelativeName(ind.originalsPath()))
 		}
 	}
 }

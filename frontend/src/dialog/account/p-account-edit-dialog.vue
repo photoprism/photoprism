@@ -181,24 +181,6 @@
                                 v-model="model.SyncRaw"
                         ></v-checkbox>
                     </v-flex>
-                    <v-flex xs12 sm6 class="px-2">
-                        <v-checkbox
-                                :disabled="!model.AccSync"
-                                hide-details
-                                color="secondary-dark"
-                                :label="label.SyncVideo"
-                                v-model="model.SyncVideo"
-                        ></v-checkbox>
-                    </v-flex>
-                    <v-flex xs12 sm6 class="px-2">
-                        <v-checkbox
-                                :disabled="!model.AccSync"
-                                hide-details
-                                color="secondary-dark"
-                                :label="label.SyncSidecar"
-                                v-model="model.SyncSidecar"
-                        ></v-checkbox>
-                    </v-flex>
                 </v-layout>
                 <v-layout row wrap v-else>
                     <v-flex xs12 class="pa-2">
@@ -367,14 +349,12 @@
                     ShareExpires: this.$gettext("Expires"),
                     SyncPath: this.$gettext("Location"),
                     SyncInterval: this.$gettext("Interval"),
-                    SyncFilenames: this.$gettext("Preserve remote filenames"),
+                    SyncFilenames: this.$gettext("Preserve filenames"),
                     SyncStart: this.$gettext("Start"),
                     SyncDownload: this.$gettext("Download remote files"),
                     SyncUpload: this.$gettext("Upload local files"),
                     SyncDelete: this.$gettext("Remote delete"),
-                    SyncRaw: this.$gettext("Sync RAW images"),
-                    SyncVideo: this.$gettext("Sync videos"),
-                    SyncSidecar: this.$gettext("Sync sidecar files"),
+                    SyncRaw: this.$gettext("Sync raw images"),
                 }
             }
         },

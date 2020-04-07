@@ -107,7 +107,7 @@ func (c *Convert) ConvertCommand(image *MediaFile, jpegName string, xmpName stri
 	} else if image.IsHEIF() {
 		result = exec.Command(c.conf.HeifConvertBin(), image.fileName, jpegName)
 	} else {
-		return nil, useMutex, fmt.Errorf("convert: image type not supported for conversion (%s)", image.Type())
+		return nil, useMutex, fmt.Errorf("convert: image type not supported for conversion (%s)", image.FileType())
 	}
 
 	return result, useMutex, nil
@@ -148,7 +148,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	}
 
 	event.Publish("index.converting", event.Data{
-		"fileType": image.Type(),
+		"fileType": image.FileType(),
 		"fileName": fileName,
 		"baseName": filepath.Base(fileName),
 		"xmpName":  filepath.Base(xmpName),

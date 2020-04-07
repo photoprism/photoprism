@@ -278,7 +278,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.FileHash = fileHash
 	file.FileSize = fileSize
 	file.FileModified = fileModified
-	file.FileType = string(m.Type())
+	file.FileType = string(m.FileType())
 	file.FileMime = m.MimeType()
 	file.FileOrientation = m.Orientation()
 

@@ -24,7 +24,7 @@ import (
 // MediaFile represents a single photo, video or sidecar file.
 type MediaFile struct {
 	fileName    string
-	fileType    fs.Type
+	fileType    fs.FileType
 	mimeType    string
 	dateCreated time.Time
 	hash        string
@@ -488,38 +488,43 @@ func (m MediaFile) IsJpeg() bool {
 	return m.MimeType() == fs.MimeTypeJpeg
 }
 
-// Type returns the type of the media file.
-func (m MediaFile) Type() fs.Type {
-	return fs.Ext[m.Extension()]
+// FileType returns the file type (jpg, gif, tiff,...).
+func (m MediaFile) FileType() fs.FileType {
+	return fs.GetFileType(m.fileName)
 }
 
-// HasType returns true if this media file is of a given type.
-func (m MediaFile) HasType(t fs.Type) bool {
+// MediaType returns the media type (video, image, raw, sidecar,...).
+func (m MediaFile) MediaType() fs.MediaType {
+	return fs.GetMediaType(m.fileName)
+}
+
+// HasFileType returns true if this media file is of a given type.
+func (m MediaFile) HasFileType(t fs.FileType) bool {
 	if t == fs.TypeJpeg {
 		return m.IsJpeg()
 	}
 
-	return m.Type() == t
+	return m.FileType() == t
 }
 
 // IsRaw returns true if this media file a RAW file.
 func (m MediaFile) IsRaw() bool {
-	return m.HasType(fs.TypeRaw)
+	return m.HasFileType(fs.TypeRaw)
 }
 
 // IsPng returns true if this media file a PNG file.
 func (m MediaFile) IsPng() bool {
-	return m.HasType(fs.TypePng)
+	return m.HasFileType(fs.TypePng)
 }
 
 // IsTiff returns true if this media file a TIFF file.
 func (m MediaFile) IsTiff() bool {
-	return m.HasType(fs.TypeTiff)
+	return m.HasFileType(fs.TypeTiff)
 }
 
 // IsImageOther returns true this media file a PNG, GIF, BMP or TIFF file.
 func (m MediaFile) IsImageOther() bool {
-	switch m.Type() {
+	switch m.FileType() {
 	case fs.TypeBitmap:
 		return true
 	case fs.TypeGif:
@@ -535,44 +540,22 @@ func (m MediaFile) IsImageOther() bool {
 
 // IsHEIF returns true if this media file is a High Efficiency Image File Format file.
 func (m MediaFile) IsHEIF() bool {
-	return m.HasType(fs.TypeHEIF)
+	return m.HasFileType(fs.TypeHEIF)
 }
 
 // IsXMP returns true if this file is a XMP sidecar file.
 func (m MediaFile) IsXMP() bool {
-	return m.Type() == fs.TypeXMP
+	return m.FileType() == fs.TypeXMP
 }
 
 // IsSidecar returns true if this media file is a sidecar file (containing metadata).
 func (m MediaFile) IsSidecar() bool {
-	switch m.Type() {
-	case fs.TypeXMP:
-		return true
-	case fs.TypeAAE:
-		return true
-	case fs.TypeXML:
-		return true
-	case fs.TypeYaml:
-		return true
-	case fs.TypeJson:
-		return true
-	case fs.TypeText:
-		return true
-	case fs.TypeMarkdown:
-		return true
-	default:
-		return false
-	}
+	return m.MediaType() == fs.MediaSidecar
 }
 
 // IsVideo returns true if this media file is a video file.
 func (m MediaFile) IsVideo() bool {
-	switch m.Type() {
-	case fs.TypeMovie:
-		return true
-	}
-
-	return false
+	return m.MediaType() == fs.MediaVideo
 }
 
 // IsPhoto checks if this media file is a photo / image.

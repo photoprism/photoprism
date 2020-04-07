@@ -14,7 +14,7 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format fs.Type) {
+func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format fs.FileType) {
 	method = ResampleFit
 	filter = imaging.Lanczos
 	format = fs.TypeJpeg

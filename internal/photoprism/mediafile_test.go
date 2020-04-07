@@ -611,21 +611,21 @@ func TestMediaFile_HasType(t *testing.T) {
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
 		assert.Nil(t, err)
-		assert.Equal(t, false, mediaFile.HasType("jpg"))
+		assert.Equal(t, false, mediaFile.HasFileType("jpg"))
 	})
 	t.Run("/iphone_7.heic", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
 		assert.Nil(t, err)
-		assert.Equal(t, true, mediaFile.HasType("heif"))
+		assert.Equal(t, true, mediaFile.HasFileType("heif"))
 	})
 	t.Run("/iphone_7.xmp", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.xmp")
 		assert.Nil(t, err)
-		assert.Equal(t, true, mediaFile.HasType("xmp"))
+		assert.Equal(t, true, mediaFile.HasFileType("xmp"))
 	})
 }
 

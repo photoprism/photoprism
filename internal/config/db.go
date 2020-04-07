@@ -157,6 +157,8 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 func (c *Config) DropTables() {
 	db := c.Db()
 
+	logLevel := log.Level
+
 	log.SetLevel(logrus.FatalLevel)
 	db.SetLogger(log)
 	db.LogMode(false)
@@ -183,6 +185,8 @@ func (c *Config) DropTables() {
 		&entity.Keyword{},
 		&entity.PhotoKeyword{},
 	)
+
+	log.SetLevel(logLevel)
 }
 
 // ImportSQL imports a file to the currently configured database.

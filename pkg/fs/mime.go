@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+const (
+	MimeTypeJpeg = "image/jpeg"
+)
+
 // MimeType returns the mime type of a file, empty string if unknown.
 func MimeType(filename string) string {
 	handle, err := os.Open(filename)

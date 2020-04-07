@@ -35,20 +35,6 @@ func TestDiscover(t *testing.T) {
 		assert.Equal(t, "photoprism", r.AccPass)
 	})
 
-	t.Run("https", func(t *testing.T) {
-		r, err := Discover("https://dl.photoprism.org/fixtures/testdata/import/", "", "")
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Equal(t, "Photoprism", r.AccName)
-		assert.Equal(t, "web", r.AccType)
-		assert.Equal(t, "https://dl.photoprism.org/fixtures/testdata/import/", r.AccURL)
-		assert.Equal(t, "", r.AccUser)
-		assert.Equal(t, "", r.AccPass)
-	})
-
 	t.Run("facebook", func(t *testing.T) {
 		r, err := Discover("https://www.facebook.com/ob.boris.palmer", "", "")
 

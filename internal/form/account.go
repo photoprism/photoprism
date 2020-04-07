@@ -27,8 +27,6 @@ type Account struct {
 	SyncDownload  bool   `json:"SyncDownload"`
 	SyncFilenames bool   `json:"SyncFilenames"`
 	SyncRaw       bool   `json:"SyncRaw"`
-	SyncVideo     bool   `json:"SyncVideo"`
-	SyncSidecar   bool   `json:"SyncSidecar"`
 }
 
 func NewAccount(m interface{}) (f Account, err error) {

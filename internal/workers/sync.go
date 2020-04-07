@@ -166,9 +166,30 @@ func (s *Sync) getRemoteFiles(a entity.Account) (complete bool, err error) {
 			}
 
 			f := entity.NewFileSync(a.ID, file.Abs)
+
+			f.Status = entity.FileSyncIgnore
 			f.RemoteDate = file.Date
 			f.RemoteSize = file.Size
+
+			// Select supported types for download
+			mediaType := fs.GetMediaType(file.Name)
+			switch mediaType {
+			case fs.MediaImage:
+				f.Status = entity.FileSyncNew
+			case fs.MediaSidecar:
+				f.Status = entity.FileSyncNew
+			case fs.MediaRaw:
+				if a.SyncRaw {
+					f.Status = entity.FileSyncNew
+				}
+			}
+
 			f.FirstOrCreate(db)
+
+			if f.Status == entity.FileSyncIgnore && mediaType == fs.MediaRaw && a.SyncRaw {
+				f.Status = entity.FileSyncNew
+				db.Save(&f)
+			}
 
 			if f.Status == entity.FileSyncDownloaded && !f.RemoteDate.Equal(file.Date) {
 				f.Status = entity.FileSyncNew
