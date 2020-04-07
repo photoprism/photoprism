@@ -26,7 +26,7 @@
                                 <template v-slot:activator="{ on }">
                                     <span v-on="on">{{labels.skipUnchanged}}</span>
                                 </template>
-                                <span>Enable to re-index all originals, including already indexed and unchanged files.</span>
+                                <span>Disable to re-index all originals, including already indexed and unchanged files.</span>
                             </v-tooltip>
                         </div>
                     </template>
