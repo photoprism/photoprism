@@ -233,45 +233,6 @@
                                 ></v-text-field>
                             </v-flex>
 
-                            <v-flex xs12 class="pa-2">
-                                <v-textarea
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        auto-grow
-                                        label="Description"
-                                        placeholder=""
-                                        :rows="1"
-                                        color="secondary-dark"
-                                        v-model="model.Description.PhotoDescription"
-                                ></v-textarea>
-                            </v-flex>
-
-                            <v-flex xs12 md6 class="pa-2">
-                                <v-textarea
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        auto-grow
-                                        label="Keywords"
-                                        placeholder=""
-                                        :rows="1"
-                                        color="secondary-dark"
-                                        v-model="model.Description.PhotoKeywords"
-                                ></v-textarea>
-                            </v-flex>
-
-                            <v-flex xs12 md6 class="pa-2">
-                                <v-textarea
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        auto-grow
-                                        label="Notes"
-                                        placeholder=""
-                                        :rows="1"
-                                        color="secondary-dark"
-                                        v-model="model.Description.PhotoNotes"
-                                ></v-textarea>
-                            </v-flex>
-
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-textarea
                                         hide-details
@@ -317,6 +278,45 @@
                                         :rows="1"
                                         color="secondary-dark"
                                         v-model="model.Description.PhotoLicense"
+                                ></v-textarea>
+                            </v-flex>
+
+                            <v-flex xs12 class="pa-2">
+                                <v-textarea
+                                        hide-details
+                                        browser-autocomplete="off"
+                                        auto-grow
+                                        label="Description"
+                                        placeholder=""
+                                        :rows="1"
+                                        color="secondary-dark"
+                                        v-model="model.Description.PhotoDescription"
+                                ></v-textarea>
+                            </v-flex>
+
+                            <v-flex xs12 md6 class="pa-2">
+                                <v-textarea
+                                        hide-details
+                                        browser-autocomplete="off"
+                                        auto-grow
+                                        label="Keywords"
+                                        placeholder=""
+                                        :rows="1"
+                                        color="secondary-dark"
+                                        v-model="model.Description.PhotoKeywords"
+                                ></v-textarea>
+                            </v-flex>
+
+                            <v-flex xs12 md6 class="pa-2">
+                                <v-textarea
+                                        hide-details
+                                        browser-autocomplete="off"
+                                        auto-grow
+                                        label="Notes"
+                                        placeholder=""
+                                        :rows="1"
+                                        color="secondary-dark"
+                                        v-model="model.Description.PhotoNotes"
                                 ></v-textarea>
                             </v-flex>
 

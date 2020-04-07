@@ -10,7 +10,7 @@ func (q *Query) AccountUploads(a entity.Account, limit int) (results []entity.Fi
 	s := q.db
 
 	s = s.Where("files.file_missing = 0").
-    	Where("files.id NOT IN (SELECT file_id FROM files_sync WHERE file_id > 0 AND account_id = ?)", a.ID)
+		Where("files.id NOT IN (SELECT file_id FROM files_sync WHERE file_id > 0 AND account_id = ?)", a.ID)
 
 	if !a.SyncRaw {
 		s = s.Where("files.file_type <> ? OR files.file_type IS NULL", fs.TypeRaw)
