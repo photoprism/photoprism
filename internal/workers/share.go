@@ -2,7 +2,7 @@ package workers
 
 import (
 	"fmt"
-	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -77,14 +77,14 @@ func (s *Share) Start() (err error) {
 
 			dir := filepath.Dir(file.RemoteName)
 
-			if _, ok := existingDirs[dir]; ok == false && dir != "/" && dir != "." {
+			if _, ok := existingDirs[dir]; !ok {
 				if err := client.CreateDir(dir); err != nil {
 					log.Errorf("share: could not create directory %s", dir)
 					continue
 				}
 			}
 
-			srcFileName := s.conf.OriginalsPath() + string(os.PathSeparator) + file.File.FileName
+			srcFileName := path.Join(s.conf.OriginalsPath(), file.File.FileName)
 
 			if a.ShareSize != "" {
 				thumbType, ok := thumb.Types[a.ShareSize]

@@ -1,0 +1,77 @@
+package workers
+
+import (
+	"path"
+	"path/filepath"
+	"time"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/remote/webdav"
+)
+
+// Uploads local files to a remote account
+func (s *Sync) upload(a entity.Account) (complete bool, err error) {
+	db := s.conf.Db()
+	q := s.q
+	maxResults := 250
+
+	// Get upload file list from database
+	files, err := q.AccountUploads(a, maxResults)
+
+	if err != nil {
+		return false, err
+	}
+
+	if len(files) == 0 {
+		log.Infof("sync: upload complete for %s", a.AccName)
+		event.Publish("sync.uploaded", event.Data{"account": a})
+		return true, nil
+	}
+
+	client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
+	existingDirs := make(map[string]string)
+
+	for _, file := range files {
+		if mutex.Sync.Canceled() {
+			return false, nil
+		}
+
+		fileName := path.Join(s.conf.OriginalsPath(), file.FileName)
+		remoteName := path.Join(a.SyncPath, file.FileName)
+		remoteDir := filepath.Dir(remoteName)
+
+		if _, ok := existingDirs[remoteDir]; !ok {
+			if err := client.CreateDir(remoteDir); err != nil {
+				log.Errorf("sync: could not create remote directory %s", remoteDir)
+				continue // try again next time
+			}
+		}
+
+		if err := client.Upload(fileName, remoteName); err != nil {
+			log.Errorf("sync: %s", err.Error())
+			continue // try again next time
+		}
+
+		log.Infof("sync: uploaded %s to %s on %s", fileName, remoteName, a.AccName)
+
+		fileSync := entity.NewFileSync(a.ID, remoteName)
+		fileSync.Status = entity.FileSyncUploaded
+		fileSync.RemoteDate = time.Now()
+		fileSync.RemoteSize = file.FileSize
+		fileSync.FileID = file.ID
+		fileSync.Error = ""
+		fileSync.Errors = 0
+
+		if mutex.Sync.Canceled() {
+			return false, nil
+		}
+
+		if err := db.Save(&fileSync).Error; err != nil {
+			log.Errorf("sync: %s", err.Error())
+		}
+	}
+
+	return false, nil
+}

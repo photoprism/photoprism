@@ -166,7 +166,7 @@ func (c Client) DownloadDir(from, to string, recursive, force bool) (errs []erro
 
 // CreateDir recursively creates directories if they don't exist.
 func (c Client) CreateDir(dir string) error {
-	if dir == "" || dir == "/" {
+	if dir == "" || dir == "/" || dir == "." {
 		return nil
 	}
 
