@@ -63,7 +63,7 @@
                             </v-btn>
                         </v-img>
 
-                        <v-card-title primary-title class="pa-3 p-photo-details-desc">
+                        <v-card-title primary-title class="pa-3 p-photo-desc">
                             <div>
                                 <h3 class="body-2 mb-2" :title="photo.PhotoTitle">
                                     <button @click.exact="editPhoto(index)">

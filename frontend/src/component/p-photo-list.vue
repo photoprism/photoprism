@@ -18,8 +18,12 @@
                     <v-icon v-else-if="!$clipboard.has(props.item)" color="accent lighten-4">radio_button_off</v-icon>
                 </v-btn>
             </td>
-            <td @click="editPhoto(props.index)" class="p-pointer">{{ props.item.PhotoTitle }}</td>
-            <td class="hidden-xs-only">
+            <td class="p-photo-desc">
+                <button @click.stop.prevent="openPhoto(props.index)">
+                    {{ props.item.PhotoTitle }}
+                </button>
+            </td>
+            <td class="hidden-xs-only p-photo-desc">
                 <button v-if="props.item.LocationID" @click.stop.prevent="openLocation(props.index)">
                     {{ props.item.getLocation() }}
                 </button>
@@ -27,8 +31,16 @@
                     {{ props.item.getLocation() }}
                 </span>
             </td>
-            <td class="hidden-sm-and-down">{{ props.item.CameraMake }} {{ props.item.CameraModel }}</td>
-            <td :title="props.item.TakenAt | luxon:format('dd/MM/yyyy HH:mm:ss')">{{ props.item.TakenAt | luxon:locale }}</td>
+            <td class="hidden-sm-and-down p-photo-desc">
+                <button @click.stop.prevent="editPhoto(props.index)">
+                    {{ props.item.CameraMake }} {{ props.item.CameraModel }}
+                </button>
+            </td>
+            <td :title="props.item.TakenAt | luxon:format('dd/MM/yyyy HH:mm:ss')" class="p-photo-desc">
+                <button @click.stop.prevent="editPhoto(props.index)">
+                    {{ props.item.TakenAt | luxon:locale }}
+                </button>
+            </td>
             <td><v-btn icon small flat :ripple="false"
                        class="p-photo-like"
                        @click.stop.prevent="props.item.toggleLike()">
