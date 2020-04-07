@@ -19,22 +19,55 @@
                         v-model="options.skipUnchanged"
                         color="secondary-dark"
                         :disabled="busy"
-                        :label="labels.skipUnchanged"
-                ></v-checkbox>
+                >
+                    <template v-slot:label>
+                        <div>
+                            <v-tooltip right  max-width="90%" :open-delay="tooltipDelay">
+                                <template v-slot:activator="{ on }">
+                                    <span v-on="on">{{labels.skipUnchanged}}</span>
+                                </template>
+                                <span>Enable to re-index all originals, including already indexed and unchanged files.</span>
+                            </v-tooltip>
+                        </div>
+                    </template>
+                </v-checkbox>
+
                 <v-checkbox
                         class="ma-0 pa-0"
                         v-model="options.convertRaw"
                         color="secondary-dark"
                         :disabled="busy || readonly"
-                        :label="labels.convertRaw"
-                ></v-checkbox>
+                >
+                    <template v-slot:label>
+                        <div>
+                            <v-tooltip right max-width="90%" :open-delay="tooltipDelay">
+                                <template v-slot:activator="{ on }">
+                                    <span v-on="on">{{labels.convertRaw}}</span>
+                                </template>
+                                <span>RAW image files can not be indexed and displayed directly. They need to be converted to JPEG if not done already. You can also convert your files manually.</span>
+                            </v-tooltip>
+                        </div>
+                    </template>
+                </v-checkbox>
+
                 <v-checkbox
                         class="ma-0 pa-0"
                         v-model="options.createThumbs"
                         color="secondary-dark"
                         :disabled="busy"
-                        :label="labels.createThumbs"
-                ></v-checkbox>
+                >
+                    <template v-slot:label>
+                        <div>
+                            <v-tooltip right max-width="90%" :open-delay="tooltipDelay">
+                                <template v-slot:activator="{ on }">
+                                    <span v-on="on">{{labels.createThumbs}}</span>
+                                </template>
+                                <span>Enable to pre-render thumbnails if not done already.
+                                    On-demand rendering saves storage but requires a powerful CPU.</span>
+                            </v-tooltip>
+                        </div>
+                    </template>
+                </v-checkbox>
                 <!-- v-checkbox
                         class="ma-0 pa-0"
                         v-model="options.groomMetadata"
@@ -86,6 +119,7 @@
                 action: "",
                 fileName: "",
                 source: null,
+                tooltipDelay: 750, // ms
                 options: {
                     skipUnchanged: true,
                     createThumbs: false,

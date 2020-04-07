@@ -6,11 +6,12 @@
                     <span v-if="fileName">Importing {{fileName}}...</span>
                     <span v-else-if="busy">Importing files from import folder...</span>
                     <span v-else-if="completed">Done.</span>
-                    <span v-else>Press button to copy photos from import folder...</span>
+                    <span v-else>Press button to import photos...</span>
                 </p>
 
                 <p class="options">
-                    <v-progress-linear color="secondary-dark" :value="completed" :indeterminate="busy"></v-progress-linear>
+                    <v-progress-linear color="secondary-dark" :value="completed"
+                                       :indeterminate="busy"></v-progress-linear>
                 </p>
 
                 <v-checkbox
@@ -18,8 +19,19 @@
                         v-model="options.move"
                         color="secondary-dark"
                         :disabled="busy"
-                        :label="labels.move"
-                ></v-checkbox>
+                >
+                    <template v-slot:label>
+                        <div>
+                            <v-tooltip right max-width="90%" open-delay="750">
+                                <template v-slot:activator="{ on }">
+                                    <span v-on="on">{{labels.move}}</span>
+                                </template>
+                                <span>Instead of creating a copy, move files from import to originals to save storage.
+                                    Unsupported file types will never be deleted, they remain in their current folder.</span>
+                            </v-tooltip>
+                        </div>
+                    </template>
+                </v-checkbox>
 
                 <p class="subheading">
                     When you import files to your library, they will be sorted by date
@@ -40,11 +52,11 @@
                 </v-btn>
 
                 <v-btn v-if="!this.$config.values.readonly"
-                        :disabled="busy"
-                        color="secondary-dark"
-                        class="white--text ml-0 mt-2 hidden-xs-only"
-                        depressed
-                        @click.stop="showUpload()"
+                       :disabled="busy"
+                       color="secondary-dark"
+                       class="white--text ml-0 mt-2 hidden-xs-only"
+                       depressed
+                       @click.stop="showUpload()"
                 >
                     <translate>Upload</translate>
                     <v-icon right dark>cloud_upload</v-icon>
