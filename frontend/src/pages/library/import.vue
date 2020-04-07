@@ -4,9 +4,9 @@
             <v-container fluid>
                 <p class="subheading">
                     <span v-if="fileName">Importing {{fileName}}...</span>
-                    <span v-else-if="busy">Importing files from directory...</span>
+                    <span v-else-if="busy">Importing files from import folder...</span>
                     <span v-else-if="completed">Done.</span>
-                    <span v-else>Press button to move and index photos from import directory...</span>
+                    <span v-else>Press button to copy photos from import folder...</span>
                 </p>
 
                 <p class="options">
@@ -21,6 +21,14 @@
                         :label="labels.move"
                 ></v-checkbox>
 
+                <p class="subheading">
+                    When you import files to your library, they will be sorted by date
+                    and given a unique file name to avoid duplicates.
+                    Importing will automatically render thumbnails and jpegs as needed.
+                    Original file names will be stored and indexed.
+                    You can as well manage your originals manually or using other tools.
+                </p>
+
                 <v-btn
                         :disabled="!busy"
                         color="secondary-dark"
@@ -29,6 +37,17 @@
                         @click.stop="cancelImport()"
                 >
                     <translate>Cancel</translate>
+                </v-btn>
+
+                <v-btn v-if="!this.$config.values.readonly"
+                        :disabled="busy"
+                        color="secondary-dark"
+                        class="white--text ml-0 mt-2 hidden-xs-only"
+                        depressed
+                        @click.stop="showUpload()"
+                >
+                    <translate>Upload</translate>
+                    <v-icon right dark>cloud_upload</v-icon>
                 </v-btn>
 
                 <v-btn
@@ -63,14 +82,17 @@
                 fileName: '',
                 source: null,
                 options: {
-                    move: true,
+                    move: false,
                 },
                 labels: {
-                    move: this.$gettext("Move files to save storage and boost performance"),
+                    move: this.$gettext("Remove imported files from import folder"),
                 }
             }
         },
         methods: {
+            showUpload() {
+                Event.publish("upload.show");
+            },
             submit() {
                 // DO NOTHING
             },
