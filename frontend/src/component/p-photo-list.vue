@@ -98,6 +98,15 @@
                 }
             },
             selection: function () {
+                this.refreshSelection();
+            },
+        },
+        methods: {
+            toggleSelection(props) {
+                this.$clipboard.toggle(props.item);
+                props.selected = this.$clipboard.has(props.item);
+            },
+            refreshSelection() {
                 this.selected.splice(0);
 
                 for (let i = 0; i <= this.photos.length; i++) {
@@ -107,11 +116,10 @@
                 }
             },
         },
-        methods: {
-            toggleSelection(props) {
-                this.$clipboard.toggle(props.item);
-                props.selected = this.$clipboard.has(props.item);
-            }
+        mounted: function () {
+            this.$nextTick(function () {
+                this.refreshSelection();
+            })
         }
     };
 </script>

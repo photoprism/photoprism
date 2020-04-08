@@ -257,7 +257,7 @@
                         if (!this.results.length) {
                             this.$notify.warning(this.$gettext("No photos found"));
                         } else if (this.results.length === 1) {
-                            this.$notify.info("One photo found");
+                            this.$notify.info(this.$gettext("One photo found"));
                         } else {
                             this.$notify.info(this.results.length + this.$gettext(" photos found"));
                         }
