@@ -56,6 +56,7 @@ class Photo extends Abstract {
             Labels: [],
             Keywords: [],
             Albums: [],
+            Links: [],
             CreatedAt: "",
             UpdatedAt: "",
             DeletedAt: null,

@@ -23,16 +23,16 @@ func (q *Query) FilesByUUID(u []string, limit int, offset int) (files []entity.F
 
 // FileByPhotoUUID
 func (q *Query) FileByPhotoUUID(u string) (file entity.File, err error) {
-	if err := q.db.Where("photo_uuid = ? AND file_primary = 1", u).Preload("Photo").First(&file).Error; err != nil {
+	if err := q.db.Where("photo_uuid = ? AND file_primary = 1", u).Preload("Links").Preload("Photo").First(&file).Error; err != nil {
 		return file, err
 	}
 
 	return file, nil
 }
 
-// FileByID returns a MediaFile given a certain ID.
-func (q *Query) FileByID(id string) (file entity.File, err error) {
-	if err := q.db.Where("id = ?", id).Preload("Photo").First(&file).Error; err != nil {
+// FileByUUID returns the file entity for a given UUID.
+func (q *Query) FileByUUID(uuid string) (file entity.File, err error) {
+	if err := q.db.Where("file_uuid = ?", uuid).Preload("Links").Preload("Photo").First(&file).Error; err != nil {
 		return file, err
 	}
 
@@ -41,7 +41,7 @@ func (q *Query) FileByID(id string) (file entity.File, err error) {
 
 // FirstFileByHash finds a file with a given hash string.
 func (q *Query) FileByHash(fileHash string) (file entity.File, err error) {
-	if err := q.db.Where("file_hash = ?", fileHash).Preload("Photo").First(&file).Error; err != nil {
+	if err := q.db.Where("file_hash = ?", fileHash).Preload("Links").Preload("Photo").First(&file).Error; err != nil {
 		return file, err
 	}
 

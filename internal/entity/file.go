@@ -40,8 +40,9 @@ type File struct {
 	FileChroma      uint
 	FileNotes       string `gorm:"type:text"`
 	FileError       string `gorm:"type:varbinary(512)"`
-	FileShare       []FileShare
-	FileSync        []FileSync
+	Share           []FileShare
+	Sync            []FileSync
+	Links           []Link `gorm:"foreignkey:ShareUUID;association_foreignkey:FileUUID"`
 	CreatedAt       time.Time
 	CreatedIn       int64
 	UpdatedAt       time.Time

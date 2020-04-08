@@ -51,6 +51,7 @@ type Photo struct {
 	Lens                *Lens       `json:"Lens"`
 	Location            *Location   `json:"-"`
 	Place               *Place      `json:"-"`
+	Links               []Link      `gorm:"foreignkey:ShareUUID;association_foreignkey:PhotoUUID"`
 	Keywords            []Keyword   `json:"-"`
 	Albums              []Album     `json:"-"`
 	Files               []File

@@ -20,6 +20,7 @@ class Album extends Abstract {
             AlbumRadius: 0,
             AlbumOrder: "",
             AlbumTemplate: "",
+            Links: [],
             CreatedAt: "",
             UpdatedAt: "",
             DeletedAt: null,

@@ -54,20 +54,27 @@ func TestQuery_FileByPhotoUUID(t *testing.T) {
 	})
 }
 
-func TestQuery_FileByID(t *testing.T) {
+func TestQuery_FileByUUID(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		file, err := search.FileByID("3")
+		file, err := search.FileByUUID("fq8es39w45bnlqdw")
 
-		assert.Nil(t, err)
-		assert.Equal(t, "exampleXmpFile.xmp", file.FileName)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "exampleFileName.jpg", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		file, err := search.FileByID("111")
+		file, err := search.FileByUUID("111")
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
 
 		assert.Error(t, err, "record not found")
 		t.Log(file)

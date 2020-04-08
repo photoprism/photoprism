@@ -17,6 +17,7 @@ class Label extends Abstract {
             LabelFavorite: false,
             LabelDescription: "",
             LabelNotes: "",
+            Links: [],
         };
     }
 

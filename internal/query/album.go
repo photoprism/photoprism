@@ -23,11 +23,12 @@ type AlbumResult struct {
 	AlbumFavorite    bool
 	AlbumDescription string
 	AlbumNotes       string
+	LinkCount        int
 }
 
 // AlbumByUUID returns a Album based on the UUID.
 func (q *Query) AlbumByUUID(albumUUID string) (album entity.Album, err error) {
-	if err := q.db.Where("album_uuid = ?", albumUUID).First(&album).Error; err != nil {
+	if err := q.db.Where("album_uuid = ?", albumUUID).Preload("Links").First(&album).Error; err != nil {
 		return album, err
 	}
 
@@ -59,8 +60,11 @@ func (q *Query) Albums(f form.AlbumSearch) (results []AlbumResult, err error) {
 	s := q.db.NewScope(nil).DB()
 
 	s = s.Table("albums").
-		Select(`albums.*, COUNT(photos_albums.album_uuid) AS album_count`).
+		Select(`albums.*, 
+			COUNT(photos_albums.album_uuid) AS album_count,
+			COUNT(links.link_token) AS link_count`).
 		Joins("LEFT JOIN photos_albums ON photos_albums.album_uuid = albums.album_uuid").
+		Joins("LEFT JOIN links ON links.share_uuid = albums.album_uuid").
 		Where("albums.deleted_at IS NULL").
 		Group("albums.id")
 

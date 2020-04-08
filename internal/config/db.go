@@ -73,7 +73,6 @@ func (c *Config) MigrateDb() {
 		&entity.Camera{},
 		&entity.Lens{},
 		&entity.Country{},
-
 		&entity.Album{},
 		&entity.PhotoAlbum{},
 		&entity.Label{},
@@ -81,10 +80,47 @@ func (c *Config) MigrateDb() {
 		&entity.PhotoLabel{},
 		&entity.Keyword{},
 		&entity.PhotoKeyword{},
+		&entity.Link{},
 	)
 
 	entity.CreateUnknownPlace(db)
 	entity.CreateUnknownCountry(db)
+}
+
+// DropTables drops all tables in the currently configured database (be careful!).
+func (c *Config) DropTables() {
+	db := c.Db()
+
+	logLevel := log.Level
+
+	log.SetLevel(logrus.FatalLevel)
+	db.SetLogger(log)
+	db.LogMode(false)
+
+	db.DropTableIfExists(
+		&entity.Account{},
+		&entity.File{},
+		&entity.FileShare{},
+		&entity.FileSync{},
+		&entity.Photo{},
+		&entity.Description{},
+		&entity.Event{},
+		&entity.Place{},
+		&entity.Location{},
+		&entity.Camera{},
+		&entity.Lens{},
+		&entity.Country{},
+		&entity.Album{},
+		&entity.PhotoAlbum{},
+		&entity.Label{},
+		&entity.Category{},
+		&entity.PhotoLabel{},
+		&entity.Keyword{},
+		&entity.PhotoKeyword{},
+		&entity.Link{},
+	)
+
+	log.SetLevel(logLevel)
 }
 
 // connectToDatabase establishes a database connection.
@@ -151,42 +187,6 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 
 	c.db = db
 	return err
-}
-
-// DropTables drops all tables in the currently configured database (be careful!).
-func (c *Config) DropTables() {
-	db := c.Db()
-
-	logLevel := log.Level
-
-	log.SetLevel(logrus.FatalLevel)
-	db.SetLogger(log)
-	db.LogMode(false)
-
-	db.DropTableIfExists(
-		&entity.Account{},
-		&entity.File{},
-		&entity.FileShare{},
-		&entity.FileSync{},
-		&entity.Photo{},
-		&entity.Description{},
-		&entity.Event{},
-		&entity.Place{},
-		&entity.Location{},
-		&entity.Camera{},
-		&entity.Lens{},
-		&entity.Country{},
-
-		&entity.Album{},
-		&entity.PhotoAlbum{},
-		&entity.Label{},
-		&entity.Category{},
-		&entity.PhotoLabel{},
-		&entity.Keyword{},
-		&entity.PhotoKeyword{},
-	)
-
-	log.SetLevel(logLevel)
 }
 
 // ImportSQL imports a file to the currently configured database.

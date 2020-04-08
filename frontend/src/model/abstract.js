@@ -114,6 +114,14 @@ class Abstract {
         return this.constructor.getModelName() + " " + this.getId();
     }
 
+    addLink(password, expires, comment, edit) {
+        expires = expires ? parseInt(expires) : 0;
+        comment = !!comment;
+        edit = !!edit;
+        const values = {password, expires, comment, edit};
+        return Api.post(this.getEntityResource() + "/link", values).then((response) => Promise.resolve(this.setValues(response.data)));
+    }
+
     static getCollectionResource() {
         throw new Error("getCollectionResource() needs to be implemented");
     }

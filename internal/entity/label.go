@@ -22,6 +22,7 @@ type Label struct {
 	LabelDescription string   `gorm:"type:text;"`
 	LabelNotes       string   `gorm:"type:text;"`
 	LabelCategories  []*Label `gorm:"many2many:categories;association_jointable_foreignkey:category_id"`
+	Links            []Link   `gorm:"foreignkey:ShareUUID;association_foreignkey:LabelUUID"`
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 	DeletedAt        *time.Time `sql:"index"`

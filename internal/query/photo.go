@@ -337,7 +337,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 
 // PhotoByID returns a Photo based on the ID.
 func (q *Query) PhotoByID(photoID uint64) (photo entity.Photo, err error) {
-	if err := q.db.Where("id = ?", photoID).Preload("Description").First(&photo).Error; err != nil {
+	if err := q.db.Where("id = ?", photoID).Preload("Links").Preload("Description").First(&photo).Error; err != nil {
 		return photo, err
 	}
 
@@ -346,7 +346,7 @@ func (q *Query) PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 
 // PhotoByUUID returns a Photo based on the UUID.
 func (q *Query) PhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
-	if err := q.db.Where("photo_uuid = ?", photoUUID).Preload("Description").First(&photo).Error; err != nil {
+	if err := q.db.Where("photo_uuid = ?", photoUUID).Preload("Links").Preload("Description").First(&photo).Error; err != nil {
 		return photo, err
 	}
 
@@ -362,6 +362,7 @@ func (q *Query) PreloadPhotoByUUID(photoUUID string) (photo entity.Photo, err er
 		Preload("Labels.Label").
 		Preload("Camera").
 		Preload("Lens").
+		Preload("Links").
 		Preload("Description").
 		First(&photo).Error; err != nil {
 		return photo, err

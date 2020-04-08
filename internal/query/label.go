@@ -30,7 +30,7 @@ type LabelResult struct {
 
 // LabelBySlug returns a Label based on the slug name.
 func (q *Query) LabelBySlug(labelSlug string) (label entity.Label, err error) {
-	if err := q.db.Where("label_slug = ?", labelSlug).First(&label).Error; err != nil {
+	if err := q.db.Where("label_slug = ?", labelSlug).Preload("Links").First(&label).Error; err != nil {
 		return label, err
 	}
 
@@ -39,7 +39,7 @@ func (q *Query) LabelBySlug(labelSlug string) (label entity.Label, err error) {
 
 // LabelByUUID returns a Label based on the label UUID.
 func (q *Query) LabelByUUID(labelUUID string) (label entity.Label, err error) {
-	if err := q.db.Where("label_uuid = ?", labelUUID).First(&label).Error; err != nil {
+	if err := q.db.Where("label_uuid = ?", labelUUID).Preload("Links").First(&label).Error; err != nil {
 		return label, err
 	}
 
