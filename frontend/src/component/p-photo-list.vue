@@ -11,10 +11,8 @@
     >
         <template slot="items" slot-scope="props">
             <td>
-                <v-img :src="props.item.getThumbnailUrl('tile_50')"
-                       aspect-ratio="1"
-                       class="accent lighten-2"
-                       style="cursor: pointer"
+                <v-img class="accent lighten-2" style="cursor: pointer" aspect-ratio="1"
+                       :src="props.item.getThumbnailUrl('tile_50')"
                        @click.exact="openPhoto(props.index)"
                 >
                     <v-layout
@@ -37,7 +35,7 @@
                     </button>
                 </v-hover>
             </td>
-            <td class="hidden-xs-only p-photo-desc" @click.exact="toggleSelection(props)">
+            <td class="p-photo-desc hidden-xs-only" @click.exact="toggleSelection(props)">
                 <button v-if="props.item.LocationID" @click.stop.prevent="openLocation(props.index)">
                     {{ props.item.getLocation() }}
                 </button>
@@ -45,19 +43,18 @@
                     {{ props.item.getLocation() }}
                 </span>
             </td>
-            <td class="hidden-sm-and-down p-photo-desc" @click.exact="toggleSelection(props)">
+            <td class="p-photo-desc hidden-sm-and-down" @click.exact="toggleSelection(props)">
                 <button @click.stop.prevent="editPhoto(props.index)">
                     {{ props.item.CameraMake }} {{ props.item.CameraModel }}
                 </button>
             </td>
-            <td :title="props.item.TakenAt | luxon:format('dd/MM/yyyy HH:mm:ss')" class="p-photo-desc">
+            <td class="p-photo-desc hidden-xs-only" :title="props.item.TakenAt | luxon:format('dd/MM/yyyy HH:mm:ss')">
                 <button @click.stop.prevent="editPhoto(props.index)">
                     {{ props.item.TakenAt | luxon:locale }}
                 </button>
             </td>
             <td>
-                <v-btn icon small flat :ripple="false"
-                       class="p-photo-like"
+                <v-btn class="p-photo-like" icon small flat :ripple="false"
                        @click.stop.prevent="props.item.toggleLike()">
                     <v-icon v-if="props.item.PhotoFavorite" color="pink lighten-3">favorite</v-icon>
                     <v-icon v-else color="accent lighten-4">favorite_border</v-icon>
@@ -85,7 +82,7 @@
                     {text: this.$gettext('Title'), value: 'PhotoTitle'},
                     {text: this.$gettext('Location'), class: 'hidden-xs-only', value: 'LocLabel'},
                     {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel'},
-                    {text: this.$gettext('Taken'), value: 'TakenAt'},
+                    {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt'},
                     {text: this.$gettext('Favorite'), value: 'PhotoFavorite', align: 'left'},
                 ],
             };
