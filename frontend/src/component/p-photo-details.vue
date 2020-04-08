@@ -45,7 +45,7 @@
 
                             <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
                                    icon large absolute
-                                   class="p-photo-select"
+                                   :class="hover ? 'p-photo-select' : 'p-photo-select opacity-70'"
                                    @click.shift.prevent="$clipboard.addRange(index, photos)"
                                    @click.exact.stop.prevent="$clipboard.toggle(photo)">
                                 <v-icon v-if="selection.length && $clipboard.has(photo)" color="white"
@@ -56,7 +56,7 @@
 
                             <v-btn v-if="hover || photo.PhotoFavorite" :flat="!hover" :ripple="false"
                                    icon large absolute
-                                   class="p-photo-like"
+                                   :class="hover ? 'p-photo-like' : 'p-photo-like opacity-70'"
                                    @click.stop.prevent="photo.toggleLike()">
                                 <v-icon v-if="photo.PhotoFavorite" color="white" class="t-like t-on">favorite</v-icon>
                                 <v-icon v-else color="accent lighten-3" class="t-like t-off">favorite_border</v-icon>
