@@ -9,21 +9,35 @@
             v-model="selected"
             :no-data-text="this.$gettext('No photos matched your search')"
     >
-        <template slot="items" slot-scope="props" class="p-photo">
+        <template slot="items" slot-scope="props">
             <td>
-                <v-btn icon small :ripple="false"
-                       class="p-photo-select"
-                       @click.stop.prevent="$clipboard.toggle(props.item)">
-                    <v-icon v-if="selection.length && $clipboard.has(props.item)" color="accent darken-2">check_circle</v-icon>
-                    <v-icon v-else-if="!$clipboard.has(props.item)" color="accent lighten-4">radio_button_off</v-icon>
-                </v-btn>
+                <v-img :src="props.item.getThumbnailUrl('tile_50')"
+                       aspect-ratio="1"
+                       class="accent lighten-2"
+                       style="cursor: pointer"
+                       @click.exact="openPhoto(props.index)"
+                >
+                    <v-layout
+                            slot="placeholder"
+                            fill-height
+                            align-center
+                            justify-center
+                            ma-0
+                    >
+                        <v-progress-circular indeterminate
+                                             color="accent lighten-5"></v-progress-circular>
+                    </v-layout>
+                </v-img>
             </td>
-            <td class="p-photo-desc">
-                <button @click.stop.prevent="openPhoto(props.index)">
-                    {{ props.item.PhotoTitle }}
-                </button>
+            <td class="p-photo-desc" @click.exact="toggleSelection(props)">
+                <v-hover>
+                    <button @click.stop.prevent="editPhoto(props.index)" slot-scope="{ hover }">
+                        {{ props.item.PhotoTitle }}
+                        <v-icon v-if="hover" size="16" title="edit">edit</v-icon>
+                    </button>
+                </v-hover>
             </td>
-            <td class="hidden-xs-only p-photo-desc">
+            <td class="hidden-xs-only p-photo-desc" @click.exact="toggleSelection(props)">
                 <button v-if="props.item.LocationID" @click.stop.prevent="openLocation(props.index)">
                     {{ props.item.getLocation() }}
                 </button>
@@ -31,7 +45,7 @@
                     {{ props.item.getLocation() }}
                 </span>
             </td>
-            <td class="hidden-sm-and-down p-photo-desc">
+            <td class="hidden-sm-and-down p-photo-desc" @click.exact="toggleSelection(props)">
                 <button @click.stop.prevent="editPhoto(props.index)">
                     {{ props.item.CameraMake }} {{ props.item.CameraModel }}
                 </button>
@@ -41,11 +55,12 @@
                     {{ props.item.TakenAt | luxon:locale }}
                 </button>
             </td>
-            <td><v-btn icon small flat :ripple="false"
+            <td>
+                <v-btn icon small flat :ripple="false"
                        class="p-photo-like"
                        @click.stop.prevent="props.item.toggleLike()">
-                <v-icon v-if="props.item.PhotoFavorite" color="pink lighten-3">favorite</v-icon>
-                <v-icon v-else color="accent lighten-4">favorite_border</v-icon>
+                    <v-icon v-if="props.item.PhotoFavorite" color="pink lighten-3">favorite</v-icon>
+                    <v-icon v-else color="accent lighten-4">favorite_border</v-icon>
                 </v-btn>
             </td>
         </template>
@@ -75,7 +90,31 @@
                 ],
             };
         },
+        watch: {
+            photos: function (photos) {
+                this.selected.splice(0);
+
+                for (let i = 0; i <= photos.length; i++) {
+                    if(this.$clipboard.has(photos[i])) {
+                        this.selected.push(photos[i]);
+                    }
+                }
+            },
+            selection: function () {
+                this.selected.splice(0);
+
+                for (let i = 0; i <= this.photos.length; i++) {
+                    if(this.$clipboard.has(this.photos[i])) {
+                        this.selected.push(this.photos[i]);
+                    }
+                }
+            },
+        },
         methods: {
+            toggleSelection(props) {
+                this.$clipboard.toggle(props.item);
+                props.selected = this.$clipboard.has(props.item);
+            }
         }
     };
 </script>

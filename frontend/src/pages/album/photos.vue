@@ -19,6 +19,7 @@
                             :photos="results"
                             :selection="selection"
                             :album="model"
+                            :edit-photo="editPhoto"
                             :open-photo="openPhoto"></p-photo-mosaic>
             <p-photo-list v-else-if="settings.view === 'list'"
                           :photos="results"

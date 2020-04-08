@@ -16,6 +16,7 @@
             <p-photo-mosaic v-if="settings.view === 'mosaic'"
                             :photos="results"
                             :selection="selection"
+                            :edit-photo="editPhoto"
                             :open-photo="openPhoto"></p-photo-mosaic>
             <p-photo-list v-else-if="settings.view === 'list'"
                           :photos="results"

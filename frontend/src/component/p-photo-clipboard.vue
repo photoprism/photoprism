@@ -31,7 +31,7 @@
                         @click.stop="dialog.share = true"
                         :disabled="selection.length === 0"
                         v-if="context !== 'archive'"
-                        class="p-photo-clipboard-private"
+                        class="p-photo-clipboard-share"
                 >
                     <v-icon>share</v-icon>
                 </v-btn>

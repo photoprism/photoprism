@@ -1,15 +1,21 @@
 #photoprism .p-col-select {
-    width: 50px;
+    width: 66px;
 }
 
 #photoprism .p-photo-list tr td:first-child {
-    padding: 0 0 0 16px;
+    padding: 0 0 0 8px;
     text-align: center;
 }
 
 #photoprism .p-photo-list .p-photo-select {
     margin-left: 0;
     margin-right: 0;
+}
+
+#photoprism .p-photo-tiles .p-photo-edit,
+#photoprism .p-photo-mosaic .p-photo-edit,
+#photoprism .p-photo-details .p-photo-edit {
+    top: 4px; right: 4px;
 }
 
 #photoprism .p-photo-tiles .p-photo-like,

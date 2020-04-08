@@ -68,10 +68,7 @@
                                 <h3 class="body-2 mb-2" :title="photo.PhotoTitle">
                                     <button @click.exact="editPhoto(index)">
                                         {{ photo.PhotoTitle | truncate(80) }}
-                                        <v-icon v-if="photo.PhotoPrivate" size="16" title="Private">vpn_key</v-icon>
-                                        <v-icon v-if="photo.PhotoStory" size="16"
-                                                title="Shared with your friends in the story feed">wifi
-                                        </v-icon>
+                                        <v-icon v-if="hover" size="16" title="edit">edit</v-icon>
                                     </button>
                                 </h3>
                                 <div class="caption">

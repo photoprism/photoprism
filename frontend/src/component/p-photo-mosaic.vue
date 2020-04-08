@@ -53,6 +53,13 @@
                                 <v-icon v-if="photo.PhotoFavorite" color="white" class="t-like t-on">favorite</v-icon>
                                 <v-icon v-else color="accent lighten-3" class="t-like t-off">favorite_border</v-icon>
                             </v-btn>
+
+                            <v-btn v-if="hover" :flat="!hover" :ripple="false"
+                                   icon small absolute
+                                   class="p-photo-edit"
+                                   @click.stop.prevent="editPhoto(index)">
+                                <v-icon color="white">edit</v-icon>
+                            </v-btn>
                         </v-img>
 
                     </v-card>
@@ -68,6 +75,7 @@
             photos: Array,
             selection: Array,
             openPhoto: Function,
+            editPhoto: Function,
             album: Object,
         },
         methods: {
