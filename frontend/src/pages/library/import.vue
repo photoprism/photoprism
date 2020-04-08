@@ -35,8 +35,8 @@
 
                 <p class="subheading">
                     When you import files to your library, they will be sorted by date
-                    and given a unique file name to avoid duplicates.
-                    Importing will automatically render thumbnails and jpegs as needed.
+                    and given a unique name to avoid duplicates.
+                    Importing will automatically convert raw images and render thumbnails as needed.
                     Original file names will be stored and indexed.
                     You can as well manage your originals manually or using other tools.
                 </p>
