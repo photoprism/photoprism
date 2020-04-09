@@ -891,9 +891,9 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"brain coral": {
-		Label:      "nature",
-		Threshold:  0.000000,
-		Priority:   0,
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"brambling bird": {
@@ -1533,9 +1533,9 @@ var rules = LabelRules{
 		Categories: []string{"vegetables"},
 	},
 	"coral reef": {
-		Label:      "nature",
-		Threshold:  0.600000,
-		Priority:   0,
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"corkscrew": {
@@ -4899,9 +4899,9 @@ var rules = LabelRules{
 		Categories: []string{"water"},
 	},
 	"sea anemone": {
-		Label:      "nature",
-		Threshold:  0.000000,
-		Priority:   0,
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"sea cucumber": {

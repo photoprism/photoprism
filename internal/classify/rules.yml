@@ -695,14 +695,13 @@ jellyfish:
     - fish
 
 sea anemone:
-  label: nature
+  see: ignore
 
 brain coral:
-  label: nature
+  see: ignore
 
 coral reef:
-  label: nature
-  threshold: 0.6
+  see: ignore
 
 worm:
   label: worm
