@@ -14,15 +14,19 @@ func TestQuery_AlbumByUUID(t *testing.T) {
 	search := New(conf.Db())
 
 	t.Run("existing uuid", func(t *testing.T) {
-		albums, err := search.AlbumByUUID("3")
-		assert.Nil(t, err)
-		assert.Equal(t, "Christmas2030", albums.AlbumName)
+		album, err := search.AlbumByUUID("3")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Christmas2030", album.AlbumName)
 	})
 
 	t.Run("not existing uuid", func(t *testing.T) {
-		albums, err := search.AlbumByUUID("3765")
+		album, err := search.AlbumByUUID("3765")
 		assert.Error(t, err, "record not found")
-		t.Log(albums)
+		t.Log(album)
 	})
 }
 
@@ -33,7 +37,11 @@ func TestQuery_AlbumThumbByUUID(t *testing.T) {
 
 	t.Run("existing uuid", func(t *testing.T) {
 		file, err := search.AlbumThumbByUUID("4")
-		assert.Nil(t, err)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, "exampleFileName.jpg", file.FileName)
 	})
 
@@ -52,7 +60,11 @@ func TestQuery_Albums(t *testing.T) {
 	t.Run("search with string", func(t *testing.T) {
 		query := form.NewAlbumSearch("chr")
 		result, err := search.Albums(query)
-		assert.Nil(t, err)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, "Christmas2030", result[0].AlbumName)
 	})
 
@@ -67,14 +79,22 @@ func TestQuery_Albums(t *testing.T) {
 		query := form.NewAlbumSearch("favorites:true count:10000")
 
 		result, err := search.Albums(query)
-		assert.Nil(t, err)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, "Holiday2030", result[0].AlbumName)
 	})
 	t.Run("empty query", func(t *testing.T) {
 		query := form.NewAlbumSearch("order:slug")
 
 		result, err := search.Albums(query)
-		assert.Nil(t, err)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, 3, len(result))
 	})
 	t.Run("search with invalid query string", func(t *testing.T) {

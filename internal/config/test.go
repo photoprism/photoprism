@@ -25,6 +25,7 @@ const (
 
 var testConfig *Config
 var once sync.Once
+var testConfigMutex sync.Mutex
 
 func testDataPath(assetsPath string) string {
 	return assetsPath + "/testdata"
@@ -85,6 +86,9 @@ func TestConfig() *Config {
 
 // NewTestConfig inits valid config used for testing
 func NewTestConfig() *Config {
+	testConfigMutex.Lock()
+	defer testConfigMutex.Unlock()
+
 	log.SetLevel(logrus.DebugLevel)
 
 	c := &Config{config: NewTestParams()}
