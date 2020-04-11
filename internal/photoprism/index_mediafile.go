@@ -284,11 +284,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if m.IsJpeg() && (fileChanged || o.UpdateColors) {
 		// Color information
-		if p, err := m.Colors(ind.thumbnailsPath()); err == nil {
+		if p, err := m.Colors(ind.thumbnailsPath()); err != nil {
+			log.Errorf("index: %s", err.Error())
+		} else {
 			file.FileMainColor = p.MainColor.Name()
 			file.FileColors = p.Colors.Hex()
 			file.FileLuminance = p.Luminance.Hex()
-			file.FileChroma = p.Chroma.Uint()
+			file.FileDiff = p.Luminance.Diff()
+			file.FileChroma = p.Chroma.Value()
 		}
 	}
 

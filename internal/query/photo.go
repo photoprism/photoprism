@@ -62,19 +62,22 @@ type PhotoResult struct {
 	LocationEstimated bool
 
 	// File
-	FileID             uint
-	FileUUID           string
-	FilePrimary        bool
-	FileMissing        bool
-	FileName           string
-	FileHash           string
-	FilePerceptualHash string
-	FileType           string
-	FileMime           string
-	FileWidth          int
-	FileHeight         int
-	FileOrientation    int
-	FileAspectRatio    float64
+	FileID          uint
+	FileUUID        string
+	FilePrimary     bool
+	FileMissing     bool
+	FileName        string
+	FileHash        string
+	FileType        string
+	FileMime        string
+	FileWidth       int
+	FileHeight      int
+	FileOrientation int
+	FileAspectRatio float64
+	FileColors      string // todo: remove from result?
+	FileChroma      uint8  // todo: remove from result?
+	FileLuminance   string  // todo: remove from result?
+	FileDiff        uint32  // todo: remove from result?
 }
 
 func (m *PhotoResult) DownloadFileName() string {
@@ -110,6 +113,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		files.id AS file_id, files.file_uuid, files.file_primary, files.file_missing, files.file_name, files.file_hash, 
 		files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, 
 		files.file_orientation, files.file_main_color, files.file_colors, files.file_luminance, files.file_chroma,
+		files.file_diff,
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
 		places.loc_label, places.loc_city, places.loc_state, places.loc_country
@@ -274,6 +278,10 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		s = s.Where("files.file_chroma > 0 AND files.file_chroma <= ?", f.Chroma)
 	}
 
+	if f.Diff != 0 {
+		s = s.Where("files.file_diff = ?", f.Diff)
+	}
+
 	if f.Fmin > 0 {
 		s = s.Where("photos.photo_f_number >= ?", f.Fmin)
 	}
@@ -318,6 +326,8 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		s = s.Order("taken_at, photos.photo_uuid")
 	case "imported":
 		s = s.Order("photos.id DESC")
+	case "similar":
+		s = s.Order("files.file_main_color, photos.location_id, files.file_diff, taken_at DESC")
 	default:
 		s = s.Order("taken_at DESC, photos.photo_uuid")
 	}

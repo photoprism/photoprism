@@ -18,7 +18,8 @@ type PhotoSearch struct {
 	Dist      uint      `form:"dist"`
 	Fmin      float64   `form:"fmin"`
 	Fmax      float64   `form:"fmax"`
-	Chroma    uint      `form:"chroma"`
+	Chroma    uint8     `form:"chroma"`
+	Diff      uint32    `form:"diff"`
 	Mono      bool      `form:"mono"`
 	Portrait  bool      `form:"portrait"`
 	Location  bool      `form:"location"`

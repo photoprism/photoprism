@@ -46,19 +46,19 @@ func ParseQueryString(f SearchForm) (result error) {
 						} else {
 							field.Set(reflect.ValueOf(timeValue))
 						}
-					case float64:
+					case float32, float64:
 						if floatValue, err := strconv.ParseFloat(stringValue, 64); err != nil {
 							result = err
 						} else {
 							field.SetFloat(floatValue)
 						}
-					case int, int64:
+					case int, int8, int16, int32, int64:
 						if intValue, err := strconv.Atoi(stringValue); err != nil {
 							result = err
 						} else {
 							field.SetInt(int64(intValue))
 						}
-					case uint, uint64:
+					case uint, uint8, uint16, uint32, uint64:
 						if intValue, err := strconv.Atoi(stringValue); err != nil {
 							result = err
 						} else {

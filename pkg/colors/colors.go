@@ -11,24 +11,12 @@ import (
 	"fmt"
 	"image/color"
 	"strings"
-
-	"github.com/lucasb-eyer/go-colorful"
 )
-
-// TODO: Requires documentation
-type ColorPerception struct {
-	Colors    Colors
-	MainColor Color
-	Luminance LightMap
-	Chroma    Chroma
-}
 
 type Color uint16
 type Colors []Color
 
 type Chroma uint8
-type Luminance uint8
-type LightMap []Luminance
 
 const (
 	Black Color = iota
@@ -136,24 +124,16 @@ func (c Chroma) Hex() string {
 	return fmt.Sprintf("%X", c)
 }
 
+func (c Chroma) Value() uint8 {
+	return uint8(c)
+}
+
 func (c Chroma) Uint() uint {
 	return uint(c)
 }
 
 func (c Chroma) Int() int {
 	return int(c)
-}
-
-func (l Luminance) Hex() string {
-	return fmt.Sprintf("%X", l)
-}
-
-func (m LightMap) Hex() (result string) {
-	for _, luminance := range m {
-		result += luminance.Hex()
-	}
-
-	return result
 }
 
 var ColorExamples = map[Color]string{
@@ -444,20 +424,4 @@ var ColorMap = map[color.RGBA]Color{
 	{0xde, 0xa2, 0x53, 0xff}: Gold,
 	{0xd5, 0xaa, 0x6f, 0xff}: Gold,
 	{0xf5, 0xea, 0xd4, 0xff}: Gold,
-}
-
-func Colorful(actualColor colorful.Color) (result Color) {
-	var distance = 1.0
-
-	for rgba, i := range ColorMap {
-		colorColorful, _ := colorful.MakeColor(rgba)
-		currentDistance := colorColorful.DistanceLab(actualColor)
-
-		if distance >= currentDistance {
-			distance = currentDistance
-			result = i
-		}
-	}
-
-	return result
 }

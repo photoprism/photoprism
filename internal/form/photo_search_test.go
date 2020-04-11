@@ -37,7 +37,7 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, 33.45343166666667, form.Lat)
 	})
 	t.Run("valid query 2", func(t *testing.T) {
-		form := &PhotoSearch{Query: "chroma:600 title:\"test\" after:2018-01-15 duplicate:false  favorites:true lng:33.45343166666667"}
+		form := &PhotoSearch{Query: "chroma:200 title:\"test\" after:2018-01-15 duplicate:false  favorites:true lng:33.45343166666667"}
 
 		err := form.ParseQueryString()
 
@@ -47,7 +47,7 @@ func TestParseQueryString(t *testing.T) {
 			t.Fatal("err should be nil")
 		}
 
-		assert.Equal(t, uint(0x258), form.Chroma)
+		assert.Equal(t, uint8(200), form.Chroma)
 		assert.Equal(t, "test", form.Title)
 		assert.Equal(t, time.Date(2018, 01, 15, 0, 0, 0, 0, time.UTC), form.After)
 		assert.Equal(t, false, form.Duplicate)

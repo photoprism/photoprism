@@ -37,7 +37,8 @@ type File struct {
 	FileMainColor   string `gorm:"type:varbinary(16);index;"`
 	FileColors      string `gorm:"type:binary(9);"`
 	FileLuminance   string `gorm:"type:binary(9);"`
-	FileChroma      uint
+	FileDiff        uint32
+	FileChroma      uint8
 	FileNotes       string `gorm:"type:text"`
 	FileError       string `gorm:"type:varbinary(512)"`
 	Share           []FileShare

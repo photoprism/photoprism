@@ -142,6 +142,7 @@
                         {value: 'imported', text: this.$gettext('Recently imported')},
                         {value: 'newest', text: this.$gettext('Newest first')},
                         {value: 'oldest', text: this.$gettext('Oldest first')},
+                        {value: 'similar', text: this.$gettext('Similar')},
                     ],
                 },
                 labels: {
