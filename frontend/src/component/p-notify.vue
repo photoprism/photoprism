@@ -5,8 +5,8 @@
             :color="color"
             :timeout="0"
             :class="textColor"
-            top
-            right
+            :top="$vuetify.breakpoint.smAndUp"
+            :right="$vuetify.breakpoint.smAndUp"
     >
         {{ text }}
         <v-btn

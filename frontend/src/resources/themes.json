@@ -145,7 +145,7 @@
     "secondary": "#A8A8A8",
     "secondary-light": "#cdccca",
     "accent": "#656565",
-    "error": "#FF76DC",
+    "error": "#E57373",
     "info": "#5A94DD",
     "success": "#4DB6AC",
     "warning": "#E3D181",

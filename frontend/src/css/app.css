@@ -215,8 +215,16 @@ table.v-table tfoot td div.v-input__slot {
     opacity: 0.8 !important;
 }
 
+#photoprism .opacity-85 {
+    opacity: 0.85 !important;
+}
+
 #photoprism .opacity-90 {
     opacity: 0.9 !important;
+}
+
+#photoprism .opacity-95 {
+    opacity: 0.95 !important;
 }
 
 #photoprism .opacity-100 {
