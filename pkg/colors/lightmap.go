@@ -16,6 +16,7 @@ type diffValue struct {
 	b []int
 }
 
+// Pixel comparisons for calculating the diff value.
 var diffValues = []diffValue{
 	{a: []int{4, 4, 4, 4}, b: []int{1, 3, 5, 7}},
 	{a: []int{0}, b: []int{1}},
@@ -27,6 +28,26 @@ var diffValues = []diffValue{
 	{a: []int{8}, b: []int{5}},
 	{a: []int{8}, b: []int{7}},
 }
+
+/*
+	Alternative values to experiment with:
+
+    {a: []int{4, 4, 4, 4}, b: []int{1, 3, 5, 7}},
+	{a: []int{0}, b: []int{2}},
+	{a: []int{8}, b: []int{6}},
+	{a: []int{0}, b: []int{1}},
+	{a: []int{1}, b: []int{2}},
+	{a: []int{2}, b: []int{5}},
+	{a: []int{8}, b: []int{7}},
+	{a: []int{7}, b: []int{6}},
+	{a: []int{5}, b: []int{8}},
+	{a: []int{6}, b: []int{3}},
+
+	Other ideas:
+	- Use Lightness instead of luminance
+    - Use more pixels (difficult as we only have 3x3 thumbs right now)
+	- Iterative calculation using smaller offsets for each round (current offset is +4)
+*/
 
 // Diff returns an integer that can be used to find similar images.
 func (m LightMap) Diff() (result uint32) {
@@ -50,7 +71,7 @@ func (m LightMap) Diff() (result uint32) {
 			b += int(m[i])
 		}
 
-		if a + 4 > b {
+		if a+4 > b {
 			result += 1
 		}
 	}
