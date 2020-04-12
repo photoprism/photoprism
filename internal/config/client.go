@@ -12,6 +12,31 @@ import (
 // ClientConfig contains HTTP client / Web UI config values
 type ClientConfig map[string]interface{}
 
+// Flags returns config flags as string slice.
+func (c *Config) Flags() (flags []string) {
+	if c.Public() {
+		flags = append(flags, "public")
+	}
+
+	if c.Debug() {
+		flags = append(flags, "debug")
+	}
+
+	if c.Experimental() {
+		flags = append(flags, "experimental")
+	}
+
+	if c.ReadOnly() {
+		flags = append(flags, "readonly")
+	}
+
+	if !c.DisableSettings() {
+		flags = append(flags, "settings")
+	}
+
+	return flags
+}
+
 // PublicClientConfig returns reduced config values for non-public sites.
 func (c *Config) PublicClientConfig() ClientConfig {
 	if c.Public() {
@@ -20,22 +45,7 @@ func (c *Config) PublicClientConfig() ClientConfig {
 
 	jsHash := fs.Checksum(c.HttpStaticBuildPath() + "/app.js")
 	cssHash := fs.Checksum(c.HttpStaticBuildPath() + "/app.css")
-
-	// Feature Flags
-	var flags []string
-
-	if c.Public() {
-		flags = append(flags, "public")
-	}
-	if c.Debug() {
-		flags = append(flags, "debug")
-	}
-	if c.Experimental() {
-		flags = append(flags, "experimental")
-	}
-	if c.ReadOnly() {
-		flags = append(flags, "readonly")
-	}
+	configFlags := c.Flags()
 
 	var noPos = struct {
 		PhotoUUID  string    `json:"photo"`
@@ -57,34 +67,35 @@ func (c *Config) PublicClientConfig() ClientConfig {
 	}{}
 
 	result := ClientConfig{
-		"settings":     c.Settings(),
-		"flags":        strings.Join(flags, " "),
-		"name":         c.Name(),
-		"url":          c.Url(),
-		"title":        c.Title(),
-		"subtitle":     c.Subtitle(),
-		"description":  c.Description(),
-		"author":       c.Author(),
-		"twitter":      c.Twitter(),
-		"version":      c.Version(),
-		"copyright":    c.Copyright(),
-		"debug":        c.Debug(),
-		"readonly":     c.ReadOnly(),
-		"uploadNSFW":   c.UploadNSFW(),
-		"public":       c.Public(),
-		"experimental": c.Experimental(),
-		"albums":       []string{},
-		"cameras":      []string{},
-		"lenses":       []string{},
-		"countries":    []string{},
-		"thumbnails":   Thumbnails,
-		"jsHash":       jsHash,
-		"cssHash":      cssHash,
-		"count":        count,
-		"pos":          noPos,
-		"years":        []int{},
-		"colors":       colors.All.List(),
-		"categories":   []string{},
+		"settings":        c.Settings(),
+		"flags":           strings.Join(configFlags, " "),
+		"name":            c.Name(),
+		"url":             c.Url(),
+		"title":           c.Title(),
+		"subtitle":        c.Subtitle(),
+		"description":     c.Description(),
+		"author":          c.Author(),
+		"twitter":         c.Twitter(),
+		"version":         c.Version(),
+		"copyright":       c.Copyright(),
+		"debug":           c.Debug(),
+		"readonly":        c.ReadOnly(),
+		"uploadNSFW":      c.UploadNSFW(),
+		"public":          c.Public(),
+		"experimental":    c.Experimental(),
+		"disableSettings": c.DisableSettings(),
+		"albums":          []string{},
+		"cameras":         []string{},
+		"lenses":          []string{},
+		"countries":       []string{},
+		"thumbnails":      Thumbnails,
+		"jsHash":          jsHash,
+		"cssHash":         cssHash,
+		"count":           count,
+		"pos":             noPos,
+		"years":           []int{},
+		"colors":          colors.All.List(),
+		"categories":      []string{},
 	}
 
 	return result
@@ -198,52 +209,38 @@ func (c *Config) ClientConfig() ClientConfig {
 
 	jsHash := fs.Checksum(c.HttpStaticBuildPath() + "/app.js")
 	cssHash := fs.Checksum(c.HttpStaticBuildPath() + "/app.css")
-
-	// Feature Flags
-	var flags []string
-
-	if c.Public() {
-		flags = append(flags, "public")
-	}
-	if c.Debug() {
-		flags = append(flags, "debug")
-	}
-	if c.Experimental() {
-		flags = append(flags, "experimental")
-	}
-	if c.ReadOnly() {
-		flags = append(flags, "readonly")
-	}
+	configFlags := c.Flags()
 
 	result := ClientConfig{
-		"flags":        strings.Join(flags, " "),
-		"name":         c.Name(),
-		"url":          c.Url(),
-		"title":        c.Title(),
-		"subtitle":     c.Subtitle(),
-		"description":  c.Description(),
-		"author":       c.Author(),
-		"twitter":      c.Twitter(),
-		"version":      c.Version(),
-		"copyright":    c.Copyright(),
-		"debug":        c.Debug(),
-		"readonly":     c.ReadOnly(),
-		"uploadNSFW":   c.UploadNSFW(),
-		"public":       c.Public(),
-		"experimental": c.Experimental(),
-		"albums":       albums,
-		"cameras":      cameras,
-		"lenses":       lenses,
-		"countries":    countries,
-		"thumbnails":   Thumbnails,
-		"jsHash":       jsHash,
-		"cssHash":      cssHash,
-		"settings":     c.Settings(),
-		"count":        count,
-		"pos":          position,
-		"years":        years,
-		"colors":       colors.All.List(),
-		"categories":   categories,
+		"flags":           strings.Join(configFlags, " "),
+		"name":            c.Name(),
+		"url":             c.Url(),
+		"title":           c.Title(),
+		"subtitle":        c.Subtitle(),
+		"description":     c.Description(),
+		"author":          c.Author(),
+		"twitter":         c.Twitter(),
+		"version":         c.Version(),
+		"copyright":       c.Copyright(),
+		"debug":           c.Debug(),
+		"readonly":        c.ReadOnly(),
+		"uploadNSFW":      c.UploadNSFW(),
+		"public":          c.Public(),
+		"experimental":    c.Experimental(),
+		"disableSettings": c.DisableSettings(),
+		"albums":          albums,
+		"cameras":         cameras,
+		"lenses":          lenses,
+		"countries":       countries,
+		"thumbnails":      Thumbnails,
+		"jsHash":          jsHash,
+		"cssHash":         cssHash,
+		"settings":        c.Settings(),
+		"count":           count,
+		"pos":             position,
+		"years":           years,
+		"colors":          colors.All.List(),
+		"categories":      categories,
 	}
 
 	return result

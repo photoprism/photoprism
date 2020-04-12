@@ -134,7 +134,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if file.FilePrimary {
 		primaryFile = file
 
-		if !ind.conf.TensorFlowDisabled() && (fileChanged || o.UpdateKeywords || o.UpdateLabels || o.UpdateTitle) {
+		if !ind.conf.DisableTensorFlow() && (fileChanged || o.UpdateKeywords || o.UpdateLabels || o.UpdateTitle) {
 			// Image classification via TensorFlow
 			labels = ind.classifyImage(m)
 			photo.PhotoNSFW = ind.isNSFW(m)

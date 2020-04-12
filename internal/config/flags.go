@@ -230,11 +230,6 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "allow uploads that may contain offensive content",
 		EnvVar: "PHOTOPRISM_UPLOAD_NSFW",
 	},
-	cli.BoolFlag{
-		Name:   "tf-disabled, t",
-		Usage:  "don't use TensorFlow for image classification",
-		EnvVar: "PHOTOPRISM_TF_DISABLED",
-	},
 	cli.StringFlag{
 		Name:   "geocoding-api, g",
 		Usage:  "geocoding api (none, osm or places)",
@@ -264,5 +259,15 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "resample filter (blackman, lanczos, cubic or linear)",
 		Value:  "lanczos",
 		EnvVar: "PHOTOPRISM_THUMB_FILTER",
+	},
+	cli.BoolFlag{
+		Name:   "disable-tf",
+		Usage:  "don't use TensorFlow for image classification",
+		EnvVar: "PHOTOPRISM_DISABLE_TF",
+	},
+	cli.BoolFlag{
+		Name:   "disable-settings",
+		Usage:  "user can not change settings",
+		EnvVar: "PHOTOPRISM_DISABLE_SETTINGS",
 	},
 }

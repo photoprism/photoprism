@@ -3,3 +3,12 @@ language: german
 maps:
   animate: 0
   style: streets
+features:
+  upload: true
+  import: true
+  labels: true
+  places: true
+  archive: true
+  download: true
+  edit: true
+  share: true

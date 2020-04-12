@@ -52,7 +52,6 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("resources-path        %s\n", conf.ResourcesPath())
 	fmt.Printf("tf-version            %s\n", conf.TensorFlowVersion())
 	fmt.Printf("tf-model-path         %s\n", conf.TensorFlowModelPath())
-	fmt.Printf("tf-disabled           %t\n", conf.TensorFlowDisabled())
 	fmt.Printf("templates-path        %s\n", conf.HttpTemplatesPath())
 	fmt.Printf("favicons-path         %s\n", conf.HttpFaviconsPath())
 	fmt.Printf("static-path           %s\n", conf.HttpStaticPath())
@@ -82,6 +81,9 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("thumb-size            %d\n", conf.ThumbSize())
 	fmt.Printf("thumb-limit           %d\n", conf.ThumbLimit())
 	fmt.Printf("thumb-filter          %s\n", conf.ThumbFilter())
+
+	fmt.Printf("disable-tf            %t\n", conf.DisableTensorFlow())
+	fmt.Printf("disable-settings      %t\n", conf.DisableSettings())
 
 	return nil
 }

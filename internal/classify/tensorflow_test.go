@@ -14,7 +14,7 @@ func TestTensorFlow_LabelsFromFile(t *testing.T) {
 	t.Run("chameleon_lime.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		tensorFlow := New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+		tensorFlow := New(conf.ResourcesPath(), conf.DisableTensorFlow())
 
 		result, err := tensorFlow.File(conf.ExamplesPath() + "/chameleon_lime.jpg")
 
@@ -38,7 +38,7 @@ func TestTensorFlow_LabelsFromFile(t *testing.T) {
 	t.Run("not existing file", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		tensorFlow := New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+		tensorFlow := New(conf.ResourcesPath(), conf.DisableTensorFlow())
 
 		result, err := tensorFlow.File(conf.ExamplesPath() + "/notexisting.jpg")
 		assert.Contains(t, err.Error(), "no such file or directory")
@@ -54,7 +54,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 	t.Run("chameleon_lime.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		tensorFlow := New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+		tensorFlow := New(conf.ResourcesPath(), conf.DisableTensorFlow())
 
 		if imageBuffer, err := ioutil.ReadFile(conf.ExamplesPath() + "/chameleon_lime.jpg"); err != nil {
 			t.Error(err)
@@ -77,7 +77,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 	t.Run("dog_orange.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		tensorFlow := New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+		tensorFlow := New(conf.ResourcesPath(), conf.DisableTensorFlow())
 
 		if imageBuffer, err := ioutil.ReadFile(conf.ExamplesPath() + "/dog_orange.jpg"); err != nil {
 			t.Error(err)
@@ -100,7 +100,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 	t.Run("Random.docx", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		tensorFlow := New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+		tensorFlow := New(conf.ResourcesPath(), conf.DisableTensorFlow())
 
 		if imageBuffer, err := ioutil.ReadFile(conf.ExamplesPath() + "/Random.docx"); err != nil {
 			t.Error(err)
@@ -113,7 +113,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 	t.Run("6720px_white.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		tensorFlow := New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+		tensorFlow := New(conf.ResourcesPath(), conf.DisableTensorFlow())
 
 		if imageBuffer, err := ioutil.ReadFile(conf.ExamplesPath() + "/6720px_white.jpg"); err != nil {
 			t.Error(err)
@@ -129,7 +129,7 @@ func TestTensorFlow_LoadModel(t *testing.T) {
 	t.Run("model path exists", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		tensorFlow := New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+		tensorFlow := New(conf.ResourcesPath(), conf.DisableTensorFlow())
 
 		result := tensorFlow.loadModel()
 		assert.Nil(t, result)
@@ -137,7 +137,7 @@ func TestTensorFlow_LoadModel(t *testing.T) {
 	t.Run("model path does not exist", func(t *testing.T) {
 		conf := config.NewTestErrorConfig()
 
-		tensorFlow := New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+		tensorFlow := New(conf.ResourcesPath(), conf.DisableTensorFlow())
 
 		result := tensorFlow.loadModel()
 		assert.Contains(t, result.Error(), "Could not find SavedModel")
@@ -148,7 +148,7 @@ func TestTensorFlow_BestLabels(t *testing.T) {
 	t.Run("labels not loaded", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		tensorFlow := New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+		tensorFlow := New(conf.ResourcesPath(), conf.DisableTensorFlow())
 
 		p := make([]float32, 1000)
 
@@ -160,7 +160,7 @@ func TestTensorFlow_BestLabels(t *testing.T) {
 	t.Run("labels loaded", func(t *testing.T) {
 		conf := config.TestConfig()
 		path := conf.TensorFlowModelPath()
-		tensorFlow := New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+		tensorFlow := New(conf.ResourcesPath(), conf.DisableTensorFlow())
 		tensorFlow.loadLabels(path)
 
 		p := make([]float32, 1000)
@@ -183,7 +183,7 @@ func TestTensorFlow_MakeTensor(t *testing.T) {
 	t.Run("cat_brown.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		tensorFlow := New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+		tensorFlow := New(conf.ResourcesPath(), conf.DisableTensorFlow())
 
 		imageBuffer, err := ioutil.ReadFile(conf.ExamplesPath() + "/cat_brown.jpg")
 		assert.Nil(t, err)
@@ -195,7 +195,7 @@ func TestTensorFlow_MakeTensor(t *testing.T) {
 	t.Run("Random.docx", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		tensorFlow := New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+		tensorFlow := New(conf.ResourcesPath(), conf.DisableTensorFlow())
 
 		imageBuffer, err := ioutil.ReadFile(conf.ExamplesPath() + "/Random.docx")
 		assert.Nil(t, err)

@@ -51,7 +51,7 @@ func TestConfig_TensorFlowDisabled(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	version := c.TensorFlowDisabled()
+	version := c.DisableTensorFlow()
 	assert.Equal(t, false, version)
 }
 

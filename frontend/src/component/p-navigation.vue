@@ -225,7 +225,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/settings" @click="" class="p-navigation-settings">
+                <v-list-tile to="/settings" @click="" class="p-navigation-settings" v-if="!config.disableSettings">
                     <v-list-tile-action>
                         <v-icon>settings</v-icon>
                     </v-list-tile-action>

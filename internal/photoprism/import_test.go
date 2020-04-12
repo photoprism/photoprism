@@ -12,7 +12,7 @@ import (
 func TestNewImport(t *testing.T) {
 	conf := config.TestConfig()
 
-	tf := classify.New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+	tf := classify.New(conf.ResourcesPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
 
 	ind := NewIndex(conf, tf, nd)
@@ -29,7 +29,7 @@ func TestImport_DestinationFilename(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tf := classify.New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+	tf := classify.New(conf.ResourcesPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
 
 	ind := NewIndex(conf, tf, nd)
@@ -58,7 +58,7 @@ func TestImport_Start(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tf := classify.New(conf.ResourcesPath(), conf.TensorFlowDisabled())
+	tf := classify.New(conf.ResourcesPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
 
 	ind := NewIndex(conf, tf, nd)
