@@ -76,8 +76,8 @@ type PhotoResult struct {
 	FileAspectRatio float64
 	FileColors      string // todo: remove from result?
 	FileChroma      uint8  // todo: remove from result?
-	FileLuminance   string  // todo: remove from result?
-	FileDiff        uint32  // todo: remove from result?
+	FileLuminance   string // todo: remove from result?
+	FileDiff        uint32 // todo: remove from result?
 }
 
 func (m *PhotoResult) DownloadFileName() string {

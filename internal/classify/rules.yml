@@ -46,7 +46,13 @@ leopard:
   see: wild cat
 
 snow leopard:
-  see: wild cat
+  label: leopard
+  priority: 5
+  threshold: 0.6
+  categories:
+    - cat
+    - animal
+    - wildlife
 
 jaguar:
   see: wild cat
@@ -77,7 +83,7 @@ cardoon:
 
 window:
   label: window
-  threshold: 0.4
+  threshold: 0.7
   categories:
     - architecture
 
@@ -267,7 +273,7 @@ goldfish:
 
 shark:
   label: shark
-  threshold: 0.3
+  threshold: 0.6
   categories:
     - water
     - fish
@@ -362,7 +368,7 @@ great grey owl bird:
 
 salamander:
   label: salamander
-  threshold: 0.5
+  threshold: 0.7
   categories:
     - animal
 
@@ -470,14 +476,14 @@ komodo dragon:
 
 african crocodile:
   label: crocodile
-  threshold: 0.5
+  threshold: 0.75
   categories:
     - reptile
     - animal
 
 american alligator:
   label: alligator
-  threshold: 0.5
+  threshold: 0.75
   categories:
     - reptile
     - animal
@@ -555,7 +561,7 @@ scorpion:
 
 spider:
   label: spider
-  threshold: 0.75
+  threshold: 0.95
   categories:
     - animal
 
@@ -716,7 +722,7 @@ nematode:
 
 conch:
   label: shell
-  threshold: 0.5
+  threshold: 0.6
 
 snail:
   label: snail
@@ -881,7 +887,7 @@ maltese dog:
 pekinese dog:
   see: dog
 
-sshih-tzu dog:
+shih-tzu dog:
   see: dog
 
 blenheim spaniel dog:
@@ -1256,7 +1262,7 @@ hyena:
 
 fox:
   label: fox
-  threshold: 0.6
+  threshold: 0.85
   categories:
     - animal
 
@@ -1291,9 +1297,8 @@ sloth bear:
   see: bear
 
 mongoose:
+  label: animal
   threshold: 0.3
-  categories:
-    - animal
 
 meerkat:
   threshold: 0.3
@@ -1333,12 +1338,12 @@ weevil:
   see: beetle
 
 fly:
-  threshold: 0.3
+  threshold: 0.6
   categories:
     - animal
 
 bee:
-  threshold: 0.3
+  threshold: 0.6
   categories:
     - animal
 
@@ -1346,10 +1351,7 @@ apiary:
   see: ignore
 
 ant:
-  threshold: 0.45
-  categories:
-    - animal
-    - insect
+  see: insect
 
 walking stick:
   see: ignore
@@ -1419,10 +1421,7 @@ starfish:
     - animal
 
 sea urchin:
-  threshold: 0.8
-  categories:
-    - water
-    - animal
+  see: ignore
 
 sea cucumber:
   threshold: 0.8
@@ -1497,7 +1496,7 @@ warthog:
 
 hippopotamus:
   label: hippo
-  threshold: 0.2
+  threshold: 0.4
   categories:
     - animal
     - wildlife
@@ -1720,7 +1719,7 @@ giant panda:
 
 fish:
   label: fish
-  threshold: 0.2
+  threshold: 0.4
   categories:
     - water
     - animal
@@ -2092,10 +2091,8 @@ crock pot:
   label: cooking
 
 dam:
-  label: wall
+  label: water
   threshold: 0.3
-  categories:
-    - architecture
 
 stone wall:
   label: wall
@@ -2639,6 +2636,9 @@ pickup:
 
 pier:
   threshold: 0.3
+  categories:
+    - architecture
+    - water
 
 piggy bank:
   threshold: 0.5
@@ -2943,11 +2943,10 @@ suspension bridge:
     - building
 
 swimming trunks:
-  label: sunshine
+  label: portrait
   threshold: 0.2
   categories:
     - people
-    - portrait
 
 table lamp:
   see: living
@@ -3240,7 +3239,7 @@ fig:
   see: fruit
 
 pineapple:
-  threshold: 0.45
+  threshold: 0.6
   categories:
     - fruit
     - food
@@ -3325,9 +3324,6 @@ alp:
 cliff:
   label: landscape
   threshold: 0.2
-  categories:
-    - water
-    - rocks
 
 promontory:
   see: cliff
@@ -3335,8 +3331,6 @@ promontory:
 geyser:
   label: landscape
   threshold: 0.4
-  categories:
-    - water
 
 sandbar:
   label: beach
@@ -3360,10 +3354,7 @@ corn:
   see: vegetables
 
 acorn:
-  label: tree
-  threshold: 0.8
-  categories:
-    - plant
+  see: ignore
 
 buckeye:
   label: plant
@@ -3416,8 +3407,7 @@ croquet ball:
   see: ignore
 
 ball:
-  threshold: 1
-  priority: -2
+  see: ignore
 
 baseball:
   see: ball
@@ -3544,6 +3534,9 @@ portrait:
   categories:
     - people
 
+shower cap:
+  see: portrait
+
 band aid:
   see: portrait
 
@@ -3576,7 +3569,7 @@ bucket:
 
 baby:
   label: baby
-  threshold: 0.25
+  threshold: 0.5
   categories:
     - people
 
@@ -3656,6 +3649,7 @@ groom:
   threshold: 0.3
   categories:
     - event
+    - portrait
 
 maypole:
   label: festival
@@ -3824,8 +3818,7 @@ chain:
   see: ignore
 
 chest:
-  label: box
-  threshold: 0.5
+  see: ignore
 
 christmas stocking:
   see: ignore
@@ -3842,7 +3835,7 @@ cowboy boot:
   see: shoe
 
 crib:
-  threshold: 0.3
+  threshold: 0.4
   label: stained glass
 
 drumstick:
@@ -3989,7 +3982,7 @@ turnstile:
   threshold: 0.45
 
 whistle:
-  threshold: 0.7
+  see: fashion
 
 umbrella:
   threshold: 0.6
@@ -4004,7 +3997,7 @@ tick:
   see: ignore
 
 carton:
-  threshold: 0.5
+  see: ignore
 
 teddy:
   label: toy
@@ -4029,3 +4022,17 @@ horse cart:
 
 mailbox:
   threshold: 0.5
+
+apron:
+  see: ignore
+
+milk can:
+  see: ignore
+
+scabbard:
+  see: ignore
+
+street sign:
+  label: sign
+  categories:
+    - traffic

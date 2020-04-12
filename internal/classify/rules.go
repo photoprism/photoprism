@@ -27,10 +27,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"acorn": {
-		Label:      "tree",
-		Threshold:  0.800000,
-		Priority:   0,
-		Categories: []string{"plant"},
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"acorn squash": {
 		Label:      "pumpkin",
@@ -70,7 +70,7 @@ var rules = LabelRules{
 	},
 	"african crocodile": {
 		Label:      "crocodile",
-		Threshold:  0.500000,
+		Threshold:  0.750000,
 		Priority:   0,
 		Categories: []string{"reptile", "animal"},
 	},
@@ -160,7 +160,7 @@ var rules = LabelRules{
 	},
 	"american alligator": {
 		Label:      "alligator",
-		Threshold:  0.500000,
+		Threshold:  0.750000,
 		Priority:   0,
 		Categories: []string{"reptile", "animal"},
 	},
@@ -214,7 +214,7 @@ var rules = LabelRules{
 	},
 	"anemone fish": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
@@ -225,10 +225,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"ant": {
-		Label:      "",
-		Threshold:  0.450000,
+		Label:      "insect",
+		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{"animal", "insect"},
+		Categories: []string{"animal"},
 	},
 	"ape": {
 		Label:      "ape",
@@ -248,6 +248,12 @@ var rules = LabelRules{
 		Priority:   5,
 		Categories: []string{"animal"},
 	},
+	"apron": {
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
+	},
 	"arabian camel": {
 		Label:      "animal",
 		Threshold:  0.700000,
@@ -256,7 +262,7 @@ var rules = LabelRules{
 	},
 	"arctic fox": {
 		Label:      "fox",
-		Threshold:  0.600000,
+		Threshold:  0.850000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -292,7 +298,7 @@ var rules = LabelRules{
 	},
 	"axolotl": {
 		Label:      "salamander",
-		Threshold:  0.500000,
+		Threshold:  0.700000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -304,7 +310,7 @@ var rules = LabelRules{
 	},
 	"baby": {
 		Label:      "baby",
-		Threshold:  0.250000,
+		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{"people"},
 	},
@@ -430,7 +436,7 @@ var rules = LabelRules{
 	},
 	"barn spider": {
 		Label:      "spider",
-		Threshold:  0.750000,
+		Threshold:  0.950000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -442,7 +448,7 @@ var rules = LabelRules{
 	},
 	"barracouta": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
@@ -490,7 +496,7 @@ var rules = LabelRules{
 	},
 	"bassinet": {
 		Label:      "baby",
-		Threshold:  0.250000,
+		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{"people"},
 	},
@@ -568,7 +574,7 @@ var rules = LabelRules{
 	},
 	"bee": {
 		Label:      "",
-		Threshold:  0.300000,
+		Threshold:  0.600000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -700,7 +706,7 @@ var rules = LabelRules{
 	},
 	"black and gold garden spider": {
 		Label:      "spider",
-		Threshold:  0.750000,
+		Threshold:  0.950000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -724,7 +730,7 @@ var rules = LabelRules{
 	},
 	"black widow": {
 		Label:      "spider",
-		Threshold:  0.750000,
+		Threshold:  0.950000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -1144,8 +1150,8 @@ var rules = LabelRules{
 	},
 	"carton": {
 		Label:      "",
-		Threshold:  0.500000,
-		Priority:   0,
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"cash machine": {
@@ -1269,9 +1275,9 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"chest": {
-		Label:      "box",
-		Threshold:  0.500000,
-		Priority:   0,
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"chickadee bird": {
@@ -1362,7 +1368,7 @@ var rules = LabelRules{
 		Label:      "landscape",
 		Threshold:  0.200000,
 		Priority:   0,
-		Categories: []string{"water", "rocks"},
+		Categories: []string{},
 	},
 	"cliff dwelling": {
 		Label:      "building",
@@ -1438,7 +1444,7 @@ var rules = LabelRules{
 	},
 	"coho fish": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
@@ -1480,7 +1486,7 @@ var rules = LabelRules{
 	},
 	"common newt salamander": {
 		Label:      "salamander",
-		Threshold:  0.500000,
+		Threshold:  0.700000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -1492,7 +1498,7 @@ var rules = LabelRules{
 	},
 	"conch": {
 		Label:      "shell",
-		Threshold:  0.500000,
+		Threshold:  0.600000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -1624,7 +1630,7 @@ var rules = LabelRules{
 	},
 	"crib": {
 		Label:      "stained glass",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -1695,10 +1701,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"dam": {
-		Label:      "wall",
+		Label:      "water",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{"architecture"},
+		Categories: []string{},
 	},
 	"damselfly": {
 		Label:      "insect",
@@ -1924,13 +1930,13 @@ var rules = LabelRules{
 	},
 	"eel": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
 	"eft": {
 		Label:      "salamander",
-		Threshold:  0.500000,
+		Threshold:  0.700000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -1966,7 +1972,7 @@ var rules = LabelRules{
 	},
 	"electric ray": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
@@ -2038,7 +2044,7 @@ var rules = LabelRules{
 	},
 	"european fire salamander": {
 		Label:      "salamander",
-		Threshold:  0.500000,
+		Threshold:  0.700000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -2116,7 +2122,7 @@ var rules = LabelRules{
 	},
 	"fish": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
@@ -2152,7 +2158,7 @@ var rules = LabelRules{
 	},
 	"fly": {
 		Label:      "",
-		Threshold:  0.300000,
+		Threshold:  0.600000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -2206,7 +2212,7 @@ var rules = LabelRules{
 	},
 	"fox": {
 		Label:      "fox",
-		Threshold:  0.600000,
+		Threshold:  0.850000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -2272,7 +2278,7 @@ var rules = LabelRules{
 	},
 	"gar fish": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
@@ -2284,7 +2290,7 @@ var rules = LabelRules{
 	},
 	"garden spider": {
 		Label:      "spider",
-		Threshold:  0.750000,
+		Threshold:  0.950000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -2328,7 +2334,7 @@ var rules = LabelRules{
 		Label:      "landscape",
 		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{"water"},
+		Categories: []string{},
 	},
 	"giant panda": {
 		Label:      "panda",
@@ -2380,14 +2386,14 @@ var rules = LabelRules{
 	},
 	"goldfish": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
 	"golf ball": {
 		Label:      "",
-		Threshold:  1.000000,
-		Priority:   -2,
+		Threshold:  0.000000,
+		Priority:   0,
 		Categories: []string{},
 	},
 	"golfcart": {
@@ -2470,7 +2476,7 @@ var rules = LabelRules{
 	},
 	"great white shark": {
 		Label:      "shark",
-		Threshold:  0.300000,
+		Threshold:  0.600000,
 		Priority:   0,
 		Categories: []string{"water", "fish", "animal"},
 	},
@@ -2506,7 +2512,7 @@ var rules = LabelRules{
 	},
 	"grey fox": {
 		Label:      "fox",
-		Threshold:  0.600000,
+		Threshold:  0.850000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -2538,7 +2544,7 @@ var rules = LabelRules{
 		Label:      "wedding",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{"event"},
+		Categories: []string{"event", "portrait"},
 	},
 	"ground beetle": {
 		Label:      "beetle",
@@ -2602,7 +2608,7 @@ var rules = LabelRules{
 	},
 	"hammerhead": {
 		Label:      "shark",
-		Threshold:  0.300000,
+		Threshold:  0.600000,
 		Priority:   0,
 		Categories: []string{"water", "fish", "animal"},
 	},
@@ -2674,7 +2680,7 @@ var rules = LabelRules{
 	},
 	"harvestman": {
 		Label:      "spider",
-		Threshold:  0.750000,
+		Threshold:  0.950000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -2734,7 +2740,7 @@ var rules = LabelRules{
 	},
 	"hippopotamus": {
 		Label:      "hippo",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"animal", "wildlife"},
 	},
@@ -3112,7 +3118,7 @@ var rules = LabelRules{
 	},
 	"kit fox": {
 		Label:      "fox",
-		Threshold:  0.600000,
+		Threshold:  0.850000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -3328,7 +3334,7 @@ var rules = LabelRules{
 	},
 	"lionfish": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
@@ -3620,6 +3626,12 @@ var rules = LabelRules{
 		Priority:   0,
 		Categories: []string{"people"},
 	},
+	"milk can": {
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
+	},
 	"miniature pinscher dog": {
 		Label:      "dog",
 		Threshold:  0.200000,
@@ -3711,10 +3723,10 @@ var rules = LabelRules{
 		Categories: []string{"architecture"},
 	},
 	"mongoose": {
-		Label:      "",
+		Label:      "animal",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{"animal"},
+		Categories: []string{},
 	},
 	"monitor": {
 		Label:      "screen",
@@ -4224,7 +4236,7 @@ var rules = LabelRules{
 		Label:      "",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"architecture", "water"},
 	},
 	"piggy bank": {
 		Label:      "",
@@ -4246,14 +4258,14 @@ var rules = LabelRules{
 	},
 	"pineapple": {
 		Label:      "",
-		Threshold:  0.450000,
+		Threshold:  0.600000,
 		Priority:   0,
 		Categories: []string{"fruit", "food"},
 	},
 	"ping-pong ball": {
 		Label:      "",
-		Threshold:  1.000000,
-		Priority:   -2,
+		Threshold:  0.000000,
+		Priority:   0,
 		Categories: []string{},
 	},
 	"pinwheel": {
@@ -4464,7 +4476,7 @@ var rules = LabelRules{
 		Label:      "landscape",
 		Threshold:  0.200000,
 		Priority:   0,
-		Categories: []string{"water", "rocks"},
+		Categories: []string{},
 	},
 	"ptarmigan": {
 		Label:      "bird",
@@ -4480,7 +4492,7 @@ var rules = LabelRules{
 	},
 	"puffer": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
@@ -4588,7 +4600,7 @@ var rules = LabelRules{
 	},
 	"red fox": {
 		Label:      "fox",
-		Threshold:  0.600000,
+		Threshold:  0.850000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -4702,7 +4714,7 @@ var rules = LabelRules{
 	},
 	"rock beauty fish": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
@@ -4786,7 +4798,7 @@ var rules = LabelRules{
 	},
 	"salamander": {
 		Label:      "salamander",
-		Threshold:  0.500000,
+		Threshold:  0.700000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -4828,6 +4840,12 @@ var rules = LabelRules{
 	},
 	"sax": {
 		Label:      "instrument",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
+	},
+	"scabbard": {
+		Label:      "",
 		Threshold:  1.000000,
 		Priority:   -2,
 		Categories: []string{},
@@ -4930,9 +4948,9 @@ var rules = LabelRules{
 	},
 	"sea urchin": {
 		Label:      "",
-		Threshold:  0.800000,
-		Priority:   0,
-		Categories: []string{"water", "animal"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"sealyham terrier dog": {
 		Label:      "dog",
@@ -4954,7 +4972,7 @@ var rules = LabelRules{
 	},
 	"shark": {
 		Label:      "shark",
-		Threshold:  0.300000,
+		Threshold:  0.600000,
 		Priority:   0,
 		Categories: []string{"water", "fish", "animal"},
 	},
@@ -4975,6 +4993,12 @@ var rules = LabelRules{
 		Threshold:  1.000000,
 		Priority:   -2,
 		Categories: []string{},
+	},
+	"shih-tzu dog": {
+		Label:      "dog",
+		Threshold:  0.200000,
+		Priority:   5,
+		Categories: []string{"animal"},
 	},
 	"ship": {
 		Label:      "ship",
@@ -5017,6 +5041,12 @@ var rules = LabelRules{
 		Threshold:  0.500000,
 		Priority:   -1,
 		Categories: []string{},
+	},
+	"shower cap": {
+		Label:      "portrait",
+		Threshold:  0.300000,
+		Priority:   0,
+		Categories: []string{"people"},
 	},
 	"shower curtain": {
 		Label:      "living",
@@ -5127,7 +5157,7 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"snow leopard": {
-		Label:      "",
+		Label:      "leopard",
 		Threshold:  0.600000,
 		Priority:   5,
 		Categories: []string{"cat", "animal", "wildlife"},
@@ -5230,7 +5260,7 @@ var rules = LabelRules{
 	},
 	"spider": {
 		Label:      "spider",
-		Threshold:  0.750000,
+		Threshold:  0.950000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -5278,7 +5308,7 @@ var rules = LabelRules{
 	},
 	"spotted salamander": {
 		Label:      "salamander",
-		Threshold:  0.500000,
+		Threshold:  0.700000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -5292,12 +5322,6 @@ var rules = LabelRules{
 		Label:      "monkey",
 		Threshold:  0.400000,
 		Priority:   2,
-		Categories: []string{"animal"},
-	},
-	"sshih-tzu dog": {
-		Label:      "dog",
-		Threshold:  0.200000,
-		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"staffordshire bullterrier dog": {
@@ -5356,7 +5380,7 @@ var rules = LabelRules{
 	},
 	"stingray": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
@@ -5402,6 +5426,12 @@ var rules = LabelRules{
 		Priority:   0,
 		Categories: []string{"food"},
 	},
+	"street sign": {
+		Label:      "sign",
+		Threshold:  0.000000,
+		Priority:   0,
+		Categories: []string{"traffic"},
+	},
 	"streetcar": {
 		Label:      "",
 		Threshold:  0.200000,
@@ -5428,7 +5458,7 @@ var rules = LabelRules{
 	},
 	"sturgeon fish": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
@@ -5505,10 +5535,10 @@ var rules = LabelRules{
 		Categories: []string{"people"},
 	},
 	"swimming trunks": {
-		Label:      "sunshine",
+		Label:      "portrait",
 		Threshold:  0.200000,
 		Priority:   0,
-		Categories: []string{"people", "portrait"},
+		Categories: []string{"people"},
 	},
 	"swing": {
 		Label:      "moment",
@@ -5566,7 +5596,7 @@ var rules = LabelRules{
 	},
 	"tarantula": {
 		Label:      "spider",
-		Threshold:  0.750000,
+		Threshold:  0.950000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -5590,14 +5620,14 @@ var rules = LabelRules{
 	},
 	"tench fish": {
 		Label:      "fish",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"water", "animal"},
 	},
 	"tennis ball": {
 		Label:      "",
-		Threshold:  1.000000,
-		Priority:   -2,
+		Threshold:  0.000000,
+		Priority:   0,
 		Categories: []string{},
 	},
 	"terrapin": {
@@ -5686,7 +5716,7 @@ var rules = LabelRules{
 	},
 	"tiger shark": {
 		Label:      "shark",
-		Threshold:  0.300000,
+		Threshold:  0.600000,
 		Priority:   0,
 		Categories: []string{"water", "fish", "animal"},
 	},
@@ -6165,10 +6195,10 @@ var rules = LabelRules{
 		Categories: []string{"reptile", "animal"},
 	},
 	"whistle": {
-		Label:      "",
-		Threshold:  0.700000,
+		Label:      "portrait",
+		Threshold:  0.350000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"people"},
 	},
 	"white stork": {
 		Label:      "bird",
@@ -6202,7 +6232,7 @@ var rules = LabelRules{
 	},
 	"window": {
 		Label:      "window",
-		Threshold:  0.400000,
+		Threshold:  0.700000,
 		Priority:   0,
 		Categories: []string{"architecture"},
 	},
@@ -6250,7 +6280,7 @@ var rules = LabelRules{
 	},
 	"wolf spider": {
 		Label:      "spider",
-		Threshold:  0.750000,
+		Threshold:  0.950000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
