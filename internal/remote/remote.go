@@ -4,6 +4,9 @@ Package remote implements a remote service abstraction.
 Additional information can be found in our Developer Guide:
 
 https://github.com/photoprism/photoprism/wiki
+
+See also:
+- RClone (https://rclone.org/), a popular Go tool for syncing data with remote services
 */
 package remote
 

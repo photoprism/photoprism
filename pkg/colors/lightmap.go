@@ -51,6 +51,9 @@ var diffValues = []diffValue{
 	For a more complex implementation, see
 	https://github.com/EdjoLabs/image-match/blob/master/image_match/goldberg.py
     http://www.cs.cmu.edu/~hcwong/Pdfs/icip02.ps
+
+	General blog post on Perceptual image hashing:
+	https://jenssegers.com/perceptual-image-hashes
 */
 
 // Diff returns an integer that can be used to find similar images.
