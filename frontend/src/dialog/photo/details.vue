@@ -36,6 +36,7 @@
                         <v-layout row wrap>
                             <v-flex xs12 class="pa-2">
                                 <v-text-field
+                                        :disabled="disabled"
                                         hide-details
                                         label="Title"
                                         placeholder=""
@@ -48,6 +49,7 @@
                             <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
 
                                 <v-text-field
+                                        :disabled="disabled"
                                         :value="timeLocalFormatted"
                                         browser-autocomplete="off"
                                         label="Local Time"
@@ -59,6 +61,7 @@
                             </v-flex>
                             <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
                                 <v-menu
+                                        :disabled="disabled"
                                         v-model="showTimePicker"
                                         :close-on-content-click="false"
                                         full-width
@@ -66,6 +69,7 @@
                                 >
                                     <template v-slot:activator="{ on }">
                                         <v-text-field
+                                                :disabled="disabled"
                                                 :value="timeFormatted"
                                                 label="UTC Time"
                                                 readonly
@@ -85,12 +89,14 @@
                             </v-flex>
                             <v-flex xs12 sm6 md3 class="pa-2 p-date-select">
                                 <v-menu
+                                        :disabled="disabled"
                                         :close-on-content-click="false"
                                         full-width
                                         max-width="290"
                                 >
                                     <template v-slot:activator="{ on }">
                                         <v-text-field
+                                                :disabled="disabled"
                                                 :value="dateFormatted"
                                                 browser-autocomplete="off"
                                                 label="UTC Date"
@@ -110,6 +116,7 @@
 
                             <v-flex xs12 sm6 md3 class="pa-2 p-timezone-select">
                                 <v-autocomplete
+                                        :disabled="disabled"
                                         :label="labels.timezone"
                                         hide-details
                                         color="secondary-dark"
@@ -122,6 +129,7 @@
 
                             <v-flex xs12 md6 pa-2 class="p-camera-select">
                                 <v-select
+                                        :disabled="disabled"
                                         :label="labels.camera"
                                         browser-autocomplete="off"
                                         hide-details
@@ -134,6 +142,7 @@
                             </v-flex>
                             <v-flex xs12 md6 pa-2 class="p-lens-select">
                                 <v-select
+                                        :disabled="disabled"
                                         :label="labels.lens"
                                         browser-autocomplete="off"
                                         hide-details
@@ -147,6 +156,7 @@
 
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         label="Latitude"
@@ -157,6 +167,7 @@
                             </v-flex>
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         label="Longitude"
@@ -167,6 +178,7 @@
                             </v-flex>
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         label="Altitude (m)"
@@ -178,6 +190,7 @@
 
                             <v-flex xs12 sm6 md3 class="pa-2 p-countries-select">
                                 <v-select
+                                        :disabled="disabled"
                                         :label="labels.country"
                                         hide-details
                                         browser-autocomplete="off"
@@ -191,6 +204,7 @@
 
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         label="Focal Length"
@@ -202,6 +216,7 @@
 
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         label="F Number"
@@ -213,6 +228,7 @@
 
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         label="ISO"
@@ -224,6 +240,7 @@
 
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         label="Exposure"
@@ -235,6 +252,7 @@
 
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-textarea
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         auto-grow
@@ -248,6 +266,7 @@
 
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         label="Artist"
@@ -259,6 +278,7 @@
 
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         label="Copyright"
@@ -270,6 +290,7 @@
 
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-textarea
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         auto-grow
@@ -283,6 +304,7 @@
 
                             <v-flex xs12 class="pa-2">
                                 <v-textarea
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         auto-grow
@@ -296,6 +318,7 @@
 
                             <v-flex xs12 md6 class="pa-2">
                                 <v-textarea
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         auto-grow
@@ -309,6 +332,7 @@
 
                             <v-flex xs12 md6 class="pa-2">
                                 <v-textarea
+                                        :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
                                         auto-grow
@@ -320,7 +344,7 @@
                                 ></v-textarea>
                             </v-flex>
 
-                            <v-flex xs12 text-xs-right class="pt-3">
+                            <v-flex xs12 text-xs-right class="pt-3" v-if="!disabled">
                                 <v-btn @click.stop="close" depressed color="secondary-light"
                                        class="p-photo-dialog-close">
                                     <translate>Close</translate>
@@ -355,6 +379,7 @@
         },
         data() {
             return {
+                disabled: !this.$config.feature("edit"),
                 config: this.$config.values,
                 all: {
                     countries: [{code: "", name: ""}],

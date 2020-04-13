@@ -14,13 +14,20 @@
                 <td>{{ props.item.Label.LabelName }}</td>
                 <td class="text-xs-left">{{ props.item.LabelSource }}</td>
                 <td class="text-xs-center">{{ 100 - props.item.LabelUncertainty }}%</td>
-                <td class="text-xs-center"><v-btn icon small flat :ripple="false"
-                                                  class="p-photo-label-remove"
-                                                  @click.stop.prevent="removeLabel(props.item.Label)">
-                    <v-icon color="secondary-dark">delete</v-icon>
-                </v-btn></td>
+                <td class="text-xs-center">
+                    <v-btn v-if="!disabled" icon small flat :ripple="false"
+                           class="p-photo-label-remove"
+                           @click.stop.prevent="removeLabel(props.item.Label)">
+                        <v-icon color="secondary-dark">delete</v-icon>
+                    </v-btn>
+                    <v-btn v-else icon small flat :ripple="false"
+                           class="action-view"
+                           @click.stop.prevent="searchLabel(props.item.Label)">
+                        <v-icon color="secondary-dark">search</v-icon>
+                    </v-btn>
+                </td>
             </template>
-            <template v-slot:footer>
+            <template v-slot:footer v-if="!disabled">
                 <td>
                     <v-text-field
                             v-model="newLabel"
@@ -36,11 +43,13 @@
                 </td>
                 <td class="text-xs-left">manual</td>
                 <td class="text-xs-center">100%</td>
-                <td class="text-xs-center"><v-btn icon small flat :ripple="false"
-                                                  class="p-photo-label-remove"
-                                                  @click.stop.prevent="addLabel">
-                    <v-icon color="secondary-dark">add</v-icon>
-                </v-btn></td>
+                <td class="text-xs-center">
+                    <v-btn icon small flat :ripple="false"
+                           class="p-photo-label-remove"
+                           @click.stop.prevent="addLabel">
+                        <v-icon color="secondary-dark">add</v-icon>
+                    </v-btn>
+                </td>
             </template>
         </v-data-table>
     </div>
@@ -56,6 +65,7 @@
         },
         data() {
             return {
+                disabled: !this.$config.feature("edit"),
                 config: this.$config.values,
                 readonly: this.$config.getValue("readonly"),
                 selected: [],
@@ -72,13 +82,12 @@
                 nameRule: v => v.length <= 25 || this.$gettext("Name too long"),
             };
         },
-        computed: {
-        },
+        computed: {},
         methods: {
             refresh() {
             },
             removeLabel(label) {
-                if(!label) {
+                if (!label) {
                     return
                 }
 
@@ -89,7 +98,7 @@
                 });
             },
             addLabel() {
-                if(!this.newLabel) {
+                if (!this.newLabel) {
                     return
                 }
 
@@ -98,6 +107,10 @@
 
                     this.newLabel = "";
                 });
+            },
+            searchLabel(label) {
+                this.$router.push({name: 'photos', query: {q: 'label:' + label.LabelSlug}}).catch(err => {});
+                this.$emit('close');
             },
         },
     };

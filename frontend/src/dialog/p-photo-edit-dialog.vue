@@ -31,7 +31,7 @@
                     <translate>Details</translate>
                 </v-tab>
 
-                <v-tab id="tab-edit-labels" ripple>
+                <v-tab id="tab-edit-labels" ripple :disabled="!$config.feature('labels')">
                     <translate>Labels</translate>
                 </v-tab>
 
@@ -46,11 +46,11 @@
                     </v-tab-item>
 
                     <v-tab-item lazy>
-                        <p-tab-photo-edit-labels :model="model"></p-tab-photo-edit-labels>
+                        <p-tab-photo-edit-labels :model="model" @close="close"></p-tab-photo-edit-labels>
                     </v-tab-item>
 
                     <v-tab-item lazy>
-                        <p-tab-photo-edit-files :model="model"></p-tab-photo-edit-files>
+                        <p-tab-photo-edit-files :model="model" @close="close"></p-tab-photo-edit-files>
                     </v-tab-item>
                 </v-tabs-items>
             </v-tabs>

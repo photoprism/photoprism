@@ -12,9 +12,12 @@
         >
             <template slot="items" slot-scope="props" class="p-file">
                 <td>
-                    <a :href="'/api/v1/download/' + props.item.FileHash" class="secondary-dark--text" target="_blank">
+                    <a :href="'/api/v1/download/' + props.item.FileHash" class="secondary-dark--text" target="_blank" v-if="$config.feature('download')">
                         {{ props.item.FileName }}
                     </a>
+                    <span v-else>
+                        {{ props.item.FileName }}
+                    </span>
                 </td>
                 <td>{{ props.item.FileWidth ? props.item.FileWidth : "" }}</td>
                 <td>{{ props.item.FileHeight ? props.item.FileHeight : "" }}</td>
