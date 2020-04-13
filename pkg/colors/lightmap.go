@@ -47,6 +47,10 @@ var diffValues = []diffValue{
 	- Use Lightness instead of luminance
     - Use more pixels (difficult as we only have 3x3 thumbs right now)
 	- Iterative calculation using smaller offsets for each round (current offset is +4)
+
+	For a more complex implementation, see
+	https://github.com/EdjoLabs/image-match/blob/master/image_match/goldberg.py
+    http://www.cs.cmu.edu/~hcwong/Pdfs/icip02.ps
 */
 
 // Diff returns an integer that can be used to find similar images.
