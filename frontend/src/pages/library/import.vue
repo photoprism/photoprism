@@ -51,7 +51,7 @@
                     <translate>Cancel</translate>
                 </v-btn>
 
-                <v-btn v-if="!this.$config.values.readonly"
+                <v-btn v-if="!$config.values.readonly && $config.feature('upload')"
                        :disabled="busy"
                        color="secondary-dark"
                        class="white--text ml-0 mt-2 hidden-xs-only"

@@ -73,9 +73,9 @@ class Config {
         this.values.count;
     }
 
-    updateSettings(values, $vuetify) {
-        this.setValue("settings", values);
-        this.setTheme(values.theme);
+    updateSettings(settings, $vuetify) {
+        this.setValue("settings", settings);
+        this.setTheme(settings.theme);
         $vuetify.theme = this.theme;
     }
 
@@ -112,6 +112,10 @@ class Config {
         delete this.values[key];
 
         return this;
+    }
+
+    feature(name) {
+        return this.values.settings.features[name];
     }
 }
 

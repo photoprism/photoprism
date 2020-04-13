@@ -12,3 +12,9 @@ features:
   download: true
   edit: true
   share: true
+library:
+  reindex: false
+  duplicates: false
+  convert: false
+  create-thumbs: false
+  remove-imported: false

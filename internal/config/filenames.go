@@ -86,7 +86,7 @@ func (c *Config) CreateDirectories() error {
 
 // ConfigFile returns the config file name.
 func (c *Config) ConfigFile() string {
-	return c.config.ConfigFile
+	return c.params.ConfigFile
 }
 
 // SettingsFile returns the user settings file name.
@@ -96,73 +96,73 @@ func (c *Config) SettingsFile() string {
 
 // ConfigPath returns the config path.
 func (c *Config) ConfigPath() string {
-	if c.config.ConfigPath == "" {
+	if c.params.ConfigPath == "" {
 		return c.AssetsPath() + "/config"
 	}
 
-	return fs.Abs(c.config.ConfigPath)
+	return fs.Abs(c.params.ConfigPath)
 }
 
 // PIDFilename returns the filename for storing the server process id (pid).
 func (c *Config) PIDFilename() string {
-	if c.config.PIDFilename == "" {
+	if c.params.PIDFilename == "" {
 		return c.AssetsPath() + "/photoprism.pid"
 	}
 
-	return fs.Abs(c.config.PIDFilename)
+	return fs.Abs(c.params.PIDFilename)
 }
 
 // LogFilename returns the filename for storing server logs.
 func (c *Config) LogFilename() string {
-	if c.config.LogFilename == "" {
+	if c.params.LogFilename == "" {
 		return c.AssetsPath() + "/photoprism.log"
 	}
 
-	return fs.Abs(c.config.LogFilename)
+	return fs.Abs(c.params.LogFilename)
 }
 
 // OriginalsPath returns the originals.
 func (c *Config) OriginalsPath() string {
-	return fs.Abs(c.config.OriginalsPath)
+	return fs.Abs(c.params.OriginalsPath)
 }
 
 // ImportPath returns the import directory.
 func (c *Config) ImportPath() string {
-	return fs.Abs(c.config.ImportPath)
+	return fs.Abs(c.params.ImportPath)
 }
 
 // SipsBin returns the sips binary file name.
 func (c *Config) SipsBin() string {
-	return findExecutable(c.config.SipsBin, "sips")
+	return findExecutable(c.params.SipsBin, "sips")
 }
 
 // DarktableBin returns the darktable-cli binary file name.
 func (c *Config) DarktableBin() string {
-	return findExecutable(c.config.DarktableBin, "darktable-cli")
+	return findExecutable(c.params.DarktableBin, "darktable-cli")
 }
 
 // HeifConvertBin returns the heif-convert binary file name.
 func (c *Config) HeifConvertBin() string {
-	return findExecutable(c.config.HeifConvertBin, "heif-convert")
+	return findExecutable(c.params.HeifConvertBin, "heif-convert")
 }
 
 // ExifToolBin returns the exiftool binary file name.
 func (c *Config) ExifToolBin() string {
-	return findExecutable(c.config.ExifToolBin, "exiftool")
+	return findExecutable(c.params.ExifToolBin, "exiftool")
 }
 
 // TempPath returns a temporary directory name for uploads and downloads.
 func (c *Config) TempPath() string {
-	if c.config.TempPath == "" {
+	if c.params.TempPath == "" {
 		return os.TempDir() + "/photoprism"
 	}
 
-	return fs.Abs(c.config.TempPath)
+	return fs.Abs(c.params.TempPath)
 }
 
 // CachePath returns the path to the cache.
 func (c *Config) CachePath() string {
-	return fs.Abs(c.config.CachePath)
+	return fs.Abs(c.params.CachePath)
 }
 
 // ThumbnailsPath returns the path to the cached thumbnails.
@@ -172,16 +172,16 @@ func (c *Config) ThumbnailsPath() string {
 
 // AssetsPath returns the path to the assets.
 func (c *Config) AssetsPath() string {
-	return fs.Abs(c.config.AssetsPath)
+	return fs.Abs(c.params.AssetsPath)
 }
 
 // ResourcesPath returns the path to the app resources like static files.
 func (c *Config) ResourcesPath() string {
-	if c.config.ResourcesPath == "" {
+	if c.params.ResourcesPath == "" {
 		return c.AssetsPath() + "/resources"
 	}
 
-	return fs.Abs(c.config.ResourcesPath)
+	return fs.Abs(c.params.ResourcesPath)
 }
 
 // ExamplesPath returns the example files path.

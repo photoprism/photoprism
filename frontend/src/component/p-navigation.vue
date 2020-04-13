@@ -9,7 +9,7 @@
             <v-spacer></v-spacer>
 
             <v-toolbar-items>
-                <v-btn icon @click.stop="showUpload = true" v-if="!readonly">
+                <v-btn icon @click.stop="showUpload = true" v-if="!readonly && $config.feature('upload')">
                     <v-icon>cloud_upload</v-icon>
                 </v-btn>
             </v-toolbar-items>
@@ -87,7 +87,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile to="/archive" @click="" class="p-navigation-archive">
+                    <v-list-tile to="/archive" @click="" class="p-navigation-archive" v-if="$config.feature('archive')">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate>Archive</translate>
@@ -109,7 +109,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile v-if="mini" to="/archive" @click="" class="p-navigation-archive">
+                <v-list-tile v-if="mini && $config.feature('archive')" to="/archive" @click="" class="p-navigation-archive">
                     <v-list-tile-action>
                         <v-icon>archive</v-icon>
                     </v-list-tile-action>
@@ -153,7 +153,7 @@
                     </v-list-tile>
                 </v-list-group>
 
-                <v-list-tile to="/labels" @click="" class="p-navigation-labels">
+                <v-list-tile to="/labels" @click="" class="p-navigation-labels" v-if="$config.feature('labels')">
                     <v-list-tile-action>
                         <v-icon>label</v-icon>
                     </v-list-tile-action>
@@ -167,7 +167,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile :to="{ name: 'places' }" @click="" class="p-navigation-places">
+                <v-list-tile :to="{ name: 'places' }" @click="" class="p-navigation-places" v-if="$config.feature('places')">
                     <v-list-tile-action>
                         <v-icon>place</v-icon>
                     </v-list-tile-action>
@@ -300,6 +300,9 @@
             },
         },
         methods: {
+            feature(name) {
+                return this.$config.values.settings.features[name];
+            },
             openDocs() {
                 window.open("https://docs.photoprism.org/", "_blank");
             },

@@ -4,39 +4,39 @@ import "github.com/photoprism/photoprism/pkg/fs"
 
 // DatabasePath returns the database storage path for TiDB.
 func (c *Config) DatabasePath() string {
-	if c.config.DatabasePath == "" {
+	if c.params.DatabasePath == "" {
 		return c.ResourcesPath() + "/database"
 	}
 
-	return fs.Abs(c.config.DatabasePath)
+	return fs.Abs(c.params.DatabasePath)
 }
 
 // DetachServer returns true if server should detach from console (daemon mode).
 func (c *Config) DetachServer() bool {
-	return c.config.DetachServer
+	return c.params.DetachServer
 }
 
 // HttpServerHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
 func (c *Config) HttpServerHost() string {
-	if c.config.HttpServerHost == "" {
+	if c.params.HttpServerHost == "" {
 		return "0.0.0.0"
 	}
 
-	return c.config.HttpServerHost
+	return c.params.HttpServerHost
 }
 
 // HttpServerPort returns the built-in HTTP server port.
 func (c *Config) HttpServerPort() int {
-	if c.config.HttpServerPort == 0 {
+	if c.params.HttpServerPort == 0 {
 		return 2342
 	}
 
-	return c.config.HttpServerPort
+	return c.params.HttpServerPort
 }
 
 // HttpServerMode returns the server mode.
 func (c *Config) HttpServerMode() string {
-	if c.config.HttpServerMode == "" {
+	if c.params.HttpServerMode == "" {
 		if c.Debug() {
 			return "debug"
 		}
@@ -44,12 +44,12 @@ func (c *Config) HttpServerMode() string {
 		return "release"
 	}
 
-	return c.config.HttpServerMode
+	return c.params.HttpServerMode
 }
 
 // HttpServerPassword returns the password for the user interface (optional).
 func (c *Config) HttpServerPassword() string {
-	return c.config.HttpServerPassword
+	return c.params.HttpServerPassword
 }
 
 // HttpTemplatesPath returns the server templates path.
@@ -74,23 +74,23 @@ func (c *Config) HttpStaticBuildPath() string {
 
 // SqlServerHost returns the built-in SQL server host name or IP address (empty for all interfaces).
 func (c *Config) SqlServerHost() string {
-	if c.config.SqlServerHost == "" {
+	if c.params.SqlServerHost == "" {
 		return "127.0.0.1"
 	}
 
-	return c.config.SqlServerHost
+	return c.params.SqlServerHost
 }
 
 // SqlServerPort returns the built-in SQL server port.
 func (c *Config) SqlServerPort() uint {
-	if c.config.SqlServerPort == 0 {
+	if c.params.SqlServerPort == 0 {
 		return 4000
 	}
 
-	return c.config.SqlServerPort
+	return c.params.SqlServerPort
 }
 
 // SqlServerPassword returns the password for the built-in database server.
 func (c *Config) SqlServerPassword() string {
-	return c.config.SqlServerPassword
+	return c.params.SqlServerPassword
 }

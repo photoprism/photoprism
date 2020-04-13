@@ -12,7 +12,7 @@
                 <translate>Originals</translate>
             </v-tab>
 
-            <v-tab id="tab-import" :disabled="readonly" ripple @click="changePath('/library/import')">
+            <v-tab id="tab-import" :disabled="readonly || !$config.feature('import')" ripple @click="changePath('/library/import')">
                 <translate>Import</translate>
             </v-tab>
 

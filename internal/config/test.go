@@ -24,7 +24,7 @@ const (
 )
 
 var testConfig *Config
-var once sync.Once
+var testConfigOnce sync.Once
 var testConfigMutex sync.Mutex
 
 func testDataPath(assetsPath string) string {
@@ -75,11 +75,13 @@ func NewTestParamsError() *Params {
 	return c
 }
 
+func SetNewTestConfig() {
+	testConfig = NewTestConfig()
+}
+
 // TestConfig inits the global testConfig if it was not already initialised
 func TestConfig() *Config {
-	once.Do(func() {
-		testConfig = NewTestConfig()
-	})
+	testConfigOnce.Do(SetNewTestConfig)
 
 	return testConfig
 }
@@ -91,7 +93,7 @@ func NewTestConfig() *Config {
 
 	log.SetLevel(logrus.DebugLevel)
 
-	c := &Config{config: NewTestParams()}
+	c := &Config{params: NewTestParams()}
 	err := c.Init(context.Background())
 	if err != nil {
 		log.Fatalf("failed init config: %v", err)
@@ -115,7 +117,7 @@ func NewTestConfig() *Config {
 func NewTestErrorConfig() *Config {
 	log.SetLevel(logrus.DebugLevel)
 
-	c := &Config{config: NewTestParamsError()}
+	c := &Config{params: NewTestParamsError()}
 	err := c.Init(context.Background())
 	if err != nil {
 		log.Fatalf("failed init config: %v", err)

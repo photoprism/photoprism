@@ -31,7 +31,7 @@
                 <v-icon>view_column</v-icon>
             </v-btn>
 
-            <v-btn icon @click.stop="showUpload()" v-if="!this.$config.values.readonly" class="hidden-md-and-down">
+            <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')" class="hidden-md-and-down">
                 <v-icon>cloud_upload</v-icon>
             </v-btn>
 

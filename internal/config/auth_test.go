@@ -11,19 +11,19 @@ func TestUtils_CheckPassword(t *testing.T) {
 	c := NewConfig(ctx)
 	formPassword := "photoprism"
 
-	c.config.AdminPassword = "$2b$10$cRhWIleqJkbaFWhBMp54VOI25RvVubxOooCWzWgdrvl5COFxaBnAy"
+	c.params.AdminPassword = "$2b$10$cRhWIleqJkbaFWhBMp54VOI25RvVubxOooCWzWgdrvl5COFxaBnAy"
 	check := c.CheckPassword(formPassword)
 	assert.True(t, check)
 
-	c.config.AdminPassword = "photoprism"
+	c.params.AdminPassword = "photoprism"
 	check = c.CheckPassword(formPassword)
 	assert.True(t, check)
 
-	c.config.AdminPassword = "$2b$10$yprZEQzm/Qy7AaePXtKfkem0kANBZgRwl8HbLE4JrjK6/8Pypgi1W"
+	c.params.AdminPassword = "$2b$10$yprZEQzm/Qy7AaePXtKfkem0kANBZgRwl8HbLE4JrjK6/8Pypgi1W"
 	check = c.CheckPassword(formPassword)
 	assert.False(t, check)
 
-	c.config.AdminPassword = "admin"
+	c.params.AdminPassword = "admin"
 	check = c.CheckPassword(formPassword)
 	assert.False(t, check)
 }

@@ -9,5 +9,5 @@ func (c *Config) TensorFlowVersion() string {
 
 // DisableTensorFlow returns true if the use of TensorFlow is disabled for image classification.
 func (c *Config) DisableTensorFlow() bool {
-	return c.config.DisableTensorFlow
+	return c.params.DisableTensorFlow
 }

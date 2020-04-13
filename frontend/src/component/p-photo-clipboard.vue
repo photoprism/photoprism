@@ -30,7 +30,7 @@
                         color="share"
                         @click.stop="dialog.share = true"
                         :disabled="selection.length === 0"
-                        v-if="context !== 'archive'"
+                        v-if="context !== 'archive' && $config.feature('share')"
                         class="p-photo-clipboard-share"
                 >
                     <v-icon>share</v-icon>
@@ -43,7 +43,7 @@
                         color="edit"
                         :disabled="selection.length === 0"
                         @click.stop="dialog.edit = true"
-                        v-if="context !== 'archive'"
+                        v-if="context !== 'archive' && $config.feature('edit')"
                         class="p-photo-clipboard-edit"
                 >
                     <v-icon>edit</v-icon>
@@ -55,7 +55,7 @@
                         :title="labels.download"
                         color="download"
                         @click.stop="download()"
-                        v-if="context !== 'archive'"
+                        v-if="context !== 'archive' && $config.feature('download')"
                         class="p-photo-clipboard-download"
                 >
                     <v-icon>cloud_download</v-icon>
@@ -82,7 +82,7 @@
                         :title="labels.archive"
                         @click.stop="dialog.archive = true"
                         :disabled="selection.length === 0"
-                        v-if="!album && context !== 'archive'"
+                        v-if="!album && context !== 'archive' && $config.feature('archive')"
                         class="p-photo-clipboard-archive"
                 >
                     <v-icon>archive</v-icon>

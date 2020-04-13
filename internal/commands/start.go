@@ -78,6 +78,7 @@ func startAction(ctx *cli.Context) error {
 	if err := conf.Init(cctx); err != nil {
 		log.Fatal(err)
 	}
+
 	// initialize the database
 	conf.MigrateDb()
 

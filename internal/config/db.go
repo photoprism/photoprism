@@ -18,20 +18,20 @@ import (
 
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
-	if c.config.DatabaseDriver == "" {
+	if c.params.DatabaseDriver == "" {
 		return DbTiDB
 	}
 
-	return c.config.DatabaseDriver
+	return c.params.DatabaseDriver
 }
 
 // DatabaseDsn returns the database data source name (DSN).
 func (c *Config) DatabaseDsn() string {
-	if c.config.DatabaseDsn == "" {
+	if c.params.DatabaseDsn == "" {
 		return "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
 	}
 
-	return c.config.DatabaseDsn
+	return c.params.DatabaseDsn
 }
 
 // Db returns the db connection.

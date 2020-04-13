@@ -30,6 +30,7 @@
                         color="download"
                         @click.stop="download()"
                         class="p-album-clipboard-download"
+                        v-if="$config.feature('download')"
                         :disabled="selection.length !== 1"
                 >
                     <v-icon>cloud_download</v-icon>

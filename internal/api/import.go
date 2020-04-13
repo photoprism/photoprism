@@ -21,7 +21,7 @@ import (
 // POST /api/v1/import*
 func StartImport(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/import/*path", func(c *gin.Context) {
-		if conf.ReadOnly() {
+		if conf.ReadOnly() || !conf.Settings().Features.Import {
 			c.AbortWithStatusJSON(http.StatusForbidden, ErrReadOnly)
 			return
 		}

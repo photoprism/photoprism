@@ -11,7 +11,7 @@ import (
 
 // DisableSettings returns true if the user is not allowed to change settings.
 func (c *Config) DisableSettings() bool {
-	return c.config.DisableSettings
+	return c.params.DisableSettings
 }
 
 type MapsSettings struct {
@@ -19,7 +19,15 @@ type MapsSettings struct {
 	Style   string `json:"style" yaml:"style"`
 }
 
-type FeatureFlags struct {
+type LibrarySettings struct {
+	Reindex        bool `json:"reindex" yaml:"reindex"`
+	Duplicates     bool `json:"duplicates" yaml:"duplicates"`
+	Convert        bool `json:"convert" yaml:"convert"`
+	CreateThumbs   bool `json:"create-thumbs" yaml:"create-thumbs"`
+	RemoveImported bool `json:"remove-imported" yaml:"remove-imported"`
+}
+
+type FeatureSettings struct {
 	Upload   bool `json:"upload" yaml:"upload"`
 	Import   bool `json:"import" yaml:"import"`
 	Labels   bool `json:"labels" yaml:"labels"`
@@ -32,10 +40,11 @@ type FeatureFlags struct {
 
 // Settings contains Web UI settings
 type Settings struct {
-	Theme    string       `json:"theme" yaml:"theme"`
-	Language string       `json:"language" yaml:"language"`
-	Maps     MapsSettings `json:"maps" yaml:"maps"`
-	Features FeatureFlags `json:"features" yaml:"features"`
+	Theme    string          `json:"theme" yaml:"theme"`
+	Language string          `json:"language" yaml:"language"`
+	Maps     MapsSettings    `json:"maps" yaml:"maps"`
+	Features FeatureSettings `json:"features" yaml:"features"`
+	Library  LibrarySettings `json:"library" yaml:"library"`
 }
 
 // NewSettings returns a empty Settings
@@ -47,7 +56,7 @@ func NewSettings() *Settings {
 			Animate: 0,
 			Style:   "streets",
 		},
-		Features: FeatureFlags{
+		Features: FeatureSettings{
 			Upload:   true,
 			Import:   true,
 			Labels:   true,
@@ -58,6 +67,11 @@ func NewSettings() *Settings {
 			Share:    true,
 		},
 	}
+}
+
+// Propagate updates settings in other packages as needed.
+func (s *Settings) Propagate() {
+
 }
 
 // Load uses a yaml config file to initiate the configuration entity.
@@ -72,7 +86,13 @@ func (s *Settings) Load(fileName string) error {
 		return err
 	}
 
-	return yaml.Unmarshal(yamlConfig, s)
+	if err := yaml.Unmarshal(yamlConfig, s); err != nil {
+		return err
+	}
+
+	s.Propagate()
+
+	return nil
 }
 
 // Save uses a yaml config file to initiate the configuration entity.
@@ -83,17 +103,30 @@ func (s *Settings) Save(fileName string) error {
 		return err
 	}
 
-	return ioutil.WriteFile(fileName, data, os.ModePerm)
+	s.Propagate()
+
+	if err := ioutil.WriteFile(fileName, data, os.ModePerm); err != nil {
+		return err
+	}
+
+	s.Propagate()
+
+	return nil
+}
+
+// initSettings initializes user settings from a config file.
+func (c *Config) initSettings() {
+	c.settings = NewSettings()
+	p := c.SettingsFile()
+
+	if err := c.settings.Load(p); err != nil {
+		log.Error(err)
+	}
+
+	c.settings.Propagate()
 }
 
 // Settings returns the current user settings.
 func (c *Config) Settings() *Settings {
-	s := NewSettings()
-	p := c.SettingsFile()
-
-	if err := s.Load(p); err != nil {
-		log.Error(err)
-	}
-
-	return s
+	return c.settings
 }
