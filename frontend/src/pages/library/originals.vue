@@ -14,67 +14,49 @@
                                        :indeterminate="busy"></v-progress-linear>
                 </p>
 
-                <v-checkbox
-                        class="mb-0 mt-4 pa-0"
-                        v-model="options.skipUnchanged"
-                        color="secondary-dark"
-                        :disabled="busy"
-                >
-                    <template v-slot:label>
-                        <div>
-                            <v-tooltip right  max-width="90%" :open-delay="tooltipDelay">
-                                <template v-slot:activator="{ on }">
-                                    <span v-on="on">{{labels.skipUnchanged}}</span>
-                                </template>
-                                <span>Disable to re-index all originals, including already indexed and unchanged files.</span>
-                            </v-tooltip>
-                        </div>
-                    </template>
-                </v-checkbox>
+                <v-layout wrap align-top class="pb-3">
+                    <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+                        <v-checkbox
+                                :disabled="busy"
+                                class="ma-0 pa-0"
+                                v-model="options.all"
+                                color="secondary-dark"
+                                :label="labels.all"
+                                hint="Re-index all originals, including already indexed and unchanged files."
+                                prepend-icon="cached"
+                                persistent-hint
+                        >
+                        </v-checkbox>
+                    </v-flex>
 
-                <v-checkbox
-                        class="ma-0 pa-0"
-                        v-model="options.convertRaw"
-                        color="secondary-dark"
-                        :disabled="busy || readonly"
-                >
-                    <template v-slot:label>
-                        <div>
-                            <v-tooltip right max-width="90%" :open-delay="tooltipDelay">
-                                <template v-slot:activator="{ on }">
-                                    <span v-on="on">{{labels.convertRaw}}</span>
-                                </template>
-                                <span>RAW image files can not be indexed and displayed directly. They need to be converted to JPEG if not done already. You can also convert your files manually.</span>
-                            </v-tooltip>
-                        </div>
-                    </template>
-                </v-checkbox>
+                    <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+                        <v-checkbox
+                                :disabled="busy"
+                                class="ma-0 pa-0"
+                                v-model="options.convertRaw"
+                                color="secondary-dark"
+                                :label="labels.convertRaw"
+                                hint="RAWs need to be converted to JPEG so that they can be displayed in a browser. You can also do this manually."
+                                prepend-icon="photo_camera"
+                                persistent-hint
+                        >
+                        </v-checkbox>
+                    </v-flex>
 
-                <v-checkbox
-                        class="ma-0 pa-0"
-                        v-model="options.createThumbs"
-                        color="secondary-dark"
-                        :disabled="busy"
-                >
-                    <template v-slot:label>
-                        <div>
-                            <v-tooltip right max-width="90%" :open-delay="tooltipDelay">
-                                <template v-slot:activator="{ on }">
-                                    <span v-on="on">{{labels.createThumbs}}</span>
-                                </template>
-                                <span>Enable to pre-render thumbnails if not done already.
-                                    On-demand rendering saves storage but requires a powerful CPU.</span>
-                            </v-tooltip>
-                        </div>
-                    </template>
-                </v-checkbox>
-                <!-- v-checkbox
-                        class="ma-0 pa-0"
-                        v-model="options.groomMetadata"
-                        color="secondary-dark"
-                        :disabled="busy"
-                        :label="labels.groomMetadata"
-                ></v-checkbox -->
+                    <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+                        <v-checkbox
+                                :disabled="busy"
+                                class="ma-0 pa-0"
+                                v-model="options.createThumbs"
+                                color="secondary-dark"
+                                :label="labels.createThumbs"
+                                hint="Enable to pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."
+                                prepend-icon="burst_mode"
+                                persistent-hint
+                        >
+                        </v-checkbox>
+                    </v-flex>
+                </v-layout>
 
                 <v-btn
                         :disabled="!busy"
@@ -119,18 +101,15 @@
                 action: "",
                 fileName: "",
                 source: null,
-                tooltipDelay: 750, // ms
                 options: {
-                    skipUnchanged: true,
+                    all: false,
                     createThumbs: false,
                     convertRaw: false,
-                    groomMetadata: false,
                 },
                 labels: {
-                    skipUnchanged: this.$gettext("Skip unchanged files"),
-                    createThumbs: this.$gettext("Pre-render thumbnails"),
-                    convertRaw: this.$gettext("Convert RAW to JPEG"),
-                    groomMetadata: this.$gettext("Groom metadata and estimate locations"),
+                    all: this.$gettext("Complete rescan"),
+                    createThumbs: this.$gettext("Create thumbnails"),
+                    convertRaw: this.$gettext("Convert RAW files"),
                 }
             }
         },

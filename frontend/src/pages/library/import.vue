@@ -14,24 +14,22 @@
                                        :indeterminate="busy"></v-progress-linear>
                 </p>
 
-                <v-checkbox
-                        class="mb-0 mt-4 pa-0"
-                        v-model="options.move"
-                        color="secondary-dark"
-                        :disabled="busy"
-                >
-                    <template v-slot:label>
-                        <div>
-                            <v-tooltip right max-width="90%" open-delay="750">
-                                <template v-slot:activator="{ on }">
-                                    <span v-on="on">{{labels.move}}</span>
-                                </template>
-                                <span>Instead of creating a copy, move files from import to originals to save storage.
-                                    Unsupported file types will never be deleted, they remain in their current folder.</span>
-                            </v-tooltip>
-                        </div>
-                    </template>
-                </v-checkbox>
+                <v-layout wrap align-top class="pb-3">
+                    <v-flex xs12 class="px-2 pb-2 pt-2">
+                        <v-checkbox
+                                :disabled="busy"
+                                class="ma-0 pa-0"
+                                v-model="options.move"
+                                color="secondary-dark"
+                                :label="labels.move"
+                                hint="Move files from import to originals to save storage.
+                                    Unsupported file types will never be deleted, they remain in their current location."
+                                prepend-icon="delete"
+                                persistent-hint
+                        >
+                        </v-checkbox>
+                    </v-flex>
+                </v-layout>
 
                 <p class="subheading">
                     When you import files to your library, they will be sorted by date

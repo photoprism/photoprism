@@ -9,7 +9,7 @@
                 </v-card-title>
 
                 <v-card-actions>
-                    <v-layout wrap align-center>
+                    <v-layout wrap align-top>
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
                                     @change="save"
@@ -131,7 +131,7 @@
                 </v-card-title>
 
                 <v-card-actions>
-                    <v-layout wrap align-center>
+                    <v-layout wrap align-top>
                         <v-flex xs12 sm6 class="px-2 pb-2">
                             <v-select
                                     @change="save"
@@ -165,7 +165,7 @@
                 </v-card-title>
 
                 <v-card-actions>
-                    <v-layout wrap align-center>
+                    <v-layout wrap align-top>
                         <v-flex xs12 sm6 class="px-2 pb-2">
                             <v-select
                                     @change="save"

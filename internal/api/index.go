@@ -62,10 +62,10 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 
 		ind := service.Index()
 
-		if f.SkipUnchanged {
-			ind.Start(photoprism.IndexOptionsNone())
-		} else {
+		if f.All {
 			ind.Start(photoprism.IndexOptionsAll())
+		} else {
+			ind.Start(photoprism.IndexOptionsNone())
 		}
 
 		elapsed := int(time.Since(start).Seconds())
