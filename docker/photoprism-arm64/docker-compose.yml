@@ -28,13 +28,28 @@ services:
       PHOTOPRISM_PUBLIC: "false"
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # Plain text or bcrypt hash (escape "$" with "$$")
       PHOTOPRISM_WEBDAV_PASSWORD: "photoprism" # Plain text only (username "photoprism")
+      PHOTOPRISM_DISABLE_SETTINGS: "false"
+      PHOTOPRISM_HTTP_HOST: "0.0.0.0"
+      PHOTOPRISM_HTTP_PORT: 2342
+      PHOTOPRISM_SQL_HOST: "0.0.0.0"
+      PHOTOPRISM_SQL_PORT: 4000 # Port for internal TiDB SQL server (driver "internal")
+      PHOTOPRISM_SQL_PASSWORD: "photoprism" # Plain text only (username "root")
+      PHOTOPRISM_DATABASE_DRIVER: "internal" # Change to "mysql" for external MySQL or MariaDB
+      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
+      # PHOTOPRISM_THUMB_QUALITY: 95 # High-quality thumbnails (optional)
+      # PHOTOPRISM_THUMB_SIZE: 3840
+      # PHOTOPRISM_THUMB_LIMIT: 3840
+      # PHOTOPRISM_THUMB_FILTER: "lanczos"
     volumes:
       - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
       - "~/Pictures/Import:/photoprism/import" # [local path]:[container path] (optional)
+      - "photoprism-config:/photoprism/config" # keep settings
       - "photoprism-cache:/photoprism/cache" # keep thumbnail cache
       - "photoprism-database:/photoprism/database" # keep database files
 
 volumes: # keep this
+  photoprism-config:
+    driver: local
   photoprism-cache:
     driver: local
   photoprism-database:
