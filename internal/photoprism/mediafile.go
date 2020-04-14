@@ -59,7 +59,7 @@ func (m MediaFile) Stat() (size int64, mod time.Time) {
 		return -1, time.Now()
 	}
 
-	return s.Size(), s.ModTime()
+	return s.Size(), s.ModTime().Round(time.Second)
 }
 
 // DateCreated returns the date on which the media file was created in UTC.

@@ -13,14 +13,16 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/meta"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 const (
-	IndexUpdated IndexStatus = "updated"
-	IndexAdded   IndexStatus = "added"
-	IndexSkipped IndexStatus = "skipped"
-	IndexFailed  IndexStatus = "failed"
+	IndexUpdated   IndexStatus = "updated"
+	IndexAdded     IndexStatus = "added"
+	IndexSkipped   IndexStatus = "skipped"
+	IndexDuplicate IndexStatus = "skipped duplicate"
+	IndexFailed    IndexStatus = "failed"
 )
 
 type IndexStatus string
@@ -84,6 +86,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		fileHash = m.Hash()
 		fileQuery = ind.db.Unscoped().First(&file, "file_hash = ?", fileHash)
 		fileExists = fileQuery.Error == nil
+
+		if fileExists && fs.FileExists(filepath.Join(ind.conf.OriginalsPath(), file.FileName)) {
+			result.Status = IndexDuplicate
+			return result
+		}
 	}
 
 	if !fileExists {

@@ -92,9 +92,9 @@ func (m File) Changed(fileSize int64, fileModified time.Time) bool {
 		return true
 	}
 
-	if m.FileModified.Format("2006-01-02 15:04:05") != fileModified.Format("2006-01-02 15:04:05") {
-		return true
+	if m.FileModified.Round(time.Second).Equal(fileModified.Round(time.Second)) {
+		return false
 	}
 
-	return false
+	return true
 }
