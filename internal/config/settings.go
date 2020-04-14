@@ -23,7 +23,7 @@ type LibrarySettings struct {
 	CompleteRescan bool `json:"rescan" yaml:"rescan"`
 	ConvertRaw     bool `json:"raw" yaml:"raw"`
 	CreateThumbs   bool `json:"thumbs" yaml:"thumbs"`
-	FindRelated    bool `json:"related" yaml:"related"`
+	GroupRelated   bool `json:"group" yaml:"group"`
 	MoveImported   bool `json:"move" yaml:"move"`
 }
 
@@ -70,7 +70,7 @@ func NewSettings() *Settings {
 			CompleteRescan: false,
 			ConvertRaw:     false,
 			CreateThumbs:   true,
-			FindRelated:    true,
+			GroupRelated:   true,
 			MoveImported:   false,
 		},
 	}

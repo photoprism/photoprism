@@ -121,7 +121,7 @@ func (imp *Import) Start(opt ImportOptions) {
 			return nil
 		}
 
-		related, err := mf.RelatedFiles()
+		related, err := mf.RelatedFiles(imp.conf.Settings().Library.GroupRelated)
 
 		if err != nil {
 			event.Error(fmt.Sprintf("import: %s", err.Error()))

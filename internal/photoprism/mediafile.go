@@ -269,8 +269,8 @@ func (m *MediaFile) EditedName() string {
 }
 
 // RelatedFiles returns files which are related to this file.
-func (m *MediaFile) RelatedFiles() (result RelatedFiles, err error) {
-	baseFilename := m.AbsBase()
+func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err error) {
+	baseFilename := m.AbsBase(stripSequence)
 	// escape any meta characters in the file name
 	baseFilename = regexp.QuoteMeta(baseFilename)
 	matches, err := filepath.Glob(baseFilename + "*")
@@ -357,12 +357,12 @@ func (m MediaFile) RelativePath(directory string) string {
 }
 
 // RelativeBase returns the relative filename.
-func (m MediaFile) RelativeBase(directory string) string {
+func (m MediaFile) RelativeBase(directory string, stripSequence bool) string {
 	if relativePath := m.RelativePath(directory); relativePath != "" {
-		return relativePath + string(os.PathSeparator) + m.Base()
+		return filepath.Join(relativePath, m.Base(stripSequence))
 	}
 
-	return m.Base()
+	return m.Base(stripSequence)
 }
 
 // Directory returns the directory
@@ -371,13 +371,13 @@ func (m MediaFile) Directory() string {
 }
 
 // Base returns the filename base without any extensions and path.
-func (m MediaFile) Base() string {
-	return fs.Base(m.FileName())
+func (m MediaFile) Base(stripSequence bool) string {
+	return fs.Base(m.FileName(), stripSequence)
 }
 
 // AbsBase returns the directory and base filename without any extensions.
-func (m MediaFile) AbsBase() string {
-	return m.Directory() + string(os.PathSeparator) + m.Base()
+func (m MediaFile) AbsBase(stripSequence bool) string {
+	return fs.AbsBase(m.FileName(), stripSequence)
 }
 
 // MimeType returns the mime type.
@@ -573,7 +573,7 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 		return m, nil
 	}
 
-	jpegFilename := fmt.Sprintf("%s.%s", m.AbsBase(), fs.TypeJpeg)
+	jpegFilename := fmt.Sprintf("%s.%s", m.AbsBase(false), fs.TypeJpeg)
 
 	if !fs.FileExists(jpegFilename) {
 		return nil, fmt.Errorf("jpeg file does not exist: %s", jpegFilename)
@@ -712,11 +712,11 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	defer func() {
 		switch count {
 		case 0:
-			log.Info(capture.Time(start, fmt.Sprintf("mediafile: no new thumbnails created for %s", m.Base())))
+			log.Info(capture.Time(start, fmt.Sprintf("mediafile: no new thumbnails created for %s", m.Base(false))))
 		case 1:
-			log.Info(capture.Time(start, fmt.Sprintf("mediafile: one thumbnail created for %s", m.Base())))
+			log.Info(capture.Time(start, fmt.Sprintf("mediafile: one thumbnail created for %s", m.Base(false))))
 		default:
-			log.Info(capture.Time(start, fmt.Sprintf("mediafile: %d thumbnails created for %s", count, m.Base())))
+			log.Info(capture.Time(start, fmt.Sprintf("mediafile: %d thumbnails created for %s", count, m.Base(false))))
 		}
 	}()
 

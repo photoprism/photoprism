@@ -16,5 +16,5 @@ library:
   rescan: false
   raw: false
   thumbs: true
-  related: true
+  group: true
   move: false

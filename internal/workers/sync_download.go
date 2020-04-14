@@ -32,7 +32,7 @@ func (s *Sync) relatedDownloads(a entity.Account) (result Downloads, err error) 
 
 	// Group results by directory and base name
 	for i, file := range files {
-		k := fs.AbsBase(file.RemoteName)
+		k := fs.AbsBase(file.RemoteName, s.conf.Settings().Library.GroupRelated)
 
 		result[k] = append(result[k], file)
 
@@ -124,7 +124,7 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 				continue
 			}
 
-			related, err := mf.RelatedFiles()
+			related, err := mf.RelatedFiles(s.conf.Settings().Library.GroupRelated)
 
 			if err != nil {
 				log.Warnf("sync: %s", err.Error())

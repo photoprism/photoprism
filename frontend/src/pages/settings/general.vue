@@ -43,9 +43,9 @@
                             <v-checkbox
                                     @change="save"
                                     class="ma-0 pa-0"
-                                    v-model="settings.library.related"
+                                    v-model="settings.library.group"
                                     color="secondary-dark"
-                                    :label="labels.related"
+                                    :label="labels.group"
                                     hint="Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' belong to the same photo."
                                     prepend-icon="file_copy"
                                     persistent-hint
@@ -286,7 +286,7 @@
                     thumbs: this.$gettext("Create thumbnails"),
                     raw: this.$gettext("Convert RAW files"),
                     move: this.$gettext("Remove imported files"),
-                    related: this.$gettext("Find related files"),
+                    group: this.$gettext("Group related files"),
                 },
             };
         },

@@ -61,7 +61,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	var locKeywords []string
 
 	labels := classify.Labels{}
-	fileBase := m.Base()
+	fileBase := m.Base(ind.conf.Settings().Library.GroupRelated)
 	filePath := m.RelativePath(ind.originalsPath())
 	fileName := m.RelativeName(ind.originalsPath())
 	fileHash := ""

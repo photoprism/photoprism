@@ -94,6 +94,7 @@ func NewTestConfig() *Config {
 	log.SetLevel(logrus.DebugLevel)
 
 	c := &Config{params: NewTestParams()}
+	c.initSettings()
 	err := c.Init(context.Background())
 	if err != nil {
 		log.Fatalf("failed init config: %v", err)

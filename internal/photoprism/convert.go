@@ -102,7 +102,7 @@ func (c *Convert) ConvertCommand(image *MediaFile, jpegName string, xmpName stri
 				result = exec.Command(c.conf.DarktableBin(), image.fileName, jpegName)
 			}
 		} else {
-			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", image.Base())
+			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", image.Base(c.conf.Settings().Library.GroupRelated))
 		}
 	} else if image.IsHEIF() {
 		result = exec.Command(c.conf.HeifConvertBin(), image.fileName, jpegName)
@@ -123,7 +123,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return image, nil
 	}
 
-	base := image.AbsBase()
+	base := image.AbsBase(c.conf.Settings().Library.GroupRelated)
 
 	jpegName := base + ".jpg"
 
