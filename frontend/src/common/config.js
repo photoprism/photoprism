@@ -117,6 +117,10 @@ class Config {
     feature(name) {
         return this.values.settings.features[name];
     }
+
+    settings() {
+        return this.values.settings
+    }
 }
 
 export default Config;

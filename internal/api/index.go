@@ -62,7 +62,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 
 		ind := service.Index()
 
-		if f.All {
+		if f.CompleteRescan {
 			ind.Start(photoprism.IndexOptionsAll())
 		} else {
 			ind.Start(photoprism.IndexOptionsNone())

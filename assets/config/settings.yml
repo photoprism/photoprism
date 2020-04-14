@@ -12,3 +12,9 @@ features:
   download: true
   edit: true
   share: true
+library:
+  rescan: false
+  raw: false
+  thumbs: true
+  related: true
+  move: false

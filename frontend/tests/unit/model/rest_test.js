@@ -1,4 +1,4 @@
-import Abstract from "model/abstract";
+import Rest from "model/rest";
 import Album from "model/album";
 import Label from "model/label";
 import MockAdapter from "axios-mock-adapter";
@@ -46,7 +46,7 @@ describe("model/abstract", () => {
     });
 
     it("should get model name",  () => {
-        const result = Abstract.getModelName();
+        const result = Rest.getModelName();
         assert.equal(result, "Item");
     });
 
@@ -121,6 +121,6 @@ describe("model/abstract", () => {
     });
 
     it("should get collection resource",  () => {
-        assert.throws(() => Abstract.getCollectionResource(), Error, "getCollectionResource() needs to be implemented");
+        assert.throws(() => Rest.getCollectionResource(), Error, "getCollectionResource() needs to be implemented");
     });
 });

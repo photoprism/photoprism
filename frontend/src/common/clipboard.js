@@ -1,4 +1,4 @@
-import Abstract from "model/abstract";
+import RestModel from "model/rest";
 
 class Clipboard {
     /**
@@ -29,7 +29,7 @@ class Clipboard {
     }
 
     toggle(model) {
-        if(!model || !(model instanceof Abstract)) {
+        if(!model || !(model instanceof RestModel)) {
             console.log("Clipboard::toggle() - not a model:", model);
             return;
         }
@@ -55,7 +55,7 @@ class Clipboard {
     }
 
     add(model) {
-        if(!model || !(model instanceof Abstract)) {
+        if(!model || !(model instanceof RestModel)) {
             console.log("Clipboard::add() - not a model:", model);
             return;
         }
@@ -76,7 +76,7 @@ class Clipboard {
     }
 
     addRange(rangeEnd, models) {
-        if(!models || !models[rangeEnd] || !(models[rangeEnd] instanceof Abstract)) {
+        if(!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
             console.warn("Clipboard::addRange() - invalid arguments:", rangeEnd, models);
             return;
         }
@@ -102,7 +102,7 @@ class Clipboard {
     }
 
     has(model) {
-        if(!model || !(model instanceof Abstract)) {
+        if(!model || !(model instanceof RestModel)) {
             console.log("Clipboard::has() - not a model:", model);
             return;
         }
@@ -115,7 +115,7 @@ class Clipboard {
     }
 
     remove(model) {
-        if(!model || !(model instanceof Abstract)) {
+        if(!model || !(model instanceof RestModel)) {
             console.log("Clipboard::remove() - not a model:", model);
             return;
         }

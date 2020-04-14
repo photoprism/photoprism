@@ -1,8 +1,8 @@
-import Abstract from "model/abstract";
+import RestModel from "model/rest";
 import Api from "common/api";
 import { DateTime } from "luxon";
 
-class Label extends Abstract {
+class Label extends RestModel {
     getDefaults() {
         return {
             ID: 0,

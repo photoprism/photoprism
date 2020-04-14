@@ -1,7 +1,7 @@
-import Abstract from "model/abstract";
+import RestModel from "model/rest";
 import Api from "../common/api";
 
-class Account extends Abstract {
+class Account extends RestModel {
     getDefaults() {
         return {
             ID: 0,

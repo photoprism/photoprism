@@ -1,6 +1,6 @@
-import Abstract from "model/abstract";
+import RestModel from "model/rest";
 
-class Link extends Abstract {
+class Link extends RestModel {
     getDefaults() {
         return {
             LinkToken: "",

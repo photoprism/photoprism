@@ -20,11 +20,11 @@ type MapsSettings struct {
 }
 
 type LibrarySettings struct {
-	Reindex        bool `json:"reindex" yaml:"reindex"`
-	Duplicates     bool `json:"duplicates" yaml:"duplicates"`
-	Convert        bool `json:"convert" yaml:"convert"`
-	CreateThumbs   bool `json:"create-thumbs" yaml:"create-thumbs"`
-	RemoveImported bool `json:"remove-imported" yaml:"remove-imported"`
+	CompleteRescan bool `json:"rescan" yaml:"rescan"`
+	ConvertRaw     bool `json:"raw" yaml:"raw"`
+	CreateThumbs   bool `json:"thumbs" yaml:"thumbs"`
+	FindRelated    bool `json:"related" yaml:"related"`
+	MoveImported   bool `json:"move" yaml:"move"`
 }
 
 type FeatureSettings struct {
@@ -65,6 +65,13 @@ func NewSettings() *Settings {
 			Download: true,
 			Edit:     true,
 			Share:    true,
+		},
+		Library: LibrarySettings{
+			CompleteRescan: false,
+			ConvertRaw:     false,
+			CreateThumbs:   true,
+			FindRelated:    true,
+			MoveImported:   false,
 		},
 	}
 }

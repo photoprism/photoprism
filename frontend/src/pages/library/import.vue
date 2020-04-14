@@ -14,7 +14,7 @@
                                        :indeterminate="busy"></v-progress-linear>
                 </p>
 
-                <v-layout wrap align-top class="pb-3">
+                <v-layout wrap align-top class="pb-2">
                     <v-flex xs12 class="px-2 pb-2 pt-2">
                         <v-checkbox
                                 :disabled="busy"
@@ -29,20 +29,21 @@
                         >
                         </v-checkbox>
                     </v-flex>
+                    <v-flex xs12 class="px-2 pb-2 pt-2">
+                        <p class="body-1 pt-2">
+                            Imported files will be sorted by date
+                            and given a unique name to avoid duplicates.
+                            JPEGs and thumbnails are automatically rendered as needed.
+                            Original file names will be stored and indexed.
+                            Note that you can as well manage and re-index your originals manually.
+                        </p>
+                    </v-flex>
                 </v-layout>
-
-                <p class="subheading">
-                    When you import files to your library, they will be sorted by date
-                    and given a unique name to avoid duplicates.
-                    Importing will automatically convert RAWs and render thumbnails as needed.
-                    Original file names will be stored and indexed.
-                    You can as well manage your originals manually.
-                </p>
 
                 <v-btn
                         :disabled="!busy"
                         color="secondary-dark"
-                        class="white--text ml-0 mt-2"
+                        class="white--text ml-0"
                         depressed
                         @click.stop="cancelImport()"
                 >
@@ -52,7 +53,7 @@
                 <v-btn v-if="!$config.values.readonly && $config.feature('upload')"
                        :disabled="busy"
                        color="secondary-dark"
-                       class="white--text ml-0 mt-2 hidden-xs-only"
+                       class="white--text ml-0 hidden-xs-only"
                        depressed
                        @click.stop="showUpload()"
                 >
@@ -84,6 +85,8 @@
     export default {
         name: 'p-tab-import',
         data() {
+            let settings = this.$config.settings();
+
             return {
                 started: false,
                 busy: false,
@@ -92,7 +95,7 @@
                 fileName: '',
                 source: null,
                 options: {
-                    move: false,
+                    move: settings.library.move,
                 },
                 labels: {
                     move: this.$gettext("Remove imported files"),

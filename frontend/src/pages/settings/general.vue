@@ -5,6 +5,74 @@
                 @submit.prevent="save">
             <v-card flat tile class="mt-0 px-1 application">
                 <v-card-title primary-title class="pb-0">
+                    <h3 class="body-2 mb-0">Library</h3>
+                </v-card-title>
+
+                <v-card-actions>
+                    <v-layout wrap align-top>
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="save"
+                                    class="ma-0 pa-0"
+                                    v-model="settings.library.raw"
+                                    color="secondary-dark"
+                                    :label="labels.raw"
+                                    hint="RAWs need to be converted to JPEG so that they can be displayed in a browser. You can also do this manually."
+                                    prepend-icon="photo_camera"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="save"
+                                    :disabled="busy"
+                                    class="ma-0 pa-0"
+                                    v-model="settings.library.thumbs"
+                                    color="secondary-dark"
+                                    :label="labels.thumbs"
+                                    hint="Enable to pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."
+                                    prepend-icon="burst_mode"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="save"
+                                    class="ma-0 pa-0"
+                                    v-model="settings.library.related"
+                                    color="secondary-dark"
+                                    :label="labels.related"
+                                    hint="Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' belong to the same photo."
+                                    prepend-icon="file_copy"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="save"
+                                    class="ma-0 pa-0"
+                                    v-model="settings.library.move"
+                                    color="secondary-dark"
+                                    :label="labels.move"
+                                    hint="Move files from import to originals to save storage.
+                                    Unsupported file types will never be deleted, they remain in their current location."
+                                    prepend-icon="delete"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+                    </v-layout>
+                </v-card-actions>
+            </v-card>
+
+            <v-card flat tile class="mt-0 px-1 application">
+                <v-card-title primary-title class="pb-0">
                     <h3 class="body-2 mb-0">Features</h3>
                 </v-card-title>
 
@@ -193,17 +261,7 @@
                 </v-card-actions>
             </v-card>
 
-
-
-            <!-- v-container fluid class="mt-1">
-                <v-btn color="secondary-dark"
-                       class="ml-1"
-                       depressed dark
-                       @click.stop="save">
-                    <translate>Save</translate>
-                    <v-icon right dark>save</v-icon>
-                </v-btn>
-            </v-container -->
+            <div class="mt-5"></div>
         </v-form>
     </div>
 </template>
@@ -224,6 +282,11 @@
                     theme: this.$gettext("Theme"),
                     mapsAnimate: this.$gettext("Animation"),
                     mapsStyle: this.$gettext("Style"),
+                    rescan: this.$gettext("Complete rescan"),
+                    thumbs: this.$gettext("Create thumbnails"),
+                    raw: this.$gettext("Convert RAW files"),
+                    move: this.$gettext("Remove imported files"),
+                    related: this.$gettext("Find related files"),
                 },
             };
         },

@@ -19,23 +19,9 @@
                         <v-checkbox
                                 :disabled="busy"
                                 class="ma-0 pa-0"
-                                v-model="options.all"
+                                v-model="options.raw"
                                 color="secondary-dark"
-                                :label="labels.all"
-                                hint="Re-index all originals, including already indexed and unchanged files."
-                                prepend-icon="cached"
-                                persistent-hint
-                        >
-                        </v-checkbox>
-                    </v-flex>
-
-                    <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
-                        <v-checkbox
-                                :disabled="busy"
-                                class="ma-0 pa-0"
-                                v-model="options.convertRaw"
-                                color="secondary-dark"
-                                :label="labels.convertRaw"
+                                :label="labels.raw"
                                 hint="RAWs need to be converted to JPEG so that they can be displayed in a browser. You can also do this manually."
                                 prepend-icon="photo_camera"
                                 persistent-hint
@@ -47,11 +33,25 @@
                         <v-checkbox
                                 :disabled="busy"
                                 class="ma-0 pa-0"
-                                v-model="options.createThumbs"
+                                v-model="options.thumbs"
                                 color="secondary-dark"
-                                :label="labels.createThumbs"
+                                :label="labels.thumbs"
                                 hint="Enable to pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."
                                 prepend-icon="burst_mode"
+                                persistent-hint
+                        >
+                        </v-checkbox>
+                    </v-flex>
+
+                    <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+                        <v-checkbox
+                                :disabled="busy"
+                                class="ma-0 pa-0"
+                                v-model="options.rescan"
+                                color="secondary-dark"
+                                :label="labels.rescan"
+                                hint="Re-index all originals, including already indexed and unchanged files."
+                                prepend-icon="cached"
                                 persistent-hint
                         >
                         </v-checkbox>
@@ -92,6 +92,8 @@
     export default {
         name: 'p-tab-index',
         data() {
+            let settings = this.$config.settings();
+
             return {
                 readonly: this.$config.getValue("readonly"),
                 started: false,
@@ -102,14 +104,14 @@
                 fileName: "",
                 source: null,
                 options: {
-                    all: false,
-                    createThumbs: false,
-                    convertRaw: false,
+                    rescan: settings.library.rescan,
+                    thumbs: settings.library.thumbs,
+                    raw: settings.library.raw,
                 },
                 labels: {
-                    all: this.$gettext("Complete rescan"),
-                    createThumbs: this.$gettext("Create thumbnails"),
-                    convertRaw: this.$gettext("Convert RAW files"),
+                    rescan: this.$gettext("Complete rescan"),
+                    thumbs: this.$gettext("Create thumbnails"),
+                    raw: this.$gettext("Convert RAW files"),
                 }
             }
         },
