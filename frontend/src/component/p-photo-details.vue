@@ -80,7 +80,7 @@
                                         <v-icon size="14">photo_camera</v-icon> {{ photo.getCamera() }}
                                     </button>
                                     <br/>
-                                    <button @click.exact="openLocation(index)" v-if="photo.LocationID">
+                                    <button @click.exact="openLocation(index)" v-if="photo.LocationID && places">
                                         <v-icon size="14">location_on</v-icon> {{ photo.getLocation() }}
                                     </button>
                                 </div>
@@ -102,6 +102,11 @@
             editPhoto: Function,
             openLocation: Function,
             album: Object,
+        },
+        data() {
+            return {
+                places: this.$config.settings().features.places,
+            };
         },
         methods: {}
     };

@@ -165,6 +165,7 @@
                                         v-model="model.PhotoLat"
                                 ></v-text-field>
                             </v-flex>
+
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         :disabled="disabled"
@@ -176,6 +177,7 @@
                                         v-model="model.PhotoLng"
                                 ></v-text-field>
                             </v-flex>
+
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         :disabled="disabled"
@@ -362,6 +364,8 @@
                         </v-layout>
                     </v-flex>
                 </v-layout>
+
+                <div class="mt-5"></div>
             </v-form>
         </v-container>
     </div>

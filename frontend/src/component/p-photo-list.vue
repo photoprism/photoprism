@@ -36,7 +36,7 @@
                 </v-hover>
             </td>
             <td class="p-photo-desc hidden-xs-only" @click.exact="toggleSelection(props)">
-                <button v-if="props.item.LocationID" @click.stop.prevent="openLocation(props.index)">
+                <button v-if="props.item.LocationID && places" @click.stop.prevent="openLocation(props.index)">
                     {{ props.item.getLocation() }}
                 </button>
                 <span v-else>
@@ -85,6 +85,7 @@
                     {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt'},
                     {text: this.$gettext('Favorite'), value: 'PhotoFavorite', align: 'left'},
                 ],
+                places: this.$config.settings().features.places,
             };
         },
         watch: {

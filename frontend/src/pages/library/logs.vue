@@ -6,7 +6,7 @@
                     <translate>Nothing to see here yet. Be patient.</translate>
                 </p>
                 <p v-for="(log, index) in logs" :key="index.id" class="p-log-message" :class="'p-log-' + log.level">
-                    {{ log.time | luxon:format('yyyy-LL-dd hh:mm:ss') }} {{ level(log) }} <span>{{ log.msg }}</span>
+                    {{ log.time | luxon:format('yyyy-LL-dd HH:mm:ss') }} {{ level(log) }} <span>{{ log.msg }}</span>
                 </p>
             </v-flex>
         </v-layout>
