@@ -31,8 +31,6 @@
                              :edit-photo="editPhoto"
                              :open-location="openLocation"></p-photo-details>
         </v-container>
-        <p-photo-edit-dialog :show="edit.dialog" :selection="edit.selection"
-                             @close="edit.dialog = false"></p-photo-edit-dialog>
     </div>
 </template>
 
@@ -101,10 +99,6 @@
                 lastFilter: {},
                 routeName: routeName,
                 loading: true,
-                edit: {
-                    dialog: false,
-                    selection: []
-                }
             };
         },
         computed: {
@@ -148,8 +142,12 @@
                 }
             },
             editPhoto(index) {
-                this.edit.selection = [this.results[index].getId()];
-                this.edit.dialog = true;
+                let selection = this.results.map((p) => {
+                    return p.getId()
+                });
+
+                // Open Edit Dialog
+                Event.publish("dialog.edit", {selection: selection, album: null, index: index});
             },
             openPhoto(index) {
                 this.$viewer.show(this.results, index)

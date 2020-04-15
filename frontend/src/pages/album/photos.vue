@@ -40,8 +40,6 @@
                            :album="model"
                            :open-photo="openPhoto"></p-photo-tiles>
         </v-container>
-        <p-photo-edit-dialog :show="edit.dialog" :selection="edit.selection"
-                             @close="edit.dialog = false"></p-photo-edit-dialog>
     </div>
 </template>
 
@@ -99,10 +97,6 @@
                 lastFilter: {},
                 routeName: routeName,
                 loading: true,
-                edit: {
-                    dialog: false,
-                    selection: []
-                }
             };
         },
         methods: {
@@ -136,8 +130,12 @@
                 }
             },
             editPhoto(index) {
-                this.edit.selection = [this.results[index].getId()];
-                this.edit.dialog = true;
+                let selection = this.results.map((p) => {
+                    return p.getId()
+                });
+
+                // Open Edit Dialog
+                Event.publish("dialog.edit", {selection: selection, album: this.album, index: index});
             },
             openPhoto(index) {
                 this.$viewer.show(this.results, index)
@@ -171,7 +169,7 @@
                     if (this.scrollDisabled) {
                         this.offset = offset;
 
-                        if(this.results.length > 1) {
+                        if (this.results.length > 1) {
                             this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' photos loaded'));
                         }
                     } else {
@@ -221,7 +219,7 @@
                 return params;
             },
             refresh() {
-                if(this.loading) return;
+                if (this.loading) return;
                 this.loading = true;
                 this.page = 0;
                 this.dirty = true;

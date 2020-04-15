@@ -42,7 +42,7 @@
                         :title="labels.edit"
                         color="edit"
                         :disabled="selection.length === 0"
-                        @click.stop="dialog.edit = true"
+                        @click.stop="edit"
                         v-if="context !== 'archive' && $config.feature('edit')"
                         class="p-photo-clipboard-edit"
                 >
@@ -131,8 +131,6 @@
                               @confirm="addToAlbum"></p-photo-album-dialog>
         <p-photo-archive-dialog :show="dialog.archive" @cancel="dialog.archive = false"
                                @confirm="batchArchivePhotos"></p-photo-archive-dialog>
-        <p-photo-edit-dialog :show="dialog.edit" :selection="selection" :album="album"
-                             @close="dialog.edit = false"></p-photo-edit-dialog>
         <p-photo-share-dialog :show="dialog.share" :selection="selection" :album="album" @cancel="dialog.share = false"
                              @confirm="dialog.share = false"></p-photo-share-dialog>
     </div>
@@ -140,6 +138,7 @@
 <script>
     import Api from "common/api";
     import Notify from "common/notify";
+    import Event from "pubsub-js";
 
     export default {
         name: 'p-photo-clipboard',
@@ -155,7 +154,6 @@
                 dialog: {
                     archive: false,
                     album: false,
-                    edit: false,
                     share: false,
                 },
                 labels: {
@@ -228,6 +226,10 @@
             onDownload(path) {
                 Notify.success(this.$gettext("Downloading..."));
                 window.open(path, "_blank");
+            },
+            edit() {
+                // Open Edit Dialog
+                Event.publish("dialog.edit", {selection: this.selection, album: this.album, index: 0});
             },
         }
     };

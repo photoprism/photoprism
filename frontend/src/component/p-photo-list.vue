@@ -27,15 +27,10 @@
                     </v-layout>
                 </v-img>
             </td>
-            <td class="p-photo-desc" @click.exact="toggleSelection(props)">
-                <v-hover>
-                    <button @click.stop.prevent="editPhoto(props.index)" slot-scope="{ hover }">
-                        {{ props.item.PhotoTitle }}
-                        <v-icon v-if="hover" size="16" title="edit">edit</v-icon>
-                    </button>
-                </v-hover>
+            <td class="p-photo-desc p-pointer" @click.exact="toggleSelection(props)">
+                {{ props.item.PhotoTitle }}
             </td>
-            <td class="p-photo-desc hidden-xs-only" @click.exact="toggleSelection(props)">
+            <td class="p-photo-desc hidden-xs-only">
                 <button v-if="props.item.LocationID && places" @click.stop.prevent="openLocation(props.index)">
                     {{ props.item.getLocation() }}
                 </button>
@@ -43,7 +38,7 @@
                     {{ props.item.getLocation() }}
                 </span>
             </td>
-            <td class="p-photo-desc hidden-sm-and-down" @click.exact="toggleSelection(props)">
+            <td class="p-photo-desc hidden-sm-and-down">
                 <button @click.stop.prevent="editPhoto(props.index)">
                     {{ props.item.CameraMake }} {{ props.item.CameraModel }}
                 </button>
@@ -93,7 +88,7 @@
                 this.selected.splice(0);
 
                 for (let i = 0; i <= photos.length; i++) {
-                    if(this.$clipboard.has(photos[i])) {
+                    if (this.$clipboard.has(photos[i])) {
                         this.selected.push(photos[i]);
                     }
                 }
@@ -111,7 +106,7 @@
                 this.selected.splice(0);
 
                 for (let i = 0; i <= this.photos.length; i++) {
-                    if(this.$clipboard.has(this.photos[i])) {
+                    if (this.$clipboard.has(this.photos[i])) {
                         this.selected.push(this.photos[i]);
                     }
                 }

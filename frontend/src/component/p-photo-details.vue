@@ -68,7 +68,6 @@
                                 <h3 class="body-2 mb-2" :title="photo.PhotoTitle">
                                     <button @click.exact="editPhoto(index)">
                                         {{ photo.PhotoTitle | truncate(80) }}
-                                        <v-icon v-if="hover" size="16" title="edit">edit</v-icon>
                                     </button>
                                 </h3>
                                 <div class="caption">

@@ -104,7 +104,7 @@
         },
         methods: {
             showUpload() {
-                Event.publish("upload.show");
+                Event.publish("dialog.upload");
             },
             submit() {
                 // DO NOTHING

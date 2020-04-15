@@ -9,7 +9,7 @@
             <v-spacer></v-spacer>
 
             <v-toolbar-items>
-                <v-btn icon @click.stop="showUpload = true" v-if="!readonly && $config.feature('upload')">
+                <v-btn icon @click.stop="upload.dialog = true" v-if="!readonly && $config.feature('upload')">
                     <v-icon>cloud_upload</v-icon>
                 </v-btn>
             </v-toolbar-items>
@@ -109,7 +109,8 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile v-if="mini && $config.feature('archive')" to="/archive" @click="" class="p-navigation-archive">
+                <v-list-tile v-if="mini && $config.feature('archive')" to="/archive" @click=""
+                             class="p-navigation-archive">
                     <v-list-tile-action>
                         <v-icon>archive</v-icon>
                     </v-list-tile-action>
@@ -167,7 +168,8 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile :to="{ name: 'places' }" @click="" class="p-navigation-places" v-if="$config.feature('places')">
+                <v-list-tile :to="{ name: 'places' }" @click="" class="p-navigation-places"
+                             v-if="$config.feature('places')">
                     <v-list-tile-action>
                         <v-icon>place</v-icon>
                     </v-list-tile-action>
@@ -263,8 +265,10 @@
 
             </v-list>
         </v-navigation-drawer>
-        <p-upload-dialog :show="showUpload" @cancel="showUpload = false"
-                         @confirm="showUpload = false"></p-upload-dialog>
+        <p-upload-dialog :show="upload.dialog" @cancel="upload.dialog = false"
+                         @confirm="upload.dialog = false"></p-upload-dialog>
+        <p-photo-edit-dialog :show="edit.dialog" :selection="edit.selection" :index="edit.index" :album="edit.album"
+                             @close="edit.dialog = false"></p-photo-edit-dialog>
     </div>
 </template>
 
@@ -283,8 +287,17 @@
                 readonly: this.$config.getValue("readonly"),
                 config: this.$config.values,
                 page: this.$config.page,
-                showUpload: false,
-                uploadSubId: null,
+                upload: {
+                    dialog: false,
+                    subscription: null,
+                },
+                edit: {
+                    dialog: false,
+                    subscription: null,
+                    album: null,
+                    selection: [],
+                    index: 0,
+                },
             };
         },
         computed: {
@@ -292,7 +305,7 @@
                 return this.session.auth || this.public
             },
             albumExpandIcon() {
-                if(this.config.count.albums > 0) {
+                if (this.config.count.albums > 0) {
                     return this.$vuetify.icons.expand
                 }
 
@@ -320,10 +333,19 @@
             },
         },
         created() {
-            this.uploadSubId = Event.subscribe("upload.show", () => this.showUpload = true);
+            this.upload.subscription = Event.subscribe("dialog.upload", () => this.upload.dialog = true);
+            this.edit.subscription = Event.subscribe("dialog.edit", (ev, data) => {
+                if (!this.edit.dialog) {
+                    this.edit.index = data.index;
+                    this.edit.selection = data.selection;
+                    this.edit.album = data.album;
+                    this.edit.dialog = true;
+                }
+            });
         },
         destroyed() {
-            Event.unsubscribe(this.uploadSubId);
+            Event.unsubscribe(this.upload.subscription);
+            Event.unsubscribe(this.edit.subscription);
         }
     };
 </script>

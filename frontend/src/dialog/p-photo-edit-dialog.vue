@@ -66,6 +66,7 @@
     export default {
         name: 'p-photo-edit-dialog',
         props: {
+            index: Number,
             show: Boolean,
             selection: Array,
             album: Object,
@@ -140,7 +141,7 @@
         watch: {
             show: function (show) {
                 if (show) {
-                    this.find(0);
+                    this.find(this.index);
                 }
             }
         },

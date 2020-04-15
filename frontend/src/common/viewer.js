@@ -5,6 +5,7 @@ class Viewer {
     constructor() {
         this.photos = [];
         this.el = null;
+        this.gallery = null;
     }
 
     photosWithSizes() {
@@ -17,6 +18,7 @@ class Viewer {
             download_url: photo.getDownloadUrl(),
             original_w: photo.FileWidth,
             original_h: photo.FileHeight,
+            uuid: photo.PhotoUUID,
         };
 
         const thumbs = window.clientConfig.thumbnails;
@@ -102,6 +104,8 @@ class Viewer {
         let nextSize;
         let firstResize = true;
         let photoSrcWillChange;
+
+        this.gallery = gallery;
 
         gallery.listen("beforeResize", () => {
             realViewportWidth = gallery.viewportSize.x * window.devicePixelRatio;
