@@ -222,19 +222,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 				photo.PhotoTitle = fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.DateCreated().Format("2006"))
 			} else if !photo.TakenAtLocal.IsZero() {
-				var daytimeString string
-				hour := photo.TakenAtLocal.Hour()
-
-				switch {
-				case hour < 17:
-					daytimeString = "Unknown"
-				case hour < 20:
-					daytimeString = "Sunset"
-				default:
-					daytimeString = "Unknown"
-				}
-
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", daytimeString, photo.TakenAtLocal.Format("2006"))
+				photo.PhotoTitle = fmt.Sprintf("Unknown / %s", photo.TakenAtLocal.Format("2006"))
 			} else {
 				photo.PhotoTitle = "Unknown"
 			}
