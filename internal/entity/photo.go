@@ -77,7 +77,7 @@ func SavePhoto(model Photo, form form.Photo, db *gorm.DB) error {
 
 	model.IndexKeywords(db)
 
-	return db.Save(&model).Error
+	return db.Unscoped().Save(&model).Error
 }
 
 // BeforeCreate computes a unique UUID, and set a default takenAt before indexing a new photo
