@@ -8,8 +8,7 @@
 }
 
 #photoprism .p-photo-list .p-photo-select {
-    margin-left: 0;
-    margin-right: 0;
+    top: 7px; left: 7px;
 }
 
 #photoprism .p-photo-tiles .p-photo-edit,
