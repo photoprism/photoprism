@@ -17,6 +17,7 @@
                                    class="accent lighten-2 elevation-0"
                                    style="cursor: pointer"
                                    @click.exact="openPhoto()"
+                                   v-touch="{left, right}"
                             >
                                 <v-layout
                                         slot="placeholder"
@@ -438,7 +439,7 @@
 
                 let localDate = DateTime.fromISO(utcDate);
 
-                if(this.model.TimeZone) {
+                if (this.model.TimeZone) {
                     localDate = localDate.setZone(this.model.TimeZone);
                 } else {
                     localDate = localDate.toUTC(0);
@@ -468,6 +469,12 @@
             },
         },
         methods: {
+            left() {
+                this.$emit('next');
+            },
+            right() {
+                this.$emit('prev');
+            },
             openPhoto() {
                 this.$viewer.show([this.model], 0)
             },
@@ -486,9 +493,9 @@
                 }
 
                 this.model.update().then(() => {
-                   if (close) {
-                       this.$emit('close');
-                   }
+                    if (close) {
+                        this.$emit('close');
+                    }
                 });
             },
             close() {

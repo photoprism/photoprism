@@ -42,7 +42,7 @@
                 <v-tabs-items touchless>
                     <v-tab-item>
                         <p-tab-photo-edit-details :model="model" ref="details"
-                                                  @close="close"></p-tab-photo-edit-details>
+                                                  @close="close" @prev="prev" @next="next"></p-tab-photo-edit-details>
                     </v-tab-item>
 
                     <v-tab-item lazy>
