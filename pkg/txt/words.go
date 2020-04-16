@@ -6,11 +6,23 @@ import (
 	"strings"
 )
 
-var KeywordsRegexp = regexp.MustCompile("[\\p{L}]{3,}")
+var KeywordsRegexp = regexp.MustCompile("[\\p{L}\\-]{3,}")
 
-// Words returns a slice of words with at least 3 characters from a string.
+// Words returns a slice of words with at least 3 characters from a string, dashes count as character ("ile-de-france").
 func Words(s string) (results []string) {
 	return KeywordsRegexp.FindAllString(s, -1)
+}
+
+// ReplaceSpaces replaces all spaces with another string.
+func ReplaceSpaces(s string, char string) string {
+	return strings.Replace(s, " ", char, -1)
+}
+
+var FilenameKeywordsRegexp = regexp.MustCompile("[\\p{L}]{3,}")
+
+// FilenameWords returns a slice of words with at least 3 characters from a string ("ile", "france").
+func FilenameWords(s string) (results []string) {
+	return FilenameKeywordsRegexp.FindAllString(s, -1)
 }
 
 // Keywords returns a slice of keywords without stopwords.

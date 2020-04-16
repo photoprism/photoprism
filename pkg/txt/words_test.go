@@ -7,12 +7,23 @@ import (
 )
 
 func TestWords(t *testing.T) {
-	t.Run("I'm a lazy brown fox!", func(t *testing.T) {
-		result := Words("I'm a lazy BRoWN fox!")
-		assert.Equal(t, []string{"lazy", "BRoWN", "fox"}, result)
+	t.Run("I'm a lazy-brown fox!", func(t *testing.T) {
+		result := Words("I'm a lazy-BRoWN fox!")
+		assert.Equal(t, []string{"lazy-BRoWN", "fox"}, result)
 	})
 	t.Run("no result", func(t *testing.T) {
 		result := Words("x")
+		assert.Equal(t, []string(nil), result)
+	})
+}
+
+func TestFilenameWords(t *testing.T) {
+	t.Run("I'm a lazy-brown fox!", func(t *testing.T) {
+		result := FilenameWords("I'm a lazy-BRoWN fox!")
+		assert.Equal(t, []string{"lazy", "BRoWN", "fox"}, result)
+	})
+	t.Run("no result", func(t *testing.T) {
+		result := FilenameWords("x")
 		assert.Equal(t, []string(nil), result)
 	})
 }
@@ -30,8 +41,8 @@ func TestKeywords(t *testing.T) {
 
 func TestUniqueWords(t *testing.T) {
 	t.Run("many", func(t *testing.T) {
-		result := UniqueWords([]string{"lazy", "brown", "apple", "brown"})
-		assert.Equal(t, []string{"apple", "brown", "lazy"}, result)
+		result := UniqueWords([]string{"lazy", "brown", "apple", "brown", "new-york"})
+		assert.Equal(t, []string{"apple", "brown", "lazy", "new-york"}, result)
 	})
 	t.Run("one", func(t *testing.T) {
 		result := UniqueWords([]string{"lazy"})
@@ -41,8 +52,8 @@ func TestUniqueWords(t *testing.T) {
 
 func TestUniqueKeywords(t *testing.T) {
 	t.Run("many", func(t *testing.T) {
-		result := UniqueKeywords("lazy, brown, apple, brown, ...")
-		assert.Equal(t, []string{"apple", "brown", "lazy"}, result)
+		result := UniqueKeywords("lazy, brown, apple, new-york, brown, ...")
+		assert.Equal(t, []string{"apple", "brown", "lazy", "new-york"}, result)
 	})
 	t.Run("one", func(t *testing.T) {
 		result := UniqueKeywords("")

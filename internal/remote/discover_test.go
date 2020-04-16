@@ -14,7 +14,7 @@ func TestDiscover(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Webdav", r.AccName)
+		assert.Equal(t, "Webdav-Dummy", r.AccName)
 		assert.Equal(t, "webdav", r.AccType)
 		assert.Equal(t, "http://webdav-dummy/", r.AccURL)
 		assert.Equal(t, "admin", r.AccUser)
@@ -28,7 +28,7 @@ func TestDiscover(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Webdav", r.AccName)
+		assert.Equal(t, "Webdav-Dummy", r.AccName)
 		assert.Equal(t, "webdav", r.AccType)
 		assert.Equal(t, "http://webdav-dummy/", r.AccURL)
 		assert.Equal(t, "admin", r.AccUser)

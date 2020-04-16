@@ -61,5 +61,4 @@ func TestBaseAbs(t *testing.T) {
 		assert.Equal(t, "/testdata/Test (4)", result)
 	})
 
-
 }

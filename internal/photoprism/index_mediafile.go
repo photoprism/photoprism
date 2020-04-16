@@ -308,7 +308,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		w = append(w, locKeywords...)
-		w = append(w, txt.Keywords(file.OriginalName)...)
+		w = append(w, txt.FilenameWords(file.OriginalName)...)
 		w = append(w, file.FileMainColor)
 		w = append(w, labels.Keywords()...)
 
