@@ -301,12 +301,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		w := txt.Keywords(photo.Description.PhotoKeywords)
 
 		if NonCanonical(fileBase) {
-			w = append(w, txt.Keywords(filePath)...)
-			w = append(w, txt.Keywords(fileBase)...)
+			w = append(w, txt.FilenameKeywords(filePath)...)
+			w = append(w, txt.FilenameKeywords(fileBase)...)
 		}
 
 		w = append(w, locKeywords...)
-		w = append(w, txt.FilenameWords(file.OriginalName)...)
+		w = append(w, txt.FilenameKeywords(file.OriginalName)...)
 		w = append(w, file.FileMainColor)
 		w = append(w, labels.Keywords()...)
 

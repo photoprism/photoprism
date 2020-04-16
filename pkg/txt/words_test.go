@@ -28,6 +28,17 @@ func TestFilenameWords(t *testing.T) {
 	})
 }
 
+func TestFilenameKeywords(t *testing.T) {
+	t.Run("I'm a lazy-brown var fox.jpg!", func(t *testing.T) {
+		result := FilenameKeywords("I'm a lazy-brown var fox.jpg!")
+		assert.Equal(t, []string{"lazy", "brown", "fox"}, result)
+	})
+	t.Run("no result", func(t *testing.T) {
+		result := FilenameKeywords("x")
+		assert.Equal(t, []string(nil), result)
+	})
+}
+
 func TestKeywords(t *testing.T) {
 	t.Run("I'm a lazy brown fox!", func(t *testing.T) {
 		result := Keywords("I'm a lazy BRoWN img!")
@@ -41,8 +52,8 @@ func TestKeywords(t *testing.T) {
 
 func TestUniqueWords(t *testing.T) {
 	t.Run("many", func(t *testing.T) {
-		result := UniqueWords([]string{"lazy", "Brown", "apple", "brown", "new-york"})
-		assert.Equal(t, []string{"apple", "brown", "lazy", "new-york"}, result)
+		result := UniqueWords([]string{"lazy", "jpg", "Brown", "apple", "brown", "new-york", "JPG"})
+		assert.Equal(t, []string{"apple", "brown", "jpg", "lazy", "new-york"}, result)
 	})
 	t.Run("one", func(t *testing.T) {
 		result := UniqueWords([]string{"lazy"})

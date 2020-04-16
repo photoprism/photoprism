@@ -25,7 +25,20 @@ func FilenameWords(s string) (results []string) {
 	return FilenameKeywordsRegexp.FindAllString(s, -1)
 }
 
-// Keywords returns a slice of keywords without stopwords.
+// FilenameKeywords returns a slice of keywords without stopwords.
+func FilenameKeywords(s string) (results []string) {
+	for _, w := range FilenameWords(s) {
+		w = strings.ToLower(w)
+
+		if _, ok := Stopwords[w]; ok == false {
+			results = append(results, w)
+		}
+	}
+
+	return results
+}
+
+// Keywords returns a slice of keywords without stopwords but including dashes.
 func Keywords(s string) (results []string) {
 	for _, w := range Words(s) {
 		w = strings.ToLower(w)
