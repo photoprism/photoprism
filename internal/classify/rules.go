@@ -2196,7 +2196,7 @@ var rules = LabelRules{
 		Label:      "outdoor",
 		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{"water"},
+		Categories: []string{},
 	},
 	"fountain pen": {
 		Label:      "",
@@ -2361,10 +2361,10 @@ var rules = LabelRules{
 		Categories: []string{"reptile", "animal"},
 	},
 	"go-kart": {
-		Label:      "outdoor",
-		Threshold:  0.300000,
+		Label:      "vehicle",
+		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{"vehicle"},
+		Categories: []string{},
 	},
 	"goblet": {
 		Label:      "beverage",
@@ -2392,8 +2392,8 @@ var rules = LabelRules{
 	},
 	"golf ball": {
 		Label:      "",
-		Threshold:  0.000000,
-		Priority:   0,
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"golfcart": {
@@ -2968,8 +2968,8 @@ var rules = LabelRules{
 	},
 	"iron": {
 		Label:      "",
-		Threshold:  0.500000,
-		Priority:   0,
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"isopod": {
@@ -3226,9 +3226,9 @@ var rules = LabelRules{
 	},
 	"lawn mower": {
 		Label:      "outdoor",
-		Threshold:  0.000000,
+		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{"vehicle"},
+		Categories: []string{},
 	},
 	"leaf beetle": {
 		Label:      "beetle",
@@ -4264,8 +4264,8 @@ var rules = LabelRules{
 	},
 	"ping-pong ball": {
 		Label:      "",
-		Threshold:  0.000000,
-		Priority:   0,
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"pinwheel": {
@@ -5544,7 +5544,7 @@ var rules = LabelRules{
 		Label:      "moment",
 		Threshold:  0.000000,
 		Priority:   0,
-		Categories: []string{"outdoor"},
+		Categories: []string{},
 	},
 	"switch": {
 		Label:      "electronics",
@@ -5626,8 +5626,8 @@ var rules = LabelRules{
 	},
 	"tennis ball": {
 		Label:      "",
-		Threshold:  0.000000,
-		Priority:   0,
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"terrapin": {
@@ -6105,8 +6105,8 @@ var rules = LabelRules{
 		Categories: []string{"beverage"},
 	},
 	"water buffalo": {
-		Label:      "",
-		Threshold:  0.200000,
+		Label:      "buffalo",
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{"animal", "farm"},
 	},

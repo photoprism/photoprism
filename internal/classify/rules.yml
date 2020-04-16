@@ -1509,7 +1509,8 @@ ox:
     - farm
 
 water buffalo:
-  threshold: 0.2
+  label: buffalo
+  threshold: 0.3
   categories:
     - animal
     - farm
@@ -2228,8 +2229,6 @@ forklift:
 fountain:
   label: outdoor
   threshold: 0.4
-  categories:
-    - water
 
 fountain pen:
   see: ignore
@@ -2252,10 +2251,8 @@ garbage truck:
   threshold: 0.3
 
 go-kart:
-  label: outdoor
-  threshold: 0.3
-  categories:
-    - vehicle
+  label: vehicle
+  threshold: 0.4
 
 golfcart:
   label: outdoor
@@ -2356,8 +2353,7 @@ laptop:
 
 lawn mower:
   label: outdoor
-  categories:
-    - vehicle
+  threshold: 0.3
 
 photography:
   label: photography
@@ -3410,28 +3406,28 @@ ball:
   see: ignore
 
 baseball:
-  see: ball
+  see: ignore
 
 basketball:
-  see: ball
+  see: ignore
 
 golf ball:
-  see: ball
+  see: ignore
 
 ping-pong ball:
-  see: ball
+  see: ignore
 
 rugby ball:
-  see: ball
+  see: ignore
 
 soccer ball:
-  see: ball
+  see: ignore
 
 tennis ball:
-  see: ball
+  see: ignore
 
 volleyball:
-  see: ball
+  see: ignore
 
 spider web:
   see: ignore
@@ -3466,8 +3462,6 @@ packet:
 
 swing:
   label: moment
-  categories:
-    - outdoor
 
 web site:
   label: info
@@ -3875,7 +3869,7 @@ hip:
   threshold: 0.2
 
 iron:
-  threshold: 0.5
+  see: ignore
 
 jinrikisha:
   label: people
