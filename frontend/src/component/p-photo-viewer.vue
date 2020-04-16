@@ -15,11 +15,12 @@
 
                     <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 
-                    <button class="pswp__button pswp__button--share p-photo-download" title="Share"
-                            v-if="config.settings.features.download"></button>
+                    <button class="pswp__button pswp__button--share p-photo-download" title="Download"
+                            v-if="config.settings.features.download">
+                    </button>
 
-                    <button class="pswp__button" style="background: none;" @click.exact="editDialog">
-                        <v-icon size="16" title="edit" color="white">edit</v-icon>
+                    <button class="pswp__button" style="background: none;" @click.exact="editDialog" title="Edit">
+                        <v-icon size="16" color="white">edit</v-icon>
                     </button>
 
                     <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
