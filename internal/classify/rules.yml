@@ -101,7 +101,7 @@ window shade:
 
 daisy:
   label: flower
-  threshold: 0.2
+  threshold: 0.43
   categories:
     - nature
     - plant
@@ -313,7 +313,7 @@ ostrich:
 
 bird:
   label: bird
-  threshold: 0.45
+  threshold: 0.5
   categories:
     - animal
 
@@ -361,7 +361,7 @@ vulture bird:
 
 great grey owl bird:
   label: owl
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - animal
     - bird
@@ -601,7 +601,7 @@ prairie chicken:
   see: bird
 
 peacock:
-  threshold: 0.6
+  threshold: 0.84
   categories:
     - animal
     - bird
@@ -694,7 +694,7 @@ wombat:
     - animal
 
 jellyfish:
-  threshold: 0.5
+  threshold: 0.7
   categories:
     - water
     - animal
@@ -737,7 +737,8 @@ sea slug:
   see: ignore
 
 chambered nautilus:
-  see: snail
+  label: snail
+  threshold: 0.75
 
 crab:
   label: crab
@@ -826,6 +827,7 @@ red-backed sandpiper:
 
 redshank:
   label: plant
+  threshold: 0.7
   categories:
     - nature
 
@@ -870,7 +872,7 @@ sea lion:
 
 dog:
   label: dog
-  threshold: 0.2
+  threshold: 0.4
   priority: 5
   categories:
     - animal
@@ -1280,7 +1282,7 @@ grey fox:
 
 bear:
   label: bear
-  threshold: 0.5
+  threshold: 0.78
   categories:
     - animal
 
@@ -1772,20 +1774,20 @@ aircraft carrier:
 
 airliner:
   label: aircraft
-  threshold: 0.2
+  threshold: 0.6
   categories:
     - airport
     - vehicle
 
 airship:
   label: aircraft
-  threshold: 0.5
+  threshold: 0.65
   categories:
     - airport
     - vehicle
 
 wing:
-  threshold: 0.15
+  threshold: 0.28
   categories:
     - aircraft
 
@@ -1813,10 +1815,10 @@ assault rifle:
   see: weapon
 
 backpack:
-  threshold: 0.3
+  threshold: 0.61
 
 bakery:
-  threshold: 0.5
+  threshold: 0.54
   categories:
     - shop
 
@@ -1863,7 +1865,7 @@ bathtub:
   see: living
 
 beacon:
-  threshold: 0.4
+  threshold: 0.79
   categories:
     - tower
     - architecture
@@ -1903,7 +1905,7 @@ birdhouse:
   see: shelter
 
 boathouse:
-  threshold: 0.5
+  threshold: 0.71
   categories:
     - architecture
     - water
@@ -2666,7 +2668,7 @@ pillow:
 
 plane:
   label: aircraft
-  threshold: 0.25
+  threshold: 0.6
   categories:
     - vehicle
 
@@ -2696,7 +2698,7 @@ pop bottle:
 
 pot:
   label: plant
-  threshold: 0.3
+  threshold: 0.4
   categories:
     - nature
 
@@ -2765,7 +2767,7 @@ rocking chair:
 
 rotisserie:
   label: barbecue
-  threshold: 0.5
+  threshold: 0.85
   categories:
     - cooking
 
@@ -2807,10 +2809,11 @@ shoe shop:
 
 basket:
   label: basket
-  threshold: 0.4
+  threshold: 0.5
 
 crate:
-  see: basket
+  label: basket
+  threshold: 0.68
 
 shopping basket:
   see: basket
@@ -2823,7 +2826,7 @@ shovel:
   see: tool
 
 ski:
-  threshold: 0.33
+  threshold: 0.58
   categories:
     - snow
 
@@ -3090,7 +3093,7 @@ book jacket:
 
 guacamole:
   label: vegetables
-  threshold: 0.2
+  threshold: 0.4
   categories:
     - cooking
 
@@ -3123,7 +3126,7 @@ ice cream:
 
 ice lolly:
   label: dessert
-  threshold: 0.4
+  threshold: 0.42
   categories:
     - food
 
@@ -3134,7 +3137,7 @@ chocolate sauce:
     - food
 
 french loaf:
-  threshold: 0.4
+  threshold: 0.54
   categories:
     - bakery
     - food
@@ -3163,7 +3166,7 @@ hotdog:
 
 vegetables:
   label: vegetables
-  threshold: 0.33
+  threshold: 0.4
   categories:
     - dining
     - food
@@ -3215,7 +3218,7 @@ acorn squash:
 
 fruit:
   label: fruit
-  threshold: 0.3
+  threshold: 0.45
   categories:
     - food
 
@@ -3296,7 +3299,7 @@ red wine:
 
 beverage:
   label: beverage
-  threshold: 0.2
+  threshold: 0.35
 
 water jug:
   see: beverage
@@ -3330,7 +3333,7 @@ geyser:
 
 sandbar:
   label: beach
-  threshold: 0.2
+  threshold: 0.39
   categories:
     - sand
 
@@ -3358,7 +3361,7 @@ buckeye:
 
 mushroom:
   label: mushroom
-  threshold: 0.5
+  threshold: 0.84
   categories:
     - vegetables
 
@@ -3434,7 +3437,7 @@ spider web:
 
 wool:
   label: animal fur
-  threshold: 0.5
+  threshold: 0.73
   priority: -1
   categories:
     - animal
@@ -3563,7 +3566,7 @@ bucket:
 
 baby:
   label: baby
-  threshold: 0.5
+  threshold: 0.54
   categories:
     - people
 
@@ -3740,7 +3743,7 @@ balance beam:
   see: ignore
 
 balloon:
-  threshold: 0.6
+  threshold: 0.91
 
 display:
   label: display
@@ -3866,7 +3869,7 @@ hay:
 
 hip:
   label: plant
-  threshold: 0.2
+  threshold: 0.43
 
 iron:
   see: ignore
@@ -3883,7 +3886,7 @@ military uniform:
 
 park bench:
   label: bench
-  threshold: 0.2
+  threshold: 0.44
 
 parking meter:
   label: parking
@@ -3973,7 +3976,7 @@ traffic light:
 
 turnstile:
   label: public transport
-  threshold: 0.45
+  threshold: 0.65
 
 whistle:
   see: fashion

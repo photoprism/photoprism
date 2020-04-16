@@ -124,7 +124,7 @@ func TestTensorFlow_LoadModel(t *testing.T) {
 		assert.Nil(t, result)
 	})
 	t.Run("model path does not exist", func(t *testing.T) {
-		tensorFlow := New(resourcesPath + "foo", false)
+		tensorFlow := New(resourcesPath+"foo", false)
 
 		err := tensorFlow.loadModel()
 

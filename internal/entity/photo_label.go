@@ -53,10 +53,10 @@ func (m *PhotoLabel) ClassifyLabel() classify.Label {
 	}
 
 	result := classify.Label{
-		Name: m.Label.LabelName,
-		Source: m.LabelSource,
+		Name:        m.Label.LabelName,
+		Source:      m.LabelSource,
 		Uncertainty: m.LabelUncertainty,
-		Priority: m.Label.LabelPriority,
+		Priority:    m.Label.LabelPriority,
 	}
 
 	return result
