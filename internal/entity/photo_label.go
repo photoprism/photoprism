@@ -2,6 +2,7 @@ package entity
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
@@ -43,4 +44,20 @@ func (m *PhotoLabel) FirstOrCreate(db *gorm.DB) *PhotoLabel {
 	}
 
 	return m
+}
+
+// ClassifyLabel returns the label as classify.Label
+func (m *PhotoLabel) ClassifyLabel() classify.Label {
+	if m.Label == nil {
+		panic("photo label: label is nil")
+	}
+
+	result := classify.Label{
+		Name: m.Label.LabelName,
+		Source: m.LabelSource,
+		Uncertainty: m.LabelUncertainty,
+		Priority: m.Label.LabelPriority,
+	}
+
+	return result
 }

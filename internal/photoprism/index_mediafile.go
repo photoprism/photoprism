@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"errors"
-	"fmt"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -212,35 +211,24 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.PhotoExposure = m.Exposure()
 		}
 
-		if fileChanged || o.UpdateKeywords || o.UpdateLocation || o.UpdateTitle {
+		if photo.TakenAt.IsZero() || photo.TakenAtLocal.IsZero() {
+			photo.TakenAt = m.DateCreated()
+			photo.TakenAtLocal = photo.TakenAt
+		}
+
+		if fileChanged || o.UpdateKeywords || o.UpdateLocation || o.UpdateTitle || photo.NoTitle() {
 			if photo.HasLatLng() {
-				var locLabels classify.Labels
-				var location = entity.NewLocation(photo.PhotoLat, photo.PhotoLng)
-				locKeywords, locLabels = IndexLocation(ind.db, ind.conf, location, &photo, labels, fileChanged, o)
-				labels = append(labels, locLabels...)
+				locKeywords, labels = photo.IndexLocation(ind.db, ind.conf.GeoCodingApi(), labels)
 			} else {
 				log.Info("index: no latitude and longitude in metadata")
+
+				if err := photo.UpdateTitle(labels); err != nil {
+					log.Warn(err)
+				}
 
 				photo.Place = entity.UnknownPlace
 				photo.PlaceID = entity.UnknownPlace.ID
 			}
-		}
-
-		if photo.NoTitle() || (fileChanged || o.UpdateTitle) && !photo.ModifiedTitle && photo.NoLocation() {
-			if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
-				photo.PhotoTitle = fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.DateCreated().Format("2006"))
-			} else if !photo.TakenAtLocal.IsZero() {
-				photo.PhotoTitle = fmt.Sprintf("Unknown / %s", photo.TakenAtLocal.Format("2006"))
-			} else {
-				photo.PhotoTitle = "Unknown"
-			}
-
-			log.Infof("index: changed empty photo title to \"%s\"", photo.PhotoTitle)
-		}
-
-		if photo.TakenAt.IsZero() || photo.TakenAtLocal.IsZero() {
-			photo.TakenAt = m.DateCreated()
-			photo.TakenAtLocal = photo.TakenAt
 		}
 	} else if m.IsXMP() {
 		// TODO: Proof-of-concept for indexing XMP sidecar files
@@ -267,8 +255,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
-	photo.PhotoYear = photo.TakenAt.Year()
-	photo.PhotoMonth = int(photo.TakenAt.Month())
+	if !photo.TakenAtLocal.IsZero() {
+		photo.PhotoYear = photo.TakenAtLocal.Year()
+		photo.PhotoMonth = int(photo.TakenAtLocal.Month())
+	}
 
 	if originalName != "" {
 		file.OriginalName = originalName

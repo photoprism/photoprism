@@ -218,7 +218,7 @@ class Photo extends RestModel {
     }
 
     addLabel(name) {
-        return Api.post(this.getEntityResource() + "/label", {LabelName: name})
+        return Api.post(this.getEntityResource() + "/label", {LabelName: name, LabelPriority: 10})
             .then((response) => Promise.resolve(this.setValues(response.data)));
     }
 

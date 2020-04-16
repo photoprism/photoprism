@@ -46,10 +46,10 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		id := c.Param("uuid")
+		uuid := c.Param("uuid")
 		q := query.New(conf.Db())
 
-		m, err := q.PhotoByUUID(id)
+		m, err := q.PhotoByUUID(uuid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -72,16 +72,16 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		// 3) Save model with values from form
-		if err := entity.SavePhoto(m, f, conf.Db()); err != nil {
+		if err := entity.SavePhotoForm(m, f, conf.Db(), conf.GeoCodingApi()); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, id, c, q)
+		PublishPhotoEvent(EntityUpdated, uuid, c, q)
 
 		event.Success("photo saved")
 
-		p, err := q.PreloadPhotoByUUID(id)
+		p, err := q.PreloadPhotoByUUID(uuid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)

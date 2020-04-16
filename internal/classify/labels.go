@@ -29,7 +29,7 @@ func (l Labels) AppendLabel(label Label) Labels {
 	return append(l, label)
 }
 
-// Keywords returns all keywords contains in Labels and theire categories
+// Keywords returns all keywords contains in Labels and their categories
 func (l Labels) Keywords() (result []string) {
 	for _, label := range l {
 		result = append(result, txt.Keywords(label.Name)...)

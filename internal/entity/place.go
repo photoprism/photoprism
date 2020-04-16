@@ -92,36 +92,36 @@ func (m *Place) FirstOrCreate(db *gorm.DB) *Place {
 }
 
 // NoID checks is the place has no id
-func (m *Place) NoID() bool {
+func (m Place) NoID() bool {
 	return m.ID == ""
 }
 
 // Label returns place label
-func (m *Place) Label() string {
+func (m Place) Label() string {
 	return m.LocLabel
 }
 
 // City returns place City
-func (m *Place) City() string {
+func (m Place) City() string {
 	return m.LocCity
 }
 
 // State returns place State
-func (m *Place) State() string {
+func (m Place) State() string {
 	return m.LocState
 }
 
 // CountryCode returns place CountryCode
-func (m *Place) CountryCode() string {
+func (m Place) CountryCode() string {
 	return m.LocCountry
 }
 
 // CountryName returns place CountryName
-func (m *Place) CountryName() string {
+func (m Place) CountryName() string {
 	return maps.CountryNames[m.LocCountry]
 }
 
 // Notes returns place Notes
-func (m *Place) Notes() string {
+func (m Place) Notes() string {
 	return m.LocNotes
 }

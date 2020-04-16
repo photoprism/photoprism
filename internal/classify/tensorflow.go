@@ -14,13 +14,11 @@ import (
 	"strings"
 
 	"github.com/disintegration/imaging"
-	"github.com/photoprism/photoprism/internal/config"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
 // TensorFlow is a wrapper for tensorflow low-level API.
 type TensorFlow struct {
-	conf       *config.Config
 	model      *tf.SavedModel
 	modelsPath string
 	disabled   bool

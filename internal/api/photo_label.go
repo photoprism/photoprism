@@ -68,6 +68,11 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		if err := p.Save(db); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
 		c.JSON(http.StatusOK, p)
 	})
 }
@@ -106,6 +111,11 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			return
+		}
+
+		if err := p.Save(db); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 

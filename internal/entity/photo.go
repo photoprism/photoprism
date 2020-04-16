@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -49,7 +50,7 @@ type Photo struct {
 	Description         Description `json:"Description"`
 	Camera              *Camera     `json:"Camera"`
 	Lens                *Lens       `json:"Lens"`
-	Location            *Location   `json:"-"`
+	Location            *Location   `json:"Location"`
 	Place               *Place      `json:"-"`
 	Links               []Link      `gorm:"foreignkey:ShareUUID;association_foreignkey:PhotoUUID"`
 	Keywords            []Keyword   `json:"-"`
@@ -61,8 +62,10 @@ type Photo struct {
 	DeletedAt           *time.Time `sql:"index"`
 }
 
-// SavePhoto updates a model using form data and persists it in the database.
-func SavePhoto(model Photo, form form.Photo, db *gorm.DB) error {
+// SavePhotoForm updates a model using form data and persists it in the database.
+func SavePhotoForm(model Photo, form form.Photo, db *gorm.DB, geoApi string) error {
+	locChanged := model.PhotoLat != form.PhotoLat || model.PhotoLng != form.PhotoLng
+
 	if err := deepcopier.Copy(&model).From(form); err != nil {
 		return err
 	}
@@ -75,9 +78,51 @@ func SavePhoto(model Photo, form form.Photo, db *gorm.DB) error {
 		model.Description.PhotoKeywords = strings.Join(txt.UniqueKeywords(model.Description.PhotoKeywords), ", ")
 	}
 
+	if model.HasLatLng() && locChanged && model.ModifiedLocation {
+		w := txt.UniqueKeywords(model.Description.PhotoKeywords)
+
+		var locKeywords []string
+		labels := model.ClassifyLabels()
+
+		locKeywords, labels = model.IndexLocation(db, geoApi, labels)
+
+		w = append(w, locKeywords...)
+		w = append(w, labels.Keywords()...)
+
+		model.Description.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
+	}
+
 	model.IndexKeywords(db)
 
 	return db.Unscoped().Save(&model).Error
+}
+
+// ClassifyLabels returns all associated labels as classify.Labels
+func (m *Photo) ClassifyLabels() classify.Labels {
+	result := classify.Labels{}
+
+	for _, l := range m.Labels {
+		result = append(result, l.ClassifyLabel())
+	}
+
+	return result
+}
+
+// Save stored the entity in the database.
+func (m *Photo) Save(db *gorm.DB) error {
+	labels := m.ClassifyLabels()
+
+	if err := m.UpdateTitle(labels); err != nil {
+		log.Warn(err)
+	}
+
+	if m.Description.PhotoID == m.ID {
+		w := txt.UniqueKeywords(m.Description.PhotoKeywords)
+		w = append(w, labels.Keywords()...)
+		m.Description.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
+	}
+
+	return db.Unscoped().Save(m).Error
 }
 
 // BeforeCreate computes a unique UUID, and set a default takenAt before indexing a new photo
