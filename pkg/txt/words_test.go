@@ -41,7 +41,7 @@ func TestKeywords(t *testing.T) {
 
 func TestUniqueWords(t *testing.T) {
 	t.Run("many", func(t *testing.T) {
-		result := UniqueWords([]string{"lazy", "brown", "apple", "brown", "new-york"})
+		result := UniqueWords([]string{"lazy", "Brown", "apple", "brown", "new-york"})
 		assert.Equal(t, []string{"apple", "brown", "lazy", "new-york"}, result)
 	})
 	t.Run("one", func(t *testing.T) {
@@ -52,7 +52,7 @@ func TestUniqueWords(t *testing.T) {
 
 func TestUniqueKeywords(t *testing.T) {
 	t.Run("many", func(t *testing.T) {
-		result := UniqueKeywords("lazy, brown, apple, new-york, brown, ...")
+		result := UniqueKeywords("lazy, Brown, apple, new-york, brown, ...")
 		assert.Equal(t, []string{"apple", "brown", "lazy", "new-york"}, result)
 	})
 	t.Run("one", func(t *testing.T) {

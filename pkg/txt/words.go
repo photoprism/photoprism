@@ -42,9 +42,11 @@ func Keywords(s string) (results []string) {
 func UniqueWords(words []string) (results []string) {
 	last := ""
 
-	sort.Strings(words)
+	SortCaseInsensitive(words)
 
 	for _, w := range words {
+		w = strings.ToLower(w)
+
 		if len(w) < 3 || w == last {
 			continue
 		}
@@ -63,7 +65,7 @@ func UniqueKeywords(s string) (results []string) {
 
 	words := Keywords(s)
 
-	sort.Strings(words)
+	SortCaseInsensitive(words)
 
 	for _, w := range words {
 		w = strings.ToLower(w)
@@ -78,4 +80,9 @@ func UniqueKeywords(s string) (results []string) {
 	}
 
 	return results
+}
+
+// Sorts string slice case insensitive.
+func SortCaseInsensitive(words []string) {
+	sort.Slice(words, func(i, j int) bool { return strings.ToLower(words[i]) < strings.ToLower(words[j]) })
 }
