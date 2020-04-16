@@ -210,6 +210,16 @@ func (m *Photo) HasLocation() bool {
 	return m.LocationID != ""
 }
 
+// HasLatLng checks if the photo has a latitude and longitude.
+func (m *Photo) HasLatLng() bool {
+	return m.PhotoLat != 0 && m.PhotoLng != 0
+}
+
+// NoLatLng checks if latitude and longitude are missing.
+func (m *Photo) NoLatLng() bool {
+	return !m.HasLatLng()
+}
+
 // NoPlace checks if the photo has no Place
 func (m *Photo) NoPlace() bool {
 	return len(m.PlaceID) < 2
