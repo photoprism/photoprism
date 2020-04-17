@@ -11,14 +11,20 @@ tabby cat:
 persian cat:
   label: cat
   threshold: 0.3
+  categories:
+    - animal
 
 siamese cat:
   label: cat
   threshold: 0.3
+  categories:
+    - animal
 
 egyptian cat:
   label: cat
   threshold: 0.3
+  categories:
+    - animal
 
 tiger cat:
   priority: 5
@@ -67,6 +73,10 @@ lion:
 cheetah:
   label: wild cat
   threshold: 0.7
+  categories:
+    - cat
+    - animal
+    - wildlife
 
 tiger:
   see: wild cat

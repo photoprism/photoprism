@@ -1266,7 +1266,7 @@ var rules = LabelRules{
 		Label:      "wild cat",
 		Threshold:  0.700000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"cat", "animal", "wildlife"},
 	},
 	"chesapeake bay retriever dog": {
 		Label:      "dog",
@@ -1956,7 +1956,7 @@ var rules = LabelRules{
 		Label:      "cat",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"animal"},
 	},
 	"electric fan": {
 		Label:      "fan",
@@ -4188,7 +4188,7 @@ var rules = LabelRules{
 		Label:      "cat",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"animal"},
 	},
 	"petri dish": {
 		Label:      "",
@@ -5076,7 +5076,7 @@ var rules = LabelRules{
 		Label:      "cat",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"animal"},
 	},
 	"siberian husky dog": {
 		Label:      "dog",
