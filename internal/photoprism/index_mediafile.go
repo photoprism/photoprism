@@ -360,7 +360,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	result.PhotoUUID = photo.PhotoUUID
 
 	if file.FilePrimary && (fileChanged || o.UpdateKeywords) {
-		photo.IndexKeywords(ind.db)
+		if err := photo.IndexKeywords(ind.db); err != nil {
+			log.Error(err)
+		}
 	}
 
 	result.Status = IndexUpdated

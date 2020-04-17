@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -92,9 +93,32 @@ func SavePhotoForm(model Photo, form form.Photo, db *gorm.DB, geoApi string) err
 		model.Description.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
 	}
 
-	model.IndexKeywords(db)
+	if err := model.IndexKeywords(db); err != nil {
+		log.Error(err)
+	}
 
 	return db.Unscoped().Save(&model).Error
+}
+
+// Save stored the entity in the database.
+func (m *Photo) Save(db *gorm.DB) error {
+	labels := m.ClassifyLabels()
+
+	if err := m.UpdateTitle(labels); err != nil {
+		log.Warnf("%s (%s)", err.Error(), m.PhotoUUID)
+	}
+
+	if m.DescriptionLoaded() {
+		w := txt.UniqueKeywords(m.Description.PhotoKeywords)
+		w = append(w, labels.Keywords()...)
+		m.Description.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
+	}
+
+	if err := m.IndexKeywords(db); err != nil {
+		log.Error(err)
+	}
+
+	return db.Unscoped().Save(m).Error
 }
 
 // ClassifyLabels returns all associated labels as classify.Labels
@@ -106,23 +130,6 @@ func (m *Photo) ClassifyLabels() classify.Labels {
 	}
 
 	return result
-}
-
-// Save stored the entity in the database.
-func (m *Photo) Save(db *gorm.DB) error {
-	labels := m.ClassifyLabels()
-
-	if err := m.UpdateTitle(labels); err != nil {
-		log.Warn(err)
-	}
-
-	if m.Description.PhotoID == m.ID {
-		w := txt.UniqueKeywords(m.Description.PhotoKeywords)
-		w = append(w, labels.Keywords()...)
-		m.Description.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
-	}
-
-	return db.Unscoped().Save(m).Error
 }
 
 // BeforeCreate computes a unique UUID, and set a default takenAt before indexing a new photo
@@ -164,7 +171,11 @@ func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 }
 
 // IndexKeywords adds given keywords to the photo entry
-func (m *Photo) IndexKeywords(db *gorm.DB) {
+func (m *Photo) IndexKeywords(db *gorm.DB) error {
+	if !m.DescriptionLoaded() {
+		return fmt.Errorf("photo: can't index keywords, description not loaded (%s)", m.PhotoUUID)
+	}
+
 	var keywordIds []uint
 	var keywords []string
 
@@ -189,7 +200,7 @@ func (m *Photo) IndexKeywords(db *gorm.DB) {
 		NewPhotoKeyword(m.ID, kw.ID).FirstOrCreate(db)
 	}
 
-	db.Where("photo_id = ? AND keyword_id NOT IN (?)", m.ID, keywordIds).Delete(&PhotoKeyword{})
+	return db.Where("photo_id = ? AND keyword_id NOT IN (?)", m.ID, keywordIds).Delete(&PhotoKeyword{}).Error
 }
 
 // PreloadFiles prepares gorm scope to retrieve photo file
@@ -288,4 +299,9 @@ func (m *Photo) NoCameraSerial() bool {
 // HasTitle checks if the photo has a  Title
 func (m *Photo) HasTitle() bool {
 	return m.PhotoTitle != ""
+}
+
+// DescriptionLoaded returns true if photo description exists.
+func (m *Photo) DescriptionLoaded() bool {
+	return m.Description.PhotoID == m.ID
 }
