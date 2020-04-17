@@ -116,10 +116,8 @@ func (m *Label) Update(label classify.Label, db *gorm.DB) error {
 	}
 
 	if !save {
-		log.Warnf("NOT saving %s", m.LabelName)
 		return nil
 	}
 
-	log.Warnf("SAVING %s", m.LabelName)
 	return db.Save(m).Error
 }
