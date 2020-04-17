@@ -6,6 +6,10 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
+const (
+	LabelSourceManual = "manual"
+)
+
 // PhotoLabel represents the many-to-many relation between Photo and label.
 // Labels are weighted by uncertainty (100 - confidence)
 type PhotoLabel struct {
@@ -34,7 +38,7 @@ func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *Photo
 	return result
 }
 
-// FirstOrCreate checks wether the PhotoLabel relation already exist in the database before the creation
+// FirstOrCreate checks if the PhotoLabel relation already exist in the database before the creation
 func (m *PhotoLabel) FirstOrCreate(db *gorm.DB) *PhotoLabel {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
@@ -60,4 +64,17 @@ func (m *PhotoLabel) ClassifyLabel() classify.Label {
 	}
 
 	return result
+}
+
+// Save saves the entity in the database and returns an error.
+func (m *PhotoLabel) Save(db *gorm.DB) error {
+	if m.Photo != nil {
+		m.Photo = nil
+	}
+
+	if m.Label != nil {
+		m.Label.Rename(m.Label.LabelName)
+	}
+
+	return db.Save(m).Error
 }

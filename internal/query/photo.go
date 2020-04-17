@@ -122,7 +122,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
 		Joins("JOIN places ON photos.place_id = places.id").
-		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id").
+		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id AND photos_labels.label_uncertainty < 100").
 		Where("files.file_missing = 0").
 		Group("photos.id, files.id")
 
@@ -141,7 +141,8 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 	var labelIds []uint
 
 	if f.Label != "" {
-		if result := q.db.First(&label, "label_slug = ?", strings.ToLower(f.Label)); result.Error != nil {
+		slugString := strings.ToLower(f.Label)
+		if result := q.db.First(&label, "label_slug =? OR custom_slug = ?", slugString, slugString); result.Error != nil {
 			log.Errorf("search: label \"%s\" not found", f.Label)
 			return results, fmt.Errorf("label \"%s\" not found", f.Label)
 		} else {
@@ -177,7 +178,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		s = s.Joins("LEFT JOIN photos_keywords ON photos_keywords.photo_id = photos.id").
 			Joins("LEFT JOIN keywords ON photos_keywords.keyword_id = keywords.id")
 
-		if result := q.db.First(&label, "label_slug = ?", slugString); result.Error != nil {
+		if result := q.db.First(&label, "label_slug = ? OR custom_slug = ?", slugString, slugString); result.Error != nil {
 			log.Infof("search: label \"%s\" not found, using fuzzy search", f.Query)
 
 			s = s.Where("keywords.keyword LIKE ?", likeString)

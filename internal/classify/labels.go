@@ -13,7 +13,11 @@ type Labels []Label
 func (l Labels) Len() int      { return len(l) }
 func (l Labels) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
 func (l Labels) Less(i, j int) bool {
-	if l[i].Priority == l[j].Priority {
+	if l[i].Uncertainty >= 100 {
+		return false
+	} else if l[j].Uncertainty >= 100 {
+		return true
+	} else if l[i].Priority == l[j].Priority {
 		return l[i].Uncertainty < l[j].Uncertainty
 	} else {
 		return l[i].Priority > l[j].Priority
@@ -32,6 +36,10 @@ func (l Labels) AppendLabel(label Label) Labels {
 // Keywords returns all keywords contains in Labels and their categories
 func (l Labels) Keywords() (result []string) {
 	for _, label := range l {
+		if label.Uncertainty >= 100 {
+			continue
+		}
+
 		result = append(result, txt.Keywords(label.Name)...)
 
 		for _, c := range label.Categories {
@@ -42,7 +50,7 @@ func (l Labels) Keywords() (result []string) {
 	return result
 }
 
-// Title gets the best label out a list of labels or fallback to compute a meaningfull default title.
+// Title gets the best label out a list of labels or fallback to compute a meaningful default title.
 func (l Labels) Title(fallback string) string {
 	fallbackRunes := len([]rune(fallback))
 

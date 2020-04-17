@@ -109,8 +109,12 @@ func TestQuery_Labels(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(result))
-		assert.Equal(t, "Flower", result[1].LabelName)
-		assert.Equal(t, "COW", result[0].LabelName)
+		assert.Equal(t, "COW", result[1].LabelName)
+		assert.Equal(t, "Flower", result[0].LabelName)
+		assert.Equal(t, "cow", result[1].LabelSlug)
+		assert.Equal(t, "flower", result[0].LabelSlug)
+		assert.Equal(t, "kuh", result[1].CustomSlug)
+		assert.Equal(t, "flower", result[0].CustomSlug)
 	})
 
 	t.Run("search with empty query", func(t *testing.T) {

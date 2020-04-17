@@ -1,6 +1,7 @@
 package classify
 
 import (
+	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,7 +29,6 @@ func TestLabel_AppendLabel(t *testing.T) {
 		assert.Equal(t, 2, labelsNew.Len())
 		assert.Equal(t, "dog", labelsNew[1].Name)
 	})
-
 }
 
 func TestLabels_Title(t *testing.T) {
@@ -90,4 +90,30 @@ func TestLabels_Keywords(t *testing.T) {
 		assert.Equal(t, "animal", result[1])
 		assert.Equal(t, "dog", result[2])
 	})
+}
+
+func TestLabel_Sort(t *testing.T) {
+	labels := Labels{
+		{Name: "label 0", Source: "location", Uncertainty: 100, Priority: 10},
+		{Name: "label 1", Source: "location", Uncertainty: 100, Priority: -1},
+		{Name: "label 2", Source: "location", Uncertainty: 80, Priority: 5},
+		{Name: "label 3", Source: "location", Uncertainty: 80, Priority: 5},
+		{Name: "label 4", Source: "location", Uncertainty: 99, Priority: 5},
+		{Name: "label 5", Source: "location", Uncertainty: 1, Priority: 0},
+		{Name: "label 6", Source: "location", Uncertainty: 0, Priority: 5},
+		{Name: "label 7", Source: "location", Uncertainty: 0, Priority: 1},
+		{Name: "label 8", Source: "location", Uncertainty: 101, Priority: 5},
+	}
+
+	sort.Sort(labels)
+
+	assert.Equal(t, "label 6", labels[0].Name)
+	assert.Equal(t, "label 2", labels[1].Name)
+	assert.Equal(t, "label 3", labels[2].Name)
+	assert.Equal(t, "label 4", labels[3].Name)
+	assert.Equal(t, "label 7", labels[4].Name)
+	assert.Equal(t, "label 5", labels[5].Name)
+	assert.Equal(t, "label 0", labels[6].Name)
+	assert.Equal(t, "label 1", labels[7].Name)
+	assert.Equal(t, "label 8", labels[8].Name)
 }

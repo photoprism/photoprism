@@ -52,7 +52,7 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 
 		if plm.LabelUncertainty > f.LabelUncertainty {
 			plm.LabelUncertainty = f.LabelUncertainty
-			plm.LabelSource = "manual"
+			plm.LabelSource = entity.LabelSourceManual
 
 			if err := db.Save(&plm).Error; err != nil {
 				log.Errorf("label: %s", err)
@@ -89,7 +89,8 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.Db())
+		db := conf.Db()
+		q := query.New(db)
 		m, err := q.PhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
@@ -104,8 +105,82 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		label, err := q.PhotoLabel(m.ID, uint(labelId))
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		if label.LabelSource == entity.LabelSourceManual {
+			db.Delete(&label)
+		} else {
+			label.LabelUncertainty = 100
+			db.Save(&label)
+		}
+
+		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			return
+		}
+
+		if err := p.Save(db); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		c.JSON(http.StatusOK, p)
+	})
+}
+
+// PUT /api/v1/photos/:uuid/label/:id
+//
+// Parameters:
+//   uuid: string PhotoUUID as returned by the API
+//   id: int LabelId as returned by the API
+func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
+	router.PUT("/photos/:uuid/label/:id", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		// TODO: Code clean-up, simplify
+
 		db := conf.Db()
-		db.Where("photo_id = ? AND label_id = ?", m.ID, labelId).Delete(&entity.PhotoLabel{})
+		q := query.New(db)
+		m, err := q.PhotoByUUID(c.Param("uuid"))
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			return
+		}
+
+		labelId, err := strconv.Atoi(c.Param("id"))
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		label, err := q.PhotoLabel(m.ID, uint(labelId))
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		if err := c.BindJSON(&label); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		if err := label.Save(db); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
 
 		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
 

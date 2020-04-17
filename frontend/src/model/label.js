@@ -1,6 +1,6 @@
 import RestModel from "model/rest";
 import Api from "common/api";
-import { DateTime } from "luxon";
+import {DateTime} from "luxon";
 
 class Label extends RestModel {
     getDefaults() {
@@ -11,6 +11,7 @@ class Label extends RestModel {
             DeletedAt: "",
             LabelUUID: "",
             LabelSlug: "",
+            CustomSlug: "",
             LabelName: "",
             LabelPriority: 0,
             LabelCount: 0,
@@ -40,7 +41,7 @@ class Label extends RestModel {
     getThumbnailSrcset() {
         const result = [];
 
-        result.push(this.getThumbnailUrl("fit_720")  + " 720w");
+        result.push(this.getThumbnailUrl("fit_720") + " 720w");
         result.push(this.getThumbnailUrl("fit_1280") + " 1280w");
         result.push(this.getThumbnailUrl("fit_1920") + " 1920w");
         result.push(this.getThumbnailUrl("fit_2560") + " 2560w");
@@ -68,7 +69,7 @@ class Label extends RestModel {
     toggleLike() {
         this.LabelFavorite = !this.LabelFavorite;
 
-        if(this.LabelFavorite) {
+        if (this.LabelFavorite) {
             return Api.post(this.getEntityResource() + "/like");
         } else {
             return Api.delete(this.getEntityResource() + "/like");

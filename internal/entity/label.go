@@ -6,6 +6,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -15,7 +16,8 @@ import (
 type Label struct {
 	ID               uint   `gorm:"primary_key"`
 	LabelUUID        string `gorm:"type:varbinary(36);unique_index;"`
-	LabelSlug        string `gorm:"type:varbinary(128);index;"`
+	LabelSlug        string `gorm:"type:varbinary(128);unique_index;"`
+	CustomSlug       string `gorm:"type:varbinary(128);index;"`
 	LabelName        string `gorm:"type:varchar(128);"`
 	LabelPriority    int
 	LabelFavorite    bool
@@ -48,22 +50,24 @@ func NewLabel(labelName string, labelPriority int) *Label {
 	}
 
 	labelSlug := slug.Make(labelName)
+	labelName = txt.Title(txt.Clip(labelName, 128))
 
 	result := &Label{
-		LabelName:     labelName,
 		LabelSlug:     labelSlug,
+		CustomSlug:    labelSlug,
+		LabelName:     labelName,
 		LabelPriority: labelPriority,
 	}
 
 	return result
 }
 
-// FirstOrCreate checks wether the label already exists in the database
+// FirstOrCreate checks if the label already exists in the database
 func (m *Label) FirstOrCreate(db *gorm.DB) *Label {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
 
-	if err := db.FirstOrCreate(m, "label_slug = ?", m.LabelSlug).Error; err != nil {
+	if err := db.FirstOrCreate(m, "label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).Error; err != nil {
 		log.Errorf("label: %s", err)
 	}
 
@@ -77,11 +81,45 @@ func (m *Label) AfterCreate(scope *gorm.Scope) error {
 
 // Rename an existing label
 func (m *Label) Rename(name string) {
-	name = txt.Clip(name, 128)
+	name = strings.TrimSpace(name)
 
 	if name == "" {
-		name = txt.SlugToTitle(m.LabelSlug)
+		return
 	}
 
+	name = txt.Title(txt.Clip(name, 128))
+
 	m.LabelName = name
+	m.CustomSlug = slug.Make(name)
+}
+
+// Updates a label if necessary
+func (m *Label) Update(label classify.Label, db *gorm.DB) error {
+	save := false
+
+	if m.LabelPriority != label.Priority {
+		m.LabelPriority = label.Priority
+		save = true
+	}
+
+	if m.CustomSlug == "" {
+		m.CustomSlug = m.LabelSlug
+		save = true
+	} else if m.LabelSlug == "" {
+		m.LabelSlug = m.CustomSlug
+		save = true
+	}
+
+	if m.CustomSlug == m.LabelSlug && label.Title() != m.LabelName {
+		m.Rename(label.Title())
+		save = true
+	}
+
+	if !save {
+		log.Warnf("NOT saving %s", m.LabelName)
+		return nil
+	}
+
+	log.Warnf("SAVING %s", m.LabelName)
+	return db.Save(m).Error
 }

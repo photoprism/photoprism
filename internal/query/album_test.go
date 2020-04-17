@@ -71,7 +71,11 @@ func TestQuery_Albums(t *testing.T) {
 	t.Run("search with slug", func(t *testing.T) {
 		query := form.NewAlbumSearch("slug:holiday count:10")
 		result, err := search.Albums(query)
-		assert.Nil(t, err)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, "Holiday2030", result[0].AlbumName)
 	})
 

@@ -20,6 +20,7 @@ type LabelResult struct {
 	DeletedAt        time.Time
 	LabelUUID        string
 	LabelSlug        string
+	CustomSlug       string
 	LabelName        string
 	LabelPriority    int
 	LabelCount       int
@@ -28,9 +29,18 @@ type LabelResult struct {
 	LabelNotes       string
 }
 
+// PhotoLabel returns a photo label entity if exists.
+func (q *Query) PhotoLabel(photoID, labelID uint) (label entity.PhotoLabel, err error) {
+	if err := q.db.Where("photo_id = ? AND label_id = ?", photoID, labelID).Preload("Photo").Preload("Label").First(&label).Error; err != nil {
+		return label, err
+	}
+
+	return label, nil
+}
+
 // LabelBySlug returns a Label based on the slug name.
 func (q *Query) LabelBySlug(labelSlug string) (label entity.Label, err error) {
-	if err := q.db.Where("label_slug = ?", labelSlug).Preload("Links").First(&label).Error; err != nil {
+	if err := q.db.Where("label_slug = ? OR custom_slug = ?", labelSlug, labelSlug).Preload("Links").First(&label).Error; err != nil {
 		return label, err
 	}
 
@@ -120,7 +130,7 @@ func (q *Query) Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		slugString := slug.Make(f.Query)
 		likeString := "%" + strings.ToLower(f.Query) + "%"
 
-		if result := q.db.First(&label, "label_slug = ?", slugString); result.Error != nil {
+		if result := q.db.First(&label, "label_slug = ? OR custom_slug = ?", slugString, slugString); result.Error != nil {
 			log.Infof("search: label \"%s\" not found", f.Query)
 
 			s = s.Where("LOWER(labels.label_name) LIKE ?", likeString)
@@ -149,9 +159,9 @@ func (q *Query) Labels(f form.LabelSearch) (results []LabelResult, err error) {
 
 	switch f.Order {
 	case "slug":
-		s = s.Order("labels.label_favorite DESC, label_slug ASC")
+		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
 	default:
-		s = s.Order("labels.label_favorite DESC, label_slug ASC")
+		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
 	}
 
 	if f.Count > 0 && f.Count <= 1000 {

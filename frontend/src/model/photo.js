@@ -222,6 +222,16 @@ class Photo extends RestModel {
             .then((response) => Promise.resolve(this.setValues(response.data)));
     }
 
+    activateLabel(id) {
+        return Api.put(this.getEntityResource() + "/label/" + id, {LabelUncertainty: 0})
+            .then((response) => Promise.resolve(this.setValues(response.data)));
+    }
+
+    renameLabel(id, name) {
+        return Api.put(this.getEntityResource() + "/label/" + id, {Label: {LabelName: name}})
+            .then((response) => Promise.resolve(this.setValues(response.data)));
+    }
+
     removeLabel(id) {
         return Api.delete(this.getEntityResource() + "/label/" + id)
             .then((response) => Promise.resolve(this.setValues(response.data)));

@@ -2,6 +2,8 @@ package classify
 
 import (
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Label represents a MediaFile label (automatically created).
@@ -26,4 +28,9 @@ func LocationLabel(name string, uncertainty int, priority int) Label {
 	label := Label{Name: name, Source: "location", Uncertainty: uncertainty, Priority: priority}
 
 	return label
+}
+
+// Title returns a formatted label title as string.
+func (l Label) Title() string {
+	return txt.Title(txt.Clip(strings.TrimSpace(l.Name), 128))
 }

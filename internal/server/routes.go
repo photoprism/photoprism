@@ -37,6 +37,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DislikePhoto(v1, conf)
 		api.AddPhotoLabel(v1, conf)
 		api.RemovePhotoLabel(v1, conf)
+		api.UpdatePhotoLabel(v1, conf)
 		api.GetMomentsTime(v1, conf)
 		api.GetFile(v1, conf)
 		api.LinkFile(v1, conf)

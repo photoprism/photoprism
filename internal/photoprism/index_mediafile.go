@@ -487,7 +487,7 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 
 func (ind *Index) addLabels(photoId uint, labels classify.Labels) {
 	for _, label := range labels {
-		lm := entity.NewLabel(txt.Title(label.Name), label.Priority).FirstOrCreate(ind.db)
+		lm := entity.NewLabel(label.Title(), label.Priority).FirstOrCreate(ind.db)
 
 		if lm.New {
 			event.EntitiesCreated("labels", []*entity.Label{lm})
@@ -499,12 +499,8 @@ func (ind *Index) addLabels(photoId uint, labels classify.Labels) {
 			}
 		}
 
-		if lm.LabelPriority != label.Priority {
-			lm.LabelPriority = label.Priority
-
-			if err := ind.db.Save(&lm).Error; err != nil {
-				log.Errorf("index: %s", err)
-			}
+		if err := lm.Update(label, ind.db); err != nil {
+			log.Errorf("index: %s", err)
 		}
 
 		plm := entity.NewPhotoLabel(photoId, lm.ID, label.Uncertainty, label.Source).FirstOrCreate(ind.db)
@@ -517,7 +513,7 @@ func (ind *Index) addLabels(photoId uint, labels classify.Labels) {
 			}
 		}
 
-		if plm.LabelUncertainty > label.Uncertainty {
+		if plm.LabelUncertainty > label.Uncertainty && plm.LabelUncertainty > 100 {
 			plm.LabelUncertainty = label.Uncertainty
 			plm.LabelSource = label.Source
 			if err := ind.db.Save(&plm).Error; err != nil {

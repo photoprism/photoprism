@@ -11,19 +11,49 @@
                 :no-data-text="$gettext('No labels found')"
         >
             <template v-slot:items="props" class="p-file">
-                <td>{{ props.item.Label.LabelName }}</td>
+                <td>
+                    <v-edit-dialog
+                            :return-value.sync="props.item.Label.LabelName"
+                            lazy
+                            @save="renameLabel(props.item.Label)"
+                            class="p-inline-edit"
+                    >
+                        {{ props.item.Label.LabelName | capitalize }}
+                        <template v-slot:input>
+                            <v-text-field
+                                    v-model="props.item.Label.LabelName"
+                                    :rules="[nameRule]"
+                                    :label="labels.name"
+                                    color="secondary-dark"
+                                    single-line
+                                    autofocus
+                            ></v-text-field>
+                        </template>
+                    </v-edit-dialog>
+                </td>
                 <td class="text-xs-left">{{ props.item.LabelSource }}</td>
                 <td class="text-xs-center">{{ 100 - props.item.LabelUncertainty }}%</td>
                 <td class="text-xs-center">
-                    <v-btn v-if="!disabled" icon small flat :ripple="false"
-                           class="p-photo-label-remove"
+                    <v-btn v-if="disabled" icon small flat :ripple="false"
+                           class="action-view" title="Search"
+                           @click.stop.prevent="searchLabel(props.item.Label)">
+                        <v-icon color="secondary-dark">search</v-icon>
+                    </v-btn>
+                    <v-btn v-else-if="props.item.LabelUncertainty < 100 && props.item.LabelSource === 'manual'" icon
+                           small flat :ripple="false"
+                           class="action-off" title="Delete"
                            @click.stop.prevent="removeLabel(props.item.Label)">
                         <v-icon color="secondary-dark">delete</v-icon>
                     </v-btn>
+                    <v-btn v-else-if="props.item.LabelUncertainty < 100" icon small flat :ripple="false"
+                           class="action-off" title="Remove"
+                           @click.stop.prevent="removeLabel(props.item.Label)">
+                        <v-icon color="secondary-dark">remove</v-icon>
+                    </v-btn>
                     <v-btn v-else icon small flat :ripple="false"
-                           class="action-view"
-                           @click.stop.prevent="searchLabel(props.item.Label)">
-                        <v-icon color="secondary-dark">search</v-icon>
+                           class="action-on" title="Activate"
+                           @click.stop.prevent="activateLabel(props.item.Label)">
+                        <v-icon color="secondary-dark">add</v-icon>
                     </v-btn>
                 </td>
             </template>
@@ -44,7 +74,7 @@
                 <td class="text-xs-left">manual</td>
                 <td class="text-xs-center">100%</td>
                 <td class="text-xs-center">
-                    <v-btn icon small flat :ripple="false"
+                    <v-btn icon small flat :ripple="false" title="Add"
                            class="p-photo-label-remove"
                            @click.stop.prevent="addLabel">
                         <v-icon color="secondary-dark">add</v-icon>
@@ -78,6 +108,8 @@
                 ],
                 labels: {
                     addLabel: "",
+                    search: this.$gettext("Search"),
+                    name: this.$gettext("Label Name"),
                 },
                 nameRule: v => v.length <= 25 || this.$gettext("Name too long"),
             };
@@ -108,8 +140,23 @@
                     this.newLabel = "";
                 });
             },
+            activateLabel(label) {
+                if (!label) {
+                    return
+                }
+
+                this.model.activateLabel(label.ID);
+            },
+            renameLabel(label) {
+                if (!label) {
+                    return
+                }
+
+                this.model.renameLabel(label.ID, label.LabelName);
+            },
             searchLabel(label) {
-                this.$router.push({name: 'photos', query: {q: 'label:' + label.LabelSlug}}).catch(err => {});
+                this.$router.push({name: 'photos', query: {q: 'label:' + label.LabelSlug}}).catch(err => {
+                });
                 this.$emit('close');
             },
         },
