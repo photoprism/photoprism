@@ -231,7 +231,7 @@ class Photo extends RestModel {
     }
 
     activateLabel(id) {
-        return Api.put(this.getEntityResource() + "/label/" + id, {LabelUncertainty: 0})
+        return Api.put(this.getEntityResource() + "/label/" + id, {Uncertainty: 0})
             .then((response) => Promise.resolve(this.setValues(response.data)));
     }
 

@@ -32,7 +32,7 @@
                     </v-edit-dialog>
                 </td>
                 <td class="text-xs-left">{{ props.item.LabelSrc }}</td>
-                <td class="text-xs-center">{{ 100 - props.item.LabelUncertainty }}%</td>
+                <td class="text-xs-center">{{ 100 - props.item.Uncertainty }}%</td>
                 <td class="text-xs-center">
                     <v-btn v-if="disabled" icon small flat :ripple="false"
                            class="action-view" title="Search"
