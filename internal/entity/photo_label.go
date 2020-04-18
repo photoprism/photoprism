@@ -9,12 +9,12 @@ import (
 // PhotoLabel represents the many-to-many relation between Photo and label.
 // Labels are weighted by uncertainty (100 - confidence)
 type PhotoLabel struct {
-	PhotoID          uint `gorm:"primary_key;auto_increment:false"`
-	LabelID          uint `gorm:"primary_key;auto_increment:false;index"`
-	LabelUncertainty int
-	LabelSource      string `gorm:"type:varbinary(8);"`
-	Photo            *Photo `gorm:"PRELOAD:false"`
-	Label            *Label `gorm:"PRELOAD:true"`
+	PhotoID     uint   `gorm:"primary_key;auto_increment:false"`
+	LabelID     uint   `gorm:"primary_key;auto_increment:false;index"`
+	LabelSrc    string `gorm:"type:varbinary(8);"`
+	Uncertainty int    `gorm:"type:SMALLINT"`
+	Photo       *Photo `gorm:"PRELOAD:false"`
+	Label       *Label `gorm:"PRELOAD:true"`
 }
 
 // TableName returns PhotoLabel table identifier "photos_labels"
@@ -25,10 +25,10 @@ func (PhotoLabel) TableName() string {
 // NewPhotoLabel registers a new PhotoLabel relation with an uncertainty and a source of label
 func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *PhotoLabel {
 	result := &PhotoLabel{
-		PhotoID:          photoID,
-		LabelID:          labelID,
-		LabelUncertainty: uncertainty,
-		LabelSource:      source,
+		PhotoID:     photoID,
+		LabelID:     labelID,
+		Uncertainty: uncertainty,
+		LabelSrc:    source,
 	}
 
 	return result
@@ -54,8 +54,8 @@ func (m *PhotoLabel) ClassifyLabel() classify.Label {
 
 	result := classify.Label{
 		Name:        m.Label.LabelName,
-		Source:      m.LabelSource,
-		Uncertainty: m.LabelUncertainty,
+		Source:      m.LabelSrc,
+		Uncertainty: m.Uncertainty,
 		Priority:    m.Label.LabelPriority,
 	}
 

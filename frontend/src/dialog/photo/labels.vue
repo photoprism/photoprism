@@ -31,7 +31,7 @@
                         </template>
                     </v-edit-dialog>
                 </td>
-                <td class="text-xs-left">{{ props.item.LabelSource }}</td>
+                <td class="text-xs-left">{{ props.item.LabelSrc }}</td>
                 <td class="text-xs-center">{{ 100 - props.item.LabelUncertainty }}%</td>
                 <td class="text-xs-center">
                     <v-btn v-if="disabled" icon small flat :ripple="false"
@@ -39,13 +39,13 @@
                            @click.stop.prevent="searchLabel(props.item.Label)">
                         <v-icon color="secondary-dark">search</v-icon>
                     </v-btn>
-                    <v-btn v-else-if="props.item.LabelUncertainty < 100 && props.item.LabelSource === 'manual'" icon
+                    <v-btn v-else-if="props.item.Uncertainty < 100 && props.item.LabelSrc === 'manual'" icon
                            small flat :ripple="false"
                            class="action-off" title="Delete"
                            @click.stop.prevent="removeLabel(props.item.Label)">
                         <v-icon color="secondary-dark">delete</v-icon>
                     </v-btn>
-                    <v-btn v-else-if="props.item.LabelUncertainty < 100" icon small flat :ripple="false"
+                    <v-btn v-else-if="props.item.Uncertainty < 100" icon small flat :ripple="false"
                            class="action-off" title="Remove"
                            @click.stop.prevent="removeLabel(props.item.Label)">
                         <v-icon color="secondary-dark">remove</v-icon>
@@ -102,8 +102,8 @@
                 newLabel: "",
                 listColumns: [
                     {text: this.$gettext('Label'), value: '', sortable: false, align: 'left'},
-                    {text: this.$gettext('Source'), value: 'LabelSource', sortable: false, align: 'left'},
-                    {text: this.$gettext('Confidence'), value: 'LabelUncertainty', sortable: false, align: 'center'},
+                    {text: this.$gettext('Source'), value: 'LabelSrc', sortable: false, align: 'left'},
+                    {text: this.$gettext('Confidence'), value: 'Uncertainty', sortable: false, align: 'center'},
                     {text: this.$gettext('Action'), value: '', sortable: false, align: 'center'},
                 ],
                 labels: {

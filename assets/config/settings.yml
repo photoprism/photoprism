@@ -15,6 +15,6 @@ features:
 library:
   rescan: false
   raw: false
-  thumbs: true
+  thumbs: false
   group: true
   move: false

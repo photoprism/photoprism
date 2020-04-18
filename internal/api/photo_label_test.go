@@ -14,7 +14,7 @@ func TestRemovePhotoLabel(t *testing.T) {
 		RemovePhotoLabel(router, ctx)
 		result := PerformRequest(app, "DELETE", "/api/v1/photos/654/label/1")
 		assert.Equal(t, http.StatusOK, result.Code)
-		val := gjson.Get(result.Body.String(), "Labels.#(LabelID==1).LabelUncertainty")
+		val := gjson.Get(result.Body.String(), "Labels.#(LabelID==1).Uncertainty")
 		assert.Equal(t, "100", val.String())
 	})
 	t.Run("try to remove wrong label", func(t *testing.T) {

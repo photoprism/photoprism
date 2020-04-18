@@ -355,7 +355,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 			m.PhotoTitle = "Unknown"
 		}
 
-		log.Infof("photo: changed empty photo title to \"%s\"", m.PhotoTitle)
+		log.Infof("photo: changed photo title to \"%s\"", m.PhotoTitle)
 	} else {
 		log.Infof("photo: new title is \"%s\"", m.PhotoTitle)
 	}
@@ -385,9 +385,9 @@ func (m *Photo) AddLabels(labels classify.Labels, db *gorm.DB) {
 
 		plm := NewPhotoLabel(m.ID, lm.ID, label.Uncertainty, label.Source).FirstOrCreate(db)
 
-		if plm.LabelUncertainty > label.Uncertainty && plm.LabelUncertainty > 100 {
-			plm.LabelUncertainty = label.Uncertainty
-			plm.LabelSource = label.Source
+		if plm.Uncertainty > label.Uncertainty && plm.Uncertainty > 100 {
+			plm.Uncertainty = label.Uncertainty
+			plm.LabelSrc = label.Source
 			if err := db.Save(&plm).Error; err != nil {
 				log.Errorf("index: %s", err)
 			}

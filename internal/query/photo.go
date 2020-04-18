@@ -120,7 +120,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
 		Joins("JOIN places ON photos.place_id = places.id").
-		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id AND photos_labels.label_uncertainty < 100").
+		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id AND photos_labels.uncertainty < 100").
 		Where("files.file_missing = 0").
 		Group("photos.id, files.id")
 
@@ -352,7 +352,7 @@ func (q *Query) PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 		Preload("Location").
 		Preload("Location.Place").
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
-			return db.Order("photos_labels.label_uncertainty ASC, photos_labels.label_id DESC")
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
 		Preload("Labels.Label").
 		First(&photo).Error; err != nil {
@@ -370,7 +370,7 @@ func (q *Query) PhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
 		Preload("Location").
 		Preload("Location.Place").
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
-			return db.Order("photos_labels.label_uncertainty ASC, photos_labels.label_id DESC")
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
 		Preload("Labels.Label").
 		First(&photo).Error; err != nil {
@@ -384,7 +384,7 @@ func (q *Query) PhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
 func (q *Query) PreloadPhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
 	if err := q.db.Unscoped().Where("photo_uuid = ?", photoUUID).
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
-			return db.Order("photos_labels.label_uncertainty ASC, photos_labels.label_id DESC")
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
 		Preload("Labels.Label").
 		Preload("Camera").

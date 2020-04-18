@@ -30,6 +30,6 @@ INSERT INTO categories (label_id, category_id) VALUES ('1', '1');
 INSERT INTO labels (id, label_uuid, label_slug, custom_slug, label_name, label_priority, label_favorite) VALUES ('1', '12', 'flower', 'flower', 'Flower', 1, 1);
 INSERT INTO labels (id, label_uuid, label_slug, custom_slug, label_name, label_priority, label_favorite) VALUES ('2', '13', 'cake', 'kuchen', 'Cake', 5, 0);
 INSERT INTO labels (id, label_uuid, label_slug, custom_slug, label_name, label_priority, label_favorite) VALUES ('3', '14', 'cow', 'kuh', 'COW', -1, 1);
-INSERT INTO photos_labels (photo_id, label_id, label_uncertainty, label_source) VALUES ('1', '1', '38', 'image');
-INSERT INTO photos_labels (photo_id, label_id, label_uncertainty, label_source) VALUES ('1', '2', '10', 'image');
+INSERT INTO photos_labels (photo_id, label_id, uncertainty, label_src) VALUES ('1', '1', '38', 'image');
+INSERT INTO photos_labels (photo_id, label_id, uncertainty, label_src) VALUES ('1', '2', '10', 'image');
 INSERT INTO accounts (id, acc_name, acc_owner, acc_url, acc_type, acc_key, acc_user, acc_pass, acc_error, acc_share, acc_sync, retry_limit, share_path, share_size, share_expires, sync_path, sync_interval, sync_upload, sync_download, sync_raw, created_at, updated_at, deleted_at) VALUES (1, 'Test Account', 'Admin', 'http://webdav-dummy/', 'webdav', '', 'admin', 'photoprism', null, true, false, 3, '/Photos', null, null, null, null, null, null, null, '2020-03-06 02:06:51', '2020-03-28 14:06:00', null);

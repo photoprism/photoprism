@@ -69,7 +69,7 @@ func NewSettings() *Settings {
 		Library: LibrarySettings{
 			CompleteRescan: false,
 			ConvertRaw:     false,
-			CreateThumbs:   true,
+			CreateThumbs:   false,
 			GroupRelated:   true,
 			MoveImported:   false,
 		},

@@ -1,9 +1,12 @@
 package entity
 
 const (
-	SrcAuto   = ""
-	SrcManual = "manual"
-	SrcImg    = "img"
-	SrcXmp    = "xmp"
-	SrcYml    = "yml"
+	SrcAuto     = ""
+	SrcManual   = "manual"
+	SrcLocation = "location"
+	SrcImage    = "image"
+	SrcExif     = "exif"
+	SrcXmp      = "xmp"
+	SrcYml      = "yml"
+	SrcJson     = "json"
 )

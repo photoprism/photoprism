@@ -11,8 +11,8 @@ func TestNewPhotoLabel(t *testing.T) {
 		photoLabel := NewPhotoLabel(1, 3, 80, "source")
 		assert.Equal(t, uint(0x1), photoLabel.PhotoID)
 		assert.Equal(t, uint(0x3), photoLabel.LabelID)
-		assert.Equal(t, 80, photoLabel.LabelUncertainty)
-		assert.Equal(t, "source", photoLabel.LabelSource)
+		assert.Equal(t, 80, photoLabel.Uncertainty)
+		assert.Equal(t, "source", photoLabel.LabelSrc)
 	})
 }
 func TestPhotoLabel_TableName(t *testing.T) {

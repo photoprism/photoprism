@@ -2,11 +2,14 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
 
-const SrcAuto   = ""
+const SrcAuto = ""
 const SrcManual = "manual"
-const SrcImg    = "img"
-const SrcXmp    = "xmp"
-const SrcYml    = "yml"
+const SrcLocation = "location"
+const SrcImage = "image"
+const SrcExif = "exif"
+const SrcXmp = "xmp"
+const SrcYml = "yml"
+const SrcJson = "json"
 
 class Photo extends RestModel {
     getDefaults() {
@@ -82,13 +85,13 @@ class Photo extends RestModel {
 
     getColor() {
         switch (this.PhotoColor) {
-        case "brown":
-        case "black":
-        case "white":
-        case "grey":
-            return "grey lighten-2";
-        default:
-            return this.PhotoColor + " lighten-4";
+            case "brown":
+            case "black":
+            case "white":
+            case "grey":
+                return "grey lighten-2";
+            default:
+                return this.PhotoColor + " lighten-4";
         }
     }
 
@@ -97,13 +100,13 @@ class Photo extends RestModel {
     }
 
     refreshFileAttr() {
-        if(!this.Files) {
+        if (!this.Files) {
             return;
         }
 
         const primary = this.Files.find(f => f.FilePrimary === true);
 
-        if(!primary) {
+        if (!primary) {
             return;
         }
 
@@ -113,7 +116,7 @@ class Photo extends RestModel {
     }
 
     getThumbnailUrl(type) {
-        if(this.FileHash) {
+        if (this.FileHash) {
             return "/api/v1/thumbnails/" + this.FileHash + "/" + type;
         }
 
@@ -193,7 +196,7 @@ class Photo extends RestModel {
     }
 
     getCamera() {
-        if(this.Camera) {
+        if (this.Camera) {
             return this.Camera.CameraMake + " " + this.Camera.CameraModel;
         } else if (this.CameraModel) {
             return this.CameraMake + " " + this.CameraModel;
@@ -245,23 +248,23 @@ class Photo extends RestModel {
     update() {
         const values = this.getValues(true);
 
-        if(values.PhotoTitle) {
+        if (values.PhotoTitle) {
             values.TitleSrc = SrcManual;
         }
 
-        if(values.Description) {
+        if (values.Description) {
             values.DescriptionSrc = SrcManual;
         }
 
-        if(values.PhotoLat || values.PhotoLng) {
+        if (values.PhotoLat || values.PhotoLng) {
             values.LocationSrc = SrcManual;
         }
 
-        if(values.TakenAt || values.TimeZone) {
+        if (values.TakenAt || values.TimeZone) {
             values.TakenSrc = SrcManual;
         }
 
-        if(values.CameraID || values.LensID || values.PhotoFocalLength || values.PhotoFNumber || values.PhotoIso || values.PhotoExposure) {
+        if (values.CameraID || values.LensID || values.PhotoFocalLength || values.PhotoFNumber || values.PhotoIso || values.PhotoExposure) {
             values.CameraSrc = SrcManual;
         }
 

@@ -48,11 +48,11 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			})
 		}
 
-		plm := entity.NewPhotoLabel(m.ID, lm.ID, f.LabelUncertainty, "manual").FirstOrCreate(db)
+		plm := entity.NewPhotoLabel(m.ID, lm.ID, f.Uncertainty, "manual").FirstOrCreate(db)
 
-		if plm.LabelUncertainty > f.LabelUncertainty {
-			plm.LabelUncertainty = f.LabelUncertainty
-			plm.LabelSource = entity.SrcManual
+		if plm.Uncertainty > f.Uncertainty {
+			plm.Uncertainty = f.Uncertainty
+			plm.LabelSrc = entity.SrcManual
 
 			if err := db.Save(&plm).Error; err != nil {
 				log.Errorf("label: %s", err)
@@ -72,6 +72,10 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
+
+		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c, q)
+
+		event.Success("label updated")
 
 		c.JSON(http.StatusOK, p)
 	})
@@ -112,10 +116,10 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if label.LabelSource == entity.SrcManual {
+		if label.LabelSrc == entity.SrcManual {
 			db.Delete(&label)
 		} else {
-			label.LabelUncertainty = 100
+			label.Uncertainty = 100
 			db.Save(&label)
 		}
 
@@ -130,6 +134,10 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
+
+		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c, q)
+
+		event.Success("label removed")
 
 		c.JSON(http.StatusOK, p)
 	})
@@ -193,6 +201,10 @@ func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
+
+		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c, q)
+
+		event.Success("label saved")
 
 		c.JSON(http.StatusOK, p)
 	})

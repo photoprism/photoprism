@@ -149,28 +149,28 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if fileChanged || o.UpdateExif {
 			// Read UpdateExif data
 			if metaData, err := m.MetaData(); err == nil {
-				if photo.LocationSrc == entity.SrcAuto || photo.LocationSrc == entity.SrcImg {
+				if photo.LocationSrc == entity.SrcAuto || photo.LocationSrc == entity.SrcExif {
 					photo.PhotoLat = metaData.Lat
 					photo.PhotoLng = metaData.Lng
 					photo.PhotoAltitude = metaData.Altitude
-					photo.LocationSrc = entity.SrcImg
+					photo.LocationSrc = entity.SrcExif
 				}
 
-				if photo.TakenSrc == entity.SrcAuto || photo.TakenSrc == entity.SrcImg {
+				if photo.TakenSrc == entity.SrcAuto || photo.TakenSrc == entity.SrcExif {
 					photo.TakenAt = metaData.TakenAt
 					photo.TakenAtLocal = metaData.TakenAtLocal
 					photo.TimeZone = metaData.TimeZone
-					photo.TakenSrc = entity.SrcImg
+					photo.TakenSrc = entity.SrcExif
 				}
 
-				if metaData.Title != "" && (photo.NoTitle() || photo.TitleSrc == entity.SrcImg) {
+				if metaData.Title != "" && (photo.NoTitle() || photo.TitleSrc == entity.SrcExif) {
 					photo.PhotoTitle = metaData.Title
-					photo.TitleSrc = entity.SrcImg
+					photo.TitleSrc = entity.SrcExif
 				}
 
-				if metaData.Description != "" && (photo.Description.NoDescription() || photo.DescriptionSrc == entity.SrcImg) {
+				if metaData.Description != "" && (photo.Description.NoDescription() || photo.DescriptionSrc == entity.SrcExif) {
 					photo.Description.PhotoDescription = metaData.Description
-					photo.DescriptionSrc = entity.SrcImg
+					photo.DescriptionSrc = entity.SrcExif
 				}
 
 				if photo.Description.NoNotes() {
