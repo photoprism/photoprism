@@ -119,7 +119,7 @@ class Config {
     }
 
     settings() {
-        return this.values.settings
+        return this.values.settings;
     }
 }
 

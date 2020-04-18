@@ -2,14 +2,14 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
 
-const SrcAuto = ""
-const SrcManual = "manual"
-const SrcLocation = "location"
-const SrcImage = "image"
-const SrcExif = "exif"
-const SrcXmp = "xmp"
-const SrcYml = "yml"
-const SrcJson = "json"
+const SrcAuto = "";
+const SrcManual = "manual";
+const SrcLocation = "location";
+const SrcImage = "image";
+const SrcExif = "exif";
+const SrcXmp = "xmp";
+const SrcYml = "yml";
+const SrcJson = "json";
 
 class Photo extends RestModel {
     getDefaults() {
@@ -85,13 +85,13 @@ class Photo extends RestModel {
 
     getColor() {
         switch (this.PhotoColor) {
-            case "brown":
-            case "black":
-            case "white":
-            case "grey":
-                return "grey lighten-2";
-            default:
-                return this.PhotoColor + " lighten-4";
+        case "brown":
+        case "black":
+        case "white":
+        case "grey":
+            return "grey lighten-2";
+        default:
+            return this.PhotoColor + " lighten-4";
         }
     }
 
