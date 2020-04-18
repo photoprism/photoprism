@@ -346,7 +346,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 		}
 	}
 
-	if m.NoTitle() {
+	if !hasLocation || m.NoTitle() {
 		if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 			m.PhotoTitle = fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.TakenAt.Format("2006"))
 		} else if !m.TakenAtLocal.IsZero() {
