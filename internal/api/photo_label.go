@@ -52,7 +52,7 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 
 		if plm.LabelUncertainty > f.LabelUncertainty {
 			plm.LabelUncertainty = f.LabelUncertainty
-			plm.LabelSource = entity.LabelSourceManual
+			plm.LabelSource = entity.SrcManual
 
 			if err := db.Save(&plm).Error; err != nil {
 				log.Errorf("label: %s", err)
@@ -112,7 +112,7 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if label.LabelSource == entity.LabelSourceManual {
+		if label.LabelSource == entity.SrcManual {
 			db.Delete(&label)
 		} else {
 			label.LabelUncertainty = 100

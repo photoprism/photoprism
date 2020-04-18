@@ -65,7 +65,7 @@
                                     slot-scope="{ hover }"
                                     :dark="selection.includes(label.LabelUUID)"
                                     :class="selection.includes(label.LabelUUID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
-                                    :to="{name: 'photos', query: {q: 'label:' + label.CustomSlug}}">
+                                    :to="{name: 'photos', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.LabelSlug)}}">
                                 <v-img
                                         :src="label.getThumbnailUrl('tile_500')"
                                         aspect-ratio="1"

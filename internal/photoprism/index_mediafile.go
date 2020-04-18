@@ -149,24 +149,28 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if fileChanged || o.UpdateExif {
 			// Read UpdateExif data
 			if metaData, err := m.MetaData(); err == nil {
-				if !photo.ModifiedLocation {
+				if photo.LocationSrc == entity.SrcAuto || photo.LocationSrc == entity.SrcImg {
 					photo.PhotoLat = metaData.Lat
 					photo.PhotoLng = metaData.Lng
 					photo.PhotoAltitude = metaData.Altitude
+					photo.LocationSrc = entity.SrcImg
 				}
 
-				if !photo.ModifiedDate {
+				if photo.TakenSrc == entity.SrcAuto || photo.TakenSrc == entity.SrcImg {
 					photo.TakenAt = metaData.TakenAt
 					photo.TakenAtLocal = metaData.TakenAtLocal
 					photo.TimeZone = metaData.TimeZone
+					photo.TakenSrc = entity.SrcImg
 				}
 
-				if photo.NoTitle() {
+				if metaData.Title != "" && (photo.NoTitle() || photo.TitleSrc == entity.SrcImg) {
 					photo.PhotoTitle = metaData.Title
+					photo.TitleSrc = entity.SrcImg
 				}
 
-				if photo.Description.NoDescription() {
+				if metaData.Description != "" && (photo.Description.NoDescription() || photo.DescriptionSrc == entity.SrcImg) {
 					photo.Description.PhotoDescription = metaData.Description
+					photo.DescriptionSrc = entity.SrcImg
 				}
 
 				if photo.Description.NoNotes() {
@@ -201,7 +205,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 
-		if !photo.ModifiedCamera && (fileChanged || o.UpdateCamera) {
+		if photo.CameraSrc == entity.SrcAuto && (fileChanged || o.UpdateCamera) {
 			// Set UpdateCamera, Lens, Focal Length and F Number
 			photo.Camera = entity.NewCamera(m.CameraModel(), m.CameraMake()).FirstOrCreate(ind.db)
 			photo.Lens = entity.NewLens(m.LensModel(), m.LensMake()).FirstOrCreate(ind.db)
@@ -218,13 +222,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		if fileChanged || o.UpdateKeywords || o.UpdateLocation || o.UpdateTitle || photo.NoTitle() {
 			if photo.HasLatLng() {
-				locKeywords, labels = photo.IndexLocation(ind.db, ind.conf.GeoCodingApi(), labels)
+				var locLabels classify.Labels
+				locKeywords, locLabels = photo.UpdateLocation(ind.db, ind.conf.GeoCodingApi())
+				labels = append(labels, locLabels...)
 			} else {
 				log.Info("index: no latitude and longitude in metadata")
-
-				if err := photo.UpdateTitle(labels); err != nil {
-					log.Warn(err)
-				}
 
 				photo.Place = entity.UnknownPlace
 				photo.PlaceID = entity.UnknownPlace.ID
@@ -233,8 +235,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	} else if m.IsXMP() {
 		// TODO: Proof-of-concept for indexing XMP sidecar files
 		if data, err := meta.XMP(m.FileName()); err == nil {
-			if data.Title != "" && !photo.ModifiedTitle {
+			if data.Title != "" && photo.TitleSrc == entity.SrcAuto {
 				photo.PhotoTitle = data.Title
+				photo.TitleSrc = entity.SrcXmp
 			}
 
 			if photo.Description.NoCopyright() && data.Copyright != "" {
@@ -253,6 +256,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 				photo.Description.PhotoNotes = data.Comment
 			}
 		}
+	}
+
+	if photo.Place != nil && (photo.PhotoCountry == "" || photo.PhotoCountry == "zz") {
+		photo.PhotoCountry = photo.Place.LocCountry
 	}
 
 	if !photo.TakenAtLocal.IsZero() {
@@ -297,28 +304,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
-	if file.FilePrimary && (fileChanged || o.UpdateKeywords) {
-		w := txt.Keywords(photo.Description.PhotoKeywords)
-
-		if NonCanonical(fileBase) {
-			w = append(w, txt.FilenameKeywords(filePath)...)
-			w = append(w, txt.FilenameKeywords(fileBase)...)
-		}
-
-		w = append(w, locKeywords...)
-		w = append(w, txt.FilenameKeywords(file.OriginalName)...)
-		w = append(w, file.FileMainColor)
-		w = append(w, labels.Keywords()...)
-
-		photo.Description.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
-
-		if photo.Description.PhotoKeywords != "" {
-			log.Debugf("index: updated photo keywords (%s)", photo.Description.PhotoKeywords)
-		} else {
-			log.Debug("index: no photo keywords")
-		}
-	}
-
 	if photoExists {
 		// Estimate location
 		if o.UpdateLocation && photo.NoLocation() {
@@ -348,10 +333,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		event.EntitiesCreated("photos", []entity.Photo{photo})
 	}
 
-	if len(labels) > 0 {
-		log.Infof("index: adding labels %+v", labels)
-		ind.addLabels(photo.ID, labels)
-	}
+	photo.AddLabels(labels, ind.db)
 
 	file.PhotoID = photo.ID
 	result.PhotoID = photo.ID
@@ -359,9 +341,42 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.PhotoUUID = photo.PhotoUUID
 	result.PhotoUUID = photo.PhotoUUID
 
-	if file.FilePrimary && (fileChanged || o.UpdateKeywords) {
+	if file.FilePrimary && (fileChanged || o.UpdateKeywords || o.UpdateTitle || o.UpdateLabels) {
+		labels := photo.ClassifyLabels()
+
+		if err := photo.UpdateTitle(labels); err != nil {
+			log.Warnf("%s (%s)", err.Error(), photo.PhotoUUID)
+		}
+
+		w := txt.Keywords(photo.Description.PhotoKeywords)
+
+		if NonCanonical(fileBase) {
+			w = append(w, txt.FilenameKeywords(filePath)...)
+			w = append(w, txt.FilenameKeywords(fileBase)...)
+		}
+
+		w = append(w, locKeywords...)
+		w = append(w, txt.FilenameKeywords(file.OriginalName)...)
+		w = append(w, file.FileMainColor)
+		w = append(w, labels.Keywords()...)
+
+		photo.Description.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
+
+		if photo.Description.PhotoKeywords != "" {
+			log.Debugf("index: updated photo keywords (%s)", photo.Description.PhotoKeywords)
+		} else {
+			log.Debug("index: no photo keywords")
+		}
+
+		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
+			log.Errorf("index: %s", err)
+			result.Status = IndexFailed
+			result.Error = err
+			return result
+		}
+
 		if err := photo.IndexKeywords(ind.db); err != nil {
-			log.Error(err)
+			log.Warnf("%s (%s)", err.Error(), photo.PhotoUUID)
 		}
 	}
 
@@ -483,42 +498,4 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 	log.Debugf("index: image classification took %s", elapsed)
 
 	return results
-}
-
-func (ind *Index) addLabels(photoId uint, labels classify.Labels) {
-	for _, label := range labels {
-		lm := entity.NewLabel(label.Title(), label.Priority).FirstOrCreate(ind.db)
-
-		if lm.New {
-			event.EntitiesCreated("labels", []*entity.Label{lm})
-
-			if label.Priority >= 0 {
-				event.Publish("count.labels", event.Data{
-					"count": 1,
-				})
-			}
-		}
-
-		if err := lm.Update(label, ind.db); err != nil {
-			log.Errorf("index: %s", err)
-		}
-
-		plm := entity.NewPhotoLabel(photoId, lm.ID, label.Uncertainty, label.Source).FirstOrCreate(ind.db)
-
-		// Add categories
-		for _, category := range label.Categories {
-			sn := entity.NewLabel(txt.Title(category), -3).FirstOrCreate(ind.db)
-			if err := ind.db.Model(&lm).Association("LabelCategories").Append(sn).Error; err != nil {
-				log.Errorf("index: %s", err)
-			}
-		}
-
-		if plm.LabelUncertainty > label.Uncertainty && plm.LabelUncertainty > 100 {
-			plm.LabelUncertainty = label.Uncertainty
-			plm.LabelSource = label.Source
-			if err := ind.db.Save(&plm).Error; err != nil {
-				log.Errorf("index: %s", err)
-			}
-		}
-	}
 }

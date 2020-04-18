@@ -36,8 +36,8 @@ type PhotoResult struct {
 	PhotoLat         float64
 	PhotoLng         float64
 	PhotoAltitude    int
-	PhotoFocalLength int
 	PhotoIso         int
+	PhotoFocalLength int
 	PhotoFNumber     float64
 	PhotoExposure    string
 
@@ -52,14 +52,12 @@ type PhotoResult struct {
 	LensMake  string
 
 	// Location
-	LocationID        string
-	PlaceID           string
-	LocLabel          string
-	LocCity           string
-	LocState          string
-	LocCountry        string
-	LocationChanged   bool
-	LocationEstimated bool
+	LocationID string
+	PlaceID    string
+	LocLabel   string
+	LocCity    string
+	LocState   string
+	LocCountry string
 
 	// File
 	FileID          uint

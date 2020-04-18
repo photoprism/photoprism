@@ -115,9 +115,19 @@ func (m *Label) Update(label classify.Label, db *gorm.DB) error {
 		save = true
 	}
 
-	if !save {
-		return nil
+	if save {
+		if err := db.Save(m).Error; err != nil {
+			return err
+		}
 	}
 
-	return db.Save(m).Error
+	// Add categories
+	for _, category := range label.Categories {
+		sn := NewLabel(txt.Title(category), -3).FirstOrCreate(db)
+		if err := db.Model(m).Association("LabelCategories").Append(sn).Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

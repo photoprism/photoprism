@@ -117,6 +117,7 @@
 
                             <v-flex xs12 sm6 md3 class="pa-2 p-timezone-select">
                                 <v-autocomplete
+                                        @change="updateTime"
                                         :disabled="disabled"
                                         :label="labels.timezone"
                                         hide-details
@@ -198,10 +199,10 @@
                                         hide-details
                                         browser-autocomplete="off"
                                         color="secondary-dark"
-                                        item-value="code"
-                                        item-text="name"
+                                        item-value="Code"
+                                        item-text="Name"
                                         v-model="model.PhotoCountry"
-                                        :items="countryOptions">
+                                        :items="countries">
                                 </v-select>
                             </v-flex>
 
@@ -376,6 +377,7 @@
     import options from "resources/options.json";
     import {DateTime} from "luxon";
     import moment from "moment-timezone"
+    import countries from "resources/countries.json";
 
     export default {
         name: 'p-tab-photo-edit-details',
@@ -387,11 +389,11 @@
                 disabled: !this.$config.feature("edit"),
                 config: this.$config.values,
                 all: {
-                    countries: [{code: "", name: ""}],
                     colors: [{label: "Unknown", name: ""}],
                 },
                 readonly: this.$config.getValue("readonly"),
                 options: options,
+                countries: countries,
                 labels: {
                     search: this.$gettext("Search"),
                     view: this.$gettext("View"),
@@ -411,27 +413,47 @@
                 showTimePicker: false,
                 date: "",
                 time: "",
+                dateFormatted: "",
+                timeFormatted: "",
+                timeLocalFormatted: "",
             };
         },
-        computed: {
-            dateFormatted() {
+        watch: {
+            date() {
                 if (!this.date) {
-                    return "";
+                    this.dateFormatted = "";
+                    this.timeLocalFormatted = "";
+                    return
                 }
 
-                return DateTime.fromISO(this.date).toLocaleString(DateTime.DATE_FULL);
+                this.dateFormatted = DateTime.fromISO(this.date).toLocaleString(DateTime.DATE_FULL);
             },
-            timeFormatted() {
-                if (!this.time) {
-                    return "";
-                }
-
-                return DateTime.fromISO(this.time).toLocaleString(DateTime.TIME_24_WITH_SECONDS);
+            time() {
+                this.updateTime();
             },
-            timeLocalFormatted() {
+        },
+        computed: {
+            cameraOptions() {
+                return this.config.cameras;
+            },
+            lensOptions() {
+                return this.config.lenses;
+            },
+            colorOptions() {
+                return this.all.colors.concat(this.config.colors);
+            },
+            timeZones() {
+                return moment.tz.names();
+            },
+        },
+        methods: {
+            updateTime() {
                 if (!this.time || !this.date) {
-                    return ""
+                    this.timeFormatted = ""
+                    this.timeLocalFormatted = ""
                 }
+
+                this.timeFormatted = DateTime.fromISO(this.time).toLocaleString(DateTime.TIME_24_WITH_SECONDS);
 
                 const utcDate = this.date + "T" + this.time + "Z";
 
@@ -450,25 +472,8 @@
                     includeOffset: false,
                 }) + "Z";
 
-                return localDate.toLocaleString(DateTime.TIME_24_WITH_SECONDS);
+                this.timeLocalFormatted = localDate.toLocaleString(DateTime.TIME_24_WITH_SECONDS);
             },
-            countryOptions() {
-                return this.all.countries.concat(this.config.countries);
-            },
-            cameraOptions() {
-                return this.config.cameras;
-            },
-            lensOptions() {
-                return this.config.lenses;
-            },
-            colorOptions() {
-                return this.all.colors.concat(this.config.colors);
-            },
-            timeZones() {
-                return moment.tz.names();
-            },
-        },
-        methods: {
             left() {
                 this.$emit('next');
             },
@@ -485,6 +490,8 @@
                     const date = DateTime.fromISO(model.TakenAt).toUTC();
                     this.date = date.toISODate();
                     this.time = date.toFormat("HH:mm:ss");
+
+                    this.updateTime();
                 }
             },
             save(close) {
@@ -495,6 +502,8 @@
                 this.model.update().then(() => {
                     if (close) {
                         this.$emit('close');
+                    } else {
+                        this.refresh(this.model);
                     }
                 });
             },

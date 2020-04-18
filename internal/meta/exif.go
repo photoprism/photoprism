@@ -273,7 +273,7 @@ func Exif(filename string) (data Data, err error) {
 		} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", value, loc); err == nil {
 			data.TakenAt = tl.UTC()
 		} else {
-			log.Warnf("could parse time: %s", err.Error())
+			log.Warnf("could not parse time: %s", err.Error())
 		}
 	}
 

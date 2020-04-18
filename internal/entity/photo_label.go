@@ -6,19 +6,15 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
-const (
-	LabelSourceManual = "manual"
-)
-
 // PhotoLabel represents the many-to-many relation between Photo and label.
 // Labels are weighted by uncertainty (100 - confidence)
 type PhotoLabel struct {
 	PhotoID          uint `gorm:"primary_key;auto_increment:false"`
 	LabelID          uint `gorm:"primary_key;auto_increment:false;index"`
 	LabelUncertainty int
-	LabelSource      string
-	Photo            *Photo
-	Label            *Label
+	LabelSource      string `gorm:"type:varbinary(8);"`
+	Photo            *Photo `gorm:"PRELOAD:false"`
+	Label            *Label `gorm:"PRELOAD:true"`
 }
 
 // TableName returns PhotoLabel table identifier "photos_labels"

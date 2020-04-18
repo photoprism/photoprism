@@ -243,7 +243,7 @@ var CountryNames = map[string]string{
 	"uz": "Uzbekistan",
 	"vu": "Vanuatu",
 	"ve": "Venezuela",
-	"vn": "Viet Nam",
+	"vn": "Vietnam",
 	"vg": "British Virgin Islands",
 	"vi": "US Virgin Islands",
 	"wf": "Wallis and Futuna",

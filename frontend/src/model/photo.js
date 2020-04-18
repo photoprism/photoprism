@@ -2,47 +2,51 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
 
+const SrcAuto   = ""
+const SrcManual = "manual"
+const SrcImg    = "img"
+const SrcXmp    = "xmp"
+const SrcYml    = "yml"
+
 class Photo extends RestModel {
     getDefaults() {
         return {
             ID: 0,
             TakenAt: "",
+            TakenAtLocal: "",
+            TakenSrc: "",
+            TimeZone: "",
             PhotoUUID: "",
             PhotoPath: "",
             PhotoName: "",
             PhotoTitle: "",
+            TitleSrc: "",
             PhotoFavorite: false,
             PhotoPrivate: false,
             PhotoNSFW: false,
             PhotoStory: false,
+            PhotoReview: false,
             PhotoLat: 0.0,
             PhotoLng: 0.0,
             PhotoAltitude: 0,
-            PhotoFocalLength: 0,
             PhotoIso: 0,
+            PhotoFocalLength: 0,
             PhotoFNumber: 0.0,
             PhotoExposure: "",
             PhotoViews: 0,
             Camera: {},
             CameraID: 0,
+            CameraSrc: "",
             Lens: {},
             LensID: 0,
-            CountryChanged: false,
             Location: null,
             LocationID: "",
+            LocationSrc: "",
             Place: null,
             PlaceID: "",
-            LocationEstimated: false,
             PhotoCountry: "",
             PhotoYear: 0,
             PhotoMonth: 0,
-            TakenAtLocal: "",
-            ModifiedTitle: false,
-            ModifiedDescription: false,
-            ModifiedDate: false,
-            ModifiedLocation: false,
-            ModifiedCamera: false,
-            TimeZone: "",
             Description: {
                 PhotoDescription: "",
                 PhotoKeywords: "",
@@ -52,6 +56,7 @@ class Photo extends RestModel {
                 PhotoCopyright: "",
                 PhotoLicense: "",
             },
+            DescriptionSrc: "",
             Files: [],
             Labels: [],
             Keywords: [],
@@ -241,23 +246,23 @@ class Photo extends RestModel {
         const values = this.getValues(true);
 
         if(values.PhotoTitle) {
-            values.ModifiedTitle = true;
+            values.TitleSrc = SrcManual;
         }
 
         if(values.Description) {
-            values.ModifiedDescription = true;
+            values.DescriptionSrc = SrcManual;
         }
 
-        if(values.PhotoLat || values.PhotoLng || values.PhotoAltitude || values.PhotoCountry) {
-            values.ModifiedLocation = true;
+        if(values.PhotoLat || values.PhotoLng) {
+            values.LocationSrc = SrcManual;
         }
 
         if(values.TakenAt || values.TimeZone) {
-            values.ModifiedDate = true;
+            values.TakenSrc = SrcManual;
         }
 
-        if(values.CameraID || values.LensID) {
-            values.ModifiedCamera = true;
+        if(values.CameraID || values.LensID || values.PhotoFocalLength || values.PhotoFNumber || values.PhotoIso || values.PhotoExposure) {
+            values.CameraSrc = SrcManual;
         }
 
         return Api.put(this.getEntityResource(), values).then((response) => Promise.resolve(this.setValues(response.data)));
