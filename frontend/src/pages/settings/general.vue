@@ -261,7 +261,11 @@
                 </v-card-actions>
             </v-card>
 
-            <div class="mt-5"></div>
+            <v-card flat tile class="mt-0 px-1 application">
+                <v-card-title primary-title class="pb-0">
+                    <p class="body-1 mb-4">PhotoPrism {{$config.getValue("version")}}<br>{{$config.getValue("copyright")}}</p>
+                </v-card-title>
+            </v-card>
         </v-form>
     </div>
 </template>
