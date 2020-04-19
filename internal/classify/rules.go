@@ -3723,10 +3723,10 @@ var rules = LabelRules{
 		Categories: []string{"animal", "insect"},
 	},
 	"monastery": {
-		Label:      "historic architecture",
+		Label:      "historic",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"architecture"},
 	},
 	"mongoose": {
 		Label:      "animal",

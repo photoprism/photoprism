@@ -2493,10 +2493,6 @@ model t:
   categories:
     - vehicle
 
-monastery:
-  label: historic architecture
-  threshold: 0.3
-
 monitor:
   label: screen
   threshold: 0.2
@@ -2594,6 +2590,12 @@ historic architecture:
     - architecture
 
 palace:
+  see: historic architecture
+
+monastery:
+  see: historic architecture
+
+triumphal arch:
   see: historic architecture
 
 panpipe:
@@ -3015,9 +3017,6 @@ trailer truck:
 
 trimaran:
   see: boat
-
-triumphal arch:
-  see: historic architecture
 
 trolleybus:
   label: bus
