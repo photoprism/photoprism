@@ -6,7 +6,7 @@
             <v-edit-dialog
                     :return-value.sync="album.AlbumName"
                     lazy
-                    @save="onSave(album)"
+                    @save="updateAlbum()"
                     class="p-inline-edit">
                 <v-toolbar-title>
                     {{ album.AlbumName }}
@@ -175,7 +175,7 @@
                 this.growDesc = !this.growDesc;
             },
             updateAlbum() {
-                this.album.update()
+                this.album.update();
             },
             dropdownChange() {
                 this.filterChange();
@@ -196,9 +196,6 @@
             clearQuery() {
                 this.filter.q = '';
                 this.filterChange();
-            },
-            onSave(album) {
-                album.update().then((a) => window.document.title = `PhotoPrism: ${a.AlbumName}`);
             },
         }
     };

@@ -19,10 +19,12 @@ type AlbumResult struct {
 	AlbumUUID        string
 	AlbumSlug        string
 	AlbumName        string
-	AlbumCount       int
-	AlbumFavorite    bool
 	AlbumDescription string
 	AlbumNotes       string
+	AlbumOrder       string
+	AlbumTemplate    string
+	AlbumCount       int
+	AlbumFavorite    bool
 	LinkCount        int
 }
 

@@ -1,6 +1,6 @@
 import RestModel from "model/rest";
 import Api from "common/api";
-import { DateTime } from "luxon";
+import {DateTime} from "luxon";
 
 class Album extends RestModel {
     getDefaults() {
@@ -12,18 +12,12 @@ class Album extends RestModel {
             AlbumName: "",
             AlbumDescription: "",
             AlbumNotes: "",
-            AlbumViews: 0,
-            AlbumFavorite: true,
-            AlbumPublic: false,
-            AlbumLat: 0,
-            AlbumLng: 0,
-            AlbumRadius: 0,
             AlbumOrder: "",
             AlbumTemplate: "",
+            AlbumFavorite: true,
             Links: [],
             CreatedAt: "",
             UpdatedAt: "",
-            DeletedAt: null,
         };
     }
 
@@ -46,7 +40,7 @@ class Album extends RestModel {
     getThumbnailSrcset() {
         const result = [];
 
-        result.push(this.getThumbnailUrl("fit_720")  + " 720w");
+        result.push(this.getThumbnailUrl("fit_720") + " 720w");
         result.push(this.getThumbnailUrl("fit_1280") + " 1280w");
         result.push(this.getThumbnailUrl("fit_1920") + " 1920w");
         result.push(this.getThumbnailUrl("fit_2560") + " 2560w");
@@ -74,7 +68,7 @@ class Album extends RestModel {
     toggleLike() {
         this.AlbumFavorite = !this.AlbumFavorite;
 
-        if(this.AlbumFavorite) {
+        if (this.AlbumFavorite) {
             return Api.post(this.getEntityResource() + "/like");
         } else {
             return Api.delete(this.getEntityResource() + "/like");

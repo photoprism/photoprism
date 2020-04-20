@@ -57,15 +57,19 @@
             '$route'() {
                 const query = this.$route.query;
 
-                this.uuid = this.$route.params.uuid;
                 this.filter.q = query['q'] ? query['q'] : '';
                 this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
                 this.filter.country = query['country'] ? query['country'] : '';
                 this.settings.view = this.viewType();
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
-                this.findAlbum();
-                this.search();
+
+                if (this.uuid !== this.$route.params.uuid) {
+                    this.uuid = this.$route.params.uuid;
+                    this.findAlbum().then(() => this.search());
+                } else {
+                    this.search();
+                }
             }
         },
         data() {
@@ -273,6 +277,7 @@
             findAlbum() {
                 return this.model.find(this.uuid).then(m => {
                     this.model = m;
+
                     this.filter.order = m.AlbumOrder;
                     window.document.title = `PhotoPrism: ${this.model.AlbumName}`;
 
@@ -287,19 +292,26 @@
                 }
 
                 for (let i = 0; i < data.entities.length; i++) {
-                    const values = data.entities[i];
-
                     if (this.model.AlbumUUID === data.entities[i].AlbumUUID) {
+                        let values = data.entities[i];
+
                         for (let key in values) {
                             if (values.hasOwnProperty(key)) {
                                 this.model[key] = values[key];
                             }
                         }
 
+                        window.document.title = `PhotoPrism: ${this.model.AlbumName}`
+
                         this.dirty = true;
                         this.scrollDisabled = false;
 
-                        this.loadMore();
+                        if (this.filter.order !== this.model.AlbumOrder) {
+                            this.filter.order = this.model.AlbumOrder;
+                            this.updateQuery();
+                        } else {
+                            this.loadMore();
+                        }
 
                         return;
                     }
