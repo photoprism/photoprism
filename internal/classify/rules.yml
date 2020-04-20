@@ -88,12 +88,14 @@ tiger:
   see: wild cat
 
 seashore:
-  threshold: 0.38
+  label: seashore
+  threshold: 0.6
   categories:
     - beach
     - water
 
 lakeside:
+  label: lakeside
   threshold: 0.35
   categories:
     - water
@@ -247,7 +249,7 @@ pirate:
 
 ship:
   label: ship
-  threshold: 0.15
+  threshold: 0.52
   categories:
     - water
     - vehicle
@@ -328,6 +330,7 @@ hen:
   see: cock
 
 ostrich:
+  label: ostrich
   threshold: 0.78
   categories:
     - bird
@@ -576,6 +579,7 @@ harvestman:
   see: spider
 
 scorpion:
+  label: scorpion
   threshold: 0.4
   categories:
     - animal
@@ -888,7 +892,6 @@ dugong:
   label: water
 
 sea lion:
-  label: sea lion
   threshold: 0.21
   categories:
     - animal
@@ -1549,7 +1552,7 @@ bison:
 
 ram:
   label: sheep
-  threshold: 0.2
+  threshold: 0.27
   categories:
     - farm
     - animal
@@ -1922,7 +1925,7 @@ bicycle-built-for-two:
 
 shelter:
   label: shelter
-  threshold: 0.2
+  threshold: 0.4
   categories:
     - outdoor
     - architecture
@@ -2105,7 +2108,8 @@ confectionery:
   label: shop
 
 container ship:
-  see: ship
+  label: ship
+  threshold: 0.63
 
 convertible:
   label: car
@@ -2828,7 +2832,7 @@ rubber eraser:
 
 shoe:
   label: shoe
-  threshold: 0.4
+  threshold: 0.65
 
 running shoe:
   see: shoe
@@ -2982,7 +2986,7 @@ studio couch:
     - furniture
 
 submarine:
-  threshold: 0.75
+  threshold: 0.93
   categories:
     - water
     - ship
@@ -3620,13 +3624,15 @@ safety pin:
   see: ignore
 
 safe:
-  label:safe
+  label: safe
   threshold: 0.32
+
 beaker:
   label: cup
   threshold: 0.3
   categories:
     - beverage
+
 cup:
   threshold: 0.3
 

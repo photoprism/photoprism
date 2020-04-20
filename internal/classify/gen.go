@@ -44,6 +44,10 @@ func main() {
 
 	err = yaml.Unmarshal(yamlConfig, rules)
 
+	if err != nil {
+		panic(err)
+	}
+
 	for label, rule := range rules {
 		for _, char := range label {
 			if unicode.IsUpper(char) {
