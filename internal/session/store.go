@@ -1,31 +1,51 @@
 package session
 
 import (
-	"time"
+	"encoding/json"
+	"io/ioutil"
 
 	gc "github.com/patrickmn/go-cache"
 )
 
-var cache = gc.New(72*time.Hour, 30*time.Minute)
-
-func Create(data interface{}) string {
+func (s *Session) Create(data interface{}) string {
 	token := Token()
-	cache.Set(token, data, gc.DefaultExpiration)
+	s.cache.Set(token, data, gc.DefaultExpiration)
 	log.Debugf("session: created")
+
+	if err := s.Save(); err != nil {
+		log.Errorf("session: %s", err)
+	}
+
 	return token
 }
 
-func Delete(token string) {
-	cache.Delete(token)
+func (s *Session) Delete(token string) {
+	s.cache.Delete(token)
 	log.Debugf("session: deleted")
+
+	if err := s.Save(); err != nil {
+		log.Errorf("session: %s", err)
+	}
 }
 
-func Get(token string) (data interface{}, exists bool) {
-	return cache.Get(token)
+func (s *Session) Get(token string) (data interface{}, exists bool) {
+	return s.cache.Get(token)
 }
 
-func Exists(token string) bool {
-	_, found := cache.Get(token)
+func (s *Session) Exists(token string) bool {
+	_, found := s.cache.Get(token)
 
 	return found
+}
+
+func (s *Session) Save() error {
+	if s.cacheFile == "" {
+		return nil
+	} else if serialized, err := json.MarshalIndent(s.cache.Items(), "", " "); err != nil {
+		return err
+	} else if err = ioutil.WriteFile(s.cacheFile, serialized, 0600); err != nil {
+		return err
+	}
+
+	return nil
 }
