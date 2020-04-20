@@ -92,7 +92,7 @@
                 editScope: "main",
                 listColumns: [
                     {text: this.$gettext('Name'), value: 'AccName', sortable: false, align: 'left'},
-                    {text: this.$gettext('Sharing'), value: 'AccShare', sortable: false, align: 'center'},
+                    {text: this.$gettext('Upload'), value: 'AccShare', sortable: false, align: 'center'},
                     {text: this.$gettext('Sync'), value: 'AccSync', sortable: false, align: 'center'},
                     {text: this.$gettext('Synced'), value: 'SyncDate', sortable: false, class: 'hidden-sm-and-down', align: 'left'},
                     {text: '', value: '', sortable: false, class: 'hidden-xs-only', align: 'right'},

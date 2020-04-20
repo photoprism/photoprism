@@ -4,7 +4,7 @@
             <v-card-title primary-title>
                 <v-layout row wrap v-if="scope === 'sharing'">
                     <v-flex xs9>
-                        <h3 class="headline mb-0">Sharing</h3>
+                        <h3 class="headline mb-0">Upload</h3>
                     </v-flex>
                     <v-flex xs3 text-xs-right>
                         <v-switch
