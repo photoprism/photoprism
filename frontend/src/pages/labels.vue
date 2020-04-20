@@ -84,7 +84,7 @@
 
                                     <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
                                            icon large absolute
-                                           class="p-label-select"
+                                           :class="selection.includes(label.LabelUUID) ? 'p-label-select' : 'p-label-select opacity-50'"
                                            @click.stop.prevent="toggleSelection(label.LabelUUID)">
                                         <v-icon v-if="selection.includes(label.LabelUUID)" color="white">check_circle
                                         </v-icon>
@@ -241,7 +241,7 @@
 
                     if (this.scrollDisabled) {
                         this.offset = offset;
-                        if(this.results.length > 1) {
+                        if (this.results.length > 1) {
                             this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' labels loaded'));
                         }
                     } else {
@@ -290,7 +290,7 @@
                 return params;
             },
             refresh() {
-                if(this.loading) return;
+                if (this.loading) return;
                 this.loading = true;
                 this.page = 0;
                 this.dirty = true;
@@ -389,7 +389,7 @@
             this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
         },
         destroyed() {
-            for(let i = 0; i < this.subscriptions.length; i++) {
+            for (let i = 0; i < this.subscriptions.length; i++) {
                 Event.unsubscribe(this.subscriptions[i]);
             }
         },
