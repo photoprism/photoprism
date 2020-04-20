@@ -271,9 +271,12 @@
                 });
             },
             findAlbum() {
-                this.model.find(this.uuid).then(m => {
+                return this.model.find(this.uuid).then(m => {
                     this.model = m;
+                    this.filter.order = m.AlbumOrder;
                     window.document.title = `PhotoPrism: ${this.model.AlbumName}`;
+
+                    return Promise.resolve(this.model)
                 });
             },
             onAlbumsUpdated(ev, data) {
@@ -347,8 +350,7 @@
             },
         },
         created() {
-            this.findAlbum();
-            this.search();
+            this.findAlbum().then(() => this.search());
 
             this.subscriptions.push(Event.subscribe("albums.updated", (ev, data) => this.onAlbumsUpdated(ev, data)));
             this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));

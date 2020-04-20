@@ -28,6 +28,11 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		if !conf.Settings().Features.Download {
+			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)
+			return
+		}
+
 		var f form.Selection
 		start := time.Now()
 

@@ -6,7 +6,9 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/ulule/deepcopier"
 )
 
 // Album represents a photo album
@@ -62,4 +64,17 @@ func (m *Album) Rename(albumName string) {
 
 	m.AlbumName = strings.TrimSpace(albumName)
 	m.AlbumSlug = slug.Make(m.AlbumName)
+}
+
+// Save updates the entity using form data and stores it in the database.
+func (m *Album) Save(f form.Album, db *gorm.DB) error {
+	if err := deepcopier.Copy(m).From(f); err != nil {
+		return err
+	}
+
+	if f.AlbumName != "" {
+		m.Rename(f.AlbumName)
+	}
+
+	return db.Save(m).Error
 }

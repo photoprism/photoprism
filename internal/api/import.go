@@ -21,13 +21,13 @@ import (
 // POST /api/v1/import*
 func StartImport(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/import/*path", func(c *gin.Context) {
-		if conf.ReadOnly() || !conf.Settings().Features.Import {
-			c.AbortWithStatusJSON(http.StatusForbidden, ErrReadOnly)
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		if conf.ReadOnly() || !conf.Settings().Features.Import {
+			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)
 			return
 		}
 

@@ -12,7 +12,6 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GET /api/v1/photos/:uuid
@@ -46,8 +45,9 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		db := conf.Db()
 		uuid := c.Param("uuid")
-		q := query.New(conf.Db())
+		q := query.New(db)
 
 		m, err := q.PhotoByUUID(uuid)
 
@@ -61,19 +61,22 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 		f, err := form.NewPhoto(m)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
 		}
 
 		// 2) Update form with values from request
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusBadRequest, ErrFormInvalid)
 			return
 		}
 
 		// 3) Save model with values from form
-		if err := entity.SavePhotoForm(m, f, conf.Db(), conf.GeoCodingApi()); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+		if err := entity.SavePhotoForm(m, f, db, conf.GeoCodingApi()); err != nil {
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
 		}
 

@@ -117,30 +117,41 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		var f form.Album
+		db := conf.Db()
+		uuid := c.Param("uuid")
+		q := query.New(db)
 
-		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
-			return
-		}
-
-		id := c.Param("uuid")
-		q := query.New(conf.Db())
-
-		m, err := q.AlbumByUUID(id)
+		m, err := q.AlbumByUUID(uuid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
 			return
 		}
 
-		m.Rename(f.AlbumName)
-		conf.Db().Save(&m)
+		f, err := form.NewAlbum(m)
+
+		if err != nil {
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			return
+		}
+
+		if err := c.BindJSON(&f); err != nil {
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusBadRequest, ErrFormInvalid)
+			return
+		}
+
+		if err := m.Save(f, conf.Db()); err != nil {
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			return
+		}
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 		event.Success("album saved")
 
-		PublishAlbumEvent(EntityUpdated, id, c, q)
+		PublishAlbumEvent(EntityUpdated, uuid, c, q)
 
 		c.JSON(http.StatusOK, m)
 	})

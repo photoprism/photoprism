@@ -214,19 +214,22 @@ func UpdateAccount(router *gin.RouterGroup, conf *config.Config) {
 		f, err := form.NewAccount(m)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
 		}
 
 		// 2) Update form with values from request
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusBadRequest, ErrFormInvalid)
 			return
 		}
 
 		// 3) Save model with values from form
 		if err := m.Save(f, conf.Db()); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			log.Error(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
 		}
 
