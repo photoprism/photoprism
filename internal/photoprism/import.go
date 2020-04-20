@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -199,11 +200,11 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	}
 
 	//	Mon Jan 2 15:04:05 -0700 MST 2006
-	pathName := imp.originalsPath() + string(os.PathSeparator) + dateCreated.Format("2006/01")
+	pathName := path.Join(imp.originalsPath(), dateCreated.Format("2006/01"))
 
 	iteration := 0
 
-	result := pathName + string(os.PathSeparator) + fileName + fileExtension
+	result := path.Join(pathName, fileName + fileExtension)
 
 	for fs.FileExists(result) {
 		if mediaFile.Hash() == fs.Hash(result) {
@@ -212,7 +213,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 		iteration++
 
-		result = pathName + string(os.PathSeparator) + fileName + "." + fmt.Sprintf("edited_%d", iteration) + fileExtension
+		result = path.Join(pathName, fileName + "." + fmt.Sprintf("%04d", iteration) + fileExtension)
 	}
 
 	return result, nil
