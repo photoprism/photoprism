@@ -85,7 +85,28 @@ class Rest extends Model {
         };
 
         return Api.get(this.getCollectionResource(), options).then((response) => {
+            let count = 0;
+            let limit = 0;
+            let offset = 0;
+
+            if (response.headers['x-count']) {
+                count = response.headers['x-count'];
+            } else if (response.data) {
+                count = response.data.length
+            }
+
+            if (response.headers['x-limit']) {
+                limit = response.headers['x-limit'];
+            }
+
+            if (response.headers['x-offset']) {
+                offset = response.headers['x-offset'];
+            }
+
             response.models = [];
+            response.count = count;
+            response.limit = limit;
+            response.offset = offset;
 
             for (let i = 0; i < response.data.length; i++) {
                 response.models.push(new this(response.data[i]));

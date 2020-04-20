@@ -44,15 +44,16 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		result, err := q.Photos(f)
+		result, count, err := q.Photos(f)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
-		c.Header("X-Result-Count", strconv.Itoa(f.Count))
-		c.Header("X-Result-Offset", strconv.Itoa(f.Offset))
+		c.Header("X-Count", strconv.Itoa(count))
+		c.Header("X-Limit", strconv.Itoa(f.Count))
+		c.Header("X-Offset", strconv.Itoa(f.Offset))
 
 		c.JSON(http.StatusOK, result)
 	})

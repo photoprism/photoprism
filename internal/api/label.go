@@ -43,8 +43,9 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		c.Header("X-Result-Count", strconv.Itoa(f.Count))
-		c.Header("X-Result-Offset", strconv.Itoa(f.Offset))
+		// TODO c.Header("X-Count", strconv.Itoa(count))
+		c.Header("X-Limit", strconv.Itoa(f.Count))
+		c.Header("X-Offset", strconv.Itoa(f.Offset))
 
 		c.JSON(http.StatusOK, result)
 	})

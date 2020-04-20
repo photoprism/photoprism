@@ -85,13 +85,13 @@ class Photo extends RestModel {
 
     getColor() {
         switch (this.PhotoColor) {
-        case "brown":
-        case "black":
-        case "white":
-        case "grey":
-            return "grey lighten-2";
-        default:
-            return this.PhotoColor + " lighten-4";
+            case "brown":
+            case "black":
+            case "white":
+            case "grey":
+                return "grey lighten-2";
+            default:
+                return this.PhotoColor + " lighten-4";
         }
     }
 
@@ -269,6 +269,21 @@ class Photo extends RestModel {
         }
 
         return Api.put(this.getEntityResource(), values).then((response) => Promise.resolve(this.setValues(response.data)));
+    }
+
+    expand() {
+        let photos = [];
+        let files = this.Files;
+
+        for (let i = 0; i < files.length; i++) {
+            let photo = new this.constructor(this.getValues())
+            photo.setValues(files[i])
+            photos.push(photo)
+        }
+
+        console.log("PHOTOS", photos);
+
+        return photos;
     }
 
     static getCollectionResource() {

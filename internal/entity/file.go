@@ -79,9 +79,10 @@ func (m *File) ShareFileName() string {
 		name = m.PhotoUUID
 	}
 
-	taken := m.Photo.TakenAt.Format("20060102-150405")
+	taken := m.Photo.TakenAtLocal.Format("20060102-150405")
+	token := rnd.Token(3)
 
-	result := fmt.Sprintf("%s-%s.%s", taken, name, m.FileType)
+	result := fmt.Sprintf("%s-%s-%s.%s", taken, name, token, m.FileType)
 
 	return result
 }

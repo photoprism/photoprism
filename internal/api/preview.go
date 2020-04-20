@@ -46,7 +46,7 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 		f.Order = "relevance"
 
 		q := query.New(conf.Db())
-		p, err := q.Photos(f)
+		p, _, err := q.Photos(f)
 
 		if err != nil {
 			log.Error(err)

@@ -41,6 +41,7 @@ type PhotoSearch struct {
 	Count     int       `form:"count" binding:"required"`
 	Offset    int       `form:"offset"`
 	Order     string    `form:"order"`
+	Merged    bool      `form:"merged"`
 }
 
 func (f *PhotoSearch) GetQuery() string {

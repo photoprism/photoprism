@@ -71,13 +71,20 @@
             editDialog() {
                 const g = this.$viewer.gallery; // Gallery
                 let index = 0;
-                let selection = g.items.map((p, i) => {
+
+                // remove duplicates
+                let filtered = g.items.filter(function (p, i, s) {
+                    return !(i > 0 && p.uuid === s[i - 1].uuid);
+                });
+
+                let selection = filtered.map((p, i) => {
                     if (g.currItem.uuid === p.uuid) {
                         index = i;
                     }
 
                     return p.uuid
                 });
+
                 let album = null;
 
                 g.close(); // Close Gallery

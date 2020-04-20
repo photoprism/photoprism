@@ -49,8 +49,9 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		c.Header("X-Result-Count", strconv.Itoa(f.Count))
-		c.Header("X-Result-Offset", strconv.Itoa(f.Offset))
+		// TODO c.Header("X-Count", strconv.Itoa(count))
+		c.Header("X-Limit", strconv.Itoa(f.Count))
+		c.Header("X-Offset", strconv.Itoa(f.Offset))
 
 		c.JSON(http.StatusOK, result)
 	})
@@ -352,7 +353,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		p, err := q.Photos(form.PhotoSearch{
+		p, _, err := q.Photos(form.PhotoSearch{
 			Album:  a.AlbumUUID,
 			Count:  10000,
 			Offset: 0,
@@ -389,7 +390,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		for _, f := range p {
 			fileName := path.Join(conf.OriginalsPath(), f.FileName)
-			fileAlias := f.DownloadFileName()
+			fileAlias := f.ShareFileName()
 
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {

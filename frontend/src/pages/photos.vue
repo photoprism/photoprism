@@ -149,8 +149,12 @@
                 // Open Edit Dialog
                 Event.publish("dialog.edit", {selection: selection, album: null, index: index});
             },
-            openPhoto(index) {
-                this.$viewer.show(this.results, index)
+            openPhoto(index, showMerged) {
+                if (showMerged) {
+                    this.$viewer.show(this.results[index].expand(), 0)
+                } else {
+                    this.$viewer.show(this.results, index);
+                }
             },
             loadMore() {
                 if (this.scrollDisabled) return;
@@ -164,6 +168,7 @@
                 const params = {
                     count: count,
                     offset: offset,
+                    merged: true,
                 };
 
                 Object.assign(params, this.lastFilter);
@@ -175,7 +180,7 @@
                 Photo.search(params).then(response => {
                     this.results = this.dirty ? response.models : this.results.concat(response.models);
 
-                    this.scrollDisabled = (response.models.length < count);
+                    this.scrollDisabled = (response.count < count);
 
                     if (this.scrollDisabled) {
                         this.offset = offset;
@@ -218,6 +223,7 @@
                 const params = {
                     count: this.pageSize,
                     offset: this.offset,
+                    merged: true,
                 };
 
                 Object.assign(params, this.filter);
@@ -259,7 +265,7 @@
 
                     this.results = response.models;
 
-                    this.scrollDisabled = (response.models.length < this.pageSize);
+                    this.scrollDisabled = (response.count < this.pageSize);
 
                     if (this.scrollDisabled) {
                         if (!this.results.length) {

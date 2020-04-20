@@ -10,6 +10,8 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/capture"
+	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/ulule/deepcopier"
 )
 
 // PhotoResult contains found photos and their main file plus other meta data.
@@ -40,6 +42,7 @@ type PhotoResult struct {
 	PhotoFocalLength int
 	PhotoFNumber     float64
 	PhotoExposure    string
+	Merged           bool
 
 	// Camera
 	CameraID    uint
@@ -76,9 +79,11 @@ type PhotoResult struct {
 	FileChroma      uint8  // todo: remove from result?
 	FileLuminance   string // todo: remove from result?
 	FileDiff        uint32 // todo: remove from result?
+
+	Files []entity.File
 }
 
-func (m *PhotoResult) DownloadFileName() string {
+func (m *PhotoResult) ShareFileName() string {
 	var name string
 
 	if m.PhotoTitle != "" {
@@ -87,17 +92,18 @@ func (m *PhotoResult) DownloadFileName() string {
 		name = m.PhotoUUID
 	}
 
-	taken := m.TakenAt.Format("20060102-150405")
+	taken := m.TakenAtLocal.Format("20060102-150405")
+	token := rnd.Token(3)
 
-	result := fmt.Sprintf("%s-%s.%s", taken, name, m.FileType)
+	result := fmt.Sprintf("%s-%s-%s.%s", taken, name, token, m.FileType)
 
 	return result
 }
 
 // Photos searches for photos based on a Form and returns a PhotoResult slice.
-func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
+func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, count int, err error) {
 	if err := f.ParseQueryString(); err != nil {
-		return results, err
+		return results, 0, err
 	}
 
 	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("photos: %+v", f)))
@@ -116,7 +122,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		lenses.lens_make, lenses.lens_model,
 		places.loc_label, places.loc_city, places.loc_state, places.loc_country
 		`).
-		Joins("JOIN files ON files.photo_id = photos.id AND files.file_primary AND files.deleted_at IS NULL").
+		Joins("JOIN files ON files.photo_id = photos.id AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
 		Joins("JOIN places ON photos.place_id = places.id").
@@ -128,10 +134,10 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		s = s.Where("photos.photo_uuid = ?", f.ID)
 
 		if result := s.Scan(&results); result.Error != nil {
-			return results, result.Error
+			return results, 0, result.Error
 		}
 
-		return results, nil
+		return results, 0, nil
 	}
 
 	var categories []entity.Category
@@ -142,7 +148,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		slugString := strings.ToLower(f.Label)
 		if result := q.db.First(&label, "label_slug =? OR custom_slug = ?", slugString, slugString); result.Error != nil {
 			log.Errorf("search: label \"%s\" not found", f.Label)
-			return results, fmt.Errorf("label \"%s\" not found", f.Label)
+			return results, 0, fmt.Errorf("label \"%s\" not found", f.Label)
 		} else {
 			labelIds = append(labelIds, label.ID)
 
@@ -166,7 +172,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 		}
 	} else if f.Query != "" {
 		if len(f.Query) < 2 {
-			return results, fmt.Errorf("query too short")
+			return results, 0, fmt.Errorf("query too short")
 		}
 
 		slugString := slug.Make(f.Query)
@@ -338,10 +344,48 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 	}
 
 	if result := s.Scan(&results); result.Error != nil {
-		return results, result.Error
+		return results, 0, result.Error
 	}
 
-	return results, nil
+	count = len(results)
+
+	if !f.Merged {
+		for i := range results {
+			results[i].Files = []entity.File{}
+		}
+
+		return results, count, nil
+	}
+
+	merged := make([]PhotoResult, 0, count)
+
+	var lastId uint
+	var i int
+
+	for _, res := range results {
+		file := entity.File{}
+
+		if err := deepcopier.Copy(&file).From(res); err != nil {
+			return merged, count, err
+		}
+
+		file.ID = res.FileID
+
+		if lastId == res.ID && i > 0 {
+			merged[i-1].Files = append(merged[i-1].Files, file)
+			merged[i-1].Merged = true
+			continue
+		}
+
+		lastId = res.ID
+
+		res.Files = append(res.Files, file)
+		merged = append(merged, res)
+
+		i++
+	}
+
+	return merged, count, nil
 }
 
 // PhotoByID returns a Photo based on the ID.

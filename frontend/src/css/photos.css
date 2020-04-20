@@ -17,6 +17,12 @@
     top: 4px; right: 4px;
 }
 
+#photoprism .p-photo-tiles .p-photo-merged,
+#photoprism .p-photo-mosaic .p-photo-merged,
+#photoprism .p-photo-details .p-photo-merged {
+    top: 4px; left: 4px;
+}
+
 #photoprism .p-photo-tiles .p-photo-like,
 #photoprism .p-photo-mosaic .p-photo-like,
 #photoprism .p-photo-details .p-photo-like {

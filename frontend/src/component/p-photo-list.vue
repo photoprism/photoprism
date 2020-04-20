@@ -37,7 +37,7 @@
                 </v-img>
             </td>
             <td class="p-photo-desc p-pointer" @click.exact="openPhoto(props.index)">
-                {{ props.item.PhotoTitle }}
+                {{ props.item.PhotoTitle }} <v-icon v-if="props.item.Merged" color="secondary-dark" class="action-burst dark right">burst_mode</v-icon>
             </td>
             <td class="p-photo-desc hidden-xs-only" :title="props.item.TakenAt | luxon:format('dd/MM/yyyy HH:mm:ss')">
                 <button @click.stop.prevent="editPhoto(props.index)">

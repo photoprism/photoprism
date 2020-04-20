@@ -19,7 +19,7 @@ const (
 
 func PublishPhotoEvent(e EntityEvent, uuid string, c *gin.Context, q *query.Query) {
 	f := form.PhotoSearch{ID: uuid}
-	result, err := q.Photos(f)
+	result, _, err := q.Photos(f)
 
 	if err != nil {
 		log.Error(err)

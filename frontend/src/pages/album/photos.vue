@@ -141,8 +141,12 @@
                 // Open Edit Dialog
                 Event.publish("dialog.edit", {selection: selection, album: this.album, index: index});
             },
-            openPhoto(index) {
-                this.$viewer.show(this.results, index)
+            openPhoto(index, showMerged) {
+                if (showMerged) {
+                    this.$viewer.show(this.results[index].expand(), 0)
+                } else {
+                    this.$viewer.show(this.results, index);
+                }
             },
             loadMore() {
                 if (this.scrollDisabled) return;
@@ -157,6 +161,7 @@
                     count: count,
                     offset: offset,
                     album: this.uuid,
+                    merged: true,
                 };
 
                 Object.assign(params, this.lastFilter);
@@ -212,6 +217,7 @@
                     count: this.pageSize,
                     offset: this.offset,
                     album: this.uuid,
+                    merged: true,
                 };
 
                 Object.assign(params, this.filter);

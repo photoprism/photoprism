@@ -61,6 +61,12 @@
                                 <v-icon v-if="photo.PhotoFavorite" color="white" class="t-like t-on">favorite</v-icon>
                                 <v-icon v-else color="accent lighten-3" class="t-like t-off">favorite_border</v-icon>
                             </v-btn>
+
+                            <v-btn v-if="photo.Merged" :flat="!hover" :ripple="false"
+                                   icon large absolute class="p-photo-merged"
+                                   @click.stop.prevent="openPhoto(index, true)">
+                                <v-icon color="white" class="action-burst">burst_mode</v-icon>
+                            </v-btn>
                         </v-img>
 
                         <v-card-title primary-title class="pa-3 p-photo-desc">
@@ -72,15 +78,18 @@
                                 </h3>
                                 <div class="caption">
                                     <button @click.exact="editPhoto(index)">
-                                        <v-icon size="14">date_range</v-icon> {{ photo.getDateString() }}
+                                        <v-icon size="14">date_range</v-icon>
+                                        {{ photo.getDateString() }}
                                     </button>
                                     <br/>
                                     <button @click.exact="editPhoto(index)">
-                                        <v-icon size="14">photo_camera</v-icon> {{ photo.getCamera() }}
+                                        <v-icon size="14">photo_camera</v-icon>
+                                        {{ photo.getCamera() }}
                                     </button>
                                     <br/>
                                     <button @click.exact="openLocation(index)" v-if="photo.LocationID && places">
-                                        <v-icon size="14">location_on</v-icon> {{ photo.getLocation() }}
+                                        <v-icon size="14">location_on</v-icon>
+                                        {{ photo.getLocation() }}
                                     </button>
                                 </div>
                             </div>

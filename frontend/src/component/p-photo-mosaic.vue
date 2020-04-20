@@ -54,6 +54,12 @@
                                 <v-icon v-else color="accent lighten-3" class="t-like t-off">favorite_border</v-icon>
                             </v-btn>
 
+                            <v-btn v-if="photo.Merged" :flat="!hover" :ripple="false"
+                                   icon large absolute class="p-photo-merged"
+                                   @click.stop.prevent="openPhoto(index, true)">
+                                <v-icon color="white" class="action-burst">burst_mode</v-icon>
+                            </v-btn>
+
                             <!-- v-btn v-if="hover" :flat="!hover" :ripple="false"
                                    icon small absolute
                                    class="p-photo-edit"
