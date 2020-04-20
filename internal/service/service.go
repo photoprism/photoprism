@@ -5,6 +5,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/session"
 )
 
 var conf *config.Config
@@ -16,6 +17,7 @@ var services struct {
 	Convert  *photoprism.Convert
 	Resample *photoprism.Resample
 	Classify *classify.TensorFlow
+	Session  *session.Session
 }
 
 func SetConfig(c *config.Config) {

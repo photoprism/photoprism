@@ -317,15 +317,15 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, err error) {
 	}
 
 	switch f.Order {
-	case "relevance":
+	case entity.SortOrderRelevance:
 		s = s.Order("photo_story DESC, photo_favorite DESC, taken_at DESC")
-	case "newest":
+	case entity.SortOrderNewest:
 		s = s.Order("taken_at DESC, photos.photo_uuid")
-	case "oldest":
+	case entity.SortOrderOldest:
 		s = s.Order("taken_at, photos.photo_uuid")
-	case "imported":
+	case entity.SortOrderImported:
 		s = s.Order("photos.id DESC")
-	case "similar":
+	case entity.SortOrderSimilar:
 		s = s.Order("files.file_main_color, photos.location_id, files.file_diff, taken_at DESC")
 	default:
 		s = s.Order("taken_at DESC, photos.photo_uuid")

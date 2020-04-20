@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/session"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -54,7 +54,7 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 		if err := json.Unmarshal(m, &info); err != nil {
 			log.Error(err)
 		} else {
-			if session.Exists(info.SessionToken) {
+			if service.Session().Exists(info.SessionToken) {
 				log.Debug("websocket: authenticated")
 
 				wsAuth.mutex.Lock()

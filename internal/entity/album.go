@@ -49,8 +49,9 @@ func NewAlbum(albumName string) *Album {
 	albumSlug := slug.Make(albumName)
 
 	result := &Album{
-		AlbumSlug: albumSlug,
-		AlbumName: albumName,
+		AlbumSlug:  albumSlug,
+		AlbumName:  albumName,
+		AlbumOrder: SortOrderOldest,
 	}
 
 	return result

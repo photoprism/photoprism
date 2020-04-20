@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/session"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -27,7 +27,7 @@ func CreateSession(router *gin.RouterGroup, conf *config.Config) {
 
 		user := gin.H{"ID": 1, "FirstName": "Admin", "LastName": "", "Role": "admin", "Email": "photoprism@localhost"}
 
-		token := session.Create(user)
+		token := service.Session().Create(user)
 
 		c.Header("X-Session-Token", token)
 
@@ -42,7 +42,7 @@ func DeleteSession(router *gin.RouterGroup, conf *config.Config) {
 	router.DELETE("/session/:token", func(c *gin.Context) {
 		token := c.Param("token")
 
-		session.Delete(token)
+		service.Session().Delete(token)
 
 		c.JSON(http.StatusOK, gin.H{"status": "ok", "token": token})
 	})
@@ -59,5 +59,5 @@ func Unauthorized(c *gin.Context, conf *config.Config) bool {
 	token := c.GetHeader("X-Session-Token")
 
 	// Check if session token is valid
-	return !session.Exists(token)
+	return !service.Session().Exists(token)
 }

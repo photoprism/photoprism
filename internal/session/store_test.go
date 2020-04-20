@@ -2,44 +2,49 @@ package session
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreate(t *testing.T) {
-	token := Create(23)
+func TestSession_Create(t *testing.T) {
+	s := New(time.Hour, "testdata")
+	token := s.Create(23)
 	t.Logf("token: %s", token)
 	assert.Equal(t, 48, len(token))
 }
 
-func TestDelete(t *testing.T) {
-	Delete("abc")
+func TestSession_Delete(t *testing.T) {
+	s := New(time.Hour, "testdata")
+	s.Delete("abc")
 }
 
-func TestGet(t *testing.T) {
-	token := Create(42)
+func TestSession_Get(t *testing.T) {
+	s := New(time.Hour, "testdata")
+	token := s.Create(42)
 	t.Logf("token: %s", token)
 	assert.Equal(t, 48, len(token))
 
-	data, exists := Get(token)
+	data, exists := s.Get(token)
 
 	assert.Equal(t, 42, data)
 	assert.True(t, exists)
 
-	Delete(token)
+	s.Delete(token)
 
-	data, exists = Get(token)
+	data, exists = s.Get(token)
 
 	assert.Nil(t, data)
-	assert.False(t, Exists(token))
+	assert.False(t, s.Exists(token))
 }
 
-func TestExists(t *testing.T) {
-	assert.False(t, Exists("xyz"))
-	token := Create(23)
+func TestSession_Exists(t *testing.T) {
+	s := New(time.Hour, "testdata")
+	assert.False(t, s.Exists("xyz"))
+	token := s.Create(23)
 	t.Logf("token: %s", token)
 	assert.Equal(t, 48, len(token))
-	assert.True(t, Exists(token))
-	Delete(token)
-	assert.False(t, Exists(token))
+	assert.True(t, s.Exists(token))
+	s.Delete(token)
+	assert.False(t, s.Exists(token))
 }
