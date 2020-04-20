@@ -71,7 +71,8 @@ lion:
   see: wild cat
 
 cheetah:
-  label: wild cat
+  label: cheetah
+  priority: 5
   threshold: 0.7
   categories:
     - cat
@@ -311,8 +312,8 @@ stingray:
   see: fish
 
 cock:
-  threshold: 0.2
   label: chicken
+  threshold: 0.2
   categories:
     - bird
     - animal
@@ -1538,8 +1539,6 @@ water buffalo:
 bison:
   label: animal
   threshold: 0.5
-  categories:
-    - farm
 
 ram:
   label: sheep
@@ -2757,14 +2756,10 @@ punching bag:
 harvester:
   label: vehicle
   threshold: 0.5
-  categories:
-    - farm
 
 thresher:
   label: vehicle
   threshold: 0.5
-  categories:
-    - farm
 
 tractor:
   label: tractor
@@ -3908,8 +3903,8 @@ hamper:
   see: basket
 
 hay:
-  threshold: 0.2
   label: farm
+  threshold: 0.2
 
 hip:
   label: plant

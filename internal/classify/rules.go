@@ -696,7 +696,7 @@ var rules = LabelRules{
 		Label:      "animal",
 		Threshold:  0.500000,
 		Priority:   0,
-		Categories: []string{"farm"},
+		Categories: []string{},
 	},
 	"bittern": {
 		Label:      "bird",
@@ -1263,9 +1263,9 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"cheetah": {
-		Label:      "wild cat",
+		Label:      "cheetah",
 		Threshold:  0.700000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"cat", "animal", "wildlife"},
 	},
 	"chesapeake bay retriever dog": {
@@ -2682,7 +2682,7 @@ var rules = LabelRules{
 		Label:      "vehicle",
 		Threshold:  0.500000,
 		Priority:   0,
-		Categories: []string{"farm"},
+		Categories: []string{},
 	},
 	"harvestman": {
 		Label:      "spider",
@@ -5676,7 +5676,7 @@ var rules = LabelRules{
 		Label:      "vehicle",
 		Threshold:  0.500000,
 		Priority:   0,
-		Categories: []string{"farm"},
+		Categories: []string{},
 	},
 	"throne": {
 		Label:      "",
