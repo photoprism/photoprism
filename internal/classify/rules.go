@@ -154,7 +154,7 @@ var rules = LabelRules{
 	},
 	"ambulance": {
 		Label:      "vehicle",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -202,7 +202,7 @@ var rules = LabelRules{
 	},
 	"amphibian": {
 		Label:      "vehicle",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -274,7 +274,7 @@ var rules = LabelRules{
 	},
 	"artichoke": {
 		Label:      "vegetables",
-		Threshold:  0.400000,
+		Threshold:  0.460000,
 		Priority:   0,
 		Categories: []string{"dining", "food"},
 	},
@@ -406,7 +406,7 @@ var rules = LabelRules{
 	},
 	"bannister": {
 		Label:      "stairs",
-		Threshold:  0.200000,
+		Threshold:  0.410000,
 		Priority:   0,
 		Categories: []string{"architecture"},
 	},
@@ -526,7 +526,7 @@ var rules = LabelRules{
 	},
 	"beach wagon": {
 		Label:      "vehicle",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -616,7 +616,7 @@ var rules = LabelRules{
 	},
 	"bell pepper": {
 		Label:      "vegetables",
-		Threshold:  0.400000,
+		Threshold:  0.460000,
 		Priority:   0,
 		Categories: []string{"dining", "food"},
 	},
@@ -820,7 +820,7 @@ var rules = LabelRules{
 	},
 	"bookshop": {
 		Label:      "shop",
-		Threshold:  0.000000,
+		Threshold:  0.350000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -880,7 +880,7 @@ var rules = LabelRules{
 	},
 	"box turtle": {
 		Label:      "turtle",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"reptile", "animal"},
 	},
@@ -946,7 +946,7 @@ var rules = LabelRules{
 	},
 	"broccoli": {
 		Label:      "vegetables",
-		Threshold:  0.800000,
+		Threshold:  0.900000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -1000,7 +1000,7 @@ var rules = LabelRules{
 	},
 	"bullet train": {
 		Label:      "vehicle",
-		Threshold:  0.350000,
+		Threshold:  0.460000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -1144,7 +1144,7 @@ var rules = LabelRules{
 	},
 	"carousel": {
 		Label:      "theme park",
-		Threshold:  0.200000,
+		Threshold:  0.800000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -1198,7 +1198,7 @@ var rules = LabelRules{
 	},
 	"cauliflower": {
 		Label:      "vegetables",
-		Threshold:  0.800000,
+		Threshold:  0.900000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -1252,7 +1252,7 @@ var rules = LabelRules{
 	},
 	"chambered nautilus": {
 		Label:      "snail",
-		Threshold:  0.750000,
+		Threshold:  0.770000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -1510,13 +1510,13 @@ var rules = LabelRules{
 	},
 	"confectionery": {
 		Label:      "shop",
-		Threshold:  0.200000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{},
 	},
 	"consomme": {
 		Label:      "soup",
-		Threshold:  0.200000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{"dining", "food"},
 	},
@@ -1558,7 +1558,7 @@ var rules = LabelRules{
 	},
 	"corn": {
 		Label:      "vegetables",
-		Threshold:  0.400000,
+		Threshold:  0.460000,
 		Priority:   0,
 		Categories: []string{"dining", "food"},
 	},
@@ -1636,7 +1636,7 @@ var rules = LabelRules{
 	},
 	"crib": {
 		Label:      "stained glass",
-		Threshold:  0.400000,
+		Threshold:  0.610000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -1672,7 +1672,7 @@ var rules = LabelRules{
 	},
 	"cucumber": {
 		Label:      "vegetables",
-		Threshold:  0.400000,
+		Threshold:  0.460000,
 		Priority:   0,
 		Categories: []string{"dining", "food"},
 	},
@@ -2110,7 +2110,7 @@ var rules = LabelRules{
 	},
 	"fire engine": {
 		Label:      "vehicle",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -2236,7 +2236,7 @@ var rules = LabelRules{
 	},
 	"freight car": {
 		Label:      "vehicle",
-		Threshold:  0.350000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -2296,7 +2296,7 @@ var rules = LabelRules{
 	},
 	"garbage truck": {
 		Label:      "truck",
-		Threshold:  0.300000,
+		Threshold:  0.410000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -2410,9 +2410,9 @@ var rules = LabelRules{
 	},
 	"golfcart": {
 		Label:      "outdoor",
-		Threshold:  0.300000,
+		Threshold:  0.700000,
 		Priority:   0,
-		Categories: []string{"vehicle"},
+		Categories: []string{},
 	},
 	"gondola": {
 		Label:      "vehicle",
@@ -2542,7 +2542,7 @@ var rules = LabelRules{
 	},
 	"grocery store": {
 		Label:      "store",
-		Threshold:  0.400000,
+		Threshold:  0.600000,
 		Priority:   0,
 		Categories: []string{"shop"},
 	},
@@ -2553,10 +2553,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"groom": {
-		Label:      "wedding",
+		Label:      "event",
 		Threshold:  0.300000,
 		Priority:   0,
-		Categories: []string{"event", "portrait"},
+		Categories: []string{"portrait"},
 	},
 	"ground beetle": {
 		Label:      "beetle",
@@ -2566,7 +2566,7 @@ var rules = LabelRules{
 	},
 	"guacamole": {
 		Label:      "vegetables",
-		Threshold:  0.900000,
+		Threshold:  0.700000,
 		Priority:   0,
 		Categories: []string{"cooking"},
 	},
@@ -2608,7 +2608,7 @@ var rules = LabelRules{
 	},
 	"half track": {
 		Label:      "vehicle",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -2710,9 +2710,9 @@ var rules = LabelRules{
 	},
 	"head cabbage": {
 		Label:      "vegetables",
-		Threshold:  0.400000,
+		Threshold:  0.800000,
 		Priority:   0,
-		Categories: []string{"dining", "food"},
+		Categories: []string{},
 	},
 	"helmet": {
 		Label:      "helmet",
@@ -2830,7 +2830,7 @@ var rules = LabelRules{
 	},
 	"hot pot": {
 		Label:      "soup",
-		Threshold:  0.200000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{"dining", "food"},
 	},
@@ -3256,9 +3256,9 @@ var rules = LabelRules{
 	},
 	"leatherback turtle": {
 		Label:      "turtle",
-		Threshold:  0.300000,
+		Threshold:  0.800000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"lemon": {
 		Label:      "fruit",
@@ -3400,7 +3400,7 @@ var rules = LabelRules{
 	},
 	"loggerhead": {
 		Label:      "turtle",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"reptile", "animal"},
 	},
@@ -3442,7 +3442,7 @@ var rules = LabelRules{
 	},
 	"lumbermill": {
 		Label:      "wood",
-		Threshold:  0.000000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -3550,7 +3550,7 @@ var rules = LabelRules{
 	},
 	"mashed potato": {
 		Label:      "vegetables",
-		Threshold:  0.400000,
+		Threshold:  0.460000,
 		Priority:   0,
 		Categories: []string{"dining", "food"},
 	},
@@ -3676,7 +3676,7 @@ var rules = LabelRules{
 	},
 	"minivan": {
 		Label:      "vehicle",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -3754,7 +3754,7 @@ var rules = LabelRules{
 	},
 	"moped": {
 		Label:      "vehicle",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -3814,15 +3814,15 @@ var rules = LabelRules{
 	},
 	"moving van": {
 		Label:      "vehicle",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
 	"mud turtle": {
 		Label:      "turtle",
-		Threshold:  0.300000,
+		Threshold:  0.800000,
 		Priority:   0,
-		Categories: []string{"reptile", "animal"},
+		Categories: []string{},
 	},
 	"mushroom": {
 		Label:      "mushroom",
@@ -3904,7 +3904,7 @@ var rules = LabelRules{
 	},
 	"obelisk": {
 		Label:      "tower",
-		Threshold:  0.200000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{"architecture"},
 	},
@@ -4372,7 +4372,7 @@ var rules = LabelRules{
 	},
 	"police van": {
 		Label:      "vehicle",
-		Threshold:  0.000000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -4564,7 +4564,7 @@ var rules = LabelRules{
 	},
 	"racer": {
 		Label:      "vehicle",
-		Threshold:  0.200000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"car"},
 	},
@@ -4630,7 +4630,7 @@ var rules = LabelRules{
 	},
 	"red wolf": {
 		Label:      "wolf",
-		Threshold:  0.500000,
+		Threshold:  0.710000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -5116,7 +5116,7 @@ var rules = LabelRules{
 	},
 	"ski": {
 		Label:      "",
-		Threshold:  0.580000,
+		Threshold:  0.760000,
 		Priority:   0,
 		Categories: []string{"snow"},
 	},
@@ -5200,7 +5200,7 @@ var rules = LabelRules{
 	},
 	"snowplow": {
 		Label:      "snow",
-		Threshold:  0.400000,
+		Threshold:  0.800000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -5458,13 +5458,13 @@ var rules = LabelRules{
 	},
 	"street sign": {
 		Label:      "sign",
-		Threshold:  0.000000,
+		Threshold:  0.120000,
 		Priority:   0,
-		Categories: []string{"traffic"},
+		Categories: []string{},
 	},
 	"streetcar": {
 		Label:      "",
-		Threshold:  0.200000,
+		Threshold:  0.280000,
 		Priority:   0,
 		Categories: []string{"train", "vehicle"},
 	},
@@ -5524,13 +5524,13 @@ var rules = LabelRules{
 	},
 	"sunglass": {
 		Label:      "sunglasses",
-		Threshold:  0.200000,
+		Threshold:  0.220000,
 		Priority:   2,
 		Categories: []string{"portrait"},
 	},
 	"sunglasses": {
 		Label:      "sunglasses",
-		Threshold:  0.200000,
+		Threshold:  0.220000,
 		Priority:   2,
 		Categories: []string{"portrait"},
 	},
@@ -5614,7 +5614,7 @@ var rules = LabelRules{
 	},
 	"tank": {
 		Label:      "vehicle",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -5638,7 +5638,7 @@ var rules = LabelRules{
 	},
 	"teddy": {
 		Label:      "toy",
-		Threshold:  0.200000,
+		Threshold:  0.450000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -5662,7 +5662,7 @@ var rules = LabelRules{
 	},
 	"terrapin": {
 		Label:      "turtle",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"reptile", "animal"},
 	},
@@ -5674,7 +5674,7 @@ var rules = LabelRules{
 	},
 	"theater curtain": {
 		Label:      "theater",
-		Threshold:  0.200000,
+		Threshold:  0.800000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -5698,7 +5698,7 @@ var rules = LabelRules{
 	},
 	"throne": {
 		Label:      "",
-		Threshold:  0.400000,
+		Threshold:  0.700000,
 		Priority:   0,
 		Categories: []string{"historic"},
 	},
@@ -5758,7 +5758,7 @@ var rules = LabelRules{
 	},
 	"timber wolf": {
 		Label:      "wolf",
-		Threshold:  0.500000,
+		Threshold:  0.710000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -5776,7 +5776,7 @@ var rules = LabelRules{
 	},
 	"tobacco shop": {
 		Label:      "shop",
-		Threshold:  0.000000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -5818,7 +5818,7 @@ var rules = LabelRules{
 	},
 	"tow truck": {
 		Label:      "truck",
-		Threshold:  0.200000,
+		Threshold:  0.410000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -5836,13 +5836,13 @@ var rules = LabelRules{
 	},
 	"toyshop": {
 		Label:      "shop",
-		Threshold:  0.200000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{},
 	},
 	"tractor": {
 		Label:      "tractor",
-		Threshold:  0.300000,
+		Threshold:  0.340000,
 		Priority:   0,
 		Categories: []string{"farm", "vehicle"},
 	},
@@ -5854,7 +5854,7 @@ var rules = LabelRules{
 	},
 	"trailer truck": {
 		Label:      "truck",
-		Threshold:  0.200000,
+		Threshold:  0.410000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -5884,7 +5884,7 @@ var rules = LabelRules{
 	},
 	"tricycle": {
 		Label:      "vehicle",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -5944,7 +5944,7 @@ var rules = LabelRules{
 	},
 	"turtle": {
 		Label:      "turtle",
-		Threshold:  0.300000,
+		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"reptile", "animal"},
 	},
@@ -5962,7 +5962,7 @@ var rules = LabelRules{
 	},
 	"umbrella": {
 		Label:      "",
-		Threshold:  0.600000,
+		Threshold:  0.800000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -5986,9 +5986,15 @@ var rules = LabelRules{
 	},
 	"valley": {
 		Label:      "",
-		Threshold:  0.200000,
+		Threshold:  0.230000,
 		Priority:   0,
 		Categories: []string{"landscape", "nature"},
+	},
+	"vase": {
+		Label:      "vase",
+		Threshold:  0.500000,
+		Priority:   0,
+		Categories: []string{},
 	},
 	"vault": {
 		Label:      "building",
@@ -5998,7 +6004,7 @@ var rules = LabelRules{
 	},
 	"vegetables": {
 		Label:      "vegetables",
-		Threshold:  0.400000,
+		Threshold:  0.460000,
 		Priority:   0,
 		Categories: []string{"dining", "food"},
 	},
@@ -6088,7 +6094,7 @@ var rules = LabelRules{
 	},
 	"wallaby": {
 		Label:      "",
-		Threshold:  0.200000,
+		Threshold:  0.350000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -6224,6 +6230,12 @@ var rules = LabelRules{
 		Priority:   1,
 		Categories: []string{"reptile", "animal"},
 	},
+	"whiskey jug": {
+		Label:      "drinks",
+		Threshold:  0.300000,
+		Priority:   0,
+		Categories: []string{},
+	},
 	"whistle": {
 		Label:      "portrait",
 		Threshold:  0.350000,
@@ -6238,7 +6250,7 @@ var rules = LabelRules{
 	},
 	"white wolf": {
 		Label:      "wolf",
-		Threshold:  0.500000,
+		Threshold:  0.710000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -6262,7 +6274,7 @@ var rules = LabelRules{
 	},
 	"window": {
 		Label:      "window",
-		Threshold:  0.700000,
+		Threshold:  0.800000,
 		Priority:   0,
 		Categories: []string{"architecture"},
 	},
@@ -6304,7 +6316,7 @@ var rules = LabelRules{
 	},
 	"wolf": {
 		Label:      "wolf",
-		Threshold:  0.500000,
+		Threshold:  0.710000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -6316,7 +6328,7 @@ var rules = LabelRules{
 	},
 	"wombat": {
 		Label:      "",
-		Threshold:  0.200000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{"animal"},
 	},
@@ -6328,7 +6340,7 @@ var rules = LabelRules{
 	},
 	"wooden spoon": {
 		Label:      "spoon",
-		Threshold:  0.200000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -6382,13 +6394,13 @@ var rules = LabelRules{
 	},
 	"zebra": {
 		Label:      "",
-		Threshold:  0.400000,
+		Threshold:  0.410000,
 		Priority:   0,
 		Categories: []string{"animal", "wildlife"},
 	},
 	"zucchini": {
 		Label:      "vegetables",
-		Threshold:  0.400000,
+		Threshold:  0.460000,
 		Priority:   0,
 		Categories: []string{"dining", "food"},
 	},

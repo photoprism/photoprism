@@ -106,13 +106,13 @@ cardoon:
 
 window:
   label: window
-  threshold: 0.7
+  threshold: 0.8
   categories:
     - architecture
 
 bannister:
   label: stairs
-  threshold: 0.2
+  threshold: 0.41
   categories:
     - architecture
 
@@ -429,7 +429,7 @@ tailed frog:
 
 turtle:
   label: turtle
-  threshold: 0.3
+  threshold: 0.4
   categories:
     - reptile
     - animal
@@ -438,10 +438,12 @@ loggerhead:
   see: turtle
 
 leatherback turtle:
-  see: turtle
+  label: turtle
+  threshold: 0.8
 
 mud turtle:
-  see: turtle
+  label: turtle
+  threshold: 0.8
 
 terrapin:
   see: turtle
@@ -704,7 +706,7 @@ platypus:
   threshold: 0.7
 
 wallaby:
-  threshold: 0.2
+  threshold: 0.35
   categories:
     - animal
 
@@ -714,7 +716,7 @@ koala:
     - animal
 
 wombat:
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - animal
 
@@ -763,7 +765,7 @@ sea slug:
 
 chambered nautilus:
   label: snail
-  threshold: 0.75
+  threshold: 0.77
 
 crab:
   label: crab
@@ -1261,7 +1263,7 @@ mexican hairless dog:
 
 wolf:
   label: wolf
-  threshold: 0.5
+  threshold: 0.71
   categories:
     - animal
 
@@ -1503,7 +1505,7 @@ sorrel:
   see: ignore
 
 zebra:
-  threshold: 0.4
+  threshold: 0.41
   categories:
     - animal
     - wildlife
@@ -1825,19 +1827,19 @@ wing:
 
 ambulance:
   label: vehicle
-  threshold: 0.3
+  threshold: 0.4
 
 amphibian:
   label: vehicle
-  threshold: 0.3
+  threshold: 0.4
 
 half track:
   label: vehicle
-  threshold: 0.3
+  threshold: 0.4
 
 tank:
   label: vehicle
-  threshold: 0.3
+  threshold: 0.4
 
 weapon:
   label: weapon
@@ -1954,16 +1956,18 @@ bookcase:
 
 bookshop:
   label: shop
+  threshold: 0.35
 
 tobacco shop:
   label: shop
+  threshold: 0.3
 
 breakwater:
   label: water
 
 bullet train:
   label: vehicle
-  threshold: 0.35
+  threshold: 0.46
 
 butcher shop:
   label: butcher
@@ -2104,7 +2108,7 @@ mouse:
   threshold: 0.2
 
 confectionery:
-  threshold: 0.2
+  threshold: 0.3
   label: shop
 
 container ship:
@@ -2257,7 +2261,7 @@ fireboat:
 
 fire engine:
   label: vehicle
-  threshold: 0.3
+  threshold: 0.4
 
 flagpole:
   label: flag
@@ -2285,7 +2289,7 @@ four-poster:
 
 freight car:
   label: vehicle
-  threshold: 0.35
+  threshold: 0.4
 
 french horn:
   see: instrument
@@ -2295,7 +2299,7 @@ frying pan:
 
 garbage truck:
   label: truck
-  threshold: 0.3
+  threshold: 0.41
 
 go-kart:
   label: vehicle
@@ -2303,9 +2307,7 @@ go-kart:
 
 golfcart:
   label: outdoor
-  threshold: 0.3
-  categories:
-    - vehicle
+  threshold: 0.7
 
 gondola:
   label: vehicle
@@ -2328,7 +2330,7 @@ greenhouse:
 
 grocery store:
   label: store
-  threshold: 0.4
+  threshold: 0.6
   categories:
     - shop
 
@@ -2497,7 +2499,7 @@ minibus:
 
 minivan:
   label: vehicle
-  threshold: 0.2
+  threshold: 0.4
 
 mixing bowl:
   label: bowl
@@ -2545,7 +2547,7 @@ unicycle:
 
 tricycle:
   label: vehicle
-  threshold: 0.3
+  threshold: 0.4
 
 motor scooter:
   label: scooter
@@ -2561,7 +2563,7 @@ mountain tent:
 
 moving van:
   label: vehicle
-  threshold: 0.2
+  threshold: 0.4
 
 notebook:
   label: computer
@@ -2569,7 +2571,7 @@ notebook:
 
 obelisk:
   label: tower
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - architecture
 
@@ -2646,20 +2648,20 @@ grille:
 
 racer:
   label: vehicle
-  threshold: 0.2
+  threshold: 0.4
   categories:
     - car
 
 moped:
   label: vehicle
-  threshold: 0.2
+  threshold: 0.4
 
 passenger car:
   see: car
 
 beach wagon:
   label: vehicle
-  threshold: 0.3
+  threshold: 0.4
 
 pay-phone:
   see: electronics
@@ -2749,6 +2751,7 @@ polaroid camera:
 
 police van:
   label: vehicle
+  threshold: 0.4
 
 pool table:
   see: ignore
@@ -2791,7 +2794,7 @@ thresher:
 
 tractor:
   label: tractor
-  threshold: 0.3
+  threshold: 0.34
   categories:
     - farm
     - vehicle
@@ -2883,7 +2886,7 @@ shovel:
   see: tool
 
 ski:
-  threshold: 0.58
+  threshold: 0.76
   categories:
     - snow
 
@@ -2907,7 +2910,7 @@ snowmobile:
 
 snowplow:
   label: snow
-  threshold: 0.4
+  threshold: 0.8
 
 plow:
   label: farm
@@ -2974,7 +2977,7 @@ strainer:
   threshold: 0.4
 
 streetcar:
-  threshold: 0.2
+  threshold: 0.28
   categories:
     - train
     - vehicle
@@ -3013,7 +3016,7 @@ teapot:
 
 theater curtain:
   label: theater
-  threshold: 0.2
+  threshold: 0.8
 
 toaster:
   threshold: 0.2
@@ -3027,15 +3030,15 @@ torch:
   see: ignore
 
 tow truck:
-  threshold: 0.2
+  threshold: 0.41
   label: truck
 
 toyshop:
-  threshold: 0.2
+  threshold: 0.3
   label: shop
 
 trailer truck:
-  threshold: 0.2
+  threshold: 0.41
   label: truck
 
 trimaran:
@@ -3110,7 +3113,7 @@ wok:
 
 wooden spoon:
   label: spoon
-  threshold: 0.2
+  threshold: 0.3
 
 fence:
   label: outdoor
@@ -3146,20 +3149,20 @@ book jacket:
 
 guacamole:
   label: vegetables
-  threshold: 0.9
+  threshold: 0.7
   categories:
     - cooking
 
 consomme:
   label: soup
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - dining
     - food
 
 hot pot:
   label: soup
-  threshold: 0.2
+  threshold: 0.3
   categories:
     - dining
     - food
@@ -3219,7 +3222,7 @@ hotdog:
 
 vegetables:
   label: vegetables
-  threshold: 0.4
+  threshold: 0.46
   categories:
     - dining
     - food
@@ -3228,15 +3231,16 @@ mashed potato:
   see: vegetables
 
 head cabbage:
-  see: vegetables
+  label: vegetables
+  threshold: 0.8
 
 broccoli:
   label: vegetables
-  threshold: 0.8
+  threshold: 0.9
 
 cauliflower:
   label: vegetables
-  threshold: 0.8
+  threshold: 0.9
 
 zucchini:
   see: vegetables
@@ -3399,7 +3403,7 @@ sandbar:
     - sand
 
 valley:
-  threshold: 0.2
+  threshold: 0.23
   categories:
     - landscape
     - nature
@@ -3509,7 +3513,7 @@ ear:
 sunglasses:
   label: sunglasses
   priority: 2
-  threshold: 0.2
+  threshold: 0.22
   categories:
     - portrait
 
@@ -3636,6 +3640,10 @@ beaker:
 cup:
   threshold: 0.3
 
+whiskey jug:
+  label: drinks
+  threshold: 0.3
+
 bucket:
   threshold: 0.6
 
@@ -3714,13 +3722,12 @@ slot:
 
 carousel:
   label: theme park
-  threshold: 0.2
+  threshold: 0.8
 
 groom:
-  label: wedding
+  label: event
   threshold: 0.3
   categories:
-    - event
     - portrait
 
 maypole:
@@ -3909,7 +3916,7 @@ cowboy boot:
   see: shoe
 
 crib:
-  threshold: 0.4
+  threshold: 0.61
   label: stained glass
 
 drumstick:
@@ -3958,6 +3965,7 @@ jinrikisha:
 
 lumbermill:
   label: wood
+  threshold: 0.4
 
 military uniform:
   see: fashion
@@ -4044,7 +4052,7 @@ scuba diver:
     - water
 
 throne:
-  threshold: 0.4
+  threshold: 0.7
   categories:
     - historic
 
@@ -4060,7 +4068,7 @@ whistle:
   see: fashion
 
 umbrella:
-  threshold: 0.6
+  threshold: 0.8
 
 vending machine:
   see: ignore
@@ -4076,7 +4084,7 @@ carton:
 
 teddy:
   label: toy
-  threshold: 0.2
+  threshold: 0.45
 
 corkscrew:
   see: ignore
@@ -4086,6 +4094,10 @@ feather boa:
 
 vacuum:
   see: ignore
+
+vase:
+  label: vase
+  threshold: 0.5
 
 crane:
   see: ignore
@@ -4109,5 +4121,4 @@ scabbard:
 
 street sign:
   label: sign
-  categories:
-    - traffic
+  threshold: 0.12
