@@ -55,65 +55,83 @@ func (s *Sync) Start() (err error) {
 			continue
 		}
 
+		// Values updated in account: AccError, AccErrors, SyncStatus, SyncDate
+		accError := a.AccError
+		accErrors := a.AccErrors
+		syncStatus := a.SyncStatus
+		syncDate := a.SyncDate
+		synced := false
+
 		switch a.SyncStatus {
 		case entity.AccountSyncStatusRefresh:
 			if complete, err := s.refresh(a); err != nil {
-				a.AccErrors++
-				a.AccError = err.Error()
+				accErrors++
+				accError = err.Error()
 			} else if complete {
-				a.AccErrors = 0
-				a.AccError = ""
+				accErrors = 0
+				accError = ""
 
 				if a.SyncDownload {
-					a.SyncStatus = entity.AccountSyncStatusDownload
+					syncStatus = entity.AccountSyncStatusDownload
 				} else if a.SyncUpload {
-					a.SyncStatus = entity.AccountSyncStatusUpload
+					syncStatus = entity.AccountSyncStatusUpload
 				} else {
-					a.SyncStatus = entity.AccountSyncStatusSynced
-					a.SyncDate.Time = time.Now()
-					a.SyncDate.Valid = true
+					syncStatus = entity.AccountSyncStatusSynced
+					syncDate.Time = time.Now()
+					syncDate.Valid = true
 				}
-
-				event.Publish("sync.refreshed", event.Data{"account": a})
 			}
 		case entity.AccountSyncStatusDownload:
 			if complete, err := s.download(a); err != nil {
-				a.AccErrors++
-				a.AccError = err.Error()
+				accErrors++
+				accError = err.Error()
 			} else if complete {
 				if a.SyncUpload {
-					a.SyncStatus = entity.AccountSyncStatusUpload
+					syncStatus = entity.AccountSyncStatusUpload
 				} else {
-					event.Publish("sync.synced", event.Data{"account": a})
-					a.SyncStatus = entity.AccountSyncStatusSynced
-					a.SyncDate.Time = time.Now()
-					a.SyncDate.Valid = true
+					synced = true
+					syncStatus = entity.AccountSyncStatusSynced
+					syncDate.Time = time.Now()
+					syncDate.Valid = true
 				}
 			}
 		case entity.AccountSyncStatusUpload:
 			if complete, err := s.upload(a); err != nil {
-				a.AccErrors++
-				a.AccError = err.Error()
+				accErrors++
+				accError = err.Error()
 			} else if complete {
-				event.Publish("sync.synced", event.Data{"account": a})
-				a.SyncStatus = entity.AccountSyncStatusSynced
-				a.SyncDate.Time = time.Now()
-				a.SyncDate.Valid = true
+				synced = true
+				syncStatus = entity.AccountSyncStatusSynced
+				syncDate.Time = time.Now()
+				syncDate.Valid = true
 			}
 		case entity.AccountSyncStatusSynced:
 			if a.SyncDate.Valid && a.SyncDate.Time.Before(time.Now().Add(time.Duration(-1*a.SyncInterval)*time.Second)) {
-				a.SyncStatus = entity.AccountSyncStatusRefresh
+				syncStatus = entity.AccountSyncStatusRefresh
 			}
 		default:
-			a.SyncStatus = entity.AccountSyncStatusRefresh
+			syncStatus = entity.AccountSyncStatusRefresh
 		}
 
 		if mutex.Sync.Canceled() {
 			return nil
 		}
 
+		if err := db.First(&a, a.ID).Error; err != nil {
+			log.Errorf("sync: %s", err.Error())
+			return err
+		}
+
+		// Only update the following fields to avoid overwriting other settings
+		a.AccError = accError
+		a.AccErrors = accErrors
+		a.SyncStatus = syncStatus
+		a.SyncDate = syncDate
+
 		if err := db.Save(&a).Error; err != nil {
 			log.Errorf("sync: %s", err.Error())
+		} else if synced {
+			event.Publish("sync.synced", event.Data{"account": a})
 		}
 	}
 
