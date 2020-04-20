@@ -104,7 +104,7 @@
                         </v-select>
                     </v-flex>
                     <v-flex xs12 pt-2 px-2>
-                        <v-textarea flat solo auto-grow autofocus
+                        <v-textarea flat solo auto-grow
                                     browser-autocomplete="off"
                                     :label="labels.description"
                                     :rows="2"
