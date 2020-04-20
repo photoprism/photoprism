@@ -2,6 +2,7 @@ package workers
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -87,7 +88,7 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 	done := make(map[string]bool)
 
 	for _, files := range relatedFiles {
-		for _, file := range files {
+		for i, file := range files {
 			if mutex.Sync.Canceled() {
 				return false, nil
 			}
@@ -99,25 +100,36 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 
 			localName := baseDir + file.RemoteName
 
-			if err := client.Download(file.RemoteName, localName, false); err != nil {
-				log.Errorf("sync: %s", err.Error())
-				file.Errors++
-				file.Error = err.Error()
+			if _, err := os.Stat(localName); err == nil {
+				log.Warnf("sync: download skipped, %s already exists", localName)
+				file.Status = entity.FileSyncExists
 			} else {
-				log.Infof("sync: downloaded %s from %s", file.RemoteName, a.AccName)
-				file.Status = entity.FileSyncDownloaded
-			}
+				if err := client.Download(file.RemoteName, localName, false); err != nil {
+					log.Errorf("sync: %s", err.Error())
+					file.Errors++
+					file.Error = err.Error()
+				} else {
+					log.Infof("sync: downloaded %s from %s", file.RemoteName, a.AccName)
+					file.Status = entity.FileSyncDownloaded
+				}
 
-			if mutex.Sync.Canceled() {
-				return false, nil
+				if mutex.Sync.Canceled() {
+					return false, nil
+				}
 			}
 
 			if err := db.Save(&file).Error; err != nil {
 				log.Errorf("sync: %s", err.Error())
+			} else {
+				files[i] = file
 			}
 		}
 
 		for _, file := range files {
+			if file.Status != entity.FileSyncDownloaded {
+				continue
+			}
+
 			mf, err := photoprism.NewMediaFile(baseDir + file.RemoteName)
 
 			if err != nil || !mf.IsPhoto() {

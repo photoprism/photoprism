@@ -10,6 +10,7 @@ import (
 const (
 	FileSyncNew        = "new"
 	FileSyncIgnore     = "ignore"
+	FileSyncExists     = "exists"
 	FileSyncDownloaded = "downloaded"
 	FileSyncUploaded   = "uploaded"
 )
