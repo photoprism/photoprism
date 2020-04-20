@@ -1,6 +1,7 @@
 package entity
 
 const (
+	// data sources
 	SrcAuto     = ""
 	SrcManual   = "manual"
 	SrcLocation = "location"
@@ -9,4 +10,11 @@ const (
 	SrcXmp      = "xmp"
 	SrcYml      = "yml"
 	SrcJson     = "json"
+
+	// sort orders
+	SortOrderRelevance = "relevance"
+	SortOrderNewest    = "newest"
+	SortOrderOldest    = "oldest"
+	SortOrderImported  = "imported"
+	SortOrderSimilar   = "similar"
 )
