@@ -9,16 +9,17 @@ class Model {
         }
     }
 
-    setValues(values) {
+    setValues(values, scalarOnly) {
         if (!values) return;
 
         for (let key in values) {
             if (values.hasOwnProperty(key) && key !== "__originalValues") {
                 this[key] = values[key];
-                if (typeof values[key] === "object") {
-                    this.__originalValues[key] = JSON.parse(JSON.stringify(values[key]));
-                } else {
+
+                if (typeof values[key] !== "object") {
                     this.__originalValues[key] = values[key];
+                } else if (!scalarOnly) {
+                    this.__originalValues[key] = JSON.parse(JSON.stringify(values[key]));
                 }
 
             }
@@ -36,15 +37,15 @@ class Model {
                 let val;
                 if (defaults.hasOwnProperty(key)) {
                     switch (typeof defaults[key]) {
-                    case "bigint":
-                    case "number":
-                        val = parseFloat(this[key]);
-                        break;
-                    case "boolean":
-                        val = !!this[key];
-                        break;
-                    default:
-                        val = this[key];
+                        case "bigint":
+                        case "number":
+                            val = parseFloat(this[key]);
+                            break;
+                        case "boolean":
+                            val = !!this[key];
+                            break;
+                        default:
+                            val = this[key];
                     }
                 } else {
                     val = this[key];

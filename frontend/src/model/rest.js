@@ -90,16 +90,16 @@ class Rest extends Model {
             let offset = 0;
 
             if (response.headers) {
-                if (response.headers['x-count']) {
-                    count = response.headers['x-count'];
+                if (response.headers["x-count"]) {
+                    count = response.headers["x-count"];
                 }
 
-                if (response.headers['x-limit']) {
-                    limit = response.headers['x-limit'];
+                if (response.headers["x-limit"]) {
+                    limit = response.headers["x-limit"];
                 }
 
-                if (response.headers['x-offset']) {
-                    offset = response.headers['x-offset'];
+                if (response.headers["x-offset"]) {
+                    offset = response.headers["x-offset"];
                 }
             }
 

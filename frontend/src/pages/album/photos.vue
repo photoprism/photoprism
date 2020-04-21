@@ -47,6 +47,7 @@
     import Photo from "model/photo";
     import Album from "model/album";
     import Event from "pubsub-js";
+    import Thumb from "../../model/thumb";
 
     export default {
         name: 'p-page-album-photos',
@@ -143,9 +144,9 @@
             },
             openPhoto(index, showMerged) {
                 if (showMerged) {
-                    this.$viewer.show(this.results[index].expand(), 0)
+                    this.$viewer.show(Thumb.fromFiles([this.results[index]]), 0)
                 } else {
-                    this.$viewer.show(this.results, index);
+                    this.$viewer.show(Thumb.fromPhotos(this.results), index);
                 }
             },
             loadMore() {

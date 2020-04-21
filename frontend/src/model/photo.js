@@ -104,7 +104,7 @@ class Photo extends RestModel {
             return;
         }
 
-        const primary = this.Files.find(f => f.FilePrimary === true);
+        const primary = this.Files.find(f => !!f.FilePrimary);
 
         if (!primary) {
             return;
@@ -115,19 +115,32 @@ class Photo extends RestModel {
         this.FileHeight = primary.FileHeight;
     }
 
-    getThumbnailUrl(type) {
-        if (this.Files && this.Files.length) {
+    primaryFileHash() {
+        if (this.Files) {
             const primary = this.Files.find(f => !!f.FilePrimary);
-            return "/api/v1/thumbnails/" + primary.FileHash + "/" + type;
+
+            if (primary && primary.FileHash) {
+                return primary.FileHash;
+            }
         } else if (this.FileHash) {
-            return "/api/v1/thumbnails/" + this.FileHash + "/" + type;
+            return this.FileHash;
         }
 
-        return "/api/v1/svg/photo";
+        return ""
+    }
+
+    getThumbnailUrl(type) {
+        let hash = this.primaryFileHash();
+
+        if (!hash) {
+            return "/api/v1/svg/photo";
+        }
+
+        return "/api/v1/thumbnails/" + hash + "/" + type;
     }
 
     getDownloadUrl() {
-        return "/api/v1/download/" + this.FileHash;
+        return "/api/v1/download/" + this.primaryFileHash();
     }
 
     getThumbnailSrcset() {
@@ -283,9 +296,9 @@ class Photo extends RestModel {
         let files = this.Files;
 
         for (let i = 0; i < files.length; i++) {
-            let photo = new this.constructor(this.getValues())
-            photo.setValues(files[i])
-            photos.push(photo)
+            let photo = new this.constructor(this.getValues());
+            photo.setValues(files[i], true);
+            photos.push(photo);
         }
 
         console.log("PHOTOS", photos);
