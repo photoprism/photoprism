@@ -55,7 +55,7 @@
                             </v-btn>
 
                             <v-btn v-if="photo.Merged" :flat="!hover" :ripple="false"
-                                   icon large absolute class="p-photo-merged"
+                                   icon small absolute class="p-photo-merged opacity-75"
                                    @click.stop.prevent="openPhoto(index, true)">
                                 <v-icon color="white" class="action-burst">burst_mode</v-icon>
                             </v-btn>

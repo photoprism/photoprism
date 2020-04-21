@@ -204,7 +204,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 	iteration := 0
 
-	result := path.Join(pathName, fileName + fileExtension)
+	result := path.Join(pathName, fileName+fileExtension)
 
 	for fs.FileExists(result) {
 		if mediaFile.Hash() == fs.Hash(result) {
@@ -213,7 +213,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 		iteration++
 
-		result = path.Join(pathName, fileName + "." + fmt.Sprintf("%04d", iteration) + fileExtension)
+		result = path.Join(pathName, fileName+"."+fmt.Sprintf("%04d", iteration)+fileExtension)
 	}
 
 	return result, nil

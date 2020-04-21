@@ -83,6 +83,41 @@ type PhotoResult struct {
 	Files []entity.File
 }
 
+type PhotoResults []PhotoResult
+
+func (m PhotoResults) Merged() (PhotoResults, int, error) {
+	count := len(m)
+	merged := make([]PhotoResult, 0, count)
+
+	var lastId uint
+	var i int
+
+	for _, res := range m {
+		file := entity.File{}
+
+		if err := deepcopier.Copy(&file).From(res); err != nil {
+			return merged, count, err
+		}
+
+		file.ID = res.FileID
+
+		if lastId == res.ID && i > 0 {
+			merged[i-1].Files = append(merged[i-1].Files, file)
+			merged[i-1].Merged = true
+			continue
+		}
+
+		lastId = res.ID
+
+		res.Files = append(res.Files, file)
+		merged = append(merged, res)
+
+		i++
+	}
+
+	return merged, count, nil
+}
+
 func (m *PhotoResult) ShareFileName() string {
 	var name string
 
@@ -101,7 +136,7 @@ func (m *PhotoResult) ShareFileName() string {
 }
 
 // Photos searches for photos based on a Form and returns a PhotoResult slice.
-func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, count int, err error) {
+func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, 0, err
 	}
@@ -137,7 +172,11 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, count int, er
 			return results, 0, result.Error
 		}
 
-		return results, 0, nil
+		if f.Merged {
+			return results.Merged()
+		}
+
+		return results, len(results), nil
 	}
 
 	var categories []entity.Category
@@ -347,45 +386,11 @@ func (q *Query) Photos(f form.PhotoSearch) (results []PhotoResult, count int, er
 		return results, 0, result.Error
 	}
 
-	count = len(results)
-
-	if !f.Merged {
-		for i := range results {
-			results[i].Files = []entity.File{}
-		}
-
-		return results, count, nil
+	if f.Merged {
+		return results.Merged()
 	}
 
-	merged := make([]PhotoResult, 0, count)
-
-	var lastId uint
-	var i int
-
-	for _, res := range results {
-		file := entity.File{}
-
-		if err := deepcopier.Copy(&file).From(res); err != nil {
-			return merged, count, err
-		}
-
-		file.ID = res.FileID
-
-		if lastId == res.ID && i > 0 {
-			merged[i-1].Files = append(merged[i-1].Files, file)
-			merged[i-1].Merged = true
-			continue
-		}
-
-		lastId = res.ID
-
-		res.Files = append(res.Files, file)
-		merged = append(merged, res)
-
-		i++
-	}
-
-	return merged, count, nil
+	return results, len(results), nil
 }
 
 // PhotoByID returns a Photo based on the ID.
