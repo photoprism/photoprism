@@ -5,8 +5,7 @@
             :color="color"
             :timeout="0"
             :class="textColor"
-            :top="$vuetify.breakpoint.smAndUp"
-            :right="$vuetify.breakpoint.smAndUp"
+            :bottom="true"
     >
         {{ text }}
         <v-btn
@@ -88,7 +87,7 @@
             },
 
             addInfoMessage: function (message) {
-                this.addMessage('info', 'white--text', message, 1250);
+                this.addMessage('info', 'white--text', message, 2000);
             },
 
             addMessage: function (color, textColor, message, delay) {
