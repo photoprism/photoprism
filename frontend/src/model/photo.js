@@ -116,7 +116,9 @@ class Photo extends RestModel {
     }
 
     getThumbnailUrl(type) {
-        if (this.FileHash) {
+        if (this.Files && this.Files.length) {
+            return "/api/v1/thumbnails/" + this.Files[0].FileHash + "/" + type;
+        } else if (this.FileHash) {
             return "/api/v1/thumbnails/" + this.FileHash + "/" + type;
         }
 
@@ -215,6 +217,10 @@ class Photo extends RestModel {
         }
     }
 
+    setPrimary(fileUUID) {
+        return Api.post(this.getEntityResource() + "/primary/" + fileUUID).then((r) => Promise.resolve(this.setValues(r.data)));
+    }
+
     like() {
         this.PhotoFavorite = true;
         return Api.post(this.getEntityResource() + "/like");
@@ -227,22 +233,22 @@ class Photo extends RestModel {
 
     addLabel(name) {
         return Api.post(this.getEntityResource() + "/label", {LabelName: name, LabelPriority: 10})
-            .then((response) => Promise.resolve(this.setValues(response.data)));
+            .then((r) => Promise.resolve(this.setValues(r.data)));
     }
 
     activateLabel(id) {
         return Api.put(this.getEntityResource() + "/label/" + id, {Uncertainty: 0})
-            .then((response) => Promise.resolve(this.setValues(response.data)));
+            .then((r) => Promise.resolve(this.setValues(r.data)));
     }
 
     renameLabel(id, name) {
         return Api.put(this.getEntityResource() + "/label/" + id, {Label: {LabelName: name}})
-            .then((response) => Promise.resolve(this.setValues(response.data)));
+            .then((r) => Promise.resolve(this.setValues(r.data)));
     }
 
     removeLabel(id) {
         return Api.delete(this.getEntityResource() + "/label/" + id)
-            .then((response) => Promise.resolve(this.setValues(response.data)));
+            .then((r) => Promise.resolve(this.setValues(r.data)));
     }
 
     update() {

@@ -157,16 +157,16 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 		lenses.lens_make, lenses.lens_model,
 		places.loc_label, places.loc_city, places.loc_state, places.loc_country
 		`).
-		Joins("JOIN files ON files.photo_id = photos.id AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
+		Joins("JOIN files ON files.photo_id = photos.id AND files.file_type = 'jpg' AND files.file_missing = 0 AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
 		Joins("JOIN places ON photos.place_id = places.id").
 		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id AND photos_labels.uncertainty < 100").
-		Where("files.file_missing = 0").
 		Group("photos.id, files.id")
 
 	if f.ID != "" {
 		s = s.Where("photos.photo_uuid = ?", f.ID)
+		s = s.Order("files.file_primary DESC")
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, 0, result.Error
@@ -363,17 +363,17 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 
 	switch f.Order {
 	case entity.SortOrderRelevance:
-		s = s.Order("photo_story DESC, photo_favorite DESC, taken_at DESC")
+		s = s.Order("photo_story DESC, photo_favorite DESC, taken_at DESC, files.file_primary DESC")
 	case entity.SortOrderNewest:
-		s = s.Order("taken_at DESC, photos.photo_uuid")
+		s = s.Order("taken_at DESC, photos.photo_uuid, files.file_primary DESC")
 	case entity.SortOrderOldest:
-		s = s.Order("taken_at, photos.photo_uuid")
+		s = s.Order("taken_at, photos.photo_uuid, files.file_primary DESC")
 	case entity.SortOrderImported:
-		s = s.Order("photos.id DESC")
+		s = s.Order("photos.id DESC, files.file_primary DESC")
 	case entity.SortOrderSimilar:
-		s = s.Order("files.file_main_color, photos.location_id, files.file_diff, taken_at DESC")
+		s = s.Order("files.file_main_color, photos.location_id, files.file_diff, taken_at DESC, files.file_primary DESC")
 	default:
-		s = s.Order("taken_at DESC, photos.photo_uuid")
+		s = s.Order("taken_at DESC, photos.photo_uuid, files.file_primary DESC")
 	}
 
 	if f.Count > 0 && f.Count <= 1000 {

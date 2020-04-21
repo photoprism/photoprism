@@ -31,7 +31,6 @@
                                 style="cursor: pointer"
                                 class="accent lighten-2"
                                 @click.exact="openPhoto(index)"
-
                         >
                             <v-layout
                                     slot="placeholder"

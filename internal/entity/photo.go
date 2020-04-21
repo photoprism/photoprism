@@ -212,7 +212,7 @@ func (m *Photo) PreloadFiles(db *gorm.DB) {
 		Table("files").
 		Select(`files.*`).
 		Where("files.photo_id = ?", m.ID).
-		Order("files.file_primary DESC")
+		Order("files.file_name DESC")
 
 	logError(q.Scan(&m.Files))
 }

@@ -194,3 +194,41 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
 }
+
+// POST /api/v1/photos/:uuid/primary/:file_uuid
+//
+// Parameters:
+//   uuid: string PhotoUUID as returned by the API
+func SetPhotoPrimary(router *gin.RouterGroup, conf *config.Config) {
+	router.POST("/photos/:uuid/primary/:file_uuid", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		db := conf.Db()
+
+		uuid := c.Param("uuid")
+		fileUUID := c.Param("file_uuid")
+		q := query.New(db)
+		err := q.SetPhotoPrimary(uuid, fileUUID)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			return
+		}
+
+		PublishPhotoEvent(EntityUpdated, uuid, c, q)
+
+		event.Success("photo saved")
+
+		p, err := q.PreloadPhotoByUUID(uuid)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			return
+		}
+
+		c.JSON(http.StatusOK, p)
+	})
+}

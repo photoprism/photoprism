@@ -1,6 +1,8 @@
 package query
 
-import "github.com/photoprism/photoprism/internal/entity"
+import (
+	"github.com/photoprism/photoprism/internal/entity"
+)
 
 // Files finds files returning maximum results defined by limit
 // and finding them from an offest defined by offset.
@@ -46,4 +48,10 @@ func (q *Query) FileByHash(fileHash string) (file entity.File, err error) {
 	}
 
 	return file, nil
+}
+
+// SetPhotoPrimary sets a new primary image file for a photo.
+func (q *Query) SetPhotoPrimary(photoUUID, fileUUID string) error {
+	q.db.Model(entity.File{}).Where("photo_uuid = ? AND file_uuid <> ?", photoUUID, fileUUID).UpdateColumn("file_primary", false)
+	return q.db.Model(entity.File{}).Where("photo_uuid = ? AND file_uuid = ?", photoUUID, fileUUID).UpdateColumn("file_primary", true).Error
 }

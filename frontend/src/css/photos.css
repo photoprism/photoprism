@@ -2,6 +2,10 @@
     width: 66px;
 }
 
+#photoprism .p-col-primary {
+    width: 50px;
+}
+
 #photoprism .p-photo-list tr td:first-child {
     padding: 0 0 0 8px;
     text-align: center;
