@@ -37,7 +37,7 @@
                                 color="secondary-dark"
                                 :label="labels.thumbs"
                                 hint="Enable to pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."
-                                prepend-icon="burst_mode"
+                                prepend-icon="photo_size_select_large"
                                 persistent-hint
                         >
                         </v-checkbox>

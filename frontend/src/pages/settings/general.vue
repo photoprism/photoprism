@@ -33,7 +33,7 @@
                                     color="secondary-dark"
                                     :label="labels.thumbs"
                                     hint="Enable to pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."
-                                    prepend-icon="burst_mode"
+                                    prepend-icon="photo_size_select_large"
                                     persistent-hint
                             >
                             </v-checkbox>
@@ -47,7 +47,7 @@
                                     color="secondary-dark"
                                     :label="labels.group"
                                     hint="Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' belong to the same photo."
-                                    prepend-icon="file_copy"
+                                    prepend-icon="photo_library"
                                     persistent-hint
                             >
                             </v-checkbox>
