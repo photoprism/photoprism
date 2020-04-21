@@ -117,7 +117,8 @@ class Photo extends RestModel {
 
     getThumbnailUrl(type) {
         if (this.Files && this.Files.length) {
-            return "/api/v1/thumbnails/" + this.Files[0].FileHash + "/" + type;
+            const primary = this.Files.find(f => !!f.FilePrimary);
+            return "/api/v1/thumbnails/" + primary.FileHash + "/" + type;
         } else if (this.FileHash) {
             return "/api/v1/thumbnails/" + this.FileHash + "/" + type;
         }

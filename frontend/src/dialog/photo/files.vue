@@ -11,12 +11,16 @@
                 :no-data-text="this.$gettext('No files found')"
         >
             <template slot="items" slot-scope="props" class="p-file">
-                <td><v-btn v-if="props.item.FileType === 'jpg'" flat :ripple="false" icon small @click.stop.prevent="model.setPrimary(props.item.FileUUID)">
-                    <v-icon v-if="props.item.FilePrimary" color="secondary-dark">radio_button_checked</v-icon>
-                    <v-icon v-else color="secondary-dark">radio_button_unchecked</v-icon>
-                </v-btn></td>
                 <td>
-                    <a :href="'/api/v1/download/' + props.item.FileHash" class="secondary-dark--text" target="_blank" v-if="$config.feature('download')">
+                    <v-btn v-if="props.item.FileType === 'jpg'" flat :ripple="false" icon small
+                           @click.stop.prevent="setPrimary(props.item)">
+                        <v-icon v-if="props.item.FilePrimary" color="secondary-dark">radio_button_checked</v-icon>
+                        <v-icon v-else color="secondary-dark">radio_button_unchecked</v-icon>
+                    </v-btn>
+                </td>
+                <td>
+                    <a :href="'/api/v1/download/' + props.item.FileHash" class="secondary-dark--text" target="_blank"
+                       v-if="$config.feature('download')">
                         {{ props.item.FileName }}
                     </a>
                     <span v-else>
@@ -58,8 +62,13 @@
             openPhoto() {
                 this.$viewer.show([this.model], 0)
             },
+            setPrimary(file) {
+                this.model.setPrimary(file.FileUUID);
+            },
             fileDimensions(file) {
-                if(!file.FileWidth || !file.FileHeight) { return ""; }
+                if (!file.FileWidth || !file.FileHeight) {
+                    return "";
+                }
 
                 return file.FileWidth + " × " + file.FileHeight;
             },
@@ -67,7 +76,8 @@
                 if (!file.FileSize) {
                     return "";
                 }
-                const kb = Number.parseFloat(file.FileSize)  / 1048576;
+
+                const kb = Number.parseFloat(file.FileSize) / 1048576;
 
                 return kb.toFixed(1) + " MB";
             },
