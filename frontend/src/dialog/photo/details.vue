@@ -378,6 +378,7 @@
     import {DateTime} from "luxon";
     import moment from "moment-timezone"
     import countries from "resources/countries.json";
+    import Thumb from "model/thumb";
 
     export default {
         name: 'p-tab-photo-edit-details',
@@ -481,7 +482,7 @@
                 this.$emit('prev');
             },
             openPhoto() {
-                this.$viewer.show([this.model], 0)
+                this.$viewer.show(Thumb.fromFiles([this.model]), 0)
             },
             refresh(model) {
                 if (!model.hasId()) return;

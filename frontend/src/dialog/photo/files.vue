@@ -37,6 +37,8 @@
 </template>
 
 <script>
+    import Thumb from "model/thumb";
+
     export default {
         name: 'p-tab-photo-edit-files',
         props: {
@@ -60,7 +62,7 @@
         computed: {},
         methods: {
             openPhoto() {
-                this.$viewer.show([this.model], 0)
+                this.$viewer.show(Thumb.fromFiles([this.model]), 0)
             },
             setPrimary(file) {
                 this.model.setPrimary(file.FileUUID);

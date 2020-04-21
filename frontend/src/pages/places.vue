@@ -27,6 +27,7 @@
     import Photo from "model/photo";
     import mapboxgl from "mapbox-gl";
     import Api from "../common/api";
+    import Thumb from "../model/thumb";
 
     export default {
         name: 'p-page-places',
@@ -80,7 +81,7 @@
                 if (this.photos.length > 0) {
                     const index = this.photos.findIndex((p) => p.PhotoUUID === id);
 
-                    this.$viewer.show(this.photos, index)
+                    this.$viewer.show(Thumb.fromPhotos(this.photos), index)
                 } else {
                     this.$notify.warning("No photos found");
                 }
