@@ -44,7 +44,7 @@ func TestConfig_TensorFlowVersion(t *testing.T) {
 	c := NewConfig(ctx)
 
 	version := c.TensorFlowVersion()
-	assert.Equal(t, "1.14.0", version)
+	assert.IsType(t, "1.15.0", version)
 }
 
 func TestConfig_TensorFlowDisabled(t *testing.T) {
