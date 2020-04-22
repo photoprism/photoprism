@@ -9,10 +9,16 @@ version: '3.3'
 services:
   photoprism:
     image: photoprism/photoprism:latest
+    restart: unless-stopped
     ports:
       - 2342:2342 # [local port]:[container port]
+    healthcheck:
+      test: "photoprism status"
+      interval: 60s
+      timeout: 15s
+      retries: 5
     environment: # Run "photoprism help" and "photoprism config" too see all config options and current values
-      PHOTOPRISM_URL: "https://demo.photoprism.org/"
+      PHOTOPRISM_URL: "http://localhost:2342/"
       PHOTOPRISM_TITLE: "PhotoPrism"
       PHOTOPRISM_SUBTITLE: "Browse your life"
       PHOTOPRISM_DESCRIPTION: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source."
@@ -34,16 +40,29 @@ services:
       PHOTOPRISM_WEBDAV_PASSWORD: "photoprism" # Plain text only (username "photoprism")
       PHOTOPRISM_DATABASE_DRIVER: "internal" # Change to "mysql" for external MySQL or MariaDB
       PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
-      # PHOTOPRISM_THUMB_QUALITY: 95 # High-quality thumbnails (optional)
-      # PHOTOPRISM_THUMB_SIZE: 3840
-      # PHOTOPRISM_THUMB_LIMIT: 3840
-      # PHOTOPRISM_THUMB_FILTER: "lanczos"
+      # PHOTOPRISM_DATABASE_DRIVER: "mysql" # Using MariaDB or MySQL instead of the internal TiDB is optional
+      # PHOTOPRISM_DATABASE_DSN: "photoprism:photoprism@tcp(photoprism-db:3306)/photoprism?parseTime=true"
+      # PHOTOPRISM_THUMB_QUALITY: 95 # High-quality thumbnails (optional, default JPEG quality is 90)
+      # PHOTOPRISM_THUMB_SIZE: 3840 # For retina screens, default is 2048
+      # PHOTOPRISM_THUMB_FILTER: "lanczos" # Resample filter, best to worst: blackman, lanczos, cubic, linear
     volumes:
       - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
       - "~/Pictures/Import:/photoprism/import" # [local path]:[container path] (optional)
       - "photoprism-config:/photoprism/config" # keep settings
       - "photoprism-cache:/photoprism/cache" # keep thumbnail cache
-      - "photoprism-database:/photoprism/database" # keep database files
+      - "photoprism-database:/photoprism/database" # TiDB database files, remove if you use MariaDB or MySQL
+
+  # photoprism-db: # Uncomment, if you want to use MariaDB instead of the internal TiDB
+  #  image: mariadb:10.5 # Alternatively mysql:8.0
+  #  restart: unless-stopped
+  #  command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
+  #  volumes:
+  #    - "photoprism-database:/var/lib/mysql"
+  #  environment:
+  #    MYSQL_ROOT_PASSWORD: photoprism
+  #    MYSQL_USER: photoprism
+  #    MYSQL_PASSWORD: photoprism
+  #    MYSQL_DATABASE: photoprism
 
 volumes: # keep this
   photoprism-config:

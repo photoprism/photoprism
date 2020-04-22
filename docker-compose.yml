@@ -42,7 +42,7 @@ services:
       TF_CPP_MIN_LOG_LEVEL: 0
 
   photoprism-db:
-    image: mariadb:10.4.11
+    image: mariadb:10.5
     command: mysqld --port=4001 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024
     expose:
       - "4001"
