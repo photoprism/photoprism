@@ -4,6 +4,7 @@ import (
 	_ "image/gif" // Import for image.
 	_ "image/jpeg"
 	_ "image/png"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -21,19 +22,22 @@ const (
 	TypeMov      FileType = "mov"  // Video files.
 	TypeMP4      FileType = "mp4"
 	TypeAvi      FileType = "avi"
-	TypeXMP      FileType = "xmp"     // Adobe XMP sidecar file (XML).
-	TypeAAE      FileType = "aae"     // Apple sidecar file (XML).
-	TypeXML      FileType = "xml"     // XML metadata / config / sidecar file.
-	TypeYaml     FileType = "yml"     // YAML metadata / config / sidecar file.
-	TypeToml     FileType = "toml"    // Tom's Obvious, Minimal Language sidecar file.
-	TypeJson     FileType = "json"    // JSON metadata / config / sidecar file.
-	TypeText     FileType = "txt"     // Text config / sidecar file.
-	TypeMarkdown FileType = "md"      // Markdown text sidecar file.
-	TypeOther    FileType = "unknown" // Unknown file format.
+	TypeXMP      FileType = "xmp"  // Adobe XMP sidecar file (XML).
+	TypeAAE      FileType = "aae"  // Apple sidecar file (XML).
+	TypeXML      FileType = "xml"  // XML metadata / config / sidecar file.
+	TypeYaml     FileType = "yml"  // YAML metadata / config / sidecar file.
+	TypeToml     FileType = "toml" // Tom's Obvious, Minimal Language sidecar file.
+	TypeJson     FileType = "json" // JSON metadata / config / sidecar file.
+	TypeText     FileType = "txt"  // Text config / sidecar file.
+	TypeMarkdown FileType = "md"   // Markdown text sidecar file.
+	TypeOther    FileType = ""     // Unknown file format.
 )
 
+type FileExtensions map[string]FileType
+type TypeExtensions map[FileType][]string
+
 // FileExt contains the filename extensions of file formats known to PhotoPrism.
-var FileExt = map[string]FileType{
+var FileExt = FileExtensions{
 	".bmp":  TypeBitmap,
 	".gif":  TypeGif,
 	".tif":  TypeTiff,
@@ -48,9 +52,14 @@ var FileExt = map[string]FileType{
 	".avi":  TypeAvi,
 	".mp4":  TypeMP4,
 	".yml":  TypeYaml,
+	".yaml": TypeYaml,
 	".jpg":  TypeJpeg,
-	".thm":  TypeJpeg,
 	".jpeg": TypeJpeg,
+	".jpe":  TypeJpeg,
+	".jif":  TypeJpeg,
+	".jfif": TypeJpeg,
+	".jfi":  TypeJpeg,
+	".thm":  TypeJpeg,
 	".xmp":  TypeXMP,
 	".aae":  TypeAAE,
 	".heif": TypeHEIF,
@@ -97,6 +106,50 @@ var FileExt = map[string]FileType{
 	".json": TypeJson,
 }
 
+func (m FileExtensions) TypeExt() TypeExtensions {
+	result := make(TypeExtensions)
+
+	for ext, t := range m {
+		extUpper := strings.ToUpper(ext)
+		if _, ok := result[t]; ok {
+			result[t] = append(result[t], ext, extUpper)
+		} else {
+			result[t] = []string{ext, extUpper}
+		}
+	}
+
+	return result
+}
+
+var TypeExt = FileExt.TypeExt()
+
+// Find returns the first filename with the same base name and a given type.
+func (t FileType) Find(fileName string, stripSequence bool) string {
+	base := Base(fileName, stripSequence)
+	dir := filepath.Dir(fileName)
+
+	prefix := filepath.Join(dir, base)
+	prefixLower := filepath.Join(dir, strings.ToLower(base))
+	prefixUpper := filepath.Join(dir, strings.ToUpper(base))
+
+	for _, ext := range TypeExt[t] {
+		if info, err := os.Stat(prefix + ext); err == nil && info.Mode().IsRegular() {
+			return filepath.Join(dir, info.Name())
+		}
+
+		if info, err := os.Stat(prefixLower + ext); err == nil && info.Mode().IsRegular() {
+			return filepath.Join(dir, info.Name())
+		}
+
+		if info, err := os.Stat(prefixUpper + ext); err == nil && info.Mode().IsRegular() {
+			return filepath.Join(dir, info.Name())
+		}
+	}
+
+	return ""
+}
+
+// GetFileType returns the (expected) type for a given file name.
 func GetFileType(fileName string) FileType {
 	fileExt := strings.ToLower(filepath.Ext(fileName))
 	result, ok := FileExt[fileExt]

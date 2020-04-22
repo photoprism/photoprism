@@ -22,3 +22,25 @@ func TestGetFileType(t *testing.T) {
 		assert.Equal(t, TypeOther, result)
 	})
 }
+
+func TestFileType_Find(t *testing.T) {
+	t.Run("find jpg", func(t *testing.T) {
+		result := TypeJpeg.Find("testdata/test.xmp", false)
+		assert.Equal(t, "testdata/test.jpg", result)
+	})
+
+	t.Run("upper ext", func(t *testing.T) {
+		result := TypeJpeg.Find("testdata/test.XMP", false)
+		assert.Equal(t, "testdata/test.jpg", result)
+	})
+
+	t.Run("with sequence", func(t *testing.T) {
+		result := TypeJpeg.Find("testdata/test (2).xmp", false)
+		assert.Equal(t, "", result)
+	})
+
+	t.Run("strip sequence", func(t *testing.T) {
+		result := TypeJpeg.Find("testdata/test (2).xmp", true)
+		assert.Equal(t, "testdata/test.jpg", result)
+	})
+}

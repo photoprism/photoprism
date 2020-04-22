@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
@@ -123,15 +124,15 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return image, nil
 	}
 
-	base := image.AbsBase(c.conf.Settings().Library.GroupRelated)
-
-	jpegName := base + ".jpg"
+	jpegName := fs.TypeJpeg.Find(image.FileName(), c.conf.Settings().Library.GroupRelated)
 
 	mediaFile, err := NewMediaFile(jpegName)
 
 	if err == nil {
 		return mediaFile, nil
 	}
+
+	jpegName = image.AbsBase(c.conf.Settings().Library.GroupRelated) + ".jpg"
 
 	if c.conf.ReadOnly() {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.FileName())
@@ -141,11 +142,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 
 	log.Infof("convert: %s -> %s", fileName, jpegName)
 
-	xmpName := base + ".xmp"
-
-	if _, err := os.Stat(xmpName); err != nil {
-		xmpName = ""
-	}
+	xmpName := fs.TypeXMP.Find(image.FileName(), c.conf.Settings().Library.GroupRelated)
 
 	event.Publish("index.converting", event.Data{
 		"fileType": image.FileType(),
