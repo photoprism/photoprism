@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/tidwall/gjson"
@@ -20,7 +21,7 @@ var StatusCommand = cli.Command{
 // statusAction shows the server health status
 func statusAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
-	client := &http.Client{}
+	client := &http.Client{Timeout: 10 * time.Second}
 
 	url := fmt.Sprintf("http://%s:%d/api/v1/status", conf.HttpServerHost(), conf.HttpServerPort())
 
