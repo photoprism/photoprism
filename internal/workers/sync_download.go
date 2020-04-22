@@ -94,7 +94,7 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 			}
 
 			if file.Errors > a.RetryLimit {
-				log.Warnf("sync: downloading %s failed more than %d times", file.RemoteName, a.RetryLimit)
+				log.Debugf("sync: downloading %s failed more than %d times", file.RemoteName, a.RetryLimit)
 				continue
 			}
 
