@@ -32,7 +32,7 @@
                                     v-model="settings.library.thumbs"
                                     color="secondary-dark"
                                     :label="labels.thumbs"
-                                    hint="Enable to pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."
+                                    hint="Pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."
                                     prepend-icon="photo_size_select_large"
                                     persistent-hint
                             >
