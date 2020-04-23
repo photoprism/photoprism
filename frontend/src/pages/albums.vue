@@ -35,7 +35,8 @@
         <v-container fluid class="pa-0" v-else>
             <p-scroll-top></p-scroll-top>
 
-            <p-album-clipboard :refresh="refresh" :selection="selection"></p-album-clipboard>
+            <p-album-clipboard :refresh="refresh" :selection="selection"
+                               :clear-selection="clearSelection"></p-album-clipboard>
 
             <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-cards">
                 <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1 ma-1" flat>
@@ -60,7 +61,7 @@
                         <v-hover>
                             <v-card tile class="accent lighten-3"
                                     slot-scope="{ hover }"
-                                    @contextmenu="contextMenu($event, album)"
+                                    @contextmenu="contextMenu($event, album, index)"
                                     :dark="selection.includes(album.AlbumUUID)"
                                     :class="selection.includes(album.AlbumUUID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
                                     :to="{name: 'album', params: {uuid: album.AlbumUUID, slug: album.AlbumSlug}}"
@@ -68,7 +69,7 @@
                                 <v-img
                                         :src="album.getThumbnailUrl('tile_500')"
                                         v-longclick="longClick"
-                                        @click="onClick($event, album)"
+                                        @click="onClick($event, album, index)"
                                         aspect-ratio="1"
                                         class="accent lighten-2"
                                 >
@@ -86,7 +87,7 @@
                                     <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
                                            icon large absolute
                                            :class="selection.includes(album.AlbumUUID) ? 'p-album-select' : 'p-album-select opacity-50'"
-                                           @click.stop.prevent="toggleSelection(album.AlbumUUID)">
+                                           @click.stop.prevent="onSelect($event, album, index)">
                                         <v-icon v-if="selection.includes(album.AlbumUUID)" color="white">check_circle
                                         </v-icon>
                                         <v-icon v-else color="accent lighten-3">radio_button_off</v-icon>
@@ -138,6 +139,7 @@
     import Album from "model/album";
     import {DateTime} from "luxon";
     import Event from "pubsub-js";
+    import RestModel from "../model/rest";
 
     export default {
         name: 'p-page-albums',
@@ -182,28 +184,74 @@
                     name: this.$gettext("Album Name"),
                 },
                 wasLong: false,
+                lastId: "",
             };
         },
         methods: {
+            selectRange(rangeEnd, models) {
+                if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
+                    console.warn("selectRange() - invalid arguments:", rangeEnd, models);
+                    return;
+                }
+
+                let rangeStart = models.findIndex((m) => m.getId() === this.lastId);
+
+                if (rangeStart === -1) {
+                    this.toggleSelection(models[rangeEnd].getId());
+                    return 1;
+                }
+
+                if (rangeStart > rangeEnd) {
+                    const newEnd = rangeStart;
+                    rangeStart = rangeEnd;
+                    rangeEnd = newEnd;
+                }
+
+                for (let i = rangeStart; i <= rangeEnd; i++) {
+                    this.addSelection(models[i].getId());
+                }
+
+                return (rangeEnd - rangeStart) + 1;
+            },
             longClick() {
                 this.wasLong = true;
             },
-            onClick(ev, model) {
-                if (this.wasLong || this.selection.length > 0) {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-
+            onSelect(ev, model, index) {
+                if (ev.shiftKey) {
+                    this.selectRange(index, this.results);
+                } else {
                     this.toggleSelection(model.getId());
                 }
 
                 this.wasLong = false;
             },
-            contextMenu(ev, model) {
+            onClick(ev, model, index) {
+                if (this.wasLong || this.selection.length > 0) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+
+                    if (this.wasLong || ev.shiftKey) {
+                        this.selectRange(index, this.results);
+                    } else {
+                        this.toggleSelection(model.getId());
+                    }
+                }
+
+                this.wasLong = false;
+            },
+            contextMenu(ev, model, index) {
                 if (this.$isMobile) {
                     ev.preventDefault();
                     ev.stopPropagation();
-                    this.toggleSelection(model.getId());
+
+                    if (this.wasLong) {
+                        this.selectRange(index, this.results);
+                    } else {
+                        this.toggleSelection(model.getId());
+                    }
                 }
+
+                this.wasLong = false;
             },
             clearQuery() {
                 this.filter.q = '';
@@ -352,13 +400,23 @@
             onSave(album) {
                 album.update();
             },
+            addSelection(uuid) {
+                const pos = this.selection.indexOf(uuid);
+
+                if (pos === -1) {
+                    this.selection.push(uuid)
+                    this.lastId = uuid;
+                }
+            },
             toggleSelection(uuid) {
                 const pos = this.selection.indexOf(uuid);
 
                 if (pos !== -1) {
                     this.selection.splice(pos, 1);
+                    this.lastId = "";
                 } else {
-                    this.selection.push(uuid)
+                    this.selection.push(uuid);
+                    this.lastId = uuid;
                 }
             },
             removeSelection(uuid) {
@@ -366,7 +424,12 @@
 
                 if (pos !== -1) {
                     this.selection.splice(pos, 1);
+                    this.lastId = "";
                 }
+            },
+            clearSelection() {
+                this.selection.splice(0, this.selection.length);
+                this.lastId = "";
             },
             onUpdate(ev, data) {
                 if (!this.listen) return;

@@ -86,6 +86,7 @@
         props: {
             selection: Array,
             refresh: Function,
+            clearSelection: Function,
         },
         data() {
             return {
@@ -106,7 +107,7 @@
         },
         methods: {
             clearClipboard() {
-                this.selection.splice(0, this.selection.length);
+                this.clearSelection();
                 this.expanded = false;
             },
             addToAlbum(albumUUID) {

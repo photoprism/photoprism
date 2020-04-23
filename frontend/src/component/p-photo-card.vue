@@ -26,8 +26,7 @@
                 <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
                        icon large absolute
                        :class="isSelected ? 'p-photo-select' : 'p-photo-select opacity-50'"
-                       @click.shift.prevent="longClick"
-                       @click.exact.stop.prevent="$clipboard.toggle(photo)">
+                       @click.stop.prevent="onSelect($event)">
                     <v-icon v-if="selection.length && isSelected" color="white"
                             class="t-select t-on">check_circle
                     </v-icon>
@@ -101,12 +100,21 @@
             longClick() {
                 this.wasLong = true;
             },
+            onSelect(ev) {
+                if (this.wasLong || ev.shiftKey) {
+                    this.selectRange(this.index);
+                } else {
+                    this.$clipboard.toggle(this.photo);
+                }
+
+                this.wasLong = false;
+            },
             onClick(ev) {
                 if (this.wasLong || this.selection.length > 0) {
                     ev.preventDefault();
                     ev.stopPropagation();
 
-                    if (this.wasLong) {
+                    if (this.wasLong || ev.shiftKey) {
                         this.selectRange(this.index);
                     } else {
                         this.$clipboard.toggle(this.photo);
