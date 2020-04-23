@@ -123,7 +123,7 @@
                 this.wasLong = true;
             },
             onSelect(ev, model, index) {
-                if (this.wasLong || ev.shiftKey) {
+                if (ev.shiftKey) {
                     this.selectRange(index);
                 } else {
                     this.$clipboard.toggle(model);
