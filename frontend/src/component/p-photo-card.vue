@@ -128,6 +128,8 @@
                         this.$clipboard.toggle(this.photo);
                     }
                 }
+
+                this.wasLong = false;
             },
         },
         watch: {

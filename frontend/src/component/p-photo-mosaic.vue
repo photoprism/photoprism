@@ -23,7 +23,7 @@
             >
                 <v-hover>
                     <v-card tile slot-scope="{ hover }"
-                            @contextmenu="contextMenu($event, photo)"
+                            @contextmenu="contextMenu($event, photo, index)"
                             :class="$clipboard.has(photo) ? 'elevation-10 ma-0' : 'elevation-0 ma-1'"
                             :title="photo.PhotoTitle">
                         <v-img :src="photo.getThumbnailUrl('tile_224')"
@@ -118,12 +118,19 @@
 
                 this.wasLong = false;
             },
-            contextMenu(ev, model) {
+            contextMenu(ev, model, index) {
                 if (this.$isMobile) {
                     ev.preventDefault();
                     ev.stopPropagation();
-                    this.$clipboard.toggle(model);
+
+                    if (this.wasLong) {
+                        this.selectRange(index);
+                    } else {
+                        this.$clipboard.toggle(model);
+                    }
                 }
+
+                this.wasLong = false;
             },
             selectRange(index) {
                 this.$clipboard.addRange(index, this.photos);
