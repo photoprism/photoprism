@@ -179,7 +179,7 @@
                 }
 
                 Photo.search(params).then(response => {
-                    this.results = this.dirty ? response.models : this.results.concat(response.models);
+                    this.results = Photo.mergeResponse(this.results, response);
 
                     this.scrollDisabled = (response.count < count);
 

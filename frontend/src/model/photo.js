@@ -100,27 +100,37 @@ class Photo extends RestModel {
     }
 
     refreshFileAttr() {
-        if (!this.Files) {
+        const file = this.mainFile();
+
+        if (!file) {
             return;
         }
 
-        const primary = this.Files.find(f => !!f.FilePrimary);
-
-        if (!primary) {
-            return;
-        }
-
-        this.FileHash = primary.FileHash;
-        this.FileWidth = primary.FileWidth;
-        this.FileHeight = primary.FileHeight;
+        this.FileHash = file.FileHash;
+        this.FileWidth = file.FileWidth;
+        this.FileHeight = file.FileHeight;
     }
 
-    primaryFileHash() {
-        if (this.Files) {
-            const primary = this.Files.find(f => !!f.FilePrimary);
+    mainFile() {
+        if (!this.Files) {
+            return false;
+        }
 
-            if (primary && primary.FileHash) {
-                return primary.FileHash;
+        let file = this.Files.find(f => !!f.FilePrimary);
+
+        if (!file) {
+            file = this.Files.find(f => f.FileType === 'jpg');
+        }
+
+        return file;
+    }
+
+    mainFileHash() {
+        if (this.Files) {
+            let file = this.mainFile();
+
+            if (file && file.FileHash) {
+                return file.FileHash;
             }
         } else if (this.FileHash) {
             return this.FileHash;
@@ -130,7 +140,7 @@ class Photo extends RestModel {
     }
 
     getThumbnailUrl(type) {
-        let hash = this.primaryFileHash();
+        let hash = this.mainFileHash();
 
         if (!hash) {
             return "/api/v1/svg/photo";
@@ -140,7 +150,7 @@ class Photo extends RestModel {
     }
 
     getDownloadUrl() {
-        return "/api/v1/download/" + this.primaryFileHash();
+        return "/api/v1/download/" + this.mainFileHash();
     }
 
     getThumbnailSrcset() {
@@ -291,27 +301,29 @@ class Photo extends RestModel {
         return Api.put(this.getEntityResource(), values).then((response) => Promise.resolve(this.setValues(response.data)));
     }
 
-    expand() {
-        let photos = [];
-        let files = this.Files;
-
-        for (let i = 0; i < files.length; i++) {
-            let photo = new this.constructor(this.getValues());
-            photo.setValues(files[i], true);
-            photos.push(photo);
-        }
-
-        console.log("PHOTOS", photos);
-
-        return photos;
-    }
-
     static getCollectionResource() {
         return "photos";
     }
 
     static getModelName() {
         return "Photo";
+    }
+
+    static mergeResponse(results, response) {
+        if (response.offset === 0 || results.length === 0) {
+            return response.models;
+        }
+
+        if (response.models.length > 0) {
+            let i = results.length - 1;
+
+            if (results[i].PhotoUUID === response.models[0].PhotoUUID) {
+                const first = response.models.shift();
+                results[i].Files = results[i].Files.concat(first.Files)
+            }
+        }
+
+        return results.concat(response.models);
     }
 }
 
