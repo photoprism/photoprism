@@ -3,7 +3,6 @@ import PNavigation from "./p-navigation.vue";
 import PLoadingBar from "./p-loading-bar.vue";
 import PPhotoSearch from "./p-photo-search.vue";
 import PPhotoCards from "./p-photo-cards.vue";
-import PPhotoCard from "./p-photo-card.vue";
 import PPhotoMosaic from "./p-photo-mosaic.vue";
 import PPhotoList from "./p-photo-list.vue";
 import PPhotoClipboard from "./p-photo-clipboard.vue";
@@ -21,7 +20,6 @@ components.install = (Vue) => {
     Vue.component("p-loading-bar", PLoadingBar);
     Vue.component("p-photo-viewer", PPhotoViewer);
     Vue.component("p-photo-cards", PPhotoCards);
-    Vue.component("p-photo-card", PPhotoCard);
     Vue.component("p-photo-mosaic", PPhotoMosaic);
     Vue.component("p-photo-list", PPhotoList);
     Vue.component("p-photo-search", PPhotoSearch);

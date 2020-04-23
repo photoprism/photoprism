@@ -25,11 +25,11 @@
                           :edit-photo="editPhoto"
                           :open-location="openLocation"></p-photo-list>
             <p-photo-cards v-else
-                             :photos="results"
-                             :selection="selection"
-                             :open-photo="openPhoto"
-                             :edit-photo="editPhoto"
-                             :open-location="openLocation"></p-photo-cards>
+                           :photos="results"
+                           :selection="selection"
+                           :open-photo="openPhoto"
+                           :edit-photo="editPhoto"
+                           :open-location="openLocation"></p-photo-cards>
         </v-container>
     </div>
 </template>
@@ -305,11 +305,13 @@
                     case 'updated':
                         for (let i = 0; i < data.entities.length; i++) {
                             const values = data.entities[i];
-                            const model = this.results.find((m) => m.ID === values.ID);
+                            const model = this.results.find((m) => m.PhotoUUID === values.PhotoUUID);
 
-                            for (let key in values) {
-                                if (values.hasOwnProperty(key)) {
-                                    model[key] = values[key];
+                            if (model) {
+                                for (let key in values) {
+                                    if (values.hasOwnProperty(key)) {
+                                        model[key] = values[key];
+                                    }
                                 }
                             }
                         }
