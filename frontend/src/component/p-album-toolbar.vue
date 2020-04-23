@@ -48,7 +48,7 @@
                 flat
                 color="secondary-light"
                 v-show="searchExpanded">
-            <v-card-text class="pb-0">
+            <v-card-text>
                 <v-layout row wrap>
                     <v-flex xs12 pa-2>
                         <v-text-field flat solo hide-details
@@ -103,13 +103,14 @@
                                   :items="options.sorting">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 pt-2 px-2>
+                    <v-flex xs12 pa-2>
                         <v-textarea flat solo auto-grow
                                     browser-autocomplete="off"
                                     :label="labels.description"
                                     :rows="2"
                                     :key="growDesc"
                                     color="secondary-dark"
+                                    style="background-color: white"
                                     v-model="album.AlbumDescription"
                                     @change="updateAlbum">
                         </v-textarea>
