@@ -11,7 +11,7 @@ import Log from "common/log";
 import PhotoPrism from "photoprism.vue";
 import Router from "vue-router";
 import Routes from "routes";
-import {session, config} from "session";
+import {config, session} from "session";
 import {Settings} from "luxon";
 import Socket from "common/websocket";
 import Viewer from "common/viewer";
@@ -21,6 +21,7 @@ import VueLuxon from "vue-luxon";
 import VueFilters from "vue2-filters";
 import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
+import VueLongClick from "common/longclick";
 
 // Initialize helpers
 const viewer = new Viewer();
@@ -37,6 +38,7 @@ Vue.prototype.$log = Log;
 Vue.prototype.$socket = Socket;
 Vue.prototype.$config = config;
 Vue.prototype.$clipboard = clipboard;
+Vue.prototype.$isMobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
 
 // Register Vuetify
 Vue.use(Vuetify, {"theme": config.theme});
@@ -50,6 +52,8 @@ Vue.use(GetTextPlugin, {
     silent: true, // !config.values.debug,
     defaultLanguage: Vue.config.language,
 });
+
+Vue.directive("longclick", VueLongClick({delay: 400, interval: 0}));
 
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);

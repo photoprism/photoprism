@@ -85,13 +85,13 @@ class Photo extends RestModel {
 
     getColor() {
         switch (this.PhotoColor) {
-            case "brown":
-            case "black":
-            case "white":
-            case "grey":
-                return "grey lighten-2";
-            default:
-                return this.PhotoColor + " lighten-4";
+        case "brown":
+        case "black":
+        case "white":
+        case "grey":
+            return "grey lighten-2";
+        default:
+            return this.PhotoColor + " lighten-4";
         }
     }
 
@@ -119,7 +119,7 @@ class Photo extends RestModel {
         let file = this.Files.find(f => !!f.FilePrimary);
 
         if (!file) {
-            file = this.Files.find(f => f.FileType === 'jpg');
+            file = this.Files.find(f => f.FileType === "jpg");
         }
 
         return file;
@@ -136,7 +136,7 @@ class Photo extends RestModel {
             return this.FileHash;
         }
 
-        return ""
+        return "";
     }
 
     getThumbnailUrl(type) {
@@ -319,7 +319,7 @@ class Photo extends RestModel {
 
             if (results[i].PhotoUUID === response.models[0].PhotoUUID) {
                 const first = response.models.shift();
-                results[i].Files = results[i].Files.concat(first.Files)
+                results[i].Files = results[i].Files.concat(first.Files);
             }
         }
 

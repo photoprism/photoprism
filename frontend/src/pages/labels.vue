@@ -63,11 +63,14 @@
                         <v-hover>
                             <v-card tile class="accent lighten-3"
                                     slot-scope="{ hover }"
+                                    @contextmenu="contextMenu($event, label)"
                                     :dark="selection.includes(label.LabelUUID)"
                                     :class="selection.includes(label.LabelUUID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
                                     :to="{name: 'photos', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.LabelSlug)}}">
                                 <v-img
                                         :src="label.getThumbnailUrl('tile_500')"
+                                        v-longclick="longClick"
+                                        @click="onClick($event, label)"
                                         aspect-ratio="1"
                                         class="accent lighten-2"
                                 >
@@ -180,9 +183,30 @@
                     name: this.$gettext("Label Name"),
                 },
                 titleRule: v => v.length <= 25 || this.$gettext("Name too long"),
+                wasLong: false,
             };
         },
         methods: {
+            longClick() {
+                this.wasLong = true;
+            },
+            onClick(ev, model) {
+                if (this.wasLong || this.selection.length > 0) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+
+                    this.toggleSelection(model.getId());
+                }
+
+                this.wasLong = false;
+            },
+            contextMenu(ev, model) {
+                if (this.$isMobile) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    this.toggleSelection(model.getId());
+                }
+            },
             onSave(label) {
                 label.update();
             },

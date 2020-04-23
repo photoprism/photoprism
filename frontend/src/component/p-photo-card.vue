@@ -1,15 +1,17 @@
 <template>
     <v-hover>
         <v-card tile slot-scope="{ hover }"
+                @contextmenu="contextMenu($event)"
                 :dark="isSelected"
                 :class="isSelected ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'">
             <v-img
                     :src="thumbnailUrl"
                     aspect-ratio="1"
                     v-bind:class="{ selected: isSelected }"
-                    style="cursor: pointer"
+                    style="cursor: pointer;"
                     class="accent lighten-2"
-                    @click.exact="openPhoto(index)"
+                    v-longclick="longClick"
+                    @click="onClick($event)"
             >
                 <v-layout
                         slot="placeholder"
@@ -24,7 +26,7 @@
                 <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
                        icon large absolute
                        :class="isSelected ? 'p-photo-select' : 'p-photo-select opacity-50'"
-                       @click.shift.prevent="$clipboard.addRange(index, photos)"
+                       @click.shift.prevent="longClick"
                        @click.exact.stop.prevent="$clipboard.toggle(photo)">
                     <v-icon v-if="selection.length && isSelected" color="white"
                             class="t-select t-on">check_circle
@@ -47,7 +49,7 @@
                 </v-btn>
             </v-img>
 
-            <v-card-title primary-title class="pa-3 p-photo-desc">
+            <v-card-title primary-title class="pa-3 p-photo-desc" style="user-select: none;">
                 <div>
                     <h3 class="body-2 mb-2" :title="photo.PhotoTitle">
                         <button @click.exact="editPhoto(index)">
@@ -82,6 +84,7 @@
             index: Number,
             photo: Object,
             selection: Array,
+            selectRange: Function,
             openPhoto: Function,
             editPhoto: Function,
             openLocation: Function,
@@ -91,13 +94,46 @@
             return {
                 isSelected: this.$clipboard.has(this.photo),
                 thumbnailUrl: this.photo.getThumbnailUrl('tile_500'),
+                wasLong: false,
             };
+        },
+        methods: {
+            longClick() {
+                this.wasLong = true;
+            },
+            onClick(ev) {
+                if (this.wasLong || this.selection.length > 0) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+
+                    if (this.wasLong) {
+                        this.selectRange(this.index);
+                    } else {
+                        this.$clipboard.toggle(this.photo);
+                    }
+                } else {
+                    this.openPhoto(this.index, false);
+                }
+
+                this.wasLong = false;
+            },
+            contextMenu(ev) {
+                if (this.$isMobile) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+
+                    if (this.wasLong) {
+                        this.selectRange(this.index);
+                    } else {
+                        this.$clipboard.toggle(this.photo);
+                    }
+                }
+            },
         },
         watch: {
             selection() {
                 this.isSelected = this.$clipboard.has(this.photo);
             }
         },
-        methods: {}
     };
 </script>

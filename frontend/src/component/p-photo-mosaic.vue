@@ -23,13 +23,15 @@
             >
                 <v-hover>
                     <v-card tile slot-scope="{ hover }"
+                            @contextmenu="contextMenu($event, photo)"
                             :class="$clipboard.has(photo) ? 'elevation-10 ma-0' : 'elevation-0 ma-1'"
                             :title="photo.PhotoTitle">
                         <v-img :src="photo.getThumbnailUrl('tile_224')"
                                aspect-ratio="1"
                                class="accent lighten-2"
                                style="cursor: pointer"
-                               @click.exact="openPhoto(index)"
+                               v-longclick="longClick"
+                               @click="onClick($event, photo, index)"
                         >
                             <v-layout
                                     slot="placeholder"
@@ -45,7 +47,7 @@
                             <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
                                    icon small absolute
                                    :class="$clipboard.has(photo) ? 'p-photo-select' : 'p-photo-select opacity-50'"
-                                   @click.shift.prevent="$clipboard.addRange(index, photos)"
+                                   @click.shift.prevent="longClick"
                                    @click.exact.stop.prevent="$clipboard.toggle(photo)">
                                 <v-icon v-if="selection.length && $clipboard.has(photo)" color="white"
                                         class="t-select t-on">check_circle
@@ -91,6 +93,41 @@
             editPhoto: Function,
             album: Object,
         },
-        methods: {},
+        data() {
+            return {
+                wasLong: false,
+            };
+        },
+        methods: {
+            longClick() {
+                this.wasLong = true;
+            },
+            onClick(ev, model, index) {
+                if (this.wasLong || this.selection.length > 0) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+
+                    if (this.wasLong) {
+                        this.selectRange(index);
+                    } else {
+                        this.$clipboard.toggle(model);
+                    }
+                } else {
+                    this.openPhoto(index, false);
+                }
+
+                this.wasLong = false;
+            },
+            contextMenu(ev, model) {
+                if (this.$isMobile) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    this.$clipboard.toggle(model);
+                }
+            },
+            selectRange(index) {
+                this.$clipboard.addRange(index, this.photos);
+            }
+        },
     };
 </script>

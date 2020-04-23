@@ -22,6 +22,7 @@
                     v-bind:class="{ 'is-selected': $clipboard.has(photo) }"
             >
                 <p-photo-card :photo="photo" :selection="selection" :index="index" :open-photo="openPhoto"
+                              :select-range="selectRange"
                               :edit-photo="editPhoto" :open-location="openLocation" :show-location="places">
                 </p-photo-card>
             </v-flex>
@@ -44,6 +45,10 @@
                 places: this.$config.settings().features.places,
             };
         },
-        methods: {}
+        methods: {
+            selectRange(index) {
+                this.$clipboard.addRange(index, this.photos);
+            }
+        }
     };
 </script>
