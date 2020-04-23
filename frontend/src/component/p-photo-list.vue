@@ -10,9 +10,12 @@
             :no-data-text="this.$gettext('No photos matched your search')"
     >
         <template slot="items" slot-scope="props">
-            <td @click.exact="toggleSelection(props)">
+            <td style="user-select: none;">
                 <v-img class="accent lighten-2" style="cursor: pointer" aspect-ratio="1"
                        :src="props.item.getThumbnailUrl('tile_50')"
+                       v-longclick="longClick"
+                       @contextmenu="contextMenu($event, props.item, props.index)"
+                       @click="onClick($event, props.item, props.index)"
                 >
                     <v-layout
                             slot="placeholder"
@@ -27,30 +30,29 @@
 
                     <v-btn v-if="selection.length > 0" :flat="true" :ripple="false"
                            icon large absolute
-                           class="p-photo-select"
-                           @click.shift.prevent="$clipboard.addRange(props.index, photos)"
-                           @click.exact.stop.prevent="$clipboard.toggle(props.item)">
+                           class="p-photo-select">
                         <v-icon v-if="selection.length && $clipboard.has(props.item)" color="white"
                                 class="t-select t-on">check_circle
                         </v-icon>
                     </v-btn>
                 </v-img>
             </td>
-            <td class="p-photo-desc p-pointer" @click.exact="openPhoto(props.index)">
+            <td class="p-photo-desc p-pointer" @click.exact="openPhoto(props.index)" style="user-select: none;">
                 {{ props.item.PhotoTitle }}
             </td>
             <td class="p-photo-desc hidden-xs-only" :title="props.item.TakenAt | luxon:format('dd/MM/yyyy HH:mm:ss')">
-                <button @click.stop.prevent="editPhoto(props.index)">
+                <button @click.stop.prevent="editPhoto(props.index)" style="user-select: none;">
                     {{ props.item.TakenAt | luxon:locale }}
                 </button>
             </td>
-            <td class="p-photo-desc hidden-sm-and-down">
+            <td class="p-photo-desc hidden-sm-and-down" style="user-select: none;">
                 <button @click.stop.prevent="editPhoto(props.index)">
                     {{ props.item.CameraMake }} {{ props.item.CameraModel }}
                 </button>
             </td>
             <td class="p-photo-desc hidden-xs-only">
-                <button v-if="props.item.LocationID && places" @click.stop.prevent="openLocation(props.index)">
+                <button v-if="props.item.LocationID && showLocation" @click.stop.prevent="openLocation(props.index)"
+                        style="user-select: none;">
                     {{ props.item.getLocation() }}
                 </button>
                 <span v-else>
@@ -89,7 +91,8 @@
                     {text: this.$gettext('Location'), class: 'hidden-xs-only', value: 'LocLabel'},
                     {text: this.$gettext('Favorite'), value: 'PhotoFavorite', align: 'left'},
                 ],
-                places: this.$config.settings().features.places,
+                showLocation: this.$config.settings().features.places,
+                wasLong: false,
             };
         },
         watch: {
@@ -107,9 +110,35 @@
             },
         },
         methods: {
-            toggleSelection(props) {
-                this.$clipboard.toggle(props.item);
-                props.selected = this.$clipboard.has(props.item);
+            longClick() {
+                this.wasLong = true;
+            },
+            onClick(ev, model, index) {
+                ev.preventDefault();
+                ev.stopPropagation();
+
+                if (this.wasLong || ev.shiftKey) {
+                    this.selectRange(index);
+                } else {
+                    this.$clipboard.toggle(model);
+                }
+
+                this.wasLong = false;
+            },
+            contextMenu(ev, model, index) {
+                ev.preventDefault();
+                ev.stopPropagation();
+
+                if (this.wasLong) {
+                    this.selectRange(index);
+                } else {
+                    this.$clipboard.toggle(model);
+                }
+
+                this.wasLong = false;
+            },
+            selectRange(index) {
+                this.$clipboard.addRange(index, this.photos);
             },
             refreshSelection() {
                 this.selected.splice(0);
