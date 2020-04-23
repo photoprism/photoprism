@@ -40,7 +40,7 @@
 
             <p-scroll-top></p-scroll-top>
 
-            <v-container grid-list-xs fluid class="pa-2 p-labels p-labels-details">
+            <v-container grid-list-xs fluid class="pa-2 p-labels p-labels-cards">
                 <v-card v-if="results.length === 0" class="p-labels-empty secondary-light lighten-1 ma-1" flat>
                     <v-card-title primary-title>
                         <div>

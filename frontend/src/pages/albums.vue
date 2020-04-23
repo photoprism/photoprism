@@ -37,7 +37,7 @@
 
             <p-album-clipboard :refresh="refresh" :selection="selection"></p-album-clipboard>
 
-            <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-details">
+            <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-cards">
                 <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1 ma-1" flat>
                     <v-card-title primary-title>
                         <div>
@@ -213,7 +213,7 @@
                     if (this.scrollDisabled) {
                         this.offset = offset;
 
-                        if(this.results.length > 1) {
+                        if (this.results.length > 1) {
                             this.$notify.info(this.$gettext("All ") + this.results.length + this.$gettext(" albums loaded"));
                         }
                     } else {
@@ -306,7 +306,7 @@
                 });
             },
             refresh() {
-                if(this.loading) return;
+                if (this.loading) return;
                 this.loading = true;
                 this.page = 0;
                 this.dirty = true;
@@ -387,7 +387,7 @@
                         for (let i = 0; i < data.entities.length; i++) {
                             const values = data.entities[i];
                             const index = this.results.findIndex((m) => m.AlbumUUID === values.AlbumUUID);
-                            if(index === -1) {
+                            if (index === -1) {
                                 this.results.unshift(new Album(values));
                             }
                         }
@@ -406,7 +406,7 @@
             this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
         },
         destroyed() {
-            for(let i = 0; i < this.subscriptions.length; i++) {
+            for (let i = 0; i < this.subscriptions.length; i++) {
                 Event.unsubscribe(this.subscriptions[i]);
             }
         },

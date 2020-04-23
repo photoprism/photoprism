@@ -28,17 +28,13 @@
                           :open-photo="openPhoto"
                           :edit-photo="editPhoto"
                           :open-location="openLocation"></p-photo-list>
-            <p-photo-details v-else-if="settings.view === 'details'"
+            <p-photo-cards v-else
                              :photos="results"
                              :selection="selection"
                              :album="model"
                              :open-photo="openPhoto"
                              :edit-photo="editPhoto"
-                             :open-location="openLocation"></p-photo-details>
-            <p-photo-tiles v-else :photos="results"
-                           :selection="selection"
-                           :album="model"
-                           :open-photo="openPhoto"></p-photo-tiles>
+                             :open-location="openLocation"></p-photo-cards>
         </v-container>
     </div>
 </template>
@@ -47,7 +43,7 @@
     import Photo from "model/photo";
     import Album from "model/album";
     import Event from "pubsub-js";
-    import Thumb from "../../model/thumb";
+    import Thumb from "model/thumb";
 
     export default {
         name: 'p-page-album-photos',
@@ -119,11 +115,9 @@
                     return defaultType;
                 } else if (window.innerWidth < 960) {
                     return 'mosaic';
-                } else if (window.innerWidth > 1600) {
-                    return 'details';
                 }
 
-                return 'tiles';
+                return 'cards';
             },
             openLocation(index) {
                 const photo = this.results[index];

@@ -3,8 +3,13 @@
         <v-card v-if="photos.length === 0" class="p-photos-empty secondary-light lighten-1 ma-1" flat>
             <v-card-title primary-title>
                 <div>
-                    <h3 class="title mb-3"><translate>No photos matched your search</translate></h3>
-                    <div><translate>Try using other terms and search options such as category, country and camera.</translate></div>
+                    <h3 class="title mb-3">
+                        <translate>No photos matched your search</translate>
+                    </h3>
+                    <div>
+                        <translate>Try using other terms and search options such as category, country and camera.
+                        </translate>
+                    </div>
                 </div>
             </v-card-title>
         </v-card>
@@ -42,7 +47,9 @@
                                    :class="$clipboard.has(photo) ? 'p-photo-select' : 'p-photo-select opacity-50'"
                                    @click.shift.prevent="$clipboard.addRange(index, photos)"
                                    @click.exact.stop.prevent="$clipboard.toggle(photo)">
-                                <v-icon v-if="selection.length && $clipboard.has(photo)" color="white" class="t-select t-on">check_circle</v-icon>
+                                <v-icon v-if="selection.length && $clipboard.has(photo)" color="white"
+                                        class="t-select t-on">check_circle
+                                </v-icon>
                                 <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
                             </v-btn>
 
@@ -84,7 +91,6 @@
             editPhoto: Function,
             album: Object,
         },
-        methods: {
-        },
+        methods: {},
     };
 </script>

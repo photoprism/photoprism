@@ -12,36 +12,38 @@
 }
 
 #photoprism .p-photo-list .p-photo-select {
-    top: 7px; left: 7px;
+    top: 7px;
+    left: 7px;
 }
 
-#photoprism .p-photo-tiles .p-photo-edit,
 #photoprism .p-photo-mosaic .p-photo-edit,
-#photoprism .p-photo-details .p-photo-edit {
-    top: 4px; right: 4px;
+#photoprism .p-photo-cards .p-photo-edit {
+    top: 4px;
+    right: 4px;
 }
 
-#photoprism .p-photo-tiles .p-photo-merged,
 #photoprism .p-photo-mosaic .p-photo-merged,
-#photoprism .p-photo-details .p-photo-merged {
-    top: 4px; left: 4px;
+#photoprism .p-photo-cards .p-photo-merged {
+    top: 4px;
+    left: 4px;
 }
 
-#photoprism .p-photo-tiles .p-photo-like,
 #photoprism .p-photo-mosaic .p-photo-like,
-#photoprism .p-photo-details .p-photo-like {
-    left: 4px; bottom: 4px;
+#photoprism .p-photo-cards .p-photo-like {
+    left: 4px;
+    bottom: 4px;
 }
 
-#photoprism .p-photo-tiles .p-photo-select,
-#photoprism .p-photo-details .p-photo-select,
+#photoprism .p-photo-cards .p-photo-select,
 #photoprism .p-photo-mosaic .p-photo-select {
-    right: 4px; bottom: 4px;
+    right: 4px;
+    bottom: 4px;
 }
 
-#photoprism .p-albums-details .p-album-select,
-#photoprism .p-labels-details .p-label-select {
-    right: 4px; bottom: 4px;
+#photoprism .p-albums-cards .p-album-select,
+#photoprism .p-labels-cards .p-label-select {
+    right: 4px;
+    bottom: 4px;
 }
 
 #photoprism .p-clipboard {
@@ -50,7 +52,7 @@
 }
 
 #photoprism .p-clipboard .v-btn.v-btn--disabled:not(.v-btn--icon):not(.v-btn--flat):not(.v-btn--outline) {
-    background-color: rgba(100,100,100,0.5) !important;
+    background-color: rgba(100, 100, 100, 0.5) !important;
 }
 
 #photoprism .p-photo-desc button {

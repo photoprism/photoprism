@@ -24,12 +24,12 @@
                           :open-photo="openPhoto"
                           :edit-photo="editPhoto"
                           :open-location="openLocation"></p-photo-list>
-            <p-photo-details v-else
+            <p-photo-cards v-else
                              :photos="results"
                              :selection="selection"
                              :open-photo="openPhoto"
                              :edit-photo="editPhoto"
-                             :open-location="openLocation"></p-photo-details>
+                             :open-location="openLocation"></p-photo-cards>
         </v-container>
     </div>
 </template>
@@ -131,7 +131,7 @@
                     return 'mosaic';
                 }
 
-                return 'details';
+                return 'cards';
             },
             openLocation(index) {
                 const photo = this.results[index];

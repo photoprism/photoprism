@@ -29,13 +29,13 @@
                 <v-icon>refresh</v-icon>
             </v-btn>
 
-            <v-btn icon v-if="settings.view === 'details'" @click.stop="setView('list')">
+            <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')">
                 <v-icon>view_list</v-icon>
             </v-btn>
             <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')">
                 <v-icon>view_comfy</v-icon>
             </v-btn>
-            <v-btn icon v-else @click.stop="setView('details')">
+            <v-btn icon v-else @click.stop="setView('cards')">
                 <v-icon>view_column</v-icon>
             </v-btn>
 
@@ -144,7 +144,7 @@
                 options: {
                     'views': [
                         {value: 'mosaic', text: this.$gettext('Mosaic')},
-                        {value: 'details', text: this.$gettext('Details')},
+                        {value: 'cards', text: this.$gettext('Cards')},
                         {value: 'list', text: this.$gettext('List')},
                     ],
                     'countries': countries,
