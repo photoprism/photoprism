@@ -299,15 +299,18 @@ bubble:
   see: ignore
 
 tench fish:
-  label: tench fish
+  label: fish
+  threshold: 0.54
   categories:
-    - fish
+    - water
+    - animal
 
 goldfish:
-  label: goldfish
-  threshold: 0.2
+  label: fish
+  threshold: 0.76
   categories:
-    - fish
+    - water
+    - animal
 
 shark:
   label: shark
@@ -327,14 +330,14 @@ hammerhead:
   see: shark
 
 electric ray:
-  label: electriv ray
+  label: fish
+  threshold: 0.94
   categories:
-    - fish
+    - water
+    - animal
 
 stingray:
-  label: sting ray
-  categories:
-    - fish
+  see: fish
 
 cock:
   label: chicken
@@ -480,9 +483,11 @@ box turtle:
     - turtle
 
 common iguana:
-  label: common iguana
+  label: lizard
+  threshold: 0.32
   categories:
-    - lizard
+    - reptile
+    - animal
 
 chameleon:
   label: chameleon
@@ -507,44 +512,60 @@ lizard:
     - animal
 
 agama:
-  label: agama
+  label: lizard
+  threshold: 0.67
   categories:
-    - lizard
+    - reptile
+    - animal
 
 whiptail:
-  label: whiptail
+  label: lizard
+  threshold: 0.32
   categories:
-    - lizard
+    - reptile
+    - animal
 
 banded gecko:
-  label: banded gecko
+  label: lizard
+  threshold: 0.68
   categories:
-    - lizard
+    - reptile
+    - animal
 
 frilled lizard:
-  label: frilled lizard
+  label: lizard
+  threshold: 48
   categories:
-    - lizard
+    - reptile
+    - animal
 
 alligator lizard:
-  label: alligator lizard
+  label: lizard
+  threshold: 0.33
   categories:
-    - lizard
+    - reptile
+    - animal
 
 gila monster lizard:
-  label: gila monster lizard
+  label: lizard
+  threshold: 0.62
   categories:
-    - lizard
+    - reptile
+    - animal
 
 green lizard:
-  label: green lizard
+  label: lizard
+  threshold: 0.3
   categories:
-    - lizard
+    - reptile
+    - animal
 
 komodo dragon:
-  label: komodo dragon
+  label: lizard
+  threshold: 0.47
   categories:
-    - lizard
+    - reptile
+    - animal
 
 african crocodile:
   label: crocodile
@@ -2051,54 +2072,67 @@ fish:
     - animal
 
 barracouta:
-  label: barracouta
+  label: fish
+  threshold: 0.23
   categories:
-    - fish
+    - water
+    - animal
 
 eel:
-  label: eel
+  label: fish
+  threshold: 0.21
   categories:
-    - fish
+    - water
+    - animal
 
 coho fish:
-  label: coho fish
+  label: fish
+  threshold: 0.15
   categories:
-    - fish
+    - water
+    - animal
 
 rock beauty fish:
-  label: rock beauty fish
-  threshold: 0.3
+  label: fish
+  threshold: 0.83
   categories:
-    - fish
+    - water
+    - animal
 
 anemone fish:
-  label: aneone fish
-  threshold: 0.3
+  label: fish
+  threshold: 0.51
   categories:
-    - fish
+    - water
+    - animal
 
 sturgeon fish:
-  label: sturegoen fish
-  threshold: 0.3
+  label: fish
+  threshold: 0.39
   categories:
-    - fish
+    - water
+    - animal
 
 gar fish:
-  label: gar fish
-  threshold: 0.3
+  label: fish
+  threshold: 0.48
   categories:
-    - fish
+    - water
+    - animal
 
 lionfish:
-  label: lionfish
+  label: fish
+  threshold: 0.54
   categories:
-    - fish
+    - water
+    - animal
 
 puffer:
-  label: puffer
-  threshold: 0.4
+  label: fish
+  threshold: 0.2
   categories:
-    - fish
+    - water
+    - animal
 
 instrument:
   label: instrument
@@ -2181,10 +2215,8 @@ bakery:
     - shop
 
 ballpoint:
-  label: ballpoint
-  threshold: 0.4
-  categories:
-    - office
+  label: office
+  threshold: 0.47
 
 banjo:
   see: instrument
@@ -2196,10 +2228,8 @@ barber chair:
   see: ignore
 
 barbershop:
-  label: barber shop
-  threshold: 0.3
-  categories:
-    - shop
+  label: shop
+  threshold: 0.35
 
 barn:
   threshold: 0.2
@@ -2283,16 +2313,12 @@ bookcase:
     - book
 
 bookshop:
-  label: bookshop
+  label: shop
   threshold: 0.35
-  categories:
-    - shop
 
 tobacco shop:
-  label: tobacco shop
-  threshold: 0.3
-  categories:
-    - shop
+  label: shop
+  threshold: 0.54
 
 breakwater:
   label: water
@@ -2461,9 +2487,7 @@ mouse:
 
 confectionery:
   threshold: 0.3
-  label: confectionery
-  categories:
-    - shop
+  label: shop
 
 container ship:
   label: container ship
@@ -2710,7 +2734,7 @@ greenhouse:
     - building
 
 grocery store:
-  label: grocery store
+  label: store
   threshold: 0.6
   categories:
     - shop
@@ -3088,10 +3112,8 @@ petri dish:
   see: ignore
 
 photocopier:
-  label: photocopier
-  threshold: 0.3
-  categories:
-    - office
+  label: office
+  threshold: 0.69
 
 picket fence:
   see: fence
@@ -3196,10 +3218,8 @@ prayer rug:
   see: ignore
 
 printer:
-  label: printer
+  label: office
   threshold: 0.3
-  categories:
-    - office
 
 prison:
   label: building
@@ -3305,10 +3325,8 @@ screwdriver:
   see: tool
 
 shoe shop:
-  label: shoe shop
-  threshold: 0.3
-  categories:
-    - shop
+  label: shop
+  threshold: 0.35
 
 basket:
   label: basket
@@ -3327,10 +3345,8 @@ shopping basket:
     - basket
 
 shopping cart:
-  label: shopping cart
-  threshold: 0.3
-  categories:
-    - shop
+  label: shop
+  threshold: 0.83
 
 shovel:
   see: tool
@@ -3416,10 +3432,8 @@ steam locomotive:
     - vehicle
 
 steel arch bridge:
-  label: steel arch bridge
-  threshold: 0.3
-  categories:
-    - bridge
+  label: bridge
+  threshold: 0.47
 
 steel drum:
   see: instrument
@@ -3456,10 +3470,9 @@ submarine:
     - ship
 
 suspension bridge:
-  label: suspension bridge
-  threshold: 0.3
+  label: bridge
+  threshold: 0.65
   categories:
-    - bridge
     - architecture
 
 swimming trunks:
@@ -3497,10 +3510,8 @@ tow truck:
   label: truck
 
 toyshop:
-  threshold: 0.3
-  label: toyshop
-  categories:
-    - shop
+  threshold: 0.5
+  label: shop
 
 trailer truck:
   threshold: 0.41
@@ -4063,28 +4074,20 @@ menu:
     - info
 
 envelope:
-  label: envelope
-  threshold: 0.3
-  categories:
-    - office
+  label: office
+  threshold: 0.7
 
 slide rule:
-  label: slide rule
-  threshold: 0.3
-  categories:
-    - office
+  label: office
+  threshold: 0.7
 
 binder:
-  label: binder
-  threshold: 0.3
-  categories:
-    - office
+  label: office
+  threshold: 0.73
 
 letter opener:
-  label: letter opener
-  threshold: 0.3
-  categories:
-    - office
+  label: office
+  threshold: 0.55
 
 puzzle:
   label: puzzle
@@ -4241,19 +4244,16 @@ office:
   threshold: 0.2
 
 desk:
-  label: desk
-  categories:
-    - office
+  label: office
+  threshold: 0.43
 
 pencil box:
-  label: pencil box
-  categories:
-    - office
+  label: office
+  threshold: 0.5
 
 pencil sharpener:
-  label: pencil sharpener
-  categories:
-    - office
+  label: office
+  threshold: 0.45
 
 volcano:
   see: ignore
