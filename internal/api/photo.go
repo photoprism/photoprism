@@ -150,6 +150,7 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		m.PhotoFavorite = true
+		m.PhotoQuality = m.QualityScore()
 		conf.Db().Save(&m)
 
 		event.Publish("count.favorites", event.Data{
@@ -183,6 +184,7 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		m.PhotoFavorite = false
+		m.PhotoQuality = m.QualityScore()
 		conf.Db().Save(&m)
 
 		event.Publish("count.favorites", event.Data{

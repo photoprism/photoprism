@@ -46,9 +46,6 @@ func (m *Photo) GetTakenAt() time.Time {
 func (m *Photo) UpdateLocation(db *gorm.DB, geoApi string) (keywords []string, labels classify.Labels) {
 	var location = NewLocation(m.PhotoLat, m.PhotoLng)
 
-	location.Lock()
-	defer location.Unlock()
-
 	err := location.Find(db, geoApi)
 
 	if err == nil {

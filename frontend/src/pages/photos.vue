@@ -55,6 +55,7 @@
                 this.filter.year = query['year'] ? parseInt(query['year']) : 0;
                 this.filter.color = query['color'] ? query['color'] : '';
                 this.filter.label = query['label'] ? query['label'] : '';
+                this.filter.order = this.sortOrder();
                 this.settings.view = this.viewType();
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
@@ -64,7 +65,7 @@
         data() {
             const query = this.$route.query;
             const routeName = this.$route.name;
-            const order = query['order'] ? query['order'] : 'newest';
+            const order = this.sortOrder();
             const camera = query['camera'] ? parseInt(query['camera']) : 0;
             const q = query['q'] ? query['q'] : '';
             const country = query['country'] ? query['country'] : '';
@@ -120,10 +121,10 @@
         methods: {
             viewType() {
                 let queryParam = this.$route.query['view'];
-                let storedType = window.localStorage.getItem("photo_view_type");
+                let storedType = window.localStorage.getItem("photo_view");
 
                 if (queryParam) {
-                    window.localStorage.setItem("photo_view_type", queryParam);
+                    window.localStorage.setItem("photo_view", queryParam);
                     return queryParam;
                 } else if (storedType) {
                     return storedType;
@@ -132,6 +133,19 @@
                 }
 
                 return 'cards';
+            },
+            sortOrder() {
+                let queryParam = this.$route.query['order'];
+                let storedType = window.localStorage.getItem("photo_order");
+
+                if (queryParam) {
+                    window.localStorage.setItem("photo_order", queryParam);
+                    return queryParam;
+                } else if (storedType) {
+                    return storedType;
+                }
+
+                return 'newest';
             },
             openLocation(index) {
                 const photo = this.results[index];

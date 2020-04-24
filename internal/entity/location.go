@@ -2,17 +2,13 @@ package entity
 
 import (
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
-	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
-
-var locationMutex = sync.Mutex{}
 
 // Location used to associate photos to location
 type Location struct {
@@ -26,16 +22,6 @@ type Location struct {
 	UpdatedAt   time.Time
 }
 
-// Lock location for updates
-func (Location) Lock() {
-	locationMutex.Lock()
-}
-
-// Unlock location for updates
-func (Location) Unlock() {
-	locationMutex.Unlock()
-}
-
 // NewLocation creates a location using a token extracted from coordinate
 func NewLocation(lat, lng float64) *Location {
 	result := &Location{}
@@ -47,9 +33,6 @@ func NewLocation(lat, lng float64) *Location {
 
 // Find gets the location using either the db or the api if not in the db
 func (m *Location) Find(db *gorm.DB, api string) error {
-	mutex.Db.Lock()
-	defer mutex.Db.Unlock()
-
 	if err := db.First(m, "id = ?", m.ID).Error; err == nil {
 		m.Place = FindPlace(m.PlaceID, db)
 		return nil
@@ -77,8 +60,12 @@ func (m *Location) Find(db *gorm.DB, api string) error {
 	m.LocCategory = l.LocCategory
 	m.LocSource = l.LocSource
 
-	if err := db.Create(m).Error; err != nil {
-		log.Errorf("location: %s", err)
+	if err := db.Create(m).Error; err == nil {
+		return nil
+	} else if err := db.First(m, "id = ?", m.ID).Error; err == nil {
+		// avoid mutex by trying again to find location
+		m.Place = FindPlace(m.PlaceID, db)
+	} else {
 		return err
 	}
 

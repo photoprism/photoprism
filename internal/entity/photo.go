@@ -25,11 +25,12 @@ type Photo struct {
 	PhotoName        string      `gorm:"type:varbinary(256);"`
 	PhotoTitle       string      `json:"PhotoTitle"`
 	TitleSrc         string      `gorm:"type:varbinary(8);" json:"TitleSrc"`
+	PhotoQuality     int         `gorm:"type:SMALLINT" json:"PhotoQuality"`
+	PhotoResolution  int         `gorm:"type:SMALLINT" json:"PhotoResolution"`
 	PhotoFavorite    bool        `json:"PhotoFavorite"`
 	PhotoPrivate     bool        `json:"PhotoPrivate"`
-	PhotoNSFW        bool        `json:"PhotoNSFW"`
 	PhotoStory       bool        `json:"PhotoStory"`
-	PhotoReview      bool        `json:"PhotoReview"`
+	PhotoNSFW        bool        `json:"PhotoNSFW"`
 	PhotoLat         float64     `gorm:"index;" json:"PhotoLat"`
 	PhotoLng         float64     `gorm:"index;" json:"PhotoLng"`
 	PhotoAltitude    int         `json:"PhotoAltitude"`
@@ -100,6 +101,8 @@ func SavePhotoForm(model Photo, form form.Photo, db *gorm.DB, geoApi string) err
 		log.Warnf("%s (%s)", err.Error(), model.PhotoUUID)
 	}
 
+	model.PhotoQuality = model.QualityScore()
+
 	return db.Unscoped().Save(&model).Error
 }
 
@@ -120,6 +123,8 @@ func (m *Photo) Save(db *gorm.DB) error {
 	if err := m.IndexKeywords(db); err != nil {
 		log.Error(err)
 	}
+
+	m.PhotoQuality = m.QualityScore()
 
 	return db.Unscoped().Save(m).Error
 }

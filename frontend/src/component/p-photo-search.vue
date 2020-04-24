@@ -170,6 +170,7 @@
                         {value: 'newest', text: this.$gettext('Newest first')},
                         {value: 'oldest', text: this.$gettext('Oldest first')},
                         {value: 'similar', text: this.$gettext('Similar')},
+                        {value: 'relevance', text: this.$gettext('Relevance')},
                     ],
                 },
                 labels: {

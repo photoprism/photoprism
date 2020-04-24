@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"errors"
+	"math"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -258,7 +259,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
-	if photo.Place != nil && (photo.PhotoCountry == "" || photo.PhotoCountry == "zz") {
+	if photo.Place == nil {
+		photo.Place = entity.UnknownPlace
+		photo.PlaceID = entity.UnknownPlace.ID
+	}
+
+	if photo.PhotoCountry == "" || photo.PhotoCountry == "zz" {
 		photo.PhotoCountry = photo.Place.LocCountry
 	}
 
@@ -301,6 +307,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Width() < m.Height()
+
+			megapixels := int(math.Round(float64(file.FileWidth*file.FileHeight) / 1000000))
+
+			if megapixels > photo.PhotoResolution {
+				photo.PhotoResolution = megapixels
+			}
 		}
 	}
 
@@ -368,6 +380,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			log.Debug("index: no photo keywords")
 		}
 
+		photo.PhotoQuality = photo.QualityScore()
+
 		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
 			log.Errorf("index: %s", err)
 			result.Status = IndexFailed
@@ -377,6 +391,15 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		if err := photo.IndexKeywords(ind.db); err != nil {
 			log.Warnf("%s (%s)", err.Error(), photo.PhotoUUID)
+		}
+	} else {
+		photo.PhotoQuality = photo.QualityScore()
+
+		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
+			log.Errorf("index: %s", err)
+			result.Status = IndexFailed
+			result.Error = err
+			return result
 		}
 	}
 

@@ -29,6 +29,8 @@ type PhotoSearch struct {
 	Year      uint      `form:"year"`
 	Month     uint      `form:"month"`
 	Color     string    `form:"color"`
+	Quality   int       `form:"quality"`
+	Review    bool      `form:"review"`
 	Camera    int       `form:"camera"`
 	Lens      int       `form:"lens"`
 	Before    time.Time `form:"before" time_format:"2006-01-02"`

@@ -33,8 +33,6 @@ type PhotoResult struct {
 	PhotoCountry     string
 	PhotoFavorite    bool
 	PhotoPrivate     bool
-	PhotoSensitive   bool
-	PhotoStory       bool
 	PhotoLat         float64
 	PhotoLng         float64
 	PhotoAltitude    int
@@ -42,6 +40,8 @@ type PhotoResult struct {
 	PhotoFocalLength int
 	PhotoFNumber     float64
 	PhotoExposure    string
+	PhotoQuality     int
+	PhotoResolution  int
 	Merged           bool
 
 	// Camera
@@ -322,6 +322,12 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 		s = s.Where("files.file_chroma > 0 AND files.file_chroma <= ?", f.Chroma)
 	}
 
+	if f.Review {
+		s = s.Where("photos.photo_quality < 3")
+	} else if f.Quality != 0 {
+		s = s.Where("photos.photo_quality >= ?", f.Quality)
+	}
+
 	if f.Diff != 0 {
 		s = s.Where("files.file_diff = ?", f.Diff)
 	}
@@ -363,7 +369,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 
 	switch f.Order {
 	case entity.SortOrderRelevance:
-		s = s.Order("photo_story DESC, photo_favorite DESC, taken_at DESC, files.file_primary DESC")
+		s = s.Order("photo_quality DESC, taken_at DESC, files.file_primary DESC")
 	case entity.SortOrderNewest:
 		s = s.Order("taken_at DESC, photos.photo_uuid, files.file_primary DESC")
 	case entity.SortOrderOldest:

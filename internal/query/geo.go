@@ -42,6 +42,7 @@ func (q *Query) Geo(f form.GeoSearch) (results []GeoResult, err error) {
 		AND files.file_missing = 0 AND files.file_primary AND files.deleted_at IS NULL`).
 		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0").
+		Where("photos.photo_quality > 2").
 		Group("photos.id, files.id")
 
 	if f.Query != "" {

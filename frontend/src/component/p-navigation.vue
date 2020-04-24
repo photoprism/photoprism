@@ -71,7 +71,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile :to="{name: 'photos', query: { q: 'mono:true' }}" :exact="true" @click="">
+                    <v-list-tile :to="{name: 'photos', query: { q: 'mono:true quality:3' }}" :exact="true" @click="">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate>Monochrome</translate>
@@ -79,10 +79,10 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile :to="{name: 'photos', query: { q: 'chroma:50' }}" :exact="true" @click="">
+                    <v-list-tile :to="{name: 'photos', query: { q: 'review:true' }}" :exact="true" @click="">
                         <v-list-tile-content>
                             <v-list-tile-title>
-                                <translate>Vibrant</translate>
+                                <translate>Review</translate>
                             </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
