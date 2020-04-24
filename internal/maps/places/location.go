@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	gc "github.com/patrickmn/go-cache"
 	"github.com/photoprism/photoprism/pkg/s2"
@@ -23,6 +24,7 @@ type Location struct {
 }
 
 var ReverseLookupURL = "https://places.photoprism.org/v1/location/%s"
+var client = &http.Client{Timeout: 30 * time.Second} // TODO: Change timeout if needed
 
 func NewLocation(id string, lat float64, lng float64, name string, category string, place Place, cached bool) *Location {
 	result := &Location{
@@ -59,10 +61,21 @@ func FindLocation(id string) (result Location, err error) {
 
 	log.Debugf("places: query %s", url)
 
-	r, err := http.Get(url)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
 		log.Errorf("places: %s", err.Error())
+		return result, err
+	}
+
+	r, err := client.Do(req)
+
+	if err != nil {
+		log.Errorf("places: %s", err.Error())
+		return result, err
+	} else if r.StatusCode >= 400 {
+		err = fmt.Errorf("places: request failed with status code %d", r.StatusCode)
+		log.Error(err)
 		return result, err
 	}
 
