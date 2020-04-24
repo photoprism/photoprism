@@ -13,6 +13,8 @@ type GeoSearch struct {
 	S2       string    `form:"s2"`
 	Olc      string    `form:"olc"`
 	Dist     uint      `form:"dist"`
+	Quality  int       `form:"quality"`
+	Review   bool      `form:"review"`
 }
 
 // GetQuery returns the query parameter as string.
