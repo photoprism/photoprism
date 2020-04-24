@@ -13,15 +13,16 @@ import (
 
 // GeoResult represents a photo for displaying it on a map.
 type GeoResult struct {
-	ID         string    `json:"ID"`
-	PhotoLat   float64   `json:"Lat"`
-	PhotoLng   float64   `json:"Lng"`
-	PhotoUUID  string    `json:"PhotoUUID"`
-	PhotoTitle string    `json:"PhotoTitle"`
-	FileHash   string    `json:"FileHash"`
-	FileWidth  int       `json:"FileWidth"`
-	FileHeight int       `json:"FileHeight"`
-	TakenAt    time.Time `json:"TakenAt"`
+	ID            string    `json:"ID"`
+	PhotoLat      float64   `json:"Lat"`
+	PhotoLng      float64   `json:"Lng"`
+	PhotoUUID     string    `json:"PhotoUUID"`
+	PhotoTitle    string    `json:"PhotoTitle"`
+	PhotoFavorite bool      `json:"PhotoFavorite"`
+	FileHash      string    `json:"FileHash"`
+	FileWidth     int       `json:"FileWidth"`
+	FileHeight    int       `json:"FileHeight"`
+	TakenAt       time.Time `json:"TakenAt"`
 }
 
 // Geo searches for photos based on a Form and returns a PhotoResult slice.
@@ -35,8 +36,8 @@ func (q *Query) Geo(f form.GeoSearch) (results []GeoResult, err error) {
 	s := q.db.NewScope(nil).DB()
 
 	s = s.Table("photos").
-		Select(`photos.id, photos.photo_uuid, photos.photo_lat, photos.photo_lng, photos.photo_title, photos.taken_at, 
-		files.file_hash, files.file_width, files.file_height`).
+		Select(`photos.id, photos.photo_uuid, photos.photo_lat, photos.photo_lng, photos.photo_title, 
+		photos.photo_favorite, photos.taken_at, files.file_hash, files.file_width, files.file_height`).
 		Joins(`JOIN files ON files.photo_id = photos.id 
 		AND files.file_missing = 0 AND files.file_primary AND files.deleted_at IS NULL`).
 		Where("photos.deleted_at IS NULL").
@@ -47,6 +48,10 @@ func (q *Query) Geo(f form.GeoSearch) (results []GeoResult, err error) {
 		s = s.Joins("LEFT JOIN photos_keywords ON photos_keywords.photo_id = photos.id").
 			Joins("LEFT JOIN keywords ON photos_keywords.keyword_id = keywords.id").
 			Where("keywords.keyword LIKE ?", strings.ToLower(f.Query)+"%")
+	}
+
+	if f.Favorite {
+		s = s.Where("photos.photo_favorite = 1")
 	}
 
 	if f.S2 != "" {

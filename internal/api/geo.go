@@ -64,12 +64,13 @@ func GetGeo(router *gin.RouterGroup, conf *config.Config) {
 			feat := geojson.NewPointFeature([]float64{p.PhotoLng, p.PhotoLat})
 			feat.ID = p.ID
 			feat.Properties = gin.H{
-				"PhotoUUID":  p.PhotoUUID,
-				"PhotoTitle": p.PhotoTitle,
-				"FileHash":   p.FileHash,
-				"FileWidth":  p.FileWidth,
-				"FileHeight": p.FileHeight,
-				"TakenAt":    p.TakenAt,
+				"PhotoUUID":     p.PhotoUUID,
+				"PhotoTitle":    p.PhotoTitle,
+				"PhotoFavorite": p.PhotoFavorite,
+				"FileHash":      p.FileHash,
+				"FileWidth":     p.FileWidth,
+				"FileHeight":    p.FileHeight,
+				"TakenAt":       p.TakenAt,
 			}
 			fc.AddFeature(feat)
 		}
