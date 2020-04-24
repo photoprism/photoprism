@@ -242,6 +242,12 @@ class Photo extends RestModel {
         }
     }
 
+    togglePrivate() {
+        this.PhotoPrivate = !this.PhotoPrivate;
+
+        return Api.put(this.getEntityResource(), {PhotoPrivate: this.PhotoPrivate});
+    }
+
     setPrimary(fileUUID) {
         return Api.post(this.getEntityResource() + "/primary/" + fileUUID).then((r) => Promise.resolve(this.setValues(r.data)));
     }

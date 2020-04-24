@@ -18,3 +18,5 @@ library:
   thumbs: false
   group: true
   move: false
+  review: true
+  private: false

@@ -40,9 +40,9 @@
             <td class="p-photo-desc p-pointer" @click.exact="openPhoto(props.index)" style="user-select: none;">
                 {{ props.item.PhotoTitle }}
             </td>
-            <td class="p-photo-desc hidden-xs-only" :title="props.item.TakenAt | luxon:format('dd/MM/yyyy HH:mm:ss')">
+            <td class="p-photo-desc hidden-xs-only" :title="props.item.getDateString()">
                 <button @click.stop.prevent="editPhoto(props.index)" style="user-select: none;">
-                    {{ props.item.TakenAt | luxon:locale }}
+                    {{ props.item.TakenAt | luxon:locale('DATE_MED') }}
                 </button>
             </td>
             <td class="p-photo-desc hidden-sm-and-down" style="user-select: none;">
@@ -59,11 +59,16 @@
                     {{ props.item.getLocation() }}
                 </span>
             </td>
-            <td>
+            <td class="text-xs-center">
+                <v-btn v-if="showPrivate" class="p-photo-private" icon small flat :ripple="false"
+                       @click.stop.prevent="props.item.togglePrivate()">
+                    <v-icon v-if="props.item.PhotoPrivate" color="secondary-dark">lock</v-icon>
+                    <v-icon v-else color="accent lighten-3">lock_open</v-icon>
+                </v-btn>
                 <v-btn class="p-photo-like" icon small flat :ripple="false"
                        @click.stop.prevent="props.item.toggleLike()">
                     <v-icon v-if="props.item.PhotoFavorite" color="pink lighten-3">favorite</v-icon>
-                    <v-icon v-else color="accent lighten-4">favorite_border</v-icon>
+                    <v-icon v-else color="accent lighten-3">favorite_border</v-icon>
                 </v-btn>
             </td>
         </template>
@@ -89,9 +94,10 @@
                     {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt'},
                     {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel'},
                     {text: this.$gettext('Location'), class: 'hidden-xs-only', value: 'LocLabel'},
-                    {text: this.$gettext('Favorite'), value: 'PhotoFavorite', align: 'left'},
+                    {text: '', value: '', sortable: false, align: 'center'},
                 ],
                 showLocation: this.$config.settings().features.places,
+                showPrivate: this.$config.settings().library.private,
                 wasLong: false,
             };
         },

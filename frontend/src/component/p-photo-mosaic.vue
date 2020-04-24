@@ -44,6 +44,12 @@
                                                      color="accent lighten-5"></v-progress-circular>
                             </v-layout>
 
+                            <v-btn v-if="showPrivate && photo.PhotoPrivate" :flat="!hover" :ripple="false"
+                                   icon small absolute
+                                   class="p-photo-private opacity-75">
+                                <v-icon color="white">lock</v-icon>
+                            </v-btn>
+
                             <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
                                    icon small absolute
                                    :class="$clipboard.has(photo) ? 'p-photo-select' : 'p-photo-select opacity-50'"
@@ -95,6 +101,7 @@
         data() {
             return {
                 wasLong: false,
+                showPrivate: this.$config.settings().library.private,
             };
         },
         methods: {

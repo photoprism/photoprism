@@ -87,11 +87,11 @@
 
             const settings = this.$config.settings();
 
-            if(settings.library.private) {
+            if (settings.library.private) {
                 filter.public = true;
             }
 
-            if(settings.library.review) {
+            if (settings.library.review) {
                 filter.quality = 3;
             }
 
@@ -332,7 +332,7 @@
 
                             if (model) {
                                 for (let key in values) {
-                                    if (values.hasOwnProperty(key)) {
+                                    if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
                                         model[key] = values[key];
                                     }
                                 }

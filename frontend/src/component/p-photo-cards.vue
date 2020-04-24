@@ -75,6 +75,7 @@
                                 <h3 class="body-2 mb-2" :title="photo.PhotoTitle">
                                     <button @click.exact="editPhoto(index)">
                                         {{ photo.PhotoTitle | truncate(80) }}
+                                        <v-icon v-if="showPrivate && photo.PhotoPrivate" size="16" title="Private">lock</v-icon>
                                     </button>
                                 </h3>
                                 <div class="caption">
@@ -115,6 +116,7 @@
         data() {
             return {
                 showLocation: this.$config.settings().features.places,
+                showPrivate: this.$config.settings().library.private,
                 wasLong: false,
             };
         },

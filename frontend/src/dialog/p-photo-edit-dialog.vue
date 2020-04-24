@@ -6,7 +6,9 @@
                 <v-btn icon dark @click.stop="close">
                     <v-icon>close</v-icon>
                 </v-btn>
-                <v-toolbar-title>{{ title }}</v-toolbar-title>
+                <v-toolbar-title>{{ title }}
+                    <v-icon v-if="isPrivate" title="Private">lock</v-icon>
+                </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-toolbar-items v-if="selection.length > 1">
                     <v-btn icon disabled @click.stop="prev" :disabled="selected < 1">
@@ -83,6 +85,13 @@
                 }
 
                 this.$gettext("Edit Photo");
+            },
+            isPrivate: function () {
+                if (this.model && this.model.PhotoPrivate && this.$config.settings().library.private) {
+                    return this.model.PhotoPrivate
+                }
+
+                return false;
             },
         },
         data() {

@@ -16,6 +16,12 @@
     left: 7px;
 }
 
+#photoprism .p-photo-mosaic .p-photo-private,
+#photoprism .p-photo-cards .p-photo-private {
+    top: 4px;
+    right: 4px;
+}
+
 #photoprism .p-photo-mosaic .p-photo-edit,
 #photoprism .p-photo-cards .p-photo-edit {
     top: 4px;

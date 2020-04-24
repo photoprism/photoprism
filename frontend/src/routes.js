@@ -52,6 +52,20 @@ export default [
         props: {staticFilter: {favorites: true}},
     },
     {
+        name: "review",
+        path: "/review",
+        component: Photos,
+        meta: {title: "Review", auth: true},
+        props: {staticFilter: {review: true}},
+    },
+    {
+        name: "private",
+        path: "/private",
+        component: Photos,
+        meta: {title: "Private", auth: true},
+        props: {staticFilter: {private: true}},
+    },
+    {
         name: "archive",
         path: "/archive",
         component: Photos,
