@@ -53,7 +53,7 @@ Vue.use(GetTextPlugin, {
     defaultLanguage: Vue.config.language,
 });
 
-Vue.directive("longclick", VueLongClick({delay: 400, interval: 0}));
+Vue.directive("longclick", VueLongClick({delay: 450, interval: 0}));
 
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
