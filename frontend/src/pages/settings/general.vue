@@ -2,7 +2,7 @@
     <div class="p-tab p-settings-general">
         <v-form lazy-validation dense
                 ref="form" class="p-form-settings" accept-charset="UTF-8"
-                @submit.prevent="save">
+                @submit.prevent="onChange">
             <v-card flat tile class="mt-0 px-1 application">
                 <v-card-title primary-title class="pb-0">
                     <h3 class="body-2 mb-0">Library</h3>
@@ -12,28 +12,14 @@
                     <v-layout wrap align-top>
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
-                                    @change="save"
-                                    class="ma-0 pa-0"
-                                    v-model="settings.library.raw"
-                                    color="secondary-dark"
-                                    :label="labels.raw"
-                                    hint="RAWs need to be converted to JPEG so that they can be displayed in a browser. You can also do this manually."
-                                    prepend-icon="photo_camera"
-                                    persistent-hint
-                            >
-                            </v-checkbox>
-                        </v-flex>
-
-                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-                            <v-checkbox
-                                    @change="save"
+                                    @change="onChange"
                                     :disabled="busy"
                                     class="ma-0 pa-0"
-                                    v-model="settings.library.thumbs"
+                                    v-model="settings.library.private"
                                     color="secondary-dark"
-                                    :label="labels.thumbs"
-                                    hint="Pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."
-                                    prepend-icon="photo_size_select_large"
+                                    :label="labels.private"
+                                    hint="Exclude photos and videos marked as private from search results by default."
+                                    prepend-icon="lock"
                                     persistent-hint
                             >
                             </v-checkbox>
@@ -41,7 +27,23 @@
 
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
+                                    class="ma-0 pa-0"
+                                    v-model="settings.library.review"
+                                    color="secondary-dark"
+                                    :label="labels.review"
+                                    hint="Low-quality photos and videos require a review before they appear in search results."
+                                    prepend-icon="remove_red_eye"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="onChange"
+                                    :disabled="busy"
                                     class="ma-0 pa-0"
                                     v-model="settings.library.group"
                                     color="secondary-dark"
@@ -55,7 +57,8 @@
 
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     class="ma-0 pa-0"
                                     v-model="settings.library.move"
                                     color="secondary-dark"
@@ -80,7 +83,8 @@
                     <v-layout wrap align-top>
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     class="ma-0 pa-0"
                                     v-model="settings.features.places"
                                     color="secondary-dark"
@@ -94,7 +98,8 @@
 
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     class="ma-0 pa-0"
                                     v-model="settings.features.labels"
                                     color="secondary-dark"
@@ -108,7 +113,8 @@
 
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     class="ma-0 pa-0"
                                     v-model="settings.features.import"
                                     color="secondary-dark"
@@ -122,7 +128,8 @@
 
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     class="ma-0 pa-0"
                                     v-model="settings.features.archive"
                                     color="secondary-dark"
@@ -136,7 +143,8 @@
 
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     class="ma-0 pa-0"
                                     v-model="settings.features.upload"
                                     color="secondary-dark"
@@ -150,7 +158,8 @@
 
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     class="ma-0 pa-0"
                                     v-model="settings.features.download"
                                     color="secondary-dark"
@@ -164,7 +173,8 @@
 
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     class="ma-0 pa-0"
                                     v-model="settings.features.edit"
                                     color="secondary-dark"
@@ -178,7 +188,8 @@
 
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     class="ma-0 pa-0"
                                     v-model="settings.features.share"
                                     color="secondary-dark"
@@ -202,7 +213,8 @@
                     <v-layout wrap align-top>
                         <v-flex xs12 sm6 class="px-2 pb-2">
                             <v-select
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     :items="options.themes"
                                     :label="labels.theme"
                                     color="secondary-dark"
@@ -214,7 +226,8 @@
 
                         <v-flex xs12 sm6 class="px-2 pb-2">
                             <v-select
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     :items="options.languages"
                                     :label="labels.language"
                                     color="secondary-dark"
@@ -236,7 +249,8 @@
                     <v-layout wrap align-top>
                         <v-flex xs12 sm6 class="px-2 pb-2">
                             <v-select
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     :items="options.mapsStyle"
                                     :label="labels.mapsStyle"
                                     color="secondary-dark"
@@ -248,7 +262,8 @@
 
                         <v-flex xs12 sm6 class="px-2 pb-2">
                             <v-select
-                                    @change="save"
+                                    @change="onChange"
+                                    :disabled="busy"
                                     :items="options.mapsAnimate"
                                     :label="labels.mapsAnimate"
                                     color="secondary-dark"
@@ -293,7 +308,7 @@
         data() {
             return {
                 readonly: this.$config.getValue("readonly"),
-                settings: new Settings(this.$config.values.settings),
+                settings: new Settings(this.$config.settings()),
                 options: options,
                 labels: {
                     language: this.$gettext("Language"),
@@ -305,19 +320,24 @@
                     raw: this.$gettext("Convert RAW files"),
                     move: this.$gettext("Remove imported files"),
                     group: this.$gettext("Group related files"),
+                    private: this.$gettext("Hide private content"),
+                    review: this.$gettext("Apply quality filter"),
                 },
+                busy: false,
             };
         },
         methods: {
             load() {
                 this.settings.load();
             },
-            save() {
+            onChange() {
                 const reload = this.settings.changed("language");
 
-                this.settings.save().then((s) => {
-                    this.$config.updateSettings(s.getValues(), this.$vuetify);
+                if (reload) {
+                    this.busy = true;
+                }
 
+                this.settings.save().then((s) => {
                     if (reload) {
                         this.$notify.info(this.$gettext("Reloading..."));
                         this.$notify.blockUI();
@@ -325,7 +345,7 @@
                     } else {
                         this.$notify.success(this.$gettext("Settings saved"));
                     }
-                })
+                }).finally(() => this.busy = false)
             },
         },
         created() {

@@ -25,6 +25,8 @@ type LibrarySettings struct {
 	CreateThumbs   bool `json:"thumbs" yaml:"thumbs"`
 	GroupRelated   bool `json:"group" yaml:"group"`
 	MoveImported   bool `json:"move" yaml:"move"`
+	RequireReview  bool `json:"review" yaml:"review"`
+	HidePrivate    bool `json:"private" yaml:"private"`
 }
 
 type FeatureSettings struct {
@@ -72,6 +74,8 @@ func NewSettings() *Settings {
 			CreateThumbs:   false,
 			GroupRelated:   true,
 			MoveImported:   false,
+			RequireReview:  true,
+			HidePrivate:    false,
 		},
 	}
 }

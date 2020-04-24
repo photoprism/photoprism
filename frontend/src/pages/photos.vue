@@ -84,7 +84,16 @@
                 order: order,
                 q: q,
             };
-            const settings = {view: view};
+
+            const settings = this.$config.settings();
+
+            if(settings.library.private) {
+                filter.public = true;
+            }
+
+            if(settings.library.review) {
+                filter.quality = 3;
+            }
 
             return {
                 subscriptions: [],
@@ -96,7 +105,7 @@
                 offset: 0,
                 page: 0,
                 selection: this.$clipboard.selection,
-                settings: settings,
+                settings: {view: view},
                 filter: filter,
                 lastFilter: {},
                 routeName: routeName,

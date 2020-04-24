@@ -79,10 +79,20 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile :to="{name: 'photos', query: { q: 'review:true' }}" :exact="true" @click="">
+                    <v-list-tile :to="{name: 'photos', query: { q: 'review:true' }}" :exact="true" @click=""
+                                 v-if="config.settings.library.review">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate>Review</translate>
+                            </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile :to="{name: 'photos', query: { q: 'private:true' }}" :exact="true" @click=""
+                                 v-if="config.settings.library.private">
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                <translate>Private</translate>
                             </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>

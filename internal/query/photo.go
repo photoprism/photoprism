@@ -244,6 +244,18 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 		s = s.Where("photos.deleted_at IS NOT NULL")
 	} else {
 		s = s.Where("photos.deleted_at IS NULL")
+
+		if f.Private {
+			s = s.Where("photos.photo_private = 1")
+		} else if f.Public {
+			s = s.Where("photos.photo_private = 0")
+		}
+
+		if f.Review {
+			s = s.Where("photos.photo_quality < 3")
+		} else if f.Quality != 0 && f.Private == false {
+			s = s.Where("photos.photo_quality >= ?", f.Quality)
+		}
 	}
 
 	if f.Error {
@@ -276,10 +288,6 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 
 	if f.Favorites {
 		s = s.Where("photos.photo_favorite = 1")
-	}
-
-	if f.Public {
-		s = s.Where("photos.photo_private = 0")
 	}
 
 	if f.Safe {
@@ -320,12 +328,6 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 		s = s.Where("files.file_chroma > ?", f.Chroma)
 	} else if f.Chroma > 0 {
 		s = s.Where("files.file_chroma > 0 AND files.file_chroma <= ?", f.Chroma)
-	}
-
-	if f.Review {
-		s = s.Where("photos.photo_quality < 3")
-	} else if f.Quality != 0 {
-		s = s.Where("photos.photo_quality >= ?", f.Quality)
 	}
 
 	if f.Diff != 0 {

@@ -51,6 +51,7 @@
         created() {
             window.addEventListener('touchstart', (e) => this.onTouchStart(e), {passive: true});
             window.addEventListener('touchmove', (e) => this.onTouchMove(e), {passive: true});
+            this.$config.setVuetify(this.$vuetify);
         },
         destroyed() {
             window.removeEventListener('touchstart', (e) => this.onTouchStart(e), false);
