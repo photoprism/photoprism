@@ -1,4 +1,5 @@
 import Model from "./model";
+import Api from "../common/api";
 
 const thumbs = window.clientConfig.thumbnails;
 
@@ -7,10 +8,21 @@ class Thumb extends Model {
         return {
             uuid: "",
             title: "",
+            favorite: false,
             original_w: "",
             original_h: "",
             download_url: "",
         };
+    }
+
+    toggleLike() {
+        this.favorite = !this.favorite;
+
+        if (this.favorite) {
+            return Api.post("photos/" + this.uuid + "/like");
+        } else {
+            return Api.delete("photos/" + this.uuid + "/like");
+        }
     }
 
     static fromPhotos(photos) {
@@ -31,6 +43,7 @@ class Thumb extends Model {
         const result = {
             uuid: photo.PhotoUUID,
             title: photo.PhotoTitle,
+            favorite: photo.PhotoFavorite,
             download_url: "/api/v1/download/" + photo.FileHash,
             original_w: photo.FileWidth,
             original_h: photo.FileHeight,
@@ -53,6 +66,7 @@ class Thumb extends Model {
         const result = {
             uuid: photo.PhotoUUID,
             title: photo.PhotoTitle,
+            favorite: photo.PhotoFavorite,
             download_url: "/api/v1/download/" + file.FileHash,
             original_w: file.FileWidth,
             original_h: file.FileHeight,
@@ -78,10 +92,10 @@ class Thumb extends Model {
             if (!p.Files) return;
 
             p.Files.forEach((f) => {
-                if (f.FileType === "jpg") {
-                    result.push(this.fromFile(p, f));
+                    if (f.FileType === "jpg") {
+                        result.push(this.fromFile(p, f));
+                    }
                 }
-            }
             );
         });
 

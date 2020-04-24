@@ -19,8 +19,13 @@
                             v-if="config.settings.features.download">
                     </button>
 
-                    <button class="pswp__button" style="background: none;" @click.exact="editDialog" title="Edit">
+                    <button class="pswp__button" style="background: none;" @click.exact="onEdit" title="Edit">
                         <v-icon size="16" color="white">edit</v-icon>
+                    </button>
+
+                    <button class="pswp__button" style="background: none;" @click.exact="toggleLike" title="Like">
+                        <v-icon v-if="item.favorite" size="16" color="white">favorite</v-icon>
+                        <v-icon v-else size="16" color="white">favorite_border</v-icon>
                     </button>
 
                     <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
@@ -59,16 +64,33 @@
     import 'photoswipe/dist/photoswipe.css'
     import 'photoswipe/dist/default-skin/default-skin.css'
     import Event from "pubsub-js";
+    import Thumb from "../model/thumb";
 
     export default {
         name: "p-photo-viewer",
         data() {
             return {
                 config: this.$config.values,
+                item: new Thumb(),
+                subscriptions: [],
             };
         },
+        created() {
+            this.subscriptions['viewer.change'] = Event.subscribe('viewer.change', this.onChange);
+        },
+        destroyed() {
+            for (let i = 0; i < this.subscriptions.length; i++) {
+                Event.unsubscribe(this.subscriptions[i]);
+            }
+        },
         methods: {
-            editDialog() {
+            onChange(ev, data) {
+                this.item = data.item;
+            },
+            toggleLike() {
+                this.item.toggleLike();
+            },
+            onEdit() {
                 const g = this.$viewer.gallery; // Gallery
                 let index = 0;
 

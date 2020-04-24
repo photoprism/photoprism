@@ -1,5 +1,6 @@
 import PhotoSwipe from "photoswipe";
 import PhotoSwipeUI_Default from "photoswipe/dist/photoswipe-ui-default.js";
+import Event from "pubsub-js";
 
 const thumbs = window.clientConfig.thumbnails;
 
@@ -74,6 +75,10 @@ class Viewer {
         let photoSrcWillChange;
 
         this.gallery = gallery;
+
+        gallery.listen('beforeChange', function() {
+            Event.publish("viewer.change", {gallery: gallery, item: gallery.currItem});
+        });
 
         gallery.listen("beforeResize", () => {
             realViewportWidth = gallery.viewportSize.x * window.devicePixelRatio;
