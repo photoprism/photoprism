@@ -335,7 +335,7 @@
 
                             if (model) {
                                 for (let key in values) {
-                                    if (values.hasOwnProperty(key)) {
+                                    if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
                                         model[key] = values[key];
                                     }
                                 }
