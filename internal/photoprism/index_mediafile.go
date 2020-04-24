@@ -144,7 +144,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if !ind.conf.DisableTensorFlow() && (fileChanged || o.UpdateKeywords || o.UpdateLabels || o.UpdateTitle) {
 			// Image classification via TensorFlow
 			labels = ind.classifyImage(m)
-			photo.PhotoNSFW = ind.isNSFW(m)
+
+			if !photoExists && ind.conf.DetectNSFW() {
+				photo.PhotoPrivate = ind.NSFW(m)
+			}
 		}
 
 		if fileChanged || o.UpdateExif {
@@ -443,12 +446,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	return result
 }
 
-// isNSFW returns true if media file might be offensive and detection is enabled.
-func (ind *Index) isNSFW(jpeg *MediaFile) bool {
-	if !ind.conf.DetectNSFW() {
-		return false
-	}
-
+// NSFW returns true if media file might be offensive and detection is enabled.
+func (ind *Index) NSFW(jpeg *MediaFile) bool {
 	filename, err := jpeg.Thumbnail(ind.thumbnailsPath(), "fit_720")
 
 	if err != nil {

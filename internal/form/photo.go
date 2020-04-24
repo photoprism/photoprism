@@ -27,7 +27,6 @@ type Photo struct {
 	DescriptionSrc   string  `json:"DescriptionSrc"`
 	PhotoFavorite    bool    `json:"PhotoFavorite"`
 	PhotoPrivate     bool    `json:"PhotoPrivate"`
-	PhotoNSFW        bool    `json:"PhotoNSFW"`
 	PhotoStory       bool    `json:"PhotoStory"`
 	PhotoReview      bool    `json:"PhotoReview"`
 	PhotoLat         float64 `json:"PhotoLat"`

@@ -19,4 +19,4 @@ library:
   group: true
   move: false
   review: true
-  private: false
+  private: true

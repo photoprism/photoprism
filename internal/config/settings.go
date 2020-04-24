@@ -72,10 +72,10 @@ func NewSettings() *Settings {
 			CompleteRescan: false,
 			ConvertRaw:     false,
 			CreateThumbs:   false,
-			GroupRelated:   true,
 			MoveImported:   false,
+			GroupRelated:   true,
 			RequireReview:  true,
-			HidePrivate:    false,
+			HidePrivate:    true,
 		},
 	}
 }

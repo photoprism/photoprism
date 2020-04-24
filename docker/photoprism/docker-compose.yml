@@ -12,7 +12,8 @@ services:
     restart: unless-stopped
     ports:
       - 2342:2342 # [local port]:[container port]
-    healthcheck:
+      # - 4000:4000 # Internal database (MySQL compatible)
+    healthcheck: # Optional
       test: "photoprism status"
       interval: 60s
       timeout: 15s
@@ -25,7 +26,7 @@ services:
       PHOTOPRISM_AUTHOR: "Anonymous"
       PHOTOPRISM_TWITTER: "@browseyourlife"
       PHOTOPRISM_UPLOAD_NSFW: "true"
-      PHOTOPRISM_HIDE_NSFW: "false"
+      PHOTOPRISM_DETECT_NSFW: "true"
       PHOTOPRISM_EXPERIMENTAL: "false"
       PHOTOPRISM_DEBUG: "false"
       PHOTOPRISM_READONLY: "false"

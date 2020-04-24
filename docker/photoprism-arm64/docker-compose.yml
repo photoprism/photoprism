@@ -13,6 +13,12 @@ services:
       - seccomp:unconfined
     ports:
       - 2342:2342 # [local port]:[container port]
+      # - 4000:4000 # Internal database (MySQL compatible)
+    healthcheck: # Optional
+      test: "photoprism status"
+      interval: 60s
+      timeout: 15s
+      retries: 5
     environment: # Run "photoprism help" and "photoprism config" too see all config options and current values
       PHOTOPRISM_URL: "https://demo.photoprism.org/"
       PHOTOPRISM_TITLE: "PhotoPrism"
@@ -21,7 +27,7 @@ services:
       PHOTOPRISM_AUTHOR: "Anonymous"
       PHOTOPRISM_TWITTER: "@browseyourlife"
       PHOTOPRISM_UPLOAD_NSFW: "true"
-      PHOTOPRISM_HIDE_NSFW: "false"
+      PHOTOPRISM_DETECT_NSFW: "false"
       PHOTOPRISM_EXPERIMENTAL: "false"
       PHOTOPRISM_DEBUG: "false"
       PHOTOPRISM_READONLY: "false"

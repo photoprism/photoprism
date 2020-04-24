@@ -222,12 +222,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "detect-nsfw",
-		Usage:  "flag photos that may be offensive",
+		Usage:  "flag photos as private that may be offensive",
 		EnvVar: "PHOTOPRISM_DETECT_NSFW",
 	},
 	cli.BoolFlag{
 		Name:   "upload-nsfw",
-		Usage:  "allow uploads that may contain offensive content",
+		Usage:  "allow uploads that may be offensive",
 		EnvVar: "PHOTOPRISM_UPLOAD_NSFW",
 	},
 	cli.StringFlag{

@@ -30,7 +30,6 @@ type Photo struct {
 	PhotoFavorite    bool        `json:"PhotoFavorite"`
 	PhotoPrivate     bool        `json:"PhotoPrivate"`
 	PhotoStory       bool        `json:"PhotoStory"`
-	PhotoNSFW        bool        `json:"PhotoNSFW"`
 	PhotoLat         float64     `gorm:"index;" json:"PhotoLat"`
 	PhotoLng         float64     `gorm:"index;" json:"PhotoLng"`
 	PhotoAltitude    int         `json:"PhotoAltitude"`

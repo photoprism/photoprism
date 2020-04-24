@@ -27,7 +27,6 @@ class Photo extends RestModel {
             PhotoFavorite: false,
             PhotoStory: false,
             PhotoPrivate: false,
-            PhotoNSFW: false,
             PhotoResolution: 0,
             PhotoQuality: 0,
             PhotoLat: 0.0,

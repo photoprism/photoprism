@@ -16,5 +16,7 @@ library:
   rescan: false
   raw: false
   thumbs: false
-  group: true
   move: false
+  group: true
+  review: true
+  private: true

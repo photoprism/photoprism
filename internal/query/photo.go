@@ -290,14 +290,6 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
-	if f.Safe {
-		s = s.Where("photos.photo_nsfw = 0")
-	}
-
-	if f.Nsfw {
-		s = s.Where("photos.photo_nsfw = 1")
-	}
-
 	if f.Story {
 		s = s.Where("photos.photo_story = 1")
 	}
