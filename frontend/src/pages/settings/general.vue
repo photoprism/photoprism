@@ -262,9 +262,23 @@
             </v-card>
 
             <v-card flat tile class="mt-0 px-1 application">
-                <v-card-title primary-title class="pb-0">
-                    <p class="body-1 mb-4">PhotoPrism {{$config.getValue("version")}}<br>{{$config.getValue("copyright")}}</p>
-                </v-card-title>
+                <v-card-actions>
+                    <v-layout wrap align-top>
+                        <v-flex xs12 sm6 class="px-2 pb-2 body-1">
+                            PhotoPrism {{$config.getValue("version")}}
+                            <br>{{$config.getValue("copyright")}}
+                        </v-flex>
+
+                        <v-flex xs12 sm6 class="px-2 pb-2 body-1 text-xs-left text-sm-right">
+                            A big <a href="https://docs.photoprism.org/en/latest/credits/" class="secondary-dark--text"
+                                     target="_blank">thank you</a> to everyone who made this possible!
+                            <br>
+                            <a href="https://app.fossa.com/attribution/d068c7e2-586d-421a-86a4-f23104a408f9"
+                               class="secondary-dark--text" target="_blank">
+                                3rd-party software packages</a>
+                        </v-flex>
+                    </v-layout>
+                </v-card-actions>
             </v-card>
         </v-form>
     </div>
