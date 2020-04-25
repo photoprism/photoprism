@@ -44,14 +44,14 @@
                                                      color="accent lighten-5"></v-progress-circular>
                             </v-layout>
 
-                            <v-btn v-if="showPrivate && photo.PhotoPrivate" :flat="!hover" :ripple="false"
-                                   icon small absolute
+                            <v-btn v-if="hidePrivate && photo.PhotoPrivate"
+                                   icon flat small absolute
                                    class="p-photo-private opacity-75">
                                 <v-icon color="white">lock</v-icon>
                             </v-btn>
 
-                            <v-btn v-if="hover || selection.length && $clipboard.has(photo)" :flat="!hover" :ripple="false"
-                                   icon small absolute
+                            <v-btn v-if="hover || selection.length && $clipboard.has(photo)"
+                                   icon flat small absolute
                                    :class="selection.length && $clipboard.has(photo) ? 'p-photo-select' : 'p-photo-select opacity-50'"
                                    @click.stop.prevent="onSelect($event, index)">
                                 <v-icon v-if="selection.length && $clipboard.has(photo)" color="white"
@@ -60,28 +60,19 @@
                                 <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
                             </v-btn>
 
-                            <v-btn :flat="!hover" :ripple="false"
-                                   icon small absolute
+                            <v-btn icon flat small absolute
                                    :class="photo.PhotoFavorite ? 'p-photo-like opacity-75' : 'p-photo-like opacity-50'"
                                    @click.stop.prevent="photo.toggleLike()">
                                 <v-icon v-if="photo.PhotoFavorite" color="white" class="t-like t-on">favorite</v-icon>
                                 <v-icon v-else color="accent lighten-3" class="t-like t-off">favorite_border</v-icon>
                             </v-btn>
 
-                            <v-btn v-if="photo.Files.length > 1" :flat="!hover" :ripple="false"
-                                   icon small absolute class="p-photo-merged opacity-75"
+                            <v-btn v-if="photo.Files.length > 1"
+                                   icon flat small absolute class="p-photo-merged opacity-75"
                                    @click.stop.prevent="openPhoto(index, true)">
                                 <v-icon color="white" class="action-burst">burst_mode</v-icon>
                             </v-btn>
-
-                            <!-- v-btn v-if="hover" :flat="!hover" :ripple="false"
-                                   icon small absolute
-                                   class="p-photo-edit"
-                                   @click.stop.prevent="editPhoto(index)">
-                                <v-icon color="white">edit</v-icon>
-                            </v-btn -->
                         </v-img>
-
                     </v-card>
                 </v-hover>
             </v-flex>
@@ -100,7 +91,7 @@
         },
         data() {
             return {
-                showPrivate: this.$config.settings().library.private,
+                hidePrivate: this.$config.settings().library.private,
                 mouseDown: {
                     index: -1,
                     timeStamp: -1,

@@ -57,7 +57,7 @@
                 </span>
             </td>
             <td class="text-xs-center">
-                <v-btn v-if="showPrivate" class="p-photo-private" icon small flat :ripple="false"
+                <v-btn v-if="hidePrivate" class="p-photo-private" icon small flat :ripple="false"
                        @click.stop.prevent="props.item.togglePrivate()">
                     <v-icon v-if="props.item.PhotoPrivate" color="secondary-dark">lock</v-icon>
                     <v-icon v-else color="accent lighten-3">lock_open</v-icon>
@@ -94,7 +94,7 @@
                     {text: '', value: '', sortable: false, align: 'center'},
                 ],
                 showLocation: this.$config.settings().features.places,
-                showPrivate: this.$config.settings().library.private,
+                hidePrivate: this.$config.settings().library.private,
                 mouseDown: {
                     index: -1,
                     timeStamp: -1,
