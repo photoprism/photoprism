@@ -21,7 +21,6 @@ import VueLuxon from "vue-luxon";
 import VueFilters from "vue2-filters";
 import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
-import VueLongClick from "common/longclick";
 
 // Initialize helpers
 const viewer = new Viewer();
@@ -52,8 +51,6 @@ Vue.use(GetTextPlugin, {
     silent: true, // !config.values.debug,
     defaultLanguage: Vue.config.language,
 });
-
-Vue.directive("longclick", VueLongClick({delay: 450, interval: 0}));
 
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);

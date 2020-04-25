@@ -13,9 +13,9 @@
             <td style="user-select: none;">
                 <v-img class="accent lighten-2" style="cursor: pointer" aspect-ratio="1"
                        :src="props.item.getThumbnailUrl('tile_50')"
-                       v-longclick="longClick"
-                       @contextmenu="contextMenu($event, props.item, props.index)"
-                       @click="onClick($event, props.item, props.index)"
+                       @mousedown="onMouseDown($event, props.index)"
+                       @contextmenu="onContextMenu($event, props.index)"
+                       @click.stop.prevent="onClick($event, props.index)"
                 >
                     <v-layout
                             slot="placeholder"
@@ -37,7 +37,7 @@
                     </v-btn>
                 </v-img>
             </td>
-            <td class="p-photo-desc p-pointer" @click.exact="openPhoto(props.index)" style="user-select: none;">
+            <td class="p-photo-desc p-pointer" @click.exact="editPhoto(props.index)" style="user-select: none;">
                 {{ props.item.PhotoTitle }}
             </td>
             <td class="p-photo-desc hidden-xs-only" :title="props.item.getDateString()">
@@ -98,7 +98,10 @@
                 ],
                 showLocation: this.$config.settings().features.places,
                 showPrivate: this.$config.settings().library.private,
-                wasLong: false,
+                mouseDown: {
+                    index: -1,
+                    timeStamp: -1,
+                },
             };
         },
         watch: {
@@ -116,32 +119,36 @@
             },
         },
         methods: {
-            longClick() {
-                this.wasLong = true;
-            },
-            onClick(ev, model, index) {
-                ev.preventDefault();
-                ev.stopPropagation();
-
-                if (this.wasLong || ev.shiftKey) {
+            onSelect(ev, index) {
+                if (ev.shiftKey) {
                     this.selectRange(index);
                 } else {
-                    this.$clipboard.toggle(model);
+                    this.$clipboard.toggle(this.photos[index]);
                 }
-
-                this.wasLong = false;
             },
-            contextMenu(ev, model, index) {
-                ev.preventDefault();
-                ev.stopPropagation();
+            onMouseDown(ev, index) {
+                this.mouseDown.index = index;
+                this.mouseDown.timeStamp = ev.timeStamp;
+            },
+            onClick(ev, index) {
+                let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
 
-                if (this.wasLong) {
-                    this.selectRange(index);
+                if (longClick || this.selection.length > 0) {
+                    if (longClick || ev.shiftKey) {
+                        this.selectRange(index);
+                    } else {
+                        this.$clipboard.toggle(this.photos[index]);
+                    }
                 } else {
-                    this.$clipboard.toggle(model);
+                    this.openPhoto(index, false);
                 }
-
-                this.wasLong = false;
+            },
+            onContextMenu(ev, index) {
+                if (this.$isMobile) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    this.selectRange(index);
+                }
             },
             selectRange(index) {
                 this.$clipboard.addRange(index, this.photos);
