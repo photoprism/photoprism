@@ -24,7 +24,7 @@ type Place struct {
 
 // UnknownPlace is defined here to use it as a default
 var UnknownPlace = Place{
-	ID:         "-",
+	ID:         "zz",
 	LocLabel:   "Unknown",
 	LocCity:    "Unknown",
 	LocState:   "Unknown",
@@ -41,23 +41,13 @@ func (m *Place) AfterCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("New", true)
 }
 
-// FindPlace returns place from a token
-func FindPlace(token string, db *gorm.DB) *Place {
-	place := &Place{}
-
-	if err := db.First(place, "id = ?", token).Error; err != nil {
-		log.Debugf("place: %s for token %s", err.Error(), token)
-	}
-
-	return place
-}
-
 // FindPlaceByLabel returns a place from an id or a label
 func FindPlaceByLabel(id string, label string, db *gorm.DB) *Place {
 	place := &Place{}
 
 	if err := db.First(place, "id = ? OR loc_label = ?", id, label).Error; err != nil {
 		log.Debugf("place: %s for id %s or label \"%s\"", err.Error(), id, label)
+		return nil
 	}
 
 	return place
@@ -84,9 +74,9 @@ func (m *Place) FirstOrCreate(db *gorm.DB) *Place {
 	return m
 }
 
-// NoID checks is the place has no id
-func (m Place) NoID() bool {
-	return m.ID == ""
+// Unknown returns true if this is an unknown place
+func (m Place) Unknown() bool {
+	return m.ID == UnknownPlace.ID
 }
 
 // Label returns place label

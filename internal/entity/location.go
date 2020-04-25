@@ -33,8 +33,7 @@ func NewLocation(lat, lng float64) *Location {
 
 // Find gets the location using either the db or the api if not in the db
 func (m *Location) Find(db *gorm.DB, api string) error {
-	if err := db.First(m, "id = ?", m.ID).Error; err == nil {
-		m.Place = FindPlace(m.PlaceID, db)
+	if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err == nil {
 		return nil
 	}
 
@@ -46,14 +45,16 @@ func (m *Location) Find(db *gorm.DB, api string) error {
 		return err
 	}
 
-	m.Place = FindPlaceByLabel(l.ID, l.LocLabel, db)
-
-	if m.Place.NoID() {
-		m.Place.ID = l.ID
-		m.Place.LocLabel = l.LocLabel
-		m.Place.LocCity = l.LocCity
-		m.Place.LocState = l.LocState
-		m.Place.LocCountry = l.LocCountry
+	if place := FindPlaceByLabel(l.ID, l.LocLabel, db); place != nil {
+		m.Place = place
+	} else {
+		m.Place = &Place{
+			ID:         l.ID,
+			LocLabel:   l.LocLabel,
+			LocCity:    l.LocCity,
+			LocState:   l.LocState,
+			LocCountry: l.LocCountry,
+		}
 	}
 
 	m.LocName = l.LocName
@@ -62,10 +63,7 @@ func (m *Location) Find(db *gorm.DB, api string) error {
 
 	if err := db.Create(m).Error; err == nil {
 		return nil
-	} else if err := db.First(m, "id = ?", m.ID).Error; err == nil {
-		// avoid mutex by trying again to find location
-		m.Place = FindPlace(m.PlaceID, db)
-	} else {
+	} else if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err != nil {
 		return err
 	}
 

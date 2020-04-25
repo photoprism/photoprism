@@ -41,10 +41,10 @@ type Photo struct {
 	CameraSerial     string      `gorm:"type:varbinary(128);" json:"CameraSerial"`
 	CameraSrc        string      `gorm:"type:varbinary(8);" json:"CameraSrc"`
 	LensID           uint        `gorm:"index:idx_photos_camera_lens;" json:"LensID"`
-	PlaceID          string      `gorm:"type:varbinary(16);index;" json:"PlaceID"`
+	PlaceID          string      `gorm:"type:varbinary(16);index;default:'zz'" json:"PlaceID"`
 	LocationID       string      `gorm:"type:varbinary(16);index;" json:"LocationID"`
 	LocationSrc      string      `gorm:"type:varbinary(8);" json:"LocationSrc"`
-	PhotoCountry     string      `gorm:"index:idx_photos_country_year_month;" json:"PhotoCountry"`
+	PhotoCountry     string      `gorm:"index:idx_photos_country_year_month;default:'zz'" json:"PhotoCountry"`
 	PhotoYear        int         `gorm:"index:idx_photos_country_year_month;"`
 	PhotoMonth       int         `gorm:"index:idx_photos_country_year_month;"`
 	TimeZone         string      `gorm:"type:varbinary(64);" json:"TimeZone"`
@@ -288,12 +288,12 @@ func (m *Photo) NoLatLng() bool {
 
 // NoPlace checks if the photo has no Place
 func (m *Photo) NoPlace() bool {
-	return len(m.PlaceID) < 2
+	return m.PlaceID == "" || m.PlaceID == UnknownPlace.ID
 }
 
 // HasPlace checks if the photo has a Place
 func (m *Photo) HasPlace() bool {
-	return len(m.PlaceID) >= 2
+	return !m.NoPlace()
 }
 
 // NoTitle checks if the photo has no Title

@@ -161,7 +161,7 @@
 
                 if (photo.LocationID) {
                     this.$router.push({name: "place", params: {q: "s2:" + photo.LocationID}});
-                } else if (photo.PlaceID && photo.PlaceID !== "-") {
+                } else if (photo.PlaceID.length > 3) {
                     this.$router.push({name: "place", params: {q: "s2:" + photo.PlaceID}});
                 }
             },
