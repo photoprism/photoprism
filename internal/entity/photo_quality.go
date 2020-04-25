@@ -14,8 +14,8 @@ var QualityBlacklist = map[string]bool{
 }
 
 var (
-	year2008 = time.Date(2008, 1,1,0,0,0,0, time.UTC)
-	year2012 = time.Date(2012, 1,1,0,0,0,0, time.UTC)
+	year2008 = time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC)
+	year2012 = time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC)
 )
 
 // QualityScore returns a score based on photo properties like size and metadata.

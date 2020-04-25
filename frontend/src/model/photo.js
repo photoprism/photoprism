@@ -85,13 +85,13 @@ class Photo extends RestModel {
 
     getColor() {
         switch (this.PhotoColor) {
-            case "brown":
-            case "black":
-            case "white":
-            case "grey":
-                return "grey lighten-2";
-            default:
-                return this.PhotoColor + " lighten-4";
+        case "brown":
+        case "black":
+        case "white":
+        case "grey":
+            return "grey lighten-2";
+        default:
+            return this.PhotoColor + " lighten-4";
         }
     }
 
