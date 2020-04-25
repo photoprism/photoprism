@@ -44,7 +44,7 @@ type Photo struct {
 	PlaceID          string      `gorm:"type:varbinary(16);index;default:'zz'" json:"PlaceID"`
 	LocationID       string      `gorm:"type:varbinary(16);index;" json:"LocationID"`
 	LocationSrc      string      `gorm:"type:varbinary(8);" json:"LocationSrc"`
-	PhotoCountry     string      `gorm:"index:idx_photos_country_year_month;default:'zz'" json:"PhotoCountry"`
+	PhotoCountry     string      `gorm:"type:varbinary(2);index:idx_photos_country_year_month;default:'zz'" json:"PhotoCountry"`
 	PhotoYear        int         `gorm:"index:idx_photos_country_year_month;"`
 	PhotoMonth       int         `gorm:"index:idx_photos_country_year_month;"`
 	TimeZone         string      `gorm:"type:varbinary(64);" json:"TimeZone"`
