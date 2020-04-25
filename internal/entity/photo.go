@@ -62,6 +62,7 @@ type Photo struct {
 	Labels           []PhotoLabel
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
+	EditedAt         *time.Time
 	DeletedAt        *time.Time `sql:"index"`
 }
 
@@ -100,6 +101,8 @@ func SavePhotoForm(model Photo, form form.Photo, db *gorm.DB, geoApi string) err
 		log.Warnf("%s (%s)", err.Error(), model.PhotoUUID)
 	}
 
+	edited := time.Now().UTC()
+	model.EditedAt = &edited
 	model.PhotoQuality = model.QualityScore()
 
 	return db.Unscoped().Save(&model).Error

@@ -22,8 +22,14 @@ type Place struct {
 	New         bool `gorm:"-"`
 }
 
-// UnknownPlace is the default unknown place
-var UnknownPlace = NewPlace("-", "Unknown", "Unknown", "Unknown", "zz")
+// UnknownPlace is defined here to use it as a default
+var UnknownPlace = Place{
+	ID:         "-",
+	LocLabel:   "Unknown",
+	LocCity:    "Unknown",
+	LocState:   "Unknown",
+	LocCountry: "zz",
+}
 
 // CreateUnknownPlace initializes default place in the database
 func CreateUnknownPlace(db *gorm.DB) {
@@ -55,19 +61,6 @@ func FindPlaceByLabel(id string, label string, db *gorm.DB) *Place {
 	}
 
 	return place
-}
-
-// NewPlace registers a new place in database
-func NewPlace(id, label, city, state, countryCode string) *Place {
-	result := &Place{
-		ID:         id,
-		LocLabel:   label,
-		LocCity:    city,
-		LocState:   state,
-		LocCountry: countryCode,
-	}
-
-	return result
 }
 
 // Find returns db record of place

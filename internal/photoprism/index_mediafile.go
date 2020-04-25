@@ -232,7 +232,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			} else {
 				log.Info("index: no latitude and longitude in metadata")
 
-				photo.Place = entity.UnknownPlace
+				photo.Place = &entity.UnknownPlace
 				photo.PlaceID = entity.UnknownPlace.ID
 			}
 		}
@@ -263,7 +263,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	if photo.Place == nil {
-		photo.Place = entity.UnknownPlace
+		photo.Place = &entity.UnknownPlace
 		photo.PlaceID = entity.UnknownPlace.ID
 	}
 

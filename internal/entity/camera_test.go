@@ -7,15 +7,10 @@ import (
 )
 
 func TestNewCamera(t *testing.T) {
-	t.Run("model Unknown make Nikon", func(t *testing.T) {
+	t.Run("unknown camera", func(t *testing.T) {
 		camera := NewCamera("", "Nikon")
 
-		expected := &Camera{
-			CameraModel: "Unknown",
-			CameraMake:  "Nikon",
-			CameraSlug:  "nikon-unknown",
-		}
-		assert.Equal(t, expected, camera)
+		assert.Equal(t, &UnknownCamera, camera)
 	})
 	t.Run("model EOS 6D make Canon", func(t *testing.T) {
 		camera := NewCamera("EOS 6D", "Canon")
@@ -50,12 +45,7 @@ func TestNewCamera(t *testing.T) {
 	t.Run("model Unknown make Unknown", func(t *testing.T) {
 		camera := NewCamera("", "")
 
-		expected := &Camera{
-			CameraModel: "Unknown",
-			CameraMake:  "",
-			CameraSlug:  "unknown",
-		}
-		assert.Equal(t, expected, camera)
+		assert.Equal(t, &UnknownCamera, camera)
 	})
 }
 

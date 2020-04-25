@@ -167,15 +167,15 @@ func (c *Config) ClientConfig() ClientConfig {
 
 	db.Model(&entity.Country{}).
 		Select("id, country_name").
-		Order("country_name").
+		Order("country_slug").
 		Scan(&countries)
 
 	db.Where("deleted_at IS NULL").
-		Limit(1000).Order("camera_model").
+		Limit(10000).Order("camera_slug").
 		Find(&cameras)
 
 	db.Where("deleted_at IS NULL").
-		Limit(1000).Order("lens_model").
+		Limit(10000).Order("lens_slug").
 		Find(&lenses)
 
 	db.Where("deleted_at IS NULL AND album_favorite = 1").

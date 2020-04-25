@@ -20,7 +20,7 @@ func TestNewCountry(t *testing.T) {
 		country := entity.NewCountry("", "")
 		assert.Equal(t, "zz", country.ID)
 		assert.Equal(t, "Unknown", country.CountryName)
-		assert.Equal(t, "unknown", country.CountrySlug)
+		assert.Equal(t, "zz", country.CountrySlug)
 	})
 }
 func TestCountry_FirstOrCreate(t *testing.T) {

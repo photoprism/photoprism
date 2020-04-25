@@ -84,7 +84,7 @@ func (m *Photo) UpdateLocation(db *gorm.DB, geoApi string) (keywords []string, l
 	} else {
 		log.Warn(err)
 
-		m.Place = UnknownPlace
+		m.Place = &UnknownPlace
 		m.PlaceID = UnknownPlace.ID
 	}
 

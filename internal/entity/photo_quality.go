@@ -2,6 +2,7 @@ package entity
 
 import (
 	"strings"
+	"time"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -11,6 +12,11 @@ var QualityBlacklist = map[string]bool{
 	"screenshots": true,
 	"info":        true,
 }
+
+var (
+	year2008 = time.Date(2008, 1,1,0,0,0,0, time.UTC)
+	year2012 = time.Date(2012, 1,1,0,0,0,0, time.UTC)
+)
 
 // QualityScore returns a score based on photo properties like size and metadata.
 func (m *Photo) QualityScore() (score int) {
@@ -26,7 +32,11 @@ func (m *Photo) QualityScore() (score int) {
 		score++
 	}
 
-	if m.PhotoResolution >= 2 {
+	if m.TakenAt.Before(year2008) {
+		score++
+	} else if m.TakenAt.Before(year2012) && m.PhotoResolution >= 1 {
+		score++
+	} else if m.PhotoResolution >= 2 {
 		score++
 	}
 
@@ -47,6 +57,10 @@ func (m *Photo) QualityScore() (score int) {
 
 	if !blacklisted {
 		score++
+	}
+
+	if score < 3 && m.EditedAt != nil {
+		score = 3
 	}
 
 	return score

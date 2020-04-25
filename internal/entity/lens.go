@@ -24,6 +24,17 @@ type Lens struct {
 	DeletedAt       *time.Time `sql:"index"`
 }
 
+var UnknownLens = Lens{
+	LensModel: "Unknown",
+	LensMake:  "",
+	LensSlug:  "zz",
+}
+
+// CreateUnknownLens initializes the database with an unknown lens if not exists
+func CreateUnknownLens(db *gorm.DB) {
+	UnknownLens.FirstOrCreate(db)
+}
+
 // TableName returns Lens table identifier "lens"
 func (Lens) TableName() string {
 	return "lenses"
@@ -33,12 +44,11 @@ func (Lens) TableName() string {
 func NewLens(modelName string, makeName string) *Lens {
 	modelName = strings.TrimSpace(modelName)
 	makeName = strings.TrimSpace(makeName)
+	lensSlug := slug.MakeLang(modelName, "en")
 
 	if modelName == "" {
-		modelName = "Unknown"
+		return &UnknownLens
 	}
-
-	lensSlug := slug.MakeLang(modelName, "en")
 
 	result := &Lens{
 		LensModel: modelName,
@@ -49,7 +59,7 @@ func NewLens(modelName string, makeName string) *Lens {
 	return result
 }
 
-// FirstOrCreate checks wether the lens already exists in the database
+// FirstOrCreate checks if the lens already exists in the database
 func (m *Lens) FirstOrCreate(db *gorm.DB) *Lens {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()

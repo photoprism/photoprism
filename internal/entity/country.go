@@ -26,8 +26,12 @@ type Country struct {
 	New                bool `gorm:"-"`
 }
 
-// UnknownCountry is the default country
-var UnknownCountry = NewCountry("zz", maps.CountryNames["zz"])
+// UnknownCountry is defined here to use it as a default
+var UnknownCountry = Country{
+	ID:          "zz",
+	CountryName: maps.CountryNames["zz"],
+	CountrySlug: "zz",
+}
 
 // CreateUnknownCountry is used to initialize the database with the default country
 func CreateUnknownCountry(db *gorm.DB) {
@@ -37,7 +41,7 @@ func CreateUnknownCountry(db *gorm.DB) {
 // NewCountry creates a new country, with default country code if not provided
 func NewCountry(countryCode string, countryName string) *Country {
 	if countryCode == "" {
-		countryCode = "zz"
+		return &UnknownCountry
 	}
 
 	if altName, ok := altCountryNames[countryName]; ok {
