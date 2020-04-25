@@ -84,10 +84,10 @@
                                                              color="accent lighten-5"></v-progress-circular>
                                     </v-layout>
 
-                                    <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
+                                    <v-btn v-if="hover || selection.includes(album.AlbumUUID)" :flat="!hover" :ripple="false"
                                            icon large absolute
                                            :class="selection.includes(album.AlbumUUID) ? 'p-album-select' : 'p-album-select opacity-50'"
-                                           @click.stop.prevent="onSelect($event, album, index)">
+                                           @click.stop.prevent="onSelect($event, index)">
                                         <v-icon v-if="selection.includes(album.AlbumUUID)" color="white">check_circle
                                         </v-icon>
                                         <v-icon v-else color="accent lighten-3">radio_button_off</v-icon>

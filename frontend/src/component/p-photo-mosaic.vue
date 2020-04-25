@@ -50,9 +50,9 @@
                                 <v-icon color="white">lock</v-icon>
                             </v-btn>
 
-                            <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
+                            <v-btn v-if="hover || selection.length && $clipboard.has(photo)" :flat="!hover" :ripple="false"
                                    icon small absolute
-                                   :class="$clipboard.has(photo) ? 'p-photo-select' : 'p-photo-select opacity-50'"
+                                   :class="selection.length && $clipboard.has(photo) ? 'p-photo-select' : 'p-photo-select opacity-50'"
                                    @click.stop.prevent="onSelect($event, index)">
                                 <v-icon v-if="selection.length && $clipboard.has(photo)" color="white"
                                         class="t-select t-on">check_circle

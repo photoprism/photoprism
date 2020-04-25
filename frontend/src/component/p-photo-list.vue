@@ -28,12 +28,9 @@
                                              color="accent lighten-5"></v-progress-circular>
                     </v-layout>
 
-                    <v-btn v-if="selection.length > 0" :flat="true" :ripple="false"
-                           icon large absolute
-                           class="p-photo-select">
-                        <v-icon v-if="selection.length && $clipboard.has(props.item)" color="white"
-                                class="t-select t-on">check_circle
-                        </v-icon>
+                    <v-btn v-if="selection.length && $clipboard.has(props.item)" :flat="true" :ripple="false"
+                           icon large absolute class="p-photo-select">
+                        <v-icon color="white" class="t-select t-on">check_circle</v-icon>
                     </v-btn>
                 </v-img>
             </td>
