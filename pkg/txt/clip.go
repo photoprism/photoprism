@@ -3,9 +3,10 @@ package txt
 import "strings"
 
 const (
-	ClipDefault = 160
-	ClipSlug    = 80
-	ClipKeyword = 40
+	ClipDefault     = 160
+	ClipSlug        = 80
+	ClipKeyword     = 40
+	ClipDescription = 16000
 )
 
 func Clip(s string, size int) string {

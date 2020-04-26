@@ -153,28 +153,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if fileChanged || o.UpdateExif {
 			// Read UpdateExif data
 			if metaData, err := m.MetaData(); err == nil {
-				if photo.LocationSrc == entity.SrcAuto || photo.LocationSrc == entity.SrcExif {
-					photo.PhotoLat = metaData.Lat
-					photo.PhotoLng = metaData.Lng
-					photo.PhotoAltitude = metaData.Altitude
-					photo.LocationSrc = entity.SrcExif
-				}
-
-				if photo.TakenSrc == entity.SrcAuto || photo.TakenSrc == entity.SrcExif {
-					photo.TakenAt = metaData.TakenAt
-					photo.TakenAtLocal = metaData.TakenAtLocal
-					photo.TimeZone = metaData.TimeZone
-					photo.TakenSrc = entity.SrcExif
-				}
-
-				if metaData.Title != "" && (photo.NoTitle() || photo.TitleSrc == entity.SrcExif) {
-					photo.SetTitle(metaData.Title, entity.SrcExif)
-				}
-
-				if metaData.Description != "" && (photo.Description.NoDescription() || photo.DescriptionSrc == entity.SrcExif) {
-					photo.Description.PhotoDescription = metaData.Description
-					photo.DescriptionSrc = entity.SrcExif
-				}
+				photo.SetTitle(metaData.Title, entity.SrcExif)
+				photo.SetDescription(metaData.Description, entity.SrcExif)
+				photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcExif)
+				photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcExif)
 
 				if photo.Description.NoNotes() {
 					photo.Description.PhotoNotes = metaData.Comment
@@ -219,8 +201,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		if photo.TakenAt.IsZero() || photo.TakenAtLocal.IsZero() {
-			photo.TakenAt = m.DateCreated()
-			photo.TakenAtLocal = photo.TakenAt
+			photo.SetTakenAt(m.DateCreated(), m.DateCreated(), time.UTC.String(), entity.SrcAuto)
 		}
 
 		if fileChanged || o.UpdateKeywords || o.UpdateLocation || o.UpdateTitle || photo.NoTitle() {
@@ -238,24 +219,19 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	} else if m.IsXMP() {
 		// TODO: Proof-of-concept for indexing XMP sidecar files
 		if data, err := meta.XMP(m.FileName()); err == nil {
-			if data.Title != "" && photo.TitleSrc == entity.SrcAuto {
-				photo.SetTitle(data.Title, entity.SrcXmp)
-			}
+			photo.SetTitle(data.Title, entity.SrcXmp)
+			photo.SetDescription(data.Description, entity.SrcXmp)
 
-			if photo.Description.NoCopyright() && data.Copyright != "" {
-				photo.Description.PhotoCopyright = data.Copyright
+			if photo.Description.NoNotes() && data.Comment != "" {
+				photo.Description.PhotoNotes = data.Comment
 			}
 
 			if photo.Description.NoArtist() && data.Artist != "" {
 				photo.Description.PhotoArtist = data.Artist
 			}
 
-			if photo.Description.NoDescription() && data.Description != "" {
-				photo.Description.PhotoDescription = data.Description
-			}
-
-			if photo.Description.NoNotes() && data.Comment != "" {
-				photo.Description.PhotoNotes = data.Comment
+			if photo.Description.NoCopyright() && data.Copyright != "" {
+				photo.Description.PhotoCopyright = data.Copyright
 			}
 		}
 	}

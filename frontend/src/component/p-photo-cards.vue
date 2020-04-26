@@ -84,19 +84,29 @@
                                 </h3>
                                 <div class="caption">
                                     <button @click.exact="editPhoto(index)">
-                                        <v-icon size="14">date_range</v-icon>
+                                        <v-icon size="14" title="Taken" v-if="photo.TakenSrc">date_range</v-icon>
+                                        <v-icon size="14" title="Imported" v-else>save</v-icon>
                                         {{ photo.getDateString() }}
                                     </button>
                                     <br/>
-                                    <button @click.exact="editPhoto(index)">
+                                    <button @click.exact="editPhoto(index)" title="Camera">
                                         <v-icon size="14">photo_camera</v-icon>
                                         {{ photo.getCamera() }}
                                     </button>
-                                    <br/>
-                                    <button @click.exact="openLocation(index)" v-if="showLocation && photo.LocationID">
-                                        <v-icon size="14">location_on</v-icon>
-                                        {{ photo.getLocation() }}
-                                    </button>
+                                    <template v-if="showLocation && photo.LocationID">
+                                        <br/>
+                                        <button @click.exact="openLocation(index)" title="Location">
+                                            <v-icon size="14">location_on</v-icon>
+                                            {{ photo.getLocation() }}
+                                        </button>
+                                    </template>
+                                    <template v-if="debug">
+                                        <br/>
+                                        <button @click.exact="openUUID(index)" title="Unique ID">
+                                            <v-icon size="14">fingerprint</v-icon>
+                                            {{ photo.PhotoUUID }}
+                                        </button>
+                                    </template>
                                 </div>
                             </div>
                         </v-card-title>
@@ -121,6 +131,7 @@
             return {
                 showLocation: this.$config.settings().features.places,
                 hidePrivate: this.$config.settings().library.private,
+                debug: this.$config.get('debug'),
                 mouseDown: {
                     index: -1,
                     timeStamp: -1,
@@ -161,7 +172,10 @@
             },
             selectRange(index) {
                 this.$clipboard.addRange(index, this.photos);
-            }
+            },
+            openUUID(index) {
+                window.open("/api/v1/" + this.photos[index].getEntityResource(), '_blank');
+            },
         }
     };
 </script>

@@ -33,7 +33,7 @@ func GetPhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		c.JSON(http.StatusOK, p)
+		c.IndentedJSON(http.StatusOK, p)
 	})
 }
 
