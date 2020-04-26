@@ -134,11 +134,11 @@
             const cameras = [{
                 ID: 0,
                 CameraModel: this.$gettext('All Cameras')
-            }].concat(this.$config.getValue('cameras'));
+            }].concat(this.$config.get('cameras'));
             const countries = [{
                 code: '',
                 name: this.$gettext('All Countries')
-            }].concat(this.$config.getValue('countries'));
+            }].concat(this.$config.get('countries'));
 
             return {
                 searchExpanded: false,
@@ -167,7 +167,7 @@
                     sort: this.$gettext("Sort By"),
                     name: this.$gettext("Album Name"),
                 },
-                titleRule: v => v.length <= 25 || this.$gettext("Title too long"),
+                titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Title too long"),
                 growDesc: false,
             };
         },

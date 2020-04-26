@@ -38,6 +38,7 @@
                             <v-flex xs12 class="pa-2">
                                 <v-text-field
                                         :disabled="disabled"
+                                        :rules="[textRule]"
                                         hide-details
                                         label="Title"
                                         placeholder=""
@@ -257,6 +258,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-textarea
                                         :disabled="disabled"
+                                        :rules="[textRule]"
                                         hide-details
                                         browser-autocomplete="off"
                                         auto-grow
@@ -271,6 +273,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         :disabled="disabled"
+                                        :rules="[textRule]"
                                         hide-details
                                         browser-autocomplete="off"
                                         label="Artist"
@@ -283,6 +286,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         :disabled="disabled"
+                                        :rules="[textRule]"
                                         hide-details
                                         browser-autocomplete="off"
                                         label="Copyright"
@@ -295,6 +299,7 @@
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-textarea
                                         :disabled="disabled"
+                                        :rules="[textRule]"
                                         hide-details
                                         browser-autocomplete="off"
                                         auto-grow
@@ -393,7 +398,7 @@
                 all: {
                     colors: [{label: "Unknown", name: ""}],
                 },
-                readonly: this.$config.getValue("readonly"),
+                readonly: this.$config.get("readonly"),
                 options: options,
                 countries: countries,
                 labels: {
@@ -418,6 +423,7 @@
                 dateFormatted: "",
                 timeFormatted: "",
                 timeLocalFormatted: "",
+                textRule: v => v.length <= this.$config.get('clip') || this.$gettext("Text too long"),
             };
         },
         watch: {

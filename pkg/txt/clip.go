@@ -2,12 +2,19 @@ package txt
 
 import "strings"
 
+const (
+	ClipDefault = 160
+	ClipSlug    = 80
+	ClipKeyword = 40
+)
+
 func Clip(s string, size int) string {
-	if s == "" {
+	s = strings.TrimSpace(s)
+
+	if s == "" || size <= 0 {
 		return ""
 	}
 
-	s = strings.TrimSpace(s)
 	runes := []rune(s)
 
 	if len(runes) > size {

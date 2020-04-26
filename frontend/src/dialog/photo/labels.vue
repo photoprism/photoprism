@@ -97,7 +97,7 @@
             return {
                 disabled: !this.$config.feature("edit"),
                 config: this.$config.values,
-                readonly: this.$config.getValue("readonly"),
+                readonly: this.$config.get("readonly"),
                 selected: [],
                 newLabel: "",
                 listColumns: [
@@ -111,7 +111,7 @@
                     search: this.$gettext("Search"),
                     name: this.$gettext("Label Name"),
                 },
-                nameRule: v => v.length <= 25 || this.$gettext("Name too long"),
+                nameRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
             };
         },
         computed: {},

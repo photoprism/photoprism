@@ -17,7 +17,7 @@ var altCountryNames = map[string]string{
 // Country represents a country location, used for labeling photos.
 type Country struct {
 	ID                 string `gorm:"type:varbinary(2);primary_key"`
-	CountrySlug        string `gorm:"type:varbinary(128);unique_index;"`
+	CountrySlug        string `gorm:"type:varbinary(255);unique_index;"`
 	CountryName        string
 	CountryDescription string `gorm:"type:text;"`
 	CountryNotes       string `gorm:"type:text;"`

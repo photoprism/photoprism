@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
 )
 
@@ -207,7 +208,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 		if f.Query != "" {
 			s = s.Joins("LEFT JOIN photos_keywords ON photos_keywords.photo_id = photos.id").
 				Joins("LEFT JOIN keywords ON photos_keywords.keyword_id = keywords.id").
-				Where("keywords.keyword LIKE ?", strings.ToLower(f.Query)+"%")
+				Where("keywords.keyword LIKE ?", strings.ToLower(txt.Clip(f.Query, txt.ClipKeyword))+"%")
 		}
 	} else if f.Query != "" {
 		if len(f.Query) < 2 {
@@ -216,7 +217,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 
 		slugString := slug.Make(f.Query)
 		lowerString := strings.ToLower(f.Query)
-		likeString := lowerString + "%"
+		likeString := txt.Clip(lowerString, txt.ClipKeyword) + "%"
 
 		s = s.Joins("LEFT JOIN photos_keywords ON photos_keywords.photo_id = photos.id").
 			Joins("LEFT JOIN keywords ON photos_keywords.keyword_id = keywords.id")

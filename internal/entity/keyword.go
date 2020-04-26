@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Keyword used for full text search
@@ -16,7 +17,7 @@ type Keyword struct {
 
 // NewKeyword registers a new keyword in database
 func NewKeyword(keyword string) *Keyword {
-	keyword = strings.ToLower(strings.TrimSpace(keyword))
+	keyword = strings.ToLower(txt.Clip(keyword, txt.ClipKeyword))
 
 	result := &Keyword{
 		Keyword: keyword,

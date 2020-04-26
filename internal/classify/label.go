@@ -32,5 +32,5 @@ func LocationLabel(name string, uncertainty int, priority int) Label {
 
 // Title returns a formatted label title as string.
 func (l Label) Title() string {
-	return txt.Title(txt.Clip(strings.TrimSpace(l.Name), 128))
+	return txt.Title(txt.Clip(l.Name, txt.ClipDefault))
 }

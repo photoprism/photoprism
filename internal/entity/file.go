@@ -17,8 +17,8 @@ type File struct {
 	PhotoID         uint   `gorm:"index;"`
 	PhotoUUID       string `gorm:"type:varbinary(36);index;"`
 	FileUUID        string `gorm:"type:varbinary(36);unique_index;"`
-	FileName        string `gorm:"type:varbinary(600);unique_index"`
-	OriginalName    string `gorm:"type:varbinary(600);"`
+	FileName        string `gorm:"type:varbinary(768);unique_index"`
+	OriginalName    string `gorm:"type:varbinary(768);"`
 	FileHash        string `gorm:"type:varbinary(128);index"`
 	FileModified    time.Time
 	FileSize        int64
@@ -34,9 +34,9 @@ type File struct {
 	FileHeight      int
 	FileOrientation int
 	FileAspectRatio float32 `gorm:"type:FLOAT;"`
-	FileMainColor   string `gorm:"type:varbinary(16);index;"`
-	FileColors      string `gorm:"type:binary(9);"`
-	FileLuminance   string `gorm:"type:binary(9);"`
+	FileMainColor   string  `gorm:"type:varbinary(16);index;"`
+	FileColors      string  `gorm:"type:binary(9);"`
+	FileLuminance   string  `gorm:"type:binary(9);"`
 	FileDiff        uint32
 	FileChroma      uint8
 	FileNotes       string `gorm:"type:text"`

@@ -25,7 +25,7 @@ import VueInfiniteScroll from "vue-infinite-scroll";
 // Initialize helpers
 const viewer = new Viewer();
 const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
-const isPublic = config.getValue("public");
+const isPublic = config.get("public");
 
 // Assign helpers to VueJS prototype
 Vue.prototype.$event = Event;

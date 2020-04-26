@@ -280,8 +280,8 @@
                 <v-card-actions>
                     <v-layout wrap align-top>
                         <v-flex xs12 sm6 class="px-2 pb-2 body-1">
-                            PhotoPrism {{$config.getValue("version")}}
-                            <br>{{$config.getValue("copyright")}}
+                            PhotoPrism {{$config.get("version")}}
+                            <br>{{$config.get("copyright")}}
                         </v-flex>
 
                         <v-flex xs12 sm6 class="px-2 pb-2 body-1 text-xs-left text-sm-right">
@@ -307,7 +307,7 @@
         name: 'p-settings-general',
         data() {
             return {
-                readonly: this.$config.getValue("readonly"),
+                readonly: this.$config.get("readonly"),
                 settings: new Settings(this.$config.settings()),
                 options: options,
                 labels: {

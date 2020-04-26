@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // ClientConfig contains HTTP client / Web UI config values
@@ -96,6 +97,7 @@ func (c *Config) PublicClientConfig() ClientConfig {
 		"years":           []int{},
 		"colors":          colors.All.List(),
 		"categories":      []string{},
+		"clip":            txt.ClipDefault,
 	}
 
 	return result
@@ -241,6 +243,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		"years":           years,
 		"colors":          colors.All.List(),
 		"categories":      categories,
+		"clip":            txt.ClipDefault,
 	}
 
 	return result

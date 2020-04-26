@@ -21,9 +21,9 @@ type Photo struct {
 	TakenAt          time.Time   `gorm:"type:datetime;index:idx_photos_taken_uuid;" json:"TakenAt"`
 	TakenSrc         string      `gorm:"type:varbinary(8);" json:"TakenSrc"`
 	PhotoUUID        string      `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;"`
-	PhotoPath        string      `gorm:"type:varbinary(512);index;"`
+	PhotoPath        string      `gorm:"type:varbinary(768);index;"`
 	PhotoName        string      `gorm:"type:varbinary(255);"`
-	PhotoTitle       string      `gorm:"type:varchar(200);" json:"PhotoTitle"`
+	PhotoTitle       string      `gorm:"type:varchar(255);" json:"PhotoTitle"`
 	TitleSrc         string      `gorm:"type:varbinary(8);" json:"TitleSrc"`
 	PhotoQuality     int         `gorm:"type:SMALLINT" json:"PhotoQuality"`
 	PhotoResolution  int         `gorm:"type:SMALLINT" json:"PhotoResolution"`
@@ -38,7 +38,7 @@ type Photo struct {
 	PhotoFNumber     float32     `gorm:"type:FLOAT;" json:"PhotoFNumber"`
 	PhotoExposure    string      `gorm:"type:varbinary(64);" json:"PhotoExposure"`
 	CameraID         uint        `gorm:"index:idx_photos_camera_lens;" json:"CameraID"`
-	CameraSerial     string      `gorm:"type:varbinary(128);" json:"CameraSerial"`
+	CameraSerial     string      `gorm:"type:varbinary(255);" json:"CameraSerial"`
 	CameraSrc        string      `gorm:"type:varbinary(8);" json:"CameraSrc"`
 	LensID           uint        `gorm:"index:idx_photos_camera_lens;" json:"LensID"`
 	PlaceID          string      `gorm:"type:varbinary(16);index;default:'zz'" json:"PlaceID"`
@@ -322,8 +322,6 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 		return errors.New("photo: won't update title, was modified")
 	}
 
-	m.TitleSrc = SrcAuto
-
 	hasLocation := m.Location != nil && m.Location.Place != nil
 
 	if hasLocation {
@@ -332,34 +330,34 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 		if title := labels.Title(loc.Name()); title != "" { // TODO: User defined title format
 			log.Infof("photo: using label \"%s\" to create photo title", title)
 			if loc.NoCity() || loc.LongCity() || loc.CityContains(title) {
-				m.PhotoTitle = fmt.Sprintf("%s / %s / %s", txt.Title(title), loc.CountryName(), m.TakenAt.Format("2006"))
+				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), loc.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
-				m.PhotoTitle = fmt.Sprintf("%s / %s / %s", txt.Title(title), loc.City(), m.TakenAt.Format("2006"))
+				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), loc.City(), m.TakenAt.Format("2006")), SrcAuto)
 			}
 		} else if loc.Name() != "" && loc.City() != "" {
 			if len(loc.Name()) > 45 {
-				m.PhotoTitle = txt.Title(loc.Name())
+				m.SetTitle(txt.Title(loc.Name()), SrcAuto)
 			} else if len(loc.Name()) > 20 || len(loc.City()) > 16 || strings.Contains(loc.Name(), loc.City()) {
-				m.PhotoTitle = fmt.Sprintf("%s / %s", loc.Name(), m.TakenAt.Format("2006"))
+				m.SetTitle(fmt.Sprintf("%s / %s", loc.Name(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
-				m.PhotoTitle = fmt.Sprintf("%s / %s / %s", loc.Name(), loc.City(), m.TakenAt.Format("2006"))
+				m.SetTitle(fmt.Sprintf("%s / %s / %s", loc.Name(), loc.City(), m.TakenAt.Format("2006")), SrcAuto)
 			}
 		} else if loc.City() != "" && loc.CountryName() != "" {
 			if len(loc.City()) > 20 {
-				m.PhotoTitle = fmt.Sprintf("%s / %s", loc.City(), m.TakenAt.Format("2006"))
+				m.SetTitle(fmt.Sprintf("%s / %s", loc.City(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
-				m.PhotoTitle = fmt.Sprintf("%s / %s / %s", loc.City(), loc.CountryName(), m.TakenAt.Format("2006"))
+				m.SetTitle(fmt.Sprintf("%s / %s / %s", loc.City(), loc.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
 			}
 		}
 	}
 
 	if !hasLocation || m.NoTitle() {
 		if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
-			m.PhotoTitle = fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.TakenAt.Format("2006"))
+			m.SetTitle(fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.TakenAt.Format("2006")), SrcAuto)
 		} else if !m.TakenAtLocal.IsZero() {
-			m.PhotoTitle = fmt.Sprintf("Unknown / %s", m.TakenAtLocal.Format("2006"))
+			m.SetTitle(fmt.Sprintf("Unknown / %s", m.TakenAtLocal.Format("2006")), SrcAuto)
 		} else {
-			m.PhotoTitle = "Unknown"
+			m.SetTitle("Unknown", SrcAuto)
 		}
 
 		log.Infof("photo: changed photo title to \"%s\"", m.PhotoTitle)
@@ -402,4 +400,16 @@ func (m *Photo) AddLabels(labels classify.Labels, db *gorm.DB) {
 	}
 
 	db.Set("gorm:auto_preload", true).Model(m).Related(&m.Labels)
+}
+
+// SetTitle sets the photo title and clips it to 300 characters.
+func (m *Photo) SetTitle(title, source string) {
+	newTitle := txt.Clip(title, txt.ClipDefault)
+
+	if newTitle == "" {
+		return
+	}
+
+	m.PhotoTitle = newTitle
+	m.TitleSrc = source
 }

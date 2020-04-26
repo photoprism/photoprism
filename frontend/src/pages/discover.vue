@@ -60,7 +60,7 @@
         },
         data() {
             return {
-                readonly: this.$config.getValue("readonly"),
+                readonly: this.$config.get("readonly"),
                 active: this.tab,
             }
         },

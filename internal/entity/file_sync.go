@@ -17,7 +17,7 @@ const (
 
 // FileSync represents a one-to-many relation between File and Account for syncing with remote services.
 type FileSync struct {
-	RemoteName string `gorm:"primary_key;auto_increment:false;type:varbinary(256)"`
+	RemoteName string `gorm:"primary_key;auto_increment:false;type:varbinary(255)"`
 	AccountID  uint   `gorm:"primary_key;auto_increment:false"`
 	FileID     uint   `gorm:"index;"`
 	RemoteDate time.Time
