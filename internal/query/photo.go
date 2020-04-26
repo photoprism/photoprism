@@ -24,6 +24,7 @@ type PhotoResult struct {
 	DeletedAt        time.Time
 	TakenAt          time.Time
 	TakenAtLocal     time.Time
+	TakenSrc         string
 	TimeZone         string
 	PhotoUUID        string
 	PhotoPath        string

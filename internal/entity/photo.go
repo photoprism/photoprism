@@ -18,13 +18,14 @@ import (
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
 	ID               uint        `gorm:"primary_key"`
-	TakenAt          time.Time   `gorm:"type:datetime;index:idx_photos_taken_uuid;" json:"TakenAt"`
-	TakenSrc         string      `gorm:"type:varbinary(8);" json:"TakenSrc"`
 	PhotoUUID        string      `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;"`
-	PhotoPath        string      `gorm:"type:varbinary(768);index;"`
-	PhotoName        string      `gorm:"type:varbinary(255);"`
+	TakenAt          time.Time   `gorm:"type:datetime;index:idx_photos_taken_uuid;" json:"TakenAt"`
+	TakenAtLocal     time.Time   `gorm:"type:datetime;"`
+	TakenSrc         string      `gorm:"type:varbinary(8);" json:"TakenSrc"`
 	PhotoTitle       string      `gorm:"type:varchar(255);" json:"PhotoTitle"`
 	TitleSrc         string      `gorm:"type:varbinary(8);" json:"TitleSrc"`
+	PhotoPath        string      `gorm:"type:varbinary(768);index;"`
+	PhotoName        string      `gorm:"type:varbinary(255);"`
 	PhotoQuality     int         `gorm:"type:SMALLINT" json:"PhotoQuality"`
 	PhotoResolution  int         `gorm:"type:SMALLINT" json:"PhotoResolution"`
 	PhotoFavorite    bool        `json:"PhotoFavorite"`
@@ -44,11 +45,10 @@ type Photo struct {
 	PlaceID          string      `gorm:"type:varbinary(16);index;default:'zz'" json:"PlaceID"`
 	LocationID       string      `gorm:"type:varbinary(16);index;" json:"LocationID"`
 	LocationSrc      string      `gorm:"type:varbinary(8);" json:"LocationSrc"`
+	TimeZone         string      `gorm:"type:varbinary(64);" json:"TimeZone"`
 	PhotoCountry     string      `gorm:"type:varbinary(2);index:idx_photos_country_year_month;default:'zz'" json:"PhotoCountry"`
 	PhotoYear        int         `gorm:"index:idx_photos_country_year_month;"`
 	PhotoMonth       int         `gorm:"index:idx_photos_country_year_month;"`
-	TimeZone         string      `gorm:"type:varbinary(64);" json:"TimeZone"`
-	TakenAtLocal     time.Time   `gorm:"type:datetime;"`
 	Description      Description `json:"Description"`
 	DescriptionSrc   string      `gorm:"type:varbinary(8);" json:"DescriptionSrc"`
 	Camera           *Camera     `json:"Camera"`
@@ -402,7 +402,7 @@ func (m *Photo) AddLabels(labels classify.Labels, db *gorm.DB) {
 	db.Set("gorm:auto_preload", true).Model(m).Related(&m.Labels)
 }
 
-// SetTitle sets the photo title and clips it to 300 characters.
+// SetTitle changes the photo title and clips it to 300 characters.
 func (m *Photo) SetTitle(title, source string) {
 	newTitle := txt.Clip(title, txt.ClipDefault)
 
@@ -410,6 +410,68 @@ func (m *Photo) SetTitle(title, source string) {
 		return
 	}
 
+	if m.TitleSrc != SrcAuto && m.TitleSrc != source && source != SrcManual && m.HasTitle() {
+		return
+	}
+
 	m.PhotoTitle = newTitle
 	m.TitleSrc = source
+}
+
+// SetDescription changes the photo description if not empty and from the same source.
+func (m *Photo) SetDescription(desc, source string) {
+	newDesc := txt.Clip(desc, txt.ClipDescription)
+
+	if newDesc == "" {
+		return
+	}
+
+	if m.DescriptionSrc != SrcAuto && m.DescriptionSrc != source && source != SrcManual && m.Description.PhotoDescription != "" {
+		return
+	}
+
+	m.Description.PhotoDescription = newDesc
+	m.DescriptionSrc = source
+}
+
+// SetTakenAt changes the photo date if not empty and from the same source.
+func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
+	if taken.IsZero() || taken.Year() < 1000 {
+		return
+	}
+
+	if m.TakenSrc != SrcAuto && m.TakenSrc != source && source != SrcManual {
+		return
+	}
+
+	m.TakenAt = taken.Round(time.Second).UTC()
+	m.TakenSrc = source
+
+	if local.IsZero() || local.Year() < 1000 {
+		m.TakenAtLocal = m.TakenAt
+	} else {
+		m.TakenAtLocal = local.Round(time.Second)
+	}
+
+	if zone != "" {
+		m.TimeZone = zone
+	} else {
+		m.TimeZone = time.UTC.String()
+	}
+}
+
+// SetCoordinates changes the photo lat, lng and altitude if not empty and from the same source.
+func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
+	if lat == 0 && lng == 0 {
+		return
+	}
+
+	if m.LocationSrc != SrcAuto && m.LocationSrc != source && source != SrcManual {
+		return
+	}
+
+	m.PhotoLat = lat
+	m.PhotoLng = lng
+	m.PhotoAltitude = altitude
+	m.LocationSrc = source
 }
