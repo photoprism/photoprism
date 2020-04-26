@@ -88,7 +88,7 @@ func (m *Photo) UpdateLocation(db *gorm.DB, geoApi string) (keywords []string, l
 		m.PlaceID = UnknownPlace.ID
 	}
 
-	if m.Place != nil && (m.PhotoCountry == "" || m.PhotoCountry == "zz") {
+	if m.Place != nil && (m.PhotoCountry == "" || m.PhotoCountry == UnknownCountry.Code()) {
 		m.PhotoCountry = m.Place.LocCountry
 	}
 
