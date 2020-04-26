@@ -157,6 +157,15 @@ func Exif(filename string) (data Data, err error) {
 	}
 
 	if value, ok := tags["ExposureTime"]; ok {
+		if n := strings.Split(value, "/"); len(n) == 2 {
+			if n[0] != "1" && len(n[0]) < len(n[1]) {
+				n0, _ := strconv.ParseUint(n[0], 10, 64)
+				if n1, err := strconv.ParseUint(n[1], 10, 64); err == nil && n0 > 0 && n1 > 0 {
+					value = fmt.Sprintf("1/%d", n1 / n0)
+				}
+			}
+		}
+
 		data.Exposure = value
 	}
 
