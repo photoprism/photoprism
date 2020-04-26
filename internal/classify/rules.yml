@@ -456,31 +456,39 @@ turtle:
     - animal
 
 loggerhead:
-  label: loggerhead
+  label: turtle
+  threshold: 0.21
   categories:
-    - turtle
+    - reptile
+    - animal
 
 leatherback turtle:
-  label: leatherback turtle
-  threshold: 0.2
+  label: turtle
+  threshold: 0.79
   categories:
-    - turtle
+    - reptile
+    - animal
 
 mud turtle:
-  label: mud turtle
+  label: turtle
   threshold: 0.2
   categories:
-    - turtle
+    - reptile
+    - animal
 
 terrapin:
-  label: terrapin
+  label: turtle
+  threshold: 0.46
   categories:
-    - turtle
+    - reptile
+    - animal
 
 box turtle:
-  label: box turtle
+  label: turtle
+  threshold: 0.19
   categories:
-    - turtle
+    - reptile
+    - animal
 
 common iguana:
   label: lizard
@@ -2202,9 +2210,8 @@ weapon:
   threshold: 0.3
 
 assault rifle:
-  label: assault rifle
-  categories:
-    - weapon
+  label: weapon
+  threshold: 0.8
 
 backpack:
   threshold: 0.61
@@ -2429,9 +2436,8 @@ cliff dwelling:
   threshold: 0.3
 
 clog:
-  label: clog
-  categories:
-    - shoe
+  label: shoe
+  threshold: 0.65
 
 cocktail shaker:
   label: drinks
@@ -2449,22 +2455,20 @@ coffee:
     - beverage
 
 espresso:
-  label: espresso
-  threshold: 0.2
+  label: coffee
+  threshold: 0.28
   categories:
-    - coffee
+    - beverage
 
 coffee mug:
-  label: coffee mug
-  threshold: 0.2
+  label: coffee
+  threshold: 0.4
   categories:
-    - coffee
+    - beverage
 
 coffeepot:
-  label: coffeepot
+  label: coffee
   threshold: 0.2
-  categories:
-    - coffee
 
 lock:
   see: ignore
@@ -2575,10 +2579,8 @@ dishrag:
   see: ignore
 
 dishwasher:
-  label: dishwasher
+  label: kitchen
   threshold: 0.3
-  categories:
-    - kitchen
 
 disk brake:
   label: car
@@ -2614,17 +2616,14 @@ drum:
   see: instrument
 
 dutch oven:
-  label: dutch oven
+  label: cooking
   threshold: 0.2
   categories:
     - kitchen
-    - cooking
 
 tray:
-  label: tray
-  threshold: 0.3
-  categories:
-    - kitchen
+  label: kitchen
+  threshold: 0.45
 
 electric guitar:
   see: instrument
@@ -2642,9 +2641,7 @@ entertainment center:
     - screen
 
 espresso maker:
-  label: espresso maker
-  categories:
-    - coffee
+  label: coffee
 
 face powder:
   see: ignore
@@ -2854,9 +2851,8 @@ lipstick:
   see: ignore
 
 loafer:
-  label: loafer
-  categories:
-    - shoe
+  label: shoe
+  threshold: 0.3
 
 loudspeaker:
   label: loudspeaker
@@ -2906,11 +2902,10 @@ microphone:
     - music
 
 microwave:
-  label: microwave
-  threshold: 0.3
+  label: kitchen
+  threshold: 0.42
   categories:
     - electronics
-    - kitchen
 
 minibus:
   label: bus
@@ -2984,11 +2979,10 @@ motor scooter:
     - vehicle
 
 mountain tent:
-  label: mountain tent
-  threshold: 0.2
+  label: camping
+  threshold: 0.26
   categories:
     - outdoor
-    - camping
 
 moving van:
   label: moving van
@@ -3265,14 +3259,12 @@ restaurant:
   threshold: 0.3
 
 revolver:
-  label: revolver
-  categories:
-    - weapon
+  label: weapon
+  threshold: 0.5
 
 rifle:
-  label: rifle
-  categories:
-    - weapon
+  label: weapon
+  threshold: 0.6
 
 rocking chair:
   label: furniture
@@ -3292,9 +3284,8 @@ shoe:
   threshold: 0.3
 
 running shoe:
-  label: running shoe
-  categories:
-    - shoe
+  label: shoe
+  threshold: 0.54
 
 saltshaker:
   label: saltshaker
@@ -3303,9 +3294,8 @@ saltshaker:
     - cooking
 
 sandal:
-  label: sandal
-  categories:
-    - shoe
+  label: shoe
+  threshold: 0.87
 
 sax:
   see: instrument
@@ -3333,14 +3323,12 @@ basket:
   threshold: 0.3
 
 crate:
-  label: crate
-  threshold: 0.3
-  categories:
-    - basket
+  label: basket
+  threshold: 0.52
 
 shopping basket:
   label: shopping basket
-  threshold: 0.3
+  threshold: 0.57
   categories:
     - basket
 
@@ -3357,10 +3345,8 @@ ski:
     - snow
 
 sleeping bag:
-  label: sleeping bag
-  threshold: 0.2
-  categories:
-    - camping
+  label: camping
+  threshold: 0.26
 
 sliding door:
   label: building
@@ -3439,10 +3425,9 @@ steel drum:
   see: instrument
 
 stove:
-  label: stove
-  threshold: 0.2
+  label: cooking
+  threshold: 0.46
   categories:
-    - cooking
     - kitchen
 
 strainer:
@@ -3618,11 +3603,10 @@ yawl:
     - boat
 
 yurt:
-  label: yurt
-  threshold: 0.2
+  label: camping
+  threshold: 0.57
   categories:
     - outdoor
-    - camping
 
 comic book:
   label: comic
@@ -3640,49 +3624,43 @@ guacamole:
     - vegetables
 
 consomme:
-  label: consomme
-  threshold: 0.2
+  label: soup
+  threshold: 0.39
   categories:
     - dining
     - food
-    - soup
 
 hot pot:
-  label: hot pot
+  label: soup
   threshold: 0.2
   categories:
     - dining
     - food
-    - soup
 
 trifle:
-  label: trifle
-  threshold: 0.1
+  label: dessert
+  threshold: 0.26
   categories:
     - dining
     - food
-    - dessert
 
 ice cream:
-  label: ice cream
+  label: dessert
   threshold: 0.2
   categories:
     - food
-    - dessert
 
 ice lolly:
-  label: ice lolly
-  threshold: 0.2
+  label: dessert
+  threshold: 0.56
   categories:
     - food
-    - dessert
 
 chocolate sauce:
-  label: chocolate sauce
+  label: dessert
   threshold: 0.1
   categories:
     - food
-    - dessert
 
 french loaf:
   threshold: 0.54
@@ -3789,37 +3767,37 @@ fruit:
     - food
 
 granny smith:
-  label: granny smith
+  label: fruit
   threshold: 0.2
   categories:
     - food
-    - fruit
 
 strawberry:
-  label: strawberry
-  threshold: 0.2
+  label: fruit
+  threshold: 0.57
   categories:
-    - fruit
+    - food
 
 orange:
-  label: orange
+  label: fruit
+  threshold: 0.17
   categories:
-    - fruit
+    - food
 
 lemon:
-  label: lemon
+  label: fruit
   threshold: 0.15
   categories:
     - food
-    - fruit
 
 fig:
-  label: fig
+  label: fruit
+  threshold: 0.11
   categories:
-    - fruit
+    - food
 
 pineapple:
-  threshold: 0.3
+  threshold: 0.65
   categories:
     - fruit
     - food
@@ -3831,20 +3809,22 @@ banana:
     - food
 
 jackfruit:
-  label: jackfruit
-  threshold: 0.3
+  label: fruit
+  threshold: 0.9
   categories:
-    - fruit
+    - food
 
 custard apple:
-  label: custard apple
+  label: fruit
+  threshold: 0.27
   categories:
-    - fruit
+    - food
 
 pomegranate:
-  label: pomegranate
+  label: fruit
+  threshold: 0.15
   categories:
-    - fruit
+    - food
 
 carbonara:
   label: pasta
@@ -4488,9 +4468,8 @@ cowboy hat:
   see: ignore
 
 cowboy boot:
-  label: cowboy boot
-  categories:
-    - shoe
+  label: shoe
+  threshold: 0.2
 
 crib:
   threshold: 0.61
@@ -4522,10 +4501,8 @@ gas pump:
   threshold: 0.2
 
 hamper:
-  label: hamper
-  threshold: 0.3
-  categories:
-    - basket
+  label: basket
+  threshold: 0.61
 
 hay:
   label: farm
