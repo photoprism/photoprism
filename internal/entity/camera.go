@@ -8,15 +8,16 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
 	ID                uint   `gorm:"primary_key"`
-	CameraSlug        string `gorm:"type:varbinary(128);unique_index;"`
-	CameraModel       string `gorm:"type:varchar(128);"`
-	CameraMake        string `gorm:"type:varchar(128);"`
-	CameraType        string `gorm:"type:varchar(128);"`
+	CameraSlug        string `gorm:"type:varbinary(255);unique_index;"`
+	CameraModel       string `gorm:"type:varchar(255);"`
+	CameraMake        string `gorm:"type:varchar(255);"`
+	CameraType        string `gorm:"type:varchar(255);"`
 	CameraDescription string `gorm:"type:text;"`
 	CameraNotes       string `gorm:"type:text;"`
 	CreatedAt         time.Time
@@ -37,7 +38,8 @@ func CreateUnknownCamera(db *gorm.DB) {
 
 // NewCamera creates a camera entity from a model name and a make name.
 func NewCamera(modelName string, makeName string) *Camera {
-	makeName = strings.TrimSpace(makeName)
+	modelName = txt.Clip(modelName, txt.ClipDefault)
+	makeName = txt.Clip(makeName, txt.ClipDefault)
 
 	if modelName == "" {
 		return &UnknownCamera
@@ -48,9 +50,9 @@ func NewCamera(modelName string, makeName string) *Camera {
 	var cameraSlug string
 
 	if makeName != "" {
-		cameraSlug = slug.Make(makeName + " " + modelName)
+		cameraSlug = slug.Make(txt.Clip(makeName+" "+modelName, txt.ClipSlug))
 	} else {
-		cameraSlug = slug.Make(modelName)
+		cameraSlug = slug.Make(txt.Clip(modelName, txt.ClipSlug))
 	}
 
 	result := &Camera{

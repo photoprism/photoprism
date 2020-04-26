@@ -11,10 +11,10 @@ type Description struct {
 	PhotoDescription string `gorm:"type:text;" json:"PhotoDescription"`
 	PhotoKeywords    string `gorm:"type:text;" json:"PhotoKeywords"`
 	PhotoNotes       string `gorm:"type:text;" json:"PhotoNotes"`
-	PhotoSubject     string `json:"PhotoSubject"`
-	PhotoArtist      string `json:"PhotoArtist"`
-	PhotoCopyright   string `json:"PhotoCopyright"`
-	PhotoLicense     string `json:"PhotoLicense"`
+	PhotoSubject     string `gorm:"type:varchar(255);" json:"PhotoSubject"`
+	PhotoArtist      string `gorm:"type:varchar(255);" json:"PhotoArtist"`
+	PhotoCopyright   string `gorm:"type:varchar(255);" json:"PhotoCopyright"`
+	PhotoLicense     string `gorm:"type:varchar(255);" json:"PhotoLicense"`
 }
 
 // FirstOrCreate returns the matching entity or creates a new one.

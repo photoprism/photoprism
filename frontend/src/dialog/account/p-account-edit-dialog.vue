@@ -329,7 +329,7 @@
                         {"value": 86400 * 365, "text": "After one year"},
                     ],
                 },
-                readonly: this.$config.getValue("readonly"),
+                readonly: this.$config.get("readonly"),
                 options: options,
                 label: {
                     cancel: this.$gettext("Cancel"),

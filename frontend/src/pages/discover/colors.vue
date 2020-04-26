@@ -33,7 +33,7 @@
         name: 'p-tab-discover-colors',
         data() {
             return {
-                readonly: this.$config.getValue("readonly"),
+                readonly: this.$config.get("readonly"),
                 colors: this.$config.values.colors,
                 labels: {},
             };

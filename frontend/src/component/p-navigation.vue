@@ -304,8 +304,8 @@
                 drawer: null,
                 mini: true,
                 session: this.$session,
-                public: this.$config.getValue("public"),
-                readonly: this.$config.getValue("readonly"),
+                public: this.$config.get("public"),
+                readonly: this.$config.get("readonly"),
                 config: this.$config.values,
                 page: this.$config.page,
                 upload: {

@@ -168,8 +168,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 				}
 
 				if metaData.Title != "" && (photo.NoTitle() || photo.TitleSrc == entity.SrcExif) {
-					photo.PhotoTitle = txt.Clip(metaData.Title, 200)
-					photo.TitleSrc = entity.SrcExif
+					photo.SetTitle(metaData.Title, entity.SrcExif)
 				}
 
 				if metaData.Description != "" && (photo.Description.NoDescription() || photo.DescriptionSrc == entity.SrcExif) {
@@ -240,8 +239,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		// TODO: Proof-of-concept for indexing XMP sidecar files
 		if data, err := meta.XMP(m.FileName()); err == nil {
 			if data.Title != "" && photo.TitleSrc == entity.SrcAuto {
-				photo.PhotoTitle = txt.Clip(data.Title, 200)
-				photo.TitleSrc = entity.SrcXmp
+				photo.SetTitle(data.Title, entity.SrcXmp)
 			}
 
 			if photo.Description.NoCopyright() && data.Copyright != "" {

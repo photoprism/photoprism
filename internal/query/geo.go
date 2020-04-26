@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/pluscode"
 	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GeoResult represents a photo for displaying it on a map.
@@ -51,6 +52,8 @@ func (q *Query) Geo(f form.GeoSearch) (results []GeoResult, err error) {
 		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0").
 		Group("photos.id, files.id")
+
+	f.Query = txt.Clip(f.Query, txt.ClipKeyword)
 
 	if f.Query != "" {
 		s = s.Joins("LEFT JOIN photos_keywords ON photos_keywords.photo_id = photos.id").

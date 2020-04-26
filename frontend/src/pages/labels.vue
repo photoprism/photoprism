@@ -184,7 +184,7 @@
                     search: this.$gettext("Search"),
                     name: this.$gettext("Label Name"),
                 },
-                titleRule: v => v.length <= 25 || this.$gettext("Name too long"),
+                titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
                 mouseDown: {
                     index: -1,
                     timeStamp: -1,

@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"strings"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -16,9 +15,9 @@ import (
 type Label struct {
 	ID               uint   `gorm:"primary_key"`
 	LabelUUID        string `gorm:"type:varbinary(36);unique_index;"`
-	LabelSlug        string `gorm:"type:varbinary(128);unique_index;"`
-	CustomSlug       string `gorm:"type:varbinary(128);index;"`
-	LabelName        string `gorm:"type:varchar(128);"`
+	LabelSlug        string `gorm:"type:varbinary(255);unique_index;"`
+	CustomSlug       string `gorm:"type:varbinary(255);index;"`
+	LabelName        string `gorm:"type:varchar(255);"`
 	LabelPriority    int
 	LabelFavorite    bool
 	LabelDescription string   `gorm:"type:text;"`
@@ -42,21 +41,21 @@ func (m *Label) BeforeCreate(scope *gorm.Scope) error {
 }
 
 // NewLabel creates a label in database with a given name and priority
-func NewLabel(labelName string, labelPriority int) *Label {
-	labelName = strings.TrimSpace(labelName)
+func NewLabel(name string, priority int) *Label {
+	labelName := txt.Clip(name, txt.ClipDefault)
 
 	if labelName == "" {
 		labelName = "Unknown"
 	}
 
-	labelSlug := slug.Make(labelName)
-	labelName = txt.Title(txt.Clip(labelName, 128))
+	labelName = txt.Title(labelName)
+	labelSlug := slug.Make(txt.Clip(labelName, txt.ClipSlug))
 
 	result := &Label{
 		LabelSlug:     labelSlug,
 		CustomSlug:    labelSlug,
 		LabelName:     labelName,
-		LabelPriority: labelPriority,
+		LabelPriority: priority,
 	}
 
 	return result
@@ -79,18 +78,16 @@ func (m *Label) AfterCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("New", true)
 }
 
-// Rename an existing label
-func (m *Label) Rename(name string) {
-	name = strings.TrimSpace(name)
+// SetName changes the label name.
+func (m *Label) SetName(name string) {
+	newName := txt.Clip(name, txt.ClipDefault)
 
-	if name == "" {
+	if newName == "" {
 		return
 	}
 
-	name = txt.Title(txt.Clip(name, 128))
-
-	m.LabelName = name
-	m.CustomSlug = slug.Make(name)
+	m.LabelName = txt.Title(newName)
+	m.CustomSlug = slug.Make(txt.Clip(name, txt.ClipSlug))
 }
 
 // Updates a label if necessary
@@ -111,7 +108,7 @@ func (m *Label) Update(label classify.Label, db *gorm.DB) error {
 	}
 
 	if m.CustomSlug == m.LabelSlug && label.Title() != m.LabelName {
-		m.Rename(label.Title())
+		m.SetName(label.Title())
 		save = true
 	}
 

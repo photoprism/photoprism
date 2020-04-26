@@ -98,7 +98,7 @@
         data() {
             return {
                 settings: new Settings(this.$config.settings()),
-                readonly: this.$config.getValue("readonly"),
+                readonly: this.$config.get("readonly"),
                 started: false,
                 busy: false,
                 completed: 0,

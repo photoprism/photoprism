@@ -78,7 +78,7 @@
         data() {
             return {
                 config: this.$config.values,
-                readonly: this.$config.getValue("readonly"),
+                readonly: this.$config.get("readonly"),
                 settings: new Settings(this.$config.values.settings),
                 options: options,
                 model: {},

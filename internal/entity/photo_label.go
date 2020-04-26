@@ -69,7 +69,7 @@ func (m *PhotoLabel) Save(db *gorm.DB) error {
 	}
 
 	if m.Label != nil {
-		m.Label.Rename(m.Label.LabelName)
+		m.Label.SetName(m.Label.LabelName)
 	}
 
 	return db.Save(m).Error

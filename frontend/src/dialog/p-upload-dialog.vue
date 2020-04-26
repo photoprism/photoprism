@@ -69,7 +69,7 @@
                 total: 0,
                 completed: 0,
                 started: 0,
-                safe: !this.$config.getValue("uploadNSFW")
+                safe: !this.$config.get("uploadNSFW")
             }
         },
         methods: {

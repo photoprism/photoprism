@@ -12,7 +12,7 @@ import (
 // Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
 	ID              uint   `gorm:"primary_key"`
-	LensSlug        string `gorm:"type:varbinary(128);unique_index;"`
+	LensSlug        string `gorm:"type:varbinary(255);unique_index;"`
 	LensModel       string
 	LensMake        string
 	LensType        string

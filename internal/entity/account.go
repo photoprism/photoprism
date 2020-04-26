@@ -23,22 +23,22 @@ const (
 // Account represents a remote service account for uploading, downloading or syncing media files.
 type Account struct {
 	ID            uint   `gorm:"primary_key"`
-	AccName       string `gorm:"type:varchar(128);"`
-	AccOwner      string `gorm:"type:varchar(128);"`
+	AccName       string `gorm:"type:varchar(255);"`
+	AccOwner      string `gorm:"type:varchar(255);"`
 	AccURL        string `gorm:"type:varbinary(512);"`
-	AccType       string `gorm:"type:varbinary(256);"`
-	AccKey        string `gorm:"type:varbinary(256);"`
-	AccUser       string `gorm:"type:varbinary(256);"`
-	AccPass       string `gorm:"type:varbinary(256);"`
+	AccType       string `gorm:"type:varbinary(255);"`
+	AccKey        string `gorm:"type:varbinary(255);"`
+	AccUser       string `gorm:"type:varbinary(255);"`
+	AccPass       string `gorm:"type:varbinary(255);"`
 	AccError      string `gorm:"type:varbinary(512);"`
 	AccErrors     int
 	AccShare      bool
 	AccSync       bool
 	RetryLimit    int
-	SharePath     string `gorm:"type:varbinary(256);"`
+	SharePath     string `gorm:"type:varbinary(255);"`
 	ShareSize     string `gorm:"type:varbinary(16);"`
 	ShareExpires  int
-	SyncPath      string `gorm:"type:varbinary(256);"`
+	SyncPath      string `gorm:"type:varbinary(255);"`
 	SyncStatus    string `gorm:"type:varbinary(16);"`
 	SyncInterval  int
 	SyncDate      sql.NullTime `deepcopier:"skip"`

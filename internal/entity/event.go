@@ -10,7 +10,7 @@ import (
 // Event defines temporal event that can be used to link photos together
 type Event struct {
 	EventUUID        string `gorm:"type:varbinary(36);unique_index;"`
-	EventSlug        string `gorm:"type:varbinary(128);unique_index;"`
+	EventSlug        string `gorm:"type:varbinary(255);unique_index;"`
 	EventName        string
 	EventType        string
 	EventDescription string    `gorm:"type:text;"`

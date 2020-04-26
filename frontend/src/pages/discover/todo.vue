@@ -15,7 +15,7 @@
         name: 'p-tab-discover-todo',
         data() {
             return {
-                readonly: this.$config.getValue("readonly"),
+                readonly: this.$config.get("readonly"),
                 config: this.$config.values,
                 labels: {},
             };

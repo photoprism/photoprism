@@ -8,6 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
 )
 
@@ -16,12 +17,12 @@ type Album struct {
 	ID               uint   `gorm:"primary_key"`
 	CoverUUID        string `gorm:"type:varbinary(36);"`
 	AlbumUUID        string `gorm:"type:varbinary(36);unique_index;"`
-	AlbumSlug        string `gorm:"type:varbinary(128);index;"`
-	AlbumName        string `gorm:"type:varchar(128);"`
+	AlbumSlug        string `gorm:"type:varbinary(255);index;"`
+	AlbumName        string `gorm:"type:varchar(255);"`
 	AlbumDescription string `gorm:"type:text;"`
 	AlbumNotes       string `gorm:"type:text;"`
 	AlbumOrder       string `gorm:"type:varbinary(32);"`
-	AlbumTemplate    string `gorm:"type:varbinary(256);"`
+	AlbumTemplate    string `gorm:"type:varbinary(255);"`
 	AlbumFavorite    bool
 	Links            []Link `gorm:"foreignkey:ShareUUID;association_foreignkey:AlbumUUID"`
 	CreatedAt        time.Time
@@ -39,32 +40,36 @@ func (m *Album) BeforeCreate(scope *gorm.Scope) error {
 }
 
 // NewAlbum creates a new album; default name is current month and year
-func NewAlbum(albumName string) *Album {
-	albumName = strings.TrimSpace(albumName)
-
-	if albumName == "" {
-		albumName = time.Now().Format("January 2006")
-	}
-
-	albumSlug := slug.Make(albumName)
+func NewAlbum(name string) *Album {
+	now := time.Now().UTC()
 
 	result := &Album{
-		AlbumSlug:  albumSlug,
-		AlbumName:  albumName,
+		AlbumUUID:  rnd.PPID('a'),
 		AlbumOrder: SortOrderOldest,
+		CreatedAt:  now,
+		UpdatedAt:  now,
 	}
+
+	result.SetName(name)
 
 	return result
 }
 
-// Rename an existing album
-func (m *Album) Rename(albumName string) {
-	if albumName == "" {
-		albumName = m.CreatedAt.Format("January 2006")
+// SetName changes the album name.
+func (m *Album) SetName(name string) {
+	name = strings.TrimSpace(name)
+
+	if name == "" {
+		name = m.CreatedAt.Format("January 2006")
 	}
 
-	m.AlbumName = strings.TrimSpace(albumName)
-	m.AlbumSlug = slug.Make(m.AlbumName)
+	m.AlbumName = txt.Clip(name, txt.ClipDefault)
+
+	if len(m.AlbumName) < txt.ClipSlug {
+		m.AlbumSlug = slug.Make(m.AlbumName)
+	} else {
+		m.AlbumSlug = slug.Make(txt.Clip(m.AlbumName, txt.ClipSlug)) + "-" + m.AlbumUUID
+	}
 }
 
 // Save updates the entity using form data and stores it in the database.
@@ -74,7 +79,7 @@ func (m *Album) Save(f form.Album, db *gorm.DB) error {
 	}
 
 	if f.AlbumName != "" {
-		m.Rename(f.AlbumName)
+		m.SetName(f.AlbumName)
 	}
 
 	return db.Save(m).Error

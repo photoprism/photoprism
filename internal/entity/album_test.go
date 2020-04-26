@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
+	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,22 +26,38 @@ func TestNewAlbum(t *testing.T) {
 	})
 }
 
-func TestRename(t *testing.T) {
+func TestAlbum_SetName(t *testing.T) {
 	t.Run("valid name", func(t *testing.T) {
 		album := NewAlbum("initial name")
 		assert.Equal(t, "initial name", album.AlbumName)
 		assert.Equal(t, "initial-name", album.AlbumSlug)
-		album.Rename("new album name")
-		assert.Equal(t, "new album name", album.AlbumName)
+		album.SetName("New Album Name")
+		assert.Equal(t, "New Album Name", album.AlbumName)
 		assert.Equal(t, "new-album-name", album.AlbumSlug)
 	})
 	t.Run("empty name", func(t *testing.T) {
 		album := NewAlbum("initial name")
 		assert.Equal(t, "initial name", album.AlbumName)
 		assert.Equal(t, "initial-name", album.AlbumSlug)
-		t.Log(album.CreatedAt)
-		album.Rename("")
-		assert.Equal(t, "January 0001", album.AlbumName)
-		assert.Equal(t, "january-0001", album.AlbumSlug)
+
+		album.SetName("")
+		expected := album.CreatedAt.Format("January 2006")
+		assert.Equal(t, expected, album.AlbumName)
+		assert.Equal(t, slug.Make(expected), album.AlbumSlug)
+	})
+	t.Run("long name", func(t *testing.T) {
+		longName := `A value in decimal degrees to a precision of 4 decimal places is precise to 11.132 meters at the 
+equator. A value in decimal degrees to 5 decimal places is precise to 1.1132 meter at the equator. Elevation also 
+introduces a small error. At 6,378 m elevation, the radius and surface distance is increased by 0.001 or 0.1%. 
+Because the earth is not flat, the precision of the longitude part of the coordinates increases 
+the further from the equator you get. The precision of the latitude part does not increase so much, 
+more strictly however, a meridian arc length per 1 second depends on the latitude at the point in question. 
+The discrepancy of 1 second meridian arc length between equator and pole is about 0.3 metres because the earth 
+is an oblate spheroid.`
+		expected := txt.Clip(longName, txt.ClipDefault)
+		slugExpected := txt.Clip(longName, txt.ClipSlug)
+		album := NewAlbum(longName)
+		assert.Equal(t, expected, album.AlbumName)
+		assert.Contains(t, album.AlbumSlug, slug.Make(slugExpected))
 	})
 }

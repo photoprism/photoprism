@@ -49,8 +49,8 @@ describe("common/config", () => {
         const values = {};
 
         const config = new Config(storage, values);
-        config.setValue("city", "Berlin");
-        const result = config.getValue("city");
+        config.set("city", "Berlin");
+        const result = config.get("city");
         assert.equal(result, "Berlin");
     });
 });

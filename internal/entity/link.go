@@ -9,8 +9,8 @@ import (
 
 // Link represents a sharing link.
 type Link struct {
-	LinkToken    string     `gorm:"type:varbinary(256);primary_key;"`
-	LinkPassword string     `gorm:"type:varbinary(256);"`
+	LinkToken    string     `gorm:"type:varbinary(255);primary_key;"`
+	LinkPassword string     `gorm:"type:varbinary(255);"`
 	LinkExpires  *time.Time `gorm:"type:datetime;"`
 	ShareUUID    string     `gorm:"type:varbinary(36);index;"`
 	CanComment   bool

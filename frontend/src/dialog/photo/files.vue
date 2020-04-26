@@ -47,7 +47,7 @@
         data() {
             return {
                 config: this.$config.values,
-                readonly: this.$config.getValue("readonly"),
+                readonly: this.$config.get("readonly"),
                 selected: [],
                 listColumns: [
                     {text: this.$gettext('Primary'), value: 'FilePrimary', sortable: false, align: 'center', class: 'p-col-primary'},

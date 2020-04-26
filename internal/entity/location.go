@@ -15,7 +15,7 @@ type Location struct {
 	ID          string `gorm:"type:varbinary(16);primary_key;auto_increment:false;"`
 	PlaceID     string `gorm:"type:varbinary(16);"`
 	Place       *Place
-	LocName     string `gorm:"type:varchar(128);"`
+	LocName     string `gorm:"type:varchar(255);"`
 	LocCategory string `gorm:"type:varchar(64);"`
 	LocSource   string `gorm:"type:varbinary(16);"`
 	CreatedAt   time.Time

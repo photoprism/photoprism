@@ -178,7 +178,7 @@
                 filter: filter,
                 lastFilter: {},
                 routeName: routeName,
-                titleRule: v => v.length <= 25 || this.$gettext("Title too long"),
+                titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Title too long"),
                 labels: {
                     search: this.$gettext("Search"),
                     name: this.$gettext("Album Name"),

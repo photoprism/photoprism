@@ -23,8 +23,8 @@ class Config {
         Event.subscribe("config.updated", (ev, data) => this.setValues(data));
         Event.subscribe("count", (ev, data) => this.onCount(ev, data));
 
-        if (this.hasValue("settings")) {
-            this.setTheme(this.getValue("settings").theme);
+        if (this.has("settings")) {
+            this.setTheme(this.get("settings").theme);
         } else {
             this.setTheme("default");
         }
@@ -39,7 +39,7 @@ class Config {
 
         for (let key in values) {
             if (values.hasOwnProperty(key)) {
-                this.setValue(key, values[key]);
+                this.set(key, values[key]);
             }
         }
 
@@ -99,28 +99,20 @@ class Config {
 
     storeValues() {
         this.storage.setItem(this.storage_key, JSON.stringify(this.getValues()));
-
         return this;
     }
 
-    setValue(key, value) {
+    set(key, value) {
         this.values[key] = value;
-
         return this;
     }
 
-    hasValue(key) {
+    has(key) {
         return !!this.values[key];
     }
 
-    getValue(key) {
+    get(key) {
         return this.values[key];
-    }
-
-    deleteValue(key) {
-        delete this.values[key];
-
-        return this;
     }
 
     feature(name) {

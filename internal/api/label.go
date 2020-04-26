@@ -76,7 +76,7 @@ func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		m.Rename(f.LabelName)
+		m.SetName(f.LabelName)
 		conf.Db().Save(&m)
 
 		event.Success("label saved")
