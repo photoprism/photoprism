@@ -92,10 +92,10 @@ class Thumb extends Model {
             if (!p.Files) return;
 
             p.Files.forEach((f) => {
-                    if (f.FileType === "jpg") {
-                        result.push(this.fromFile(p, f));
-                    }
+                if (f.FileType === "jpg") {
+                    result.push(this.fromFile(p, f));
                 }
+            }
             );
         });
 

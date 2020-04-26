@@ -355,7 +355,8 @@
                                 </v-btn>
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save(false)"
                                        class="p-photo-dialog-confirm">
-                                    <span>Apply</span>
+                                    <span v-if="config.settings.library.review && model.PhotoQuality < 3">Approve</span>
+                                    <span v-else>Apply</span>
                                 </v-btn>
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save(true)"
                                        class="p-photo-dialog-confirm hidden-xs-only">

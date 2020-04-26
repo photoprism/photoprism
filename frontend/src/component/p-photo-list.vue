@@ -13,9 +13,9 @@
             <td style="user-select: none;">
                 <v-img class="accent lighten-2" style="cursor: pointer" aspect-ratio="1"
                        :src="props.item.getThumbnailUrl('tile_50')"
-                       v-longclick="longClick"
-                       @contextmenu="contextMenu($event, props.item, props.index)"
-                       @click="onClick($event, props.item, props.index)"
+                       @mousedown="onMouseDown($event, props.index)"
+                       @contextmenu="onContextMenu($event, props.index)"
+                       @click.stop.prevent="onClick($event, props.index)"
                 >
                     <v-layout
                             slot="placeholder"
@@ -28,21 +28,18 @@
                                              color="accent lighten-5"></v-progress-circular>
                     </v-layout>
 
-                    <v-btn v-if="selection.length > 0" :flat="true" :ripple="false"
-                           icon large absolute
-                           class="p-photo-select">
-                        <v-icon v-if="selection.length && $clipboard.has(props.item)" color="white"
-                                class="t-select t-on">check_circle
-                        </v-icon>
+                    <v-btn v-if="selection.length && $clipboard.has(props.item)" :flat="true" :ripple="false"
+                           icon large absolute class="p-photo-select">
+                        <v-icon color="white" class="t-select t-on">check_circle</v-icon>
                     </v-btn>
                 </v-img>
             </td>
-            <td class="p-photo-desc p-pointer" @click.exact="openPhoto(props.index)" style="user-select: none;">
+            <td class="p-photo-desc p-pointer" @click.exact="editPhoto(props.index)" style="user-select: none;">
                 {{ props.item.PhotoTitle }}
             </td>
-            <td class="p-photo-desc hidden-xs-only" :title="props.item.TakenAt | luxon:format('dd/MM/yyyy HH:mm:ss')">
+            <td class="p-photo-desc hidden-xs-only" :title="props.item.getDateString()">
                 <button @click.stop.prevent="editPhoto(props.index)" style="user-select: none;">
-                    {{ props.item.TakenAt | luxon:locale }}
+                    {{ props.item.TakenAt | luxon:locale('DATE_MED') }}
                 </button>
             </td>
             <td class="p-photo-desc hidden-sm-and-down" style="user-select: none;">
@@ -59,11 +56,16 @@
                     {{ props.item.getLocation() }}
                 </span>
             </td>
-            <td>
+            <td class="text-xs-center">
+                <v-btn v-if="hidePrivate" class="p-photo-private" icon small flat :ripple="false"
+                       @click.stop.prevent="props.item.togglePrivate()">
+                    <v-icon v-if="props.item.PhotoPrivate" color="secondary-dark">lock</v-icon>
+                    <v-icon v-else color="accent lighten-3">lock_open</v-icon>
+                </v-btn>
                 <v-btn class="p-photo-like" icon small flat :ripple="false"
                        @click.stop.prevent="props.item.toggleLike()">
                     <v-icon v-if="props.item.PhotoFavorite" color="pink lighten-3">favorite</v-icon>
-                    <v-icon v-else color="accent lighten-4">favorite_border</v-icon>
+                    <v-icon v-else color="accent lighten-3">favorite_border</v-icon>
                 </v-btn>
             </td>
         </template>
@@ -89,10 +91,14 @@
                     {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt'},
                     {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel'},
                     {text: this.$gettext('Location'), class: 'hidden-xs-only', value: 'LocLabel'},
-                    {text: this.$gettext('Favorite'), value: 'PhotoFavorite', align: 'left'},
+                    {text: '', value: '', sortable: false, align: 'center'},
                 ],
                 showLocation: this.$config.settings().features.places,
-                wasLong: false,
+                hidePrivate: this.$config.settings().library.private,
+                mouseDown: {
+                    index: -1,
+                    timeStamp: -1,
+                },
             };
         },
         watch: {
@@ -110,32 +116,36 @@
             },
         },
         methods: {
-            longClick() {
-                this.wasLong = true;
-            },
-            onClick(ev, model, index) {
-                ev.preventDefault();
-                ev.stopPropagation();
-
-                if (this.wasLong || ev.shiftKey) {
+            onSelect(ev, index) {
+                if (ev.shiftKey) {
                     this.selectRange(index);
                 } else {
-                    this.$clipboard.toggle(model);
+                    this.$clipboard.toggle(this.photos[index]);
                 }
-
-                this.wasLong = false;
             },
-            contextMenu(ev, model, index) {
-                ev.preventDefault();
-                ev.stopPropagation();
+            onMouseDown(ev, index) {
+                this.mouseDown.index = index;
+                this.mouseDown.timeStamp = ev.timeStamp;
+            },
+            onClick(ev, index) {
+                let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
 
-                if (this.wasLong) {
-                    this.selectRange(index);
+                if (longClick || this.selection.length > 0) {
+                    if (longClick || ev.shiftKey) {
+                        this.selectRange(index);
+                    } else {
+                        this.$clipboard.toggle(this.photos[index]);
+                    }
                 } else {
-                    this.$clipboard.toggle(model);
+                    this.openPhoto(index, false);
                 }
-
-                this.wasLong = false;
+            },
+            onContextMenu(ev, index) {
+                if (this.$isMobile) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    this.selectRange(index);
+                }
             },
             selectRange(index) {
                 this.$clipboard.addRange(index, this.photos);

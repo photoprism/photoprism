@@ -20,11 +20,13 @@ type MapsSettings struct {
 }
 
 type LibrarySettings struct {
-	CompleteRescan bool `json:"rescan" yaml:"rescan"`
 	ConvertRaw     bool `json:"raw" yaml:"raw"`
 	CreateThumbs   bool `json:"thumbs" yaml:"thumbs"`
-	GroupRelated   bool `json:"group" yaml:"group"`
+	CompleteRescan bool `json:"rescan" yaml:"rescan"`
 	MoveImported   bool `json:"move" yaml:"move"`
+	HidePrivate    bool `json:"private" yaml:"private"`
+	RequireReview  bool `json:"review" yaml:"review"`
+	GroupRelated   bool `json:"group" yaml:"group"`
 }
 
 type FeatureSettings struct {
@@ -70,8 +72,10 @@ func NewSettings() *Settings {
 			CompleteRescan: false,
 			ConvertRaw:     false,
 			CreateThumbs:   false,
-			GroupRelated:   true,
 			MoveImported:   false,
+			GroupRelated:   true,
+			RequireReview:  true,
+			HidePrivate:    true,
 		},
 	}
 }

@@ -13,8 +13,10 @@ features:
   edit: true
   share: true
 library:
-  rescan: false
   raw: false
   thumbs: false
-  group: true
+  rescan: false
   move: false
+  private: true
+  review: true
+  group: true

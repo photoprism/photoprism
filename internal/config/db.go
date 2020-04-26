@@ -85,6 +85,8 @@ func (c *Config) MigrateDb() {
 
 	entity.CreateUnknownPlace(db)
 	entity.CreateUnknownCountry(db)
+	entity.CreateUnknownCamera(db)
+	entity.CreateUnknownLens(db)
 }
 
 // DropTables drops all tables in the currently configured database (be careful!).

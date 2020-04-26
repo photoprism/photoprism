@@ -13,11 +13,11 @@ type PhotoSearch struct {
 	Duplicate bool      `form:"duplicate"`
 	Archived  bool      `form:"archived"`
 	Error     bool      `form:"error"`
-	Lat       float64   `form:"lat"`
-	Lng       float64   `form:"lng"`
+	Lat       float32   `form:"lat"`
+	Lng       float32   `form:"lng"`
 	Dist      uint      `form:"dist"`
-	Fmin      float64   `form:"fmin"`
-	Fmax      float64   `form:"fmax"`
+	Fmin      float32   `form:"fmin"`
+	Fmax      float32   `form:"fmax"`
 	Chroma    uint8     `form:"chroma"`
 	Diff      uint32    `form:"diff"`
 	Mono      bool      `form:"mono"`
@@ -37,6 +37,7 @@ type PhotoSearch struct {
 	After     time.Time `form:"after" time_format:"2006-01-02"`
 	Favorites bool      `form:"favorites"`
 	Public    bool      `form:"public"`
+	Private   bool      `form:"private"`
 	Story     bool      `form:"story"`
 	Safe      bool      `form:"safe"`
 	Nsfw      bool      `form:"nsfw"`

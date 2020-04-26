@@ -64,14 +64,14 @@
                         <v-hover>
                             <v-card tile class="accent lighten-3"
                                     slot-scope="{ hover }"
-                                    @contextmenu="contextMenu($event, label, index)"
+                                    @contextmenu="onContextMenu($event, index)"
                                     :dark="selection.includes(label.LabelUUID)"
                                     :class="selection.includes(label.LabelUUID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
                                     :to="{name: 'photos', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.LabelSlug)}}">
                                 <v-img
                                         :src="label.getThumbnailUrl('tile_500')"
-                                        v-longclick="longClick"
-                                        @click="onClick($event, label, index)"
+                                        @mousedown="onMouseDown($event, index)"
+                                        @click="onClick($event, index)"
                                         aspect-ratio="1"
                                         class="accent lighten-2"
                                 >
@@ -86,10 +86,10 @@
                                                              color="accent lighten-5"></v-progress-circular>
                                     </v-layout>
 
-                                    <v-btn v-if="hover || selection.length > 0" :flat="!hover" :ripple="false"
+                                    <v-btn v-if="hover || selection.includes(label.LabelUUID)" :flat="!hover" :ripple="false"
                                            icon large absolute
                                            :class="selection.includes(label.LabelUUID) ? 'p-label-select' : 'p-label-select opacity-50'"
-                                           @click.stop.prevent="onSelect($event, label, index)">
+                                           @click.stop.prevent="onSelect($event, index)">
                                         <v-icon v-if="selection.includes(label.LabelUUID)" color="white">check_circle
                                         </v-icon>
                                         <v-icon v-else color="accent lighten-3">radio_button_off</v-icon>
@@ -185,7 +185,10 @@
                     name: this.$gettext("Label Name"),
                 },
                 titleRule: v => v.length <= 25 || this.$gettext("Name too long"),
-                wasLong: false,
+                mouseDown: {
+                    index: -1,
+                    timeStamp: -1,
+                },
                 lastId: "",
             };
         },
@@ -215,45 +218,40 @@
 
                 return (rangeEnd - rangeStart) + 1;
             },
-            longClick() {
-                this.wasLong = true;
-            },
-            onSelect(ev, model, index) {
+            onSelect(ev, index) {
                 if (ev.shiftKey) {
                     this.selectRange(index, this.results);
                 } else {
-                    this.toggleSelection(model.getId());
+                    this.toggleSelection(this.results[index].getId());
                 }
-
-                this.wasLong = false;
             },
-            onClick(ev, model, index) {
-                if (this.wasLong || this.selection.length > 0) {
+            onMouseDown(ev, index) {
+                this.mouseDown.index = index;
+                this.mouseDown.timeStamp = ev.timeStamp;
+            },
+            onClick(ev, index) {
+                let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+
+                if (longClick || this.selection.length > 0) {
                     ev.preventDefault();
                     ev.stopPropagation();
 
-                    if (this.wasLong || ev.shiftKey) {
+                    if (longClick || ev.shiftKey) {
                         this.selectRange(index, this.results);
                     } else {
-                        this.toggleSelection(model.getId());
+                        this.toggleSelection(this.results[index].getId());
                     }
                 }
-
-                this.wasLong = false;
             },
-            contextMenu(ev, model, index) {
+            onContextMenu(ev, index) {
                 if (this.$isMobile) {
                     ev.preventDefault();
                     ev.stopPropagation();
 
-                    if (this.wasLong) {
+                    if(this.results[index]) {
                         this.selectRange(index, this.results);
-                    } else {
-                        this.toggleSelection(model.getId());
                     }
                 }
-
-                this.wasLong = false;
             },
             onSave(label) {
                 label.update();

@@ -76,7 +76,7 @@ class Viewer {
 
         this.gallery = gallery;
 
-        gallery.listen('beforeChange', function() {
+        gallery.listen("beforeChange", function() {
             Event.publish("viewer.change", {gallery: gallery, item: gallery.currItem});
         });
 

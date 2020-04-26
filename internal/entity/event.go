@@ -17,9 +17,9 @@ type Event struct {
 	EventNotes       string    `gorm:"type:text;"`
 	EventBegin       time.Time `gorm:"type:datetime;"`
 	EventEnd         time.Time `gorm:"type:datetime;"`
-	EventLat         float64
-	EventLng         float64
-	EventDist        float64
+	EventLat         float32   `gorm:"type:FLOAT;"`
+	EventLng         float32   `gorm:"type:FLOAT;"`
+	EventDist        float32   `gorm:"type:FLOAT;"`
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 	DeletedAt        *time.Time `sql:"index"`

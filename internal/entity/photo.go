@@ -22,30 +22,29 @@ type Photo struct {
 	TakenSrc         string      `gorm:"type:varbinary(8);" json:"TakenSrc"`
 	PhotoUUID        string      `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;"`
 	PhotoPath        string      `gorm:"type:varbinary(512);index;"`
-	PhotoName        string      `gorm:"type:varbinary(256);"`
-	PhotoTitle       string      `json:"PhotoTitle"`
+	PhotoName        string      `gorm:"type:varbinary(255);"`
+	PhotoTitle       string      `gorm:"type:varchar(200);" json:"PhotoTitle"`
 	TitleSrc         string      `gorm:"type:varbinary(8);" json:"TitleSrc"`
 	PhotoQuality     int         `gorm:"type:SMALLINT" json:"PhotoQuality"`
 	PhotoResolution  int         `gorm:"type:SMALLINT" json:"PhotoResolution"`
 	PhotoFavorite    bool        `json:"PhotoFavorite"`
 	PhotoPrivate     bool        `json:"PhotoPrivate"`
 	PhotoStory       bool        `json:"PhotoStory"`
-	PhotoNSFW        bool        `json:"PhotoNSFW"`
-	PhotoLat         float64     `gorm:"index;" json:"PhotoLat"`
-	PhotoLng         float64     `gorm:"index;" json:"PhotoLng"`
+	PhotoLat         float32     `gorm:"type:FLOAT;index;" json:"PhotoLat"`
+	PhotoLng         float32     `gorm:"type:FLOAT;index;" json:"PhotoLng"`
 	PhotoAltitude    int         `json:"PhotoAltitude"`
 	PhotoIso         int         `json:"PhotoIso"`
 	PhotoFocalLength int         `json:"PhotoFocalLength"`
-	PhotoFNumber     float64     `json:"PhotoFNumber"`
+	PhotoFNumber     float32     `gorm:"type:FLOAT;" json:"PhotoFNumber"`
 	PhotoExposure    string      `gorm:"type:varbinary(64);" json:"PhotoExposure"`
 	CameraID         uint        `gorm:"index:idx_photos_camera_lens;" json:"CameraID"`
 	CameraSerial     string      `gorm:"type:varbinary(128);" json:"CameraSerial"`
 	CameraSrc        string      `gorm:"type:varbinary(8);" json:"CameraSrc"`
 	LensID           uint        `gorm:"index:idx_photos_camera_lens;" json:"LensID"`
-	PlaceID          string      `gorm:"type:varbinary(16);index;" json:"PlaceID"`
+	PlaceID          string      `gorm:"type:varbinary(16);index;default:'zz'" json:"PlaceID"`
 	LocationID       string      `gorm:"type:varbinary(16);index;" json:"LocationID"`
 	LocationSrc      string      `gorm:"type:varbinary(8);" json:"LocationSrc"`
-	PhotoCountry     string      `gorm:"index:idx_photos_country_year_month;" json:"PhotoCountry"`
+	PhotoCountry     string      `gorm:"type:varbinary(2);index:idx_photos_country_year_month;default:'zz'" json:"PhotoCountry"`
 	PhotoYear        int         `gorm:"index:idx_photos_country_year_month;"`
 	PhotoMonth       int         `gorm:"index:idx_photos_country_year_month;"`
 	TimeZone         string      `gorm:"type:varbinary(64);" json:"TimeZone"`
@@ -63,6 +62,7 @@ type Photo struct {
 	Labels           []PhotoLabel
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
+	EditedAt         *time.Time
 	DeletedAt        *time.Time `sql:"index"`
 }
 
@@ -101,6 +101,8 @@ func SavePhotoForm(model Photo, form form.Photo, db *gorm.DB, geoApi string) err
 		log.Warnf("%s (%s)", err.Error(), model.PhotoUUID)
 	}
 
+	edited := time.Now().UTC()
+	model.EditedAt = &edited
 	model.PhotoQuality = model.QualityScore()
 
 	return db.Unscoped().Save(&model).Error
@@ -286,12 +288,12 @@ func (m *Photo) NoLatLng() bool {
 
 // NoPlace checks if the photo has no Place
 func (m *Photo) NoPlace() bool {
-	return len(m.PlaceID) < 2
+	return m.PlaceID == "" || m.PlaceID == UnknownPlace.ID
 }
 
 // HasPlace checks if the photo has a Place
 func (m *Photo) HasPlace() bool {
-	return len(m.PlaceID) >= 2
+	return !m.NoPlace()
 }
 
 // NoTitle checks if the photo has no Title

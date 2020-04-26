@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -27,6 +28,8 @@ type Client struct {
 // New creates a new WebDAV client.
 func New(url, user, pass string) Client {
 	clt := gowebdav.NewClient(url, user, pass)
+
+	clt.SetTimeout(10 * time.Minute) // TODO: Change timeout if needed
 
 	result := Client{client: clt}
 

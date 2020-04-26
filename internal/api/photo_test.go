@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/tidwall/gjson"
 )
 
 func TestGetPhoto(t *testing.T) {
@@ -13,7 +14,8 @@ func TestGetPhoto(t *testing.T) {
 		GetPhoto(router, ctx)
 		result := PerformRequest(app, "GET", "/api/v1/photos/654")
 		assert.Equal(t, http.StatusOK, result.Code)
-		assert.Contains(t, result.Body.String(), "\"PhotoLat\":48.519235")
+		val := gjson.Get(result.Body.String(), "PhotoLat")
+		assert.Equal(t, "48.519234", val.String())
 	})
 	t.Run("search for not existing photo", func(t *testing.T) {
 		app, router, ctx := NewApiTest()

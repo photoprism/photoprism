@@ -46,6 +46,6 @@ func SaveSettings(router *gin.RouterGroup, conf *config.Config) {
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 		log.Infof("settings saved")
 
-		c.JSON(http.StatusOK, gin.H{"message": "saved"})
+		c.JSON(http.StatusOK, s)
 	})
 }

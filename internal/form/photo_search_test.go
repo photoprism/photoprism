@@ -34,7 +34,7 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
 		assert.Equal(t, false, form.Favorites)
 		assert.Equal(t, uint(0x61a8), form.Dist)
-		assert.Equal(t, 33.45343166666667, form.Lat)
+		assert.Equal(t, float32(33.45343), form.Lat)
 	})
 	t.Run("valid query 2", func(t *testing.T) {
 		form := &PhotoSearch{Query: "chroma:200 title:\"test\" after:2018-01-15 duplicate:false  favorites:true lng:33.45343166666667"}
@@ -51,7 +51,7 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, "test", form.Title)
 		assert.Equal(t, time.Date(2018, 01, 15, 0, 0, 0, 0, time.UTC), form.After)
 		assert.Equal(t, false, form.Duplicate)
-		assert.Equal(t, 33.45343166666667, form.Lng)
+		assert.Equal(t, float32(33.45343), form.Lng)
 	})
 	t.Run("valid query with umlauts", func(t *testing.T) {
 		form := &PhotoSearch{Query: "title:\"tübingen\""}

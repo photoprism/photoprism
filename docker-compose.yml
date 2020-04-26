@@ -23,7 +23,7 @@ services:
       PHOTOPRISM_PUBLIC: "false"
       PHOTOPRISM_EXPERIMENTAL: "true"
       PHOTOPRISM_UPLOAD_NSFW: "false"
-      PHOTOPRISM_HIDE_NSFW: "false"
+      PHOTOPRISM_DETECT_NSFW: "true"
       PHOTOPRISM_SERVER_MODE: "debug"
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_CACHE_PATH: "/go/src/github.com/photoprism/photoprism/assets/cache"

@@ -27,6 +27,8 @@ services:
       PHOTOPRISM_PID_FILENAME: "photoprism.pid"
       PHOTOPRISM_LOG_FILENAME: "photoprism.log"
       PHOTOPRISM_DETACH_SERVER: "true"
+      PHOTOPRISM_UPLOAD_NSFW: "false"
+      PHOTOPRISM_DETECT_NSFW: "true"
       CODECOV_TOKEN:
       CODECOV_ENV:
       CODECOV_URL:

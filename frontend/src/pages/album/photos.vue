@@ -124,7 +124,7 @@
 
                 if (photo.LocationID) {
                     this.$router.push({name: "place", params: {q: "s2:" + photo.LocationID}});
-                } else if (photo.PlaceID && photo.PlaceID !== "-") {
+                } else if (photo.PlaceID.length > 3) {
                     this.$router.push({name: "place", params: {q: "s2:" + photo.PlaceID}});
                 }
             },
@@ -335,7 +335,7 @@
 
                             if (model) {
                                 for (let key in values) {
-                                    if (values.hasOwnProperty(key)) {
+                                    if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
                                         model[key] = values[key];
                                     }
                                 }

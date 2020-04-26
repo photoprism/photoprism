@@ -27,7 +27,6 @@ class Photo extends RestModel {
             PhotoFavorite: false,
             PhotoStory: false,
             PhotoPrivate: false,
-            PhotoNSFW: false,
             PhotoResolution: 0,
             PhotoQuality: 0,
             PhotoLat: 0.0,
@@ -86,13 +85,13 @@ class Photo extends RestModel {
 
     getColor() {
         switch (this.PhotoColor) {
-            case "brown":
-            case "black":
-            case "white":
-            case "grey":
-                return "grey lighten-2";
-            default:
-                return this.PhotoColor + " lighten-4";
+        case "brown":
+        case "black":
+        case "white":
+        case "grey":
+            return "grey lighten-2";
+        default:
+            return this.PhotoColor + " lighten-4";
         }
     }
 
@@ -240,6 +239,12 @@ class Photo extends RestModel {
         } else {
             return Api.delete(this.getEntityResource() + "/like");
         }
+    }
+
+    togglePrivate() {
+        this.PhotoPrivate = !this.PhotoPrivate;
+
+        return Api.put(this.getEntityResource(), {PhotoPrivate: this.PhotoPrivate});
     }
 
     setPrimary(fileUUID) {

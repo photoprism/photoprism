@@ -24,12 +24,23 @@ type Camera struct {
 	DeletedAt         *time.Time `sql:"index"`
 }
 
+var UnknownCamera = Camera{
+	CameraModel: "Unknown",
+	CameraMake:  "",
+	CameraSlug:  "zz",
+}
+
+// CreateUnknownCamera initializes the database with an unknown camera if not exists
+func CreateUnknownCamera(db *gorm.DB) {
+	UnknownCamera.FirstOrCreate(db)
+}
+
 // NewCamera creates a camera entity from a model name and a make name.
 func NewCamera(modelName string, makeName string) *Camera {
 	makeName = strings.TrimSpace(makeName)
 
 	if modelName == "" {
-		modelName = "Unknown"
+		return &UnknownCamera
 	} else if strings.HasPrefix(modelName, makeName) {
 		modelName = strings.TrimSpace(modelName[len(makeName):])
 	}

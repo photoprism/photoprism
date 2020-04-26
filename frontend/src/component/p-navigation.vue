@@ -79,10 +79,18 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile :to="{name: 'photos', query: { q: 'review:true' }}" :exact="true" @click="">
+                    <v-list-tile to="/review" @click="" v-if="config.settings.library.review">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate>Review</translate>
+                            </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile to="/private" @click="" v-if="config.settings.library.private">
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                <translate>Private</translate>
                             </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
@@ -105,6 +113,19 @@
                         <v-list-tile-title>
                             <translate>Favorites</translate>
                             <span v-if="config.count.favorites > 0" class="p-navigation-count">{{ config.count.favorites }}</span>
+                        </v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
+                <v-list-tile v-if="mini && config.settings.library.private" to="/private" @click=""
+                             class="p-navigation-private">
+                    <v-list-tile-action>
+                        <v-icon>lock</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>
+                            <translate>Private</translate>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>

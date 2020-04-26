@@ -17,9 +17,10 @@
                 <v-layout wrap align-top class="pb-3">
                     <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
                         <v-checkbox
+                                @change="onChange"
                                 :disabled="busy"
                                 class="ma-0 pa-0"
-                                v-model="options.raw"
+                                v-model="settings.library.raw"
                                 color="secondary-dark"
                                 :label="labels.raw"
                                 hint="RAWs need to be converted to JPEG so that they can be displayed in a browser. You can also do this manually."
@@ -31,9 +32,10 @@
 
                     <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
                         <v-checkbox
+                                @change="onChange"
                                 :disabled="busy"
                                 class="ma-0 pa-0"
-                                v-model="options.thumbs"
+                                v-model="settings.library.thumbs"
                                 color="secondary-dark"
                                 :label="labels.thumbs"
                                 hint="Pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."
@@ -45,9 +47,10 @@
 
                     <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
                         <v-checkbox
+                                @change="onChange"
                                 :disabled="busy"
                                 class="ma-0 pa-0"
-                                v-model="options.rescan"
+                                v-model="settings.library.rescan"
                                 color="secondary-dark"
                                 :label="labels.rescan"
                                 hint="Re-index all originals, including already indexed and unchanged files."
@@ -88,13 +91,13 @@
     import Axios from "axios";
     import Notify from "common/notify";
     import Event from "pubsub-js";
+    import Settings from "../../model/settings";
 
     export default {
         name: 'p-tab-index',
         data() {
-            let settings = this.$config.settings();
-
             return {
+                settings: new Settings(this.$config.settings()),
                 readonly: this.$config.getValue("readonly"),
                 started: false,
                 busy: false,
@@ -103,11 +106,6 @@
                 action: "",
                 fileName: "",
                 source: null,
-                options: {
-                    rescan: settings.library.rescan,
-                    thumbs: settings.library.thumbs,
-                    raw: settings.library.raw,
-                },
                 labels: {
                     rescan: this.$gettext("Complete rescan"),
                     thumbs: this.$gettext("Create thumbnails"),
@@ -116,6 +114,9 @@
             }
         },
         methods: {
+            onChange() {
+                this.settings.save();
+            },
             submit() {
                 // DO NOTHING
             },
@@ -132,7 +133,7 @@
                 const ctx = this;
                 Notify.blockUI();
 
-                Api.post('index', this.options, {cancelToken: this.source.token}).then(function () {
+                Api.post('index', this.settings.library, {cancelToken: this.source.token}).then(function () {
                     Notify.unblockUI();
                     ctx.busy = false;
                     ctx.completed = 100;

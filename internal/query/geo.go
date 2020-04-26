@@ -14,8 +14,8 @@ import (
 // GeoResult represents a photo for displaying it on a map.
 type GeoResult struct {
 	ID            string    `json:"ID"`
-	PhotoLat      float64   `json:"Lat"`
-	PhotoLng      float64   `json:"Lng"`
+	PhotoLat      float32   `json:"Lat"`
+	PhotoLng      float32   `json:"Lng"`
 	PhotoUUID     string    `json:"PhotoUUID"`
 	PhotoTitle    string    `json:"PhotoTitle"`
 	PhotoFavorite bool      `json:"PhotoFavorite"`
@@ -23,6 +23,14 @@ type GeoResult struct {
 	FileWidth     int       `json:"FileWidth"`
 	FileHeight    int       `json:"FileHeight"`
 	TakenAt       time.Time `json:"TakenAt"`
+}
+
+func (g GeoResult) Lat() float64 {
+	return float64(g.PhotoLat)
+}
+
+func (g GeoResult) Lng() float64 {
+	return float64(g.PhotoLng)
 }
 
 // Geo searches for photos based on a Form and returns a PhotoResult slice.
@@ -69,14 +77,14 @@ func (q *Query) Geo(f form.GeoSearch) (results []GeoResult, err error) {
 	} else {
 		// Inaccurate distance search, but probably 'good enough' for now
 		if f.Lat > 0 {
-			latMin := f.Lat - SearchRadius*float64(f.Dist)
-			latMax := f.Lat + SearchRadius*float64(f.Dist)
+			latMin := f.Lat - SearchRadius*float32(f.Dist)
+			latMax := f.Lat + SearchRadius*float32(f.Dist)
 			s = s.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
 		}
 
 		if f.Lng > 0 {
-			lngMin := f.Lng - SearchRadius*float64(f.Dist)
-			lngMax := f.Lng + SearchRadius*float64(f.Dist)
+			lngMin := f.Lng - SearchRadius*float32(f.Dist)
+			lngMax := f.Lng + SearchRadius*float32(f.Dist)
 			s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngMin, lngMax)
 		}
 	}

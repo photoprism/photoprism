@@ -33,12 +33,12 @@ type PhotoResult struct {
 	PhotoCountry     string
 	PhotoFavorite    bool
 	PhotoPrivate     bool
-	PhotoLat         float64
-	PhotoLng         float64
+	PhotoLat         float32
+	PhotoLng         float32
 	PhotoAltitude    int
 	PhotoIso         int
 	PhotoFocalLength int
-	PhotoFNumber     float64
+	PhotoFNumber     float32
 	PhotoExposure    string
 	PhotoQuality     int
 	PhotoResolution  int
@@ -74,7 +74,7 @@ type PhotoResult struct {
 	FileWidth       int
 	FileHeight      int
 	FileOrientation int
-	FileAspectRatio float64
+	FileAspectRatio float32
 	FileColors      string // todo: remove from result?
 	FileChroma      uint8  // todo: remove from result?
 	FileLuminance   string // todo: remove from result?
@@ -244,6 +244,18 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 		s = s.Where("photos.deleted_at IS NOT NULL")
 	} else {
 		s = s.Where("photos.deleted_at IS NULL")
+
+		if f.Private {
+			s = s.Where("photos.photo_private = 1")
+		} else if f.Public {
+			s = s.Where("photos.photo_private = 0")
+		}
+
+		if f.Review {
+			s = s.Where("photos.photo_quality < 3")
+		} else if f.Quality != 0 && f.Private == false {
+			s = s.Where("photos.photo_quality >= ?", f.Quality)
+		}
 	}
 
 	if f.Error {
@@ -278,18 +290,6 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
-	if f.Public {
-		s = s.Where("photos.photo_private = 0")
-	}
-
-	if f.Safe {
-		s = s.Where("photos.photo_nsfw = 0")
-	}
-
-	if f.Nsfw {
-		s = s.Where("photos.photo_nsfw = 1")
-	}
-
 	if f.Story {
 		s = s.Where("photos.photo_story = 1")
 	}
@@ -322,12 +322,6 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 		s = s.Where("files.file_chroma > 0 AND files.file_chroma <= ?", f.Chroma)
 	}
 
-	if f.Review {
-		s = s.Where("photos.photo_quality < 3")
-	} else if f.Quality != 0 {
-		s = s.Where("photos.photo_quality >= ?", f.Quality)
-	}
-
 	if f.Diff != 0 {
 		s = s.Where("files.file_diff = ?", f.Diff)
 	}
@@ -348,14 +342,14 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 
 	// Inaccurate distance search, but probably 'good enough' for now
 	if f.Lat > 0 {
-		latMin := f.Lat - SearchRadius*float64(f.Dist)
-		latMax := f.Lat + SearchRadius*float64(f.Dist)
+		latMin := f.Lat - SearchRadius*float32(f.Dist)
+		latMax := f.Lat + SearchRadius*float32(f.Dist)
 		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
 	}
 
 	if f.Lng > 0 {
-		lngMin := f.Lng - SearchRadius*float64(f.Dist)
-		lngMax := f.Lng + SearchRadius*float64(f.Dist)
+		lngMin := f.Lng - SearchRadius*float32(f.Dist)
+		lngMax := f.Lng + SearchRadius*float32(f.Dist)
 		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngMin, lngMax)
 	}
 

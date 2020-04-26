@@ -167,7 +167,7 @@ func Exif(filename string) (data Data, err error) {
 			number, _ := strconv.ParseFloat(values[0], 64)
 			denom, _ := strconv.ParseFloat(values[1], 64)
 
-			data.FNumber = math.Round((number/denom)*1000) / 1000
+			data.FNumber = float32(math.Round((number/denom)*1000) / 1000)
 		}
 	}
 
@@ -178,7 +178,7 @@ func Exif(filename string) (data Data, err error) {
 			number, _ := strconv.ParseFloat(values[0], 64)
 			denom, _ := strconv.ParseFloat(values[1], 64)
 
-			data.Aperture = math.Round((number/denom)*1000) / 1000
+			data.Aperture = float32(math.Round((number/denom)*1000) / 1000)
 		}
 	}
 
@@ -243,16 +243,16 @@ func Exif(filename string) (data Data, err error) {
 
 	if ifd, err := index.RootIfd.ChildWithIfdPath(exifcommon.IfdPathStandardGps); err == nil {
 		if gi, err := ifd.GpsInfo(); err == nil {
-			data.Lat = gi.Latitude.Decimal()
-			data.Lng = gi.Longitude.Decimal()
+			data.Lat = float32(gi.Latitude.Decimal())
+			data.Lng = float32(gi.Longitude.Decimal())
 			data.Altitude = gi.Altitude
 		}
 	}
 
 	if data.Lat != 0 && data.Lng != 0 {
 		zones, err := tz.GetZone(tz.Point{
-			Lat: data.Lat,
-			Lon: data.Lng,
+			Lat: float64(data.Lat),
+			Lon: float64(data.Lng),
 		})
 
 		if err != nil {

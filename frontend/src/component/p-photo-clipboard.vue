@@ -52,6 +52,19 @@
                         fab
                         dark
                         small
+                        :title="labels.private"
+                        color="private"
+                        :disabled="selection.length === 0"
+                        @click.stop="batchPrivate"
+                        v-if="context !== 'archive' && config.settings.library.private"
+                        class="p-photo-clipboard-private"
+                >
+                    <v-icon>lock</v-icon>
+                </v-btn>
+                <v-btn
+                        fab
+                        dark
+                        small
                         :title="labels.download"
                         color="download"
                         @click.stop="download()"
@@ -130,9 +143,9 @@
         <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false"
                               @confirm="addToAlbum"></p-photo-album-dialog>
         <p-photo-archive-dialog :show="dialog.archive" @cancel="dialog.archive = false"
-                               @confirm="batchArchivePhotos"></p-photo-archive-dialog>
+                                @confirm="batchArchivePhotos"></p-photo-archive-dialog>
         <p-photo-share-dialog :show="dialog.share" :selection="selection" :album="album" @cancel="dialog.share = false"
-                             @confirm="dialog.share = false"></p-photo-share-dialog>
+                              @confirm="dialog.share = false"></p-photo-share-dialog>
     </div>
 </template>
 <script>
@@ -150,6 +163,7 @@
         },
         data() {
             return {
+                config: this.$config.values,
                 expanded: false,
                 dialog: {
                     archive: false,
@@ -158,6 +172,7 @@
                 },
                 labels: {
                     share: this.$gettext("Share"),
+                    private: this.$gettext("Change private flag"),
                     edit: this.$gettext("Edit"),
                     story: this.$gettext("Story"),
                     addToAlbum: this.$gettext("Add to album"),
@@ -182,6 +197,12 @@
                 Notify.success(this.$gettext("Photos archived"));
                 this.clearClipboard();
             },
+            batchPrivate() {
+                Api.post("batch/photos/private", {"photos": this.selection}).then(() => this.onPrivateSaved());
+            },
+            onPrivateSaved() {
+                this.clearClipboard();
+            },
             batchRestorePhotos() {
                 Api.post("batch/photos/restore", {"photos": this.selection}).then(() => this.onRestored());
             },
@@ -198,7 +219,7 @@
                 this.clearClipboard();
             },
             removeFromAlbum() {
-                if(!this.album) {
+                if (!this.album) {
                     this.$notify.error(this.$gettext("remove failed: unknown album"));
                     return
                 }
@@ -213,7 +234,7 @@
                 this.clearClipboard();
             },
             download() {
-                if(this.selection.length === 1) {
+                if (this.selection.length === 1) {
                     this.onDownload(`/api/v1/photos/${this.selection[0]}/download`);
                 } else {
                     Api.post("zip", {"photos": this.selection}).then(r => {

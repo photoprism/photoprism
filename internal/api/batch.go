@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gin-gonic/gin"
@@ -157,7 +158,18 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 
 		db := conf.Db()
 
-		db.Model(entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).UpdateColumn("photo_private", gorm.Expr("IF (`photo_private`, 0, 1)"))
+		err := db.Model(entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).UpdateColumn("photo_private", gorm.Expr("IF (`photo_private`, 0, 1)")).Error
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			return
+		}
+
+		q := query.New(db)
+
+		if entities, err := q.PhotoSelection(f); err == nil {
+			event.EntitiesUpdated("photos", entities)
+		}
 
 		elapsed := time.Since(start)
 

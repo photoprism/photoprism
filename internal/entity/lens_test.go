@@ -17,7 +17,8 @@ func TestNewLens(t *testing.T) {
 		lens := NewLens("", "")
 		assert.Equal(t, "Unknown", lens.LensModel)
 		assert.Equal(t, "", lens.LensMake)
-		assert.Equal(t, "unknown", lens.LensSlug)
+		assert.Equal(t, "zz", lens.LensSlug)
+		assert.Equal(t, &UnknownLens, lens)
 	})
 }
 

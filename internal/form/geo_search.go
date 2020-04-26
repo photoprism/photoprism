@@ -8,8 +8,8 @@ type GeoSearch struct {
 	Before   time.Time `form:"before" time_format:"2006-01-02"`
 	After    time.Time `form:"after" time_format:"2006-01-02"`
 	Favorite bool      `form:"favorite"`
-	Lat      float64   `form:"lat"`
-	Lng      float64   `form:"lng"`
+	Lat      float32   `form:"lat"`
+	Lng      float32   `form:"lng"`
 	S2       string    `form:"s2"`
 	Olc      string    `form:"olc"`
 	Dist     uint      `form:"dist"`
