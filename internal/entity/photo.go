@@ -22,20 +22,20 @@ type Photo struct {
 	TakenSrc         string      `gorm:"type:varbinary(8);" json:"TakenSrc"`
 	PhotoUUID        string      `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;"`
 	PhotoPath        string      `gorm:"type:varbinary(512);index;"`
-	PhotoName        string      `gorm:"type:varbinary(256);"`
-	PhotoTitle       string      `json:"PhotoTitle"`
+	PhotoName        string      `gorm:"type:varbinary(255);"`
+	PhotoTitle       string      `gorm:"type:varchar(200);" json:"PhotoTitle"`
 	TitleSrc         string      `gorm:"type:varbinary(8);" json:"TitleSrc"`
 	PhotoQuality     int         `gorm:"type:SMALLINT" json:"PhotoQuality"`
 	PhotoResolution  int         `gorm:"type:SMALLINT" json:"PhotoResolution"`
 	PhotoFavorite    bool        `json:"PhotoFavorite"`
 	PhotoPrivate     bool        `json:"PhotoPrivate"`
 	PhotoStory       bool        `json:"PhotoStory"`
-	PhotoLat         float64     `gorm:"index;" json:"PhotoLat"`
-	PhotoLng         float64     `gorm:"index;" json:"PhotoLng"`
+	PhotoLat         float32     `gorm:"type:FLOAT;index;" json:"PhotoLat"`
+	PhotoLng         float32     `gorm:"type:FLOAT;index;" json:"PhotoLng"`
 	PhotoAltitude    int         `json:"PhotoAltitude"`
 	PhotoIso         int         `json:"PhotoIso"`
 	PhotoFocalLength int         `json:"PhotoFocalLength"`
-	PhotoFNumber     float64     `json:"PhotoFNumber"`
+	PhotoFNumber     float32     `gorm:"type:FLOAT;" json:"PhotoFNumber"`
 	PhotoExposure    string      `gorm:"type:varbinary(64);" json:"PhotoExposure"`
 	CameraID         uint        `gorm:"index:idx_photos_camera_lens;" json:"CameraID"`
 	CameraSerial     string      `gorm:"type:varbinary(128);" json:"CameraSerial"`

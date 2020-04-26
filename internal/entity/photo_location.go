@@ -15,8 +15,8 @@ func (m *Photo) GetTimeZone() string {
 
 	if m.HasLatLng() {
 		zones, err := tz.GetZone(tz.Point{
-			Lat: m.PhotoLat,
-			Lon: m.PhotoLng,
+			Lat: float64(m.PhotoLat),
+			Lon: float64(m.PhotoLng),
 		})
 
 		if err == nil && len(zones) > 0 {

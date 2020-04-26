@@ -23,10 +23,10 @@ type Location struct {
 }
 
 // NewLocation creates a location using a token extracted from coordinate
-func NewLocation(lat, lng float64) *Location {
+func NewLocation(lat, lng float32) *Location {
 	result := &Location{}
 
-	result.ID = s2.Token(lat, lng)
+	result.ID = s2.Token(float64(lat), float64(lng))
 
 	return result
 }

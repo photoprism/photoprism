@@ -29,12 +29,12 @@ type Photo struct {
 	PhotoPrivate     bool    `json:"PhotoPrivate"`
 	PhotoStory       bool    `json:"PhotoStory"`
 	PhotoReview      bool    `json:"PhotoReview"`
-	PhotoLat         float64 `json:"PhotoLat"`
-	PhotoLng         float64 `json:"PhotoLng"`
+	PhotoLat         float32 `json:"PhotoLat"`
+	PhotoLng         float32 `json:"PhotoLng"`
 	PhotoAltitude    int     `json:"PhotoAltitude"`
 	PhotoIso         int     `json:"PhotoIso"`
 	PhotoFocalLength int     `json:"PhotoFocalLength"`
-	PhotoFNumber     float64 `json:"PhotoFNumber"`
+	PhotoFNumber     float32 `json:"PhotoFNumber"`
 	PhotoExposure    string  `json:"PhotoExposure"`
 	CameraID         uint    `json:"CameraID"`
 	CameraSrc        string  `json:"CameraSrc"`

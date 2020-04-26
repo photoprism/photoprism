@@ -151,14 +151,14 @@ func TestMediaFile_FNumber(t *testing.T) {
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/cat_brown.jpg")
 		assert.Nil(t, err)
-		assert.Equal(t, 2.2, mediaFile.FNumber())
+		assert.Equal(t, float32(2.2), mediaFile.FNumber())
 	})
 	t.Run("/elephants.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 		assert.Nil(t, err)
-		assert.Equal(t, 10.0, mediaFile.FNumber())
+		assert.Equal(t, float32(10.0), mediaFile.FNumber())
 	})
 }
 
@@ -977,7 +977,7 @@ func TestMediaFile_AspectRatio(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
 		assert.Nil(t, err)
 		ratio := mediaFile.AspectRatio()
-		assert.Equal(t, 0.75, ratio)
+		assert.Equal(t, float32(0.75), ratio)
 	})
 	t.Run("/fern_green.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
@@ -985,7 +985,7 @@ func TestMediaFile_AspectRatio(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/fern_green.jpg")
 		assert.Nil(t, err)
 		ratio := mediaFile.AspectRatio()
-		assert.Equal(t, float64(1), ratio)
+		assert.Equal(t, float32(1), ratio)
 	})
 	t.Run("/elephants.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
@@ -993,7 +993,7 @@ func TestMediaFile_AspectRatio(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 		assert.Nil(t, err)
 		ratio := mediaFile.AspectRatio()
-		assert.Equal(t, 1.501510574018127, ratio)
+		assert.Equal(t, float32(1.5015106), ratio)
 	})
 }
 

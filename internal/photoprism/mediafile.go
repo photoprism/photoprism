@@ -177,10 +177,10 @@ func (m *MediaFile) FocalLength() int {
 }
 
 // FNumber returns the F number with which the media file was created.
-func (m *MediaFile) FNumber() float64 {
+func (m *MediaFile) FNumber() float32 {
 	info, err := m.MetaData()
 
-	var result float64
+	var result float32
 
 	if err == nil {
 		result = info.FNumber
@@ -653,7 +653,7 @@ func (m *MediaFile) Height() int {
 }
 
 // AspectRatio returns the aspect ratio of a MediaFile.
-func (m *MediaFile) AspectRatio() float64 {
+func (m *MediaFile) AspectRatio() float32 {
 	width := float64(m.Width())
 	height := float64(m.Height())
 
@@ -661,7 +661,7 @@ func (m *MediaFile) AspectRatio() float64 {
 		return 0
 	}
 
-	aspectRatio := width / height
+	aspectRatio := float32(width / height)
 
 	return aspectRatio
 }

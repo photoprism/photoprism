@@ -33,12 +33,12 @@ type PhotoResult struct {
 	PhotoCountry     string
 	PhotoFavorite    bool
 	PhotoPrivate     bool
-	PhotoLat         float64
-	PhotoLng         float64
+	PhotoLat         float32
+	PhotoLng         float32
 	PhotoAltitude    int
 	PhotoIso         int
 	PhotoFocalLength int
-	PhotoFNumber     float64
+	PhotoFNumber     float32
 	PhotoExposure    string
 	PhotoQuality     int
 	PhotoResolution  int
@@ -74,7 +74,7 @@ type PhotoResult struct {
 	FileWidth       int
 	FileHeight      int
 	FileOrientation int
-	FileAspectRatio float64
+	FileAspectRatio float32
 	FileColors      string // todo: remove from result?
 	FileChroma      uint8  // todo: remove from result?
 	FileLuminance   string // todo: remove from result?
@@ -342,14 +342,14 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 
 	// Inaccurate distance search, but probably 'good enough' for now
 	if f.Lat > 0 {
-		latMin := f.Lat - SearchRadius*float64(f.Dist)
-		latMax := f.Lat + SearchRadius*float64(f.Dist)
+		latMin := f.Lat - SearchRadius*float32(f.Dist)
+		latMax := f.Lat + SearchRadius*float32(f.Dist)
 		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
 	}
 
 	if f.Lng > 0 {
-		lngMin := f.Lng - SearchRadius*float64(f.Dist)
-		lngMax := f.Lng + SearchRadius*float64(f.Dist)
+		lngMin := f.Lng - SearchRadius*float32(f.Dist)
+		lngMax := f.Lng + SearchRadius*float32(f.Dist)
 		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngMin, lngMax)
 	}
 
