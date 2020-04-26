@@ -236,13 +236,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
-	if photo.Place == nil {
+	if len(photo.PlaceID) < 2 {
 		photo.Place = &entity.UnknownPlace
 		photo.PlaceID = entity.UnknownPlace.ID
-	}
-
-	if photo.PhotoCountry == "" || photo.PhotoCountry == "zz" {
-		photo.PhotoCountry = photo.Place.LocCountry
+		photo.PhotoCountry = entity.UnknownPlace.CountryCode()
 	}
 
 	if !photo.TakenAtLocal.IsZero() {
