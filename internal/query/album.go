@@ -42,7 +42,7 @@ func (q *Query) AlbumThumbByUUID(albumUUID string) (file entity.File, err error)
 	if err := q.db.Where("files.file_primary = 1 AND files.deleted_at IS NULL").
 		Joins("JOIN albums ON albums.album_uuid = ?", albumUUID).
 		Joins("JOIN photos_albums pa ON pa.album_uuid = albums.album_uuid AND pa.photo_uuid = files.photo_uuid").
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos.taken_at DESC").
 		First(&file).Error; err != nil {
 		return file, err

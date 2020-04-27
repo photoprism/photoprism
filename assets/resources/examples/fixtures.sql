@@ -16,12 +16,12 @@ INSERT INTO files (id, photo_id, photo_uuid, file_uuid, file_name, file_primary,
 INSERT INTO files (id, photo_id, photo_uuid, file_uuid, file_name, file_primary, file_hash, file_missing) VALUES (3, '2', '655', 'fq8ev8t1x0bwje4e', 'exampleXmpFile.xmp', 0, '125xxx', 0);
 INSERT INTO files (id, photo_id, photo_uuid, file_uuid, file_name, file_primary, file_hash, file_missing) VALUES (4, '5', '658', 'fq8ev9c3sp88uwzq', 'bridge.jpg', 1, '126xxx', 0);
 INSERT INTO files (id, photo_id, photo_uuid, file_uuid, file_name, file_primary, file_hash, file_missing) VALUES (5, '6', '659', 'fq8evan3urz3i48d', 'reunion.jpg', 1, '127xxx', 0);
-INSERT INTO photos (id, photo_uuid, photo_year, photo_month, photo_lat, photo_lng) VALUES (1, '654', 2790, 2, 48.519234, 9.057997);
-INSERT INTO photos (id, photo_uuid, photo_year, photo_month, photo_lat, photo_lng) VALUES (2, '655', 2790, 2, 48.519234, 9.057997);
-INSERT INTO photos (id, photo_uuid, photo_year, photo_month, photo_lat, photo_lng) VALUES (3, '656', 1990, 3, 48.519234, 9.057997);
-INSERT INTO photos (id, photo_uuid, photo_year, photo_month, photo_lat, photo_lng) VALUES (4, '657', 1990, 4, 48.519234, 9.057997);
-INSERT INTO photos (id, photo_uuid, taken_at, photo_lat, photo_lng, photo_title) VALUES (5, '658', '2014-07-17 15:42:12', 48.519235, 9.05799666, 'Neckarbrücke');
-INSERT INTO photos (id, photo_uuid, taken_at, photo_lat, photo_lng, photo_title) VALUES (6, '659', '2015-11-11 09:07:18', -21.342636, 55.466944, 'Reunion');
+INSERT INTO photos (id, photo_uuid, photo_private, photo_quality, photo_year, photo_month, photo_lat, photo_lng) VALUES (1, '654', 0, 3, 2790, 2, 48.519234, 9.057997);
+INSERT INTO photos (id, photo_uuid, photo_private, photo_quality, photo_year, photo_month, photo_lat, photo_lng) VALUES (2, '655', 0, 3, 2790, 2, 48.519234, 9.057997);
+INSERT INTO photos (id, photo_uuid, photo_private, photo_quality, photo_year, photo_month, photo_lat, photo_lng) VALUES (3, '656', 0, 3, 1990, 3, 48.519234, 9.057997);
+INSERT INTO photos (id, photo_uuid, photo_private, photo_quality, photo_year, photo_month, photo_lat, photo_lng) VALUES (4, '657', 0, 3, 1990, 4, 48.519234, 9.057997);
+INSERT INTO photos (id, photo_uuid, photo_private, photo_quality, taken_at, photo_lat, photo_lng, photo_title) VALUES (5, '658', 0, 3, '2014-07-17 15:42:12', 48.519235, 9.05799666, 'Neckarbrücke');
+INSERT INTO photos (id, photo_uuid, photo_private, photo_quality, taken_at, photo_lat, photo_lng, photo_title) VALUES (6, '659', 0, 3, '2015-11-11 09:07:18', -21.342636, 55.466944, 'Reunion');
 INSERT INTO keywords (id, keyword, skip) VALUES (1, 'bridge', 0);
 INSERT INTO keywords (id, keyword, skip) VALUES (2, 'beach', 0);
 INSERT INTO photos_keywords (photo_id, keyword_id) VALUES (5, 1);

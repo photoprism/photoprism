@@ -61,7 +61,7 @@ func (q *Query) LabelThumbBySlug(labelSlug string) (file entity.File, err error)
 	if err := q.db.Where("files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN labels ON labels.label_slug = ?", labelSlug).
 		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = files.photo_id").
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
 		First(&file).Error; err != nil {
 		return file, err
@@ -76,7 +76,7 @@ func (q *Query) LabelThumbByUUID(labelUUID string) (file entity.File, err error)
 	err = q.db.Where("files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN labels ON labels.label_uuid = ?", labelUUID).
 		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = files.photo_id").
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
 		First(&file).Error
 
@@ -89,7 +89,7 @@ func (q *Query) LabelThumbByUUID(labelUUID string) (file entity.File, err error)
 		Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id").
 		Joins("JOIN categories c ON photos_labels.label_id = c.label_id").
 		Joins("JOIN labels ON c.category_id = labels.id AND labels.label_uuid= ?", labelUUID).
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
 		First(&file).Error
 
