@@ -6,30 +6,27 @@ cat:
     - animal
 
 tabby cat:
-  label: tabby cat
+  label: cat
   categories:
-    - cat
+    - animal
 
 persian cat:
-  label: persian cat
+  label: cat
   threshold: 0.2
   categories:
     - animal
-    - cat
 
 siamese cat:
-  label: siamese cat
+  label: cat
   threshold: 0.2
   categories:
     - animal
-    - cat
 
 egyptian cat:
-  label: egyptian cat
+  label: cat
   threshold: 0.2
   categories:
     - animal
-    - cat
 
 tiger cat:
   priority: 5
@@ -142,10 +139,9 @@ rapeseed:
     - landscape
 
 fashion:
-  label: fashion
-  threshold: 0.35
+  label: portrait
+  threshold: 0.5
   categories:
-    - people
     - portrait
 
 vestment:
@@ -248,14 +244,18 @@ quilt:
   see: ignore
 
 liner:
-  label: liner
+  label: ship
+  threshold: 0.85
   categories:
-    - ship
+    - water
+    - vehicle
 
 pirate:
-  label: pirate
+  label: ship
+  threshold: 0.23
   categories:
-    - ship
+    - water
+    - vehicle
 
 ship:
   label: ship
@@ -975,602 +975,560 @@ sea lion:
 
 dog:
   label: dog
-  threshold: 0.4
+  threshold: 0.2
   priority: 5
   categories:
     - animal
 
 chihuahua dog:
-  label: chihuahua
+  label: dog
+  threshold: 0.29
   categories:
-    - dog
+    - animal
 
 japanese spaniel dog:
-  label: japanese spaniel
-  categories:
-    - dog
+  see: dog
 
 maltese dog:
-  label: maltese dog
-  categories:
-    - dog
+  see: dog
 
 pekinese dog:
-  label: pekinese
-  categories:
-    - dog
+  see: dog
 
 shih-tzu dog:
-  label: shih-tzu
-  categories:
-    - dog
+  see: dog
 
 blenheim spaniel dog:
-  label: blenheim spaniel
-  categories:
-    - dog
+  see: dog
 
 papillon dog:
-  label: papilon dog
+  label: dog
+  threshold: 0.18
   categories:
-    - dog
+    - animal
 
 toy terrier dog:
-  label: toy terrier
+  label: dog
+  threshold: 0.44
   categories:
-    - dog
+    - animal
 
 rhodesian ridgeback dog:
-  label: rhodesian ridgeback dog
-  categories:
-    - dog
+  see: dog
 
 afghan hound dog:
-  label: afghan hound dog
-  categories:
-    - dog
+  see: dog
 
 basset dog:
-  label: basset dog
-  categories:
-    - dog
+  see: dog
 
 beagle dog:
-  label: beagle
-  categories:
-    - dog
+  see: dog
 
 bloodhound dog:
-  label: bloodhound
+  label: dog
+  threshold: 0.25
   categories:
-    - dog
+    - animal
 
 bluetick dog:
-  label: bluetick dog
+  label: dog
+  threshold: 0.27
   categories:
-    - dog
+    - animal
 
 black-and-tan coonhound dog:
-  label: black and tan coonhound dog
-  categories:
-    - dog
+  see: dog
 
 walker hound dog:
-  label: walker hound dog
-  categories:
-    - dog
+  see: dog
 
 english foxhound dog:
-  label: english foxhound
-  categories:
-    - dog
+  see: dog
 
 redbone dog:
-  label: redbone dog
-  categories:
-    - dog
+  see: dog
 
 borzoi dog:
-  label: borzoi dog
+  label: dog
+  threshold: 0.48
   categories:
-    - dog
+    - animal
 
 irish wolfhound dog:
-  label: irish wolfhound dog
+  label: dog
+  threshold: 0.24
   categories:
-    - dog
+    - animal
 
 italian greyhound dog:
-  label: italian greyhound dog
+  label: dog
+  threshold: 0.41
   categories:
-    - dog
+    - animal
 
 whippet dog:
-  label: whippet dog
+  label: dog
+  threshold: 0.21
   categories:
-    - dog
+    - animal
 
 ibizan hound dog:
-  label: ibizan hound dog
+  label: dog
+  threshold: 0.22
   categories:
-    - dog
+    - animal
 
 norwegian elkhound dog:
-  label: norwegian elkhound dog
+  label: dog
+  threshold: 0.53
   categories:
-    - dog
+    - animal
 
 otterhound dog:
-  label: otterhound dog
-  categories:
-    - dog
+  see: dog
 
 saluki dog:
-  label: saluki dog
+  label: dog
+  threshold: 0.12
   categories:
-    - dog
+    - animal
 
 scottish deerhound dog:
-  label: scottish deerhound dog
+  label: dog
+  threshold: 0.47
   categories:
-    - dog
+    - animal
 
 weimaraner dog:
-  label: weimaraner dog
+  label: dog
+  threshold: 0.31
   categories:
-    - dog
+    - animal
 
 staffordshire bullterrier dog:
-  label: staffordshire bullterrier dog
+  label: dog
+  threshold: 0.15
   categories:
-    - dog
+    - animal
 
 american staffordshire terrier dog:
-  label: american staffordshire terrier dog
-  categories:
-    - dog
+  see: dog
 
 bedlington terrier dog:
-  label: bedlington terrier dog
+  label: dog
+  threshold: 0.54
   categories:
-    - dog
+    - animal
 
 border terrier dog:
-  label: border terrier dog
+  label: dog
+  threshold: 0.32
   categories:
-    - dog
+    - animal
 
 kerry blue terrier dog:
-  label: kerry blue terrier dog
+  label: dog
+  threshold: 0.35
   categories:
-    - dog
+    - animal
 
 irish terrier dog:
-  label: irish terrier dog
+  label: dog
+  threshold: 0.18
   categories:
-    - dog
+    - animal
 
 norfolk terrier dog:
-  label: norfolk terrier dog
-  categories:
-    - dog
+  see: dog
 
 norwich terrier dog:
-  label: norwich terrier dog
-  categories:
-    - dog
+  see: dog
 
 yorkshire terrier dog:
-  label: yorkshire terrier dog
-  categories:
-    - dog
+  see: dog
 
 wire-haired fox terrier dog:
-  label: wire-haired fox terrier dog
+  label: dog
+  threshold: 0.67
   categories:
-    - dog
+    - animal
 
 lakeland terrier dog:
   priority: 5
-  label: lakeland terrier dog
+  label: dog
+  threshold: 0.31
   categories:
-    - dog
+    - animal
 
 sealyham terrier dog:
-  label: sealyham terrier dog
-  categories:
-    - dog
+  see: dog
 
 airedale dog:
-  label: airedale dog
+  label: dog
+  threshold: 0.38
   categories:
-    - dog
+    - animal
 
 cairn dog:
-  label: cairn dog
-  categories:
-    - dog
+  see: dog
 
 australian terrier dog:
-  label: australian terrier dog
+  label: dog
+  threshold: 0.11
   categories:
-    - dog
+    - animal
 
 dandie dinmont dog:
-  label: dandie dinmont dog
-  categories:
-    - dog
+  see: dog
 
 boston bull dog:
-  label: boston bull dog
+  label: dog
+  threshold: 0.25
   categories:
-    - dog
+    - animal
 
 miniature schnauzer dog:
-  label: miniature schnauzer dog
+  label: dog
+  threshold: 0.15
   categories:
-    - dog
+    - animal
 
 giant schnauzer dog:
-  label: giant schnauzer dog
-  categories:
-    - dog
+  see: dog
 
 standard schnauzer dog:
-  label: standard schnauzer dog
-  categories:
-    - dog
+  see: dog
 
 scotch terrier dog:
-  label: scotch terrier dog
+  label: dog
+  threshold: 0.4
   categories:
-    - dog
+    - animal
 
 tibetan terrier dog:
-  label: tibetan terrier dog
-  categories:
-    - dog
+  see: dog
 
 silky terrier dog:
-  label: silky terrier dog
-  categories:
-    - dog
+  see: dog
 
 soft-coated wheaten terrier dog:
-  label: soft-coated wheaten terrier dog
+  label: dog
+  threshold: 0.12
   categories:
-    - dog
+    - animal
 
 west highland white terrier dog:
-  label: west highland white terrier dog
+  label: dog
+  threshold: 0.43
   categories:
-    - dog
+    - animal
 
 lhasa dog:
-  label: lhasa dog
-  categories:
-    - dog
+  see: dog
 
 flat-coated retriever dog:
-  label: flat-coated retriever dog
+  label: dog
+  threshold: 0.16
   categories:
-    - dog
+    - animal
 
 curly-coated retriever dog:
-  label: curly-coated retriever dog
+  label: dog
+  threshold: 0.17
   categories:
-    - dog
+    - animal
 
 golden retriever dog:
-  label: golden retriever dog
+  label: dog
+  threshold: 0.13
   categories:
-    - dog
+    - animal
 
 labrador retriever dog:
-  label: labrador retriever dog
+  label: dog
+  threshold: 0.15
   categories:
-    - dog
+    - animal
 
 chesapeake bay retriever dog:
-  label: cheaspeake bay retriever dog
+  label: dog
+  threshold: 0.15
   categories:
-    - dog
+    - animal
 
 german short-haired pointer dog:
-  label: german short-haired pointer dog
+  label: dog
+  threshold: 0.64
   categories:
-    - dog
+    - animal
 
 vizsla dog:
-  label: vizla dog
-  categories:
-    - dog
+  see: dog
 
 english setter dog:
-  label: english setter dog
-  categories:
-    - dog
+  see: dog
 
 irish setter dog:
-  label: irish setter dog
+  label: dog
+  threshold: 0.18
   categories:
-    - dog
+    - animal
 
 gordon setter dog:
-  label: gordon setter dog
+  label: dog
+  threshold: 0.18
   categories:
-    - dog
+    - animal
 
 brittany spaniel dog:
-  label: brittany spaniel dog
+  label: dog
+  threshold: 0.18
   categories:
-    - dog
+    - animal
 
 clumber spaniel dog:
-  label: clumber spaniel dog
-  categories:
-    - dog
+  see: dog
 
 english springer dog:
-  label: english springer dog
-  categories:
-    - dog
+  see: dog
 
 welsh springer spaniel dog:
-  label: welsh springer dog
-  categories:
-    - dog
+  see: dog
 
 cocker spaniel dog:
-  label: cocker spaniel dog
-  categories:
-    - dog
+  see: dog
 
 sussex spaniel dog:
-  label: sussex spaniel dog
+  label: dog
+  threshold: 0.13
   categories:
-    - dog
+    - animal
 
 irish water spaniel dog:
-  label: irish water spaniel dog
+  label: dog
+  threshold: 0.66
   categories:
-    - dog
+    - animal
 
 kuvasz dog:
-  label: kuvasz dog
+  label: dog
+  threshold: 0.41
   categories:
-    - dog
+    - animal
 
 schipperke dog:
-  label: schiperke dog
-  threshold: 0.3
+  label: dog
+  threshold: 0.96
   categories:
-    - dog
+    - animal
 
 groenendael dog:
-  label: groenendael dog
+  label: dog
+  threshold: 0.56
   categories:
-    - dog
+    - animal
 
 malinois dog:
-  label: malinois dog
-  categories:
-    - dog
+  see: dog
 
 briard dog:
-  label: briad dog
-  categories:
-    - dog
+  see: dog
 
 kelpie dog:
-  label: kelpie dog
-  categories:
-    - dog
+  see: dog
 
 komondor dog:
-  label: komondor dog
+  label: dog
+  threshold: 0.93
   categories:
-    - dog
+    - animal
 
 old english sheepdog:
-  label: old english sheepdog
-  categories:
-    - dog
+  see: dog
 
 shetland sheepdog:
-  label: shetland sheepdog
-  categories:
-    - dog
+  see: dog
 
 collie dog:
-  label: collie dog
-  categories:
-    - dog
+  see: dog
 
 border collie dog:
-  label: border collie dog
+  label: dog
+  threshold: 0.14
   categories:
-    - dog
+    - animal
 
 bouvier des flandres dog:
-  label: bouvier des flandres dog
+  label: dog
+  threshold: 0.73
   categories:
-    - dog
+    - animal
 
 rottweiler dog:
-  label: rottweiler dog
-  categories:
-    - dog
+  see: dog
 
 german shepherd dog:
-  label: german sheperd dog
+  label: dog
+  threshold: 0.11
   categories:
-    - dog
+    - animal
 
 doberman dog:
-  label: doberman dog
-  categories:
-    - dog
+  see: dog
 
 miniature pinscher dog:
-  label: miniature pinscher dog
-  categories:
-    - dog
+  see: dog
 
 greater swiss mountain dog:
-  label: greater swiss mountain dog
-  categories:
-    - dog
+  see: dog
 
 bernese mountain dog:
-  label: bernese mountain dog
-  categories:
-    - dog
+  see: dog
 
 appenzeller dog:
-  label: appenzeller dog
-  categories:
-    - dog
+  see: dog
 
 entlebucher dog:
-  label: entlebucher dog
-  categories:
-    - dog
+  see: dog
 
 boxer dog:
-  label: boxer dog
-  categories:
-    - dog
+  see: dog
 
 bull mastiff dog:
-  label: bull mastiff dog
-  categories:
-    - dog
+  see: dog
 
 tibetan mastiff dog:
-  label: tibetan mastiff dog
-  categories:
-    - dog
+  see: dog
 
 french bulldog dog:
-  label: french bulldog dog
+  label: dog
+  threshold: 0.13
   categories:
-    - dog
+    - animal
 
 great dane dog:
-  label: great dane dog
+  label: dog
+  threshold: 0.12
   categories:
-    - dog
+    - animal
 
 saint bernard dog:
-  label: saint bernard dog
-  categories:
-    - dog
+  see: dog
 
 eskimo dog:
-  label: eskimo dog
+  label: dog
+  threshold: 0.31
   categories:
-    - dog
+    - animal
 
 malamute dog:
-  label: malamute dog
+  label: dog
+  threshold: 0.25
   categories:
-    - dog
+    - animal
 
 siberian husky dog:
-  label: siberian husky dog
+  label: dog
+  threshold: 0.55
   categories:
-    - dog
+    - animal
 
 dalmatian dog:
-  label: dalmatian dog
+  label: dog
+  threshold: 0.69
   categories:
-    - dog
+    - animal
 
 affenpinscher dog:
-  label: affenpinscher dog
+  label: dog
+  threshold: 0.3
   categories:
-    - dog
+    - animal
 
 basenji dog:
-  label: basenji dog
+  label: dog
+  threshold: 0.3
   categories:
-    - dog
+    - animal
 
 pug dog:
-  label: pug dog
+  label: dog
+  threshold: 0.13
   categories:
-    - dog
+    - animal
 
 leonberg dog:
-  label: leonberg dog
-  categories:
-    - dog
+  see: dog
 
 newfoundland dog:
-  label: newfoundland dog
-  categories:
-    - dog
+  see: dog
 
 great pyrenees dog:
-  label: great pyrenees dog
+  label: dog
+  threshold: 0.33
   categories:
-    - dog
+    - animal
 
 samoyed dog:
-  label: samoyed dog
+  label: dog
+  threshold: 0.38
   categories:
-    - dog
+    - animal
 
 pomeranian dog:
-  label: pomeranian dog
+  label: dog
+  threshold: 0.16
   categories:
-    - dog
+    - animal
 
 chow dog:
-  label: chow dog
-  categories:
-    - dog
+  see: dog
 
 keeshond dog:
-  label: keeshond dog
-  categories:
-    - dog
+  see: dog
 
 brabancon griffon dog:
-  label: brabancon griffon dog
+  label: dog
+  threshold: 0.14
   categories:
-    - dog
+    - animal
 
 pembroke dog:
-  label: pembroke dog
+  label: dog
+  threshold: 0.15
   categories:
-    - dog
+    - animal
 
 cardigan dog:
-  label: cardigan dog
+  label: dog
+  threshold: 0.45
   categories:
-    - dog
+    - animal
 
 toy poodle dog:
-  label: toy poodle dog
+  label: dog
+  threshold: 0.4
   categories:
-    - dog
+    - animal
 
 miniature poodle dog:
-  label: miniature poodle dog
+  label: dog
+  threshold: 0.4
   categories:
-    - dog
+    - animal
 
 standard poodle dog:
-  label: standard poodle dog
+  label: dog
+  threshold: 0.4
   categories:
-    - dog
+    - animal
 
 mexican hairless dog:
-  label: mexican hairless dog
+  label: dog
+  threshold: 0.24
   categories:
-    - dog
+    - animal
 
 wolf:
   label: wolf
@@ -1588,29 +1546,31 @@ red wolf:
   see: wolf
 
 coyote:
-  label: coyote
+  label: dog
+  threshold: 0.29
   categories:
-    - dog
+    - animal
 
 dingo:
-  label: digo
+  label: dog
+  threshold: 0.89
   categories:
-    - dog
+    - animal
 
 dhole:
-  label: dhole
+  label: dog
+  threshold: 0.5
   categories:
-    - dog
+    - animal
 
 african hunting dog:
-  label: african hunting dog
+  label: dog
+  threshold: 0.55
   categories:
-    - dog
+    - animal
 
 hyena:
-  label: hyena
-  categories:
-    - dog
+  see: dog
 
 fox:
   label: fox
@@ -2035,9 +1995,8 @@ indri:
     - monkey
 
 fossa:
-  label: fossa
-  categories:
-    - cat
+  label: animal
+  threshold: 0.15
 
 elephant:
   label: elephant
@@ -2161,20 +2120,18 @@ aircraft carrier:
     - vehicle
 
 airliner:
-  label: airliner
-  threshold: 0.2
+  label: aircraft
+  threshold: 0.55
   categories:
     - airport
     - vehicle
-    - aircraft
 
 airship:
-  label: airship
-  threshold: 0.2
+  label: aircraft
+  threshold: 0.9
   categories:
     - airport
     - vehicle
-    - aircraft
 
 wing:
   threshold: 0.29
@@ -2182,28 +2139,22 @@ wing:
     - aircraft
 
 ambulance:
-  label: ambulance
-  threshold: 0.4
-  categories:
-    - vehicle
+  label: vehicle
+  threshold: 0.68
 
 amphibian:
-  label: amphibian
+  label: vehicle
   threshold: 0.4
-  categories:
-    - vehicle
 
 half track:
-  label: half track
+  label: tractor
   threshold: 0.4
   categories:
     - vehicle
 
 tank:
-  label: tank
+  label: vehicle
   threshold: 0.4
-  categories:
-    - vehicle
 
 weapon:
   label: weapon
@@ -2331,8 +2282,8 @@ breakwater:
   label: water
 
 bullet train:
-  label: bullet train
-  threshold: 0.3
+  label: train
+  threshold: 0.9
   categories:
     - vehicle
 
@@ -2353,10 +2304,7 @@ cannon:
     - weapon
 
 can opener:
-  label: can opener
-  threshold: 0.3
-  categories:
-    - cooking
+  see: cooking
 
 carpenter's kit:
   see: tool
@@ -2375,27 +2323,28 @@ boat:
     - water
 
 canoe:
-  label: canoe
+  label: boat
+  threshold: 0.32
   categories:
-    - boat
+    - vehicle
+    - water
 
 catamaran:
-  label: catamaran
+  label: boat
+  threshold: 0.32
   categories:
-    - boat
+    - vehicle
+    - water
 
 cello:
   see: instrument
 
 cellular telephone:
-  label: cellular telephone
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.45
 
 phone:
-  label: phone
-  categories:
-    - electronics
+  see: electronics
 
 chain saw:
   label: outdoor
@@ -2494,10 +2443,11 @@ confectionery:
   label: shop
 
 container ship:
-  label: container ship
-  threshold: 0.3
+  label: ship
+  threshold: 0.84
   categories:
-    - ship
+    - water
+    - vehicle
 
 convertible:
   label: car
@@ -2520,10 +2470,7 @@ football helmet:
   see: helmet
 
 crock pot:
-  threshold: 0.3
-  label: crock pot
-  categories:
-    - cooking
+  see: cooking
 
 dam:
   label: water
@@ -2542,9 +2489,8 @@ desktop computer:
     - office
 
 dial telephone:
-  label: dial telephone
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.25
 
 clock:
   see: display
@@ -2635,10 +2581,8 @@ electric locomotive:
     - vehicle
 
 entertainment center:
-  label: entertainment center
-  threshold: 0.3
-  categories:
-    - screen
+  label: screen
+  threshold: 0.32
 
 espresso maker:
   label: coffee
@@ -2647,15 +2591,15 @@ face powder:
   see: ignore
 
 fireboat:
-  label: fireboat
-  categories:
-    - boat
-
-fire engine:
-  label: fire engine
-  threshold: 0.4
+  label: boat
+  threshold: 0.8
   categories:
     - vehicle
+    - water
+
+fire engine:
+  label: vehicle
+  threshold: 0.4
 
 flagpole:
   label: flag
@@ -2682,36 +2626,30 @@ four-poster:
   see: living
 
 freight car:
-  label: freight car
-  threshold: 0.4
-  categories:
-    - vehicle
+  label: vehicle
+  threshold: 0.6
 
 french horn:
   see: instrument
 
 frying pan:
-  label: frying pan
-  categories:
-    - cooking
+  label: cooking
 
 garbage truck:
   label: truck
   threshold: 0.41
 
 go-kart:
-  label: go-kart
-  threshold: 0.4
-  categories:
-    - vehicle
+  label: vehicle
+  threshold: 0.75
 
 golfcart:
   label: outdoor
   threshold: 0.7
 
 gondola:
-  label: gondola
-  threshold: 0.4
+  label: boat
+  threshold: 0.89
   categories:
     - vehicle
 
@@ -2764,16 +2702,12 @@ hatchet:
   see: tool
 
 home theater:
-  label: home theater
+  label: screen
   threshold: 0.3
-  categories:
-    - screen
 
 television:
-  label: television
-  threshold: 0.3
-  categories:
-    - screen
+  label: screen
+  threshold: 0.65
 
 honeycomb:
   see: ignore
@@ -2795,14 +2729,11 @@ cooking:
   threshold: 0.3
 
 pan:
-  label: pan
-  categories:
-    - cooking
+  label: cooking
 
 ladle:
-  label: ladle
-  categories:
-    - cooking
+  label: cooking
+  threshold: 0.5
 
 lampshade:
   threshold: 0.53
@@ -2835,9 +2766,10 @@ library:
   threshold: 0.5
 
 lifeboat:
-  label: lifeboat
+  label: boat
   categories:
-    - boat
+    - vehicle
+    - water
 
 lighter:
   see: ignore
@@ -2855,9 +2787,8 @@ loafer:
   threshold: 0.3
 
 loudspeaker:
-  label: loudspeaker
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.62
 
 magnetic compass:
   label: display
@@ -2936,7 +2867,7 @@ model t:
 
 monitor:
   label: monitor
-  threshold: 0.25
+  threshold: 0.57
   categories:
     - computer
     - screen
@@ -2961,16 +2892,12 @@ mountain bike:
   see: bike
 
 unicycle:
-  label: unicycle
-  threshold: 0.4
-  categories:
-    - vehicle
+  label: vehicle
+  threshold: 0.97
 
 tricycle:
-  label: tricycle
-  threshold: 0.4
-  categories:
-    - vehicle
+  label: vehicle
+  threshold: 0.53
 
 motor scooter:
   label: scooter
@@ -2985,8 +2912,8 @@ mountain tent:
     - outdoor
 
 moving van:
-  label: moving van
-  threshold: 0.4
+  label: car
+  threshold: 0.42
   categories:
     - vehicle
 
@@ -3020,14 +2947,18 @@ oxcart:
     - farm
 
 paddle:
-  label: paddle
+  label: boat
+  threshold: 0.31
   categories:
-    - boat
+    - vehicle
+    - water
 
 paddlewheel:
-  label: paddlwheel
+  label: boat
+  threshold: 0.15
   categories:
-    - boat
+    - vehicle
+    - water
 
 padlock:
   see: ignore
@@ -3076,14 +3007,13 @@ grille:
   see: car
 
 racer:
-  label: racer
-  threshold: 0.4
+  label: vehicle
+  threshold: 0.8
   categories:
-    - vehicle
     - car
 
 moped:
-  label: moped
+  label: scooter
   threshold: 0.4
   categories:
     - vehicle
@@ -3092,15 +3022,14 @@ passenger car:
   see: car
 
 beach wagon:
-  label: beach wagon
+  label: car
   threshold: 0.4
   categories:
     - vehicle
 
 pay-phone:
-  label: pay-phone
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.64
 
 petri dish:
   see: ignore
@@ -3161,18 +3090,16 @@ pillow:
   see: ignore
 
 plane:
-  label: plane
+  label: aircraft
   threshold: 0.3
   categories:
     - vehicle
-    - aircraft
 
 space shuttle:
-  label: space shuttle
-  threshold: 0.87
+  label: aircraft
+  threshold: 0.92
   categories:
     - vehicle
-    - aircraft
 
 plate rack:
   see: ignore
@@ -3188,7 +3115,7 @@ polaroid camera:
     - photography
 
 police van:
-  label: police van
+  label: car
   threshold: 0.4
   categories:
     - vehicle
@@ -3225,16 +3152,14 @@ punching bag:
   see: ignore
 
 harvester:
-  label: harvester
-  threshold: 0.4
+  label: tractor
+  threshold: 0.48
   categories:
     - vehicle
 
 thresher:
-  label: thresher
+  label: vehicle
   threshold: 0.4
-  categories:
-    - vehicle
 
 tractor:
   label: tractor
@@ -3288,10 +3213,7 @@ running shoe:
   threshold: 0.54
 
 saltshaker:
-  label: saltshaker
-  threshold: 0.3
-  categories:
-    - cooking
+  see: cooking
 
 sandal:
   label: shoe
@@ -3307,9 +3229,11 @@ school bus:
     - vehicle
 
 schooner:
-  see: schooner
+  label: ship
+  threshold: 0.24
   categories:
-    - ship
+    - water
+    - vehicle
 
 screwdriver:
   see: tool
@@ -3392,15 +3316,15 @@ soup bowl:
     - dining
 
 spatula:
-  label: spatula
-  threshold: 0.2
-  categories:
-    - cooking
+  label: cooking
+  threshold: 0.6
 
 speedboat:
-  label: speedboat
+  label: boat
+  threshold: 0.23
   categories:
-    - boat
+    - vehicle
+    - water
 
 sports car:
   label: car
@@ -3431,10 +3355,8 @@ stove:
     - kitchen
 
 strainer:
-  label: strainer
-  threshold: 0.4
-  categories:
-    - cooking
+  label: cooking
+  threshold: 0.71
 
 streetcar:
   threshold: 0.28
@@ -3461,11 +3383,10 @@ suspension bridge:
     - architecture
 
 swimming trunks:
-  label: swimming trunks
+  label: portrait
   threshold: 0.2
   categories:
     - people
-    - portrait
 
 table lamp:
   see: living
@@ -3503,9 +3424,11 @@ trailer truck:
   label: truck
 
 trimaran:
-  label: trimaran
+  label: boat
+  threshold: 0.55
   categories:
-    - boat
+    - vehicle
+    - water
 
 trolleybus:
   label: bus
@@ -3533,21 +3456,18 @@ violin:
   see: instrument
 
 waffle iron:
-  label: waffle iron
-  threshold: 0.3
-  categories:
-    - cooking
+  label: cooking
+  threshold: 0.45
 
 wardrobe:
   label: furniture
   threshold: 0.4
 
 warplane:
-  label: warplane
-  threshold: 0.3
+  label: aircraft
+  threshold: 0.39
   categories:
     - vehicle
-    - aircraft
 
 washbasin:
   see: living
@@ -3590,17 +3510,18 @@ worm fence:
   see: fence
 
 wreck:
-  see: wreck
+  label: ship
+  threshold: 0.46
   categories:
-    - ship
+    - water
+    - vehicle
 
 yawl:
-  label: yawl
+  label: boat
   threshold: 0.3
   categories:
     - water
     - vehicle
-    - boat
 
 yurt:
   label: camping
@@ -3617,11 +3538,11 @@ book jacket:
   threshold: 0.61
 
 guacamole:
-  label: guacamole
+  label: vegetables
   threshold: 0.5
   categories:
     - cooking
-    - vegetables
+    - food
 
 consomme:
   label: soup
@@ -3698,54 +3619,51 @@ vegetables:
     - food
 
 mashed potato:
-  label: mashed potato
+  label: vegetables
   categories:
-    - vegetables
+    - dining
+    - food
 
 head cabbage:
-  label: head cabbage
+  label: vegetables
   threshold: 0.5
-  categories:
-    - vegetables
 
 broccoli:
-  label: broccoli
-  threshold: 0.5
+  label: vegetables
+  threshold: 0.92
   categories:
-    - vegetables
+    - food
 
 cauliflower:
-  label: cauliflower
-  threshold: 0.5
+  label: vegetables
+  threshold: 0.9
   categories:
-    - vegetables
+    - food
 
 zucchini:
-  label: zuccini
+  label: vegetables
   categories:
-    - vegetables
+    - food
 
 artichoke:
-  label: artichoke
-  categories:
-    - vegetables
+  label: plant
 
 bell pepper:
-  label: bell pepper
+  label: vegetables
   categories:
-    - vegetables
+    - food
 
 cucumber:
-  label: cucumber
+  label: vegetables
+  thresgold: 0.3
   categories:
-    - vegetables
+    - food
 
 squash:
-  label: squash
+  label: vegetables
   threshold: 0.4
   categories:
     - food
-    - vegetables
 
 spaghetti squash:
   see: squash
@@ -3834,10 +3752,8 @@ carbonara:
     - food
 
 dough:
-  label: dough
+  label: cooking
   threshold: 0.2
-  categories:
-    - cooking
 
 meat loaf:
   label: meat
@@ -3852,11 +3768,10 @@ pizza:
     - food
 
 potpie:
-  label: potpie
+  label: cooking
   threshold: 0.2
   categories:
     - food
-    - cooking
 
 burrito:
   see: food
@@ -3921,9 +3836,11 @@ yellow lady's slipper:
     - plant
 
 corn:
-  label: corn
+  label: vegetables
+  threshold: 0.7
   categories:
-    - vegetables
+    - food
+    - dining
 
 acorn:
   see: ignore
@@ -3933,10 +3850,10 @@ buckeye:
   threshold: 0.5
 
 mushroom:
-  label: mushroom
+  label: vegetables
   threshold: 0.84
   categories:
-    - vegetables
+    - food
 
 coral fungus:
   see: mushroom
@@ -4090,10 +4007,10 @@ bearskin:
   see: ignore
 
 ballplayer:
-  label: ballplayer
-  threshold: 0.3
+  label: portrait
+  threshold: 0.4
   categories:
-    - portrait
+    - people
 
 crutch:
   see: ignore
@@ -4113,34 +4030,38 @@ portrait:
     - people
 
 shower cap:
-  label: shower cap
+  label: portrait
   categories:
-    - portrait
+    - people
 
 band aid:
-  label: band aid
+  label: portrait
+  threshold: 0.64
   categories:
-    - portrait
+    - people
 
 oxygen mask:
-  label: oxygen mask
+  label: portrait
+  threshold: 0.14
   categories:
-    - portrait
+    - people
 
 gasmask:
-  label: gasmask
+  label: portrait
   categories:
-    - portrait
+    - people
 
 wig:
-  label: wig
+  label: portrait
+  threshold: 0.22
   categories:
-    - portrait
+    - people
 
 ski mask:
-  label: ski mask
+  label: portrait
+  threshold: 0.13
   categories:
-    - portrait
+    - people
 
 heritage:
   label: heritage
@@ -4252,10 +4173,10 @@ carousel:
   threshold: 0.8
 
 groom:
-  label: event
+  label: portrait
   threshold: 0.3
   categories:
-    - portrait
+    - people
 
 maypole:
   label: festival
@@ -4372,10 +4293,8 @@ bow:
   see: ignore
 
 caldron:
-  label: caldron
-  threshold: 0.3
-  categories:
-    - cooking
+  label: cooking
+  threshold: 0.51
 
 cash machine:
   see: ignore
@@ -4385,70 +4304,56 @@ electronics:
   threshold: 0.3
 
 switch:
-  label: switch
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.18
 
 remote control:
-  label: remote control
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.16
 
 radio:
-  label: radio
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.64
 
 projector:
-  label: projector
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.6
 
 modem:
-  label: modem
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.32
 
 ipod:
-  label: ipod
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.51
 
 cassette:
-  label: casette
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.63
 
 cassette player:
-  label: cassette player
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.17
 
 tape player:
-  label: tape player
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.2
 
 cd player:
-  label: cd player
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.7
 
 hard disc:
-  label: hard disc
-  threshold: 0.3
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.41
 
 space heater:
-  label: space heater
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.51
 
 joystick:
-  label: joystick
-  categories:
-    - electronics
+  label: electronics
+  threshold: 0.86
 
 chain:
   see: ignore
@@ -4516,10 +4421,8 @@ iron:
   see: ignore
 
 jinrikisha:
-  label: jinrikisha
+  label: people
   threshold: 0.2
-  categories:
-    - people
 
 lumbermill:
   label: wood
