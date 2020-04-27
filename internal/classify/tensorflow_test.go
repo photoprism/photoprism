@@ -87,7 +87,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 			assert.IsType(t, Labels{}, result)
 			assert.Equal(t, 1, len(result))
 
-			assert.Equal(t, "chihuahua", result[0].Name)
+			assert.Equal(t, "dog", result[0].Name)
 
 			assert.Equal(t, 34, result[0].Uncertainty)
 		}
