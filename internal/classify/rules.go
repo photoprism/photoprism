@@ -53,7 +53,7 @@ var rules = LabelRules{
 	"affenpinscher dog": {
 		Label:      "dog",
 		Threshold:  0.300000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"afghan hound dog": {
@@ -89,7 +89,7 @@ var rules = LabelRules{
 	"african hunting dog": {
 		Label:      "dog",
 		Threshold:  0.550000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"agama": {
@@ -113,7 +113,7 @@ var rules = LabelRules{
 	"airedale dog": {
 		Label:      "dog",
 		Threshold:  0.380000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"airliner": {
@@ -293,7 +293,7 @@ var rules = LabelRules{
 	"australian terrier dog": {
 		Label:      "dog",
 		Threshold:  0.110000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"axolotl": {
@@ -473,7 +473,7 @@ var rules = LabelRules{
 	"basenji dog": {
 		Label:      "dog",
 		Threshold:  0.300000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"basket": {
@@ -569,7 +569,7 @@ var rules = LabelRules{
 	"bedlington terrier dog": {
 		Label:      "dog",
 		Threshold:  0.540000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"bee": {
@@ -755,13 +755,13 @@ var rules = LabelRules{
 	"bloodhound dog": {
 		Label:      "dog",
 		Threshold:  0.250000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"bluetick dog": {
 		Label:      "dog",
 		Threshold:  0.270000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"boa constrictor snake": {
@@ -827,25 +827,25 @@ var rules = LabelRules{
 	"border collie dog": {
 		Label:      "dog",
 		Threshold:  0.140000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"border terrier dog": {
 		Label:      "dog",
 		Threshold:  0.320000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"borzoi dog": {
 		Label:      "dog",
 		Threshold:  0.480000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"boston bull dog": {
 		Label:      "dog",
 		Threshold:  0.250000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"bottle": {
@@ -863,7 +863,7 @@ var rules = LabelRules{
 	"bouvier des flandres dog": {
 		Label:      "dog",
 		Threshold:  0.730000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"bow": {
@@ -893,7 +893,7 @@ var rules = LabelRules{
 	"brabancon griffon dog": {
 		Label:      "dog",
 		Threshold:  0.140000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"brain coral": {
@@ -941,7 +941,7 @@ var rules = LabelRules{
 	"brittany spaniel dog": {
 		Label:      "dog",
 		Threshold:  0.180000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"broccoli": {
@@ -1133,7 +1133,7 @@ var rules = LabelRules{
 	"cardigan dog": {
 		Label:      "dog",
 		Threshold:  0.450000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"cardoon": {
@@ -1277,7 +1277,7 @@ var rules = LabelRules{
 	"chesapeake bay retriever dog": {
 		Label:      "dog",
 		Threshold:  0.150000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"chest": {
@@ -1301,7 +1301,7 @@ var rules = LabelRules{
 	"chihuahua dog": {
 		Label:      "dog",
 		Threshold:  0.290000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"chime": {
@@ -1595,7 +1595,7 @@ var rules = LabelRules{
 	"coyote": {
 		Label:      "dog",
 		Threshold:  0.290000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"crab": {
@@ -1691,7 +1691,7 @@ var rules = LabelRules{
 	"curly-coated retriever dog": {
 		Label:      "dog",
 		Threshold:  0.170000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"custard apple": {
@@ -1709,7 +1709,7 @@ var rules = LabelRules{
 	"dalmatian dog": {
 		Label:      "dog",
 		Threshold:  0.690000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"dam": {
@@ -1745,7 +1745,7 @@ var rules = LabelRules{
 	"dhole": {
 		Label:      "dog",
 		Threshold:  0.500000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"dial telephone": {
@@ -1781,7 +1781,7 @@ var rules = LabelRules{
 	"dingo": {
 		Label:      "dog",
 		Threshold:  0.890000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"dining table": {
@@ -1961,7 +1961,7 @@ var rules = LabelRules{
 	"egyptian cat": {
 		Label:      "cat",
 		Threshold:  0.200000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"electric fan": {
@@ -2039,7 +2039,7 @@ var rules = LabelRules{
 	"eskimo dog": {
 		Label:      "dog",
 		Threshold:  0.310000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"espresso": {
@@ -2153,7 +2153,7 @@ var rules = LabelRules{
 	"flat-coated retriever dog": {
 		Label:      "dog",
 		Threshold:  0.160000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"flatworm": {
@@ -2243,7 +2243,7 @@ var rules = LabelRules{
 	"french bulldog dog": {
 		Label:      "dog",
 		Threshold:  0.130000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"french horn": {
@@ -2333,13 +2333,13 @@ var rules = LabelRules{
 	"german shepherd dog": {
 		Label:      "dog",
 		Threshold:  0.110000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"german short-haired pointer dog": {
 		Label:      "dog",
 		Threshold:  0.640000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"geyser": {
@@ -2387,7 +2387,7 @@ var rules = LabelRules{
 	"golden retriever dog": {
 		Label:      "dog",
 		Threshold:  0.130000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"goldfinch bird": {
@@ -2435,7 +2435,7 @@ var rules = LabelRules{
 	"gordon setter dog": {
 		Label:      "dog",
 		Threshold:  0.180000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"gorilla": {
@@ -2471,7 +2471,7 @@ var rules = LabelRules{
 	"great dane dog": {
 		Label:      "dog",
 		Threshold:  0.120000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"great grey owl bird": {
@@ -2483,7 +2483,7 @@ var rules = LabelRules{
 	"great pyrenees dog": {
 		Label:      "dog",
 		Threshold:  0.330000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"great white shark": {
@@ -2549,7 +2549,7 @@ var rules = LabelRules{
 	"groenendael dog": {
 		Label:      "dog",
 		Threshold:  0.560000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"groom": {
@@ -2879,7 +2879,7 @@ var rules = LabelRules{
 	"ibizan hound dog": {
 		Label:      "dog",
 		Threshold:  0.220000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"ice bear": {
@@ -2957,25 +2957,25 @@ var rules = LabelRules{
 	"irish setter dog": {
 		Label:      "dog",
 		Threshold:  0.180000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"irish terrier dog": {
 		Label:      "dog",
 		Threshold:  0.180000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"irish water spaniel dog": {
 		Label:      "dog",
 		Threshold:  0.660000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"irish wolfhound dog": {
 		Label:      "dog",
 		Threshold:  0.240000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"iron": {
@@ -2993,7 +2993,7 @@ var rules = LabelRules{
 	"italian greyhound dog": {
 		Label:      "dog",
 		Threshold:  0.410000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"jacamar": {
@@ -3095,7 +3095,7 @@ var rules = LabelRules{
 	"kerry blue terrier dog": {
 		Label:      "dog",
 		Threshold:  0.350000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"killer whale": {
@@ -3167,13 +3167,13 @@ var rules = LabelRules{
 	"komondor dog": {
 		Label:      "dog",
 		Threshold:  0.930000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"kuvasz dog": {
 		Label:      "dog",
 		Threshold:  0.410000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"lab coat": {
@@ -3185,7 +3185,7 @@ var rules = LabelRules{
 	"labrador retriever dog": {
 		Label:      "dog",
 		Threshold:  0.150000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"lacewing": {
@@ -3341,7 +3341,7 @@ var rules = LabelRules{
 	"lion": {
 		Label:      "lion",
 		Threshold:  0.710000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"wild cat", "cat", "animal"},
 	},
 	"lionfish": {
@@ -3503,7 +3503,7 @@ var rules = LabelRules{
 	"malamute dog": {
 		Label:      "dog",
 		Threshold:  0.250000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"malinois dog": {
@@ -3617,7 +3617,7 @@ var rules = LabelRules{
 	"mexican hairless dog": {
 		Label:      "dog",
 		Threshold:  0.240000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"microphone": {
@@ -3653,13 +3653,13 @@ var rules = LabelRules{
 	"miniature poodle dog": {
 		Label:      "dog",
 		Threshold:  0.400000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"miniature schnauzer dog": {
 		Label:      "dog",
 		Threshold:  0.150000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"minibus": {
@@ -3887,7 +3887,7 @@ var rules = LabelRules{
 	"norwegian elkhound dog": {
 		Label:      "dog",
 		Threshold:  0.530000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"norwich terrier dog": {
@@ -4085,7 +4085,7 @@ var rules = LabelRules{
 	"papillon dog": {
 		Label:      "dog",
 		Threshold:  0.180000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"parachute": {
@@ -4169,7 +4169,7 @@ var rules = LabelRules{
 	"pembroke dog": {
 		Label:      "dog",
 		Threshold:  0.150000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"pencil box": {
@@ -4193,7 +4193,7 @@ var rules = LabelRules{
 	"persian cat": {
 		Label:      "cat",
 		Threshold:  0.200000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"petri dish": {
@@ -4385,7 +4385,7 @@ var rules = LabelRules{
 	"pomeranian dog": {
 		Label:      "dog",
 		Threshold:  0.160000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"poncho": {
@@ -4517,7 +4517,7 @@ var rules = LabelRules{
 	"pug dog": {
 		Label:      "dog",
 		Threshold:  0.130000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"punching bag": {
@@ -4835,13 +4835,13 @@ var rules = LabelRules{
 	"saluki dog": {
 		Label:      "dog",
 		Threshold:  0.120000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"samoyed dog": {
 		Label:      "dog",
 		Threshold:  0.380000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"sandal": {
@@ -4883,7 +4883,7 @@ var rules = LabelRules{
 	"schipperke dog": {
 		Label:      "dog",
 		Threshold:  0.960000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"school bus": {
@@ -4913,13 +4913,13 @@ var rules = LabelRules{
 	"scotch terrier dog": {
 		Label:      "dog",
 		Threshold:  0.400000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"scottish deerhound dog": {
 		Label:      "dog",
 		Threshold:  0.470000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"screen": {
@@ -5093,13 +5093,13 @@ var rules = LabelRules{
 	"siamese cat": {
 		Label:      "cat",
 		Threshold:  0.200000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"siberian husky dog": {
 		Label:      "dog",
 		Threshold:  0.550000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"sidewinder snake": {
@@ -5225,7 +5225,7 @@ var rules = LabelRules{
 	"soft-coated wheaten terrier dog": {
 		Label:      "dog",
 		Threshold:  0.120000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"solar dish": {
@@ -5357,7 +5357,7 @@ var rules = LabelRules{
 	"staffordshire bullterrier dog": {
 		Label:      "dog",
 		Threshold:  0.150000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"stage": {
@@ -5369,7 +5369,7 @@ var rules = LabelRules{
 	"standard poodle dog": {
 		Label:      "dog",
 		Threshold:  0.400000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"standard schnauzer dog": {
@@ -5549,7 +5549,7 @@ var rules = LabelRules{
 	"sussex spaniel dog": {
 		Label:      "dog",
 		Threshold:  0.130000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"swab": {
@@ -5572,7 +5572,7 @@ var rules = LabelRules{
 	},
 	"swing": {
 		Label:      "moment",
-		Threshold:  0.000000,
+		Threshold:  0.150000,
 		Priority:   0,
 		Categories: []string{},
 	},
@@ -5590,8 +5590,8 @@ var rules = LabelRules{
 	},
 	"tabby cat": {
 		Label:      "cat",
-		Threshold:  0.000000,
-		Priority:   0,
+		Threshold:  0.150000,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"table lamp": {
@@ -5739,10 +5739,10 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"tiger cat": {
-		Label:      "",
+		Label:      "cat",
 		Threshold:  0.200000,
 		Priority:   5,
-		Categories: []string{"cat", "animal"},
+		Categories: []string{"animal"},
 	},
 	"tiger shark": {
 		Label:      "shark",
@@ -5825,13 +5825,13 @@ var rules = LabelRules{
 	"toy poodle dog": {
 		Label:      "dog",
 		Threshold:  0.400000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"toy terrier dog": {
 		Label:      "dog",
 		Threshold:  0.440000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"toyshop": {
@@ -6197,7 +6197,7 @@ var rules = LabelRules{
 	"weimaraner dog": {
 		Label:      "dog",
 		Threshold:  0.310000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"welsh springer spaniel dog": {
@@ -6209,7 +6209,7 @@ var rules = LabelRules{
 	"west highland white terrier dog": {
 		Label:      "dog",
 		Threshold:  0.430000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"whale": {
@@ -6221,7 +6221,7 @@ var rules = LabelRules{
 	"whippet dog": {
 		Label:      "dog",
 		Threshold:  0.210000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"whiptail": {
@@ -6305,7 +6305,7 @@ var rules = LabelRules{
 	"wire-haired fox terrier dog": {
 		Label:      "dog",
 		Threshold:  0.670000,
-		Priority:   0,
+		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"wok": {
