@@ -48,17 +48,16 @@ RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 10 && \
 
 # Download Bazel & TensorFlow
 WORKDIR "/home/tensorflow"
-RUN wget https://github.com/tensorflow/tensorflow/archive/v1.14.0.tar.gz
-RUN tar -xzf v1.14.0.tar.gz
+RUN wget https://github.com/tensorflow/tensorflow/archive/v1.15.2.tar.gz
+RUN tar -xzf v1.15.2.tar.gz
 
 # Install Bazel
 RUN wget https://github.com/bazelbuild/bazel/releases/download/0.24.1/bazel-0.24.1-linux-x86_64
 RUN mv bazel-0.24.1-linux-x86_64 /usr/local/bin/bazel && chmod 755 /usr/local/bin/bazel
 
 # Configure TensorFlow
-WORKDIR "/home/tensorflow/tensorflow-1.14.0"
+WORKDIR "/home/tensorflow/tensorflow-1.15.2"
 COPY ./*.sh ./
 COPY ./*.diff ./
 COPY ./.tf_configure.bazelrc .tf_configure.bazelrc
 COPY ./Makefile Makefile
-RUN make patch

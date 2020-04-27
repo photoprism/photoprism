@@ -1,4 +1,4 @@
-TF_VERSION=1.14.0
+TF_VERSION=1.15.2
 
 # -march see https://gcc.gnu.org/onlinedocs/gcc-4.8.5/gcc/i386-and-x86-64-Options.html
 
