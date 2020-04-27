@@ -76,7 +76,8 @@ func (q *Query) LabelThumbByUUID(labelUUID string) (file entity.File, err error)
 	err = q.db.Where("files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN labels ON labels.label_uuid = ?", labelUUID).
 		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = files.photo_id").
-		Order("photos_labels.uncertainty ASC").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
+		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
 		First(&file).Error
 
 	if err == nil {
@@ -88,7 +89,8 @@ func (q *Query) LabelThumbByUUID(labelUUID string) (file entity.File, err error)
 		Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id").
 		Joins("JOIN categories c ON photos_labels.label_id = c.label_id").
 		Joins("JOIN labels ON c.category_id = labels.id AND labels.label_uuid= ?", labelUUID).
-		Order("photos_labels.uncertainty ASC").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
+		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
 		First(&file).Error
 
 	return file, err

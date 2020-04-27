@@ -365,7 +365,11 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 
 	switch f.Order {
 	case entity.SortOrderRelevance:
-		s = s.Order("photo_quality DESC, taken_at DESC, files.file_primary DESC")
+		if f.Label != "" {
+			s = s.Order("photo_quality DESC, photos_labels.uncertainty ASC, taken_at DESC, files.file_primary DESC")
+		} else {
+			s = s.Order("photo_quality DESC, taken_at DESC, files.file_primary DESC")
+		}
 	case entity.SortOrderNewest:
 		s = s.Order("taken_at DESC, photos.photo_uuid, files.file_primary DESC")
 	case entity.SortOrderOldest:
