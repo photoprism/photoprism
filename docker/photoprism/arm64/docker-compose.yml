@@ -13,7 +13,7 @@ services:
       - seccomp:unconfined
     ports:
       - 2342:2342 # [local port]:[container port]
-      # - 2343:2343 # Internal database (MySQL compatible)
+      # - 2343:2343 # Database (built-in TiDB)
     healthcheck: # Optional
       test: "photoprism status"
       interval: 60s
