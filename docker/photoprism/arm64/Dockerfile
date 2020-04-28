@@ -52,7 +52,7 @@ RUN apt-get update && apt-get upgrade && \
 ENV LD_LIBRARY_PATH /root/.local/lib:/usr/local/lib:/usr/lib:/lib
 ENV TF_CPP_MIN_LOG_LEVEL 0
 RUN curl -L \
-   "https://dl.photoprism.org/tensorflow/arm64/libtensorflow-arm64-1.14.0.tar.gz" | \
+   "https://dl.photoprism.org/tensorflow/arm64/libtensorflow-arm64-1.15.2.tar.gz" | \
    tar -C "/usr" -xz
 RUN ldconfig
 
@@ -140,7 +140,7 @@ ENV PATH /photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin
 
 ENV PHOTOPRISM_ORIGINALS_PATH /photoprism/originals
 ENV PHOTOPRISM_IMPORT_PATH /photoprism/import
-ENV PHOTOPRISM_DATABASE_PATH /photoprism/database
+ENV PHOTOPRISM_SQL_PATH /photoprism/database
 ENV PHOTOPRISM_TEMP_PATH /photoprism/temp
 ENV PHOTOPRISM_CACHE_PATH /photoprism/cache
 ENV PHOTOPRISM_CONFIG_PATH /photoprism/config
@@ -169,7 +169,7 @@ RUN chmod -R 777 /photoprism
 RUN photoprism -v
 
 # Expose http and database ports
-EXPOSE 2342 4000
+EXPOSE 2342 2343
 
 # Run server
 CMD photoprism start

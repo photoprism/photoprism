@@ -116,14 +116,14 @@ func TestConfig_SqlServerPort(t *testing.T) {
 	c := NewConfig(ctx)
 
 	port := c.SqlServerPort()
-	assert.Equal(t, uint(4000), port)
+	assert.Equal(t, uint(2343), port)
 }
 
 func TestConfig_SqlServerPath(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	path := c.DatabasePath()
+	path := c.SqlPath()
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/database", path)
 }
 

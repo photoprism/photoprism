@@ -2,15 +2,6 @@ package config
 
 import "github.com/photoprism/photoprism/pkg/fs"
 
-// DatabasePath returns the database storage path for TiDB.
-func (c *Config) DatabasePath() string {
-	if c.params.DatabasePath == "" {
-		return c.ResourcesPath() + "/database"
-	}
-
-	return fs.Abs(c.params.DatabasePath)
-}
-
 // DetachServer returns true if server should detach from console (daemon mode).
 func (c *Config) DetachServer() bool {
 	return c.params.DetachServer
@@ -84,7 +75,7 @@ func (c *Config) SqlServerHost() string {
 // SqlServerPort returns the built-in SQL server port.
 func (c *Config) SqlServerPort() uint {
 	if c.params.SqlServerPort == 0 {
-		return 4000
+		return 2343
 	}
 
 	return c.params.SqlServerPort
@@ -93,4 +84,13 @@ func (c *Config) SqlServerPort() uint {
 // SqlServerPassword returns the password for the built-in database server.
 func (c *Config) SqlServerPassword() string {
 	return c.params.SqlServerPassword
+}
+
+// SqlPath returns the database storage path for the built-in SQL server.
+func (c *Config) SqlPath() string {
+	if c.params.SqlServerPath == "" {
+		return c.ResourcesPath() + "/database"
+	}
+
+	return fs.Abs(c.params.SqlServerPath)
 }

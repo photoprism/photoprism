@@ -28,7 +28,7 @@ func (c *Config) DatabaseDriver() string {
 // DatabaseDsn returns the database data source name (DSN).
 func (c *Config) DatabaseDsn() string {
 	if c.params.DatabaseDsn == "" {
-		return "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
+		return "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
 	}
 
 	return c.params.DatabaseDsn
@@ -154,7 +154,7 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 		if isTiDB {
 			log.Infof("starting database server at %s:%d\n", c.SqlServerHost(), c.SqlServerPort())
 
-			go tidb.Start(ctx, c.DatabasePath(), c.SqlServerPort(), c.SqlServerHost(), c.Debug())
+			go tidb.Start(ctx, c.SqlPath(), c.SqlServerPort(), c.SqlServerHost(), c.Debug())
 		}
 
 		for i := 1; i <= 12; i++ {

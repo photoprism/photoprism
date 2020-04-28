@@ -61,8 +61,8 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.ResourcesPath(), err)
 	}
 
-	if err := os.MkdirAll(c.DatabasePath(), os.ModePerm); err != nil {
-		return createError(c.DatabasePath(), err)
+	if err := os.MkdirAll(c.SqlPath(), os.ModePerm); err != nil {
+		return createError(c.SqlPath(), err)
 	}
 
 	if err := os.MkdirAll(c.TensorFlowModelPath(), os.ModePerm); err != nil {

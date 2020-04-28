@@ -54,12 +54,12 @@ type Params struct {
 	ImportPath         string `yaml:"import-path" flag:"import-path"`
 	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`
 	ResourcesPath      string `yaml:"resources-path" flag:"resources-path"`
-	DatabasePath       string `yaml:"database-path" flag:"database-path"`
 	DatabaseDriver     string `yaml:"database-driver" flag:"database-driver"`
 	DatabaseDsn        string `yaml:"database-dsn" flag:"database-dsn"`
 	SqlServerHost      string `yaml:"sql-host" flag:"sql-host"`
 	SqlServerPort      uint   `yaml:"sql-port" flag:"sql-port"`
 	SqlServerPassword  string `yaml:"sql-password" flag:"sql-password"`
+	SqlServerPath      string `yaml:"sql-path" flag:"sql-path"`
 	HttpServerHost     string `yaml:"http-host" flag:"http-host"`
 	HttpServerPort     int    `yaml:"http-port" flag:"http-port"`
 	HttpServerMode     string `yaml:"http-mode" flag:"http-mode"`
@@ -116,7 +116,7 @@ func (c *Params) expandFilenames() {
 	c.OriginalsPath = fs.Abs(c.OriginalsPath)
 	c.ImportPath = fs.Abs(c.ImportPath)
 	c.TempPath = fs.Abs(c.TempPath)
-	c.DatabasePath = fs.Abs(c.DatabasePath)
+	c.SqlServerPath = fs.Abs(c.SqlServerPath)
 	c.PIDFilename = fs.Abs(c.PIDFilename)
 	c.LogFilename = fs.Abs(c.LogFilename)
 }

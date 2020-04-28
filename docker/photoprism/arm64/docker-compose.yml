@@ -13,7 +13,7 @@ services:
       - seccomp:unconfined
     ports:
       - 2342:2342 # [local port]:[container port]
-      # - 4000:4000 # Internal database (MySQL compatible)
+      # - 2343:2343 # Internal database (MySQL compatible)
     healthcheck: # Optional
       test: "photoprism status"
       interval: 60s
@@ -36,12 +36,12 @@ services:
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_SQL_HOST: "0.0.0.0"
-      PHOTOPRISM_SQL_PORT: 4000 # Port for internal TiDB SQL server (driver "internal")
+      PHOTOPRISM_SQL_PORT: 2343 # Port for internal TiDB SQL server (driver "internal")
       PHOTOPRISM_SQL_PASSWORD: "photoprism" # Plain text only (username "root")
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # Plain text or bcrypt hash (escape "$" with "$$")
       PHOTOPRISM_WEBDAV_PASSWORD: "photoprism" # Plain text only (username "photoprism")
       PHOTOPRISM_DATABASE_DRIVER: "internal" # Change to "mysql" for external MySQL or MariaDB
-      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
+      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
       # PHOTOPRISM_THUMB_QUALITY: 95 # High-quality thumbnails (optional)
       # PHOTOPRISM_THUMB_SIZE: 3840
       # PHOTOPRISM_THUMB_LIMIT: 3840

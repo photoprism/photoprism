@@ -33,11 +33,11 @@ services:
       PHOTOPRISM_TEMP_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/temp"
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/originals"
       PHOTOPRISM_DATABASE_DRIVER: "internal"
-      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
+      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_SQL_HOST: "0.0.0.0"
-      PHOTOPRISM_SQL_PORT: 4000
+      PHOTOPRISM_SQL_PORT: 2343
       PHOTOPRISM_SQL_PASSWORD: "photoprism"
       TF_CPP_MIN_LOG_LEVEL: 0
 
