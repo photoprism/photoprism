@@ -19,10 +19,10 @@ http-host:
 http-mode: release
 http-port: 2342
 tidb-host: localhost
-tidb-port: 4000
+tidb-port: 2343
 tidb-password: photoprism
 database-driver: tidb
-database-dsn: root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true
+database-dsn: root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true
 pid-filename: ~/.local/share/photoprism/photoprism.pid
 log-filename: ~/.local/share/photoprism/photoprism.log
 detach-server: false
