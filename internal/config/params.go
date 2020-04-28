@@ -15,8 +15,8 @@ import (
 
 // define database drivers const
 const (
-	DbTiDB  = "internal"
-	DbMySQL = "mysql"
+	DriverTidb  = "tidb"
+	DriverMysql = "mysql"
 )
 
 // Params provides a struct in which application configuration is stored.
@@ -56,10 +56,10 @@ type Params struct {
 	ResourcesPath      string `yaml:"resources-path" flag:"resources-path"`
 	DatabaseDriver     string `yaml:"database-driver" flag:"database-driver"`
 	DatabaseDsn        string `yaml:"database-dsn" flag:"database-dsn"`
-	SqlServerHost      string `yaml:"sql-host" flag:"sql-host"`
-	SqlServerPort      uint   `yaml:"sql-port" flag:"sql-port"`
-	SqlServerPassword  string `yaml:"sql-password" flag:"sql-password"`
-	SqlServerPath      string `yaml:"sql-path" flag:"sql-path"`
+	TidbServerHost     string `yaml:"tidb-host" flag:"tidb-host"`
+	TidbServerPort     uint   `yaml:"tidb-port" flag:"tidb-port"`
+	TidbServerPassword string `yaml:"tidb-password" flag:"tidb-password"`
+	TidbServerPath     string `yaml:"tidb-path" flag:"tidb-path"`
 	HttpServerHost     string `yaml:"http-host" flag:"http-host"`
 	HttpServerPort     int    `yaml:"http-port" flag:"http-port"`
 	HttpServerMode     string `yaml:"http-mode" flag:"http-mode"`
@@ -116,7 +116,7 @@ func (c *Params) expandFilenames() {
 	c.OriginalsPath = fs.Abs(c.OriginalsPath)
 	c.ImportPath = fs.Abs(c.ImportPath)
 	c.TempPath = fs.Abs(c.TempPath)
-	c.SqlServerPath = fs.Abs(c.SqlServerPath)
+	c.TidbServerPath = fs.Abs(c.TidbServerPath)
 	c.PIDFilename = fs.Abs(c.PIDFilename)
 	c.LogFilename = fs.Abs(c.LogFilename)
 }

@@ -12,23 +12,23 @@ services:
       - "~/.cache/go-mod:/go/pkg/mod"
     environment:
       PHOTOPRISM_URL: "http://localhost:2342/"
+      PHOTOPRISM_UPLOAD_NSFW: "false"
+      PHOTOPRISM_DETECT_NSFW: "true"
+      PHOTOPRISM_PID_FILENAME: "photoprism.pid"
+      PHOTOPRISM_LOG_FILENAME: "photoprism.log"
+      PHOTOPRISM_DETACH_SERVER: "true"
+      PHOTOPRISM_HTTP_HOST: "0.0.0.0"
+      PHOTOPRISM_HTTP_PORT: 2342
+      PHOTOPRISM_TIDB_HOST: "0.0.0.0"
+      PHOTOPRISM_TIDB_PORT: 2343
+      PHOTOPRISM_TIDB_PASSWORD: "photoprism"
+      PHOTOPRISM_DATABASE_DRIVER: "tidb"
+      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
       PHOTOPRISM_TITLE: "PhotoPrism"
       PHOTOPRISM_SUBTITLE: "Browse your life"
       PHOTOPRISM_DESCRIPTION: "Personal Photo Management tested by Travis CI."
       PHOTOPRISM_AUTHOR: "PhotoPrism.org"
       PHOTOPRISM_TWITTER: "@browseyourlife"
-      PHOTOPRISM_HTTP_HOST: "0.0.0.0"
-      PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_SQL_HOST: "0.0.0.0"
-      PHOTOPRISM_SQL_PORT: 2343
-      PHOTOPRISM_SQL_PASSWORD: "photoprism"
-      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
-      PHOTOPRISM_DATABASE_DRIVER: "internal"
-      PHOTOPRISM_PID_FILENAME: "photoprism.pid"
-      PHOTOPRISM_LOG_FILENAME: "photoprism.log"
-      PHOTOPRISM_DETACH_SERVER: "true"
-      PHOTOPRISM_UPLOAD_NSFW: "false"
-      PHOTOPRISM_DETECT_NSFW: "true"
       CODECOV_TOKEN:
       CODECOV_ENV:
       CODECOV_URL:

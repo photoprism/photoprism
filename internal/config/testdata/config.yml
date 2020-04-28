@@ -5,14 +5,14 @@ cache-path: /srv/photoprism/cache
 originals-path: /srv/photoprism/photos/originals
 import-path: /srv/photoprism/photos/import
 temp-path: /srv/photoprism/temp
-sql-host: localhost
-sql-port: 2343
-sql-password: photoprism
 http-host:
 http-mode: release
 http-port: 81
 http-password:
-database-driver: internal
+tidb-host: localhost
+tidb-port: 2343
+tidb-password: photoprism
+database-driver: tidb
 database-dsn: root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true
 theme: lavendel
 language: english

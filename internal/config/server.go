@@ -63,34 +63,34 @@ func (c *Config) HttpStaticBuildPath() string {
 	return c.HttpStaticPath() + "/build"
 }
 
-// SqlServerHost returns the built-in SQL server host name or IP address (empty for all interfaces).
-func (c *Config) SqlServerHost() string {
-	if c.params.SqlServerHost == "" {
+// TidbServerHost returns the host for the built-in TiDB server. (empty for all interfaces).
+func (c *Config) TidbServerHost() string {
+	if c.params.TidbServerHost == "" {
 		return "127.0.0.1"
 	}
 
-	return c.params.SqlServerHost
+	return c.params.TidbServerHost
 }
 
-// SqlServerPort returns the built-in SQL server port.
-func (c *Config) SqlServerPort() uint {
-	if c.params.SqlServerPort == 0 {
+// TidbServerPort returns the port for the built-in TiDB server.
+func (c *Config) TidbServerPort() uint {
+	if c.params.TidbServerPort == 0 {
 		return 2343
 	}
 
-	return c.params.SqlServerPort
+	return c.params.TidbServerPort
 }
 
-// SqlServerPassword returns the password for the built-in database server.
-func (c *Config) SqlServerPassword() string {
-	return c.params.SqlServerPassword
+// TidbServerPassword returns the password for the built-in TiDB server.
+func (c *Config) TidbServerPassword() string {
+	return c.params.TidbServerPassword
 }
 
-// SqlPath returns the database storage path for the built-in SQL server.
-func (c *Config) SqlPath() string {
-	if c.params.SqlServerPath == "" {
+// TidbServerPath returns the database storage path for the built-in TiDB server.
+func (c *Config) TidbServerPath() string {
+	if c.params.TidbServerPath == "" {
 		return c.ResourcesPath() + "/database"
 	}
 
-	return fs.Abs(c.params.SqlServerPath)
+	return fs.Abs(c.params.TidbServerPath)
 }

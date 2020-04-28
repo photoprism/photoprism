@@ -61,10 +61,10 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("http-port             %d\n", conf.HttpServerPort())
 	fmt.Printf("http-mode             %s\n", conf.HttpServerMode())
 
-	fmt.Printf("sql-host              %s\n", conf.SqlServerHost())
-	fmt.Printf("sql-port              %d\n", conf.SqlServerPort())
-	fmt.Printf("sql-password          %s\n", conf.SqlServerPassword())
-	fmt.Printf("sql-path              %s\n", conf.SqlPath())
+	fmt.Printf("tidb-host             %s\n", conf.TidbServerHost())
+	fmt.Printf("tidb-port             %d\n", conf.TidbServerPort())
+	fmt.Printf("tidb-password         %s\n", conf.TidbServerPassword())
+	fmt.Printf("tidb-path             %s\n", conf.TidbServerPath())
 
 	fmt.Printf("database-driver       %s\n", conf.DatabaseDriver())
 	fmt.Printf("database-dsn          %s\n", conf.DatabaseDsn())
