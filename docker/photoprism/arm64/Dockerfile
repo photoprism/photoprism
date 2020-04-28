@@ -94,7 +94,7 @@ RUN wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
-COPY ../../photoprism-arm64 .
+COPY . .
 
 # Build PhotoPrism
 RUN make dep build-js install
