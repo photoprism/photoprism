@@ -1,9 +1,17 @@
 package colors
 
 import (
+	"github.com/stretchr/testify/assert"
 	"strconv"
 	"testing"
 )
+
+func TestLightMap_Hex(t *testing.T) {
+	lum := []Luminance{1, 16, 2, 4, 15, 16, 1, 0, 8}
+	lMap := LightMap(lum)
+	assert.Equal(t, "11024F10108", lMap.Hex())
+
+}
 
 func TestLightMap_Diff(t *testing.T) {
 	t.Run("random", func(t *testing.T) {
