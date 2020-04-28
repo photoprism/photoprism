@@ -36,7 +36,7 @@ func TestLocation_Assign(t *testing.T) {
 		}
 
 		assert.Equal(t, "Comici I", o.Name())
-		assert.Equal(t, "Trentino-Alto Adige/Südtirol", o.State())
+		assert.Equal(t, "Trentino-Alto Adige", o.State())
 		assert.Equal(t, "it", o.CountryCode())
 
 		var l Location
@@ -46,9 +46,9 @@ func TestLocation_Assign(t *testing.T) {
 		}
 
 		assert.Equal(t, "Comici I", l.LocName)
-		assert.Equal(t, "Plan de Gralba, Trentino-Alto Adige/Südtirol, Italy", l.LocLabel)
+		assert.Equal(t, "Plan de Gralba, Trentino-Alto Adige, Italy", l.LocLabel)
 		assert.IsType(t, []string{}, l.Keywords())
-		assert.Equal(t, "", l.KeywordString())
+		assert.Equal(t, "südtirol", l.KeywordString())
 	})
 
 	t.Run("BerlinFernsehturm", func(t *testing.T) {
