@@ -45,21 +45,22 @@ func (m *Location) Find(db *gorm.DB, api string) error {
 		return err
 	}
 
-	if place := FindPlaceByLabel(l.ID, l.LocLabel, db); place != nil {
+	if place := FindPlaceByLabel(l.S2Token(), l.Label(), db); place != nil {
 		m.Place = place
 	} else {
 		m.Place = &Place{
-			ID:         l.ID,
-			LocLabel:   l.LocLabel,
-			LocCity:    l.LocCity,
-			LocState:   l.LocState,
-			LocCountry: l.LocCountry,
+			ID:          l.S2Token(),
+			LocLabel:    l.Label(),
+			LocCity:     l.City(),
+			LocState:    l.State(),
+			LocCountry:  l.CountryCode(),
+			LocKeywords: l.KeywordString(),
 		}
 	}
 
-	m.LocName = l.LocName
-	m.LocCategory = l.LocCategory
-	m.LocSource = l.LocSource
+	m.LocName = l.Name()
+	m.LocCategory = l.Category()
+	m.LocSource = l.Source()
 
 	if err := db.Create(m).Error; err == nil {
 		return nil
@@ -72,11 +73,17 @@ func (m *Location) Find(db *gorm.DB, api string) error {
 
 // Keywords computes keyword based on a Location
 func (m *Location) Keywords() (result []string) {
+	if m.Place == nil {
+		log.Errorf("location: place for %s is nil - you might have found a bug", m.ID)
+		return result
+	}
+
 	result = append(result, txt.Keywords(txt.ReplaceSpaces(m.City(), "-"))...)
 	result = append(result, txt.Keywords(txt.ReplaceSpaces(m.State(), "-"))...)
 	result = append(result, txt.Keywords(txt.ReplaceSpaces(m.CountryName(), "-"))...)
 	result = append(result, txt.Keywords(m.Category())...)
 	result = append(result, txt.Keywords(m.Name())...)
+	result = append(result, txt.Keywords(m.Place.LocKeywords)...)
 
 	result = txt.UniqueWords(result)
 

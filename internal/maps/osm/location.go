@@ -10,7 +10,6 @@ import (
 
 	"github.com/melihmucuk/geocache"
 	"github.com/photoprism/photoprism/pkg/s2"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 type Location struct {
@@ -123,7 +122,7 @@ func (l Location) CountryCode() (result string) {
 }
 
 func (l Location) Keywords() (result []string) {
-	return txt.Keywords(l.LocDisplayName)
+	return result
 }
 
 func (l Location) Source() string {

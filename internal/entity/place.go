@@ -11,10 +11,11 @@ import (
 // Place used to associate photos to places
 type Place struct {
 	ID          string `gorm:"type:varbinary(16);primary_key;auto_increment:false;"`
-	LocLabel    string `gorm:"type:varbinary(512);unique_index;"`
-	LocCity     string `gorm:"type:varchar(128);"`
-	LocState    string `gorm:"type:varchar(128);"`
+	LocLabel    string `gorm:"type:varbinary(768);unique_index;"`
+	LocCity     string `gorm:"type:varchar(255);"`
+	LocState    string `gorm:"type:varchar(255);"`
 	LocCountry  string `gorm:"type:varbinary(2);"`
+	LocKeywords string `gorm:"type:varchar(255);"`
 	LocNotes    string `gorm:"type:text;"`
 	LocFavorite bool
 	CreatedAt   time.Time
@@ -24,11 +25,14 @@ type Place struct {
 
 // UnknownPlace is defined here to use it as a default
 var UnknownPlace = Place{
-	ID:         "zz",
-	LocLabel:   "Unknown",
-	LocCity:    "Unknown",
-	LocState:   "Unknown",
-	LocCountry: "zz",
+	ID:          "zz",
+	LocLabel:    "Unknown",
+	LocCity:     "Unknown",
+	LocState:    "Unknown",
+	LocCountry:  "zz",
+	LocKeywords: "",
+	LocNotes:    "",
+	LocFavorite: false,
 }
 
 // CreateUnknownPlace initializes default place in the database

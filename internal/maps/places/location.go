@@ -26,7 +26,7 @@ type Location struct {
 var ReverseLookupURL = "https://places.photoprism.org/v1/location/%s"
 var client = &http.Client{Timeout: 30 * time.Second} // TODO: Change timeout if needed
 
-func NewLocation(id string, lat float64, lng float64, name string, category string, place Place, cached bool) *Location {
+func NewLocation(id string, lat, lng float64, name, category string, place Place, cached bool) *Location {
 	result := &Location{
 		ID:          id,
 		LocLat:      lat,
@@ -68,7 +68,15 @@ func FindLocation(id string) (result Location, err error) {
 		return result, err
 	}
 
-	r, err := client.Do(req)
+	var r *http.Response
+
+	for i := 0; i < 3; i++ {
+		r, err = client.Do(req)
+
+		if err == nil {
+			break
+		}
+	}
 
 	if err != nil {
 		log.Errorf("places: %s", err.Error())
@@ -135,7 +143,7 @@ func (l Location) Longitude() (result float64) {
 }
 
 func (l Location) Keywords() (result []string) {
-	return txt.Keywords(l.Label())
+	return txt.UniqueKeywords(l.Place.LocKeywords)
 }
 
 func (l Location) Source() string {
