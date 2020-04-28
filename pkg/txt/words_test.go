@@ -17,6 +17,13 @@ func TestWords(t *testing.T) {
 	})
 }
 
+func TestReplaceSpaces(t *testing.T) {
+	t.Run("I love Cats", func(t *testing.T) {
+		result := ReplaceSpaces("I love Cats", "dog")
+		assert.Equal(t, "IdoglovedogCats", result)
+	})
+}
+
 func TestFilenameWords(t *testing.T) {
 	t.Run("I'm a lazy-brown fox!", func(t *testing.T) {
 		result := FilenameWords("I'm a lazy-BRoWN fox!")

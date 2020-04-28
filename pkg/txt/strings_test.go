@@ -55,10 +55,25 @@ func TestUcFirst(t *testing.T) {
 }
 
 func TestTitle(t *testing.T) {
-	t.Run("photo-lover", func(t *testing.T) {
+	t.Run("Browse your life in pictures", func(t *testing.T) {
 		assert.Equal(t, "Browse Your Life In Pictures", Title("Browse your life in pictures"))
 	})
-	t.Run("cat", func(t *testing.T) {
+	t.Run("photo-lover", func(t *testing.T) {
 		assert.Equal(t, "Photo-Lover", Title("photo-lover"))
+	})
+}
+
+func TestBool(t *testing.T) {
+	t.Run("not empty", func(t *testing.T) {
+		assert.Equal(t, true, Bool("Browse your life in pictures"))
+	})
+	t.Run("no", func(t *testing.T) {
+		assert.Equal(t, false, Bool("no"))
+	})
+	t.Run("false", func(t *testing.T) {
+		assert.Equal(t, false, Bool("false"))
+	})
+	t.Run("empty", func(t *testing.T) {
+		assert.Equal(t, false, Bool(""))
 	})
 }
