@@ -2,8 +2,6 @@ export GO111MODULE=on
 GOIMPORTS=goimports
 BINARY_NAME=photoprism
 DOCKER_TAG=`date -u +%Y%m%d`
-TIDB_VERSION=2.1.11
-TF_VERSION=1.14.0
 
 HASRICHGO := $(shell which richgo)
 ifdef HASRICHGO
@@ -75,6 +73,12 @@ build-go:
 build-static:
 	rm -f $(BINARY_NAME)
 	scripts/build.sh static $(BINARY_NAME)
+build-tensorflow:
+	docker build -t photoprism/tensorflow:build docker/tensorflow
+	docker run -ti photoprism/tensorflow:build bash
+build-tensorflow-arm64:
+	docker build -t photoprism/tensorflow:arm64 docker/tensorflow/arm64
+	docker run -ti photoprism/tensorflow:arm64 bash
 watch-js:
 	(cd frontend &&	env NODE_ENV=development npm run watch)
 test-js:
@@ -125,12 +129,6 @@ docker-photoprism-arm64:
 docker-demo:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
-docker-tensorflow:
-	scripts/docker-build.sh tensorflow $(TF_VERSION)
-	scripts/docker-push.sh tensorflow $(TF_VERSION)
-docker-tidb:
-	scripts/docker-build.sh tidb $(TIDB_VERSION)
-	scripts/docker-push.sh tidb $(TIDB_VERSION)
 docker-webdav:
 	scripts/docker-build.sh webdav $(DOCKER_TAG)
 	scripts/docker-push.sh webdav $(DOCKER_TAG)
