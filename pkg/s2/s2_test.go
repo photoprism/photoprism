@@ -93,6 +93,13 @@ func TestTokenLevel(t *testing.T) {
 
 		assert.Equal(t, expected, token)
 	})
+
+	t.Run("lat & long 0.0", func(t *testing.T) {
+		token := TokenLevel(0.0, 0.0, 30)
+		expected := ""
+
+		assert.Equal(t, expected, token)
+	})
 }
 
 func TestLatLng(t *testing.T) {
@@ -104,6 +111,11 @@ func TestLatLng(t *testing.T) {
 
 	t.Run("invalid", func(t *testing.T) {
 		lat, lng := LatLng("4799e370ca5q")
+		assert.Equal(t, 0.0, lat)
+		assert.Equal(t, 0.0, lng)
+	})
+	t.Run("empty", func(t *testing.T) {
+		lat, lng := LatLng("")
 		assert.Equal(t, 0.0, lat)
 		assert.Equal(t, 0.0, lng)
 	})
