@@ -16,7 +16,7 @@ func TestColors_List(t *testing.T) {
 
 func TestColor_Hex(t *testing.T) {
 	assert.Equal(t, "C", Magenta.Hex())
-	assert.Equal(t, 7, Cyan.Hex())
+	assert.Equal(t, "7", Cyan.Hex())
 }
 
 func TestColors_Hex(t *testing.T) {
