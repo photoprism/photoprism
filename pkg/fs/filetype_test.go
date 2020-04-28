@@ -43,12 +43,12 @@ func TestFileType_Find(t *testing.T) {
 		result := TypeJpeg.Find("testdata/test (2).xmp", true)
 		assert.Equal(t, "testdata/test.jpg", result)
 	})
-	t.Run("prefixUpper", func(t *testing.T) {
-		result := TypeJpeg.Find("testdata/catyellow.xmp", true)
+	t.Run("name upper", func(t *testing.T) {
+		result := TypeJpeg.Find("testdata/CATYELLOW.xmp", true)
 		assert.Equal(t, "testdata/CATYELLOW.jpg", result)
 	})
-	t.Run("prefixLower", func(t *testing.T) {
-		result := TypeJpeg.Find("testdata/CHAMELEON_LIME.xmp", true)
+	t.Run("name lower", func(t *testing.T) {
+		result := TypeJpeg.Find("testdata/chameleon_lime.xmp", true)
 		assert.Equal(t, "testdata/chameleon_lime.jpg", result)
 	})
 }

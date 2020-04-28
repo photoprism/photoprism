@@ -36,7 +36,7 @@ func TestConfig_Version(t *testing.T) {
 	c := NewConfig(ctx)
 
 	version := c.Version()
-	assert.Equal(t, "1.0.0", version)
+	assert.Equal(t, "test", version)
 }
 
 func TestConfig_TensorFlowVersion(t *testing.T) {
