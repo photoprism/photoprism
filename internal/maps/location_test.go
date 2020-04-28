@@ -21,7 +21,6 @@ func TestLocation_QueryPlaces(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Alt-Berlin", l.LocName)
 		assert.Equal(t, "Berlin, Germany", l.LocLabel)
 	})
 }
@@ -36,7 +35,7 @@ func TestLocation_Assign(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Sotsaslong", o.Name())
+		assert.Equal(t, "Comici I", o.Name())
 		assert.Equal(t, "Trentino-Alto Adige/Südtirol", o.State())
 		assert.Equal(t, "it", o.CountryCode())
 
@@ -46,10 +45,10 @@ func TestLocation_Assign(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Sotsaslong", l.LocName)
-		assert.Equal(t, "Sëlva, Trentino-Alto Adige/Südtirol, Italy", l.LocLabel)
-		assert.Equal(t, []string{"gardena", "selva", "wolkenstein"}, l.Keywords())
-		assert.Equal(t, "gardena, selva, wolkenstein", l.KeywordString())
+		assert.Equal(t, "Comici I", l.LocName)
+		assert.Equal(t, "Plan de Gralba, Trentino-Alto Adige/Südtirol, Italy", l.LocLabel)
+		assert.IsType(t, []string{}, l.Keywords())
+		assert.Equal(t, "", l.KeywordString())
 	})
 
 	t.Run("BerlinFernsehturm", func(t *testing.T) {
@@ -194,7 +193,7 @@ func TestLocation_Assign(t *testing.T) {
 
 		assert.Equal(t, "Indian Ocean", l.LocName)
 		assert.Equal(t, "", l.LocCategory)
-		assert.Equal(t, "", l.LocCity)
+		assert.Equal(t, "Unknown", l.LocCity)
 		// TODO: Should be zz for international waters, fixed in places server
 		// assert.Equal(t, "", l.LocCountry)
 	})
