@@ -96,4 +96,9 @@ func TestS2(t *testing.T) {
 
 		assert.Equal(t, "4799e3772d14", token)
 	})
+	t.Run("empty code", func(t *testing.T) {
+		token := S2("")
+
+		assert.Equal(t, "", token)
+	})
 }
