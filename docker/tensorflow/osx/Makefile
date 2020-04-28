@@ -8,13 +8,13 @@ patch:
 download:
 	wget https://github.com/tensorflow/tensorflow/archive/v$(TF_VERSION).tar.gz
 	tar -xzf v$(TF_VERSION).tar.gz
-	cp .tf_configure.bazelrc Makefile *.sh tensorflow-$(TF_VERSION)
+	cp .tf_configure.bazelrc Makefile ../*.sh tensorflow-$(TF_VERSION)
 libtensorflow:
 	bazel build --jobs 2 --config=opt //tensorflow:libtensorflow.so
-	./create_archive.sh linux-cpu $(TF_VERSION)
+	./create_archive.sh osx-cpu $(TF_VERSION)
 libtensorflow-avx:
 	bazel build --jobs 2 --config=opt //tensorflow:libtensorflow.so --copt=-march=core-avx-i --host_copt=-march=core-avx-i
-	./create_archive.sh linux-avx $(TF_VERSION)
+	./create_archive.sh osx-avx $(TF_VERSION)
 libtensorflow-avx2:
 	bazel build --jobs 2 --config=opt //tensorflow:libtensorflow.so --copt=-march=core-avx2 --host_copt=-march=core-avx2
-	./create_archive.sh linux-avx2 $(TF_VERSION)
+	./create_archive.sh osx-avx2 $(TF_VERSION)
