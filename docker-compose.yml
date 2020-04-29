@@ -8,16 +8,12 @@ services:
       - photoprism-db
     ports:
       - "2342:2342" # Web Server (PhotoPrism)
-      - "4000:4000" # Database (MySQL compatible)
+      - "2343:2343" # Database (built-in TiDB)
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
     shm_size: "2gb"
     environment:
       PHOTOPRISM_URL: "http://localhost:2342/"
-      PHOTOPRISM_TITLE: "PhotoPrism"
-      PHOTOPRISM_SUBTITLE: "Browse your life"
-      PHOTOPRISM_AUTHOR: "PhotoPrism.org"
-      PHOTOPRISM_TWITTER: "@browseyourlife"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
       PHOTOPRISM_PUBLIC: "false"
@@ -25,6 +21,13 @@ services:
       PHOTOPRISM_UPLOAD_NSFW: "false"
       PHOTOPRISM_DETECT_NSFW: "true"
       PHOTOPRISM_SERVER_MODE: "debug"
+      PHOTOPRISM_HTTP_HOST: "0.0.0.0"
+      PHOTOPRISM_HTTP_PORT: 2342
+      PHOTOPRISM_TIDB_HOST: "0.0.0.0"
+      PHOTOPRISM_TIDB_PORT: 2343
+      PHOTOPRISM_TIDB_PASSWORD: "photoprism"
+      PHOTOPRISM_DATABASE_DRIVER: "tidb"
+      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_CACHE_PATH: "/go/src/github.com/photoprism/photoprism/assets/cache"
       PHOTOPRISM_RESOURCES_PATH: "/go/src/github.com/photoprism/photoprism/assets/resources"
@@ -32,13 +35,10 @@ services:
       PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/import"
       PHOTOPRISM_TEMP_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/temp"
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/originals"
-      PHOTOPRISM_DATABASE_DRIVER: "internal"
-      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
-      PHOTOPRISM_HTTP_HOST: "0.0.0.0"
-      PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_SQL_HOST: "0.0.0.0"
-      PHOTOPRISM_SQL_PORT: 4000
-      PHOTOPRISM_SQL_PASSWORD: "photoprism"
+      PHOTOPRISM_TITLE: "PhotoPrism"
+      PHOTOPRISM_SUBTITLE: "Browse your life"
+      PHOTOPRISM_AUTHOR: "PhotoPrism.org"
+      PHOTOPRISM_TWITTER: "@browseyourlife"
       TF_CPP_MIN_LOG_LEVEL: 0
 
   photoprism-db:

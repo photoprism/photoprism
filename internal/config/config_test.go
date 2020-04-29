@@ -36,7 +36,7 @@ func TestConfig_Version(t *testing.T) {
 	c := NewConfig(ctx)
 
 	version := c.Version()
-	assert.Equal(t, "1.0.0", version)
+	assert.Equal(t, "test", version)
 }
 
 func TestConfig_TensorFlowVersion(t *testing.T) {
@@ -103,35 +103,35 @@ func TestConfig_DetachServer(t *testing.T) {
 	assert.Equal(t, false, detachServer)
 }
 
-func TestConfig_SqlServerHost(t *testing.T) {
+func TestConfig_TidbServerHost(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	host := c.SqlServerHost()
+	host := c.TidbServerHost()
 	assert.Equal(t, "127.0.0.1", host)
 }
 
-func TestConfig_SqlServerPort(t *testing.T) {
+func TestConfig_TidbServerPort(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	port := c.SqlServerPort()
-	assert.Equal(t, uint(4000), port)
+	port := c.TidbServerPort()
+	assert.Equal(t, uint(2343), port)
 }
 
-func TestConfig_SqlServerPath(t *testing.T) {
+func TestConfig_TidbServerPath(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	path := c.DatabasePath()
+	path := c.TidbServerPath()
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/database", path)
 }
 
-func TestConfig_SqlServerPassword(t *testing.T) {
+func TestConfig_TidbServerPassword(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	password := c.SqlServerPassword()
+	password := c.TidbServerPassword()
 	assert.Equal(t, "", password)
 }
 
@@ -222,7 +222,7 @@ func TestConfig_DatabaseDriver(t *testing.T) {
 	c := NewConfig(ctx)
 
 	driver := c.DatabaseDriver()
-	assert.Equal(t, "internal", driver)
+	assert.Equal(t, DriverTidb, driver)
 }
 
 func TestConfig_DatabaseDsn(t *testing.T) {
@@ -230,7 +230,7 @@ func TestConfig_DatabaseDsn(t *testing.T) {
 	c := NewConfig(ctx)
 
 	dsn := c.DatabaseDriver()
-	assert.Equal(t, "internal", dsn)
+	assert.Equal(t, DriverTidb, dsn)
 }
 
 func TestConfig_CachePath(t *testing.T) {

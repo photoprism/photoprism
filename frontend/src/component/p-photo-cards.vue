@@ -85,7 +85,7 @@
                                 <div class="caption">
                                     <button @click.exact="editPhoto(index)">
                                         <v-icon size="14" title="Taken" v-if="photo.TakenSrc">date_range</v-icon>
-                                        <v-icon size="14" title="Imported" v-else>save</v-icon>
+                                        <v-icon size="14" title="Modified" v-else>save</v-icon>
                                         {{ photo.getDateString() }}
                                     </button>
                                     <br/>

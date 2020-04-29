@@ -17,6 +17,8 @@ var Stopwords = map[string]bool{
 	"import":           true,
 	"export":           true,
 	"abc":              true,
+	"val":              true,
+	"tmp":              true,
 	"xyz":              true,
 	"jpg":              true,
 	"jpeg":             true,

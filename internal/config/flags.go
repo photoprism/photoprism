@@ -150,23 +150,6 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_ASSETS_PATH",
 	},
 	cli.StringFlag{
-		Name:   "database-path",
-		Usage:  "built-in database server storage path",
-		EnvVar: "PHOTOPRISM_DATABASE_PATH",
-	},
-	cli.StringFlag{
-		Name:   "database-driver",
-		Usage:  "database `DRIVER` (internal or mysql)",
-		Value:  "internal",
-		EnvVar: "PHOTOPRISM_DATABASE_DRIVER",
-	},
-	cli.StringFlag{
-		Name:   "database-dsn",
-		Usage:  "database data source name (`DSN`)",
-		Value:  "root:@tcp(localhost:4000)/photoprism?parseTime=true",
-		EnvVar: "PHOTOPRISM_DATABASE_DSN",
-	},
-	cli.StringFlag{
 		Name:   "sips-bin",
 		Usage:  "sips cli binary `FILENAME`",
 		Value:  "sips",
@@ -192,6 +175,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "http-port",
+		Value:  2342,
 		Usage:  "HTTP server port",
 		EnvVar: "PHOTOPRISM_HTTP_PORT",
 	},
@@ -206,19 +190,37 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_HTTP_MODE",
 	},
 	cli.IntFlag{
-		Name:   "sql-port",
-		Usage:  "built-in SQL server port",
-		EnvVar: "PHOTOPRISM_SQL_PORT",
+		Name:   "tidb-port",
+		Value:  2343,
+		Usage:  "built-in TiDB server port",
+		EnvVar: "PHOTOPRISM_TIDB_PORT",
 	},
 	cli.StringFlag{
-		Name:   "sql-host",
-		Usage:  "built-in SQL server host",
-		EnvVar: "PHOTOPRISM_SQL_HOST",
+		Name:   "tidb-host",
+		Usage:  "built-in TiDB server host",
+		EnvVar: "PHOTOPRISM_TIDB_HOST",
 	},
 	cli.StringFlag{
-		Name:   "sql-password",
-		Usage:  "built-in SQL server password",
-		EnvVar: "PHOTOPRISM_SQL_PASSWORD",
+		Name:   "tidb-password",
+		Usage:  "built-in TiDB server password",
+		EnvVar: "PHOTOPRISM_TIDB_PASSWORD",
+	},
+	cli.StringFlag{
+		Name:   "tidb-path",
+		Usage:  "built-in TiDB server storage path",
+		EnvVar: "PHOTOPRISM_TIDB_PATH",
+	},
+	cli.StringFlag{
+		Name:   "database-driver",
+		Usage:  "database `DRIVER` (tidb or mysql)",
+		Value:  "tidb",
+		EnvVar: "PHOTOPRISM_DATABASE_DRIVER",
+	},
+	cli.StringFlag{
+		Name:   "database-dsn",
+		Usage:  "database data source name (`DSN`)",
+		Value:  "root:@tcp(localhost:2343)/photoprism?parseTime=true",
+		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
 	cli.BoolFlag{
 		Name:   "detect-nsfw",

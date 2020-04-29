@@ -51,11 +51,11 @@ func startAction(ctx *cli.Context) error {
 	if ctx.IsSet("config") {
 		fmt.Printf("NAME                  VALUE\n")
 		fmt.Printf("detach-server         %t\n", conf.DetachServer())
-		fmt.Printf("database-path         %s\n", conf.DatabasePath())
 
-		fmt.Printf("sql-host              %s\n", conf.SqlServerHost())
-		fmt.Printf("sql-port              %d\n", conf.SqlServerPort())
-		fmt.Printf("sql-password          %s\n", conf.SqlServerPassword())
+		fmt.Printf("tidb-host             %s\n", conf.TidbServerHost())
+		fmt.Printf("tidb-port             %d\n", conf.TidbServerPort())
+		fmt.Printf("tidb-password         %s\n", conf.TidbServerPassword())
+		fmt.Printf("tidb-path             %s\n", conf.TidbServerPath())
 
 		fmt.Printf("http-host             %s\n", conf.HttpServerHost())
 		fmt.Printf("http-port             %d\n", conf.HttpServerPort())

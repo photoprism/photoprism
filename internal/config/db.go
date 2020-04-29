@@ -18,17 +18,17 @@ import (
 
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
-	if c.params.DatabaseDriver == "" {
-		return DbTiDB
+	if strings.ToLower(c.params.DatabaseDriver) == "mysql" {
+		return DriverMysql
 	}
 
-	return c.params.DatabaseDriver
+	return DriverTidb
 }
 
 // DatabaseDsn returns the database data source name (DSN).
 func (c *Config) DatabaseDsn() string {
 	if c.params.DatabaseDsn == "" {
-		return "root:photoprism@tcp(localhost:4000)/photoprism?parseTime=true"
+		return "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
 	}
 
 	return c.params.DatabaseDsn
@@ -67,7 +67,6 @@ func (c *Config) MigrateDb() {
 		&entity.FileSync{},
 		&entity.Photo{},
 		&entity.Description{},
-		&entity.Event{},
 		&entity.Place{},
 		&entity.Location{},
 		&entity.Camera{},
@@ -106,7 +105,6 @@ func (c *Config) DropTables() {
 		&entity.FileSync{},
 		&entity.Photo{},
 		&entity.Description{},
-		&entity.Event{},
 		&entity.Place{},
 		&entity.Location{},
 		&entity.Camera{},
@@ -146,17 +144,17 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 	isTiDB := false
 	initSuccess := false
 
-	if dbDriver == DbTiDB {
+	if dbDriver == DriverTidb {
 		isTiDB = true
-		dbDriver = DbMySQL
+		dbDriver = DriverMysql
 	}
 
 	db, err := gorm.Open(dbDriver, dbDsn)
 	if err != nil || db == nil {
 		if isTiDB {
-			log.Infof("starting database server at %s:%d\n", c.SqlServerHost(), c.SqlServerPort())
+			log.Infof("starting database server at %s:%d\n", c.TidbServerHost(), c.TidbServerPort())
 
-			go tidb.Start(ctx, c.DatabasePath(), c.SqlServerPort(), c.SqlServerHost(), c.Debug())
+			go tidb.Start(ctx, c.TidbServerPath(), c.TidbServerPort(), c.TidbServerHost(), c.Debug())
 		}
 
 		for i := 1; i <= 12; i++ {
@@ -169,7 +167,7 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 			}
 
 			if isTiDB && !initSuccess {
-				err = tidb.InitDatabase(c.SqlServerPort(), c.SqlServerPassword())
+				err = tidb.InitDatabase(c.TidbServerPort(), c.TidbServerPassword())
 
 				if err != nil {
 					log.Debug(err)

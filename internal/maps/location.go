@@ -32,6 +32,7 @@ type Location struct {
 	LocState    string
 	LocCountry  string
 	LocSource   string
+	LocKeywords []string
 }
 
 type LocationSource interface {
@@ -42,9 +43,10 @@ type LocationSource interface {
 	City() string
 	State() string
 	Source() string
+	Keywords() []string
 }
 
-func NewLocation(id string, name string, category string, label string, city string, state string, country string, source string) *Location {
+func NewLocation(id, name, category, label, city, state, country, source string, keywords []string) *Location {
 	result := &Location{
 		ID:          id,
 		LocName:     name,
@@ -54,6 +56,7 @@ func NewLocation(id string, name string, category string, label string, city str
 		LocState:    state,
 		LocCountry:  country,
 		LocSource:   source,
+		LocKeywords: keywords,
 	}
 
 	return result
@@ -84,6 +87,7 @@ func (l *Location) QueryPlaces() error {
 	l.LocCountry = s.CountryCode()
 	l.LocCategory = s.Category()
 	l.LocLabel = s.Label()
+	l.LocKeywords = s.Keywords()
 
 	return nil
 }
@@ -114,6 +118,7 @@ func (l *Location) Assign(s LocationSource) error {
 	l.LocCountry = s.CountryCode()
 	l.LocCategory = s.Category()
 	l.LocLabel = l.label()
+	l.LocKeywords = s.Keywords()
 
 	return nil
 }
@@ -147,6 +152,10 @@ func (l *Location) label() string {
 	return strings.Join(loc[:], ", ")
 }
 
+func (l Location) S2Token() string {
+	return l.ID
+}
+
 func (l Location) Name() string {
 	return l.LocName
 }
@@ -177,4 +186,12 @@ func (l Location) CountryName() string {
 
 func (l Location) Source() string {
 	return l.LocSource
+}
+
+func (l Location) Keywords() []string {
+	return l.LocKeywords
+}
+
+func (l Location) KeywordString() string {
+	return strings.Join(l.LocKeywords, ", ")
 }

@@ -12,6 +12,8 @@ photos
 import
 export
 abc
+val
+tmp
 xyz
 jpg
 jpeg
