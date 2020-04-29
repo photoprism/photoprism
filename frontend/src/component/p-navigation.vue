@@ -123,19 +123,6 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile v-if="mini && $config.feature('archive')" to="/archive" @click=""
-                             class="p-navigation-archive">
-                    <v-list-tile-action>
-                        <v-icon>archive</v-icon>
-                    </v-list-tile-action>
-
-                    <v-list-tile-content>
-                        <v-list-tile-title>
-                            <translate>Archive</translate>
-                        </v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-
                 <v-list-tile v-if="mini" to="/albums" @click="">
                     <v-list-tile-action>
                         <v-icon>folder</v-icon>
