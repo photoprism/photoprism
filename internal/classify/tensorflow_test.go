@@ -13,6 +13,21 @@ var resourcesPath = "../../assets/resources"
 var modelPath = resourcesPath + "/nasnet"
 var examplesPath = resourcesPath + "/examples"
 
+func TestTensorFlow_Init(t *testing.T) {
+	t.Run("disabled true", func(t *testing.T) {
+		tensorFlow := New(resourcesPath, true)
+
+		result := tensorFlow.Init()
+		assert.Nil(t, result)
+	})
+	t.Run("disabled false", func(t *testing.T) {
+		tensorFlow := New(resourcesPath, false)
+
+		result := tensorFlow.Init()
+		assert.Nil(t, result)
+	})
+}
+
 func TestTensorFlow_LabelsFromFile(t *testing.T) {
 	t.Run("chameleon_lime.jpg", func(t *testing.T) {
 		tensorFlow := New(resourcesPath, false)
@@ -42,6 +57,23 @@ func TestTensorFlow_LabelsFromFile(t *testing.T) {
 		result, err := tensorFlow.File(examplesPath + "/notexisting.jpg")
 		assert.Contains(t, err.Error(), "no such file or directory")
 		assert.Empty(t, result)
+	})
+	t.Run("disabled true", func(t *testing.T) {
+		tensorFlow := New(resourcesPath, true)
+
+		result, err := tensorFlow.File(examplesPath + "/chameleon_lime.jpg")
+		assert.Nil(t, err)
+
+		if err != nil {
+			t.Log(err.Error())
+			t.Fail()
+		}
+
+		assert.Nil(t, result)
+		assert.IsType(t, Labels{}, result)
+		assert.Equal(t, 0, len(result))
+
+		t.Log(result)
 	})
 }
 
@@ -112,6 +144,23 @@ func TestTensorFlow_Labels(t *testing.T) {
 			result, err := tensorFlow.Labels(imageBuffer)
 			assert.Empty(t, result)
 			assert.Nil(t, err)
+		}
+	})
+	t.Run("disabled true", func(t *testing.T) {
+		tensorFlow := New(resourcesPath, true)
+
+		if imageBuffer, err := ioutil.ReadFile(examplesPath + "/dog_orange.jpg"); err != nil {
+			t.Error(err)
+		} else {
+			result, err := tensorFlow.Labels(imageBuffer)
+
+			t.Log(result)
+
+			assert.Nil(t, result)
+
+			assert.Nil(t, err)
+			assert.IsType(t, Labels{}, result)
+			assert.Equal(t, 0, len(result))
 		}
 	})
 }

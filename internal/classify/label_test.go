@@ -29,3 +29,15 @@ func TestLabel_NewLocationLabel(t *testing.T) {
 		assert.Equal(t, "locationtest", LocLabel.Name)
 	})
 }
+
+func TestLabel_Title(t *testing.T) {
+	t.Run("locationtest123", func(t *testing.T) {
+		LocLabel := LocationLabel("locationtest123", 23, 1)
+		assert.Equal(t, "Locationtest123", LocLabel.Title())
+	})
+
+	t.Run("Berlin/Neukölln", func(t *testing.T) {
+		LocLabel := LocationLabel("berlin/neukölln_hasenheide", 23, 1)
+		assert.Equal(t, "Berlin/Neukölln_hasenheide", LocLabel.Title())
+	})
+}

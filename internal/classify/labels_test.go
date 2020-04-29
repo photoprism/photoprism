@@ -82,13 +82,16 @@ func TestLabels_Title(t *testing.T) {
 func TestLabels_Keywords(t *testing.T) {
 	cat := Label{Name: "cat", Source: "location", Uncertainty: 80, Priority: 5, Categories: []string{"animal"}}
 	dog := Label{Name: "dog", Source: "location", Uncertainty: 80, Priority: 5}
-	labels := Labels{cat, dog}
+	bird := Label{Name: "bird", Source: "image", Uncertainty: 100, Priority: 2}
+	labels := Labels{cat, dog, bird}
 
 	t.Run("labelWithName", func(t *testing.T) {
 		result := labels.Keywords()
+		t.Log(result)
 		assert.Equal(t, "cat", result[0])
 		assert.Equal(t, "animal", result[1])
 		assert.Equal(t, "dog", result[2])
+		assert.Equal(t, 3, len(result))
 	})
 }
 
