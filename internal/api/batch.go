@@ -171,6 +171,8 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 			event.EntitiesUpdated("photos", entities)
 		}
 
+		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+
 		elapsed := time.Since(start)
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos marked as private in %s", elapsed)})
