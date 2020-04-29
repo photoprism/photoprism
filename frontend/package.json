@@ -73,7 +73,7 @@
     "karma-verbose-reporter": "^0.0.6",
     "karma-webpack": "^4.0.2",
     "luxon": "^1.23.0",
-    "mapbox-gl": "^1.9.1",
+    "mapbox-gl": "^1.10.0",
     "material-design-icons-iconfont": "^5.0.1",
     "mini-css-extract-plugin": "^0.7.0",
     "minimist": ">=1.2.5",
