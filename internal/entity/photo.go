@@ -455,8 +455,6 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 
 	if zone != "" {
 		m.TimeZone = zone
-	} else {
-		m.TimeZone = time.UTC.String()
 	}
 }
 
