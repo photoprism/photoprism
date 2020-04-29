@@ -87,14 +87,6 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile to="/private" @click="" v-if="config.settings.library.private">
-                        <v-list-tile-content>
-                            <v-list-tile-title>
-                                <translate>Private</translate>
-                            </v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-
                     <v-list-tile to="/archive" @click="" class="p-navigation-archive" v-if="$config.feature('archive')">
                         <v-list-tile-content>
                             <v-list-tile-title>
@@ -117,7 +109,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile v-if="mini && config.settings.library.private" to="/private" @click=""
+                <v-list-tile v-if="config.settings.library.private" to="/private" @click=""
                              class="p-navigation-private">
                     <v-list-tile-action>
                         <v-icon>lock</v-icon>
@@ -125,7 +117,8 @@
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <translate>Private</translate>
+                            Private
+                            <span v-if="config.count.private > 0" class="p-navigation-count">{{ config.count.private }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
