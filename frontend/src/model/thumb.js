@@ -29,7 +29,11 @@ class Thumb extends Model {
         let result = [];
 
         photos.forEach((p) => {
-            result.push(this.fromPhoto(p));
+            let thumb = this.fromPhoto(p);
+
+            if(thumb) {
+                result.push(thumb);
+            }
         });
 
         return result;
@@ -40,11 +44,15 @@ class Thumb extends Model {
             return this.fromFile(photo, photo.Files.find(f => !!f.FilePrimary));
         }
 
+        if(!photo || !photo.FileHash) {
+            return false;
+        }
+
         const result = {
             uuid: photo.PhotoUUID,
             title: photo.PhotoTitle,
             favorite: photo.PhotoFavorite,
-            download_url: "/api/v1/download/" + photo.FileHash,
+            download_url: this.downloadUrl(photo),
             original_w: photo.FileWidth,
             original_h: photo.FileHeight,
         };
@@ -63,11 +71,15 @@ class Thumb extends Model {
     }
 
     static fromFile(photo, file) {
+        if(!photo || !file || !file.FileHash) {
+            return false;
+        }
+
         const result = {
             uuid: photo.PhotoUUID,
             title: photo.PhotoTitle,
             favorite: photo.PhotoFavorite,
-            download_url: "/api/v1/download/" + file.FileHash,
+            download_url: this.downloadUrl(file),
             original_w: file.FileWidth,
             original_h: file.FileHeight,
         };
@@ -92,8 +104,12 @@ class Thumb extends Model {
             if (!p.Files) return;
 
             p.Files.forEach((f) => {
-                if (f.FileType === "jpg") {
-                    result.push(this.fromFile(p, f));
+                if (f && f.FileType === "jpg") {
+                    let thumb = this.fromFile(p, f);
+
+                    if(thumb) {
+                        result.push(thumb);
+                    }
                 }
             }
             );
@@ -131,6 +147,15 @@ class Thumb extends Model {
         }
 
         return "/api/v1/thumbnails/" + file.FileHash + "/" + type;
+    }
+
+    static downloadUrl(file) {
+        if (!file || !file.FileHash) {
+            return "";
+
+        }
+
+        return "/api/v1/download/" + file.FileHash;
     }
 }
 

@@ -102,7 +102,7 @@ class Photo extends RestModel {
     refreshFileAttr() {
         const file = this.mainFile();
 
-        if (!file) {
+        if (!file || !file.FileHash) {
             return;
         }
 
