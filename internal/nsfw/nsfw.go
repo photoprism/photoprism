@@ -1,5 +1,5 @@
 /*
-This package detects porn images.
+This package detects images that may not be safe for work.
 
 Additional information can be found in our Developer Guide:
 
@@ -12,6 +12,12 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
+const (
+	ThresholdSafe   = 0.75
+	ThresholdMedium = 0.85
+	ThresholdHigh   = 0.9
+)
+
 var log = event.Log
 
 type Labels struct {
@@ -22,22 +28,18 @@ type Labels struct {
 	Sexy    float32
 }
 
+// IsSafe returns true if the image is probably safe for work.
 func (l *Labels) IsSafe() bool {
-	return !l.NSFW()
+	return !l.NSFW(ThresholdSafe)
 }
 
-func (l *Labels) NSFW() bool {
+// NSFW returns true if the image is may not be safe for work.
+func (l *Labels) NSFW(threshold float32) bool {
 	if l.Neutral > 0.25 {
 		return false
 	}
 
-	if l.Porn > 0.75 {
-		return true
-	}
-	if l.Sexy > 0.75 {
-		return true
-	}
-	if l.Hentai > 0.75 {
+	if l.Porn > threshold || l.Sexy > threshold || l.Hentai > threshold {
 		return true
 	}
 

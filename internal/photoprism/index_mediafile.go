@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/meta"
+	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -430,7 +431,7 @@ func (ind *Index) NSFW(jpeg *MediaFile) bool {
 		log.Error(err)
 		return false
 	} else {
-		if nsfwLabels.NSFW() {
+		if nsfwLabels.NSFW(nsfw.ThresholdHigh) {
 			log.Warnf("index: \"%s\" might contain offensive content", jpeg.FileName())
 			return true
 		}
