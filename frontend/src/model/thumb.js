@@ -152,7 +152,6 @@ class Thumb extends Model {
     static downloadUrl(file) {
         if (!file || !file.FileHash) {
             return "";
-
         }
 
         return "/api/v1/download/" + file.FileHash;
