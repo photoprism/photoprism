@@ -15,6 +15,11 @@ import (
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
+// SanitizeString removes unwanted character from an exif value string.
+func SanitizeString(value string) string {
+	return strings.Replace(value, "\"", "", -1)
+}
+
 // Exif parses an image file for Exif meta data and returns as Data struct.
 func Exif(filename string) (data Data, err error) {
 	defer func() {
@@ -125,35 +130,35 @@ func Exif(filename string) (data Data, err error) {
 	// Cherry-pick the values that we care about.
 
 	if value, ok := tags["Artist"]; ok {
-		data.Artist = strings.Replace(value, "\"", "", -1)
+		data.Artist = SanitizeString(value)
 	}
 
 	if value, ok := tags["Copyright"]; ok {
-		data.Copyright = strings.Replace(value, "\"", "", -1)
+		data.Copyright = SanitizeString(value)
 	}
 
 	if value, ok := tags["Model"]; ok {
-		data.CameraModel = strings.Replace(value, "\"", "", -1)
+		data.CameraModel = SanitizeString(value)
 	}
 
 	if value, ok := tags["Make"]; ok {
-		data.CameraMake = strings.Replace(value, "\"", "", -1)
+		data.CameraMake = SanitizeString(value)
 	}
 
 	if value, ok := tags["CameraOwnerName"]; ok {
-		data.CameraOwner = strings.Replace(value, "\"", "", -1)
+		data.CameraOwner = SanitizeString(value)
 	}
 
 	if value, ok := tags["BodySerialNumber"]; ok {
-		data.CameraSerial = strings.Replace(value, "\"", "", -1)
+		data.CameraSerial = SanitizeString(value)
 	}
 
 	if value, ok := tags["LensMake"]; ok {
-		data.LensMake = strings.Replace(value, "\"", "", -1)
+		data.LensMake = SanitizeString(value)
 	}
 
 	if value, ok := tags["LensModel"]; ok {
-		data.LensModel = strings.Replace(value, "\"", "", -1)
+		data.LensModel = SanitizeString(value)
 	}
 
 	if value, ok := tags["ExposureTime"]; ok {
@@ -272,16 +277,14 @@ func Exif(filename string) (data Data, err error) {
 	if value, ok := tags["DateTimeOriginal"]; ok && value != "0000:00:00 00:00:00" {
 		if taken, err := time.Parse("2006:01:02 15:04:05", value); err == nil {
 			data.TakenAtLocal = taken.Round(time.Second)
+			data.TakenAt = data.TakenAtLocal
 
-			if data.TimeZone == "" {
-				data.TakenAt = data.TakenAtLocal
-			} else if loc, err := time.LoadLocation(data.TimeZone); err != nil {
-				data.TakenAt = data.TakenAtLocal
-				log.Warnf("exif: no location for time zone %s", data.TimeZone)
+			if loc, err := time.LoadLocation(data.TimeZone); err != nil {
+				log.Warnf("exif: unknown time zone %s", data.TimeZone)
 			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", value, loc); err == nil {
-				data.TakenAt = tl.UTC()
+				data.TakenAt = tl.Round(time.Second).UTC()
 			} else {
-				log.Warnf("exif: %s", err.Error())
+				log.Errorf("exif: %s", err.Error()) // this should never happen
 			}
 		} else {
 			log.Warnf("exif: invalid time %s", value)
@@ -295,7 +298,7 @@ func Exif(filename string) (data Data, err error) {
 	}
 
 	if value, ok := tags["ImageDescription"]; ok {
-		data.Description = strings.Replace(value, "\"", "", -1)
+		data.Description = SanitizeString(value)
 	}
 
 	data.All = tags
