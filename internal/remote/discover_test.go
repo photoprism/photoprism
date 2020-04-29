@@ -36,7 +36,7 @@ func TestDiscover(t *testing.T) {
 	})
 
 	t.Run("facebook", func(t *testing.T) {
-		r, err := Discover("https://www.facebook.com/ob.boris.palmer", "", "")
+		r, err := Discover("https://www.facebook.com/ob.boris.palmer", "test", "")
 
 		if err != nil {
 			t.Fatal(err)
@@ -45,6 +45,27 @@ func TestDiscover(t *testing.T) {
 		assert.Equal(t, "Facebook", r.AccName)
 		assert.Equal(t, "facebook", r.AccType)
 		assert.Equal(t, "https://www.facebook.com/ob.boris.palmer", r.AccURL)
+		assert.Equal(t, "test", r.AccUser)
+		assert.Equal(t, "", r.AccPass)
+	})
+	t.Run("empty raw url", func(t *testing.T) {
+		r, err := Discover("", "", "")
+
+		assert.Equal(t, err.Error(), "service URL is empty")
+		assert.Equal(t, "", r.AccName)
+		assert.Equal(t, "", r.AccType)
+		assert.Equal(t, "", r.AccURL)
+		assert.Equal(t, "", r.AccUser)
+		assert.Equal(t, "", r.AccPass)
+	})
+
+	t.Run("invalid raw url", func(t *testing.T) {
+		r, err := Discover("xxx", "", "")
+
+		assert.Equal(t, err.Error(), "could not connect")
+		assert.Equal(t, "", r.AccName)
+		assert.Equal(t, "", r.AccType)
+		assert.Equal(t, "", r.AccURL)
 		assert.Equal(t, "", r.AccUser)
 		assert.Equal(t, "", r.AccPass)
 	})
