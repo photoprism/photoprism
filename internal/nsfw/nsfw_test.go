@@ -115,6 +115,6 @@ func TestNSFW(t *testing.T) {
 	assert.Equal(t, false, hentai.NSFW(ThresholdMedium))
 
 	assert.Equal(t, false, porn.NSFW(ThresholdHigh))
-	assert.Equal(t, true, sexy.NSFW(ThresholdHigh))
+	assert.Equal(t, false, sexy.NSFW(ThresholdHigh))
 	assert.Equal(t, false, hentai.NSFW(ThresholdHigh))
 }
