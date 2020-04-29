@@ -317,6 +317,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			"count": 1,
 		})
 
+		if photo.PhotoPrivate {
+			event.Publish("count.private", event.Data{
+				"count": 1,
+			})
+		}
+
 		event.EntitiesCreated("photos", []entity.Photo{photo})
 	}
 
@@ -432,7 +438,7 @@ func (ind *Index) NSFW(jpeg *MediaFile) bool {
 		return false
 	} else {
 		if nsfwLabels.NSFW(nsfw.ThresholdHigh) {
-			log.Warnf("index: \"%s\" might contain offensive content", jpeg.FileName())
+			log.Warnf("index: %s might contain offensive content", jpeg.RelativeName(ind.originalsPath()))
 			return true
 		}
 	}

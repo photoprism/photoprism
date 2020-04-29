@@ -264,25 +264,27 @@ func Exif(filename string) (data Data, err error) {
 			Lon: float64(data.Lng),
 		})
 
-		if err != nil {
-			data.TimeZone = "UTC"
+		if err == nil && len(zones) > 0 {
+			data.TimeZone = zones[0]
 		}
-
-		data.TimeZone = zones[0]
 	}
 
-	if value, ok := tags["DateTimeOriginal"]; ok {
-		data.TakenAtLocal, _ = time.Parse("2006:01:02 15:04:05", value)
+	if value, ok := tags["DateTimeOriginal"]; ok && value != "0000:00:00 00:00:00" {
+		if taken, err := time.Parse("2006:01:02 15:04:05", value); err == nil {
+			data.TakenAtLocal = taken.Round(time.Second)
 
-		loc, err := time.LoadLocation(data.TimeZone)
-
-		if err != nil {
-			data.TakenAt = data.TakenAtLocal
-			log.Warnf("no location for timezone: %s", err.Error())
-		} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", value, loc); err == nil {
-			data.TakenAt = tl.UTC()
+			if data.TimeZone == "" {
+				data.TakenAt = data.TakenAtLocal
+			} else if loc, err := time.LoadLocation(data.TimeZone); err != nil {
+				data.TakenAt = data.TakenAtLocal
+				log.Warnf("exif: no location for time zone %s", data.TimeZone)
+			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", value, loc); err == nil {
+				data.TakenAt = tl.UTC()
+			} else {
+				log.Warnf("exif: %s", err.Error())
+			}
 		} else {
-			log.Warnf("could not parse time: %s", err.Error())
+			log.Warnf("exif: invalid time %s", value)
 		}
 	}
 

@@ -15,7 +15,7 @@ import (
 const (
 	ThresholdSafe   = 0.75
 	ThresholdMedium = 0.85
-	ThresholdHigh   = 0.9
+	ThresholdHigh   = 0.98
 )
 
 var log = event.Log

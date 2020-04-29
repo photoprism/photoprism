@@ -57,6 +57,9 @@ class Config {
         case "favorites":
             this.values.count.favorites += data.count;
             break;
+        case "private":
+            this.values.count.private += data.count;
+            break;
         case "albums":
             this.values.count.albums += data.count;
             break;
