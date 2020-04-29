@@ -237,6 +237,14 @@ func TestLocation_place(t *testing.T) {
 	})
 }
 
+func TestLocation_S2Token(t *testing.T) {
+	t.Run("123", func(t *testing.T) {
+		l := NewLocation("123", "Indian ocean", "", "", "Nürnberg", "Bayern", "de", "", []string{})
+
+		assert.Equal(t, "123", l.S2Token())
+	})
+}
+
 func TestLocation_Name(t *testing.T) {
 	t.Run("Christkindlesmarkt", func(t *testing.T) {
 		l := NewLocation("", "Christkindlesmarkt", "", "", "Nürnberg", "Bayern", "de", "", []string{})
