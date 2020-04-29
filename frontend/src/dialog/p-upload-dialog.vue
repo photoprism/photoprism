@@ -27,9 +27,13 @@
                                            :indeterminate="indexing"></v-progress-linear>
 
 
-                        <p class="subheading" v-if="safe">
+                        <p class="body-1" v-if="safe">
                             Please don't upload photos containing offensive content. Uploads
                             that may contain such images will be rejected automatically.
+                        </p>
+
+                        <p class="body-1" v-if="review">
+                            Low-quality photos require a review before they appear in search results.
                         </p>
 
                         <v-btn
@@ -69,7 +73,8 @@
                 total: 0,
                 completed: 0,
                 started: 0,
-                safe: !this.$config.get("uploadNSFW")
+                review: this.$config.settings().library.review,
+                safe: !this.$config.get("uploadNSFW"),
             }
         },
         methods: {
@@ -171,6 +176,8 @@
                 this.total = 0;
                 this.completed = 0;
                 this.started = 0;
+                this.review = this.$config.settings().library.review;
+                this.safe = !this.$config.get("uploadNSFW");
             }
         },
     };

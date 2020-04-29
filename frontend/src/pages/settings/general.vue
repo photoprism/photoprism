@@ -18,7 +18,7 @@
                                     v-model="settings.library.private"
                                     color="secondary-dark"
                                     :label="labels.private"
-                                    hint="Exclude photos and videos marked as private from search results by default."
+                                    hint="Exclude photos marked as private from search results by default."
                                     prepend-icon="lock"
                                     persistent-hint
                             >
@@ -33,7 +33,7 @@
                                     v-model="settings.library.review"
                                     color="secondary-dark"
                                     :label="labels.review"
-                                    hint="Low-quality photos and videos require a review before they appear in search results."
+                                    hint="Low-quality photos require a review before they appear in search results."
                                     prepend-icon="remove_red_eye"
                                     persistent-hint
                             >
