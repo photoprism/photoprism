@@ -10,7 +10,5 @@ func CreateTestFixtures(db *gorm.DB) {
 	CreateCameraFixtures(db)
 	CreateCountryFixtures(db)
 	CreatePhotoFixtures(db)
-func CreateTestFixtures() {
-	CreateLabelFixtures()
-	CreateAccountFixtures()
+	CreateAlbumFixtures(db)
 }
