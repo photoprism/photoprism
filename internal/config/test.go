@@ -3,7 +3,6 @@ package config
 import (
 	"context"
 	"flag"
-	"fmt"
 	"os"
 	"sync"
 	"testing"
@@ -173,10 +172,21 @@ func CliTestContext() *cli.Context {
 
 // RemoveTestData deletes files in import, export, originals and cache folders
 func (c *Config) RemoveTestData(t *testing.T) {
-	LogError(os.RemoveAll(c.ImportPath()))
-	LogError(os.RemoveAll(c.TempPath()))
-	LogError(os.RemoveAll(c.OriginalsPath()))
-	LogError(os.RemoveAll(c.CachePath()))
+	if err := os.RemoveAll(c.ImportPath()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := os.RemoveAll(c.TempPath()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := os.RemoveAll(c.OriginalsPath()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := os.RemoveAll(c.CachePath()); err != nil {
+		t.Fatal(err)
+	}
 }
 
 // DownloadTestData downloads test data from photoprism.org server
@@ -185,16 +195,19 @@ func (c *Config) DownloadTestData(t *testing.T) {
 		hash := fs.Hash(TestDataZip)
 
 		if hash != TestDataHash {
-			LogError(os.Remove(TestDataZip))
-			t.Logf("removed outdated test data zip file (fingerprint %s)\n", hash)
+			if err := os.Remove(TestDataZip); err != nil {
+				t.Fatalf("config: %s", err.Error())
+			}
+
+			t.Logf("config: removed outdated test data zip file (fingerprint %s)", hash)
 		}
 	}
 
 	if !fs.FileExists(TestDataZip) {
-		fmt.Printf("downloading latest test data zip file from %s\n", TestDataURL)
+		t.Logf("config: downloading latest test data zip file from %s", TestDataURL)
 
 		if err := fs.Download(TestDataZip, TestDataURL); err != nil {
-			fmt.Printf("Download failed: %s\n", err.Error())
+			t.Fatalf("config: test data download failed: %s", err.Error())
 		}
 	}
 }
@@ -202,13 +215,13 @@ func (c *Config) DownloadTestData(t *testing.T) {
 // UnzipTestData in default test folder
 func (c *Config) UnzipTestData(t *testing.T) {
 	if _, err := fs.Unzip(TestDataZip, testDataPath(c.AssetsPath())); err != nil {
-		t.Logf("could not unzip test data: %s\n", err.Error())
+		t.Fatalf("config: could not unzip test data: %s", err.Error())
 	}
 }
 
 // InitializeTestData using testing constant
 func (c *Config) InitializeTestData(t *testing.T) {
-	t.Log("initializing test data")
+	defer t.Logf(capture.Time(time.Now(), "config: initialized test data"))
 
 	c.RemoveTestData(t)
 
