@@ -130,33 +130,6 @@
                                 </v-autocomplete>
                             </v-flex>
 
-                            <v-flex xs12 md6 pa-2 class="p-camera-select">
-                                <v-select
-                                        :disabled="disabled"
-                                        :label="labels.camera"
-                                        browser-autocomplete="off"
-                                        hide-details
-                                        color="secondary-dark"
-                                        item-value="ID"
-                                        item-text="CameraModel"
-                                        v-model="model.CameraID"
-                                        :items="cameraOptions">
-                                </v-select>
-                            </v-flex>
-                            <v-flex xs12 md6 pa-2 class="p-lens-select">
-                                <v-select
-                                        :disabled="disabled"
-                                        :label="labels.lens"
-                                        browser-autocomplete="off"
-                                        hide-details
-                                        color="secondary-dark"
-                                        item-value="ID"
-                                        item-text="LensModel"
-                                        v-model="model.LensID"
-                                        :items="lensOptions">
-                                </v-select>
-                            </v-flex>
-
                             <v-flex xs12 sm6 md3 class="pa-2">
                                 <v-text-field
                                         :disabled="disabled"
@@ -207,28 +180,18 @@
                                 </v-select>
                             </v-flex>
 
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
+                            <v-flex xs12 md6 pa-2 class="p-camera-select">
+                                <v-select
                                         :disabled="disabled"
-                                        hide-details
+                                        :label="labels.camera"
                                         browser-autocomplete="off"
-                                        label="Focal Length"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.PhotoFocalLength"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        :disabled="disabled"
                                         hide-details
-                                        browser-autocomplete="off"
-                                        label="F Number"
-                                        placeholder=""
                                         color="secondary-dark"
-                                        v-model="model.PhotoFNumber"
-                                ></v-text-field>
+                                        item-value="ID"
+                                        item-text="CameraModel"
+                                        v-model="model.CameraID"
+                                        :items="cameraOptions">
+                                </v-select>
                             </v-flex>
 
                             <v-flex xs12 sm6 md3 class="pa-2">
@@ -252,6 +215,44 @@
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.PhotoExposure"
+                                ></v-text-field>
+                            </v-flex>
+
+                            <v-flex xs12 md6 pa-2 class="p-lens-select">
+                                <v-select
+                                        :disabled="disabled"
+                                        :label="labels.lens"
+                                        browser-autocomplete="off"
+                                        hide-details
+                                        color="secondary-dark"
+                                        item-value="ID"
+                                        item-text="LensModel"
+                                        v-model="model.LensID"
+                                        :items="lensOptions">
+                                </v-select>
+                            </v-flex>
+
+                            <v-flex xs12 sm6 md3 class="pa-2">
+                                <v-text-field
+                                        :disabled="disabled"
+                                        hide-details
+                                        browser-autocomplete="off"
+                                        label="F Number"
+                                        placeholder=""
+                                        color="secondary-dark"
+                                        v-model="model.PhotoFNumber"
+                                ></v-text-field>
+                            </v-flex>
+
+                            <v-flex xs12 sm6 md3 class="pa-2">
+                                <v-text-field
+                                        :disabled="disabled"
+                                        hide-details
+                                        browser-autocomplete="off"
+                                        label="Focal Length"
+                                        placeholder=""
+                                        color="secondary-dark"
+                                        v-model="model.PhotoFocalLength"
                                 ></v-text-field>
                             </v-flex>
 
