@@ -7,9 +7,11 @@ import (
 	"os"
 	"sync"
 	"testing"
+	"time"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/sirupsen/logrus"
@@ -102,8 +104,17 @@ func NewTestConfig() *Config {
 
 	c.DropTables()
 
+	// Make sure changes have been written to disk.
+	time.Sleep(250*time.Millisecond)
+
 	c.MigrateDb()
 
+	// Make sure changes have been written to disk.
+	time.Sleep(250*time.Millisecond)
+
+	entity.CreateTestFixtures(c.Db())
+
+	// TODO: Remove when new test fixtures are ready
 	c.ImportSQL(c.ExamplesPath() + "/fixtures.sql")
 
 	thumb.JpegQuality = c.ThumbQuality()

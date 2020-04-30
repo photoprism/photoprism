@@ -59,33 +59,7 @@ func (c *Config) CloseDb() error {
 // MigrateDb will start a migration process.
 func (c *Config) MigrateDb() {
 	db := c.Db()
-
-	db.AutoMigrate(
-		&entity.Account{},
-		&entity.File{},
-		&entity.FileShare{},
-		&entity.FileSync{},
-		&entity.Photo{},
-		&entity.Description{},
-		&entity.Place{},
-		&entity.Location{},
-		&entity.Camera{},
-		&entity.Lens{},
-		&entity.Country{},
-		&entity.Album{},
-		&entity.PhotoAlbum{},
-		&entity.Label{},
-		&entity.Category{},
-		&entity.PhotoLabel{},
-		&entity.Keyword{},
-		&entity.PhotoKeyword{},
-		&entity.Link{},
-	)
-
-	entity.CreateUnknownPlace(db)
-	entity.CreateUnknownCountry(db)
-	entity.CreateUnknownCamera(db)
-	entity.CreateUnknownLens(db)
+	entity.Migrate(db)
 }
 
 // DropTables drops all tables in the currently configured database (be careful!).
@@ -98,27 +72,7 @@ func (c *Config) DropTables() {
 	db.SetLogger(log)
 	db.LogMode(false)
 
-	db.DropTableIfExists(
-		&entity.Account{},
-		&entity.File{},
-		&entity.FileShare{},
-		&entity.FileSync{},
-		&entity.Photo{},
-		&entity.Description{},
-		&entity.Place{},
-		&entity.Location{},
-		&entity.Camera{},
-		&entity.Lens{},
-		&entity.Country{},
-		&entity.Album{},
-		&entity.PhotoAlbum{},
-		&entity.Label{},
-		&entity.Category{},
-		&entity.PhotoLabel{},
-		&entity.Keyword{},
-		&entity.PhotoKeyword{},
-		&entity.Link{},
-	)
+	entity.DropTables(db)
 
 	log.SetLevel(logLevel)
 }

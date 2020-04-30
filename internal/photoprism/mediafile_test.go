@@ -253,13 +253,17 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 	t.Run("canon_eos_6d.dng", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		expectedBaseFilename := conf.ExamplesPath() + "/canon_eos_6d"
 
 		related, err := mediaFile.RelatedFiles(true)
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		assert.Len(t, related.Files, 3)
 
@@ -285,7 +289,9 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 
 		related, err := mediaFile.RelatedFiles(true)
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		assert.Len(t, related.Files, 3)
 
@@ -870,7 +876,11 @@ func TestMediaFile_IsVideo(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")
-		assert.Nil(t, err)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, true, mediaFile.IsPhoto())
 	})
 }
@@ -880,27 +890,59 @@ func TestMediaFile_Jpeg(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
-		assert.Nil(t, err)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		file, err := mediaFile.Jpeg()
-		assert.Nil(t, file)
+
+		if file != nil {
+			t.Fatal("file should be nil")
+		}
+
+		if err == nil {
+			t.Fatal("err should NOT be nil")
+		}
+
 		assert.Equal(t, "jpeg file does not exist: "+conf.ExamplesPath()+"/Random.jpg", err.Error())
 	})
 	t.Run("/ferriswheel_colorful.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/ferriswheel_colorful.jpg")
-		assert.Nil(t, err)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		file, err := mediaFile.Jpeg()
-		assert.Nil(t, err)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.FileExists(t, file.fileName)
 	})
 	t.Run("/iphone_7.json", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.json")
-		assert.Nil(t, err)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		file, err := mediaFile.Jpeg()
-		assert.Nil(t, file)
+
+		if file != nil {
+			t.Fatal("file should be nil")
+		}
+
+		if err == nil {
+			t.Fatal("err should NOT be nil")
+		}
+
 		assert.Equal(t, "jpeg file does not exist: "+conf.ExamplesPath()+"/iphone_7.jpg", err.Error())
 	})
 }

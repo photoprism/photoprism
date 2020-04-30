@@ -1,6 +1,7 @@
 package query
 
 import (
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -16,7 +17,10 @@ func TestQuery_LabelBySlug(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
 		label, err := q.LabelBySlug("flower")
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, "Flower", label.LabelName)
 	})
 
@@ -24,7 +28,7 @@ func TestQuery_LabelBySlug(t *testing.T) {
 		label, err := q.LabelBySlug("111")
 
 		assert.Error(t, err, "record not found")
-		t.Log(label)
+		assert.Empty(t, label.ID)
 	})
 }
 
@@ -36,7 +40,10 @@ func TestQuery_LabelByUUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
 		label, err := q.LabelByUUID("14")
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, "COW", label.LabelName)
 	})
 
@@ -44,7 +51,7 @@ func TestQuery_LabelByUUID(t *testing.T) {
 		label, err := q.LabelByUUID("111")
 
 		assert.Error(t, err, "record not found")
-		t.Log(label)
+		assert.Empty(t, label.ID)
 	})
 }
 
@@ -56,7 +63,10 @@ func TestQuery_LabelThumbBySlug(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
 		file, err := q.LabelThumbBySlug("flower")
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, "exampleFileName.jpg", file.FileName)
 	})
 
@@ -76,7 +86,10 @@ func TestQuery_LabelThumbByUUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
 		file, err := q.LabelThumbByUUID("13")
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, "exampleFileName.jpg", file.FileName)
 	})
 
@@ -90,44 +103,77 @@ func TestQuery_LabelThumbByUUID(t *testing.T) {
 
 func TestQuery_Labels(t *testing.T) {
 	conf := config.TestConfig()
-
 	q := New(conf.Db())
 
 	t.Run("search with query", func(t *testing.T) {
 		query := form.NewLabelSearch("Query:C Count:1005 Order:slug")
 		result, err := q.Labels(query)
 
-		assert.Nil(t, err)
-		assert.Equal(t, 2, len(result))
-		assert.Equal(t, "Cake", result[1].LabelName)
-		assert.Equal(t, "COW", result[0].LabelName)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("results: %+v", result)
+
+		assert.LessOrEqual(t, 2, len(result))
+
+		for _, r := range result {
+			assert.IsType(t, LabelResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.LabelName)
+			assert.NotEmpty(t, r.LabelSlug)
+			assert.NotEmpty(t, r.CustomSlug)
+
+			if fix, ok := entity.LabelFixtures[r.LabelSlug]; ok {
+				assert.Equal(t, fix.LabelName, r.LabelName)
+				assert.Equal(t, fix.LabelSlug, r.LabelSlug)
+				assert.Equal(t, fix.CustomSlug, r.CustomSlug)
+			}
+		}
 	})
 
 	t.Run("search for favorites", func(t *testing.T) {
 		query := form.NewLabelSearch("Favorites:true")
 		result, err := q.Labels(query)
 
-		assert.Nil(t, err)
-		assert.Equal(t, 2, len(result))
-		assert.Equal(t, "COW", result[1].LabelName)
-		assert.Equal(t, "Flower", result[0].LabelName)
-		assert.Equal(t, "cow", result[1].LabelSlug)
-		assert.Equal(t, "flower", result[0].LabelSlug)
-		assert.Equal(t, "kuh", result[1].CustomSlug)
-		assert.Equal(t, "flower", result[0].CustomSlug)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 2, len(result))
+
+		for _, r := range result {
+			assert.True(t, r.LabelFavorite)
+			assert.IsType(t, LabelResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.LabelName)
+			assert.NotEmpty(t, r.LabelSlug)
+			assert.NotEmpty(t, r.CustomSlug)
+
+			if fix, ok := entity.LabelFixtures[r.LabelSlug]; ok {
+				assert.Equal(t, fix.LabelName, r.LabelName)
+				assert.Equal(t, fix.LabelSlug, r.LabelSlug)
+				assert.Equal(t, fix.CustomSlug, r.CustomSlug)
+			}
+		}
 	})
 
 	t.Run("search with empty query", func(t *testing.T) {
 		query := form.NewLabelSearch("")
 		result, err := q.Labels(query)
-		assert.Nil(t, err)
-		assert.Equal(t, 3, len(result))
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 3, len(result))
 	})
 
 	t.Run("search with invalid query string", func(t *testing.T) {
 		query := form.NewLabelSearch("xxx:bla")
 		result, err := q.Labels(query)
+
 		assert.Error(t, err, "unknown filter")
-		t.Log(result)
+		assert.Empty(t, result)
 	})
 }

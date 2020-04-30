@@ -21,3 +21,58 @@ func logError(result *gorm.DB) {
 		log.Error(result.Error.Error())
 	}
 }
+
+// Migrate creates all tables and inserts default entities as needed.
+func Migrate(db *gorm.DB) {
+	db.AutoMigrate(
+		&Account{},
+		&File{},
+		&FileShare{},
+		&FileSync{},
+		&Photo{},
+		&Description{},
+		&Place{},
+		&Location{},
+		&Camera{},
+		&Lens{},
+		&Country{},
+		&Album{},
+		&PhotoAlbum{},
+		&Label{},
+		&Category{},
+		&PhotoLabel{},
+		&Keyword{},
+		&PhotoKeyword{},
+		&Link{},
+	)
+
+	CreateUnknownPlace(db)
+	CreateUnknownCountry(db)
+	CreateUnknownCamera(db)
+	CreateUnknownLens(db)
+}
+
+// DropTables drops database tables for all known entities.
+func DropTables(db *gorm.DB) {
+	db.DropTableIfExists(
+		&Account{},
+		&File{},
+		&FileShare{},
+		&FileSync{},
+		&Photo{},
+		&Description{},
+		&Place{},
+		&Location{},
+		&Camera{},
+		&Lens{},
+		&Country{},
+		&Album{},
+		&PhotoAlbum{},
+		&Label{},
+		&Category{},
+		&PhotoLabel{},
+		&Keyword{},
+		&PhotoKeyword{},
+		&Link{},
+	)
+}

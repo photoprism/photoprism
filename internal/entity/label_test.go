@@ -20,3 +20,17 @@ func TestNewLabel(t *testing.T) {
 		assert.Equal(t, -6, label.LabelPriority)
 	})
 }
+
+func TestLabel_SetName(t *testing.T) {
+	entity := LabelFixtures["landscape"]
+
+	assert.Equal(t, "Landscape", entity.LabelName)
+	assert.Equal(t, "landscape", entity.LabelSlug)
+	assert.Equal(t, "landscape", entity.CustomSlug)
+
+	entity.SetName("Landschaft")
+
+	assert.Equal(t, "Landschaft", entity.LabelName)
+	assert.Equal(t, "landscape", entity.LabelSlug)
+	assert.Equal(t, "landschaft", entity.CustomSlug)
+}
