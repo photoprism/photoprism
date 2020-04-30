@@ -93,6 +93,9 @@ acceptance-firefox:
 test-go:
 	$(info Running all Go unit tests...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...
+test-parallel:
+	$(info Running all Go unit tests in parallel mode...)
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./pkg/... ./internal/...
 test-verbose:
 	$(info Running all Go unit tests in verbose mode...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m -v ./pkg/... ./internal/...
