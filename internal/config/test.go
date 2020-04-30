@@ -10,7 +10,6 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -103,20 +102,7 @@ func NewTestConfig() *Config {
 		log.Fatalf("config: %s", err.Error())
 	}
 
-	c.DropTables()
-
-	// Make sure changes have been written to disk.
-	time.Sleep(250 * time.Millisecond)
-
-	c.InitDb()
-
-	// Make sure changes have been written to disk.
-	time.Sleep(250 * time.Millisecond)
-
-	entity.CreateTestFixtures()
-
-	// TODO: Remove when new test fixtures are ready
-	c.ImportSQL(c.ExamplesPath() + "/fixtures.sql")
+	c.ResetDb(true)
 
 	thumb.JpegQuality = c.ThumbQuality()
 	thumb.PreRenderSize = c.ThumbSize()

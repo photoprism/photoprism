@@ -10,6 +10,8 @@ https://github.com/photoprism/photoprism/wiki/Storage
 package entity
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/event"
 )
@@ -22,8 +24,8 @@ func logError(result *gorm.DB) {
 	}
 }
 
-// Migrate creates all tables and inserts default entities as needed.
-func Migrate() {
+// MigrateDb creates all tables and inserts default entities as needed.
+func MigrateDb() {
 	Db().AutoMigrate(
 		&Account{},
 		&File{},
@@ -53,8 +55,8 @@ func Migrate() {
 }
 
 // DropTables drops database tables for all known entities.
-func DropTables(db *gorm.DB) {
-	db.DropTableIfExists(
+func DropTables() {
+	Db().DropTableIfExists(
 		&Account{},
 		&File{},
 		&FileShare{},
@@ -75,4 +77,34 @@ func DropTables(db *gorm.DB) {
 		&PhotoKeyword{},
 		&Link{},
 	)
+}
+
+// ResetDb drops database tables for all known entities and re-creates them with fixtures.
+func ResetDb(testFixtures bool) {
+	DropTables()
+
+	// Make sure changes have been written to disk.
+	time.Sleep(100 * time.Millisecond)
+
+	MigrateDb()
+
+	if testFixtures {
+		// Make sure changes have been written to disk.
+		time.Sleep(100 * time.Millisecond)
+
+		CreateTestFixtures()
+	}
+}
+
+// InitTestDb connects to and completely initializes the test database incl fixtures.
+func InitTestDb(dsn string) *Gorm {
+	db := &Gorm{
+		Driver: "mysql",
+		Dsn:    dsn,
+	}
+
+	SetDbProvider(db)
+	ResetDb(true)
+
+	return db
 }

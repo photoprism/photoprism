@@ -58,12 +58,18 @@ func (c *Config) CloseDb() error {
 // InitDb will initialize the database connection and schema.
 func (c *Config) InitDb() {
 	entity.SetDbProvider(c)
-	entity.Migrate()
+	entity.MigrateDb()
 }
 
-// DropTables drops all tables in the currently configured database (be careful!).
-func (c *Config) DropTables() {
-	entity.DropTables(c.Db())
+// ResetDb drops all tables in the currently configured database and re-creates them.
+func (c *Config) ResetDb(testFixtures bool) {
+	entity.SetDbProvider(c)
+	entity.ResetDb(testFixtures)
+
+	// TODO: Remove when new test fixtures are ready
+	if testFixtures {
+		c.ImportSQL(c.ExamplesPath() + "/fixtures.sql")
+	}
 }
 
 // connectToDatabase establishes a database connection.
