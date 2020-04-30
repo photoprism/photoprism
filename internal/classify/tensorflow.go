@@ -131,9 +131,12 @@ func (t *TensorFlow) loadLabels(path string) error {
 	return nil
 }
 
+func (t *TensorFlow) ModelLoaded() bool {
+	return t.model != nil
+}
+
 func (t *TensorFlow) loadModel() error {
-	if t.model != nil {
-		// Already loaded
+	if t.ModelLoaded() {
 		return nil
 	}
 

@@ -2,6 +2,7 @@ package classify
 
 import (
 	"io/ioutil"
+	"sync"
 	"testing"
 
 	tensorflow "github.com/tensorflow/tensorflow/tensorflow/go"
@@ -12,33 +13,31 @@ import (
 var resourcesPath = "../../assets/resources"
 var modelPath = resourcesPath + "/nasnet"
 var examplesPath = resourcesPath + "/examples"
+var once sync.Once
+var testInstance *TensorFlow
 
-func TestTensorFlow_Init(t *testing.T) {
-	t.Run("disabled true", func(t *testing.T) {
-		tensorFlow := New(resourcesPath, true)
-
-		result := tensorFlow.Init()
-		assert.Nil(t, result)
+// NewTest returns a new TensorFlow test instance.
+func NewTest(t *testing.T) *TensorFlow {
+	once.Do(func() {
+		testInstance = New(resourcesPath, false)
+		if err := testInstance.loadModel(); err != nil {
+			t.Fatal(err)
+		}
 	})
-	t.Run("disabled false", func(t *testing.T) {
-		tensorFlow := New(resourcesPath, false)
 
-		result := tensorFlow.Init()
-		assert.Nil(t, result)
-	})
+	return testInstance
 }
 
 func TestTensorFlow_LabelsFromFile(t *testing.T) {
 	t.Run("chameleon_lime.jpg", func(t *testing.T) {
-		tensorFlow := New(resourcesPath, false)
+		tensorFlow := NewTest(t)
 
 		result, err := tensorFlow.File(examplesPath + "/chameleon_lime.jpg")
 
 		assert.Nil(t, err)
 
 		if err != nil {
-			t.Log(err.Error())
-			t.Fail()
+			t.Fatal(err)
 		}
 
 		assert.NotNil(t, result)
@@ -52,7 +51,7 @@ func TestTensorFlow_LabelsFromFile(t *testing.T) {
 		assert.Equal(t, 7, result[0].Uncertainty)
 	})
 	t.Run("not existing file", func(t *testing.T) {
-		tensorFlow := New(resourcesPath, false)
+		tensorFlow := NewTest(t)
 
 		result, err := tensorFlow.File(examplesPath + "/notexisting.jpg")
 		assert.Contains(t, err.Error(), "no such file or directory")
@@ -65,8 +64,7 @@ func TestTensorFlow_LabelsFromFile(t *testing.T) {
 		assert.Nil(t, err)
 
 		if err != nil {
-			t.Log(err.Error())
-			t.Fail()
+			t.Fatal(err)
 		}
 
 		assert.Nil(t, result)
@@ -83,7 +81,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 	}
 
 	t.Run("chameleon_lime.jpg", func(t *testing.T) {
-		tensorFlow := New(resourcesPath, false)
+		tensorFlow := NewTest(t)
 
 		if imageBuffer, err := ioutil.ReadFile(examplesPath + "/chameleon_lime.jpg"); err != nil {
 			t.Error(err)
@@ -94,7 +92,10 @@ func TestTensorFlow_Labels(t *testing.T) {
 
 			assert.NotNil(t, result)
 
-			assert.Nil(t, err)
+			if err != nil {
+				t.Fatal(err)
+			}
+
 			assert.IsType(t, Labels{}, result)
 			assert.Equal(t, 1, len(result))
 
@@ -104,7 +105,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 		}
 	})
 	t.Run("dog_orange.jpg", func(t *testing.T) {
-		tensorFlow := New(resourcesPath, false)
+		tensorFlow := NewTest(t)
 
 		if imageBuffer, err := ioutil.ReadFile(examplesPath + "/dog_orange.jpg"); err != nil {
 			t.Error(err)
@@ -115,7 +116,10 @@ func TestTensorFlow_Labels(t *testing.T) {
 
 			assert.NotNil(t, result)
 
-			assert.Nil(t, err)
+			if err != nil {
+				t.Fatal(err)
+			}
+
 			assert.IsType(t, Labels{}, result)
 			assert.Equal(t, 1, len(result))
 
@@ -125,25 +129,34 @@ func TestTensorFlow_Labels(t *testing.T) {
 		}
 	})
 	t.Run("Random.docx", func(t *testing.T) {
-		tensorFlow := New(resourcesPath, false)
+		tensorFlow := NewTest(t)
 
 		if imageBuffer, err := ioutil.ReadFile(examplesPath + "/Random.docx"); err != nil {
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Labels(imageBuffer)
 			assert.Empty(t, result)
-			assert.Contains(t, err.Error(), "invalid image")
+
+			if err != nil {
+				assert.Contains(t, err.Error(), "invalid image")
+			} else {
+				t.Fatal("err should NOT be nil")
+			}
 		}
 	})
 	t.Run("6720px_white.jpg", func(t *testing.T) {
-		tensorFlow := New(resourcesPath, false)
+		tensorFlow := NewTest(t)
 
 		if imageBuffer, err := ioutil.ReadFile(examplesPath + "/6720px_white.jpg"); err != nil {
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Labels(imageBuffer)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
 			assert.Empty(t, result)
-			assert.Nil(t, err)
 		}
 	})
 	t.Run("disabled true", func(t *testing.T) {
@@ -166,22 +179,17 @@ func TestTensorFlow_Labels(t *testing.T) {
 }
 
 func TestTensorFlow_LoadModel(t *testing.T) {
-	t.Run("model path exists", func(t *testing.T) {
-		tensorFlow := New(resourcesPath, false)
-
-		result := tensorFlow.loadModel()
-		assert.Nil(t, result)
+	t.Run("model loaded", func(t *testing.T) {
+		tf := NewTest(t)
+		assert.True(t, tf.ModelLoaded())
 	})
 	t.Run("model path does not exist", func(t *testing.T) {
 		tensorFlow := New(resourcesPath+"foo", false)
-
-		err := tensorFlow.loadModel()
-
-		if err == nil {
-			t.FailNow()
+		if err := tensorFlow.loadModel(); err != nil {
+			assert.Contains(t, err.Error(), "Could not find SavedModel")
+		} else {
+			t.Fatal("err should NOT be nil")
 		}
-
-		assert.Contains(t, err.Error(), "Could not find SavedModel")
 	})
 }
 
@@ -198,7 +206,10 @@ func TestTensorFlow_BestLabels(t *testing.T) {
 	})
 	t.Run("labels loaded", func(t *testing.T) {
 		tensorFlow := New(resourcesPath, false)
-		tensorFlow.loadLabels(modelPath)
+
+		if err := tensorFlow.loadLabels(modelPath); err != nil {
+			t.Fatal(err)
+		}
 
 		p := make([]float32, 1000)
 
@@ -215,7 +226,7 @@ func TestTensorFlow_BestLabels(t *testing.T) {
 
 func TestTensorFlow_MakeTensor(t *testing.T) {
 	t.Run("cat_brown.jpg", func(t *testing.T) {
-		tensorFlow := New(resourcesPath, false)
+		tensorFlow := NewTest(t)
 
 		imageBuffer, err := ioutil.ReadFile(examplesPath + "/cat_brown.jpg")
 		assert.Nil(t, err)
@@ -225,7 +236,7 @@ func TestTensorFlow_MakeTensor(t *testing.T) {
 		assert.Equal(t, int64(224), result.Shape()[2])
 	})
 	t.Run("Random.docx", func(t *testing.T) {
-		tensorFlow := New(resourcesPath, false)
+		tensorFlow := NewTest(t)
 
 		imageBuffer, err := ioutil.ReadFile(examplesPath + "/Random.docx")
 		assert.Nil(t, err)
