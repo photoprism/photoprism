@@ -3,10 +3,10 @@
         <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="fileName">Importing {{fileName}}...</span>
-                    <span v-else-if="busy">Importing files from import folder...</span>
-                    <span v-else-if="completed">Done.</span>
-                    <span v-else>Press button to import photos...</span>
+                    <span v-if="fileName"><translate>Importing</translate> {{fileName}}...</span>
+                    <span v-else-if="busy"><translate>Importing files from import folder...</translate></span>
+                    <span v-else-if="completed"><translate>Done.</translate></span>
+                    <span v-else><translate>Press button to import photos...</translate></span>
                 </p>
 
                 <p class="options">
@@ -22,8 +22,7 @@
                                 v-model="options.move"
                                 color="secondary-dark"
                                 :label="labels.move"
-                                hint="Move files from import to originals to save storage.
-                                    Unsupported file types will never be deleted, they remain in their current location."
+                                :hint="hints.move"
                                 prepend-icon="delete"
                                 persistent-hint
                         >
@@ -31,11 +30,11 @@
                     </v-flex>
                     <v-flex xs12 class="px-2 pb-2 pt-2">
                         <p class="body-1 pt-2">
-                            Imported files will be sorted by date
-                            and given a unique name to avoid duplicates.
-                            JPEGs and thumbnails are automatically rendered as needed.
-                            Original file names will be stored and indexed.
-                            Note that you can as well manage and re-index your originals manually.
+                            <translate>Imported files will be sorted by date
+                                and given a unique name to avoid duplicates.</translate>
+                            <translate>JPEGs and thumbnails are automatically rendered as needed.</translate>
+                            <translate>Original file names will be stored and indexed.</translate>
+                                <translate>Note that you can as well manage and re-index your originals manually.</translate>
                         </p>
                     </v-flex>
                 </v-layout>
@@ -99,6 +98,9 @@
                 },
                 labels: {
                     move: this.$gettext("Remove imported files"),
+                },
+                hints: {
+                    move: this.$gettext("Move files from import to originals to save storage. Unsupported file types will never be deleted, they remain in their current location."),
                 }
             }
         },

@@ -4,9 +4,9 @@
             <v-container fluid>
                 <p class="subheading">
                     <span v-if="fileName">{{ action }} {{ fileName }}...</span>
-                    <span v-else-if="busy">Indexing photos and sidecar files...</span>
-                    <span v-else-if="completed">Done.</span>
-                    <span v-else>Press button to start indexing...</span>
+                    <span v-else-if="busy"><translate>Indexing photos and sidecar files...</translate></span>
+                    <span v-else-if="completed"><translate>Done.</translate></span>
+                    <span v-else><translate>Press button to start indexing...</translate></span>
                 </p>
 
                 <p class="options">
@@ -23,7 +23,7 @@
                                 v-model="settings.library.raw"
                                 color="secondary-dark"
                                 :label="labels.raw"
-                                hint="RAWs need to be converted to JPEG so that they can be displayed in a browser. You can also do this manually."
+                                :hint="hints.raw"
                                 prepend-icon="photo_camera"
                                 persistent-hint
                         >
@@ -38,7 +38,7 @@
                                 v-model="settings.library.thumbs"
                                 color="secondary-dark"
                                 :label="labels.thumbs"
-                                hint="Pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."
+                                :hint="hints.thumbs"
                                 prepend-icon="photo_size_select_large"
                                 persistent-hint
                         >
@@ -53,7 +53,7 @@
                                 v-model="settings.library.rescan"
                                 color="secondary-dark"
                                 :label="labels.rescan"
-                                hint="Re-index all originals, including already indexed and unchanged files."
+                                :hint="hints.rescan"
                                 prepend-icon="cached"
                                 persistent-hint
                         >
@@ -110,6 +110,11 @@
                     rescan: this.$gettext("Complete rescan"),
                     thumbs: this.$gettext("Create thumbnails"),
                     raw: this.$gettext("Convert RAW files"),
+                },
+                hints: {
+                    rescan: this.$gettext("Re-index all originals, including already indexed and unchanged files."),
+                    thumbs: this.$gettext("Pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."),
+                    raw: this.$gettext("RAWs need to be converted to JPEG so that they can be displayed in a browser. You can also do this manually."),
                 }
             }
         },
