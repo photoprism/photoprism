@@ -13,7 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/tidb"
-	"github.com/sirupsen/logrus"
 )
 
 // DatabaseDriver returns the database driver name.
@@ -65,16 +64,7 @@ func (c *Config) MigrateDb() {
 // DropTables drops all tables in the currently configured database (be careful!).
 func (c *Config) DropTables() {
 	db := c.Db()
-
-	logLevel := log.Level
-
-	log.SetLevel(logrus.FatalLevel)
-	db.SetLogger(log)
-	db.LogMode(false)
-
 	entity.DropTables(db)
-
-	log.SetLevel(logLevel)
 }
 
 // connectToDatabase establishes a database connection.
@@ -163,10 +153,6 @@ func (c *Config) ImportSQL(filename string) {
 
 		var result struct{}
 
-		err := q.Raw(stmt).Scan(&result).Error
-
-		if err != nil {
-			log.Error(err)
-		}
+		q.Raw(stmt).Scan(&result)
 	}
 }

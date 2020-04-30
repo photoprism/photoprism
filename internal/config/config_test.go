@@ -336,15 +336,6 @@ func TestConfig_HttpStaticBuildPath(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/static/build", path)
 }
 
-func TestConfig_CloseDb(t *testing.T) {
-	c := NewTestConfig()
-
-	assert.NotNil(t, c.Db())
-
-	err := c.CloseDb()
-	assert.Nil(t, err)
-}
-
 func TestConfig_ClientConfig(t *testing.T) {
 	c := TestConfig()
 
@@ -360,11 +351,6 @@ func TestConfig_ClientConfig(t *testing.T) {
 	assert.Contains(t, cc, "thumbnails")
 	assert.Contains(t, cc, "jsHash")
 	assert.Contains(t, cc, "cssHash")
-}
-
-func TestConfig_Shutdown(t *testing.T) {
-	c := NewTestConfig()
-	c.Shutdown()
 }
 
 func TestConfig_Workers(t *testing.T) {

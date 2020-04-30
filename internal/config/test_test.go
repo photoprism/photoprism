@@ -16,9 +16,10 @@ func TestTestCliContext(t *testing.T) {
 }
 
 func TestTestConfig(t *testing.T) {
-	result := TestConfig()
+	c := TestConfig()
 
-	assert.IsType(t, new(Config), result)
+	assert.IsType(t, new(Config), c)
+	assert.IsType(t, &gorm.DB{}, c.Db())
 }
 
 func TestNewTestParams(t *testing.T) {
@@ -27,15 +28,7 @@ func TestNewTestParams(t *testing.T) {
 	assert.IsType(t, new(Params), c)
 
 	assert.Equal(t, fs.Abs("../../assets"), c.AssetsPath)
-	assert.False(t, c.Debug)
-}
-
-func TestNewTestConfig(t *testing.T) {
-	c := NewTestConfig()
-
-	db := c.Db()
-
-	assert.IsType(t, &gorm.DB{}, db)
+	assert.True(t, c.Debug)
 }
 
 func TestNewTestParamsError(t *testing.T) {

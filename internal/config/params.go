@@ -123,8 +123,12 @@ func (c *Params) expandFilenames() {
 
 // Load uses a yaml config file to initiate the configuration entity.
 func (c *Params) Load(fileName string) error {
+	if fileName == "" {
+		return nil
+	}
+
 	if !fs.FileExists(fileName) {
-		return errors.New(fmt.Sprintf("config file not found: \"%s\"", fileName))
+		return errors.New(fmt.Sprintf("config: %s not found", fileName))
 	}
 
 	yamlConfig, err := ioutil.ReadFile(fileName)

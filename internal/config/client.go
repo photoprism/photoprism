@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -105,6 +106,8 @@ func (c *Config) PublicClientConfig() ClientConfig {
 
 // ClientConfig returns a loaded and set configuration entity.
 func (c *Config) ClientConfig() ClientConfig {
+	defer log.Debug(capture.Time(time.Now(), "config: client config created"))
+
 	db := c.Db()
 
 	var cameras []*entity.Camera

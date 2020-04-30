@@ -13,8 +13,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -40,11 +40,13 @@ func NewTestParams() *Params {
 	testDataPath := testDataPath(assetsPath)
 
 	c := &Params{
+		Debug:          true,
 		Public:         true,
 		ReadOnly:       false,
 		DetectNSFW:     true,
 		UploadNSFW:     false,
 		DarktableBin:   "/usr/bin/darktable-cli",
+		ExifToolBin:    "/usr/bin/exiftool",
 		AssetsPath:     assetsPath,
 		CachePath:      testDataPath + "/cache",
 		OriginalsPath:  testDataPath + "/originals",
@@ -90,27 +92,27 @@ func TestConfig() *Config {
 
 // NewTestConfig inits valid config used for testing
 func NewTestConfig() *Config {
+	defer log.Debug(capture.Time(time.Now(), "config: new test config created"))
+
 	testConfigMutex.Lock()
 	defer testConfigMutex.Unlock()
 
-	log.SetLevel(logrus.DebugLevel)
-
 	c := &Config{params: NewTestParams()}
 	c.initSettings()
-	err := c.Init(context.Background())
-	if err != nil {
-		log.Fatalf("failed init config: %v", err)
+
+	if err := c.Init(context.Background()); err != nil {
+		log.Fatalf("config: %s", err.Error())
 	}
 
 	c.DropTables()
 
 	// Make sure changes have been written to disk.
-	time.Sleep(250*time.Millisecond)
+	time.Sleep(250 * time.Millisecond)
 
 	c.MigrateDb()
 
 	// Make sure changes have been written to disk.
-	time.Sleep(250*time.Millisecond)
+	time.Sleep(250 * time.Millisecond)
 
 	entity.CreateTestFixtures(c.Db())
 
@@ -127,12 +129,10 @@ func NewTestConfig() *Config {
 
 // NewTestErrorConfig inits invalid config used for testing
 func NewTestErrorConfig() *Config {
-	log.SetLevel(logrus.DebugLevel)
-
 	c := &Config{params: NewTestParamsError()}
 	err := c.Init(context.Background())
 	if err != nil {
-		log.Fatalf("failed init config: %v", err)
+		log.Fatalf("config: %s", err.Error())
 	}
 
 	c.MigrateDb()
@@ -159,24 +159,24 @@ func CliTestContext() *cli.Context {
 
 	c := cli.NewContext(app, globalSet, nil)
 
-	c.Set("config-file", config.ConfigFile)
-	c.Set("assets-path", config.AssetsPath)
-	c.Set("originals-path", config.OriginalsPath)
-	c.Set("import-path", config.ImportPath)
-	c.Set("temp-path", config.TempPath)
-	c.Set("cache-path", config.CachePath)
-	c.Set("darktable-cli", config.DarktableBin)
-	c.Set("detect-nsfw", "true")
+	LogError(c.Set("config-file", config.ConfigFile))
+	LogError(c.Set("assets-path", config.AssetsPath))
+	LogError(c.Set("originals-path", config.OriginalsPath))
+	LogError(c.Set("import-path", config.ImportPath))
+	LogError(c.Set("temp-path", config.TempPath))
+	LogError(c.Set("cache-path", config.CachePath))
+	LogError(c.Set("darktable-cli", config.DarktableBin))
+	LogError(c.Set("detect-nsfw", "true"))
 
 	return c
 }
 
 // RemoveTestData deletes files in import, export, originals and cache folders
 func (c *Config) RemoveTestData(t *testing.T) {
-	os.RemoveAll(c.ImportPath())
-	os.RemoveAll(c.TempPath())
-	os.RemoveAll(c.OriginalsPath())
-	os.RemoveAll(c.CachePath())
+	LogError(os.RemoveAll(c.ImportPath()))
+	LogError(os.RemoveAll(c.TempPath()))
+	LogError(os.RemoveAll(c.OriginalsPath()))
+	LogError(os.RemoveAll(c.CachePath()))
 }
 
 // DownloadTestData downloads test data from photoprism.org server
@@ -185,7 +185,7 @@ func (c *Config) DownloadTestData(t *testing.T) {
 		hash := fs.Hash(TestDataZip)
 
 		if hash != TestDataHash {
-			os.Remove(TestDataZip)
+			LogError(os.Remove(TestDataZip))
 			t.Logf("removed outdated test data zip file (fingerprint %s)\n", hash)
 		}
 	}

@@ -10,3 +10,9 @@ var (
 	ErrUnauthorized = errors.New("please log in and try again")
 	ErrUploadNSFW   = errors.New("upload might be offensive")
 )
+
+func LogError(err error) {
+	if err != nil {
+		log.Errorf("config: %s", err.Error())
+	}
+}
