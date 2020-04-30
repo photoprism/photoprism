@@ -73,7 +73,7 @@ func (m *Album) SetName(name string) {
 }
 
 // Save updates the entity using form data and stores it in the database.
-func (m *Album) Save(f form.Album, db *gorm.DB) error {
+func (m *Album) Save(f form.Album) error {
 	if err := deepcopier.Copy(m).From(f); err != nil {
 		return err
 	}
@@ -82,5 +82,5 @@ func (m *Album) Save(f form.Album, db *gorm.DB) error {
 		m.SetName(f.AlbumName)
 	}
 
-	return db.Save(m).Error
+	return Db().Save(m).Error
 }

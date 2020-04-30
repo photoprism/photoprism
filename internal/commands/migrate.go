@@ -28,7 +28,7 @@ func migrateAction(ctx *cli.Context) error {
 
 	log.Infoln("migrating database")
 
-	conf.MigrateDb()
+	conf.InitDb()
 
 	elapsed := time.Since(start)
 

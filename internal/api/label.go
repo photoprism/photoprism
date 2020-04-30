@@ -13,7 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -29,7 +29,7 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 
 		var f form.LabelSearch
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -67,7 +67,7 @@ func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.Db())
+		q := service.Query()
 
 		m, err := q.LabelByUUID(id)
 
@@ -99,7 +99,7 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.Db())
+		q := service.Query()
 
 		label, err := q.LabelByUUID(id)
 
@@ -135,7 +135,7 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.Db())
+		q := service.Query()
 
 		label, err := q.LabelByUUID(id)
 
@@ -180,7 +180,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.Db())
+		q := service.Query()
 
 		gc := conf.Cache()
 		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", labelUUID, typeName)

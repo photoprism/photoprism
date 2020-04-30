@@ -5,6 +5,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/session"
 )
 
@@ -18,6 +19,7 @@ var services struct {
 	Resample *photoprism.Resample
 	Classify *classify.TensorFlow
 	Session  *session.Session
+	Query    *query.Query
 }
 
 func SetConfig(c *config.Config) {

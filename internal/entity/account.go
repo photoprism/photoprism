@@ -5,7 +5,6 @@ import (
 	"sort"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/remote"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
@@ -52,7 +51,7 @@ type Account struct {
 }
 
 // CreateAccount creates a new account entity in the database.
-func CreateAccount(form form.Account, db *gorm.DB) (model *Account, err error) {
+func CreateAccount(form form.Account) (model *Account, err error) {
 	model = &Account{
 		ShareSize:    "",
 		ShareExpires: 0,
@@ -60,13 +59,15 @@ func CreateAccount(form form.Account, db *gorm.DB) (model *Account, err error) {
 		SyncStatus:   AccountSyncStatusRefresh,
 	}
 
-	err = model.Save(form, db)
+	err = model.Save(form)
 
 	return model, err
 }
 
 // Save updates the entity using form data and stores it in the database.
-func (m *Account) Save(form form.Account, db *gorm.DB) error {
+func (m *Account) Save(form form.Account) error {
+	db := Db()
+
 	if err := deepcopier.Copy(m).From(form); err != nil {
 		return err
 	}
@@ -95,8 +96,8 @@ func (m *Account) Save(form form.Account, db *gorm.DB) error {
 }
 
 // Delete deletes the entity from the database.
-func (m *Account) Delete(db *gorm.DB) error {
-	return db.Delete(m).Error
+func (m *Account) Delete() error {
+	return Db().Delete(m).Error
 }
 
 // Directories returns a list of directories or albums in an account.

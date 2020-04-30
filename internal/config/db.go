@@ -36,7 +36,7 @@ func (c *Config) DatabaseDsn() string {
 // Db returns the db connection.
 func (c *Config) Db() *gorm.DB {
 	if c.db == nil {
-		log.Fatal("config: database not initialised")
+		log.Fatal("config: database not connected")
 	}
 
 	return c.db
@@ -55,16 +55,15 @@ func (c *Config) CloseDb() error {
 	return nil
 }
 
-// MigrateDb will start a migration process.
-func (c *Config) MigrateDb() {
-	db := c.Db()
-	entity.Migrate(db)
+// InitDb will initialize the database connection and schema.
+func (c *Config) InitDb() {
+	entity.SetDbProvider(c)
+	entity.Migrate()
 }
 
 // DropTables drops all tables in the currently configured database (be careful!).
 func (c *Config) DropTables() {
-	db := c.Db()
-	entity.DropTables(db)
+	entity.DropTables(c.Db())
 }
 
 // connectToDatabase establishes a database connection.
@@ -99,11 +98,11 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 			log.Infof("starting database server at %s:%d\n", c.TidbServerHost(), c.TidbServerPort())
 
 			go tidb.Start(ctx, c.TidbServerPath(), c.TidbServerPort(), c.TidbServerHost(), c.Debug())
+
+			time.Sleep(2 * time.Second)
 		}
 
 		for i := 1; i <= 12; i++ {
-			time.Sleep(5 * time.Second)
-
 			db, err = gorm.Open(dbDriver, dbDsn)
 
 			if db != nil && err == nil {
@@ -119,6 +118,8 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 					initSuccess = true
 				}
 			}
+
+			time.Sleep(5 * time.Second)
 		}
 
 		if err != nil || db == nil {

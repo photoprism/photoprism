@@ -193,8 +193,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		if photo.CameraSrc == entity.SrcAuto && (fileChanged || o.UpdateCamera) {
 			// Set UpdateCamera, Lens, Focal Length and F Number
-			photo.Camera = entity.NewCamera(m.CameraModel(), m.CameraMake()).FirstOrCreate(ind.db)
-			photo.Lens = entity.NewLens(m.LensModel(), m.LensMake()).FirstOrCreate(ind.db)
+			photo.Camera = entity.NewCamera(m.CameraModel(), m.CameraMake()).FirstOrCreate()
+			photo.Lens = entity.NewLens(m.LensModel(), m.LensMake()).FirstOrCreate()
 			photo.PhotoFocalLength = m.FocalLength()
 			photo.PhotoFNumber = m.FNumber()
 			photo.PhotoIso = m.Iso()
@@ -208,7 +208,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if fileChanged || o.UpdateKeywords || o.UpdateLocation || o.UpdateTitle || photo.NoTitle() {
 			if photo.HasLatLng() {
 				var locLabels classify.Labels
-				locKeywords, locLabels = photo.UpdateLocation(ind.db, ind.conf.GeoCodingApi())
+				locKeywords, locLabels = photo.UpdateLocation(ind.conf.GeoCodingApi())
 				labels = append(labels, locLabels...)
 			} else {
 				log.Info("index: no latitude and longitude in metadata")
@@ -326,7 +326,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		event.EntitiesCreated("photos", []entity.Photo{photo})
 	}
 
-	photo.AddLabels(labels, ind.db)
+	photo.AddLabels(labels)
 
 	file.PhotoID = photo.ID
 	result.PhotoID = photo.ID
@@ -370,7 +370,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			return result
 		}
 
-		if err := photo.IndexKeywords(ind.db); err != nil {
+		if err := photo.IndexKeywords(); err != nil {
 			log.Warnf("%s (%s)", err.Error(), photo.PhotoUUID)
 		}
 	} else {

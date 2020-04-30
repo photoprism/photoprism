@@ -62,7 +62,7 @@ func (s *Sync) refresh(a entity.Account) (complete bool, err error) {
 				}
 			}
 
-			f.FirstOrCreate(db)
+			f.FirstOrCreate()
 
 			if f.Status == entity.FileSyncIgnore && mediaType == fs.MediaRaw && a.SyncRaw {
 				f.Status = entity.FileSyncNew

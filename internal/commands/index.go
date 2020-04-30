@@ -42,7 +42,7 @@ func indexAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.MigrateDb()
+	conf.InitDb()
 	log.Infof("indexing photos in %s", conf.OriginalsPath())
 
 	if conf.ReadOnly() {

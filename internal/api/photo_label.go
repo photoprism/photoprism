@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -24,7 +25,7 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		m, err := q.PhotoByUUID(c.Param("uuid"))
 		db := conf.Db()
 
@@ -40,7 +41,7 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		lm := entity.NewLabel(f.LabelName, f.LabelPriority).FirstOrCreate(db)
+		lm := entity.NewLabel(f.LabelName, f.LabelPriority).FirstOrCreate()
 
 		if lm.New && f.LabelPriority >= 0 {
 			event.Publish("count.labels", event.Data{
@@ -48,7 +49,7 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			})
 		}
 
-		plm := entity.NewPhotoLabel(m.ID, lm.ID, f.Uncertainty, "manual").FirstOrCreate(db)
+		plm := entity.NewPhotoLabel(m.ID, lm.ID, f.Uncertainty, "manual").FirstOrCreate()
 
 		if plm.Uncertainty > f.Uncertainty {
 			plm.Uncertainty = f.Uncertainty
@@ -68,7 +69,7 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := p.Save(db); err != nil {
+		if err := p.Save(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
@@ -130,7 +131,7 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := p.Save(db); err != nil {
+		if err := p.Save(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
@@ -185,7 +186,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := label.Save(db); err != nil {
+		if err := label.Save(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
@@ -197,7 +198,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := p.Save(db); err != nil {
+		if err := p.Save(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}

@@ -3,7 +3,6 @@ package entity
 import (
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/event"
 	"gopkg.in/ugjka/go-tz.v2/tz"
@@ -43,10 +42,10 @@ func (m *Photo) GetTakenAt() time.Time {
 }
 
 // UpdateLocation updates location and labels based on latitude and longitude.
-func (m *Photo) UpdateLocation(db *gorm.DB, geoApi string) (keywords []string, labels classify.Labels) {
+func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classify.Labels) {
 	var location = NewLocation(m.PhotoLat, m.PhotoLng)
 
-	err := location.Find(db, geoApi)
+	err := location.Find(geoApi)
 
 	if err == nil {
 		if location.Place.New {
@@ -66,7 +65,7 @@ func (m *Photo) UpdateLocation(db *gorm.DB, geoApi string) (keywords []string, l
 			m.TakenAt = m.GetTakenAt()
 		}
 
-		country := NewCountry(location.CountryCode(), location.CountryName()).FirstOrCreate(db)
+		country := NewCountry(location.CountryCode(), location.CountryName()).FirstOrCreate()
 
 		if country.New {
 			event.Publish("count.countries", event.Data{

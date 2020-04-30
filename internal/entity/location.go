@@ -4,7 +4,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -32,7 +31,9 @@ func NewLocation(lat, lng float32) *Location {
 }
 
 // Find gets the location using either the db or the api if not in the db
-func (m *Location) Find(db *gorm.DB, api string) error {
+func (m *Location) Find(api string) error {
+	db := Db()
+
 	if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err == nil {
 		return nil
 	}
@@ -45,7 +46,7 @@ func (m *Location) Find(db *gorm.DB, api string) error {
 		return err
 	}
 
-	if place := FindPlaceByLabel(l.S2Token(), l.Label(), db); place != nil {
+	if place := FindPlaceByLabel(l.S2Token(), l.Label()); place != nil {
 		m.Place = place
 	} else {
 		m.Place = &Place{

@@ -108,12 +108,12 @@ func NewTestConfig() *Config {
 	// Make sure changes have been written to disk.
 	time.Sleep(250 * time.Millisecond)
 
-	c.MigrateDb()
+	c.InitDb()
 
 	// Make sure changes have been written to disk.
 	time.Sleep(250 * time.Millisecond)
 
-	entity.CreateTestFixtures(c.Db())
+	entity.CreateTestFixtures()
 
 	// TODO: Remove when new test fixtures are ready
 	c.ImportSQL(c.ExamplesPath() + "/fixtures.sql")
@@ -134,7 +134,7 @@ func NewTestErrorConfig() *Config {
 		log.Fatalf("config: %s", err.Error())
 	}
 
-	c.MigrateDb()
+	c.InitDb()
 	return c
 }
 

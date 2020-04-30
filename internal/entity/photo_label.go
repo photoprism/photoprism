@@ -1,9 +1,7 @@
 package entity
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/classify"
-	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // PhotoLabel represents the many-to-many relation between Photo and label.
@@ -35,11 +33,8 @@ func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *Photo
 }
 
 // FirstOrCreate checks if the PhotoLabel relation already exist in the database before the creation
-func (m *PhotoLabel) FirstOrCreate(db *gorm.DB) *PhotoLabel {
-	mutex.Db.Lock()
-	defer mutex.Db.Unlock()
-
-	if err := db.FirstOrCreate(m, "photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).Error; err != nil {
+func (m *PhotoLabel) FirstOrCreate() *PhotoLabel {
+	if err := Db().FirstOrCreate(m, "photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).Error; err != nil {
 		log.Errorf("photo label: %s", err)
 	}
 
@@ -63,7 +58,7 @@ func (m *PhotoLabel) ClassifyLabel() classify.Label {
 }
 
 // Save saves the entity in the database and returns an error.
-func (m *PhotoLabel) Save(db *gorm.DB) error {
+func (m *PhotoLabel) Save() error {
 	if m.Photo != nil {
 		m.Photo = nil
 	}
@@ -72,5 +67,5 @@ func (m *PhotoLabel) Save(db *gorm.DB) error {
 		m.Label.SetName(m.Label.LabelName)
 	}
 
-	return db.Save(m).Error
+	return Db().Save(m).Error
 }

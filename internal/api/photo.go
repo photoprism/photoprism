@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -25,7 +26,7 @@ func GetPhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
@@ -74,7 +75,7 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		// 3) Save model with values from form
-		if err := entity.SavePhotoForm(m, f, db, conf.GeoCodingApi()); err != nil {
+		if err := entity.SavePhotoForm(m, f, conf.GeoCodingApi()); err != nil {
 			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
@@ -101,7 +102,7 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 //   uuid: string PhotoUUID as returned by the API
 func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/photos/:uuid/download", func(c *gin.Context) {
-		q := query.New(conf.Db())
+		q := service.Query()
 		f, err := q.FileByPhotoUUID(c.Param("uuid"))
 
 		if err != nil {
@@ -141,7 +142,7 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.Db())
+		q := service.Query()
 		m, err := q.PhotoByUUID(id)
 
 		if err != nil {
@@ -175,7 +176,7 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.Db())
+		q := service.Query()
 		m, err := q.PhotoByUUID(id)
 
 		if err != nil {

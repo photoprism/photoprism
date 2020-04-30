@@ -1,10 +1,5 @@
 package entity
 
-import (
-	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/mutex"
-)
-
 // Description stores additional metadata fields for each photo to improve search performance.
 type Description struct {
 	PhotoID          uint   `gorm:"primary_key;auto_increment:false"`
@@ -18,11 +13,8 @@ type Description struct {
 }
 
 // FirstOrCreate returns the matching entity or creates a new one.
-func (m *Description) FirstOrCreate(db *gorm.DB) error {
-	mutex.Db.Lock()
-	defer mutex.Db.Unlock()
-
-	return db.FirstOrCreate(m, "photo_id = ?", m.PhotoID).Error
+func (m *Description) FirstOrCreate() error {
+	return Db().FirstOrCreate(m, "photo_id = ?", m.PhotoID).Error
 }
 
 // NoDescription checks if the photo has no Description

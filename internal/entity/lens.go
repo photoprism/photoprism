@@ -5,8 +5,6 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
-	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // Lens represents camera lens (as extracted from UpdateExif metadata)
@@ -31,8 +29,8 @@ var UnknownLens = Lens{
 }
 
 // CreateUnknownLens initializes the database with an unknown lens if not exists
-func CreateUnknownLens(db *gorm.DB) {
-	UnknownLens.FirstOrCreate(db)
+func CreateUnknownLens() {
+	UnknownLens.FirstOrCreate()
 }
 
 // TableName returns Lens table identifier "lens"
@@ -60,11 +58,8 @@ func NewLens(modelName string, makeName string) *Lens {
 }
 
 // FirstOrCreate checks if the lens already exists in the database
-func (m *Lens) FirstOrCreate(db *gorm.DB) *Lens {
-	mutex.Db.Lock()
-	defer mutex.Db.Unlock()
-
-	if err := db.FirstOrCreate(m, "lens_slug = ?", m.LensSlug).Error; err != nil {
+func (m *Lens) FirstOrCreate() *Lens {
+	if err := Db().FirstOrCreate(m, "lens_slug = ?", m.LensSlug).Error; err != nil {
 		log.Errorf("lens: %s", err)
 	}
 

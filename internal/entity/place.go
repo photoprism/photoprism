@@ -5,7 +5,6 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
-	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // Place used to associate photos to places
@@ -36,8 +35,8 @@ var UnknownPlace = Place{
 }
 
 // CreateUnknownPlace initializes default place in the database
-func CreateUnknownPlace(db *gorm.DB) {
-	UnknownPlace.FirstOrCreate(db)
+func CreateUnknownPlace() {
+	UnknownPlace.FirstOrCreate()
 }
 
 // AfterCreate sets the New column used for database callback
@@ -46,10 +45,10 @@ func (m *Place) AfterCreate(scope *gorm.Scope) error {
 }
 
 // FindPlaceByLabel returns a place from an id or a label
-func FindPlaceByLabel(id string, label string, db *gorm.DB) *Place {
+func FindPlaceByLabel(id string, label string) *Place {
 	place := &Place{}
 
-	if err := db.First(place, "id = ? OR loc_label = ?", id, label).Error; err != nil {
+	if err := Db().First(place, "id = ? OR loc_label = ?", id, label).Error; err != nil {
 		log.Debugf("place: %s for id %s or label \"%s\"", err.Error(), id, label)
 		return nil
 	}
@@ -58,20 +57,17 @@ func FindPlaceByLabel(id string, label string, db *gorm.DB) *Place {
 }
 
 // Find returns db record of place
-func (m *Place) Find(db *gorm.DB) error {
-	if err := db.First(m, "id = ?", m.ID).Error; err != nil {
+func (m *Place) Find() error {
+	if err := Db().First(m, "id = ?", m.ID).Error; err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// FirstOrCreate checks wether the place already exists in the database
-func (m *Place) FirstOrCreate(db *gorm.DB) *Place {
-	mutex.Db.Lock()
-	defer mutex.Db.Unlock()
-
-	if err := db.FirstOrCreate(m, "id = ? OR loc_label = ?", m.ID, m.LocLabel).Error; err != nil {
+// FirstOrCreate checks if the place already exists in the database
+func (m *Place) FirstOrCreate() *Place {
+	if err := Db().FirstOrCreate(m, "id = ? OR loc_label = ?", m.ID, m.LocLabel).Error; err != nil {
 		log.Debugf("place: %s for token %s or label \"%s\"", err.Error(), m.ID, m.LocLabel)
 	}
 

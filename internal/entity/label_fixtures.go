@@ -2,8 +2,6 @@ package entity
 
 import (
 	"time"
-
-	"github.com/jinzhu/gorm"
 )
 
 var LabelFixtures = map[string]Label{
@@ -27,8 +25,8 @@ var LabelFixtures = map[string]Label{
 }
 
 // CreateLabelFixtures inserts known entities into the database for testing.
-func CreateLabelFixtures(db *gorm.DB) {
+func CreateLabelFixtures() {
 	for _, entity := range LabelFixtures {
-		db.Create(&entity)
+		Db().Create(&entity)
 	}
 }

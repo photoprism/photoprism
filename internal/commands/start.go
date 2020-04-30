@@ -80,7 +80,7 @@ func startAction(ctx *cli.Context) error {
 	}
 
 	// initialize the database
-	conf.MigrateDb()
+	conf.InitDb()
 
 	// check if daemon is running, if not initialize the daemon
 	dctx := new(daemon.Context)

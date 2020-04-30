@@ -4,7 +4,6 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
-	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // altCountryNames defines mapping between different names for the same countriy
@@ -34,8 +33,8 @@ var UnknownCountry = Country{
 }
 
 // CreateUnknownCountry is used to initialize the database with the default country
-func CreateUnknownCountry(db *gorm.DB) {
-	UnknownCountry.FirstOrCreate(db)
+func CreateUnknownCountry() {
+	UnknownCountry.FirstOrCreate()
 }
 
 // NewCountry creates a new country, with default country code if not provided
@@ -59,12 +58,9 @@ func NewCountry(countryCode string, countryName string) *Country {
 	return result
 }
 
-// FirstOrCreate checks wether the country exist already in the database (using countryCode)
-func (m *Country) FirstOrCreate(db *gorm.DB) *Country {
-	mutex.Db.Lock()
-	defer mutex.Db.Unlock()
-
-	if err := db.FirstOrCreate(m, "id = ?", m.ID).Error; err != nil {
+// FirstOrCreate checks if the country exist already in the database (using countryCode)
+func (m *Country) FirstOrCreate() *Country {
+	if err := Db().FirstOrCreate(m, "id = ?", m.ID).Error; err != nil {
 		log.Errorf("country: %s", err)
 	}
 

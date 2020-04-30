@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -21,7 +22,7 @@ func GetFile(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		p, err := q.FileByHash(c.Param("hash"))
 
 		if err != nil {

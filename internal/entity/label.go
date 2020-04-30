@@ -6,7 +6,6 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/classify"
-	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -62,11 +61,8 @@ func NewLabel(name string, priority int) *Label {
 }
 
 // FirstOrCreate checks if the label already exists in the database
-func (m *Label) FirstOrCreate(db *gorm.DB) *Label {
-	mutex.Db.Lock()
-	defer mutex.Db.Unlock()
-
-	if err := db.FirstOrCreate(m, "label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).Error; err != nil {
+func (m *Label) FirstOrCreate() *Label {
+	if err := Db().FirstOrCreate(m, "label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).Error; err != nil {
 		log.Errorf("label: %s", err)
 	}
 
@@ -91,8 +87,9 @@ func (m *Label) SetName(name string) {
 }
 
 // Updates a label if necessary
-func (m *Label) Update(label classify.Label, db *gorm.DB) error {
+func (m *Label) Update(label classify.Label) error {
 	save := false
+	db := Db()
 
 	if m.LabelPriority != label.Priority {
 		m.LabelPriority = label.Priority
@@ -120,7 +117,7 @@ func (m *Label) Update(label classify.Label, db *gorm.DB) error {
 
 	// Add categories
 	for _, category := range label.Categories {
-		sn := NewLabel(txt.Title(category), -3).FirstOrCreate(db)
+		sn := NewLabel(txt.Title(category), -3).FirstOrCreate()
 		if err := db.Model(m).Association("LabelCategories").Append(sn).Error; err != nil {
 			return err
 		}

@@ -1,10 +1,5 @@
 package entity
 
-import (
-	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/mutex"
-)
-
 // PhotoKeyword represents the many-to-many relation between Photo and Keyword
 type PhotoKeyword struct {
 	PhotoID   uint `gorm:"primary_key;auto_increment:false"`
@@ -26,12 +21,9 @@ func NewPhotoKeyword(photoID, keywordID uint) *PhotoKeyword {
 	return result
 }
 
-// FirstOrCreate checks wether the PhotoKeywords relation already exist in the database before the creation
-func (m *PhotoKeyword) FirstOrCreate(db *gorm.DB) *PhotoKeyword {
-	mutex.Db.Lock()
-	defer mutex.Db.Unlock()
-
-	if err := db.FirstOrCreate(m, "photo_id = ? AND keyword_id = ?", m.PhotoID, m.KeywordID).Error; err != nil {
+// FirstOrCreate checks if the PhotoKeywords relation already exist in the database before the creation
+func (m *PhotoKeyword) FirstOrCreate() *PhotoKeyword {
+	if err := Db().FirstOrCreate(m, "photo_id = ? AND keyword_id = ?", m.PhotoID, m.KeywordID).Error; err != nil {
 		log.Errorf("photo keyword: %s", err)
 	}
 

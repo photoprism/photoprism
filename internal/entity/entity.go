@@ -23,8 +23,8 @@ func logError(result *gorm.DB) {
 }
 
 // Migrate creates all tables and inserts default entities as needed.
-func Migrate(db *gorm.DB) {
-	db.AutoMigrate(
+func Migrate() {
+	Db().AutoMigrate(
 		&Account{},
 		&File{},
 		&FileShare{},
@@ -46,10 +46,10 @@ func Migrate(db *gorm.DB) {
 		&Link{},
 	)
 
-	CreateUnknownPlace(db)
-	CreateUnknownCountry(db)
-	CreateUnknownCamera(db)
-	CreateUnknownLens(db)
+	CreateUnknownPlace()
+	CreateUnknownCountry()
+	CreateUnknownCamera()
+	CreateUnknownLens()
 }
 
 // DropTables drops database tables for all known entities.

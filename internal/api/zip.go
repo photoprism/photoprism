@@ -12,7 +12,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -47,7 +47,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		files, err := q.FilesByUUID(f.Photos, 1000, 0)
 
 		if err != nil {

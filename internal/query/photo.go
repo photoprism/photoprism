@@ -452,7 +452,7 @@ func (q *Query) PreloadPhotoByUUID(photoUUID string) (photo entity.Photo, err er
 		return photo, err
 	}
 
-	photo.PreloadMany(q.db)
+	photo.PreloadMany()
 
 	return photo, nil
 }

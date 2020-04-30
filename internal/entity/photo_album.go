@@ -2,9 +2,6 @@ package entity
 
 import (
 	"time"
-
-	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // PhotoAlbum represents the many_to_many relation between Photo and Album
@@ -33,12 +30,9 @@ func NewPhotoAlbum(photoUUID, albumUUID string) *PhotoAlbum {
 	return result
 }
 
-// FirstOrCreate checks wether the PhotoAlbum relation already exist in the database before the creation
-func (m *PhotoAlbum) FirstOrCreate(db *gorm.DB) *PhotoAlbum {
-	mutex.Db.Lock()
-	defer mutex.Db.Unlock()
-
-	if err := db.FirstOrCreate(m, "photo_uuid = ? AND album_uuid = ?", m.PhotoUUID, m.AlbumUUID).Error; err != nil {
+// FirstOrCreate checks if the PhotoAlbum relation already exist in the database before the creation
+func (m *PhotoAlbum) FirstOrCreate() *PhotoAlbum {
+	if err := Db().FirstOrCreate(m, "photo_uuid = ? AND album_uuid = ?", m.PhotoUUID, m.AlbumUUID).Error; err != nil {
 		log.Errorf("photo album: %s", err)
 	}
 

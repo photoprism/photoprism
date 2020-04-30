@@ -1,7 +1,6 @@
 module github.com/photoprism/photoprism
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.3.3 // indirect
 	github.com/araddon/dateparse v0.0.0-20190622164848-0fb0a474d195
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/coreos/etcd v3.3.10+incompatible // indirect
@@ -55,11 +54,9 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/shopspring/decimal v0.0.0-20191130220710-360f2bc03045 // indirect
-	github.com/simplereach/timeutils v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.5.0
 	github.com/soheilhy/cmux v0.1.4 // indirect
 	github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72 // indirect
-	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.5.1
 	github.com/studio-b12/gowebdav v0.0.0-20200303150724-9380631c29a1
 	github.com/tensorflow/tensorflow v1.15.2
@@ -80,7 +77,6 @@ require (
 	golang.org/x/sys v0.0.0-20200331124033-c3d80250170d // indirect
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
 	golang.org/x/tools v0.0.0-20200401192744-099440627f01 // indirect
-	gopkg.in/mgo.v2 v2.0.0-20180705113604-9856a29383ce // indirect
 	gopkg.in/stretchr/testify.v1 v1.2.2 // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.8
 	gopkg.in/yaml.v2 v2.2.8

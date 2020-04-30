@@ -67,7 +67,8 @@ type Photo struct {
 }
 
 // SavePhotoForm updates a model using form data and persists it in the database.
-func SavePhotoForm(model Photo, form form.Photo, db *gorm.DB, geoApi string) error {
+func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
+	db := Db()
 	locChanged := model.PhotoLat != form.PhotoLat || model.PhotoLng != form.PhotoLng
 
 	if err := deepcopier.Copy(&model).From(form); err != nil {
@@ -83,9 +84,9 @@ func SavePhotoForm(model Photo, form form.Photo, db *gorm.DB, geoApi string) err
 	}
 
 	if model.HasLatLng() && locChanged && model.LocationSrc == SrcManual {
-		locKeywords, labels := model.UpdateLocation(db, geoApi)
+		locKeywords, labels := model.UpdateLocation(geoApi)
 
-		model.AddLabels(labels, db)
+		model.AddLabels(labels)
 
 		w := txt.UniqueKeywords(model.Description.PhotoKeywords)
 		w = append(w, locKeywords...)
@@ -97,7 +98,7 @@ func SavePhotoForm(model Photo, form form.Photo, db *gorm.DB, geoApi string) err
 		log.Warnf("%s (%s)", err.Error(), model.PhotoUUID)
 	}
 
-	if err := model.IndexKeywords(db); err != nil {
+	if err := model.IndexKeywords(); err != nil {
 		log.Warnf("%s (%s)", err.Error(), model.PhotoUUID)
 	}
 
@@ -109,7 +110,8 @@ func SavePhotoForm(model Photo, form form.Photo, db *gorm.DB, geoApi string) err
 }
 
 // Save stored the entity in the database.
-func (m *Photo) Save(db *gorm.DB) error {
+func (m *Photo) Save() error {
+	db := Db()
 	labels := m.ClassifyLabels()
 
 	if err := m.UpdateTitle(labels); err != nil {
@@ -122,7 +124,7 @@ func (m *Photo) Save(db *gorm.DB) error {
 		m.Description.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
 	}
 
-	if err := m.IndexKeywords(db); err != nil {
+	if err := m.IndexKeywords(); err != nil {
 		log.Error(err)
 	}
 
@@ -181,10 +183,12 @@ func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 }
 
 // IndexKeywords adds given keywords to the photo entry
-func (m *Photo) IndexKeywords(db *gorm.DB) error {
+func (m *Photo) IndexKeywords() error {
 	if !m.DescriptionLoaded() {
 		return fmt.Errorf("photo: can't index keywords, description not loaded (%s)", m.PhotoUUID)
 	}
+
+	db := Db()
 
 	var keywordIds []uint
 	var keywords []string
@@ -199,7 +203,7 @@ func (m *Photo) IndexKeywords(db *gorm.DB) error {
 	keywords = txt.UniqueWords(keywords)
 
 	for _, w := range keywords {
-		kw := NewKeyword(w).FirstOrCreate(db)
+		kw := NewKeyword(w).FirstOrCreate()
 
 		if kw.Skip {
 			continue
@@ -207,15 +211,15 @@ func (m *Photo) IndexKeywords(db *gorm.DB) error {
 
 		keywordIds = append(keywordIds, kw.ID)
 
-		NewPhotoKeyword(m.ID, kw.ID).FirstOrCreate(db)
+		NewPhotoKeyword(m.ID, kw.ID).FirstOrCreate()
 	}
 
 	return db.Where("photo_id = ? AND keyword_id NOT IN (?)", m.ID, keywordIds).Delete(&PhotoKeyword{}).Error
 }
 
 // PreloadFiles prepares gorm scope to retrieve photo file
-func (m *Photo) PreloadFiles(db *gorm.DB) {
-	q := db.NewScope(nil).DB().
+func (m *Photo) PreloadFiles() {
+	q := Db().NewScope(nil).DB().
 		Table("files").
 		Select(`files.*`).
 		Where("files.photo_id = ?", m.ID).
@@ -224,8 +228,8 @@ func (m *Photo) PreloadFiles(db *gorm.DB) {
 	logError(q.Scan(&m.Files))
 }
 
-/* func (m *Photo) PreloadLabels(db *gorm.DB) {
-	q := db.NewScope(nil).DB().
+/* func (m *Photo) PreloadLabels() {
+	q := Db().NewScope(nil).DB().
 		Table("labels").
 		Select(`labels.*`).
 		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = ?", m.ID).
@@ -236,8 +240,8 @@ func (m *Photo) PreloadFiles(db *gorm.DB) {
 } */
 
 // PreloadKeywords prepares gorm scope to retrieve photo keywords
-func (m *Photo) PreloadKeywords(db *gorm.DB) {
-	q := db.NewScope(nil).DB().
+func (m *Photo) PreloadKeywords() {
+	q := Db().NewScope(nil).DB().
 		Table("keywords").
 		Select(`keywords.*`).
 		Joins("JOIN photos_keywords ON photos_keywords.keyword_id = keywords.id AND photos_keywords.photo_id = ?", m.ID).
@@ -247,8 +251,8 @@ func (m *Photo) PreloadKeywords(db *gorm.DB) {
 }
 
 // PreloadAlbums prepares gorm scope to retrieve photo albums
-func (m *Photo) PreloadAlbums(db *gorm.DB) {
-	q := db.NewScope(nil).DB().
+func (m *Photo) PreloadAlbums() {
+	q := Db().NewScope(nil).DB().
 		Table("albums").
 		Select(`albums.*`).
 		Joins("JOIN photos_albums ON photos_albums.album_uuid = albums.album_uuid AND photos_albums.photo_uuid = ?", m.PhotoUUID).
@@ -259,11 +263,11 @@ func (m *Photo) PreloadAlbums(db *gorm.DB) {
 }
 
 // PreloadMany prepares gorm scope to retrieve photo file, albums and keywords
-func (m *Photo) PreloadMany(db *gorm.DB) {
-	m.PreloadFiles(db)
-	// m.PreloadLabels(db)
-	m.PreloadKeywords(db)
-	m.PreloadAlbums(db)
+func (m *Photo) PreloadMany() {
+	m.PreloadFiles()
+	// m.PreloadLabels()
+	m.PreloadKeywords()
+	m.PreloadAlbums()
 }
 
 // NoLocation checks if the photo has no location
@@ -369,10 +373,12 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 }
 
 // AddLabels updates the entity with additional or updated label information.
-func (m *Photo) AddLabels(labels classify.Labels, db *gorm.DB) {
+func (m *Photo) AddLabels(labels classify.Labels) {
+	db := Db()
+
 	// TODO: Update classify labels from database
 	for _, label := range labels {
-		lm := NewLabel(label.Title(), label.Priority).FirstOrCreate(db)
+		lm := NewLabel(label.Title(), label.Priority).FirstOrCreate()
 
 		if lm.New {
 			event.EntitiesCreated("labels", []*Label{lm})
@@ -384,11 +390,11 @@ func (m *Photo) AddLabels(labels classify.Labels, db *gorm.DB) {
 			}
 		}
 
-		if err := lm.Update(label, db); err != nil {
+		if err := lm.Update(label); err != nil {
 			log.Errorf("index: %s", err)
 		}
 
-		plm := NewPhotoLabel(m.ID, lm.ID, label.Uncertainty, label.Source).FirstOrCreate(db)
+		plm := NewPhotoLabel(m.ID, lm.ID, label.Uncertainty, label.Source).FirstOrCreate()
 
 		if plm.Uncertainty > label.Uncertainty && plm.Uncertainty > 100 {
 			plm.Uncertainty = label.Uncertainty

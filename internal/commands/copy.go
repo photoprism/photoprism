@@ -43,7 +43,7 @@ func copyAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.MigrateDb()
+	conf.InitDb()
 
 	// get cli first argument
 	sourcePath := strings.TrimSpace(ctx.Args().First())

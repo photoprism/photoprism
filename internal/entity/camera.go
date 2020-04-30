@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
-	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -32,8 +30,8 @@ var UnknownCamera = Camera{
 }
 
 // CreateUnknownCamera initializes the database with an unknown camera if not exists
-func CreateUnknownCamera(db *gorm.DB) {
-	UnknownCamera.FirstOrCreate(db)
+func CreateUnknownCamera() {
+	UnknownCamera.FirstOrCreate()
 }
 
 // NewCamera creates a camera entity from a model name and a make name.
@@ -64,10 +62,9 @@ func NewCamera(modelName string, makeName string) *Camera {
 	return result
 }
 
-// FirstOrCreate checks wether the camera model exist already in the database
-func (m *Camera) FirstOrCreate(db *gorm.DB) *Camera {
-	mutex.Db.Lock()
-	defer mutex.Db.Unlock()
+// FirstOrCreate checks if the camera model exist already in the database
+func (m *Camera) FirstOrCreate() *Camera {
+	db := Db()
 
 	if err := db.FirstOrCreate(m, "camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).Error; err != nil {
 		log.Errorf("camera: %s", err)

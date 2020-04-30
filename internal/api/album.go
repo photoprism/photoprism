@@ -14,7 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -35,7 +35,7 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 
 		var f form.AlbumSearch
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -61,7 +61,7 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 func GetAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums/:uuid", func(c *gin.Context) {
 		id := c.Param("uuid")
-		q := query.New(conf.Db())
+		q := service.Query()
 		m, err := q.AlbumByUUID(id)
 
 		if err != nil {
@@ -88,7 +88,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		m := entity.NewAlbum(f.AlbumName)
 		m.AlbumFavorite = f.AlbumFavorite
 
@@ -118,9 +118,8 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		db := conf.Db()
 		uuid := c.Param("uuid")
-		q := query.New(db)
+		q := service.Query()
 
 		m, err := q.AlbumByUUID(uuid)
 
@@ -143,7 +142,7 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := m.Save(f, conf.Db()); err != nil {
+		if err := m.Save(f); err != nil {
 			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
@@ -167,7 +166,7 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.Db())
+		q := service.Query()
 
 		m, err := q.AlbumByUUID(id)
 
@@ -199,7 +198,7 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.Db())
+		q := service.Query()
 
 		album, err := q.AlbumByUUID(id)
 
@@ -230,7 +229,7 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := query.New(conf.Db())
+		q := service.Query()
 		album, err := q.AlbumByUUID(id)
 
 		if err != nil {
@@ -264,7 +263,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		uuid := c.Param("uuid")
-		q := query.New(conf.Db())
+		q := service.Query()
 		a, err := q.AlbumByUUID(uuid)
 
 		if err != nil {
@@ -280,11 +279,10 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		db := conf.Db()
 		var added []*entity.PhotoAlbum
 
 		for _, p := range photos {
-			added = append(added, entity.NewPhotoAlbum(p.PhotoUUID, a.AlbumUUID).FirstOrCreate(db))
+			added = append(added, entity.NewPhotoAlbum(p.PhotoUUID, a.AlbumUUID).FirstOrCreate())
 		}
 
 		if len(added) == 1 {
@@ -320,7 +318,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		a, err := q.AlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
@@ -345,7 +343,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums/:uuid/download", func(c *gin.Context) {
 		start := time.Now()
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		a, err := q.AlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
@@ -446,7 +444,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.Db())
+		q := service.Query()
 
 		gc := conf.Cache()
 		cacheKey := fmt.Sprintf("album-thumbnail:%s:%s", uuid, typeName)

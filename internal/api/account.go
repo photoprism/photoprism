@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -25,7 +25,7 @@ func GetAccounts(router *gin.RouterGroup, conf *config.Config) {
 
 		var f form.AccountSearch
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -59,7 +59,7 @@ func GetAccount(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		id := ParseUint(c.Param("id"))
 
 		if m, err := q.AccountByID(id); err == nil {
@@ -81,7 +81,7 @@ func GetAccountDirs(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		id := ParseUint(c.Param("id"))
 
 		m, err := q.AccountByID(id)
@@ -114,7 +114,7 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		id := ParseUint(c.Param("id"))
 
 		m, err := q.AccountByID(id)
@@ -143,7 +143,7 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 			dstFileName := dst + "/" + file.ShareFileName()
 
 			fileShare := entity.NewFileShare(file.ID, m.ID, dstFileName)
-			fileShare.FirstOrCreate(conf.Db())
+			fileShare.FirstOrCreate()
 		}
 
 		workers.StartShare(conf)
@@ -173,7 +173,7 @@ func CreateAccount(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		m, err := entity.CreateAccount(f, conf.Db())
+		m, err := entity.CreateAccount(f)
 
 		log.Debugf("create account: %+v %+v", f, m)
 
@@ -202,7 +202,7 @@ func UpdateAccount(router *gin.RouterGroup, conf *config.Config) {
 
 		id := ParseUint(c.Param("id"))
 
-		q := query.New(conf.Db())
+		q := service.Query()
 
 		m, err := q.AccountByID(id)
 
@@ -228,7 +228,7 @@ func UpdateAccount(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		// 3) Save model with values from form
-		if err := m.Save(f, conf.Db()); err != nil {
+		if err := m.Save(f); err != nil {
 			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
@@ -259,7 +259,7 @@ func DeleteAccount(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := ParseUint(c.Param("id"))
-		q := query.New(conf.Db())
+		q := service.Query()
 
 		m, err := q.AccountByID(id)
 
@@ -268,7 +268,7 @@ func DeleteAccount(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := m.Delete(conf.Db()); err != nil {
+		if err := m.Delete(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, txt.UcFirst(err.Error()))
 			return
 		}

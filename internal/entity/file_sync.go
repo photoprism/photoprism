@@ -2,9 +2,6 @@ package entity
 
 import (
 	"time"
-
-	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 const (
@@ -48,11 +45,8 @@ func NewFileSync(accountID uint, remoteName string) *FileSync {
 }
 
 // FirstOrCreate returns the matching entity or creates a new one.
-func (m *FileSync) FirstOrCreate(db *gorm.DB) *FileSync {
-	mutex.Db.Lock()
-	defer mutex.Db.Unlock()
-
-	if err := db.FirstOrCreate(m, "account_id = ? AND remote_name = ?", m.AccountID, m.RemoteName).Error; err != nil {
+func (m *FileSync) FirstOrCreate() *FileSync {
+	if err := Db().FirstOrCreate(m, "account_id = ? AND remote_name = ?", m.AccountID, m.RemoteName).Error; err != nil {
 		log.Errorf("file sync: %s", err)
 	}
 

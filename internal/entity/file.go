@@ -52,10 +52,10 @@ type File struct {
 }
 
 // FirstFileByHash gets a file in db from its hash
-func FirstFileByHash(db *gorm.DB, fileHash string) (File, error) {
+func FirstFileByHash(fileHash string) (File, error) {
 	var file File
 
-	q := db.Unscoped().First(&file, "file_hash = ?", fileHash)
+	q := Db().Unscoped().First(&file, "file_hash = ?", fileHash)
 
 	return file, q.Error
 }

@@ -5,7 +5,7 @@ import (
 	"path"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +23,7 @@ func GetDownload(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/download/:hash", func(c *gin.Context) {
 		fileHash := c.Param("hash")
 
-		q := query.New(conf.Db())
+		q := service.Query()
 		f, err := q.FileByHash(fileHash)
 
 		if err != nil {

@@ -3,8 +3,6 @@ package entity
 import (
 	"strings"
 
-	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -26,12 +24,9 @@ func NewKeyword(keyword string) *Keyword {
 	return result
 }
 
-// FirstOrCreate checks wether the keyword already exist in the database
-func (m *Keyword) FirstOrCreate(db *gorm.DB) *Keyword {
-	mutex.Db.Lock()
-	defer mutex.Db.Unlock()
-
-	if err := db.FirstOrCreate(m, "keyword = ?", m.Keyword).Error; err != nil {
+// FirstOrCreate checks if the keyword already exist in the database
+func (m *Keyword) FirstOrCreate() *Keyword {
+	if err := Db().FirstOrCreate(m, "keyword = ?", m.Keyword).Error; err != nil {
 		log.Errorf("keyword: %s", err)
 	}
 

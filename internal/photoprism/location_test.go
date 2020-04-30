@@ -24,7 +24,7 @@ func TestMediaFile_Location(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err = location.Find(conf.Db(), "places"); err != nil {
+		if err = location.Find("places"); err != nil {
 			t.Fatal(err)
 		}
 
@@ -39,7 +39,7 @@ func TestMediaFile_Location(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err = location.Find(conf.Db(), "places"); err != nil {
+		if err = location.Find("places"); err != nil {
 			t.Fatal(err)
 		}
 
@@ -60,7 +60,7 @@ func TestMediaFile_Location(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err = location.Find(conf.Db(), "places"); err != nil {
+		if err = location.Find("places"); err != nil {
 			t.Fatal(err)
 		}
 
