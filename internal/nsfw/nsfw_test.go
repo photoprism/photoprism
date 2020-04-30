@@ -104,17 +104,25 @@ func TestIsSafe(t *testing.T) {
 func TestNSFW(t *testing.T) {
 	porn := Labels{0, 0, 0.11, 0.88, 0}
 	sexy := Labels{0, 0, 0.2, 0.59, 0.98}
+	max := Labels{0, 0.999, 0.1, 0.999, 0.999}
+	drawing := Labels{0.999, 0, 0, 0, 0}
 	hentai := Labels{0, 0.80, 0.2, 0, 0}
 
 	assert.Equal(t, true, porn.NSFW(ThresholdSafe))
 	assert.Equal(t, true, sexy.NSFW(ThresholdSafe))
 	assert.Equal(t, true, hentai.NSFW(ThresholdSafe))
+	assert.Equal(t, false, drawing.NSFW(ThresholdSafe))
+	assert.Equal(t, true, max.NSFW(ThresholdSafe))
 
 	assert.Equal(t, true, porn.NSFW(ThresholdMedium))
 	assert.Equal(t, true, sexy.NSFW(ThresholdMedium))
 	assert.Equal(t, false, hentai.NSFW(ThresholdMedium))
+	assert.Equal(t, false, drawing.NSFW(ThresholdMedium))
+	assert.Equal(t, true, max.NSFW(ThresholdMedium))
 
 	assert.Equal(t, false, porn.NSFW(ThresholdHigh))
 	assert.Equal(t, false, sexy.NSFW(ThresholdHigh))
 	assert.Equal(t, false, hentai.NSFW(ThresholdHigh))
+	assert.Equal(t, false, drawing.NSFW(ThresholdHigh))
+	assert.Equal(t, true, max.NSFW(ThresholdHigh))
 }
