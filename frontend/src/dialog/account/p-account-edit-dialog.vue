@@ -4,7 +4,7 @@
             <v-card-title primary-title>
                 <v-layout row wrap v-if="scope === 'sharing'">
                     <v-flex xs9>
-                        <h3 class="headline mb-0">Upload</h3>
+                        <h3 class="headline mb-0"><translate>Upload</translate></h3>
                     </v-flex>
                     <v-flex xs3 text-xs-right>
                         <v-switch
@@ -12,7 +12,7 @@
                                 color="secondary-dark"
                                 :true-value="true"
                                 :false-value="false"
-                                :label="model.AccShare ? 'enabled' : 'disabled'"
+                                :label="model.AccShare ? label.enable : label.disable"
                                 :disabled="model.AccType !== 'webdav'"
                                 class="mt-0 hidden-xs-only"
                                 hide-details
@@ -30,7 +30,7 @@
                 </v-layout>
                 <v-layout row wrap v-else-if="scope === 'sync'">
                     <v-flex xs9>
-                        <h3 class="headline mb-0">Remote Sync</h3>
+                        <h3 class="headline mb-0"><translate>Remote Sync</translate></h3>
                     </v-flex>
                     <v-flex xs3 text-xs-right>
                         <v-switch
@@ -38,7 +38,7 @@
                                 color="secondary-dark"
                                 :true-value="true"
                                 :false-value="false"
-                                :label="model.AccSync ? 'enabled' : 'disabled'"
+                                :label="model.AccSync ? label.enable : label.disable"
                                 :disabled="model.AccType !== 'webdav'"
                                 class="mt-0 hidden-xs-only"
                                 hide-details
@@ -56,7 +56,7 @@
                 </v-layout>
                 <v-layout row wrap v-else>
                     <v-flex xs10>
-                        <h3 class="headline mb-0">Edit Account</h3>
+                        <h3 class="headline mb-0"><translate>Edit Account</translate></h3>
                     </v-flex>
                     <v-flex xs2 text-xs-right>
                         <v-btn icon flat :ripple="false"
@@ -66,7 +66,7 @@
                         </v-btn>
                     </v-flex>
                 </v-layout>
-                <h3 class="headline mb-0" v-else>Edit Account</h3>
+                <h3 class="headline mb-0" v-else><translate>Edit Account</translate></h3>
             </v-card-title>
             <v-container fluid class="pt-0 pb-2 pr-2 pl-2">
                 <v-layout row wrap v-if="scope === 'sharing'">
