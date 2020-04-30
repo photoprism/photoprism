@@ -15,7 +15,7 @@ func TestMain(m *testing.M) {
 	log.Out = &logBuffer
 	log.SetLevel(logrus.DebugLevel)
 
-	db := InitTestDb("photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true")
+	db := InitTestDb(os.Getenv("PHOTOPRISM_TEST_DSN"))
 
 	code := m.Run()
 

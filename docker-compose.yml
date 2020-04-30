@@ -28,6 +28,7 @@ services:
       PHOTOPRISM_TIDB_PASSWORD: "photoprism"
       PHOTOPRISM_DATABASE_DRIVER: "tidb"
       PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
+      PHOTOPRISM_TEST_DSN: "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true"
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_CACHE_PATH: "/go/src/github.com/photoprism/photoprism/assets/cache"
       PHOTOPRISM_RESOURCES_PATH: "/go/src/github.com/photoprism/photoprism/assets/resources"
