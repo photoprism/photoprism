@@ -7,8 +7,8 @@ import (
 )
 
 func TestType_ExceedsLimit(t *testing.T) {
-	PreRenderSize    = 1024
-	MaxRenderSize    = 2048
+	PreRenderSize = 1024
+	MaxRenderSize = 2048
 
 	fit3840 := Types["fit_3840"]
 	assert.True(t, fit3840.ExceedsLimit())
@@ -19,13 +19,13 @@ func TestType_ExceedsLimit(t *testing.T) {
 	tile500 := Types["tile_500"]
 	assert.False(t, tile500.ExceedsLimit())
 
-	PreRenderSize    = 3840
-	MaxRenderSize    = 3840
+	PreRenderSize = 3840
+	MaxRenderSize = 3840
 }
 
 func TestType_SkipPreRender(t *testing.T) {
-	PreRenderSize    = 1024
-	MaxRenderSize    = 2048
+	PreRenderSize = 1024
+	MaxRenderSize = 2048
 
 	fit3840 := Types["fit_3840"]
 	assert.True(t, fit3840.SkipPreRender())
@@ -36,6 +36,6 @@ func TestType_SkipPreRender(t *testing.T) {
 	tile500 := Types["tile_500"]
 	assert.False(t, tile500.SkipPreRender())
 
-	PreRenderSize    = 3840
-	MaxRenderSize    = 3840
+	PreRenderSize = 3840
+	MaxRenderSize = 3840
 }

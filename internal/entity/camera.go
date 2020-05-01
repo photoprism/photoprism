@@ -64,9 +64,7 @@ func NewCamera(modelName string, makeName string) *Camera {
 
 // FirstOrCreate checks if the camera model exist already in the database
 func (m *Camera) FirstOrCreate() *Camera {
-	db := Db()
-
-	if err := db.FirstOrCreate(m, "camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).Error; err != nil {
+	if err := Db().FirstOrCreate(m, "camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).Error; err != nil {
 		log.Errorf("camera: %s", err)
 	}
 
