@@ -28,7 +28,7 @@ func TestGetAccount(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetAccount(router, conf)
-		result := PerformRequest(app, "GET", "/api/v1/accounts/1")
+		result := PerformRequest(app, "GET", "/api/v1/accounts/1000000")
 		assert.Contains(t, result.Body.String(), "Test Account")
 		assert.Equal(t, http.StatusOK, result.Code)
 	})

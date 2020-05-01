@@ -48,7 +48,7 @@ func TestLikeLabel(t *testing.T) {
 
 		LikeLabel(router, ctx)
 
-		result := PerformRequest(app, "POST", "/api/v1/labels/14/like")
+		result := PerformRequest(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c5/like")
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
 
@@ -68,7 +68,7 @@ func TestDislikeLabel(t *testing.T) {
 
 		DislikeLabel(router, ctx)
 
-		result := PerformRequest(app, "DELETE", "/api/v1/labels/14/like")
+		result := PerformRequest(app, "DELETE", "/api/v1/labels/lt9k3pw1wowuy3c5/like")
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
 }
@@ -91,7 +91,7 @@ func TestLabelThumbnail(t *testing.T) {
 	t.Run("could not find original", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		LabelThumbnail(router, ctx)
-		result := PerformRequest(app, "GET", "/api/v1/labels/12/thumbnail/tile_500")
+		result := PerformRequest(app, "GET", "/api/v1/labels/lt9k3pw1wowuy3c3/thumbnail/tile_500")
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
 }

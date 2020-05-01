@@ -17,7 +17,7 @@ func TestLinkAlbum(t *testing.T) {
 
 		LinkAlbum(router, ctx)
 
-		result1 := PerformRequestWithBody(app, "POST", "/api/v1/albums/3/link", `{"password": "foobar", "expires": 0, "edit": true}`)
+		result1 := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/link", `{"password": "foobar", "expires": 0, "edit": true}`)
 
 		assert.Equal(t, http.StatusOK, result1.Code)
 
@@ -36,7 +36,7 @@ func TestLinkAlbum(t *testing.T) {
 		assert.False(t, link.CanComment)
 		assert.True(t, link.CanEdit)
 
-		result2 := PerformRequestWithBody(app, "POST", "/api/v1/albums/3/link", `{"password": "", "expires": 3600}`)
+		result2 := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/link", `{"password": "", "expires": 3600}`)
 
 		assert.Equal(t, http.StatusOK, result2.Code)
 

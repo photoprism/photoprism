@@ -28,7 +28,7 @@ func TestGetAlbum(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetAlbum(router, conf)
-		result := PerformRequest(app, "GET", "/api/v1/albums/4")
+		result := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba8")
 		assert.Contains(t, result.Body.String(), "holiday-2030")
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
@@ -44,7 +44,7 @@ func TestDeleteAlbum(t *testing.T) {
 	t.Run("delete existing album", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		DeleteAlbum(router, conf)
-		result := PerformRequest(app, "DELETE", "/api/v1/albums/5")
+		result := PerformRequest(app, "DELETE", "/api/v1/albums/at9lxuqxpogaaba9")
 		assert.Equal(t, http.StatusOK, result.Code)
 		assert.Contains(t, result.Body.String(), "Berlin2019")
 		GetAlbums(router, conf)
@@ -65,7 +65,7 @@ func TestLikeAlbum(t *testing.T) {
 
 		LikeAlbum(router, ctx)
 
-		result := PerformRequest(app, "POST", "/api/v1/albums/98789876/like")
+		result := PerformRequest(app, "POST", "/api/v1/albums/xxx/like")
 		assert.Equal(t, http.StatusNotFound, result.Code)
 	})
 	t.Run("like existing album", func(t *testing.T) {
@@ -73,7 +73,7 @@ func TestLikeAlbum(t *testing.T) {
 
 		LikeAlbum(router, ctx)
 
-		result := PerformRequest(app, "POST", "/api/v1/albums/3/like")
+		result := PerformRequest(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/like")
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
 }
@@ -92,7 +92,7 @@ func TestDislikeAlbum(t *testing.T) {
 
 		DislikeAlbum(router, conf)
 
-		result := PerformRequest(app, "DELETE", "/api/v1/albums/4/like")
+		result := PerformRequest(app, "DELETE", "/api/v1/albums/at9lxuqxpogaaba8/like")
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
 }
@@ -111,22 +111,16 @@ func TestDownloadAlbum(t *testing.T) {
 
 		DownloadAlbum(router, conf)
 
-		result := PerformRequest(app, "GET", "/api/v1/albums/4/download")
+		result := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba8/download")
 		assert.Equal(t, http.StatusOK, result.Code)
 	})
 }
 
 func TestAlbumThumbnail(t *testing.T) {
-	t.Run("could not find original", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		AlbumThumbnail(router, ctx)
-		result := PerformRequest(app, "GET", "/api/v1/albums/4/thumbnail/tile_500")
-		assert.Equal(t, http.StatusNotFound, result.Code)
-	})
 	t.Run("invalid type", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		AlbumThumbnail(router, ctx)
-		result := PerformRequest(app, "GET", "/api/v1/albums/1/thumbnail/xxx")
+		result := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba7/thumbnail/xxx")
 
 		assert.Equal(t, http.StatusBadRequest, result.Code)
 	})
