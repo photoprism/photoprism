@@ -13,7 +13,6 @@ func TestGetAccounts(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetAccounts(router, conf)
 		r := PerformRequest(app, "GET", "/api/v1/accounts?count=10")
-		assert.Contains(t, r.Body.String(), "Test Account")
 		val := gjson.Get(r.Body.String(), "#(AccName=\"Test Account\").AccURL")
 		len := gjson.Get(r.Body.String(), "#")
 		assert.LessOrEqual(t, int64(1), len.Int())
