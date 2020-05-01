@@ -20,7 +20,7 @@ require (
 	github.com/gin-gonic/gin v1.6.2
 	github.com/go-errors/errors v1.0.2 // indirect
 	github.com/golang/geo v0.0.0-20200319012246-673a6f80352d
-	github.com/golang/protobuf v1.4.0 // indirect
+	github.com/golang/protobuf v1.3.5 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/open-location-code/go v0.0.0-20191230190541-a6eb95b4d2f9
 	github.com/gorilla/websocket v1.4.2
