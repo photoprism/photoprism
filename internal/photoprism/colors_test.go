@@ -8,14 +8,14 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/colors"
+	"github.com/photoprism/photoprism/pkg/fastwalk"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMediaFile_Colors_Testdata(t *testing.T) {
 	conf := config.TestConfig()
 
-	thumbsPath := conf.CachePath() + "/_tmp"
-
+	thumbsPath := os.TempDir() + "/TestMediaFile_Colors_Testdata"
 	defer os.RemoveAll(thumbsPath)
 
 	/*
@@ -54,12 +54,8 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 		},
 	}
 
-	err := filepath.Walk(conf.ExamplesPath(), func(filename string, fileInfo os.FileInfo, err error) error {
-		if err != nil {
-			return nil
-		}
-
-		if fileInfo.IsDir() || strings.HasPrefix(filepath.Base(filename), ".") {
+	if err := fastwalk.Walk(conf.ExamplesPath(), func(filename string, info os.FileMode) error {
+		if info.IsDir() || strings.HasPrefix(filepath.Base(filename), ".") {
 			return nil
 		}
 
@@ -87,10 +83,8 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 		})
 
 		return nil
-	})
-
-	if err != nil {
-		t.Log(err.Error())
+	}); err != nil {
+		t.Fatal(err)
 	}
 }
 

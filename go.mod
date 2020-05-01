@@ -30,6 +30,7 @@ require (
 	github.com/guregu/null v3.4.0+incompatible // indirect
 	github.com/jinzhu/gorm v1.9.5
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
+	github.com/karrick/godirwalk v1.15.6 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/leandro-lugaresi/hub v1.1.0
@@ -78,7 +79,7 @@ require (
 	golang.org/x/net v0.0.0-20200501053045-e0ff5e5a1de5
 	golang.org/x/sys v0.0.0-20200501052902-10377860bb8e // indirect
 	golang.org/x/time v0.0.0-20200416051211-89c76fbcd5d1 // indirect
-	golang.org/x/tools v0.0.0-20200401192744-099440627f01 // indirect
+	golang.org/x/tools v0.0.0-20200501065659-ab2804fb9c9d
 	gopkg.in/stretchr/testify.v1 v1.2.2 // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.9
 	gopkg.in/yaml.v2 v2.2.8

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/fastwalk"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -60,12 +61,8 @@ func TestIsSafe(t *testing.T) {
 		"zebra_green_brown.jpg": {0.24, 0.01, 0.73, 0.004, 0.001},
 	}
 
-	err := filepath.Walk("testdata", func(filename string, fileInfo os.FileInfo, err error) error {
-		if err != nil {
-			return nil
-		}
-
-		if fileInfo.IsDir() || strings.HasPrefix(filepath.Base(filename), ".") {
+	if err := fastwalk.Walk("testdata", func(filename string, info os.FileMode) error {
+		if info.IsDir() || strings.HasPrefix(filepath.Base(filename), ".") {
 			return nil
 		}
 
@@ -94,10 +91,8 @@ func TestIsSafe(t *testing.T) {
 		})
 
 		return nil
-	})
-
-	if err != nil {
-		t.Log(err.Error())
+	}); err != nil {
+		t.Fatal(err)
 	}
 }
 
