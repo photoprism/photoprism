@@ -6,23 +6,20 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-func Jpeg(srcFilename, jpgFilename string) (result image.Image, err error) {
-	img, err := imaging.Open(srcFilename, imaging.AutoOrientation(true))
+func Jpeg(srcFilename, jpgFilename string) (img image.Image, err error) {
+	img, err = imaging.Open(srcFilename, imaging.AutoOrientation(true))
 
 	if err != nil {
 		log.Errorf("thumbs: can't open %s", srcFilename)
-		return result, err
+		return img, err
 	}
 
-	var saveOption imaging.EncodeOption
-	saveOption = imaging.JPEGQuality(JpegQuality)
+	saveOption := imaging.JPEGQuality(JpegQuality)
 
-	err = imaging.Save(img, jpgFilename, saveOption)
-
-	if err != nil {
+	if err = imaging.Save(img, jpgFilename, saveOption); err != nil {
 		log.Errorf("thumbs: failed to save %s", jpgFilename)
-		return result, err
+		return img, err
 	}
 
-	return result, nil
+	return img, nil
 }
