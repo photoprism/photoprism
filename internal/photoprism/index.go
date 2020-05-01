@@ -3,12 +3,10 @@ package photoprism
 import (
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
 	"sync"
 
 	"github.com/jinzhu/gorm"
+	"github.com/karrick/godirwalk"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
@@ -89,68 +87,62 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 		}()
 	}
 
-	err := filepath.Walk(originalsPath, func(fileName string, fileInfo os.FileInfo, err error) error {
-		defer func() {
-			if err := recover(); err != nil {
-				log.Errorf("index: %s [panic]", err)
-			}
-		}()
+	err := godirwalk.Walk(originalsPath, &godirwalk.Options{
+		Callback: func(fileName string, info *godirwalk.Dirent) error {
+			defer func() {
+				if err := recover(); err != nil {
+					log.Errorf("index: %s [panic]", err)
+				}
+			}()
 
-		if mutex.Worker.Canceled() {
-			return errors.New("indexing canceled")
-		}
-
-		if err != nil || done[fileName] {
-			return nil
-		}
-
-		hidden := strings.HasPrefix(filepath.Base(fileName), ".")
-
-		if fileInfo.IsDir() && hidden {
-			return filepath.SkipDir
-		}
-
-		if fileInfo.IsDir() || hidden {
-			return nil
-		}
-
-		mf, err := NewMediaFile(fileName)
-
-		if err != nil || !mf.IsPhoto() {
-			return nil
-		}
-
-		related, err := mf.RelatedFiles(ind.conf.Settings().Library.GroupRelated)
-
-		if err != nil {
-			log.Warnf("index: %s", err.Error())
-
-			return nil
-		}
-
-		var files MediaFiles
-
-		for _, f := range related.Files {
-			if done[f.FileName()] {
-				continue
+			if mutex.Worker.Canceled() {
+				return errors.New("indexing canceled")
 			}
 
-			files = append(files, f)
-			done[f.FileName()] = true
-		}
+			if skip, result := fs.SkipGodirwalk(fileName, info, done); skip {
+				return result
+			}
 
-		done[mf.FileName()] = true
+			mf, err := NewMediaFile(fileName)
 
-		related.Files = files
+			if err != nil || !mf.IsPhoto() {
+				return nil
+			}
 
-		jobs <- IndexJob{
-			FileName: mf.FileName(),
-			Related:  related,
-			IndexOpt: options,
-			Ind:      ind,
-		}
+			related, err := mf.RelatedFiles(ind.conf.Settings().Library.GroupRelated)
 
-		return nil
+			if err != nil {
+				log.Warnf("index: %s", err.Error())
+
+				return nil
+			}
+
+			var files MediaFiles
+
+			for _, f := range related.Files {
+				if done[f.FileName()] {
+					continue
+				}
+
+				files = append(files, f)
+				done[f.FileName()] = true
+			}
+
+			done[mf.FileName()] = true
+
+			related.Files = files
+
+			jobs <- IndexJob{
+				FileName: mf.FileName(),
+				Related:  related,
+				IndexOpt: options,
+				Ind:      ind,
+			}
+
+			return nil
+		},
+		Unsorted:            false,
+		FollowSymbolicLinks: true,
 	})
 
 	close(jobs)

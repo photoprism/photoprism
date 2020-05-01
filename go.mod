@@ -30,7 +30,7 @@ require (
 	github.com/guregu/null v3.4.0+incompatible // indirect
 	github.com/jinzhu/gorm v1.9.5
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
-	github.com/karrick/godirwalk v1.15.6 // indirect
+	github.com/karrick/godirwalk v1.15.6
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/leandro-lugaresi/hub v1.1.0

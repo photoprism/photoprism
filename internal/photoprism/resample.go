@@ -2,14 +2,14 @@ package photoprism
 
 import (
 	"errors"
-	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 
+	"github.com/karrick/godirwalk"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Resample represents a thumbnail generator.
@@ -46,42 +46,48 @@ func (rs *Resample) Start(force bool) error {
 		}()
 	}
 
-	err := filepath.Walk(originalsPath, func(filename string, fileInfo os.FileInfo, err error) error {
-		defer func() {
-			if err := recover(); err != nil {
-				log.Errorf("resample: %s [panic]", err)
+	done := make(map[string]bool)
+
+	err := godirwalk.Walk(originalsPath, &godirwalk.Options{
+		Callback: func(fileName string, info *godirwalk.Dirent) error {
+			defer func() {
+				if err := recover(); err != nil {
+					log.Errorf("resample: %s [panic]", err)
+				}
+			}()
+
+			if mutex.Worker.Canceled() {
+				return errors.New("resample: canceled")
 			}
-		}()
 
-		if mutex.Worker.Canceled() {
-			return errors.New("resample: canceled")
-		}
+			if skip, result := fs.SkipGodirwalk(fileName, info, done); skip {
+				return result
+			}
 
-		if err != nil || fileInfo.IsDir() || strings.HasPrefix(filepath.Base(filename), ".") {
+			mf, err := NewMediaFile(fileName)
+
+			if err != nil || !mf.IsJpeg() {
+				return nil
+			}
+
+			relativeName := mf.RelativeName(originalsPath)
+
+			event.Publish("index.thumbnails", event.Data{
+				"fileName": relativeName,
+				"baseName": filepath.Base(relativeName),
+				"force":    force,
+			})
+
+			jobs <- ResampleJob{
+				mediaFile: mf,
+				path:      thumbnailsPath,
+				force:     force,
+			}
+
 			return nil
-		}
-
-		mf, err := NewMediaFile(filename)
-
-		if err != nil || !mf.IsJpeg() {
-			return nil
-		}
-
-		fileName := mf.RelativeName(originalsPath)
-
-		event.Publish("index.thumbnails", event.Data{
-			"fileName": fileName,
-			"baseName": filepath.Base(fileName),
-			"force":    force,
-		})
-
-		jobs <- ResampleJob{
-			mediaFile: mf,
-			path:      thumbnailsPath,
-			force:     force,
-		}
-
-		return nil
+		},
+		Unsorted:            true,
+		FollowSymbolicLinks: true,
 	})
 
 	close(jobs)

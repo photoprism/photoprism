@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"sync"
 
+	"github.com/karrick/godirwalk"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -49,37 +49,39 @@ func (c *Convert) Start(path string) error {
 		}()
 	}
 
-	err := filepath.Walk(path, func(fileName string, fileInfo os.FileInfo, err error) error {
-		defer func() {
-			if err := recover(); err != nil {
-				log.Errorf("convert: %s [panic]", err)
+	done := make(map[string]bool)
+
+	err := godirwalk.Walk(path, &godirwalk.Options{
+		Callback: func(fileName string, info *godirwalk.Dirent) error {
+			defer func() {
+				if err := recover(); err != nil {
+					log.Errorf("convert: %s [panic]", err)
+				}
+			}()
+
+			if mutex.Worker.Canceled() {
+				return errors.New("convert: canceled")
 			}
-		}()
 
-		if mutex.Worker.Canceled() {
-			return errors.New("convert: canceled")
-		}
+			if skip, result := fs.SkipGodirwalk(fileName, info, done); skip {
+				return result
+			}
 
-		if err != nil {
+			mf, err := NewMediaFile(fileName)
+
+			if err != nil || !(mf.IsRaw() || mf.IsHEIF() || mf.IsImageOther()) {
+				return nil
+			}
+
+			jobs <- ConvertJob{
+				image:   mf,
+				convert: c,
+			}
+
 			return nil
-		}
-
-		if fileInfo.IsDir() {
-			return nil
-		}
-
-		mf, err := NewMediaFile(fileName)
-
-		if err != nil || !(mf.IsRaw() || mf.IsHEIF() || mf.IsImageOther()) {
-			return nil
-		}
-
-		jobs <- ConvertJob{
-			image:   mf,
-			convert: c,
-		}
-
-		return nil
+		},
+		Unsorted:            true,
+		FollowSymbolicLinks: true,
 	})
 
 	close(jobs)

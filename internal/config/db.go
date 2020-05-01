@@ -100,7 +100,7 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 
 			go tidb.Start(ctx, c.TidbServerPath(), c.TidbServerPort(), c.TidbServerHost(), c.Debug())
 
-			time.Sleep(2 * time.Second)
+			time.Sleep(5 * time.Second)
 		}
 
 		for i := 1; i <= 12; i++ {
