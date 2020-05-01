@@ -65,11 +65,6 @@ func (c *Config) InitDb() {
 func (c *Config) ResetDb(testFixtures bool) {
 	entity.SetDbProvider(c)
 	entity.ResetDb(testFixtures)
-
-	// TODO: Remove when new test fixtures are ready
-	if testFixtures {
-		c.ImportSQL(c.ExamplesPath() + "/fixtures.sql")
-	}
 }
 
 // connectToDatabase establishes a database connection.
