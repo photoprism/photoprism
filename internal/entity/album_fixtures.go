@@ -1,15 +1,14 @@
 package entity
 
 import (
-	"github.com/jinzhu/gorm"
 	"time"
 )
 
 var AlbumFixtures = map[string]Album{
 	"christmas2030": {
 		ID:               1000000,
-		CoverUUID:        nil,
-		AlbumUUID:        "aq9lxuqxpogaaba7",
+		CoverUUID:        "",
+		AlbumUUID:        "at9lxuqxpogaaba7",
 		AlbumSlug:        "christmas2030",
 		AlbumName:        "Christmas2030",
 		AlbumDescription: "Wonderful christmas",
@@ -24,8 +23,8 @@ var AlbumFixtures = map[string]Album{
 	},
 	"holiday-2030": {
 		ID:               1000001,
-		CoverUUID:        nil,
-		AlbumUUID:        "aq9lxuqxpogaaba8",
+		CoverUUID:        "",
+		AlbumUUID:        "at9lxuqxpogaaba8",
 		AlbumSlug:        "holiday-2030",
 		AlbumName:        "Holiday2030",
 		AlbumDescription: "Wonderful christmas",
@@ -40,8 +39,8 @@ var AlbumFixtures = map[string]Album{
 	},
 	"berlin-2019": {
 		ID:               1000002,
-		CoverUUID:        nil,
-		AlbumUUID:        "aq9lxuqxpogaaba9",
+		CoverUUID:        "",
+		AlbumUUID:        "at9lxuqxpogaaba9",
 		AlbumSlug:        "berlin-2019",
 		AlbumName:        "Berlin2019",
 		AlbumDescription: "Wonderful christmas",
@@ -56,9 +55,12 @@ var AlbumFixtures = map[string]Album{
 	},
 }
 
+var AlbumFixtureHoliday2030 = AlbumFixtures["holiday-2030"]
+var AlbumFixtureBerlin2019 = AlbumFixtures["berlin-2019"]
+
 // CreateAlbumFixtures inserts known entities into the database for testing.
-func CreateAlbumFixtures(db *gorm.DB) {
+func CreateAlbumFixtures() {
 	for _, entity := range AlbumFixtures {
-		db.Create(&entity)
+		Db().Create(&entity)
 	}
 }

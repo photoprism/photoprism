@@ -61,7 +61,7 @@ var LabelFixtures = map[string]Label{
 		LabelUUID:        "lt9k3pw1wowuy3c5",
 		LabelSlug:        "cow",
 		CustomSlug:       "kuh",
-		LabelName:        "Cow",
+		LabelName:        "COW",
 		LabelPriority:    -1,
 		LabelFavorite:    true,
 		LabelDescription: "",
@@ -74,6 +74,10 @@ var LabelFixtures = map[string]Label{
 		New:              false,
 	},
 }
+
+var LabelFixtureLandscape = LabelFixtures["landscape"]
+var LabelFixtureFlower = LabelFixtures["flower"]
+var LabelFixtureCake = LabelFixtures["cake"]
 
 // CreateLabelFixtures inserts known entities into the database for testing.
 func CreateLabelFixtures() {

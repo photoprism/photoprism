@@ -4,8 +4,8 @@ import "time"
 
 var PhotoAlbumFixtures = map[string]PhotoAlbum{
 	"1": {
-		PhotoUUID: "1jxf3jfn2k",
-		AlbumUUID: "pq9jtdre2lvl0yh7",
+		PhotoUUID: "pt9jtdre2lvl0yh7",
+		AlbumUUID: "at9lxuqxpogaaba8",
 		Order:     0,
 		CreatedAt: time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
@@ -13,8 +13,8 @@ var PhotoAlbumFixtures = map[string]PhotoAlbum{
 		Album:     &AlbumFixtureHoliday2030,
 	},
 	"2": {
-		PhotoUUID: "pq9jtdre2lvl0y11",
-		AlbumUUID: "aq9lxuqxpogaaba9",
+		PhotoUUID: "pt9jtdre2lvl0y11",
+		AlbumUUID: "at9lxuqxpogaaba9",
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),

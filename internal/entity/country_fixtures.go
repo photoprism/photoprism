@@ -1,9 +1,5 @@
 package entity
 
-import (
-	"github.com/jinzhu/gorm"
-)
-
 var CountryFixtures = map[string]Country{
 	"apple-iphone-se": {
 		ID:                 "de",
@@ -18,8 +14,8 @@ var CountryFixtures = map[string]Country{
 }
 
 // CreateCountryFixtures inserts known entities into the database for testing.
-func CreateCountryFixtures(db *gorm.DB) {
+func CreateCountryFixtures() {
 	for _, entity := range CountryFixtures {
-		db.Create(&entity)
+		Db().Create(&entity)
 	}
 }

@@ -2,14 +2,12 @@ package entity
 
 import (
 	"time"
-
-	"github.com/jinzhu/gorm"
 )
 
 var PhotoFixtures = map[string]Photo{
 	"19800101_000002_D640C559": {
 		ID:               1000000,
-		PhotoUUID:        "pq9jtdre2lvl0yh7",
+		PhotoUUID:        "pt9jtdre2lvl0yh7",
 		TakenAt:          time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenSrc:         "exif",
@@ -25,14 +23,14 @@ var PhotoFixtures = map[string]Photo{
 		PhotoLat:         48.519234,
 		PhotoLng:         9.057997,
 		PhotoAltitude:    0,
-		PhotoIso:         nil,
-		PhotoFocalLength: nil,
-		PhotoFNumber:     nil,
+		PhotoIso:         0,
+		PhotoFocalLength: 0,
+		PhotoFNumber:     0,
 		PhotoExposure:    "",
-		CameraID:         nil,
+		CameraID:         0,
 		CameraSerial:     "",
 		CameraSrc:        "",
-		LensID:           nil,
+		LensID:           0,
 		PlaceID:          "zz",
 		LocationID:       "",
 		LocationSrc:      "",
@@ -58,7 +56,7 @@ var PhotoFixtures = map[string]Photo{
 	},
 	"Photo01": {
 		ID:               1000001,
-		PhotoUUID:        "pq9jtdre2lvl0yh8",
+		PhotoUUID:        "pt9jtdre2lvl0yh8",
 		TakenAt:          time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
 		TakenSrc:         "exif",
@@ -68,20 +66,20 @@ var PhotoFixtures = map[string]Photo{
 		PhotoName:        "Photo01",
 		PhotoQuality:     3,
 		PhotoResolution:  2,
-		PhotoFavorite:    false,
+		PhotoFavorite:    true,
 		PhotoPrivate:     false,
 		PhotoStory:       false,
 		PhotoLat:         48.519234,
 		PhotoLng:         9.057997,
 		PhotoAltitude:    0,
-		PhotoIso:         nil,
-		PhotoFocalLength: nil,
-		PhotoFNumber:     nil,
+		PhotoIso:         0,
+		PhotoFocalLength: 0,
+		PhotoFNumber:     0,
 		PhotoExposure:    "",
-		CameraID:         nil,
+		CameraID:         0,
 		CameraSerial:     "",
 		CameraSrc:        "",
-		LensID:           nil,
+		LensID:           0,
 		PlaceID:          "zz",
 		LocationID:       "",
 		LocationSrc:      "",
@@ -107,7 +105,7 @@ var PhotoFixtures = map[string]Photo{
 	},
 	"Photo02": {
 		ID:               1000002,
-		PhotoUUID:        "pq9jtdre2lvl0yh9",
+		PhotoUUID:        "pt9jtdre2lvl0yh9",
 		TakenAt:          time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenSrc:         "exif",
@@ -123,14 +121,14 @@ var PhotoFixtures = map[string]Photo{
 		PhotoLat:         48.519234,
 		PhotoLng:         9.057997,
 		PhotoAltitude:    0,
-		PhotoIso:         nil,
-		PhotoFocalLength: nil,
-		PhotoFNumber:     nil,
+		PhotoIso:         0,
+		PhotoFocalLength: 0,
+		PhotoFNumber:     0,
 		PhotoExposure:    "",
-		CameraID:         nil,
+		CameraID:         0,
 		CameraSerial:     "",
 		CameraSrc:        "",
-		LensID:           nil,
+		LensID:           0,
 		PlaceID:          "zz",
 		LocationID:       "",
 		LocationSrc:      "",
@@ -156,7 +154,7 @@ var PhotoFixtures = map[string]Photo{
 	},
 	"Photo03": {
 		ID:               1000003,
-		PhotoUUID:        "pq9jtdre2lvl0yh0",
+		PhotoUUID:        "pt9jtdre2lvl0yh0",
 		TakenAt:          time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenSrc:         "exif",
@@ -172,14 +170,14 @@ var PhotoFixtures = map[string]Photo{
 		PhotoLat:         48.519234,
 		PhotoLng:         9.057997,
 		PhotoAltitude:    0,
-		PhotoIso:         nil,
-		PhotoFocalLength: nil,
-		PhotoFNumber:     nil,
+		PhotoIso:         0,
+		PhotoFocalLength: 0,
+		PhotoFNumber:     0,
 		PhotoExposure:    "",
-		CameraID:         nil,
+		CameraID:         0,
 		CameraSerial:     "",
 		CameraSrc:        "",
-		LensID:           nil,
+		LensID:           0,
 		PlaceID:          "zz",
 		LocationID:       "",
 		LocationSrc:      "",
@@ -205,7 +203,7 @@ var PhotoFixtures = map[string]Photo{
 	},
 	"Photo04": {
 		ID:               1000004,
-		PhotoUUID:        "pq9jtdre2lvl0y11",
+		PhotoUUID:        "pt9jtdre2lvl0y11",
 		TakenAt:          time.Date(2014, 7, 17, 15, 42, 12, 0, time.UTC),
 		TakenAtLocal:     time.Date(2014, 7, 17, 15, 42, 12, 0, time.UTC),
 		TakenSrc:         "exif",
@@ -221,14 +219,14 @@ var PhotoFixtures = map[string]Photo{
 		PhotoLat:         48.519234,
 		PhotoLng:         9.057997,
 		PhotoAltitude:    0,
-		PhotoIso:         nil,
-		PhotoFocalLength: nil,
-		PhotoFNumber:     nil,
+		PhotoIso:         0,
+		PhotoFocalLength: 0,
+		PhotoFNumber:     0,
 		PhotoExposure:    "",
-		CameraID:         nil,
+		CameraID:         0,
 		CameraSerial:     "",
 		CameraSrc:        "",
-		LensID:           nil,
+		LensID:           0,
 		PlaceID:          "zz",
 		LocationID:       "",
 		LocationSrc:      "",
@@ -254,7 +252,7 @@ var PhotoFixtures = map[string]Photo{
 	},
 	"Photo05": {
 		ID:               1000005,
-		PhotoUUID:        "pq9jtdre2lvl0y12",
+		PhotoUUID:        "pt9jtdre2lvl0y12",
 		TakenAt:          time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "exif",
@@ -270,14 +268,14 @@ var PhotoFixtures = map[string]Photo{
 		PhotoLat:         -21.342636,
 		PhotoLng:         55.466944,
 		PhotoAltitude:    0,
-		PhotoIso:         nil,
-		PhotoFocalLength: nil,
-		PhotoFNumber:     nil,
+		PhotoIso:         0,
+		PhotoFocalLength: 0,
+		PhotoFNumber:     0,
 		PhotoExposure:    "",
-		CameraID:         nil,
+		CameraID:         0,
 		CameraSerial:     "",
 		CameraSrc:        "",
-		LensID:           nil,
+		LensID:           0,
 		PlaceID:          "zz",
 		LocationID:       "",
 		LocationSrc:      "",
@@ -303,9 +301,14 @@ var PhotoFixtures = map[string]Photo{
 	},
 }
 
+var PhotoFixture19800101_000002_D640C559 = PhotoFixtures["19800101_000002_D640C559"]
+var PhotoFixturePhoto04 = PhotoFixtures["Photo04"]
+var PhotoFixturePhoto01 = PhotoFixtures["Photo01"]
+var PhotoFixturePhoto05 = PhotoFixtures["Photo05"]
+
 // CreatePhotoFixtures inserts known entities into the database for testing.
-func CreatePhotoFixtures(db *gorm.DB) {
+func CreatePhotoFixtures() {
 	for _, entity := range PhotoFixtures {
-		db.Create(&entity)
+		Db().Create(&entity)
 	}
 }

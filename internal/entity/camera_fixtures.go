@@ -2,8 +2,6 @@ package entity
 
 import (
 	"time"
-
-	"github.com/jinzhu/gorm"
 )
 
 var CameraFixtures = map[string]Camera{
@@ -84,8 +82,8 @@ var CameraFixtures = map[string]Camera{
 var CameraFixtureEOS6D = CameraFixtures["canon-eos-6d"]
 
 // CreateCameraFixtures inserts known entities into the database for testing.
-func CreateCameraFixtures(db *gorm.DB) {
+func CreateCameraFixtures() {
 	for _, entity := range CameraFixtures {
-		db.Create(&entity)
+		Db().Create(&entity)
 	}
 }
