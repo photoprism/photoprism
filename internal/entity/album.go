@@ -32,11 +32,11 @@ type Album struct {
 
 // BeforeCreate computes a random UUID when a new album is created in database
 func (m *Album) BeforeCreate(scope *gorm.Scope) error {
-	if err := scope.SetColumn("AlbumUUID", rnd.PPID('a')); err != nil {
-		return err
+	if rnd.IsPPID(m.AlbumUUID, 'a') {
+		return nil
 	}
 
-	return nil
+	return scope.SetColumn("AlbumUUID", rnd.PPID('a'))
 }
 
 // NewAlbum creates a new album; default name is current month and year

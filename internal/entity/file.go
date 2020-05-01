@@ -62,6 +62,10 @@ func FirstFileByHash(fileHash string) (File, error) {
 
 // BeforeCreate computes a random UUID when a new file is created in database
 func (m *File) BeforeCreate(scope *gorm.Scope) error {
+	if rnd.IsPPID(m.FileUUID, 'f') {
+		return nil
+	}
+
 	return scope.SetColumn("FileUUID", rnd.PPID('f'))
 }
 

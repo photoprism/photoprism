@@ -146,10 +146,6 @@ func (m *Photo) ClassifyLabels() classify.Labels {
 
 // BeforeCreate computes a unique UUID, and set a default takenAt before indexing a new photo
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
-	if err := scope.SetColumn("PhotoUUID", rnd.PPID('p')); err != nil {
-		return err
-	}
-
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
 		now := time.Now()
 
@@ -162,7 +158,11 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 		}
 	}
 
-	return nil
+	if rnd.IsPPID(m.PhotoUUID, 'p') {
+		return nil
+	}
+
+	return scope.SetColumn("PhotoUUID", rnd.PPID('p'))
 }
 
 // BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo

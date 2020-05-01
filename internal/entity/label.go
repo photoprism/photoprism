@@ -31,12 +31,11 @@ type Label struct {
 
 // BeforeCreate computes a random UUID when a new label is created in database
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
-	if err := scope.SetColumn("LabelUUID", rnd.PPID('l')); err != nil {
-		log.Errorf("label: %s", err)
-		return err
+	if rnd.IsPPID(m.LabelUUID, 'l') {
+		return nil
 	}
 
-	return nil
+	return scope.SetColumn("LabelUUID", rnd.PPID('l'))
 }
 
 // NewLabel creates a label in database with a given name and priority
