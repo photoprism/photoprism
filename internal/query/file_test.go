@@ -16,7 +16,7 @@ func TestQuery_Files(t *testing.T) {
 		files, err := search.Files(1000, 0)
 
 		assert.Nil(t, err)
-		assert.Equal(t, 5, len(files))
+		assert.LessOrEqual(t, 5, len(files))
 	})
 }
 
@@ -26,7 +26,7 @@ func TestQuery_FilesByUUID(t *testing.T) {
 	search := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		files, err := search.FilesByUUID([]string{"654"}, 100, 0)
+		files, err := search.FilesByUUID([]string{"ft8es39w45bnlqdw"}, 100, 0)
 
 		assert.Nil(t, err)
 		assert.Equal(t, 1, len(files))
@@ -40,7 +40,7 @@ func TestQuery_FileByPhotoUUID(t *testing.T) {
 	search := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		file, err := search.FileByPhotoUUID("655")
+		file, err := search.FileByPhotoUUID("pt9jtdre2lvl0yh8")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "exampleDNGFile.dng", file.FileName)
@@ -60,7 +60,7 @@ func TestQuery_FileByUUID(t *testing.T) {
 	search := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		file, err := search.FileByUUID("fq8es39w45bnlqdw")
+		file, err := search.FileByUUID("ft8es39w45bnlqdw")
 
 		if err != nil {
 			t.Fatal(err)
@@ -87,7 +87,7 @@ func TestQuery_FileByHash(t *testing.T) {
 	search := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		file, err := search.FileByHash("123xxx")
+		file, err := search.FileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "exampleFileName.jpg", file.FileName)

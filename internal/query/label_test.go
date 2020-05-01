@@ -38,7 +38,7 @@ func TestQuery_LabelByUUID(t *testing.T) {
 	q := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		label, err := q.LabelByUUID("14")
+		label, err := q.LabelByUUID("lt9k3pw1wowuy3c5")
 
 		if err != nil {
 			t.Fatal(err)
@@ -84,7 +84,7 @@ func TestQuery_LabelThumbByUUID(t *testing.T) {
 	q := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		file, err := q.LabelThumbByUUID("13")
+		file, err := q.LabelThumbByUUID("lt9k3pw1wowuy3c4")
 
 		if err != nil {
 			t.Fatal(err)

@@ -34,7 +34,7 @@ func TestQuery_PhotoByID(t *testing.T) {
 	search := New(conf.Db())
 
 	t.Run("photo found", func(t *testing.T) {
-		result, err := search.PhotoByID(1)
+		result, err := search.PhotoByID(1000000)
 		assert.Nil(t, err)
 		assert.Equal(t, 2790, result.PhotoYear)
 	})
@@ -52,7 +52,7 @@ func TestQuery_PhotoByUUID(t *testing.T) {
 	search := New(conf.Db())
 
 	t.Run("photo found", func(t *testing.T) {
-		result, err := search.PhotoByUUID("659")
+		result, err := search.PhotoByUUID("pt9jtdre2lvl0y12")
 		assert.Nil(t, err)
 		assert.Equal(t, "Reunion", result.PhotoTitle)
 	})
@@ -70,7 +70,7 @@ func TestQuery_PreloadPhotoByUUID(t *testing.T) {
 	search := New(conf.Db())
 
 	t.Run("photo found", func(t *testing.T) {
-		result, err := search.PreloadPhotoByUUID("659")
+		result, err := search.PreloadPhotoByUUID("pt9jtdre2lvl0y12")
 		assert.Nil(t, err)
 		assert.Equal(t, "Reunion", result.PhotoTitle)
 	})

@@ -14,7 +14,7 @@ func TestQuery_AlbumByUUID(t *testing.T) {
 	search := New(conf.Db())
 
 	t.Run("existing uuid", func(t *testing.T) {
-		album, err := search.AlbumByUUID("3")
+		album, err := search.AlbumByUUID("at9lxuqxpogaaba7")
 
 		if err != nil {
 			t.Fatal(err)
@@ -36,7 +36,7 @@ func TestQuery_AlbumThumbByUUID(t *testing.T) {
 	search := New(conf.Db())
 
 	t.Run("existing uuid", func(t *testing.T) {
-		file, err := search.AlbumThumbByUUID("4")
+		file, err := search.AlbumThumbByUUID("at9lxuqxpogaaba8")
 
 		if err != nil {
 			t.Fatal(err)

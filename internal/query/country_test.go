@@ -28,7 +28,7 @@ func TestCountry_FirstOrCreate(t *testing.T) {
 		country.FirstOrCreate()
 		assert.Equal(t, "de", country.Code())
 		assert.Equal(t, "Germany", country.Name())
-		assert.Equal(t, "Country Description", country.CountryDescription)
+		assert.Equal(t, "Country description", country.CountryDescription)
 		assert.Equal(t, "Country Notes", country.CountryNotes)
 		assert.Equal(t, uint(0), country.CountryPhotoID)
 	})
