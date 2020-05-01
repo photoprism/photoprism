@@ -12,14 +12,14 @@ import (
 var conf *config.Config
 
 var services struct {
+	Classify *classify.TensorFlow
+	Convert  *photoprism.Convert
 	Import   *photoprism.Import
 	Index    *photoprism.Index
 	Nsfw     *nsfw.Detector
-	Convert  *photoprism.Convert
-	Resample *photoprism.Resample
-	Classify *classify.TensorFlow
-	Session  *session.Session
 	Query    *query.Query
+	Resample *photoprism.Resample
+	Session  *session.Session
 }
 
 func SetConfig(c *config.Config) {
