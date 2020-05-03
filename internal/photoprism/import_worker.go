@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 type ImportJob struct {
@@ -47,23 +48,23 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if related.Main.HasSameName(f) {
 					destinationMainFilename = destinationFilename
-					log.Infof("import: moving main %s file \"%s\" to \"%s\"", f.FileType(), relativeFilename, destinationFilename)
+					log.Infof("import: moving main %s file \"%s\" to \"%s\"", f.FileType(), relativeFilename, fs.RelativeName(destinationFilename, imp.originalsPath()))
 				} else {
-					log.Infof("import: moving related %s file \"%s\" to \"%s\"", f.FileType(), relativeFilename, destinationFilename)
+					log.Infof("import: moving related %s file \"%s\" to \"%s\"", f.FileType(), relativeFilename, fs.RelativeName(destinationFilename, imp.originalsPath()))
 				}
 
 				if opt.Move {
 					if err := f.Move(destinationFilename); err != nil {
-						log.Errorf("import: could not move file to %s (%s)", destinationMainFilename, err.Error())
+						log.Errorf("import: could not move file to %s (%s)", fs.RelativeName(destinationMainFilename, imp.originalsPath()), err.Error())
 					}
 				} else {
 					if err := f.Copy(destinationFilename); err != nil {
-						log.Errorf("import: could not copy file to %s (%s)", destinationMainFilename, err.Error())
+						log.Errorf("import: could not copy file to %s (%s)", fs.RelativeName(destinationMainFilename, imp.originalsPath()), err.Error())
 					}
 				}
 			} else if opt.RemoveExistingFiles {
 				if err := f.Remove(); err != nil {
-					log.Errorf("import: could not delete %s (%s)", f.FileName(), err.Error())
+					log.Errorf("import: could not delete %s (%s)",fs.RelativeName(f.FileName(), importPath), err.Error())
 				} else {
 					log.Infof("import: deleted %s (already exists)", relativeFilename)
 				}
@@ -74,7 +75,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			importedMainFile, err := NewMediaFile(destinationMainFilename)
 
 			if err != nil {
-				log.Errorf("import: could not index \"%s\" (%s)", destinationMainFilename, err.Error())
+				log.Errorf("import: could not index \"%s\" (%s)", fs.RelativeName(destinationMainFilename, imp.originalsPath()), err.Error())
 
 				continue
 			}
@@ -96,7 +97,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			related, err := importedMainFile.RelatedFiles(imp.conf.Settings().Library.GroupRelated)
 
 			if err != nil {
-				log.Errorf("import: could not index \"%s\" (%s)", destinationMainFilename, err.Error())
+				log.Errorf("import: could not index \"%s\" (%s)", fs.RelativeName(destinationMainFilename, imp.originalsPath()), err.Error())
 
 				continue
 			}
@@ -109,7 +110,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				log.Infof("import: %s main %s file \"%s\"", res, related.Main.FileType(), related.Main.RelativeName(ind.originalsPath()))
 				done[related.Main.FileName()] = true
 			} else {
-				log.Warnf("import: no main file for %s (conversion to jpeg failed?)", destinationMainFilename)
+				log.Warnf("import: no main file for %s (conversion to jpeg failed?)", fs.RelativeName(destinationMainFilename, imp.originalsPath()))
 			}
 
 			for _, f := range related.Files {

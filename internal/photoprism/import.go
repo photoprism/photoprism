@@ -99,10 +99,6 @@ func (imp *Import) Start(opt ImportOptions) {
 				return errors.New("import canceled")
 			}
 
-			if done[fileName] {
-				return nil
-			}
-
 			isDir := info.IsDir()
 			isSymlink := info.IsSymlink()
 
@@ -141,7 +137,7 @@ func (imp *Import) Start(opt ImportOptions) {
 				done[f.FileName()] = true
 			}
 
-			done[mf.FileName()] = true
+			done[fileName] = true
 
 			related.Files = files
 

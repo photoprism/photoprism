@@ -85,6 +85,8 @@ func (c *Convert) Start(path string) error {
 				return nil
 			}
 
+			done[fileName] = true
+
 			jobs <- ConvertJob{
 				image:   mf,
 				convert: c,
@@ -131,7 +133,7 @@ func (c *Convert) ConvertCommand(image *MediaFile, jpegName string, xmpName stri
 // ToJpeg converts a single image file to JPEG if possible.
 func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	if !image.Exists() {
-		return nil, fmt.Errorf("convert: can not convert to jpeg, file does not exist (%s)", image.FileName())
+		return nil, fmt.Errorf("convert: can not convert to jpeg, file does not exist (%s)", image.RelativeName(c.conf.OriginalsPath()))
 	}
 
 	if image.IsJpeg() {
@@ -149,12 +151,12 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	jpegName = image.AbsBase(c.conf.Settings().Library.GroupRelated) + ".jpg"
 
 	if c.conf.ReadOnly() {
-		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.FileName())
+		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.RelativeName(c.conf.OriginalsPath()))
 	}
 
 	fileName := image.RelativeName(c.conf.OriginalsPath())
 
-	log.Infof("convert: %s -> %s", fileName, jpegName)
+	log.Infof("convert: %s -> %s", fileName, fs.RelativeName(jpegName, c.conf.OriginalsPath()))
 
 	xmpName := fs.TypeXMP.Find(image.FileName(), c.conf.Settings().Library.GroupRelated)
 

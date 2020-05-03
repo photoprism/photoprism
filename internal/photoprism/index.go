@@ -141,7 +141,7 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 				done[f.FileName()] = true
 			}
 
-			done[mf.FileName()] = true
+			done[fileName] = true
 
 			related.Files = files
 

@@ -1,5 +1,7 @@
 package photoprism
 
+import "github.com/photoprism/photoprism/pkg/fs"
+
 type IndexJob struct {
 	FileName string
 	Related  RelatedFiles
@@ -20,7 +22,7 @@ func IndexWorker(jobs <-chan IndexJob) {
 
 			log.Infof("index: %s main %s file \"%s\"", res, related.Main.FileType(), related.Main.RelativeName(ind.originalsPath()))
 		} else {
-			log.Warnf("index: no main file for %s (conversion to jpeg failed?)", job.FileName)
+			log.Warnf("index: no main file for %s (conversion to jpeg failed?)", fs.RelativeName(job.FileName, ind.originalsPath()))
 		}
 
 		for _, f := range related.Files {

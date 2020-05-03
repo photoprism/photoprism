@@ -10,8 +10,6 @@ func SkipWalk(fileName string, isDir, isSymlink bool, done map[string]bool, igno
 	isDone := done[fileName]
 	isIgnored := ignore.Ignore(fileName)
 
-	done[fileName] = true
-
 	if isSymlink {
 		// Symlinks are skipped by default unless they are links to directories
 		skip = true
@@ -37,6 +35,10 @@ func SkipWalk(fileName string, isDir, isSymlink bool, done map[string]bool, igno
 	} else if isIgnored || isDone {
 		// Skip files that are hidden or already done...
 		skip = true
+	}
+
+	if skip {
+		done[fileName] = true
 	}
 
 	return skip, result

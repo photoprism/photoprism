@@ -8,21 +8,22 @@ import (
 	"github.com/urfave/cli"
 )
 
-// ThumbsCommand is used to register the thumbs cli command
-var ThumbsCommand = cli.Command{
-	Name:  "thumbs",
-	Usage: "Pre-renders thumbnails to boost performance",
+// ResampleCommand is used to register the thumbs cli command
+var ResampleCommand = cli.Command{
+	Name:  "resample",
+	Aliases: []string{"thumbs"},
+	Usage: "Pre-renders thumbnails (significantly reduces memory and cpu usage)",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",
 			Usage: "re-create existing thumbnails",
 		},
 	},
-	Action: thumbsAction,
+	Action: resampleAction,
 }
 
-// thumbsAction pre-render the thumbnails
-func thumbsAction(ctx *cli.Context) error {
+// resampleAction pre-render the thumbnails
+func resampleAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)

@@ -112,17 +112,17 @@ func (l *IgnoreList) Dir(dir string) error {
 	}
 
 	if l.configFile == "" {
-		return errors.New("ignore file name not set")
+		return errors.New("empty ignore file name")
 	}
 
 	fileName := filepath.Join(dir, l.configFile)
 
 	if _, ok := l.configFiles[fileName]; ok {
-		return fmt.Errorf("%s already parsed", l.configFile)
+		return nil
 	}
 
 	if !FileExists(fileName) {
-		return fmt.Errorf("%s does not exist", l.configFile)
+		return fmt.Errorf("no %s file found", l.configFile)
 	}
 
 	return l.ConfigFile(fileName)

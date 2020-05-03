@@ -28,7 +28,7 @@ func main() {
 		commands.ImportCommand,
 		commands.CopyCommand,
 		commands.ConvertCommand,
-		commands.ThumbsCommand,
+		commands.ResampleCommand,
 		commands.MigrateCommand,
 		commands.ConfigCommand,
 		commands.VersionCommand,
