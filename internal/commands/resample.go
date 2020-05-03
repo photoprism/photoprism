@@ -5,14 +5,15 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/urfave/cli"
 )
 
 // ResampleCommand is used to register the thumbs cli command
 var ResampleCommand = cli.Command{
-	Name:  "resample",
+	Name:    "resample",
 	Aliases: []string{"thumbs"},
-	Usage: "Pre-renders thumbnails (significantly reduces memory and cpu usage)",
+	Usage:   "Pre-renders thumbnails (significantly reduces memory and cpu usage)",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",
@@ -33,7 +34,7 @@ func resampleAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("creating thumbnails in \"%s\"", conf.ThumbnailsPath())
+	log.Infof("creating thumbnails in %s", txt.Quote(conf.ThumbnailsPath()))
 
 	rs := service.Resample()
 

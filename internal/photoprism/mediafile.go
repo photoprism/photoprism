@@ -19,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // MediaFile represents a single photo, video or sidecar file.
@@ -725,7 +726,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 		}
 
 		if fileName, err := thumb.Filename(hash, thumbPath, thumbType.Width, thumbType.Height, thumbType.Options...); err != nil {
-			log.Errorf("mediafile: could not create \"%s\" (%s)", name, err)
+			log.Errorf("mediafile: could not create %s (%s)", txt.Quote(name), err)
 
 			return err
 		} else {
@@ -737,7 +738,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 				img, err := imaging.Open(m.FileName(), imaging.AutoOrientation(true))
 
 				if err != nil {
-					log.Errorf("mediafile: can't open \"%s\" (%s)", m.FileName(), err.Error())
+					log.Errorf("mediafile: can't open %s (%s)", txt.Quote(m.FileName()), err.Error())
 					return err
 				}
 
@@ -756,7 +757,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 			}
 
 			if err != nil {
-				log.Errorf("mediafile: could not create \"%s\" (%s)", name, err)
+				log.Errorf("mediafile: could not create %s (%s)", txt.Quote(name), err)
 				return err
 			}
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 type ImportJob struct {
@@ -48,25 +49,25 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if related.Main.HasSameName(f) {
 					destinationMainFilename = destinationFilename
-					log.Infof("import: moving main %s file \"%s\" to \"%s\"", f.FileType(), relativeFilename, fs.RelativeName(destinationFilename, imp.originalsPath()))
+					log.Infof("import: moving main %s file %s to %s", f.FileType(), txt.Quote(relativeFilename), txt.Quote(fs.RelativeName(destinationFilename, imp.originalsPath())))
 				} else {
-					log.Infof("import: moving related %s file \"%s\" to \"%s\"", f.FileType(), relativeFilename, fs.RelativeName(destinationFilename, imp.originalsPath()))
+					log.Infof("import: moving related %s file %s to %s", f.FileType(), txt.Quote(relativeFilename), txt.Quote(fs.RelativeName(destinationFilename, imp.originalsPath())))
 				}
 
 				if opt.Move {
 					if err := f.Move(destinationFilename); err != nil {
-						log.Errorf("import: could not move file to %s (%s)", fs.RelativeName(destinationMainFilename, imp.originalsPath()), err.Error())
+						log.Errorf("import: could not move file to %s (%s)", txt.Quote(fs.RelativeName(destinationMainFilename, imp.originalsPath())), err.Error())
 					}
 				} else {
 					if err := f.Copy(destinationFilename); err != nil {
-						log.Errorf("import: could not copy file to %s (%s)", fs.RelativeName(destinationMainFilename, imp.originalsPath()), err.Error())
+						log.Errorf("import: could not copy file to %s (%s)", txt.Quote(fs.RelativeName(destinationMainFilename, imp.originalsPath())), err.Error())
 					}
 				}
 			} else if opt.RemoveExistingFiles {
 				if err := f.Remove(); err != nil {
-					log.Errorf("import: could not delete %s (%s)",fs.RelativeName(f.FileName(), importPath), err.Error())
+					log.Errorf("import: could not delete %s (%s)", txt.Quote(fs.RelativeName(f.FileName(), importPath)), err.Error())
 				} else {
-					log.Infof("import: deleted %s (already exists)", relativeFilename)
+					log.Infof("import: deleted %s (already exists)", txt.Quote(relativeFilename))
 				}
 			}
 		}
@@ -75,7 +76,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			importedMainFile, err := NewMediaFile(destinationMainFilename)
 
 			if err != nil {
-				log.Errorf("import: could not index \"%s\" (%s)", fs.RelativeName(destinationMainFilename, imp.originalsPath()), err.Error())
+				log.Errorf("import: could not index %s (%s)", txt.Quote(fs.RelativeName(destinationMainFilename, imp.originalsPath())), err.Error())
 
 				continue
 			}
@@ -97,7 +98,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			related, err := importedMainFile.RelatedFiles(imp.conf.Settings().Library.GroupRelated)
 
 			if err != nil {
-				log.Errorf("import: could not index \"%s\" (%s)", fs.RelativeName(destinationMainFilename, imp.originalsPath()), err.Error())
+				log.Errorf("import: could not index %s (%s)", txt.Quote(fs.RelativeName(destinationMainFilename, imp.originalsPath())), err.Error())
 
 				continue
 			}
@@ -107,7 +108,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			if related.Main != nil {
 				res := ind.MediaFile(related.Main, indexOpt, originalName)
-				log.Infof("import: %s main %s file \"%s\"", res, related.Main.FileType(), related.Main.RelativeName(ind.originalsPath()))
+				log.Infof("import: %s main %s file %s", res, related.Main.FileType(), txt.Quote(related.Main.RelativeName(ind.originalsPath())))
 				done[related.Main.FileName()] = true
 			} else {
 				log.Warnf("import: no main file for %s (conversion to jpeg failed?)", fs.RelativeName(destinationMainFilename, imp.originalsPath()))
@@ -125,7 +126,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				res := ind.MediaFile(f, indexOpt, "")
 				done[f.FileName()] = true
 
-				log.Infof("import: %s related %s file \"%s\"", res, f.FileType(), f.RelativeName(ind.originalsPath()))
+				log.Infof("import: %s related %s file %s", res, f.FileType(), txt.Quote(f.RelativeName(ind.originalsPath())))
 			}
 		}
 	}

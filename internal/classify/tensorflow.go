@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/disintegration/imaging"
+	"github.com/photoprism/photoprism/pkg/txt"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
@@ -142,7 +143,7 @@ func (t *TensorFlow) loadModel() error {
 
 	modelPath := path.Join(t.modelsPath, t.modelName)
 
-	log.Infof("tensorflow: loading image classification model from \"%s\"", filepath.Base(modelPath))
+	log.Infof("tensorflow: loading image classification model from %s", txt.Quote(filepath.Base(modelPath)))
 
 	// Load model
 	model, err := tf.LoadSavedModel(modelPath, t.modelTags, nil)

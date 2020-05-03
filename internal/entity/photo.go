@@ -332,7 +332,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 		loc := m.Location
 
 		if title := labels.Title(loc.Name()); title != "" { // TODO: User defined title format
-			log.Infof("photo: using label \"%s\" to create photo title", title)
+			log.Infof("photo: using label %s to create photo title", txt.Quote(title))
 			if loc.NoCity() || loc.LongCity() || loc.CityContains(title) {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), loc.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
@@ -364,9 +364,9 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 			m.SetTitle("Unknown", SrcAuto)
 		}
 
-		log.Infof("photo: changed photo title to \"%s\"", m.PhotoTitle)
+		log.Infof("photo: changed photo title to %s", txt.Quote(m.PhotoTitle))
 	} else {
-		log.Infof("photo: new title is \"%s\"", m.PhotoTitle)
+		log.Infof("photo: new title is %s", txt.Quote(m.PhotoTitle))
 	}
 
 	return nil

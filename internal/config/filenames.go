@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func findExecutable(configBin, defaultBin string) (result string) {
@@ -31,9 +32,9 @@ func findExecutable(configBin, defaultBin string) (result string) {
 func (c *Config) CreateDirectories() error {
 	createError := func(path string, err error) (result error) {
 		if fs.FileExists(path) {
-			result = fmt.Errorf("\"%s\" is a file, not a directory: please check your configuration", path)
+			result = fmt.Errorf("%s is a file, not a directory: please check your configuration", txt.Quote(path))
 		} else {
-			result = fmt.Errorf("can't create \"%s\": please check configuration and permissions", path)
+			result = fmt.Errorf("can't create %s: please check configuration and permissions", txt.Quote(path))
 		}
 
 		log.Debug(err)

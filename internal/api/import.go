@@ -56,10 +56,10 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 		var opt photoprism.ImportOptions
 
 		if f.Move {
-			event.Info(fmt.Sprintf("moving files from \"%s\"", filepath.Base(path)))
+			event.Info(fmt.Sprintf("moving files from %s", txt.Quote(filepath.Base(path))))
 			opt = photoprism.ImportOptionsMove(path)
 		} else {
-			event.Info(fmt.Sprintf("copying files from \"%s\"", filepath.Base(path)))
+			event.Info(fmt.Sprintf("copying files from %s", txt.Quote(filepath.Base(path))))
 			opt = photoprism.ImportOptionsCopy(path)
 		}
 
@@ -67,9 +67,9 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 
 		if subPath != "" && path != conf.ImportPath() && fs.IsEmpty(path) {
 			if err := os.Remove(path); err != nil {
-				log.Errorf("import: could not deleted empty directory \"%s\": %s", path, err)
+				log.Errorf("import: could not deleted empty directory %s: %s", txt.Quote(path), err)
 			} else {
-				log.Infof("import: deleted empty directory \"%s\"", path)
+				log.Infof("import: deleted empty directory %s", txt.Quote(path))
 			}
 		}
 

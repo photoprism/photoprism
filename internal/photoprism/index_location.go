@@ -3,6 +3,7 @@ package photoprism
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func (ind *Index) estimateLocation(photo *entity.Photo) {
@@ -13,7 +14,7 @@ func (ind *Index) estimateLocation(photo *entity.Photo) {
 			photo.Place = recentPhoto.Place
 			photo.PhotoCountry = photo.Place.LocCountry
 			photo.LocationSrc = entity.SrcAuto
-			log.Debugf("index: approximate location is \"%s\"", recentPhoto.Place.Label())
+			log.Debugf("index: approximate location is %s", txt.Quote(recentPhoto.Place.Label()))
 		}
 	}
 }

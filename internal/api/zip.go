@@ -90,9 +90,9 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip file")})
 					return
 				}
-				log.Infof("zip: added \"%s\" as \"%s\"", f.FileName, fileAlias)
+				log.Infof("zip: added %s as %s", txt.Quote(f.FileName), txt.Quote(fileAlias))
 			} else {
-				log.Warnf("zip: \"%s\" is missing", f.FileName)
+				log.Warnf("zip: %s is missing", txt.Quote(f.FileName))
 				f.FileMissing = true
 				conf.Db().Save(&f)
 			}
@@ -100,7 +100,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 
 		elapsed := int(time.Since(start).Seconds())
 
-		log.Infof("zip: archive \"%s\" created in %s", zipBaseName, time.Since(start))
+		log.Infof("zip: archive %s created in %s", txt.Quote(zipBaseName), time.Since(start))
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("zip created in %d s", elapsed), "filename": zipBaseName})
 	})
@@ -124,7 +124,7 @@ func DownloadZip(router *gin.RouterGroup, conf *config.Config) {
 		c.File(zipFileName)
 
 		if err := os.Remove(zipFileName); err != nil {
-			log.Errorf("zip: could not remove \"%s\" %s", zipFileName, err.Error())
+			log.Errorf("zip: could not remove %s (%s)", txt.Quote(zipFileName), err.Error())
 		}
 	})
 }

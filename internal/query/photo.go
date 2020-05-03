@@ -188,8 +188,8 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 	if f.Label != "" {
 		slugString := strings.ToLower(f.Label)
 		if result := q.db.First(&label, "label_slug =? OR custom_slug = ?", slugString, slugString); result.Error != nil {
-			log.Errorf("search: label \"%s\" not found", f.Label)
-			return results, 0, fmt.Errorf("label \"%s\" not found", f.Label)
+			log.Errorf("search: label %s not found", txt.Quote(f.Label))
+			return results, 0, fmt.Errorf("label %s not found", txt.Quote(f.Label))
 		} else {
 			labelIds = append(labelIds, label.ID)
 
@@ -224,7 +224,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 			Joins("LEFT JOIN keywords ON photos_keywords.keyword_id = keywords.id")
 
 		if result := q.db.First(&label, "label_slug = ? OR custom_slug = ?", slugString, slugString); result.Error != nil {
-			log.Infof("search: label \"%s\" not found, using fuzzy search", f.Query)
+			log.Infof("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
 
 			s = s.Where("keywords.keyword LIKE ?", likeString)
 		} else {
@@ -236,7 +236,7 @@ func (q *Query) Photos(f form.PhotoSearch) (results PhotoResults, count int, err
 				labelIds = append(labelIds, category.LabelID)
 			}
 
-			log.Infof("search: label \"%s\" includes %d categories", label.LabelName, len(labelIds))
+			log.Infof("search: label %s includes %d categories", txt.Quote(label.LabelName), len(labelIds))
 
 			s = s.Where("photos_labels.label_id IN (?) OR keywords.keyword LIKE ?", labelIds, likeString)
 		}

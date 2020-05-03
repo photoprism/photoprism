@@ -55,7 +55,7 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 		for _, file := range files {
 			filename := path.Join(p, filepath.Base(file.Filename))
 
-			log.Debugf("upload: saving file \"%s\"", file.Filename)
+			log.Debugf("upload: saving file %s", txt.Quote(file.Filename))
 
 			if err := c.SaveUploadedFile(file, filename); err != nil {
 				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
@@ -82,7 +82,7 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 					continue
 				}
 
-				log.Infof("nsfw: \"%s\" might be offensive", filename)
+				log.Infof("nsfw: %s might be offensive", txt.Quote(filename))
 
 				containsNSFW = true
 			}
@@ -90,7 +90,7 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 			if containsNSFW {
 				for _, filename := range uploads {
 					if err := os.Remove(filename); err != nil {
-						log.Errorf("nsfw: could not delete \"%s\"", filename)
+						log.Errorf("nsfw: could not delete %s", txt.Quote(filename))
 					}
 				}
 

@@ -34,7 +34,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 
 		path := conf.OriginalsPath()
 
-		event.Info(fmt.Sprintf("indexing photos in \"%s\"", filepath.Base(path)))
+		event.Info(fmt.Sprintf("indexing photos in %s", txt.Quote(filepath.Base(path))))
 
 		cancel := func(err error) {
 			log.Error(err.Error())

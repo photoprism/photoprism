@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Place used to associate photos to places
@@ -49,7 +50,7 @@ func FindPlaceByLabel(id string, label string) *Place {
 	place := &Place{}
 
 	if err := Db().First(place, "id = ? OR loc_label = ?", id, label).Error; err != nil {
-		log.Debugf("place: %s for id %s or label \"%s\"", err.Error(), id, label)
+		log.Debugf("place: %s for id %s or label %s", err.Error(), id, txt.Quote(label))
 		return nil
 	}
 
@@ -68,7 +69,7 @@ func (m *Place) Find() error {
 // FirstOrCreate checks if the place already exists in the database
 func (m *Place) FirstOrCreate() *Place {
 	if err := Db().FirstOrCreate(m, "id = ? OR loc_label = ?", m.ID, m.LocLabel).Error; err != nil {
-		log.Debugf("place: %s for token %s or label \"%s\"", err.Error(), m.ID, m.LocLabel)
+		log.Debugf("place: %s for token %s or label %s", err.Error(), m.ID, txt.Quote(m.LocLabel))
 	}
 
 	return m

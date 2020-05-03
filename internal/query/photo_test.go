@@ -114,6 +114,7 @@ func TestSearch_Photos(t *testing.T) {
 		if err != nil {
 			// TODO: Add database fixtures to avoid failing queries
 			t.Logf("query failed: %s", err.Error())
+			// t.Fatal(err)
 		}
 
 		t.Logf("results: %+v", photos)
@@ -126,9 +127,12 @@ func TestSearch_Photos(t *testing.T) {
 
 		photos, _, err := search.Photos(f)
 
-		assert.Equal(t, err.Error(), "label \"xxx\" not found")
+		assert.Error(t, err)
+		assert.Empty(t, photos)
 
-		t.Logf("results: %+v", photos)
+		if err != nil {
+			assert.Equal(t, err.Error(), "label xxx not found")
+		}
 	})
 	t.Run("form.location true", func(t *testing.T) {
 		var f form.PhotoSearch

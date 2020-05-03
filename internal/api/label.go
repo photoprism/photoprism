@@ -175,7 +175,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		thumbType, ok := thumb.Types[typeName]
 
 		if !ok {
-			log.Errorf("label: invalid thumb type \"%s\"", typeName)
+			log.Errorf("label: invalid thumb type %s", txt.Quote(typeName))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}

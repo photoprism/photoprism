@@ -4,6 +4,7 @@ import (
 	"syscall"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
 )
@@ -20,7 +21,7 @@ var StopCommand = cli.Command{
 func stopAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 
-	log.Infof("looking for pid in \"%s\"", conf.PIDFilename())
+	log.Infof("looking for pid in %s", txt.Quote(conf.PIDFilename()))
 
 	dcxt := new(daemon.Context)
 	dcxt.PidFileName = conf.PIDFilename()

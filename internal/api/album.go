@@ -96,7 +96,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		if res := conf.Db().Create(m); res.Error != nil {
 			log.Error(res.Error.Error())
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("\"%s\" already exists", m.AlbumName)})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("%s already exists", txt.Quote(m.AlbumName))})
 			return
 		}
 
@@ -180,7 +180,7 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 		conf.Db().Delete(&m)
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
-		event.Success(fmt.Sprintf("album \"%s\" deleted", m.AlbumName))
+		event.Success(fmt.Sprintf("album %s deleted", txt.Quote(m.AlbumName)))
 
 		c.JSON(http.StatusOK, m)
 	})
@@ -396,16 +396,15 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip file")})
 					return
 				}
-				log.Infof("album: added \"%s\" as \"%s\"", f.FileName, fileAlias)
+				log.Infof("album: added %s as %s", txt.Quote(f.FileName), txt.Quote(fileAlias))
 			} else {
-				log.Warnf("album: \"%s\" is missing", f.FileName)
+				log.Warnf("album: %s is missing", txt.Quote(f.FileName))
 				f.FileMissing = true
 				conf.Db().Save(&f)
 			}
 		}
 
-		log.Infof("album: archive \"%s\" created in %s", zipBaseName, time.Since(start))
-
+		log.Infof("album: archive %s created in %s", txt.Quote(zipBaseName), time.Since(start))
 		zipWriter.Close()
 		newZipFile.Close()
 
@@ -420,7 +419,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		c.File(zipFileName)
 
 		if err := os.Remove(zipFileName); err != nil {
-			log.Errorf("album: could not remove \"%s\" %s", zipFileName, err.Error())
+			log.Errorf("album: could not remove %s (%s)", txt.Quote(zipFileName), err.Error())
 		}
 	})
 }

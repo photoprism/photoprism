@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/yaml.v2"
 )
 
@@ -88,7 +89,7 @@ func (s *Settings) Propagate() {
 // Load uses a yaml config file to initiate the configuration entity.
 func (s *Settings) Load(fileName string) error {
 	if !fs.FileExists(fileName) {
-		return fmt.Errorf("settings file not found: \"%s\"", fileName)
+		return fmt.Errorf("settings file not found: %s", txt.Quote(fileName))
 	}
 
 	yamlConfig, err := ioutil.ReadFile(fileName)

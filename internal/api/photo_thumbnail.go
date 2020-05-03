@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GET /api/v1/thumbnails/:hash/:type
@@ -25,7 +26,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		thumbType, ok := thumb.Types[typeName]
 
 		if !ok {
-			log.Errorf("photo: invalid thumb type \"%s\"", typeName)
+			log.Errorf("photo: invalid thumb type %s", txt.Quote(typeName))
 			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
 			return
 		}

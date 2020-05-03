@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/capture"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // LabelResult contains found labels
@@ -132,7 +133,7 @@ func (q *Query) Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		likeString := "%" + strings.ToLower(f.Query) + "%"
 
 		if result := q.db.First(&label, "label_slug = ? OR custom_slug = ?", slugString, slugString); result.Error != nil {
-			log.Infof("search: label \"%s\" not found", f.Query)
+			log.Infof("search: label %s not found", txt.Quote(f.Query))
 
 			s = s.Where("LOWER(labels.label_name) LIKE ?", likeString)
 		} else {
@@ -144,7 +145,7 @@ func (q *Query) Labels(f form.LabelSearch) (results []LabelResult, err error) {
 				labelIds = append(labelIds, category.LabelID)
 			}
 
-			log.Infof("search: label \"%s\" includes %d categories", label.LabelName, len(labelIds))
+			log.Infof("search: label %s includes %d categories", txt.Quote(label.LabelName), len(labelIds))
 
 			s = s.Where("labels.id IN (?)", labelIds)
 		}

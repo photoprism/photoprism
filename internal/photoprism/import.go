@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Import represents an importer that can copy/move MediaFiles to the originals directory.
@@ -167,9 +168,9 @@ func (imp *Import) Start(opt ImportOptions) {
 		for _, directory := range directories {
 			if fs.IsEmpty(directory) {
 				if err := os.Remove(directory); err != nil {
-					log.Errorf("import: could not deleted empty directory %s (%s)", directory, err)
+					log.Errorf("import: could not deleted empty directory %s (%s)", fs.RelativeName(directory, importPath), err)
 				} else {
-					log.Infof("import: deleted empty directory %s", directory)
+					log.Infof("import: deleted empty directory %s", fs.RelativeName(directory, importPath))
 				}
 			}
 		}
@@ -183,7 +184,7 @@ func (imp *Import) Start(opt ImportOptions) {
 			}
 
 			if err := os.Remove(file); err != nil {
-				log.Errorf("import: could not remove \"%s\" (%s)", file, err.Error())
+				log.Errorf("import: could not remove %s (%s)", txt.Quote(fs.RelativeName(file, importPath)), err.Error())
 			}
 		}
 	}
@@ -207,7 +208,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	if !mediaFile.IsSidecar() {
 		if f, err := entity.FirstFileByHash(mediaFile.Hash()); err == nil {
 			existingFilename := imp.conf.OriginalsPath() + string(os.PathSeparator) + f.FileName
-			return existingFilename, fmt.Errorf("\"%s\" is identical to \"%s\" (%s)", mediaFile.FileName(), f.FileName, mediaFile.Hash())
+			return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", txt.Quote(mediaFile.FileName()), txt.Quote(f.FileName), mediaFile.Hash())
 		}
 	}
 

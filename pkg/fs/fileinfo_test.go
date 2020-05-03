@@ -39,10 +39,10 @@ func TestNewFileInfos(t *testing.T) {
 	}
 
 	expected := map[string]FileInfo{
-		"test.jpg": {Abs: "/test.jpg", Size: 10990, Dir: false},
+		"test.jpg":      {Abs: "/test.jpg", Size: 10990, Dir: false},
 		"CATYELLOW.jpg": {Abs: "/CATYELLOW.jpg", Size: 70790, Dir: false},
-		"directory": {Abs: "/directory", Size: 4096, Dir: true},
-		"linked": {Abs: "/linked", Size: 4096, Dir: true},
+		"directory":     {Abs: "/directory", Size: 4096, Dir: true},
+		"linked":        {Abs: "/linked", Size: 4096, Dir: true},
 	}
 
 	for _, file := range result {
