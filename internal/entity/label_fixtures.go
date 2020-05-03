@@ -73,6 +73,23 @@ var LabelFixtures = map[string]Label{
 		DeletedAt:        nil,
 		New:              false,
 	},
+	"batchdelete": {
+		ID:               1000004,
+		LabelUUID:        "lt9k3pw1wowuy3c6",
+		LabelSlug:        "batchdelete",
+		CustomSlug:       "batchDelete",
+		LabelName:        "BatchDelete",
+		LabelPriority:    1,
+		LabelFavorite:    true,
+		LabelDescription: "",
+		LabelNotes:       "",
+		LabelCategories:  []*Label{},
+		Links:            []Link{},
+		CreatedAt:        time.Now(),
+		UpdatedAt:        time.Now(),
+		DeletedAt:        nil,
+		New:              false,
+	},
 }
 
 var LabelFixtureLandscape = LabelFixtures["landscape"]
