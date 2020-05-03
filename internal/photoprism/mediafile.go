@@ -322,17 +322,7 @@ func (m *MediaFile) SetFileName(fileName string) {
 
 // RelativeName returns the relative filename.
 func (m MediaFile) RelativeName(directory string) string {
-	if index := strings.Index(m.fileName, directory); index == 0 {
-		if index := strings.LastIndex(directory, string(os.PathSeparator)); index == len(directory)-1 {
-			pos := len(directory)
-			return m.fileName[pos:]
-		} else if index := strings.LastIndex(directory, string(os.PathSeparator)); index != len(directory) {
-			pos := len(directory) + 1
-			return m.fileName[pos:]
-		}
-	}
-
-	return m.fileName
+	return fs.RelativeName(m.fileName, directory)
 }
 
 // RelativePath returns the relative path without filename.

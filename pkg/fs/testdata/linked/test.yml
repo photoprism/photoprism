@@ -1,0 +1,6 @@
+version: '3.5'
+
+services:
+  photoprism:
+    build: .
+    image: photoprism/photoprism:develop

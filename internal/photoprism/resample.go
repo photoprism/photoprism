@@ -47,6 +47,15 @@ func (rs *Resample) Start(force bool) error {
 	}
 
 	done := make(map[string]bool)
+	ignore := fs.NewIgnoreList(IgnoreFile, true, false)
+
+	if err := ignore.Dir(originalsPath); err != nil {
+		log.Infof("resample: %s", err)
+	}
+
+	ignore.Log = func(fileName string) {
+		log.Infof(`resample: ignored "%s"`, fs.RelativeName(fileName, originalsPath))
+	}
 
 	err := godirwalk.Walk(originalsPath, &godirwalk.Options{
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
@@ -60,7 +69,10 @@ func (rs *Resample) Start(force bool) error {
 				return errors.New("resample: canceled")
 			}
 
-			if skip, result := fs.SkipGodirwalk(fileName, info, done); skip {
+			isDir := info.IsDir()
+			isSymlink := info.IsSymlink()
+
+			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
 				return result
 			}
 

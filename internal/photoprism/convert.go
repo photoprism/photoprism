@@ -50,6 +50,15 @@ func (c *Convert) Start(path string) error {
 	}
 
 	done := make(map[string]bool)
+	ignore := fs.NewIgnoreList(IgnoreFile, true, false)
+
+	if err := ignore.Dir(path); err != nil {
+		log.Infof("convert: %s", err)
+	}
+
+	ignore.Log = func(fileName string) {
+		log.Infof(`convert: ignored "%s"`, fs.RelativeName(fileName, path))
+	}
 
 	err := godirwalk.Walk(path, &godirwalk.Options{
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
@@ -63,7 +72,10 @@ func (c *Convert) Start(path string) error {
 				return errors.New("convert: canceled")
 			}
 
-			if skip, result := fs.SkipGodirwalk(fileName, info, done); skip {
+			isDir := info.IsDir()
+			isSymlink := info.IsSymlink()
+
+			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
 				return result
 			}
 

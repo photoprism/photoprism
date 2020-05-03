@@ -87,6 +87,16 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 		}()
 	}
 
+	ignore := fs.NewIgnoreList(IgnoreFile, true, false)
+
+	if err := ignore.Dir(originalsPath); err != nil {
+		log.Infof("index: %s", err)
+	}
+
+	ignore.Log = func(fileName string) {
+		log.Infof(`index: ignored "%s"`, fs.RelativeName(fileName, originalsPath))
+	}
+
 	err := godirwalk.Walk(originalsPath, &godirwalk.Options{
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
 			defer func() {
@@ -99,7 +109,10 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 				return errors.New("indexing canceled")
 			}
 
-			if skip, result := fs.SkipGodirwalk(fileName, info, done); skip {
+			isDir := info.IsDir()
+			isSymlink := info.IsSymlink()
+
+			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
 				return result
 			}
 

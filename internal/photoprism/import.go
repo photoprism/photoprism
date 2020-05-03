@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"path/filepath"
 	"sort"
-	"strings"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -79,6 +77,15 @@ func (imp *Import) Start(opt ImportOptions) {
 	}
 
 	indexOpt := IndexOptionsAll()
+	ignore := fs.NewIgnoreList(IgnoreFile, true, false)
+
+	if err := ignore.Dir(importPath); err != nil {
+		log.Infof("import: %s", err)
+	}
+
+	ignore.Log = func(fileName string) {
+		log.Infof(`import: ignored "%s"`, fs.RelativeName(fileName, importPath))
+	}
 
 	err := godirwalk.Walk(importPath, &godirwalk.Options{
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
@@ -96,25 +103,16 @@ func (imp *Import) Start(opt ImportOptions) {
 				return nil
 			}
 
-			if info.IsDir() {
+			isDir := info.IsDir()
+			isSymlink := info.IsSymlink()
+
+			if isDir {
 				if fileName != importPath {
 					directories = append(directories, fileName)
 				}
-			} else if info.IsRegular() && strings.HasPrefix(filepath.Base(fileName), ".") {
-				done[fileName] = true
-
-				if !opt.RemoveDotFiles {
-					return nil
-				}
-
-				if err := os.Remove(fileName); err != nil {
-					log.Errorf("import: could not remove \"%s\" (%s)", fileName, err.Error())
-				}
-
-				return nil
 			}
 
-			if skip, result := fs.SkipGodirwalk(fileName, info, done); skip {
+			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
 				return result
 			}
 
@@ -177,6 +175,19 @@ func (imp *Import) Start(opt ImportOptions) {
 				} else {
 					log.Infof("import: deleted empty directory %s", directory)
 				}
+			}
+		}
+	}
+
+	if opt.RemoveDotFiles {
+		// Remove hidden .files if option is enabled
+		for _, file := range ignore.Hidden() {
+			if !fs.FileExists(file) {
+				continue
+			}
+
+			if err := os.Remove(file); err != nil {
+				log.Errorf("import: could not remove \"%s\" (%s)", file, err.Error())
 			}
 		}
 	}
