@@ -184,6 +184,14 @@ func TestAddPhotosToAlbum(t *testing.T) {
 		assert.Equal(t, "photos added to album", val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+	t.Run("add one photo to album", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		AddPhotosToAlbum(router, conf)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uuid+"/photos", `{"photos": ["pt9jtdre2lvl0y12"]}`)
+		val := gjson.Get(r.Body.String(), "message")
+		assert.Equal(t, "photos added to album", val.String())
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		AddPhotosToAlbum(router, conf)
@@ -269,7 +277,12 @@ func TestAlbumThumbnail(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		AlbumThumbnail(router, ctx)
 		r := PerformRequest(app, "GET", "/api/v1/albums/987-986435/thumbnail/tile_500")
-
 		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("album: could not find original", func(t *testing.T) {
+		app, router, ctx := NewApiTest()
+		AlbumThumbnail(router, ctx)
+		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba8/thumbnail/tile_500")
+		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }
