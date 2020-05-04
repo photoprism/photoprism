@@ -76,7 +76,7 @@ func LinkPhoto(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.PhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
 			return
 		}
 
@@ -107,7 +107,7 @@ func LinkLabel(router *gin.RouterGroup, conf *config.Config) {
 		m, err := q.LabelByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrLabelNotFound)
 			return
 		}
 
