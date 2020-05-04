@@ -117,7 +117,7 @@
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <translate>Private</translate>
+                            Private
                             <span v-if="config.count.private > 0" class="p-navigation-count">{{ config.count.private }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
