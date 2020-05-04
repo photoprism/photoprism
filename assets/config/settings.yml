@@ -4,19 +4,22 @@ maps:
   animate: 0
   style: streets
 features:
+  archive: true
+  private: true
+  review: true
   upload: true
   import: true
   labels: true
   places: true
-  archive: true
   download: true
   edit: true
   share: true
-library:
-  raw: false
-  thumbs: false
-  rescan: false
+  logs: true
+import:
+  path: ""
   move: false
-  private: true
-  review: true
+library:
+  convert: true
+  resample: true
+  rescan: false
   group: true

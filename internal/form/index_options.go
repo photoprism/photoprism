@@ -1,7 +1,7 @@
 package form
 
 type IndexOptions struct {
-	CompleteRescan bool `json:"rescan"`
-	CreateThumbs   bool `json:"thumbs"`
-	ConvertRaw     bool `json:"raw"`
+	Convert  bool `json:"convert"`
+	Resample bool `json:"resample"`
+	Rescan   bool `json:"rescan"`
 }

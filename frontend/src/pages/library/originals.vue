@@ -20,10 +20,10 @@
                                 @change="onChange"
                                 :disabled="busy"
                                 class="ma-0 pa-0"
-                                v-model="settings.library.raw"
+                                v-model="settings.library.convert"
                                 color="secondary-dark"
-                                :label="labels.raw"
-                                :hint="hints.raw"
+                                :label="labels.convert"
+                                :hint="hints.convert"
                                 prepend-icon="photo_camera"
                                 persistent-hint
                         >
@@ -35,10 +35,10 @@
                                 @change="onChange"
                                 :disabled="busy"
                                 class="ma-0 pa-0"
-                                v-model="settings.library.thumbs"
+                                v-model="settings.library.resample"
                                 color="secondary-dark"
-                                :label="labels.thumbs"
-                                :hint="hints.thumbs"
+                                :label="labels.resample"
+                                :hint="hints.resample"
                                 prepend-icon="photo_size_select_large"
                                 persistent-hint
                         >
@@ -91,7 +91,7 @@
     import Axios from "axios";
     import Notify from "common/notify";
     import Event from "pubsub-js";
-    import Settings from "../../model/settings";
+    import Settings from "model/settings";
 
     export default {
         name: 'p-tab-index',
@@ -108,13 +108,13 @@
                 source: null,
                 labels: {
                     rescan: this.$gettext("Complete rescan"),
-                    thumbs: this.$gettext("Create thumbnails"),
-                    raw: this.$gettext("Convert RAW files"),
+                    resample: this.$gettext("Create thumbnails"),
+                    convert: this.$gettext("Convert RAW files"),
                 },
                 hints: {
                     rescan: this.$gettext("Re-index all originals, including already indexed and unchanged files."),
-                    thumbs: this.$gettext("Pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."),
-                    raw: this.$gettext("RAWs need to be converted to JPEG so that they can be displayed in a browser. You can also do this manually."),
+                    resample: this.$gettext("Pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."),
+                    convert: this.$gettext("RAWs need to be converted to JPEG so that they can be displayed in a browser. You can also do this manually."),
                 }
             }
         },

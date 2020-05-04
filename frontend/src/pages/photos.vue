@@ -87,11 +87,11 @@
 
             const settings = this.$config.settings();
 
-            if (settings.library.private) {
+            if (settings.features.private) {
                 filter.public = true;
             }
 
-            if (settings.library.review) {
+            if (settings.features.review) {
                 filter.quality = 3;
             }
 

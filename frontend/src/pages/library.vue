@@ -16,7 +16,7 @@
                 <translate>Import</translate>
             </v-tab>
 
-            <v-tab id="tab-logs" ripple @click="changePath('/library/logs')">
+            <v-tab id="tab-logs" ripple @click="changePath('/library/logs')" v-if="$config.feature('logs')">
                 <translate>Logs</translate>
             </v-tab>
 
@@ -29,7 +29,7 @@
                     <p-tab-import></p-tab-import>
                 </v-tab-item>
 
-                <v-tab-item>
+                <v-tab-item  v-if="$config.feature('logs')">
                     <p-tab-logs></p-tab-logs>
                 </v-tab-item>
             </v-tabs-items>

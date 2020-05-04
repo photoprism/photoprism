@@ -17,9 +17,10 @@
                 <v-layout wrap align-top class="pb-2">
                     <v-flex xs12 class="px-2 pb-2 pt-2">
                         <v-checkbox
+                                @change="onChange"
                                 :disabled="busy"
                                 class="ma-0 pa-0"
-                                v-model="options.move"
+                                v-model="settings.import.move"
                                 color="secondary-dark"
                                 :label="labels.move"
                                 :hint="hints.move"
@@ -80,6 +81,7 @@
     import Axios from "axios";
     import Notify from "common/notify";
     import Event from "pubsub-js";
+    import Settings from "model/settings";
 
     export default {
         name: 'p-tab-import',
@@ -87,15 +89,13 @@
             let settings = this.$config.settings();
 
             return {
+                settings: new Settings(this.$config.settings()),
                 started: false,
                 busy: false,
                 completed: 0,
                 subscriptionId: '',
                 fileName: '',
                 source: null,
-                options: {
-                    move: settings.library.move,
-                },
                 labels: {
                     move: this.$gettext("Remove imported files"),
                 },
@@ -105,6 +105,9 @@
             }
         },
         methods: {
+            onChange() {
+                this.settings.save();
+            },
             showUpload() {
                 Event.publish("dialog.upload");
             },
@@ -124,7 +127,7 @@
                 const ctx = this;
                 Notify.blockUI();
 
-                Api.post('import', this.options, {cancelToken: this.source.token}).then(function () {
+                Api.post('import', this.settings.import, {cancelToken: this.source.token}).then(function () {
                     Notify.unblockUI();
                     ctx.busy = false;
                     ctx.completed = 100;

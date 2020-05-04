@@ -91,7 +91,7 @@
         },
         data() {
             return {
-                hidePrivate: this.$config.settings().library.private,
+                hidePrivate: this.$config.settings().features.private,
                 mouseDown: {
                     index: -1,
                     timeStamp: -1,

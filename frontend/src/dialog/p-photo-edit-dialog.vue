@@ -87,7 +87,7 @@
                 this.$gettext("Edit Photo");
             },
             isPrivate: function () {
-                if (this.model && this.model.PhotoPrivate && this.$config.settings().library.private) {
+                if (this.model && this.model.PhotoPrivate && this.$config.settings().features.private) {
                     return this.model.PhotoPrivate
                 }
 

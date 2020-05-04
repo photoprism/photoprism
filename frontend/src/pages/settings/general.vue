@@ -15,7 +15,22 @@
                                     @change="onChange"
                                     :disabled="busy"
                                     class="ma-0 pa-0"
-                                    v-model="settings.library.private"
+                                    v-model="settings.features.archive"
+                                    color="secondary-dark"
+                                    :label="labels.archive"
+                                    :hint="hints.archive"
+                                    prepend-icon="archive"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="onChange"
+                                    :disabled="busy"
+                                    class="ma-0 pa-0"
+                                    v-model="settings.features.private"
                                     color="secondary-dark"
                                     :label="labels.private"
                                     :hint="hints.private"
@@ -30,7 +45,7 @@
                                     @change="onChange"
                                     :disabled="busy"
                                     class="ma-0 pa-0"
-                                    v-model="settings.library.review"
+                                    v-model="settings.features.review"
                                     color="secondary-dark"
                                     :label="labels.review"
                                     :hint="hints.review"
@@ -54,92 +69,49 @@
                             >
                             </v-checkbox>
                         </v-flex>
+                    </v-layout>
+                </v-card-actions>
+            </v-card>
 
-                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-                            <v-checkbox
+            <v-card flat tile class="mt-0 px-1 application">
+                <v-card-title primary-title class="pb-2">
+                    <h3 class="body-2 mb-0"><translate>User Interface</translate></h3>
+                </v-card-title>
+
+                <v-card-actions>
+                    <v-layout wrap align-top>
+                        <v-flex xs12 sm6 class="px-2 pb-2">
+                            <v-select
                                     @change="onChange"
                                     :disabled="busy"
-                                    class="ma-0 pa-0"
-                                    v-model="settings.library.move"
+                                    :items="options.themes"
+                                    :label="labels.theme"
                                     color="secondary-dark"
-                                    :label="labels.move"
-                                    :hint="hints.move"
-                                    prepend-icon="delete"
-                                    persistent-hint
-                            >
-                            </v-checkbox>
+                                    background-color="secondary-light"
+                                    v-model="settings.theme"
+                                    hide-details box
+                            ></v-select>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 class="px-2 pb-2">
+                            <v-select
+                                    @change="onChange"
+                                    :disabled="busy"
+                                    :items="options.languages"
+                                    :label="labels.language"
+                                    color="secondary-dark"
+                                    background-color="secondary-light"
+                                    v-model="settings.language"
+                                    hide-details box
+                            ></v-select>
                         </v-flex>
                     </v-layout>
                 </v-card-actions>
             </v-card>
 
             <v-card flat tile class="mt-0 px-1 application">
-                <v-card-title primary-title class="pb-0">
-                    <h3 class="body-2 mb-0"><translate>Features</translate></h3>
-                </v-card-title>
-
                 <v-card-actions>
                     <v-layout wrap align-top>
-                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-                            <v-checkbox
-                                    @change="onChange"
-                                    :disabled="busy"
-                                    class="ma-0 pa-0"
-                                    v-model="settings.features.places"
-                                    color="secondary-dark"
-                                    :label="labels.places"
-                                    :hint="hints.places"
-                                    prepend-icon="place"
-                                    persistent-hint
-                            >
-                            </v-checkbox>
-                        </v-flex>
-
-                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-                            <v-checkbox
-                                    @change="onChange"
-                                    :disabled="busy"
-                                    class="ma-0 pa-0"
-                                    v-model="settings.features.labels"
-                                    color="secondary-dark"
-                                    :label="labels.labels"
-                                    :hint="hints.labels"
-                                    prepend-icon="label"
-                                    persistent-hint
-                            >
-                            </v-checkbox>
-                        </v-flex>
-
-                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-                            <v-checkbox
-                                    @change="onChange"
-                                    :disabled="busy"
-                                    class="ma-0 pa-0"
-                                    v-model="settings.features.import"
-                                    color="secondary-dark"
-                                    :label="labels.import"
-                                    :hint="hints.import"
-                                    prepend-icon="create_new_folder"
-                                    persistent-hint
-                            >
-                            </v-checkbox>
-                        </v-flex>
-
-                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-                            <v-checkbox
-                                    @change="onChange"
-                                    :disabled="busy"
-                                    class="ma-0 pa-0"
-                                    v-model="settings.features.archive"
-                                    color="secondary-dark"
-                                    :label="labels.archive"
-                                    :hint="hints.archive"
-                                    prepend-icon="archive"
-                                    persistent-hint
-                            >
-                            </v-checkbox>
-                        </v-flex>
-
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
                                     @change="onChange"
@@ -175,6 +147,21 @@
                                     @change="onChange"
                                     :disabled="busy"
                                     class="ma-0 pa-0"
+                                    v-model="settings.features.import"
+                                    color="secondary-dark"
+                                    :label="labels.import"
+                                    :hint="hints.import"
+                                    prepend-icon="create_new_folder"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="onChange"
+                                    :disabled="busy"
+                                    class="ma-0 pa-0"
                                     v-model="settings.features.edit"
                                     color="secondary-dark"
                                     :label="labels.edit"
@@ -199,41 +186,50 @@
                             >
                             </v-checkbox>
                         </v-flex>
-                    </v-layout>
-                </v-card-actions>
-            </v-card>
 
-            <v-card flat tile class="px-1 application">
-                <v-card-title primary-title class="pb-2">
-                    <h3 class="body-2 mb-0"><translate>User Interface</translate></h3>
-                </v-card-title>
-
-                <v-card-actions>
-                    <v-layout wrap align-top>
-                        <v-flex xs12 sm6 class="px-2 pb-2">
-                            <v-select
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
                                     @change="onChange"
                                     :disabled="busy"
-                                    :items="options.themes"
-                                    :label="labels.theme"
+                                    class="ma-0 pa-0"
+                                    v-model="settings.features.labels"
                                     color="secondary-dark"
-                                    background-color="secondary-light"
-                                    v-model="settings.theme"
-                                    hide-details box
-                            ></v-select>
+                                    :label="labels.labels"
+                                    :hint="hints.labels"
+                                    prepend-icon="label"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
                         </v-flex>
 
-                        <v-flex xs12 sm6 class="px-2 pb-2">
-                            <v-select
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
                                     @change="onChange"
                                     :disabled="busy"
-                                    :items="options.languages"
-                                    :label="labels.language"
+                                    class="ma-0 pa-0"
+                                    v-model="settings.features.logs"
                                     color="secondary-dark"
-                                    background-color="secondary-light"
-                                    v-model="settings.language"
-                                    hide-details box
-                            ></v-select>
+                                    :label="labels.logs"
+                                    :hint="hints.logs"
+                                    prepend-icon="notes"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="onChange"
+                                    :disabled="busy"
+                                    class="ma-0 pa-0"
+                                    v-model="settings.features.places"
+                                    color="secondary-dark"
+                                    :label="labels.places"
+                                    :hint="hints.places"
+                                    prepend-icon="place"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
                         </v-flex>
                     </v-layout>
                 </v-card-actions>
@@ -318,17 +314,18 @@
                     thumbs: this.$gettext("Create thumbnails"),
                     raw: this.$gettext("Convert RAW files"),
                     move: this.$gettext("Remove imported files"),
-                    group: this.$gettext("Group related files"),
-                    private: this.$gettext("Hide private content"),
-                    review: this.$gettext("Apply quality filter"),
+                    group: this.$gettext("Group Sequential"),
+                    archive: this.$gettext("Photo Archive"),
+                    private: this.$gettext("Hide Private"),
+                    review: this.$gettext("Quality Filter"),
                     places: this.$gettext("Places"),
                     labels: this.$gettext("Labels"),
                     import: this.$gettext("Import"),
-                    archive: this.$gettext("Archive"),
                     upload: this.$gettext("Upload"),
                     download: this.$gettext("Download"),
                     edit: this.$gettext("Edit"),
                     share: this.$gettext("Share"),
+                    logs: this.$gettext("Logs"),
                 },
                 hints: {
                     private: this.$gettext("Exclude photos marked as private from search results by default."),
@@ -343,7 +340,7 @@
                     download: this.$gettext("Download single files and zip archives."),
                     edit: this.$gettext("Change photo titles, locations and other metadata."),
                     share: this.$gettext("Upload to WebDAV and other remote services."),
-
+                    logs: this.$gettext("Show logs tab on library page."),
                 },
                 busy: false,
             };

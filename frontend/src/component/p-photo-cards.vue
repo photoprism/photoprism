@@ -130,7 +130,7 @@
         data() {
             return {
                 showLocation: this.$config.settings().features.places,
-                hidePrivate: this.$config.settings().library.private,
+                hidePrivate: this.$config.settings().features.private,
                 debug: this.$config.get('debug'),
                 mouseDown: {
                     index: -1,

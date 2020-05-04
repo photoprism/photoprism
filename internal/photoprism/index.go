@@ -122,7 +122,7 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 				return nil
 			}
 
-			related, err := mf.RelatedFiles(ind.conf.Settings().Library.GroupRelated)
+			related, err := mf.RelatedFiles(ind.conf.Settings().Library.Group)
 
 			if err != nil {
 				log.Warnf("index: %s", err.Error())

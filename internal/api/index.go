@@ -42,7 +42,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 			c.JSON(http.StatusOK, gin.H{"error": err.Error()})
 		}
 
-		if f.ConvertRaw && !conf.ReadOnly() {
+		if f.Convert && !conf.ReadOnly() {
 			convert := service.Convert()
 
 			if err := convert.Start(conf.OriginalsPath()); err != nil {
@@ -51,7 +51,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 			}
 		}
 
-		if f.CreateThumbs {
+		if f.Resample {
 			rs := service.Resample()
 
 			if err := rs.Start(false); err != nil {
@@ -62,7 +62,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 
 		ind := service.Index()
 
-		if f.CompleteRescan {
+		if f.Rescan {
 			ind.Start(photoprism.IndexOptionsAll())
 		} else {
 			ind.Start(photoprism.IndexOptionsNone())

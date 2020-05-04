@@ -73,7 +73,7 @@
                 total: 0,
                 completed: 0,
                 started: 0,
-                review: this.$config.settings().library.review,
+                review: this.$config.settings().features.review,
                 safe: !this.$config.get("uploadNSFW"),
             }
         },
@@ -176,7 +176,7 @@
                 this.total = 0;
                 this.completed = 0;
                 this.started = 0;
-                this.review = this.$config.settings().library.review;
+                this.review = this.$config.feature("review");
                 this.safe = !this.$config.get("uploadNSFW");
             }
         },

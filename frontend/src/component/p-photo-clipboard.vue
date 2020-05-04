@@ -56,7 +56,7 @@
                         color="private"
                         :disabled="selection.length === 0"
                         @click.stop="batchPrivate"
-                        v-if="context !== 'archive' && config.settings.library.private"
+                        v-if="context !== 'archive' && config.settings.features.private"
                         class="p-photo-clipboard-private"
                 >
                     <v-icon>lock</v-icon>

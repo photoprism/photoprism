@@ -79,7 +79,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile to="/review" @click="" v-if="config.settings.library.review">
+                    <v-list-tile to="/review" @click="" v-if="$config.feature('review')">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate>Review</translate>
@@ -109,8 +109,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile v-if="config.settings.library.private" to="/private" @click=""
-                             class="p-navigation-private">
+                <v-list-tile to="/private" @click="" class="p-navigation-private" v-if="$config.feature('private')" >
                     <v-list-tile-action>
                         <v-icon>lock</v-icon>
                     </v-list-tile-action>

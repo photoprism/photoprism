@@ -21,24 +21,29 @@ type MapsSettings struct {
 }
 
 type LibrarySettings struct {
-	ConvertRaw     bool `json:"raw" yaml:"raw"`
-	CreateThumbs   bool `json:"thumbs" yaml:"thumbs"`
-	CompleteRescan bool `json:"rescan" yaml:"rescan"`
-	MoveImported   bool `json:"move" yaml:"move"`
-	HidePrivate    bool `json:"private" yaml:"private"`
-	RequireReview  bool `json:"review" yaml:"review"`
-	GroupRelated   bool `json:"group" yaml:"group"`
+	Convert  bool `json:"convert" yaml:"convert"`
+	Resample bool `json:"resample" yaml:"resample"`
+	Rescan   bool `json:"rescan" yaml:"rescan"`
+	Group    bool `json:"group" yaml:"group"`
+}
+
+type ImportSettings struct {
+	Path string `json:"path" yaml:"path"`
+	Move bool   `json:"move" yaml:"move"`
 }
 
 type FeatureSettings struct {
+	Archive  bool `json:"archive" yaml:"archive"`
+	Private  bool `json:"private" yaml:"private"`
+	Review   bool `json:"review" yaml:"review"`
 	Upload   bool `json:"upload" yaml:"upload"`
 	Import   bool `json:"import" yaml:"import"`
 	Labels   bool `json:"labels" yaml:"labels"`
 	Places   bool `json:"places" yaml:"places"`
-	Archive  bool `json:"archive" yaml:"archive"`
 	Download bool `json:"download" yaml:"download"`
 	Edit     bool `json:"edit" yaml:"edit"`
 	Share    bool `json:"share" yaml:"share"`
+	Logs     bool `json:"logs" yaml:"logs"`
 }
 
 // Settings contains Web UI settings
@@ -47,6 +52,7 @@ type Settings struct {
 	Language string          `json:"language" yaml:"language"`
 	Maps     MapsSettings    `json:"maps" yaml:"maps"`
 	Features FeatureSettings `json:"features" yaml:"features"`
+	Import   ImportSettings  `json:"import" yaml:"import"`
 	Library  LibrarySettings `json:"library" yaml:"library"`
 }
 
@@ -60,23 +66,27 @@ func NewSettings() *Settings {
 			Style:   "streets",
 		},
 		Features: FeatureSettings{
+			Archive:  true,
+			Review:   true,
+			Private:  true,
 			Upload:   true,
 			Import:   true,
 			Labels:   true,
 			Places:   true,
-			Archive:  true,
 			Download: true,
 			Edit:     true,
 			Share:    true,
+			Logs:     true,
+		},
+		Import: ImportSettings{
+			Path: "",
+			Move: false,
 		},
 		Library: LibrarySettings{
-			CompleteRescan: false,
-			ConvertRaw:     false,
-			CreateThumbs:   false,
-			MoveImported:   false,
-			GroupRelated:   true,
-			RequireReview:  true,
-			HidePrivate:    true,
+			Rescan:   false,
+			Convert:  true,
+			Resample: true,
+			Group:    true,
 		},
 	}
 }
