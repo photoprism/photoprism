@@ -34,12 +34,12 @@ func GetFile(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// POST /api/v1/files/:hash/link
+// POST /api/v1/files/:uuid/link
 //
 // Parameters:
-//   hash: string SHA-1 hash of the file
+//   uuid: string SHA-1 hash of the file
 func LinkFile(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/files/:hash/link", func(c *gin.Context) {
+	router.POST("/files/:uuid/link", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -48,10 +48,10 @@ func LinkFile(router *gin.RouterGroup, conf *config.Config) {
 		db := conf.Db()
 		q := query.New(db)
 
-		m, err := q.FileByUUID(c.Param("hash"))
+		m, err := q.FileByUUID(c.Param("uuid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrFileNotFound)
 			return
 		}
 
