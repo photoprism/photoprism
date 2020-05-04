@@ -90,6 +90,23 @@ var LabelFixtures = map[string]Label{
 		DeletedAt:        nil,
 		New:              false,
 	},
+	"updateLabel": {
+		ID:               1000005,
+		LabelUUID:        "lt9k3pw1wowuy3c7",
+		LabelSlug:        "updatelabel",
+		CustomSlug:       "updateLabel",
+		LabelName:        "updateLabel",
+		LabelPriority:    2,
+		LabelFavorite:    false,
+		LabelDescription: "",
+		LabelNotes:       "",
+		LabelCategories:  []*Label{},
+		Links:            []Link{},
+		CreatedAt:        time.Now(),
+		UpdatedAt:        time.Now(),
+		DeletedAt:        nil,
+		New:              false,
+	},
 }
 
 var LabelFixtureLandscape = LabelFixtures["landscape"]
