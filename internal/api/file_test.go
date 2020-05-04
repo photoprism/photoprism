@@ -1,6 +1,8 @@
 package api
 
 import (
+	"encoding/json"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/tidwall/gjson"
 	"net/http"
 	"testing"
@@ -27,22 +29,40 @@ func TestGetFile(t *testing.T) {
 }
 
 func TestLinkFile(t *testing.T) {
-	t.Run("album not found", func(t *testing.T) {
+	t.Run("successful request", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		LinkFile(router, ctx)
-		r := PerformRequest(app, "POST", "/api/v1/files/3cad9168fa6acc5c5c2965ddf6ec465ca42fd818/link")
-		t.Log(r.Body.String())
+		r := PerformRequestWithBody(app, "POST", "/api/v1/files/ft9es39w45bnlqdw/link", `{"password": "foobar123", "expires": 0, "edit": true}`)
+
+		var label entity.Label
+
+		if err := json.Unmarshal(r.Body.Bytes(), &label); err != nil {
+			t.Fatal(err)
+		}
+
+		if len(label.Links) != 1 {
+			t.Fatalf("one link expected: %d, %+v", len(label.Links), label)
+		}
+
+		link := label.Links[0]
+
+		assert.Equal(t, "foobar123", link.LinkPassword)
+		assert.Nil(t, link.LinkExpires)
+		assert.False(t, link.CanComment)
+		assert.True(t, link.CanEdit)
+	})
+	t.Run("file not found", func(t *testing.T) {
+		app, router, ctx := NewApiTest()
+		LinkFile(router, ctx)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/files/xxx/link", `{"password": "foobar", "expires": 0, "edit": true}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Album not found", val.String())
+		assert.Equal(t, "File not found", val.String())
 	})
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		LinkFile(router, ctx)
-		r := PerformRequest(app, "POST", "/api/v1/files/ft9es39w45bnlqdw/link")
+		r := PerformRequestWithBody(app, "POST", "/api/v1/files/ft9es39w45bnlqdw/link", `{"xxx": 123, "expires": 0, "edit": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
-		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Invalid request", val.String())
 	})
-
 }
