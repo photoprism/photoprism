@@ -636,7 +636,7 @@ msgstr "Orte"
 
 #: src/pages/login.vue:10
 msgid "Please enter your password to proceed:"
-msgstr "Bitte gib deinPasswort ein um fortzufahren…"
+msgstr "Bitte gib dein Passwort ein um fortzufahren…"
 
 #: src/pages/library/originals.vue:116
 msgid ""
@@ -722,7 +722,7 @@ msgstr "Wiederherstellen"
 
 #: src/component/p-navigation.vue:84
 msgid "Review"
-msgstr "Nachprüfung"
+msgstr "Review"
 
 #: src/dialog/account/p-account-edit-dialog.vue:336
 #: src/dialog/account/p-account-edit-dialog.vue:337
