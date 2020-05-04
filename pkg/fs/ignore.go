@@ -84,7 +84,7 @@ func (l *IgnoreList) AppendItems(dir string, patterns []string) error {
 	}
 
 	for _, pattern := range patterns {
-		if pattern != "" {
+		if pattern != "" && !strings.HasPrefix(pattern, "#") {
 			l.items = append(l.items, NewIgnoreItem(dir, pattern, l.caseSensitive))
 		}
 	}
