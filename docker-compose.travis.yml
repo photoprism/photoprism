@@ -29,7 +29,6 @@ services:
       PHOTOPRISM_SUBTITLE: "Browse your life"
       PHOTOPRISM_DESCRIPTION: "Personal Photo Management tested by Travis CI."
       PHOTOPRISM_AUTHOR: "PhotoPrism.org"
-      PHOTOPRISM_TWITTER: "@browseyourlife"
       CODECOV_TOKEN:
       CODECOV_ENV:
       CODECOV_URL:

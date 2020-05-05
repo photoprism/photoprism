@@ -74,7 +74,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 		}
 
-		if  err != nil {
+		if err != nil {
 			log.Errorf("photo: %s", err)
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 			return

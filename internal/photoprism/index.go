@@ -3,8 +3,8 @@ package photoprism
 import (
 	"errors"
 	"fmt"
-	"sync"
 	"runtime"
+	"sync"
 
 	"github.com/jinzhu/gorm"
 	"github.com/karrick/godirwalk"

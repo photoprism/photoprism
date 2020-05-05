@@ -21,10 +21,6 @@ func configAction(ctx *cli.Context) error {
 
 	fmt.Printf("%-25s VALUE\n", "NAME")
 
-	// Passwords
-	fmt.Printf("%-25s %s\n", "admin-password", conf.AdminPassword())
-	fmt.Printf("%-25s %s\n", "webdav-password", conf.WebDAVPassword())
-
 	// Description
 	fmt.Printf("%-25s %s\n", "name", conf.Name())
 	fmt.Printf("%-25s %s\n", "url", conf.Url())
@@ -32,7 +28,6 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "subtitle", conf.Subtitle())
 	fmt.Printf("%-25s %s\n", "description", conf.Description())
 	fmt.Printf("%-25s %s\n", "author", conf.Author())
-	fmt.Printf("%-25s %s\n", "twitter", conf.Twitter())
 	fmt.Printf("%-25s %s\n", "version", conf.Version())
 	fmt.Printf("%-25s %s\n", "copyright", conf.Copyright())
 
@@ -50,6 +45,10 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "detect-nsfw", conf.DetectNSFW())
 	fmt.Printf("%-25s %t\n", "upload-nsfw", conf.UploadNSFW())
 
+	// Passwords
+	fmt.Printf("%-25s %s\n", "admin-password", conf.AdminPassword())
+	fmt.Printf("%-25s %s\n", "webdav-password", conf.WebDAVPassword())
+
 	// Background workers and logging
 	fmt.Printf("%-25s %d\n", "workers", conf.Workers())
 	fmt.Printf("%-25s %d\n", "wakeup-interval", conf.WakeupInterval()/time.Second)
@@ -66,16 +65,18 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "temp-path", conf.TempPath())
 	fmt.Printf("%-25s %s\n", "cache-path", conf.CachePath())
 	fmt.Printf("%-25s %s\n", "resources-path", conf.ResourcesPath())
-	fmt.Printf("%-25s %s\n", "templates-path", conf.HttpTemplatesPath())
+
+	// HTTP server config
 	fmt.Printf("%-25s %s\n", "favicons-path", conf.HttpFaviconsPath())
 	fmt.Printf("%-25s %s\n", "static-path", conf.HttpStaticPath())
 	fmt.Printf("%-25s %s\n", "static-build-path", conf.HttpStaticBuildPath())
-
-	// Server config
+	fmt.Printf("%-25s %s\n", "templates-path", conf.HttpTemplatesPath())
+	fmt.Printf("%-25s %s\n", "http-template", conf.HttpDefaultTemplate())
 	fmt.Printf("%-25s %s\n", "http-host", conf.HttpServerHost())
 	fmt.Printf("%-25s %d\n", "http-port", conf.HttpServerPort())
 	fmt.Printf("%-25s %s\n", "http-mode", conf.HttpServerMode())
 
+	// Built-in TiDB server config
 	fmt.Printf("%-25s %s\n", "tidb-host", conf.TidbServerHost())
 	fmt.Printf("%-25s %d\n", "tidb-port", conf.TidbServerPort())
 	fmt.Printf("%-25s %s\n", "tidb-password", conf.TidbServerPassword())

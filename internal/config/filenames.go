@@ -92,13 +92,13 @@ func (c *Config) ConfigFile() string {
 
 // SettingsFile returns the user settings file name.
 func (c *Config) SettingsFile() string {
-	return c.ConfigPath() + "/settings.yml"
+	return filepath.Join(c.ConfigPath(), "settings.yml")
 }
 
 // ConfigPath returns the config path.
 func (c *Config) ConfigPath() string {
 	if c.params.ConfigPath == "" {
-		return c.AssetsPath() + "/config"
+		return filepath.Join(c.AssetsPath(), "config")
 	}
 
 	return fs.Abs(c.params.ConfigPath)
@@ -107,7 +107,7 @@ func (c *Config) ConfigPath() string {
 // PIDFilename returns the filename for storing the server process id (pid).
 func (c *Config) PIDFilename() string {
 	if c.params.PIDFilename == "" {
-		return c.AssetsPath() + "/photoprism.pid"
+		return filepath.Join(c.AssetsPath(), "photoprism.pid")
 	}
 
 	return fs.Abs(c.params.PIDFilename)
@@ -116,7 +116,7 @@ func (c *Config) PIDFilename() string {
 // LogFilename returns the filename for storing server logs.
 func (c *Config) LogFilename() string {
 	if c.params.LogFilename == "" {
-		return c.AssetsPath() + "/photoprism.log"
+		return filepath.Join(c.AssetsPath(), "photoprism.log")
 	}
 
 	return fs.Abs(c.params.LogFilename)
@@ -155,7 +155,7 @@ func (c *Config) ExifToolBin() string {
 // TempPath returns a temporary directory name for uploads and downloads.
 func (c *Config) TempPath() string {
 	if c.params.TempPath == "" {
-		return os.TempDir() + "/photoprism"
+		return filepath.Join(os.TempDir(), "photoprism")
 	}
 
 	return fs.Abs(c.params.TempPath)
@@ -174,7 +174,7 @@ func (c *Config) AssetsPath() string {
 // ResourcesPath returns the path to the app resources like static files.
 func (c *Config) ResourcesPath() string {
 	if c.params.ResourcesPath == "" {
-		return c.AssetsPath() + "/resources"
+		return filepath.Join(c.AssetsPath(), "resources")
 	}
 
 	return fs.Abs(c.params.ResourcesPath)
@@ -182,15 +182,15 @@ func (c *Config) ResourcesPath() string {
 
 // ExamplesPath returns the example files path.
 func (c *Config) ExamplesPath() string {
-	return c.ResourcesPath() + "/examples"
+	return filepath.Join(c.ResourcesPath(), "examples")
 }
 
 // TensorFlowModelPath returns the tensorflow model path.
 func (c *Config) TensorFlowModelPath() string {
-	return c.ResourcesPath() + "/nasnet"
+	return filepath.Join(c.ResourcesPath(), "nasnet")
 }
 
 // NSFWModelPath returns the NSFW tensorflow model path.
 func (c *Config) NSFWModelPath() string {
-	return c.ResourcesPath() + "/nsfw"
+	return filepath.Join(c.ResourcesPath(), "nsfw")
 }

@@ -15,6 +15,10 @@ func (c *Config) DisableSettings() bool {
 	return c.params.DisableSettings
 }
 
+type TemplateSettings struct {
+	Default string `json:"default" yaml:"default"`
+}
+
 type MapsSettings struct {
 	Animate int    `json:"animate" yaml:"animate"`
 	Style   string `json:"style" yaml:"style"`
@@ -48,12 +52,13 @@ type FeatureSettings struct {
 
 // Settings contains Web UI settings
 type Settings struct {
-	Theme    string          `json:"theme" yaml:"theme"`
-	Language string          `json:"language" yaml:"language"`
-	Maps     MapsSettings    `json:"maps" yaml:"maps"`
-	Features FeatureSettings `json:"features" yaml:"features"`
-	Import   ImportSettings  `json:"import" yaml:"import"`
-	Library  LibrarySettings `json:"library" yaml:"library"`
+	Theme     string           `json:"theme" yaml:"theme"`
+	Language  string           `json:"language" yaml:"language"`
+	Templates TemplateSettings `json:"templates" yaml:"templates"`
+	Maps      MapsSettings     `json:"maps" yaml:"maps"`
+	Features  FeatureSettings  `json:"features" yaml:"features"`
+	Import    ImportSettings   `json:"import" yaml:"import"`
+	Library   LibrarySettings  `json:"library" yaml:"library"`
 }
 
 // NewSettings returns a empty Settings
@@ -61,6 +66,9 @@ func NewSettings() *Settings {
 	return &Settings{
 		Theme:    "default",
 		Language: "en",
+		Templates: TemplateSettings{
+			Default: "index.tmpl",
+		},
 		Maps: MapsSettings{
 			Animate: 0,
 			Style:   "streets",

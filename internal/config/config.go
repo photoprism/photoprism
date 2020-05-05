@@ -123,11 +123,6 @@ func (c *Config) Author() string {
 	return c.params.Author
 }
 
-// Twitter returns the twitter handle for sharing.
-func (c *Config) Twitter() string {
-	return c.params.Twitter
-}
-
 // Version returns the application version.
 func (c *Config) Version() string {
 	return c.params.Version

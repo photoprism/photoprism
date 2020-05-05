@@ -30,4 +30,3 @@ func TestRuntimeInfo_Refresh(t *testing.T) {
 	assert.LessOrEqual(t, uint64(1), info.Memory.Reserved)
 	assert.LessOrEqual(t, uint64(1), info.Memory.Used)
 }
-

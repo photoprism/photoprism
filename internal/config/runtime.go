@@ -12,9 +12,9 @@ type RuntimeInfo struct {
 	Cores    int `json:"cores"`
 	Routines int `json:"routines"`
 	Memory   struct {
-		Used        uint64 `json:"used"`
-		Reserved    uint64 `json:"reserved"`
-		Info        string `json:"info"`
+		Used     uint64 `json:"used"`
+		Reserved uint64 `json:"reserved"`
+		Info     string `json:"info"`
 	} `json:"memory"`
 }
 

@@ -3,6 +3,10 @@ FROM photoprism/photoprism:latest as build
 # Hide TensorFlow warnings
 ENV TF_CPP_MIN_LOG_LEVEL 2
 
+# Copy assets
+COPY /docker/demo/index.tmpl /photoprism/assets/resources/templates
+
+# Download example photos
 RUN wget -qO- https://dl.photoprism.org/fixtures/demo.tar.gz | tar xvz -C /photoprism/import
 
 # Configure PhotoPrism

@@ -1,5 +1,7 @@
 theme: default
 language: en
+templates:
+  default: index.tmpl
 maps:
   animate: 0
   style: streets

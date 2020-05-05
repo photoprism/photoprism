@@ -1,6 +1,10 @@
 package config
 
-import "github.com/photoprism/photoprism/pkg/fs"
+import (
+	"path/filepath"
+
+	"github.com/photoprism/photoprism/pkg/fs"
+)
 
 // DetachServer returns true if server should detach from console (daemon mode).
 func (c *Config) DetachServer() bool {
@@ -45,22 +49,36 @@ func (c *Config) HttpServerPassword() string {
 
 // HttpTemplatesPath returns the server templates path.
 func (c *Config) HttpTemplatesPath() string {
-	return c.ResourcesPath() + "/templates"
+	return filepath.Join(c.ResourcesPath(), "templates")
+}
+
+// HttpTemplateExists returns true if a template with the given name exists (e.g. index.tmpl).
+func (c *Config) HttpTemplateExists(name string) bool {
+	return fs.FileExists(filepath.Join(c.HttpTemplatesPath(), name))
+}
+
+// HttpDefaultTemplate returns the name of the default template (e.g. index.tmpl).
+func (c *Config) HttpDefaultTemplate() string {
+	if c.HttpTemplateExists(c.Settings().Templates.Default) {
+		return c.Settings().Templates.Default
+	}
+
+	return "index.tmpl"
 }
 
 // HttpFaviconsPath returns the favicons path.
 func (c *Config) HttpFaviconsPath() string {
-	return c.HttpStaticPath() + "/favicons"
+	return filepath.Join(c.HttpStaticPath(), "favicons")
 }
 
 // HttpStaticPath returns the static server assets path (//server/static/*).
 func (c *Config) HttpStaticPath() string {
-	return c.ResourcesPath() + "/static"
+	return filepath.Join(c.ResourcesPath(), "static")
 }
 
 // HttpStaticBuildPath returns the static build path (//server/static/build/*).
 func (c *Config) HttpStaticBuildPath() string {
-	return c.HttpStaticPath() + "/build"
+	return filepath.Join(c.HttpStaticPath(), "build")
 }
 
 // TidbServerHost returns the host for the built-in TiDB server. (empty for all interfaces).
@@ -89,7 +107,7 @@ func (c *Config) TidbServerPassword() string {
 // TidbServerPath returns the database storage path for the built-in TiDB server.
 func (c *Config) TidbServerPath() string {
 	if c.params.TidbServerPath == "" {
-		return c.ResourcesPath() + "/database"
+		return filepath.Join(c.ResourcesPath(), "/database")
 	}
 
 	return fs.Abs(c.params.TidbServerPath)

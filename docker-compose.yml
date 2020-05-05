@@ -39,7 +39,6 @@ services:
       PHOTOPRISM_TITLE: "PhotoPrism"
       PHOTOPRISM_SUBTITLE: "Browse your life"
       PHOTOPRISM_AUTHOR: "PhotoPrism.org"
-      PHOTOPRISM_TWITTER: "@browseyourlife"
       TF_CPP_MIN_LOG_LEVEL: 0
 
   photoprism-db:

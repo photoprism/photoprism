@@ -79,12 +79,6 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_AUTHOR",
 	},
 	cli.StringFlag{
-		Name:   "twitter",
-		Usage:  "twitter handle for sharing",
-		Value:  "@browseyourlife",
-		EnvVar: "PHOTOPRISM_TWITTER",
-	},
-	cli.StringFlag{
 		Name:   "log-level, l",
 		Usage:  "trace, debug, info, warning, error, fatal or panic",
 		Value:  "info",

@@ -28,23 +28,22 @@ const (
 //
 // See https://github.com/photoprism/photoprism/issues/50#issuecomment-433856358
 type Params struct {
-	AdminPassword      string `yaml:"admin-password" flag:"admin-password"`
-	WebDAVPassword     string `yaml:"webdav-password" flag:"webdav-password"`
 	Name               string
 	Url                string `yaml:"url" flag:"url"`
 	Title              string `yaml:"title" flag:"title"`
 	Subtitle           string `yaml:"subtitle" flag:"subtitle"`
 	Description        string `yaml:"description" flag:"description"`
 	Author             string `yaml:"author" flag:"author"`
-	Twitter            string `yaml:"twitter" flag:"twitter"`
 	Version            string
 	Copyright          string
+	Public             bool   `yaml:"public" flag:"public"`
 	Debug              bool   `yaml:"debug" flag:"debug"`
 	ReadOnly           bool   `yaml:"read-only" flag:"read-only"`
-	Public             bool   `yaml:"public" flag:"public"`
 	Experimental       bool   `yaml:"experimental" flag:"experimental"`
 	Workers            int    `yaml:"workers" flag:"workers"`
 	WakeupInterval     int    `yaml:"wakeup-interval" flag:"wakeup-interval"`
+	AdminPassword      string `yaml:"admin-password" flag:"admin-password"`
+	WebDAVPassword     string `yaml:"webdav-password" flag:"webdav-password"`
 	LogLevel           string `yaml:"log-level" flag:"log-level"`
 	ConfigFile         string
 	ConfigPath         string `yaml:"config-path" flag:"config-path"`
