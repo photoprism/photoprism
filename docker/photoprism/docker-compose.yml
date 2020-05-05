@@ -43,9 +43,12 @@ services:
       PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
       # PHOTOPRISM_DATABASE_DRIVER: "mysql" # Using MariaDB or MySQL instead of the internal TiDB is optional
       # PHOTOPRISM_DATABASE_DSN: "photoprism:photoprism@tcp(photoprism-db:3306)/photoprism?parseTime=true"
-      # PHOTOPRISM_THUMB_QUALITY: 95 # High-quality thumbnails (optional, default JPEG quality is 90)
-      # PHOTOPRISM_THUMB_SIZE: 3840 # For retina screens, default is 2048
-      # PHOTOPRISM_THUMB_FILTER: "lanczos" # Resample filter, best to worst: blackman, lanczos, cubic, linear
+      PHOTOPRISM_JPEG_QUALITY: 90 # Use 95 for high-quality thumbnails (requires more storage)
+      PHOTOPRISM_RESAMPLE_FILTER: "lanczos" # Resample filter, best to worst: blackman, lanczos, cubic, linear
+      PHOTOPRISM_RESAMPLE_UNCACHED: "false" # On-demand rendering of thumbnails (high memory and cpu usage)
+      PHOTOPRISM_RESAMPLE_SIZE: 2048 # Cached thumbnail size (default 2048, min 720, max 3840)
+      # PHOTOPRISM_RESAMPLE_SIZE: 3840 # For retina screens (requires more storage)
+      PHOTOPRISM_RESAMPLE_LIMIT: 3840 # On-demand thumbnail size (default 2048, min 720, max 3840)
     volumes:
       - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
       - "~/Pictures/Import:/photoprism/import" # [local path]:[container path] (optional)

@@ -17,7 +17,7 @@ func TestConfigCommand(t *testing.T) {
 		err = ConfigCommand.Run(ctx)
 	})
 
-	assert.Contains(t, output, "NAME                  VALUE")
+	assert.Contains(t, output, "NAME                      VALUE")
 	assert.Contains(t, output, "config-file")
 	assert.Contains(t, output, "darktable-cli")
 	assert.Contains(t, output, "originals-path")

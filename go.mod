@@ -16,7 +16,7 @@ require (
 	github.com/dsoprea/go-logging v0.0.0-20200401235223-7e979d0e0d02 // indirect
 	github.com/dsoprea/go-png-image-structure v0.0.0-20200402000326-c0fdb803026f
 	github.com/dsoprea/go-utility v0.0.0-20200412174200-5aee815e0920 // indirect
-	github.com/dustin/go-humanize v1.0.0 // indirect
+	github.com/dustin/go-humanize v1.0.0
 	github.com/gin-gonic/gin v1.6.2
 	github.com/go-errors/errors v1.0.2 // indirect
 	github.com/golang/geo v0.0.0-20200319012246-673a6f80352d

@@ -99,6 +99,7 @@ func (c *Config) PublicClientConfig() ClientConfig {
 		"colors":          colors.All.List(),
 		"categories":      []string{},
 		"clip":            txt.ClipDefault,
+		"server":          RuntimeInfo{},
 	}
 
 	return result
@@ -247,6 +248,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		"colors":          colors.All.List(),
 		"categories":      categories,
 		"clip":            txt.ClipDefault,
+		"server":          NewRuntimeInfo(),
 	}
 
 	return result

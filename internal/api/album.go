@@ -439,7 +439,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		if !ok {
 			log.Errorf("album: invalid thumb type %s", typeName)
-			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
+			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 			return
 		}
 
@@ -466,7 +466,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		if !fs.FileExists(fileName) {
 			log.Errorf("album: could not find original for %s", fileName)
-			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
+			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			f.FileMissing = true
@@ -477,33 +477,40 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
 		if thumbType.ExceedsLimit() && c.Query("download") == "" {
 			log.Debugf("album: using original, thumbnail size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
-
 			c.File(fileName)
-
 			return
 		}
 
-		if thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
-			if c.Query("download") != "" {
-				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.ShareFileName()))
-			}
+		var thumbnail string
 
-			thumbData, err := ioutil.ReadFile(thumbnail)
-
-			if err != nil {
-				log.Errorf("album: %s", err)
-				c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
-				return
-			}
-
-			gc.Set(cacheKey, thumbData, time.Hour)
-
-			log.Debugf("album: %s cached [%s]", cacheKey, time.Since(start))
-
-			c.Data(http.StatusOK, "image/jpeg", thumbData)
+		if conf.ResampleUncached() || thumbType.SkipPreRender() {
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 		} else {
-			log.Errorf("album: %s", err)
-			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
+			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 		}
+
+		if err != nil {
+			log.Errorf("album: %s", err)
+			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+			return
+		}
+
+		if c.Query("download") != "" {
+			c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.ShareFileName()))
+		}
+
+		thumbData, err := ioutil.ReadFile(thumbnail)
+
+		if err != nil {
+			log.Errorf("album: %s", err)
+			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
+			return
+		}
+
+		gc.Set(cacheKey, thumbData, time.Hour)
+
+		log.Debugf("album: %s cached [%s]", cacheKey, time.Since(start))
+
+		c.Data(http.StatusOK, "image/jpeg", thumbData)
 	})
 }

@@ -3,12 +3,24 @@ package thumb
 import "github.com/disintegration/imaging"
 
 var (
-	PreRenderSize    = 3840
-	MaxRenderSize    = 3840
+	Size             = 3840
+	Limit            = 3840
+	Filter           = ResampleLanczos
 	JpegQuality      = 95
 	JpegQualitySmall = 80
-	Filter           = ResampleLanczos
 )
+
+func MaxSize() int {
+	if Size > Limit {
+		return Size
+	}
+
+	return Limit
+}
+
+func InvalidSize(size int) bool {
+	return size < 0 || size > MaxSize()
+}
 
 const (
 	ResampleBlackman ResampleFilter = "blackman"
@@ -84,9 +96,9 @@ var DefaultTypes = []string{
 }
 
 func (t Type) ExceedsLimit() bool {
-	return t.Width > MaxRenderSize || t.Height > MaxRenderSize
+	return t.Width > MaxSize() || t.Height > MaxSize()
 }
 
 func (t Type) SkipPreRender() bool {
-	return t.Width > PreRenderSize || t.Height > PreRenderSize
+	return t.Width > Size || t.Height > Size
 }

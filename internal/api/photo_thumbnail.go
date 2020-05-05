@@ -27,7 +27,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		if !ok {
 			log.Errorf("photo: invalid thumb type %s", txt.Quote(typeName))
-			c.Data(http.StatusBadRequest, "image/svg+xml", photoIconSvg)
+			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 			return
 		}
 
@@ -36,12 +36,12 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		f, err := q.FileByHash(fileHash)
 
 		if err != nil {
-			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
+			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 			return
 		}
 
 		if f.FileError != "" {
-			c.Data(http.StatusBadRequest, "image/svg+xml", brokenIconSvg)
+			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 			return
 		}
 
@@ -49,7 +49,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		if !fs.FileExists(fileName) {
 			log.Errorf("photo: could not find original for %s", fileName)
-			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
+			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			f.FileMissing = true
@@ -66,19 +66,24 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
-			if c.Query("download") != "" {
-				c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.ShareFileName()))
-			}
+		var thumbnail string
 
-			c.File(thumbnail)
+		if conf.ResampleUncached() || thumbType.SkipPreRender() {
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 		} else {
-			log.Errorf("photo: %s", err)
-
-			f.FileError = err.Error()
-			db.Save(&f)
-
-			c.Data(http.StatusBadRequest, "image/svg+xml", brokenIconSvg)
+			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 		}
+
+		if  err != nil {
+			log.Errorf("photo: %s", err)
+			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+			return
+		}
+
+		if c.Query("download") != "" {
+			c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.ShareFileName()))
+		}
+
+		c.File(thumbnail)
 	})
 }

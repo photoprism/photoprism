@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"runtime"
 
 	"github.com/jinzhu/gorm"
 	"github.com/karrick/godirwalk"
@@ -164,6 +165,8 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 	if err != nil {
 		log.Error(err.Error())
 	}
+
+	runtime.GC()
 
 	return done
 }

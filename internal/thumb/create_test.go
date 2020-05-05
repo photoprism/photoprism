@@ -109,6 +109,35 @@ func TestFromFile(t *testing.T) {
 	})
 }
 
+func TestFromCache(t *testing.T) {
+	t.Run("missing thumb", func(t *testing.T) {
+		tile50 := Types["tile_50"]
+		src := "testdata/example.jpg"
+
+		assert.FileExists(t, src)
+
+		fileName, err := FromCache(src, "193456789098765432", "testdata", tile50.Width, tile50.Height, tile50.Options...)
+
+		assert.Equal(t, "", fileName)
+
+		if err != ErrThumbNotCached {
+			t.Fatal("ErrThumbNotCached expected")
+		}
+	})
+
+	t.Run("missing file", func(t *testing.T) {
+		tile50 := Types["tile_50"]
+		src := "testdata/example.xxx"
+
+		assert.NoFileExists(t, src)
+
+		fileName, err := FromCache(src, "193456789098765432", "testdata", tile50.Width, tile50.Height, tile50.Options...)
+
+		assert.Equal(t, "", fileName)
+		assert.Error(t, err)
+	})
+}
+
 func TestCreate(t *testing.T) {
 	t.Run("tile_500", func(t *testing.T) {
 		tile500 := Types["tile_500"]

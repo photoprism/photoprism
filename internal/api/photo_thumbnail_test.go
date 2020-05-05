@@ -13,20 +13,20 @@ func TestGetThumbnail(t *testing.T) {
 		GetThumbnail(router, ctx)
 		result := PerformRequest(app, "GET", "/api/v1/thumbnails/1/xxx")
 
-		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.Equal(t, http.StatusOK, result.Code)
 	})
 	t.Run("invalid hash", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		GetThumbnail(router, ctx)
 		result := PerformRequest(app, "GET", "/api/v1/thumbnails/1/tile_500")
 
-		assert.Equal(t, http.StatusNotFound, result.Code)
+		assert.Equal(t, http.StatusOK, result.Code)
 	})
 	t.Run("could not find original", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		GetThumbnail(router, ctx)
 		result := PerformRequest(app, "GET", "/api/v1/thumbnails/123xxx/tile_500")
 
-		assert.Equal(t, http.StatusNotFound, result.Code)
+		assert.Equal(t, http.StatusOK, result.Code)
 	})
 }

@@ -38,8 +38,6 @@ func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imag
 			method = ResampleFit
 		case ResampleResize:
 			method = ResampleResize
-		default:
-			panic(fmt.Errorf("not a valid resample option: %d", option))
 		}
 	}
 
@@ -75,11 +73,11 @@ func Postfix(width, height int, opts ...ResampleOption) (result string) {
 }
 
 func Filename(hash string, thumbPath string, width, height int, opts ...ResampleOption) (filename string, err error) {
-	if width < 0 || width > MaxRenderSize {
+	if InvalidSize(width) {
 		return "", fmt.Errorf("resample: width exceeds limit (%d)", width)
 	}
 
-	if height < 0 || height > MaxRenderSize {
+	if InvalidSize(height) {
 		return "", fmt.Errorf("resample: height exceeds limit (%d)", height)
 	}
 
@@ -103,7 +101,7 @@ func Filename(hash string, thumbPath string, width, height int, opts ...Resample
 	return filename, nil
 }
 
-func FromFile(imageFilename string, hash string, thumbPath string, width, height int, opts ...ResampleOption) (fileName string, err error) {
+func FromCache(imageFilename, hash, thumbPath string, width, height int, opts ...ResampleOption) (fileName string, err error) {
 	if len(hash) < 4 {
 		return "", fmt.Errorf("resample: file hash is empty or too short (%s)", txt.Quote(hash))
 	}
@@ -115,12 +113,29 @@ func FromFile(imageFilename string, hash string, thumbPath string, width, height
 	fileName, err = Filename(hash, thumbPath, width, height, opts...)
 
 	if err != nil {
-		log.Errorf("resample: can't determine filename (%s)", err)
+		log.Error(err)
 		return "", err
 	}
 
 	if fs.FileExists(fileName) {
 		return fileName, nil
+	}
+
+	return "", ErrThumbNotCached
+}
+
+func FromFile(imageFilename, hash, thumbPath string, width, height int, opts ...ResampleOption) (fileName string, err error) {
+	if fileName, err := FromCache(imageFilename, hash, thumbPath, width, height, opts...); err == nil {
+		return fileName, err
+	} else if err != ErrThumbNotCached {
+		return "", err
+	}
+
+	fileName, err = Filename(hash, thumbPath, width, height, opts...)
+
+	if err != nil {
+		log.Error(err)
+		return "", err
 	}
 
 	img, err := imaging.Open(imageFilename, imaging.AutoOrientation(true))
@@ -138,11 +153,11 @@ func FromFile(imageFilename string, hash string, thumbPath string, width, height
 }
 
 func Create(img *image.Image, fileName string, width, height int, opts ...ResampleOption) (result *image.Image, err error) {
-	if width < 0 || width > MaxRenderSize {
+	if InvalidSize(width) {
 		return img, fmt.Errorf("resample: width has an invalid value (%d)", width)
 	}
 
-	if height < 0 || height > MaxRenderSize {
+	if InvalidSize(height) {
 		return img, fmt.Errorf("resample: height has an invalid value (%d)", height)
 	}
 

@@ -220,25 +220,32 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil {
-			thumbData, err := ioutil.ReadFile(thumbnail)
+		var thumbnail string
 
-			if err != nil {
-				log.Errorf("label: %s", err)
-				c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-				return
-			}
-
-			gc.Set(cacheKey, thumbData, time.Hour*4)
-
-			log.Debugf("label: %s cached [%s]", cacheKey, time.Since(start))
-
-			c.Data(http.StatusOK, "image/jpeg", thumbData)
+		if conf.ResampleUncached()  || thumbType.SkipPreRender() {
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 		} else {
-			log.Errorf("label: %s", err)
+			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+		}
 
+		if err != nil {
+			log.Errorf("label: %s", err)
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}
+
+		thumbData, err := ioutil.ReadFile(thumbnail)
+
+		if err != nil {
+			log.Errorf("label: %s", err)
+			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
+			return
+		}
+
+		gc.Set(cacheKey, thumbData, time.Hour*4)
+
+		log.Debugf("label: %s cached [%s]", cacheKey, time.Since(start))
+
+		c.Data(http.StatusOK, "image/jpeg", thumbData)
 	})
 }

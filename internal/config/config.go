@@ -3,7 +3,6 @@ package config
 import (
 	"context"
 	"runtime"
-	"strings"
 	"sync"
 	"time"
 
@@ -72,10 +71,10 @@ func NewConfig(ctx *cli.Context) *Config {
 func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
-	thumb.JpegQuality = c.ThumbQuality()
-	thumb.PreRenderSize = c.ThumbSize()
-	thumb.MaxRenderSize = c.ThumbLimit()
-	thumb.Filter = c.ThumbFilter()
+	thumb.Size = c.ResampleSize()
+	thumb.Limit = c.ResampleLimit()
+	thumb.Filter = c.ResampleFilter()
+	thumb.JpegQuality = c.JpegQuality()
 
 	c.Settings().Propagate()
 }
@@ -240,61 +239,6 @@ func (c *Config) WakeupInterval() time.Duration {
 	}
 
 	return time.Duration(c.params.WakeupInterval) * time.Second
-}
-
-// ThumbQuality returns the thumbnail jpeg quality setting (25-100).
-func (c *Config) ThumbQuality() int {
-	if c.params.ThumbQuality > 100 {
-		return 100
-	}
-
-	if c.params.ThumbQuality < 25 {
-		return 25
-	}
-
-	return c.params.ThumbQuality
-}
-
-// ThumbSize returns the pre-rendered thumbnail size limit in pixels (720-3840).
-func (c *Config) ThumbSize() int {
-	if c.params.ThumbSize > 3840 {
-		return 3840
-	}
-
-	if c.params.ThumbSize < 720 {
-		return 720
-	}
-
-	return c.params.ThumbSize
-}
-
-// ThumbLimit returns the on-demand thumbnail size limit in pixels (720-3840).
-func (c *Config) ThumbLimit() int {
-	if c.params.ThumbLimit > 3840 {
-		return 3840
-	}
-
-	if c.params.ThumbLimit < 720 {
-		return 720
-	}
-
-	return c.params.ThumbLimit
-}
-
-// ThumbFilter returns the thumbnail resample filter (blackman, lanczos, cubic or linear).
-func (c *Config) ThumbFilter() thumb.ResampleFilter {
-	switch strings.ToLower(c.params.ThumbFilter) {
-	case "blackman":
-		return thumb.ResampleBlackman
-	case "lanczos":
-		return thumb.ResampleLanczos
-	case "cubic":
-		return thumb.ResampleCubic
-	case "linear":
-		return thumb.ResampleLinear
-	default:
-		return thumb.ResampleCubic
-	}
 }
 
 // GeoCodingApi returns the preferred geo coding api (none, osm or places).

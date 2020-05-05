@@ -271,7 +271,7 @@ func TestAlbumThumbnail(t *testing.T) {
 		AlbumThumbnail(router, ctx)
 		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba7/thumbnail/xxx")
 
-		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("album has no photo (because is not existing)", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
@@ -283,6 +283,6 @@ func TestAlbumThumbnail(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		AlbumThumbnail(router, ctx)
 		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba8/thumbnail/tile_500")
-		assert.Equal(t, http.StatusNotFound, r.Code)
+		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }

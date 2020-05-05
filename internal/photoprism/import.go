@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"runtime"
 	"sort"
 	"sync"
 
@@ -192,6 +193,8 @@ func (imp *Import) Start(opt ImportOptions) {
 	if err != nil {
 		log.Error(err.Error())
 	}
+
+	runtime.GC()
 }
 
 // Cancel stops the current import operation.
