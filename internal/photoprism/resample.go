@@ -31,7 +31,7 @@ func (rs *Resample) Start(force bool) error {
 	defer mutex.Worker.Stop()
 
 	originalsPath := rs.conf.OriginalsPath()
-	thumbnailsPath := rs.conf.ThumbnailsPath()
+	thumbnailsPath := rs.conf.ThumbPath()
 
 	jobs := make(chan ResampleJob)
 

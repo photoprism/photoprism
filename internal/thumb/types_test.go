@@ -28,13 +28,13 @@ func TestType_SkipPreRender(t *testing.T) {
 	Limit = 2048
 
 	fit3840 := Types["fit_3840"]
-	assert.True(t, fit3840.SkipPreRender())
+	assert.True(t, fit3840.OnDemand())
 
 	fit2048 := Types["fit_2048"]
-	assert.True(t, fit2048.SkipPreRender())
+	assert.True(t, fit2048.OnDemand())
 
 	tile500 := Types["tile_500"]
-	assert.False(t, tile500.SkipPreRender())
+	assert.False(t, tile500.OnDemand())
 
 	Size = 3840
 	Limit = 3840

@@ -94,7 +94,7 @@ func (s *Share) Start() (err error) {
 					continue
 				}
 
-				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, s.conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, s.conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 
 				if err != nil {
 					log.Errorf("share: %s", err)

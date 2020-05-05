@@ -44,7 +44,7 @@ func (ind *Index) originalsPath() string {
 }
 
 func (ind *Index) thumbnailsPath() string {
-	return ind.conf.ThumbnailsPath()
+	return ind.conf.ThumbPath()
 }
 
 // Cancel stops the current indexing operation.

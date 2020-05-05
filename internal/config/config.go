@@ -71,8 +71,8 @@ func NewConfig(ctx *cli.Context) *Config {
 func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
-	thumb.Size = c.ResampleSize()
-	thumb.Limit = c.ResampleLimit()
+	thumb.Size = c.ThumbSize()
+	thumb.Limit = c.ThumbLimit()
 	thumb.Filter = c.ResampleFilter()
 	thumb.JpegQuality = c.JpegQuality()
 

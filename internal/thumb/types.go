@@ -95,10 +95,12 @@ var DefaultTypes = []string{
 	"fit_3840", "fit_2560", "fit_2048", "fit_1920", "fit_1280", "fit_720", "right_224", "left_224", "colors", "tile_500", "tile_224", "tile_100", "tile_50",
 }
 
+// Returns true if thumbnail is too large and can not be rendered at all.
 func (t Type) ExceedsLimit() bool {
 	return t.Width > MaxSize() || t.Height > MaxSize()
 }
 
-func (t Type) SkipPreRender() bool {
+// Returns true if thumbnail type should not be pre-rendered.
+func (t Type) OnDemand() bool {
 	return t.Width > Size || t.Height > Size
 }

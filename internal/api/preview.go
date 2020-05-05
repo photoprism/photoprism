@@ -23,7 +23,7 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/preview", func(c *gin.Context) {
 		// TODO: proof of concept - code needs refactoring!
 		t := time.Now().Format("20060102")
-		thumbPath := path.Join(conf.ThumbnailsPath(), "preview", t[0:4], t[4:6])
+		thumbPath := path.Join(conf.ThumbPath(), "preview", t[0:4], t[4:6])
 
 		if err := os.MkdirAll(thumbPath, os.ModePerm); err != nil {
 			log.Error(err)
@@ -75,7 +75,7 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 				return
 			}
 
-			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 
 			if err != nil {
 				log.Error(err)

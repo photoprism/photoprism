@@ -46,10 +46,10 @@ services:
       # PHOTOPRISM_DATABASE_DSN: "photoprism:photoprism@tcp(photoprism-db:3306)/photoprism?parseTime=true"
       PHOTOPRISM_JPEG_QUALITY: 90 # Use 95 for high-quality thumbnails (requires more storage)
       PHOTOPRISM_RESAMPLE_FILTER: "lanczos" # Resample filter, best to worst: blackman, lanczos, cubic, linear
-      PHOTOPRISM_RESAMPLE_UNCACHED: "false" # On-demand rendering of thumbnails (high memory and cpu usage)
-      PHOTOPRISM_RESAMPLE_SIZE: 2048 # Cached thumbnail size (default 2048, min 720, max 3840)
-      # PHOTOPRISM_RESAMPLE_SIZE: 3840 # For retina screens (requires more storage)
-      PHOTOPRISM_RESAMPLE_LIMIT: 3840 # On-demand thumbnail size (default 2048, min 720, max 3840)
+      PHOTOPRISM_THUMB_UNCACHED: "false" # On-demand rendering of default thumbnails (high memory and cpu usage)
+      PHOTOPRISM_THUMB_SIZE: 2048 # Default thumbnail size limit (default 2048, min 720, max 3840)
+      # PHOTOPRISM_THUMB_SIZE: 3840 # For retina screens (requires more storage)
+      PHOTOPRISM_THUMB_LIMIT: 3840 # On-demand thumbnail size limit (default 2048, min 720, max 3840)
     volumes:
       - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
       - "~/Pictures/Import:/photoprism/import" # [local path]:[container path] (optional)

@@ -54,8 +54,8 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.TempPath(), err)
 	}
 
-	if err := os.MkdirAll(c.ThumbnailsPath(), os.ModePerm); err != nil {
-		return createError(c.ThumbnailsPath(), err)
+	if err := os.MkdirAll(c.ThumbPath(), os.ModePerm); err != nil {
+		return createError(c.ThumbPath(), err)
 	}
 
 	if err := os.MkdirAll(c.ResourcesPath(), os.ModePerm); err != nil {
@@ -164,11 +164,6 @@ func (c *Config) TempPath() string {
 // CachePath returns the path to the cache.
 func (c *Config) CachePath() string {
 	return fs.Abs(c.params.CachePath)
-}
-
-// ThumbnailsPath returns the path to the cached thumbnails.
-func (c *Config) ThumbnailsPath() string {
-	return c.CachePath() + "/thumbnails"
 }
 
 // AssetsPath returns the path to the assets.

@@ -720,7 +720,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	for _, name := range thumb.DefaultTypes {
 		thumbType := thumb.Types[name]
 
-		if thumbType.SkipPreRender() {
+		if thumbType.OnDemand() {
 			// Skip, size exceeds limit
 			continue
 		}

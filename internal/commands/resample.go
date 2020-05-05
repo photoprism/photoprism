@@ -34,7 +34,7 @@ func resampleAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("creating thumbnails in %s", txt.Quote(conf.ThumbnailsPath()))
+	log.Infof("creating thumbnails in %s", txt.Quote(conf.ThumbPath()))
 
 	rs := service.Resample()
 

@@ -483,10 +483,10 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		var thumbnail string
 
-		if conf.ResampleUncached() || thumbType.SkipPreRender() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+		if conf.ThumbUncached() || thumbType.OnDemand() {
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 		} else {
-			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbnailsPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 		}
 
 		if err != nil {
