@@ -107,11 +107,30 @@ var LabelFixtures = map[string]Label{
 		DeletedAt:        nil,
 		New:              false,
 	},
+	"updatePhotoLabel": {
+		ID:               1000006,
+		LabelUUID:        "lt9k3pw1wowuy3c8",
+		LabelSlug:        "updatephotolabel",
+		CustomSlug:       "updateLabelPhoto",
+		LabelName:        "updatePhotoLabel",
+		LabelPriority:    2,
+		LabelFavorite:    false,
+		LabelDescription: "",
+		LabelNotes:       "",
+		LabelCategories:  []*Label{},
+		Links:            []Link{},
+		CreatedAt:        time.Now(),
+		UpdatedAt:        time.Now(),
+		DeletedAt:        nil,
+		New:              false,
+	},
 }
 
 var LabelFixtureLandscape = LabelFixtures["landscape"]
 var LabelFixtureFlower = LabelFixtures["flower"]
 var LabelFixtureCake = LabelFixtures["cake"]
+var LabelFixtureCow = LabelFixtures["cow"]
+var LabelFixtureUpdatePhotoLabel = LabelFixtures["updatePhotoLabel"]
 
 // CreateLabelFixtures inserts known entities into the database for testing.
 func CreateLabelFixtures() {

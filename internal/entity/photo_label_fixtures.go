@@ -12,10 +12,18 @@ var PhotoLabelFixtures = map[string]PhotoLabel{
 	"2": {
 		PhotoID:     1000000,
 		LabelID:     1000002,
-		LabelSrc:    "image",
+		LabelSrc:    "manual",
 		Uncertainty: 38,
 		Photo:       &PhotoFixture19800101_000002_D640C559,
 		Label:       &LabelFixtureCake,
+	},
+	"3": {
+		PhotoID:     1000003,
+		LabelID:     1000006,
+		LabelSrc:    "manual",
+		Uncertainty: 20,
+		Photo:       &PhotoFixturePhoto03,
+		Label:       &LabelFixtureUpdatePhotoLabel,
 	},
 }
 

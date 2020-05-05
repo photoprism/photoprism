@@ -354,6 +354,7 @@ var PhotoFixture19800101_000002_D640C559 = PhotoFixtures["19800101_000002_D640C5
 var PhotoFixturePhoto04 = PhotoFixtures["Photo04"]
 var PhotoFixturePhoto01 = PhotoFixtures["Photo01"]
 var PhotoFixturePhoto05 = PhotoFixtures["Photo05"]
+var PhotoFixturePhoto03 = PhotoFixtures["Photo03"]
 
 // CreatePhotoFixtures inserts known entities into the database for testing.
 func CreatePhotoFixtures() {
