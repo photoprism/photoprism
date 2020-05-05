@@ -1,5 +1,7 @@
 theme: lavendel
 language: german
+templates:
+  default: index.tmpl
 maps:
   animate: 0
   style: streets

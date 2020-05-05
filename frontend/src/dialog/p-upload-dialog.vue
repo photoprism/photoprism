@@ -73,7 +73,7 @@
                 total: 0,
                 completed: 0,
                 started: 0,
-                review: this.$config.settings().features.review,
+                review: this.$config.feature("review"),
                 safe: !this.$config.get("uploadNSFW"),
             }
         },
