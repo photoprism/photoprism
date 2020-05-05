@@ -265,7 +265,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if m.IsJpeg() && (fileChanged || o.UpdateColors) {
 		// Color information
-		if p, err := m.Colors(ind.thumbnailsPath()); err != nil {
+		if p, err := m.Colors(ind.thumbPath()); err != nil {
 			log.Errorf("index: %s", err.Error())
 		} else {
 			file.FileMainColor = p.MainColor.Name()
@@ -426,7 +426,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 // NSFW returns true if media file might be offensive and detection is enabled.
 func (ind *Index) NSFW(jpeg *MediaFile) bool {
-	filename, err := jpeg.Thumbnail(ind.thumbnailsPath(), "fit_720")
+	filename, err := jpeg.Thumbnail(ind.thumbPath(), "fit_720")
 
 	if err != nil {
 		log.Error(err)
@@ -461,7 +461,7 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 	var labels classify.Labels
 
 	for _, thumb := range thumbs {
-		filename, err := jpeg.Thumbnail(ind.thumbnailsPath(), thumb)
+		filename, err := jpeg.Thumbnail(ind.thumbPath(), thumb)
 
 		if err != nil {
 			log.Error(err)

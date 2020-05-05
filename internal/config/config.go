@@ -73,7 +73,7 @@ func (c *Config) Propagate() {
 
 	thumb.Size = c.ThumbSize()
 	thumb.Limit = c.ThumbLimit()
-	thumb.Filter = c.ResampleFilter()
+	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()
 
 	c.Settings().Propagate()

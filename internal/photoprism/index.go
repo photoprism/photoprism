@@ -43,7 +43,7 @@ func (ind *Index) originalsPath() string {
 	return ind.conf.OriginalsPath()
 }
 
-func (ind *Index) thumbnailsPath() string {
+func (ind *Index) thumbPath() string {
 	return ind.conf.ThumbPath()
 }
 

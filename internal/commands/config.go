@@ -65,7 +65,6 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "import-path", conf.ImportPath())
 	fmt.Printf("%-25s %s\n", "temp-path", conf.TempPath())
 	fmt.Printf("%-25s %s\n", "cache-path", conf.CachePath())
-	fmt.Printf("%-25s %s\n", "thumbnails-path", conf.ThumbPath())
 	fmt.Printf("%-25s %s\n", "resources-path", conf.ResourcesPath())
 	fmt.Printf("%-25s %s\n", "templates-path", conf.HttpTemplatesPath())
 	fmt.Printf("%-25s %s\n", "favicons-path", conf.HttpFaviconsPath())
@@ -97,10 +96,11 @@ func configAction(ctx *cli.Context) error {
 
 	// Thumbnails
 	fmt.Printf("%-25s %d\n", "jpeg-quality", conf.JpegQuality())
-	fmt.Printf("%-25s %s\n", "resample-filter", conf.ResampleFilter())
-	fmt.Printf("%-25s %t\n", "resample-uncached", conf.ThumbUncached())
-	fmt.Printf("%-25s %d\n", "resample-size", conf.ThumbSize())
-	fmt.Printf("%-25s %d\n", "resample-limit", conf.ThumbLimit())
+	fmt.Printf("%-25s %s\n", "thumb-filter", conf.ThumbFilter())
+	fmt.Printf("%-25s %t\n", "thumb-uncached", conf.ThumbUncached())
+	fmt.Printf("%-25s %d\n", "thumb-size", conf.ThumbSize())
+	fmt.Printf("%-25s %d\n", "thumb-limit", conf.ThumbLimit())
+	fmt.Printf("%-25s %s\n", "thumb-path", conf.ThumbPath())
 
 	return nil
 }

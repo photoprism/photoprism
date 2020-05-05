@@ -106,7 +106,7 @@ func NewTestConfig() *Config {
 
 	thumb.Size = c.ThumbSize()
 	thumb.Limit = c.ThumbLimit()
-	thumb.Filter = c.ResampleFilter()
+	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()
 
 	return c

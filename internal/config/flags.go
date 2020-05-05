@@ -245,10 +245,10 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},
 	cli.StringFlag{
-		Name:   "resample-filter, f",
+		Name:   "thumb-filter, f",
 		Usage:  "resample filter (best to worst: blackman, lanczos, cubic, linear)",
 		Value:  "lanczos",
-		EnvVar: "PHOTOPRISM_RESAMPLE_FILTER",
+		EnvVar: "PHOTOPRISM_THUMB_FILTER",
 	},
 	cli.BoolFlag{
 		Name:   "thumb-uncached, u",

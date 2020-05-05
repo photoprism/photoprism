@@ -19,9 +19,9 @@ func (c *Config) JpegQuality() int {
 	return c.params.JpegQuality
 }
 
-// ResampleFilter returns the thumbnail resample filter (blackman, lanczos, cubic or linear).
-func (c *Config) ResampleFilter() thumb.ResampleFilter {
-	switch strings.ToLower(c.params.ResampleFilter) {
+// ThumbFilter returns the thumbnail resample filter (best to worst: blackman, lanczos, cubic or linear).
+func (c *Config) ThumbFilter() thumb.ResampleFilter {
+	switch strings.ToLower(c.params.ThumbFilter) {
 	case "blackman":
 		return thumb.ResampleBlackman
 	case "lanczos":

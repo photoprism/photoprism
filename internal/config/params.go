@@ -75,7 +75,7 @@ type Params struct {
 	UploadNSFW         bool   `yaml:"upload-nsfw" flag:"upload-nsfw"`
 	GeoCodingApi       string `yaml:"geocoding-api" flag:"geocoding-api"`
 	JpegQuality        int    `yaml:"jpeg-quality" flag:"jpeg-quality"`
-	ResampleFilter     string `yaml:"resample-filter" flag:"resample-filter"`
+	ThumbFilter        string `yaml:"thumb-filter" flag:"thumb-filter"`
 	ThumbUncached      bool   `yaml:"thumb-uncached" flag:"thumb-uncached"`
 	ThumbSize          int    `yaml:"thumb-size" flag:"thumb-size"`
 	ThumbLimit         int    `yaml:"thumb-limit" flag:"thumb-limit"`
