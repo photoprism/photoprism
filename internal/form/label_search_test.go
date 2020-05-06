@@ -22,7 +22,9 @@ func TestParseQueryStringLabel(t *testing.T) {
 
 		log.Debugf("%+v\n", form)
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal("err should be nil")
+		}
 		assert.Equal(t, "cat", form.Name)
 		assert.Equal(t, true, form.Favorites)
 		assert.Equal(t, 10, form.Count)
@@ -94,4 +96,9 @@ func TestParseQueryStringLabel(t *testing.T) {
 
 		assert.Equal(t, "strconv.Atoi: parsing \"2019-01-15\": invalid syntax", err.Error())
 	})
+}
+
+func TestNewLabelSearch(t *testing.T) {
+	r := NewLabelSearch("cat")
+	assert.IsType(t, LabelSearch{}, r)
 }

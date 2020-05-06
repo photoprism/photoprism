@@ -143,3 +143,8 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, "Could not find format for \"cat\"", err.Error())
 	})
 }
+
+func TestNewPhotoSearch(t *testing.T) {
+	r := NewPhotoSearch("cat")
+	assert.IsType(t, PhotoSearch{}, r)
+}

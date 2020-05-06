@@ -22,7 +22,10 @@ func TestParseQueryStringAlbum(t *testing.T) {
 
 		log.Debugf("%+v\n", form)
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal("err should be nil")
+		}
+
 		assert.Equal(t, "album1", form.Slug)
 		assert.Equal(t, true, form.Favorites)
 		assert.Equal(t, 10, form.Count)
@@ -94,4 +97,9 @@ func TestParseQueryStringAlbum(t *testing.T) {
 
 		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
 	})
+}
+
+func TestNewAlbumSearch(t *testing.T) {
+	r := NewAlbumSearch("holiday")
+	assert.IsType(t, AlbumSearch{}, r)
 }

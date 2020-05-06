@@ -27,3 +27,8 @@ func TestGeoSearch(t *testing.T) {
 		assert.Equal(t, float32(33.45343), form.Lat)
 	})
 }
+
+func TestNewGeoSearch(t *testing.T) {
+	r := NewGeoSearch("Berlin")
+	assert.IsType(t, GeoSearch{}, r)
+}
