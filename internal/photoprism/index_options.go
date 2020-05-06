@@ -1,8 +1,9 @@
 package photoprism
 
 type IndexOptions struct {
-	Rescan         bool
-	Convert        bool
+	Path    string
+	Rescan  bool
+	Convert bool
 }
 
 func (o *IndexOptions) SkipUnchanged() bool {
@@ -12,8 +13,9 @@ func (o *IndexOptions) SkipUnchanged() bool {
 // IndexOptionsAll returns new index options with all options set to true.
 func IndexOptionsAll() IndexOptions {
 	result := IndexOptions{
-		Rescan:         true,
-		Convert:        true,
+		Path:    "/",
+		Rescan:  true,
+		Convert: true,
 	}
 
 	return result

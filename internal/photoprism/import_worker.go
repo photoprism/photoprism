@@ -95,7 +95,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 			}
 
-			related, err := importedMainFile.RelatedFiles(imp.conf.Settings().Library.Group)
+			related, err := importedMainFile.RelatedFiles(imp.conf.Settings().Index.Group)
 
 			if err != nil {
 				log.Errorf("import: could not index %s (%s)", txt.Quote(fs.RelativeName(destinationMainFilename, imp.originalsPath())), err.Error())

@@ -141,7 +141,7 @@
                             ctx.completed = 100;
                             ctx.failed = true;
 
-                            throw Error("upload failed");
+                            Notify.error(ctx.$gettext("Upload failed"));
                         });
                     }
                 }

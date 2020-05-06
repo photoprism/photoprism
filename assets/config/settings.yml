@@ -18,10 +18,10 @@ features:
   share: true
   logs: true
 import:
-  path: ""
+  path: /
   move: false
-library:
+index:
+  path: /
   convert: true
-  resample: true
   rescan: false
   group: true

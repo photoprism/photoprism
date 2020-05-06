@@ -9,6 +9,21 @@
                     <span v-else><translate>Press button to start indexing...</translate></span>
                 </p>
 
+                <v-autocomplete
+                        @change="onChange"
+                        color="secondary-dark"
+                        class="my-3"
+                        hide-details hide-no-data flat solo
+                        v-model="settings.index.path"
+                        browser-autocomplete="off"
+                        :items="dirs"
+                        :loading="loading"
+                        :disabled="busy || loading"
+                        item-text="name"
+                        item-value="path"
+                >
+                </v-autocomplete>
+
                 <p class="options">
                     <v-progress-linear color="secondary-dark" :value="completed"
                                        :indeterminate="busy"></v-progress-linear>
@@ -20,7 +35,7 @@
                                 @change="onChange"
                                 :disabled="busy"
                                 class="ma-0 pa-0"
-                                v-model="settings.library.convert"
+                                v-model="settings.index.convert"
                                 color="secondary-dark"
                                 :label="labels.convert"
                                 :hint="hints.convert"
@@ -35,7 +50,7 @@
                                 @change="onChange"
                                 :disabled="busy"
                                 class="ma-0 pa-0"
-                                v-model="settings.library.rescan"
+                                v-model="settings.index.rescan"
                                 color="secondary-dark"
                                 :label="labels.rescan"
                                 :hint="hints.rescan"
@@ -77,23 +92,30 @@
     import Notify from "common/notify";
     import Event from "pubsub-js";
     import Settings from "model/settings";
+    import Util from "common/util";
 
     export default {
         name: 'p-tab-index',
         data() {
+            const root = {"name": "All originals", "path": "/"}
+
             return {
                 settings: new Settings(this.$config.settings()),
                 readonly: this.$config.get("readonly"),
                 started: false,
                 busy: false,
+                loading: false,
                 completed: 0,
                 subscriptionId: "",
                 action: "",
                 fileName: "",
                 source: null,
+                root: root,
+                dirs: [root],
                 labels: {
                     rescan: this.$gettext("Complete Rescan"),
                     convert: this.$gettext("Convert to JPEG"),
+                    path: this.$gettext("Folder"),
                 },
                 hints: {
                     rescan: this.$gettext("Re-index all originals, including already indexed and unchanged files."),
@@ -121,7 +143,7 @@
                 const ctx = this;
                 Notify.blockUI();
 
-                Api.post('index', this.settings.library, {cancelToken: this.source.token}).then(function () {
+                Api.post('index', this.settings.index, {cancelToken: this.source.token}).then(function () {
                     Notify.unblockUI();
                     ctx.busy = false;
                     ctx.completed = 100;
@@ -134,7 +156,7 @@
                         return
                     }
 
-                    Notify.error(this.$gettext("Indexing failed"));
+                    Notify.error(ctx.$gettext("Indexing failed"));
 
                     ctx.busy = false;
                     ctx.completed = 0;
@@ -182,6 +204,26 @@
         },
         created() {
             this.subscriptionId = Event.subscribe('index', this.handleEvent);
+            this.loading = true;
+            Api.get('index').then((r) => {
+                const subDirs = r.data.dirs ? r.data.dirs : [];
+                const currentPath = this.settings.index.path;
+                let found = currentPath === this.root.path;
+
+                this.dirs = [this.root];
+
+                for (let i = 0; i < subDirs.length; i++) {
+                    if(currentPath === subDirs[i]) {
+                        found = true;
+                    }
+
+                    this.dirs.push({name: Util.truncate(subDirs[i], 100, "..."), path: subDirs[i]});
+                }
+
+                if(!found) {
+                    this.settings.index.path = this.root.path;
+                }
+            }).finally(() => this.loading = false);
         },
         destroyed() {
             Event.unsubscribe(this.subscriptionId);

@@ -21,7 +21,7 @@ func TestGetSettings(t *testing.T) {
 }
 
 func TestSaveSettings(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	/* t.Run("successful request", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetSettings(router, conf)
 		r := PerformRequest(app, "GET", "/api/v1/settings")
@@ -36,7 +36,7 @@ func TestSaveSettings(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r2.Code)
 		r3 := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"language": "de"}`)
 		assert.Equal(t, http.StatusOK, r3.Code)
-	})
+	}) */
 	t.Run("bad request", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		SaveSettings(router, conf)

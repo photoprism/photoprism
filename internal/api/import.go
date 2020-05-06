@@ -18,6 +18,25 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// GET /api/v1/import
+func GetImportOptions(router *gin.RouterGroup, conf *config.Config) {
+	router.GET("/import", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		dirs, err := fs.Dirs(conf.ImportPath(), true)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"dirs": dirs})
+	})
+}
+
 // POST /api/v1/import*
 func StartImport(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/import/*path", func(c *gin.Context) {
@@ -45,7 +64,11 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 
 		if subPath = c.Param("path"); subPath != "" && subPath != "/" {
 			subPath = strings.Replace(subPath, ".", "", -1)
-			log.Debugf("import sub path: %s", subPath)
+			log.Debugf("import sub path from url: %s", subPath)
+			path = path + subPath
+		} else if f.Path != "" {
+			subPath = strings.Replace(f.Path, ".", "", -1)
+			log.Debugf("import sub path from request: %s", subPath)
 			path = path + subPath
 		}
 

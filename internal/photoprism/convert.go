@@ -119,7 +119,7 @@ func (c *Convert) ConvertCommand(image *MediaFile, jpegName string, xmpName stri
 				result = exec.Command(c.conf.DarktableBin(), image.fileName, jpegName)
 			}
 		} else {
-			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", image.Base(c.conf.Settings().Library.Group))
+			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", image.Base(c.conf.Settings().Index.Group))
 		}
 	} else if image.IsHEIF() {
 		result = exec.Command(c.conf.HeifConvertBin(), image.fileName, jpegName)
@@ -144,7 +144,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return image, nil
 	}
 
-	jpegName := fs.TypeJpeg.Find(image.FileName(), c.conf.Settings().Library.Group)
+	jpegName := fs.TypeJpeg.Find(image.FileName(), c.conf.Settings().Index.Group)
 
 	mediaFile, err := NewMediaFile(jpegName)
 
@@ -152,7 +152,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return mediaFile, nil
 	}
 
-	jpegName = image.AbsBase(c.conf.Settings().Library.Group) + ".jpg"
+	jpegName = image.AbsBase(c.conf.Settings().Index.Group) + ".jpg"
 
 	if c.conf.ReadOnly() {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.RelativeName(c.conf.OriginalsPath()))
@@ -162,7 +162,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 
 	log.Infof("convert: %s -> %s", fileName, fs.RelativeName(jpegName, c.conf.OriginalsPath()))
 
-	xmpName := fs.TypeXMP.Find(image.FileName(), c.conf.Settings().Library.Group)
+	xmpName := fs.TypeXMP.Find(image.FileName(), c.conf.Settings().Index.Group)
 
 	event.Publish("index.converting", event.Data{
 		"fileType": image.FileType(),

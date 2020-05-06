@@ -6,8 +6,23 @@
                     <span v-if="fileName"><translate>Importing</translate> {{fileName}}...</span>
                     <span v-else-if="busy"><translate>Importing files from import folder...</translate></span>
                     <span v-else-if="completed"><translate>Done.</translate></span>
-                    <span v-else><translate>Press button to import photos...</translate></span>
+                    <span v-else><translate>Press button to start import...</translate></span>
                 </p>
+
+                <v-autocomplete
+                        @change="onChange"
+                        color="secondary-dark"
+                        class="my-3"
+                        hide-details hide-no-data flat solo
+                        v-model="settings.import.path"
+                        browser-autocomplete="off"
+                        :items="dirs"
+                        :loading="loading"
+                        :disabled="busy || loading"
+                        item-text="name"
+                        item-value="path"
+                >
+                </v-autocomplete>
 
                 <p class="options">
                     <v-progress-linear color="secondary-dark" :value="completed"
@@ -82,22 +97,27 @@
     import Notify from "common/notify";
     import Event from "pubsub-js";
     import Settings from "model/settings";
+    import Util from "../../common/util";
 
     export default {
         name: 'p-tab-import',
         data() {
-            let settings = this.$config.settings();
+            const root = {"name": "All files", "path": "/"}
 
             return {
                 settings: new Settings(this.$config.settings()),
                 started: false,
                 busy: false,
+                loading: false,
                 completed: 0,
                 subscriptionId: '',
                 fileName: '',
                 source: null,
+                root: root,
+                dirs: [root],
                 labels: {
                     move: this.$gettext("Remove imported files"),
+                    path: this.$gettext("Folder"),
                 },
                 hints: {
                     move: this.$gettext("Move files from import to originals to save storage. Unsupported file types will never be deleted, they remain in their current location."),
@@ -174,6 +194,26 @@
         },
         created() {
             this.subscriptionId = Event.subscribe('import', this.handleEvent);
+            this.loading = true;
+            Api.get('import').then((r) => {
+                const subDirs = r.data.dirs ? r.data.dirs : [];
+                const currentPath = this.settings.import.path;
+                let found = currentPath === this.root.path;
+
+                this.dirs = [this.root];
+
+                for (let i = 0; i < subDirs.length; i++) {
+                    if(currentPath === subDirs[i]) {
+                        found = true;
+                    }
+
+                    this.dirs.push({name: Util.truncate(subDirs[i], 100, "..."), path: subDirs[i]});
+                }
+
+                if(!found) {
+                    this.settings.import.path = this.root.path;
+                }
+            }).finally(() => this.loading = false);
         },
         destroyed() {
             Event.unsubscribe(this.subscriptionId);

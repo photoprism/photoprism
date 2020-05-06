@@ -2,11 +2,14 @@ package commands
 
 import (
 	"context"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/urfave/cli"
 )
 
@@ -47,7 +50,15 @@ func indexAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
-	log.Infof("indexing photos in %s", conf.OriginalsPath())
+
+	// get cli first argument
+	subPath := strings.TrimSpace(ctx.Args().First())
+
+	if subPath == "" {
+		log.Infof("indexing photos in %s", txt.Quote(conf.OriginalsPath()))
+	} else {
+		log.Infof("indexing originals subdirectory %s", txt.Quote(filepath.Join(conf.OriginalsPath(), subPath)))
+	}
 
 	if conf.ReadOnly() {
 		log.Infof("read-only mode enabled")
@@ -56,7 +67,8 @@ func indexAction(ctx *cli.Context) error {
 	ind := service.Index()
 
 	opt := photoprism.IndexOptions{
-		Rescan: ctx.Bool("all"),
+		Path:    subPath,
+		Rescan:  ctx.Bool("all"),
 		Convert: ctx.Bool("convert"),
 	}
 

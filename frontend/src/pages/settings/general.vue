@@ -60,7 +60,7 @@
                                     @change="onChange"
                                     :disabled="busy"
                                     class="ma-0 pa-0"
-                                    v-model="settings.library.group"
+                                    v-model="settings.index.group"
                                     color="secondary-dark"
                                     :label="labels.group"
                                     :hint="hints.group"

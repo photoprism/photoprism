@@ -24,10 +24,11 @@ type MapsSettings struct {
 	Style   string `json:"style" yaml:"style"`
 }
 
-type LibrarySettings struct {
-	Convert  bool `json:"convert" yaml:"convert"`
-	Rescan   bool `json:"rescan" yaml:"rescan"`
-	Group    bool `json:"group" yaml:"group"`
+type IndexSettings struct {
+	Path    string `json:"path" yaml:"path"`
+	Convert bool   `json:"convert" yaml:"convert"`
+	Rescan  bool   `json:"rescan" yaml:"rescan"`
+	Group   bool   `json:"group" yaml:"group"`
 }
 
 type ImportSettings struct {
@@ -57,7 +58,7 @@ type Settings struct {
 	Maps      MapsSettings     `json:"maps" yaml:"maps"`
 	Features  FeatureSettings  `json:"features" yaml:"features"`
 	Import    ImportSettings   `json:"import" yaml:"import"`
-	Library   LibrarySettings  `json:"library" yaml:"library"`
+	Index     IndexSettings    `json:"index" yaml:"index"`
 }
 
 // NewSettings returns a empty Settings
@@ -86,13 +87,14 @@ func NewSettings() *Settings {
 			Logs:     true,
 		},
 		Import: ImportSettings{
-			Path: "",
+			Path: "/",
 			Move: false,
 		},
-		Library: LibrarySettings{
-			Rescan:   false,
-			Convert:  true,
-			Group:    true,
+		Index: IndexSettings{
+			Path:    "/",
+			Rescan:  false,
+			Convert: true,
+			Group:   true,
 		},
 	}
 }

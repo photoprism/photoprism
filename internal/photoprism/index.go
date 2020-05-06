@@ -3,6 +3,7 @@ package photoprism
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 	"runtime"
 	"sync"
 
@@ -55,7 +56,7 @@ func (ind *Index) Cancel() {
 }
 
 // Start indexes media files in the originals directory.
-func (ind *Index) Start(options IndexOptions) map[string]bool {
+func (ind *Index) Start(opt IndexOptions) map[string]bool {
 	done := make(map[string]bool)
 	originalsPath := ind.originalsPath()
 
@@ -100,7 +101,9 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 		log.Infof(`index: ignored "%s"`, fs.RelativeName(fileName, originalsPath))
 	}
 
-	err := godirwalk.Walk(originalsPath, &godirwalk.Options{
+	indexPath := filepath.Join(originalsPath, opt.Path)
+
+	err := godirwalk.Walk(indexPath, &godirwalk.Options{
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
 			defer func() {
 				if err := recover(); err != nil {
@@ -125,7 +128,7 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 				return nil
 			}
 
-			related, err := mf.RelatedFiles(ind.conf.Settings().Library.Group)
+			related, err := mf.RelatedFiles(ind.conf.Settings().Index.Group)
 
 			if err != nil {
 				log.Warnf("index: %s", err.Error())
@@ -151,7 +154,7 @@ func (ind *Index) Start(options IndexOptions) map[string]bool {
 			jobs <- IndexJob{
 				FileName: mf.FileName(),
 				Related:  related,
-				IndexOpt: options,
+				IndexOpt: opt,
 				Ind:      ind,
 			}
 
