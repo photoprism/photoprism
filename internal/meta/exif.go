@@ -260,6 +260,8 @@ func Exif(filename string) (data Data, err error) {
 			data.Lat = float32(gi.Latitude.Decimal())
 			data.Lng = float32(gi.Longitude.Decimal())
 			data.Altitude = gi.Altitude
+		} else {
+			log.Warnf("exif: %s", err)
 		}
 	}
 

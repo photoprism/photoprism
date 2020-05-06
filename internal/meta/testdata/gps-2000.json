@@ -1,0 +1,68 @@
+[{
+  "SourceFile": "gps-2000.jpg",
+  "ExifTool": {
+    "ExifToolVersion": 11.85
+  },
+  "File": {
+    "FileName": "gps-2000.jpg",
+    "Directory": ".",
+    "FileSize": "46 kB",
+    "FileModifyDate": "2020:05:06 07:55:20+02:00",
+    "FileAccessDate": "2020:05:06 07:57:16+02:00",
+    "FileInodeChangeDate": "2020:05:06 07:55:58+02:00",
+    "FilePermissions": "rw-r--r--",
+    "FileType": "JPEG",
+    "FileTypeExtension": "jpg",
+    "MIMEType": "image/jpeg",
+    "ExifByteOrder": "Big-endian (Motorola, MM)",
+    "ImageWidth": 494,
+    "ImageHeight": 327,
+    "EncodingProcess": "Baseline DCT, Huffman coding",
+    "BitsPerSample": 8,
+    "ColorComponents": 3,
+    "YCbCrSubSampling": "YCbCr4:2:0 (2 2)"
+  },
+  "JFIF": {
+    "JFIFVersion": 1.01,
+    "ResolutionUnit": "inches",
+    "XResolution": 96,
+    "YResolution": 96
+  },
+  "EXIF": {
+    "ImageWidth": 4940,
+    "ImageHeight": 3272,
+    "Orientation": "Horizontal (normal)",
+    "Software": "Perfectly Clear Complete v3 3.6.3.1351",
+    "GPSVersionID": "2.0.0.0",
+    "GPSLatitudeRef": "South",
+    "GPSLatitude": "38 deg 24' 18.70\"",
+    "GPSLongitudeRef": "East",
+    "GPSLongitude": "144 deg 11' 20.25\"",
+    "GPSMapDatum": "WGS-84",
+    "Compression": "JPEG (old-style)",
+    "XResolution": 0,
+    "YResolution": 0,
+    "ResolutionUnit": "inches",
+    "ThumbnailOffset": 372,
+    "ThumbnailLength": 7556,
+    "ThumbnailImage": "(Binary data 7556 bytes, use -b option to extract)"
+  },
+  "XMP": {
+    "XMPToolkit": "XMP Core 4.4.0-Exiv2",
+    "GPSVersionID": "2.0.0.0",
+    "GPSMapDatum": "WGS-84",
+    "GPSLatitudeRef": "S",
+    "GPSLatitude": "38 deg 24' 18.70\" S",
+    "GPSLongitudeRef": "E",
+    "GPSLongitude": "144 deg 11' 20.25\" E"
+  },
+  "Composite": {
+    "ImageSize": "494x327",
+    "Megapixels": 0.162,
+    "GPSLatitude": "38 deg 24' 18.70\" S",
+    "GPSLongitude": "144 deg 11' 20.25\" E",
+    "GPSLatitudeRef": "South",
+    "GPSLongitudeRef": "East",
+    "GPSPosition": "38 deg 24' 18.70\" S, 144 deg 11' 20.25\" E"
+  }
+}]

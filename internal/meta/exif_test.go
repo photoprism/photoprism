@@ -7,7 +7,7 @@ import (
 )
 
 func TestExif(t *testing.T) {
-	t.Run("jpg file with exif data", func(t *testing.T) {
+	t.Run("photoshop.jpg", func(t *testing.T) {
 		data, err := Exif("testdata/photoshop.jpg")
 
 		if err != nil {
@@ -36,7 +36,7 @@ func TestExif(t *testing.T) {
 		// assert.Equal(t, "HUAWEI P30 Rear Main Camera", data.LensModel)
 	})
 
-	t.Run("ladybug jpg file", func(t *testing.T) {
+	t.Run("ladybug.jpg", func(t *testing.T) {
 		data, err := Exif("testdata/ladybug.jpg")
 
 		if err != nil {
@@ -66,7 +66,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 1, int(data.Orientation))
 	})
 
-	t.Run("GoPro HD2 jpg file", func(t *testing.T) {
+	t.Run("gopro_hd2.jpg", func(t *testing.T) {
 		data, err := Exif("testdata/gopro_hd2.jpg")
 
 		if err != nil {
@@ -95,14 +95,14 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 1, int(data.Orientation))
 	})
 
-	t.Run("png file without exif", func(t *testing.T) {
+	t.Run("tweethog.png", func(t *testing.T) {
 		_, err := Exif("testdata/tweethog.png")
 
 		assert.Error(t, err, "file does not have EXIF")
 		// TODO: png with exif data
 	})
 
-	t.Run("heic file with exif data", func(t *testing.T) {
+	t.Run("iphone_7.heic", func(t *testing.T) {
 		data, err := Exif("testdata/iphone_7.heic")
 		if err != nil {
 			t.Fatal(err)
@@ -121,5 +121,31 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "Apple", data.LensMake)
 		assert.Equal(t, "iPhone 7 back camera 3.99mm f/1.8", data.LensModel)
 
+	})
+
+	t.Run("gps-2000.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/gps-2000.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "", data.Artist)
+		assert.True(t, data.TakenAt.IsZero())
+		assert.True(t, data.TakenAtLocal.IsZero())
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, 3272, data.Height)
+		assert.Equal(t, 4940, data.Width)
+		assert.Equal(t, float32(-38.405193), data.Lat)
+		assert.Equal(t, float32(144.18896), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "", data.Exposure)
+		assert.Equal(t, "", data.CameraMake)
+		assert.Equal(t, "", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, 0, data.FocalLength)
+		assert.Equal(t, 1, int(data.Orientation))
 	})
 }

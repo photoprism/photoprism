@@ -65,12 +65,14 @@ github.com/dsoprea/go-exif/v2 v2.0.0-20200113231207-0bbb7a3584f7 h1:+koSu4BOaLu+
 github.com/dsoprea/go-exif/v2 v2.0.0-20200113231207-0bbb7a3584f7/go.mod h1:Lm2lMM2zx8p4a34ZemkaUV95AnMl4ZvLbCUbwOvLC2E=
 github.com/dsoprea/go-exif/v2 v2.0.0-20200321225314-640175a69fe4 h1:bVaiYo8amn7Lu93sz6mTlYB3EtLG9aRcMnM1Eps8fmM=
 github.com/dsoprea/go-exif/v2 v2.0.0-20200321225314-640175a69fe4/go.mod h1:Lm2lMM2zx8p4a34ZemkaUV95AnMl4ZvLbCUbwOvLC2E=
+github.com/dsoprea/go-exif/v2 v2.0.0-20200506054703-8da3881353b3 h1:hgFwhM9SjozdLr8hCTn8/XeTBQQyyIEuwnNpdvjTBrM=
+github.com/dsoprea/go-exif/v2 v2.0.0-20200506054703-8da3881353b3/go.mod h1:YXOyDqCYjBuHHRw4JIGPgOgMit0IDvVSjjhsqOAFTYQ=
 github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200419165912-75b7a4f392e6 h1:6oyE0L+MX1iUjldwrLdAaU95g36UrKpbmlyslhyoJj4=
 github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200419165912-75b7a4f392e6/go.mod h1:5vwlfhyZI7u8AuvTl0G70sdqVdH41f7dscvBQ6mEbHs=
 github.com/dsoprea/go-logging v0.0.0-20190624164917-c4f10aab7696 h1:VGFnZAcLwPpt1sHlAxml+pGLZz9A2s+K/s1YNhPC91Y=
 github.com/dsoprea/go-logging v0.0.0-20190624164917-c4f10aab7696/go.mod h1:Nm/x2ZUNRW6Fe5C3LxdY1PyZY5wmDv/s5dkPJ/VB3iA=
-github.com/dsoprea/go-logging v0.0.0-20200401235223-7e979d0e0d02 h1:Ezh2FrKVTFWkL0UVYH7DLx89SvBy9c4SeiG7odG8Yok=
-github.com/dsoprea/go-logging v0.0.0-20200401235223-7e979d0e0d02/go.mod h1:Nm/x2ZUNRW6Fe5C3LxdY1PyZY5wmDv/s5dkPJ/VB3iA=
+github.com/dsoprea/go-logging v0.0.0-20200502201358-170ff607885f h1:FonKAuW3PmNtqk9tOR+Z7bnyQHytmnZBCmm5z1PQMss=
+github.com/dsoprea/go-logging v0.0.0-20200502201358-170ff607885f/go.mod h1:7I+3Pe2o/YSU88W0hWlm9S22W7XI1JFNJ86U0zPKMf8=
 github.com/dsoprea/go-png-image-structure v0.0.0-20200402000326-c0fdb803026f h1:cuf7rjLGedkB0V4UcWmWMxDZGKNtCM0dGt1WTWsZXDQ=
 github.com/dsoprea/go-png-image-structure v0.0.0-20200402000326-c0fdb803026f/go.mod h1:wFgCouxC0gy+d+sre8HkLj+VeUWPr969zAOvQ9NGXJc=
 github.com/dsoprea/go-utility v0.0.0-20200322154813-27f0b0d142d7 h1:DJhSHW0odJrW5wR9MU6ry5S+PsxuRXA165KFaiB+cZo=
@@ -424,6 +426,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
 golang.org/x/net v0.0.0-20200320220750-118fecf932d8/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
 golang.org/x/net v0.0.0-20200501053045-e0ff5e5a1de5 h1:WQ8q63x+f/zpC8Ac1s9wLElVoHhm32p6tudrU72n1QA=
 golang.org/x/net v0.0.0-20200501053045-e0ff5e5a1de5/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
+golang.org/x/net v0.0.0-20200505041828-1ed23360d12c h1:zJ0mtu4jCalhKg6Oaukv6iIkb+cOvDrajDH9DH46Q4M=
+golang.org/x/net v0.0.0-20200505041828-1ed23360d12c/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
 golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
 golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
 golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
