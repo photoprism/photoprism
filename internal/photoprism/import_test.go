@@ -14,11 +14,9 @@ func TestNewImport(t *testing.T) {
 
 	tf := classify.New(conf.ResourcesPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
-
-	ind := NewIndex(conf, tf, nd)
-
 	convert := NewConvert(conf)
 
+	ind := NewIndex(conf, tf, nd, convert)
 	imp := NewImport(conf, ind, convert)
 
 	assert.IsType(t, &Import{}, imp)
@@ -31,10 +29,9 @@ func TestImport_DestinationFilename(t *testing.T) {
 
 	tf := classify.New(conf.ResourcesPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
-
-	ind := NewIndex(conf, tf, nd)
-
 	convert := NewConvert(conf)
+
+	ind := NewIndex(conf, tf, nd, convert)
 
 	imp := NewImport(conf, ind, convert)
 
@@ -60,10 +57,9 @@ func TestImport_Start(t *testing.T) {
 
 	tf := classify.New(conf.ResourcesPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
-
-	ind := NewIndex(conf, tf, nd)
-
 	convert := NewConvert(conf)
+
+	ind := NewIndex(conf, tf, nd, convert)
 
 	imp := NewImport(conf, ind, convert)
 

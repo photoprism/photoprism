@@ -19,8 +19,12 @@ import (
 )
 
 // FileExists returns true if file exists and is not a directory.
-func FileExists(filename string) bool {
-	info, err := os.Stat(filename)
+func FileExists(fileName string) bool {
+	if fileName == "" {
+		return false
+	}
+
+	info, err := os.Stat(fileName)
 
 	return err == nil && !info.IsDir()
 }

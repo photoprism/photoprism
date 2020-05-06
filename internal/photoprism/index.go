@@ -22,16 +22,18 @@ type Index struct {
 	conf         *config.Config
 	tensorFlow   *classify.TensorFlow
 	nsfwDetector *nsfw.Detector
+	convert      *Convert
 	db           *gorm.DB
 	q            *query.Query
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
-func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector) *Index {
+func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, convert *Convert) *Index {
 	i := &Index{
 		conf:         conf,
 		tensorFlow:   tensorFlow,
 		nsfwDetector: nsfwDetector,
+		convert:      convert,
 		db:           conf.Db(),
 		q:            query.New(conf.Db()),
 	}

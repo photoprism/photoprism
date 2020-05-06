@@ -26,7 +26,6 @@ type MapsSettings struct {
 
 type LibrarySettings struct {
 	Convert  bool `json:"convert" yaml:"convert"`
-	Resample bool `json:"resample" yaml:"resample"`
 	Rescan   bool `json:"rescan" yaml:"rescan"`
 	Group    bool `json:"group" yaml:"group"`
 }
@@ -93,7 +92,6 @@ func NewSettings() *Settings {
 		Library: LibrarySettings{
 			Rescan:   false,
 			Convert:  true,
-			Resample: true,
 			Group:    true,
 		},
 	}

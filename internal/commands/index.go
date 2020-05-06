@@ -23,6 +23,10 @@ var indexFlags = []cli.Flag{
 		Name:  "all, a",
 		Usage: "re-index all originals, including unchanged files",
 	},
+	cli.BoolFlag{
+		Name:  "convert, c",
+		Usage: "convert raw to jpeg so that they can be displayed in a browser",
+	},
 }
 
 // indexAction indexes all photos in originals directory (photo library)
@@ -51,12 +55,9 @@ func indexAction(ctx *cli.Context) error {
 
 	ind := service.Index()
 
-	var opt photoprism.IndexOptions
-
-	if ctx.Bool("all") {
-		opt = photoprism.IndexOptionsAll()
-	} else {
-		opt = photoprism.IndexOptionsNone()
+	opt := photoprism.IndexOptions{
+		Rescan: ctx.Bool("all"),
+		Convert: ctx.Bool("convert"),
 	}
 
 	files := ind.Start(opt)

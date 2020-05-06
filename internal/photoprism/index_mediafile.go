@@ -142,7 +142,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if file.FilePrimary {
 		primaryFile = file
 
-		if !ind.conf.DisableTensorFlow() && (fileChanged || o.UpdateKeywords || o.UpdateLabels || o.UpdateTitle) {
+		if !ind.conf.DisableTensorFlow() && (fileChanged || o.Rescan) {
 			// Image classification via TensorFlow
 			labels = ind.classifyImage(m)
 
@@ -151,7 +151,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 
-		if fileChanged || o.UpdateExif {
+		if fileChanged || o.Rescan {
 			// Read UpdateExif data
 			if metaData, err := m.MetaData(); err == nil {
 				photo.SetTitle(metaData.Title, entity.SrcExif)
@@ -191,7 +191,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 
-		if photo.CameraSrc == entity.SrcAuto && (fileChanged || o.UpdateCamera) {
+		if photo.CameraSrc == entity.SrcAuto && (fileChanged || o.Rescan) {
 			// Set UpdateCamera, Lens, Focal Length and F Number
 			photo.Camera = entity.NewCamera(m.CameraModel(), m.CameraMake()).FirstOrCreate()
 			photo.Lens = entity.NewLens(m.LensModel(), m.LensMake()).FirstOrCreate()
@@ -205,7 +205,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetTakenAt(m.DateCreated(), m.DateCreated(), "", entity.SrcAuto)
 		}
 
-		if fileChanged || o.UpdateKeywords || o.UpdateLocation || o.UpdateTitle || photo.NoTitle() {
+		if fileChanged || o.Rescan || photo.NoTitle() {
 			if photo.HasLatLng() {
 				var locLabels classify.Labels
 				locKeywords, locLabels = photo.UpdateLocation(ind.conf.GeoCodingApi())
@@ -263,7 +263,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.FileMime = m.MimeType()
 	file.FileOrientation = m.Orientation()
 
-	if m.IsJpeg() && (fileChanged || o.UpdateColors) {
+	if m.IsJpeg() && (fileChanged || o.Rescan) {
 		// Color information
 		if p, err := m.Colors(ind.thumbPath()); err != nil {
 			log.Errorf("index: %s", err.Error())
@@ -276,7 +276,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
-	if m.IsJpeg() && (fileChanged || o.UpdateSize) {
+	if m.IsJpeg() && (fileChanged || o.Rescan) {
 		if m.Width() > 0 && m.Height() > 0 {
 			file.FileWidth = m.Width()
 			file.FileHeight = m.Height()
@@ -293,7 +293,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if photoExists {
 		// Estimate location
-		if o.UpdateLocation && photo.NoLocation() {
+		if o.Rescan && photo.NoLocation() {
 			ind.estimateLocation(&photo)
 		}
 
@@ -334,7 +334,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.PhotoUUID = photo.PhotoUUID
 	result.PhotoUUID = photo.PhotoUUID
 
-	if file.FilePrimary && (fileChanged || o.UpdateKeywords || o.UpdateTitle || o.UpdateLabels) {
+	if file.FilePrimary && (fileChanged || o.Rescan) {
 		labels := photo.ClassifyLabels()
 
 		if err := photo.UpdateTitle(labels); err != nil {

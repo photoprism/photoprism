@@ -19,11 +19,9 @@ func TestIndex_Start(t *testing.T) {
 
 	tf := classify.New(conf.ResourcesPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
-
-	ind := NewIndex(conf, tf, nd)
-
 	convert := NewConvert(conf)
 
+	ind := NewIndex(conf, tf, nd, convert)
 	imp := NewImport(conf, ind, convert)
 	opt := ImportOptionsMove(conf.ImportPath())
 

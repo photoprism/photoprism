@@ -138,6 +138,11 @@ func (m *Photo) ClassifyLabels() classify.Labels {
 	result := classify.Labels{}
 
 	for _, l := range m.Labels {
+		if l.Label == nil {
+			log.Warnf("photo: empty reference while creating classify labels (%d -> %d)", l.PhotoID, l.LabelID)
+			continue
+		}
+
 		result = append(result, l.ClassifyLabel())
 	}
 
@@ -374,8 +379,6 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 
 // AddLabels updates the entity with additional or updated label information.
 func (m *Photo) AddLabels(labels classify.Labels) {
-	db := Db()
-
 	// TODO: Update classify labels from database
 	for _, label := range labels {
 		lm := NewLabel(label.Title(), label.Priority).FirstOrCreate()
@@ -399,13 +402,13 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		if plm.Uncertainty > label.Uncertainty && plm.Uncertainty > 100 {
 			plm.Uncertainty = label.Uncertainty
 			plm.LabelSrc = label.Source
-			if err := db.Save(&plm).Error; err != nil {
+			if err := Db().Save(&plm).Error; err != nil {
 				log.Errorf("index: %s", err)
 			}
 		}
 	}
 
-	db.Set("gorm:auto_preload", true).Model(m).Related(&m.Labels)
+	Db().Set("gorm:auto_preload", true).Model(m).Related(&m.Labels)
 }
 
 // SetTitle changes the photo title and clips it to 300 characters.

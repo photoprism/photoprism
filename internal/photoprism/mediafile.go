@@ -564,13 +564,22 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 		return m, nil
 	}
 
-	jpegFilename := fmt.Sprintf("%s.%s", m.AbsBase(false), fs.TypeJpeg)
+	jpegFilename := fs.TypeJpeg.Find(m.FileName(), false)
 
-	if !fs.FileExists(jpegFilename) {
-		return nil, fmt.Errorf("jpeg file does not exist: %s", jpegFilename)
+	if jpegFilename == "" {
+		return nil, fmt.Errorf("no jpeg found for %s", m.FileName())
 	}
 
 	return NewMediaFile(jpegFilename)
+}
+
+// HasJpeg returns false if there is no jpeg representation of this media file.
+func (m *MediaFile) HasJpeg() bool {
+	if m.IsJpeg() {
+		return true
+	}
+
+	return fs.TypeJpeg.Find(m.FileName(), false) != ""
 }
 
 func (m *MediaFile) decodeDimensions() error {

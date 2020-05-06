@@ -20,10 +20,30 @@ func IndexWorker(jobs <-chan IndexJob) {
 		ind := job.Ind
 
 		if related.Main != nil {
-			res := ind.MediaFile(related.Main, opt, "")
-			done[related.Main.FileName()] = true
+			f := related.Main
 
-			log.Infof("index: %s main %s file %s", res, related.Main.FileType(), txt.Quote(related.Main.RelativeName(ind.originalsPath())))
+			if !ind.conf.ReadOnly() && !f.HasJpeg() {
+				if converted, err := ind.convert.ToJpeg(f); err != nil {
+					log.Errorf("index: creating jpeg failed (%s)", err.Error())
+				} else {
+					if err := converted.ResampleDefault(ind.thumbPath(), false); err != nil {
+						log.Errorf("index: could not create default thumbnails (%s)", err.Error())
+					}
+
+					related.Files = append(related.Files, converted)
+				}
+			}
+
+			res := ind.MediaFile(f, opt, "")
+			done[f.FileName()] = true
+
+			if res.Status == IndexAdded && f.IsJpeg() {
+				if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
+					log.Errorf("index: could not create default thumbnails (%s)", err.Error())
+				}
+			}
+
+			log.Infof("index: %s main %s file %s", res, f.FileType(), txt.Quote(f.RelativeName(ind.originalsPath())))
 		} else {
 			log.Warnf("index: no main file for %s (conversion failed?)", txt.Quote(fs.RelativeName(job.FileName, ind.originalsPath())))
 		}
@@ -35,6 +55,12 @@ func IndexWorker(jobs <-chan IndexJob) {
 
 			res := ind.MediaFile(f, opt, "")
 			done[f.FileName()] = true
+
+			if res.Status == IndexAdded && f.IsJpeg() {
+				if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
+					log.Errorf("index: could not create default thumbnails (%s)", err.Error())
+				}
+			}
 
 			log.Infof("index: %s related %s file %s", res, f.FileType(), txt.Quote(f.RelativeName(ind.originalsPath())))
 		}

@@ -36,37 +36,14 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Info(fmt.Sprintf("indexing photos in %s", txt.Quote(filepath.Base(path))))
 
-		cancel := func(err error) {
-			log.Error(err.Error())
-			event.Publish("index.completed", event.Data{"path": path, "seconds": int(time.Since(start).Seconds())})
-			c.JSON(http.StatusOK, gin.H{"error": err.Error()})
-		}
-
-		if f.Convert && !conf.ReadOnly() {
-			convert := service.Convert()
-
-			if err := convert.Start(conf.OriginalsPath()); err != nil {
-				cancel(err)
-				return
-			}
-		}
-
-		if f.Resample {
-			rs := service.Resample()
-
-			if err := rs.Start(false); err != nil {
-				cancel(err)
-				return
-			}
-		}
-
 		ind := service.Index()
 
-		if f.Rescan {
-			ind.Start(photoprism.IndexOptionsAll())
-		} else {
-			ind.Start(photoprism.IndexOptionsNone())
+		opt := photoprism.IndexOptions{
+			Rescan: f.Rescan,
+			Convert: f.Convert && !conf.ReadOnly(),
 		}
+
+		ind.Start(opt)
 
 		elapsed := int(time.Since(start).Seconds())
 

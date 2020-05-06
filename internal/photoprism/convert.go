@@ -132,6 +132,10 @@ func (c *Convert) ConvertCommand(image *MediaFile, jpegName string, xmpName stri
 
 // ToJpeg converts a single image file to JPEG if possible.
 func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
+	if c.conf.ReadOnly() {
+		return nil, errors.New("convert: disabled in read-only mode")
+	}
+
 	if !image.Exists() {
 		return nil, fmt.Errorf("convert: can not convert to jpeg, file does not exist (%s)", image.RelativeName(c.conf.OriginalsPath()))
 	}

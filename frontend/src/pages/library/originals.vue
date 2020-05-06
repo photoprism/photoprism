@@ -35,21 +35,6 @@
                                 @change="onChange"
                                 :disabled="busy"
                                 class="ma-0 pa-0"
-                                v-model="settings.library.resample"
-                                color="secondary-dark"
-                                :label="labels.resample"
-                                :hint="hints.resample"
-                                prepend-icon="photo_size_select_large"
-                                persistent-hint
-                        >
-                        </v-checkbox>
-                    </v-flex>
-
-                    <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
-                        <v-checkbox
-                                @change="onChange"
-                                :disabled="busy"
-                                class="ma-0 pa-0"
                                 v-model="settings.library.rescan"
                                 color="secondary-dark"
                                 :label="labels.rescan"
@@ -107,14 +92,12 @@
                 fileName: "",
                 source: null,
                 labels: {
-                    rescan: this.$gettext("Complete rescan"),
-                    resample: this.$gettext("Create thumbnails"),
-                    convert: this.$gettext("Convert RAW files"),
+                    rescan: this.$gettext("Complete Rescan"),
+                    convert: this.$gettext("Convert to JPEG"),
                 },
                 hints: {
                     rescan: this.$gettext("Re-index all originals, including already indexed and unchanged files."),
-                    resample: this.$gettext("Pre-render thumbnails if not done already. On-demand rendering saves storage but requires a powerful CPU."),
-                    convert: this.$gettext("RAWs need to be converted to JPEG so that they can be displayed in a browser. You can also do this manually."),
+                    convert: this.$gettext("File types like RAW might need to be converted so that they can be displayed in a browser. JPEGs will be stored in the same folder next to the original using the best possible quality."),
                 }
             }
         },

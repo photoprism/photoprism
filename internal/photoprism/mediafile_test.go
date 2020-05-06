@@ -885,8 +885,33 @@ func TestMediaFile_IsVideo(t *testing.T) {
 	})
 }
 
+func TestMediaFile_HasJpeg(t *testing.T) {
+	t.Run("Random.docx", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		f, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, f.HasJpeg())
+	})
+	t.Run("ferriswheel_colorful.jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		f, err := NewMediaFile(conf.ExamplesPath() + "/ferriswheel_colorful.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, f.HasJpeg())
+	})
+}
+
 func TestMediaFile_Jpeg(t *testing.T) {
-	t.Run("/Random.docx", func(t *testing.T) {
+	t.Run("Random.docx", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
@@ -905,9 +930,9 @@ func TestMediaFile_Jpeg(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "jpeg file does not exist: "+conf.ExamplesPath()+"/Random.jpg", err.Error())
+		assert.Equal(t, "no jpeg found for "+mediaFile.FileName(), err.Error())
 	})
-	t.Run("/ferriswheel_colorful.jpg", func(t *testing.T) {
+	t.Run("ferriswheel_colorful.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/ferriswheel_colorful.jpg")
@@ -924,7 +949,7 @@ func TestMediaFile_Jpeg(t *testing.T) {
 
 		assert.FileExists(t, file.fileName)
 	})
-	t.Run("/iphone_7.json", func(t *testing.T) {
+	t.Run("iphone_7.json", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.json")
@@ -943,12 +968,12 @@ func TestMediaFile_Jpeg(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "jpeg file does not exist: "+conf.ExamplesPath()+"/iphone_7.jpg", err.Error())
+		assert.Equal(t, "no jpeg found for "+mediaFile.FileName(), err.Error())
 	})
 }
 
 func TestMediaFile_decodeDimension(t *testing.T) {
-	t.Run("/Random.docx", func(t *testing.T) {
+	t.Run("Random.docx", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
@@ -956,7 +981,7 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 		decodeErr := mediaFile.decodeDimensions()
 		assert.Equal(t, "not a photo: "+conf.ExamplesPath()+"/Random.docx", decodeErr.Error())
 	})
-	t.Run("/clock_purple.jpg", func(t *testing.T) {
+	t.Run("clock_purple.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/clock_purple.jpg")
@@ -964,7 +989,7 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 		decodeErr := mediaFile.decodeDimensions()
 		assert.Nil(t, decodeErr)
 	})
-	t.Run("/iphone_7.heic", func(t *testing.T) {
+	t.Run("iphone_7.heic", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
@@ -975,7 +1000,7 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 }
 
 func TestMediaFile_Width(t *testing.T) {
-	t.Run("/Random.docx", func(t *testing.T) {
+	t.Run("Random.docx", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
@@ -983,7 +1008,7 @@ func TestMediaFile_Width(t *testing.T) {
 		width := mediaFile.Width()
 		assert.Equal(t, 0, width)
 	})
-	t.Run("/elephant_mono.jpg", func(t *testing.T) {
+	t.Run("elephant_mono.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephant_mono.jpg")
@@ -994,7 +1019,7 @@ func TestMediaFile_Width(t *testing.T) {
 }
 
 func TestMediaFile_Height(t *testing.T) {
-	t.Run("/Random.docx", func(t *testing.T) {
+	t.Run("Random.docx", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
@@ -1002,7 +1027,7 @@ func TestMediaFile_Height(t *testing.T) {
 		height := mediaFile.Height()
 		assert.Equal(t, 0, height)
 	})
-	t.Run("/elephants.jpg", func(t *testing.T) {
+	t.Run("elephants.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
@@ -1013,7 +1038,7 @@ func TestMediaFile_Height(t *testing.T) {
 }
 
 func TestMediaFile_AspectRatio(t *testing.T) {
-	t.Run("/iphone_7.heic", func(t *testing.T) {
+	t.Run("iphone_7.heic", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
@@ -1021,7 +1046,7 @@ func TestMediaFile_AspectRatio(t *testing.T) {
 		ratio := mediaFile.AspectRatio()
 		assert.Equal(t, float32(0.75), ratio)
 	})
-	t.Run("/fern_green.jpg", func(t *testing.T) {
+	t.Run("fern_green.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/fern_green.jpg")
@@ -1029,7 +1054,7 @@ func TestMediaFile_AspectRatio(t *testing.T) {
 		ratio := mediaFile.AspectRatio()
 		assert.Equal(t, float32(1), ratio)
 	})
-	t.Run("/elephants.jpg", func(t *testing.T) {
+	t.Run("elephants.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
@@ -1040,7 +1065,7 @@ func TestMediaFile_AspectRatio(t *testing.T) {
 }
 
 func TestMediaFile_Orientation(t *testing.T) {
-	t.Run("/iphone_7.heic", func(t *testing.T) {
+	t.Run("iphone_7.heic", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
@@ -1048,7 +1073,7 @@ func TestMediaFile_Orientation(t *testing.T) {
 		orientation := mediaFile.Orientation()
 		assert.Equal(t, 6, orientation)
 	})
-	t.Run("/turtle_brown_blue.jpg", func(t *testing.T) {
+	t.Run("turtle_brown_blue.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/turtle_brown_blue.jpg")
@@ -1069,7 +1094,7 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 
 	defer os.RemoveAll(thumbsPath)
 
-	t.Run("/elephants.jpg", func(t *testing.T) {
+	t.Run("elephants.jpg", func(t *testing.T) {
 		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 		assert.Nil(t, err)
 
@@ -1109,7 +1134,7 @@ func TestMediaFile_Resample(t *testing.T) {
 	thumbsPath := conf.CachePath() + "/_tmp"
 
 	defer os.RemoveAll(thumbsPath)
-	t.Run("/elephants.jpg", func(t *testing.T) {
+	t.Run("elephants.jpg", func(t *testing.T) {
 		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 		assert.Nil(t, err)
 
