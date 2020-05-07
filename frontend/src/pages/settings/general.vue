@@ -329,7 +329,7 @@
                 },
                 hints: {
                     private: this.$gettext("Exclude photos marked as private from search results by default."),
-                    review: this.$gettext("Low-quality photos require a review before they appear in search results."),
+                    review: this.$gettext("Non-photographic and low-quality images require a review before they appear in search results."),
                     group: this.$gettext("Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' belong to the same photo."),
                     move: this.$gettext("Move files from import to originals to save storage. Unsupported file types will never be deleted, they remain in their current location."),
                     places: this.$gettext("Search and display photos on a map."),
