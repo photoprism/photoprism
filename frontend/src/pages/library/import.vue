@@ -6,7 +6,7 @@
                     <span v-if="fileName"><translate>Importing</translate> {{fileName}}...</span>
                     <span v-else-if="busy"><translate>Importing files from import folder...</translate></span>
                     <span v-else-if="completed"><translate>Done.</translate></span>
-                    <span v-else><translate>Press button to start import...</translate></span>
+                    <span v-else><translate>Press button to start importing...</translate></span>
                 </p>
 
                 <v-autocomplete
