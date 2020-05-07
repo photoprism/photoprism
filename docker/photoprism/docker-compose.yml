@@ -25,7 +25,7 @@ services:
       PHOTOPRISM_DESCRIPTION: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source."
       PHOTOPRISM_AUTHOR: "Anonymous"
       PHOTOPRISM_UPLOAD_NSFW: "true"
-      PHOTOPRISM_DETECT_NSFW: "true"
+      PHOTOPRISM_DETECT_NSFW: "false"
       PHOTOPRISM_EXPERIMENTAL: "false"
       PHOTOPRISM_DEBUG: "false"
       PHOTOPRISM_READONLY: "false"
