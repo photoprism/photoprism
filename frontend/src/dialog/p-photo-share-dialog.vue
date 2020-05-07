@@ -27,7 +27,7 @@
                                 hide-details hide-no-data flat
                                 v-model="path"
                                 browser-autocomplete="off"
-                                hint="Location"
+                                hint="Folder"
                                 :search-input.sync="search"
                                 :items="pathItems"
                                 :loading="loading"
@@ -80,7 +80,7 @@
                 newPath: "",
                 labels: {
                     account: this.$gettext("Account"),
-                    path: this.$gettext("Location"),
+                    path: this.$gettext("Folder"),
                     upload: this.$gettext("Upload"),
                     setup: this.$gettext("Setup"),
                 }

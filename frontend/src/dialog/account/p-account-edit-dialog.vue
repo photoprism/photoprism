@@ -4,7 +4,7 @@
             <v-card-title primary-title>
                 <v-layout row wrap v-if="scope === 'sharing'">
                     <v-flex xs9>
-                        <h3 class="headline mb-0"><translate>Upload</translate></h3>
+                        <h3 class="headline mb-0">{{ $gettext('Upload') }}</h3>
                     </v-flex>
                     <v-flex xs3 text-xs-right>
                         <v-switch
@@ -30,7 +30,7 @@
                 </v-layout>
                 <v-layout row wrap v-else-if="scope === 'sync'">
                     <v-flex xs9>
-                        <h3 class="headline mb-0"><translate>Remote Sync</translate></h3>
+                        <h3 class="headline mb-0">{{ $gettext('Remote Sync') }}</h3>
                     </v-flex>
                     <v-flex xs3 text-xs-right>
                         <v-switch
@@ -56,7 +56,7 @@
                 </v-layout>
                 <v-layout row wrap v-else>
                     <v-flex xs10>
-                        <h3 class="headline mb-0"><translate>Edit Account</translate></h3>
+                        <h3 class="headline mb-0">{{ $gettext('Edit Account') }}</h3>
                     </v-flex>
                     <v-flex xs2 text-xs-right>
                         <v-btn icon flat :ripple="false"
@@ -66,7 +66,7 @@
                         </v-btn>
                     </v-flex>
                 </v-layout>
-                <h3 class="headline mb-0" v-else><translate>Edit Account</translate></h3>
+                <h3 class="headline mb-0" v-else>{{ $gettext('Edit Account') }}</h3>
             </v-card-title>
             <v-container fluid class="pt-0 pb-2 pr-2 pl-2">
                 <v-layout row wrap v-if="scope === 'sharing'">
@@ -76,7 +76,7 @@
                                 hide-details hide-no-data flat
                                 v-model="model.SharePath"
                                 browser-autocomplete="off"
-                                hint="Location"
+                                hint="Folder"
                                 :search-input.sync="search"
                                 :items="pathItems"
                                 :loading="loading"
@@ -121,7 +121,7 @@
                                 hide-details hide-no-data flat
                                 v-model="model.SyncPath"
                                 browser-autocomplete="off"
-                                hint="Location"
+                                hint="Folder"
                                 :search-input.sync="search"
                                 :items="pathItems"
                                 :loading="loading"
@@ -344,10 +344,10 @@
                     owner: this.$gettext("Owner"),
                     apiKey: this.$gettext("API Key"),
                     AccType: this.$gettext("Type"),
-                    SharePath: this.$gettext("Default Location"),
+                    SharePath: this.$gettext("Default Folder"),
                     ShareSize: this.$gettext("Size"),
                     ShareExpires: this.$gettext("Expires"),
-                    SyncPath: this.$gettext("Location"),
+                    SyncPath: this.$gettext("Folder"),
                     SyncInterval: this.$gettext("Interval"),
                     SyncFilenames: this.$gettext("Preserve filenames"),
                     SyncStart: this.$gettext("Start"),
