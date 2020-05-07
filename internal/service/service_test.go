@@ -44,6 +44,10 @@ func TestIndex(t *testing.T) {
 	assert.IsType(t, &photoprism.Index{}, Index())
 }
 
+func TestPurge(t *testing.T) {
+	assert.IsType(t, &photoprism.Purge{}, Purge())
+}
+
 func TestNsfwDetector(t *testing.T) {
 	assert.IsType(t, &nsfw.Detector{}, NsfwDetector())
 }

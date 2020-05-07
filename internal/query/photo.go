@@ -456,3 +456,13 @@ func (q *Query) PreloadPhotoByUUID(photoUUID string) (photo entity.Photo, err er
 
 	return photo, nil
 }
+
+// MissingPhotos returns photo entities without existing files.
+func (q *Query) MissingPhotos(limit int, offset int) (entities []entity.Photo, err error){
+	err = q.db.
+		Joins("LEFT JOIN files ON photos.id = files.id AND files.file_missing = 0").
+		Where("files.id IS NULL").
+		Order("photos.id").Limit(limit).Offset(offset).Find(&entities).Error
+
+	return entities, err
+}

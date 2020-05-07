@@ -103,3 +103,12 @@ func (m File) Changed(fileSize int64, fileModified time.Time) bool {
 
 	return true
 }
+
+// Purge removes a file from the index by marking it as missing.
+func (m *File) Purge() error {
+	if err := Db().Unscoped().Model(m).Update("file_missing", true).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

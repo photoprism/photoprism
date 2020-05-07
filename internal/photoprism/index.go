@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Index represents an indexer that indexes files in the originals directory.
@@ -59,9 +60,10 @@ func (ind *Index) Cancel() {
 func (ind *Index) Start(opt IndexOptions) map[string]bool {
 	done := make(map[string]bool)
 	originalsPath := ind.originalsPath()
+	optionsPath := filepath.Join(originalsPath, opt.Path)
 
-	if !fs.PathExists(originalsPath) {
-		event.Error(fmt.Sprintf("index: %s does not exist", originalsPath))
+	if !fs.PathExists(optionsPath) {
+		event.Error(fmt.Sprintf("index: %s does not exist", txt.Quote(optionsPath)))
 		return done
 	}
 
@@ -101,9 +103,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 		log.Infof(`index: ignored "%s"`, fs.RelativeName(fileName, originalsPath))
 	}
 
-	indexPath := filepath.Join(originalsPath, opt.Path)
-
-	err := godirwalk.Walk(indexPath, &godirwalk.Options{
+	err := godirwalk.Walk(optionsPath, &godirwalk.Options{
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
 			defer func() {
 				if err := recover(); err != nil {

@@ -482,3 +482,24 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 	m.PhotoAltitude = altitude
 	m.LocationSrc = source
 }
+
+// Delete deletes the entity from the database.
+func (m *Photo) Delete(permanently bool) error {
+	if permanently {
+		return m.DeletePermanently()
+	}
+
+	Db().Delete(File{}, "photo_id = ?", m.ID)
+
+	return Db().Delete(m).Error
+}
+
+// Delete permanently deletes the entity from the database.
+func (m *Photo) DeletePermanently() error {
+	Db().Unscoped().Delete(File{}, "photo_id = ?", m.ID)
+	Db().Unscoped().Delete(PhotoKeyword{}, "photo_id = ?", m.ID)
+	Db().Unscoped().Delete(PhotoLabel{}, "photo_id = ?", m.ID)
+	Db().Unscoped().Delete(PhotoAlbum{}, "photo_uuid = ?", m.PhotoUUID)
+
+	return Db().Unscoped().Delete(m).Error
+}

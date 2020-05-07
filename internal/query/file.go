@@ -4,14 +4,11 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// Files finds files returning maximum results defined by limit
-// and finding them from an offest defined by offset.
+// Files returns file entities in the range of limit and offset sorted by id.
 func (q *Query) Files(limit int, offset int) (files []entity.File, err error) {
-	if err := q.db.Where(&entity.File{}).Limit(limit).Offset(offset).Find(&files).Error; err != nil {
-		return files, err
-	}
+	err = q.db.Unscoped().Where(&entity.File{}).Order("id").Limit(limit).Offset(offset).Find(&files).Error
 
-	return files, nil
+	return files, err
 }
 
 // FilesByUUID
