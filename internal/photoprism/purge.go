@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"path"
-	"path/filepath"
 	"runtime"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -45,13 +44,6 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 	purgedFiles = make(map[string]bool)
 	purgedPhotos = make(map[string]bool)
 	originalsPath := prg.originalsPath()
-	optionsPath := filepath.Join(originalsPath, opt.Path)
-
-	if !fs.PathExists(optionsPath) {
-		err = fmt.Errorf("purge: %s does not exist", txt.Quote(optionsPath))
-		event.Error(err.Error())
-		return purgedFiles, purgedPhotos, err
-	}
 
 	if err := mutex.Worker.Start(); err != nil {
 		err = fmt.Errorf("purge: %s", err.Error())
@@ -70,7 +62,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 	offset := 0
 
 	for {
-		files, err := q.Files(limit, offset)
+		files, err := q.Files(limit, offset, opt.Path)
 
 		if err != nil {
 			return purgedFiles, purgedPhotos, err
@@ -102,7 +94,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 					log.Errorf("purge: %s", err)
 				} else {
 					purgedFiles[fileName] = true
-					log.Infof("purge: removed %s", txt.Quote(fs.RelativeName(fileName, originalsPath)))
+					log.Infof("purge: removed file %s", txt.Quote(fs.RelativeName(fileName, originalsPath)))
 				}
 			}
 		}
@@ -151,7 +143,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 				if opt.Hard {
 					log.Infof("purge: permanently deleted photo %s", txt.Quote(photo.PhotoTitle))
 				} else {
-					log.Infof("purge: archived photo %s", txt.Quote(photo.PhotoTitle))
+					log.Infof("purge: removed photo %s", txt.Quote(photo.PhotoTitle))
 				}
 			}
 		}

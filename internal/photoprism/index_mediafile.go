@@ -291,6 +291,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
+	photo.DeletedAt = nil
+	file.DeletedAt = nil
+
 	if photoExists {
 		// Estimate location
 		if o.Rescan && photo.NoLocation() {

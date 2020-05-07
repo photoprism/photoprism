@@ -52,9 +52,9 @@ func purgeAction(ctx *cli.Context) error {
 	subPath := strings.TrimSpace(ctx.Args().First())
 
 	if subPath == "" {
-		log.Infof("purging missing files in %s", txt.Quote(filepath.Base(conf.OriginalsPath())))
+		log.Infof("removing missing files in %s", txt.Quote(filepath.Base(conf.OriginalsPath())))
 	} else {
-		log.Infof("purging missing files in %s", txt.Quote(fs.RelativeName(filepath.Join(conf.OriginalsPath(), subPath), filepath.Dir(conf.OriginalsPath()))))
+		log.Infof("removing missing files in %s", txt.Quote(fs.RelativeName(filepath.Join(conf.OriginalsPath(), subPath), filepath.Dir(conf.OriginalsPath()))))
 	}
 
 	if conf.ReadOnly() {
@@ -74,7 +74,7 @@ func purgeAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("purged %d files and %d photos in %s", len(files), len(photos), elapsed)
+		log.Infof("removed %d files and %d photos in %s", len(files), len(photos), elapsed)
 	}
 
 	conf.Shutdown()

@@ -13,7 +13,7 @@ func TestQuery_Files(t *testing.T) {
 	search := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		files, err := search.Files(1000, 0)
+		files, err := search.Files(1000, 0, "/")
 
 		assert.Nil(t, err)
 		assert.LessOrEqual(t, 5, len(files))

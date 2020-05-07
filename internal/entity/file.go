@@ -93,6 +93,10 @@ func (m *File) ShareFileName() string {
 
 // Changed returns true if new and old file size or modified time are different.
 func (m File) Changed(fileSize int64, fileModified time.Time) bool {
+	if m.DeletedAt != nil {
+		return  true
+	}
+	
 	if m.FileSize != fileSize {
 		return true
 	}

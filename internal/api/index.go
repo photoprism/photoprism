@@ -56,19 +56,32 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 
 		ind := service.Index()
 
-		opt := photoprism.IndexOptions{
+		indOpt := photoprism.IndexOptions{
 			Rescan:  f.Rescan,
 			Convert: f.Convert && !conf.ReadOnly(),
 			Path:    filepath.Clean(f.Path),
 		}
 
-		if len(opt.Path) > 1 {
-			event.Info(fmt.Sprintf("indexing files in %s", txt.Quote(opt.Path)))
+		if len(indOpt.Path) > 1 {
+			event.Info(fmt.Sprintf("indexing files in %s", txt.Quote(indOpt.Path)))
 		} else {
 			event.Info("indexing originals...")
 		}
 
-		ind.Start(opt)
+		ind.Start(indOpt)
+
+		prg := service.Purge()
+
+		prgOpt := photoprism.PurgeOptions{
+			Path: filepath.Clean(f.Path),
+		}
+
+		if files, photos, err := prg.Start(prgOpt); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		} else if len(files) > 0 || len(photos) > 0 {
+			event.Info(fmt.Sprintf("removed %d files and %d photos", len(files), len(photos)))
+		}
 
 		elapsed := int(time.Since(start).Seconds())
 

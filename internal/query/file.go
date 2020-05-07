@@ -1,12 +1,24 @@
 package query
 
 import (
+	"strings"
+
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
 // Files returns file entities in the range of limit and offset sorted by id.
-func (q *Query) Files(limit int, offset int) (files []entity.File, err error) {
-	err = q.db.Unscoped().Where(&entity.File{}).Order("id").Limit(limit).Offset(offset).Find(&files).Error
+func (q *Query) Files(limit int, offset int, filePath string) (files []entity.File, err error) {
+	if strings.HasPrefix(filePath, "/") {
+		filePath = filePath[1:]
+	}
+
+	stmt := q.db.Unscoped()
+
+	if filePath != "" {
+		stmt = stmt.Where("file_name LIKE ?", filePath + "/%")
+	}
+
+	err = stmt.Order("id").Limit(limit).Offset(offset).Find(&files).Error
 
 	return files, err
 }
