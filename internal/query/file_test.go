@@ -7,13 +7,13 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-func TestQuery_Files(t *testing.T) {
+func TestQuery_ExistingFiles(t *testing.T) {
 	conf := config.TestConfig()
 
 	search := New(conf.Db())
 
 	t.Run("files found", func(t *testing.T) {
-		files, err := search.Files(1000, 0, "/")
+		files, err := search.ExistingFiles(1000, 0, "/")
 
 		assert.Nil(t, err)
 		assert.LessOrEqual(t, 5, len(files))

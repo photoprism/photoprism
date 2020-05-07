@@ -2,6 +2,6 @@ package photoprism
 
 type PurgeOptions struct {
 	Path string
-	Dry bool
+	Dry  bool
 	Hard bool
 }

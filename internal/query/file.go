@@ -6,16 +6,16 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// Files returns file entities in the range of limit and offset sorted by id.
-func (q *Query) Files(limit int, offset int, filePath string) (files []entity.File, err error) {
+// ExistingFiles returns not-missing and not-deleted file entities in the range of limit and offset sorted by id.
+func (q *Query) ExistingFiles(limit int, offset int, filePath string) (files []entity.File, err error) {
 	if strings.HasPrefix(filePath, "/") {
 		filePath = filePath[1:]
 	}
 
-	stmt := q.db.Unscoped()
+	stmt := q.db.Unscoped().Where("file_missing = 0 AND deleted_at IS NULL")
 
 	if filePath != "" {
-		stmt = stmt.Where("file_name LIKE ?", filePath + "/%")
+		stmt = stmt.Where("file_name LIKE ?", filePath+"/%")
 	}
 
 	err = stmt.Order("id").Limit(limit).Offset(offset).Find(&files).Error

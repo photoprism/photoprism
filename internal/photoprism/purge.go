@@ -16,13 +16,13 @@ import (
 
 // Purge represents a worker that removes missing files from search results.
 type Purge struct {
-	conf    *config.Config
+	conf *config.Config
 }
 
 // NewPurge returns a new purge worker.
 func NewPurge(conf *config.Config) *Purge {
 	instance := &Purge{
-		conf:    conf,
+		conf: conf,
 	}
 
 	return instance
@@ -62,7 +62,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 	offset := 0
 
 	for {
-		files, err := q.Files(limit, offset, opt.Path)
+		files, err := q.ExistingFiles(limit, offset, opt.Path)
 
 		if err != nil {
 			return purgedFiles, purgedPhotos, err
@@ -79,11 +79,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 			fileName := path.Join(prg.conf.OriginalsPath(), file.FileName)
 
-			if !fs.FileExists(fileName) && !purgedFiles[fileName]{
-				if file.FileMissing {
-					continue
-				}
-
+			if !fs.FileExists(fileName) && !purgedFiles[fileName] {
 				if opt.Dry {
 					purgedFiles[fileName] = true
 					log.Infof("purge: file %s would be removed", txt.Quote(fs.RelativeName(fileName, originalsPath)))

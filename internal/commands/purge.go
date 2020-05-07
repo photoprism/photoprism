@@ -65,7 +65,7 @@ func purgeAction(ctx *cli.Context) error {
 
 	opt := photoprism.PurgeOptions{
 		Path: subPath,
-		Dry: ctx.Bool("dry"),
+		Dry:  ctx.Bool("dry"),
 		Hard: ctx.Bool("hard"),
 	}
 
