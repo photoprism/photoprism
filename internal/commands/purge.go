@@ -25,7 +25,11 @@ var PurgeCommand = cli.Command{
 var purgeFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "hard",
-		Usage: "delete all data and permanently remove from index",
+		Usage: "permanently delete from database",
+	},
+	cli.BoolFlag{
+		Name:  "dry",
+		Usage: "dry run, don't actually remove anything",
 	},
 }
 
@@ -61,6 +65,7 @@ func purgeAction(ctx *cli.Context) error {
 
 	opt := photoprism.PurgeOptions{
 		Path: subPath,
+		Dry: ctx.Bool("dry"),
 		Hard: ctx.Bool("hard"),
 	}
 

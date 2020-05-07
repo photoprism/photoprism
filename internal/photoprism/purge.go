@@ -92,6 +92,12 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 					continue
 				}
 
+				if opt.Dry {
+					purgedFiles[fileName] = true
+					log.Infof("purge: file %s would be removed", txt.Quote(fs.RelativeName(fileName, originalsPath)))
+					continue
+				}
+
 				if err := file.Purge(); err != nil {
 					log.Errorf("purge: %s", err)
 				} else {
@@ -128,6 +134,12 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 			}
 
 			if purgedPhotos[photo.PhotoUUID] {
+				continue
+			}
+
+			if opt.Dry {
+				purgedPhotos[photo.PhotoUUID] = true
+				log.Infof("purge: photo %s would be removed", txt.Quote(photo.PhotoTitle))
 				continue
 			}
 
