@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/photoprism/photoprism/internal/form"
 	"testing"
 	"time"
 
@@ -60,4 +61,31 @@ is an oblate spheroid.`
 		assert.Equal(t, expected, album.AlbumName)
 		assert.Contains(t, album.AlbumSlug, slug.Make(slugExpected))
 	})
+}
+
+func TestAlbum_Save(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		album := NewAlbum("Old Name")
+
+		assert.Equal(t, "Old Name", album.AlbumName)
+		assert.Equal(t, "old-name", album.AlbumSlug)
+
+		album2 := Album{ID: 123, AlbumName: "New name", AlbumDescription: "new description"}
+
+		albumForm, err := form.NewAlbum(album2)
+
+		if err != nil {
+			t.Fatal("error")
+		}
+
+		err = album.Save(albumForm)
+
+		if err != nil {
+			t.Fatal("error")
+		}
+
+		assert.Equal(t, "New name", album.AlbumName)
+		assert.Equal(t, "new description", album.AlbumDescription)
+	})
+
 }

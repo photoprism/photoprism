@@ -68,7 +68,12 @@ func TestCamera_String(t *testing.T) {
 		cameraString := camera.String()
 		assert.Equal(t, "XXX", cameraString)
 	})
-	t.Run("model Unkown make Unknown", func(t *testing.T) {
+	t.Run("model Unknown make XXX", func(t *testing.T) {
+		camera := NewCamera("", "test")
+		cameraString := camera.String()
+		assert.Equal(t, "Unknown", cameraString)
+	})
+	t.Run("model Unknown make Unknown", func(t *testing.T) {
 		camera := NewCamera("", "")
 		cameraString := camera.String()
 		assert.Equal(t, "Unknown", cameraString)
