@@ -43,7 +43,7 @@
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
                                     @change="onChange"
-                                    :disabled="busy"
+                                    :disabled="busy || readonly"
                                     class="ma-0 pa-0"
                                     v-model="settings.index.convert"
                                     color="secondary-dark"
@@ -115,7 +115,7 @@
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
                                     @change="onChange"
-                                    :disabled="busy"
+                                    :disabled="busy || readonly"
                                     class="ma-0 pa-0"
                                     v-model="settings.features.upload"
                                     color="secondary-dark"
@@ -160,7 +160,7 @@
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
                                     @change="onChange"
-                                    :disabled="busy"
+                                    :disabled="busy || readonly"
                                     class="ma-0 pa-0"
                                     v-model="settings.features.import"
                                     color="secondary-dark"
