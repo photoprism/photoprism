@@ -203,7 +203,7 @@ class Photo extends RestModel {
         if (this.TimeZone) {
             return DateTime.fromISO(this.TakenAt).setZone(this.TimeZone).toLocaleString(DateTime.DATETIME_FULL);
         } else if (this.TakenAt) {
-            return DateTime.fromISO(this.TakenAt).toLocaleString(DateTime.DATE_HUGE);
+            return DateTime.fromISO(this.TakenAt).setZone("UTC").toLocaleString(DateTime.DATE_HUGE);
         } else {
             return "Unknown";
         }
