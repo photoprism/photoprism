@@ -327,7 +327,6 @@
                     mapsStyle: this.$gettext("Style"),
                     rescan: this.$gettext("Complete rescan"),
                     thumbs: this.$gettext("Create thumbnails"),
-                    raw: this.$gettext("Convert RAW files"),
                     move: this.$gettext("Remove imported files"),
                     group: this.$gettext("Group Sequential"),
                     archive: this.$gettext("Archive"),
