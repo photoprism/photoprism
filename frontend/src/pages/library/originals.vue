@@ -35,21 +35,6 @@
                                 @change="onChange"
                                 :disabled="busy"
                                 class="ma-0 pa-0"
-                                v-model="settings.index.convert"
-                                color="secondary-dark"
-                                :label="labels.convert"
-                                :hint="hints.convert"
-                                prepend-icon="photo_camera"
-                                persistent-hint
-                        >
-                        </v-checkbox>
-                    </v-flex>
-
-                    <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
-                        <v-checkbox
-                                @change="onChange"
-                                :disabled="busy"
-                                class="ma-0 pa-0"
                                 v-model="settings.index.rescan"
                                 color="secondary-dark"
                                 :label="labels.rescan"

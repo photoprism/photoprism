@@ -15,21 +15,6 @@
                                     @change="onChange"
                                     :disabled="busy"
                                     class="ma-0 pa-0"
-                                    v-model="settings.features.archive"
-                                    color="secondary-dark"
-                                    :label="labels.archive"
-                                    :hint="hints.archive"
-                                    prepend-icon="archive"
-                                    persistent-hint
-                            >
-                            </v-checkbox>
-                        </v-flex>
-
-                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-                            <v-checkbox
-                                    @change="onChange"
-                                    :disabled="busy"
-                                    class="ma-0 pa-0"
                                     v-model="settings.features.private"
                                     color="secondary-dark"
                                     :label="labels.private"
@@ -50,6 +35,21 @@
                                     :label="labels.review"
                                     :hint="hints.review"
                                     prepend-icon="remove_red_eye"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="onChange"
+                                    :disabled="busy"
+                                    class="ma-0 pa-0"
+                                    v-model="settings.index.convert"
+                                    color="secondary-dark"
+                                    :label="labels.convert"
+                                    :hint="hints.convert"
+                                    prepend-icon="photo_camera"
                                     persistent-hint
                             >
                             </v-checkbox>
@@ -147,6 +147,21 @@
                                     @change="onChange"
                                     :disabled="busy"
                                     class="ma-0 pa-0"
+                                    v-model="settings.features.share"
+                                    color="secondary-dark"
+                                    :label="labels.share"
+                                    :hint="hints.share"
+                                    prepend-icon="share"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="onChange"
+                                    :disabled="busy"
+                                    class="ma-0 pa-0"
                                     v-model="settings.features.import"
                                     color="secondary-dark"
                                     :label="labels.import"
@@ -162,11 +177,11 @@
                                     @change="onChange"
                                     :disabled="busy"
                                     class="ma-0 pa-0"
-                                    v-model="settings.features.edit"
+                                    v-model="settings.features.archive"
                                     color="secondary-dark"
-                                    :label="labels.edit"
-                                    :hint="hints.edit"
-                                    prepend-icon="edit"
+                                    :label="labels.archive"
+                                    :hint="hints.archive"
+                                    prepend-icon="archive"
                                     persistent-hint
                             >
                             </v-checkbox>
@@ -177,11 +192,11 @@
                                     @change="onChange"
                                     :disabled="busy"
                                     class="ma-0 pa-0"
-                                    v-model="settings.features.share"
+                                    v-model="settings.features.edit"
                                     color="secondary-dark"
-                                    :label="labels.share"
-                                    :hint="hints.share"
-                                    prepend-icon="share"
+                                    :label="labels.edit"
+                                    :hint="hints.edit"
+                                    prepend-icon="edit"
                                     persistent-hint
                             >
                             </v-checkbox>
@@ -315,7 +330,7 @@
                     raw: this.$gettext("Convert RAW files"),
                     move: this.$gettext("Remove imported files"),
                     group: this.$gettext("Group Sequential"),
-                    archive: this.$gettext("Photo Archive"),
+                    archive: this.$gettext("Archive"),
                     private: this.$gettext("Hide Private"),
                     review: this.$gettext("Quality Filter"),
                     places: this.$gettext("Places"),
@@ -326,6 +341,7 @@
                     edit: this.$gettext("Edit"),
                     share: this.$gettext("Share"),
                     logs: this.$gettext("Logs"),
+                    convert: this.$gettext("Convert to JPEG"),
                 },
                 hints: {
                     private: this.$gettext("Exclude photos marked as private from search results by default."),
@@ -340,7 +356,8 @@
                     download: this.$gettext("Download single files and zip archives."),
                     edit: this.$gettext("Change photo titles, locations and other metadata."),
                     share: this.$gettext("Upload to WebDAV and other remote services."),
-                    logs: this.$gettext("Show logs tab on library page."),
+                    logs: this.$gettext("Show server logs in Library."),
+                    convert: this.$gettext("File types like RAW might need to be converted so that they can be displayed in a browser. JPEGs will be stored in the same folder next to the original using the best possible quality."),
                 },
                 busy: false,
             };
