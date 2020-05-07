@@ -102,7 +102,7 @@
     export default {
         name: 'p-tab-import',
         data() {
-            const root = {"name": "All files", "path": "/"}
+            const root = {"name": "All files in import directory", "path": "/"}
 
             return {
                 settings: new Settings(this.$config.settings()),
@@ -116,11 +116,11 @@
                 root: root,
                 dirs: [root],
                 labels: {
-                    move: this.$gettext("Remove imported files"),
+                    move: this.$gettext("Move Files"),
                     path: this.$gettext("Folder"),
                 },
                 hints: {
-                    move: this.$gettext("Move files from import to originals to save storage. Unsupported file types will never be deleted, they remain in their current location."),
+                    move: this.$gettext("Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."),
                 }
             }
         },
