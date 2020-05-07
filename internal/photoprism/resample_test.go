@@ -91,7 +91,7 @@ func TestThumb_Filename(t *testing.T) {
 		if err == nil {
 			t.FailNow()
 		}
-		assert.Equal(t, "resample: path is empty", err.Error())
+		assert.Equal(t, "resample: folder is empty", err.Error())
 	})
 }
 

@@ -201,7 +201,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "tidb-path",
-		Usage:  "built-in TiDB server storage path",
+		Usage:  "built-in TiDB server storage `PATH`",
 		EnvVar: "PHOTOPRISM_TIDB_PATH",
 	},
 	cli.StringFlag{

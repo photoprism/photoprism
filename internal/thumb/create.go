@@ -86,7 +86,7 @@ func Filename(hash string, thumbPath string, width, height int, opts ...Resample
 	}
 
 	if len(thumbPath) == 0 {
-		return "", errors.New("resample: path is empty")
+		return "", errors.New("resample: folder is empty")
 	}
 
 	postfix := Postfix(width, height, opts...)

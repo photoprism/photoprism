@@ -17,7 +17,7 @@ import (
 var CopyCommand = cli.Command{
 	Name:    "copy",
 	Aliases: []string{"cp"},
-	Usage:   "Copies files to originals path, converts and indexes them as needed",
+	Usage:   "Copies files to originals folder, converts and indexes them as needed",
 	Action:  copyAction,
 }
 
@@ -61,7 +61,7 @@ func copyAction(ctx *cli.Context) error {
 	}
 
 	if sourcePath == conf.OriginalsPath() {
-		return errors.New("import path is identical with originals path")
+		return errors.New("import folder is identical with originals")
 	}
 
 	log.Infof("copying media files from %s to %s", sourcePath, conf.OriginalsPath())

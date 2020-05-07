@@ -16,7 +16,7 @@ import (
 // IndexCommand is used to register the index cli command
 var IndexCommand = cli.Command{
 	Name:   "index",
-	Usage:  "Indexes media files in originals path",
+	Usage:  "Indexes media files in originals folder",
 	Flags:  indexFlags,
 	Action: indexAction,
 }
@@ -28,7 +28,7 @@ var indexFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "convert, c",
-		Usage: "convert raw to jpeg so that they can be displayed in a browser",
+		Usage: "convert other file types to jpeg so that they can be displayed in a browser",
 	},
 }
 
