@@ -169,9 +169,9 @@ func (imp *Import) Start(opt ImportOptions) {
 		for _, directory := range directories {
 			if fs.IsEmpty(directory) {
 				if err := os.Remove(directory); err != nil {
-					log.Errorf("import: could not deleted empty directory %s (%s)", fs.RelativeName(directory, importPath), err)
+					log.Errorf("import: could not delete empty folder %s (%s)", txt.Quote(fs.RelativeName(directory, importPath)), err)
 				} else {
-					log.Infof("import: deleted empty directory %s", fs.RelativeName(directory, importPath))
+					log.Infof("import: deleted empty folder %s", txt.Quote(fs.RelativeName(directory, importPath)))
 				}
 			}
 		}

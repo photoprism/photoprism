@@ -44,7 +44,7 @@ func (s *Sync) upload(a entity.Account) (complete bool, err error) {
 
 		if _, ok := existingDirs[remoteDir]; !ok {
 			if err := client.CreateDir(remoteDir); err != nil {
-				log.Errorf("sync: could not create remote directory %s", remoteDir)
+				log.Errorf("sync: could not create remote folder %s", remoteDir)
 				continue // try again next time
 			}
 		}

@@ -57,7 +57,7 @@ func indexAction(ctx *cli.Context) error {
 	if subPath == "" {
 		log.Infof("indexing photos in %s", txt.Quote(conf.OriginalsPath()))
 	} else {
-		log.Infof("indexing originals subdirectory %s", txt.Quote(filepath.Join(conf.OriginalsPath(), subPath)))
+		log.Infof("indexing originals folder %s", txt.Quote(filepath.Join(conf.OriginalsPath(), subPath)))
 	}
 
 	if conf.ReadOnly() {

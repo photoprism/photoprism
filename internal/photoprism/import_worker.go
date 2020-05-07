@@ -44,7 +44,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			if destinationFilename, err := imp.DestinationFilename(related.Main, f); err == nil {
 				if err := os.MkdirAll(path.Dir(destinationFilename), os.ModePerm); err != nil {
-					log.Errorf("import: could not create directories (%s)", err.Error())
+					log.Errorf("import: could not create folders (%s)", err.Error())
 				}
 
 				if related.Main.HasSameName(f) {

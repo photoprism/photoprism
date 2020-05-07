@@ -102,7 +102,7 @@
     export default {
         name: 'p-tab-import',
         data() {
-            const root = {"name": "All files in import directory", "path": "/"}
+            const root = {"name": "All files in import folder", "path": "/"}
 
             return {
                 settings: new Settings(this.$config.settings()),

@@ -63,7 +63,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 
 		if err := os.MkdirAll(zipPath, 0700); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip directory")})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip folder")})
 			return
 		}
 

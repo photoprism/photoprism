@@ -79,7 +79,7 @@ func (s *Share) Start() (err error) {
 
 			if _, ok := existingDirs[dir]; !ok {
 				if err := client.CreateDir(dir); err != nil {
-					log.Errorf("share: could not create directory %s", dir)
+					log.Errorf("share: could not create folder %s", dir)
 					continue
 				}
 			}

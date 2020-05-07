@@ -115,7 +115,7 @@ func (c Client) Download(from, to string, force bool) error {
 			return fmt.Errorf("webdav: can't create %s (%s)", dir, err)
 		}
 	} else if !dirInfo.IsDir() {
-		return fmt.Errorf("webdav: %s is not a directory", dir)
+		return fmt.Errorf("webdav: %s is not a folder", dir)
 	}
 
 	bytes, err := c.client.Read(from)
