@@ -146,7 +146,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			// Image classification via TensorFlow
 			labels = ind.classifyImage(m)
 
-			if !photoExists && ind.conf.DetectNSFW() {
+			if !photoExists && ind.conf.Settings().Features.Private && ind.conf.DetectNSFW() {
 				photo.PhotoPrivate = ind.NSFW(m)
 			}
 		}

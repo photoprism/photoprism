@@ -40,7 +40,6 @@ type PhotoSearch struct {
 	Private   bool      `form:"private"`
 	Story     bool      `form:"story"`
 	Safe      bool      `form:"safe"`
-	Nsfw      bool      `form:"nsfw"`
 	Count     int       `form:"count" binding:"required"`
 	Offset    int       `form:"offset"`
 	Order     string    `form:"order"`
