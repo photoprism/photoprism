@@ -469,3 +469,10 @@ func (q *Query) MissingPhotos(limit int, offset int) (entities []entity.Photo, e
 
 	return entities, err
 }
+
+// ResetPhotosQuality resets the quality of photos without primary file to -1.
+func (q *Query) ResetPhotosQuality() error {
+	return q.db.Table("photos").
+		Where("id IN (SELECT photos.id FROM photos LEFT JOIN files ON photos.id = files.photo_id AND files.file_primary = 1 WHERE files.id IS NULL GROUP BY photos.id)").
+		Update("photo_quality", -1).Error
+}

@@ -56,14 +56,16 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	start := time.Now()
 
-	var photo entity.Photo
-	var description entity.Description
-	var file, primaryFile entity.File
-	var metaData meta.Data
 	var photoQuery, fileQuery *gorm.DB
 	var locKeywords []string
 
+	file, primaryFile := entity.File{}, entity.File{}
+
+	photo := entity.Photo{}
+	metaData := meta.Data{}
+	description := entity.Description{}
 	labels := classify.Labels{}
+
 	fileBase := m.Base(ind.conf.Settings().Index.Group)
 	filePath := m.RelativePath(ind.originalsPath())
 	fileName := m.RelativeName(ind.originalsPath())
@@ -120,6 +122,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if photoExists {
 		ind.db.Model(&photo).Related(&description)
+	} else {
+		photo.PhotoQuality = -1
 	}
 
 	if fileHash == "" {
@@ -377,7 +381,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			log.Warnf("%s (%s)", err.Error(), photo.PhotoUUID)
 		}
 	} else {
-		photo.PhotoQuality = photo.QualityScore()
+		if photo.PhotoQuality >= 0 {
+			photo.PhotoQuality = photo.QualityScore()
+		}
 
 		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
 			log.Errorf("index: %s", err)

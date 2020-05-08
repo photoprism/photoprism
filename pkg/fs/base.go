@@ -2,6 +2,7 @@ package fs
 
 import (
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -9,8 +10,8 @@ import (
 func Base(fileName string, stripSequence bool) string {
 	basename := filepath.Base(fileName)
 
-	if end := strings.Index(basename, "."); end != -1 {
-		// ignore everything behind the first dot in the file name
+	// strip file type extension
+	if end := strings.LastIndex(basename, "."); end != -1 {
 		basename = basename[:end]
 	}
 
@@ -18,7 +19,14 @@ func Base(fileName string, stripSequence bool) string {
 		return basename
 	}
 
-	// common sequential naming schemes
+	// strip numeric extensions like .0000, .0001, .4542353245,....
+	if dot := strings.LastIndex(basename, "."); dot != -1 {
+		if i, err := strconv.Atoi(basename[dot+1:]); err == nil && i >= 0 {
+			basename = basename[:dot]
+		}
+	}
+
+	// other common sequential naming schemes
 	if end := strings.Index(basename, " ("); end != -1 {
 		// copies created by Chrome & Windows, example: IMG_1234 (2)
 		basename = basename[:end]

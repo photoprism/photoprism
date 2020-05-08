@@ -52,6 +52,12 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 			Luminance: colors.LightMap{0x9, 0x5, 0xb, 0x6, 0x1, 0x6, 0xa, 0x1, 0x8},
 			Chroma:    20,
 		},
+		"Screenshot 2019-05-21 at 10.45.52.png": {
+			Colors:    colors.Colors{},
+			MainColor: 0,
+			Luminance: colors.LightMap{},
+			Chroma:    0,
+		},
 	}
 
 	if err := fastwalk.Walk(conf.ExamplesPath(), func(filename string, info os.FileMode) error {
@@ -61,7 +67,12 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 
 		mediaFile, err := NewMediaFile(filename)
 
-		if err != nil || !mediaFile.IsJpeg() {
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if !mediaFile.IsJpeg() {
+			t.Logf("not a jpeg: %s", filepath.Base(mediaFile.FileName()))
 			return nil
 		}
 

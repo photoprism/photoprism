@@ -163,6 +163,8 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		offset += limit
 	}
 
+	err = q.ResetPhotosQuality()
+
 	return purgedFiles, purgedPhotos, err
 }
 

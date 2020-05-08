@@ -35,8 +35,8 @@ type File struct {
 	FileOrientation int
 	FileAspectRatio float32 `gorm:"type:FLOAT;"`
 	FileMainColor   string  `gorm:"type:varbinary(16);index;"`
-	FileColors      string  `gorm:"type:binary(9);"`
-	FileLuminance   string  `gorm:"type:binary(9);"`
+	FileColors      string  `gorm:"type:varbinary(9);"`
+	FileLuminance   string  `gorm:"type:varbinary(9);"`
 	FileDiff        uint32
 	FileChroma      uint8
 	FileNotes       string `gorm:"type:text"`

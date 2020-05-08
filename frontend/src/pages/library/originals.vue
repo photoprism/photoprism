@@ -66,6 +66,18 @@
                     <translate>Index</translate>
                     <v-icon right dark>update</v-icon>
                 </v-btn>
+
+                <v-alert
+                        :value="true"
+                        color="error"
+                        icon="priority_high"
+                        class="mt-3"
+                        outline
+                        v-if="config.count.hidden > 0"
+                >
+                    The index currently contains {{ config.count.hidden }} hidden files. Their format may not be supported,
+                    they haven't been converted to JPEG yet or there are duplicates.
+                </v-alert>
             </v-container>
         </v-form>
     </div>
@@ -87,6 +99,7 @@
             return {
                 settings: new Settings(this.$config.settings()),
                 readonly: this.$config.get("readonly"),
+                config: this.$config.values,
                 started: false,
                 busy: false,
                 loading: false,
