@@ -23,6 +23,9 @@ var PhotoAlbumFixtures = map[string]PhotoAlbum{
 	},
 }
 
+var PhotoAlbumFixture1 = PhotoAlbumFixtures["1"]
+var PhotoAlbumFixture2 = PhotoAlbumFixtures["2"]
+
 // CreatePhotoAlbumFixtures inserts known entities into the database for testing.
 func CreatePhotoAlbumFixtures() {
 	for _, entity := range PhotoAlbumFixtures {

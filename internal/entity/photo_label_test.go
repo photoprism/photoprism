@@ -21,3 +21,36 @@ func TestPhotoLabel_TableName(t *testing.T) {
 
 	assert.Equal(t, "photos_labels", tableName)
 }
+
+func TestPhotoLabel_FirstOrCreate(t *testing.T) {
+	r := PhotoLabelFixture1.FirstOrCreate()
+	assert.Equal(t, uint(0xf4240), r.PhotoID)
+}
+
+func TestPhotoLabel_ClassifyLabel(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		r := PhotoLabelFixture1.ClassifyLabel()
+		assert.Equal(t, "Flower", r.Name)
+		assert.Equal(t, 38, r.Uncertainty)
+		assert.Equal(t, "image", r.Source)
+	})
+
+	t.Run("label = nil", func(t *testing.T) {
+		photoLabel := NewPhotoLabel(1, 3, 80, "source")
+		assert.Panics(t, func() {
+
+			photoLabel.ClassifyLabel()
+
+		}, "photo label: label is nil")
+	})
+}
+
+func TestPhotoLabel_Save(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		photoLabel := NewPhotoLabel(13, 1000, 99, "image")
+		err := photoLabel.Save()
+		if err != nil {
+			t.Fatal("error")
+		}
+	})
+}

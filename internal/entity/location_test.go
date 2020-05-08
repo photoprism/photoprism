@@ -15,6 +15,7 @@ func TestNewLocation(t *testing.T) {
 		l.LocSource = "places"
 
 		assert.Equal(t, "restaurant", l.Category())
+		assert.Equal(t, false, l.NoCategory())
 		assert.Equal(t, false, l.Unknown())
 		assert.Equal(t, "LocationName", l.Name())
 		assert.Equal(t, false, l.NoName())

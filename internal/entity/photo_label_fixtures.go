@@ -27,6 +27,8 @@ var PhotoLabelFixtures = map[string]PhotoLabel{
 	},
 }
 
+var PhotoLabelFixture1 = PhotoLabelFixtures["1"]
+
 // CreatePhotoLabelFixtures inserts known entities into the database for testing.
 func CreatePhotoLabelFixtures() {
 	for _, entity := range PhotoLabelFixtures {

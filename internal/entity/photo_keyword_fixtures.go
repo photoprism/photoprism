@@ -7,6 +7,8 @@ var PhotoKeywordFixtures = map[string]PhotoKeyword{
 	},
 }
 
+var PhotoKeywordFixture1 = PhotoKeywordFixtures["1"]
+
 // CreatePhotoKeywordFixtures inserts known entities into the database for testing.
 func CreatePhotoKeywordFixtures() {
 	for _, entity := range PhotoKeywordFixtures {
