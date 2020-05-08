@@ -21,6 +21,8 @@ func TestMain(m *testing.M) {
 
 	code := m.Run()
 
+	_ = c.CloseDb()
+
 	os.Exit(code)
 }
 

@@ -1,12 +1,27 @@
 package config
 
 import (
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMain(m *testing.M) {
+	log = logrus.StandardLogger()
+	log.SetLevel(logrus.DebugLevel)
+
+	c := TestConfig()
+
+	code := m.Run()
+
+	_ = c.CloseDb()
+
+	os.Exit(code)
+}
 
 func TestNewConfig(t *testing.T) {
 	ctx := CliTestContext()

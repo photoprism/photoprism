@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/sirupsen/logrus"
 )
 
@@ -12,13 +12,11 @@ func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.DebugLevel)
 
-	db := entity.InitTestDb(os.Getenv("PHOTOPRISM_TEST_DSN"))
+	c := config.TestConfig()
 
 	code := m.Run()
 
-	if db != nil {
-		db.Close()
-	}
+	_ = c.CloseDb()
 
 	os.Exit(code)
 }

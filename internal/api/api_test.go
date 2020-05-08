@@ -3,11 +3,14 @@ package api
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
+	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/sirupsen/logrus"
 )
 
 // NewApiTest returns new API test helper
@@ -36,4 +39,17 @@ func PerformRequestWithBody(r http.Handler, method, path, body string) *httptest
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	return w
+}
+
+func TestMain(m *testing.M) {
+	log = logrus.StandardLogger()
+	log.SetLevel(logrus.DebugLevel)
+
+	c := config.TestConfig()
+
+	code := m.Run()
+
+	_ = c.CloseDb()
+
+	os.Exit(code)
 }
