@@ -166,7 +166,7 @@
                         {value: 'list', text: this.$gettext('List')},
                     ],
                     'sorting': [
-                        {value: 'imported', text: this.$gettext('Recently imported')},
+                        {value: 'imported', text: this.$gettext('Recently added')},
                         {value: 'newest', text: this.$gettext('Newest first')},
                         {value: 'oldest', text: this.$gettext('Oldest first')},
                         {value: 'similar', text: this.$gettext('Group by similarity')},
