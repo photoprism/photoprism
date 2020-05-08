@@ -62,7 +62,7 @@ func (list Types) WaitForMigration() {
 				log.Debugf("entity: table %s migrated", name)
 				break
 			} else {
-				log.Error(err)
+				log.Debugf("entity: %s", err.Error())
 			}
 
 			if i == attempts {
