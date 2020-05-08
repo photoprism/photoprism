@@ -66,16 +66,30 @@ func indexAction(ctx *cli.Context) error {
 
 	ind := service.Index()
 
-	opt := photoprism.IndexOptions{
+	indOpt := photoprism.IndexOptions{
 		Path:    subPath,
 		Rescan:  ctx.Bool("all"),
 		Convert: ctx.Bool("convert"),
 	}
 
-	files := ind.Start(opt)
+	indexed := ind.Start(indOpt)
+
+	prg := service.Purge()
+
+	prgOpt := photoprism.PurgeOptions{
+		Path:   subPath,
+		Ignore: indexed,
+	}
+
+	if files, photos, err := prg.Start(prgOpt); err != nil {
+		log.Error(err)
+	} else if len(files) > 0 || len(photos) > 0 {
+		log.Infof("removed %d files and %d photos", len(files), len(photos))
+	}
+
 	elapsed := time.Since(start)
 
-	log.Infof("indexed %d files in %s", len(files), elapsed)
+	log.Infof("indexed %d files in %s", len(indexed), elapsed)
 
 	conf.Shutdown()
 
