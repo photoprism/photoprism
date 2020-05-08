@@ -18,3 +18,9 @@ func TestNewKeyword(t *testing.T) {
 		assert.Equal(t, false, keyword.Skip)
 	})
 }
+
+func TestKeyword_FirstOrCreate(t *testing.T) {
+	keyword := NewKeyword("food")
+	r := keyword.FirstOrCreate()
+	assert.Equal(t, "food", r.Keyword)
+}

@@ -67,3 +67,10 @@ func TestFile_Changed(t *testing.T) {
 		assert.Equal(t, false, file.Changed(500, time))
 	})
 }
+
+func TestFile_Purge(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
+		assert.Equal(t, nil, file.Purge())
+	})
+}

@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/photoprism/photoprism/internal/classify"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,15 +23,99 @@ func TestNewLabel(t *testing.T) {
 }
 
 func TestLabel_SetName(t *testing.T) {
-	entity := LabelFixtures["landscape"]
+	t.Run("set name", func(t *testing.T) {
+		entity := LabelFixtures["landscape"]
 
-	assert.Equal(t, "Landscape", entity.LabelName)
-	assert.Equal(t, "landscape", entity.LabelSlug)
-	assert.Equal(t, "landscape", entity.CustomSlug)
+		assert.Equal(t, "Landscape", entity.LabelName)
+		assert.Equal(t, "landscape", entity.LabelSlug)
+		assert.Equal(t, "landscape", entity.CustomSlug)
 
-	entity.SetName("Landschaft")
+		entity.SetName("Landschaft")
 
-	assert.Equal(t, "Landschaft", entity.LabelName)
-	assert.Equal(t, "landscape", entity.LabelSlug)
-	assert.Equal(t, "landschaft", entity.CustomSlug)
+		assert.Equal(t, "Landschaft", entity.LabelName)
+		assert.Equal(t, "landscape", entity.LabelSlug)
+		assert.Equal(t, "landschaft", entity.CustomSlug)
+	})
+
+	t.Run("new name empty", func(t *testing.T) {
+		entity := LabelFixtures["flower"]
+
+		assert.Equal(t, "Flower", entity.LabelName)
+		assert.Equal(t, "flower", entity.LabelSlug)
+		assert.Equal(t, "flower", entity.CustomSlug)
+
+		entity.SetName("")
+
+		assert.Equal(t, "Flower", entity.LabelName)
+		assert.Equal(t, "flower", entity.LabelSlug)
+		assert.Equal(t, "flower", entity.CustomSlug)
+	})
+}
+
+func TestLabel_FirstOrCreate(t *testing.T) {
+	r := LabelFixtureFlower.FirstOrCreate()
+	assert.Equal(t, "Flower", r.LabelName)
+	assert.Equal(t, "flower", r.LabelSlug)
+}
+
+func TestLabel_Update(t *testing.T) {
+	t.Run("update priority and label slug", func(t *testing.T) {
+		classifyLabel := &classify.Label{Name: "classify", Uncertainty: 30, Source: "manual", Priority: 5}
+		Label := &Label{LabelName: "label", LabelSlug: "", CustomSlug: "customslug", LabelPriority: 4}
+
+		assert.Equal(t, 4, Label.LabelPriority)
+		assert.Equal(t, "", Label.LabelSlug)
+		assert.Equal(t, "customslug", Label.CustomSlug)
+		assert.Equal(t, "label", Label.LabelName)
+
+		err := Label.Update(*classifyLabel)
+		if err != nil {
+			t.Fatal("error")
+		}
+
+		assert.Equal(t, 5, Label.LabelPriority)
+		assert.Equal(t, "customslug", Label.LabelSlug)
+		assert.Equal(t, "classify", Label.CustomSlug)
+		assert.Equal(t, "Classify", Label.LabelName)
+	})
+	t.Run("update custom slug", func(t *testing.T) {
+		classifyLabel := &classify.Label{Name: "classify", Uncertainty: 30, Source: "manual", Priority: 5}
+		Label := &Label{LabelName: "label12", LabelSlug: "labelslug", CustomSlug: "", LabelPriority: 5}
+
+		assert.Equal(t, 5, Label.LabelPriority)
+		assert.Equal(t, "labelslug", Label.LabelSlug)
+		assert.Equal(t, "", Label.CustomSlug)
+		assert.Equal(t, "label12", Label.LabelName)
+
+		err := Label.Update(*classifyLabel)
+		if err != nil {
+			t.Fatal("error")
+		}
+
+		assert.Equal(t, 5, Label.LabelPriority)
+		assert.Equal(t, "labelslug", Label.LabelSlug)
+		assert.Equal(t, "classify", Label.CustomSlug)
+		assert.Equal(t, "Classify", Label.LabelName)
+
+	})
+	t.Run("update name and Categories", func(t *testing.T) {
+		classifyLabel := &classify.Label{Name: "classify", Uncertainty: 30, Source: "manual", Priority: 5}
+		Label := &Label{LabelName: "label34", LabelSlug: "labelslug2", CustomSlug: "labelslug2", LabelPriority: 5, LabelCategories: []*Label{&LabelFixtureFlower}}
+
+		assert.Equal(t, 5, Label.LabelPriority)
+		assert.Equal(t, "labelslug2", Label.LabelSlug)
+		assert.Equal(t, "labelslug2", Label.CustomSlug)
+		assert.Equal(t, "label34", Label.LabelName)
+
+		err := Label.Update(*classifyLabel)
+		if err != nil {
+			t.Fatal("error")
+		}
+
+		assert.Equal(t, 5, Label.LabelPriority)
+		assert.Equal(t, "labelslug2", Label.LabelSlug)
+		assert.Equal(t, "classify", Label.CustomSlug)
+		assert.Equal(t, "Classify", Label.LabelName)
+
+	})
 }
