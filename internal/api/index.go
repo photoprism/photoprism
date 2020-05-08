@@ -68,12 +68,13 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 			event.Info("indexing originals...")
 		}
 
-		ind.Start(indOpt)
+		indexed := ind.Start(indOpt)
 
 		prg := service.Purge()
 
 		prgOpt := photoprism.PurgeOptions{
-			Path: filepath.Clean(f.Path),
+			Path:   filepath.Clean(f.Path),
+			Ignore: indexed,
 		}
 
 		if files, photos, err := prg.Start(prgOpt); err != nil {

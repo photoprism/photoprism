@@ -41,6 +41,14 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		}
 	}()
 
+	var ignore map[string]bool
+
+	if opt.Ignore != nil {
+		ignore = opt.Ignore
+	} else {
+		ignore = make(map[string]bool)
+	}
+
 	purgedFiles = make(map[string]bool)
 	purgedPhotos = make(map[string]bool)
 	originalsPath := prg.originalsPath()
@@ -58,7 +66,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 	q := query.New(prg.conf.Db())
 
-	limit := 250
+	limit := 500
 	offset := 0
 
 	for {
@@ -79,7 +87,11 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 			fileName := path.Join(prg.conf.OriginalsPath(), file.FileName)
 
-			if !fs.FileExists(fileName) && !purgedFiles[fileName] {
+			if ignore[fileName] || purgedFiles[fileName] {
+				continue
+			}
+
+			if !fs.FileExists(fileName) {
 				if opt.Dry {
 					purgedFiles[fileName] = true
 					log.Infof("purge: file %s would be removed", txt.Quote(fs.RelativeName(fileName, originalsPath)))
@@ -102,7 +114,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		offset += limit
 	}
 
-	limit = 250
+	limit = 500
 	offset = 0
 
 	for {
@@ -127,7 +139,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 			if opt.Dry {
 				purgedPhotos[photo.PhotoUUID] = true
-				log.Infof("purge: photo %s would be removed", txt.Quote(photo.PhotoTitle))
+				log.Infof("purge: photo %s would be removed", txt.Quote(photo.PhotoName))
 				continue
 			}
 
@@ -137,9 +149,9 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 				purgedPhotos[photo.PhotoUUID] = true
 
 				if opt.Hard {
-					log.Infof("purge: permanently deleted photo %s", txt.Quote(photo.PhotoTitle))
+					log.Infof("purge: permanently deleted photo %s", txt.Quote(photo.PhotoName))
 				} else {
-					log.Infof("purge: removed photo %s", txt.Quote(photo.PhotoTitle))
+					log.Infof("purge: removed photo %s", txt.Quote(photo.PhotoName))
 				}
 			}
 		}
