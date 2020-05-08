@@ -5,8 +5,8 @@ import (
 )
 
 // FileSyncs returns a list of FileSync entities for a given account and status.
-func (q *Query) FileSyncs(accountId uint, status string, limit int) (result []entity.FileSync, err error) {
-	s := q.db.Where(&entity.FileSync{})
+func FileSyncs(accountId uint, status string, limit int) (result []entity.FileSync, err error) {
+	s := Db().Where(&entity.FileSync{})
 
 	if accountId > 0 {
 		s = s.Where("account_id = ?", accountId)

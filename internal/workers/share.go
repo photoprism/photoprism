@@ -39,11 +39,8 @@ func (s *Share) Start() (err error) {
 		Share: true,
 	}
 
-	db := s.conf.Db()
-	q := query.New(db)
-
 	// Find accounts for which sharing is enabled
-	accounts, err := q.Accounts(f)
+	accounts, err := query.Accounts(f)
 
 	// Upload newly shared files
 	for _, a := range accounts {
@@ -55,7 +52,7 @@ func (s *Share) Start() (err error) {
 			continue
 		}
 
-		files, err := q.FileShares(a.ID, entity.FileShareNew)
+		files, err := query.FileShares(a.ID, entity.FileShareNew)
 
 		if err != nil {
 			log.Errorf("share: %s", err.Error())
@@ -121,7 +118,7 @@ func (s *Share) Start() (err error) {
 				return nil
 			}
 
-			if err := db.Save(&file).Error; err != nil {
+			if err := entity.Db().Save(&file).Error; err != nil {
 				log.Errorf("share: %s", err.Error())
 			}
 		}
@@ -137,7 +134,7 @@ func (s *Share) Start() (err error) {
 			continue
 		}
 
-		files, err := q.ExpiredFileShares(a)
+		files, err := query.ExpiredFileShares(a)
 
 		if err != nil {
 			log.Errorf("share: %s", err.Error())
@@ -166,7 +163,7 @@ func (s *Share) Start() (err error) {
 				file.Status = entity.FileShareRemoved
 			}
 
-			if err := db.Save(&file).Error; err != nil {
+			if err := entity.Db().Save(&file).Error; err != nil {
 				log.Errorf("share: %s", err.Error())
 			}
 		}

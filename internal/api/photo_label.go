@@ -10,7 +10,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -25,9 +24,7 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := service.Query()
-		m, err := q.PhotoByUUID(c.Param("uuid"))
-		db := conf.Db()
+		m, err := query.PhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -55,14 +52,14 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			plm.Uncertainty = f.Uncertainty
 			plm.LabelSrc = entity.SrcManual
 
-			if err := db.Save(&plm).Error; err != nil {
+			if err := entity.Db().Save(&plm).Error; err != nil {
 				log.Errorf("label: %s", err)
 			}
 		}
 
-		db.Save(&lm)
+		entity.Db().Save(&lm)
 
-		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
+		p, err := query.PreloadPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -74,7 +71,7 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c, q)
+		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c)
 
 		event.Success("label updated")
 
@@ -94,9 +91,7 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		db := conf.Db()
-		q := query.New(db)
-		m, err := q.PhotoByUUID(c.Param("uuid"))
+		m, err := query.PhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -110,7 +105,7 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		label, err := q.PhotoLabel(m.ID, uint(labelId))
+		label, err := query.PhotoLabel(m.ID, uint(labelId))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
@@ -118,13 +113,13 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if label.LabelSrc == entity.SrcManual {
-			db.Delete(&label)
+			entity.Db().Delete(&label)
 		} else {
 			label.Uncertainty = 100
-			db.Save(&label)
+			entity.Db().Save(&label)
 		}
 
-		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
+		p, err := query.PreloadPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -136,7 +131,7 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c, q)
+		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c)
 
 		event.Success("label removed")
 
@@ -158,9 +153,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 
 		// TODO: Code clean-up, simplify
 
-		db := conf.Db()
-		q := query.New(db)
-		m, err := q.PhotoByUUID(c.Param("uuid"))
+		m, err := query.PhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -174,7 +167,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		label, err := q.PhotoLabel(m.ID, uint(labelId))
+		label, err := query.PhotoLabel(m.ID, uint(labelId))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
@@ -191,7 +184,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
+		p, err := query.PreloadPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -203,7 +196,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c, q)
+		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c)
 
 		event.Success("label saved")
 

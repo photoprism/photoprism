@@ -41,9 +41,11 @@ func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Infof("photos: archiving %#v", f.Photos)
 
-		db := conf.Db()
+		entity.Db().Where("photo_uuid IN (?)", f.Photos).Delete(&entity.Photo{})
 
-		db.Where("photo_uuid IN (?)", f.Photos).Delete(&entity.Photo{})
+		if err := query.UpdatePhotoCounts(); err != nil {
+			log.Errorf("photos: %s", err)
+		}
 
 		elapsed := int(time.Since(start).Seconds())
 
@@ -80,9 +82,7 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Infof("restoring photos: %#v", f.Photos)
 
-		db := conf.Db()
-
-		db.Unscoped().Model(&entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).
+		entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).
 			UpdateColumn("deleted_at", gorm.Expr("NULL"))
 
 		elapsed := int(time.Since(start).Seconds())
@@ -118,10 +118,8 @@ func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Infof("albums: deleting %#v", f.Albums)
 
-		db := conf.Db()
-
-		db.Where("album_uuid IN (?)", f.Albums).Delete(&entity.Album{})
-		db.Where("album_uuid IN (?)", f.Albums).Delete(&entity.PhotoAlbum{})
+		entity.Db().Where("album_uuid IN (?)", f.Albums).Delete(&entity.Album{})
+		entity.Db().Where("album_uuid IN (?)", f.Albums).Delete(&entity.PhotoAlbum{})
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 
@@ -156,18 +154,14 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Infof("marking photos as private: %#v", f.Photos)
 
-		db := conf.Db()
-
-		err := db.Model(entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).UpdateColumn("photo_private", gorm.Expr("IF (`photo_private`, 0, 1)")).Error
+		err := entity.Db().Model(entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).UpdateColumn("photo_private", gorm.Expr("IF (`photo_private`, 0, 1)")).Error
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
 		}
 
-		q := query.New(db)
-
-		if entities, err := q.PhotoSelection(f); err == nil {
+		if entities, err := query.PhotoSelection(f); err == nil {
 			event.EntitiesUpdated("photos", entities)
 		}
 
@@ -204,9 +198,7 @@ func BatchPhotosStory(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Infof("marking photos as story: %#v", f.Photos)
 
-		db := conf.Db()
-
-		db.Model(entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).Updates(map[string]interface{}{
+		entity.Db().Model(entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).Updates(map[string]interface{}{
 			"photo_story": gorm.Expr("IF (`photo_story`, 0, 1)"),
 		})
 
@@ -239,9 +231,7 @@ func BatchLabelsDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Infof("labels: deleting %#v", f.Labels)
 
-		db := conf.Db()
-
-		db.Where("label_uuid IN (?)", f.Labels).Delete(&entity.Label{})
+		entity.Db().Where("label_uuid IN (?)", f.Labels).Delete(&entity.Label{})
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
 

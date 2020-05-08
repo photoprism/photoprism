@@ -11,7 +11,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -26,8 +25,7 @@ func GetPhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := service.Query()
-		p, err := q.PreloadPhotoByUUID(c.Param("uuid"))
+		p, err := query.PreloadPhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -46,11 +44,8 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		db := conf.Db()
 		uuid := c.Param("uuid")
-		q := query.New(db)
-
-		m, err := q.PhotoByUUID(uuid)
+		m, err := query.PhotoByUUID(uuid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -81,11 +76,15 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, uuid, c, q)
+		if err := query.UpdatePhotoCounts(); err != nil {
+			log.Errorf("photo: %s", err)
+		}
+
+		PublishPhotoEvent(EntityUpdated, uuid, c)
 
 		event.Success("photo saved")
 
-		p, err := q.PreloadPhotoByUUID(uuid)
+		p, err := query.PreloadPhotoByUUID(uuid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -102,8 +101,7 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 //   uuid: string PhotoUUID as returned by the API
 func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/photos/:uuid/download", func(c *gin.Context) {
-		q := service.Query()
-		f, err := q.FileByPhotoUUID(c.Param("uuid"))
+		f, err := query.FileByPhotoUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -142,8 +140,7 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := service.Query()
-		m, err := q.PhotoByUUID(id)
+		m, err := query.PhotoByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -158,7 +155,7 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			"count": 1,
 		})
 
-		PublishPhotoEvent(EntityUpdated, id, c, q)
+		PublishPhotoEvent(EntityUpdated, id, c)
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
@@ -176,8 +173,7 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := service.Query()
-		m, err := q.PhotoByUUID(id)
+		m, err := query.PhotoByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -186,13 +182,13 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 
 		m.PhotoFavorite = false
 		m.PhotoQuality = m.QualityScore()
-		conf.Db().Save(&m)
+		entity.Db().Save(&m)
 
 		event.Publish("count.favorites", event.Data{
 			"count": -1,
 		})
 
-		PublishPhotoEvent(EntityUpdated, id, c, q)
+		PublishPhotoEvent(EntityUpdated, id, c)
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
@@ -209,23 +205,20 @@ func SetPhotoPrimary(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		db := conf.Db()
-
 		uuid := c.Param("uuid")
 		fileUUID := c.Param("file_uuid")
-		q := query.New(db)
-		err := q.SetPhotoPrimary(uuid, fileUUID)
+		err := query.SetPhotoPrimary(uuid, fileUUID)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, uuid, c, q)
+		PublishPhotoEvent(EntityUpdated, uuid, c)
 
 		event.Success("photo saved")
 
-		p, err := q.PreloadPhotoByUUID(uuid)
+		p, err := query.PreloadPhotoByUUID(uuid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)

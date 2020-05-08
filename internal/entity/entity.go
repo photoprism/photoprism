@@ -10,6 +10,7 @@ https://github.com/photoprism/photoprism/wiki/Storage
 package entity
 
 import (
+	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -17,6 +18,7 @@ import (
 )
 
 var log = event.Log
+var resetFixturesOnce sync.Once
 
 func logError(result *gorm.DB) {
 	if result.Error != nil {
@@ -84,27 +86,38 @@ func ResetDb(testFixtures bool) {
 	DropTables()
 
 	// Make sure changes have been written to disk.
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(200 * time.Millisecond)
 
 	MigrateDb()
 
 	if testFixtures {
 		// Make sure changes have been written to disk.
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 
 		CreateTestFixtures()
 	}
 }
 
+// InitTestFixtures resets the database and test fixtures once.
+func InitTestFixtures() {
+	resetFixturesOnce.Do(func() {
+		ResetDb(true)
+	})
+}
+
 // InitTestDb connects to and completely initializes the test database incl fixtures.
 func InitTestDb(dsn string) *Gorm {
+	if HasDbProvider() {
+		return nil
+	}
+
 	db := &Gorm{
 		Driver: "mysql",
 		Dsn:    dsn,
 	}
 
 	SetDbProvider(db)
-	ResetDb(true)
+	InitTestFixtures()
 
 	return db
 }

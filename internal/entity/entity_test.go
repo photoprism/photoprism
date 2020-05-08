@@ -19,7 +19,9 @@ func TestMain(m *testing.M) {
 
 	code := m.Run()
 
-	db.Close()
+	if db != nil {
+		db.Close()
+	}
 
 	os.Exit(code)
 }

@@ -29,8 +29,8 @@ type AlbumResult struct {
 }
 
 // AlbumByUUID returns a Album based on the UUID.
-func (q *Query) AlbumByUUID(albumUUID string) (album entity.Album, err error) {
-	if err := q.db.Where("album_uuid = ?", albumUUID).Preload("Links").First(&album).Error; err != nil {
+func AlbumByUUID(albumUUID string) (album entity.Album, err error) {
+	if err := Db().Where("album_uuid = ?", albumUUID).Preload("Links").First(&album).Error; err != nil {
 		return album, err
 	}
 
@@ -38,8 +38,8 @@ func (q *Query) AlbumByUUID(albumUUID string) (album entity.Album, err error) {
 }
 
 // AlbumThumbByUUID returns a album preview file based on the uuid.
-func (q *Query) AlbumThumbByUUID(albumUUID string) (file entity.File, err error) {
-	if err := q.db.Where("files.file_primary = 1 AND files.deleted_at IS NULL").
+func AlbumThumbByUUID(albumUUID string) (file entity.File, err error) {
+	if err := Db().Where("files.file_primary = 1 AND files.deleted_at IS NULL").
 		Joins("JOIN albums ON albums.album_uuid = ?", albumUUID).
 		Joins("JOIN photos_albums pa ON pa.album_uuid = albums.album_uuid AND pa.photo_uuid = files.photo_uuid").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
@@ -52,14 +52,14 @@ func (q *Query) AlbumThumbByUUID(albumUUID string) (file entity.File, err error)
 }
 
 // Albums searches albums based on their name.
-func (q *Query) Albums(f form.AlbumSearch) (results []AlbumResult, err error) {
+func Albums(f form.AlbumSearch) (results []AlbumResult, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
 
 	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("albums: %+v", f)))
 
-	s := q.db.NewScope(nil).DB()
+	s := Db().NewScope(nil).DB()
 
 	s = s.Table("albums").
 		Select(`albums.*, 

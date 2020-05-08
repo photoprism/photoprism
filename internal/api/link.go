@@ -39,10 +39,7 @@ func LinkAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		db := conf.Db()
-		q := query.New(db)
-
-		m, err := q.AlbumByUUID(c.Param("uuid"))
+		m, err := query.AlbumByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
@@ -53,7 +50,7 @@ func LinkAlbum(router *gin.RouterGroup, conf *config.Config) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		} else {
-			db.Model(&m).Association("Links").Append(link)
+			entity.Db().Model(&m).Association("Links").Append(link)
 		}
 
 		event.Success("created album share link")
@@ -70,10 +67,7 @@ func LinkPhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		db := conf.Db()
-		q := query.New(db)
-
-		m, err := q.PhotoByUUID(c.Param("uuid"))
+		m, err := query.PhotoByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -84,7 +78,7 @@ func LinkPhoto(router *gin.RouterGroup, conf *config.Config) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		} else {
-			db.Model(&m).Association("Links").Append(link)
+			entity.Db().Model(&m).Association("Links").Append(link)
 		}
 
 		event.Success("created photo share link")
@@ -101,10 +95,7 @@ func LinkLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		db := conf.Db()
-		q := query.New(db)
-
-		m, err := q.LabelByUUID(c.Param("uuid"))
+		m, err := query.LabelByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrLabelNotFound)
@@ -115,7 +106,7 @@ func LinkLabel(router *gin.RouterGroup, conf *config.Config) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		} else {
-			db.Model(&m).Association("Links").Append(link)
+			entity.Db().Model(&m).Association("Links").Append(link)
 		}
 
 		event.Success("created label share link")

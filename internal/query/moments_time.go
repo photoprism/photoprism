@@ -8,8 +8,8 @@ type MomentsTimeResult struct {
 }
 
 // GetMomentsTime counts photos per month and year
-func (q *Query) GetMomentsTime() (results []MomentsTimeResult, err error) {
-	s := q.db.NewScope(nil).DB()
+func GetMomentsTime() (results []MomentsTimeResult, err error) {
+	s := UnscopedDb()
 
 	s = s.Table("photos").
 		Where("deleted_at IS NULL").

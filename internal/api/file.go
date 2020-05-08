@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -22,8 +22,7 @@ func GetFile(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := service.Query()
-		p, err := q.FileByHash(c.Param("hash"))
+		p, err := query.FileByHash(c.Param("hash"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -45,10 +44,7 @@ func LinkFile(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		db := conf.Db()
-		q := query.New(db)
-
-		m, err := q.FileByUUID(c.Param("uuid"))
+		m, err := query.FileByUUID(c.Param("uuid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrFileNotFound)
@@ -59,7 +55,7 @@ func LinkFile(router *gin.RouterGroup, conf *config.Config) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		} else {
-			db.Model(&m).Association("Links").Append(link)
+			entity.Db().Model(&m).Association("Links").Append(link)
 		}
 
 		event.Success("created file share link")

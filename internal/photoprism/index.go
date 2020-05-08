@@ -171,6 +171,10 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 		log.Error(err.Error())
 	}
 
+	if err := query.UpdatePhotoCounts(); err != nil {
+		log.Errorf("index: %s", err)
+	}
+
 	runtime.GC()
 
 	return done

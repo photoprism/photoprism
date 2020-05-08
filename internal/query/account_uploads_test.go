@@ -5,19 +5,13 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/photoprism/photoprism/internal/config"
 )
 
-func TestQuery_AccountUploads(t *testing.T) {
-	conf := config.TestConfig()
-
-	q := New(conf.Db())
-
+func TestAccountUploads(t *testing.T) {
 	a := entity.Account{ID: 1, SyncRaw: false}
 
 	t.Run("find uploads", func(t *testing.T) {
-		results, err := q.AccountUploads(a, 10)
+		results, err := AccountUploads(a, 10)
 
 		if err != nil {
 			t.Fatal(err)

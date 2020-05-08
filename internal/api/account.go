@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -25,7 +25,6 @@ func GetAccounts(router *gin.RouterGroup, conf *config.Config) {
 
 		var f form.AccountSearch
 
-		q := service.Query()
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -33,7 +32,7 @@ func GetAccounts(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		result, err := q.Accounts(f)
+		result, err := query.Accounts(f)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
@@ -59,10 +58,9 @@ func GetAccount(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := service.Query()
 		id := ParseUint(c.Param("id"))
 
-		if m, err := q.AccountByID(id); err == nil {
+		if m, err := query.AccountByID(id); err == nil {
 			c.JSON(http.StatusOK, m)
 		} else {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
@@ -81,10 +79,9 @@ func GetAccountDirs(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := service.Query()
 		id := ParseUint(c.Param("id"))
 
-		m, err := q.AccountByID(id)
+		m, err := query.AccountByID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
@@ -114,10 +111,9 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := service.Query()
 		id := ParseUint(c.Param("id"))
 
-		m, err := q.AccountByID(id)
+		m, err := query.AccountByID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
@@ -132,7 +128,7 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		dst := f.Destination
-		files, err := q.FilesByUUID(f.Photos, 1000, 0)
+		files, err := query.FilesByUUID(f.Photos, 1000, 0)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
@@ -202,9 +198,7 @@ func UpdateAccount(router *gin.RouterGroup, conf *config.Config) {
 
 		id := ParseUint(c.Param("id"))
 
-		q := service.Query()
-
-		m, err := q.AccountByID(id)
+		m, err := query.AccountByID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -236,7 +230,7 @@ func UpdateAccount(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Success("account saved")
 
-		m, err = q.AccountByID(id)
+		m, err = query.AccountByID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
@@ -259,9 +253,8 @@ func DeleteAccount(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := ParseUint(c.Param("id"))
-		q := service.Query()
 
-		m, err := q.AccountByID(id)
+		m, err := query.AccountByID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)

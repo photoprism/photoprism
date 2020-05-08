@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/nsfw"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -426,7 +427,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		downloadedAs = originalName
 	}
 
-	if err := ind.q.SetDownloadFileID(downloadedAs, file.ID); err != nil {
+	if err := query.SetDownloadFileID(downloadedAs, file.ID); err != nil {
 		log.Errorf("index: %s", err)
 	}
 

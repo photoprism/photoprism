@@ -5,7 +5,8 @@ import (
 	"path"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/gin-gonic/gin"
@@ -23,8 +24,7 @@ func GetDownload(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/download/:hash", func(c *gin.Context) {
 		fileHash := c.Param("hash")
 
-		q := service.Query()
-		f, err := q.FileByHash(fileHash)
+		f, err := query.FileByHash(fileHash)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
@@ -39,7 +39,7 @@ func GetDownload(router *gin.RouterGroup, conf *config.Config) {
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			f.FileMissing = true
-			conf.Db().Save(&f)
+			entity.Db().Save(&f)
 			return
 		}
 

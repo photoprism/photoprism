@@ -102,7 +102,7 @@ func NewTestConfig() *Config {
 		log.Fatalf("config: %s", err.Error())
 	}
 
-	c.ResetDb(true)
+	c.ResetDb()
 
 	thumb.Size = c.ThumbSize()
 	thumb.Limit = c.ThumbLimit()

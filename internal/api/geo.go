@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gin-gonic/gin"
@@ -24,7 +24,6 @@ func GetGeo(router *gin.RouterGroup, conf *config.Config) {
 
 		var f form.GeoSearch
 
-		q := service.Query()
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -32,7 +31,7 @@ func GetGeo(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		photos, err := q.Geo(f)
+		photos, err := query.Geo(f)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})

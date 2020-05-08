@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -45,8 +45,7 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 		f.Count = 12
 		f.Order = "relevance"
 
-		q := service.Query()
-		p, _, err := q.Photos(f)
+		p, _, err := query.Photos(f)
 
 		if err != nil {
 			log.Error(err)

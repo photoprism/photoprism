@@ -1,32 +1,25 @@
 package query
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestQuery_ExistingFiles(t *testing.T) {
-	conf := config.TestConfig()
-
-	search := New(conf.Db())
-
+func TestExistingFiles(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		files, err := search.ExistingFiles(1000, 0, "/")
+		files, err := ExistingFiles(1000, 0, "/")
+
+		t.Logf("files: %+v", files)
 
 		assert.Nil(t, err)
 		assert.LessOrEqual(t, 5, len(files))
 	})
 }
 
-func TestQuery_FilesByUUID(t *testing.T) {
-	conf := config.TestConfig()
-
-	search := New(conf.Db())
-
+func TestFilesByUUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		files, err := search.FilesByUUID([]string{"ft8es39w45bnlqdw"}, 100, 0)
+		files, err := FilesByUUID([]string{"ft8es39w45bnlqdw"}, 100, 0)
 
 		assert.Nil(t, err)
 		assert.Equal(t, 1, len(files))
@@ -34,33 +27,25 @@ func TestQuery_FilesByUUID(t *testing.T) {
 	})
 }
 
-func TestQuery_FileByPhotoUUID(t *testing.T) {
-	conf := config.TestConfig()
-
-	search := New(conf.Db())
-
+func TestFileByPhotoUUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		file, err := search.FileByPhotoUUID("pt9jtdre2lvl0yh8")
+		file, err := FileByPhotoUUID("pt9jtdre2lvl0yh8")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "exampleDNGFile.dng", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		file, err := search.FileByPhotoUUID("111")
+		file, err := FileByPhotoUUID("111")
 
 		assert.Error(t, err, "record not found")
 		t.Log(file)
 	})
 }
 
-func TestQuery_FileByUUID(t *testing.T) {
-	conf := config.TestConfig()
-
-	search := New(conf.Db())
-
+func TestFileByUUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		file, err := search.FileByUUID("ft8es39w45bnlqdw")
+		file, err := FileByUUID("ft8es39w45bnlqdw")
 
 		if err != nil {
 			t.Fatal(err)
@@ -70,7 +55,7 @@ func TestQuery_FileByUUID(t *testing.T) {
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		file, err := search.FileByUUID("111")
+		file, err := FileByUUID("111")
 
 		if err == nil {
 			t.Fatal("error expected")
@@ -81,20 +66,16 @@ func TestQuery_FileByUUID(t *testing.T) {
 	})
 }
 
-func TestQuery_FileByHash(t *testing.T) {
-	conf := config.TestConfig()
-
-	search := New(conf.Db())
-
+func TestFileByHash(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		file, err := search.FileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
+		file, err := FileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "exampleFileName.jpg", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		file, err := search.FileByHash("111")
+		file, err := FileByHash("111")
 
 		assert.Error(t, err, "record not found")
 		t.Log(file)

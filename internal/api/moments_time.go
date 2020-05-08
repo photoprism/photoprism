@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gin-gonic/gin"
@@ -18,9 +18,8 @@ func GetMomentsTime(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := service.Query()
+		result, err := query.GetMomentsTime()
 
-		result, err := q.GetMomentsTime()
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return

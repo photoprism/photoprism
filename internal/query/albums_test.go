@@ -1,20 +1,15 @@
 package query
 
 import (
-	form "github.com/photoprism/photoprism/internal/form"
-	"github.com/stretchr/testify/assert"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config"
+	form "github.com/photoprism/photoprism/internal/form"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestQuery_AlbumByUUID(t *testing.T) {
-	conf := config.TestConfig()
-
-	search := New(conf.Db())
-
+func TestAlbumByUUID(t *testing.T) {
 	t.Run("existing uuid", func(t *testing.T) {
-		album, err := search.AlbumByUUID("at9lxuqxpogaaba7")
+		album, err := AlbumByUUID("at9lxuqxpogaaba7")
 
 		if err != nil {
 			t.Fatal(err)
@@ -24,19 +19,15 @@ func TestQuery_AlbumByUUID(t *testing.T) {
 	})
 
 	t.Run("not existing uuid", func(t *testing.T) {
-		album, err := search.AlbumByUUID("3765")
+		album, err := AlbumByUUID("3765")
 		assert.Error(t, err, "record not found")
 		t.Log(album)
 	})
 }
 
-func TestQuery_AlbumThumbByUUID(t *testing.T) {
-	conf := config.TestConfig()
-
-	search := New(conf.Db())
-
+func TestAlbumThumbByUUID(t *testing.T) {
 	t.Run("existing uuid", func(t *testing.T) {
-		file, err := search.AlbumThumbByUUID("at9lxuqxpogaaba8")
+		file, err := AlbumThumbByUUID("at9lxuqxpogaaba8")
 
 		if err != nil {
 			t.Fatal(err)
@@ -46,20 +37,16 @@ func TestQuery_AlbumThumbByUUID(t *testing.T) {
 	})
 
 	t.Run("not existing uuid", func(t *testing.T) {
-		file, err := search.AlbumThumbByUUID("3765")
+		file, err := AlbumThumbByUUID("3765")
 		assert.Error(t, err, "record not found")
 		t.Log(file)
 	})
 }
 
-func TestQuery_Albums(t *testing.T) {
-	conf := config.TestConfig()
-
-	search := New(conf.Db())
-
+func TestAlbums(t *testing.T) {
 	t.Run("search with string", func(t *testing.T) {
 		query := form.NewAlbumSearch("chr")
-		result, err := search.Albums(query)
+		result, err := Albums(query)
 
 		if err != nil {
 			t.Fatal(err)
@@ -70,7 +57,7 @@ func TestQuery_Albums(t *testing.T) {
 
 	t.Run("search with slug", func(t *testing.T) {
 		query := form.NewAlbumSearch("slug:holiday count:10")
-		result, err := search.Albums(query)
+		result, err := Albums(query)
 
 		if err != nil {
 			t.Fatal(err)
@@ -82,7 +69,7 @@ func TestQuery_Albums(t *testing.T) {
 	t.Run("favorites true", func(t *testing.T) {
 		query := form.NewAlbumSearch("favorites:true count:10000")
 
-		result, err := search.Albums(query)
+		result, err := Albums(query)
 
 		if err != nil {
 			t.Fatal(err)
@@ -93,7 +80,7 @@ func TestQuery_Albums(t *testing.T) {
 	t.Run("empty query", func(t *testing.T) {
 		query := form.NewAlbumSearch("order:slug")
 
-		result, err := search.Albums(query)
+		result, err := Albums(query)
 
 		if err != nil {
 			t.Fatal(err)
@@ -103,7 +90,7 @@ func TestQuery_Albums(t *testing.T) {
 	})
 	t.Run("search with invalid query string", func(t *testing.T) {
 		query := form.NewAlbumSearch("xxx:bla")
-		result, err := search.Albums(query)
+		result, err := Albums(query)
 		assert.Error(t, err, "unknown filter")
 		t.Log(result)
 	})

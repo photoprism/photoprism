@@ -11,9 +11,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -29,7 +30,6 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 
 		var f form.LabelSearch
 
-		q := service.Query()
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -37,7 +37,8 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		result, err := q.Labels(f)
+		result, err := query.Labels(f)
+
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
 			return
@@ -67,9 +68,7 @@ func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := service.Query()
-
-		m, err := q.LabelByUUID(id)
+		m, err := query.LabelByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrLabelNotFound)
@@ -77,11 +76,11 @@ func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		m.SetName(f.LabelName)
-		conf.Db().Save(&m)
+		entity.Db().Save(&m)
 
 		event.Success("label saved")
 
-		PublishLabelEvent(EntityUpdated, id, c, q)
+		PublishLabelEvent(EntityUpdated, id, c)
 
 		c.JSON(http.StatusOK, m)
 	})
@@ -99,9 +98,7 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := service.Query()
-
-		label, err := q.LabelByUUID(id)
+		label, err := query.LabelByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
@@ -109,7 +106,7 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		label.LabelFavorite = true
-		conf.Db().Save(&label)
+		entity.Db().Save(&label)
 
 		if label.LabelPriority < 0 {
 			event.Publish("count.labels", event.Data{
@@ -117,7 +114,7 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 			})
 		}
 
-		PublishLabelEvent(EntityUpdated, id, c, q)
+		PublishLabelEvent(EntityUpdated, id, c)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})
@@ -135,9 +132,7 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		id := c.Param("uuid")
-		q := service.Query()
-
-		label, err := q.LabelByUUID(id)
+		label, err := query.LabelByUUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
@@ -145,7 +140,7 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		label.LabelFavorite = false
-		conf.Db().Save(&label)
+		entity.Db().Save(&label)
 
 		if label.LabelPriority < 0 {
 			event.Publish("count.labels", event.Data{
@@ -153,7 +148,7 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 			})
 		}
 
-		PublishLabelEvent(EntityUpdated, id, c, q)
+		PublishLabelEvent(EntityUpdated, id, c)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})
@@ -180,8 +175,6 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		q := service.Query()
-
 		gc := conf.Cache()
 		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", labelUUID, typeName)
 
@@ -191,7 +184,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		f, err := q.LabelThumbByUUID(labelUUID)
+		f, err := query.LabelThumbByUUID(labelUUID)
 
 		if err != nil {
 			log.Errorf(err.Error())

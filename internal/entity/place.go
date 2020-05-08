@@ -18,6 +18,7 @@ type Place struct {
 	LocKeywords string `gorm:"type:varchar(255);"`
 	LocNotes    string `gorm:"type:text;"`
 	LocFavorite bool
+	PhotoCount  int
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	New         bool `gorm:"-"`
@@ -33,6 +34,7 @@ var UnknownPlace = Place{
 	LocKeywords: "",
 	LocNotes:    "",
 	LocFavorite: false,
+	PhotoCount:  -1,
 }
 
 // CreateUnknownPlace initializes default place in the database

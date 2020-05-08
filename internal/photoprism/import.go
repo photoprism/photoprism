@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -42,7 +43,7 @@ func (imp *Import) originalsPath() string {
 }
 
 // Start imports media files from a directory and converts/indexes them as needed.
-func (imp *Import) Start(opt ImportOptions) {
+func (imp *Import) Start(opt ImportOptions) map[string]bool {
 	var directories []string
 	done := make(map[string]bool)
 	ind := imp.index
@@ -50,19 +51,19 @@ func (imp *Import) Start(opt ImportOptions) {
 
 	if !fs.PathExists(importPath) {
 		event.Error(fmt.Sprintf("import: %s does not exist", importPath))
-		return
+		return done
 	}
 
 	if err := mutex.Worker.Start(); err != nil {
 		event.Error(fmt.Sprintf("import: %s", err.Error()))
-		return
+		return done
 	}
 
 	defer mutex.Worker.Stop()
 
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("import: %s", err.Error())
-		return
+		return done
 	}
 
 	jobs := make(chan ImportJob)
@@ -194,7 +195,13 @@ func (imp *Import) Start(opt ImportOptions) {
 		log.Error(err.Error())
 	}
 
+	if err := query.UpdatePhotoCounts(); err != nil {
+		log.Errorf("import: %s", err)
+	}
+
 	runtime.GC()
+
+	return done
 }
 
 // Cancel stops the current import operation.

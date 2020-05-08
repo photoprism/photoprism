@@ -1,9 +1,10 @@
 package entity
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateUnknownPlace(t *testing.T) {
@@ -32,7 +33,20 @@ func TestPlace_Find(t *testing.T) {
 		assert.Nil(t, r)
 	})
 	t.Run("record does not exist", func(t *testing.T) {
-		place := &Place{"1110", "test", "testCity", "", "", "", "", false, time.Now(), time.Now(), false}
+		place := &Place{
+			ID:          "1110",
+			LocLabel:    "test",
+			LocCity:     "testCity",
+			LocState:    "",
+			LocCountry:  "",
+			LocKeywords: "",
+			LocNotes:    "",
+			LocFavorite: false,
+			PhotoCount:  0,
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+			New:         false,
+		}
 		r := place.Find()
 		assert.Equal(t, "record not found", r.Error())
 	})

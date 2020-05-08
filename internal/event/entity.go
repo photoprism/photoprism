@@ -1,6 +1,8 @@
 package event
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func PublishEntities(name, ev string, entities interface{}) {
 	SharedHub().Publish(Message{

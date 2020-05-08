@@ -12,37 +12,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// GeoResult represents a photo for displaying it on a map.
-type GeoResult struct {
-	ID            string    `json:"ID"`
-	PhotoLat      float32   `json:"Lat"`
-	PhotoLng      float32   `json:"Lng"`
-	PhotoUUID     string    `json:"PhotoUUID"`
-	PhotoTitle    string    `json:"PhotoTitle"`
-	PhotoFavorite bool      `json:"PhotoFavorite"`
-	FileHash      string    `json:"FileHash"`
-	FileWidth     int       `json:"FileWidth"`
-	FileHeight    int       `json:"FileHeight"`
-	TakenAt       time.Time `json:"TakenAt"`
-}
-
-func (g GeoResult) Lat() float64 {
-	return float64(g.PhotoLat)
-}
-
-func (g GeoResult) Lng() float64 {
-	return float64(g.PhotoLng)
-}
-
 // Geo searches for photos based on a Form and returns a PhotoResult slice.
-func (q *Query) Geo(f form.GeoSearch) (results []GeoResult, err error) {
+func Geo(f form.GeoSearch) (results []GeoResult, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
 
 	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("search: %+v", f)))
 
-	s := q.db.NewScope(nil).DB()
+	s := UnscopedDb()
 
 	s = s.Table("photos").
 		Select(`photos.id, photos.photo_uuid, photos.photo_lat, photos.photo_lng, photos.photo_title, 

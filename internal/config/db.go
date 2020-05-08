@@ -62,9 +62,9 @@ func (c *Config) InitDb() {
 }
 
 // ResetDb drops all tables in the currently configured database and re-creates them.
-func (c *Config) ResetDb(testFixtures bool) {
+func (c *Config) ResetDb() {
 	entity.SetDbProvider(c)
-	entity.ResetDb(testFixtures)
+	entity.InitTestFixtures()
 }
 
 // connectToDatabase establishes a database connection.

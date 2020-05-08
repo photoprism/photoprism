@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -31,9 +32,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		db := conf.Db()
-		q := query.New(db)
-		f, err := q.FileByHash(fileHash)
+		f, err := query.FileByHash(fileHash)
 
 		if err != nil {
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
@@ -53,7 +52,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			f.FileMissing = true
-			db.Save(&f)
+			entity.Db().Save(&f)
 			return
 		}
 

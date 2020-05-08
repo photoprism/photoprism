@@ -6,8 +6,8 @@ import (
 )
 
 // Accounts returns a list of accounts.
-func (q *Query) Accounts(f form.AccountSearch) (result []entity.Account, err error) {
-	s := q.db.Where(&entity.Account{})
+func Accounts(f form.AccountSearch) (result []entity.Account, err error) {
+	s := Db().Where(&entity.Account{})
 
 	if f.Share {
 		s = s.Where("acc_share = 1")
@@ -37,8 +37,8 @@ func (q *Query) Accounts(f form.AccountSearch) (result []entity.Account, err err
 }
 
 // AccountByID finds an account by primary key.
-func (q *Query) AccountByID(id uint) (result entity.Account, err error) {
-	if err := q.db.Where("id = ?", id).First(&result).Error; err != nil {
+func AccountByID(id uint) (result entity.Account, err error) {
+	if err := Db().Where("id = ?", id).First(&result).Error; err != nil {
 		return result, err
 	}
 

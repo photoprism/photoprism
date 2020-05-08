@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gin-gonic/gin"
@@ -36,7 +36,6 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 
 		var f form.PhotoSearch
 
-		q := service.Query()
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
@@ -44,7 +43,7 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		result, count, err := q.Photos(f)
+		result, count, err := query.Photos(f)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})

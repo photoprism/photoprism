@@ -1,21 +1,16 @@
 package query
 
 import (
+	"testing"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
-	"testing"
-
-	"github.com/photoprism/photoprism/internal/config"
 )
 
-func TestQuery_LabelBySlug(t *testing.T) {
-	conf := config.TestConfig()
-
-	q := New(conf.Db())
-
+func TestLabelBySlug(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		label, err := q.LabelBySlug("flower")
+		label, err := LabelBySlug("flower")
 
 		if err != nil {
 			t.Fatal(err)
@@ -25,20 +20,16 @@ func TestQuery_LabelBySlug(t *testing.T) {
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		label, err := q.LabelBySlug("111")
+		label, err := LabelBySlug("111")
 
 		assert.Error(t, err, "record not found")
 		assert.Empty(t, label.ID)
 	})
 }
 
-func TestQuery_LabelByUUID(t *testing.T) {
-	conf := config.TestConfig()
-
-	q := New(conf.Db())
-
+func TestLabelByUUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		label, err := q.LabelByUUID("lt9k3pw1wowuy3c5")
+		label, err := LabelByUUID("lt9k3pw1wowuy3c5")
 
 		if err != nil {
 			t.Fatal(err)
@@ -48,20 +39,16 @@ func TestQuery_LabelByUUID(t *testing.T) {
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		label, err := q.LabelByUUID("111")
+		label, err := LabelByUUID("111")
 
 		assert.Error(t, err, "record not found")
 		assert.Empty(t, label.ID)
 	})
 }
 
-func TestQuery_LabelThumbBySlug(t *testing.T) {
-	conf := config.TestConfig()
-
-	q := New(conf.Db())
-
+func TestLabelThumbBySlug(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		file, err := q.LabelThumbBySlug("flower")
+		file, err := LabelThumbBySlug("flower")
 
 		if err != nil {
 			t.Fatal(err)
@@ -71,20 +58,16 @@ func TestQuery_LabelThumbBySlug(t *testing.T) {
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		file, err := q.LabelThumbBySlug("cow")
+		file, err := LabelThumbBySlug("cow")
 
 		assert.Error(t, err, "record not found")
 		t.Log(file)
 	})
 }
 
-func TestQuery_LabelThumbByUUID(t *testing.T) {
-	conf := config.TestConfig()
-
-	q := New(conf.Db())
-
+func TestLabelThumbByUUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		file, err := q.LabelThumbByUUID("lt9k3pw1wowuy3c4")
+		file, err := LabelThumbByUUID("lt9k3pw1wowuy3c4")
 
 		if err != nil {
 			t.Fatal(err)
@@ -94,20 +77,17 @@ func TestQuery_LabelThumbByUUID(t *testing.T) {
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		file, err := q.LabelThumbByUUID("14")
+		file, err := LabelThumbByUUID("14")
 
 		assert.Error(t, err, "record not found")
 		t.Log(file)
 	})
 }
 
-func TestQuery_Labels(t *testing.T) {
-	conf := config.TestConfig()
-	q := New(conf.Db())
-
+func TestLabels(t *testing.T) {
 	t.Run("search with query", func(t *testing.T) {
 		query := form.NewLabelSearch("Query:C Count:1005 Order:slug")
-		result, err := q.Labels(query)
+		result, err := Labels(query)
 
 		if err != nil {
 			t.Fatal(err)
@@ -134,7 +114,7 @@ func TestQuery_Labels(t *testing.T) {
 
 	t.Run("search for favorites", func(t *testing.T) {
 		query := form.NewLabelSearch("Favorites:true")
-		result, err := q.Labels(query)
+		result, err := Labels(query)
 
 		if err != nil {
 			t.Fatal(err)
@@ -160,7 +140,7 @@ func TestQuery_Labels(t *testing.T) {
 
 	t.Run("search with empty query", func(t *testing.T) {
 		query := form.NewLabelSearch("")
-		result, err := q.Labels(query)
+		result, err := Labels(query)
 
 		if err != nil {
 			t.Fatal(err)
@@ -171,7 +151,7 @@ func TestQuery_Labels(t *testing.T) {
 
 	t.Run("search with invalid query string", func(t *testing.T) {
 		query := form.NewLabelSearch("xxx:bla")
-		result, err := q.Labels(query)
+		result, err := Labels(query)
 
 		assert.Error(t, err, "unknown filter")
 		assert.Empty(t, result)

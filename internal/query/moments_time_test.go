@@ -1,19 +1,14 @@
 package query
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestQuery_GetMomentsTime(t *testing.T) {
-	conf := config.TestConfig()
-
-	search := New(conf.Db())
-
+func TestGetMomentsTime(t *testing.T) {
 	t.Run("result found", func(t *testing.T) {
-		result, err := search.GetMomentsTime()
+		result, err := GetMomentsTime()
 
 		assert.Nil(t, err)
 		assert.Equal(t, 2790, result[0].PhotoYear)

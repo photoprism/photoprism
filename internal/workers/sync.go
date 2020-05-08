@@ -16,14 +16,12 @@ import (
 // Sync represents a sync worker.
 type Sync struct {
 	conf *config.Config
-	q    *query.Query
 }
 
 // NewSync returns a new service sync worker.
 func NewSync(conf *config.Config) *Sync {
 	return &Sync{
 		conf: conf,
-		q:    query.New(conf.Db()),
 	}
 }
 
@@ -40,10 +38,7 @@ func (s *Sync) Start() (err error) {
 		Sync: true,
 	}
 
-	db := s.conf.Db()
-	q := s.q
-
-	accounts, err := q.Accounts(f)
+	accounts, err := query.Accounts(f)
 
 	for _, a := range accounts {
 		if a.AccType != remote.ServiceWebDAV {
@@ -117,7 +112,7 @@ func (s *Sync) Start() (err error) {
 			return nil
 		}
 
-		if err := db.First(&a, a.ID).Error; err != nil {
+		if err := entity.Db().First(&a, a.ID).Error; err != nil {
 			log.Errorf("sync: %s", err.Error())
 			return err
 		}
@@ -128,7 +123,7 @@ func (s *Sync) Start() (err error) {
 		a.SyncStatus = syncStatus
 		a.SyncDate = syncDate
 
-		if err := db.Save(&a).Error; err != nil {
+		if err := entity.Db().Save(&a).Error; err != nil {
 			log.Errorf("sync: %s", err.Error())
 		} else if synced {
 			event.Publish("sync.synced", event.Data{"account": a})

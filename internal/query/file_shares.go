@@ -7,8 +7,8 @@ import (
 )
 
 // FileShares returns up to 100 file shares for a given account id and status.
-func (q *Query) FileShares(accountId uint, status string) (result []entity.FileShare, err error) {
-	s := q.db.Where(&entity.FileShare{})
+func FileShares(accountId uint, status string) (result []entity.FileShare, err error) {
+	s := Db().Where(&entity.FileShare{})
 
 	if accountId > 0 {
 		s = s.Where("account_id = ?", accountId)
@@ -31,12 +31,12 @@ func (q *Query) FileShares(accountId uint, status string) (result []entity.FileS
 }
 
 // ExpiredFileShares returns up to 100 expired file shares for a given account.
-func (q *Query) ExpiredFileShares(account entity.Account) (result []entity.FileShare, err error) {
+func ExpiredFileShares(account entity.Account) (result []entity.FileShare, err error) {
 	if account.ShareExpires <= 0 {
 		return result, nil
 	}
 
-	s := q.db.Where(&entity.FileShare{})
+	s := Db().Where(&entity.FileShare{})
 
 	exp := time.Now().Add(time.Duration(-1*account.ShareExpires) * time.Second)
 

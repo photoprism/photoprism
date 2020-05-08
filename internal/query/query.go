@@ -8,6 +8,7 @@ https://github.com/photoprism/photoprism/wiki
 package query
 
 import (
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/jinzhu/gorm"
@@ -35,4 +36,14 @@ func New(db *gorm.DB) *Query {
 	}
 
 	return q
+}
+
+// Db returns a database connection instance.
+func Db() *gorm.DB {
+	return entity.Db()
+}
+
+// UnscopedDb returns an unscoped database connection instance.
+func UnscopedDb() *gorm.DB {
+	return entity.Db().Unscoped()
 }

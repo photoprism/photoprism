@@ -8,7 +8,7 @@ import (
 )
 
 // SetDownloadFileID updates the local file id for remote downloads.
-func (q *Query) SetDownloadFileID(filename string, fileId uint) error {
+func SetDownloadFileID(filename string, fileId uint) error {
 	if len(filename) == 0 {
 		return errors.New("sync: can't update, filename empty")
 	}
@@ -18,7 +18,7 @@ func (q *Query) SetDownloadFileID(filename string, fileId uint) error {
 		filename = string(os.PathSeparator) + filename
 	}
 
-	result := q.db.Model(entity.FileSync{}).
+	result := Db().Model(entity.FileSync{}).
 		Where("remote_name = ? AND status = ? AND file_id = 0", filename, entity.FileSyncDownloaded).
 		Update("file_id", fileId)
 

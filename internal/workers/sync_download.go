@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -20,12 +21,13 @@ func (s *Sync) downloadPath() string {
 	return s.conf.TempPath() + "/sync"
 }
 
+// relatedDownloads returns files to be downloaded grouped by prefix.
 func (s *Sync) relatedDownloads(a entity.Account) (result Downloads, err error) {
 	result = make(Downloads)
 	maxResults := 1000
 
 	// Get remote files from database
-	files, err := s.q.FileSyncs(a.ID, entity.FileSyncNew, maxResults)
+	files, err := query.FileSyncs(a.ID, entity.FileSyncNew, maxResults)
 
 	if err != nil {
 		return result, err
@@ -48,10 +50,9 @@ func (s *Sync) relatedDownloads(a entity.Account) (result Downloads, err error) 
 
 // Downloads remote files in batches and imports / indexes them
 func (s *Sync) download(a entity.Account) (complete bool, err error) {
-	db := s.conf.Db()
-
 	// Set up index worker
 	indexJobs := make(chan photoprism.IndexJob)
+
 	go photoprism.IndexWorker(indexJobs)
 	defer close(indexJobs)
 
@@ -118,7 +119,7 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 				}
 			}
 
-			if err := db.Save(&file).Error; err != nil {
+			if err := entity.Db().Save(&file).Error; err != nil {
 				log.Errorf("sync: %s", err.Error())
 			} else {
 				files[i] = file

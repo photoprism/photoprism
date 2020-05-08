@@ -1,21 +1,16 @@
 package query
 
 import (
-	"github.com/photoprism/photoprism/internal/form"
-	"github.com/stretchr/testify/assert"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestQuery_Geo(t *testing.T) {
-	conf := config.TestConfig()
-
-	search := New(conf.Db())
-
+func TestGeo(t *testing.T) {
 	t.Run("search all photos", func(t *testing.T) {
 		query := form.NewGeoSearch("")
-		result, err := search.Geo(query)
+		result, err := Geo(query)
 
 		assert.Nil(t, err)
 		assert.Equal(t, 4, len(result))
@@ -24,7 +19,7 @@ func TestQuery_Geo(t *testing.T) {
 
 	t.Run("search for bridge", func(t *testing.T) {
 		query := form.NewGeoSearch("Query:bridge Before:3006-01-02")
-		result, err := search.Geo(query)
+		result, err := Geo(query)
 
 		assert.Nil(t, err)
 		assert.Equal(t, "Neckarbrücke", result[0].PhotoTitle)
@@ -33,7 +28,7 @@ func TestQuery_Geo(t *testing.T) {
 
 	t.Run("search for timeframe", func(t *testing.T) {
 		query := form.NewGeoSearch("After:2014-12-02 Before:3006-01-02")
-		result, err := search.Geo(query)
+		result, err := Geo(query)
 
 		assert.Nil(t, err)
 		t.Log(result)

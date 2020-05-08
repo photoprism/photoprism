@@ -64,13 +64,11 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		runtime.GC()
 	}()
 
-	q := query.New(prg.conf.Db())
-
 	limit := 500
 	offset := 0
 
 	for {
-		files, err := q.ExistingFiles(limit, offset, opt.Path)
+		files, err := query.ExistingFiles(limit, offset, opt.Path)
 
 		if err != nil {
 			return purgedFiles, purgedPhotos, err
@@ -118,7 +116,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 	offset = 0
 
 	for {
-		photos, err := q.MissingPhotos(limit, offset)
+		photos, err := query.MissingPhotos(limit, offset)
 
 		if err != nil {
 			return purgedFiles, purgedPhotos, err
@@ -163,9 +161,15 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		offset += limit
 	}
 
-	err = q.ResetPhotosQuality()
+	if err := query.ResetPhotosQuality(); err != nil {
+		return purgedFiles, purgedPhotos, err
+	}
 
-	return purgedFiles, purgedPhotos, err
+	if err := query.UpdatePhotoCounts(); err != nil {
+		return purgedFiles, purgedPhotos, err
+	}
+
+	return purgedFiles, purgedPhotos, nil
 }
 
 // Cancel stops the current purge operation.

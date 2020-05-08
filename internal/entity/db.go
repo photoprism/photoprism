@@ -20,13 +20,18 @@ func SetDbProvider(provider DbProvider) {
 	dbProvider = provider
 }
 
-// Db() returns a database connection.
+// HasDbProvider returns true if a db provider exists.
+func HasDbProvider() bool {
+	return dbProvider != nil
+}
+
+// Db returns a database connection.
 func Db() *gorm.DB {
 	return dbProvider.Db()
 }
 
-// Db() returns an unscoped database connection.
-func Unscoped() *gorm.DB {
+// UnscopedDb returns an unscoped database connection.
+func UnscopedDb() *gorm.DB {
 	return Db().Unscoped()
 }
 

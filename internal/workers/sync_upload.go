@@ -8,17 +8,16 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
 )
 
 // Uploads local files to a remote account
 func (s *Sync) upload(a entity.Account) (complete bool, err error) {
-	db := s.conf.Db()
-	q := s.q
 	maxResults := 250
 
 	// Get upload file list from database
-	files, err := q.AccountUploads(a, maxResults)
+	files, err := query.AccountUploads(a, maxResults)
 
 	if err != nil {
 		return false, err
@@ -68,7 +67,7 @@ func (s *Sync) upload(a entity.Account) (complete bool, err error) {
 			return false, nil
 		}
 
-		if err := db.Save(&fileSync).Error; err != nil {
+		if err := entity.Db().Save(&fileSync).Error; err != nil {
 			log.Errorf("sync: %s", err.Error())
 		}
 	}

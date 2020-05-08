@@ -8,12 +8,12 @@ import (
 )
 
 // PhotoSelection returns all selected photos.
-func (q *Query) PhotoSelection(f form.Selection) (results []entity.Photo, err error) {
+func PhotoSelection(f form.Selection) (results []entity.Photo, err error) {
 	if f.Empty() {
 		return results, errors.New("no photos selected")
 	}
 
-	s := q.db.NewScope(nil).DB()
+	s := Db().NewScope(nil).DB()
 
 	s = s.Table("photos").
 		Select("photos.*").
