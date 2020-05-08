@@ -50,6 +50,9 @@ func MigrateDb() {
 		&Link{},
 	)
 
+	// Make sure changes have been written to disk.
+	time.Sleep(200 * time.Millisecond)
+
 	CreateUnknownPlace()
 	CreateUnknownCountry()
 	CreateUnknownCamera()
@@ -91,9 +94,6 @@ func ResetDb(testFixtures bool) {
 	MigrateDb()
 
 	if testFixtures {
-		// Make sure changes have been written to disk.
-		time.Sleep(200 * time.Millisecond)
-
 		CreateTestFixtures()
 	}
 }

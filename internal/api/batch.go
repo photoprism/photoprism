@@ -85,6 +85,10 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 		entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).
 			UpdateColumn("deleted_at", gorm.Expr("NULL"))
 
+		if err := query.UpdatePhotoCounts(); err != nil {
+			log.Errorf("photos: %s", err)
+		}
+
 		elapsed := int(time.Since(start).Seconds())
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
