@@ -26,6 +26,15 @@ func logError(result *gorm.DB) {
 	}
 }
 
+type Table struct {
+	Field    string
+	Type     string
+	Null     string
+	Key      string
+	Default  string
+	Extra    string
+}
+
 // MigrateDb creates all tables and inserts default entities as needed.
 func MigrateDb() {
 	Db().AutoMigrate(
@@ -50,13 +59,25 @@ func MigrateDb() {
 		&Link{},
 	)
 
-	// Make sure changes have been written to disk.
-	time.Sleep(200 * time.Millisecond)
+	WaitForMigration()
 
 	CreateUnknownPlace()
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()
+}
+
+// Waits for tables to be available after migrating / resetting database.
+func WaitForMigration() {
+	for i := 0; i < 20; i++ {
+		table := Table{}
+
+		if Db().Raw("DESCRIBE places").Scan(&table).Error == nil {
+			return
+		}
+
+		time.Sleep(50 * time.Millisecond)
+	}
 }
 
 // DropTables drops database tables for all known entities.
@@ -87,10 +108,6 @@ func DropTables() {
 // ResetDb drops database tables for all known entities and re-creates them with fixtures.
 func ResetDb(testFixtures bool) {
 	DropTables()
-
-	// Make sure changes have been written to disk.
-	time.Sleep(200 * time.Millisecond)
-
 	MigrateDb()
 
 	if testFixtures {

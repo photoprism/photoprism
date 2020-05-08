@@ -12,7 +12,13 @@ func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.DebugLevel)
 
-	db := entity.InitTestDb(os.Getenv("PHOTOPRISM_TEST_DSN"))
+	dsn := os.Getenv("PHOTOPRISM_TEST_DSN")
+
+	if dsn == "" {
+		panic("database dsn is empty")
+	}
+
+	db := entity.InitTestDb(dsn)
 
 	code := m.Run()
 
