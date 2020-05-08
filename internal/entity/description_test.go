@@ -9,7 +9,7 @@ func TestDescription_FirstOrCreate(t *testing.T) {
 	description := &Description{PhotoID: 123, PhotoDescription: ""}
 	err := description.FirstOrCreate()
 	if err != nil {
-		t.Fatal("error")
+		t.Fatal(err)
 	}
 }
 

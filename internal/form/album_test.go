@@ -26,7 +26,7 @@ func TestNewAlbum(t *testing.T) {
 		r, err := NewAlbum(album)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, "Foo", r.AlbumName)

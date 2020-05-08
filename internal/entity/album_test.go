@@ -75,13 +75,13 @@ func TestAlbum_Save(t *testing.T) {
 		albumForm, err := form.NewAlbum(album2)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		err = album.Save(albumForm)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, "New name", album.AlbumName)

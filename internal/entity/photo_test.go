@@ -87,13 +87,13 @@ func TestPhoto_Save(t *testing.T) {
 
 		err := photo.Save()
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 	})
 	t.Run("existing photo", func(t *testing.T) {
 		err := PhotoFixture19800101_000002_D640C559.Save()
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 	})
 }

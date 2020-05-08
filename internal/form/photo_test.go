@@ -17,7 +17,7 @@ func TestNewPhoto(t *testing.T) {
 		r, err := NewPhoto(photo)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC), r.TakenAt)

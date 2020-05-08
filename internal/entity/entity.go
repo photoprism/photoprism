@@ -11,7 +11,6 @@ package entity
 
 import (
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -19,7 +18,6 @@ import (
 )
 
 var log = event.Log
-var resetFixturesOnce sync.Once
 
 func logError(result *gorm.DB) {
 	if result.Error != nil {
@@ -74,6 +72,18 @@ func (list Types) WaitForMigration() {
 	}
 }
 
+// Truncate removes all data from tables without dropping them.
+func (list Types) Truncate() {
+	for name := range list {
+		if err := Db().Raw(fmt.Sprintf("TRUNCATE TABLE `%s`", name)).Scan(&struct{}{}).Error; err == nil {
+			log.Debugf("entity: removed all data from %s", name)
+			break
+		} else {
+			log.Debugf("entity: %s", err.Error())
+		}
+	}
+}
+
 // Drop migrates all database tables of registered entities.
 func (list Types) Migrate() {
 	for _, entity := range list {
@@ -98,40 +108,31 @@ func (list Types) Drop() {
 	}
 }
 
-// MigrateDb creates all tables and inserts default entities as needed.
-func MigrateDb() {
-	Entities.Migrate()
-	Entities.WaitForMigration()
-
+// Creates default database entries for test and production.
+func CreateDefaultFixtures() {
 	CreateUnknownPlace()
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()
 }
 
-// DropTables drops database tables for all known entities.
-func DropTables() {
-	Entities.Drop()
+// MigrateDb creates all tables and inserts default entities as needed.
+func MigrateDb() {
+	Entities.Migrate()
+	Entities.WaitForMigration()
 
-	// wait for changes to be written to disk
-	time.Sleep(250 * time.Millisecond)
+	CreateDefaultFixtures()
 }
 
-// ResetDb drops database tables for all known entities and re-creates them with fixtures.
-func ResetDb(testFixtures bool) {
-	DropTables()
-	MigrateDb()
+// ResetTestFixtures drops database tables for all known entities and re-creates them with fixtures.
+func ResetTestFixtures() {
+	Entities.Migrate()
+	Entities.WaitForMigration()
+	Entities.Truncate()
 
-	if testFixtures {
-		CreateTestFixtures()
-	}
-}
+	CreateDefaultFixtures()
 
-// InitTestFixtures resets the database and test fixtures once.
-func InitTestFixtures() {
-	resetFixturesOnce.Do(func() {
-		ResetDb(true)
-	})
+	CreateTestFixtures()
 }
 
 // InitTestDb connects to and completely initializes the test database incl fixtures.
@@ -146,7 +147,7 @@ func InitTestDb(dsn string) *Gorm {
 	}
 
 	SetDbProvider(db)
-	InitTestFixtures()
+	ResetTestFixtures()
 
 	return db
 }

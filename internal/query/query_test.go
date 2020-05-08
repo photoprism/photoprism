@@ -2,6 +2,7 @@ package query
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -18,7 +19,7 @@ func TestMain(m *testing.M) {
 		panic("database dsn is empty")
 	}
 
-	db := entity.InitTestDb(dsn)
+	db := entity.InitTestDb(strings.Replace(dsn, "/photoprism", "/query", 1))
 
 	code := m.Run()
 

@@ -50,7 +50,7 @@ func TestPhotoLabel_Save(t *testing.T) {
 		photoLabel := NewPhotoLabel(13, 1000, 99, "image")
 		err := photoLabel.Save()
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 	})
 }

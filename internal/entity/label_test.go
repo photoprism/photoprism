@@ -70,7 +70,7 @@ func TestLabel_Update(t *testing.T) {
 
 		err := Label.Update(*classifyLabel)
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, 5, Label.LabelPriority)
@@ -89,7 +89,7 @@ func TestLabel_Update(t *testing.T) {
 
 		err := Label.Update(*classifyLabel)
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, 5, Label.LabelPriority)
@@ -109,7 +109,7 @@ func TestLabel_Update(t *testing.T) {
 
 		err := Label.Update(*classifyLabel)
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, 5, Label.LabelPriority)

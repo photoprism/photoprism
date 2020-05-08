@@ -15,12 +15,13 @@ func TestCreateAccount(t *testing.T) {
 		accountForm, err := form.NewAccount(account)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
+
 		model, err := CreateAccount(accountForm)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, "/home", model.SharePath)
@@ -56,12 +57,12 @@ func TestAccount_Save(t *testing.T) {
 		accountForm, err := form.NewAccount(account)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 		model, err := CreateAccount(accountForm)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, "Foo", model.AccName)
@@ -75,7 +76,7 @@ func TestAccount_Save(t *testing.T) {
 		err = model.Save(UpdateForm)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, "NewName", model.AccName)
@@ -94,18 +95,18 @@ func TestAccount_Delete(t *testing.T) {
 		accountForm, err := form.NewAccount(account)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 		model, err := CreateAccount(accountForm)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		err = model.Delete()
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 		// TODO how to assert deletion?
 
@@ -121,18 +122,18 @@ func TestAccount_Directories(t *testing.T) {
 		accountForm, err := form.NewAccount(account)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 		model, err := CreateAccount(accountForm)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		result, err := model.Directories()
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 		assert.NotEmpty(t, result.Abs())
 		assert.Contains(t, result.Abs(), "/Photos")
@@ -146,18 +147,18 @@ func TestAccount_Directories(t *testing.T) {
 		accountForm, err := form.NewAccount(account)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 		model, err := CreateAccount(accountForm)
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		result, err := model.Directories()
 
 		if err != nil {
-			t.Fatal("error")
+			t.Fatal(err)
 		}
 
 		assert.Empty(t, result.Abs())
