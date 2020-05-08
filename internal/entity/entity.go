@@ -10,6 +10,7 @@ https://github.com/photoprism/photoprism/wiki/Storage
 package entity
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -26,40 +27,75 @@ func logError(result *gorm.DB) {
 	}
 }
 
-type Table struct {
-	Field    string
-	Type     string
-	Null     string
-	Key      string
-	Default  string
-	Extra    string
+type Types map[string]interface{}
+
+// List of database entities and their table names.
+var Entities = Types{
+	"accounts":        &Account{},
+	"files":           &File{},
+	"files_share":     &FileShare{},
+	"files_sync":      &FileSync{},
+	"photos":          &Photo{},
+	"descriptions":    &Description{},
+	"places":          &Place{},
+	"locations":       &Location{},
+	"cameras":         &Camera{},
+	"lenses":          &Lens{},
+	"countries":       &Country{},
+	"albums":          &Album{},
+	"photos_albums":   &PhotoAlbum{},
+	"labels":          &Label{},
+	"categories":      &Category{},
+	"photos_labels":   &PhotoLabel{},
+	"keywords":        &Keyword{},
+	"photos_keywords": &PhotoKeyword{},
+	"links":           &Link{},
+}
+
+// WaitForMigration waits for the database migration to be successful.
+func (list Types) WaitForMigration() {
+	attempts := 100
+
+	for name := range list {
+		for i := 0; i <= attempts; i++ {
+			if err := Db().Raw(fmt.Sprintf("DESCRIBE `%s`", name)).Scan(&struct{}{}).Error; err == nil {
+				log.Debugf("entity: table %s migrated", name)
+				break
+			} else {
+				log.Error(err)
+			}
+
+			if i == attempts {
+				panic("migration failed")
+			}
+
+			time.Sleep(50 * time.Millisecond)
+		}
+	}
+}
+
+// Drop migrates all database tables of registered entities.
+func (list Types) Migrate() {
+	for _, entity := range list {
+		if err := Db().AutoMigrate(entity).Error; err != nil {
+			panic(err)
+		}
+	}
+}
+
+// Drop drops all database tables of registered entities.
+func (list Types) Drop() {
+	for _, entity := range list {
+		if err := Db().DropTableIfExists(entity).Error; err != nil {
+			panic(err)
+		}
+	}
 }
 
 // MigrateDb creates all tables and inserts default entities as needed.
 func MigrateDb() {
-	Db().AutoMigrate(
-		&Account{},
-		&File{},
-		&FileShare{},
-		&FileSync{},
-		&Photo{},
-		&Description{},
-		&Place{},
-		&Location{},
-		&Camera{},
-		&Lens{},
-		&Country{},
-		&Album{},
-		&PhotoAlbum{},
-		&Label{},
-		&Category{},
-		&PhotoLabel{},
-		&Keyword{},
-		&PhotoKeyword{},
-		&Link{},
-	)
-
-	WaitForMigration()
+	Entities.Migrate()
+	Entities.WaitForMigration()
 
 	CreateUnknownPlace()
 	CreateUnknownCountry()
@@ -67,42 +103,9 @@ func MigrateDb() {
 	CreateUnknownLens()
 }
 
-// Waits for tables to be available after migrating / resetting database.
-func WaitForMigration() {
-	for i := 0; i < 20; i++ {
-		table := Table{}
-
-		if Db().Raw("DESCRIBE places").Scan(&table).Error == nil {
-			return
-		}
-
-		time.Sleep(50 * time.Millisecond)
-	}
-}
-
 // DropTables drops database tables for all known entities.
 func DropTables() {
-	Db().DropTableIfExists(
-		&Account{},
-		&File{},
-		&FileShare{},
-		&FileSync{},
-		&Photo{},
-		&Description{},
-		&Place{},
-		&Location{},
-		&Camera{},
-		&Lens{},
-		&Country{},
-		&Album{},
-		&PhotoAlbum{},
-		&Label{},
-		&Category{},
-		&PhotoLabel{},
-		&Keyword{},
-		&PhotoKeyword{},
-		&Link{},
-	)
+	Entities.Drop()
 }
 
 // ResetDb drops database tables for all known entities and re-creates them with fixtures.

@@ -1,18 +1,14 @@
 package entity
 
 import (
-	"bytes"
 	"os"
 	"testing"
 
 	"github.com/sirupsen/logrus"
 )
 
-var logBuffer bytes.Buffer
-
 func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
-	log.Out = &logBuffer
 	log.SetLevel(logrus.DebugLevel)
 
 	dsn := os.Getenv("PHOTOPRISM_TEST_DSN")
