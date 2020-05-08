@@ -399,6 +399,55 @@ var PhotoFixtures = map[string]Photo{
 		EditedAt:         &editTime,
 		DeletedAt:        nil,
 	},
+	"Photo08": {
+		ID:               1000008,
+		PhotoUUID:        "pt9jtdre2lvl0y15",
+		TakenAt:          time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
+		TakenAtLocal:     time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
+		TakenSrc:         "",
+		PhotoTitle:       "Black beach",
+		TitleSrc:         "exif",
+		PhotoPath:        "2016/11",
+		PhotoName:        "",
+		PhotoQuality:     0,
+		PhotoResolution:  0,
+		PhotoFavorite:    false,
+		PhotoPrivate:     false,
+		PhotoStory:       false,
+		PhotoLat:         -21.342636,
+		PhotoLng:         55.466944,
+		PhotoAltitude:    0,
+		PhotoIso:         0,
+		PhotoFocalLength: 0,
+		PhotoFNumber:     0,
+		PhotoExposure:    "",
+		CameraID:         0,
+		CameraSerial:     "",
+		CameraSrc:        "",
+		LensID:           0,
+		PlaceID:          "zz",
+		LocationID:       "",
+		LocationSrc:      "",
+		TimeZone:         "",
+		PhotoCountry:     "zz",
+		PhotoYear:        2014,
+		PhotoMonth:       7,
+		Description:      Description{},
+		DescriptionSrc:   "",
+		Camera:           nil,
+		Lens:             nil,
+		Location:         nil,
+		Place:            nil,
+		Links:            []Link{},
+		Keywords:         []Keyword{},
+		Albums:           []Album{},
+		Files:            []File{},
+		Labels:           []PhotoLabel{},
+		CreatedAt:        time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
+		UpdatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		EditedAt:         nil,
+		DeletedAt:        nil,
+	},
 }
 
 var PhotoFixture19800101_000002_D640C559 = PhotoFixtures["19800101_000002_D640C559"]
@@ -408,6 +457,7 @@ var PhotoFixturePhoto05 = PhotoFixtures["Photo05"]
 var PhotoFixturePhoto03 = PhotoFixtures["Photo03"]
 var PhotoFixturePhoto06 = PhotoFixtures["Photo06"]
 var PhotoFixturePhoto07 = PhotoFixtures["Photo07"]
+var PhotoFixturePhoto08 = PhotoFixtures["Photo08"]
 
 // CreatePhotoFixtures inserts known entities into the database for testing.
 func CreatePhotoFixtures() {
