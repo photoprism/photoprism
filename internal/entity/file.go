@@ -110,9 +110,5 @@ func (m File) Changed(fileSize int64, fileModified time.Time) bool {
 
 // Purge removes a file from the index by marking it as missing.
 func (m *File) Purge() error {
-	if err := Db().Unscoped().Model(m).Updates(map[string]interface{}{"file_missing": true, "file_primary": false}).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return Db().Unscoped().Model(m).Updates(map[string]interface{}{"file_missing": true, "file_primary": false}).Error
 }
