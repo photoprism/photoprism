@@ -77,8 +77,14 @@ func (list Types) WaitForMigration() {
 // Drop migrates all database tables of registered entities.
 func (list Types) Migrate() {
 	for _, entity := range list {
-		if err := Db().AutoMigrate(entity).Error; err != nil {
-			panic(err)
+		if err := UnscopedDb().AutoMigrate(entity).Error; err != nil {
+			log.Debugf("entity: %s (waiting 1s)", err.Error())
+
+			time.Sleep(time.Second)
+
+			if err := UnscopedDb().AutoMigrate(entity).Error; err != nil {
+				panic(err)
+			}
 		}
 	}
 }
@@ -86,7 +92,7 @@ func (list Types) Migrate() {
 // Drop drops all database tables of registered entities.
 func (list Types) Drop() {
 	for _, entity := range list {
-		if err := Db().DropTableIfExists(entity).Error; err != nil {
+		if err := UnscopedDb().DropTableIfExists(entity).Error; err != nil {
 			panic(err)
 		}
 	}
@@ -106,6 +112,9 @@ func MigrateDb() {
 // DropTables drops database tables for all known entities.
 func DropTables() {
 	Entities.Drop()
+
+	// wait for changes to be written to disk
+	time.Sleep(250 * time.Millisecond)
 }
 
 // ResetDb drops database tables for all known entities and re-creates them with fixtures.
