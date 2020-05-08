@@ -99,7 +99,7 @@ func TestLabel_Update(t *testing.T) {
 
 	})
 	t.Run("update name and Categories", func(t *testing.T) {
-		classifyLabel := &classify.Label{Name: "classify", Uncertainty: 30, Source: "manual", Priority: 5}
+		classifyLabel := &classify.Label{Name: "classify", Uncertainty: 30, Source: "manual", Priority: 5, Categories: []string{"flower", "plant"}}
 		Label := &Label{LabelName: "label34", LabelSlug: "labelslug2", CustomSlug: "labelslug2", LabelPriority: 5, LabelCategories: []*Label{&LabelFixtureFlower}}
 
 		assert.Equal(t, 5, Label.LabelPriority)
