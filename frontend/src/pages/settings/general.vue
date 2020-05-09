@@ -343,7 +343,7 @@
                     convert: this.$gettext("Convert to JPEG"),
                 },
                 hints: {
-                    private: this.$gettext("Exclude photos marked as private from search results by default."),
+                    private: this.$gettext("Exclude photos marked as private from search results, shared albums, labels and places."),
                     review: this.$gettext("Non-photographic and low-quality images require a review before they appear in search results."),
                     group: this.$gettext("Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' belong to the same photo."),
                     move: this.$gettext("Move files from import to originals to save storage. Unsupported file types will never be deleted, they remain in their current location."),
