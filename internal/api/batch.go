@@ -41,7 +41,12 @@ func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Infof("photos: archiving %#v", f.Photos)
 
-		entity.Db().Where("photo_uuid IN (?)", f.Photos).Delete(&entity.Photo{})
+		err := entity.Db().Where("photo_uuid IN (?)", f.Photos).Delete(&entity.Photo{}).Error
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			return
+		}
 
 		if err := query.UpdatePhotoCounts(); err != nil {
 			log.Errorf("photos: %s", err)
@@ -82,8 +87,13 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Infof("restoring photos: %#v", f.Photos)
 
-		entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).
-			UpdateColumn("deleted_at", gorm.Expr("NULL"))
+		err := entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).
+			UpdateColumn("deleted_at", gorm.Expr("NULL")).Error
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			return
+		}
 
 		if err := query.UpdatePhotoCounts(); err != nil {
 			log.Errorf("photos: %s", err)
@@ -163,6 +173,10 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
+		}
+
+		if err := query.UpdatePhotoCounts(); err != nil {
+			log.Errorf("photos: %s", err)
 		}
 
 		if entities, err := query.PhotoSelection(f); err == nil {

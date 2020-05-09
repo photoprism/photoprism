@@ -57,10 +57,10 @@ func (list Types) WaitForMigration() {
 	for name := range list {
 		for i := 0; i <= attempts; i++ {
 			if err := Db().Raw(fmt.Sprintf("DESCRIBE `%s`", name)).Scan(&struct{}{}).Error; err == nil {
-				log.Debugf("entity: table %s migrated", name)
+				// log.Debugf("entity: table %s migrated", name)
 				break
 			} else {
-				log.Debugf("entity: %s", err.Error())
+				log.Debugf("entity: wait for migration %s (%s)", err.Error(), name)
 			}
 
 			if i == attempts {
@@ -78,8 +78,8 @@ func (list Types) Truncate() {
 		if err := Db().Raw(fmt.Sprintf("TRUNCATE TABLE `%s`", name)).Scan(&struct{}{}).Error; err == nil {
 			log.Debugf("entity: removed all data from %s", name)
 			break
-		} else {
-			log.Debugf("entity: %s", err.Error())
+		} else if err.Error() != "record not found" {
+			log.Debugf("entity: truncate %s (%s)", err.Error(), name)
 		}
 	}
 }
@@ -88,7 +88,7 @@ func (list Types) Truncate() {
 func (list Types) Migrate() {
 	for _, entity := range list {
 		if err := UnscopedDb().AutoMigrate(entity).Error; err != nil {
-			log.Debugf("entity: %s (waiting 1s)", err.Error())
+			log.Debugf("entity: migrate %s (waiting 1s)", err.Error())
 
 			time.Sleep(time.Second)
 

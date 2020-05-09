@@ -49,7 +49,7 @@ services:
     ports:
       - "4001:4001" # MySQL (for tests)
     volumes:
-      - "./scripts/test-db.sql:/docker-entrypoint-initdb.d/test-db.sql"
+      - "./scripts/reset-test-db.sql:/docker-entrypoint-initdb.d/reset-test-db.sql"
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism

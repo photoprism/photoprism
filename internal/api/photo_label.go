@@ -71,6 +71,10 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		if err := query.UpdatePhotoCounts(); err != nil {
+			log.Errorf("photo: %s", err)
+		}
+
 		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c)
 
 		event.Success("label updated")
@@ -129,6 +133,10 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 		if err := p.Save(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
+		}
+
+		if err := query.UpdatePhotoCounts(); err != nil {
+			log.Errorf("photo: %s", err)
 		}
 
 		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c)

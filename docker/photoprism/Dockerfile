@@ -1,4 +1,4 @@
-FROM photoprism/development:20200427 as build
+FROM photoprism/development:20200509 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -85,7 +85,7 @@ RUN chmod -R 777 /photoprism
 RUN photoprism -v
 
 # Expose http and database ports
-EXPOSE 2342 2343
+EXPOSE 2342 2343 4000
 
 # Run server
 CMD photoprism start

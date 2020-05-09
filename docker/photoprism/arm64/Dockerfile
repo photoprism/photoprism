@@ -169,7 +169,7 @@ RUN chmod -R 777 /photoprism
 RUN photoprism -v
 
 # Expose http and database ports
-EXPOSE 2342 2343
+EXPOSE 2342 2343 4000
 
 # Run server
 CMD photoprism start

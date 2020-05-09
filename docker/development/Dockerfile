@@ -116,6 +116,9 @@ RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tsliwowicz/go-wrk
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo
 RUN echo "alias go=richgo" > /root/.bash_aliases
 
+# MariaDB test database settings
+COPY /docker/development/.my.cnf /root/.my.cnf
+
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 

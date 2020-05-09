@@ -14,7 +14,7 @@ all: dep build
 dep: dep-tensorflow dep-js dep-go
 build: generate build-js build-go
 install: install-bin install-assets
-test: test-js test-go
+test: reset-test-db test-js test-go
 acceptance-all: start acceptance acceptance-firefox stop
 test-all: test acceptance-all
 fmt: fmt-js fmt-go
@@ -90,6 +90,8 @@ acceptance:
 acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
 	(cd frontend &&	npm run acceptance-firefox)
+reset-test-db:
+	mysql < scripts/reset-test-db.sql
 test-go:
 	$(info Running all Go unit tests...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...
