@@ -9,6 +9,7 @@ type PhotoAlbum struct {
 	PhotoUUID string `gorm:"type:varbinary(36);primary_key;auto_increment:false"`
 	AlbumUUID string `gorm:"type:varbinary(36);primary_key;auto_increment:false;index"`
 	Order     int
+	Hidden    bool
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Photo     *Photo
