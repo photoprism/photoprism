@@ -52,6 +52,12 @@
     bottom: 4px;
 }
 
+#photoprism .p-labels-cards .p-label-count {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+}
+
 #photoprism .p-clipboard {
     right: 8px;
     bottom: 12px;

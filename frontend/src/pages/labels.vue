@@ -86,6 +86,16 @@
                                                              color="accent lighten-5"></v-progress-circular>
                                     </v-layout>
 
+                                    <!-- v-progress-circular
+                                            :rotate="270"
+                                            :size="20"
+                                            :width="10"
+                                            :value="label.popularity(config.count.labelMaxPhotos)"
+                                            color="accent lighten-3"
+                                            class="p-label-count"
+                                    >
+                                    </v-progress-circular -->
+
                                     <v-btn v-if="hover || selection.includes(label.LabelUUID)" :flat="!hover" :ripple="false"
                                            icon large absolute
                                            :class="selection.includes(label.LabelUUID) ? 'p-label-select' : 'p-label-select opacity-50'"
@@ -166,6 +176,7 @@
             const settings = {};
 
             return {
+                config: this.$config.values,
                 subscriptions: [],
                 listen: false,
                 dirty: false,

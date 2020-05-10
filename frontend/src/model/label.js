@@ -14,10 +14,10 @@ class Label extends RestModel {
             CustomSlug: "",
             LabelName: "",
             LabelPriority: 0,
-            LabelCount: 0,
             LabelFavorite: false,
             LabelDescription: "",
             LabelNotes: "",
+            PhotoCount: 0,
             Links: [],
         };
     }
@@ -85,6 +85,18 @@ class Label extends RestModel {
         this.LabelFavorite = false;
         return Api.delete(this.getEntityResource() + "/like");
     }
+
+    /* popularity(max) {
+        if (!this.PhotoCount) {
+            return 0;
+        }
+
+        if (this.PhotoCount >= max) {
+            return 100;
+        }
+
+        return Math.ceil(max / this.PhotoCount);
+    } */
 
     static getCollectionResource() {
         return "labels";
