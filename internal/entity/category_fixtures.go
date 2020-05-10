@@ -1,17 +1,17 @@
 package entity
 
 var CategoryFixtures = map[string]Category{
-	"1": {
+	"flower_landscape": {
 		LabelID:    1000001,
+		Label:      LabelFixtures.Pointer("flower"),
 		CategoryID: 1000000,
-		Label:      &LabelFixtureFlower,
-		Category:   &LabelFixtureLandscape,
+		Category:   LabelFixtures.Pointer("landscape"),
 	},
 }
 
 // CreateCategoryFixtures inserts known entities into the database for testing.
 func CreateCategoryFixtures() {
-	for _, entity := range KeywordFixtures {
+	for _, entity := range CategoryFixtures {
 		Db().Create(&entity)
 	}
 }

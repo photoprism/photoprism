@@ -131,15 +131,16 @@ func (c *Config) ClientConfig() ClientConfig {
 		Take(&position)
 
 	var count = struct {
-		Photos    uint `json:"photos"`
-		Hidden    uint `json:"hidden"`
-		Favorites uint `json:"favorites"`
-		Private   uint `json:"private"`
-		Stories   uint `json:"stories"`
-		Labels    uint `json:"labels"`
-		Albums    uint `json:"albums"`
-		Countries uint `json:"countries"`
-		Places    uint `json:"places"`
+		Photos         uint `json:"photos"`
+		Hidden         uint `json:"hidden"`
+		Favorites      uint `json:"favorites"`
+		Private        uint `json:"private"`
+		Stories        uint `json:"stories"`
+		Albums         uint `json:"albums"`
+		Countries      uint `json:"countries"`
+		Places         uint `json:"places"`
+		Labels         uint `json:"labels"`
+		LabelMaxPhotos uint `json:"labelMaxPhotos"`
 	}{}
 
 	db.Table("photos").
@@ -148,8 +149,10 @@ func (c *Config) ClientConfig() ClientConfig {
 		Take(&count)
 
 	db.Table("labels").
-		Select("COUNT(*) AS labels").
-		Where("(label_priority >= 0 || label_favorite = 1) && deleted_at IS NULL").
+		Select("MAX(photo_count) as label_max_photos, COUNT(*) AS labels").
+		Where("photo_count > 0").
+		Where("deleted_at IS NULL").
+		Where("(label_priority >= 0 || label_favorite = 1)").
 		Take(&count)
 
 	db.Table("albums").

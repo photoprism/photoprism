@@ -1,6 +1,8 @@
 package entity
 
-var KeywordFixtures = map[string]Keyword{
+type KeywordMap map[string]Keyword
+
+var KeywordFixtures = KeywordMap{
 	"bridge": {
 		ID:      1000000,
 		Keyword: "bridge",

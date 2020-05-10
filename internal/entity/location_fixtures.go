@@ -2,21 +2,31 @@ package entity
 
 import "time"
 
-var LocationFixtures = map[string]Location{
+type LocationMap map[string]Location
+
+var LocationFixtures = LocationMap{
 	"mexico": {
-		ID:          "1000000",
-		PlaceID:     "1000000",
+		ID:          "85d1ea7d382c",
+		PlaceID:     PlaceFixtures.Get("teotihuacan").ID,
 		LocName:     "Adosada Platform",
 		LocCategory: "tourism",
-		Place:       &PlaceFixtureTeotihuacan,
+		Place:       PlaceFixtures.Pointer("teotihuacan"),
 		LocSource:   "places",
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	},
 	"caravan park": {
-		ID:          "1000001",
-		PlaceID:     "",
-		Place:       nil,
+		ID:      "1ef75a71a36c",
+		PlaceID: "1ef75a71a36c",
+		Place: &Place{
+			ID:         "1ef75a71a36",
+			LocLabel:   "Mandeni, KwaZulu-Natal, South Africa",
+			LocCity:    "Mandeni",
+			LocState:   "KwaZulu-Natal",
+			LocCountry: "za",
+			CreatedAt:  time.Now(),
+			UpdatedAt:  time.Now(),
+		},
 		LocName:     "Lobotes Caravan Park",
 		LocCategory: "camping",
 		LocSource:   "manual",
@@ -24,9 +34,9 @@ var LocationFixtures = map[string]Location{
 		UpdatedAt:   time.Now(),
 	},
 	"zinkwazi": {
-		ID:          "1000002",
-		PlaceID:     "",
-		Place:       &PlaceFixtureZinkwazi,
+		ID:          "1ef744d1e28c",
+		PlaceID:     PlaceFixtures.Get("zinkwazi").ID,
+		Place:       PlaceFixtures.Pointer("zinkwazi"),
 		LocName:     "Zinkwazi Beach",
 		LocCategory: "",
 		LocSource:   "places",
@@ -34,10 +44,6 @@ var LocationFixtures = map[string]Location{
 		UpdatedAt:   time.Now(),
 	},
 }
-
-var LocationFixtureMexico = LocationFixtures["mexico"]
-var LocationFixtureCaravanPark = LocationFixtures["caravan park"]
-var LocationFixtureZinkawzi = LocationFixtures["zinkwazi"]
 
 // CreateLocationFixtures inserts known entities into the database for testing.
 func CreateLocationFixtures() {

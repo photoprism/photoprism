@@ -11,7 +11,7 @@ func TestNewLocation(t *testing.T) {
 		l := NewLocation(1, 1)
 		l.LocCategory = "restaurant"
 		l.LocName = "LocationName"
-		l.Place = &PlaceFixtureZinkwazi
+		l.Place = PlaceFixtures.Pointer("zinkwazi")
 		l.LocSource = "places"
 
 		assert.Equal(t, "restaurant", l.Category())
@@ -34,19 +34,22 @@ func TestNewLocation(t *testing.T) {
 }
 
 func TestLocation_Keywords(t *testing.T) {
-	t.Run("location with place", func(t *testing.T) {
-		r := LocationFixtureMexico.Keywords()
+	t.Run("mexico", func(t *testing.T) {
+		m := LocationFixtures["mexico"]
+		r := m.Keywords()
 		assert.Equal(t, []string{"adosada", "ancient", "mexico", "platform", "pyramid", "teotihuacán", "tourism"}, r)
 	})
-	t.Run("location without place", func(t *testing.T) {
-		r := LocationFixtureCaravanPark.Keywords()
-		assert.Nil(t, r)
+	t.Run("caravan park", func(t *testing.T) {
+		m := LocationFixtures["caravan park"]
+		r := m.Keywords()
+		assert.Equal(t, []string{"camping", "caravan", "kwazulu-natal", "lobotes", "mandeni", "park", "south-africa"}, r)
 	})
 }
 
 func TestLocation_Find(t *testing.T) {
 	t.Run("place in db", func(t *testing.T) {
-		r := LocationFixtureMexico.Find("")
+		m := LocationFixtures["mexico"]
+		r := m.Find("")
 		assert.Nil(t, r)
 	})
 	t.Run("invalid api", func(t *testing.T) {

@@ -4,7 +4,9 @@ import (
 	"time"
 )
 
-var CameraFixtures = map[string]Camera{
+type CameraMap map[string]Camera
+
+var CameraFixtures = CameraMap{
 	"apple-iphone-se": {
 		ID:                1000000,
 		CameraSlug:        "apple-iphone-se",

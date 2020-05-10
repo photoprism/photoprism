@@ -23,7 +23,7 @@ type Label struct {
 	LabelNotes       string   `gorm:"type:text;"`
 	LabelCategories  []*Label `gorm:"many2many:categories;association_jointable_foreignkey:category_id"`
 	Links            []Link   `gorm:"foreignkey:ShareUUID;association_foreignkey:LabelUUID"`
-	PhotoCount       int
+	PhotoCount       int      `gorm:"default:1"`
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 	DeletedAt        *time.Time `sql:"index"`
@@ -55,6 +55,7 @@ func NewLabel(name string, priority int) *Label {
 		CustomSlug:    labelSlug,
 		LabelName:     labelName,
 		LabelPriority: priority,
+		PhotoCount:    1,
 	}
 
 	return result

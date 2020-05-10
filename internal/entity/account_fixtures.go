@@ -5,7 +5,9 @@ import (
 	"time"
 )
 
-var AccountFixtures = map[string]Account{
+type AccountMap map[string]Account
+
+var AccountFixtures = AccountMap{
 	"webdav-dummy": {
 		ID:            1000000,
 		AccName:       "Test Account",

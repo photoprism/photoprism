@@ -9,7 +9,7 @@ var PhotoAlbumFixtures = map[string]PhotoAlbum{
 		Order:     0,
 		CreatedAt: time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     &PhotoFixture19800101_000002_D640C559,
+		Photo:     PhotoFixtures.Pointer("19800101_000002_D640C559"),
 		Album:     &AlbumFixtureHoliday2030,
 	},
 	"2": {
@@ -18,7 +18,7 @@ var PhotoAlbumFixtures = map[string]PhotoAlbum{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     &PhotoFixturePhoto04,
+		Photo:     PhotoFixtures.Pointer("Photo04"),
 		Album:     &AlbumFixtureBerlin2019,
 	},
 }

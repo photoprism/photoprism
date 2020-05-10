@@ -53,7 +53,8 @@ func TestLabel_SetName(t *testing.T) {
 }
 
 func TestLabel_FirstOrCreate(t *testing.T) {
-	r := LabelFixtureFlower.FirstOrCreate()
+	label := LabelFixtures.Get("flower")
+	r := label.FirstOrCreate()
 	assert.Equal(t, "Flower", r.LabelName)
 	assert.Equal(t, "flower", r.LabelSlug)
 }
@@ -100,7 +101,7 @@ func TestLabel_Update(t *testing.T) {
 	})
 	t.Run("update name and Categories", func(t *testing.T) {
 		classifyLabel := &classify.Label{Name: "classify", Uncertainty: 30, Source: "manual", Priority: 5, Categories: []string{"flower", "plant"}}
-		Label := &Label{LabelName: "label34", LabelSlug: "labelslug2", CustomSlug: "labelslug2", LabelPriority: 5, LabelCategories: []*Label{&LabelFixtureFlower}}
+		Label := &Label{LabelName: "label34", LabelSlug: "labelslug2", CustomSlug: "labelslug2", LabelPriority: 5, LabelCategories: []*Label{LabelFixtures.Pointer("flower")}}
 
 		assert.Equal(t, 5, Label.LabelPriority)
 		assert.Equal(t, "labelslug2", Label.LabelSlug)

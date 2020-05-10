@@ -22,6 +22,7 @@ func TestPhotoKeyword_TableName(t *testing.T) {
 }
 
 func TestPhotoKeywords_FirstOrCreate(t *testing.T) {
-	r := PhotoKeywordFixture1.FirstOrCreate()
+	m := PhotoKeywordFixtures["1"]
+	r := m.FirstOrCreate()
 	assert.Equal(t, uint(0xf4244), r.PhotoID)
 }

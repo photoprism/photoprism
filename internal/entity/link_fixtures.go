@@ -4,7 +4,9 @@ import "time"
 
 var date = time.Date(2050, 3, 6, 2, 6, 51, 0, time.UTC)
 
-var LinkFixtures = map[string]Link{
+type LinkMap map[string]Link
+
+var LinkFixtures = LinkMap{
 	"1jxf3jfn2k": {
 		LinkToken:    "1jxf3jfn2k",
 		LinkPassword: "somepassword",

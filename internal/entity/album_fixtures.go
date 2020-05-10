@@ -4,7 +4,9 @@ import (
 	"time"
 )
 
-var AlbumFixtures = map[string]Album{
+type AlbumMap map[string]Album
+
+var AlbumFixtures = AlbumMap{
 	"christmas2030": {
 		ID:               1000000,
 		CoverUUID:        "",

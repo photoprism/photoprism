@@ -7,15 +7,15 @@ import (
 
 func TestPhoto_QualityScore(t *testing.T) {
 	t.Run("PhotoFixture19800101_000002_D640C559", func(t *testing.T) {
-		assert.Equal(t, 4, PhotoFixture19800101_000002_D640C559.QualityScore())
+		assert.Equal(t, 4, PhotoFixtures.Pointer("19800101_000002_D640C559").QualityScore())
 	})
 	t.Run("PhotoFixturePhoto01 - favorite true - taken at before 2008", func(t *testing.T) {
-		assert.Equal(t, 7, PhotoFixturePhoto01.QualityScore())
+		assert.Equal(t, 7, PhotoFixtures.Pointer("Photo01").QualityScore())
 	})
 	t.Run("PhotoFixturePhoto06 - taken at after 2012 - resolution 2", func(t *testing.T) {
-		assert.Equal(t, 4, PhotoFixturePhoto06.QualityScore())
+		assert.Equal(t, 4, PhotoFixtures.Pointer("Photo06").QualityScore())
 	})
 	t.Run("PhotoFixturePhoto07 - score < 3 bit edited", func(t *testing.T) {
-		assert.Equal(t, 3, PhotoFixturePhoto07.QualityScore())
+		assert.Equal(t, 3, PhotoFixtures.Pointer("Photo07").QualityScore())
 	})
 }

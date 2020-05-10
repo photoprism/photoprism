@@ -1,6 +1,26 @@
 package entity
 
-var DescriptionFixtures = map[string]Description{
+type DescriptionMap map[string]Description
+
+func (m DescriptionMap) Get(name string, photoId uint) Description {
+	if result, ok := m[name]; ok {
+		result.PhotoID = photoId
+		return result
+	}
+
+	return Description{PhotoID: photoId}
+}
+
+func (m DescriptionMap) Pointer(name string, photoId uint) *Description {
+	if result, ok := m[name]; ok {
+		result.PhotoID = photoId
+		return &result
+	}
+
+	return &Description{PhotoID: photoId}
+}
+
+var DescriptionFixtures = DescriptionMap{
 	"lake": {
 		PhotoID:          1000000,
 		PhotoDescription: "photo description",
@@ -11,12 +31,4 @@ var DescriptionFixtures = map[string]Description{
 		PhotoCopyright:   "copy",
 		PhotoLicense:     "MIT",
 	},
-}
-var DescriptionFixtureLake = DescriptionFixtures["lake"]
-
-// CreateDescriptionFixtures inserts known entities into the database for testing.
-func CreateDescriptionFixtures() {
-	for _, entity := range DescriptionFixtures {
-		Db().Create(&entity)
-	}
 }

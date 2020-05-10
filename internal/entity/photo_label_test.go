@@ -23,13 +23,15 @@ func TestPhotoLabel_TableName(t *testing.T) {
 }
 
 func TestPhotoLabel_FirstOrCreate(t *testing.T) {
-	r := PhotoLabelFixture1.FirstOrCreate()
-	assert.Equal(t, uint(0xf4240), r.PhotoID)
+	pl := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
+	r := pl.FirstOrCreate()
+	assert.Equal(t, uint(1000000), r.PhotoID)
 }
 
 func TestPhotoLabel_ClassifyLabel(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		r := PhotoLabelFixture1.ClassifyLabel()
+		pl := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
+		r := pl.ClassifyLabel()
 		assert.Equal(t, "Flower", r.Name)
 		assert.Equal(t, 38, r.Uncertainty)
 		assert.Equal(t, "image", r.Source)

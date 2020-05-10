@@ -1,13 +1,13 @@
 package entity
 
-var PhotoKeywordFixtures = map[string]PhotoKeyword{
+type PhotoKeywordMap map[string]PhotoKeyword
+
+var PhotoKeywordFixtures = PhotoKeywordMap{
 	"1": {
 		PhotoID:   1000004,
 		KeywordID: 1000000,
 	},
 }
-
-var PhotoKeywordFixture1 = PhotoKeywordFixtures["1"]
 
 // CreatePhotoKeywordFixtures inserts known entities into the database for testing.
 func CreatePhotoKeywordFixtures() {

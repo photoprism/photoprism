@@ -7,7 +7,7 @@ import (
 var FileFixtures = map[string]File{
 	"exampleFileName.jpg": {
 		ID:              1000000,
-		Photo:           &PhotoFixture19800101_000002_D640C559,
+		Photo:           PhotoFixtures.Pointer("19800101_000002_D640C559"),
 		PhotoID:         1000000,
 		PhotoUUID:       "pt9jtdre2lvl0yh7",
 		FileUUID:        "ft8es39w45bnlqdw",
@@ -46,7 +46,7 @@ var FileFixtures = map[string]File{
 	},
 	"exampleDNGFile.dng": {
 		ID:              1000001,
-		Photo:           &PhotoFixturePhoto01,
+		Photo:           PhotoFixtures.Pointer("Photo01"),
 		PhotoID:         1000001,
 		PhotoUUID:       "pt9jtdre2lvl0yh8",
 		FileUUID:        "ft9es39w45bnlqdw",
@@ -85,7 +85,7 @@ var FileFixtures = map[string]File{
 	},
 	"exampleXmpFile.xmp": {
 		ID:              1000002,
-		Photo:           &PhotoFixturePhoto01,
+		Photo:           PhotoFixtures.Pointer("Photo01"),
 		PhotoID:         1000001,
 		PhotoUUID:       "pt9jtdre2lvl0yh8",
 		FileUUID:        "ft1es39w45bnlqdw",
@@ -124,7 +124,7 @@ var FileFixtures = map[string]File{
 	},
 	"bridge.jpg": {
 		ID:              1000003,
-		Photo:           &PhotoFixturePhoto04,
+		Photo:           PhotoFixtures.Pointer("Photo04"),
 		PhotoID:         1000004,
 		PhotoUUID:       "pt9jtdre2lvl0y11",
 		FileUUID:        "ft2es39w45bnlqdw",
@@ -163,7 +163,7 @@ var FileFixtures = map[string]File{
 	},
 	"reunion.jpg": {
 		ID:              1000004,
-		Photo:           &PhotoFixturePhoto05,
+		Photo:           PhotoFixtures.Pointer("Photo05"),
 		PhotoID:         1000005,
 		PhotoUUID:       "pt9jtdre2lvl0y12",
 		FileUUID:        "ft3es39w45bnlqdw",

@@ -4,7 +4,34 @@ import (
 	"time"
 )
 
-var LabelFixtures = map[string]Label{
+type LabelMap map[string]Label
+
+func (m LabelMap) Get(name string) Label {
+	if result, ok := m[name]; ok {
+		return result
+	}
+
+	return *NewLabel(name, 0)
+}
+
+func (m LabelMap) Pointer(name string) *Label {
+	if result, ok := m[name]; ok {
+		return &result
+	}
+
+	return NewLabel(name, 0)
+}
+
+func (m LabelMap) PhotoLabel(photoId uint, labelName string, uncertainty int, source string) PhotoLabel {
+	label := m.Get(labelName)
+
+	photoLabel := NewPhotoLabel(photoId, label.ID, uncertainty, source)
+	photoLabel.Label = &label
+
+	return *photoLabel
+}
+
+var LabelFixtures = LabelMap{
 	"landscape": {
 		ID:               1000000,
 		LabelUUID:        "lt9k3pw1wowuy3c2",
@@ -15,6 +42,7 @@ var LabelFixtures = map[string]Label{
 		LabelFavorite:    true,
 		LabelDescription: "",
 		LabelNotes:       "",
+		PhotoCount:       1,
 		LabelCategories:  []*Label{},
 		Links:            []Link{},
 		CreatedAt:        time.Now(),
@@ -32,6 +60,7 @@ var LabelFixtures = map[string]Label{
 		LabelFavorite:    true,
 		LabelDescription: "",
 		LabelNotes:       "",
+		PhotoCount:       2,
 		LabelCategories:  []*Label{},
 		Links:            []Link{},
 		CreatedAt:        time.Now(),
@@ -49,6 +78,7 @@ var LabelFixtures = map[string]Label{
 		LabelFavorite:    false,
 		LabelDescription: "",
 		LabelNotes:       "",
+		PhotoCount:       3,
 		LabelCategories:  []*Label{},
 		Links:            []Link{},
 		CreatedAt:        time.Now(),
@@ -66,6 +96,7 @@ var LabelFixtures = map[string]Label{
 		LabelFavorite:    true,
 		LabelDescription: "",
 		LabelNotes:       "",
+		PhotoCount:       4,
 		LabelCategories:  []*Label{},
 		Links:            []Link{},
 		CreatedAt:        time.Now(),
@@ -83,6 +114,7 @@ var LabelFixtures = map[string]Label{
 		LabelFavorite:    true,
 		LabelDescription: "",
 		LabelNotes:       "",
+		PhotoCount:       5,
 		LabelCategories:  []*Label{},
 		Links:            []Link{},
 		CreatedAt:        time.Now(),
@@ -100,6 +132,7 @@ var LabelFixtures = map[string]Label{
 		LabelFavorite:    false,
 		LabelDescription: "",
 		LabelNotes:       "",
+		PhotoCount:       1,
 		LabelCategories:  []*Label{},
 		Links:            []Link{},
 		CreatedAt:        time.Now(),
@@ -117,6 +150,7 @@ var LabelFixtures = map[string]Label{
 		LabelFavorite:    false,
 		LabelDescription: "",
 		LabelNotes:       "",
+		PhotoCount:       1,
 		LabelCategories:  []*Label{},
 		Links:            []Link{},
 		CreatedAt:        time.Now(),
@@ -125,12 +159,6 @@ var LabelFixtures = map[string]Label{
 		New:              false,
 	},
 }
-
-var LabelFixtureLandscape = LabelFixtures["landscape"]
-var LabelFixtureFlower = LabelFixtures["flower"]
-var LabelFixtureCake = LabelFixtures["cake"]
-var LabelFixtureCow = LabelFixtures["cow"]
-var LabelFixtureUpdatePhotoLabel = LabelFixtures["updatePhotoLabel"]
 
 // CreateLabelFixtures inserts known entities into the database for testing.
 func CreateLabelFixtures() {

@@ -2,9 +2,27 @@ package entity
 
 import "time"
 
-var PlaceFixtures = map[string]Place{
+type PlacesMap map[string]Place
+
+func (m PlacesMap) Get(name string) Place {
+	if result, ok := m[name]; ok {
+		return result
+	}
+
+	return UnknownPlace
+}
+
+func (m PlacesMap) Pointer(name string) *Place {
+	if result, ok := m[name]; ok {
+		return &result
+	}
+
+	return &UnknownPlace
+}
+
+var PlaceFixtures = PlacesMap{
 	"teotihuacan": {
-		ID:          "1000000",
+		ID:          "85d1ea7d382c",
 		LocLabel:    "Teotihuacán, Mexico, Mexico",
 		LocCity:     "Teotihuacán",
 		LocState:    "Mexico",
@@ -12,11 +30,12 @@ var PlaceFixtures = map[string]Place{
 		LocKeywords: "ancient, pyramid",
 		LocNotes:    "",
 		LocFavorite: false,
+		PhotoCount:  1,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	},
 	"zinkwazi": {
-		ID:          "1000001",
+		ID:          "1ef744d1e28c",
 		LocLabel:    "KwaDukuza, KwaZulu-Natal, South Africa",
 		LocCity:     "KwaDukuza",
 		LocState:    "KwaZulu-Natal",
@@ -24,13 +43,11 @@ var PlaceFixtures = map[string]Place{
 		LocKeywords: "",
 		LocNotes:    "africa",
 		LocFavorite: true,
+		PhotoCount:  2,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	},
 }
-
-var PlaceFixtureTeotihuacan = PlaceFixtures["teotihuacan"]
-var PlaceFixtureZinkwazi = PlaceFixtures["zinkwazi"]
 
 // CreatePlaceFixtures inserts known entities into the database for testing.
 func CreatePlaceFixtures() {

@@ -16,8 +16,8 @@ type LabelResult struct {
 	CustomSlug       string
 	LabelName        string
 	LabelPriority    int
-	LabelCount       int
 	LabelFavorite    bool
 	LabelDescription string
 	LabelNotes       string
+	PhotoCount       int
 }

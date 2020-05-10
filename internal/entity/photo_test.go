@@ -91,7 +91,8 @@ func TestPhoto_Save(t *testing.T) {
 		}
 	})
 	t.Run("existing photo", func(t *testing.T) {
-		err := PhotoFixture19800101_000002_D640C559.Save()
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
+		err := m.Save()
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -100,13 +101,13 @@ func TestPhoto_Save(t *testing.T) {
 
 func TestPhoto_ClassifyLabels(t *testing.T) {
 	t.Run("new photo", func(t *testing.T) {
-		m := PhotoFixturePhoto01
+		m := PhotoFixtures.Get("Photo01")
 		Db().Set("gorm:auto_preload", true).Model(&m).Related(&m.Labels)
 		labels := m.ClassifyLabels()
 		assert.Empty(t, labels)
 	})
 	t.Run("existing photo", func(t *testing.T) {
-		m := PhotoFixture19800101_000002_D640C559
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		Db().Set("gorm:auto_preload", true).Model(&m).Related(&m.Labels)
 		labels := m.ClassifyLabels()
 		assert.LessOrEqual(t, 2, labels.Len())

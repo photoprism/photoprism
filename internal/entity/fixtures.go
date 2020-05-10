@@ -14,8 +14,6 @@ func CreateTestFixtures() {
 	CreateKeywordFixtures()
 	CreatePhotoKeywordFixtures()
 	CreateCategoryFixtures()
-	CreatePhotoLabelFixtures()
 	CreateLocationFixtures()
 	CreatePlaceFixtures()
-	CreateDescriptionFixtures()
 }

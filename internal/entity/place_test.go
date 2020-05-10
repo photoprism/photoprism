@@ -14,22 +14,36 @@ func TestCreateUnknownPlace(t *testing.T) {
 
 func TestFindPlaceByLabel(t *testing.T) {
 	t.Run("find by id", func(t *testing.T) {
-		r := FindPlaceByLabel("1000000", "")
+		r := FindPlaceByLabel("85d1ea7d382c", "")
+
+		if r == nil {
+			t.Fatal("result should not be nil")
+		}
+
 		assert.Equal(t, "mx", r.LocCountry)
 	})
 	t.Run("find by label", func(t *testing.T) {
 		r := FindPlaceByLabel("", "KwaDukuza, KwaZulu-Natal, South Africa")
+
+		if r == nil {
+			t.Fatal("result should not be nil")
+		}
+
 		assert.Equal(t, "za", r.LocCountry)
 	})
 	t.Run("not matching", func(t *testing.T) {
 		r := FindPlaceByLabel("111", "xxx")
-		assert.Nil(t, r)
+
+		if r != nil {
+			t.Fatal("result should be nil")
+		}
 	})
 }
 
 func TestPlace_Find(t *testing.T) {
 	t.Run("record exists", func(t *testing.T) {
-		r := PlaceFixtureTeotihuacan.Find()
+		m := PlaceFixtures.Get("teotihuacan")
+		r := m.Find()
 		assert.Nil(t, r)
 	})
 	t.Run("record does not exist", func(t *testing.T) {
@@ -53,6 +67,7 @@ func TestPlace_Find(t *testing.T) {
 }
 
 func TestPlace_FirstOrCreate(t *testing.T) {
-	r := PlaceFixtureZinkwazi.FirstOrCreate()
+	m := PlaceFixtures.Pointer("zinkwazi")
+	r := m.FirstOrCreate()
 	assert.Equal(t, "KwaDukuza, KwaZulu-Natal, South Africa", r.LocLabel)
 }

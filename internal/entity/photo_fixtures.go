@@ -6,7 +6,25 @@ import (
 
 var editTime = time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC)
 
-var PhotoFixtures = map[string]Photo{
+type PhotoMap map[string]Photo
+
+func (m PhotoMap) Get(name string) Photo {
+	if result, ok := m[name]; ok {
+		return result
+	}
+
+	return Photo{PhotoName: name}
+}
+
+func (m PhotoMap) Pointer(name string) *Photo {
+	if result, ok := m[name]; ok {
+		return &result
+	}
+
+	return &Photo{PhotoName: name}
+}
+
+var PhotoFixtures = PhotoMap{
 	"19800101_000002_D640C559": {
 		ID:               1000000,
 		PhotoUUID:        "pt9jtdre2lvl0yh7",
@@ -40,7 +58,7 @@ var PhotoFixtures = map[string]Photo{
 		PhotoCountry:     "zz",
 		PhotoYear:        2790,
 		PhotoMonth:       2,
-		Description:      DescriptionFixtureLake,
+		Description:      DescriptionFixtures.Get("lake", 1000000),
 		DescriptionSrc:   "",
 		Camera:           &CameraFixtureEOS6D,
 		Lens:             nil,
@@ -50,7 +68,10 @@ var PhotoFixtures = map[string]Photo{
 		Keywords:         []Keyword{},
 		Albums:           []Album{},
 		Files:            []File{},
-		Labels:           []PhotoLabel{},
+		Labels:           []PhotoLabel{
+			LabelFixtures.PhotoLabel(1000000, "flower", 38, "image"),
+			LabelFixtures.PhotoLabel(1000000, "cake", 38, "manual"),
+		},
 		CreatedAt:        time.Date(2009, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:         nil,
@@ -148,7 +169,7 @@ var PhotoFixtures = map[string]Photo{
 		Keywords:         []Keyword{},
 		Albums:           []Album{},
 		Files:            []File{},
-		Labels:           []PhotoLabel{},
+		Labels:           []PhotoLabel{LabelFixtures.PhotoLabel(1000002, "cake", 20, "image")},
 		CreatedAt:        time.Date(2009, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:         nil,
@@ -197,7 +218,10 @@ var PhotoFixtures = map[string]Photo{
 		Keywords:         []Keyword{},
 		Albums:           []Album{},
 		Files:            []File{},
-		Labels:           []PhotoLabel{},
+		Labels:           []PhotoLabel{
+			LabelFixtures.PhotoLabel(1000003, "cow", 20, "image"),
+			LabelFixtures.PhotoLabel(1000003, "updatePhotoLabel", 20, "manual"),
+		},
 		CreatedAt:        time.Date(2009, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:         nil,
@@ -246,7 +270,7 @@ var PhotoFixtures = map[string]Photo{
 		Keywords:         []Keyword{},
 		Albums:           []Album{},
 		Files:            []File{},
-		Labels:           []PhotoLabel{},
+		Labels:           []PhotoLabel{LabelFixtures.PhotoLabel(1000004, "batchdelete", 20, "image")},
 		CreatedAt:        time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:         nil,
@@ -295,7 +319,7 @@ var PhotoFixtures = map[string]Photo{
 		Keywords:         []Keyword{},
 		Albums:           []Album{},
 		Files:            []File{},
-		Labels:           []PhotoLabel{},
+		Labels:           []PhotoLabel{LabelFixtures.PhotoLabel(1000005, "updateLabel", 20, "image")},
 		CreatedAt:        time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:         nil,
@@ -344,7 +368,7 @@ var PhotoFixtures = map[string]Photo{
 		Keywords:         []Keyword{},
 		Albums:           []Album{},
 		Files:            []File{},
-		Labels:           []PhotoLabel{},
+		Labels:           []PhotoLabel{LabelFixtures.PhotoLabel(1000006, "updatePhotoLabel", 20, "image")},
 		CreatedAt:        time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:         nil,
@@ -393,7 +417,7 @@ var PhotoFixtures = map[string]Photo{
 		Keywords:         []Keyword{},
 		Albums:           []Album{},
 		Files:            []File{},
-		Labels:           []PhotoLabel{},
+		Labels:           []PhotoLabel{LabelFixtures.PhotoLabel(1000007, "landscape", 20, "image")},
 		CreatedAt:        time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:         &editTime,
@@ -442,22 +466,13 @@ var PhotoFixtures = map[string]Photo{
 		Keywords:         []Keyword{},
 		Albums:           []Album{},
 		Files:            []File{},
-		Labels:           []PhotoLabel{},
+		Labels:           []PhotoLabel{LabelFixtures.PhotoLabel(1000008, "landscape", 20, "image")},
 		CreatedAt:        time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:         nil,
 		DeletedAt:        nil,
 	},
 }
-
-var PhotoFixture19800101_000002_D640C559 = PhotoFixtures["19800101_000002_D640C559"]
-var PhotoFixturePhoto04 = PhotoFixtures["Photo04"]
-var PhotoFixturePhoto01 = PhotoFixtures["Photo01"]
-var PhotoFixturePhoto05 = PhotoFixtures["Photo05"]
-var PhotoFixturePhoto03 = PhotoFixtures["Photo03"]
-var PhotoFixturePhoto06 = PhotoFixtures["Photo06"]
-var PhotoFixturePhoto07 = PhotoFixtures["Photo07"]
-var PhotoFixturePhoto08 = PhotoFixtures["Photo08"]
 
 // CreatePhotoFixtures inserts known entities into the database for testing.
 func CreatePhotoFixtures() {
