@@ -65,7 +65,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		runtime.GC()
 	}()
 
-	limit := 500
+	limit := 250
 	offset := 0
 
 	for {
@@ -115,7 +115,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		time.Sleep(250 * time.Millisecond)
 	}
 
-	limit = 500
+	limit = 250
 	offset = 0
 
 	for {
