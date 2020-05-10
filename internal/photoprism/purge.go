@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path"
 	"runtime"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
@@ -110,6 +111,8 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		}
 
 		offset += limit
+
+		time.Sleep(250 * time.Millisecond)
 	}
 
 	limit = 500
@@ -159,6 +162,8 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		}
 
 		offset += limit
+
+		time.Sleep(250 * time.Millisecond)
 	}
 
 	if err := query.ResetPhotosQuality(); err != nil {
