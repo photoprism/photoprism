@@ -162,7 +162,8 @@ func (c *Config) ClientConfig() ClientConfig {
 		Take(&count)
 
 	db.Table("places").
-		Select("(SUM(photo_count > 0) - 1) AS places").
+		Select("SUM(photo_count > 0) AS places").
+		Where("id != 'zz'").
 		Take(&count)
 
 	type country struct {
