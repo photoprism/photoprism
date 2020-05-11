@@ -1,6 +1,6 @@
 package entity
 
-func CreateViews () {
+func CreateViews() {
 	labelCounts := `CREATE OR REPLACE VIEW label_counts AS
 		SELECT label_id, SUM(photo_count) AS photo_count FROM (
 		(SELECT l.id AS label_id, COUNT(*) AS photo_count FROM labels l

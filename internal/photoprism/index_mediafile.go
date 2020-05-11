@@ -24,6 +24,7 @@ const (
 	IndexAdded     IndexStatus = "added"
 	IndexSkipped   IndexStatus = "skipped"
 	IndexDuplicate IndexStatus = "skipped duplicate"
+	IndexArchived  IndexStatus = "skipped archived"
 	IndexFailed    IndexStatus = "failed"
 )
 
@@ -143,6 +144,16 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			file.FilePrimary = m.IsJpeg()
 		}
 	}
+
+	if photo.PhotoQuality == -1 && file.FilePrimary {
+		// restore photos that have been purged automatically
+		photo.DeletedAt = nil
+	} else if photo.DeletedAt != nil {
+		result.Status = IndexArchived
+		return result
+	}
+
+	file.DeletedAt = nil
 
 	if file.FilePrimary {
 		primaryFile = file
@@ -295,9 +306,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 	}
-
-	photo.DeletedAt = nil
-	file.DeletedAt = nil
 
 	if photoExists {
 		// Estimate location

@@ -68,14 +68,14 @@ var PhotoFixtures = PhotoMap{
 		Keywords:         []Keyword{},
 		Albums:           []Album{},
 		Files:            []File{},
-		Labels:           []PhotoLabel{
+		Labels: []PhotoLabel{
 			LabelFixtures.PhotoLabel(1000000, "flower", 38, "image"),
 			LabelFixtures.PhotoLabel(1000000, "cake", 38, "manual"),
 		},
-		CreatedAt:        time.Date(2009, 1, 1, 0, 0, 0, 0, time.UTC),
-		UpdatedAt:        time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
-		EditedAt:         nil,
-		DeletedAt:        nil,
+		CreatedAt: time.Date(2009, 1, 1, 0, 0, 0, 0, time.UTC),
+		UpdatedAt: time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
+		EditedAt:  nil,
+		DeletedAt: nil,
 	},
 	"Photo01": {
 		ID:               1000001,
@@ -218,14 +218,14 @@ var PhotoFixtures = PhotoMap{
 		Keywords:         []Keyword{},
 		Albums:           []Album{},
 		Files:            []File{},
-		Labels:           []PhotoLabel{
+		Labels: []PhotoLabel{
 			LabelFixtures.PhotoLabel(1000003, "cow", 20, "image"),
 			LabelFixtures.PhotoLabel(1000003, "updatePhotoLabel", 20, "manual"),
 		},
-		CreatedAt:        time.Date(2009, 1, 1, 0, 0, 0, 0, time.UTC),
-		UpdatedAt:        time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
-		EditedAt:         nil,
-		DeletedAt:        nil,
+		CreatedAt: time.Date(2009, 1, 1, 0, 0, 0, 0, time.UTC),
+		UpdatedAt: time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
+		EditedAt:  nil,
+		DeletedAt: nil,
 	},
 	"Photo04": {
 		ID:               1000004,
