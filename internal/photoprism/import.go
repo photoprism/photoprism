@@ -195,8 +195,12 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 		log.Error(err.Error())
 	}
 
-	if err := query.UpdatePhotoCounts(); err != nil {
-		log.Errorf("import: %s", err)
+	if len(done) > 0 {
+		log.Info("import: updating photo counts")
+
+		if err := query.UpdatePhotoCounts(); err != nil {
+			log.Errorf("import: %s", err)
+		}
 	}
 
 	runtime.GC()

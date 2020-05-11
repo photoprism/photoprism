@@ -175,7 +175,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 	log.Info("purge: updating photo counts")
 
 	if err := query.UpdatePhotoCounts(); err != nil {
-		return purgedFiles, purgedPhotos, err
+		log.Errorf("purge: %s", err)
 	}
 
 	return purgedFiles, purgedPhotos, nil

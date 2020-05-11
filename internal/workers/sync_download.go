@@ -179,5 +179,13 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 		}
 	}
 
+	if len(done) > 0 {
+		log.Info("sync: updating photo counts")
+
+		if err := query.UpdatePhotoCounts(); err != nil {
+			log.Errorf("sync: %s", err)
+		}
+	}
+
 	return false, nil
 }

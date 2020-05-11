@@ -71,6 +71,8 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		log.Info("photo: updating related entity counts")
+
 		if err := query.UpdatePhotoCounts(); err != nil {
 			log.Errorf("photo: %s", err)
 		}
@@ -134,6 +136,8 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
+
+		log.Info("photo: updating related entity counts")
 
 		if err := query.UpdatePhotoCounts(); err != nil {
 			log.Errorf("photo: %s", err)
