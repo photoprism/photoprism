@@ -65,7 +65,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		runtime.GC()
 	}()
 
-	limit := 250
+	limit := 500
 	offset := 0
 
 	for {
@@ -112,10 +112,10 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 		offset += limit
 
-		time.Sleep(250 * time.Millisecond)
+		time.Sleep(50 * time.Millisecond)
 	}
 
-	limit = 250
+	limit = 500
 	offset = 0
 
 	for {
@@ -163,7 +163,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 		offset += limit
 
-		time.Sleep(250 * time.Millisecond)
+		time.Sleep(50 * time.Millisecond)
 	}
 
 	log.Info("purge: finding hidden photos")
