@@ -166,9 +166,13 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		time.Sleep(250 * time.Millisecond)
 	}
 
+	log.Info("purge: finding hidden photos")
+
 	if err := query.ResetPhotosQuality(); err != nil {
 		return purgedFiles, purgedPhotos, err
 	}
+
+	log.Info("purge: updating photo counts")
 
 	if err := query.UpdatePhotoCounts(); err != nil {
 		return purgedFiles, purgedPhotos, err
