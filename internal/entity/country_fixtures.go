@@ -3,7 +3,7 @@ package entity
 type CountryMap map[string]Country
 
 var CountryFixtures = CountryMap{
-	"apple-iphone-se": {
+	"germany": {
 		ID:                 "de",
 		CountrySlug:        "germany",
 		CountryName:        "Germany",

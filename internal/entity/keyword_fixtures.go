@@ -2,6 +2,22 @@ package entity
 
 type KeywordMap map[string]Keyword
 
+func (m KeywordMap) Get(name string) Keyword {
+	if result, ok := m[name]; ok {
+		return result
+	}
+
+	return *NewKeyword(name)
+}
+
+func (m KeywordMap) Pointer(name string) *Keyword {
+	if result, ok := m[name]; ok {
+		return &result
+	}
+
+	return NewKeyword(name)
+}
+
 var KeywordFixtures = KeywordMap{
 	"bridge": {
 		ID:      1000000,

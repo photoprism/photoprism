@@ -6,6 +6,22 @@ import (
 
 type AlbumMap map[string]Album
 
+func (m AlbumMap) Get(name string) Album {
+	if result, ok := m[name]; ok {
+		return result
+	}
+
+	return *NewAlbum(name)
+}
+
+func (m AlbumMap) Pointer(name string) *Album {
+	if result, ok := m[name]; ok {
+		return &result
+	}
+
+	return NewAlbum(name)
+}
+
 var AlbumFixtures = AlbumMap{
 	"christmas2030": {
 		ID:               1000000,
@@ -56,9 +72,6 @@ var AlbumFixtures = AlbumMap{
 		DeletedAt:        nil,
 	},
 }
-
-var AlbumFixtureHoliday2030 = AlbumFixtures["holiday-2030"]
-var AlbumFixtureBerlin2019 = AlbumFixtures["berlin-2019"]
 
 // CreateAlbumFixtures inserts known entities into the database for testing.
 func CreateAlbumFixtures() {

@@ -22,6 +22,7 @@ func TestPhotoAlbum_TableName(t *testing.T) {
 }
 
 func TestPhotoAlbum_FirstOrCreate(t *testing.T) {
-	r := PhotoAlbumFixture1.FirstOrCreate()
+	m := PhotoAlbumFixtures.Get("1", "pt9jtdre2lvl0yh7", "at9lxuqxpogaaba8")
+	r := m.FirstOrCreate()
 	assert.Equal(t, "at9lxuqxpogaaba8", r.AlbumUUID)
 }

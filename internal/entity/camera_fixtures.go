@@ -6,6 +6,22 @@ import (
 
 type CameraMap map[string]Camera
 
+func (m CameraMap) Get(name string) Camera {
+	if result, ok := m[name]; ok {
+		return result
+	}
+
+	return *NewCamera(name, "")
+}
+
+func (m CameraMap) Pointer(name string) *Camera {
+	if result, ok := m[name]; ok {
+		return &result
+	}
+
+	return NewCamera(name, "")
+}
+
 var CameraFixtures = CameraMap{
 	"apple-iphone-se": {
 		ID:                1000000,
@@ -80,8 +96,6 @@ var CameraFixtures = CameraMap{
 		DeletedAt:         nil,
 	},
 }
-
-var CameraFixtureEOS6D = CameraFixtures["canon-eos-6d"]
 
 // CreateCameraFixtures inserts known entities into the database for testing.
 func CreateCameraFixtures() {
