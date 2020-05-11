@@ -39,11 +39,13 @@ func TestImport_DestinationFilename(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	filename, _ := imp.DestinationFilename(rawFile, rawFile)
+	fileName, err := imp.DestinationFilename(rawFile, rawFile)
 
-	// TODO: Check for errors!
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	assert.Equal(t, conf.OriginalsPath()+"/2019/07/20190705_153230_C167C6FD.cr2", filename)
+	assert.Equal(t, conf.OriginalsPath()+"/2019/07/20190705_153230_C167C6FD.cr2", fileName)
 }
 
 func TestImport_Start(t *testing.T) {
