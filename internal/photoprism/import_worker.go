@@ -63,11 +63,15 @@ func ImportWorker(jobs <-chan ImportJob) {
 						log.Errorf("import: could not copy file to %s (%s)", txt.Quote(fs.RelativeName(destinationMainFilename, imp.originalsPath())), err.Error())
 					}
 				}
-			} else if opt.RemoveExistingFiles {
-				if err := f.Remove(); err != nil {
-					log.Errorf("import: could not delete %s (%s)", txt.Quote(fs.RelativeName(f.FileName(), importPath)), err.Error())
-				} else {
-					log.Infof("import: deleted %s (already exists)", txt.Quote(relativeFilename))
+			} else {
+				log.Warnf("import: %s", err)
+
+				if opt.RemoveExistingFiles {
+					if err := f.Remove(); err != nil {
+						log.Errorf("import: could not delete %s (%s)", txt.Quote(fs.RelativeName(f.FileName(), importPath)), err.Error())
+					} else {
+						log.Infof("import: deleted %s (already exists)", txt.Quote(relativeFilename))
+					}
 				}
 			}
 		}

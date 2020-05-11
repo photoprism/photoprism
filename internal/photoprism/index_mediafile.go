@@ -149,12 +149,16 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		// restore photos that have been purged automatically
 		photo.DeletedAt = nil
 	} else if photo.DeletedAt != nil {
+		// don't waste time indexing deleted / archived photos
 		result.Status = IndexArchived
 		return result
 	}
 
+	// file obviously exists: remove deleted and missing flags
 	file.DeletedAt = nil
+	file.FileMissing = false
 
+	// primary files are used for rendering thumbnails and image classification (plus sidecar files if they exist)
 	if file.FilePrimary {
 		primaryFile = file
 
@@ -270,7 +274,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	file.FileSidecar = m.IsSidecar()
 	file.FileVideo = m.IsVideo()
-	file.FileMissing = false
 	file.FileName = fileName
 	file.FileHash = fileHash
 	file.FileSize = fileSize

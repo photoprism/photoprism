@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
 	"runtime"
 	"sort"
 	"sync"
@@ -217,26 +217,30 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 	if !mediaFile.IsSidecar() {
 		if f, err := entity.FirstFileByHash(mediaFile.Hash()); err == nil {
-			existingFilename := imp.conf.OriginalsPath() + string(os.PathSeparator) + f.FileName
-			return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", txt.Quote(mediaFile.FileName()), txt.Quote(f.FileName), mediaFile.Hash())
+			existingFilename := filepath.Join(imp.conf.OriginalsPath(), f.FileName)
+			if fs.FileExists(existingFilename) {
+				return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", txt.Quote(filepath.Base(mediaFile.FileName())), txt.Quote(f.FileName), mediaFile.Hash())
+			} else {
+				return existingFilename, nil
+			}
 		}
 	}
 
 	//	Mon Jan 2 15:04:05 -0700 MST 2006
-	pathName := path.Join(imp.originalsPath(), dateCreated.Format("2006/01"))
+	pathName := filepath.Join(imp.originalsPath(), dateCreated.Format("2006/01"))
 
 	iteration := 0
 
-	result := path.Join(pathName, fileName+fileExtension)
+	result := filepath.Join(pathName, fileName+fileExtension)
 
 	for fs.FileExists(result) {
 		if mediaFile.Hash() == fs.Hash(result) {
-			return result, fmt.Errorf("file already exists: %s", result)
+			return result, fmt.Errorf("%s already exists", txt.Quote(fs.RelativeName(result, imp.originalsPath())))
 		}
 
 		iteration++
 
-		result = path.Join(pathName, fileName+"."+fmt.Sprintf("%04d", iteration)+fileExtension)
+		result = filepath.Join(pathName, fileName+"."+fmt.Sprintf("%04d", iteration)+fileExtension)
 	}
 
 	return result, nil
