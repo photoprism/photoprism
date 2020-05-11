@@ -8,8 +8,13 @@ https://github.com/photoprism/photoprism/wiki
 package query
 
 import (
+	"fmt"
+	"strings"
+
+	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/jinzhu/gorm"
 )
@@ -46,4 +51,49 @@ func Db() *gorm.DB {
 // UnscopedDb returns an unscoped database connection instance.
 func UnscopedDb() *gorm.DB {
 	return entity.Db().Unscoped()
+}
+
+// LikeAny returns a where condition that matches any keyword in search.
+func LikeAny(col, search string) (where string) {
+	var wheres []string
+
+	words := txt.UniqueKeywords(search)
+
+	if len(words) == 0 {
+		return ""
+	}
+
+	for _, w := range words {
+		if len(w) > 3 {
+			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s%%'", col, w))
+		} else {
+			wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, w))
+		}
+	}
+
+	return strings.Join(wheres, " OR ")
+}
+
+// AnySlug returns a where condition that matches any slug in search.
+func AnySlug(col, search string) (where string) {
+	if search == "" {
+		return ""
+	}
+
+	var wheres []string
+	var words []string
+
+	for _, w := range strings.Split(search, " ") {
+		words = append(words, slug.Make(strings.TrimSpace(w)))
+	}
+
+	if len(words) == 0 {
+		return ""
+	}
+
+	for _, w := range words {
+		wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, w))
+	}
+
+	return strings.Join(wheres, " OR ")
 }

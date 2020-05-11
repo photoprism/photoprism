@@ -11,8 +11,8 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
-// PhotoResult contains found photos and their main file plus other meta data.
-type PhotoResult struct {
+// PhotosResult contains found photos and their main file plus other meta data.
+type PhotosResult struct {
 	// Photo
 	ID               uint
 	CreatedAt        time.Time
@@ -81,11 +81,11 @@ type PhotoResult struct {
 	Files []entity.File
 }
 
-type PhotoResults []PhotoResult
+type PhotosResults []PhotosResult
 
-func (m PhotoResults) Merged() (PhotoResults, int, error) {
+func (m PhotosResults) Merged() (PhotosResults, int, error) {
 	count := len(m)
-	merged := make([]PhotoResult, 0, count)
+	merged := make([]PhotosResult, 0, count)
 
 	var lastId uint
 	var i int
@@ -116,7 +116,7 @@ func (m PhotoResults) Merged() (PhotoResults, int, error) {
 	return merged, count, nil
 }
 
-func (m *PhotoResult) ShareFileName() string {
+func (m *PhotosResult) ShareFileName() string {
 	var name string
 
 	if m.PhotoTitle != "" {

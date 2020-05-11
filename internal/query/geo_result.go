@@ -25,3 +25,5 @@ func (g GeoResult) Lat() float64 {
 func (g GeoResult) Lng() float64 {
 	return float64(g.PhotoLng)
 }
+
+type GeoResults []GeoResult

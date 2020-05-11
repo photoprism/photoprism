@@ -5,15 +5,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gosimple/slug"
+	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Photos searches for photos based on a Form and returns a PhotoResult slice.
-func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
+// Photos searches for photos based on a Form and returns PhotosResults ([]PhotosResult).
+func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, 0, err
 	}
@@ -32,13 +32,11 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		files.file_diff,
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
-		places.loc_label, places.loc_city, places.loc_state, places.loc_country
-		`).
+		places.loc_label, places.loc_city, places.loc_state, places.loc_country`).
 		Joins("JOIN files ON files.photo_id = photos.id AND files.file_type = 'jpg' AND files.file_missing = 0 AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
 		Joins("JOIN places ON photos.place_id = places.id").
-		Joins("LEFT JOIN photos_labels ON photos_labels.photo_id = photos.id AND photos_labels.uncertainty < 100").
 		Group("photos.id, files.id")
 
 	if f.ID != "" {
@@ -58,6 +56,7 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 
 	var categories []entity.Category
 	var label entity.Label
+	var labels []entity.Label
 	var labelIds []uint
 
 	if f.Label != "" {
@@ -74,46 +73,46 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 				labelIds = append(labelIds, category.LabelID)
 			}
 
-			s = s.Where("photos_labels.label_id IN (?)", labelIds)
+			s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = photos.id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIds)
 		}
 	}
 
 	if f.Location == true {
 		s = s.Where("location_id > 0")
 
-		if f.Query != "" {
-			s = s.Joins("LEFT JOIN photos_keywords ON photos_keywords.photo_id = photos.id").
-				Joins("LEFT JOIN keywords ON photos_keywords.keyword_id = keywords.id").
-				Where("keywords.keyword LIKE ?", strings.ToLower(txt.Clip(f.Query, txt.ClipKeyword))+"%")
+		if likeAny := LikeAny("k.keyword", f.Query); likeAny != "" {
+			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(likeAny))
 		}
 	} else if f.Query != "" {
 		if len(f.Query) < 2 {
 			return results, 0, fmt.Errorf("query too short")
 		}
 
-		slugString := slug.Make(f.Query)
-		lowerString := strings.ToLower(f.Query)
-		likeString := txt.Clip(lowerString, txt.ClipKeyword) + "%"
-
-		s = s.Joins("LEFT JOIN photos_keywords ON photos_keywords.photo_id = photos.id").
-			Joins("LEFT JOIN keywords ON photos_keywords.keyword_id = keywords.id")
-
-		if result := Db().First(&label, "label_slug = ? OR custom_slug = ?", slugString, slugString); result.Error != nil {
+		if err := Db().Where(AnySlug("custom_slug", f.Query)).Find(&labels).Error; len(labels) == 0 || err != nil {
 			log.Infof("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
 
-			s = s.Where("keywords.keyword LIKE ?", likeString)
+			if likeAny := LikeAny("k.keyword", f.Query); likeAny != "" {
+				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(likeAny))
+			}
 		} else {
-			labelIds = append(labelIds, label.ID)
+			for _, l := range labels {
+				labelIds = append(labelIds, l.ID)
 
-			Db().Where("category_id = ?", label.ID).Find(&categories)
+				Db().Where("category_id = ?", l.ID).Find(&categories)
 
-			for _, category := range categories {
-				labelIds = append(labelIds, category.LabelID)
+				log.Infof("search: label %s includes %d categories", txt.Quote(l.LabelName), len(categories))
+
+				for _, category := range categories {
+					labelIds = append(labelIds, category.LabelID)
+				}
 			}
 
-			log.Infof("search: label %s includes %d categories", txt.Quote(label.LabelName), len(labelIds))
-
-			s = s.Where("photos_labels.label_id IN (?) OR keywords.keyword LIKE ?", labelIds, likeString)
+			if likeAny := LikeAny("k.keyword", f.Query); likeAny != "" {
+				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?)) OR "+
+					"photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(likeAny), labelIds)
+			} else {
+				s = s.Where("photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", labelIds)
+			}
 		}
 	}
 

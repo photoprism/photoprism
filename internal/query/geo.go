@@ -12,8 +12,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Geo searches for photos based on a Form and returns a PhotoResult slice.
-func Geo(f form.GeoSearch) (results []GeoResult, err error) {
+// Geo searches for photos based on a Form and returns GeoResults ([]GeoResult).
+func Geo(f form.GeoSearch) (results GeoResults, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}

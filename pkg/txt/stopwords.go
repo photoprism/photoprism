@@ -2854,7 +2854,6 @@ var Stopwords = map[string]bool{
 	"unas":             true,
 	"uno":              true,
 	"unos":             true,
-	"usa":              true,
 	"usais":            true,
 	"usamos":           true,
 	"usan":             true,

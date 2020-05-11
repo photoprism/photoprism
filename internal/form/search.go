@@ -31,6 +31,8 @@ func ParseQueryString(f SearchForm) (result error) {
 
 	q = strings.TrimSpace(q) + "\n"
 
+	var queryStrings []string
+
 	for _, char := range q {
 		if unicode.IsSpace(char) && !escaped {
 			if isKeyValue {
@@ -74,8 +76,8 @@ func ParseQueryString(f SearchForm) (result error) {
 				} else {
 					result = fmt.Errorf("unknown filter: %s", fieldName)
 				}
-			} else {
-				f.SetQuery(string(key))
+			} else if len(strings.TrimSpace(string(key))) > 0 {
+				queryStrings = append(queryStrings, strings.TrimSpace(string(key)))
 			}
 
 			escaped = false
@@ -91,6 +93,10 @@ func ParseQueryString(f SearchForm) (result error) {
 		} else {
 			key = append(key, unicode.ToLower(char))
 		}
+	}
+
+	if len(queryStrings) > 0 {
+		f.SetQuery(strings.Join(queryStrings, " "))
 	}
 
 	if result != nil {
