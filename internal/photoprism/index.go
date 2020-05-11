@@ -11,6 +11,7 @@ import (
 	"github.com/karrick/godirwalk"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/nsfw"
@@ -172,9 +173,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 	}
 
 	if len(done) > 0 {
-		log.Info("index: updating photo counts")
-
-		if err := query.UpdatePhotoCounts(); err != nil {
+		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("index: %s", err)
 		}
 	}

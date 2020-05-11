@@ -76,12 +76,6 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		log.Info("photo: updating related entity counts")
-
-		if err := query.UpdatePhotoCounts(); err != nil {
-			log.Errorf("photo: %s", err)
-		}
-
 		PublishPhotoEvent(EntityUpdated, uuid, c)
 
 		event.Success("photo saved")

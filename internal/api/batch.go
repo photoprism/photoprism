@@ -48,7 +48,7 @@ func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := query.UpdatePhotoCounts(); err != nil {
+		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("photos: %s", err)
 		}
 
@@ -95,7 +95,7 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := query.UpdatePhotoCounts(); err != nil {
+		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("photos: %s", err)
 		}
 
@@ -175,7 +175,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := query.UpdatePhotoCounts(); err != nil {
+		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("photos: %s", err)
 		}
 

@@ -106,7 +106,15 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 	model.EditedAt = &edited
 	model.PhotoQuality = model.QualityScore()
 
-	return db.Unscoped().Save(&model).Error
+	if err := db.Unscoped().Save(&model).Error; err != nil {
+		return err
+	}
+
+	if err := UpdatePhotoCounts(); err != nil {
+		log.Errorf("photo: %s", err)
+	}
+
+	return nil
 }
 
 // Save stored the entity in the database.
@@ -130,7 +138,15 @@ func (m *Photo) Save() error {
 
 	m.PhotoQuality = m.QualityScore()
 
-	return db.Unscoped().Save(m).Error
+	if err := db.Unscoped().Save(m).Error; err != nil {
+		return err
+	}
+
+	if err := UpdatePhotoCounts(); err != nil {
+		log.Errorf("photo: %s", err)
+	}
+
+	return nil
 }
 
 // ClassifyLabels returns all associated labels as classify.Labels

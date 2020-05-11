@@ -14,7 +14,6 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -196,9 +195,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 	}
 
 	if len(done) > 0 {
-		log.Info("import: updating photo counts")
-
-		if err := query.UpdatePhotoCounts(); err != nil {
+		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("import: %s", err)
 		}
 	}
