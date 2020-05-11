@@ -97,7 +97,7 @@ func TestUpdatePhotoLabel(t *testing.T) {
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/pt9jtdre2lvl0yh0/label/1000006", `{"Label": {"LabelName": "NewLabelName"}}`)
 		assert.Equal(t, http.StatusOK, r.Code)
 		val := gjson.Get(r.Body.String(), "PhotoTitle")
-		assert.Equal(t, "NewLabelName / 2008", val.String())
+		assert.Contains(t, val.String(), "NewLabelName")
 	})
 	t.Run("photo not found", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
