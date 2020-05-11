@@ -26,10 +26,11 @@ type File struct {
 	FileMime        string `gorm:"type:varbinary(64)"`
 	FilePrimary     bool
 	FileSidecar     bool
-	FileVideo       bool
 	FileMissing     bool
 	FileDuplicate   bool
 	FilePortrait    bool
+	FileVideo       bool
+	FileLength      time.Duration
 	FileWidth       int
 	FileHeight      int
 	FileOrientation int

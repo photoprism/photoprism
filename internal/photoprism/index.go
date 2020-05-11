@@ -125,7 +125,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 
 			mf, err := NewMediaFile(fileName)
 
-			if err != nil || !mf.IsPhoto() {
+			if err != nil || !mf.IsMedia() {
 				return nil
 			}
 

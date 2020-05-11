@@ -191,41 +191,6 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// POST /api/v1/batch/photos/story
-func BatchPhotosStory(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/batch/photos/story", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
-			return
-		}
-
-		start := time.Now()
-
-		var f form.Selection
-
-		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
-			return
-		}
-
-		if len(f.Photos) == 0 {
-			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
-			return
-		}
-
-		log.Infof("marking photos as story: %#v", f.Photos)
-
-		entity.Db().Model(entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).Updates(map[string]interface{}{
-			"photo_story": gorm.Expr("IF (`photo_story`, 0, 1)"),
-		})
-
-		elapsed := time.Since(start)
-
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos marked as story in %s", elapsed)})
-	})
-}
-
 // POST /api/v1/batch/labels/delete
 func BatchLabelsDelete(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/batch/labels/delete", func(c *gin.Context) {

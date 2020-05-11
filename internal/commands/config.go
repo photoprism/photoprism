@@ -89,8 +89,10 @@ func configAction(ctx *cli.Context) error {
 	// External binaries
 	fmt.Printf("%-25s %s\n", "sips-bin", conf.SipsBin())
 	fmt.Printf("%-25s %s\n", "darktable-bin", conf.DarktableBin())
-	fmt.Printf("%-25s %s\n", "exiftool-bin", conf.ExifToolBin())
 	fmt.Printf("%-25s %s\n", "heifconvert-bin", conf.HeifConvertBin())
+	fmt.Printf("%-25s %s\n", "ffmpeg-bin", conf.FFmpegBin())
+	fmt.Printf("%-25s %s\n", "exiftool-bin", conf.ExifToolBin())
+	fmt.Printf("%-25s %t\n", "write-json", conf.WriteJson())
 
 	// Places / Geocoding API
 	fmt.Printf("%-25s %s\n", "geocoding-api", conf.GeoCodingApi())

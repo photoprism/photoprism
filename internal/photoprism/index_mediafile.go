@@ -135,6 +135,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	photo.PhotoPath = filePath
 	photo.PhotoName = fileBase
 
+	if m.IsVideo() {
+		photo.PhotoVideo = true
+	}
+
 	if !file.FilePrimary {
 		if photoExists {
 			if q := ind.db.Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); q.Error != nil {

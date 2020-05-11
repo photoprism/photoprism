@@ -34,6 +34,14 @@ func IndexWorker(jobs <-chan IndexJob) {
 				}
 			}
 
+			if ind.conf.WriteJson() && !f.HasJson() {
+				if converted, err := ind.convert.ToJson(f); err != nil {
+					log.Errorf("index: creating jpeg failed (%s)", err.Error())
+				} else {
+					related.Files = append(related.Files, converted)
+				}
+			}
+
 			res := ind.MediaFile(f, opt, "")
 			done[f.FileName()] = true
 

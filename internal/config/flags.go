@@ -145,27 +145,38 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "sips-bin",
-		Usage:  "sips cli binary `FILENAME`",
+		Usage:  "sips executable `FILENAME`",
 		Value:  "sips",
 		EnvVar: "PHOTOPRISM_SIPS_BIN",
 	},
 	cli.StringFlag{
 		Name:   "darktable-bin",
-		Usage:  "darktable cli binary `FILENAME`",
+		Usage:  "darktable-cli executable `FILENAME`",
 		Value:  "darktable-cli",
 		EnvVar: "PHOTOPRISM_DARKTABLE_BIN",
 	},
 	cli.StringFlag{
+		Name:   "heifconvert-bin",
+		Usage:  "heif-convert executable `FILENAME`",
+		Value:  "heif-convert",
+		EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
+	},
+	cli.StringFlag{
+		Name: "ffmpeg-bin",
+		Usage: "ffmpeg executable `FILENAME`",
+		Value: "ffmpeg",
+		EnvVar: "PHOTOPRISM_FFMPEG_BIN",
+	},
+	cli.StringFlag{
 		Name:   "exiftool-bin",
-		Usage:  "exiftool cli binary `FILENAME`",
+		Usage:  "exiftool executable `FILENAME`",
 		Value:  "exiftool",
 		EnvVar: "PHOTOPRISM_EXIFTOOL_BIN",
 	},
-	cli.StringFlag{
-		Name:   "heifconvert-bin",
-		Usage:  "heif conversion cli binary `FILENAME`",
-		Value:  "heif-convert",
-		EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
+	cli.BoolFlag{
+		Name:   "write-json",
+		Usage:  "run exiftool for exporting metadata to json sidecar files",
+		EnvVar: "PHOTOPRISM_EXIFTOOL_JSON",
 	},
 	cli.IntFlag{
 		Name:   "http-port",

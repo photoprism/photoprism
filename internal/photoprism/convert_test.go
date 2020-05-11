@@ -23,65 +23,169 @@ func TestConvert_ToJpeg(t *testing.T) {
 	}
 
 	conf := config.TestConfig()
-
 	conf.InitializeTestData(t)
-
 	convert := NewConvert(conf)
 
-	jpegFilename := conf.ImportPath() + "/fern_green.jpg"
+	t.Run("gopher-video.mp4", func(t *testing.T) {
+		fileName := conf.ExamplesPath() + "/gopher-video.mp4"
+		outputName := conf.ExamplesPath() + "/gopher-video.jpg"
 
-	assert.Truef(t, fs.FileExists(jpegFilename), "file does not exist: %s", jpegFilename)
+		_ = os.Remove(outputName)
 
-	t.Logf("Testing RAW to JPEG convert with %s", jpegFilename)
+		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
 
-	jpegMediaFile, err := NewMediaFile(jpegFilename)
+		mf, err := NewMediaFile(fileName)
 
-	assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	imageJpeg, err := convert.ToJpeg(jpegMediaFile)
+		jpegFile, err := convert.ToJpeg(mf)
 
-	assert.Empty(t, err, "ToJpeg() failed")
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	infoJpeg, err := imageJpeg.MetaData()
+		assert.Equal(t, jpegFile.FileName(), outputName)
+		assert.Truef(t, fs.FileExists(jpegFile.FileName()), "output file does not exist: %s", jpegFile.FileName())
 
-	assert.Nilf(t, err, "UpdateExif() failed for "+imageJpeg.FileName())
+		metaData, err := jpegFile.MetaData()
 
-	if err != nil {
-		t.Fatalf("%s for %s", err.Error(), imageJpeg.FileName())
-	}
+		if err != nil {
+			t.Log(err)
+		} else {
+			t.Logf("video metadata: %+v", metaData)
+		}
 
-	assert.Equal(t, jpegFilename, imageJpeg.fileName)
+		_ = os.Remove(outputName)
+	})
 
-	assert.Equal(t, "Canon EOS 7D", infoJpeg.CameraModel)
+	t.Run("fern_green.jpg", func(t *testing.T) {
+		jpegFilename := conf.ImportPath() + "/fern_green.jpg"
 
-	rawFilename := conf.ImportPath() + "/raw/IMG_2567.CR2"
+		assert.Truef(t, fs.FileExists(jpegFilename), "file does not exist: %s", jpegFilename)
 
-	t.Logf("Testing RAW to JPEG convert with %s", rawFilename)
+		t.Logf("Testing RAW to JPEG convert with %s", jpegFilename)
 
-	rawMediaFile, err := NewMediaFile(rawFilename)
+		mf, err := NewMediaFile(jpegFilename)
 
-	if err != nil {
-		t.Fatalf("%s for %s", err.Error(), rawFilename)
-	}
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	imageRaw, err := convert.ToJpeg(rawMediaFile)
+		imageJpeg, err := convert.ToJpeg(mf)
 
-	if err != nil {
-		t.Fatalf("%s for %s", err.Error(), rawFilename)
-	}
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	assert.True(t, fs.FileExists(conf.ImportPath()+"/raw/IMG_2567.jpg"), "Jpeg file was not found - is Darktable installed?")
+		infoJpeg, err := imageJpeg.MetaData()
 
-	if imageRaw == nil {
-		t.Fatal("imageRaw is nil")
-	}
+		if err != nil {
+			t.Fatalf("%s for %s", err.Error(), imageJpeg.FileName())
+		}
 
-	assert.NotEqual(t, rawFilename, imageRaw.fileName)
+		assert.Equal(t, jpegFilename, imageJpeg.fileName)
 
-	infoRaw, err := imageRaw.MetaData()
+		assert.Equal(t, "Canon EOS 7D", infoJpeg.CameraModel)
 
-	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel)
+		rawFilename := conf.ImportPath() + "/raw/IMG_2567.CR2"
+
+		t.Logf("Testing RAW to JPEG convert with %s", rawFilename)
+
+		rawMediaFile, err := NewMediaFile(rawFilename)
+
+		if err != nil {
+			t.Fatalf("%s for %s", err.Error(), rawFilename)
+		}
+
+		imageRaw, err := convert.ToJpeg(rawMediaFile)
+
+		if err != nil {
+			t.Fatalf("%s for %s", err.Error(), rawFilename)
+		}
+
+		assert.True(t, fs.FileExists(conf.ImportPath()+"/raw/IMG_2567.jpg"), "Jpeg file was not found - is Darktable installed?")
+
+		if imageRaw == nil {
+			t.Fatal("imageRaw is nil")
+		}
+
+		assert.NotEqual(t, rawFilename, imageRaw.fileName)
+
+		infoRaw, err := imageRaw.MetaData()
+
+		assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel)
+	})
 }
+
+func TestConvert_ToJson(t *testing.T) {
+	conf := config.TestConfig()
+	convert := NewConvert(conf)
+
+	t.Run("gopher-video.mp4", func(t *testing.T) {
+		fileName := conf.ExamplesPath() + "/gopher-video.mp4"
+		outputName := conf.ExamplesPath() + "/gopher-video.json"
+
+		_ = os.Remove(outputName)
+
+		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
+		assert.Falsef(t, fs.FileExists(outputName), "output file must not exist: %s", outputName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		jsonFile, err := convert.ToJson(mf)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if jsonFile == nil {
+			t.Fatal("jsonFile should not be nil")
+		}
+
+		assert.Equal(t, jsonFile.FileName(), outputName)
+		assert.Truef(t, fs.FileExists(jsonFile.FileName()), "output file does not exist: %s", jsonFile.FileName())
+		assert.False(t, jsonFile.IsJpeg())
+		assert.False(t, jsonFile.IsMedia())
+		assert.False(t, jsonFile.IsVideo())
+		assert.True(t, jsonFile.IsSidecar())
+
+		_ = os.Remove(outputName)
+	})
+
+	t.Run("iphone_7.heic", func(t *testing.T) {
+		fileName := conf.ExamplesPath() + "/iphone_7.heic"
+		outputName := conf.ExamplesPath() + "/iphone_7.json"
+
+		assert.True(t, fs.FileExists(fileName))
+		assert.True(t, fs.FileExists(outputName))
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		jsonFile, err := convert.ToJson(mf)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, jsonFile.FileName(), outputName)
+		assert.Truef(t, fs.FileExists(jsonFile.FileName()), "output file does not exist: %s", jsonFile.FileName())
+		assert.False(t, jsonFile.IsJpeg())
+		assert.False(t, jsonFile.IsMedia())
+		assert.False(t, jsonFile.IsVideo())
+		assert.True(t, jsonFile.IsSidecar())
+	})
+}
+
 
 func TestConvert_Start(t *testing.T) {
 	if testing.Short() {

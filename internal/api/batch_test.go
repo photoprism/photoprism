@@ -165,42 +165,6 @@ func TestBatchPhotosPrivate(t *testing.T) {
 	})
 }
 
-func TestBatchPhotosStory(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		GetPhoto(router, conf)
-		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh8")
-		assert.Equal(t, http.StatusOK, r.Code)
-		val := gjson.Get(r.Body.String(), "PhotoStory")
-		assert.Equal(t, "false", val.String())
-
-		BatchPhotosStory(router, conf)
-		r2 := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/story", `{"photos": ["pt9jtdre2lvl0yh8", "pt9jtdre2lvl0ycc"]}`)
-		val2 := gjson.Get(r2.Body.String(), "message")
-		assert.Contains(t, val2.String(), "photos marked as story")
-		assert.Equal(t, http.StatusOK, r2.Code)
-
-		r3 := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh8")
-		assert.Equal(t, http.StatusOK, r3.Code)
-		val3 := gjson.Get(r3.Body.String(), "PhotoStory")
-		assert.Equal(t, "true", val3.String())
-	})
-	t.Run("no photos selected", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		BatchPhotosStory(router, conf)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/story", `{"photos": []}`)
-		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "No photos selected", val.String())
-		assert.Equal(t, http.StatusBadRequest, r.Code)
-	})
-	t.Run("invalid request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		BatchPhotosStory(router, conf)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/story", `{"photos": 123}`)
-		assert.Equal(t, http.StatusBadRequest, r.Code)
-	})
-}
-
 func TestBatchLabelsDelete(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, conf := NewApiTest()

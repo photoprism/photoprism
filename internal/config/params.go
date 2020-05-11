@@ -65,8 +65,10 @@ type Params struct {
 	HttpServerPassword string `yaml:"http-password" flag:"http-password"`
 	SipsBin            string `yaml:"sips-bin" flag:"sips-bin"`
 	DarktableBin       string `yaml:"darktable-bin" flag:"darktable-bin"`
-	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
 	HeifConvertBin     string `yaml:"heifconvert-bin" flag:"heifconvert-bin"`
+	FFmpegBin          string `yaml:"ffmpeg-bin" flag:"ffmpeg-bin"`
+	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
+	WriteJson          bool   `yaml:"write-json" flag:"write-json"`
 	PIDFilename        string `yaml:"pid-filename" flag:"pid-filename"`
 	LogFilename        string `yaml:"log-filename" flag:"log-filename"`
 	DetachServer       bool   `yaml:"detach-server" flag:"detach-server"`

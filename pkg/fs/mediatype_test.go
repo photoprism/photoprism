@@ -17,6 +17,11 @@ func TestGetMediaType(t *testing.T) {
 		assert.Equal(t, MediaRaw, result)
 	})
 
+	t.Run("video", func(t *testing.T) {
+		result := GetMediaType("testdata/gopher.mp4")
+		assert.Equal(t, MediaVideo, result)
+	})
+
 	t.Run("sidecar", func(t *testing.T) {
 		result := GetMediaType("/IMG_4120.AAE")
 		assert.Equal(t, MediaSidecar, result)

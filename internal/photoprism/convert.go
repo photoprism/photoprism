@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -105,29 +107,81 @@ func (c *Convert) Start(path string) error {
 }
 
 // ConvertCommand returns the command for converting files to JPEG, depending on the format.
-func (c *Convert) ConvertCommand(image *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, useMutex bool, err error) {
-	if image.IsRaw() {
+func (c *Convert) ConvertCommand(mf *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, useMutex bool, err error) {
+	if mf.IsRaw() {
 		if c.conf.SipsBin() != "" {
-			result = exec.Command(c.conf.SipsBin(), "-s", "format", "jpeg", "--out", jpegName, image.fileName)
+			result = exec.Command(c.conf.SipsBin(), "-s", "format", "jpeg", "--out", jpegName, mf.FileName())
 		} else if c.conf.DarktableBin() != "" {
 			// Only one instance of darktable-cli allowed due to locking
 			useMutex = true
 
 			if xmpName != "" {
-				result = exec.Command(c.conf.DarktableBin(), image.fileName, xmpName, jpegName)
+				result = exec.Command(c.conf.DarktableBin(), mf.FileName(), xmpName, jpegName)
 			} else {
-				result = exec.Command(c.conf.DarktableBin(), image.fileName, jpegName)
+				result = exec.Command(c.conf.DarktableBin(), mf.FileName(), jpegName)
 			}
 		} else {
-			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", image.Base(c.conf.Settings().Index.Group))
+			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", mf.Base(c.conf.Settings().Index.Group))
 		}
-	} else if image.IsHEIF() {
-		result = exec.Command(c.conf.HeifConvertBin(), image.fileName, jpegName)
+	} else if mf.IsVideo() {
+		result = exec.Command(c.conf.FFmpegBin(), "-i", mf.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
+	} else if mf.IsHEIF() {
+		result = exec.Command(c.conf.HeifConvertBin(), mf.FileName(), jpegName)
 	} else {
-		return nil, useMutex, fmt.Errorf("convert: image type not supported for conversion (%s)", image.FileType())
+		return nil, useMutex, fmt.Errorf("convert: file type not supported for conversion (%s)", mf.FileType())
 	}
 
 	return result, useMutex, nil
+}
+
+// ToJson uses exiftool to export metadata to a json file.
+func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
+	jsonName := fs.TypeJson.Find(mf.FileName(), c.conf.Settings().Index.Group)
+
+	result, err := NewMediaFile(jsonName)
+
+	if err == nil {
+		return result, nil
+	}
+
+	jsonName = mf.AbsBase(c.conf.Settings().Index.Group) + ".json"
+
+	if c.conf.ReadOnly() {
+		return nil, fmt.Errorf("convert: metadata export to json disabled in read only mode (%s)", mf.RelativeName(c.conf.OriginalsPath()))
+	}
+
+	fileName := mf.RelativeName(c.conf.OriginalsPath())
+
+	log.Infof("convert: %s -> %s", fileName, fs.RelativeName(jsonName, c.conf.OriginalsPath()))
+
+	cmd := exec.Command(c.conf.ExifToolBin(), "-j", mf.FileName())
+
+	// Fetch command output.
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+
+	// Run convert command.
+	if err := cmd.Run(); err != nil {
+		if stderr.String() != "" {
+			return nil, errors.New(stderr.String())
+		} else {
+			return nil, err
+		}
+	}
+
+	// Write output to file.
+	if err := ioutil.WriteFile(jsonName, []byte(out.String()), os.ModePerm); err != nil {
+		return nil, err
+	}
+
+	// Check if file exists.
+	if !fs.FileExists(jsonName) {
+		return nil, fmt.Errorf("convert: %s could not be created, check configuration", jsonName)
+	}
+
+	return NewMediaFile(jsonName)
 }
 
 // ToJpeg converts a single image file to JPEG if possible.

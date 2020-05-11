@@ -30,7 +30,7 @@ type Photo struct {
 	PhotoResolution  int         `gorm:"type:SMALLINT" json:"PhotoResolution"`
 	PhotoFavorite    bool        `json:"PhotoFavorite"`
 	PhotoPrivate     bool        `json:"PhotoPrivate"`
-	PhotoStory       bool        `json:"PhotoStory"`
+	PhotoVideo       bool        `json:"PhotoVideo"`
 	PhotoLat         float32     `gorm:"type:FLOAT;index;" json:"PhotoLat"`
 	PhotoLng         float32     `gorm:"type:FLOAT;index;" json:"PhotoLng"`
 	PhotoAltitude    int         `json:"PhotoAltitude"`

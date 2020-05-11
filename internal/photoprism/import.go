@@ -116,7 +116,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 
 			mf, err := NewMediaFile(fileName)
 
-			if err != nil || !mf.IsPhoto() {
+			if err != nil || !mf.IsMedia() {
 				return nil
 			}
 

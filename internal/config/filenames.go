@@ -132,24 +132,38 @@ func (c *Config) ImportPath() string {
 	return fs.Abs(c.params.ImportPath)
 }
 
-// SipsBin returns the sips binary file name.
+// SipsBin returns the sips executable file name.
 func (c *Config) SipsBin() string {
 	return findExecutable(c.params.SipsBin, "sips")
 }
 
-// DarktableBin returns the darktable-cli binary file name.
+// DarktableBin returns the darktable-cli executable file name.
 func (c *Config) DarktableBin() string {
 	return findExecutable(c.params.DarktableBin, "darktable-cli")
 }
 
-// HeifConvertBin returns the heif-convert binary file name.
+// ExifToolBin returns the exiftool executable file name.
+func (c *Config) ExifToolBin() string {
+	return findExecutable(c.params.ExifToolBin, "exiftool")
+}
+
+// WriteJson returns true if exiftool should be used for exporting metadata to json sidecar files.
+func (c *Config) WriteJson() bool {
+	if c.ReadOnly() || c.ExifToolBin() == "" {
+		return false
+	}
+
+	return c.params.WriteJson
+}
+
+// HeifConvertBin returns the heif-convert executable file name.
 func (c *Config) HeifConvertBin() string {
 	return findExecutable(c.params.HeifConvertBin, "heif-convert")
 }
 
-// ExifToolBin returns the exiftool binary file name.
-func (c *Config) ExifToolBin() string {
-	return findExecutable(c.params.ExifToolBin, "exiftool")
+// FFmpegBin returns the ffmpeg executable file name.
+func (c *Config) FFmpegBin() string {
+	return findExecutable(c.params.FFmpegBin, "ffmpeg")
 }
 
 // TempPath returns a temporary directory name for uploads and downloads.

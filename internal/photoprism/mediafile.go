@@ -24,17 +24,17 @@ import (
 
 // MediaFile represents a single photo, video or sidecar file.
 type MediaFile struct {
-	fileName    string
-	fileType    fs.FileType
-	mimeType    string
-	dateCreated time.Time
-	hash        string
-	checksum    string
-	width       int
-	height      int
-	once        sync.Once
-	metaData    meta.Data
-	location    *entity.Location
+	fileName     string
+	fileType     fs.FileType
+	mimeType     string
+	dateCreated  time.Time
+	hash         string
+	checksum     string
+	width        int
+	height       int
+	metaData     meta.Data
+	metaDataOnce sync.Once
+	location     *entity.Location
 }
 
 // NewMediaFile returns a new media file.
@@ -52,7 +52,7 @@ func NewMediaFile(fileName string) (*MediaFile, error) {
 }
 
 // Stat returns the media file size and modification time.
-func (m MediaFile) Stat() (size int64, mod time.Time) {
+func (m *MediaFile) Stat() (size int64, mod time.Time) {
 	s, err := os.Stat(m.FileName())
 
 	if err != nil {
@@ -301,6 +301,8 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			result.Main = resultFile
 		} else if resultFile.IsImageOther() {
 			result.Main = resultFile
+		} else if resultFile.IsVideo() {
+			result.Main = resultFile
 		}
 
 		result.Files = append(result.Files, resultFile)
@@ -312,7 +314,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 }
 
 // FileName returns the filename.
-func (m MediaFile) FileName() string {
+func (m *MediaFile) FileName() string {
 	return m.fileName
 }
 
@@ -322,12 +324,12 @@ func (m *MediaFile) SetFileName(fileName string) {
 }
 
 // RelativeName returns the relative filename.
-func (m MediaFile) RelativeName(directory string) string {
+func (m *MediaFile) RelativeName(directory string) string {
 	return fs.RelativeName(m.fileName, directory)
 }
 
 // RelativePath returns the relative path without filename.
-func (m MediaFile) RelativePath(directory string) string {
+func (m *MediaFile) RelativePath(directory string) string {
 	pathname := m.fileName
 
 	if i := strings.Index(pathname, directory); i == 0 {
@@ -348,7 +350,7 @@ func (m MediaFile) RelativePath(directory string) string {
 }
 
 // RelativeBase returns the relative filename.
-func (m MediaFile) RelativeBase(directory string, stripSequence bool) string {
+func (m *MediaFile) RelativeBase(directory string, stripSequence bool) string {
 	if relativePath := m.RelativePath(directory); relativePath != "" {
 		return filepath.Join(relativePath, m.Base(stripSequence))
 	}
@@ -357,17 +359,17 @@ func (m MediaFile) RelativeBase(directory string, stripSequence bool) string {
 }
 
 // Directory returns the directory
-func (m MediaFile) Directory() string {
+func (m *MediaFile) Directory() string {
 	return filepath.Dir(m.fileName)
 }
 
 // Base returns the filename base without any extensions and path.
-func (m MediaFile) Base(stripSequence bool) string {
+func (m *MediaFile) Base(stripSequence bool) string {
 	return fs.Base(m.FileName(), stripSequence)
 }
 
 // AbsBase returns the directory and base filename without any extensions.
-func (m MediaFile) AbsBase(stripSequence bool) string {
+func (m *MediaFile) AbsBase(stripSequence bool) string {
 	return fs.AbsBase(m.FileName(), stripSequence)
 }
 
@@ -392,18 +394,18 @@ func (m *MediaFile) openFile() (*os.File, error) {
 }
 
 // Exists checks if a media file exists by filename.
-func (m MediaFile) Exists() bool {
+func (m *MediaFile) Exists() bool {
 	return fs.FileExists(m.FileName())
 }
 
 // Remove a media file.
-func (m MediaFile) Remove() error {
+func (m *MediaFile) Remove() error {
 	return os.Remove(m.FileName())
 }
 
 // HasSameName compares a media file with another media file and returns if
 // their filenames are matching or not.
-func (m MediaFile) HasSameName(f *MediaFile) bool {
+func (m *MediaFile) HasSameName(f *MediaFile) bool {
 	if f == nil {
 		return false
 	}
@@ -465,12 +467,12 @@ func (m *MediaFile) Copy(destinationFilename string) error {
 }
 
 // Extension returns the filename extension of this media file.
-func (m MediaFile) Extension() string {
+func (m *MediaFile) Extension() string {
 	return strings.ToLower(filepath.Ext(m.fileName))
 }
 
 // IsJpeg return true if this media file is a JPEG image.
-func (m MediaFile) IsJpeg() bool {
+func (m *MediaFile) IsJpeg() bool {
 	// Don't import/use existing thumbnail files (we create our own)
 	if m.Extension() == ".thm" {
 		return false
@@ -479,18 +481,23 @@ func (m MediaFile) IsJpeg() bool {
 	return m.MimeType() == fs.MimeTypeJpeg
 }
 
+// IsJson return true if this media file is a json sidecar file.
+func (m *MediaFile) IsJson() bool {
+	return m.HasFileType(fs.TypeJson)
+}
+
 // FileType returns the file type (jpg, gif, tiff,...).
-func (m MediaFile) FileType() fs.FileType {
+func (m *MediaFile) FileType() fs.FileType {
 	return fs.GetFileType(m.fileName)
 }
 
 // MediaType returns the media type (video, image, raw, sidecar,...).
-func (m MediaFile) MediaType() fs.MediaType {
+func (m *MediaFile) MediaType() fs.MediaType {
 	return fs.GetMediaType(m.fileName)
 }
 
-// HasFileType returns true if this media file is of a given type.
-func (m MediaFile) HasFileType(t fs.FileType) bool {
+// HasFileType returns true if this is the given type.
+func (m *MediaFile) HasFileType(t fs.FileType) bool {
 	if t == fs.TypeJpeg {
 		return m.IsJpeg()
 	}
@@ -498,23 +505,23 @@ func (m MediaFile) HasFileType(t fs.FileType) bool {
 	return m.FileType() == t
 }
 
-// IsRaw returns true if this media file a RAW file.
-func (m MediaFile) IsRaw() bool {
+// IsRaw returns true if this is a RAW file.
+func (m *MediaFile) IsRaw() bool {
 	return m.HasFileType(fs.TypeRaw)
 }
 
-// IsPng returns true if this media file a PNG file.
-func (m MediaFile) IsPng() bool {
+// IsPng returns true if this is a PNG file.
+func (m *MediaFile) IsPng() bool {
 	return m.HasFileType(fs.TypePng)
 }
 
-// IsTiff returns true if this media file a TIFF file.
-func (m MediaFile) IsTiff() bool {
+// IsTiff returns true if this is a TIFF file.
+func (m *MediaFile) IsTiff() bool {
 	return m.HasFileType(fs.TypeTiff)
 }
 
-// IsImageOther returns true this media file a PNG, GIF, BMP or TIFF file.
-func (m MediaFile) IsImageOther() bool {
+// IsImageOther returns true if this is a PNG, GIF, BMP or TIFF file.
+func (m *MediaFile) IsImageOther() bool {
 	switch m.FileType() {
 	case fs.TypeBitmap:
 		return true
@@ -529,29 +536,34 @@ func (m MediaFile) IsImageOther() bool {
 	}
 }
 
-// IsHEIF returns true if this media file is a High Efficiency Image File Format file.
-func (m MediaFile) IsHEIF() bool {
+// IsHEIF returns true if this is a High Efficiency Image File Format file.
+func (m *MediaFile) IsHEIF() bool {
 	return m.HasFileType(fs.TypeHEIF)
 }
 
-// IsXMP returns true if this file is a XMP sidecar file.
-func (m MediaFile) IsXMP() bool {
+// IsXMP returns true if this is a XMP sidecar file.
+func (m *MediaFile) IsXMP() bool {
 	return m.FileType() == fs.TypeXMP
 }
 
-// IsSidecar returns true if this media file is a sidecar file (containing metadata).
-func (m MediaFile) IsSidecar() bool {
+// IsSidecar returns true if this is a sidecar file (containing metadata).
+func (m *MediaFile) IsSidecar() bool {
 	return m.MediaType() == fs.MediaSidecar
 }
 
-// IsVideo returns true if this media file is a video file.
-func (m MediaFile) IsVideo() bool {
+// IsVideo returns true if this is a video file.
+func (m *MediaFile) IsVideo() bool {
 	return m.MediaType() == fs.MediaVideo
 }
 
-// IsPhoto checks if this media file is a photo / image.
-func (m MediaFile) IsPhoto() bool {
+// IsPhoto returns true if this file is a photo / image.
+func (m *MediaFile) IsPhoto() bool {
 	return m.IsJpeg() || m.IsRaw() || m.IsHEIF() || m.IsImageOther()
+}
+
+// IsMedia returns true if this is a media file (photo or video, not sidecar or other).
+func (m *MediaFile) IsMedia() bool {
+	return m.IsJpeg() || m.IsVideo() || m.IsRaw() || m.IsHEIF() || m.IsImageOther()
 }
 
 // Jpeg returns a the JPEG version of an image or sidecar file (if exists).
@@ -573,13 +585,22 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 	return NewMediaFile(jpegFilename)
 }
 
-// HasJpeg returns false if there is no jpeg representation of this media file.
+// HasJpeg returns true if this file has or is a jpeg media file.
 func (m *MediaFile) HasJpeg() bool {
 	if m.IsJpeg() {
 		return true
 	}
 
 	return fs.TypeJpeg.Find(m.FileName(), false) != ""
+}
+
+// HasJson returns true if this file has or is a json sidecar file.
+func (m *MediaFile) HasJson() bool {
+	if m.IsJson() {
+		return true
+	}
+
+	return fs.TypeJson.Find(m.FileName(), false) != ""
 }
 
 func (m *MediaFile) decodeDimensions() error {

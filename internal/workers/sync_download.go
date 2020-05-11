@@ -133,7 +133,7 @@ func (s *Sync) download(a entity.Account) (complete bool, err error) {
 
 			mf, err := photoprism.NewMediaFile(baseDir + file.RemoteName)
 
-			if err != nil || !mf.IsPhoto() {
+			if err != nil || !mf.IsMedia() {
 				continue
 			}
 
