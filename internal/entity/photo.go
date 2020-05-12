@@ -415,7 +415,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 
 		plm := NewPhotoLabel(m.ID, lm.ID, label.Uncertainty, label.Source).FirstOrCreate()
 
-		if plm.Uncertainty > label.Uncertainty && plm.Uncertainty > 100 {
+		if plm.Uncertainty > label.Uncertainty && plm.Uncertainty < 100 {
 			plm.Uncertainty = label.Uncertainty
 			plm.LabelSrc = label.Source
 			if err := Db().Save(&plm).Error; err != nil {
