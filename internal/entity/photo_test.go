@@ -31,9 +31,18 @@ func TestSavePhotoForm(t *testing.T) {
 			CameraSrc:        "exif",
 			LensID:           uint(6),
 			LocationID:       "1234",
-			LocationSrc:      "geo",
+			LocationSrc:      "manual",
 			PlaceID:          "765",
 			PhotoCountry:     "de",
+			Description: form.Description{
+				PhotoID:          uint(1000008),
+				PhotoDescription: "test",
+				PhotoKeywords:    "test cat dog",
+				PhotoSubject:     "animals",
+				PhotoArtist:      "Bender",
+				PhotoNotes:       "notes",
+				PhotoCopyright:   "copy",
+				PhotoLicense:     ""},
 		}
 
 		m := PhotoFixtures["Photo08"]
@@ -55,7 +64,7 @@ func TestSavePhotoForm(t *testing.T) {
 		assert.Equal(t, false, m.PhotoVideo)
 		assert.Equal(t, float32(7.9999), m.PhotoLat)
 		assert.NotNil(t, m.EditedAt)
-
+		t.Log(m.Description.PhotoKeywords)
 	})
 }
 
@@ -438,22 +447,20 @@ func TestPhoto_SetTitle(t *testing.T) {
 func TestPhoto_SetDescription(t *testing.T) {
 	t.Run("empty description", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, "photo description lake", m.Description.PhotoDescription)
+		assert.Equal(t, "photo description blacklist", m.Description.PhotoDescription)
 		m.SetDescription("", "manual")
-		assert.Equal(t, "photo description lake", m.Description.PhotoDescription)
+		assert.Equal(t, "photo description blacklist", m.Description.PhotoDescription)
 	})
 	t.Run("description not from the same source", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, "photo description lake", m.Description.PhotoDescription)
+		assert.Equal(t, "photo description blacklist", m.Description.PhotoDescription)
 		m.SetDescription("new photo description", "image")
-		assert.Equal(t, "photo description lake", m.Description.PhotoDescription)
+		assert.Equal(t, "photo description blacklist", m.Description.PhotoDescription)
 	})
 	t.Run("success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		m2 := PhotoFixtures.Get("19800101_000002_D640C559")
-		assert.Equal(t, "photo description lake", m.Description.PhotoDescription)
+		assert.Equal(t, "photo description blacklist", m.Description.PhotoDescription)
 		m.SetDescription("new photo description", "manual")
-		assert.Equal(t, "photo description lake", m2.Description.PhotoDescription)
 		assert.Equal(t, "new photo description", m.Description.PhotoDescription)
 	})
 }
@@ -486,7 +493,7 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Time{}, "", "location")
+			time.Time{}, "test", "location")
 		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 	})

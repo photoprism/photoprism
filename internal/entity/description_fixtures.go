@@ -31,4 +31,14 @@ var DescriptionFixtures = DescriptionMap{
 		PhotoCopyright:   "copy",
 		PhotoLicense:     "MIT",
 	},
+	"blacklist": {
+		PhotoID:          1000001,
+		PhotoDescription: "photo description blacklist",
+		PhotoKeywords:    "screenshot, info",
+		PhotoNotes:       "notes",
+		PhotoSubject:     "Blacklist",
+		PhotoArtist:      "Hans",
+		PhotoCopyright:   "copy",
+		PhotoLicense:     "MIT",
+	},
 }
