@@ -392,3 +392,152 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		assert.Equal(t, "Unknown", m.PhotoTitle)
 	})
 }
+
+func TestPhoto_AddLabels(t *testing.T) {
+	t.Run("add label", func(t *testing.T) {
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
+		classifyLabels := classify.Labels{{Name: "cactus", Uncertainty: 30, Source: "manual", Priority: 5, Categories: []string{"plant"}}}
+		len1 := len(m.Labels)
+		m.AddLabels(classifyLabels)
+		assert.Greater(t, len(m.Labels), len1)
+	})
+	t.Run("update label", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		classifyLabels := classify.Labels{{Name: "landscape", Uncertainty: 10, Source: "manual", Priority: 5, Categories: []string{"plant"}}}
+		assert.Equal(t, 20, m.Labels[0].Uncertainty)
+		assert.Equal(t, "image", m.Labels[0].LabelSrc)
+		len1 := len(m.Labels)
+		m.AddLabels(classifyLabels)
+		assert.Equal(t, len(m.Labels), len1)
+		assert.Equal(t, 10, m.Labels[0].Uncertainty)
+		assert.Equal(t, "manual", m.Labels[0].LabelSrc)
+	})
+}
+
+func TestPhoto_SetTitle(t *testing.T) {
+	t.Run("empty title", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		m.SetTitle("", "manual")
+		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+	})
+	t.Run("title not from the same source", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		m.SetTitle("NewTitleSet", "image")
+		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+	})
+	t.Run("success", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		m.SetTitle("NewTitleSet", "location")
+		assert.Equal(t, "NewTitleSet", m.PhotoTitle)
+	})
+}
+
+func TestPhoto_SetDescription(t *testing.T) {
+	t.Run("empty description", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, "photo description lake", m.Description.PhotoDescription)
+		m.SetDescription("", "manual")
+		assert.Equal(t, "photo description lake", m.Description.PhotoDescription)
+	})
+	t.Run("description not from the same source", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, "photo description lake", m.Description.PhotoDescription)
+		m.SetDescription("new photo description", "image")
+		assert.Equal(t, "photo description lake", m.Description.PhotoDescription)
+	})
+	t.Run("success", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		m2 := PhotoFixtures.Get("19800101_000002_D640C559")
+		assert.Equal(t, "photo description lake", m.Description.PhotoDescription)
+		m.SetDescription("new photo description", "manual")
+		assert.Equal(t, "photo description lake", m2.Description.PhotoDescription)
+		assert.Equal(t, "new photo description", m.Description.PhotoDescription)
+	})
+}
+
+func TestPhoto_SetTakenAt(t *testing.T) {
+	t.Run("empty taken", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		m.SetTakenAt(time.Time{}, time.Time{}, "", "manual")
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+	})
+	t.Run("taken not from the same source", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
+			time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), "", "image")
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+	})
+	t.Run("success", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
+			time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), "", "location")
+		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), m.TakenAtLocal)
+	})
+	t.Run("success with empty takenAtLocal", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
+			time.Time{}, "", "location")
+		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+	})
+}
+
+func TestPhoto_SetCoordinates(t *testing.T) {
+	t.Run("empty coordinates", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, float32(1.234), m.PhotoLat)
+		assert.Equal(t, float32(4.321), m.PhotoLng)
+		assert.Equal(t, 3, m.PhotoAltitude)
+		m.SetCoordinates(0, 0, 5, "manual")
+		assert.Equal(t, float32(1.234), m.PhotoLat)
+		assert.Equal(t, float32(4.321), m.PhotoLng)
+		assert.Equal(t, 3, m.PhotoAltitude)
+	})
+	t.Run("different source", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, float32(1.234), m.PhotoLat)
+		assert.Equal(t, float32(4.321), m.PhotoLng)
+		assert.Equal(t, 3, m.PhotoAltitude)
+		m.SetCoordinates(5.555, 5.555, 5, "image")
+		assert.Equal(t, float32(1.234), m.PhotoLat)
+		assert.Equal(t, float32(4.321), m.PhotoLng)
+		assert.Equal(t, 3, m.PhotoAltitude)
+	})
+	t.Run("success", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, float32(1.234), m.PhotoLat)
+		assert.Equal(t, float32(4.321), m.PhotoLng)
+		assert.Equal(t, 3, m.PhotoAltitude)
+		m.SetCoordinates(5.555, 5.555, 5, "location")
+		assert.Equal(t, float32(5.555), m.PhotoLat)
+		assert.Equal(t, float32(5.555), m.PhotoLng)
+		assert.Equal(t, 5, m.PhotoAltitude)
+	})
+}
+
+func TestPhoto_Delete(t *testing.T) {
+	t.Run("not permanent", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo16")
+		err := m.Delete(false)
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("permanent", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo16")
+		err := m.Delete(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+}
