@@ -23,7 +23,7 @@ func (m DescriptionMap) Pointer(name string, photoId uint) *Description {
 var DescriptionFixtures = DescriptionMap{
 	"lake": {
 		PhotoID:          1000000,
-		PhotoDescription: "photo description",
+		PhotoDescription: "photo description lake",
 		PhotoKeywords:    "nature, frog",
 		PhotoNotes:       "notes",
 		PhotoSubject:     "Lake",
