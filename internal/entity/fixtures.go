@@ -16,4 +16,6 @@ func CreateTestFixtures() {
 	CreateCategoryFixtures()
 	CreateLocationFixtures()
 	CreatePlaceFixtures()
+	CreateFileShareFixtures()
+	CreateFileSyncFixtures()
 }

@@ -35,14 +35,17 @@ var FileFixtures = map[string]File{
 		FileChroma:      25,
 		FileNotes:       "",
 		FileError:       "",
-		Share:           []FileShare{},
-		Sync:            []FileSync{},
-		Links:           []Link{},
-		CreatedAt:       time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
-		CreatedIn:       2,
-		UpdatedAt:       time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
-		UpdatedIn:       0,
-		DeletedAt:       nil,
+		Share: []FileShare{
+			FileShareFixtures.Get("FileShare1", 0, 0, ""),
+			FileShareFixtures.Get("FileShare2", 0, 0, ""),
+		},
+		Sync:      []FileSync{},
+		Links:     []Link{},
+		CreatedAt: time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
+		CreatedIn: 2,
+		UpdatedAt: time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
+		UpdatedIn: 0,
+		DeletedAt: nil,
 	},
 	"exampleDNGFile.dng": {
 		ID:              1000001,
@@ -201,6 +204,9 @@ var FileFixtures = map[string]File{
 		DeletedAt:       nil,
 	},
 }
+
+var FileFixturesExampleJPG = FileFixtures["exampleFileName.jpg"]
+var FileFixturesExampleXMP = FileFixtures["exampleXmpFile.xmp"]
 
 // CreateFileFixtures inserts known entities into the database for testing.
 func CreateFileFixtures() {

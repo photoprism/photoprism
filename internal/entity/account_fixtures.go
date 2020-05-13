@@ -24,7 +24,7 @@ var AccountFixtures = AccountMap{
 		RetryLimit:    3,
 		SharePath:     "/Photos",
 		ShareSize:     "",
-		ShareExpires:  0,
+		ShareExpires:  1,
 		SyncPath:      "/Photos",
 		SyncStatus:    "",
 		SyncInterval:  3600,
@@ -37,7 +37,39 @@ var AccountFixtures = AccountMap{
 		UpdatedAt:     time.Now(),
 		DeletedAt:     nil,
 	},
+	"webdav-dummy2": {
+		ID:            1000001,
+		AccName:       "Test Account2",
+		AccOwner:      "",
+		AccURL:        "http://webdav-dummy/",
+		AccType:       "webdav",
+		AccKey:        "123",
+		AccUser:       "admin",
+		AccPass:       "photoprism",
+		AccError:      "",
+		AccErrors:     0,
+		AccShare:      false,
+		AccSync:       false,
+		RetryLimit:    3,
+		SharePath:     "/Photos",
+		ShareSize:     "",
+		ShareExpires:  0,
+		SyncPath:      "/Photos",
+		SyncStatus:    "test",
+		SyncInterval:  3600,
+		SyncDate:      sql.NullTime{Time: time.Now()},
+		SyncUpload:    true,
+		SyncDownload:  true,
+		SyncFilenames: true,
+		SyncRaw:       true,
+		CreatedAt:     time.Now(),
+		UpdatedAt:     time.Now(),
+		DeletedAt:     nil,
+	},
 }
+
+var AccountFixtureWebdavDummy = AccountFixtures["webdav-dummy"]
+var AccountFixtureWebdavDummy2 = AccountFixtures["webdav-dummy2"]
 
 // CreateLabelFixtures inserts known entities into the database for testing.
 func CreateAccountFixtures() {
