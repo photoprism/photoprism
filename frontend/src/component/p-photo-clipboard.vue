@@ -174,7 +174,6 @@
                     share: this.$gettext("Share"),
                     private: this.$gettext("Change private flag"),
                     edit: this.$gettext("Edit"),
-                    story: this.$gettext("Story"),
                     addToAlbum: this.$gettext("Add to album"),
                     removeFromAlbum: this.$gettext("Remove"),
                     archive: this.$gettext("Archive"),
