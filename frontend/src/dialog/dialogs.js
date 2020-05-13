@@ -8,6 +8,7 @@ import PPhotoShareDialog from "./p-photo-share-dialog.vue";
 import PAlbumDeleteDialog from "./album/p-album-delete-dialog.vue";
 import PLabelDeleteDialog from "./label/p-label-delete-dialog.vue";
 import PUploadDialog from "./p-upload-dialog.vue";
+import PVideoDialog from "./p-video-dialog.vue";
 
 const dialogs = {};
 
@@ -22,6 +23,7 @@ dialogs.install = (Vue) => {
     Vue.component("p-album-delete-dialog", PAlbumDeleteDialog);
     Vue.component("p-label-delete-dialog", PLabelDeleteDialog);
     Vue.component("p-upload-dialog", PUploadDialog);
+    Vue.component("p-video-dialog", PVideoDialog);
 };
 
 export default dialogs;

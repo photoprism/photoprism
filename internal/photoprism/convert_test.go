@@ -186,7 +186,6 @@ func TestConvert_ToJson(t *testing.T) {
 	})
 }
 
-
 func TestConvert_Start(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")

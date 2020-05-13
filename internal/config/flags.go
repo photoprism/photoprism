@@ -162,9 +162,9 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_HEIFCONVERT_BIN",
 	},
 	cli.StringFlag{
-		Name: "ffmpeg-bin",
-		Usage: "ffmpeg executable `FILENAME`",
-		Value: "ffmpeg",
+		Name:   "ffmpeg-bin",
+		Usage:  "ffmpeg executable `FILENAME`",
+		Value:  "ffmpeg",
 		EnvVar: "PHOTOPRISM_FFMPEG_BIN",
 	},
 	cli.StringFlag{

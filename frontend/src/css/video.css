@@ -1,0 +1,31 @@
+@import url("../../node_modules/mediaelement/build/mediaelementplayer.min.css");
+
+.mejs__container {
+    min-width: auto !important;
+}
+.mejs__overlay-button {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+:not([style*='display: none']).mejs__controls {
+    background: none !important;
+}
+.mejs__controls div{
+    display: inline-block;
+}
+.mejs__time-rail {
+    width: 50%;
+}
+.mejs__fullscreen > button {
+    background-position: -80px 0 !important;
+}
+
+#photoprism .p-video-dialog {
+    overflow: hidden !important;
+}
+
+#photoprism .p-video-player {
+    overflow: hidden !important;
+}

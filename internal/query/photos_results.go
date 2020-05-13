@@ -31,6 +31,7 @@ type PhotosResult struct {
 	PhotoCountry     string
 	PhotoFavorite    bool
 	PhotoPrivate     bool
+	PhotoVideo       bool
 	PhotoLat         float32
 	PhotoLng         float32
 	PhotoAltitude    int
@@ -65,6 +66,8 @@ type PhotosResult struct {
 	FileUUID        string
 	FilePrimary     bool
 	FileMissing     bool
+	FileVideo       bool
+	FileLength      time.Duration
 	FileName        string
 	FileHash        string
 	FileType        string

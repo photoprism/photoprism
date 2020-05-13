@@ -26,6 +26,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetPreview(v1, conf)
 		api.GetThumbnail(v1, conf)
 		api.GetDownload(v1, conf)
+		api.GetVideo(v1, conf)
 		api.CreateZip(v1, conf)
 		api.DownloadZip(v1, conf)
 

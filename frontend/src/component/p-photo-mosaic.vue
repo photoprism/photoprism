@@ -44,13 +44,13 @@
                                                      color="accent lighten-5"></v-progress-circular>
                             </v-layout>
 
-                            <v-btn v-if="hidePrivate && photo.PhotoPrivate"
+                            <v-btn v-if="hidePrivate && photo.PhotoPrivate"  :ripple="false"
                                    icon flat small absolute
                                    class="p-photo-private opacity-75">
                                 <v-icon color="white">lock</v-icon>
                             </v-btn>
 
-                            <v-btn v-if="hover || selection.length && $clipboard.has(photo)"
+                            <v-btn v-if="hover || selection.length && $clipboard.has(photo)"  :ripple="false"
                                    icon flat small absolute
                                    :class="selection.length && $clipboard.has(photo) ? 'p-photo-select' : 'p-photo-select opacity-50'"
                                    @click.stop.prevent="onSelect($event, index)">
@@ -60,14 +60,19 @@
                                 <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
                             </v-btn>
 
-                            <v-btn icon flat small absolute
+                            <v-btn icon flat small absolute  :ripple="false"
                                    :class="photo.PhotoFavorite ? 'p-photo-like opacity-75' : 'p-photo-like opacity-50'"
                                    @click.stop.prevent="photo.toggleLike()">
                                 <v-icon v-if="photo.PhotoFavorite" color="white" class="t-like t-on">favorite</v-icon>
                                 <v-icon v-else color="accent lighten-3" class="t-like t-off">favorite_border</v-icon>
                             </v-btn>
 
-                            <v-btn v-if="photo.Files.length > 1"
+                            <v-btn v-if="photo.PhotoVideo" color="white"
+                                   outline fab absolute class="p-photo-play opacity-75" :depressed="false" :ripple="false"
+                                   @click.stop.prevent="openPhoto(index, true)">
+                                <v-icon color="white" class="action-play">play_arrow</v-icon>
+                            </v-btn>
+                            <v-btn v-else-if="photo.Files.length > 1"  :ripple="false"
                                    icon flat small absolute class="p-photo-merged opacity-75"
                                    @click.stop.prevent="openPhoto(index, true)">
                                 <v-icon color="white" class="action-burst">burst_mode</v-icon>

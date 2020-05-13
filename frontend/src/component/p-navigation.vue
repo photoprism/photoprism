@@ -269,6 +269,7 @@
                          @confirm="upload.dialog = false"></p-upload-dialog>
         <p-photo-edit-dialog :show="edit.dialog" :selection="edit.selection" :index="edit.index" :album="edit.album"
                              @close="edit.dialog = false"></p-photo-edit-dialog>
+        <p-video-dialog ref="video" :play="video.play" :album="video.album"></p-video-dialog>
     </div>
 </template>
 
@@ -288,15 +289,20 @@
                 config: this.$config.values,
                 page: this.$config.page,
                 upload: {
-                    dialog: false,
                     subscription: null,
+                    dialog: false,
                 },
                 edit: {
-                    dialog: false,
                     subscription: null,
+                    dialog: false,
                     album: null,
                     selection: [],
                     index: 0,
+                },
+                video: {
+                    subscription: null,
+                    album: null,
+                    play: null,
                 },
             };
         },
@@ -334,6 +340,7 @@
         },
         created() {
             this.upload.subscription = Event.subscribe("dialog.upload", () => this.upload.dialog = true);
+
             this.edit.subscription = Event.subscribe("dialog.edit", (ev, data) => {
                 if (!this.edit.dialog) {
                     this.edit.index = data.index;
@@ -342,10 +349,17 @@
                     this.edit.dialog = true;
                 }
             });
+
+            this.video.subscription = Event.subscribe("dialog.video", (ev, data) => {
+                this.video.play = data.play;
+                this.video.album = data.album;
+                this.$refs.video.show = true;
+            });
         },
         destroyed() {
             Event.unsubscribe(this.upload.subscription);
             Event.unsubscribe(this.edit.subscription);
+            Event.unsubscribe(this.video.subscription);
         }
     };
 </script>

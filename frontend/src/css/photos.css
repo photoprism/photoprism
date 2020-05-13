@@ -11,9 +11,15 @@
     text-align: center;
 }
 
-#photoprism .p-photo-list .p-photo-select {
-    top: 7px;
-    left: 7px;
+#photoprism .p-photo-list .p-photo-select,
+#photoprism .p-photo-list .p-photo-play {
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
 }
 
 #photoprism .p-photo-mosaic .p-photo-private,
@@ -32,6 +38,17 @@
 #photoprism .p-photo-cards .p-photo-merged {
     top: 4px;
     left: 4px;
+}
+
+#photoprism .p-photo-mosaic .p-photo-play,
+#photoprism .p-photo-cards .p-photo-play {
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
 }
 
 #photoprism .p-photo-mosaic .p-photo-like,

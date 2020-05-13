@@ -21,11 +21,15 @@ import VueLuxon from "vue-luxon";
 import VueFilters from "vue2-filters";
 import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
+import Hls from "hls.js";
 
 // Initialize helpers
 const viewer = new Viewer();
 const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
 const isPublic = config.get("public");
+
+// HTTP Live Streaming (video support)
+window.Hls = Hls;
 
 // Assign helpers to VueJS prototype
 Vue.prototype.$event = Event;

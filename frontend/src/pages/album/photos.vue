@@ -137,11 +137,19 @@
                 Event.publish("dialog.edit", {selection: selection, album: this.album, index: index});
             },
             openPhoto(index, showMerged) {
-                if (showMerged) {
+                if(!this.results[index]) {
+                    return false;
+                }
+
+                if (showMerged && this.results[index].PhotoVideo) {
+                    Event.publish("dialog.video", {play: this.results[index], album: null});
+                } else if (showMerged) {
                     this.$viewer.show(Thumb.fromFiles([this.results[index]]), 0)
                 } else {
                     this.$viewer.show(Thumb.fromPhotos(this.results), index);
                 }
+
+                return true;
             },
             loadMore() {
                 if (this.scrollDisabled) return;

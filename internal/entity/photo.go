@@ -499,6 +499,19 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 	m.LocationSrc = source
 }
 
+// AllFilesMissing returns true, if all files for this photo are missing.
+func (m *Photo) AllFilesMissing() bool {
+	count := 0
+
+	if err := Db().Model(&File{}).
+		Where("photo_id = ? AND b.file_missing = 0", m.ID).
+		Count(&count).Error; err != nil {
+		log.Error(err)
+	}
+
+	return count == 0
+}
+
 // Delete deletes the entity from the database.
 func (m *Photo) Delete(permanently bool) error {
 	if permanently {

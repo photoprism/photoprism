@@ -28,9 +28,14 @@
                                              color="accent lighten-5"></v-progress-circular>
                     </v-layout>
 
-                    <v-btn v-if="selection.length && $clipboard.has(props.item)" :flat="true" :ripple="false"
-                           icon large absolute class="p-photo-select">
+                    <v-btn v-if="selection.length && $clipboard.has(props.item)" :ripple="false"
+                           flat icon large absolute class="p-photo-select">
                         <v-icon color="white" class="t-select t-on">check_circle</v-icon>
+                    </v-btn>
+                    <v-btn v-else-if="!selection.length && props.item.PhotoVideo" :ripple="false"
+                           flat icon large absolute class="p-photo-play opacity-75"
+                           @click.stop.prevent="openPhoto(props.index, true)">
+                        <v-icon color="white" class="action-play">play_arrow</v-icon>
                     </v-btn>
                 </v-img>
             </td>
@@ -136,8 +141,14 @@
                     } else {
                         this.$clipboard.toggle(this.photos[index]);
                     }
-                } else {
-                    this.openPhoto(index, false);
+                } else if(this.photos[index]) {
+                    let photo = this.photos[index];
+
+                    if(photo.PhotoVideo) {
+                        this.openPhoto(index, true);
+                    } else {
+                        this.openPhoto(index, false);
+                    }
                 }
             },
             onContextMenu(ev, index) {

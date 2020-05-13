@@ -29,11 +29,11 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		files.id AS file_id, files.file_uuid, files.file_primary, files.file_missing, files.file_name, files.file_hash, 
 		files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, 
 		files.file_orientation, files.file_main_color, files.file_colors, files.file_luminance, files.file_chroma,
-		files.file_diff,
+		files.file_diff, files.file_video, files.file_length,
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
 		places.loc_label, places.loc_city, places.loc_state, places.loc_country`).
-		Joins("JOIN files ON files.photo_id = photos.id AND files.file_type = 'jpg' AND files.file_missing = 0 AND files.deleted_at IS NULL").
+		Joins("JOIN files ON files.photo_id = photos.id AND files.file_missing = 0 AND files.deleted_at IS NULL AND (files.file_type = 'jpg' OR files.file_video)").
 		Joins("JOIN cameras ON cameras.id = photos.camera_id").
 		Joins("JOIN lenses ON lenses.id = photos.lens_id").
 		Joins("JOIN places ON photos.place_id = places.id").

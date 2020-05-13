@@ -25,8 +25,8 @@ class Photo extends RestModel {
             PhotoTitle: "",
             TitleSrc: "",
             PhotoFavorite: false,
-            PhotoStory: false,
             PhotoPrivate: false,
+            PhotoVideo: false,
             PhotoResolution: 0,
             PhotoQuality: 0,
             PhotoLat: 0.0,
@@ -109,6 +109,30 @@ class Photo extends RestModel {
         this.FileHash = file.FileHash;
         this.FileWidth = file.FileWidth;
         this.FileHeight = file.FileHeight;
+    }
+
+    videoFile() {
+        if (!this.Files) {
+            return false;
+        }
+
+        let file = this.Files.find(f => f.FileType === "mp4");
+
+        if (!file) {
+            file = this.Files.find(f => !!f.FileVideo);
+        }
+
+        return file;
+    }
+
+    videoUri() {
+        const file = this.videoFile()
+
+        if (!file) {
+            return "";
+        }
+
+        return "/api/v1/videos/" + file.FileHash + "/mp4"
     }
 
     mainFile() {

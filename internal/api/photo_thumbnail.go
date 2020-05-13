@@ -1,13 +1,11 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"path"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -47,12 +45,21 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("photo: could not find original for %s", fileName)
+			log.Errorf("photo: could not find original for %s", txt.Quote(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore
 			f.FileMissing = true
-			entity.Db().Save(&f)
+
+			if err := f.Save(); err != nil {
+				log.Errorf("photo: %s", err)
+			} else if f.AllFilesMissing() {
+				log.Infof("photo: deleting photo, all files missing for %s", txt.Quote(f.FileName))
+
+				if err := f.Photo.Delete(false); err != nil {
+					log.Errorf("photo: %s", err)
+				}
+			}
 			return
 		}
 
@@ -80,9 +87,9 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if c.Query("download") != "" {
-			c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.ShareFileName()))
+			c.FileAttachment(thumbnail, f.ShareFileName())
+		} else {
+			c.File(thumbnail)
 		}
-
-		c.File(thumbnail)
 	})
 }

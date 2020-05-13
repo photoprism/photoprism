@@ -113,3 +113,25 @@ func (m File) Changed(fileSize int64, fileModified time.Time) bool {
 func (m *File) Purge() error {
 	return Db().Unscoped().Model(m).Updates(map[string]interface{}{"file_missing": true, "file_primary": false}).Error
 }
+
+// AllFilesMissing returns true, if all files for the photo of this file are missing.
+func (m *File) AllFilesMissing() bool {
+	count := 0
+
+	if err := Db().Model(&File{}).
+		Where("photo_id = ? AND b.file_missing = 0", m.PhotoID).
+		Count(&count).Error; err != nil {
+		log.Error(err)
+	}
+
+	return count == 0
+}
+
+// Save stored the file in the database using the default connection.
+func (m *File) Save() error {
+	if err := Db().Save(m).Error; err != nil {
+		return err
+	}
+
+	return Db().Model(m).Related(Photo{}).Error
+}

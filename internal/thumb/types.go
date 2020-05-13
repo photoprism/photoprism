@@ -75,7 +75,9 @@ type Type struct {
 	Options []ResampleOption
 }
 
-var Types = map[string]Type{
+type TypeMap map[string]Type
+
+var Types = TypeMap{
 	"tile_50":   {"tile_500", 50, 50, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
 	"tile_100":  {"tile_500", 100, 100, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
 	"tile_224":  {"tile_500", 224, 224, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
