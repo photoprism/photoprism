@@ -7,7 +7,6 @@ import (
 )
 
 func TestPhotosResults_Merged(t *testing.T) {
-
 	result1 := PhotosResult{
 		ID:               111111,
 		CreatedAt:        time.Time{},

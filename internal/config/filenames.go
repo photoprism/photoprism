@@ -147,13 +147,13 @@ func (c *Config) ExifToolBin() string {
 	return findExecutable(c.params.ExifToolBin, "exiftool")
 }
 
-// WriteJson returns true if exiftool should be used for exporting metadata to json sidecar files.
-func (c *Config) WriteJson() bool {
+// SidecarJson returns true if metadata should be synced with json sidecar files as used by exiftool.
+func (c *Config) SidecarJson() bool {
 	if c.ReadOnly() || c.ExifToolBin() == "" {
 		return false
 	}
 
-	return c.params.WriteJson
+	return c.params.SidecarJson
 }
 
 // HeifConvertBin returns the heif-convert executable file name.

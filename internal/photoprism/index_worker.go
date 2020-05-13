@@ -38,11 +38,11 @@ func IndexWorker(jobs <-chan IndexJob) {
 			}
 		}
 
-		if ind.conf.WriteJson() && !f.HasJson() {
-			if converted, err := ind.convert.ToJson(f); err != nil {
-				log.Errorf("index: creating jpeg failed (%s)", err.Error())
+		if ind.conf.SidecarJson() && !f.HasJson() {
+			if jsonFile, err := ind.convert.ToJson(f); err != nil {
+				log.Errorf("index: creating json sidecar file failed (%s)", err.Error())
 			} else {
-				related.Files = append(related.Files, converted)
+				related.Files = append(related.Files, jsonFile)
 			}
 		}
 

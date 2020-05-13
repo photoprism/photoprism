@@ -68,7 +68,7 @@ type Params struct {
 	HeifConvertBin     string `yaml:"heifconvert-bin" flag:"heifconvert-bin"`
 	FFmpegBin          string `yaml:"ffmpeg-bin" flag:"ffmpeg-bin"`
 	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
-	WriteJson          bool   `yaml:"write-json" flag:"write-json"`
+	SidecarJson        bool   `yaml:"sidecar-json" flag:"sidecar-json"`
 	PIDFilename        string `yaml:"pid-filename" flag:"pid-filename"`
 	LogFilename        string `yaml:"log-filename" flag:"log-filename"`
 	DetachServer       bool   `yaml:"detach-server" flag:"detach-server"`

@@ -22,9 +22,15 @@ func SanitizeString(value string) string {
 
 // Exif parses an image file for Exif meta data and returns as Data struct.
 func Exif(filename string) (data Data, err error) {
+	err = data.Exif(filename)
+
+	return data, err
+}
+
+// Exif parses an image file for Exif meta data and returns as Data struct.
+func (data *Data) Exif(filename string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			data = Data{}
 			err = fmt.Errorf("meta: %s", e)
 		}
 	}()
@@ -42,13 +48,13 @@ func Exif(filename string) (data Data, err error) {
 		sl, err := jmp.ParseFile(filename)
 
 		if err != nil {
-			return data, err
+			return err
 		}
 
 		_, rawExif, err = sl.Exif()
 
 		if err != nil {
-			return data, err
+			return err
 		}
 	} else if fileExtension == ".png" {
 		pmp := pngstructure.NewPngMediaParser()
@@ -56,13 +62,13 @@ func Exif(filename string) (data Data, err error) {
 		cs, err := pmp.ParseFile(filename)
 
 		if err != nil {
-			return data, err
+			return err
 		}
 
 		_, rawExif, err = cs.Exif()
 
 		if err != nil {
-			return data, err
+			return err
 		}
 	} else {
 		// Fallback to an optimistic, brute-force search.
@@ -72,7 +78,7 @@ func Exif(filename string) (data Data, err error) {
 		rawExif, err = exif.SearchFileAndExtractExif(filename)
 
 		if err != nil {
-			return data, err
+			return err
 		}
 	}
 
@@ -81,10 +87,12 @@ func Exif(filename string) (data Data, err error) {
 	ti := exif.NewTagIndex()
 
 	if err := exif.LoadStandardTags(ti); err != nil {
-		return data, err
+		return err
 	}
 
-	tags := make(map[string]string)
+	if data.All == nil {
+		data.All = make(map[string]string)
+	}
 
 	visitor := func(fqIfdPath string, ifdIndex int, ite *exif.IfdTagEntry) (err error) {
 		tagId := ite.TagId()
@@ -114,7 +122,7 @@ func Exif(filename string) (data Data, err error) {
 			}
 
 			if it.Name != "" && valueString != "" {
-				tags[it.Name] = strings.Split(valueString, "\x00")[0]
+				data.All[it.Name] = strings.Split(valueString, "\x00")[0]
 			}
 		}
 
@@ -124,8 +132,10 @@ func Exif(filename string) (data Data, err error) {
 	_, err = exif.Visit(exifcommon.IfdStandard, im, ti, rawExif, visitor)
 
 	if err != nil {
-		return data, err
+		return err
 	}
+
+	tags := data.All
 
 	// Cherry-pick the values that we care about.
 
@@ -252,7 +262,7 @@ func Exif(filename string) (data Data, err error) {
 	_, index, err := exif.Collect(im, ti, rawExif)
 
 	if err != nil {
-		return data, err
+		return err
 	}
 
 	if ifd, err := index.RootIfd.ChildWithIfdPath(exifcommon.IfdPathStandardGps); err == nil {
@@ -305,5 +315,5 @@ func Exif(filename string) (data Data, err error) {
 
 	data.All = tags
 
-	return data, nil
+	return nil
 }
