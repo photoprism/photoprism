@@ -28,7 +28,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 		importPath := job.ImportOpt.Path
 
 		if related.Main == nil {
-			log.Warnf("import: no main file found for %s", job.FileName)
+			log.Warnf("import: no media file found for %s", txt.Quote(fs.RelativeName(job.FileName, importPath)))
 			continue
 		}
 
