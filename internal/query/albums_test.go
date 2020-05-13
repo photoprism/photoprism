@@ -94,4 +94,31 @@ func TestAlbums(t *testing.T) {
 		assert.Error(t, err, "unknown filter")
 		t.Log(result)
 	})
+	t.Run("search with invalid query string", func(t *testing.T) {
+		query := form.NewAlbumSearch("xxx:bla")
+		result, err := Albums(query)
+		assert.Error(t, err, "unknown filter")
+		t.Log(result)
+	})
+	t.Run("search for existing ID", func(t *testing.T) {
+		f := form.AlbumSearch{
+			Query:     "",
+			ID:        "at9lxuqxpogaaba7",
+			Slug:      "",
+			Name:      "",
+			Favorites: false,
+			Count:     0,
+			Offset:    0,
+			Order:     "",
+		}
+
+		result, err := Albums(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 1, len(result))
+		assert.Equal(t, "christmas2030", result[0].AlbumSlug)
+	})
 }
