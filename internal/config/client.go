@@ -135,7 +135,6 @@ func (c *Config) ClientConfig() ClientConfig {
 		Hidden         uint `json:"hidden"`
 		Favorites      uint `json:"favorites"`
 		Private        uint `json:"private"`
-		Stories        uint `json:"stories"`
 		Albums         uint `json:"albums"`
 		Countries      uint `json:"countries"`
 		Places         uint `json:"places"`
@@ -144,7 +143,7 @@ func (c *Config) ClientConfig() ClientConfig {
 	}{}
 
 	db.Table("photos").
-		Select("SUM(photo_quality = -1) AS hidden, SUM(photo_quality >= 0) AS photos, SUM(photo_favorite) AS favorites, SUM(photo_private) AS private, SUM(photo_story) AS stories").
+		Select("SUM(photo_quality = -1) AS hidden, SUM(photo_quality >= 0) AS photos, SUM(photo_favorite) AS favorites, SUM(photo_private) AS private").
 		Where("deleted_at IS NULL").
 		Take(&count)
 

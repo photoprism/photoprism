@@ -38,7 +38,6 @@ type PhotoSearch struct {
 	Favorites bool      `form:"favorites"`
 	Public    bool      `form:"public"`
 	Private   bool      `form:"private"`
-	Story     bool      `form:"story"`
 	Safe      bool      `form:"safe"`
 	Count     int       `form:"count" binding:"required"`
 	Offset    int       `form:"offset"`

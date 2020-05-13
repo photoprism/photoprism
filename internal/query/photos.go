@@ -166,10 +166,6 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
-	if f.Story {
-		s = s.Where("photos.photo_story = 1")
-	}
-
 	if f.Country != "" {
 		s = s.Where("photos.photo_country = ?", f.Country)
 	}
