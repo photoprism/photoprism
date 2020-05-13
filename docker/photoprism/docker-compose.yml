@@ -48,6 +48,7 @@ services:
       PHOTOPRISM_THUMB_SIZE: 2048 # Default thumbnail size limit (default 2048, min 720, max 3840)
       # PHOTOPRISM_THUMB_SIZE: 3840 # For retina screens (requires more storage)
       PHOTOPRISM_THUMB_LIMIT: 3840 # On-demand thumbnail size limit (default 2048, min 720, max 3840)
+      # PHOTOPRISM_SIDECAR_JSON: true # sync metadata with json sidecar files as used by exiftool
     volumes:
       - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
       - "~/Pictures/Import:/photoprism/import" # [local path]:[container path] (optional)
