@@ -36,24 +36,41 @@
                     return;
                 }
 
-                if(file.FileWidth > 0) {
-                    this.width = file.FileWidth;
-                } else if(main.FileWidth > 0) {
-                    this.width = main.FileWidth;
-                } else {
-                    this.width = this.defaultWidth;
-                }
+                const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+                const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
-                if(window.innerWidth < (this.width + 50)) {
-                    this.width = window.innerWidth - 50;
+                let width = 0;
+                let height = 0;
+
+                if(file.FileWidth > 0) {
+                    width = file.FileWidth;
+                } else if(main.FileWidth > 0) {
+                    width = main.FileWidth;
+                } else {
+                    width = this.defaultWidth;
                 }
 
                 if(file.FileHeight > 0) {
-                    this.height = file.FileHeight;
+                    height = file.FileHeight;
                 } else if(main.FileHeight > 0) {
-                    this.height = main.FileHeight;
+                    height = main.FileHeight;
                 } else {
-                    this.height = this.defaultHeight;
+                    height = this.defaultHeight;
+                }
+
+                this.width = width;
+                this.height = height;
+
+                if(vw < (width + 80)) {
+                    let newWidth =  vw - 120;
+                    this.height = Math.round(newWidth * (height / width));
+                    this.width = newWidth;
+                }
+
+                if(vh < (this.height + 100)) {
+                    let newHeight = vh - 160;
+                    this.width = Math.round(newHeight * (width / height));
+                    this.height = newHeight;
                 }
 
                 this.$el.style.height = this.height;
