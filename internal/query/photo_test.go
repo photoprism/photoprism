@@ -9,7 +9,9 @@ import (
 func TestPhotoByID(t *testing.T) {
 	t.Run("photo found", func(t *testing.T) {
 		result, err := PhotoByID(1000000)
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 		assert.Equal(t, 2790, result.PhotoYear)
 	})
 
@@ -23,7 +25,9 @@ func TestPhotoByID(t *testing.T) {
 func TestPhotoByUUID(t *testing.T) {
 	t.Run("photo found", func(t *testing.T) {
 		result, err := PhotoByUUID("pt9jtdre2lvl0y12")
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 		assert.Equal(t, "Reunion", result.PhotoTitle)
 	})
 
@@ -37,7 +41,9 @@ func TestPhotoByUUID(t *testing.T) {
 func TestPreloadPhotoByUUID(t *testing.T) {
 	t.Run("photo found", func(t *testing.T) {
 		result, err := PreloadPhotoByUUID("pt9jtdre2lvl0y12")
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 		assert.Equal(t, "Reunion", result.PhotoTitle)
 	})
 
@@ -46,4 +52,19 @@ func TestPreloadPhotoByUUID(t *testing.T) {
 		assert.Error(t, err, "record not found")
 		t.Log(result)
 	})
+}
+
+func TestMissingPhotos(t *testing.T) {
+	r, err := MissingPhotos(15, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.LessOrEqual(t, 1, len(r))
+}
+
+func TestResetPhotosQuality(t *testing.T) {
+	err := ResetPhotosQuality()
+	if err != nil {
+		t.Fatal(err)
+	}
 }

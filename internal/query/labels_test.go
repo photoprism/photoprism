@@ -1,11 +1,10 @@
 package query
 
 import (
-	"testing"
-
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestLabels(t *testing.T) {
@@ -37,7 +36,7 @@ func TestLabels(t *testing.T) {
 	})
 
 	t.Run("search for favorites", func(t *testing.T) {
-		query := form.NewLabelSearch("Favorites:true")
+		query := form.NewLabelSearch("Favorites:true Count:15")
 		result, err := Labels(query)
 
 		if err != nil {
@@ -70,6 +69,7 @@ func TestLabels(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		t.Log(result)
 		assert.LessOrEqual(t, 3, len(result))
 	})
 
@@ -79,5 +79,27 @@ func TestLabels(t *testing.T) {
 
 		assert.Error(t, err, "unknown filter")
 		assert.Empty(t, result)
+	})
+
+	t.Run("search for ID", func(t *testing.T) {
+		f := form.LabelSearch{
+			Query:     "",
+			ID:        "lt9k3pw1wowuy3c4",
+			Slug:      "",
+			Name:      "",
+			All:       false,
+			Favorites: false,
+			Count:     0,
+			Offset:    0,
+			Order:     "",
+		}
+
+		result, err := Labels(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "cake", result[0].LabelSlug)
 	})
 }
