@@ -158,6 +158,24 @@ var LabelFixtures = LabelMap{
 		DeletedAt:        nil,
 		New:              false,
 	},
+	"likeLabel": {
+		ID:               1000007,
+		LabelUUID:        "lt9k3pw1wowuy3c9",
+		LabelSlug:        "likeLabel",
+		CustomSlug:       "likeLabel",
+		LabelName:        "likeLabel",
+		LabelPriority:    3,
+		LabelFavorite:    false,
+		LabelDescription: "",
+		LabelNotes:       "",
+		PhotoCount:       1,
+		LabelCategories:  []*Label{},
+		Links:            []Link{},
+		CreatedAt:        time.Now(),
+		UpdatedAt:        time.Now(),
+		DeletedAt:        nil,
+		New:              false,
+	},
 }
 
 // CreateLabelFixtures inserts known entities into the database for testing.
