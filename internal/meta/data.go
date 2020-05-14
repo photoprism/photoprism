@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"math"
 	"time"
 )
 
@@ -9,10 +10,10 @@ type Data struct {
 	UniqueID     string        `meta:"ImageUniqueID"`
 	TakenAt      time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate"`
 	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate"`
-	Duration     time.Duration `meta:"Duration,MediaDuration"`
+	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
 	TimeZone     string        `meta:"-"`
 	Title        string        `meta:"Title"`
-	Subject      string        `meta:"Subject"`
+	Subject      string        `meta:"Subject,PersonInImage"`
 	Keywords     string        `meta:"Keywords"`
 	Comment      string        `meta:"-"`
 	Artist       string        `meta:"Artist,Creator"`
@@ -31,11 +32,37 @@ type Data struct {
 	FNumber      float32       `meta:"FNumber"`
 	Iso          int           `meta:"ISO"`
 	GPSPosition  string        `meta:"GPSPosition"`
-	Lat          float32       `meta:"-"` // TODO
-	Lng          float32       `meta:"-"` // TODO
-	Altitude     int           `meta:"-"`
+	GPSLatitude  string        `meta:"GPSLatitude"`
+	GPSLongitude string        `meta:"GPSLongitude"`
+	Lat          float32       `meta:"-"`
+	Lng          float32       `meta:"-"`
+	Altitude     int           `meta:"GlobalAltitude"`
 	Width        int           `meta:"ImageWidth"`
 	Height       int           `meta:"ImageHeight"`
 	Orientation  int           `meta:"-"`
 	All          map[string]string
+}
+
+// AspectRatio returns the aspect ratio based on width and height.
+func (data Data) AspectRatio() float32 {
+	width := float64(data.Width)
+	height := float64(data.Height)
+
+	if width <= 0 || height <= 0 {
+		return 0
+	}
+
+	aspectRatio := float32(width / height)
+
+	return aspectRatio
+}
+
+// Portrait returns true if it's a portrait picture or video based on width and height.
+func (data Data) Portrait() bool {
+	return data.Width < data.Height
+}
+
+// Megapixels returns the resolution in megapixels.
+func (data Data) Megapixels() int {
+	return int(math.Round(float64(data.Width*data.Height) / 1000000))
 }

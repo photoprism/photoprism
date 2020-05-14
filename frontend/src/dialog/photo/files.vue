@@ -79,9 +79,9 @@
                     return "";
                 }
 
-                const kb = Number.parseFloat(file.FileSize) / 1048576;
+                const size = Number.parseFloat(file.FileSize) / 1048576;
 
-                return kb.toFixed(1) + " MB";
+                return size.toFixed(1) + " MB";
             },
             fileType(file) {
                 if (file.FileVideo) {

@@ -1,15 +1,15 @@
 package entity
 
+import "github.com/photoprism/photoprism/internal/classify"
+
 const (
 	// data sources
 	SrcAuto     = ""
 	SrcManual   = "manual"
-	SrcLocation = "location"
-	SrcImage    = "image"
-	SrcExif     = "exif"
+	SrcMeta     = "meta"
 	SrcXmp      = "xmp"
-	SrcYml      = "yml"
-	SrcJson     = "json"
+	SrcLocation = classify.SrcLocation
+	SrcImage    = classify.SrcImage
 
 	// sort orders
 	SortOrderRelevance = "relevance"

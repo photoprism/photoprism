@@ -26,6 +26,25 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.LensModel)
 	})
 
+	t.Run("gopher-video.json", func(t *testing.T) {
+		data, err := JSON("testdata/gopher-video.json")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("DATA: %+v", data)
+
+		assert.Equal(t, "2s", data.Duration.String())
+		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, 270, data.Width)
+		assert.Equal(t, 480, data.Height)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, "", data.CameraMake)
+		assert.Equal(t, "", data.CameraModel)
+		assert.Equal(t, "", data.LensModel)
+	})
+
 	t.Run("photoshop.json", func(t *testing.T) {
 		data, err := JSON("testdata/photoshop.json")
 
@@ -35,6 +54,12 @@ func TestJSON(t *testing.T) {
 
 		// t.Logf("DATA: %+v", data)
 
+		assert.Equal(t, "0s", data.Duration.String())
+		assert.Equal(t, float32(52.45969), data.Lat)
+		assert.Equal(t, float32(13.321831), data.Lng)
+		assert.Equal(t, "2020-01-01 16:28:23 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "2020-01-01 17:28:23 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
 		assert.Equal(t, "Night Shift / Berlin / 2020", data.Title)
 		assert.Equal(t, "Michael Mayer", data.Artist)
 		assert.Equal(t, "Example file for development", data.Description)

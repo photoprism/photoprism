@@ -1,4 +1,53 @@
+const Nanosecond = 1
+const Microsecond = 1000 * Nanosecond
+const Millisecond = 1000 * Microsecond
+const Second = 1000 * Millisecond
+const Minute = 60 * Second
+const Hour = 60 * Minute
+
 export default class Util {
+    static duration(d) {
+        let u = d;
+
+        let neg = d < 0;
+
+        if (neg) {
+            u = -u
+        }
+
+        if (u < Second) {
+            // Special case: if duration is smaller than a second,
+            // use smaller units, like 1.2ms
+            if (!u) {
+                return "0s";
+            }
+
+            if (u < Microsecond) {
+                return u + "ns";
+            }
+
+            if (u < Millisecond) {
+                return Math.round(u / Microsecond) + "µs";
+            }
+
+            return Math.round(u / Millisecond) + "ms";
+        }
+
+        let result = []
+
+        let h = Math.floor(u / Hour)
+        let min = Math.floor(u / Minute)%60
+        let sec = Math.ceil(u / Second)%60
+
+        result.push(h.toString().padStart(2, '0'))
+        result.push(min.toString().padStart(2, '0'))
+        result.push(sec.toString().padStart(2, '0'))
+
+        // return `${h}h${min}m${sec}s`
+
+        return result.join(":");
+    }
+
     static arabicToRoman(number) {
         let roman = "";
         const romanNumList = {
@@ -34,7 +83,7 @@ export default class Util {
         return roman;
     }
 
-    static truncate (str, length, ending) {
+    static truncate(str, length, ending) {
         if (length == null) {
             length = 100;
         }

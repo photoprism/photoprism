@@ -5,12 +5,12 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"reflect"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/tidwall/gjson"
+	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
 // JSON parses a json sidecar file (as used by Exiftool) and returns a Data struct.
@@ -81,18 +81,10 @@ func (data *Data) JSON(filename string) (err error) {
 			switch t := fieldValue.Interface().(type) {
 			case time.Time:
 				if tv, err := time.Parse("2006:01:02 15:04:05", strings.TrimSpace(jsonValue.String())); err == nil {
-					fieldValue.Set(reflect.ValueOf(tv))
+					fieldValue.Set(reflect.ValueOf(tv.Round(time.Second).UTC()))
 				}
 			case time.Duration:
-				if n := strings.Split(strings.TrimSpace(jsonValue.String()), ":"); len(n) == 3 {
-					h, _ := strconv.Atoi(n[0])
-					m, _ := strconv.Atoi(n[1])
-					s, _ := strconv.Atoi(n[2])
-
-					dv := time.Duration(h)*time.Hour + time.Duration(m)*time.Minute + time.Duration(s)*time.Second
-
-					fieldValue.Set(reflect.ValueOf(dv))
-				}
+				fieldValue.Set(reflect.ValueOf(StringToDuration(jsonValue.String())))
 			case int, int64:
 				fieldValue.SetInt(jsonValue.Int())
 			case float32, float64:
@@ -105,6 +97,36 @@ func (data *Data) JSON(filename string) (err error) {
 				fieldValue.SetBool(jsonValue.Bool())
 			default:
 				log.Warnf("meta: can't assign value of type %s to %s", t, tagValue)
+			}
+		}
+	}
+
+	// Calculate latitude and longitude if exists.
+	if data.GPSPosition != "" {
+		data.Lat, data.Lng = GpsToLatLng(data.GPSPosition)
+	} else if data.GPSLatitude != "" && data.GPSLongitude != "" {
+		data.Lat = GpsToDecimal(data.GPSLatitude)
+		data.Lng = GpsToDecimal(data.GPSLongitude)
+	}
+
+	// Set time zone and calculate UTC time.
+	if data.Lat != 0 && data.Lng != 0 {
+		zones, err := tz.GetZone(tz.Point{
+			Lat: float64(data.Lat),
+			Lon: float64(data.Lng),
+		})
+
+		if err == nil && len(zones) > 0 {
+			data.TimeZone = zones[0]
+		}
+
+		if !data.TakenAtLocal.IsZero() {
+			if loc, err := time.LoadLocation(data.TimeZone); err != nil {
+				log.Warnf("meta: unknown time zone %s", data.TimeZone)
+			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), loc); err == nil {
+				data.TakenAt = tl.Round(time.Second).UTC()
+			} else {
+				log.Errorf("meta: %s", err.Error()) // this should never happen
 			}
 		}
 	}

@@ -1,15 +1,9 @@
 import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
+import Util from "common/util";
 
-const SrcAuto = "";
 const SrcManual = "manual";
-const SrcLocation = "location";
-const SrcImage = "image";
-const SrcExif = "exif";
-const SrcXmp = "xmp";
-const SrcYml = "yml";
-const SrcJson = "json";
 
 class Photo extends RestModel {
     getDefaults() {
@@ -243,6 +237,35 @@ class Photo extends RestModel {
         }
 
         return "Unknown";
+    }
+
+    getVideoInfo() {
+        let result = [];
+        let file = this.videoFile();
+
+        if(!file) {
+            file = this.mainFile();
+        }
+
+        if(!file) {
+            return "Video";
+        }
+
+        if (file.FileLength > 0) {
+            result.push(Util.duration(file.FileLength))
+        }
+
+        if (file.FileWidth && file.FileHeight) {
+            result.push(file.FileWidth + " × " + file.FileHeight);
+        }
+
+        if(file.FileSize) {
+            const size = Number.parseFloat(file.FileSize) / 1048576;
+
+            result.push(size.toFixed(1) + " MB");
+        }
+
+        return result.join(", ");
     }
 
     getCamera() {

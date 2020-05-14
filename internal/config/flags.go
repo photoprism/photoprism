@@ -174,7 +174,7 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_EXIFTOOL_BIN",
 	},
 	cli.BoolFlag{
-		Name:   "sidecar-json",
+		Name:   "sidecar-json, j",
 		Usage:  "sync metadata with json sidecar files as used by exiftool",
 		EnvVar: "PHOTOPRISM_SIDECAR_JSON",
 	},

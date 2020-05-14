@@ -74,6 +74,7 @@ type PhotosResult struct {
 	FileMime        string
 	FileWidth       int
 	FileHeight      int
+	FileSize        int64
 	FileOrientation int
 	FileAspectRatio float32
 	FileColors      string // todo: remove from result?

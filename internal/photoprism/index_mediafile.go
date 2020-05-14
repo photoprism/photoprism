@@ -137,6 +137,17 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if m.IsVideo() {
 		photo.PhotoVideo = true
+		metaData, _ = m.MetaData()
+
+		file.FileWidth = metaData.Width
+		file.FileHeight = metaData.Height
+		file.FileLength = metaData.Duration
+		file.FileAspectRatio = metaData.AspectRatio()
+		file.FilePortrait = metaData.Portrait()
+
+		if res := metaData.Megapixels(); res > photo.PhotoResolution {
+			photo.PhotoResolution = res
+		}
 	}
 
 	if !file.FilePrimary {
@@ -176,12 +187,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		if fileChanged || o.Rescan {
-			// Read UpdateExif data
+			// read metadata from embedded Exif and JSON sidecar file (if exists)
 			if metaData, err := m.MetaData(); err == nil {
-				photo.SetTitle(metaData.Title, entity.SrcExif)
-				photo.SetDescription(metaData.Description, entity.SrcExif)
-				photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcExif)
-				photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcExif)
+				photo.SetTitle(metaData.Title, entity.SrcMeta)
+				photo.SetDescription(metaData.Description, entity.SrcMeta)
+				photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
+				photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcMeta)
 
 				if photo.Description.NoNotes() {
 					photo.Description.PhotoNotes = metaData.Comment

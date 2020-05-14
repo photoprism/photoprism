@@ -11,13 +11,15 @@ import (
 // MetaData returns exif meta data of a media file.
 func (m *MediaFile) MetaData() (result meta.Data, err error) {
 	m.metaDataOnce.Do(func() {
+		err = m.metaData.Exif(m.FileName())
+
 		if jsonFile := fs.TypeJson.Find(m.FileName(), false); jsonFile == "" {
 			log.Debugf("mediafile: no json sidecar file found for %s", txt.Quote(filepath.Base(m.FileName())))
-		} else if err := m.metaData.JSON(jsonFile); err != nil {
-			log.Warn(err)
+		} else if jsonErr := m.metaData.JSON(jsonFile); jsonErr != nil {
+			log.Warn(jsonErr)
+		} else {
+			err = nil
 		}
-
-		err = m.metaData.Exif(m.FileName())
 	})
 
 	return m.metaData, err

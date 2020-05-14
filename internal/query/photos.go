@@ -29,7 +29,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		files.id AS file_id, files.file_uuid, files.file_primary, files.file_missing, files.file_name, files.file_hash, 
 		files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, 
 		files.file_orientation, files.file_main_color, files.file_colors, files.file_luminance, files.file_chroma,
-		files.file_diff, files.file_video, files.file_length,
+		files.file_diff, files.file_video, files.file_length, files.file_size,
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
 		places.loc_label, places.loc_city, places.loc_state, places.loc_country`).

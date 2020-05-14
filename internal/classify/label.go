@@ -25,7 +25,7 @@ func LocationLabel(name string, uncertainty int, priority int) Label {
 		name = name[:index]
 	}
 
-	label := Label{Name: name, Source: "location", Uncertainty: uncertainty, Priority: priority}
+	label := Label{Name: name, Source: SrcLocation, Uncertainty: uncertainty, Priority: priority}
 
 	return label
 }

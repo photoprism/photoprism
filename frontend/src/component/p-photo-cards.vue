@@ -94,7 +94,11 @@
                                         {{ photo.getDateString() }}
                                     </button>
                                     <br/>
-                                    <button @click.exact="editPhoto(index)" title="Camera">
+                                    <button v-if="photo.PhotoVideo" @click.exact="openPhoto(index, true)" title="Video">
+                                        <v-icon size="14">movie</v-icon>
+                                        {{ photo.getVideoInfo() }}
+                                    </button>
+                                    <button v-else @click.exact="editPhoto(index)" title="Camera">
                                         <v-icon size="14">photo_camera</v-icon>
                                         {{ photo.getCamera() }}
                                     </button>
@@ -105,13 +109,13 @@
                                             {{ photo.getLocation() }}
                                         </button>
                                     </template>
-                                    <template v-if="debug">
+                                    <!-- template v-if="debug">
                                         <br/>
                                         <button @click.exact="openUUID(index)" title="Unique ID">
                                             <v-icon size="14">fingerprint</v-icon>
                                             {{ photo.PhotoUUID }}
                                         </button>
-                                    </template>
+                                    </template -->
                                 </div>
                             </div>
                         </v-card-title>
