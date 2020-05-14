@@ -288,7 +288,7 @@ func TestPhotos(t *testing.T) {
 	})
 	t.Run("form.favorites", func(t *testing.T) {
 		var f form.PhotoSearch
-		f.Query = "favorites:true"
+		f.Query = "favorite:true"
 		f.Count = 10
 		f.Offset = 0
 

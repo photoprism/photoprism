@@ -68,12 +68,12 @@
                                 <v-icon v-else color="accent lighten-3" class="t-like t-off">favorite_border</v-icon>
                             </v-btn>
 
-                            <v-btn v-if="photo.PhotoVideo" color="white" :ripple="false"
+                            <v-btn v-if="photo.PhotoVideo && photo.isMP4()" color="white" :ripple="false"
                                    outline large fab absolute class="p-photo-play opacity-75" :depressed="false"
                                    @click.stop.prevent="openPhoto(index, true)">
                                 <v-icon color="white" class="action-play">play_arrow</v-icon>
                             </v-btn>
-                            <v-btn v-else-if="photo.Files.length > 1" :ripple="false"
+                            <v-btn v-else-if="!photo.PhotoVideo && photo.Files.length > 1" :ripple="false"
                                    icon flat large absolute class="p-photo-merged opacity-75"
                                    @click.stop.prevent="openPhoto(index, true)">
                                 <v-icon color="white" class="action-burst">burst_mode</v-icon>

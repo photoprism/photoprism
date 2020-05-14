@@ -12,8 +12,7 @@ func TestGetImportOptions(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetImportOptions(router, conf)
 		r := PerformRequest(app, "GET", "/api/v1/import")
-		val := gjson.Get(r.Body.String(), "dirs")
-		assert.Equal(t, "[\"/raw\"]", val.String())
+		assert.True(t, gjson.Get(r.Body.String(), "dirs").IsArray())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }

@@ -24,6 +24,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 
 	// s.LogMode(true)
 
+	// Main search query, avoids (slow) left joins.
 	s = s.Table("photos").
 		Select(`photos.*,
 		files.id AS file_id, files.file_uuid, files.file_primary, files.file_missing, files.file_name, files.file_hash, 
@@ -33,11 +34,12 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
 		places.loc_label, places.loc_city, places.loc_state, places.loc_country`).
-		Joins("JOIN files ON photos.id = files.photo_id AND files.file_missing = 0 AND files.deleted_at IS NULL AND (files.file_type = 'jpg' OR files.file_video)").
+		Joins("JOIN files ON photos.id = files.photo_id AND files.file_missing = 0 AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON photos.camera_id = cameras.id").
 		Joins("JOIN lenses ON photos.lens_id = lenses.id").
 		Joins("JOIN places ON photos.place_id = places.id")
 
+	// Shortcut for known photo ids.
 	if f.ID != "" {
 		s = s.Where("photos.photo_uuid = ?", f.ID)
 		s = s.Order("files.file_primary DESC")
@@ -53,6 +55,16 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		return results, len(results), nil
 	}
 
+	// Filter by media type.
+	if f.Video {
+		s = s.Where("(files.file_type = 'jpg' OR files.file_video = 1) AND photos.photo_video = 1")
+	} else if f.Photo {
+		s = s.Where("files.file_type = 'jpg' AND photos.photo_video = 1")
+	} else {
+		s = s.Where("(files.file_type = 'jpg' OR files.file_video = 1)")
+	}
+
+	// Filter by label, label category and keywords.
 	var categories []entity.Category
 	var label entity.Label
 	var labels []entity.Label
@@ -76,6 +88,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		}
 	}
 
+	// Filter by location.
 	if f.Location == true {
 		s = s.Where("location_id > 0")
 
@@ -115,6 +128,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		}
 	}
 
+	// Filter by status.
 	if f.Archived {
 		s = s.Where("photos.deleted_at IS NOT NULL")
 	} else {
@@ -133,6 +147,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		}
 	}
 
+	// Filter by additional flags and metadata.
 	if f.Error {
 		s = s.Where("files.file_error <> ''")
 	}
@@ -161,7 +176,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		s = s.Where("files.file_main_color = ?", strings.ToLower(f.Color))
 	}
 
-	if f.Favorites {
+	if f.Favorite {
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
@@ -211,7 +226,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		f.Dist = 5000
 	}
 
-	// Inaccurate distance search, but probably 'good enough' for now
+	// Filter by distance (approximation).
 	if f.Lat > 0 {
 		latMin := f.Lat - SearchRadius*float32(f.Dist)
 		latMax := f.Lat + SearchRadius*float32(f.Dist)
@@ -232,6 +247,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
 	}
 
+	// Set sort order for results.
 	switch f.Order {
 	case entity.SortOrderRelevance:
 		if f.Label != "" {

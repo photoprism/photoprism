@@ -11,6 +11,7 @@ import (
 )
 
 func Dirs(root string, recursive bool) (result []string, err error) {
+	result = []string{}
 	ignore := NewIgnoreList(".ppignore", true, false)
 	mutex := sync.Mutex{}
 

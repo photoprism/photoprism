@@ -62,7 +62,7 @@ func TestLabels(t *testing.T) {
 		}
 	})
 	t.Run("search for favorites", func(t *testing.T) {
-		query := form.NewLabelSearch("Favorites:true Count:15")
+		query := form.NewLabelSearch("Favorite:true Count:15")
 		result, err := Labels(query)
 
 		if err != nil {
@@ -109,15 +109,15 @@ func TestLabels(t *testing.T) {
 
 	t.Run("search for ID", func(t *testing.T) {
 		f := form.LabelSearch{
-			Query:     "",
-			ID:        "lt9k3pw1wowuy3c4",
-			Slug:      "",
-			Name:      "",
-			All:       false,
-			Favorites: false,
-			Count:     0,
-			Offset:    0,
-			Order:     "",
+			Query:    "",
+			ID:       "lt9k3pw1wowuy3c4",
+			Slug:     "",
+			Name:     "",
+			All:      false,
+			Favorite: false,
+			Count:    0,
+			Offset:   0,
+			Order:    "",
 		}
 
 		result, err := Labels(f)

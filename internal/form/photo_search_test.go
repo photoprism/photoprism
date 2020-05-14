@@ -18,7 +18,7 @@ func TestPhotoSearchForm(t *testing.T) {
 func TestParseQueryString(t *testing.T) {
 
 	t.Run("valid query", func(t *testing.T) {
-		form := &PhotoSearch{Query: "label:cat query:\"fooBar baz\" before:2019-01-15 camera:23 favorites:false dist:25000 lat:33.45343166666667"}
+		form := &PhotoSearch{Query: "label:cat query:\"fooBar baz\" before:2019-01-15 camera:23 favorite:false dist:25000 lat:33.45343166666667"}
 
 		err := form.ParseQueryString()
 
@@ -32,12 +32,12 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, "foobar baz", form.Query)
 		assert.Equal(t, 23, form.Camera)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
-		assert.Equal(t, false, form.Favorites)
+		assert.Equal(t, false, form.Favorite)
 		assert.Equal(t, uint(0x61a8), form.Dist)
 		assert.Equal(t, float32(33.45343), form.Lat)
 	})
 	t.Run("valid query 2", func(t *testing.T) {
-		form := &PhotoSearch{Query: "chroma:200 title:\"test\" after:2018-01-15 duplicate:false  favorites:true lng:33.45343166666667"}
+		form := &PhotoSearch{Query: "chroma:200 title:\"test\" after:2018-01-15 duplicate:false  favorite:true lng:33.45343166666667"}
 
 		err := form.ParseQueryString()
 
@@ -80,7 +80,7 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, "unknown filter: Xxx", err.Error())
 	})
 	t.Run("query for favorites with uncommon bool value", func(t *testing.T) {
-		form := &PhotoSearch{Query: "favorites:cat"}
+		form := &PhotoSearch{Query: "favorite:cat"}
 
 		err := form.ParseQueryString()
 
@@ -88,7 +88,7 @@ func TestParseQueryString(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.True(t, form.Favorites)
+		assert.True(t, form.Favorite)
 	})
 	t.Run("query for lat with invalid type", func(t *testing.T) {
 		form := &PhotoSearch{Query: "lat:cat"}

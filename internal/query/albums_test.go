@@ -67,7 +67,7 @@ func TestAlbums(t *testing.T) {
 	})
 
 	t.Run("favorites true", func(t *testing.T) {
-		query := form.NewAlbumSearch("favorites:true count:10000")
+		query := form.NewAlbumSearch("favorite:true count:10000")
 
 		result, err := Albums(query)
 
@@ -102,14 +102,14 @@ func TestAlbums(t *testing.T) {
 	})
 	t.Run("search for existing ID", func(t *testing.T) {
 		f := form.AlbumSearch{
-			Query:     "",
-			ID:        "at9lxuqxpogaaba7",
-			Slug:      "",
-			Name:      "",
-			Favorites: false,
-			Count:     0,
-			Offset:    0,
-			Order:     "",
+			Query:    "",
+			ID:       "at9lxuqxpogaaba7",
+			Slug:     "",
+			Name:     "",
+			Favorite: false,
+			Count:    0,
+			Offset:   0,
+			Order:    "",
 		}
 
 		result, err := Albums(f)

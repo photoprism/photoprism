@@ -10,6 +10,8 @@ type PhotoSearch struct {
 	ID        string    `form:"id"`
 	Title     string    `form:"title"`
 	Hash      string    `form:"hash"`
+	Video     bool      `form:"video"`
+	Photo     bool      `form:"photo"`
 	Duplicate bool      `form:"duplicate"`
 	Archived  bool      `form:"archived"`
 	Error     bool      `form:"error"`
@@ -25,24 +27,24 @@ type PhotoSearch struct {
 	Location  bool      `form:"location"`
 	Album     string    `form:"album"`
 	Label     string    `form:"label"`
-	Country   string    `form:"country"`
-	Year      uint      `form:"year"`
-	Month     uint      `form:"month"`
-	Color     string    `form:"color"`
-	Quality   int       `form:"quality"`
-	Review    bool      `form:"review"`
-	Camera    int       `form:"camera"`
-	Lens      int       `form:"lens"`
-	Before    time.Time `form:"before" time_format:"2006-01-02"`
-	After     time.Time `form:"after" time_format:"2006-01-02"`
-	Favorites bool      `form:"favorites"`
-	Public    bool      `form:"public"`
-	Private   bool      `form:"private"`
-	Safe      bool      `form:"safe"`
-	Count     int       `form:"count" binding:"required"`
-	Offset    int       `form:"offset"`
-	Order     string    `form:"order"`
-	Merged    bool      `form:"merged"`
+	Country  string    `form:"country"`
+	Year     uint      `form:"year"`
+	Month    uint      `form:"month"`
+	Color    string    `form:"color"`
+	Quality  int       `form:"quality"`
+	Review   bool      `form:"review"`
+	Camera   int       `form:"camera"`
+	Lens     int       `form:"lens"`
+	Before   time.Time `form:"before" time_format:"2006-01-02"`
+	After    time.Time `form:"after" time_format:"2006-01-02"`
+	Favorite bool      `form:"favorite"`
+	Public   bool      `form:"public"`
+	Private  bool      `form:"private"`
+	Safe     bool      `form:"safe"`
+	Count    int       `form:"count" binding:"required"`
+	Offset   int       `form:"offset"`
+	Order    string    `form:"order"`
+	Merged   bool      `form:"merged"`
 }
 
 func (f *PhotoSearch) GetQuery() string {

@@ -49,7 +49,14 @@ export default [
         path: "/favorites",
         component: Photos,
         meta: {title: "Favorites", auth: true},
-        props: {staticFilter: {favorites: true}},
+        props: {staticFilter: {favorite: true}},
+    },
+    {
+        name: "videos",
+        path: "/videos",
+        component: Photos,
+        meta: {title: "Videos", auth: true},
+        props: {staticFilter: {video: true}},
     },
     {
         name: "review",

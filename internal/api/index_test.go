@@ -12,8 +12,7 @@ func TestGetIndexingOptions(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetIndexingOptions(router, conf)
 		r := PerformRequest(app, "GET", "/api/v1/index")
-		val := gjson.Get(r.Body.String(), "dirs")
-		assert.Contains(t, val.String(), "/2011")
+		assert.True(t, gjson.Get(r.Body.String(), "dirs").IsArray())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }
