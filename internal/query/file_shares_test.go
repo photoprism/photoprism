@@ -9,7 +9,7 @@ import (
 
 func TestFileShares(t *testing.T) {
 	t.Run("search for id and status", func(t *testing.T) {
-		r, err := FileShares(uint(1000001), "test")
+		r, err := FileShares(uint(1000001), "new")
 		if err != nil {
 			t.Fatal(err)
 		}
