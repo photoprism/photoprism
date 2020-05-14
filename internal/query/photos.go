@@ -59,7 +59,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 	if f.Video {
 		s = s.Where("(files.file_type = 'jpg' OR files.file_video = 1) AND photos.photo_video = 1")
 	} else if f.Photo {
-		s = s.Where("files.file_type = 'jpg' AND photos.photo_video = 1")
+		s = s.Where("files.file_type = 'jpg' AND photos.photo_video = 0")
 	} else {
 		s = s.Where("(files.file_type = 'jpg' OR files.file_video = 1)")
 	}
