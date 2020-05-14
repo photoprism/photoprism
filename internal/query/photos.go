@@ -33,11 +33,10 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
 		places.loc_label, places.loc_city, places.loc_state, places.loc_country`).
-		Joins("JOIN files ON files.photo_id = photos.id AND files.file_missing = 0 AND files.deleted_at IS NULL AND (files.file_type = 'jpg' OR files.file_video)").
-		Joins("JOIN cameras ON cameras.id = photos.camera_id").
-		Joins("JOIN lenses ON lenses.id = photos.lens_id").
-		Joins("JOIN places ON photos.place_id = places.id").
-		Group("photos.id, files.id")
+		Joins("JOIN files ON photos.id = files.photo_id AND files.file_missing = 0 AND files.deleted_at IS NULL AND (files.file_type = 'jpg' OR files.file_video)").
+		Joins("JOIN cameras ON photos.camera_id = cameras.id").
+		Joins("JOIN lenses ON photos.lens_id = lenses.id").
+		Joins("JOIN places ON photos.place_id = places.id")
 
 	if f.ID != "" {
 		s = s.Where("photos.photo_uuid = ?", f.ID)
