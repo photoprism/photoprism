@@ -10,7 +10,7 @@ import (
 )
 
 func TestPhotos(t *testing.T) {
-	t.Run("normal query", func(t *testing.T) {
+	t.Run("search all", func(t *testing.T) {
 		var f form.PhotoSearch
 		f.Query = ""
 		f.Count = 10
@@ -35,6 +35,36 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
+	t.Run("search for ID and merged", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Count = 5000
+		f.Offset = 0
+		f.ID = "pt9jtdre2lvl0yh7"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("search for ID with merged false", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Count = 5000
+		f.Offset = 0
+		f.ID = "pt9jtdre2lvl0yh7"
+		f.Merged = false
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
 	t.Run("label query dog", func(t *testing.T) {
 		var f form.PhotoSearch
 		f.Query = "label:dog"
@@ -45,7 +75,6 @@ func TestPhotos(t *testing.T) {
 
 		assert.Equal(t, "label dog not found", err.Error())
 		assert.Empty(t, photos)
-		//t.Logf("results: %+v", photos)
 	})
 	t.Run("label query landscape", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -89,7 +118,143 @@ func TestPhotos(t *testing.T) {
 		}
 
 		assert.LessOrEqual(t, 3, len(photos))
+	})
+	t.Run("form.location true and keyword", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "bridge"
+		f.Count = 10
+		f.Offset = 0
+		f.Location = true
 
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("query too short", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "a"
+		f.Count = 5000
+		f.Offset = 0
+		f.Location = false
+
+		photos, _, err := Photos(f)
+
+		assert.Equal(t, "query too short", err.Error())
+		assert.Empty(t, photos)
+	})
+	t.Run("search for keyword", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "bridge"
+		f.Count = 5000
+		f.Offset = 0
+
+		photos, _, err := Photos(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 2, len(photos))
+	})
+	t.Run("search for label in query", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "flower"
+		f.Count = 5000
+		f.Offset = 0
+
+		photos, _, err := Photos(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("search for archived", func(t *testing.T) {
+
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Count = 5000
+		f.Offset = 0
+		f.Archived = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("search for private", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Count = 5000
+		f.Offset = 0
+		f.Private = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("search for public", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Count = 5000
+		f.Offset = 0
+		f.Public = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 3, len(photos))
+	})
+	t.Run("search for review", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Count = 5000
+		f.Offset = 0
+		f.Review = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("search for quality", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Count = 5000
+		f.Offset = 0
+		f.Quality = 4
+		f.Private = false
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("search for file error", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Count = 5000
+		f.Offset = 0
+		f.Error = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
 	})
 	t.Run("form.camera", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -213,9 +378,10 @@ func TestPhotos(t *testing.T) {
 	})
 	t.Run("form.mono", func(t *testing.T) {
 		var f form.PhotoSearch
-		f.Query = "mono:false"
+		f.Query = "mono:true"
 		f.Count = 10
 		f.Offset = 0
+		f.Archived = true
 
 		photos, _, err := Photos(f)
 
@@ -223,7 +389,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.LessOrEqual(t, 4, len(photos))
+		assert.LessOrEqual(t, 1, len(photos))
 	})
 	t.Run("form.chroma >9 Order:similar", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -349,53 +515,6 @@ func TestPhotos(t *testing.T) {
 		f.Month = 2
 		f.Year = 2790
 		f.Album = "at9lxuqxpogaaba8"
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.LessOrEqual(t, 1, len(photos))
-	})
-	t.Run("search for private, archived, review", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = ""
-		f.Count = 5000
-		f.Offset = 0
-		f.Private = true
-		f.Archived = true
-		f.Review = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Empty(t, photos)
-	})
-	t.Run("search for archived and public", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = ""
-		f.Count = 5000
-		f.Offset = 0
-		f.Archived = true
-		f.Public = true
-
-		photos, _, err := Photos(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Empty(t, photos)
-		//TODO create test fixture
-	})
-	t.Run("search for ID", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = ""
-		f.Count = 5000
-		f.Offset = 0
-		f.ID = "pt9jtdre2lvl0yh7"
-		f.Merged = true
 
 		photos, _, err := Photos(f)
 
