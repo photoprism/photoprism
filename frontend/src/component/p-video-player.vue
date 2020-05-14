@@ -71,8 +71,9 @@
                     shimScriptAccess: 'always',
                     forceLive: false,
                     loop: false,
-                    stretching: false,
+                    stretching: true,
                     autoplay: true,
+                    setDimensions: true,
                     success: (mediaElement, originalNode, instance) => {
                         instance.setSrc(self.source);
                         this.success(mediaElement, originalNode, instance);
@@ -86,8 +87,9 @@
             },
             remove() {
                 if (this.player) {
+                    this.player.pause();
                     this.player.remove();
-                    this.player = "";
+                    this.player = null;
                 }
             },
             setSource(src) {
@@ -104,6 +106,8 @@
                 this.player.width = this.width;
                 this.player.videoHeight = this.height;
                 this.player.videoWidth = this.width;
+                this.$el.style.cssText = "width: " +  this.width + "px; height: " + this.height + "px;"
+
                 this.player.setSrc(src);
                 this.player.setPoster("");
                 this.player.load();

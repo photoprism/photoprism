@@ -73,9 +73,6 @@
                     this.height = newHeight;
                 }
 
-                this.$el.style.height = this.height;
-                this.$el.style.width = this.width;
-
                 this.source = uri;
                 this.show = true;
             },
