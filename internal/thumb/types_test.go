@@ -39,3 +39,18 @@ func TestType_SkipPreRender(t *testing.T) {
 	Size = 3840
 	Limit = 3840
 }
+
+func TestResampleFilter_Imaging(t *testing.T) {
+	t.Run("Blackman", func(t *testing.T) {
+		r := ResampleBlackman.Imaging()
+		assert.Equal(t, float64(3), r.Support)
+	})
+	t.Run("Cubic", func(t *testing.T) {
+		r := ResampleCubic.Imaging()
+		assert.Equal(t, float64(2), r.Support)
+	})
+	t.Run("Linear", func(t *testing.T) {
+		r := ResampleLinear.Imaging()
+		assert.Equal(t, float64(1), r.Support)
+	})
+}
