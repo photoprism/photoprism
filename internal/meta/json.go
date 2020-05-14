@@ -131,5 +131,11 @@ func (data *Data) JSON(filename string) (err error) {
 		}
 	}
 
+	// Fix rotation.
+	if data.Rotation == 90 || data.Rotation == 270 || data.Rotation == -90 {
+		data.Width, data.Height = data.Height, data.Width
+		data.Rotation = 0
+	}
+
 	return nil
 }
