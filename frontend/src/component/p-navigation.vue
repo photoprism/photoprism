@@ -63,7 +63,7 @@
                     <v-list-tile slot="activator" to="/photos" @click.stop="" class="p-navigation-photos">
                         <v-list-tile-content>
                             <v-list-tile-title>
-                                <translate>{{ $gettext('Photos') }}</translate>
+                                <span>{{ $gettext('Photos') }}</span>
                                 <span v-if="config.count.photos > 0" class="p-navigation-count">{{ config.count.photos }}</span>
                             </v-list-tile-title>
                         </v-list-tile-content>
