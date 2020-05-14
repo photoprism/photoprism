@@ -7,6 +7,72 @@ import (
 )
 
 func TestJSON(t *testing.T) {
+	t.Run("gopher-telegram.json", func(t *testing.T) {
+		data, err := JSON("testdata/gopher-telegram.json")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("DATA: %+v", data)
+
+		assert.Equal(t, "2s", data.Duration.String())
+		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, 270, data.Width)
+		assert.Equal(t, 480, data.Height)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, "", data.CameraMake)
+		assert.Equal(t, "", data.CameraModel)
+		assert.Equal(t, "", data.LensModel)
+	})
+
+	t.Run("gopher-original.json", func(t *testing.T) {
+		data, err := JSON("testdata/gopher-original.json")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("DATA: %+v", data)
+
+		assert.Equal(t, "2s", data.Duration.String())
+		assert.Equal(t, "2020-05-11 14:16:48 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2020-05-11 12:16:48 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, 1080, data.Width)
+		assert.Equal(t, 1920, data.Height)
+		assert.Equal(t, float32(52.4596), data.Lat)
+		assert.Equal(t, float32(13.3218), data.Lng)
+		assert.Equal(t, "", data.CameraMake)
+		assert.Equal(t, "", data.CameraModel)
+		assert.Equal(t, "", data.LensModel)
+	})
+
+	t.Run("berlin-landscape.json", func(t *testing.T) {
+		data, err := JSON("testdata/berlin-landscape.json")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("DATA: %+v", data)
+
+		assert.Equal(t, "4s", data.Duration.String())
+		assert.Equal(t, "2020-05-14 11:34:41 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2020-05-14 09:34:41 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, 1920, data.Width)
+		assert.Equal(t, 1080, data.Height)
+		assert.Equal(t, float32(52.4649), data.Lat)
+		assert.Equal(t, float32(13.3148), data.Lng)
+		assert.Equal(t, "", data.CameraMake)
+		assert.Equal(t, "", data.CameraModel)
+		assert.Equal(t, "", data.LensModel)
+	})
+
 	t.Run("mp4.json", func(t *testing.T) {
 		data, err := JSON("testdata/mp4.json")
 
@@ -19,25 +85,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "4m25s", data.Duration.String())
 		assert.Equal(t, "2019-11-23 13:51:49 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, 848, data.Width)
-		assert.Equal(t, 480, data.Height)
-		assert.Equal(t, "", data.Copyright)
-		assert.Equal(t, "", data.CameraMake)
-		assert.Equal(t, "", data.CameraModel)
-		assert.Equal(t, "", data.LensModel)
-	})
-
-	t.Run("gopher-video.json", func(t *testing.T) {
-		data, err := JSON("testdata/gopher-video.json")
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		// t.Logf("DATA: %+v", data)
-
-		assert.Equal(t, "2s", data.Duration.String())
-		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAtLocal.String())
-		assert.Equal(t, 270, data.Width)
 		assert.Equal(t, 480, data.Height)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, "", data.CameraMake)

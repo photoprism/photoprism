@@ -40,6 +40,7 @@ type Data struct {
 	Width        int           `meta:"ImageWidth"`
 	Height       int           `meta:"ImageHeight"`
 	Orientation  int           `meta:"-"`
+	Rotation     int           `meta:"Rotation"`
 	All          map[string]string
 }
 
