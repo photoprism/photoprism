@@ -29,8 +29,7 @@ func GetImportOptions(router *gin.RouterGroup, conf *config.Config) {
 		dirs, err := fs.Dirs(conf.ImportPath(), true)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
-			return
+			log.Errorf("import: %s", err)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"dirs": dirs})

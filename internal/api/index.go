@@ -27,8 +27,7 @@ func GetIndexingOptions(router *gin.RouterGroup, conf *config.Config) {
 		dirs, err := fs.Dirs(conf.OriginalsPath(), true)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
-			return
+			log.Errorf("index: %s", err)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"dirs": dirs})
