@@ -105,6 +105,14 @@ class Photo extends RestModel {
         this.FileHeight = file.FileHeight;
     }
 
+    isMP4() {
+        if (!this.Files) {
+            return false;
+        }
+
+        return this.Files.findIndex(f => f.FileType === "mp4") !== -1;
+    }
+
     videoFile() {
         if (!this.Files) {
             return false;

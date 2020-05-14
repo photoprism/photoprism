@@ -27,7 +27,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Neckarbrücke", result[0].PhotoTitle)
+		assert.LessOrEqual(t, 2, len(result))
 
 	})
 

@@ -32,7 +32,7 @@
                            flat icon large absolute class="p-photo-select">
                         <v-icon color="white" class="t-select t-on">check_circle</v-icon>
                     </v-btn>
-                    <v-btn v-else-if="!selection.length && props.item.PhotoVideo" :ripple="false"
+                    <v-btn v-else-if="!selection.length && props.item.PhotoVideo && props.item.isMP4()" :ripple="false"
                            flat icon large absolute class="p-photo-play opacity-75"
                            @click.stop.prevent="openPhoto(props.index, true)">
                         <v-icon color="white" class="action-play">play_arrow</v-icon>
@@ -144,7 +144,7 @@
                 } else if(this.photos[index]) {
                     let photo = this.photos[index];
 
-                    if(photo.PhotoVideo) {
+                    if(photo.PhotoVideo && photo.isMP4()) {
                         this.openPhoto(index, true);
                     } else {
                         this.openPhoto(index, false);

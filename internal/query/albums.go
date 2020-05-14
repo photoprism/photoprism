@@ -85,7 +85,7 @@ func Albums(f form.AlbumSearch) (results []AlbumResult, err error) {
 		s = s.Where("LOWER(albums.album_name) LIKE ?", likeString)
 	}
 
-	if f.Favorites {
+	if f.Favorite {
 		s = s.Where("albums.album_favorite = 1")
 	}
 

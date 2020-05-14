@@ -51,6 +51,7 @@ func TestFile_DownloadFileName(t *testing.T) {
 }
 
 func TestFile_Changed(t *testing.T) {
+	var deletedAt = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 	t.Run("different modified times", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, FileModified: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)}
 		time := time.Date(2020, 01, 15, 0, 0, 0, 0, time.UTC)
@@ -66,6 +67,11 @@ func TestFile_Changed(t *testing.T) {
 		time := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 		assert.Equal(t, false, file.Changed(500, time))
 	})
+	t.Run("deleted", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, FileModified: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), DeletedAt: &deletedAt}
+		time := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
+		assert.Equal(t, true, file.Changed(500, time))
+	})
 }
 
 func TestFile_Purge(t *testing.T) {
@@ -73,4 +79,29 @@ func TestFile_Purge(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
 		assert.Equal(t, nil, file.Purge())
 	})
+}
+
+func TestFile_AllFilesMissing(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
+		file := &File{Photo: photo, FileType: "jpg", PhotoUUID: "123", FileUUID: "123", FileMissing: true}
+		file2 := &File{Photo: photo, FileType: "jpg", PhotoUUID: "123", FileUUID: "456", FileMissing: true}
+		assert.True(t, file.AllFilesMissing())
+		assert.NotEmpty(t, file2)
+	})
+	//TODO test false
+	/*t.Run("false", func(t *testing.T) {
+		file := FileFixturesExampleJPG
+		assert.False(t, file.AllFilesMissing())
+		assert.NotEmpty(t, file)
+	})*/
+}
+
+func TestFile_Save(t *testing.T) {
+	t.Run("record not found", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", PhotoUUID: "123", FileUUID: "123"}
+		err := file.Save()
+		assert.Equal(t, "record not found", err.Error())
+	})
+	//TODO test success
 }

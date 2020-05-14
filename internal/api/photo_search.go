@@ -26,7 +26,7 @@ import (
 //   offset:    int    Result offset
 //   before:    date   Find photos taken before (format: "2006-01-02")
 //   after:     date   Find photos taken after (format: "2006-01-02")
-//   favorites: bool   Find favorites only
+//   favorite:  bool   Find favorites only
 func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/photos", func(c *gin.Context) {
 		if Unauthorized(c, conf) {

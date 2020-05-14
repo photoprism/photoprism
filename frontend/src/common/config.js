@@ -54,6 +54,9 @@ class Config {
         const type = ev.split(".")[1];
 
         switch (type) {
+        case "videos":
+            this.values.count.videos += data.count;
+            break;
         case "favorites":
             this.values.count.favorites += data.count;
             break;

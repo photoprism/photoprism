@@ -556,6 +556,11 @@ func (m *MediaFile) IsVideo() bool {
 	return m.MediaType() == fs.MediaVideo
 }
 
+// IsPlayableVideo returns true if this is a supported video file format.
+func (m *MediaFile) IsPlayableVideo() bool {
+	return m.MediaType() == fs.MediaVideo && m.HasFileType(fs.TypeMP4)
+}
+
 // IsPhoto returns true if this file is a photo / image.
 func (m *MediaFile) IsPhoto() bool {
 	return m.IsJpeg() || m.IsRaw() || m.IsHEIF() || m.IsImageOther()

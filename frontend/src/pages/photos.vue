@@ -115,16 +115,16 @@
         computed: {
             context: function () {
                 if (!this.staticFilter) {
-                    return "photos"
+                    return "photos";
                 }
 
                 if (this.staticFilter.archived) {
-                    return "archive"
-                } else if (this.staticFilter.favorites) {
-                    return "favorites"
+                    return "archive";
+                } else if (this.staticFilter.favorite) {
+                    return "favorites";
                 }
 
-                return ""
+                return "";
             }
         },
         methods: {
@@ -179,7 +179,11 @@
                 }
 
                 if (showMerged && this.results[index].PhotoVideo) {
-                    Event.publish("dialog.video", {play: this.results[index], album: null});
+                    if(this.results[index].isMP4()) {
+                        Event.publish("dialog.video", {play: this.results[index], album: null});
+                    } else {
+                        this.$viewer.show(Thumb.fromPhotos(this.results), index);
+                    }
                 } else if (showMerged) {
                     this.$viewer.show(Thumb.fromFiles([this.results[index]]), 0)
                 } else {

@@ -67,7 +67,7 @@ func Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		}
 	}
 
-	if f.Favorites {
+	if f.Favorite {
 		s = s.Where("labels.label_favorite = 1")
 	}
 

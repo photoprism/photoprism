@@ -59,6 +59,7 @@ func (c *Config) PublicClientConfig() ClientConfig {
 
 	var count = struct {
 		Photos    uint `json:"photos"`
+		Videos    uint `json:"videos"`
 		Hidden    uint `json:"hidden"`
 		Favorites uint `json:"favorites"`
 		Private   uint `json:"private"`
@@ -132,6 +133,7 @@ func (c *Config) ClientConfig() ClientConfig {
 
 	var count = struct {
 		Photos         uint `json:"photos"`
+		Videos         uint `json:"videos"`
 		Hidden         uint `json:"hidden"`
 		Favorites      uint `json:"favorites"`
 		Private        uint `json:"private"`
@@ -143,7 +145,7 @@ func (c *Config) ClientConfig() ClientConfig {
 	}{}
 
 	db.Table("photos").
-		Select("SUM(photo_quality = -1) AS hidden, SUM(photo_quality >= 0) AS photos, SUM(photo_favorite) AS favorites, SUM(photo_private) AS private").
+		Select("SUM(photo_video = 1 AND photo_quality >= 0) AS videos, SUM(photo_quality = -1) AS hidden, SUM(photo_quality >= 0) AS photos, SUM(photo_favorite) AS favorites, SUM(photo_private) AS private").
 		Where("deleted_at IS NULL").
 		Take(&count)
 

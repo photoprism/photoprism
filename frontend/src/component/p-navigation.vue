@@ -55,9 +55,7 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                        <v-list-tile-title>
-                            <translate>Photos</translate>
-                        </v-list-tile-title>
+                        <v-list-tile-title>{{ $gettext('Photos') }}</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
@@ -65,36 +63,43 @@
                     <v-list-tile slot="activator" to="/photos" @click.stop="" class="p-navigation-photos">
                         <v-list-tile-content>
                             <v-list-tile-title>
-                                <translate>Photos</translate>
+                                <translate>{{ $gettext('Photos') }}</translate>
                                 <span v-if="config.count.photos > 0" class="p-navigation-count">{{ config.count.photos }}</span>
                             </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile :to="{name: 'photos', query: { q: 'mono:true quality:3' }}" :exact="true" @click="">
+                    <v-list-tile :to="{name: 'photos', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" @click="">
                         <v-list-tile-content>
-                            <v-list-tile-title>
-                                <translate>Monochrome</translate>
-                            </v-list-tile-title>
+                            <v-list-tile-title>{{ $gettext('Monochrome') }}</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
                     <v-list-tile to="/review" @click="" v-if="$config.feature('review')">
                         <v-list-tile-content>
-                            <v-list-tile-title>
-                                <translate>Review</translate>
-                            </v-list-tile-title>
+                            <v-list-tile-title>{{ $gettext('Review') }}</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile to="/archive" @click="" class="p-navigation-archive" v-if="$config.feature('archive')">
+                    <v-list-tile to="/archive" @click="" class="p-navigation-archive" v-show="$config.feature('archive')">
                         <v-list-tile-content>
-                            <v-list-tile-title>
-                                <translate>Archive</translate>
-                            </v-list-tile-title>
+                            <v-list-tile-title>{{ $gettext('Archive') }}</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list-group>
+
+                <v-list-tile to="/videos" @click="" class="p-navigation-video">
+                    <v-list-tile-action>
+                        <v-icon>slideshow</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>
+                            <span>{{ $gettext('Videos') }}</span>
+                            <span v-show="config.count.videos > 0" class="p-navigation-count">{{ config.count.videos }}</span>
+                        </v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
 
                 <v-list-tile to="/favorites" @click="" class="p-navigation-favorites">
                     <v-list-tile-action>
@@ -103,21 +108,21 @@
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <translate>Favorites</translate>
-                            <span v-if="config.count.favorites > 0" class="p-navigation-count">{{ config.count.favorites }}</span>
+                            <span>{{ $gettext('Favorites') }}</span>
+                            <span v-show="config.count.favorites > 0" class="p-navigation-count">{{ config.count.favorites }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/private" @click="" class="p-navigation-private" v-if="$config.feature('private')" >
+                <v-list-tile to="/private" @click="" class="p-navigation-private" v-show="$config.feature('private')" >
                     <v-list-tile-action>
                         <v-icon>lock</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <span v-translate>Private</span>
-                            <span v-if="config.count.private > 0" class="p-navigation-count">{{ config.count.private }}</span>
+                            <span>{{ $gettext('Private') }}</span>
+                            <span v-show="config.count.private > 0" class="p-navigation-count">{{ config.count.private }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
@@ -129,7 +134,7 @@
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <translate>Albums</translate>
+                            <span>{{ $gettext('Albums') }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
@@ -138,7 +143,7 @@
                     <v-list-tile slot="activator" to="/albums" @click.stop="">
                         <v-list-tile-content>
                             <v-list-tile-title>
-                                <translate>Albums</translate>
+                                <span>{{ $gettext('Albums') }}</span>
                                 <span v-if="config.count.albums > 0" class="p-navigation-count">{{ config.count.albums }}</span>
                             </v-list-tile-title>
                         </v-list-tile-content>
@@ -154,36 +159,36 @@
                     </v-list-tile>
                 </v-list-group>
 
-                <v-list-tile to="/labels" @click="" class="p-navigation-labels" v-if="$config.feature('labels')">
+                <v-list-tile to="/labels" @click="" class="p-navigation-labels" v-show="$config.feature('labels')">
                     <v-list-tile-action>
                         <v-icon>label</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <translate>Labels</translate>
-                            <span v-if="config.count.labels > 0"
+                            <span>{{ $gettext('Labels') }}</span>
+                            <span v-show="config.count.labels > 0"
                                   class="p-navigation-count">{{ config.count.labels }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
                 <v-list-tile :to="{ name: 'places' }" @click="" class="p-navigation-places"
-                             v-if="$config.feature('places')">
+                             v-show="$config.feature('places')">
                     <v-list-tile-action>
                         <v-icon>place</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <translate>Places</translate>
-                            <span v-if="config.count.places > 0"
+                            <span>{{ $gettext('Places') }}</span>
+                            <span v-show="config.count.places > 0"
                                   class="p-navigation-count">{{ config.count.places }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <!-- v-list-tile to="/discover" @click="" class="p-navigation-discover" v-if="config.experimental">
+                <!-- v-list-tile to="/discover" @click="" class="p-navigation-discover" v-show="config.experimental">
                     <v-list-tile-action>
                         <v-icon>color_lens</v-icon>
                     </v-list-tile-action>
@@ -222,43 +227,43 @@
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <translate>Library</translate>
+                            <span>{{ $gettext('Library') }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/settings" @click="" class="p-navigation-settings" v-if="!config.disableSettings">
+                <v-list-tile to="/settings" @click="" class="p-navigation-settings" v-show="!config.disableSettings">
                     <v-list-tile-action>
                         <v-icon>settings</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <translate>Settings</translate>
+                            <span>{{ $gettext('Settings') }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile @click="logout" class="p-navigation-logout" v-if="!public && auth">
+                <v-list-tile @click="logout" class="p-navigation-logout" v-show="!public && auth">
                     <v-list-tile-action>
                         <v-icon>power_settings_new</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <translate>Logout</translate>
+                            <span>{{ $gettext('Logout') }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/login" @click="" class="p-navigation-login" v-if="!auth">
+                <v-list-tile to="/login" @click="" class="p-navigation-login" v-show="!auth">
                     <v-list-tile-action>
                         <v-icon>lock</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <translate>Login</translate>
+                            <span>{{ $gettext('Login') }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>

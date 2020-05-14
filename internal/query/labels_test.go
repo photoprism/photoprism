@@ -35,8 +35,34 @@ func TestLabels(t *testing.T) {
 		}
 	})
 
+	t.Run("search for cow", func(t *testing.T) {
+		query := form.NewLabelSearch("Query:cow Count:1005 Order:slug")
+		result, err := Labels(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("results: %+v", result)
+
+		assert.LessOrEqual(t, 1, len(result))
+
+		for _, r := range result {
+			assert.IsType(t, LabelResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.LabelName)
+			assert.NotEmpty(t, r.LabelSlug)
+			assert.NotEmpty(t, r.CustomSlug)
+
+			if fix, ok := entity.LabelFixtures[r.LabelSlug]; ok {
+				assert.Equal(t, fix.LabelName, r.LabelName)
+				assert.Equal(t, fix.LabelSlug, r.LabelSlug)
+				assert.Equal(t, fix.CustomSlug, r.CustomSlug)
+			}
+		}
+	})
 	t.Run("search for favorites", func(t *testing.T) {
-		query := form.NewLabelSearch("Favorites:true Count:15")
+		query := form.NewLabelSearch("Favorite:true Count:15")
 		result, err := Labels(query)
 
 		if err != nil {
@@ -83,15 +109,15 @@ func TestLabels(t *testing.T) {
 
 	t.Run("search for ID", func(t *testing.T) {
 		f := form.LabelSearch{
-			Query:     "",
-			ID:        "lt9k3pw1wowuy3c4",
-			Slug:      "",
-			Name:      "",
-			All:       false,
-			Favorites: false,
-			Count:     0,
-			Offset:    0,
-			Order:     "",
+			Query:    "",
+			ID:       "lt9k3pw1wowuy3c4",
+			Slug:     "",
+			Name:     "",
+			All:      false,
+			Favorite: false,
+			Count:    0,
+			Offset:   0,
+			Order:    "",
 		}
 
 		result, err := Labels(f)

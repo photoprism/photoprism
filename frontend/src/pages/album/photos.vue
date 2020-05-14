@@ -142,7 +142,11 @@
                 }
 
                 if (showMerged && this.results[index].PhotoVideo) {
-                    Event.publish("dialog.video", {play: this.results[index], album: null});
+                    if(this.results[index].isMP4()) {
+                        Event.publish("dialog.video", {play: this.results[index], album: this.album});
+                    } else {
+                        this.$viewer.show(Thumb.fromPhotos(this.results), index);
+                    }
                 } else if (showMerged) {
                     this.$viewer.show(Thumb.fromFiles([this.results[index]]), 0)
                 } else {

@@ -357,6 +357,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			})
 		}
 
+		if photo.PhotoVideo {
+			event.Publish("count.videos", event.Data{
+				"count": 1,
+			})
+		}
+
 		event.EntitiesCreated("photos", []entity.Photo{photo})
 	}
 
