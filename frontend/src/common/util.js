@@ -1,9 +1,9 @@
-const Nanosecond = 1
-const Microsecond = 1000 * Nanosecond
-const Millisecond = 1000 * Microsecond
-const Second = 1000 * Millisecond
-const Minute = 60 * Second
-const Hour = 60 * Minute
+const Nanosecond = 1;
+const Microsecond = 1000 * Nanosecond;
+const Millisecond = 1000 * Microsecond;
+const Second = 1000 * Millisecond;
+const Minute = 60 * Second;
+const Hour = 60 * Minute;
 
 export default class Util {
     static duration(d) {
@@ -12,7 +12,7 @@ export default class Util {
         let neg = d < 0;
 
         if (neg) {
-            u = -u
+            u = -u;
         }
 
         if (u < Second) {
@@ -33,15 +33,15 @@ export default class Util {
             return Math.round(u / Millisecond) + "ms";
         }
 
-        let result = []
+        let result = [];
 
-        let h = Math.floor(u / Hour)
-        let min = Math.floor(u / Minute)%60
-        let sec = Math.ceil(u / Second)%60
+        let h = Math.floor(u / Hour);
+        let min = Math.floor(u / Minute)%60;
+        let sec = Math.ceil(u / Second)%60;
 
-        result.push(h.toString().padStart(2, '0'))
-        result.push(min.toString().padStart(2, '0'))
-        result.push(sec.toString().padStart(2, '0'))
+        result.push(h.toString().padStart(2, "0"));
+        result.push(min.toString().padStart(2, "0"));
+        result.push(sec.toString().padStart(2, "0"));
 
         // return `${h}h${min}m${sec}s`
 

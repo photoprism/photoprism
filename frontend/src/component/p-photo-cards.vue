@@ -100,7 +100,7 @@
                                     </button>
                                     <button v-else @click.exact="editPhoto(index)" title="Camera">
                                         <v-icon size="14">photo_camera</v-icon>
-                                        {{ photo.getCamera() }}
+                                        {{ photo.getPhotoInfo() }}
                                     </button>
                                     <template v-if="showLocation && photo.LocationID">
                                         <br/>

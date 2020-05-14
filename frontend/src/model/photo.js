@@ -120,13 +120,13 @@ class Photo extends RestModel {
     }
 
     videoUri() {
-        const file = this.videoFile()
+        const file = this.videoFile();
 
         if (!file) {
             return "";
         }
 
-        return "/api/v1/videos/" + file.FileHash + "/mp4"
+        return "/api/v1/videos/" + file.FileHash + "/mp4";
     }
 
     mainFile() {
@@ -252,7 +252,7 @@ class Photo extends RestModel {
         }
 
         if (file.FileLength > 0) {
-            result.push(Util.duration(file.FileLength))
+            result.push(Util.duration(file.FileLength));
         }
 
         if (file.FileWidth && file.FileHeight) {
@@ -263,6 +263,37 @@ class Photo extends RestModel {
             const size = Number.parseFloat(file.FileSize) / 1048576;
 
             result.push(size.toFixed(1) + " MB");
+        }
+
+        if(!result) {
+            return "Video";
+        }
+
+        return result.join(", ");
+    }
+
+    getPhotoInfo() {
+        let result = [];
+        let file = this.mainFile();
+
+        if (this.Camera) {
+            result.push(this.Camera.CameraMake + " " + this.Camera.CameraModel);
+        } else if (this.CameraModel && this.CameraMake) {
+            result.push(this.CameraMake + " " + this.CameraModel);
+        }
+
+        if (file && file.FileWidth && file.FileHeight) {
+            result.push(file.FileWidth + " × " + file.FileHeight);
+        }
+
+        if(file && file.FileSize) {
+            const size = Number.parseFloat(file.FileSize) / 1048576;
+
+            result.push(size.toFixed(1) + " MB");
+        }
+
+        if(!result) {
+            return "Unknown";
         }
 
         return result.join(", ");
