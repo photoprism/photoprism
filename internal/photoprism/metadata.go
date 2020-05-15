@@ -20,6 +20,10 @@ func (m *MediaFile) MetaData() (result meta.Data, err error) {
 		} else {
 			err = nil
 		}
+
+		if err != nil {
+			log.Debugf("mediafile: %s", err.Error())
+		}
 	})
 
 	return m.metaData, err

@@ -76,7 +76,7 @@ func (m *MediaFile) DateCreated() time.Time {
 	if err == nil && !info.TakenAt.IsZero() && info.TakenAt.Year() > 1000 {
 		m.dateCreated = info.TakenAt.UTC()
 
-		log.Infof("exif: taken at %s", m.dateCreated.String())
+		log.Infof("mediafile: taken at %s (meta)", m.dateCreated.String())
 
 		return m.dateCreated
 	}
@@ -95,7 +95,7 @@ func (m *MediaFile) DateCreated() time.Time {
 		m.dateCreated = t.ModTime().UTC()
 	}
 
-	log.Infof("mediafile: taken at %s", m.dateCreated.String())
+	log.Infof("mediafile: taken at %s (file)", m.dateCreated.String())
 
 	return m.dateCreated
 }

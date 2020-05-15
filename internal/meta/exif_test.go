@@ -148,4 +148,39 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 0, data.FocalLength)
 		assert.Equal(t, 1, int(data.Orientation))
 	})
+
+	t.Run("image-2011.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/image-2011.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("ALL: %+v", data.All)
+
+		/*
+		  Exiftool date information:
+
+		  File Modification Date/Time     : 2020:05:15 08:25:46+00:00
+		  File Access Date/Time           : 2020:05:15 08:25:47+00:00
+		  File Inode Change Date/Time     : 2020:05:15 08:25:46+00:00
+		  Modify Date                     : 2020:05:15 10:25:45
+		  Create Date                     : 2011:07:19 11:36:38
+		  Metadata Date                   : 2020:05:15 10:25:45+02:00
+
+		*/
+
+		// assert.Equal(t, "2011-07-19T11:36:38Z", data.TakenAt.Format("2006-01-02T15:04:05Z")) // TODO FIX
+		// assert.Equal(t, "2011-07-19T11:36:38Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))  // TODO FIX
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "1/1100", data.Exposure)
+		assert.Equal(t, "SAMSUNG", data.CameraMake)
+		assert.Equal(t, "GT-I9000", data.CameraModel)
+		assert.Equal(t, 3, data.FocalLength)
+		assert.Equal(t, 1, int(data.Orientation))
+		assert.Equal(t, "", data.LensMake)
+		assert.Equal(t, "", data.LensModel)
+	})
 }

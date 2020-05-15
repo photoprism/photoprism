@@ -15,8 +15,16 @@ import (
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
+const DateTimeZero = "0000:00:00 00:00:00"
+
+// ValidDateTime returns true if a date string looks valid and is not zero.
+func ValidDateTime(s string) bool {
+	 return len(s) == len(DateTimeZero) && s != DateTimeZero
+}
+
 // SanitizeString removes unwanted character from an exif value string.
 func SanitizeString(value string) string {
+	value = strings.TrimSpace(value)
 	return strings.Replace(value, "\"", "", -1)
 }
 
@@ -31,16 +39,15 @@ func Exif(filename string) (data Data, err error) {
 func (data *Data) Exif(filename string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("meta: %s", e)
+			err = fmt.Errorf("exif: %s", e)
 		}
 	}()
 
 	// Extract raw EXIF block.
-
 	var rawExif []byte
+	var parsed bool
 
-	fileExtension := path.Ext(filename)
-	fileExtension = strings.ToLower(fileExtension)
+	fileExtension := strings.ToLower(path.Ext(filename))
 
 	if fileExtension == ".jpg" || fileExtension == ".jpeg" {
 		jmp := jpegstructure.NewJpegMediaParser()
@@ -54,7 +61,9 @@ func (data *Data) Exif(filename string) (err error) {
 		_, rawExif, err = sl.Exif()
 
 		if err != nil {
-			return err
+			log.Errorf("exif: %s (parse jpeg)", err)
+		} else {
+			parsed = true
 		}
 	} else if fileExtension == ".png" {
 		pmp := pngstructure.NewPngMediaParser()
@@ -69,10 +78,13 @@ func (data *Data) Exif(filename string) (err error) {
 
 		if err != nil {
 			return err
+		} else {
+			parsed = true
 		}
-	} else {
-		// Fallback to an optimistic, brute-force search.
+	}
 
+	if !parsed {
+		// Fallback to an optimistic, brute-force search.
 		var err error
 
 		rawExif, err = exif.SearchFileAndExtractExif(filename)
@@ -83,7 +95,6 @@ func (data *Data) Exif(filename string) (err error) {
 	}
 
 	// Enumerate tags in EXIF block.
-
 	ti := exif.NewTagIndex()
 
 	if err := exif.LoadStandardTags(ti); err != nil {
@@ -149,9 +160,13 @@ func (data *Data) Exif(filename string) (err error) {
 
 	if value, ok := tags["Model"]; ok {
 		data.CameraModel = SanitizeString(value)
+	} else if value, ok := tags["CameraModel"]; ok {
+		data.CameraModel = SanitizeString(value)
 	}
 
 	if value, ok := tags["Make"]; ok {
+		data.CameraMake = SanitizeString(value)
+	} else if value, ok := tags["CameraMake"]; ok {
 		data.CameraMake = SanitizeString(value)
 	}
 
@@ -286,20 +301,30 @@ func (data *Data) Exif(filename string) (err error) {
 		}
 	}
 
-	if value, ok := tags["DateTimeOriginal"]; ok && value != "0000:00:00 00:00:00" {
-		if taken, err := time.Parse("2006:01:02 15:04:05", value); err == nil {
+	var takenAt string
+
+	if value, ok := tags["DateTimeOriginal"]; ok && ValidDateTime(value) {
+		takenAt = value
+	} else if value, ok := tags["CreateDate"]; ok && ValidDateTime(value) {
+		takenAt = value
+	} else if value, ok := tags["DateTime"]; ok && ValidDateTime(value) {
+		takenAt = value
+	}
+
+	if ValidDateTime(takenAt) {
+		if taken, err := time.Parse("2006:01:02 15:04:05", takenAt); err == nil {
 			data.TakenAtLocal = taken.Round(time.Second)
 			data.TakenAt = data.TakenAtLocal
 
 			if loc, err := time.LoadLocation(data.TimeZone); err != nil {
 				log.Warnf("exif: unknown time zone %s", data.TimeZone)
-			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", value, loc); err == nil {
+			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", takenAt, loc); err == nil {
 				data.TakenAt = tl.Round(time.Second).UTC()
 			} else {
 				log.Errorf("exif: %s", err.Error()) // this should never happen
 			}
 		} else {
-			log.Warnf("exif: invalid time %s", value)
+			log.Warnf("exif: invalid time %s", takenAt)
 		}
 	}
 

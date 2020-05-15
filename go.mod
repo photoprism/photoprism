@@ -11,10 +11,10 @@ require (
 	github.com/cznic/sortutil v0.0.0-20181122101858-f5f958428db8 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.2.0
-	github.com/dsoprea/go-exif/v2 v2.0.0-20200506054703-8da3881353b3
-	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200419165912-75b7a4f392e6
+	github.com/dsoprea/go-exif/v2 v2.0.0-20200506085928-e7aea1340ccb
+	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200504080818-288e72e0addf
 	github.com/dsoprea/go-png-image-structure v0.0.0-20200402000326-c0fdb803026f
-	github.com/dsoprea/go-utility v0.0.0-20200412174200-5aee815e0920 // indirect
+	github.com/dsoprea/go-utility v0.0.0-20200512094054-1abbbc781176 // indirect
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gin-gonic/gin v1.6.2
 	github.com/golang/geo v0.0.0-20200319012246-673a6f80352d
@@ -72,13 +72,13 @@ require (
 	go.uber.org/atomic v1.4.0 // indirect
 	golang.org/x/crypto v0.0.0-20200429183012-4b2356b1ed79
 	golang.org/x/image v0.0.0-20200430140353-33d19683fad8 // indirect
-	golang.org/x/net v0.0.0-20200505041828-1ed23360d12c
+	golang.org/x/net v0.0.0-20200513185701-a91f0712d120
 	golang.org/x/sys v0.0.0-20200501052902-10377860bb8e // indirect
 	golang.org/x/time v0.0.0-20200416051211-89c76fbcd5d1 // indirect
 	golang.org/x/tools v0.0.0-20200501065659-ab2804fb9c9d // indirect
 	gopkg.in/stretchr/testify.v1 v1.2.2 // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.9
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.3.0
 )
 
 go 1.13
