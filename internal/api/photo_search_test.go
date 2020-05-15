@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/tidwall/gjson"
 	"net/http"
 	"testing"
 
@@ -8,13 +9,14 @@ import (
 )
 
 func TestGetPhotos(t *testing.T) {
-	// TODO assert for json response
 	t.Run("successful request", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 
 		GetPhotos(router, ctx)
-		result := PerformRequest(app, "GET", "/api/v1/photos?count=10")
-		assert.Equal(t, http.StatusOK, result.Code)
+		r := PerformRequest(app, "GET", "/api/v1/photos?count=10")
+		len := gjson.Get(r.Body.String(), "#")
+		assert.LessOrEqual(t, int64(3), len.Int())
+		assert.Equal(t, http.StatusOK, r.Code)
 	})
 
 	t.Run("invalid request", func(t *testing.T) {
