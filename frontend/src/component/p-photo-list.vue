@@ -44,7 +44,7 @@
             </td>
             <td class="p-photo-desc hidden-xs-only" :title="props.item.getDateString()">
                 <button @click.stop.prevent="editPhoto(props.index)" style="user-select: none;">
-                    {{ props.item.TakenAt | luxon:locale('DATE_MED') }}
+                    {{ props.item.shortDateString() }}
                 </button>
             </td>
             <td class="p-photo-desc hidden-sm-and-down" style="user-select: none;">

@@ -197,6 +197,7 @@ func (c *Config) ClientConfig() ClientConfig {
 	var years []int
 
 	db.Table("photos").
+		Where("photo_year > 0").
 		Order("photo_year DESC").
 		Pluck("DISTINCT photo_year", &years)
 

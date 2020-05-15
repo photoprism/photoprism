@@ -17,4 +17,9 @@ const (
 	SortOrderOldest    = "oldest"
 	SortOrderImported  = "imported"
 	SortOrderSimilar   = "similar"
+
+	// unknown values
+	YearUnknown  = -1
+	MonthUnknown = -1
+	TitleUnknown = "Unknown"
 )

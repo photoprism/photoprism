@@ -378,11 +378,15 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 
 	if !hasLocation || m.NoTitle() {
 		if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
-			m.SetTitle(fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.TakenAt.Format("2006")), SrcAuto)
-		} else if !m.TakenAtLocal.IsZero() {
-			m.SetTitle(fmt.Sprintf("Unknown / %s", m.TakenAtLocal.Format("2006")), SrcAuto)
+			if m.TakenSrc != SrcAuto {
+				m.SetTitle(fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.TakenAt.Format("2006")), SrcAuto)
+			} else {
+				m.SetTitle(txt.Title(labels[0].Name), SrcAuto)
+			}
+		} else if !m.TakenAtLocal.IsZero() && m.TakenSrc != SrcAuto {
+			m.SetTitle(fmt.Sprintf("%s / %s", TitleUnknown, m.TakenAtLocal.Format("2006")), SrcAuto)
 		} else {
-			m.SetTitle("Unknown", SrcAuto)
+			m.SetTitle(TitleUnknown, SrcAuto)
 		}
 
 		log.Infof("photo: changed photo title to %s", txt.Quote(m.PhotoTitle))

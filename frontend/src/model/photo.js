@@ -7,6 +7,8 @@ const SrcManual = "manual";
 const CodecAvc1 = "avc1";
 const TypeMP4 = "mp4";
 const TypeJpeg = "jpg";
+const YearUnknown = -1;
+const MonthUnknown = -1;
 
 class Photo extends RestModel {
     getDefaults() {
@@ -45,8 +47,8 @@ class Photo extends RestModel {
             Place: null,
             PlaceID: "",
             PhotoCountry: "",
-            PhotoYear: 0,
-            PhotoMonth: 0,
+            PhotoYear: YearUnknown,
+            PhotoMonth: MonthUnknown,
             Description: {
                 PhotoDescription: "",
                 PhotoKeywords: "",
@@ -233,13 +235,28 @@ class Photo extends RestModel {
     }
 
     getDateString() {
-        if (this.TimeZone) {
-            return DateTime.fromISO(this.TakenAt).setZone(this.TimeZone).toLocaleString(DateTime.DATETIME_FULL);
-        } else if (this.TakenAt) {
-            return DateTime.fromISO(this.TakenAt).setZone("UTC").toLocaleString(DateTime.DATE_HUGE);
-        } else {
+        if (!this.TakenAt || this.PhotoYear === YearUnknown) {
             return "Unknown";
         }
+
+        if (this.TimeZone) {
+            return DateTime.fromISO(this.TakenAt).setZone(this.TimeZone).toLocaleString(DateTime.DATETIME_FULL);
+        }
+
+        return DateTime.fromISO(this.TakenAt).setZone("UTC").toLocaleString(DateTime.DATE_HUGE);
+    }
+
+    shortDateString() {
+        if (!this.TakenAt || this.PhotoYear === YearUnknown) {
+            return "Unknown";
+        }
+
+
+        if (this.TimeZone) {
+            return DateTime.fromISO(this.TakenAt).setZone(this.TimeZone).toLocaleString(DateTime.DATE_MED);
+        }
+
+        return DateTime.fromISO(this.TakenAt).setZone("UTC").toLocaleString(DateTime.DATE_MED);
     }
 
     hasLocation() {
@@ -254,8 +271,28 @@ class Photo extends RestModel {
         return "Unknown";
     }
 
+    addSizeInfo(file, info) {
+        if(!file) {
+            return;
+        }
+
+        if (file.FileWidth && file.FileHeight) {
+            info.push(file.FileWidth + " × " + file.FileHeight);
+        }
+
+        if (file.FileSize > 102400) {
+            const size = Number.parseFloat(file.FileSize) / 1048576;
+
+            info.push(size.toFixed(1) + " MB");
+        } else if (file.FileSize) {
+            const size = Number.parseFloat(file.FileSize) / 1024;
+
+            info.push(size.toFixed(1) + " KB");
+        }
+    }
+
     getVideoInfo() {
-        let result = [];
+        let info = [];
         let file = this.videoFile();
 
         if (!file) {
@@ -267,51 +304,36 @@ class Photo extends RestModel {
         }
 
         if (file.FileDuration > 0) {
-            result.push(Util.duration(file.FileDuration));
+            info.push(Util.duration(file.FileDuration));
         }
 
-        if (file.FileWidth && file.FileHeight) {
-            result.push(file.FileWidth + " × " + file.FileHeight);
-        }
+        this.addSizeInfo(file, info);
 
-        if (file.FileSize) {
-            const size = Number.parseFloat(file.FileSize) / 1048576;
-
-            result.push(size.toFixed(1) + " MB");
-        }
-
-        if (!result) {
+        if (!info) {
             return "Video";
         }
 
-        return result.join(", ");
+        return info.join(", ");
     }
 
     getPhotoInfo() {
-        let result = [];
-        let file = this.mainFile();
+        let info = [];
 
         if (this.Camera) {
-            result.push(this.Camera.CameraMake + " " + this.Camera.CameraModel);
+            info.push(this.Camera.CameraMake + " " + this.Camera.CameraModel);
         } else if (this.CameraModel && this.CameraMake) {
-            result.push(this.CameraMake + " " + this.CameraModel);
+            info.push(this.CameraMake + " " + this.CameraModel);
         }
 
-        if (file && file.FileWidth && file.FileHeight) {
-            result.push(file.FileWidth + " × " + file.FileHeight);
-        }
+        let file = this.mainFile();
 
-        if (file && file.FileSize) {
-            const size = Number.parseFloat(file.FileSize) / 1048576;
+        this.addSizeInfo(file, info);
 
-            result.push(size.toFixed(1) + " MB");
-        }
-
-        if (!result) {
+        if (!info) {
             return "Unknown";
         }
 
-        return result.join(", ");
+        return info.join(", ");
     }
 
     getCamera() {

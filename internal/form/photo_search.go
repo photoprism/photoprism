@@ -28,8 +28,8 @@ type PhotoSearch struct {
 	Album     string    `form:"album"`
 	Label     string    `form:"label"`
 	Country   string    `form:"country"`
-	Year      uint      `form:"year"`
-	Month     uint      `form:"month"`
+	Year      int       `form:"year"`
+	Month     int       `form:"month"`
 	Color     string    `form:"color"`
 	Quality   int       `form:"quality"`
 	Review    bool      `form:"review"`

@@ -14,17 +14,17 @@ import (
 )
 
 // JSON parses a json sidecar file (as used by Exiftool) and returns a Data struct.
-func JSON(filename string) (data Data, err error) {
-	err = data.JSON(filename)
+func JSON(fileName string) (data Data, err error) {
+	err = data.JSON(fileName)
 
 	return data, err
 }
 
 // JSON parses a json sidecar file (as used by Exiftool) and returns a Data struct.
-func (data *Data) JSON(filename string) (err error) {
+func (data *Data) JSON(fileName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("meta: %s", e)
+			err = fmt.Errorf("%s (json metadata)", e)
 		}
 	}()
 
@@ -32,16 +32,17 @@ func (data *Data) JSON(filename string) (err error) {
 		data.All = make(map[string]string)
 	}
 
-	jsonString, err := ioutil.ReadFile(filename)
+	jsonString, err := ioutil.ReadFile(fileName)
 
 	if err != nil {
-		return err
+		log.Warnf("meta: %s", err.Error())
+		return fmt.Errorf("can't read %s (json)", txt.Quote(filepath.Base(fileName)))
 	}
 
 	j := gjson.GetBytes(jsonString, "@flatten|@join")
 
 	if !j.IsObject() {
-		return fmt.Errorf("meta: json is not an object (%s)", txt.Quote(filepath.Base(filename)))
+		return fmt.Errorf("data is not an object in %s (json)", txt.Quote(filepath.Base(fileName)))
 	}
 
 	jsonValues := j.Map()

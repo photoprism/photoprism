@@ -2,6 +2,9 @@ package meta
 
 import (
 	"fmt"
+	"path/filepath"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // XMP parses an XMP file and returns a Data struct.
@@ -15,14 +18,14 @@ func XMP(fileName string) (data Data, err error) {
 func (data *Data) XMP(fileName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("meta: %s", e)
+			err = fmt.Errorf("%s (xmp metadata)", e)
 		}
 	}()
 
 	doc := XmpDocument{}
 
 	if err := doc.Load(fileName); err != nil {
-		return err
+		return fmt.Errorf("can't read %s (xmp)", txt.Quote(filepath.Base(fileName)))
 	}
 
 	if doc.Title() != "" {

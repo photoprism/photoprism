@@ -98,8 +98,11 @@ func TestExif(t *testing.T) {
 	t.Run("tweethog.png", func(t *testing.T) {
 		_, err := Exif("testdata/tweethog.png")
 
-		assert.Error(t, err, "file does not have EXIF")
-		// TODO: png with exif data
+		if err == nil {
+			t.Fatal("err should NOT be nil")
+		}
+
+		assert.Equal(t, "no exif data in tweethog.png", err.Error())
 	})
 
 	t.Run("iphone_7.heic", func(t *testing.T) {
@@ -203,5 +206,26 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.LensMake)
 		assert.Equal(t, "", data.LensModel)
+	})
+
+	t.Run("no-exif-data.jpg", func(t *testing.T) {
+		_, err := Exif("testdata/no-exif-data.jpg")
+
+		if err == nil {
+			t.Fatal("err should NOT be nil")
+		}
+
+		assert.Equal(t, "no exif data in no-exif-data.jpg", err.Error())
+	})
+
+	t.Run("screenshot.png", func(t *testing.T) {
+		data, err := Exif("testdata/screenshot.png")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "721", data.All["PixelXDimension"])
+		assert.Equal(t, "332", data.All["PixelYDimension"])
 	})
 }

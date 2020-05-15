@@ -31,7 +31,8 @@
                 <v-icon>view_column</v-icon>
             </v-btn>
 
-            <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')" class="hidden-md-and-down">
+            <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
+                   class="hidden-md-and-down">
                 <v-icon>cloud_upload</v-icon>
             </v-btn>
 
@@ -153,7 +154,7 @@
                 config: this.$config.values,
                 searchExpanded: false,
                 all: {
-                    countries: [{ code: "", name: this.$gettext("All Countries")}],
+                    countries: [{code: "", name: this.$gettext("All Countries")}],
                     cameras: [{ID: 0, CameraModel: this.$gettext("All Cameras")}],
                     lenses: [{ID: 0, LensModel: this.$gettext("All Lenses")}],
                     colors: [{label: this.$gettext("All Colors"), name: ""}],
@@ -205,13 +206,17 @@
                 return this.all.categories.concat(this.config.categories);
             },
             yearOptions() {
-                let result = [{"year": 0, "label": this.$gettext("All Years")}];
+                let result = [
+                    {"year": 0, "label": this.$gettext("All Years")},
+                ];
 
                 if (this.config.years) {
                     for (let i = 0; i < this.config.years.length; i++) {
                         result.push({"year": this.config.years[i], "label": this.config.years[i].toString()});
                     }
                 }
+
+                result.push({"year": -1, "label": this.$gettext("Unknown")});
 
                 return result;
             },

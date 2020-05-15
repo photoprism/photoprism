@@ -164,11 +164,11 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		s = s.Where("photos.lens_id = ?", f.Lens)
 	}
 
-	if f.Year > 0 {
+	if f.Year > 0 || f.Year == entity.YearUnknown {
 		s = s.Where("photos.photo_year = ?", f.Year)
 	}
 
-	if f.Month > 0 {
+	if f.Month > 0 || f.Month == entity.MonthUnknown {
 		s = s.Where("photos.photo_month = ?", f.Month)
 	}
 

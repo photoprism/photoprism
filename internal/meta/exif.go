@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/dsoprea/go-exif/v2/common"
 	"github.com/dsoprea/go-jpeg-image-structure"
 	"github.com/dsoprea/go-png-image-structure"
+	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
@@ -19,7 +21,7 @@ const DateTimeZero = "0000:00:00 00:00:00"
 
 // ValidDateTime returns true if a date string looks valid and is not zero.
 func ValidDateTime(s string) bool {
-	 return len(s) == len(DateTimeZero) && s != DateTimeZero
+	return len(s) == len(DateTimeZero) && s != DateTimeZero
 }
 
 // SanitizeString removes unwanted character from an exif value string.
@@ -29,17 +31,17 @@ func SanitizeString(value string) string {
 }
 
 // Exif parses an image file for Exif meta data and returns as Data struct.
-func Exif(filename string) (data Data, err error) {
-	err = data.Exif(filename)
+func Exif(fileName string) (data Data, err error) {
+	err = data.Exif(fileName)
 
 	return data, err
 }
 
 // Exif parses an image file for Exif meta data and returns as Data struct.
-func (data *Data) Exif(filename string) (err error) {
+func (data *Data) Exif(fileName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("exif: %s", e)
+			err = fmt.Errorf("%s (exif metadata)", e)
 		}
 	}()
 
@@ -47,12 +49,12 @@ func (data *Data) Exif(filename string) (err error) {
 	var rawExif []byte
 	var parsed bool
 
-	fileExtension := strings.ToLower(path.Ext(filename))
+	fileExtension := strings.ToLower(path.Ext(fileName))
 
 	if fileExtension == ".jpg" || fileExtension == ".jpeg" {
 		jmp := jpegstructure.NewJpegMediaParser()
 
-		sl, err := jmp.ParseFile(filename)
+		sl, err := jmp.ParseFile(fileName)
 
 		if err != nil {
 			return err
@@ -61,14 +63,18 @@ func (data *Data) Exif(filename string) (err error) {
 		_, rawExif, err = sl.Exif()
 
 		if err != nil {
-			log.Errorf("exif: %s (parse jpeg)", err)
+			if err.Error() == "no exif data" {
+				return fmt.Errorf("no exif data in %s", txt.Quote(filepath.Base(fileName)))
+			} else {
+				log.Warnf("exif: %s (parse jpeg)", err)
+			}
 		} else {
 			parsed = true
 		}
 	} else if fileExtension == ".png" {
 		pmp := pngstructure.NewPngMediaParser()
 
-		cs, err := pmp.ParseFile(filename)
+		cs, err := pmp.ParseFile(fileName)
 
 		if err != nil {
 			return err
@@ -77,7 +83,11 @@ func (data *Data) Exif(filename string) (err error) {
 		_, rawExif, err = cs.Exif()
 
 		if err != nil {
-			return err
+			if err.Error() == "file does not have EXIF" {
+				return fmt.Errorf("no exif data in %s", txt.Quote(filepath.Base(fileName)))
+			} else {
+				log.Warnf("exif: %s (parse png)", err)
+			}
 		} else {
 			parsed = true
 		}
@@ -87,7 +97,7 @@ func (data *Data) Exif(filename string) (err error) {
 		// Fallback to an optimistic, brute-force search.
 		var err error
 
-		rawExif, err = exif.SearchFileAndExtractExif(filename)
+		rawExif, err = exif.SearchFileAndExtractExif(fileName)
 
 		if err != nil {
 			return err
