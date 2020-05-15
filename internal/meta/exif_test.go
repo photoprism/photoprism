@@ -179,7 +179,28 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "SAMSUNG", data.CameraMake)
 		assert.Equal(t, "GT-I9000", data.CameraModel)
 		assert.Equal(t, 3, data.FocalLength)
-		assert.Equal(t, 1, int(data.Orientation))
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, "", data.LensMake)
+		assert.Equal(t, "", data.LensModel)
+	})
+
+	t.Run("ship.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/ship.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2019-05-12T15:13:53Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2019-05-12T17:13:53Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, float32(53.12349), data.Lat)
+		assert.Equal(t, float32(18.00152), data.Lng)
+		assert.Equal(t, 63, data.Altitude)
+		assert.Equal(t, "1/100", data.Exposure)
+		assert.Equal(t, "Xiaomi", data.CameraMake)
+		assert.Equal(t, "Mi A1", data.CameraModel)
+		assert.Equal(t, 52, data.FocalLength)
+		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.LensMake)
 		assert.Equal(t, "", data.LensModel)
 	})
