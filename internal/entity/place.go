@@ -51,7 +51,12 @@ func (m *Place) AfterCreate(scope *gorm.Scope) error {
 func FindPlaceByLabel(id string, label string) *Place {
 	place := &Place{}
 
-	if err := Db().First(place, "id = ? OR loc_label = ?", id, label).Error; err != nil {
+	if label == "" {
+		if err := Db().First(place, "id = ?", id).Error; err != nil {
+			log.Debugf("place: %s for id %s", err.Error(), id)
+			return nil
+		}
+	} else if err := Db().First(place, "id = ? OR loc_label = ?", id, label).Error; err != nil {
 		log.Debugf("place: %s for id %s or label %s", err.Error(), id, txt.Quote(label))
 		return nil
 	}
