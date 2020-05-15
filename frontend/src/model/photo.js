@@ -4,6 +4,9 @@ import {DateTime} from "luxon";
 import Util from "common/util";
 
 const SrcManual = "manual";
+const CodecAvc1 = "avc1";
+const TypeMP4 = "mp4";
+const TypeJpeg = "jpg";
 
 class Photo extends RestModel {
     getDefaults() {
@@ -105,12 +108,12 @@ class Photo extends RestModel {
         this.FileHeight = file.FileHeight;
     }
 
-    isMP4() {
+    isPlayable() {
         if (!this.Files) {
             return false;
         }
 
-        return this.Files.findIndex(f => f.FileType === "mp4") !== -1;
+        return this.Files.findIndex(f => f.FileCodec === CodecAvc1) !== -1 || this.Files.findIndex(f => f.FileType === TypeMP4) !== -1;
     }
 
     videoFile() {
@@ -118,7 +121,11 @@ class Photo extends RestModel {
             return false;
         }
 
-        let file = this.Files.find(f => f.FileType === "mp4");
+        let file = this.Files.find(f => f.FileCodec === CodecAvc1);
+
+        if (!file) {
+            file = this.Files.find(f => f.FileType === TypeMP4);
+        }
 
         if (!file) {
             file = this.Files.find(f => !!f.FileVideo);
@@ -134,7 +141,7 @@ class Photo extends RestModel {
             return "";
         }
 
-        return "/api/v1/videos/" + file.FileHash + "/mp4";
+        return "/api/v1/videos/" + file.FileHash + "/" + TypeMP4;
     }
 
     mainFile() {
@@ -145,7 +152,7 @@ class Photo extends RestModel {
         let file = this.Files.find(f => !!f.FilePrimary);
 
         if (!file) {
-            file = this.Files.find(f => f.FileType === "jpg");
+            file = this.Files.find(f => f.FileType === TypeJpeg);
         }
 
         return file;
@@ -251,29 +258,29 @@ class Photo extends RestModel {
         let result = [];
         let file = this.videoFile();
 
-        if(!file) {
+        if (!file) {
             file = this.mainFile();
         }
 
-        if(!file) {
+        if (!file) {
             return "Video";
         }
 
-        if (file.FileLength > 0) {
-            result.push(Util.duration(file.FileLength));
+        if (file.FileDuration > 0) {
+            result.push(Util.duration(file.FileDuration));
         }
 
         if (file.FileWidth && file.FileHeight) {
             result.push(file.FileWidth + " × " + file.FileHeight);
         }
 
-        if(file.FileSize) {
+        if (file.FileSize) {
             const size = Number.parseFloat(file.FileSize) / 1048576;
 
             result.push(size.toFixed(1) + " MB");
         }
 
-        if(!result) {
+        if (!result) {
             return "Video";
         }
 
@@ -294,13 +301,13 @@ class Photo extends RestModel {
             result.push(file.FileWidth + " × " + file.FileHeight);
         }
 
-        if(file && file.FileSize) {
+        if (file && file.FileSize) {
             const size = Number.parseFloat(file.FileSize) / 1048576;
 
             result.push(size.toFixed(1) + " MB");
         }
 
-        if(!result) {
+        if (!result) {
             return "Unknown";
         }
 

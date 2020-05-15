@@ -88,19 +88,6 @@
                     </v-list-tile>
                 </v-list-group>
 
-                <v-list-tile to="/videos" @click="" class="p-navigation-video">
-                    <v-list-tile-action>
-                        <v-icon>slideshow</v-icon>
-                    </v-list-tile-action>
-
-                    <v-list-tile-content>
-                        <v-list-tile-title>
-                            <span>{{ $gettext('Videos') }}</span>
-                            <span v-show="config.count.videos > 0" class="p-navigation-count">{{ config.count.videos }}</span>
-                        </v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-
                 <v-list-tile to="/favorites" @click="" class="p-navigation-favorites">
                     <v-list-tile-action>
                         <v-icon>favorite</v-icon>
@@ -123,6 +110,19 @@
                         <v-list-tile-title>
                             <span>{{ $gettext('Private') }}</span>
                             <span v-show="config.count.private > 0" class="p-navigation-count">{{ config.count.private }}</span>
+                        </v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
+                <v-list-tile to="/videos" @click="" class="p-navigation-video">
+                    <v-list-tile-action>
+                        <v-icon>movie_creation</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>
+                            <span>{{ $gettext('Videos') }}</span>
+                            <span v-show="config.count.videos > 0" class="p-navigation-count">{{ config.count.videos }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>

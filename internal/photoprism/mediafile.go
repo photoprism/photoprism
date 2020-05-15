@@ -615,11 +615,11 @@ func (m *MediaFile) decodeDimensions() error {
 
 	var width, height int
 
-	exif, err := m.MetaData()
+	data, err := m.MetaData()
 
 	if err == nil {
-		width = exif.Width
-		height = exif.Height
+		width = data.Width
+		height = data.Height
 	}
 
 	if m.IsJpeg() {
@@ -694,8 +694,8 @@ func (m *MediaFile) AspectRatio() float32 {
 
 // Orientation returns the orientation of a MediaFile.
 func (m *MediaFile) Orientation() int {
-	if exif, err := m.MetaData(); err == nil {
-		return exif.Orientation
+	if data, err := m.MetaData(); err == nil {
+		return data.Orientation
 	}
 
 	return 1

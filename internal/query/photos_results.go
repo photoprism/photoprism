@@ -67,9 +67,10 @@ type PhotosResult struct {
 	FilePrimary     bool
 	FileMissing     bool
 	FileVideo       bool
-	FileLength      time.Duration
+	FileDuration    time.Duration
 	FileName        string
 	FileHash        string
+	FileCodec       string
 	FileType        string
 	FileMime        string
 	FileWidth       int

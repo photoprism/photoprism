@@ -137,5 +137,11 @@ func (data *Data) JSON(filename string) (err error) {
 		data.Rotation = 0
 	}
 
+	// Normalize compression information.
+	data.Codec = strings.ToLower(data.Codec)
+	if strings.Contains(data.Codec, CodecJpeg) {
+		data.Codec = CodecJpeg
+	}
+
 	return nil
 }

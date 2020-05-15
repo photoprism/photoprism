@@ -22,6 +22,7 @@ type File struct {
 	FileHash        string `gorm:"type:varbinary(128);index"`
 	FileModified    time.Time
 	FileSize        int64
+	FileCodec       string `gorm:"type:varbinary(32)"`
 	FileType        string `gorm:"type:varbinary(32)"`
 	FileMime        string `gorm:"type:varbinary(64)"`
 	FilePrimary     bool
@@ -30,7 +31,7 @@ type File struct {
 	FileDuplicate   bool
 	FilePortrait    bool
 	FileVideo       bool
-	FileLength      time.Duration
+	FileDuration    time.Duration
 	FileWidth       int
 	FileHeight      int
 	FileOrientation int

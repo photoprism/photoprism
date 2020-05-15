@@ -10,8 +10,9 @@ type Data struct {
 	UniqueID     string        `meta:"ImageUniqueID"`
 	TakenAt      time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate"`
 	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate"`
-	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
 	TimeZone     string        `meta:"-"`
+	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
+	Codec        string        `meta:"CompressorID,Compression"`
 	Title        string        `meta:"Title"`
 	Subject      string        `meta:"Subject,PersonInImage"`
 	Keywords     string        `meta:"Keywords"`

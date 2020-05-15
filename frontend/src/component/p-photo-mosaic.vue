@@ -67,7 +67,7 @@
                                 <v-icon v-else color="accent lighten-3" class="t-like t-off">favorite_border</v-icon>
                             </v-btn>
 
-                            <v-btn v-if="photo.PhotoVideo && photo.isMP4()" color="white"
+                            <v-btn v-if="photo.PhotoVideo && photo.isPlayable()" color="white"
                                    outline fab absolute class="p-photo-play opacity-75" :depressed="false" :ripple="false"
                                    @click.stop.prevent="openPhoto(index, true)">
                                 <v-icon color="white" class="action-play">play_arrow</v-icon>
