@@ -22,6 +22,14 @@ func TestFindPlaceByLabel(t *testing.T) {
 
 		assert.Equal(t, "de", r.LocCountry)
 	})
+	t.Run("find by id", func(t *testing.T) {
+		r := FindPlaceByLabel("85d1ea7d3278", "")
+
+		if r == nil {
+			t.Fatal("result should not be nil")
+		}
+		assert.Equal(t, "mx", r.LocCountry)
+	})
 	t.Run("find by label", func(t *testing.T) {
 		r := FindPlaceByLabel("", "KwaDukuza, KwaZulu-Natal, South Africa")
 

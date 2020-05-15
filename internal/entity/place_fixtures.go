@@ -22,7 +22,7 @@ func (m PlacesMap) Pointer(name string) *Place {
 
 var PlaceFixtures = PlacesMap{
 	"teotihuacan": {
-		ID:          "85d1ea7d382c",
+		ID:          "85d1ea7d3278",
 		LocLabel:    "Teotihuacán, Mexico, Mexico",
 		LocCity:     "Teotihuacán",
 		LocState:    "Mexico",
@@ -35,7 +35,7 @@ var PlaceFixtures = PlacesMap{
 		UpdatedAt:   time.Now(),
 	},
 	"zinkwazi": {
-		ID:          "1ef744d1e28c",
+		ID:          "1ef744d1e279",
 		LocLabel:    "KwaDukuza, KwaZulu-Natal, South Africa",
 		LocCity:     "KwaDukuza",
 		LocState:    "KwaZulu-Natal",
@@ -62,7 +62,7 @@ var PlaceFixtures = PlacesMap{
 	},
 	"emptyNameLongCity": {
 		ID:          "1ef744d1e281",
-		LocLabel:    "",
+		LocLabel:    "label",
 		LocCity:     "longlonglonglonglongcity",
 		LocState:    "Rheinland-Pfalz",
 		LocCountry:  "de",
@@ -75,7 +75,7 @@ var PlaceFixtures = PlacesMap{
 	},
 	"emptyNameShortCity": {
 		ID:          "1ef744d1e282",
-		LocLabel:    "",
+		LocLabel:    "label",
 		LocCity:     "shortcity",
 		LocState:    "Rheinland-Pfalz",
 		LocCountry:  "de",
@@ -88,7 +88,7 @@ var PlaceFixtures = PlacesMap{
 	},
 	"veryLongLocName": {
 		ID:          "1ef744d1e283",
-		LocLabel:    "",
+		LocLabel:    "label",
 		LocCity:     "Mainz",
 		LocState:    "Rheinland-Pfalz",
 		LocCountry:  "de",
@@ -101,7 +101,7 @@ var PlaceFixtures = PlacesMap{
 	},
 	"mediumLongLocName": {
 		ID:          "1ef744d1e284",
-		LocLabel:    "",
+		LocLabel:    "label",
 		LocCity:     "New york",
 		LocState:    "New york",
 		LocCountry:  "us",
