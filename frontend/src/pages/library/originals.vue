@@ -4,9 +4,9 @@
             <v-container fluid>
                 <p class="subheading">
                     <span v-if="fileName">{{ action }} {{ fileName }}...</span>
-                    <span v-else-if="busy"><translate>Indexing photos and sidecar files...</translate></span>
-                    <span v-else-if="completed"><translate>Done.</translate></span>
-                    <span v-else><translate>Press button to start indexing...</translate></span>
+                    <span v-else-if="busy">{{ $gettext('Indexing photos and sidecar files...') }}</span>
+                    <span v-else-if="completed">{{ $gettext('Done.') }}</span>
+                    <span v-else>{{ $gettext('Press button to start indexing...') }}</span>
                 </p>
 
                 <v-autocomplete

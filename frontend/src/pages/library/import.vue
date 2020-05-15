@@ -3,10 +3,10 @@
         <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
             <v-container fluid>
                 <p class="subheading">
-                    <span v-if="fileName"><translate>Importing</translate> {{fileName}}...</span>
-                    <span v-else-if="busy"><translate>Importing files from import folder...</translate></span>
-                    <span v-else-if="completed"><translate>Done.</translate></span>
-                    <span v-else><translate>Press button to start importing...</translate></span>
+                    <span v-if="fileName">{{ $gettext('Importing') }} {{fileName}}...</span>
+                    <span v-else-if="busy">{{ $gettext('Importing files from import folder...') }}</span>
+                    <span v-else-if="completed">{{ $gettext('Done.') }}</span>
+                    <span v-else>{{ $gettext('Press button to start importing...') }}</span>
                 </p>
 
                 <v-autocomplete
