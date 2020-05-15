@@ -75,6 +75,8 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 		return err
 	}
 
+	model.UpdateYearMonth()
+
 	if form.Description.PhotoID == model.ID {
 		if err := deepcopier.Copy(&model.Description).From(form.Description); err != nil {
 			return err
@@ -121,6 +123,8 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 func (m *Photo) Save() error {
 	db := Db()
 	labels := m.ClassifyLabels()
+
+	m.UpdateYearMonth()
 
 	if err := m.UpdateTitle(labels); err != nil {
 		log.Warnf("%s (%s)", err.Error(), m.PhotoUUID)
@@ -484,6 +488,27 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 
 	if zone != "" {
 		m.TimeZone = zone
+	}
+
+	m.UpdateYearMonth()
+}
+
+// UpdateYearMonth updates internal date fields.
+func (m *Photo) UpdateYearMonth() {
+	if m.TakenAt.IsZero() || m.TakenAt.Year() < 1000 {
+		return
+	}
+
+	if m.TakenAtLocal.IsZero() || m.TakenAtLocal.Year() < 1000 {
+		m.TakenAtLocal = m.TakenAt
+	}
+
+	if m.TakenSrc == SrcAuto {
+		m.PhotoYear = YearUnknown
+		m.PhotoMonth = MonthUnknown
+	} else {
+		m.PhotoYear = m.TakenAtLocal.Year()
+		m.PhotoMonth = int(m.TakenAtLocal.Month())
 	}
 }
 

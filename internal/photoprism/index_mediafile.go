@@ -279,13 +279,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		photo.PhotoCountry = entity.UnknownPlace.CountryCode()
 	}
 
-	if photo.TakenSrc == entity.SrcAuto {
-		photo.PhotoYear = entity.YearUnknown
-		photo.PhotoMonth = entity.MonthUnknown
-	} else if !photo.TakenAtLocal.IsZero() {
-		photo.PhotoYear = photo.TakenAtLocal.Year()
-		photo.PhotoMonth = int(photo.TakenAtLocal.Month())
-	}
+	photo.UpdateYearMonth()
 
 	if originalName != "" {
 		file.OriginalName = originalName
