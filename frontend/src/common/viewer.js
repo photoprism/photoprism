@@ -56,6 +56,11 @@ class Viewer {
             getImageURLForShare: function (button) {
                 const item = gallery.currItem;
 
+                if (!item.original_w) {
+                    button.label = button.template.replace("size", "not available");
+                    return item.download_url;
+                }
+
                 if(button.id === "original") {
                     button.label = button.template.replace("size", item.original_w + " × " + item.original_h);
                     return item.download_url;

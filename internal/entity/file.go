@@ -8,6 +8,7 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/ulule/deepcopier"
 )
 
 // File represents an image or sidecar file that belongs to a photo
@@ -51,6 +52,18 @@ type File struct {
 	UpdatedAt       time.Time
 	UpdatedIn       int64
 	DeletedAt       *time.Time `sql:"index"`
+}
+
+type FileInfos struct {
+	FileWidth       int
+	FileHeight      int
+	FileOrientation int
+	FileAspectRatio float32
+	FileMainColor   string
+	FileColors      string
+	FileLuminance   string
+	FileDiff        uint32
+	FileChroma      uint8
 }
 
 // FirstFileByHash gets a file in db from its hash
@@ -135,4 +148,15 @@ func (m *File) Save() error {
 	}
 
 	return Db().Model(m).Related(Photo{}).Error
+}
+
+// UpdateVideoInfos updates related video infos based on this file.
+func (m *File) UpdateVideoInfos() error {
+	values := FileInfos{}
+
+	if err := deepcopier.Copy(&values).From(m); err != nil {
+		return err
+	}
+
+	return Db().Model(File{}).Where("photo_id = ? AND file_video = 1", m.PhotoID).Updates(values).Error
 }

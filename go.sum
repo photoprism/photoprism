@@ -70,10 +70,14 @@ github.com/dsoprea/go-exif/v2 v2.0.0-20200506054703-8da3881353b3 h1:hgFwhM9Sjozd
 github.com/dsoprea/go-exif/v2 v2.0.0-20200506054703-8da3881353b3/go.mod h1:YXOyDqCYjBuHHRw4JIGPgOgMit0IDvVSjjhsqOAFTYQ=
 github.com/dsoprea/go-exif/v2 v2.0.0-20200506085928-e7aea1340ccb h1:En5n3RCyOL1Wnf78SNCzqFT9u4+kWJoSQEK/Z8MoZQE=
 github.com/dsoprea/go-exif/v2 v2.0.0-20200506085928-e7aea1340ccb/go.mod h1:YXOyDqCYjBuHHRw4JIGPgOgMit0IDvVSjjhsqOAFTYQ=
+github.com/dsoprea/go-exif/v2 v2.0.0-20200516122116-a45cc7cfd55e h1:tPHXVRs63sg0ajoZjdmMa5aZuyjnSAt3Anwh2F4XsJM=
+github.com/dsoprea/go-exif/v2 v2.0.0-20200516122116-a45cc7cfd55e/go.mod h1:YXOyDqCYjBuHHRw4JIGPgOgMit0IDvVSjjhsqOAFTYQ=
 github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200419165912-75b7a4f392e6 h1:6oyE0L+MX1iUjldwrLdAaU95g36UrKpbmlyslhyoJj4=
 github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200419165912-75b7a4f392e6/go.mod h1:5vwlfhyZI7u8AuvTl0G70sdqVdH41f7dscvBQ6mEbHs=
 github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200504080818-288e72e0addf h1:fHaBuk2M/HNmLyQlQH91UNmsc883sNLukYXEsk7coZM=
 github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200504080818-288e72e0addf/go.mod h1:dSPqu4ZEK+hLQmKh1XkwVdNkWwI8G7TOiZMLZrxx/j0=
+github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200516131022-2c0537684b05 h1:aBQuseJ46TDgCd1a/hYzJvvWNRTbGwt6k8/lOYzR9xU=
+github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200516131022-2c0537684b05/go.mod h1:7V7bSB5y4Zwomfq6jz43dABqCs9RFCgV+gakP7lIcHY=
 github.com/dsoprea/go-logging v0.0.0-20190624164917-c4f10aab7696 h1:VGFnZAcLwPpt1sHlAxml+pGLZz9A2s+K/s1YNhPC91Y=
 github.com/dsoprea/go-logging v0.0.0-20190624164917-c4f10aab7696/go.mod h1:Nm/x2ZUNRW6Fe5C3LxdY1PyZY5wmDv/s5dkPJ/VB3iA=
 github.com/dsoprea/go-logging v0.0.0-20200502201358-170ff607885f h1:FonKAuW3PmNtqk9tOR+Z7bnyQHytmnZBCmm5z1PQMss=

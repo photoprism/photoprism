@@ -32,7 +32,7 @@
                 let uri = video.videoUri();
 
                 if (!uri) {
-                    this.$notify.error("no video file found");
+                    this.$notify.error("no video selected");
                     return;
                 }
 
@@ -44,7 +44,7 @@
 
                 if(file.FileWidth > 0) {
                     width = file.FileWidth;
-                } else if(main.FileWidth > 0) {
+                } else if(main && main.FileWidth > 0) {
                     width = main.FileWidth;
                 } else {
                     width = this.defaultWidth;
@@ -52,7 +52,7 @@
 
                 if(file.FileHeight > 0) {
                     height = file.FileHeight;
-                } else if(main.FileHeight > 0) {
+                } else if(main && main.FileHeight > 0) {
                     height = main.FileHeight;
                 } else {
                     height = this.defaultHeight;

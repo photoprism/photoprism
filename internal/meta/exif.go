@@ -150,7 +150,7 @@ func (data *Data) Exif(fileName string) (err error) {
 		return nil
 	}
 
-	_, err = exif.Visit(exifcommon.IfdStandard, im, ti, rawExif, visitor)
+	_, _, err = exif.Visit(exifcommon.IfdStandard, im, ti, rawExif, visitor)
 
 	if err != nil {
 		return err

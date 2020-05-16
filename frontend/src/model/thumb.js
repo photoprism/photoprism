@@ -9,8 +9,8 @@ class Thumb extends Model {
             uuid: "",
             title: "",
             favorite: false,
-            original_w: "",
-            original_h: "",
+            original_w: 0,
+            original_h: 0,
             download_url: "",
         };
     }
@@ -25,15 +25,33 @@ class Thumb extends Model {
         }
     }
 
+    static thumbNotFound() {
+        const result = {
+            uuid: "",
+            title: "Not Found",
+            favorite: false,
+            original_w: 0,
+            original_h: 0,
+            download_url: "",
+        };
+
+        for (let i = 0; i < thumbs.length; i++) {
+            result[thumbs[i].Name] = {
+                src: "/api/v1/svg/photo",
+                w: thumbs[i].Width,
+                h: thumbs[i].Height,
+            };
+        }
+
+        return result;
+    }
+
     static fromPhotos(photos) {
         let result = [];
 
         photos.forEach((p) => {
             let thumb = this.fromPhoto(p);
-
-            if(thumb) {
-                result.push(thumb);
-            }
+            result.push(thumb);
         });
 
         return result;
@@ -44,8 +62,8 @@ class Thumb extends Model {
             return this.fromFile(photo, photo.Files.find(f => !!f.FilePrimary));
         }
 
-        if(!photo || !photo.FileHash) {
-            return false;
+        if (!photo || !photo.FileHash) {
+            return this.thumbNotFound();
         }
 
         const result = {
@@ -71,8 +89,8 @@ class Thumb extends Model {
     }
 
     static fromFile(photo, file) {
-        if(!photo || !file || !file.FileHash) {
-            return false;
+        if (!photo || !file || !file.FileHash) {
+            return this.thumbNotFound();
         }
 
         const result = {
@@ -107,7 +125,7 @@ class Thumb extends Model {
                 if (f && f.FileType === "jpg") {
                     let thumb = this.fromFile(p, f);
 
-                    if(thumb) {
+                    if (thumb) {
                         result.push(thumb);
                     }
                 }

@@ -11,8 +11,8 @@ require (
 	github.com/cznic/sortutil v0.0.0-20181122101858-f5f958428db8 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.2.0
-	github.com/dsoprea/go-exif/v2 v2.0.0-20200506085928-e7aea1340ccb
-	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200504080818-288e72e0addf
+	github.com/dsoprea/go-exif/v2 v2.0.0-20200516122116-a45cc7cfd55e
+	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200516131022-2c0537684b05
 	github.com/dsoprea/go-png-image-structure v0.0.0-20200402000326-c0fdb803026f
 	github.com/dsoprea/go-utility v0.0.0-20200512094054-1abbbc781176 // indirect
 	github.com/dustin/go-humanize v1.0.0

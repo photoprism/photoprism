@@ -178,6 +178,12 @@ class Photo extends RestModel {
         let hash = this.mainFileHash();
 
         if (!hash) {
+            let video = this.videoFile();
+
+            if (video && video.FileHash) {
+                return "/api/v1/thumbnails/" + video.FileHash + "/" + type;
+            }
+
             return "/api/v1/svg/photo";
         }
 
@@ -272,12 +278,17 @@ class Photo extends RestModel {
     }
 
     addSizeInfo(file, info) {
-        if(!file) {
+        if (!file) {
             return;
         }
 
         if (file.FileWidth && file.FileHeight) {
             info.push(file.FileWidth + " × " + file.FileHeight);
+        } else if (!file.FilePrimary) {
+            let main = this.mainFile();
+            if (main && main.FileWidth && main.FileHeight) {
+                info.push(main.FileWidth + " × " + main.FileHeight);
+            }
         }
 
         if (file.FileSize > 102400) {

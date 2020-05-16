@@ -262,6 +262,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 	case entity.SortOrderImported:
 		s = s.Order("photos.id DESC, files.file_primary DESC")
 	case entity.SortOrderSimilar:
+		s = s.Where("files.file_diff > 0")
 		s = s.Order("files.file_main_color, photos.location_id, files.file_diff, taken_at DESC, files.file_primary DESC")
 	default:
 		s = s.Order("taken_at DESC, photos.photo_uuid, files.file_primary DESC")

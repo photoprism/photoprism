@@ -135,22 +135,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	photo.PhotoPath = filePath
 	photo.PhotoName = fileBase
 
-	if m.IsVideo() {
-		photo.PhotoVideo = true
-		metaData, _ = m.MetaData()
-
-		file.FileCodec = metaData.Codec
-		file.FileWidth = metaData.Width
-		file.FileHeight = metaData.Height
-		file.FileDuration = metaData.Duration
-		file.FileAspectRatio = metaData.AspectRatio()
-		file.FilePortrait = metaData.Portrait()
-
-		if res := metaData.Megapixels(); res > photo.PhotoResolution {
-			photo.PhotoResolution = res
-		}
-	}
-
 	if !file.FilePrimary {
 		if photoExists {
 			if q := ind.db.Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); q.Error != nil {
@@ -168,6 +152,35 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		// don't waste time indexing deleted / archived photos
 		result.Status = IndexArchived
 		return result
+	}
+
+	if m.IsVideo() {
+		photo.PhotoVideo = true
+		metaData, _ = m.MetaData()
+
+		file.FileCodec = metaData.Codec
+		file.FileWidth = metaData.Width
+		file.FileHeight = metaData.Height
+		file.FileDuration = metaData.Duration
+		file.FileAspectRatio = metaData.AspectRatio()
+		file.FilePortrait = metaData.Portrait()
+
+		if res := metaData.Megapixels(); res > photo.PhotoResolution {
+			photo.PhotoResolution = res
+		}
+
+		if file.FileWidth == 0 && primaryFile.FileWidth > 0 {
+			file.FileWidth = primaryFile.FileWidth
+			file.FileHeight = primaryFile.FileHeight
+			file.FileAspectRatio = primaryFile.FileAspectRatio
+			file.FilePortrait = primaryFile.FilePortrait
+		}
+
+		file.FileDiff = primaryFile.FileDiff
+		file.FileMainColor = primaryFile.FileMainColor
+		file.FileChroma = primaryFile.FileChroma
+		file.FileLuminance = primaryFile.FileLuminance
+		file.FileColors = primaryFile.FileColors
 	}
 
 	// file obviously exists: remove deleted and missing flags
@@ -446,6 +459,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		result.Status = IndexAdded
+	}
+
+	if photo.PhotoVideo && file.FilePrimary {
+		if err := file.UpdateVideoInfos(); err != nil {
+			log.Errorf("index: %s", err)
+		}
 	}
 
 	result.FileID = file.ID
