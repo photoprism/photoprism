@@ -315,6 +315,8 @@ func (data *Data) Exif(fileName string) (err error) {
 
 	if value, ok := tags["DateTimeOriginal"]; ok && ValidDateTime(value) {
 		takenAt = value
+	} else if value, ok := tags["DateTimeDigitized"]; ok && ValidDateTime(value) {
+		takenAt = value
 	} else if value, ok := tags["CreateDate"]; ok && ValidDateTime(value) {
 		takenAt = value
 	} else if value, ok := tags["DateTime"]; ok && ValidDateTime(value) {

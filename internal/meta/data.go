@@ -8,8 +8,8 @@ import (
 // Data represents image meta data.
 type Data struct {
 	UniqueID     string        `meta:"ImageUniqueID"`
-	TakenAt      time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate,DateTime"`
-	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate,DateTime"`
+	TakenAt      time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate,DateTimeDigitized,DateTime"`
+	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate,DateTimeDigitized,DateTime"`
 	TimeZone     string        `meta:"-"`
 	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
 	Codec        string        `meta:"CompressorID,Compression"`
