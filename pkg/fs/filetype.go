@@ -149,6 +149,48 @@ func (t FileType) Find(fileName string, stripSequence bool) string {
 	return ""
 }
 
+// Find returns the first filename with the same base name and a given type (also searches a sub directory).
+func (t FileType) FindSub(fileName, subDir string, stripSequence bool) string {
+	base := Base(fileName, stripSequence)
+	dir := filepath.Dir(fileName)
+
+	prefix := filepath.Join(dir, base)
+	prefixLower := filepath.Join(dir, strings.ToLower(base))
+	prefixUpper := filepath.Join(dir, strings.ToUpper(base))
+
+	prefixHidden := filepath.Join(dir, subDir, base)
+	prefixLowerHidden := filepath.Join(dir, subDir, strings.ToLower(base))
+	prefixUpperHidden := filepath.Join(dir, subDir, strings.ToUpper(base))
+
+	for _, ext := range TypeExt[t] {
+		if info, err := os.Stat(prefix + ext); err == nil && info.Mode().IsRegular() {
+			return filepath.Join(dir, info.Name())
+		}
+
+		if info, err := os.Stat(prefixLower + ext); err == nil && info.Mode().IsRegular() {
+			return filepath.Join(dir, info.Name())
+		}
+
+		if info, err := os.Stat(prefixUpper + ext); err == nil && info.Mode().IsRegular() {
+			return filepath.Join(dir, info.Name())
+		}
+
+		if info, err := os.Stat(prefixHidden + ext); err == nil && info.Mode().IsRegular() {
+			return filepath.Join(dir, subDir, info.Name())
+		}
+
+		if info, err := os.Stat(prefixLowerHidden + ext); err == nil && info.Mode().IsRegular() {
+			return filepath.Join(dir, subDir, info.Name())
+		}
+
+		if info, err := os.Stat(prefixUpperHidden + ext); err == nil && info.Mode().IsRegular() {
+			return filepath.Join(dir, subDir, info.Name())
+		}
+	}
+
+	return ""
+}
+
 // GetFileType returns the (expected) type for a given file name.
 func GetFileType(fileName string) FileType {
 	fileExt := strings.ToLower(filepath.Ext(fileName))

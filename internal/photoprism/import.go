@@ -41,6 +41,11 @@ func (imp *Import) originalsPath() string {
 	return imp.conf.OriginalsPath()
 }
 
+// thumbPath returns the thumbnails cache path as string.
+func (imp *Import) thumbPath() string {
+	return imp.conf.ThumbPath()
+}
+
 // Start imports media files from a directory and converts/indexes them as needed.
 func (imp *Import) Start(opt ImportOptions) map[string]bool {
 	var directories []string
@@ -241,7 +246,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 		iteration++
 
-		result = filepath.Join(pathName, fileName+"."+fmt.Sprintf("%04d", iteration)+fileExtension)
+		result = filepath.Join(pathName, fileName+"."+fmt.Sprintf("%05d", iteration)+fileExtension)
 	}
 
 	return result, nil

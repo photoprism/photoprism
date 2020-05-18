@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -250,6 +251,45 @@ func TestMediaFile_EditedFilename(t *testing.T) {
 func TestMediaFile_RelatedFiles(t *testing.T) {
 	conf := config.TestConfig()
 
+	t.Run("example.tif", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/example.tif")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mediaFile.RelatedFiles(true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, related.Files, 5)
+		assert.True(t, related.ContainsJpeg())
+
+		for _, result := range related.Files {
+			t.Logf("FileName: %s", result.FileName())
+
+			filename := result.FileName()
+
+			if len(filename) < 2 {
+				t.Fatalf("filename not be longer: %s", filename)
+			}
+
+			extension := result.Extension()
+
+			if len(extension) < 2 {
+				t.Fatalf("extension should be longer: %s", extension)
+			}
+
+			relativePath := result.RelativePath(conf.ExamplesPath())
+
+			if len(relativePath) > 0 {
+				t.Fatalf("relative path should be empty: %s", relativePath)
+			}
+		}
+	})
+
 	t.Run("canon_eos_6d.dng", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")
 
@@ -266,6 +306,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		}
 
 		assert.Len(t, related.Files, 3)
+		assert.False(t, related.ContainsJpeg())
 
 		for _, result := range related.Files {
 			t.Logf("FileName: %s", result.FileName())
@@ -372,7 +413,10 @@ func TestMediaFile_RelativePath(t *testing.T) {
 	conf := config.TestConfig()
 
 	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/tree_white.jpg")
-	assert.Nil(t, err)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	t.Run("directory with end slash", func(t *testing.T) {
 		path := mediaFile.RelativePath("/go/src/github.com/photoprism/photoprism/assets/resources/")
@@ -383,12 +427,31 @@ func TestMediaFile_RelativePath(t *testing.T) {
 		assert.Equal(t, "examples", path)
 	})
 	t.Run("directory equals filepath", func(t *testing.T) {
-		path := mediaFile.RelativePath("/go/src/github.com/photoprism/photoprism/assets/resources/examples")
+		path := mediaFile.RelativePath(conf.ExamplesPath())
 		assert.Equal(t, "", path)
 	})
 	t.Run("directory does not match filepath", func(t *testing.T) {
 		path := mediaFile.RelativePath("xxx")
 		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/examples", path)
+	})
+
+	mediaFile, err = NewMediaFile(conf.ExamplesPath() + "/.photoprism/example.jpg")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("hidden", func(t *testing.T) {
+		path := mediaFile.RelativePath(conf.ExamplesPath())
+		assert.Equal(t, "", path)
+	})
+	t.Run("hidden empty", func(t *testing.T) {
+		path := mediaFile.RelativePath("")
+		assert.Equal(t, conf.ExamplesPath(), path)
+	})
+	t.Run("hidden root", func(t *testing.T) {
+		path := mediaFile.RelativePath(filepath.Join(conf.ExamplesPath(), HiddenPath))
+		assert.Equal(t, "", path)
 	})
 }
 

@@ -5,6 +5,7 @@ import (
 	"image"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -40,7 +41,7 @@ type MediaFile struct {
 // NewMediaFile returns a new media file.
 func NewMediaFile(fileName string) (*MediaFile, error) {
 	if !fs.FileExists(fileName) {
-		return nil, fmt.Errorf("file does not exist: %s", fileName)
+		return nil, fmt.Errorf("%s does not exist", filepath.Base(fileName))
 	}
 
 	instance := &MediaFile{
@@ -308,6 +309,15 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		result.Files = append(result.Files, resultFile)
 	}
 
+	// Add hidden JPEG if exists.
+	if !result.ContainsJpeg() && result.Main != nil {
+		if jpegName := fs.TypeJpeg.FindSub(result.Main.FileName(), HiddenPath, stripSequence); jpegName != "" {
+			if resultFile, err := NewMediaFile(jpegName); err == nil {
+				result.Files = append(result.Files, resultFile)
+			}
+		}
+	}
+
 	sort.Sort(result.Files)
 
 	return result, nil
@@ -346,6 +356,16 @@ func (m *MediaFile) RelativePath(directory string) string {
 		pathname = ""
 	}
 
+	// Remove hidden sub directory if exists.
+	if path.Base(pathname) == HiddenPath {
+		pathname = path.Dir(pathname)
+	}
+
+	// Use empty string for current / root directory.
+	if pathname == "." || pathname == "/" {
+		pathname = ""
+	}
+
 	return pathname
 }
 
@@ -371,6 +391,16 @@ func (m *MediaFile) Base(stripSequence bool) string {
 // AbsBase returns the directory and base filename without any extensions.
 func (m *MediaFile) AbsBase(stripSequence bool) string {
 	return fs.AbsBase(m.FileName(), stripSequence)
+}
+
+// HiddenName returns the a filename with the same base name and a given extension in a hidden sub directory.
+func (m *MediaFile) HiddenName(fileExt string, stripSequence bool) string {
+	return fs.SubFileName(m.FileName(), HiddenPath, fileExt, stripSequence)
+}
+
+// RelatedName returns the a filename with the same base name and a given extension in the same directory.
+func (m *MediaFile) RelatedName(fileExt string, stripSequence bool) string {
+	return m.AbsBase(stripSequence) + fileExt
 }
 
 // MimeType returns the mime type.
@@ -571,7 +601,7 @@ func (m *MediaFile) IsMedia() bool {
 	return m.IsJpeg() || m.IsVideo() || m.IsRaw() || m.IsHEIF() || m.IsImageOther()
 }
 
-// Jpeg returns a the JPEG version of an image or sidecar file (if exists).
+// Jpeg returns a the JPEG version of the media file (if exists).
 func (m *MediaFile) Jpeg() (*MediaFile, error) {
 	if m.IsJpeg() {
 		if !fs.FileExists(m.FileName()) {
@@ -581,7 +611,7 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 		return m, nil
 	}
 
-	jpegFilename := fs.TypeJpeg.Find(m.FileName(), false)
+	jpegFilename := fs.TypeJpeg.FindSub(m.FileName(), HiddenPath, false)
 
 	if jpegFilename == "" {
 		return nil, fmt.Errorf("no jpeg found for %s", m.FileName())
@@ -590,13 +620,13 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 	return NewMediaFile(jpegFilename)
 }
 
-// HasJpeg returns true if this file has or is a jpeg media file.
+// ContainsJpeg returns true if this file has or is a jpeg media file.
 func (m *MediaFile) HasJpeg() bool {
 	if m.IsJpeg() {
 		return true
 	}
 
-	return fs.TypeJpeg.Find(m.FileName(), false) != ""
+	return fs.TypeJpeg.FindSub(m.FileName(), HiddenPath, false) != ""
 }
 
 // HasJson returns true if this file has or is a json sidecar file.
@@ -605,7 +635,7 @@ func (m *MediaFile) HasJson() bool {
 		return true
 	}
 
-	return fs.TypeJson.Find(m.FileName(), false) != ""
+	return fs.TypeJson.FindSub(m.FileName(), HiddenPath, false) != ""
 }
 
 func (m *MediaFile) decodeDimensions() error {

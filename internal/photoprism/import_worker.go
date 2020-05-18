@@ -81,29 +81,32 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			if err != nil {
 				log.Errorf("import: could not index %s (%s)", txt.Quote(fs.RelativeName(destinationMainFilename, imp.originalsPath())), err.Error())
-
 				continue
 			}
 
 			if !f.HasJpeg() {
-				if _, err := imp.convert.ToJpeg(f); err != nil {
+				if jpegFile, err := imp.convert.ToJpeg(f, true); err != nil {
 					log.Errorf("import: creating jpeg failed (%s)", err.Error())
+					continue
+				} else {
+					log.Infof("import: %s created", fs.RelativeName(jpegFile.FileName(), imp.originalsPath()))
 				}
 			}
 
 			if jpg, err := f.Jpeg(); err != nil {
 				log.Error(err)
 			} else {
-				if err := jpg.ResampleDefault(imp.conf.ThumbPath(), false); err != nil {
+				if err := jpg.ResampleDefault(imp.thumbPath(), false); err != nil {
 					log.Errorf("import: could not create default thumbnails (%s)", err.Error())
+					continue
 				}
 			}
 
 			if imp.conf.SidecarJson() && !f.HasJson() {
-				if jsonFile, err := imp.convert.ToJson(f); err != nil {
+				if jsonFile, err := imp.convert.ToJson(f, true); err != nil {
 					log.Errorf("import: creating json sidecar file failed (%s)", err.Error())
 				} else {
-					related.Files = append(related.Files, jsonFile)
+					log.Infof("import: %s created", fs.RelativeName(jsonFile.FileName(), imp.originalsPath()))
 				}
 			}
 

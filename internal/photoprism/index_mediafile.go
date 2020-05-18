@@ -186,6 +186,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	// file obviously exists: remove deleted and missing flags
 	file.DeletedAt = nil
 	file.FileMissing = false
+	file.FileError = ""
 
 	// primary files are used for rendering thumbnails and image classification (plus sidecar files if they exist)
 	if file.FilePrimary {

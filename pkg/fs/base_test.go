@@ -11,7 +11,7 @@ func TestBase(t *testing.T) {
 		regular := Base("Screenshot 2019-05-21 at 10.45.52.png", false)
 		assert.Equal(t, "Screenshot 2019-05-21 at 10.45.52", regular)
 		stripped := Base("Screenshot 2019-05-21 at 10.45.52.png", true)
-		assert.Equal(t, "Screenshot 2019-05-21 at 10.45", stripped)
+		assert.Equal(t, "Screenshot 2019-05-21 at 10.45.52", stripped)
 	})
 
 	t.Run("Test.jpg", func(t *testing.T) {
@@ -47,6 +47,14 @@ func TestBase(t *testing.T) {
 		assert.Equal(t, "bar.0000", regular)
 
 		stripped := Base("/foo/bar.0000.ZIP", true)
+		assert.Equal(t, "bar.0000", stripped)
+	})
+
+	t.Run("/foo/bar.00001.ZIP", func(t *testing.T) {
+		regular := Base("/foo/bar.00001.ZIP", false)
+		assert.Equal(t, "bar.00001", regular)
+
+		stripped := Base("/foo/bar.00001.ZIP", true)
 		assert.Equal(t, "bar", stripped)
 	})
 
@@ -74,4 +82,24 @@ func TestBaseAbs(t *testing.T) {
 		assert.Equal(t, "/testdata/Test (4)", result)
 	})
 
+}
+
+func TestSubFileName(t *testing.T) {
+	t.Run("Test copy 3.jpg", func(t *testing.T) {
+		result := SubFileName("/testdata/Test (4).jpg",".photoprism", ".xmp", true)
+
+		assert.Equal(t, "/testdata/.photoprism/Test.xmp", result)
+	})
+
+	t.Run("Test (3).jpg", func(t *testing.T) {
+		result := SubFileName("/testdata/Test (4).jpg",".photoprism", ".xmp", false)
+
+		assert.Equal(t, "/testdata/.photoprism/Test (4).xmp", result)
+	})
+
+	t.Run("FOO.XMP", func(t *testing.T) {
+		result := SubFileName("/testdata/FOO.XMP",".photoprism", ".jpeg", true)
+
+		assert.Equal(t, "/testdata/.photoprism/FOO.jpeg", result)
+	})
 }

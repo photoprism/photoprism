@@ -146,6 +146,7 @@ func (c *Config) ClientConfig() ClientConfig {
 
 	db.Table("photos").
 		Select("SUM(photo_video = 1 AND photo_quality >= 0) AS videos, SUM(photo_quality = -1) AS hidden, SUM(photo_quality >= 0) AS photos, SUM(photo_favorite) AS favorites, SUM(photo_private) AS private").
+		Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
 		Where("deleted_at IS NULL").
 		Take(&count)
 

@@ -135,8 +135,8 @@ func (c *Convert) ConvertCommand(mf *MediaFile, jpegName string, xmpName string)
 }
 
 // ToJson uses exiftool to export metadata to a json file.
-func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
-	jsonName := fs.TypeJson.Find(mf.FileName(), c.conf.Settings().Index.Group)
+func (c *Convert) ToJson(mf *MediaFile, hidden bool) (*MediaFile, error) {
+	jsonName := fs.TypeJson.FindSub(mf.FileName(), HiddenPath, c.conf.Settings().Index.Group)
 
 	result, err := NewMediaFile(jsonName)
 
@@ -144,10 +144,14 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 		return result, nil
 	}
 
-	jsonName = mf.AbsBase(c.conf.Settings().Index.Group) + ".json"
-
 	if c.conf.ReadOnly() {
 		return nil, fmt.Errorf("convert: metadata export to json disabled in read only mode (%s)", mf.RelativeName(c.conf.OriginalsPath()))
+	}
+
+	if hidden {
+		jsonName = mf.HiddenName(".json", c.conf.Settings().Index.Group)
+	} else {
+		jsonName = mf.RelatedName(".json", c.conf.Settings().Index.Group)
 	}
 
 	fileName := mf.RelativeName(c.conf.OriginalsPath())
@@ -185,7 +189,7 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 }
 
 // ToJpeg converts a single image file to JPEG if possible.
-func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
+func (c *Convert) ToJpeg(image *MediaFile, hidden bool) (*MediaFile, error) {
 	if c.conf.ReadOnly() {
 		return nil, errors.New("convert: disabled in read-only mode")
 	}
@@ -198,7 +202,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return image, nil
 	}
 
-	jpegName := fs.TypeJpeg.Find(image.FileName(), c.conf.Settings().Index.Group)
+	jpegName := fs.TypeJpeg.FindSub(image.FileName(), HiddenPath, c.conf.Settings().Index.Group)
 
 	mediaFile, err := NewMediaFile(jpegName)
 
@@ -206,10 +210,14 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return mediaFile, nil
 	}
 
-	jpegName = image.AbsBase(c.conf.Settings().Index.Group) + ".jpg"
-
 	if c.conf.ReadOnly() {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.RelativeName(c.conf.OriginalsPath()))
+	}
+
+	if hidden {
+		jpegName = image.HiddenName(".jpg", c.conf.Settings().Index.Group)
+	} else {
+		jpegName = image.RelatedName(".jpg", c.conf.Settings().Index.Group)
 	}
 
 	fileName := image.RelativeName(c.conf.OriginalsPath())

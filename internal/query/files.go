@@ -64,3 +64,10 @@ func SetPhotoPrimary(photoUUID, fileUUID string) error {
 	Db().Model(entity.File{}).Where("photo_uuid = ? AND file_uuid <> ?", photoUUID, fileUUID).UpdateColumn("file_primary", false)
 	return Db().Model(entity.File{}).Where("photo_uuid = ? AND file_uuid = ?", photoUUID, fileUUID).UpdateColumn("file_primary", true).Error
 }
+
+// SetFileError updates the file error column.
+func SetFileError(fileUUID, errorString string) {
+	if err := Db().Model(entity.File{}).Where("file_uuid = ?", fileUUID).UpdateColumn("file_error", errorString).Error; err != nil {
+		log.Errorf("query: %s", err.Error())
+	}
+}

@@ -150,6 +150,8 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 	// Filter by additional flags and metadata.
 	if f.Error {
 		s = s.Where("files.file_error <> ''")
+	} else {
+		s = s.Where("files.file_error = ''")
 	}
 
 	if f.Album != "" {

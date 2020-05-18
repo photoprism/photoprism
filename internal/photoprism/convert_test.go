@@ -28,7 +28,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 	t.Run("gopher-video.mp4", func(t *testing.T) {
 		fileName := conf.ExamplesPath() + "/gopher-video.mp4"
-		outputName := conf.ExamplesPath() + "/gopher-video.jpg"
+		outputName := conf.ExamplesPath() + "/.photoprism/gopher-video.jpg"
 
 		_ = os.Remove(outputName)
 
@@ -40,7 +40,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		jpegFile, err := convert.ToJpeg(mf)
+		jpegFile, err := convert.ToJpeg(mf, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -73,7 +73,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		imageJpeg, err := convert.ToJpeg(mf)
+		imageJpeg, err := convert.ToJpeg(mf, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -99,13 +99,13 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatalf("%s for %s", err.Error(), rawFilename)
 		}
 
-		imageRaw, err := convert.ToJpeg(rawMediaFile)
+		imageRaw, err := convert.ToJpeg(rawMediaFile, true)
 
 		if err != nil {
 			t.Fatalf("%s for %s", err.Error(), rawFilename)
 		}
 
-		assert.True(t, fs.FileExists(conf.ImportPath()+"/raw/IMG_2567.jpg"), "Jpeg file was not found - is Darktable installed?")
+		assert.True(t, fs.FileExists(conf.ImportPath()+"/raw/.photoprism/IMG_2567.jpg"), "Jpeg file was not found - is Darktable installed?")
 
 		if imageRaw == nil {
 			t.Fatal("imageRaw is nil")
@@ -125,7 +125,7 @@ func TestConvert_ToJson(t *testing.T) {
 
 	t.Run("gopher-video.mp4", func(t *testing.T) {
 		fileName := conf.ExamplesPath() + "/gopher-video.mp4"
-		outputName := conf.ExamplesPath() + "/gopher-video.json"
+		outputName := conf.ExamplesPath() + "/.photoprism/gopher-video.json"
 
 		_ = os.Remove(outputName)
 
@@ -138,7 +138,7 @@ func TestConvert_ToJson(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		jsonFile, err := convert.ToJson(mf)
+		jsonFile, err := convert.ToJson(mf, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -171,7 +171,7 @@ func TestConvert_ToJson(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		jsonFile, err := convert.ToJson(mf)
+		jsonFile, err := convert.ToJson(mf, true)
 
 		if err != nil {
 			t.Fatal(err)

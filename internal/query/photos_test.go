@@ -23,7 +23,7 @@ func TestPhotos(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.LessOrEqual(t, 4, len(photos))
+		assert.LessOrEqual(t, 3, len(photos))
 		for _, r := range photos {
 			assert.IsType(t, PhotosResult{}, r)
 			assert.NotEmpty(t, r.ID)
@@ -117,7 +117,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.LessOrEqual(t, 3, len(photos))
+		assert.LessOrEqual(t, 2, len(photos))
 	})
 	t.Run("form.location true and keyword", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -125,6 +125,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 		f.Location = true
+		f.Error = false
 
 		photos, _, err := Photos(f)
 
@@ -191,6 +192,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 5000
 		f.Offset = 0
 		f.Private = true
+		f.Error = true
 
 		photos, _, err := Photos(f)
 
@@ -269,7 +271,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.LessOrEqual(t, 4, len(photos))
+		assert.LessOrEqual(t, 3, len(photos))
 	})
 	t.Run("form.color", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -284,7 +286,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.LessOrEqual(t, 2, len(photos))
+		assert.LessOrEqual(t, 1, len(photos))
 	})
 	t.Run("form.favorites", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -312,7 +314,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.LessOrEqual(t, 3, len(photos))
+		assert.LessOrEqual(t, 2, len(photos))
 
 	})
 	t.Run("form.title", func(t *testing.T) {
@@ -411,6 +413,7 @@ func TestPhotos(t *testing.T) {
 		f.Query = "chroma:4"
 		f.Count = 3
 		f.Offset = 0
+		f.Error = true
 
 		photos, _, err := Photos(f)
 
@@ -447,7 +450,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.LessOrEqual(t, 3, len(photos))
+		assert.LessOrEqual(t, 2, len(photos))
 
 	})
 	t.Run("form.Lat and form.Lng and Order:imported", func(t *testing.T) {
@@ -490,7 +493,7 @@ func TestPhotos(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.LessOrEqual(t, 3, len(photos))
+		assert.LessOrEqual(t, 2, len(photos))
 	})
 
 	t.Run("search for diff", func(t *testing.T) {

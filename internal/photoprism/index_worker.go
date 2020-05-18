@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -27,22 +28,26 @@ func IndexWorker(jobs <-chan IndexJob) {
 		f := related.Main
 
 		if opt.Convert && !f.HasJpeg() {
-			if converted, err := ind.convert.ToJpeg(f); err != nil {
+			if jpegFile, err := ind.convert.ToJpeg(f, true); err != nil {
 				log.Errorf("index: creating jpeg failed (%s)", err.Error())
+				continue
 			} else {
-				if err := converted.ResampleDefault(ind.thumbPath(), false); err != nil {
+				log.Infof("index: %s created", fs.RelativeName(jpegFile.FileName(), ind.originalsPath()))
+
+				if err := jpegFile.ResampleDefault(ind.thumbPath(), false); err != nil {
 					log.Errorf("index: could not create default thumbnails (%s)", err.Error())
+					continue
 				}
 
-				related.Files = append(related.Files, converted)
+				related.Files = append(related.Files, jpegFile)
 			}
 		}
 
 		if ind.conf.SidecarJson() && !f.HasJson() {
-			if jsonFile, err := ind.convert.ToJson(f); err != nil {
+			if jsonFile, err := ind.convert.ToJson(f, true); err != nil {
 				log.Errorf("index: creating json sidecar file failed (%s)", err.Error())
 			} else {
-				related.Files = append(related.Files, jsonFile)
+				log.Infof("index: %s created", fs.RelativeName(jsonFile.FileName(), ind.originalsPath()))
 			}
 		}
 
@@ -52,6 +57,7 @@ func IndexWorker(jobs <-chan IndexJob) {
 		if (res.Status == IndexAdded || res.Status == IndexUpdated) && f.IsJpeg() {
 			if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
 				log.Errorf("index: could not create default thumbnails (%s)", err.Error())
+				query.SetFileError(res.FileUUID, err.Error())
 			}
 		}
 
@@ -68,6 +74,7 @@ func IndexWorker(jobs <-chan IndexJob) {
 			if (res.Status == IndexAdded || res.Status == IndexUpdated) && f.IsJpeg() {
 				if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
 					log.Errorf("index: could not create default thumbnails (%s)", err.Error())
+					query.SetFileError(res.FileUUID, err.Error())
 				}
 			}
 
