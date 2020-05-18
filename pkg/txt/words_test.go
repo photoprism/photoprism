@@ -15,6 +15,18 @@ func TestWords(t *testing.T) {
 		result := Words("x")
 		assert.Equal(t, []string(nil), result)
 	})
+	t.Run("Österreich Urlaub", func(t *testing.T) {
+		result := Words("Österreich Urlaub")
+		assert.Equal(t, []string{"Österreich", "Urlaub"}, result)
+	})
+	t.Run("Schäferhund", func(t *testing.T) {
+		result := Words("Schäferhund")
+		assert.Equal(t, []string{"Schäferhund"}, result)
+	})
+	t.Run("Île de la Réunion", func(t *testing.T) {
+		result := Words("Île de la Réunion")
+		assert.Equal(t, []string{"Île", "Réunion"}, result)
+	})
 }
 
 func TestReplaceSpaces(t *testing.T) {
