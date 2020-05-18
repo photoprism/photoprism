@@ -62,7 +62,7 @@ var PlaceFixtures = PlacesMap{
 	},
 	"emptyNameLongCity": {
 		ID:          "1ef744d1e281",
-		LocLabel:    "label",
+		LocLabel:    "labelEmptyNameLongCity",
 		LocCity:     "longlonglonglonglongcity",
 		LocState:    "Rheinland-Pfalz",
 		LocCountry:  "de",
@@ -75,7 +75,7 @@ var PlaceFixtures = PlacesMap{
 	},
 	"emptyNameShortCity": {
 		ID:          "1ef744d1e282",
-		LocLabel:    "label",
+		LocLabel:    "labelEmptyNameShortCity",
 		LocCity:     "shortcity",
 		LocState:    "Rheinland-Pfalz",
 		LocCountry:  "de",
@@ -88,7 +88,7 @@ var PlaceFixtures = PlacesMap{
 	},
 	"veryLongLocName": {
 		ID:          "1ef744d1e283",
-		LocLabel:    "label",
+		LocLabel:    "labelVeryLongLocName",
 		LocCity:     "Mainz",
 		LocState:    "Rheinland-Pfalz",
 		LocCountry:  "de",
@@ -101,7 +101,7 @@ var PlaceFixtures = PlacesMap{
 	},
 	"mediumLongLocName": {
 		ID:          "1ef744d1e284",
-		LocLabel:    "label",
+		LocLabel:    "labelMediumLongLocName",
 		LocCity:     "New york",
 		LocState:    "New york",
 		LocCountry:  "us",
