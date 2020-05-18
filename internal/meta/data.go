@@ -38,8 +38,8 @@ type Data struct {
 	Lat          float32       `meta:"-"`
 	Lng          float32       `meta:"-"`
 	Altitude     int           `meta:"GlobalAltitude"`
-	Width        int           `meta:"ImageWidth"`
-	Height       int           `meta:"ImageHeight"`
+	Width        int           `meta:"PixelXDimension,ImageWidth,ExifImageWidth,SourceImageWidth"`
+	Height       int           `meta:"PixelYDimension,ImageHeight,ImageLength,ExifImageHeight,SourceImageHeight"`
 	Orientation  int           `meta:"-"`
 	Rotation     int           `meta:"Rotation"`
 	All          map[string]string

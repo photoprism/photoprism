@@ -256,21 +256,21 @@ func (data *Data) Exif(fileName string) (err error) {
 		data.UniqueID = value
 	}
 
-	if value, ok := tags["ImageWidth"]; ok {
+	if value, ok := tags["PixelXDimension"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Width = i
 		}
-	} else if value, ok := tags["PixelXDimension"]; ok {
+	} else if value, ok := tags["ImageWidth"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Width = i
 		}
 	}
 
-	if value, ok := tags["ImageLength"]; ok {
+	if value, ok := tags["PixelYDimension"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Height = i
 		}
-	} else if value, ok := tags["PixelYDimension"]; ok {
+	} else if value, ok := tags["ImageLength"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Height = i
 		}
