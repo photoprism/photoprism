@@ -19,7 +19,7 @@ func TestNewFileSync(t *testing.T) {
 }
 
 func TestFileSync_FirstOrCreate(t *testing.T) {
-	fileSync := &FileSync{AccountID: 123}
+	fileSync := &FileSync{AccountID: 123, FileID: 888, RemoteName: "test123"}
 	r := fileSync.FirstOrCreate()
 	assert.Equal(t, uint(0x7b), r.AccountID)
 }

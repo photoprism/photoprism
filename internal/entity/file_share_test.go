@@ -20,7 +20,7 @@ func TestNewFileShare(t *testing.T) {
 }
 
 func TestFileShare_FirstOrCreate(t *testing.T) {
-	fileShare := &FileShare{FileID: 123}
+	fileShare := &FileShare{FileID: 123, AccountID: 888, RemoteName: "test888"}
 	r := fileShare.FirstOrCreate()
 	assert.Equal(t, uint(0x7b), r.FileID)
 }

@@ -71,6 +71,7 @@ func TestSavePhotoForm(t *testing.T) {
 func TestPhoto_Save(t *testing.T) {
 	t.Run("new photo", func(t *testing.T) {
 		photo := Photo{
+			ID:               11111,
 			TakenAt:          time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
 			TakenAtLocal:     time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
 			TakenSrc:         "exif",
@@ -93,7 +94,10 @@ func TestPhoto_Save(t *testing.T) {
 			LocationID:       "1234",
 			LocationSrc:      "geo",
 			PlaceID:          "765",
-			PhotoCountry:     "de"}
+			PhotoCountry:     "de",
+			Keywords:         []Keyword{},
+			Description:      Description{},
+		}
 
 		err := photo.Save()
 		if err != nil {
