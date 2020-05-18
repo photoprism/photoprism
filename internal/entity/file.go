@@ -151,7 +151,9 @@ func (m *File) Save() error {
 		return err
 	}
 
-	return Db().Model(m).Related(Photo{}).Error
+	photo := Photo{}
+
+	return Db().Model(m).Related(&photo).Error
 }
 
 // UpdateVideoInfos updates related video infos based on this file.
