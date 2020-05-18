@@ -26,6 +26,7 @@ type PhotosResult struct {
 	PhotoPath        string
 	PhotoName        string
 	PhotoTitle       string
+	PhotoDescription string
 	PhotoYear        int
 	PhotoMonth       int
 	PhotoCountry     string

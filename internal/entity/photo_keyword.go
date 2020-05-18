@@ -21,7 +21,7 @@ func NewPhotoKeyword(photoID, keywordID uint) *PhotoKeyword {
 	return result
 }
 
-// FirstOrCreate checks if the PhotoKeywords relation already exist in the database before the creation
+// FirstOrCreate checks if the Keywords relation already exist in the database before the creation
 func (m *PhotoKeyword) FirstOrCreate() *PhotoKeyword {
 	if err := Db().FirstOrCreate(m, "photo_id = ? AND keyword_id = ?", m.PhotoID, m.KeywordID).Error; err != nil {
 		log.Errorf("photo keyword: %s", err)

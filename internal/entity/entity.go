@@ -34,7 +34,7 @@ var Entities = Types{
 	"files_share":     &FileShare{},
 	"files_sync":      &FileSync{},
 	"photos":          &Photo{},
-	"descriptions":    &Description{},
+	"details":         &Details{},
 	"places":          &Place{},
 	"locations":       &Location{},
 	"cameras":         &Camera{},

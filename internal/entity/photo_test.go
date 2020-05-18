@@ -1,11 +1,12 @@
 package entity
 
 import (
+	"testing"
+	"time"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 func TestSavePhotoForm(t *testing.T) {
@@ -34,15 +35,15 @@ func TestSavePhotoForm(t *testing.T) {
 			LocationSrc:      "manual",
 			PlaceID:          "765",
 			PhotoCountry:     "de",
-			Description: form.Description{
-				PhotoID:          uint(1000008),
-				PhotoDescription: "test",
-				PhotoKeywords:    "test cat dog",
-				PhotoSubject:     "animals",
-				PhotoArtist:      "Bender",
-				PhotoNotes:       "notes",
-				PhotoCopyright:   "copy",
-				PhotoLicense:     ""},
+			Details: form.Details{
+				PhotoID:   uint(1000008),
+				Keywords:  "test cat dog",
+				Subject:   "animals",
+				Artist:    "Bender",
+				Notes:     "notes",
+				Copyright: "copy",
+				License:   "",
+			},
 		}
 
 		m := PhotoFixtures["Photo08"]
@@ -64,7 +65,7 @@ func TestSavePhotoForm(t *testing.T) {
 		assert.Equal(t, false, m.PhotoVideo)
 		assert.Equal(t, float32(7.9999), m.PhotoLat)
 		assert.NotNil(t, m.EditedAt)
-		t.Log(m.Description.PhotoKeywords)
+		t.Log(m.Details.Keywords)
 	})
 }
 
@@ -96,7 +97,7 @@ func TestPhoto_Save(t *testing.T) {
 			PlaceID:          "765",
 			PhotoCountry:     "de",
 			Keywords:         []Keyword{},
-			Description:      Description{},
+			Details:          Details{},
 		}
 
 		err := photo.Save()
@@ -269,14 +270,14 @@ func TestPhoto_NoCameraSerial(t *testing.T) {
 	})
 }
 
-func TestPhoto_DescriptionLoaded(t *testing.T) {
+func TestPhoto_DetailsLoaded(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
-		assert.True(t, m.DescriptionLoaded())
+		assert.True(t, m.DetailsLoaded())
 	})
 	t.Run("false", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo05")
-		assert.False(t, m.DescriptionLoaded())
+		assert.False(t, m.DetailsLoaded())
 	})
 }
 
@@ -451,21 +452,21 @@ func TestPhoto_SetTitle(t *testing.T) {
 func TestPhoto_SetDescription(t *testing.T) {
 	t.Run("empty description", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, "photo description blacklist", m.Description.PhotoDescription)
+		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
 		m.SetDescription("", "manual")
-		assert.Equal(t, "photo description blacklist", m.Description.PhotoDescription)
+		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
 	})
 	t.Run("description not from the same source", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, "photo description blacklist", m.Description.PhotoDescription)
+		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
 		m.SetDescription("new photo description", "image")
-		assert.Equal(t, "photo description blacklist", m.Description.PhotoDescription)
+		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
 	})
 	t.Run("success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, "photo description blacklist", m.Description.PhotoDescription)
+		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
 		m.SetDescription("new photo description", "manual")
-		assert.Equal(t, "new photo description", m.Description.PhotoDescription)
+		assert.Equal(t, "new photo description", m.PhotoDescription)
 	})
 }
 

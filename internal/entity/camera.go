@@ -11,16 +11,16 @@ import (
 
 // Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
-	ID                uint   `gorm:"primary_key"`
-	CameraSlug        string `gorm:"type:varbinary(255);unique_index;"`
-	CameraModel       string `gorm:"type:varchar(255);"`
-	CameraMake        string `gorm:"type:varchar(255);"`
-	CameraType        string `gorm:"type:varchar(255);"`
-	CameraDescription string `gorm:"type:text;"`
-	CameraNotes       string `gorm:"type:text;"`
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
-	DeletedAt         *time.Time `sql:"index"`
+	ID                uint       `gorm:"primary_key" yaml:"CameraID"`
+	CameraSlug        string     `gorm:"type:varbinary(255);unique_index;" yaml:"Slug"`
+	CameraModel       string     `gorm:"type:varchar(255);" yaml:"Model"`
+	CameraMake        string     `gorm:"type:varchar(255);" yaml:"Make"`
+	CameraType        string     `gorm:"type:varchar(255);" yaml:"Type,omitempty"`
+	CameraDescription string     `gorm:"type:text;" yaml:"Description,omitempty"`
+	CameraNotes       string     `gorm:"type:text;" yaml:"Notes,omitempty"`
+	CreatedAt         time.Time  `yaml:"-"`
+	UpdatedAt         time.Time  `yaml:"-"`
+	DeletedAt         *time.Time `sql:"index" yaml:"-"`
 }
 
 var UnknownCamera = Camera{

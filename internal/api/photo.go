@@ -4,15 +4,31 @@ import (
 	"fmt"
 	"net/http"
 	"path"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// SavePhotoAsYaml saves photo data as YAML file.
+func SavePhotoAsYaml(p entity.Photo, conf *config.Config) {
+	// Write YAML sidecar file (optional).
+	if conf.SidecarYaml() {
+		yamlFile := filepath.Join(conf.OriginalsPath(), p.PhotoPath, photoprism.HiddenPath, p.PhotoName) + ".yml"
+		if err := p.SaveAsYaml(yamlFile); err != nil {
+			log.Errorf("photo: %s (update yaml)", err)
+		} else {
+			log.Errorf("photo: updated yaml file %s", txt.Quote(fs.RelativeName(yamlFile, conf.OriginalsPath())))
+		}
+	}
+}
 
 // GET /api/v1/photos/:uuid
 //
@@ -87,6 +103,8 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		SavePhotoAsYaml(p, conf)
+
 		c.JSON(http.StatusOK, p)
 	})
 }
@@ -124,6 +142,39 @@ func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
+// GET /api/v1/photos/:uuid/yaml
+//
+// Parameters:
+//   uuid: string PhotoUUID as returned by the API
+func GetPhotoYaml(router *gin.RouterGroup, conf *config.Config) {
+	router.GET("/photos/:uuid/yaml", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		p, err := query.PreloadPhotoByUUID(c.Param("uuid"))
+
+		if err != nil {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
+		data, err := p.Yaml()
+
+		if err != nil {
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+
+		if c.Query("download") != "" {
+			c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", c.Param("uuid")+".yml"))
+		}
+
+		c.Data(http.StatusOK, "text/x-yaml; charset=utf-8", data)
+	})
+}
+
 // POST /api/v1/photos/:uuid/like
 //
 // Parameters:
@@ -146,6 +197,8 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		m.PhotoFavorite = true
 		m.PhotoQuality = m.QualityScore()
 		conf.Db().Save(&m)
+
+		SavePhotoAsYaml(m, conf)
 
 		event.Publish("count.favorites", event.Data{
 			"count": 1,
@@ -179,6 +232,8 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 		m.PhotoFavorite = false
 		m.PhotoQuality = m.QualityScore()
 		entity.Db().Save(&m)
+
+		SavePhotoAsYaml(m, conf)
 
 		event.Publish("count.favorites", event.Data{
 			"count": -1,

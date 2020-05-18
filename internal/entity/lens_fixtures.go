@@ -29,7 +29,6 @@ var LensFixtures = LensMap{
 		LensModel:       "F380",
 		LensMake:        "Apple",
 		LensType:        "",
-		LensOwner:       "Test",
 		LensDescription: "",
 		LensNotes:       "Notes",
 		CreatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),

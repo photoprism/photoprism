@@ -17,53 +17,54 @@ import (
 
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
-	ID               uint        `gorm:"primary_key"`
-	PhotoUUID        string      `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;"`
-	TakenAt          time.Time   `gorm:"type:datetime;index:idx_photos_taken_uuid;" json:"TakenAt"`
-	TakenAtLocal     time.Time   `gorm:"type:datetime;"`
-	TakenSrc         string      `gorm:"type:varbinary(8);" json:"TakenSrc"`
-	PhotoTitle       string      `gorm:"type:varchar(255);" json:"PhotoTitle"`
-	TitleSrc         string      `gorm:"type:varbinary(8);" json:"TitleSrc"`
-	PhotoPath        string      `gorm:"type:varbinary(768);index;"`
-	PhotoName        string      `gorm:"type:varbinary(255);"`
-	PhotoQuality     int         `gorm:"type:SMALLINT" json:"PhotoQuality"`
-	PhotoResolution  int         `gorm:"type:SMALLINT" json:"PhotoResolution"`
-	PhotoFavorite    bool        `json:"PhotoFavorite"`
-	PhotoPrivate     bool        `json:"PhotoPrivate"`
-	PhotoVideo       bool        `json:"PhotoVideo"`
-	PhotoLat         float32     `gorm:"type:FLOAT;index;" json:"PhotoLat"`
-	PhotoLng         float32     `gorm:"type:FLOAT;index;" json:"PhotoLng"`
-	PhotoAltitude    int         `json:"PhotoAltitude"`
-	PhotoIso         int         `json:"PhotoIso"`
-	PhotoFocalLength int         `json:"PhotoFocalLength"`
-	PhotoFNumber     float32     `gorm:"type:FLOAT;" json:"PhotoFNumber"`
-	PhotoExposure    string      `gorm:"type:varbinary(64);" json:"PhotoExposure"`
-	CameraID         uint        `gorm:"index:idx_photos_camera_lens;" json:"CameraID"`
-	CameraSerial     string      `gorm:"type:varbinary(255);" json:"CameraSerial"`
-	CameraSrc        string      `gorm:"type:varbinary(8);" json:"CameraSrc"`
-	LensID           uint        `gorm:"index:idx_photos_camera_lens;" json:"LensID"`
-	PlaceID          string      `gorm:"type:varbinary(16);index;default:'zz'" json:"PlaceID"`
-	LocationID       string      `gorm:"type:varbinary(16);index;" json:"LocationID"`
-	LocationSrc      string      `gorm:"type:varbinary(8);" json:"LocationSrc"`
-	TimeZone         string      `gorm:"type:varbinary(64);" json:"TimeZone"`
-	PhotoCountry     string      `gorm:"type:varbinary(2);index:idx_photos_country_year_month;default:'zz'" json:"PhotoCountry"`
-	PhotoYear        int         `gorm:"index:idx_photos_country_year_month;"`
-	PhotoMonth       int         `gorm:"index:idx_photos_country_year_month;"`
-	Description      Description `json:"Description"`
-	DescriptionSrc   string      `gorm:"type:varbinary(8);" json:"DescriptionSrc"`
-	Camera           *Camera     `json:"Camera"`
-	Lens             *Lens       `json:"Lens"`
-	Location         *Location   `json:"Location"`
-	Place            *Place      `json:"-"`
-	Links            []Link      `gorm:"foreignkey:ShareUUID;association_foreignkey:PhotoUUID"`
-	Keywords         []Keyword   `json:"-"`
-	Albums           []Album     `json:"-"`
-	Files            []File
-	Labels           []PhotoLabel
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
-	EditedAt         *time.Time
-	DeletedAt        *time.Time `sql:"index"`
+	ID               uint         `gorm:"primary_key" yaml:"-"`
+	PhotoUUID        string       `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;" yaml:"PhotoID"`
+	TakenAt          time.Time    `gorm:"type:datetime;index:idx_photos_taken_uuid;" json:"TakenAt" yaml:"Taken"`
+	TakenAtLocal     time.Time    `gorm:"type:datetime;" yaml:"-"`
+	TakenSrc         string       `gorm:"type:varbinary(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
+	PhotoTitle       string       `gorm:"type:varchar(255);" json:"PhotoTitle" yaml:"Title"`
+	TitleSrc         string       `gorm:"type:varbinary(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
+	PhotoDescription string       `gorm:"type:text;" json:"PhotoDescription" yaml:"Description,omitempty"`
+	DescriptionSrc   string       `gorm:"type:varbinary(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
+	Details          Details      `json:"Details" yaml:"Details"`
+	PhotoPath        string       `gorm:"type:varbinary(768);index;" yaml:"-"`
+	PhotoName        string       `gorm:"type:varbinary(255);" yaml:"-"`
+	PhotoFavorite    bool         `json:"PhotoFavorite" yaml:"Favorite,omitempty"`
+	PhotoPrivate     bool         `json:"PhotoPrivate" yaml:"Private,omitempty"`
+	PhotoVideo       bool         `json:"PhotoVideo" yaml:"-"`
+	TimeZone         string       `gorm:"type:varbinary(64);" json:"TimeZone" yaml:"-"`
+	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"PhotoLat" yaml:"Lat,omitempty"`
+	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"PhotoLng" yaml:"Lng,omitempty"`
+	PhotoAltitude    int          `json:"PhotoAltitude" yaml:"Altitude,omitempty"`
+	PhotoCountry     string       `gorm:"type:varbinary(2);index:idx_photos_country_year_month;default:'zz'" json:"PhotoCountry" yaml:"-"`
+	PhotoYear        int          `gorm:"index:idx_photos_country_year_month;" yaml:"-"`
+	PhotoMonth       int          `gorm:"index:idx_photos_country_year_month;" yaml:"-"`
+	PhotoIso         int          `json:"PhotoIso" yaml:"ISO,omitempty"`
+	PhotoExposure    string       `gorm:"type:varbinary(64);" json:"PhotoExposure" yaml:"Exposure,omitempty"`
+	PhotoFNumber     float32      `gorm:"type:FLOAT;" json:"PhotoFNumber" yaml:"FNumber,omitempty"`
+	PhotoFocalLength int          `json:"PhotoFocalLength" yaml:"FocalLength,omitempty"`
+	PhotoQuality     int          `gorm:"type:SMALLINT" json:"PhotoQuality" yaml:"-"`
+	PhotoResolution  int          `gorm:"type:SMALLINT" json:"PhotoResolution" yaml:"-"`
+	CameraID         uint         `gorm:"index:idx_photos_camera_lens;" json:"CameraID" yaml:"-"`
+	CameraSerial     string       `gorm:"type:varbinary(255);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
+	CameraSrc        string       `gorm:"type:varbinary(8);" json:"CameraSrc" yaml:"-"`
+	LensID           uint         `gorm:"index:idx_photos_camera_lens;" json:"LensID" yaml:"-"`
+	PlaceID          string       `gorm:"type:varbinary(16);index;default:'zz'" json:"PlaceID" yaml:"-"`
+	LocationID       string       `gorm:"type:varbinary(16);index;" json:"LocationID" yaml:"-"`
+	LocationSrc      string       `gorm:"type:varbinary(8);" json:"LocationSrc" yaml:"-"`
+	Camera           *Camera      `json:"Camera" yaml:"-"`
+	Lens             *Lens        `json:"Lens" yaml:"-"`
+	Location         *Location    `json:"Location" yaml:"-"`
+	Place            *Place       `json:"-" yaml:"-"`
+	Links            []Link       `gorm:"foreignkey:ShareUUID;association_foreignkey:PhotoUUID" yaml:"-"`
+	Keywords         []Keyword    `json:"-" yaml:"-"`
+	Albums           []Album      `json:"-" yaml:"Albums,omitempty"`
+	Files            []File       `yaml:"-"`
+	Labels           []PhotoLabel `yaml:"-"`
+	CreatedAt        time.Time    `yaml:"Created"`
+	UpdatedAt        time.Time    `yaml:"Updated"`
+	EditedAt         *time.Time   `yaml:"Edited,omitempty"`
+	DeletedAt        *time.Time   `sql:"index" yaml:"Deleted,omitempty"`
 }
 
 // SavePhotoForm updates a model using form data and persists it in the database.
@@ -77,12 +78,12 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 
 	model.UpdateYearMonth()
 
-	if form.Description.PhotoID == model.ID {
-		if err := deepcopier.Copy(&model.Description).From(form.Description); err != nil {
+	if form.Details.PhotoID == model.ID {
+		if err := deepcopier.Copy(&model.Details).From(form.Details); err != nil {
 			return err
 		}
 
-		model.Description.PhotoKeywords = strings.Join(txt.UniqueKeywords(model.Description.PhotoKeywords), ", ")
+		model.Details.Keywords = strings.Join(txt.UniqueKeywords(model.Details.Keywords), ", ")
 	}
 
 	if model.HasLatLng() && locChanged && model.LocationSrc == SrcManual {
@@ -90,10 +91,10 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 
 		model.AddLabels(labels)
 
-		w := txt.UniqueKeywords(model.Description.PhotoKeywords)
+		w := txt.UniqueKeywords(model.Details.Keywords)
 		w = append(w, locKeywords...)
 
-		model.Description.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
+		model.Details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 	}
 
 	if err := model.UpdateTitle(model.ClassifyLabels()); err != nil {
@@ -130,10 +131,10 @@ func (m *Photo) Save() error {
 		log.Warnf("%s (%s)", err.Error(), m.PhotoUUID)
 	}
 
-	if m.DescriptionLoaded() {
-		w := txt.UniqueKeywords(m.Description.PhotoKeywords)
+	if m.DetailsLoaded() {
+		w := txt.UniqueKeywords(m.Details.Keywords)
 		w = append(w, labels.Keywords()...)
-		m.Description.PhotoKeywords = strings.Join(txt.UniqueWords(w), ", ")
+		m.Details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 	}
 
 	if err := m.IndexKeywords(); err != nil {
@@ -209,7 +210,7 @@ func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 
 // IndexKeywords adds given keywords to the photo entry
 func (m *Photo) IndexKeywords() error {
-	if !m.DescriptionLoaded() {
+	if !m.DetailsLoaded() {
 		return fmt.Errorf("photo: can't index keywords, description not loaded (%s)", m.PhotoUUID)
 	}
 
@@ -220,10 +221,10 @@ func (m *Photo) IndexKeywords() error {
 
 	// Add title, description and other keywords
 	keywords = append(keywords, txt.Keywords(m.PhotoTitle)...)
-	keywords = append(keywords, txt.Keywords(m.Description.PhotoDescription)...)
-	keywords = append(keywords, txt.Keywords(m.Description.PhotoKeywords)...)
-	keywords = append(keywords, txt.Keywords(m.Description.PhotoSubject)...)
-	keywords = append(keywords, txt.Keywords(m.Description.PhotoArtist)...)
+	keywords = append(keywords, txt.Keywords(m.PhotoDescription)...)
+	keywords = append(keywords, txt.Keywords(m.Details.Keywords)...)
+	keywords = append(keywords, txt.Keywords(m.Details.Subject)...)
+	keywords = append(keywords, txt.Keywords(m.Details.Artist)...)
 
 	keywords = txt.UniqueWords(keywords)
 
@@ -340,9 +341,9 @@ func (m *Photo) HasTitle() bool {
 	return m.PhotoTitle != ""
 }
 
-// DescriptionLoaded returns true if photo description exists.
-func (m *Photo) DescriptionLoaded() bool {
-	return m.Description.PhotoID == m.ID
+// DetailsLoaded returns true if photo details exist.
+func (m *Photo) DetailsLoaded() bool {
+	return m.Details.PhotoID == m.ID
 }
 
 // UpdateTitle updated the photo title based on location and labels.
@@ -459,11 +460,11 @@ func (m *Photo) SetDescription(desc, source string) {
 		return
 	}
 
-	if m.DescriptionSrc != SrcAuto && m.DescriptionSrc != source && source != SrcManual && m.Description.PhotoDescription != "" {
+	if m.DescriptionSrc != SrcAuto && m.DescriptionSrc != source && source != SrcManual && m.PhotoDescription != "" {
 		return
 	}
 
-	m.Description.PhotoDescription = newDesc
+	m.PhotoDescription = newDesc
 	m.DescriptionSrc = source
 }
 
@@ -560,4 +561,9 @@ func (m *Photo) DeletePermanently() error {
 	Db().Unscoped().Delete(PhotoAlbum{}, "photo_uuid = ?", m.PhotoUUID)
 
 	return Db().Unscoped().Delete(m).Error
+}
+
+// NoDescription returns true if the photo has no description.
+func (m *Photo) NoDescription() bool {
+	return m.PhotoDescription == ""
 }

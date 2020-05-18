@@ -9,17 +9,16 @@ import (
 
 // Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
-	ID              uint   `gorm:"primary_key"`
-	LensSlug        string `gorm:"type:varbinary(255);unique_index;"`
-	LensModel       string
-	LensMake        string
-	LensType        string
-	LensOwner       string
-	LensDescription string `gorm:"type:text;"`
-	LensNotes       string `gorm:"type:text;"`
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	DeletedAt       *time.Time `sql:"index"`
+	ID              uint       `gorm:"primary_key" yaml:"LensID"`
+	LensSlug        string     `gorm:"type:varbinary(255);unique_index;" yaml:"Slug"`
+	LensModel       string     `yaml:"Model"`
+	LensMake        string     `yaml:"Make"`
+	LensType        string     `yaml:"Type,omitempty"`
+	LensDescription string     `gorm:"type:text;" yaml:"Description,omitempty"`
+	LensNotes       string     `gorm:"type:text;" yaml:"Notes,omitempty"`
+	CreatedAt       time.Time  `yaml:"-"`
+	UpdatedAt       time.Time  `yaml:"-"`
+	DeletedAt       *time.Time `sql:"index" yaml:"-"`
 }
 
 var UnknownLens = Lens{

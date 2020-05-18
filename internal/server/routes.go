@@ -32,6 +32,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		api.GetGeo(v1, conf)
 		api.GetPhoto(v1, conf)
+		api.GetPhotoYaml(v1, conf)
 		api.UpdatePhoto(v1, conf)
 		api.GetPhotos(v1, conf)
 		api.GetPhotoDownload(v1, conf)

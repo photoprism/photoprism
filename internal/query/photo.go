@@ -9,7 +9,9 @@ import (
 func PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 	if err := UnscopedDb().Where("id = ?", photoID).
 		Preload("Links").
-		Preload("Description").
+		Preload("Camera").
+		Preload("Lens").
+		Preload("Details").
 		Preload("Location").
 		Preload("Location.Place").
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
@@ -27,7 +29,9 @@ func PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 func PhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
 	if err := UnscopedDb().Where("photo_uuid = ?", photoUUID).
 		Preload("Links").
-		Preload("Description").
+		Preload("Camera").
+		Preload("Lens").
+		Preload("Details").
 		Preload("Location").
 		Preload("Location.Place").
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
@@ -53,7 +57,7 @@ func PreloadPhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
 		Preload("Links").
 		Preload("Location").
 		Preload("Location.Place").
-		Preload("Description").
+		Preload("Details").
 		First(&photo).Error; err != nil {
 		return photo, err
 	}

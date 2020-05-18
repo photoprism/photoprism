@@ -267,7 +267,7 @@
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
-                                        v-model="model.Description.PhotoSubject"
+                                        v-model="model.Details.Subject"
                                 ></v-textarea>
                             </v-flex>
 
@@ -280,7 +280,7 @@
                                         label="Artist"
                                         placeholder=""
                                         color="secondary-dark"
-                                        v-model="model.Description.PhotoArtist"
+                                        v-model="model.Details.Artist"
                                 ></v-text-field>
                             </v-flex>
 
@@ -293,7 +293,7 @@
                                         label="Copyright"
                                         placeholder=""
                                         color="secondary-dark"
-                                        v-model="model.Description.PhotoCopyright"
+                                        v-model="model.Details.Copyright"
                                 ></v-text-field>
                             </v-flex>
 
@@ -308,7 +308,7 @@
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
-                                        v-model="model.Description.PhotoLicense"
+                                        v-model="model.Details.License"
                                 ></v-textarea>
                             </v-flex>
 
@@ -322,7 +322,7 @@
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
-                                        v-model="model.Description.PhotoDescription"
+                                        v-model="model.PhotoDescription"
                                 ></v-textarea>
                             </v-flex>
 
@@ -336,7 +336,7 @@
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
-                                        v-model="model.Description.PhotoKeywords"
+                                        v-model="model.Details.Keywords"
                                 ></v-textarea>
                             </v-flex>
 
@@ -350,7 +350,7 @@
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
-                                        v-model="model.Description.PhotoNotes"
+                                        v-model="model.Details.Notes"
                                 ></v-textarea>
                             </v-flex>
 

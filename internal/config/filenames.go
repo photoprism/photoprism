@@ -156,6 +156,15 @@ func (c *Config) SidecarJson() bool {
 	return c.params.SidecarJson
 }
 
+// SidecarYaml returns true if metadata should be synced with PhotoPrism YAML sidecar files.
+func (c *Config) SidecarYaml() bool {
+	if c.ReadOnly() {
+		return false
+	}
+
+	return c.params.SidecarYaml
+}
+
 // HeifConvertBin returns the heif-convert executable file name.
 func (c *Config) HeifConvertBin() string {
 	return findExecutable(c.params.HeifConvertBin, "heif-convert")

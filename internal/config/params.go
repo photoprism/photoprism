@@ -69,6 +69,7 @@ type Params struct {
 	FFmpegBin          string `yaml:"ffmpeg-bin" flag:"ffmpeg-bin"`
 	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
 	SidecarJson        bool   `yaml:"sidecar-json" flag:"sidecar-json"`
+	SidecarYaml        bool   `yaml:"sidecar-yaml" flag:"sidecar-yaml"`
 	PIDFilename        string `yaml:"pid-filename" flag:"pid-filename"`
 	LogFilename        string `yaml:"log-filename" flag:"log-filename"`
 	DetachServer       bool   `yaml:"detach-server" flag:"detach-server"`

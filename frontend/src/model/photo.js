@@ -23,6 +23,8 @@ class Photo extends RestModel {
             PhotoName: "",
             PhotoTitle: "",
             TitleSrc: "",
+            PhotoDescription: "",
+            DescriptionSrc: "",
             PhotoFavorite: false,
             PhotoPrivate: false,
             PhotoVideo: false,
@@ -49,16 +51,14 @@ class Photo extends RestModel {
             PhotoCountry: "",
             PhotoYear: YearUnknown,
             PhotoMonth: MonthUnknown,
-            Description: {
-                PhotoDescription: "",
-                PhotoKeywords: "",
-                PhotoNotes: "",
-                PhotoSubject: "",
-                PhotoArtist: "",
-                PhotoCopyright: "",
-                PhotoLicense: "",
+            Details: {
+                Keywords: "",
+                Notes: "",
+                Subject: "",
+                Artist: "",
+                Copyright: "",
+                License: "",
             },
-            DescriptionSrc: "",
             Files: [],
             Labels: [],
             Keywords: [],
@@ -414,7 +414,7 @@ class Photo extends RestModel {
             values.TitleSrc = SrcManual;
         }
 
-        if (values.Description) {
+        if (values.PhotoDescription) {
             values.DescriptionSrc = SrcManual;
         }
 

@@ -93,6 +93,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "ffmpeg-bin", conf.FFmpegBin())
 	fmt.Printf("%-25s %s\n", "exiftool-bin", conf.ExifToolBin())
 	fmt.Printf("%-25s %t\n", "sidecar-json", conf.SidecarJson())
+	fmt.Printf("%-25s %t\n", "sidecar-yaml", conf.SidecarYaml())
 
 	// Places / Geocoding API
 	fmt.Printf("%-25s %s\n", "geocoding-api", conf.GeoCodingApi())
