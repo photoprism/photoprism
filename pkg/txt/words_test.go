@@ -45,6 +45,18 @@ func TestFilenameWords(t *testing.T) {
 		result := FilenameWords("x")
 		assert.Equal(t, []string(nil), result)
 	})
+	t.Run("Österreich Urlaub", func(t *testing.T) {
+		result := FilenameWords("Österreich Urlaub")
+		assert.Equal(t, []string{"Österreich", "Urlaub"}, result)
+	})
+	t.Run("Schäferhund", func(t *testing.T) {
+		result := FilenameWords("Schäferhund")
+		assert.Equal(t, []string{"Schäferhund"}, result)
+	})
+	t.Run("Île de la Réunion", func(t *testing.T) {
+		result := FilenameWords("Île de la Réunion")
+		assert.Equal(t, []string{"Île", "Réunion"}, result)
+	})
 }
 
 func TestFilenameKeywords(t *testing.T) {
@@ -56,6 +68,18 @@ func TestFilenameKeywords(t *testing.T) {
 		result := FilenameKeywords("x")
 		assert.Equal(t, []string(nil), result)
 	})
+	t.Run("Österreich Urlaub", func(t *testing.T) {
+		result := FilenameKeywords("Österreich Urlaub")
+		assert.Equal(t, []string{"österreich", "urlaub"}, result)
+	})
+	t.Run("Schäferhund", func(t *testing.T) {
+		result := FilenameKeywords("Schäferhund")
+		assert.Equal(t, []string{"schäferhund"}, result)
+	})
+	t.Run("Île de la Réunion", func(t *testing.T) {
+		result := FilenameKeywords("Île de la Réunion")
+		assert.Equal(t, []string{"île", "réunion"}, result)
+	})
 }
 
 func TestKeywords(t *testing.T) {
@@ -66,6 +90,18 @@ func TestKeywords(t *testing.T) {
 	t.Run("no result", func(t *testing.T) {
 		result := Keywords("was")
 		assert.Equal(t, []string(nil), result)
+	})
+	t.Run("Österreich Urlaub", func(t *testing.T) {
+		result := Keywords("Österreich Urlaub")
+		assert.Equal(t, []string{"österreich", "urlaub"}, result)
+	})
+	t.Run("Schäferhund", func(t *testing.T) {
+		result := Keywords("Schäferhund")
+		assert.Equal(t, []string{"schäferhund"}, result)
+	})
+	t.Run("Île de la Réunion", func(t *testing.T) {
+		result := Keywords("Île de la Réunion")
+		assert.Equal(t, []string{"île", "réunion"}, result)
 	})
 }
 
