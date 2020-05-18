@@ -143,7 +143,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 0, data.Height) // TODO
-		assert.Equal(t, 0, data.Width) // TODO
+		assert.Equal(t, 0, data.Width)  // TODO
 		assert.Equal(t, float32(-38.405193), data.Lat)
 		assert.Equal(t, float32(144.18896), data.Lng)
 		assert.Equal(t, 0, data.Altitude)

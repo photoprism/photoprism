@@ -133,9 +133,9 @@ func (m *File) AllFilesMissing() bool {
 	count := 0
 
 	if err := Db().Model(&File{}).
-		Where("photo_id = ? AND b.file_missing = 0", m.PhotoID).
+		Where("photo_id = ? AND file_missing = 0", m.PhotoID).
 		Count(&count).Error; err != nil {
-		log.Error(err)
+		log.Errorf("file: %s", err.Error())
 	}
 
 	return count == 0

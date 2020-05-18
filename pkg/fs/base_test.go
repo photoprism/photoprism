@@ -86,19 +86,19 @@ func TestBaseAbs(t *testing.T) {
 
 func TestSubFileName(t *testing.T) {
 	t.Run("Test copy 3.jpg", func(t *testing.T) {
-		result := SubFileName("/testdata/Test (4).jpg",".photoprism", ".xmp", true)
+		result := SubFileName("/testdata/Test (4).jpg", ".photoprism", ".xmp", true)
 
 		assert.Equal(t, "/testdata/.photoprism/Test.xmp", result)
 	})
 
 	t.Run("Test (3).jpg", func(t *testing.T) {
-		result := SubFileName("/testdata/Test (4).jpg",".photoprism", ".xmp", false)
+		result := SubFileName("/testdata/Test (4).jpg", ".photoprism", ".xmp", false)
 
 		assert.Equal(t, "/testdata/.photoprism/Test (4).xmp", result)
 	})
 
 	t.Run("FOO.XMP", func(t *testing.T) {
-		result := SubFileName("/testdata/FOO.XMP",".photoprism", ".jpeg", true)
+		result := SubFileName("/testdata/FOO.XMP", ".photoprism", ".jpeg", true)
 
 		assert.Equal(t, "/testdata/.photoprism/FOO.jpeg", result)
 	})
