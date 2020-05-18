@@ -143,6 +143,10 @@ func (m *File) AllFilesMissing() bool {
 
 // Save stored the file in the database using the default connection.
 func (m *File) Save() error {
+	if m.PhotoID == 0 {
+		return fmt.Errorf("file: photo id is empty (%s)", m.FileUUID)
+	}
+
 	if err := Db().Save(m).Error; err != nil {
 		return err
 	}

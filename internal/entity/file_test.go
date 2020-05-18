@@ -98,10 +98,18 @@ func TestFile_AllFilesMissing(t *testing.T) {
 }
 
 func TestFile_Save(t *testing.T) {
-	t.Run("record not found", func(t *testing.T) {
+	t.Run("save without photo", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", PhotoUUID: "123", FileUUID: "123"}
 		err := file.Save()
-		assert.Equal(t, "record not found", err.Error())
+
+		if err == nil {
+			t.Fatal("error should not be nil")
+		}
+
+		if file.ID != 0 {
+			t.Fatalf("file id should be 0: %d", file.ID)
+		}
+
+		assert.Equal(t, "file: photo id is empty (123)", err.Error())
 	})
-	//TODO test success
 }
