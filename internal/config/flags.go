@@ -175,12 +175,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "sidecar-json, j",
-		Usage:  "read metadata from json sidecar files as used by exiftool",
+		Usage:  "read metadata from json sidecar files created by exiftool",
 		EnvVar: "PHOTOPRISM_SIDECAR_JSON",
 	},
 	cli.BoolFlag{
 		Name:   "sidecar-yaml, y",
-		Usage:  "write photo metadata to yaml sidecar files",
+		Usage:  "backup photo metadata to yaml sidecar files",
 		EnvVar: "PHOTOPRISM_SIDECAR_YAML",
 	},
 	cli.IntFlag{
