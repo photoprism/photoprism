@@ -3,7 +3,9 @@ package entity
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
+	"github.com/photoprism/photoprism/pkg/fs"
 	"gopkg.in/yaml.v2"
 )
 
@@ -52,4 +54,13 @@ func (m *Photo) LoadFromYaml(fileName string) error {
 	}
 
 	return nil
+}
+
+// YamlFileName returns the YAML backup file name.
+func (m *Photo) YamlFileName(originalsPath string, hidden bool) string {
+	if hidden {
+		return filepath.Join(originalsPath, m.PhotoPath, fs.HiddenPath, m.PhotoName) + fs.YamlExt
+	}
+
+	return filepath.Join(originalsPath, m.PhotoPath, m.PhotoName) + fs.YamlExt
 }

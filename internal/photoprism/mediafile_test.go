@@ -450,7 +450,7 @@ func TestMediaFile_RelativePath(t *testing.T) {
 		assert.Equal(t, conf.ExamplesPath(), path)
 	})
 	t.Run("hidden root", func(t *testing.T) {
-		path := mediaFile.RelativePath(filepath.Join(conf.ExamplesPath(), HiddenPath))
+		path := mediaFile.RelativePath(filepath.Join(conf.ExamplesPath(), fs.HiddenPath))
 		assert.Equal(t, "", path)
 	})
 }
@@ -639,7 +639,7 @@ func TestMediaFile_Extension(t *testing.T) {
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 		assert.Nil(t, err)
-		assert.Equal(t, ".jpg", mediaFile.Extension())
+		assert.Equal(t, fs.JpegExt, mediaFile.Extension())
 	})
 }
 

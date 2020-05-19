@@ -103,7 +103,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 
 			if imp.conf.SidecarJson() && !f.HasJson() {
-				if jsonFile, err := imp.convert.ToJson(f, true); err != nil {
+				if jsonFile, err := imp.convert.ToJson(f, imp.conf.SidecarHidden()); err != nil {
 					log.Errorf("import: creating json sidecar file failed (%s)", err.Error())
 				} else {
 					log.Infof("import: %s created", fs.RelativeName(jsonFile.FileName(), imp.originalsPath()))

@@ -36,6 +36,11 @@ const (
 type FileExtensions map[string]FileType
 type TypeExtensions map[FileType][]string
 
+const (
+	YamlExt = ".yml"
+	JpegExt = ".jpg"
+)
+
 // FileExt contains the filename extensions of file formats known to PhotoPrism.
 var FileExt = FileExtensions{
 	".bmp":  TypeBitmap,

@@ -350,7 +350,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			return result
 		}
 	} else {
-		if yamlName := fs.TypeYaml.FindSub(m.FileName(), HiddenPath, ind.conf.Settings().Index.Group); yamlName != "" {
+		if yamlName := fs.TypeYaml.FindSub(m.FileName(), fs.HiddenPath, ind.conf.Settings().Index.Group); yamlName != "" {
 			if err := photo.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s (restore from yaml)", err.Error())
 			} else {
@@ -491,7 +491,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	// Write YAML sidecar file (optional).
 	if file.FilePrimary && ind.conf.SidecarYaml() {
-		yamlFile := m.HiddenName(".yml", ind.conf.Settings().Index.Group)
+		yamlFile := photo.YamlFileName(ind.originalsPath(), ind.conf.SidecarHidden())
 
 		if err := photo.SaveAsYaml(yamlFile); err != nil {
 			log.Errorf("index: %s (update yaml)", err.Error())

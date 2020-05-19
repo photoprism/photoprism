@@ -4,14 +4,12 @@ import (
 	"fmt"
 	"net/http"
 	"path"
-	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -21,7 +19,8 @@ import (
 func SavePhotoAsYaml(p entity.Photo, conf *config.Config) {
 	// Write YAML sidecar file (optional).
 	if conf.SidecarYaml() {
-		yamlFile := filepath.Join(conf.OriginalsPath(), p.PhotoPath, photoprism.HiddenPath, p.PhotoName) + ".yml"
+		yamlFile := p.YamlFileName(conf.OriginalsPath(), conf.SidecarHidden())
+
 		if err := p.SaveAsYaml(yamlFile); err != nil {
 			log.Errorf("photo: %s (update yaml)", err)
 		} else {
@@ -168,7 +167,7 @@ func GetPhotoYaml(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if c.Query("download") != "" {
-			c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", c.Param("uuid")+".yml"))
+			c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", c.Param("uuid")+fs.YamlExt))
 		}
 
 		c.Data(http.StatusOK, "text/x-yaml; charset=utf-8", data)

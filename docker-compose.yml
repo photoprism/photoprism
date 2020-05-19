@@ -13,6 +13,7 @@ services:
       - ".:/go/src/github.com/photoprism/photoprism"
     shm_size: "2gb"
     environment:
+      TF_CPP_MIN_LOG_LEVEL: 0 # Show TensorFlow log messages for development
       PHOTOPRISM_URL: "http://localhost:2342/"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
@@ -39,7 +40,15 @@ services:
       PHOTOPRISM_TITLE: "PhotoPrism"
       PHOTOPRISM_SUBTITLE: "Browse your life"
       PHOTOPRISM_AUTHOR: "PhotoPrism.org"
-      TF_CPP_MIN_LOG_LEVEL: 0
+      PHOTOPRISM_THUMB_FILTER: "lanczos" # Resample filter, best to worst: blackman, lanczos, cubic, linear
+      PHOTOPRISM_THUMB_UNCACHED: "true" # On-demand rendering of default thumbnails (high memory and cpu usage)
+      PHOTOPRISM_THUMB_SIZE: 2048 # Default thumbnail size limit (default 2048, min 720, max 3840)
+      PHOTOPRISM_THUMB_LIMIT: 3840 # On-demand thumbnail size limit (default 2048, min 720, max 3840)
+      PHOTOPRISM_JPEG_QUALITY: 90 # Use 95 for high-quality thumbnails (requires more storage)
+      PHOTOPRISM_JPEG_HIDDEN: "true" # Create JPEG files in .photoprism (when converting other file types)
+      PHOTOPRISM_SIDECAR_JSON: "true" # Read metadata from JSON sidecar files created by exiftool
+      PHOTOPRISM_SIDECAR_YAML: "true" # Backup photo metadata to YAML sidecar files
+      PHOTOPRISM_SIDECAR_HIDDEN: "true" # Create JSON and YAML sidecar files in .photoprism (if enabled)
 
   photoprism-db:
     image: mariadb:10.5

@@ -70,12 +70,14 @@ type Params struct {
 	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
 	SidecarJson        bool   `yaml:"sidecar-json" flag:"sidecar-json"`
 	SidecarYaml        bool   `yaml:"sidecar-yaml" flag:"sidecar-yaml"`
+	SidecarHidden      bool   `yaml:"sidecar-hidden" flag:"sidecar-hidden"`
 	PIDFilename        string `yaml:"pid-filename" flag:"pid-filename"`
 	LogFilename        string `yaml:"log-filename" flag:"log-filename"`
 	DetachServer       bool   `yaml:"detach-server" flag:"detach-server"`
 	DetectNSFW         bool   `yaml:"detect-nsfw" flag:"detect-nsfw"`
 	UploadNSFW         bool   `yaml:"upload-nsfw" flag:"upload-nsfw"`
 	GeoCodingApi       string `yaml:"geocoding-api" flag:"geocoding-api"`
+	JpegHidden         bool   `yaml:"jpeg-hidden" flag:"jpeg-hidden"`
 	JpegQuality        int    `yaml:"jpeg-quality" flag:"jpeg-quality"`
 	ThumbFilter        string `yaml:"thumb-filter" flag:"thumb-filter"`
 	ThumbUncached      bool   `yaml:"thumb-uncached" flag:"thumb-uncached"`

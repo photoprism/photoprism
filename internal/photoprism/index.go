@@ -94,7 +94,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 		}()
 	}
 
-	ignore := fs.NewIgnoreList(IgnoreFile, true, false)
+	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(originalsPath); err != nil {
 		log.Infof("index: %s", err)

@@ -12,6 +12,3 @@ import (
 )
 
 var log = event.Log
-
-const IgnoreFile = ".ppignore"
-const HiddenPath = ".photoprism"

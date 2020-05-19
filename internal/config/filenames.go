@@ -165,6 +165,11 @@ func (c *Config) SidecarYaml() bool {
 	return c.params.SidecarYaml
 }
 
+// SidecarHidden returns true if new sidecar files should be created in a .photoprism sub directory (hidden).
+func (c *Config) SidecarHidden() bool {
+	return c.params.SidecarHidden
+}
+
 // HeifConvertBin returns the heif-convert executable file name.
 func (c *Config) HeifConvertBin() string {
 	return findExecutable(c.params.HeifConvertBin, "heif-convert")

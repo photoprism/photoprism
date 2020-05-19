@@ -43,6 +43,7 @@ func NewTestParams() *Params {
 		ReadOnly:       false,
 		DetectNSFW:     true,
 		UploadNSFW:     false,
+		SidecarHidden:  true,
 		DarktableBin:   "/usr/bin/darktable-cli",
 		ExifToolBin:    "/usr/bin/exiftool",
 		AssetsPath:     assetsPath,

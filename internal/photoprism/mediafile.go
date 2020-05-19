@@ -311,7 +311,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 
 	// Add hidden JPEG if exists.
 	if !result.ContainsJpeg() && result.Main != nil {
-		if jpegName := fs.TypeJpeg.FindSub(result.Main.FileName(), HiddenPath, stripSequence); jpegName != "" {
+		if jpegName := fs.TypeJpeg.FindSub(result.Main.FileName(), fs.HiddenPath, stripSequence); jpegName != "" {
 			if resultFile, err := NewMediaFile(jpegName); err == nil {
 				result.Files = append(result.Files, resultFile)
 			}
@@ -357,7 +357,7 @@ func (m *MediaFile) RelativePath(directory string) string {
 	}
 
 	// Remove hidden sub directory if exists.
-	if path.Base(pathname) == HiddenPath {
+	if path.Base(pathname) == fs.HiddenPath {
 		pathname = path.Dir(pathname)
 	}
 
@@ -395,7 +395,7 @@ func (m *MediaFile) AbsBase(stripSequence bool) string {
 
 // HiddenName returns the a filename with the same base name and a given extension in a hidden sub directory.
 func (m *MediaFile) HiddenName(fileExt string, stripSequence bool) string {
-	return fs.SubFileName(m.FileName(), HiddenPath, fileExt, stripSequence)
+	return fs.SubFileName(m.FileName(), fs.HiddenPath, fileExt, stripSequence)
 }
 
 // RelatedName returns the a filename with the same base name and a given extension in the same directory.
@@ -611,7 +611,7 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 		return m, nil
 	}
 
-	jpegFilename := fs.TypeJpeg.FindSub(m.FileName(), HiddenPath, false)
+	jpegFilename := fs.TypeJpeg.FindSub(m.FileName(), fs.HiddenPath, false)
 
 	if jpegFilename == "" {
 		return nil, fmt.Errorf("no jpeg found for %s", m.FileName())
@@ -626,7 +626,7 @@ func (m *MediaFile) HasJpeg() bool {
 		return true
 	}
 
-	return fs.TypeJpeg.FindSub(m.FileName(), HiddenPath, false) != ""
+	return fs.TypeJpeg.FindSub(m.FileName(), fs.HiddenPath, false) != ""
 }
 
 // HasJson returns true if this file has or is a json sidecar file.
@@ -635,7 +635,7 @@ func (m *MediaFile) HasJson() bool {
 		return true
 	}
 
-	return fs.TypeJson.FindSub(m.FileName(), HiddenPath, false) != ""
+	return fs.TypeJson.FindSub(m.FileName(), fs.HiddenPath, false) != ""
 }
 
 func (m *MediaFile) decodeDimensions() error {

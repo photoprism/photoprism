@@ -84,7 +84,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 	}
 
 	indexOpt := IndexOptionsAll()
-	ignore := fs.NewIgnoreList(IgnoreFile, true, false)
+	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(importPath); err != nil {
 		log.Infof("import: %s", err)

@@ -18,6 +18,9 @@ import (
 	"strings"
 )
 
+const IgnoreFile = ".ppignore"
+const HiddenPath = ".photoprism"
+
 // FileExists returns true if file exists and is not a directory.
 func FileExists(fileName string) bool {
 	if fileName == "" {

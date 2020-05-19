@@ -6,6 +6,11 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
+// JpegHidden returns true if JPEG files should be created in a .photoprism sub directory (hidden).
+func (c *Config) JpegHidden() bool {
+	return c.params.JpegHidden
+}
+
 // JpegQuality returns the jpeg quality for resampling, use 95 for high-quality thumbs (25-100).
 func (c *Config) JpegQuality() int {
 	if c.params.JpegQuality > 100 {

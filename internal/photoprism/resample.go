@@ -47,7 +47,7 @@ func (rs *Resample) Start(force bool) error {
 	}
 
 	done := make(map[string]bool)
-	ignore := fs.NewIgnoreList(IgnoreFile, true, false)
+	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(originalsPath); err != nil {
 		log.Infof("resample: %s", err)

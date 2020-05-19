@@ -26,3 +26,8 @@ database-dsn: root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true
 pid-filename: ~/.local/share/photoprism/photoprism.pid
 log-filename: ~/.local/share/photoprism/photoprism.log
 detach-server: false
+sidecar-json: false
+sidecar-yaml: false
+sidecar-hidden: true
+jpeg-quality: 90
+jpeg-hidden: true

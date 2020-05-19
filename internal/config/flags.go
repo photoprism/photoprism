@@ -175,13 +175,18 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "sidecar-json, j",
-		Usage:  "read metadata from json sidecar files created by exiftool",
+		Usage:  "read metadata from JSON sidecar files created by exiftool",
 		EnvVar: "PHOTOPRISM_SIDECAR_JSON",
 	},
 	cli.BoolFlag{
 		Name:   "sidecar-yaml, y",
-		Usage:  "backup photo metadata to yaml sidecar files",
+		Usage:  "backup photo metadata to YAML sidecar files",
 		EnvVar: "PHOTOPRISM_SIDECAR_YAML",
+	},
+	cli.BoolFlag{
+		Name:   "sidecar-hidden",
+		Usage:  "create JSON and YAML sidecar files in .photoprism if enabled",
+		EnvVar: "PHOTOPRISM_SIDECAR_HIDDEN",
 	},
 	cli.IntFlag{
 		Name:   "http-port",
@@ -248,12 +253,6 @@ var GlobalFlags = []cli.Flag{
 		Value:  "places",
 		EnvVar: "PHOTOPRISM_GEOCODING_API",
 	},
-	cli.IntFlag{
-		Name:   "jpeg-quality, q",
-		Usage:  "set to 95 for high-quality thumbnails (25-100)",
-		Value:  90,
-		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
-	},
 	cli.StringFlag{
 		Name:   "thumb-filter, f",
 		Usage:  "resample filter (best to worst: blackman, lanczos, cubic, linear)",
@@ -276,6 +275,17 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "on-demand thumbnail size limit in pixels (720-3840)",
 		Value:  3840,
 		EnvVar: "PHOTOPRISM_THUMB_LIMIT",
+	},
+	cli.IntFlag{
+		Name:   "jpeg-quality, q",
+		Usage:  "set to 95 for high-quality thumbnails (25-100)",
+		Value:  90,
+		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
+	},
+	cli.BoolFlag{
+		Name:   "jpeg-hidden",
+		Usage:  "create JPEG files in .photoprism when converting other file types",
+		EnvVar: "PHOTOPRISM_JPEG_HIDDEN",
 	},
 	cli.BoolFlag{
 		Name:   "disable-tf",

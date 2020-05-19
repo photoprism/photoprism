@@ -52,7 +52,7 @@ func (c *Convert) Start(path string) error {
 	}
 
 	done := make(map[string]bool)
-	ignore := fs.NewIgnoreList(IgnoreFile, true, false)
+	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(path); err != nil {
 		log.Infof("convert: %s", err)
@@ -136,7 +136,7 @@ func (c *Convert) ConvertCommand(mf *MediaFile, jpegName string, xmpName string)
 
 // ToJson uses exiftool to export metadata to a json file.
 func (c *Convert) ToJson(mf *MediaFile, hidden bool) (*MediaFile, error) {
-	jsonName := fs.TypeJson.FindSub(mf.FileName(), HiddenPath, c.conf.Settings().Index.Group)
+	jsonName := fs.TypeJson.FindSub(mf.FileName(), fs.HiddenPath, c.conf.Settings().Index.Group)
 
 	result, err := NewMediaFile(jsonName)
 
@@ -202,7 +202,7 @@ func (c *Convert) ToJpeg(image *MediaFile, hidden bool) (*MediaFile, error) {
 		return image, nil
 	}
 
-	jpegName := fs.TypeJpeg.FindSub(image.FileName(), HiddenPath, c.conf.Settings().Index.Group)
+	jpegName := fs.TypeJpeg.FindSub(image.FileName(), fs.HiddenPath, c.conf.Settings().Index.Group)
 
 	mediaFile, err := NewMediaFile(jpegName)
 
@@ -215,9 +215,9 @@ func (c *Convert) ToJpeg(image *MediaFile, hidden bool) (*MediaFile, error) {
 	}
 
 	if hidden {
-		jpegName = image.HiddenName(".jpg", c.conf.Settings().Index.Group)
+		jpegName = image.HiddenName(fs.JpegExt, c.conf.Settings().Index.Group)
 	} else {
-		jpegName = image.RelatedName(".jpg", c.conf.Settings().Index.Group)
+		jpegName = image.RelatedName(fs.JpegExt, c.conf.Settings().Index.Group)
 	}
 
 	fileName := image.RelativeName(c.conf.OriginalsPath())

@@ -94,17 +94,19 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "exiftool-bin", conf.ExifToolBin())
 	fmt.Printf("%-25s %t\n", "sidecar-json", conf.SidecarJson())
 	fmt.Printf("%-25s %t\n", "sidecar-yaml", conf.SidecarYaml())
+	fmt.Printf("%-25s %t\n", "sidecar-hidden", conf.SidecarHidden())
 
 	// Places / Geocoding API
 	fmt.Printf("%-25s %s\n", "geocoding-api", conf.GeoCodingApi())
 
 	// Thumbnails
-	fmt.Printf("%-25s %d\n", "jpeg-quality", conf.JpegQuality())
 	fmt.Printf("%-25s %s\n", "thumb-filter", conf.ThumbFilter())
 	fmt.Printf("%-25s %t\n", "thumb-uncached", conf.ThumbUncached())
 	fmt.Printf("%-25s %d\n", "thumb-size", conf.ThumbSize())
 	fmt.Printf("%-25s %d\n", "thumb-limit", conf.ThumbLimit())
 	fmt.Printf("%-25s %s\n", "thumb-path", conf.ThumbPath())
+	fmt.Printf("%-25s %d\n", "jpeg-quality", conf.JpegQuality())
+	fmt.Printf("%-25s %t\n", "jpeg-hidden", conf.JpegHidden())
 
 	return nil
 }

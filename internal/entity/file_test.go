@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,7 +31,7 @@ func TestFile_DownloadFileName(t *testing.T) {
 		filename := file.ShareFileName()
 
 		assert.Contains(t, filename, "20190115-000000-Berlin-Morning-Mood")
-		assert.Contains(t, filename, ".jpg")
+		assert.Contains(t, filename, fs.JpegExt)
 	})
 	t.Run("photo without title", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
@@ -39,7 +40,7 @@ func TestFile_DownloadFileName(t *testing.T) {
 		filename := file.ShareFileName()
 
 		assert.Contains(t, filename, "20190115-000000-123")
-		assert.Contains(t, filename, ".jpg")
+		assert.Contains(t, filename, fs.JpegExt)
 	})
 	t.Run("photo without photo", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileHash: "123Hash", FileUUID: "foobar345678765"}

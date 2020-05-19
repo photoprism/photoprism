@@ -42,14 +42,16 @@ services:
       PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
       # PHOTOPRISM_DATABASE_DRIVER: "mysql" # Using MariaDB or MySQL instead of the internal TiDB is optional
       # PHOTOPRISM_DATABASE_DSN: "photoprism:photoprism@tcp(photoprism-db:3306)/photoprism?parseTime=true"
-      PHOTOPRISM_JPEG_QUALITY: 90 # Use 95 for high-quality thumbnails (requires more storage)
+      # PHOTOPRISM_SIDECAR_JSON: "true" # Read metadata from JSON sidecar files created by exiftool
+      # PHOTOPRISM_SIDECAR_YAML: "true" # Backup photo metadata to YAML sidecar files
+      PHOTOPRISM_SIDECAR_HIDDEN: "true" # Create JSON and YAML sidecar files in .photoprism (if enabled)
       PHOTOPRISM_THUMB_FILTER: "lanczos" # Resample filter, best to worst: blackman, lanczos, cubic, linear
       PHOTOPRISM_THUMB_UNCACHED: "false" # On-demand rendering of default thumbnails (high memory and cpu usage)
       PHOTOPRISM_THUMB_SIZE: 2048 # Default thumbnail size limit (default 2048, min 720, max 3840)
       # PHOTOPRISM_THUMB_SIZE: 3840 # For retina screens (requires more storage)
       PHOTOPRISM_THUMB_LIMIT: 3840 # On-demand thumbnail size limit (default 2048, min 720, max 3840)
-      # PHOTOPRISM_SIDECAR_JSON: "true" # read metadata from json sidecar files created by exiftool
-      # PHOTOPRISM_SIDECAR_YAML: "true" # backup photo metadata to yaml sidecar files
+      PHOTOPRISM_JPEG_QUALITY: 90 # Use 95 for high-quality thumbnails (requires more storage)
+      PHOTOPRISM_JPEG_HIDDEN: "true" # Create JPEG files in .photoprism (when converting other file types)
     volumes:
       - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
       - "~/Pictures/Import:/photoprism/import" # [local path]:[container path] (optional)

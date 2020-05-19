@@ -44,7 +44,7 @@ func IndexWorker(jobs <-chan IndexJob) {
 		}
 
 		if ind.conf.SidecarJson() && !f.HasJson() {
-			if jsonFile, err := ind.convert.ToJson(f, true); err != nil {
+			if jsonFile, err := ind.convert.ToJson(f, ind.conf.SidecarHidden()); err != nil {
 				log.Errorf("index: creating json sidecar file failed (%s)", err.Error())
 			} else {
 				log.Infof("index: %s created", fs.RelativeName(jsonFile.FileName(), ind.originalsPath()))
