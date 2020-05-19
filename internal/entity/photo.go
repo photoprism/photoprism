@@ -106,7 +106,7 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 	}
 
 	if err := model.IndexKeywords(); err != nil {
-		log.Warnf("%s (%s)", err.Error(), model.PhotoUUID)
+		log.Error(err)
 	}
 
 	edited := time.Now().UTC()
@@ -219,7 +219,7 @@ func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 // IndexKeywords adds given keywords to the photo entry
 func (m *Photo) IndexKeywords() error {
 	if !m.DetailsLoaded() {
-		return fmt.Errorf("photo: can't index keywords, description not loaded (%s)", m.PhotoUUID)
+		return fmt.Errorf("photo: can't index keywords, details not loaded (%s)", m.PhotoUUID)
 	}
 
 	db := Db()

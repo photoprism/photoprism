@@ -431,7 +431,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		if err := photo.IndexKeywords(); err != nil {
-			log.Warnf("%s (%s)", err.Error(), photo.PhotoUUID)
+			log.Error(err)
 		}
 	} else {
 		if photo.PhotoQuality >= 0 {

@@ -29,6 +29,7 @@ type Types map[string]interface{}
 
 // List of database entities and their table names.
 var Entities = Types{
+	"errors":          &Error{},
 	"accounts":        &Account{},
 	"files":           &File{},
 	"files_share":     &FileShare{},

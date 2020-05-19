@@ -59,12 +59,14 @@ func (c *Config) CloseDb() error {
 func (c *Config) InitDb() {
 	entity.SetDbProvider(c)
 	entity.MigrateDb()
+	go entity.SaveErrorMessages()
 }
 
 // InitTestDb drops all tables in the currently configured database and re-creates them.
 func (c *Config) InitTestDb() {
 	entity.SetDbProvider(c)
 	entity.ResetTestFixtures()
+	go entity.SaveErrorMessages()
 }
 
 // connectToDatabase establishes a database connection.

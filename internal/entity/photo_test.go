@@ -97,7 +97,15 @@ func TestPhoto_Save(t *testing.T) {
 			PlaceID:          "765",
 			PhotoCountry:     "de",
 			Keywords:         []Keyword{},
-			Details:          Details{},
+			Details: Details{
+				PhotoID:   11111,
+				Keywords:  "test cat dog",
+				Subject:   "animals",
+				Artist:    "Bender",
+				Notes:     "notes",
+				Copyright: "copy",
+				License:   "",
+			},
 		}
 
 		err := photo.Save()
@@ -276,7 +284,7 @@ func TestPhoto_DetailsLoaded(t *testing.T) {
 		assert.True(t, m.DetailsLoaded())
 	})
 	t.Run("false", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo05")
+		m := PhotoFixtures.Get("Photo12")
 		assert.False(t, m.DetailsLoaded())
 	})
 }
