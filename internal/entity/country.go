@@ -69,7 +69,8 @@ func (m *Country) FirstOrCreate() *Country {
 
 // AfterCreate sets the New column used for database callback
 func (m *Country) AfterCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("New", true)
+	m.New = true
+	return nil
 }
 
 // Code returns country code

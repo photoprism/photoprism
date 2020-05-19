@@ -72,7 +72,8 @@ func (m *Label) FirstOrCreate() *Label {
 
 // AfterCreate sets the New column used for database callback
 func (m *Label) AfterCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("New", true)
+	m.New = true
+	return nil
 }
 
 // SetName changes the label name.

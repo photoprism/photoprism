@@ -70,6 +70,7 @@ func TestLabel_Update(t *testing.T) {
 		assert.Equal(t, "label", Label.LabelName)
 
 		err := Label.Update(*classifyLabel)
+
 		if err != nil {
 			t.Fatal(err)
 		}

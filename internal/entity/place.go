@@ -44,7 +44,8 @@ func CreateUnknownPlace() {
 
 // AfterCreate sets the New column used for database callback
 func (m *Place) AfterCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("New", true)
+	m.New = true
+	return nil
 }
 
 // FindPlaceByLabel returns a place from an id or a label
