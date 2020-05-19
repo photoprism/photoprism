@@ -70,8 +70,6 @@ func TestSavePhotoForm(t *testing.T) {
 }
 
 func TestPhoto_Save(t *testing.T) {
-	/* Creating new photos with Save() not supported (yet)
-
 	t.Run("new photo", func(t *testing.T) {
 		photo := Photo{
 			ID:               11111,
@@ -103,11 +101,9 @@ func TestPhoto_Save(t *testing.T) {
 		}
 
 		err := photo.Save()
-		if err != nil {
-			t.Fatal(err)
-		}
+
+		assert.EqualError(t, err, "photo: can't save to database, id is empty")
 	})
-	*/
 
 	t.Run("existing photo", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
