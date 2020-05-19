@@ -58,7 +58,7 @@ type Photo struct {
 	Place            *Place       `json:"-" yaml:"-"`
 	Links            []Link       `gorm:"foreignkey:ShareUUID;association_foreignkey:PhotoUUID" yaml:"-"`
 	Keywords         []Keyword    `json:"-" yaml:"-"`
-	Albums           []Album      `json:"-" yaml:"Albums,omitempty"`
+	Albums           []Album      `json:"-" yaml:"-"`
 	Files            []File       `yaml:"-"`
 	Labels           []PhotoLabel `yaml:"-"`
 	CreatedAt        time.Time    `yaml:"Created"`
