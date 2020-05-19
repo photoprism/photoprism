@@ -28,7 +28,7 @@ func IndexWorker(jobs <-chan IndexJob) {
 		f := related.Main
 
 		if opt.Convert && !f.HasJpeg() {
-			if jpegFile, err := ind.convert.ToJpeg(f, true); err != nil {
+			if jpegFile, err := ind.convert.ToJpeg(f, ind.conf.JpegHidden()); err != nil {
 				log.Errorf("index: creating jpeg failed (%s)", err.Error())
 				continue
 			} else {

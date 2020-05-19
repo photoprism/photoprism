@@ -28,7 +28,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 	t.Run("gopher-video.mp4", func(t *testing.T) {
 		fileName := conf.ExamplesPath() + "/gopher-video.mp4"
-		outputName := conf.ExamplesPath() + "/.photoprism/gopher-video.jpg"
+		outputName := conf.ExamplesPath() + "/gopher-video.jpg"
 
 		_ = os.Remove(outputName)
 
@@ -40,7 +40,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		jpegFile, err := convert.ToJpeg(mf, true)
+		jpegFile, err := convert.ToJpeg(mf, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -139,6 +139,41 @@ func TestConvert_ToJson(t *testing.T) {
 		}
 
 		jsonFile, err := convert.ToJson(mf, true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if jsonFile == nil {
+			t.Fatal("jsonFile should not be nil")
+		}
+
+		assert.Equal(t, jsonFile.FileName(), outputName)
+		assert.Truef(t, fs.FileExists(jsonFile.FileName()), "output file does not exist: %s", jsonFile.FileName())
+		assert.False(t, jsonFile.IsJpeg())
+		assert.False(t, jsonFile.IsMedia())
+		assert.False(t, jsonFile.IsVideo())
+		assert.True(t, jsonFile.IsSidecar())
+
+		_ = os.Remove(outputName)
+	})
+
+	t.Run("IMG_4120.JPG", func(t *testing.T) {
+		fileName := conf.ExamplesPath() + "/IMG_4120.JPG"
+		outputName := conf.ExamplesPath() + "/IMG_4120.json"
+
+		_ = os.Remove(outputName)
+
+		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
+		assert.Falsef(t, fs.FileExists(outputName), "output file must not exist: %s", outputName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		jsonFile, err := convert.ToJson(mf, false)
 
 		if err != nil {
 			t.Fatal(err)

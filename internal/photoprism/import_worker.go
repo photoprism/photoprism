@@ -85,7 +85,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 
 			if !f.HasJpeg() {
-				if jpegFile, err := imp.convert.ToJpeg(f, true); err != nil {
+				if jpegFile, err := imp.convert.ToJpeg(f, imp.conf.JpegHidden()); err != nil {
 					log.Errorf("import: creating jpeg failed (%s)", err.Error())
 					continue
 				} else {
