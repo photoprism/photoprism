@@ -101,9 +101,12 @@ class Viewer {
 
         this.gallery = gallery;
 
-        gallery.listen("beforeChange", function() {
-            Event.publish("viewer.change", {gallery: gallery, item: gallery.currItem});
-        });
+        gallery.listen("close", () => Event.publish("viewer.pause"));
+        gallery.listen("shareLinkClick", () => Event.publish("viewer.pause"));
+        gallery.listen("initialZoomIn", () => Event.publish("viewer.pause"));
+        gallery.listen("initialZoomOut", () => Event.publish("viewer.pause"));
+
+        gallery.listen("beforeChange", () => Event.publish("viewer.change", {gallery: gallery, item: gallery.currItem}));
 
         gallery.listen("beforeResize", () => {
             realViewportWidth = gallery.viewportSize.x * window.devicePixelRatio;

@@ -34,6 +34,11 @@
 
                     <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
 
+                    <button class="pswp__button" style="background: none;" @click.exact="onSlideshow" title="Slideshow">
+                        <v-icon v-show="!interval" size="16" color="white">slideshow</v-icon>
+                        <v-icon v-show="interval" size="16" color="white">pause</v-icon>
+                    </button>
+
                     <div class="pswp__preloader">
                         <div class="pswp__preloader__icn">
                             <div class="pswp__preloader__cut">
@@ -75,10 +80,12 @@
                 config: this.$config.values,
                 item: new Thumb(),
                 subscriptions: [],
+                interval: false,
             };
         },
         created() {
             this.subscriptions['viewer.change'] = Event.subscribe('viewer.change', this.onChange);
+            this.subscriptions['viewer.pause'] = Event.subscribe('viewer.pause', this.onPause);
         },
         destroyed() {
             for (let i = 0; i < this.subscriptions.length; i++) {
@@ -91,6 +98,31 @@
             },
             toggleLike() {
                 this.item.toggleLike();
+            },
+            onPause() {
+                if (this.interval) {
+                    clearInterval(this.interval);
+                    this.interval = false;
+                }
+            },
+            onSlideshow() {
+                if (this.interval) {
+                    this.onPause();
+                    return;
+                }
+
+                const self = this;
+                const psp = this.$viewer.gallery;
+
+                psp.next();
+
+                self.interval = setInterval(() => {
+                    if (psp && typeof psp.next === "function") {
+                        psp.next();
+                    } else {
+                        this.onPause();
+                    }
+                }, 4000);
             },
             onEdit() {
                 const g = this.$viewer.gallery; // Gallery
