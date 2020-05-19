@@ -28,6 +28,12 @@ func (m *Photo) SaveAsYaml(fileName string) error {
 		return err
 	}
 
+	// Make sure directory exists.
+	if err := os.MkdirAll(filepath.Dir(fileName), os.ModePerm); err != nil {
+		return err
+	}
+
+	// Write YAML data to file.
 	if err := ioutil.WriteFile(fileName, data, os.ModePerm); err != nil {
 		return err
 	}
