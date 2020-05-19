@@ -1,8 +1,9 @@
 package photoprism
 
 import (
+	"errors"
+
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/pkg/errors"
 )
 
 // Location returns the Location of a MediaFile.

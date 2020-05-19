@@ -11,13 +11,14 @@ services:
       - "2343:2343" # Database (built-in TiDB)
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
+      - "go-mod:/go/pkg/mod"
     shm_size: "2gb"
     environment:
       TF_CPP_MIN_LOG_LEVEL: 0 # Show TensorFlow log messages for development
       PHOTOPRISM_URL: "http://localhost:2342/"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
-      PHOTOPRISM_PUBLIC: "false"
+      PHOTOPRISM_PUBLIC: "true"
       PHOTOPRISM_EXPERIMENTAL: "true"
       PHOTOPRISM_UPLOAD_NSFW: "false"
       PHOTOPRISM_DETECT_NSFW: "true"
@@ -67,3 +68,7 @@ services:
 
   webdav-dummy:
     image: photoprism/webdav:20200327
+
+volumes:
+  go-mod:
+    driver: local

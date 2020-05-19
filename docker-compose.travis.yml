@@ -12,6 +12,9 @@ services:
       - "~/.cache/go-mod:/go/pkg/mod"
     environment:
       PHOTOPRISM_URL: "http://localhost:2342/"
+      PHOTOPRISM_DEBUG: "false"
+      PHOTOPRISM_READONLY: "false"
+      PHOTOPRISM_PUBLIC: "true"
       PHOTOPRISM_UPLOAD_NSFW: "false"
       PHOTOPRISM_DETECT_NSFW: "true"
       PHOTOPRISM_PID_FILENAME: "photoprism.pid"
