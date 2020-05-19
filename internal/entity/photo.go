@@ -336,9 +336,14 @@ func (m *Photo) NoCameraSerial() bool {
 	return m.CameraSerial == ""
 }
 
-// HasTitle checks if the photo has a  Title
+// HasTitle checks if the photo has a title.
 func (m *Photo) HasTitle() bool {
 	return m.PhotoTitle != ""
+}
+
+// HasDescription checks if the photo has a description.
+func (m *Photo) HasDescription() bool {
+	return m.PhotoDescription != ""
 }
 
 // DetailsLoaded returns true if photo details exist.

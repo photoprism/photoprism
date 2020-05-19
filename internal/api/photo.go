@@ -25,7 +25,7 @@ func SavePhotoAsYaml(p entity.Photo, conf *config.Config) {
 		if err := p.SaveAsYaml(yamlFile); err != nil {
 			log.Errorf("photo: %s (update yaml)", err)
 		} else {
-			log.Errorf("photo: updated yaml file %s", txt.Quote(fs.RelativeName(yamlFile, conf.OriginalsPath())))
+			log.Infof("photo: updated yaml file %s", txt.Quote(fs.RelativeName(yamlFile, conf.OriginalsPath())))
 		}
 	}
 }

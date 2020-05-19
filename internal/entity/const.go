@@ -8,6 +8,7 @@ const (
 	SrcManual   = "manual"
 	SrcMeta     = "meta"
 	SrcXmp      = "xmp"
+	SrcYaml     = "yaml"
 	SrcLocation = classify.SrcLocation
 	SrcImage    = classify.SrcImage
 
