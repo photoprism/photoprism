@@ -76,6 +76,10 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 		return err
 	}
 
+	if !model.HasID() {
+		return errors.New("photo: can't save form, id is empty")
+	}
+
 	model.UpdateYearMonth()
 
 	if form.Details.PhotoID == model.ID {
@@ -120,8 +124,12 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 	return nil
 }
 
-// Save stored the entity in the database.
+// Save the entity in the database.
 func (m *Photo) Save() error {
+	if !m.HasID() {
+		return errors.New("photo: can't save to database, id is empty")
+	}
+
 	db := Db()
 	labels := m.ClassifyLabels()
 
@@ -294,6 +302,11 @@ func (m *Photo) PreloadMany() {
 	// m.PreloadLabels()
 	m.PreloadKeywords()
 	m.PreloadAlbums()
+}
+
+// HasID checks if the photo has a database id and uuid.
+func (m *Photo) HasID() bool {
+	return m.ID > 0 && m.PhotoUUID != ""
 }
 
 // NoLocation checks if the photo has no location
