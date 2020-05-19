@@ -70,19 +70,19 @@ class Viewer {
                     return item[button.id].src + "?download=1";
                 }
             },
-            addCaptionHTMLFn: function(item, captionEl, isFake) {
+            addCaptionHTMLFn: function(item, captionEl /*, isFake */) {
                 // item      - slide object
                 // captionEl - caption DOM element
                 // isFake    - true when content is added to fake caption container
                 //             (used to get size of next or previous caption)
 
                 if(!item.title) {
-                    captionEl.children[0].innerHTML = '';
+                    captionEl.children[0].innerHTML = "";
                     return false;
                 }
 
                 if(item.description) {
-                    captionEl.children[0].innerHTML = stripHtml(item.title) + '<br><span class="description">' + stripHtml(item.description) + '</span>';
+                    captionEl.children[0].innerHTML = stripHtml(item.title) + "<br><span class=\"description\">" + stripHtml(item.description) + "</span>";
                 } else {
                     captionEl.children[0].innerHTML = stripHtml(item.title);
                 }
