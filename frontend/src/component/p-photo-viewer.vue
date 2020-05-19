@@ -11,6 +11,8 @@
             <div class="pswp__ui pswp__ui--hidden">
 
                 <div class="pswp__top-bar">
+                    <div class="pswp__taken hidden-xs-only">{{ item.taken }}</div>
+
                     <div class="pswp__counter"></div>
 
                     <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>

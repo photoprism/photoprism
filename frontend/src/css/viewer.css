@@ -6,4 +6,39 @@
     padding: 10px;
     line-height: 20px;
     color: #E0E0E0;
+    font-weight: 400;
+}
+
+#p-photo-viewer .pswp__caption__center .description {
+    font-weight: 300;
+    font-size: 13px;
+}
+
+#p-photo-viewer .pswp__caption__center .taken {
+    font-weight: 300;
+    font-size: 13px;
+}
+
+#p-photo-viewer .pswp__taken {
+    padding: 10px;
+    line-height: 20px;
+    font-size: 14px;
+    color: #E0E0E0;
+    font-weight: 300;
+    width: auto;
+    height: 44px;
+    position: relative;
+    background: none;
+    cursor: none;
+    overflow: visible;
+    -webkit-appearance: none;
+    display: block;
+    border: 0;
+    margin: 0;
+    float: left;
+    opacity: 0.75;
+    -webkit-transition: opacity 0.2s;
+    transition: opacity 0.2s;
+    -webkit-box-shadow: none;
+    box-shadow: none;
 }

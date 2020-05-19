@@ -1,6 +1,7 @@
 import PhotoSwipe from "photoswipe";
 import PhotoSwipeUI_Default from "photoswipe/dist/photoswipe-ui-default.js";
 import Event from "pubsub-js";
+import stripHtml from "string-strip-html";
 
 const thumbs = window.clientConfig.thumbnails;
 
@@ -68,6 +69,25 @@ class Viewer {
                     button.label = button.template.replace("size", item[button.id].w + " × " + item[button.id].h);
                     return item[button.id].src + "?download=1";
                 }
+            },
+            addCaptionHTMLFn: function(item, captionEl, isFake) {
+                // item      - slide object
+                // captionEl - caption DOM element
+                // isFake    - true when content is added to fake caption container
+                //             (used to get size of next or previous caption)
+
+                if(!item.title) {
+                    captionEl.children[0].innerHTML = '';
+                    return false;
+                }
+
+                if(item.description) {
+                    captionEl.children[0].innerHTML = stripHtml(item.title) + '<br><span class="description">' + stripHtml(item.description) + '</span>';
+                } else {
+                    captionEl.children[0].innerHTML = stripHtml(item.title);
+                }
+
+                return true;
             },
         };
 

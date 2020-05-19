@@ -87,20 +87,25 @@
                                         {{ photo.PhotoTitle | truncate(80) }}
                                     </button>
                                 </h3>
+                                <div class="caption mb-2" v-if="photo.PhotoDescription" title="Description">
+                                    {{ photo.PhotoDescription }}
+                                </div>
                                 <div class="caption">
                                     <button @click.exact="editPhoto(index)">
                                         <v-icon size="14" title="Taken">date_range</v-icon>
                                         {{ photo.getDateString() }}
                                     </button>
-                                    <br/>
-                                    <button v-if="photo.PhotoVideo" @click.exact="openPhoto(index, true)" title="Video">
-                                        <v-icon size="14">movie</v-icon>
-                                        {{ photo.getVideoInfo() }}
-                                    </button>
-                                    <button v-else @click.exact="editPhoto(index)" title="Camera">
-                                        <v-icon size="14">photo_camera</v-icon>
-                                        {{ photo.getPhotoInfo() }}
-                                    </button>
+                                    <template v-if="!photo.PhotoDescription">
+                                        <br/>
+                                        <button v-if="photo.PhotoVideo" @click.exact="openPhoto(index, true)" title="Video">
+                                            <v-icon size="14">movie</v-icon>
+                                            {{ photo.getVideoInfo() }}
+                                        </button>
+                                        <button v-else @click.exact="editPhoto(index)" title="Camera">
+                                            <v-icon size="14">photo_camera</v-icon>
+                                            {{ photo.getPhotoInfo() }}
+                                        </button>
+                                    </template>
                                     <template v-if="showLocation && photo.LocationID">
                                         <br/>
                                         <button @click.exact="openLocation(index)" title="Location">
@@ -108,6 +113,7 @@
                                             {{ photo.getLocation() }}
                                         </button>
                                     </template>
+
                                     <!-- template v-if="debug">
                                         <br/>
                                         <button @click.exact="openUUID(index)" title="Unique ID">

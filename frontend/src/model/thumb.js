@@ -8,6 +8,8 @@ class Thumb extends Model {
         return {
             uuid: "",
             title: "",
+            taken: "",
+            description: "",
             favorite: false,
             original_w: 0,
             original_h: 0,
@@ -29,6 +31,8 @@ class Thumb extends Model {
         const result = {
             uuid: "",
             title: "Not Found",
+            taken: "",
+            description: "",
             favorite: false,
             original_w: 0,
             original_h: 0,
@@ -69,6 +73,8 @@ class Thumb extends Model {
         const result = {
             uuid: photo.PhotoUUID,
             title: photo.PhotoTitle,
+            taken: photo.getDateString(),
+            description: photo.PhotoDescription,
             favorite: photo.PhotoFavorite,
             download_url: this.downloadUrl(photo),
             original_w: photo.FileWidth,
@@ -96,6 +102,8 @@ class Thumb extends Model {
         const result = {
             uuid: photo.PhotoUUID,
             title: photo.PhotoTitle,
+            taken: photo.getDateString(),
+            description: photo.PhotoDescription,
             favorite: photo.PhotoFavorite,
             download_url: this.downloadUrl(file),
             original_w: file.FileWidth,
