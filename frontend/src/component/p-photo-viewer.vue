@@ -35,7 +35,7 @@
                     <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
 
                     <button class="pswp__button" style="background: none;" @click.exact="onSlideshow" title="Slideshow">
-                        <v-icon v-show="!interval" size="16" color="white">slideshow</v-icon>
+                        <v-icon v-show="!interval" size="18" color="white">play_arrow</v-icon>
                         <v-icon v-show="interval" size="16" color="white">pause</v-icon>
                     </button>
 
