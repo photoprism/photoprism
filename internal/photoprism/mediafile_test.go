@@ -5,43 +5,128 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
-
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMediaFile_DateCreated(t *testing.T) {
 	conf := config.TestConfig()
 
+	t.Run("telegram_2020-01-30_09-57-18.jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		date := mediaFile.DateCreated().UTC()
+		assert.Equal(t, "2020-01-30 09:57:18 +0000 UTC", date.String())
+	})
+	t.Run("Screenshot 2019-05-21 at 10.45.52.png", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Screenshot 2019-05-21 at 10.45.52.png")
+		if err != nil {
+			t.Fatal(err)
+		}
+		date := mediaFile.DateCreated().UTC()
+		assert.Equal(t, "2019-05-21 10:45:52 +0000 UTC", date.String())
+	})
 	t.Run("iphone_7.heic", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 		date := mediaFile.DateCreated().UTC()
 		assert.Equal(t, "2018-09-10 03:16:13 +0000 UTC", date.String())
-		assert.Empty(t, err)
 	})
 	t.Run("canon_eos_6d.dng", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 		date := mediaFile.DateCreated().UTC()
 		assert.Equal(t, "2019-06-06 07:29:51 +0000 UTC", date.String())
-		assert.Empty(t, err)
 	})
 	t.Run("elephants.jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 		date := mediaFile.DateCreated().UTC()
 		assert.Equal(t, "2013-11-26 13:53:55 +0000 UTC", date.String())
-		assert.Empty(t, err)
 	})
 	t.Run("dog_created_1919.jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/dog_created_1919.jpg")
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 		date := mediaFile.DateCreated().UTC()
 		assert.Equal(t, "1919-05-04 05:59:26 +0000 UTC", date.String())
-		assert.Empty(t, err)
+	})
+}
+
+func TestMediaFile_TakenAt(t *testing.T) {
+	conf := config.TestConfig()
+
+	t.Run("telegram_2020-01-30_09-57-18.jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		date, src := mediaFile.TakenAt()
+		assert.Equal(t, "2020-01-30 09:57:18 +0000 UTC", date.String())
+		assert.Equal(t, entity.SrcName, src)
+	})
+	t.Run("Screenshot 2019-05-21 at 10.45.52.png", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Screenshot 2019-05-21 at 10.45.52.png")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		date, src := mediaFile.TakenAt()
+		assert.Equal(t, "2019-05-21 10:45:52 +0000 UTC", date.String())
+		assert.Equal(t, entity.SrcName, src)
+	})
+	t.Run("iphone_7.heic", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		date, src := mediaFile.TakenAt()
+		assert.Equal(t, "2018-09-10 03:16:13 +0000 UTC", date.String())
+		assert.Equal(t, entity.SrcMeta, src)
+	})
+	t.Run("canon_eos_6d.dng", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		date, src := mediaFile.TakenAt()
+		assert.Equal(t, "2019-06-06 07:29:51 +0000 UTC", date.String())
+		assert.Equal(t, entity.SrcMeta, src)
+	})
+	t.Run("elephants.jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		date, src := mediaFile.TakenAt()
+		assert.Equal(t, "2013-11-26 13:53:55 +0000 UTC", date.String())
+		assert.Equal(t, entity.SrcMeta, src)
+	})
+	t.Run("dog_created_1919.jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/dog_created_1919.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		date, src := mediaFile.TakenAt()
+		assert.Equal(t, "1919-05-04 05:59:26 +0000 UTC", date.String())
+		assert.Equal(t, entity.SrcMeta, src)
 	})
 }
 

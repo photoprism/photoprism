@@ -252,7 +252,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		if photo.TakenAt.IsZero() || photo.TakenAtLocal.IsZero() {
-			photo.SetTakenAt(m.DateCreated(), m.DateCreated(), "", entity.SrcAuto)
+			takenUtc, takenSrc := m.TakenAt()
+			photo.SetTakenAt(takenUtc, takenUtc, "", takenSrc)
 		}
 
 		if fileChanged || o.Rescan || photo.NoTitle() {

@@ -28,7 +28,8 @@ type MediaFile struct {
 	fileName     string
 	fileType     fs.FileType
 	mimeType     string
-	dateCreated  time.Time
+	takenAt      time.Time
+	takenAtSrc   string
 	hash         string
 	checksum     string
 	width        int
@@ -64,41 +65,61 @@ func (m *MediaFile) Stat() (size int64, mod time.Time) {
 	return s.Size(), s.ModTime().Round(time.Second)
 }
 
-// DateCreated returns the date on which the media file was created in UTC.
+// DateCreated returns only the date on which the media file was probably taken in UTC.
 func (m *MediaFile) DateCreated() time.Time {
-	if !m.dateCreated.IsZero() {
-		return m.dateCreated
+	takenAt, _ := m.TakenAt()
+
+	return takenAt
+}
+
+// TakenAt returns the date on which the media file was taken in UTC and the source of this information.
+func (m *MediaFile) TakenAt() (time.Time, string) {
+	if !m.takenAt.IsZero() {
+		return m.takenAt, m.takenAtSrc
 	}
 
-	m.dateCreated = time.Now().UTC()
+	m.takenAt = time.Now().UTC()
 
 	info, err := m.MetaData()
 
 	if err == nil && !info.TakenAt.IsZero() && info.TakenAt.Year() > 1000 {
-		m.dateCreated = info.TakenAt.UTC()
+		m.takenAt = info.TakenAt.UTC()
+		m.takenAtSrc = entity.SrcMeta
 
-		log.Infof("mediafile: taken at %s (meta)", m.dateCreated.String())
+		log.Infof("mediafile: %s was taken at %s (%s)", filepath.Base(m.fileName), m.takenAt.String(), m.takenAtSrc)
 
-		return m.dateCreated
+		return m.takenAt, m.takenAtSrc
 	}
 
-	t, err := times.Stat(m.FileName())
+	if nameTime := txt.Time(m.fileName); !nameTime.IsZero() {
+		m.takenAt = nameTime
+		m.takenAtSrc = entity.SrcName
+
+		log.Infof("mediafile: %s was taken at %s (%s)", filepath.Base(m.fileName), m.takenAt.String(), m.takenAtSrc)
+
+		return m.takenAt, m.takenAtSrc
+	}
+
+	m.takenAtSrc = entity.SrcAuto
+
+	fileInfo, err := times.Stat(m.FileName())
 
 	if err != nil {
-		log.Debug(err.Error())
+		log.Warnf("mediafile: %s (file stat)", err.Error())
+		log.Infof("mediafile: %s was taken at %s (now)", filepath.Base(m.fileName), m.takenAt.String())
 
-		return m.dateCreated
+		return m.takenAt, m.takenAtSrc
 	}
 
-	if t.HasBirthTime() {
-		m.dateCreated = t.BirthTime().UTC()
+	if fileInfo.HasBirthTime() {
+		m.takenAt = fileInfo.BirthTime().UTC()
+		log.Infof("mediafile: %s was taken at %s (file birth time)", filepath.Base(m.fileName), m.takenAt.String())
 	} else {
-		m.dateCreated = t.ModTime().UTC()
+		m.takenAt = fileInfo.ModTime().UTC()
+		log.Infof("mediafile: %s was taken at %s (file mod time)", filepath.Base(m.fileName), m.takenAt.String())
 	}
 
-	log.Infof("mediafile: taken at %s (file)", m.dateCreated.String())
-
-	return m.dateCreated
+	return m.takenAt, m.takenAtSrc
 }
 
 func (m *MediaFile) HasTimeAndPlace() bool {

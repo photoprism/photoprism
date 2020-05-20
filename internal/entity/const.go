@@ -6,6 +6,7 @@ const (
 	// data sources
 	SrcAuto     = ""
 	SrcManual   = "manual"
+	SrcName     = "name"
 	SrcMeta     = "meta"
 	SrcXmp      = "xmp"
 	SrcYaml     = "yaml"
