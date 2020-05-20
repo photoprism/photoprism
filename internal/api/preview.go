@@ -86,6 +86,7 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 			if err != nil {
 				log.Error(err)
 				c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
+				return
 			}
 
 			preview = imaging.Paste(preview, src, image.Pt(x, y))
