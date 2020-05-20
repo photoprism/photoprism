@@ -120,6 +120,12 @@ func TestTime(t *testing.T) {
 		assert.False(t, result.IsZero())
 		assert.Equal(t, "2019-01-03 00:00:00 +0000 UTC", result.String())
 	})
+
+	t.Run("/1989/1/3/foo.jpg", func(t *testing.T) {
+		result := Time("/1989/1/3/foo.jpg")
+		assert.True(t, result.IsZero())
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
 }
 
 func TestInt(t *testing.T) {

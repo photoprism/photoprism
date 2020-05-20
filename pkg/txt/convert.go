@@ -13,7 +13,7 @@ var DateTimeRegexp = regexp.MustCompile("\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}.{1,4}\\d
 var DateIntRegexp = regexp.MustCompile("\\d{1,4}")
 
 var (
-	YearMin = 1000
+	YearMin = 1990
 	YearMax = time.Now().Year() + 3
 )
 
