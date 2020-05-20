@@ -6,10 +6,10 @@ import (
 	"time"
 )
 
-var DateRegexp = regexp.MustCompile("\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}")
-var DateCanonicalRegexp = regexp.MustCompile("\\d{8}_\\d{6}_\\w{8}\\.")
-var DatePathRegexp = regexp.MustCompile("\\d{4}\\/\\d{1,2}\\/?\\d{0,2}")
-var DateTimeRegexp = regexp.MustCompile("\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}.{1,4}\\d{2}\\D\\d{2}\\D\\d{2}")
+var DateRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}\\D")
+var DateCanonicalRegexp = regexp.MustCompile("\\D\\d{8}_\\d{6}_\\w+\\.")
+var DatePathRegexp = regexp.MustCompile("\\D\\d{4}\\/\\d{1,2}\\/?\\d{0,2}\\D")
+var DateTimeRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}.{1,4}\\d{2}\\D\\d{2}\\D\\d{2}\\D")
 var DateIntRegexp = regexp.MustCompile("\\d{1,4}")
 
 var (
@@ -40,8 +40,8 @@ func Time(s string) (result time.Time) {
 
 	b := []byte(s)
 
-	if found := DateCanonicalRegexp.Find(b); len(found) == 25 { // Is it a canonical name like "20120727_093920_97425909.jpg"?
-		if date, err := time.Parse("20060102_150405", string(found[0:15])); err == nil {
+	if found := DateCanonicalRegexp.Find(b); len(found) > 0 { // Is it a canonical name like "20120727_093920_97425909.jpg"?
+		if date, err := time.Parse("20060102_150405", string(found[1:16])); err == nil {
 			result = date.Round(time.Second).UTC()
 		}
 	} else if found := DateTimeRegexp.Find(b); len(found) > 0 { // Is it a date with time like "2020-01-30_09-57-18"?
