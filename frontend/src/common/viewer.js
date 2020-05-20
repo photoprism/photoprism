@@ -81,10 +81,18 @@ class Viewer {
                     return false;
                 }
 
+                captionEl.children[0].innerHTML = stripHtml(item.title);
+
+                if(item.playable) {
+                    captionEl.children[0].innerHTML += " <i aria-hidden=\"true\" class=\"v-icon material-icons theme--dark\">movie_creation</i>";
+                }
+
                 if(item.description) {
-                    captionEl.children[0].innerHTML = stripHtml(item.title) + "<br><span class=\"description\">" + stripHtml(item.description) + "</span>";
-                } else {
-                    captionEl.children[0].innerHTML = stripHtml(item.title);
+                    captionEl.children[0].innerHTML += "<br><span class=\"description\">" + stripHtml(item.description) + "</span>";
+                }
+
+                if(item.playable) {
+                    captionEl.children[0].innerHTML = "<button>" + captionEl.children[0].innerHTML + "</button>";
                 }
 
                 return true;

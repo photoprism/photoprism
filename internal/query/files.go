@@ -41,6 +41,15 @@ func FileByPhotoUUID(u string) (file entity.File, err error) {
 	return file, nil
 }
 
+// VideoByPhotoUUID
+func VideoByPhotoUUID(u string) (file entity.File, err error) {
+	if err := Db().Where("photo_uuid = ? AND file_video = 1", u).Preload("Links").Preload("Photo").First(&file).Error; err != nil {
+		return file, err
+	}
+
+	return file, nil
+}
+
 // FileByUUID returns the file entity for a given UUID.
 func FileByUUID(uuid string) (file entity.File, err error) {
 	if err := Db().Where("file_uuid = ?", uuid).Preload("Links").Preload("Photo").First(&file).Error; err != nil {
@@ -50,7 +59,7 @@ func FileByUUID(uuid string) (file entity.File, err error) {
 	return file, nil
 }
 
-// FirstFileByHash finds a file with a given hash string.
+// FileByHash finds a file with a given hash string.
 func FileByHash(fileHash string) (file entity.File, err error) {
 	if err := Db().Where("file_hash = ?", fileHash).Preload("Links").Preload("Photo").First(&file).Error; err != nil {
 		return file, err

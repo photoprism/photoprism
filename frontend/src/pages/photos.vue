@@ -180,7 +180,7 @@
 
                 if (showMerged && this.results[index].PhotoVideo) {
                     if(this.results[index].isPlayable()) {
-                        Event.publish("dialog.video", {play: this.results[index], album: null});
+                        this.$modal.show('video', {video: this.results[index], album: null});
                     } else {
                         this.$viewer.show(Thumb.fromPhotos(this.results), index);
                     }

@@ -110,6 +110,7 @@
     "vue-fullscreen": "^2.1.6",
     "vue-gettext": "^2.1.8",
     "vue-infinite-scroll": "^2.0.2",
+    "vue-js-modal": "^2.0.0-rc.3",
     "vue-loader": "^14.2.4",
     "vue-luxon": "^0.7.3",
     "vue-router": "^3.1.6",

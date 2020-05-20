@@ -1,3 +1,7 @@
+#p-photo-viewer {
+    z-index: 1500;
+}
+
 #p-photo-viewer .pswp__caption__center {
     text-align: center;
     max-width: 80%;
@@ -7,6 +11,14 @@
     line-height: 20px;
     color: #E0E0E0;
     font-weight: 400;
+}
+
+#p-photo-viewer .pswp__caption__center .v-icon,
+#p-photo-viewer .pswp__caption__center a {
+    font-weight: 400;
+    font-size: 17px;
+    text-decoration: none;
+    padding-left: 4px;
 }
 
 #p-photo-viewer .pswp__caption__center .description {

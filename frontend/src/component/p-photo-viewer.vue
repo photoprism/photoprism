@@ -58,7 +58,7 @@
                 <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
                 </button>
 
-                <div class="pswp__caption">
+                <div class="pswp__caption" @click="playVideo">
                     <div class="pswp__caption__center"></div>
                 </div>
 
@@ -71,7 +71,8 @@
     import 'photoswipe/dist/photoswipe.css'
     import 'photoswipe/dist/default-skin/default-skin.css'
     import Event from "pubsub-js";
-    import Thumb from "../model/thumb";
+    import Thumb from "model/thumb";
+    import Photo from "model/photo";
 
     export default {
         name: "p-photo-viewer",
@@ -98,6 +99,14 @@
             },
             toggleLike() {
                 this.item.toggleLike();
+            },
+            playVideo() {
+              if(this.item && this.item.playable) {
+                  let photo = new Photo();
+                  photo.find(this.item.uuid).then((p) => {
+                      this.$modal.show('video', {video: p, album: null});
+                  });
+              }
             },
             onPause() {
                 if (this.interval) {

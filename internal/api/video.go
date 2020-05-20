@@ -34,9 +34,19 @@ func GetVideo(router *gin.RouterGroup, conf *config.Config) {
 		f, err := query.FileByHash(fileHash)
 
 		if err != nil {
-			log.Errorf("video: db error %s", err.Error())
+			log.Errorf("video: %s", err.Error())
 			c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 			return
+		}
+
+		if !f.FileVideo {
+			f, err = query.VideoByPhotoUUID(f.PhotoUUID)
+
+			if err != nil {
+				log.Errorf("video: %s", err.Error())
+				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
+				return
+			}
 		}
 
 		if f.FileError != "" {

@@ -13,6 +13,7 @@
         </v-app>
 
         <p-photo-viewer></p-photo-viewer>
+        <p-video-dialog></p-video-dialog>
     </div>
 </template>
 

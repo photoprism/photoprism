@@ -274,7 +274,6 @@
                          @confirm="upload.dialog = false"></p-upload-dialog>
         <p-photo-edit-dialog :show="edit.dialog" :selection="edit.selection" :index="edit.index" :album="edit.album"
                              @close="edit.dialog = false"></p-photo-edit-dialog>
-        <p-video-dialog ref="video" :play="video.play" :album="video.album"></p-video-dialog>
     </div>
 </template>
 
@@ -303,11 +302,6 @@
                     album: null,
                     selection: [],
                     index: 0,
-                },
-                video: {
-                    subscription: null,
-                    album: null,
-                    play: null,
                 },
             };
         },
@@ -354,17 +348,10 @@
                     this.edit.dialog = true;
                 }
             });
-
-            this.video.subscription = Event.subscribe("dialog.video", (ev, data) => {
-                this.video.play = data.play;
-                this.video.album = data.album;
-                this.$refs.video.show = true;
-            });
         },
         destroyed() {
             Event.unsubscribe(this.upload.subscription);
             Event.unsubscribe(this.edit.subscription);
-            Event.unsubscribe(this.video.subscription);
         }
     };
 </script>

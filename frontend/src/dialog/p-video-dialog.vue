@@ -1,15 +1,13 @@
 <template>
-    <v-dialog lazy v-model="show" :scrollable="false" :max-width="width" class="p-video-dialog">
-        <p-video-player v-show="show" ref="player" :source="source" :height="height.toString()" :width="width.toString()" :autoplay="true"></p-video-player>
-    </v-dialog>
+    <modal name="video" ref="video" :height="height" :width="width" :reset="true" class="p-video-dialog" @before-close="onClose"
+           @before-open="onOpen">
+        <p-video-player v-show="show" ref="player" :source="source" :height="height.toString()"
+                        :width="width.toString()" :autoplay="true"></p-video-player>
+    </modal>
 </template>
 <script>
     export default {
         name: 'p-video-dialog',
-        props: {
-            play: Object,
-            album: Object,
-        },
         data() {
             return {
                 show: false,
@@ -18,18 +16,29 @@
                 defaultHeight: 480,
                 width: 640,
                 height: 480,
+                video: null,
+                album: null,
             }
         },
         methods: {
-            load(video) {
-                if (!video) {
+            onOpen(ev) {
+                this.video = ev.params.video;
+                this.album = ev.params.album;
+                this.play();
+            },
+            onClose() {
+                this.$refs.player.pause();
+                this.show = false;
+            },
+            play() {
+                if (!this.video) {
                     this.$notify.error("no video selected");
                     return;
                 }
 
-                let main = video.mainFile();
-                let file = video.videoFile();
-                let uri = video.videoUri();
+                let main = this.video.mainFile();
+                let file = this.video.videoFile();
+                let uri = this.video.videoUri();
 
                 if (!uri) {
                     this.$notify.error("no video selected");
@@ -42,17 +51,17 @@
                 let width = 0;
                 let height = 0;
 
-                if(file.FileWidth > 0) {
+                if (file.FileWidth > 0) {
                     width = file.FileWidth;
-                } else if(main && main.FileWidth > 0) {
+                } else if (main && main.FileWidth > 0) {
                     width = main.FileWidth;
                 } else {
                     width = this.defaultWidth;
                 }
 
-                if(file.FileHeight > 0) {
+                if (file.FileHeight > 0) {
                     height = file.FileHeight;
-                } else if(main && main.FileHeight > 0) {
+                } else if (main && main.FileHeight > 0) {
                     height = main.FileHeight;
                 } else {
                     height = this.defaultHeight;
@@ -61,33 +70,27 @@
                 this.width = width;
                 this.height = height;
 
-                if(vw < (width + 80)) {
-                    let newWidth =  vw - 120;
+                if (vw < (width + 80)) {
+                    let newWidth = vw - 120;
                     this.height = Math.round(newWidth * (height / width));
                     this.width = newWidth;
                 }
 
-                if(vh < (this.height + 100)) {
+                if (vh < (this.height + 100)) {
                     let newHeight = vh - 160;
                     this.width = Math.round(newHeight * (width / height));
                     this.height = newHeight;
                 }
 
+                // Resize video overlay.
+                this.$refs.video.setInitialSize();
+                let size = { width: this.width, height: this.height }
+                this.$refs.video.onModalResize({size});
+
+                // Play by triggering source change event.
                 this.source = uri;
                 this.show = true;
             },
-        },
-        watch: {
-            play: function (play) {
-                if (play) {
-                    this.load(play);
-                }
-            },
-            show: function(show) {
-                if(!show) {
-                    this.$refs.player.pause();
-                }
-            }
         },
     }
 </script>

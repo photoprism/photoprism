@@ -21,6 +21,7 @@ import VueLuxon from "vue-luxon";
 import VueFilters from "vue2-filters";
 import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
+import VueModal from "vue-js-modal";
 import Hls from "hls.js";
 
 // Initialize helpers
@@ -59,6 +60,7 @@ Vue.use(GetTextPlugin, {
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);
+Vue.use(VueModal, { dynamic: true, dynamicDefaults: { clickToClose: true } });
 Vue.use(VueFilters);
 Vue.use(Components);
 Vue.use(Dialogs);
