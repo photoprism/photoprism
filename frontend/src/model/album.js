@@ -33,23 +33,23 @@ class Album extends RestModel {
         return this.AlbumName;
     }
 
-    getThumbnailUrl(type) {
+    thumbnailUrl(type) {
         return "/api/v1/albums/" + this.getId() + "/thumbnail/" + type;
     }
 
-    getThumbnailSrcset() {
+    thumbnailSrcset() {
         const result = [];
 
-        result.push(this.getThumbnailUrl("fit_720") + " 720w");
-        result.push(this.getThumbnailUrl("fit_1280") + " 1280w");
-        result.push(this.getThumbnailUrl("fit_1920") + " 1920w");
-        result.push(this.getThumbnailUrl("fit_2560") + " 2560w");
-        result.push(this.getThumbnailUrl("fit_3840") + " 3840w");
+        result.push(this.thumbnailUrl("fit_720") + " 720w");
+        result.push(this.thumbnailUrl("fit_1280") + " 1280w");
+        result.push(this.thumbnailUrl("fit_1920") + " 1920w");
+        result.push(this.thumbnailUrl("fit_2560") + " 2560w");
+        result.push(this.thumbnailUrl("fit_3840") + " 3840w");
 
         return result.join(", ");
     }
 
-    getThumbnailSizes() {
+    thumbnailSizes() {
         const result = [];
 
         result.push("(min-width: 2560px) 3840px");

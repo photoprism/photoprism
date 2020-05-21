@@ -212,8 +212,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.FileAspectRatio = metaData.AspectRatio()
 		file.FilePortrait = metaData.Portrait()
 
-		if file.FileDuration == 0 || file.FileDuration > time.Second*4 {
-			photo.PhotoVideo = true
+		if file.FileDuration == 0 || file.FileDuration > time.Millisecond*3100 {
 			photo.PhotoType = entity.TypeVideo
 		} else {
 			photo.PhotoType = entity.TypeLive
@@ -386,7 +385,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			})
 		}
 
-		if photo.PhotoVideo {
+		if photo.PhotoType == entity.TypeVideo {
 			event.Publish("count.videos", event.Data{
 				"count": 1,
 			})
@@ -480,7 +479,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		result.Status = IndexAdded
 	}
 
-	if photo.PhotoVideo && file.FilePrimary {
+	if (photo.PhotoType == entity.TypeVideo || photo.PhotoType == entity.TypeLive) && file.FilePrimary {
 		if err := file.UpdateVideoInfos(); err != nil {
 			log.Errorf("index: %s for %s", err, txt.Quote(m.RelativeName(ind.originalsPath())))
 		}

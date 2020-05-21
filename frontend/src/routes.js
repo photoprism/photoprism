@@ -31,6 +31,7 @@ export default [
         path: "/photos",
         component: Photos,
         meta: {title: c.subtitle, auth: true},
+        props: {staticFilter: {photo: "true"}},
     },
     {
         name: "albums",
@@ -56,7 +57,7 @@ export default [
         path: "/videos",
         component: Photos,
         meta: {title: "Videos", auth: true},
-        props: {staticFilter: {video: true}},
+        props: {staticFilter: {video: "true"}},
     },
     {
         name: "review",

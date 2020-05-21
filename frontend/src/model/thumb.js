@@ -88,7 +88,7 @@ class Thumb extends Model {
             let size = photo.calculateSize(thumbs[i].Width, thumbs[i].Height);
 
             result[thumbs[i].Name] = {
-                src: photo.getThumbnailUrl(thumbs[i].Name),
+                src: photo.thumbnailUrl(thumbs[i].Name),
                 w: size.width,
                 h: size.height,
             };

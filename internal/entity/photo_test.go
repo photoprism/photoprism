@@ -20,7 +20,7 @@ func TestSavePhotoForm(t *testing.T) {
 			TitleSrc:         "manual",
 			PhotoFavorite:    true,
 			PhotoPrivate:     true,
-			PhotoVideo:       false,
+			PhotoType:        "image",
 			PhotoLat:         7.9999,
 			PhotoLng:         8.8888,
 			PhotoAltitude:    2,
@@ -62,7 +62,7 @@ func TestSavePhotoForm(t *testing.T) {
 		assert.Equal(t, "manual", m.TitleSrc)
 		assert.Equal(t, true, m.PhotoFavorite)
 		assert.Equal(t, true, m.PhotoPrivate)
-		assert.Equal(t, false, m.PhotoVideo)
+		assert.Equal(t, "image", m.PhotoType)
 		assert.Equal(t, float32(7.9999), m.PhotoLat)
 		assert.NotNil(t, m.EditedAt)
 		t.Log(m.Details.Keywords)
@@ -81,7 +81,7 @@ func TestPhoto_Save(t *testing.T) {
 			TitleSrc:         "manual",
 			PhotoFavorite:    false,
 			PhotoPrivate:     false,
-			PhotoVideo:       true,
+			PhotoType:        "video",
 			PhotoLat:         9.9999,
 			PhotoLng:         8.8888,
 			PhotoAltitude:    2,

@@ -7,8 +7,10 @@
                         <translate>No photos matched your search</translate>
                     </h3>
                     <div>
-                        <translate>Try using other terms and search options such as category, country and camera.
-                        </translate>
+                        {{$gettext("Try using other terms and search options such as category, country and camera.")}}
+                        <span v-show="$config.feature('review')">
+                            {{$gettext("Non-photographic and low-quality images require a review before they appear in search results.")}}
+                        </span>
                     </div>
                 </div>
             </v-card-title>
@@ -26,14 +28,13 @@
                             @contextmenu="onContextMenu($event, index)"
                             :dark="$clipboard.has(photo)"
                             :class="$clipboard.has(photo) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'">
-                        <v-img
-                                :src="photo.getThumbnailUrl('tile_500')"
-                                aspect-ratio="1"
-                                v-bind:class="{ selected: $clipboard.has(photo) }"
-                                style="cursor: pointer;"
-                                class="accent lighten-2"
-                                @mousedown="onMouseDown($event, index)"
-                                @click.stop.prevent="onClick($event, index)"
+                        <v-img :src="photo.thumbnailUrl('tile_500')"
+                               aspect-ratio="1"
+                               v-bind:class="{ selected: $clipboard.has(photo) }"
+                               style="cursor: pointer;"
+                               class="accent lighten-2"
+                               @mousedown="onMouseDown($event, index)"
+                               @click.stop.prevent="onClick($event, index)"
                         >
                             <v-layout
                                     slot="placeholder"
@@ -41,8 +42,24 @@
                                     align-center
                                     justify-center
                                     ma-0
+
                             >
                                 <v-progress-circular indeterminate color="accent lighten-5"></v-progress-circular>
+                            </v-layout>
+
+                            <v-layout
+                                    fill-height
+                                    align-center
+                                    justify-center
+                                    ma-0
+                                    class="p-photo-live"
+                                    style="overflow: hidden;"
+                                    v-if="photo.PhotoType === 'live'"
+                                    v-show="hover"
+                            >
+                                <video width="500" height="500" autoplay loop muted playsinline>
+                                    <source :src="photo.videoUrl()" type="video/mp4">
+                                </video>
                             </v-layout>
 
                             <v-btn v-if="hidePrivate && photo.PhotoPrivate" :ripple="false"
@@ -68,12 +85,19 @@
                                 <v-icon v-else color="accent lighten-3" class="t-like t-off">favorite_border</v-icon>
                             </v-btn>
 
-                            <v-btn v-if="photo.PhotoVideo && photo.isPlayable()" color="white" :ripple="false"
-                                   outline large fab absolute class="p-photo-play opacity-75" :depressed="false"
-                                   @click.stop.prevent="openPhoto(index, true)">
-                                <v-icon color="white" class="action-play">play_arrow</v-icon>
-                            </v-btn>
-                            <v-btn v-else-if="!photo.PhotoVideo && photo.Files.length > 1" :ripple="false"
+                            <template v-if="photo.isPlayable()">
+                                <v-btn v-if="photo.PhotoType === 'live'" :ripple="false"
+                                       icon flat large absolute class="p-photo-live opacity-75"
+                                       @click.stop.prevent="openPhoto(index, true)">
+                                    <v-icon color="white" class="action-play">adjust</v-icon>
+                                </v-btn>
+                                <v-btn v-else color="white" :ripple="false"
+                                       outline large fab absolute class="p-photo-play opacity-75" :depressed="false"
+                                       @click.stop.prevent="openPhoto(index, true)">
+                                    <v-icon color="white" class="action-play">play_arrow</v-icon>
+                                </v-btn>
+                            </template>
+                            <v-btn v-else-if="photo.PhotoType === 'image' && photo.Files.length > 1" :ripple="false"
                                    icon flat large absolute class="p-photo-merged opacity-75"
                                    @click.stop.prevent="openPhoto(index, true)">
                                 <v-icon color="white" class="action-burst">burst_mode</v-icon>
@@ -97,7 +121,8 @@
                                     </button>
                                     <template v-if="!photo.PhotoDescription">
                                         <br/>
-                                        <button v-if="photo.PhotoVideo" @click.exact="openPhoto(index, true)" title="Video">
+                                        <button v-if="photo.PhotoType === 'video'" @click.exact="openPhoto(index, true)"
+                                                title="Video">
                                             <v-icon size="14">movie</v-icon>
                                             {{ photo.getVideoInfo() }}
                                         </button>
@@ -113,14 +138,6 @@
                                             {{ photo.getLocation() }}
                                         </button>
                                     </template>
-
-                                    <!-- template v-if="debug">
-                                        <br/>
-                                        <button @click.exact="openUUID(index)" title="Unique ID">
-                                            <v-icon size="14">fingerprint</v-icon>
-                                            {{ photo.PhotoUUID }}
-                                        </button>
-                                    </template -->
                                 </div>
                             </div>
                         </v-card-title>
@@ -186,9 +203,6 @@
             },
             selectRange(index) {
                 this.$clipboard.addRange(index, this.photos);
-            },
-            openUUID(index) {
-                window.open("/api/v1/" + this.photos[index].getEntityResource(), '_blank');
             },
         }
     };

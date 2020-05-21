@@ -43,10 +43,10 @@
                     <v-card-title primary-title>
                         <div>
                             <h3 class="title mb-3">
-                                <translate>No albums matched your search</translate>
+                                {{$gettext("No albums matched your search")}}
                             </h3>
                             <div>
-                                <translate>Try again using a different term or create a new album</translate>
+                                {{$gettext("Try again using a different term or create a new album from a selection in Photos.")}}
                             </div>
                         </div>
                     </v-card-title>
@@ -67,7 +67,7 @@
                                     :to="{name: 'album', params: {uuid: album.AlbumUUID, slug: album.AlbumSlug}}"
                             >
                                 <v-img
-                                        :src="album.getThumbnailUrl('tile_500')"
+                                        :src="album.thumbnailUrl('tile_500')"
                                         @mousedown="onMouseDown($event, index)"
                                         @click="onClick($event, index)"
                                         aspect-ratio="1"

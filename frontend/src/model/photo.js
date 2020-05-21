@@ -18,7 +18,6 @@ class Photo extends RestModel {
             PhotoType: "",
             PhotoFavorite: false,
             PhotoPrivate: false,
-            PhotoVideo: false,
             TakenAt: "",
             TakenAtLocal: "",
             TakenSrc: "",
@@ -85,13 +84,13 @@ class Photo extends RestModel {
 
     getColor() {
         switch (this.PhotoColor) {
-            case "brown":
-            case "black":
-            case "white":
-            case "grey":
-                return "grey lighten-2";
-            default:
-                return this.PhotoColor + " lighten-4";
+        case "brown":
+        case "black":
+        case "white":
+        case "grey":
+            return "grey lighten-2";
+        default:
+            return this.PhotoColor + " lighten-4";
         }
     }
 
@@ -137,7 +136,7 @@ class Photo extends RestModel {
         return file;
     }
 
-    videoUri() {
+    videoUrl() {
         const file = this.videoFile();
 
         if (!file) {
@@ -175,7 +174,7 @@ class Photo extends RestModel {
         return "";
     }
 
-    getThumbnailUrl(type) {
+    thumbnailUrl(type) {
         let hash = this.mainFileHash();
 
         if (!hash) {
@@ -195,14 +194,14 @@ class Photo extends RestModel {
         return "/api/v1/download/" + this.mainFileHash();
     }
 
-    getThumbnailSrcset() {
+    thumbnailSrcset() {
         const result = [];
 
-        result.push(this.getThumbnailUrl("fit_720") + " 720w");
-        result.push(this.getThumbnailUrl("fit_1280") + " 1280w");
-        result.push(this.getThumbnailUrl("fit_1920") + " 1920w");
-        result.push(this.getThumbnailUrl("fit_2560") + " 2560w");
-        result.push(this.getThumbnailUrl("fit_3840") + " 3840w");
+        result.push(this.thumbnailUrl("fit_720") + " 720w");
+        result.push(this.thumbnailUrl("fit_1280") + " 1280w");
+        result.push(this.thumbnailUrl("fit_1920") + " 1920w");
+        result.push(this.thumbnailUrl("fit_2560") + " 2560w");
+        result.push(this.thumbnailUrl("fit_3840") + " 3840w");
 
         return result.join(", ");
     }
@@ -229,7 +228,7 @@ class Photo extends RestModel {
         return {width: newW, height: newH};
     }
 
-    getThumbnailSizes() {
+    thumbnailSizes() {
         const result = [];
 
         result.push("(min-width: 2560px) 3840px");

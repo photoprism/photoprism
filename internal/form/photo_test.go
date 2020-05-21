@@ -10,7 +10,7 @@ func TestNewPhoto(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		photo := Photo{TakenAt: time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC), TakenAtLocal: time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
 			TakenSrc: "exif", TimeZone: "UTC", PhotoTitle: "Black beach", TitleSrc: "manual",
-			PhotoFavorite: false, PhotoPrivate: false, PhotoVideo: true, PhotoReview: false, PhotoLat: 9.9999, PhotoLng: 8.8888, PhotoAltitude: 2, PhotoIso: 5,
+			PhotoFavorite: false, PhotoPrivate: false, PhotoType: "image", PhotoReview: false, PhotoLat: 9.9999, PhotoLng: 8.8888, PhotoAltitude: 2, PhotoIso: 5,
 			PhotoFocalLength: 10, PhotoFNumber: 3.3, PhotoExposure: "exposure", CameraID: uint(3), CameraSrc: "exif", LensID: uint(6), LocationID: "1234", LocationSrc: "geo",
 			PlaceID: "765", PhotoCountry: "de"}
 
@@ -28,7 +28,7 @@ func TestNewPhoto(t *testing.T) {
 		assert.Equal(t, "manual", r.TitleSrc)
 		assert.Equal(t, false, r.PhotoFavorite)
 		assert.Equal(t, false, r.PhotoPrivate)
-		assert.Equal(t, true, r.PhotoVideo)
+		assert.Equal(t, "image", r.PhotoType)
 		assert.Equal(t, false, r.PhotoReview)
 		assert.Equal(t, float32(9.9999), r.PhotoLat)
 		assert.Equal(t, float32(8.8888), r.PhotoLng)

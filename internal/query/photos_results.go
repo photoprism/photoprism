@@ -33,7 +33,6 @@ type PhotosResult struct {
 	PhotoCountry     string
 	PhotoFavorite    bool
 	PhotoPrivate     bool
-	PhotoVideo       bool
 	PhotoLat         float32
 	PhotoLng         float32
 	PhotoAltitude    int

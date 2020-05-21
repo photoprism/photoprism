@@ -178,7 +178,7 @@
                     return false;
                 }
 
-                if (showMerged && this.results[index].PhotoVideo) {
+                if (showMerged && (this.results[index].PhotoType === 'video' || this.results[index].PhotoType === 'live')) {
                     if(this.results[index].isPlayable()) {
                         this.$modal.show('video', {video: this.results[index], album: null});
                     } else {

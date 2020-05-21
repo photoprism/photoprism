@@ -38,7 +38,7 @@
 
                 let main = this.video.mainFile();
                 let file = this.video.videoFile();
-                let uri = this.video.videoUri();
+                let uri = this.video.videoUrl();
 
                 if (!uri) {
                     this.$notify.error("no video selected");

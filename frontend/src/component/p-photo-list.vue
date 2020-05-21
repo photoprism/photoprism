@@ -7,12 +7,12 @@
             disable-initial-sort
             item-key="ID"
             v-model="selected"
-            :no-data-text="this.$gettext('No photos matched your search')"
+            :no-data-text="notFoundMessage"
     >
         <template slot="items" slot-scope="props">
             <td style="user-select: none;">
                 <v-img class="accent lighten-2" style="cursor: pointer" aspect-ratio="1"
-                       :src="props.item.getThumbnailUrl('tile_50')"
+                       :src="props.item.thumbnailUrl('tile_50')"
                        @mousedown="onMouseDown($event, props.index)"
                        @contextmenu="onContextMenu($event, props.index)"
                        @click.stop.prevent="onClick($event, props.index)"
@@ -32,7 +32,7 @@
                            flat icon large absolute class="p-photo-select">
                         <v-icon color="white" class="t-select t-on">check_circle</v-icon>
                     </v-btn>
-                    <v-btn v-else-if="!selection.length && props.item.PhotoVideo && props.item.isPlayable()" :ripple="false"
+                    <v-btn v-else-if="!selection.length && props.item.PhotoType === 'video' && props.item.isPlayable()" :ripple="false"
                            flat icon large absolute class="p-photo-play opacity-75"
                            @click.stop.prevent="openPhoto(props.index, true)">
                         <v-icon color="white" class="action-play">play_arrow</v-icon>
@@ -88,7 +88,14 @@
             album: Object,
         },
         data() {
+            let m = this.$gettext('Try using other terms and search options such as category, country and camera.');
+
+            if(this.$config.feature("review")) {
+                m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
+            }
+
             return {
+                notFoundMessage: m,
                 'selected': [],
                 'listColumns': [
                     {text: '', value: '', align: 'center', sortable: false, class: 'p-col-select'},
@@ -144,7 +151,7 @@
                 } else if(this.photos[index]) {
                     let photo = this.photos[index];
 
-                    if(photo.PhotoVideo && photo.isPlayable()) {
+                    if(photo.PhotoType === 'video' && photo.isPlayable()) {
                         this.openPhoto(index, true);
                     } else {
                         this.openPhoto(index, false);

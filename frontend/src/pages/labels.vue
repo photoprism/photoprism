@@ -69,7 +69,7 @@
                                     :class="selection.includes(label.LabelUUID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
                                     :to="{name: 'photos', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.LabelSlug)}}">
                                 <v-img
-                                        :src="label.getThumbnailUrl('tile_500')"
+                                        :src="label.thumbnailUrl('tile_500')"
                                         @mousedown="onMouseDown($event, index)"
                                         @click="onClick($event, index)"
                                         aspect-ratio="1"

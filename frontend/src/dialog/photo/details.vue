@@ -12,7 +12,7 @@
                         <v-card tile
                                 class="ma-1 elevation-0"
                                 :title="model.PhotoTitle">
-                            <v-img :src="model.getThumbnailUrl('tile_500')"
+                            <v-img :src="model.thumbnailUrl('tile_500')"
                                    aspect-ratio="1"
                                    class="accent lighten-2 elevation-0"
                                    style="cursor: pointer"

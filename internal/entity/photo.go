@@ -32,7 +32,6 @@ type Photo struct {
 	PhotoName        string       `gorm:"type:varbinary(255);" yaml:"-"`
 	PhotoFavorite    bool         `json:"PhotoFavorite" yaml:"Favorite,omitempty"`
 	PhotoPrivate     bool         `json:"PhotoPrivate" yaml:"Private,omitempty"`
-	PhotoVideo       bool         `json:"PhotoVideo" yaml:"-"`
 	TimeZone         string       `gorm:"type:varbinary(64);" json:"TimeZone" yaml:"-"`
 	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"PhotoLat" yaml:"Lat,omitempty"`
 	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"PhotoLng" yaml:"Lng,omitempty"`

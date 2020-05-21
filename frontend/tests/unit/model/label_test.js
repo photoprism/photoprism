@@ -36,21 +36,21 @@ describe("model/label", () => {
     it("should get thumbnail url",  () => {
         const values = {ID: 5, LabelUUID: "ABC123", LabelName: "Black Cat", LabelSlug: "black-cat"};
         const label = new Label(values);
-        const result = label.getThumbnailUrl("xyz");
+        const result = label.thumbnailUrl("xyz");
         assert.equal(result, "/api/v1/labels/ABC123/thumbnail/xyz");
     });
 
     it("should get thumbnail src set",  () => {
         const values = {ID: 5, LabelUUID: "ABC123", LabelName: "Black Cat", LabelSlug: "black-cat"};
         const label = new Label(values);
-        const result = label.getThumbnailSrcset("");
+        const result = label.thumbnailSrcset("");
         assert.equal(result, "/api/v1/labels/ABC123/thumbnail/fit_720 720w, /api/v1/labels/ABC123/thumbnail/fit_1280 1280w, /api/v1/labels/ABC123/thumbnail/fit_1920 1920w, /api/v1/labels/ABC123/thumbnail/fit_2560 2560w, /api/v1/labels/ABC123/thumbnail/fit_3840 3840w");
     });
 
     it("should get thumbnail sizes",  () => {
         const values = {ID: 5, LabelUUID: "ABC123", LabelName: "Black Cat", LabelSlug: "black-cat"};
         const label = new Label(values);
-        const result = label.getThumbnailSizes();
+        const result = label.thumbnailSizes();
         assert.equal(result, "(min-width: 2560px) 3840px, (min-width: 1920px) 2560px, (min-width: 1280px) 1920px, (min-width: 720px) 1280px, 720px");
     });
 

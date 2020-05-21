@@ -37,7 +37,8 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		Joins("JOIN files ON photos.id = files.photo_id AND files.file_missing = 0 AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON photos.camera_id = cameras.id").
 		Joins("JOIN lenses ON photos.lens_id = lenses.id").
-		Joins("JOIN places ON photos.place_id = places.id")
+		Joins("JOIN places ON photos.place_id = places.id").
+		Where("files.file_type = 'jpg' OR files.file_video = 1")
 
 	// Shortcut for known photo ids.
 	if f.ID != "" {
@@ -53,15 +54,6 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		}
 
 		return results, len(results), nil
-	}
-
-	// Filter by media type.
-	if f.Video {
-		s = s.Where("(files.file_type = 'jpg' OR files.file_video = 1) AND photos.photo_video = 1")
-	} else if f.Photo {
-		s = s.Where("files.file_type = 'jpg' AND photos.photo_video = 0")
-	} else {
-		s = s.Where("(files.file_type = 'jpg' OR files.file_video = 1)")
 	}
 
 	// Filter by label, label category and keywords.
@@ -166,16 +158,16 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		s = s.Where("photos.lens_id = ?", f.Lens)
 	}
 
-	if f.Year > 0 || f.Year == entity.YearUnknown {
+	if (f.Year > 0 && f.Year <= txt.YearMax) || f.Year == entity.YearUnknown {
 		s = s.Where("photos.photo_year = ?", f.Year)
 	}
 
-	if f.Month > 0 || f.Month == entity.MonthUnknown {
+	if (f.Month >= txt.MonthMin && f.Month <= txt.MonthMax) || f.Month == entity.MonthUnknown {
 		s = s.Where("photos.photo_month = ?", f.Month)
 	}
 
 	if f.Color != "" {
-		s = s.Where("files.file_main_color = ?", strings.ToLower(f.Color))
+		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), ","))
 	}
 
 	if f.Favorite {
@@ -183,11 +175,18 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 	}
 
 	if f.Country != "" {
-		s = s.Where("photos.photo_country = ?", f.Country)
+		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), ","))
 	}
 
+	// Filter by media type.
 	if f.Type != "" {
-		s = s.Where("photos.photo_type = ?", strings.ToLower(f.Type))
+		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), ","))
+	}
+
+	if f.Video {
+		s = s.Where("photos.photo_type = 'video'")
+	} else if f.Photo {
+		s = s.Where("photos.photo_type IN ('image','raw','live')")
 	}
 
 	if f.Path != "" {
@@ -199,6 +198,8 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
+		} else if strings.Contains(p, ",") {
+			s = s.Where("photos.photo_path IN (?)", strings.Split(p, ","))
 		} else {
 			s = s.Where("photos.photo_path LIKE ?", strings.ReplaceAll(p, "*", "%"))
 		}
@@ -213,7 +214,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 	}
 
 	if f.Hash != "" {
-		s = s.Where("files.file_hash = ?", f.Hash)
+		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), ","))
 	}
 
 	if f.Duplicate {

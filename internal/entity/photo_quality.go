@@ -59,7 +59,7 @@ func (m *Photo) QualityScore() (score int) {
 		score++
 	}
 
-	if score < 3 && (m.PhotoVideo || m.EditedAt != nil) {
+	if score < 3 && (m.PhotoType != TypeImage || m.EditedAt != nil) {
 		score = 3
 	}
 

@@ -35,7 +35,9 @@
 }
 
 #photoprism .p-photo-mosaic .p-photo-merged,
-#photoprism .p-photo-cards .p-photo-merged {
+#photoprism .p-photo-cards .p-photo-merged,
+#photoprism .p-photo-mosaic .p-photo-live,
+#photoprism .p-photo-cards .p-photo-live {
     top: 4px;
     left: 4px;
 }
@@ -86,4 +88,11 @@
 
 #photoprism .p-photo-desc button {
     text-align: left;
+}
+
+#photoprism .p-photo video {
+    width: 100% !important;
+    height: auto !important;
+    position: absolute;
+    overflow: hidden;
 }

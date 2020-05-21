@@ -64,7 +64,7 @@ describe("model/photo", () => {
     it("should get photo thumbnail url",  () => {
         const values = {ID: 5, PhotoTitle: "Crazy Cat", FileHash: 345982};
         const photo = new Photo(values);
-        const result = photo.getThumbnailUrl("tile500");
+        const result = photo.thumbnailUrl("tile500");
         assert.equal(result, "/api/v1/thumbnails/345982/tile500");
     });
 
@@ -78,7 +78,7 @@ describe("model/photo", () => {
     it("should get photo thumbnail src set",  () => {
         const values = {ID: 5, PhotoTitle: "Crazy Cat", FileHash: 345982};
         const photo = new Photo(values);
-        const result = photo.getThumbnailSrcset();
+        const result = photo.thumbnailSrcset();
         assert.equal(result, "/api/v1/thumbnails/345982/fit_720 720w, /api/v1/thumbnails/345982/fit_1280 1280w, /api/v1/thumbnails/345982/fit_1920 1920w, /api/v1/thumbnails/345982/fit_2560 2560w, /api/v1/thumbnails/345982/fit_3840 3840w");
     });
 
@@ -109,7 +109,7 @@ describe("model/photo", () => {
     it("should get thumbnail sizes",  () => {
         const values = {ID: 5, PhotoTitle: "Crazy Cat", FileWidth: 500, FileHeight: 200};
         const photo = new Photo(values);
-        const result = photo.getThumbnailSizes();
+        const result = photo.thumbnailSizes();
         assert.equal(result, "(min-width: 2560px) 3840px, (min-width: 1920px) 2560px, (min-width: 1280px) 1920px, (min-width: 720px) 1280px, 720px");
     });
 
