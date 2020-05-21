@@ -18,6 +18,7 @@ type Details struct {
 
 // Photo represents a photo edit form.
 type Photo struct {
+	PhotoType        string    `json:"PhotoType"`
 	TakenAt          time.Time `json:"TakenAt"`
 	TakenAtLocal     time.Time `json:"TakenAtLocal"`
 	TakenSrc         string    `json:"TakenSrc"`

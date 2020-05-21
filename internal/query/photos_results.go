@@ -15,6 +15,8 @@ import (
 type PhotosResult struct {
 	// Photo
 	ID               uint
+	PhotoUUID        string
+	PhotoType        string
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 	DeletedAt        time.Time
@@ -22,7 +24,6 @@ type PhotosResult struct {
 	TakenAtLocal     time.Time
 	TakenSrc         string
 	TimeZone         string
-	PhotoUUID        string
 	PhotoPath        string
 	PhotoName        string
 	PhotoTitle       string

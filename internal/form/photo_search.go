@@ -8,6 +8,9 @@ import (
 type PhotoSearch struct {
 	Query     string    `form:"q"`
 	ID        string    `form:"id"`
+	Type      string    `form:"type"`
+	Path      string    `form:"path"`
+	Name      string    `form:"name"`
 	Title     string    `form:"title"`
 	Hash      string    `form:"hash"`
 	Video     bool      `form:"video"`

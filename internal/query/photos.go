@@ -186,8 +186,30 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		s = s.Where("photos.photo_country = ?", f.Country)
 	}
 
+	if f.Type != "" {
+		s = s.Where("photos.photo_type = ?", strings.ToLower(f.Type))
+	}
+
+	if f.Path != "" {
+		p := f.Path
+
+		if strings.HasPrefix(p, "/") {
+			p = p[1:]
+		}
+
+		if strings.HasSuffix(p, "/") {
+			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
+		} else {
+			s = s.Where("photos.photo_path LIKE ?", strings.ReplaceAll(p, "*", "%"))
+		}
+	}
+
+	if f.Name != "" {
+		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(f.Name, "*", "%"))
+	}
+
 	if f.Title != "" {
-		s = s.Where("LOWER(photos.photo_title) LIKE ?", fmt.Sprintf("%%%s%%", strings.ToLower(f.Title)))
+		s = s.Where("LOWER(photos.photo_title) LIKE ?", strings.ReplaceAll(strings.ToLower(f.Title), "*", "%"))
 	}
 
 	if f.Hash != "" {

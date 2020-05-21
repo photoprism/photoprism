@@ -10,6 +10,7 @@ type GeoResult struct {
 	PhotoLat      float32   `json:"Lat"`
 	PhotoLng      float32   `json:"Lng"`
 	PhotoUUID     string    `json:"PhotoUUID"`
+	PhotoType     string    `json:"PhotoType"`
 	PhotoTitle    string    `json:"PhotoTitle"`
 	PhotoFavorite bool      `json:"PhotoFavorite"`
 	FileHash      string    `json:"FileHash"`

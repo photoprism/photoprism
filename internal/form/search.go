@@ -89,7 +89,7 @@ func ParseQueryString(f SearchForm) (result error) {
 		} else if char == '"' {
 			escaped = !escaped
 		} else if isKeyValue {
-			value = append(value, unicode.ToLower(char))
+			value = append(value, char)
 		} else {
 			key = append(key, unicode.ToLower(char))
 		}

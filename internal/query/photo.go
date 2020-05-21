@@ -74,6 +74,7 @@ func MissingPhotos(limit int, offset int) (entities []entity.Photo, err error) {
 		Joins("JOIN files a ON photos.id = a.photo_id ").
 		Joins("LEFT JOIN files b ON a.photo_id = b.photo_id AND a.id != b.id AND b.file_missing = 0").
 		Where("a.file_missing = 1 AND b.id IS NULL").
+		Where("photos.photo_type <> ?", entity.TypeText).
 		Group("photos.id").
 		Limit(limit).Offset(offset).Find(&entities).Error
 

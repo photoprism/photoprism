@@ -29,7 +29,7 @@ func TestParseQueryString(t *testing.T) {
 		}
 
 		assert.Equal(t, "cat", form.Label)
-		assert.Equal(t, "foobar baz", form.Query)
+		assert.Equal(t, "fooBar baz", form.Query)
 		assert.Equal(t, 23, form.Camera)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
 		assert.Equal(t, false, form.Favorite)

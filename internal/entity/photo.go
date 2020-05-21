@@ -19,6 +19,7 @@ import (
 type Photo struct {
 	ID               uint         `gorm:"primary_key" yaml:"-"`
 	PhotoUUID        string       `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;" yaml:"PhotoID"`
+	PhotoType        string       `gorm:"type:varbinary(8);default:'image';" json:"PhotoType" yaml:"Type"`
 	TakenAt          time.Time    `gorm:"type:datetime;index:idx_photos_taken_uuid;" json:"TakenAt" yaml:"Taken"`
 	TakenAtLocal     time.Time    `gorm:"type:datetime;" yaml:"-"`
 	TakenSrc         string       `gorm:"type:varbinary(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
