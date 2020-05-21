@@ -88,12 +88,12 @@
                             <template v-if="photo.isPlayable()">
                                 <v-btn v-if="photo.PhotoType === 'live'" :ripple="false"
                                        icon flat large absolute class="p-photo-live opacity-75"
-                                       @click.stop.prevent="openPhoto(index, true)">
+                                       @click.stop.prevent="openPhoto(index, true)" title="Live Photo">
                                     <v-icon color="white" class="action-play">adjust</v-icon>
                                 </v-btn>
                                 <v-btn v-else color="white" :ripple="false"
                                        outline large fab absolute class="p-photo-play opacity-75" :depressed="false"
-                                       @click.stop.prevent="openPhoto(index, true)">
+                                       @click.stop.prevent="openPhoto(index, true)" title="Play">
                                     <v-icon color="white" class="action-play">play_arrow</v-icon>
                                 </v-btn>
                             </template>
@@ -101,6 +101,11 @@
                                    icon flat large absolute class="p-photo-merged opacity-75"
                                    @click.stop.prevent="openPhoto(index, true)">
                                 <v-icon color="white" class="action-burst">burst_mode</v-icon>
+                            </v-btn>
+                            <v-btn v-else-if="photo.PhotoType === 'raw'" :ripple="false"
+                                   icon flat large absolute class="p-photo-merged opacity-75"
+                                   @click.stop.prevent="openPhoto(index, true)" title="RAW">
+                                <v-icon color="white" class="action-burst">photo_camera</v-icon>
                             </v-btn>
                         </v-img>
 
