@@ -16,7 +16,33 @@ func TestPhotoSearchForm(t *testing.T) {
 }
 
 func TestParseQueryString(t *testing.T) {
+	t.Run("path", func(t *testing.T) {
+		form := &PhotoSearch{Query: "path:123abc/,EFG"}
 
+		err := form.ParseQueryString()
+
+		log.Debugf("%+v\n", form)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "123abc/,EFG", form.Path)
+	})
+
+	t.Run("folder", func(t *testing.T) {
+		form := &PhotoSearch{Query: "folder:123abc/,EFG"}
+
+		err := form.ParseQueryString()
+
+		log.Debugf("%+v\n", form)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "123abc/,EFG", form.Path)
+	})
 	t.Run("valid query", func(t *testing.T) {
 		form := &PhotoSearch{Query: "label:cat query:\"fooBar baz\" before:2019-01-15 camera:23 favorite:false dist:25000 lat:33.45343166666667"}
 
@@ -25,7 +51,7 @@ func TestParseQueryString(t *testing.T) {
 		log.Debugf("%+v\n", form)
 
 		if err != nil {
-			t.Fatal("err should be nil")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, "cat", form.Label)
@@ -61,7 +87,7 @@ func TestParseQueryString(t *testing.T) {
 		log.Debugf("%+v\n", form)
 
 		if err != nil {
-			t.Fatal("err should be nil")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, "tübingen", form.Title)
@@ -72,7 +98,7 @@ func TestParseQueryString(t *testing.T) {
 		err := form.ParseQueryString()
 
 		if err == nil {
-			t.Fatal("err should NOT be nil")
+			t.Fatal(err)
 		}
 
 		log.Debugf("%+v\n", form)
@@ -85,7 +111,7 @@ func TestParseQueryString(t *testing.T) {
 		err := form.ParseQueryString()
 
 		if err != nil {
-			t.Fatal("err should NOT be nil")
+			t.Fatal(err)
 		}
 
 		assert.True(t, form.Favorite)
@@ -96,7 +122,7 @@ func TestParseQueryString(t *testing.T) {
 		err := form.ParseQueryString()
 
 		if err == nil {
-			t.Fatal("err should NOT be nil")
+			t.Fatal(err)
 		}
 
 		log.Debugf("%+v\n", form)
@@ -109,7 +135,7 @@ func TestParseQueryString(t *testing.T) {
 		err := form.ParseQueryString()
 
 		if err == nil {
-			t.Fatal("err should NOT be nil")
+			t.Fatal(err)
 		}
 
 		log.Debugf("%+v\n", form)
@@ -122,7 +148,7 @@ func TestParseQueryString(t *testing.T) {
 		err := form.ParseQueryString()
 
 		if err == nil {
-			t.Fatal("err should NOT be nil")
+			t.Fatal(err)
 		}
 
 		log.Debugf("%+v\n", form)
@@ -135,7 +161,7 @@ func TestParseQueryString(t *testing.T) {
 		err := form.ParseQueryString()
 
 		if err == nil {
-			t.Fatal("err should NOT be nil")
+			t.Fatal(err)
 		}
 
 		log.Debugf("%+v\n", form)

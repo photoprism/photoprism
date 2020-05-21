@@ -10,6 +10,7 @@ type PhotoSearch struct {
 	ID        string    `form:"id"`
 	Type      string    `form:"type"`
 	Path      string    `form:"path"`
+	Folder    string    `form:"folder"` // Alias for Path
 	Name      string    `form:"name"`
 	Title     string    `form:"title"`
 	Hash      string    `form:"hash"`
@@ -59,7 +60,13 @@ func (f *PhotoSearch) SetQuery(q string) {
 }
 
 func (f *PhotoSearch) ParseQueryString() error {
-	return ParseQueryString(f)
+	err := ParseQueryString(f)
+
+	if f.Path == "" && f.Folder != "" {
+		f.Path = f.Folder
+	}
+
+	return err
 }
 
 func NewPhotoSearch(query string) PhotoSearch {
