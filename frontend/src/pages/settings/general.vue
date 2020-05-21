@@ -298,7 +298,7 @@
                             A big <a href="https://docs.photoprism.org/en/latest/credits/" class="secondary-dark--text"
                                                             target="_blank">thank you</a>to everyone who made this possible!
                             <br>
-                            <a href="https://app.fossa.com/attribution/d068c7e2-586d-421a-86a4-f23104a408f9"
+                            <a href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE"
                                class="secondary-dark--text" target="_blank">
                                 3rd-party software packages</a>
                         </v-flex>
