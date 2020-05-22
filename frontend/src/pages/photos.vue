@@ -16,17 +16,20 @@
             <p-photo-mosaic v-if="settings.view === 'mosaic'"
                             :photos="results"
                             :selection="selection"
+                            :filter="filter"
                             :edit-photo="editPhoto"
                             :open-photo="openPhoto"></p-photo-mosaic>
             <p-photo-list v-else-if="settings.view === 'list'"
                           :photos="results"
                           :selection="selection"
+                          :filter="filter"
                           :open-photo="openPhoto"
                           :edit-photo="editPhoto"
                           :open-location="openLocation"></p-photo-list>
             <p-photo-cards v-else
                            :photos="results"
                            :selection="selection"
+                           :filter="filter"
                            :open-photo="openPhoto"
                            :edit-photo="editPhoto"
                            :open-location="openLocation"></p-photo-cards>

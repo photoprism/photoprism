@@ -24,6 +24,7 @@ export class Photo extends RestModel {
             TimeZone: "",
             PhotoPath: "",
             PhotoName: "",
+            FileName: "",
             PhotoTitle: "",
             TitleSrc: "",
             PhotoDescription: "",

@@ -122,6 +122,7 @@
             openPhoto: Function,
             editPhoto: Function,
             album: Object,
+            filter: Object,
         },
         data() {
             return {

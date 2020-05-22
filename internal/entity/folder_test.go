@@ -40,9 +40,15 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, "23 Birthday", folder.FolderTitle)
 	})
 
-	t.Run("name empty", func(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
 		folder := NewFolder(FolderRootOriginals, "", nil)
-		assert.Equal(t, "/", folder.Path)
+		assert.Equal(t, "", folder.Path)
+		assert.Equal(t, "Originals", folder.FolderTitle)
+	})
+
+	t.Run("root", func(t *testing.T) {
+		folder := NewFolder(FolderRootOriginals, RootPath, nil)
+		assert.Equal(t, "", folder.Path)
 		assert.Equal(t, "Originals", folder.FolderTitle)
 	})
 }

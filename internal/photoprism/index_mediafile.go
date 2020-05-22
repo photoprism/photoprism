@@ -309,17 +309,15 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetTakenAt(takenUtc, takenUtc, "", takenSrc)
 		}
 
-		if photo.NoTitle() {
-			if photo.HasLatLng() {
-				var locLabels classify.Labels
-				locKeywords, locLabels = photo.UpdateLocation(ind.conf.GeoCodingApi())
-				labels = append(labels, locLabels...)
-			} else {
-				log.Debugf("index: no coordinates in metadata for %s", txt.Quote(m.RelativeName(ind.originalsPath())))
+		if photo.HasLatLng() {
+			var locLabels classify.Labels
+			locKeywords, locLabels = photo.UpdateLocation(ind.conf.GeoCodingApi())
+			labels = append(labels, locLabels...)
+		} else {
+			log.Debugf("index: no coordinates in metadata for %s", txt.Quote(m.RelativeName(ind.originalsPath())))
 
-				photo.Place = &entity.UnknownPlace
-				photo.PlaceID = entity.UnknownPlace.ID
-			}
+			photo.Place = &entity.UnknownPlace
+			photo.PlaceID = entity.UnknownPlace.ID
 		}
 	}
 

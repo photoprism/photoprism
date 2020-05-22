@@ -18,6 +18,7 @@ const (
 	FolderRootUnknown   = ""
 	FolderRootOriginals = "originals"
 	FolderRootImport    = "import"
+	RootPath            = "/"
 )
 
 // Folder represents a file system directory.
@@ -55,8 +56,8 @@ func NewFolder(root, pathName string, modTime *time.Time) Folder {
 
 	pathName = strings.Trim(pathName, string(os.PathSeparator))
 
-	if pathName == "" {
-		pathName = "/"
+	if pathName == RootPath {
+		pathName = ""
 	}
 
 	result := Folder{
@@ -79,7 +80,7 @@ func (m *Folder) SetTitleFromPath() {
 	s := m.Path
 	s = strings.TrimSpace(s)
 
-	if s == "" || s == "/" {
+	if s == "" || s == RootPath {
 		s = m.Root
 	} else {
 		s = path.Base(s)
@@ -103,13 +104,23 @@ func (m *Folder) SetTitleFromPath() {
 	m.FolderTitle = txt.Clip(s, txt.ClipDefault)
 }
 
-// Saves the entity using form data and stores it in the database.
-func (m *Folder) Save(f form.Folder) error {
+// Saves the complete entity in the database.
+func (m *Folder) Create() error {
+	return Db().Create(m).Error
+}
+
+// Updates selected properties in the database.
+func (m *Folder) Updates(values interface{}) error {
+	return Db().Model(m).Updates(values).Error
+}
+
+// SetForm updates the entity properties based on form values.
+func (m *Folder) SetForm(f form.Folder) error {
 	if err := deepcopier.Copy(m).From(f); err != nil {
 		return err
 	}
 
-	return Db().Save(m).Error
+	return nil
 }
 
 // Returns a slice of folders in a given directory incl sub directories in recursive mode.

@@ -53,7 +53,11 @@
                 </button>
             </td>
             <td class="p-photo-desc hidden-xs-only">
-                <button v-if="props.item.LocationID && showLocation" @click.stop.prevent="openLocation(props.index)"
+                <button @click.exact="downloadFile(props.index)"
+                        title="Name" v-if="filter.order === 'name'">
+                    {{ props.item.FileName }}
+                </button>
+                <button v-else-if="props.item.LocationID && showLocation" @click.stop.prevent="openLocation(props.index)"
                         style="user-select: none;">
                     {{ props.item.getLocation() }}
                 </button>
@@ -86,6 +90,7 @@
             editPhoto: Function,
             openLocation: Function,
             album: Object,
+            filter: Object,
         },
         data() {
             let m = this.$gettext('Try using other terms and search options such as category, country and camera.');
@@ -93,6 +98,8 @@
             if(this.$config.feature("review")) {
                 m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
             }
+
+            let showName = this.filter.order === 'name'
 
             return {
                 notFoundMessage: m,
@@ -102,9 +109,10 @@
                     {text: this.$gettext('Title'), value: 'PhotoTitle'},
                     {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt'},
                     {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel'},
-                    {text: this.$gettext('Location'), class: 'hidden-xs-only', value: 'LocLabel'},
+                    {text: showName ? this.$gettext('Name') : this.$gettext('Location'), class: 'hidden-xs-only', value: showName ? 'FileName' : 'LocLabel'},
                     {text: '', value: '', sortable: false, align: 'center'},
                 ],
+                showName: showName,
                 showLocation: this.$config.settings().features.places,
                 hidePrivate: this.$config.settings().features.private,
                 mouseDown: {
@@ -128,6 +136,13 @@
             },
         },
         methods: {
+            downloadFile(index) {
+                const photo = this.photos[index];
+                const link = document.createElement('a')
+                link.href = "/api/v1/download/" + photo.FileHash;
+                link.download = photo.FileName;
+                link.click()
+            },
             onSelect(ev, index) {
                 if (ev.shiftKey) {
                     this.selectRange(index);

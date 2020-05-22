@@ -13,5 +13,10 @@
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#333333",
-  "background_color": "#333333"
+  "background_color": "#333333",
+  "permissions": [
+    "geolocation",
+    "downloads",
+    "storage"
+  ]
 }

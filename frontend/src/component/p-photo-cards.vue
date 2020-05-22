@@ -136,6 +136,14 @@
                                             {{ photo.getPhotoInfo() }}
                                         </button>
                                     </template>
+                                    <template v-if="filter.order === 'name' && $config.feature('download')">
+                                        <br/>
+                                        <button @click.exact="downloadFile(index)"
+                                                title="Name">
+                                            <v-icon size="14">save</v-icon>
+                                            {{ photo.FileName }}
+                                        </button>
+                                    </template>
                                     <template v-if="showLocation && photo.LocationID">
                                         <br/>
                                         <button @click.exact="openLocation(index)" title="Location">
@@ -162,6 +170,7 @@
             editPhoto: Function,
             openLocation: Function,
             album: Object,
+            filter: Object,
         },
         data() {
             return {
@@ -175,6 +184,13 @@
             };
         },
         methods: {
+            downloadFile(index) {
+                const photo = this.photos[index];
+                const link = document.createElement('a')
+                link.href = "/api/v1/download/" + photo.FileHash;
+                link.download = photo.FileName;
+                link.click()
+            },
             onSelect(ev, index) {
                 if (ev.shiftKey) {
                     this.selectRange(index);

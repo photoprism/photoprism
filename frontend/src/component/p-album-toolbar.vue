@@ -154,6 +154,7 @@
                         {value: 'imported', text: this.$gettext('Recently added')},
                         {value: 'newest', text: this.$gettext('Newest first')},
                         {value: 'oldest', text: this.$gettext('Oldest first')},
+                        {value: 'name', text: this.$gettext('Sort by file name')},
                         {value: 'similar', text: this.$gettext('Group by similarity')},
                         {value: 'relevance', text: this.$gettext('Most relevant')},
                     ],

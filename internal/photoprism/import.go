@@ -116,6 +116,14 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 			}
 
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
+				if isDir && result != filepath.SkipDir {
+					folder := entity.NewFolder(entity.FolderRootImport, fs.RelativeName(fileName, imp.conf.ImportPath()), nil)
+
+					if err := folder.Create(); err == nil {
+						log.Infof("import: added folder /%s", folder.Path)
+					}
+				}
+
 				return result
 			}
 

@@ -7,6 +7,10 @@ import (
 
 // RelativeName returns the file name relative to directory.
 func RelativeName(fileName, directory string) string {
+	if fileName == directory {
+		return ""
+	}
+
 	if index := strings.Index(fileName, directory); index == 0 {
 		if index := strings.LastIndex(directory, string(os.PathSeparator)); index == len(directory)-1 {
 			pos := len(directory)
