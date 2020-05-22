@@ -12,6 +12,7 @@ import (
 func TestGetFoldersOriginals(t *testing.T) {
 	t.Run("flat", func(t *testing.T) {
 		app, router, conf := NewApiTest()
+		_ = conf.CreateDirectories()
 		expected, err := fs.Dirs(conf.OriginalsPath(), false)
 
 		if err != nil {
@@ -53,6 +54,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 	})
 	t.Run("recursive", func(t *testing.T) {
 		app, router, conf := NewApiTest()
+		_ = conf.CreateDirectories()
 		expected, err := fs.Dirs(conf.OriginalsPath(), true)
 
 		if err != nil {
@@ -90,6 +92,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 func TestGetFoldersImport(t *testing.T) {
 	t.Run("flat", func(t *testing.T) {
 		app, router, conf := NewApiTest()
+		_ = conf.CreateDirectories()
 		expected, err := fs.Dirs(conf.ImportPath(), false)
 
 		if err != nil {
@@ -131,6 +134,7 @@ func TestGetFoldersImport(t *testing.T) {
 	})
 	t.Run("recursive", func(t *testing.T) {
 		app, router, conf := NewApiTest()
+		_ = conf.CreateDirectories()
 		expected, err := fs.Dirs(conf.ImportPath(), true)
 
 		if err != nil {
