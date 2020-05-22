@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -175,7 +176,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		gc := conf.Cache()
+		gc := service.Cache()
 		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", labelUUID, typeName)
 
 		if cacheData, ok := gc.Get(cacheKey); ok {

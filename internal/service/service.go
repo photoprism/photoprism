@@ -1,6 +1,7 @@
 package service
 
 import (
+	gc "github.com/patrickmn/go-cache"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/nsfw"
@@ -12,6 +13,7 @@ import (
 var conf *config.Config
 
 var services struct {
+	Cache    *gc.Cache
 	Classify *classify.TensorFlow
 	Convert  *photoprism.Convert
 	Import   *photoprism.Import
