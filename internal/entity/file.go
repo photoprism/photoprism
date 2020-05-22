@@ -75,7 +75,7 @@ func FirstFileByHash(fileHash string) (File, error) {
 	return file, q.Error
 }
 
-// BeforeCreate computes a random UUID when a new file is created in database
+// BeforeCreate creates a random UUID if needed before inserting a new row to the database.
 func (m *File) BeforeCreate(scope *gorm.Scope) error {
 	if rnd.IsPPID(m.FileUUID, 'f') {
 		return nil
@@ -141,7 +141,7 @@ func (m *File) AllFilesMissing() bool {
 	return count == 0
 }
 
-// Save stored the file in the database using the default connection.
+// Saves the file in the database.
 func (m *File) Save() error {
 	if m.PhotoID == 0 {
 		return fmt.Errorf("file: photo id is empty (%s)", m.FileUUID)

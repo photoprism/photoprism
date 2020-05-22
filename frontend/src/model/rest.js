@@ -2,7 +2,7 @@ import Api from "common/api";
 import Form from "common/form";
 import Model from "./model";
 
-class Rest extends Model {
+export class Rest extends Model {
     getId() {
         return this.ID;
     }

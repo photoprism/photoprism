@@ -1,7 +1,7 @@
 import Api from "common/api";
 import Model from "./model";
 
-class Settings extends Model {
+export class Settings extends Model {
     changed(key) {
         return (this[key] !== this.__originalValues[key]);
     }

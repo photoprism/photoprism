@@ -31,6 +31,7 @@ type Types map[string]interface{}
 var Entities = Types{
 	"errors":          &Error{},
 	"accounts":        &Account{},
+	"folders":         &Folder{},
 	"files":           &File{},
 	"files_share":     &FileShare{},
 	"files_sync":      &FileSync{},

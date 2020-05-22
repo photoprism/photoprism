@@ -2,7 +2,7 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
 
-class Label extends RestModel {
+export class Label extends RestModel {
     getDefaults() {
         return {
             ID: 0,

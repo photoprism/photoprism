@@ -64,7 +64,7 @@ func CreateAccount(form form.Account) (model *Account, err error) {
 	return model, err
 }
 
-// Save updates the entity using form data and stores it in the database.
+// Saves the entity using form data and stores it in the database.
 func (m *Account) Save(form form.Account) error {
 	db := Db()
 

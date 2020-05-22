@@ -30,7 +30,7 @@ type Label struct {
 	New              bool       `gorm:"-"`
 }
 
-// BeforeCreate computes a random UUID when a new label is created in database
+// BeforeCreate creates a random UUID if needed before inserting a new row to the database.
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
 	if rnd.IsPPID(m.LabelUUID, 'l') {
 		return nil

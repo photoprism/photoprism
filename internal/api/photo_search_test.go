@@ -14,8 +14,8 @@ func TestGetPhotos(t *testing.T) {
 
 		GetPhotos(router, ctx)
 		r := PerformRequest(app, "GET", "/api/v1/photos?count=10")
-		len := gjson.Get(r.Body.String(), "#")
-		assert.LessOrEqual(t, int64(2), len.Int())
+		count := gjson.Get(r.Body.String(), "#")
+		assert.LessOrEqual(t, int64(2), count.Int())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 

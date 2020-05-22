@@ -12,8 +12,8 @@ type PhotoAlbum struct {
 	Hidden    bool
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Photo     *Photo
-	Album     *Album
+	Photo     *Photo `gorm:"PRELOAD:false"`
+	Album     *Album `gorm:"PRELOAD:true"`
 }
 
 // TableName returns PhotoAlbum table identifier "photos_albums"

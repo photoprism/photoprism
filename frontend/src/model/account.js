@@ -1,7 +1,7 @@
 import RestModel from "model/rest";
 import Api from "../common/api";
 
-class Account extends RestModel {
+export class Account extends RestModel {
     getDefaults() {
         return {
             ID: 0,

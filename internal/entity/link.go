@@ -20,7 +20,7 @@ type Link struct {
 	DeletedAt    *time.Time `deepcopier:"skip" sql:"index"`
 }
 
-// BeforeCreate creates a new URL token when a new link is created.
+// BeforeCreate creates a random UUID if needed before inserting a new row to the database.
 func (m *Link) BeforeCreate(scope *gorm.Scope) error {
 	if err := scope.SetColumn("LinkToken", rnd.Token(10)); err != nil {
 		return err

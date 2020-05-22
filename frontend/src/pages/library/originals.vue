@@ -75,7 +75,8 @@
                         outline
                         v-if="config.count.hidden > 0"
                 >
-                    The index currently contains {{ config.count.hidden }} hidden files. Their format may not be supported,
+                    The index currently contains {{ config.count.hidden }} hidden files. Their format may not be
+                    supported,
                     they haven't been converted to JPEG yet or there are duplicates.
                 </v-alert>
             </v-container>
@@ -90,11 +91,12 @@
     import Event from "pubsub-js";
     import Settings from "model/settings";
     import Util from "common/util";
+    import { Folder, FolderRootOriginals } from "model/folder";
 
     export default {
         name: 'p-tab-index',
         data() {
-            const root = {"name": "All originals", "path": "/"}
+            const root = {"path": "/", "name": this.$gettext("All originals")}
 
             return {
                 settings: new Settings(this.$config.settings()),
@@ -203,22 +205,23 @@
         created() {
             this.subscriptionId = Event.subscribe('index', this.handleEvent);
             this.loading = true;
-            Api.get('index').then((r) => {
-                const subDirs = r.data.dirs ? r.data.dirs : [];
+
+            Folder.findAll(FolderRootOriginals).then((r) => {
+                const folders = r.models ? r.models : [];
                 const currentPath = this.settings.index.path;
                 let found = currentPath === this.root.path;
 
                 this.dirs = [this.root];
 
-                for (let i = 0; i < subDirs.length; i++) {
-                    if(currentPath === subDirs[i]) {
+                for (let i = 0; i < folders.length; i++) {
+                    if (currentPath === folders[i].Path) {
                         found = true;
                     }
 
-                    this.dirs.push({name: Util.truncate(subDirs[i], 100, "..."), path: subDirs[i]});
+                    this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "...")});
                 }
 
-                if(!found) {
+                if (!found) {
                     this.settings.index.path = this.root.path;
                 }
             }).finally(() => this.loading = false);

@@ -18,11 +18,11 @@ import (
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
 	ID               uint         `gorm:"primary_key" yaml:"-"`
-	PhotoUUID        string       `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;" yaml:"PhotoID"`
-	PhotoType        string       `gorm:"type:varbinary(8);default:'image';" json:"PhotoType" yaml:"Type"`
 	TakenAt          time.Time    `gorm:"type:datetime;index:idx_photos_taken_uuid;" json:"TakenAt" yaml:"Taken"`
 	TakenAtLocal     time.Time    `gorm:"type:datetime;" yaml:"-"`
 	TakenSrc         string       `gorm:"type:varbinary(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
+	PhotoUUID        string       `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;" yaml:"PPID"`
+	PhotoType        string       `gorm:"type:varbinary(8);default:'image';" json:"PhotoType" yaml:"Type"`
 	PhotoTitle       string       `gorm:"type:varchar(255);" json:"PhotoTitle" yaml:"Title"`
 	TitleSrc         string       `gorm:"type:varbinary(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
 	PhotoDescription string       `gorm:"type:text;" json:"PhotoDescription" yaml:"Description,omitempty"`
@@ -67,7 +67,7 @@ type Photo struct {
 	DeletedAt        *time.Time   `sql:"index" yaml:"Deleted,omitempty"`
 }
 
-// SavePhotoForm updates a model using form data and persists it in the database.
+// SavePhotoForm saves a model in the database using form data.
 func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 	db := Db()
 	locChanged := model.PhotoLat != form.PhotoLat || model.PhotoLng != form.PhotoLng
@@ -178,7 +178,7 @@ func (m *Photo) ClassifyLabels() classify.Labels {
 	return result
 }
 
-// BeforeCreate computes a unique UUID, and set a default takenAt before indexing a new photo
+// BeforeCreate creates a random UUID if needed before inserting a new row to the database.
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
 		now := time.Now()

@@ -1,9 +1,10 @@
 package api
 
 import (
-	"github.com/tidwall/gjson"
 	"net/http"
 	"testing"
+
+	"github.com/tidwall/gjson"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -13,8 +14,8 @@ func TestGetAlbums(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetAlbums(router, conf)
 		r := PerformRequest(app, "GET", "/api/v1/albums?count=10")
-		len := gjson.Get(r.Body.String(), "#")
-		assert.LessOrEqual(t, int64(3), len.Int())
+		count := gjson.Get(r.Body.String(), "#")
+		assert.LessOrEqual(t, int64(3), count.Int())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("invalid request", func(t *testing.T) {

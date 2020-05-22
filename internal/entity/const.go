@@ -19,15 +19,17 @@ const (
 	SortOrderOldest    = "oldest"
 	SortOrderImported  = "imported"
 	SortOrderSimilar   = "similar"
+	SortOrderName      = "name"
 
 	// unknown values
 	YearUnknown  = -1
 	MonthUnknown = -1
 	TitleUnknown = "Unknown"
 
-	TypeImage = "image"
-	TypeLive  = "live"
-	TypeVideo = "video"
-	TypeRaw   = "raw"
-	TypeText  = "text"
+	TypeDefault = ""
+	TypeImage   = "image"
+	TypeLive    = "live"
+	TypeVideo   = "video"
+	TypeRaw     = "raw"
+	TypeText    = "text"
 )

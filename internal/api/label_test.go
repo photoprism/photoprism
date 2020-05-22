@@ -13,8 +13,8 @@ func TestGetLabels(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		GetLabels(router, ctx)
 		r := PerformRequest(app, "GET", "/api/v1/labels?count=15")
-		len := gjson.Get(r.Body.String(), "#")
-		assert.LessOrEqual(t, int64(4), len.Int())
+		count := gjson.Get(r.Body.String(), "#")
+		assert.LessOrEqual(t, int64(4), count.Int())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("invalid request", func(t *testing.T) {

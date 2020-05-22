@@ -87,6 +87,12 @@ func TestTime(t *testing.T) {
 
 	t.Run("2019/05/21", func(t *testing.T) {
 		result := Time("2019/05/21")
+		assert.False(t, result.IsZero())
+		assert.Equal(t, "2019-05-21 00:00:00 +0000 UTC", result.String())
+	})
+
+	t.Run("2019/05/2145", func(t *testing.T) {
+		result := Time("2019/05/2145")
 		assert.True(t, result.IsZero())
 		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
 	})
@@ -150,7 +156,6 @@ func TestTime(t *testing.T) {
 		assert.True(t, result.IsZero())
 		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
 	})
-
 
 	t.Run("545452019/1/3/foo.jpg", func(t *testing.T) {
 		result := Time("/2019/1/3/foo.jpg")

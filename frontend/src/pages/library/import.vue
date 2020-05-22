@@ -98,11 +98,12 @@
     import Event from "pubsub-js";
     import Settings from "model/settings";
     import Util from "../../common/util";
+    import {Folder, FolderRootImport} from "model/folder";
 
     export default {
         name: 'p-tab-import',
         data() {
-            const root = {"name": "All files in import folder", "path": "/"}
+            const root = {"path": "/", "name": this.$gettext("All files in import folder")}
 
             return {
                 settings: new Settings(this.$config.settings()),
@@ -195,22 +196,23 @@
         created() {
             this.subscriptionId = Event.subscribe('import', this.handleEvent);
             this.loading = true;
-            Api.get('import').then((r) => {
-                const subDirs = r.data.dirs ? r.data.dirs : [];
+
+            Folder.findAll(FolderRootImport).then((r) => {
+                const folders = r.models ? r.models : [];
                 const currentPath = this.settings.import.path;
                 let found = currentPath === this.root.path;
 
                 this.dirs = [this.root];
 
-                for (let i = 0; i < subDirs.length; i++) {
-                    if(currentPath === subDirs[i]) {
+                for (let i = 0; i < folders.length; i++) {
+                    if (currentPath === folders[i].Path) {
                         found = true;
                     }
 
-                    this.dirs.push({name: Util.truncate(subDirs[i], 100, "..."), path: subDirs[i]});
+                    this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "...")});
                 }
 
-                if(!found) {
+                if (!found) {
                     this.settings.import.path = this.root.path;
                 }
             }).finally(() => this.loading = false);

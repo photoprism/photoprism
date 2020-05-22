@@ -1,4 +1,4 @@
-class Model {
+export class Model {
     constructor(values) {
         this.__originalValues = {};
 

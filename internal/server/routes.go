@@ -54,11 +54,12 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DislikeLabel(v1, conf)
 		api.LabelThumbnail(v1, conf)
 
+		api.GetFoldersOriginals(v1, conf)
+		api.GetFoldersImport(v1, conf)
+
 		api.Upload(v1, conf)
-		api.GetImportOptions(v1, conf)
 		api.StartImport(v1, conf)
 		api.CancelImport(v1, conf)
-		api.GetIndexingOptions(v1, conf)
 		api.StartIndexing(v1, conf)
 		api.CancelIndexing(v1, conf)
 

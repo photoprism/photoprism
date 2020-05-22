@@ -2,7 +2,7 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
 
-class Album extends RestModel {
+export class Album extends RestModel {
     getDefaults() {
         return {
             ID: 0,

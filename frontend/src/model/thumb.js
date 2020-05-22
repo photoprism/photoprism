@@ -3,7 +3,7 @@ import Api from "../common/api";
 
 const thumbs = window.clientConfig.thumbnails;
 
-class Thumb extends Model {
+export class Thumb extends Model {
     getDefaults() {
         return {
             uuid: "",

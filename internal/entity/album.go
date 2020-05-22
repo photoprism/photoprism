@@ -30,7 +30,7 @@ type Album struct {
 	DeletedAt        *time.Time `sql:"index"`
 }
 
-// BeforeCreate computes a random UUID when a new album is created in database
+// BeforeCreate creates a random UUID if needed before inserting a new row to the database.
 func (m *Album) BeforeCreate(scope *gorm.Scope) error {
 	if rnd.IsPPID(m.AlbumUUID, 'a') {
 		return nil
@@ -72,7 +72,7 @@ func (m *Album) SetName(name string) {
 	}
 }
 
-// Save updates the entity using form data and stores it in the database.
+// Saves the entity using form data and stores it in the database.
 func (m *Album) Save(f form.Album) error {
 	if err := deepcopier.Copy(m).From(f); err != nil {
 		return err

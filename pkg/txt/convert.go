@@ -3,13 +3,14 @@ package txt
 import (
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
-var DateRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}\\D")
+var DateRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2,}")
 var DateCanonicalRegexp = regexp.MustCompile("\\D\\d{8}_\\d{6}_\\w+\\.")
-var DatePathRegexp = regexp.MustCompile("\\D\\d{4}\\/\\d{1,2}\\/?\\d{0,2}\\D")
-var DateTimeRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}.{1,4}\\d{2}\\D\\d{2}\\D\\d{2}\\D")
+var DatePathRegexp = regexp.MustCompile("\\D\\d{4}\\/\\d{1,2}\\/?\\d*")
+var DateTimeRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}.{1,4}\\d{2}\\D\\d{2}\\D\\d{2,}")
 var DateIntRegexp = regexp.MustCompile("\\d{1,4}")
 
 var (
@@ -37,6 +38,14 @@ func Time(s string) (result time.Time) {
 			result = time.Time{}
 		}
 	}()
+
+	if len(s) < 6 {
+		return time.Time{}
+	}
+
+	if !strings.HasPrefix(s, "/"){
+		s = "/" + s
+	}
 
 	b := []byte(s)
 
@@ -153,4 +162,19 @@ func Int(s string) int {
 	}
 
 	return int(result)
+}
+
+// IsUInt returns true if a string only contains an unsigned integer.
+func IsUInt(s string) bool {
+	if s == "" {
+		return false
+	}
+
+	for _, r := range s {
+		if r < 48 || r > 57 {
+			return false
+		}
+	}
+
+	return true
 }

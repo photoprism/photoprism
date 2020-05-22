@@ -1,6 +1,6 @@
 import RestModel from "model/rest";
 
-class Link extends RestModel {
+export class Link extends RestModel {
     getDefaults() {
         return {
             LinkToken: "",

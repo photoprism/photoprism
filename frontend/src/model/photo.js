@@ -3,14 +3,14 @@ import Api from "common/api";
 import {DateTime} from "luxon";
 import Util from "common/util";
 
-const SrcManual = "manual";
-const CodecAvc1 = "avc1";
-const TypeMP4 = "mp4";
-const TypeJpeg = "jpg";
-const YearUnknown = -1;
-const MonthUnknown = -1;
+export const SrcManual = "manual";
+export const CodecAvc1 = "avc1";
+export const TypeMP4 = "mp4";
+export const TypeJpeg = "jpg";
+export const YearUnknown = -1;
+export const MonthUnknown = -1;
 
-class Photo extends RestModel {
+export class Photo extends RestModel {
     getDefaults() {
         return {
             ID: 0,
