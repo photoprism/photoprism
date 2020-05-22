@@ -180,7 +180,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", labelUUID, typeName)
 
 		if cacheData, ok := gc.Get(cacheKey); ok {
-			log.Debugf("label: %s cache hit [%s]", cacheKey, time.Since(start))
+			log.Debugf("%s cache hit [%s]", cacheKey, time.Since(start))
 			c.Data(http.StatusOK, "image/jpeg", cacheData.([]byte))
 			return
 		}
@@ -238,7 +238,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		gc.Set(cacheKey, thumbData, time.Hour*4)
 
-		log.Debugf("label: %s cached [%s]", cacheKey, time.Since(start))
+		log.Debugf("%s cached [%s]", cacheKey, time.Since(start))
 
 		c.Data(http.StatusOK, "image/jpeg", thumbData)
 	})

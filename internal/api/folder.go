@@ -26,7 +26,7 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, root, pathName str
 		cacheKey := fmt.Sprintf("folders:%s:%t", pathName, recursive)
 
 		if cacheData, ok := gc.Get(cacheKey); ok {
-			log.Debugf("folders: %s cache hit [%s]", cacheKey, time.Since(start))
+			log.Debugf("%s cache hit [%s]", cacheKey, time.Since(start))
 			c.JSON(http.StatusOK, cacheData.([]entity.Folder))
 			return
 		}
@@ -38,7 +38,7 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, root, pathName str
 		} else {
 			gc.Set(cacheKey, folders, time.Minute*5)
 
-			log.Debugf("folders: %s cached [%s]", cacheKey, time.Since(start))
+			log.Debugf("%s cached [%s]", cacheKey, time.Since(start))
 		}
 
 		c.JSON(http.StatusOK, folders)

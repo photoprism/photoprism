@@ -434,7 +434,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		cacheKey := fmt.Sprintf("album-thumbnail:%s:%s", uuid, typeName)
 
 		if cacheData, ok := gc.Get(cacheKey); ok {
-			log.Debugf("album: %s cache hit [%s]", cacheKey, time.Since(start))
+			log.Debugf("%s cache hit [%s]", cacheKey, time.Since(start))
 			c.Data(http.StatusOK, "image/jpeg", cacheData.([]byte))
 			return
 		}
@@ -494,7 +494,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		gc.Set(cacheKey, thumbData, time.Hour)
 
-		log.Debugf("album: %s cached [%s]", cacheKey, time.Since(start))
+		log.Debugf("%s cached [%s]", cacheKey, time.Since(start))
 
 		c.Data(http.StatusOK, "image/jpeg", thumbData)
 	})
