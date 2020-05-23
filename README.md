@@ -124,11 +124,10 @@ and we'll find a solution.
 
 PhotoPrism™ is a trademark of Michael Mayer.
 You may use it as required to describe our software, run your own server, for educational purposes,
-but not for offering commercial goods or services to others without prior written permission.
+but not for offering goods, products, or services to others without prior written permission.
 
 In exchange, PhotoPrism is [GPL](https://en.wikipedia.org/wiki/GNU_General_Public_License) 
-licensed instead of [AGPL](https://en.wikipedia.org/wiki/Affero_General_Public_License)
-like [Nextcloud](https://nextcloud.com/) and many other great products.
+licensed instead of [AGPL](https://en.wikipedia.org/wiki/Affero_General_Public_License).
 This means, you're not legally obliged to publish the source code when modifying a private copy.
 Hopefully we can keep it like that :)
 
