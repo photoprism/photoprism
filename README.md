@@ -123,13 +123,13 @@ enjoy a bit of sarcasm from time to time. Please let us know when there is an is
 and we'll find a solution.
 
 PhotoPrism™ is a trademark of Michael Mayer.
-You may use it as required to describe our software but not for offering commercial goods or services
-without prior written permission.
+You may use it as required to describe our software, run your own server, for educational purposes,
+but not for offering commercial goods or services to others without prior written permission.
 
 In exchange, PhotoPrism is [GPL](https://en.wikipedia.org/wiki/GNU_General_Public_License) 
 licensed instead of [AGPL](https://en.wikipedia.org/wiki/Affero_General_Public_License)
-like [Nextcloud](https://nextcloud.com/), [Pydio](https://pydio.com/) and many other great products.
-This means, you're not legally forced to share your code when you modify a local copy.
+like [Nextcloud](https://nextcloud.com/) and many other great products.
+This means, you're not legally obliged to publish the source code when modifying a private copy.
 Hopefully we can keep it like that :)
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
