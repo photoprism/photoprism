@@ -40,7 +40,7 @@ func GetVideo(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if !f.FileVideo {
-			f, err = query.VideoByPhotoUUID(f.PhotoUUID)
+			f, err = query.VideoByPhotoUID(f.PhotoUID)
 
 			if err != nil {
 				log.Errorf("video: %s", err.Error())

@@ -28,7 +28,7 @@ func (m PhotoMap) Pointer(name string) *Photo {
 var PhotoFixtures = PhotoMap{
 	"19800101_000002_D640C559": {
 		ID:               1000000,
-		PhotoUUID:        "pt9jtdre2lvl0yh7",
+		PhotoUID:         "pt9jtdre2lvl0yh7",
 		TakenAt:          time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenSrc:         "exif",
@@ -84,7 +84,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo01": {
 		ID:               1000001,
-		PhotoUUID:        "pt9jtdre2lvl0yh8",
+		PhotoUID:         "pt9jtdre2lvl0yh8",
 		TakenAt:          time.Date(2006, 1, 1, 2, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(2006, 1, 1, 2, 0, 0, 0, time.UTC),
 		TakenSrc:         "exif",
@@ -133,7 +133,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo02": {
 		ID:               1000002,
-		PhotoUUID:        "pt9jtdre2lvl0yh9",
+		PhotoUID:         "pt9jtdre2lvl0yh9",
 		TakenAt:          time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenSrc:         "exif",
@@ -181,7 +181,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo03": {
 		ID:               1000003,
-		PhotoUUID:        "pt9jtdre2lvl0yh0",
+		PhotoUID:         "pt9jtdre2lvl0yh0",
 		TakenAt:          time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "exif",
@@ -233,7 +233,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo04": {
 		ID:               1000004,
-		PhotoUUID:        "pt9jtdre2lvl0y11",
+		PhotoUID:         "pt9jtdre2lvl0y11",
 		TakenAt:          time.Date(2014, 7, 17, 15, 42, 12, 0, time.UTC),
 		TakenAtLocal:     time.Date(2014, 7, 17, 15, 42, 12, 0, time.UTC),
 		TakenSrc:         "exif",
@@ -286,7 +286,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo05": {
 		ID:               1000005,
-		PhotoUUID:        "pt9jtdre2lvl0y12",
+		PhotoUID:         "pt9jtdre2lvl0y12",
 		TakenAt:          time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "exif",
@@ -335,7 +335,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo06": {
 		ID:               1000006,
-		PhotoUUID:        "pt9jtdre2lvl0y13",
+		PhotoUID:         "pt9jtdre2lvl0y13",
 		TakenAt:          time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "exif",
@@ -384,7 +384,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo07": {
 		ID:               1000007,
-		PhotoUUID:        "pt9jtdre2lvl0y14",
+		PhotoUID:         "pt9jtdre2lvl0y14",
 		TakenAt:          time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -433,7 +433,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo08": {
 		ID:               1000008,
-		PhotoUUID:        "pt9jtdre2lvl0y15",
+		PhotoUID:         "pt9jtdre2lvl0y15",
 		TakenAt:          time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -482,7 +482,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo09": {
 		ID:               1000009,
-		PhotoUUID:        "pt9jtdre2lvl0y16",
+		PhotoUID:         "pt9jtdre2lvl0y16",
 		TakenAt:          time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -531,7 +531,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo10": {
 		ID:               1000010,
-		PhotoUUID:        "pt9jtdre2lvl0y17",
+		PhotoUID:         "pt9jtdre2lvl0y17",
 		TakenAt:          time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -580,7 +580,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo11": {
 		ID:               1000011,
-		PhotoUUID:        "pt9jtdre2lvl0y18",
+		PhotoUID:         "pt9jtdre2lvl0y18",
 		TakenAt:          time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -629,7 +629,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo12": {
 		ID:               1000012,
-		PhotoUUID:        "pt9jtdre2lvl0y19",
+		PhotoUID:         "pt9jtdre2lvl0y19",
 		TakenAt:          time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -678,7 +678,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo13": {
 		ID:               1000013,
-		PhotoUUID:        "pt9jtdre2lvl0y20",
+		PhotoUID:         "pt9jtdre2lvl0y20",
 		TakenAt:          time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -727,7 +727,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo14": {
 		ID:               1000014,
-		PhotoUUID:        "pt9jtdre2lvl0y21",
+		PhotoUID:         "pt9jtdre2lvl0y21",
 		TakenAt:          time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -776,7 +776,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo15": {
 		ID:               1000015,
-		PhotoUUID:        "pt9jtdre2lvl0y22",
+		PhotoUID:         "pt9jtdre2lvl0y22",
 		TakenAt:          time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "location",
@@ -826,7 +826,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo16": {
 		ID:               1000016,
-		PhotoUUID:        "pt9jtdre2lvl0y23",
+		PhotoUID:         "pt9jtdre2lvl0y23",
 		TakenAt:          time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -875,7 +875,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo17": {
 		ID:               1000017,
-		PhotoUUID:        "pt9jtdre2lvl0y24",
+		PhotoUID:         "pt9jtdre2lvl0y24",
 		TakenAt:          time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -926,7 +926,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo18": {
 		ID:               1000018,
-		PhotoUUID:        "pt9jtdre2lvl0y25",
+		PhotoUID:         "pt9jtdre2lvl0y25",
 		TakenAt:          time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",

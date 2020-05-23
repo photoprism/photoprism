@@ -7,17 +7,17 @@ import (
 // LabelResult contains found labels
 type LabelResult struct {
 	// Label
-	ID               uint
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
-	DeletedAt        time.Time
-	LabelUUID        string
-	LabelSlug        string
-	CustomSlug       string
-	LabelName        string
-	LabelPriority    int
-	LabelFavorite    bool
-	LabelDescription string
-	LabelNotes       string
-	PhotoCount       int
+	ID               uint      `json:"ID"`
+	LabelUID         string    `json:"UID"`
+	LabelSlug        string    `json:"Slug"`
+	CustomSlug       string    `json:"CustomSlug"`
+	LabelName        string    `json:"Name"`
+	LabelPriority    int       `json:"Priority"`
+	LabelFavorite    bool      `json:"Favorite"`
+	LabelDescription string    `json:"Description"`
+	LabelNotes       string    `json:"Notes"`
+	PhotoCount       int       `json:"PhotoCount"`
+	CreatedAt        time.Time `json:"CreatedAt"`
+	UpdatedAt        time.Time `json:"UpdatedAt"`
+	DeletedAt        time.Time `json:"DeletedAt,omitempty"`
 }

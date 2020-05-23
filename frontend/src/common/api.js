@@ -2,7 +2,7 @@ import Axios from "axios";
 import Notify from "common/notify";
 
 const testConfig = {"jsHash": "test", "version": "test"};
-const config = window.clientConfig ? window.clientConfig : testConfig;
+const config = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
 
 const Api = Axios.create({
     baseURL: "/api/v1",

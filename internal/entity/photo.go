@@ -18,33 +18,33 @@ import (
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
 	ID               uint         `gorm:"primary_key" yaml:"-"`
-	TakenAt          time.Time    `gorm:"type:datetime;index:idx_photos_taken_uuid;" json:"TakenAt" yaml:"Taken"`
+	TakenAt          time.Time    `gorm:"type:datetime;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
 	TakenAtLocal     time.Time    `gorm:"type:datetime;" yaml:"-"`
 	TakenSrc         string       `gorm:"type:varbinary(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
-	PhotoUUID        string       `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uuid;" yaml:"PPID"`
-	PhotoType        string       `gorm:"type:varbinary(8);default:'image';" json:"PhotoType" yaml:"Type"`
-	PhotoTitle       string       `gorm:"type:varchar(255);" json:"PhotoTitle" yaml:"Title"`
+	PhotoUID         string       `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
+	PhotoType        string       `gorm:"type:varbinary(8);default:'image';" json:"Type" yaml:"Type"`
+	PhotoTitle       string       `gorm:"type:varchar(255);" json:"Title" yaml:"Title"`
 	TitleSrc         string       `gorm:"type:varbinary(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
-	PhotoDescription string       `gorm:"type:text;" json:"PhotoDescription" yaml:"Description,omitempty"`
+	PhotoDescription string       `gorm:"type:text;" json:"Description" yaml:"Description,omitempty"`
 	DescriptionSrc   string       `gorm:"type:varbinary(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
 	Details          Details      `json:"Details" yaml:"Details"`
 	PhotoPath        string       `gorm:"type:varbinary(768);index;" yaml:"-"`
 	PhotoName        string       `gorm:"type:varbinary(255);" yaml:"-"`
-	PhotoFavorite    bool         `json:"PhotoFavorite" yaml:"Favorite,omitempty"`
-	PhotoPrivate     bool         `json:"PhotoPrivate" yaml:"Private,omitempty"`
+	PhotoFavorite    bool         `json:"Favorite" yaml:"Favorite,omitempty"`
+	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
 	TimeZone         string       `gorm:"type:varbinary(64);" json:"TimeZone" yaml:"-"`
-	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"PhotoLat" yaml:"Lat,omitempty"`
-	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"PhotoLng" yaml:"Lng,omitempty"`
-	PhotoAltitude    int          `json:"PhotoAltitude" yaml:"Altitude,omitempty"`
-	PhotoCountry     string       `gorm:"type:varbinary(2);index:idx_photos_country_year_month;default:'zz'" json:"PhotoCountry" yaml:"-"`
+	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
+	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
+	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
+	PhotoCountry     string       `gorm:"type:varbinary(2);index:idx_photos_country_year_month;default:'zz'" json:"Country" yaml:"-"`
 	PhotoYear        int          `gorm:"index:idx_photos_country_year_month;" yaml:"-"`
 	PhotoMonth       int          `gorm:"index:idx_photos_country_year_month;" yaml:"-"`
-	PhotoIso         int          `json:"PhotoIso" yaml:"ISO,omitempty"`
-	PhotoExposure    string       `gorm:"type:varbinary(64);" json:"PhotoExposure" yaml:"Exposure,omitempty"`
-	PhotoFNumber     float32      `gorm:"type:FLOAT;" json:"PhotoFNumber" yaml:"FNumber,omitempty"`
-	PhotoFocalLength int          `json:"PhotoFocalLength" yaml:"FocalLength,omitempty"`
-	PhotoQuality     int          `gorm:"type:SMALLINT" json:"PhotoQuality" yaml:"-"`
-	PhotoResolution  int          `gorm:"type:SMALLINT" json:"PhotoResolution" yaml:"-"`
+	PhotoIso         int          `json:"Iso" yaml:"ISO,omitempty"`
+	PhotoExposure    string       `gorm:"type:varbinary(64);" json:"Exposure" yaml:"Exposure,omitempty"`
+	PhotoFNumber     float32      `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
+	PhotoFocalLength int          `json:"FocalLength" yaml:"FocalLength,omitempty"`
+	PhotoQuality     int          `gorm:"type:SMALLINT" json:"Quality" yaml:"-"`
+	PhotoResolution  int          `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
 	CameraID         uint         `gorm:"index:idx_photos_camera_lens;" json:"CameraID" yaml:"-"`
 	CameraSerial     string       `gorm:"type:varbinary(255);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
 	CameraSrc        string       `gorm:"type:varbinary(8);" json:"CameraSrc" yaml:"-"`
@@ -56,15 +56,15 @@ type Photo struct {
 	Lens             *Lens        `json:"Lens" yaml:"-"`
 	Location         *Location    `json:"Location" yaml:"-"`
 	Place            *Place       `json:"-" yaml:"-"`
-	Links            []Link       `gorm:"foreignkey:ShareUUID;association_foreignkey:PhotoUUID" yaml:"-"`
+	Links            []Link       `gorm:"foreignkey:ShareUID;association_foreignkey:PhotoUID" json:"Links" yaml:"-"`
 	Keywords         []Keyword    `json:"-" yaml:"-"`
 	Albums           []Album      `json:"-" yaml:"-"`
 	Files            []File       `yaml:"-"`
 	Labels           []PhotoLabel `yaml:"-"`
-	CreatedAt        time.Time    `yaml:"Created"`
-	UpdatedAt        time.Time    `yaml:"Updated"`
-	EditedAt         *time.Time   `yaml:"Edited,omitempty"`
-	DeletedAt        *time.Time   `sql:"index" yaml:"Deleted,omitempty"`
+	CreatedAt        time.Time    `yaml:"CreatedAt,omitempty"`
+	UpdatedAt        time.Time    `yaml:"UpdatedAt,omitempty"`
+	EditedAt         *time.Time   `yaml:"EditedAt,omitempty"`
+	DeletedAt        *time.Time   `sql:"index" yaml:"DeletedAt,omitempty"`
 }
 
 // SavePhotoForm saves a model in the database using form data.
@@ -102,7 +102,7 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 	}
 
 	if err := model.UpdateTitle(model.ClassifyLabels()); err != nil {
-		log.Warnf("%s (%s)", err.Error(), model.PhotoUUID)
+		log.Warnf("%s (%s)", err.Error(), model.PhotoUID)
 	}
 
 	if err := model.IndexKeywords(); err != nil {
@@ -136,7 +136,7 @@ func (m *Photo) Save() error {
 	m.UpdateYearMonth()
 
 	if err := m.UpdateTitle(labels); err != nil {
-		log.Warnf("%s (%s)", err.Error(), m.PhotoUUID)
+		log.Warnf("%s (%s)", err.Error(), m.PhotoUID)
 	}
 
 	if m.DetailsLoaded() {
@@ -178,7 +178,7 @@ func (m *Photo) ClassifyLabels() classify.Labels {
 	return result
 }
 
-// BeforeCreate creates a random UUID if needed before inserting a new row to the database.
+// BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
 		now := time.Now()
@@ -192,11 +192,11 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 		}
 	}
 
-	if rnd.IsPPID(m.PhotoUUID, 'p') {
+	if rnd.IsPPID(m.PhotoUID, 'p') {
 		return nil
 	}
 
-	return scope.SetColumn("PhotoUUID", rnd.PPID('p'))
+	return scope.SetColumn("PhotoUID", rnd.PPID('p'))
 }
 
 // BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo
@@ -219,7 +219,7 @@ func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 // IndexKeywords adds given keywords to the photo entry
 func (m *Photo) IndexKeywords() error {
 	if !m.DetailsLoaded() {
-		return fmt.Errorf("photo: can't index keywords, details not loaded (%s)", m.PhotoUUID)
+		return fmt.Errorf("photo: can't index keywords, details not loaded (%s)", m.PhotoUID)
 	}
 
 	db := Db()
@@ -289,7 +289,7 @@ func (m *Photo) PreloadAlbums() {
 	q := Db().NewScope(nil).DB().
 		Table("albums").
 		Select(`albums.*`).
-		Joins("JOIN photos_albums ON photos_albums.album_uuid = albums.album_uuid AND photos_albums.photo_uuid = ?", m.PhotoUUID).
+		Joins("JOIN photos_albums ON photos_albums.album_uid = albums.album_uid AND photos_albums.photo_uid = ?", m.PhotoUID).
 		Where("albums.deleted_at IS NULL").
 		Order("albums.album_name ASC")
 
@@ -304,9 +304,9 @@ func (m *Photo) PreloadMany() {
 	m.PreloadAlbums()
 }
 
-// HasID checks if the photo has a database id and uuid.
+// HasID checks if the photo has a database id and uid.
 func (m *Photo) HasID() bool {
-	return m.ID > 0 && m.PhotoUUID != ""
+	return m.ID > 0 && m.PhotoUID != ""
 }
 
 // NoLocation checks if the photo has no location
@@ -576,7 +576,7 @@ func (m *Photo) DeletePermanently() error {
 	Db().Unscoped().Delete(File{}, "photo_id = ?", m.ID)
 	Db().Unscoped().Delete(PhotoKeyword{}, "photo_id = ?", m.ID)
 	Db().Unscoped().Delete(PhotoLabel{}, "photo_id = ?", m.ID)
-	Db().Unscoped().Delete(PhotoAlbum{}, "photo_uuid = ?", m.PhotoUUID)
+	Db().Unscoped().Delete(PhotoAlbum{}, "photo_uid = ?", m.PhotoUID)
 
 	return Db().Unscoped().Delete(m).Error
 }

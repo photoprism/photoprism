@@ -31,12 +31,12 @@ const (
 type IndexStatus string
 
 type IndexResult struct {
-	Status    IndexStatus
-	Error     error
-	FileID    uint
-	FileUUID  string
-	PhotoID   uint
-	PhotoUUID string
+	Status   IndexStatus
+	Error    error
+	FileID   uint
+	FileUID  string
+	PhotoID  uint
+	PhotoUID string
 }
 
 func (r IndexResult) String() string {
@@ -288,9 +288,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 
 			if len(metaData.UniqueID) > 15 {
-				log.Debugf("index: found file uuid %s for %s", txt.Quote(metaData.UniqueID), txt.Quote(m.RelativeName(ind.originalsPath())))
+				log.Debugf("index: found file uid %s for %s", txt.Quote(metaData.UniqueID), txt.Quote(m.RelativeName(ind.originalsPath())))
 
-				file.FileUUID = metaData.UniqueID
+				file.FileUID = metaData.UniqueID
 			}
 		}
 
@@ -397,8 +397,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.PhotoID = photo.ID
 	result.PhotoID = photo.ID
 
-	file.PhotoUUID = photo.PhotoUUID
-	result.PhotoUUID = photo.PhotoUUID
+	file.PhotoUID = photo.PhotoUID
+	result.PhotoUID = photo.PhotoUID
 
 	// Main JPEG file.
 	if file.FilePrimary {
@@ -484,7 +484,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	result.FileID = file.ID
-	result.FileUUID = file.FileUUID
+	result.FileUID = file.FileUID
 
 	downloadedAs := fileName
 

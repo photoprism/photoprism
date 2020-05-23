@@ -79,7 +79,7 @@
                 }
 
                 if (this.photos.length > 0) {
-                    const index = this.photos.findIndex((p) => p.PhotoUUID === id);
+                    const index = this.photos.findIndex((p) => p.UID === id);
 
                     this.$viewer.show(Thumb.fromPhotos(this.photos), index)
                 } else {
@@ -169,14 +169,14 @@
                     if (!marker) {
                         let el = document.createElement('div');
                         el.className = 'marker';
-                        el.title = props.PhotoTitle;
+                        el.title = props.Title;
                         el.style.backgroundImage =
                             'url(/api/v1/thumbnails/' +
-                            props.FileHash + '/tile_50)';
+                            props.Hash + '/tile_50)';
                         el.style.width = '50px';
                         el.style.height = '50px';
 
-                        el.addEventListener('click', () => this.openPhoto(props.PhotoUUID));
+                        el.addEventListener('click', () => this.openPhoto(props.UID));
                         marker = this.markers[id] = new mapboxgl.Marker({
                             element: el
                         }).setLngLat(coords);

@@ -150,17 +150,17 @@ func (c *Params) Load(fileName string) error {
 func (c *Params) SetContext(ctx *cli.Context) error {
 	v := reflect.ValueOf(c).Elem()
 
-	// Iterate through all config fields
+	// Iterate through all config fields.
 	for i := 0; i < v.NumField(); i++ {
 		fieldValue := v.Field(i)
 
 		tagValue := v.Type().Field(i).Tag.Get("flag")
 
-		// Automatically assign values to fields with "flag" tag
+		// Automatically assign values to fields with "flag" tag.
 		if tagValue != "" {
 			switch t := fieldValue.Interface().(type) {
 			case int, int64:
-				// Only if explicitly set or current value is empty (use default)
+				// Only if explicitly set or current value is empty (use default).
 				if ctx.IsSet(tagValue) {
 					f := ctx.Int64(tagValue)
 					fieldValue.SetInt(f)
@@ -169,7 +169,7 @@ func (c *Params) SetContext(ctx *cli.Context) error {
 					fieldValue.SetInt(f)
 				}
 			case uint, uint64:
-				// Only if explicitly set or current value is empty (use default)
+				// Only if explicitly set or current value is empty (use default).
 				if ctx.IsSet(tagValue) {
 					f := ctx.Uint64(tagValue)
 					fieldValue.SetUint(f)

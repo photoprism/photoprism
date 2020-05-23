@@ -8,17 +8,16 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Photos searches for photos based on a Form and returns PhotosResults ([]PhotosResult).
 func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
+	start := time.Now()
+
 	if err := f.ParseQueryString(); err != nil {
 		return results, 0, err
 	}
-
-	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("photos: %+v", f)))
 
 	s := UnscopedDb()
 
@@ -27,7 +26,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 	// Main search query, avoids (slow) left joins.
 	s = s.Table("photos").
 		Select(`photos.*,
-		files.id AS file_id, files.file_uuid, files.file_primary, files.file_missing, files.file_name, files.file_hash, 
+		files.id AS file_id, files.file_uid, files.file_primary, files.file_missing, files.file_name, files.file_hash, 
 		files.file_codec, files.file_type, files.file_mime, files.file_width, files.file_height, files.file_aspect_ratio, 
 		files.file_orientation, files.file_main_color, files.file_colors, files.file_luminance, files.file_chroma,
 		files.file_diff, files.file_video, files.file_duration, files.file_size,
@@ -42,12 +41,14 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 
 	// Shortcut for known photo ids.
 	if f.ID != "" {
-		s = s.Where("photos.photo_uuid = ?", f.ID)
+		s = s.Where("photos.photo_uid IN (?)", strings.Split(f.ID, ","))
 		s = s.Order("files.file_primary DESC")
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, 0, result.Error
 		}
+
+		log.Infof("photos: found %d results for %s [%s]", len(results), f.SerializeAll(), time.Since(start))
 
 		if f.Merged {
 			return results.Merged()
@@ -147,7 +148,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 	}
 
 	if f.Album != "" {
-		s = s.Joins("JOIN photos_albums ON photos_albums.photo_uuid = photos.photo_uuid").Where("photos_albums.album_uuid = ?", f.Album)
+		s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").Where("photos_albums.album_uid IN (?)", strings.Split(f.Album, ","))
 	}
 
 	if f.Camera > 0 {
@@ -281,9 +282,9 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 			s = s.Order("photo_quality DESC, taken_at DESC, files.file_primary DESC")
 		}
 	case entity.SortOrderNewest:
-		s = s.Order("taken_at DESC, photos.photo_uuid, files.file_primary DESC")
+		s = s.Order("taken_at DESC, photos.photo_uid, files.file_primary DESC")
 	case entity.SortOrderOldest:
-		s = s.Order("taken_at, photos.photo_uuid, files.file_primary DESC")
+		s = s.Order("taken_at, photos.photo_uid, files.file_primary DESC")
 	case entity.SortOrderImported:
 		s = s.Order("photos.id DESC, files.file_primary DESC")
 	case entity.SortOrderSimilar:
@@ -292,7 +293,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 	case entity.SortOrderName:
 		s = s.Order("photos.photo_path, photos.photo_name, files.file_primary DESC")
 	default:
-		s = s.Order("taken_at DESC, photos.photo_uuid, files.file_primary DESC")
+		s = s.Order("taken_at DESC, photos.photo_uid, files.file_primary DESC")
 	}
 
 	if f.Count > 0 && f.Count <= 1000 {
@@ -304,6 +305,8 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 	if result := s.Scan(&results); result.Error != nil {
 		return results, 0, result.Error
 	}
+
+	log.Infof("photos: found %d results for %s [%s]", len(results), f.SerializeAll(), time.Since(start))
 
 	if f.Merged {
 		return results.Merged()

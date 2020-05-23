@@ -114,7 +114,7 @@ func (c Colors) List() []map[string]string {
 	result := make([]map[string]string, 0, len(c))
 
 	for _, c := range c {
-		result = append(result, map[string]string{"name": c.Name(), "label": strings.Title(c.Name()), "example": ColorExamples[c]})
+		result = append(result, map[string]string{"Slug": c.Name(), "Name": strings.Title(c.Name()), "Example": ColorExamples[c]})
 	}
 
 	return result

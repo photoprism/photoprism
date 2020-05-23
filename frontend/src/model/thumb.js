@@ -1,12 +1,12 @@
 import Model from "./model";
 import Api from "../common/api";
 
-const thumbs = window.clientConfig.thumbnails;
+const thumbs = window.__CONFIG__.thumbnails;
 
 export class Thumb extends Model {
     getDefaults() {
         return {
-            uuid: "",
+            uid: "",
             title: "",
             taken: "",
             description: "",
@@ -22,15 +22,15 @@ export class Thumb extends Model {
         this.favorite = !this.favorite;
 
         if (this.favorite) {
-            return Api.post("photos/" + this.uuid + "/like");
+            return Api.post("photos/" + this.uid + "/like");
         } else {
-            return Api.delete("photos/" + this.uuid + "/like");
+            return Api.delete("photos/" + this.uid + "/like");
         }
     }
 
     static thumbNotFound() {
         const result = {
-            uuid: "",
+            uid: "",
             title: "Not Found",
             taken: "",
             description: "",
@@ -65,23 +65,23 @@ export class Thumb extends Model {
 
     static fromPhoto(photo) {
         if (photo.Files) {
-            return this.fromFile(photo, photo.Files.find(f => !!f.FilePrimary));
+            return this.fromFile(photo, photo.Files.find(f => !!f.Primary));
         }
 
-        if (!photo || !photo.FileHash) {
+        if (!photo || !photo.Hash) {
             return this.thumbNotFound();
         }
 
         const result = {
-            uuid: photo.PhotoUUID,
-            title: photo.PhotoTitle,
+            uid: photo.UID,
+            title: photo.Title,
             taken: photo.getDateString(),
-            description: photo.PhotoDescription,
-            favorite: photo.PhotoFavorite,
+            description: photo.Description,
+            favorite: photo.Favorite,
             playable: photo.isPlayable(),
             download_url: this.downloadUrl(photo),
-            original_w: photo.FileWidth,
-            original_h: photo.FileHeight,
+            original_w: photo.Width,
+            original_h: photo.Height,
         };
 
         for (let i = 0; i < thumbs.length; i++) {
@@ -98,20 +98,20 @@ export class Thumb extends Model {
     }
 
     static fromFile(photo, file) {
-        if (!photo || !file || !file.FileHash) {
+        if (!photo || !file || !file.Hash) {
             return this.thumbNotFound();
         }
 
         const result = {
-            uuid: photo.PhotoUUID,
-            title: photo.PhotoTitle,
+            uid: photo.UID,
+            title: photo.Title,
             taken: photo.getDateString(),
-            description: photo.PhotoDescription,
-            favorite: photo.PhotoFavorite,
+            description: photo.Description,
+            favorite: photo.Favorite,
             playable: photo.isPlayable(),
             download_url: this.downloadUrl(file),
-            original_w: file.FileWidth,
-            original_h: file.FileHeight,
+            original_w: file.Width,
+            original_h: file.Height,
         };
 
         thumbs.forEach((t) => {
@@ -149,11 +149,11 @@ export class Thumb extends Model {
     }
 
     static calculateSize(file, width, height) {
-        if (width >= file.FileWidth && height >= file.FileHeight) { // Smaller
-            return {width: file.FileWidth, height: file.FileHeight};
+        if (width >= file.Width && height >= file.Height) { // Smaller
+            return {width: file.Width, height: file.Height};
         }
 
-        const srcAspectRatio = file.FileWidth / file.FileHeight;
+        const srcAspectRatio = file.Width / file.Height;
         const maxAspectRatio = width / height;
 
         let newW, newH;
@@ -171,20 +171,20 @@ export class Thumb extends Model {
     }
 
     static thumbnailUrl(file, type) {
-        if (!file.FileHash) {
+        if (!file.Hash) {
             return "/api/v1/svg/photo";
 
         }
 
-        return "/api/v1/thumbnails/" + file.FileHash + "/" + type;
+        return "/api/v1/thumbnails/" + file.Hash + "/" + type;
     }
 
     static downloadUrl(file) {
-        if (!file || !file.FileHash) {
+        if (!file || !file.Hash) {
             return "";
         }
 
-        return "/api/v1/download/" + file.FileHash;
+        return "/api/v1/download/" + file.Hash;
     }
 }
 

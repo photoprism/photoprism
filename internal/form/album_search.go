@@ -7,9 +7,9 @@ type AlbumSearch struct {
 	Slug     string `form:"slug"`
 	Name     string `form:"name"`
 	Favorite bool   `form:"favorite"`
-	Count    int    `form:"count" binding:"required"`
-	Offset   int    `form:"offset"`
-	Order    string `form:"order"`
+	Count    int    `form:"count" binding:"required" serialize:"-"`
+	Offset   int    `form:"offset" serialize:"-"`
+	Order    string `form:"order" serialize:"-"`
 }
 
 func (f *AlbumSearch) GetQuery() string {

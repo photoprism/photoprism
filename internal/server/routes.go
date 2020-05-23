@@ -123,6 +123,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Default HTML page (client-side routing implemented via Vue.js)
 	router.NoRoute(func(c *gin.Context) {
-		c.HTML(http.StatusOK, conf.HttpDefaultTemplate(), gin.H{"clientConfig": conf.PublicClientConfig()})
+		clientConfig := conf.PublicClientConfig()
+		c.HTML(http.StatusOK, conf.HttpDefaultTemplate(), gin.H{"config": clientConfig})
 	})
 }

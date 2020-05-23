@@ -18,7 +18,7 @@ func Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		return results, err
 	}
 
-	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("labels: %+v", f)))
+	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("labels: search %s", form.Serialize(f, true))))
 
 	s := UnscopedDb()
 
@@ -31,7 +31,7 @@ func Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		Group("labels.id")
 
 	if f.ID != "" {
-		s = s.Where("labels.label_uuid = ?", f.ID)
+		s = s.Where("labels.label_uid = ?", f.ID)
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error

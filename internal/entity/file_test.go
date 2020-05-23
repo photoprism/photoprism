@@ -26,7 +26,7 @@ func TestFirstFileByHash(t *testing.T) {
 func TestFile_DownloadFileName(t *testing.T) {
 	t.Run("photo with title", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
-		file := &File{Photo: photo, FileType: "jpg", FileUUID: "foobar345678765"}
+		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765"}
 
 		filename := file.ShareFileName()
 
@@ -35,7 +35,7 @@ func TestFile_DownloadFileName(t *testing.T) {
 	})
 	t.Run("photo without title", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
-		file := &File{Photo: photo, FileType: "jpg", PhotoUUID: "123", FileUUID: "foobar345678765"}
+		file := &File{Photo: photo, FileType: "jpg", PhotoUID: "123", FileUID: "foobar345678765"}
 
 		filename := file.ShareFileName()
 
@@ -43,7 +43,7 @@ func TestFile_DownloadFileName(t *testing.T) {
 		assert.Contains(t, filename, fs.JpegExt)
 	})
 	t.Run("photo without photo", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileHash: "123Hash", FileUUID: "foobar345678765"}
+		file := &File{Photo: nil, FileType: "jpg", FileHash: "123Hash", FileUID: "foobar345678765"}
 
 		filename := file.ShareFileName()
 
@@ -85,8 +85,8 @@ func TestFile_Purge(t *testing.T) {
 func TestFile_AllFilesMissing(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
-		file := &File{Photo: photo, FileType: "jpg", PhotoUUID: "123", FileUUID: "123", FileMissing: true}
-		file2 := &File{Photo: photo, FileType: "jpg", PhotoUUID: "123", FileUUID: "456", FileMissing: true}
+		file := &File{Photo: photo, FileType: "jpg", PhotoUID: "123", FileUID: "123", FileMissing: true}
+		file2 := &File{Photo: photo, FileType: "jpg", PhotoUID: "123", FileUID: "456", FileMissing: true}
 		assert.True(t, file.AllFilesMissing())
 		assert.NotEmpty(t, file2)
 	})
@@ -100,7 +100,7 @@ func TestFile_AllFilesMissing(t *testing.T) {
 
 func TestFile_Save(t *testing.T) {
 	t.Run("save without photo", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", PhotoUUID: "123", FileUUID: "123"}
+		file := &File{Photo: nil, FileType: "jpg", PhotoUID: "123", FileUID: "123"}
 		err := file.Save()
 
 		if err == nil {

@@ -13,8 +13,8 @@ import (
 )
 
 // TODO: GET /api/v1/dl/file/:hash
-// TODO: GET /api/v1/dl/photo/:uuid
-// TODO: GET /api/v1/dl/album/:uuid
+// TODO: GET /api/v1/dl/photo/:uid
+// TODO: GET /api/v1/dl/album/:uid
 
 // GET /api/v1/download/:hash
 //

@@ -9,16 +9,16 @@ import (
 
 // Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
-	ID              uint       `gorm:"primary_key" yaml:"LensID"`
-	LensSlug        string     `gorm:"type:varbinary(255);unique_index;" yaml:"Slug"`
-	LensModel       string     `yaml:"Model"`
-	LensMake        string     `yaml:"Make"`
-	LensType        string     `yaml:"Type,omitempty"`
-	LensDescription string     `gorm:"type:text;" yaml:"Description,omitempty"`
-	LensNotes       string     `gorm:"type:text;" yaml:"Notes,omitempty"`
-	CreatedAt       time.Time  `yaml:"-"`
-	UpdatedAt       time.Time  `yaml:"-"`
-	DeletedAt       *time.Time `sql:"index" yaml:"-"`
+	ID              uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
+	LensSlug        string     `gorm:"type:varbinary(255);unique_index;" json:"Slug" yaml:"Slug,omitempty"`
+	LensModel       string     `json:"Model" yaml:"Model"`
+	LensMake        string     `json:"Make" yaml:"Make"`
+	LensType        string     `json:"Type" yaml:"Type,omitempty"`
+	LensDescription string     `gorm:"type:text;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	LensNotes       string     `gorm:"type:text;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CreatedAt       time.Time  `json:"-" yaml:"-"`
+	UpdatedAt       time.Time  `json:"-" yaml:"-"`
+	DeletedAt       *time.Time `sql:"index" json:"-" yaml:"-"`
 }
 
 var UnknownLens = Lens{

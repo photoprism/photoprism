@@ -103,7 +103,7 @@
             playVideo() {
               if(this.item && this.item.playable) {
                   let photo = new Photo();
-                  photo.find(this.item.uuid).then((p) => {
+                  photo.find(this.item.uid).then((p) => {
                       this.$modal.show('video', {video: p, album: null});
                   });
               }
@@ -139,15 +139,15 @@
 
                 // remove duplicates
                 let filtered = g.items.filter(function (p, i, s) {
-                    return !(i > 0 && p.uuid === s[i - 1].uuid);
+                    return !(i > 0 && p.uid === s[i - 1].uid);
                 });
 
                 let selection = filtered.map((p, i) => {
-                    if (g.currItem.uuid === p.uuid) {
+                    if (g.currItem.uid === p.uid) {
                         index = i;
                     }
 
-                    return p.uuid
+                    return p.uid
                 });
 
                 let album = null;

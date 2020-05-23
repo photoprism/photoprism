@@ -30,9 +30,9 @@ func TestExistingFiles(t *testing.T) {
 	})
 }
 
-func TestFilesByUUID(t *testing.T) {
+func TestFilesByUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		files, err := FilesByUUID([]string{"ft8es39w45bnlqdw"}, 100, 0)
+		files, err := FilesByUID([]string{"ft8es39w45bnlqdw"}, 100, 0)
 
 		if err != nil {
 			t.Fatal(err)
@@ -41,7 +41,7 @@ func TestFilesByUUID(t *testing.T) {
 		assert.Equal(t, "exampleFileName.jpg", files[0].FileName)
 	})
 	t.Run("no files found", func(t *testing.T) {
-		files, err := FilesByUUID([]string{"ft8es39w45bnlxxx"}, 100, 0)
+		files, err := FilesByUID([]string{"ft8es39w45bnlxxx"}, 100, 0)
 
 		if err != nil {
 			t.Fatal(err)
@@ -50,9 +50,9 @@ func TestFilesByUUID(t *testing.T) {
 	})
 }
 
-func TestFileByPhotoUUID(t *testing.T) {
+func TestFileByPhotoUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		file, err := FileByPhotoUUID("pt9jtdre2lvl0yh8")
+		file, err := FileByPhotoUID("pt9jtdre2lvl0yh8")
 
 		if err != nil {
 			t.Fatal(err)
@@ -61,16 +61,16 @@ func TestFileByPhotoUUID(t *testing.T) {
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		file, err := FileByPhotoUUID("111")
+		file, err := FileByPhotoUID("111")
 
 		assert.Error(t, err, "record not found")
 		t.Log(file)
 	})
 }
 
-func TestFileByUUID(t *testing.T) {
+func TestFileByUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		file, err := FileByUUID("ft8es39w45bnlqdw")
+		file, err := FileByUID("ft8es39w45bnlqdw")
 
 		if err != nil {
 			t.Fatal(err)
@@ -80,7 +80,7 @@ func TestFileByUUID(t *testing.T) {
 	})
 
 	t.Run("no files found", func(t *testing.T) {
-		file, err := FileByUUID("111")
+		file, err := FileByUID("111")
 
 		if err == nil {
 			t.Fatal("error expected")

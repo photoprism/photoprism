@@ -207,6 +207,36 @@
                                     @change="onChange"
                                     :disabled="busy"
                                     class="ma-0 pa-0"
+                                    v-model="settings.features.folders"
+                                    color="secondary-dark"
+                                    :label="labels.folders"
+                                    :hint="hints.folders"
+                                    prepend-icon="folder"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="onChange"
+                                    :disabled="busy"
+                                    class="ma-0 pa-0"
+                                    v-model="settings.features.moments"
+                                    color="secondary-dark"
+                                    :label="labels.moments"
+                                    :hint="hints.moments"
+                                    prepend-icon="star"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="onChange"
+                                    :disabled="busy"
+                                    class="ma-0 pa-0"
                                     v-model="settings.features.labels"
                                     color="secondary-dark"
                                     :label="labels.labels"
@@ -318,6 +348,7 @@
         data() {
             return {
                 readonly: this.$config.get("readonly"),
+                experimental: this.$config.get("experimental"),
                 settings: new Settings(this.$config.settings()),
                 options: options,
                 labels: {
@@ -333,6 +364,8 @@
                     private: this.$gettext("Hide Private"),
                     review: this.$gettext("Quality Filter"),
                     places: this.$gettext("Places"),
+                    folders: this.$gettext("Folders"),
+                    moments: this.$gettext("Moments"),
                     labels: this.$gettext("Labels"),
                     import: this.$gettext("Import"),
                     upload: this.$gettext("Upload"),
@@ -348,6 +381,8 @@
                     group: this.$gettext("Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' belong to the same photo."),
                     move: this.$gettext("Move files from import to originals to save storage. Unsupported file types will never be deleted, they remain in their current location."),
                     places: this.$gettext("Search and display photos on a map."),
+                    folders: this.$gettext("Browse existing folders as albums."),
+                    moments: this.$gettext("Let PhotoPrism create albums from past events."),
                     labels: this.$gettext("Browse and edit image classification labels."),
                     import: this.$gettext("Imported files will be sorted by date and given a unique name."),
                     archive: this.$gettext("Hide photos that have been moved to archive."),

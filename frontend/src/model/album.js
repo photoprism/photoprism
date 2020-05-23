@@ -5,16 +5,19 @@ import {DateTime} from "luxon";
 export class Album extends RestModel {
     getDefaults() {
         return {
-            ID: 0,
-            CoverUUID: "",
-            AlbumUUID: "",
-            AlbumSlug: "",
-            AlbumName: "",
-            AlbumDescription: "",
-            AlbumNotes: "",
-            AlbumOrder: "",
-            AlbumTemplate: "",
-            AlbumFavorite: true,
+            UID: "",
+            Cover: "",
+            Parent: "",
+            Folder: "",
+            Slug: "",
+            Type: "",
+            Name: "",
+            Description: "",
+            Notes: "",
+            Order: "",
+            Filter: "",
+            Template: "",
+            Favorite: true,
             Links: [],
             CreatedAt: "",
             UpdatedAt: "",
@@ -22,15 +25,15 @@ export class Album extends RestModel {
     }
 
     getEntityName() {
-        return this.AlbumSlug;
+        return this.Slug;
     }
 
     getId() {
-        return this.AlbumUUID;
+        return this.UID;
     }
 
     getTitle() {
-        return this.AlbumName;
+        return this.Name;
     }
 
     thumbnailUrl(type) {
@@ -66,9 +69,9 @@ export class Album extends RestModel {
     }
 
     toggleLike() {
-        this.AlbumFavorite = !this.AlbumFavorite;
+        this.Favorite = !this.Favorite;
 
-        if (this.AlbumFavorite) {
+        if (this.Favorite) {
             return Api.post(this.getEntityResource() + "/like");
         } else {
             return Api.delete(this.getEntityResource() + "/like");
@@ -76,12 +79,12 @@ export class Album extends RestModel {
     }
 
     like() {
-        this.AlbumFavorite = true;
+        this.Favorite = true;
         return Api.post(this.getEntityResource() + "/like");
     }
 
     unlike() {
-        this.AlbumFavorite = false;
+        this.Favorite = false;
         return Api.delete(this.getEntityResource() + "/like");
     }
 

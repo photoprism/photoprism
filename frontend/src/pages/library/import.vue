@@ -4,9 +4,9 @@
             <v-container fluid>
                 <p class="subheading">
                     <span v-if="fileName">{{ $gettext('Importing') }} {{fileName}}...</span>
-                    <span v-else-if="busy">{{ $gettext('Importing files from import folder...') }}</span>
+                    <span v-else-if="busy">{{ $gettext('Importing files to originals...') }}</span>
                     <span v-else-if="completed">{{ $gettext('Done.') }}</span>
-                    <span v-else>{{ $gettext('Press button to start importing...') }}</span>
+                    <span v-else>{{ $gettext('Press button to start copying to originals...') }}</span>
                 </p>
 
                 <v-autocomplete
@@ -103,7 +103,7 @@
     export default {
         name: 'p-tab-import',
         data() {
-            const root = {"path": "/", "name": this.$gettext("All files in import folder")}
+            const root = {"path": "/", "name": this.$gettext("All files from import folder")}
 
             return {
                 settings: new Settings(this.$config.settings()),

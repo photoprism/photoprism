@@ -66,7 +66,8 @@
 }
 
 #photoprism .p-albums-cards .p-album-select,
-#photoprism .p-labels-cards .p-label-select {
+#photoprism .p-labels-cards .p-label-select,
+#photoprism .p-folders-cards .p-folder-select{
     right: 4px;
     bottom: 4px;
 }

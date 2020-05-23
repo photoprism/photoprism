@@ -2,8 +2,8 @@ import Photos from "pages/photos.vue";
 import Albums from "pages/albums.vue";
 import AlbumPhotos from "pages/album/photos.vue";
 import Places from "pages/places.vue";
+import Folders from "pages/folders.vue";
 import Labels from "pages/labels.vue";
-import Events from "pages/events.vue";
 import People from "pages/people.vue";
 import Library from "pages/library.vue";
 import Share from "pages/share.vue";
@@ -12,7 +12,7 @@ import Login from "pages/login.vue";
 import Discover from "pages/discover.vue";
 import Todo from "pages/todo.vue";
 
-const c = window.clientConfig;
+const c = window.__CONFIG__;
 
 export default [
     {
@@ -41,7 +41,7 @@ export default [
     },
     {
         name: "album",
-        path: "/albums/:uuid",
+        path: "/albums/:uid",
         component: AlbumPhotos,
         meta: {title: "Album", auth: true},
     },
@@ -93,16 +93,23 @@ export default [
         meta: {title: "Places", auth: true},
     },
     {
+        name: "folders",
+        path: "/folders",
+        component: Folders,
+        meta: {title: "Folders", auth: true},
+    },
+    {
         name: "labels",
         path: "/labels",
         component: Labels,
         meta: {title: "Labels", auth: true},
     },
     {
-        name: "events",
-        path: "/events",
-        component: Events,
-        meta: {title: "Events", auth: true},
+        name: "moments",
+        path: "/moments",
+        component: Photos,
+        meta: {title: "Moments", auth: true},
+        props: {},
     },
     {
         name: "people",
@@ -134,7 +141,7 @@ export default [
         name: "library",
         path: "/library",
         component: Library,
-        meta: {title: "Photo Library", auth: true, background: "application-light"},
+        meta: {title: "Originals", auth: true, background: "application-light"},
         props: {tab: 0},
     },
     {

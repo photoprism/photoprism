@@ -8,9 +8,9 @@ import (
 
 func TestPPID(t *testing.T) {
 	for n := 0; n < 5; n++ {
-		uuid := PPID('x')
-		t.Logf("id: %s", uuid)
-		assert.Equal(t, len(uuid), 16)
+		uid := PPID('x')
+		t.Logf("id: %s", uid)
+		assert.Equal(t, len(uid), 16)
 	}
 }
 

@@ -18,33 +18,33 @@ type Details struct {
 
 // Photo represents a photo edit form.
 type Photo struct {
-	PhotoType        string    `json:"PhotoType"`
+	PhotoType        string    `json:"Type"`
 	TakenAt          time.Time `json:"TakenAt"`
 	TakenAtLocal     time.Time `json:"TakenAtLocal"`
 	TakenSrc         string    `json:"TakenSrc"`
 	TimeZone         string    `json:"TimeZone"`
-	PhotoTitle       string    `json:"PhotoTitle"`
+	PhotoTitle       string    `json:"Title"`
 	TitleSrc         string    `json:"TitleSrc"`
-	PhotoDescription string    `json:"PhotoDescription"`
+	PhotoDescription string    `json:"Description"`
 	DescriptionSrc   string    `json:"DescriptionSrc"`
 	Details          Details   `json:"Details"`
-	PhotoFavorite    bool      `json:"PhotoFavorite"`
-	PhotoPrivate     bool      `json:"PhotoPrivate"`
-	PhotoReview      bool      `json:"PhotoReview"`
-	PhotoLat         float32   `json:"PhotoLat"`
-	PhotoLng         float32   `json:"PhotoLng"`
-	PhotoAltitude    int       `json:"PhotoAltitude"`
-	PhotoIso         int       `json:"PhotoIso"`
-	PhotoFocalLength int       `json:"PhotoFocalLength"`
-	PhotoFNumber     float32   `json:"PhotoFNumber"`
-	PhotoExposure    string    `json:"PhotoExposure"`
-	CameraID         uint      `json:"CameraID"`
-	CameraSrc        string    `json:"CameraSrc"`
-	LensID           uint      `json:"LensID"`
+	PhotoFavorite    bool      `json:"Favorite"`
+	PhotoPrivate     bool      `json:"Private"`
+	PhotoReview      bool      `json:"Review"`
+	PhotoLat         float32   `json:"Lat"`
+	PhotoLng         float32   `json:"Lng"`
+	PhotoAltitude    int       `json:"Altitude"`
+	PhotoIso         int       `json:"Iso"`
+	PhotoFocalLength int       `json:"FocalLength"`
+	PhotoFNumber     float32   `json:"FNumber"`
+	PhotoExposure    string    `json:"Exposure"`
+	PhotoCountry     string    `json:"Country"`
 	LocationID       string    `json:"LocationID"`
 	LocationSrc      string    `json:"LocationSrc"`
 	PlaceID          string    `json:"PlaceID"`
-	PhotoCountry     string    `json:"PhotoCountry"`
+	CameraID         uint      `json:"CameraID"`
+	CameraSrc        string    `json:"CameraSrc"`
+	LensID           uint      `json:"LensID"`
 }
 
 func NewPhoto(m interface{}) (f Photo, err error) {

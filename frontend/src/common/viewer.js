@@ -3,7 +3,7 @@ import PhotoSwipeUI_Default from "photoswipe/dist/photoswipe-ui-default.js";
 import Event from "pubsub-js";
 import stripHtml from "string-strip-html";
 
-const thumbs = window.clientConfig.thumbnails;
+const thumbs = window.__CONFIG__.thumbnails;
 
 class Viewer {
     constructor() {

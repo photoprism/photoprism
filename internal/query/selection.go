@@ -24,7 +24,7 @@ func PhotoSelection(f form.Selection) (results []entity.Photo, err error) {
 		Where("photos.deleted_at IS NULL").
 		Group("photos.id")
 
-	s = s.Where("photos.photo_uuid IN (?) OR l.label_uuid IN (?) OR lc.label_uuid IN (?)", f.Photos, f.Labels, f.Labels)
+	s = s.Where("photos.photo_uid IN (?) OR l.label_uid IN (?) OR lc.label_uid IN (?)", f.Photos, f.Labels, f.Labels)
 
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error

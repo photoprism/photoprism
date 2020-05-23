@@ -14,7 +14,9 @@ all: dep build
 dep: dep-tensorflow dep-js dep-go
 build: generate build-js build-go
 install: install-bin install-assets
-test: reset-test-db test-js test-go
+test: test-js test-go
+test-go: reset-test-db run-test-go
+test-short: reset-test-db run-test-short
 acceptance-all: start acceptance acceptance-firefox stop
 test-all: test acceptance-all
 fmt: fmt-js fmt-go
@@ -91,8 +93,12 @@ acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
 	(cd frontend &&	npm run acceptance-firefox)
 reset-test-db:
+	$(info Purging test database...)
 	mysql < scripts/reset-test-db.sql
-test-go:
+run-test-short:
+	$(info Running short Go unit tests in parallel mode...)
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/...
+run-test-go:
 	$(info Running all Go unit tests...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...
 test-parallel:
@@ -101,9 +107,6 @@ test-parallel:
 test-verbose:
 	$(info Running all Go unit tests in verbose mode...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m -v ./pkg/... ./internal/...
-test-short:
-	$(info Running short Go unit tests in parallel mode...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/...
 test-race:
 	$(info Running all Go unit tests with race detection in verbose mode...)
 	$(GOTEST) -tags slow -race -timeout 60m -v ./pkg/... ./internal/...

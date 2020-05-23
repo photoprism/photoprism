@@ -31,15 +31,15 @@ func newLink(c *gin.Context) (link entity.Link, err error) {
 	return link, nil
 }
 
-// POST /api/v1/albums/:uuid/link
+// POST /api/v1/albums/:uid/link
 func LinkAlbum(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/albums/:uuid/link", func(c *gin.Context) {
+	router.POST("/albums/:uid/link", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
-		m, err := query.AlbumByUUID(c.Param("uuid"))
+		m, err := query.AlbumByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
@@ -59,15 +59,15 @@ func LinkAlbum(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// POST /api/v1/photos/:uuid/link
+// POST /api/v1/photos/:uid/link
 func LinkPhoto(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/photos/:uuid/link", func(c *gin.Context) {
+	router.POST("/photos/:uid/link", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
-		m, err := query.PhotoByUUID(c.Param("uuid"))
+		m, err := query.PhotoByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -87,15 +87,15 @@ func LinkPhoto(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// POST /api/v1/labels/:uuid/link
+// POST /api/v1/labels/:uid/link
 func LinkLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/labels/:uuid/link", func(c *gin.Context) {
+	router.POST("/labels/:uid/link", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
-		m, err := query.LabelByUUID(c.Param("uuid"))
+		m, err := query.LabelByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrLabelNotFound)

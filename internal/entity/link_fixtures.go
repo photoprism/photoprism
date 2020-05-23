@@ -11,7 +11,7 @@ var LinkFixtures = LinkMap{
 		LinkToken:    "1jxf3jfn2k",
 		LinkPassword: "somepassword",
 		LinkExpires:  &date,
-		ShareUUID:    "4",
+		ShareUID:     "4",
 		CanComment:   true,
 		CanEdit:      false,
 		CreatedAt:    time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),

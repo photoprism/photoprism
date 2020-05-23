@@ -50,7 +50,7 @@ func (c *Config) PublicClientConfig() ClientConfig {
 	configFlags := c.Flags()
 
 	var noPos = struct {
-		PhotoUUID  string    `json:"photo"`
+		PhotoUID   string    `json:"photo"`
 		LocationID string    `json:"location"`
 		TakenAt    time.Time `json:"utc"`
 		PhotoLat   float64   `json:"lat"`
@@ -63,9 +63,12 @@ func (c *Config) PublicClientConfig() ClientConfig {
 		Hidden    uint `json:"hidden"`
 		Favorites uint `json:"favorites"`
 		Private   uint `json:"private"`
+		Review    uint `json:"review"`
 		Stories   uint `json:"stories"`
 		Labels    uint `json:"labels"`
 		Albums    uint `json:"albums"`
+		Folders   uint `json:"folders"`
+		Moments   uint `json:"moments"`
 		Countries uint `json:"countries"`
 		Places    uint `json:"places"`
 	}{}
@@ -112,12 +115,13 @@ func (c *Config) ClientConfig() ClientConfig {
 
 	db := c.Db()
 
-	var cameras []*entity.Camera
-	var lenses []*entity.Lens
-	var albums []*entity.Album
+	var cameras []entity.Camera
+	var lenses []entity.Lens
+	var albums []entity.Album
+	var countries []entity.Country
 
 	var position struct {
-		PhotoUUID  string    `json:"photo"`
+		PhotoUID   string    `json:"photo"`
 		LocationID string    `json:"location"`
 		TakenAt    time.Time `json:"utc"`
 		PhotoLat   float64   `json:"lat"`
@@ -125,7 +129,7 @@ func (c *Config) ClientConfig() ClientConfig {
 	}
 
 	db.Table("photos").
-		Select("photo_uuid, location_id, photo_lat, photo_lng, taken_at").
+		Select("photo_uid, location_id, photo_lat, photo_lng, taken_at").
 		Where("deleted_at IS NULL AND photo_lat != 0 AND photo_lng != 0").
 		Order("taken_at DESC").
 		Limit(1).Offset(0).
@@ -137,7 +141,10 @@ func (c *Config) ClientConfig() ClientConfig {
 		Hidden         uint `json:"hidden"`
 		Favorites      uint `json:"favorites"`
 		Private        uint `json:"private"`
+		Review         uint `json:"review"`
 		Albums         uint `json:"albums"`
+		Folders        uint `json:"folders"`
+		Moments        uint `json:"moments"`
 		Countries      uint `json:"countries"`
 		Places         uint `json:"places"`
 		Labels         uint `json:"labels"`
@@ -145,7 +152,7 @@ func (c *Config) ClientConfig() ClientConfig {
 	}{}
 
 	db.Table("photos").
-		Select("SUM(photo_type = 'video' AND photo_quality >= 0 AND photo_private = 0) AS videos, SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','live') AND photo_private = 0 AND photo_quality >= 0) AS photos, SUM(photo_favorite = 1 AND photo_quality >= 0) AS favorites, SUM(photo_private = 1 AND photo_quality >= 0) AS private").
+		Select("SUM(photo_type = 'video' AND photo_quality >= 0 AND photo_private = 0) AS videos, SUM(photo_type IN ('image','raw','live') AND photo_quality < 3 AND photo_quality >= 0 AND photo_private = 0) AS review, SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','live') AND photo_private = 0 AND photo_quality >= 0) AS photos, SUM(photo_favorite = 1 AND photo_quality >= 0) AS favorites, SUM(photo_private = 1 AND photo_quality >= 0) AS private").
 		Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
 		Where("deleted_at IS NULL").
 		Take(&count)
@@ -158,7 +165,13 @@ func (c *Config) ClientConfig() ClientConfig {
 		Take(&count)
 
 	db.Table("albums").
-		Select("COUNT(*) AS albums").
+		Select("SUM(album_type = '') AS albums, SUM(album_type = 'moment') AS moments, SUM(album_type = 'folder') AS folders").
+		Where("deleted_at IS NULL").
+		Take(&count)
+
+	db.Table("folders").
+		Select("COUNT(*) AS folders").
+		Where("folder_hidden = 0").
 		Where("deleted_at IS NULL").
 		Take(&count)
 
@@ -171,17 +184,8 @@ func (c *Config) ClientConfig() ClientConfig {
 		Where("id != 'zz'").
 		Take(&count)
 
-	type country struct {
-		ID          string `json:"code"`
-		CountryName string `json:"name"`
-	}
-
-	var countries []country
-
-	db.Model(&entity.Country{}).
-		Select("id, country_name").
-		Order("country_slug").
-		Scan(&countries)
+	db.Order("country_slug").
+		Find(&countries)
 
 	db.Where("deleted_at IS NULL").
 		Limit(10000).Order("camera_slug").
@@ -203,23 +207,21 @@ func (c *Config) ClientConfig() ClientConfig {
 		Pluck("DISTINCT photo_year", &years)
 
 	type CategoryLabel struct {
-		LabelName string
-		Title     string
+		LabelUID   string `json:"UID"`
+		CustomSlug string `json:"Slug"`
+		LabelName  string `json:"Name"`
 	}
 
 	var categories []CategoryLabel
 
 	db.Table("categories").
-		Select("l.label_name").
+		Select("l.label_uid, l.custom_slug, l.label_name").
 		Joins("JOIN labels l ON categories.category_id = l.id").
-		Group("l.label_name").
-		Order("l.label_name").
+		Where("l.deleted_at IS NULL").
+		Group("l.custom_slug").
+		Order("l.custom_slug").
 		Limit(1000).Offset(0).
 		Scan(&categories)
-
-	for i, l := range categories {
-		categories[i].Title = strings.Title(l.LabelName)
-	}
 
 	jsHash := fs.Checksum(c.HttpStaticBuildPath() + "/app.js")
 	cssHash := fs.Checksum(c.HttpStaticBuildPath() + "/app.css")

@@ -90,25 +90,25 @@ func TestBatchPhotosRestore(t *testing.T) {
 func TestBatchAlbumsDelete(t *testing.T) {
 	app, router, conf := NewApiTest()
 	CreateAlbum(router, conf)
-	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"AlbumName": "BatchDelete", "AlbumDescription": "To be deleted", "AlbumNotes": "", "AlbumFavorite": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Name": "BatchDelete", "Description": "To be deleted", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusOK, r.Code)
-	uuid := gjson.Get(r.Body.String(), "AlbumUUID").String()
+	uid := gjson.Get(r.Body.String(), "UID").String()
 
 	t.Run("successful request", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 
 		GetAlbum(router, conf)
-		r := PerformRequest(app, "GET", "/api/v1/albums/"+uuid)
-		val := gjson.Get(r.Body.String(), "AlbumSlug")
+		r := PerformRequest(app, "GET", "/api/v1/albums/"+uid)
+		val := gjson.Get(r.Body.String(), "Slug")
 		assert.Equal(t, "batchdelete", val.String())
 
 		BatchAlbumsDelete(router, conf)
-		r2 := PerformRequestWithBody(app, "POST", "/api/v1/batch/albums/delete", fmt.Sprintf(`{"albums": ["%s", "pt9jtdre2lvl0ycc"]}`, uuid))
+		r2 := PerformRequestWithBody(app, "POST", "/api/v1/batch/albums/delete", fmt.Sprintf(`{"albums": ["%s", "pt9jtdre2lvl0ycc"]}`, uid))
 		val2 := gjson.Get(r2.Body.String(), "message")
 		assert.Contains(t, val2.String(), "albums deleted")
 		assert.Equal(t, http.StatusOK, r2.Code)
 
-		r3 := PerformRequest(app, "GET", "/api/v1/albums/"+uuid)
+		r3 := PerformRequest(app, "GET", "/api/v1/albums/"+uid)
 		val3 := gjson.Get(r3.Body.String(), "error")
 		assert.Equal(t, "Album not found", val3.String())
 		assert.Equal(t, http.StatusNotFound, r3.Code)
@@ -135,7 +135,7 @@ func TestBatchPhotosPrivate(t *testing.T) {
 		GetPhoto(router, conf)
 		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh8")
 		assert.Equal(t, http.StatusOK, r.Code)
-		val := gjson.Get(r.Body.String(), "PhotoPrivate")
+		val := gjson.Get(r.Body.String(), "Private")
 		assert.Equal(t, "false", val.String())
 
 		BatchPhotosPrivate(router, conf)
@@ -146,7 +146,7 @@ func TestBatchPhotosPrivate(t *testing.T) {
 
 		r3 := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh8")
 		assert.Equal(t, http.StatusOK, r3.Code)
-		val3 := gjson.Get(r3.Body.String(), "PhotoPrivate")
+		val3 := gjson.Get(r3.Body.String(), "Private")
 		assert.Equal(t, "true", val3.String())
 	})
 	t.Run("no photos selected", func(t *testing.T) {
@@ -170,7 +170,7 @@ func TestBatchLabelsDelete(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetLabels(router, conf)
 		r := PerformRequest(app, "GET", "/api/v1/labels?count=15")
-		val := gjson.Get(r.Body.String(), `#(LabelName=="BatchDelete").LabelSlug`)
+		val := gjson.Get(r.Body.String(), `#(Name=="BatchDelete").Slug`)
 		assert.Equal(t, val.String(), "batchdelete")
 
 		BatchLabelsDelete(router, conf)
@@ -180,7 +180,7 @@ func TestBatchLabelsDelete(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r2.Code)
 
 		r3 := PerformRequest(app, "GET", "/api/v1/labels?count=15")
-		val3 := gjson.Get(r3.Body.String(), `#(LabelName=="BatchDelete").LabelSlug`)
+		val3 := gjson.Get(r3.Body.String(), `#(Name=="BatchDelete").Slug`)
 		assert.Equal(t, val3.String(), "")
 	})
 	t.Run("no labels selected", func(t *testing.T) {

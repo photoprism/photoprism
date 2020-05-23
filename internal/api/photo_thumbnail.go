@@ -38,7 +38,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if f.FileVideo {
-			f, err = query.FileByPhotoUUID(f.PhotoUUID)
+			f, err = query.FileByPhotoUID(f.PhotoUID)
 
 			if err != nil {
 				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)

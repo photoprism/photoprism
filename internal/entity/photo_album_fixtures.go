@@ -4,26 +4,26 @@ import "time"
 
 type PhotoAlbumMap map[string]PhotoAlbum
 
-func (m PhotoAlbumMap) Get(name, photoUUID, albumUUID string) PhotoAlbum {
+func (m PhotoAlbumMap) Get(name, photoUID, albumUID string) PhotoAlbum {
 	if result, ok := m[name]; ok {
 		return result
 	}
 
-	return *NewPhotoAlbum(photoUUID, albumUUID)
+	return *NewPhotoAlbum(photoUID, albumUID)
 }
 
-func (m PhotoAlbumMap) Pointer(name, photoUUID, albumUUID string) *PhotoAlbum {
+func (m PhotoAlbumMap) Pointer(name, photoUID, albumUID string) *PhotoAlbum {
 	if result, ok := m[name]; ok {
 		return &result
 	}
 
-	return NewPhotoAlbum(photoUUID, albumUUID)
+	return NewPhotoAlbum(photoUID, albumUID)
 }
 
 var PhotoAlbumFixtures = PhotoAlbumMap{
 	"1": {
-		PhotoUUID: "pt9jtdre2lvl0yh7",
-		AlbumUUID: "at9lxuqxpogaaba8",
+		PhotoUID:  "pt9jtdre2lvl0yh7",
+		AlbumUID:  "at9lxuqxpogaaba8",
 		Order:     0,
 		CreatedAt: time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
@@ -31,8 +31,8 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Album:     AlbumFixtures.Pointer("holiday-2030"),
 	},
 	"2": {
-		PhotoUUID: "pt9jtdre2lvl0y11",
-		AlbumUUID: "at9lxuqxpogaaba9",
+		PhotoUID:  "pt9jtdre2lvl0y11",
+		AlbumUID:  "at9lxuqxpogaaba9",
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
@@ -40,8 +40,8 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Album:     AlbumFixtures.Pointer("berlin-2019"),
 	},
 	"3": {
-		PhotoUUID: "pt9jtdre2lvl0yh8",
-		AlbumUUID: "at9lxuqxpogaaba9",
+		PhotoUID:  "pt9jtdre2lvl0yh8",
+		AlbumUID:  "at9lxuqxpogaaba9",
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),

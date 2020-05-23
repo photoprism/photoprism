@@ -65,9 +65,9 @@
                             <v-card tile class="accent lighten-3"
                                     slot-scope="{ hover }"
                                     @contextmenu="onContextMenu($event, index)"
-                                    :dark="selection.includes(label.LabelUUID)"
-                                    :class="selection.includes(label.LabelUUID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
-                                    :to="{name: 'photos', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.LabelSlug)}}">
+                                    :dark="selection.includes(label.UID)"
+                                    :class="selection.includes(label.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
+                                    :to="{name: 'photos', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.Slug)}}">
                                 <v-img
                                         :src="label.thumbnailUrl('tile_500')"
                                         @mousedown="onMouseDown($event, index)"
@@ -96,11 +96,11 @@
                                     >
                                     </v-progress-circular -->
 
-                                    <v-btn v-if="hover || selection.includes(label.LabelUUID)" :flat="!hover" :ripple="false"
+                                    <v-btn v-if="hover || selection.includes(label.UID)" :flat="!hover" :ripple="false"
                                            icon large absolute
-                                           :class="selection.includes(label.LabelUUID) ? 'p-label-select' : 'p-label-select opacity-50'"
+                                           :class="selection.includes(label.UID) ? 'p-label-select' : 'p-label-select opacity-50'"
                                            @click.stop.prevent="onSelect($event, index)">
-                                        <v-icon v-if="selection.includes(label.LabelUUID)" color="white">check_circle
+                                        <v-icon v-if="selection.includes(label.UID)" color="white">check_circle
                                         </v-icon>
                                         <v-icon v-else color="accent lighten-3">radio_button_off</v-icon>
                                     </v-btn>
@@ -108,20 +108,20 @@
 
                                 <v-card-actions @click.stop.prevent="">
                                     <v-edit-dialog
-                                            :return-value.sync="label.LabelName"
+                                            :return-value.sync="label.Name"
                                             lazy
                                             @save="onSave(label)"
                                             class="p-inline-edit"
                                     >
-                                        <span v-if="label.LabelName">
-                                            {{ label.LabelName | capitalize }}
+                                        <span v-if="label.Name">
+                                            {{ label.Name | capitalize }}
                                         </span>
                                         <span v-else>
                                             <v-icon>edit</v-icon>
                                         </span>
                                         <template v-slot:input>
                                             <v-text-field
-                                                    v-model="label.LabelName"
+                                                    v-model="label.Name"
                                                     :rules="[titleRule]"
                                                     :label="labels.name"
                                                     color="secondary-dark"
@@ -132,7 +132,7 @@
                                     </v-edit-dialog>
                                     <v-spacer></v-spacer>
                                     <v-btn icon @click.stop.prevent="label.toggleLike()">
-                                        <v-icon v-if="label.LabelFavorite" color="#FFD600">star
+                                        <v-icon v-if="label.Favorite" color="#FFD600">star
                                         </v-icon>
                                         <v-icon v-else color="accent lighten-2">star</v-icon>
                                     </v-btn>
@@ -279,27 +279,27 @@
                 this.filter.q = '';
                 this.updateQuery();
             },
-            addSelection(uuid) {
-                const pos = this.selection.indexOf(uuid);
+            addSelection(uid) {
+                const pos = this.selection.indexOf(uid);
 
                 if (pos === -1) {
-                    this.selection.push(uuid)
-                    this.lastId = uuid;
+                    this.selection.push(uid)
+                    this.lastId = uid;
                 }
             },
-            toggleSelection(uuid) {
-                const pos = this.selection.indexOf(uuid);
+            toggleSelection(uid) {
+                const pos = this.selection.indexOf(uid);
 
                 if (pos !== -1) {
                     this.selection.splice(pos, 1);
                     this.lastId = "";
                 } else {
-                    this.selection.push(uuid);
-                    this.lastId = uuid;
+                    this.selection.push(uid);
+                    this.lastId = uid;
                 }
             },
-            removeSelection(uuid) {
-                const pos = this.selection.indexOf(uuid);
+            removeSelection(uid) {
+                const pos = this.selection.indexOf(uid);
 
                 if (pos !== -1) {
                     this.selection.splice(pos, 1);
@@ -444,7 +444,7 @@
                     case 'updated':
                         for (let i = 0; i < data.entities.length; i++) {
                             const values = data.entities[i];
-                            const model = this.results.find((m) => m.LabelUUID === values.LabelUUID);
+                            const model = this.results.find((m) => m.UID === values.UID);
 
                             for (let key in values) {
                                 if (values.hasOwnProperty(key)) {
@@ -457,14 +457,14 @@
                         this.dirty = true;
 
                         for (let i = 0; i < data.entities.length; i++) {
-                            const uuid = data.entities[i];
-                            const index = this.results.findIndex((m) => m.LabelUUID === uuid);
+                            const uid = data.entities[i];
+                            const index = this.results.findIndex((m) => m.UID === uid);
 
                             if (index >= 0) {
                                 this.results.splice(index, 1);
                             }
 
-                            this.removeSelection(uuid)
+                            this.removeSelection(uid)
                         }
 
                         break;

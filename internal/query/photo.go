@@ -25,9 +25,9 @@ func PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 	return photo, nil
 }
 
-// PhotoByUUID returns a Photo based on the UUID.
-func PhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
-	if err := UnscopedDb().Where("photo_uuid = ?", photoUUID).
+// PhotoByUID returns a Photo based on the UID.
+func PhotoByUID(photoUID string) (photo entity.Photo, err error) {
+	if err := UnscopedDb().Where("photo_uid = ?", photoUID).
 		Preload("Links").
 		Preload("Camera").
 		Preload("Lens").
@@ -45,9 +45,9 @@ func PhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
 	return photo, nil
 }
 
-// PreloadPhotoByUUID returns a Photo based on the UUID with all dependencies preloaded.
-func PreloadPhotoByUUID(photoUUID string) (photo entity.Photo, err error) {
-	if err := UnscopedDb().Where("photo_uuid = ?", photoUUID).
+// PreloadPhotoByUID returns a Photo based on the UID with all dependencies preloaded.
+func PreloadPhotoByUID(photoUID string) (photo entity.Photo, err error) {
+	if err := UnscopedDb().Where("photo_uid = ?", photoUID).
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).

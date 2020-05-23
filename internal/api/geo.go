@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/txt"
 
@@ -60,17 +61,30 @@ func GetGeo(router *gin.RouterGroup, conf *config.Config) {
 			bboxMax(2, p.Lng())
 			bboxMax(3, p.Lat())
 
+			props := gin.H{
+				"UID":     p.PhotoUID,
+				"Hash":    p.FileHash,
+				"Width":   p.FileWidth,
+				"Height":  p.FileHeight,
+				"TakenAt": p.TakenAt,
+				"Title":   p.PhotoTitle,
+			}
+
+			if p.PhotoDescription != "" {
+				props["Description"] = p.PhotoDescription
+			}
+
+			if p.PhotoType != entity.TypeImage && p.PhotoType != entity.TypeDefault {
+				props["Type"] = p.PhotoType
+			}
+
+			if p.PhotoFavorite {
+				props["Favorite"] = true
+			}
+
 			feat := geojson.NewPointFeature([]float64{p.Lng(), p.Lat()})
 			feat.ID = p.ID
-			feat.Properties = gin.H{
-				"PhotoUUID":     p.PhotoUUID,
-				"PhotoTitle":    p.PhotoTitle,
-				"PhotoFavorite": p.PhotoFavorite,
-				"FileHash":      p.FileHash,
-				"FileWidth":     p.FileWidth,
-				"FileHeight":    p.FileHeight,
-				"TakenAt":       p.TakenAt,
-			}
+			feat.Properties = props
 			fc.AddFeature(feat)
 		}
 

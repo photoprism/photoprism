@@ -181,7 +181,7 @@
                     return false;
                 }
 
-                if (showMerged && (this.results[index].PhotoType === 'video' || this.results[index].PhotoType === 'live')) {
+                if (showMerged && (this.results[index].Type === 'video' || this.results[index].Type === 'live')) {
                     if(this.results[index].isPlayable()) {
                         this.$modal.show('video', {video: this.results[index], album: null});
                     } else {
@@ -341,7 +341,7 @@
                     case 'updated':
                         for (let i = 0; i < data.entities.length; i++) {
                             const values = data.entities[i];
-                            const model = this.results.find((m) => m.PhotoUUID === values.PhotoUUID);
+                            const model = this.results.find((m) => m.UID === values.UID);
 
                             if (model) {
                                 for (let key in values) {
@@ -358,8 +358,8 @@
                         if (this.context !== "archive") break;
 
                         for (let i = 0; i < data.entities.length; i++) {
-                            const uuid = data.entities[i];
-                            const index = this.results.findIndex((m) => m.PhotoUUID === uuid);
+                            const uid = data.entities[i];
+                            const index = this.results.findIndex((m) => m.UID === uid);
                             if (index >= 0) {
                                 this.results.splice(index, 1);
                             }
@@ -372,8 +372,8 @@
                         if (this.context === "archive") break;
 
                         for (let i = 0; i < data.entities.length; i++) {
-                            const uuid = data.entities[i];
-                            const index = this.results.findIndex((m) => m.PhotoUUID === uuid);
+                            const uid = data.entities[i];
+                            const index = this.results.findIndex((m) => m.UID === uid);
                             if (index >= 0) {
                                 this.results.splice(index, 1);
                             }

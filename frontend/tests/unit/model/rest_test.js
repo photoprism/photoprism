@@ -10,36 +10,36 @@ let assert = chai.assert;
 describe("model/abstract", () => {
     const mock = new MockAdapter(Api);
     it("should set values",  () => {
-        const values = {id: 5, LabelName: "Black Cat", LabelSlug: "black-cat"};
+        const values = {id: 5, Name: "Black Cat", Slug: "black-cat"};
         const label = new Label(values);
-        assert.equal(label.LabelName, "Black Cat");
-        assert.equal(label.LabelSlug, "black-cat");
+        assert.equal(label.Name, "Black Cat");
+        assert.equal(label.Slug, "black-cat");
         label.setValues();
-        assert.equal(label.LabelName, "Black Cat");
-        assert.equal(label.LabelSlug, "black-cat");
-        const values2 = {id: 6, LabelName: "White Cat", LabelSlug: "white-cat"};
+        assert.equal(label.Name, "Black Cat");
+        assert.equal(label.Slug, "black-cat");
+        const values2 = {id: 6, Name: "White Cat", Slug: "white-cat"};
         label.setValues(values2);
-        assert.equal(label.LabelName, "White Cat");
-        assert.equal(label.LabelSlug, "white-cat");
+        assert.equal(label.Name, "White Cat");
+        assert.equal(label.Slug, "white-cat");
     });
 
     it("should get values",  () => {
-        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumUUID: 66};
+        const values = {id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66};
         const album = new Album(values);
         const result = album.getValues();
-        assert.equal(result.AlbumName, "Christmas 2019");
-        assert.equal(result.AlbumUUID, 66);
+        assert.equal(result.Name, "Christmas 2019");
+        assert.equal(result.UID, 66);
     });
 
     it("should get id",  () => {
-        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumUUID: 66};
+        const values = {id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66};
         const album = new Album(values);
         const result = album.getId();
         assert.equal(result, 66);
     });
 
     it("should test if id exists",  () => {
-        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumUUID: 66};
+        const values = {id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66};
         const album = new Album(values);
         const result = album.hasId();
         assert.equal(result, true);
@@ -51,47 +51,47 @@ describe("model/abstract", () => {
     });
 
     it("should update album",  async() => {
-        mock.onPut().reply(200, {AlbumDescription: "Test description"});
-        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumUUID: 66};
+        mock.onPut().reply(200, {Description: "Test description"});
+        const values = {id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66};
         const album = new Album(values);
-        assert.equal(album.AlbumDescription, undefined);
+        assert.equal(album.Description, undefined);
         await album.update();
-        assert.equal(album.AlbumDescription, "Test description");
+        assert.equal(album.Description, "Test description");
         mock.reset();
     });
 
     it("should save album",  async() => {
-        mock.onPut().reply(200, {AlbumDescription: "Test description"});
-        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumUUID: 66};
+        mock.onPut().reply(200, {Description: "Test description"});
+        const values = {id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66};
         const album = new Album(values);
-        assert.equal(album.AlbumDescription, undefined);
+        assert.equal(album.Description, undefined);
         await album.save();
-        assert.equal(album.AlbumDescription, "Test description");
+        assert.equal(album.Description, "Test description");
         mock.reset();
     });
 
     it("should save album",  async() => {
-        mock.onPost().reply(200, {AlbumDescription: "Test description"});
-        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019"};
+        mock.onPost().reply(200, {Description: "Test description"});
+        const values = {id: 5, Name: "Christmas 2019", Slug: "christmas-2019"};
         const album = new Album(values);
-        assert.equal(album.AlbumDescription, undefined);
+        assert.equal(album.Description, undefined);
         await album.save();
-        assert.equal(album.AlbumDescription, "Test description");
+        assert.equal(album.Description, "Test description");
         mock.reset();
     });
 
     it("should remove album",  async() => {
         mock.onDelete().reply(200);
-        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019"};
+        const values = {id: 5, Name: "Christmas 2019", Slug: "christmas-2019"};
         const album = new Album(values);
-        assert.equal(album.AlbumName, "Christmas 2019");
+        assert.equal(album.Name, "Christmas 2019");
         await album.remove();
         mock.reset();
     });
 
     it("should get edit form",  async() => {
         mock.onAny().reply(200, "editForm");
-        const values = {id: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019"};
+        const values = {id: 5, Name: "Christmas 2019", Slug: "christmas-2019"};
         const album = new Album(values);
         const result = await album.getEditForm();
         assert.equal(result.definition, "editForm");
@@ -113,10 +113,10 @@ describe("model/abstract", () => {
     });
 
     it("should search label",  async() => {
-        mock.onAny().reply(200, {"ID":51,"CreatedAt":"2019-07-03T18:48:07Z","UpdatedAt":"2019-07-25T01:04:44Z","DeletedAt":"0001-01-01T00:00:00Z","LabelSlug":"tabby-cat","LabelName":"tabby cat","LabelPriority":5,"LabelCount":9,"LabelFavorite":false,"LabelDescription":"","LabelNotes":""});
+        mock.onAny().reply(200, {"ID":51,"CreatedAt":"2019-07-03T18:48:07Z","UpdatedAt":"2019-07-25T01:04:44Z","DeletedAt":"0001-01-01T00:00:00Z","Slug":"tabby-cat","Name":"tabby cat","Priority":5,"LabelCount":9,"Favorite":false,"Description":"","Notes":""});
         const result = await Album.search();
         assert.equal(result.data.ID, 51);
-        assert.equal(result.data.LabelName, "tabby cat");
+        assert.equal(result.data.Name, "tabby cat");
         mock.reset();
     });
 

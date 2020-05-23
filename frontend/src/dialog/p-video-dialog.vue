@@ -51,18 +51,18 @@
                 let width = 0;
                 let height = 0;
 
-                if (file.FileWidth > 0) {
-                    width = file.FileWidth;
-                } else if (main && main.FileWidth > 0) {
-                    width = main.FileWidth;
+                if (file.Width > 0) {
+                    width = file.Width;
+                } else if (main && main.Width > 0) {
+                    width = main.Width;
                 } else {
                     width = this.defaultWidth;
                 }
 
-                if (file.FileHeight > 0) {
-                    height = file.FileHeight;
-                } else if (main && main.FileHeight > 0) {
-                    height = main.FileHeight;
+                if (file.Height > 0) {
+                    height = file.Height;
+                } else if (main && main.Height > 0) {
+                    height = main.Height;
                 } else {
                     height = this.defaultHeight;
                 }

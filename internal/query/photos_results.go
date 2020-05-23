@@ -14,77 +14,69 @@ import (
 // PhotosResult contains found photos and their main file plus other meta data.
 type PhotosResult struct {
 	// Photo
-	ID               uint
-	PhotoUUID        string
-	PhotoType        string
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
-	DeletedAt        time.Time
-	TakenAt          time.Time
-	TakenAtLocal     time.Time
-	TakenSrc         string
-	TimeZone         string
-	PhotoPath        string
-	PhotoName        string
-	PhotoTitle       string
-	PhotoDescription string
-	PhotoYear        int
-	PhotoMonth       int
-	PhotoCountry     string
-	PhotoFavorite    bool
-	PhotoPrivate     bool
-	PhotoLat         float32
-	PhotoLng         float32
-	PhotoAltitude    int
-	PhotoIso         int
-	PhotoFocalLength int
-	PhotoFNumber     float32
-	PhotoExposure    string
-	PhotoQuality     int
-	PhotoResolution  int
-	Merged           bool
+	ID               uint          `json:"ID"`
+	PhotoUID         string        `json:"UID"`
+	PhotoType        string        `json:"Type"`
+	TakenAt          time.Time     `json:"TakenAt"`
+	TakenAtLocal     time.Time     `json:"TakenAtLocal"`
+	TakenSrc         string        `json:"TakenSrc"`
+	TimeZone         string        `json:"TimeZone"`
+	PhotoPath        string        `json:"Path"`
+	PhotoName        string        `json:"Name"`
+	PhotoTitle       string        `json:"Title"`
+	PhotoDescription string        `json:"Description"`
+	PhotoYear        int           `json:"Year"`
+	PhotoMonth       int           `json:"Month"`
+	PhotoCountry     string        `json:"Country"`
+	PhotoFavorite    bool          `json:"Favorite"`
+	PhotoPrivate     bool          `json:"Private"`
+	PhotoLat         float32       `json:"Lat"`
+	PhotoLng         float32       `json:"Lng"`
+	PhotoAltitude    int           `json:"Altitude"`
+	PhotoIso         int           `json:"Iso"`
+	PhotoFocalLength int           `json:"FocalLength"`
+	PhotoFNumber     float32       `json:"FNumber"`
+	PhotoExposure    string        `json:"Exposure"`
+	PhotoQuality     int           `json:"Quality"`
+	PhotoResolution  int           `json:"Resolution"`
+	CameraID         uint          `json:"CameraID"` // Camera
+	CameraModel      string        `json:"CameraModel"`
+	CameraMake       string        `json:"CameraMake"`
+	LensID           uint          `json:"LensID"` // Lens
+	LensModel        string        `json:"LensModel"`
+	LensMake         string        `json:"LensMake"`
+	LocationID       string        `json:"LocationID"` // Location
+	PlaceID          string        `json:"PlaceID"`
+	LocLabel         string        `json:"LocLabel"`
+	LocCity          string        `json:"LocCity"`
+	LocState         string        `json:"LocState"`
+	LocCountry       string        `json:"LocCountry"`
+	FileID           uint          `json:"-"` // File
+	FileUID          string        `json:"FileUID"`
+	FileName         string        `json:"FileName"`
+	FileHash         string        `json:"Hash"`
+	FileWidth        int           `json:"Width"`
+	FileHeight       int           `json:"Height"`
+	FilePrimary      bool          `json:"-"`
+	FileMissing      bool          `json:"-"`
+	FileVideo        bool          `json:"-"`
+	FileDuration     time.Duration `json:"-"`
+	FileCodec        string        `json:"-"`
+	FileType         string        `json:"-"`
+	FileMime         string        `json:"-"`
+	FileSize         int64         `json:"-"`
+	FileOrientation  int           `json:"-"`
+	FileAspectRatio  float32       `json:"-"`
+	FileColors       string        `json:"-"`
+	FileChroma       uint8         `json:"-"`
+	FileLuminance    string        `json:"-"`
+	FileDiff         uint32        `json:"-"`
+	Merged           bool          `json:"Merged"`
+	CreatedAt        time.Time     `json:"CreatedAt"`
+	UpdatedAt        time.Time     `json:"UpdatedAt"`
+	DeletedAt        time.Time     `json:"DeletedAt,omitempty"`
 
-	// Camera
-	CameraID    uint
-	CameraModel string
-	CameraMake  string
-
-	// Lens
-	LensID    uint
-	LensModel string
-	LensMake  string
-
-	// Location
-	LocationID string
-	PlaceID    string
-	LocLabel   string
-	LocCity    string
-	LocState   string
-	LocCountry string
-
-	// File
-	FileID          uint
-	FileUUID        string
-	FilePrimary     bool
-	FileMissing     bool
-	FileVideo       bool
-	FileDuration    time.Duration
-	FileName        string
-	FileHash        string
-	FileCodec       string
-	FileType        string
-	FileMime        string
-	FileWidth       int
-	FileHeight      int
-	FileSize        int64
-	FileOrientation int
-	FileAspectRatio float32
-	FileColors      string // todo: remove from result?
-	FileChroma      uint8  // todo: remove from result?
-	FileLuminance   string // todo: remove from result?
-	FileDiff        uint32 // todo: remove from result?
-
-	Files []entity.File
+	Files []entity.File `json:"Files"`
 }
 
 type PhotosResults []PhotosResult
@@ -128,7 +120,7 @@ func (m *PhotosResult) ShareFileName() string {
 	if m.PhotoTitle != "" {
 		name = strings.Title(slug.MakeLang(m.PhotoTitle, "en"))
 	} else {
-		name = m.PhotoUUID
+		name = m.PhotoUID
 	}
 
 	taken := m.TakenAtLocal.Format("20060102-150405")

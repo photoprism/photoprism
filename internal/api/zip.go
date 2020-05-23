@@ -47,7 +47,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		files, err := query.FilesByUUID(f.Photos, 1000, 0)
+		files, err := query.FilesByUID(f.Photos, 1000, 0)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})

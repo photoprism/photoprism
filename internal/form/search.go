@@ -9,7 +9,6 @@ import (
 	"unicode"
 
 	"github.com/photoprism/photoprism/pkg/txt"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/araddon/dateparse"
 )

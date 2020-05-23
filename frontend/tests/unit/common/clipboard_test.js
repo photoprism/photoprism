@@ -28,11 +28,11 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.storageKey, "clipboard");
         assert.equal(clipboard.selection, "");
 
-        const values = {ID: 5, PhotoUUID: "ABC123", PhotoTitle: "Crazy Cat", PhotoColor: "brown"};
+        const values = {ID: 5, UID: "ABC123", Title: "Crazy Cat"};
         const photo = new Photo(values);
         clipboard.toggle(photo);
         assert.equal(clipboard.selection[0], "ABC123");
-        const values2 = {ID: 8, PhotoUUID: "ABC124", PhotoTitle: "Crazy Cat", PhotoColor: "brown"};
+        const values2 = {ID: 8, UID: "ABC124", Title: "Crazy Cat"};
         const photo2 = new Photo(values2);
         clipboard.toggle(photo2);
         assert.equal(clipboard.selection[0], "ABC123");
@@ -66,7 +66,7 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.selection, "");
         assert(spy.calledWith("Clipboard::add() - not a model:"));
 
-        const values = {ID: 5, PhotoUUID: "ABC124", PhotoTitle: "Crazy Cat", PhotoColor: "brown"};
+        const values = {ID: 5, UID: "ABC124", Title: "Crazy Cat"};
         const photo = new Photo(values);
         clipboard.add(photo);
         assert.equal(clipboard.selection[0], "ABC124");
@@ -97,13 +97,13 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.selection, "");
         assert(spy.calledWith("Clipboard::has() - not a model:"));
 
-        const values = {ID: 5, PhotoUUID: "ABC124", PhotoTitle: "Crazy Cat", PhotoColor: "brown"};
+        const values = {ID: 5, UID: "ABC124", Title: "Crazy Cat"};
         const photo = new Photo(values);
         clipboard.add(photo);
         assert.equal(clipboard.selection[0], "ABC124");
         const result = clipboard.has(photo);
         assert.equal(result, true);
-        const values2 = {ID: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumUUID: 66};
+        const values2 = {ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66};
         const album = new Album(values2);
         const result2 = clipboard.has(album);
         assert.equal(result2, false);
@@ -133,14 +133,14 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.selection, "");
         assert(spy.calledWith("Clipboard::remove() - not a model:"));
 
-        const values = {ID: 5, PhotoUUID: "ABC123", PhotoTitle: "Crazy Cat", PhotoColor: "brown"};
+        const values = {ID: 5, UID: "ABC123", Title: "Crazy Cat"};
         const photo = new Photo(values);
         clipboard.add(photo);
         assert.equal(clipboard.selection[0], "ABC123");
 
         clipboard.remove(photo);
         assert.equal(clipboard.selection, "");
-        const values2 = {ID: 5, AlbumName: "Christmas 2019", AlbumSlug: "christmas-2019", AlbumUUID: 66};
+        const values2 = {ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66};
         const album = new Album(values2);
         clipboard.remove(album);
         assert.equal(clipboard.selection, "");

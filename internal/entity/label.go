@@ -12,31 +12,31 @@ import (
 
 // Label is used for photo, album and location categorization
 type Label struct {
-	ID               uint   `gorm:"primary_key"`
-	LabelUUID        string `gorm:"type:varbinary(36);unique_index;"`
-	LabelSlug        string `gorm:"type:varbinary(255);unique_index;"`
-	CustomSlug       string `gorm:"type:varbinary(255);index;"`
-	LabelName        string `gorm:"type:varchar(255);"`
-	LabelPriority    int
-	LabelFavorite    bool
-	LabelDescription string   `gorm:"type:text;"`
-	LabelNotes       string   `gorm:"type:text;"`
-	LabelCategories  []*Label `gorm:"many2many:categories;association_jointable_foreignkey:category_id"`
-	Links            []Link   `gorm:"foreignkey:ShareUUID;association_foreignkey:LabelUUID"`
-	PhotoCount       int      `gorm:"default:1"`
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
-	DeletedAt        *time.Time `sql:"index"`
-	New              bool       `gorm:"-"`
+	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
+	LabelUID         string     `gorm:"type:varbinary(36);unique_index;" json:"UID" yaml:"UID"`
+	LabelSlug        string     `gorm:"type:varbinary(255);unique_index;" json:"Slug" yaml:"-"`
+	CustomSlug       string     `gorm:"type:varbinary(255);index;" json:"CustomSlug" yaml:"-"`
+	LabelName        string     `gorm:"type:varchar(255);" json:"Name" yaml:"Name"`
+	LabelPriority    int        `gorm:"type:varchar(255);" json:"Priority" yaml:"Priority,omitempty"`
+	LabelFavorite    bool       `gorm:"type:varchar(255);" json:"Favorite" yaml:"Favorite,omitempty"`
+	LabelDescription string     `gorm:"type:text;" json:"Description" yaml:"Description,omitempty"`
+	LabelNotes       string     `gorm:"type:text;" json:"Notes" yaml:"Notes,omitempty"`
+	LabelCategories  []*Label   `gorm:"many2many:categories;association_jointable_foreignkey:category_id" json:"-" yaml:"-"`
+	Links            []Link     `gorm:"foreignkey:ShareUID;association_foreignkey:LabelUID" json:"Links" yaml:"-"`
+	PhotoCount       int        `gorm:"default:1" json:"PhotoCount" yaml:"-"`
+	CreatedAt        time.Time  `json:"CreatedAt" yaml:"-"`
+	UpdatedAt        time.Time  `json:"UpdatedAt" yaml:"-"`
+	DeletedAt        *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	New              bool       `gorm:"-" json:"-" yaml:"-"`
 }
 
-// BeforeCreate creates a random UUID if needed before inserting a new row to the database.
+// BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsPPID(m.LabelUUID, 'l') {
+	if rnd.IsPPID(m.LabelUID, 'l') {
 		return nil
 	}
 
-	return scope.SetColumn("LabelUUID", rnd.PPID('l'))
+	return scope.SetColumn("LabelUID", rnd.PPID('l'))
 }
 
 // NewLabel creates a label in database with a given name and priority

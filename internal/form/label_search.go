@@ -8,9 +8,9 @@ type LabelSearch struct {
 	Name     string `form:"name"`
 	All      bool   `form:"all"`
 	Favorite bool   `form:"favorite"`
-	Count    int    `form:"count" binding:"required"`
-	Offset   int    `form:"offset"`
-	Order    string `form:"order"`
+	Count    int    `form:"count" binding:"required" serialize:"-"`
+	Offset   int    `form:"offset" serialize:"-"`
+	Order    string `form:"order" serialize:"-"`
 }
 
 func (f *LabelSearch) GetQuery() string {

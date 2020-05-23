@@ -11,7 +11,7 @@
                     >
                         <v-card tile
                                 class="ma-1 elevation-0"
-                                :title="model.PhotoTitle">
+                                :title="model.Title">
                             <v-img :src="model.thumbnailUrl('tile_500')"
                                    aspect-ratio="1"
                                    class="accent lighten-2 elevation-0"
@@ -44,7 +44,7 @@
                                         placeholder=""
                                         color="secondary-dark"
                                         browser-autocomplete="off"
-                                        v-model="model.PhotoTitle"
+                                        v-model="model.Title"
                                 ></v-text-field>
                             </v-flex>
 
@@ -123,8 +123,8 @@
                                         :label="labels.timezone"
                                         hide-details
                                         color="secondary-dark"
-                                        item-value="code"
-                                        item-text="name"
+                                        item-value="ID"
+                                        item-text="Name"
                                         v-model="model.TimeZone"
                                         :items="timeZones">
                                 </v-autocomplete>
@@ -138,7 +138,7 @@
                                         label="Latitude"
                                         placeholder=""
                                         color="secondary-dark"
-                                        v-model="model.PhotoLat"
+                                        v-model="model.Lat"
                                 ></v-text-field>
                             </v-flex>
 
@@ -150,7 +150,7 @@
                                         label="Longitude"
                                         placeholder=""
                                         color="secondary-dark"
-                                        v-model="model.PhotoLng"
+                                        v-model="model.Lng"
                                 ></v-text-field>
                             </v-flex>
 
@@ -162,7 +162,7 @@
                                         label="Altitude (m)"
                                         placeholder=""
                                         color="secondary-dark"
-                                        v-model="model.PhotoAltitude"
+                                        v-model="model.Altitude"
                                 ></v-text-field>
                             </v-flex>
 
@@ -175,7 +175,7 @@
                                         color="secondary-dark"
                                         item-value="Code"
                                         item-text="Name"
-                                        v-model="model.PhotoCountry"
+                                        v-model="model.Country"
                                         :items="countries">
                                 </v-select>
                             </v-flex>
@@ -188,7 +188,7 @@
                                         hide-details
                                         color="secondary-dark"
                                         item-value="ID"
-                                        item-text="CameraModel"
+                                        item-text="Model"
                                         v-model="model.CameraID"
                                         :items="cameraOptions">
                                 </v-select>
@@ -202,7 +202,7 @@
                                         label="ISO"
                                         placeholder=""
                                         color="secondary-dark"
-                                        v-model="model.PhotoIso"
+                                        v-model="model.Iso"
                                 ></v-text-field>
                             </v-flex>
 
@@ -214,7 +214,7 @@
                                         label="Exposure"
                                         placeholder=""
                                         color="secondary-dark"
-                                        v-model="model.PhotoExposure"
+                                        v-model="model.Exposure"
                                 ></v-text-field>
                             </v-flex>
 
@@ -226,7 +226,7 @@
                                         hide-details
                                         color="secondary-dark"
                                         item-value="ID"
-                                        item-text="LensModel"
+                                        item-text="Model"
                                         v-model="model.LensID"
                                         :items="lensOptions">
                                 </v-select>
@@ -240,7 +240,7 @@
                                         label="F Number"
                                         placeholder=""
                                         color="secondary-dark"
-                                        v-model="model.PhotoFNumber"
+                                        v-model="model.FNumber"
                                 ></v-text-field>
                             </v-flex>
 
@@ -252,7 +252,7 @@
                                         label="Focal Length"
                                         placeholder=""
                                         color="secondary-dark"
-                                        v-model="model.PhotoFocalLength"
+                                        v-model="model.FocalLength"
                                 ></v-text-field>
                             </v-flex>
 
@@ -322,7 +322,7 @@
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
-                                        v-model="model.PhotoDescription"
+                                        v-model="model.Description"
                                 ></v-textarea>
                             </v-flex>
 
@@ -361,7 +361,7 @@
                                 </v-btn>
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save(false)"
                                        class="p-photo-dialog-confirm">
-                                    <span v-if="$config.feature('review') && model.PhotoQuality < 3">Approve</span>
+                                    <span v-if="$config.feature('review') && model.Quality < 3">Approve</span>
                                     <span v-else>Apply</span>
                                 </v-btn>
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save(true)"

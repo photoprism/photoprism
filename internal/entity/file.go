@@ -13,45 +13,45 @@ import (
 
 // File represents an image or sidecar file that belongs to a photo
 type File struct {
-	ID              uint `gorm:"primary_key"`
-	Photo           *Photo
-	PhotoID         uint   `gorm:"index;"`
-	PhotoUUID       string `gorm:"type:varbinary(36);index;"`
-	FileUUID        string `gorm:"type:varbinary(36);unique_index;"`
-	FileName        string `gorm:"type:varbinary(768);unique_index"`
-	OriginalName    string `gorm:"type:varbinary(768);"`
-	FileHash        string `gorm:"type:varbinary(128);index"`
-	FileModified    time.Time
-	FileSize        int64
-	FileCodec       string `gorm:"type:varbinary(32)"`
-	FileType        string `gorm:"type:varbinary(32)"`
-	FileMime        string `gorm:"type:varbinary(64)"`
-	FilePrimary     bool
-	FileSidecar     bool
-	FileMissing     bool
-	FileDuplicate   bool
-	FilePortrait    bool
-	FileVideo       bool
-	FileDuration    time.Duration
-	FileWidth       int
-	FileHeight      int
-	FileOrientation int
-	FileAspectRatio float32 `gorm:"type:FLOAT;"`
-	FileMainColor   string  `gorm:"type:varbinary(16);index;"`
-	FileColors      string  `gorm:"type:varbinary(9);"`
-	FileLuminance   string  `gorm:"type:varbinary(9);"`
-	FileDiff        uint32
-	FileChroma      uint8
-	FileNotes       string `gorm:"type:text"`
-	FileError       string `gorm:"type:varbinary(512)"`
-	Share           []FileShare
-	Sync            []FileSync
-	Links           []Link `gorm:"foreignkey:ShareUUID;association_foreignkey:FileUUID"`
-	CreatedAt       time.Time
-	CreatedIn       int64
-	UpdatedAt       time.Time
-	UpdatedIn       int64
-	DeletedAt       *time.Time `sql:"index"`
+	ID              uint          `gorm:"primary_key" json:"-" yaml:"-"`
+	Photo           *Photo        `json:"-" yaml:"-"`
+	PhotoID         uint          `gorm:"index;" json:"-" yaml:"-"`
+	PhotoUID        string        `gorm:"type:varbinary(36);index;" json:"PhotoUID" yaml:"PhotoUID"`
+	FileUID         string        `gorm:"type:varbinary(36);unique_index;" json:"UID" yaml:"UID"`
+	FileName        string        `gorm:"type:varbinary(768);unique_index" json:"Name" yaml:"Name"`
+	OriginalName    string        `gorm:"type:varbinary(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
+	FileHash        string        `gorm:"type:varbinary(128);index" json:"Hash" yaml:"Hash,omitempty"`
+	FileModified    time.Time     `json:"Modified" yaml:"Modified,omitempty"`
+	FileSize        int64         `json:"Size" yaml:"Size,omitempty"`
+	FileCodec       string        `gorm:"type:varbinary(32)" json:"Codec" yaml:"Codec,omitempty"`
+	FileType        string        `gorm:"type:varbinary(32)" json:"Type" yaml:"Type,omitempty"`
+	FileMime        string        `gorm:"type:varbinary(64)" json:"Mime" yaml:"Mime,omitempty"`
+	FilePrimary     bool          `json:"Primary" yaml:"Primary,omitempty"`
+	FileSidecar     bool          `json:"Sidecar" yaml:"Sidecar,omitempty"`
+	FileMissing     bool          `json:"Missing" yaml:"Missing,omitempty"`
+	FileDuplicate   bool          `json:"Duplicate" yaml:"Duplicate,omitempty"`
+	FilePortrait    bool          `json:"Portrait" yaml:"Portrait,omitempty"`
+	FileVideo       bool          `json:"Video" yaml:"Video,omitempty"`
+	FileDuration    time.Duration `json:"Duration" yaml:"Duration,omitempty"`
+	FileWidth       int           `json:"Width" yaml:"Width,omitempty"`
+	FileHeight      int           `json:"Height" yaml:"Height,omitempty"`
+	FileOrientation int           `json:"Orientation" yaml:"Orientation,omitempty"`
+	FileAspectRatio float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
+	FileMainColor   string        `gorm:"type:varbinary(16);index;" json:"eMainColor" yaml:"eMainColor,omitempty"`
+	FileColors      string        `gorm:"type:varbinary(9);" json:"Colors" yaml:"Colors,omitempty"`
+	FileLuminance   string        `gorm:"type:varbinary(9);" json:"Luminance" yaml:"Luminance,omitempty"`
+	FileDiff        uint32        `json:"Diff" yaml:"Diff,omitempty"`
+	FileChroma      uint8         `json:"Chroma" yaml:"Chroma,omitempty"`
+	FileNotes       string        `gorm:"type:text" json:"Notes" yaml:"Notes,omitempty"`
+	FileError       string        `gorm:"type:varbinary(512)" json:"Error" yaml:"Error,omitempty"`
+	Share           []FileShare   `json:"-" yaml:"-"`
+	Sync            []FileSync    `json:"-" yaml:"-"`
+	Links           []Link        `gorm:"foreignkey:ShareUID;association_foreignkey:FileUID" json:"Links" yaml:"-"`
+	CreatedAt       time.Time     `json:"CreatedAt" yaml:"-"`
+	CreatedIn       int64         `json:"CreatedIn" yaml:"-"`
+	UpdatedAt       time.Time     `json:"UpdatedAt" yaml:"-"`
+	UpdatedIn       int64         `json:"UpdatedIn" yaml:"-"`
+	DeletedAt       *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
 type FileInfos struct {
@@ -75,13 +75,13 @@ func FirstFileByHash(fileHash string) (File, error) {
 	return file, q.Error
 }
 
-// BeforeCreate creates a random UUID if needed before inserting a new row to the database.
+// BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *File) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsPPID(m.FileUUID, 'f') {
+	if rnd.IsPPID(m.FileUID, 'f') {
 		return nil
 	}
 
-	return scope.SetColumn("FileUUID", rnd.PPID('f'))
+	return scope.SetColumn("FileUID", rnd.PPID('f'))
 }
 
 // ShareFileName returns a meaningful file name useful for sharing.
@@ -95,7 +95,7 @@ func (m *File) ShareFileName() string {
 	if m.Photo.PhotoTitle != "" {
 		name = strings.Title(slug.MakeLang(m.Photo.PhotoTitle, "en"))
 	} else {
-		name = m.PhotoUUID
+		name = m.PhotoUID
 	}
 
 	taken := m.Photo.TakenAtLocal.Format("20060102-150405")
@@ -144,7 +144,7 @@ func (m *File) AllFilesMissing() bool {
 // Saves the file in the database.
 func (m *File) Save() error {
 	if m.PhotoID == 0 {
-		return fmt.Errorf("file: photo id is empty (%s)", m.FileUUID)
+		return fmt.Errorf("file: photo id is empty (%s)", m.FileUID)
 	}
 
 	if err := Db().Save(m).Error; err != nil {

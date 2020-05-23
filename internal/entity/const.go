@@ -27,6 +27,8 @@ const (
 	TitleUnknown = "Unknown"
 
 	TypeDefault = ""
+	TypeFolder  = "folder"
+	TypeMoment  = "moment"
 	TypeImage   = "image"
 	TypeLive    = "live"
 	TypeVideo   = "video"

@@ -6,8 +6,8 @@ import (
 
 // PhotoAlbum represents the many_to_many relation between Photo and Album
 type PhotoAlbum struct {
-	PhotoUUID string `gorm:"type:varbinary(36);primary_key;auto_increment:false"`
-	AlbumUUID string `gorm:"type:varbinary(36);primary_key;auto_increment:false;index"`
+	PhotoUID  string `gorm:"type:varbinary(36);primary_key;auto_increment:false"`
+	AlbumUID  string `gorm:"type:varbinary(36);primary_key;auto_increment:false;index"`
 	Order     int
 	Hidden    bool
 	CreatedAt time.Time
@@ -21,11 +21,11 @@ func (PhotoAlbum) TableName() string {
 	return "photos_albums"
 }
 
-// NewPhotoAlbum registers an photo and album association using UUID
-func NewPhotoAlbum(photoUUID, albumUUID string) *PhotoAlbum {
+// NewPhotoAlbum registers an photo and album association using UID
+func NewPhotoAlbum(photoUID, albumUID string) *PhotoAlbum {
 	result := &PhotoAlbum{
-		PhotoUUID: photoUUID,
-		AlbumUUID: albumUUID,
+		PhotoUID: photoUID,
+		AlbumUID: albumUID,
 	}
 
 	return result
@@ -33,7 +33,7 @@ func NewPhotoAlbum(photoUUID, albumUUID string) *PhotoAlbum {
 
 // FirstOrCreate checks if the PhotoAlbum relation already exist in the database before the creation
 func (m *PhotoAlbum) FirstOrCreate() *PhotoAlbum {
-	if err := Db().FirstOrCreate(m, "photo_uuid = ? AND album_uuid = ?", m.PhotoUUID, m.AlbumUUID).Error; err != nil {
+	if err := Db().FirstOrCreate(m, "photo_uid = ? AND album_uid = ?", m.PhotoUID, m.AlbumUID).Error; err != nil {
 		log.Errorf("photo album: %s", err)
 	}
 

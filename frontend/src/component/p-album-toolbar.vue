@@ -4,16 +4,16 @@
             @submit.prevent="filterChange">
         <v-toolbar flat color="secondary">
             <v-edit-dialog
-                    :return-value.sync="album.AlbumName"
+                    :return-value.sync="album.Name"
                     lazy
                     @save="updateAlbum()"
                     class="p-inline-edit">
                 <v-toolbar-title>
-                    {{ album.AlbumName }}
+                    {{ album.Name }}
                 </v-toolbar-title>
                 <template v-slot:input>
                     <v-text-field
-                            v-model="album.AlbumName"
+                            v-model="album.Name"
                             :rules="[titleRule]"
                             :label="labels.name"
                             color="secondary-dark"
@@ -67,8 +67,8 @@
                                   :label="labels.country"
                                   flat solo hide-details
                                   color="secondary-dark"
-                                  item-value="code"
-                                  item-text="name"
+                                  item-value="ID"
+                                  item-text="Name"
                                   v-model="filter.country"
                                   :items="options.countries">
                         </v-select>
@@ -79,7 +79,7 @@
                                   flat solo hide-details
                                   color="secondary-dark"
                                   item-value="ID"
-                                  item-text="CameraModel"
+                                  item-text="Model"
                                   v-model="filter.camera"
                                   :items="options.cameras">
                         </v-select>
@@ -111,7 +111,7 @@
                                     :key="growDesc"
                                     color="secondary-dark"
                                     style="background-color: white"
-                                    v-model="album.AlbumDescription"
+                                    v-model="album.Description"
                                     @change="updateAlbum">
                         </v-textarea>
                     </v-flex>
@@ -133,11 +133,11 @@
         data() {
             const cameras = [{
                 ID: 0,
-                CameraModel: this.$gettext('All Cameras')
+                Model: this.$gettext('All Cameras')
             }].concat(this.$config.get('cameras'));
             const countries = [{
-                code: '',
-                name: this.$gettext('All Countries')
+                ID: '',
+                Name: this.$gettext('All Countries')
             }].concat(this.$config.get('countries'));
 
             return {

@@ -29,7 +29,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if len(folders) != len(expected){
+		if len(folders) != len(expected) {
 			t.Fatalf("response contains %d folders", len(folders))
 		}
 
@@ -43,7 +43,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 			assert.Equal(t, entity.TypeDefault, folder.FolderType)
 			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
 			assert.Equal(t, entity.FolderRootOriginals, folder.Root)
-			assert.Equal(t, "", folder.FolderUUID)
+			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
 			assert.Equal(t, false, folder.FolderHidden)
 			assert.Equal(t, false, folder.FolderIgnore)
@@ -69,7 +69,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if len(folders) != len(expected){
+		if len(folders) != len(expected) {
 			t.Fatalf("response contains %d folders", len(folders))
 		}
 
@@ -78,7 +78,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 			assert.Equal(t, entity.TypeDefault, folder.FolderType)
 			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
 			assert.Equal(t, entity.FolderRootOriginals, folder.Root)
-			assert.Equal(t, "", folder.FolderUUID)
+			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
 			assert.Equal(t, false, folder.FolderHidden)
 			assert.Equal(t, false, folder.FolderIgnore)
@@ -108,7 +108,7 @@ func TestGetFoldersImport(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if len(folders) != len(expected){
+		if len(folders) != len(expected) {
 			t.Fatalf("response contains %d folders", len(folders))
 		}
 
@@ -124,7 +124,7 @@ func TestGetFoldersImport(t *testing.T) {
 			assert.Equal(t, entity.TypeDefault, folder.FolderType)
 			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
 			assert.Equal(t, entity.FolderRootImport, folder.Root)
-			assert.Equal(t, "", folder.FolderUUID)
+			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
 			assert.Equal(t, false, folder.FolderHidden)
 			assert.Equal(t, false, folder.FolderIgnore)
@@ -140,6 +140,7 @@ func TestGetFoldersImport(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		GetFoldersImport(router, conf)
 		r := PerformRequest(app, "GET", "/api/v1/folders/import?recursive=true")
 		var folders []entity.Folder
@@ -149,7 +150,7 @@ func TestGetFoldersImport(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if len(folders) != len(expected){
+		if len(folders) != len(expected) {
 			t.Fatalf("response contains %d folders", len(folders))
 		}
 
@@ -158,7 +159,7 @@ func TestGetFoldersImport(t *testing.T) {
 			assert.Equal(t, entity.TypeDefault, folder.FolderType)
 			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
 			assert.Equal(t, entity.FolderRootImport, folder.Root)
-			assert.Equal(t, "", folder.FolderUUID)
+			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
 			assert.Equal(t, false, folder.FolderHidden)
 			assert.Equal(t, false, folder.FolderIgnore)

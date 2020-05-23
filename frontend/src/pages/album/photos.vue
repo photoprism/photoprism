@@ -64,8 +64,8 @@
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
 
-                if (this.uuid !== this.$route.params.uuid) {
-                    this.uuid = this.$route.params.uuid;
+                if (this.uid !== this.$route.params.uid) {
+                    this.uid = this.$route.params.uid;
                     this.findAlbum().then(() => this.search());
                 } else {
                     this.search();
@@ -73,7 +73,7 @@
             }
         },
         data() {
-            const uuid = this.$route.params.uuid;
+            const uid = this.$route.params.uid;
             const query = this.$route.query;
             const routeName = this.$route.name;
             const order = query['order'] ? query['order'] : 'oldest';
@@ -89,7 +89,7 @@
                 listen: false,
                 dirty: false,
                 model: new Album(),
-                uuid: uuid,
+                uid: uid,
                 results: [],
                 scrollDisabled: true,
                 pageSize: 60,
@@ -144,7 +144,7 @@
                     return false;
                 }
 
-                if (showMerged && (this.results[index].PhotoType === 'video' || this.results[index].PhotoType === 'live')) {
+                if (showMerged && (this.results[index].Type === 'video' || this.results[index].Type === 'live')) {
                     if(this.results[index].isPlayable()) {
                         this.$modal.show('video', {video: this.results[index], album: this.album});
                     } else {
@@ -170,7 +170,7 @@
                 const params = {
                     count: count,
                     offset: offset,
-                    album: this.uuid,
+                    album: this.uid,
                     merged: true,
                 };
 
@@ -183,7 +183,7 @@
                 Photo.search(params).then(response => {
                     this.results = Photo.mergeResponse(this.results, response);
 
-                    this.scrollDisabled = (response.models.length < count);
+                    this.scrollDisabled = (response.count < count);
 
                     if (this.scrollDisabled) {
                         this.offset = offset;
@@ -226,7 +226,7 @@
                 const params = {
                     count: this.pageSize,
                     offset: this.offset,
-                    album: this.uuid,
+                    album: this.uid,
                     merged: true,
                 };
 
@@ -269,7 +269,7 @@
 
                     this.results = response.models;
 
-                    this.scrollDisabled = (response.models.length < this.pageSize);
+                    this.scrollDisabled = (response.count < this.pageSize);
 
                     if (this.scrollDisabled) {
                         if (!this.results.length) {
@@ -291,11 +291,11 @@
                 });
             },
             findAlbum() {
-                return this.model.find(this.uuid).then(m => {
+                return this.model.find(this.uid).then(m => {
                     this.model = m;
 
                     this.filter.order = m.AlbumOrder;
-                    window.document.title = `PhotoPrism: ${this.model.AlbumName}`;
+                    window.document.title = `PhotoPrism: ${this.model.Name}`;
 
                     return Promise.resolve(this.model)
                 });
@@ -308,7 +308,7 @@
                 }
 
                 for (let i = 0; i < data.entities.length; i++) {
-                    if (this.model.AlbumUUID === data.entities[i].AlbumUUID) {
+                    if (this.model.UID === data.entities[i].UID) {
                         let values = data.entities[i];
 
                         for (let key in values) {
@@ -317,7 +317,7 @@
                             }
                         }
 
-                        window.document.title = `PhotoPrism: ${this.model.AlbumName}`
+                        window.document.title = `PhotoPrism: ${this.model.Name}`
 
                         this.dirty = true;
                         this.scrollDisabled = false;
@@ -346,7 +346,7 @@
                     case 'updated':
                         for (let i = 0; i < data.entities.length; i++) {
                             const values = data.entities[i];
-                            const model = this.results.find((m) => m.PhotoUUID === values.PhotoUUID);
+                            const model = this.results.find((m) => m.UID === values.UID);
 
                             if (model) {
                                 for (let key in values) {
@@ -368,8 +368,8 @@
                         this.dirty = true;
 
                         for (let i = 0; i < data.entities.length; i++) {
-                            const uuid = data.entities[i];
-                            const index = this.results.findIndex((m) => m.PhotoUUID === uuid);
+                            const uid = data.entities[i];
+                            const index = this.results.findIndex((m) => m.UID === uid);
                             if (index >= 0) {
                                 this.results.splice(index, 1);
                             }

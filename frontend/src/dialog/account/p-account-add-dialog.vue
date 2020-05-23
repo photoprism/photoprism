@@ -88,7 +88,7 @@
 
                 this.model.save().then((a) => {
                     this.loading = false;
-                    this.$emit('confirm', a.AlbumUUID);
+                    this.$emit('confirm', a.UID);
                 });
             },
         },

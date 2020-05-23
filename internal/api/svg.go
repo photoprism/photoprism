@@ -48,6 +48,10 @@ func GetSvg(router *gin.RouterGroup) {
 		c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 	})
 
+	router.GET("/svg/folder", func(c *gin.Context) {
+		c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
+	})
+
 	router.GET("/svg/broken", func(c *gin.Context) {
 		c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 	})

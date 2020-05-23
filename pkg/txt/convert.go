@@ -43,7 +43,7 @@ func Time(s string) (result time.Time) {
 		return time.Time{}
 	}
 
-	if !strings.HasPrefix(s, "/"){
+	if !strings.HasPrefix(s, "/") {
 		s = "/" + s
 	}
 

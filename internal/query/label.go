@@ -22,9 +22,9 @@ func LabelBySlug(labelSlug string) (label entity.Label, err error) {
 	return label, nil
 }
 
-// LabelByUUID returns a Label based on the label UUID.
-func LabelByUUID(labelUUID string) (label entity.Label, err error) {
-	if err := Db().Where("label_uuid = ?", labelUUID).Preload("Links").First(&label).Error; err != nil {
+// LabelByUID returns a Label based on the label UID.
+func LabelByUID(labelUID string) (label entity.Label, err error) {
+	if err := Db().Where("label_uid = ?", labelUID).Preload("Links").First(&label).Error; err != nil {
 		return label, err
 	}
 
@@ -45,11 +45,11 @@ func LabelThumbBySlug(labelSlug string) (file entity.File, err error) {
 	return file, nil
 }
 
-// LabelThumbByUUID returns a label preview file based on the label UUID.
-func LabelThumbByUUID(labelUUID string) (file entity.File, err error) {
+// LabelThumbByUID returns a label preview file based on the label UID.
+func LabelThumbByUID(labelUID string) (file entity.File, err error) {
 	// Search matching label
 	err = Db().Where("files.file_primary AND files.deleted_at IS NULL").
-		Joins("JOIN labels ON labels.label_uuid = ?", labelUUID).
+		Joins("JOIN labels ON labels.label_uid = ?", labelUID).
 		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
@@ -63,7 +63,7 @@ func LabelThumbByUUID(labelUUID string) (file entity.File, err error) {
 	err = Db().Where("files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100").
 		Joins("JOIN categories c ON photos_labels.label_id = c.label_id").
-		Joins("JOIN labels ON c.category_id = labels.id AND labels.label_uuid= ?", labelUUID).
+		Joins("JOIN labels ON c.category_id = labels.id AND labels.label_uid= ?", labelUID).
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
 		First(&file).Error

@@ -57,8 +57,17 @@ class Config {
         case "videos":
             this.values.count.videos += data.count;
             break;
+        case "folders":
+            this.values.count.folders += data.count;
+            break;
+        case "moments":
+            this.values.count.moments += data.count;
+            break;
         case "favorites":
             this.values.count.favorites += data.count;
+            break;
+        case "review":
+            this.values.count.review += data.count;
             break;
         case "private":
             this.values.count.private += data.count;

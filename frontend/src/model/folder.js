@@ -2,15 +2,15 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
 
-export const FolderRootOriginals = "originals"
-export const FolderRootImport = "import"
+export const FolderRootOriginals = "originals";
+export const FolderRootImport = "import";
 
 export class Folder extends RestModel {
     getDefaults() {
         return {
             Root: "",
             Path: "",
-            PPID: "",
+            UID: "",
             Title: "",
             Description: "",
             Type: "",
@@ -30,11 +30,11 @@ export class Folder extends RestModel {
     }
 
     getId() {
-        return this.PPID;
+        return this.UID;
     }
 
-    thumbnailUrl(type) {
-        return "/api/v1/folder/" + this.getId() + "/thumbnail/" + type;
+    thumbnailUrl() {
+        return "/api/v1/svg/folder";
     }
 
     getDateString() {
@@ -62,7 +62,11 @@ export class Folder extends RestModel {
     }
 
     static findAll(path) {
-        return this.search(path, {recursive: true})
+        return this.search(path, {recursive: true});
+    }
+
+    static originals(path, params) {
+        return this.search(FolderRootOriginals + "/" + path, params);
     }
 
     static search(path, params) {
@@ -71,7 +75,7 @@ export class Folder extends RestModel {
         };
 
         if (!path || path[0] !== "/") {
-            path = "/" + path
+            path = "/" + path;
         }
 
         return Api.get(this.getCollectionResource() + path, options).then((response) => {

@@ -15,14 +15,14 @@ var altCountryNames = map[string]string{
 
 // Country represents a country location, used for labeling photos.
 type Country struct {
-	ID                 string `gorm:"type:varbinary(2);primary_key"`
-	CountrySlug        string `gorm:"type:varbinary(255);unique_index;"`
-	CountryName        string
-	CountryDescription string `gorm:"type:text;"`
-	CountryNotes       string `gorm:"type:text;"`
-	CountryPhoto       *Photo
-	CountryPhotoID     uint
-	New                bool `gorm:"-"`
+	ID                 string `gorm:"type:varbinary(2);primary_key" json:"ID" yaml:"ID"`
+	CountrySlug        string `gorm:"type:varbinary(255);unique_index;" json:"Slug" yaml:"-"`
+	CountryName        string `json:"Name" yaml:"Name,omitempty"`
+	CountryDescription string `gorm:"type:text;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	CountryNotes       string `gorm:"type:text;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CountryPhoto       *Photo `json:"-" yaml:"-"`
+	CountryPhotoID     uint   `json:"-" yaml:"-"`
+	New                bool   `gorm:"-" json:"-" yaml:"-"`
 }
 
 // UnknownCountry is defined here to use it as a default

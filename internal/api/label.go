@@ -53,9 +53,9 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// PUT /api/v1/labels/:uuid
+// PUT /api/v1/labels/:uid
 func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.PUT("/labels/:uuid", func(c *gin.Context) {
+	router.PUT("/labels/:uid", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -68,8 +68,8 @@ func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		id := c.Param("uuid")
-		m, err := query.LabelByUUID(id)
+		id := c.Param("uid")
+		m, err := query.LabelByUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrLabelNotFound)
@@ -87,19 +87,19 @@ func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// POST /api/v1/labels/:uuid/like
+// POST /api/v1/labels/:uid/like
 //
 // Parameters:
-//   uuid: string Label UUID
+//   uid: string Label UID
 func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/labels/:uuid/like", func(c *gin.Context) {
+	router.POST("/labels/:uid/like", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
-		id := c.Param("uuid")
-		label, err := query.LabelByUUID(id)
+		id := c.Param("uid")
+		label, err := query.LabelByUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
@@ -121,19 +121,19 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// DELETE /api/v1/labels/:uuid/like
+// DELETE /api/v1/labels/:uid/like
 //
 // Parameters:
-//   uuid: string Label UUID
+//   uid: string Label UID
 func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.DELETE("/labels/:uuid/like", func(c *gin.Context) {
+	router.DELETE("/labels/:uid/like", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
-		id := c.Param("uuid")
-		label, err := query.LabelByUUID(id)
+		id := c.Param("uid")
+		label, err := query.LabelByUID(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
@@ -155,17 +155,17 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// GET /api/v1/labels/:uuid/thumbnail/:type
+// GET /api/v1/labels/:uid/thumbnail/:type
 //
 // Example: /api/v1/labels/cheetah/thumbnail/tile_500
 //
 // Parameters:
-//   uuid: string Label UUID
+//   uid: string Label UID
 //   type: string Thumbnail type, see photoprism.ThumbnailTypes
 func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/labels/:uuid/thumbnail/:type", func(c *gin.Context) {
+	router.GET("/labels/:uid/thumbnail/:type", func(c *gin.Context) {
 		typeName := c.Param("type")
-		labelUUID := c.Param("uuid")
+		labelUID := c.Param("uid")
 		start := time.Now()
 
 		thumbType, ok := thumb.Types[typeName]
@@ -177,15 +177,15 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		gc := service.Cache()
-		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", labelUUID, typeName)
+		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", labelUID, typeName)
 
 		if cacheData, ok := gc.Get(cacheKey); ok {
-			log.Debugf("%s cache hit [%s]", cacheKey, time.Since(start))
+			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
 			c.Data(http.StatusOK, "image/jpeg", cacheData.([]byte))
 			return
 		}
 
-		f, err := query.LabelThumbByUUID(labelUUID)
+		f, err := query.LabelThumbByUID(labelUID)
 
 		if err != nil {
 			log.Errorf(err.Error())
@@ -238,7 +238,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		gc.Set(cacheKey, thumbData, time.Hour*4)
 
-		log.Debugf("%s cached [%s]", cacheKey, time.Since(start))
+		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		c.Data(http.StatusOK, "image/jpeg", thumbData)
 	})

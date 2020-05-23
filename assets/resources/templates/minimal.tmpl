@@ -5,20 +5,20 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>{{ .clientConfig.title }}</title>
+  <title>{{ .config.title }}</title>
 
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/static/favicons/favicon.png">
   <link rel="icon" type="image/png" href="/static/favicons/favicon.png"/>
 
-  <link rel="stylesheet" href="/static/build/app.css?{{ .clientConfig.cssHash }}">
+  <link rel="stylesheet" href="/static/build/app.css?{{ .config.cssHash }}">
   <link rel="manifest" href="/static/manifest.json">
 
   <script>
-      window.clientConfig = {{ .clientConfig }};
+      window.__CONFIG__ = {{ .config }};
   </script>
 </head>
-<body class="{{ .clientConfig.flags }}">
+<body class="{{ .config.flags }}">
 <!--[if lt IE 8]>
 <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
   your browser</a> to improve your experience.</p>
@@ -31,6 +31,6 @@
 
 <div id="p-busy-overlay"></div>
 
-<script src="/static/build/app.js?{{ .clientConfig.jsHash }}"></script>
+<script src="/static/build/app.js?{{ .config.jsHash }}"></script>
 </body>
 </html>

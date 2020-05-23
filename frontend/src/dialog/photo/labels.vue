@@ -13,15 +13,15 @@
             <template v-slot:items="props" class="p-file">
                 <td>
                     <v-edit-dialog
-                            :return-value.sync="props.item.Label.LabelName"
+                            :return-value.sync="props.item.Label.Name"
                             lazy
                             @save="renameLabel(props.item.Label)"
                             class="p-inline-edit"
                     >
-                        {{ props.item.Label.LabelName | capitalize }}
+                        {{ props.item.Label.Name | capitalize }}
                         <template v-slot:input>
                             <v-text-field
-                                    v-model="props.item.Label.LabelName"
+                                    v-model="props.item.Label.Name"
                                     :rules="[nameRule]"
                                     :label="labels.name"
                                     color="secondary-dark"
@@ -123,7 +123,7 @@
                     return
                 }
 
-                const name = label.LabelName;
+                const name = label.Name;
 
                 this.model.removeLabel(label.ID).then((m) => {
                     this.$notify.success("removed " + name);
@@ -152,10 +152,10 @@
                     return
                 }
 
-                this.model.renameLabel(label.ID, label.LabelName);
+                this.model.renameLabel(label.ID, label.Name);
             },
             searchLabel(label) {
-                this.$router.push({name: 'photos', query: {q: 'label:' + label.LabelSlug}}).catch(err => {
+                this.$router.push({name: 'photos', query: {q: 'label:' + label.Slug}}).catch(err => {
                 });
                 this.$emit('close');
             },

@@ -52,8 +52,8 @@
                                   :label="labels.country"
                                   flat solo hide-details
                                   color="secondary-dark"
-                                  item-value="code"
-                                  item-text="name"
+                                  item-value="ID"
+                                  item-text="Name"
                                   v-model="filter.country"
                                   :items="countryOptions">
                         </v-select>
@@ -63,8 +63,8 @@
                                   :label="labels.year"
                                   flat solo hide-details
                                   color="secondary-dark"
-                                  item-value="year"
-                                  item-text="label"
+                                  item-value="Year"
+                                  item-text="Name"
                                   v-model="filter.year"
                                   :items="yearOptions">
                         </v-select>
@@ -94,7 +94,7 @@
                                   flat solo hide-details
                                   color="secondary-dark"
                                   item-value="ID"
-                                  item-text="CameraModel"
+                                  item-text="Model"
                                   v-model="filter.camera"
                                   :items="cameraOptions">
                         </v-select>
@@ -105,7 +105,7 @@
                                   flat solo hide-details
                                   color="secondary-dark"
                                   item-value="ID"
-                                  item-text="LensModel"
+                                  item-text="Model"
                                   v-model="filter.lens"
                                   :items="lensOptions">
                         </v-select>
@@ -115,8 +115,8 @@
                                   :label="labels.color"
                                   flat solo hide-details
                                   color="secondary-dark"
-                                  item-value="name"
-                                  item-text="label"
+                                  item-value="Slug"
+                                  item-text="Name"
                                   v-model="filter.color"
                                   :items="colorOptions">
                         </v-select>
@@ -126,8 +126,8 @@
                                   :label="labels.category"
                                   flat solo hide-details
                                   color="secondary-dark"
-                                  item-value="LabelName"
-                                  item-text="Title"
+                                  item-value="Slug"
+                                  item-text="Name"
                                   v-model="filter.label"
                                   :items="categoryOptions">
                         </v-select>
@@ -154,11 +154,11 @@
                 config: this.$config.values,
                 searchExpanded: false,
                 all: {
-                    countries: [{code: "", name: this.$gettext("All Countries")}],
-                    cameras: [{ID: 0, CameraModel: this.$gettext("All Cameras")}],
-                    lenses: [{ID: 0, LensModel: this.$gettext("All Lenses")}],
-                    colors: [{label: this.$gettext("All Colors"), name: ""}],
-                    categories: [{LabelName: "", Title: this.$gettext("All Categories")}],
+                    countries: [{ID: "", Name: this.$gettext("All Countries")}],
+                    cameras: [{ID: 0, Model: this.$gettext("All Cameras")}],
+                    lenses: [{ID: 0, Model: this.$gettext("All Lenses")}],
+                    colors: [{Slug: "", Name: this.$gettext("All Colors")}],
+                    categories: [{Slug: "", Name: this.$gettext("All Categories")}],
                 },
                 options: {
                     'views': [
@@ -208,16 +208,16 @@
             },
             yearOptions() {
                 let result = [
-                    {"year": 0, "label": this.$gettext("All Years")},
+                    {"Year": 0, "Name": this.$gettext("All Years")},
                 ];
 
                 if (this.config.years) {
                     for (let i = 0; i < this.config.years.length; i++) {
-                        result.push({"year": this.config.years[i], "label": this.config.years[i].toString()});
+                        result.push({"Year": this.config.years[i], "Name": this.config.years[i].toString()});
                     }
                 }
 
-                result.push({"year": -1, "label": this.$gettext("Unknown")});
+                result.push({"Year": -1, "Name": this.$gettext("Unknown")});
 
                 return result;
             },

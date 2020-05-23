@@ -17,8 +17,8 @@
                                 :loading="loading"
                                 hide-details
                                 hide-no-data
-                                item-text="AlbumName"
-                                item-value="AlbumUUID"
+                                item-text="Name"
+                                item-value="UID"
                                 :label="labels.select"
                                 color="secondary-dark"
                                 flat solo
@@ -73,7 +73,7 @@
 
                     this.newAlbum.save().then((a) => {
                         this.loading = false;
-                        this.$emit('confirm', a.AlbumUUID);
+                        this.$emit('confirm', a.UID);
                     });
                 } else {
                     this.$emit('confirm', this.album);
@@ -96,7 +96,7 @@
                     this.loading = false;
 
                     if(response.models.length > 0 && !this.album) {
-                        this.album = response.models[0].AlbumUUID;
+                        this.album = response.models[0].UID;
                     }
 
                     this.albums = response.models;
@@ -106,13 +106,13 @@
         },
         watch: {
             search (q) {
-                const exists = this.albums.findIndex((album) => album.AlbumName === q);
+                const exists = this.albums.findIndex((album) => album.Name === q);
 
                 if (exists !== -1 || !q) {
                     this.items = this.albums;
                     this.newAlbum = null;
                 } else {
-                    this.newAlbum = new Album({AlbumName: q, AlbumUUID: "", AlbumFavorite: true});
+                    this.newAlbum = new Album({Name: q, UID: "", Favorite: true});
                     this.items = this.albums.concat([this.newAlbum]);
                 }
             },

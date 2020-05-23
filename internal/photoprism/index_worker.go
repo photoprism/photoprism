@@ -57,7 +57,7 @@ func IndexWorker(jobs <-chan IndexJob) {
 		if (res.Status == IndexAdded || res.Status == IndexUpdated) && f.IsJpeg() {
 			if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
 				log.Errorf("index: could not create default thumbnails (%s)", err.Error())
-				query.SetFileError(res.FileUUID, err.Error())
+				query.SetFileError(res.FileUID, err.Error())
 			}
 		}
 
@@ -74,7 +74,7 @@ func IndexWorker(jobs <-chan IndexJob) {
 			if (res.Status == IndexAdded || res.Status == IndexUpdated) && f.IsJpeg() {
 				if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
 					log.Errorf("index: could not create default thumbnails (%s)", err.Error())
-					query.SetFileError(res.FileUUID, err.Error())
+					query.SetFileError(res.FileUID, err.Error())
 				}
 			}
 

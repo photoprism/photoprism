@@ -136,9 +136,9 @@ export default class Session {
     sendClientInfo() {
         const clientInfo = {
             "session": this.getToken(),
-            "js": window.clientConfig.jsHash,
-            "css": window.clientConfig.cssHash,
-            "version": window.clientConfig.version,
+            "js": window.__CONFIG__.jsHash,
+            "css": window.__CONFIG__.cssHash,
+            "version": window.__CONFIG__.version,
         };
 
         try {

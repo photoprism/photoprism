@@ -13,18 +13,18 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// POST /api/v1/photos/:uuid/label
+// POST /api/v1/photos/:uid/label
 //
 // Parameters:
-//   uuid: string PhotoUUID as returned by the API
+//   uid: string PhotoUID as returned by the API
 func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/photos/:uuid/label", func(c *gin.Context) {
+	router.POST("/photos/:uid/label", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
-		m, err := query.PhotoByUUID(c.Param("uuid"))
+		m, err := query.PhotoByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -59,7 +59,7 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 
 		entity.Db().Save(&lm)
 
-		p, err := query.PreloadPhotoByUUID(c.Param("uuid"))
+		p, err := query.PreloadPhotoByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -71,7 +71,7 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c)
+		PublishPhotoEvent(EntityUpdated, c.Param("uid"), c)
 
 		event.Success("label updated")
 
@@ -79,19 +79,19 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// DELETE /api/v1/photos/:uuid/label/:id
+// DELETE /api/v1/photos/:uid/label/:id
 //
 // Parameters:
-//   uuid: string PhotoUUID as returned by the API
+//   uid: string PhotoUID as returned by the API
 //   id: int LabelId as returned by the API
 func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.DELETE("/photos/:uuid/label/:id", func(c *gin.Context) {
+	router.DELETE("/photos/:uid/label/:id", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
-		m, err := query.PhotoByUUID(c.Param("uuid"))
+		m, err := query.PhotoByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -119,7 +119,7 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			entity.Db().Save(&label)
 		}
 
-		p, err := query.PreloadPhotoByUUID(c.Param("uuid"))
+		p, err := query.PreloadPhotoByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -131,7 +131,7 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c)
+		PublishPhotoEvent(EntityUpdated, c.Param("uid"), c)
 
 		event.Success("label removed")
 
@@ -139,13 +139,13 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// PUT /api/v1/photos/:uuid/label/:id
+// PUT /api/v1/photos/:uid/label/:id
 //
 // Parameters:
-//   uuid: string PhotoUUID as returned by the API
+//   uid: string PhotoUID as returned by the API
 //   id: int LabelId as returned by the API
 func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.PUT("/photos/:uuid/label/:id", func(c *gin.Context) {
+	router.PUT("/photos/:uid/label/:id", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -153,7 +153,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 
 		// TODO: Code clean-up, simplify
 
-		m, err := query.PhotoByUUID(c.Param("uuid"))
+		m, err := query.PhotoByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -184,7 +184,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		p, err := query.PreloadPhotoByUUID(c.Param("uuid"))
+		p, err := query.PreloadPhotoByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -196,7 +196,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, c.Param("uuid"), c)
+		PublishPhotoEvent(EntityUpdated, c.Param("uid"), c)
 
 		event.Success("label saved")
 

@@ -16,7 +16,7 @@ func TestPhotosResults_Merged(t *testing.T) {
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "",
 		TimeZone:         "",
-		PhotoUUID:        "",
+		PhotoUID:         "",
 		PhotoPath:        "",
 		PhotoName:        "",
 		PhotoTitle:       "Photo1",
@@ -48,7 +48,7 @@ func TestPhotosResults_Merged(t *testing.T) {
 		LocState:         "",
 		LocCountry:       "",
 		FileID:           0,
-		FileUUID:         "",
+		FileUID:          "",
 		FilePrimary:      false,
 		FileMissing:      false,
 		FileName:         "",
@@ -75,7 +75,7 @@ func TestPhotosResults_Merged(t *testing.T) {
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "",
 		TimeZone:         "",
-		PhotoUUID:        "",
+		PhotoUID:         "",
 		PhotoPath:        "",
 		PhotoName:        "",
 		PhotoTitle:       "Photo2",
@@ -107,7 +107,7 @@ func TestPhotosResults_Merged(t *testing.T) {
 		LocState:         "",
 		LocCountry:       "",
 		FileID:           0,
-		FileUUID:         "",
+		FileUID:          "",
 		FilePrimary:      false,
 		FileMissing:      false,
 		FileName:         "",
@@ -147,7 +147,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			TakenAtLocal:     time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 			TakenSrc:         "",
 			TimeZone:         "",
-			PhotoUUID:        "uuid123",
+			PhotoUID:         "uid123",
 			PhotoPath:        "",
 			PhotoName:        "",
 			PhotoTitle:       "PhotoTitle123",
@@ -179,7 +179,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			LocState:         "",
 			LocCountry:       "",
 			FileID:           0,
-			FileUUID:         "",
+			FileUID:          "",
 			FilePrimary:      false,
 			FileMissing:      false,
 			FileName:         "",
@@ -210,7 +210,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			TakenAtLocal:     time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC),
 			TakenSrc:         "",
 			TimeZone:         "",
-			PhotoUUID:        "uuid123",
+			PhotoUID:         "uid123",
 			PhotoPath:        "",
 			PhotoName:        "",
 			PhotoTitle:       "",
@@ -242,7 +242,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			LocState:         "",
 			LocCountry:       "",
 			FileID:           0,
-			FileUUID:         "",
+			FileUID:          "",
 			FilePrimary:      false,
 			FileMissing:      false,
 			FileName:         "",
@@ -261,6 +261,6 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 		}
 
 		r := result1.ShareFileName()
-		assert.Contains(t, r, "20151111-090718-uuid123")
+		assert.Contains(t, r, "20151111-090718-uid123")
 	})
 }

@@ -80,15 +80,15 @@
         },
         computed: {
             title: function () {
-                if (this.model && this.model.PhotoTitle) {
-                    return this.model.PhotoTitle
+                if (this.model && this.model.Title) {
+                    return this.model.Title
                 }
 
                 this.$gettext("Edit Photo");
             },
             isPrivate: function () {
-                if (this.model && this.model.PhotoPrivate && this.$config.settings().features.private) {
-                    return this.model.PhotoPrivate
+                if (this.model && this.model.Private && this.$config.settings().features.private) {
+                    return this.model.Private
                 }
 
                 return false;

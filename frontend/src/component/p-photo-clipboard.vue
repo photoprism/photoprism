@@ -209,10 +209,10 @@
                 Notify.success(this.$gettext("Photos restored"));
                 this.clearClipboard();
             },
-            addToAlbum(albumUUID) {
+            addToAlbum(ppid) {
                 this.dialog.album = false;
 
-                Api.post(`albums/${albumUUID}/photos`, {"photos": this.selection}).then(() => this.onAdded());
+                Api.post(`albums/${ppid}/photos`, {"photos": this.selection}).then(() => this.onAdded());
             },
             onAdded() {
                 this.clearClipboard();
@@ -223,11 +223,11 @@
                     return
                 }
 
-                const albumUUID = this.album.AlbumUUID;
+                const uid = this.album.UID;
 
                 this.dialog.album = false;
 
-                Api.delete(`albums/${albumUUID}/photos`, {"data": {"photos": this.selection}}).then(() => this.onRemoved());
+                Api.delete(`albums/${uid}/photos`, {"data": {"photos": this.selection}}).then(() => this.onRemoved());
             },
             onRemoved() {
                 this.clearClipboard();

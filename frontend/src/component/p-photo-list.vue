@@ -32,7 +32,7 @@
                            flat icon large absolute class="p-photo-select">
                         <v-icon color="white" class="t-select t-on">check_circle</v-icon>
                     </v-btn>
-                    <v-btn v-else-if="!selection.length && props.item.PhotoType === 'video' && props.item.isPlayable()" :ripple="false"
+                    <v-btn v-else-if="!selection.length && props.item.Type === 'video' && props.item.isPlayable()" :ripple="false"
                            flat icon large absolute class="p-photo-play opacity-75"
                            @click.stop.prevent="openPhoto(props.index, true)">
                         <v-icon color="white" class="action-play">play_arrow</v-icon>
@@ -40,7 +40,7 @@
                 </v-img>
             </td>
             <td class="p-photo-desc p-pointer" @click.exact="editPhoto(props.index)" style="user-select: none;">
-                {{ props.item.PhotoTitle }}
+                {{ props.item.Title }}
             </td>
             <td class="p-photo-desc hidden-xs-only" :title="props.item.getDateString()">
                 <button @click.stop.prevent="editPhoto(props.index)" style="user-select: none;">
@@ -68,12 +68,12 @@
             <td class="text-xs-center">
                 <v-btn v-if="hidePrivate" class="p-photo-private" icon small flat :ripple="false"
                        @click.stop.prevent="props.item.togglePrivate()">
-                    <v-icon v-if="props.item.PhotoPrivate" color="secondary-dark">lock</v-icon>
+                    <v-icon v-if="props.item.Private" color="secondary-dark">lock</v-icon>
                     <v-icon v-else color="accent lighten-3">lock_open</v-icon>
                 </v-btn>
                 <v-btn class="p-photo-like" icon small flat :ripple="false"
                        @click.stop.prevent="props.item.toggleLike()">
-                    <v-icon v-if="props.item.PhotoFavorite" color="pink lighten-3">favorite</v-icon>
+                    <v-icon v-if="props.item.Favorite" color="pink lighten-3">favorite</v-icon>
                     <v-icon v-else color="accent lighten-3">favorite_border</v-icon>
                 </v-btn>
             </td>
@@ -106,7 +106,7 @@
                 'selected': [],
                 'listColumns': [
                     {text: '', value: '', align: 'center', sortable: false, class: 'p-col-select'},
-                    {text: this.$gettext('Title'), value: 'PhotoTitle'},
+                    {text: this.$gettext('Title'), value: 'Title'},
                     {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt'},
                     {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel'},
                     {text: showName ? this.$gettext('Name') : this.$gettext('Location'), class: 'hidden-xs-only', value: showName ? 'FileName' : 'LocLabel'},
@@ -139,7 +139,7 @@
             downloadFile(index) {
                 const photo = this.photos[index];
                 const link = document.createElement('a')
-                link.href = "/api/v1/download/" + photo.FileHash;
+                link.href = "/api/v1/download/" + photo.Hash;
                 link.download = photo.FileName;
                 link.click()
             },
@@ -166,7 +166,7 @@
                 } else if(this.photos[index]) {
                     let photo = this.photos[index];
 
-                    if(photo.PhotoType === 'video' && photo.isPlayable()) {
+                    if(photo.Type === 'video' && photo.isPlayable()) {
                         this.openPhoto(index, true);
                     } else {
                         this.openPhoto(index, false);

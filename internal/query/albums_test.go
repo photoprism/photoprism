@@ -7,9 +7,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAlbumByUUID(t *testing.T) {
-	t.Run("existing uuid", func(t *testing.T) {
-		album, err := AlbumByUUID("at9lxuqxpogaaba7")
+func TestAlbumByUID(t *testing.T) {
+	t.Run("existing uid", func(t *testing.T) {
+		album, err := AlbumByUID("at9lxuqxpogaaba7")
 
 		if err != nil {
 			t.Fatal(err)
@@ -18,16 +18,16 @@ func TestAlbumByUUID(t *testing.T) {
 		assert.Equal(t, "Christmas2030", album.AlbumName)
 	})
 
-	t.Run("not existing uuid", func(t *testing.T) {
-		album, err := AlbumByUUID("3765")
+	t.Run("not existing uid", func(t *testing.T) {
+		album, err := AlbumByUID("3765")
 		assert.Error(t, err, "record not found")
 		t.Log(album)
 	})
 }
 
-func TestAlbumThumbByUUID(t *testing.T) {
-	t.Run("existing uuid", func(t *testing.T) {
-		file, err := AlbumThumbByUUID("at9lxuqxpogaaba8")
+func TestAlbumThumbByUID(t *testing.T) {
+	t.Run("existing uid", func(t *testing.T) {
+		file, err := AlbumThumbByUID("at9lxuqxpogaaba8")
 
 		if err != nil {
 			t.Fatal(err)
@@ -36,8 +36,8 @@ func TestAlbumThumbByUUID(t *testing.T) {
 		assert.Equal(t, "exampleFileName.jpg", file.FileName)
 	})
 
-	t.Run("not existing uuid", func(t *testing.T) {
-		file, err := AlbumThumbByUUID("3765")
+	t.Run("not existing uid", func(t *testing.T) {
+		file, err := AlbumThumbByUID("3765")
 		assert.Error(t, err, "record not found")
 		t.Log(file)
 	})

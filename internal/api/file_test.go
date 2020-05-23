@@ -17,7 +17,7 @@ func TestGetFile(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/files/2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		assert.Equal(t, http.StatusOK, r.Code)
 
-		val := gjson.Get(r.Body.String(), "FileName")
+		val := gjson.Get(r.Body.String(), "Name")
 		assert.Equal(t, "exampleFileName.jpg", val.String())
 	})
 	t.Run("search for not existing file", func(t *testing.T) {
@@ -32,7 +32,7 @@ func TestLinkFile(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		LinkFile(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/files/ft9es39w45bnlqdw/link", `{"password": "foobar123", "expires": 0, "edit": true}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/files/ft9es39w45bnlqdw/link", `{"Password": "foobar123", "Expires": 0, "CanEdit": true}`)
 
 		var label entity.Label
 
@@ -54,7 +54,7 @@ func TestLinkFile(t *testing.T) {
 	t.Run("file not found", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		LinkFile(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/files/xxx/link", `{"password": "foobar", "expires": 0, "edit": true}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/files/xxx/link", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "File not found", val.String())
@@ -62,7 +62,7 @@ func TestLinkFile(t *testing.T) {
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		LinkFile(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/files/ft9es39w45bnlqdw/link", `{"xxx": 123, "expires": 0, "edit": "xxx"}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/files/ft9es39w45bnlqdw/link", `{"xxx": 123, "Expires": 0, "CanEdit": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }

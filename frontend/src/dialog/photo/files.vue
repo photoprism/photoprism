@@ -12,19 +12,19 @@
         >
             <template slot="items" slot-scope="props" class="p-file">
                 <td>
-                    <v-btn v-if="props.item.FileType === 'jpg'" flat :ripple="false" icon small
+                    <v-btn v-if="props.item.Type === 'jpg'" flat :ripple="false" icon small
                            @click.stop.prevent="setPrimary(props.item)">
-                        <v-icon v-if="props.item.FilePrimary" color="secondary-dark">radio_button_checked</v-icon>
+                        <v-icon v-if="props.item.Primary" color="secondary-dark">radio_button_checked</v-icon>
                         <v-icon v-else color="secondary-dark">radio_button_unchecked</v-icon>
                     </v-btn>
                 </td>
                 <td>
-                    <a :href="'/api/v1/download/' + props.item.FileHash" class="secondary-dark--text" target="_blank"
+                    <a :href="'/api/v1/download/' + props.item.Hash" class="secondary-dark--text" target="_blank"
                        v-if="$config.feature('download')">
-                        {{ props.item.FileName }}
+                        {{ props.item.Name }}
                     </a>
                     <span v-else>
-                        {{ props.item.FileName }}
+                        {{ props.item.Name }}
                     </span>
                 </td>
                 <td class="hidden-sm-and-down">{{ fileDimensions(props.item) }}</td>
@@ -50,10 +50,10 @@
                 readonly: this.$config.get("readonly"),
                 selected: [],
                 listColumns: [
-                    {text: this.$gettext('Primary'), value: 'FilePrimary', sortable: false, align: 'center', class: 'p-col-primary'},
-                    {text: this.$gettext('Name'), value: 'FileName', sortable: false, align: 'left'},
+                    {text: this.$gettext('Primary'), value: 'Primary', sortable: false, align: 'center', class: 'p-col-primary'},
+                    {text: this.$gettext('Name'), value: 'Name', sortable: false, align: 'left'},
                     {text: this.$gettext('Dimensions'), value: '', sortable: false, class: 'hidden-sm-and-down'},
-                    {text: this.$gettext('Size'), value: 'FileSize', sortable: false, class: 'hidden-xs-only'},
+                    {text: this.$gettext('Size'), value: 'Size', sortable: false, class: 'hidden-xs-only'},
                     {text: this.$gettext('Type'), value: '', sortable: false, align: 'left'},
                     {text: this.$gettext('Status'), value: '', sortable: false, align: 'left'},
                 ],
@@ -65,38 +65,38 @@
                 this.$viewer.show(Thumb.fromFiles([this.model]), 0)
             },
             setPrimary(file) {
-                this.model.setPrimary(file.FileUUID);
+                this.model.setPrimary(file.UID);
             },
             fileDimensions(file) {
-                if (!file.FileWidth || !file.FileHeight) {
+                if (!file.Width || !file.Height) {
                     return "";
                 }
 
-                return file.FileWidth + " × " + file.FileHeight;
+                return file.Width + " × " + file.Height;
             },
             fileSize(file) {
-                if (!file.FileSize) {
+                if (!file.Size) {
                     return "";
                 }
 
-                const size = Number.parseFloat(file.FileSize) / 1048576;
+                const size = Number.parseFloat(file.Size) / 1048576;
 
                 return size.toFixed(1) + " MB";
             },
             fileType(file) {
-                if (file.FileVideo) {
+                if (file.Video) {
                     return this.$gettext("Video");
-                } else if (file.FileSidecar) {
+                } else if (file.Sidecar) {
                     return this.$gettext("Sidecar");
                 }
 
-                return file.FileType.toUpperCase();
+                return file.Type.toUpperCase();
             },
             fileStatus(file) {
-                if (file.FileMissing) {
+                if (file.Missing) {
                     return this.$gettext("Missing");
-                } else if (file.FileError) {
-                    return file.FileError;
+                } else if (file.Error) {
+                    return file.Error;
                 } else if (file.Duplicate) {
                     return this.$gettext("Duplicate");
                 }

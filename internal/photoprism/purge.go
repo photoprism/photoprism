@@ -135,12 +135,12 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 				return purgedFiles, purgedPhotos, errors.New("purge canceled")
 			}
 
-			if purgedPhotos[photo.PhotoUUID] {
+			if purgedPhotos[photo.PhotoUID] {
 				continue
 			}
 
 			if opt.Dry {
-				purgedPhotos[photo.PhotoUUID] = true
+				purgedPhotos[photo.PhotoUID] = true
 				log.Infof("purge: photo %s would be removed", txt.Quote(photo.PhotoName))
 				continue
 			}
@@ -148,7 +148,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 			if err := photo.Delete(opt.Hard); err != nil {
 				log.Errorf("purge: %s", err)
 			} else {
-				purgedPhotos[photo.PhotoUUID] = true
+				purgedPhotos[photo.PhotoUID] = true
 
 				if opt.Hard {
 					log.Infof("purge: permanently deleted photo %s", txt.Quote(photo.PhotoName))

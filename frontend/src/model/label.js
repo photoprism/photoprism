@@ -6,32 +6,32 @@ export class Label extends RestModel {
     getDefaults() {
         return {
             ID: 0,
+            UID: "",
+            Slug: "",
+            CustomSlug: "",
+            Name: "",
+            Priority: 0,
+            Favorite: false,
+            Description: "",
+            Notes: "",
+            PhotoCount: 0,
+            Links: [],
             CreatedAt: "",
             UpdatedAt: "",
             DeletedAt: "",
-            LabelUUID: "",
-            LabelSlug: "",
-            CustomSlug: "",
-            LabelName: "",
-            LabelPriority: 0,
-            LabelFavorite: false,
-            LabelDescription: "",
-            LabelNotes: "",
-            PhotoCount: 0,
-            Links: [],
         };
     }
 
     getEntityName() {
-        return this.LabelSlug;
+        return this.Slug;
     }
 
     getId() {
-        return this.LabelUUID;
+        return this.UID;
     }
 
     getTitle() {
-        return this.LabelName;
+        return this.Name;
     }
 
     thumbnailUrl(type) {
@@ -67,9 +67,9 @@ export class Label extends RestModel {
     }
 
     toggleLike() {
-        this.LabelFavorite = !this.LabelFavorite;
+        this.Favorite = !this.Favorite;
 
-        if (this.LabelFavorite) {
+        if (this.Favorite) {
             return Api.post(this.getEntityResource() + "/like");
         } else {
             return Api.delete(this.getEntityResource() + "/like");
@@ -77,26 +77,14 @@ export class Label extends RestModel {
     }
 
     like() {
-        this.LabelFavorite = true;
+        this.Favorite = true;
         return Api.post(this.getEntityResource() + "/like");
     }
 
     unlike() {
-        this.LabelFavorite = false;
+        this.Favorite = false;
         return Api.delete(this.getEntityResource() + "/like");
     }
-
-    /* popularity(max) {
-        if (!this.PhotoCount) {
-            return 0;
-        }
-
-        if (this.PhotoCount >= max) {
-            return 100;
-        }
-
-        return Math.ceil(max / this.PhotoCount);
-    } */
 
     static getCollectionResource() {
         return "labels";

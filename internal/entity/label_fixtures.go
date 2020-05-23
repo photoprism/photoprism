@@ -34,7 +34,7 @@ func (m LabelMap) PhotoLabel(photoId uint, labelName string, uncertainty int, so
 var LabelFixtures = LabelMap{
 	"landscape": {
 		ID:               1000000,
-		LabelUUID:        "lt9k3pw1wowuy3c2",
+		LabelUID:         "lt9k3pw1wowuy3c2",
 		LabelSlug:        "landscape",
 		CustomSlug:       "landscape",
 		LabelName:        "Landscape",
@@ -52,7 +52,7 @@ var LabelFixtures = LabelMap{
 	},
 	"flower": {
 		ID:               1000001,
-		LabelUUID:        "lt9k3pw1wowuy3c3",
+		LabelUID:         "lt9k3pw1wowuy3c3",
 		LabelSlug:        "flower",
 		CustomSlug:       "flower",
 		LabelName:        "Flower",
@@ -70,7 +70,7 @@ var LabelFixtures = LabelMap{
 	},
 	"cake": {
 		ID:               1000002,
-		LabelUUID:        "lt9k3pw1wowuy3c4",
+		LabelUID:         "lt9k3pw1wowuy3c4",
 		LabelSlug:        "cake",
 		CustomSlug:       "kuchen",
 		LabelName:        "Cake",
@@ -88,7 +88,7 @@ var LabelFixtures = LabelMap{
 	},
 	"cow": {
 		ID:               1000003,
-		LabelUUID:        "lt9k3pw1wowuy3c5",
+		LabelUID:         "lt9k3pw1wowuy3c5",
 		LabelSlug:        "cow",
 		CustomSlug:       "kuh",
 		LabelName:        "COW",
@@ -106,7 +106,7 @@ var LabelFixtures = LabelMap{
 	},
 	"batchdelete": {
 		ID:               1000004,
-		LabelUUID:        "lt9k3pw1wowuy3c6",
+		LabelUID:         "lt9k3pw1wowuy3c6",
 		LabelSlug:        "batchdelete",
 		CustomSlug:       "batchDelete",
 		LabelName:        "BatchDelete",
@@ -124,7 +124,7 @@ var LabelFixtures = LabelMap{
 	},
 	"updateLabel": {
 		ID:               1000005,
-		LabelUUID:        "lt9k3pw1wowuy3c7",
+		LabelUID:         "lt9k3pw1wowuy3c7",
 		LabelSlug:        "updatelabel",
 		CustomSlug:       "updateLabel",
 		LabelName:        "updateLabel",
@@ -142,7 +142,7 @@ var LabelFixtures = LabelMap{
 	},
 	"updatePhotoLabel": {
 		ID:               1000006,
-		LabelUUID:        "lt9k3pw1wowuy3c8",
+		LabelUID:         "lt9k3pw1wowuy3c8",
 		LabelSlug:        "updatephotolabel",
 		CustomSlug:       "updateLabelPhoto",
 		LabelName:        "updatePhotoLabel",
@@ -160,7 +160,7 @@ var LabelFixtures = LabelMap{
 	},
 	"likeLabel": {
 		ID:               1000007,
-		LabelUUID:        "lt9k3pw1wowuy3c9",
+		LabelUID:         "lt9k3pw1wowuy3c9",
 		LabelSlug:        "likeLabel",
 		CustomSlug:       "likeLabel",
 		LabelName:        "likeLabel",

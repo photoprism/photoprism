@@ -54,7 +54,7 @@
                                     ma-0
                                     class="p-photo-live"
                                     style="overflow: hidden;"
-                                    v-if="photo.PhotoType === 'live'"
+                                    v-if="photo.Type === 'live'"
                                     v-show="hover"
                             >
                                 <video width="500" height="500" autoplay loop muted playsinline>
@@ -62,7 +62,7 @@
                                 </video>
                             </v-layout>
 
-                            <v-btn v-if="hidePrivate && photo.PhotoPrivate" :ripple="false"
+                            <v-btn v-if="hidePrivate && photo.Private" :ripple="false"
                                    icon flat large absolute
                                    class="p-photo-private opacity-75">
                                 <v-icon color="white">lock</v-icon>
@@ -79,14 +79,14 @@
                             </v-btn>
 
                             <v-btn icon flat large absolute :ripple="false"
-                                   :class="photo.PhotoFavorite ? 'p-photo-like opacity-75' : 'p-photo-like opacity-50'"
+                                   :class="photo.Favorite ? 'p-photo-like opacity-75' : 'p-photo-like opacity-50'"
                                    @click.stop.prevent="photo.toggleLike()">
-                                <v-icon v-if="photo.PhotoFavorite" color="white" class="t-like t-on">favorite</v-icon>
+                                <v-icon v-if="photo.Favorite" color="white" class="t-like t-on">favorite</v-icon>
                                 <v-icon v-else color="accent lighten-3" class="t-like t-off">favorite_border</v-icon>
                             </v-btn>
 
                             <template v-if="photo.isPlayable()">
-                                <v-btn v-if="photo.PhotoType === 'live'" :ripple="false"
+                                <v-btn v-if="photo.Type === 'live'" :ripple="false"
                                        icon flat large absolute class="p-photo-live opacity-75"
                                        @click.stop.prevent="openPhoto(index, true)" title="Live Photo">
                                     <v-icon color="white" class="action-play">adjust</v-icon>
@@ -97,12 +97,12 @@
                                     <v-icon color="white" class="action-play">play_arrow</v-icon>
                                 </v-btn>
                             </template>
-                            <v-btn v-else-if="photo.PhotoType === 'image' && photo.Files.length > 1" :ripple="false"
+                            <v-btn v-else-if="photo.Type === 'image' && photo.Files.length > 1" :ripple="false"
                                    icon flat large absolute class="p-photo-merged opacity-75"
                                    @click.stop.prevent="openPhoto(index, true)">
                                 <v-icon color="white" class="action-burst">burst_mode</v-icon>
                             </v-btn>
-                            <v-btn v-else-if="photo.PhotoType === 'raw'" :ripple="false"
+                            <v-btn v-else-if="photo.Type === 'raw'" :ripple="false"
                                    icon flat large absolute class="p-photo-merged opacity-75"
                                    @click.stop.prevent="openPhoto(index, true)" title="RAW">
                                 <v-icon color="white" class="action-burst">photo_camera</v-icon>
@@ -111,22 +111,22 @@
 
                         <v-card-title primary-title class="pa-3 p-photo-desc" style="user-select: none;">
                             <div>
-                                <h3 class="body-2 mb-2" :title="photo.PhotoTitle">
+                                <h3 class="body-2 mb-2" :title="photo.Title">
                                     <button @click.exact="editPhoto(index)">
-                                        {{ photo.PhotoTitle | truncate(80) }}
+                                        {{ photo.Title | truncate(80) }}
                                     </button>
                                 </h3>
-                                <div class="caption mb-2" v-if="photo.PhotoDescription" title="Description">
-                                    {{ photo.PhotoDescription }}
+                                <div class="caption mb-2" v-if="photo.Description" title="Description">
+                                    {{ photo.Description }}
                                 </div>
                                 <div class="caption">
                                     <button @click.exact="editPhoto(index)">
                                         <v-icon size="14" title="Taken">date_range</v-icon>
                                         {{ photo.getDateString() }}
                                     </button>
-                                    <template v-if="!photo.PhotoDescription">
+                                    <template v-if="!photo.Description">
                                         <br/>
-                                        <button v-if="photo.PhotoType === 'video'" @click.exact="openPhoto(index, true)"
+                                        <button v-if="photo.Type === 'video'" @click.exact="openPhoto(index, true)"
                                                 title="Video">
                                             <v-icon size="14">movie</v-icon>
                                             {{ photo.getVideoInfo() }}
@@ -187,7 +187,7 @@
             downloadFile(index) {
                 const photo = this.photos[index];
                 const link = document.createElement('a')
-                link.href = "/api/v1/download/" + photo.FileHash;
+                link.href = "/api/v1/download/" + photo.Hash;
                 link.download = photo.FileName;
                 link.click()
             },

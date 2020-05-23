@@ -12,8 +12,8 @@ import (
 )
 
 // GetFolders is a reusable request handler for directory listings (GET /api/v1/folders/*).
-func GetFolders(router *gin.RouterGroup, conf *config.Config, root, pathName string)  {
-	router.GET("/folders/" + root, func(c *gin.Context) {
+func GetFolders(router *gin.RouterGroup, conf *config.Config, root, pathName string) {
+	router.GET("/folders/"+root, func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -26,7 +26,7 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, root, pathName str
 		cacheKey := fmt.Sprintf("folders:%s:%t", pathName, recursive)
 
 		if cacheData, ok := gc.Get(cacheKey); ok {
-			log.Debugf("%s cache hit [%s]", cacheKey, time.Since(start))
+			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
 			c.JSON(http.StatusOK, cacheData.([]entity.Folder))
 			return
 		}
@@ -38,7 +38,7 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, root, pathName str
 		} else {
 			gc.Set(cacheKey, folders, time.Minute*5)
 
-			log.Debugf("%s cached [%s]", cacheKey, time.Since(start))
+			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 		}
 
 		c.JSON(http.StatusOK, folders)

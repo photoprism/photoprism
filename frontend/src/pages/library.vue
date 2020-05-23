@@ -9,15 +9,15 @@
                 height="64"
         >
             <v-tab id="tab-originals" ripple @click="changePath('/library')">
-                <translate>Originals</translate>
+                <translate key="Index">Index</translate>
             </v-tab>
 
             <v-tab id="tab-import" :disabled="readonly || !$config.feature('import')" ripple @click="changePath('/library/import')">
-                <translate>Import</translate>
+                <translate key="Copy">Copy</translate>
             </v-tab>
 
             <v-tab id="tab-logs" ripple @click="changePath('/library/logs')" v-if="$config.feature('logs')">
-                <translate>Logs</translate>
+                <translate key="Logs">Logs</translate>
             </v-tab>
 
             <v-tabs-items touchless>

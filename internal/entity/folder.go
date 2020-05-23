@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -25,7 +26,7 @@ const (
 type Folder struct {
 	Root              string     `gorm:"type:varbinary(255);unique_index:idx_folders_root_path;" json:"Root" yaml:"Root"`
 	Path              string     `gorm:"type:varbinary(1024);unique_index:idx_folders_root_path;" json:"Path" yaml:"Path"`
-	FolderUUID        string     `gorm:"type:varbinary(36);primary_key;" json:"PPID,omitempty" yaml:"PPID,omitempty"`
+	FolderUID         string     `gorm:"type:varbinary(36);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
 	FolderTitle       string     `gorm:"type:varchar(255);" json:"Title" yaml:"Title,omitempty"`
 	FolderDescription string     `gorm:"type:text;" json:"Description,omitempty" yaml:"Description,omitempty"`
 	FolderType        string     `gorm:"type:varbinary(16);" json:"Type" yaml:"Type,omitempty"`
@@ -34,20 +35,20 @@ type Folder struct {
 	FolderIgnore      bool       `json:"Ignore" yaml:"Ignore"`
 	FolderHidden      bool       `json:"Hidden" yaml:"Hidden"`
 	FolderWatch       bool       `json:"Watch" yaml:"Watch"`
-	Links             []Link     `gorm:"foreignkey:ShareUUID;association_foreignkey:FolderUUID" json:"-" yaml:"-"`
+	Links             []Link     `gorm:"foreignkey:ShareUID;association_foreignkey:FolderUID" json:"Links" json:"-" yaml:"-"`
 	CreatedAt         time.Time  `json:"-" yaml:"-"`
 	UpdatedAt         time.Time  `json:"-" yaml:"-"`
 	ModifiedAt        *time.Time `json:"ModifiedAt,omitempty" yaml:"-"`
 	DeletedAt         *time.Time `sql:"index" json:"-"`
 }
 
-// BeforeCreate creates a random UUID if needed before inserting a new row to the database.
+// BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Folder) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsPPID(m.FolderUUID, 'd') {
+	if rnd.IsPPID(m.FolderUID, 'd') {
 		return nil
 	}
 
-	return scope.SetColumn("FolderUUID", rnd.PPID('d'))
+	return scope.SetColumn("FolderUID", rnd.PPID('d'))
 }
 
 // NewFolder creates a new file system directory entity.
@@ -61,6 +62,7 @@ func NewFolder(root, pathName string, modTime *time.Time) Folder {
 	}
 
 	result := Folder{
+		FolderUID:   rnd.PPID('d'),
 		Root:        root,
 		Path:        pathName,
 		FolderType:  TypeDefault,
@@ -106,7 +108,15 @@ func (m *Folder) SetTitleFromPath() {
 
 // Saves the complete entity in the database.
 func (m *Folder) Create() error {
-	return Db().Create(m).Error
+	if err := Db().Create(m).Error; err != nil {
+		return err
+	}
+
+	event.Publish("count.folders", event.Data{
+		"count": 1,
+	})
+
+	return nil
 }
 
 // Updates selected properties in the database.

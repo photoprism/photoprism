@@ -1,16 +1,18 @@
 package form
 
 import (
+	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
-// PhotoSearch represents search form fields for "/api/v1/photos".
-type PhotoSearch struct {
+type TestForm struct {
 	Query     string    `form:"q"`
 	ID        string    `form:"id"`
 	Type      string    `form:"type"`
 	Path      string    `form:"path"`
-	Folder    string    `form:"folder"` // Alias for Path
+	Folder    string    `form:"folder"`
 	Name      string    `form:"name"`
 	Title     string    `form:"title"`
 	Hash      string    `form:"hash"`
@@ -51,34 +53,45 @@ type PhotoSearch struct {
 	Merged    bool      `form:"merged" serialize:"-"`
 }
 
-func (f *PhotoSearch) GetQuery() string {
-	return f.Query
-}
-
-func (f *PhotoSearch) SetQuery(q string) {
-	f.Query = q
-}
-
-func (f *PhotoSearch) ParseQueryString() error {
-	err := ParseQueryString(f)
-
-	if f.Path == "" && f.Folder != "" {
-		f.Path = f.Folder
+func TestSerialize(t *testing.T) {
+	form := TestForm{
+		Query:   "foo BAR",
+		Private: true,
+		Photo:   false,
+		Lat:     1.5,
+		Lng:     -10.33333,
+		Year:    2002,
+		Chroma:  1,
+		Diff:    424242,
+		Count:   100,
+		Order:   "name",
+		Before:  time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC),
 	}
 
-	return err
-}
+	expected := "q:\"foo BAR\" lat:1.500000 lng:-10.333330 chroma:1 diff:424242 year:2002 before:2019-01-15 private:true"
+	expectedAll := "q:\"foo BAR\" lat:1.500000 lng:-10.333330 chroma:1 diff:424242 year:2002 before:2019-01-15 private:true count:100 order:name"
 
-// Serialize returns a string containing non-empty fields and values of a struct.
-func (f *PhotoSearch) Serialize() string {
-	return Serialize(f, false)
-}
+	t.Run("value", func(t *testing.T) {
+		result := Serialize(form, false)
+		assert.IsType(t, expected, result)
+		assert.Equal(t, expected, result)
+	})
 
-// SerializeAll returns a string containing all non-empty fields and values of a struct.
-func (f *PhotoSearch) SerializeAll() string {
-	return Serialize(f, true)
-}
+	t.Run("pointer", func(t *testing.T) {
+		result := Serialize(&form, false)
+		assert.IsType(t, expected, result)
+		assert.Equal(t, expected, result)
+	})
 
-func NewPhotoSearch(query string) PhotoSearch {
-	return PhotoSearch{Query: query}
+	t.Run("all value", func(t *testing.T) {
+		result := Serialize(form, true)
+		assert.IsType(t, expectedAll, result)
+		assert.Equal(t, expectedAll, result)
+	})
+
+	t.Run("all pointer", func(t *testing.T) {
+		result := Serialize(&form, true)
+		assert.IsType(t, expectedAll, result)
+		assert.Equal(t, expectedAll, result)
+	})
 }

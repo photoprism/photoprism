@@ -29,8 +29,8 @@ func TestUpdateLabel(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		UpdateLabel(router, conf)
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/labels/lt9k3pw1wowuy3c7", `{"LabelName": "Updated01", "LabelPriority": 2}`)
-		val := gjson.Get(r.Body.String(), "LabelName")
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/labels/lt9k3pw1wowuy3c7", `{"Name": "Updated01", "Priority": 2}`)
+		val := gjson.Get(r.Body.String(), "Name")
 		assert.Equal(t, "Updated01", val.String())
 		val2 := gjson.Get(r.Body.String(), "CustomSlug")
 		assert.Equal(t, "updated01", val2.String())
@@ -40,7 +40,7 @@ func TestUpdateLabel(t *testing.T) {
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		UpdateLabel(router, conf)
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/labels/lt9k3pw1wowuy3c7", `{"LabelName": 123, "LabelPriority": 4, "Uncertainty": 80}`)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/labels/lt9k3pw1wowuy3c7", `{"Name": 123, "Priority": 4, "Uncertainty": 80}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 
@@ -66,7 +66,7 @@ func TestLikeLabel(t *testing.T) {
 		GetLabels(router, ctx)
 		r2 := PerformRequest(app, "GET", "/api/v1/labels?count=1&q=likeLabel")
 		t.Log(r2.Body.String())
-		val := gjson.Get(r2.Body.String(), `#(LabelSlug=="likeLabel").LabelFavorite`)
+		val := gjson.Get(r2.Body.String(), `#(Slug=="likeLabel").Favorite`)
 		assert.Equal(t, "false", val.String())
 		LikeLabel(router, ctx)
 		r := PerformRequest(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c9/like")
@@ -74,7 +74,7 @@ func TestLikeLabel(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 		r3 := PerformRequest(app, "GET", "/api/v1/labels?count=1&q=likeLabel")
 		t.Log(r3.Body.String())
-		val2 := gjson.Get(r3.Body.String(), `#(LabelSlug=="likeLabel").LabelFavorite`)
+		val2 := gjson.Get(r3.Body.String(), `#(Slug=="likeLabel").Favorite`)
 		assert.Equal(t, "true", val2.String())
 	})
 
@@ -93,7 +93,7 @@ func TestDislikeLabel(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		GetLabels(router, ctx)
 		r2 := PerformRequest(app, "GET", "/api/v1/labels?count=1&q=landscape")
-		val := gjson.Get(r2.Body.String(), `#(LabelSlug=="landscape").LabelFavorite`)
+		val := gjson.Get(r2.Body.String(), `#(Slug=="landscape").Favorite`)
 		assert.Equal(t, "true", val.String())
 
 		DislikeLabel(router, ctx)
@@ -102,7 +102,7 @@ func TestDislikeLabel(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 
 		r3 := PerformRequest(app, "GET", "/api/v1/labels?count=1&q=landscape")
-		val2 := gjson.Get(r3.Body.String(), `#(LabelSlug=="landscape").LabelFavorite`)
+		val2 := gjson.Get(r3.Body.String(), `#(Slug=="landscape").Favorite`)
 		assert.Equal(t, "false", val2.String())
 	})
 }
