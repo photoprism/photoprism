@@ -1,33 +1,22 @@
 <template>
-    <div class="p-page p-page-folders" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
-         :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
-
-        <v-form ref="form" class="p-folders-search" lazy-validation @submit.prevent="updateQuery" dense>
+    <div class="p-page p-page-files">
+        <v-form ref="form" class="p-files-search" lazy-validation @submit.prevent="updateQuery" dense>
             <v-toolbar flat color="secondary">
-                <v-text-field class="pt-3 pr-3"
-                              single-line
-                              :label="labels.search"
-                              prepend-inner-icon="search"
-                              browser-autocomplete="off"
-                              clearable
-                              color="secondary-dark"
-                              @click:clear="clearQuery"
-                              v-model="filter.q"
-                              @keyup.enter.native="updateQuery"
-                              id="search"
-                ></v-text-field>
+                <v-toolbar-title>
+                    <router-link to="/files">
+                        <translate key="Originals">Originals</translate>
+                    </router-link>
+
+                    <router-link v-for="(item, index) in breadcrumbs" :key="index" :to="item.path">
+                        <v-icon>navigate_next</v-icon>
+                        {{item.name}}
+                    </router-link>
+                </v-toolbar-title>
 
                 <v-spacer></v-spacer>
 
                 <v-btn icon @click.stop="refresh">
                     <v-icon>refresh</v-icon>
-                </v-btn>
-
-                <v-btn v-if="!filter.all" icon @click.stop="showAll">
-                    <v-icon>visibility</v-icon>
-                </v-btn>
-                <v-btn v-else icon @click.stop="showImportant">
-                    <v-icon>visibility_off</v-icon>
                 </v-btn>
             </v-toolbar>
         </v-form>
@@ -37,37 +26,37 @@
         </v-container>
         <v-container fluid class="pa-0" v-else>
             <p-folder-clipboard :refresh="refresh" :selection="selection"
-                               :clear-selection="clearSelection"></p-folder-clipboard>
+                                :clear-selection="clearSelection"></p-folder-clipboard>
 
             <p-scroll-top></p-scroll-top>
 
-            <v-container grid-list-xs fluid class="pa-2 p-folders p-folders-cards">
-                <v-card v-if="results.length === 0" class="p-folders-empty secondary-light lighten-1 ma-1" flat>
+            <v-container grid-list-xs fluid class="pa-2 p-files p-files-cards">
+                <v-card v-if="results.length === 0" class="p-files-empty secondary-light lighten-1 ma-1" flat>
                     <v-card-title primary-title>
                         <div>
                             <h3 class="title mb-3">
-                                <translate>No folders matched your search</translate>
+                                <translate key="nofolders">No files matched your search</translate>
                             </h3>
                             <div>
-                                <translate>Try again using a related or otherwise similar term.</translate>
+                                <translate key="tryagain">Please re-index your originals if a file you expect is
+                                    missing.
+                                </translate>
                             </div>
                         </div>
                     </v-card-title>
                 </v-card>
-                <v-layout row wrap class="p-folders-results">
+                <v-layout row wrap class="p-files-results">
                     <v-flex
                             v-for="(model, index) in results"
                             :key="index"
-                            class="p-folder"
                             xs6 sm4 md3 lg2 d-flex
                     >
                         <v-hover>
-                            <v-card tile class="accent lighten-3"
+                            <v-card tile class="accent lighten-3 clickable"
                                     slot-scope="{ hover }"
                                     @contextmenu="onContextMenu($event, index)"
                                     :dark="selection.includes(model.UID)"
-                                    :class="selection.includes(model.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
-                                    :to="{name: 'photos', query: {q: 'path:' + model.Path + '*' }}">
+                                    :class="selection.includes(model.UID) ? 'elevation-10 ma-0 darken-1 white--text' : 'elevation-0 ma-1 lighten-3'">
                                 <v-img
                                         :src="model.thumbnailUrl('tile_500')"
                                         @mousedown="onMouseDown($event, index)"
@@ -88,7 +77,7 @@
 
                                     <v-btn v-if="hover || selection.includes(model.UID)" :flat="!hover" :ripple="false"
                                            icon large absolute
-                                           :class="selection.includes(model.UID) ? 'p-folder-select' : 'p-folder-select opacity-50'"
+                                           :class="selection.includes(model.UID) ? 'p-file-select' : 'p-file-select opacity-50'"
                                            @click.stop.prevent="onSelect($event, index)">
                                         <v-icon v-if="selection.includes(model.UID)" color="white">check_circle
                                         </v-icon>
@@ -96,37 +85,34 @@
                                     </v-btn>
                                 </v-img>
 
-                                <v-card-actions @click.stop.prevent="">
-                                    <v-edit-dialog
-                                            :return-value.sync="model.Title"
-                                            lazy
-                                            @save="onSave(model)"
-                                            class="p-inline-edit"
-                                    >
-                                        <span v-if="model.Title">
-                                            {{ model.Title | capitalize }}
-                                        </span>
-                                        <span v-else>
-                                            <v-icon>edit</v-icon>
-                                        </span>
-                                        <template v-slot:input>
-                                            <v-text-field
-                                                    v-model="model.Title"
-                                                    :rules="[titleRule]"
-                                                    :label="labels.name"
-                                                    color="secondary-dark"
-                                                    single-line
-                                                    autofocus
-                                            ></v-text-field>
-                                        </template>
-                                    </v-edit-dialog>
-                                    <v-spacer></v-spacer>
-                                    <v-btn icon @click.stop.prevent="model.toggleLike()">
-                                        <v-icon v-if="model.Favorite" color="#FFD600">star
-                                        </v-icon>
-                                        <v-icon v-else color="accent lighten-2">star</v-icon>
-                                    </v-btn>
-                                </v-card-actions>
+                                <v-card-title primary-title class="pa-3 p-photo-desc" style="user-select: none;"
+                                              v-if="model.isFile()">
+                                    <div>
+                                    <h3 class="body-2 mb-2" :title="model.Name">
+                                        <button @click.exact="openFile(index)">
+                                            {{ model.baseName(19) }}
+                                        </button>
+                                    </h3>
+                                    <div class="caption" title="Info">
+                                        {{ model.getInfo() }}
+                                    </div>
+                                    </div>
+                                </v-card-title>
+                                <v-card-title primary-title class="pa-3 p-photo-desc" v-else>
+                                    <div>
+                                    <h3 class="body-2 mb-2" :title="model.Title">
+                                        <button @click.exact="openFile(index)">
+                                            {{ model.Title }}
+                                        </button>
+                                    </h3>
+                                    <div class="caption" title="Path" v-if="model.Title !== model.Path">
+                                        /{{ model.Path }}
+                                    </div>
+                                    <div class="caption" title="Path" v-else>
+                                        <translate key="Folder">Folder</translate>
+                                    </div>
+                                    </div>
+                                </v-card-title>
                             </v-card>
                         </v-hover>
                     </v-flex>
@@ -137,12 +123,14 @@
 </template>
 
 <script>
-    import Folder from "model/folder";
     import Event from "pubsub-js";
-    import RestModel from "../model/rest";
+    import RestModel from "model/rest";
+    import Thumb from "model/thumb";
+    import {Folder} from "model/folder";
+    import {Photo, TypeJpeg} from "model/photo";
 
     export default {
-        name: 'p-page-folders',
+        name: 'p-page-files',
         props: {
             staticFilter: Object
         },
@@ -154,6 +142,7 @@
                 this.filter.all = query['all'] ? query['all'] : '';
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
+                this.path = this.$route.params.pathMatch;
                 this.search();
             }
         },
@@ -171,7 +160,6 @@
                 listen: false,
                 dirty: false,
                 results: [],
-                scrollDisabled: true,
                 loading: true,
                 pageSize: 24,
                 offset: 0,
@@ -181,6 +169,7 @@
                 filter: filter,
                 lastFilter: {},
                 routeName: routeName,
+                path: "",
                 labels: {
                     search: this.$gettext("Search"),
                     name: this.$gettext("Folder Name"),
@@ -191,9 +180,53 @@
                     timeStamp: -1,
                 },
                 lastId: "",
+                breadcrumbs: [],
             };
         },
         methods: {
+            getBreadcrumbs() {
+                let result = [];
+                let path = "/files";
+
+                const crumbs = this.path.split("/");
+
+                crumbs.forEach(dir => {
+                    if (dir) {
+                        path += "/" + dir
+                        result.push({path: path, name: dir})
+                    }
+                })
+
+                return result;
+            },
+            openFile(index) {
+                const model = this.results[index];
+
+                if (model.isFile()) {
+                    if (model.Type === TypeJpeg) {
+                        const photo = new Photo({
+                            UID: model.PhotoUID,
+                            Title: model.Name,
+                            TakenAt: model.Modified,
+                            Description: "",
+                            Favorite: false,
+                            Files: [model]
+                        });
+                        this.$viewer.show(Thumb.fromPhotos([photo]), 0);
+                    } else {
+                        this.downloadFile(index);
+                    }
+                } else {
+                    this.$router.push({path: '/files/' + model.Path});
+                }
+            },
+            downloadFile(index) {
+                const model = this.results[index];
+                const link = document.createElement('a')
+                link.href = "/api/v1/download/" + model.Hash;
+                link.download = model.Name;
+                link.click()
+            },
             selectRange(rangeEnd, models) {
                 if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
                     console.warn("selectRange() - invalid arguments:", rangeEnd, models);
@@ -242,6 +275,8 @@
                     } else {
                         this.toggleSelection(this.results[index].getId());
                     }
+                } else {
+                    this.openFile(index);
                 }
             },
             onContextMenu(ev, index) {
@@ -249,7 +284,7 @@
                     ev.preventDefault();
                     ev.stopPropagation();
 
-                    if(this.results[index]) {
+                    if (this.results[index]) {
                         this.selectRange(index, this.results);
                     }
                 }
@@ -300,48 +335,6 @@
                 this.selection.splice(0, this.selection.length);
                 this.lastId = "";
             },
-            loadMore() {
-                if (this.scrollDisabled) return;
-
-                this.scrollDisabled = true;
-                this.listen = false;
-
-                const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
-                const offset = this.dirty ? 0 : this.offset;
-
-                const params = {
-                    count: count,
-                    offset: offset,
-                };
-
-                Object.assign(params, this.lastFilter);
-
-                if (this.staticFilter) {
-                    Object.assign(params, this.staticFilter);
-                }
-
-                Folder.originals("", params).then(response => {
-                    this.results = this.dirty ? response.models : this.results.concat(response.models);
-
-                    this.scrollDisabled = (response.models.length < count);
-
-                    if (this.scrollDisabled) {
-                        this.offset = offset;
-                        if (this.results.length > 1) {
-                            this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' folders loaded'));
-                        }
-                    } else {
-                        this.offset = offset + count;
-                        this.page++;
-                    }
-                }).catch(() => {
-                    this.scrollDisabled = false;
-                }).finally(() => {
-                    this.dirty = false;
-                    this.loading = false;
-                    this.listen = true;
-                });
-            },
             updateQuery() {
                 const query = {
                     view: this.settings.view
@@ -363,8 +356,7 @@
             },
             searchParams() {
                 const params = {
-                    count: this.pageSize,
-                    offset: this.offset,
+                    files: true,
                 };
 
                 Object.assign(params, this.filter);
@@ -380,15 +372,11 @@
                 this.loading = true;
                 this.page = 0;
                 this.dirty = true;
-                this.scrollDisabled = false;
-                this.loadMore();
+                this.search();
             },
             search() {
-                this.scrollDisabled = true;
-
                 // Don't query the same data more than once
                 if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-                    this.$nextTick(() => this.$emit("scrollRefresh"));
                     return;
                 }
 
@@ -401,19 +389,18 @@
 
                 const params = this.searchParams();
 
-                Folder.originals("", params).then(response => {
+                Folder.originals(this.path, params).then(response => {
                     this.offset = this.pageSize;
 
                     this.results = response.models;
+                    this.breadcrumbs = this.getBreadcrumbs();
 
-                    this.scrollDisabled = (response.models.length < this.pageSize);
-
-                    if (this.scrollDisabled) {
-                        this.$notify.info(this.results.length + this.$gettext(' folders found'));
+                    if (response.count === 0) {
+                        this.$notify.warn(this.$gettext('Directory is empty'));
+                    } else if (response.count === 1) {
+                        this.$notify.info(this.$gettext('One entry found'));
                     } else {
-                        this.$notify.info(this.$gettext('More than 20 folders found'));
-
-                        this.$nextTick(() => this.$emit("scrollRefresh"));
+                        this.$notify.info(response.count + this.$gettext(' entries found'));
                     }
                 }).finally(() => {
                     this.dirty = false;
@@ -467,12 +454,13 @@
             }
         },
         created() {
+            this.path = this.$route.params.pathMatch;
+
             this.search();
 
             this.subscriptions.push(Event.subscribe("folders", (ev, data) => this.onUpdate(ev, data)));
 
             this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-            this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
         },
         destroyed() {
             for (let i = 0; i < this.subscriptions.length; i++) {

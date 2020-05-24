@@ -2,7 +2,7 @@ import Photos from "pages/photos.vue";
 import Albums from "pages/albums.vue";
 import AlbumPhotos from "pages/album/photos.vue";
 import Places from "pages/places.vue";
-import Folders from "pages/folders.vue";
+import Files from "pages/files.vue";
 import Labels from "pages/labels.vue";
 import People from "pages/people.vue";
 import Library from "pages/library.vue";
@@ -93,10 +93,10 @@ export default [
         meta: {title: "Places", auth: true},
     },
     {
-        name: "folders",
-        path: "/folders",
-        component: Folders,
-        meta: {title: "Folders", auth: true},
+        name: "files",
+        path: "/files*",
+        component: Files,
+        meta: {title: "Originals", auth: true},
     },
     {
         name: "labels",

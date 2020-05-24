@@ -57,6 +57,9 @@ class Config {
         case "videos":
             this.values.count.videos += data.count;
             break;
+        case "files":
+            this.values.count.files += data.count;
+            break;
         case "folders":
             this.values.count.folders += data.count;
             break;

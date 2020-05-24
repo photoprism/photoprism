@@ -7,6 +7,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFilesByPath(t *testing.T) {
+	t.Run("files found", func(t *testing.T) {
+		files, err := FilesByPath(entity.RootOriginals, "2016/11")
+
+		t.Logf("files: %+v", files)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(files))
+	})
+}
+
 func TestExistingFiles(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
 		files, err := ExistingFiles(1000, 0, "/")
@@ -26,6 +40,7 @@ func TestExistingFiles(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Empty(t, files)
 	})
 }

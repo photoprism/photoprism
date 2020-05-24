@@ -6,16 +6,35 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+type Files []entity.File
+
+// FilesByPath returns a slice of files in a given originals folder.
+func FilesByPath(root, pathName string) (files Files, err error) {
+	if strings.HasPrefix(pathName, "/") {
+		pathName = pathName[1:]
+	}
+
+	err = Db().
+		Table("files").Select("files.*").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
+		Where("files.file_missing = 0").
+		Where("files.file_root = ? AND photos.photo_path = ?", root, pathName).
+		Order("files.file_name").
+		Find(&files).Error
+
+	return files, err
+}
+
 // ExistingFiles returns not-missing and not-deleted file entities in the range of limit and offset sorted by id.
-func ExistingFiles(limit int, offset int, filePath string) (files []entity.File, err error) {
-	if strings.HasPrefix(filePath, "/") {
-		filePath = filePath[1:]
+func ExistingFiles(limit int, offset int, pathName string) (files Files, err error) {
+	if strings.HasPrefix(pathName, "/") {
+		pathName = pathName[1:]
 	}
 
 	stmt := Db().Unscoped().Where("file_missing = 0 AND deleted_at IS NULL")
 
-	if filePath != "" {
-		stmt = stmt.Where("file_name LIKE ?", filePath+"/%")
+	if pathName != "" {
+		stmt = stmt.Where("files.file_name LIKE ?", pathName+"/%")
 	}
 
 	err = stmt.Order("id").Limit(limit).Offset(offset).Find(&files).Error
@@ -24,7 +43,7 @@ func ExistingFiles(limit int, offset int, filePath string) (files []entity.File,
 }
 
 // FilesByUID
-func FilesByUID(u []string, limit int, offset int) (files []entity.File, err error) {
+func FilesByUID(u []string, limit int, offset int) (files Files, err error) {
 	if err := Db().Where("(photo_uid IN (?) AND file_primary = 1) OR file_uid IN (?)", u, u).Preload("Photo").Limit(limit).Offset(offset).Find(&files).Error; err != nil {
 		return files, err
 	}

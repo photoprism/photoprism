@@ -10,6 +10,9 @@ var photoIconSvg = []byte(`
 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/>
 <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"/></svg>`)
 
+var fileIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+<path d="M6 2c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z"/><path d="M0 0h24v24H0z" fill="none"/></svg>`)
+
 var videoIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
 <path d="M0 0h24v24H0z" fill="none"/><path d="M10 8v8l5-4-5-4zm9-5H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/></svg>`)
 
@@ -34,6 +37,10 @@ var uncachedIconSvg = []byte(`
 func GetSvg(router *gin.RouterGroup) {
 	router.GET("/svg/photo", func(c *gin.Context) {
 		c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+	})
+
+	router.GET("/svg/file", func(c *gin.Context) {
+		c.Data(http.StatusOK, "image/svg+xml", fileIconSvg)
 	})
 
 	router.GET("/svg/video", func(c *gin.Context) {

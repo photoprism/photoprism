@@ -11,7 +11,7 @@ features:
   review: true
   upload: true
   import: true
-  folders: true
+  files: true
   moments: true
   labels: true
   places: true

@@ -14,8 +14,7 @@
                                 :title="model.Title">
                             <v-img :src="model.thumbnailUrl('tile_500')"
                                    aspect-ratio="1"
-                                   class="accent lighten-2 elevation-0"
-                                   style="cursor: pointer"
+                                   class="accent lighten-2 elevation-0 clickable"
                                    @click.exact="openPhoto()"
                                    v-touch="{left, right}"
                             >

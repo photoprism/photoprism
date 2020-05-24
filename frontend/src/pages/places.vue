@@ -83,7 +83,7 @@
 
                     this.$viewer.show(Thumb.fromPhotos(this.photos), index)
                 } else {
-                    this.$notify.warning("No photos found");
+                    this.$notify.warn("No photos found");
                 }
             },
             formChange() {
@@ -120,7 +120,7 @@
                     if (!response.data.features || response.data.features.length === 0) {
                         this.loading = false;
 
-                        this.$notify.warning("No photos found");
+                        this.$notify.warn("No photos found");
 
                         return;
                     }

@@ -25,7 +25,7 @@
             <v-toolbar flat>
                 <v-list class="navigation-home">
                     <v-list-tile class="p-navigation-logo">
-                        <v-list-tile-avatar class="p-pointer" @click.stop.prevent="openDocs">
+                        <v-list-tile-avatar class="clickable" @click.stop.prevent="openDocs">
                             <img src="/static/img/logo.png" alt="Logo">
                         </v-list-tile-avatar>
                         <v-list-tile-content>
@@ -142,21 +142,12 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-group v-if="!mini" prepend-icon="folder" no-action>
+                <v-list-group v-if="!mini" prepend-icon="folder" no-action :append-icon="albumExpandIcon">
                     <v-list-tile slot="activator" to="/albums" @click.stop="">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate key="Albums">Albums</translate>
                                 <span v-if="config.count.albums > 0" class="p-navigation-count">{{ config.count.albums }}</span>
-                            </v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-
-                    <v-list-tile to="/folders" @click="" class="p-navigation-folders" v-show="$config.feature('folders')">
-                        <v-list-tile-content>
-                            <v-list-tile-title>
-                                <translate key="Folders">Folders</translate>
-                                <span v-show="config.count.folders > 0" class="p-navigation-count">{{ config.count.folders }}</span>
                             </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
@@ -271,17 +262,36 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile to="/library" @click="" class="p-navigation-library">
+                <v-list-tile v-if="mini" to="/library" @click="" class="p-navigation-library">
                     <v-list-tile-action>
                         <v-icon>camera_roll</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            <translate key="Originals">Originals</translate>
+                            <translate key="Library">Library</translate>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
+
+                <v-list-group v-if="!mini" prepend-icon="camera_roll" no-action>
+                    <v-list-tile slot="activator" to="/library" @click.stop="" class="p-navigation-library">
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                <translate key="Library">Library</translate>
+                            </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile to="/files" @click="" class="p-navigation-files" v-show="$config.feature('files')">
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                <translate key="Files">Files</translate>
+                                <span v-show="config.count.files > 0" class="p-navigation-count">{{ config.count.files }}</span>
+                            </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list-group>
 
                 <v-list-tile to="/settings" @click="" class="p-navigation-settings" v-show="!config.disableSettings">
                     <v-list-tile-action>

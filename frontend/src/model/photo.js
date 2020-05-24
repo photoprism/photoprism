@@ -74,11 +74,27 @@ export class Photo extends RestModel {
             LocState: "",
             LocCountry: "",
             FileUID: "",
+            FileRoot: "",
             FileName: "",
             Hash: "",
             Width: "",
             Height: "",
         };
+    }
+
+    baseName(truncate) {
+        let result = this.FileName;
+        const slash = result.lastIndexOf("/")
+
+        if (slash >= 0) {
+            result = this.FileName.substring(slash + 1)
+        }
+
+        if(truncate) {
+            result = Util.truncate(result, truncate, "...")
+        }
+
+        return result
     }
 
     getEntityName() {

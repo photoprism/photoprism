@@ -42,7 +42,7 @@ type FeatureSettings struct {
 	Review   bool `json:"review" yaml:"review"`
 	Upload   bool `json:"upload" yaml:"upload"`
 	Import   bool `json:"import" yaml:"import"`
-	Folders  bool `json:"folders" yaml:"folders"`
+	Files    bool `json:"files" yaml:"files"`
 	Moments  bool `json:"moments" yaml:"moments"`
 	Labels   bool `json:"labels" yaml:"labels"`
 	Places   bool `json:"places" yaml:"places"`
@@ -81,7 +81,7 @@ func NewSettings() *Settings {
 			Private:  true,
 			Upload:   true,
 			Import:   true,
-			Folders:  true,
+			Files:    true,
 			Moments:  true,
 			Labels:   true,
 			Places:   true,

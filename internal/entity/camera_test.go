@@ -6,11 +6,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCamera_FirstOrCreate(t *testing.T) {
+func TestFirstOrCreateCamera(t *testing.T) {
 	t.Run("iphone-se", func(t *testing.T) {
 		camera := NewCamera("iPhone SE", "Apple")
-		camera.FirstOrCreate()
-		assert.GreaterOrEqual(t, camera.ID, uint(1))
+
+		result := FirstOrCreateCamera(camera)
+
+		if result == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.GreaterOrEqual(t, result.ID, uint(1))
 	})
 }
 

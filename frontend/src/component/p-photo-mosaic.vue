@@ -30,8 +30,7 @@
                             :title="photo.Title">
                         <v-img :src="photo.thumbnailUrl('tile_224')"
                                aspect-ratio="1"
-                               class="accent lighten-2"
-                               style="cursor: pointer"
+                               class="accent lighten-2 clickable"
                                @mousedown="onMouseDown($event, index)"
                                @click.stop.prevent="onClick($event, index)"
                         >

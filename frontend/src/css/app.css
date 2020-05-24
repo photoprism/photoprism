@@ -7,7 +7,7 @@
 @import url("viewer.css");
 @import url("photos.css");
 @import url("labels.css");
-@import url("folders.css");
+@import url("files.css");
 
 html,
 body {
@@ -79,6 +79,11 @@ main {
     color: #333333;
 }
 
+#photoprism .v-toolbar a {
+    text-decoration: none;
+    color: #333333;
+}
+
 #photoprism main .p-inline-edit a,
 #photoprism main .p-inline-edit a span {
     cursor: text;
@@ -92,7 +97,8 @@ main {
     top: -8px;
 }
 
-#photoprism .p-pointer {
+#photoprism .p-pointer,
+#photoprism .clickable {
     cursor: pointer;
 }
 

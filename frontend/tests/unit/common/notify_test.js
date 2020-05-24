@@ -10,8 +10,8 @@ describe("common/alert", () => {
     });
 
     it("should call alert.warning",  () => {
-        let spy = sinon.spy(Notify, "warning");
-        Notify.warning("message");
+        let spy = sinon.spy(Notify, "warn");
+        Notify.warn("message");
         sinon.assert.calledOnce(spy);
         spy.resetHistory();
     });

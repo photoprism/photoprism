@@ -31,8 +31,7 @@
                         <v-img :src="photo.thumbnailUrl('tile_500')"
                                aspect-ratio="1"
                                v-bind:class="{ selected: $clipboard.has(photo) }"
-                               style="cursor: pointer;"
-                               class="accent lighten-2"
+                               class="accent lighten-2 clickable"
                                @mousedown="onMouseDown($event, index)"
                                @click.stop.prevent="onClick($event, index)"
                         >
@@ -140,8 +139,8 @@
                                         <br/>
                                         <button @click.exact="downloadFile(index)"
                                                 title="Name">
-                                            <v-icon size="14">save</v-icon>
-                                            {{ photo.FileName }}
+                                            <v-icon size="14">insert_drive_file</v-icon>
+                                            {{ photo.baseName() }}
                                         </button>
                                     </template>
                                     <template v-if="showLocation && photo.LocationID">

@@ -11,6 +11,8 @@ features:
   review: true
   upload: true
   import: true
+  files: true
+  moments: true
   labels: true
   places: true
   download: true

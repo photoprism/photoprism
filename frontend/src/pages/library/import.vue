@@ -98,7 +98,7 @@
     import Event from "pubsub-js";
     import Settings from "model/settings";
     import Util from "../../common/util";
-    import {Folder, FolderRootImport} from "model/folder";
+    import {Folder, RootImport} from "model/folder";
 
     export default {
         name: 'p-tab-import',
@@ -197,7 +197,7 @@
             this.subscriptionId = Event.subscribe('import', this.handleEvent);
             this.loading = true;
 
-            Folder.findAll(FolderRootImport).then((r) => {
+            Folder.findAll(RootImport).then((r) => {
                 const folders = r.models ? r.models : [];
                 const currentPath = this.settings.import.path;
                 let found = currentPath === this.root.path;

@@ -18,7 +18,8 @@ type File struct {
 	PhotoID         uint          `gorm:"index;" json:"-" yaml:"-"`
 	PhotoUID        string        `gorm:"type:varbinary(36);index;" json:"PhotoUID" yaml:"PhotoUID"`
 	FileUID         string        `gorm:"type:varbinary(36);unique_index;" json:"UID" yaml:"UID"`
-	FileName        string        `gorm:"type:varbinary(768);unique_index" json:"Name" yaml:"Name"`
+	FileName        string        `gorm:"type:varbinary(768);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
+	FileRoot        string        `gorm:"type:varbinary(16);default:'originals';unique_index:idx_files_name_root;" json:"Root" yaml:"Root"`
 	OriginalName    string        `gorm:"type:varbinary(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	FileHash        string        `gorm:"type:varbinary(128);index" json:"Hash" yaml:"Hash,omitempty"`
 	FileModified    time.Time     `json:"Modified" yaml:"Modified,omitempty"`
@@ -37,7 +38,7 @@ type File struct {
 	FileHeight      int           `json:"Height" yaml:"Height,omitempty"`
 	FileOrientation int           `json:"Orientation" yaml:"Orientation,omitempty"`
 	FileAspectRatio float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
-	FileMainColor   string        `gorm:"type:varbinary(16);index;" json:"eMainColor" yaml:"eMainColor,omitempty"`
+	FileMainColor   string        `gorm:"type:varbinary(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
 	FileColors      string        `gorm:"type:varbinary(9);" json:"Colors" yaml:"Colors,omitempty"`
 	FileLuminance   string        `gorm:"type:varbinary(9);" json:"Luminance" yaml:"Luminance,omitempty"`
 	FileDiff        uint32        `json:"Diff" yaml:"Diff,omitempty"`

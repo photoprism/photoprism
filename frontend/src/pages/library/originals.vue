@@ -91,7 +91,7 @@
     import Event from "pubsub-js";
     import Settings from "model/settings";
     import Util from "common/util";
-    import { Folder, FolderRootOriginals } from "model/folder";
+    import { Folder, RootOriginals } from "model/folder";
 
     export default {
         name: 'p-tab-index',
@@ -206,7 +206,7 @@
             this.subscriptionId = Event.subscribe('index', this.handleEvent);
             this.loading = true;
 
-            Folder.findAll(FolderRootOriginals).then((r) => {
+            Folder.findAll(RootOriginals).then((r) => {
                 const folders = r.models ? r.models : [];
                 const currentPath = this.settings.index.path;
                 let found = currentPath === this.root.path;

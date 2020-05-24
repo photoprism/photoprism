@@ -1,13 +1,16 @@
 import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
+import File from "model/file";
+import Util from "../common/util";
 
-export const FolderRootOriginals = "originals";
-export const FolderRootImport = "import";
+export const RootOriginals = "originals";
+export const RootImport = "import";
 
 export class Folder extends RestModel {
     getDefaults() {
         return {
+            Folder: true,
             Root: "",
             Path: "",
             UID: "",
@@ -23,6 +26,25 @@ export class Folder extends RestModel {
             CreatedAt: "",
             UpdatedAt: "",
         };
+    }
+
+    baseName(truncate) {
+        let result = this.Name;
+        const slash = result.lastIndexOf("/")
+
+        if (slash >= 0) {
+            result = this.Name.substring(slash + 1)
+        }
+
+        if(truncate) {
+            result = Util.truncate(result, truncate, "...")
+        }
+
+        return result
+    }
+
+    isFile() {
+        return false;
     }
 
     getEntityName() {
@@ -66,7 +88,11 @@ export class Folder extends RestModel {
     }
 
     static originals(path, params) {
-        return this.search(FolderRootOriginals + "/" + path, params);
+        if(!path) {
+            path = "/"
+        }
+
+        return this.search(RootOriginals + path, params);
     }
 
     static search(path, params) {
@@ -79,7 +105,11 @@ export class Folder extends RestModel {
         }
 
         return Api.get(this.getCollectionResource() + path, options).then((response) => {
-            let count = response.data.length;
+            let folders = response.data.folders;
+            let files = response.data.files ? response.data.files : [];
+
+            let count = folders.length + files.length;
+
             let limit = 0;
             let offset = 0;
 
@@ -102,8 +132,12 @@ export class Folder extends RestModel {
             response.limit = limit;
             response.offset = offset;
 
-            for (let i = 0; i < response.data.length; i++) {
-                response.models.push(new this(response.data[i]));
+            for (let i = 0; i < folders.length; i++) {
+                response.models.push(new this(folders[i]));
+            }
+
+            for (let i = 0; i < files.length; i++) {
+                response.models.push(new File(files[i]));
             }
 
             return Promise.resolve(response);

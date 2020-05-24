@@ -70,6 +70,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	fileBase := m.Base(ind.conf.Settings().Index.Group)
 	filePath := m.RelativePath(ind.originalsPath())
+	fileRoot := entity.RootOriginals
 	fileName := m.RelativeName(ind.originalsPath())
 	fileHash := ""
 	fileSize, fileModified := m.Stat()
@@ -296,8 +297,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		if photo.CameraSrc == entity.SrcAuto {
 			// Set UpdateCamera, Lens, Focal Length and F Number.
-			photo.Camera = entity.NewCamera(m.CameraModel(), m.CameraMake()).FirstOrCreate()
-			photo.Lens = entity.NewLens(m.LensModel(), m.LensMake()).FirstOrCreate()
+			photo.Camera = entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake()))
+			photo.Lens = entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake()))
 			photo.PhotoFocalLength = m.FocalLength()
 			photo.PhotoFNumber = m.FNumber()
 			photo.PhotoIso = m.Iso()
@@ -335,6 +336,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	file.FileSidecar = m.IsSidecar()
 	file.FileVideo = m.IsVideo()
+	file.FileRoot = fileRoot
 	file.FileName = fileName
 	file.FileHash = fileHash
 	file.FileSize = fileSize
@@ -473,6 +475,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			result.Error = err
 			return result
 		}
+
+		event.Publish("count.files", event.Data{
+			"count": 1,
+		})
 
 		result.Status = IndexAdded
 	}

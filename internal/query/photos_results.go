@@ -53,6 +53,7 @@ type PhotosResult struct {
 	LocCountry       string        `json:"LocCountry"`
 	FileID           uint          `json:"-"` // File
 	FileUID          string        `json:"FileUID"`
+	FileRoot         string        `json:"FileRoot"`
 	FileName         string        `json:"FileName"`
 	FileHash         string        `json:"Hash"`
 	FileWidth        int           `json:"Width"`

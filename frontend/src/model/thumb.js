@@ -134,7 +134,7 @@ export class Thumb extends Model {
             if (!p.Files) return;
 
             p.Files.forEach((f) => {
-                if (f && f.FileType === "jpg") {
+                if (f && f.Type === "jpg") {
                     let thumb = this.fromFile(p, f);
 
                     if (thumb) {

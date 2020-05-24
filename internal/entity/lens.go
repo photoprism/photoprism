@@ -29,7 +29,7 @@ var UnknownLens = Lens{
 
 // CreateUnknownLens initializes the database with an unknown lens if not exists
 func CreateUnknownLens() {
-	UnknownLens.FirstOrCreate()
+	FirstOrCreateLens(&UnknownLens)
 }
 
 // TableName returns Lens table identifier "lens"
@@ -56,10 +56,24 @@ func NewLens(modelName string, makeName string) *Lens {
 	return result
 }
 
-// FirstOrCreate checks if the lens already exists in the database
-func (m *Lens) FirstOrCreate() *Lens {
-	if err := Db().FirstOrCreate(m, "lens_slug = ?", m.LensSlug).Error; err != nil {
+// Create inserts a new row to the database.
+func (m *Lens) Create() error {
+	if err := Db().Create(m).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// FirstOrCreateLens inserts a new row if not exists.
+func FirstOrCreateLens(m *Lens) *Lens {
+	result := Lens{}
+
+	if err := Db().Where("lens_slug = ?", m.LensSlug).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
 		log.Errorf("lens: %s", err)
+		return nil
 	}
 
 	return m

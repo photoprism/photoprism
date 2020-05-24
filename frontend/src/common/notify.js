@@ -4,7 +4,7 @@ const Notify = {
     info: function (message) {
         Event.publish("notify.info", {msg: message});
     },
-    warning: function (message) {
+    warn: function (message) {
         Event.publish("notify.warning", {msg: message});
     },
     error: function (message) {
@@ -38,7 +38,7 @@ const Notify = {
         }
     },
     wait: function () {
-        this.warning("Busy, please wait...");
+        this.warn("Busy, please wait...");
     },
 };
 

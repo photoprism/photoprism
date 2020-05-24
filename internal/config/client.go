@@ -58,19 +58,21 @@ func (c *Config) PublicClientConfig() ClientConfig {
 	}{}
 
 	var count = struct {
-		Photos    uint `json:"photos"`
-		Videos    uint `json:"videos"`
-		Hidden    uint `json:"hidden"`
-		Favorites uint `json:"favorites"`
-		Private   uint `json:"private"`
-		Review    uint `json:"review"`
-		Stories   uint `json:"stories"`
-		Labels    uint `json:"labels"`
-		Albums    uint `json:"albums"`
-		Folders   uint `json:"folders"`
-		Moments   uint `json:"moments"`
-		Countries uint `json:"countries"`
-		Places    uint `json:"places"`
+		Photos         uint `json:"photos"`
+		Videos         uint `json:"videos"`
+		Hidden         uint `json:"hidden"`
+		Favorites      uint `json:"favorites"`
+		Private        uint `json:"private"`
+		Review         uint `json:"review"`
+		Stories        uint `json:"stories"`
+		Albums         uint `json:"albums"`
+		Folders        uint `json:"folders"`
+		Files          uint `json:"files"`
+		Moments        uint `json:"moments"`
+		Countries      uint `json:"countries"`
+		Places         uint `json:"places"`
+		Labels         uint `json:"labels"`
+		LabelMaxPhotos uint `json:"labelMaxPhotos"`
 	}{}
 
 	result := ClientConfig{
@@ -144,6 +146,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		Review         uint `json:"review"`
 		Albums         uint `json:"albums"`
 		Folders        uint `json:"folders"`
+		Files          uint `json:"files"`
 		Moments        uint `json:"moments"`
 		Countries      uint `json:"countries"`
 		Places         uint `json:"places"`
@@ -172,6 +175,12 @@ func (c *Config) ClientConfig() ClientConfig {
 	db.Table("folders").
 		Select("COUNT(*) AS folders").
 		Where("folder_hidden = 0").
+		Where("deleted_at IS NULL").
+		Take(&count)
+
+	db.Table("files").
+		Select("COUNT(*) AS files").
+		Where("file_missing = 0").
 		Where("deleted_at IS NULL").
 		Take(&count)
 

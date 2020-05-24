@@ -11,7 +11,7 @@
     >
         <template slot="items" slot-scope="props">
             <td style="user-select: none;">
-                <v-img class="accent lighten-2" style="cursor: pointer" aspect-ratio="1"
+                <v-img class="accent lighten-2 clickable" aspect-ratio="1"
                        :src="props.item.thumbnailUrl('tile_50')"
                        @mousedown="onMouseDown($event, props.index)"
                        @contextmenu="onContextMenu($event, props.index)"
@@ -39,7 +39,7 @@
                     </v-btn>
                 </v-img>
             </td>
-            <td class="p-photo-desc p-pointer" @click.exact="editPhoto(props.index)" style="user-select: none;">
+            <td class="p-photo-desc clickable" @click.exact="editPhoto(props.index)" style="user-select: none;">
                 {{ props.item.Title }}
             </td>
             <td class="p-photo-desc hidden-xs-only" :title="props.item.getDateString()">

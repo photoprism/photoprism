@@ -306,7 +306,7 @@
 
                     if (this.scrollDisabled) {
                         if (!this.results.length) {
-                            this.$notify.warning(this.$gettext("No photos found"));
+                            this.$notify.warn(this.$gettext("No photos found"));
                         } else if (this.results.length === 1) {
                             this.$notify.info(this.$gettext("One photo found"));
                         } else {

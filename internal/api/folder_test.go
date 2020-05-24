@@ -22,12 +22,16 @@ func TestGetFoldersOriginals(t *testing.T) {
 		GetFoldersOriginals(router, conf)
 		r := PerformRequest(app, "GET", "/api/v1/folders/originals")
 
-		var folders []entity.Folder
-		err = json.Unmarshal(r.Body.Bytes(), &folders)
+		// t.Logf("RESPONSE: %s", r.Body.Bytes())
+
+		var resp FoldersResponse
+		err = json.Unmarshal(r.Body.Bytes(), &resp)
 
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		folders := resp.Folders
 
 		if len(folders) != len(expected) {
 			t.Fatalf("response contains %d folders", len(folders))
@@ -42,7 +46,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 			assert.Equal(t, "", folder.FolderDescription)
 			assert.Equal(t, entity.TypeDefault, folder.FolderType)
 			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
-			assert.Equal(t, entity.FolderRootOriginals, folder.Root)
+			assert.Equal(t, entity.RootOriginals, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
 			assert.Equal(t, false, folder.FolderHidden)
@@ -62,12 +66,17 @@ func TestGetFoldersOriginals(t *testing.T) {
 		}
 		GetFoldersOriginals(router, conf)
 		r := PerformRequest(app, "GET", "/api/v1/folders/originals?recursive=true")
-		var folders []entity.Folder
-		err = json.Unmarshal(r.Body.Bytes(), &folders)
+
+		// t.Logf("RESPONSE: %s", r.Body.Bytes())
+
+		var resp FoldersResponse
+		err = json.Unmarshal(r.Body.Bytes(), &resp)
 
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		folders := resp.Folders
 
 		if len(folders) != len(expected) {
 			t.Fatalf("response contains %d folders", len(folders))
@@ -77,7 +86,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 			assert.Equal(t, "", folder.FolderDescription)
 			assert.Equal(t, entity.TypeDefault, folder.FolderType)
 			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
-			assert.Equal(t, entity.FolderRootOriginals, folder.Root)
+			assert.Equal(t, entity.RootOriginals, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
 			assert.Equal(t, false, folder.FolderHidden)
@@ -101,12 +110,17 @@ func TestGetFoldersImport(t *testing.T) {
 
 		GetFoldersImport(router, conf)
 		r := PerformRequest(app, "GET", "/api/v1/folders/import")
-		var folders []entity.Folder
-		err = json.Unmarshal(r.Body.Bytes(), &folders)
+
+		// t.Logf("RESPONSE: %s", r.Body.Bytes())
+
+		var resp FoldersResponse
+		err = json.Unmarshal(r.Body.Bytes(), &resp)
 
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		folders := resp.Folders
 
 		if len(folders) != len(expected) {
 			t.Fatalf("response contains %d folders", len(folders))
@@ -123,7 +137,7 @@ func TestGetFoldersImport(t *testing.T) {
 			assert.Equal(t, "", folder.FolderDescription)
 			assert.Equal(t, entity.TypeDefault, folder.FolderType)
 			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
-			assert.Equal(t, entity.FolderRootImport, folder.Root)
+			assert.Equal(t, entity.RootImport, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
 			assert.Equal(t, false, folder.FolderHidden)
@@ -143,12 +157,15 @@ func TestGetFoldersImport(t *testing.T) {
 
 		GetFoldersImport(router, conf)
 		r := PerformRequest(app, "GET", "/api/v1/folders/import?recursive=true")
-		var folders []entity.Folder
-		err = json.Unmarshal(r.Body.Bytes(), &folders)
+
+		var resp FoldersResponse
+		err = json.Unmarshal(r.Body.Bytes(), &resp)
 
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		folders := resp.Folders
 
 		if len(folders) != len(expected) {
 			t.Fatalf("response contains %d folders", len(folders))
@@ -158,7 +175,7 @@ func TestGetFoldersImport(t *testing.T) {
 			assert.Equal(t, "", folder.FolderDescription)
 			assert.Equal(t, entity.TypeDefault, folder.FolderType)
 			assert.Equal(t, entity.SortOrderName, folder.FolderOrder)
-			assert.Equal(t, entity.FolderRootImport, folder.Root)
+			assert.Equal(t, entity.RootImport, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
 			assert.Equal(t, false, folder.FolderHidden)

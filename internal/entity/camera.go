@@ -31,7 +31,7 @@ var UnknownCamera = Camera{
 
 // CreateUnknownCamera initializes the database with an unknown camera if not exists
 func CreateUnknownCamera() {
-	UnknownCamera.FirstOrCreate()
+	FirstOrCreateCamera(&UnknownCamera)
 }
 
 // NewCamera creates a camera entity from a model name and a make name.
@@ -66,6 +66,29 @@ func NewCamera(modelName string, makeName string) *Camera {
 func (m *Camera) FirstOrCreate() *Camera {
 	if err := Db().FirstOrCreate(m, "camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).Error; err != nil {
 		log.Errorf("camera: %s", err)
+	}
+
+	return m
+}
+
+// Create inserts a new row to the database.
+func (m *Camera) Create() error {
+	if err := Db().Create(m).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// FirstOrCreateCamera inserts a new row if not exists.
+func FirstOrCreateCamera(m *Camera) *Camera {
+	result := Camera{}
+
+	if err := Db().Where("camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
+		log.Errorf("camera: %s", err)
+		return nil
 	}
 
 	return m

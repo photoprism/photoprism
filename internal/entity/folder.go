@@ -9,23 +9,15 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
 )
 
-const (
-	FolderRootUnknown   = ""
-	FolderRootOriginals = "originals"
-	FolderRootImport    = "import"
-	RootPath            = "/"
-)
-
 // Folder represents a file system directory.
 type Folder struct {
-	Root              string     `gorm:"type:varbinary(255);unique_index:idx_folders_root_path;" json:"Root" yaml:"Root"`
-	Path              string     `gorm:"type:varbinary(1024);unique_index:idx_folders_root_path;" json:"Path" yaml:"Path"`
+	Path              string     `gorm:"type:varbinary(255);unique_index:idx_folders_path_root;" json:"Path" yaml:"Path"`
+	Root              string     `gorm:"type:varbinary(16);default:'originals';unique_index:idx_folders_path_root;" json:"Root" yaml:"Root"`
 	FolderUID         string     `gorm:"type:varbinary(36);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
 	FolderTitle       string     `gorm:"type:varchar(255);" json:"Title" yaml:"Title,omitempty"`
 	FolderDescription string     `gorm:"type:text;" json:"Description,omitempty" yaml:"Description,omitempty"`
@@ -119,6 +111,18 @@ func (m *Folder) Create() error {
 	return nil
 }
 
+// FirstOrCreateFolder finds the first matching record or creates a new one with the given conditions.
+func FirstOrCreateFolder(m *Folder) error {
+	first := Folder{}
+
+	if err := Db().Where("path = ? AND root = ?", m.Path, m.Root).First(&first).Error; err == nil {
+		m = &first
+		return nil
+	}
+
+	return m.Create()
+}
+
 // Updates selected properties in the database.
 func (m *Folder) Updates(values interface{}) error {
 	return Db().Model(m).Updates(values).Error
@@ -131,21 +135,4 @@ func (m *Folder) SetForm(f form.Folder) error {
 	}
 
 	return nil
-}
-
-// Returns a slice of folders in a given directory incl sub directories in recursive mode.
-func Folders(root, dir string, recursive bool) ([]Folder, error) {
-	dirs, err := fs.Dirs(dir, recursive)
-
-	if err != nil {
-		return []Folder{}, err
-	}
-
-	folders := make([]Folder, len(dirs))
-
-	for i, p := range dirs {
-		folders[i] = NewFolder(root, p, nil)
-	}
-
-	return folders, nil
 }
