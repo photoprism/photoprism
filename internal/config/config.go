@@ -246,3 +246,13 @@ func (c *Config) GeoCodingApi() string {
 	}
 	return ""
 }
+
+// OriginalsLimit returns the file size limit for originals.
+func (c *Config) OriginalsLimit() int64 {
+	if c.params.OriginalsLimit <= 0 || c.params.OriginalsLimit > 100000 {
+		return -1
+	}
+
+	// Megabyte.
+	return c.params.OriginalsLimit * 1024 * 1024
+}

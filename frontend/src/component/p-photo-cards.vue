@@ -143,11 +143,11 @@
                                             {{ photo.baseName() }}
                                         </button>
                                     </template>
-                                    <template v-if="showLocation && photo.LocationID">
+                                    <template v-if="showLocation && photo.LocUID">
                                         <br/>
                                         <button @click.exact="openLocation(index)" title="Location">
                                             <v-icon size="14">location_on</v-icon>
-                                            {{ photo.getLocation() }}
+                                            {{ photo.locationInfo() }}
                                         </button>
                                     </template>
                                 </div>
@@ -188,7 +188,7 @@
                 const link = document.createElement('a')
                 link.href = "/api/v1/download/" + photo.Hash;
                 link.download = photo.FileName;
-                link.click()
+                link.click();
             },
             onSelect(ev, index) {
                 if (ev.shiftKey) {

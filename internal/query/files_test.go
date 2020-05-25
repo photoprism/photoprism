@@ -67,12 +67,12 @@ func TestFilesByUID(t *testing.T) {
 
 func TestFileByPhotoUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		file, err := FileByPhotoUID("pt9jtdre2lvl0yh8")
+		file, err := FileByPhotoUID("pt9jtdre2lvl0y11")
 
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "exampleDNGFile.dng", file.FileName)
+		assert.Equal(t, "bridge.jpg", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
@@ -127,7 +127,7 @@ func TestFileByHash(t *testing.T) {
 func TestSetPhotoPrimary(t *testing.T) {
 	assert.Equal(t, false, entity.FileFixturesExampleXMP.FilePrimary)
 
-	err := SetPhotoPrimary("pt9jtdre2lvl0yh8", "ft1es39w45bnlqdw")
+	err := SetPhotoPrimary("pt9jtdre2lvl0yh7", "ft2es49whhbnlqdn")
 
 	if err != nil {
 		t.Fatal(err)

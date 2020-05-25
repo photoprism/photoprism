@@ -9,7 +9,7 @@ import PPhotoList from "./p-photo-list.vue";
 import PPhotoSearch from "./p-photo-search.vue";
 import PPhotoClipboard from "./p-photo-clipboard.vue";
 import PLabelClipboard from "./p-label-clipboard.vue";
-import PFolderClipboard from "./p-folder-clipboard.vue";
+import PFileClipboard from "./p-file-clipboard.vue";
 import PAlbumClipboard from "./p-album-clipboard.vue";
 import PAlbumToolbar from "./p-album-toolbar.vue";
 import PScrollTop from "./p-scroll-top.vue";
@@ -28,7 +28,7 @@ components.install = (Vue) => {
     Vue.component("p-photo-search", PPhotoSearch);
     Vue.component("p-photo-clipboard", PPhotoClipboard);
     Vue.component("p-label-clipboard", PLabelClipboard);
-    Vue.component("p-folder-clipboard", PFolderClipboard);
+    Vue.component("p-file-clipboard", PFileClipboard);
     Vue.component("p-album-clipboard", PAlbumClipboard);
     Vue.component("p-album-toolbar", PAlbumToolbar);
     Vue.component("p-scroll-top", PScrollTop);

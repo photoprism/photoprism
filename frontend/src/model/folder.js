@@ -30,17 +30,17 @@ export class Folder extends RestModel {
 
     baseName(truncate) {
         let result = this.Name;
-        const slash = result.lastIndexOf("/")
+        const slash = result.lastIndexOf("/");
 
         if (slash >= 0) {
-            result = this.Name.substring(slash + 1)
+            result = this.Name.substring(slash + 1);
         }
 
         if(truncate) {
-            result = Util.truncate(result, truncate, "...")
+            result = Util.truncate(result, truncate, "...");
         }
 
-        return result
+        return result;
     }
 
     isFile() {
@@ -89,7 +89,7 @@ export class Folder extends RestModel {
 
     static originals(path, params) {
         if(!path) {
-            path = "/"
+            path = "/";
         }
 
         return this.search(RootOriginals + path, params);

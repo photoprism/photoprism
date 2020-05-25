@@ -50,6 +50,7 @@ type Params struct {
 	TempPath           string `yaml:"temp-path" flag:"temp-path"`
 	CachePath          string `yaml:"cache-path" flag:"cache-path"`
 	OriginalsPath      string `yaml:"originals-path" flag:"originals-path"`
+	OriginalsLimit     int64  `yaml:"originals-limit" flag:"originals-limit"`
 	ImportPath         string `yaml:"import-path" flag:"import-path"`
 	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`
 	ResourcesPath      string `yaml:"resources-path" flag:"resources-path"`

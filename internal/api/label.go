@@ -196,12 +196,12 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("label: could not find original for %s", fileName)
+			log.Errorf("label: file %s is missing", txt.Quote(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 
-			// Set missing flag so that the file doesn't show up in search results anymore
-			f.FileMissing = true
-			conf.Db().Save(&f)
+			// Set missing flag so that the file doesn't show up in search results anymore.
+			report("label", f.Update("FileMissing", true))
+
 			return
 		}
 

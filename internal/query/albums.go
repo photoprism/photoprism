@@ -41,7 +41,8 @@ func AlbumByUID(albumUID string) (album entity.Album, err error) {
 
 // AlbumThumbByUID returns a album preview file based on the uid.
 func AlbumThumbByUID(albumUID string) (file entity.File, err error) {
-	if err := Db().Where("files.file_primary = 1 AND files.deleted_at IS NULL").
+	if err := Db().
+		Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
 		Joins("JOIN albums ON albums.album_uid = ?", albumUID).
 		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = files.photo_uid").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
@@ -53,8 +54,8 @@ func AlbumThumbByUID(albumUID string) (file entity.File, err error) {
 	return file, nil
 }
 
-// Albums searches albums based on their name.
-func Albums(f form.AlbumSearch) (results []AlbumResult, err error) {
+// AlbumSearch searches albums based on their name.
+func AlbumSearch(f form.AlbumSearch) (results []AlbumResult, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}

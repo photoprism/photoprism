@@ -33,6 +33,9 @@ type Photo struct {
 	PhotoFavorite    bool         `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
 	TimeZone         string       `gorm:"type:varbinary(64);" json:"TimeZone" yaml:"-"`
+	PlaceUID         string       `gorm:"type:varbinary(16);index;" json:"PlaceUID" yaml:"-"`
+	LocUID           string       `gorm:"type:varbinary(16);index;" json:"LocUID" yaml:"-"`
+	LocSrc           string       `gorm:"type:varbinary(8);" json:"LocSrc" yaml:"-"`
 	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
 	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
 	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
@@ -49,14 +52,11 @@ type Photo struct {
 	CameraSerial     string       `gorm:"type:varbinary(255);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
 	CameraSrc        string       `gorm:"type:varbinary(8);" json:"CameraSrc" yaml:"-"`
 	LensID           uint         `gorm:"index:idx_photos_camera_lens;" json:"LensID" yaml:"-"`
-	PlaceID          string       `gorm:"type:varbinary(16);index;default:'zz'" json:"PlaceID" yaml:"-"`
-	LocationID       string       `gorm:"type:varbinary(16);index;" json:"LocationID" yaml:"-"`
-	LocationSrc      string       `gorm:"type:varbinary(8);" json:"LocationSrc" yaml:"-"`
-	Camera           *Camera      `json:"Camera" yaml:"-"`
-	Lens             *Lens        `json:"Lens" yaml:"-"`
-	Location         *Location    `json:"Location" yaml:"-"`
-	Place            *Place       `json:"-" yaml:"-"`
-	Links            []Link       `gorm:"foreignkey:ShareUID;association_foreignkey:PhotoUID" json:"Links" yaml:"-"`
+	Camera           *Camera      `gorm:"association_autoupdate:false;association_autocreate:false" json:"Camera" yaml:"-"`
+	Lens             *Lens        `gorm:"association_autoupdate:false;association_autocreate:false" json:"Lens" yaml:"-"`
+	Location         *Location    `gorm:"foreignkey:loc_uid;association_foreignkey:loc_uid;association_autoupdate:false;association_autocreate:false" json:"Location" yaml:"-"`
+	Place            *Place       `gorm:"foreignkey:place_uid;association_foreignkey:place_uid;association_autoupdate:false;association_autocreate:false" json:"-" yaml:"-"`
+	Links            []Link       `gorm:"foreignkey:share_uid;association_foreignkey:photo_uid" json:"Links" yaml:"-"`
 	Keywords         []Keyword    `json:"-" yaml:"-"`
 	Albums           []Album      `json:"-" yaml:"-"`
 	Files            []File       `yaml:"-"`
@@ -90,7 +90,7 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 		model.Details.Keywords = strings.Join(txt.UniqueKeywords(model.Details.Keywords), ", ")
 	}
 
-	if model.HasLatLng() && locChanged && model.LocationSrc == SrcManual {
+	if model.HasLatLng() && locChanged && model.LocSrc == SrcManual {
 		locKeywords, labels := model.UpdateLocation(geoApi)
 
 		model.AddLabels(labels)
@@ -309,14 +309,19 @@ func (m *Photo) HasID() bool {
 	return m.ID > 0 && m.PhotoUID != ""
 }
 
-// NoLocation checks if the photo has no location
+// NoLocation checks if the photo has an unknown location.
 func (m *Photo) NoLocation() bool {
-	return m.LocationID == ""
+	return m.LocUID == "" || m.LocUID == UnknownLocation.LocUID
 }
 
-// HasLocation checks if the photo has a location
+// HasLocation checks if the photo has a known location.
 func (m *Photo) HasLocation() bool {
-	return m.LocationID != ""
+	return !m.NoLocation()
+}
+
+// LocationLoaded checks if the photo has a known location that is currently loaded.
+func (m *Photo) LocationLoaded() bool {
+	return m.Location != nil && m.Location.Place != nil && m.Location.LocUID != UnknownLocation.LocUID
 }
 
 // HasLatLng checks if the photo has a latitude and longitude.
@@ -329,12 +334,12 @@ func (m *Photo) NoLatLng() bool {
 	return !m.HasLatLng()
 }
 
-// NoPlace checks if the photo has no Place
+// NoPlace checks if the photo has an unknown place.
 func (m *Photo) NoPlace() bool {
-	return m.PlaceID == "" || m.PlaceID == UnknownPlace.ID
+	return m.PlaceUID == "" || m.PlaceUID == UnknownPlace.PlaceUID
 }
 
-// HasPlace checks if the photo has a Place
+// HasPlace checks if the photo has a known place.
 func (m *Photo) HasPlace() bool {
 	return !m.NoPlace()
 }
@@ -370,9 +375,9 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 		return errors.New("photo: won't update title, was modified")
 	}
 
-	hasLocation := m.Location != nil && m.Location.Place != nil
+	knownLocation := m.LocationLoaded()
 
-	if hasLocation {
+	if knownLocation {
 		loc := m.Location
 
 		if title := labels.Title(loc.Name()); title != "" { // TODO: User defined title format
@@ -399,7 +404,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 		}
 	}
 
-	if !hasLocation || m.NoTitle() {
+	if !knownLocation || m.NoTitle() {
 		if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 			if m.TakenSrc != SrcAuto {
 				m.SetTitle(fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.TakenAt.Format("2006")), SrcAuto)
@@ -537,14 +542,14 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 		return
 	}
 
-	if m.LocationSrc != SrcAuto && m.LocationSrc != source && source != SrcManual {
+	if m.LocSrc != SrcAuto && m.LocSrc != source && source != SrcManual {
 		return
 	}
 
 	m.PhotoLat = lat
 	m.PhotoLng = lng
 	m.PhotoAltitude = altitude
-	m.LocationSrc = source
+	m.LocSrc = source
 }
 
 // AllFilesMissing returns true, if all files for this photo are missing.
@@ -584,4 +589,9 @@ func (m *Photo) DeletePermanently() error {
 // NoDescription returns true if the photo has no description.
 func (m *Photo) NoDescription() bool {
 	return m.PhotoDescription == ""
+}
+
+// Updates a model attribute.
+func (m *Photo) Update(attr string, value interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }

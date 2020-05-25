@@ -7,6 +7,7 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/ulule/deepcopier"
 )
@@ -47,7 +48,7 @@ type File struct {
 	FileError       string        `gorm:"type:varbinary(512)" json:"Error" yaml:"Error,omitempty"`
 	Share           []FileShare   `json:"-" yaml:"-"`
 	Sync            []FileSync    `json:"-" yaml:"-"`
-	Links           []Link        `gorm:"foreignkey:ShareUID;association_foreignkey:FileUID" json:"Links" yaml:"-"`
+	Links           []Link        `gorm:"foreignkey:share_uid;association_foreignkey:file_uid" json:"Links" yaml:"-"`
 	CreatedAt       time.Time     `json:"CreatedAt" yaml:"-"`
 	CreatedIn       int64         `json:"CreatedIn" yaml:"-"`
 	UpdatedAt       time.Time     `json:"UpdatedAt" yaml:"-"`
@@ -87,19 +88,18 @@ func (m *File) BeforeCreate(scope *gorm.Scope) error {
 
 // ShareFileName returns a meaningful file name useful for sharing.
 func (m *File) ShareFileName() string {
-	if m.Photo == nil {
+	photo := m.RelatedPhoto()
+
+	if photo == nil {
+		return fmt.Sprintf("%s.%s", m.FileHash, m.FileType)
+	} else if len(m.FileHash) < 8 {
+		return fmt.Sprintf("%s.%s", rnd.UUID(), m.FileType)
+	} else if photo.TakenAtLocal.IsZero() || photo.PhotoTitle == "" {
 		return fmt.Sprintf("%s.%s", m.FileHash, m.FileType)
 	}
 
-	var name string
-
-	if m.Photo.PhotoTitle != "" {
-		name = strings.Title(slug.MakeLang(m.Photo.PhotoTitle, "en"))
-	} else {
-		name = m.PhotoUID
-	}
-
-	taken := m.Photo.TakenAtLocal.Format("20060102-150405")
+	name := strings.Title(slug.MakeLang(photo.PhotoTitle, "en"))
+	taken := photo.TakenAtLocal.Format("20060102-150405")
 	token := rnd.Token(3)
 
 	result := fmt.Sprintf("%s-%s-%s.%s", taken, name, token, m.FileType)
@@ -166,4 +166,28 @@ func (m *File) UpdateVideoInfos() error {
 	}
 
 	return Db().Model(File{}).Where("photo_id = ? AND file_video = 1", m.PhotoID).Updates(values).Error
+}
+
+// Updates a model attribute.
+func (m *File) Update(attr string, value interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+
+// RelatedPhoto returns the related photo entity.
+func (m *File) RelatedPhoto() *Photo {
+	if m.Photo != nil {
+		return m.Photo
+	}
+
+	photo := Photo{}
+
+	UnscopedDb().Model(m).Related(&photo)
+
+	return &photo
+}
+
+// NoJPEG returns true if the file is not a JPEG image file.
+func (m *File) NoJPEG() bool {
+	return m.FileType != string(fs.TypeJpeg)
 }

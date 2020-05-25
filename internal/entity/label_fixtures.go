@@ -176,6 +176,24 @@ var LabelFixtures = LabelMap{
 		DeletedAt:        nil,
 		New:              false,
 	},
+	"no-jpeg": {
+		ID:               1000008,
+		LabelUID:         "lt9k3aa1wowuy3c5",
+		LabelSlug:        "no-jpeg",
+		CustomSlug:       "no-jpeg",
+		LabelName:        "NO JPEG",
+		LabelPriority:    -1,
+		LabelFavorite:    false,
+		LabelDescription: "",
+		LabelNotes:       "",
+		PhotoCount:       4,
+		LabelCategories:  []*Label{},
+		Links:            []Link{},
+		CreatedAt:        time.Now(),
+		UpdatedAt:        time.Now(),
+		DeletedAt:        nil,
+		New:              false,
+	},
 }
 
 // CreateLabelFixtures inserts known entities into the database for testing.

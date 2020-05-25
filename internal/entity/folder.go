@@ -27,7 +27,7 @@ type Folder struct {
 	FolderIgnore      bool       `json:"Ignore" yaml:"Ignore"`
 	FolderHidden      bool       `json:"Hidden" yaml:"Hidden"`
 	FolderWatch       bool       `json:"Watch" yaml:"Watch"`
-	Links             []Link     `gorm:"foreignkey:ShareUID;association_foreignkey:FolderUID" json:"Links" json:"-" yaml:"-"`
+	Links             []Link     `gorm:"foreignkey:share_uid;association_foreignkey:folder_uid" json:"Links" json:"-" yaml:"-"`
 	CreatedAt         time.Time  `json:"-" yaml:"-"`
 	UpdatedAt         time.Time  `json:"-" yaml:"-"`
 	ModifiedAt        *time.Time `json:"ModifiedAt,omitempty" yaml:"-"`
@@ -111,16 +111,18 @@ func (m *Folder) Create() error {
 	return nil
 }
 
-// FirstOrCreateFolder finds the first matching record or creates a new one with the given conditions.
-func FirstOrCreateFolder(m *Folder) error {
-	first := Folder{}
+// FirstOrCreateFolder returns the first matching record or creates a new one with the given conditions.
+func FirstOrCreateFolder(m *Folder) *Folder {
+	result := Folder{}
 
-	if err := Db().Where("path = ? AND root = ?", m.Path, m.Root).First(&first).Error; err == nil {
-		m = &first
+	if err := Db().Where("path = ? AND root = ?", m.Path, m.Root).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
+		log.Errorf("folder: %s", err)
 		return nil
 	}
 
-	return m.Create()
+	return m
 }
 
 // Updates selected properties in the database.

@@ -17,8 +17,12 @@
 
                     <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 
-                    <button class="pswp__button pswp__button--share p-photo-download" title="Download"
+                    <!-- button class="pswp__button pswp__button--share p-photo-download" title="Download"
                             v-if="config.settings.features.download">
+                    </button -->
+
+                    <button class="pswp__button" style="background: none;" @click.exact="onDownload" title="Download" v-if="config.settings.features.download">
+                        <v-icon size="16" color="white">cloud_download</v-icon>
                     </button>
 
                     <button class="pswp__button" style="background: none;" @click.exact="onEdit" title="Edit">
@@ -73,6 +77,7 @@
     import Event from "pubsub-js";
     import Thumb from "model/thumb";
     import Photo from "model/photo";
+    import Notify from "../common/notify";
 
     export default {
         name: "p-photo-viewer",
@@ -132,6 +137,18 @@
                         this.onPause();
                     }
                 }, 4000);
+            },
+            onDownload() {
+                if(!this.item || !this.item.download_url ) {
+                    console.warn("photo viewer: no download url");
+                    return;
+                }
+
+                Notify.success(this.$gettext("Downloading..."));
+                let photo = new Photo();
+                photo.find(this.item.uid).then((p) => {
+                    p.downloadAll();
+                });
             },
             onEdit() {
                 const g = this.$viewer.gallery; // Gallery

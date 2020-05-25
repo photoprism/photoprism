@@ -39,9 +39,9 @@ type Photo struct {
 	PhotoFNumber     float32   `json:"FNumber"`
 	PhotoExposure    string    `json:"Exposure"`
 	PhotoCountry     string    `json:"Country"`
-	LocationID       string    `json:"LocationID"`
-	LocationSrc      string    `json:"LocationSrc"`
-	PlaceID          string    `json:"PlaceID"`
+	LocUID           string    `json:"LocUID"`
+	LocSrc           string    `json:"LocSrc"`
+	PlaceUID         string    `json:"PlaceUID"`
 	CameraID         uint      `json:"CameraID"`
 	CameraSrc        string    `json:"CameraSrc"`
 	LensID           uint      `json:"LensID"`

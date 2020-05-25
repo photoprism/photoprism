@@ -22,7 +22,7 @@ type Label struct {
 	LabelDescription string     `gorm:"type:text;" json:"Description" yaml:"Description,omitempty"`
 	LabelNotes       string     `gorm:"type:text;" json:"Notes" yaml:"Notes,omitempty"`
 	LabelCategories  []*Label   `gorm:"many2many:categories;association_jointable_foreignkey:category_id" json:"-" yaml:"-"`
-	Links            []Link     `gorm:"foreignkey:ShareUID;association_foreignkey:LabelUID" json:"Links" yaml:"-"`
+	Links            []Link     `gorm:"foreignkey:share_uid;association_foreignkey:label_uid" json:"Links" yaml:"-"`
 	PhotoCount       int        `gorm:"default:1" json:"PhotoCount" yaml:"-"`
 	CreatedAt        time.Time  `json:"CreatedAt" yaml:"-"`
 	UpdatedAt        time.Time  `json:"UpdatedAt" yaml:"-"`

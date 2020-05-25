@@ -23,8 +23,9 @@ type Location struct {
 	Cached      bool    `json:"-"`
 }
 
+const ApiName = "photoprism places"
 var ReverseLookupURL = "https://places.photoprism.org/v1/location/%s"
-var client = &http.Client{Timeout: 30 * time.Second} // TODO: Change timeout if needed
+var client = &http.Client{Timeout: 60 * time.Second} // TODO: Change timeout if needed
 
 func NewLocation(id string, lat, lng float64, name, category string, place Place, cached bool) *Location {
 	result := &Location{
@@ -41,17 +42,17 @@ func NewLocation(id string, lat, lng float64, name, category string, place Place
 }
 func FindLocation(id string) (result Location, err error) {
 	if len(id) > 16 || len(id) == 0 {
-		return result, fmt.Errorf("places: invalid location id %s", id)
+		return result, fmt.Errorf("api: invalid location id %s (%s)", id, ApiName)
 	}
 
 	lat, lng := s2.LatLng(id)
 
 	if lat == 0.0 || lng == 0.0 {
-		return result, fmt.Errorf("places: skipping lat %f, lng %f", lat, lng)
+		return result, fmt.Errorf("api: skipping lat %f, lng %f (%s)", lat, lng, ApiName)
 	}
 
 	if hit, ok := cache.Get(id); ok {
-		log.Debugf("places: cache hit for lat %f, lng %f", lat, lng)
+		log.Debugf("api: cache hit for lat %f, lng %f (%s)", lat, lng, ApiName)
 		result = hit.(Location)
 		result.Cached = true
 		return result, nil
@@ -59,12 +60,12 @@ func FindLocation(id string) (result Location, err error) {
 
 	url := fmt.Sprintf(ReverseLookupURL, id)
 
-	log.Debugf("places: query %s", url)
+	log.Debugf("api: sending request to %s (%s)", url, ApiName)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
-		log.Errorf("places: %s", err.Error())
+		log.Errorf("api: %s (%s)", err.Error(), ApiName)
 		return result, err
 	}
 
@@ -79,10 +80,10 @@ func FindLocation(id string) (result Location, err error) {
 	}
 
 	if err != nil {
-		log.Errorf("places: %s", err.Error())
+		log.Errorf("api: %s", err.Error())
 		return result, err
 	} else if r.StatusCode >= 400 {
-		err = fmt.Errorf("places: request failed with status code %d", r.StatusCode)
+		err = fmt.Errorf("api: request failed with status code %d (%s)", r.StatusCode, ApiName)
 		log.Error(err)
 		return result, err
 	}
@@ -90,13 +91,13 @@ func FindLocation(id string) (result Location, err error) {
 	err = json.NewDecoder(r.Body).Decode(&result)
 
 	if err != nil {
-		log.Errorf("places: %s", err.Error())
+		log.Errorf("api: %s (%s)", err.Error(), ApiName)
 		return result, err
 	}
 
 	if result.ID == "" {
-		log.Debugf("result: %+v", result)
-		return result, fmt.Errorf("places: no result for %s", id)
+		log.Debugf("api: %+v", result)
+		return result, fmt.Errorf("api: no result for %s (%s)", id, ApiName)
 	}
 
 	cache.Set(id, result, gc.DefaultExpiration)

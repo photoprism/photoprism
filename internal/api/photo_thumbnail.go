@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"path"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
@@ -37,15 +38,17 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if f.FileVideo {
+		// Find fallback if file is not a JPEG image.
+		if f.NoJPEG() {
 			f, err = query.FileByPhotoUID(f.PhotoUID)
 
 			if err != nil {
-				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
+				c.Data(http.StatusOK, "image/svg+xml", fileIconSvg)
 				return
 			}
 		}
 
+		// Return SVG icon as placeholder if file has errors.
 		if f.FileError != "" {
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 			return
@@ -54,21 +57,18 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("photo: could not find original for %s", txt.Quote(f.FileName))
+			log.Errorf("photo: file %s is missing", txt.Quote(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 
-			// Set missing flag so that the file doesn't show up in search results anymore
-			f.FileMissing = true
+			// Set missing flag so that the file doesn't show up in search results anymore.
+			report("photo", f.Update("FileMissing", true))
 
-			if err := f.Save(); err != nil {
-				log.Errorf("photo: %s", err)
-			} else if f.AllFilesMissing() {
+			if f.AllFilesMissing() {
 				log.Infof("photo: deleting photo, all files missing for %s", txt.Quote(f.FileName))
 
-				if err := f.Photo.Delete(false); err != nil {
-					log.Errorf("photo: %s", err)
-				}
+				report("photo", f.RelatedPhoto().Delete(false))
 			}
+
 			return
 		}
 
@@ -91,7 +91,11 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		if err != nil {
 			log.Errorf("photo: %s", err)
-			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+			return
+		} else if thumbnail == "" {
+			log.Errorf("photo: thumbnail name for %s is empty - bug?", filepath.Base(fileName))
+			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 			return
 		}
 

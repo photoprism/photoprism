@@ -26,7 +26,7 @@ func TestFirstFileByHash(t *testing.T) {
 func TestFile_DownloadFileName(t *testing.T) {
 	t.Run("photo with title", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
-		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765"}
+		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
 
 		filename := file.ShareFileName()
 
@@ -35,19 +35,18 @@ func TestFile_DownloadFileName(t *testing.T) {
 	})
 	t.Run("photo without title", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
-		file := &File{Photo: photo, FileType: "jpg", PhotoUID: "123", FileUID: "foobar345678765"}
+		file := &File{Photo: photo, FileType: "jpg", PhotoUID: "123", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
 
 		filename := file.ShareFileName()
 
-		assert.Contains(t, filename, "20190115-000000-123")
-		assert.Contains(t, filename, fs.JpegExt)
+		assert.Equal(t, filename, "e98eb86480a72bd585d228a709f0622f90e86cbc.jpg")
 	})
 	t.Run("photo without photo", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileHash: "123Hash", FileUID: "foobar345678765"}
+		file := &File{Photo: nil, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
 
 		filename := file.ShareFileName()
 
-		assert.Equal(t, "123Hash.jpg", filename)
+		assert.Equal(t, "e98eb86480a72bd585d228a709f0622f90e86cbc.jpg", filename)
 	})
 }
 

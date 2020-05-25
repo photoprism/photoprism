@@ -25,8 +25,8 @@
             <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
         </v-container>
         <v-container fluid class="pa-0" v-else>
-            <p-folder-clipboard :refresh="refresh" :selection="selection"
-                                :clear-selection="clearSelection"></p-folder-clipboard>
+            <p-file-clipboard :refresh="refresh" :selection="selection"
+                                :clear-selection="clearSelection"></p-file-clipboard>
 
             <p-scroll-top></p-scroll-top>
 
@@ -357,6 +357,7 @@
             searchParams() {
                 const params = {
                     files: true,
+                    uncached: true,
                 };
 
                 Object.assign(params, this.filter);
@@ -376,7 +377,9 @@
             },
             search() {
                 // Don't query the same data more than once
-                if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
+                if (!this.dirty && (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter))) {
+                    this.loading = false;
+                    this.listen = true;
                     return;
                 }
 

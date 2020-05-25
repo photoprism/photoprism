@@ -65,6 +65,18 @@ func (m *MediaFile) Stat() (size int64, mod time.Time) {
 	return s.Size(), s.ModTime().Round(time.Second)
 }
 
+// FileSize returns the media file size.
+func (m *MediaFile) FileSize() (size int64) {
+	s, err := os.Stat(m.FileName())
+
+	if err != nil {
+		log.Errorf("mediafile: unknown size (%s)", err)
+		return -1
+	}
+
+	return s.Size()
+}
+
 // DateCreated returns only the date on which the media file was probably taken in UTC.
 func (m *MediaFile) DateCreated() time.Time {
 	takenAt, _ := m.TakenAt()

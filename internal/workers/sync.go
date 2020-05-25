@@ -38,7 +38,7 @@ func (s *Sync) Start() (err error) {
 		Sync: true,
 	}
 
-	accounts, err := query.Accounts(f)
+	accounts, err := query.AccountSearch(f)
 
 	for _, a := range accounts {
 		if a.AccType != remote.ServiceWebDAV {

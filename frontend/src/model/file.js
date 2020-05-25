@@ -46,17 +46,17 @@ export class File extends RestModel {
 
     baseName(truncate) {
         let result = this.Name;
-        const slash = result.lastIndexOf("/")
+        const slash = result.lastIndexOf("/");
 
         if (slash >= 0) {
-            result = this.Name.substring(slash + 1)
+            result = this.Name.substring(slash + 1);
         }
 
         if(truncate) {
-            result = Util.truncate(result, truncate, "...")
+            result = Util.truncate(result, truncate, "...");
         }
 
-        return result
+        return result;
     }
 
     isFile() {
@@ -72,6 +72,12 @@ export class File extends RestModel {
     }
 
     thumbnailUrl(type) {
+        if(this.Error) {
+            return "/api/v1/svg/broken";
+        } else if (this.Type === "raw") {
+            return "/api/v1/svg/raw";
+        }
+
         return "/api/v1/thumbnails/" + this.Hash + "/" + type;
     }
 

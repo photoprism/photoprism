@@ -8,7 +8,7 @@ func UpdatePhotoCounts() error {
 
 	if err := Db().Table("places").
 		UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(*) FROM photos ph "+
-			"WHERE places.id = ph.place_id "+
+			"WHERE places.place_uid = ph.place_uid "+
 			"AND ph.photo_quality >= 0 "+
 			"AND ph.photo_private = 0 "+
 			"AND ph.deleted_at IS NULL)")).Error; err != nil {

@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GET /api/v1/preview
@@ -45,7 +46,7 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 		f.Count = 12
 		f.Order = "relevance"
 
-		p, _, err := query.Photos(f)
+		p, _, err := query.PhotoSearch(f)
 
 		if err != nil {
 			log.Error(err)
@@ -65,12 +66,8 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 			fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
 			if !fs.FileExists(fileName) {
-				log.Errorf("could not find original for thumbnail: %s", fileName)
+				log.Errorf("preview: file %s is missing", txt.Quote(f.FileName))
 				c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
-
-				// Set missing flag so that the file doesn't show up in search results anymore
-				f.FileMissing = true
-				conf.Db().Save(&f)
 				return
 			}
 

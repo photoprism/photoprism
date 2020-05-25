@@ -7,7 +7,7 @@ import (
 )
 
 func TestPhotosResults_Merged(t *testing.T) {
-	result1 := PhotosResult{
+	result1 := PhotoResult{
 		ID:               111111,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        time.Time{},
@@ -41,8 +41,8 @@ func TestPhotosResults_Merged(t *testing.T) {
 		LensID:           0,
 		LensModel:        "",
 		LensMake:         "",
-		LocationID:       "",
-		PlaceID:          "",
+		LocUID:           "",
+		PlaceUID:         "",
 		LocLabel:         "",
 		LocCity:          "",
 		LocState:         "",
@@ -66,7 +66,7 @@ func TestPhotosResults_Merged(t *testing.T) {
 		Files:            nil,
 	}
 
-	result2 := PhotosResult{
+	result2 := PhotoResult{
 		ID:               22222,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        time.Time{},
@@ -100,8 +100,8 @@ func TestPhotosResults_Merged(t *testing.T) {
 		LensID:           0,
 		LensModel:        "",
 		LensMake:         "",
-		LocationID:       "",
-		PlaceID:          "",
+		LocUID:           "",
+		PlaceUID:         "",
 		LocLabel:         "",
 		LocCity:          "",
 		LocState:         "",
@@ -125,20 +125,20 @@ func TestPhotosResults_Merged(t *testing.T) {
 		Files:            nil,
 	}
 
-	results := PhotosResults{result1, result2}
+	results := PhotoResults{result1, result2}
 
-	merged, int, err := results.Merged()
+	merged, count, err := results.Merged()
 
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, 2, int)
+	assert.Equal(t, 2, count)
 	t.Log(merged)
 }
 
 func TestPhotosResult_ShareFileName(t *testing.T) {
 	t.Run("with photo title", func(t *testing.T) {
-		result1 := PhotosResult{
+		result1 := PhotoResult{
 			ID:               111111,
 			CreatedAt:        time.Time{},
 			UpdatedAt:        time.Time{},
@@ -172,8 +172,8 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			LensID:           0,
 			LensModel:        "",
 			LensMake:         "",
-			LocationID:       "",
-			PlaceID:          "",
+			LocUID:           "",
+			PlaceUID:         "",
 			LocLabel:         "",
 			LocCity:          "",
 			LocState:         "",
@@ -201,7 +201,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 		assert.Contains(t, r, "20131111-090718-Phototitle123")
 	})
 	t.Run("without photo title", func(t *testing.T) {
-		result1 := PhotosResult{
+		result1 := PhotoResult{
 			ID:               111111,
 			CreatedAt:        time.Time{},
 			UpdatedAt:        time.Time{},
@@ -235,8 +235,8 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			LensID:           0,
 			LensModel:        "",
 			LensMake:         "",
-			LocationID:       "",
-			PlaceID:          "",
+			LocUID:           "",
+			PlaceUID:         "",
 			LocLabel:         "",
 			LocCity:          "",
 			LocState:         "",

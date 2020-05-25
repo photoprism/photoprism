@@ -29,11 +29,11 @@ func TestSavePhotoForm(t *testing.T) {
 			PhotoFNumber:     3.3,
 			PhotoExposure:    "exposure",
 			CameraID:         uint(3),
-			CameraSrc:        "exif",
+			CameraSrc:        "meta",
 			LensID:           uint(6),
-			LocationID:       "1234",
-			LocationSrc:      "manual",
-			PlaceID:          "765",
+			LocUID:           "1234",
+			LocSrc:           "manual",
+			PlaceUID:         "765",
 			PhotoCountry:     "de",
 			Details: form.Details{
 				PhotoID:   uint(1000008),
@@ -75,7 +75,7 @@ func TestPhoto_Save(t *testing.T) {
 			ID:               11111,
 			TakenAt:          time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
 			TakenAtLocal:     time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
-			TakenSrc:         "exif",
+			TakenSrc:         "meta",
 			TimeZone:         "UTC",
 			PhotoTitle:       "Black beach",
 			TitleSrc:         "manual",
@@ -90,11 +90,11 @@ func TestPhoto_Save(t *testing.T) {
 			PhotoFNumber:     3.3,
 			PhotoExposure:    "exposure",
 			CameraID:         uint(3),
-			CameraSrc:        "exif",
+			CameraSrc:        "meta",
 			LensID:           uint(6),
-			LocationID:       "1234",
-			LocationSrc:      "geo",
-			PlaceID:          "765",
+			LocUID:           "1234",
+			LocSrc:           "geo",
+			PlaceUID:         "765",
 			PhotoCountry:     "de",
 			Keywords:         []Keyword{},
 			Details: Details{
@@ -124,7 +124,7 @@ func TestPhoto_Save(t *testing.T) {
 
 func TestPhoto_ClassifyLabels(t *testing.T) {
 	t.Run("new photo", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo01")
+		m := PhotoFixtures.Get("Photo19")
 		Db().Set("gorm:auto_preload", true).Model(&m).Related(&m.Labels)
 		labels := m.ClassifyLabels()
 		assert.Empty(t, labels)
@@ -186,6 +186,8 @@ func TestPhoto_NoLocation(t *testing.T) {
 	})
 	t.Run("false", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo08")
+		// t.Logf("MODEL: %+v", m)
+		assert.True(t, m.HasLocation())
 		assert.False(t, m.NoLocation())
 	})
 }
@@ -404,7 +406,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		assert.Equal(t, "Unknown / 2008", m.PhotoTitle)
 	})
 	t.Run("no location no labels no takenAt", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo03")
+		m := PhotoFixtures.Get("Photo19")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "", m.PhotoTitle)
 		err := m.UpdateTitle(*classifyLabels)

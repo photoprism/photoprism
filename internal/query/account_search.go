@@ -5,8 +5,10 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 )
 
-// Accounts returns a list of accounts.
-func Accounts(f form.AccountSearch) (result []entity.Account, err error) {
+type Accounts []entity.Account
+
+// AccountSearch returns a list of accounts.
+func AccountSearch(f form.AccountSearch) (result Accounts, err error) {
 	s := Db().Where(&entity.Account{})
 
 	if f.Share {

@@ -28,7 +28,7 @@ type Album struct {
 	AlbumOrder       string     `gorm:"type:varbinary(32);" json:"Order" yaml:"Order,omitempty"`
 	AlbumTemplate    string     `gorm:"type:varbinary(255);" json:"Template" yaml:"Template,omitempty"`
 	AlbumFavorite    bool       `json:"Favorite" yaml:"Favorite,omitempty"`
-	Links            []Link     `gorm:"foreignkey:ShareUID;association_foreignkey:AlbumUID" json:"Links" yaml:"-"`
+	Links            []Link     `gorm:"foreignkey:share_uid;association_foreignkey:album_uid" json:"Links" yaml:"-"`
 	CreatedAt        time.Time  `json:"CreatedAt" yaml:"-"`
 	UpdatedAt        time.Time  `json:"UpdatedAt" yaml:"-"`
 	DeletedAt        *time.Time `sql:"index" json:"-" yaml:"-"`

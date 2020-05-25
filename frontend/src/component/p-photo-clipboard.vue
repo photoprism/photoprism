@@ -245,7 +245,10 @@
             },
             onDownload(path) {
                 Notify.success(this.$gettext("Downloading..."));
-                window.open(path, "_blank");
+                const link = document.createElement('a')
+                link.href = path;
+                link.download = "photos.zip";
+                link.click();
             },
             edit() {
                 // Open Edit Dialog

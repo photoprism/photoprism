@@ -33,15 +33,18 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, root, rootPath str
 		gc := service.Cache()
 		recursive := c.Query("recursive") != ""
 		listFiles := c.Query("files") != ""
+		cached := c.Query("uncached") == ""
 		resp := FoldersResponse{Root: root, Recursive: recursive}
 		path := c.Param("path")
 
 		cacheKey := fmt.Sprintf("folders:%s:%t:%t", filepath.Join(rootPath, path), recursive, listFiles)
 
-		if cacheData, ok := gc.Get(cacheKey); ok {
-			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
-			c.JSON(http.StatusOK, cacheData.(FoldersResponse))
-			return
+		if cached {
+			if cacheData, ok := gc.Get(cacheKey); ok {
+				log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+				c.JSON(http.StatusOK, cacheData.(FoldersResponse))
+				return
+			}
 		}
 
 		if folders, err := query.FoldersByPath(root, rootPath, path, recursive); err != nil {
@@ -63,7 +66,7 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, root, rootPath str
 		gc.Set(cacheKey, resp, time.Minute*5)
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
-		c.Header("X-Count", strconv.Itoa(len(resp.Files) + len(resp.Folders)))
+		c.Header("X-Count", strconv.Itoa(len(resp.Files)+len(resp.Folders)))
 		c.Header("X-Offset", "0")
 
 		c.JSON(http.StatusOK, resp)

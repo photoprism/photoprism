@@ -46,32 +46,33 @@ func TestLabelByUID(t *testing.T) {
 
 func TestLabelThumbBySlug(t *testing.T) {
 	t.Run("file found", func(t *testing.T) {
-		file, err := LabelThumbBySlug("flower")
+		file, err := LabelThumbBySlug("cow")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "exampleFileName.jpg", file.FileName)
+		assert.Equal(t, "bridge2.jpg", file.FileName)
 	})
 
 	t.Run("no file found", func(t *testing.T) {
-		file, err := LabelThumbBySlug("cow")
+		file, err := LabelThumbBySlug("no-jpeg")
 
-		assert.Error(t, err, "record not found")
-		t.Log(file)
+		if err == nil {
+			t.Fatalf("did not expect to find file: %+v", file)
+		}
 	})
 }
 
 func TestLabelThumbByUID(t *testing.T) {
 	t.Run("file found", func(t *testing.T) {
-		file, err := LabelThumbByUID("lt9k3pw1wowuy3c4")
+		file, err := LabelThumbByUID("lt9k3pw1wowuy3c5")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "exampleFileName.jpg", file.FileName)
+		assert.Equal(t, "bridge2.jpg", file.FileName)
 	})
 
 	t.Run("no file found", func(t *testing.T) {

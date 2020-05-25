@@ -11,21 +11,22 @@ import (
 
 func TestPhotos(t *testing.T) {
 	t.Run("search all", func(t *testing.T) {
+		//Db().LogMode(true)
 		var f form.PhotoSearch
 		f.Query = ""
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		//t.Logf("results: %+v", photos)
+		// t.Logf("results: %+v", photos)
 		assert.LessOrEqual(t, 3, len(photos))
 		for _, r := range photos {
-			assert.IsType(t, PhotosResult{}, r)
+			assert.IsType(t, PhotoResult{}, r)
 			assert.NotEmpty(t, r.ID)
 			assert.NotEmpty(t, r.CameraID)
 			assert.NotEmpty(t, r.LensID)
@@ -43,7 +44,7 @@ func TestPhotos(t *testing.T) {
 		f.ID = "pt9jtdre2lvl0yh7"
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -58,7 +59,7 @@ func TestPhotos(t *testing.T) {
 		f.ID = "pt9jtdre2lvl0yh7"
 		f.Merged = false
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -71,7 +72,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		assert.Equal(t, "label dog not found", err.Error())
 		assert.Empty(t, photos)
@@ -82,7 +83,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -95,7 +96,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		assert.Error(t, err)
 		assert.Empty(t, photos)
@@ -111,7 +112,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Location = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -127,7 +128,7 @@ func TestPhotos(t *testing.T) {
 		f.Location = true
 		f.Error = false
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -142,7 +143,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Location = false
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		assert.Equal(t, "query too short", err.Error())
 		assert.Empty(t, photos)
@@ -153,7 +154,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 5000
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -165,7 +166,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 5000
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -179,7 +180,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Archived = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -194,7 +195,7 @@ func TestPhotos(t *testing.T) {
 		f.Private = true
 		f.Error = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -208,7 +209,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Public = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -222,7 +223,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Review = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -234,10 +235,10 @@ func TestPhotos(t *testing.T) {
 		f.Query = ""
 		f.Count = 5000
 		f.Offset = 0
-		f.Quality = 4
+		f.Quality = 3
 		f.Private = false
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -251,7 +252,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Error = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -265,7 +266,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Camera = 1000003
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -280,7 +281,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Color = "blue"
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -294,7 +295,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -308,13 +309,13 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.LessOrEqual(t, 2, len(photos))
+		assert.LessOrEqual(t, 1, len(photos))
 
 	})
 	t.Run("form.title", func(t *testing.T) {
@@ -323,7 +324,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -339,7 +340,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 3
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -354,7 +355,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -369,7 +370,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -385,7 +386,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Archived = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -399,7 +400,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 3
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -415,7 +416,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Error = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -430,7 +431,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -444,7 +445,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -459,7 +460,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -473,7 +474,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 10
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -488,7 +489,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Merged = true
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -502,7 +503,7 @@ func TestPhotos(t *testing.T) {
 		f.Count = 5000
 		f.Offset = 0
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -519,7 +520,7 @@ func TestPhotos(t *testing.T) {
 		f.Year = 2790
 		f.Album = "at9lxuqxpogaaba8"
 
-		photos, _, err := Photos(f)
+		photos, _, err := PhotoSearch(f)
 
 		if err != nil {
 			t.Fatal(err)

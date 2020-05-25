@@ -124,12 +124,12 @@ func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("could not find original: %s", c.Param("uid"))
+			log.Errorf("photo: file %s is missing", txt.Quote(f.FileName))
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 
-			// Set missing flag so that the file doesn't show up in search results anymore
-			f.FileMissing = true
-			conf.Db().Save(&f)
+			// Set missing flag so that the file doesn't show up in search results anymore.
+			report("photo", f.Update("FileMissing", true))
+
 			return
 		}
 

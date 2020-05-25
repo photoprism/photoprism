@@ -40,7 +40,7 @@ func (s *Share) Start() (err error) {
 	}
 
 	// Find accounts for which sharing is enabled
-	accounts, err := query.Accounts(f)
+	accounts, err := query.AccountSearch(f)
 
 	// Upload newly shared files
 	for _, a := range accounts {

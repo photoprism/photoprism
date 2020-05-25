@@ -8,7 +8,7 @@ import (
 )
 
 func TestCreateUnknownPlace(t *testing.T) {
-	r := UnknownPlace.FirstOrCreate()
+	r := FirstOrCreatePlace(&UnknownPlace)
 	assert.True(t, r.Unknown())
 }
 
@@ -50,13 +50,14 @@ func TestFindPlaceByLabel(t *testing.T) {
 
 func TestPlace_Find(t *testing.T) {
 	t.Run("record exists", func(t *testing.T) {
-		m := PlaceFixtures.Get("teotihuacan")
-		r := m.Find()
-		assert.Nil(t, r)
+		m := PlaceFixtures.Get("mexico")
+		if err := m.Find(); err != nil {
+			t.Fatal(err)
+		}
 	})
 	t.Run("record does not exist", func(t *testing.T) {
 		place := &Place{
-			ID:          "1110",
+			PlaceUID:    "1110",
 			LocLabel:    "test",
 			LocCity:     "testCity",
 			LocState:    "",
@@ -74,8 +75,8 @@ func TestPlace_Find(t *testing.T) {
 	})
 }
 
-func TestPlace_FirstOrCreate(t *testing.T) {
+func TestFirstOrCreatePlace(t *testing.T) {
 	m := PlaceFixtures.Pointer("zinkwazi")
-	r := m.FirstOrCreate()
+	r := FirstOrCreatePlace(m)
 	assert.Equal(t, "KwaDukuza, KwaZulu-Natal, South Africa", r.LocLabel)
 }

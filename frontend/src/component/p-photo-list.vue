@@ -57,12 +57,12 @@
                         title="Name" v-if="filter.order === 'name'">
                     {{ props.item.FileName }}
                 </button>
-                <button v-else-if="props.item.LocationID && showLocation" @click.stop.prevent="openLocation(props.index)"
+                <button v-else-if="props.item.LocUID && showLocation" @click.stop.prevent="openLocation(props.index)"
                         style="user-select: none;">
-                    {{ props.item.getLocation() }}
+                    {{ props.item.locationInfo() }}
                 </button>
                 <span v-else>
-                    {{ props.item.getLocation() }}
+                    {{ props.item.locationInfo() }}
                 </span>
             </td>
             <td class="text-xs-center">

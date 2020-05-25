@@ -39,4 +39,13 @@ var DetailsFixtures = DetailsMap{
 		Copyright: "copy",
 		License:   "MIT",
 	},
+	"bridge": {
+		PhotoID:   1000003,
+		Keywords:  "bridge, nature",
+		Notes:     "Some Notes!@#$",
+		Subject:   "Bridge",
+		Artist:    "Jens Mander",
+		Copyright: "Copyright 2020",
+		License:   "n/a",
+	},
 }

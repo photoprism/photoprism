@@ -80,7 +80,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			f, err := NewMediaFile(destinationMainFilename)
 
 			if err != nil {
-				log.Errorf("import: could not index %s (%s)", txt.Quote(fs.RelativeName(destinationMainFilename, imp.originalsPath())), err.Error())
+				log.Errorf("import: could not import %s (%s)", txt.Quote(fs.RelativeName(destinationMainFilename, imp.originalsPath())), err.Error())
 				continue
 			}
 
@@ -122,6 +122,12 @@ func ImportWorker(jobs <-chan ImportJob) {
 			ind := imp.index
 
 			if related.Main != nil {
+				// Enforce file size limit for originals.
+				if ind.conf.OriginalsLimit() > 0 && related.Main.FileSize() > ind.conf.OriginalsLimit() {
+					log.Warnf("import: %s exceeds file size limit for originals [%d / %d MB]", filepath.Base(related.Main.FileName()), related.Main.FileSize()/(1024*1024), ind.conf.OriginalsLimit()/(1024*1024))
+					continue
+				}
+
 				res := ind.MediaFile(related.Main, indexOpt, originalName)
 				log.Infof("import: %s main %s file %s", res, related.Main.FileType(), txt.Quote(related.Main.RelativeName(ind.originalsPath())))
 				done[related.Main.FileName()] = true

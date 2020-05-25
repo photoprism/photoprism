@@ -12,3 +12,9 @@ import (
 )
 
 var log = event.Log
+
+func report(prefix string, err error) {
+	if err != nil {
+		log.Errorf("%s: %s", prefix, err.Error())
+	}
+}

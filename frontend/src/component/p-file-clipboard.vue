@@ -8,7 +8,7 @@
                     direction="top"
                     v-model="expanded"
                     transition="slide-y-reverse-transition"
-                    class="p-clipboard p-folder-clipboard"
+                    class="p-clipboard p-file-clipboard"
                     id="t-clipboard"
             >
                 <v-btn
@@ -16,24 +16,26 @@
                         color="accent darken-2"
                         dark
                         fab
-                        class="p-folder-clipboard-menu"
+                        class="p-file-clipboard-menu"
                 >
                     <v-icon v-if="selection.length === 0">menu</v-icon>
-                    <span v-else  class="t-clipboard-count">{{ selection.length }}</span>
+                    <span v-else class="t-clipboard-count">{{ selection.length }}</span>
                 </v-btn>
 
-                <!-- v-btn
+                <v-btn
                         fab
                         dark
                         small
                         :title="labels.download"
                         color="download"
                         @click.stop="download()"
-                        class="p-label-clipboard-download"
-                        :disabled="selection.length !== 1"
+                        class="p-file-clipboard-download"
+                        v-if="$config.feature('download')"
+                        :disabled="selection.length === 0"
                 >
                     <v-icon>cloud_download</v-icon>
-                </v-btn -->
+                </v-btn>
+
                 <v-btn
                         fab
                         dark
@@ -42,7 +44,7 @@
                         color="album"
                         :disabled="selection.length === 0"
                         @click.stop="dialog.album = true"
-                        class="p-photo-clipboard-album"
+                        class="p-file-clipboard-album"
                 >
                     <v-icon>folder</v-icon>
                 </v-btn>
@@ -53,7 +55,7 @@
                         small
                         color="accent"
                         @click.stop="clearClipboard()"
-                        class="p-folder-clipboard-clear"
+                        class="p-file-clipboard-clear"
                 >
                     <v-icon>clear</v-icon>
                 </v-btn>
@@ -68,7 +70,7 @@
     import Notify from "common/notify";
 
     export default {
-        name: 'p-folder-clipboard',
+        name: 'p-file-clipboard',
         props: {
             selection: Array,
             refresh: Function,
@@ -97,24 +99,24 @@
             addToAlbum(ppid) {
                 this.dialog.album = false;
 
-                Api.post(`albums/${ppid}/photos`, {"folders": this.selection}).then(() => this.onAdded());
+                Api.post(`albums/${ppid}/photos`, {"files": this.selection}).then(() => this.onAdded());
             },
             onAdded() {
                 this.clearClipboard();
             },
             download() {
-                if(this.selection.length !== 1) {
-                    Notify.error(this.$gettext("You can only download one folder"));
-                    return;
-                }
-
-                this.onDownload(`/api/v1/folders/${this.selection[0]}/download`);
+                Api.post("zip", {"files": this.selection}).then(r => {
+                    this.onDownload("/api/v1/zip/" + r.data.filename);
+                });
 
                 this.expanded = false;
             },
             onDownload(path) {
                 Notify.success(this.$gettext("Downloading..."));
-                window.open(path, "_blank");
+                const link = document.createElement('a')
+                link.href = path;
+                link.download = "photos.zip";
+                link.click();
             },
         }
     };

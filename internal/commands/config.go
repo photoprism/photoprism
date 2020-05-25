@@ -61,6 +61,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "config-path", conf.ConfigPath())
 	fmt.Printf("%-25s %s\n", "assets-path", conf.AssetsPath())
 	fmt.Printf("%-25s %s\n", "originals-path", conf.OriginalsPath())
+	fmt.Printf("%-25s %d\n", "originals-limit", conf.OriginalsLimit())
 	fmt.Printf("%-25s %s\n", "import-path", conf.ImportPath())
 	fmt.Printf("%-25s %s\n", "temp-path", conf.TempPath())
 	fmt.Printf("%-25s %s\n", "cache-path", conf.CachePath())

@@ -125,10 +125,10 @@
             openLocation(index) {
                 const photo = this.results[index];
 
-                if (photo.LocationID) {
-                    this.$router.push({name: "place", params: {q: "s2:" + photo.LocationID}});
-                } else if (photo.PlaceID.length > 3) {
-                    this.$router.push({name: "place", params: {q: "s2:" + photo.PlaceID}});
+                if (photo.LocUID) {
+                    this.$router.push({name: "place", params: {q: "s2:" + photo.LocUID}});
+                } else if (photo.PlaceUID.length > 3) {
+                    this.$router.push({name: "place", params: {q: "s2:" + photo.PlaceUID}});
                 }
             },
             editPhoto(index) {

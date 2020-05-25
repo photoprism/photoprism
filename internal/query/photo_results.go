@@ -11,9 +11,11 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
-// PhotosResult contains found photos and their main file plus other meta data.
-type PhotosResult struct {
-	// Photo
+// Default photo result slice for simple use cases.
+type Photos []entity.Photo
+
+// PhotoResult contains found photos and their main file plus other meta data.
+type PhotoResult struct {
 	ID               uint          `json:"ID"`
 	PhotoUID         string        `json:"UID"`
 	PhotoType        string        `json:"Type"`
@@ -45,8 +47,8 @@ type PhotosResult struct {
 	LensID           uint          `json:"LensID"` // Lens
 	LensModel        string        `json:"LensModel"`
 	LensMake         string        `json:"LensMake"`
-	LocationID       string        `json:"LocationID"` // Location
-	PlaceID          string        `json:"PlaceID"`
+	PlaceUID         string        `json:"PlaceUID"`
+	LocUID           string        `json:"LocUID"` // Location
 	LocLabel         string        `json:"LocLabel"`
 	LocCity          string        `json:"LocCity"`
 	LocState         string        `json:"LocState"`
@@ -80,11 +82,11 @@ type PhotosResult struct {
 	Files []entity.File `json:"Files"`
 }
 
-type PhotosResults []PhotosResult
+type PhotoResults []PhotoResult
 
-func (m PhotosResults) Merged() (PhotosResults, int, error) {
+func (m PhotoResults) Merged() (PhotoResults, int, error) {
 	count := len(m)
-	merged := make([]PhotosResult, 0, count)
+	merged := make([]PhotoResult, 0, count)
 
 	var lastId uint
 	var i int
@@ -115,7 +117,7 @@ func (m PhotosResults) Merged() (PhotosResults, int, error) {
 	return merged, count, nil
 }
 
-func (m *PhotosResult) ShareFileName() string {
+func (m *PhotoResult) ShareFileName() string {
 	var name string
 
 	if m.PhotoTitle != "" {

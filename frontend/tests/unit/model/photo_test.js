@@ -114,30 +114,30 @@ describe("model/photo", () => {
     });
 
     it("should get location",  () => {
-        const values = {ID: 5, Title: "Crazy Cat", LocationID: 6, LocType: "viewpoint", LocLabel: "Cape Point, South Africa", LocCountry: "South Africa"};
+        const values = {ID: 5, Title: "Crazy Cat", LocUID: 6, LocType: "viewpoint", LocLabel: "Cape Point, South Africa", LocCountry: "South Africa"};
         const photo = new Photo(values);
-        const result = photo.getLocation();
+        const result = photo.locationInfo();
         assert.equal(result, "Cape Point, South Africa");
     });
 
     it("should get location",  () => {
-        const values = {ID: 5, Title: "Crazy Cat", LocationID: 6, LocType: "viewpoint", LocLabel: "Cape Point, State, South Africa", LocCountry: "South Africa", LocCity: "Cape Town", LocCounty: "County", LocState: "State"};
+        const values = {ID: 5, Title: "Crazy Cat", LocUID: 6, LocType: "viewpoint", LocLabel: "Cape Point, State, South Africa", LocCountry: "South Africa", LocCity: "Cape Town", LocCounty: "County", LocState: "State"};
         const photo = new Photo(values);
-        const result = photo.getLocation();
+        const result = photo.locationInfo();
         assert.equal(result, "Cape Point, State, South Africa");
     });
 
     it("should get location",  () => {
         const values = {ID: 5, Title: "Crazy Cat", LocType: "viewpoint", LocName: "Cape Point", LocCountry: "Africa", LocCity: "Cape Town", LocCounty: "County", LocState: "State"};
         const photo = new Photo(values);
-        const result = photo.getLocation();
+        const result = photo.locationInfo();
         assert.equal(result, "Unknown");
     });
 
     it("should get location",  () => {
         const values = {ID: 5, Title: "Crazy Cat", CountryName: "Africa", LocCity: "Cape Town"};
         const photo = new Photo(values);
-        const result = photo.getLocation();
+        const result = photo.locationInfo();
         assert.equal(result, "Unknown");
     });
 

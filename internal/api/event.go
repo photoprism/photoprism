@@ -19,7 +19,7 @@ const (
 
 func PublishPhotoEvent(e EntityEvent, uid string, c *gin.Context) {
 	f := form.PhotoSearch{ID: uid, Merged: true}
-	result, _, err := query.Photos(f)
+	result, _, err := query.PhotoSearch(f)
 
 	if err != nil {
 		log.Error(err)
@@ -32,7 +32,7 @@ func PublishPhotoEvent(e EntityEvent, uid string, c *gin.Context) {
 
 func PublishAlbumEvent(e EntityEvent, uid string, c *gin.Context) {
 	f := form.AlbumSearch{ID: uid}
-	result, err := query.Albums(f)
+	result, err := query.AlbumSearch(f)
 
 	if err != nil {
 		log.Error(err)

@@ -18,7 +18,7 @@ func TestAccounts(t *testing.T) {
 			Offset: 0,
 			Order:  "",
 		}
-		r, err := Accounts(f)
+		r, err := AccountSearch(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -43,7 +43,7 @@ func TestAccounts(t *testing.T) {
 			Offset: 0,
 			Order:  "",
 		}
-		r, err := Accounts(f)
+		r, err := AccountSearch(f)
 
 		if err != nil {
 			t.Fatal(err)

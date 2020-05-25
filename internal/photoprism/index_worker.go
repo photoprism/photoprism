@@ -1,6 +1,8 @@
 package photoprism
 
 import (
+	"path/filepath"
+
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -20,8 +22,15 @@ func IndexWorker(jobs <-chan IndexJob) {
 		opt := job.IndexOpt
 		ind := job.Ind
 
+		// Skip sidecar files without related media file.
 		if related.Main == nil {
 			log.Warnf("index: no media file found for %s", txt.Quote(fs.RelativeName(job.FileName, ind.originalsPath())))
+			continue
+		}
+
+		// Enforce file size limit for originals.
+		if ind.conf.OriginalsLimit() > 0 && related.Main.FileSize() > ind.conf.OriginalsLimit() {
+			log.Warnf("index: %s exceeds file size limit for originals [%d / %d MB]", filepath.Base(related.Main.FileName()), related.Main.FileSize()/(1024*1024), ind.conf.OriginalsLimit()/(1024*1024))
 			continue
 		}
 

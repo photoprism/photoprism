@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/video"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -58,12 +57,12 @@ func GetVideo(router *gin.RouterGroup, conf *config.Config) {
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("video: could not find file for %s", fileName)
+			log.Errorf("video: file %s is missing", txt.Quote(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 
-			// Set missing flag so that the file doesn't show up in search results anymore
-			f.FileMissing = true
-			entity.Db().Save(&f)
+			// Set missing flag so that the file doesn't show up in search results anymore.
+			report("video", f.Update("FileMissing", true))
+
 			return
 		}
 

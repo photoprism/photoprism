@@ -10,23 +10,23 @@ import (
 
 // Place used to associate photos to places
 type Place struct {
-	ID          string `gorm:"type:varbinary(16);primary_key;auto_increment:false;"`
-	LocLabel    string `gorm:"type:varbinary(768);unique_index;"`
-	LocCity     string `gorm:"type:varchar(255);"`
-	LocState    string `gorm:"type:varchar(255);"`
-	LocCountry  string `gorm:"type:varbinary(2);"`
-	LocKeywords string `gorm:"type:varchar(255);"`
-	LocNotes    string `gorm:"type:text;"`
-	LocFavorite bool
-	PhotoCount  int
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	New         bool `gorm:"-"`
+	PlaceUID    string    `gorm:"type:varbinary(16);primary_key;auto_increment:false;" json:"PlaceUID" yaml:"PlaceUID"`
+	LocLabel    string    `gorm:"type:varbinary(768);unique_index;" json:"Label" yaml:"Label"`
+	LocCity     string    `gorm:"type:varchar(255);" json:"City" yaml:"City,omitempty"`
+	LocState    string    `gorm:"type:varchar(255);" json:"State" yaml:"State,omitempty"`
+	LocCountry  string    `gorm:"type:varbinary(2);" json:"Country" yaml:"Country,omitempty"`
+	LocKeywords string    `gorm:"type:varchar(255);" json:"Keywords" yaml:"Keywords,omitempty"`
+	LocNotes    string    `gorm:"type:text;" json:"Notes" yaml:"Notes,omitempty"`
+	LocFavorite bool      `json:"Favorite" yaml:"Favorite,omitempty"`
+	PhotoCount  int       `json:"PhotoCount" yaml:"-"`
+	CreatedAt   time.Time `json:"CreatedAt" yaml:"-"`
+	UpdatedAt   time.Time `json:"UpdatedAt" yaml:"-"`
+	New         bool      `gorm:"-" json:"-" yaml:"-"`
 }
 
-// UnknownPlace is defined here to use it as a default
+// UnknownPlace is PhotoPrism's default place.
 var UnknownPlace = Place{
-	ID:          "zz",
+	PlaceUID:    "zz",
 	LocLabel:    "Unknown",
 	LocCity:     "Unknown",
 	LocState:    "Unknown",
@@ -37,9 +37,9 @@ var UnknownPlace = Place{
 	PhotoCount:  -1,
 }
 
-// CreateUnknownPlace initializes default place in the database
+// CreateUnknownPlace creates the default place if not exists.
 func CreateUnknownPlace() {
-	UnknownPlace.FirstOrCreate()
+	FirstOrCreatePlace(&UnknownPlace)
 }
 
 // AfterCreate sets the New column used for database callback
@@ -49,16 +49,16 @@ func (m *Place) AfterCreate(scope *gorm.Scope) error {
 }
 
 // FindPlaceByLabel returns a place from an id or a label
-func FindPlaceByLabel(id string, label string) *Place {
+func FindPlaceByLabel(uid string, label string) *Place {
 	place := &Place{}
 
 	if label == "" {
-		if err := Db().First(place, "id = ?", id).Error; err != nil {
-			log.Debugf("place: %s for id %s", err.Error(), id)
+		if err := Db().First(place, "place_uid = ?", uid).Error; err != nil {
+			log.Debugf("place: %s for uid %s", err.Error(), uid)
 			return nil
 		}
-	} else if err := Db().First(place, "id = ? OR loc_label = ?", id, label).Error; err != nil {
-		log.Debugf("place: %s for id %s / label %s", err.Error(), id, txt.Quote(label))
+	} else if err := Db().First(place, "place_uid = ? OR loc_label = ?", uid, label).Error; err != nil {
+		log.Debugf("place: %s for uid %s / label %s", err.Error(), uid, txt.Quote(label))
 		return nil
 	}
 
@@ -67,17 +67,41 @@ func FindPlaceByLabel(id string, label string) *Place {
 
 // Find returns db record of place
 func (m *Place) Find() error {
-	if err := Db().First(m, "id = ?", m.ID).Error; err != nil {
+	if err := Db().First(m, "place_uid = ?", m.PlaceUID).Error; err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// FirstOrCreate checks if the place already exists in the database
-func (m *Place) FirstOrCreate() *Place {
-	if err := Db().FirstOrCreate(m, "id = ? OR loc_label = ?", m.ID, m.LocLabel).Error; err != nil {
-		log.Debugf("place: %s for token %s / label %s", err.Error(), m.ID, txt.Quote(m.LocLabel))
+// Create inserts a new row to the database.
+func (m *Place) Create() error {
+	if err := Db().Create(m).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// FirstOrCreatePlace inserts a new row if not exists.
+func FirstOrCreatePlace(m *Place) *Place {
+	if m.PlaceUID == "" {
+		log.Errorf("place: uid must not be empty")
+		return nil
+	}
+
+	if m.LocLabel == "" {
+		log.Errorf("place: label must not be empty (uid %s)", m.PlaceUID)
+		return nil
+	}
+
+	result := Place{}
+
+	if err := Db().Where("place_uid = ? OR loc_label = ?", m.PlaceUID, m.LocLabel).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
+		log.Errorf("place: %s", err)
+		return nil
 	}
 
 	return m
@@ -85,7 +109,7 @@ func (m *Place) FirstOrCreate() *Place {
 
 // Unknown returns true if this is an unknown place
 func (m Place) Unknown() bool {
-	return m.ID == UnknownPlace.ID
+	return m.PlaceUID == UnknownPlace.PlaceUID
 }
 
 // Label returns place label

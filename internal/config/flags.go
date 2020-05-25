@@ -119,6 +119,12 @@ var GlobalFlags = []cli.Flag{
 		Value:  "~/Pictures/Originals",
 		EnvVar: "PHOTOPRISM_ORIGINALS_PATH",
 	},
+	cli.IntFlag{
+		Name:   "originals-limit",
+		Value:  1000,
+		Usage:  "file `SIZE` limit for originals in MB",
+		EnvVar: "PHOTOPRISM_ORIGINALS_LIMIT",
+	},
 	cli.StringFlag{
 		Name:   "import-path",
 		Usage:  "import `PATH`",

@@ -44,11 +44,6 @@ export class Photo extends RestModel {
             CameraSrc: "",
             Lens: {},
             LensID: 0,
-            Location: null,
-            LocationID: "",
-            LocationSrc: "",
-            Place: null,
-            PlaceID: "",
             Country: "",
             Year: YearUnknown,
             Month: MonthUnknown,
@@ -65,10 +60,12 @@ export class Photo extends RestModel {
             Keywords: [],
             Albums: [],
             Links: [],
-            CreatedAt: "",
-            UpdatedAt: "",
-            DeletedAt: null,
-            // Additional fields for result lists.
+            Location: null,
+            Place: null,
+            PlaceUID: "",
+            LocUID: "",
+            LocSrc: "",
+            // Additional data in result lists.
             LocLabel: "",
             LocCity: "",
             LocState: "",
@@ -79,22 +76,32 @@ export class Photo extends RestModel {
             Hash: "",
             Width: "",
             Height: "",
+            // Date fields.
+            CreatedAt: "",
+            UpdatedAt: "",
+            DeletedAt: null,
         };
     }
 
     baseName(truncate) {
-        let result = this.FileName;
-        const slash = result.lastIndexOf("/")
+        let result = this.fileBase(this.FileName ? this.FileName : this.mainFile().Name);
+
+        if (truncate) {
+            result = Util.truncate(result, truncate, "...");
+        }
+
+        return result;
+    }
+
+    fileBase(name) {
+        let result = name;
+        const slash = result.lastIndexOf("/");
 
         if (slash >= 0) {
-            result = this.FileName.substring(slash + 1)
+            result = name.substring(slash + 1);
         }
 
-        if(truncate) {
-            result = Util.truncate(result, truncate, "...")
-        }
-
-        return result
+        return result;
     }
 
     getEntityName() {
@@ -209,6 +216,28 @@ export class Photo extends RestModel {
         return "/api/v1/download/" + this.mainFileHash();
     }
 
+    downloadAll() {
+        if (!this.Files) {
+            let link = document.createElement('a')
+            link.href = "/api/v1/download/" + this.mainFileHash();
+            link.download = this.baseName(false);
+            link.click();
+            return;
+        }
+
+        this.Files.forEach((file) => {
+            if (!file || !file.Hash) {
+                console.warn("no file hash found for download", file)
+                return
+            }
+
+            let link = document.createElement('a')
+            link.href = "/api/v1/download/" + file.Hash;
+            link.download = this.fileBase(file.Name);
+            link.click();
+        });
+    }
+
     thumbnailSrcset() {
         const result = [];
 
@@ -284,7 +313,7 @@ export class Photo extends RestModel {
         return this.Lat !== 0 || this.Lng !== 0;
     }
 
-    getLocation() {
+    locationInfo() {
         if (this.LocLabel) {
             return this.LocLabel;
         }

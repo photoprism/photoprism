@@ -43,7 +43,7 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		result, err := query.Albums(f)
+		result, err := query.AlbumSearch(f)
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
 			return
@@ -338,7 +338,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		p, _, err := query.Photos(form.PhotoSearch{
+		p, _, err := query.PhotoSearch(form.PhotoSearch{
 			Album:  a.AlbumUID,
 			Count:  10000,
 			Offset: 0,
@@ -385,9 +385,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 				}
 				log.Infof("album: added %s as %s", txt.Quote(f.FileName), txt.Quote(fileAlias))
 			} else {
-				log.Warnf("album: %s is missing", txt.Quote(f.FileName))
-				f.FileMissing = true
-				conf.Db().Save(&f)
+				log.Errorf("album: file %s is missing", txt.Quote(f.FileName))
 			}
 		}
 
@@ -453,9 +451,9 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			log.Errorf("album: could not find original for %s", fileName)
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 
-			// Set missing flag so that the file doesn't show up in search results anymore
-			f.FileMissing = true
-			entity.Db().Save(&f)
+			// Set missing flag so that the file doesn't show up in search results anymore.
+			log.Warnf("album: %s is missing", txt.Quote(f.FileName))
+			report("album", f.Update("FileMissing", true))
 			return
 		}
 

@@ -4,22 +4,38 @@ import "time"
 
 type LocationMap map[string]Location
 
+func (m LocationMap) Get(name string) Location {
+	if result, ok := m[name]; ok {
+		return result
+	}
+
+	return UnknownLocation
+}
+
+func (m LocationMap) Pointer(name string) *Location {
+	if result, ok := m[name]; ok {
+		return &result
+	}
+
+	return &UnknownLocation
+}
+
 var LocationFixtures = LocationMap{
 	"mexico": {
-		ID:          "85d1ea7d382c",
-		PlaceID:     PlaceFixtures.Get("teotihuacan").ID,
+		LocUID:      "85d1ea7d382c",
+		PlaceUID:    PlaceFixtures.Get("mexico").PlaceUID,
 		LocName:     "Adosada Platform",
 		LocCategory: "tourism",
-		Place:       PlaceFixtures.Pointer("teotihuacan"),
+		Place:       PlaceFixtures.Pointer("mexico"),
 		LocSource:   "places",
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	},
 	"caravan park": {
-		ID:      "1ef75a71a36c",
-		PlaceID: "1ef75a71a36c",
+		LocUID:   "1ef75a71a36c",
+		PlaceUID: "1ef75a71a36c",
 		Place: &Place{
-			ID:         "1ef75a71a36",
+			PlaceUID:   "1ef75a71a36",
 			LocLabel:   "Mandeni, KwaZulu-Natal, South Africa",
 			LocCity:    "Mandeni",
 			LocState:   "KwaZulu-Natal",
@@ -34,8 +50,8 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"zinkwazi": {
-		ID:          "1ef744d1e28c",
-		PlaceID:     PlaceFixtures.Get("zinkwazi").ID,
+		LocUID:      "1ef744d1e28c",
+		PlaceUID:    PlaceFixtures.Get("zinkwazi").PlaceUID,
 		Place:       PlaceFixtures.Pointer("zinkwazi"),
 		LocName:     "Zinkwazi Beach",
 		LocCategory: "",
@@ -44,8 +60,8 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"hassloch": {
-		ID:          "1ef744d1e280",
-		PlaceID:     PlaceFixtures.Get("holidaypark").ID,
+		LocUID:      "1ef744d1e280",
+		PlaceUID:    PlaceFixtures.Get("holidaypark").PlaceUID,
 		Place:       PlaceFixtures.Pointer("holidaypark"),
 		LocName:     "Holiday Park",
 		LocCategory: "",
@@ -54,8 +70,8 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"emptyNameLongCity": {
-		ID:          "1ef744d1e281",
-		PlaceID:     PlaceFixtures.Get("emptyNameLongCity").ID,
+		LocUID:      "1ef744d1e281",
+		PlaceUID:    PlaceFixtures.Get("emptyNameLongCity").PlaceUID,
 		Place:       PlaceFixtures.Pointer("emptyNameLongCity"),
 		LocName:     "",
 		LocCategory: "",
@@ -64,8 +80,8 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"emptyNameShortCity": {
-		ID:          "1ef744d1e282",
-		PlaceID:     PlaceFixtures.Get("emptyNameShortCity").ID,
+		LocUID:      "1ef744d1e282",
+		PlaceUID:    PlaceFixtures.Get("emptyNameShortCity").PlaceUID,
 		Place:       PlaceFixtures.Pointer("emptyNameShortCity"),
 		LocName:     "",
 		LocCategory: "",
@@ -74,8 +90,8 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"veryLongLocName": {
-		ID:          "1ef744d1e283",
-		PlaceID:     PlaceFixtures.Get("veryLongLocName").ID,
+		LocUID:      "1ef744d1e283",
+		PlaceUID:    PlaceFixtures.Get("veryLongLocName").PlaceUID,
 		Place:       PlaceFixtures.Pointer("veryLongLocName"),
 		LocName:     "longlonglonglonglonglonglonglonglonglonglonglonglongName",
 		LocCategory: "",
@@ -84,8 +100,8 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"mediumLongLocName": {
-		ID:          "1ef744d1e283",
-		PlaceID:     PlaceFixtures.Get("mediumLongLocName").ID,
+		LocUID:      "1ef744d1e283",
+		PlaceUID:    PlaceFixtures.Get("mediumLongLocName").PlaceUID,
 		Place:       PlaceFixtures.Pointer("mediumLongLocName"),
 		LocName:     "longlonglonglonglonglongName",
 		LocCategory: "",
@@ -94,13 +110,6 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 }
-
-var LocationFixturesMexico = LocationFixtures["mexico"]
-var LocationFixturesHassloch = LocationFixtures["hassloch"]
-var LocationFixturesEmptyNameLongCity = LocationFixtures["emptyNameLongCity"]
-var LocationFixturesEmptyNameShortCity = LocationFixtures["emptyNameShortCity"]
-var LocationFixturesVeryLongLocName = LocationFixtures["veryLongLocName"]
-var LocationFixturesMediumLongLocName = LocationFixtures["mediumLongLocName"]
 
 // CreateLocationFixtures inserts known entities into the database for testing.
 func CreateLocationFixtures() {

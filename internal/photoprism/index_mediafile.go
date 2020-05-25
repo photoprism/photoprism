@@ -298,7 +298,21 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if photo.CameraSrc == entity.SrcAuto {
 			// Set UpdateCamera, Lens, Focal Length and F Number.
 			photo.Camera = entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake()))
+
+			if photo.Camera != nil {
+				photo.CameraID = photo.Camera.ID
+			} else {
+				photo.CameraID = entity.UnknownCamera.ID
+			}
+
 			photo.Lens = entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake()))
+
+			if photo.Lens != nil {
+				photo.LensID = photo.Lens.ID
+			} else {
+				photo.LensID = entity.UnknownLens.ID
+			}
+
 			photo.PhotoFocalLength = m.FocalLength()
 			photo.PhotoFNumber = m.FNumber()
 			photo.PhotoIso = m.Iso()
@@ -317,14 +331,21 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		} else {
 			log.Debugf("index: no coordinates in metadata for %s", txt.Quote(m.RelativeName(ind.originalsPath())))
 
+			photo.Location = &entity.UnknownLocation
+			photo.LocUID = entity.UnknownLocation.LocUID
 			photo.Place = &entity.UnknownPlace
-			photo.PlaceID = entity.UnknownPlace.ID
+			photo.PlaceUID = entity.UnknownPlace.PlaceUID
 		}
 	}
 
-	if len(photo.PlaceID) < 2 {
+	if len(photo.LocUID) < 2 {
+		photo.Location = &entity.UnknownLocation
+		photo.LocUID = entity.UnknownLocation.LocUID
+	}
+
+	if len(photo.PlaceUID) < 2 {
 		photo.Place = &entity.UnknownPlace
-		photo.PlaceID = entity.UnknownPlace.ID
+		photo.PlaceUID = entity.UnknownPlace.PlaceUID
 		photo.PhotoCountry = entity.UnknownPlace.CountryCode()
 	}
 
@@ -346,11 +367,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.FileOrientation = m.Orientation()
 
 	if photoExists {
-		// Estimate location
-		if o.Rescan && photo.NoLocation() {
-			ind.estimateLocation(&photo)
-		}
-
 		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
 			log.Errorf("index: %s for %s", err.Error(), txt.Quote(m.RelativeName(ind.originalsPath())))
 			result.Status = IndexFailed

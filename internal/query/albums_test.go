@@ -46,7 +46,7 @@ func TestAlbumThumbByUID(t *testing.T) {
 func TestAlbums(t *testing.T) {
 	t.Run("search with string", func(t *testing.T) {
 		query := form.NewAlbumSearch("chr")
-		result, err := Albums(query)
+		result, err := AlbumSearch(query)
 
 		if err != nil {
 			t.Fatal(err)
@@ -57,7 +57,7 @@ func TestAlbums(t *testing.T) {
 
 	t.Run("search with slug", func(t *testing.T) {
 		query := form.NewAlbumSearch("slug:holiday count:10")
-		result, err := Albums(query)
+		result, err := AlbumSearch(query)
 
 		if err != nil {
 			t.Fatal(err)
@@ -69,7 +69,7 @@ func TestAlbums(t *testing.T) {
 	t.Run("favorites true", func(t *testing.T) {
 		query := form.NewAlbumSearch("favorite:true count:10000")
 
-		result, err := Albums(query)
+		result, err := AlbumSearch(query)
 
 		if err != nil {
 			t.Fatal(err)
@@ -80,7 +80,7 @@ func TestAlbums(t *testing.T) {
 	t.Run("empty query", func(t *testing.T) {
 		query := form.NewAlbumSearch("order:slug")
 
-		result, err := Albums(query)
+		result, err := AlbumSearch(query)
 
 		if err != nil {
 			t.Fatal(err)
@@ -90,13 +90,13 @@ func TestAlbums(t *testing.T) {
 	})
 	t.Run("search with invalid query string", func(t *testing.T) {
 		query := form.NewAlbumSearch("xxx:bla")
-		result, err := Albums(query)
+		result, err := AlbumSearch(query)
 		assert.Error(t, err, "unknown filter")
 		t.Log(result)
 	})
 	t.Run("search with invalid query string", func(t *testing.T) {
 		query := form.NewAlbumSearch("xxx:bla")
-		result, err := Albums(query)
+		result, err := AlbumSearch(query)
 		assert.Error(t, err, "unknown filter")
 		t.Log(result)
 	})
@@ -112,7 +112,7 @@ func TestAlbums(t *testing.T) {
 			Order:    "",
 		}
 
-		result, err := Albums(f)
+		result, err := AlbumSearch(f)
 
 		if err != nil {
 			t.Fatal(err)

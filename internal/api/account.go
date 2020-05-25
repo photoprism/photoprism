@@ -32,7 +32,7 @@ func GetAccounts(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		result, err := query.Accounts(f)
+		result, err := query.AccountSearch(f)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})

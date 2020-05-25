@@ -13,7 +13,7 @@ func (ind *Index) estimateLocation(photo *entity.Photo) {
 		if recentPhoto.HasPlace() {
 			photo.Place = recentPhoto.Place
 			photo.PhotoCountry = photo.Place.LocCountry
-			photo.LocationSrc = entity.SrcAuto
+			photo.LocSrc = entity.SrcAuto
 			log.Debugf("index: approximate location is %s", txt.Quote(recentPhoto.Place.Label()))
 		}
 	}

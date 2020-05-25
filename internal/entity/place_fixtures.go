@@ -21,8 +21,8 @@ func (m PlacesMap) Pointer(name string) *Place {
 }
 
 var PlaceFixtures = PlacesMap{
-	"teotihuacan": {
-		ID:          "85d1ea7d3278",
+	"mexico": {
+		PlaceUID:    "85d1ea7d3278",
 		LocLabel:    "Teotihuacán, Mexico, Mexico",
 		LocCity:     "Teotihuacán",
 		LocState:    "Mexico",
@@ -35,7 +35,7 @@ var PlaceFixtures = PlacesMap{
 		UpdatedAt:   time.Now(),
 	},
 	"zinkwazi": {
-		ID:          "1ef744d1e279",
+		PlaceUID:    "1ef744d1e279",
 		LocLabel:    "KwaDukuza, KwaZulu-Natal, South Africa",
 		LocCity:     "KwaDukuza",
 		LocState:    "KwaZulu-Natal",
@@ -48,7 +48,7 @@ var PlaceFixtures = PlacesMap{
 		UpdatedAt:   time.Now(),
 	},
 	"holidaypark": {
-		ID:          "1ef744d1e280",
+		PlaceUID:    "1ef744d1e280",
 		LocLabel:    "Holiday Park, Amusement",
 		LocCity:     "",
 		LocState:    "Rheinland-Pfalz",
@@ -61,7 +61,7 @@ var PlaceFixtures = PlacesMap{
 		UpdatedAt:   time.Now(),
 	},
 	"emptyNameLongCity": {
-		ID:          "1ef744d1e281",
+		PlaceUID:    "1ef744d1e281",
 		LocLabel:    "labelEmptyNameLongCity",
 		LocCity:     "longlonglonglonglongcity",
 		LocState:    "Rheinland-Pfalz",
@@ -74,7 +74,7 @@ var PlaceFixtures = PlacesMap{
 		UpdatedAt:   time.Now(),
 	},
 	"emptyNameShortCity": {
-		ID:          "1ef744d1e282",
+		PlaceUID:    "1ef744d1e282",
 		LocLabel:    "labelEmptyNameShortCity",
 		LocCity:     "shortcity",
 		LocState:    "Rheinland-Pfalz",
@@ -87,7 +87,7 @@ var PlaceFixtures = PlacesMap{
 		UpdatedAt:   time.Now(),
 	},
 	"veryLongLocName": {
-		ID:          "1ef744d1e283",
+		PlaceUID:    "1ef744d1e283",
 		LocLabel:    "labelVeryLongLocName",
 		LocCity:     "Mainz",
 		LocState:    "Rheinland-Pfalz",
@@ -100,7 +100,7 @@ var PlaceFixtures = PlacesMap{
 		UpdatedAt:   time.Now(),
 	},
 	"mediumLongLocName": {
-		ID:          "1ef744d1e284",
+		PlaceUID:    "1ef744d1e284",
 		LocLabel:    "labelMediumLongLocName",
 		LocCity:     "New york",
 		LocState:    "New york",

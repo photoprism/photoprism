@@ -11,8 +11,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Photos searches for photos based on a Form and returns PhotosResults ([]PhotosResult).
-func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
+// PhotoSearch searches for photos based on a Form and returns PhotoResults ([]PhotoResult).
+func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
 	if err := f.ParseQueryString(); err != nil {
@@ -37,7 +37,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		Joins("JOIN files ON photos.id = files.photo_id AND files.file_missing = 0 AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON photos.camera_id = cameras.id").
 		Joins("JOIN lenses ON photos.lens_id = lenses.id").
-		Joins("JOIN places ON photos.place_id = places.id").
+		Joins("JOIN places ON photos.place_uid = places.place_uid").
 		Where("files.file_type = 'jpg' OR files.file_video = 1")
 
 	// Shortcut for known photo ids.
@@ -84,7 +84,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 
 	// Filter by location.
 	if f.Location == true {
-		s = s.Where("location_id > 0")
+		s = s.Where("loc_uid <> ''")
 
 		if likeAny := LikeAny("k.keyword", f.Query); likeAny != "" {
 			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(likeAny))
@@ -290,7 +290,7 @@ func Photos(f form.PhotoSearch) (results PhotosResults, count int, err error) {
 		s = s.Order("photos.id DESC, files.file_primary DESC")
 	case entity.SortOrderSimilar:
 		s = s.Where("files.file_diff > 0")
-		s = s.Order("files.file_main_color, photos.location_id, files.file_diff, taken_at DESC, files.file_primary DESC")
+		s = s.Order("files.file_main_color, photos.loc_uid, files.file_diff, taken_at DESC, files.file_primary DESC")
 	case entity.SortOrderName:
 		s = s.Order("photos.photo_path, photos.photo_name, files.file_primary DESC")
 	default:

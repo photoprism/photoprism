@@ -33,8 +33,7 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		Joins(`JOIN files ON files.photo_id = photos.id AND 
 		files.file_missing = 0 AND files.file_primary AND files.deleted_at IS NULL`).
 		Where("photos.deleted_at IS NULL").
-		Where("photos.photo_lat <> 0").
-		Group("photos.id, files.id")
+		Where("photos.photo_lat <> 0")
 
 	f.Query = txt.Clip(f.Query, txt.ClipKeyword)
 
@@ -151,10 +150,10 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 
 	if f.S2 != "" {
 		s2Min, s2Max := s2.Range(f.S2, 7)
-		s = s.Where("photos.location_id BETWEEN ? AND ?", s2Min, s2Max)
+		s = s.Where("photos.loc_uid BETWEEN ? AND ?", s2Min, s2Max)
 	} else if f.Olc != "" {
 		s2Min, s2Max := s2.Range(pluscode.S2(f.Olc), 7)
-		s = s.Where("photos.location_id BETWEEN ? AND ?", s2Min, s2Max)
+		s = s.Where("photos.loc_uid BETWEEN ? AND ?", s2Min, s2Max)
 	} else {
 		// Inaccurate distance search, but probably 'good enough' for now
 		if f.Lat > 0 {

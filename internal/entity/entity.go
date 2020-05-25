@@ -113,6 +113,7 @@ func (list Types) Drop() {
 // Creates default database entries for test and production.
 func CreateDefaultFixtures() {
 	CreateUnknownPlace()
+	CreateUnknownLocation()
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()

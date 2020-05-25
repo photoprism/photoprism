@@ -47,7 +47,11 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 
 	err := location.Find(geoApi)
 
-	if err == nil {
+	if location.Place == nil {
+		log.Warnf("PLACE IS NIL: %+v", location)
+	}
+
+	if err == nil && location.Place != nil {
 		if location.Place.New {
 			event.Publish("count.places", event.Data{
 				"count": 1,
@@ -55,9 +59,9 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 		}
 
 		m.Location = location
-		m.LocationID = location.ID
+		m.LocUID = location.LocUID
 		m.Place = location.Place
-		m.PlaceID = location.PlaceID
+		m.PlaceUID = location.PlaceUID
 		m.PhotoCountry = location.CountryCode()
 
 		if m.TakenSrc != SrcManual {
@@ -83,8 +87,10 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 	} else {
 		log.Warn(err)
 
+		m.Location = &UnknownLocation
+		m.LocUID = UnknownLocation.LocUID
 		m.Place = &UnknownPlace
-		m.PlaceID = UnknownPlace.ID
+		m.PlaceUID = UnknownPlace.PlaceUID
 	}
 
 	if m.Place != nil && (m.PhotoCountry == "" || m.PhotoCountry == UnknownCountry.Code()) {
