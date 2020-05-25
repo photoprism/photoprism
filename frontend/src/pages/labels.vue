@@ -67,7 +67,7 @@
                                     @contextmenu="onContextMenu($event, index)"
                                     :dark="selection.includes(label.UID)"
                                     :class="selection.includes(label.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
-                                    :to="{name: 'photos', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.Slug)}}">
+                                    :to="{name: 'browse', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.Slug)}}">
                                 <v-img
                                         :src="label.thumbnailUrl('tile_500')"
                                         @mousedown="onMouseDown($event, index)"

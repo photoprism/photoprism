@@ -105,6 +105,13 @@ export default [
         meta: {title: "Labels", auth: true},
     },
     {
+        name: "browse",
+        path: "/browse",
+        component: Photos,
+        meta: {title: "Photos & Videos", auth: true},
+        props: {staticFilter: {}},
+    },
+    {
         name: "moments",
         path: "/moments",
         component: Photos,
