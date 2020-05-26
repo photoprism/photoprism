@@ -301,7 +301,6 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 			t.Fatal()
 		}
 		assert.Equal(t, "Black beach", m.PhotoTitle)
-		assert.Equal(t, "photo: won't update title, was modified", err.Error())
 	})
 	t.Run("photo with location without city and label", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo10")

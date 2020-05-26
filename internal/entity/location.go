@@ -159,7 +159,7 @@ func (m *Location) Keywords() (result []string) {
 
 // Unknown checks if the location has no id
 func (m *Location) Unknown() bool {
-	return m.LocUID == ""
+	return m.LocUID == "" || m.LocUID == UnknownLocation.LocUID
 }
 
 // Name returns name of location

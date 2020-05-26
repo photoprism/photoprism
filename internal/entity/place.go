@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -105,7 +106,7 @@ func FirstOrCreatePlace(m *Place) *Place {
 
 // Unknown returns true if this is an unknown place
 func (m Place) Unknown() bool {
-	return m.PlaceUID == UnknownPlace.PlaceUID
+	return m.PlaceUID == "" || m.PlaceUID == UnknownPlace.PlaceUID
 }
 
 // Label returns place label
@@ -116,6 +117,21 @@ func (m Place) Label() string {
 // City returns place City
 func (m Place) City() string {
 	return m.LocCity
+}
+
+// LongCity checks if the city name is more than 16 char.
+func (m Place) LongCity() bool {
+	return len(m.LocCity) > 16
+}
+
+// NoCity checks if the location has no city
+func (m Place) NoCity() bool {
+	return m.LocCity == ""
+}
+
+// CityContains checks if the location city contains the text string
+func (m Place) CityContains(text string) bool {
+	return strings.Contains(text, m.LocCity)
 }
 
 // State returns place State

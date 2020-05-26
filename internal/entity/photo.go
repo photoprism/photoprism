@@ -103,7 +103,7 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 	}
 
 	if err := model.UpdateTitle(model.ClassifyLabels()); err != nil {
-		log.Warnf("%s (%s)", err.Error(), model.PhotoUID)
+		log.Warn(err)
 	}
 
 	if err := model.IndexKeywords(); err != nil {
@@ -136,7 +136,7 @@ func (m *Photo) Save() error {
 	m.UpdateYearMonth()
 
 	if err := m.UpdateTitle(labels); err != nil {
-		log.Warnf("%s (%s)", err.Error(), m.PhotoUID)
+		log.Warn(err)
 	}
 
 	if m.DetailsLoaded() {
@@ -219,7 +219,7 @@ func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 // IndexKeywords adds given keywords to the photo entry
 func (m *Photo) IndexKeywords() error {
 	if !m.DetailsLoaded() {
-		return fmt.Errorf("photo: can't index keywords, details not loaded (%s)", m.PhotoUID)
+		return fmt.Errorf("photo: can't index keywords, details not loaded for %s", m.PhotoUID)
 	}
 
 	db := Db()
@@ -326,7 +326,7 @@ func (m *Photo) HasLocation() bool {
 
 // LocationLoaded checks if the photo has a known location that is currently loaded.
 func (m *Photo) LocationLoaded() bool {
-	return m.Location != nil && m.Location.Place != nil && m.Location.LocUID != UnknownLocation.LocUID
+	return m.Location != nil && m.Location.Place != nil && !m.Location.Unknown()
 }
 
 // HasLatLng checks if the photo has a latitude and longitude.
@@ -337,6 +337,11 @@ func (m *Photo) HasLatLng() bool {
 // NoLatLng checks if latitude and longitude are missing.
 func (m *Photo) NoLatLng() bool {
 	return !m.HasLatLng()
+}
+
+// PlaceLoaded checks if the photo has a known place that is currently loaded.
+func (m *Photo) PlaceLoaded() bool {
+	return m.Place != nil && !m.Place.Unknown()
 }
 
 // NoPlace checks if the photo has an unknown place.
@@ -377,12 +382,13 @@ func (m *Photo) DetailsLoaded() bool {
 // UpdateTitle updated the photo title based on location and labels.
 func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	if m.TitleSrc != SrcAuto && m.HasTitle() {
-		return errors.New("photo: won't update title, was modified")
+		return fmt.Errorf("photo: won't update title, %s was modified", m.PhotoUID)
 	}
 
-	knownLocation := m.LocationLoaded()
+	var knownLocation bool
 
-	if knownLocation {
+	if m.LocationLoaded() {
+		knownLocation = true
 		loc := m.Location
 
 		if title := labels.Title(loc.Name()); title != "" { // TODO: User defined title format
@@ -405,6 +411,23 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 				m.SetTitle(fmt.Sprintf("%s / %s", loc.City(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", loc.City(), loc.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
+			}
+		}
+	} else if m.PlaceLoaded() {
+		knownLocation = true
+
+		if title := labels.Title(""); title != "" {
+			log.Infof("photo: using label %s to create photo title", txt.Quote(title))
+			if m.Place.NoCity() || m.Place.LongCity() || m.Place.CityContains(title) {
+				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), m.Place.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
+			} else {
+				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), m.Place.City(), m.TakenAt.Format("2006")), SrcAuto)
+			}
+		} else if m.Place.City() != "" && m.Place.CountryName() != "" {
+			if len(m.Place.City()) > 20 {
+				m.SetTitle(fmt.Sprintf("%s / %s", m.Place.City(), m.TakenAt.Format("2006")), SrcAuto)
+			} else {
+				m.SetTitle(fmt.Sprintf("%s / %s / %s", m.Place.City(), m.Place.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
 			}
 		}
 	}
@@ -630,58 +653,4 @@ func (m *Photo) SetFavorite(favorite bool) error {
 	}
 
 	return nil
-}
-
-// EstimatePosition updates the photo with an estimated geolocation if possible.
-func (m *Photo) EstimatePosition() {
-	var recentPhoto Photo
-
-	if result := UnscopedDb().
-		Where("place_uid <> '' && place_uid <> 'zz'").
-		Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", m.TakenAt)).
-		Preload("Place").First(&recentPhoto); result.Error == nil {
-		if recentPhoto.HasPlace() {
-			m.Place = recentPhoto.Place
-			m.PlaceUID = recentPhoto.PlaceUID
-			m.PhotoCountry = recentPhoto.PhotoCountry
-			m.LocSrc = SrcEstimate
-			log.Debugf("prism: approximate location for %s is %s", m.PhotoUID, recentPhoto.PlaceUID)
-		}
-	}
-}
-
-// Maintain photo data, improve if possible.
-func (m *Photo) Maintain() error {
-	if !m.HasID() {
-		return errors.New("photo: can't maintain, id is empty")
-	}
-
-	maintained := time.Now()
-	m.MaintainedAt = &maintained
-
-	if m.NoPlace() && (m.LocSrc == SrcAuto || m.LocSrc == SrcEstimate) {
-		m.EstimatePosition()
-	}
-
-	labels := m.ClassifyLabels()
-
-	m.UpdateYearMonth()
-
-	if err := m.UpdateTitle(labels); err != nil {
-		log.Warnf("%s (%s)", err.Error(), m.PhotoUID)
-	}
-
-	if m.DetailsLoaded() {
-		w := txt.UniqueKeywords(m.Details.Keywords)
-		w = append(w, labels.Keywords()...)
-		m.Details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
-	}
-
-	if err := m.IndexKeywords(); err != nil {
-		log.Error(err)
-	}
-
-	m.PhotoQuality = m.QualityScore()
-
-	return UnscopedDb().Save(m).Error
 }
