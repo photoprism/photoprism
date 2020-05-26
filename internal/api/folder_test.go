@@ -49,7 +49,6 @@ func TestGetFoldersOriginals(t *testing.T) {
 			assert.Equal(t, entity.RootOriginals, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
-			assert.Equal(t, false, folder.FolderHidden)
 			assert.Equal(t, false, folder.FolderIgnore)
 			assert.Equal(t, false, folder.FolderWatch)
 		}
@@ -89,7 +88,6 @@ func TestGetFoldersOriginals(t *testing.T) {
 			assert.Equal(t, entity.RootOriginals, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
-			assert.Equal(t, false, folder.FolderHidden)
 			assert.Equal(t, false, folder.FolderIgnore)
 			assert.Equal(t, false, folder.FolderWatch)
 		}
@@ -140,7 +138,6 @@ func TestGetFoldersImport(t *testing.T) {
 			assert.Equal(t, entity.RootImport, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
-			assert.Equal(t, false, folder.FolderHidden)
 			assert.Equal(t, false, folder.FolderIgnore)
 			assert.Equal(t, false, folder.FolderWatch)
 		}
@@ -178,7 +175,6 @@ func TestGetFoldersImport(t *testing.T) {
 			assert.Equal(t, entity.RootImport, folder.Root)
 			assert.IsType(t, "", folder.FolderUID)
 			assert.Equal(t, false, folder.FolderFavorite)
-			assert.Equal(t, false, folder.FolderHidden)
 			assert.Equal(t, false, folder.FolderIgnore)
 			assert.Equal(t, false, folder.FolderWatch)
 		}

@@ -5,8 +5,12 @@ type AlbumSearch struct {
 	Query    string `form:"q"`
 	ID       string `form:"id"`
 	Slug     string `form:"slug"`
-	Name     string `form:"name"`
+	Title    string `form:"title"`
+	Country  string `json:"country"`
+	Year     int    `json:"year"`
+	Month    int    `json:"month"`
 	Favorite bool   `form:"favorite"`
+	Private  bool   `form:"private"`
 	Count    int    `form:"count" binding:"required" serialize:"-"`
 	Offset   int    `form:"offset" serialize:"-"`
 	Order    string `form:"order" serialize:"-"`

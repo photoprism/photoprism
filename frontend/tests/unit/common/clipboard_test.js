@@ -103,7 +103,7 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.selection[0], "ABC124");
         const result = clipboard.has(photo);
         assert.equal(result, true);
-        const values2 = {ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66};
+        const values2 = {ID: 5, Title: "Christmas 2019", Slug: "christmas-2019", UID: 66};
         const album = new Album(values2);
         const result2 = clipboard.has(album);
         assert.equal(result2, false);

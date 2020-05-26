@@ -19,6 +19,7 @@ type FoldersResponse struct {
 	Folders   []entity.Folder `json:"folders"`
 	Files     []entity.File   `json:"files,omitempty"`
 	Recursive bool            `json:"recursive,omitempty"`
+	Cached    bool            `json:"cached,omitempty"`
 }
 
 // GetFolders is a reusable request handler for directory listings (GET /api/v1/folders/*).
@@ -33,8 +34,8 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, root, rootPath str
 		gc := service.Cache()
 		recursive := c.Query("recursive") != ""
 		listFiles := c.Query("files") != ""
-		cached := c.Query("uncached") == ""
-		resp := FoldersResponse{Root: root, Recursive: recursive}
+		cached := !listFiles && c.Query("uncached") == ""
+		resp := FoldersResponse{Root: root, Recursive: recursive, Cached: cached}
 		path := c.Param("path")
 
 		cacheKey := fmt.Sprintf("folders:%s:%t:%t", filepath.Join(rootPath, path), recursive, listFiles)
@@ -63,8 +64,10 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, root, rootPath str
 			}
 		}
 
-		gc.Set(cacheKey, resp, time.Minute*5)
-		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
+		if cached {
+			gc.Set(cacheKey, resp, time.Minute*5)
+			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
+		}
 
 		c.Header("X-Count", strconv.Itoa(len(resp.Files)+len(resp.Folders)))
 		c.Header("X-Offset", "0")

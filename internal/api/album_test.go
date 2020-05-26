@@ -49,7 +49,7 @@ func TestCreateAlbum(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		CreateAlbum(router, conf)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Name": "New created album", "Notes": "", "Favorite": true}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "New created album", "Notes": "", "Favorite": true}`)
 		val := gjson.Get(r.Body.String(), "Slug")
 		assert.Equal(t, "new-created-album", val.String())
 		val2 := gjson.Get(r.Body.String(), "Favorite")
@@ -59,21 +59,21 @@ func TestCreateAlbum(t *testing.T) {
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		CreateAlbum(router, conf)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Name": 333, "Description": "Created via unit test", "Notes": "", "Favorite": true}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": 333, "Description": "Created via unit test", "Notes": "", "Favorite": true}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }
 func TestUpdateAlbum(t *testing.T) {
 	app, router, conf := NewApiTest()
 	CreateAlbum(router, conf)
-	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Name": "Update", "Description": "To be updated", "Notes": "", "Favorite": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "Update", "Description": "To be updated", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusOK, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
 
 	t.Run("successful request", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		UpdateAlbum(router, conf)
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/"+uid, `{"Name": "Updated01", "Notes": "", "Favorite": false}`)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/"+uid, `{"Title": "Updated01", "Notes": "", "Favorite": false}`)
 		val := gjson.Get(r.Body.String(), "Slug")
 		assert.Equal(t, "updated01", val.String())
 		val2 := gjson.Get(r.Body.String(), "Favorite")
@@ -84,14 +84,14 @@ func TestUpdateAlbum(t *testing.T) {
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		UpdateAlbum(router, conf)
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums"+uid, `{"Name": 333, "Description": "Created via unit test", "Notes": "", "Favorite": true}`)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums"+uid, `{"Title": 333, "Description": "Created via unit test", "Notes": "", "Favorite": true}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 
 	t.Run("not found", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		UpdateAlbum(router, conf)
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/xxx", `{"Name": "Update03", "Description": "Created via unit test", "Notes": "", "Favorite": true}`)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/xxx", `{"Title": "Update03", "Description": "Created via unit test", "Notes": "", "Favorite": true}`)
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "Album not found", val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
@@ -100,7 +100,7 @@ func TestUpdateAlbum(t *testing.T) {
 func TestDeleteAlbum(t *testing.T) {
 	app, router, conf := NewApiTest()
 	CreateAlbum(router, conf)
-	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Name": "Delete", "Description": "To be deleted", "Notes": "", "Favorite": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "Delete", "Description": "To be deleted", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusOK, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
 
@@ -173,7 +173,7 @@ func TestDislikeAlbum(t *testing.T) {
 func TestAddPhotosToAlbum(t *testing.T) {
 	app, router, conf := NewApiTest()
 	CreateAlbum(router, conf)
-	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Name": "Add photos", "Description": "", "Notes": "", "Favorite": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "Add photos", "Description": "", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusOK, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
 
@@ -210,7 +210,7 @@ func TestAddPhotosToAlbum(t *testing.T) {
 func TestRemovePhotosFromAlbum(t *testing.T) {
 	app, router, conf := NewApiTest()
 	CreateAlbum(router, conf)
-	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Name": "Remove photos", "Description": "", "Notes": "", "Favorite": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "Remove photos", "Description": "", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusOK, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
 	AddPhotosToAlbum(router, conf)

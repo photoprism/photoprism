@@ -24,6 +24,7 @@ type Location struct {
 }
 
 const ApiName = "photoprism places"
+
 var ReverseLookupURL = "https://places.photoprism.org/v1/location/%s"
 var client = &http.Client{Timeout: 60 * time.Second} // TODO: Change timeout if needed
 

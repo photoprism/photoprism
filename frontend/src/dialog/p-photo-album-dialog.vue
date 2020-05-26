@@ -17,7 +17,7 @@
                                 :loading="loading"
                                 hide-details
                                 hide-no-data
-                                item-text="Name"
+                                item-text="Title"
                                 item-value="UID"
                                 :label="labels.select"
                                 color="secondary-dark"
@@ -106,13 +106,13 @@
         },
         watch: {
             search (q) {
-                const exists = this.albums.findIndex((album) => album.Name === q);
+                const exists = this.albums.findIndex((album) => album.Title === q);
 
                 if (exists !== -1 || !q) {
                     this.items = this.albums;
                     this.newAlbum = null;
                 } else {
-                    this.newAlbum = new Album({Name: q, UID: "", Favorite: true});
+                    this.newAlbum = new Album({Title: q, UID: "", Favorite: true});
                     this.items = this.albums.concat([this.newAlbum]);
                 }
             },

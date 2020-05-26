@@ -40,8 +40,8 @@ type Photo struct {
 	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
 	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
 	PhotoCountry     string       `gorm:"type:varbinary(2);index:idx_photos_country_year_month;default:'zz'" json:"Country" yaml:"-"`
-	PhotoYear        int          `gorm:"index:idx_photos_country_year_month;" yaml:"-"`
-	PhotoMonth       int          `gorm:"index:idx_photos_country_year_month;" yaml:"-"`
+	PhotoYear        int          `gorm:"index:idx_photos_country_year_month;" json:"Year" yaml:"-"`
+	PhotoMonth       int          `gorm:"index:idx_photos_country_year_month;" json:"Month" yaml:"-"`
 	PhotoIso         int          `json:"Iso" yaml:"ISO,omitempty"`
 	PhotoExposure    string       `gorm:"type:varbinary(64);" json:"Exposure" yaml:"Exposure,omitempty"`
 	PhotoFNumber     float32      `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
@@ -291,7 +291,7 @@ func (m *Photo) PreloadAlbums() {
 		Select(`albums.*`).
 		Joins("JOIN photos_albums ON photos_albums.album_uid = albums.album_uid AND photos_albums.photo_uid = ?", m.PhotoUID).
 		Where("albums.deleted_at IS NULL").
-		Order("albums.album_name ASC")
+		Order("albums.album_title ASC")
 
 	logError(q.Scan(&m.Albums))
 }

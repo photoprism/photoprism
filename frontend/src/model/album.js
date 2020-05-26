@@ -11,13 +11,20 @@ export class Album extends RestModel {
             Folder: "",
             Slug: "",
             Type: "",
-            Name: "",
+            Title: "",
+            Caption: "",
+            Category: "",
             Description: "",
             Notes: "",
-            Order: "",
             Filter: "",
+            Order: "",
             Template: "",
+            Country: "",
+            Year: 0,
+            Month: 0,
             Favorite: true,
+            Private: false,
+            PhotoCount: 0,
             Links: [],
             CreatedAt: "",
             UpdatedAt: "",
@@ -33,7 +40,7 @@ export class Album extends RestModel {
     }
 
     getTitle() {
-        return this.Name;
+        return this.Title;
     }
 
     thumbnailUrl(type) {

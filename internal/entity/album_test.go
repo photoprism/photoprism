@@ -13,7 +13,7 @@ import (
 func TestNewAlbum(t *testing.T) {
 	t.Run("name Christmas 2018", func(t *testing.T) {
 		album := NewAlbum("Christmas 2018", TypeDefault)
-		assert.Equal(t, "Christmas 2018", album.AlbumName)
+		assert.Equal(t, "Christmas 2018", album.AlbumTitle)
 		assert.Equal(t, "christmas-2018", album.AlbumSlug)
 	})
 	t.Run("name empty", func(t *testing.T) {
@@ -22,7 +22,7 @@ func TestNewAlbum(t *testing.T) {
 		defaultName := time.Now().Format("January 2006")
 		defaultSlug := slug.Make(defaultName)
 
-		assert.Equal(t, defaultName, album.AlbumName)
+		assert.Equal(t, defaultName, album.AlbumTitle)
 		assert.Equal(t, defaultSlug, album.AlbumSlug)
 	})
 }
@@ -30,20 +30,20 @@ func TestNewAlbum(t *testing.T) {
 func TestAlbum_SetName(t *testing.T) {
 	t.Run("valid name", func(t *testing.T) {
 		album := NewAlbum("initial name", TypeDefault)
-		assert.Equal(t, "initial name", album.AlbumName)
+		assert.Equal(t, "initial name", album.AlbumTitle)
 		assert.Equal(t, "initial-name", album.AlbumSlug)
-		album.SetName("New Album Name")
-		assert.Equal(t, "New Album Name", album.AlbumName)
+		album.SetTitle("New Album Name")
+		assert.Equal(t, "New Album Name", album.AlbumTitle)
 		assert.Equal(t, "new-album-name", album.AlbumSlug)
 	})
 	t.Run("empty name", func(t *testing.T) {
 		album := NewAlbum("initial name", TypeDefault)
-		assert.Equal(t, "initial name", album.AlbumName)
+		assert.Equal(t, "initial name", album.AlbumTitle)
 		assert.Equal(t, "initial-name", album.AlbumSlug)
 
-		album.SetName("")
+		album.SetTitle("")
 		expected := album.CreatedAt.Format("January 2006")
-		assert.Equal(t, expected, album.AlbumName)
+		assert.Equal(t, expected, album.AlbumTitle)
 		assert.Equal(t, slug.Make(expected), album.AlbumSlug)
 	})
 	t.Run("long name", func(t *testing.T) {
@@ -58,7 +58,7 @@ is an oblate spheroid.`
 		expected := txt.Clip(longName, txt.ClipDefault)
 		slugExpected := txt.Clip(longName, txt.ClipSlug)
 		album := NewAlbum(longName, TypeDefault)
-		assert.Equal(t, expected, album.AlbumName)
+		assert.Equal(t, expected, album.AlbumTitle)
 		assert.Contains(t, album.AlbumSlug, slug.Make(slugExpected))
 	})
 }
@@ -67,10 +67,10 @@ func TestAlbum_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		album := NewAlbum("Old Name", TypeDefault)
 
-		assert.Equal(t, "Old Name", album.AlbumName)
+		assert.Equal(t, "Old Name", album.AlbumTitle)
 		assert.Equal(t, "old-name", album.AlbumSlug)
 
-		album2 := Album{ID: 123, AlbumName: "New name", AlbumDescription: "new description"}
+		album2 := Album{ID: 123, AlbumTitle: "New name", AlbumDescription: "new description"}
 
 		albumForm, err := form.NewAlbum(album2)
 
@@ -84,7 +84,7 @@ func TestAlbum_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "New name", album.AlbumName)
+		assert.Equal(t, "New name", album.AlbumTitle)
 		assert.Equal(t, "new description", album.AlbumDescription)
 	})
 

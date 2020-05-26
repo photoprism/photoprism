@@ -17,7 +17,6 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, SortOrderName, folder.FolderOrder)
 		assert.IsType(t, "", folder.FolderUID)
 		assert.Equal(t, false, folder.FolderFavorite)
-		assert.Equal(t, false, folder.FolderHidden)
 		assert.Equal(t, false, folder.FolderIgnore)
 		assert.Equal(t, false, folder.FolderWatch)
 	})

@@ -156,7 +156,7 @@
                                  :key="index"
                                  :to="{ name: 'album', params: { uid: album.UID, slug: album.Slug } }">
                         <v-list-tile-content>
-                            <v-list-tile-title v-if="album.Name">{{ album.Name }}</v-list-tile-title>
+                            <v-list-tile-title v-if="album.Title">{{ album.Title }}</v-list-tile-title>
                             <v-list-tile-title v-else>Untitled</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
@@ -391,7 +391,7 @@
             },
             createAlbum() {
                 let name = "New Album";
-                const album = new Album({Name: name, Favorite: true});
+                const album = new Album({Title: name, Favorite: true});
                 album.save();
             },
             logout() {

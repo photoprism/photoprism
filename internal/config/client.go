@@ -174,7 +174,7 @@ func (c *Config) ClientConfig() ClientConfig {
 
 	db.Table("folders").
 		Select("COUNT(*) AS folders").
-		Where("folder_hidden = 0").
+		Where("folder_ignore = 0").
 		Where("deleted_at IS NULL").
 		Take(&count)
 
@@ -205,7 +205,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		Find(&lenses)
 
 	db.Where("deleted_at IS NULL AND album_favorite = 1").
-		Limit(20).Order("album_name").
+		Limit(20).Order("album_title").
 		Find(&albums)
 
 	var years []int

@@ -87,14 +87,14 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		m := entity.NewAlbum(f.AlbumName, entity.TypeDefault)
+		m := entity.NewAlbum(f.AlbumTitle, entity.TypeDefault)
 		m.AlbumFavorite = f.AlbumFavorite
 
 		log.Debugf("create album: %+v %+v", f, m)
 
 		if res := entity.Db().Create(m); res.Error != nil {
 			log.Error(res.Error.Error())
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("%s already exists", txt.Quote(m.AlbumName))})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("%s already exists", txt.Quote(m.AlbumTitle))})
 			return
 		}
 
@@ -175,7 +175,7 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 		conf.Db().Delete(&m)
 
 		event.Publish("config.updated", event.Data(conf.ClientConfig()))
-		event.Success(fmt.Sprintf("album %s deleted", txt.Quote(m.AlbumName)))
+		event.Success(fmt.Sprintf("album %s deleted", txt.Quote(m.AlbumTitle)))
 
 		c.JSON(http.StatusOK, m)
 	})
@@ -277,9 +277,9 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if len(added) == 1 {
-			event.Success(fmt.Sprintf("one photo added to %s", txt.Quote(a.AlbumName)))
+			event.Success(fmt.Sprintf("one photo added to %s", txt.Quote(a.AlbumTitle)))
 		} else {
-			event.Success(fmt.Sprintf("%d photos added to %s", len(added), txt.Quote(a.AlbumName)))
+			event.Success(fmt.Sprintf("%d photos added to %s", len(added), txt.Quote(a.AlbumTitle)))
 		}
 
 		PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
@@ -318,7 +318,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		entity.Db().Where("album_uid = ? AND photo_uid IN (?)", a.AlbumUID, f.Photos).Delete(&entity.PhotoAlbum{})
 
-		event.Success(fmt.Sprintf("photos removed from %s", a.AlbumName))
+		event.Success(fmt.Sprintf("photos removed from %s", a.AlbumTitle))
 
 		PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 

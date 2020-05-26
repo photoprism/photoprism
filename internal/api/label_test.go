@@ -47,7 +47,7 @@ func TestUpdateLabel(t *testing.T) {
 	t.Run("not found", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		UpdateLabel(router, conf)
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/labels/xxx", `{"LabelName": "Updated01", "LabelPriority": 4, "Uncertainty": 80}`)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/labels/xxx", `{"Name": "Updated01", "Priority": 4, "Uncertainty": 80}`)
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "Label not found", val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)

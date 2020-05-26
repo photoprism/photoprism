@@ -295,7 +295,7 @@
                     this.model = m;
 
                     this.filter.order = m.AlbumOrder;
-                    window.document.title = `PhotoPrism: ${this.model.Name}`;
+                    window.document.title = `PhotoPrism: ${this.model.Title}`;
 
                     return Promise.resolve(this.model)
                 });
@@ -317,7 +317,7 @@
                             }
                         }
 
-                        window.document.title = `PhotoPrism: ${this.model.Name}`
+                        window.document.title = `PhotoPrism: ${this.model.Title}`
 
                         this.dirty = true;
                         this.scrollDisabled = false;

@@ -15,7 +15,7 @@ func TestAlbumByUID(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Christmas2030", album.AlbumName)
+		assert.Equal(t, "Christmas2030", album.AlbumTitle)
 	})
 
 	t.Run("not existing uid", func(t *testing.T) {
@@ -52,7 +52,7 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Christmas2030", result[0].AlbumName)
+		assert.Equal(t, "Christmas2030", result[0].AlbumTitle)
 	})
 
 	t.Run("search with slug", func(t *testing.T) {
@@ -63,7 +63,7 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Holiday2030", result[0].AlbumName)
+		assert.Equal(t, "Holiday2030", result[0].AlbumTitle)
 	})
 
 	t.Run("favorites true", func(t *testing.T) {
@@ -75,7 +75,7 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Holiday2030", result[0].AlbumName)
+		assert.Equal(t, "Holiday2030", result[0].AlbumTitle)
 	})
 	t.Run("empty query", func(t *testing.T) {
 		query := form.NewAlbumSearch("order:slug")
@@ -105,7 +105,7 @@ func TestAlbums(t *testing.T) {
 			Query:    "",
 			ID:       "at9lxuqxpogaaba7",
 			Slug:     "",
-			Name:     "",
+			Title:    "",
 			Favorite: false,
 			Count:    0,
 			Offset:   0,

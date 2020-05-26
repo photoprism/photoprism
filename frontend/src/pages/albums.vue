@@ -96,22 +96,22 @@
 
                                 <v-card-actions @click.stop.prevent="">
                                     <v-edit-dialog
-                                            :return-value.sync="album.Name"
+                                            :return-value.sync="album.Title"
                                             lazy
                                             @save="onSave(album)"
                                             class="p-inline-edit"
                                     >
-                                        <span v-if="album.Name">
-                                            {{ album.Name }}
+                                        <span v-if="album.Title">
+                                            {{ album.Title }}
                                         </span>
                                         <span v-else>
                                             <v-icon>edit</v-icon>
                                         </span>
                                         <template v-slot:input>
                                             <v-text-field
-                                                    v-model="album.Name"
+                                                    v-model="album.Title"
                                                     :rules="[titleRule]"
-                                                    :label="labels.name"
+                                                    :label="labels.title"
                                                     color="secondary-dark"
                                                     single-line
                                                     autofocus
@@ -181,7 +181,7 @@
                 titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Title too long"),
                 labels: {
                     search: this.$gettext("Search"),
-                    name: this.$gettext("Album Name"),
+                    title: this.$gettext("Album Name"),
                 },
                 mouseDown: {
                     index: -1,
@@ -384,14 +384,14 @@
                 this.loadMore();
             },
             create() {
-                let name = DateTime.local().toFormat("LLLL yyyy");
+                let title = DateTime.local().toFormat("LLLL yyyy");
 
-                if (this.results.findIndex(a => a.Name.startsWith(name)) !== -1) {
-                    const existing = this.results.filter(a => a.Name.startsWith(name));
-                    name = `${name} (${existing.length + 1})`
+                if (this.results.findIndex(a => a.Title.startsWith(title)) !== -1) {
+                    const existing = this.results.filter(a => a.Title.startsWith(title));
+                    title = `${title} (${existing.length + 1})`
                 }
 
-                const album = new Album({"Name": name, "Favorite": true});
+                const album = new Album({"Title": title, "Favorite": true});
 
                 album.save();
             },

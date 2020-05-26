@@ -39,16 +39,15 @@ func TestDownloadZip(t *testing.T) {
 	// filename := gjson.Get(r.Body.String(), "filename")
 	assert.Equal(t, http.StatusNotFound, r.Code) // TODO: Should be http.StatusOK
 
-
 	// Todo @graciousgray: Files must exist for this to be successful
 	/*
-	t.Run("successful request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		DownloadZip(router, conf)
-		r := PerformRequest(app, "GET", "/api/v1/zip/"+filename.String())
-		assert.Equal(t, http.StatusOK, r.Code)
-	})
-	 */
+		t.Run("successful request", func(t *testing.T) {
+			app, router, conf := NewApiTest()
+			DownloadZip(router, conf)
+			r := PerformRequest(app, "GET", "/api/v1/zip/"+filename.String())
+			assert.Equal(t, http.StatusOK, r.Code)
+		})
+	*/
 
 	t.Run("zip not existing", func(t *testing.T) {
 		app, router, conf := NewApiTest()

@@ -173,7 +173,6 @@ func (m *File) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
-
 // RelatedPhoto returns the related photo entity.
 func (m *File) RelatedPhoto() *Photo {
 	if m.Photo != nil {

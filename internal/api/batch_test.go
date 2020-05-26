@@ -90,7 +90,7 @@ func TestBatchPhotosRestore(t *testing.T) {
 func TestBatchAlbumsDelete(t *testing.T) {
 	app, router, conf := NewApiTest()
 	CreateAlbum(router, conf)
-	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Name": "BatchDelete", "Description": "To be deleted", "Notes": "", "Favorite": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "BatchDelete", "Description": "To be deleted", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusOK, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
 

@@ -4,18 +4,18 @@
             @submit.prevent="filterChange">
         <v-toolbar flat color="secondary">
             <v-edit-dialog
-                    :return-value.sync="album.Name"
+                    :return-value.sync="album.Title"
                     lazy
                     @save="updateAlbum()"
                     class="p-inline-edit">
                 <v-toolbar-title>
-                    {{ album.Name }}
+                    {{ album.Title }}
                 </v-toolbar-title>
                 <template v-slot:input>
                     <v-text-field
-                            v-model="album.Name"
+                            v-model="album.Title"
                             :rules="[titleRule]"
-                            :label="labels.name"
+                            :label="labels.title"
                             color="secondary-dark"
                             single-line
                             autofocus
@@ -160,15 +160,15 @@
                     ],
                 },
                 labels: {
+                    title: this.$gettext("Album Name"),
                     description: this.$gettext("Description"),
                     search: this.$gettext("Search"),
                     view: this.$gettext("View"),
                     country: this.$gettext("Country"),
                     camera: this.$gettext("Camera"),
                     sort: this.$gettext("Sort By"),
-                    name: this.$gettext("Album Name"),
                 },
-                titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Title too long"),
+                titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
                 growDesc: false,
             };
         },

@@ -12,22 +12,30 @@ import (
 
 // AlbumResult contains found albums
 type AlbumResult struct {
-	ID               uint      `json:"-" yaml:"-"`
-	AlbumUID         string    `json:"UID" yaml:"UID"`
-	AlbumSlug        string    `json:"Slug" yaml:"Slug"`
-	AlbumType        string    `json:"Type" yaml:"Type,omitempty"`
-	AlbumName        string    `json:"Name" yaml:"Name,omitempty"`
-	AlbumDescription string    `json:"Description" yaml:"Description,omitempty"`
-	AlbumNotes       string    `json:"Notes" yaml:"Notes,omitempty"`
-	AlbumOrder       string    `json:"Order" yaml:"Order,omitempty"`
-	AlbumFilter      string    `json:"Filter" yaml:"Filter,omitempty"`
-	AlbumTemplate    string    `json:"Template" yaml:"Template,omitempty"`
-	AlbumFavorite    bool      `json:"Favorite" yaml:"Favorite,omitempty"`
-	PhotoCount       int       `json:"PhotoCount" yaml:"-"`
-	LinkCount        int       `json:"LinkCount" yaml:"-"`
-	CreatedAt        time.Time `json:"CreatedAt" yaml:"-"`
-	UpdatedAt        time.Time `json:"UpdatedAt" yaml:"-"`
-	DeletedAt        time.Time `json:"DeletedAt,omitempty" yaml:"-"`
+	ID               uint      `json:"-"`
+	AlbumUID         string    `json:"UID"`
+	CoverUID         string    `json:"CoverUID"`
+	FolderUID        string    `json:"FolderUID"`
+	AlbumSlug        string    `json:"Slug"`
+	AlbumType        string    `json:"Type"`
+	AlbumTitle       string    `json:"Title"`
+	AlbumCategory    string    `json:"Category"`
+	AlbumCaption     string    `json:"Caption"`
+	AlbumDescription string    `json:"Description"`
+	AlbumNotes       string    `json:"Notes"`
+	AlbumFilter      string    `json:"Filter"`
+	AlbumOrder       string    `json:"Order"`
+	AlbumTemplate    string    `json:"Template"`
+	AlbumCountry     string    `json:"Country"`
+	AlbumYear        int       `json:"Year"`
+	AlbumMonth       int       `json:"Month"`
+	AlbumFavorite    bool      `json:"Favorite"`
+	AlbumPrivate     bool      `json:"Private"`
+	PhotoCount       int       `json:"PhotoCount"`
+	LinkCount        int       `json:"LinkCount"`
+	CreatedAt        time.Time `json:"CreatedAt"`
+	UpdatedAt        time.Time `json:"UpdatedAt"`
+	DeletedAt        time.Time `json:"DeletedAt,omitempty"`
 }
 
 // AlbumByUID returns a Album based on the UID.
@@ -85,7 +93,7 @@ func AlbumSearch(f form.AlbumSearch) (results []AlbumResult, err error) {
 
 	if f.Query != "" {
 		likeString := "%" + strings.ToLower(f.Query) + "%"
-		s = s.Where("LOWER(albums.album_name) LIKE ?", likeString)
+		s = s.Where("LOWER(albums.album_title) LIKE ?", likeString)
 	}
 
 	if f.Favorite {
