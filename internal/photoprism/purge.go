@@ -55,14 +55,14 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 	purgedPhotos = make(map[string]bool)
 	originalsPath := prg.originalsPath()
 
-	if err := mutex.Worker.Start(); err != nil {
+	if err := mutex.MainWorker.Start(); err != nil {
 		err = fmt.Errorf("purge: %s", err.Error())
 		event.Error(err.Error())
 		return purgedFiles, purgedPhotos, err
 	}
 
 	defer func() {
-		mutex.Worker.Stop()
+		mutex.MainWorker.Stop()
 		runtime.GC()
 	}()
 
@@ -81,7 +81,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		}
 
 		for _, file := range files {
-			if mutex.Worker.Canceled() {
+			if mutex.MainWorker.Canceled() {
 				return purgedFiles, purgedPhotos, errors.New("purge canceled")
 			}
 
@@ -107,7 +107,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 			}
 		}
 
-		if mutex.Worker.Canceled() {
+		if mutex.MainWorker.Canceled() {
 			return purgedFiles, purgedPhotos, errors.New("purge canceled")
 		}
 
@@ -131,7 +131,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		}
 
 		for _, photo := range photos {
-			if mutex.Worker.Canceled() {
+			if mutex.MainWorker.Canceled() {
 				return purgedFiles, purgedPhotos, errors.New("purge canceled")
 			}
 
@@ -158,7 +158,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 			}
 		}
 
-		if mutex.Worker.Canceled() {
+		if mutex.MainWorker.Canceled() {
 			return purgedFiles, purgedPhotos, errors.New("purge canceled")
 		}
 
@@ -182,5 +182,5 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 // Cancel stops the current purge operation.
 func (prg *Purge) Cancel() {
-	mutex.Worker.Cancel()
+	mutex.MainWorker.Cancel()
 }

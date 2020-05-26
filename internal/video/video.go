@@ -1,5 +1,5 @@
 /*
-This package encapsulates JPEG thumbnail generation.
+This package contains video related types and functions.
 
 Additional information can be found in our Developer Guide:
 
@@ -8,11 +8,8 @@ https://github.com/photoprism/photoprism/wiki
 package video
 
 import (
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
-
-var log = event.Log
 
 type Type struct {
 	Format fs.FileType

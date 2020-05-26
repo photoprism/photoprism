@@ -21,19 +21,26 @@ type Share struct {
 	conf *config.Config
 }
 
-// NewShare returns a new service share worker.
+// NewShare returns a new share worker.
 func NewShare(conf *config.Config) *Share {
 	return &Share{conf: conf}
 }
 
+// logError logs an error message if err is not nil.
+func (worker *Share) logError(err error) {
+	if err != nil {
+		log.Errorf("share: %s", err.Error())
+	}
+}
+
 // Start starts the share worker.
-func (s *Share) Start() (err error) {
-	if err := mutex.Share.Start(); err != nil {
+func (worker *Share) Start() (err error) {
+	if err := mutex.ShareWorker.Start(); err != nil {
 		event.Error(fmt.Sprintf("share: %s", err.Error()))
 		return err
 	}
 
-	defer mutex.Share.Stop()
+	defer mutex.ShareWorker.Stop()
 
 	f := form.AccountSearch{
 		Share: true,
@@ -44,7 +51,7 @@ func (s *Share) Start() (err error) {
 
 	// Upload newly shared files
 	for _, a := range accounts {
-		if mutex.Share.Canceled() {
+		if mutex.ShareWorker.Canceled() {
 			return nil
 		}
 
@@ -55,7 +62,7 @@ func (s *Share) Start() (err error) {
 		files, err := query.FileShares(a.ID, entity.FileShareNew)
 
 		if err != nil {
-			log.Errorf("share: %s", err.Error())
+			worker.logError(err)
 			continue
 		}
 
@@ -68,7 +75,7 @@ func (s *Share) Start() (err error) {
 		existingDirs := make(map[string]string)
 
 		for _, file := range files {
-			if mutex.Share.Canceled() {
+			if mutex.ShareWorker.Canceled() {
 				return nil
 			}
 
@@ -81,7 +88,7 @@ func (s *Share) Start() (err error) {
 				}
 			}
 
-			srcFileName := path.Join(s.conf.OriginalsPath(), file.File.FileName)
+			srcFileName := path.Join(worker.conf.OriginalsPath(), file.File.FileName)
 
 			if a.ShareSize != "" {
 				thumbType, ok := thumb.Types[a.ShareSize]
@@ -91,16 +98,16 @@ func (s *Share) Start() (err error) {
 					continue
 				}
 
-				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, s.conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, worker.conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 
 				if err != nil {
-					log.Errorf("share: %s", err)
+					worker.logError(err)
 					continue
 				}
 			}
 
 			if err := client.Upload(srcFileName, file.RemoteName); err != nil {
-				log.Errorf("share: %s", err.Error())
+				worker.logError(err)
 				file.Errors++
 				file.Error = err.Error()
 			} else {
@@ -114,19 +121,17 @@ func (s *Share) Start() (err error) {
 				file.Status = entity.FileShareError
 			}
 
-			if mutex.Share.Canceled() {
+			if mutex.ShareWorker.Canceled() {
 				return nil
 			}
 
-			if err := entity.Db().Save(&file).Error; err != nil {
-				log.Errorf("share: %s", err.Error())
-			}
+			worker.logError(entity.Db().Save(&file).Error)
 		}
 	}
 
 	// Remove previously shared files if expired
 	for _, a := range accounts {
-		if mutex.Share.Canceled() {
+		if mutex.ShareWorker.Canceled() {
 			return nil
 		}
 
@@ -137,7 +142,7 @@ func (s *Share) Start() (err error) {
 		files, err := query.ExpiredFileShares(a)
 
 		if err != nil {
-			log.Errorf("share: %s", err.Error())
+			worker.logError(err)
 			continue
 		}
 
@@ -149,7 +154,7 @@ func (s *Share) Start() (err error) {
 		client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
 
 		for _, file := range files {
-			if mutex.Share.Canceled() {
+			if mutex.ShareWorker.Canceled() {
 				return nil
 			}
 
@@ -164,7 +169,7 @@ func (s *Share) Start() (err error) {
 			}
 
 			if err := entity.Db().Save(&file).Error; err != nil {
-				log.Errorf("share: %s", err.Error())
+				worker.logError(err)
 			}
 		}
 	}

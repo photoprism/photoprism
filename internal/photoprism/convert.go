@@ -32,11 +32,11 @@ func NewConvert(conf *config.Config) *Convert {
 
 // Start converts all files in a directory to JPEG if possible.
 func (c *Convert) Start(path string) error {
-	if err := mutex.Worker.Start(); err != nil {
+	if err := mutex.MainWorker.Start(); err != nil {
 		return err
 	}
 
-	defer mutex.Worker.Stop()
+	defer mutex.MainWorker.Stop()
 
 	jobs := make(chan ConvertJob)
 
@@ -70,7 +70,7 @@ func (c *Convert) Start(path string) error {
 				}
 			}()
 
-			if mutex.Worker.Canceled() {
+			if mutex.MainWorker.Canceled() {
 				return errors.New("convert: canceled")
 			}
 

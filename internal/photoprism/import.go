@@ -58,12 +58,12 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 		return done
 	}
 
-	if err := mutex.Worker.Start(); err != nil {
+	if err := mutex.MainWorker.Start(); err != nil {
 		event.Error(fmt.Sprintf("import: %s", err.Error()))
 		return done
 	}
 
-	defer mutex.Worker.Stop()
+	defer mutex.MainWorker.Stop()
 
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("import: %s", err.Error())
@@ -102,7 +102,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 				}
 			}()
 
-			if mutex.Worker.Canceled() {
+			if mutex.MainWorker.Canceled() {
 				return errors.New("import canceled")
 			}
 
@@ -220,7 +220,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 
 // Cancel stops the current import operation.
 func (imp *Import) Cancel() {
-	mutex.Worker.Cancel()
+	mutex.MainWorker.Cancel()
 }
 
 // DestinationFilename returns the destination filename of a MediaFile to be imported.

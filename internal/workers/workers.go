@@ -21,10 +21,12 @@ func Start(conf *config.Config) {
 			case <-stop:
 				log.Info("shutting down workers")
 				ticker.Stop()
-				mutex.Share.Cancel()
-				mutex.Sync.Cancel()
+				mutex.GroomWorker.Cancel()
+				mutex.ShareWorker.Cancel()
+				mutex.SyncWorker.Cancel()
 				return
 			case <-ticker.C:
+				StartGroom(conf)
 				StartShare(conf)
 				StartSync(conf)
 			}
@@ -37,12 +39,24 @@ func Stop() {
 	stop <- true
 }
 
+// StartGroom runs the groom worker once.
+func StartGroom(conf *config.Config) {
+	if !mutex.WorkersBusy() {
+		go func() {
+			worker := NewGroom(conf)
+			if err := worker.Start(); err != nil {
+				log.Error(err)
+			}
+		}()
+	}
+}
+
 // StartShare runs the share worker once.
 func StartShare(conf *config.Config) {
-	if !mutex.Share.Busy() {
+	if !mutex.ShareWorker.Busy() {
 		go func() {
-			s := NewShare(conf)
-			if err := s.Start(); err != nil {
+			worker := NewShare(conf)
+			if err := worker.Start(); err != nil {
 				log.Error(err)
 			}
 		}()
@@ -51,10 +65,10 @@ func StartShare(conf *config.Config) {
 
 // StartShare runs the sync worker once.
 func StartSync(conf *config.Config) {
-	if !mutex.Sync.Busy() {
+	if !mutex.SyncWorker.Busy() {
 		go func() {
-			s := NewSync(conf)
-			if err := s.Start(); err != nil {
+			worker := NewSync(conf)
+			if err := worker.Start(); err != nil {
 				log.Error(err)
 			}
 		}()

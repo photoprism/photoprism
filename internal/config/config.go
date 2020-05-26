@@ -201,9 +201,10 @@ func (c *Config) Cache() *gc.Cache {
 
 // Shutdown services and workers.
 func (c *Config) Shutdown() {
-	mutex.Worker.Cancel()
-	mutex.Share.Cancel()
-	mutex.Sync.Cancel()
+	mutex.MainWorker.Cancel()
+	mutex.ShareWorker.Cancel()
+	mutex.SyncWorker.Cancel()
+	mutex.GroomWorker.Cancel()
 
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)

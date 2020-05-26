@@ -54,7 +54,7 @@ func (ind *Index) thumbPath() string {
 
 // Cancel stops the current indexing operation.
 func (ind *Index) Cancel() {
-	mutex.Worker.Cancel()
+	mutex.MainWorker.Cancel()
 }
 
 // Start indexes media files in the originals directory.
@@ -68,12 +68,12 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 		return done
 	}
 
-	if err := mutex.Worker.Start(); err != nil {
+	if err := mutex.MainWorker.Start(); err != nil {
 		event.Error(fmt.Sprintf("index: %s", err.Error()))
 		return done
 	}
 
-	defer mutex.Worker.Stop()
+	defer mutex.MainWorker.Stop()
 
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("index: %s", err.Error())
@@ -112,7 +112,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 				}
 			}()
 
-			if mutex.Worker.Canceled() {
+			if mutex.MainWorker.Canceled() {
 				return errors.New("indexing canceled")
 			}
 

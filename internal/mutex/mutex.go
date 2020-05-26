@@ -5,8 +5,14 @@ import (
 )
 
 var (
-	Db     = sync.Mutex{}
-	Worker = Busy{}
-	Sync   = Busy{}
-	Share  = Busy{}
+	Db          = sync.Mutex{}
+	MainWorker  = Busy{}
+	SyncWorker  = Busy{}
+	ShareWorker = Busy{}
+	GroomWorker = Busy{}
 )
+
+// WorkersBusy returns true if any worker is busy.
+func WorkersBusy() bool {
+	return MainWorker.Busy() || SyncWorker.Busy() || ShareWorker.Busy() || GroomWorker.Busy()
+}

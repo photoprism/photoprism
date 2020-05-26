@@ -13,7 +13,7 @@ import (
 )
 
 // Uploads local files to a remote account
-func (s *Sync) upload(a entity.Account) (complete bool, err error) {
+func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 	maxResults := 250
 
 	// Get upload file list from database
@@ -33,11 +33,11 @@ func (s *Sync) upload(a entity.Account) (complete bool, err error) {
 	existingDirs := make(map[string]string)
 
 	for _, file := range files {
-		if mutex.Sync.Canceled() {
+		if mutex.SyncWorker.Canceled() {
 			return false, nil
 		}
 
-		fileName := path.Join(s.conf.OriginalsPath(), file.FileName)
+		fileName := path.Join(worker.conf.OriginalsPath(), file.FileName)
 		remoteName := path.Join(a.SyncPath, file.FileName)
 		remoteDir := filepath.Dir(remoteName)
 
@@ -49,7 +49,7 @@ func (s *Sync) upload(a entity.Account) (complete bool, err error) {
 		}
 
 		if err := client.Upload(fileName, remoteName); err != nil {
-			log.Errorf("sync: %s", err.Error())
+			worker.logError(err)
 			continue // try again next time
 		}
 
@@ -63,13 +63,11 @@ func (s *Sync) upload(a entity.Account) (complete bool, err error) {
 		fileSync.Error = ""
 		fileSync.Errors = 0
 
-		if mutex.Sync.Canceled() {
+		if mutex.SyncWorker.Canceled() {
 			return false, nil
 		}
 
-		if err := entity.Db().Save(&fileSync).Error; err != nil {
-			log.Errorf("sync: %s", err.Error())
-		}
+		worker.logError(entity.Db().Save(&fileSync).Error)
 	}
 
 	return false, nil

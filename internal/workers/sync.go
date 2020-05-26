@@ -18,28 +18,35 @@ type Sync struct {
 	conf *config.Config
 }
 
-// NewSync returns a new service sync worker.
+// NewSync returns a new sync worker.
 func NewSync(conf *config.Config) *Sync {
 	return &Sync{
 		conf: conf,
 	}
 }
 
-// Report logs an error message if err is not nil.
-func (s *Sync) report(err error) {
+// logError logs an error message if err is not nil.
+func (worker *Sync) logError(err error) {
 	if err != nil {
 		log.Errorf("sync: %s", err.Error())
 	}
 }
 
+// logWarn logs a warning message if err is not nil.
+func (worker *Sync) logWarn(err error) {
+	if err != nil {
+		log.Warnf("sync: %s", err.Error())
+	}
+}
+
 // Start starts the sync worker.
-func (s *Sync) Start() (err error) {
-	if err := mutex.Sync.Start(); err != nil {
+func (worker *Sync) Start() (err error) {
+	if err := mutex.SyncWorker.Start(); err != nil {
 		event.Error(fmt.Sprintf("sync: %s", err.Error()))
 		return err
 	}
 
-	defer mutex.Sync.Stop()
+	defer mutex.SyncWorker.Stop()
 
 	f := form.AccountSearch{
 		Sync: true,
@@ -57,7 +64,7 @@ func (s *Sync) Start() (err error) {
 			a.AccSync = false
 
 			if err := entity.Db().Save(&a).Error; err != nil {
-				log.Errorf("sync: %s", err.Error())
+				worker.logError(err)
 			} else {
 				log.Warnf("sync: disabled sync, %s failed more than %d times", a.AccName, a.RetryLimit)
 			}
@@ -74,7 +81,7 @@ func (s *Sync) Start() (err error) {
 
 		switch a.SyncStatus {
 		case entity.AccountSyncStatusRefresh:
-			if complete, err := s.refresh(a); err != nil {
+			if complete, err := worker.refresh(a); err != nil {
 				accErrors++
 				accError = err.Error()
 			} else if complete {
@@ -92,7 +99,7 @@ func (s *Sync) Start() (err error) {
 				}
 			}
 		case entity.AccountSyncStatusDownload:
-			if complete, err := s.download(a); err != nil {
+			if complete, err := worker.download(a); err != nil {
 				accErrors++
 				accError = err.Error()
 			} else if complete {
@@ -106,7 +113,7 @@ func (s *Sync) Start() (err error) {
 				}
 			}
 		case entity.AccountSyncStatusUpload:
-			if complete, err := s.upload(a); err != nil {
+			if complete, err := worker.upload(a); err != nil {
 				accErrors++
 				accError = err.Error()
 			} else if complete {
@@ -123,17 +130,17 @@ func (s *Sync) Start() (err error) {
 			syncStatus = entity.AccountSyncStatusRefresh
 		}
 
-		if mutex.Sync.Canceled() {
+		if mutex.SyncWorker.Canceled() {
 			return nil
 		}
 
 		// Only update the following fields to avoid overwriting other settings
 		if err := a.Updates(map[string]interface{}{
-			"AccError": accError,
-			"AccErrors": accErrors,
+			"AccError":   accError,
+			"AccErrors":  accErrors,
 			"SyncStatus": syncStatus,
-			"SyncDate": syncDate}); err != nil {
-			log.Errorf("sync: %s", err.Error())
+			"SyncDate":   syncDate}); err != nil {
+			worker.logError(err)
 		} else if synced {
 			event.Publish("sync.synced", event.Data{"account": a})
 		}

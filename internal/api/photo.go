@@ -193,7 +193,7 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := m.SetFavorite(true); err != nil{
+		if err := m.SetFavorite(true); err != nil {
 			log.Errorf("photo: %s", err.Error())
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
@@ -226,7 +226,7 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := m.SetFavorite(false); err != nil{
+		if err := m.SetFavorite(false); err != nil {
 			log.Errorf("photo: %s", err.Error())
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
