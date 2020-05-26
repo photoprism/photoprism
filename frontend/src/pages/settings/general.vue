@@ -326,7 +326,7 @@
 
                         <v-flex xs12 sm6 class="px-2 pb-2 body-1 text-xs-left text-sm-right">
                             A big <a href="https://docs.photoprism.org/en/latest/credits/" class="secondary-dark--text"
-                                                            target="_blank">thank you</a>to everyone who made this possible!
+                                                            target="_blank">thank you</a> to everyone who made this possible!
                             <br>
                             <a href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE"
                                class="secondary-dark--text" target="_blank">
