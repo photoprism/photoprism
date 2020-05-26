@@ -108,7 +108,7 @@ export default [
         name: "browse",
         path: "/browse",
         component: Photos,
-        meta: {title: "Photos & Videos", auth: true},
+        meta: {title: "All photos and videos", auth: true},
         props: {staticFilter: {quality: 0}},
     },
     {
