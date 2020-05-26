@@ -94,7 +94,7 @@
                 filter.public = true;
             }
 
-            if (settings.features.review) {
+            if (settings.features.review && !("quality" in this.staticFilter)) {
                 filter.quality = 3;
             }
 

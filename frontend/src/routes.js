@@ -109,7 +109,7 @@ export default [
         path: "/browse",
         component: Photos,
         meta: {title: "Photos & Videos", auth: true},
-        props: {staticFilter: {}},
+        props: {staticFilter: {quality: 0}},
     },
     {
         name: "moments",
