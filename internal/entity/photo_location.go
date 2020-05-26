@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/classify"
-	"github.com/photoprism/photoprism/internal/event"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
@@ -48,16 +47,10 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 	err := location.Find(geoApi)
 
 	if location.Place == nil {
-		log.Warnf("PLACE IS NIL: %+v", location)
+		log.Warnf("photo: location place is nil (uid %s, loc_uid %s) - bug?", m.PhotoUID, location.LocUID)
 	}
 
-	if err == nil && location.Place != nil {
-		if location.Place.New {
-			event.Publish("count.places", event.Data{
-				"count": 1,
-			})
-		}
-
+	if err == nil && location.Place != nil && location.LocUID != UnknownLocation.LocUID {
 		m.Location = location
 		m.LocUID = location.LocUID
 		m.Place = location.Place

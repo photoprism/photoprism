@@ -51,10 +51,10 @@ type Photo struct {
 	CameraSerial     string       `gorm:"type:varbinary(255);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
 	CameraSrc        string       `gorm:"type:varbinary(8);" json:"CameraSrc" yaml:"-"`
 	LensID           uint         `gorm:"index:idx_photos_camera_lens;" json:"LensID" yaml:"-"`
-	Camera           *Camera      `gorm:"association_autoupdate:false;association_autocreate:false" json:"Camera" yaml:"-"`
-	Lens             *Lens        `gorm:"association_autoupdate:false;association_autocreate:false" json:"Lens" yaml:"-"`
-	Location         *Location    `gorm:"foreignkey:loc_uid;association_foreignkey:loc_uid;association_autoupdate:false;association_autocreate:false" json:"Location" yaml:"-"`
-	Place            *Place       `gorm:"foreignkey:place_uid;association_foreignkey:place_uid;association_autoupdate:false;association_autocreate:false" json:"-" yaml:"-"`
+	Camera           *Camera      `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Camera" yaml:"-"`
+	Lens             *Lens        `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Lens" yaml:"-"`
+	Location         *Location    `gorm:"foreignkey:loc_uid;association_foreignkey:loc_uid;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Location" yaml:"-"`
+	Place            *Place       `gorm:"foreignkey:place_uid;association_foreignkey:place_uid;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"-" yaml:"-"`
 	Links            []Link       `gorm:"foreignkey:share_uid;association_foreignkey:photo_uid" json:"Links" yaml:"-"`
 	Keywords         []Keyword    `json:"-" yaml:"-"`
 	Albums           []Album      `json:"-" yaml:"-"`

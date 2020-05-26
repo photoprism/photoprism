@@ -4,6 +4,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -45,7 +46,7 @@ func NewLocation(lat, lng float32) *Location {
 	return result
 }
 
-// Find gets the location using either the db or the api if not in the db
+// Find retrieves location data from the database or an external api if not known already.
 func (m *Location) Find(api string) error {
 	start := time.Now()
 	db := Db()
@@ -80,7 +81,12 @@ func (m *Location) Find(api string) error {
 			log.Errorf("place: failed adding %s %s", place.PlaceUID, err.Error())
 			m.Place = &UnknownPlace
 		} else {
+			event.Publish("count.places", event.Data{
+				"count": 1,
+			})
+
 			log.Infof("place: added %s [%s]", place.PlaceUID, time.Since(start))
+
 			m.Place = place
 		}
 	}

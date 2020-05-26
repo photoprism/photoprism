@@ -463,7 +463,7 @@ export class Photo extends RestModel {
         }
 
         if (values.Lat || values.Lng) {
-            values.LocationSrc = SrcManual;
+            values.LocSrc = SrcManual;
         }
 
         if (values.TakenAt || values.TimeZone) {
