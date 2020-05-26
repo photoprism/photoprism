@@ -61,7 +61,7 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			}
 		}
 
-		p, err := query.PreloadPhotoByUID(c.Param("uid"))
+		p, err := query.PhotoPreloadByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -121,7 +121,7 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			entity.Db().Save(&label)
 		}
 
-		p, err := query.PreloadPhotoByUID(c.Param("uid"))
+		p, err := query.PhotoPreloadByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -186,7 +186,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		p, err := query.PreloadPhotoByUID(c.Param("uid"))
+		p, err := query.PhotoPreloadByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)

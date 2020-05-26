@@ -120,7 +120,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 	offset = 0
 
 	for {
-		photos, err := query.MissingPhotos(limit, offset)
+		photos, err := query.PhotosMissing(limit, offset)
 
 		if err != nil {
 			return purgedFiles, purgedPhotos, err
@@ -169,7 +169,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 	log.Info("purge: finding hidden photos")
 
-	if err := query.ResetPhotosQuality(); err != nil {
+	if err := query.ResetPhotoQuality(); err != nil {
 		return purgedFiles, purgedPhotos, err
 	}
 

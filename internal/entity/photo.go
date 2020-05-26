@@ -64,6 +64,7 @@ type Photo struct {
 	CreatedAt        time.Time    `yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time    `yaml:"UpdatedAt,omitempty"`
 	EditedAt         *time.Time   `yaml:"EditedAt,omitempty"`
+	MaintainedAt     *time.Time   `sql:"index" yaml:"-"`
 	DeletedAt        *time.Time   `sql:"index" yaml:"DeletedAt,omitempty"`
 }
 
@@ -130,7 +131,6 @@ func (m *Photo) Save() error {
 		return errors.New("photo: can't save to database, id is empty")
 	}
 
-	db := Db()
 	labels := m.ClassifyLabels()
 
 	m.UpdateYearMonth()
@@ -151,7 +151,7 @@ func (m *Photo) Save() error {
 
 	m.PhotoQuality = m.QualityScore()
 
-	if err := db.Unscoped().Save(m).Error; err != nil {
+	if err := UnscopedDb().Save(m).Error; err != nil {
 		return err
 	}
 
@@ -630,4 +630,58 @@ func (m *Photo) SetFavorite(favorite bool) error {
 	}
 
 	return nil
+}
+
+// EstimatePosition updates the photo with an estimated geolocation if possible.
+func (m *Photo) EstimatePosition() {
+	var recentPhoto Photo
+
+	if result := UnscopedDb().
+		Where("place_uid <> '' && place_uid <> 'zz'").
+		Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", m.TakenAt)).
+		Preload("Place").First(&recentPhoto); result.Error == nil {
+		if recentPhoto.HasPlace() {
+			m.Place = recentPhoto.Place
+			m.PlaceUID = recentPhoto.PlaceUID
+			m.PhotoCountry = recentPhoto.PhotoCountry
+			m.LocSrc = SrcEstimate
+			log.Debugf("prism: approximate location for %s is %s", m.PhotoUID, recentPhoto.PlaceUID)
+		}
+	}
+}
+
+// Maintain photo data, improve if possible.
+func (m *Photo) Maintain() error {
+	if !m.HasID() {
+		return errors.New("photo: can't maintain, id is empty")
+	}
+
+	maintained := time.Now()
+	m.MaintainedAt = &maintained
+
+	if m.NoPlace() && (m.LocSrc == SrcAuto || m.LocSrc == SrcEstimate) {
+		m.EstimatePosition()
+	}
+
+	labels := m.ClassifyLabels()
+
+	m.UpdateYearMonth()
+
+	if err := m.UpdateTitle(labels); err != nil {
+		log.Warnf("%s (%s)", err.Error(), m.PhotoUID)
+	}
+
+	if m.DetailsLoaded() {
+		w := txt.UniqueKeywords(m.Details.Keywords)
+		w = append(w, labels.Keywords()...)
+		m.Details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
+	}
+
+	if err := m.IndexKeywords(); err != nil {
+		log.Error(err)
+	}
+
+	m.PhotoQuality = m.QualityScore()
+
+	return UnscopedDb().Save(m).Error
 }

@@ -21,12 +21,12 @@ func Start(conf *config.Config) {
 			case <-stop:
 				log.Info("shutting down workers")
 				ticker.Stop()
-				mutex.GroomWorker.Cancel()
+				mutex.PrismWorker.Cancel()
 				mutex.ShareWorker.Cancel()
 				mutex.SyncWorker.Cancel()
 				return
 			case <-ticker.C:
-				StartGroom(conf)
+				StartPrism(conf)
 				StartShare(conf)
 				StartSync(conf)
 			}
@@ -39,11 +39,11 @@ func Stop() {
 	stop <- true
 }
 
-// StartGroom runs the groom worker once.
-func StartGroom(conf *config.Config) {
+// StartPrism runs the prism worker once.
+func StartPrism(conf *config.Config) {
 	if !mutex.WorkersBusy() {
 		go func() {
-			worker := NewGroom(conf)
+			worker := NewPrism(conf)
 			if err := worker.Start(); err != nil {
 				log.Error(err)
 			}

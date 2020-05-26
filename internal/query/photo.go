@@ -1,6 +1,8 @@
 package query
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 )
@@ -8,16 +10,16 @@ import (
 // PhotoByID returns a Photo based on the ID.
 func PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 	if err := UnscopedDb().Where("id = ?", photoID).
+		Preload("Labels", func(db *gorm.DB) *gorm.DB {
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
+		}).
+		Preload("Labels.Label").
 		Preload("Links").
 		Preload("Camera").
 		Preload("Lens").
 		Preload("Details").
 		Preload("Location").
 		Preload("Location.Place").
-		Preload("Labels", func(db *gorm.DB) *gorm.DB {
-			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
-		}).
-		Preload("Labels.Label").
 		First(&photo).Error; err != nil {
 		return photo, err
 	}
@@ -28,16 +30,16 @@ func PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 // PhotoByUID returns a Photo based on the UID.
 func PhotoByUID(photoUID string) (photo entity.Photo, err error) {
 	if err := UnscopedDb().Where("photo_uid = ?", photoUID).
+		Preload("Labels", func(db *gorm.DB) *gorm.DB {
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
+		}).
+		Preload("Labels.Label").
 		Preload("Links").
 		Preload("Camera").
 		Preload("Lens").
 		Preload("Details").
 		Preload("Location").
 		Preload("Location.Place").
-		Preload("Labels", func(db *gorm.DB) *gorm.DB {
-			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
-		}).
-		Preload("Labels.Label").
 		First(&photo).Error; err != nil {
 		return photo, err
 	}
@@ -45,19 +47,19 @@ func PhotoByUID(photoUID string) (photo entity.Photo, err error) {
 	return photo, nil
 }
 
-// PreloadPhotoByUID returns a Photo based on the UID with all dependencies preloaded.
-func PreloadPhotoByUID(photoUID string) (photo entity.Photo, err error) {
+// PhotoPreloadByUID returns a Photo based on the UID with all dependencies preloaded.
+func PhotoPreloadByUID(photoUID string) (photo entity.Photo, err error) {
 	if err := UnscopedDb().Where("photo_uid = ?", photoUID).
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
 		Preload("Labels.Label").
+		Preload("Links").
 		Preload("Camera").
 		Preload("Lens").
-		Preload("Links").
+		Preload("Details").
 		Preload("Location").
 		Preload("Location.Place").
-		Preload("Details").
 		First(&photo).Error; err != nil {
 		return photo, err
 	}
@@ -67,8 +69,8 @@ func PreloadPhotoByUID(photoUID string) (photo entity.Photo, err error) {
 	return photo, nil
 }
 
-// MissingPhotos returns photo entities without existing files.
-func MissingPhotos(limit int, offset int) (entities []entity.Photo, err error) {
+// PhotosMissing returns photo entities without existing files.
+func PhotosMissing(limit int, offset int) (entities Photos, err error) {
 	err = Db().
 		Select("photos.*").
 		Joins("JOIN files a ON photos.id = a.photo_id ").
@@ -81,9 +83,29 @@ func MissingPhotos(limit int, offset int) (entities []entity.Photo, err error) {
 	return entities, err
 }
 
-// ResetPhotosQuality resets the quality of photos without primary file to -1.
-func ResetPhotosQuality() error {
+// ResetPhotoQuality resets the quality of photos without primary file to -1.
+func ResetPhotoQuality() error {
 	return Db().Table("photos").
 		Where("id IN (SELECT photos.id FROM photos LEFT JOIN files ON photos.id = files.photo_id AND files.file_primary = 1 WHERE files.id IS NULL GROUP BY photos.id)").
 		Update("photo_quality", -1).Error
+}
+
+// PhotosMaintenance returns photos selected for maintenance.
+func PhotosMaintenance(limit int, offset int) (entities Photos, err error) {
+	err = Db().
+		Preload("Labels", func(db *gorm.DB) *gorm.DB {
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
+		}).
+		Preload("Labels.Label").
+		Preload("Links").
+		Preload("Camera").
+		Preload("Lens").
+		Preload("Details").
+		Preload("Location").
+		Preload("Location.Place").
+		Where("maintained_at IS NULL OR maintained_at < ?", time.Now().Add(-1*time.Hour*24*7)).
+		Where("updated_at < ?", time.Now().Add(-1*time.Hour*36)).
+		Limit(limit).Offset(offset).Find(&entities).Error
+
+	return entities, err
 }

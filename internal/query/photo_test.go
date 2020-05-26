@@ -40,7 +40,7 @@ func TestPhotoByUID(t *testing.T) {
 
 func TestPreloadPhotoByUID(t *testing.T) {
 	t.Run("photo found", func(t *testing.T) {
-		result, err := PreloadPhotoByUID("pt9jtdre2lvl0y12")
+		result, err := PhotoPreloadByUID("pt9jtdre2lvl0y12")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -48,14 +48,14 @@ func TestPreloadPhotoByUID(t *testing.T) {
 	})
 
 	t.Run("no photo found", func(t *testing.T) {
-		result, err := PreloadPhotoByUID("99999")
+		result, err := PhotoPreloadByUID("99999")
 		assert.Error(t, err, "record not found")
 		t.Log(result)
 	})
 }
 
 func TestMissingPhotos(t *testing.T) {
-	r, err := MissingPhotos(15, 0)
+	r, err := PhotosMissing(15, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,7 +63,7 @@ func TestMissingPhotos(t *testing.T) {
 }
 
 func TestResetPhotosQuality(t *testing.T) {
-	err := ResetPhotosQuality()
+	err := ResetPhotoQuality()
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -40,7 +40,7 @@ func GetPhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		p, err := query.PreloadPhotoByUID(c.Param("uid"))
+		p, err := query.PhotoPreloadByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -95,7 +95,7 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Success("photo saved")
 
-		p, err := query.PreloadPhotoByUID(uid)
+		p, err := query.PhotoPreloadByUID(uid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
@@ -152,7 +152,7 @@ func GetPhotoYaml(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		p, err := query.PreloadPhotoByUID(c.Param("uid"))
+		p, err := query.PhotoPreloadByUID(c.Param("uid"))
 
 		if err != nil {
 			c.AbortWithStatus(http.StatusNotFound)
@@ -264,7 +264,7 @@ func SetPhotoPrimary(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Success("photo saved")
 
-		p, err := query.PreloadPhotoByUID(uid)
+		p, err := query.PhotoPreloadByUID(uid)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)

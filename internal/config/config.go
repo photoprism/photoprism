@@ -204,7 +204,7 @@ func (c *Config) Shutdown() {
 	mutex.MainWorker.Cancel()
 	mutex.ShareWorker.Cancel()
 	mutex.SyncWorker.Cancel()
-	mutex.GroomWorker.Cancel()
+	mutex.PrismWorker.Cancel()
 
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)

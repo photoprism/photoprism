@@ -8,14 +8,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGroom_Start(t *testing.T) {
+func TestPrism_Start(t *testing.T) {
 	conf := config.TestConfig()
 
-	worker := NewGroom(conf)
+	worker := NewPrism(conf)
 
-	assert.IsType(t, &Groom{}, worker)
+	assert.IsType(t, &Prism{}, worker)
 
-	if err := mutex.GroomWorker.Start(); err != nil {
+	if err := mutex.PrismWorker.Start(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -23,7 +23,11 @@ func TestGroom_Start(t *testing.T) {
 		t.Fatal("error expected")
 	}
 
-	mutex.GroomWorker.Stop()
+	mutex.PrismWorker.Stop()
+
+	if err := worker.Start(); err != nil {
+		t.Fatal(err)
+	}
 
 	if err := worker.Start(); err != nil {
 		t.Fatal(err)
