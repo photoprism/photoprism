@@ -72,14 +72,14 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 		f, err := form.NewPhoto(m)
 
 		if err != nil {
-			log.Error(err)
+			log.Errorf("photo: %s", err.Error())
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
 		}
 
 		// 2) Update form with values from request
 		if err := c.BindJSON(&f); err != nil {
-			log.Error(err)
+			log.Errorf("photo: %s", err.Error())
 			c.AbortWithStatusJSON(http.StatusBadRequest, ErrFormInvalid)
 			return
 		}
@@ -193,15 +193,13 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		m.PhotoFavorite = true
-		m.PhotoQuality = m.QualityScore()
-		conf.Db().Save(&m)
+		if err := m.SetFavorite(true); err != nil{
+			log.Errorf("photo: %s", err.Error())
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			return
+		}
 
 		SavePhotoAsYaml(m, conf)
-
-		event.Publish("count.favorites", event.Data{
-			"count": 1,
-		})
 
 		PublishPhotoEvent(EntityUpdated, id, c)
 
@@ -228,15 +226,13 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		m.PhotoFavorite = false
-		m.PhotoQuality = m.QualityScore()
-		entity.Db().Save(&m)
+		if err := m.SetFavorite(false); err != nil{
+			log.Errorf("photo: %s", err.Error())
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			return
+		}
 
 		SavePhotoAsYaml(m, conf)
-
-		event.Publish("count.favorites", event.Data{
-			"count": -1,
-		})
 
 		PublishPhotoEvent(EntityUpdated, id, c)
 

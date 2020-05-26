@@ -8,6 +8,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -598,4 +599,35 @@ func (m *Photo) NoDescription() bool {
 // Updates a column in the database.
 func (m *Photo) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+// Updates multiple columns in the database.
+func (m *Photo) Updates(values interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumns(values).Error
+}
+
+// SetFavorite updates the favorite status of a photo.
+func (m *Photo) SetFavorite(favorite bool) error {
+	changed := m.PhotoFavorite != favorite
+	m.PhotoFavorite = favorite
+	m.PhotoQuality = m.QualityScore()
+
+	if err := m.Updates(map[string]interface{}{"PhotoFavorite": m.PhotoFavorite, "PhotoQuality": m.PhotoQuality}); err != nil {
+		return err
+	}
+
+	// Update counters if changed and not deleted.
+	if changed && m.DeletedAt == nil {
+		if favorite {
+			event.Publish("count.favorites", event.Data{
+				"count": 1,
+			})
+		} else {
+			event.Publish("count.favorites", event.Data{
+				"count": -1,
+			})
+		}
+	}
+
+	return nil
 }
