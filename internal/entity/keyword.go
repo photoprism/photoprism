@@ -24,10 +24,35 @@ func NewKeyword(keyword string) *Keyword {
 	return result
 }
 
-// FirstOrCreate checks if the keyword already exist in the database
-func (m *Keyword) FirstOrCreate() *Keyword {
-	if err := Db().FirstOrCreate(m, "keyword = ?", m.Keyword).Error; err != nil {
+// Updates multiple columns in the database.
+func (m *Keyword) Updates(values interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumns(values).Error
+}
+
+// Updates a column in the database.
+func (m *Keyword) Update(attr string, value interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+// Save updates the existing or inserts a new row.
+func (m *Keyword) Save() error {
+	return Db().Save(m).Error
+}
+
+// Create inserts a new row to the database.
+func (m *Keyword) Create() error {
+	return Db().Create(m).Error
+}
+
+// FirstOrCreateKeyword returns the existing row, inserts a new row or nil in case of errors.
+func FirstOrCreateKeyword(m *Keyword) *Keyword {
+	result := Keyword{}
+
+	if err := Db().Where("keyword = ?", m.Keyword).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
 		log.Errorf("keyword: %s", err)
+		return nil
 	}
 
 	return m

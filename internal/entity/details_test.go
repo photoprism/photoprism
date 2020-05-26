@@ -5,11 +5,12 @@ import (
 	"testing"
 )
 
-func TestDetails_FirstOrCreate(t *testing.T) {
-	description := &Details{PhotoID: 123, Keywords: ""}
-	err := description.FirstOrCreate()
-	if err != nil {
-		t.Fatal(err)
+func TestFirstOrCreateDetails(t *testing.T) {
+	details := &Details{PhotoID: 123, Keywords: ""}
+	details = FirstOrCreateDetails(details)
+
+	if details == nil {
+		t.Fatal("details should not be nil")
 	}
 }
 

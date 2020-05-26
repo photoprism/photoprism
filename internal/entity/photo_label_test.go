@@ -3,6 +3,7 @@ package entity
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,10 +23,21 @@ func TestPhotoLabel_TableName(t *testing.T) {
 	assert.Equal(t, "photos_labels", tableName)
 }
 
-func TestPhotoLabel_FirstOrCreate(t *testing.T) {
-	pl := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
-	r := pl.FirstOrCreate()
-	assert.Equal(t, uint(1000000), r.PhotoID)
+func TestFirstOrCreatePhotoLabel(t *testing.T) {
+	model := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
+	result := FirstOrCreatePhotoLabel(&model)
+
+	if result == nil {
+		t.Fatal("result should not be nil")
+	}
+
+	if result.PhotoID != model.PhotoID {
+		t.Errorf("PhotoID should be the same: %d %d", result.PhotoID, model.PhotoID)
+	}
+
+	if result.LabelID != model.LabelID {
+		t.Errorf("LabelID should be the same: %d %d", result.LabelID, model.LabelID)
+	}
 }
 
 func TestPhotoLabel_ClassifyLabel(t *testing.T) {
@@ -39,11 +51,8 @@ func TestPhotoLabel_ClassifyLabel(t *testing.T) {
 
 	t.Run("label = nil", func(t *testing.T) {
 		photoLabel := NewPhotoLabel(1, 3, 80, "source")
-		assert.Panics(t, func() {
-
-			photoLabel.ClassifyLabel()
-
-		}, "photo label: label is nil")
+		result := photoLabel.ClassifyLabel()
+		assert.Equal(t, classify.Label{}, result)
 	})
 }
 

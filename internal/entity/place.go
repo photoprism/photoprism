@@ -65,7 +65,7 @@ func FindPlaceByLabel(uid string, label string) *Place {
 	return place
 }
 
-// Find returns db record of place
+// Find updates the entity with values from the database.
 func (m *Place) Find() error {
 	if err := Db().First(m, "place_uid = ?", m.PlaceUID).Error; err != nil {
 		return err
@@ -76,14 +76,10 @@ func (m *Place) Find() error {
 
 // Create inserts a new row to the database.
 func (m *Place) Create() error {
-	if err := Db().Create(m).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return Db().Create(m).Error
 }
 
-// FirstOrCreatePlace inserts a new row if not exists.
+// FirstOrCreatePlace returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreatePlace(m *Place) *Place {
 	if m.PlaceUID == "" {
 		log.Errorf("place: uid must not be empty")

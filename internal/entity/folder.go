@@ -116,7 +116,7 @@ func (m *Folder) Create() error {
 	return nil
 }
 
-// FirstOrCreateFolder returns the first matching record or creates a new one with the given conditions.
+// FirstOrCreateFolder returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateFolder(m *Folder) *Folder {
 	result := Folder{}
 

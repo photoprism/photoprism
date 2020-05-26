@@ -138,7 +138,7 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if err := m.Save(f); err != nil {
+		if err := m.SaveForm(f); err != nil {
 			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
@@ -273,7 +273,11 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 		var added []*entity.PhotoAlbum
 
 		for _, p := range photos {
-			added = append(added, entity.NewPhotoAlbum(p.PhotoUID, a.AlbumUID).FirstOrCreate())
+			val := entity.FirstOrCreatePhotoAlbum(entity.NewPhotoAlbum(p.PhotoUID, a.AlbumUID))
+
+			if val != nil {
+				added = append(added, val)
+			}
 		}
 
 		if len(added) == 1 {

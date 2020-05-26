@@ -69,13 +69,7 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 			m.TakenAt = m.GetTakenAt()
 		}
 
-		country := NewCountry(location.CountryCode(), location.CountryName()).FirstOrCreate()
-
-		if country.New {
-			event.Publish("count.countries", event.Data{
-				"count": 1,
-			})
-		}
+		FirstOrCreateCountry(NewCountry(location.CountryCode(), location.CountryName()))
 
 		locCategory := location.Category()
 		keywords = append(keywords, location.Keywords()...)

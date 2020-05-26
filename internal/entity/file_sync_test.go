@@ -18,8 +18,19 @@ func TestNewFileSync(t *testing.T) {
 	assert.Equal(t, "new", r.Status)
 }
 
-func TestFileSync_FirstOrCreate(t *testing.T) {
+func TestFirstOrCreateFileSync(t *testing.T) {
 	fileSync := &FileSync{AccountID: 123, FileID: 888, RemoteName: "test123"}
-	r := fileSync.FirstOrCreate()
-	assert.Equal(t, uint(0x7b), r.AccountID)
+	result := FirstOrCreateFileSync(fileSync)
+
+	if result == nil {
+		t.Fatal("result should not be nil")
+	}
+
+	if result.FileID != fileSync.FileID {
+		t.Errorf("FileID should be the same: %d %d", result.FileID, fileSync.FileID)
+	}
+
+	if result.AccountID != fileSync.AccountID {
+		t.Errorf("AccountID should be the same: %d %d", result.AccountID, fileSync.AccountID)
+	}
 }

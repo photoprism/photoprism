@@ -21,10 +21,20 @@ func NewPhotoKeyword(photoID, keywordID uint) *PhotoKeyword {
 	return result
 }
 
-// FirstOrCreate checks if the Keywords relation already exist in the database before the creation
-func (m *PhotoKeyword) FirstOrCreate() *PhotoKeyword {
-	if err := Db().FirstOrCreate(m, "photo_id = ? AND keyword_id = ?", m.PhotoID, m.KeywordID).Error; err != nil {
-		log.Errorf("photo keyword: %s", err)
+// Create inserts a new row to the database.
+func (m *PhotoKeyword) Create() error {
+	return Db().Create(m).Error
+}
+
+// FirstOrCreatePhotoKeyword returns the existing row, inserts a new row or nil in case of errors.
+func FirstOrCreatePhotoKeyword(m *PhotoKeyword) *PhotoKeyword {
+	result := PhotoKeyword{}
+
+	if err := Db().Where("photo_id = ? AND keyword_id = ?", m.PhotoID, m.KeywordID).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
+		log.Errorf("photo-keyword: %s", err)
+		return nil
 	}
 
 	return m

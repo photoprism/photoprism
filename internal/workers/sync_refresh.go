@@ -14,7 +14,6 @@ func (s *Sync) refresh(a entity.Account) (complete bool, err error) {
 		return false, nil
 	}
 
-	db := s.conf.Db()
 	client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
 
 	subDirs, err := client.Directories(a.SyncPath, true)
@@ -62,18 +61,23 @@ func (s *Sync) refresh(a entity.Account) (complete bool, err error) {
 				}
 			}
 
-			f.FirstOrCreate()
+			f = entity.FirstOrCreateFileSync(f)
+
+			if f == nil {
+				log.Errorf("sync: file sync entity should not be nil - bug?")
+				continue
+			}
 
 			if f.Status == entity.FileSyncIgnore && mediaType == fs.MediaRaw && a.SyncRaw {
-				f.Status = entity.FileSyncNew
-				db.Save(&f)
+				s.report(f.Update("Status", entity.FileSyncNew))
 			}
 
 			if f.Status == entity.FileSyncDownloaded && !f.RemoteDate.Equal(file.Date) {
-				f.Status = entity.FileSyncNew
-				f.RemoteDate = file.Date
-				f.RemoteSize = file.Size
-				db.Save(&f)
+				s.report(f.Updates(map[string]interface{}{
+					"Status":     entity.FileSyncNew,
+					"RemoteDate": file.Date,
+					"RemoteSize": file.Size,
+				}))
 			}
 		}
 	}

@@ -32,32 +32,17 @@ func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *Photo
 	return result
 }
 
-// FirstOrCreate checks if the PhotoLabel relation already exist in the database before the creation
-func (m *PhotoLabel) FirstOrCreate() *PhotoLabel {
-	if err := Db().FirstOrCreate(m, "photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).Error; err != nil {
-		log.Errorf("photo label: %s", err)
-	}
-
-	return m
+// Updates multiple columns in the database.
+func (m *PhotoLabel) Updates(values interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
-// ClassifyLabel returns the label as classify.Label
-func (m *PhotoLabel) ClassifyLabel() classify.Label {
-	if m.Label == nil {
-		panic("photo label: label is nil")
-	}
-
-	result := classify.Label{
-		Name:        m.Label.LabelName,
-		Source:      m.LabelSrc,
-		Uncertainty: m.Uncertainty,
-		Priority:    m.Label.LabelPriority,
-	}
-
-	return result
+// Updates a column in the database.
+func (m *PhotoLabel) Update(attr string, value interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
-// Save saves the entity in the database and returns an error.
+// Save saves the entity in the database.
 func (m *PhotoLabel) Save() error {
 	if m.Photo != nil {
 		m.Photo = nil
@@ -68,4 +53,40 @@ func (m *PhotoLabel) Save() error {
 	}
 
 	return Db().Save(m).Error
+}
+
+// Create inserts a new row to the database.
+func (m *PhotoLabel) Create() error {
+	return Db().Create(m).Error
+}
+
+// FirstOrCreatePhotoLabel returns the existing row, inserts a new row or nil in case of errors.
+func FirstOrCreatePhotoLabel(m *PhotoLabel) *PhotoLabel {
+	result := PhotoLabel{}
+
+	if err := Db().Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
+		log.Errorf("photo-label: %s", err)
+		return nil
+	}
+
+	return m
+}
+
+// ClassifyLabel returns the label as classify.Label
+func (m *PhotoLabel) ClassifyLabel() classify.Label {
+	if m.Label == nil {
+		log.Errorf("photo-label: classify label is nil (photo id %d, label id %d) - bug?", m.PhotoID, m.LabelID)
+		return classify.Label{}
+	}
+
+	result := classify.Label{
+		Name:        m.Label.LabelName,
+		Source:      m.LabelSrc,
+		Uncertainty: m.Uncertainty,
+		Priority:    m.Label.LabelPriority,
+	}
+
+	return result
 }

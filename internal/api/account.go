@@ -139,7 +139,7 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 			dstFileName := dst + "/" + file.ShareFileName()
 
 			fileShare := entity.NewFileShare(file.ID, m.ID, dstFileName)
-			fileShare.FirstOrCreate()
+			entity.FirstOrCreateFileShare(fileShare)
 		}
 
 		workers.StartShare(conf)
@@ -222,7 +222,7 @@ func UpdateAccount(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		// 3) Save model with values from form
-		if err := m.Save(f); err != nil {
+		if err := m.SaveForm(f); err != nil {
 			log.Error(err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return

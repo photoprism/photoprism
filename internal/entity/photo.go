@@ -8,7 +8,6 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/classify"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -237,7 +236,12 @@ func (m *Photo) IndexKeywords() error {
 	keywords = txt.UniqueWords(keywords)
 
 	for _, w := range keywords {
-		kw := NewKeyword(w).FirstOrCreate()
+		kw := FirstOrCreateKeyword(NewKeyword(w))
+
+		if kw == nil {
+			log.Errorf("photo: index keyword should not be nil - bug?")
+			continue
+		}
 
 		if kw.Skip {
 			continue
@@ -245,7 +249,7 @@ func (m *Photo) IndexKeywords() error {
 
 		keywordIds = append(keywordIds, kw.ID)
 
-		NewPhotoKeyword(m.ID, kw.ID).FirstOrCreate()
+		FirstOrCreatePhotoKeyword(NewPhotoKeyword(m.ID, kw.ID))
 	}
 
 	return db.Where("photo_id = ? AND keyword_id NOT IN (?)", m.ID, keywordIds).Delete(&PhotoKeyword{}).Error
@@ -427,30 +431,30 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 
 // AddLabels updates the entity with additional or updated label information.
 func (m *Photo) AddLabels(labels classify.Labels) {
-	// TODO: Update classify labels from database
-	for _, label := range labels {
-		lm := NewLabel(label.Title(), label.Priority).FirstOrCreate()
+	for _, classifyLabel := range labels {
+		labelEntity := FirstOrCreateLabel(NewLabel(classifyLabel.Title(), classifyLabel.Priority))
 
-		if lm.New {
-			event.EntitiesCreated("labels", []*Label{lm})
-
-			if label.Priority >= 0 {
-				event.Publish("count.labels", event.Data{
-					"count": 1,
-				})
-			}
+		if labelEntity == nil {
+			log.Errorf("index: label %s for photo %d should not be nil - bug?", txt.Quote(classifyLabel.Title()), m.ID)
+			continue
 		}
 
-		if err := lm.Update(label); err != nil {
+		if err := labelEntity.UpdateClassify(classifyLabel); err != nil {
 			log.Errorf("index: %s", err)
 		}
 
-		plm := NewPhotoLabel(m.ID, lm.ID, label.Uncertainty, label.Source).FirstOrCreate()
+		photoLabel := FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, classifyLabel.Source))
 
-		if plm.Uncertainty > label.Uncertainty && plm.Uncertainty < 100 {
-			plm.Uncertainty = label.Uncertainty
-			plm.LabelSrc = label.Source
-			if err := Db().Save(&plm).Error; err != nil {
+		if photoLabel == nil {
+			log.Errorf("index: label %d for photo %d should not be nil - bug?", labelEntity.ID, m.ID)
+			continue
+		}
+
+		if photoLabel.Uncertainty > classifyLabel.Uncertainty && photoLabel.Uncertainty < 100 {
+			if err := photoLabel.Updates(map[string]interface{}{
+				"Uncertainty": classifyLabel.Uncertainty,
+				"LabelSrc":    classifyLabel.Source,
+			}); err != nil {
 				log.Errorf("index: %s", err)
 			}
 		}
@@ -591,7 +595,7 @@ func (m *Photo) NoDescription() bool {
 	return m.PhotoDescription == ""
 }
 
-// Updates a model attribute.
+// Updates a column in the database.
 func (m *Photo) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }

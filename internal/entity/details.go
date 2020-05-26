@@ -11,9 +11,23 @@ type Details struct {
 	License   string `gorm:"type:varchar(255);" json:"License" yaml:"License,omitempty"`
 }
 
-// FirstOrCreate returns the matching entity or creates a new one.
-func (m *Details) FirstOrCreate() error {
-	return Db().FirstOrCreate(m, "photo_id = ?", m.PhotoID).Error
+// Create inserts a new row to the database.
+func (m *Details) Create() error {
+	return Db().Create(m).Error
+}
+
+// FirstOrCreateDetails returns the existing row, inserts a new row or nil in case of errors.
+func FirstOrCreateDetails(m *Details) *Details {
+	result := Details{}
+
+	if err := Db().Where("photo_id = ?", m.PhotoID).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
+		log.Errorf("details: %s", err)
+		return nil
+	}
+
+	return m
 }
 
 // NoKeywords checks if the photo has no Keywords

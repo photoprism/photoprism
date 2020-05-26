@@ -64,14 +64,10 @@ func NewCamera(modelName string, makeName string) *Camera {
 
 // Create inserts a new row to the database.
 func (m *Camera) Create() error {
-	if err := Db().Create(m).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return Db().Create(m).Error
 }
 
-// FirstOrCreateCamera inserts a new row if not exists.
+// FirstOrCreateCamera returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateCamera(m *Camera) *Camera {
 	result := Camera{}
 

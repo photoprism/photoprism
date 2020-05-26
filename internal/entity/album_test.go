@@ -78,7 +78,7 @@ func TestAlbum_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		err = album.Save(albumForm)
+		err = album.SaveForm(albumForm)
 
 		if err != nil {
 			t.Fatal(err)

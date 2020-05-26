@@ -25,6 +25,13 @@ func NewSync(conf *config.Config) *Sync {
 	}
 }
 
+// Report logs an error message if err is not nil.
+func (s *Sync) report(err error) {
+	if err != nil {
+		log.Errorf("sync: %s", err.Error())
+	}
+}
+
 // Start starts the sync worker.
 func (s *Sync) Start() (err error) {
 	if err := mutex.Sync.Start(); err != nil {
@@ -120,18 +127,12 @@ func (s *Sync) Start() (err error) {
 			return nil
 		}
 
-		if err := entity.Db().First(&a, a.ID).Error; err != nil {
-			log.Errorf("sync: %s", err.Error())
-			return err
-		}
-
 		// Only update the following fields to avoid overwriting other settings
-		a.AccError = accError
-		a.AccErrors = accErrors
-		a.SyncStatus = syncStatus
-		a.SyncDate = syncDate
-
-		if err := entity.Db().Save(&a).Error; err != nil {
+		if err := a.Updates(map[string]interface{}{
+			"AccError": accError,
+			"AccErrors": accErrors,
+			"SyncStatus": syncStatus,
+			"SyncDate": syncDate}); err != nil {
 			log.Errorf("sync: %s", err.Error())
 		} else if synced {
 			event.Publish("sync.synced", event.Data{"account": a})

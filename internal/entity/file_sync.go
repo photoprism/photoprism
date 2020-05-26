@@ -44,10 +44,35 @@ func NewFileSync(accountID uint, remoteName string) *FileSync {
 	return result
 }
 
-// FirstOrCreate returns the matching entity or creates a new one.
-func (m *FileSync) FirstOrCreate() *FileSync {
-	if err := Db().FirstOrCreate(m, "account_id = ? AND remote_name = ?", m.AccountID, m.RemoteName).Error; err != nil {
-		log.Errorf("file sync: %s", err)
+// Updates multiple columns in the database.
+func (m *FileSync) Updates(values interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumns(values).Error
+}
+
+// Updates a column in the database.
+func (m *FileSync) Update(attr string, value interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+// Save updates the existing or inserts a new row.
+func (m *FileSync) Save() error {
+	return Db().Save(m).Error
+}
+
+// Create inserts a new row to the database.
+func (m *FileSync) Create() error {
+	return Db().Create(m).Error
+}
+
+// FirstOrCreateFileSync returns the existing row, inserts a new row or nil in case of errors.
+func FirstOrCreateFileSync(m *FileSync) *FileSync {
+	result := FileSync{}
+
+	if err := Db().Where("account_id = ? AND remote_name = ?", m.AccountID, m.RemoteName).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
+		log.Errorf("file-sync: %s", err)
+		return nil
 	}
 
 	return m

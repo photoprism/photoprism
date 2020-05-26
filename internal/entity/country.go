@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/maps"
 )
 
@@ -34,7 +35,7 @@ var UnknownCountry = Country{
 
 // CreateUnknownCountry is used to initialize the database with the default country
 func CreateUnknownCountry() {
-	UnknownCountry.FirstOrCreate()
+	FirstOrCreateCountry(&UnknownCountry)
 }
 
 // NewCountry creates a new country, with default country code if not provided
@@ -58,10 +59,26 @@ func NewCountry(countryCode string, countryName string) *Country {
 	return result
 }
 
-// FirstOrCreate checks if the country exist already in the database (using countryCode)
-func (m *Country) FirstOrCreate() *Country {
-	if err := Db().FirstOrCreate(m, "id = ?", m.ID).Error; err != nil {
+// Create inserts a new row to the database.
+func (m *Country) Create() error {
+	return Db().Create(m).Error
+}
+
+// FirstOrCreateCountry returns the existing row, inserts a new row or nil in case of errors.
+func FirstOrCreateCountry(m *Country) *Country {
+	result := Country{}
+
+	if err := Db().Where("id = ?", m.ID).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
 		log.Errorf("country: %s", err)
+		return nil
+	}
+
+	if m.ID != UnknownCountry.ID {
+		event.Publish("count.countries", event.Data{
+			"count": 1,
+		})
 	}
 
 	return m

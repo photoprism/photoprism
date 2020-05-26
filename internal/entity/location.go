@@ -105,14 +105,10 @@ func (m *Location) Find(api string) error {
 
 // Create inserts a new row to the database.
 func (m *Location) Create() error {
-	if err := Db().Create(m).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return Db().Create(m).Error
 }
 
-// FirstOrCreateLocation inserts a new row if not exists.
+// FirstOrCreateLocation returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateLocation(m *Location) *Location {
 	if m.LocUID == "" {
 		log.Errorf("location: loc_uid must not be empty")

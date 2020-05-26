@@ -31,10 +31,20 @@ func NewPhotoAlbum(photoUID, albumUID string) *PhotoAlbum {
 	return result
 }
 
-// FirstOrCreate checks if the PhotoAlbum relation already exist in the database before the creation
-func (m *PhotoAlbum) FirstOrCreate() *PhotoAlbum {
-	if err := Db().FirstOrCreate(m, "photo_uid = ? AND album_uid = ?", m.PhotoUID, m.AlbumUID).Error; err != nil {
-		log.Errorf("photo album: %s", err)
+// Create inserts a new row to the database.
+func (m *PhotoAlbum) Create() error {
+	return Db().Create(m).Error
+}
+
+// FirstOrCreatePhotoAlbum returns the existing row, inserts a new row or nil in case of errors.
+func FirstOrCreatePhotoAlbum(m *PhotoAlbum) *PhotoAlbum {
+	result := PhotoAlbum{}
+
+	if err := Db().Where("photo_uid = ? AND album_uid = ?", m.PhotoUID, m.AlbumUID).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
+		log.Errorf("photo-album: %s", err)
+		return nil
 	}
 
 	return m

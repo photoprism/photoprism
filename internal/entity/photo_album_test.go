@@ -21,8 +21,19 @@ func TestPhotoAlbum_TableName(t *testing.T) {
 	assert.Equal(t, "photos_albums", tableName)
 }
 
-func TestPhotoAlbum_FirstOrCreate(t *testing.T) {
-	m := PhotoAlbumFixtures.Get("1", "pt9jtdre2lvl0yh7", "at9lxuqxpogaaba8")
-	r := m.FirstOrCreate()
-	assert.Equal(t, "at9lxuqxpogaaba8", r.AlbumUID)
+func TestFirstOrCreatePhotoAlbum(t *testing.T) {
+	model := PhotoAlbumFixtures.Get("1", "pt9jtdre2lvl0yh7", "at9lxuqxpogaaba8")
+	result := FirstOrCreatePhotoAlbum(&model)
+
+	if result == nil {
+		t.Fatal("result should not be nil")
+	}
+
+	if result.AlbumUID != model.AlbumUID {
+		t.Errorf("AlbumUID should be the same: %s %s", result.AlbumUID, model.AlbumUID)
+	}
+
+	if result.PhotoUID != model.PhotoUID {
+		t.Errorf("PhotoUID should be the same: %s %s", result.PhotoUID, model.PhotoUID)
+	}
 }

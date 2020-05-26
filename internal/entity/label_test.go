@@ -52,11 +52,21 @@ func TestLabel_SetName(t *testing.T) {
 	})
 }
 
-func TestLabel_FirstOrCreate(t *testing.T) {
+func TestFirstOrCreateLabel(t *testing.T) {
 	label := LabelFixtures.Get("flower")
-	r := label.FirstOrCreate()
-	assert.Equal(t, "Flower", r.LabelName)
-	assert.Equal(t, "flower", r.LabelSlug)
+	result := FirstOrCreateLabel(&label)
+
+	if result == nil {
+		t.Fatal("result should not be nil")
+	}
+
+	if result.LabelName != label.LabelName {
+		t.Errorf("LabelName should be the same: %s %s", result.LabelName, label.LabelName)
+	}
+
+	if result.LabelSlug != label.LabelSlug {
+		t.Errorf("LabelName should be the same: %s %s", result.LabelSlug, label.LabelSlug)
+	}
 }
 
 func TestLabel_Update(t *testing.T) {
@@ -69,7 +79,7 @@ func TestLabel_Update(t *testing.T) {
 		assert.Equal(t, "customslug", Label.CustomSlug)
 		assert.Equal(t, "label", Label.LabelName)
 
-		err := Label.Update(*classifyLabel)
+		err := Label.UpdateClassify(*classifyLabel)
 
 		if err != nil {
 			t.Fatal(err)
@@ -89,7 +99,7 @@ func TestLabel_Update(t *testing.T) {
 		assert.Equal(t, "", Label.CustomSlug)
 		assert.Equal(t, "label12", Label.LabelName)
 
-		err := Label.Update(*classifyLabel)
+		err := Label.UpdateClassify(*classifyLabel)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -109,7 +119,7 @@ func TestLabel_Update(t *testing.T) {
 		assert.Equal(t, "labelslug2", Label.CustomSlug)
 		assert.Equal(t, "label34", Label.LabelName)
 
-		err := Label.Update(*classifyLabel)
+		err := Label.UpdateClassify(*classifyLabel)
 		if err != nil {
 			t.Fatal(err)
 		}

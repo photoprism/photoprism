@@ -38,26 +38,28 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		lm := entity.NewLabel(f.LabelName, f.LabelPriority).FirstOrCreate()
+		labelEntity := entity.FirstOrCreateLabel(entity.NewLabel(f.LabelName, f.LabelPriority))
 
-		if lm.New && f.LabelPriority >= 0 {
-			event.Publish("count.labels", event.Data{
-				"count": 1,
-			})
+		if labelEntity == nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed creating label"})
+			return
 		}
 
-		plm := entity.NewPhotoLabel(m.ID, lm.ID, f.Uncertainty, "manual").FirstOrCreate()
+		photoLabel := entity.FirstOrCreatePhotoLabel(entity.NewPhotoLabel(m.ID, labelEntity.ID, f.Uncertainty, "manual"))
 
-		if plm.Uncertainty > f.Uncertainty {
-			plm.Uncertainty = f.Uncertainty
-			plm.LabelSrc = entity.SrcManual
+		if photoLabel == nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed updating photo label"})
+			return
+		}
 
-			if err := entity.Db().Save(&plm).Error; err != nil {
+		if photoLabel.Uncertainty > f.Uncertainty {
+			if err := photoLabel.Updates(map[string]interface{}{
+				"Uncertainty": f.Uncertainty,
+				"LabelSrc":    entity.SrcManual,
+			}); err != nil {
 				log.Errorf("label: %s", err)
 			}
 		}
-
-		entity.Db().Save(&lm)
 
 		p, err := query.PreloadPhotoByUID(c.Param("uid"))
 

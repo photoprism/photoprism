@@ -168,7 +168,7 @@ func (m *File) UpdateVideoInfos() error {
 	return Db().Model(File{}).Where("photo_id = ? AND file_video = 1", m.PhotoID).Updates(values).Error
 }
 
-// Updates a model attribute.
+// Updates a column in the database.
 func (m *File) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }

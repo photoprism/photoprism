@@ -58,14 +58,10 @@ func NewLens(modelName string, makeName string) *Lens {
 
 // Create inserts a new row to the database.
 func (m *Lens) Create() error {
-	if err := Db().Create(m).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return Db().Create(m).Error
 }
 
-// FirstOrCreateLens inserts a new row if not exists.
+// FirstOrCreateLens returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateLens(m *Lens) *Lens {
 	result := Lens{}
 

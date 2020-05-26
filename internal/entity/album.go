@@ -83,7 +83,7 @@ func (m *Album) SetTitle(title string) {
 }
 
 // Saves the entity using form data and stores it in the database.
-func (m *Album) Save(f form.Album) error {
+func (m *Album) SaveForm(f form.Album) error {
 	if err := deepcopier.Copy(m).From(f); err != nil {
 		return err
 	}
@@ -93,4 +93,19 @@ func (m *Album) Save(f form.Album) error {
 	}
 
 	return Db().Save(m).Error
+}
+
+// Updates a column in the database.
+func (m *Album) Update(attr string, value interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+// Save updates the existing or inserts a new row.
+func (m *Album) Save() error {
+	return Db().Save(m).Error
+}
+
+// Create inserts a new row to the database.
+func (m *Album) Create() error {
+	return Db().Create(m).Error
 }

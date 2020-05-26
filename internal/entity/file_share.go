@@ -44,10 +44,35 @@ func NewFileShare(fileID, accountID uint, remoteName string) *FileShare {
 	return result
 }
 
-// FirstOrCreate returns the matching entity or creates a new one.
-func (m *FileShare) FirstOrCreate() *FileShare {
-	if err := Db().FirstOrCreate(m, "file_id = ? AND account_id = ? AND remote_name = ?", m.FileID, m.AccountID, m.RemoteName).Error; err != nil {
-		log.Errorf("file push: %s", err)
+// Updates multiple columns in the database.
+func (m *FileShare) Updates(values interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumns(values).Error
+}
+
+// Updates a column in the database.
+func (m *FileShare) Update(attr string, value interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+// Save updates the existing or inserts a new row.
+func (m *FileShare) Save() error {
+	return Db().Save(m).Error
+}
+
+// Create inserts a new row to the database.
+func (m *FileShare) Create() error {
+	return Db().Create(m).Error
+}
+
+// FirstOrCreateFileShare returns the existing row, inserts a new row or nil in case of errors.
+func FirstOrCreateFileShare(m *FileShare) *FileShare {
+	result := FileShare{}
+
+	if err := Db().Where("file_id = ? AND account_id = ? AND remote_name = ?", m.FileID, m.AccountID, m.RemoteName).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
+		log.Errorf("file-share: %s", err)
+		return nil
 	}
 
 	return m

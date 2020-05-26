@@ -19,8 +19,15 @@ func TestNewKeyword(t *testing.T) {
 	})
 }
 
-func TestKeyword_FirstOrCreate(t *testing.T) {
+func TestFirstOrCreateKeyword(t *testing.T) {
 	keyword := NewKeyword("food")
-	r := keyword.FirstOrCreate()
-	assert.Equal(t, "food", r.Keyword)
+	result := FirstOrCreateKeyword(keyword)
+
+	if result == nil {
+		t.Fatal("result should not be nil")
+	}
+
+	if result.Keyword != keyword.Keyword {
+		t.Errorf("Keyword should be the same: %s %s", result.Keyword, keyword.Keyword)
+	}
 }

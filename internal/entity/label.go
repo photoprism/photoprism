@@ -6,6 +6,7 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -61,10 +62,33 @@ func NewLabel(name string, priority int) *Label {
 	return result
 }
 
-// FirstOrCreate checks if the label already exists in the database
-func (m *Label) FirstOrCreate() *Label {
-	if err := Db().FirstOrCreate(m, "label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).Error; err != nil {
+// Save updates the existing or inserts a new row.
+func (m *Label) Save() error {
+	return Db().Save(m).Error
+}
+
+// Create inserts a new row to the database.
+func (m *Label) Create() error {
+	return Db().Create(m).Error
+}
+
+// FirstOrCreateLabel returns the existing row, inserts a new row or nil in case of errors.
+func FirstOrCreateLabel(m *Label) *Label {
+	result := Label{}
+
+	if err := Db().Where("label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).First(&result).Error; err == nil {
+		return &result
+	} else if err := m.Create(); err != nil {
 		log.Errorf("label: %s", err)
+		return nil
+	}
+
+	if m.LabelPriority >= 0 {
+		event.EntitiesCreated("labels", []*Label{m})
+
+		event.Publish("count.labels", event.Data{
+			"count": 1,
+		})
 	}
 
 	return m
@@ -89,7 +113,7 @@ func (m *Label) SetName(name string) {
 }
 
 // Updates a label if necessary
-func (m *Label) Update(label classify.Label) error {
+func (m *Label) UpdateClassify(label classify.Label) error {
 	save := false
 	db := Db()
 
@@ -119,7 +143,12 @@ func (m *Label) Update(label classify.Label) error {
 
 	// Add categories
 	for _, category := range label.Categories {
-		sn := NewLabel(txt.Title(category), -3).FirstOrCreate()
+		sn := FirstOrCreateLabel(NewLabel(txt.Title(category), -3))
+
+		if sn == nil {
+			continue
+		}
+
 		if err := db.Model(m).Association("LabelCategories").Append(sn).Error; err != nil {
 			return err
 		}

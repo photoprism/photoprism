@@ -73,7 +73,7 @@ func TestAccount_Save(t *testing.T) {
 
 		UpdateForm, err := form.NewAccount(accountUpdate)
 
-		err = model.Save(UpdateForm)
+		err = model.SaveForm(UpdateForm)
 
 		if err != nil {
 			t.Fatal(err)
