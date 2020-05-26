@@ -96,7 +96,7 @@ export default [
         name: "files",
         path: "/files*",
         component: Files,
-        meta: {title: "Originals", auth: true},
+        meta: {title: "File Browser", auth: true},
     },
     {
         name: "labels",
