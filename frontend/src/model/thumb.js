@@ -1,5 +1,6 @@
 import Model from "./model";
 import Api from "../common/api";
+import {config} from "../session";
 
 const thumbs = window.__CONFIG__.thumbnails;
 
@@ -176,7 +177,7 @@ export class Thumb extends Model {
 
         }
 
-        return "/api/v1/thumbnails/" + file.Hash + "/" + type;
+        return `/api/v1/t/${file.Hash}/${config.thumbToken()}/${type}`;
     }
 
     static downloadUrl(file) {
@@ -184,7 +185,7 @@ export class Thumb extends Model {
             return "";
         }
 
-        return "/api/v1/download/" + file.Hash;
+        return `/api/v1/dl/${file.Hash}?t=${config.downloadToken()}`;
     }
 }
 

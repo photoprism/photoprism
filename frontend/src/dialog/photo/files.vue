@@ -19,7 +19,7 @@
                     </v-btn>
                 </td>
                 <td>
-                    <a :href="'/api/v1/download/' + props.item.Hash" class="secondary-dark--text" target="_blank"
+                    <a :href="'/api/v1/dl/' + props.item.Hash + '?t=' + $config.downloadToken()" class="secondary-dark--text" target="_blank"
                        v-if="$config.feature('download')">
                         {{ props.item.Name }}
                     </a>

@@ -56,33 +56,33 @@ func TestUpdatePhoto(t *testing.T) {
 
 func TestGetPhotoDownload(t *testing.T) {
 	t.Run("could not find original", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		GetPhotoDownload(router, ctx)
-		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh7/download")
+		app, router, conf := NewApiTest()
+		GetPhotoDownload(router, conf)
+		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh7/dl?t="+conf.DownloadToken())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 	t.Run("not existing photo", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		GetPhotoDownload(router, ctx)
-		r := PerformRequest(app, "GET", "/api/v1/photos/xxx/download")
+		app, router, conf := NewApiTest()
+		GetPhotoDownload(router, conf)
+		r := PerformRequest(app, "GET", "/api/v1/photos/xxx/dl?t="+conf.DownloadToken())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }
 
 func TestLikePhoto(t *testing.T) {
 	t.Run("existing photo", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		LikePhoto(router, ctx)
+		app, router, conf := NewApiTest()
+		LikePhoto(router, conf)
 		r := PerformRequest(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh9/like")
 		assert.Equal(t, http.StatusOK, r.Code)
-		GetPhoto(router, ctx)
+		GetPhoto(router, conf)
 		r2 := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh9")
 		val := gjson.Get(r2.Body.String(), "Favorite")
 		assert.Equal(t, "true", val.String())
 	})
 	t.Run("not existing photo", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		LikePhoto(router, ctx)
+		app, router, conf := NewApiTest()
+		LikePhoto(router, conf)
 		r := PerformRequest(app, "POST", "/api/v1/photos/xxx/like")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})

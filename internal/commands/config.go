@@ -101,6 +101,8 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "geocoding-api", conf.GeoCodingApi())
 
 	// Thumbnails
+	fmt.Printf("%-25s %s\n", "download-token", conf.DownloadToken())
+	fmt.Printf("%-25s %s\n", "thumb-token", conf.ThumbToken())
 	fmt.Printf("%-25s %s\n", "thumb-filter", conf.ThumbFilter())
 	fmt.Printf("%-25s %t\n", "thumb-uncached", conf.ThumbUncached())
 	fmt.Printf("%-25s %d\n", "thumb-size", conf.ThumbSize())

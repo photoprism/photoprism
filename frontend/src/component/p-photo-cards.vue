@@ -186,7 +186,7 @@
             downloadFile(index) {
                 const photo = this.photos[index];
                 const link = document.createElement('a')
-                link.href = "/api/v1/download/" + photo.Hash;
+                link.href = `/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`;
                 link.download = photo.FileName;
                 link.click();
             },

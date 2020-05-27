@@ -133,7 +133,7 @@
                     return;
                 }
 
-                this.onDownload(`/api/v1/labels/${this.selection[0]}/download`);
+                this.onDownload(`/api/v1/labels/${this.selection[0]}/dl?t=${this.$config.downloadToken()}`);
 
                 this.expanded = false;
             },

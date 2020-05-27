@@ -64,7 +64,7 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 				writeMutex.Lock()
 				ws.SetWriteDeadline(time.Now().Add(30 * time.Second))
 
-				if err := ws.WriteJSON(gin.H{"event": "config.updated", "data": event.Data(conf.ClientConfig())}); err != nil {
+				if err := ws.WriteJSON(gin.H{"event": "config.updated", "data": event.Data{"config": conf.ClientConfig()}}); err != nil {
 					log.Error(err)
 				}
 				writeMutex.Unlock()

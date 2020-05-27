@@ -92,7 +92,7 @@
                 uid: uid,
                 results: [],
                 scrollDisabled: true,
-                pageSize: 480,
+                pageSize: 120,
                 offset: 0,
                 page: 0,
                 selection: this.$clipboard.selection,

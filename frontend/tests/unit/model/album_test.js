@@ -37,14 +37,14 @@ describe("model/album", () => {
         const values = {id: 5, Title: "Christmas 2019", Slug: "christmas-2019", UID: 66};
         const album = new Album(values);
         const result = album.thumbnailUrl("xyz");
-        assert.equal(result, "/api/v1/albums/66/thumbnail/xyz");
+        assert.equal(result, "/api/v1/albums/66/t/static/xyz");
     });
 
     it("should get thumbnail src set",  () => {
         const values = {id: 5, Title: "Christmas 2019", Slug: "christmas-2019", UID: 66};
         const album = new Album(values);
         const result = album.thumbnailSrcset("");
-        assert.equal(result, "/api/v1/albums/66/thumbnail/fit_720 720w, /api/v1/albums/66/thumbnail/fit_1280 1280w, /api/v1/albums/66/thumbnail/fit_1920 1920w, /api/v1/albums/66/thumbnail/fit_2560 2560w, /api/v1/albums/66/thumbnail/fit_3840 3840w");
+        assert.equal(result, "/api/v1/albums/66/t/static/fit_720 720w, /api/v1/albums/66/t/static/fit_1280 1280w, /api/v1/albums/66/t/static/fit_1920 1920w, /api/v1/albums/66/t/static/fit_2560 2560w, /api/v1/albums/66/t/static/fit_3840 3840w");
     });
 
     it("should get thumbnail sizes",  () => {

@@ -355,17 +355,16 @@ func TestConfig_ClientConfig(t *testing.T) {
 	c := TestConfig()
 
 	cc := c.ClientConfig()
-	assert.NotEmpty(t, cc)
-	assert.Contains(t, cc, "name")
-	assert.Contains(t, cc, "version")
-	assert.Contains(t, cc, "copyright")
-	assert.Contains(t, cc, "debug")
-	assert.Contains(t, cc, "readonly")
-	assert.Contains(t, cc, "cameras")
-	assert.Contains(t, cc, "countries")
-	assert.Contains(t, cc, "thumbnails")
-	assert.Contains(t, cc, "jsHash")
-	assert.Contains(t, cc, "cssHash")
+
+	assert.IsType(t, ClientConfig{}, cc)
+	assert.NotEmpty(t, cc.Name)
+	assert.NotEmpty(t, cc.Version)
+	assert.NotEmpty(t, cc.Copyright)
+	assert.NotEmpty(t, cc.Thumbnails)
+	assert.NotEmpty(t, cc.JSHash)
+	assert.NotEmpty(t, cc.CSSHash)
+	assert.Equal(t, true, cc.Debug)
+	assert.Equal(t, false, cc.ReadOnly)
 }
 
 func TestConfig_Workers(t *testing.T) {

@@ -5,33 +5,33 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>{{ .config.title }}</title>
+  <title>{{ .config.Title }}</title>
 
-  <meta property="og:title" content="{{ .config.title }}: {{ .config.subtitle }}"/>
-  <meta property="og:image" content="{{ .config.url }}api/v1/preview"/>
-  <meta property="og:url" content="{{ .config.url }}"/>
-  <meta property="og:description" content="{{ .config.description }}"/>
+  <meta property="og:title" content="{{ .config.Title }}: {{ .config.Subtitle }}"/>
+  <meta property="og:image" content="{{ .config.URL }}api/v1/preview"/>
+  <meta property="og:url" content="{{ .config.URL }}"/>
+  <meta property="og:description" content="{{ .config.Description }}"/>
 
   <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="{{ .config.title }}: {{ .config.subtitle }}"/>
-  <meta name="twitter:description" content="{{ .config.description }}"/>
-  <meta name="twitter:image" content="{{ .config.url }}api/v1/preview"/>
+  <meta name="twitter:title" content="{{ .config.Title }}: {{ .config.Subtitle }}"/>
+  <meta name="twitter:description" content="{{ .config.Description }}"/>
+  <meta name="twitter:image" content="{{ .config.URL }}api/v1/preview"/>
 
-  <meta name="author" content="{{ .config.author }}">
-  <meta name="description" content="{{ .config.description }}"/>
+  <meta name="author" content="{{ .config.Author }}">
+  <meta name="description" content="{{ .config.Description }}"/>
 
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/static/favicons/favicon.png">
   <link rel="icon" type="image/png" href="/static/favicons/favicon.png"/>
 
-  <link rel="stylesheet" href="/static/build/app.css?{{ .config.cssHash }}">
+  <link rel="stylesheet" href="/static/build/app.css?{{ .config.CSSHash }}">
   <link rel="manifest" href="/static/manifest.json">
 
   <script>
       window.__CONFIG__ = {{ .config }};
   </script>
 </head>
-<body class="{{ .config.flags }}">
+<body class="{{ .config.Flags }}">
 <!--[if lt IE 8]>
 <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
   your browser</a> to improve your experience.</p>
@@ -44,6 +44,6 @@
 
 <div id="p-busy-overlay"></div>
 
-<script src="/static/build/app.js?{{ .config.jsHash }}"></script>
+<script src="/static/build/app.js?{{ .config.JSHash }}"></script>
 </body>
 </html>

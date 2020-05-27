@@ -1,6 +1,7 @@
 import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
+import {config} from "../session";
 
 export class Label extends RestModel {
     getDefaults() {
@@ -35,7 +36,7 @@ export class Label extends RestModel {
     }
 
     thumbnailUrl(type) {
-        return "/api/v1/labels/" + this.getId() + "/thumbnail/" + type;
+        return `/api/v1/labels/${this.getId()}/t/${config.thumbToken()}/${type}`;
     }
 
     thumbnailSrcset() {

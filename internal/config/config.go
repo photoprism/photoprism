@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -27,6 +28,7 @@ type Config struct {
 	cache    *gc.Cache
 	params   *Params
 	settings *Settings
+	token    string
 }
 
 func init() {
@@ -60,6 +62,7 @@ func NewConfig(ctx *cli.Context) *Config {
 
 	c := &Config{
 		params: NewParams(ctx),
+		token:  rnd.Token(8),
 	}
 
 	c.initSettings()

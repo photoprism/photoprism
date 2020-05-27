@@ -52,7 +52,7 @@ func TestDownloadZip(t *testing.T) {
 	t.Run("zip not existing", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		DownloadZip(router, conf)
-		r := PerformRequest(app, "GET", "/api/v1/zip/xxx")
+		r := PerformRequest(app, "GET", "/api/v1/zip/xxx?t="+conf.DownloadToken())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }

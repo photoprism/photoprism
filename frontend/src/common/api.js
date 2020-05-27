@@ -1,7 +1,7 @@
 import Axios from "axios";
 import Notify from "common/notify";
 
-const testConfig = {"jsHash": "test", "version": "test"};
+const testConfig = {"jsHash":"48019917", "cssHash":"2b327230", "version": "test"};
 const config = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
 
 const Api = Axios.create({

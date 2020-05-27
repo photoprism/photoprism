@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/urfave/cli"
 )
 
@@ -38,6 +39,9 @@ func NewTestParams() *Params {
 	testDataPath := testDataPath(assetsPath)
 
 	c := &Params{
+		Name:           "PhotoPrism",
+		Version:        "0.0.0",
+		Copyright:      "(c) 2018-2020 PhotoPrism.org",
 		Debug:          true,
 		Public:         true,
 		ReadOnly:       false,
@@ -96,7 +100,11 @@ func NewTestConfig() *Config {
 	testConfigMutex.Lock()
 	defer testConfigMutex.Unlock()
 
-	c := &Config{params: NewTestParams()}
+	c := &Config{
+		params: NewTestParams(),
+		token:  rnd.Token(8),
+	}
+
 	c.initSettings()
 
 	if err := c.Init(context.Background()); err != nil {

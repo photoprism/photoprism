@@ -54,22 +54,6 @@ class Viewer {
             counterEl: false,
             arrowEl: true,
             preloaderEl: true,
-            getImageURLForShare: function (button) {
-                const item = gallery.currItem;
-
-                if (!item.original_w) {
-                    button.label = button.template.replace("size", "not available");
-                    return item.download_url;
-                }
-
-                if(button.id === "original") {
-                    button.label = button.template.replace("size", item.original_w + " × " + item.original_h);
-                    return item.download_url;
-                } else {
-                    button.label = button.template.replace("size", item[button.id].w + " × " + item[button.id].h);
-                    return item[button.id].src + "?download=1";
-                }
-            },
             addCaptionHTMLFn: function(item, captionEl /*, isFake */) {
                 // item      - slide object
                 // captionEl - caption DOM element

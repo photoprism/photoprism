@@ -13,13 +13,18 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// GET /api/v1/thumbnails/:hash/:type
+// GET /api/v1/t/:hash/:token/:type
 //
 // Parameters:
 //   hash: string The file hash as returned by the search API
 //   type: string Thumbnail type, see photoprism.ThumbnailTypes
 func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/thumbnails/:hash/:type", func(c *gin.Context) {
+	router.GET("/t/:hash/:token/:type", func(c *gin.Context) {
+		if InvalidToken(c, conf) {
+			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			return
+		}
+
 		fileHash := c.Param("hash")
 		typeName := c.Param("type")
 

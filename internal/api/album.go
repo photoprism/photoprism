@@ -100,7 +100,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Success("album created")
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig(conf)
 
 		PublishAlbumEvent(EntityCreated, m.AlbumUID, c)
 
@@ -144,7 +144,8 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig(conf)
+
 		event.Success("album saved")
 
 		PublishAlbumEvent(EntityUpdated, uid, c)
@@ -174,7 +175,7 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		conf.Db().Delete(&m)
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig(conf)
 		event.Success(fmt.Sprintf("album %s deleted", txt.Quote(m.AlbumTitle)))
 
 		c.JSON(http.StatusOK, m)
@@ -203,7 +204,7 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		album.AlbumFavorite = true
 		conf.Db().Save(&album)
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig(conf)
 		PublishAlbumEvent(EntityUpdated, id, c)
 
 		c.JSON(http.StatusOK, http.Response{})
@@ -232,7 +233,7 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		album.AlbumFavorite = false
 		conf.Db().Save(&album)
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig(conf)
 		PublishAlbumEvent(EntityUpdated, id, c)
 
 		c.JSON(http.StatusOK, http.Response{})
@@ -330,9 +331,14 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// GET /albums/:uid/download
+// GET /albums/:uid/dl
 func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/albums/:uid/download", func(c *gin.Context) {
+	router.GET("/albums/:uid/dl", func(c *gin.Context) {
+		if InvalidDownloadToken(c, conf) {
+			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			return
+		}
+
 		start := time.Now()
 
 		a, err := query.AlbumByUID(c.Param("uid"))
@@ -413,13 +419,18 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// GET /api/v1/albums/:uid/thumbnail/:type
+// GET /api/v1/albums/:uid/t/:token/:type
 //
 // Parameters:
 //   uid: string Album UID
 //   type: string Thumbnail type, see photoprism.ThumbnailTypes
 func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/albums/:uid/thumbnail/:type", func(c *gin.Context) {
+	router.GET("/albums/:uid/t/:token/:type", func(c *gin.Context) {
+		if InvalidToken(c, conf) {
+			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			return
+		}
+
 		typeName := c.Param("type")
 		uid := c.Param("uid")
 		start := time.Now()

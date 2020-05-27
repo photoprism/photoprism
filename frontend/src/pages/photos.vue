@@ -90,11 +90,11 @@
 
             const settings = this.$config.settings();
 
-            if (settings.features.private) {
+            if (settings && settings.features.private) {
                 filter.public = true;
             }
 
-            if (settings.features.review && !("quality" in this.staticFilter)) {
+            if (settings && settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
                 filter.quality = 3;
             }
 

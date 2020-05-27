@@ -54,7 +54,7 @@ func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
 
 		elapsed := int(time.Since(start).Seconds())
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig(conf)
 
 		event.EntitiesArchived("photos", f.Photos)
 
@@ -101,7 +101,7 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 
 		elapsed := int(time.Since(start).Seconds())
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig(conf)
 
 		event.EntitiesRestored("photos", f.Photos)
 
@@ -135,7 +135,7 @@ func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
 		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.Album{})
 		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.PhotoAlbum{})
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig(conf)
 
 		event.EntitiesDeleted("albums", f.Albums)
 
@@ -183,7 +183,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 			event.EntitiesUpdated("photos", entities)
 		}
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig(conf)
 
 		elapsed := time.Since(start)
 
@@ -216,7 +216,7 @@ func BatchLabelsDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		entity.Db().Where("label_uid IN (?)", f.Labels).Delete(&entity.Label{})
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig(conf)
 
 		event.EntitiesDeleted("labels", f.Labels)
 

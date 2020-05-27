@@ -2,6 +2,7 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
 import Util from "common/util";
+import {config} from "../session";
 
 export class File extends RestModel {
     getDefaults() {
@@ -79,11 +80,11 @@ export class File extends RestModel {
             return "/api/v1/svg/raw";
         }
 
-        return "/api/v1/thumbnails/" + this.Hash + "/" + type;
+        return `/api/v1/t/${this.Hash}/t/${config.thumbToken()}/${type}`;
     }
 
     getDownloadUrl() {
-        return "/api/v1/download/" + this.Hash;
+        return "/api/v1/dl/" + this.Hash + "?t=" + config.downloadToken();
     }
 
     thumbnailSrcset() {

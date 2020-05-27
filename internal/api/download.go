@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"net/http"
 	"path"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -16,12 +17,17 @@ import (
 // TODO: GET /api/v1/dl/photo/:uid
 // TODO: GET /api/v1/dl/album/:uid
 
-// GET /api/v1/download/:hash
+// GET /api/v1/dl/:hash
 //
 // Parameters:
 //   hash: string The file hash as returned by the search API
 func GetDownload(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/download/:hash", func(c *gin.Context) {
+	router.GET("/dl/:hash", func(c *gin.Context) {
+		if InvalidDownloadToken(c, conf) {
+			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			return
+		}
+
 		fileHash := c.Param("hash")
 
 		f, err := query.FileByHash(fileHash)

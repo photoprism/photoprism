@@ -61,3 +61,19 @@ func Unauthorized(c *gin.Context, conf *config.Config) bool {
 	// Check if session token is valid
 	return !service.Session().Exists(token)
 }
+
+// InvalidToken returns true if the token is invalid.
+func InvalidToken(c *gin.Context, conf *config.Config) bool {
+	token := c.Param("token")
+
+	if token == "" {
+		token = c.Query("t")
+	}
+
+	return conf.InvalidToken(token)
+}
+
+// InvalidDownloadToken returns true if the token is invalid.
+func InvalidDownloadToken(c *gin.Context, conf *config.Config) bool {
+	return conf.InvalidDownloadToken(c.Query("t"))
+}

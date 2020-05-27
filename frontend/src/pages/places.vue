@@ -166,13 +166,12 @@
                     let id = features[i].id;
 
                     let marker = this.markers[id];
+                    let token = this.$config.thumbToken();
                     if (!marker) {
                         let el = document.createElement('div');
                         el.className = 'marker';
                         el.title = props.Title;
-                        el.style.backgroundImage =
-                            'url(/api/v1/thumbnails/' +
-                            props.Hash + '/tile_50)';
+                        el.style.backgroundImage = `url(/api/v1/t/${props.Hash}/${token}/tile_50)`;
                         el.style.width = '50px';
                         el.style.height = '50px';
 

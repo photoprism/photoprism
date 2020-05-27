@@ -78,12 +78,14 @@ type Params struct {
 	DetectNSFW         bool   `yaml:"detect-nsfw" flag:"detect-nsfw"`
 	UploadNSFW         bool   `yaml:"upload-nsfw" flag:"upload-nsfw"`
 	GeoCodingApi       string `yaml:"geocoding-api" flag:"geocoding-api"`
-	JpegHidden         bool   `yaml:"jpeg-hidden" flag:"jpeg-hidden"`
-	JpegQuality        int    `yaml:"jpeg-quality" flag:"jpeg-quality"`
+	DownloadToken      string `yaml:"download-token" flag:"download-token"`
+	ThumbToken         string `yaml:"thumb-token" flag:"thumb-token"`
 	ThumbFilter        string `yaml:"thumb-filter" flag:"thumb-filter"`
 	ThumbUncached      bool   `yaml:"thumb-uncached" flag:"thumb-uncached"`
 	ThumbSize          int    `yaml:"thumb-size" flag:"thumb-size"`
 	ThumbLimit         int    `yaml:"thumb-limit" flag:"thumb-limit"`
+	JpegHidden         bool   `yaml:"jpeg-hidden" flag:"jpeg-hidden"`
+	JpegQuality        int    `yaml:"jpeg-quality" flag:"jpeg-quality"`
 	DisableTensorFlow  bool   `yaml:"disable-tf" flag:"disable-tf"`
 	DisableSettings    bool   `yaml:"disable-settings" flag:"disable-settings"`
 }

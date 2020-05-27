@@ -155,15 +155,18 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// GET /api/v1/labels/:uid/thumbnail/:type
-//
-// Example: /api/v1/labels/cheetah/thumbnail/tile_500
+// GET /api/v1/labels/:uid/t/:token/:type
 //
 // Parameters:
 //   uid: string Label UID
 //   type: string Thumbnail type, see photoprism.ThumbnailTypes
 func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/labels/:uid/thumbnail/:type", func(c *gin.Context) {
+	router.GET("/labels/:uid/t/:token/:type", func(c *gin.Context) {
+		if InvalidToken(c, conf) {
+			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			return
+		}
+
 		typeName := c.Param("type")
 		labelUID := c.Param("uid")
 		start := time.Now()

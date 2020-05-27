@@ -100,7 +100,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			return result
 		}
 
-		if !fileExists && m.MetaData().HasInstanceID(){
+		if !fileExists && m.MetaData().HasInstanceID() {
 			fileQuery = ind.db.Unscoped().First(&file, "instance_id = ?", m.MetaData().InstanceID)
 			fileExists = fileQuery.Error == nil
 		}

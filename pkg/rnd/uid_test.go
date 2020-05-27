@@ -43,4 +43,3 @@ func TestIsUID(t *testing.T) {
 	assert.False(t, IsUID("_", '_'))
 	assert.False(t, IsUID("", '_'))
 }
-

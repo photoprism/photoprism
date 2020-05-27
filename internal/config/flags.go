@@ -260,6 +260,18 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_GEOCODING_API",
 	},
 	cli.StringFlag{
+		Name:   "download-token",
+		Usage:  "url `TOKEN` for file downloads",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
+	},
+	cli.StringFlag{
+		Name:   "thumb-token",
+		Usage:  "url `TOKEN` for thumbnails and video streaming",
+		Value:  "static",
+		EnvVar: "PHOTOPRISM_THUMB_TOKEN",
+	},
+	cli.StringFlag{
 		Name:   "thumb-filter, f",
 		Usage:  "resample filter (best to worst: blackman, lanczos, cubic, linear)",
 		Value:  "lanczos",

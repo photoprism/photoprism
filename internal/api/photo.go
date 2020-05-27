@@ -108,12 +108,17 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// GET /api/v1/photos/:uid/download
+// GET /api/v1/photos/:uid/dl
 //
 // Parameters:
 //   uid: string PhotoUID as returned by the API
 func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/photos/:uid/download", func(c *gin.Context) {
+	router.GET("/photos/:uid/dl", func(c *gin.Context) {
+		if InvalidDownloadToken(c, conf) {
+			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			return
+		}
+
 		f, err := query.FileByPhotoUID(c.Param("uid"))
 
 		if err != nil {

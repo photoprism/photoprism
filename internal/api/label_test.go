@@ -1,9 +1,10 @@
 package api
 
 import (
-	"github.com/tidwall/gjson"
 	"net/http"
 	"testing"
+
+	"github.com/tidwall/gjson"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -109,22 +110,22 @@ func TestDislikeLabel(t *testing.T) {
 
 func TestLabelThumbnail(t *testing.T) {
 	t.Run("invalid type", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		LabelThumbnail(router, ctx)
-		r := PerformRequest(app, "GET", "/api/v1/labels/lt9k3pw1wowuy3c2/thumbnail/xxx")
+		app, router, conf := NewApiTest()
+		LabelThumbnail(router, conf)
+		r := PerformRequest(app, "GET", "/api/v1/labels/lt9k3pw1wowuy3c2/t/"+conf.ThumbToken()+"/xxx")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("invalid label", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		LabelThumbnail(router, ctx)
-		r := PerformRequest(app, "GET", "/api/v1/labels/xxx/thumbnail/tile_500")
+		app, router, conf := NewApiTest()
+		LabelThumbnail(router, conf)
+		r := PerformRequest(app, "GET", "/api/v1/labels/xxx/t/"+conf.ThumbToken()+"/tile_500")
 
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("could not find original", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		LabelThumbnail(router, ctx)
-		r := PerformRequest(app, "GET", "/api/v1/labels/lt9k3pw1wowuy3c3/thumbnail/tile_500")
+		app, router, conf := NewApiTest()
+		LabelThumbnail(router, conf)
+		r := PerformRequest(app, "GET", "/api/v1/labels/lt9k3pw1wowuy3c3/t/"+conf.ThumbToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }

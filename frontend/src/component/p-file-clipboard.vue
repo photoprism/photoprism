@@ -106,7 +106,7 @@
             },
             download() {
                 Api.post("zip", {"files": this.selection}).then(r => {
-                    this.onDownload("/api/v1/zip/" + r.data.filename);
+                    this.onDownload("/api/v1/zip/" + r.data.filename + "?t=" + this.$config.downloadToken());
                 });
 
                 this.expanded = false;

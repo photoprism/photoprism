@@ -109,6 +109,11 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 // GET /api/v1/zip/:filename
 func DownloadZip(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/zip/:filename", func(c *gin.Context) {
+		if InvalidDownloadToken(c, conf) {
+			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			return
+		}
+
 		zipBaseName := filepath.Base(c.Param("filename"))
 		zipPath := path.Join(conf.TempPath(), "zip")
 		zipFileName := path.Join(zipPath, zipBaseName)

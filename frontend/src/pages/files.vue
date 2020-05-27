@@ -223,7 +223,7 @@
             downloadFile(index) {
                 const model = this.results[index];
                 const link = document.createElement('a')
-                link.href = "/api/v1/download/" + model.Hash;
+                link.href = `/api/v1/dl/${model.Hash}?t=${this.$config.downloadToken()}`;
                 link.download = model.Name;
                 link.click()
             },

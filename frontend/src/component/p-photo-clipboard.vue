@@ -234,10 +234,10 @@
             },
             download() {
                 if (this.selection.length === 1) {
-                    this.onDownload(`/api/v1/photos/${this.selection[0]}/download`);
+                    this.onDownload(`/api/v1/photos/${this.selection[0]}/dl?t=${this.$config.downloadToken()}`);
                 } else {
                     Api.post("zip", {"photos": this.selection}).then(r => {
-                        this.onDownload("/api/v1/zip/" + r.data.filename);
+                        this.onDownload(`/api/v1/zip/${r.data.filename}?t=${this.$config.downloadToken()}`);
                     });
                 }
 

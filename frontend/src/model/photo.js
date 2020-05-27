@@ -2,6 +2,7 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
 import Util from "common/util";
+import {config} from "../session";
 
 export const SrcManual = "manual";
 export const CodecAvc1 = "avc1";
@@ -166,7 +167,7 @@ export class Photo extends RestModel {
             return "";
         }
 
-        return "/api/v1/videos/" + file.Hash + "/" + TypeMP4;
+        return `/api/v1/videos/${file.Hash}/${config.thumbToken()}/${TypeMP4}`;
     }
 
     mainFile() {
@@ -204,23 +205,23 @@ export class Photo extends RestModel {
             let video = this.videoFile();
 
             if (video && video.Hash) {
-                return "/api/v1/thumbnails/" + video.Hash + "/" + type;
+                return `/api/v1/t/${video.Hash}/${config.thumbToken()}/${type}`;
             }
 
             return "/api/v1/svg/photo";
         }
 
-        return "/api/v1/thumbnails/" + hash + "/" + type;
+        return `/api/v1/t/${hash}/${config.thumbToken()}/${type}`;
     }
 
     getDownloadUrl() {
-        return "/api/v1/download/" + this.mainFileHash();
+        return `/api/v1/dl/${this.mainFileHash()}?t=${config.downloadToken()}`;
     }
 
     downloadAll() {
         if (!this.Files) {
-            let link = document.createElement('a')
-            link.href = "/api/v1/download/" + this.mainFileHash();
+            let link = document.createElement("a");
+            link.href = `/api/v1/dl/${this.mainFileHash()}?t=${config.downloadToken()}`;
             link.download = this.baseName(false);
             link.click();
             return;
@@ -228,12 +229,12 @@ export class Photo extends RestModel {
 
         this.Files.forEach((file) => {
             if (!file || !file.Hash) {
-                console.warn("no file hash found for download", file)
-                return
+                console.warn("no file hash found for download", file);
+                return;
             }
 
-            let link = document.createElement('a')
-            link.href = "/api/v1/download/" + file.Hash;
+            let link = document.createElement("a");
+            link.href = `/api/v1/dl/${file.Hash}?t=${config.downloadToken()}`;
             link.download = this.fileBase(file.Name);
             link.click();
         });

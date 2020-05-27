@@ -11,16 +11,23 @@ class Config {
         this.storage = storage;
         this.storage_key = "config";
 
+        this.$vuetify = null;
         this.translations = translations;
-        this.values = values;
-        this.debug = !!values.debug;
         this.page = {
             title: "PhotoPrism",
         };
 
-        this.$vuetify = null;
+        if(!values) {
+            console.warn("config: values are empty");
+            this.debug = true;
+            this.values = {};
+            return;
+        }
 
-        Event.subscribe("config.updated", (ev, data) => this.setValues(data));
+        this.values = values;
+        this.debug = !!values.debug;
+
+        Event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
         Event.subscribe("count", (ev, data) => this.onCount(ev, data));
 
         if (this.has("settings")) {
@@ -139,6 +146,14 @@ class Config {
 
     settings() {
         return this.values.settings;
+    }
+
+    downloadToken() {
+        return this.values["downloadToken"];
+    }
+
+    thumbToken() {
+        return this.values["thumbToken"];
     }
 }
 
