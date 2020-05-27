@@ -167,7 +167,7 @@ export class Photo extends RestModel {
             return "";
         }
 
-        return `/api/v1/videos/${file.Hash}/${config.thumbToken()}/${TypeMP4}`;
+        return `/api/v1/videos/${file.Hash}/${config.previewToken()}/${TypeMP4}`;
     }
 
     mainFile() {
@@ -205,13 +205,13 @@ export class Photo extends RestModel {
             let video = this.videoFile();
 
             if (video && video.Hash) {
-                return `/api/v1/t/${video.Hash}/${config.thumbToken()}/${type}`;
+                return `/api/v1/t/${video.Hash}/${config.previewToken()}/${type}`;
             }
 
             return "/api/v1/svg/photo";
         }
 
-        return `/api/v1/t/${hash}/${config.thumbToken()}/${type}`;
+        return `/api/v1/t/${hash}/${config.previewToken()}/${type}`;
     }
 
     getDownloadUrl() {

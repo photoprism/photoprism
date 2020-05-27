@@ -177,7 +177,7 @@ export class Thumb extends Model {
 
         }
 
-        return `/api/v1/t/${file.Hash}/${config.thumbToken()}/${type}`;
+        return `/api/v1/t/${file.Hash}/${config.previewToken()}/${type}`;
     }
 
     static downloadUrl(file) {

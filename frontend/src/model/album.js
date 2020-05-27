@@ -45,7 +45,7 @@ export class Album extends RestModel {
     }
 
     thumbnailUrl(type) {
-        return `/api/v1/albums/${this.getId()}/t/${config.thumbToken()}/${type}`;
+        return `/api/v1/albums/${this.getId()}/t/${config.previewToken()}/${type}`;
     }
 
     thumbnailSrcset() {

@@ -79,7 +79,7 @@ type Params struct {
 	UploadNSFW         bool   `yaml:"upload-nsfw" flag:"upload-nsfw"`
 	GeoCodingApi       string `yaml:"geocoding-api" flag:"geocoding-api"`
 	DownloadToken      string `yaml:"download-token" flag:"download-token"`
-	ThumbToken         string `yaml:"thumb-token" flag:"thumb-token"`
+	PreviewToken       string `yaml:"preview-token" flag:"preview-token"`
 	ThumbFilter        string `yaml:"thumb-filter" flag:"thumb-filter"`
 	ThumbUncached      bool   `yaml:"thumb-uncached" flag:"thumb-uncached"`
 	ThumbSize          int    `yaml:"thumb-size" flag:"thumb-size"`

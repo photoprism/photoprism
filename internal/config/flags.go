@@ -266,10 +266,10 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
 	},
 	cli.StringFlag{
-		Name:   "thumb-token",
+		Name:   "preview-token",
 		Usage:  "url `TOKEN` for thumbnails and video streaming",
 		Value:  "static",
-		EnvVar: "PHOTOPRISM_THUMB_TOKEN",
+		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{
 		Name:   "thumb-filter, f",

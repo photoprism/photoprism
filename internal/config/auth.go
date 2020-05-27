@@ -43,14 +43,14 @@ func (c *Config) DownloadToken() string {
 
 // InvalidToken returns true if the token is invalid.
 func (c *Config) InvalidToken(t string) bool {
-	return c.ThumbToken() != t && c.DownloadToken() != t
+	return c.PreviewToken() != t && c.DownloadToken() != t
 }
 
-// ThumbToken returns the THUMBNAILS api token (you can optionally use a static value for permanent caching).
-func (c *Config) ThumbToken() string {
-	if c.params.ThumbToken == "" {
-		c.params.ThumbToken = rnd.Token(8)
+// PreviewToken returns the THUMBNAILS api token (you can optionally use a static value for permanent caching).
+func (c *Config) PreviewToken() string {
+	if c.params.PreviewToken == "" {
+		c.params.PreviewToken = rnd.Token(8)
 	}
 
-	return c.params.ThumbToken
+	return c.params.PreviewToken
 }

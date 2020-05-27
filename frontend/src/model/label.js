@@ -36,7 +36,7 @@ export class Label extends RestModel {
     }
 
     thumbnailUrl(type) {
-        return `/api/v1/labels/${this.getId()}/t/${config.thumbToken()}/${type}`;
+        return `/api/v1/labels/${this.getId()}/t/${config.previewToken()}/${type}`;
     }
 
     thumbnailSrcset() {

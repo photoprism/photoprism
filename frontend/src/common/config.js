@@ -152,8 +152,8 @@ class Config {
         return this.values["downloadToken"];
     }
 
-    thumbToken() {
-        return this.values["thumbToken"];
+    previewToken() {
+        return this.values["previewToken"];
     }
 }
 

@@ -35,7 +35,7 @@ type ClientConfig struct {
 	Countries       []entity.Country    `json:"countries"`
 	Thumbnails      []Thumbnail         `json:"thumbnails"`
 	DownloadToken   string              `json:"downloadToken"`
-	ThumbToken      string              `json:"thumbToken"`
+	PreviewToken    string              `json:"previewToken"`
 	JSHash          string              `json:"jsHash"`
 	CSSHash         string              `json:"cssHash"`
 	Settings        Settings            `json:"settings"`
@@ -133,7 +133,7 @@ func (c *Config) PublicClientConfig() ClientConfig {
 		JSHash:        fs.Checksum(c.HttpStaticBuildPath() + "/app.js"),
 		CSSHash:       fs.Checksum(c.HttpStaticBuildPath() + "/app.css"),
 		Clip:          txt.ClipDefault,
-		ThumbToken:    "public",
+		PreviewToken:  "public",
 		DownloadToken: "public",
 	}
 
@@ -164,7 +164,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		Colors:          colors.All.List(),
 		Thumbnails:      Thumbnails,
 		DownloadToken:   c.DownloadToken(),
-		ThumbToken:      c.ThumbToken(),
+		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.HttpStaticBuildPath() + "/app.js"),
 		CSSHash:         fs.Checksum(c.HttpStaticBuildPath() + "/app.css"),
 		Clip:            txt.ClipDefault,

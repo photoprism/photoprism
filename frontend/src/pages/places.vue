@@ -166,7 +166,7 @@
                     let id = features[i].id;
 
                     let marker = this.markers[id];
-                    let token = this.$config.thumbToken();
+                    let token = this.$config.previewToken();
                     if (!marker) {
                         let el = document.createElement('div');
                         el.className = 'marker';
