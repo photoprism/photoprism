@@ -23,7 +23,7 @@ type FoldersResponse struct {
 }
 
 // GetFolders is a reusable request handler for directory listings (GET /api/v1/folders/*).
-func GetFolders(router *gin.RouterGroup, conf *config.Config, root, rootPath string) {
+func GetFolders(router *gin.RouterGroup, conf *config.Config, urlPath, rootName, rootPath string) {
 	handler := func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
@@ -35,7 +35,7 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, root, rootPath str
 		recursive := c.Query("recursive") != ""
 		listFiles := c.Query("files") != ""
 		cached := !listFiles && c.Query("uncached") == ""
-		resp := FoldersResponse{Root: root, Recursive: recursive, Cached: cached}
+		resp := FoldersResponse{Root: rootName, Recursive: recursive, Cached: cached}
 		path := c.Param("path")
 
 		cacheKey := fmt.Sprintf("folders:%s:%t:%t", filepath.Join(rootPath, path), recursive, listFiles)
@@ -48,7 +48,7 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, root, rootPath str
 			}
 		}
 
-		if folders, err := query.FoldersByPath(root, rootPath, path, recursive); err != nil {
+		if folders, err := query.FoldersByPath(rootName, rootPath, path, recursive); err != nil {
 			log.Errorf("folders: %s", err)
 			c.JSON(http.StatusOK, resp)
 			return
@@ -57,7 +57,7 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, root, rootPath str
 		}
 
 		if listFiles {
-			if files, err := query.FilesByPath(root, path); err != nil {
+			if files, err := query.FilesByPath(rootName, path); err != nil {
 				log.Errorf("folders: %s", err)
 			} else {
 				resp.Files = files
@@ -75,16 +75,16 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, root, rootPath str
 		c.JSON(http.StatusOK, resp)
 	}
 
-	router.GET("/folders/"+root, handler)
-	router.GET("/folders/"+root+"/*path", handler)
+	router.GET("/folders/"+urlPath, handler)
+	router.GET("/folders/"+urlPath+"/*path", handler)
 }
 
 // GET /api/v1/folders/originals
 func GetFoldersOriginals(router *gin.RouterGroup, conf *config.Config) {
-	GetFolders(router, conf, entity.RootOriginals, conf.OriginalsPath())
+	GetFolders(router, conf, "originals", entity.RootDefault, conf.OriginalsPath())
 }
 
 // GET /api/v1/folders/import
 func GetFoldersImport(router *gin.RouterGroup, conf *config.Config) {
-	GetFolders(router, conf, entity.RootImport, conf.ImportPath())
+	GetFolders(router, conf, "import", entity.RootImport, conf.ImportPath())
 }

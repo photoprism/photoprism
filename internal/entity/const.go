@@ -36,7 +36,7 @@ const (
 	TypeRaw     = "raw"
 	TypeText    = "text"
 
-	RootOriginals = "originals"
-	RootImport    = "import"
-	RootPath      = "/"
+	RootDefault = ""
+	RootImport  = "import"
+	RootPath    = "/"
 )

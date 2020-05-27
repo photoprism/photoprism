@@ -41,7 +41,7 @@ type Album struct {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Album) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsPPID(m.AlbumUID, 'a') {
+	if rnd.IsUID(m.AlbumUID, 'a') {
 		return nil
 	}
 

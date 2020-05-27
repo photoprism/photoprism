@@ -17,36 +17,36 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 
 		assert.Nil(t, err)
 
-		info, err := img.MetaData()
+		data := img.MetaData()
 
 		assert.Empty(t, err)
 
-		assert.IsType(t, meta.Data{}, info)
+		assert.IsType(t, meta.Data{}, data)
 
-		assert.Equal(t, "", info.UniqueID)
-		assert.Equal(t, "2013-11-26 13:53:55 +0000 UTC", info.TakenAt.String())
-		assert.Equal(t, "2013-11-26 15:53:55 +0000 UTC", info.TakenAtLocal.String())
-		assert.Equal(t, 1, info.Orientation)
-		assert.Equal(t, "Canon EOS 6D", info.CameraModel)
-		assert.Equal(t, "Canon", info.CameraMake)
-		assert.Equal(t, "EF70-200mm f/4L IS USM", info.LensModel)
-		assert.Equal(t, "", info.LensMake)
-		assert.Equal(t, "Africa/Johannesburg", info.TimeZone)
-		assert.Equal(t, "", info.Artist)
-		assert.Equal(t, 111, info.FocalLength)
-		assert.Equal(t, "1/640", info.Exposure)
-		assert.Equal(t, float32(6.644), info.Aperture)
-		assert.Equal(t, float32(10), info.FNumber)
-		assert.Equal(t, 200, info.Iso)
-		assert.Equal(t, float32(-33.45347), info.Lat)
-		assert.Equal(t, float32(25.764645), info.Lng)
-		assert.Equal(t, 190, info.Altitude)
-		assert.Equal(t, 497, info.Width)
-		assert.Equal(t, 331, info.Height)
-		assert.Equal(t, false, info.Flash)
-		assert.Equal(t, "", info.Description)
-		t.Logf("UTC: %s", info.TakenAt.String())
-		t.Logf("Local: %s", info.TakenAtLocal.String())
+		assert.Equal(t, "", data.DocumentID)
+		assert.Equal(t, "2013-11-26 13:53:55 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "2013-11-26 15:53:55 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, "Canon EOS 6D", data.CameraModel)
+		assert.Equal(t, "Canon", data.CameraMake)
+		assert.Equal(t, "EF70-200mm f/4L IS USM", data.LensModel)
+		assert.Equal(t, "", data.LensMake)
+		assert.Equal(t, "Africa/Johannesburg", data.TimeZone)
+		assert.Equal(t, "", data.Artist)
+		assert.Equal(t, 111, data.FocalLength)
+		assert.Equal(t, "1/640", data.Exposure)
+		assert.Equal(t, float32(6.644), data.Aperture)
+		assert.Equal(t, float32(10), data.FNumber)
+		assert.Equal(t, 200, data.Iso)
+		assert.Equal(t, float32(-33.45347), data.Lat)
+		assert.Equal(t, float32(25.764645), data.Lng)
+		assert.Equal(t, 190, data.Altitude)
+		assert.Equal(t, 497, data.Width)
+		assert.Equal(t, 331, data.Height)
+		assert.Equal(t, false, data.Flash)
+		assert.Equal(t, "", data.Description)
+		t.Logf("UTC: %s", data.TakenAt.String())
+		t.Logf("Local: %s", data.TakenAtLocal.String())
 	})
 
 	t.Run("fern_green.jpg", func(t *testing.T) {
@@ -54,13 +54,13 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 
 		assert.Nil(t, err)
 
-		info, err := img.MetaData()
+		info := img.MetaData()
 
 		assert.Empty(t, err)
 
 		assert.IsType(t, meta.Data{}, info)
 
-		assert.Equal(t, "", info.UniqueID)
+		assert.Equal(t, "", info.DocumentID)
 		assert.Equal(t, 1, info.Orientation)
 		assert.Equal(t, "Canon EOS 7D", info.CameraModel)
 		assert.Equal(t, "Canon", info.CameraMake)
@@ -94,13 +94,13 @@ func TestMediaFile_Exif_DNG(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	info, err := img.MetaData()
+	info := img.MetaData()
 
 	assert.Empty(t, err)
 
 	assert.IsType(t, meta.Data{}, info)
 
-	assert.Equal(t, "", info.UniqueID)
+	assert.Equal(t, "", info.DocumentID)
 	assert.Equal(t, "2019-06-06 07:29:51 +0000 UTC", info.TakenAt.String())
 	assert.Equal(t, "2019-06-06 07:29:51 +0000 UTC", info.TakenAtLocal.String())
 	assert.Equal(t, 1, info.Orientation)
@@ -132,7 +132,7 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	info, err := img.MetaData()
+	info := img.MetaData()
 
 	assert.IsType(t, meta.Data{}, info)
 
@@ -144,13 +144,13 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	jpegInfo, err := jpeg.MetaData()
+	jpegInfo := jpeg.MetaData()
 
 	assert.IsType(t, meta.Data{}, jpegInfo)
 
 	assert.Nil(t, err)
 
-	assert.Equal(t, "", jpegInfo.UniqueID)
+	assert.Equal(t, "", jpegInfo.DocumentID)
 	assert.Equal(t, "2018-09-10 03:16:13 +0000 UTC", jpegInfo.TakenAt.String())
 	assert.Equal(t, "2018-09-10 12:16:13 +0000 UTC", jpegInfo.TakenAtLocal.String())
 	assert.Equal(t, 6, jpegInfo.Orientation)

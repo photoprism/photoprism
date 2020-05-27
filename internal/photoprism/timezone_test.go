@@ -15,7 +15,7 @@ func TestMediaFile_TimeZone(t *testing.T) {
 
 		assert.Nil(t, err)
 
-		zone, err := img.TimeZone()
+		zone := img.TimeZone()
 
 		assert.Nil(t, err)
 		assert.Equal(t, "Africa/Johannesburg", zone)

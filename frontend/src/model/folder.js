@@ -4,8 +4,8 @@ import {DateTime} from "luxon";
 import File from "model/file";
 import Util from "../common/util";
 
-export const RootOriginals = "originals";
 export const RootImport = "import";
+export const RootOriginals = "originals";
 
 export class Folder extends RestModel {
     getDefaults() {

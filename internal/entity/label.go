@@ -33,7 +33,7 @@ type Label struct {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsPPID(m.LabelUID, 'l') {
+	if rnd.IsUID(m.LabelUID, 'l') {
 		return nil
 	}
 

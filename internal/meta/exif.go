@@ -25,12 +25,6 @@ func ValidDateTime(s string) bool {
 	return len(s) == len(DateTimeZero) && s != DateTimeZero
 }
 
-// SanitizeString removes unwanted character from an exif value string.
-func SanitizeString(value string) string {
-	value = strings.TrimSpace(value)
-	return strings.Replace(value, "\"", "", -1)
-}
-
 // Exif parses an image file for Exif meta data and returns as Data struct.
 func Exif(fileName string) (data Data, err error) {
 	err = data.Exif(fileName)
@@ -254,7 +248,7 @@ func (data *Data) Exif(fileName string) (err error) {
 	}
 
 	if value, ok := tags["ImageUniqueID"]; ok {
-		data.UniqueID = value
+		data.DocumentID = SanitizeUID(value)
 	}
 
 	if value, ok := tags["PixelXDimension"]; ok {

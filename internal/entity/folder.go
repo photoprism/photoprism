@@ -17,7 +17,7 @@ import (
 // Folder represents a file system directory.
 type Folder struct {
 	Path              string     `gorm:"type:varbinary(255);unique_index:idx_folders_path_root;" json:"Path" yaml:"Path"`
-	Root              string     `gorm:"type:varbinary(16);default:'originals';unique_index:idx_folders_path_root;" json:"Root" yaml:"Root"`
+	Root              string     `gorm:"type:varbinary(16);default:'';unique_index:idx_folders_path_root;" json:"Root" yaml:"Root,omitempty"`
 	FolderUID         string     `gorm:"type:varbinary(36);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
 	FolderType        string     `gorm:"type:varbinary(16);" json:"Type" yaml:"Type,omitempty"`
 	FolderTitle       string     `gorm:"type:varchar(255);" json:"Title" yaml:"Title,omitempty"`
@@ -41,7 +41,7 @@ type Folder struct {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Folder) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsPPID(m.FolderUID, 'd') {
+	if rnd.IsUID(m.FolderUID, 'd') {
 		return nil
 	}
 
@@ -80,7 +80,12 @@ func (m *Folder) SetTitleFromPath() {
 	s = strings.TrimSpace(s)
 
 	if s == "" || s == RootPath {
-		s = m.Root
+		if m.Root == RootDefault {
+			m.FolderTitle = "Originals"
+			return
+		} else {
+			s = m.Root
+		}
 	} else {
 		s = path.Base(s)
 	}

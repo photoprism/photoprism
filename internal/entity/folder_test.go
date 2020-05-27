@@ -8,8 +8,8 @@ import (
 
 func TestNewFolder(t *testing.T) {
 	t.Run("2020/05", func(t *testing.T) {
-		folder := NewFolder(RootOriginals, "2020/05", nil)
-		assert.Equal(t, RootOriginals, folder.Root)
+		folder := NewFolder(RootDefault, "2020/05", nil)
+		assert.Equal(t, RootDefault, folder.Root)
 		assert.Equal(t, "2020/05", folder.Path)
 		assert.Equal(t, "May 2020", folder.FolderTitle)
 		assert.Equal(t, "", folder.FolderDescription)
@@ -22,7 +22,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("/2020/05/01/", func(t *testing.T) {
-		folder := NewFolder(RootOriginals, "/2020/05/01/", nil)
+		folder := NewFolder(RootDefault, "/2020/05/01/", nil)
 		assert.Equal(t, "2020/05/01", folder.Path)
 		assert.Equal(t, "May 2020", folder.FolderTitle)
 	})
@@ -34,19 +34,19 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("/2020/05/23 Birthday", func(t *testing.T) {
-		folder := NewFolder(RootOriginals, "/2020/05/23 Birthday", nil)
+		folder := NewFolder(RootDefault, "/2020/05/23 Birthday", nil)
 		assert.Equal(t, "2020/05/23 Birthday", folder.Path)
 		assert.Equal(t, "23 Birthday", folder.FolderTitle)
 	})
 
 	t.Run("empty", func(t *testing.T) {
-		folder := NewFolder(RootOriginals, "", nil)
+		folder := NewFolder(RootDefault, "", nil)
 		assert.Equal(t, "", folder.Path)
 		assert.Equal(t, "Originals", folder.FolderTitle)
 	})
 
 	t.Run("root", func(t *testing.T) {
-		folder := NewFolder(RootOriginals, RootPath, nil)
+		folder := NewFolder(RootDefault, RootPath, nil)
 		assert.Equal(t, "", folder.Path)
 		assert.Equal(t, "Originals", folder.FolderTitle)
 	})

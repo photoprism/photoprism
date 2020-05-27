@@ -92,10 +92,10 @@ func (m *MediaFile) TakenAt() (time.Time, string) {
 
 	m.takenAt = time.Now().UTC()
 
-	info, err := m.MetaData()
+	data := m.MetaData()
 
-	if err == nil && !info.TakenAt.IsZero() && info.TakenAt.Year() > 1000 {
-		m.takenAt = info.TakenAt.UTC()
+	if data.Error == nil && !data.TakenAt.IsZero() && data.TakenAt.Year() > 1000 {
+		m.takenAt = data.TakenAt.UTC()
 		m.takenAtSrc = entity.SrcMeta
 
 		log.Infof("mediafile: %s was taken at %s (%s)", filepath.Base(m.fileName), m.takenAt.String(), m.takenAtSrc)
@@ -135,119 +135,67 @@ func (m *MediaFile) TakenAt() (time.Time, string) {
 }
 
 func (m *MediaFile) HasTimeAndPlace() bool {
-	exifData, err := m.MetaData()
+	data := m.MetaData()
 
-	if err != nil {
-		return false
-	}
-
-	result := !exifData.TakenAt.IsZero() && exifData.Lat != 0 && exifData.Lng != 0
+	result := !data.TakenAt.IsZero() && data.Lat != 0 && data.Lng != 0
 
 	return result
 }
 
 // CameraModel returns the camera model with which the media file was created.
 func (m *MediaFile) CameraModel() string {
-	info, err := m.MetaData()
+	data := m.MetaData()
 
-	var result string
-
-	if err == nil {
-		result = info.CameraModel
-	}
-
-	return result
+	return data.CameraModel
 }
 
 // CameraMake returns the make of the camera with which the file was created.
 func (m *MediaFile) CameraMake() string {
-	info, err := m.MetaData()
+	data := m.MetaData()
 
-	var result string
-
-	if err == nil {
-		result = info.CameraMake
-	}
-
-	return result
+	return data.CameraMake
 }
 
 // LensModel returns the lens model of a media file.
 func (m *MediaFile) LensModel() string {
-	info, err := m.MetaData()
+	data := m.MetaData()
 
-	var result string
-
-	if err == nil {
-		result = info.LensModel
-	}
-
-	return result
+	return data.LensModel
 }
 
 // LensMake returns the make of the Lens.
 func (m *MediaFile) LensMake() string {
-	info, err := m.MetaData()
+	data := m.MetaData()
 
-	var result string
-
-	if err == nil {
-		result = info.LensMake
-	}
-
-	return result
+	return data.LensMake
 }
 
 // FocalLength return the length of the focal for a file.
 func (m *MediaFile) FocalLength() int {
-	info, err := m.MetaData()
+	data := m.MetaData()
 
-	var result int
-
-	if err == nil {
-		result = info.FocalLength
-	}
-
-	return result
+	return data.FocalLength
 }
 
 // FNumber returns the F number with which the media file was created.
 func (m *MediaFile) FNumber() float32 {
-	info, err := m.MetaData()
+	data := m.MetaData()
 
-	var result float32
-
-	if err == nil {
-		result = info.FNumber
-	}
-
-	return result
+	return data.FNumber
 }
 
 // Iso returns the iso rating as int.
 func (m *MediaFile) Iso() int {
-	info, err := m.MetaData()
+	data := m.MetaData()
 
-	var result int
-
-	if err == nil {
-		result = info.Iso
-	}
-
-	return result
+	return data.Iso
 }
 
 // Exposure returns the exposure time as string.
 func (m *MediaFile) Exposure() string {
-	info, err := m.MetaData()
+	data := m.MetaData()
 
-	var result string
-
-	if err == nil {
-		result = info.Exposure
-	}
-
-	return result
+	return data.Exposure
 }
 
 // CanonicalName returns the canonical name of a media file.
@@ -678,9 +626,9 @@ func (m *MediaFile) decodeDimensions() error {
 
 	var width, height int
 
-	data, err := m.MetaData()
+	data := m.MetaData()
 
-	if err == nil {
+	if data.Error == nil {
 		width = data.Width
 		height = data.Height
 	}
@@ -757,7 +705,7 @@ func (m *MediaFile) AspectRatio() float32 {
 
 // Orientation returns the orientation of a MediaFile.
 func (m *MediaFile) Orientation() int {
-	if data, err := m.MetaData(); err == nil {
+	if data := m.MetaData(); data.Error == nil {
 		return data.Orientation
 	}
 

@@ -10,7 +10,7 @@ import (
 type Folders []entity.Folder
 
 // FoldersByPath returns a slice of folders in a given directory incl sub directories in recursive mode.
-func FoldersByPath(root, rootPath, path string, recursive bool) (folders Folders, err error) {
+func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders Folders, err error) {
 	dirs, err := fs.Dirs(filepath.Join(rootPath, path), recursive)
 
 	if err != nil {
@@ -20,7 +20,7 @@ func FoldersByPath(root, rootPath, path string, recursive bool) (folders Folders
 	folders = make(Folders, len(dirs))
 
 	for i, dir := range dirs {
-		folder := entity.NewFolder(root, filepath.Join(path, dir), nil)
+		folder := entity.NewFolder(rootName, filepath.Join(path, dir), nil)
 
 		if f := entity.FirstOrCreateFolder(&folder); f != nil {
 			folders[i] = *f

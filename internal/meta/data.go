@@ -7,12 +7,13 @@ import (
 
 // Data represents image meta data.
 type Data struct {
-	UniqueID     string        `meta:"ImageUniqueID"`
+	DocumentID   string        `meta:"ImageUniqueID,OriginalDocumentID,DocumentID"`
+	InstanceID   string        `meta:"InstanceID,DocumentID"`
 	TakenAt      time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate,DateTimeDigitized,DateTime"`
 	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate,DateTimeDigitized,DateTime"`
 	TimeZone     string        `meta:"-"`
 	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
-	Codec        string        `meta:"CompressorID,Compression"`
+	Codec        string        `meta:"CompressorID,Compression,FileType"`
 	Title        string        `meta:"Title"`
 	Subject      string        `meta:"Subject,PersonInImage"`
 	Keywords     string        `meta:"Keywords"`
@@ -42,6 +43,7 @@ type Data struct {
 	Height       int           `meta:"PixelYDimension,ImageHeight,ImageLength,ExifImageHeight,SourceImageHeight"`
 	Orientation  int           `meta:"-"`
 	Rotation     int           `meta:"Rotation"`
+	Error        error         `meta:"-"`
 	All          map[string]string
 }
 
@@ -67,4 +69,19 @@ func (data Data) Portrait() bool {
 // Megapixels returns the resolution in megapixels.
 func (data Data) Megapixels() int {
 	return int(math.Round(float64(data.Width*data.Height) / 1000000))
+}
+
+// HasDocumentID returns true if a DocumentID exists.
+func (data Data) HasDocumentID() bool {
+	return len(data.DocumentID) >= 15
+}
+
+// HasInstanceID returns true if an InstanceID exists.
+func (data Data) HasInstanceID() bool {
+	return len(data.InstanceID) >= 15
+}
+
+// HasTimeAndPlace if data contains a time and gps position.
+func (data Data) HasTimeAndPlace() bool {
+	return !data.TakenAt.IsZero() && data.Lat != 0 && data.Lng != 0
 }

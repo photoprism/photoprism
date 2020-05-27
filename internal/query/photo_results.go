@@ -16,7 +16,8 @@ type Photos []entity.Photo
 
 // PhotoResult contains found photos and their main file plus other meta data.
 type PhotoResult struct {
-	ID               uint          `json:"ID"`
+	ID               uint          `json:"-"`
+	DocumentID       string        `json:"DocumentID,omitempty"`
 	PhotoUID         string        `json:"UID"`
 	PhotoType        string        `json:"Type"`
 	TakenAt          time.Time     `json:"TakenAt"`

@@ -4,7 +4,7 @@ import "github.com/jinzhu/gorm"
 
 // UpdatePhotoCounts updates photos count in related tables as needed.
 func UpdatePhotoCounts() error {
-	log.Info("index: updating photo counts")
+	// log.Info("index: updating photo counts")
 
 	if err := Db().Table("places").
 		UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(*) FROM photos ph "+

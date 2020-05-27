@@ -18,6 +18,7 @@ func PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 		Preload("Camera").
 		Preload("Lens").
 		Preload("Details").
+		Preload("Place").
 		Preload("Location").
 		Preload("Location.Place").
 		First(&photo).Error; err != nil {
@@ -38,6 +39,7 @@ func PhotoByUID(photoUID string) (photo entity.Photo, err error) {
 		Preload("Camera").
 		Preload("Lens").
 		Preload("Details").
+		Preload("Place").
 		Preload("Location").
 		Preload("Location.Place").
 		First(&photo).Error; err != nil {
@@ -58,6 +60,7 @@ func PhotoPreloadByUID(photoUID string) (photo entity.Photo, err error) {
 		Preload("Camera").
 		Preload("Lens").
 		Preload("Details").
+		Preload("Place").
 		Preload("Location").
 		Preload("Location.Place").
 		First(&photo).Error; err != nil {
@@ -101,6 +104,7 @@ func PhotosMaintenance(limit int, offset int) (entities Photos, err error) {
 		Preload("Camera").
 		Preload("Lens").
 		Preload("Details").
+		Preload("Place").
 		Preload("Location").
 		Preload("Location.Place").
 		Where("maintained_at IS NULL OR maintained_at < ?", time.Now().Add(-1*time.Hour*24*7)).

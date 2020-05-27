@@ -49,13 +49,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 		assert.Equal(t, jpegFile.FileName(), outputName)
 		assert.Truef(t, fs.FileExists(jpegFile.FileName()), "output file does not exist: %s", jpegFile.FileName())
 
-		metaData, err := jpegFile.MetaData()
-
-		if err != nil {
-			t.Log(err)
-		} else {
-			t.Logf("video metadata: %+v", metaData)
-		}
+		t.Logf("video metadata: %+v", jpegFile.MetaData())
 
 		_ = os.Remove(outputName)
 	})
@@ -79,11 +73,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		infoJpeg, err := imageJpeg.MetaData()
-
-		if err != nil {
-			t.Fatalf("%s for %s", err.Error(), imageJpeg.FileName())
-		}
+		infoJpeg := imageJpeg.MetaData()
 
 		assert.Equal(t, jpegFilename, imageJpeg.fileName)
 
@@ -113,7 +103,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 		assert.NotEqual(t, rawFilename, imageRaw.fileName)
 
-		infoRaw, err := imageRaw.MetaData()
+		infoRaw := imageRaw.MetaData()
 
 		assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel)
 	})
@@ -246,7 +236,7 @@ func TestConvert_Start(t *testing.T) {
 
 	assert.Equal(t, jpegFilename, image.fileName, "FileName must be the same")
 
-	infoRaw, err := image.MetaData()
+	infoRaw := image.MetaData()
 
 	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel, "UpdateCamera model should be Canon EOS M10")
 
@@ -254,9 +244,11 @@ func TestConvert_Start(t *testing.T) {
 
 	oldHash := fs.Hash(existingJpegFilename)
 
-	os.Remove(existingJpegFilename)
+	_ = os.Remove(existingJpegFilename)
 
-	convert.Start(conf.ImportPath())
+	if err := convert.Start(conf.ImportPath()); err != nil {
+		t.Fatal(err)
+	}
 
 	newHash := fs.Hash(existingJpegFilename)
 

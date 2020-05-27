@@ -70,8 +70,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	fileBase := m.Base(ind.conf.Settings().Index.Group)
 	filePath := m.RelativePath(ind.originalsPath())
-	fileRoot := entity.RootOriginals
+	fileRoot := entity.RootDefault
 	fileName := m.RelativeName(ind.originalsPath())
+	quotedName := txt.Quote(m.RelativeName(ind.originalsPath()))
 	fileHash := ""
 	fileSize, fileModified := m.Stat()
 	fileChanged := true
@@ -82,6 +83,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		"fileHash": fileHash,
 		"fileSize": fileSize,
 		"fileName": fileName,
+		"fileRoot": fileRoot,
 		"baseName": filepath.Base(fileName),
 	})
 
@@ -97,14 +99,23 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			result.Status = IndexDuplicate
 			return result
 		}
+
+		if !fileExists && m.MetaData().HasInstanceID(){
+			fileQuery = ind.db.Unscoped().First(&file, "instance_id = ?", m.MetaData().InstanceID)
+			fileExists = fileQuery.Error == nil
+		}
 	}
 
 	if !fileExists {
 		photoQuery = ind.db.Unscoped().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase)
 
-		if photoQuery.Error != nil && m.HasTimeAndPlace() {
-			metaData, _ = m.MetaData()
+		if photoQuery.Error != nil && m.MetaData().HasTimeAndPlace() {
+			metaData = m.MetaData()
 			photoQuery = ind.db.Unscoped().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ?", metaData.Lat, metaData.Lng, metaData.TakenAt)
+		}
+
+		if photoQuery.Error != nil && m.MetaData().HasDocumentID() {
+			photoQuery = ind.db.Unscoped().First(&photo, "document_id = ?", m.MetaData().DocumentID)
 		}
 	} else {
 		photoQuery = ind.db.Unscoped().First(&photo, "id = ?", file.PhotoID)
@@ -160,7 +171,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	case m.IsJpeg():
 		// Color information
 		if p, err := m.Colors(ind.thumbPath()); err != nil {
-			log.Errorf("index: %s for %s", err.Error(), txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Errorf("index: %s for %s", err.Error(), quotedName)
 		} else {
 			file.FileMainColor = p.MainColor.Name()
 			file.FileColors = p.Colors.Hex()
@@ -204,7 +215,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.PhotoType = entity.TypeRaw
 		}
 	case m.IsVideo():
-		metaData, _ = m.MetaData()
+		metaData = m.MetaData()
 
 		file.FileCodec = metaData.Codec
 		file.FileWidth = metaData.Width
@@ -258,7 +269,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		// read metadata from embedded Exif and JSON sidecar file (if exists)
-		if metaData, err := m.MetaData(); err == nil {
+		if metaData := m.MetaData(); metaData.Error == nil {
 			photo.SetTitle(metaData.Title, entity.SrcMeta)
 			photo.SetDescription(metaData.Description, entity.SrcMeta)
 			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
@@ -288,10 +299,16 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 				photo.CameraSerial = metaData.CameraSerial
 			}
 
-			if len(metaData.UniqueID) > 15 {
-				log.Debugf("index: found file uid %s for %s", txt.Quote(metaData.UniqueID), txt.Quote(m.RelativeName(ind.originalsPath())))
+			if metaData.HasDocumentID() && photo.DocumentID == "" {
+				log.Debugf("index: %s has document id %s", quotedName, txt.Quote(metaData.DocumentID))
 
-				file.FileUID = metaData.UniqueID
+				photo.DocumentID = metaData.DocumentID
+			}
+
+			if metaData.HasInstanceID() && file.InstanceID == "" {
+				log.Debugf("index: %s has instance id %s", quotedName, txt.Quote(metaData.InstanceID))
+
+				file.InstanceID = metaData.InstanceID
 			}
 		}
 
@@ -329,7 +346,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			locKeywords, locLabels = photo.UpdateLocation(ind.conf.GeoCodingApi())
 			labels = append(labels, locLabels...)
 		} else {
-			log.Debugf("index: no coordinates in metadata for %s", txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Debugf("index: no coordinates in metadata for %s", quotedName)
 
 			photo.Location = &entity.UnknownLocation
 			photo.LocUID = entity.UnknownLocation.LocUID
@@ -368,7 +385,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if photoExists {
 		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
-			log.Errorf("index: %s for %s", err.Error(), txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Errorf("index: %s for %s", err.Error(), quotedName)
 			result.Status = IndexFailed
 			result.Error = err
 			return result
@@ -376,7 +393,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	} else {
 		if yamlName := fs.TypeYaml.FindSub(m.FileName(), fs.HiddenPath, ind.conf.Settings().Index.Group); yamlName != "" {
 			if err := photo.LoadFromYaml(yamlName); err != nil {
-				log.Errorf("index: %s (restore from yaml) for %s", err.Error(), txt.Quote(m.RelativeName(ind.originalsPath())))
+				log.Errorf("index: %s (restore from yaml) for %s", err.Error(), quotedName)
 			} else {
 				log.Infof("index: restored from %s", txt.Quote(fs.RelativeName(yamlName, ind.originalsPath())))
 			}
@@ -423,7 +440,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		labels := photo.ClassifyLabels()
 
 		if err := photo.UpdateTitle(labels); err != nil {
-			log.Warnf("%s for %s", err.Error(), txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Warnf("%s for %s", err.Error(), quotedName)
 		}
 
 		w := txt.Keywords(photo.Details.Keywords)
@@ -441,22 +458,22 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		photo.Details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
 		if photo.Details.Keywords != "" {
-			log.Debugf("index: set keywords %s for %s", photo.Details.Keywords, txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Debugf("index: set keywords %s for %s", photo.Details.Keywords, quotedName)
 		} else {
-			log.Debugf("index: no keywords for %s", txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Debugf("index: no keywords for %s", quotedName)
 		}
 
 		photo.PhotoQuality = photo.QualityScore()
 
 		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
-			log.Errorf("index: %s for %s", err, txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Errorf("index: %s for %s", err, quotedName)
 			result.Status = IndexFailed
 			result.Error = err
 			return result
 		}
 
 		if err := photo.IndexKeywords(); err != nil {
-			log.Errorf("%s for %s", err, txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Errorf("%s for %s", err, quotedName)
 		}
 	} else {
 		if photo.PhotoQuality >= 0 {
@@ -464,7 +481,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
-			log.Errorf("index: %s for %s", err, txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Errorf("index: %s for %s", err, quotedName)
 			result.Status = IndexFailed
 			result.Error = err
 			return result
@@ -477,7 +494,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.UpdatedIn = int64(time.Since(start))
 
 		if err := ind.db.Unscoped().Save(&file).Error; err != nil {
-			log.Errorf("index: %s for %s", err, txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Errorf("index: %s for %s", err, quotedName)
 			result.Status = IndexFailed
 			result.Error = err
 			return result
@@ -486,7 +503,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.CreatedIn = int64(time.Since(start))
 
 		if err := ind.db.Create(&file).Error; err != nil {
-			log.Errorf("index: %s for %s", err, txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Errorf("index: %s for %s", err, quotedName)
 			result.Status = IndexFailed
 			result.Error = err
 			return result
@@ -501,7 +518,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if (photo.PhotoType == entity.TypeVideo || photo.PhotoType == entity.TypeLive) && file.FilePrimary {
 		if err := file.UpdateVideoInfos(); err != nil {
-			log.Errorf("index: %s for %s", err, txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Errorf("index: %s for %s", err, quotedName)
 		}
 	}
 
@@ -515,7 +532,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	if err := query.SetDownloadFileID(downloadedAs, file.ID); err != nil {
-		log.Errorf("index: %s for %s", err, txt.Quote(m.RelativeName(ind.originalsPath())))
+		log.Errorf("index: %s for %s", err, quotedName)
 	}
 
 	// Write YAML sidecar file (optional).
@@ -523,7 +540,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		yamlFile := photo.YamlFileName(ind.originalsPath(), ind.conf.SidecarHidden())
 
 		if err := photo.SaveAsYaml(yamlFile); err != nil {
-			log.Errorf("index: %s (update yaml) for %s", err.Error(), txt.Quote(m.RelativeName(ind.originalsPath())))
+			log.Errorf("index: %s (update yaml) for %s", err.Error(), quotedName)
 		} else {
 			log.Infof("index: updated yaml file %s", txt.Quote(fs.RelativeName(yamlFile, ind.originalsPath())))
 		}

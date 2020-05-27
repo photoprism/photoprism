@@ -9,9 +9,9 @@ import (
 )
 
 // MetaData returns exif meta data of a media file.
-func (m *MediaFile) MetaData() (result meta.Data, err error) {
+func (m *MediaFile) MetaData() (result meta.Data) {
 	m.metaDataOnce.Do(func() {
-		err = m.metaData.Exif(m.FileName())
+		err := m.metaData.Exif(m.FileName())
 
 		if jsonFile := fs.TypeJson.FindSub(m.FileName(), fs.HiddenPath, false); jsonFile == "" {
 			log.Debugf("mediafile: no json sidecar file found for %s", txt.Quote(filepath.Base(m.FileName())))
@@ -22,9 +22,10 @@ func (m *MediaFile) MetaData() (result meta.Data, err error) {
 		}
 
 		if err != nil {
+			m.metaData.Error = err
 			log.Debugf("mediafile: %s", err.Error())
 		}
 	})
 
-	return m.metaData, err
+	return m.metaData
 }

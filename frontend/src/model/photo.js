@@ -14,6 +14,7 @@ export const MonthUnknown = -1;
 export class Photo extends RestModel {
     getDefaults() {
         return {
+            DocumentID: "",
             UID: "",
             Type: TypeImage,
             Favorite: false,

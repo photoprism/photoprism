@@ -12,15 +12,16 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
-// File represents an image or sidecar file that belongs to a photo
+// File represents an image or sidecar file that belongs to a photo.
 type File struct {
 	ID              uint          `gorm:"primary_key" json:"-" yaml:"-"`
+	InstanceID      string        `gorm:"type:varbinary(36);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	Photo           *Photo        `json:"-" yaml:"-"`
 	PhotoID         uint          `gorm:"index;" json:"-" yaml:"-"`
 	PhotoUID        string        `gorm:"type:varbinary(36);index;" json:"PhotoUID" yaml:"PhotoUID"`
 	FileUID         string        `gorm:"type:varbinary(36);unique_index;" json:"UID" yaml:"UID"`
 	FileName        string        `gorm:"type:varbinary(768);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
-	FileRoot        string        `gorm:"type:varbinary(16);default:'originals';unique_index:idx_files_name_root;" json:"Root" yaml:"Root"`
+	FileRoot        string        `gorm:"type:varbinary(16);default:'';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
 	OriginalName    string        `gorm:"type:varbinary(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	FileHash        string        `gorm:"type:varbinary(128);index" json:"Hash" yaml:"Hash,omitempty"`
 	FileModified    time.Time     `json:"Modified" yaml:"Modified,omitempty"`
@@ -79,7 +80,7 @@ func FirstFileByHash(fileHash string) (File, error) {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *File) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsPPID(m.FileUID, 'f') {
+	if rnd.IsUID(m.FileUID, 'f') {
 		return nil
 	}
 

@@ -6,6 +6,7 @@ import Util from "common/util";
 export class File extends RestModel {
     getDefaults() {
         return {
+            InstanceID: "",
             UID: "",
             PhotoUID: "",
             Root: "",

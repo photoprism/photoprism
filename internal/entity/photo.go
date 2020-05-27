@@ -18,6 +18,7 @@ import (
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
 	ID               uint         `gorm:"primary_key" yaml:"-"`
+	DocumentID       string       `gorm:"type:varbinary(36);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
 	TakenAt          time.Time    `gorm:"type:datetime;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
 	TakenAtLocal     time.Time    `gorm:"type:datetime;" yaml:"-"`
 	TakenSrc         string       `gorm:"type:varbinary(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
@@ -192,7 +193,7 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 		}
 	}
 
-	if rnd.IsPPID(m.PhotoUID, 'p') {
+	if rnd.IsUID(m.PhotoUID, 'p') {
 		return nil
 	}
 
@@ -391,8 +392,9 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 		knownLocation = true
 		loc := m.Location
 
-		if title := labels.Title(loc.Name()); title != "" { // TODO: User defined title format
-			log.Infof("photo: using label %s to create photo title", txt.Quote(title))
+		// TODO: User defined title format
+		if title := labels.Title(loc.Name()); title != "" {
+			log.Infof("photo: using label %s to create title for %s", txt.Quote(title), m.PhotoUID)
 			if loc.NoCity() || loc.LongCity() || loc.CityContains(title) {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), loc.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
@@ -417,7 +419,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 		knownLocation = true
 
 		if title := labels.Title(""); title != "" {
-			log.Infof("photo: using label %s to create photo title", txt.Quote(title))
+			log.Infof("photo: using label %s to create title for %s", txt.Quote(title), m.PhotoUID)
 			if m.Place.NoCity() || m.Place.LongCity() || m.Place.CityContains(title) {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), m.Place.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
@@ -445,9 +447,9 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 			m.SetTitle(TitleUnknown, SrcAuto)
 		}
 
-		log.Infof("photo: changed photo title to %s", txt.Quote(m.PhotoTitle))
+		log.Infof("photo: changed title of %s to %s", m.PhotoUID, txt.Quote(m.PhotoTitle))
 	} else {
-		log.Infof("photo: new title is %s", txt.Quote(m.PhotoTitle))
+		log.Infof("photo: new title of %s is %s", m.PhotoUID, txt.Quote(m.PhotoTitle))
 	}
 
 	return nil

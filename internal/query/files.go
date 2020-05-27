@@ -9,7 +9,7 @@ import (
 type Files []entity.File
 
 // FilesByPath returns a slice of files in a given originals folder.
-func FilesByPath(root, pathName string) (files Files, err error) {
+func FilesByPath(rootName, pathName string) (files Files, err error) {
 	if strings.HasPrefix(pathName, "/") {
 		pathName = pathName[1:]
 	}
@@ -18,7 +18,7 @@ func FilesByPath(root, pathName string) (files Files, err error) {
 		Table("files").Select("files.*").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
 		Where("files.file_missing = 0").
-		Where("files.file_root = ? AND photos.photo_path = ?", root, pathName).
+		Where("files.file_root = ? AND photos.photo_path = ?", rootName, pathName).
 		Order("files.file_name").
 		Find(&files).Error
 

@@ -144,5 +144,15 @@ func (data *Data) JSON(fileName string) (err error) {
 		data.Codec = CodecJpeg
 	}
 
+	// Validate and normalize optional DocumentID.
+	if len(data.DocumentID) > 0 {
+		data.DocumentID = SanitizeUID(data.DocumentID)
+	}
+
+	// Validate and normalize optional InstanceID.
+	if len(data.InstanceID) > 0 {
+		data.InstanceID = SanitizeUID(data.InstanceID)
+	}
+
 	return nil
 }
