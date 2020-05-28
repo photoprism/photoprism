@@ -55,7 +55,13 @@ export default class Page {
         }
     }
 
-    async selectPhoto(nPhoto) {
+    async selectPhotoFromUID(uid) {
+        await t
+        .hover(Selector('div').withAttribute('data-uid', uid))
+        .click(Selector('.t-select.t-off'));
+    }
+
+    async selectNthPhoto(nPhoto) {
         await t
         .hover(Selector('div[class="v-image__image v-image__image--cover"]', {timeout:4000}).nth(nPhoto))
         .click(Selector('.t-select.t-off'));
@@ -71,6 +77,25 @@ export default class Page {
         await t
             .hover(Selector('div[class="v-image__image v-image__image--cover"]', {timeout:4000}).nth(nPhoto))
             .click(Selector('.t-like.t-off'));
+    }
+
+    async archiveSelectedPhotos() {
+        await t
+            .click(Selector('button.p-photo-clipboard-menu'))
+            .click(Selector('button.p-photo-clipboard-archive'))
+            .click(Selector('button.p-photo-dialog-confirm'));
+    }
+
+    async restoreSelectedPhotos() {
+        await t
+            .click(Selector('button.p-photo-clipboard-menu'))
+            .click(Selector('button.p-photo-clipboard-restore'));
+    }
+
+    async editSelectedPhotos() {
+        await t
+            .click(Selector('button.p-photo-clipboard-menu'))
+            .click(Selector('button.p-photo-clipboard-edit'));
     }
 
     async login(password) {
