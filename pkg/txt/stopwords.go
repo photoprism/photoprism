@@ -3,7 +3,16 @@ package txt
 
 // Stopwords contains a list of stopwords for full-text indexing.
 var Stopwords = map[string]bool{
+	"olymp":            true,
+	"sony":             true,
+	"canon":            true,
+	"nikon":            true,
+	"iphone":           true,
+	"imac":             true,
+	"ipad":             true,
+	"android":          true,
 	"sync":             true,
+	"usb":              true,
 	"upload":           true,
 	"download":         true,
 	"temp":             true,
@@ -15,6 +24,8 @@ var Stopwords = map[string]bool{
 	"thumbnails":       true,
 	"photos":           true,
 	"import":           true,
+	"originals":        true,
+	"original":         true,
 	"export":           true,
 	"abc":              true,
 	"val":              true,
