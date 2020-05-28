@@ -22,14 +22,14 @@ const page = new Page();
 
 //?upload + Later: delete--> oder nur in library?
 
-//scroll to top
+//TODO scroll to top
 
-//download
+//TODO download
 
-//clipboard --> extra test needed or include in other tests done for private, archive
+//TODO clipboard --> extra test needed or include in other tests done for private, archive
 
 //TODO add part for video as well
-/*test('#8 approve photo', async t => {
+test('#8 approve photo', async t => {
     await page.openNav();
     await t
         .click(Selector('div.p-navigation-photos + div'))
@@ -38,6 +38,18 @@ const page = new Page();
     await page.search('type:image');
     const request1 = await logger.requests[0].response.body;
     const FirstPhoto = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
+    const SecondPhoto = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
+
+    logger.clear();
+    await t
+        .click(Selector('.p-navigation-photos'));
+    const request11 = await logger.requests[0].response.body;
+    await t
+        .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists).notOk()
+        .expect(Selector('div').withAttribute('data-uid', SecondPhoto).exists).notOk();
+    logger.clear();
+    await t.click(Selector('.p-navigation-review'));
+    const request111 = await logger.requests[0].response.body;
 
     await page.selectPhotoFromUID(FirstPhoto);
     await page.editSelectedPhotos();
@@ -58,145 +70,87 @@ const page = new Page();
         .click(Selector('button.action-ok'));
     const request3 = await logger.requests[0].response.body;
     logger.clear();
+
+    await page.unselectPhotoFromUID(FirstPhoto);
+    await page.selectPhotoFromUID(SecondPhoto);
+    await page.editSelectedPhotos();
+    logger.clear();
+    await t
+        .typeText(Selector('input[aria-label="Latitude"]'), '9.999')
+        .typeText(Selector('input[aria-label="Longitude"]'), '9.999')
+        .click(Selector('button.action-ok'));
+    const request31 = await logger.requests[0].response.body;
+
     await t
         .click(Selector('button.action-reload'));
     const request4 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists).notOk()
+        .expect(Selector('div').withAttribute('data-uid', SecondPhoto).exists).notOk()
         .click(Selector('.p-navigation-photos'));
     const request5 = await logger.requests[0].response.body;
     logger.clear();
     await page.search('type:image');
     const request6 = await logger.requests[0].response.body;
     await t
-        .expect(Selector('div').withAttribute('data-uid', FirstPhoto).visible).ok();
+        .expect(Selector('div').withAttribute('data-uid', FirstPhoto).visible).ok()
+        .expect(Selector('div').withAttribute('data-uid', SecondPhoto).visible).ok();
 });
 
-//review - add/remove date to photo so that it appears in photos
-test('#9 approve photo', async t => {
-    await page.openNav();
-    await t
-        .click(Selector('div.p-navigation-photos + div'))
-        .click(Selector('.p-navigation-review'));
-    logger.clear();
-    await page.search('type:image');
-    const request1 = await logger.requests[0].response.body;
-    const FirstPhoto = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
+//TODO videos - play video
 
-    await page.selectPhotoFromUID(FirstPhoto);
-    await page.editSelectedPhotos();
-    logger.clear();
-    await t
-        .click(Selector('button.p-photo-dialog-close'));
-    await t
-        .click(Selector('button.action-reload'));
-    const request12 = await logger.requests[0].response.body;
-    logger.clear();
-    await t
-        .expect(Selector('div').withAttribute('data-uid', FirstPhoto).visible).ok();
-    await page.editSelectedPhotos();
-    const request2 = await logger.requests[0].response.body;
-    logger.clear();
-    await t
-        .click(Selector('button.action-approve'))
-        .click(Selector('button.action-ok'));
-    const request3 = await logger.requests[0].response.body;
-    logger.clear();
-    await t
-        .click(Selector('button.action-reload'));
-    const request4 = await logger.requests[0].response.body;
-    logger.clear();
-    await t
-        .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists).notOk()
-        .click(Selector('.p-navigation-photos'));
-    const request5 = await logger.requests[0].response.body;
-    logger.clear();
-    await page.search('type:image');
-    const request6 = await logger.requests[0].response.body;
-    await t
-        .expect(Selector('div').withAttribute('data-uid', FirstPhoto).visible).ok();
-});*/
-
-//videos - play video
-
-test('#1 like/dislike photo', async t => {
+/*test('#1 like/dislike photo/video', async t => {
 
     logger.clear();
-    const FirstLikeButton = await Selector('i.t-off').nth(0).parent(0).nth(0);
-    //const FirstPhoto = FirstLikeButton.parent('div.p-photo');
-    //const FirstPhoto = FirstLikeButton.parent(5);
-    //console.log(FirstPhoto);
-    const FirstPhotoUid = FirstLikeButton.getAttribute('class');
-    console.log('test');
-    console.log(FirstPhotoUid);
+    const FirstPhoto = await Selector('.t-off').nth(0).getAttribute('data-uid');
+
+    await t.click(Selector('.p-navigation-video'));
+    const request0 = await logger.requests[0].response.body;
+    const FirstVideo = await Selector('.t-off').nth(0).getAttribute('data-uid');
 
     await t.click(Selector('.p-navigation-favorites'));
     await t
-        .expect(Selector('div').withAttribute('data-uid', FirstPhotoUid).exists).notOk()
-        .click(Selector('.p-navigation-photos'));
-    logger.clear();
-    await page.search('favorite:false');
-    await page.likePhoto(FirstPhotoUid);
-    const request = await logger.requests[0].response.body;
-    logger.clear();
-    await t
-        .click(Selector('.action-reload'))
-        .expect(Selector('div').withAttribute('data-uid', FirstPhotoUid).exists).ok();
-    logger.clear();
-    await t
-        .click(Selector('.p-navigation-favorites'));
-    const request2 = await logger.requests[0].response.body;
-    logger.clear();
-    await t
-        .expect(Selector('div').withAttribute('data-uid', FirstPhotoUid).exists).ok()
-        .expect(Selector('div.v-image__image').visible).ok();
-    await page.dislikePhoto(FirstPhotoUid);
-    logger.clear();
-    await t.click(Selector('.action-reload'));
-    const request3 = await logger.requests[0].response.body;
-    await t
-        .expect(Selector('div').withAttribute('data-uid', FirstPhotoUid).exists).notOk();
-
-});
-
-/*test('#2 like/dislike video', async t => {
-
-    await t.click(Selector('.p-navigation-video'));
-    logger.clear();
-    await page.search('favorite:false');
-    const request1 = await logger.requests[0].response.body;
-    const FirstPhoto = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
-    await t
-        .click(Selector('.p-navigation-favorites'))
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists).notOk()
+        .expect(Selector('div').withAttribute('data-uid', FirstVideo).exists).notOk()
         .click(Selector('.p-navigation-photos'));
 
-    await t.click(Selector('.p-navigation-video'));
     logger.clear();
-    await page.search('favorite:false');
     await page.likePhoto(FirstPhoto);
     const request = await logger.requests[0].response.body;
     logger.clear();
     await t
         .click(Selector('.action-reload'))
-        .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists).ok();
+        .expect(Selector('i.t-on').withAttribute('data-uid', FirstPhoto).exists).ok();
+    logger.clear();
+
+    await t.click(Selector('.p-navigation-video'));
+    await page.likePhoto(FirstVideo);
+    const request1 = await logger.requests[0].response.body;
+    logger.clear();
+    await t
+        .click(Selector('.action-reload'))
+        .expect(Selector('i.t-on').withAttribute('data-uid', FirstVideo).exists).ok();
     logger.clear();
 
     await t
         .click(Selector('.p-navigation-favorites'));
-    logger.clear();
-    await page.search('type:video');
     const request2 = await logger.requests[0].response.body;
+    logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists).ok()
+        .expect(Selector('div').withAttribute('data-uid', FirstVideo).exists).ok()
         .expect(Selector('div.v-image__image').visible).ok();
+    await page.dislikePhoto(FirstVideo);
+    const request21 = await logger.requests[0].response.body;
+    logger.clear();
     await page.dislikePhoto(FirstPhoto);
     logger.clear();
     await t.click(Selector('.action-reload'));
     const request3 = await logger.requests[0].response.body;
     await t
-        .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists).notOk();
+        .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists).notOk()
+        .expect(Selector('div').withAttribute('data-uid', FirstVideo).exists).notOk();
 });
 
 test('#6 private/unprivate photo/video using clipboard and list', async t => {
@@ -472,10 +426,10 @@ test('#7 archive/restore video, photos, private photos and review photos using c
 });*/
 
 
-//open photoeditdialogue (multiple ways) + edit photo details
+//TODO open photoeditdialogue (multiple ways) + edit photo details
 
-//change primary file
+//TODO change primary file
 
-//navigate to places
+//TODO navigate to places
 
 //??Check count in navi gets updated --> gt/lt or matches count of images
