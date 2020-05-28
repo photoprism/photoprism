@@ -86,6 +86,7 @@ func configAction(ctx *cli.Context) error {
 	// Database config
 	fmt.Printf("%-25s %s\n", "database-driver", conf.DatabaseDriver())
 	fmt.Printf("%-25s %s\n", "database-dsn", conf.DatabaseDsn())
+	fmt.Printf("%-25s %d\n", "database-conns", conf.DatabaseConns())
 
 	// External binaries
 	fmt.Printf("%-25s %s\n", "sips-bin", conf.SipsBin())

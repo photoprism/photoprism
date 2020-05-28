@@ -33,6 +33,15 @@ func (c *Config) DatabaseDsn() string {
 	return c.params.DatabaseDsn
 }
 
+// DatabaseConns sets the maximum number of open connections to the database.
+func (c *Config) DatabaseConns() int {
+	if c.params.DatabaseConns > 1024 || c.params.DatabaseConns < 0 {
+		return 0
+	}
+
+	return c.params.DatabaseConns
+}
+
 // Db returns the db connection.
 func (c *Config) Db() *gorm.DB {
 	if c.db == nil {
@@ -133,7 +142,7 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 	db.LogMode(false)
 	db.SetLogger(log)
 	db.DB().SetMaxIdleConns(0)
-	db.DB().SetMaxOpenConns(256)
+	db.DB().SetMaxOpenConns(c.DatabaseConns())
 
 	c.db = db
 	return err

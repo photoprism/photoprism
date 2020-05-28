@@ -243,6 +243,12 @@ var GlobalFlags = []cli.Flag{
 		Value:  "root:@tcp(localhost:2343)/photoprism?parseTime=true",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
+	cli.IntFlag{
+		Name:   "database-conns",
+		Usage:  "maximum `NUMBER` of open connections to the database",
+		Value:  256,
+		EnvVar: "PHOTOPRISM_DATABASE_CONNS",
+	},
 	cli.BoolFlag{
 		Name:   "detect-nsfw",
 		Usage:  "flag photos as private that may be offensive",

@@ -56,6 +56,7 @@ type Params struct {
 	ResourcesPath      string `yaml:"resources-path" flag:"resources-path"`
 	DatabaseDriver     string `yaml:"database-driver" flag:"database-driver"`
 	DatabaseDsn        string `yaml:"database-dsn" flag:"database-dsn"`
+	DatabaseConns      int    `yaml:"database-conns" flag:"database-conns"`
 	TidbServerHost     string `yaml:"tidb-host" flag:"tidb-host"`
 	TidbServerPort     uint   `yaml:"tidb-port" flag:"tidb-port"`
 	TidbServerPassword string `yaml:"tidb-password" flag:"tidb-password"`
