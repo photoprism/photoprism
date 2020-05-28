@@ -61,6 +61,12 @@ export default class Page {
         .click(Selector('.t-select.t-off'));
     }
 
+    async unselectPhotoFromUID(uid) {
+        await t
+            .hover(Selector('div').withAttribute('data-uid', uid))
+            .click(Selector('.t-select.t-on'));
+    }
+
     async selectNthPhoto(nPhoto) {
         await t
         .hover(Selector('div[class="v-image__image v-image__image--cover"]', {timeout:4000}).nth(nPhoto))
@@ -75,14 +81,12 @@ export default class Page {
 
     async likePhoto(uid) {
         await t
-            .hover(Selector('div').withAttribute('data-uid', uid))
-            .click(Selector('.t-like.t-off'));
+            .click(Selector('.t-like.t-off').withAttribute('data-uid', uid));
     }
 
     async dislikePhoto(uid) {
         await t
-            .hover(Selector('div').withAttribute('data-uid', uid))
-            .click(Selector('.t-like.t-on'));
+            .click(Selector('.t-like.t-on').withAttribute('data-uid', uid));
     }
 
     async archiveSelectedPhotos() {
@@ -99,9 +103,13 @@ export default class Page {
     }
 
     async editSelectedPhotos() {
-        await t
-            .click(Selector('button.p-photo-clipboard-menu'))
-            .click(Selector('button.p-photo-clipboard-edit'));
+        if (await Selector('button.p-photo-clipboard-edit').exists) {
+            await t.click(Selector('button.p-photo-clipboard-edit'));
+        } else if (await Selector('button.p-photo-clipboard-menu').exists) {
+            await t
+                .click(Selector('button.p-photo-clipboard-menu'))
+                .click(Selector('button.p-photo-clipboard-edit'));
+        }
     }
 
     async login(password) {

@@ -100,7 +100,7 @@ test('#8 approve photo', async t => {
 
 //TODO videos - play video
 
-/*test('#1 like/dislike photo/video', async t => {
+test('#1 like/dislike photo/video', async t => {
 
     logger.clear();
     const FirstPhoto = await Selector('.t-off').nth(0).getAttribute('data-uid');
@@ -423,7 +423,7 @@ test('#7 archive/restore video, photos, private photos and review photos using c
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstReviewPhoto).exists).ok();
-});*/
+});
 
 
 //TODO open photoeditdialogue (multiple ways) + edit photo details
