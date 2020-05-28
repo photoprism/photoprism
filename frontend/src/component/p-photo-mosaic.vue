@@ -80,8 +80,8 @@
                             <v-btn icon flat small absolute  :ripple="false"
                                    :class="photo.Favorite ? 'p-photo-like opacity-75' : 'p-photo-like opacity-50'"
                                    @click.stop.prevent="photo.toggleLike()">
-                                <v-icon v-if="photo.Favorite" color="white" class="t-like t-on">favorite</v-icon>
-                                <v-icon v-else color="accent lighten-3" class="t-like t-off">favorite_border</v-icon>
+                                <v-icon v-if="photo.Favorite" color="white" class="t-like t-on" :data-uid="photo.UID">favorite</v-icon>
+                                <v-icon v-else color="accent lighten-3" class="t-like t-off" :data-uid="photo.UID">favorite_border</v-icon>
                             </v-btn>
 
                             <template v-if="photo.isPlayable()">

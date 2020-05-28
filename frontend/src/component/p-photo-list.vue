@@ -73,8 +73,8 @@
                 </v-btn>
                 <v-btn class="p-photo-like" icon small flat :ripple="false"
                        @click.stop.prevent="props.item.toggleLike()" :data-uid="props.item.UID">
-                    <v-icon v-if="props.item.Favorite" color="pink lighten-3">favorite</v-icon>
-                    <v-icon v-else color="accent lighten-3">favorite_border</v-icon>
+                    <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID">favorite</v-icon>
+                    <v-icon v-else color="accent lighten-3" :data-uid="props.item.UID">favorite_border</v-icon>
                 </v-btn>
             </td>
         </template>
