@@ -94,6 +94,19 @@ func FirstOrCreateLabel(m *Label) *Label {
 	return m
 }
 
+// FindLabel returns an existing row if exists.
+func FindLabel(s string) *Label {
+	labelSlug := slug.Make(txt.Clip(s, txt.ClipSlug))
+
+	result := Label{}
+
+	if err := Db().Where("label_slug = ? OR custom_slug = ?", labelSlug, labelSlug).First(&result).Error; err == nil {
+		return &result
+	}
+
+	return nil
+}
+
 // AfterCreate sets the New column used for database callback
 func (m *Label) AfterCreate(scope *gorm.Scope) error {
 	m.New = true

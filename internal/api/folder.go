@@ -43,7 +43,7 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, urlPath, rootName,
 		if cached {
 			if cacheData, ok := gc.Get(cacheKey); ok {
 				log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
-				c.JSON(http.StatusOK, cacheData.(FoldersResponse))
+				c.JSON(http.StatusOK, cacheData.(*FoldersResponse))
 				return
 			}
 		}
@@ -65,7 +65,7 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, urlPath, rootName,
 		}
 
 		if cached {
-			gc.Set(cacheKey, resp, time.Minute*5)
+			gc.Set(cacheKey, &resp, time.Minute*5)
 			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 		}
 

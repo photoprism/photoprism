@@ -13,9 +13,9 @@ type Labels []Label
 func (l Labels) Len() int      { return len(l) }
 func (l Labels) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
 func (l Labels) Less(i, j int) bool {
-	if l[i].Uncertainty >= 100 {
+	if l[i].Uncertainty >= 100 || l[i].Source == SrcKeyword {
 		return false
-	} else if l[j].Uncertainty >= 100 {
+	} else if l[j].Uncertainty >= 100 || l[j].Source == SrcKeyword {
 		return true
 	} else if l[i].Priority == l[j].Priority {
 		return l[i].Uncertainty < l[j].Uncertainty
@@ -36,7 +36,7 @@ func (l Labels) AppendLabel(label Label) Labels {
 // Keywords returns all keywords contains in Labels and their categories
 func (l Labels) Keywords() (result []string) {
 	for _, label := range l {
-		if label.Uncertainty >= 100 {
+		if label.Uncertainty >= 100 || label.Source == SrcKeyword {
 			continue
 		}
 

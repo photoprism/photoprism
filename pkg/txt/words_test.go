@@ -126,3 +126,14 @@ func TestUniqueKeywords(t *testing.T) {
 		assert.Equal(t, []string(nil), result)
 	})
 }
+
+func TestRemoveFromWords(t *testing.T) {
+	t.Run("brown apple", func(t *testing.T) {
+		result := RemoveFromWords([]string{"lazy", "jpg", "Brown", "apple", "brown", "new-york", "JPG"}, "brown apple")
+		assert.Equal(t, []string{"jpg", "lazy", "new-york"}, result)
+	})
+	t.Run("empty", func(t *testing.T) {
+		result := RemoveFromWords([]string{"lazy", "jpg", "Brown", "apple"}, "")
+		assert.Equal(t, []string{"apple", "brown", "jpg", "lazy"}, result)
+	})
+}

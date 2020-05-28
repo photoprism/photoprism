@@ -51,7 +51,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		if cacheData, ok := gc.Get(cacheKey); ok {
 			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
 
-			cached := cacheData.(ThumbCache)
+			cached := cacheData.(*ThumbCache)
 
 			if !fs.FileExists(cached.FileName) {
 				log.Errorf("thumbnail: %s not found", fileHash)
@@ -137,7 +137,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		// Cache thumbnail filename.
-		gc.Set(cacheKey, ThumbCache{thumbnail, f.ShareFileName()}, time.Hour*24)
+		gc.Set(cacheKey, &ThumbCache{thumbnail, f.ShareFileName()}, time.Hour*24)
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		if c.Query("download") != "" {

@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -114,11 +115,11 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if label.LabelSrc == entity.SrcManual {
-			entity.Db().Delete(&label)
+		if label.LabelSrc == classify.SrcManual || label.LabelSrc == classify.SrcKeyword{
+			logError("label", entity.Db().Delete(&label).Error)
 		} else {
 			label.Uncertainty = 100
-			entity.Db().Save(&label)
+			logError("label", entity.Db().Save(&label).Error)
 		}
 
 		p, err := query.PhotoPreloadByUID(c.Param("uid"))
@@ -127,6 +128,8 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
 			return
 		}
+
+		logError("label", p.RemoveKeyword(label.Label.LabelName))
 
 		if err := p.Save(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})

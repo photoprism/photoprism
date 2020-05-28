@@ -59,7 +59,7 @@ func (m *Photo) Maintain() error {
 	}
 
 	if err := m.IndexKeywords(); err != nil {
-		log.Error(err)
+		log.Errorf("photo: %s", err.Error())
 	}
 
 	m.PhotoQuality = m.QualityScore()

@@ -72,6 +72,9 @@ build-js:
 build-go:
 	rm -f $(BINARY_NAME)
 	scripts/build.sh debug $(BINARY_NAME)
+build-race:
+	rm -f $(BINARY_NAME)
+	scripts/build.sh race $(BINARY_NAME)
 build-static:
 	rm -f $(BINARY_NAME)
 	scripts/build.sh static $(BINARY_NAME)

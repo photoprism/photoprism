@@ -72,6 +72,28 @@ func UniqueWords(words []string) (results []string) {
 	return results
 }
 
+// RemoveFromWords removes words from a string slice and returns the sorted result.
+func RemoveFromWords(words []string, remove string) (results []string) {
+	remove = strings.ToLower(remove)
+	last := ""
+
+	SortCaseInsensitive(words)
+
+	for _, w := range words {
+		w = strings.ToLower(w)
+
+		if len(w) < 3 || w == last || strings.Contains(remove, w){
+			continue
+		}
+
+		last = w
+
+		results = append(results, w)
+	}
+
+	return results
+}
+
 // UniqueKeywords returns a slice of unique and sorted keywords without stopwords.
 func UniqueKeywords(s string) (results []string) {
 	last := ""

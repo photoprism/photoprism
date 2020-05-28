@@ -38,7 +38,8 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		Joins("JOIN cameras ON photos.camera_id = cameras.id").
 		Joins("JOIN lenses ON photos.lens_id = lenses.id").
 		Joins("JOIN places ON photos.place_uid = places.place_uid").
-		Where("files.file_type = 'jpg' OR files.file_video = 1")
+		Where("files.file_type = 'jpg' OR files.file_video = 1").
+		Group("photos.id, files.id")
 
 	// Shortcut for known photo ids.
 	if f.ID != "" {

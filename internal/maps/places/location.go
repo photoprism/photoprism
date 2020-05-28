@@ -54,9 +54,9 @@ func FindLocation(id string) (result Location, err error) {
 
 	if hit, ok := cache.Get(id); ok {
 		log.Debugf("api: cache hit for lat %f, lng %f (%s)", lat, lng, ApiName)
-		result = hit.(Location)
-		result.Cached = true
-		return result, nil
+		cached := hit.(*Location)
+		cached.Cached = true
+		return *cached, nil
 	}
 
 	url := fmt.Sprintf(ReverseLookupURL, id)
@@ -101,7 +101,7 @@ func FindLocation(id string) (result Location, err error) {
 		return result, fmt.Errorf("api: no result for %s (%s)", id, ApiName)
 	}
 
-	cache.Set(id, result, gc.DefaultExpiration)
+	cache.Set(id, &result, gc.DefaultExpiration)
 
 	result.Cached = false
 

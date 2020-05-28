@@ -180,7 +180,7 @@ func (c Client) CreateDir(dir string) error {
 func (c Client) Upload(from, to string) error {
 	file, err := os.Open(from)
 
-	if err != nil {
+	if err != nil || file == nil {
 		return err
 	}
 

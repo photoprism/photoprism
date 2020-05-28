@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -248,10 +247,6 @@ func (c *Convert) ToJpeg(image *MediaFile, hidden bool) (*MediaFile, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// Unclear if this is really necessary here, but safe is safe.
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
 
 	if useMutex {
 		// Make sure only one command is executed at a time.

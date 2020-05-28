@@ -102,12 +102,16 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 		model.Details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 	}
 
+	if err := model.SyncKeywordLabels(); err != nil {
+		log.Errorf("photo: %s", err)
+	}
+
 	if err := model.UpdateTitle(model.ClassifyLabels()); err != nil {
 		log.Warn(err)
 	}
 
 	if err := model.IndexKeywords(); err != nil {
-		log.Error(err)
+		log.Errorf("photo: %s", err.Error())
 	}
 
 	edited := time.Now().UTC()
@@ -146,7 +150,7 @@ func (m *Photo) Save() error {
 	}
 
 	if err := m.IndexKeywords(); err != nil {
-		log.Error(err)
+		log.Errorf("photo: %s", err.Error())
 	}
 
 	m.PhotoQuality = m.QualityScore()
@@ -216,10 +220,39 @@ func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 	return nil
 }
 
+// RemoveKeyword removes a word from photo keywords.
+func (m *Photo) RemoveKeyword(w string) error {
+	if !m.DetailsLoaded() {
+		return fmt.Errorf("can't remove keyword, details not loaded")
+	}
+
+	words := txt.RemoveFromWords(txt.Words(m.Details.Keywords), w)
+
+	m.Details.Keywords = strings.Join(words, ", ")
+
+	return nil
+}
+
+// SyncKeywordLabels maintains the label / photo relationship for existing labels and keywords.
+func (m *Photo) SyncKeywordLabels() error {
+	keywords := txt.UniqueKeywords(m.Details.Keywords)
+
+	var labelIds []uint
+
+	for _, w := range keywords {
+		if label := FindLabel(w); label != nil {
+			labelIds = append(labelIds, label.ID)
+			FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, label.ID, 5, classify.SrcKeyword))
+		}
+	}
+
+	return Db().Where("label_src = ? AND photo_id = ? AND label_id NOT IN (?)", classify.SrcKeyword, m.ID, labelIds).Delete(&PhotoLabel{}).Error
+}
+
 // IndexKeywords adds given keywords to the photo entry
 func (m *Photo) IndexKeywords() error {
 	if !m.DetailsLoaded() {
-		return fmt.Errorf("photo: can't index keywords, details not loaded for %s", m.PhotoUID)
+		return fmt.Errorf("can't index keywords, details not loaded")
 	}
 
 	db := Db()
@@ -240,7 +273,7 @@ func (m *Photo) IndexKeywords() error {
 		kw := FirstOrCreateKeyword(NewKeyword(w))
 
 		if kw == nil {
-			log.Errorf("photo: index keyword should not be nil - bug?")
+			log.Errorf("index keyword should not be nil - bug?")
 			continue
 		}
 

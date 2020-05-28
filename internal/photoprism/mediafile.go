@@ -636,6 +636,10 @@ func (m *MediaFile) decodeDimensions() error {
 	if m.IsJpeg() {
 		file, err := os.Open(m.FileName())
 
+		if err != nil || file == nil {
+			return err
+		}
+
 		defer file.Close()
 
 		size, _, err := image.DecodeConfig(file)

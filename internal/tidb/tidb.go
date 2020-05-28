@@ -10,8 +10,6 @@ func InitDatabase(port uint, password string) error {
 
 	db, err := sql.Open("mysql", fmt.Sprintf("root:@tcp(localhost:%d)/", port))
 
-	defer db.Close()
-
 	if err != nil {
 		log.Debug(err.Error())
 		log.Debug("database login as root with password")
@@ -22,6 +20,8 @@ func InitDatabase(port uint, password string) error {
 		log.Error(err.Error())
 		return err
 	}
+
+	defer db.Close()
 
 	if password != "" {
 		log.Debug("set database password")

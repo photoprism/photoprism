@@ -33,7 +33,8 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		Joins(`JOIN files ON files.photo_id = photos.id AND 
 		files.file_missing = 0 AND files.file_primary AND files.deleted_at IS NULL`).
 		Where("photos.deleted_at IS NULL").
-		Where("photos.photo_lat <> 0")
+		Where("photos.photo_lat <> 0").
+		Group("photos.id, files.id")
 
 	f.Query = txt.Clip(f.Query, txt.ClipKeyword)
 

@@ -462,8 +462,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			return result
 		}
 
+		if err := photo.SyncKeywordLabels(); err != nil {
+			log.Errorf("index: %s for %s", err, quotedName)
+		}
+
 		if err := photo.IndexKeywords(); err != nil {
-			log.Errorf("%s for %s", err, quotedName)
+			log.Errorf("index: %s for %s", err, quotedName)
 		}
 	} else {
 		if photo.PhotoQuality >= 0 {
