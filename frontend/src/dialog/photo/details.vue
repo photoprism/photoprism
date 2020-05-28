@@ -359,12 +359,12 @@
                                     <translate>Close</translate>
                                 </v-btn>
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save(false)"
-                                       class="p-photo-dialog-confirm">
+                                       class="p-photo-dialog-confirm action-approve">
                                     <span v-if="$config.feature('review') && model.Quality < 3">Approve</span>
                                     <span v-else>Apply</span>
                                 </v-btn>
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save(true)"
-                                       class="p-photo-dialog-confirm hidden-xs-only">
+                                       class="p-photo-dialog-confirm hidden-xs-only action-ok">
                                     <span>OK</span>
                                     <v-icon right dark>done</v-icon>
                                 </v-btn>
