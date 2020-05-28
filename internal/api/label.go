@@ -167,9 +167,9 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		start := time.Now()
 		typeName := c.Param("type")
 		labelUID := c.Param("uid")
-		start := time.Now()
 
 		thumbType, ok := thumb.Types[typeName]
 
@@ -203,7 +203,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			report("label", f.Update("FileMissing", true))
+			logError("label", f.Update("FileMissing", true))
 
 			return
 		}

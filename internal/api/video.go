@@ -66,7 +66,7 @@ func GetVideo(router *gin.RouterGroup, conf *config.Config) {
 			c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			report("video", f.Update("FileMissing", true))
+			logError("video", f.Update("FileMissing", true))
 
 			return
 		}

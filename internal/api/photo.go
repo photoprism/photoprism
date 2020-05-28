@@ -133,7 +133,7 @@ func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			report("photo", f.Update("FileMissing", true))
+			logError("photo", f.Update("FileMissing", true))
 
 			return
 		}

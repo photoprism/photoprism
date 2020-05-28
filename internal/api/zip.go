@@ -94,7 +94,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 				log.Infof("zip: added %s as %s", txt.Quote(f.FileName), txt.Quote(fileAlias))
 			} else {
 				log.Warnf("zip: file %s is missing", txt.Quote(f.FileName))
-				report("zip", f.Update("FileMissing", true))
+				logError("zip", f.Update("FileMissing", true))
 			}
 		}
 

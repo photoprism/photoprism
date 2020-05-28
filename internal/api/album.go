@@ -431,9 +431,9 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		start := time.Now()
 		typeName := c.Param("type")
 		uid := c.Param("uid")
-		start := time.Now()
 
 		thumbType, ok := thumb.Types[typeName]
 
@@ -468,7 +468,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			log.Warnf("album: %s is missing", txt.Quote(f.FileName))
-			report("album", f.Update("FileMissing", true))
+			logError("album", f.Update("FileMissing", true))
 			return
 		}
 

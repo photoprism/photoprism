@@ -1,17 +1,25 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"path"
 	"path/filepath"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+type ThumbCache struct {
+	FileName  string
+	ShareName string
+}
 
 // GET /api/v1/t/:hash/:token/:type
 //
@@ -25,14 +33,38 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		start := time.Now()
 		fileHash := c.Param("hash")
 		typeName := c.Param("type")
 
 		thumbType, ok := thumb.Types[typeName]
 
 		if !ok {
-			log.Errorf("photo: invalid thumb type %s", txt.Quote(typeName))
+			log.Errorf("thumbnail: invalid type %s", txt.Quote(typeName))
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+			return
+		}
+
+		gc := service.Cache()
+		cacheKey := fmt.Sprintf("thumbnail:%s:%s", fileHash, typeName)
+
+		if cacheData, ok := gc.Get(cacheKey); ok {
+			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+
+			cached := cacheData.(ThumbCache)
+
+			if !fs.FileExists(cached.FileName) {
+				log.Errorf("thumbnail: %s not found", fileHash)
+				c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+				return
+			}
+
+			if c.Query("download") != "" {
+				c.FileAttachment(cached.FileName, cached.ShareName)
+			} else {
+				c.File(cached.FileName)
+			}
+
 			return
 		}
 
@@ -62,16 +94,16 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("photo: file %s is missing", txt.Quote(f.FileName))
-			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+			log.Errorf("thumbnail: file %s is missing", txt.Quote(f.FileName))
+			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			report("photo", f.Update("FileMissing", true))
+			logError("thumbnail", f.Update("FileMissing", true))
 
 			if f.AllFilesMissing() {
-				log.Infof("photo: deleting photo, all files missing for %s", txt.Quote(f.FileName))
+				log.Infof("thumbnail: deleting photo, all files missing for %s", txt.Quote(f.FileName))
 
-				report("photo", f.RelatedPhoto().Delete(false))
+				logError("thumbnail", f.RelatedPhoto().Delete(false))
 			}
 
 			return
@@ -79,7 +111,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
 		if thumbType.ExceedsLimit() && c.Query("download") == "" {
-			log.Debugf("photo: using original, thumbnail size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
+			log.Debugf("thumbnail: using original, size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
 
 			c.File(fileName)
 
@@ -95,14 +127,18 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if err != nil {
-			log.Errorf("photo: %s", err)
+			log.Errorf("thumbnail: %s", err)
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 			return
 		} else if thumbnail == "" {
-			log.Errorf("photo: thumbnail name for %s is empty - bug?", filepath.Base(fileName))
+			log.Errorf("thumbnail: thumbnail name for %s is empty - bug?", filepath.Base(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 			return
 		}
+
+		// Cache thumbnail filename.
+		gc.Set(cacheKey, ThumbCache{thumbnail, f.ShareFileName()}, time.Hour*24)
+		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		if c.Query("download") != "" {
 			c.FileAttachment(thumbnail, f.ShareFileName())

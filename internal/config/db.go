@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io/ioutil"
+	"runtime"
 	"strings"
 	"time"
 
@@ -141,7 +142,14 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 
 	db.LogMode(false)
 	db.SetLogger(log)
-	db.DB().SetMaxIdleConns(0)
+
+	if runtime.NumCPU() > 4 {
+		db.DB().SetMaxIdleConns(runtime.NumCPU())
+	} else {
+		db.DB().SetMaxIdleConns(4)
+	}
+
+	db.DB().SetConnMaxLifetime(time.Minute)
 	db.DB().SetMaxOpenConns(c.DatabaseConns())
 
 	c.db = db

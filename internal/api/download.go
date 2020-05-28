@@ -44,7 +44,7 @@ func GetDownload(router *gin.RouterGroup, conf *config.Config) {
 			c.Data(404, "image/svg+xml", brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			report("download", f.Update("FileMissing", true))
+			logError("download", f.Update("FileMissing", true))
 
 			return
 		}
