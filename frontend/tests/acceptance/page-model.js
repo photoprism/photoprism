@@ -73,10 +73,16 @@ export default class Page {
             .click(Selector('.t-select.t-on'));
     }
 
-    async likePhoto(nPhoto) {
+    async likePhoto(uid) {
         await t
-            .hover(Selector('div[class="v-image__image v-image__image--cover"]', {timeout:4000}).nth(nPhoto))
+            .hover(Selector('div').withAttribute('data-uid', uid))
             .click(Selector('.t-like.t-off'));
+    }
+
+    async dislikePhoto(uid) {
+        await t
+            .hover(Selector('div').withAttribute('data-uid', uid))
+            .click(Selector('.t-like.t-on'));
     }
 
     async archiveSelectedPhotos() {
