@@ -16,20 +16,7 @@ const page = new Page();
 
 test('Like photo', async t => {
 
-    const FavoritesCount = await Selector('.t-like.t-on').count;
-    logger.clear();
-    await t.navigateTo("../photos")
-    const request = await logger.requests[0].responseBody;
-    await page.likePhoto(5);
-    logger.clear();
-    await t.navigateTo("../favorites");
-    const request2 = await logger.requests[0].responseBody;
-    logger.clear();
 
-    const FavoritesCountAfterLike = await Selector('.t-like.t-on').count;
-    await t
-        .expect(FavoritesCountAfterLike).eql(FavoritesCount + 1)
-        .expect(Selector('div.v-image__image').visible).ok();
 }),
 
 test('Dislike photo', async t => {

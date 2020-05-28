@@ -1,6 +1,6 @@
 import { Selector } from 'testcafe';
-import testcafeconfig from './testcafeconfig';
-import Page from "./page-model";
+import testcafeconfig from '../testcafeconfig';
+import Page from "../page-model";
 import { ClientFunction } from 'testcafe';
 
 fixture`Scroll to top`

@@ -1,6 +1,6 @@
 import { Selector } from 'testcafe';
-import testcafeconfig from './testcafeconfig';
-import Page from "./page-model";
+import testcafeconfig from '../testcafeconfig';
+import Page from "../page-model";
 
 fixture`Test views`
     .page`${testcafeconfig.url}`;

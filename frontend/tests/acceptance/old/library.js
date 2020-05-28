@@ -1,6 +1,6 @@
 import { Selector } from 'testcafe';
-import testcafeconfig from './testcafeconfig';
-import Page from "./page-model";
+import testcafeconfig from '../testcafeconfig';
+import Page from "../page-model";
 import { RequestLogger } from 'testcafe';
 
 const logger = RequestLogger( /http:\/\/localhost:2342\/api\/v1\*/ , {
