@@ -19,6 +19,7 @@
             <v-flex
                     v-for="(photo, index) in photos"
                     :key="index"
+                    :data-uid="photo.UID"
                     v-bind:class="{ selected: $clipboard.has(photo) }"
                     class="p-photo"
                     xs4 sm3 md2 xl1 d-flex

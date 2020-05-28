@@ -10,7 +10,7 @@
             :no-data-text="notFoundMessage"
     >
         <template slot="items" slot-scope="props">
-            <td style="user-select: none;">
+            <td style="user-select: none;" :data-uid="props.item.UID">
                 <v-img class="accent lighten-2 clickable" aspect-ratio="1"
                        :src="props.item.thumbnailUrl('tile_50')"
                        @mousedown="onMouseDown($event, props.index)"
@@ -67,12 +67,12 @@
             </td>
             <td class="text-xs-center">
                 <v-btn v-if="hidePrivate" class="p-photo-private" icon small flat :ripple="false"
-                       @click.stop.prevent="props.item.togglePrivate()">
+                       @click.stop.prevent="props.item.togglePrivate()" :data-uid="props.item.UID">
                     <v-icon v-if="props.item.Private" color="secondary-dark">lock</v-icon>
                     <v-icon v-else color="accent lighten-3">lock_open</v-icon>
                 </v-btn>
                 <v-btn class="p-photo-like" icon small flat :ripple="false"
-                       @click.stop.prevent="props.item.toggleLike()">
+                       @click.stop.prevent="props.item.toggleLike()" :data-uid="props.item.UID">
                     <v-icon v-if="props.item.Favorite" color="pink lighten-3">favorite</v-icon>
                     <v-icon v-else color="accent lighten-3">favorite_border</v-icon>
                 </v-btn>
