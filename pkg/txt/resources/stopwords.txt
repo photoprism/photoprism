@@ -1,4 +1,13 @@
+olymp
+sony
+canon
+nikon
+iphone
+imac
+ipad
+android
 sync
+usb
 upload
 download
 temp
@@ -10,6 +19,8 @@ thumbnail
 thumbnails
 photos
 import
+originals
+original
 export
 abc
 val

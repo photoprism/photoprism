@@ -4,9 +4,12 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 var ContainsNumberRegexp = regexp.MustCompile("\\d+")
+var FileTitleRegexp = regexp.MustCompile("[\\p{L}\\-]{2,}")
 
 // ContainsNumber returns true if string contains a number.
 func ContainsNumber(s string) bool {
@@ -47,6 +50,9 @@ func UcFirst(str string) string {
 
 // Title returns the string with the first characters of each word converted to uppercase.
 func Title(s string) string {
+	s = strings.TrimSpace(s)
+	s = strings.ReplaceAll(s, "_", " ")
+
 	prev := ' '
 	return strings.Map(
 		func(r rune) rune {
@@ -58,6 +64,52 @@ func Title(s string) string {
 			return r
 		},
 		s)
+}
+
+// TitleFromFileName returns the string with the first characters of each word converted to uppercase.
+func TitleFromFileName(s string) string {
+	s = fs.Base(s, true)
+
+	if len(s) < 3 {
+		return ""
+	}
+
+	words := FileTitleRegexp.FindAllString(s, -1)
+	var result []string
+
+	found := 0
+
+	for _, w := range words {
+		w = strings.ToLower(w)
+
+		if len(w) < 3 && found == 0 {
+			continue
+		}
+
+		if _, ok := Stopwords[w]; ok && found == 0 {
+			continue
+		}
+
+		result = append(result, w)
+
+		found++
+
+		if found >= 10 {
+			break
+		}
+	}
+
+	if found == 0 {
+		return ""
+	}
+
+	title := strings.Join(result, " ")
+
+	title = strings.ReplaceAll(title, "--", " / ")
+	title = strings.ReplaceAll(title, "-", " ")
+	title = strings.ReplaceAll(title, "  ", " ")
+
+	return Title(title)
 }
 
 // Bool casts a string to bool.

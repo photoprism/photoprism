@@ -59,53 +59,65 @@ func NewFolder(root, pathName string, modTime *time.Time) Folder {
 	}
 
 	result := Folder{
-		FolderUID:   rnd.PPID('d'),
-		Root:        root,
-		Path:        pathName,
-		FolderType:  TypeDefault,
-		FolderOrder: SortOrderName,
-		ModifiedAt:  modTime,
-		CreatedAt:   now,
-		UpdatedAt:   now,
+		FolderUID:     rnd.PPID('d'),
+		Root:          root,
+		Path:          pathName,
+		FolderType:    TypeDefault,
+		FolderOrder:   SortOrderName,
+		FolderCountry: UnknownCountry.ID,
+		FolderYear:    0,
+		FolderMonth:   0,
+		ModifiedAt:    modTime,
+		CreatedAt:     now,
+		UpdatedAt:     now,
 	}
 
-	result.SetTitleFromPath()
+	result.SetValuesFromPath()
 
 	return result
 }
 
-// SetTitleFromPath updates the title based on the path name (e.g. when displaying it as an album).
-func (m *Folder) SetTitleFromPath() {
+// SetValuesFromPath updates the title and other values based on the path name.
+func (m *Folder) SetValuesFromPath() {
 	s := m.Path
 	s = strings.TrimSpace(s)
 
 	if s == "" || s == RootPath {
 		if m.Root == RootDefault {
 			m.FolderTitle = "Originals"
+
 			return
 		} else {
 			s = m.Root
 		}
 	} else {
+		m.FolderCountry = txt.CountryCode(s)
+		m.FolderYear = txt.Year(s)
 		s = path.Base(s)
 	}
 
-	if len(m.Path) >= 6 && txt.IsUInt(s) {
+	if len(m.Path) >= 6 {
 		if date := txt.Time(m.Path); !date.IsZero() {
-			if date.Day() > 1 {
-				m.FolderTitle = date.Format("January 2, 2006")
-			} else {
-				m.FolderTitle = date.Format("January 2006")
+			if txt.IsUInt(s) {
+				if date.Day() > 1 {
+					m.FolderTitle = date.Format("January 2, 2006")
+				} else {
+					m.FolderTitle = date.Format("January 2006")
+				}
 			}
-			return
+
+			m.FolderYear = date.Year()
+			m.FolderMonth = int(date.Month())
 		}
 	}
 
-	s = strings.ReplaceAll(s, "_", " ")
-	s = strings.ReplaceAll(s, "-", " ")
-	s = strings.Title(s)
+	if m.FolderTitle == "" {
+		s = strings.ReplaceAll(s, "_", " ")
+		s = strings.ReplaceAll(s, "-", " ")
+		s = strings.Title(s)
 
-	m.FolderTitle = txt.Clip(s, txt.ClipDefault)
+		m.FolderTitle = txt.Clip(s, txt.ClipDefault)
+	}
 }
 
 // Saves the complete entity in the database.
@@ -117,6 +129,19 @@ func (m *Folder) Create() error {
 	event.Publish("count.folders", event.Data{
 		"count": 1,
 	})
+
+	return nil
+}
+
+// FindFolder returns an existing row if exists.
+func FindFolder(root, pathName string) *Folder {
+	pathName = strings.Trim(pathName, string(os.PathSeparator))
+
+	result := Folder{}
+
+	if err := Db().Where("path = ? AND root = ?", pathName, root).First(&result).Error; err == nil {
+		return &result
+	}
 
 	return nil
 }

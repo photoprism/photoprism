@@ -1,9 +1,12 @@
 package entity
 
 import (
+	"path"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
@@ -25,6 +28,16 @@ func (m *Photo) GetTimeZone() string {
 	return result
 }
 
+// CountryName returns the photo country name.
+func (m *Photo) CountryName() string {
+	return maps.CountryNames[m.PhotoCountry]
+}
+
+// CountryCode returns the photo country code.
+func (m *Photo) CountryCode() string {
+	return m.PhotoCountry
+}
+
 // GetTakenAt returns UTC time for TakenAtLocal.
 func (m *Photo) GetTakenAt() time.Time {
 	loc, err := time.LoadLocation(m.TimeZone)
@@ -42,46 +55,65 @@ func (m *Photo) GetTakenAt() time.Time {
 
 // UpdateLocation updates location and labels based on latitude and longitude.
 func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classify.Labels) {
-	var location = NewLocation(m.PhotoLat, m.PhotoLng)
+	if m.HasLatLng() {
+		var location = NewLocation(m.PhotoLat, m.PhotoLng)
 
-	err := location.Find(geoApi)
+		err := location.Find(geoApi)
 
-	if location.Place == nil {
-		log.Warnf("photo: location place is nil (uid %s, loc_uid %s) - bug?", m.PhotoUID, location.LocUID)
+		if location.Place == nil {
+			log.Warnf("photo: location place is nil (uid %s, loc_uid %s) - bug?", m.PhotoUID, location.LocUID)
+		}
+
+		if err == nil && location.Place != nil && location.LocUID != UnknownLocation.LocUID {
+			m.Location = location
+			m.LocUID = location.LocUID
+			m.Place = location.Place
+			m.PlaceUID = location.PlaceUID
+			m.PhotoCountry = location.CountryCode()
+
+			if m.TakenSrc != SrcManual {
+				m.TimeZone = m.GetTimeZone()
+				m.TakenAt = m.GetTakenAt()
+			}
+
+			FirstOrCreateCountry(NewCountry(location.CountryCode(), location.CountryName()))
+
+			locCategory := location.Category()
+			keywords = append(keywords, location.Keywords()...)
+
+			// Append category from reverse location lookup
+			if locCategory != "" {
+				labels = append(labels, classify.LocationLabel(locCategory, 0, -1))
+			}
+
+			return keywords, labels
+		}
 	}
 
-	if err == nil && location.Place != nil && location.LocUID != UnknownLocation.LocUID {
-		m.Location = location
-		m.LocUID = location.LocUID
-		m.Place = location.Place
-		m.PlaceUID = location.PlaceUID
-		m.PhotoCountry = location.CountryCode()
+	keywords = []string{}
+	labels = classify.Labels{}
 
-		if m.TakenSrc != SrcManual {
-			m.TimeZone = m.GetTimeZone()
-			m.TakenAt = m.GetTakenAt()
-		}
-
-		FirstOrCreateCountry(NewCountry(location.CountryCode(), location.CountryName()))
-
-		locCategory := location.Category()
-		keywords = append(keywords, location.Keywords()...)
-
-		// Append category from reverse location lookup
-		if locCategory != "" {
-			labels = append(labels, classify.LocationLabel(locCategory, 0, -1))
-		}
-	} else {
-		log.Warn(err)
-
+	if m.UnknownLocation() {
 		m.Location = &UnknownLocation
 		m.LocUID = UnknownLocation.LocUID
-		m.Place = &UnknownPlace
-		m.PlaceUID = UnknownPlace.PlaceUID
+	} else if err := m.LoadLocation(); err == nil {
+		m.Place = m.Location.Place
+		m.PlaceUID = m.Location.PlaceUID
 	}
 
-	if m.Place != nil && (m.PhotoCountry == "" || m.PhotoCountry == UnknownCountry.Code()) {
-		m.PhotoCountry = m.Place.LocCountry
+	if m.UnknownPlace() {
+		m.Place = &UnknownPlace
+		m.PlaceUID = UnknownPlace.PlaceUID
+	} else if err := m.LoadPlace(); err == nil {
+		m.PhotoCountry = m.Place.CountryCode()
+	}
+
+	if m.UnknownCountry() {
+		m.PhotoCountry = txt.CountryCode(path.Join(m.PhotoPath, m.PhotoName))
+	}
+
+	if m.HasCountry() {
+		FirstOrCreateCountry(NewCountry(m.CountryCode(), m.CountryName()))
 	}
 
 	return keywords, labels

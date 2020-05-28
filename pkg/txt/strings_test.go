@@ -63,6 +63,33 @@ func TestTitle(t *testing.T) {
 	})
 }
 
+func TestTitleFromFileName(t *testing.T) {
+	t.Run("Browse your life in pictures", func(t *testing.T) {
+		assert.Equal(t, "Browse Your Life In Pictures", TitleFromFileName("Browse your life in pictures"))
+	})
+	t.Run("photo-lover", func(t *testing.T) {
+		assert.Equal(t, "Photo Lover", TitleFromFileName("photo-lover"))
+	})
+	t.Run("BRIDGE", func(t *testing.T) {
+		assert.Equal(t, "Bridge", TitleFromFileName("Bridge"))
+	})
+	t.Run("IMG_4568", func(t *testing.T) {
+		assert.Equal(t, "", TitleFromFileName("IMG_4568"))
+	})
+	t.Run("queen-city-yacht-club--toronto-island_7999432607_o.jpg", func(t *testing.T) {
+		assert.Equal(t, "Queen City Yacht Club / Toronto Island", TitleFromFileName("queen-city-yacht-club--toronto-island_7999432607_o.jpg"))
+	})
+	t.Run("tim-robbins--tiff-2012_7999233420_o.jpg", func(t *testing.T) {
+		assert.Equal(t, "Tim Robbins / Tiff", TitleFromFileName("tim-robbins--tiff-2012_7999233420_o.jpg"))
+	})
+	t.Run("20200102-204030-Berlin-Germany-2020-3h4.jpg", func(t *testing.T) {
+		assert.Equal(t, "Berlin Germany", TitleFromFileName("20200102-204030-Berlin-Germany-2020-3h4.jpg"))
+	})
+	t.Run("changing-of-the-guard--buckingham-palace_7925318070_o.jpg", func(t *testing.T) {
+		assert.Equal(t, "Changing Of The Guard / Buckingham Palace", TitleFromFileName("changing-of-the-guard--buckingham-palace_7925318070_o.jpg"))
+	})
+}
+
 func TestBool(t *testing.T) {
 	t.Run("not empty", func(t *testing.T) {
 		assert.Equal(t, true, Bool("Browse your life in pictures"))

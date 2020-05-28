@@ -182,13 +182,13 @@ func TestPhoto_PreloadMany(t *testing.T) {
 func TestPhoto_NoLocation(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
-		assert.True(t, m.NoLocation())
+		assert.True(t, m.UnknownLocation())
 	})
 	t.Run("false", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo08")
 		// t.Logf("MODEL: %+v", m)
 		assert.True(t, m.HasLocation())
-		assert.False(t, m.NoLocation())
+		assert.False(t, m.UnknownLocation())
 	})
 }
 
@@ -228,11 +228,11 @@ func TestPhoto_NoLatLng(t *testing.T) {
 func TestPhoto_NoPlace(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
-		assert.True(t, m.NoPlace())
+		assert.True(t, m.UnknownPlace())
 	})
 	t.Run("false", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo08")
-		assert.False(t, m.NoPlace())
+		assert.False(t, m.UnknownPlace())
 	})
 }
 

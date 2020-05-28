@@ -23,6 +23,10 @@ func (m *Photo) EstimatePosition() {
 			m.PhotoCountry = recentPhoto.PhotoCountry
 			m.LocSrc = SrcEstimate
 			log.Debugf("prism: approximate position of %s is %s", m.PhotoUID, recentPhoto.PlaceUID)
+		} else if recentPhoto.HasCountry() {
+			m.PhotoCountry = recentPhoto.PhotoCountry
+			m.LocSrc = SrcEstimate
+			log.Debugf("prism: probable country for %s is %s", m.PhotoUID, recentPhoto.PhotoCountry)
 		}
 	}
 }
@@ -36,7 +40,7 @@ func (m *Photo) Maintain() error {
 	maintained := time.Now()
 	m.MaintainedAt = &maintained
 
-	if m.NoLocation() && (m.LocSrc == SrcAuto || m.LocSrc == SrcEstimate) {
+	if m.UnknownLocation() && (m.LocSrc == SrcAuto || m.LocSrc == SrcEstimate) {
 		m.EstimatePosition()
 	}
 
@@ -49,7 +53,7 @@ func (m *Photo) Maintain() error {
 	}
 
 	if m.DetailsLoaded() {
-		w := txt.UniqueKeywords(m.Details.Keywords)
+		w := txt.UniqueWords(txt.Words(m.Details.Keywords))
 		w = append(w, labels.Keywords()...)
 		m.Details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 	}

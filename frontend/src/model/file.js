@@ -80,7 +80,7 @@ export class File extends RestModel {
             return "/api/v1/svg/raw";
         }
 
-        return `/api/v1/t/${this.Hash}/t/${config.previewToken()}/${type}`;
+        return `/api/v1/t/${this.Hash}/${config.previewToken()}/${type}`;
     }
 
     getDownloadUrl() {

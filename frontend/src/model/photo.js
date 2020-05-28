@@ -3,6 +3,7 @@ import Api from "common/api";
 import {DateTime} from "luxon";
 import Util from "common/util";
 import {config} from "../session";
+import countries from "resources/countries.json";
 
 export const SrcManual = "manual";
 export const CodecAvc1 = "avc1";
@@ -316,11 +317,15 @@ export class Photo extends RestModel {
     }
 
     locationInfo() {
-        if (this.LocLabel) {
-            return this.LocLabel;
+        if (this.PlaceUID === "zz" && this.Country !== "zz") {
+            const country = countries.find(c => c.Code === this.Country);
+
+            if(country) {
+                return country.Name;
+            }
         }
 
-        return "Unknown";
+        return this.LocLabel ? this.LocLabel : "Unknown";
     }
 
     addSizeInfo(file, info) {
@@ -464,7 +469,7 @@ export class Photo extends RestModel {
             values.DescriptionSrc = SrcManual;
         }
 
-        if (values.Lat || values.Lng) {
+        if (values.Lat || values.Lng || values.Country) {
             values.LocSrc = SrcManual;
         }
 

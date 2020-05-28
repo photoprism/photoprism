@@ -9,9 +9,10 @@ import (
 
 var DateRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2,}")
 var DateCanonicalRegexp = regexp.MustCompile("\\D\\d{8}_\\d{6}_\\w+\\.")
-var DatePathRegexp = regexp.MustCompile("\\D\\d{4}\\/\\d{1,2}\\/?\\d*")
+var DatePathRegexp = regexp.MustCompile("\\D\\d{4}/\\d{1,2}/?\\d*")
 var DateTimeRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}.{1,4}\\d{2}\\D\\d{2}\\D\\d{2,}")
 var DateIntRegexp = regexp.MustCompile("\\d{1,4}")
+var YearRegexp = regexp.MustCompile("\\d{4,5}")
 
 var (
 	YearMin = 1990
@@ -177,4 +178,38 @@ func IsUInt(s string) bool {
 	}
 
 	return true
+}
+
+// CountryCode tries to find a matching country code for a given string e.g. from a file oder directory name.
+func CountryCode(s string) string {
+	if s == "zz" {
+		return "zz"
+	}
+
+	s = strings.ToLower(s)
+
+	for keyword, code := range Countries {
+		if strings.Contains(s, keyword) {
+			return code
+		}
+	}
+
+	return "zz"
+}
+
+// Year tries to find a matching year for a given string e.g. from a file oder directory name.
+func Year(s string) int {
+	b := []byte(s)
+
+	found := YearRegexp.FindAll(b, -1)
+
+	for _, match := range found {
+		year := Int(string(match))
+
+		if year > YearMin && year < YearMax {
+			return year
+		}
+	}
+
+	return 0
 }

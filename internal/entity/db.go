@@ -78,6 +78,8 @@ func (g *Gorm) Connect() {
 
 	db.LogMode(false)
 	db.SetLogger(log)
+	db.DB().SetMaxIdleConns(0)
+	db.DB().SetMaxOpenConns(256)
 
 	g.db = db
 }

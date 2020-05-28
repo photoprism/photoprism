@@ -73,7 +73,13 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 		return done
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer func() {
+		mutex.MainWorker.Stop()
+
+		if err := recover(); err != nil {
+			log.Errorf("index: %s [panic]", err)
+		}
+	}()
 
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("index: %s", err.Error())
@@ -106,12 +112,6 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 
 	err := godirwalk.Walk(optionsPath, &godirwalk.Options{
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
-			defer func() {
-				if err := recover(); err != nil {
-					log.Errorf("index: %s [panic]", err)
-				}
-			}()
-
 			if mutex.MainWorker.Canceled() {
 				return errors.New("indexing canceled")
 			}

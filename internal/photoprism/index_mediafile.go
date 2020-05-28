@@ -63,7 +63,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	file, primaryFile := entity.File{}, entity.File{}
 
-	photo := entity.Photo{PhotoType: entity.TypeImage}
+	photo := entity.Photo{PhotoType: entity.TypeImage, PhotoCountry: entity.UnknownCountry.ID}
 	metaData := meta.Data{}
 	description := entity.Details{}
 	labels := classify.Labels{}
@@ -87,12 +87,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		"baseName": filepath.Base(fileName),
 	})
 
-	fileQuery = ind.db.Unscoped().First(&file, "file_name = ?", fileName)
+	fileQuery = entity.UnscopedDb().First(&file, "file_name = ?", fileName)
 	fileExists = fileQuery.Error == nil
 
 	if !fileExists && !m.IsSidecar() {
 		fileHash = m.Hash()
-		fileQuery = ind.db.Unscoped().First(&file, "file_hash = ?", fileHash)
+		fileQuery = entity.UnscopedDb().First(&file, "file_hash = ?", fileHash)
 		fileExists = fileQuery.Error == nil
 
 		if fileExists && fs.FileExists(filepath.Join(ind.conf.OriginalsPath(), file.FileName)) {
@@ -101,24 +101,24 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		if !fileExists && m.MetaData().HasInstanceID() {
-			fileQuery = ind.db.Unscoped().First(&file, "instance_id = ?", m.MetaData().InstanceID)
+			fileQuery = entity.UnscopedDb().First(&file, "instance_id = ?", m.MetaData().InstanceID)
 			fileExists = fileQuery.Error == nil
 		}
 	}
 
 	if !fileExists {
-		photoQuery = ind.db.Unscoped().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase)
+		photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase)
 
 		if photoQuery.Error != nil && m.MetaData().HasTimeAndPlace() {
 			metaData = m.MetaData()
-			photoQuery = ind.db.Unscoped().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ?", metaData.Lat, metaData.Lng, metaData.TakenAt)
+			photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ?", metaData.Lat, metaData.Lng, metaData.TakenAt)
 		}
 
 		if photoQuery.Error != nil && m.MetaData().HasDocumentID() {
-			photoQuery = ind.db.Unscoped().First(&photo, "document_id = ?", m.MetaData().DocumentID)
+			photoQuery = entity.UnscopedDb().First(&photo, "document_id = ?", m.MetaData().DocumentID)
 		}
 	} else {
-		photoQuery = ind.db.Unscoped().First(&photo, "id = ?", file.PhotoID)
+		photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
 
 		fileChanged = file.Changed(fileSize, fileModified)
 
@@ -135,7 +135,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	if photoExists {
-		ind.db.Model(&photo).Related(&description)
+		entity.UnscopedDb().Model(&photo).Related(&description)
 	} else {
 		photo.PhotoQuality = -1
 	}
@@ -149,7 +149,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if !file.FilePrimary {
 		if photoExists {
-			if q := ind.db.Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); q.Error != nil {
+			if q := entity.UnscopedDb().Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); q.Error != nil {
 				file.FilePrimary = m.IsJpeg()
 			}
 		} else {
@@ -341,29 +341,19 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetTakenAt(takenUtc, takenUtc, "", takenSrc)
 		}
 
-		if photo.HasLatLng() {
-			var locLabels classify.Labels
-			locKeywords, locLabels = photo.UpdateLocation(ind.conf.GeoCodingApi())
-			labels = append(labels, locLabels...)
-		} else {
-			log.Debugf("index: no coordinates in metadata for %s", quotedName)
-
-			photo.Location = &entity.UnknownLocation
-			photo.LocUID = entity.UnknownLocation.LocUID
-			photo.Place = &entity.UnknownPlace
-			photo.PlaceUID = entity.UnknownPlace.PlaceUID
-		}
+		var locLabels classify.Labels
+		locKeywords, locLabels = photo.UpdateLocation(ind.conf.GeoCodingApi())
+		labels = append(labels, locLabels...)
 	}
 
-	if len(photo.LocUID) < 2 {
+	if photo.UnknownLocation() {
 		photo.Location = &entity.UnknownLocation
 		photo.LocUID = entity.UnknownLocation.LocUID
 	}
 
-	if len(photo.PlaceUID) < 2 {
+	if photo.UnknownPlace() {
 		photo.Place = &entity.UnknownPlace
 		photo.PlaceUID = entity.UnknownPlace.PlaceUID
-		photo.PhotoCountry = entity.UnknownPlace.CountryCode()
 	}
 
 	photo.UpdateYearMonth()
@@ -384,7 +374,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.FileOrientation = m.Orientation()
 
 	if photoExists {
-		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
+		if err := entity.UnscopedDb().Save(&photo).Error; err != nil {
 			log.Errorf("index: %s for %s", err.Error(), quotedName)
 			result.Status = IndexFailed
 			result.Error = err
@@ -401,7 +391,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.PhotoFavorite = false
 		}
 
-		if err := ind.db.Create(&photo).Error; err != nil {
+		if err := entity.UnscopedDb().Create(&photo).Error; err != nil {
 			log.Errorf("index: %s", err)
 			result.Status = IndexFailed
 			result.Error = err
@@ -465,7 +455,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		photo.PhotoQuality = photo.QualityScore()
 
-		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
+		if err := entity.UnscopedDb().Save(&photo).Error; err != nil {
 			log.Errorf("index: %s for %s", err, quotedName)
 			result.Status = IndexFailed
 			result.Error = err
@@ -480,7 +470,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.PhotoQuality = photo.QualityScore()
 		}
 
-		if err := ind.db.Unscoped().Save(&photo).Error; err != nil {
+		if err := entity.UnscopedDb().Unscoped().Save(&photo).Error; err != nil {
 			log.Errorf("index: %s for %s", err, quotedName)
 			result.Status = IndexFailed
 			result.Error = err
@@ -493,7 +483,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if fileQuery.Error == nil {
 		file.UpdatedIn = int64(time.Since(start))
 
-		if err := ind.db.Unscoped().Save(&file).Error; err != nil {
+		if err := entity.UnscopedDb().Save(&file).Error; err != nil {
 			log.Errorf("index: %s for %s", err, quotedName)
 			result.Status = IndexFailed
 			result.Error = err
@@ -502,7 +492,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	} else {
 		file.CreatedIn = int64(time.Since(start))
 
-		if err := ind.db.Create(&file).Error; err != nil {
+		if err := entity.UnscopedDb().Create(&file).Error; err != nil {
 			log.Errorf("index: %s for %s", err, quotedName)
 			result.Status = IndexFailed
 			result.Error = err

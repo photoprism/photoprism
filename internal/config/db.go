@@ -132,6 +132,8 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 
 	db.LogMode(false)
 	db.SetLogger(log)
+	db.DB().SetMaxIdleConns(0)
+	db.DB().SetMaxOpenConns(256)
 
 	c.db = db
 	return err

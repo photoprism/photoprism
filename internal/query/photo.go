@@ -107,8 +107,8 @@ func PhotosMaintenance(limit int, offset int) (entities Photos, err error) {
 		Preload("Place").
 		Preload("Location").
 		Preload("Location.Place").
-		Where("maintained_at IS NULL OR maintained_at < ?", time.Now().Add(-1*time.Hour*24*7)).
-		Where("updated_at < ?", time.Now().Add(-1*time.Hour*36)).
+		Where("maintained_at IS NULL OR maintained_at < ?", time.Now().Add(-1*time.Hour*24*3)).
+		Where("updated_at < ?", time.Now().Add(-1*time.Minute*10)).
 		Limit(limit).Offset(offset).Find(&entities).Error
 
 	return entities, err

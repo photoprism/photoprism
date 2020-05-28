@@ -57,7 +57,7 @@
                         title="Name" v-if="filter.order === 'name'">
                     {{ props.item.FileName }}
                 </button>
-                <button v-else-if="props.item.LocUID && showLocation" @click.stop.prevent="openLocation(props.index)"
+                <button v-else-if="props.item.Country !== 'zz' && showLocation" @click.stop.prevent="openLocation(props.index)"
                         style="user-select: none;">
                     {{ props.item.locationInfo() }}
                 </button>

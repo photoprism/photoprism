@@ -143,7 +143,7 @@
                                             {{ photo.baseName() }}
                                         </button>
                                     </template>
-                                    <template v-if="showLocation && photo.LocUID">
+                                    <template v-if="showLocation && photo.Country !== 'zz'">
                                         <br/>
                                         <button @click.exact="openLocation(index)" title="Location">
                                             <v-icon size="14">location_on</v-icon>

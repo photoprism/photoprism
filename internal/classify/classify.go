@@ -12,5 +12,6 @@ import (
 )
 
 //go:generate go run gen.go
+//go:generate go fmt .
 
 var log = event.Log

@@ -190,3 +190,67 @@ func TestInt(t *testing.T) {
 		assert.Equal(t, -123, result)
 	})
 }
+
+func TestCountryCode(t *testing.T) {
+	t.Run("London", func(t *testing.T) {
+		result := CountryCode("London")
+		assert.Equal(t, "gb", result)
+	})
+
+	t.Run("San Francisco", func(t *testing.T) {
+		result := CountryCode("San Francisco 2019")
+		assert.Equal(t, "us", result)
+	})
+
+	t.Run("U.S.A.", func(t *testing.T) {
+		result := CountryCode("Born in the U.S.A. is a song written and performed by Bruce Springsteen...")
+		assert.Equal(t, "us", result)
+	})
+
+	t.Run("US", func(t *testing.T) {
+		result := CountryCode("Somebody help us please!")
+		assert.Equal(t, "zz", result)
+	})
+
+	t.Run("Never mind Nirvana", func(t *testing.T) {
+		result := CountryCode("Never mind Nirvana.")
+		assert.Equal(t, "zz", result)
+	})
+
+	t.Run("empty string", func(t *testing.T) {
+		result := CountryCode("")
+		assert.Equal(t, "zz", result)
+	})
+}
+
+func TestYear(t *testing.T) {
+	t.Run("London 2002", func(t *testing.T) {
+		result := Year("/2002/London 81/")
+		assert.Equal(t, 2002, result)
+	})
+
+	t.Run("San Francisco 2019", func(t *testing.T) {
+		result := Year("San Francisco 2019")
+		assert.Equal(t, 2019, result)
+	})
+
+	t.Run("string with no number", func(t *testing.T) {
+		result := Year("Born in the U.S.A. is a song written and performed by Bruce Springsteen...")
+		assert.Equal(t, 0, result)
+	})
+
+	t.Run("file name", func(t *testing.T) {
+		result := Year("/share/photos/243546/2003/01/myfile.jpg")
+		assert.Equal(t, 2003, result)
+	})
+
+	t.Run("path", func(t *testing.T) {
+		result := Year("/root/1981/London 2005")
+		assert.Equal(t, 2005, result)
+	})
+
+	t.Run("empty string", func(t *testing.T) {
+		result := Year("")
+		assert.Equal(t, 0, result)
+	})
+}

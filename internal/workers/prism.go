@@ -70,12 +70,12 @@ func (worker *Prism) Start() (err error) {
 		if len(photos) == 0 {
 			break
 		} else if offset == 0 {
-			log.Infof("prism: starting photo maintenance")
+			log.Infof("prism: starting metadata optimization")
 		}
 
 		for _, photo := range photos {
 			if mutex.PrismWorker.Canceled() {
-				return errors.New("prism: maintenance canceled")
+				return errors.New("prism: optimization canceled")
 			}
 
 			if done[photo.PhotoUID] {
@@ -88,7 +88,7 @@ func (worker *Prism) Start() (err error) {
 		}
 
 		if mutex.PrismWorker.Canceled() {
-			return errors.New("prism: maintenance canceled")
+			return errors.New("prism: optimization canceled")
 		}
 
 		offset += limit
@@ -97,7 +97,7 @@ func (worker *Prism) Start() (err error) {
 	}
 
 	if len(done) > 0 {
-		log.Infof("prism: maintained %d photos", len(done))
+		log.Infof("prism: optimized %d photos", len(done))
 	}
 
 	worker.logError(query.ResetPhotoQuality())

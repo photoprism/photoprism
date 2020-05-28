@@ -71,8 +71,7 @@ type Photo struct {
 
 // SavePhotoForm saves a model in the database using form data.
 func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
-	db := Db()
-	locChanged := model.PhotoLat != form.PhotoLat || model.PhotoLng != form.PhotoLng
+	locChanged := model.PhotoLat != form.PhotoLat || model.PhotoLng != form.PhotoLng || model.PhotoCountry != form.PhotoCountry
 
 	if err := deepcopier.Copy(&model).From(form); err != nil {
 		return err
@@ -89,15 +88,15 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 			return err
 		}
 
-		model.Details.Keywords = strings.Join(txt.UniqueKeywords(model.Details.Keywords), ", ")
+		model.Details.Keywords = strings.Join(txt.UniqueWords(txt.Words(model.Details.Keywords)), ", ")
 	}
 
-	if model.HasLatLng() && locChanged && model.LocSrc == SrcManual {
+	if locChanged && model.LocSrc == SrcManual {
 		locKeywords, labels := model.UpdateLocation(geoApi)
 
 		model.AddLabels(labels)
 
-		w := txt.UniqueKeywords(model.Details.Keywords)
+		w := txt.UniqueWords(txt.Words(model.Details.Keywords))
 		w = append(w, locKeywords...)
 
 		model.Details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
@@ -115,7 +114,7 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 	model.EditedAt = &edited
 	model.PhotoQuality = model.QualityScore()
 
-	if err := db.Unscoped().Save(&model).Error; err != nil {
+	if err := UnscopedDb().Save(&model).Error; err != nil {
 		return err
 	}
 
@@ -141,7 +140,7 @@ func (m *Photo) Save() error {
 	}
 
 	if m.DetailsLoaded() {
-		w := txt.UniqueKeywords(m.Details.Keywords)
+		w := txt.UniqueWords(txt.Words(m.Details.Keywords))
 		w = append(w, labels.Keywords()...)
 		m.Details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 	}
@@ -315,19 +314,44 @@ func (m *Photo) HasID() bool {
 	return m.ID > 0 && m.PhotoUID != ""
 }
 
-// NoLocation checks if the photo has an unknown location.
-func (m *Photo) NoLocation() bool {
+// UnknownLocation checks if the photo has an unknown location.
+func (m *Photo) UnknownLocation() bool {
 	return m.LocUID == "" || m.LocUID == UnknownLocation.LocUID
 }
 
 // HasLocation checks if the photo has a known location.
 func (m *Photo) HasLocation() bool {
-	return !m.NoLocation()
+	return !m.UnknownLocation()
 }
 
 // LocationLoaded checks if the photo has a known location that is currently loaded.
 func (m *Photo) LocationLoaded() bool {
-	return m.Location != nil && m.Location.Place != nil && !m.Location.Unknown()
+	return m.Location != nil && m.Location.Place != nil && !m.Location.Unknown() && m.Location.LocUID == m.LocUID
+}
+
+// LoadLocation loads the photo location from the database if not done already.
+func (m *Photo) LoadLocation() error {
+	if m.LocationLoaded() {
+		return nil
+	}
+
+	var loc Location
+	return Db().Set("gorm:auto_preload", true).Model(m).Related(&loc, "Location").Error
+}
+
+// PlaceLoaded checks if the photo has a known place that is currently loaded.
+func (m *Photo) PlaceLoaded() bool {
+	return m.Place != nil && !m.Place.Unknown() && m.Place.PlaceUID == m.PlaceUID
+}
+
+// LoadPlace loads the photo place from the database if not done already.
+func (m *Photo) LoadPlace() error {
+	if m.PlaceLoaded() {
+		return nil
+	}
+
+	var place Place
+	return Db().Set("gorm:auto_preload", true).Model(m).Related(&place, "Place").Error
 }
 
 // HasLatLng checks if the photo has a latitude and longitude.
@@ -340,19 +364,24 @@ func (m *Photo) NoLatLng() bool {
 	return !m.HasLatLng()
 }
 
-// PlaceLoaded checks if the photo has a known place that is currently loaded.
-func (m *Photo) PlaceLoaded() bool {
-	return m.Place != nil && !m.Place.Unknown()
-}
-
-// NoPlace checks if the photo has an unknown place.
-func (m *Photo) NoPlace() bool {
+// UnknownPlace checks if the photo has an unknown place.
+func (m *Photo) UnknownPlace() bool {
 	return m.PlaceUID == "" || m.PlaceUID == UnknownPlace.PlaceUID
 }
 
 // HasPlace checks if the photo has a known place.
 func (m *Photo) HasPlace() bool {
-	return !m.NoPlace()
+	return !m.UnknownPlace()
+}
+
+// HasCountry checks if the photo has a known country.
+func (m *Photo) HasCountry() bool {
+	return !m.UnknownCountry()
+}
+
+// UnknownCountry checks if the photo has an unknown country.
+func (m *Photo) UnknownCountry() bool {
+	return m.PhotoCountry == "" || m.PhotoCountry == UnknownCountry.ID
 }
 
 // NoTitle checks if the photo has no Title
@@ -388,6 +417,13 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 
 	var knownLocation bool
 
+	oldTitle := m.PhotoTitle
+	fileTitle := txt.TitleFromFileName(m.PhotoName)
+
+	if fileTitle == "" {
+		fileTitle = txt.TitleFromFileName(m.PhotoPath)
+	}
+
 	if m.LocationLoaded() {
 		knownLocation = true
 		loc := m.Location
@@ -418,7 +454,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	} else if m.PlaceLoaded() {
 		knownLocation = true
 
-		if title := labels.Title(""); title != "" {
+		if title := labels.Title(fileTitle); title != "" {
 			log.Infof("photo: using label %s to create title for %s", txt.Quote(title), m.PhotoUID)
 			if m.Place.NoCity() || m.Place.LongCity() || m.Place.CityContains(title) {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), m.Place.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
@@ -435,21 +471,25 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	}
 
 	if !knownLocation || m.NoTitle() {
+		if fileTitle == "" {
+			fileTitle = TitleUnknown
+		}
+
 		if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 			if m.TakenSrc != SrcAuto {
 				m.SetTitle(fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
 				m.SetTitle(txt.Title(labels[0].Name), SrcAuto)
 			}
-		} else if !m.TakenAtLocal.IsZero() && m.TakenSrc != SrcAuto {
-			m.SetTitle(fmt.Sprintf("%s / %s", TitleUnknown, m.TakenAtLocal.Format("2006")), SrcAuto)
+		} else if len(fileTitle) <= 20 && !m.TakenAtLocal.IsZero() && m.TakenSrc != SrcAuto {
+			m.SetTitle(fmt.Sprintf("%s / %s", fileTitle, m.TakenAtLocal.Format("2006")), SrcAuto)
 		} else {
-			m.SetTitle(TitleUnknown, SrcAuto)
+			m.SetTitle(fileTitle, SrcAuto)
 		}
+	}
 
+	if m.PhotoTitle != oldTitle {
 		log.Infof("photo: changed title of %s to %s", m.PhotoUID, txt.Quote(m.PhotoTitle))
-	} else {
-		log.Infof("photo: new title of %s is %s", m.PhotoUID, txt.Quote(m.PhotoTitle))
 	}
 
 	return nil
