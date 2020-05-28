@@ -9,7 +9,7 @@
             <v-spacer></v-spacer>
 
             <v-toolbar-items>
-                <v-btn icon @click.stop="upload.dialog = true" v-if="!readonly && $config.feature('upload')">
+                <v-btn icon class="action-upload" @click.stop="upload.dialog = true" v-if="!readonly && $config.feature('upload')">
                     <v-icon>cloud_upload</v-icon>
                 </v-btn>
             </v-toolbar-items>
@@ -75,7 +75,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile to="/review" @click="" v-if="$config.feature('review') && config.count.review > 0">
+                    <v-list-tile to="/review" @click="" v-if="$config.feature('review') && config.count.review > 0" class="p-navigation-review">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate key="Review">Review</translate>
