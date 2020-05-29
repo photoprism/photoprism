@@ -5,14 +5,17 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
 	ID              uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
 	LensSlug        string     `gorm:"type:varbinary(255);unique_index;" json:"Slug" yaml:"Slug,omitempty"`
-	LensModel       string     `json:"Model" yaml:"Model"`
-	LensMake        string     `json:"Make" yaml:"Make"`
+	LensName        string     `gorm:"type:varchar(255);" json:"Name" yaml:"Name"`
+	LensMake        string     `json:"Make" yaml:"Make,omitempty"`
+	LensModel       string     `json:"Model" yaml:"Model,omitempty"`
 	LensType        string     `json:"Type" yaml:"Type,omitempty"`
 	LensDescription string     `gorm:"type:text;" json:"Description,omitempty" yaml:"Description,omitempty"`
 	LensNotes       string     `gorm:"type:text;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
@@ -22,9 +25,10 @@ type Lens struct {
 }
 
 var UnknownLens = Lens{
-	LensModel: "Unknown",
-	LensMake:  "",
 	LensSlug:  "zz",
+	LensName: "Unknown",
+	LensMake:  "",
+	LensModel: "Unknown",
 }
 
 // CreateUnknownLens initializes the database with an unknown lens if not exists
@@ -39,18 +43,37 @@ func (Lens) TableName() string {
 
 // NewLens creates a new lens in database
 func NewLens(modelName string, makeName string) *Lens {
-	modelName = strings.TrimSpace(modelName)
-	makeName = strings.TrimSpace(makeName)
-	lensSlug := slug.MakeLang(modelName, "en")
+	modelName = txt.Clip(modelName, txt.ClipDefault)
+	makeName = txt.Clip(makeName, txt.ClipDefault)
 
-	if modelName == "" {
+	if modelName == "" && makeName == "" {
 		return &UnknownLens
+	} else if strings.HasPrefix(modelName, makeName) {
+		modelName = strings.TrimSpace(modelName[len(makeName):])
 	}
 
+	if n, ok := CameraMakes[makeName]; ok {
+		makeName = n
+	}
+
+	var name []string
+
+	if makeName != "" {
+		name = append(name, makeName)
+	}
+
+	if modelName != "" {
+		name = append(name, modelName)
+	}
+
+	lensName := strings.Join(name, " ")
+	lensSlug := slug.Make(txt.Clip(lensName, txt.ClipSlug))
+
 	result := &Lens{
-		LensModel: modelName,
-		LensMake:  makeName,
 		LensSlug:  lensSlug,
+		LensName:  lensName,
+		LensMake:  makeName,
+		LensModel: modelName,
 	}
 
 	return result
@@ -72,5 +95,18 @@ func FirstOrCreateLens(m *Lens) *Lens {
 		return nil
 	}
 
+	if !m.Unknown() {
+		event.EntitiesCreated("lenses", []*Lens{m})
+
+		event.Publish("count.lenses", event.Data{
+			"count": 1,
+		})
+	}
+
 	return m
+}
+
+// Unknown returns true if the lens is not a known make or model.
+func (m *Lens) Unknown() bool {
+	return m.LensSlug == "" || m.LensSlug == UnknownLens.LensSlug
 }

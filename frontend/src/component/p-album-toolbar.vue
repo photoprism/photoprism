@@ -79,7 +79,7 @@
                                   flat solo hide-details
                                   color="secondary-dark"
                                   item-value="ID"
-                                  item-text="Model"
+                                  item-text="Name"
                                   v-model="filter.camera"
                                   :items="options.cameras">
                         </v-select>
@@ -133,7 +133,7 @@
         data() {
             const cameras = [{
                 ID: 0,
-                Model: this.$gettext('All Cameras')
+                Name: this.$gettext('All Cameras')
             }].concat(this.$config.get('cameras'));
             const countries = [{
                 ID: '',

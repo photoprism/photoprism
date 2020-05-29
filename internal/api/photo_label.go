@@ -115,7 +115,7 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		if label.LabelSrc == classify.SrcManual || label.LabelSrc == classify.SrcKeyword{
+		if label.LabelSrc == classify.SrcManual || label.LabelSrc == classify.SrcKeyword {
 			logError("label", entity.Db().Delete(&label).Error)
 		} else {
 			label.Uncertainty = 100

@@ -13,9 +13,9 @@ type Labels []Label
 func (l Labels) Len() int      { return len(l) }
 func (l Labels) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
 func (l Labels) Less(i, j int) bool {
-	if l[i].Uncertainty >= 100 || l[i].Source == SrcKeyword {
+	if l[i].Uncertainty >= 100 {
 		return false
-	} else if l[j].Uncertainty >= 100 || l[j].Source == SrcKeyword {
+	} else if l[j].Uncertainty >= 100 {
 		return true
 	} else if l[i].Priority == l[j].Priority {
 		return l[i].Uncertainty < l[j].Uncertainty

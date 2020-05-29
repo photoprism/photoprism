@@ -38,8 +38,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		Joins("JOIN cameras ON photos.camera_id = cameras.id").
 		Joins("JOIN lenses ON photos.lens_id = lenses.id").
 		Joins("JOIN places ON photos.place_id = places.id").
-		Where("files.file_type = 'jpg' OR files.file_video = 1").
-		Group("photos.id, files.id")
+		Where("files.file_type = 'jpg' OR files.file_video = 1")
 
 	// Shortcut for known photo ids.
 	if f.ID != "" {
@@ -61,25 +60,28 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 	// Filter by label, label category and keywords.
 	var categories []entity.Category
-	var label entity.Label
 	var labels []entity.Label
 	var labelIds []uint
 
 	if f.Label != "" {
-		slugString := strings.ToLower(f.Label)
-		if result := Db().First(&label, "label_slug =? OR custom_slug = ?", slugString, slugString); result.Error != nil {
-			log.Errorf("search: label %s not found", txt.Quote(f.Label))
-			return results, 0, fmt.Errorf("label %s not found", txt.Quote(f.Label))
+		if err := Db().Where(AnySlug("label_slug", f.Label, ",")).Or(AnySlug("custom_slug", f.Label, ",")).Find(&labels).Error; len(labels) == 0 || err != nil {
+			log.Errorf("search: labels %s not found", txt.Quote(f.Label))
+			return results, 0, fmt.Errorf("%s not found", txt.Quote(f.Label))
 		} else {
-			labelIds = append(labelIds, label.ID)
+			for _, l := range labels {
+				labelIds = append(labelIds, l.ID)
 
-			Db().Where("category_id = ?", label.ID).Find(&categories)
+				Db().Where("category_id = ?", l.ID).Find(&categories)
 
-			for _, category := range categories {
-				labelIds = append(labelIds, category.LabelID)
+				log.Infof("search: label %s includes %d categories", txt.Quote(l.LabelName), len(categories))
+
+				for _, category := range categories {
+					labelIds = append(labelIds, category.LabelID)
+				}
 			}
 
-			s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = photos.id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIds)
+			s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = photos.id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIds).
+				Group("photos.id, files.id")
 		}
 	}
 
@@ -95,7 +97,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 			return results, 0, fmt.Errorf("query too short")
 		}
 
-		if err := Db().Where(AnySlug("custom_slug", f.Query)).Find(&labels).Error; len(labels) == 0 || err != nil {
+		if err := Db().Where(AnySlug("custom_slug", f.Query, " ")).Find(&labels).Error; len(labels) == 0 || err != nil {
 			log.Infof("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
 
 			if likeAny := LikeAny("k.keyword", f.Query); likeAny != "" {
@@ -150,7 +152,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Album != "" {
-		s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").Where("photos_albums.album_uid IN (?)", strings.Split(f.Album, ","))
+		s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", f.Album)
 	}
 
 	if f.Camera > 0 {
@@ -179,6 +181,15 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 	if f.Country != "" {
 		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), ","))
+	}
+
+	if f.State != "" {
+		s = s.Where("places.loc_state IN (?)", strings.Split(txt.Title(f.State), ","))
+	}
+
+	if f.Category != "" {
+		s = s.Joins("JOIN locations ON photos.location_id = locations.id").
+			Where("locations.loc_category IN (?)", strings.Split(strings.ToLower(f.Category), ","))
 	}
 
 	// Filter by media type.

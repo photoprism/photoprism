@@ -82,7 +82,7 @@ func RemoveFromWords(words []string, remove string) (results []string) {
 	for _, w := range words {
 		w = strings.ToLower(w)
 
-		if len(w) < 3 || w == last || strings.Contains(remove, w){
+		if len(w) < 3 || w == last || strings.Contains(remove, w) {
 			continue
 		}
 

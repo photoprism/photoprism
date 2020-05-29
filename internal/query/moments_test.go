@@ -20,11 +20,11 @@ func TestMomentsTime(t *testing.T) {
 		t.Logf("MomentsTime %+v", results)
 
 		for _, moment := range results {
-			assert.Len(t, moment.PhotoCountry, 0)
-			assert.GreaterOrEqual(t, moment.PhotoYear, 1990)
-			assert.LessOrEqual(t, moment.PhotoYear, 2800)
-			assert.GreaterOrEqual(t, moment.PhotoMonth, 1)
-			assert.LessOrEqual(t, moment.PhotoMonth, 12)
+			assert.Len(t, moment.Country, 0)
+			assert.GreaterOrEqual(t, moment.Year, 1990)
+			assert.LessOrEqual(t, moment.Year, 2800)
+			assert.GreaterOrEqual(t, moment.Month, 1)
+			assert.LessOrEqual(t, moment.Month, 12)
 			assert.GreaterOrEqual(t, moment.PhotoCount, 1)
 			t.Logf("Title: %s", moment.Title())
 			t.Logf("Slug: %s", moment.Slug())
@@ -47,10 +47,10 @@ func TestMomentsCountries(t *testing.T) {
 		}
 
 		for _, moment := range results {
-			assert.Len(t, moment.PhotoCountry, 2)
-			assert.GreaterOrEqual(t, moment.PhotoYear, 1990)
-			assert.LessOrEqual(t, moment.PhotoYear, 2800)
-			assert.Equal(t, moment.PhotoMonth, 0)
+			assert.Len(t, moment.Country, 2)
+			assert.GreaterOrEqual(t, moment.Year, 1990)
+			assert.LessOrEqual(t, moment.Year, 2800)
+			assert.Equal(t, moment.Month, 0)
 			assert.GreaterOrEqual(t, moment.PhotoCount, 1)
 			t.Logf("Title: %s", moment.Title())
 			t.Logf("Slug: %s", moment.Slug())
@@ -73,10 +73,10 @@ func TestMomentsStates(t *testing.T) {
 		}
 
 		for _, moment := range results {
-			assert.Len(t, moment.PhotoCountry, 2)
-			assert.NotEmpty(t, moment.PhotoState)
-			assert.Equal(t, moment.PhotoYear, 0)
-			assert.Equal(t, moment.PhotoMonth, 0)
+			assert.Len(t, moment.Country, 2)
+			assert.NotEmpty(t, moment.State)
+			assert.Equal(t, moment.Year, 0)
+			assert.Equal(t, moment.Month, 0)
 			assert.GreaterOrEqual(t, moment.PhotoCount, 1)
 			t.Logf("Title: %s", moment.Title())
 			t.Logf("Slug: %s", moment.Slug())
@@ -99,11 +99,11 @@ func TestMomentsCategories(t *testing.T) {
 		}
 
 		for _, moment := range results {
-			assert.NotEmpty(t, moment.PhotoCategory)
-			assert.Empty(t, moment.PhotoCountry)
-			assert.Empty(t, moment.PhotoState)
-			assert.Equal(t, moment.PhotoYear, 0)
-			assert.Equal(t, moment.PhotoMonth, 0)
+			assert.NotEmpty(t, moment.Category)
+			assert.Empty(t, moment.Country)
+			assert.Empty(t, moment.State)
+			assert.Equal(t, moment.Year, 0)
+			assert.Equal(t, moment.Month, 0)
 			assert.GreaterOrEqual(t, moment.PhotoCount, 1)
 			t.Logf("Title: %s", moment.Title())
 			t.Logf("Slug: %s", moment.Slug())

@@ -12,7 +12,6 @@ import (
 )
 
 // ClientConfig contains HTTP client / Web UI config values
-
 type ClientConfig struct {
 	Flags           string              `json:"flags"`
 	Name            string              `json:"name"`
@@ -49,6 +48,9 @@ type ClientConfig struct {
 }
 
 type ClientCounts struct {
+	Cameras        uint `json:"cameras"`
+	Lenses         uint `json:"lenses"`
+	Countries      uint `json:"countries"`
 	Photos         uint `json:"photos"`
 	Videos         uint `json:"videos"`
 	Hidden         uint `json:"hidden"`
@@ -60,7 +62,6 @@ type ClientCounts struct {
 	Folders        uint `json:"folders"`
 	Files          uint `json:"files"`
 	Moments        uint `json:"moments"`
-	Countries      uint `json:"countries"`
 	Places         uint `json:"places"`
 	Labels         uint `json:"labels"`
 	LabelMaxPhotos uint `json:"labelMaxPhotos"`
@@ -180,22 +181,15 @@ func (c *Config) ClientConfig() ClientConfig {
 		Limit(1).Offset(0).
 		Take(&result.Pos)
 
-	var count = struct {
-		Photos         uint `json:"photos"`
-		Videos         uint `json:"videos"`
-		Hidden         uint `json:"hidden"`
-		Favorites      uint `json:"favorites"`
-		Private        uint `json:"private"`
-		Review         uint `json:"review"`
-		Albums         uint `json:"albums"`
-		Folders        uint `json:"folders"`
-		Files          uint `json:"files"`
-		Moments        uint `json:"moments"`
-		Countries      uint `json:"countries"`
-		Places         uint `json:"places"`
-		Labels         uint `json:"labels"`
-		LabelMaxPhotos uint `json:"labelMaxPhotos"`
-	}{}
+	db.Table("cameras").
+		Where("camera_slug <> 'zz' AND camera_slug <> ''").
+		Select("COUNT(*) AS cameras").
+		Take(&result.Count)
+
+	db.Table("lenses").
+		Where("lens_slug <> 'zz' AND lens_slug <> ''").
+		Select("COUNT(*) AS lenses").
+		Take(&result.Count)
 
 	db.Table("photos").
 		Select("SUM(photo_type = 'video' AND photo_quality >= 0 AND photo_private = 0) AS videos, SUM(photo_type IN ('image','raw','live') AND photo_quality < 3 AND photo_quality >= 0 AND photo_private = 0) AS review, SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','live') AND photo_private = 0 AND photo_quality >= 0) AS photos, SUM(photo_favorite = 1 AND photo_quality >= 0) AS favorites, SUM(photo_private = 1 AND photo_quality >= 0) AS private").
@@ -211,13 +205,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		Take(&result.Count)
 
 	db.Table("albums").
-		Select("SUM(album_type = '') AS albums, SUM(album_type = 'moment') AS moments, SUM(album_type = 'folder') AS folders").
-		Where("deleted_at IS NULL").
-		Take(&result.Count)
-
-	db.Table("folders").
-		Select("COUNT(*) AS folders").
-		Where("folder_ignore = 0").
+		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS folders", entity.TypeAlbum, entity.TypeMoment, entity.TypeFolder).
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
 
@@ -234,7 +222,7 @@ func (c *Config) ClientConfig() ClientConfig {
 	db.Table("places").
 		Select("SUM(photo_count > 0) AS places").
 		Where("id != 'zz'").
-		Take(&count)
+		Take(&result.Count)
 
 	db.Order("country_slug").
 		Find(&result.Countries)

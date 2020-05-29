@@ -22,7 +22,7 @@ func TestFirstOrCreateCamera(t *testing.T) {
 
 func TestNewCamera(t *testing.T) {
 	t.Run("unknown camera", func(t *testing.T) {
-		camera := NewCamera("", "Nikon")
+		camera := NewCamera("", "")
 
 		assert.Equal(t, &UnknownCamera, camera)
 	})
@@ -30,36 +30,60 @@ func TestNewCamera(t *testing.T) {
 		camera := NewCamera("EOS 6D", "Canon")
 
 		expected := &Camera{
-			CameraModel: "EOS 6D",
-			CameraMake:  "Canon",
 			CameraSlug:  "canon-eos-6d",
+			CameraName:  "Canon EOS 6D",
+			CameraMake:  "Canon",
+			CameraModel: "EOS 6D",
 		}
+
 		assert.Equal(t, expected, camera)
 	})
 	t.Run("model with prefix make Panasonic", func(t *testing.T) {
 		camera := NewCamera("Panasonic Lumix", "Panasonic")
 
 		expected := &Camera{
-			CameraModel: "Lumix",
-			CameraMake:  "Panasonic",
 			CameraSlug:  "panasonic-lumix",
+			CameraName:  "Panasonic Lumix",
+			CameraMake:  "Panasonic",
+			CameraModel: "Lumix",
 		}
+
 		assert.Equal(t, expected, camera)
 	})
 	t.Run("model TG-4 make Unknown", func(t *testing.T) {
 		camera := NewCamera("TG-4", "")
 
 		expected := &Camera{
-			CameraModel: "TG-4",
-			CameraMake:  "",
 			CameraSlug:  "tg-4",
+			CameraName:  "TG-4",
+			CameraMake:  "",
+			CameraModel: "TG-4",
 		}
+
 		assert.Equal(t, expected, camera)
 	})
 	t.Run("model Unknown make Unknown", func(t *testing.T) {
 		camera := NewCamera("", "")
 
 		assert.Equal(t, &UnknownCamera, camera)
+	})
+
+	t.Run("OLYMPUS", func(t *testing.T) {
+		camera := NewCamera("", "OLYMPUS OPTICAL CO.,LTD")
+
+		assert.Equal(t, "olympus", camera.CameraSlug)
+		assert.Equal(t, "Olympus", camera.CameraName)
+		assert.Equal(t, "Olympus", camera.CameraMake)
+		assert.Equal(t, "", camera.CameraModel)
+	})
+
+	t.Run("P30", func(t *testing.T) {
+		camera := NewCamera("ELE-AL00", "Huawei")
+
+		assert.Equal(t, "huawei-p30", camera.CameraSlug)
+		assert.Equal(t, "Huawei P30", camera.CameraName)
+		assert.Equal(t, "Huawei", camera.CameraMake)
+		assert.Equal(t, "P30", camera.CameraModel)
 	})
 }
 
@@ -77,7 +101,7 @@ func TestCamera_String(t *testing.T) {
 	t.Run("model Unknown make XXX", func(t *testing.T) {
 		camera := NewCamera("", "test")
 		cameraString := camera.String()
-		assert.Equal(t, "Unknown", cameraString)
+		assert.Equal(t, "test", cameraString)
 	})
 	t.Run("model Unknown make Unknown", func(t *testing.T) {
 		camera := NewCamera("", "")

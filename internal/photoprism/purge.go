@@ -37,12 +37,6 @@ func (prg *Purge) originalsPath() string {
 
 // Start removes missing files from search results.
 func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhotos map[string]bool, err error) {
-	defer func() {
-		if err := recover(); err != nil {
-			log.Errorf("purge: %s [panic]", err)
-		}
-	}()
-
 	var ignore map[string]bool
 
 	if opt.Ignore != nil {
@@ -63,7 +57,12 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 	defer func() {
 		mutex.MainWorker.Stop()
-		runtime.GC()
+
+		if err := recover(); err != nil {
+			log.Errorf("purge: %s [panic]", err)
+		} else {
+			runtime.GC()
+		}
 	}()
 
 	limit := 500
@@ -180,7 +179,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 	return purgedFiles, purgedPhotos, nil
 }
 
-// Cancel stops the current purge operation.
+// Cancel stops the current operation.
 func (prg *Purge) Cancel() {
 	mutex.MainWorker.Cancel()
 }

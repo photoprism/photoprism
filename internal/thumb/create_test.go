@@ -52,7 +52,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 750, bounds.Max.X)
 		assert.Equal(t, 500, bounds.Max.Y)
 
-		result := *Resample(&img, tile50.Width, tile50.Height, tile50.Options...)
+		result := Resample(img, tile50.Width, tile50.Height, tile50.Options...)
 
 		boundsNew := result.Bounds()
 
@@ -77,7 +77,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 750, bounds.Max.X)
 		assert.Equal(t, 500, bounds.Max.Y)
 
-		result := *Resample(&img, left_224.Width, left_224.Height, left_224.Options...)
+		result := Resample(img, left_224.Width, left_224.Height, left_224.Options...)
 
 		boundsNew := result.Bounds()
 
@@ -102,7 +102,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 750, bounds.Max.X)
 		assert.Equal(t, 500, bounds.Max.Y)
 
-		result := *Resample(&img, right_224.Width, right_224.Height, right_224.Options...)
+		result := Resample(img, right_224.Width, right_224.Height, right_224.Options...)
 
 		boundsNew := result.Bounds()
 
@@ -127,7 +127,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 750, bounds.Max.X)
 		assert.Equal(t, 500, bounds.Max.Y)
 
-		result := *Resample(&img, fit_1280.Width, fit_1280.Height, fit_1280.Options...)
+		result := Resample(img, fit_1280.Width, fit_1280.Height, fit_1280.Options...)
 
 		boundsNew := result.Bounds()
 
@@ -173,6 +173,9 @@ func TestFilename(t *testing.T) {
 
 		result, err := Filename("123456789098765432", "testdata", -2, colorThumb.Height, colorThumb.Options...)
 
+		if err == nil {
+			t.Fatal("error expected")
+		}
 		assert.Equal(t, "resample: width exceeds limit (-2)", err.Error())
 		assert.Empty(t, result)
 	})
@@ -181,6 +184,9 @@ func TestFilename(t *testing.T) {
 
 		result, err := Filename("123456789098765432", "testdata", colorThumb.Width, -3, colorThumb.Options...)
 
+		if err == nil {
+			t.Fatal("error expected")
+		}
 		assert.Equal(t, "resample: height exceeds limit (-3)", err.Error())
 		assert.Empty(t, result)
 	})
@@ -189,6 +195,9 @@ func TestFilename(t *testing.T) {
 
 		result, err := Filename("12", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
+		if err == nil {
+			t.Fatal("error expected")
+		}
 		assert.Equal(t, "resample: file hash is empty or too short (12)", err.Error())
 		assert.Empty(t, result)
 	})
@@ -197,6 +206,9 @@ func TestFilename(t *testing.T) {
 
 		result, err := Filename("123456789098765432", "", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
+		if err == nil {
+			t.Fatal("error expected")
+		}
 		assert.Equal(t, "resample: folder is empty", err.Error())
 		assert.Empty(t, result)
 	})
@@ -237,6 +249,9 @@ func TestFromFile(t *testing.T) {
 
 		fileName, err := FromFile("", "193456789098765432", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
+		if err == nil {
+			t.Fatal("error expected")
+		}
 		assert.Equal(t, "", fileName)
 		assert.Equal(t, "resample: image filename is empty or too short ()", err.Error())
 	})
@@ -277,6 +292,9 @@ func TestFromCache(t *testing.T) {
 
 		fileName, err := FromCache(src, "12", "testdata", tile50.Width, tile50.Height, tile50.Options...)
 
+		if err == nil {
+			t.Fatal("error expected")
+		}
 		assert.Equal(t, "resample: file hash is empty or too short (12)", err.Error())
 		assert.Empty(t, fileName)
 	})
@@ -285,6 +303,9 @@ func TestFromCache(t *testing.T) {
 
 		fileName, err := FromCache("", "193456789098765432", "testdata", tile50.Width, tile50.Height, tile50.Options...)
 
+		if err == nil {
+			t.Fatal("error expected")
+		}
 		assert.Equal(t, "resample: image filename is empty or too short ()", err.Error())
 		assert.Empty(t, fileName)
 	})
@@ -310,7 +331,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, 750, bounds.Max.X)
 		assert.Equal(t, 500, bounds.Max.Y)
 
-		resized, err := Create(&img, dst, tile500.Width, tile500.Height, tile500.Options...)
+		resized, err := Create(img, dst, tile500.Width, tile500.Height, tile500.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -322,7 +343,7 @@ func TestCreate(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		imgNew := *resized
+		imgNew := resized
 		boundsNew := imgNew.Bounds()
 
 		assert.Equal(t, 500, boundsNew.Max.X)
@@ -347,7 +368,11 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, 750, bounds.Max.X)
 		assert.Equal(t, 500, bounds.Max.Y)
 
-		resized, err := Create(&img, dst, -5, tile500.Height, tile500.Options...)
+		resized, err := Create(img, dst, -5, tile500.Height, tile500.Options...)
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
 
 		assert.Equal(t, "resample: width has an invalid value (-5)", err.Error())
 		t.Log(resized)
@@ -371,7 +396,11 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, 750, bounds.Max.X)
 		assert.Equal(t, 500, bounds.Max.Y)
 
-		resized, err := Create(&img, dst, tile500.Width, -3, tile500.Options...)
+		resized, err := Create(img, dst, tile500.Width, -3, tile500.Options...)
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
 
 		assert.Equal(t, "resample: height has an invalid value (-3)", err.Error())
 		t.Log(resized)

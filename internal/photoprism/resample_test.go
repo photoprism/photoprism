@@ -173,13 +173,13 @@ func TestThumb_Create(t *testing.T) {
 			t.Errorf("can't open original: %s", err)
 		}
 
-		res, err := thumb.Create(&img, expectedFilename, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		res, err := thumb.Create(img, expectedFilename, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil || res == nil {
 			t.Fatal("err should be nil and res should NOT be nil")
 		}
 
-		thumbnail := *res
+		thumbnail := res
 		bounds := thumbnail.Bounds()
 
 		assert.Equal(t, 150, bounds.Dx())
@@ -200,13 +200,13 @@ func TestThumb_Create(t *testing.T) {
 			t.Errorf("can't open original: %s", err)
 		}
 
-		res, err := thumb.Create(&img, expectedFilename, -1, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		res, err := thumb.Create(img, expectedFilename, -1, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err == nil || res == nil {
 			t.Fatal("err and res should NOT be nil")
 		}
 
-		thumbnail := *res
+		thumbnail := res
 
 		assert.Equal(t, "resample: width has an invalid value (-1)", err.Error())
 		bounds := thumbnail.Bounds()
@@ -226,13 +226,13 @@ func TestThumb_Create(t *testing.T) {
 			t.Errorf("can't open original: %s", err)
 		}
 
-		res, err := thumb.Create(&img, expectedFilename, 150, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		res, err := thumb.Create(img, expectedFilename, 150, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err == nil || res == nil {
 			t.Fatal("err and res should NOT be nil")
 		}
 
-		thumbnail := *res
+		thumbnail := res
 
 		assert.Equal(t, "resample: height has an invalid value (-1)", err.Error())
 		bounds := thumbnail.Bounds()

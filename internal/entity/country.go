@@ -75,7 +75,9 @@ func FirstOrCreateCountry(m *Country) *Country {
 		return nil
 	}
 
-	if m.ID != UnknownCountry.ID {
+	if !m.Unknown() {
+		event.EntitiesCreated("countries", []*Country{m})
+
 		event.Publish("count.countries", event.Data{
 			"count": 1,
 		})
@@ -98,4 +100,9 @@ func (m *Country) Code() string {
 // Name returns country name
 func (m *Country) Name() string {
 	return m.CountryName
+}
+
+// Unknown returns true if the country is not a known country.
+func (m *Country) Unknown() bool {
+	return m.ID == "" || m.ID == UnknownCountry.ID
 }

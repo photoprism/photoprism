@@ -18,6 +18,7 @@ var services struct {
 	Convert  *photoprism.Convert
 	Import   *photoprism.Import
 	Index    *photoprism.Index
+	Moments  *photoprism.Moments
 	Purge    *photoprism.Purge
 	Nsfw     *nsfw.Detector
 	Query    *query.Query

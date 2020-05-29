@@ -26,8 +26,9 @@ var LensFixtures = LensMap{
 	"lens-f-380": {
 		ID:              1000000,
 		LensSlug:        "lens-f-380",
-		LensModel:       "F380",
+		LensName:        "Apple F380",
 		LensMake:        "Apple",
+		LensModel:       "F380",
 		LensType:        "",
 		LensDescription: "",
 		LensNotes:       "Notes",

@@ -33,8 +33,7 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		Joins(`JOIN files ON files.photo_id = photos.id AND 
 		files.file_missing = 0 AND files.file_primary AND files.deleted_at IS NULL`).
 		Where("photos.deleted_at IS NULL").
-		Where("photos.photo_lat <> 0").
-		Group("photos.id, files.id")
+		Where("photos.photo_lat <> 0")
 
 	f.Query = txt.Clip(f.Query, txt.ClipKeyword)
 
@@ -48,7 +47,7 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 			return results, fmt.Errorf("query too short")
 		}
 
-		if err := Db().Where(AnySlug("custom_slug", f.Query)).Find(&labels).Error; len(labels) == 0 || err != nil {
+		if err := Db().Where(AnySlug("custom_slug", f.Query, " ")).Find(&labels).Error; len(labels) == 0 || err != nil {
 			log.Infof("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
 
 			if likeAny := LikeAny("k.keyword", f.Query); likeAny != "" {
@@ -77,7 +76,7 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 	}
 
 	if f.Album != "" {
-		s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").Where("photos_albums.album_uid IN (?)", strings.Split(f.Album, ","))
+		s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", f.Album)
 	}
 
 	if f.Camera > 0 {

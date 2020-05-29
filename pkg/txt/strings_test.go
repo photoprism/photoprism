@@ -70,8 +70,11 @@ func TestTitleFromFileName(t *testing.T) {
 	t.Run("photo-lover", func(t *testing.T) {
 		assert.Equal(t, "Photo Lover", TitleFromFileName("photo-lover"))
 	})
-	t.Run("BRIDGE", func(t *testing.T) {
-		assert.Equal(t, "Bridge", TitleFromFileName("Bridge"))
+	t.Run("BRIDGE in nyc", func(t *testing.T) {
+		assert.Equal(t, "Bridge In NYC", TitleFromFileName("BRIDGE in nyc"))
+	})
+	t.Run("phil unveils iphone, ipad, imac or macbook 11 pro and max", func(t *testing.T) {
+		assert.Equal(t, "Phil Unveils iPhone iPad iMac or MacBook Pro and Max", TitleFromFileName("phil unveils iphone, ipad, imac or macbook 11 pro and max"))
 	})
 	t.Run("IMG_4568", func(t *testing.T) {
 		assert.Equal(t, "", TitleFromFileName("IMG_4568"))
@@ -80,7 +83,7 @@ func TestTitleFromFileName(t *testing.T) {
 		assert.Equal(t, "Queen City Yacht Club / Toronto Island", TitleFromFileName("queen-city-yacht-club--toronto-island_7999432607_o.jpg"))
 	})
 	t.Run("tim-robbins--tiff-2012_7999233420_o.jpg", func(t *testing.T) {
-		assert.Equal(t, "Tim Robbins / Tiff", TitleFromFileName("tim-robbins--tiff-2012_7999233420_o.jpg"))
+		assert.Equal(t, "Tim Robbins / TIFF", TitleFromFileName("tim-robbins--tiff-2012_7999233420_o.jpg"))
 	})
 	t.Run("20200102-204030-Berlin-Germany-2020-3h4.jpg", func(t *testing.T) {
 		assert.Equal(t, "Berlin Germany", TitleFromFileName("20200102-204030-Berlin-Germany-2020-3h4.jpg"))

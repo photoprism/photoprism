@@ -74,7 +74,7 @@ func TestPhotos(t *testing.T) {
 
 		photos, _, err := PhotoSearch(f)
 
-		assert.Equal(t, "label dog not found", err.Error())
+		assert.Equal(t, "dog not found", err.Error())
 		assert.Empty(t, photos)
 	})
 	t.Run("label query landscape", func(t *testing.T) {
@@ -102,7 +102,7 @@ func TestPhotos(t *testing.T) {
 		assert.Empty(t, photos)
 
 		if err != nil {
-			assert.Equal(t, err.Error(), "label xxx not found")
+			assert.Equal(t, err.Error(), "xxx not found")
 		}
 	})
 	t.Run("form.location true", func(t *testing.T) {
@@ -525,6 +525,49 @@ func TestPhotos(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("search for state", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.State = "KwaZulu-Natal"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("STATE SEARCH: %+v", photos)
+
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("search for category", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Category = "botanical garden"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("CATEGORY SEARCH: %+v", photos)
+
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+
+	t.Run("search for labels", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Label = "botanical-garden,nature,landscape,park"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("CATEGORY SEARCH: %+v", photos)
+
 		assert.LessOrEqual(t, 1, len(photos))
 	})
 }

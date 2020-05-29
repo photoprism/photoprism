@@ -58,15 +58,15 @@
                                   :items="countryOptions">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-year-select">
+                    <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
                         <v-select @change="dropdownChange"
-                                  :label="labels.year"
+                                  :label="labels.camera"
                                   flat solo hide-details
                                   color="secondary-dark"
-                                  item-value="Year"
+                                  item-value="ID"
                                   item-text="Name"
-                                  v-model="filter.year"
-                                  :items="yearOptions">
+                                  v-model="filter.camera"
+                                  :items="cameraOptions">
                         </v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
@@ -88,18 +88,29 @@
                                   :items="options.sorting">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
+                    <v-flex xs12 sm6 md3 pa-2 class="p-year-select">
                         <v-select @change="dropdownChange"
-                                  :label="labels.camera"
+                                  :label="labels.year"
                                   flat solo hide-details
                                   color="secondary-dark"
-                                  item-value="ID"
-                                  item-text="Model"
-                                  v-model="filter.camera"
-                                  :items="cameraOptions">
+                                  item-value="Year"
+                                  item-text="Name"
+                                  v-model="filter.year"
+                                  :items="yearOptions">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 md3 pa-2 class="p-lens-select">
+                    <v-flex xs12 sm6 md3 pa-2 class="p-month-select">
+                        <v-select @change="dropdownChange"
+                                  :label="labels.month"
+                                  flat solo hide-details
+                                  color="secondary-dark"
+                                  item-value="Month"
+                                  item-text="Name"
+                                  v-model="filter.month"
+                                  :items="monthOptions">
+                        </v-select>
+                    </v-flex>
+                    <!-- v-flex xs12 sm6 md3 pa-2 class="p-lens-select">
                         <v-select @change="dropdownChange"
                                   :label="labels.lens"
                                   flat solo hide-details
@@ -109,7 +120,7 @@
                                   v-model="filter.lens"
                                   :items="lensOptions">
                         </v-select>
-                    </v-flex>
+                    </v-flex -->
                     <v-flex xs12 sm6 md3 pa-2 class="p-color-select">
                         <v-select @change="dropdownChange"
                                   :label="labels.color"
@@ -139,6 +150,7 @@
 </template>
 <script>
     import Event from "pubsub-js";
+    import { Info } from "luxon";
 
     export default {
         name: 'p-photo-search',
@@ -155,8 +167,8 @@
                 searchExpanded: false,
                 all: {
                     countries: [{ID: "", Name: this.$gettext("All Countries")}],
-                    cameras: [{ID: 0, Model: this.$gettext("All Cameras")}],
-                    lenses: [{ID: 0, Model: this.$gettext("All Lenses")}],
+                    cameras: [{ID: 0, Name: this.$gettext("All Cameras")}],
+                    lenses: [{ID: 0, Name: this.$gettext("All Lenses")}],
                     colors: [{Slug: "", Name: this.$gettext("All Colors")}],
                     categories: [{Slug: "", Name: this.$gettext("All Categories")}],
                 },
@@ -182,6 +194,7 @@
                     camera: this.$gettext("Camera"),
                     lens: this.$gettext("Lens"),
                     year: this.$gettext("Year"),
+                    month: this.$gettext("Month"),
                     color: this.$gettext("Color"),
                     category: this.$gettext("Category"),
                     sort: this.$gettext("Sort By"),
@@ -205,6 +218,21 @@
             },
             categoryOptions() {
                 return this.all.categories.concat(this.config.categories);
+            },
+            monthOptions() {
+                let result = [
+                    {"Month": 0, "Name": this.$gettext("All Months")},
+                ];
+
+                const months = Info.months("long");
+
+                for (let i = 0; i < months.length; i++) {
+                    result.push({"Month": i + 1, "Name": months[i]});
+                }
+
+                result.push({"Month": -1, "Name": this.$gettext("Unknown")});
+
+                return result;
             },
             yearOptions() {
                 let result = [

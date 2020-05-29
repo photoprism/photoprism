@@ -54,7 +54,7 @@ func Title(s string) string {
 	s = strings.ReplaceAll(s, "_", " ")
 
 	prev := ' '
-	return strings.Map(
+	result := strings.Map(
 		func(r rune) rune {
 			if isSeparator(prev) {
 				prev = r
@@ -64,6 +64,12 @@ func Title(s string) string {
 			return r
 		},
 		s)
+
+	for match, abbr := range TitleReplacements {
+		result = strings.ReplaceAll(result, match, abbr)
+	}
+
+	return result
 }
 
 // TitleFromFileName returns the string with the first characters of each word converted to uppercase.

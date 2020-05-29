@@ -75,7 +75,22 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 
 func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 	pingTicker := time.NewTicker(15 * time.Second)
-	s := event.Subscribe("log.*", "notify.*", "index.*", "upload.*", "import.*", "config.*", "count.*", "photos.*", "albums.*", "labels.*", "sync.*")
+	s := event.Subscribe(
+		"log.*",
+		"notify.*",
+		"index.*",
+		"upload.*",
+		"import.*",
+		"config.*",
+		"count.*",
+		"photos.*",
+		"cameras.*",
+		"lenses.*",
+		"countries.*",
+		"albums.*",
+		"labels.*",
+		"sync.*",
+	)
 
 	defer func() {
 		pingTicker.Stop()

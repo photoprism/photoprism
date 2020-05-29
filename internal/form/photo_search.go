@@ -31,9 +31,11 @@ type PhotoSearch struct {
 	Location  bool      `form:"location"`
 	Album     string    `form:"album"`
 	Label     string    `form:"label"`
-	Country   string    `form:"country"`
-	Year      int       `form:"year"`
-	Month     int       `form:"month"`
+	Category  string    `form:"category"` // Moments
+	Country   string    `form:"country"`  // Moments
+	State     string    `form:"state"`    // Moments
+	Year      int       `form:"year"`     // Moments
+	Month     int       `form:"month"`    // Moments
 	Color     string    `form:"color"`
 	Quality   int       `form:"quality"`
 	Review    bool      `form:"review"`

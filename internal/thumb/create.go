@@ -44,24 +44,24 @@ func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imag
 	return method, filter, format
 }
 
-func Resample(img *image.Image, width, height int, opts ...ResampleOption) *image.Image {
+func Resample(img image.Image, width, height int, opts ...ResampleOption) image.Image {
 	var resImg image.Image
 
 	method, filter, _ := ResampleOptions(opts...)
 
 	if method == ResampleFit {
-		resImg = imaging.Fit(*img, width, height, filter)
+		resImg = imaging.Fit(img, width, height, filter)
 	} else if method == ResampleFillCenter {
-		resImg = imaging.Fill(*img, width, height, imaging.Center, filter)
+		resImg = imaging.Fill(img, width, height, imaging.Center, filter)
 	} else if method == ResampleFillTopLeft {
-		resImg = imaging.Fill(*img, width, height, imaging.TopLeft, filter)
+		resImg = imaging.Fill(img, width, height, imaging.TopLeft, filter)
 	} else if method == ResampleFillBottomRight {
-		resImg = imaging.Fill(*img, width, height, imaging.BottomRight, filter)
+		resImg = imaging.Fill(img, width, height, imaging.BottomRight, filter)
 	} else if method == ResampleResize {
-		resImg = imaging.Resize(*img, width, height, filter)
+		resImg = imaging.Resize(img, width, height, filter)
 	}
 
-	return &resImg
+	return resImg
 }
 
 func Postfix(width, height int, opts ...ResampleOption) (result string) {
@@ -145,14 +145,14 @@ func FromFile(imageFilename, hash, thumbPath string, width, height int, opts ...
 		return "", err
 	}
 
-	if _, err := Create(&img, fileName, width, height, opts...); err != nil {
+	if _, err := Create(img, fileName, width, height, opts...); err != nil {
 		return "", err
 	}
 
 	return fileName, nil
 }
 
-func Create(img *image.Image, fileName string, width, height int, opts ...ResampleOption) (result *image.Image, err error) {
+func Create(img image.Image, fileName string, width, height int, opts ...ResampleOption) (result image.Image, err error) {
 	if InvalidSize(width) {
 		return img, fmt.Errorf("resample: width has an invalid value (%d)", width)
 	}
@@ -173,7 +173,7 @@ func Create(img *image.Image, fileName string, width, height int, opts ...Resamp
 		saveOption = imaging.JPEGQuality(JpegQuality)
 	}
 
-	err = imaging.Save(*result, fileName, saveOption)
+	err = imaging.Save(result, fileName, saveOption)
 
 	if err != nil {
 		log.Errorf("resample: failed to save %s", fileName)

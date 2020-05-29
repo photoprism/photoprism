@@ -763,8 +763,8 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 
 	hash := m.Hash()
 
-	var originalImg *image.Image
-	var sourceImg *image.Image
+	var originalImg image.Image
+	var sourceImg image.Image
 	var sourceImgType string
 
 	for _, name := range thumb.DefaultTypes {
@@ -792,7 +792,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 					return err
 				}
 
-				originalImg = &img
+				originalImg = img
 			}
 
 			if thumbType.Source != "" {

@@ -242,7 +242,7 @@ func (m *Photo) SyncKeywordLabels() error {
 	for _, w := range keywords {
 		if label := FindLabel(w); label != nil {
 			labelIds = append(labelIds, label.ID)
-			FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, label.ID, 5, classify.SrcKeyword))
+			FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, label.ID, 25, classify.SrcKeyword))
 		}
 	}
 

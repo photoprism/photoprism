@@ -11,20 +11,22 @@ import (
 
 // Moment contains photo counts per month and year
 type Moment struct {
-	PhotoCategory string `json:"Category"`
-	PhotoCountry  string `json:"Country"`
-	PhotoState    string `json:"State"`
-	PhotoYear     int    `json:"Year"`
-	PhotoMonth    int    `json:"Month"`
-	PhotoCount    int    `json:"Count"`
+	Category   string `json:"Category"`
+	Country    string `json:"Country"`
+	State      string `json:"State"`
+	Year       int    `json:"Year"`
+	Month      int    `json:"Month"`
+	PhotoCount int    `json:"PhotoCount"`
 }
 
 var MomentCategory = map[string]string{
-	"botanical garden": "Botanical Gardens",
-	"nature reserve": "Nature Reserves",
-	"bay": "Bays, Capes & Beaches",
-	"beach": "Bays, Capes & Beaches",
-	"cape": "Bays, Capes & Beaches",
+	"botanical-garden": "Botanical Gardens",
+	"nature-reserve":   "Nature & Landscape",
+	"landscape":        "Nature & Landscape",
+	"nature":           "Nature & Landscape",
+	"bay":              "Bays, Capes & Beaches",
+	"beach":            "Bays, Capes & Beaches",
+	"cape":             "Bays, Capes & Beaches",
 }
 
 // Slug returns an identifier string for a moment.
@@ -34,56 +36,57 @@ func (m Moment) Slug() string {
 
 // Title returns an english title for the moment.
 func (m Moment) Title() string {
-	if m.PhotoYear == 0 && m.PhotoMonth == 0 {
-		if m.PhotoCategory != "" {
-			return MomentCategory[m.PhotoCategory]
+	if m.Year == 0 && m.Month == 0 {
+		if m.Category != "" {
+			return MomentCategory[m.Category]
 		}
 
-		country := maps.CountryName(m.PhotoCountry)
+		country := maps.CountryName(m.Country)
 
-		if strings.Contains(m.PhotoState, country) {
-			return m.PhotoState
+		if strings.Contains(m.State, country) {
+			return m.State
 		}
 
-		if m.PhotoState == "" {
-			return m.PhotoCountry
+		if m.State == "" {
+			return m.Country
 		}
 
-		return fmt.Sprintf("%s / %s", m.PhotoState, country)
+		return fmt.Sprintf("%s / %s", m.State, country)
 	}
 
-	if m.PhotoCountry != "" && m.PhotoYear > 1900 && m.PhotoMonth == 0 {
-		if m.PhotoState != "" {
-			return fmt.Sprintf("%s / %s / %d", m.PhotoState, maps.CountryName(m.PhotoCountry), m.PhotoYear)
+	if m.Country != "" && m.Year > 1900 && m.Month == 0 {
+		if m.State != "" {
+			return fmt.Sprintf("%s / %s / %d", m.State, maps.CountryName(m.Country), m.Year)
 		}
 
-		return fmt.Sprintf("%s %d", maps.CountryName(m.PhotoCountry), m.PhotoYear)
+		return fmt.Sprintf("%s %d", maps.CountryName(m.Country), m.Year)
 	}
 
-	if m.PhotoYear > 1900 && m.PhotoMonth > 0 && m.PhotoMonth <= 12 {
-		date := time.Date(m.PhotoYear, time.Month(m.PhotoMonth), 1, 0, 0, 0, 0, time.UTC)
+	if m.Year > 1900 && m.Month > 0 && m.Month <= 12 {
+		date := time.Date(m.Year, time.Month(m.Month), 1, 0, 0, 0, 0, time.UTC)
 
-		if m.PhotoCountry == "" {
+		if m.Country == "" {
 			return date.Format("January 2006")
 		}
 
-		return fmt.Sprintf("%s / %s", maps.CountryName(m.PhotoCountry), date.Format("January 2006"))
+		return fmt.Sprintf("%s / %s", maps.CountryName(m.Country), date.Format("January 2006"))
 	}
 
-	if m.PhotoMonth > 0 && m.PhotoMonth <= 12 {
-		return time.Month(m.PhotoMonth).String()
+	if m.Month > 0 && m.Month <= 12 {
+		return time.Month(m.Month).String()
 	}
 
-	return maps.CountryName(m.PhotoCountry)
+	return maps.CountryName(m.Country)
 }
 
+// A list of moments.
 type Moments []Moment
 
 // MomentsTime counts photos by month and year.
 func MomentsTime(threshold int) (results Moments, err error) {
 	db := UnscopedDb().Table("photos").
-		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photo_year > 0 AND photo_month > 0").
-		Select("photos.photo_year, photos.photo_month, COUNT(*) AS photo_count").
+		Select("photos.photo_year AS year, photos.photo_month AS month, COUNT(*) AS photo_count").
+		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photos.photo_year > 0 AND photos.photo_month > 0").
 		Group("photos.photo_year, photos.photo_month").
 		Order("photos.photo_year DESC, photos.photo_month DESC").
 		Having("photo_count >= ?", threshold)
@@ -98,8 +101,8 @@ func MomentsTime(threshold int) (results Moments, err error) {
 // MomentsCountries returns the most popular countries by year.
 func MomentsCountries(threshold int) (results Moments, err error) {
 	db := UnscopedDb().Table("photos").
+		Select("photo_country AS country, photo_year AS year, COUNT(*) AS photo_count ").
 		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photo_country <> 'zz' AND photo_year > 0").
-		Select("photo_country, photo_year, COUNT(*) AS photo_count ").
 		Group("photo_country, photo_year").
 		Having("photo_count >= ?", threshold)
 
@@ -113,10 +116,10 @@ func MomentsCountries(threshold int) (results Moments, err error) {
 // MomentsStates returns the most popular states and countries by year.
 func MomentsStates(threshold int) (results Moments, err error) {
 	db := UnscopedDb().Table("photos").
+		Select("p.loc_country AS country, p.loc_state AS state, COUNT(*) AS photo_count").
 		Joins("JOIN places p ON p.id = photos.place_id").
 		Where("photos.photo_quality >= 3 AND photos.deleted_at IS NULL AND p.loc_state <> '' AND p.loc_country <> 'zz'").
-		Select("p.loc_country AS photo_country, p.loc_state AS photo_state, COUNT(*) AS photo_count").
-		Group("photo_country, photo_state").
+		Group("p.loc_country, p.loc_state").
 		Having("photo_count >= ?", threshold)
 
 	if err := db.Scan(&results).Error; err != nil {
@@ -135,10 +138,11 @@ func MomentsCategories(threshold int) (results Moments, err error) {
 	}
 
 	db := UnscopedDb().Table("photos").
-		Joins("JOIN locations l ON l.id = photos.location_id AND photos.location_id <> 'zz'").
-		Where("photos.photo_quality >= 3 AND photos.deleted_at IS NULL AND l.loc_category IN (?)", cats).
-		Select("l.loc_category AS photo_category, COUNT(*) AS photo_count").
-		Group("photo_category").
+		Select("l.label_slug AS category, COUNT(*) AS photo_count").
+		Joins("JOIN photos_labels pl ON pl.photo_id = photos.id AND pl.uncertainty < 100").
+		Joins("JOIN labels l ON l.id = pl.label_id").
+		Where("photos.photo_quality >= 3 AND photos.deleted_at IS NULL AND l.label_slug IN (?)", cats).
+		Group("l.label_slug").
 		Having("photo_count >= ?", threshold)
 
 	if err := db.Scan(&results).Error; err != nil {

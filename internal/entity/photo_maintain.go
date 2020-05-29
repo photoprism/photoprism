@@ -40,7 +40,7 @@ func (m *Photo) Maintain() error {
 	maintained := time.Now()
 	m.MaintainedAt = &maintained
 
-	if m.UnknownLocation() && (m.LocSrc == SrcAuto || m.LocSrc == SrcEstimate) {
+	if m.UnknownCountry() && m.LocSrc == SrcAuto || m.UnknownLocation() && m.LocSrc == SrcEstimate {
 		m.EstimatePosition()
 	}
 

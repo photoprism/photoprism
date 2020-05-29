@@ -29,22 +29,22 @@ type Photo struct {
 	DescriptionSrc   string    `json:"DescriptionSrc"`
 	Details          Details   `json:"Details"`
 	PhotoFavorite    bool      `json:"Favorite"`
-	PhotoPrivate     bool    `json:"Private"`
-	PhotoReview      bool    `json:"Review"`
-	PhotoLat         float32 `json:"Lat"`
-	PhotoLng         float32 `json:"Lng"`
-	PhotoAltitude    int     `json:"Altitude"`
-	PhotoIso         int     `json:"Iso"`
-	PhotoFocalLength int     `json:"FocalLength"`
-	PhotoFNumber     float32 `json:"FNumber"`
-	PhotoExposure    string  `json:"Exposure"`
-	PhotoCountry     string  `json:"Country"`
-	LocationID       string  `json:"LocationID"`
-	LocSrc           string  `json:"LocSrc"`
-	PlaceID          string  `json:"PlaceID"`
-	CameraID         uint    `json:"CameraID"`
-	CameraSrc        string  `json:"CameraSrc"`
-	LensID           uint    `json:"LensID"`
+	PhotoPrivate     bool      `json:"Private"`
+	PhotoReview      bool      `json:"Review"`
+	PhotoLat         float32   `json:"Lat"`
+	PhotoLng         float32   `json:"Lng"`
+	PhotoAltitude    int       `json:"Altitude"`
+	PhotoIso         int       `json:"Iso"`
+	PhotoFocalLength int       `json:"FocalLength"`
+	PhotoFNumber     float32   `json:"FNumber"`
+	PhotoExposure    string    `json:"Exposure"`
+	PhotoCountry     string    `json:"Country"`
+	LocationID       string    `json:"LocationID"`
+	LocSrc           string    `json:"LocSrc"`
+	PlaceID          string    `json:"PlaceID"`
+	CameraID         uint      `json:"CameraID"`
+	CameraSrc        string    `json:"CameraSrc"`
+	LensID           uint      `json:"LensID"`
 }
 
 func NewPhoto(m interface{}) (f Photo, err error) {

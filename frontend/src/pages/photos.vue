@@ -56,6 +56,7 @@
                 this.filter.country = query['country'] ? query['country'] : '';
                 this.filter.lens = query['lens'] ? parseInt(query['lens']) : 0;
                 this.filter.year = query['year'] ? parseInt(query['year']) : 0;
+                this.filter.month = query['month'] ? parseInt(query['month']) : 0;
                 this.filter.color = query['color'] ? query['color'] : '';
                 this.filter.label = query['label'] ? query['label'] : '';
                 this.filter.order = this.sortOrder();
@@ -74,6 +75,7 @@
             const country = query['country'] ? query['country'] : '';
             const lens = query['lens'] ? parseInt(query['lens']) : 0;
             const year = query['year'] ? parseInt(query['year']) : 0;
+            const month = query['month'] ? parseInt(query['month']) : 0;
             const color = query['color'] ? query['color'] : '';
             const label = query['label'] ? query['label'] : '';
             const view = this.viewType();
@@ -83,6 +85,7 @@
                 lens: lens,
                 label: label,
                 year: year,
+                month: month,
                 color: color,
                 order: order,
                 q: q,

@@ -187,7 +187,7 @@
                                         hide-details
                                         color="secondary-dark"
                                         item-value="ID"
-                                        item-text="Model"
+                                        item-text="Name"
                                         v-model="model.CameraID"
                                         :items="cameraOptions">
                                 </v-select>
@@ -225,7 +225,7 @@
                                         hide-details
                                         color="secondary-dark"
                                         item-value="ID"
-                                        item-text="Model"
+                                        item-text="Name"
                                         v-model="model.LensID"
                                         :items="lensOptions">
                                 </v-select>

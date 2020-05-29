@@ -75,15 +75,19 @@ func LikeAny(col, search string) (where string) {
 }
 
 // AnySlug returns a where condition that matches any slug in search.
-func AnySlug(col, search string) (where string) {
+func AnySlug(col, search, sep string) (where string) {
 	if search == "" {
 		return ""
+	}
+
+	if sep == "" {
+		sep = " "
 	}
 
 	var wheres []string
 	var words []string
 
-	for _, w := range strings.Split(search, " ") {
+	for _, w := range strings.Split(search, sep) {
 		words = append(words, slug.Make(strings.TrimSpace(w)))
 	}
 

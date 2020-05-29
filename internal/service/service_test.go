@@ -46,6 +46,10 @@ func TestIndex(t *testing.T) {
 	assert.IsType(t, &photoprism.Index{}, Index())
 }
 
+func TestMoments(t *testing.T) {
+	assert.IsType(t, &photoprism.Moments{}, Moments())
+}
+
 func TestPurge(t *testing.T) {
 	assert.IsType(t, &photoprism.Purge{}, Purge())
 }
