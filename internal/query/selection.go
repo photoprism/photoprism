@@ -17,7 +17,7 @@ func PhotoSelection(f form.Selection) (results Photos, err error) {
 	s := UnscopedDb().Table("photos").
 		Select("photos.*").
 		Where(`photos.photo_uid IN (?) 
-		OR photos.place_uid IN (?) 
+		OR photos.place_id IN (?) 
 		OR photos.photo_uid IN (SELECT photo_uid FROM files WHERE file_uid IN (?))
 		OR photos.photo_path IN (
 			SELECT a.path FROM folders a WHERE a.folder_uid IN (?) UNION
@@ -48,7 +48,7 @@ func FileSelection(f form.Selection) (results Files, err error) {
 		Where("photos.deleted_at IS NULL").
 		Where("files.file_missing = 0").
 		Where(`photos.photo_uid IN (?) 
-		OR photos.place_uid IN (?) 
+		OR photos.place_id IN (?) 
 		OR photos.photo_uid IN (SELECT photo_uid FROM files WHERE file_uid IN (?))
 		OR photos.photo_path IN (
 			SELECT a.path FROM folders a WHERE a.folder_uid IN (?) UNION

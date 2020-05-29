@@ -63,10 +63,10 @@ export class Photo extends RestModel {
             Keywords: [],
             Albums: [],
             Links: [],
-            Location: null,
-            Place: null,
-            PlaceUID: "",
-            LocUID: "",
+            Location: {},
+            Place: {},
+            PlaceID: "",
+            LocationID: "",
             LocSrc: "",
             // Additional data in result lists.
             LocLabel: "",
@@ -317,7 +317,7 @@ export class Photo extends RestModel {
     }
 
     locationInfo() {
-        if (this.PlaceUID === "zz" && this.Country !== "zz") {
+        if (this.PlaceID === "zz" && this.Country !== "zz") {
             const country = countries.find(c => c.Code === this.Country);
 
             if(country) {

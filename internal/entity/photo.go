@@ -34,8 +34,8 @@ type Photo struct {
 	PhotoFavorite    bool         `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
 	TimeZone         string       `gorm:"type:varbinary(64);" json:"TimeZone" yaml:"-"`
-	PlaceUID         string       `gorm:"type:varbinary(16);index;" json:"PlaceUID" yaml:"-"`
-	LocUID           string       `gorm:"type:varbinary(16);index;" json:"LocUID" yaml:"-"`
+	PlaceID          string       `gorm:"type:varbinary(16);index;" json:"PlaceID" yaml:"-"`
+	LocationID       string       `gorm:"type:varbinary(16);index;" json:"LocationID" yaml:"-"`
 	LocSrc           string       `gorm:"type:varbinary(8);" json:"LocSrc" yaml:"-"`
 	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
 	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
@@ -55,8 +55,8 @@ type Photo struct {
 	LensID           uint         `gorm:"index:idx_photos_camera_lens;" json:"LensID" yaml:"-"`
 	Camera           *Camera      `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Camera" yaml:"-"`
 	Lens             *Lens        `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Lens" yaml:"-"`
-	Location         *Location    `gorm:"foreignkey:loc_uid;association_foreignkey:loc_uid;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Location" yaml:"-"`
-	Place            *Place       `gorm:"foreignkey:place_uid;association_foreignkey:place_uid;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"-" yaml:"-"`
+	Location         *Location    `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Location" yaml:"-"`
+	Place            *Place       `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Place" yaml:"-"`
 	Links            []Link       `gorm:"foreignkey:share_uid;association_foreignkey:photo_uid" json:"Links" yaml:"-"`
 	Keywords         []Keyword    `json:"-" yaml:"-"`
 	Albums           []Album      `json:"-" yaml:"-"`
@@ -349,7 +349,7 @@ func (m *Photo) HasID() bool {
 
 // UnknownLocation checks if the photo has an unknown location.
 func (m *Photo) UnknownLocation() bool {
-	return m.LocUID == "" || m.LocUID == UnknownLocation.LocUID
+	return m.LocationID == "" || m.LocationID == UnknownLocation.ID
 }
 
 // HasLocation checks if the photo has a known location.
@@ -359,7 +359,7 @@ func (m *Photo) HasLocation() bool {
 
 // LocationLoaded checks if the photo has a known location that is currently loaded.
 func (m *Photo) LocationLoaded() bool {
-	return m.Location != nil && m.Location.Place != nil && !m.Location.Unknown() && m.Location.LocUID == m.LocUID
+	return m.Location != nil && m.Location.Place != nil && !m.Location.Unknown() && m.Location.ID == m.LocationID
 }
 
 // LoadLocation loads the photo location from the database if not done already.
@@ -374,7 +374,7 @@ func (m *Photo) LoadLocation() error {
 
 // PlaceLoaded checks if the photo has a known place that is currently loaded.
 func (m *Photo) PlaceLoaded() bool {
-	return m.Place != nil && !m.Place.Unknown() && m.Place.PlaceUID == m.PlaceUID
+	return m.Place != nil && !m.Place.Unknown() && m.Place.ID == m.PlaceID
 }
 
 // LoadPlace loads the photo place from the database if not done already.
@@ -399,7 +399,7 @@ func (m *Photo) NoLatLng() bool {
 
 // UnknownPlace checks if the photo has an unknown place.
 func (m *Photo) UnknownPlace() bool {
-	return m.PlaceUID == "" || m.PlaceUID == UnknownPlace.PlaceUID
+	return m.PlaceID == "" || m.PlaceID == UnknownPlace.ID
 }
 
 // HasPlace checks if the photo has a known place.

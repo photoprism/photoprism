@@ -73,11 +73,11 @@ type CategoryLabel struct {
 }
 
 type ClientPosition struct {
-	PhotoUID string    `json:"uid"`
-	LocUID   string    `json:"loc"`
-	TakenAt  time.Time `json:"utc"`
-	PhotoLat float64   `json:"lat"`
-	PhotoLng float64   `json:"lng"`
+	PhotoUID   string    `json:"uid"`
+	LocationID string    `json:"loc"`
+	TakenAt    time.Time `json:"utc"`
+	PhotoLat   float64   `json:"lat"`
+	PhotoLng   float64   `json:"lng"`
 }
 
 // Flags returns config flags as string slice.
@@ -174,7 +174,7 @@ func (c *Config) ClientConfig() ClientConfig {
 	db := c.Db()
 
 	db.Table("photos").
-		Select("photo_uid, loc_uid, photo_lat, photo_lng, taken_at").
+		Select("photo_uid, location_id, photo_lat, photo_lng, taken_at").
 		Where("deleted_at IS NULL AND photo_lat != 0 AND photo_lng != 0").
 		Order("taken_at DESC").
 		Limit(1).Offset(0).

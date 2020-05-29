@@ -48,8 +48,8 @@ type PhotoResult struct {
 	LensID           uint          `json:"LensID"` // Lens
 	LensModel        string        `json:"LensModel"`
 	LensMake         string        `json:"LensMake"`
-	PlaceUID         string        `json:"PlaceUID"`
-	LocUID           string        `json:"LocUID"` // Location
+	PlaceID          string        `json:"PlaceID"`
+	LocationID       string        `json:"LocationID"` // Location
 	LocLabel         string        `json:"LocLabel"`
 	LocCity          string        `json:"LocCity"`
 	LocState         string        `json:"LocState"`

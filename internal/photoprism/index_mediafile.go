@@ -348,12 +348,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if photo.UnknownLocation() {
 		photo.Location = &entity.UnknownLocation
-		photo.LocUID = entity.UnknownLocation.LocUID
+		photo.LocationID = entity.UnknownLocation.ID
 	}
 
 	if photo.UnknownPlace() {
 		photo.Place = &entity.UnknownPlace
-		photo.PlaceUID = entity.UnknownPlace.PlaceUID
+		photo.PlaceID = entity.UnknownPlace.ID
 	}
 
 	photo.UpdateYearMonth()

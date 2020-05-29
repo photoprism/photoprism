@@ -12,9 +12,9 @@ import (
 
 // Location used to associate photos to location
 type Location struct {
-	LocUID      string    `gorm:"type:varbinary(16);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	PlaceUID    string    `gorm:"type:varbinary(16);" json:"-" yaml:"PlaceUID"`
-	Place       *Place    `gorm:"foreignkey:place_uid;association_foreignkey:place_uid;PRELOAD:true" json:"Place" yaml:"-"`
+	ID          string    `gorm:"type:varbinary(16);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
+	PlaceID     string    `gorm:"type:varbinary(16);" json:"-" yaml:"PlaceID"`
+	Place       *Place    `gorm:"PRELOAD:true" json:"Place" yaml:"-"`
 	LocName     string    `gorm:"type:varchar(255);" json:"Name" yaml:"Name,omitempty"`
 	LocCategory string    `gorm:"type:varchar(64);" json:"Category" yaml:"Category,omitempty"`
 	LocSource   string    `gorm:"type:varbinary(16);" json:"Source" yaml:"Source,omitempty"`
@@ -24,9 +24,9 @@ type Location struct {
 
 // UnknownLocation is PhotoPrism's default location.
 var UnknownLocation = Location{
-	LocUID:      "zz",
+	ID:          "zz",
 	Place:       &UnknownPlace,
-	PlaceUID:    "zz",
+	PlaceID:     "zz",
 	LocName:     "",
 	LocCategory: "",
 	LocSource:   SrcAuto,
@@ -41,7 +41,7 @@ func CreateUnknownLocation() {
 func NewLocation(lat, lng float32) *Location {
 	result := &Location{}
 
-	result.LocUID = s2.Token(float64(lat), float64(lng))
+	result.ID = s2.Token(float64(lat), float64(lng))
 
 	return result
 }
@@ -51,25 +51,25 @@ func (m *Location) Find(api string) error {
 	start := time.Now()
 	db := Db()
 
-	if err := db.Preload("Place").First(m, "loc_uid = ?", m.LocUID).Error; err == nil {
-		log.Infof("location: found %s (%+v)", m.LocUID, m)
+	if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err == nil {
+		log.Infof("location: found %s (%+v)", m.ID, m)
 		return nil
 	}
 
 	l := &maps.Location{
-		ID: m.LocUID,
+		ID: m.ID,
 	}
 
 	if err := l.QueryApi(api); err != nil {
-		log.Errorf("location: %s failed %s", m.LocUID, err)
+		log.Errorf("location: %s failed %s", m.ID, err)
 		return err
 	}
 
-	if place := FindPlaceByLabel(l.S2Token(), l.Label()); place != nil {
+	if place := FindPlace(l.S2Token(), l.Label()); place != nil {
 		m.Place = place
 	} else {
 		place = &Place{
-			PlaceUID:    l.S2Token(),
+			ID:          l.S2Token(),
 			LocLabel:    l.Label(),
 			LocCity:     l.City(),
 			LocState:    l.State(),
@@ -78,32 +78,32 @@ func (m *Location) Find(api string) error {
 		}
 
 		if err := place.Create(); err != nil {
-			log.Errorf("place: failed adding %s %s", place.PlaceUID, err.Error())
+			log.Errorf("place: failed adding %s %s", place.ID, err.Error())
 			m.Place = &UnknownPlace
 		} else {
 			event.Publish("count.places", event.Data{
 				"count": 1,
 			})
 
-			log.Infof("place: added %s [%s]", place.PlaceUID, time.Since(start))
+			log.Infof("place: added %s [%s]", place.ID, time.Since(start))
 
 			m.Place = place
 		}
 	}
 
-	m.PlaceUID = m.Place.PlaceUID
+	m.PlaceID = m.Place.ID
 	m.LocName = l.Name()
 	m.LocCategory = l.Category()
 	m.LocSource = l.Source()
 
 	if err := db.Create(m).Error; err == nil {
-		log.Infof("location: added %s [%s]", m.LocUID, time.Since(start))
+		log.Infof("location: added %s [%s]", m.ID, time.Since(start))
 		return nil
-	} else if err := db.Preload("Place").First(m, "loc_uid = ?", m.LocUID).Error; err != nil {
-		log.Errorf("location: failed adding %s %s [%s]", m.LocUID, err.Error(), time.Since(start))
+	} else if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err != nil {
+		log.Errorf("location: failed adding %s %s [%s]", m.ID, err.Error(), time.Since(start))
 		return err
 	} else {
-		log.Infof("location: found %s after second try [%s]", m.LocUID, time.Since(start))
+		log.Infof("location: found %s after second try [%s]", m.ID, time.Since(start))
 	}
 
 	return nil
@@ -116,19 +116,19 @@ func (m *Location) Create() error {
 
 // FirstOrCreateLocation returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateLocation(m *Location) *Location {
-	if m.LocUID == "" {
-		log.Errorf("location: loc_uid must not be empty")
+	if m.ID == "" {
+		log.Errorf("location: id must not be empty")
 		return nil
 	}
 
-	if m.PlaceUID == "" {
-		log.Errorf("location: place_uid must not be empty (loc_uid %s)", m.LocUID)
+	if m.PlaceID == "" {
+		log.Errorf("location: place_id must not be empty (id %s)", m.ID)
 		return nil
 	}
 
 	result := Location{}
 
-	if err := Db().Where("loc_uid = ?", m.LocUID).First(&result).Error; err == nil {
+	if err := Db().Where("id = ?", m.ID).First(&result).Error; err == nil {
 		return &result
 	} else if err := m.Create(); err != nil {
 		log.Errorf("location: %s", err)
@@ -141,7 +141,7 @@ func FirstOrCreateLocation(m *Location) *Location {
 // Keywords computes keyword based on a Location
 func (m *Location) Keywords() (result []string) {
 	if m.Place == nil {
-		log.Errorf("location: place for %s is nil - you might have found a bug", m.LocUID)
+		log.Errorf("location: place for %s is nil - you might have found a bug", m.ID)
 		return result
 	}
 
@@ -159,7 +159,7 @@ func (m *Location) Keywords() (result []string) {
 
 // Unknown checks if the location has no id
 func (m *Location) Unknown() bool {
-	return m.LocUID == "" || m.LocUID == UnknownLocation.LocUID
+	return m.ID == "" || m.ID == UnknownLocation.ID
 }
 
 // Name returns name of location

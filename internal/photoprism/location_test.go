@@ -32,7 +32,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "Hyogo Prefecture", location.State())
 		assert.Equal(t, "Japan", location.CountryName())
 		assert.Equal(t, "", location.Category())
-		assert.True(t, strings.HasPrefix(location.LocUID, "3554df45"))
+		assert.True(t, strings.HasPrefix(location.ID, "3554df45"))
 		location2, err := mediaFile.Location()
 
 		if err != nil {
@@ -67,7 +67,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "Tübingen", location.City())
 		assert.Equal(t, "de", location.CountryCode())
 		assert.Equal(t, "Germany", location.CountryName())
-		assert.True(t, strings.HasPrefix(location.LocUID, "4799e4a5"))
+		assert.True(t, strings.HasPrefix(location.ID, "4799e4a5"))
 	})
 	t.Run("dog_orange.jpg", func(t *testing.T) {
 		conf := config.TestConfig()

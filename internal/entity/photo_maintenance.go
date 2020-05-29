@@ -14,15 +14,15 @@ func (m *Photo) EstimatePosition() {
 	var recentPhoto Photo
 
 	if result := UnscopedDb().
-		Where("place_uid <> '' && place_uid <> 'zz'").
+		Where("place_id <> '' AND place_id <> 'zz'").
 		Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", m.TakenAt)).
 		Preload("Place").First(&recentPhoto); result.Error == nil {
 		if recentPhoto.HasPlace() {
 			m.Place = recentPhoto.Place
-			m.PlaceUID = recentPhoto.PlaceUID
+			m.PlaceID = recentPhoto.PlaceID
 			m.PhotoCountry = recentPhoto.PhotoCountry
 			m.LocSrc = SrcEstimate
-			log.Debugf("prism: approximate position of %s is %s", m.PhotoUID, recentPhoto.PlaceUID)
+			log.Debugf("prism: approximate position of %s is %s", m.PhotoUID, recentPhoto.PlaceID)
 		} else if recentPhoto.HasCountry() {
 			m.PhotoCountry = recentPhoto.PhotoCountry
 			m.LocSrc = SrcEstimate

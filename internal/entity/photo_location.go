@@ -61,14 +61,14 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 		err := location.Find(geoApi)
 
 		if location.Place == nil {
-			log.Warnf("photo: location place is nil (uid %s, loc_uid %s) - bug?", m.PhotoUID, location.LocUID)
+			log.Warnf("photo: location place is nil (uid %s, location %s) - bug?", m.PhotoUID, location.ID)
 		}
 
-		if err == nil && location.Place != nil && location.LocUID != UnknownLocation.LocUID {
+		if err == nil && location.Place != nil && location.ID != UnknownLocation.ID {
 			m.Location = location
-			m.LocUID = location.LocUID
+			m.LocationID = location.ID
 			m.Place = location.Place
-			m.PlaceUID = location.PlaceUID
+			m.PlaceID = location.PlaceID
 			m.PhotoCountry = location.CountryCode()
 
 			if m.TakenSrc != SrcManual {
@@ -95,15 +95,15 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 
 	if m.UnknownLocation() {
 		m.Location = &UnknownLocation
-		m.LocUID = UnknownLocation.LocUID
+		m.LocationID = UnknownLocation.ID
 	} else if err := m.LoadLocation(); err == nil {
 		m.Place = m.Location.Place
-		m.PlaceUID = m.Location.PlaceUID
+		m.PlaceID = m.Location.PlaceID
 	}
 
 	if m.UnknownPlace() {
 		m.Place = &UnknownPlace
-		m.PlaceUID = UnknownPlace.PlaceUID
+		m.PlaceID = UnknownPlace.ID
 	} else if err := m.LoadPlace(); err == nil {
 		m.PhotoCountry = m.Place.CountryCode()
 	}
