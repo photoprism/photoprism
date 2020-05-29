@@ -151,10 +151,6 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("files.file_error = ''")
 	}
 
-	if f.Album != "" {
-		s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", f.Album)
-	}
-
 	if f.Camera > 0 {
 		s = s.Where("photos.camera_id = ?", f.Camera)
 	}
@@ -284,6 +280,14 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 	if !f.After.IsZero() {
 		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
+	}
+
+	if f.Album != "" {
+		if f.Filter != "" {
+			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", f.Album)
+		} else {
+			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", f.Album)
+		}
 	}
 
 	// Set sort order for results.

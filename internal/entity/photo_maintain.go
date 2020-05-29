@@ -14,7 +14,7 @@ func (m *Photo) EstimatePosition() {
 	var recentPhoto Photo
 
 	if result := UnscopedDb().
-		Where("place_id <> '' AND place_id <> 'zz'").
+		Where("place_id <> '' AND place_id <> 'zz' AND loc_src <> '' AND loc_src <> ?", SrcEstimate).
 		Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", m.TakenAt)).
 		Preload("Place").First(&recentPhoto); result.Error == nil {
 		if recentPhoto.HasPlace() {

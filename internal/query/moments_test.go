@@ -86,20 +86,20 @@ func TestMomentsStates(t *testing.T) {
 
 func TestMomentsCategories(t *testing.T) {
 	t.Run("result found", func(t *testing.T) {
-		results, err := MomentsCategories(1)
+		results, err := MomentsLabels(1)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		t.Logf("MomentsCategories %+v", results)
+		t.Logf("MomentsLabels %+v", results)
 
 		if len(results) < 1 {
 			t.Error("at least one result expected")
 		}
 
 		for _, moment := range results {
-			assert.NotEmpty(t, moment.Category)
+			assert.NotEmpty(t, moment.Label)
 			assert.Empty(t, moment.Country)
 			assert.Empty(t, moment.State)
 			assert.Equal(t, moment.Year, 0)

@@ -142,13 +142,29 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-group v-if="!mini" prepend-icon="folder" no-action :append-icon="albumExpandIcon">
+                <v-list-group v-if="!mini" prepend-icon="folder" no-action>
                     <v-list-tile slot="activator" to="/albums" @click.stop="">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate key="Albums">Albums</translate>
                                 <span v-if="config.count.albums > 0" class="p-navigation-count">{{ config.count.albums }}</span>
                             </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <v-list-tile-title><translate key="Folders">Folders</translate>
+                                <span v-show="config.count.folders > 0"
+                                      class="p-navigation-count">{{ config.count.folders }}</span></v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <v-list-tile-title><translate key="Months">Months</translate>
+                                <span v-show="config.count.months > 0"
+                                      class="p-navigation-count">{{ config.count.months }}</span></v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
 

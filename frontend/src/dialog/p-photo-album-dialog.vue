@@ -90,6 +90,7 @@
                     q: q,
                     count: 1000,
                     offset: 0,
+                    type: "album"
                 };
 
                 Album.search(params).then(response => {

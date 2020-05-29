@@ -64,6 +64,12 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 			event.Info(fmt.Sprintf("removed %d files and %d photos", len(files), len(photos)))
 		}
 
+		moments := service.Moments()
+
+		if err := moments.Start(); err != nil {
+			log.Error(err)
+		}
+
 		elapsed := int(time.Since(start).Seconds())
 
 		event.Success(fmt.Sprintf("indexing completed in %d s", elapsed))

@@ -41,6 +41,12 @@ export default [
         props: {staticFilter: {type: "moment"}},
     },
     {
+        name: "moment",
+        path: "/moment/:uid",
+        component: AlbumPhotos,
+        meta: {title: "Moment", auth: true},
+    },
+    {
         name: "albums",
         path: "/albums",
         component: Albums,

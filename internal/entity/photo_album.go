@@ -36,6 +36,11 @@ func (m *PhotoAlbum) Create() error {
 	return Db().Create(m).Error
 }
 
+// Save updates or inserts a row.
+func (m *PhotoAlbum) Save() error {
+	return Db().Save(m).Error
+}
+
 // FirstOrCreatePhotoAlbum returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreatePhotoAlbum(m *PhotoAlbum) *PhotoAlbum {
 	result := PhotoAlbum{}

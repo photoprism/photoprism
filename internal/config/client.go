@@ -48,23 +48,24 @@ type ClientConfig struct {
 }
 
 type ClientCounts struct {
-	Cameras        uint `json:"cameras"`
-	Lenses         uint `json:"lenses"`
-	Countries      uint `json:"countries"`
-	Photos         uint `json:"photos"`
-	Videos         uint `json:"videos"`
-	Hidden         uint `json:"hidden"`
-	Favorites      uint `json:"favorites"`
-	Private        uint `json:"private"`
-	Review         uint `json:"review"`
-	Stories        uint `json:"stories"`
-	Albums         uint `json:"albums"`
-	Folders        uint `json:"folders"`
-	Files          uint `json:"files"`
-	Moments        uint `json:"moments"`
-	Places         uint `json:"places"`
-	Labels         uint `json:"labels"`
-	LabelMaxPhotos uint `json:"labelMaxPhotos"`
+	Cameras        int `json:"cameras"`
+	Lenses         int `json:"lenses"`
+	Countries      int `json:"countries"`
+	Photos         int `json:"photos"`
+	Videos         int `json:"videos"`
+	Hidden         int `json:"hidden"`
+	Favorites      int `json:"favorites"`
+	Private        int `json:"private"`
+	Review         int `json:"review"`
+	Stories        int `json:"stories"`
+	Albums         int `json:"albums"`
+	Moments        int `json:"moments"`
+	Months         int `json:"months"`
+	Folders        int `json:"folders"`
+	Files          int `json:"files"`
+	Places         int `json:"places"`
+	Labels         int `json:"labels"`
+	LabelMaxPhotos int `json:"labelMaxPhotos"`
 }
 
 type CategoryLabel struct {
@@ -205,7 +206,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		Take(&result.Count)
 
 	db.Table("albums").
-		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS folders", entity.TypeAlbum, entity.TypeMoment, entity.TypeFolder).
+		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS folders", entity.TypeAlbum, entity.TypeMoment, entity.TypeMonth, entity.TypeFolder).
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
 

@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	gc "github.com/patrickmn/go-cache"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -46,17 +45,22 @@ func FindLocation(id string) (result Location, err error) {
 		return result, fmt.Errorf("api: invalid location id %s (%s)", id, ApiName)
 	}
 
+	start := time.Now()
 	lat, lng := s2.LatLng(id)
 
 	if lat == 0.0 || lng == 0.0 {
 		return result, fmt.Errorf("api: skipping lat %f, lng %f (%s)", lat, lng, ApiName)
 	}
 
-	if hit, ok := cache.Get(id); ok {
+	if hit, err := cache.Get(id); err == nil {
 		log.Debugf("api: cache hit for lat %f, lng %f (%s)", lat, lng, ApiName)
-		cached := hit.(*Location)
-		cached.Cached = true
-		return *cached, nil
+		var cached Location
+		if err := json.Unmarshal(hit, &cached); err != nil {
+			log.Errorf("api: %s (%s)", err.Error(), ApiName)
+		} else {
+			cached.Cached = true
+			return cached, nil
+		}
 	}
 
 	url := fmt.Sprintf(ReverseLookupURL, id)
@@ -101,7 +105,13 @@ func FindLocation(id string) (result Location, err error) {
 		return result, fmt.Errorf("api: no result for %s (%s)", id, ApiName)
 	}
 
-	cache.Set(id, &result, gc.DefaultExpiration)
+	if cached, err := json.Marshal(result); err == nil {
+		if err := cache.Set(id, cached); err != nil {
+			log.Errorf("api: %s (%s)", id, ApiName)
+		} else {
+			log.Debugf("cached %s [%s]", id, time.Since(start))
+		}
+	}
 
 	result.Cached = false
 

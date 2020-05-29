@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"path"
@@ -19,6 +20,10 @@ import (
 type ThumbCache struct {
 	FileName  string
 	ShareName string
+}
+
+type ByteCache struct {
+	Data  []byte
 }
 
 // GET /api/v1/t/:hash/:token/:type
@@ -45,13 +50,19 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		gc := service.Cache()
+		cache := service.Cache()
 		cacheKey := fmt.Sprintf("thumbnail:%s:%s", fileHash, typeName)
 
-		if cacheData, ok := gc.Get(cacheKey); ok {
+		if cacheData, err := cache.Get(cacheKey); err == nil {
 			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
 
-			cached := cacheData.(*ThumbCache)
+			var cached ThumbCache
+
+			if err := json.Unmarshal(cacheData, &cached); err != nil {
+				log.Errorf("thumbnail: %s not found", fileHash)
+				c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
+				return
+			}
 
 			if !fs.FileExists(cached.FileName) {
 				log.Errorf("thumbnail: %s not found", fileHash)
@@ -137,8 +148,10 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		// Cache thumbnail filename.
-		gc.Set(cacheKey, &ThumbCache{thumbnail, f.ShareFileName()}, time.Hour*24)
-		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
+		if cached, err := json.Marshal(ThumbCache{thumbnail, f.ShareFileName()}); err == nil {
+			logError("thumbnail", cache.Set(cacheKey, cached))
+			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
+		}
 
 		if c.Query("download") != "" {
 			c.FileAttachment(thumbnail, f.ShareFileName())

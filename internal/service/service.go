@@ -1,19 +1,21 @@
 package service
 
 import (
-	gc "github.com/patrickmn/go-cache"
+	"github.com/allegro/bigcache"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/session"
 )
 
+var log = event.Log
 var conf *config.Config
 
 var services struct {
-	Cache    *gc.Cache
+	Cache    *bigcache.BigCache
 	Classify *classify.TensorFlow
 	Convert  *photoprism.Convert
 	Import   *photoprism.Import

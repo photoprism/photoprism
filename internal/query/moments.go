@@ -11,7 +11,7 @@ import (
 
 // Moment contains photo counts per month and year
 type Moment struct {
-	Category   string `json:"Category"`
+	Label      string `json:"Label"`
 	Country    string `json:"Country"`
 	State      string `json:"State"`
 	Year       int    `json:"Year"`
@@ -19,7 +19,7 @@ type Moment struct {
 	PhotoCount int    `json:"PhotoCount"`
 }
 
-var MomentCategory = map[string]string{
+var MomentLabels = map[string]string{
 	"botanical-garden": "Botanical Gardens",
 	"nature-reserve":   "Nature & Landscape",
 	"landscape":        "Nature & Landscape",
@@ -37,8 +37,8 @@ func (m Moment) Slug() string {
 // Title returns an english title for the moment.
 func (m Moment) Title() string {
 	if m.Year == 0 && m.Month == 0 {
-		if m.Category != "" {
-			return MomentCategory[m.Category]
+		if m.Label != "" {
+			return MomentLabels[m.Label]
 		}
 
 		country := maps.CountryName(m.Country)
@@ -129,16 +129,16 @@ func MomentsStates(threshold int) (results Moments, err error) {
 	return results, nil
 }
 
-// MomentsCategories returns the most popular photo categories.
-func MomentsCategories(threshold int) (results Moments, err error) {
+// MomentsLabels returns the most popular photo labels.
+func MomentsLabels(threshold int) (results Moments, err error) {
 	var cats []string
 
-	for cat, _ := range MomentCategory {
+	for cat, _ := range MomentLabels {
 		cats = append(cats, cat)
 	}
 
 	db := UnscopedDb().Table("photos").
-		Select("l.label_slug AS category, COUNT(*) AS photo_count").
+		Select("l.label_slug AS label, COUNT(*) AS photo_count").
 		Joins("JOIN photos_labels pl ON pl.photo_id = photos.id AND pl.uncertainty < 100").
 		Joins("JOIN labels l ON l.id = pl.label_id").
 		Where("photos.photo_quality >= 3 AND photos.deleted_at IS NULL AND l.label_slug IN (?)", cats).

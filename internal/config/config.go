@@ -9,7 +9,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	gc "github.com/patrickmn/go-cache"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -25,7 +24,6 @@ var once sync.Once
 type Config struct {
 	once     sync.Once
 	db       *gorm.DB
-	cache    *gc.Cache
 	params   *Params
 	settings *Settings
 	token    string
@@ -191,15 +189,6 @@ func (c *Config) LogLevel() logrus.Level {
 	} else {
 		return logrus.InfoLevel
 	}
-}
-
-// Cache returns the in-memory cache.
-func (c *Config) Cache() *gc.Cache {
-	if c.cache == nil {
-		c.cache = gc.New(336*time.Hour, 30*time.Minute)
-	}
-
-	return c.cache
 }
 
 // Shutdown services and workers.

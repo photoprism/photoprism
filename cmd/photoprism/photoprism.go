@@ -26,6 +26,7 @@ func main() {
 		commands.StopCommand,
 		commands.IndexCommand,
 		commands.ImportCommand,
+		commands.MomentsCommand,
 		commands.PurgeCommand,
 		commands.CopyCommand,
 		commands.ConvertCommand,

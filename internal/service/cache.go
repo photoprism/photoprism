@@ -4,16 +4,22 @@ import (
 	"sync"
 	"time"
 
-	gc "github.com/patrickmn/go-cache"
+	"github.com/allegro/bigcache"
 )
 
 var onceCache sync.Once
 
 func initCache() {
-	services.Cache = gc.New(336*time.Hour, 30*time.Minute)
+	var err error
+
+	services.Cache, err = bigcache.NewBigCache(bigcache.DefaultConfig(time.Hour))
+
+	if err != nil {
+		log.Errorf("")
+	}
 }
 
-func Cache() *gc.Cache {
+func Cache() *bigcache.BigCache {
 	onceCache.Do(initCache)
 
 	return services.Cache

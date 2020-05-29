@@ -3,7 +3,17 @@ package places
 import (
 	"time"
 
-	gc "github.com/patrickmn/go-cache"
+	"github.com/allegro/bigcache"
 )
 
-var cache = gc.New(15*time.Minute, 5*time.Minute)
+var cache *bigcache.BigCache
+
+func init() {
+	var err error
+
+	cache, err = bigcache.NewBigCache(bigcache.DefaultConfig(time.Hour))
+
+	if err != nil {
+		log.Errorf("")
+	}
+}

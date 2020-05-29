@@ -1,10 +1,11 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"path"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -163,32 +164,52 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/labels/:uid/t/:token/:type", func(c *gin.Context) {
 		if InvalidToken(c, conf) {
-			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			c.Data(http.StatusForbidden, "image/svg+xml", labelIconSvg)
 			return
 		}
 
 		start := time.Now()
 		typeName := c.Param("type")
-		labelUID := c.Param("uid")
+		uid := c.Param("uid")
 
 		thumbType, ok := thumb.Types[typeName]
 
 		if !ok {
-			log.Errorf("label: invalid thumb type %s", txt.Quote(typeName))
+			log.Errorf("label-thumbnail: invalid type %s", txt.Quote(typeName))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}
 
-		gc := service.Cache()
-		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", labelUID, typeName)
+		cache := service.Cache()
+		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", uid, typeName)
 
-		if cacheData, ok := gc.Get(cacheKey); ok {
+		if cacheData, err := cache.Get(cacheKey); err == nil {
 			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
-			c.Data(http.StatusOK, "image/jpeg", cacheData.([]byte))
+
+			var cached ThumbCache
+
+			if err := json.Unmarshal(cacheData, &cached); err != nil {
+				log.Errorf("label-thumbnail: %s not found", uid)
+				c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
+				return
+			}
+
+			if !fs.FileExists(cached.FileName) {
+				log.Errorf("label-thumbnail: %s not found", uid)
+				c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
+				return
+			}
+
+			if c.Query("download") != "" {
+				c.FileAttachment(cached.FileName, cached.ShareName)
+			} else {
+				c.File(cached.FileName)
+			}
+
 			return
 		}
 
-		f, err := query.LabelThumbByUID(labelUID)
+		f, err := query.LabelThumbByUID(uid)
 
 		if err != nil {
 			log.Errorf(err.Error())
@@ -199,18 +220,18 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("label: file %s is missing", txt.Quote(f.FileName))
+			log.Errorf("label-thumbnail: file %s is missing", txt.Quote(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			logError("label", f.Update("FileMissing", true))
+			logError("label-thumbnail", f.Update("FileMissing", true))
 
 			return
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
 		if thumbType.ExceedsLimit() {
-			log.Debugf("label: using original, thumbnail size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
+			log.Debugf("label-thumbnail: using original, size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
 
 			c.File(fileName)
 
@@ -226,23 +247,24 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if err != nil {
-			log.Errorf("label: %s", err)
+			log.Errorf("label-thumbnail: %s", err)
+			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
+			return
+		} else if thumbnail == "" {
+			log.Errorf("label-thumbnail: %s has empty thumb name - bug?", filepath.Base(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}
 
-		thumbData, err := ioutil.ReadFile(thumbnail)
-
-		if err != nil {
-			log.Errorf("label: %s", err)
-			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-			return
+		if cached, err := json.Marshal(ThumbCache{thumbnail, f.ShareFileName()}); err == nil {
+			logError("label-thumbnail", cache.Set(cacheKey, cached))
+			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 		}
 
-		gc.Set(cacheKey, thumbData, time.Hour*4)
-
-		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
-
-		c.Data(http.StatusOK, "image/jpeg", thumbData)
+		if c.Query("download") != "" {
+			c.FileAttachment(thumbnail, f.ShareFileName())
+		} else {
+			c.File(thumbnail)
+		}
 	})
 }

@@ -27,7 +27,7 @@ func TestAlbumByUID(t *testing.T) {
 
 func TestAlbumThumbByUID(t *testing.T) {
 	t.Run("existing uid", func(t *testing.T) {
-		file, err := AlbumThumbByUID("at9lxuqxpogaaba8")
+		file, err := AlbumCoverByUID("at9lxuqxpogaaba8")
 
 		if err != nil {
 			t.Fatal(err)
@@ -37,7 +37,7 @@ func TestAlbumThumbByUID(t *testing.T) {
 	})
 
 	t.Run("not existing uid", func(t *testing.T) {
-		file, err := AlbumThumbByUID("3765")
+		file, err := AlbumCoverByUID("3765")
 		assert.Error(t, err, "record not found")
 		t.Log(file)
 	})

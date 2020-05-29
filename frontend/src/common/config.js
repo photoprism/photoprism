@@ -86,14 +86,20 @@ class Config {
             case "videos":
                 this.values.count.videos += data.count;
                 break;
-            case "files":
-                this.values.count.files += data.count;
+            case "albums":
+                this.values.count.albums += data.count;
+                break;
+            case "moments":
+                this.values.count.moments += data.count;
+                break;
+            case "months":
+                this.values.count.months += data.count;
                 break;
             case "folders":
                 this.values.count.folders += data.count;
                 break;
-            case "moments":
-                this.values.count.moments += data.count;
+            case "files":
+                this.values.count.files += data.count;
                 break;
             case "favorites":
                 this.values.count.favorites += data.count;
@@ -103,9 +109,6 @@ class Config {
                 break;
             case "private":
                 this.values.count.private += data.count;
-                break;
-            case "albums":
-                this.values.count.albums += data.count;
                 break;
             case "photos":
                 this.values.count.photos += data.count;

@@ -2,11 +2,12 @@ package api
 
 import (
 	"archive/zip"
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -271,13 +272,15 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		var added []*entity.PhotoAlbum
+		var added []entity.PhotoAlbum
 
 		for _, p := range photos {
-			val := entity.FirstOrCreatePhotoAlbum(entity.NewPhotoAlbum(p.PhotoUID, a.AlbumUID))
+			pa := entity.PhotoAlbum{AlbumUID: a.AlbumUID, PhotoUID: p.PhotoUID, Hidden: false}
 
-			if val != nil {
-				added = append(added, val)
+			if err := pa.Save(); err != nil {
+				log.Errorf("album: %s", err.Error())
+			} else {
+				added = append(added, pa)
 			}
 		}
 
@@ -321,13 +324,18 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		entity.Db().Where("album_uid = ? AND photo_uid IN (?)", a.AlbumUID, f.Photos).Delete(&entity.PhotoAlbum{})
+		for _, photoUID := range f.Photos {
+			pa := entity.PhotoAlbum{AlbumUID: a.AlbumUID, PhotoUID: photoUID, Hidden: true}
+			logError("album", pa.Save())
+		}
 
-		event.Success(fmt.Sprintf("photos removed from %s", a.AlbumTitle))
+		// affected := entity.Db().Model(entity.PhotoAlbum{}).Where("album_uid = ? AND photo_uid IN (?)", a.AlbumUID, f.Photos).UpdateColumn("Hidden", true).RowsAffected
+
+		event.Success(fmt.Sprintf("entries removed from %s", a.AlbumTitle))
 
 		PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 
-		c.JSON(http.StatusOK, gin.H{"message": "photos removed from album", "album": a, "photos": f.Photos})
+		c.JSON(http.StatusOK, gin.H{"message": "entries removed from album", "album": a, "photos": f.Photos})
 	})
 }
 
@@ -427,7 +435,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums/:uid/t/:token/:type", func(c *gin.Context) {
 		if InvalidToken(c, conf) {
-			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			c.Data(http.StatusForbidden, "image/svg+xml", albumIconSvg)
 			return
 		}
 
@@ -438,24 +446,44 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		thumbType, ok := thumb.Types[typeName]
 
 		if !ok {
-			log.Errorf("album: invalid thumb type %s", typeName)
-			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+			log.Errorf("album-thumbnail: invalid type %s", typeName)
+			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		}
 
-		gc := service.Cache()
+		cache := service.Cache()
 		cacheKey := fmt.Sprintf("album-thumbnail:%s:%s", uid, typeName)
 
-		if cacheData, ok := gc.Get(cacheKey); ok {
+		if cacheData, err := cache.Get(cacheKey); err == nil {
 			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
-			c.Data(http.StatusOK, "image/jpeg", cacheData.([]byte))
+
+			var cached ThumbCache
+
+			if err := json.Unmarshal(cacheData, &cached); err != nil {
+				log.Errorf("album-thumbnail: %s not found", uid)
+				c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
+				return
+			}
+
+			if !fs.FileExists(cached.FileName) {
+				log.Errorf("album-thumbnail: %s not found", uid)
+				c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
+				return
+			}
+
+			if c.Query("download") != "" {
+				c.FileAttachment(cached.FileName, cached.ShareName)
+			} else {
+				c.File(cached.FileName)
+			}
+
 			return
 		}
 
-		f, err := query.AlbumThumbByUID(uid)
+		f, err := query.AlbumCoverByUID(uid)
 
 		if err != nil {
-			log.Debugf("album: no photos yet, using generic image for %s", uid)
+			log.Debugf("album-thumbnail: no photos yet, using generic image for %s", uid)
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		}
@@ -463,18 +491,18 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 		fileName := path.Join(conf.OriginalsPath(), f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("album: could not find original for %s", fileName)
-			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+			log.Errorf("album-thumbnail: could not find original for %s", fileName)
+			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			log.Warnf("album: %s is missing", txt.Quote(f.FileName))
-			logError("album", f.Update("FileMissing", true))
+			log.Warnf("album-thumbnail: %s is missing", txt.Quote(f.FileName))
+			logError("album-thumbnail", f.Update("FileMissing", true))
 			return
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
 		if thumbType.ExceedsLimit() && c.Query("download") == "" {
-			log.Debugf("album: using original, thumbnail size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
+			log.Debugf("album-thumbnail: using original, size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
 			c.File(fileName)
 			return
 		}
@@ -491,24 +519,21 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			log.Errorf("album: %s", err)
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 			return
-		}
-
-		if c.Query("download") != "" {
-			c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.ShareFileName()))
-		}
-
-		thumbData, err := ioutil.ReadFile(thumbnail)
-
-		if err != nil {
-			log.Errorf("album: %s", err)
+		} else if thumbnail == "" {
+			log.Errorf("album-thumbnail: %s has empty thumb name - bug?", filepath.Base(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		}
 
-		gc.Set(cacheKey, thumbData, time.Hour)
+		if cached, err := json.Marshal(ThumbCache{thumbnail, f.ShareFileName()}); err == nil {
+			logError("album-thumbnail", cache.Set(cacheKey, cached))
+			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
+		}
 
-		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
-
-		c.Data(http.StatusOK, "image/jpeg", thumbData)
+		if c.Query("download") != "" {
+			c.FileAttachment(thumbnail, f.ShareFileName())
+		} else {
+			c.File(thumbnail)
+		}
 	})
 }

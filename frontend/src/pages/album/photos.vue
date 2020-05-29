@@ -171,6 +171,7 @@
                     count: count,
                     offset: offset,
                     album: this.uid,
+                    filter: this.model.Filter ? this.model.Filter : "",
                     merged: true,
                 };
 
@@ -227,6 +228,7 @@
                     count: this.pageSize,
                     offset: this.offset,
                     album: this.uid,
+                    filter: this.model.Filter ? this.model.Filter : "",
                     merged: true,
                 };
 

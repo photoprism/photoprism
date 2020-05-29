@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"path/filepath"
@@ -31,20 +32,26 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, urlPath, rootName,
 		}
 
 		start := time.Now()
-		gc := service.Cache()
+		cache := service.Cache()
 		recursive := c.Query("recursive") != ""
 		listFiles := c.Query("files") != ""
-		cached := !listFiles && c.Query("uncached") == ""
-		resp := FoldersResponse{Root: rootName, Recursive: recursive, Cached: cached}
+		uncached := listFiles || c.Query("uncached") != ""
+		resp := FoldersResponse{Root: rootName, Recursive: recursive, Cached: !uncached}
 		path := c.Param("path")
 
 		cacheKey := fmt.Sprintf("folders:%s:%t:%t", filepath.Join(rootPath, path), recursive, listFiles)
 
-		if cached {
-			if cacheData, ok := gc.Get(cacheKey); ok {
-				log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
-				c.JSON(http.StatusOK, cacheData.(*FoldersResponse))
-				return
+		if !uncached {
+			if cacheData, err := cache.Get(cacheKey); err == nil {
+				var cached FoldersResponse
+
+				if err := json.Unmarshal(cacheData, &cached); err != nil {
+					log.Errorf("folders: %s", err)
+				} else {
+					log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+					c.JSON(http.StatusOK, cached)
+					return
+				}
 			}
 		}
 
@@ -64,9 +71,11 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, urlPath, rootName,
 			}
 		}
 
-		if cached {
-			gc.Set(cacheKey, &resp, time.Minute*5)
-			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
+		if !uncached {
+			if c, err := json.Marshal(resp); err == nil {
+				logError("folders", cache.Set(cacheKey, c))
+				log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
+			}
 		}
 
 		c.Header("X-Count", strconv.Itoa(len(resp.Files)+len(resp.Folders)))

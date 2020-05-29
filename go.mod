@@ -1,6 +1,7 @@
 module github.com/photoprism/photoprism
 
 require (
+	github.com/allegro/bigcache v1.2.1
 	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/coreos/etcd v3.3.10+incompatible // indirect
