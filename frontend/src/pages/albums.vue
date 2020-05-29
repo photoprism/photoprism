@@ -41,12 +41,24 @@
             <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-cards">
                 <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1 ma-1" flat>
                     <v-card-title primary-title>
-                        <div>
+                        <div v-if="staticFilter.type === 'moment'">
                             <h3 class="title mb-3">
-                                {{$gettext("No albums matched your search")}}
+                                <translate key=">No moments">No moments matched your search</translate>
                             </h3>
                             <div>
-                                {{$gettext("Try again using a different term or create a new album from a selection in Photos.")}}
+                                <translate key=">Wait until">Wait until PhotoPrism has analyzed your library or try
+                                    again using a different term.
+                                </translate>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <h3 class="title mb-3">
+                                <translate key=">No albums">No albums matched your search</translate>
+                            </h3>
+                            <div>
+                                <translate key="Try again">Try again using a different term or create a new album from a
+                                    selection in Photos.
+                                </translate>
                             </div>
                         </div>
                     </v-card-title>
@@ -246,7 +258,7 @@
                     ev.preventDefault();
                     ev.stopPropagation();
 
-                    if(this.results[index]) {
+                    if (this.results[index]) {
                         this.selectRange(index, this.results);
                     }
                 }

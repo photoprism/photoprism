@@ -294,7 +294,7 @@
                 return this.model.find(this.uid).then(m => {
                     this.model = m;
 
-                    this.filter.order = m.AlbumOrder;
+                    this.filter.order = m.Order;
                     window.document.title = `PhotoPrism: ${this.model.Title}`;
 
                     return Promise.resolve(this.model)
@@ -322,8 +322,8 @@
                         this.dirty = true;
                         this.scrollDisabled = false;
 
-                        if (this.filter.order !== this.model.AlbumOrder) {
-                            this.filter.order = this.model.AlbumOrder;
+                        if (this.filter.order !== this.model.Order) {
+                            this.filter.order = this.model.Order;
                             this.updateQuery();
                         } else {
                             this.loadMore();

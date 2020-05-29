@@ -19,7 +19,7 @@ type Album struct {
 	CoverUID         string     `gorm:"type:varbinary(36);" json:"CoverUID" yaml:"CoverUID,omitempty"`
 	FolderUID        string     `gorm:"type:varbinary(36);index;" json:"FolderUID" yaml:"FolderUID,omitempty"`
 	AlbumSlug        string     `gorm:"type:varbinary(255);index;" json:"Slug" yaml:"Slug"`
-	AlbumType        string     `gorm:"type:varbinary(8);" json:"Type" yaml:"Type,omitempty"`
+	AlbumType        string     `gorm:"type:varbinary(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
 	AlbumTitle       string     `gorm:"type:varchar(255);" json:"Title" yaml:"Title"`
 	AlbumCategory    string     `gorm:"type:varchar(255);index;" json:"Category" yaml:"Category,omitempty"`
 	AlbumCaption     string     `gorm:"type:text;" json:"Caption" yaml:"Caption,omitempty"`
@@ -51,6 +51,10 @@ func (m *Album) BeforeCreate(scope *gorm.Scope) error {
 // NewAlbum creates a new album; default name is current month and year
 func NewAlbum(albumTitle, albumType string) *Album {
 	now := time.Now().UTC()
+
+	if albumType == "" {
+		albumType = TypeAlbum
+	}
 
 	result := &Album{
 		AlbumUID:   rnd.PPID('a'),

@@ -25,7 +25,7 @@ var PlaceFixtures = PlacesMap{
 		PlaceUID:    "85d1ea7d3278",
 		LocLabel:    "Teotihuacán, Mexico, Mexico",
 		LocCity:     "Teotihuacán",
-		LocState:    "Mexico",
+		LocState:    "State of Mexico",
 		LocCountry:  "mx",
 		LocKeywords: "ancient, pyramid",
 		LocNotes:    "",

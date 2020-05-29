@@ -4,6 +4,8 @@ package form
 type AlbumSearch struct {
 	Query    string `form:"q"`
 	ID       string `form:"id"`
+	Type     string `form:"type"`
+	Category string `form:"category"`
 	Slug     string `form:"slug"`
 	Title    string `form:"title"`
 	Country  string `json:"country"`

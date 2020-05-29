@@ -82,7 +82,7 @@ func AlbumSearch(f form.AlbumSearch) (results []AlbumResult, err error) {
 		Group("albums.id")
 
 	if f.ID != "" {
-		s = s.Where("albums.album_uid = ?", f.ID)
+		s = s.Where("albums.album_uid IN (?)", strings.Split(f.ID, ","))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -94,6 +94,14 @@ func AlbumSearch(f form.AlbumSearch) (results []AlbumResult, err error) {
 	if f.Query != "" {
 		likeString := "%" + strings.ToLower(f.Query) + "%"
 		s = s.Where("LOWER(albums.album_title) LIKE ?", likeString)
+	}
+
+	if f.Type != "" {
+		s = s.Where("albums.album_type IN (?)", strings.Split(f.Type, ","))
+	}
+
+	if f.Category != "" {
+		s = s.Where("albums.album_category IN (?)", strings.Split(f.Category, ","))
 	}
 
 	if f.Favorite {

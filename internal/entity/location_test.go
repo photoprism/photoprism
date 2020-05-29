@@ -37,7 +37,7 @@ func TestLocation_Keywords(t *testing.T) {
 	t.Run("mexico", func(t *testing.T) {
 		m := LocationFixtures["mexico"]
 		r := m.Keywords()
-		assert.Equal(t, []string{"adosada", "ancient", "mexico", "platform", "pyramid", "teotihuacán", "tourism"}, r)
+		assert.Equal(t, []string{"adosada", "ancient", "botanical", "garden", "mexico", "platform", "pyramid", "state-of-mexico", "teotihuacán"}, r)
 	})
 	t.Run("caravan park", func(t *testing.T) {
 		m := LocationFixtures["caravan park"]
@@ -55,6 +55,11 @@ func TestLocation_Find(t *testing.T) {
 	t.Run("invalid api", func(t *testing.T) {
 		l := NewLocation(2, 1)
 		err := l.Find("")
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
 		assert.Equal(t, "maps: reverse lookup disabled", err.Error())
 	})
 }

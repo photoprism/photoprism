@@ -87,7 +87,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		m := entity.NewAlbum(f.AlbumTitle, entity.TypeDefault)
+		m := entity.NewAlbum(f.AlbumTitle, entity.TypeAlbum)
 		m.AlbumFavorite = f.AlbumFavorite
 
 		log.Debugf("create album: %+v %+v", f, m)

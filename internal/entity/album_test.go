@@ -12,12 +12,12 @@ import (
 
 func TestNewAlbum(t *testing.T) {
 	t.Run("name Christmas 2018", func(t *testing.T) {
-		album := NewAlbum("Christmas 2018", TypeDefault)
+		album := NewAlbum("Christmas 2018", TypeAlbum)
 		assert.Equal(t, "Christmas 2018", album.AlbumTitle)
 		assert.Equal(t, "christmas-2018", album.AlbumSlug)
 	})
 	t.Run("name empty", func(t *testing.T) {
-		album := NewAlbum("", TypeDefault)
+		album := NewAlbum("", TypeAlbum)
 
 		defaultName := time.Now().Format("January 2006")
 		defaultSlug := slug.Make(defaultName)
@@ -29,7 +29,7 @@ func TestNewAlbum(t *testing.T) {
 
 func TestAlbum_SetName(t *testing.T) {
 	t.Run("valid name", func(t *testing.T) {
-		album := NewAlbum("initial name", TypeDefault)
+		album := NewAlbum("initial name", TypeAlbum)
 		assert.Equal(t, "initial name", album.AlbumTitle)
 		assert.Equal(t, "initial-name", album.AlbumSlug)
 		album.SetTitle("New Album Name")
@@ -37,7 +37,7 @@ func TestAlbum_SetName(t *testing.T) {
 		assert.Equal(t, "new-album-name", album.AlbumSlug)
 	})
 	t.Run("empty name", func(t *testing.T) {
-		album := NewAlbum("initial name", TypeDefault)
+		album := NewAlbum("initial name", TypeAlbum)
 		assert.Equal(t, "initial name", album.AlbumTitle)
 		assert.Equal(t, "initial-name", album.AlbumSlug)
 
@@ -57,7 +57,7 @@ The discrepancy of 1 second meridian arc length between equator and pole is abou
 is an oblate spheroid.`
 		expected := txt.Clip(longName, txt.ClipDefault)
 		slugExpected := txt.Clip(longName, txt.ClipSlug)
-		album := NewAlbum(longName, TypeDefault)
+		album := NewAlbum(longName, TypeAlbum)
 		assert.Equal(t, expected, album.AlbumTitle)
 		assert.Contains(t, album.AlbumSlug, slug.Make(slugExpected))
 	})
@@ -65,7 +65,7 @@ is an oblate spheroid.`
 
 func TestAlbum_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		album := NewAlbum("Old Name", TypeDefault)
+		album := NewAlbum("Old Name", TypeAlbum)
 
 		assert.Equal(t, "Old Name", album.AlbumTitle)
 		assert.Equal(t, "old-name", album.AlbumSlug)

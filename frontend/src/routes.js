@@ -34,10 +34,18 @@ export default [
         props: {staticFilter: {photo: "true"}},
     },
     {
+        name: "moments",
+        path: "/moments",
+        component: Albums,
+        meta: {title: "Moments", auth: true},
+        props: {staticFilter: {type: "moment"}},
+    },
+    {
         name: "albums",
         path: "/albums",
         component: Albums,
         meta: {title: "Albums", auth: true},
+        props: {staticFilter: {type: "album"}},
     },
     {
         name: "album",
@@ -110,13 +118,6 @@ export default [
         component: Photos,
         meta: {title: "All photos and videos", auth: true},
         props: {staticFilter: {quality: 0}},
-    },
-    {
-        name: "moments",
-        path: "/moments",
-        component: Photos,
-        meta: {title: "Moments", auth: true},
-        props: {},
     },
     {
         name: "people",

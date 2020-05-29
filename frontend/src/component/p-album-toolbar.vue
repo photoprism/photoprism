@@ -187,8 +187,8 @@
                     this.searchExpanded = false;
                 }
 
-                if (this.filter.order !== this.album.AlbumOrder) {
-                    this.album.AlbumOrder = this.filter.order;
+                if (this.filter.order !== this.album.Order) {
+                    this.album.Order = this.filter.order;
                     this.updateAlbum()
                 }
             },

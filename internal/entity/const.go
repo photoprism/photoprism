@@ -28,6 +28,7 @@ const (
 	TitleUnknown = "Unknown"
 
 	TypeDefault = ""
+	TypeAlbum   = "album"
 	TypeFolder  = "folder"
 	TypeMoment  = "moment"
 	TypeImage   = "image"

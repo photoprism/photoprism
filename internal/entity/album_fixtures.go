@@ -11,7 +11,7 @@ func (m AlbumMap) Get(name string) Album {
 		return result
 	}
 
-	return *NewAlbum(name, TypeDefault)
+	return *NewAlbum(name, TypeAlbum)
 }
 
 func (m AlbumMap) Pointer(name string) *Album {
@@ -19,7 +19,7 @@ func (m AlbumMap) Pointer(name string) *Album {
 		return &result
 	}
 
-	return NewAlbum(name, TypeDefault)
+	return NewAlbum(name, TypeAlbum)
 }
 
 var AlbumFixtures = AlbumMap{
@@ -28,7 +28,7 @@ var AlbumFixtures = AlbumMap{
 		CoverUID:         "",
 		AlbumUID:         "at9lxuqxpogaaba7",
 		AlbumSlug:        "christmas2030",
-		AlbumType:        TypeDefault,
+		AlbumType:        TypeAlbum,
 		AlbumTitle:       "Christmas2030",
 		AlbumDescription: "Wonderful christmas",
 		AlbumNotes:       "",
@@ -45,7 +45,7 @@ var AlbumFixtures = AlbumMap{
 		CoverUID:         "",
 		AlbumUID:         "at9lxuqxpogaaba8",
 		AlbumSlug:        "holiday-2030",
-		AlbumType:        TypeDefault,
+		AlbumType:        TypeAlbum,
 		AlbumTitle:       "Holiday2030",
 		AlbumDescription: "Wonderful christmas",
 		AlbumNotes:       "",
@@ -62,7 +62,7 @@ var AlbumFixtures = AlbumMap{
 		CoverUID:         "",
 		AlbumUID:         "at9lxuqxpogaaba9",
 		AlbumSlug:        "berlin-2019",
-		AlbumType:        TypeDefault,
+		AlbumType:        TypeAlbum,
 		AlbumTitle:       "Berlin2019",
 		AlbumDescription: "Wonderful christmas",
 		AlbumNotes:       "",

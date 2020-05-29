@@ -142,6 +142,7 @@ MX:UMS
 CO:Colombia
 CO:Republic of Colombia
 US:California
+US:Washington
 US:New York
 US:NYC
 US:Florida
@@ -286,7 +287,6 @@ PT:Portugal
 ER:Eritrea
 IS:Iceland
 IS:Ísland
-IS:Island
 AF:Afghanistan
 AF:Islamic Republic of Afghanistan
 IN:India
@@ -419,6 +419,7 @@ CA:Toronto
 CA:Ottawa
 CA:Quebec
 CA:Ontario
+CA:Alberta
 IL:Israel
 IL:State of Israel
 IL:Holy Land
