@@ -26,7 +26,7 @@ var GlobalFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:   "read-only, r",
 		Usage:  "run in read-only mode",
-		EnvVar: "PHOTOPRISM_READ_ONLY",
+		EnvVar: "PHOTOPRISM_READONLY",
 	},
 	cli.BoolFlag{
 		Name:   "public, p",
