@@ -36,7 +36,7 @@ func TestParams_SetValuesFromFile(t *testing.T) {
 	assert.Equal(t, "/srv/photoprism/photos/originals", c.OriginalsPath)
 	assert.Equal(t, "/srv/photoprism/photos/import", c.ImportPath)
 	assert.Equal(t, "/srv/photoprism/temp", c.TempPath)
-	assert.Equal(t, DriverTidb, c.DatabaseDriver)
-	assert.Equal(t, "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true", c.DatabaseDsn)
+	assert.NotEmpty(t, c.DatabaseDriver)
+	assert.NotEmpty(t, c.DatabaseDsn)
 	assert.Equal(t, 81, c.HttpServerPort)
 }

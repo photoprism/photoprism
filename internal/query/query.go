@@ -21,6 +21,11 @@ import (
 
 var log = event.Log
 
+const (
+	MySQL = "mysql"
+	SQLite = "sqlite3"
+)
+
 // About 1km ('good enough' for now)
 const SearchRadius = 0.009
 
@@ -51,6 +56,16 @@ func Db() *gorm.DB {
 // UnscopedDb returns an unscoped database connection instance.
 func UnscopedDb() *gorm.DB {
 	return entity.Db().Unscoped()
+}
+
+// IsDialect returns true if the given sql dialect is used.
+func IsDialect(name string) bool {
+	return name == Db().Dialect().GetName()
+}
+
+// DbDialect returns the sql dialect name.
+func DbDialect() string {
+	return Db().Dialect().GetName()
 }
 
 // LikeAny returns a where condition that matches any keyword in search.

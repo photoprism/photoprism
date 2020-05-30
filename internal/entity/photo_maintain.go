@@ -12,11 +12,32 @@ import (
 // EstimatePosition updates the photo with an estimated geolocation if possible.
 func (m *Photo) EstimatePosition() {
 	var recentPhoto Photo
+	var dateExpr string
 
-	if result := UnscopedDb().
+	switch DbDialect() {
+	case MySQL:
+		dateExpr = "ABS(DATEDIFF(taken_at, ?)) ASC"
+	case SQLite:
+		dateExpr = "ABS(JulianDay(taken_at) - JulianDay(?)) ASC"
+	default:
+		log.Errorf("photo: unknown sql dialect %s", DbDialect())
+		return
+	}
+
+	if err := UnscopedDb().
 		Where("place_id <> '' AND place_id <> 'zz' AND loc_src <> '' AND loc_src <> ?", SrcEstimate).
-		Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", m.TakenAt)).
-		Preload("Place").First(&recentPhoto); result.Error == nil {
+		Order(gorm.Expr(dateExpr, m.TakenAt)).
+		Preload("Place").First(&recentPhoto).Error; err != nil {
+		log.Errorf("photo: %s", err.Error())
+	} else {
+		if days := recentPhoto.TakenAt.Sub(m.TakenAt) / (time.Hour * 24); days < -7 {
+			log.Debugf("prism: can't estimate position of %s, time difference too big (%d days)", m.PhotoUID, -1*days)
+			return
+		} else if days > -7 {
+			log.Debugf("prism: can't estimate position of %s, time difference too big (%d days)", m.PhotoUID, days)
+			return
+		}
+
 		if recentPhoto.HasPlace() {
 			m.Place = recentPhoto.Place
 			m.PlaceID = recentPhoto.PlaceID

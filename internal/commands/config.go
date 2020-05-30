@@ -19,7 +19,15 @@ var ConfigCommand = cli.Command{
 func configAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 
+	dbDriver := conf.DatabaseDriver()
+	dbDsn := conf.DatabaseDsn()
+
 	fmt.Printf("%-25s VALUE\n", "NAME")
+
+	// Database config
+	fmt.Printf("%-25s %s\n", "database-driver", dbDriver)
+	fmt.Printf("%-25s %s\n", "database-dsn", dbDsn)
+	fmt.Printf("%-25s %d\n", "database-conns", conf.DatabaseConns())
 
 	// Description
 	fmt.Printf("%-25s %s\n", "name", conf.Name())
@@ -76,17 +84,6 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "http-host", conf.HttpServerHost())
 	fmt.Printf("%-25s %d\n", "http-port", conf.HttpServerPort())
 	fmt.Printf("%-25s %s\n", "http-mode", conf.HttpServerMode())
-
-	// Built-in TiDB server config
-	fmt.Printf("%-25s %s\n", "tidb-host", conf.TidbServerHost())
-	fmt.Printf("%-25s %d\n", "tidb-port", conf.TidbServerPort())
-	fmt.Printf("%-25s %s\n", "tidb-password", conf.TidbServerPassword())
-	fmt.Printf("%-25s %s\n", "tidb-path", conf.TidbServerPath())
-
-	// Database config
-	fmt.Printf("%-25s %s\n", "database-driver", conf.DatabaseDriver())
-	fmt.Printf("%-25s %s\n", "database-dsn", conf.DatabaseDsn())
-	fmt.Printf("%-25s %d\n", "database-conns", conf.DatabaseConns())
 
 	// External binaries
 	fmt.Printf("%-25s %s\n", "sips-bin", conf.SipsBin())

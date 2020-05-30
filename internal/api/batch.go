@@ -168,7 +168,8 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Infof("marking photos as private: %#v", f.Photos)
 
-		err := entity.Db().Model(entity.Photo{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("photo_private", gorm.Expr("IF (`photo_private`, 0, 1)")).Error
+		err := entity.Db().Model(entity.Photo{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("photo_private",
+			gorm.Expr("CASE WHEN photo_private > 0 THEN 0 ELSE 1 END")).Error
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)

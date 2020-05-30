@@ -49,7 +49,8 @@ RUN apt-get update && apt-get upgrade && \
     firefox \
     libheif-examples \
     exiftool \
-    ffmpeg
+    ffmpeg \
+    lsof
 
 # Install RAW to JPEG converter
 RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_18.04/ /' > /etc/apt/sources.list.d/graphics:darktable.list" && \
@@ -122,8 +123,8 @@ COPY /docker/development/.my.cnf /root/.my.cnf
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
-# Expose HTTP port 2342 plus 2343 for TiDB and 9515 for chromedriver
-EXPOSE 2342 2343 9515
+# Expose HTTP port 2342 plus 9515 for chromedriver
+EXPOSE 2342 9515
 
 # Keep container running (services can be started manually using a terminal)
 CMD tail -f /dev/null

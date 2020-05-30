@@ -31,12 +31,6 @@ func NewMoments(conf *config.Config) *Moments {
 
 // Start creates albums based on popular locations, dates and categories.
 func (m *Moments) Start() (err error) {
-	defer func() {
-		if err := recover(); err != nil {
-			log.Errorf("moments: %s [panic]", err)
-		}
-	}()
-
 	if err := mutex.MainWorker.Start(); err != nil {
 		err = fmt.Errorf("moments: %s", err.Error())
 		event.Error(err.Error())
@@ -56,9 +50,11 @@ func (m *Moments) Start() (err error) {
 	counts := query.Counts{}
 	counts.Refresh()
 
-	threshold := int(math.Log2(float64(counts.Photos))) + 1
+	indexSize := counts.Photos + counts.Videos
 
-	log.Infof("moments: threshold %d / %d", threshold, counts.Photos)
+	threshold := int(math.Log2(float64(indexSize))) + 1
+
+	log.Infof("moments: index contains %d photos and videos, threshold %d", indexSize, threshold)
 
 	// Important years and months.
 	if results, err := query.MomentsTime(threshold); err != nil {
@@ -149,7 +145,7 @@ func (m *Moments) Start() (err error) {
 				if err := a.Update("AlbumFilter", f.Serialize()); err != nil {
 					log.Errorf("moments: %s", err.Error())
 				} else {
-					log.Infof("moments: updated %s (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+					log.Infof("moments: updated %s (%s)", txt.Quote(a.AlbumTitle), f.Serialize())
 				}
 			} else if a := entity.NewMoment(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				if err := a.Create(); err != nil {

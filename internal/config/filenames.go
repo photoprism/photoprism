@@ -62,10 +62,6 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.ResourcesPath(), err)
 	}
 
-	if err := os.MkdirAll(c.TidbServerPath(), os.ModePerm); err != nil {
-		return createError(c.TidbServerPath(), err)
-	}
-
 	if err := os.MkdirAll(c.TensorFlowModelPath(), os.ModePerm); err != nil {
 		return createError(c.TensorFlowModelPath(), err)
 	}

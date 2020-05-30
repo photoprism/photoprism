@@ -8,11 +8,13 @@
 /assets/resources/nsfw
 /assets/testdata
 /assets/backups
-Dockerfile
 /photoprism
-docker-compose*
 /coverage.*
+/frontend/tests/acceptance/screenshots
 .dockerignore
 .idea
 .DS_Store
-/frontend/tests/acceptance/screenshots
+*.db
+*.db-journal
+Dockerfile
+docker-compose*

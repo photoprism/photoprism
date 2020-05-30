@@ -8,7 +8,6 @@ services:
       - photoprism-db
     ports:
       - "2342:2342" # Web Server (PhotoPrism)
-      - "2343:2343" # Database (built-in TiDB)
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
       - "go-mod:/go/pkg/mod"
@@ -25,12 +24,9 @@ services:
       PHOTOPRISM_SERVER_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_TIDB_HOST: "0.0.0.0"
-      PHOTOPRISM_TIDB_PORT: 2343
-      PHOTOPRISM_TIDB_PASSWORD: "photoprism"
-      PHOTOPRISM_DATABASE_DRIVER: "tidb"
-      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
-      PHOTOPRISM_TEST_DSN: "root:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true"
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"
+      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true"
+      PHOTOPRISM_TEST_DRIVER: "test"
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_CACHE_PATH: "/go/src/github.com/photoprism/photoprism/assets/cache"
       PHOTOPRISM_RESOURCES_PATH: "/go/src/github.com/photoprism/photoprism/assets/resources"

@@ -53,22 +53,29 @@ func AlbumCoverByUID(albumUID string) (file entity.File, err error) {
 
 	if err := Db().Where("album_uid = ?", albumUID).First(&a).Error; err != nil {
 		return file, err
-	} else if a.IsMoment() { // TODO: Optimize
-		f := form.PhotoSearch{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: true}
+	} else if a.AlbumType != entity.TypeAlbum { // TODO: Optimize
+		f := form.PhotoSearch{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
 
 		if photos, _, err := PhotoSearch(f); err != nil {
 			return file, err
 		} else if len(photos) > 0 {
+			log.Debugf("PHOTOS: %+v", photos)
+
 			for _, photo := range photos {
-				return FileByPhotoUID(photo.PhotoUID)
+				log.Debugf("PHOTO: %+v", photo)
+				if err := Db().Where("photo_uid = ? AND file_primary = 1", photo.PhotoUID).First(&file).Error; err != nil {
+					log.Debugf("ERROR: %+v", err)
+					return file, err
+				} else {
+					return file, nil
+				}
 			}
 		}
 
 		return file, fmt.Errorf("found no cover for moment")
 	}
 
-	if err := Db().
-		Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
+	if err := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
 		Joins("JOIN albums ON albums.album_uid = ?", albumUID).
 		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = files.photo_uid").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").

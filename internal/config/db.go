@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
@@ -13,22 +15,46 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/tidb"
 )
 
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
-	if strings.ToLower(c.params.DatabaseDriver) == "mysql" {
-		return DriverMysql
+	switch strings.ToLower(c.params.DatabaseDriver) {
+	case MySQL, "mariadb":
+		c.params.DatabaseDriver = MySQL
+	case SQLite, "sqlite", "sqllite", "test", "file", "":
+		c.params.DatabaseDriver = SQLite
+	case "tidb":
+		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")
+		c.params.DatabaseDriver = SQLite
+		c.params.DatabaseDsn = ""
+	default:
+		log.Warnf("config: unsupported database driver %s, using sqlite", c.params.DatabaseDriver)
+		c.params.DatabaseDriver = SQLite
+		c.params.DatabaseDsn = ""
 	}
 
-	return DriverTidb
+	return c.params.DatabaseDriver
 }
 
 // DatabaseDsn returns the database data source name (DSN).
 func (c *Config) DatabaseDsn() string {
 	if c.params.DatabaseDsn == "" {
-		return "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
+		switch c.DatabaseDriver() {
+		case MySQL:
+			return "photoprism:photoprism@tcp(photoprism-db:3306)/photoprism?parseTime=true"
+		case SQLite:
+			storagePath := filepath.Join(c.ConfigPath())
+
+			if err := os.MkdirAll(storagePath, os.ModePerm); err != nil {
+				log.Errorf("config: %s (database storage path)", err.Error())
+			} else {
+				return filepath.Join(storagePath, "index.db")
+			}
+		default:
+			log.Errorf("config: empty database dsn")
+			return ""
+		}
 	}
 
 	return c.params.DatabaseDsn
@@ -97,39 +123,13 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 		return errors.New("config: database DSN not specified")
 	}
 
-	isTiDB := false
-	initSuccess := false
-
-	if dbDriver == DriverTidb {
-		isTiDB = true
-		dbDriver = DriverMysql
-	}
-
 	db, err := gorm.Open(dbDriver, dbDsn)
 	if err != nil || db == nil {
-		if isTiDB {
-			log.Infof("starting database server at %s:%d\n", c.TidbServerHost(), c.TidbServerPort())
-
-			go tidb.Start(ctx, c.TidbServerPath(), c.TidbServerPort(), c.TidbServerHost(), c.Debug())
-
-			time.Sleep(5 * time.Second)
-		}
-
 		for i := 1; i <= 12; i++ {
 			db, err = gorm.Open(dbDriver, dbDsn)
 
 			if db != nil && err == nil {
 				break
-			}
-
-			if isTiDB && !initSuccess {
-				err = tidb.InitDatabase(c.TidbServerPort(), c.TidbServerPassword())
-
-				if err != nil {
-					log.Debug(err)
-				} else {
-					initSuccess = true
-				}
 			}
 
 			time.Sleep(5 * time.Second)

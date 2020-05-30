@@ -17,6 +17,8 @@
 /assets/resources/nsfw
 /package-lock.json
 *.log
+*.db
+*.db-journal
 
 # Binaries for programs and plugins
 *.exe

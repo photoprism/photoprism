@@ -80,35 +80,3 @@ func (c *Config) HttpStaticPath() string {
 func (c *Config) HttpStaticBuildPath() string {
 	return filepath.Join(c.HttpStaticPath(), "build")
 }
-
-// TidbServerHost returns the host for the built-in TiDB server. (empty for all interfaces).
-func (c *Config) TidbServerHost() string {
-	if c.params.TidbServerHost == "" {
-		return "127.0.0.1"
-	}
-
-	return c.params.TidbServerHost
-}
-
-// TidbServerPort returns the port for the built-in TiDB server.
-func (c *Config) TidbServerPort() uint {
-	if c.params.TidbServerPort == 0 {
-		return 2343
-	}
-
-	return c.params.TidbServerPort
-}
-
-// TidbServerPassword returns the password for the built-in TiDB server.
-func (c *Config) TidbServerPassword() string {
-	return c.params.TidbServerPassword
-}
-
-// TidbServerPath returns the database storage path for the built-in TiDB server.
-func (c *Config) TidbServerPath() string {
-	if c.params.TidbServerPath == "" {
-		return filepath.Join(c.ResourcesPath(), "/database")
-	}
-
-	return fs.Abs(c.params.TidbServerPath)
-}

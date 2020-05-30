@@ -11,6 +11,8 @@ import (
 func TestPrism_Start(t *testing.T) {
 	conf := config.TestConfig()
 
+	t.Logf("database-dsn: %s", conf.DatabaseDsn())
+
 	worker := NewPrism(conf)
 
 	assert.IsType(t, &Prism{}, worker)

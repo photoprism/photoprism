@@ -319,8 +319,8 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Limit(100).Offset(0)
 	}
 
-	if result := s.Scan(&results); result.Error != nil {
-		return results, 0, result.Error
+	if err := s.Scan(&results).Error; err != nil {
+		return results, 0, err
 	}
 
 	log.Infof("photos: found %d results for %s [%s]", len(results), f.SerializeAll(), time.Since(start))

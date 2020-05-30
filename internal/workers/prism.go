@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 )
 
@@ -103,6 +104,12 @@ func (worker *Prism) Start() (err error) {
 	worker.logError(query.ResetPhotoQuality())
 
 	worker.logError(entity.UpdatePhotoCounts())
+
+	moments := photoprism.NewMoments(worker.conf)
+
+	if err := moments.Start(); err != nil {
+		log.Error(err)
+	}
 
 	runtime.GC()
 

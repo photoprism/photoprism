@@ -9,10 +9,7 @@ http-host:
 http-mode: release
 http-port: 81
 http-password:
-tidb-host: localhost
-tidb-port: 2343
-tidb-password: photoprism
-database-driver: tidb
-database-dsn: root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true
+database-driver: sqlite
+database-dsn: .photoprism.db
 theme: lavendel
 language: english

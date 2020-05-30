@@ -18,11 +18,7 @@ import-path: ~/Pictures/Import
 http-host:
 http-mode: release
 http-port: 2342
-tidb-host: localhost
-tidb-port: 2343
-tidb-password: photoprism
-database-driver: tidb
-database-dsn: root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true
+database-driver: sqlite
 pid-filename: ~/.local/share/photoprism/photoprism.pid
 log-filename: ~/.local/share/photoprism/photoprism.log
 detach-server: false

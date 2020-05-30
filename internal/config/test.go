@@ -38,6 +38,18 @@ func NewTestParams() *Params {
 
 	testDataPath := testDataPath(assetsPath)
 
+	dbDriver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
+	dbDsn := os.Getenv("PHOTOPRISM_TEST_DSN")
+
+	// Config example for MySQL / MariaDB:
+	//   dbDriver = MySQL,
+	//   dbDsn = "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
+
+	if dbDriver == "test" || dbDriver == "sqlite" || dbDriver == "" || dbDsn == ""{
+		dbDriver = SQLite
+		dbDsn = ".test.db"
+	}
+
 	c := &Params{
 		Name:           "PhotoPrism",
 		Version:        "0.0.0",
@@ -55,8 +67,8 @@ func NewTestParams() *Params {
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
 		TempPath:       testDataPath + "/temp",
-		DatabaseDriver: "mysql",
-		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
+		DatabaseDriver: dbDriver,
+		DatabaseDsn:    dbDsn,
 	}
 
 	return c
@@ -75,7 +87,7 @@ func NewTestParamsError() *Params {
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
 		TempPath:       testDataPath + "/temp",
-		DatabaseDriver: "mysql",
+		DatabaseDriver: MySQL,
 		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
 	}
 

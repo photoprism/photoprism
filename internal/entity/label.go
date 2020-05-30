@@ -72,6 +72,11 @@ func (m *Label) Create() error {
 	return Db().Create(m).Error
 }
 
+// Updates a column in the database.
+func (m *Label) Update(attr string, value interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
 // FirstOrCreateLabel returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateLabel(m *Label) *Label {
 	result := Label{}

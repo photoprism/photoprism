@@ -13,10 +13,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// define database drivers const
+// Database drivers (sql dialects).
 const (
-	DriverTidb  = "tidb"
-	DriverMysql = "mysql"
+	MySQL  = "mysql"
+	SQLite = "sqlite3"
 )
 
 // Params provides a struct in which application configuration is stored.
@@ -57,10 +57,6 @@ type Params struct {
 	DatabaseDriver     string `yaml:"database-driver" flag:"database-driver"`
 	DatabaseDsn        string `yaml:"database-dsn" flag:"database-dsn"`
 	DatabaseConns      int    `yaml:"database-conns" flag:"database-conns"`
-	TidbServerHost     string `yaml:"tidb-host" flag:"tidb-host"`
-	TidbServerPort     uint   `yaml:"tidb-port" flag:"tidb-port"`
-	TidbServerPassword string `yaml:"tidb-password" flag:"tidb-password"`
-	TidbServerPath     string `yaml:"tidb-path" flag:"tidb-path"`
 	HttpServerHost     string `yaml:"http-host" flag:"http-host"`
 	HttpServerPort     int    `yaml:"http-port" flag:"http-port"`
 	HttpServerMode     string `yaml:"http-mode" flag:"http-mode"`
@@ -125,7 +121,6 @@ func (c *Params) expandFilenames() {
 	c.OriginalsPath = fs.Abs(c.OriginalsPath)
 	c.ImportPath = fs.Abs(c.ImportPath)
 	c.TempPath = fs.Abs(c.TempPath)
-	c.TidbServerPath = fs.Abs(c.TidbServerPath)
 	c.PIDFilename = fs.Abs(c.PIDFilename)
 	c.LogFilename = fs.Abs(c.LogFilename)
 }

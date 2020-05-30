@@ -118,38 +118,6 @@ func TestConfig_DetachServer(t *testing.T) {
 	assert.Equal(t, false, detachServer)
 }
 
-func TestConfig_TidbServerHost(t *testing.T) {
-	ctx := CliTestContext()
-	c := NewConfig(ctx)
-
-	host := c.TidbServerHost()
-	assert.Equal(t, "127.0.0.1", host)
-}
-
-func TestConfig_TidbServerPort(t *testing.T) {
-	ctx := CliTestContext()
-	c := NewConfig(ctx)
-
-	port := c.TidbServerPort()
-	assert.Equal(t, uint(2343), port)
-}
-
-func TestConfig_TidbServerPath(t *testing.T) {
-	ctx := CliTestContext()
-	c := NewConfig(ctx)
-
-	path := c.TidbServerPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/database", path)
-}
-
-func TestConfig_TidbServerPassword(t *testing.T) {
-	ctx := CliTestContext()
-	c := NewConfig(ctx)
-
-	password := c.TidbServerPassword()
-	assert.Equal(t, "", password)
-}
-
 func TestConfig_HttpServerHost(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
@@ -237,7 +205,7 @@ func TestConfig_DatabaseDriver(t *testing.T) {
 	c := NewConfig(ctx)
 
 	driver := c.DatabaseDriver()
-	assert.Equal(t, DriverTidb, driver)
+	assert.Equal(t, SQLite, driver)
 }
 
 func TestConfig_DatabaseDsn(t *testing.T) {
@@ -245,7 +213,7 @@ func TestConfig_DatabaseDsn(t *testing.T) {
 	c := NewConfig(ctx)
 
 	dsn := c.DatabaseDriver()
-	assert.Equal(t, DriverTidb, dsn)
+	assert.Equal(t, SQLite, dsn)
 }
 
 func TestConfig_CachePath(t *testing.T) {

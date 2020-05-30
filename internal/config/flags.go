@@ -7,6 +7,24 @@ import (
 // GlobalFlags lists all CLI flags
 var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
+		Name:   "database-driver",
+		Usage:  "database `DRIVER` (sqlite or mysql)",
+		Value:  "sqlite",
+		EnvVar: "PHOTOPRISM_DATABASE_DRIVER",
+	},
+	cli.StringFlag{
+		Name:   "database-dsn",
+		Usage:  "database data source or file name (`DSN`)",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_DATABASE_DSN",
+	},
+	cli.IntFlag{
+		Name:   "database-conns",
+		Usage:  "maximum `NUMBER` of open connections to the database",
+		Value:  256,
+		EnvVar: "PHOTOPRISM_DATABASE_CONNS",
+	},
+	cli.StringFlag{
 		Name:   "admin-password",
 		Usage:  "admin password",
 		Value:  "photoprism",
@@ -209,45 +227,6 @@ var GlobalFlags = []cli.Flag{
 		Name:   "http-mode, m",
 		Usage:  "debug, release or test",
 		EnvVar: "PHOTOPRISM_HTTP_MODE",
-	},
-	cli.IntFlag{
-		Name:   "tidb-port",
-		Value:  2343,
-		Usage:  "built-in TiDB server port",
-		EnvVar: "PHOTOPRISM_TIDB_PORT",
-	},
-	cli.StringFlag{
-		Name:   "tidb-host",
-		Usage:  "built-in TiDB server host",
-		EnvVar: "PHOTOPRISM_TIDB_HOST",
-	},
-	cli.StringFlag{
-		Name:   "tidb-password",
-		Usage:  "built-in TiDB server password",
-		EnvVar: "PHOTOPRISM_TIDB_PASSWORD",
-	},
-	cli.StringFlag{
-		Name:   "tidb-path",
-		Usage:  "built-in TiDB server storage `PATH`",
-		EnvVar: "PHOTOPRISM_TIDB_PATH",
-	},
-	cli.StringFlag{
-		Name:   "database-driver",
-		Usage:  "database `DRIVER` (tidb or mysql)",
-		Value:  "tidb",
-		EnvVar: "PHOTOPRISM_DATABASE_DRIVER",
-	},
-	cli.StringFlag{
-		Name:   "database-dsn",
-		Usage:  "database data source name (`DSN`)",
-		Value:  "root:@tcp(localhost:2343)/photoprism?parseTime=true",
-		EnvVar: "PHOTOPRISM_DATABASE_DSN",
-	},
-	cli.IntFlag{
-		Name:   "database-conns",
-		Usage:  "maximum `NUMBER` of open connections to the database",
-		Value:  256,
-		EnvVar: "PHOTOPRISM_DATABASE_CONNS",
 	},
 	cli.BoolFlag{
 		Name:   "detect-nsfw",

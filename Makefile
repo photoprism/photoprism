@@ -96,8 +96,9 @@ acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
 	(cd frontend &&	npm run acceptance-firefox)
 reset-test-db:
-	$(info Purging test database...)
+	$(info Purging test databases...)
 	mysql < scripts/reset-test-db.sql
+	find ./internal -type f -name '.test.*' -delete
 run-test-short:
 	$(info Running short Go unit tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/...

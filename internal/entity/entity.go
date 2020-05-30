@@ -52,13 +52,17 @@ var Entities = Types{
 	"links":           &Link{},
 }
 
+type RowCount struct {
+	Count int
+}
+
 // WaitForMigration waits for the database migration to be successful.
 func (list Types) WaitForMigration() {
 	attempts := 100
-
 	for name := range list {
 		for i := 0; i <= attempts; i++ {
-			if err := Db().Raw(fmt.Sprintf("DESCRIBE `%s`", name)).Scan(&struct{}{}).Error; err == nil {
+			count := RowCount{}
+			if err := Db().Raw(fmt.Sprintf("SELECT COUNT(*) AS count FROM %s", name)).Scan(&count).Error; err == nil {
 				// log.Debugf("entity: table %s migrated", name)
 				break
 			} else {
@@ -77,7 +81,8 @@ func (list Types) WaitForMigration() {
 // Truncate removes all data from tables without dropping them.
 func (list Types) Truncate() {
 	for name := range list {
-		if err := Db().Raw(fmt.Sprintf("TRUNCATE TABLE `%s`", name)).Scan(&struct{}{}).Error; err == nil {
+		row := RowCount{}
+		if err := Db().Raw(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Scan(&row).Error; err == nil {
 			log.Debugf("entity: removed all data from %s", name)
 			break
 		} else if err.Error() != "record not found" {
@@ -117,7 +122,7 @@ func CreateDefaultFixtures() {
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()
-	CreateViews()
+	// CreateViews()
 }
 
 // MigrateDb creates all tables and inserts default entities as needed.
@@ -140,13 +145,20 @@ func ResetTestFixtures() {
 }
 
 // InitTestDb connects to and completely initializes the test database incl fixtures.
-func InitTestDb(dsn string) *Gorm {
+func InitTestDb(driver, dsn string) *Gorm {
 	if HasDbProvider() {
 		return nil
 	}
 
+	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
+		driver = "sqlite3"
+		dsn = ".test.db"
+	}
+
+	log.Infof("initializing %s test db in %s", driver, dsn)
+
 	db := &Gorm{
-		Driver: "mysql",
+		Driver: driver,
 		Dsn:    dsn,
 	}
 

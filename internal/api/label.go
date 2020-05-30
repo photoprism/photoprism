@@ -103,12 +103,14 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		label, err := query.LabelByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
-		label.LabelFavorite = true
-		entity.Db().Save(&label)
+		if err := label.Update("LabelFavorite", true); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
 
 		if label.LabelPriority < 0 {
 			event.Publish("count.labels", event.Data{
@@ -137,12 +139,14 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		label, err := query.LabelByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
-		label.LabelFavorite = false
-		entity.Db().Save(&label)
+		if err := label.Update("LabelFavorite", false); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
 
 		if label.LabelPriority < 0 {
 			event.Publish("count.labels", event.Data{
