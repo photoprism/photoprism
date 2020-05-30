@@ -152,7 +152,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile>
+                    <v-list-tile to="/folders">
                         <v-list-tile-content>
                             <v-list-tile-title><translate key="Folders">Folders</translate>
                                 <span v-show="config.count.folders > 0"
@@ -160,7 +160,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile>
+                    <v-list-tile to="/months">
                         <v-list-tile-content>
                             <v-list-tile-title><translate key="Months">Months</translate>
                                 <span v-show="config.count.months > 0"

@@ -76,7 +76,7 @@
                                     @contextmenu="onContextMenu($event, index)"
                                     :dark="selection.includes(album.UID)"
                                     :class="selection.includes(album.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
-                                    :to="{name: albumRoute(), params: {uid: album.UID, slug: album.Slug}}"
+                                    :to="{name: view, params: {uid: album.UID, slug: album.Slug}}"
                             >
                                 <v-img
                                         :src="album.thumbnailUrl('tile_500')"
@@ -156,7 +156,8 @@
     export default {
         name: 'p-page-albums',
         props: {
-            staticFilter: Object
+            staticFilter: Object,
+            view: String,
         },
         watch: {
             '$route'() {
@@ -203,13 +204,6 @@
             };
         },
         methods: {
-            albumRoute() {
-                if(this.routeName === "moments") {
-                    return "moment";
-                }
-
-                return "album";
-            },
             selectRange(rangeEnd, models) {
                 if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
                     console.warn("selectRange() - invalid arguments:", rangeEnd, models);
