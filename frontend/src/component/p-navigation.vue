@@ -159,18 +159,24 @@
                                       class="p-navigation-count">{{ config.count.folders }}</span></v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
-
-                    <v-list-tile to="/months">
-                        <v-list-tile-content>
-                            <v-list-tile-title><translate key="Months">Months</translate>
-                                <span v-show="config.count.months > 0"
-                                      class="p-navigation-count">{{ config.count.months }}</span></v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
                 </v-list-group>
 
+                <v-list-tile :to="{ name: 'calendar' }" @click="" class="p-navigation-calendar">
+                    <v-list-tile-action>
+                        <v-icon>date_range</v-icon>
+                    </v-list-tile-action>
+
+                    <v-list-tile-content>
+                        <v-list-tile-title>
+                            <translate key="Calendar">Calendar</translate>
+                            <span v-show="config.count.months > 0"
+                                  class="p-navigation-count">{{ config.count.months }}</span>
+                        </v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+
                 <v-list-tile :to="{ name: 'moments' }" @click="" class="p-navigation-moments"
-                             v-show="config.experimental && $config.feature('moments')">
+                             v-show="$config.feature('moments')">
                     <v-list-tile-action>
                         <v-icon>star</v-icon>
                     </v-list-tile-action>

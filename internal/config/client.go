@@ -28,6 +28,7 @@ type ClientConfig struct {
 	Public          bool                `json:"public"`
 	Experimental    bool                `json:"experimental"`
 	DisableSettings bool                `json:"disableSettings"`
+	AlbumCategories []string            `json:"albumCategories"`
 	Albums          []entity.Album      `json:"albums"`
 	Cameras         []entity.Camera     `json:"cameras"`
 	Lenses          []entity.Lens       `json:"lenses"`
@@ -173,79 +174,77 @@ func (c *Config) ClientConfig() ClientConfig {
 		Server:          NewRuntimeInfo(),
 	}
 
-	db := c.Db()
-
-	db.Table("photos").
+	c.Db().Table("photos").
 		Select("photo_uid, location_id, photo_lat, photo_lng, taken_at").
 		Where("deleted_at IS NULL AND photo_lat != 0 AND photo_lng != 0").
 		Order("taken_at DESC").
 		Limit(1).Offset(0).
 		Take(&result.Pos)
 
-	db.Table("cameras").
+	c.Db().Table("cameras").
 		Where("camera_slug <> 'zz' AND camera_slug <> ''").
 		Select("COUNT(*) AS cameras").
 		Take(&result.Count)
 
-	db.Table("lenses").
+	c.Db().Table("lenses").
 		Where("lens_slug <> 'zz' AND lens_slug <> ''").
 		Select("COUNT(*) AS lenses").
 		Take(&result.Count)
 
-	db.Table("photos").
+	c.Db().Table("photos").
 		Select("SUM(photo_type = 'video' AND photo_quality >= 0 AND photo_private = 0) AS videos, SUM(photo_type IN ('image','raw','live') AND photo_quality < 3 AND photo_quality >= 0 AND photo_private = 0) AS review, SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','live') AND photo_private = 0 AND photo_quality >= 0) AS photos, SUM(photo_favorite = 1 AND photo_quality >= 0) AS favorites, SUM(photo_private = 1 AND photo_quality >= 0) AS private").
 		Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
 
-	db.Table("labels").
+	c.Db().Table("labels").
 		Select("MAX(photo_count) as label_max_photos, COUNT(*) AS labels").
 		Where("photo_count > 0").
 		Where("deleted_at IS NULL").
 		Where("(label_priority >= 0 || label_favorite = 1)").
 		Take(&result.Count)
 
-	db.Table("albums").
+	c.Db().Table("albums").
 		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS folders", entity.TypeAlbum, entity.TypeMoment, entity.TypeMonth, entity.TypeFolder).
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
 
-	db.Table("files").
+	c.Db().Table("files").
 		Select("COUNT(*) AS files").
 		Where("file_missing = 0").
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
 
-	db.Table("countries").
+	c.Db().Table("countries").
 		Select("(COUNT(*) - 1) AS countries").
 		Take(&result.Count)
 
-	db.Table("places").
+	c.Db().Table("places").
 		Select("SUM(photo_count > 0) AS places").
 		Where("id != 'zz'").
 		Take(&result.Count)
 
-	db.Order("country_slug").
+	c.Db().Order("country_slug").
 		Find(&result.Countries)
 
-	db.Where("deleted_at IS NULL").
+	c.Db().Where("deleted_at IS NULL").
 		Limit(10000).Order("camera_slug").
 		Find(&result.Cameras)
 
-	db.Where("deleted_at IS NULL").
+	c.Db().Where("deleted_at IS NULL").
 		Limit(10000).Order("lens_slug").
 		Find(&result.Lenses)
 
-	db.Where("deleted_at IS NULL AND album_favorite = 1").
+	c.Db().Where("deleted_at IS NULL AND album_favorite = 1").
 		Limit(20).Order("album_title").
 		Find(&result.Albums)
 
-	db.Table("photos").
+	c.Db().Table("photos").
 		Where("photo_year > 0").
 		Order("photo_year DESC").
 		Pluck("DISTINCT photo_year", &result.Years)
 
-	db.Table("categories").
+	c.Db().Table("categories").
 		Select("l.label_uid, l.custom_slug, l.label_name").
 		Joins("JOIN labels l ON categories.category_id = l.id").
 		Where("l.deleted_at IS NULL").
@@ -253,6 +252,14 @@ func (c *Config) ClientConfig() ClientConfig {
 		Order("l.custom_slug").
 		Limit(1000).Offset(0).
 		Scan(&result.Categories)
+
+	c.Db().Table("albums").
+		Select("album_category").
+		Where("deleted_at IS NULL AND album_category <> ''").
+		Group("album_category").
+		Order("album_category").
+		Limit(1000).Offset(0).
+		Pluck("album_category", &result.AlbumCategories)
 
 	return result
 }

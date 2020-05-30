@@ -26,7 +26,10 @@ var MomentLabels = map[string]string{
 	"nature":           "Nature & Landscape",
 	"bay":              "Bays, Capes & Beaches",
 	"beach":            "Bays, Capes & Beaches",
+	"seashore":         "Bays, Capes & Beaches",
 	"cape":             "Bays, Capes & Beaches",
+	"cat":              "Pets 🐾",
+	"dog":              "Pets 🐾",
 }
 
 // Slug returns an identifier string for a moment.

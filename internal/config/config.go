@@ -223,7 +223,7 @@ func (c *Config) Workers() int {
 // WakeupInterval returns the background worker wakeup interval.
 func (c *Config) WakeupInterval() time.Duration {
 	if c.params.WakeupInterval <= 0 {
-		return 5 * time.Minute
+		return 15 * time.Minute
 	}
 
 	return time.Duration(c.params.WakeupInterval) * time.Second

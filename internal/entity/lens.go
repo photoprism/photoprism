@@ -26,7 +26,7 @@ type Lens struct {
 
 var UnknownLens = Lens{
 	LensSlug:  "zz",
-	LensName: "Unknown",
+	LensName:  "Unknown",
 	LensMake:  "",
 	LensModel: "Unknown",
 }

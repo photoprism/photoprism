@@ -37,6 +37,13 @@ export class Model {
                 let val;
                 if (defaults.hasOwnProperty(key)) {
                     switch (typeof defaults[key]) {
+                        case "string":
+                            if(this[key] === null || this[key] === undefined) {
+                                val = "";
+                            }  else {
+                                val = this[key];
+                            }
+                            break;
                     case "bigint":
                     case "number":
                         val = parseFloat(this[key]);
@@ -58,6 +65,16 @@ export class Model {
         }
 
         return result;
+    }
+
+    wasChanged() {
+        const changed = this.getValues(true);
+
+        if(!changed) {
+            return false;
+        }
+
+        return !(changed.constructor === Object && Object.keys(changed).length === 0);
     }
 
     getDefaults() {

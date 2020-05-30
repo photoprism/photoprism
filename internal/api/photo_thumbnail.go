@@ -23,7 +23,7 @@ type ThumbCache struct {
 }
 
 type ByteCache struct {
-	Data  []byte
+	Data []byte
 }
 
 // GET /api/v1/t/:hash/:token/:type

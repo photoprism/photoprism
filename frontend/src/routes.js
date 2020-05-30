@@ -42,7 +42,7 @@ export default [
     },
     {
         name: "moment",
-        path: "/moments/:uid",
+        path: "/moments/:uid/:slug",
         component: AlbumPhotos,
         meta: {title: "Moments", auth: true},
     },
@@ -55,22 +55,22 @@ export default [
     },
     {
         name: "album",
-        path: "/albums/:uid",
+        path: "/albums/:uid/:slug",
         component: AlbumPhotos,
         meta: {title: "Album", auth: true},
     },
     {
-        name: "months",
-        path: "/months",
+        name: "calendar",
+        path: "/calendar",
         component: Albums,
-        meta: {title: "Months", auth: true},
+        meta: {title: "Calendar", auth: true},
         props: {view: "month", staticFilter: {type: "month"}},
     },
     {
         name: "month",
-        path: "/months/:uid",
+        path: "/calendar/:uid/:slug",
         component: AlbumPhotos,
-        meta: {title: "Months", auth: true},
+        meta: {title: "Calendar", auth: true},
     },
     {
         name: "folders",
@@ -81,7 +81,7 @@ export default [
     },
     {
         name: "folder",
-        path: "/folders/:uid",
+        path: "/folders/:uid:/:slug",
         component: AlbumPhotos,
         meta: {title: "Folders", auth: true},
     },

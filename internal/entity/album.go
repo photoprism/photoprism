@@ -158,10 +158,12 @@ func (m *Album) SetTitle(title string) {
 
 	m.AlbumTitle = txt.Clip(title, txt.ClipDefault)
 
-	if len(m.AlbumTitle) < txt.ClipSlug {
-		m.AlbumSlug = slug.Make(m.AlbumTitle)
-	} else {
-		m.AlbumSlug = slug.Make(txt.Clip(m.AlbumTitle, txt.ClipSlug)) + "-" + m.AlbumUID
+	if m.AlbumType == TypeAlbum {
+		if len(m.AlbumTitle) < txt.ClipSlug {
+			m.AlbumSlug = slug.Make(m.AlbumTitle)
+		} else {
+			m.AlbumSlug = slug.Make(txt.Clip(m.AlbumTitle, txt.ClipSlug)) + "-" + m.AlbumUID
+		}
 	}
 }
 
@@ -169,6 +171,10 @@ func (m *Album) SetTitle(title string) {
 func (m *Album) SaveForm(f form.Album) error {
 	if err := deepcopier.Copy(m).From(f); err != nil {
 		return err
+	}
+
+	if f.AlbumCategory != "" {
+		m.AlbumCategory = txt.Title(txt.Clip(f.AlbumCategory, txt.ClipKeyword))
 	}
 
 	if f.AlbumTitle != "" {
@@ -211,7 +217,7 @@ func (m *Album) Create() error {
 func FindAlbum(slug, albumType string) *Album {
 	result := Album{}
 
-	if err := Db().Where("album_slug = ? AND album_type = ?", slug, albumType).First(&result).Error; err != nil {
+	if err := UnscopedDb().Where("album_slug = ? AND album_type = ?", slug, albumType).First(&result).Error; err != nil {
 		return nil
 	}
 

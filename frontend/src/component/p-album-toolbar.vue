@@ -50,35 +50,15 @@
                 v-show="searchExpanded">
             <v-card-text>
                 <v-layout row wrap>
-                    <!-- v-flex xs12 pa-2>
-                        <v-text-field flat solo hide-details
-                                      browser-autocomplete="off"
-                                      :label="labels.search"
-                                      prepend-inner-icon="search"
-                                      clearable
-                                      color="secondary-dark"
-                                      @click:clear="clearQuery"
-                                      v-model="filter.q"
-                                      @keyup.enter.native="filterChange"
-                        ></v-text-field>
-                    </v-flex -->
                     <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
-                        <v-autocomplete
+                        <v-combobox flat solo hide-details color="secondary-dark"
                                 v-model="album.Category"
-                                browser-autocomplete="off"
-                                hint="Category"
-                                :items="items"
-                                :search-input.sync="search"
-                                :loading="loading"
-                                hide-details
-                                hide-no-data
-                                item-text="Title"
-                                item-value="UID"
+                                :items="categories"
                                 :label="labels.category"
-                                color="secondary-dark"
-                                flat solo
-                        >
-                        </v-autocomplete>
+                                @change="updateAlbum"
+                                    :allow-overflow="false"
+                                    return-masked-value
+                        ></v-combobox>
                     </v-flex>
                     <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
                         <v-select @change="dropdownChange"
@@ -150,9 +130,7 @@
             }].concat(this.$config.get('countries'));
 
             return {
-                items: [],
-                search: null,
-                loading: false,
+                categories: this.$config.values.albumCategories,
                 searchExpanded: false,
                 options: {
                     'views': [
@@ -185,31 +163,16 @@
                 growDesc: false,
             };
         },
-        watch: {
-            search (q) {
-                const exists = this.albums.findIndex((album) => album.Title === q);
-
-                if (exists !== -1 || !q) {
-                    this.items = this.albums;
-                    this.newAlbum = null;
-                } else {
-                    this.newAlbum = new Album({Title: q, UID: "", Favorite: true});
-                    this.items = this.albums.concat([this.newAlbum]);
-                }
-            },
-            show: function (show) {
-                if (show) {
-                    this.queryServer("");
-                }
-            }
-        },
         methods: {
             expand() {
                 this.searchExpanded = !this.searchExpanded;
                 this.growDesc = !this.growDesc;
             },
             updateAlbum() {
-                this.album.update();
+                console.log("UPDATE ALBUM", this.album.getValues(true));
+                if(this.album.wasChanged()) {
+                    this.album.update();
+                }
             },
             dropdownChange() {
                 this.filterChange();

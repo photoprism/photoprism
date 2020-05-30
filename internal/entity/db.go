@@ -12,7 +12,7 @@ import (
 
 // Database drivers (sql dialects).
 const (
-	MySQL = "mysql"
+	MySQL  = "mysql"
 	SQLite = "sqlite3"
 )
 

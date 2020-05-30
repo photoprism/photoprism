@@ -45,7 +45,7 @@ func NewTestParams() *Params {
 	//   dbDriver = MySQL,
 	//   dbDsn = "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
 
-	if dbDriver == "test" || dbDriver == "sqlite" || dbDriver == "" || dbDsn == ""{
+	if dbDriver == "test" || dbDriver == "sqlite" || dbDriver == "" || dbDsn == "" {
 		dbDriver = SQLite
 		dbDsn = ".test.db"
 	}

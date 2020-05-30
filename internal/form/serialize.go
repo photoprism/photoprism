@@ -76,7 +76,7 @@ func Serialize(f interface{}, all bool) string {
 	return strings.Join(q, " ")
 }
 
-func Unserialize(f SearchForm, q string)  (result error){
+func Unserialize(f SearchForm, q string) (result error) {
 	var key, value []rune
 	var escaped, isKeyValue bool
 

@@ -22,7 +22,7 @@ import (
 var log = event.Log
 
 const (
-	MySQL = "mysql"
+	MySQL  = "mysql"
 	SQLite = "sqlite3"
 )
 

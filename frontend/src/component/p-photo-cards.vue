@@ -117,7 +117,9 @@
                                     </button>
                                 </h3>
                                 <div class="caption mb-2" v-if="photo.Description" title="Description">
-                                    {{ photo.Description }}
+                                    <button @click.exact="editPhoto(index)">
+                                        {{ photo.Description }}
+                                    </button>
                                 </div>
                                 <div class="caption">
                                     <button @click.exact="editPhoto(index)">

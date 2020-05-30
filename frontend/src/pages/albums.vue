@@ -4,8 +4,9 @@
 
         <v-form ref="form" class="p-albums-search" lazy-validation @submit.prevent="updateQuery" dense>
             <v-toolbar flat color="secondary">
-                <v-text-field class="pt-3 pr-3"
+                <v-text-field @keyup.enter.native="updateQuery"
                               single-line
+                              class="hidden-xs-only mr-3"
                               :label="labels.search"
                               browser-autocomplete="off"
                               prepend-inner-icon="search"
@@ -13,9 +14,16 @@
                               color="secondary-dark"
                               @click:clear="clearQuery"
                               v-model="filter.q"
-                              @keyup.enter.native="updateQuery"
                               id="search"
                 ></v-text-field>
+
+                <v-select @change="updateQuery"
+                          single-line
+                          :label="labels.category"
+                          color="secondary-dark"
+                          v-model="filter.category"
+                          :items="categories">
+                </v-select>
 
                 <v-spacer></v-spacer>
 
@@ -76,7 +84,7 @@
                                     @contextmenu="onContextMenu($event, index)"
                                     :dark="selection.includes(album.UID)"
                                     :class="selection.includes(album.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
-                                    :to="{name: view, params: {uid: album.UID, slug: album.Slug}}"
+                                    :to="{name: view, params: {uid: album.UID, slug: album.Slug, year: album.Year, month: album.Month}}"
                             >
                                 <v-img
                                         :src="album.thumbnailUrl('tile_500')"
@@ -163,7 +171,8 @@
             '$route'() {
                 const query = this.$route.query;
 
-                this.filter.q = query['q'] ? query['q'] : '';
+                this.filter.q = query["q"] ? query["q"] : "";
+                this.filter.category = query["category"] ? query["category"] : "";
                 this.lastFilter = {};
                 this.routeName = this.$route.name;
                 this.search();
@@ -172,11 +181,16 @@
         data() {
             const query = this.$route.query;
             const routeName = this.$route.name;
-            const q = query['q'] ? query['q'] : '';
-            const filter = {q: q};
+            const q = query["q"] ? query["q"] : "";
+            const category = query["category"] ? query["category"] : "";
+            const filter = {q, category};
             const settings = {};
 
+            let categories = [{"value": "", "text": this.$gettext("All Categories")}];
+            categories = categories.concat(this.$config.values.albumCategories.map(cat => { return {"value": cat, "text": cat}; }));
+
             return {
+                categories: categories,
                 subscriptions: [],
                 listen: false,
                 dirty: false,
@@ -195,6 +209,7 @@
                 labels: {
                     search: this.$gettext("Search"),
                     title: this.$gettext("Album Name"),
+                    category: this.$gettext("Category"),
                 },
                 mouseDown: {
                     index: -1,
