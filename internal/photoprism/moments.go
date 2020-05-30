@@ -56,14 +56,35 @@ func (m *Moments) Start() (err error) {
 
 	log.Infof("moments: index contains %d photos and videos, threshold %d", indexSize, threshold)
 
+	// Important folders.
+	if results, err := query.AlbumFolders(threshold); err != nil {
+		log.Errorf("moments: %s", err.Error())
+	} else {
+		for _, mom := range results {
+			f := form.PhotoSearch{
+				Path: mom.Path,
+			}
+
+			if a := entity.FindAlbum(mom.Slug(), entity.TypeFolder); a != nil {
+				log.Infof("moments: %s already exists (%s)", txt.Quote(mom.Title()), f.Serialize())
+			} else if a := entity.NewFolderAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
+				if err := a.Create(); err != nil {
+					log.Errorf("moments: %s", err)
+				} else {
+					log.Infof("moments: added %s (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+				}
+			}
+		}
+	}
+
 	// Important years and months.
 	if results, err := query.MomentsTime(threshold); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
-			if a := entity.FindAlbum(mom.Slug()); a != nil {
+			if a := entity.FindAlbum(mom.Slug(), entity.TypeMonth); a != nil {
 				log.Infof("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
-			} else if a := entity.NewMonth(mom.Title(), mom.Slug(), mom.Year, mom.Month); a != nil {
+			} else if a := entity.NewMonthAlbum(mom.Title(), mom.Slug(), mom.Year, mom.Month); a != nil {
 				if err := a.Create(); err != nil {
 					log.Errorf("moments: %s", err)
 				} else {
@@ -83,9 +104,9 @@ func (m *Moments) Start() (err error) {
 				Year:    mom.Year,
 			}
 
-			if a := entity.FindAlbum(mom.Slug()); a != nil {
+			if a := entity.FindAlbum(mom.Slug(), entity.TypeMoment); a != nil {
 				log.Infof("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
-			} else if a := entity.NewMoment(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
+			} else if a := entity.NewMomentsAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				a.AlbumYear = mom.Year
 				a.AlbumCountry = mom.Country
 
@@ -108,9 +129,9 @@ func (m *Moments) Start() (err error) {
 				State:   mom.State,
 			}
 
-			if a := entity.FindAlbum(mom.Slug()); a != nil {
+			if a := entity.FindAlbum(mom.Slug(), entity.TypeMoment); a != nil {
 				log.Infof("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
-			} else if a := entity.NewMoment(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
+			} else if a := entity.NewMomentsAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				a.AlbumCountry = mom.Country
 
 				if err := a.Create(); err != nil {
@@ -131,7 +152,7 @@ func (m *Moments) Start() (err error) {
 				Label: mom.Label,
 			}
 
-			if a := entity.FindAlbum(mom.Slug()); a != nil {
+			if a := entity.FindAlbum(mom.Slug(), entity.TypeMoment); a != nil {
 				log.Infof("moments: %s already exists (%s)", txt.Quote(mom.Title()), f.Serialize())
 
 				if err := form.ParseQueryString(&f); err != nil {
@@ -147,7 +168,7 @@ func (m *Moments) Start() (err error) {
 				} else {
 					log.Infof("moments: updated %s (%s)", txt.Quote(a.AlbumTitle), f.Serialize())
 				}
-			} else if a := entity.NewMoment(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
+			} else if a := entity.NewMomentsAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				if err := a.Create(); err != nil {
 					log.Errorf("moments: %s", err.Error())
 				} else {

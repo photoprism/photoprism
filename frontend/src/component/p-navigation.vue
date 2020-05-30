@@ -167,15 +167,6 @@
                                       class="p-navigation-count">{{ config.count.months }}</span></v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
-
-                    <v-list-tile v-for="(album, index) in config.albums"
-                                 :key="index"
-                                 :to="{ name: 'album', params: { uid: album.UID, slug: album.Slug } }">
-                        <v-list-tile-content>
-                            <v-list-tile-title v-if="album.Title">{{ album.Title }}</v-list-tile-title>
-                            <v-list-tile-title v-else>Untitled</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
                 </v-list-group>
 
                 <v-list-tile :to="{ name: 'moments' }" @click="" class="p-navigation-moments"
@@ -385,13 +376,6 @@
         computed: {
             auth() {
                 return this.session.auth || this.public
-            },
-            albumExpandIcon() {
-                if (this.config.count.albums > 0) {
-                    return this.$vuetify.icons.expand
-                }
-
-                return ""
             },
         },
         methods: {

@@ -31,10 +31,10 @@ func (m *Photo) EstimatePosition() {
 		log.Errorf("photo: %s", err.Error())
 	} else {
 		if days := recentPhoto.TakenAt.Sub(m.TakenAt) / (time.Hour * 24); days < -7 {
-			log.Debugf("prism: can't estimate position of %s, time difference too big (%d days)", m.PhotoUID, -1*days)
+			log.Debugf("prism: can't estimate position of %s, %d days time difference", m.PhotoUID, -1*days)
 			return
 		} else if days > -7 {
-			log.Debugf("prism: can't estimate position of %s, time difference too big (%d days)", m.PhotoUID, days)
+			log.Debugf("prism: can't estimate position of %s, %d days time difference", m.PhotoUID, days)
 			return
 		}
 

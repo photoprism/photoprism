@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -118,6 +119,16 @@ func (m *Folder) SetValuesFromPath() {
 
 		m.FolderTitle = txt.Clip(s, txt.ClipDefault)
 	}
+}
+
+// Slug returns a slug based on the folder title.
+func (m *Folder) Slug() string {
+	return slug.Make(m.FolderTitle)
+}
+
+// Title returns a human readable folder title.
+func (m *Folder) Title() string {
+	return m.FolderTitle
 }
 
 // Saves the complete entity in the database.

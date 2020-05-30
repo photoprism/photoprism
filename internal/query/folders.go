@@ -37,3 +37,18 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders Fol
 
 	return folders, nil
 }
+
+// AlbumFolders returns folders that should be added as album.
+func AlbumFolders(threshold int) (folders Folders, err error) {
+	db := UnscopedDb().LogMode(true).Table("folders").
+		Select("folders.*, COUNT(photos.id) AS photo_count").
+		Joins("JOIN photos ON photos.photo_path = folders.path AND photos.deleted_at IS NULL AND photos.photo_quality >= 3").
+		Group("folders.path").
+		Having("photo_count >= ?", threshold)
+
+	if err := db.Scan(&folders).Error; err != nil {
+		return folders, err
+	}
+
+	return folders, nil
+}

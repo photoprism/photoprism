@@ -10,6 +10,7 @@ func CreateTestFixtures() {
 	CreateAccountFixtures()
 	CreateLinkFixtures()
 	CreatePhotoAlbumFixtures()
+	CreateFolderFixtures()
 	CreateFileFixtures()
 	CreateKeywordFixtures()
 	CreatePhotoKeywordFixtures()

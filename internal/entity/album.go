@@ -70,8 +70,30 @@ func NewAlbum(albumTitle, albumType string) *Album {
 	return result
 }
 
-// NewMoment creates a new moment.
-func NewMoment(albumTitle, albumSlug, albumFilter string) *Album {
+// NewFolderAlbum creates a new folder album.
+func NewFolderAlbum(albumTitle, albumSlug, albumFilter string) *Album {
+	if albumTitle == "" || albumSlug == "" || albumFilter == "" {
+		return nil
+	}
+
+	now := time.Now().UTC()
+
+	result := &Album{
+		AlbumUID:    rnd.PPID('a'),
+		AlbumOrder:  SortOrderOldest,
+		AlbumType:   TypeFolder,
+		AlbumTitle:  albumTitle,
+		AlbumSlug:   albumSlug,
+		AlbumFilter: albumFilter,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}
+
+	return result
+}
+
+// NewMomentsAlbum creates a new moment.
+func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	if albumTitle == "" || albumSlug == "" || albumFilter == "" {
 		return nil
 	}
@@ -92,8 +114,8 @@ func NewMoment(albumTitle, albumSlug, albumFilter string) *Album {
 	return result
 }
 
-// NewMonth creates a new month album.
-func NewMonth(albumTitle, albumSlug string, year, month int) *Album {
+// NewMonthAlbum creates a new month album.
+func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	if albumTitle == "" || albumSlug == "" || year == 0 || month == 0 {
 		return nil
 	}
@@ -186,10 +208,10 @@ func (m *Album) Create() error {
 }
 
 // FindAlbum finds a matching album or returns nil.
-func FindAlbum(slug string) *Album {
+func FindAlbum(slug, albumType string) *Album {
 	result := Album{}
 
-	if err := Db().Where("album_slug = ?", slug).First(&result).Error; err != nil {
+	if err := Db().Where("album_slug = ? AND album_type = ?", slug, albumType).First(&result).Error; err != nil {
 		return nil
 	}
 

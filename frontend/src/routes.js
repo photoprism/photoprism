@@ -42,7 +42,7 @@ export default [
     },
     {
         name: "moment",
-        path: "/moment/:uid",
+        path: "/moments/:uid",
         component: AlbumPhotos,
         meta: {title: "Moments", auth: true},
     },
@@ -68,7 +68,7 @@ export default [
     },
     {
         name: "month",
-        path: "/month/:uid",
+        path: "/months/:uid",
         component: AlbumPhotos,
         meta: {title: "Months", auth: true},
     },
@@ -81,7 +81,7 @@ export default [
     },
     {
         name: "folder",
-        path: "/folder/:uid",
+        path: "/folders/:uid",
         component: AlbumPhotos,
         meta: {title: "Folders", auth: true},
     },
