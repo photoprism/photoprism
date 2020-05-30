@@ -87,6 +87,18 @@ func AlbumCoverByUID(albumUID string) (file entity.File, err error) {
 	return file, nil
 }
 
+// AlbumPhotos returns up to count photos from an album.
+func AlbumPhotos(a entity.Album, count int) (results PhotoResults, err error) {
+	results, _, err = PhotoSearch(form.PhotoSearch{
+		Album:  a.AlbumUID,
+		Filter: a.AlbumFilter,
+		Count:  count,
+		Offset: 0,
+	})
+
+	return results, err
+}
+
 // AlbumSearch searches albums based on their name.
 func AlbumSearch(f form.AlbumSearch) (results []AlbumResult, err error) {
 	if err := f.ParseQueryString(); err != nil {

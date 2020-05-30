@@ -3,6 +3,7 @@ package query
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	form "github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
 )
@@ -41,6 +42,21 @@ func TestAlbumThumbByUID(t *testing.T) {
 		assert.Error(t, err, "record not found")
 		t.Log(file)
 	})
+}
+
+func TestAlbumPhotos(t *testing.T) {
+	t.Run("search with string", func(t *testing.T) {
+		results, err := AlbumPhotos(entity.AlbumFixtures.Get("april-1990"), 2)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(results) < 2 {
+			t.Errorf("at least 2 results expected: %d", len(results))
+		}
+	})
+
 }
 
 func TestAlbums(t *testing.T) {

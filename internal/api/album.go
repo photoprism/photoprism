@@ -356,11 +356,7 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		p, _, err := query.PhotoSearch(form.PhotoSearch{
-			Album:  a.AlbumUID,
-			Count:  10000,
-			Offset: 0,
-		})
+		p, err := query.AlbumPhotos(a, 10000)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})

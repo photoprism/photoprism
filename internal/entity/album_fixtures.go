@@ -74,6 +74,24 @@ var AlbumFixtures = AlbumMap{
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
 		DeletedAt:        nil,
 	},
+	"april-1990": {
+		ID:               1000003,
+		CoverUID:         "",
+		AlbumUID:         "at1lxuqipogaaba1",
+		AlbumSlug:        "april-1990",
+		AlbumType:        TypeFolder,
+		AlbumTitle:       "April 1990",
+		AlbumDescription: "Spring is the time of year when many things change.",
+		AlbumNotes:       "Thunderstorms cause most of the severe spring weather.",
+		AlbumOrder:       "oldest",
+		AlbumTemplate:    "",
+		AlbumFilter:      "path:\"1990/04\"",
+		AlbumFavorite:    false,
+		Links:            []Link{},
+		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
+		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
+		DeletedAt:        nil,
+	},
 }
 
 // CreateAlbumFixtures inserts known entities into the database for testing.
