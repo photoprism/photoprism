@@ -37,13 +37,13 @@ export class Model {
                 let val;
                 if (defaults.hasOwnProperty(key)) {
                     switch (typeof defaults[key]) {
-                        case "string":
-                            if(this[key] === null || this[key] === undefined) {
-                                val = "";
-                            }  else {
-                                val = this[key];
-                            }
-                            break;
+                    case "string":
+                        if(this[key] === null || this[key] === undefined) {
+                            val = "";
+                        }  else {
+                            val = this[key];
+                        }
+                        break;
                     case "bigint":
                     case "number":
                         val = parseFloat(this[key]);

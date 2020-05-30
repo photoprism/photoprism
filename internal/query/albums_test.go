@@ -56,7 +56,6 @@ func TestAlbumPhotos(t *testing.T) {
 			t.Errorf("at least 2 results expected: %d", len(results))
 		}
 	})
-
 }
 
 func TestAlbums(t *testing.T) {
