@@ -96,13 +96,15 @@ func TestAlbums(t *testing.T) {
 	t.Run("empty query", func(t *testing.T) {
 		query := form.NewAlbumSearch("order:slug")
 
-		result, err := AlbumSearch(query)
+		results, err := AlbumSearch(query)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 3, len(result))
+		if len(results) < 3 {
+			t.Errorf("at least 3 results expected: %d", len(results))
+		}
 	})
 	t.Run("search with invalid query string", func(t *testing.T) {
 		query := form.NewAlbumSearch("xxx:bla")
