@@ -44,6 +44,7 @@
                                         color="secondary-dark"
                                         browser-autocomplete="off"
                                         v-model="model.Title"
+                                        class="input-title"
                                 ></v-text-field>
                             </v-flex>
 
@@ -57,6 +58,7 @@
                                         readonly
                                         hide-details
                                         color="secondary-dark"
+                                        class="input-local-time"
                                 ></v-text-field>
 
                             </v-flex>
@@ -77,6 +79,7 @@
                                                 hide-details
                                                 v-on="on"
                                                 color="secondary-dark"
+                                                class="input-utc-time"
                                         ></v-text-field>
                                     </template>
                                     <v-time-picker
@@ -105,6 +108,7 @@
                                                 hide-details
                                                 v-on="on"
                                                 color="secondary-dark"
+                                                class="input-utc-date"
                                         ></v-text-field>
                                     </template>
                                     <v-date-picker
@@ -125,7 +129,8 @@
                                         item-value="ID"
                                         item-text="Name"
                                         v-model="model.TimeZone"
-                                        :items="timeZones">
+                                        :items="timeZones"
+                                        class="input-timezone">
                                 </v-autocomplete>
                             </v-flex>
 
@@ -138,6 +143,7 @@
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Lat"
+                                        class="input-latitude"
                                 ></v-text-field>
                             </v-flex>
 
@@ -150,6 +156,7 @@
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Lng"
+                                        class="input-longitude"
                                 ></v-text-field>
                             </v-flex>
 
@@ -162,6 +169,7 @@
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Altitude"
+                                        class="input-altitude"
                                 ></v-text-field>
                             </v-flex>
 
@@ -175,7 +183,8 @@
                                         item-value="Code"
                                         item-text="Name"
                                         v-model="model.Country"
-                                        :items="countries">
+                                        :items="countries"
+                                        class="input-country">
                                 </v-select>
                             </v-flex>
 
@@ -189,7 +198,8 @@
                                         item-value="ID"
                                         item-text="Name"
                                         v-model="model.CameraID"
-                                        :items="cameraOptions">
+                                        :items="cameraOptions"
+                                        class="input-camera">
                                 </v-select>
                             </v-flex>
 
@@ -202,6 +212,7 @@
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Iso"
+                                        class="input-iso"
                                 ></v-text-field>
                             </v-flex>
 
@@ -214,6 +225,7 @@
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Exposure"
+                                        class="input-exposure"
                                 ></v-text-field>
                             </v-flex>
 
@@ -227,7 +239,8 @@
                                         item-value="ID"
                                         item-text="Name"
                                         v-model="model.LensID"
-                                        :items="lensOptions">
+                                        :items="lensOptions"
+                                        class="input-lens">
                                 </v-select>
                             </v-flex>
 
@@ -240,6 +253,7 @@
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.FNumber"
+                                        class="input-fnumber"
                                 ></v-text-field>
                             </v-flex>
 
@@ -252,6 +266,7 @@
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.FocalLength"
+                                        class="input-focal-length"
                                 ></v-text-field>
                             </v-flex>
 
@@ -267,6 +282,7 @@
                                         :rows="1"
                                         color="secondary-dark"
                                         v-model="model.Details.Subject"
+                                        class="input-subject"
                                 ></v-textarea>
                             </v-flex>
 
@@ -280,6 +296,7 @@
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Details.Artist"
+                                        class="input-artist"
                                 ></v-text-field>
                             </v-flex>
 
@@ -293,6 +310,7 @@
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Details.Copyright"
+                                        class="input-copyright"
                                 ></v-text-field>
                             </v-flex>
 
@@ -308,6 +326,7 @@
                                         :rows="1"
                                         color="secondary-dark"
                                         v-model="model.Details.License"
+                                        class="input-license"
                                 ></v-textarea>
                             </v-flex>
 
@@ -322,6 +341,7 @@
                                         :rows="1"
                                         color="secondary-dark"
                                         v-model="model.Description"
+                                        class="input-description"
                                 ></v-textarea>
                             </v-flex>
 
@@ -336,6 +356,7 @@
                                         :rows="1"
                                         color="secondary-dark"
                                         v-model="model.Details.Keywords"
+                                        class="input-keywords"
                                 ></v-textarea>
                             </v-flex>
 
@@ -350,6 +371,7 @@
                                         :rows="1"
                                         color="secondary-dark"
                                         v-model="model.Details.Notes"
+                                        class="input-notes"
                                 ></v-textarea>
                             </v-flex>
 
