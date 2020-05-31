@@ -11,7 +11,7 @@ describe("common/config", () => {
 
     it("should get all config values",  () => {
         const storage = window.localStorage;
-        const values = {name: "testConfig", year: "2300"};
+        const values = {siteTitle: "Foo", name: "testConfig", year: "2300"};
 
         const config = new Config(storage, values);
         const result = config.getValues();
@@ -20,8 +20,8 @@ describe("common/config", () => {
 
     it("should set multiple config values",  () => {
         const storage = window.localStorage;
-        const values = {country: "Germany", city: "Hamburg"};
-        const newValues = {new: "xxx", city: "Berlin"};
+        const values = {siteTitle: "Foo", country: "Germany", city: "Hamburg"};
+        const newValues = {siteTitle: "Foo", new: "xxx", city: "Berlin"};
         const config = new Config(storage, values);
         assert.equal(config.values.new, undefined);
         assert.equal(config.values.city, "Hamburg");
@@ -37,11 +37,12 @@ describe("common/config", () => {
 
     it("should store values",  () => {
         const storage = window.localStorage;
-        const values = {country: "Germany", city: "Hamburg"};
+        const values = {siteTitle: "Foo", country: "Germany", city: "Hamburg"};
         const config = new Config(storage, values);
         assert.equal(config.storage["config"], undefined);
         config.storeValues();
-        assert.equal(config.storage["config"], "{\"country\":\"Germany\",\"city\":\"Hamburg\"}");
+        const expected = '{"siteTitle":"Foo","country":"Germany","city":"Hamburg"}';
+        assert.equal(config.storage["config"], expected);
     });
 
     it("should set and get single config value",  () => {

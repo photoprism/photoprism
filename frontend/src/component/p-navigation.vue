@@ -4,7 +4,7 @@
                    @click.stop="showNavigation()">
             <v-toolbar-side-icon class="p-navigation-show"></v-toolbar-side-icon>
 
-            <v-toolbar-title class="p-navigation-title">{{ config.siteTitle }}</v-toolbar-title>
+            <v-toolbar-title class="p-navigation-title">{{ page.title }}</v-toolbar-title>
 
             <v-spacer></v-spacer>
 

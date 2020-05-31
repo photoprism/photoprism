@@ -13,7 +13,12 @@
             </v-tab>
 
             <v-tab id="tab-import" :disabled="readonly || !$config.feature('import')" ripple @click="changePath('/library/import')">
-                <translate key="Copy">Copy</translate>
+                <template v-if="config.settings.import.move">
+                    <translate key="Move">Move</translate>
+                </template>
+                <template v-else>
+                    <translate key="Copy">Copy</translate>
+                </template>
             </v-tab>
 
             <v-tab id="tab-logs" ripple @click="changePath('/library/logs')" v-if="$config.feature('logs')">
@@ -41,6 +46,7 @@
     import tabImport from "pages/library/import.vue";
     import tabOriginals from "pages/library/originals.vue";
     import tabLogs from "pages/library/logs.vue";
+    import Settings from "../model/settings";
 
     export default {
         name: 'p-page-library',
@@ -54,6 +60,7 @@
         },
         data() {
             return {
+                config: this.$config.values,
                 readonly: this.$config.get("readonly"),
                 active: this.tab,
             }

@@ -103,7 +103,7 @@ router.afterEach((to) => {
         window.document.title = config.values.siteTitle + ": " + to.meta.title;
     } else {
         config.page.title = "";
-        window.document.title = config.values.siteTitle;
+        window.document.title = config.values.siteTitle + ": " + config.values.siteCaption;
     }
 });
 

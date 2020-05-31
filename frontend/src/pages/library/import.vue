@@ -6,7 +6,8 @@
                     <span v-if="fileName">{{ $gettext('Importing') }} {{fileName}}...</span>
                     <span v-else-if="busy">{{ $gettext('Importing files to originals...') }}</span>
                     <span v-else-if="completed">{{ $gettext('Done.') }}</span>
-                    <span v-else>{{ $gettext('Press button to start copying to originals...') }}</span>
+                    <span v-else-if="settings.import.move">{{ $gettext('Press button to start moving...') }}</span>
+                    <span v-else>{{ $gettext('Press button to start copying...') }}</span>
                 </p>
 
                 <v-autocomplete
