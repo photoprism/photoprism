@@ -119,13 +119,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "assets-path",
-		Usage:  "assets `PATH` for static files",
+		Usage:  "assets `PATH` for static files like templates and TensorFlow models",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_ASSETS_PATH",
 	},
 	cli.StringFlag{
 		Name:   "storage-path",
-		Usage:  "storage `PATH` for generated files",
+		Usage:  "storage `PATH` for generated files like cache and index",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_STORAGE_PATH",
 	},

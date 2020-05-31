@@ -211,20 +211,38 @@ func (c *Config) CachePath() string {
 	return fs.Abs(c.params.CachePath)
 }
 
-// StoragePath returns the path for generated files.
+// StoragePath returns the path for generated files like cache and index.
 func (c *Config) StoragePath() string {
 	if c.params.StoragePath == "" {
-		if usr, _ := user.Current(); usr.HomeDir != "" {
-			p := filepath.Join(usr.HomeDir, fs.HiddenPath, "storage")
+		const dirName = "storage"
 
-			if fs.PathExists(p) {
+		// Default directories.
+		originalsDir := fs.Abs(filepath.Join(c.OriginalsPath(), fs.HiddenPath, dirName))
+		storageDir := fs.Abs(dirName)
+
+		// Find existing directories.
+		if fs.PathExists(originalsDir) && !c.ReadOnly() {
+			return originalsDir
+		} else if fs.PathExists(storageDir) && c.ReadOnly() {
+			return storageDir
+		}
+
+		// Use .photoprism in home directory?
+		if usr, _ := user.Current(); usr.HomeDir != "" {
+			p := fs.Abs(filepath.Join(usr.HomeDir, fs.HiddenPath, dirName))
+
+			if fs.PathExists(p) || c.ReadOnly() {
 				return p
 			}
 		}
 
-		if !c.ReadOnly() {
-			return filepath.Join(c.OriginalsPath(), fs.HiddenPath, "storage")
+		// Fallback directory in case nothing else works.
+		if c.ReadOnly() {
+			return fs.Abs(filepath.Join(fs.HiddenPath, dirName))
 		}
+
+		// Store cache and index in "originals/.photoprism/storage".
+		return originalsDir
 	}
 
 	return fs.Abs(c.params.StoragePath)
