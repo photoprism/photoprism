@@ -132,6 +132,21 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 	return nil
 }
 
+// String returns an entity identifier as string for use in logs.
+func (m *Photo) String() string {
+	if m.PhotoUID == "" {
+		if m.PhotoName != "" {
+			return txt.Quote(m.PhotoName)
+		} else if m.OriginalName != "" {
+			return txt.Quote(m.OriginalName)
+		}
+
+		return "[unknown photo]"
+	}
+
+	return "uid " + txt.Quote(m.PhotoUID)
+}
+
 // Save the entity in the database.
 func (m *Photo) Save() error {
 	if !m.HasID() {
@@ -417,7 +432,7 @@ func (m *Photo) HasCountry() bool {
 
 // UnknownCountry checks if the photo has an unknown country.
 func (m *Photo) UnknownCountry() bool {
-	return m.PhotoCountry == "" || m.PhotoCountry == UnknownCountry.ID
+	return m.CountryCode() == UnknownCountry.ID
 }
 
 // NoTitle checks if the photo has no Title

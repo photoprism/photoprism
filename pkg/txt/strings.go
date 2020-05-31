@@ -12,7 +12,6 @@ func ContainsNumber(s string) bool {
 	return ContainsNumberRegexp.MatchString(s)
 }
 
-
 // Bool casts a string to bool.
 func Bool(s string) bool {
 	s = strings.TrimSpace(s)

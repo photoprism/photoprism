@@ -6,11 +6,52 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// EstimatePosition updates the photo with an estimated geolocation if possible.
-func (m *Photo) EstimatePosition() {
+// EstimateCountry updates the photo with an estimated country if possible.
+func (m *Photo) EstimateCountry() {
+	if m.HasLatLng() || m.HasLocation() || m.HasPlace() || m.HasCountry() && m.LocSrc != SrcAuto && m.LocSrc != SrcEstimate {
+		// Do nothing.
+		return
+	}
+
+	unknown := UnknownCountry.ID
+	countryCode := unknown
+
+	if code := txt.CountryCode(m.PhotoTitle); code != unknown {
+		countryCode = code
+	}
+
+	if countryCode == unknown && fs.NonCanonical(m.PhotoName) {
+		if code := txt.CountryCode(m.PhotoName); code != unknown {
+			countryCode = code
+		} else if code := txt.CountryCode(m.PhotoPath); code != unknown {
+			countryCode = code
+		}
+	}
+
+	if countryCode == unknown && m.OriginalName != "" && fs.NonCanonical(m.OriginalName) {
+		if code := txt.CountryCode(m.OriginalName); code != UnknownCountry.ID {
+			countryCode = code
+		}
+	}
+
+	if countryCode != unknown {
+		m.PhotoCountry = countryCode
+		m.LocSrc = SrcEstimate
+		log.Debugf("photo: probable country for %s is %s", m, txt.Quote(m.CountryName()))
+	}
+}
+
+// EstimatePlace updates the photo with an estimated place and country if possible.
+func (m *Photo) EstimatePlace() {
+	if m.HasLatLng() || m.HasLocation() || m.HasPlace() && m.LocSrc != SrcAuto && m.LocSrc != SrcEstimate {
+		// Do nothing.
+		return
+	}
+
 	var recentPhoto Photo
 	var dateExpr string
 
@@ -28,26 +69,25 @@ func (m *Photo) EstimatePosition() {
 		Where("place_id <> '' AND place_id <> 'zz' AND loc_src <> '' AND loc_src <> ?", SrcEstimate).
 		Order(gorm.Expr(dateExpr, m.TakenAt)).
 		Preload("Place").First(&recentPhoto).Error; err != nil {
-		log.Errorf("photo: %s", err.Error())
+		log.Errorf("photo: %s (estimate place)", err.Error())
+		m.EstimateCountry()
 	} else {
 		if days := recentPhoto.TakenAt.Sub(m.TakenAt) / (time.Hour * 24); days < -7 {
-			log.Debugf("prism: can't estimate position of %s, %d days time difference", m.PhotoUID, -1*days)
-			return
+			log.Debugf("photo: can't estimate position of %s, %d days time difference", m, -1*days)
 		} else if days > -7 {
-			log.Debugf("prism: can't estimate position of %s, %d days time difference", m.PhotoUID, days)
-			return
-		}
-
-		if recentPhoto.HasPlace() {
+			log.Debugf("photo: can't estimate position of %s, %d days time difference", m, days)
+		} else if recentPhoto.HasPlace() {
 			m.Place = recentPhoto.Place
 			m.PlaceID = recentPhoto.PlaceID
 			m.PhotoCountry = recentPhoto.PhotoCountry
 			m.LocSrc = SrcEstimate
-			log.Debugf("prism: approximate position of %s is %s", m.PhotoUID, recentPhoto.PlaceID)
+			log.Debugf("photo: approximate position of %s is %s (id %s)", m, txt.Quote(m.CountryName()), recentPhoto.PlaceID)
 		} else if recentPhoto.HasCountry() {
 			m.PhotoCountry = recentPhoto.PhotoCountry
 			m.LocSrc = SrcEstimate
-			log.Debugf("prism: probable country for %s is %s", m.PhotoUID, recentPhoto.PhotoCountry)
+			log.Debugf("photo: probable country for %s is %s", m, txt.Quote(m.CountryName()))
+		} else {
+			m.EstimateCountry()
 		}
 	}
 }
@@ -61,9 +101,7 @@ func (m *Photo) Maintain() error {
 	maintained := time.Now()
 	m.MaintainedAt = &maintained
 
-	if m.UnknownCountry() && m.LocSrc == SrcAuto || m.UnknownLocation() && m.LocSrc == SrcEstimate {
-		m.EstimatePosition()
-	}
+	m.EstimatePlace()
 
 	labels := m.ClassifyLabels()
 

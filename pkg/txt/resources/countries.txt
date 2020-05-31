@@ -1,32 +1,27 @@
 AD:Andorra
-AD:Principality of Andorra
-FR:France (land mass)
+FR:France
 FR:Frankreich
 SK:Slovakia
 AT:Austria
+AT:Wörthersee
 AT:Österreich
 AT:Vienna
 AT:Salzburg
 AT:Klagenfurt
 AT:Innsbruck
-AT:Republic of Austria
 HU:Hungary
-GE:Georgia
 GE:Republic of Georgia
 VA:Vatican City
-VA:Vatican
 PL:Poland
+PL:Warsaw
+PL:Warschau
 KH:Cambodia
-LA:Laos
+LA:Vientiane
 LA:Lao People's Democratic Republic
 VN:Vietnam
-VN:Socialist Republic of Vietnam
 DK:Denmark
-DK:Kingdom of Denmark
 MM:Myanmar
-MM:Republic of the Union of Myanmar
 CZ:Czechia
-CZ:Czech Republic
 CZ:Czech
 CH:Zurich
 CH:Zürich
@@ -37,28 +32,24 @@ CH:Lucerne
 CH:Luzern
 CH:Switzerland
 CH:Swiss
-CH:Swiss Confederation
 CH:Schweiz
 BE:Belgium
 SE:Sweden
-FO:Faroe Islands
+SE:Sverige
+SE:Schweden
+SE:Gotland
+SE:Öland
+FO:Faroe
 AL:Albania
-AL:Republic of Albania
 MK:Macedonia
-MK:North Macedonia
-MK:Republic of North Macedonia
 ME:Montenegro
 FI:Finland
-FI:Republic of Finland
 SM:San Marino
 MD:Moldova
 BY:Belarus
 BR:Brazil
 BR:Brasil
-BR:Federative Republic of Brazil
 RU:Russia
-RU:Russia (land mass)
-RU:Russian Federation
 UA:Ukraine
 GB:United Kingdom
 GB:London
@@ -67,20 +58,26 @@ GB:Edinburgh
 GB:England
 GB:U.K.
 GB:Northern Ireland
-GB:United Kingdom of Great Britain and Northern Ireland
 GB:Great Britain
+GB:Buckingham Palace
 IM:Isle of Man
 IE:Ireland
 IE:Dublin
-DE:Federal Republic of Germany (land mass)
-DE:Federal Republic of Germany
-DE:DDR
+DE:Deutsche Demokratische
 DE:Deutschland
 DE:Germany
 DE:Aachen
 DE:Steglitz
 DE:Friedrichshain
 DE:Berghain
+DE:RAW Gelände
+DE:Bundestag
+DE:Grunewald
+DE:Charlottenburg
+DE:Wilmersdorf
+DE:Tempelhof
+DE:Schönefeld
+DE:Reichstag
 DE:Kreuzberg
 DE:Ostsee
 DE:Nordsee
@@ -90,7 +87,15 @@ DE:Pfalz
 DE:Mannheim
 DE:Heidelberg
 DE:Stuttgart
+DE:Bisingen
+DE:Balingen
+DE:Hechingen
+DE:Swabian Jura
+DE:Schwäbische Alb
+DE:Albtrauf
 DE:München
+DE:Württemberg
+DE:Bayern
 DE:Erfurt
 DE:Leipzig
 DE:Schwerin
@@ -99,7 +104,6 @@ DE:Dresden
 DE:Nürnberg
 DE:Munich
 DE:Frankfurt
-DE:Bayern
 DE:Brandenburg
 DE:Hamburg
 DE:Tübingen
@@ -111,18 +115,16 @@ DE:Cologne
 DE:Saarland
 DE:Saarbrücken
 LV:Latvia
+LV:Lettland
 LT:Lithuania
-LT:Republic of Lithuania
-LT:Lithuania (land mass)
+LT:Litauen
 EE:Estonia
-EE:Republic of Estonia
 AU:Australia
 AU:Melbourne
 AU:Perth
 AU:Tasmania
 AU:Tasmanien
 AU:Sydney
-AU:Commonwealth of Australia
 ZA:Capetown
 ZA:Durban
 ZA:Pretoria
@@ -130,22 +132,20 @@ ZA:Kapstadt
 ZA:Johannesburg
 ZA:South Africa
 ZA:Republic of South Africa
-ZA:RSA
 SZ:Eswatini
 SZ:Kingdom of Eswatini
 SZ:Swaziland
 RO:Romania
 EC:Ecuador
 MX:Mexico
-MX:United Mexican States
-MX:UMS
 CO:Colombia
-CO:Republic of Colombia
 US:California
 US:Washington
+US:The White House
 US:New York
 US:NYC
 US:Florida
+US:Cape Canaveral
 US:San Francisco
 US:Oakland
 US:San Diego
@@ -174,10 +174,8 @@ US:USA
 US:U.S.A.
 US:U.S.
 US:United States
-US:United States of America
 MN:Mongolia
 CL:Chile
-CL:Republic of Chile
 RW:Rwanda
 TR:Turkey
 KG:Kyrgyzstan
@@ -190,8 +188,6 @@ LB:Lebanon
 BG:Bulgaria
 GR:Greece
 GR:Hellas
-GR:Hellenic Republic
-GR:Hellenic
 KP:North Korea
 KP:Democratic People's Republic of Korea
 KP:DPRK
@@ -218,9 +214,7 @@ SD:Sudan
 CF:Central African Republic
 GQ:Equatorial Guinea
 GA:Gabon
-CG:Congo-Brazzaville
 CG:Congo Brazzaville
-CD:Democratic Republic of the Congo
 CD:Congo
 UG:Uganda
 KE:Kenya
@@ -229,18 +223,13 @@ ET:Ethiopia
 DJ:Djibouti
 CM:Cameroon
 NA:Namibia
-NA:Republic of Namibia
 AO:Angola
 BI:Burundi
 TZ:Tanzania
-TZ:United Republic of Tanzania
 ZM:Zambia
-ZM:Republic of Zambia
 ZW:Zimbabwe
-ZW:Republic of Zimbabwe
 ZW:Rhodesia
 MZ:Mozambique
-MZ:Republic of Mozambique
 MW:Malawi
 UZ:Uzbekistan
 TJ:Tajikistan
@@ -250,37 +239,24 @@ SI:Slovenia
 TM:Turkmenistan
 BO:Bolivia
 GG:Guernsey
-GG:Guernsey (land mass)
 CN:China
 CN:Shanghai
 CN:上海市
 CN:Peking
 CN:北京市
 CN:Beijing
-CN:People's Republic of China
-CN:People's Republic of China (PRC)
-CN:PRC
 VE:Venezuela
-VE:Bolivarian Republic of Venezuela
-VG:British Virgin Islands
-VG:Virgin Islands
+VG:Virgin Island
 AR:Argentina
-AR:Argentine Republic
 AR:Argentine
 UY:Uruguay
 PY:Paraguay
 SR:Suriname
 GY:Guyana
-GY:The Co-operative Republic of Guyana
-GY:Republic of Guyana
 NI:Nicaragua
-NI:Republic of Nicaragua
 CR:Costa Rica
-CR:Republic of Costa Rica
 PA:Panama
-PA:Republic of Panama
 HN:Honduras
-HN:Republic of Honduras
 BZ:Belize
 PE:Peru
 PT:Portugal
@@ -288,53 +264,46 @@ ER:Eritrea
 IS:Iceland
 IS:Ísland
 AF:Afghanistan
-AF:Islamic Republic of Afghanistan
 IN:India
-IN:Republic of India
+IN:Indien
 ID:Indonesia
-ID:Republic of Indonesia
 IQ:Iraq
-IQ:Republic of Iraq
+IQ:Irak
 IR:Iran
 IR:Persia
-IR:Islamic Republic of Iran
 YE:Yemen
-YE:Republic of Yemen
 QA:Qatar
-QA:State of Qatar
-QA:Qatar (land mass)
 KW:Kuwait
-KW:State of Kuwait
 OM:Oman
-OM:Sultanate of Oman
 TL:East Timor
 PK:Pakistan
 SA:Saudi Arabia
-SA:Kingdom of Saudi Arabia
-SA:KSA
 KR:South Korea
-KR:Republic of Korea
-KR:Korea
 AE:United Arab Emirates
 AE:Emirates
-AE:UAE
 CY:Cyprus
-CY:Republic of Cyprus
 DM:Dominica
-DO:Dominican Republic
 HT:Haiti
-HT:Republic of Haiti
 HT:Hayti
 CU:Cuba
-CU:Republic of Cuba
 PG:Papua New Guinea
 AM:Armenia
 AM:Republic of Armenia
 AZ:Azerbaijan
 MT:Malta
 IT:Italy
-IT:Italian Republic
-JE:Jersey
+IT:Milan
+IT:Mailand
+IT:Neapel
+IT:Palermo
+IT:Genua
+IT:Florenz
+IT:Bologna
+IT:Venezia
+IT:Venedig
+IT:Italien
+JE:Jersey Island
+JE:Bailiwick of Jersey
 BH:Bahrain
 JP:Japan
 JP:Tokyo
@@ -342,72 +311,61 @@ JP:東京都
 JP:Fukushima
 JP:Nippon
 JP:Nihon
-PH:Philippines
 PH:Pilipinas
 PH:Filipinas
-PH:Republic of the Philippines
+PH:Philippines
 MG:Madagascar
 TW:Taiwan
-TW:Republic of China
 TW:Taipei
 CV:Cape Verde
 KM:Comoros
 MU:Mauritius
-MU:Republic of Mauritius
-ST:Sao Tome and Principe
-ST:São Tomé and Príncipe
-ST:Democratic Republic of São Tomé and Príncipe
+ST:São Tomé
+ST:Príncipe
 SC:Seychelles
+SC:Seychellen
 MV:Maldives
 SG:Singapore
 LK:Sri Lanka
-KN:Saint Kitts and Nevis
 KN:Saint Kitts
 KN:Nevis
-AG:Antigua and Barbuda
 AG:Antigua
 AG:Barbuda
 MS:Montserrat
-BS:The Bahamas
 BS:Bahamas
-TC:Turks and Caicos Islands
-TC:Turks
-TC:Caicos Islands
+TC:Turks Island
+TC:Caicos Island
 BB:Barbados
 VC:Saint Vincent
-VC:Saint Vincent and the Grenadines
 GD:Grenada
 LC:Saint Lucia
 JM:Jamaica
-TT:Trinidad and Tobago
 TT:Trinidad
 TT:Tobago
 NZ:New Zealand
 KI:Kiribati
 FJ:Fiji
-FJ:Republic of Fiji
-FJ:Fiji Islands
-FJ:Bligh Islands
-MH:Marshall Islands
-MH:Republic of the Marshall Islands
-FM:Federated States of Micronesia
-FM:States of Micronesia
+FJ:Bligh Island
+MH:Marshall Island
 FM:Micronesia
 NR:Nauru
-NR:Republic of Nauru
 PW:Palau
-PW:Republic of Palau
-PL:Poland (land mass)
-BE:Belgium (land mass)
-SI:Slovenia (land mass)
 MC:Monaco
-MC:Principality of Monaco
 LI:Liechtenstein
-LI:Principality of Liechtenstein
-ZA:South Africa (land mass)
 GI:Gibraltar
 ES:Spain
-ES:Kingdom of Spain
+ES:Spanien
+ES:Andalusien
+ES:Andalusia
+ES:Canarias
+ES:Granada
+ES:Madrid
+ES:Barcelona
+ES:Córdoba
+ES:Seville
+ES:Málaga
+ES:Bilbao
+ES:Valencia
 ES:España
 ES:Espana
 CA:Canada
@@ -420,6 +378,7 @@ CA:Ottawa
 CA:Quebec
 CA:Ontario
 CA:Alberta
+CA:Niagara Falls
 IL:Israel
 IL:State of Israel
 IL:Holy Land
@@ -430,81 +389,55 @@ SV:El Salvador
 GT:Guatemala
 NU:Niue
 SS:South Sudan
-JE:Jersey (land mass)
 RS:Serbia
-RS:Republic of Serbia
-SB:Solomon Islands
+SB:Solomon Island
 WS:Samoa
-WS:Independent State of Samoa
 BW:Gaborone
 BW:Botswana
 BW:Botsuana
-BW:Republic of Botswana
-SH:Saint Helena, Ascension and Tristan da Cunha
 SH:Saint Helena
 SH:Ascension
 SH:Tristan da Cunha
-GS:South Georgia and the South Sandwich Islands
-GS:South Georgia
-GS:South Sandwich Islands
-GS:South Sandwich
-BM:Bermuda
+GS:South Sandwich Island
+BM:Island of Bermuda
 BM:Islands of Bermuda
-BM:Bermuda Islands
-IO:British Indian Ocean Territory
-IO:The British Indian Ocean Territory
+BM:Bermuda Island
+IO:British Indian Ocean
+IO:British Indian Territory
 TH:Thailand
-TH:Kingdom of Thailand
-TH:Siam
 XK:Kosovo
-XK:Republic of Kosovo
 LS:Lesotho
-LS:Kingdom of Lesotho
 BN:Brunei
-BN:Nation of Brunei, the Abode of Peace
-BN:Nation of Brunei
 MY:Malaysia
-MY:Federation of Malaysia
 LU:Luxembourg
-LU:Grand Duchy of Luxembourg
 AI:Anguilla
 VU:Vanuatu
 TV:Tuvalu
 GL:Greenland
-CK:Cook Islands
-CK:Cook
-KY:Cayman Islands
-KY:Cayman
-FK:Falkland Islands
-FK:Falkland
-PN:Pitcairn Islands
-PN:Pitcairn
+CK:Cook Island
+KY:Cayman Island
+FK:Falkland Island
+PN:Pitcairn Island
 TK:Tokelau
 TO:Tonga
 TO:Kingdom of Tonga
-FR:Reunion
+FR:ile de la Reunion
+FR:Reunion Island
 FR:Réunion
-FR:France
+FR:Piton de la Fournaise
+FR:Piton des Neiges
 FR:Strassburg
 FR:Strasbourg
 FR:Straßburg
 FR:Paris
-FR:French Republic
 NL:Netherlands
 NL:Holland
-TD:Chad
 TD:Republic of Chad
-BA:Bosnia and Herzegovina
-BA:Bosnia–Herzegovina
 BA:Bosnia
 BA:Herzegovina
 NO:Norway
-NO:Kingdom of Norway
+NO:Norwegen
 MA:Morocco
-MA:Kingdom of Morocco
 PS:Palestine
-PS:Palestine, State of
-PS:State of Palestine
-HM:Heard Island and McDonald Islands
+HM:McDonald Island
 HM:Heard Island
-HM:McDonald Islands

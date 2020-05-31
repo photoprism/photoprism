@@ -30,11 +30,19 @@ func (m *Photo) GetTimeZone() string {
 
 // CountryName returns the photo country name.
 func (m *Photo) CountryName() string {
-	return maps.CountryNames[m.PhotoCountry]
+	if name, ok := maps.CountryNames[m.CountryCode()]; ok {
+		return name
+	}
+
+	return UnknownCountry.CountryName
 }
 
 // CountryCode returns the photo country code.
 func (m *Photo) CountryCode() string {
+	if len(m.PhotoCountry) != 2 {
+		m.PhotoCountry = UnknownCountry.ID
+	}
+
 	return m.PhotoCountry
 }
 
