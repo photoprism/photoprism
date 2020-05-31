@@ -1,12 +1,10 @@
 package entity
 
 import (
-	"path"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/maps"
-	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
@@ -117,7 +115,7 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 	}
 
 	if m.UnknownCountry() {
-		m.PhotoCountry = txt.CountryCode(path.Join(m.PhotoPath, m.PhotoName))
+		m.EstimateCountry()
 	}
 
 	if m.HasCountry() {
