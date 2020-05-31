@@ -2,6 +2,7 @@ import Event from "pubsub-js";
 import themes from "../resources/themes.json";
 import translations from "../resources/translations.json";
 import Api from "./api";
+import {config} from "../session";
 
 class Config {
     /**
@@ -14,9 +15,7 @@ class Config {
 
         this.$vuetify = null;
         this.translations = translations;
-        this.page = {
-            title: "PhotoPrism",
-        };
+        this.page = {};
 
         if (!values) {
             console.warn("config: values are empty");
@@ -25,6 +24,7 @@ class Config {
             return;
         }
 
+        this.page.title = values.siteTitle;
         this.values = values;
         this.debug = !!values.debug;
 

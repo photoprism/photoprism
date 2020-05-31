@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -44,13 +43,7 @@ func (c *Config) DatabaseDsn() string {
 		case MySQL:
 			return "photoprism:photoprism@tcp(photoprism-db:3306)/photoprism?parseTime=true"
 		case SQLite:
-			storagePath := filepath.Join(c.ConfigPath())
-
-			if err := os.MkdirAll(storagePath, os.ModePerm); err != nil {
-				log.Errorf("config: %s (database storage path)", err.Error())
-			} else {
-				return filepath.Join(storagePath, "index.db")
-			}
+			return filepath.Join(c.StoragePath(), "index.db")
 		default:
 			log.Errorf("config: empty database dsn")
 			return ""

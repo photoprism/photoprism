@@ -86,42 +86,9 @@ func (c *Config) Init(ctx context.Context) error {
 	return c.connectToDatabase(ctx)
 }
 
-// Name returns the application name.
+// Name returns the application name ("PhotoPrism").
 func (c *Config) Name() string {
 	return c.params.Name
-}
-
-// Url returns the public server URL (default is "http://localhost:2342/").
-func (c *Config) Url() string {
-	if c.params.Url == "" {
-		return "http://localhost:2342/"
-	}
-
-	return c.params.Url
-}
-
-// Title returns the site title (default is application name).
-func (c *Config) Title() string {
-	if c.params.Title == "" {
-		return c.Name()
-	}
-
-	return c.params.Title
-}
-
-// Subtitle returns the site title.
-func (c *Config) Subtitle() string {
-	return c.params.Subtitle
-}
-
-// Description returns the site title.
-func (c *Config) Description() string {
-	return c.params.Description
-}
-
-// Author returns the site author / copyright.
-func (c *Config) Author() string {
-	return c.params.Author
 }
 
 // Version returns the application version.
@@ -132,6 +99,39 @@ func (c *Config) Version() string {
 // Copyright returns the application copyright.
 func (c *Config) Copyright() string {
 	return c.params.Copyright
+}
+
+// SiteUrl returns the public server URL (default is "http://localhost:2342/").
+func (c *Config) SiteUrl() string {
+	if c.params.SiteUrl == "" {
+		return "http://localhost:2342/"
+	}
+
+	return c.params.SiteUrl
+}
+
+// SiteTitle returns the main site title (default is application name).
+func (c *Config) SiteTitle() string {
+	if c.params.SiteTitle == "" {
+		return c.Name()
+	}
+
+	return c.params.SiteTitle
+}
+
+// SiteCaption returns a short site caption.
+func (c *Config) SiteCaption() string {
+	return c.params.SiteCaption
+}
+
+// SiteDescription returns a long site description.
+func (c *Config) SiteDescription() string {
+	return c.params.SiteDescription
+}
+
+// SiteAuthor returns the site author / copyright.
+func (c *Config) SiteAuthor() string {
+	return c.params.SiteAuthor
 }
 
 // Debug returns true if Debug mode is on.

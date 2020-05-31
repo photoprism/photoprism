@@ -10,9 +10,9 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// DisableSettings returns true if the user is not allowed to change settings.
-func (c *Config) DisableSettings() bool {
-	return c.params.DisableSettings
+// SettingsHidden returns true if the user is not allowed to change settings.
+func (c *Config) SettingsHidden() bool {
+	return c.params.SettingsHidden
 }
 
 type TemplateSettings struct {
@@ -154,7 +154,7 @@ func (c *Config) initSettings() {
 	p := c.SettingsFile()
 
 	if err := c.settings.Load(p); err != nil {
-		log.Error(err)
+		log.Info(err)
 	}
 
 	c.settings.Propagate()

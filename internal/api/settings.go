@@ -25,7 +25,7 @@ func GetSettings(router *gin.RouterGroup, conf *config.Config) {
 // POST /api/v1/settings
 func SaveSettings(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/settings", func(c *gin.Context) {
-		if conf.DisableSettings() || Unauthorized(c, conf) {
+		if conf.SettingsHidden() || Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}

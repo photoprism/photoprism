@@ -12,7 +12,7 @@ import (
 func TestNewImport(t *testing.T) {
 	conf := config.TestConfig()
 
-	tf := classify.New(conf.ResourcesPath(), conf.DisableTensorFlow())
+	tf := classify.New(conf.AssetsPath(), conf.TensorFlowOff())
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 
@@ -27,7 +27,7 @@ func TestImport_DestinationFilename(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tf := classify.New(conf.ResourcesPath(), conf.DisableTensorFlow())
+	tf := classify.New(conf.AssetsPath(), conf.TensorFlowOff())
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 
@@ -37,7 +37,9 @@ func TestImport_DestinationFilename(t *testing.T) {
 
 	rawFile, err := NewMediaFile(conf.ImportPath() + "/raw/IMG_2567.CR2")
 
-	assert.Nil(t, err)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	fileName, err := imp.DestinationFilename(rawFile, rawFile)
 
@@ -57,7 +59,7 @@ func TestImport_Start(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tf := classify.New(conf.ResourcesPath(), conf.DisableTensorFlow())
+	tf := classify.New(conf.AssetsPath(), conf.TensorFlowOff())
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 

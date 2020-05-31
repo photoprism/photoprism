@@ -9,18 +9,16 @@ read-only: false
 public: false
 experimental: false
 admin-password: photoprism
-config-path: ~/.config/photoprism
-cache-path: ~/.cache/photoprism
-assets-path: ~/.local/share/photoprism
-resources-path: ~/.local/share/photoprism/resources
+assets-path: ~/.photoprism/assets
+storage-path: ~/.photoprism/storage
+pid-filename: ~/.photoprism/photoprism.pid
+log-filename: ~/.photoprism/photoprism.log
 originals-path: ~/Pictures/Originals
 import-path: ~/Pictures/Import
 http-host:
 http-mode: release
 http-port: 2342
 database-driver: sqlite
-pid-filename: ~/.local/share/photoprism/photoprism.pid
-log-filename: ~/.local/share/photoprism/photoprism.log
 detach-server: false
 sidecar-json: false
 sidecar-yaml: false

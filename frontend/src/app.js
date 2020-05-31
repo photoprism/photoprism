@@ -100,10 +100,10 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to) => {
     if (to.meta.title) {
         config.page.title = to.meta.title;
-        window.document.title = "PhotoPrism: " + to.meta.title;
+        window.document.title = config.values.siteTitle + ": " + to.meta.title;
     } else {
         config.page.title = "";
-        window.document.title = "PhotoPrism";
+        window.document.title = config.values.siteTitle;
     }
 });
 

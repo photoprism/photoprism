@@ -29,31 +29,33 @@ const (
 // See https://github.com/photoprism/photoprism/issues/50#issuecomment-433856358
 type Params struct {
 	Name               string
-	Url                string `yaml:"url" flag:"url"`
-	Title              string `yaml:"title" flag:"title"`
-	Subtitle           string `yaml:"subtitle" flag:"subtitle"`
-	Description        string `yaml:"description" flag:"description"`
-	Author             string `yaml:"author" flag:"author"`
 	Version            string
 	Copyright          string
+	SiteUrl            string `yaml:"site-url" flag:"site-url"`
+	SiteTitle          string `yaml:"site-title" flag:"site-title"`
+	SiteCaption        string `yaml:"site-caption" flag:"site-caption"`
+	SiteDescription    string `yaml:"site-description" flag:"site-description"`
+	SiteAuthor         string `yaml:"site-author" flag:"site-author"`
 	Public             bool   `yaml:"public" flag:"public"`
 	Debug              bool   `yaml:"debug" flag:"debug"`
 	ReadOnly           bool   `yaml:"read-only" flag:"read-only"`
 	Experimental       bool   `yaml:"experimental" flag:"experimental"`
+	TensorFlowOff      bool   `yaml:"tf-off" flag:"tf-off"`
 	Workers            int    `yaml:"workers" flag:"workers"`
 	WakeupInterval     int    `yaml:"wakeup-interval" flag:"wakeup-interval"`
 	AdminPassword      string `yaml:"admin-password" flag:"admin-password"`
 	WebDAVPassword     string `yaml:"webdav-password" flag:"webdav-password"`
 	LogLevel           string `yaml:"log-level" flag:"log-level"`
-	ConfigFile         string
-	ConfigPath         string `yaml:"config-path" flag:"config-path"`
-	TempPath           string `yaml:"temp-path" flag:"temp-path"`
-	CachePath          string `yaml:"cache-path" flag:"cache-path"`
+	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`
+	StoragePath        string `yaml:"storage-path" flag:"storage-path"`
+	ImportPath         string `yaml:"import-path" flag:"import-path"`
 	OriginalsPath      string `yaml:"originals-path" flag:"originals-path"`
 	OriginalsLimit     int64  `yaml:"originals-limit" flag:"originals-limit"`
-	ImportPath         string `yaml:"import-path" flag:"import-path"`
-	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`
-	ResourcesPath      string `yaml:"resources-path" flag:"resources-path"`
+	ConfigFile         string
+	SettingsPath       string `yaml:"settings-path" flag:"settings-path"`
+	SettingsHidden     bool   `yaml:"settings-hidden" flag:"settings-hidden"`
+	TempPath           string `yaml:"temp-path" flag:"temp-path"`
+	CachePath          string `yaml:"cache-path" flag:"cache-path"`
 	DatabaseDriver     string `yaml:"database-driver" flag:"database-driver"`
 	DatabaseDsn        string `yaml:"database-dsn" flag:"database-dsn"`
 	DatabaseConns      int    `yaml:"database-conns" flag:"database-conns"`
@@ -83,8 +85,6 @@ type Params struct {
 	ThumbLimit         int    `yaml:"thumb-limit" flag:"thumb-limit"`
 	JpegHidden         bool   `yaml:"jpeg-hidden" flag:"jpeg-hidden"`
 	JpegQuality        int    `yaml:"jpeg-quality" flag:"jpeg-quality"`
-	DisableTensorFlow  bool   `yaml:"disable-tf" flag:"disable-tf"`
-	DisableSettings    bool   `yaml:"disable-settings" flag:"disable-settings"`
 }
 
 // NewParams creates a new configuration entity by using two methods:
@@ -114,8 +114,8 @@ func NewParams(ctx *cli.Context) *Params {
 
 // expandFilenames converts path in config to absolute path
 func (c *Params) expandFilenames() {
-	c.ConfigPath = fs.Abs(c.ConfigPath)
-	c.ResourcesPath = fs.Abs(c.ResourcesPath)
+	c.SettingsPath = fs.Abs(c.SettingsPath)
+	c.StoragePath = fs.Abs(c.StoragePath)
 	c.AssetsPath = fs.Abs(c.AssetsPath)
 	c.CachePath = fs.Abs(c.CachePath)
 	c.OriginalsPath = fs.Abs(c.OriginalsPath)

@@ -475,12 +475,12 @@ func TestMediaFile_RelativeFilename(t *testing.T) {
 	assert.Nil(t, err)
 
 	t.Run("directory with end slash", func(t *testing.T) {
-		filename := mediaFile.RelativeName("/go/src/github.com/photoprism/photoprism/assets/resources/")
+		filename := mediaFile.RelativeName("/go/src/github.com/photoprism/photoprism/assets/")
 		assert.Equal(t, "examples/tree_white.jpg", filename)
 	})
 
 	t.Run("directory without end slash", func(t *testing.T) {
-		filename := mediaFile.RelativeName("/go/src/github.com/photoprism/photoprism/assets/resources")
+		filename := mediaFile.RelativeName("/go/src/github.com/photoprism/photoprism/assets")
 		assert.Equal(t, "examples/tree_white.jpg", filename)
 	})
 	t.Run("directory not part of filename", func(t *testing.T) {
@@ -488,7 +488,7 @@ func TestMediaFile_RelativeFilename(t *testing.T) {
 		assert.Equal(t, conf.ExamplesPath()+"/tree_white.jpg", filename)
 	})
 	t.Run("directory equals example path", func(t *testing.T) {
-		filename := mediaFile.RelativeName("/go/src/github.com/photoprism/photoprism/assets/resources/examples")
+		filename := mediaFile.RelativeName("/go/src/github.com/photoprism/photoprism/assets/examples")
 		assert.Equal(t, "tree_white.jpg", filename)
 	})
 }
@@ -504,11 +504,11 @@ func TestMediaFile_RelativePath(t *testing.T) {
 	}
 
 	t.Run("directory with end slash", func(t *testing.T) {
-		path := mediaFile.RelativePath("/go/src/github.com/photoprism/photoprism/assets/resources/")
+		path := mediaFile.RelativePath("/go/src/github.com/photoprism/photoprism/assets/")
 		assert.Equal(t, "examples", path)
 	})
 	t.Run("directory without end slash", func(t *testing.T) {
-		path := mediaFile.RelativePath("/go/src/github.com/photoprism/photoprism/assets/resources")
+		path := mediaFile.RelativePath("/go/src/github.com/photoprism/photoprism/assets")
 		assert.Equal(t, "examples", path)
 	})
 	t.Run("directory equals filepath", func(t *testing.T) {
@@ -517,7 +517,7 @@ func TestMediaFile_RelativePath(t *testing.T) {
 	})
 	t.Run("directory does not match filepath", func(t *testing.T) {
 		path := mediaFile.RelativePath("xxx")
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/resources/examples", path)
+		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples", path)
 	})
 
 	mediaFile, err = NewMediaFile(conf.ExamplesPath() + "/.photoprism/example.jpg")
@@ -547,15 +547,15 @@ func TestMediaFile_RelativeBasename(t *testing.T) {
 	assert.Nil(t, err)
 
 	t.Run("directory with end slash", func(t *testing.T) {
-		basename := mediaFile.RelativeBase("/go/src/github.com/photoprism/photoprism/assets/resources/", true)
+		basename := mediaFile.RelativeBase("/go/src/github.com/photoprism/photoprism/assets/", true)
 		assert.Equal(t, "examples/tree_white", basename)
 	})
 	t.Run("directory without end slash", func(t *testing.T) {
-		basename := mediaFile.RelativeBase("/go/src/github.com/photoprism/photoprism/assets/resources", true)
+		basename := mediaFile.RelativeBase("/go/src/github.com/photoprism/photoprism/assets", true)
 		assert.Equal(t, "examples/tree_white", basename)
 	})
 	t.Run("directory equals example path", func(t *testing.T) {
-		basename := mediaFile.RelativeBase("/go/src/github.com/photoprism/photoprism/assets/resources/examples/", true)
+		basename := mediaFile.RelativeBase("/go/src/github.com/photoprism/photoprism/assets/examples/", true)
 		assert.Equal(t, "tree_white", basename)
 	})
 

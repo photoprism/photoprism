@@ -4,7 +4,7 @@ TODAY=`date -u +%Y%m%d`
 
 MODEL_NAME="NSFW"
 MODEL_URL="https://dl.photoprism.org/tensorflow/nsfw.zip?$TODAY"
-MODEL_PATH="assets/resources/nsfw"
+MODEL_PATH="assets/nsfw"
 MODEL_ZIP="/tmp/photoprism/nsfw.zip"
 MODEL_HASH="2e03ad3c6aec27c270c650d0574ff2a6291d992b  $MODEL_ZIP"
 MODEL_VERSION="$MODEL_PATH/version.txt"
@@ -40,7 +40,7 @@ if [[ -e ${MODEL_PATH} ]]; then
 fi
 
 # Unzip model
-unzip ${MODEL_ZIP} -d assets/resources
+unzip ${MODEL_ZIP} -d assets
 echo "$MODEL_NAME $TODAY $MODEL_HASH" > ${MODEL_VERSION}
 
 echo "Latest $MODEL_NAME installed."

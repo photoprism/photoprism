@@ -13,15 +13,15 @@ import (
 
 // ClientConfig contains HTTP client / Web UI config values
 type ClientConfig struct {
-	Flags           string              `json:"flags"`
 	Name            string              `json:"name"`
-	URL             string              `json:"url"`
-	Title           string              `json:"title"`
-	Subtitle        string              `json:"subtitle"`
-	Description     string              `json:"description"`
-	Author          string              `json:"author"`
 	Version         string              `json:"version"`
 	Copyright       string              `json:"copyright"`
+	Flags           string              `json:"flags"`
+	SiteUrl         string              `json:"siteUrl"`
+	SiteTitle       string              `json:"siteTitle"`
+	SiteCaption     string              `json:"siteCaption"`
+	SiteDescription string              `json:"siteDescription"`
+	SiteAuthor      string              `json:"siteAuthor"`
 	Debug           bool                `json:"debug"`
 	ReadOnly        bool                `json:"readonly"`
 	UploadNSFW      bool                `json:"uploadNSFW"`
@@ -101,7 +101,7 @@ func (c *Config) Flags() (flags []string) {
 		flags = append(flags, "readonly")
 	}
 
-	if !c.DisableSettings() {
+	if !c.SettingsHidden() {
 		flags = append(flags, "settings")
 	}
 
@@ -117,27 +117,27 @@ func (c *Config) PublicClientConfig() ClientConfig {
 	settings := c.Settings()
 
 	result := ClientConfig{
-		Settings:      Settings{Language: settings.Language, Theme: settings.Theme},
-		Flags:         strings.Join(c.Flags(), " "),
-		Name:          c.Name(),
-		URL:           c.Url(),
-		Title:         c.Title(),
-		Subtitle:      c.Subtitle(),
-		Description:   c.Description(),
-		Author:        c.Author(),
-		Version:       c.Version(),
-		Copyright:     c.Copyright(),
-		Debug:         c.Debug(),
-		ReadOnly:      c.ReadOnly(),
-		Public:        c.Public(),
-		Experimental:  c.Experimental(),
-		Thumbnails:    Thumbnails,
-		Colors:        colors.All.List(),
-		JSHash:        fs.Checksum(c.HttpStaticBuildPath() + "/app.js"),
-		CSSHash:       fs.Checksum(c.HttpStaticBuildPath() + "/app.css"),
-		Clip:          txt.ClipDefault,
-		PreviewToken:  "public",
-		DownloadToken: "public",
+		Settings:        Settings{Language: settings.Language, Theme: settings.Theme},
+		Flags:           strings.Join(c.Flags(), " "),
+		Name:            c.Name(),
+		SiteUrl:         c.SiteUrl(),
+		SiteTitle:       c.SiteTitle(),
+		SiteCaption:     c.SiteCaption(),
+		SiteDescription: c.SiteDescription(),
+		SiteAuthor:      c.SiteAuthor(),
+		Version:         c.Version(),
+		Copyright:       c.Copyright(),
+		Debug:           c.Debug(),
+		ReadOnly:        c.ReadOnly(),
+		Public:          c.Public(),
+		Experimental:    c.Experimental(),
+		Thumbnails:      Thumbnails,
+		Colors:          colors.All.List(),
+		JSHash:          fs.Checksum(c.StaticBuildPath() + "/app.js"),
+		CSSHash:         fs.Checksum(c.StaticBuildPath() + "/app.css"),
+		Clip:            txt.ClipDefault,
+		PreviewToken:    "public",
+		DownloadToken:   "public",
 	}
 
 	return result
@@ -151,25 +151,25 @@ func (c *Config) ClientConfig() ClientConfig {
 		Settings:        *c.Settings(),
 		Flags:           strings.Join(c.Flags(), " "),
 		Name:            c.Name(),
-		URL:             c.Url(),
-		Title:           c.Title(),
-		Subtitle:        c.Subtitle(),
-		Description:     c.Description(),
-		Author:          c.Author(),
+		SiteUrl:         c.SiteUrl(),
+		SiteTitle:       c.SiteTitle(),
+		SiteCaption:     c.SiteCaption(),
+		SiteDescription: c.SiteDescription(),
+		SiteAuthor:      c.SiteAuthor(),
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
 		ReadOnly:        c.ReadOnly(),
 		UploadNSFW:      c.UploadNSFW(),
-		DisableSettings: c.DisableSettings(),
+		DisableSettings: c.SettingsHidden(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
 		Colors:          colors.All.List(),
 		Thumbnails:      Thumbnails,
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
-		JSHash:          fs.Checksum(c.HttpStaticBuildPath() + "/app.js"),
-		CSSHash:         fs.Checksum(c.HttpStaticBuildPath() + "/app.css"),
+		JSHash:          fs.Checksum(c.StaticBuildPath() + "/app.js"),
+		CSSHash:         fs.Checksum(c.StaticBuildPath() + "/app.css"),
 		Clip:            txt.ClipDefault,
 		Server:          NewRuntimeInfo(),
 	}

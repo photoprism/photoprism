@@ -47,36 +47,36 @@ func (c *Config) HttpServerPassword() string {
 	return c.params.HttpServerPassword
 }
 
-// HttpTemplatesPath returns the server templates path.
-func (c *Config) HttpTemplatesPath() string {
-	return filepath.Join(c.ResourcesPath(), "templates")
+// TemplatesPath returns the server templates path.
+func (c *Config) TemplatesPath() string {
+	return filepath.Join(c.AssetsPath(), "templates")
 }
 
-// HttpTemplateExists returns true if a template with the given name exists (e.g. index.tmpl).
-func (c *Config) HttpTemplateExists(name string) bool {
-	return fs.FileExists(filepath.Join(c.HttpTemplatesPath(), name))
+// TemplateExists returns true if a template with the given name exists (e.g. index.tmpl).
+func (c *Config) TemplateExists(name string) bool {
+	return fs.FileExists(filepath.Join(c.TemplatesPath(), name))
 }
 
-// HttpDefaultTemplate returns the name of the default template (e.g. index.tmpl).
-func (c *Config) HttpDefaultTemplate() string {
-	if c.HttpTemplateExists(c.Settings().Templates.Default) {
+// DefaultTemplate returns the name of the default template (e.g. index.tmpl).
+func (c *Config) DefaultTemplate() string {
+	if c.TemplateExists(c.Settings().Templates.Default) {
 		return c.Settings().Templates.Default
 	}
 
 	return "index.tmpl"
 }
 
-// HttpFaviconsPath returns the favicons path.
-func (c *Config) HttpFaviconsPath() string {
-	return filepath.Join(c.HttpStaticPath(), "favicons")
+// FaviconsPath returns the favicons path.
+func (c *Config) FaviconsPath() string {
+	return filepath.Join(c.StaticPath(), "favicons")
 }
 
-// HttpStaticPath returns the static server assets path (//server/static/*).
-func (c *Config) HttpStaticPath() string {
-	return filepath.Join(c.ResourcesPath(), "static")
+// StaticPath returns the static server assets path (//server/static/*).
+func (c *Config) StaticPath() string {
+	return filepath.Join(c.AssetsPath(), "static")
 }
 
-// HttpStaticBuildPath returns the static build path (//server/static/build/*).
-func (c *Config) HttpStaticBuildPath() string {
-	return filepath.Join(c.HttpStaticPath(), "build")
+// StaticBuildPath returns the static build path (//server/static/build/*).
+func (c *Config) StaticBuildPath() string {
+	return filepath.Join(c.StaticPath(), "build")
 }

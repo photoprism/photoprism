@@ -10,10 +10,10 @@ import (
 
 func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Favicon
-	router.StaticFile("/favicon.ico", conf.HttpFaviconsPath()+"/favicon.ico")
+	router.StaticFile("/favicon.ico", conf.FaviconsPath()+"/favicon.ico")
 
 	// Static assets like js and css files
-	router.Static("/static", conf.HttpStaticPath())
+	router.Static("/static", conf.StaticPath())
 
 	// JSON-REST API Version 1
 	v1 := router.Group("/api/v1")
@@ -125,6 +125,6 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Default HTML page (client-side routing implemented via Vue.js)
 	router.NoRoute(func(c *gin.Context) {
 		clientConfig := conf.PublicClientConfig()
-		c.HTML(http.StatusOK, conf.HttpDefaultTemplate(), gin.H{"config": clientConfig})
+		c.HTML(http.StatusOK, conf.DefaultTemplate(), gin.H{"config": clientConfig})
 	})
 }

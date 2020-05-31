@@ -27,7 +27,7 @@ func TestResample_Start(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tf := classify.New(conf.ResourcesPath(), conf.DisableTensorFlow())
+	tf := classify.New(conf.AssetsPath(), conf.TensorFlowOff())
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 
@@ -61,7 +61,7 @@ func TestThumb_Filename(t *testing.T) {
 	t.Run("", func(t *testing.T) {
 		filename, err := thumb.Filename("99988", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		assert.Nil(t, err)
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/testdata/cache/_tmp/9/9/9/99988_150x150_fit.jpg", filename)
+		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/cache/_tmp/9/9/9/99988_150x150_fit.jpg", filename)
 	})
 	t.Run("hash too short", func(t *testing.T) {
 		_, err := thumb.Filename("999", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)

@@ -4,8 +4,101 @@ import (
 	"github.com/urfave/cli"
 )
 
-// GlobalFlags lists all CLI flags
+// PhotoPrism command-line parameters and flags.
 var GlobalFlags = []cli.Flag{
+	cli.BoolFlag{
+		Name:   "debug",
+		Usage:  "run in debug mode",
+		EnvVar: "PHOTOPRISM_DEBUG",
+	},
+	cli.BoolFlag{
+		Name:   "public, p",
+		Usage:  "no authentication / password required",
+		EnvVar: "PHOTOPRISM_PUBLIC",
+	},
+	cli.BoolFlag{
+		Name:   "read-only, r",
+		Usage:  "don't add files or modify originals directory in any way",
+		EnvVar: "PHOTOPRISM_READONLY",
+	},
+	cli.BoolFlag{
+		Name:   "tf-off",
+		Usage:  "don't use TensorFlow for image classification (or anything else)",
+		EnvVar: "PHOTOPRISM_TENSORFLOW_OFF",
+	},
+	cli.BoolFlag{
+		Name:   "experimental, e",
+		Usage:  "enable experimental features",
+		EnvVar: "PHOTOPRISM_EXPERIMENTAL",
+	},
+	cli.StringFlag{
+		Name:   "admin-password",
+		Usage:  "admin password",
+		Value:  "photoprism",
+		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
+	},
+	cli.StringFlag{
+		Name:   "webdav-password",
+		Usage:  "WebDAV password (none to disable)",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_WEBDAV_PASSWORD",
+	},
+	cli.IntFlag{
+		Name:   "workers, w",
+		Usage:  "number of workers for indexing",
+		EnvVar: "PHOTOPRISM_WORKERS",
+	},
+	cli.IntFlag{
+		Name:   "wakeup-interval",
+		Usage:  "background worker wakeup interval in seconds",
+		EnvVar: "PHOTOPRISM_WAKEUP_INTERVAL",
+	},
+	cli.StringFlag{
+		Name:   "site-url",
+		Usage:  "canonical / public site URL",
+		Value:  "http://localhost:2342/",
+		EnvVar: "PHOTOPRISM_SITE_URL",
+	},
+	cli.StringFlag{
+		Name:   "site-title",
+		Usage:  "site title",
+		Value:  "PhotoPrism",
+		EnvVar: "PHOTOPRISM_SITE_TITLE",
+	},
+	cli.StringFlag{
+		Name:   "site-caption",
+		Usage:  "short caption / tagline",
+		Value:  "Browse your life",
+		EnvVar: "PHOTOPRISM_SITE_CAPTION",
+	},
+	cli.StringFlag{
+		Name:   "site-description",
+		Usage:  "long site description",
+		Value:  "Personal Photo Management",
+		EnvVar: "PHOTOPRISM_SITE_DESCRIPTION",
+	},
+	cli.StringFlag{
+		Name:   "site-author",
+		Usage:  "site owner / copyright",
+		Value:  "Anonymous",
+		EnvVar: "PHOTOPRISM_SITE_AUTHOR",
+	},
+	cli.IntFlag{
+		Name:   "http-port",
+		Value:  2342,
+		Usage:  "HTTP server port",
+		EnvVar: "PHOTOPRISM_HTTP_PORT",
+	},
+	cli.StringFlag{
+		Name:   "http-host",
+		Usage:  "HTTP server host",
+		EnvVar: "PHOTOPRISM_HTTP_HOST",
+	},
+	cli.StringFlag{
+		Name:   "http-mode, m",
+		Usage:  "debug, release or test",
+		EnvVar: "PHOTOPRISM_HTTP_MODE",
+	},
 	cli.StringFlag{
 		Name:   "database-driver",
 		Usage:  "database `DRIVER` (sqlite or mysql)",
@@ -25,111 +118,22 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DATABASE_CONNS",
 	},
 	cli.StringFlag{
-		Name:   "admin-password",
-		Usage:  "admin password",
-		Value:  "photoprism",
-		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
-	},
-	cli.StringFlag{
-		Name:   "webdav-password",
-		Usage:  "WebDAV password (none to disable)",
+		Name:   "assets-path",
+		Usage:  "assets `PATH` for static files",
 		Value:  "",
-		EnvVar: "PHOTOPRISM_WEBDAV_PASSWORD",
-	},
-	cli.BoolFlag{
-		Name:   "debug",
-		Usage:  "run in debug mode",
-		EnvVar: "PHOTOPRISM_DEBUG",
-	},
-	cli.BoolFlag{
-		Name:   "read-only, r",
-		Usage:  "run in read-only mode",
-		EnvVar: "PHOTOPRISM_READONLY",
-	},
-	cli.BoolFlag{
-		Name:   "public, p",
-		Usage:  "no authentication required",
-		EnvVar: "PHOTOPRISM_PUBLIC",
-	},
-	cli.BoolFlag{
-		Name:   "experimental, e",
-		Usage:  "enable experimental features",
-		EnvVar: "PHOTOPRISM_EXPERIMENTAL",
-	},
-	cli.IntFlag{
-		Name:   "workers, w",
-		Usage:  "number of workers for indexing",
-		EnvVar: "PHOTOPRISM_WORKERS",
-	},
-	cli.IntFlag{
-		Name:   "wakeup-interval",
-		Usage:  "background worker wakeup interval in seconds",
-		EnvVar: "PHOTOPRISM_WAKEUP_INTERVAL",
+		EnvVar: "PHOTOPRISM_ASSETS_PATH",
 	},
 	cli.StringFlag{
-		Name:   "url",
-		Usage:  "canonical site URL",
-		Value:  "http://localhost:2342/",
-		EnvVar: "PHOTOPRISM_URL",
+		Name:   "storage-path",
+		Usage:  "storage `PATH` for generated files",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_STORAGE_PATH",
 	},
 	cli.StringFlag{
-		Name:   "title",
-		Usage:  "site title",
-		Value:  "PhotoPrism",
-		EnvVar: "PHOTOPRISM_TITLE",
-	},
-	cli.StringFlag{
-		Name:   "subtitle",
-		Usage:  "site subtitle",
-		Value:  "Browse your life",
-		EnvVar: "PHOTOPRISM_SUBTITLE",
-	},
-	cli.StringFlag{
-		Name:   "description",
-		Usage:  "site description",
-		Value:  "Personal Photo Management",
-		EnvVar: "PHOTOPRISM_DESCRIPTION",
-	},
-	cli.StringFlag{
-		Name:   "author",
-		Usage:  "site owner / copyright",
-		Value:  "Anonymous",
-		EnvVar: "PHOTOPRISM_AUTHOR",
-	},
-	cli.StringFlag{
-		Name:   "log-level, l",
-		Usage:  "trace, debug, info, warning, error, fatal or panic",
-		Value:  "info",
-		EnvVar: "PHOTOPRISM_LOG_LEVEL",
-	},
-	cli.StringFlag{
-		Name:   "log-filename",
-		Usage:  "filename for storing server logs",
-		EnvVar: "PHOTOPRISM_LOG_FILENAME",
-		Value:  "~/.local/share/photoprism/photoprism.log",
-	},
-	cli.StringFlag{
-		Name:   "pid-filename",
-		Usage:  "filename for the server process id (pid)",
-		EnvVar: "PHOTOPRISM_PID_FILENAME",
-		Value:  "~/.local/share/photoprism/photoprism.pid",
-	},
-	cli.StringFlag{
-		Name:   "config-file, c",
-		Usage:  "load configuration from `FILENAME`",
-		Value:  "~/.config/photoprism/photoprism.yml",
-		EnvVar: "PHOTOPRISM_CONFIG_FILE",
-	},
-	cli.StringFlag{
-		Name:   "config-path",
-		Usage:  "config `PATH`",
-		Value:  "~/.config/photoprism",
-		EnvVar: "PHOTOPRISM_CONFIG_PATH",
-	},
-	cli.StringFlag{
-		Name:   "resources-path",
-		Usage:  "resources `PATH`",
-		EnvVar: "PHOTOPRISM_RESOURCES_PATH",
+		Name:   "import-path",
+		Usage:  "import `PATH`",
+		Value:  "~/Pictures/Import",
+		EnvVar: "PHOTOPRISM_IMPORT_PATH",
 	},
 	cli.StringFlag{
 		Name:   "originals-path",
@@ -144,10 +148,28 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_ORIGINALS_LIMIT",
 	},
 	cli.StringFlag{
-		Name:   "import-path",
-		Usage:  "import `PATH`",
-		Value:  "~/Pictures/Import",
-		EnvVar: "PHOTOPRISM_IMPORT_PATH",
+		Name:   "log-level, l",
+		Usage:  "trace, debug, info, warning, error, fatal or panic",
+		Value:  "info",
+		EnvVar: "PHOTOPRISM_LOG_LEVEL",
+	},
+	cli.StringFlag{
+		Name:   "log-filename",
+		Usage:  "filename for storing server logs",
+		EnvVar: "PHOTOPRISM_LOG_FILENAME",
+		Value:  "",
+	},
+	cli.StringFlag{
+		Name:   "pid-filename",
+		Usage:  "filename for the server process id (pid)",
+		EnvVar: "PHOTOPRISM_PID_FILENAME",
+		Value:  "",
+	},
+	cli.StringFlag{
+		Name:   "cache-path",
+		Usage:  "cache `PATH`",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_CACHE_PATH",
 	},
 	cli.StringFlag{
 		Name:   "temp-path",
@@ -156,16 +178,21 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_TEMP_PATH",
 	},
 	cli.StringFlag{
-		Name:   "cache-path",
-		Usage:  "cache `PATH`",
-		Value:  "~/.cache/photoprism",
-		EnvVar: "PHOTOPRISM_CACHE_PATH",
+		Name:   "config-file, c",
+		Usage:  "load configuration from `FILENAME`",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_CONFIG_FILE",
 	},
 	cli.StringFlag{
-		Name:   "assets-path",
-		Usage:  "assets `PATH`",
-		Value:  "~/.local/share/photoprism",
-		EnvVar: "PHOTOPRISM_ASSETS_PATH",
+		Name:   "settings-path",
+		Usage:  "settings `PATH`",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_SETTINGS_PATH",
+	},
+	cli.BoolFlag{
+		Name:   "settings-hidden",
+		Usage:  "users can not view or change settings",
+		EnvVar: "PHOTOPRISM_SETTINGS_HIDDEN",
 	},
 	cli.StringFlag{
 		Name:   "sips-bin",
@@ -211,22 +238,6 @@ var GlobalFlags = []cli.Flag{
 		Name:   "sidecar-hidden",
 		Usage:  "create JSON and YAML sidecar files in .photoprism if enabled",
 		EnvVar: "PHOTOPRISM_SIDECAR_HIDDEN",
-	},
-	cli.IntFlag{
-		Name:   "http-port",
-		Value:  2342,
-		Usage:  "HTTP server port",
-		EnvVar: "PHOTOPRISM_HTTP_PORT",
-	},
-	cli.StringFlag{
-		Name:   "http-host",
-		Usage:  "HTTP server host",
-		EnvVar: "PHOTOPRISM_HTTP_HOST",
-	},
-	cli.StringFlag{
-		Name:   "http-mode, m",
-		Usage:  "debug, release or test",
-		EnvVar: "PHOTOPRISM_HTTP_MODE",
 	},
 	cli.BoolFlag{
 		Name:   "detect-nsfw",
@@ -289,15 +300,5 @@ var GlobalFlags = []cli.Flag{
 		Name:   "jpeg-hidden",
 		Usage:  "create JPEG files in .photoprism when converting other file types",
 		EnvVar: "PHOTOPRISM_JPEG_HIDDEN",
-	},
-	cli.BoolFlag{
-		Name:   "disable-tf",
-		Usage:  "don't use TensorFlow for image classification",
-		EnvVar: "PHOTOPRISM_DISABLE_TF",
-	},
-	cli.BoolFlag{
-		Name:   "disable-settings",
-		Usage:  "user can not change settings",
-		EnvVar: "PHOTOPRISM_DISABLE_SETTINGS",
 	},
 }

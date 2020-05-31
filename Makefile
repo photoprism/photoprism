@@ -38,20 +38,20 @@ install-bin:
 	scripts/build.sh prod ~/.local/bin/$(BINARY_NAME)
 install-assets:
 	$(info Installing assets)
-	mkdir -p ~/.config/photoprism
-	mkdir -p ~/.cache/photoprism
+	mkdir -p ~/.photoprism/storage/settings
+	mkdir -p ~/.photoprism/storage/cache
+	mkdir -p ~/.photoprism/storage
+	mkdir -p ~/.photoprism/assets
 	mkdir -p ~/Pictures/Originals
 	mkdir -p ~/Pictures/Import
-	mkdir -p ~/.local/share/photoprism/resources/database
-	cp -r assets/resources/static assets/resources/templates assets/resources/nasnet assets/resources/nsfw ~/.local/share/photoprism/resources
-	rsync -a -v --ignore-existing assets/config/*.yml ~/.config/photoprism
-	find ~/.local/share/photoprism -name '.*' -type f -delete
-clean-local-share:
-	rm -rf ~/.local/share/photoprism
+	cp -r assets/static assets/templates assets/nasnet assets/nsfw ~/.photoprism/assets
+	find ~/.photoprism/assets -name '.*' -type f -delete
+clean-local-assets:
+	rm -rf ~/.photoprism/assets/*
 clean-local-cache:
-	rm -rf ~/.cache/photoprism
+	rm -rf ~/.photoprism/storage/cache/*
 clean-local-config:
-	rm -f ~/.config/photoprism/*
+	rm -f ~/.photoprism/storage/settings/*
 dep-js:
 	(cd frontend &&	npm install --silent)
 dep-go:
@@ -64,9 +64,9 @@ dep-tensorflow:
 	scripts/download-nasnet.sh
 	scripts/download-nsfw.sh
 zip-nasnet:
-	(cd assets/resources && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
+	(cd assets && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
 zip-nsfw:
-	(cd assets/resources && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
+	(cd assets && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
 build-js:
 	(cd frontend &&	env NODE_ENV=production npm run build)
 build-go:
@@ -126,8 +126,9 @@ clean:
 	rm -f $(BINARY_NAME)
 	rm -f *.log
 	rm -rf node_modules
-	rm -rf assets/testdata
-	rm -rf assets/backups
+	rm -rf storage/testdata
+	rm -rf storage/backups
+	rm -rf storage/cache
 	rm -rf frontend/node_modules
 docker-development:
 	scripts/docker-build.sh development $(DOCKER_TAG)

@@ -14,7 +14,11 @@ services:
     shm_size: "2gb"
     environment:
       TF_CPP_MIN_LOG_LEVEL: 0 # Show TensorFlow log messages for development
-      PHOTOPRISM_URL: "http://localhost:2342/"
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
+      PHOTOPRISM_SITE_TITLE: "PhotoPrism"
+      PHOTOPRISM_SITE_CAPTION: "Browse your life"
+      PHOTOPRISM_SITE_DESCRIPTION: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source."
+      PHOTOPRISM_SITE_AUTHOR: "Anonymous"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
       PHOTOPRISM_PUBLIC: "true"
@@ -26,17 +30,12 @@ services:
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true"
-      PHOTOPRISM_TEST_DRIVER: "test"
+      PHOTOPRISM_TEST_DRIVER: "sqlite"
+      PHOTOPRISM_TEST_DSN: ".test.db"
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
-      PHOTOPRISM_CACHE_PATH: "/go/src/github.com/photoprism/photoprism/assets/cache"
-      PHOTOPRISM_RESOURCES_PATH: "/go/src/github.com/photoprism/photoprism/assets/resources"
-      PHOTOPRISM_CONFIG_PATH: "/go/src/github.com/photoprism/photoprism/assets/config"
-      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/import"
-      PHOTOPRISM_TEMP_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/temp"
-      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/assets/photos/originals"
-      PHOTOPRISM_TITLE: "PhotoPrism"
-      PHOTOPRISM_SUBTITLE: "Browse your life"
-      PHOTOPRISM_AUTHOR: "PhotoPrism.org"
+      PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
+      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/photos/originals"
+      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/photos/import"
       PHOTOPRISM_THUMB_FILTER: "lanczos" # Resample filter, best to worst: blackman, lanczos, cubic, linear
       PHOTOPRISM_THUMB_UNCACHED: "true" # On-demand rendering of default thumbnails (high memory and cpu usage)
       PHOTOPRISM_THUMB_SIZE: 2048 # Default thumbnail size limit (default 2048, min 720, max 3840)

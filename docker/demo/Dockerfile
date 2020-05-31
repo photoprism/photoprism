@@ -4,18 +4,19 @@ FROM photoprism/photoprism:latest as build
 ENV TF_CPP_MIN_LOG_LEVEL 2
 
 # Copy assets
-COPY /docker/demo/index.tmpl /photoprism/assets/resources/templates
+COPY /docker/demo/index.tmpl /photoprism/assets/templates
 
 # Download example photos
 RUN wget -qO- https://dl.photoprism.org/fixtures/demo.tar.gz | tar xvz -C /photoprism/import
 
 # Configure PhotoPrism
+ENV PHOTOPRISM_STORAGE_PATH /photoprism/storage
 ENV PHOTOPRISM_DEBUG false
 ENV PHOTOPRISM_READONLY false
 ENV PHOTOPRISM_PUBLIC true
 ENV PHOTOPRISM_EXPERIMENTAL true
 ENV PHOTOPRISM_UPLOAD_NSFW false
-ENV PHOTOPRISM_DETECT_NSFW true
+ENV PHOTOPRISM_DETECT_NSFW false
 ENV PHOTOPRISM_SIDECAR_JSON true
 ENV PHOTOPRISM_SIDECAR_YAML false
 ENV PHOTOPRISM_SIDECAR_HIDDEN true

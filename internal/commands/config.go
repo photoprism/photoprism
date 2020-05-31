@@ -24,68 +24,67 @@ func configAction(ctx *cli.Context) error {
 
 	fmt.Printf("%-25s VALUE\n", "NAME")
 
-	// Database config
-	fmt.Printf("%-25s %s\n", "database-driver", dbDriver)
-	fmt.Printf("%-25s %s\n", "database-dsn", dbDsn)
-	fmt.Printf("%-25s %d\n", "database-conns", conf.DatabaseConns())
-
-	// Description
-	fmt.Printf("%-25s %s\n", "name", conf.Name())
-	fmt.Printf("%-25s %s\n", "url", conf.Url())
-	fmt.Printf("%-25s %s\n", "title", conf.Title())
-	fmt.Printf("%-25s %s\n", "subtitle", conf.Subtitle())
-	fmt.Printf("%-25s %s\n", "description", conf.Description())
-	fmt.Printf("%-25s %s\n", "author", conf.Author())
-	fmt.Printf("%-25s %s\n", "version", conf.Version())
-	fmt.Printf("%-25s %s\n", "copyright", conf.Copyright())
-
-	// Flags
+	// Feature flags.
 	fmt.Printf("%-25s %t\n", "debug", conf.Debug())
-	fmt.Printf("%-25s %t\n", "read-only", conf.ReadOnly())
 	fmt.Printf("%-25s %t\n", "public", conf.Public())
+	fmt.Printf("%-25s %t\n", "read-only", conf.ReadOnly())
 	fmt.Printf("%-25s %t\n", "experimental", conf.Experimental())
-	fmt.Printf("%-25s %t\n", "disable-settings", conf.DisableSettings())
 
-	// TensorFlow
-	fmt.Printf("%-25s %t\n", "disable-tf", conf.DisableTensorFlow())
+	// Site information.
+	fmt.Printf("%-25s %s\n", "site-url", conf.SiteUrl())
+	fmt.Printf("%-25s %s\n", "site-title", conf.SiteTitle())
+	fmt.Printf("%-25s %s\n", "site-caption", conf.SiteCaption())
+	fmt.Printf("%-25s %s\n", "site-description", conf.SiteDescription())
+	fmt.Printf("%-25s %s\n", "site-author", conf.SiteAuthor())
+
+	// Everything related to TensorFlow.
+	fmt.Printf("%-25s %t\n", "tf-off", conf.TensorFlowOff())
 	fmt.Printf("%-25s %s\n", "tf-version", conf.TensorFlowVersion())
 	fmt.Printf("%-25s %s\n", "tf-model-path", conf.TensorFlowModelPath())
 	fmt.Printf("%-25s %t\n", "detect-nsfw", conf.DetectNSFW())
 	fmt.Printf("%-25s %t\n", "upload-nsfw", conf.UploadNSFW())
 
-	// Passwords
+	// Passwords.
 	fmt.Printf("%-25s %s\n", "admin-password", conf.AdminPassword())
 	fmt.Printf("%-25s %s\n", "webdav-password", conf.WebDAVPassword())
 
-	// Background workers and logging
+	// Background workers and logging.
 	fmt.Printf("%-25s %d\n", "workers", conf.Workers())
 	fmt.Printf("%-25s %d\n", "wakeup-interval", conf.WakeupInterval()/time.Second)
 	fmt.Printf("%-25s %s\n", "log-level", conf.LogLevel())
-
-	// Path and file names
 	fmt.Printf("%-25s %s\n", "log-filename", conf.LogFilename())
 	fmt.Printf("%-25s %s\n", "pid-filename", conf.PIDFilename())
-	fmt.Printf("%-25s %s\n", "config-file", conf.ConfigFile())
-	fmt.Printf("%-25s %s\n", "config-path", conf.ConfigPath())
-	fmt.Printf("%-25s %s\n", "assets-path", conf.AssetsPath())
-	fmt.Printf("%-25s %s\n", "originals-path", conf.OriginalsPath())
-	fmt.Printf("%-25s %d\n", "originals-limit", conf.OriginalsLimit())
-	fmt.Printf("%-25s %s\n", "import-path", conf.ImportPath())
-	fmt.Printf("%-25s %s\n", "temp-path", conf.TempPath())
-	fmt.Printf("%-25s %s\n", "cache-path", conf.CachePath())
-	fmt.Printf("%-25s %s\n", "resources-path", conf.ResourcesPath())
 
-	// HTTP server config
-	fmt.Printf("%-25s %s\n", "favicons-path", conf.HttpFaviconsPath())
-	fmt.Printf("%-25s %s\n", "static-path", conf.HttpStaticPath())
-	fmt.Printf("%-25s %s\n", "static-build-path", conf.HttpStaticBuildPath())
-	fmt.Printf("%-25s %s\n", "templates-path", conf.HttpTemplatesPath())
-	fmt.Printf("%-25s %s\n", "http-template", conf.HttpDefaultTemplate())
+	// HTTP server configuration.
 	fmt.Printf("%-25s %s\n", "http-host", conf.HttpServerHost())
 	fmt.Printf("%-25s %d\n", "http-port", conf.HttpServerPort())
 	fmt.Printf("%-25s %s\n", "http-mode", conf.HttpServerMode())
 
-	// External binaries
+	// Database configuration.
+	fmt.Printf("%-25s %s\n", "database-driver", dbDriver)
+	fmt.Printf("%-25s %s\n", "database-dsn", dbDsn)
+	fmt.Printf("%-25s %d\n", "database-conns", conf.DatabaseConns())
+
+	// Main directories.
+	fmt.Printf("%-25s %s\n", "assets-path", conf.AssetsPath())
+	fmt.Printf("%-25s %s\n", "storage-path", conf.StoragePath())
+	fmt.Printf("%-25s %s\n", "import-path", conf.ImportPath())
+	fmt.Printf("%-25s %s\n", "originals-path", conf.OriginalsPath())
+	fmt.Printf("%-25s %d\n", "originals-limit", conf.OriginalsLimit())
+
+	// Additional path and file names.
+	fmt.Printf("%-25s %s\n", "static-path", conf.StaticPath())
+	fmt.Printf("%-25s %s\n", "static-build-path", conf.StaticBuildPath())
+	fmt.Printf("%-25s %s\n", "favicons-path", conf.FaviconsPath())
+	fmt.Printf("%-25s %s\n", "templates-path", conf.TemplatesPath())
+	fmt.Printf("%-25s %s\n", "default-template", conf.DefaultTemplate())
+	fmt.Printf("%-25s %s\n", "cache-path", conf.CachePath())
+	fmt.Printf("%-25s %s\n", "temp-path", conf.TempPath())
+	fmt.Printf("%-25s %s\n", "config-file", conf.ConfigFile())
+	fmt.Printf("%-25s %s\n", "settings-path", conf.SettingsPath())
+	fmt.Printf("%-25s %t\n", "settings-hidden", conf.SettingsHidden())
+
+	// External binaries and sidecar configuration.
 	fmt.Printf("%-25s %s\n", "sips-bin", conf.SipsBin())
 	fmt.Printf("%-25s %s\n", "darktable-bin", conf.DarktableBin())
 	fmt.Printf("%-25s %s\n", "heifconvert-bin", conf.HeifConvertBin())
@@ -95,10 +94,10 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "sidecar-yaml", conf.SidecarYaml())
 	fmt.Printf("%-25s %t\n", "sidecar-hidden", conf.SidecarHidden())
 
-	// Places / Geocoding API
+	// Places / Geocoding API configuration.
 	fmt.Printf("%-25s %s\n", "geocoding-api", conf.GeoCodingApi())
 
-	// Thumbnails
+	// Thumbnails, resampling and download security token.
 	fmt.Printf("%-25s %s\n", "download-token", conf.DownloadToken())
 	fmt.Printf("%-25s %s\n", "thumb-token", conf.PreviewToken())
 	fmt.Printf("%-25s %s\n", "thumb-filter", conf.ThumbFilter())

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -42,6 +43,14 @@ func (c *Config) CreateDirectories() error {
 		return result
 	}
 
+	if err := os.MkdirAll(c.AssetsPath(), os.ModePerm); err != nil {
+		return createError(c.AssetsPath(), err)
+	}
+
+	if err := os.MkdirAll(c.StoragePath(), os.ModePerm); err != nil {
+		return createError(c.StoragePath(), err)
+	}
+
 	if err := os.MkdirAll(c.OriginalsPath(), os.ModePerm); err != nil {
 		return createError(c.OriginalsPath(), err)
 	}
@@ -50,24 +59,28 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.ImportPath(), err)
 	}
 
-	if err := os.MkdirAll(c.TempPath(), os.ModePerm); err != nil {
-		return createError(c.TempPath(), err)
+	if err := os.MkdirAll(c.CachePath(), os.ModePerm); err != nil {
+		return createError(c.CachePath(), err)
 	}
 
 	if err := os.MkdirAll(c.ThumbPath(), os.ModePerm); err != nil {
 		return createError(c.ThumbPath(), err)
 	}
 
-	if err := os.MkdirAll(c.ResourcesPath(), os.ModePerm); err != nil {
-		return createError(c.ResourcesPath(), err)
+	if err := os.MkdirAll(c.SettingsPath(), os.ModePerm); err != nil {
+		return createError(c.SettingsPath(), err)
+	}
+
+	if err := os.MkdirAll(c.TempPath(), os.ModePerm); err != nil {
+		return createError(c.TempPath(), err)
 	}
 
 	if err := os.MkdirAll(c.TensorFlowModelPath(), os.ModePerm); err != nil {
 		return createError(c.TensorFlowModelPath(), err)
 	}
 
-	if err := os.MkdirAll(c.HttpStaticBuildPath(), os.ModePerm); err != nil {
-		return createError(c.HttpStaticBuildPath(), err)
+	if err := os.MkdirAll(c.StaticBuildPath(), os.ModePerm); err != nil {
+		return createError(c.StaticBuildPath(), err)
 	}
 
 	if err := os.MkdirAll(filepath.Dir(c.PIDFilename()), os.ModePerm); err != nil {
@@ -83,27 +96,31 @@ func (c *Config) CreateDirectories() error {
 
 // ConfigFile returns the config file name.
 func (c *Config) ConfigFile() string {
+	if c.params.ConfigFile == "" || !fs.FileExists(c.params.ConfigFile) {
+		return filepath.Join(c.SettingsPath(), "photoprism.yml")
+	}
+
 	return c.params.ConfigFile
 }
 
 // SettingsFile returns the user settings file name.
 func (c *Config) SettingsFile() string {
-	return filepath.Join(c.ConfigPath(), "settings.yml")
+	return filepath.Join(c.SettingsPath(), "settings.yml")
 }
 
-// ConfigPath returns the config path.
-func (c *Config) ConfigPath() string {
-	if c.params.ConfigPath == "" {
-		return filepath.Join(c.AssetsPath(), "config")
+// SettingsPath returns the config path.
+func (c *Config) SettingsPath() string {
+	if c.params.SettingsPath == "" {
+		return filepath.Join(c.StoragePath(), "settings")
 	}
 
-	return fs.Abs(c.params.ConfigPath)
+	return fs.Abs(c.params.SettingsPath)
 }
 
 // PIDFilename returns the filename for storing the server process id (pid).
 func (c *Config) PIDFilename() string {
 	if c.params.PIDFilename == "" {
-		return filepath.Join(c.AssetsPath(), "photoprism.pid")
+		return filepath.Join(c.StoragePath(), "photoprism.pid")
 	}
 
 	return fs.Abs(c.params.PIDFilename)
@@ -112,7 +129,7 @@ func (c *Config) PIDFilename() string {
 // LogFilename returns the filename for storing server logs.
 func (c *Config) LogFilename() string {
 	if c.params.LogFilename == "" {
-		return filepath.Join(c.AssetsPath(), "photoprism.log")
+		return filepath.Join(c.StoragePath(), "photoprism.log")
 	}
 
 	return fs.Abs(c.params.LogFilename)
@@ -187,34 +204,43 @@ func (c *Config) TempPath() string {
 
 // CachePath returns the path to the cache.
 func (c *Config) CachePath() string {
+	if c.params.CachePath == "" {
+		return filepath.Join(c.StoragePath(), "cache")
+	}
+
 	return fs.Abs(c.params.CachePath)
 }
 
-// AssetsPath returns the path to the assets.
+// StoragePath returns the path for generated files.
+func (c *Config) StoragePath() string {
+	if c.params.StoragePath == "" {
+		if usr, _ := user.Current(); usr.HomeDir != "" {
+			p := filepath.Join(usr.HomeDir, fs.HiddenPath, "storage")
+
+			if fs.PathExists(p) {
+				return p
+			}
+		}
+
+		if !c.ReadOnly() {
+			return filepath.Join(c.OriginalsPath(), fs.HiddenPath, "storage")
+		}
+	}
+
+	return fs.Abs(c.params.StoragePath)
+}
+
+// AssetsPath returns the path to static assets.
 func (c *Config) AssetsPath() string {
 	return fs.Abs(c.params.AssetsPath)
 }
 
-// ResourcesPath returns the path to the app resources like static files.
-func (c *Config) ResourcesPath() string {
-	if c.params.ResourcesPath == "" {
-		return filepath.Join(c.AssetsPath(), "resources")
-	}
-
-	return fs.Abs(c.params.ResourcesPath)
-}
-
 // ExamplesPath returns the example files path.
 func (c *Config) ExamplesPath() string {
-	return filepath.Join(c.ResourcesPath(), "examples")
+	return filepath.Join(c.AssetsPath(), "examples")
 }
 
-// TensorFlowModelPath returns the tensorflow model path.
-func (c *Config) TensorFlowModelPath() string {
-	return filepath.Join(c.ResourcesPath(), "nasnet")
-}
-
-// NSFWModelPath returns the NSFW tensorflow model path.
-func (c *Config) NSFWModelPath() string {
-	return filepath.Join(c.ResourcesPath(), "nsfw")
+// TestdataPath returns the test files path.
+func (c *Config) TestdataPath() string {
+	return filepath.Join(c.StoragePath(), "testdata")
 }

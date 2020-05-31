@@ -30,7 +30,7 @@ export default [
         name: "photos",
         path: "/photos",
         component: Photos,
-        meta: {title: c.subtitle, auth: true},
+        meta: {title: c.siteCaption, auth: true},
         props: {staticFilter: {photo: "true"}},
     },
     {

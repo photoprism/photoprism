@@ -259,7 +259,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if file.FilePrimary {
 		primaryFile = file
 
-		if !ind.conf.DisableTensorFlow() {
+		if !ind.conf.TensorFlowOff() {
 			// Image classification via TensorFlow.
 			labels = ind.classifyImage(m)
 

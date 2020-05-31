@@ -19,20 +19,20 @@ services:
       timeout: 15s
       retries: 5
     environment: # Run "photoprism help" and "photoprism config" too see all config options and current values
-      PHOTOPRISM_URL: "https://demo.photoprism.org/"
-      PHOTOPRISM_TITLE: "PhotoPrism"
-      PHOTOPRISM_SUBTITLE: "Browse your life"
-      PHOTOPRISM_DESCRIPTION: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source."
-      PHOTOPRISM_AUTHOR: "Anonymous"
-      PHOTOPRISM_UPLOAD_NSFW: "true"
-      PHOTOPRISM_DETECT_NSFW: "false"
-      PHOTOPRISM_EXPERIMENTAL: "false"
-      PHOTOPRISM_DEBUG: "false"
-      PHOTOPRISM_READONLY: "false"
-      PHOTOPRISM_PUBLIC: "false"
-      PHOTOPRISM_DISABLE_SETTINGS: "false"
+      PHOTOPRISM_DEBUG: "false" # Run in debug mode
+      PHOTOPRISM_PUBLIC: "false"  # No authentication / password required
+      PHOTOPRISM_READONLY: "false" # Don't add files or modify originals directory in any way
+      PHOTOPRISM_UPLOAD_NSFW: "true" # Allow uploads that may be offensive
+      PHOTOPRISM_DETECT_NSFW: "false"  # Flag photos as private that MAY be offensive
+      PHOTOPRISM_EXPERIMENTAL: "false" # Enable experimental features
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/" # Canonical / public site URL
+      PHOTOPRISM_SITE_TITLE: "PhotoPrism"
+      PHOTOPRISM_SITE_CAPTION: "Browse your life"
+      PHOTOPRISM_SITE_DESCRIPTION: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source."
+      PHOTOPRISM_SITE_AUTHOR: "Anonymous"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
+      PHOTOPRISM_SETTINGS_HIDDEN: "false" # Users can not view or change settings
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # Plain text or bcrypt hash (escape "$" with "$$")
       PHOTOPRISM_WEBDAV_PASSWORD: "photoprism" # Plain text only (username "photoprism")
       PHOTOPRISM_DATABASE_DRIVER: "sqlite" # Change to "mysql" for external MySQL or MariaDB
@@ -48,14 +48,12 @@ services:
       PHOTOPRISM_THUMB_LIMIT: 3840 # On-demand thumbnail size limit (default 2048, min 720, max 3840)
       PHOTOPRISM_JPEG_QUALITY: 90 # Use 95 for high-quality thumbnails (requires more storage)
       PHOTOPRISM_JPEG_HIDDEN: "true" # Create JPEG files in .photoprism (when converting other file types)
+      PHOTOPRISM_STORAGE_PATH: "/photoprism/storage"
     volumes:
       - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
       - "~/Pictures/Import:/photoprism/import" # [local path]:[container path] (optional)
-      - "photoprism-config:/photoprism/config" # keep settings
-      - "photoprism-cache:/photoprism/cache" # keep thumbnail cache
+      - "photoprism-storage:/photoprism/storage" # Keep cache, settings and database
 
 volumes: # keep this
-  photoprism-config:
-    driver: local
-  photoprism-cache:
+  photoprism-storage:
     driver: local

@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"os"
+	"path/filepath"
 	"sync"
 	"testing"
 	"time"
@@ -35,8 +36,8 @@ func testDataPath(assetsPath string) string {
 // NewTestParams inits valid params used for testing
 func NewTestParams() *Params {
 	assetsPath := fs.Abs("../../assets")
-
-	testDataPath := testDataPath(assetsPath)
+	storagePath := fs.Abs("../../storage")
+	testDataPath := filepath.Join(storagePath, "testdata")
 
 	dbDriver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
 	dbDsn := os.Getenv("PHOTOPRISM_TEST_DSN")
@@ -63,10 +64,12 @@ func NewTestParams() *Params {
 		DarktableBin:   "/usr/bin/darktable-cli",
 		ExifToolBin:    "/usr/bin/exiftool",
 		AssetsPath:     assetsPath,
+		StoragePath:    testDataPath,
 		CachePath:      testDataPath + "/cache",
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
 		TempPath:       testDataPath + "/temp",
+		SettingsPath:   testDataPath + "/settings",
 		DatabaseDriver: dbDriver,
 		DatabaseDsn:    dbDsn,
 	}
@@ -77,12 +80,12 @@ func NewTestParams() *Params {
 // NewTestParamsError inits invalid params used for testing
 func NewTestParamsError() *Params {
 	assetsPath := fs.Abs("../..")
-
-	testDataPath := testDataPath("../../assets")
+	testDataPath := fs.Abs("../../storage/testdata")
 
 	c := &Params{
 		DarktableBin:   "/usr/bin/darktable-cli",
 		AssetsPath:     assetsPath,
+		StoragePath:    testDataPath,
 		CachePath:      testDataPath + "/cache",
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
@@ -115,6 +118,16 @@ func NewTestConfig() *Config {
 	c := &Config{
 		params: NewTestParams(),
 		token:  rnd.Token(8),
+	}
+
+	s := NewSettings()
+
+	if err := os.MkdirAll(c.SettingsPath(), os.ModePerm); err != nil {
+		log.Fatalf("config: %s", err.Error())
+	}
+
+	if err := s.Save(filepath.Join(c.SettingsPath(), "settings.yml")); err != nil {
+		log.Fatalf("config: %s", err.Error())
 	}
 
 	c.initSettings()
@@ -151,6 +164,7 @@ func CliTestContext() *cli.Context {
 
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.Bool("debug", false, "doc")
+	globalSet.String("storage-path", config.StoragePath, "doc")
 	globalSet.String("config-file", config.ConfigFile, "doc")
 	globalSet.String("assets-path", config.AssetsPath, "doc")
 	globalSet.String("originals-path", config.OriginalsPath, "doc")
@@ -165,6 +179,7 @@ func CliTestContext() *cli.Context {
 
 	c := cli.NewContext(app, globalSet, nil)
 
+	LogError(c.Set("storage-path", config.StoragePath))
 	LogError(c.Set("config-file", config.ConfigFile))
 	LogError(c.Set("assets-path", config.AssetsPath))
 	LogError(c.Set("originals-path", config.OriginalsPath))
@@ -221,7 +236,7 @@ func (c *Config) DownloadTestData(t *testing.T) {
 
 // UnzipTestData in default test folder
 func (c *Config) UnzipTestData(t *testing.T) {
-	if _, err := fs.Unzip(TestDataZip, testDataPath(c.AssetsPath())); err != nil {
+	if _, err := fs.Unzip(TestDataZip, c.StoragePath()); err != nil {
 		t.Fatalf("config: could not unzip test data: %s", err.Error())
 	}
 }

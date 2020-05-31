@@ -4,7 +4,7 @@ TODAY=`date -u +%Y%m%d`
 
 MODEL_NAME="NASNet Mobile"
 MODEL_URL="https://dl.photoprism.org/tensorflow/nasnet.zip?$TODAY"
-MODEL_PATH="assets/resources/nasnet"
+MODEL_PATH="assets/nasnet"
 MODEL_ZIP="/tmp/photoprism/nasnet.zip"
 MODEL_HASH="f18b801354e95cade497b4f12e8d2537d04c04f6  $MODEL_ZIP"
 MODEL_VERSION="$MODEL_PATH/version.txt"
@@ -40,7 +40,7 @@ if [[ -e ${MODEL_PATH} ]]; then
 fi
 
 # Unzip model
-unzip ${MODEL_ZIP} -d assets/resources
+unzip ${MODEL_ZIP} -d assets
 echo "$MODEL_NAME $TODAY $MODEL_HASH" > ${MODEL_VERSION}
 
 echo "Latest $MODEL_NAME installed."
