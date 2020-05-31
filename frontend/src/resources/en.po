@@ -64,11 +64,11 @@ msgstr "Albums deleted"
 msgid "All "
 msgstr "All "
 
-#: src/component/p-album-search.vue:107 src/component/p-photo-search.vue:157
+#: src/component/p-album-search.vue:107 src/component/p-photo-toolbar.vue:157
 msgid "All Cameras"
 msgstr "All Cameras"
 
-#: src/component/p-album-search.vue:110 src/component/p-photo-search.vue:160
+#: src/component/p-album-search.vue:110 src/component/p-photo-toolbar.vue:160
 msgid "All Countries"
 msgstr "All Countries"
 
@@ -81,7 +81,7 @@ msgid "Are you sure you want to delete these photos?"
 msgstr "Are you sure you want to delete these photos?"
 
 #: src/component/p-album-search.vue:134 src/component/p-photo-list.vue:53
-#: src/component/p-photo-search.vue:186
+#: src/component/p-photo-toolbar.vue:186
 msgid "Camera"
 msgstr "Camera"
 
@@ -93,7 +93,7 @@ msgid "Cancel"
 msgstr "Cancel"
 
 #: src/component/p-album-search.vue:133 src/component/p-photo-list.vue:52
-#: src/component/p-photo-search.vue:185
+#: src/component/p-photo-toolbar.vue:185
 msgid "Country"
 msgstr "Country"
 
@@ -121,7 +121,7 @@ msgstr "Day"
 msgid "Delete"
 msgstr "Delete"
 
-#: src/component/p-album-search.vue:119 src/component/p-photo-search.vue:169
+#: src/component/p-album-search.vue:119 src/component/p-photo-toolbar.vue:169
 msgid "Details"
 msgstr "Details"
 
@@ -204,7 +204,7 @@ msgstr "Language"
 msgid "Library"
 msgstr "Library"
 
-#: src/component/p-album-search.vue:120 src/component/p-photo-search.vue:170
+#: src/component/p-album-search.vue:120 src/component/p-photo-toolbar.vue:170
 msgid "List"
 msgstr "List"
 
@@ -248,7 +248,7 @@ msgstr "More than 20 labels found"
 msgid "More than 50 photos found"
 msgstr "More than 50 photos found"
 
-#: src/component/p-album-search.vue:118 src/component/p-photo-search.vue:168
+#: src/component/p-album-search.vue:118 src/component/p-photo-toolbar.vue:168
 msgid "Mosaic"
 msgstr "Mosaic"
 
@@ -256,7 +256,7 @@ msgstr "Mosaic"
 msgid "New Album"
 msgstr "New Album"
 
-#: src/component/p-album-search.vue:125 src/component/p-photo-search.vue:175
+#: src/component/p-album-search.vue:125 src/component/p-photo-toolbar.vue:175
 msgid "Newest first"
 msgstr "Newest first"
 
@@ -303,7 +303,7 @@ msgstr "Nothing to see here yet. Be patient."
 msgid "of"
 msgstr "of"
 
-#: src/component/p-album-search.vue:126 src/component/p-photo-search.vue:176
+#: src/component/p-album-search.vue:126 src/component/p-photo-toolbar.vue:176
 msgid "Oldest first"
 msgstr "Oldest first"
 
@@ -351,7 +351,7 @@ msgstr "Prev"
 msgid "Private"
 msgstr "Private"
 
-#: src/component/p-album-search.vue:127 src/component/p-photo-search.vue:177
+#: src/component/p-album-search.vue:127 src/component/p-photo-toolbar.vue:177
 msgid "Recently imported"
 msgstr "Recently imported"
 
@@ -367,7 +367,7 @@ msgstr "Remove from album"
 msgid "Save"
 msgstr "Save"
 
-#: src/component/p-album-search.vue:131 src/component/p-photo-search.vue:183
+#: src/component/p-album-search.vue:131 src/component/p-photo-toolbar.vue:183
 #: src/pages/albums.vue:162 src/pages/labels.vue:116 src/pages/places.vue:73
 msgid "Search"
 msgstr "Search"
@@ -396,7 +396,7 @@ msgstr "Sign in"
 msgid "Skip existing photos and sidecar files"
 msgstr "Skip existing photos and sidecar files"
 
-#: src/component/p-album-search.vue:135 src/component/p-photo-search.vue:187
+#: src/component/p-album-search.vue:135 src/component/p-photo-toolbar.vue:187
 msgid "Sort By"
 msgstr "Sort By"
 
@@ -408,7 +408,7 @@ msgstr "Start"
 msgid "Story"
 msgstr "Story"
 
-#: src/component/p-photo-search.vue:189
+#: src/component/p-photo-toolbar.vue:189
 msgid "Taken after"
 msgstr "Taken after"
 
@@ -416,7 +416,7 @@ msgstr "Taken after"
 msgid "Taken At"
 msgstr "Taken At"
 
-#: src/component/p-photo-search.vue:188
+#: src/component/p-photo-toolbar.vue:188
 msgid "Taken before"
 msgstr "Taken before"
 
@@ -424,7 +424,7 @@ msgstr "Taken before"
 msgid "Theme"
 msgstr "Theme"
 
-#: src/component/p-album-search.vue:117 src/component/p-photo-search.vue:167
+#: src/component/p-album-search.vue:117 src/component/p-photo-toolbar.vue:167
 msgid "Tiles"
 msgstr "Tiles"
 
@@ -493,7 +493,7 @@ msgstr "Uploading photos…"
 msgid "Vibrant"
 msgstr "Vibrant"
 
-#: src/component/p-album-search.vue:132 src/component/p-photo-search.vue:184
+#: src/component/p-album-search.vue:132 src/component/p-photo-toolbar.vue:184
 msgid "View"
 msgstr "View"
 

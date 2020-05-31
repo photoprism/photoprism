@@ -1,6 +1,6 @@
 <template>
     <v-form lazy-validation dense
-            ref="form" autocomplete="off" class="p-photo-search" accept-charset="UTF-8"
+            ref="form" autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8"
             @submit.prevent="filterChange">
         <v-toolbar flat color="secondary">
             <v-text-field class="pt-3 pr-3 p-search-field"
@@ -153,7 +153,7 @@
     import { Info } from "luxon";
 
     export default {
-        name: 'p-photo-search',
+        name: 'p-photo-toolbar',
         props: {
             dirty: Boolean,
             filter: Object,

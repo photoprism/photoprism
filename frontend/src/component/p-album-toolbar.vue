@@ -1,6 +1,6 @@
 <template>
     <v-form lazy-validation dense
-            ref="form" autocomplete="off" class="p-photo-search p-album-toolbar" accept-charset="UTF-8"
+            ref="form" autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8"
             @submit.prevent="filterChange">
         <v-toolbar flat color="secondary">
             <v-edit-dialog
@@ -37,6 +37,11 @@
             </v-btn>
             <v-btn icon v-else @click.stop="setView('cards')">
                 <v-icon>view_column</v-icon>
+            </v-btn>
+
+            <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
+                   class="hidden-sm-and-down">
+                <v-icon>cloud_upload</v-icon>
             </v-btn>
 
             <v-btn icon @click.stop="expand" class="p-expand-search">
@@ -108,7 +113,7 @@
     </v-form>
 </template>
 <script>
-    import Album from "../model/album";
+    import Event from "pubsub-js";
 
     export default {
         name: 'p-album-toolbar',
@@ -164,12 +169,14 @@
             };
         },
         methods: {
+            showUpload() {
+                Event.publish("dialog.upload");
+            },
             expand() {
                 this.searchExpanded = !this.searchExpanded;
                 this.growDesc = !this.growDesc;
             },
             updateAlbum() {
-                console.log("UPDATE ALBUM", this.album.getValues(true));
                 if(this.album.wasChanged()) {
                     this.album.update();
                 }

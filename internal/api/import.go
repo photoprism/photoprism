@@ -86,6 +86,10 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 		event.Publish("import.completed", event.Data{"path": path, "seconds": elapsed})
 		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
 
+		for _, uid := range f.Albums {
+			PublishAlbumEvent(EntityUpdated, uid, c)
+		}
+
 		UpdateClientConfig(conf)
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("import completed in %d s", elapsed)})

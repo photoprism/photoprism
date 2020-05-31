@@ -31,6 +31,11 @@
                     <v-icon>refresh</v-icon>
                 </v-btn>
 
+                <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
+                       class="hidden-sm-and-down">
+                    <v-icon>cloud_upload</v-icon>
+                </v-btn>
+
                 <v-btn icon @click.prevent="create">
                     <v-icon>add</v-icon>
                 </v-btn>
@@ -222,6 +227,9 @@
             };
         },
         methods: {
+            showUpload() {
+                Event.publish("dialog.upload");
+            },
             selectRange(rangeEnd, models) {
                 if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
                     console.warn("selectRange() - invalid arguments:", rangeEnd, models);
