@@ -15,28 +15,28 @@
 
                     <div class="pswp__counter"></div>
 
-                    <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                    <button class="pswp__button pswp__button--close action-close" title="Close (Esc)"></button>
 
                     <!-- button class="pswp__button pswp__button--share p-photo-download" title="Download"
                             v-if="config.settings.features.download">
                     </button -->
 
-                    <button class="pswp__button" style="background: none;" @click.exact="onDownload" title="Download" v-if="config.settings.features.download">
+                    <button class="pswp__button action-download" style="background: none;" @click.exact="onDownload" title="Download" v-if="config.settings.features.download">
                         <v-icon size="16" color="white">cloud_download</v-icon>
                     </button>
 
-                    <button class="pswp__button" style="background: none;" @click.exact="onEdit" title="Edit">
+                    <button class="pswp__button action-edit" style="background: none;" @click.exact="onEdit" title="Edit">
                         <v-icon size="16" color="white">edit</v-icon>
                     </button>
 
-                    <button class="pswp__button" style="background: none;" @click.exact="toggleLike" title="Like">
+                    <button class="pswp__button action-like" style="background: none;" @click.exact="toggleLike" title="Like">
                         <v-icon v-if="item.favorite" size="16" color="white">favorite</v-icon>
                         <v-icon v-else size="16" color="white">favorite_border</v-icon>
                     </button>
 
-                    <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                    <button class="pswp__button pswp__button--fs action-toogle-fullscreen" title="Toggle fullscreen"></button>
 
-                    <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                    <button class="pswp__button pswp__button--zoom action-zoom" title="Zoom in/out"></button>
 
                     <button class="pswp__button" style="background: none;" @click.exact="onSlideshow" title="Slideshow">
                         <v-icon v-show="!interval" size="18" color="white">play_arrow</v-icon>
@@ -56,10 +56,10 @@
                     <div class="pswp__share-tooltip"></div>
                 </div>
 
-                <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+                <button class="pswp__button pswp__button--arrow--left action-previous" title="Previous (arrow left)">
                 </button>
 
-                <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+                <button class="pswp__button pswp__button--arrow--right action-next" title="Next (arrow right)">
                 </button>
 
                 <div class="pswp__caption" @click="playVideo">
