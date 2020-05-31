@@ -157,6 +157,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
+	if originalName != "" {
+		file.OriginalName = originalName
+
+		if file.FilePrimary && photo.OriginalName == "" {
+			photo.OriginalName = originalName
+		}
+	}
+
 	if photo.PhotoQuality == -1 && file.FilePrimary {
 		// restore photos that have been purged automatically
 		photo.DeletedAt = nil
@@ -357,14 +365,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	photo.UpdateYearMonth()
-
-	if originalName != "" {
-		file.OriginalName = originalName
-
-		if photo.OriginalName == "" {
-			photo.OriginalName = originalName
-		}
-	}
 
 	file.FileSidecar = m.IsSidecar()
 	file.FileVideo = m.IsVideo()
