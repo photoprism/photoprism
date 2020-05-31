@@ -43,4 +43,6 @@ var TitleReplacements = map[string]string{
 	" By ":    " by ",
 	" But ":   " but ",
 	" For ":   " for ",
+	" Of ":    " of ",
+	" The ":   " the ",
 }

@@ -291,6 +291,14 @@ func TestPhoto_DetailsLoaded(t *testing.T) {
 	})
 }
 
+func TestPhoto_TitleFromFileName(t *testing.T) {
+	t.Run("changing-of-the-guard--buckingham-palace_7925318070_o.jpg", func(t *testing.T) {
+		photo := Photo{PhotoName: "20200102_194030_9EFA9E5E", PhotoPath: "2000/05", OriginalName: "flickr import/changing-of-the-guard--buckingham-palace_7925318070_o.jpg"}
+		result := photo.TitleFromFileName()
+		assert.Equal(t, "Changing of the Guard / Buckingham Palace", result)
+	})
+}
+
 func TestPhoto_UpdateTitle(t *testing.T) {
 	t.Run("wont update title was modified", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo08")

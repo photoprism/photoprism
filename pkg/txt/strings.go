@@ -115,6 +115,10 @@ func TitleFromFileName(s string) string {
 	title = strings.ReplaceAll(title, "-", " ")
 	title = strings.ReplaceAll(title, "  ", " ")
 
+	if len(title) < 3 {
+		return ""
+	}
+
 	return Title(title)
 }
 

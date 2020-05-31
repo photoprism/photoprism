@@ -40,6 +40,15 @@ func Base(fileName string, stripSequence bool) string {
 	return basename
 }
 
+// RelativeBase returns the relative filename.
+func RelativeBase(fileName, dir string, stripSequence bool) string {
+	if name := RelativeName(fileName, dir); name != "" {
+		return AbsBase(name, stripSequence)
+	}
+
+	return Base(fileName, stripSequence)
+}
+
 // AbsBase returns the directory and base filename without any extensions.
 func AbsBase(fileName string, stripSequence bool) string {
 	return filepath.Join(filepath.Dir(fileName), Base(fileName, stripSequence))

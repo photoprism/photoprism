@@ -67,7 +67,7 @@ func (m *Moments) Start() (err error) {
 	}
 
 	// Important folders.
-	if results, err := query.AlbumFolders(threshold); err != nil {
+	if results, err := query.AlbumFolders(1); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {

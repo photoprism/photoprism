@@ -101,7 +101,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		if !fileExists && m.MetaData().HasInstanceID() {
-			fileQuery = entity.UnscopedDb().First(&file, "instance_id = ?", m.MetaData().InstanceID)
+			fileQuery = entity.UnscopedDb().First(&file, "uuid = ?", m.MetaData().InstanceID)
 			fileExists = fileQuery.Error == nil
 		}
 	}
@@ -115,7 +115,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		if photoQuery.Error != nil && m.MetaData().HasDocumentID() {
-			photoQuery = entity.UnscopedDb().First(&photo, "document_id = ?", m.MetaData().DocumentID)
+			photoQuery = entity.UnscopedDb().First(&photo, "uuid = ?", m.MetaData().DocumentID)
 		}
 	} else {
 		photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
@@ -299,16 +299,16 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 				photo.CameraSerial = metaData.CameraSerial
 			}
 
-			if metaData.HasDocumentID() && photo.DocumentID == "" {
+			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Debugf("index: %s has document id %s", quotedName, txt.Quote(metaData.DocumentID))
 
-				photo.DocumentID = metaData.DocumentID
+				photo.UUID = metaData.DocumentID
 			}
 
-			if metaData.HasInstanceID() && file.InstanceID == "" {
+			if metaData.HasInstanceID() && file.UUID == "" {
 				log.Debugf("index: %s has instance id %s", quotedName, txt.Quote(metaData.InstanceID))
 
-				file.InstanceID = metaData.InstanceID
+				file.UUID = metaData.InstanceID
 			}
 		}
 
@@ -360,6 +360,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if originalName != "" {
 		file.OriginalName = originalName
+
+		if photo.OriginalName == "" {
+			photo.OriginalName = originalName
+		}
 	}
 
 	file.FileSidecar = m.IsSidecar()
@@ -435,7 +439,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		w := txt.Keywords(photo.Details.Keywords)
 
-		if NonCanonical(fileBase) {
+		if fs.NonCanonical(fileBase) {
 			w = append(w, txt.FilenameKeywords(filePath)...)
 			w = append(w, txt.FilenameKeywords(fileBase)...)
 		}

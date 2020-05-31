@@ -1,4 +1,4 @@
-package photoprism
+package fs
 
 import (
 	"testing"

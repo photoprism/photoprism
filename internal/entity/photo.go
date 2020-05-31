@@ -3,6 +3,7 @@ package entity
 import (
 	"errors"
 	"fmt"
+	"path"
 	"strings"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
@@ -18,7 +20,7 @@ import (
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
 	ID               uint         `gorm:"primary_key" yaml:"-"`
-	DocumentID       string       `gorm:"type:varbinary(36);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
+	UUID             string       `gorm:"type:varbinary(36);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
 	TakenAt          time.Time    `gorm:"type:datetime;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
 	TakenAtLocal     time.Time    `gorm:"type:datetime;" yaml:"-"`
 	TakenSrc         string       `gorm:"type:varbinary(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
@@ -30,7 +32,8 @@ type Photo struct {
 	DescriptionSrc   string       `gorm:"type:varbinary(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
 	Details          Details      `json:"Details" yaml:"Details"`
 	PhotoPath        string       `gorm:"type:varbinary(768);index;" yaml:"-"`
-	PhotoName        string       `gorm:"type:varbinary(255);" yaml:"-"`
+	PhotoName        string       `gorm:"type:varbinary(255);" json:"PhotoName" yaml:"-"`
+	OriginalName     string       `gorm:"type:varbinary(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	PhotoFavorite    bool         `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
 	TimeZone         string       `gorm:"type:varbinary(64);" json:"TimeZone" yaml:"-"`
@@ -442,6 +445,29 @@ func (m *Photo) DetailsLoaded() bool {
 	return m.Details.PhotoID == m.ID
 }
 
+// TitleFromFileName returns a photo title based on the file name and/or path.
+func (m *Photo) TitleFromFileName() string {
+	if fs.NonCanonical(m.PhotoName) {
+		if title := txt.TitleFromFileName(m.PhotoName); title != "" {
+			return title
+		}
+	}
+
+	if m.OriginalName != "" && fs.NonCanonical(m.OriginalName) {
+		if title := txt.TitleFromFileName(m.OriginalName); title != "" {
+			return title
+		} else if title := txt.TitleFromFileName(path.Dir(m.OriginalName)); title != "" {
+			return title
+		}
+	}
+
+	if m.PhotoPath != "" {
+		return txt.TitleFromFileName(m.PhotoPath)
+	}
+
+	return ""
+}
+
 // UpdateTitle updated the photo title based on location and labels.
 func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	if m.TitleSrc != SrcAuto && m.HasTitle() {
@@ -451,11 +477,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	var knownLocation bool
 
 	oldTitle := m.PhotoTitle
-	fileTitle := txt.TitleFromFileName(m.PhotoName)
-
-	if fileTitle == "" {
-		fileTitle = txt.TitleFromFileName(m.PhotoPath)
-	}
+	fileTitle := m.TitleFromFileName()
 
 	if m.LocationLoaded() {
 		knownLocation = true

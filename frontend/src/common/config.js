@@ -20,13 +20,13 @@ class Config {
             this.debug = true;
             this.values = {};
             this.page = {
-                title: "PhotoPrism"
+                title: "PhotoPrism",
             };
             return;
         }
 
         this.page = {
-            title: values.siteTitle
+            title: values.siteTitle,
         };
 
         this.values = values;

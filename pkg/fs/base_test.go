@@ -69,6 +69,34 @@ func TestBase(t *testing.T) {
 	})
 }
 
+func TestRelativeBase(t *testing.T) {
+	t.Run("/foo/bar.0000.ZIP", func(t *testing.T) {
+		regular := RelativeBase("/foo/bar.0000.ZIP", "/bar", false)
+		assert.Equal(t, "/foo/bar.0000", regular)
+
+		stripped := RelativeBase("/foo/bar.0000.ZIP", "/bar", true)
+		assert.Equal(t, "/foo/bar.0000", stripped)
+	})
+
+	t.Run("/foo/bar.00001.ZIP", func(t *testing.T) {
+		regular := RelativeBase("/foo/bar.00001.ZIP", "/bar", false)
+		assert.Equal(t, "/foo/bar.00001", regular)
+
+		stripped := RelativeBase("/foo/bar.00001.ZIP", "/bar", true)
+		assert.Equal(t, "/foo/bar", stripped)
+	})
+
+	t.Run("Test copy 3.jpg", func(t *testing.T) {
+		result := RelativeBase("/testdata/foo/Test copy 3.jpg", "/testdata", false)
+		assert.Equal(t, "foo/Test copy 3", result)
+	})
+
+	t.Run("Test (3).jpg", func(t *testing.T) {
+		result := RelativeBase("/testdata/foo/Test (3).jpg", "/testdata", false)
+		assert.Equal(t, "foo/Test (3)", result)
+	})
+}
+
 func TestBaseAbs(t *testing.T) {
 	t.Run("Test copy 3.jpg", func(t *testing.T) {
 		result := AbsBase("/testdata/Test (4).jpg", true)

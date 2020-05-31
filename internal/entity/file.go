@@ -15,7 +15,7 @@ import (
 // File represents an image or sidecar file that belongs to a photo.
 type File struct {
 	ID              uint          `gorm:"primary_key" json:"-" yaml:"-"`
-	InstanceID      string        `gorm:"type:varbinary(36);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
+	UUID            string        `gorm:"type:varbinary(36);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	Photo           *Photo        `json:"-" yaml:"-"`
 	PhotoID         uint          `gorm:"index;" json:"-" yaml:"-"`
 	PhotoUID        string        `gorm:"type:varbinary(36);index;" json:"PhotoUID" yaml:"PhotoUID"`
