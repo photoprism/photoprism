@@ -81,6 +81,8 @@ var Countries = map[string]string{
 	"wilmersdorf":                           "de",
 	"tempelhof":                             "de",
 	"schönefeld":                            "de",
+	"airport ber":                           "de",
+	"flughafen ber":                         "de",
 	"reichstag":                             "de",
 	"kreuzberg":                             "de",
 	"ostsee":                                "de",

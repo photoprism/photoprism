@@ -77,6 +77,8 @@ DE:Charlottenburg
 DE:Wilmersdorf
 DE:Tempelhof
 DE:Schönefeld
+DE:Airport BER
+DE:Flughafen BER
 DE:Reichstag
 DE:Kreuzberg
 DE:Ostsee
