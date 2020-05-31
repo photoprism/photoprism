@@ -3,7 +3,7 @@
               v-model="show" persistent class="p-photo-edit-dialog" @keydown.esc="close">
         <v-card color="application">
             <v-toolbar dark color="navigation">
-                <v-btn icon dark @click.stop="close">
+                <v-btn icon dark @click.stop="close" class="action-close">
                     <v-icon>close</v-icon>
                 </v-btn>
                 <v-toolbar-title>{{ title }}
@@ -11,11 +11,11 @@
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-toolbar-items v-if="selection.length > 1">
-                    <v-btn icon disabled @click.stop="prev" :disabled="selected < 1">
+                    <v-btn icon disabled @click.stop="prev" :disabled="selected < 1" class="action-previous">
                         <v-icon>navigate_before</v-icon>
                     </v-btn>
 
-                    <v-btn icon @click.stop="next" :disabled="selected >= selection.length - 1">
+                    <v-btn icon @click.stop="next" :disabled="selected >= selection.length - 1" class="action-next">
                         <v-icon>navigate_next</v-icon>
                     </v-btn>
                 </v-toolbar-items>
