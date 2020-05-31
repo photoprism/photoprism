@@ -112,7 +112,7 @@
                         <v-card-title primary-title class="pa-3 p-photo-desc" style="user-select: none;">
                             <div>
                                 <h3 class="body-2 mb-2" :title="photo.Title">
-                                    <button @click.exact="editPhoto(index)">
+                                    <button @click.exact="editPhoto(index)" class="action-title-edit" :data-uid="photo.UID">
                                         {{ photo.Title | truncate(80) }}
                                     </button>
                                 </h3>
@@ -122,7 +122,7 @@
                                     </button>
                                 </div>
                                 <div class="caption">
-                                    <button @click.exact="editPhoto(index)">
+                                    <button @click.exact="editPhoto(index)" class="action-date-edit" :data-uid="photo.UID">
                                         <v-icon size="14" title="Taken">date_range</v-icon>
                                         {{ photo.getDateString() }}
                                     </button>
@@ -133,7 +133,7 @@
                                             <v-icon size="14">movie</v-icon>
                                             {{ photo.getVideoInfo() }}
                                         </button>
-                                        <button v-else @click.exact="editPhoto(index)" title="Camera">
+                                        <button v-else @click.exact="editPhoto(index)" title="Camera" class="action-camera-edit" :data-uid="photo.UID">
                                             <v-icon size="14">photo_camera</v-icon>
                                             {{ photo.getPhotoInfo() }}
                                         </button>
@@ -148,7 +148,7 @@
                                     </template>
                                     <template v-if="showLocation && photo.Country !== 'zz'">
                                         <br/>
-                                        <button @click.exact="openLocation(index)" title="Location">
+                                        <button @click.exact="openLocation(index)" title="Location" class="action-location" :data-uid="photo.UID">
                                             <v-icon size="14">location_on</v-icon>
                                             {{ photo.locationInfo() }}
                                         </button>
