@@ -3,7 +3,7 @@
         <div id="map" style="width: 100%; height: 100%;">
             <div class="p-map-control">
                 <div class="mapboxgl-ctrl mapboxgl-ctrl-group">
-                    <v-text-field class="pa-0 ma-0"
+                    <v-text-field class="pa-0 ma-0 input-search"
                                   single-line
                                   solo
                                   flat
