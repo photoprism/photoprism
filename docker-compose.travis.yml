@@ -20,7 +20,7 @@ services:
       PHOTOPRISM_READONLY: "false"
       PHOTOPRISM_PUBLIC: "true"
       PHOTOPRISM_UPLOAD_NSFW: "false"
-      PHOTOPRISM_DETECT_NSFW: "true"
+      PHOTOPRISM_DETECT_NSFW: "false"
       PHOTOPRISM_PID_FILENAME: "photoprism.pid"
       PHOTOPRISM_LOG_FILENAME: "photoprism.log"
       PHOTOPRISM_DETACH_SERVER: "true"
