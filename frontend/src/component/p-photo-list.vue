@@ -39,7 +39,8 @@
                     </v-btn>
                 </v-img>
             </td>
-            <td class="p-photo-desc clickable" @click.exact="editPhoto(props.index)" style="user-select: none;">
+
+            <td class="p-photo-desc clickable" :data-uid="props.item.UID" @click.exact="editPhoto(props.index)" style="user-select: none;">
                 {{ props.item.Title }}
             </td>
             <td class="p-photo-desc hidden-xs-only" :title="props.item.getDateString()">
