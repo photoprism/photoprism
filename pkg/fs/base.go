@@ -29,13 +29,15 @@ func Base(fileName string, stripSequence bool) string {
 	}
 
 	// other common sequential naming schemes
-	if end := strings.Index(basename, " ("); end != -1 {
+	if end := strings.Index(basename, "("); end != -1 {
 		// copies created by Chrome & Windows, example: IMG_1234 (2)
 		basename = basename[:end]
 	} else if end := strings.Index(basename, " copy"); end != -1 {
 		// copies created by OS X, example: IMG_1234 copy 2
 		basename = basename[:end]
 	}
+
+	basename = strings.TrimSpace(basename)
 
 	return basename
 }
