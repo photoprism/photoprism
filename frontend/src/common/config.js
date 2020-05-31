@@ -21,10 +21,14 @@ class Config {
             console.warn("config: values are empty");
             this.debug = true;
             this.values = {};
+            this.page.title = "PhotoPrism";
             return;
         }
 
-        this.page.title = values.siteTitle;
+        if (values.siteTitle) {
+            this.page.title = values.siteTitle;
+        }
+
         this.values = values;
         this.debug = !!values.debug;
 
