@@ -8,17 +8,17 @@ import (
 var GlobalFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:   "debug",
-		Usage:  "run in debug mode",
+		Usage:  "run in debug mode (shows additional log messages)",
 		EnvVar: "PHOTOPRISM_DEBUG",
 	},
 	cli.BoolFlag{
 		Name:   "public, p",
-		Usage:  "no authentication / password required",
+		Usage:  "no authentication required (disables password protection)",
 		EnvVar: "PHOTOPRISM_PUBLIC",
 	},
 	cli.BoolFlag{
 		Name:   "read-only, r",
-		Usage:  "don't add files or modify originals directory in any way",
+		Usage:  "don't modify originals directory (reduced functionality)",
 		EnvVar: "PHOTOPRISM_READONLY",
 	},
 	cli.BoolFlag{
@@ -131,14 +131,14 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "import-path",
-		Usage:  "import `PATH`",
-		Value:  "~/Pictures/Import",
+		Usage:  "optional import `PATH` for copying files to originals",
+		Value:  "",
 		EnvVar: "PHOTOPRISM_IMPORT_PATH",
 	},
 	cli.StringFlag{
 		Name:   "originals-path",
-		Usage:  "originals `PATH`",
-		Value:  "~/Pictures/Originals",
+		Usage:  "originals `PATH` for photo, video and sidecar files",
+		Value:  "",
 		EnvVar: "PHOTOPRISM_ORIGINALS_PATH",
 	},
 	cli.IntFlag{

@@ -10,6 +10,80 @@ import (
 	"github.com/photoprism/photoprism/pkg/fastwalk"
 )
 
+var OriginalPaths = []string{
+	"/photoprism/photos/originals",
+	"/photoprism/originals",
+	"photoprism/originals",
+	"PhotoPrism/Originals",
+	"photoprism/original",
+	"PhotoPrism/Original",
+	"pictures/originals",
+	"Pictures/Originals",
+	"pictures/original",
+	"Pictures/Original",
+	"photos/originals",
+	"Photos/Originals",
+	"photos/original",
+	"Photos/Original",
+	"originals",
+	"Originals",
+	"original",
+	"Original",
+	"pictures",
+	"Pictures",
+	"photos",
+	"Photos",
+	"images",
+	"Images",
+	"bilder",
+	"Bilder",
+	"fotos",
+	"Fotos",
+	"~/photoprism/originals",
+	"~/PhotoPrism/Originals",
+	"~/photoprism/original",
+	"~/PhotoPrism/Original",
+	"~/pictures/originals",
+	"~/Pictures/Originals",
+	"~/pictures/original",
+	"~/Pictures/Original",
+	"~/photos/originals",
+	"~/Photos/Originals",
+	"~/photos/original",
+	"~/Photos/Original",
+	"~/pictures",
+	"~/Pictures",
+	"~/photos",
+	"~/Photos",
+	"~/images",
+	"~/Images",
+	"~/bilder",
+	"~/Bilder",
+	"~/fotos",
+	"~/Fotos",
+}
+
+var ImportPaths = []string{
+	"/photoprism/photos/import",
+	"/photoprism/import",
+	"photoprism/import",
+	"PhotoPrism/Import",
+	"pictures/import",
+	"Pictures/Import",
+	"photos/import",
+	"Photos/Import",
+	"import",
+	"Import",
+	"~/pictures/import",
+	"~/Pictures/Import",
+	"~/photoprism/import",
+	"~/PhotoPrism/Import",
+	"~/photos/import",
+	"~/Photos/Import",
+	"~/import",
+	"~/Import",
+}
+
 func Dirs(root string, recursive bool) (result []string, err error) {
 	result = []string{}
 	ignore := NewIgnoreList(".ppignore", true, false)
@@ -39,4 +113,15 @@ func Dirs(root string, recursive bool) (result []string, err error) {
 	sort.Strings(result)
 
 	return result, err
+}
+
+func FindDir(dirs []string) string {
+	for _, dir := range dirs {
+		absDir := Abs(dir)
+		if PathExists(absDir) {
+			return absDir
+		}
+	}
+
+	return ""
 }

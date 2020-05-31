@@ -137,11 +137,21 @@ func (c *Config) LogFilename() string {
 
 // OriginalsPath returns the originals.
 func (c *Config) OriginalsPath() string {
+	if c.params.OriginalsPath == "" {
+		// Try to find the right directory by iterating through a list.
+		c.params.OriginalsPath = fs.FindDir(fs.OriginalPaths)
+	}
+
 	return fs.Abs(c.params.OriginalsPath)
 }
 
 // ImportPath returns the import directory.
 func (c *Config) ImportPath() string {
+	if c.params.ImportPath == "" {
+		// Try to find the right directory by iterating through a list.
+		c.params.ImportPath = fs.FindDir(fs.ImportPaths)
+	}
+
 	return fs.Abs(c.params.ImportPath)
 }
 
