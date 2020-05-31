@@ -3,6 +3,7 @@ package query
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
 )
@@ -30,7 +31,7 @@ func TestPhotoSelection(t *testing.T) {
 		}
 
 		assert.Equal(t, 2, len(r))
-		assert.IsType(t, Photos{}, r)
+		assert.IsType(t, entity.Photos{}, r)
 	})
 }
 
@@ -57,6 +58,6 @@ func TestFileSelection(t *testing.T) {
 		}
 
 		assert.Equal(t, 3, len(r))
-		assert.IsType(t, Files{}, r)
+		assert.IsType(t, entity.Files{}, r)
 	})
 }

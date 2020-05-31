@@ -89,3 +89,31 @@ func TestAlbum_Save(t *testing.T) {
 	})
 
 }
+
+func TestAddPhotoToAlbums(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		err := AddPhotoToAlbums("pt9jtxrexxvl0yh0", []string{"at6axuzitogaaiax"})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		a := Album{AlbumUID: "at6axuzitogaaiax"}
+
+		if err := a.Find(); err != nil {
+			t.Fatal(err)
+		}
+
+		var entries []PhotoAlbum
+
+		if err := Db().Where("album_uid = ? AND photo_uid = ?", "at6axuzitogaaiax", "pt9jtxrexxvl0yh0").Find(&entries).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		if len(entries) < 1 {
+			t.Error("at least one album entry expected")
+		}
+
+		// t.Logf("photo album entries: %+v", entries)
+	})
+}

@@ -11,8 +11,6 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
-// Default photo result slice for simple use cases.
-type Photos []entity.Photo
 
 // PhotoResult contains found photos and their main file plus other meta data.
 type PhotoResult struct {

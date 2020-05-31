@@ -65,6 +65,11 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 			opt = photoprism.ImportOptionsCopy(path)
 		}
 
+		if len(f.Albums) > 0 {
+			log.Debugf("import: files will be added to album %s", strings.Join(f.Albums, " and "))
+			opt.Albums = f.Albums
+		}
+
 		imp.Start(opt)
 
 		if subPath != "" && path != conf.ImportPath() && fs.IsEmpty(path) {

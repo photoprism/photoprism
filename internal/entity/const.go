@@ -41,4 +41,8 @@ const (
 	RootDefault = ""
 	RootImport  = "import"
 	RootPath    = "/"
+
+	Updated = "updated"
+	Created = "created"
+	Deleted = "deleted"
 )

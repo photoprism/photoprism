@@ -4,11 +4,12 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 )
 
 // PhotoSelection queries all selected photos.
-func PhotoSelection(f form.Selection) (results Photos, err error) {
+func PhotoSelection(f form.Selection) (results entity.Photos, err error) {
 	if f.Empty() {
 		return results, errors.New("no items selected")
 	}
@@ -47,7 +48,7 @@ func PhotoSelection(f form.Selection) (results Photos, err error) {
 }
 
 // FileSelection queries all selected files e.g. for downloading.
-func FileSelection(f form.Selection) (results Files, err error) {
+func FileSelection(f form.Selection) (results entity.Files, err error) {
 	if f.Empty() {
 		return results, errors.New("no items selected")
 	}

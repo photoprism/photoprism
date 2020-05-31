@@ -272,27 +272,19 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		var added []entity.PhotoAlbum
+		added := a.AddPhotos(photos.UIDs())
 
-		for _, p := range photos {
-			pa := entity.PhotoAlbum{AlbumUID: a.AlbumUID, PhotoUID: p.PhotoUID, Hidden: false}
-
-			if err := pa.Save(); err != nil {
-				log.Errorf("album: %s", err.Error())
+		if len(added) > 0 {
+			if len(added) == 1 {
+				event.Success(fmt.Sprintf("one entry added to %s", txt.Quote(a.Title())))
 			} else {
-				added = append(added, pa)
+				event.Success(fmt.Sprintf("%d entries added to %s", len(added), txt.Quote(a.Title())))
 			}
+
+			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 		}
 
-		if len(added) == 1 {
-			event.Success(fmt.Sprintf("one photo added to %s", txt.Quote(a.AlbumTitle)))
-		} else {
-			event.Success(fmt.Sprintf("%d photos added to %s", len(added), txt.Quote(a.AlbumTitle)))
-		}
-
-		PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
-
-		c.JSON(http.StatusOK, gin.H{"message": "photos added to album", "album": a, "added": added})
+		c.JSON(http.StatusOK, gin.H{"message": "photos added to album", "album": a, "photos": photos.UIDs(), "added": added})
 	})
 }
 
@@ -324,18 +316,19 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		for _, photoUID := range f.Photos {
-			pa := entity.PhotoAlbum{AlbumUID: a.AlbumUID, PhotoUID: photoUID, Hidden: true}
-			logError("album", pa.Save())
+		removed := a.RemovePhotos(f.Photos)
+
+		if len(removed) > 0 {
+			if len(removed) == 1 {
+				event.Success(fmt.Sprintf("one entry removed from %s", txt.Quote(a.Title())))
+			} else {
+				event.Success(fmt.Sprintf("%d entries removed from %s", len(removed), txt.Quote(txt.Quote(a.Title()))))
+			}
+
+			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 		}
 
-		// affected := entity.Db().Model(entity.PhotoAlbum{}).Where("album_uid = ? AND photo_uid IN (?)", a.AlbumUID, f.Photos).UpdateColumn("Hidden", true).RowsAffected
-
-		event.Success(fmt.Sprintf("entries removed from %s", a.AlbumTitle))
-
-		PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
-
-		c.JSON(http.StatusOK, gin.H{"message": "entries removed from album", "album": a, "photos": f.Photos})
+		c.JSON(http.StatusOK, gin.H{"message": "entries removed from album", "album": a, "photos": f.Photos, "removed": removed})
 	})
 }
 

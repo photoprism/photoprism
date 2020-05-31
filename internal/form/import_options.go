@@ -1,6 +1,7 @@
 package form
 
 type ImportOptions struct {
-	Path string `json:"path"`
-	Move bool   `json:"move"`
+	Albums []string `json:"albums"`
+	Path   string   `json:"path"`
+	Move   bool     `json:"move"`
 }
