@@ -187,7 +187,10 @@
             const settings = {};
 
             let categories = [{"value": "", "text": this.$gettext("All Categories")}];
-            categories = categories.concat(this.$config.values.albumCategories.map(cat => { return {"value": cat, "text": cat}; }));
+
+            if(this.$config.values.albumCategories) {
+                categories = categories.concat(this.$config.values.albumCategories.map(cat => { return {"value": cat, "text": cat}; }));
+            }
 
             return {
                 categories: categories,
