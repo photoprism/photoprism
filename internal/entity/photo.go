@@ -45,8 +45,8 @@ type Photo struct {
 	PhotoDescription string       `gorm:"type:text;" json:"Description" yaml:"Description,omitempty"`
 	DescriptionSrc   string       `gorm:"type:varbinary(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
 	Details          Details      `json:"Details" yaml:"Details"`
-	PhotoPath        string       `gorm:"type:varbinary(768);index;" yaml:"-"`
-	PhotoName        string       `gorm:"type:varbinary(255);" json:"PhotoName" yaml:"-"`
+	PhotoPath        string       `gorm:"type:varbinary(768);index;" json:"Path" yaml:"-"`
+	PhotoName        string       `gorm:"type:varbinary(255);" json:"Name" yaml:"-"`
 	OriginalName     string       `gorm:"type:varbinary(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	PhotoFavorite    bool         `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
