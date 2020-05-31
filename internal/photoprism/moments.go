@@ -52,9 +52,19 @@ func (m *Moments) Start() (err error) {
 
 	indexSize := counts.Photos + counts.Videos
 
-	threshold := int(math.Log2(float64(indexSize))) + 1
+	threshold := 3
 
-	log.Debugf("moments: index contains %d photos and videos, threshold %d", indexSize, threshold)
+	if indexSize > 4 {
+		threshold = int(math.Log2(float64(indexSize))) + 1
+	}
+
+	log.Debugf("moments: index contains %d photos and %d videos, using threshold %d", counts.Photos, counts.Videos, threshold)
+
+	if indexSize < threshold {
+		log.Debugf("moments: nothing to do, index size is smaller than threshold")
+
+		return nil
+	}
 
 	// Important folders.
 	if results, err := query.AlbumFolders(threshold); err != nil {
@@ -86,8 +96,8 @@ func (m *Moments) Start() (err error) {
 		}
 	}
 
-	// Important years and months.
-	if results, err := query.MomentsTime(threshold); err != nil {
+	// All years and months.
+	if results, err := query.MomentsTime(1); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
