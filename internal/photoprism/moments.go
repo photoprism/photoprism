@@ -73,6 +73,10 @@ func (m *Moments) Start() (err error) {
 					log.Debugf("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}
 			} else if a := entity.NewFolderAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
+				a.AlbumYear = mom.FolderYear
+				a.AlbumMonth = mom.FolderMonth
+				a.AlbumCountry = mom.FolderCountry
+
 				if err := a.Create(); err != nil {
 					log.Errorf("moments: %s", err)
 				} else {
