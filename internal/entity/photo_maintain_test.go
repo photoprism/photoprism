@@ -17,7 +17,7 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 	})
 
 	t.Run("zz", func(t *testing.T) {
-		m := Photo{PhotoName: "20200102_194030_ADADADAD", PhotoPath: "2020/Berlin", OriginalName: "Flughafen BER.jpg"}
+		m := Photo{PhotoName: "20200102_194030_ADADADAD", PhotoPath: "2020/Berlin", OriginalName: "Zimmermannstrasse.jpg"}
 		assert.Equal(t, UnknownCountry.ID, m.CountryCode())
 		assert.Equal(t, UnknownCountry.CountryName, m.CountryName())
 		m.EstimateCountry()
