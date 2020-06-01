@@ -104,6 +104,7 @@ DE:Schwerin
 DE:Greifswald
 DE:Dresden
 DE:Nürnberg
+DE:Würzburg
 DE:Munich
 DE:Frankfurt
 DE:Brandenburg

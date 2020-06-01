@@ -108,6 +108,7 @@ var Countries = map[string]string{
 	"greifswald":                            "de",
 	"dresden":                               "de",
 	"nürnberg":                              "de",
+	"würzburg":                              "de",
 	"munich":                                "de",
 	"frankfurt":                             "de",
 	"brandenburg":                           "de",

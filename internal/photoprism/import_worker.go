@@ -158,7 +158,6 @@ func ImportWorker(jobs <-chan ImportJob) {
 				log.Infof("import: %s related %s file %s", res, f.FileType(), txt.Quote(f.RelativeName(ind.originalsPath())))
 			}
 
-
 		}
 	}
 }

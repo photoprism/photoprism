@@ -11,7 +11,6 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
-
 // PhotoResult contains found photos and their main file plus other meta data.
 type PhotoResult struct {
 	ID               uint          `json:"-"`
