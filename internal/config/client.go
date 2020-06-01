@@ -201,7 +201,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		Select("MAX(photo_count) as label_max_photos, COUNT(*) AS labels").
 		Where("photo_count > 0").
 		Where("deleted_at IS NULL").
-		Where("(label_priority >= 0 || label_favorite = 1)").
+		Where("(label_priority >= 0 OR label_favorite = 1)").
 		Take(&result.Count)
 
 	c.Db().Table("albums").
