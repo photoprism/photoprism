@@ -1,8 +1,7 @@
 //search + filters?
-
-//clipboard?
-
 //views ?
+
+//clipboard yes!
 
 //create + delete album
 

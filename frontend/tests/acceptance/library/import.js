@@ -1,2 +1,2 @@
 
-//upload file + import
+//upload file + import from library and from navigation + delete later

@@ -2,7 +2,7 @@
 
 //views?
 
-//clipboard?
+//clipboard yes
 
 //show only high prio labels + check labels exist
 

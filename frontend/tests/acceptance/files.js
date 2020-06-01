@@ -2,4 +2,4 @@
 
 //download files
 
-//clipboard
+//clipboard yes
