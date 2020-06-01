@@ -46,11 +46,26 @@ func TestUcFirst(t *testing.T) {
 }
 
 func TestTitle(t *testing.T) {
-	t.Run("Browse your life in pictures", func(t *testing.T) {
+	t.Run("BrowseYourLife", func(t *testing.T) {
 		assert.Equal(t, "Browse Your Life In Pictures", Title("Browse your life in pictures"))
 	})
-	t.Run("photo-lover", func(t *testing.T) {
+	t.Run("PhotoLover", func(t *testing.T) {
 		assert.Equal(t, "Photo-Lover", Title("photo-lover"))
+	})
+	t.Run("NaomiWatts", func(t *testing.T) {
+		assert.Equal(t, "Naomi Watts / Ewan Mcgregor / The Impossible / TIFF", Title(" /Naomi watts / Ewan Mcgregor / the   Impossible /   TIFF  "))
+	})
+	t.Run("Penguin", func(t *testing.T) {
+		assert.Equal(t, "A Boulders Penguin Colony / Simon's Town / 2013", Title("A Boulders Penguin Colony /// Simon's Town / 2013 "))
+	})
+	t.Run("AirportBer", func(t *testing.T) {
+		assert.Equal(t, "Around the Terminal / Airport BER", Title("Around  the Terminal  / Airport Ber"))
+	})
+	t.Run("KwaZulu-Natal", func(t *testing.T) {
+		assert.Equal(t, "KwaZulu-Natal", Title("KwaZulu-Natal"))
+	})
+	t.Run("testAddLabel", func(t *testing.T) {
+		assert.Equal(t, "TestAddLabel", Title("testAddLabel"))
 	})
 }
 

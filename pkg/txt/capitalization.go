@@ -10,54 +10,57 @@ import (
 
 var FileTitleRegexp = regexp.MustCompile("[\\p{L}\\-]{2,}")
 
-var TitleReplacements = map[string]string{
-	"Nyc":     "NYC",
-	"Ny ":     "NY ",
-	"Uae":     "UAE",
-	"Usa":     "USA",
-	"Amd ":    "AMD ",
-	"Tiff":    "TIFF",
-	"Ibm":     "IBM",
-	"Usd":     "USD",
-	"Gbp":     "GBP",
-	"Chf":     "CHF",
-	"Ceo":     "CEO",
-	"Cto":     "CTO",
-	"Cfo":     "CFO",
-	"Cia ":    "CIA ",
-	"Fbi":     "FBI",
-	"Bnd":     "BND",
-	"Fsb":     "FSB",
-	"Nsa":     "NSA",
-	"Lax ":    "LAX ",
-	"Sfx":     "SFX",
-	"Ber ":    "BER ",
-	"Sfo":     "SFO",
-	"Lh ":     "LH ",
-	"Lhr":     "LHR",
-	"Afl ":    "AFL ",
-	"Nrl":     "NRL",
-	"Nsw":     "NSW",
-	"Qld":     "QLD",
-	"Vic ":    "VIC ",
-	"Iphone":  "iPhone",
-	"Imac":    "iMac",
-	"Ipad":    "iPad",
-	"Macbook": "MacBook",
-	" And ":   " and ",
-	" Or ":    " or ",
-	" A ":     " a ",
-	" An ":    " an ",
-	" To ":    " to ",
-	" At ":    " at ",
-	" By ":    " by ",
-	" But ":   " but ",
-	" For ":   " for ",
-	" Of ":    " of ",
-	" The ":   " the ",
-	" On ":    " on ",
-	" From ":  " from ",
-	" With ":  " with ",
+var SpecialWords = map[string]string{
+	"nyc":           "NYC",
+	"ny":            "NY",
+	"uae":           "UAE",
+	"usa":           "USA",
+	"amd":           "AMD",
+	"tiff":          "TIFF",
+	"ibm":           "IBM",
+	"usd":           "USD",
+	"gbp":           "GBP",
+	"chf":           "CHF",
+	"ceo":           "CEO",
+	"cto":           "CTO",
+	"cfo":           "CFO",
+	"cia":           "CIA ",
+	"fbi":           "FBI",
+	"bnd":           "BND",
+	"fsb":           "FSB",
+	"nsa":           "NSA",
+	"lax":           "LAX",
+	"sfx":           "SFX",
+	"ber":           "BER",
+	"sfo":           "SFO",
+	"lh":            "LH",
+	"lhr":           "LHR",
+	"afl":           "AFL",
+	"nrl":           "NRL",
+	"nsw":           "NSW",
+	"qld":           "QLD",
+	"vic":           "VIC",
+	"iphone":        "iPhone",
+	"imac":          "iMac",
+	"ipad":          "iPad",
+	"macbook":       "MacBook",
+}
+
+var SmallWords = map[string]bool{
+	"a":    true,
+	"an":   true,
+	"at":   true,
+	"of":   true,
+	"on":   true,
+	"or":   true,
+	"to":   true,
+	"by":   true,
+	"and":  true,
+	"but":  true,
+	"for":  true,
+	"the":  true,
+	"from": true,
+	"with": true,
 }
 
 // isSeparator reports whether the rune could mark a word boundary.
@@ -94,26 +97,42 @@ func UcFirst(str string) string {
 
 // Title returns the string with the first characters of each word converted to uppercase.
 func Title(s string) string {
-	s = strings.TrimSpace(s)
 	s = strings.ReplaceAll(s, "_", " ")
+	s = strings.Trim(s, "/ -")
+	blocks := strings.Split(s, "/")
+	result := make([]string, 0, len(blocks))
 
-	prev := ' '
-	result := strings.Map(
-		func(r rune) rune {
-			if isSeparator(prev) {
-				prev = r
-				return unicode.ToTitle(r)
+	for _, block := range blocks {
+		words := strings.Fields(block)
+
+		if len(words) == 0 {
+			continue
+		}
+
+		for i, w := range words {
+			if match, ok := SpecialWords[strings.ToLower(w)]; ok {
+				words[i] = match
+			} else if i > 0 && SmallWords[strings.ToLower(w)] {
+				words[i] = strings.ToLower(w)
+			} else {
+				prev := ' '
+				words[i] = strings.Map(
+					func(r rune) rune {
+						if isSeparator(prev) {
+							prev = r
+							return unicode.ToTitle(r)
+						}
+						prev = r
+						return r
+					},
+					w)
 			}
-			prev = r
-			return r
-		},
-		s)
+		}
 
-	for match, abbr := range TitleReplacements {
-		result = strings.ReplaceAll(result, match, abbr)
+		result = append(result, strings.Join(words, " "))
 	}
 
-	return result
+	return strings.Join(result, " / ")
 }
 
 // TitleFromFileName returns the string with the first characters of each word converted to uppercase.
