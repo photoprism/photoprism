@@ -89,27 +89,27 @@ msgstr "Alben gelöscht"
 msgid "All "
 msgstr "Alle"
 
-#: src/component/p-album-toolbar.vue:136 src/component/p-photo-search.vue:157
+#: src/component/p-album-toolbar.vue:136 src/component/p-photo-toolbar.vue:157
 msgid "All Cameras"
 msgstr "Alle Kameras"
 
-#: src/component/p-photo-search.vue:160
+#: src/component/p-photo-toolbar.vue:160
 msgid "All Categories"
 msgstr "Alle Kategorien"
 
-#: src/component/p-photo-search.vue:159
+#: src/component/p-photo-toolbar.vue:159
 msgid "All Colors"
 msgstr "Alle Farben"
 
-#: src/component/p-album-toolbar.vue:140 src/component/p-photo-search.vue:156
+#: src/component/p-album-toolbar.vue:140 src/component/p-photo-toolbar.vue:156
 msgid "All Countries"
 msgstr "Alle Länder"
 
-#: src/component/p-photo-search.vue:158
+#: src/component/p-photo-toolbar.vue:158
 msgid "All Lenses"
 msgstr "Alle Linsen"
 
-#: src/component/p-photo-search.vue:208
+#: src/component/p-photo-toolbar.vue:208
 msgid "All Years"
 msgstr "Alle Jahre"
 
@@ -155,7 +155,7 @@ msgid "Browse and edit image classification labels."
 msgstr "Labels können angesehen und bearbeitet werden."
 
 #: src/component/p-album-toolbar.vue:166 src/component/p-photo-list.vue:92
-#: src/component/p-photo-search.vue:180 src/dialog/photo/details.vue:409
+#: src/component/p-photo-toolbar.vue:180 src/dialog/photo/details.vue:409
 msgid "Camera"
 msgstr "Kamera"
 
@@ -171,11 +171,11 @@ msgstr "Kamera"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/component/p-album-toolbar.vue:148 src/component/p-photo-search.vue:165
+#: src/component/p-album-toolbar.vue:148 src/component/p-photo-toolbar.vue:165
 msgid "Cards"
 msgstr "Karten"
 
-#: src/component/p-photo-search.vue:184 src/dialog/photo/details.vue:413
+#: src/component/p-photo-toolbar.vue:184 src/dialog/photo/details.vue:413
 msgid "Category"
 msgstr "Kategorie"
 
@@ -191,7 +191,7 @@ msgstr "Private Flag ändern"
 msgid "Close"
 msgstr "Schließen"
 
-#: src/component/p-photo-search.vue:183 src/dialog/photo/details.vue:412
+#: src/component/p-photo-toolbar.vue:183 src/dialog/photo/details.vue:412
 msgid "Color"
 msgstr "Farbe"
 
@@ -215,7 +215,7 @@ msgstr "Verbinden"
 msgid "Convert RAW files"
 msgstr "RAW Dateien konvertieren"
 
-#: src/component/p-album-toolbar.vue:165 src/component/p-photo-search.vue:179
+#: src/component/p-album-toolbar.vue:165 src/component/p-photo-toolbar.vue:179
 #: src/dialog/photo/details.vue:408
 msgid "Country"
 msgstr "Land"
@@ -352,7 +352,7 @@ msgstr ""
 msgid "General"
 msgstr "Allgemein"
 
-#: src/component/p-album-toolbar.vue:157 src/component/p-photo-search.vue:172
+#: src/component/p-album-toolbar.vue:157 src/component/p-photo-toolbar.vue:172
 msgid "Group by similarity"
 msgstr "Ähnlichkeit"
 
@@ -438,7 +438,7 @@ msgstr "Labels gelöscht"
 msgid "Language"
 msgstr "Sprache"
 
-#: src/component/p-photo-search.vue:181 src/dialog/photo/details.vue:410
+#: src/component/p-photo-toolbar.vue:181 src/dialog/photo/details.vue:410
 msgid "Lens"
 msgstr "Linse"
 
@@ -446,7 +446,7 @@ msgstr "Linse"
 msgid "Library"
 msgstr "Bibliothek"
 
-#: src/component/p-album-toolbar.vue:149 src/component/p-photo-search.vue:166
+#: src/component/p-album-toolbar.vue:149 src/component/p-photo-toolbar.vue:166
 msgid "List"
 msgstr "Liste"
 
@@ -499,11 +499,11 @@ msgstr "Über 20 Labels gefunden"
 msgid "More than 50 photos found"
 msgstr "Über 50 Fotos gefunden"
 
-#: src/component/p-album-toolbar.vue:147 src/component/p-photo-search.vue:164
+#: src/component/p-album-toolbar.vue:147 src/component/p-photo-toolbar.vue:164
 msgid "Mosaic"
 msgstr "Mosaik"
 
-#: src/component/p-album-toolbar.vue:158 src/component/p-photo-search.vue:173
+#: src/component/p-album-toolbar.vue:158 src/component/p-photo-toolbar.vue:173
 msgid "Most relevant"
 msgstr "Relevanz"
 
@@ -529,7 +529,7 @@ msgstr "Name zu  lang"
 msgid "Never"
 msgstr "Nie"
 
-#: src/component/p-album-toolbar.vue:155 src/component/p-photo-search.vue:170
+#: src/component/p-album-toolbar.vue:155 src/component/p-photo-toolbar.vue:170
 msgid "Newest first"
 msgstr "Neueste zuerst"
 
@@ -584,7 +584,7 @@ msgstr ""
 msgid "Nothing to see here yet. Be patient."
 msgstr "Noch nichts zu sehen. Gedulde dich noch ein bisschen."
 
-#: src/component/p-album-toolbar.vue:156 src/component/p-photo-search.vue:171
+#: src/component/p-album-toolbar.vue:156 src/component/p-photo-toolbar.vue:171
 msgid "Oldest first"
 msgstr "Älteste zuerst"
 
@@ -687,7 +687,7 @@ msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 "Indexiere alle Dateien, auch bereits indexierte und unveränderte Dateien."
 
-#: src/component/p-album-toolbar.vue:154 src/component/p-photo-search.vue:169
+#: src/component/p-album-toolbar.vue:154 src/component/p-photo-toolbar.vue:169
 msgid "Recently imported"
 msgstr "Zuletzt importiert"
 
@@ -729,7 +729,7 @@ msgstr "Review"
 msgid "Save"
 msgstr "Speichern"
 
-#: src/component/p-album-toolbar.vue:163 src/component/p-photo-search.vue:177
+#: src/component/p-album-toolbar.vue:163 src/component/p-photo-toolbar.vue:177
 #: src/dialog/photo/details.vue:406 src/dialog/photo/labels.vue:111
 #: src/pages/albums.vue:183 src/pages/labels.vue:184 src/pages/places.vue:66
 msgid "Search"
@@ -781,7 +781,7 @@ msgstr "Ähnlich"
 msgid "Size"
 msgstr "Größe"
 
-#: src/component/p-album-toolbar.vue:167 src/component/p-photo-search.vue:185
+#: src/component/p-album-toolbar.vue:167 src/component/p-photo-toolbar.vue:185
 #: src/dialog/photo/details.vue:414
 msgid "Sort By"
 msgstr "Sortiere nach"
@@ -822,11 +822,11 @@ msgstr "Synchronisiert"
 msgid "Taken"
 msgstr "Erstellt am"
 
-#: src/component/p-photo-search.vue:187 src/dialog/photo/details.vue:416
+#: src/component/p-photo-toolbar.vue:187 src/dialog/photo/details.vue:416
 msgid "Taken after"
 msgstr "Erstell nach"
 
-#: src/component/p-photo-search.vue:186 src/dialog/photo/details.vue:415
+#: src/component/p-photo-toolbar.vue:186 src/dialog/photo/details.vue:415
 msgid "Taken before"
 msgstr "Erstellt vor"
 
@@ -910,7 +910,7 @@ msgstr "Nutzername"
 msgid "Video"
 msgstr "Video"
 
-#: src/component/p-album-toolbar.vue:164 src/component/p-photo-search.vue:178
+#: src/component/p-album-toolbar.vue:164 src/component/p-photo-toolbar.vue:178
 #: src/dialog/photo/details.vue:407
 msgid "View"
 msgstr "Ansicht"
@@ -919,7 +919,7 @@ msgstr "Ansicht"
 msgid "Week"
 msgstr "Woche"
 
-#: src/component/p-photo-search.vue:182 src/dialog/photo/details.vue:411
+#: src/component/p-photo-toolbar.vue:182 src/dialog/photo/details.vue:411
 msgid "Year"
 msgstr "Jahr"
 

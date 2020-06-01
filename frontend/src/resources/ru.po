@@ -68,27 +68,27 @@ msgstr "Альбом удален"
 msgid "All "
 msgstr "Все "
 
-#: src/component/p-album-toolbar.vue:124 src/component/p-photo-search.vue:150
+#: src/component/p-album-toolbar.vue:124 src/component/p-photo-toolbar.vue:150
 msgid "All Cameras"
 msgstr "Все Камеры"
 
-#: src/component/p-photo-search.vue:153
+#: src/component/p-photo-toolbar.vue:153
 msgid "All Categories"
 msgstr "Все Категории"
 
-#: src/component/p-photo-search.vue:152
+#: src/component/p-photo-toolbar.vue:152
 msgid "All Colors"
 msgstr "Все Цвета"
 
-#: src/component/p-album-toolbar.vue:128 src/component/p-photo-search.vue:149
+#: src/component/p-album-toolbar.vue:128 src/component/p-photo-toolbar.vue:149
 msgid "All Countries"
 msgstr "Все Страны"
 
-#: src/component/p-photo-search.vue:151
+#: src/component/p-photo-toolbar.vue:151
 msgid "All Lenses"
 msgstr "Все Объективы"
 
-#: src/component/p-photo-search.vue:199
+#: src/component/p-photo-toolbar.vue:199
 msgid "All Years"
 msgstr "Все Года"
 
@@ -111,7 +111,7 @@ msgid "Authentication required"
 msgstr "Требуется авторизация"
 
 #: src/component/p-album-toolbar.vue:151 src/component/p-photo-list.vue:53
-#: src/component/p-photo-search.vue:171 src/dialog/photo-edit/meta.vue:311
+#: src/component/p-photo-toolbar.vue:171 src/dialog/photo-edit/meta.vue:311
 #: src/dialog/photo-edit/todo.vue:34
 msgid "Camera"
 msgstr "Камера"
@@ -123,7 +123,7 @@ msgstr "Камера"
 msgid "Cancel"
 msgstr "Отменить"
 
-#: src/component/p-photo-search.vue:175 src/dialog/photo-edit/meta.vue:315
+#: src/component/p-photo-toolbar.vue:175 src/dialog/photo-edit/meta.vue:315
 #: src/dialog/photo-edit/todo.vue:38
 msgid "Category"
 msgstr "Категория"
@@ -132,7 +132,7 @@ msgstr "Категория"
 msgid "Close"
 msgstr "Закрыть"
 
-#: src/component/p-photo-search.vue:174 src/dialog/photo-edit/meta.vue:314
+#: src/component/p-photo-toolbar.vue:174 src/dialog/photo-edit/meta.vue:314
 #: src/dialog/photo-edit/todo.vue:37
 msgid "Color"
 msgstr "Цвет"
@@ -145,7 +145,7 @@ msgstr "Цвета"
 msgid "Convert RAW to JPEG"
 msgstr "Конвертировать RAW в JPEG"
 
-#: src/component/p-album-toolbar.vue:150 src/component/p-photo-search.vue:170
+#: src/component/p-album-toolbar.vue:150 src/component/p-photo-toolbar.vue:170
 #: src/dialog/photo-edit/meta.vue:310 src/dialog/photo-edit/todo.vue:33
 msgid "Country"
 msgstr "Страна"
@@ -171,7 +171,7 @@ msgstr "День"
 msgid "Delete"
 msgstr "Удалить"
 
-#: src/component/p-album-toolbar.vue:136 src/component/p-photo-search.vue:158
+#: src/component/p-album-toolbar.vue:136 src/component/p-photo-toolbar.vue:158
 #: src/dialog/p-photo-edit-dialog.vue:32
 msgid "Details"
 msgstr "Подробно"
@@ -255,7 +255,7 @@ msgstr "Метки"
 msgid "Language"
 msgstr "Язык"
 
-#: src/component/p-photo-search.vue:172 src/dialog/photo-edit/meta.vue:312
+#: src/component/p-photo-toolbar.vue:172 src/dialog/photo-edit/meta.vue:312
 #: src/dialog/photo-edit/todo.vue:35
 msgid "Lens"
 msgstr "Объектив"
@@ -264,7 +264,7 @@ msgstr "Объектив"
 msgid "Library"
 msgstr "Библиотека"
 
-#: src/component/p-album-toolbar.vue:137 src/component/p-photo-search.vue:159
+#: src/component/p-album-toolbar.vue:137 src/component/p-photo-toolbar.vue:159
 msgid "List"
 msgstr "Список"
 
@@ -308,7 +308,7 @@ msgstr "Более 20 меток найдено"
 msgid "More than 50 photos found"
 msgstr "Более 50 фотографий найдено"
 
-#: src/component/p-album-toolbar.vue:135 src/component/p-photo-search.vue:157
+#: src/component/p-album-toolbar.vue:135 src/component/p-photo-toolbar.vue:157
 msgid "Mosaic"
 msgstr "Мозайка"
 
@@ -316,7 +316,7 @@ msgstr "Мозайка"
 msgid "Name"
 msgstr "Название"
 
-#: src/component/p-album-toolbar.vue:143 src/component/p-photo-search.vue:163
+#: src/component/p-album-toolbar.vue:143 src/component/p-photo-toolbar.vue:163
 msgid "Newest first"
 msgstr "Сначала новые"
 
@@ -354,7 +354,7 @@ msgstr "Еще не реализованно"
 msgid "Nothing to see here yet. Be patient."
 msgstr "Пока что тут нечего смотреть. Будьте терпеливы."
 
-#: src/component/p-album-toolbar.vue:144 src/component/p-photo-search.vue:164
+#: src/component/p-album-toolbar.vue:144 src/component/p-photo-toolbar.vue:164
 msgid "Oldest first"
 msgstr "Сначала старые"
 
@@ -414,7 +414,7 @@ msgstr "Приоритет"
 msgid "Random"
 msgstr "Случайно"
 
-#: src/component/p-album-toolbar.vue:142 src/component/p-photo-search.vue:162
+#: src/component/p-album-toolbar.vue:142 src/component/p-photo-toolbar.vue:162
 msgid "Recently imported"
 msgstr "Недавно добавленные"
 
@@ -438,7 +438,7 @@ msgstr "Восстановить"
 msgid "Save"
 msgstr "Сохранить"
 
-#: src/component/p-album-toolbar.vue:148 src/component/p-photo-search.vue:168
+#: src/component/p-album-toolbar.vue:148 src/component/p-photo-toolbar.vue:168
 #: src/dialog/photo-edit/meta.vue:308 src/dialog/photo-edit/todo.vue:31
 #: src/pages/albums.vue:175 src/pages/labels.vue:134 src/pages/places.vue:63
 msgid "Search"
@@ -480,7 +480,7 @@ msgstr "Похожие"
 msgid "Skip unchanged files"
 msgstr "Пропустить не измененные файлы"
 
-#: src/component/p-album-toolbar.vue:152 src/component/p-photo-search.vue:176
+#: src/component/p-album-toolbar.vue:152 src/component/p-photo-toolbar.vue:176
 #: src/dialog/photo-edit/meta.vue:316 src/dialog/photo-edit/todo.vue:39
 msgid "Sort By"
 msgstr "Сортировать по"
@@ -489,7 +489,7 @@ msgstr "Сортировать по"
 msgid "Story"
 msgstr "История"
 
-#: src/component/p-photo-search.vue:178 src/dialog/photo-edit/meta.vue:318
+#: src/component/p-photo-toolbar.vue:178 src/dialog/photo-edit/meta.vue:318
 #: src/dialog/photo-edit/todo.vue:41
 msgid "Taken after"
 msgstr "Снято после"
@@ -498,7 +498,7 @@ msgstr "Снято после"
 msgid "Taken At"
 msgstr "Дата съемки"
 
-#: src/component/p-photo-search.vue:177 src/dialog/photo-edit/meta.vue:317
+#: src/component/p-photo-toolbar.vue:177 src/dialog/photo-edit/meta.vue:317
 #: src/dialog/photo-edit/todo.vue:40
 msgid "Taken before"
 msgstr "Снято до"
@@ -569,7 +569,7 @@ msgstr "Загрузка фотографий..."
 msgid "Vibrant"
 msgstr "Вибрант"
 
-#: src/component/p-album-toolbar.vue:149 src/component/p-photo-search.vue:169
+#: src/component/p-album-toolbar.vue:149 src/component/p-photo-toolbar.vue:169
 #: src/dialog/photo-edit/meta.vue:309 src/dialog/photo-edit/todo.vue:32
 msgid "View"
 msgstr "Обзор"
@@ -582,7 +582,7 @@ msgstr "Неделя"
 msgid "Width"
 msgstr "Ширина"
 
-#: src/component/p-photo-search.vue:173 src/dialog/photo-edit/meta.vue:313
+#: src/component/p-photo-toolbar.vue:173 src/dialog/photo-edit/meta.vue:313
 #: src/dialog/photo-edit/todo.vue:36
 msgid "Year"
 msgstr "Год"

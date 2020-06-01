@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -12,6 +13,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
 )
+
+type Albums []Album
 
 // Album represents a photo album
 type Album struct {
@@ -40,13 +43,49 @@ type Album struct {
 	DeletedAt        *time.Time `sql:"index" json:"-" yaml:"-"`
 }
 
-// BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Album) BeforeCreate(scope *gorm.Scope) error {
-	if rnd.IsUID(m.AlbumUID, 'a') {
+// AddPhotoToAlbums adds a photo UID to multiple albums and automatically creates them if needed.
+func AddPhotoToAlbums(photo string, albums []string) (err error) {
+	if photo == "" || len(albums) == 0 {
+		// Do nothing.
 		return nil
 	}
 
-	return scope.SetColumn("AlbumUID", rnd.PPID('a'))
+	if !rnd.IsPPID(photo, 'p') {
+		return fmt.Errorf("album: invalid photo uid %s", photo)
+	}
+
+	for _, album := range albums {
+		var aUID string
+
+		if album == "" {
+			log.Debugf("album: empty album identifier while adding photo %s", photo)
+			continue
+		}
+
+		if rnd.IsPPID(album, 'a') {
+			aUID = album
+		} else {
+			a := NewAlbum(album, TypeAlbum)
+
+			if err = a.Find(); err == nil {
+				aUID = a.AlbumUID
+			} else if err = a.Create(); err == nil {
+				aUID = a.AlbumUID
+			} else {
+				log.Errorf("album: %s (add photo %s to albums)", err.Error(), photo)
+			}
+		}
+
+		if aUID != "" {
+			entry := PhotoAlbum{AlbumUID: aUID, PhotoUID: photo, Hidden: false}
+
+			if err = entry.Save(); err != nil {
+				log.Errorf("album: %s (add photo %s to albums)", err.Error(), photo)
+			}
+		}
+	}
+
+	return err
 }
 
 // NewAlbum creates a new album; default name is current month and year
@@ -58,7 +97,6 @@ func NewAlbum(albumTitle, albumType string) *Album {
 	}
 
 	result := &Album{
-		AlbumUID:   rnd.PPID('a'),
 		AlbumOrder: SortOrderOldest,
 		AlbumType:  albumType,
 		CreatedAt:  now,
@@ -79,7 +117,6 @@ func NewFolderAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	now := time.Now().UTC()
 
 	result := &Album{
-		AlbumUID:    rnd.PPID('a'),
 		AlbumOrder:  SortOrderOldest,
 		AlbumType:   TypeFolder,
 		AlbumTitle:  albumTitle,
@@ -101,7 +138,6 @@ func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	now := time.Now().UTC()
 
 	result := &Album{
-		AlbumUID:    rnd.PPID('a'),
 		AlbumOrder:  SortOrderOldest,
 		AlbumType:   TypeMoment,
 		AlbumTitle:  albumTitle,
@@ -128,7 +164,6 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	now := time.Now().UTC()
 
 	result := &Album{
-		AlbumUID:    rnd.PPID('a'),
 		AlbumOrder:  SortOrderOldest,
 		AlbumType:   TypeMonth,
 		AlbumTitle:  albumTitle,
@@ -141,6 +176,59 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	}
 
 	return result
+}
+
+// FindAlbumBySlug finds a matching album or returns nil.
+func FindAlbumBySlug(slug, albumType string) *Album {
+	result := Album{}
+
+	if err := UnscopedDb().Where("album_slug = ? AND album_type = ?", slug, albumType).First(&result).Error; err != nil {
+		return nil
+	}
+
+	return &result
+}
+
+// Find updates the entity with values from the database.
+func (m *Album) Find() error {
+	if rnd.IsPPID(m.AlbumUID, 'a') {
+		log.Debugf("IS PPID: %s", m.AlbumUID)
+		if err := UnscopedDb().First(m, "album_uid = ?", m.AlbumUID).Error; err != nil {
+			return err
+		}
+	}
+
+	if err := UnscopedDb().First(m, "album_slug = ? AND album_type = ?", m.AlbumSlug, m.AlbumType).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// BeforeCreate creates a random UID if needed before inserting a new row to the database.
+func (m *Album) BeforeCreate(scope *gorm.Scope) error {
+	if rnd.IsUID(m.AlbumUID, 'a') {
+		return nil
+	}
+
+	return scope.SetColumn("AlbumUID", rnd.PPID('a'))
+}
+
+// String returns the id or name as string.
+func (m *Album) String() string {
+	if m.AlbumSlug != "" {
+		return m.AlbumSlug
+	}
+
+	if m.AlbumTitle != "" {
+		return txt.Quote(m.AlbumTitle)
+	}
+
+	if m.AlbumUID != "" {
+		return m.AlbumUID
+	}
+
+	return "[unknown album]"
 }
 
 // Checks if the album is of type moment.
@@ -213,13 +301,37 @@ func (m *Album) Create() error {
 	return nil
 }
 
-// FindAlbum finds a matching album or returns nil.
-func FindAlbum(slug, albumType string) *Album {
-	result := Album{}
+// Returns the album title.
+func (m *Album) Title() string {
+	return m.AlbumTitle
+}
 
-	if err := UnscopedDb().Where("album_slug = ? AND album_type = ?", slug, albumType).First(&result).Error; err != nil {
-		return nil
+// AddPhotos adds photos to an existing album.
+func (m *Album) AddPhotos(UIDs []string) (added []PhotoAlbum) {
+	for _, uid := range UIDs {
+		entry := PhotoAlbum{AlbumUID: m.AlbumUID, PhotoUID: uid, Hidden: false}
+
+		if err := entry.Save(); err != nil {
+			log.Errorf("album: %s (add to album %s)", err.Error(), m)
+		} else {
+			added = append(added, entry)
+		}
 	}
 
-	return &result
+	return added
+}
+
+// RemovePhotos removes photos from an album.
+func (m *Album) RemovePhotos(UIDs []string) (removed []PhotoAlbum) {
+	for _, uid := range UIDs {
+		entry := PhotoAlbum{AlbumUID: m.AlbumUID, PhotoUID: uid, Hidden: true}
+
+		if err := entry.Save(); err != nil {
+			log.Errorf("album: %s (remove from album %s)", err.Error(), m)
+		} else {
+			removed = append(removed, entry)
+		}
+	}
+
+	return removed
 }

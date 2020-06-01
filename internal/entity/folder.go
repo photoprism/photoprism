@@ -15,6 +15,8 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
+type Folders []Folder
+
 // Folder represents a file system directory.
 type Folder struct {
 	Path              string     `gorm:"type:varbinary(255);unique_index:idx_folders_path_root;" json:"Path" yaml:"Path"`

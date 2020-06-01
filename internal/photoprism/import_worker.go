@@ -5,6 +5,7 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -129,6 +130,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				res := ind.MediaFile(related.Main, indexOpt, originalName)
+
+				if res.Success() {
+					if err := entity.AddPhotoToAlbums(res.PhotoUID, opt.Albums); err != nil {
+						log.Warn(err)
+					}
+				}
+
 				log.Infof("import: %s main %s file %s", res, related.Main.FileType(), txt.Quote(related.Main.RelativeName(ind.originalsPath())))
 				done[related.Main.FileName()] = true
 			} else {
@@ -149,6 +157,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				log.Infof("import: %s related %s file %s", res, f.FileType(), txt.Quote(f.RelativeName(ind.originalsPath())))
 			}
+
+
 		}
 	}
 }

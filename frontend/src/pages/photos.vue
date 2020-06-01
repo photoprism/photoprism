@@ -2,8 +2,8 @@
     <div class="p-page p-page-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
          :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <p-photo-search :settings="settings" :filter="filter" :filter-change="updateQuery" :dirty="dirty"
-                        :refresh="refresh"></p-photo-search>
+        <p-photo-toolbar :settings="settings" :filter="filter" :filter-change="updateQuery" :dirty="dirty"
+                        :refresh="refresh"></p-photo-toolbar>
 
         <v-container fluid class="pa-4" v-if="loading">
             <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>

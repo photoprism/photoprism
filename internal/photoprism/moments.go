@@ -75,7 +75,7 @@ func (m *Moments) Start() (err error) {
 				Path: mom.Path,
 			}
 
-			if a := entity.FindAlbum(mom.Slug(), entity.TypeFolder); a != nil {
+			if a := entity.FindAlbumBySlug(mom.Slug(), entity.TypeFolder); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
 					log.Debugf("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
@@ -101,7 +101,7 @@ func (m *Moments) Start() (err error) {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
-			if a := entity.FindAlbum(mom.Slug(), entity.TypeMonth); a != nil {
+			if a := entity.FindAlbumBySlug(mom.Slug(), entity.TypeMonth); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
 					log.Debugf("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
@@ -128,7 +128,7 @@ func (m *Moments) Start() (err error) {
 				Year:    mom.Year,
 			}
 
-			if a := entity.FindAlbum(mom.Slug(), entity.TypeMoment); a != nil {
+			if a := entity.FindAlbumBySlug(mom.Slug(), entity.TypeMoment); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
 					log.Debugf("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
@@ -158,7 +158,7 @@ func (m *Moments) Start() (err error) {
 				State:   mom.State,
 			}
 
-			if a := entity.FindAlbum(mom.Slug(), entity.TypeMoment); a != nil {
+			if a := entity.FindAlbumBySlug(mom.Slug(), entity.TypeMoment); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
 					log.Debugf("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
@@ -186,7 +186,7 @@ func (m *Moments) Start() (err error) {
 				Label: mom.Label,
 			}
 
-			if a := entity.FindAlbum(mom.Slug(), entity.TypeMoment); a != nil {
+			if a := entity.FindAlbumBySlug(mom.Slug(), entity.TypeMoment); a != nil {
 				log.Debugf("moments: %s already exists (%s)", txt.Quote(mom.Title()), f.Serialize())
 
 				if f.Serialize() == a.AlbumFilter || a.DeletedAt != nil {

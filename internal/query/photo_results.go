@@ -11,8 +11,6 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
-// Default photo result slice for simple use cases.
-type Photos []entity.Photo
 
 // PhotoResult contains found photos and their main file plus other meta data.
 type PhotoResult struct {
@@ -26,6 +24,7 @@ type PhotoResult struct {
 	TimeZone         string        `json:"TimeZone"`
 	PhotoPath        string        `json:"Path"`
 	PhotoName        string        `json:"Name"`
+	OriginalName     string        `json:"OriginalName"`
 	PhotoTitle       string        `json:"Title"`
 	PhotoDescription string        `json:"Description"`
 	PhotoYear        int           `json:"Year"`

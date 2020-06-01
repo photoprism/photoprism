@@ -67,6 +67,26 @@ func TestBase(t *testing.T) {
 		result := Base("/testdata/Test (3).jpg", false)
 		assert.Equal(t, "Test (3)", result)
 	})
+	t.Run("20180506_091537_DSC02122.JPG", func(t *testing.T) {
+		result := Base("20180506_091537_DSC02122.JPG", true)
+		assert.Equal(t, "20180506_091537_DSC02122", result)
+	})
+	t.Run("20180506_091537_DSC02122 (+3.3).JPG", func(t *testing.T) {
+		result := Base("20180506_091537_DSC02122 (+3.3).JPG", true)
+		assert.Equal(t, "20180506_091537_DSC02122", result)
+	})
+	t.Run("20180506_091537_DSC02122 (-2.7).JPG", func(t *testing.T) {
+		result := Base("20180506_091537_DSC02122 (-2.7).JPG", true)
+		assert.Equal(t, "20180506_091537_DSC02122", result)
+	})
+	t.Run("20180506_091537_DSC02122(+3.3).JPG", func(t *testing.T) {
+		result := Base("20180506_091537_DSC02122(+3.3).JPG", true)
+		assert.Equal(t, "20180506_091537_DSC02122", result)
+	})
+	t.Run("20180506_091537_DSC02122(-2.7).JPG", func(t *testing.T) {
+		result := Base("20180506_091537_DSC02122(-2.7).JPG", true)
+		assert.Equal(t, "20180506_091537_DSC02122", result)
+	})
 }
 
 func TestRelativeBase(t *testing.T) {

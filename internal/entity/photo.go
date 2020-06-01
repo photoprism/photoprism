@@ -17,6 +17,20 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
+// Default photo result slice for simple use cases.
+type Photos []Photo
+
+// UIDs returns a slice of unique photo IDs.
+func (m Photos) UIDs() []string {
+	result := make([]string, len(m))
+
+	for i, el := range m {
+		result[i] = el.PhotoUID
+	}
+
+	return result
+}
+
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
 	ID               uint         `gorm:"primary_key" yaml:"-"`
@@ -31,8 +45,8 @@ type Photo struct {
 	PhotoDescription string       `gorm:"type:text;" json:"Description" yaml:"Description,omitempty"`
 	DescriptionSrc   string       `gorm:"type:varbinary(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
 	Details          Details      `json:"Details" yaml:"Details"`
-	PhotoPath        string       `gorm:"type:varbinary(768);index;" yaml:"-"`
-	PhotoName        string       `gorm:"type:varbinary(255);" json:"PhotoName" yaml:"-"`
+	PhotoPath        string       `gorm:"type:varbinary(768);index;" json:"Path" yaml:"-"`
+	PhotoName        string       `gorm:"type:varbinary(255);" json:"Name" yaml:"-"`
 	OriginalName     string       `gorm:"type:varbinary(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	PhotoFavorite    bool         `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
@@ -132,7 +146,7 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 	return nil
 }
 
-// String returns an entity identifier as string for use in logs.
+// String returns the id or name as string.
 func (m *Photo) String() string {
 	if m.PhotoUID == "" {
 		if m.PhotoName != "" {

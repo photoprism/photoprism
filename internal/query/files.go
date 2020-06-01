@@ -6,10 +6,8 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-type Files []entity.File
-
 // FilesByPath returns a slice of files in a given originals folder.
-func FilesByPath(rootName, pathName string) (files Files, err error) {
+func FilesByPath(rootName, pathName string) (files entity.Files, err error) {
 	if strings.HasPrefix(pathName, "/") {
 		pathName = pathName[1:]
 	}
@@ -26,7 +24,7 @@ func FilesByPath(rootName, pathName string) (files Files, err error) {
 }
 
 // ExistingFiles returns not-missing and not-deleted file entities in the range of limit and offset sorted by id.
-func ExistingFiles(limit int, offset int, pathName string) (files Files, err error) {
+func ExistingFiles(limit int, offset int, pathName string) (files entity.Files, err error) {
 	if strings.HasPrefix(pathName, "/") {
 		pathName = pathName[1:]
 	}
@@ -43,7 +41,7 @@ func ExistingFiles(limit int, offset int, pathName string) (files Files, err err
 }
 
 // FilesByUID
-func FilesByUID(u []string, limit int, offset int) (files Files, err error) {
+func FilesByUID(u []string, limit int, offset int) (files entity.Files, err error) {
 	if err := Db().Where("(photo_uid IN (?) AND file_primary = 1) OR file_uid IN (?)", u, u).Preload("Photo").Limit(limit).Offset(offset).Find(&files).Error; err != nil {
 		return files, err
 	}

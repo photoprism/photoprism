@@ -12,6 +12,8 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
+type Files []File
+
 // File represents an image or sidecar file that belongs to a photo.
 type File struct {
 	ID              uint          `gorm:"primary_key" json:"-" yaml:"-"`

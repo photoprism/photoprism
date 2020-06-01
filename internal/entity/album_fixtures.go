@@ -92,6 +92,24 @@ var AlbumFixtures = AlbumMap{
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
 		DeletedAt:        nil,
 	},
+	"import": {
+		ID:               1000004,
+		CoverUID:         "",
+		AlbumUID:         "at6axuzitogaaiax",
+		AlbumSlug:        "import",
+		AlbumType:        TypeAlbum,
+		AlbumTitle:       "Import Album",
+		AlbumDescription: "",
+		AlbumNotes:       "",
+		AlbumOrder:       "name",
+		AlbumTemplate:    "",
+		AlbumFilter:      "",
+		AlbumFavorite:    false,
+		Links:            []Link{},
+		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
+		DeletedAt:        nil,
+	},
 }
 
 // CreateAlbumFixtures inserts known entities into the database for testing.

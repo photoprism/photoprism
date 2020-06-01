@@ -88,28 +88,28 @@ msgid "All "
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:136
-#: src/component/p-photo-search.vue:157
+#: src/component/p-photo-toolbar.vue:157
 msgid "All Cameras"
 msgstr ""
 
-#: src/component/p-photo-search.vue:160
+#: src/component/p-photo-toolbar.vue:160
 msgid "All Categories"
 msgstr ""
 
-#: src/component/p-photo-search.vue:159
+#: src/component/p-photo-toolbar.vue:159
 msgid "All Colors"
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:140
-#: src/component/p-photo-search.vue:156
+#: src/component/p-photo-toolbar.vue:156
 msgid "All Countries"
 msgstr ""
 
-#: src/component/p-photo-search.vue:158
+#: src/component/p-photo-toolbar.vue:158
 msgid "All Lenses"
 msgstr ""
 
-#: src/component/p-photo-search.vue:208
+#: src/component/p-photo-toolbar.vue:208
 msgid "All Years"
 msgstr ""
 
@@ -158,7 +158,7 @@ msgstr ""
 
 #: src/component/p-album-toolbar.vue:166
 #: src/component/p-photo-list.vue:92
-#: src/component/p-photo-search.vue:180
+#: src/component/p-photo-toolbar.vue:180
 #: src/dialog/photo/details.vue:409
 msgid "Camera"
 msgstr ""
@@ -177,11 +177,11 @@ msgid "Cancel"
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:148
-#: src/component/p-photo-search.vue:165
+#: src/component/p-photo-toolbar.vue:165
 msgid "Cards"
 msgstr ""
 
-#: src/component/p-photo-search.vue:184
+#: src/component/p-photo-toolbar.vue:184
 #: src/dialog/photo/details.vue:413
 msgid "Category"
 msgstr ""
@@ -198,7 +198,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: src/component/p-photo-search.vue:183
+#: src/component/p-photo-toolbar.vue:183
 #: src/dialog/photo/details.vue:412
 msgid "Color"
 msgstr ""
@@ -226,7 +226,7 @@ msgid "Convert RAW files"
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:165
-#: src/component/p-photo-search.vue:179
+#: src/component/p-photo-toolbar.vue:179
 #: src/dialog/photo/details.vue:408
 msgid "Country"
 msgstr ""
@@ -365,7 +365,7 @@ msgid "General"
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:157
-#: src/component/p-photo-search.vue:172
+#: src/component/p-photo-toolbar.vue:172
 msgid "Group by similarity"
 msgstr ""
 
@@ -453,7 +453,7 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: src/component/p-photo-search.vue:181
+#: src/component/p-photo-toolbar.vue:181
 #: src/dialog/photo/details.vue:410
 msgid "Lens"
 msgstr ""
@@ -464,7 +464,7 @@ msgid "Library"
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:149
-#: src/component/p-photo-search.vue:166
+#: src/component/p-photo-toolbar.vue:166
 msgid "List"
 msgstr ""
 
@@ -516,12 +516,12 @@ msgid "More than 50 photos found"
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:147
-#: src/component/p-photo-search.vue:164
+#: src/component/p-photo-toolbar.vue:164
 msgid "Mosaic"
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:158
-#: src/component/p-photo-search.vue:173
+#: src/component/p-photo-toolbar.vue:173
 msgid "Most relevant"
 msgstr ""
 
@@ -546,7 +546,7 @@ msgid "Never"
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:155
-#: src/component/p-photo-search.vue:170
+#: src/component/p-photo-toolbar.vue:170
 msgid "Newest first"
 msgstr ""
 
@@ -602,7 +602,7 @@ msgid "Nothing to see here yet. Be patient."
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:156
-#: src/component/p-photo-search.vue:171
+#: src/component/p-photo-toolbar.vue:171
 msgid "Oldest first"
 msgstr ""
 
@@ -701,7 +701,7 @@ msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:154
-#: src/component/p-photo-search.vue:169
+#: src/component/p-photo-toolbar.vue:169
 msgid "Recently imported"
 msgstr ""
 
@@ -745,7 +745,7 @@ msgid "Save"
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:163
-#: src/component/p-photo-search.vue:177
+#: src/component/p-photo-toolbar.vue:177
 #: src/dialog/photo/details.vue:406
 #: src/dialog/photo/labels.vue:111
 #: src/pages/albums.vue:183
@@ -802,7 +802,7 @@ msgid "Size"
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:167
-#: src/component/p-photo-search.vue:185
+#: src/component/p-photo-toolbar.vue:185
 #: src/dialog/photo/details.vue:414
 msgid "Sort By"
 msgstr ""
@@ -843,12 +843,12 @@ msgstr ""
 msgid "Taken"
 msgstr ""
 
-#: src/component/p-photo-search.vue:187
+#: src/component/p-photo-toolbar.vue:187
 #: src/dialog/photo/details.vue:416
 msgid "Taken after"
 msgstr ""
 
-#: src/component/p-photo-search.vue:186
+#: src/component/p-photo-toolbar.vue:186
 #: src/dialog/photo/details.vue:415
 msgid "Taken before"
 msgstr ""
@@ -935,7 +935,7 @@ msgid "Video"
 msgstr ""
 
 #: src/component/p-album-toolbar.vue:164
-#: src/component/p-photo-search.vue:178
+#: src/component/p-photo-toolbar.vue:178
 #: src/dialog/photo/details.vue:407
 msgid "View"
 msgstr ""
@@ -944,7 +944,7 @@ msgstr ""
 msgid "Week"
 msgstr ""
 
-#: src/component/p-photo-search.vue:182
+#: src/component/p-photo-toolbar.vue:182
 #: src/dialog/photo/details.vue:411
 msgid "Year"
 msgstr ""

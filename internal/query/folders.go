@@ -7,17 +7,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-type Folders []entity.Folder
-
 // FoldersByPath returns a slice of folders in a given directory incl sub directories in recursive mode.
-func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders Folders, err error) {
+func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders entity.Folders, err error) {
 	dirs, err := fs.Dirs(filepath.Join(rootPath, path), recursive)
 
 	if err != nil {
 		return folders, err
 	}
 
-	folders = make(Folders, len(dirs))
+	folders = make(entity.Folders, len(dirs))
 
 	for i, dir := range dirs {
 		folder := entity.FindFolder(rootName, filepath.Join(path, dir))
@@ -39,7 +37,7 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders Fol
 }
 
 // AlbumFolders returns folders that should be added as album.
-func AlbumFolders(threshold int) (folders Folders, err error) {
+func AlbumFolders(threshold int) (folders entity.Folders, err error) {
 	db := UnscopedDb().Table("folders").
 		Select("folders.*, COUNT(photos.id) AS photo_count").
 		Joins("JOIN photos ON photos.photo_path = folders.path AND photos.deleted_at IS NULL AND photos.photo_quality >= 3").

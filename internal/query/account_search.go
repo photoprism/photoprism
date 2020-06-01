@@ -5,10 +5,8 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 )
 
-type Accounts []entity.Account
-
 // AccountSearch returns a list of accounts.
-func AccountSearch(f form.AccountSearch) (result Accounts, err error) {
+func AccountSearch(f form.AccountSearch) (result entity.Accounts, err error) {
 	s := Db().Where(&entity.Account{})
 
 	if f.Share {

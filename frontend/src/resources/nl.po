@@ -64,11 +64,11 @@ msgstr "Albums verwijderd"
 msgid "All "
 msgstr "Alle "
 
-#: src/component/p-album-search.vue:107 src/component/p-photo-search.vue:157
+#: src/component/p-album-search.vue:107 src/component/p-photo-toolbar.vue:157
 msgid "All Cameras"
 msgstr "Alle camera’s"
 
-#: src/component/p-album-search.vue:110 src/component/p-photo-search.vue:160
+#: src/component/p-album-search.vue:110 src/component/p-photo-toolbar.vue:160
 msgid "All Countries"
 msgstr "Alle landen"
 
@@ -81,7 +81,7 @@ msgid "Are you sure you want to delete these photos?"
 msgstr "Weet je zeker dat je deze foto’s wil verwijderen?"
 
 #: src/component/p-album-search.vue:134 src/component/p-photo-list.vue:53
-#: src/component/p-photo-search.vue:186
+#: src/component/p-photo-toolbar.vue:186
 msgid "Camera"
 msgstr "Camera"
 
@@ -93,7 +93,7 @@ msgid "Cancel"
 msgstr "Annuleren"
 
 #: src/component/p-album-search.vue:133 src/component/p-photo-list.vue:52
-#: src/component/p-photo-search.vue:185
+#: src/component/p-photo-toolbar.vue:185
 msgid "Country"
 msgstr "Land"
 
@@ -121,7 +121,7 @@ msgstr "Dag"
 msgid "Delete"
 msgstr "Verwijder"
 
-#: src/component/p-album-search.vue:119 src/component/p-photo-search.vue:169
+#: src/component/p-album-search.vue:119 src/component/p-photo-toolbar.vue:169
 msgid "Details"
 msgstr "Details"
 
@@ -204,7 +204,7 @@ msgstr "Taal"
 msgid "Library"
 msgstr "Bibliotheek"
 
-#: src/component/p-album-search.vue:120 src/component/p-photo-search.vue:170
+#: src/component/p-album-search.vue:120 src/component/p-photo-toolbar.vue:170
 msgid "List"
 msgstr "Lijst"
 
@@ -248,7 +248,7 @@ msgstr "Meer dan 20 labels gevonden"
 msgid "More than 50 photos found"
 msgstr "Meer dan 50 foto’s gevonden"
 
-#: src/component/p-album-search.vue:118 src/component/p-photo-search.vue:168
+#: src/component/p-album-search.vue:118 src/component/p-photo-toolbar.vue:168
 msgid "Mosaic"
 msgstr "Mozaiek"
 
@@ -256,7 +256,7 @@ msgstr "Mozaiek"
 msgid "New Album"
 msgstr "Nieuw album"
 
-#: src/component/p-album-search.vue:125 src/component/p-photo-search.vue:175
+#: src/component/p-album-search.vue:125 src/component/p-photo-toolbar.vue:175
 msgid "Newest first"
 msgstr "Nieuwste eerst"
 
@@ -303,7 +303,7 @@ msgstr "Niets te zien hier. Weer geduldig."
 msgid "of"
 msgstr "van"
 
-#: src/component/p-album-search.vue:126 src/component/p-photo-search.vue:176
+#: src/component/p-album-search.vue:126 src/component/p-photo-toolbar.vue:176
 msgid "Oldest first"
 msgstr "Oudste eerst"
 
@@ -351,7 +351,7 @@ msgstr "Vorige"
 msgid "Private"
 msgstr "Privé"
 
-#: src/component/p-album-search.vue:127 src/component/p-photo-search.vue:177
+#: src/component/p-album-search.vue:127 src/component/p-photo-toolbar.vue:177
 msgid "Recently imported"
 msgstr "Recent geïmporteerd"
 
@@ -367,7 +367,7 @@ msgstr "Verwijder uit album"
 msgid "Save"
 msgstr "Opslaan"
 
-#: src/component/p-album-search.vue:131 src/component/p-photo-search.vue:183
+#: src/component/p-album-search.vue:131 src/component/p-photo-toolbar.vue:183
 #: src/pages/albums.vue:162 src/pages/labels.vue:116 src/pages/places.vue:73
 msgid "Search"
 msgstr "Zoeken"
@@ -396,7 +396,7 @@ msgstr "Inloggen"
 msgid "Skip existing photos and sidecar files"
 msgstr "Sla bestaande foto’s en sidecar-bestanden over"
 
-#: src/component/p-album-search.vue:135 src/component/p-photo-search.vue:187
+#: src/component/p-album-search.vue:135 src/component/p-photo-toolbar.vue:187
 msgid "Sort By"
 msgstr "Sorteer op"
 
@@ -408,7 +408,7 @@ msgstr "Start"
 msgid "Story"
 msgstr "Verhaal"
 
-#: src/component/p-photo-search.vue:189
+#: src/component/p-photo-toolbar.vue:189
 msgid "Taken after"
 msgstr "Genomen na"
 
@@ -416,7 +416,7 @@ msgstr "Genomen na"
 msgid "Taken At"
 msgstr "Genomen op"
 
-#: src/component/p-photo-search.vue:188
+#: src/component/p-photo-toolbar.vue:188
 msgid "Taken before"
 msgstr "Genomen voor"
 
@@ -424,7 +424,7 @@ msgstr "Genomen voor"
 msgid "Theme"
 msgstr "Thema"
 
-#: src/component/p-album-search.vue:117 src/component/p-photo-search.vue:167
+#: src/component/p-album-search.vue:117 src/component/p-photo-toolbar.vue:167
 msgid "Tiles"
 msgstr "Tegels"
 
@@ -493,7 +493,7 @@ msgstr "Foto’s uploaden…"
 msgid "Vibrant"
 msgstr "Levendig"
 
-#: src/component/p-album-search.vue:132 src/component/p-photo-search.vue:184
+#: src/component/p-album-search.vue:132 src/component/p-photo-toolbar.vue:184
 msgid "View"
 msgstr "Weergave"
 

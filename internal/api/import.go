@@ -65,6 +65,11 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 			opt = photoprism.ImportOptionsCopy(path)
 		}
 
+		if len(f.Albums) > 0 {
+			log.Debugf("import: files will be added to album %s", strings.Join(f.Albums, " and "))
+			opt.Albums = f.Albums
+		}
+
 		imp.Start(opt)
 
 		if subPath != "" && path != conf.ImportPath() && fs.IsEmpty(path) {
@@ -80,6 +85,10 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 		event.Success(fmt.Sprintf("import completed in %d s", elapsed))
 		event.Publish("import.completed", event.Data{"path": path, "seconds": elapsed})
 		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
+
+		for _, uid := range f.Albums {
+			PublishAlbumEvent(EntityUpdated, uid, c)
+		}
 
 		UpdateClientConfig(conf)
 

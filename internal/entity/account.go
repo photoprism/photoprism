@@ -19,6 +19,8 @@ const (
 	AccountSyncStatusSynced   = "synced"
 )
 
+type Accounts []Account
+
 // Account represents a remote service account for uploading, downloading or syncing media files.
 type Account struct {
 	ID            uint   `gorm:"primary_key"`

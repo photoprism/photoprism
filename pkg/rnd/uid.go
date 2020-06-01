@@ -21,13 +21,43 @@ func IsPPID(s string, prefix byte) bool {
 		return false
 	}
 
-	return s[0] == prefix
+	return s[0] == prefix && IsLowerAlnum(s)
+}
+
+// IsHex returns true if the string only contains hex numbers, dashes and letters without whitespace.
+func IsHex(s string) bool {
+	if s == "" {
+		return false
+	}
+
+	for _, r := range s {
+		if (r < 48 || r > 57) && (r < 97 || r > 102) && (r < 65 || r > 90) && r != 45{
+			return false
+		}
+	}
+
+	return true
+}
+
+// IsLowerAlnum returns true if the string only contains alphanumeric ascii chars without whitespace.
+func IsLowerAlnum(s string) bool {
+	if s == "" {
+		return false
+	}
+
+	for _, r := range s {
+		if (r < 48 || r > 57) && (r < 97 || r > 122) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // IsUID returns true if string is a seemingly unique id.
 func IsUID(s string, prefix byte) bool {
 	// Regular UUID.
-	if len(s) == 36 {
+	if len(s) == 36 && IsHex(s) {
 		return true
 	}
 

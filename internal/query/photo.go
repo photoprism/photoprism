@@ -73,7 +73,7 @@ func PhotoPreloadByUID(photoUID string) (photo entity.Photo, err error) {
 }
 
 // PhotosMissing returns photo entities without existing files.
-func PhotosMissing(limit int, offset int) (entities Photos, err error) {
+func PhotosMissing(limit int, offset int) (entities entity.Photos, err error) {
 	err = Db().
 		Select("photos.*").
 		Joins("JOIN files a ON photos.id = a.photo_id ").
@@ -94,7 +94,7 @@ func ResetPhotoQuality() error {
 }
 
 // PhotosMaintenance returns photos selected for maintenance.
-func PhotosMaintenance(limit int, offset int) (entities Photos, err error) {
+func PhotosMaintenance(limit int, offset int) (entities entity.Photos, err error) {
 	err = Db().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
