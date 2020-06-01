@@ -47,13 +47,13 @@ func TestUcFirst(t *testing.T) {
 
 func TestTitle(t *testing.T) {
 	t.Run("BrowseYourLife", func(t *testing.T) {
-		assert.Equal(t, "Browse Your Life In Pictures", Title("Browse your life in pictures"))
+		assert.Equal(t, "Browse Your Life in Pictures", Title("Browse your life in pictures"))
 	})
 	t.Run("PhotoLover", func(t *testing.T) {
 		assert.Equal(t, "Photo-Lover", Title("photo-lover"))
 	})
 	t.Run("NaomiWatts", func(t *testing.T) {
-		assert.Equal(t, "Naomi Watts / Ewan Mcgregor / The Impossible / TIFF", Title(" /Naomi watts / Ewan Mcgregor / the   Impossible /   TIFF  "))
+		assert.Equal(t, "Naomi Watts / Ewan McGregor / The Impossible / TIFF", Title(" /Naomi watts / Ewan Mcgregor / the   Impossible /   TIFF  "))
 	})
 	t.Run("Penguin", func(t *testing.T) {
 		assert.Equal(t, "A Boulders Penguin Colony / Simon's Town / 2013", Title("A Boulders Penguin Colony /// Simon's Town / 2013 "))
@@ -67,20 +67,26 @@ func TestTitle(t *testing.T) {
 	t.Run("testAddLabel", func(t *testing.T) {
 		assert.Equal(t, "TestAddLabel", Title("testAddLabel"))
 	})
+	t.Run("photoprism", func(t *testing.T) {
+		assert.Equal(t, "PhotoPrism", Title("photoprism"))
+	})
+	t.Run("youtube", func(t *testing.T) {
+		assert.Equal(t, "YouTube", Title("youtube"))
+	})
 }
 
 func TestTitleFromFileName(t *testing.T) {
-	t.Run("Browse your life in pictures", func(t *testing.T) {
-		assert.Equal(t, "Browse Your Life In Pictures", TitleFromFileName("Browse your life in pictures"))
+	t.Run("photoprism", func(t *testing.T) {
+		assert.Equal(t, "PhotoPrism: Browse Your Life in Pictures", TitleFromFileName("photoprism: Browse your life in pictures"))
 	})
-	t.Run("photo-lover", func(t *testing.T) {
+	t.Run("dash", func(t *testing.T) {
 		assert.Equal(t, "Photo Lover", TitleFromFileName("photo-lover"))
 	})
-	t.Run("BRIDGE in nyc", func(t *testing.T) {
-		assert.Equal(t, "Bridge In NYC", TitleFromFileName("BRIDGE in nyc"))
+	t.Run("nyc", func(t *testing.T) {
+		assert.Equal(t, "Bridge in, or by, NYC", TitleFromFileName("BRIDGE in, or by, nyc"))
 	})
-	t.Run("phil unveils iphone, ipad, imac or macbook 11 pro and max", func(t *testing.T) {
-		assert.Equal(t, "Phil Unveils iPhone iPad iMac or MacBook Pro and Max", TitleFromFileName("phil unveils iphone, ipad, imac or macbook 11 pro and max"))
+	t.Run("apple", func(t *testing.T) {
+		assert.Equal(t, "Phil Unveils iPhone, iPad, iPod, 'airpods', Airpod, AirPlay, iMac or MacBook", TitleFromFileName("phil unveils iphone, ipad, ipod, 'airpods', airpod, airplay, imac or macbook 11 pro and max"))
 	})
 	t.Run("IMG_4568", func(t *testing.T) {
 		assert.Equal(t, "", TitleFromFileName("IMG_4568"))

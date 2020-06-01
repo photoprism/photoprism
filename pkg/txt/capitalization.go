@@ -8,7 +8,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-var FileTitleRegexp = regexp.MustCompile("[\\p{L}\\-]{2,}")
+var FileTitleRegexp = regexp.MustCompile("[\\p{L}\\-,':]{2,}")
 
 var SpecialWords = map[string]string{
 	"nyc":                "NYC",
@@ -43,7 +43,40 @@ var SpecialWords = map[string]string{
 	"iphone":             "iPhone",
 	"imac":               "iMac",
 	"ipad":               "iPad",
+	"ipod":               "iPod",
 	"macbook":            "MacBook",
+	"airplay":            "AirPlay",
+	"airpods":            "AirPods",
+	"youtube":            "YouTube",
+	"photoprism":         "PhotoPrism",
+	"macgyver":           "MacGyver",
+	"o'brien":            "O'Brien",
+	"mcgregor":           "McGregor",
+	"mcdonald":           "McDonald",
+	"mcdonalds":          "McDonald's",
+	"mcdonald's":         "McDonald's",
+	"macalister":         "MacAlister",
+	"mcalister":          "McAlister",
+	"mcallister":         "McAllister",
+	"macauley":           "MacAuley",
+	"mccauley":           "McCauley",
+	"mcawley":            "McAwley",
+	"macauliffe":         "MacAuliffe",
+	"macbride":           "MacBride",
+	"mcbride":            "McBride",
+	"maccabe":            "MacCabe",
+	"mccabe":             "McCabe",
+	"maccann":            "MacCann",
+	"mccann":             "McCann",
+	"maccarthy":          "MacCarthy",
+	"mccarthy":           "McCarthy",
+	"maccormack":         "MacCormack",
+	"mccormick":          "McCormick",
+	"maccullagh":         "MacCullagh",
+	"macnully":           "MacNully",
+	"mackenna":           "MacKenna",
+	"macnamara":          "MacNamara",
+	"mcnamara":           "McNamara",
 	"gelaende":           "Gelände",
 	"schwaebisch":        "Schwäbisch",
 	"schwaebische":       "Schwäbische",
@@ -70,15 +103,19 @@ var SpecialWords = map[string]string{
 var SmallWords = map[string]bool{
 	"a":    true,
 	"an":   true,
+	"as":   true,
 	"at":   true,
+	"by":   true,
+	"in":   true,
 	"of":   true,
 	"on":   true,
 	"or":   true,
+	"up":   true,
 	"to":   true,
-	"by":   true,
 	"and":  true,
 	"but":  true,
 	"for":  true,
+	"nor":  true,
 	"the":  true,
 	"from": true,
 	"with": true,
@@ -131,9 +168,11 @@ func Title(s string) string {
 		}
 
 		for i, w := range words {
-			if match, ok := SpecialWords[strings.ToLower(w)]; ok {
-				words[i] = match
-			} else if i > 0 && SmallWords[strings.ToLower(w)] {
+			search := strings.ToLower(strings.Trim(w, ":.,;!?"))
+
+			if match, ok := SpecialWords[search]; ok {
+				words[i] = strings.Replace(strings.ToLower(w), search, match, 1)
+			} else if i > 0 && SmallWords[search] {
 				words[i] = strings.ToLower(w)
 			} else {
 				prev := ' '
@@ -184,7 +223,7 @@ func TitleFromFileName(s string) string {
 
 		found++
 
-		if found >= 10 {
+		if found > 10 {
 			break
 		}
 	}

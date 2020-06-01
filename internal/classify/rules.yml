@@ -4020,8 +4020,7 @@ hourglass:
   threshold: 0.6
 
 packet:
-  label: package
-  priority: -1
+  see: ignore
 
 swing:
   label: moment
