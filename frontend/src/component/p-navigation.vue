@@ -130,7 +130,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile v-if="mini" to="/albums" @click="">
+                <v-list-tile v-if="mini" to="/albums" @click="" class="p-navigation-albums">
                     <v-list-tile-action>
                         <v-icon>folder</v-icon>
                     </v-list-tile-action>
@@ -143,7 +143,7 @@
                 </v-list-tile>
 
                 <v-list-group v-if="!mini" prepend-icon="folder" no-action>
-                    <v-list-tile slot="activator" to="/albums" @click.stop="">
+                    <v-list-tile slot="activator" to="/albums" @click.stop="" class="p-navigation-albums">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate key="Albums">Albums</translate>

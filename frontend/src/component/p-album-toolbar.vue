@@ -19,13 +19,14 @@
                             color="secondary-dark"
                             single-line
                             autofocus
+                            class="input-title"
                     ></v-text-field>
                 </template>
             </v-edit-dialog>
 
             <v-spacer></v-spacer>
 
-            <v-btn icon @click.stop="refresh" class="hidden-xs-only">
+            <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload">
                 <v-icon>refresh</v-icon>
             </v-btn>
 
@@ -63,6 +64,7 @@
                                 @change="updateAlbum"
                                     :allow-overflow="false"
                                     return-masked-value
+                                class="input-category"
                         ></v-combobox>
                     </v-flex>
                     <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
@@ -104,7 +106,9 @@
                                     color="secondary-dark"
                                     style="background-color: white"
                                     v-model="album.Description"
-                                    @change="updateAlbum">
+                                    @change="updateAlbum"
+                                    class="input-description"
+                        >
                         </v-textarea>
                     </v-flex>
                 </v-layout>

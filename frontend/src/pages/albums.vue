@@ -22,12 +22,14 @@
                           :label="labels.category"
                           color="secondary-dark"
                           v-model="filter.category"
-                          :items="categories">
+                          :items="categories"
+                          class="input-category"
+                >
                 </v-select>
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon @click.stop="refresh">
+                <v-btn icon @click.stop="refresh" class="action-reload">
                     <v-icon>refresh</v-icon>
                 </v-btn>
 
@@ -36,7 +38,7 @@
                     <v-icon>cloud_upload</v-icon>
                 </v-btn>
 
-                <v-btn icon @click.prevent="create">
+                <v-btn icon @click.prevent="create" class="action-add">
                     <v-icon>add</v-icon>
                 </v-btn>
             </v-toolbar>
@@ -80,6 +82,7 @@
                     <v-flex
                             v-for="(album, index) in results"
                             :key="index"
+                            :data-uid="album.UID"
                             class="p-album"
                             xs6 sm4 md3 lg2 d-flex
                     >
@@ -113,9 +116,9 @@
                                            icon large absolute
                                            :class="selection.includes(album.UID) ? 'p-album-select' : 'p-album-select opacity-50'"
                                            @click.stop.prevent="onSelect($event, index)">
-                                        <v-icon v-if="selection.includes(album.UID)" color="white">check_circle
+                                        <v-icon v-if="selection.includes(album.UID)" color="white" class="t-select t-on">check_circle
                                         </v-icon>
-                                        <v-icon v-else color="accent lighten-3">radio_button_off</v-icon>
+                                        <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
                                     </v-btn>
                                 </v-img>
 
@@ -138,6 +141,7 @@
                                                     :rules="[titleRule]"
                                                     :label="labels.title"
                                                     color="secondary-dark"
+                                                    class="input-title"
                                                     single-line
                                                     autofocus
                                             ></v-text-field>

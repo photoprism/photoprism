@@ -22,6 +22,7 @@
                                 :label="labels.select"
                                 color="secondary-dark"
                                 flat solo
+                                class="input-album"
                         >
                         </v-autocomplete>
                     </v-flex>
