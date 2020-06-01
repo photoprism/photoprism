@@ -55,13 +55,13 @@ export default class Page {
         }
     }
 
-    async selectPhotoFromUID(uid) {
+    async selectFromUID(uid) {
         await t
         .hover(Selector('div').withAttribute('data-uid', uid))
         .click(Selector('.t-select.t-off'));
     }
 
-    async unselectPhotoFromUID(uid) {
+    async unselectFromUID(uid) {
         await t
             .hover(Selector('div').withAttribute('data-uid', uid))
             .click(Selector('.t-select.t-on'));
@@ -89,20 +89,20 @@ export default class Page {
             .click(Selector('.t-like.t-on').withAttribute('data-uid', uid));
     }
 
-    async archiveSelectedPhotos() {
+    async archiveSelected() {
         await t
             .click(Selector('button.p-photo-clipboard-menu'))
             .click(Selector('button.p-photo-clipboard-archive'))
             .click(Selector('button.p-photo-dialog-confirm'));
     }
 
-    async restoreSelectedPhotos() {
+    async restoreSelected() {
         await t
             .click(Selector('button.p-photo-clipboard-menu'))
             .click(Selector('button.p-photo-clipboard-restore'));
     }
 
-    async editSelectedPhotos() {
+    async editSelected() {
         if (await Selector('button.p-photo-clipboard-edit').exists) {
             await t.click(Selector('button.p-photo-clipboard-edit'));
         } else if (await Selector('button.p-photo-clipboard-menu').exists) {
@@ -110,6 +110,28 @@ export default class Page {
                 .click(Selector('button.p-photo-clipboard-menu'))
                 .click(Selector('button.p-photo-clipboard-edit'));
         }
+    }
+
+    async deleteSelectedAlbum() {
+        await t
+            .click(Selector('button.p-album-clipboard-menu'))
+            .click(Selector('button.p-album-clipboard-delete'))
+            .click(Selector('button.p-album-dialog-confirm'));
+    }
+
+    async removeSelected() {
+        await t
+            .click(Selector('button.p-photo-clipboard-menu'))
+            .click(Selector('button.p-photo-clipboard-delete'));
+    }
+
+    async addSelectedToAlbum(name) {
+        await t
+            .click(Selector('button.p-photo-clipboard-menu'))
+            .click(Selector('button.p-photo-clipboard-album'))
+            .typeText(Selector('.input-album input'), name, { replace: true })
+            .click(Selector('div[role="listitem"]').withText(name))
+            .click(Selector('button.p-photo-dialog-confirm'));
     }
 
     async login(password) {
