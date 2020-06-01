@@ -53,7 +53,7 @@
                                         @input="data.parent.selectItem(data.item)"
                                 >
                                     <v-icon class="pr-1">folder</v-icon>
-                                    {{ data.item.Title | truncate(40) }}
+                                    {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
                                 </v-chip>
                             </template>
                         </v-combobox>
