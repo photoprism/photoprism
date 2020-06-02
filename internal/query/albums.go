@@ -59,12 +59,8 @@ func AlbumCoverByUID(albumUID string) (file entity.File, err error) {
 		if photos, _, err := PhotoSearch(f); err != nil {
 			return file, err
 		} else if len(photos) > 0 {
-			log.Debugf("PHOTOS: %+v", photos)
-
 			for _, photo := range photos {
-				log.Debugf("PHOTO: %+v", photo)
 				if err := Db().Where("photo_uid = ? AND file_primary = 1", photo.PhotoUID).First(&file).Error; err != nil {
-					log.Debugf("ERROR: %+v", err)
 					return file, err
 				} else {
 					return file, nil
