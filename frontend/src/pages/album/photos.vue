@@ -372,9 +372,12 @@
                         for (let i = 0; i < data.entities.length; i++) {
                             const uid = data.entities[i];
                             const index = this.results.findIndex((m) => m.UID === uid);
+
                             if (index >= 0) {
                                 this.results.splice(index, 1);
                             }
+
+                            this.$clipboard.removeId(uid);
                         }
 
                         break;

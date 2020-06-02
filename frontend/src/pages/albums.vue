@@ -38,7 +38,7 @@
                     <v-icon>cloud_upload</v-icon>
                 </v-btn>
 
-                <v-btn icon @click.prevent="create" class="action-add">
+                <v-btn icon @click.prevent="create" class="action-add" v-if="staticFilter.type === 'album'">
                     <v-icon>add</v-icon>
                 </v-btn>
             </v-toolbar>
@@ -487,9 +487,11 @@
                             const values = data.entities[i];
                             const model = this.results.find((m) => m.UID === values.UID);
 
-                            for (let key in values) {
-                                if (values.hasOwnProperty(key)) {
-                                    model[key] = values[key];
+                            if (model) {
+                                for (let key in values) {
+                                    if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
+                                        model[key] = values[key];
+                                    }
                                 }
                             }
                         }
@@ -515,7 +517,8 @@
                         for (let i = 0; i < data.entities.length; i++) {
                             const values = data.entities[i];
                             const index = this.results.findIndex((m) => m.UID === values.UID);
-                            if (index === -1) {
+
+                            if (index === -1 && this.staticFilter.type === values.Type) {
                                 this.results.unshift(new Album(values));
                             }
                         }

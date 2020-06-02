@@ -120,8 +120,10 @@ class Clipboard {
             return;
         }
 
-        const id = model.getId();
+        this.removeId(model.getId());
+    }
 
+    removeId(id) {
         if (!this.hasId(id)) return;
 
         const index = this.selection.indexOf(id);
