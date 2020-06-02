@@ -198,7 +198,7 @@
             this.subscriptionId = Event.subscribe('import', this.handleEvent);
             this.loading = true;
 
-            Folder.findAll(RootImport).then((r) => {
+            Folder.findAllUncached(RootImport).then((r) => {
                 const folders = r.models ? r.models : [];
                 const currentPath = this.settings.import.path;
                 let found = currentPath === this.root.path;

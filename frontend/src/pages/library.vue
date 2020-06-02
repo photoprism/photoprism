@@ -26,11 +26,11 @@
             </v-tab>
 
             <v-tabs-items touchless>
-                <v-tab-item>
+                <v-tab-item lazy>
                     <p-tab-originals></p-tab-originals>
                 </v-tab-item>
 
-                <v-tab-item :disabled="readonly">
+                <v-tab-item :disabled="readonly" lazy>
                     <p-tab-import></p-tab-import>
                 </v-tab-item>
 

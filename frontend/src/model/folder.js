@@ -92,6 +92,10 @@ export class Folder extends RestModel {
         return this.search(path, {recursive: true});
     }
 
+    static findAllUncached(path) {
+        return this.search(path, {recursive: true, uncached: true});
+    }
+
     static originals(path, params) {
         if(!path) {
             path = "/";
