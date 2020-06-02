@@ -27,6 +27,7 @@
                                     color="secondary-dark"
                                     single-line
                                     autofocus
+                                    class="input-rename"
                             ></v-text-field>
                         </template>
                     </v-edit-dialog>
@@ -41,12 +42,12 @@
                     </v-btn>
                     <v-btn v-else-if="props.item.Uncertainty < 100 && props.item.LabelSrc === 'manual'" icon
                            small flat :ripple="false"
-                           class="action-off" title="Delete"
+                           class="action-delete" title="Delete"
                            @click.stop.prevent="removeLabel(props.item.Label)">
                         <v-icon color="secondary-dark">delete</v-icon>
                     </v-btn>
                     <v-btn v-else-if="props.item.Uncertainty < 100" icon small flat :ripple="false"
-                           class="action-off" title="Remove"
+                           class="action-remove" title="Remove"
                            @click.stop.prevent="removeLabel(props.item.Label)">
                         <v-icon color="secondary-dark">remove</v-icon>
                     </v-btn>
@@ -69,13 +70,14 @@
                             flat solo hide-details
                             autofocus
                             @keyup.enter.native="addLabel"
+                            class="input-label"
                     ></v-text-field>
                 </td>
                 <td class="text-xs-left">manual</td>
                 <td class="text-xs-center">100%</td>
                 <td class="text-xs-center">
                     <v-btn icon small flat :ripple="false" title="Add"
-                           class="p-photo-label-remove"
+                           class="p-photo-label-add"
                            @click.stop.prevent="addLabel">
                         <v-icon color="secondary-dark">add</v-icon>
                     </v-btn>

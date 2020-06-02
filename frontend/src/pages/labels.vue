@@ -4,7 +4,7 @@
 
         <v-form ref="form" class="p-labels-search" lazy-validation @submit.prevent="updateQuery" dense>
             <v-toolbar flat color="secondary">
-                <v-text-field class="pt-3 pr-3"
+                <v-text-field class="pt-3 pr-3 p-search-field"
                               single-line
                               :label="labels.search"
                               prepend-inner-icon="search"
@@ -23,10 +23,10 @@
                     <v-icon>refresh</v-icon>
                 </v-btn>
 
-                <v-btn v-if="!filter.all" icon @click.stop="showAll">
+                <v-btn v-if="!filter.all" icon @click.stop="showAll" class="action-show-all">
                     <v-icon>visibility</v-icon>
                 </v-btn>
-                <v-btn v-else icon @click.stop="showImportant">
+                <v-btn v-else icon @click.stop="showImportant" class="action-show-important">
                     <v-icon>visibility_off</v-icon>
                 </v-btn>
             </v-toolbar>
@@ -59,6 +59,7 @@
                             v-for="(label, index) in results"
                             :key="index"
                             class="p-label"
+                            :data-uid="label.UID"
                             xs6 sm4 md3 lg2 d-flex
                     >
                         <v-hover>
@@ -100,9 +101,9 @@
                                            icon large absolute
                                            :class="selection.includes(label.UID) ? 'p-label-select' : 'p-label-select opacity-50'"
                                            @click.stop.prevent="onSelect($event, index)">
-                                        <v-icon v-if="selection.includes(label.UID)" color="white">check_circle
+                                        <v-icon v-if="selection.includes(label.UID)" color="white" class="t-select t-on">check_circle
                                         </v-icon>
-                                        <v-icon v-else color="accent lighten-3">radio_button_off</v-icon>
+                                        <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
                                     </v-btn>
                                 </v-img>
 
