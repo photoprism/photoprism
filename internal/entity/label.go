@@ -11,6 +11,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+type Labels []Label
+
 // Label is used for photo, album and location categorization
 type Label struct {
 	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
@@ -40,7 +42,7 @@ func (m *Label) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("LabelUID", rnd.PPID('l'))
 }
 
-// NewLabel creates a label in database with a given name and priority
+// NewLabel returns a new label.
 func NewLabel(name string, priority int) *Label {
 	labelName := txt.Clip(name, txt.ClipDefault)
 
@@ -62,26 +64,47 @@ func NewLabel(name string, priority int) *Label {
 	return result
 }
 
-// Save updates the existing or inserts a new row.
+// Save updates the existing or inserts a new label.
 func (m *Label) Save() error {
 	return Db().Save(m).Error
 }
 
-// Create inserts a new row to the database.
+// Create inserts the label to the database.
 func (m *Label) Create() error {
 	return Db().Create(m).Error
 }
 
-// Updates a column in the database.
+// Delete removes the label from the database.
+func (m *Label) Delete() error {
+	Db().Where("label_id = ? OR category_id = ?", m.ID, m.ID).Delete(&Category{})
+	Db().Where("label_id = ?", m.ID).Delete(&PhotoLabel{})
+	return Db().Delete(m).Error
+}
+
+// Deleted returns true if the label is deleted.
+func (m *Label) Deleted() bool {
+	return m.DeletedAt != nil
+}
+
+// Delete removes the label from the database.
+func (m *Label) Restore() error {
+	if m.Deleted() {
+		return UnscopedDb().Model(m).Update("DeletedAt", nil).Error
+	}
+
+	return nil
+}
+
+// Updates a label property in the database.
 func (m *Label) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
-// FirstOrCreateLabel returns the existing row, inserts a new row or nil in case of errors.
+// FirstOrCreateLabel returns the existing label, inserts a new label or nil in case of errors.
 func FirstOrCreateLabel(m *Label) *Label {
 	result := Label{}
 
-	if err := Db().Where("label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).First(&result).Error; err == nil {
+	if err := UnscopedDb().Where("label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).First(&result).Error; err == nil {
 		return &result
 	} else if err := m.Create(); err != nil {
 		log.Errorf("label: %s", err)
@@ -164,6 +187,10 @@ func (m *Label) UpdateClassify(label classify.Label) error {
 		sn := FirstOrCreateLabel(NewLabel(txt.Title(category), -3))
 
 		if sn == nil {
+			continue
+		}
+
+		if sn.Deleted() {
 			continue
 		}
 

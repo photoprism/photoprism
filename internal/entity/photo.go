@@ -17,7 +17,6 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
-// Default photo result slice for simple use cases.
 type Photos []Photo
 
 // UIDs returns a slice of unique photo IDs.
@@ -273,6 +272,10 @@ func (m *Photo) SyncKeywordLabels() error {
 
 	for _, w := range keywords {
 		if label := FindLabel(w); label != nil {
+			if label.Deleted() {
+				continue
+			}
+
 			labelIds = append(labelIds, label.ID)
 			FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, label.ID, 25, classify.SrcKeyword))
 		}
@@ -585,7 +588,12 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		labelEntity := FirstOrCreateLabel(NewLabel(classifyLabel.Title(), classifyLabel.Priority))
 
 		if labelEntity == nil {
-			log.Errorf("index: label %s for photo %d should not be nil - bug?", txt.Quote(classifyLabel.Title()), m.ID)
+			log.Errorf("index: label %s should not be nil - bug? (%s)", txt.Quote(classifyLabel.Title()), m)
+			continue
+		}
+
+		if labelEntity.Deleted() {
+			log.Debugf("index: skipping deleted label %s (%s)", txt.Quote(classifyLabel.Title()), m)
 			continue
 		}
 
@@ -596,7 +604,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		photoLabel := FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, classifyLabel.Source))
 
 		if photoLabel == nil {
-			log.Errorf("index: label %d for photo %d should not be nil - bug?", labelEntity.ID, m.ID)
+			log.Errorf("index: photo-label %d should not be nil - bug? (%s)", labelEntity.ID, m)
 			continue
 		}
 

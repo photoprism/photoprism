@@ -20,6 +20,7 @@ var (
 	ErrFileNotFound     = gin.H{"code": http.StatusNotFound, "error": "File not found"}
 	ErrUnexpectedError  = gin.H{"code": http.StatusInternalServerError, "error": "Unexpected error"}
 	ErrSaveFailed       = gin.H{"code": http.StatusInternalServerError, "error": "Changes could not be saved"}
+	ErrDeleteFailed     = gin.H{"code": http.StatusInternalServerError, "error": "Changes could not be saved"}
 	ErrFormInvalid      = gin.H{"code": http.StatusBadRequest, "error": "Changes could not be saved"}
 	ErrFeatureDisabled  = gin.H{"code": http.StatusForbidden, "error": "Feature disabled"}
 )

@@ -215,7 +215,17 @@ func BatchLabelsDelete(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Infof("labels: deleting %#v", f.Labels)
 
-		entity.Db().Where("label_uid IN (?)", f.Labels).Delete(&entity.Label{})
+		var labels entity.Labels
+
+		if err := entity.Db().Where("label_uid IN (?)", f.Labels).Find(&labels).Error; err != nil {
+			logError("labels", err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrDeleteFailed)
+			return
+		}
+
+		for _, label := range labels {
+			logError("labels", label.Delete())
+		}
 
 		UpdateClientConfig(conf)
 
