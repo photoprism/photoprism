@@ -12,6 +12,7 @@ import (
 
 var OriginalPaths = []string{
 	"/photoprism/photos/originals",
+	"/photoprism/storage/originals",
 	"/photoprism/originals",
 	"photoprism/originals",
 	"PhotoPrism/Originals",
@@ -23,6 +24,7 @@ var OriginalPaths = []string{
 	"Pictures/Original",
 	"photos/originals",
 	"Photos/Originals",
+	"storage/originals",
 	"photos/original",
 	"Photos/Original",
 	"originals",
@@ -65,6 +67,7 @@ var OriginalPaths = []string{
 
 var ImportPaths = []string{
 	"/photoprism/photos/import",
+	"/photoprism/storage/import",
 	"/photoprism/import",
 	"photoprism/import",
 	"PhotoPrism/Import",
@@ -72,6 +75,7 @@ var ImportPaths = []string{
 	"Pictures/Import",
 	"photos/import",
 	"Photos/Import",
+	"storage/import",
 	"import",
 	"Import",
 	"~/pictures/import",

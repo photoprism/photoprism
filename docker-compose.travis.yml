@@ -32,8 +32,8 @@ services:
       PHOTOPRISM_TEST_DSN: ".test.db"
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
-      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/photos/originals"
-      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/photos/import"
+      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
+      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
       PHOTOPRISM_THUMB_FILTER: "lanczos" # Resample filter, best to worst: blackman, lanczos, cubic, linear
       PHOTOPRISM_THUMB_UNCACHED: "true" # On-demand rendering of default thumbnails (high memory and cpu usage)
       PHOTOPRISM_THUMB_SIZE: 2048 # Default thumbnail size limit (default 2048, min 720, max 3840)
