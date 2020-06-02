@@ -43,7 +43,7 @@ export default class Page {
 
     async search(term) {
         await t
-            .typeText(this.search1, term)
+            .typeText(this.search1, term, { replace: true })
             .pressKey('enter')
     }
 

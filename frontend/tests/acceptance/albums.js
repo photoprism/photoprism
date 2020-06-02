@@ -14,9 +14,6 @@ fixture `Test albums`
 
 const page = new Page();
 
-//search + filters?
-//views ?
-
 test('#1 Create/delete album', async t => {
     logger.clear();
     await t.click(Selector('.p-navigation-albums'));
@@ -46,7 +43,7 @@ test('#1 Create/delete album', async t => {
 
 });
 
-test('#1 Update album', async t => {
+test('#2 Update album', async t => {
     logger.clear();
     await t.click(Selector('.p-navigation-albums'));
     const request = await logger.requests[0].response.body;
@@ -131,7 +128,7 @@ test('#1 Update album', async t => {
 });
 
 //TODO test download itself + clipboard count after download
-test('#2 Download album', async t => {
+test('#3 Download album', async t => {
     logger.clear();
     await t.click(Selector('.p-navigation-albums'));
     const request = await logger.requests[0].response.body;
