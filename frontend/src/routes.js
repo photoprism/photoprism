@@ -174,7 +174,7 @@ export default [
         name: "library_import",
         path: "/library/import",
         component: Library,
-        meta: {title: "Import Photos", auth: true, background: "application-light"},
+        meta: {title: "Import", auth: true, background: "application-light"},
         props: {tab: 1},
     },
     {
