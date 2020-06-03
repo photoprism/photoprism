@@ -219,6 +219,10 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(f.Name, "*", "%"))
 	}
 
+	if f.Original != "" {
+		s = s.Where("photos.original_name LIKE ?", strings.ReplaceAll(f.Original, "*", "%"))
+	}
+
 	if f.Title != "" {
 		s = s.Where("LOWER(photos.photo_title) LIKE ?", strings.ReplaceAll(strings.ToLower(f.Title), "*", "%"))
 	}

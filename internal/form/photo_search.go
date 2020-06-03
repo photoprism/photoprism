@@ -13,6 +13,7 @@ type PhotoSearch struct {
 	Path      string    `form:"path"`
 	Folder    string    `form:"folder"` // Alias for Path
 	Name      string    `form:"name"`
+	Original  string    `form:"original"`
 	Title     string    `form:"title"`
 	Hash      string    `form:"hash"`
 	Video     bool      `form:"video"`
