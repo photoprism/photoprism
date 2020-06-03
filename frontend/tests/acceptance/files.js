@@ -14,73 +14,75 @@ fixture `Test files`
 
 const page = new Page();
 
-
-
-//download files
-
-//TODO see files + browse through files + use breadcrumps
 test('#1 Add files to album', async t => {
     logger.clear();
     await page.openNav();
     await t.click(Selector('.p-navigation-albums'));
-    logger.clear();
     await t
-        .typeText(Selector('.p-albums-search input'), 'Christmas')
+        .typeText(Selector('.p-albums-search input'), 'KanadaVacation')
         .pressKey('enter');
-    const AlbumUid = await Selector('div.p-album').nth(0).getAttribute('data-uid');
-    logger.clear();
     await t
-        .click(Selector('div.p-album').withAttribute('data-uid', AlbumUid));
-    const request = await logger.requests[0].response.body;
-    const PhotoCount = await Selector('div.p-photo').count;
+        .expect(Selector('h3').innerText).eql('No albums matched your search');
 
     await t
         .click(Selector('div.p-navigation-library + div'))
         .click(Selector('.p-navigation-files'));
-    const FirstItem = await Selector('div.v-card__title').nth(0).innerText();
-    console.log(FirstItem)
-    logger.clear();
+    const FirstItem = await Selector('div.v-card__title').nth(0).innerText;
     await t
         .expect(FirstItem).contains('Vacation')
-        .click(Selector('div').withText('Vacation'));
-    const request1 = await logger.requests[0].response.body;
-    const FirstItemInVacation = await Selector('div.v-card__title').nth(0).innerText();
-    const SecondItemInVacation = await Selector('div.v-card__title').nth(1).innerText();
-    console.log(FirstItemInVacation);
-    console.log(SecondItemInVacation);
+        .click(Selector('button').withText('Vacation'));
+    const FirstItemInVacation = await Selector('div.v-card__title').nth(0).innerText;
+    const KanadaUid = await Selector('div.v-card__title').nth(0).getAttribute('data-uid');
+    const SecondItemInVacation = await Selector('div.v-card__title').nth(1).innerText;
     await t
-        .expect(FirstItemInVacation).contains('Vacation')
-        .expect(SecondItemInVacation).contains('Vacation')
-        .click(Selector('div').withText('Vacation'));
+        .expect(FirstItemInVacation).contains('Kanada')
+        .expect(SecondItemInVacation).contains('Korsika')
+        .click(Selector('button').withText('Kanada'));
 
-    const FirstPhotoFolder = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
-    const SecondPhotoFolder = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
+    const FirstItemInKanada = await Selector('div.v-card__title').nth(0).innerText;
+    const SecondItemInKanada = await Selector('div.v-card__title').nth(1).innerText;
     await t
-        .click('.p-navigation-labels')
-    await page.selectFromUID(LabelLandscape);
+        .expect(FirstItemInKanada).contains('BotanicalGarden')
+        .expect(SecondItemInKanada).contains('IMG')
+        .click(Selector('button').withText('BotanicalGarden'))
+        .click(Selector('a[href="/files/Vacation"]'));
+    await page.selectFromUID(KanadaUid);
+    const clipboardCount = await Selector('span.t-clipboard-count');
+    await t
+        .expect(clipboardCount.textContent).eql("1")
+        .click(Selector('button.p-file-clipboard-menu'))
+        .click(Selector('button.p-file-clipboard-album'))
+        .typeText(Selector('.input-album input'), 'KanadaVacation', { replace: true })
+        .pressKey('enter')
+        .click(Selector('button.p-photo-dialog-confirm'))
+        .click(Selector('.p-navigation-albums'))
+        .typeText(Selector('.p-albums-search input'), 'KanadaVacation')
+        .pressKey('enter');
+    const AlbumUid = await Selector('div.p-album').nth(0).getAttribute('data-uid');
+    await t
+        .click(Selector('div.p-album').nth(0));
+    const PhotoCountAfterAdd = await Selector('div.p-photo').count;
+    await t
+        .expect(PhotoCountAfterAdd).eql(2)
+        .click(Selector('.p-navigation-albums'));
+    await page.selectFromUID(AlbumUid);
+    await page.deleteSelectedAlbum();
+});
+
+//TODO test download itself + clipboard count after download
+test('#2 Download files', async t => {
+    await page.openNav();
+    await t
+        .click(Selector('div.p-navigation-library + div'))
+        .click(Selector('.p-navigation-files'));
+    const FirstFile = await Selector('div.p-file').nth(0).getAttribute('data-uid');
+
+    await page.selectFromUID(FirstFile);
 
     const clipboardCount = await Selector('span.t-clipboard-count');
     await t
         .expect(clipboardCount.textContent).eql("1")
-        .click(Selector('button.p-label-clipboard-menu'))
-        .click(Selector('button.p-photo-clipboard-album'))
-        .typeText(Selector('.input-album input'), 'Christmas', { replace: true })
-        .click(Selector('div[role="listitem"]').withText('Christmas'))
-        .click(Selector('button.p-photo-dialog-confirm'))
-        .click(Selector('.p-navigation-albums'))
-        .click(Selector('div.p-album').withAttribute('data-uid', AlbumUid));
-    const request4 = await logger.requests[0].response.body;
-    const PhotoCountAfterAdd = await Selector('div.p-photo').count;
-    await t
-        .expect(PhotoCountAfterAdd).eql(PhotoCount + 2);
-    await page.selectFromUID(FirstPhotoLandscape);
-    await page.selectFromUID(SecondPhotoLandscape);
-    await page.removeSelected();
-    await t
-        .click('.action-reload');
-    const PhotoCountAfterDelete = await Selector('div.p-photo').count;
-    logger.clear();
-    await t
-        .expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 2);
+        .click(Selector('button.p-file-clipboard-menu'))
+        .expect(Selector('button.p-file-clipboard-download').visible).ok();
 });
 

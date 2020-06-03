@@ -141,7 +141,7 @@ test('#3 Add label to album', async t => {
     logger.clear();
     await t
         .click(Selector('div.p-album').withAttribute('data-uid', AlbumUid));
-    const request2 = await logger.requests[0].response.body;
+    //const request2 = await logger.requests[0].response.body;
     const PhotoCount = await Selector('div.p-photo').count;
     await t
         .click(Selector('.p-navigation-labels'));
@@ -150,11 +150,11 @@ test('#3 Add label to album', async t => {
     logger.clear();
     await t
         .click(Selector('div.p-label').withAttribute('data-uid', LabelLandscape));
-    const request3 = await logger.requests[0].response.body;
+    //const request3 = await logger.requests[0].response.body;
     const FirstPhotoLandscape = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     const SecondPhotoLandscape = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
     await t
-        .click('.p-navigation-labels')
+        .click('.p-navigation-labels');
     await page.selectFromUID(LabelLandscape);
 
     const clipboardCount = await Selector('span.t-clipboard-count');
@@ -187,10 +187,8 @@ test('#4 Delete label', async t => {
         .click(Selector('.p-navigation-labels'));
     await page.search('dome');
     const LabelDome = await Selector('div.p-label').nth(0).getAttribute('data-uid');
-    logger.clear();
     await t
         .click(Selector('div.p-label').withAttribute('data-uid', LabelDome));
-    const request3 = await logger.requests[0].response.body;
     const FirstPhotoDome = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     await t
         .click('.p-navigation-labels')
@@ -207,8 +205,9 @@ test('#4 Delete label', async t => {
         .click('.p-navigation-photos')
         .click(Selector('.action-title-edit').withAttribute('data-uid', FirstPhotoDome))
         .click(Selector('#tab-edit-labels'))
-        //TODO fix bug
-        //.expect(Selector('div.p-inline-edit').innerText).eql('xxx');
+        .expect(Selector('td').withText('No labels found').visible).ok()
+        .typeText(Selector('.input-label input'), 'Dome')
+        .click(Selector('button.p-photo-label-add'));
 });
 
 

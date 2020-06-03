@@ -23,10 +23,6 @@ test('#1 Create/delete album', async t => {
     await t
         .click(Selector('button.action-add'));
     const request1 = await logger.requests[0].response.body;
-    await t
-        //.expect(Selector('.success').visible, {timeout: 55000}).ok()
-        //.wait(5500);
-    const wait = await Selector('div.p-album').nth(countAlbums);
     const countAlbumsAfterCreate = await Selector('div.p-album').count;
     const NewAlbum = await Selector('div.p-album').nth(0).getAttribute('data-uid');
     await t
@@ -38,7 +34,6 @@ test('#1 Create/delete album', async t => {
     const countAlbumsAfterDelete = await Selector('div.p-album').count;
     await t
         .expect(countAlbumsAfterDelete).eql(countAlbumsAfterCreate - 1);
-
 });
 
 test('#2 Update album', async t => {
