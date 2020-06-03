@@ -80,6 +80,12 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 			}
 		}
 
+		moments := service.Moments()
+
+		if err := moments.Start(); err != nil {
+			log.Error(err)
+		}
+
 		elapsed := int(time.Since(start).Seconds())
 
 		event.Success(fmt.Sprintf("import completed in %d s", elapsed))
