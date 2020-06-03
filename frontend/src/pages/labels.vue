@@ -19,7 +19,7 @@
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon @click.stop="refresh">
+                <v-btn icon @click.stop="refresh" class="action-reload">
                     <v-icon>refresh</v-icon>
                 </v-btn>
 
