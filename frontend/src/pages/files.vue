@@ -49,6 +49,8 @@
                     <v-flex
                             v-for="(model, index) in results"
                             :key="index"
+                            :data-uid="model.UID"
+                            class="p-file"
                             xs6 sm4 md3 lg2 d-flex
                     >
                         <v-hover>
@@ -79,9 +81,9 @@
                                            icon large absolute
                                            :class="selection.includes(model.UID) ? 'p-file-select' : 'p-file-select opacity-50'"
                                            @click.stop.prevent="onSelect($event, index)">
-                                        <v-icon v-if="selection.includes(model.UID)" color="white">check_circle
+                                        <v-icon v-if="selection.includes(model.UID)" color="white" class="t-select t-on">check_circle
                                         </v-icon>
-                                        <v-icon v-else color="accent lighten-3">radio_button_off</v-icon>
+                                        <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
                                     </v-btn>
                                 </v-img>
 
