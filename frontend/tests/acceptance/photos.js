@@ -527,11 +527,9 @@ test('#7 Edit photo/video', async t => {
     const FirstPhotoAltitude = await (Selector('.input-altitude input').value);
     const FirstPhotoCountry = await (Selector('.input-country div.v-select__selection').innerText);
     const FirstPhotoCamera = await (Selector('div.p-camera-select div.v-select__selection').innerText);
-    console.log(FirstPhotoCamera);
     const FirstPhotoIso = await (Selector('.input-iso input').value);
     const FirstPhotoExposure = await (Selector('.input-exposure input').value);
     const FirstPhotoLens = await (Selector('div.p-lens-select div.v-select__selection').innerText);
-    console.log(FirstPhotoLens);
     const FirstPhotoFnumber = await (Selector('.input-fnumber input').value);
     const FirstPhotoFocalLength = await (Selector('.input-focal-length input').value);
     const FirstPhotoSubject = await (Selector('.input-subject textarea').value);

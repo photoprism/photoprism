@@ -116,7 +116,7 @@ export default class Page {
         await t
             .click(Selector('button.p-album-clipboard-menu'))
             .click(Selector('button.p-album-clipboard-delete'))
-            .click(Selector('button.p-album-dialog-confirm'));
+            .click(Selector('button.p-photo-dialog-confirm'));
     }
 
     async removeSelected() {

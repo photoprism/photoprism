@@ -1,6 +1,6 @@
 import { Selector } from 'testcafe';
-import testcafeconfig from '../testcafeconfig';
-import Page from "../page-model";
+import testcafeconfig from './testcafeconfig.json';
+import Page from "./page-model";
 
 fixture`Test views`
     .page`${testcafeconfig.url}`;
@@ -31,17 +31,15 @@ test('Open list view via select', async t => {
     await page.setFilter('view', 'List');
     await t
         .expect(Selector('table.v-datatable').visible).ok()
-        .expect(Selector('div.p-photos div.v-image').exists).notOk()
         .expect(Selector('div.p-photo-list').visible).ok();
 });
 
-test('Open details view via select', async t => {
+test('Open card view via select', async t => {
     await t
         .click('button.p-expand-search');
-    await page.setFilter('view', 'Details');
+    await page.setFilter('view', 'Cards');
     await t
         .expect(Selector('div.v-image__image').visible).ok()
-        .expect(Selector('div.p-photo-details').visible).ok()
         .expect(Selector('div.p-photo div.caption').visible).ok()
         .expect(Selector('#p-photo-viewer').visible).notOk();
 });

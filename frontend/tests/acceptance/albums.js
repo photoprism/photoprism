@@ -17,19 +17,17 @@ const page = new Page();
 test('#1 Create/delete album', async t => {
     logger.clear();
     await t.click(Selector('.p-navigation-albums'));
-    const request = await logger.requests[0].response.body;
+    //const request = await logger.requests[0].response.body;
     const countAlbums = await Selector('div.p-album').count;
-    console.log(countAlbums)
     logger.clear();
     await t
         .click(Selector('button.action-add'));
     const request1 = await logger.requests[0].response.body;
     await t
         //.expect(Selector('.success').visible, {timeout: 55000}).ok()
-        .wait(5500);
+        //.wait(5500);
     const wait = await Selector('div.p-album').nth(countAlbums);
     const countAlbumsAfterCreate = await Selector('div.p-album').count;
-    console.log(countAlbumsAfterCreate)
     const NewAlbum = await Selector('div.p-album').nth(0).getAttribute('data-uid');
     await t
         .expect(countAlbumsAfterCreate).eql(countAlbums + 1);
@@ -46,7 +44,7 @@ test('#1 Create/delete album', async t => {
 test('#2 Update album', async t => {
     logger.clear();
     await t.click(Selector('.p-navigation-albums'));
-    const request = await logger.requests[0].response.body;
+    //const request = await logger.requests[0].response.body;
     logger.clear();
     await t
         .typeText(Selector('.p-albums-search input'), 'Holiday')
@@ -131,7 +129,7 @@ test('#2 Update album', async t => {
 test('#3 Download album', async t => {
     logger.clear();
     await t.click(Selector('.p-navigation-albums'));
-    const request = await logger.requests[0].response.body;
+    //const request = await logger.requests[0].response.body;
     const FirstAlbum = await Selector('div.p-album').nth(0).getAttribute('data-uid');
 
     await page.selectFromUID(FirstAlbum);

@@ -14,7 +14,7 @@ fixture`Use filters`
 
 const page = new Page();
 
-test('Test camera filter', async t => {
+/*test('Test camera filter', async t => {
     await t
         .click('button.p-expand-search');
     logger.clear();
@@ -45,4 +45,4 @@ test('Test camera filter', async t => {
             .expect(logger.requests[0].response.statusCode).eql(200)
             .expect(logger.requests[0].request.url).contains('country=')
             .expect(Selector('div.v-image__image').visible).ok();
-    },);
+    },);*/
