@@ -152,7 +152,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile to="/folders">
+                    <v-list-tile to="/folders" class="p-navigation-folders">
                         <v-list-tile-content>
                             <v-list-tile-title><translate key="Folders">Folders</translate>
                                 <span v-show="config.count.folders > 0"

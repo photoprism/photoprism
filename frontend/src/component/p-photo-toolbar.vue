@@ -32,7 +32,7 @@
             </v-btn>
 
             <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-                   class="hidden-sm-and-down">
+                   class="hidden-sm-and-down action-upload">
                 <v-icon>cloud_upload</v-icon>
             </v-btn>
 
