@@ -801,7 +801,7 @@ func (m *Photo) SetFavorite(favorite bool) error {
 	}
 
 	// Update counters if changed and not deleted.
-	if changed && m.DeletedAt == nil {
+	if changed && m.PhotoPrivate == false && m.DeletedAt == nil {
 		if favorite {
 			event.Publish("count.favorites", event.Data{
 				"count": 1,
