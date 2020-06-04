@@ -423,20 +423,24 @@ func (m *Photo) LoadLocation() error {
 		return nil
 	}
 
-	var loc Location
+	if m.UnknownLocation() {
+		return fmt.Errorf("photo: unknown location (%s)", m)
+	}
 
-	err := Db().Set("gorm:auto_preload", true).Model(m).Related(&loc, "Location").Error
+	var location Location
+
+	err := Db().Preload("Place").First(&location, "id = ?", m.LocationID).Error
 
 	if err != nil {
 		return err
 	}
 
-	if m.Location == nil {
-		m.Location = &loc
-	} else if m.Location.Unknown() {
-		m.Location = &UnknownLocation
-		return fmt.Errorf("photo: unknown location (%s)", m)
+	if location.Place == nil {
+		location.Place = &UnknownPlace
+		location.PlaceID = UnknownPlace.ID
 	}
+
+	m.Location = &location
 
 	return nil
 }
@@ -456,20 +460,19 @@ func (m *Photo) LoadPlace() error {
 		return nil
 	}
 
+	if m.UnknownPlace() {
+		return fmt.Errorf("photo: unknown place (%s)", m)
+	}
+
 	var place Place
 
-	err := Db().Set("gorm:auto_preload", true).Model(m).Related(&place, "Place").Error
+	err := Db().First(&place, "id = ?", m.PlaceID).Error
 
 	if err != nil {
 		return err
 	}
 
-	if m.Place == nil {
-		m.Place = &place
-	} else if m.Place.Unknown() {
-		m.Place = &UnknownPlace
-		return fmt.Errorf("photo: unknown place (%s)", m)
-	}
+	m.Place = &place
 
 	return nil
 }
