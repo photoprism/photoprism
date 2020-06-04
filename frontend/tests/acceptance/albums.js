@@ -17,6 +17,7 @@ const page = new Page();
 test('#1 Create/delete album', async t => {
     logger.clear();
     await t.click(Selector('.p-navigation-albums'));
+    //TODO fails in container with request but outsides without it
     //const request = await logger.requests[0].response.body;
     const countAlbums = await Selector('div.p-album').count;
     logger.clear();
@@ -30,18 +31,15 @@ test('#1 Create/delete album', async t => {
     await page.selectFromUID(NewAlbum);
     logger.clear();
     await page.deleteSelectedAlbum();
-    const request3 = await logger.requests[0].response.body;
+    const request2 = await logger.requests[0].response.body;
     const countAlbumsAfterDelete = await Selector('div.p-album').count;
     await t
         .expect(countAlbumsAfterDelete).eql(countAlbumsAfterCreate - 1);
 });
 
 test('#2 Update album', async t => {
-    logger.clear();
-    await t.click(Selector('.p-navigation-albums'));
-    //const request = await logger.requests[0].response.body;
-    logger.clear();
     await t
+        .click(Selector('.p-navigation-albums'))
         .typeText(Selector('.p-albums-search input'), 'Holiday')
         .pressKey('enter');
     const AlbumUid = await Selector('div.p-album').nth(0).getAttribute('data-uid');
@@ -56,7 +54,7 @@ test('#2 Update album', async t => {
     logger.clear();
     await t
         .click(Selector('div.p-album').nth(0));
-    const request2 = await logger.requests[0].response.body;
+    const request1 = await logger.requests[0].response.body;
     const PhotoCount = await Selector('div.p-photo').count;
     await t
         .click(Selector('.p-expand-search'))
@@ -68,7 +66,7 @@ test('#2 Update album', async t => {
     logger.clear();
     await t
         .click('.action-reload');
-    const request3 = await logger.requests[0].response.body;
+    const request2 = await logger.requests[0].response.body;
     await t
         .click(Selector('.p-expand-search'))
         .expect(Selector('.input-description textarea').value).eql('All my animals')
@@ -85,17 +83,17 @@ test('#2 Update album', async t => {
     await t
         .click(Selector('.input-category'))
         .click(Selector('div[role="listitem"]').withText('Family'));
-    const request5 = await logger.requests[0].response.body;
+    const request3 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div.v-card__actions').nth(0).innerText).contains('Christmas')
         .click(Selector('.p-navigation-albums'))
         .click(Selector('.input-category'))
         .click(Selector('div[role="listitem"]').withText('All Categories'), {timeout: 55000});
-    const request6 = await logger.requests[0].response.body;
+    const request4 = await logger.requests[0].response.body;
     await t
         .click(Selector('div.p-album').withAttribute('data-uid', AlbumUid));
-    const request4 = await logger.requests[0].response.body;
+    const request5 = await logger.requests[0].response.body;
     const PhotoCountAfterAdd = await Selector('div.p-photo').count;
     await t
         .expect(PhotoCountAfterAdd).eql(PhotoCount + 2);
@@ -122,13 +120,9 @@ test('#2 Update album', async t => {
 
 //TODO test download itself + clipboard count after download
 test('#3 Download album', async t => {
-    logger.clear();
     await t.click(Selector('.p-navigation-albums'));
-    //const request = await logger.requests[0].response.body;
     const FirstAlbum = await Selector('div.p-album').nth(0).getAttribute('data-uid');
-
     await page.selectFromUID(FirstAlbum);
-
     const clipboardCount = await Selector('span.t-clipboard-count');
     await t
         .expect(clipboardCount.textContent).eql("1")
@@ -150,6 +144,6 @@ test('#5 View calendar', async t => {
     logger.clear();
     await t
         .click(Selector('.p-navigation-calendar'))
-        .expect(Selector('a').withText('May 2020').visible).ok()
+        .expect(Selector('a').withText('May 2019').visible).ok()
         .expect(Selector('a').withText('October 2019').visible).ok();
 });

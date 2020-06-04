@@ -1,21 +1,13 @@
 import { Selector } from 'testcafe';
 import testcafeconfig from './testcafeconfig';
 import Page from "./page-model";
-import { RequestLogger } from 'testcafe';
-
-const logger = RequestLogger( /http:\/\/localhost:2342\/api\/v1\/*/ , {
-    logResponseHeaders: true,
-    logResponseBody:    true
-});
 
 fixture `Test files`
-    .page`${testcafeconfig.url}`
-    .requestHooks(logger);
+    .page`${testcafeconfig.url}`;
 
 const page = new Page();
 
 test('#1 Add files to album', async t => {
-    logger.clear();
     await page.openNav();
     await t.click(Selector('.p-navigation-albums'));
     await t
@@ -23,7 +15,6 @@ test('#1 Add files to album', async t => {
         .pressKey('enter');
     await t
         .expect(Selector('h3').innerText).eql('No albums matched your search');
-
     await t
         .click(Selector('div.p-navigation-library + div'))
         .click(Selector('.p-navigation-files'));
@@ -76,13 +67,10 @@ test('#2 Download files', async t => {
         .click(Selector('div.p-navigation-library + div'))
         .click(Selector('.p-navigation-files'));
     const FirstFile = await Selector('div.p-file').nth(0).getAttribute('data-uid');
-
     await page.selectFromUID(FirstFile);
-
     const clipboardCount = await Selector('span.t-clipboard-count');
     await t
         .expect(clipboardCount.textContent).eql("1")
         .click(Selector('button.p-file-clipboard-menu'))
         .expect(Selector('button.p-file-clipboard-download').visible).ok();
 });
-

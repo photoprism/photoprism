@@ -7,7 +7,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture`Test places page`
     .page`${testcafeconfig.url}`
 
-test('Test places', async t => {
+test('#1 Test places', async t => {
     await t
         .click(Selector('.p-navigation-places'))
         .expect(Selector('#map').exists, {timeout: 15000}).ok()

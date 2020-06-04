@@ -18,19 +18,15 @@ fixture `Test photos`
 
 const page = new Page();
 
-//TODO?search + filters --> oder search js
 //TODO raw file icon? live photo icon? - search for type look for icon --> do it in search test
-//TODO ?views including fullscreen (next,previous)--> oder view js
-//TODO Share + clipboard
+//TODO Share photo
 //TODO Check count in navi gets updated --> gt/lt or matches count of images
 //TODO videos - play video
-
 
 test('#1 Scroll to top', async t => {
     await t
         .click(Selector('.p-navigation-photos'))
         .click(Selector('.p-expand-search'));
-    logger.clear();
     await page.setFilter('view', 'Cards');
     await t
         .expect(Selector('button.p-photo-scroll-top').exists).notOk()
@@ -47,7 +43,6 @@ test('#1 Scroll to top', async t => {
 test('#2 Download single photo/video and download zip using clipboard and fullscreen mode', async t => {
     const FirstPhoto = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     const SecondPhoto = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
-
     await t
         .click(Selector('div').withAttribute('data-uid', SecondPhoto));
     await t
@@ -55,13 +50,10 @@ test('#2 Download single photo/video and download zip using clipboard and fullsc
         .hover(Selector('.action-download'))
         .expect(Selector('.action-download').visible).ok()
         .click(Selector('.action-close'));
-
     await page.selectFromUID(FirstPhoto);
-
     await t
         .click(Selector('.p-navigation-video'));
     const FirstVideo = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
-
     await page.selectFromUID(FirstVideo);
     const clipboardCount = await Selector('span.t-clipboard-count');
     await t
@@ -85,13 +77,13 @@ test('#3 Approve photo using approve and by adding location', async t => {
     logger.clear();
     await t
         .click(Selector('.p-navigation-photos'));
-    const request11 = await logger.requests[0].response.body;
+    const request2 = await logger.requests[0].response.body;
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).notOk()
         .expect(Selector('div').withAttribute('data-uid', SecondPhoto).exists, {timeout: 5000}).notOk();
     logger.clear();
     await t.click(Selector('.p-navigation-review'));
-    const request111 = await logger.requests[0].response.body;
+    const request3 = await logger.requests[0].response.body;
 
     await page.selectFromUID(FirstPhoto);
     await page.editSelected();
@@ -100,17 +92,17 @@ test('#3 Approve photo using approve and by adding location', async t => {
         .click(Selector('button.p-photo-dialog-close'));
     await t
         .click(Selector('button.action-reload'));
-    const request12 = await logger.requests[0].response.body;
+    const request4 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).visible, {timeout: 5000}).ok();
     await page.editSelected();
-    const request2 = await logger.requests[0].response.body;
+    const request5 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .click(Selector('button.action-approve'))
         .click(Selector('button.action-ok'));
-    const request3 = await logger.requests[0].response.body;
+    const request6 = await logger.requests[0].response.body;
     logger.clear();
 
     await page.unselectFromUID(FirstPhoto);
@@ -121,20 +113,20 @@ test('#3 Approve photo using approve and by adding location', async t => {
         .typeText(Selector('input[aria-label="Latitude"]'), '9.999')
         .typeText(Selector('input[aria-label="Longitude"]'), '9.999')
         .click(Selector('button.action-ok'));
-    const request31 = await logger.requests[0].response.body;
+    const request7 = await logger.requests[0].response.body;
 
     await t
         .click(Selector('button.action-reload'));
-    const request4 = await logger.requests[0].response.body;
+    const request8 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).notOk()
         .expect(Selector('div').withAttribute('data-uid', SecondPhoto).exists, {timeout: 5000}).notOk()
         .click(Selector('.p-navigation-photos'));
-    const request5 = await logger.requests[0].response.body;
+    const request9 = await logger.requests[0].response.body;
     logger.clear();
     await page.search('type:image');
-    const request6 = await logger.requests[0].response.body;
+    const request10 = await logger.requests[0].response.body;
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).visible).ok()
         .expect(Selector('div').withAttribute('data-uid', SecondPhoto).visible).ok();
@@ -146,7 +138,7 @@ test('#4 Like/dislike photo/video', async t => {
     const FirstPhoto = await Selector('.t-off').nth(0).getAttribute('data-uid');
 
     await t.click(Selector('.p-navigation-video'));
-    const request0 = await logger.requests[0].response.body;
+    const request1 = await logger.requests[0].response.body;
     const FirstVideo = await Selector('.t-off').nth(0).getAttribute('data-uid');
 
     await t.click(Selector('.p-navigation-favorites'));
@@ -157,7 +149,7 @@ test('#4 Like/dislike photo/video', async t => {
 
     logger.clear();
     await page.likePhoto(FirstPhoto);
-    const request = await logger.requests[0].response.body;
+    const request2 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .click(Selector('.action-reload'))
@@ -166,7 +158,7 @@ test('#4 Like/dislike photo/video', async t => {
 
     await t.click(Selector('.p-navigation-video'));
     await page.likePhoto(FirstVideo);
-    const request1 = await logger.requests[0].response.body;
+    const request3 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .click(Selector('.action-reload'))
@@ -175,19 +167,19 @@ test('#4 Like/dislike photo/video', async t => {
 
     await t
         .click(Selector('.p-navigation-favorites'));
-    const request2 = await logger.requests[0].response.body;
+    const request4 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).ok()
         .expect(Selector('div').withAttribute('data-uid', FirstVideo).exists, {timeout: 5000}).ok()
         .expect(Selector('div.v-image__image').visible).ok();
     await page.dislikePhoto(FirstVideo);
-    const request21 = await logger.requests[0].response.body;
+    const request5 = await logger.requests[0].response.body;
     logger.clear();
     await page.dislikePhoto(FirstPhoto);
     logger.clear();
     await t.click(Selector('.action-reload'));
-    const request3 = await logger.requests[0].response.body;
+    const request6 = await logger.requests[0].response.body;
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).notOk()
         .expect(Selector('div').withAttribute('data-uid', FirstVideo).exists, {timeout: 5000}).notOk();
@@ -195,26 +187,24 @@ test('#4 Like/dislike photo/video', async t => {
 
 //TODO Check private photos do not appear in labels, places, albums, moments...
 test('#5 Private/unprivate photo/video using clipboard and list', async t => {
-
-    logger.clear();
     await t
         .click(Selector('.p-navigation-photos'))
         .click(Selector('.p-expand-search'));
     logger.clear();
     await page.setFilter('view', 'Mosaic');
-    const request0 = await logger.requests[0].response.body;
+    const request1 = await logger.requests[0].response.body;
     const FirstPhoto = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     const SecondPhoto = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
     const ThirdPhoto = await Selector('div.p-photo').nth(2).getAttribute('data-uid');
 
     await t
         .click(Selector('.p-navigation-video'));
-    const request = await logger.requests[0].response.body;
+    const request2 = await logger.requests[0].response.body;
     const FirstVideo = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     const SecondVideo = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
 
     await t.click(Selector('.p-navigation-private'));
-    const request1 = await logger.requests[0].response.body;
+    const request3 = await logger.requests[0].response.body;
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).notOk()
         .expect(Selector('div').withAttribute('data-uid', SecondPhoto).exists, {timeout: 5000}).notOk()
@@ -222,8 +212,6 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
         .expect(Selector('div').withAttribute('data-uid', FirstVideo).exists, {timeout: 5000}).notOk()
         .expect(Selector('div').withAttribute('data-uid', SecondVideo).exists, {timeout: 5000}).notOk()
         .click(Selector('.p-navigation-photos'));
-
-    logger.clear();
     await page.selectFromUID(FirstPhoto);
     await page.selectFromUID(SecondPhoto);
     const clipboardCount = await Selector('span.t-clipboard-count');
@@ -234,14 +222,13 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
         .expect(Selector('button.p-photo-clipboard-menu').exists, {timeout: 5000}).notOk();
     logger.clear();
     await page.setFilter('view', 'List');
-    const request12 = await logger.requests[0].response.body;
+    const request4 = await logger.requests[0].response.body;
     await t
         .click(Selector('button.p-photo-private').withAttribute('data-uid', ThirdPhoto));
     logger.clear();
-
     await t
         .click(Selector('.action-reload'));
-    const request2 = await logger.requests[0].response.body;
+    const request5 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('td').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).notOk()
@@ -253,7 +240,7 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
     await t
         .click(Selector('button.p-photo-private').withAttribute('data-uid', SecondVideo));
     await page.setFilter('view', 'Mosaic');
-    const request13 = await logger.requests[0].response.body;
+    const request6 = await logger.requests[0].response.body;
     logger.clear();
 
     await page.selectFromUID(FirstVideo);
@@ -266,14 +253,14 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
     logger.clear();
     await t
         .click(Selector('.action-reload'));
-    const request3 = await logger.requests[0].response.body;
+    const request7 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstVideo).exists, {timeout: 5000}).notOk()
         .expect(Selector('div').withAttribute('data-uid', SecondVideo).exists, {timeout: 5000}).notOk()
         .click(Selector('.p-navigation-private'));
 
-    const request4 = await logger.requests[0].response.body;
+    const request8 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).ok()
@@ -293,7 +280,7 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
     await page.setFilter('view', 'Mosaic');
     logger.clear();
     await t.click(Selector('.action-reload'));
-    const request5 = await logger.requests[0].response.body;
+    const request9 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).notOk()
@@ -303,7 +290,7 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
         .expect(Selector('div').withAttribute('data-uid', SecondVideo).exists, {timeout: 5000}).notOk()
         .click(Selector('.p-navigation-photos'));
 
-    const request6 = await logger.requests[0].response.body;
+    const request10 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).ok()
@@ -311,7 +298,7 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
         .expect(Selector('div').withAttribute('data-uid', ThirdPhoto).exists, {timeout: 5000}).ok()
         .click(Selector('.p-navigation-video'));
 
-    const request7 = await logger.requests[0].response.body;
+    const request11 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstVideo).exists, {timeout: 5000}).ok()
@@ -319,40 +306,38 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
 });
 
 test('#6 Archive/restore video, photos, private photos and review photos using clipboard', async t => {
-
-    logger.clear();
     await page.openNav();
     await t
         .click(Selector('.p-navigation-photos'))
         .click(Selector('.p-expand-search'));
     logger.clear();
     await page.setFilter('view', 'Mosaic');
-    const request0 = await logger.requests[0].response.body;
+    const request1 = await logger.requests[0].response.body;
     const FirstPhoto = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     const SecondPhoto = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
 
     await t
         .click(Selector('.p-navigation-video'));
-    const request = await logger.requests[0].response.body;
+    const request2 = await logger.requests[0].response.body;
     const FirstVideo = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     logger.clear();
 
     await t
         .click(Selector('.p-navigation-private'));
-    const request1 = await logger.requests[0].response.body;
+    const request3 = await logger.requests[0].response.body;
     const FirstPrivatePhoto = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     logger.clear();
 
     await t
         .click(Selector('div.p-navigation-photos + div'))
         .click(Selector('.p-navigation-review'));
-    const request2 = await logger.requests[0].response.body;
+    const request4 = await logger.requests[0].response.body;
     const FirstReviewPhoto = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     logger.clear();
 
     await t
         .click(Selector('.p-navigation-archive'));
-    const request3 = await logger.requests[0].response.body;
+    const request5 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).notOk()
@@ -363,7 +348,7 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
 
     await t
         .click(Selector('.p-navigation-video'));
-    const request4 = await logger.requests[0].response.body;
+    const request6 = await logger.requests[0].response.body;
     logger.clear();
     await page.selectFromUID(FirstVideo);
     const clipboardCountVideo = await Selector('span.t-clipboard-count');
@@ -374,13 +359,13 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
     await t
         .expect(Selector('button.p-photo-clipboard-menu').exists, {timeout: 5000}).notOk()
         .click(Selector('.action-reload'));
-    const request5 = await logger.requests[0].response.body;
+    const request7 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstVideo).exists, {timeout: 5000}).notOk()
         .click(Selector('.p-navigation-photos'));
 
-    const request6 = await logger.requests[0].response.body;
+    const request8 = await logger.requests[0].response.body;
     logger.clear();
     await page.selectFromUID(FirstPhoto);
     await page.selectFromUID(SecondPhoto);
@@ -392,14 +377,14 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
     await t
         .expect(Selector('button.p-photo-clipboard-menu').exists, {timeout: 5000}).notOk()
         .click(Selector('.action-reload'));
-    const request7 = await logger.requests[0].response.body;
+    const request9 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).notOk()
         .expect(Selector('div').withAttribute('data-uid', SecondPhoto).exists, {timeout: 5000}).notOk()
         .click(Selector('.p-navigation-private'));
 
-    const request8 = await logger.requests[0].response.body;
+    const request10 = await logger.requests[0].response.body;
     logger.clear();
     await page.selectFromUID(FirstPrivatePhoto);
     const clipboardCountPrivate = await Selector('span.t-clipboard-count');
@@ -408,7 +393,7 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
     await t
         .click(Selector('.p-navigation-review'));
 
-    const request10 = await logger.requests[0].response.body;
+    const request11 = await logger.requests[0].response.body;
     logger.clear();
     await page.selectFromUID(FirstReviewPhoto);
     const clipboardCountReview = await Selector('span.t-clipboard-count');
@@ -419,12 +404,12 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
     await t
         .expect(Selector('button.p-photo-clipboard-menu').exists, {timeout: 5000}).notOk()
         .click(Selector('.action-reload'));
-    const request11 = await logger.requests[0].response.body;
+    const request12 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstReviewPhoto).exists, {timeout: 5000}).notOk()
         .click(Selector('.p-navigation-archive'));
-    const request12 = await logger.requests[0].response.body;
+    const request13 = await logger.requests[0].response.body;
     logger.clear();
 
     await t
@@ -446,7 +431,7 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
     await t
         .expect(Selector('button.p-photo-clipboard-menu').exists, {timeout: 5000}).notOk()
         .click(Selector('.action-reload'));
-    const request13 = await logger.requests[0].response.body;
+    const request14 = await logger.requests[0].response.body;
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).notOk()
         .expect(Selector('div').withAttribute('data-uid', SecondPhoto).exists, {timeout: 5000}).notOk()
@@ -457,14 +442,14 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
 
     await t
         .click(Selector('.p-navigation-video'));
-    const request14 = await logger.requests[0].response.body;
+    const request15 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstVideo).exists, {timeout: 5000}).ok();
 
     await t
         .click(Selector('.p-navigation-photos'));
-    const request15 = await logger.requests[0].response.body;
+    const request16 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPhoto).exists, {timeout: 5000}).ok()
@@ -472,31 +457,29 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
 
     await t
         .click(Selector('.p-navigation-private'));
-    const request16 = await logger.requests[0].response.body;
+    const request17 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstPrivatePhoto).exists, {timeout: 5000}).ok();
 
     await t
         .click(Selector('.p-navigation-review'));
-    const request17 = await logger.requests[0].response.body;
+    const request18 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstReviewPhoto).exists, {timeout: 5000}).ok();
 });
 
 //TODO edited values stay after reindex!!
-// test timepicker, datepicker, camera, lens
-//revert country, timezone
-//access video from list + edit
-// check country overwritten by lat/lng
+//TODO test timepicker, datepicker, camera, lens
+//TODO revert country, timezone
+//TODO access video from list + edit
+//TODO check country overwritten by lat/lng
 test('#7 Edit photo/video', async t => {
-    logger.clear();
     await page.openNav();
     await t
         .click(Selector('.p-navigation-photos'))
         .click(Selector('.p-expand-search'));
-    logger.clear();
     await page.setFilter('view', 'Cards');
     const FirstPhoto = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     await t
@@ -506,7 +489,7 @@ test('#7 Edit photo/video', async t => {
         logger.clear();
     await t
         .click(Selector('button.action-next'));
-    const request01 = await logger.requests[0].response.body;
+    const request1 = await logger.requests[0].response.body;
     await t
         .expect(Selector('button.action-previous').getAttribute('disabled')).notEql('disabled')
         .click(Selector('button.action-previous'))
@@ -571,14 +554,14 @@ test('#7 Edit photo/video', async t => {
         .typeText(Selector('.input-keywords textarea'), ', cat, love')
         .typeText(Selector('.input-notes textarea'), 'Some notes', { replace: true })
         .click(Selector('button.action-approve'));
-    const request = await logger.requests[0].response.body;
+    const request2 = await logger.requests[0].response.body;
     await t
         .expect(Selector('.input-latitude input').visible, {timeout: 5000}).ok()
         .click(Selector('button.action-ok'));
     logger.clear();
     await t
         .click(Selector('button.action-reload'));
-    const request1 = await logger.requests[0].response.body;
+    const request3 = await logger.requests[0].response.body;
     await t
         .expect(Selector('button.action-title-edit').withAttribute('data-uid', FirstPhoto).innerText).eql('New Photo Title')
 
@@ -605,7 +588,6 @@ test('#7 Edit photo/video', async t => {
         .expect(Selector('.input-description textarea').value).eql('Description of a nice image :)')
         .expect(Selector('.input-notes textarea').value).contains('Some notes')
         .expect(Selector('.input-keywords textarea').value).contains('cat')
-        //revert changes
     if (FirstPhotoTitle.empty || FirstPhotoTitle === "")
     { await t
         .click(Selector('.input-title input'))
@@ -739,12 +721,11 @@ test('#7 Edit photo/video', async t => {
     logger.clear();
     await t
         .click(Selector('.action-reload'));
-    const request2 = await logger.requests[0].response.body;
+    const request4 = await logger.requests[0].response.body;
     await t.expect(Selector('button.action-title-edit').withAttribute('data-uid', FirstPhoto).innerText).eql(FirstPhotoTitle);
 });
 
 test('#8 Change primary file', async t => {
-    logger.clear();
     await page.openNav();
     await t
         .click(Selector('.p-navigation-photos'))
@@ -768,7 +749,6 @@ test('#8 Change primary file', async t => {
 });
 
 test('#9 Navigate from card view to place', async t => {
-    logger.clear();
     await t.click(Selector('.p-expand-search'));
     await page.setFilter('view', 'Cards');
     await t

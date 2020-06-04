@@ -1,21 +1,14 @@
 import { Selector } from 'testcafe';
 import testcafeconfig from '../testcafeconfig';
 import Page from "../page-model";
-import { RequestLogger } from 'testcafe';
-import { ClientFunction } from 'testcafe';
-
-const logger = RequestLogger( /http:\/\/localhost:2342\/api\/v1\/*/ , {
-    logResponseHeaders: true,
-    logResponseBody:    true
-});
 
 fixture `Test settings`
-    .page`${testcafeconfig.url}`
-    .requestHooks(logger);
+    .page`${testcafeconfig.url}`;
 
 const page = new Page();
 
 //TODO test convert to jpeg, group files, places style
+//TODO check download also disabled for albums/files/review/private
 
 test('#1 Settings', async t => {
     await page.openNav();
@@ -43,7 +36,6 @@ test('#1 Settings', async t => {
         .expect(Selector('button.p-photo-label-add').visible).ok()
         .click(Selector('#tab-edit-details'))
         .click(Selector('button.action-close'))
-
         .click(Selector('.p-navigation-library'))
         .expect(Selector('#tab-import a').visible).ok()
         .expect(Selector('#tab-logs a').visible).ok()
@@ -119,8 +111,6 @@ test('#1 Settings', async t => {
         .click(Selector('div.p-navigation-library + div'))
         .expect(Selector('.p-navigation-files').visible).notOk()
         .click(Selector('div.p-navigation-albums + div'))
-        //TODO fix it
-        //.expect(Selector('.p-navigation-folders').exists).notOk()
         .expect(Selector('.p-navigation-moments').visible).notOk()
         .expect(Selector('.p-navigation-labels').visible).notOk()
         .expect(Selector('.p-navigation-places').visible).notOk()
@@ -145,6 +135,3 @@ test('#1 Settings', async t => {
         .click(Selector('.input-private input'))
         .click(Selector('.input-review input'));
 });
-
-
-//places settings

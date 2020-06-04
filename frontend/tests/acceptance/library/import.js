@@ -1,19 +1,13 @@
 import { Selector } from 'testcafe';
 import testcafeconfig from '../testcafeconfig';
 import Page from "../page-model";
-import { RequestLogger } from 'testcafe';
 
-const logger = RequestLogger( /http:\/\/localhost:2342\/api\/v1\/*/ , {
-    logResponseHeaders: true,
-    logResponseBody:    true
-});
-
-fixture `Test import`
-    .page`${testcafeconfig.url}`
-    .requestHooks(logger);
+fixture `Import file from folder`
+    .page`${testcafeconfig.url}`;
 
 const page = new Page();
 //TODO use upload + delete
+//TODO check metadata like camera, keywords, location etc are added
 test('#1 Import files from folder using copy', async t => {
     await t
         .click(Selector('.p-navigation-labels'));
@@ -23,7 +17,6 @@ test('#1 Import files from folder using copy', async t => {
    await t
         .click(Selector('.p-navigation-library'))
         .click(Selector('#tab-import'))
-        .expect(Selector('span').withText('Press button to start copying...').visible, {timeout: 5000}).ok()
         .click(Selector('.input-import-folder input'))
         .click(Selector('div.v-list__tile__title').withText('/Bäckerei'))
         .click(Selector('.action-import'))

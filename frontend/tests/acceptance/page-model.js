@@ -34,10 +34,10 @@ export default class Page {
 
         if (option) {
             await t
-                .click(Selector('div.menuable__content__active div.v-select-list a').withText(option), {timeout: 15000})
+                .click(Selector('div[role="listitem"]').withText(option), {timeout: 15000})
         } else {
             await t
-                .click(Selector('div.menuable__content__active div.v-select-list a').nth(1), {timeout: 15000})
+                .click(Selector('div[role="listitem"]').nth(1), {timeout: 15000})
         }
     }
 

@@ -15,11 +15,8 @@ fixture `Test labels`
 const page = new Page();
 
 test('#1 Remove/Activate Add/Delete Label', async t => {
-    logger.clear();
     await t.click(Selector('.p-navigation-labels'));
-    //const request = await logger.requests[0].response.body;
     const countImportantLabels = await Selector('div.p-label').count;
-    logger.clear();
     await t
         .click(Selector('button.action-show-all'));
     const countAllLabels = await Selector('div.p-label').count;
@@ -83,9 +80,7 @@ test('#1 Remove/Activate Add/Delete Label', async t => {
 
 //TODO check title of second image after index
 test('#2 Rename Label', async t => {
-    logger.clear();
     await t.click(Selector('.p-navigation-labels'));
-    //const request = await logger.requests[0].response.body;
     await page.search('zebra');
     const LabelZebra = await Selector('div.p-label').nth(0).getAttribute('data-uid');
     await t
@@ -130,27 +125,20 @@ test('#2 Rename Label', async t => {
 });
 
 test('#3 Add label to album', async t => {
-    logger.clear();
-    await t.click(Selector('.p-navigation-albums'));
-    //const request = await logger.requests[0].response.body;
-    logger.clear();
     await t
+        .click(Selector('.p-navigation-albums'))
         .typeText(Selector('.p-albums-search input'), 'Christmas')
         .pressKey('enter');
     const AlbumUid = await Selector('div.p-album').nth(0).getAttribute('data-uid');
-    logger.clear();
     await t
         .click(Selector('div.p-album').withAttribute('data-uid', AlbumUid));
-    //const request2 = await logger.requests[0].response.body;
     const PhotoCount = await Selector('div.p-photo').count;
     await t
         .click(Selector('.p-navigation-labels'));
     await page.search('landscape');
     const LabelLandscape = await Selector('div.p-label').nth(1).getAttribute('data-uid');
-    logger.clear();
     await t
         .click(Selector('div.p-label').withAttribute('data-uid', LabelLandscape));
-    //const request3 = await logger.requests[0].response.body;
     const FirstPhotoLandscape = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     const SecondPhotoLandscape = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
     await t
@@ -167,7 +155,6 @@ test('#3 Add label to album', async t => {
         .click(Selector('button.p-photo-dialog-confirm'))
         .click(Selector('.p-navigation-albums'))
         .click(Selector('div.p-album').withAttribute('data-uid', AlbumUid));
-    const request4 = await logger.requests[0].response.body;
     const PhotoCountAfterAdd = await Selector('div.p-photo').count;
     await t
         .expect(PhotoCountAfterAdd).eql(PhotoCount + 2);
@@ -177,7 +164,6 @@ test('#3 Add label to album', async t => {
     await t
         .click('.action-reload');
     const PhotoCountAfterDelete = await Selector('div.p-photo').count;
-    logger.clear();
     await t
         .expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 2);
 });

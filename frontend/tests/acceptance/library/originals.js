@@ -1,18 +1,12 @@
 import { Selector } from 'testcafe';
 import testcafeconfig from '../testcafeconfig';
 import Page from "../page-model";
-import { RequestLogger } from 'testcafe';
-
-const logger = RequestLogger( /http:\/\/localhost:2342\/api\/v1\/*/ , {
-    logResponseHeaders: true,
-    logResponseBody:    true
-});
 
 fixture `Test index`
-    .page`${testcafeconfig.url}`
-    .requestHooks(logger);
+    .page`${testcafeconfig.url}`;
 
 const page = new Page();
+//TODO check metadata like camera, keywords, location etc are added
 test('#1 Index files from folder', async t => {
     await t
         .click(Selector('.p-navigation-labels'));
