@@ -406,7 +406,15 @@ func (m *Photo) HasLocation() bool {
 
 // LocationLoaded checks if the photo has a known location that is currently loaded.
 func (m *Photo) LocationLoaded() bool {
-	return m.Location != nil && m.Location.Place != nil && !m.Location.Unknown() && m.Location.ID == m.LocationID
+	if m.Location == nil {
+		return false
+	}
+
+	if m.Location.Place == nil {
+		return false
+	}
+
+	return !m.Location.Unknown() && m.Location.ID == m.LocationID
 }
 
 // LoadLocation loads the photo location from the database if not done already.
@@ -416,12 +424,30 @@ func (m *Photo) LoadLocation() error {
 	}
 
 	var loc Location
-	return Db().Set("gorm:auto_preload", true).Model(m).Related(&loc, "Location").Error
+
+	err := Db().Set("gorm:auto_preload", true).Model(m).Related(&loc, "Location").Error
+
+	if err != nil {
+		return err
+	}
+
+	if m.Location == nil {
+		m.Location = &loc
+	} else if m.Location.Unknown() {
+		m.Location = &UnknownLocation
+		return fmt.Errorf("photo: unknown location (%s)", m)
+	}
+
+	return nil
 }
 
 // PlaceLoaded checks if the photo has a known place that is currently loaded.
 func (m *Photo) PlaceLoaded() bool {
-	return m.Place != nil && !m.Place.Unknown() && m.Place.ID == m.PlaceID
+	if m.Place == nil {
+		return false
+	}
+
+	return !m.Place.Unknown() && m.Place.ID == m.PlaceID
 }
 
 // LoadPlace loads the photo place from the database if not done already.
@@ -434,15 +460,18 @@ func (m *Photo) LoadPlace() error {
 
 	err := Db().Set("gorm:auto_preload", true).Model(m).Related(&place, "Place").Error
 
+	if err != nil {
+		return err
+	}
+
 	if m.Place == nil {
 		m.Place = &place
-	}
-
-	if m.Place.Unknown() {
+	} else if m.Place.Unknown() {
 		m.Place = &UnknownPlace
+		return fmt.Errorf("photo: unknown place (%s)", m)
 	}
 
-	return err
+	return nil
 }
 
 // HasLatLng checks if the photo has a latitude and longitude.
