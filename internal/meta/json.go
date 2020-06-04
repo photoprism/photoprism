@@ -14,14 +14,14 @@ import (
 )
 
 // JSON parses a json sidecar file (as used by Exiftool) and returns a Data struct.
-func JSON(fileName string) (data Data, err error) {
-	err = data.JSON(fileName)
+func JSON(jsonName, originalName string) (data Data, err error) {
+	err = data.JSON(jsonName, originalName)
 
 	return data, err
 }
 
 // JSON parses a json sidecar file (as used by Exiftool) and returns a Data struct.
-func (data *Data) JSON(fileName string) (err error) {
+func (data *Data) JSON(jsonName, originalName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			err = fmt.Errorf("%s (json metadata)", e)
@@ -32,23 +32,27 @@ func (data *Data) JSON(fileName string) (err error) {
 		data.All = make(map[string]string)
 	}
 
-	jsonString, err := ioutil.ReadFile(fileName)
+	jsonString, err := ioutil.ReadFile(jsonName)
 
 	if err != nil {
 		log.Warnf("meta: %s", err.Error())
-		return fmt.Errorf("can't read %s (json)", txt.Quote(filepath.Base(fileName)))
+		return fmt.Errorf("can't read %s (json)", txt.Quote(filepath.Base(jsonName)))
 	}
 
 	j := gjson.GetBytes(jsonString, "@flatten|@join")
 
 	if !j.IsObject() {
-		return fmt.Errorf("data is not an object in %s (json)", txt.Quote(filepath.Base(fileName)))
+		return fmt.Errorf("data is not an object in %s (json)", txt.Quote(filepath.Base(jsonName)))
 	}
 
 	jsonValues := j.Map()
 
 	for key, val := range jsonValues {
 		data.All[key] = val.String()
+	}
+
+	if fileName, ok := data.All["FileName"]; ok && fileName != "" && originalName != "" && fileName != originalName {
+		return fmt.Errorf("meta: original name %s does not match %s (json)", txt.Quote(originalName), txt.Quote(fileName))
 	}
 
 	v := reflect.ValueOf(data).Elem()
@@ -132,10 +136,39 @@ func (data *Data) JSON(fileName string) (err error) {
 		}
 	}
 
-	// Fix rotation.
-	if data.Rotation == 90 || data.Rotation == 270 || data.Rotation == -90 {
-		data.Width, data.Height = data.Height, data.Width
-		data.Rotation = 0
+	if orientation, ok := data.All["Orientation"]; ok && orientation != "" {
+		switch orientation {
+		case "1", "Horizontal (normal)":
+			data.Orientation = 1
+		case "2":
+			data.Orientation = 2
+		case "3", "Rotate 180 CW":
+			data.Orientation = 3
+		case "4":
+			data.Orientation = 4
+		case "5":
+			data.Orientation = 5
+		case "6", "Rotate 90 CW":
+			data.Orientation = 6
+		case "7":
+			data.Orientation = 7
+		case "8", "Rotate 270 CW":
+			data.Orientation = 8
+		}
+	}
+
+	if data.Orientation == 0 {
+		// Set orientation based on rotation.
+		switch data.Rotation {
+		case 0:
+			data.Orientation = 1
+		case -180, 180:
+			data.Orientation = 3
+		case 90:
+			data.Orientation = 6
+		case -90, 270:
+			data.Orientation = 8
+		}
 	}
 
 	// Normalize compression information.

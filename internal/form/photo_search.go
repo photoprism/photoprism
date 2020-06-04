@@ -19,8 +19,13 @@ type PhotoSearch struct {
 	Video     bool      `form:"video"`
 	Photo     bool      `form:"photo"`
 	Duplicate bool      `form:"duplicate"`
-	Archived  bool      `form:"archived"`
 	Error     bool      `form:"error"`
+	Hidden    bool      `form:"hidden"`
+	Archived  bool      `form:"archived"`
+	Public    bool      `form:"public"`
+	Private   bool      `form:"private"`
+	Favorite  bool      `form:"favorite"`
+	Safe      bool      `form:"safe"`
 	Lat       float32   `form:"lat"`
 	Lng       float32   `form:"lng"`
 	Dist      uint      `form:"dist"`
@@ -45,10 +50,6 @@ type PhotoSearch struct {
 	Lens      int       `form:"lens"`
 	Before    time.Time `form:"before" time_format:"2006-01-02"`
 	After     time.Time `form:"after" time_format:"2006-01-02"`
-	Favorite  bool      `form:"favorite"`
-	Public    bool      `form:"public"`
-	Private   bool      `form:"private"`
-	Safe      bool      `form:"safe"`
 	Count     int       `form:"count" binding:"required" serialize:"-"`
 	Offset    int       `form:"offset" serialize:"-"`
 	Order     string    `form:"order" serialize:"-"`

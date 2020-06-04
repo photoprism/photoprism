@@ -309,6 +309,11 @@ func (m *MediaFile) FileName() string {
 	return m.fileName
 }
 
+// BaseName returns the filename without path.
+func (m *MediaFile) BaseName() string {
+	return filepath.Base(m.fileName)
+}
+
 // SetFileName sets the filename to the given string.
 func (m *MediaFile) SetFileName(fileName string) {
 	m.fileName = fileName
@@ -620,7 +625,7 @@ func (m *MediaFile) HasJson() bool {
 }
 
 func (m *MediaFile) decodeDimensions() error {
-	if !m.IsPhoto() {
+	if !m.IsMedia() {
 		return fmt.Errorf("not a photo: %s", m.FileName())
 	}
 
@@ -665,7 +670,7 @@ func (m *MediaFile) decodeDimensions() error {
 
 // Width return the width dimension of a MediaFile.
 func (m *MediaFile) Width() int {
-	if !m.IsPhoto() {
+	if !m.IsMedia() {
 		return 0
 	}
 
@@ -680,7 +685,7 @@ func (m *MediaFile) Width() int {
 
 // Height returns the height dimension of a MediaFile.
 func (m *MediaFile) Height() int {
-	if !m.IsPhoto() {
+	if !m.IsMedia() {
 		return 0
 	}
 

@@ -2,15 +2,13 @@ import Photos from "pages/photos.vue";
 import Albums from "pages/albums.vue";
 import AlbumPhotos from "pages/album/photos.vue";
 import Places from "pages/places.vue";
-import Files from "pages/files.vue";
+import Files from "pages/library/files.vue";
 import Labels from "pages/labels.vue";
 import People from "pages/people.vue";
 import Library from "pages/library.vue";
-import Share from "pages/share.vue";
 import Settings from "pages/settings.vue";
 import Login from "pages/login.vue";
 import Discover from "pages/discover.vue";
-import Todo from "pages/todo.vue";
 
 const c = window.__CONFIG__;
 
@@ -134,9 +132,15 @@ export default [
     },
     {
         name: "files",
-        path: "/files*",
+        path: "/library/files*",
         component: Files,
         meta: {title: "File Browser", auth: true},
+    },
+    {
+        name: "hidden",
+        path: "/library/hidden",
+        component: Photos,
+        props: {staticFilter: {hidden: true}},
     },
     {
         name: "labels",
@@ -158,12 +162,6 @@ export default [
         meta: {title: "People", auth: true},
     },
     {
-        name: "filters",
-        path: "/filters",
-        component: Todo,
-        meta: {title: "Filters", auth: true},
-    },
-    {
         name: "library_logs",
         path: "/library/logs",
         component: Library,
@@ -183,12 +181,6 @@ export default [
         component: Library,
         meta: {title: "Originals", auth: true, background: "application-light"},
         props: {tab: 0},
-    },
-    {
-        name: "share",
-        path: "/share",
-        component: Share,
-        meta: {title: "Share with friends", auth: true},
     },
     {
         name: "settings",

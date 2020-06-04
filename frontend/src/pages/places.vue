@@ -40,6 +40,19 @@
         },
         data() {
             const s = this.$config.values.settings.maps;
+            const filter = {
+                q: this.query(),
+            };
+
+            const settings = this.$config.settings();
+
+            if (settings && settings.features.private) {
+                filter.public = true;
+            }
+
+            if (settings && settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
+                filter.quality = 3;
+            }
 
             return {
                 initialized: false,
@@ -58,9 +71,7 @@
                 },
                 photos: [],
                 result: {},
-                filter: {
-                    q: this.query(),
-                },
+                filter: filter,
                 lastFilter: {},
                 labels: {
                     search: this.$gettext("Search"),

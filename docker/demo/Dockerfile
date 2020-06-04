@@ -7,7 +7,7 @@ ENV TF_CPP_MIN_LOG_LEVEL 2
 COPY /docker/demo/index.tmpl /photoprism/assets/templates
 
 # Download example photos
-RUN wget -qO- https://dl.photoprism.org/fixtures/demo.tar.gz | tar xvz -C /photoprism/import
+RUN wget -qO- https://dl.photoprism.org/fixtures/demo.tar.gz | tar xvz -C /photoprism/originals
 
 # Configure PhotoPrism
 ENV PHOTOPRISM_STORAGE_PATH /photoprism/storage
@@ -27,9 +27,11 @@ ENV PHOTOPRISM_THUMB_SIZE 3840
 ENV PHOTOPRISM_THUMB_LIMIT 3840
 ENV PHOTOPRISM_JPEG_QUALITY 95
 ENV PHOTOPRISM_JPEG_HIDDEN false
+ENV PHOTOPRISM_SITE_CAPTION "Try our demo"
 
 # Import example photos
-RUN photoprism import
+RUN photoprism index
+RUN photoprism moments
 
 # Start PhotoPrism server
 CMD photoprism --public start

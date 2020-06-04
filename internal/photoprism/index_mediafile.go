@@ -226,8 +226,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		metaData = m.MetaData()
 
 		file.FileCodec = metaData.Codec
-		file.FileWidth = metaData.Width
-		file.FileHeight = metaData.Height
+		file.FileWidth = metaData.ActualWidth()
+		file.FileHeight = metaData.ActualHeight()
 		file.FileDuration = metaData.Duration
 		file.FileAspectRatio = metaData.AspectRatio()
 		file.FilePortrait = metaData.Portrait()

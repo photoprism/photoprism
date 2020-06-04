@@ -126,7 +126,10 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	// Filter by status.
-	if f.Archived {
+	if f.Hidden {
+		s = s.Where("photos.photo_quality = -1")
+		s = s.Where("photos.deleted_at IS NULL")
+	} else if f.Archived {
 		s = s.Where("photos.deleted_at IS NOT NULL")
 	} else {
 		s = s.Where("photos.deleted_at IS NULL")

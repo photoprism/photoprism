@@ -22,8 +22,8 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 
 		if jsonFile := fs.TypeJson.FindSub(m.FileName(), fs.HiddenPath, false); jsonFile == "" {
 			log.Debugf("mediafile: no json sidecar file found for %s", txt.Quote(filepath.Base(m.FileName())))
-		} else if jsonErr := m.metaData.JSON(jsonFile); jsonErr != nil {
-			log.Warn(jsonErr)
+		} else if jsonErr := m.metaData.JSON(jsonFile, m.BaseName()); jsonErr != nil {
+			log.Debug(jsonErr)
 		} else {
 			err = nil
 		}

@@ -369,6 +369,10 @@ export class Photo extends RestModel {
             info.push(Util.duration(file.Duration));
         }
 
+        if (file.Codec) {
+            info.push(file.Codec.toUpperCase());
+        }
+
         this.addSizeInfo(file, info);
 
         if (!info) {

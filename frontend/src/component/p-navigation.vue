@@ -296,11 +296,20 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile to="/files" @click="" class="p-navigation-files" v-show="$config.feature('files')">
+                    <v-list-tile to="/library/files" @click="" class="p-navigation-files" v-show="$config.feature('files')">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate key="Files">Files</translate>
                                 <span v-show="config.count.files > 0" class="p-navigation-count">{{ config.count.files }}</span>
+                            </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile to="/library/hidden" @click="" class="p-navigation-hidden">
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                <translate key="Hidden">Hidden</translate>
+                                <span v-show="config.count.hidden > 0" class="p-navigation-count">{{ config.count.hidden }}</span>
                             </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>

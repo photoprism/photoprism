@@ -122,7 +122,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "Apple", data.CameraMake)
 		assert.Equal(t, "iPhone 7", data.CameraModel)
 		assert.Equal(t, 74, data.FocalLength)
-		assert.Equal(t, 6, int(data.Orientation))
+		assert.Equal(t, 6, data.Orientation)
 		assert.Equal(t, "Apple", data.LensMake)
 		assert.Equal(t, "iPhone 7 back camera 3.99mm f/1.8", data.LensModel)
 
@@ -231,5 +231,39 @@ func TestExif(t *testing.T) {
 
 		assert.Equal(t, "721", data.All["PixelXDimension"])
 		assert.Equal(t, "332", data.All["PixelYDimension"])
+	})
+
+	t.Run("orientation.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/orientation.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "3264", data.All["PixelXDimension"])
+		assert.Equal(t, "1836", data.All["PixelYDimension"])
+		assert.Equal(t, 3264, data.Width)
+		assert.Equal(t, 1836, data.Height)
+		assert.Equal(t, 6, data.Orientation) // TODO: Should be 1
+
+		if err := data.JSON("testdata/orientation.json", "orientation.jpg"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 326, data.Width)
+		assert.Equal(t, 184, data.Height)
+		assert.Equal(t, 1, data.Orientation)
+
+		if err := data.JSON("testdata/orientation.json", "foo.jpg"); err != nil {
+			assert.EqualError(t, err, "meta: original name foo.jpg does not match orientation.jpg (json)")
+		} else {
+			t.Error("error expected when providing wrong orginal name")
+		}
+	})
+
+	t.Run("gopher-preview.jpg", func(t *testing.T) {
+		_, err := Exif("testdata/gopher-preview.jpg")
+
+		assert.EqualError(t, err, "no exif data in gopher-preview.jpg")
 	})
 }

@@ -14,13 +14,16 @@ type GeoSearch struct {
 	Favorite bool      `form:"favorite"`
 	Video    bool      `form:"video"`
 	Photo    bool      `form:"photo"`
+	Archived bool      `form:"archived"`
+	Public   bool      `form:"public"`
+	Private  bool      `form:"private"`
+	Review   bool      `form:"review"`
+	Quality  int       `form:"quality"`
 	Lat      float32   `form:"lat"`
 	Lng      float32   `form:"lng"`
 	S2       string    `form:"s2"`
 	Olc      string    `form:"olc"`
 	Dist     uint      `form:"dist"`
-	Quality  int       `form:"quality"`
-	Review   bool      `form:"review"`
 	Album    string    `form:"album"`
 	Country  string    `form:"country"`
 	Year     int       `form:"year"`

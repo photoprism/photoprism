@@ -49,8 +49,8 @@ type Data struct {
 
 // AspectRatio returns the aspect ratio based on width and height.
 func (data Data) AspectRatio() float32 {
-	width := float64(data.Width)
-	height := float64(data.Height)
+	width := float64(data.ActualWidth())
+	height := float64(data.ActualHeight())
 
 	if width <= 0 || height <= 0 {
 		return 0
@@ -84,4 +84,22 @@ func (data Data) HasInstanceID() bool {
 // HasTimeAndPlace if data contains a time and gps position.
 func (data Data) HasTimeAndPlace() bool {
 	return !data.TakenAt.IsZero() && data.Lat != 0 && data.Lng != 0
+}
+
+// ActualWidth is the width after rotating the media file if needed.
+func (data Data) ActualWidth() int {
+	if data.Orientation > 4 {
+		return data.Height
+	}
+
+	return data.Width
+}
+
+// ActualHeight is the height after rotating the media file if needed.
+func (data Data) ActualHeight() int {
+	if data.Orientation > 4 {
+		return data.Width
+	}
+
+	return data.Height
 }

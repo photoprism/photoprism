@@ -419,7 +419,18 @@ func (m *Photo) LoadPlace() error {
 	}
 
 	var place Place
-	return Db().Set("gorm:auto_preload", true).Model(m).Related(&place, "Place").Error
+
+	err := Db().Set("gorm:auto_preload", true).Model(m).Related(&place, "Place").Error
+
+	if m.Place == nil {
+		m.Place = &place
+	}
+
+	if m.Place.Unknown() {
+		m.Place = &UnknownPlace
+	}
+
+	return err
 }
 
 // HasLatLng checks if the photo has a latitude and longitude.

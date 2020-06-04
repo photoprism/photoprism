@@ -138,10 +138,23 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(f.Name, "*", "%"))
 	}
 
-	if f.Review {
-		s = s.Where("photos.photo_quality < 3")
-	} else if f.Quality != 0 {
-		s = s.Where("photos.photo_quality >= ?", f.Quality)
+	// Filter by status.
+	if f.Archived {
+		s = s.Where("photos.deleted_at IS NOT NULL")
+	} else {
+		s = s.Where("photos.deleted_at IS NULL")
+
+		if f.Private {
+			s = s.Where("photos.photo_private = 1")
+		} else if f.Public {
+			s = s.Where("photos.photo_private = 0")
+		}
+
+		if f.Review {
+			s = s.Where("photos.photo_quality < 3")
+		} else if f.Quality != 0 && f.Private == false {
+			s = s.Where("photos.photo_quality >= ?", f.Quality)
+		}
 	}
 
 	if f.Favorite {

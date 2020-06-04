@@ -102,7 +102,7 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 	if m.UnknownLocation() {
 		m.Location = &UnknownLocation
 		m.LocationID = UnknownLocation.ID
-	} else if err := m.LoadLocation(); err == nil {
+	} else if err := m.LoadLocation(); err == nil && m.Location != nil && m.Location.Place != nil {
 		m.Place = m.Location.Place
 		m.PlaceID = m.Location.PlaceID
 	}
@@ -110,7 +110,7 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 	if m.UnknownPlace() {
 		m.Place = &UnknownPlace
 		m.PlaceID = UnknownPlace.ID
-	} else if err := m.LoadPlace(); err == nil {
+	} else if err := m.LoadPlace(); err == nil && m.Place != nil {
 		m.PhotoCountry = m.Place.CountryCode()
 	}
 

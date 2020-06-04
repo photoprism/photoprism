@@ -16,7 +16,38 @@
 
                     <v-container fluid>
                         <p class="subheading">
-                            <span v-if="total === 0">Select files to start upload...</span>
+                            <v-combobox v-if="total === 0" flat solo hide-details chips deletable-chips
+                                        multiple color="secondary-dark" class="my-0"
+                                        v-model="selectedAlbums"
+                                        :items="albums"
+                                        item-text="Title"
+                                        item-value="UID"
+                                        :allow-overflow="false"
+                                        label="Select albums or create a new one"
+                                        return-object
+                            >
+                                <template v-slot:no-data>
+                                    <v-list-tile>
+                                        <v-list-tile-content>
+                                            <v-list-tile-title>
+                                                Press <kbd>enter</kbd> to create a new album.
+                                            </v-list-tile-title>
+                                        </v-list-tile-content>
+                                    </v-list-tile>
+                                </template>
+                                <template v-slot:selection="data">
+                                    <v-chip
+                                            :key="JSON.stringify(data.item)"
+                                            :selected="data.selected"
+                                            :disabled="data.disabled"
+                                            class="v-chip--select-multi"
+                                            @input="data.parent.selectItem(data.item)"
+                                    >
+                                        <v-icon class="pr-1">folder</v-icon>
+                                        {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
+                                    </v-chip>
+                                </template>
+                            </v-combobox>
                             <span v-else-if="failed">Upload failed</span>
                             <span v-else-if="total > 0 && completed < 100">
                         Uploading {{current}} of {{total}}...
@@ -25,38 +56,6 @@
                             <span v-else-if="completed === 100">Done.</span>
                         </p>
 
-                        <v-combobox flat solo hide-details chips deletable-chips
-                                    multiple color="secondary-dark" class="my-3"
-                                    v-model="selectedAlbums"
-                                    :items="albums"
-                                    item-text="Title"
-                                    item-value="UID"
-                                    :allow-overflow="false"
-                                    label="Add to existing albums or create a new one."
-                                    return-object
-                        >
-                            <template v-slot:no-data>
-                                <v-list-tile>
-                                    <v-list-tile-content>
-                                        <v-list-tile-title>
-                                            Press <kbd>enter</kbd> to create a new album.
-                                        </v-list-tile-title>
-                                    </v-list-tile-content>
-                                </v-list-tile>
-                            </template>
-                            <template v-slot:selection="data">
-                                <v-chip
-                                        :key="JSON.stringify(data.item)"
-                                        :selected="data.selected"
-                                        :disabled="data.disabled"
-                                        class="v-chip--select-multi"
-                                        @input="data.parent.selectItem(data.item)"
-                                >
-                                    <v-icon class="pr-1">folder</v-icon>
-                                    {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
-                                </v-chip>
-                            </template>
-                        </v-combobox>
 
                         <v-progress-linear color="secondary-dark" v-model="completed"
                                            :indeterminate="indexing"></v-progress-linear>
