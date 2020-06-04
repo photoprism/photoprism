@@ -55,7 +55,9 @@
                                   item-value="ID"
                                   item-text="Name"
                                   v-model="filter.country"
-                                  :items="countryOptions">
+                                  :items="countryOptions"
+                                  class="input-countries"
+                        >
                         </v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">

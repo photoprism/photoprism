@@ -13,7 +13,7 @@
                 <v-autocomplete
                         @change="onChange"
                         color="secondary-dark"
-                        class="my-3"
+                        class="my-3 input-import-folder"
                         hide-details hide-no-data flat solo
                         v-model="settings.import.path"
                         browser-autocomplete="off"
@@ -59,7 +59,7 @@
                 <v-btn
                         :disabled="!busy"
                         color="secondary-dark"
-                        class="white--text ml-0"
+                        class="white--text ml-0 action-cancel"
                         depressed
                         @click.stop="cancelImport()"
                 >
@@ -69,7 +69,7 @@
                 <v-btn v-if="!$config.values.readonly && $config.feature('upload')"
                        :disabled="busy"
                        color="secondary-dark"
-                       class="white--text ml-0 hidden-xs-only"
+                       class="white--text ml-0 hidden-xs-only action-upload"
                        depressed
                        @click.stop="showUpload()"
                 >
@@ -80,7 +80,7 @@
                 <v-btn
                         :disabled="busy"
                         color="secondary-dark"
-                        class="white--text ml-0 mt-2"
+                        class="white--text ml-0 mt-2 action-import"
                         depressed
                         @click.stop="startImport()"
                 >

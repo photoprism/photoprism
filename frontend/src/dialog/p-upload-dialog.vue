@@ -73,7 +73,7 @@
                         <v-btn
                                 :disabled="busy"
                                 color="secondary-dark"
-                                class="white--text ml-0 mt-2"
+                                class="white--text ml-0 mt-2 action-upload"
                                 depressed
                                 @click.stop="uploadDialog()"
                         >

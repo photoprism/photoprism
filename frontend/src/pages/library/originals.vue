@@ -12,7 +12,7 @@
                 <v-autocomplete
                         @change="onChange"
                         color="secondary-dark"
-                        class="my-3"
+                        class="my-3 input-index-folder"
                         hide-details hide-no-data flat solo
                         v-model="settings.index.path"
                         browser-autocomplete="off"
@@ -49,7 +49,7 @@
                 <v-btn
                         :disabled="!busy"
                         color="secondary-dark"
-                        class="white--text ml-0 mt-2"
+                        class="white--text ml-0 mt-2 action-cancel"
                         depressed
                         @click.stop="cancelIndexing()"
                 >
@@ -59,7 +59,7 @@
                 <v-btn
                         :disabled="busy"
                         color="secondary-dark"
-                        class="white--text ml-0 mt-2"
+                        class="white--text ml-0 mt-2 action-index"
                         depressed
                         @click.stop="startIndexing()"
                 >
