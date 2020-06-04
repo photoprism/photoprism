@@ -72,6 +72,10 @@ func IndexWorker(jobs <-chan IndexJob) {
 
 		log.Infof("index: %s main %s file %s", res, f.FileType(), txt.Quote(f.RelativeName(ind.originalsPath())))
 
+		if !res.Success() {
+			continue
+		}
+
 		for _, f := range related.Files {
 			if done[f.FileName()] {
 				continue

@@ -63,7 +63,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	file, primaryFile := entity.File{}, entity.File{}
 
-	photo := entity.Photo{PhotoType: entity.TypeImage, PhotoCountry: entity.UnknownCountry.ID}
+	photo := entity.NewPhoto()
 	metaData := meta.Data{}
 	description := entity.Details{}
 	labels := classify.Labels{}

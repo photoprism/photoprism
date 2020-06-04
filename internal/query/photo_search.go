@@ -37,8 +37,17 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		Joins("JOIN files ON photos.id = files.photo_id AND files.file_missing = 0 AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON photos.camera_id = cameras.id").
 		Joins("JOIN lenses ON photos.lens_id = lenses.id").
-		Joins("JOIN places ON photos.place_id = places.id").
-		Where("files.file_type = 'jpg' OR files.file_video = 1")
+		Joins("JOIN places ON photos.place_id = places.id")
+
+	if !f.Hidden {
+		s = s.Where("files.file_type = 'jpg' OR files.file_video = 1")
+
+		if f.Error {
+			s = s.Where("files.file_error <> ''")
+		} else {
+			s = s.Where("files.file_error = ''")
+		}
+	}
 
 	// Shortcut for known photo ids.
 	if f.ID != "" {
@@ -148,12 +157,6 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	// Filter by additional flags and metadata.
-	if f.Error {
-		s = s.Where("files.file_error <> ''")
-	} else {
-		s = s.Where("files.file_error = ''")
-	}
-
 	if f.Camera > 0 {
 		s = s.Where("photos.camera_id = ?", f.Camera)
 	}

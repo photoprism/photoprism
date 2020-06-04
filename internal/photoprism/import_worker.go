@@ -131,14 +131,16 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				res := ind.MediaFile(related.Main, indexOpt, originalName)
 
+				log.Infof("import: %s main %s file %s", res, related.Main.FileType(), txt.Quote(related.Main.RelativeName(ind.originalsPath())))
+				done[related.Main.FileName()] = true
+
 				if res.Success() {
 					if err := entity.AddPhotoToAlbums(res.PhotoUID, opt.Albums); err != nil {
 						log.Warn(err)
 					}
+				} else {
+					continue
 				}
-
-				log.Infof("import: %s main %s file %s", res, related.Main.FileType(), txt.Quote(related.Main.RelativeName(ind.originalsPath())))
-				done[related.Main.FileName()] = true
 			} else {
 				log.Warnf("import: no main file for %s (conversion to jpeg failed?)", fs.RelativeName(destinationMainFilename, imp.originalsPath()))
 			}

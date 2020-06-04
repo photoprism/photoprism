@@ -85,6 +85,22 @@ type Photo struct {
 	DeletedAt        *time.Time   `sql:"index" yaml:"DeletedAt,omitempty"`
 }
 
+// NewPhoto creates a photo entity.
+func NewPhoto() Photo {
+	return Photo{
+		PhotoType:    TypeImage,
+		PhotoCountry: UnknownCountry.ID,
+		Camera:       &UnknownCamera,
+		CameraID:     UnknownCamera.ID,
+		Lens:         &UnknownLens,
+		LensID:       UnknownLens.ID,
+		Location:     &UnknownLocation,
+		LocationID:   UnknownLocation.ID,
+		Place:        &UnknownPlace,
+		PlaceID:      UnknownPlace.ID,
+	}
+}
+
 // SavePhotoForm saves a model in the database using form data.
 func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 	locChanged := model.PhotoLat != form.PhotoLat || model.PhotoLng != form.PhotoLng || model.PhotoCountry != form.PhotoCountry
