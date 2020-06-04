@@ -90,13 +90,9 @@ func NewPhoto() Photo {
 	return Photo{
 		PhotoType:    TypeImage,
 		PhotoCountry: UnknownCountry.ID,
-		Camera:       &UnknownCamera,
 		CameraID:     UnknownCamera.ID,
-		Lens:         &UnknownLens,
 		LensID:       UnknownLens.ID,
-		Location:     &UnknownLocation,
 		LocationID:   UnknownLocation.ID,
-		Place:        &UnknownPlace,
 		PlaceID:      UnknownPlace.ID,
 	}
 }
