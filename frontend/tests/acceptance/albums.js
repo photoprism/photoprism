@@ -135,3 +135,21 @@ test('#3 Download album', async t => {
         .click(Selector('button.p-album-clipboard-menu'))
         .expect(Selector('button.p-album-clipboard-download').visible).ok();
 });
+
+test('#4 View folders', async t => {
+    await page.openNav();
+    await t
+        .click(Selector('.p-navigation-albums + div'))
+        .click(Selector('.p-navigation-folders'))
+        .expect(Selector('a').withText('BotanicalGarden').visible).ok()
+        .expect(Selector('a').withText('Kanada').visible).ok()
+        .expect(Selector('a').withText('KorsikaAdventure').visible).ok();
+});
+
+test('#5 View calendar', async t => {
+    logger.clear();
+    await t
+        .click(Selector('.p-navigation-calendar'))
+        .expect(Selector('a').withText('May 2020').visible).ok()
+        .expect(Selector('a').withText('October 2019').visible).ok();
+});
