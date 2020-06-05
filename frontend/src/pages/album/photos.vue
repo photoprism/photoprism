@@ -125,10 +125,14 @@
             openLocation(index) {
                 const photo = this.results[index];
 
-                if (photo.LocationID) {
+                if (photo.LocationID && photo.LocationID !== "zz") {
                     this.$router.push({name: "place", params: {q: photo.LocationID}});
-                } else if (photo.PlaceID.length > 3) {
+                } else if (photo.PlaceID && photo.PlaceID !== "zz") {
                     this.$router.push({name: "place", params: {q: photo.PlaceID}});
+                } else if (photo.Country && photo.Country !== "zz") {
+                    this.$router.push({name: "place", params: {q: "country:" + photo.Country}});
+                } else {
+                    this.$notify.warn("unknown location");
                 }
             },
             editPhoto(index) {
@@ -140,12 +144,12 @@
                 Event.publish("dialog.edit", {selection: selection, album: this.album, index: index});
             },
             openPhoto(index, showMerged) {
-                if(!this.results[index]) {
+                if (!this.results[index]) {
                     return false;
                 }
 
                 if (showMerged && (this.results[index].Type === 'video' || this.results[index].Type === 'live')) {
-                    if(this.results[index].isPlayable()) {
+                    if (this.results[index].isPlayable()) {
                         this.$modal.show('video', {video: this.results[index], album: this.album});
                     } else {
                         this.$viewer.show(Thumb.fromPhotos(this.results), index);
