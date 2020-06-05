@@ -3,7 +3,7 @@
         <v-form ref="form" class="p-files-search" lazy-validation @submit.prevent="updateQuery" dense>
             <v-toolbar flat color="secondary">
                 <v-toolbar-title>
-                    <router-link to="/files">
+                    <router-link to="/library/files">
                         <translate key="Originals">Originals</translate>
                     </router-link>
 
@@ -188,7 +188,7 @@
         methods: {
             getBreadcrumbs() {
                 let result = [];
-                let path = "/files";
+                let path = "/library/files";
 
                 const crumbs = this.path.split("/");
 
@@ -219,7 +219,7 @@
                         this.downloadFile(index);
                     }
                 } else {
-                    this.$router.push({path: '/files/' + model.Path});
+                    this.$router.push({path: '/library/files/' + model.Path});
                 }
             },
             downloadFile(index) {
