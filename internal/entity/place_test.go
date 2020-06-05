@@ -58,7 +58,7 @@ func TestPlace_Find(t *testing.T) {
 	})
 	t.Run("record does not exist", func(t *testing.T) {
 		place := &Place{
-			ID:          s2.TokenPrefix+"1110",
+			ID:          s2.TokenPrefix + "1110",
 			LocLabel:    "test",
 			LocCity:     "testCity",
 			LocState:    "",

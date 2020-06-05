@@ -9,7 +9,7 @@ import (
 
 func TestNormalizeToken(t *testing.T) {
 	t.Run(TokenPrefix+"1242342bac", func(t *testing.T) {
-		input := TokenPrefix+"1242342bac"
+		input := TokenPrefix + "1242342bac"
 
 		output := NormalizeToken(input)
 
@@ -29,7 +29,7 @@ func TestNormalizeToken(t *testing.T) {
 
 func TestPrefix(t *testing.T) {
 	t.Run(TokenPrefix+"1242342bac", func(t *testing.T) {
-		input := TokenPrefix+"1242342bac"
+		input := TokenPrefix + "1242342bac"
 
 		output := Prefix(input)
 
@@ -57,7 +57,7 @@ func TestPrefix(t *testing.T) {
 func TestPrefixedToken(t *testing.T) {
 	t.Run("germany", func(t *testing.T) {
 		token := PrefixedToken(48.56344833333333, 8.996878333333333)
-		expected := TokenPrefix+"4799e370"
+		expected := TokenPrefix + "4799e370"
 
 		assert.True(t, strings.HasPrefix(token, expected))
 	})

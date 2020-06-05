@@ -26,7 +26,7 @@ func (m LocationMap) Pointer(name string) *Location {
 
 var LocationFixtures = LocationMap{
 	"mexico": {
-		ID:          s2.TokenPrefix+"85d1ea7d382c",
+		ID:          s2.TokenPrefix + "85d1ea7d382c",
 		PlaceID:     PlaceFixtures.Get("mexico").ID,
 		LocName:     "Adosada Platform",
 		LocCategory: "botanical garden",
@@ -36,10 +36,10 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"caravan park": {
-		ID:      s2.TokenPrefix+"1ef75a71a36c",
-		PlaceID: s2.TokenPrefix+"1ef75a71a36c",
+		ID:      s2.TokenPrefix + "1ef75a71a36c",
+		PlaceID: s2.TokenPrefix + "1ef75a71a36c",
 		Place: &Place{
-			ID:         "x1ef75a71a36",
+			ID:         s2.TokenPrefix + "1ef75a71a36",
 			LocLabel:   "Mandeni, KwaZulu-Natal, South Africa",
 			LocCity:    "Mandeni",
 			LocState:   "KwaZulu-Natal",
@@ -54,7 +54,7 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"zinkwazi": {
-		ID:          s2.TokenPrefix+"1ef744d1e28c",
+		ID:          s2.TokenPrefix + "1ef744d1e28c",
 		PlaceID:     PlaceFixtures.Get("zinkwazi").ID,
 		Place:       PlaceFixtures.Pointer("zinkwazi"),
 		LocName:     "Zinkwazi Beach",
@@ -64,7 +64,7 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"hassloch": {
-		ID:          s2.TokenPrefix+"1ef744d1e280",
+		ID:          s2.TokenPrefix + "1ef744d1e280",
 		PlaceID:     PlaceFixtures.Get("holidaypark").ID,
 		Place:       PlaceFixtures.Pointer("holidaypark"),
 		LocName:     "Holiday Park",
@@ -74,7 +74,7 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"emptyNameLongCity": {
-		ID:          s2.TokenPrefix+"1ef744d1e281",
+		ID:          s2.TokenPrefix + "1ef744d1e281",
 		PlaceID:     PlaceFixtures.Get("emptyNameLongCity").ID,
 		Place:       PlaceFixtures.Pointer("emptyNameLongCity"),
 		LocName:     "",
@@ -84,7 +84,7 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"emptyNameShortCity": {
-		ID:          s2.TokenPrefix+"1ef744d1e282",
+		ID:          s2.TokenPrefix + "1ef744d1e282",
 		PlaceID:     PlaceFixtures.Get("emptyNameShortCity").ID,
 		Place:       PlaceFixtures.Pointer("emptyNameShortCity"),
 		LocName:     "",
@@ -94,7 +94,7 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"veryLongLocName": {
-		ID:          s2.TokenPrefix+"1ef744d1e283",
+		ID:          s2.TokenPrefix + "1ef744d1e283",
 		PlaceID:     PlaceFixtures.Get("veryLongLocName").ID,
 		Place:       PlaceFixtures.Pointer("veryLongLocName"),
 		LocName:     "longlonglonglonglonglonglonglonglonglonglonglonglongName",
@@ -104,7 +104,7 @@ var LocationFixtures = LocationMap{
 		UpdatedAt:   time.Now(),
 	},
 	"mediumLongLocName": {
-		ID:          s2.TokenPrefix+"1ef744d1e283",
+		ID:          s2.TokenPrefix + "1ef744d1e283",
 		PlaceID:     PlaceFixtures.Get("mediumLongLocName").ID,
 		Place:       PlaceFixtures.Pointer("mediumLongLocName"),
 		LocName:     "longlonglonglonglonglongName",

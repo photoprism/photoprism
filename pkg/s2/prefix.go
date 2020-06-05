@@ -28,7 +28,7 @@ func Prefix(token string) string {
 		return token
 	}
 
-	return TokenPrefix+token
+	return TokenPrefix + token
 }
 
 // PrefixedToken returns the prefixed S2 cell token for coordinates using the default level.
