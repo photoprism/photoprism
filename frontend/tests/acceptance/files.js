@@ -33,7 +33,7 @@ test('#1 Add files to album', async t => {
         .expect(FirstItemInKanada).contains('BotanicalGarden')
         .expect(SecondItemInKanada).contains('IMG')
         .click(Selector('button').withText('BotanicalGarden'))
-        .click(Selector('a[href="/files/Vacation"]'));
+        .click(Selector('a[href="/library/files/Vacation"]'));
     await page.selectFromUID(KanadaUid);
     const clipboardCount = await Selector('span.t-clipboard-count');
     await t

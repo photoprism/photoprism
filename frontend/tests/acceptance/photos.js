@@ -4,7 +4,7 @@ import Page from "./page-model";
 import { RequestLogger } from 'testcafe';
 import { ClientFunction } from 'testcafe';
 
-const logger = RequestLogger( /http:\/\/localhost:2342\/api\/v1\/photos*/ , {
+const logger = RequestLogger( /http:\/\/localhost\/api\/v1\/photos*/ , {
     logResponseHeaders: true,
     logResponseBody:    true
 });

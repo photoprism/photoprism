@@ -3,7 +3,7 @@ import testcafeconfig from './testcafeconfig';
 import Page from "./page-model";
 import { RequestLogger } from 'testcafe';
 
-const logger = RequestLogger( /http:\/\/localhost:2342\/api\/v1\/*/ , {
+const logger = RequestLogger( /http:\/\/localhost\/api\/v1\/*/ , {
     logResponseHeaders: true,
     logResponseBody:    true
 });
