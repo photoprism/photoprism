@@ -17,12 +17,24 @@ install: install-bin install-assets
 test: test-js test-go
 test-go: reset-test-db run-test-go
 test-short: reset-test-db run-test-short
-acceptance-all: start acceptance acceptance-firefox stop
+acceptance-all: acceptance-start acceptance-firefox acceptance-restart acceptance stop
 test-all: test acceptance-all
 fmt: fmt-js fmt-go
 upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-share clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets
+acceptance-start:
+	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=80 --settings-path ./storage/acceptance/settings --originals-path ./storage/acceptance/originals --sidecar-hidden=false --sidecar-json=false --sidecar-yaml=false start -d
+acceptance-restart:
+	go run cmd/photoprism/photoprism.go stop
+	cp -f storage/acceptance/backup.db storage/acceptance/index.db
+	rm -rf storage/acceptance/originals/2010
+	rm -rf storage/acceptance/originals/2013
+	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=80 --settings-path ./storage/acceptance/settings --originals-path ./storage/acceptance/originals --sidecar-hidden=false --sidecar-json=false --sidecar-yaml=false start -d
+acceptance-restore-db:
+	cp -f storage/acceptance/backup.db storage/acceptance/index.db
+	rm -rf storage/acceptance/originals/2010
+	rm -rf storage/acceptance/originals/2013
 start:
 	go run cmd/photoprism/photoprism.go start -d
 stop:
@@ -91,10 +103,10 @@ test-js:
 	(cd frontend &&	env NODE_ENV=development BABEL_ENV=test npm run test)
 acceptance:
 	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	npm run acceptance)
+	(cd frontend &&	npm run acceptance && cd ..)
 acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
-	(cd frontend &&	npm run acceptance-firefox)
+	(cd frontend &&	npm run acceptance-firefox && cd ..)
 reset-test-db:
 	$(info Purging test databases...)
 	mysql < scripts/reset-test-db.sql
