@@ -32,6 +32,11 @@ func TestLikeAny(t *testing.T) {
 		assert.Equal(t, "k.keyword = 'cat' OR k.keyword = 'dog'", where)
 	})
 
+	t.Run("cats dogs", func(t *testing.T) {
+		where := LikeAny("k.keyword", "cats dogs")
+		assert.Equal(t, "k.keyword LIKE 'cats%' OR k.keyword = 'cat' OR k.keyword LIKE 'dogs%' OR k.keyword = 'dog'", where)
+	})
+
 	t.Run("spoon", func(t *testing.T) {
 		where := LikeAny("k.keyword", "spoon")
 		assert.Equal(t, "k.keyword LIKE 'spoon%'", where)
@@ -57,6 +62,11 @@ func TestAnySlug(t *testing.T) {
 	t.Run("cat dog", func(t *testing.T) {
 		where := AnySlug("custom_slug", "cat dog", " ")
 		assert.Equal(t, "custom_slug = 'cat' OR custom_slug = 'dog'", where)
+	})
+
+	t.Run("cats dogs", func(t *testing.T) {
+		where := AnySlug("custom_slug", "cats dogs", " ")
+		assert.Equal(t, "custom_slug = 'cats' OR custom_slug = 'cat' OR custom_slug = 'dogs' OR custom_slug = 'dog'", where)
 	})
 
 	t.Run("spoon", func(t *testing.T) {

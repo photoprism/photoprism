@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/txt"
 
+	"github.com/jinzhu/inflection"
 	"github.com/jinzhu/gorm"
 )
 
@@ -58,11 +59,6 @@ func UnscopedDb() *gorm.DB {
 	return entity.Db().Unscoped()
 }
 
-// IsDialect returns true if the given sql dialect is used.
-func IsDialect(name string) bool {
-	return name == Db().Dialect().GetName()
-}
-
 // DbDialect returns the sql dialect name.
 func DbDialect() string {
 	return Db().Dialect().GetName()
@@ -84,6 +80,12 @@ func LikeAny(col, search string) (where string) {
 		} else {
 			wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, w))
 		}
+
+		singular := inflection.Singular(w)
+
+		if singular != w {
+			wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, singular))
+		}
 	}
 
 	return strings.Join(wheres, " OR ")
@@ -103,7 +105,15 @@ func AnySlug(col, search, sep string) (where string) {
 	var words []string
 
 	for _, w := range strings.Split(search, sep) {
-		words = append(words, slug.Make(strings.TrimSpace(w)))
+		w = strings.TrimSpace(w)
+
+		words = append(words, slug.Make(w))
+
+		singular := inflection.Singular(w)
+
+		if singular != w {
+			words = append(words, slug.Make(singular))
+		}
 	}
 
 	if len(words) == 0 {
