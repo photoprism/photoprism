@@ -72,7 +72,8 @@ func (m *Moments) Start() (err error) {
 	} else {
 		for _, mom := range results {
 			f := form.PhotoSearch{
-				Path: mom.Path,
+				Path:   mom.Path,
+				Public: true,
 			}
 
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.TypeFolder); a != nil {
@@ -126,6 +127,7 @@ func (m *Moments) Start() (err error) {
 			f := form.PhotoSearch{
 				Country: mom.Country,
 				Year:    mom.Year,
+				Public:  true,
 			}
 
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.TypeMoment); a != nil {
@@ -156,6 +158,7 @@ func (m *Moments) Start() (err error) {
 			f := form.PhotoSearch{
 				Country: mom.Country,
 				State:   mom.State,
+				Public:  true,
 			}
 
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.TypeMoment); a != nil {
@@ -183,7 +186,8 @@ func (m *Moments) Start() (err error) {
 	} else {
 		for _, mom := range results {
 			f := form.PhotoSearch{
-				Label: mom.Label,
+				Label:  mom.Label,
+				Public: true,
 			}
 
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.TypeMoment); a != nil {

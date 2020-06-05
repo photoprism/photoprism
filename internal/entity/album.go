@@ -157,8 +157,9 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	}
 
 	f := form.PhotoSearch{
-		Year:  year,
-		Month: month,
+		Year:   year,
+		Month:  month,
+		Public: true,
 	}
 
 	now := time.Now().UTC()

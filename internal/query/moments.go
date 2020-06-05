@@ -89,7 +89,7 @@ type Moments []Moment
 func MomentsTime(threshold int) (results Moments, err error) {
 	db := UnscopedDb().Table("photos").
 		Select("photos.photo_year AS year, photos.photo_month AS month, COUNT(*) AS photo_count").
-		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photos.photo_year > 0 AND photos.photo_month > 0").
+		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photo_private = 0 AND photos.photo_year > 0 AND photos.photo_month > 0").
 		Group("photos.photo_year, photos.photo_month").
 		Order("photos.photo_year DESC, photos.photo_month DESC").
 		Having("photo_count >= ?", threshold)
@@ -105,7 +105,7 @@ func MomentsTime(threshold int) (results Moments, err error) {
 func MomentsCountries(threshold int) (results Moments, err error) {
 	db := UnscopedDb().Table("photos").
 		Select("photo_country AS country, photo_year AS year, COUNT(*) AS photo_count ").
-		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photo_country <> 'zz' AND photo_year > 0").
+		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photo_private = 0 AND photo_country <> 'zz' AND photo_year > 0").
 		Group("photo_country, photo_year").
 		Having("photo_count >= ?", threshold)
 
@@ -121,7 +121,7 @@ func MomentsStates(threshold int) (results Moments, err error) {
 	db := UnscopedDb().Table("photos").
 		Select("p.loc_country AS country, p.loc_state AS state, COUNT(*) AS photo_count").
 		Joins("JOIN places p ON p.id = photos.place_id").
-		Where("photos.photo_quality >= 3 AND photos.deleted_at IS NULL AND p.loc_state <> '' AND p.loc_country <> 'zz'").
+		Where("photos.photo_quality >= 3 AND photos.deleted_at IS NULL AND photo_private = 0 AND p.loc_state <> '' AND p.loc_country <> 'zz'").
 		Group("p.loc_country, p.loc_state").
 		Having("photo_count >= ?", threshold)
 
@@ -144,7 +144,7 @@ func MomentsLabels(threshold int) (results Moments, err error) {
 		Select("l.label_slug AS label, COUNT(*) AS photo_count").
 		Joins("JOIN photos_labels pl ON pl.photo_id = photos.id AND pl.uncertainty < 100").
 		Joins("JOIN labels l ON l.id = pl.label_id").
-		Where("photos.photo_quality >= 3 AND photos.deleted_at IS NULL AND l.label_slug IN (?)", cats).
+		Where("photos.photo_quality >= 3 AND photos.deleted_at IS NULL AND photo_private = 0 AND l.label_slug IN (?)", cats).
 		Group("l.label_slug").
 		Having("photo_count >= ?", threshold)
 
