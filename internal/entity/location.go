@@ -41,7 +41,7 @@ func CreateUnknownLocation() {
 func NewLocation(lat, lng float32) *Location {
 	result := &Location{}
 
-	result.ID = s2.Token(float64(lat), float64(lng))
+	result.ID = s2.PrefixedToken(float64(lat), float64(lng))
 
 	return result
 }
@@ -57,7 +57,7 @@ func (m *Location) Find(api string) error {
 	}
 
 	l := &maps.Location{
-		ID: m.ID,
+		ID: s2.NormalizeToken(m.ID),
 	}
 
 	if err := l.QueryApi(api); err != nil {
@@ -65,11 +65,11 @@ func (m *Location) Find(api string) error {
 		return err
 	}
 
-	if place := FindPlace(l.S2Token(), l.Label()); place != nil {
+	if place := FindPlace(l.PrefixedToken(), l.Label()); place != nil {
 		m.Place = place
 	} else {
 		place = &Place{
-			ID:          l.S2Token(),
+			ID:          l.PrefixedToken(),
 			LocLabel:    l.Label(),
 			LocCity:     l.City(),
 			LocState:    l.State(),

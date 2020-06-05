@@ -166,9 +166,9 @@
                 const photo = this.results[index];
 
                 if (photo.LocationID) {
-                    this.$router.push({name: "place", params: {q: "s2:" + photo.LocationID}});
+                    this.$router.push({name: "place", params: {q: photo.LocationID}});
                 } else if (photo.PlaceID.length > 3) {
-                    this.$router.push({name: "place", params: {q: "s2:" + photo.PlaceID}});
+                    this.$router.push({name: "place", params: {q: photo.PlaceID}});
                 }
             },
             editPhoto(index) {

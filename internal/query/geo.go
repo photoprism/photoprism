@@ -26,6 +26,8 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 
 	s := UnscopedDb()
 
+	// s.LogMode(true)
+
 	s = s.Table("photos").
 		Select(`photos.id, photos.photo_uid, photos.photo_type, photos.photo_lat, photos.photo_lng, 
 		photos.photo_title, photos.photo_description, photos.photo_favorite, photos.taken_at, files.file_hash, files.file_width, 
@@ -162,10 +164,10 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 	}
 
 	if f.S2 != "" {
-		s2Min, s2Max := s2.Range(f.S2, 7)
+		s2Min, s2Max := s2.PrefixedRange(f.S2, 7)
 		s = s.Where("photos.location_id BETWEEN ? AND ?", s2Min, s2Max)
 	} else if f.Olc != "" {
-		s2Min, s2Max := s2.Range(pluscode.S2(f.Olc), 7)
+		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.Olc), 7)
 		s = s.Where("photos.location_id BETWEEN ? AND ?", s2Min, s2Max)
 	} else {
 		// Inaccurate distance search, but probably 'good enough' for now

@@ -44,7 +44,9 @@ func TokenLevel(lat, lng float64, level int) string {
 
 // LatLng returns the coordinates for a S2 cell token.
 func LatLng(token string) (lat, lng float64) {
-	if token == "" || token == "-" {
+	token = NormalizeToken(token)
+
+	if len(token) < 3 {
 		return 0.0, 0.0
 	}
 
@@ -65,6 +67,8 @@ func IsZero(lat, lng float64) bool {
 
 // Range returns a token range for finding nearby locations.
 func Range(token string, levelUp int) (min, max string) {
+	token = NormalizeToken(token)
+
 	c := gs2.CellIDFromToken(token)
 
 	if !c.IsValid() {

@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,7 +15,7 @@ func TestCreateUnknownPlace(t *testing.T) {
 
 func TestFindPlaceByLabel(t *testing.T) {
 	t.Run("find by id", func(t *testing.T) {
-		r := FindPlace("1ef744d1e280", "")
+		r := FindPlace(s2.TokenPrefix+"1ef744d1e280", "")
 
 		if r == nil {
 			t.Fatal("result should not be nil")
@@ -23,7 +24,7 @@ func TestFindPlaceByLabel(t *testing.T) {
 		assert.Equal(t, "de", r.LocCountry)
 	})
 	t.Run("find by id", func(t *testing.T) {
-		r := FindPlace("85d1ea7d3278", "")
+		r := FindPlace(s2.TokenPrefix+"85d1ea7d3278", "")
 
 		if r == nil {
 			t.Fatal("result should not be nil")
@@ -57,7 +58,7 @@ func TestPlace_Find(t *testing.T) {
 	})
 	t.Run("record does not exist", func(t *testing.T) {
 		place := &Place{
-			ID:          "1110",
+			ID:          s2.TokenPrefix+"1110",
 			LocLabel:    "test",
 			LocCity:     "testCity",
 			LocState:    "",
@@ -70,8 +71,8 @@ func TestPlace_Find(t *testing.T) {
 			UpdatedAt:   time.Now(),
 			New:         false,
 		}
-		r := place.Find()
-		assert.Equal(t, "record not found", r.Error())
+		err := place.Find()
+		assert.EqualError(t, err, "record not found")
 	})
 }
 

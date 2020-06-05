@@ -6,6 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/maps/osm"
 	"github.com/photoprism/photoprism/internal/maps/places"
+	"github.com/photoprism/photoprism/pkg/s2"
 )
 
 /* TODO
@@ -154,6 +155,10 @@ func (l *Location) label() string {
 
 func (l Location) S2Token() string {
 	return l.ID
+}
+
+func (l Location) PrefixedToken() string {
+	return s2.Prefix(l.ID)
 }
 
 func (l Location) Name() string {
