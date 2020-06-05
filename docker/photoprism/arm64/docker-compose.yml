@@ -37,7 +37,7 @@ services:
       PHOTOPRISM_WEBDAV_PASSWORD: "photoprism"       # Plain text only (username "photoprism")
       PHOTOPRISM_DATABASE_DRIVER: "sqlite"           # Change to "mysql" for external MySQL or MariaDB
       # PHOTOPRISM_DATABASE_DRIVER: "mysql"          # Using MariaDB or MySQL instead of SQLite is optional
-      # PHOTOPRISM_DATABASE_DSN: "photoprism:photoprism@tcp(photoprism-db:3306)/photoprism?parseTime=true"
+      # PHOTOPRISM_DATABASE_DSN: "photoprism:photoprism@tcp(photoprism-db:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
       # PHOTOPRISM_SIDECAR_JSON: "true"              # Read metadata from JSON sidecar files created by exiftool
       # PHOTOPRISM_SIDECAR_YAML: "true"              # Backup photo metadata to YAML sidecar files
       PHOTOPRISM_SIDECAR_HIDDEN: "true"              # Create JSON and YAML sidecar files in .photoprism (if enabled)
