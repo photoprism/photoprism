@@ -105,6 +105,8 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 	} else if err := m.LoadLocation(); err == nil {
 		m.Place = m.Location.Place
 		m.PlaceID = m.Location.PlaceID
+	} else {
+		log.Warn(err)
 	}
 
 	if m.UnknownPlace() {
@@ -112,6 +114,8 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 		m.PlaceID = UnknownPlace.ID
 	} else if err := m.LoadPlace(); err == nil {
 		m.PhotoCountry = m.Place.CountryCode()
+	} else {
+		log.Warn(err)
 	}
 
 	if m.UnknownCountry() {

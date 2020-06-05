@@ -138,6 +138,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		entity.UnscopedDb().Model(&photo).Related(&description)
 	} else {
 		photo.PhotoQuality = -1
+
+		if yamlName := fs.TypeYaml.FindSub(m.FileName(), fs.HiddenPath, ind.conf.Settings().Index.Group); yamlName != "" {
+			if err := photo.LoadFromYaml(yamlName); err != nil {
+				log.Errorf("index: %s (restore from yaml) for %s", err.Error(), quotedName)
+			} else {
+				log.Infof("index: restored from %s", txt.Quote(fs.RelativeName(yamlName, ind.originalsPath())))
+			}
+		}
 	}
 
 	if fileHash == "" {
@@ -385,16 +393,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			return result
 		}
 	} else {
-		if yamlName := fs.TypeYaml.FindSub(m.FileName(), fs.HiddenPath, ind.conf.Settings().Index.Group); yamlName != "" {
-			if err := photo.LoadFromYaml(yamlName); err != nil {
-				log.Errorf("index: %s (restore from yaml) for %s", err.Error(), quotedName)
-			} else {
-				log.Infof("index: restored from %s", txt.Quote(fs.RelativeName(yamlName, ind.originalsPath())))
-			}
-		} else {
-			photo.PhotoFavorite = false
-		}
-
 		if err := entity.UnscopedDb().Create(&photo).Error; err != nil {
 			log.Errorf("index: %s", err)
 			result.Status = IndexFailed

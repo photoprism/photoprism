@@ -52,7 +52,7 @@ type Photo struct {
 	TimeZone         string       `gorm:"type:varbinary(64);" json:"TimeZone" yaml:"-"`
 	PlaceID          string       `gorm:"type:varbinary(16);index;" json:"PlaceID" yaml:"-"`
 	LocationID       string       `gorm:"type:varbinary(16);index;" json:"LocationID" yaml:"-"`
-	LocSrc           string       `gorm:"type:varbinary(8);" json:"LocSrc" yaml:"-"`
+	LocSrc           string       `gorm:"type:varbinary(8);" json:"LocSrc" yaml:"LocSrc,omitempty"`
 	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
 	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
 	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
@@ -479,7 +479,7 @@ func (m *Photo) LoadPlace() error {
 
 // HasLatLng checks if the photo has a latitude and longitude.
 func (m *Photo) HasLatLng() bool {
-	return m.PhotoLat != 0 && m.PhotoLng != 0
+	return m.PhotoLat != 0.0 || m.PhotoLng != 0.0
 }
 
 // NoLatLng checks if latitude and longitude are missing.
@@ -755,7 +755,7 @@ func (m *Photo) UpdateYearMonth() {
 
 // SetCoordinates changes the photo lat, lng and altitude if not empty and from the same source.
 func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
-	if lat == 0 && lng == 0 {
+	if lat == 0.0 && lng == 0.0 {
 		return
 	}
 
