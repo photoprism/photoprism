@@ -17,10 +17,7 @@ test('#1 Add files to album', async t => {
         .expect(Selector('h3').innerText).eql('No albums matched your search');
     await t
         .click(Selector('div.p-navigation-library + div'))
-        .click(Selector('.p-navigation-files'));
-    const FirstItem = await Selector('div.v-card__title').nth(0).innerText;
-    await t
-        .expect(FirstItem).contains('Vacation')
+        .click(Selector('.p-navigation-files'))
         .click(Selector('button').withText('Vacation'));
     const FirstItemInVacation = await Selector('div.v-card__title').nth(0).innerText;
     const KanadaUid = await Selector('div.v-card__title').nth(0).getAttribute('data-uid');

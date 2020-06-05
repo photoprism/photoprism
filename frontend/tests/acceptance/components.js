@@ -7,14 +7,15 @@ fixture`Test components`
 
 const page = new Page();
 
-/*test('#1 Test filter options', async t => {
+test('#1 Test filter options', async t => {
     await t
         .click('button.p-expand-search')
-        .click(Selector('div.p-countries-select'))
-        .expect(Selector('div[role="listitem"]]').nth(0).innerText).notContains('object')
-        .expect(Selector('div[role="listitem"]]').nth(0).innerText).notContains('Botswana')
-        .expect(Selector('div[role="listitem"]]').nth(0).innerText).notContains('Animal');
-});*/
+        .expect(Selector('body').withText('object Object').exists).notOk()
+        .click('.p-navigation-albums')
+        .click(Selector('div.p-album').nth(0))
+        .click('button.p-expand-search')
+        .expect(Selector('body').withText('object Object').exists).notOk();
+});
 
 test('#2 Fullscreen mode', async t => {
     await t

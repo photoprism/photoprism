@@ -84,7 +84,7 @@ test('#2 Rename Label', async t => {
     await page.search('zebra');
     const LabelZebra = await Selector('div.p-label').nth(0).getAttribute('data-uid');
     await t
-        .click(Selector('div.p-label').withAttribute('data-uid', LabelZebra));
+        .click(Selector('div.p-label a').nth(0));
     const FirstPhotoZebra = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     const SecondPhotoZebra = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
     await t

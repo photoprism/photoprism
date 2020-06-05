@@ -69,13 +69,13 @@ export default class Page {
 
     async selectNthPhoto(nPhoto) {
         await t
-        .hover(Selector('div[class="v-image__image v-image__image--cover"]', {timeout:4000}).nth(nPhoto))
+        .hover(Selector('.p-photo', {timeout:4000}).nth(nPhoto))
         .click(Selector('.t-select.t-off'));
     }
 
     async unselectPhoto(nPhoto) {
         await t
-            .hover(Selector('div[class="v-image__image v-image__image--cover"]', {timeout:4000}).nth(nPhoto))
+            .hover(Selector('.p-photo', {timeout:4000}).nth(nPhoto))
             .click(Selector('.t-select.t-on'));
     }
 

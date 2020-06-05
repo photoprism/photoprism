@@ -69,7 +69,8 @@ test('#1 Settings', async t => {
         .click(Selector('.input-share input'))
         .click(Selector('.input-places input'))
         .click(Selector('.input-private input'))
-        .click(Selector('.input-review input'));
+        .click(Selector('.input-review input'))
+        .click(Selector('.p-navigation-photos'));
 
     await t.eval(() => location.reload());
     await page.openNav();
