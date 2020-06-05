@@ -8,6 +8,9 @@ services:
       - photoprism-db
     ports:
       - "2342:2342" # Web Server (PhotoPrism)
+      - "80:80"
+    expose:
+      - "80" # Acceptance Tests
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
       - "go-mod:/go/pkg/mod"
