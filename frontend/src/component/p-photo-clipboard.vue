@@ -71,7 +71,7 @@
                         v-if="context !== 'archive' && $config.feature('download')"
                         class="p-photo-clipboard-download"
                 >
-                    <v-icon>cloud_download</v-icon>
+                    <v-icon>get_app</v-icon>
                 </v-btn>
                 <v-btn
                         fab

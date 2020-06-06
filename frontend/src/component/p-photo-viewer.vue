@@ -22,7 +22,7 @@
                     </button -->
 
                     <button class="pswp__button action-download" style="background: none;" @click.exact="onDownload" title="Download" v-if="config.settings.features.download">
-                        <v-icon size="16" color="white">cloud_download</v-icon>
+                        <v-icon size="16" color="white">get_app</v-icon>
                     </button>
 
                     <button class="pswp__button action-edit" style="background: none;" @click.exact="onEdit" title="Edit">

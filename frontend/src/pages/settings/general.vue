@@ -138,7 +138,7 @@
                                     color="secondary-dark"
                                     :label="labels.download"
                                     :hint="hints.download"
-                                    prepend-icon="cloud_download"
+                                    prepend-icon="get_app"
                                     persistent-hint
                             >
                             </v-checkbox>

@@ -33,7 +33,7 @@
                         v-if="$config.feature('download')"
                         :disabled="selection.length === 0"
                 >
-                    <v-icon>cloud_download</v-icon>
+                    <v-icon>get_app</v-icon>
                 </v-btn>
 
                 <v-btn
