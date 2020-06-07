@@ -18,7 +18,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "read-only, r",
-		Usage:  "don't modify originals directory (reduced functionality)",
+		Usage:  "don't modify originals directory (import and upload disabled)",
 		EnvVar: "PHOTOPRISM_READONLY",
 	},
 	cli.BoolFlag{
