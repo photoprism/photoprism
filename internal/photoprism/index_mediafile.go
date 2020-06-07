@@ -226,27 +226,122 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 	case m.IsRaw():
+		if metaData := m.MetaData(); metaData.Error == nil {
+			photo.SetTitle(metaData.Title, entity.SrcMeta)
+			photo.SetDescription(metaData.Description, entity.SrcMeta)
+			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
+			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcMeta)
+
+			if photo.Details.NoNotes() {
+				photo.Details.Notes = metaData.Comment
+			}
+
+			if photo.Details.NoSubject() {
+				photo.Details.Subject = metaData.Subject
+			}
+
+			if photo.Details.NoKeywords() {
+				photo.Details.Keywords = metaData.Keywords
+			}
+
+			if photo.Details.NoArtist() && metaData.Artist != "" {
+				photo.Details.Artist = metaData.Artist
+			}
+
+			if photo.Details.NoArtist() && metaData.CameraOwner != "" {
+				photo.Details.Artist = metaData.CameraOwner
+			}
+
+			if photo.NoCameraSerial() {
+				photo.CameraSerial = metaData.CameraSerial
+			}
+
+			if metaData.HasDocumentID() && photo.UUID == "" {
+				log.Debugf("index: %s has document id %s", quotedName, txt.Quote(metaData.DocumentID))
+
+				photo.UUID = metaData.DocumentID
+			}
+
+			if metaData.HasInstanceID() && file.UUID == "" {
+				log.Debugf("index: %s has instance id %s", quotedName, txt.Quote(metaData.InstanceID))
+
+				file.UUID = metaData.InstanceID
+			}
+
+			file.FileCodec = metaData.Codec
+			file.FileWidth = metaData.ActualWidth()
+			file.FileHeight = metaData.ActualHeight()
+			file.FileDuration = metaData.Duration
+			file.FileAspectRatio = metaData.AspectRatio()
+			file.FilePortrait = metaData.Portrait()
+
+			if res := metaData.Megapixels(); res > photo.PhotoResolution {
+				photo.PhotoResolution = res
+			}
+		}
+
 		if photo.PhotoType == entity.TypeImage {
 			photo.PhotoType = entity.TypeRaw
 		}
 	case m.IsVideo():
-		metaData = m.MetaData()
+		if metaData := m.MetaData(); metaData.Error == nil {
+			photo.SetTitle(metaData.Title, entity.SrcMeta)
+			photo.SetDescription(metaData.Description, entity.SrcMeta)
+			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
+			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcMeta)
 
-		file.FileCodec = metaData.Codec
-		file.FileWidth = metaData.ActualWidth()
-		file.FileHeight = metaData.ActualHeight()
-		file.FileDuration = metaData.Duration
-		file.FileAspectRatio = metaData.AspectRatio()
-		file.FilePortrait = metaData.Portrait()
+			if photo.Details.NoNotes() {
+				photo.Details.Notes = metaData.Comment
+			}
+
+			if photo.Details.NoSubject() {
+				photo.Details.Subject = metaData.Subject
+			}
+
+			if photo.Details.NoKeywords() {
+				photo.Details.Keywords = metaData.Keywords
+			}
+
+			if photo.Details.NoArtist() && metaData.Artist != "" {
+				photo.Details.Artist = metaData.Artist
+			}
+
+			if photo.Details.NoArtist() && metaData.CameraOwner != "" {
+				photo.Details.Artist = metaData.CameraOwner
+			}
+
+			if photo.NoCameraSerial() {
+				photo.CameraSerial = metaData.CameraSerial
+			}
+
+			if metaData.HasDocumentID() && photo.UUID == "" {
+				log.Debugf("index: %s has document id %s", quotedName, txt.Quote(metaData.DocumentID))
+
+				photo.UUID = metaData.DocumentID
+			}
+
+			if metaData.HasInstanceID() && file.UUID == "" {
+				log.Debugf("index: %s has instance id %s", quotedName, txt.Quote(metaData.InstanceID))
+
+				file.UUID = metaData.InstanceID
+			}
+
+			file.FileCodec = metaData.Codec
+			file.FileWidth = metaData.ActualWidth()
+			file.FileHeight = metaData.ActualHeight()
+			file.FileDuration = metaData.Duration
+			file.FileAspectRatio = metaData.AspectRatio()
+			file.FilePortrait = metaData.Portrait()
+
+			if res := metaData.Megapixels(); res > photo.PhotoResolution {
+				photo.PhotoResolution = res
+			}
+		}
 
 		if file.FileDuration == 0 || file.FileDuration > time.Millisecond*3100 {
 			photo.PhotoType = entity.TypeVideo
 		} else {
 			photo.PhotoType = entity.TypeLive
-		}
-
-		if res := metaData.Megapixels(); res > photo.PhotoResolution {
-			photo.PhotoResolution = res
 		}
 
 		if file.FileWidth == 0 && primaryFile.FileWidth > 0 {

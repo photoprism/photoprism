@@ -20,7 +20,7 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 			err = errors.New("not a photo")
 		}
 
-		if jsonFile := fs.TypeJson.FindFirst(m.FileName(), []string{Config().OriginalsPath(), Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false); jsonFile == "" {
+		if jsonFile := fs.TypeJson.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false); jsonFile == "" {
 			log.Debugf("mediafile: no json sidecar file found for %s", txt.Quote(filepath.Base(m.FileName())))
 		} else if jsonErr := m.metaData.JSON(jsonFile, m.BaseName()); jsonErr != nil {
 			log.Debug(jsonErr)

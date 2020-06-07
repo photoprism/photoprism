@@ -135,7 +135,7 @@ func (c *Convert) ConvertCommand(mf *MediaFile, jpegName string, xmpName string)
 
 // ToJson uses exiftool to export metadata to a json file.
 func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
-	jsonName := fs.TypeJson.FindFirst(mf.FileName(), []string{c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().Index.Group)
+	jsonName := fs.TypeJson.FindFirst(mf.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().Index.Group)
 
 	result, err := NewMediaFile(jsonName)
 
