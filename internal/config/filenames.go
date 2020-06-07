@@ -178,7 +178,7 @@ func (c *Config) ExifToolBin() string {
 
 // SidecarJson returns true if metadata should be synced with json sidecar files as used by exiftool.
 func (c *Config) SidecarJson() bool {
-	if c.ReadOnly() || c.ExifToolBin() == "" {
+	if  (c.ReadOnly() && !filepath.IsAbs(c.SidecarPath())) || c.ExifToolBin() == "" {
 		return false
 	}
 
@@ -187,7 +187,7 @@ func (c *Config) SidecarJson() bool {
 
 // SidecarYaml returns true if metadata should be synced with PhotoPrism YAML sidecar files.
 func (c *Config) SidecarYaml() bool {
-	if c.ReadOnly() {
+	if c.ReadOnly() && !filepath.IsAbs(c.SidecarPath()) {
 		return false
 	}
 
