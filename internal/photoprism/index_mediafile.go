@@ -225,7 +225,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 				photo.Details.Copyright = data.Copyright
 			}
 		}
-	case m.IsRaw():
+	case m.IsRaw(), m.IsHEIF(), m.IsImageOther():
 		if metaData := m.MetaData(); metaData.Error == nil {
 			photo.SetTitle(metaData.Title, entity.SrcMeta)
 			photo.SetDescription(metaData.Description, entity.SrcMeta)
@@ -271,7 +271,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			file.FileCodec = metaData.Codec
 			file.FileWidth = metaData.ActualWidth()
 			file.FileHeight = metaData.ActualHeight()
-			file.FileDuration = metaData.Duration
 			file.FileAspectRatio = metaData.AspectRatio()
 			file.FilePortrait = metaData.Portrait()
 
@@ -280,7 +279,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 
-		if photo.PhotoType == entity.TypeImage {
+		if m.IsRaw() && photo.PhotoType == entity.TypeImage {
 			photo.PhotoType = entity.TypeRaw
 		}
 	case m.IsVideo():
