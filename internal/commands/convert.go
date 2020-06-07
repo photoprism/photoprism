@@ -22,7 +22,7 @@ func convertAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	service.SetConfig(conf)
 
-	if conf.ReadOnly() {
+	if !conf.SidecarWritable() {
 		return config.ErrReadOnly
 	}
 

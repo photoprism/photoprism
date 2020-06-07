@@ -143,7 +143,7 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 		return result, nil
 	}
 
-	if c.conf.ReadOnly() {
+	if !c.conf.SidecarWritable() {
 		return nil, fmt.Errorf("convert: metadata export to json disabled in read only mode (%s)", mf.RelativeName(c.conf.OriginalsPath()))
 	}
 
@@ -185,10 +185,6 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 
 // ToJpeg converts a single image file to JPEG if possible.
 func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
-	if c.conf.ReadOnly() {
-		return nil, errors.New("convert: disabled in read-only mode")
-	}
-
 	if !image.Exists() {
 		return nil, fmt.Errorf("convert: can not convert to jpeg, file does not exist (%s)", image.RelativeName(c.conf.OriginalsPath()))
 	}
@@ -205,7 +201,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return mediaFile, nil
 	}
 
-	if c.conf.ReadOnly() {
+	if !c.conf.SidecarWritable() {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.RelativeName(c.conf.OriginalsPath()))
 	}
 

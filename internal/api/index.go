@@ -38,7 +38,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 
 		indOpt := photoprism.IndexOptions{
 			Rescan:  f.Rescan,
-			Convert: f.Convert && (!conf.ReadOnly() || filepath.IsAbs(conf.SidecarPath())),
+			Convert: f.Convert && conf.SidecarWritable(),
 			Path:    filepath.Clean(f.Path),
 		}
 

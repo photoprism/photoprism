@@ -178,7 +178,7 @@ func (c *Config) ExifToolBin() string {
 
 // SidecarJson returns true if metadata should be synced with json sidecar files as used by exiftool.
 func (c *Config) SidecarJson() bool {
-	if  (c.ReadOnly() && !filepath.IsAbs(c.SidecarPath())) || c.ExifToolBin() == "" {
+	if !c.SidecarWritable() || c.ExifToolBin() == "" {
 		return false
 	}
 
@@ -187,7 +187,7 @@ func (c *Config) SidecarJson() bool {
 
 // SidecarYaml returns true if metadata should be synced with PhotoPrism YAML sidecar files.
 func (c *Config) SidecarYaml() bool {
-	if c.ReadOnly() && !filepath.IsAbs(c.SidecarPath()) {
+	if !c.SidecarWritable() {
 		return false
 	}
 
@@ -201,6 +201,16 @@ func (c *Config) SidecarPath() string {
 	}
 
 	return c.params.SidecarPath
+}
+
+// SidecarPathIsAbs returns true if sidecar path is absolute.
+func (c *Config) SidecarPathIsAbs() bool {
+	return filepath.IsAbs(c.SidecarPath())
+}
+
+// SidecarWritable returns true if sidecar files can be created.
+func (c *Config) SidecarWritable() bool {
+	return !c.ReadOnly() || c.SidecarPathIsAbs()
 }
 
 // HeifConvertBin returns the heif-convert executable file name.
