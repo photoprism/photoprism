@@ -29,9 +29,9 @@ More screenshots: https://github.com/photoprism/photoprism/wiki/Screenshots
 You're welcome to play with our demo at [demo.photoprism.org](https://demo.photoprism.org).
 Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
 
-Step-by-step [installation instructions](https://docs.photoprism.org/en/latest/getting-started/) can be found
-in our [User Guide](https://docs.photoprism.org/en/latest/).
-Developers can skip this and move on to the [Developer Guide](https://docs.photoprism.org/en/latest/developer-guide/).
+Step-by-step [installation instructions](https://docs.photoprism.org/getting-started/) can be found
+in our [User Guide](https://docs.photoprism.org/).
+Developers can skip this and move on to the [Developer Guide](https://docs.photoprism.org/developer-guide/).
 
 All you need is a Web browser and [Docker](https://store.docker.com/search?type=edition&offering=community)
 to run the server. It is available for Mac, Linux and Windows.
@@ -60,7 +60,7 @@ We're already in contact with data scientists who like our idea.
 ## How to contribute ##
 
 We welcome contributions of any kind. If you have a bug or an idea, read our 
-[guide](https://docs.photoprism.org/en/latest/developer-guide/) before opening an issue.
+[guide](https://docs.photoprism.org/developer-guide/) before opening an issue.
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
 good (first) contributions. 
@@ -111,7 +111,7 @@ Thank you very much! <3
 
 We spent weeks asking organizations like [The Prototype Fund](https://prototypefund.de/en/) for help 
 and also tried to cooperate with companies like Mapbox and Cewe.
-You would think it's easier to get a few dollars with [our background](http://docs.photoprism.org/en/latest/team/) 
+You would think it's easier to get a few dollars with [our background](http://docs.photoprism.org/team/) 
 and [working code](https://demo.photoprism.org/).
 
 If any of those organizations changes their mind, they are welcome to [reach out to us](mailto:hello@photoprism.org).
@@ -143,7 +143,7 @@ Hopefully we can keep it like that :)
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [coverage]: https://codecov.io/gh/photoprism/photoprism
 [ci]: https://travis-ci.org/photoprism/photoprism
-[docs]: https://docs.photoprism.org/en/latest/
+[docs]: https://docs.photoprism.org/
 [issuehunt]: https://issuehunt.io/repos/119160553
 [chat]: https://gitter.im/browseyourlife/community
 [twitter]: https://twitter.com/browseyourlife

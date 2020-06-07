@@ -5,7 +5,7 @@ You're most welcome to support us via [GitHub Sponsors](https://github.com/spons
 especially if you need help with using our software. They will match every donation in the first year.
 In addition, you can find us on [Patreon][patreon] and [PayPal][paypal].
 Our sponsors and contributors will get for free whatever we might have to 
-[charge](https://docs.photoprism.org/en/latest/funding/) for a geodata, public events and maps 
+[charge](https://docs.photoprism.org/funding/) for a geodata, public events and maps 
 subscription later.
 
 Also please [leave a star](https://github.com/photoprism/photoprism/stargazers) here on GitHub if you like this project, 
