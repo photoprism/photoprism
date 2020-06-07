@@ -70,7 +70,7 @@ type Params struct {
 	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
 	SidecarJson        bool   `yaml:"sidecar-json" flag:"sidecar-json"`
 	SidecarYaml        bool   `yaml:"sidecar-yaml" flag:"sidecar-yaml"`
-	SidecarHidden      bool   `yaml:"sidecar-hidden" flag:"sidecar-hidden"`
+	SidecarPath        string `yaml:"sidecar-path" flag:"sidecar-path"`
 	PIDFilename        string `yaml:"pid-filename" flag:"pid-filename"`
 	LogFilename        string `yaml:"log-filename" flag:"log-filename"`
 	DetachServer       bool   `yaml:"detach-server" flag:"detach-server"`
@@ -83,7 +83,6 @@ type Params struct {
 	ThumbUncached      bool   `yaml:"thumb-uncached" flag:"thumb-uncached"`
 	ThumbSize          int    `yaml:"thumb-size" flag:"thumb-size"`
 	ThumbLimit         int    `yaml:"thumb-limit" flag:"thumb-limit"`
-	JpegHidden         bool   `yaml:"jpeg-hidden" flag:"jpeg-hidden"`
 	JpegQuality        int    `yaml:"jpeg-quality" flag:"jpeg-quality"`
 }
 

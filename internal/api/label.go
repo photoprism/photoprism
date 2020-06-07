@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"path"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -15,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -221,7 +221,7 @@ func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		fileName := path.Join(conf.OriginalsPath(), f.FileName)
+		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
 			log.Errorf("label-thumbnail: file %s is missing", txt.Quote(f.FileName))

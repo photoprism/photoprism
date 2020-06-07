@@ -38,9 +38,11 @@ const (
 	TypeRaw     = "raw"
 	TypeText    = "text"
 
-	RootDefault = ""
-	RootImport  = "import"
-	RootPath    = "/"
+	RootOriginals = ""
+	RootExamples  = "examples"
+	RootSidecar   = "sidecar"
+	RootImport    = "import"
+	RootPath      = "/"
 
 	Updated = "updated"
 	Created = "created"

@@ -58,7 +58,7 @@ func (c *Convert) Start(path string) error {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`convert: ignored "%s"`, fs.RelativeName(fileName, path))
+		log.Infof(`convert: ignored "%s"`, fs.Rel(fileName, path))
 	}
 
 	err := godirwalk.Walk(path, &godirwalk.Options{
@@ -134,8 +134,8 @@ func (c *Convert) ConvertCommand(mf *MediaFile, jpegName string, xmpName string)
 }
 
 // ToJson uses exiftool to export metadata to a json file.
-func (c *Convert) ToJson(mf *MediaFile, hidden bool) (*MediaFile, error) {
-	jsonName := fs.TypeJson.FindSub(mf.FileName(), fs.HiddenPath, c.conf.Settings().Index.Group)
+func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
+	jsonName := fs.TypeJson.FindFirst(mf.FileName(), []string{c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().Index.Group)
 
 	result, err := NewMediaFile(jsonName)
 
@@ -147,15 +147,11 @@ func (c *Convert) ToJson(mf *MediaFile, hidden bool) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: metadata export to json disabled in read only mode (%s)", mf.RelativeName(c.conf.OriginalsPath()))
 	}
 
-	if hidden {
-		jsonName = mf.HiddenName(".json", c.conf.Settings().Index.Group)
-	} else {
-		jsonName = mf.RelatedName(".json", c.conf.Settings().Index.Group)
-	}
+	jsonName = fs.FileName(mf.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), ".json", c.conf.Settings().Index.Group)
 
 	fileName := mf.RelativeName(c.conf.OriginalsPath())
 
-	log.Infof("convert: %s -> %s", fileName, fs.RelativeName(jsonName, c.conf.OriginalsPath()))
+	log.Infof("convert: %s -> %s", fileName, filepath.Base(jsonName))
 
 	cmd := exec.Command(c.conf.ExifToolBin(), "-j", mf.FileName())
 
@@ -188,7 +184,7 @@ func (c *Convert) ToJson(mf *MediaFile, hidden bool) (*MediaFile, error) {
 }
 
 // ToJpeg converts a single image file to JPEG if possible.
-func (c *Convert) ToJpeg(image *MediaFile, hidden bool) (*MediaFile, error) {
+func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	if c.conf.ReadOnly() {
 		return nil, errors.New("convert: disabled in read-only mode")
 	}
@@ -201,7 +197,7 @@ func (c *Convert) ToJpeg(image *MediaFile, hidden bool) (*MediaFile, error) {
 		return image, nil
 	}
 
-	jpegName := fs.TypeJpeg.FindSub(image.FileName(), fs.HiddenPath, c.conf.Settings().Index.Group)
+	jpegName := fs.TypeJpeg.FindFirst(image.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().Index.Group)
 
 	mediaFile, err := NewMediaFile(jpegName)
 
@@ -213,15 +209,10 @@ func (c *Convert) ToJpeg(image *MediaFile, hidden bool) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.RelativeName(c.conf.OriginalsPath()))
 	}
 
-	if hidden {
-		jpegName = image.HiddenName(fs.JpegExt, c.conf.Settings().Index.Group)
-	} else {
-		jpegName = image.RelatedName(fs.JpegExt, c.conf.Settings().Index.Group)
-	}
-
+	jpegName = fs.FileName(image.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt, c.conf.Settings().Index.Group)
 	fileName := image.RelativeName(c.conf.OriginalsPath())
 
-	log.Infof("convert: %s -> %s", fileName, fs.RelativeName(jpegName, c.conf.OriginalsPath()))
+	log.Infof("convert: %s -> %s", fileName, filepath.Base(jpegName))
 
 	xmpName := fs.TypeXMP.Find(image.FileName(), c.conf.Settings().Index.Group)
 

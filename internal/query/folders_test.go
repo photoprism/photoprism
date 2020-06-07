@@ -9,7 +9,7 @@ import (
 
 func TestFoldersByPath(t *testing.T) {
 	t.Run("root", func(t *testing.T) {
-		folders, err := FoldersByPath(entity.RootDefault, "testdata", "", false)
+		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "", false)
 
 		t.Logf("folders: %+v", folders)
 
@@ -21,7 +21,7 @@ func TestFoldersByPath(t *testing.T) {
 	})
 
 	t.Run("subdirectory", func(t *testing.T) {
-		folders, err := FoldersByPath(entity.RootDefault, "testdata", "directory", false)
+		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "directory", false)
 
 		t.Logf("folders: %+v", folders)
 

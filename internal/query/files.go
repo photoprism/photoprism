@@ -23,13 +23,17 @@ func FilesByPath(rootName, pathName string) (files entity.Files, err error) {
 	return files, err
 }
 
-// ExistingFiles returns not-missing and not-deleted file entities in the range of limit and offset sorted by id.
-func ExistingFiles(limit int, offset int, pathName string) (files entity.Files, err error) {
+// Files returns not-missing and not-deleted file entities in the range of limit and offset sorted by id.
+func Files(limit int, offset int, pathName string, includeMissing bool) (files entity.Files, err error) {
 	if strings.HasPrefix(pathName, "/") {
 		pathName = pathName[1:]
 	}
 
-	stmt := Db().Unscoped().Where("file_missing = 0 AND deleted_at IS NULL")
+	stmt := Db()
+
+	if !includeMissing {
+		stmt = stmt.Where("file_missing = 0")
+	}
 
 	if pathName != "" {
 		stmt = stmt.Where("files.file_name LIKE ?", pathName+"/%")

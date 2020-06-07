@@ -44,10 +44,8 @@ services:
       PHOTOPRISM_THUMB_SIZE: 2048 # Default thumbnail size limit (default 2048, min 720, max 3840)
       PHOTOPRISM_THUMB_LIMIT: 3840 # On-demand thumbnail size limit (default 2048, min 720, max 3840)
       PHOTOPRISM_JPEG_QUALITY: 90 # Use 95 for high-quality thumbnails (requires more storage)
-      PHOTOPRISM_JPEG_HIDDEN: "true" # Create JPEG files in .photoprism (when converting other file types)
       PHOTOPRISM_SIDECAR_JSON: "true" # Read metadata from JSON sidecar files created by exiftool
       PHOTOPRISM_SIDECAR_YAML: "true" # Backup photo metadata to YAML sidecar files
-      PHOTOPRISM_SIDECAR_HIDDEN: "true" # Create JSON and YAML sidecar files in .photoprism (if enabled)
 
   photoprism-db:
     image: mariadb:10.5

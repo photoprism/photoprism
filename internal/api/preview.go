@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -63,7 +64,7 @@ func GetPreview(router *gin.RouterGroup, conf *config.Config) {
 		thumbType, _ := thumb.Types["tile_224"]
 
 		for _, f := range p {
-			fileName := path.Join(conf.OriginalsPath(), f.FileName)
+			fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 			if !fs.FileExists(fileName) {
 				log.Errorf("preview: file %s is missing", txt.Quote(f.FileName))

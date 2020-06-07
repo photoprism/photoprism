@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"path"
 	"path/filepath"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -102,7 +102,7 @@ func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		fileName := path.Join(conf.OriginalsPath(), f.FileName)
+		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
 			log.Errorf("thumbnail: file %s is missing", txt.Quote(f.FileName))

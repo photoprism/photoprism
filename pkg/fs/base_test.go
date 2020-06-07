@@ -89,30 +89,30 @@ func TestBase(t *testing.T) {
 	})
 }
 
-func TestRelativeBase(t *testing.T) {
+func TestRelBase(t *testing.T) {
 	t.Run("/foo/bar.0000.ZIP", func(t *testing.T) {
-		regular := RelativeBase("/foo/bar.0000.ZIP", "/bar", false)
+		regular := RelBase("/foo/bar.0000.ZIP", "/bar", false)
 		assert.Equal(t, "/foo/bar.0000", regular)
 
-		stripped := RelativeBase("/foo/bar.0000.ZIP", "/bar", true)
+		stripped := RelBase("/foo/bar.0000.ZIP", "/bar", true)
 		assert.Equal(t, "/foo/bar.0000", stripped)
 	})
 
 	t.Run("/foo/bar.00001.ZIP", func(t *testing.T) {
-		regular := RelativeBase("/foo/bar.00001.ZIP", "/bar", false)
+		regular := RelBase("/foo/bar.00001.ZIP", "/bar", false)
 		assert.Equal(t, "/foo/bar.00001", regular)
 
-		stripped := RelativeBase("/foo/bar.00001.ZIP", "/bar", true)
+		stripped := RelBase("/foo/bar.00001.ZIP", "/bar", true)
 		assert.Equal(t, "/foo/bar", stripped)
 	})
 
 	t.Run("Test copy 3.jpg", func(t *testing.T) {
-		result := RelativeBase("/testdata/foo/Test copy 3.jpg", "/testdata", false)
+		result := RelBase("/testdata/foo/Test copy 3.jpg", "/testdata", false)
 		assert.Equal(t, "foo/Test copy 3", result)
 	})
 
 	t.Run("Test (3).jpg", func(t *testing.T) {
-		result := RelativeBase("/testdata/foo/Test (3).jpg", "/testdata", false)
+		result := RelBase("/testdata/foo/Test (3).jpg", "/testdata", false)
 		assert.Equal(t, "foo/Test (3)", result)
 	})
 }
@@ -128,26 +128,5 @@ func TestBaseAbs(t *testing.T) {
 		result := AbsBase("/testdata/Test (4).jpg", false)
 
 		assert.Equal(t, "/testdata/Test (4)", result)
-	})
-
-}
-
-func TestSubFileName(t *testing.T) {
-	t.Run("Test copy 3.jpg", func(t *testing.T) {
-		result := SubFileName("/testdata/Test (4).jpg", ".photoprism", ".xmp", true)
-
-		assert.Equal(t, "/testdata/.photoprism/Test.xmp", result)
-	})
-
-	t.Run("Test (3).jpg", func(t *testing.T) {
-		result := SubFileName("/testdata/Test (4).jpg", ".photoprism", ".xmp", false)
-
-		assert.Equal(t, "/testdata/.photoprism/Test (4).xmp", result)
-	})
-
-	t.Run("FOO.XMP", func(t *testing.T) {
-		result := SubFileName("/testdata/FOO.XMP", ".photoprism", ".jpeg", true)
-
-		assert.Equal(t, "/testdata/.photoprism/FOO.jpeg", result)
 	})
 }

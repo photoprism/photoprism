@@ -12,6 +12,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -82,7 +83,7 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 		defer zipWriter.Close()
 
 		for _, f := range files {
-			fileName := path.Join(conf.OriginalsPath(), f.FileName)
+			fileName := photoprism.FileName(f.FileRoot, f.FileName)
 			fileAlias := f.ShareFileName()
 
 			if fs.FileExists(fileName) {

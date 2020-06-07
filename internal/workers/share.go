@@ -2,7 +2,6 @@ package workers
 
 import (
 	"fmt"
-	"path"
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -10,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
@@ -88,7 +88,7 @@ func (worker *Share) Start() (err error) {
 				}
 			}
 
-			srcFileName := path.Join(worker.conf.OriginalsPath(), file.File.FileName)
+			srcFileName := photoprism.FileName(file.File.FileRoot, file.File.FileName)
 
 			if a.ShareSize != "" {
 				thumbType, ok := thumb.Types[a.ShareSize]

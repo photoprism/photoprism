@@ -60,7 +60,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 50, boundsNew.Max.Y)
 	})
 	t.Run("left_224 options", func(t *testing.T) {
-		left_224 := Types["left_224"]
+		left224 := Types["left_224"]
 
 		src := "testdata/example.jpg"
 
@@ -77,7 +77,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 750, bounds.Max.X)
 		assert.Equal(t, 500, bounds.Max.Y)
 
-		result := Resample(img, left_224.Width, left_224.Height, left_224.Options...)
+		result := Resample(img, left224.Width, left224.Height, left224.Options...)
 
 		boundsNew := result.Bounds()
 
@@ -85,7 +85,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 224, boundsNew.Max.Y)
 	})
 	t.Run("right_224 options", func(t *testing.T) {
-		right_224 := Types["right_224"]
+		right224 := Types["right_224"]
 
 		src := "testdata/example.jpg"
 
@@ -102,7 +102,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 750, bounds.Max.X)
 		assert.Equal(t, 500, bounds.Max.Y)
 
-		result := Resample(img, right_224.Width, right_224.Height, right_224.Options...)
+		result := Resample(img, right224.Width, right224.Height, right224.Options...)
 
 		boundsNew := result.Bounds()
 
@@ -110,7 +110,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 224, boundsNew.Max.Y)
 	})
 	t.Run("fit_1280 options", func(t *testing.T) {
-		fit_1280 := Types["fit_1280"]
+		fit1280 := Types["fit_1280"]
 
 		src := "testdata/example.jpg"
 
@@ -127,7 +127,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 750, bounds.Max.X)
 		assert.Equal(t, 500, bounds.Max.Y)
 
-		result := Resample(img, fit_1280.Width, fit_1280.Height, fit_1280.Options...)
+		result := Resample(img, fit1280.Width, fit1280.Height, fit1280.Options...)
 
 		boundsNew := result.Bounds()
 

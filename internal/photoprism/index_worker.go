@@ -24,7 +24,7 @@ func IndexWorker(jobs <-chan IndexJob) {
 
 		// Skip sidecar files without related media file.
 		if related.Main == nil {
-			log.Warnf("index: no media file found for %s", txt.Quote(fs.RelativeName(job.FileName, ind.originalsPath())))
+			log.Warnf("index: no media file found for %s", txt.Quote(fs.Rel(job.FileName, ind.originalsPath())))
 			continue
 		}
 
@@ -37,11 +37,11 @@ func IndexWorker(jobs <-chan IndexJob) {
 		f := related.Main
 
 		if opt.Convert && !f.HasJpeg() {
-			if jpegFile, err := ind.convert.ToJpeg(f, ind.conf.JpegHidden()); err != nil {
+			if jpegFile, err := ind.convert.ToJpeg(f); err != nil {
 				log.Errorf("index: creating jpeg failed (%s)", err.Error())
 				continue
 			} else {
-				log.Infof("index: %s created", fs.RelativeName(jpegFile.FileName(), ind.originalsPath()))
+				log.Infof("index: %s created", fs.Rel(jpegFile.FileName(), ind.originalsPath()))
 
 				if err := jpegFile.ResampleDefault(ind.thumbPath(), false); err != nil {
 					log.Errorf("index: could not create default thumbnails (%s)", err.Error())
@@ -53,10 +53,10 @@ func IndexWorker(jobs <-chan IndexJob) {
 		}
 
 		if ind.conf.SidecarJson() && !f.HasJson() {
-			if jsonFile, err := ind.convert.ToJson(f, ind.conf.SidecarHidden()); err != nil {
+			if jsonFile, err := ind.convert.ToJson(f); err != nil {
 				log.Errorf("index: creating json sidecar file failed (%s)", err.Error())
 			} else {
-				log.Infof("index: %s created", fs.RelativeName(jsonFile.FileName(), ind.originalsPath()))
+				log.Infof("index: %s created", fs.Rel(jsonFile.FileName(), ind.originalsPath()))
 			}
 		}
 

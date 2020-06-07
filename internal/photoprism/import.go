@@ -91,7 +91,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`import: ignored "%s"`, fs.RelativeName(fileName, importPath))
+		log.Infof(`import: ignored "%s"`, fs.Rel(fileName, importPath))
 	}
 
 	err := godirwalk.Walk(importPath, &godirwalk.Options{
@@ -117,7 +117,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
 				if isDir && result != filepath.SkipDir {
-					folder := entity.NewFolder(entity.RootImport, fs.RelativeName(fileName, imp.conf.ImportPath()), nil)
+					folder := entity.NewFolder(entity.RootImport, fs.Rel(fileName, imp.conf.ImportPath()), nil)
 
 					if err := folder.Create(); err == nil {
 						log.Infof("import: added folder /%s", folder.Path)
@@ -182,9 +182,9 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 		for _, directory := range directories {
 			if fs.IsEmpty(directory) {
 				if err := os.Remove(directory); err != nil {
-					log.Errorf("import: could not delete empty folder %s (%s)", txt.Quote(fs.RelativeName(directory, importPath)), err)
+					log.Errorf("import: could not delete empty folder %s (%s)", txt.Quote(fs.Rel(directory, importPath)), err)
 				} else {
-					log.Infof("import: deleted empty folder %s", txt.Quote(fs.RelativeName(directory, importPath)))
+					log.Infof("import: deleted empty folder %s", txt.Quote(fs.Rel(directory, importPath)))
 				}
 			}
 		}
@@ -198,7 +198,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 			}
 
 			if err := os.Remove(file); err != nil {
-				log.Errorf("import: could not remove %s (%s)", txt.Quote(fs.RelativeName(file, importPath)), err.Error())
+				log.Errorf("import: could not remove %s (%s)", txt.Quote(fs.Rel(file, importPath)), err.Error())
 			}
 		}
 	}
@@ -231,7 +231,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 	if !mediaFile.IsSidecar() {
 		if f, err := entity.FirstFileByHash(mediaFile.Hash()); err == nil {
-			existingFilename := filepath.Join(imp.conf.OriginalsPath(), f.FileName)
+			existingFilename := FileName(f.FileRoot, f.FileName)
 			if fs.FileExists(existingFilename) {
 				return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", txt.Quote(filepath.Base(mediaFile.FileName())), txt.Quote(f.FileName), mediaFile.Hash())
 			} else {
@@ -249,7 +249,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 	for fs.FileExists(result) {
 		if mediaFile.Hash() == fs.Hash(result) {
-			return result, fmt.Errorf("%s already exists", txt.Quote(fs.RelativeName(result, imp.originalsPath())))
+			return result, fmt.Errorf("%s already exists", txt.Quote(fs.Rel(result, imp.originalsPath())))
 		}
 
 		iteration++

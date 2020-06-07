@@ -3,7 +3,6 @@ package photoprism
 import (
 	"errors"
 	"fmt"
-	"path"
 	"runtime"
 	"time"
 
@@ -30,11 +29,6 @@ func NewPurge(conf *config.Config) *Purge {
 	return instance
 }
 
-// originalsPath returns the original media files path as string.
-func (prg *Purge) originalsPath() string {
-	return prg.conf.OriginalsPath()
-}
-
 // Start removes missing files from search results.
 func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhotos map[string]bool, err error) {
 	var ignore map[string]bool
@@ -47,7 +41,6 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 	purgedFiles = make(map[string]bool)
 	purgedPhotos = make(map[string]bool)
-	originalsPath := prg.originalsPath()
 
 	if err := mutex.MainWorker.Start(); err != nil {
 		err = fmt.Errorf("purge: %s", err.Error())
@@ -69,7 +62,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 	offset := 0
 
 	for {
-		files, err := query.ExistingFiles(limit, offset, opt.Path)
+		files, err := query.Files(limit, offset, opt.Path, true)
 
 		if err != nil {
 			return purgedFiles, purgedPhotos, err
@@ -84,16 +77,29 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 				return purgedFiles, purgedPhotos, errors.New("purge canceled")
 			}
 
-			fileName := path.Join(prg.conf.OriginalsPath(), file.FileName)
+			fileName := FileName(file.FileRoot, file.FileName)
 
 			if ignore[fileName] || purgedFiles[fileName] {
 				continue
 			}
 
-			if !fs.FileExists(fileName) {
+			if file.FileMissing {
+				if fs.FileExists(fileName) {
+					if opt.Dry {
+						log.Infof("purge: found %s", txt.Quote(file.FileName))
+						continue
+					}
+
+					if err := file.Update("FileMissing", false); err != nil {
+						log.Errorf("purge: %s", err)
+					} else {
+						log.Infof("purge: found %s", txt.Quote(file.FileName))
+					}
+				}
+			} else if !fs.FileExists(fileName) {
 				if opt.Dry {
 					purgedFiles[fileName] = true
-					log.Infof("purge: file %s would be removed", txt.Quote(fs.RelativeName(fileName, originalsPath)))
+					log.Infof("purge: file %s would be removed", txt.Quote(file.FileName))
 					continue
 				}
 
@@ -101,7 +107,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 					log.Errorf("purge: %s", err)
 				} else {
 					purgedFiles[fileName] = true
-					log.Infof("purge: removed file %s", txt.Quote(fs.RelativeName(fileName, originalsPath)))
+					log.Infof("purge: removed file %s", txt.Quote(file.FileName))
 				}
 			}
 		}

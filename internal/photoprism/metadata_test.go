@@ -130,17 +130,23 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 
 	img, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
 
-	assert.Nil(t, err)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	info := img.MetaData()
 
 	assert.IsType(t, meta.Data{}, info)
 
-	assert.Nil(t, err)
-
 	convert := NewConvert(conf)
 
-	jpeg, err := convert.ToJpeg(img, true)
+	jpeg, err := convert.ToJpeg(img)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Logf("JPEG FILENAME: %s", jpeg.FileName())
 
 	assert.Nil(t, err)
 

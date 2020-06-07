@@ -107,7 +107,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`index: ignored "%s"`, fs.RelativeName(fileName, originalsPath))
+		log.Infof(`index: ignored "%s"`, fs.Rel(fileName, originalsPath))
 	}
 
 	err := godirwalk.Walk(optionsPath, &godirwalk.Options{
@@ -121,7 +121,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
 				if isDir && result != filepath.SkipDir {
-					folder := entity.NewFolder(entity.RootDefault, fs.RelativeName(fileName, originalsPath), nil)
+					folder := entity.NewFolder(entity.RootOriginals, fs.Rel(fileName, originalsPath), nil)
 
 					if err := folder.Create(); err == nil {
 						log.Infof("index: added folder /%s", folder.Path)

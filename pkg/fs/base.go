@@ -1,8 +1,6 @@
 package fs
 
 import (
-	"fmt"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -42,9 +40,9 @@ func Base(fileName string, stripSequence bool) string {
 	return basename
 }
 
-// RelativeBase returns the relative filename.
-func RelativeBase(fileName, dir string, stripSequence bool) string {
-	if name := RelativeName(fileName, dir); name != "" {
+// RelBase returns the relative filename.
+func RelBase(fileName, dir string, stripSequence bool) string {
+	if name := Rel(fileName, dir); name != "" {
 		return AbsBase(name, stripSequence)
 	}
 
@@ -54,19 +52,4 @@ func RelativeBase(fileName, dir string, stripSequence bool) string {
 // AbsBase returns the directory and base filename without any extensions.
 func AbsBase(fileName string, stripSequence bool) string {
 	return filepath.Join(filepath.Dir(fileName), Base(fileName, stripSequence))
-}
-
-// SubFileName returns the a filename with the same base name and a given extension in a sub directory.
-func SubFileName(fileName, subDir, fileExt string, stripSequence bool) string {
-	baseName := Base(fileName, stripSequence)
-	dirName := filepath.Join(filepath.Dir(fileName), subDir)
-
-	if err := os.MkdirAll(dirName, os.ModePerm); err != nil {
-		fmt.Println(err.Error())
-		return ""
-	}
-
-	result := filepath.Join(dirName, baseName) + fileExt
-
-	return result
 }

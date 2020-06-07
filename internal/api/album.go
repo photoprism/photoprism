@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -381,7 +382,8 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 		defer func() { _ = zipWriter.Close() }()
 
 		for _, f := range p {
-			fileName := path.Join(conf.OriginalsPath(), f.FileName)
+			fileName := photoprism.FileName(f.FileRoot, f.FileName)
+
 			fileAlias := f.ShareFileName()
 
 			if fs.FileExists(fileName) {
@@ -477,7 +479,7 @@ func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		fileName := path.Join(conf.OriginalsPath(), f.FileName)
+		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
 			log.Errorf("album-thumbnail: could not find original for %s", fileName)

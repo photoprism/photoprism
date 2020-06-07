@@ -59,6 +59,12 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.ImportPath(), err)
 	}
 
+	if filepath.IsAbs(c.SidecarPath()) {
+		if err := os.MkdirAll(c.SidecarPath(), os.ModePerm); err != nil {
+			return createError(c.SidecarPath(), err)
+		}
+	}
+
 	if err := os.MkdirAll(c.CachePath(), os.ModePerm); err != nil {
 		return createError(c.CachePath(), err)
 	}
@@ -188,9 +194,13 @@ func (c *Config) SidecarYaml() bool {
 	return c.params.SidecarYaml
 }
 
-// SidecarHidden returns true if new sidecar files should be created in a .photoprism sub directory (hidden).
-func (c *Config) SidecarHidden() bool {
-	return c.params.SidecarHidden
+// SidecarPath returns the storage path for automatically created sidecar files.
+func (c *Config) SidecarPath() string {
+	if c.params.SidecarPath == "" {
+		c.params.SidecarPath = filepath.Join(c.StoragePath(), "sidecar")
+	}
+
+	return c.params.SidecarPath
 }
 
 // HeifConvertBin returns the heif-convert executable file name.

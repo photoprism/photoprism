@@ -68,13 +68,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	description := entity.Details{}
 	labels := classify.Labels{}
 
-	fileBase := m.Base(ind.conf.Settings().Index.Group)
-	filePath := m.RelativePath(ind.originalsPath())
-	fileRoot := entity.RootDefault
-	fileName := m.RelativeName(ind.originalsPath())
-	quotedName := txt.Quote(m.RelativeName(ind.originalsPath()))
-	fileHash := ""
+	fileRoot, fileBase, filePath, fileName := m.PathNameInfo()
+
+	quotedName := txt.Quote(fileName)
 	fileSize, fileModified := m.Stat()
+
+	fileHash := ""
 	fileChanged := true
 	fileExists := false
 	photoExists := false
@@ -95,7 +94,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		fileQuery = entity.UnscopedDb().First(&file, "file_hash = ?", fileHash)
 		fileExists = fileQuery.Error == nil
 
-		if fileExists && fs.FileExists(filepath.Join(ind.conf.OriginalsPath(), file.FileName)) {
+		if fileExists && fs.FileExists(FileName(file.FileRoot, file.FileName)) {
 			result.Status = IndexDuplicate
 			return result
 		}
@@ -139,11 +138,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	} else {
 		photo.PhotoQuality = -1
 
-		if yamlName := fs.TypeYaml.FindSub(m.FileName(), fs.HiddenPath, ind.conf.Settings().Index.Group); yamlName != "" {
+		if yamlName := fs.TypeYaml.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), Config().Settings().Index.Group); yamlName != "" {
 			if err := photo.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s (restore from yaml) for %s", err.Error(), quotedName)
 			} else {
-				log.Infof("index: restored from %s", txt.Quote(fs.RelativeName(yamlName, ind.originalsPath())))
+				log.Infof("index: restored from %s", txt.Quote(fs.Rel(yamlName, Config().OriginalsPath())))
 			}
 		}
 	}
@@ -186,7 +185,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	switch {
 	case m.IsJpeg():
 		// Color information
-		if p, err := m.Colors(ind.thumbPath()); err != nil {
+		if p, err := m.Colors(Config().ThumbPath()); err != nil {
 			log.Errorf("index: %s for %s", err.Error(), quotedName)
 		} else {
 			file.FileMainColor = p.MainColor.Name()
@@ -275,11 +274,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if file.FilePrimary {
 		primaryFile = file
 
-		if !ind.conf.TensorFlowOff() {
+		if !Config().TensorFlowOff() {
 			// Image classification via TensorFlow.
 			labels = ind.classifyImage(m)
 
-			if !photoExists && ind.conf.Settings().Features.Private && ind.conf.DetectNSFW() {
+			if !photoExists && Config().Settings().Features.Private && Config().DetectNSFW() {
 				photo.PhotoPrivate = ind.NSFW(m)
 			}
 		}
@@ -532,13 +531,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	// Write YAML sidecar file (optional).
-	if file.FilePrimary && ind.conf.SidecarYaml() {
-		yamlFile := photo.YamlFileName(ind.originalsPath(), ind.conf.SidecarHidden())
+	if file.FilePrimary && Config().SidecarYaml() {
+		yamlFile := photo.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 
 		if err := photo.SaveAsYaml(yamlFile); err != nil {
 			log.Errorf("index: %s (update yaml) for %s", err.Error(), quotedName)
 		} else {
-			log.Infof("index: updated yaml file %s", txt.Quote(fs.RelativeName(yamlFile, ind.originalsPath())))
+			log.Infof("index: updated yaml file %s", txt.Quote(fs.Rel(yamlFile, Config().OriginalsPath())))
 		}
 	}
 
@@ -547,7 +546,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 // NSFW returns true if media file might be offensive and detection is enabled.
 func (ind *Index) NSFW(jpeg *MediaFile) bool {
-	filename, err := jpeg.Thumbnail(ind.thumbPath(), "fit_720")
+	filename, err := jpeg.Thumbnail(Config().ThumbPath(), "fit_720")
 
 	if err != nil {
 		log.Error(err)
@@ -559,7 +558,7 @@ func (ind *Index) NSFW(jpeg *MediaFile) bool {
 		return false
 	} else {
 		if nsfwLabels.NSFW(nsfw.ThresholdHigh) {
-			log.Warnf("index: %s might contain offensive content", txt.Quote(jpeg.RelativeName(ind.originalsPath())))
+			log.Warnf("index: %s might contain offensive content", txt.Quote(jpeg.RelativeName(Config().OriginalsPath())))
 			return true
 		}
 	}
@@ -582,7 +581,7 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 	var labels classify.Labels
 
 	for _, thumb := range thumbs {
-		filename, err := jpeg.Thumbnail(ind.thumbPath(), thumb)
+		filename, err := jpeg.Thumbnail(Config().ThumbPath(), thumb)
 
 		if err != nil {
 			log.Error(err)

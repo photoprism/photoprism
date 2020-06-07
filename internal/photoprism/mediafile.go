@@ -253,10 +253,8 @@ func (m *MediaFile) EditedName() string {
 
 // RelatedFiles returns files which are related to this file.
 func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err error) {
-	baseFilename := m.AbsBase(stripSequence)
 	// escape any meta characters in the file name
-	baseFilename = regexp.QuoteMeta(baseFilename)
-	matches, err := filepath.Glob(baseFilename + "*")
+	matches, err := filepath.Glob(regexp.QuoteMeta(m.AbsBase(stripSequence)) + "*")
 
 	if err != nil {
 		return result, err
@@ -292,7 +290,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 
 	// Add hidden JPEG if exists.
 	if !result.ContainsJpeg() && result.Main != nil {
-		if jpegName := fs.TypeJpeg.FindSub(result.Main.FileName(), fs.HiddenPath, stripSequence); jpegName != "" {
+		if jpegName := fs.TypeJpeg.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); jpegName != "" {
 			if resultFile, err := NewMediaFile(jpegName); err == nil {
 				result.Files = append(result.Files, resultFile)
 			}
@@ -302,6 +300,27 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 	sort.Sort(result.Files)
 
 	return result, nil
+}
+
+// PathNameInfo returns file name infos for indexing.
+func (m *MediaFile) PathNameInfo() (fileRoot, fileBase, relativePath, relativeName string) {
+	fileRoot = m.Root()
+	var rootPath string
+
+	switch fileRoot {
+	case entity.RootSidecar:
+		rootPath = Config().SidecarPath()
+	case entity.RootImport:
+		rootPath = Config().ImportPath()
+	default:
+		rootPath = Config().OriginalsPath()
+	}
+
+	fileBase = m.Base(Config().Settings().Index.Group)
+	relativePath = m.RelativePath(rootPath)
+	relativeName = m.RelativeName(rootPath)
+
+	return fileRoot, fileBase, relativePath, relativeName
 }
 
 // FileName returns the filename.
@@ -319,9 +338,9 @@ func (m *MediaFile) SetFileName(fileName string) {
 	m.fileName = fileName
 }
 
-// RelativeName returns the relative filename.
+// Rel returns the relative filename.
 func (m *MediaFile) RelativeName(directory string) string {
-	return fs.RelativeName(m.fileName, directory)
+	return fs.Rel(m.fileName, directory)
 }
 
 // RelativePath returns the relative path without filename.
@@ -355,7 +374,7 @@ func (m *MediaFile) RelativePath(directory string) string {
 	return pathname
 }
 
-// RelativeBase returns the relative filename.
+// RelBase returns the relative filename.
 func (m *MediaFile) RelativeBase(directory string, stripSequence bool) string {
 	if relativePath := m.RelativePath(directory); relativePath != "" {
 		return filepath.Join(relativePath, m.Base(stripSequence))
@@ -364,9 +383,14 @@ func (m *MediaFile) RelativeBase(directory string, stripSequence bool) string {
 	return m.Base(stripSequence)
 }
 
-// Directory returns the directory
+// Directory returns the file path.
 func (m *MediaFile) Directory() string {
 	return filepath.Dir(m.fileName)
+}
+
+// SubDirectory returns a sub directory name.
+func (m *MediaFile) SubDirectory(dir string) string {
+	return filepath.Join(filepath.Dir(m.fileName), dir)
 }
 
 // Base returns the filename base without any extensions and path.
@@ -374,19 +398,36 @@ func (m *MediaFile) Base(stripSequence bool) string {
 	return fs.Base(m.FileName(), stripSequence)
 }
 
+// Base returns the filename base without any extensions and path.
+func (m *MediaFile) Root() string {
+	if strings.HasPrefix(m.FileName(), Config().OriginalsPath()) {
+		return entity.RootOriginals
+	}
+
+	importPath := Config().ImportPath()
+
+	if importPath != "" && strings.HasPrefix(m.FileName(), importPath) {
+		return entity.RootImport
+	}
+
+	sidecarPath := Config().SidecarPath()
+
+	if sidecarPath != "" && strings.HasPrefix(m.FileName(), sidecarPath) {
+		return entity.RootSidecar
+	}
+
+	examplesPath := Config().ExamplesPath()
+
+	if examplesPath != "" && strings.HasPrefix(m.FileName(), examplesPath) {
+		return entity.RootExamples
+	}
+
+	return ""
+}
+
 // AbsBase returns the directory and base filename without any extensions.
 func (m *MediaFile) AbsBase(stripSequence bool) string {
 	return fs.AbsBase(m.FileName(), stripSequence)
-}
-
-// HiddenName returns the a filename with the same base name and a given extension in a hidden sub directory.
-func (m *MediaFile) HiddenName(fileExt string, stripSequence bool) string {
-	return fs.SubFileName(m.FileName(), fs.HiddenPath, fileExt, stripSequence)
-}
-
-// RelatedName returns the a filename with the same base name and a given extension in the same directory.
-func (m *MediaFile) RelatedName(fileExt string, stripSequence bool) string {
-	return m.AbsBase(stripSequence) + fileExt
 }
 
 // MimeType returns the mime type.
@@ -597,7 +638,7 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 		return m, nil
 	}
 
-	jpegFilename := fs.TypeJpeg.FindSub(m.FileName(), fs.HiddenPath, false)
+	jpegFilename := fs.TypeJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
 
 	if jpegFilename == "" {
 		return nil, fmt.Errorf("no jpeg found for %s", m.FileName())
@@ -612,7 +653,7 @@ func (m *MediaFile) HasJpeg() bool {
 		return true
 	}
 
-	return fs.TypeJpeg.FindSub(m.FileName(), fs.HiddenPath, false) != ""
+	return fs.TypeJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) != ""
 }
 
 // HasJson returns true if this file has or is a json sidecar file.
@@ -621,7 +662,7 @@ func (m *MediaFile) HasJson() bool {
 		return true
 	}
 
-	return fs.TypeJson.FindSub(m.FileName(), fs.HiddenPath, false) != ""
+	return fs.TypeJson.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) != ""
 }
 
 func (m *MediaFile) decodeDimensions() error {

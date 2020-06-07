@@ -90,7 +90,7 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, urlPath, rootName,
 
 // GET /api/v1/folders/originals
 func GetFoldersOriginals(router *gin.RouterGroup, conf *config.Config) {
-	GetFolders(router, conf, "originals", entity.RootDefault, conf.OriginalsPath())
+	GetFolders(router, conf, "originals", entity.RootOriginals, conf.OriginalsPath())
 }
 
 // GET /api/v1/folders/import

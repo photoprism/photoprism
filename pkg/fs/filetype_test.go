@@ -43,64 +43,93 @@ func TestFileType_Find(t *testing.T) {
 		result := TypeJpeg.Find("testdata/test (2).xmp", true)
 		assert.Equal(t, "testdata/test.jpg", result)
 	})
+
 	t.Run("name upper", func(t *testing.T) {
 		result := TypeJpeg.Find("testdata/CATYELLOW.xmp", true)
 		assert.Equal(t, "testdata/CATYELLOW.jpg", result)
 	})
+
 	t.Run("name lower", func(t *testing.T) {
 		result := TypeJpeg.Find("testdata/chameleon_lime.xmp", true)
 		assert.Equal(t, "testdata/chameleon_lime.jpg", result)
 	})
 }
 
-func TestFileType_FindHidden(t *testing.T) {
-	hiddenPath := ".photoprism"
+func TestFileType_FindFirst(t *testing.T) {
+	dirs := []string{HiddenPath}
 
 	t.Run("find xmp", func(t *testing.T) {
-		result := TypeXMP.FindSub("testdata/test.jpg", hiddenPath, false)
+		result := TypeXMP.FindFirst("testdata/test.jpg", dirs, "", false)
 		assert.Equal(t, "testdata/.photoprism/test.xmp", result)
 	})
 
 	t.Run("find xmp upper ext", func(t *testing.T) {
-		result := TypeXMP.FindSub("testdata/test.PNG", hiddenPath, false)
+		result := TypeXMP.FindFirst("testdata/test.PNG", dirs, "", false)
 		assert.Equal(t, "testdata/.photoprism/test.xmp", result)
 	})
 
 	t.Run("find xmp without sequence", func(t *testing.T) {
-		result := TypeXMP.FindSub("testdata/test (2).jpg", hiddenPath, false)
+		result := TypeXMP.FindFirst("testdata/test (2).jpg", dirs, "", false)
 		assert.Equal(t, "", result)
 	})
 
 	t.Run("find xmp with sequence", func(t *testing.T) {
-		result := TypeXMP.FindSub("testdata/test (2).jpg", hiddenPath, true)
+		result := TypeXMP.FindFirst("testdata/test (2).jpg", dirs, "", true)
 		assert.Equal(t, "testdata/.photoprism/test.xmp", result)
 	})
 
 	t.Run("find jpg", func(t *testing.T) {
-		result := TypeJpeg.FindSub("testdata/test.xmp", hiddenPath, false)
+		result := TypeJpeg.FindFirst("testdata/test.xmp", dirs, "", false)
 		assert.Equal(t, "testdata/test.jpg", result)
 	})
 
+	t.Run("find jpg abs", func(t *testing.T) {
+		result := TypeJpeg.FindFirst(Abs("testdata/test.xmp"), dirs, "", false)
+		assert.Equal(t, Abs("testdata/test.jpg"), result)
+	})
+
 	t.Run("upper ext", func(t *testing.T) {
-		result := TypeJpeg.FindSub("testdata/test.XMP", hiddenPath, false)
+		result := TypeJpeg.FindFirst("testdata/test.XMP", dirs, "", false)
 		assert.Equal(t, "testdata/test.jpg", result)
 	})
 
 	t.Run("with sequence", func(t *testing.T) {
-		result := TypeJpeg.FindSub("testdata/test (2).xmp", hiddenPath, false)
+		result := TypeJpeg.FindFirst("testdata/test (2).xmp", dirs, "", false)
 		assert.Equal(t, "", result)
 	})
 
 	t.Run("strip sequence", func(t *testing.T) {
-		result := TypeJpeg.FindSub("testdata/test (2).xmp", hiddenPath, true)
+		result := TypeJpeg.FindFirst("testdata/test (2).xmp", dirs, "", true)
 		assert.Equal(t, "testdata/test.jpg", result)
 	})
+
 	t.Run("name upper", func(t *testing.T) {
-		result := TypeJpeg.FindSub("testdata/CATYELLOW.xmp", hiddenPath, true)
+		result := TypeJpeg.FindFirst("testdata/CATYELLOW.xmp", dirs, "", true)
 		assert.Equal(t, "testdata/CATYELLOW.jpg", result)
 	})
+
 	t.Run("name lower", func(t *testing.T) {
-		result := TypeJpeg.FindSub("testdata/chameleon_lime.xmp", hiddenPath, true)
+		result := TypeJpeg.FindFirst("testdata/chameleon_lime.xmp", dirs, "", true)
 		assert.Equal(t, "testdata/chameleon_lime.jpg", result)
+	})
+
+	t.Run("example_bmp_notfound", func(t *testing.T) {
+		result := TypeBitmap.FindFirst("testdata/example.00001.jpg", dirs, "", true)
+		assert.Equal(t, "", result)
+	})
+
+	t.Run("example_bmp_found", func(t *testing.T) {
+		result := TypeBitmap.FindFirst("testdata/example.00001.jpg", []string{"directory"}, "", true)
+		assert.Equal(t, "testdata/directory/example.bmp", result)
+	})
+
+	t.Run("example_png_found", func(t *testing.T) {
+		result := TypePng.FindFirst("testdata/example.00001.jpg", []string{"directory", "directory/subdirectory"}, "", true)
+		assert.Equal(t, "testdata/directory/subdirectory/example.png", result)
+	})
+
+	t.Run("example_bmp_found", func(t *testing.T) {
+		result := TypeBitmap.FindFirst(Abs("testdata/example.00001.jpg"), []string{"directory"}, Abs("testdata"), true)
+		assert.Equal(t, Abs("testdata/directory/example.bmp"), result)
 	})
 }

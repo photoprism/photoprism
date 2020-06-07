@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
 )
@@ -37,7 +38,7 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 			return false, nil
 		}
 
-		fileName := path.Join(worker.conf.OriginalsPath(), file.FileName)
+		fileName := photoprism.FileName(file.FileRoot, file.FileName)
 		remoteName := path.Join(a.SyncPath, file.FileName)
 		remoteDir := filepath.Dir(remoteName)
 

@@ -54,7 +54,7 @@ func (rs *Resample) Start(force bool) error {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`resample: ignored "%s"`, fs.RelativeName(fileName, originalsPath))
+		log.Infof(`resample: ignored "%s"`, fs.Rel(fileName, originalsPath))
 	}
 
 	err := godirwalk.Walk(originalsPath, &godirwalk.Options{

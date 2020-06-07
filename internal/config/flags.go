@@ -239,6 +239,12 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "create JSON and YAML sidecar files in .photoprism if enabled",
 		EnvVar: "PHOTOPRISM_SIDECAR_HIDDEN",
 	},
+	cli.StringFlag{
+		Name:   "sidecar-path",
+		Usage:  "storage `PATH` for automatically created sidecar files (relative or absolute)",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_SIDECAR_PATH",
+	},
 	cli.BoolFlag{
 		Name:   "detect-nsfw",
 		Usage:  "flag photos as private that may be offensive",
@@ -295,10 +301,5 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "set to 95 for high-quality thumbnails (25-100)",
 		Value:  90,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
-	},
-	cli.BoolFlag{
-		Name:   "jpeg-hidden",
-		Usage:  "create JPEG files in .photoprism when converting other file types",
-		EnvVar: "PHOTOPRISM_JPEG_HIDDEN",
 	},
 }

@@ -3,13 +3,13 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"path"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -19,12 +19,12 @@ import (
 func SavePhotoAsYaml(p entity.Photo, conf *config.Config) {
 	// Write YAML sidecar file (optional).
 	if conf.SidecarYaml() {
-		yamlFile := p.YamlFileName(conf.OriginalsPath(), conf.SidecarHidden())
+		yamlFile := p.YamlFileName(conf.OriginalsPath(), conf.SidecarPath())
 
 		if err := p.SaveAsYaml(yamlFile); err != nil {
 			log.Errorf("photo: %s (update yaml)", err)
 		} else {
-			log.Infof("photo: updated yaml file %s", txt.Quote(fs.RelativeName(yamlFile, conf.OriginalsPath())))
+			log.Infof("photo: updated yaml file %s", txt.Quote(fs.Rel(yamlFile, conf.OriginalsPath())))
 		}
 	}
 }
@@ -126,7 +126,7 @@ func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		fileName := path.Join(conf.OriginalsPath(), f.FileName)
+		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
 			log.Errorf("photo: file %s is missing", txt.Quote(f.FileName))

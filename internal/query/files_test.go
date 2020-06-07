@@ -9,7 +9,7 @@ import (
 
 func TestFilesByPath(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		files, err := FilesByPath(entity.RootDefault, "2016/11")
+		files, err := FilesByPath(entity.RootOriginals, "2016/11")
 
 		t.Logf("files: %+v", files)
 
@@ -23,7 +23,7 @@ func TestFilesByPath(t *testing.T) {
 
 func TestExistingFiles(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		files, err := ExistingFiles(1000, 0, "/")
+		files, err := Files(1000, 0, "/", true)
 
 		t.Logf("files: %+v", files)
 
@@ -33,7 +33,7 @@ func TestExistingFiles(t *testing.T) {
 		assert.LessOrEqual(t, 5, len(files))
 	})
 	t.Run("search for files path", func(t *testing.T) {
-		files, err := ExistingFiles(1000, 0, "Photos")
+		files, err := Files(1000, 0, "Photos", true)
 
 		t.Logf("files: %+v", files)
 

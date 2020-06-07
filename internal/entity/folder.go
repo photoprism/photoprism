@@ -86,7 +86,7 @@ func (m *Folder) SetValuesFromPath() {
 	s = strings.TrimSpace(s)
 
 	if s == "" || s == RootPath {
-		if m.Root == RootDefault {
+		if m.Root == RootOriginals {
 			m.FolderTitle = "Originals"
 
 			return

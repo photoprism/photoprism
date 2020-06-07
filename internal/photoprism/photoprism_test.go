@@ -13,6 +13,7 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.DebugLevel)
 
 	c := config.TestConfig()
+	SetConfig(c)
 
 	code := m.Run()
 

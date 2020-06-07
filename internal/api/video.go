@@ -2,10 +2,10 @@ package api
 
 import (
 	"net/http"
-	"path"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/video"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -59,7 +59,7 @@ func GetVideo(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		fileName := path.Join(conf.OriginalsPath(), f.FileName)
+		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
 			log.Errorf("video: file %s is missing", txt.Quote(f.FileName))

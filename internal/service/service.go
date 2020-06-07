@@ -34,6 +34,8 @@ func SetConfig(c *config.Config) {
 	}
 
 	conf = c
+
+	photoprism.SetConfig(c)
 }
 
 func Config() *config.Config {

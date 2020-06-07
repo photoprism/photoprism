@@ -16,8 +16,8 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/txt"
 
-	"github.com/jinzhu/inflection"
 	"github.com/jinzhu/gorm"
+	"github.com/jinzhu/inflection"
 )
 
 var log = event.Log

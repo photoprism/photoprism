@@ -63,10 +63,6 @@ func (m *Photo) LoadFromYaml(fileName string) error {
 }
 
 // YamlFileName returns the YAML backup file name.
-func (m *Photo) YamlFileName(originalsPath string, hidden bool) string {
-	if hidden {
-		return filepath.Join(originalsPath, m.PhotoPath, fs.HiddenPath, m.PhotoName) + fs.YamlExt
-	}
-
-	return filepath.Join(originalsPath, m.PhotoPath, m.PhotoName) + fs.YamlExt
+func (m *Photo) YamlFileName(originalsPath, sidecarPath string) string {
+	return fs.FileName(filepath.Join(originalsPath, m.PhotoPath, m.PhotoName), sidecarPath, originalsPath, fs.YamlExt, false)
 }

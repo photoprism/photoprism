@@ -8,8 +8,8 @@ import (
 
 func TestNewFolder(t *testing.T) {
 	t.Run("2020/05", func(t *testing.T) {
-		folder := NewFolder(RootDefault, "2020/05", nil)
-		assert.Equal(t, RootDefault, folder.Root)
+		folder := NewFolder(RootOriginals, "2020/05", nil)
+		assert.Equal(t, RootOriginals, folder.Root)
 		assert.Equal(t, "2020/05", folder.Path)
 		assert.Equal(t, "May 2020", folder.FolderTitle)
 		assert.Equal(t, "", folder.FolderDescription)
@@ -25,7 +25,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("/2020/05/01/", func(t *testing.T) {
-		folder := NewFolder(RootDefault, "/2020/05/01/", nil)
+		folder := NewFolder(RootOriginals, "/2020/05/01/", nil)
 		assert.Equal(t, "2020/05/01", folder.Path)
 		assert.Equal(t, "May 2020", folder.FolderTitle)
 		assert.Equal(t, 2020, folder.FolderYear)
@@ -43,7 +43,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("/2020/05/23/Iceland 2020", func(t *testing.T) {
-		folder := NewFolder(RootDefault, "/2020/05/23/Iceland 2020", nil)
+		folder := NewFolder(RootOriginals, "/2020/05/23/Iceland 2020", nil)
 		assert.Equal(t, "2020/05/23/Iceland 2020", folder.Path)
 		assert.Equal(t, "Iceland 2020", folder.FolderTitle)
 		assert.Equal(t, 2020, folder.FolderYear)
@@ -52,7 +52,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("/London/2020/05/23", func(t *testing.T) {
-		folder := NewFolder(RootDefault, "/London/2020/05/23", nil)
+		folder := NewFolder(RootOriginals, "/London/2020/05/23", nil)
 		assert.Equal(t, "London/2020/05/23", folder.Path)
 		assert.Equal(t, "May 23, 2020", folder.FolderTitle)
 		assert.Equal(t, 2020, folder.FolderYear)
@@ -61,7 +61,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("empty", func(t *testing.T) {
-		folder := NewFolder(RootDefault, "", nil)
+		folder := NewFolder(RootOriginals, "", nil)
 		assert.Equal(t, "", folder.Path)
 		assert.Equal(t, "Originals", folder.FolderTitle)
 		assert.Equal(t, 0, folder.FolderYear)
@@ -70,7 +70,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("root", func(t *testing.T) {
-		folder := NewFolder(RootDefault, RootPath, nil)
+		folder := NewFolder(RootOriginals, RootPath, nil)
 		assert.Equal(t, "", folder.Path)
 		assert.Equal(t, "Originals", folder.FolderTitle)
 		assert.Equal(t, 0, folder.FolderYear)
@@ -80,7 +80,7 @@ func TestNewFolder(t *testing.T) {
 }
 
 func TestFirstOrCreateFolder(t *testing.T) {
-	folder := NewFolder(RootDefault, RootPath, nil)
+	folder := NewFolder(RootOriginals, RootPath, nil)
 	result := FirstOrCreateFolder(&folder)
 
 	if result == nil {
@@ -95,7 +95,7 @@ func TestFirstOrCreateFolder(t *testing.T) {
 		t.Errorf("FolderCountry should be 'zz'")
 	}
 
-	found := FindFolder(RootDefault, RootPath)
+	found := FindFolder(RootOriginals, RootPath)
 
 	if found == nil {
 		t.Fatal("found should not be nil")
