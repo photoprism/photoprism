@@ -65,7 +65,7 @@ func indexAction(ctx *cli.Context) error {
 	indOpt := photoprism.IndexOptions{
 		Path:    subPath,
 		Rescan:  ctx.Bool("all"),
-		Convert: conf.Settings().Index.Convert && !conf.ReadOnly(),
+		Convert: conf.Settings().Index.Convert && (!conf.ReadOnly() || filepath.IsAbs(conf.SidecarPath())),
 	}
 
 	indexed := ind.Start(indOpt)
