@@ -227,7 +227,7 @@
                     <v-list-tile :to="{ name: 'states' }" @click="" class="p-navigation-states">
                         <v-list-tile-content>
                             <v-list-tile-title>
-                                <translate key="Favorites">Favorites</translate>
+                                <translate key="States">States</translate>
                                 <span v-show="config.count.states > 0" class="p-navigation-count">{{ config.count.states }}</span>
                             </v-list-tile-title>
                         </v-list-tile-content>

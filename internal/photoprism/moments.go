@@ -151,7 +151,7 @@ func (m *Moments) Start() (err error) {
 	}
 
 	// States and countries.
-	if results, err := query.MomentsStates(threshold); err != nil {
+	if results, err := query.MomentsStates(1); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {

@@ -132,14 +132,14 @@ export default [
     },
     {
         name: "states",
-        path: "/places/favorites",
+        path: "/places/states",
         component: Albums,
         meta: {title: "Places", auth: true},
         props: {view: "state", staticFilter: {type: "state"}},
     },
     {
         name: "state",
-        path: "/places/favorites/:uid/:slug",
+        path: "/places/states/:uid/:slug",
         component: AlbumPhotos,
         meta: {title: "Places", auth: true},
     },
