@@ -138,8 +138,10 @@
                 Name: this.$gettext('All Countries')
             }].concat(this.$config.get('countries'));
 
+            const configValues = this.$config.values;
+
             return {
-                categories: this.$config.values.albumCategories,
+                categories: configValues.albumCategories ? configValues.albumCategories : [],
                 searchExpanded: false,
                 options: {
                     'views': [
