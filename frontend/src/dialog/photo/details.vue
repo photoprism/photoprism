@@ -174,7 +174,7 @@
                             </v-flex>
 
                             <v-flex xs12 sm6 md3 class="pa-2 p-countries-select">
-                                <v-select
+                                <v-autocomplete
                                         :disabled="disabled"
                                         :label="labels.country"
                                         hide-details
@@ -185,7 +185,7 @@
                                         v-model="model.Country"
                                         :items="countries"
                                         class="input-country">
-                                </v-select>
+                                </v-autocomplete>
                             </v-flex>
 
                             <v-flex xs12 md6 pa-2 class="p-camera-select">
