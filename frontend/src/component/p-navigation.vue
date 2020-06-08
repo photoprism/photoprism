@@ -224,7 +224,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile :to="{ name: 'states' }" @click="" class="p-navigation-states">
+                    <v-list-tile to="/places/states" @click="" class="p-navigation-states" :exact="true">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate key="States">States</translate>
