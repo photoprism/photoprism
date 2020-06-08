@@ -131,6 +131,19 @@ export default [
         meta: {title: "Places", auth: true},
     },
     {
+        name: "states",
+        path: "/places/favorites",
+        component: Albums,
+        meta: {title: "Places", auth: true},
+        props: {view: "state", staticFilter: {type: "state"}},
+    },
+    {
+        name: "state",
+        path: "/places/favorites/:uid/:slug",
+        component: AlbumPhotos,
+        meta: {title: "Places", auth: true},
+    },
+    {
         name: "files",
         path: "/library/files*",
         component: Files,

@@ -27,16 +27,12 @@ const (
 	MonthUnknown = -1
 	TitleUnknown = "Unknown"
 
-	TypeDefault = ""
-	TypeAlbum   = "album"
-	TypeFolder  = "folder"
-	TypeMoment  = "moment"
-	TypeMonth   = "month"
-	TypeImage   = "image"
-	TypeLive    = "live"
-	TypeVideo   = "video"
-	TypeRaw     = "raw"
-	TypeText    = "text"
+	TypeDefault  = ""
+	TypeImage    = "image"
+	TypeLive     = "live"
+	TypeVideo    = "video"
+	TypeRaw      = "raw"
+	TypeText     = "text"
 
 	RootOriginals = ""
 	RootExamples  = "examples"

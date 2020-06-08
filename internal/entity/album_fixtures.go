@@ -11,7 +11,7 @@ func (m AlbumMap) Get(name string) Album {
 		return result
 	}
 
-	return *NewAlbum(name, TypeAlbum)
+	return *NewAlbum(name, AlbumDefault)
 }
 
 func (m AlbumMap) Pointer(name string) *Album {
@@ -19,7 +19,7 @@ func (m AlbumMap) Pointer(name string) *Album {
 		return &result
 	}
 
-	return NewAlbum(name, TypeAlbum)
+	return NewAlbum(name, AlbumDefault)
 }
 
 var AlbumFixtures = AlbumMap{
@@ -28,7 +28,7 @@ var AlbumFixtures = AlbumMap{
 		CoverUID:         "",
 		AlbumUID:         "at9lxuqxpogaaba7",
 		AlbumSlug:        "christmas2030",
-		AlbumType:        TypeAlbum,
+		AlbumType:        AlbumDefault,
 		AlbumTitle:       "Christmas2030",
 		AlbumDescription: "Wonderful christmas",
 		AlbumNotes:       "",
@@ -45,7 +45,7 @@ var AlbumFixtures = AlbumMap{
 		CoverUID:         "",
 		AlbumUID:         "at9lxuqxpogaaba8",
 		AlbumSlug:        "holiday-2030",
-		AlbumType:        TypeAlbum,
+		AlbumType:        AlbumDefault,
 		AlbumTitle:       "Holiday2030",
 		AlbumDescription: "Wonderful christmas",
 		AlbumNotes:       "",
@@ -62,7 +62,7 @@ var AlbumFixtures = AlbumMap{
 		CoverUID:         "",
 		AlbumUID:         "at9lxuqxpogaaba9",
 		AlbumSlug:        "berlin-2019",
-		AlbumType:        TypeAlbum,
+		AlbumType:        AlbumDefault,
 		AlbumTitle:       "Berlin2019",
 		AlbumDescription: "Wonderful christmas",
 		AlbumNotes:       "",
@@ -79,7 +79,7 @@ var AlbumFixtures = AlbumMap{
 		CoverUID:         "",
 		AlbumUID:         "at1lxuqipogaaba1",
 		AlbumSlug:        "april-1990",
-		AlbumType:        TypeFolder,
+		AlbumType:        AlbumFolder,
 		AlbumTitle:       "April 1990",
 		AlbumDescription: "Spring is the time of year when many things change.",
 		AlbumNotes:       "Thunderstorms cause most of the severe spring weather.",
@@ -97,7 +97,7 @@ var AlbumFixtures = AlbumMap{
 		CoverUID:         "",
 		AlbumUID:         "at6axuzitogaaiax",
 		AlbumSlug:        "import",
-		AlbumType:        TypeAlbum,
+		AlbumType:        AlbumDefault,
 		AlbumTitle:       "Import Album",
 		AlbumDescription: "",
 		AlbumNotes:       "",

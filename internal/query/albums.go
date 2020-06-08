@@ -53,7 +53,7 @@ func AlbumCoverByUID(albumUID string) (file entity.File, err error) {
 
 	if err := Db().Where("album_uid = ?", albumUID).First(&a).Error; err != nil {
 		return file, err
-	} else if a.AlbumType != entity.TypeAlbum { // TODO: Optimize
+	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
 		f := form.PhotoSearch{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
 
 		if photos, _, err := PhotoSearch(f); err != nil {

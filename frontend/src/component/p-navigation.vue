@@ -200,7 +200,7 @@
                                     </v-list-tile-content>
                                 </v-list-tile -->
 
-                <v-list-tile :to="{ name: 'places' }" @click="" class="p-navigation-places"
+                <v-list-tile v-if="mini" :to="{ name: 'places' }" @click="" class="p-navigation-places"
                              v-show="$config.feature('places')">
                     <v-list-tile-action>
                         <v-icon>place</v-icon>
@@ -209,11 +209,30 @@
                     <v-list-tile-content>
                         <v-list-tile-title>
                             <translate key="Places">Places</translate>
-                            <span v-show="config.count.places > 0"
-                                  class="p-navigation-count">{{ config.count.places }}</span>
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
+
+                <v-list-group v-if="!mini" prepend-icon="place" no-action v-show="$config.feature('places')">
+                    <v-list-tile slot="activator" :to="{ name: 'places' }" @click.stop="" class="p-navigation-places">
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                <translate key="Places">Places</translate>
+                                <span v-show="config.count.places > 0"
+                                      class="p-navigation-count">{{ config.count.places }}</span>
+                            </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile :to="{ name: 'states' }" @click="" class="p-navigation-states">
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                <translate key="Favorites">Favorites</translate>
+                                <span v-show="config.count.states > 0" class="p-navigation-count">{{ config.count.states }}</span>
+                            </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list-group>
 
                 <!-- v-list-tile to="/discover" @click="" class="p-navigation-discover" v-show="config.experimental">
                     <v-list-tile-action>

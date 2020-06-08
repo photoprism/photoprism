@@ -65,6 +65,7 @@ type ClientCounts struct {
 	Folders        int `json:"folders"`
 	Files          int `json:"files"`
 	Places         int `json:"places"`
+	States         int `json:"states"`
 	Labels         int `json:"labels"`
 	LabelMaxPhotos int `json:"labelMaxPhotos"`
 }
@@ -205,7 +206,7 @@ func (c *Config) ClientConfig() ClientConfig {
 		Take(&result.Count)
 
 	c.Db().Table("albums").
-		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS folders", entity.TypeAlbum, entity.TypeMoment, entity.TypeMonth, entity.TypeFolder).
+		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
 
