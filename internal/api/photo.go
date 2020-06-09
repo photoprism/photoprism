@@ -179,6 +179,39 @@ func GetPhotoYaml(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
+// POST /api/v1/photos/:uid/approve
+//
+// Parameters:
+//   uid: string PhotoUID as returned by the API
+func ApprovePhoto(router *gin.RouterGroup, conf *config.Config) {
+	router.POST("/photos/:uid/approve", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		id := c.Param("uid")
+		m, err := query.PhotoByUID(id)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			return
+		}
+
+		if err := m.Approve(); err != nil {
+			log.Errorf("photo: %s", err.Error())
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			return
+		}
+
+		SavePhotoAsYaml(m, conf)
+
+		PublishPhotoEvent(EntityUpdated, id, c)
+
+		c.JSON(http.StatusOK, gin.H{"photo": m})
+	})
+}
+
 // POST /api/v1/photos/:uid/like
 //
 // Parameters:

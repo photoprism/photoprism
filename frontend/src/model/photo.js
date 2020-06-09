@@ -412,6 +412,10 @@ export class Photo extends RestModel {
         return "Unknown";
     }
 
+    approve() {
+        return Api.post(this.getEntityResource() + "/approve");
+    }
+
     toggleLike() {
         this.Favorite = !this.Favorite;
 

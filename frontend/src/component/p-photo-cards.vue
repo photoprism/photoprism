@@ -81,8 +81,12 @@
                             <v-btn icon flat large absolute :ripple="false"
                                    :class="photo.Favorite ? 'p-photo-like opacity-75' : 'p-photo-like opacity-50'"
                                    @click.stop.prevent="photo.toggleLike()">
-                                <v-icon v-if="photo.Favorite" color="white" class="t-like t-on" :data-uid="photo.UID">favorite</v-icon>
-                                <v-icon v-else color="accent lighten-3" class="t-like t-off" :data-uid="photo.UID">favorite_border</v-icon>
+                                <v-icon v-if="photo.Favorite" color="white" class="t-like t-on" :data-uid="photo.UID">
+                                    favorite
+                                </v-icon>
+                                <v-icon v-else color="accent lighten-3" class="t-like t-off" :data-uid="photo.UID">
+                                    favorite_border
+                                </v-icon>
                             </v-btn>
 
                             <template v-if="photo.isPlayable()">
@@ -117,7 +121,8 @@
                         <v-card-title primary-title class="pa-3 p-photo-desc" style="user-select: none;">
                             <div>
                                 <h3 class="body-2 mb-2" :title="photo.Title">
-                                    <button @click.exact="editPhoto(index)" class="action-title-edit" :data-uid="photo.UID">
+                                    <button @click.exact="editPhoto(index)" class="action-title-edit"
+                                            :data-uid="photo.UID">
                                         {{ photo.Title | truncate(80) }}
                                     </button>
                                 </h3>
@@ -127,7 +132,8 @@
                                     </button>
                                 </div>
                                 <div class="caption">
-                                    <button @click.exact="editPhoto(index)" class="action-date-edit" :data-uid="photo.UID">
+                                    <button @click.exact="editPhoto(index)" class="action-date-edit"
+                                            :data-uid="photo.UID">
                                         <v-icon size="14" title="Taken">date_range</v-icon>
                                         {{ photo.getDateString() }}
                                     </button>
@@ -138,7 +144,8 @@
                                             <v-icon size="14">movie</v-icon>
                                             {{ photo.getVideoInfo() }}
                                         </button>
-                                        <button v-else @click.exact="editPhoto(index)" title="Camera" class="action-camera-edit" :data-uid="photo.UID">
+                                        <button v-else @click.exact="editPhoto(index)" title="Camera"
+                                                class="action-camera-edit" :data-uid="photo.UID">
                                             <v-icon size="14">photo_camera</v-icon>
                                             {{ photo.getPhotoInfo() }}
                                         </button>
@@ -153,7 +160,8 @@
                                     </template>
                                     <template v-if="showLocation && photo.Country !== 'zz'">
                                         <br/>
-                                        <button @click.exact="openLocation(index)" title="Location" class="action-location" :data-uid="photo.UID">
+                                        <button @click.exact="openLocation(index)" title="Location"
+                                                class="action-location" :data-uid="photo.UID">
                                             <v-icon size="14">location_on</v-icon>
                                             {{ photo.locationInfo() }}
                                         </button>
@@ -161,6 +169,18 @@
                                 </div>
                             </div>
                         </v-card-title>
+                        <v-card-actions v-if="photo.Quality < 3 && $config.feature('review')">
+                            <v-layout row wrap align-center>
+                                <v-flex xs12>
+                                    <div class="text-xs-center">
+                                    <v-btn color="secondary-dark" small depressed dark @click.stop="photo.approve()"
+                                           class="action-approve text-xs-center">
+                                        <span>Approve</span>
+                                    </v-btn>
+                                    </div>
+                                </v-flex>
+                            </v-layout>
+                        </v-card-actions>
                     </v-card>
                 </v-hover>
             </v-flex>

@@ -38,6 +38,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetPhotos(v1, conf)
 		api.GetPhotoDownload(v1, conf)
 		api.LinkPhoto(v1, conf)
+		api.ApprovePhoto(v1, conf)
 		api.LikePhoto(v1, conf)
 		api.DislikePhoto(v1, conf)
 		api.AddPhotoLabel(v1, conf)

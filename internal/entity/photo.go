@@ -843,3 +843,29 @@ func (m *Photo) SetFavorite(favorite bool) error {
 
 	return nil
 }
+
+// Approve approves a photo in review.
+func (m *Photo) Approve() error {
+	if m.PhotoQuality >= 3 {
+		// Nothing to do.
+		return nil
+	}
+
+	edited := time.Now().UTC()
+	m.EditedAt = &edited
+	m.PhotoQuality = m.QualityScore()
+
+	if err := Db().Model(m).Updates(Photo{EditedAt: m.EditedAt, PhotoQuality: m.PhotoQuality}).Error; err != nil {
+		return err
+	}
+
+	if err := UpdatePhotoCounts(); err != nil {
+		log.Errorf("photo: %s", err)
+	}
+
+	event.Publish("count.review", event.Data{
+		"count": -1,
+	})
+
+	return nil
+}
