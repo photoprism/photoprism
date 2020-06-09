@@ -92,8 +92,9 @@ Looking forward, specific solutions for funding development and maintenance coul
 
 ## Donations ##
 
-You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
-especially if you need help with using our software. They will match every donation in the first year.
+You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
+especially if you have feature requests or need help with using our software.
+They will match every donation in the first year.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/photoprism). 
 Our [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) and 
 [contributors](https://github.com/photoprism/photoprism/graphs/contributors/) will get for free whatever we might 

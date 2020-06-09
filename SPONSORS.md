@@ -1,8 +1,9 @@
 Let's join forces
 =================
 
-You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
-especially if you need help with using our software. They will match every donation in the first year.
+You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
+especially if you have feature requests or need help with using our software.
+They will match every donation in the first year.
 In addition, you can find us on [Patreon][patreon] and [PayPal][paypal].
 Our sponsors and contributors will get for free whatever we might have to 
 [charge](https://docs.photoprism.org/funding/) for a geodata, public events and maps 
