@@ -173,10 +173,14 @@
                             <v-layout row wrap align-center>
                                 <v-flex xs12>
                                     <div class="text-xs-center">
-                                    <v-btn color="secondary-dark" small depressed dark @click.stop="photo.approve()"
-                                           class="action-approve text-xs-center">
-                                        <span>Approve</span>
-                                    </v-btn>
+                                        <v-btn color="secondary-dark" small flat dark @click.stop="photo.archive()"
+                                               class="action-approve text-xs-center">
+                                            <span>Archive</span>
+                                        </v-btn>
+                                        <v-btn color="secondary-dark" small depressed dark @click.stop="photo.approve()"
+                                               class="action-approve text-xs-center">
+                                            <span>Approve</span>
+                                        </v-btn>
                                     </div>
                                 </v-flex>
                             </v-layout>

@@ -157,20 +157,34 @@
             uploadDialog() {
                 this.$refs.upload.click();
             },
+            reset() {
+                this.busy = false;
+                this.selected = [];
+                this.uploads = [];
+                this.indexing = false;
+                this.failed = false;
+                this.current = 0;
+                this.total = 0;
+                this.completed = 0;
+                this.started = 0;
+            },
             upload() {
+                this.selected = this.$refs.upload.files;
+                this.total = this.selected.length;
+
+                if(this.total < 1) {
+                    return;
+                }
+
                 this.started = Date.now();
                 this.selected = this.$refs.upload.files;
+                this.total = this.selected.length;
                 this.busy = true;
                 this.indexing = false;
                 this.failed = false;
-                this.total = this.selected.length;
                 this.current = 0;
                 this.completed = 0;
                 this.uploads = [];
-
-                if (!this.total) {
-                    return
-                }
 
                 Notify.info(this.$gettext("Uploading photos..."));
 
@@ -205,13 +219,8 @@
                         ).then(() => {
                             ctx.completed = Math.round((ctx.current / ctx.total) * 100);
                         }).catch(() => {
-                            ctx.busy = false;
-                            ctx.indexing = false;
-                            ctx.completed = 100;
-                            ctx.failed = true;
-
-                            Notify.error(ctx.$gettext("Upload failed"));
-                        });
+                            ctx.completed = Math.round((ctx.current / ctx.total) * 100);
+                        })
                     }
                 }
 
@@ -223,29 +232,19 @@
                         move: true,
                         albums: addToAlbums,
                     }).then(() => {
+                        ctx.reset();
                         Notify.success(ctx.$gettext("Upload complete"));
-                        ctx.busy = false;
-                        ctx.indexing = false;
                         ctx.$emit('confirm');
                     }).catch(() => {
+                        ctx.reset();
                         Notify.error(ctx.$gettext("Failure while importing uploaded files"));
-                        ctx.busy = false;
-                        ctx.indexing = false;
                     });
                 });
             },
         },
         watch: {
             show: function () {
-                this.selected = [];
-                this.uploads = [];
-                this.busy = false;
-                this.indexing = false;
-                this.failed = false;
-                this.current = 0;
-                this.total = 0;
-                this.completed = 0;
-                this.started = 0;
+                this.reset();
                 this.review = this.$config.feature("review");
                 this.safe = !this.$config.get("uploadNSFW");
                 this.findAlbums("");

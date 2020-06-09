@@ -412,6 +412,10 @@ export class Photo extends RestModel {
         return "Unknown";
     }
 
+    archive() {
+        return Api.post("batch/photos/archive", {"photos": [this.getId()]});
+    }
+
     approve() {
         return Api.post(this.getEntityResource() + "/approve");
     }
