@@ -214,7 +214,7 @@
                 </v-list-tile>
 
                 <v-list-group v-if="!mini" prepend-icon="place" no-action v-show="$config.feature('places')">
-                    <v-list-tile slot="activator" :to="{ name: 'places' }" @click.stop="" class="p-navigation-places">
+                    <v-list-tile slot="activator" to="/places" @click.stop="" class="p-navigation-places">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate key="Places">Places</translate>
@@ -224,7 +224,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile to="/places/states" @click="" class="p-navigation-states" :exact="true">
+                    <v-list-tile to="/states" @click="" class="p-navigation-states">
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 <translate key="States">States</translate>
