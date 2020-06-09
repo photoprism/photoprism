@@ -10,11 +10,11 @@
                 height="64"
         >
             <v-tab id="tab-settings-general" ripple @click="changePath('/settings')">
-                <translate>General</translate>
+                <translate key="General">General</translate>
             </v-tab>
 
             <v-tab id="tab-settings-accounts" ripple @click="changePath('/settings/accounts')">
-                <translate>Accounts</translate>
+                <translate key="Sync">Sync</translate>
             </v-tab>
 
             <v-tabs-items touchless>
