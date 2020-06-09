@@ -33,11 +33,11 @@ func (m Photos) UIDs() []string {
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
 	ID               uint         `gorm:"primary_key" yaml:"-"`
-	UUID             string       `gorm:"type:varbinary(36);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
+	UUID             string       `gorm:"type:varbinary(42);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
 	TakenAt          time.Time    `gorm:"type:datetime;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
 	TakenAtLocal     time.Time    `gorm:"type:datetime;" yaml:"-"`
 	TakenSrc         string       `gorm:"type:varbinary(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
-	PhotoUID         string       `gorm:"type:varbinary(36);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
+	PhotoUID         string       `gorm:"type:varbinary(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string       `gorm:"type:varbinary(8);default:'image';" json:"Type" yaml:"Type"`
 	PhotoTitle       string       `gorm:"type:varchar(255);" json:"Title" yaml:"Title"`
 	TitleSrc         string       `gorm:"type:varbinary(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
@@ -50,8 +50,8 @@ type Photo struct {
 	PhotoFavorite    bool         `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
 	TimeZone         string       `gorm:"type:varbinary(64);" json:"TimeZone" yaml:"-"`
-	PlaceID          string       `gorm:"type:varbinary(24);index;" json:"PlaceID" yaml:"-"`
-	LocationID       string       `gorm:"type:varbinary(24);index;" json:"LocationID" yaml:"-"`
+	PlaceID          string       `gorm:"type:varbinary(42);index;" json:"PlaceID" yaml:"-"`
+	LocationID       string       `gorm:"type:varbinary(42);index;" json:"LocationID" yaml:"-"`
 	LocSrc           string       `gorm:"type:varbinary(8);" json:"LocSrc" yaml:"LocSrc,omitempty"`
 	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
 	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`

@@ -21,7 +21,7 @@ type Folders []Folder
 type Folder struct {
 	Path              string     `gorm:"type:varbinary(255);unique_index:idx_folders_path_root;" json:"Path" yaml:"Path"`
 	Root              string     `gorm:"type:varbinary(16);default:'';unique_index:idx_folders_path_root;" json:"Root" yaml:"Root,omitempty"`
-	FolderUID         string     `gorm:"type:varbinary(36);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
+	FolderUID         string     `gorm:"type:varbinary(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
 	FolderType        string     `gorm:"type:varbinary(16);" json:"Type" yaml:"Type,omitempty"`
 	FolderTitle       string     `gorm:"type:varchar(255);" json:"Title" yaml:"Title,omitempty"`
 	FolderCategory    string     `gorm:"type:varchar(255);index;" json:"Category" yaml:"Category,omitempty"`

@@ -12,8 +12,8 @@ import (
 
 // Location used to associate photos to location
 type Location struct {
-	ID          string    `gorm:"type:varbinary(24);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	PlaceID     string    `gorm:"type:varbinary(24);" json:"-" yaml:"PlaceID"`
+	ID          string    `gorm:"type:varbinary(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
+	PlaceID     string    `gorm:"type:varbinary(42);" json:"-" yaml:"PlaceID"`
 	Place       *Place    `gorm:"PRELOAD:true" json:"Place" yaml:"-"`
 	LocName     string    `gorm:"type:varchar(255);" json:"Name" yaml:"Name,omitempty"`
 	LocCategory string    `gorm:"type:varchar(64);" json:"Category" yaml:"Category,omitempty"`

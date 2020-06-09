@@ -6,8 +6,8 @@ import (
 
 // PhotoAlbum represents the many_to_many relation between Photo and Album
 type PhotoAlbum struct {
-	PhotoUID  string `gorm:"type:varbinary(36);primary_key;auto_increment:false"`
-	AlbumUID  string `gorm:"type:varbinary(36);primary_key;auto_increment:false;index"`
+	PhotoUID  string `gorm:"type:varbinary(42);primary_key;auto_increment:false"`
+	AlbumUID  string `gorm:"type:varbinary(42);primary_key;auto_increment:false;index"`
 	Order     int
 	Hidden    bool
 	CreatedAt time.Time

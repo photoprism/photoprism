@@ -12,7 +12,7 @@ type Link struct {
 	LinkToken    string     `gorm:"type:varbinary(255);primary_key;" json:"Token"`
 	LinkPassword string     `gorm:"type:varbinary(255);" json:"Password"`
 	LinkExpires  *time.Time `gorm:"type:datetime;" json:"Expires"`
-	ShareUID     string     `gorm:"type:varbinary(36);index;" json:"ShareUID"`
+	ShareUID     string     `gorm:"type:varbinary(42);index;" json:"ShareUID"`
 	CanComment   bool       `json:"CanComment"`
 	CanEdit      bool       `json:"CanEdit"`
 	CreatedAt    time.Time  `deepcopier:"skip" json:"CreatedAt"`

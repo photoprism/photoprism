@@ -16,7 +16,7 @@ type Labels []Label
 // Label is used for photo, album and location categorization
 type Label struct {
 	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
-	LabelUID         string     `gorm:"type:varbinary(36);unique_index;" json:"UID" yaml:"UID"`
+	LabelUID         string     `gorm:"type:varbinary(42);unique_index;" json:"UID" yaml:"UID"`
 	LabelSlug        string     `gorm:"type:varbinary(255);unique_index;" json:"Slug" yaml:"-"`
 	CustomSlug       string     `gorm:"type:varbinary(255);index;" json:"CustomSlug" yaml:"-"`
 	LabelName        string     `gorm:"type:varchar(255);" json:"Name" yaml:"Name"`

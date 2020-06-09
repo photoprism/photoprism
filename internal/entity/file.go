@@ -17,11 +17,11 @@ type Files []File
 // File represents an image or sidecar file that belongs to a photo.
 type File struct {
 	ID              uint          `gorm:"primary_key" json:"-" yaml:"-"`
-	UUID            string        `gorm:"type:varbinary(36);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
+	UUID            string        `gorm:"type:varbinary(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	Photo           *Photo        `json:"-" yaml:"-"`
 	PhotoID         uint          `gorm:"index;" json:"-" yaml:"-"`
-	PhotoUID        string        `gorm:"type:varbinary(36);index;" json:"PhotoUID" yaml:"PhotoUID"`
-	FileUID         string        `gorm:"type:varbinary(36);unique_index;" json:"UID" yaml:"UID"`
+	PhotoUID        string        `gorm:"type:varbinary(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
+	FileUID         string        `gorm:"type:varbinary(42);unique_index;" json:"UID" yaml:"UID"`
 	FileName        string        `gorm:"type:varbinary(768);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
 	FileRoot        string        `gorm:"type:varbinary(16);default:'';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
 	OriginalName    string        `gorm:"type:varbinary(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`

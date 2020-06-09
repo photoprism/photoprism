@@ -11,7 +11,7 @@ import (
 
 // Place used to associate photos to places
 type Place struct {
-	ID          string    `gorm:"type:varbinary(24);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
+	ID          string    `gorm:"type:varbinary(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
 	LocLabel    string    `gorm:"type:varbinary(768);unique_index;" json:"Label" yaml:"Label"`
 	LocCity     string    `gorm:"type:varchar(255);" json:"City" yaml:"City,omitempty"`
 	LocState    string    `gorm:"type:varchar(255);" json:"State" yaml:"State,omitempty"`

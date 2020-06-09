@@ -27,9 +27,9 @@ type Albums []Album
 // Album represents a photo album
 type Album struct {
 	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
-	AlbumUID         string     `gorm:"type:varbinary(36);unique_index;" json:"UID" yaml:"UID"`
-	CoverUID         string     `gorm:"type:varbinary(36);" json:"CoverUID" yaml:"CoverUID,omitempty"`
-	FolderUID        string     `gorm:"type:varbinary(36);index;" json:"FolderUID" yaml:"FolderUID,omitempty"`
+	AlbumUID         string     `gorm:"type:varbinary(42);unique_index;" json:"UID" yaml:"UID"`
+	CoverUID         string     `gorm:"type:varbinary(42);" json:"CoverUID" yaml:"CoverUID,omitempty"`
+	FolderUID        string     `gorm:"type:varbinary(42);index;" json:"FolderUID" yaml:"FolderUID,omitempty"`
 	AlbumSlug        string     `gorm:"type:varbinary(255);index;" json:"Slug" yaml:"Slug"`
 	AlbumType        string     `gorm:"type:varbinary(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
 	AlbumTitle       string     `gorm:"type:varchar(255);" json:"Title" yaml:"Title"`
