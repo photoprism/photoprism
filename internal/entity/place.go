@@ -19,7 +19,7 @@ type Place struct {
 	LocKeywords string    `gorm:"type:varchar(255);" json:"Keywords" yaml:"Keywords,omitempty"`
 	LocNotes    string    `gorm:"type:text;" json:"Notes" yaml:"Notes,omitempty"`
 	LocFavorite bool      `json:"Favorite" yaml:"Favorite,omitempty"`
-	PhotoCount  int       `json:"PhotoCount" yaml:"-"`
+	PhotoCount  int       `gorm:"default:1" json:"PhotoCount" yaml:"-"`
 	CreatedAt   time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt   time.Time `json:"UpdatedAt" yaml:"-"`
 	New         bool      `gorm:"-" json:"-" yaml:"-"`

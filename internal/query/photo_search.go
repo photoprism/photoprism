@@ -186,7 +186,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.State != "" {
-		s = s.Where("places.loc_state IN (?)", strings.Split(txt.Title(f.State), ","))
+		s = s.Where("places.loc_state IN (?)", strings.Split(f.State, ","))
 	}
 
 	if f.Category != "" {

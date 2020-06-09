@@ -75,6 +75,7 @@ func (m *Location) Find(api string) error {
 			LocState:    l.State(),
 			LocCountry:  l.CountryCode(),
 			LocKeywords: l.KeywordString(),
+			PhotoCount:  1,
 		}
 
 		if err := place.Create(); err != nil {
