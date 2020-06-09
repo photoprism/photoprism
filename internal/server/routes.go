@@ -9,11 +9,17 @@ import (
 )
 
 func registerRoutes(router *gin.Engine, conf *config.Config) {
-	// Favicon
+	// Static favicon file.
 	router.StaticFile("/favicon.ico", conf.FaviconsPath()+"/favicon.ico")
 
-	// Static assets like js and css files
+	// Other static assets like JS and CSS files.
 	router.Static("/static", conf.StaticPath())
+
+	// Rainbow page.
+	router.GET("/rainbow", func(c *gin.Context) {
+		clientConfig := conf.PublicClientConfig()
+		c.HTML(http.StatusOK, "rainbow.tmpl", gin.H{"config": clientConfig})
+	})
 
 	// JSON-REST API Version 1
 	v1 := router.Group("/api/v1")
@@ -100,7 +106,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.Websocket(v1, conf)
 	}
 
-	// WebDAV server for file management / sharing
+	// WebDAV server for file management, sync and sharing.
 	if conf.WebDAVPassword() != "" {
 		log.Info("webdav: enabled, username: photoprism")
 
@@ -123,7 +129,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		log.Info("webdav: disabled (no password set)")
 	}
 
-	// Default HTML page (client-side routing implemented via Vue.js)
+	// Default HTML page for client-side rendering and routing via VueJS.
 	router.NoRoute(func(c *gin.Context) {
 		clientConfig := conf.PublicClientConfig()
 		c.HTML(http.StatusOK, conf.DefaultTemplate(), gin.H{"config": clientConfig})
