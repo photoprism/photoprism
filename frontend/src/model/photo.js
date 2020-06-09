@@ -320,7 +320,7 @@ export class Photo extends RestModel {
         if (this.PlaceID === "zz" && this.Country !== "zz") {
             const country = countries.find(c => c.Code === this.Country);
 
-            if(country) {
+            if (country) {
                 return country.Name;
             }
         }
@@ -391,7 +391,13 @@ export class Photo extends RestModel {
             info.push(this.CameraMake + " " + this.CameraModel);
         }
 
-        let file = this.mainFile();
+        let file = this.videoFile();
+
+        if (!file || !file.Width) {
+            file = this.mainFile();
+        } else if (file.Codec) {
+            info.push(file.Codec.toUpperCase());
+        }
 
         this.addSizeInfo(file, info);
 
