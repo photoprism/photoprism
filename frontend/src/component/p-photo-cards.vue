@@ -102,6 +102,11 @@
                                    @click.stop.prevent="openPhoto(index, true)">
                                 <v-icon color="white" class="action-burst">burst_mode</v-icon>
                             </v-btn>
+                            <v-btn v-else-if="photo.Type === 'image' && selection.length && hover" :ripple="false"
+                                   icon flat large absolute class="p-photo-merged opacity-75"
+                                   @click.stop.prevent="openPhoto(index, false)">
+                                <v-icon color="white" class="action-open">zoom_in</v-icon>
+                            </v-btn>
                             <v-btn v-else-if="photo.Type === 'raw'" :ripple="false"
                                    icon flat large absolute class="p-photo-merged opacity-75"
                                    @click.stop.prevent="openPhoto(index, true)" title="RAW">
