@@ -6,18 +6,19 @@ maps:
   animate: 0
   style: streets
 features:
+  upload: true
+  download: true
   archive: true
   private: true
   review: true
-  upload: true
-  import: true
   files: true
   moments: true
   labels: true
   places: true
-  download: true
   edit: true
   share: true
+  library: true
+  import: true
   logs: true
 import:
   path: /

@@ -110,6 +110,11 @@ func CancelImport(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		if conf.ReadOnly() || !conf.Settings().Features.Import {
+			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)
+			return
+		}
+
 		imp := service.Import()
 
 		imp.Cancel()

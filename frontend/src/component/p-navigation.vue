@@ -294,7 +294,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile v-if="mini" to="/library" @click="" class="p-navigation-library">
+                <v-list-tile v-if="mini && $config.feature('library')" to="/library" @click="" class="p-navigation-library">
                     <v-list-tile-action>
                         <v-icon>camera_roll</v-icon>
                     </v-list-tile-action>
@@ -306,7 +306,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-group v-if="!mini" prepend-icon="camera_roll" no-action>
+                <v-list-group v-if="!mini && $config.feature('library')" prepend-icon="camera_roll" no-action>
                     <v-list-tile slot="activator" to="/library" @click.stop="" class="p-navigation-library">
                         <v-list-tile-content>
                             <v-list-tile-title>

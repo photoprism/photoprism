@@ -37,18 +37,19 @@ type ImportSettings struct {
 }
 
 type FeatureSettings struct {
+	Upload   bool `json:"upload" yaml:"upload"`
+	Download bool `json:"download" yaml:"download"`
 	Archive  bool `json:"archive" yaml:"archive"`
 	Private  bool `json:"private" yaml:"private"`
 	Review   bool `json:"review" yaml:"review"`
-	Upload   bool `json:"upload" yaml:"upload"`
-	Import   bool `json:"import" yaml:"import"`
 	Files    bool `json:"files" yaml:"files"`
 	Moments  bool `json:"moments" yaml:"moments"`
 	Labels   bool `json:"labels" yaml:"labels"`
 	Places   bool `json:"places" yaml:"places"`
-	Download bool `json:"download" yaml:"download"`
 	Edit     bool `json:"edit" yaml:"edit"`
 	Share    bool `json:"share" yaml:"share"`
+	Library  bool `json:"library" yaml:"library"`
+	Import   bool `json:"import" yaml:"import"`
 	Logs     bool `json:"logs" yaml:"logs"`
 }
 
@@ -76,18 +77,19 @@ func NewSettings() *Settings {
 			Style:   "streets",
 		},
 		Features: FeatureSettings{
+			Upload:   true,
+			Download: true,
 			Archive:  true,
 			Review:   true,
 			Private:  true,
-			Upload:   true,
-			Import:   true,
 			Files:    true,
 			Moments:  true,
 			Labels:   true,
 			Places:   true,
-			Download: true,
 			Edit:     true,
 			Share:    true,
+			Library:  true,
+			Import:   true,
 			Logs:     true,
 		},
 		Import: ImportSettings{

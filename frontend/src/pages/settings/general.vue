@@ -162,21 +162,6 @@
                         <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
                             <v-checkbox
                                     @change="onChange"
-                                    :disabled="busy || readonly"
-                                    class="ma-0 pa-0 input-import"
-                                    v-model="settings.features.import"
-                                    color="secondary-dark"
-                                    :label="labels.import"
-                                    :hint="hints.import"
-                                    prepend-icon="create_new_folder"
-                                    persistent-hint
-                            >
-                            </v-checkbox>
-                        </v-flex>
-
-                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-                            <v-checkbox
-                                    @change="onChange"
                                     :disabled="busy"
                                     class="ma-0 pa-0 input-archive"
                                     v-model="settings.features.archive"
@@ -244,6 +229,36 @@
                                     :label="labels.labels"
                                     :hint="hints.labels"
                                     prepend-icon="label"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="onChange"
+                                    :disabled="busy"
+                                    class="ma-0 pa-0 input-library"
+                                    v-model="settings.features.library"
+                                    color="secondary-dark"
+                                    :label="labels.library"
+                                    :hint="hints.library"
+                                    prepend-icon="camera_roll"
+                                    persistent-hint
+                            >
+                            </v-checkbox>
+                        </v-flex>
+
+                        <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+                            <v-checkbox
+                                    @change="onChange"
+                                    :disabled="busy || readonly"
+                                    class="ma-0 pa-0 input-import"
+                                    v-model="settings.features.import"
+                                    color="secondary-dark"
+                                    :label="labels.import"
+                                    :hint="hints.import"
+                                    prepend-icon="create_new_folder"
                                     persistent-hint
                             >
                             </v-checkbox>
@@ -377,6 +392,7 @@
                     edit: this.$gettext("Edit"),
                     share: this.$gettext("Share"),
                     logs: this.$gettext("Logs"),
+                    library: this.$gettext("Library"),
                     convert: this.$gettext("Convert to JPEG"),
                 },
                 hints: {
@@ -395,6 +411,7 @@
                     edit: this.$gettext("Change photo titles, locations and other metadata."),
                     share: this.$gettext("Upload to WebDAV and other remote services."),
                     logs: this.$gettext("Show server logs in Library."),
+                    library: this.$gettext("Show Library in navigation menu."),
                     convert: this.$gettext("File types like RAW might need to be converted so that they can be displayed in a browser. JPEGs will be stored in the same folder next to the original using the best possible quality."),
                 },
                 busy: false,

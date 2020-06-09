@@ -23,6 +23,11 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		if !conf.Settings().Features.Library {
+			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)
+			return
+		}
+
 		start := time.Now()
 
 		var f form.IndexOptions
@@ -86,6 +91,11 @@ func CancelIndexing(router *gin.RouterGroup, conf *config.Config) {
 	router.DELETE("/index", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		if !conf.Settings().Features.Library {
+			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)
 			return
 		}
 
