@@ -73,7 +73,7 @@
                         icon="priority_high"
                         class="mt-3"
                         outline
-                        v-if="config.count.hidden > 0"
+                        v-if="config.count.hidden > 1"
                 >
                     The index currently contains {{ config.count.hidden }} hidden files. Their format may not be
                     supported,
