@@ -1,5 +1,5 @@
 <template>
-    <div class="p-tab p-tab-photo-edit-labels">
+    <div class="p-tab p-tab-photo-labels">
         <v-data-table
                 :headers="listColumns"
                 :items="model.Labels"
@@ -91,7 +91,7 @@
     import Label from "model/label";
 
     export default {
-        name: 'p-tab-photo-edit-labels',
+        name: 'p-tab-photo-labels',
         props: {
             model: Object,
         },

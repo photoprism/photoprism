@@ -1,5 +1,5 @@
 <template>
-    <div class="p-tab p-tab-photo-edit-details">
+    <div class="p-tab p-tab-photo-edit">
         <v-container fluid>
             <v-form lazy-validation dense
                     ref="form" class="p-form-photo-edit-meta" accept-charset="UTF-8"
@@ -409,7 +409,7 @@
     import Thumb from "model/thumb";
 
     export default {
-        name: 'p-tab-photo-edit-details',
+        name: 'p-tab-photo-edit',
         props: {
             model: Object,
         },

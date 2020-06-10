@@ -1,5 +1,5 @@
 <template>
-    <div class="p-tab p-tab-photo-edit-files">
+    <div class="p-tab p-tab-photo-files">
         <v-data-table
                 :headers="listColumns"
                 :items="model.Files"
@@ -40,7 +40,7 @@
     import Thumb from "model/thumb";
 
     export default {
-        name: 'p-tab-photo-edit-files',
+        name: 'p-tab-photo-files',
         props: {
             model: Object,
         },

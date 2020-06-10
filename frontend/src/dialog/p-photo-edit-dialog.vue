@@ -29,30 +29,30 @@
                     height="64"
                     class="form"
             >
-                <v-tab id="tab-edit-details" ripple>
-                    <translate>Details</translate>
+                <v-tab id="tab-edit" ripple>
+                    <translate key="Edit">Edit</translate>
                 </v-tab>
 
-                <v-tab id="tab-edit-labels" ripple :disabled="!$config.feature('labels')">
-                    <translate>Labels</translate>
+                <v-tab id="tab-labels" ripple :disabled="!$config.feature('labels')">
+                    <translate key="Labels">Labels</translate>
                 </v-tab>
 
-                <v-tab id="tab-edit-files" ripple>
-                    <translate>Files</translate>
+                <v-tab id="tab-files" ripple>
+                    <translate key="Files">Files</translate>
                 </v-tab>
 
                 <v-tabs-items touchless>
                     <v-tab-item>
-                        <p-tab-photo-edit-details :model="model" ref="details"
-                                                  @close="close" @prev="prev" @next="next"></p-tab-photo-edit-details>
+                        <p-tab-photo-edit :model="model" ref="edit"
+                                          @close="close" @prev="prev" @next="next"></p-tab-photo-edit>
                     </v-tab-item>
 
                     <v-tab-item lazy>
-                        <p-tab-photo-edit-labels :model="model" @close="close"></p-tab-photo-edit-labels>
+                        <p-tab-photo-labels :model="model" @close="close"></p-tab-photo-labels>
                     </v-tab-item>
 
                     <v-tab-item lazy>
-                        <p-tab-photo-edit-files :model="model" @close="close"></p-tab-photo-edit-files>
+                        <p-tab-photo-files :model="model" @close="close"></p-tab-photo-files>
                     </v-tab-item>
                 </v-tabs-items>
             </v-tabs>
@@ -61,9 +61,9 @@
 </template>
 <script>
     import Photo from "../model/photo";
-    import PhotoEditDetails from "./photo/details.vue";
-    import PhotoEditLabels from "./photo/labels.vue";
-    import PhotoEditFiles from "./photo/files.vue";
+    import PhotoEdit from "./photo/edit.vue";
+    import PhotoLabels from "./photo/labels.vue";
+    import PhotoFiles from "./photo/files.vue";
 
     export default {
         name: 'p-photo-edit-dialog',
@@ -74,9 +74,9 @@
             album: Object,
         },
         components: {
-            'p-tab-photo-edit-details': PhotoEditDetails,
-            'p-tab-photo-edit-labels': PhotoEditLabels,
-            'p-tab-photo-edit-files': PhotoEditFiles,
+            'p-tab-photo-edit': PhotoEdit,
+            'p-tab-photo-labels': PhotoLabels,
+            'p-tab-photo-files': PhotoFiles,
         },
         computed: {
             title: function () {
@@ -142,7 +142,7 @@
                 this.model.find(this.selectedId).then(model => {
                     model.refreshFileAttr();
                     this.model = model;
-                    this.$refs.details.refresh(model);
+                    this.$refs.edit.refresh(model);
                     this.loading = false;
                 }).catch(() => this.loading = false);
             },
