@@ -41,7 +41,7 @@
             </v-btn>
 
             <v-btn icon @click.stop="toggleFullScreen()"
-                   class="hidden-xs-only">
+                   class="hidden-xs-only" v-if="experimental">
                 <v-icon v-if="isFullScreen">fullscreen_exit</v-icon>
                 <v-icon v-else>fullscreen</v-icon>
             </v-btn>
@@ -147,6 +147,7 @@
             const configValues = this.$config.values;
 
             return {
+                experimental: this.$config.get("experimental"),
                 isFullScreen: !!document.fullscreenElement,
                 categories: configValues.albumCategories ? configValues.albumCategories : [],
                 searchExpanded: false,
