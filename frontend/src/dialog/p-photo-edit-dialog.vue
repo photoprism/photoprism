@@ -30,7 +30,7 @@
                     class="form"
             >
                 <v-tab id="tab-edit" ripple>
-                    <translate key="Edit">Edit</translate>
+                    <translate key="Details">Details</translate>
                 </v-tab>
 
                 <v-tab id="tab-labels" ripple :disabled="!$config.feature('labels')">
