@@ -8,6 +8,7 @@ ipad
 android
 sync
 usb
+dsc
 upload
 download
 temp

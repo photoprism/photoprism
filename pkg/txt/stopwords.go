@@ -13,6 +13,7 @@ var Stopwords = map[string]bool{
 	"android":          true,
 	"sync":             true,
 	"usb":              true,
+	"dsc":              true,
 	"upload":           true,
 	"download":         true,
 	"temp":             true,
