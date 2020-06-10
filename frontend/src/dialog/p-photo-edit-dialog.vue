@@ -41,6 +41,10 @@
                     <translate key="Files">Files</translate>
                 </v-tab>
 
+                <v-tab id="tab-info" ripple v-if="$config.feature('edit')">
+                    <translate key="Advanced">Advanced</translate>
+                </v-tab>
+
                 <v-tabs-items touchless>
                     <v-tab-item>
                         <p-tab-photo-edit :model="model" ref="edit"
@@ -54,6 +58,10 @@
                     <v-tab-item lazy>
                         <p-tab-photo-files :model="model" @close="close"></p-tab-photo-files>
                     </v-tab-item>
+
+                    <v-tab-item lazy v-if="$config.feature('edit')">
+                        <p-tab-photo-advanced :model="model" @close="close"></p-tab-photo-advanced>
+                    </v-tab-item>
                 </v-tabs-items>
             </v-tabs>
         </v-card>
@@ -64,6 +72,7 @@
     import PhotoEdit from "./photo/edit.vue";
     import PhotoLabels from "./photo/labels.vue";
     import PhotoFiles from "./photo/files.vue";
+    import PhotoAdvanced from "./photo/advanced.vue";
 
     export default {
         name: 'p-photo-edit-dialog',
@@ -77,6 +86,7 @@
             'p-tab-photo-edit': PhotoEdit,
             'p-tab-photo-labels': PhotoLabels,
             'p-tab-photo-files': PhotoFiles,
+            'p-tab-photo-advanced': PhotoAdvanced,
         },
         computed: {
             title: function () {

@@ -28,6 +28,7 @@ export class Photo extends RestModel {
             Path: "",
             Color: "",
             Name: "",
+            OriginalName: "",
             Title: "",
             TitleSrc: "",
             Description: "",
@@ -314,6 +315,18 @@ export class Photo extends RestModel {
 
     hasLocation() {
         return this.Lat !== 0 || this.Lng !== 0;
+    }
+
+    countryName() {
+        if (this.Country !== "zz") {
+            const country = countries.find(c => c.Code === this.Country);
+
+            if (country) {
+                return country.Name;
+            }
+        }
+
+        return "Unknown";
     }
 
     locationInfo() {

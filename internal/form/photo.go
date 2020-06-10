@@ -45,6 +45,9 @@ type Photo struct {
 	CameraID         uint      `json:"CameraID"`
 	CameraSrc        string    `json:"CameraSrc"`
 	LensID           uint      `json:"LensID"`
+	PhotoYear        int       `json:"Year"`
+	PhotoMonth       int       `json:"Month"`
+	OriginalName     string    `json:"OriginalName"`
 }
 
 func NewPhoto(m interface{}) (f Photo, err error) {
