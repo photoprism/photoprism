@@ -32,7 +32,7 @@ func TestSavePhotoForm(t *testing.T) {
 			CameraSrc:        "meta",
 			LensID:           uint(6),
 			LocationID:       "1234",
-			LocSrc:           "manual",
+			LocationSrc:      "manual",
 			PlaceID:          "765",
 			PhotoCountry:     "de",
 			Details: form.Details{
@@ -93,7 +93,7 @@ func TestPhoto_Save(t *testing.T) {
 			CameraSrc:        "meta",
 			LensID:           uint(6),
 			LocationID:       "1234",
-			LocSrc:           "geo",
+			LocationSrc:      "geo",
 			PlaceID:          "765",
 			PhotoCountry:     "de",
 			Keywords:         []Keyword{},

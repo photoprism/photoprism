@@ -24,6 +24,7 @@ export class Photo extends RestModel {
             TakenAt: "",
             TakenAtLocal: "",
             TakenSrc: "",
+            TakenAcc: 0,
             TimeZone: "",
             Path: "",
             Color: "",
@@ -45,6 +46,7 @@ export class Photo extends RestModel {
             Views: 0,
             Camera: {},
             CameraID: 0,
+            CameraSerial: "",
             CameraSrc: "",
             Lens: {},
             LensID: 0,
@@ -68,7 +70,8 @@ export class Photo extends RestModel {
             Place: {},
             PlaceID: "",
             LocationID: "",
-            LocSrc: "",
+            LocationSrc: "",
+            LocationAcc: 0,
             // Additional data in result lists.
             LocLabel: "",
             LocCity: "",
@@ -84,6 +87,8 @@ export class Photo extends RestModel {
             CreatedAt: "",
             UpdatedAt: "",
             DeletedAt: null,
+            EditedAt: null,
+            MaintainedAt: null,
         };
     }
 
@@ -501,7 +506,7 @@ export class Photo extends RestModel {
         }
 
         if (values.Lat || values.Lng || values.Country) {
-            values.LocSrc = SrcManual;
+            values.LocationSrc = SrcManual;
         }
 
         if (values.TakenAt || values.TimeZone) {

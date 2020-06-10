@@ -20,6 +20,7 @@ type PhotoResult struct {
 	TakenAt          time.Time     `json:"TakenAt"`
 	TakenAtLocal     time.Time     `json:"TakenAtLocal"`
 	TakenSrc         string        `json:"TakenSrc"`
+	TakenAcc         int           `json:"TakenAcc"`
 	TimeZone         string        `json:"TimeZone"`
 	PhotoPath        string        `json:"Path"`
 	PhotoName        string        `json:"Name"`
@@ -41,6 +42,8 @@ type PhotoResult struct {
 	PhotoQuality     int           `json:"Quality"`
 	PhotoResolution  int           `json:"Resolution"`
 	CameraID         uint          `json:"CameraID"` // Camera
+	CameraSerial     string        `json:"CameraSerial"`
+	CameraSrc        string        `json:"CameraSrc"`
 	CameraModel      string        `json:"CameraModel"`
 	CameraMake       string        `json:"CameraMake"`
 	LensID           uint          `json:"LensID"` // Lens
@@ -48,6 +51,8 @@ type PhotoResult struct {
 	LensMake         string        `json:"LensMake"`
 	PlaceID          string        `json:"PlaceID"`
 	LocationID       string        `json:"LocationID"` // Location
+	LocationSrc      string        `json:"LocationSrc"`
+	LocationAcc      int           `json:"LocationAcc"`
 	LocLabel         string        `json:"LocLabel"`
 	LocCity          string        `json:"LocCity"`
 	LocState         string        `json:"LocState"`

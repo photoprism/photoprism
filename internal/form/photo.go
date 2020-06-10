@@ -22,6 +22,7 @@ type Photo struct {
 	TakenAt          time.Time `json:"TakenAt"`
 	TakenAtLocal     time.Time `json:"TakenAtLocal"`
 	TakenSrc         string    `json:"TakenSrc"`
+	TakenAcc         int       `json:"TakenAcc"`
 	TimeZone         string    `json:"TimeZone"`
 	PhotoTitle       string    `json:"Title"`
 	TitleSrc         string    `json:"TitleSrc"`
@@ -40,13 +41,12 @@ type Photo struct {
 	PhotoExposure    string    `json:"Exposure"`
 	PhotoCountry     string    `json:"Country"`
 	LocationID       string    `json:"LocationID"`
-	LocSrc           string    `json:"LocSrc"`
+	LocationSrc      string    `json:"LocationSrc"`
+	LocationAcc      int       `json:"LocationAcc"`
 	PlaceID          string    `json:"PlaceID"`
 	CameraID         uint      `json:"CameraID"`
 	CameraSrc        string    `json:"CameraSrc"`
 	LensID           uint      `json:"LensID"`
-	PhotoYear        int       `json:"Year"`
-	PhotoMonth       int       `json:"Month"`
 	OriginalName     string    `json:"OriginalName"`
 }
 

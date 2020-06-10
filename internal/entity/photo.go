@@ -37,6 +37,7 @@ type Photo struct {
 	TakenAt          time.Time    `gorm:"type:datetime;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
 	TakenAtLocal     time.Time    `gorm:"type:datetime;" yaml:"-"`
 	TakenSrc         string       `gorm:"type:varbinary(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
+	TakenAcc         int          `json:"TakenAcc" yaml:"TakenAcc,omitempty"`
 	PhotoUID         string       `gorm:"type:varbinary(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string       `gorm:"type:varbinary(8);default:'image';" json:"Type" yaml:"Type"`
 	PhotoTitle       string       `gorm:"type:varchar(255);" json:"Title" yaml:"Title"`
@@ -52,7 +53,8 @@ type Photo struct {
 	TimeZone         string       `gorm:"type:varbinary(64);" json:"TimeZone" yaml:"-"`
 	PlaceID          string       `gorm:"type:varbinary(42);index;" json:"PlaceID" yaml:"-"`
 	LocationID       string       `gorm:"type:varbinary(42);index;" json:"LocationID" yaml:"-"`
-	LocSrc           string       `gorm:"type:varbinary(8);" json:"LocSrc" yaml:"LocSrc,omitempty"`
+	LocationSrc      string       `gorm:"type:varbinary(8);" json:"LocationSrc" yaml:"LocationSrc,omitempty"`
+	LocationAcc      int          `json:"LocationAcc" yaml:"LocationAcc,omitempty"`
 	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
 	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
 	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
@@ -119,7 +121,7 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 		model.Details.Keywords = strings.Join(txt.UniqueWords(txt.Words(model.Details.Keywords)), ", ")
 	}
 
-	if locChanged && model.LocSrc == SrcManual {
+	if locChanged && model.LocationSrc == SrcManual {
 		locKeywords, labels := model.UpdateLocation(geoApi)
 
 		model.AddLabels(labels)
@@ -759,14 +761,14 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 		return
 	}
 
-	if m.LocSrc != SrcAuto && m.LocSrc != source && source != SrcManual {
+	if m.LocationSrc != SrcAuto && m.LocationSrc != source && source != SrcManual {
 		return
 	}
 
 	m.PhotoLat = lat
 	m.PhotoLng = lng
 	m.PhotoAltitude = altitude
-	m.LocSrc = source
+	m.LocationSrc = source
 }
 
 // AllFilesMissing returns true, if all files for this photo are missing.
