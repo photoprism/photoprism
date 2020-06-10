@@ -40,6 +40,12 @@
                 <v-icon>view_column</v-icon>
             </v-btn>
 
+            <v-btn icon @click.stop="toggleFullScreen()"
+                   class="hidden-xs-only">
+                <v-icon v-if="isFullScreen">fullscreen_exit</v-icon>
+                <v-icon v-else>fullscreen</v-icon>
+            </v-btn>
+
             <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
                    class="hidden-sm-and-down">
                 <v-icon>cloud_upload</v-icon>
@@ -58,13 +64,13 @@
                 <v-layout row wrap>
                     <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
                         <v-combobox flat solo hide-details color="secondary-dark"
-                                v-model="album.Category"
-                                :items="categories"
-                                :label="labels.category"
-                                @change="updateAlbum"
+                                    v-model="album.Category"
+                                    :items="categories"
+                                    :label="labels.category"
+                                    @change="updateAlbum"
                                     :allow-overflow="false"
                                     return-masked-value
-                                class="input-category"
+                                    class="input-category"
                         ></v-combobox>
                     </v-flex>
                     <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
@@ -141,6 +147,7 @@
             const configValues = this.$config.values;
 
             return {
+                isFullScreen: !!document.fullscreenElement,
                 categories: configValues.albumCategories ? configValues.albumCategories : [],
                 searchExpanded: false,
                 options: {
@@ -175,6 +182,15 @@
             };
         },
         methods: {
+            toggleFullScreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().then(() => this.isFullScreen = true);
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen().then(() => this.isFullScreen = false);
+                    }
+                }
+            },
             showUpload() {
                 Event.publish("dialog.upload");
             },
@@ -183,7 +199,7 @@
                 this.growDesc = !this.growDesc;
             },
             updateAlbum() {
-                if(this.album.wasChanged()) {
+                if (this.album.wasChanged()) {
                     this.album.update();
                 }
             },
