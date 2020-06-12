@@ -54,6 +54,108 @@
                 filter.quality = 3;
             }
 
+            let mapFont = ['Roboto', 'sans-serif'];
+            let mapOptions = {
+                container: "map",
+                style: "https://api.maptiler.com/maps/" + s.style + "/style.json?key=xCDwZsNKW3rlveVG0WUU",
+                attributionControl: true,
+                customAttribution: this.attribution,
+                zoom: 0,
+            };
+
+            if (s.style === "offline") {
+                mapFont = ["Open Sans Semibold"];
+                mapOptions = {
+                    container: "map",
+                    style: {
+                        "version": 8,
+                        "sources": {
+                            "world": {
+                                "type": "geojson",
+                                "data": "/static/geo/world.json",
+                                "maxzoom": 6
+                            }
+                        },
+                        "glyphs": "/static/font/{fontstack}/{range}.pbf",
+                        "layers": [
+                            {
+                                "id": "background",
+                                "type": "background",
+                                "paint": {
+                                    "background-color": "#aadafe"
+                                }
+                            },
+                            {
+                                id: "land",
+                                type: "fill",
+                                source: "world",
+                                // "source-layer": "land",
+                                paint: {
+                                    "fill-color": "#cbe5ca",
+                                },
+                            },
+                            {
+                                "id": "country-abbrev",
+                                "type": "symbol",
+                                "source": "world",
+                                "maxzoom": 3,
+                                "layout": {
+                                    "text-field": "{abbrev}",
+                                    "text-font": ["Open Sans Semibold"],
+                                    "text-transform": "uppercase",
+                                    "text-max-width": 20,
+                                    "text-size": {
+                                        "stops": [[3, 10], [4, 11], [5, 12], [6, 16]]
+                                    },
+                                    "text-letter-spacing": {
+                                        "stops": [[4, 0], [5, 1], [6, 2]]
+                                    },
+                                    "text-line-height": {
+                                        "stops": [[5, 1.2], [6, 2]]
+                                    }
+                                },
+                                "paint": {
+                                    "text-halo-color": "#fff",
+                                    "text-halo-width": 1
+                                },
+                            },
+                            {
+                                "id": "country-border",
+                                "type": "line",
+                                "source": "world",
+                                "paint": {
+                                    "line-color": "#226688",
+                                    "line-opacity": 0.25,
+                                    "line-dasharray": [6, 2, 2, 2],
+                                    "line-width": 1.2
+                                }
+                            },
+                            {
+                                "id": "country-name",
+                                "type": "symbol",
+                                "minzoom": 3,
+                                "source": "world",
+                                "layout": {
+                                    "text-field": "{name}",
+                                    "text-font": ["Open Sans Semibold"],
+                                    "text-max-width": 20,
+                                    "text-size": {
+                                        "stops": [[3, 10], [4, 11], [5, 12], [6, 16]]
+                                    }
+                                },
+                                "paint": {
+                                    "text-halo-color": "#fff",
+                                    "text-halo-width": 1
+                                },
+                            },
+                        ],
+                    },
+                    attributionControl: true,
+                    customAttribution: this.attribution,
+                    zoom: 0,
+                };
+            }
+
             return {
                 initialized: false,
                 map: null,
@@ -62,13 +164,8 @@
                 loading: false,
                 url: 'https://api.maptiler.com/maps/' + s.style + '/{z}/{x}/{y}.png?key=xCDwZsNKW3rlveVG0WUU',
                 attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-                options: {
-                    container: "map",
-                    style: "https://api.maptiler.com/maps/" + s.style + "/style.json?key=xCDwZsNKW3rlveVG0WUU",
-                    attributionControl: true,
-                    customAttribution: this.attribution,
-                    zoom: 0,
-                },
+                options: mapOptions,
+                mapFont: mapFont,
                 photos: [],
                 result: {},
                 filter: filter,
@@ -142,7 +239,13 @@
                     this.map.getSource("photos").setData(this.result);
 
                     if (this.filter.q || !this.initialized) {
-                        this.map.fitBounds(this.result.bbox, {maxZoom: 17, padding: 100, duration: this.settings.animate, essential: false, animate: this.settings.animate > 0});
+                        this.map.fitBounds(this.result.bbox, {
+                            maxZoom: 17,
+                            padding: 100,
+                            duration: this.settings.animate,
+                            essential: false,
+                            animate: this.settings.animate > 0
+                        });
                     }
 
                     this.initialized = true;
@@ -154,7 +257,7 @@
             renderMap() {
                 this.map = new mapboxgl.Map(this.options);
 
-                this.map.addControl(new mapboxgl.NavigationControl({showCompass: false}, 'top-right'));
+                this.map.addControl(new mapboxgl.NavigationControl({showCompass: true}, 'top-right'));
                 this.map.addControl(new mapboxgl.FullscreenControl({container: document.querySelector('body')}));
                 this.map.addControl(new mapboxgl.GeolocateControl({
                     positionOptions: {
@@ -250,7 +353,7 @@
                     filter: ['has', 'point_count'],
                     layout: {
                         'text-field': '{point_count_abbreviated}',
-                        'text-font': ['Roboto', 'sans-serif'],
+                        'text-font': this.mapFont,
                         'text-size': 13
                     }
                 });

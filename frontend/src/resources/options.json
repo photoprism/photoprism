@@ -67,6 +67,10 @@
   ],
   "mapsStyle": [
     {
+      "text": "Offline",
+      "value": "offline"
+    },
+    {
       "text": "Streets",
       "value": "streets"
     },
