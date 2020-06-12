@@ -186,13 +186,14 @@ func CountryCode(s string) string {
 		return "zz"
 	}
 
-	r := strings.NewReplacer("--", " / ", "_", " ", "-", " ")
+	r := strings.NewReplacer("\\", " ", "/", " ", "_", " ", "-", " ")
 	s = r.Replace(s)
-	s = strings.ToLower(s)
-	s = strings.ReplaceAll(s, "  ", " ")
+	words := strings.Fields(s)
 
-	for keyword, code := range Countries {
-		if strings.Contains(s, keyword) {
+	for _, w := range words {
+		search := strings.ToLower(strings.Trim(w, ":.,;!?/-_"))
+
+		if code, ok := Countries[search]; ok {
 			return code
 		}
 	}

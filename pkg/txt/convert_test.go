@@ -197,14 +197,44 @@ func TestCountryCode(t *testing.T) {
 		assert.Equal(t, "gb", result)
 	})
 
+	t.Run("reunion island", func(t *testing.T) {
+		result := CountryCode("Reunion-Island-2019")
+		assert.Equal(t, "zz", result)
+	})
+
+	t.Run("reunion island france", func(t *testing.T) {
+		result := CountryCode("Reunion-Island-france-2019")
+		assert.Equal(t, "fr", result)
+	})
+
+	t.Run("réunion", func(t *testing.T) {
+		result := CountryCode("My-RéunioN-2019")
+		assert.Equal(t, "fr", result)
+	})
+
+	t.Run("NYC", func(t *testing.T) {
+		result := CountryCode("NYC 2019")
+		assert.Equal(t, "us", result)
+	})
+
+	t.Run("Scuba", func(t *testing.T) {
+		result := CountryCode("Scuba 2019")
+		assert.Equal(t, "zz", result)
+	})
+
+	t.Run("Cuba", func(t *testing.T) {
+		result := CountryCode("Cuba 2019")
+		assert.Equal(t, "cu", result)
+	})
+
 	t.Run("San Francisco", func(t *testing.T) {
 		result := CountryCode("San Francisco 2019")
-		assert.Equal(t, "us", result)
+		assert.Equal(t, "zz", result)
 	})
 
 	t.Run("U.S.A.", func(t *testing.T) {
 		result := CountryCode("Born in the U.S.A. is a song written and performed by Bruce Springsteen...")
-		assert.Equal(t, "us", result)
+		assert.Equal(t, "zz", result)
 	})
 
 	t.Run("US", func(t *testing.T) {

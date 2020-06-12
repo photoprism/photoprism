@@ -26,7 +26,7 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 	})
 
 	t.Run("de", func(t *testing.T) {
-		m := Photo{PhotoName: "flughafen", PhotoPath: "2020/Berlin", OriginalName: "Flughafen BER.jpg"}
+		m := Photo{PhotoName: "Brauhaus", PhotoPath: "2020/Bayern", OriginalName: "München.jpg"}
 		assert.Equal(t, UnknownCountry.ID, m.CountryCode())
 		assert.Equal(t, UnknownCountry.CountryName, m.CountryName())
 		m.EstimateCountry()
@@ -42,6 +42,4 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 		assert.Equal(t, "ca", m.CountryCode())
 		assert.Equal(t, "Canada", m.CountryName())
 	})
-
-	//OriginalName: "demo/Toronto/port-lands--gardiner-expressway--toronto_7999515645_o.jpg"
 }
