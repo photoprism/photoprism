@@ -42,7 +42,7 @@
                 </v-tab>
 
                 <v-tab id="tab-info" ripple v-if="$config.feature('edit')">
-                    <translate key="Info">Info</translate>
+                    <v-icon>settings</v-icon>
                 </v-tab>
 
                 <v-tabs-items touchless>
