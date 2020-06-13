@@ -10,14 +10,14 @@ AT:Salzburg
 AT:Klagenfurt
 AT:Innsbruck
 HU:Hungary
-GE:Republic of Georgia
+GE:Georgia Republic
 VA:Vatican City
 PL:Poland
 PL:Warsaw
 PL:Warschau
 KH:Cambodia
 LA:Vientiane
-LA:Lao People's Democratic Republic
+LA:Lao Republic
 VN:Vietnam
 DK:Denmark
 MM:Myanmar
@@ -26,7 +26,6 @@ CZ:Czech
 CH:Zurich
 CH:Zürich
 CH:St Gallen
-CH:St. Gallen
 CH:Basel
 CH:Lucerne
 CH:Luzern
@@ -51,7 +50,7 @@ BR:Brazil
 BR:Brasil
 RU:Russia
 UA:Ukraine
-GB:UnitedKingdom
+GB:United Kingdom
 GB:London
 GB:Scotland
 GB:Edinburgh
@@ -128,9 +127,7 @@ ZA:Pretoria
 ZA:Kapstadt
 ZA:Johannesburg
 ZA:South Africa
-ZA:Republic of South Africa
 SZ:Eswatini
-SZ:Kingdom of Eswatini
 SZ:Swaziland
 RO:Romania
 EC:Ecuador
@@ -138,7 +135,6 @@ MX:Mexico
 CO:Colombia
 US:California
 US:Washington
-US:The White House
 US:New York
 US:NYC
 US:Florida
@@ -168,8 +164,6 @@ US:Detroit
 US:Nevada
 US:Texas
 US:USA
-US:U.S.A.
-US:U.S.
 US:United States
 MN:Mongolia
 CL:Chile
@@ -186,19 +180,18 @@ BG:Bulgaria
 GR:Greece
 GR:Hellas
 KP:North Korea
-KP:Democratic People's Republic of Korea
 KP:DPRK
 KP:DPR Korea
 DZ:Algeria
 TN:Tunisia
 LY:Libya
 MR:Mauritania
-GM:The Gambia
+GM:Gambia
 SN:Senegal
-GW:Guinea-Bissau
+GW:Guinea Bissau
 SL:Sierra Leone
 GN:Guinea
-CI:Côte d'Ivoire
+CI:Ivory Coast
 LR:Liberia
 GH:Ghana
 TG:Togo
@@ -208,7 +201,7 @@ ML:Mali
 NE:Niger
 NG:Nigeria
 SD:Sudan
-CF:Central African Republic
+CF:Central African
 GQ:Equatorial Guinea
 GA:Gabon
 CG:Congo Brazzaville
@@ -276,16 +269,15 @@ TL:East Timor
 PK:Pakistan
 SA:Saudi Arabia
 KR:South Korea
-AE:United Arab Emirates
-AE:Emirates
+AE:United Arab
+AE:UAE
 CY:Cyprus
 DM:Dominica
 HT:Haiti
 HT:Hayti
 CU:Cuba
-PG:Papua New Guinea
+PG:New Guinea
 AM:Armenia
-AM:Republic of Armenia
 AZ:Azerbaijan
 MT:Malta
 IT:Italy
@@ -300,7 +292,6 @@ IT:Venezia
 IT:Venedig
 IT:Italien
 JE:Jersey Island
-JE:Bailiwick of Jersey
 BH:Bahrain
 JP:Japan
 JP:Tokyo
@@ -377,7 +368,6 @@ CA:Ontario
 CA:Alberta
 CA:Niagara Falls
 IL:Israel
-IL:State of Israel
 IL:Holy Land
 EG:Egypt
 EG:Ägypten
@@ -393,12 +383,9 @@ BW:Gaborone
 BW:Botswana
 BW:Botsuana
 SH:Saint Helena
-SH:Ascension
-SH:Tristan da Cunha
-GS:South Sandwich Island
+GS:Sandwich Island
 BM:Bermuda
-IO:British Indian Ocean
-IO:British Indian Territory
+IO:British Indian
 TH:Thailand
 XK:Kosovo
 LS:Lesotho

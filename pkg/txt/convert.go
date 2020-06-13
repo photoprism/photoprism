@@ -13,6 +13,7 @@ var DatePathRegexp = regexp.MustCompile("\\D\\d{4}/\\d{1,2}/?\\d*")
 var DateTimeRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}.{1,4}\\d{2}\\D\\d{2}\\D\\d{2,}")
 var DateIntRegexp = regexp.MustCompile("\\d{1,4}")
 var YearRegexp = regexp.MustCompile("\\d{4,5}")
+var CountryWordsRegexp = regexp.MustCompile("[\\p{L}]{2,}")
 
 var (
 	YearMin = 1990
@@ -186,12 +187,18 @@ func CountryCode(s string) string {
 		return "zz"
 	}
 
-	r := strings.NewReplacer("\\", " ", "/", " ", "_", " ", "-", " ")
-	s = r.Replace(s)
-	words := strings.Fields(s)
+	words := CountryWordsRegexp.FindAllString(s, -1)
 
-	for _, w := range words {
-		search := strings.ToLower(strings.Trim(w, ":.,;!?/-_"))
+	for i, w := range words {
+		if i < len(words)-1 {
+			search := strings.ToLower(w + " " + words[i+1])
+
+			if code, ok := Countries[search]; ok {
+				return code
+			}
+		}
+
+		search := strings.ToLower(w)
 
 		if code, ok := Countries[search]; ok {
 			return code

@@ -229,7 +229,27 @@ func TestCountryCode(t *testing.T) {
 
 	t.Run("San Francisco", func(t *testing.T) {
 		result := CountryCode("San Francisco 2019")
-		assert.Equal(t, "zz", result)
+		assert.Equal(t, "us", result)
+	})
+
+	t.Run("Los Angeles", func(t *testing.T) {
+		result := CountryCode("I was in Los Angeles")
+		assert.Equal(t, "us", result)
+	})
+
+	t.Run("St Gallen", func(t *testing.T) {
+		result := CountryCode("St.----Gallen")
+		assert.Equal(t, "ch", result)
+	})
+
+	t.Run("Congo Brazzaville", func(t *testing.T) {
+		result := CountryCode("Congo Brazzaville")
+		assert.Equal(t, "cg", result)
+	})
+
+	t.Run("Congo", func(t *testing.T) {
+		result := CountryCode("Congo")
+		assert.Equal(t, "cd", result)
 	})
 
 	t.Run("U.S.A.", func(t *testing.T) {
