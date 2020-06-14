@@ -242,6 +242,58 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
+// POST /api/v1/albums/:uid/clone
+func CloneAlbums(router *gin.RouterGroup, conf *config.Config) {
+	router.POST("/albums/:uid/clone", func(c *gin.Context) {
+		if Unauthorized(c, conf) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		a, err := query.AlbumByUID(c.Param("uid"))
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			return
+		}
+
+		var f form.Selection
+
+		if err := c.BindJSON(&f); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		var added []entity.PhotoAlbum
+
+		for _, uid := range f.Albums {
+			cloneAlbum, err := query.AlbumByUID(uid)
+
+			if err != nil {
+				log.Errorf("album: %s", err)
+				continue
+			}
+
+			photos, err := query.AlbumPhotos(cloneAlbum, 10000)
+
+			if err != nil {
+				log.Errorf("album: %s", err)
+				continue
+			}
+
+			added = append(added, a.AddPhotos(photos.UIDs())...)
+		}
+
+		if len(added) > 0 {
+			event.Success(fmt.Sprintf("selection added to %s", txt.Quote(a.Title())))
+
+			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "album contents cloned", "album": a, "added": added})
+	})
+}
+
 // POST /api/v1/albums/:uid/photos
 func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.POST("/albums/:uid/photos", func(c *gin.Context) {
@@ -333,7 +385,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// GET /albums/:uid/dl
+// GET /api/v1/albums/:uid/dl
 func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 	router.GET("/albums/:uid/dl", func(c *gin.Context) {
 		if InvalidDownloadToken(c, conf) {

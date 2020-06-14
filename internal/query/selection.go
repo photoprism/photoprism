@@ -31,7 +31,7 @@ func PhotoSelection(f form.Selection) (results entity.Photos, err error) {
 		OR photos.photo_path IN (
 			SELECT a.path FROM folders a WHERE a.folder_uid IN (?) UNION
 			SELECT b.path FROM folders a JOIN folders b ON b.path LIKE %s WHERE a.folder_uid IN (?))
-		OR photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE album_uid IN (?))
+		OR photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND album_uid IN (?))
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN labels l ON pl.label_id = l.id AND l.deleted_at IS NULL WHERE l.label_uid IN (?))
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN categories c ON c.label_id = pl.label_id JOIN labels lc ON lc.id = c.category_id AND lc.deleted_at IS NULL WHERE lc.label_uid IN (?))`,
 		concat)
@@ -70,7 +70,7 @@ func FileSelection(f form.Selection) (results entity.Files, err error) {
 		OR photos.photo_path IN (
 			SELECT a.path FROM folders a WHERE a.folder_uid IN (?) UNION
 			SELECT b.path FROM folders a JOIN folders b ON b.path LIKE %s WHERE a.folder_uid IN (?))
-		OR photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE album_uid IN (?))
+		OR photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND album_uid IN (?))
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN labels l ON pl.label_id = l.id AND l.deleted_at IS NULL WHERE l.label_uid IN (?))
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN categories c ON c.label_id = pl.label_id JOIN labels lc ON lc.id = c.category_id AND lc.deleted_at IS NULL WHERE lc.label_uid IN (?))`,
 		concat)

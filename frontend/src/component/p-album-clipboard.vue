@@ -35,7 +35,18 @@
                 >
                     <v-icon>get_app</v-icon>
                 </v-btn>
-
+                <v-btn
+                        fab
+                        dark
+                        small
+                        :title="labels.clone"
+                        color="album"
+                        :disabled="selection.length === 0"
+                        @click.stop="dialog.album = true"
+                        class="p-album-clipboard-clone"
+                >
+                    <v-icon>folder</v-icon>
+                </v-btn>
                 <v-btn
                         fab
                         dark
@@ -61,6 +72,8 @@
                 </v-btn>
             </v-speed-dial>
         </v-container>
+        <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false"
+                              @confirm="cloneAlbums"></p-photo-album-dialog>
         <p-album-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false"
                                @confirm="batchDelete"></p-album-delete-dialog>
     </div>
@@ -81,10 +94,12 @@
                 expanded: false,
                 dialog: {
                     delete: false,
+                    album: false,
                     edit: false,
                 },
                 labels: {
                     download: this.$gettext("Download"),
+                    clone: this.$gettext("Add to album"),
                     delete: this.$gettext("Delete"),
                 },
 
@@ -94,6 +109,14 @@
             clearClipboard() {
                 this.clearSelection();
                 this.expanded = false;
+            },
+            cloneAlbums(ppid) {
+                this.dialog.album = false;
+
+                Api.post(`albums/${ppid}/clone`, {"albums": this.selection}).then(() => this.onCloned());
+            },
+            onCloned() {
+                this.clearClipboard();
             },
             batchDelete() {
                 this.dialog.delete = false;

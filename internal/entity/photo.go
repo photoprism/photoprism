@@ -19,7 +19,7 @@ import (
 
 type Photos []Photo
 
-// UIDs returns a slice of unique photo IDs.
+// UIDs returns a slice of photo UIDs.
 func (m Photos) UIDs() []string {
 	result := make([]string, len(m))
 

@@ -88,6 +88,17 @@ type PhotoResult struct {
 
 type PhotoResults []PhotoResult
 
+// UIDs returns a slice of photo UIDs.
+func (m PhotoResults) UIDs() []string {
+	result := make([]string, len(m))
+
+	for i, el := range m {
+		result[i] = el.PhotoUID
+	}
+
+	return result
+}
+
 func (m PhotoResults) Merged() (PhotoResults, int, error) {
 	count := len(m)
 	merged := make([]PhotoResult, 0, count)

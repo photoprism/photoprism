@@ -87,6 +87,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.LikeAlbum(v1, conf)
 		api.DislikeAlbum(v1, conf)
 		api.AlbumThumbnail(v1, conf)
+		api.CloneAlbums(v1, conf)
 		api.AddPhotosToAlbum(v1, conf)
 		api.RemovePhotosFromAlbum(v1, conf)
 
