@@ -39,7 +39,7 @@
                                         :disabled="disabled"
                                         :rules="[textRule]"
                                         hide-details
-                                        label="Title"
+                                        :label="labels.title"
                                         placeholder=""
                                         color="secondary-dark"
                                         browser-autocomplete="off"
@@ -54,7 +54,7 @@
                                         :disabled="disabled"
                                         :value="timeLocalFormatted"
                                         browser-autocomplete="off"
-                                        label="Local Time"
+                                        :label="labels.localtime"
                                         readonly
                                         hide-details
                                         color="secondary-dark"
@@ -74,7 +74,7 @@
                                         <v-text-field
                                                 :disabled="disabled"
                                                 :value="timeFormatted"
-                                                label="UTC Time"
+                                                :label="labels.utctime"
                                                 readonly
                                                 hide-details
                                                 v-on="on"
@@ -103,7 +103,7 @@
                                                 :disabled="disabled"
                                                 :value="dateFormatted"
                                                 browser-autocomplete="off"
-                                                label="UTC Date"
+                                                :label="labels.utcdate"
                                                 readonly
                                                 hide-details
                                                 v-on="on"
@@ -139,7 +139,7 @@
                                         :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
-                                        label="Latitude"
+                                        :label="labels.latitude"
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Lat"
@@ -152,7 +152,7 @@
                                         :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
-                                        label="Longitude"
+                                        :label="labels.longitude"
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Lng"
@@ -165,7 +165,7 @@
                                         :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
-                                        label="Altitude (m)"
+                                        :label="labels.altitude"
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Altitude"
@@ -221,7 +221,7 @@
                                         :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
-                                        label="Exposure"
+                                        :label="labels.exposure"
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Exposure"
@@ -249,7 +249,7 @@
                                         :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
-                                        label="F Number"
+                                        :label="labels.fnumber"
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.FNumber"
@@ -262,7 +262,7 @@
                                         :disabled="disabled"
                                         hide-details
                                         browser-autocomplete="off"
-                                        label="Focal Length"
+                                        :label="labels.focallength"
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.FocalLength"
@@ -277,7 +277,7 @@
                                         hide-details
                                         browser-autocomplete="off"
                                         auto-grow
-                                        label="Subject"
+                                        :label="labels.subject"
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
@@ -292,7 +292,7 @@
                                         :rules="[textRule]"
                                         hide-details
                                         browser-autocomplete="off"
-                                        label="Artist"
+                                        :label="labels.artist"
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Details.Artist"
@@ -306,7 +306,7 @@
                                         :rules="[textRule]"
                                         hide-details
                                         browser-autocomplete="off"
-                                        label="Copyright"
+                                        :label="labels.copyright"
                                         placeholder=""
                                         color="secondary-dark"
                                         v-model="model.Details.Copyright"
@@ -321,7 +321,7 @@
                                         hide-details
                                         browser-autocomplete="off"
                                         auto-grow
-                                        label="License"
+                                        :label="labels.license"
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
@@ -336,7 +336,7 @@
                                         hide-details
                                         browser-autocomplete="off"
                                         auto-grow
-                                        label="Description"
+                                        :label="labels.description"
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
@@ -351,7 +351,7 @@
                                         hide-details
                                         browser-autocomplete="off"
                                         auto-grow
-                                        label="Keywords"
+                                        :label="labels.keywords"
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
@@ -366,7 +366,7 @@
                                         hide-details
                                         browser-autocomplete="off"
                                         auto-grow
-                                        label="Notes"
+                                        :label="labels.notes"
                                         placeholder=""
                                         :rows="1"
                                         color="secondary-dark"
@@ -383,11 +383,11 @@
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save(false)"
                                        class="p-photo-dialog-confirm action-approve">
                                     <span v-if="$config.feature('review') && model.Quality < 3">Approve</span>
-                                    <span v-else>Apply</span>
+                                    <span v-else><translate>Apply</translate></span>
                                 </v-btn>
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save(true)"
                                        class="p-photo-dialog-confirm hidden-xs-only action-ok">
-                                    <span>OK</span>
+                                    <span><translate>OK</translate></span>
                                     <v-icon right dark>done</v-icon>
                                 </v-btn>
                             </v-flex>
@@ -437,6 +437,23 @@
                     after: this.$gettext("Taken after"),
                     language: this.$gettext("Language"),
                     timezone: this.$gettext("Time Zone"),
+                    title: this.$gettext("Title"),
+                    localtime: this.$gettext("Local Time"),
+                    utctime: this.$gettext("UTC Time"),
+                    utcdate: this.$gettext("UTC Date"),
+                    latitude: this.$gettext("Latitude"),
+                    longitude: this.$gettext("Longitude"),
+                    altitude: this.$gettext("Altitude (m)"),
+                    exposure: this.$gettext("Exposure"),
+                    fnumber: this.$gettext("F Number"),
+                    focallength: this.$gettext("Focal Length"),
+                    subject: this.$gettext("Subject"),
+                    artist: this.$gettext("Artist"),
+                    copyright: this.$gettext("Copyright"),
+                    license: this.$gettext("License"),
+                    description: this.$gettext("Description"),
+                    keywords: this.$gettext("Keywords"),
+                    notes: this.$gettext("Notes"),
                 },
                 showDatePicker: false,
                 showTimePicker: false,

@@ -4,27 +4,27 @@
             <table class="v-datatable v-table theme--light">
                 <tbody>
                 <tr>
-                    <td>UID</td>
+                    <td><translate>UID</translate></td>
                     <td>{{ model.UID | uppercase }}</td>
                 </tr>
                 <tr v-if="model.DocumentID">
-                    <td>Document ID</td>
+                    <td><translate>Document ID</translate></td>
                     <td>{{ model.DocumentID | uppercase }}</td>
                 </tr>
                 <tr>
-                    <td>Type</td>
+                    <td><translate>Type</translate></td>
                     <td>{{ model.Type | capitalize }}</td>
                 </tr>
                 <tr v-if="model.Path">
-                    <td>Path</td>
+                    <td><translate>Path</translate></td>
                     <td>{{ model.Path }}</td>
                 </tr>
                 <tr>
-                    <td>Name</td>
+                    <td><translate>Name</translate></td>
                     <td>{{ model.Name }}</td>
                 </tr>
                 <tr v-if="model.OriginalName">
-                    <td>Original Name</td>
+                    <td><translate>Original Name</translate></td>
                     <td>
                         <v-text-field
                                 @change="save"
@@ -35,15 +35,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Title</td>
+                    <td><translate>Title</translate></td>
                     <td>{{ model.Title }}</td>
                 </tr>
                 <tr v-if="model.TitleSrc">
-                    <td>Title Source</td>
+                    <td><translate>Title Source</translate></td>
                     <td>{{ model.TitleSrc | capitalize }}</td>
                 </tr>
                 <tr v-if="model.TakenAcc">
-                    <td>Year</td>
+                    <td><translate>Year</translate></td>
                     <td>
                         <v-text-field
                                 flat solo dense hide-details v-model="model.Year"
@@ -53,7 +53,7 @@
                     </td>
                 </tr>
                 <tr v-if="model.TakenAcc">
-                    <td>Month</td>
+                    <td><translate>Month</translate></td>
                     <td>
                         <v-select
                                 label="Month"
@@ -68,22 +68,22 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Quality Score</td>
+                    <td><translate>Quality Score</translate></td>
                     <td>
                         <v-rating v-model="model.Quality" :length="7" readonly small></v-rating>
                     </td>
                 </tr>
                 <tr>
-                    <td>Resolution</td>
+                    <td><translate>Resolution</translate></td>
                     <td>{{ model.Resolution }} MP</td>
                 </tr>
                 <tr v-if="model.CameraSerial">
-                    <td>Camera Serial</td>
+                    <td><translate>Camera Serial</translate></td>
                     <td>{{ model.CameraSerial }}
                     </td>
                 </tr>
                 <tr>
-                    <td>Favorite</td>
+                    <td><translate>Favorite</translate></td>
                     <td>
                         <v-switch
                                 @change="save"
@@ -94,7 +94,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Private</td>
+                    <td><translate>Private</translate></td>
                     <td>
                         <v-switch
                                 @change="save"
@@ -105,31 +105,31 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Created</td>
+                    <td><translate>Created</translate></td>
                     <td>
                         {{ model.CreatedAt | luxon:format('http') }}
                     </td>
                 </tr>
                 <tr>
-                    <td>Updated</td>
+                    <td><translate>Updated</translate></td>
                     <td>
                         {{ model.UpdatedAt | luxon:format('http') }}
                     </td>
                 </tr>
                 <tr v-if="model.EditedAt">
-                    <td>Edited</td>
+                    <td><translate>Edited</translate></td>
                     <td>
                         {{ model.EditedAt | luxon:format('http') }}
                     </td>
                 </tr>
                 <tr v-if="model.MaintainedAt">
-                    <td>Maintained</td>
+                    <td><translate>Maintained</translate></td>
                     <td>
                         {{ model.MaintainedAt | luxon:format('http') }}
                     </td>
                 </tr>
                 <tr v-if="model.DeletedAt">
-                    <td>Archived</td>
+                    <td><translate>Archived</translate></td>
                     <td>
                         {{ model.DeletedAt | luxon:format('http') }}
                     </td>

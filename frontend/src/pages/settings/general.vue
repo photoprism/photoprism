@@ -196,8 +196,8 @@
                                     class="ma-0 pa-0 input-files"
                                     v-model="settings.features.files"
                                     color="secondary-dark"
-                                    :label="labels.files"
-                                    :hint="hints.files"
+                                    :label="labels.originals"
+                                    :hint="hints.originals"
                                     prepend-icon="insert_drive_file"
                                     persistent-hint
                             >
@@ -383,7 +383,7 @@
                     private: this.$gettext("Hide Private"),
                     review: this.$gettext("Quality Filter"),
                     places: this.$gettext("Places"),
-                    files: this.$gettext("Files"),
+                    originals: this.$gettext("Originals"),
                     moments: this.$gettext("Moments"),
                     labels: this.$gettext("Labels"),
                     import: this.$gettext("Import"),
@@ -401,7 +401,7 @@
                     group: this.$gettext("Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' belong to the same photo."),
                     move: this.$gettext("Move files from import to originals to save storage. Unsupported file types will never be deleted, they remain in their current location."),
                     places: this.$gettext("Search and display photos on a map."),
-                    files: this.$gettext("Browse indexed files in Library."),
+                    originals: this.$gettext("Display indexed files in Originals"),
                     moments: this.$gettext("Let PhotoPrism create albums from past events."),
                     labels: this.$gettext("Browse and edit image classification labels."),
                     import: this.$gettext("Imported files will be sorted by date and given a unique name."),
