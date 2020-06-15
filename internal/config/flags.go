@@ -74,7 +74,7 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "site-description",
 		Usage:  "long site description",
-		Value:  "Personal Photo Management",
+		Value:  "Open-Source Personal Photo Management.",
 		EnvVar: "PHOTOPRISM_SITE_DESCRIPTION",
 	},
 	cli.StringFlag{

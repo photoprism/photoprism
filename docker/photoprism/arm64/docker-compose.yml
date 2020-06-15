@@ -28,7 +28,7 @@ services:
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Canonical / public site URL
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse your life"
-      PHOTOPRISM_SITE_DESCRIPTION: "Personal Photo Management powered by Go and Google TensorFlow. Free and open-source."
+      PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Personal Photo Management."
       PHOTOPRISM_SITE_AUTHOR: "Anonymous"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
