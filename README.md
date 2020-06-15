@@ -1,7 +1,7 @@
 PhotoPrism: Browse your life in pictures
 ========================================
 
-[![License: GPL](https://img.shields.io/badge/license-GPL-blue.svg)][license]
+[![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)][license]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][goreport]
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=develop)][ci]
 [![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://github.com/photoprism/photoprism/graphs/contributors/)
@@ -127,11 +127,6 @@ PhotoPrism™ is a trademark of Michael Mayer.
 You may use it as required to describe our software, run your own server, for educational purposes,
 but not for offering goods, products, or services to others without prior written permission.
 In other words, please ask.
-
-In exchange, PhotoPrism is [GPL](https://en.wikipedia.org/wiki/GNU_General_Public_License) 
-licensed instead of [AGPL](https://en.wikipedia.org/wiki/Affero_General_Public_License).
-This means, you're not legally obliged to publish the source code when modifying a private copy.
-Hopefully we can keep it like that :)
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
 [wiki:xmp]: https://github.com/photoprism/photoprism/wiki/XMP
