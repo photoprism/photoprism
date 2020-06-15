@@ -23,14 +23,14 @@
                                         item-text="Title"
                                         item-value="UID"
                                         :allow-overflow="false"
-                                        label="Select albums or create a new one"
+                                        :label="labels.album"
                                         return-object
                             >
                                 <template v-slot:no-data>
                                     <v-list-tile>
                                         <v-list-tile-content>
                                             <v-list-tile-title>
-                                                Press <kbd>enter</kbd> to create a new album.
+                                                <translate>Press</translate> <kbd>enter</kbd> <translate>to create a new album.</translate>
                                             </v-list-tile-title>
                                         </v-list-tile-content>
                                     </v-list-tile>
@@ -48,12 +48,12 @@
                                     </v-chip>
                                 </template>
                             </v-combobox>
-                            <span v-else-if="failed">Upload failed</span>
+                            <span v-else-if="failed"><translate>Upload failed</translate></span>
                             <span v-else-if="total > 0 && completed < 100">
-                        Uploading {{current}} of {{total}}...
+                                <translate>Uploading</translate> {{current}} <translate>of</translate> {{total}}...
                     </span>
-                            <span v-else-if="indexing">Upload complete. Indexing...</span>
-                            <span v-else-if="completed === 100">Done.</span>
+                            <span v-else-if="indexing"><translate>Upload complete. Indexing...</translate></span>
+                            <span v-else-if="completed === 100"><translate>Done.</translate></span>
                         </p>
 
 
@@ -62,12 +62,12 @@
 
 
                         <p class="body-1" v-if="safe">
-                            Please don't upload photos containing offensive content. Uploads
-                            that may contain such images will be rejected automatically.
+                            <translate>Please don't upload photos containing offensive content. Uploads
+                                that may contain such images will be rejected automatically.</translate>
                         </p>
 
                         <p class="body-1" v-if="review">
-                            Low-quality photos require a review before they appear in search results.
+                            <translate>Low-quality photos require a review before they appear in search results.</translate>
                         </p>
 
                         <v-btn
@@ -113,6 +113,9 @@
                 started: 0,
                 review: this.$config.feature("review"),
                 safe: !this.$config.get("uploadNSFW"),
+                labels: {
+                    album: this.$gettext("Select albums or create a new one"),
+                },
             }
         },
         methods: {

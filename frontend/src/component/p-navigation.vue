@@ -315,10 +315,10 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
-                    <v-list-tile to="/library/files" @click="" class="p-navigation-files" v-show="$config.feature('files')">
+                    <v-list-tile to="/library/files" @click="" class="p-navigation-originals" v-show="$config.feature('files')">
                         <v-list-tile-content>
                             <v-list-tile-title>
-                                <translate key="Files">Files</translate>
+                                <translate key="Originals">Originals</translate>
                                 <span v-show="config.count.files > 0" class="p-navigation-count">{{ config.count.files }}</span>
                             </v-list-tile-title>
                         </v-list-tile-content>
