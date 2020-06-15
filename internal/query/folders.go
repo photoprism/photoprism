@@ -39,9 +39,9 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 // AlbumFolders returns folders that should be added as album.
 func AlbumFolders(threshold int) (folders entity.Folders, err error) {
 	db := UnscopedDb().Table("folders").
-		Select("folders.*, COUNT(photos.id) AS photo_count").
+		Select("folders.path, folders.root, folders.folder_uid, folders.folder_title, folders.folder_country, folders.folder_year, folders.folder_month, COUNT(photos.id) AS photo_count").
 		Joins("JOIN photos ON photos.photo_path = folders.path AND photos.deleted_at IS NULL AND photos.photo_quality >= 3").
-		Group("folders.path").
+		Group("folders.path, folders.root, folders.folder_uid, folders.folder_title, folders.folder_country, folders.folder_year, folders.folder_month").
 		Having("photo_count >= ?", threshold)
 
 	if err := db.Scan(&folders).Error; err != nil {
