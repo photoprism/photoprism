@@ -108,15 +108,6 @@ Let us know if we mistakenly label an idea as [unfunded](https://github.com/phot
 
 Thank you very much! <3
 
-## Public and corporate sponsorship ##
-
-We spent weeks asking organizations like [The Prototype Fund](https://prototypefund.de/en/) for help 
-and also tried to cooperate with companies like Mapbox and Cewe.
-You would think it's easier to get a few dollars with [our background](http://docs.photoprism.org/team/) 
-and [working code](https://demo.photoprism.org/).
-
-If any of those organizations changes their mind, they are welcome to [reach out to us](mailto:hello@photoprism.org).
-
 ## Disclaimer ##
 
 We'd like to remind everyone that we are not full-time marketing specialists but developers who work a lot and 
