@@ -55,6 +55,7 @@ Vue.use(GetTextPlugin, {
     translations: config.translations,
     silent: true, // !config.values.debug,
     defaultLanguage: Vue.config.language,
+    autoAddKeyAttributes: true,
 });
 
 Vue.use(VueLuxon);
