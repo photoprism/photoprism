@@ -4,27 +4,27 @@
             <table class="v-datatable v-table theme--light">
                 <tbody>
                 <tr>
-                    <td><translate>UID</translate></td>
+                    <td><translate key="UID">UID</translate></td>
                     <td>{{ model.UID | uppercase }}</td>
                 </tr>
                 <tr v-if="model.DocumentID">
-                    <td><translate>Document ID</translate></td>
+                    <td><translate key="Document ID">Document ID</translate></td>
                     <td>{{ model.DocumentID | uppercase }}</td>
                 </tr>
                 <tr>
-                    <td><translate>Type</translate></td>
+                    <td><translate key="Type">Type</translate></td>
                     <td>{{ model.Type | capitalize }}</td>
                 </tr>
                 <tr v-if="model.Path">
-                    <td><translate>Path</translate></td>
+                    <td><translate key="Path">Path</translate></td>
                     <td>{{ model.Path }}</td>
                 </tr>
                 <tr>
-                    <td><translate>Name</translate></td>
+                    <td><translate key="Name">Name</translate></td>
                     <td>{{ model.Name }}</td>
                 </tr>
                 <tr v-if="model.OriginalName">
-                    <td><translate>Original Name</translate></td>
+                    <td><translate key="Original Name">Original Name</translate></td>
                     <td>
                         <v-text-field
                                 @change="save"
@@ -35,15 +35,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><translate>Title</translate></td>
+                    <td><translate key="Title">Title</translate></td>
                     <td>{{ model.Title }}</td>
                 </tr>
                 <tr v-if="model.TitleSrc">
-                    <td><translate>Title Source</translate></td>
+                    <td><translate key="Title Source">Title Source</translate></td>
                     <td>{{ model.TitleSrc | capitalize }}</td>
                 </tr>
                 <tr v-if="model.TakenAcc">
-                    <td><translate>Year</translate></td>
+                    <td><translate key="Year">Year</translate></td>
                     <td>
                         <v-text-field
                                 flat solo dense hide-details v-model="model.Year"
@@ -53,7 +53,7 @@
                     </td>
                 </tr>
                 <tr v-if="model.TakenAcc">
-                    <td><translate>Month</translate></td>
+                    <td><translate key="Month">Month</translate></td>
                     <td>
                         <v-select
                                 label="Month"
@@ -68,22 +68,22 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><translate>Quality Score</translate></td>
+                    <td><translate key="Quality Score">Quality Score</translate></td>
                     <td>
                         <v-rating v-model="model.Quality" :length="7" readonly small></v-rating>
                     </td>
                 </tr>
                 <tr>
-                    <td><translate>Resolution</translate></td>
+                    <td><translate key="Resolution">Resolution</translate></td>
                     <td>{{ model.Resolution }} MP</td>
                 </tr>
                 <tr v-if="model.CameraSerial">
-                    <td><translate>Camera Serial</translate></td>
+                    <td><translate key="Camera Serial">Camera Serial</translate></td>
                     <td>{{ model.CameraSerial }}
                     </td>
                 </tr>
                 <tr>
-                    <td><translate>Favorite</translate></td>
+                    <td><translate key="Favorite">Favorite</translate></td>
                     <td>
                         <v-switch
                                 @change="save"
@@ -94,7 +94,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><translate>Private</translate></td>
+                    <td><translate key="Private">Private</translate></td>
                     <td>
                         <v-switch
                                 @change="save"
@@ -105,31 +105,31 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><translate>Created</translate></td>
+                    <td><translate key="Created">Created</translate></td>
                     <td>
                         {{ model.CreatedAt | luxon:format('http') }}
                     </td>
                 </tr>
                 <tr>
-                    <td><translate>Updated</translate></td>
+                    <td><translate key="Updated">Updated</translate></td>
                     <td>
                         {{ model.UpdatedAt | luxon:format('http') }}
                     </td>
                 </tr>
                 <tr v-if="model.EditedAt">
-                    <td><translate>Edited</translate></td>
+                    <td><translate key="Edited">Edited</translate></td>
                     <td>
                         {{ model.EditedAt | luxon:format('http') }}
                     </td>
                 </tr>
                 <tr v-if="model.MaintainedAt">
-                    <td><translate>Maintained</translate></td>
+                    <td><translate key="Maintained">Maintained</translate></td>
                     <td>
                         {{ model.MaintainedAt | luxon:format('http') }}
                     </td>
                 </tr>
                 <tr v-if="model.DeletedAt">
-                    <td><translate>Archived</translate></td>
+                    <td><translate key="Archived">Archived</translate></td>
                     <td>
                         {{ model.DeletedAt | luxon:format('http') }}
                     </td>

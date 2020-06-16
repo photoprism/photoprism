@@ -378,16 +378,16 @@
                             <v-flex xs12 text-xs-right class="pt-3" v-if="!disabled">
                                 <v-btn @click.stop="close" depressed color="secondary-light"
                                        class="p-photo-dialog-close">
-                                    <translate>Close</translate>
+                                    <translate key="Close">Close</translate>
                                 </v-btn>
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save(false)"
                                        class="p-photo-dialog-confirm action-approve">
                                     <span v-if="$config.feature('review') && model.Quality < 3">Approve</span>
-                                    <span v-else><translate>Apply</translate></span>
+                                    <span v-else><translate key="Apply">Apply</translate></span>
                                 </v-btn>
                                 <v-btn color="secondary-dark" depressed dark @click.stop="save(true)"
                                        class="p-photo-dialog-confirm hidden-xs-only action-ok">
-                                    <span><translate>OK</translate></span>
+                                    <span><translate key="OK">OK</translate></span>
                                     <v-icon right dark>done</v-icon>
                                 </v-btn>
                             </v-flex>

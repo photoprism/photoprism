@@ -12,6 +12,7 @@
 /assets/nasnet
 /assets/nsfw
 /package-lock.json
+/frontend/tests_output
 *.log
 *.db
 *.db-journal

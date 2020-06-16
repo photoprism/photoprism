@@ -854,11 +854,6 @@ msgstr ""
 msgid "Preserve filenames"
 msgstr ""
 
-#: src//dialog/p-upload-dialog.vue:22
-#: src//dialog/p-upload-dialog.vue:4
-msgid "Press"
-msgstr ""
-
 #: src//pages/library/import.vue:53
 msgid "Press button to start copying..."
 msgstr ""
@@ -869,6 +864,11 @@ msgstr ""
 
 #: src//pages/library/import.vue:48
 msgid "Press button to start moving..."
+msgstr ""
+
+#: src//dialog/p-upload-dialog.vue:22
+#: src//dialog/p-upload-dialog.vue:4
+msgid "Press enter to create a new album."
 msgstr ""
 
 #: src//dialog/photo/files.vue:53
@@ -1104,11 +1104,6 @@ msgstr ""
 
 #: src//pages/albums.vue:220
 msgid "Title too long"
-msgstr ""
-
-#: src//dialog/p-upload-dialog.vue:22
-#: src//dialog/p-upload-dialog.vue:4
-msgid "to create a new album."
 msgstr ""
 
 #: src//pages/albums.vue:52

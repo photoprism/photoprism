@@ -841,10 +841,6 @@ msgstr "Wenn du eine Datei vermisst, indexiere deine Originals erneut."
 msgid "Preserve filenames"
 msgstr "Dateinamen beibehalten"
 
-#: src//dialog/p-upload-dialog.vue:22 src//dialog/p-upload-dialog.vue:4
-msgid "Press"
-msgstr "Drücke"
-
 #: src//pages/library/import.vue:53
 msgid "Press button to start copying..."
 msgstr "Klicke “Import” um den Kopiervorgang zu starten"
@@ -856,6 +852,10 @@ msgstr "Klicke “Indexieren” um das Indexieren zu starten"
 #: src//pages/library/import.vue:48
 msgid "Press button to start moving..."
 msgstr "Klicke “Import” um den Importvorgang zu starten"
+
+#: src//dialog/p-upload-dialog.vue:22 src//dialog/p-upload-dialog.vue:4
+msgid "Press enter to create a new album."
+msgstr "Drücke Enter um ein neues Album zu erstellen."
 
 #: src//dialog/photo/files.vue:53
 msgid "Primary"
@@ -1088,10 +1088,6 @@ msgstr "Herkunft des Titels"
 msgid "Title too long"
 msgstr "Titel zu  lang"
 
-#: src//dialog/p-upload-dialog.vue:22 src//dialog/p-upload-dialog.vue:4
-msgid "to create a new album."
-msgstr "um ein neues Album zu erstellen."
-
 #: src//pages/albums.vue:52
 msgid ""
 "Try again using a different term or create a new album from a\n"
@@ -1217,6 +1213,9 @@ msgstr "Du kannst nur ein Album gleichzeitig downloaden"
 #: src//component/p-label-clipboard.vue:132
 msgid "You can only download one label"
 msgstr "Du kannst nur ein Label gleichzeitig downloaden"
+
+#~ msgid "Press"
+#~ msgstr "Drücke"
 
 #~ msgid "4 Day"
 #~ msgstr "4 Tage"
