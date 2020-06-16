@@ -7,14 +7,14 @@
                         <v-icon size="54" color="grey lighten-1">delete_outline</v-icon>
                     </v-flex>
                     <v-flex xs9 text-xs-left align-self-center>
-                        <div class="subheading pr-1"><translate>Are you sure you want to delete this account?</translate></div>
+                        <div class="subheading pr-1"><translate key="Are you sure you want to delete this account?">Are you sure you want to delete this account?</translate></div>
                     </v-flex>
                     <v-flex xs12 text-xs-right class="pt-3">
                         <v-btn @click.stop="cancel" depressed color="secondary-light" class="action-cancel">
-                            <translate>Cancel</translate>
+                            <translate key="Cancel">Cancel</translate>
                         </v-btn>
                         <v-btn depressed dark color="secondary-dark" @click.stop="confirm"
-                               class="action-confirm"><translate>Delete</translate>
+                               class="action-confirm"><translate key="Delete">Delete</translate>
                         </v-btn>
                     </v-flex>
                 </v-layout>
