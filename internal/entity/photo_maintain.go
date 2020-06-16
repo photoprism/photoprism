@@ -66,7 +66,7 @@ func (m *Photo) EstimatePlace() {
 	}
 
 	if err := UnscopedDb().
-		Where("place_id <> '' AND place_id <> 'zz' AND loc_src <> '' AND loc_src <> ?", SrcEstimate).
+		Where("place_id <> '' AND place_id <> 'zz' AND location_src <> '' AND location_src <> ?", SrcEstimate).
 		Order(gorm.Expr(dateExpr, m.TakenAt)).
 		Preload("Place").First(&recentPhoto).Error; err != nil {
 		log.Errorf("photo: %s (estimate place)", err.Error())
