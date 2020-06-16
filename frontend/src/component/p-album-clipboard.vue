@@ -2,9 +2,7 @@
     <div>
         <v-container fluid class="pa-0" v-if="selection.length > 0">
             <v-speed-dial
-                    fixed
-                    bottom
-                    right
+                    fixed bottom right
                     direction="top"
                     v-model="expanded"
                     transition="slide-y-reverse-transition"
@@ -12,61 +10,62 @@
                     id="t-clipboard"
             >
                 <v-btn
+                        fab dark
                         slot="activator"
                         color="accent darken-2"
-                        dark
-                        fab
-                        class="p-album-clipboard-menu"
+                        class="action-menu"
                 >
                     <v-icon v-if="selection.length === 0">menu</v-icon>
-                    <span v-else  class="t-clipboard-count">{{ selection.length }}</span>
+                    <span v-else class="count-clipboard">{{ selection.length }}</span>
                 </v-btn>
 
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
+                        :title="labels.share"
+                        color="share"
+                        @click.stop="dialog.share = true"
+                        :disabled="selection.length !== 1"
+                        v-if="$config.feature('share')"
+                        class="action-share"
+                >
+                    <v-icon>share</v-icon>
+                </v-btn>
+                <v-btn
+                        fab dark small
                         :title="labels.download"
                         color="download"
                         @click.stop="download()"
-                        class="p-album-clipboard-download"
+                        class="action-download"
                         v-if="$config.feature('download')"
                         :disabled="selection.length !== 1"
                 >
                     <v-icon>get_app</v-icon>
                 </v-btn>
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         :title="labels.clone"
                         color="album"
                         :disabled="selection.length === 0"
                         @click.stop="dialog.album = true"
-                        class="p-album-clipboard-clone"
+                        class="action-clone"
                 >
                     <v-icon>folder</v-icon>
                 </v-btn>
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         color="remove"
                         :title="labels.delete"
                         @click.stop="dialog.delete = true"
                         :disabled="selection.length === 0"
-                        class="p-album-clipboard-delete"
+                        class="action-delete"
                 >
                     <v-icon>delete</v-icon>
                 </v-btn>
-
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         color="accent"
                         @click.stop="clearClipboard()"
-                        class="p-album-clipboard-clear"
+                        class="action-clear"
                 >
                     <v-icon>clear</v-icon>
                 </v-btn>
@@ -76,6 +75,10 @@
                               @confirm="cloneAlbums"></p-photo-album-dialog>
         <p-album-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false"
                                @confirm="batchDelete"></p-album-delete-dialog>
+        <p-share-dialog :show="dialog.share" title="Share Album" :selection="selection" @upload="upload"
+                              @close="dialog.share = false"></p-share-dialog>
+        <p-share-upload-dialog :show="dialog.upload" :selection="selection" @cancel="dialog.upload = false"
+                               @confirm="dialog.upload = false"></p-share-upload-dialog>
     </div>
 </template>
 <script>
@@ -96,8 +99,11 @@
                     delete: false,
                     album: false,
                     edit: false,
+                    share: false,
+                    upload: false,
                 },
                 labels: {
+                    share: this.$gettext("Share"),
                     download: this.$gettext("Download"),
                     clone: this.$gettext("Add to album"),
                     delete: this.$gettext("Delete"),
@@ -106,6 +112,10 @@
             };
         },
         methods: {
+            upload() {
+                this.dialog.share = false;
+                this.dialog.upload = true;
+            },
             clearClipboard() {
                 this.clearSelection();
                 this.expanded = false;
@@ -128,7 +138,7 @@
                 this.clearClipboard();
             },
             download() {
-                if(this.selection.length !== 1) {
+                if (this.selection.length !== 1) {
                     Notify.error(this.$gettext("You can only download one album"));
                     return;
                 }

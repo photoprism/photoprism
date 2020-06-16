@@ -1,10 +1,10 @@
 <template>
-    <v-dialog lazy v-model="show" persistent max-width="400" class="p-photo-share-dialog" @keydown.esc="cancel">
+    <v-dialog lazy v-model="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
         <v-card raised elevation="24">
             <v-container fluid class="pb-2 pr-2 pl-2">
                 <v-layout row wrap>
                     <v-flex xs3 text-xs-center>
-                        <v-icon size="54" color="grey lighten-1">share</v-icon>
+                        <v-icon size="54" color="grey lighten-1">cloud</v-icon>
                     </v-flex>
                     <v-flex xs9 text-xs-left align-self-center>
                         <v-select
@@ -57,10 +57,10 @@
     </v-dialog>
 </template>
 <script>
-    import Account from "../model/account";
+    import Account from "model/account";
 
     export default {
-        name: 'p-photo-share-dialog',
+        name: 'p-share-upload-dialog',
         props: {
             show: Boolean,
             selection: Array,

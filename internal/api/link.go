@@ -15,7 +15,7 @@ import (
 
 // newLink returns a new link entity initialized with request data
 func newLink(c *gin.Context) (link entity.Link, err error) {
-	var f form.NewLink
+	var f form.Link
 
 	if err := c.BindJSON(&f); err != nil {
 		return link, err
@@ -33,7 +33,7 @@ func newLink(c *gin.Context) (link entity.Link, err error) {
 
 // POST /api/v1/albums/:uid/link
 func LinkAlbum(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/albums/:uid/link", func(c *gin.Context) {
+	router.POST("/albums/:uid/links", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -61,7 +61,7 @@ func LinkAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 // POST /api/v1/photos/:uid/link
 func LinkPhoto(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/photos/:uid/link", func(c *gin.Context) {
+	router.POST("/photos/:uid/links", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
@@ -89,7 +89,7 @@ func LinkPhoto(router *gin.RouterGroup, conf *config.Config) {
 
 // POST /api/v1/labels/:uid/link
 func LinkLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/labels/:uid/link", func(c *gin.Context) {
+	router.POST("/labels/:uid/links", func(c *gin.Context) {
 		if Unauthorized(c, conf) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return

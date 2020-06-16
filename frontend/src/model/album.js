@@ -96,6 +96,10 @@ export class Album extends RestModel {
         return Api.delete(this.getEntityResource() + "/like");
     }
 
+    addLink(password, expires) {
+        return Api.post(this.getEntityResource() + "/links", {"Password": password ? password : "", "Expires": expires ? expires : 0, "CanEdit": false, "CanComment": false});
+    }
+
     static getCollectionResource() {
         return "albums";
     }

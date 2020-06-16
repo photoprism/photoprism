@@ -18,7 +18,7 @@ func TestLinkAlbum(t *testing.T) {
 
 		LinkAlbum(router, ctx)
 
-		result1 := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/link", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		result1 := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
 		assert.Equal(t, http.StatusOK, result1.Code)
 
 		if err := json.Unmarshal(result1.Body.Bytes(), &album); err != nil {
@@ -36,7 +36,7 @@ func TestLinkAlbum(t *testing.T) {
 		assert.False(t, link.CanComment)
 		assert.True(t, link.CanEdit)
 
-		result2 := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/link", `{"Password": "", "Expires": 3600}`)
+		result2 := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/links", `{"Password": "", "Expires": 3600}`)
 
 		assert.Equal(t, http.StatusOK, result2.Code)
 
@@ -54,7 +54,7 @@ func TestLinkAlbum(t *testing.T) {
 	t.Run("album not found", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		LinkAlbum(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/xxx/link", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/xxx/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "Album not found", val.String())
@@ -62,7 +62,7 @@ func TestLinkAlbum(t *testing.T) {
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		LinkAlbum(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/link", `{"xxx": 123, "Expires": 0, "CanEdit": "xxx"}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/links", `{"xxx": 123, "Expires": 0, "CanEdit": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }
@@ -75,7 +75,7 @@ func TestLinkPhoto(t *testing.T) {
 
 		LinkPhoto(router, ctx)
 
-		result1 := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/link", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		result1 := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
 		assert.Equal(t, http.StatusOK, result1.Code)
 
 		if err := json.Unmarshal(result1.Body.Bytes(), &photo); err != nil {
@@ -93,7 +93,7 @@ func TestLinkPhoto(t *testing.T) {
 		assert.False(t, link.CanComment)
 		assert.True(t, link.CanEdit)
 
-		result2 := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/link", `{"Password": "", "Expires": 3600}`)
+		result2 := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/links", `{"Password": "", "Expires": 3600}`)
 
 		assert.Equal(t, http.StatusOK, result2.Code)
 
@@ -116,7 +116,7 @@ func TestLinkPhoto(t *testing.T) {
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		LinkPhoto(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/link", `{"xxx": 123, "Expires": 0, "CanEdit": "xxx"}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/links", `{"xxx": 123, "Expires": 0, "CanEdit": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }
@@ -129,7 +129,7 @@ func TestLinkLabel(t *testing.T) {
 
 		LinkLabel(router, ctx)
 
-		result1 := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/link", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		result1 := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
 		assert.Equal(t, http.StatusOK, result1.Code)
 
 		if err := json.Unmarshal(result1.Body.Bytes(), &label); err != nil {
@@ -147,7 +147,7 @@ func TestLinkLabel(t *testing.T) {
 		assert.False(t, link.CanComment)
 		assert.True(t, link.CanEdit)
 
-		result2 := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/link", `{"Password": "", "Expires": 3600}`)
+		result2 := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/links", `{"Password": "", "Expires": 3600}`)
 
 		assert.Equal(t, http.StatusOK, result2.Code)
 
@@ -162,7 +162,7 @@ func TestLinkLabel(t *testing.T) {
 	t.Run("label not found", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		LinkLabel(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/labels/xxx/link", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/labels/xxx/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "Label not found", val.String())
@@ -170,7 +170,7 @@ func TestLinkLabel(t *testing.T) {
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 		LinkLabel(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/link", `{"xxx": 123, "Expires": 0, "CanEdit": "xxx"}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/links", `{"xxx": 123, "Expires": 0, "CanEdit": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }

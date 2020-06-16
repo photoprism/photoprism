@@ -29,7 +29,7 @@
                     height="64"
                     class="form"
             >
-                <v-tab id="tab-edit" ripple>
+                <v-tab id="tab-details" ripple>
                     <translate key="Details">Details</translate>
                 </v-tab>
 
@@ -47,8 +47,8 @@
 
                 <v-tabs-items touchless>
                     <v-tab-item>
-                        <p-tab-photo-edit :model="model" ref="edit"
-                                          @close="close" @prev="prev" @next="next"></p-tab-photo-edit>
+                        <p-tab-photo-details :model="model" ref="details"
+                                          @close="close" @prev="prev" @next="next"></p-tab-photo-details>
                     </v-tab-item>
 
                     <v-tab-item lazy>
@@ -69,7 +69,7 @@
 </template>
 <script>
     import Photo from "../model/photo";
-    import PhotoEdit from "./photo/edit.vue";
+    import PhotoDetails from "./photo/details.vue";
     import PhotoLabels from "./photo/labels.vue";
     import PhotoFiles from "./photo/files.vue";
     import PhotoInfo from "./photo/info.vue";
@@ -83,7 +83,7 @@
             album: Object,
         },
         components: {
-            'p-tab-photo-edit': PhotoEdit,
+            'p-tab-photo-details': PhotoDetails,
             'p-tab-photo-labels': PhotoLabels,
             'p-tab-photo-files': PhotoFiles,
             'p-tab-photo-info': PhotoInfo,
@@ -131,6 +131,8 @@
                 }
             },
             next() {
+                if(!this.selection) return;
+
                 if (this.selected < this.selection.length) {
                     this.find(this.selected + 1);
                 }
@@ -152,7 +154,7 @@
                 this.model.find(this.selectedId).then(model => {
                     model.refreshFileAttr();
                     this.model = model;
-                    this.$refs.edit.refresh(model);
+                    this.$refs.details.refresh(model);
                     this.loading = false;
                 }).catch(() => this.loading = false);
             },

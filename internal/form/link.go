@@ -1,7 +1,8 @@
 package form
 
 // Link represents a sharing link form.
-type NewLink struct {
+type Link struct {
+	Token      string `json:"Token"`
 	Password   string `json:"Password"`
 	Expires    int    `json:"Expires"`
 	CanComment bool   `json:"CanComment"`

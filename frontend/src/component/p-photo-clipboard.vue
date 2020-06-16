@@ -2,9 +2,7 @@
     <div>
         <v-container fluid class="pa-0" v-if="selection.length > 0">
             <v-speed-dial
-                    fixed
-                    bottom
-                    right
+                    fixed bottom right
                     direction="top"
                     v-model="expanded"
                     transition="slide-y-reverse-transition"
@@ -12,129 +10,107 @@
                     id="t-clipboard"
             >
                 <v-btn
+                        fab dark
                         slot="activator"
                         color="accent darken-2"
-                        dark
-                        fab
-                        class="p-photo-clipboard-menu"
+                        class="action-menu"
                 >
                     <v-icon v-if="selection.length === 0">menu</v-icon>
-                    <span v-else class="t-clipboard-count">{{ selection.length }}</span>
+                    <span v-else class="count-clipboard">{{ selection.length }}</span>
                 </v-btn>
 
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         :title="labels.share"
                         color="share"
                         @click.stop="dialog.share = true"
                         :disabled="selection.length === 0"
                         v-if="context !== 'archive' && $config.feature('share')"
-                        class="p-photo-clipboard-share"
+                        class="action-share"
                 >
                     <v-icon>share</v-icon>
                 </v-btn>
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         :title="labels.edit"
                         color="edit"
                         :disabled="selection.length === 0"
                         @click.stop="edit"
                         v-if="context !== 'archive' && $config.feature('edit')"
-                        class="p-photo-clipboard-edit"
+                        class="action-edit"
                 >
                     <v-icon>edit</v-icon>
                 </v-btn>
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         :title="labels.private"
                         color="private"
                         :disabled="selection.length === 0"
                         @click.stop="batchPrivate"
                         v-if="context !== 'archive' && config.settings.features.private"
-                        class="p-photo-clipboard-private"
+                        class="action-private"
                 >
                     <v-icon>lock</v-icon>
                 </v-btn>
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         :title="labels.download"
                         color="download"
                         @click.stop="download()"
                         v-if="context !== 'archive' && $config.feature('download')"
-                        class="p-photo-clipboard-download"
+                        class="action-download"
                 >
                     <v-icon>get_app</v-icon>
                 </v-btn>
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         :title="labels.addToAlbum"
                         color="album"
                         :disabled="selection.length === 0"
                         @click.stop="dialog.album = true"
                         v-if="context !== 'archive'"
-                        class="p-photo-clipboard-album"
+                        class="action-album"
                 >
                     <v-icon>folder</v-icon>
                 </v-btn>
-
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         color="remove"
                         :title="labels.archive"
                         @click.stop="dialog.archive = true"
                         :disabled="selection.length === 0"
                         v-if="!album && context !== 'archive' && $config.feature('archive')"
-                        class="p-photo-clipboard-archive"
+                        class="action-archive"
                 >
                     <v-icon>archive</v-icon>
                 </v-btn>
-
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         color="restore"
                         :title="labels.restore"
                         @click.stop="batchRestorePhotos"
                         :disabled="selection.length === 0"
                         v-if="!album && context === 'archive'"
-                        class="p-photo-clipboard-restore"
+                        class="action-restore"
                 >
                     <v-icon>unarchive</v-icon>
                 </v-btn>
-
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         :title="labels.removeFromAlbum"
                         color="remove"
                         @click.stop="removeFromAlbum"
                         :disabled="selection.length === 0"
                         v-if="album"
-                        class="p-photo-clipboard-delete"
+                        class="action-delete"
                 >
                     <v-icon>remove</v-icon>
                 </v-btn>
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         color="accent"
                         @click.stop="clearClipboard()"
-                        class="p-photo-clipboard-clear"
+                        class="action-clear"
                 >
                     <v-icon>clear</v-icon>
                 </v-btn>
@@ -144,8 +120,8 @@
                               @confirm="addToAlbum"></p-photo-album-dialog>
         <p-photo-archive-dialog :show="dialog.archive" @cancel="dialog.archive = false"
                                 @confirm="batchArchivePhotos"></p-photo-archive-dialog>
-        <p-photo-share-dialog :show="dialog.share" :selection="selection" :album="album" @cancel="dialog.share = false"
-                              @confirm="dialog.share = false"></p-photo-share-dialog>
+        <p-share-upload-dialog :show="dialog.share" :selection="selection" :album="album" @cancel="dialog.share = false"
+                              @confirm="dialog.share = false"></p-share-upload-dialog>
     </div>
 </template>
 <script>
