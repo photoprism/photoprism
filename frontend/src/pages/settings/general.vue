@@ -5,7 +5,7 @@
                 @submit.prevent="onChange">
             <v-card flat tile class="mt-0 px-1 application">
                 <v-card-title primary-title class="pb-0">
-                    <h3 class="body-2 mb-0"><translate>Library</translate></h3>
+                    <h3 class="body-2 mb-0"><translate key="Library">Library</translate></h3>
                 </v-card-title>
 
                 <v-card-actions>
@@ -75,7 +75,7 @@
 
             <v-card flat tile class="mt-0 px-1 application">
                 <v-card-title primary-title class="pb-2">
-                    <h3 class="body-2 mb-0"><translate>User Interface</translate></h3>
+                    <h3 class="body-2 mb-0"><translate key="User Interface">User Interface</translate></h3>
                 </v-card-title>
 
                 <v-card-actions>
@@ -299,7 +299,7 @@
 
             <v-card flat tile class="mt-0 px-1 application" v-if="settings.features.places">
                 <v-card-title primary-title class="pb-2">
-                    <h3 class="body-2 mb-0"><translate>Places</translate></h3>
+                    <h3 class="body-2 mb-0"><translate key="Places">Places</translate></h3>
                 </v-card-title>
 
                 <v-card-actions>
