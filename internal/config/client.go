@@ -118,7 +118,12 @@ func (c *Config) PublicConfig() ClientConfig {
 	settings := c.Settings()
 
 	result := ClientConfig{
-		Settings:        Settings{Language: settings.Language, Theme: settings.Theme},
+		Settings: Settings{
+			Language: settings.Language,
+			Theme:    settings.Theme,
+			Maps:     MapsSettings{Animate: settings.Maps.Animate, Style: settings.Maps.Style},
+			Features: FeatureSettings{Download: settings.Features.Download},
+		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
@@ -151,7 +156,12 @@ func (c *Config) ShareConfig() ClientConfig {
 	settings := c.Settings()
 
 	result := ClientConfig{
-		Settings:        Settings{Language: settings.Language, Theme: settings.Theme, Features: FeatureSettings{Download: settings.Features.Download}},
+		Settings: Settings{
+			Language: settings.Language,
+			Theme:    settings.Theme,
+			Maps:     MapsSettings{Animate: settings.Maps.Animate, Style: settings.Maps.Style},
+			Features: FeatureSettings{Download: settings.Features.Download},
+		},
 		Flags:           "readonly public shared",
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
