@@ -18,7 +18,7 @@
                     <v-expansion-panel-content v-for="(link, index) in links" :key="index"
                                                class="pa-0 elevation-0 secondary-light mb-1">
                         <template v-slot:header>
-                            <button class="text-xs-left action-url ml-0 mt-0 mb-0 pa-0 mr-2" @click.stop="copyUrl(link)">
+                            <button class="text-xs-left action-url ml-0 mt-0 mb-0 pa-0 mr-2" @click.stop="copyUrl(link)" style="user-select: none;">
                                 <v-icon size="16" class="pr-1">link</v-icon>
                                 /s/<strong style="font-weight: 500;" v-if="link.ShareToken">{{ link.ShareToken.toLowerCase() }}</strong><span v-else>...</span>
                             </button>
