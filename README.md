@@ -11,7 +11,7 @@ PhotoPrism: Browse your life in pictures
 
 PhotoPrism™ is a server-based application for browsing, organizing and sharing your personal photo collection.
 It makes use of the latest technologies to automatically tag and find pictures without getting in your way.
-Say goodbye to solutions that force you to upload your visual memories to the cloud.
+Say goodbye to solutions that force you to upload your visual memories to the public cloud.
 
 ![](https://dl.photoprism.org/assets/img/preview.jpg)
 
@@ -78,7 +78,7 @@ It's fair to say that users with basic needs will have no monthly costs. We were
 per dollar than commercial projects and learned a lot on top of it.
 An earlier version of this document contained a rough number, but at the end of the day it doesn't matter.
 
-Basically all established OSS companies make 90% of their revenue with enterprise customers, that's why private users 
+Most established OSS companies make the bulk of their revenue with enterprise customers, that's why private users 
 and single developers typically get everything for free. Obviously that doesn't work if you have only private users
 that refuse to share their data on top of it. In our opinion it would have made sense to finance this like all 
 public infrastructure, our expenses are peanuts compared to building a road.
@@ -87,6 +87,8 @@ Looking forward, specific solutions for funding development and maintenance coul
 
   - sell a tested & supported version in the app store while our contributors and other developers can 
     continue to use Docker or build from source
+  - provide additional features to users who support us financially, maybe with a different license similar to GitLab
+  - develop a one-click solution for private cloud hosting together with selected providers we trust
   - offer a geodata, public events and maps subscription since OpenStreetMap doesn't want us to use their development 
     API for production, which is perfectly fine
 
@@ -98,7 +100,7 @@ They will match every donation in the first year.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/photoprism). 
 Our [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) and 
 [contributors](https://github.com/photoprism/photoprism/graphs/contributors/) will get for free whatever we might 
-have to charge for a geodata subscription later.
+have to charge for a geodata subscription and/or additional features later (see [tiers](https://github.com/sponsors/lastzero/dashboard/tiers)).
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
@@ -114,7 +116,7 @@ We'd like to remind everyone that we are not full-time marketing specialists but
 enjoy a bit of sarcasm from time to time. Please let us know when there is an issue with our "nuance and tone", 
 and we'll find a solution.
 
-PhotoPrism™ is a trademark of Michael Mayer.
+PhotoPrism™ is a registered trademark of Michael Mayer.
 You may use it as required to describe our software, run your own server, for educational purposes,
 but not for offering commercial goods, products, or services without prior written permission.
 In other words, please ask.
