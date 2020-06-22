@@ -8,7 +8,7 @@
                 <v-toolbar-title>
                     <span class="hidden-xs-only">
                         <router-link :to="{ name: 'albums', params: { token: token } }">
-                            <translate>Shared Albums</translate>
+                            <translate>Shared</translate>
                         </router-link>
 
                         <v-icon>navigate_next</v-icon>
