@@ -125,7 +125,7 @@
                                     </v-btn>
                                 </v-img>
 
-                                <v-card-actions primary-title class="pl-3 pr-2 pb-0" style="user-select: none;"
+                                <v-card-actions primary-title class="pl-3 pr-2 pb-1" style="user-select: none;"
                                               @click.stop.prevent="">
                                     <v-edit-dialog
                                             :return-value.sync="album.Title"
