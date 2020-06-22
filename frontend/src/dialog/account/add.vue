@@ -3,7 +3,7 @@
         <v-card raised elevation="24">
             <v-card-title primary-title>
                 <div>
-                    <h3 class="headline mb-0"><translate>Add Account</translate></h3>
+                    <h3 class="headline mb-0"><translate key="Add Account">Add Account</translate></h3>
                 </div>
             </v-card-title>
             <v-container fluid class="pt-0 pb-2 pr-2 pl-2">

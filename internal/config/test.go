@@ -54,7 +54,7 @@ func NewTestParams() *Params {
 	c := &Params{
 		Name:           "PhotoPrism",
 		Version:        "0.0.0",
-		Copyright:      "(c) 2018-2020 PhotoPrism.org",
+		Copyright:      "(c) 2018-2020 Michael Mayer",
 		Debug:          true,
 		Public:         true,
 		ReadOnly:       false,

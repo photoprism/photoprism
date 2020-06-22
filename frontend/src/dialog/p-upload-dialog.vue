@@ -7,7 +7,7 @@
                     <v-icon>close</v-icon>
                 </v-btn>
                 <v-toolbar-title>
-                    <translate>Upload</translate>
+                    <translate key="Upload">Upload</translate>
                 </v-toolbar-title>
             </v-toolbar>
             <v-container grid-list-xs text-xs-left fluid>
@@ -30,7 +30,7 @@
                                     <v-list-tile>
                                         <v-list-tile-content>
                                             <v-list-tile-title>
-                                                <translate>Press</translate> <kbd>enter</kbd> <translate>to create a new album.</translate>
+                                                <translate key="Press enter to create a new album.">Press enter to create a new album.</translate>
                                             </v-list-tile-title>
                                         </v-list-tile-content>
                                     </v-list-tile>
@@ -48,12 +48,12 @@
                                     </v-chip>
                                 </template>
                             </v-combobox>
-                            <span v-else-if="failed"><translate>Upload failed</translate></span>
+                            <span v-else-if="failed"><translate key="Upload failed">Upload failed</translate></span>
                             <span v-else-if="total > 0 && completed < 100">
-                                <translate>Uploading</translate> {{current}} <translate>of</translate> {{total}}...
+                                <translate key="Uploading">Uploading</translate> {{current}} <translate key="of">of</translate> {{total}}...
                     </span>
-                            <span v-else-if="indexing"><translate>Upload complete. Indexing...</translate></span>
-                            <span v-else-if="completed === 100"><translate>Done.</translate></span>
+                            <span v-else-if="indexing"><translate key="Upload complete">Upload complete. Indexing...</translate></span>
+                            <span v-else-if="completed === 100"><translate key="Done">Done.</translate></span>
                         </p>
 
 
@@ -62,12 +62,12 @@
 
 
                         <p class="body-1" v-if="safe">
-                            <translate>Please don't upload photos containing offensive content. Uploads
+                            <translate key="nsfw-info">Please don't upload photos containing offensive content. Uploads
                                 that may contain such images will be rejected automatically.</translate>
                         </p>
 
                         <p class="body-1" v-if="review">
-                            <translate>Low-quality photos require a review before they appear in search results.</translate>
+                            <translate key="review-info">Low-quality photos require a review before they appear in search results.</translate>
                         </p>
 
                         <v-btn
@@ -77,7 +77,7 @@
                                 depressed
                                 @click.stop="uploadDialog()"
                         >
-                            <translate>Upload</translate>
+                            <translate key="Upload">Upload</translate>
                             <v-icon right dark>cloud_upload</v-icon>
                         </v-btn>
                     </v-container>

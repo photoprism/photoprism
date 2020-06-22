@@ -40,7 +40,7 @@
                     </v-flex>
                     <v-flex xs12 text-xs-right class="pt-3">
                         <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="action-cancel">
-                            <translate>Cancel</translate>
+                            <translate key="Cancel">Cancel</translate>
                         </v-btn>
                         <v-btn color="blue-grey lighten-2" depressed dark @click.stop="setup"
                                class="action-setup" v-if="noAccounts">
