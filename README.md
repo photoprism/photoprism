@@ -80,8 +80,7 @@ An earlier version of this document contained a rough number, but at the end of 
 
 Most established OSS companies make the bulk of their revenue with enterprise customers, that's why private users 
 and single developers typically get everything for free. Obviously that doesn't work if you have only private users
-that refuse to share their data on top of it. In our opinion it would have made sense to finance this like all 
-public infrastructure, our expenses are peanuts compared to building a road.
+that refuse to share their data on top of it.
 
 Looking forward, specific solutions for funding development and maintenance could be to...
 
