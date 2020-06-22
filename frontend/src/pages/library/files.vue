@@ -163,8 +163,8 @@
                 dirty: false,
                 results: [],
                 loading: true,
-                pageSize: 24,
-                offset: 0,
+                filesLimit: 500,
+                filesOffset: 0,
                 page: 0,
                 selection: [],
                 settings: settings,
@@ -360,6 +360,8 @@
                 const params = {
                     files: true,
                     uncached: true,
+                    count: this.filesLimit,
+                    offset: this.filesOffset,
                 };
 
                 Object.assign(params, this.filter);
@@ -387,7 +389,7 @@
 
                 Object.assign(this.lastFilter, this.filter);
 
-                this.offset = 0;
+                this.filesOffset = 0;
                 this.page = 0;
                 this.loading = true;
                 this.listen = false;
@@ -395,7 +397,7 @@
                 const params = this.searchParams();
 
                 Folder.originals(this.path, params).then(response => {
-                    this.offset = this.pageSize;
+                    this.filesOffset = this.filesLimit;
 
                     this.results = response.models;
                     this.breadcrumbs = this.getBreadcrumbs();
@@ -404,8 +406,10 @@
                         this.$notify.warn(this.$gettext('Directory is empty'));
                     } else if (response.count === 1) {
                         this.$notify.info(this.$gettext('One entry found'));
-                    } else {
+                    } else if (response.files < this.filesLimit) {
                         this.$notify.info(response.count + this.$gettext(' entries found'));
+                    } else {
+                        this.$notify.warn(this.$gettext('Too many files in folder, showing first') + ` ${response.files}`);
                     }
                 }).finally(() => {
                     this.dirty = false;

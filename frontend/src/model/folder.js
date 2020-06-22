@@ -136,6 +136,8 @@ export class Folder extends RestModel {
             }
 
             response.models = [];
+            response.files = files.length;
+            response.folders = folders.length;
             response.count = count;
             response.limit = limit;
             response.offset = offset;

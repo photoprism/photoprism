@@ -7,7 +7,7 @@ import (
 )
 
 // FilesByPath returns a slice of files in a given originals folder.
-func FilesByPath(rootName, pathName string) (files entity.Files, err error) {
+func FilesByPath(limit, offset int, rootName, pathName string) (files entity.Files, err error) {
 	if strings.HasPrefix(pathName, "/") {
 		pathName = pathName[1:]
 	}
@@ -18,13 +18,14 @@ func FilesByPath(rootName, pathName string) (files entity.Files, err error) {
 		Where("files.file_missing = 0").
 		Where("files.file_root = ? AND photos.photo_path = ?", rootName, pathName).
 		Order("files.file_name").
+		Limit(limit).Offset(offset).
 		Find(&files).Error
 
 	return files, err
 }
 
 // Files returns not-missing and not-deleted file entities in the range of limit and offset sorted by id.
-func Files(limit int, offset int, pathName string, includeMissing bool) (files entity.Files, err error) {
+func Files(limit, offset int, pathName string, includeMissing bool) (files entity.Files, err error) {
 	if strings.HasPrefix(pathName, "/") {
 		pathName = pathName[1:]
 	}

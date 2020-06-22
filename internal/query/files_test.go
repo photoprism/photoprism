@@ -9,7 +9,7 @@ import (
 
 func TestFilesByPath(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		files, err := FilesByPath(entity.RootOriginals, "2016/11")
+		files, err := FilesByPath(10, 0, entity.RootOriginals, "2016/11")
 
 		t.Logf("files: %+v", files)
 
