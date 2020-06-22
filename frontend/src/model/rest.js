@@ -1,6 +1,7 @@
 import Api from "common/api";
 import Form from "common/form";
 import Model from "./model";
+import Link from "./link";
 
 export class Rest extends Model {
     getId() {
@@ -16,7 +17,7 @@ export class Rest extends Model {
     }
 
     find(id, params) {
-        return Api.get(this.getEntityResource(id), params).then((response) => Promise.resolve(new this.constructor(response.data)));
+        return Api.get(this.getEntityResource(id), params).then((resp) => Promise.resolve(new this.constructor(resp.data)));
     }
 
     save() {
@@ -24,11 +25,11 @@ export class Rest extends Model {
             return this.update();
         }
 
-        return Api.post(this.constructor.getCollectionResource(), this.getValues()).then((response) => Promise.resolve(this.setValues(response.data)));
+        return Api.post(this.constructor.getCollectionResource(), this.getValues()).then((resp) => Promise.resolve(this.setValues(resp.data)));
     }
 
     update() {
-        return Api.put(this.getEntityResource(), this.getValues(true)).then((response) => Promise.resolve(this.setValues(response.data)));
+        return Api.put(this.getEntityResource(), this.getValues(true)).then((resp) => Promise.resolve(this.setValues(resp.data)));
     }
 
     remove() {
@@ -36,7 +37,7 @@ export class Rest extends Model {
     }
 
     getEditForm() {
-        return Api.options(this.getEntityResource()).then(response => Promise.resolve(new Form(response.data)));
+        return Api.options(this.getEntityResource()).then(resp => Promise.resolve(new Form(resp.data)));
     }
 
     getEntityResource(id) {
@@ -51,12 +52,50 @@ export class Rest extends Model {
         return this.constructor.getModelName() + " " + this.getId();
     }
 
-    addLink(password, expires, comment, edit) {
-        expires = expires ? parseInt(expires) : 0;
-        comment = !!comment;
-        edit = !!edit;
-        const values = {password, expires, comment, edit};
-        return Api.post(this.getEntityResource() + "/link", values).then((response) => Promise.resolve(this.setValues(response.data)));
+    createLink(password, expires) {
+        return Api
+            .post(this.getEntityResource() + "/links", {
+                "Password": password ? password : "",
+                "ShareExpires": expires ? expires : 0,
+                "CanEdit": false,
+                "CanComment": false
+            })
+            .then((resp) => Promise.resolve(new Link(resp.data)));
+    }
+
+    updateLink(link) {
+        let values = link.getValues(false);
+
+        if(link.Password) {
+            values["Password"] = link.Password;
+        }
+
+        return Api
+            .put(this.getEntityResource() + "/links/" + link.getId(), values)
+            .then((resp) => Promise.resolve(link.setValues(resp.data)));
+    }
+
+    removeLink(link) {
+        return Api
+            .delete(this.getEntityResource() + "/links/" + link.getId())
+            .then((resp) => Promise.resolve(link.setValues(resp.data)));
+    }
+
+    links() {
+        return Api.get(this.getEntityResource() + "/links").then((resp) => {
+            resp.models = [];
+            resp.count = resp.data.length;
+
+            for (let i = 0; i < resp.data.length; i++) {
+                resp.models.push(new Link(resp.data[i]));
+            }
+
+            return Promise.resolve(resp);
+        });
+    }
+
+    modelName() {
+        return this.constructor.getModelName()
     }
 
     static getCollectionResource() {
@@ -68,7 +107,7 @@ export class Rest extends Model {
     }
 
     static getCreateForm() {
-        return Api.options(this.getCreateResource()).then(response => Promise.resolve(new Form(response.data)));
+        return Api.options(this.getCreateResource()).then(resp => Promise.resolve(new Form(resp.data)));
     }
 
     static getModelName() {
@@ -76,7 +115,7 @@ export class Rest extends Model {
     }
 
     static getSearchForm() {
-        return Api.options(this.getCollectionResource()).then(response => Promise.resolve(new Form(response.data)));
+        return Api.options(this.getCollectionResource()).then(resp => Promise.resolve(new Form(resp.data)));
     }
 
     static search(params) {
@@ -84,35 +123,35 @@ export class Rest extends Model {
             params: params,
         };
 
-        return Api.get(this.getCollectionResource(), options).then((response) => {
-            let count = response.data.length;
+        return Api.get(this.getCollectionResource(), options).then((resp) => {
+            let count = resp.data.length;
             let limit = 0;
             let offset = 0;
 
-            if (response.headers) {
-                if (response.headers["x-count"]) {
-                    count = parseInt(response.headers["x-count"]);
+            if (resp.headers) {
+                if (resp.headers["x-count"]) {
+                    count = parseInt(resp.headers["x-count"]);
                 }
 
-                if (response.headers["x-limit"]) {
-                    limit = parseInt(response.headers["x-limit"]);
+                if (resp.headers["x-limit"]) {
+                    limit = parseInt(resp.headers["x-limit"]);
                 }
 
-                if (response.headers["x-offset"]) {
-                    offset = parseInt(response.headers["x-offset"]);
+                if (resp.headers["x-offset"]) {
+                    offset = parseInt(resp.headers["x-offset"]);
                 }
             }
 
-            response.models = [];
-            response.count = count;
-            response.limit = limit;
-            response.offset = offset;
+            resp.models = [];
+            resp.count = count;
+            resp.limit = limit;
+            resp.offset = offset;
 
-            for (let i = 0; i < response.data.length; i++) {
-                response.models.push(new this(response.data[i]));
+            for (let i = 0; i < resp.data.length; i++) {
+                resp.models.push(new this(resp.data[i]));
             }
 
-            return Promise.resolve(response);
+            return Promise.resolve(resp);
         });
     }
 }

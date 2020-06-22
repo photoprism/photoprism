@@ -21,7 +21,11 @@ func IsPPID(s string, prefix byte) bool {
 		return false
 	}
 
-	return s[0] == prefix && IsLowerAlnum(s)
+	if !IsLowerAlnum(s) {
+		return false
+	}
+
+	return prefix == 0 || s[0] == prefix
 }
 
 // IsHex returns true if the string only contains hex numbers, dashes and letters without whitespace.

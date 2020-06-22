@@ -27,7 +27,6 @@ export class Folder extends RestModel {
             Ignore: false,
             Watch: false,
             FileCount: 0,
-            Links: [],
             CreatedAt: "",
             UpdatedAt: "",
         };

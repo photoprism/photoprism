@@ -65,7 +65,6 @@ export class Photo extends RestModel {
             Labels: [],
             Keywords: [],
             Albums: [],
-            Links: [],
             Location: {},
             Place: {},
             PlaceID: "",

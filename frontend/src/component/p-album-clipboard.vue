@@ -23,7 +23,7 @@
                         fab dark small
                         :title="labels.share"
                         color="share"
-                        @click.stop="dialog.share = true"
+                        @click.stop="share()"
                         :disabled="selection.length !== 1"
                         v-if="$config.feature('share')"
                         class="action-share"
@@ -75,8 +75,8 @@
                               @confirm="cloneAlbums"></p-photo-album-dialog>
         <p-album-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false"
                                @confirm="batchDelete"></p-album-delete-dialog>
-        <p-share-dialog :show="dialog.share" title="Share Album" :selection="selection" @upload="upload"
-                              @close="dialog.share = false"></p-share-dialog>
+        <p-share-dialog :show="dialog.share" title="Share Album" :model="model" @upload="upload"
+                        @close="dialog.share = false"></p-share-dialog>
         <p-share-upload-dialog :show="dialog.upload" :selection="selection" @cancel="dialog.upload = false"
                                @confirm="dialog.upload = false"></p-share-upload-dialog>
     </div>
@@ -84,6 +84,7 @@
 <script>
     import Api from "common/api";
     import Notify from "common/notify";
+    import Album from "model/album";
 
     export default {
         name: 'p-album-clipboard',
@@ -95,6 +96,7 @@
         data() {
             return {
                 expanded: false,
+                model: new Album(),
                 dialog: {
                     delete: false,
                     album: false,
@@ -112,6 +114,20 @@
             };
         },
         methods: {
+            share() {
+                if (this.selection.length !== 1) {
+                    this.$notify.error("select one album to share");
+                    return;
+                }
+
+                this.model = new Album();
+                this.model.find(this.selection[0]).then(
+                    (m) => {
+                        this.model = m;
+                        this.dialog.share = true;
+                    }
+                );
+            },
             upload() {
                 this.dialog.share = false;
                 this.dialog.upload = true;

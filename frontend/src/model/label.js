@@ -16,7 +16,6 @@ export class Label extends RestModel {
             Description: "",
             Notes: "",
             PhotoCount: 0,
-            Links: [],
             CreatedAt: "",
             UpdatedAt: "",
             DeletedAt: "",

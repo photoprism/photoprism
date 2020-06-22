@@ -14,7 +14,6 @@ func PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
 		Preload("Labels.Label").
-		Preload("Links").
 		Preload("Camera").
 		Preload("Lens").
 		Preload("Details").
@@ -35,7 +34,6 @@ func PhotoByUID(photoUID string) (photo entity.Photo, err error) {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
 		Preload("Labels.Label").
-		Preload("Links").
 		Preload("Camera").
 		Preload("Lens").
 		Preload("Details").
@@ -56,7 +54,6 @@ func PhotoPreloadByUID(photoUID string) (photo entity.Photo, err error) {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
 		Preload("Labels.Label").
-		Preload("Links").
 		Preload("Camera").
 		Preload("Lens").
 		Preload("Details").
@@ -100,7 +97,6 @@ func PhotosMaintenance(limit int, offset int) (entities entity.Photos, err error
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
 		Preload("Labels.Label").
-		Preload("Links").
 		Preload("Camera").
 		Preload("Lens").
 		Preload("Details").

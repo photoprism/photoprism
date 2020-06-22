@@ -1,4 +1,5 @@
 import RestModel from "model/rest";
+import Link from "model/link";
 import Api from "common/api";
 import {DateTime} from "luxon";
 import {config} from "../session";
@@ -26,7 +27,6 @@ export class Album extends RestModel {
             Favorite: true,
             Private: false,
             PhotoCount: 0,
-            Links: [],
             CreatedAt: "",
             UpdatedAt: "",
         };
@@ -94,10 +94,6 @@ export class Album extends RestModel {
     unlike() {
         this.Favorite = false;
         return Api.delete(this.getEntityResource() + "/like");
-    }
-
-    addLink(password, expires) {
-        return Api.post(this.getEntityResource() + "/links", {"Password": password ? password : "", "Expires": expires ? expires : 0, "CanEdit": false, "CanComment": false});
     }
 
     static getCollectionResource() {

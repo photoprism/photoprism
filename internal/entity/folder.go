@@ -35,7 +35,6 @@ type Folder struct {
 	FolderIgnore      bool       `json:"Ignore" yaml:"Ignore,omitempty"`
 	FolderWatch       bool       `json:"Watch" yaml:"Watch,omitempty"`
 	FileCount         int        `gorm:"-" json:"FileCount" yaml:"-"`
-	Links             []Link     `gorm:"foreignkey:share_uid;association_foreignkey:folder_uid" json:"Links" yaml:"-"`
 	CreatedAt         time.Time  `json:"-" yaml:"-"`
 	UpdatedAt         time.Time  `json:"-" yaml:"-"`
 	ModifiedAt        *time.Time `json:"ModifiedAt,omitempty" yaml:"-"`

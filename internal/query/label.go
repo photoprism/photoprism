@@ -15,7 +15,7 @@ func PhotoLabel(photoID, labelID uint) (label entity.PhotoLabel, err error) {
 
 // LabelBySlug returns a Label based on the slug name.
 func LabelBySlug(labelSlug string) (label entity.Label, err error) {
-	if err := Db().Where("label_slug = ? OR custom_slug = ?", labelSlug, labelSlug).Preload("Links").First(&label).Error; err != nil {
+	if err := Db().Where("label_slug = ? OR custom_slug = ?", labelSlug, labelSlug).First(&label).Error; err != nil {
 		return label, err
 	}
 
@@ -24,7 +24,7 @@ func LabelBySlug(labelSlug string) (label entity.Label, err error) {
 
 // LabelByUID returns a Label based on the label UID.
 func LabelByUID(labelUID string) (label entity.Label, err error) {
-	if err := Db().Where("label_uid = ?", labelUID).Preload("Links").First(&label).Error; err != nil {
+	if err := Db().Where("label_uid = ?", labelUID).First(&label).Error; err != nil {
 		return label, err
 	}
 
