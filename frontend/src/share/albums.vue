@@ -93,7 +93,7 @@
                                 </v-img>
 
                                 <v-card-title primary-title class="pa-3 p-album-desc" style="user-select: none;">
-                                    <h3 class="body-1 ma-0">
+                                    <h3 class="body-2 ma-0">
                                         {{ album.Title }}
                                     </h3>
                                     <div class="caption mt-2" title="Info" v-if="album.Description">

@@ -133,7 +133,7 @@
                                             @save="onSave(album)"
                                             class="p-inline-edit"
                                     >
-                                        <span v-if="album.Title" class="body-1 ma-0">
+                                        <span v-if="album.Title" class="body-2 ma-0">
                                             {{ album.Title }}
                                         </span>
                                         <span v-else>
