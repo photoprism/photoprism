@@ -51,7 +51,6 @@ type File struct {
 	FileError       string        `gorm:"type:varbinary(512)" json:"Error" yaml:"Error,omitempty"`
 	Share           []FileShare   `json:"-" yaml:"-"`
 	Sync            []FileSync    `json:"-" yaml:"-"`
-	Links           []Link        `gorm:"foreignkey:share_uid;association_foreignkey:file_uid" json:"Links" yaml:"-"`
 	CreatedAt       time.Time     `json:"CreatedAt" yaml:"-"`
 	CreatedIn       int64         `json:"CreatedIn" yaml:"-"`
 	UpdatedAt       time.Time     `json:"UpdatedAt" yaml:"-"`
@@ -192,4 +191,9 @@ func (m *File) RelatedPhoto() *Photo {
 // NoJPEG returns true if the file is not a JPEG image file.
 func (m *File) NoJPEG() bool {
 	return m.FileType != string(fs.TypeJpeg)
+}
+
+// Links returns all share links for this entity.
+func (m *File) Links() Links {
+	return FindLinks("", m.FileUID)
 }

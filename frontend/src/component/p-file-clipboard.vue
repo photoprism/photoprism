@@ -2,9 +2,7 @@
     <div>
         <v-container fluid class="pa-0" v-if="selection.length > 0">
             <v-speed-dial
-                    fixed
-                    bottom
-                    right
+                    fixed bottom right
                     direction="top"
                     v-model="expanded"
                     transition="slide-y-reverse-transition"
@@ -12,24 +10,21 @@
                     id="t-clipboard"
             >
                 <v-btn
+                        fab dark
                         slot="activator"
                         color="accent darken-2"
-                        dark
-                        fab
-                        class="p-file-clipboard-menu"
+                        class="action-menu"
                 >
                     <v-icon v-if="selection.length === 0">menu</v-icon>
-                    <span v-else class="t-clipboard-count">{{ selection.length }}</span>
+                    <span v-else class="count-clipboard">{{ selection.length }}</span>
                 </v-btn>
 
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         :title="labels.download"
                         color="download"
                         @click.stop="download()"
-                        class="p-file-clipboard-download"
+                        class="action-download"
                         v-if="$config.feature('download')"
                         :disabled="selection.length === 0"
                 >
@@ -37,25 +32,21 @@
                 </v-btn>
 
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         :title="labels.addToAlbum"
                         color="album"
                         :disabled="selection.length === 0"
                         @click.stop="dialog.album = true"
-                        class="p-file-clipboard-album"
+                        class="action-album"
                 >
                     <v-icon>folder</v-icon>
                 </v-btn>
 
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         color="accent"
                         @click.stop="clearClipboard()"
-                        class="p-file-clipboard-clear"
+                        class="action-clear"
                 >
                     <v-icon>clear</v-icon>
                 </v-btn>

@@ -75,7 +75,6 @@ type Photo struct {
 	Lens             *Lens        `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Lens" yaml:"-"`
 	Location         *Location    `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Location" yaml:"-"`
 	Place            *Place       `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Place" yaml:"-"`
-	Links            []Link       `gorm:"foreignkey:share_uid;association_foreignkey:photo_uid" json:"Links" yaml:"-"`
 	Keywords         []Keyword    `json:"-" yaml:"-"`
 	Albums           []Album      `json:"-" yaml:"-"`
 	Files            []File       `yaml:"-"`
@@ -870,4 +869,9 @@ func (m *Photo) Approve() error {
 	})
 
 	return nil
+}
+
+// Links returns all share links for this entity.
+func (m *Photo) Links() Links {
+	return FindLinks("", m.PhotoUID)
 }

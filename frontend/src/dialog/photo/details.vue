@@ -1,8 +1,8 @@
 <template>
-    <div class="p-tab p-tab-photo-edit">
+    <div class="p-tab p-tab-photo-details">
         <v-container fluid>
             <v-form lazy-validation dense
-                    ref="form" class="p-form-photo-edit-meta" accept-charset="UTF-8"
+                    ref="form" class="p-form-photo-details-meta" accept-charset="UTF-8"
                     @submit.prevent="save">
                 <v-layout row wrap align-top fill-height>
                     <v-flex
@@ -409,7 +409,7 @@
     import Thumb from "model/thumb";
 
     export default {
-        name: 'p-tab-photo-edit',
+        name: 'p-tab-photo-details',
         props: {
             model: Object,
         },

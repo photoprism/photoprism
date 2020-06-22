@@ -14,56 +14,50 @@ func TestLinkAlbum(t *testing.T) {
 	t.Run("create share link", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 
-		var album entity.Album
+		var link entity.Link
 
-		LinkAlbum(router, ctx)
+		CreateAlbumLink(router, ctx)
 
-		result1 := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/link", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
-		assert.Equal(t, http.StatusOK, result1.Code)
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/links", `{"Password": "foobar", "ShareExpires": 0, "CanEdit": true}`)
 
-		if err := json.Unmarshal(result1.Body.Bytes(), &album); err != nil {
+		if resp.Code != http.StatusOK {
+			t.Fatal(resp.Body.String())
+		}
+
+		if err := json.Unmarshal(resp.Body.Bytes(), &link); err != nil {
 			t.Fatal(err)
 		}
 
-		if len(album.Links) != 1 {
-			t.Fatalf("one link expected: %d, %+v", len(album.Links), album)
-		}
-
-		link := album.Links[0]
-
+		assert.NotEmpty(t, link.LinkUID)
+		assert.NotEmpty(t, link.ShareUID)
+		assert.NotEmpty(t, link.ShareToken)
 		assert.Equal(t, true, link.CanEdit)
-		assert.Nil(t, link.LinkExpires)
+		assert.Equal(t, 0, link.ShareExpires)
 		assert.False(t, link.CanComment)
 		assert.True(t, link.CanEdit)
-
-		result2 := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/link", `{"Password": "", "Expires": 3600}`)
-
-		assert.Equal(t, http.StatusOK, result2.Code)
-
-		// t.Logf("result1: %s", result1.Body.String())
-		// t.Logf("result2: %s", result2.Body.String())
-
-		if err := json.Unmarshal(result2.Body.Bytes(), &album); err != nil {
-			t.Fatal(err)
-		}
-
-		if len(album.Links) != 2 {
-			t.Fatal("two links expected")
-		}
 	})
-	t.Run("album not found", func(t *testing.T) {
+	t.Run("album does not exist", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
-		LinkAlbum(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/xxx/link", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
-		assert.Equal(t, http.StatusNotFound, r.Code)
-		val := gjson.Get(r.Body.String(), "error")
+		CreateAlbumLink(router, ctx)
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/xxx/links", `{"Password": "foobar", "ShareExpires": 0, "CanEdit": true}`)
+
+		if resp.Code != http.StatusNotFound {
+			t.Fatal(resp.Body.String())
+		}
+
+		val := gjson.Get(resp.Body.String(), "error")
 		assert.Equal(t, "Album not found", val.String())
 	})
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
-		LinkAlbum(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/link", `{"xxx": 123, "Expires": 0, "CanEdit": "xxx"}`)
-		assert.Equal(t, http.StatusBadRequest, r.Code)
+
+		CreateAlbumLink(router, ctx)
+
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/links", `{"Password": "foobar", "ShareExpires": "abc", "CanEdit": true}`)
+
+		if resp.Code != http.StatusBadRequest {
+			t.Fatal(resp.Body.String())
+		}
 	})
 }
 
@@ -71,52 +65,39 @@ func TestLinkPhoto(t *testing.T) {
 	t.Run("create share link", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 
-		var photo entity.Photo
+		var link entity.Link
 
-		LinkPhoto(router, ctx)
+		CreatePhotoLink(router, ctx)
 
-		result1 := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/link", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
-		assert.Equal(t, http.StatusOK, result1.Code)
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/links", `{"Password": "foobar", "ShareExpires": 0, "CanEdit": true}`)
+		assert.Equal(t, http.StatusOK, resp.Code)
 
-		if err := json.Unmarshal(result1.Body.Bytes(), &photo); err != nil {
+		if err := json.Unmarshal(resp.Body.Bytes(), &link); err != nil {
 			t.Fatal(err)
 		}
 
-		if len(photo.Links) != 1 {
-			t.Fatalf("one link expected: %d, %+v", len(photo.Links), photo)
-		}
-
-		link := photo.Links[0]
-
-		assert.Equal(t, "foobar", link.LinkPassword)
-		assert.Nil(t, link.LinkExpires)
+		assert.NotEmpty(t, link.LinkUID)
+		assert.NotEmpty(t, link.ShareUID)
+		assert.NotEmpty(t, link.ShareToken)
+		assert.Equal(t, 0, link.ShareExpires)
 		assert.False(t, link.CanComment)
 		assert.True(t, link.CanEdit)
-
-		result2 := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/link", `{"Password": "", "Expires": 3600}`)
-
-		assert.Equal(t, http.StatusOK, result2.Code)
-
-		if err := json.Unmarshal(result2.Body.Bytes(), &photo); err != nil {
-			t.Fatal(err)
-		}
-
-		if len(photo.Links) != 2 {
-			t.Fatal("two links expected")
-		}
 	})
 	t.Run("photo not found", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
-		LinkPhoto(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/photos/xxx/link", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
-		assert.Equal(t, http.StatusNotFound, r.Code)
-		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Photo not found", val.String())
+
+		CreatePhotoLink(router, ctx)
+
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/photos/xxx/link", `{"Password": "foobar", "ShareExpires": 0, "CanEdit": true}`)
+
+		if resp.Code != http.StatusNotFound {
+			t.Fatal(resp.Body.String())
+		}
 	})
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
-		LinkPhoto(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/link", `{"xxx": 123, "Expires": 0, "CanEdit": "xxx"}`)
+		CreatePhotoLink(router, ctx)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/links", `{"xxx": 123, "ShareExpires": "abc", "CanEdit": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }
@@ -125,52 +106,37 @@ func TestLinkLabel(t *testing.T) {
 	t.Run("create share link", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
 
-		var label entity.Label
+		var link entity.Link
 
-		LinkLabel(router, ctx)
+		CreateLabelLink(router, ctx)
 
-		result1 := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/link", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
-		assert.Equal(t, http.StatusOK, result1.Code)
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/links", `{"Password": "foobar", "ShareExpires": 0, "CanEdit": true}`)
+		assert.Equal(t, http.StatusOK, resp.Code)
 
-		if err := json.Unmarshal(result1.Body.Bytes(), &label); err != nil {
+		if err := json.Unmarshal(resp.Body.Bytes(), &link); err != nil {
 			t.Fatal(err)
 		}
 
-		if len(label.Links) != 1 {
-			t.Fatalf("one link expected: %d, %+v", len(label.Links), label)
-		}
-
-		link := label.Links[0]
-
-		assert.Equal(t, "foobar", link.LinkPassword)
-		assert.Nil(t, link.LinkExpires)
+		assert.NotEmpty(t, link.LinkUID)
+		assert.NotEmpty(t, link.ShareUID)
+		assert.NotEmpty(t, link.ShareToken)
+		assert.Equal(t, 0, link.ShareExpires)
 		assert.False(t, link.CanComment)
 		assert.True(t, link.CanEdit)
-
-		result2 := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/link", `{"Password": "", "Expires": 3600}`)
-
-		assert.Equal(t, http.StatusOK, result2.Code)
-
-		if err := json.Unmarshal(result2.Body.Bytes(), &label); err != nil {
-			t.Fatal(err)
-		}
-
-		if len(label.Links) != 2 {
-			t.Fatal("two links expected")
-		}
 	})
 	t.Run("label not found", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
-		LinkLabel(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/labels/xxx/link", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
-		assert.Equal(t, http.StatusNotFound, r.Code)
-		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Label not found", val.String())
+		CreateLabelLink(router, ctx)
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/labels/xxx/links", `{"Password": "foobar", "ShareExpires": 0, "CanEdit": true}`)
+
+		if resp.Code != http.StatusNotFound {
+			t.Fatal(resp.Body.String())
+		}
 	})
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, ctx := NewApiTest()
-		LinkLabel(router, ctx)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/link", `{"xxx": 123, "Expires": 0, "CanEdit": "xxx"}`)
+		CreateLabelLink(router, ctx)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/links", `{"xxx": 123, "ShareExpires": "abc", "CanEdit": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }

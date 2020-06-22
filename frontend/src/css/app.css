@@ -107,7 +107,7 @@ main {
 }
 
 #photoprism .p-log-empty,
-#photoprism .p-log-message{
+#photoprism .p-log-message {
     display: block;
     text-align: left;
     font-size: 1em;
@@ -188,8 +188,7 @@ table.v-table tbody td input,
 table.v-table tbody td label.v-label,
 table.v-table tfoot td,
 table.v-table tfoot td input,
-table.v-table tfoot td label.v-label
-{
+table.v-table tfoot td label.v-label {
     font-weight: 400;
     font-size: 13px;
 }
@@ -237,4 +236,8 @@ table.v-table tfoot td div.v-input__slot {
 
 #photoprism .opacity-100 {
     opacity: 1 !important;
+}
+
+#photoprism button:focus {
+    outline: none;
 }

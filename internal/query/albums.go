@@ -40,7 +40,7 @@ type AlbumResult struct {
 
 // AlbumByUID returns a Album based on the UID.
 func AlbumByUID(albumUID string) (album entity.Album, err error) {
-	if err := Db().Where("album_uid = ?", albumUID).Preload("Links").First(&album).Error; err != nil {
+	if err := Db().Where("album_uid = ?", albumUID).First(&album).Error; err != nil {
 		return album, err
 	}
 
@@ -108,7 +108,7 @@ func AlbumSearch(f form.AlbumSearch) (results []AlbumResult, err error) {
 	s = s.Table("albums").
 		Select(`albums.*, 
 			COUNT(photos_albums.album_uid) AS photo_count,
-			COUNT(links.link_token) AS link_count`).
+			COUNT(links.share_token) AS link_count`).
 		Joins("LEFT JOIN photos_albums ON photos_albums.album_uid = albums.album_uid").
 		Joins("LEFT JOIN links ON links.share_uid = albums.album_uid").
 		Where("albums.deleted_at IS NULL").

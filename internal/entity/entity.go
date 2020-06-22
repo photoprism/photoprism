@@ -49,6 +49,7 @@ var Entities = Types{
 	"photos_labels":   &PhotoLabel{},
 	"keywords":        &Keyword{},
 	"photos_keywords": &PhotoKeyword{},
+	"passwords":       &Password{},
 	"links":           &Link{},
 }
 

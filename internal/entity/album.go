@@ -45,7 +45,6 @@ type Album struct {
 	AlbumMonth       int        `gorm:"index:idx_albums_country_year_month;" json:"Month" yaml:"Month,omitempty"`
 	AlbumFavorite    bool       `json:"Favorite" yaml:"Favorite,omitempty"`
 	AlbumPrivate     bool       `json:"Private" yaml:"Private,omitempty"`
-	Links            []Link     `gorm:"foreignkey:share_uid;association_foreignkey:album_uid" json:"Links" yaml:"-"`
 	CreatedAt        time.Time  `json:"CreatedAt" yaml:"-"`
 	UpdatedAt        time.Time  `json:"UpdatedAt" yaml:"-"`
 	DeletedAt        *time.Time `sql:"index" json:"-" yaml:"-"`
@@ -364,4 +363,9 @@ func (m *Album) RemovePhotos(UIDs []string) (removed []PhotoAlbum) {
 	}
 
 	return removed
+}
+
+// Links returns all share links for this entity.
+func (m *Album) Links() Links {
+	return FindLinks("", m.AlbumUID)
 }

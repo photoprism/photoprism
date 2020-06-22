@@ -2,9 +2,7 @@
     <div>
         <v-container fluid class="pa-0" v-if="selection.length > 0">
             <v-speed-dial
-                    fixed
-                    bottom
-                    right
+                    fixed bottom right
                     direction="top"
                     v-model="expanded"
                     transition="slide-y-reverse-transition"
@@ -12,14 +10,13 @@
                     id="t-clipboard"
             >
                 <v-btn
+                        fab dark
                         slot="activator"
                         color="accent darken-2"
-                        dark
-                        fab
-                        class="p-label-clipboard-menu"
+                        class="action-menu"
                 >
                     <v-icon v-if="selection.length === 0">menu</v-icon>
-                    <span v-else  class="t-clipboard-count">{{ selection.length }}</span>
+                    <span v-else class="count-clipboard">{{ selection.length }}</span>
                 </v-btn>
 
                 <!-- v-btn
@@ -35,37 +32,31 @@
                     <v-icon>cloud_download</v-icon>
                 </v-btn -->
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         :title="labels.addToAlbum"
                         color="album"
                         :disabled="selection.length === 0"
                         @click.stop="dialog.album = true"
-                        class="p-photo-clipboard-album"
+                        class="action-album"
                 >
                     <v-icon>folder</v-icon>
                 </v-btn>
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         color="remove"
                         :title="labels.delete"
                         @click.stop="dialog.delete = true"
                         :disabled="selection.length === 0"
-                        class="p-label-clipboard-delete"
+                        class="action-delete"
                 >
                     <v-icon>delete</v-icon>
                 </v-btn>
 
                 <v-btn
-                        fab
-                        dark
-                        small
+                        fab dark small
                         color="accent"
                         @click.stop="clearClipboard()"
-                        class="p-label-clipboard-clear"
+                        class="action-clear"
                 >
                     <v-icon>clear</v-icon>
                 </v-btn>
@@ -128,7 +119,7 @@
                 this.clearClipboard();
             },
             download() {
-                if(this.selection.length !== 1) {
+                if (this.selection.length !== 1) {
                     Notify.error(this.$gettext("You can only download one label"));
                     return;
                 }
