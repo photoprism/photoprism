@@ -58,7 +58,7 @@ export class Rest extends Model {
                 "Password": password ? password : "",
                 "ShareExpires": expires ? expires : 0,
                 "CanEdit": false,
-                "CanComment": false
+                "CanComment": false,
             })
             .then((resp) => Promise.resolve(new Link(resp.data)));
     }
@@ -95,7 +95,7 @@ export class Rest extends Model {
     }
 
     modelName() {
-        return this.constructor.getModelName()
+        return this.constructor.getModelName();
     }
 
     static getCollectionResource() {
