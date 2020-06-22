@@ -200,7 +200,6 @@ func CreateLabelLink(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-
 // PUT /api/v1/labels/:uid/links/:link
 func UpdateLabelLink(router *gin.RouterGroup, conf *config.Config) {
 	router.PUT("/labels/:uid/links/:link", func(c *gin.Context) {
