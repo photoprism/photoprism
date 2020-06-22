@@ -241,3 +241,7 @@ table.v-table tfoot td div.v-input__slot {
 #photoprism button:focus {
     outline: none;
 }
+
+body.shared .hidden-shared-only {
+    display: none !important;
+}

@@ -4,42 +4,12 @@
 
         <v-form ref="form" class="p-albums-search" lazy-validation @submit.prevent="updateQuery" dense>
             <v-toolbar flat color="secondary">
-                <v-text-field @keyup.enter.native="updateQuery"
-                              single-line
-                              class="hidden-xs-only mr-3"
-                              :label="labels.search"
-                              browser-autocomplete="off"
-                              prepend-inner-icon="search"
-                              clearable
-                              color="secondary-dark"
-                              @click:clear="clearQuery"
-                              v-model="filter.q"
-                              id="search"
-                ></v-text-field>
-
-                <v-select @change="updateQuery"
-                          single-line
-                          :label="labels.category"
-                          color="secondary-dark"
-                          v-model="filter.category"
-                          :items="categories"
-                          class="input-category"
-                >
-                </v-select>
+                <v-toolbar-title><translate>Shared Albums</translate></v-toolbar-title>
 
                 <v-spacer></v-spacer>
 
                 <v-btn icon @click.stop="refresh" class="action-reload">
                     <v-icon>refresh</v-icon>
-                </v-btn>
-
-                <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-                       class="hidden-sm-and-down">
-                    <v-icon>cloud_upload</v-icon>
-                </v-btn>
-
-                <v-btn icon @click.prevent="create" class="action-add" v-if="staticFilter.type === 'album'">
-                    <v-icon>add</v-icon>
                 </v-btn>
             </v-toolbar>
         </v-form>
@@ -116,56 +86,20 @@
                                            icon large absolute
                                            :class="selection.includes(album.UID) ? 'p-album-select' : 'p-album-select opacity-50'"
                                            @click.stop.prevent="onSelect($event, index)">
-                                        <v-icon v-if="selection.includes(album.UID)" color="white"
-                                                class="t-select t-on">check_circle
+                                        <v-icon v-if="selection.includes(album.UID)" color="white" class="t-select t-on">check_circle
                                         </v-icon>
-                                        <v-icon v-else color="accent lighten-3" class="t-select t-off">
-                                            radio_button_off
-                                        </v-icon>
+                                        <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
                                     </v-btn>
                                 </v-img>
 
-                                <v-card-actions primary-title class="pa-3" style="user-select: none;"
-                                              @click.stop.prevent="">
-                                    <v-edit-dialog
-                                            :return-value.sync="album.Title"
-                                            lazy
-                                            @save="onSave(album)"
-                                            class="p-inline-edit"
-                                    >
-                                        <span v-if="album.Title" class="body-1 ma-0">
-                                            {{ album.Title }}
-                                        </span>
-                                        <span v-else>
-                                            <v-icon>edit</v-icon>
-                                        </span>
-                                        <template v-slot:input>
-                                            <v-text-field
-                                                    v-model="album.Title"
-                                                    :rules="[titleRule]"
-                                                    :label="labels.title"
-                                                    color="secondary-dark"
-                                                    class="input-title"
-                                                    single-line
-                                                    autofocus
-                                            ></v-text-field>
-                                        </template>
-                                    </v-edit-dialog>
-
-                                    <v-spacer></v-spacer>
-
-                                    <v-btn icon @click.stop.prevent="album.toggleLike()">
-                                        <v-icon v-if="album.Favorite" color="#FFD600">star
-                                        </v-icon>
-                                        <v-icon v-else color="accent lighten-2">star</v-icon>
-                                    </v-btn>
-                                </v-card-actions>
-
-                                <v-card-text v-if="album.Description" class="pb-3 pl-3 pr-3 pt-0 p-album-desc">
-                                    <div class="caption" title="Description" v-if="album.Description">
+                                <v-card-title primary-title class="pa-3 p-album-desc" style="user-select: none;">
+                                    <h3 class="body-1 ma-0">
+                                        {{ album.Title }}
+                                    </h3>
+                                    <div class="caption mt-2" title="Info" v-if="album.Description">
                                         {{ album.Description }}
                                     </div>
-                                </v-card-text>
+                                </v-card-title>
                             </v-card>
                         </v-hover>
                     </v-flex>
@@ -208,10 +142,8 @@
 
             let categories = [{"value": "", "text": this.$gettext("All Categories")}];
 
-            if (this.$config.values.albumCategories) {
-                categories = categories.concat(this.$config.values.albumCategories.map(cat => {
-                    return {"value": cat, "text": cat};
-                }));
+            if(this.$config.values.albumCategories) {
+                categories = categories.concat(this.$config.values.albumCategories.map(cat => { return {"value": cat, "text": cat}; }));
             }
 
             return {

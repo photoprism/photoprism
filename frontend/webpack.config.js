@@ -14,6 +14,7 @@ if(isDev) {
 
 const PATHS = {
     app: path.join(__dirname, "src/app.js"),
+    share: path.join(__dirname, "src/share.js"),
     js: path.join(__dirname, "src"),
     css: path.join(__dirname, "src/css"),
     build: path.join(__dirname, "../assets/static/build"),
@@ -24,6 +25,7 @@ const config = {
     devtool: isDev ? "inline-source-map" : false,
     entry: {
         app: PATHS.app,
+        share: PATHS.share,
     },
     output: {
         path: PATHS.build,

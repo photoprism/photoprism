@@ -17,7 +17,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Rainbow page.
 	router.GET("/rainbow", func(c *gin.Context) {
-		clientConfig := conf.PublicClientConfig()
+		clientConfig := conf.PublicConfig()
 		c.HTML(http.StatusOK, "rainbow.tmpl", gin.H{"config": clientConfig})
 	})
 
@@ -115,6 +115,12 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.Websocket(v1, conf)
 	}
 
+	// Link sharing.
+	share := router.Group("/s")
+	{
+		api.InitShare(share, conf)
+	}
+
 	// WebDAV server for file management, sync and sharing.
 	if conf.WebDAVPassword() != "" {
 		log.Info("webdav: enabled, username: photoprism")
@@ -140,7 +146,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Default HTML page for client-side rendering and routing via VueJS.
 	router.NoRoute(func(c *gin.Context) {
-		clientConfig := conf.PublicClientConfig()
+		clientConfig := conf.PublicConfig()
 		c.HTML(http.StatusOK, conf.DefaultTemplate(), gin.H{"config": clientConfig})
 	})
 }

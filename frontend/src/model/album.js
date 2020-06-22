@@ -1,5 +1,4 @@
 import RestModel from "model/rest";
-import Link from "model/link";
 import Api from "common/api";
 import {DateTime} from "luxon";
 import {config} from "../session";

@@ -109,8 +109,8 @@ func (c *Config) Flags() (flags []string) {
 	return flags
 }
 
-// PublicClientConfig returns reduced config values for non-public sites.
-func (c *Config) PublicClientConfig() ClientConfig {
+// PublicConfig returns public client config values.
+func (c *Config) PublicConfig() ClientConfig {
 	if c.Public() {
 		return c.ClientConfig()
 	}
@@ -144,7 +144,42 @@ func (c *Config) PublicClientConfig() ClientConfig {
 	return result
 }
 
-// ClientConfig returns a loaded and set configuration entity.
+// ShareConfig returns client config values for the sharing UI.
+func (c *Config) ShareConfig() ClientConfig {
+	defer log.Debug(capture.Time(time.Now(), "config: share config created"))
+
+	settings := c.Settings()
+
+	result := ClientConfig{
+		Settings:        Settings{Language: settings.Language, Theme: settings.Theme, Features: FeatureSettings{Download: settings.Features.Download}},
+		Flags:           "readonly public shared",
+		Name:            c.Name(),
+		SiteUrl:         c.SiteUrl(),
+		SiteTitle:       c.SiteTitle(),
+		SiteCaption:     c.SiteCaption(),
+		SiteDescription: c.SiteDescription(),
+		SiteAuthor:      c.SiteAuthor(),
+		Version:         c.Version(),
+		Copyright:       c.Copyright(),
+		Debug:           c.Debug(),
+		ReadOnly:        true,
+		UploadNSFW:      c.UploadNSFW(),
+		DisableSettings: true,
+		Public:          true,
+		Experimental:    false,
+		Colors:          colors.All.List(),
+		Thumbnails:      Thumbnails,
+		DownloadToken:   c.DownloadToken(),
+		PreviewToken:    c.PreviewToken(),
+		JSHash:          fs.Checksum(c.StaticBuildPath() + "/share.js"),
+		CSSHash:         fs.Checksum(c.StaticBuildPath() + "/share.css"),
+		Clip:            txt.ClipDefault,
+	}
+
+	return result
+}
+
+// ClientConfig returns client configuration values for the UI.
 func (c *Config) ClientConfig() ClientConfig {
 	defer log.Debug(capture.Time(time.Now(), "config: client config created"))
 
