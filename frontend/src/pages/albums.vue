@@ -125,7 +125,7 @@
                                     </v-btn>
                                 </v-img>
 
-                                <v-card-actions primary-title class="pa-3" style="user-select: none;"
+                                <v-card-actions primary-title class="pl-3 pr-2 pb-0" style="user-select: none;"
                                               @click.stop.prevent="">
                                     <v-edit-dialog
                                             :return-value.sync="album.Title"
@@ -161,7 +161,7 @@
                                     </v-btn>
                                 </v-card-actions>
 
-                                <v-card-text v-if="album.Description" class="pb-3 pl-3 pr-3 pt-0 p-album-desc">
+                                <v-card-text v-if="album.Description" class="pl-3 pr-3 pt-0 pb-3 p-album-desc">
                                     <div class="caption" title="Description" v-if="album.Description">
                                         {{ album.Description }}
                                     </div>
