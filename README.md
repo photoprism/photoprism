@@ -3,7 +3,6 @@ PhotoPrism: Browse Your Life in Pictures
 
 [![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)][license]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][goreport]
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fphotoprism%2Fphotoprism.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fphotoprism%2Fphotoprism)
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=develop)][ci]
 [![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://github.com/photoprism/photoprism/graphs/contributors/)
 [![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)][docs]
