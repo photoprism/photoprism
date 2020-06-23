@@ -66,7 +66,7 @@ good (first) contributions.
 Please follow us on [Twitter][twitter] and join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
 to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
 
-## No Free Beer ##
+## Funding ##
 
 This project is about freedom and privacy but not necessarily about free beer. We feel like it
 would be a mistake to state there will be no costs, because clearly we have huge expenses, your server hardware
