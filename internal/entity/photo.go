@@ -614,20 +614,22 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	}
 
 	if !knownLocation || m.NoTitle() {
-		if fileTitle == "" {
-			fileTitle = TitleUnknown
-		}
-
-		if len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
+		if fileTitle == "" && len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
 			if m.TakenSrc != SrcAuto {
 				m.SetTitle(fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
 				m.SetTitle(txt.Title(labels[0].Name), SrcAuto)
 			}
-		} else if len(fileTitle) <= 20 && !m.TakenAtLocal.IsZero() && m.TakenSrc != SrcAuto {
+		} else if fileTitle != "" && len(fileTitle) <= 20 && !m.TakenAtLocal.IsZero() && m.TakenSrc != SrcAuto {
 			m.SetTitle(fmt.Sprintf("%s / %s", fileTitle, m.TakenAtLocal.Format("2006")), SrcAuto)
-		} else {
+		} else if fileTitle != "" {
 			m.SetTitle(fileTitle, SrcAuto)
+		} else {
+			if m.TakenSrc != SrcAuto {
+				m.SetTitle(fmt.Sprintf("%s / %s", TitleUnknown, m.TakenAt.Format("2006")), SrcAuto)
+			} else {
+				m.SetTitle(TitleUnknown, SrcAuto)
+			}
 		}
 	}
 
