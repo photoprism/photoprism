@@ -121,8 +121,8 @@ func (c *Config) PublicConfig() ClientConfig {
 		Settings: Settings{
 			Language: settings.Language,
 			Theme:    settings.Theme,
-			Maps:     MapsSettings{Animate: settings.Maps.Animate, Style: settings.Maps.Style},
-			Features: FeatureSettings{Download: settings.Features.Download},
+			Maps:     settings.Maps,
+			Features: settings.Features,
 		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Name:            c.Name(),
@@ -159,8 +159,8 @@ func (c *Config) ShareConfig() ClientConfig {
 		Settings: Settings{
 			Language: settings.Language,
 			Theme:    settings.Theme,
-			Maps:     MapsSettings{Animate: settings.Maps.Animate, Style: settings.Maps.Style},
-			Features: FeatureSettings{Download: settings.Features.Download},
+			Maps:     settings.Maps,
+			Features: settings.Features,
 		},
 		Flags:           "readonly public shared",
 		Name:            c.Name(),
