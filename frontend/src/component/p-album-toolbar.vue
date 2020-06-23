@@ -30,8 +30,7 @@
                 <v-icon>refresh</v-icon>
             </v-btn>
 
-            <v-btn icon @click.stop="dialog.share = true"
-                   class="hidden-xs-only" v-if="$config.feature('share')">
+            <v-btn icon @click.stop="dialog.share = true" v-if="$config.feature('share')">
                 <v-icon>share</v-icon>
             </v-btn>
 
