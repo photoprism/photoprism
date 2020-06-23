@@ -112,4 +112,30 @@ func TestTitleFromFileName(t *testing.T) {
 	t.Run("changing-of-the-guard--buckingham-palace_7925318070_o.jpg", func(t *testing.T) {
 		assert.Equal(t, "Changing of the Guard / Buckingham Palace", TitleFromFileName("changing-of-the-guard--buckingham-palace_7925318070_o.jpg"))
 	})
+	/*
+	Additional tests for https://github.com/photoprism/photoprism/issues/361
+
+	-rw-r--r-- 1 root root 813009 Jun  8 23:42 えく - スカイフレア (82063926) .png
+	-rw-r--r-- 1 root root 161749 Jun  6 15:48 紅シャケ＠お仕事募集中 - モスティマ (81974640) .jpg
+	[root@docker Pictures]# ls -l Originals/al
+	total 1276
+	-rw-r--r-- 1 root root 451062 Jun 18 19:00 Cyka - swappable mag (82405706) .jpg
+	-rw-r--r-- 1 root root 662922 Jun 15 21:18 dishwasher1910 - Friedrich the smol (82201574) 1ページ.jpg
+	-rw-r--r-- 1 root root 185971 Jun 19 21:07 EaycddvU0AAfuUR.jpg
+	 */
+	t.Run("issue_361_a", func(t *testing.T) {
+		assert.Equal(t, "えく スカイフレア", TitleFromFileName("えく - スカイフレア (82063926) .png"))
+	})
+	t.Run("issue_361_b", func(t *testing.T) {
+		assert.Equal(t, "紅シャケ お仕事募集中 モスティマ", TitleFromFileName("紅シャケ＠お仕事募集中 - モスティマ (81974640) .jpg"))
+	})
+	t.Run("issue_361_c", func(t *testing.T) {
+		assert.Equal(t, "Cyka Swappable Mag", TitleFromFileName("Cyka - swappable mag (82405706) .jpg"))
+	})
+	t.Run("issue_361_d", func(t *testing.T) {
+		assert.Equal(t, "Dishwasher Friedrich the Smol", TitleFromFileName("dishwasher1910 - Friedrich the smol (82201574) 1ページ.jpg"))
+	})
+	t.Run("issue_361_e", func(t *testing.T) {
+		assert.Equal(t, "Eaycddvu Aafuur", TitleFromFileName("EaycddvU0AAfuUR.jpg"))
+	})
 }
