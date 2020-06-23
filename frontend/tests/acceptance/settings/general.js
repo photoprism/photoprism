@@ -17,11 +17,11 @@ test('#1 Settings', async t => {
         .expect(Selector('.p-navigation-photos').innerText).contains('Photos');
     await page.selectNthPhoto(0);
     await t
-        .click(Selector('button.p-photo-clipboard-menu'))
-        .expect(Selector('button.p-photo-clipboard-download').visible).ok()
-        .expect(Selector('button.p-photo-clipboard-share').visible).ok()
-        .expect(Selector('button.p-photo-clipboard-edit').visible).ok()
-        .expect(Selector('button.p-photo-clipboard-private').visible).ok();
+        .click(Selector('button.action-menu'))
+        .expect(Selector('button.action-download').visible).ok()
+        .expect(Selector('button.action-share').visible).ok()
+        .expect(Selector('button.action-edit').visible).ok()
+        .expect(Selector('button.action-private').visible).ok();
     await page.unselectPhoto(0);
     await t
         .click(Selector('div.p-photo').nth(0));
@@ -32,9 +32,9 @@ test('#1 Settings', async t => {
         .expect(Selector('button.action-location').visible).ok()
         .click(Selector('button.action-title-edit').nth(0))
         .expect(Selector('.input-title input').hasAttribute('disabled')).notOk()
-        .click(Selector('#tab-edit-labels'))
+        .click(Selector('#tab-labels'))
         .expect(Selector('button.p-photo-label-add').visible).ok()
-        .click(Selector('#tab-edit-details'))
+        .click(Selector('#tab-details'))
         .click(Selector('button.action-close'))
         .click(Selector('.p-navigation-library'))
         .expect(Selector('#tab-import a').visible).ok()
@@ -43,7 +43,7 @@ test('#1 Settings', async t => {
         .expect(Selector('.p-navigation-archive').visible).ok()
         .expect(Selector('.p-navigation-review').visible).ok()
         .click(Selector('div.p-navigation-library + div'))
-        .expect(Selector('.p-navigation-files').visible).ok()
+        .expect(Selector('.p-navigation-originals').visible).ok()
         .click(Selector('div.p-navigation-albums + div'))
         .expect(Selector('.p-navigation-folders').visible).ok()
         .expect(Selector('.p-navigation-moments').visible).ok()
@@ -79,11 +79,11 @@ test('#1 Settings', async t => {
         .expect(Selector('.p-navigation-photos').innerText).contains('Fotos');
     await page.selectNthPhoto(0);
     await t
-        .click(Selector('button.p-photo-clipboard-menu'))
-        .expect(Selector('button.p-photo-clipboard-download').exists).notOk()
-        .expect(Selector('button.p-photo-clipboard-share').exists).notOk()
-        .expect(Selector('button.p-photo-clipboard-edit').exists).notOk()
-        .expect(Selector('button.p-photo-clipboard-private').exists).notOk();
+        .click(Selector('button.action-menu'))
+        .expect(Selector('button.action-download').exists).notOk()
+        .expect(Selector('button.action-share').exists).notOk()
+        .expect(Selector('button.action-edit').visible).notOk()
+        .expect(Selector('button.action-private').exists).notOk();
     await page.unselectPhoto(0);
     await t
         .click(Selector('div.p-photo').nth(0));
@@ -99,9 +99,9 @@ test('#1 Settings', async t => {
         .expect(Selector('.input-country input').hasAttribute('disabled')).ok()
         .expect(Selector('.input-description textarea').hasAttribute('disabled')).ok()
         .expect(Selector('.input-keywords textarea').hasAttribute('disabled')).ok()
-        .click(Selector('#tab-edit-labels'))
+        .click(Selector('#tab-labels'))
         .expect(Selector('button.p-photo-label-add').exists).notOk()
-        .click(Selector('#tab-edit-details'))
+        .click(Selector('#tab-details'))
         .click(Selector('button.action-close'))
         .click(Selector('.p-navigation-library'))
         .expect(Selector('#tab-import a').exists).notOk()
@@ -110,7 +110,7 @@ test('#1 Settings', async t => {
         .expect(Selector('.p-navigation-archive').visible).notOk()
         .expect(Selector('.p-navigation-review').exists).notOk()
         .click(Selector('div.p-navigation-library + div'))
-        .expect(Selector('.p-navigation-files').visible).notOk()
+        .expect(Selector('.p-navigation-originals').visible).notOk()
         .click(Selector('div.p-navigation-albums + div'))
         .expect(Selector('.p-navigation-moments').visible).notOk()
         .expect(Selector('.p-navigation-labels').visible).notOk()

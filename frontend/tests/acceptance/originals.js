@@ -7,7 +7,7 @@ fixture `Test files`
 
 const page = new Page();
 
-test('#1 Add files to album', async t => {
+test('#1 Add originals files to album', async t => {
     await page.openNav();
     await t.click(Selector('.p-navigation-albums'));
     await t
@@ -17,7 +17,7 @@ test('#1 Add files to album', async t => {
         .expect(Selector('h3').innerText).eql('No albums matched your search');
     await t
         .click(Selector('div.p-navigation-library + div'))
-        .click(Selector('.p-navigation-files'))
+        .click(Selector('.p-navigation-originals'))
         .click(Selector('button').withText('Vacation'));
     const FirstItemInVacation = await Selector('div.v-card__title').nth(0).innerText;
     const KanadaUid = await Selector('div.v-card__title').nth(0).getAttribute('data-uid');
@@ -35,14 +35,11 @@ test('#1 Add files to album', async t => {
         .click(Selector('button').withText('BotanicalGarden'))
         .click(Selector('a[href="/library/files/Vacation"]'));
     await page.selectFromUID(KanadaUid);
-    const clipboardCount = await Selector('span.t-clipboard-count');
+    const clipboardCount = await Selector('span.count-clipboard');
     await t
-        .expect(clipboardCount.textContent).eql("1")
-        .click(Selector('button.p-file-clipboard-menu'))
-        .click(Selector('button.p-file-clipboard-album'))
-        .typeText(Selector('.input-album input'), 'KanadaVacation', { replace: true })
-        .pressKey('enter')
-        .click(Selector('button.p-photo-dialog-confirm'))
+        .expect(clipboardCount.textContent).eql("1");
+    await page.addSelectedToAlbum('KanadaVacation');
+    await t
         .click(Selector('.p-navigation-albums'))
         .typeText(Selector('.p-albums-search input'), 'KanadaVacation')
         .pressKey('enter');
@@ -54,20 +51,20 @@ test('#1 Add files to album', async t => {
         .expect(PhotoCountAfterAdd).eql(2)
         .click(Selector('.p-navigation-albums'));
     await page.selectFromUID(AlbumUid);
-    await page.deleteSelectedAlbum();
+    await page.deleteSelected();
 });
 
 //TODO test download itself + clipboard count after download
-test('#2 Download files', async t => {
+test('#2 Download original files', async t => {
     await page.openNav();
     await t
         .click(Selector('div.p-navigation-library + div'))
-        .click(Selector('.p-navigation-files'));
+        .click(Selector('.p-navigation-originals'));
     const FirstFile = await Selector('div.p-file').nth(0).getAttribute('data-uid');
     await page.selectFromUID(FirstFile);
-    const clipboardCount = await Selector('span.t-clipboard-count');
+    const clipboardCount = await Selector('span.count-clipboard');
     await t
         .expect(clipboardCount.textContent).eql("1")
-        .click(Selector('button.p-file-clipboard-menu'))
-        .expect(Selector('button.p-file-clipboard-download').visible).ok();
+        .click(Selector('button.action-menu'))
+        .expect(Selector('button.action-download').visible).ok();
 });

@@ -30,7 +30,7 @@ test('#1 Create/delete album', async t => {
         .expect(countAlbumsAfterCreate).eql(countAlbums + 1);
     await page.selectFromUID(NewAlbum);
     logger.clear();
-    await page.deleteSelectedAlbum();
+    await page.deleteSelected();
     const request2 = await logger.requests[0].response.body;
     const countAlbumsAfterDelete = await Selector('div.p-album').count;
     await t
@@ -123,11 +123,11 @@ test('#3 Download album', async t => {
     await t.click(Selector('.p-navigation-albums'));
     const FirstAlbum = await Selector('div.p-album').nth(0).getAttribute('data-uid');
     await page.selectFromUID(FirstAlbum);
-    const clipboardCount = await Selector('span.t-clipboard-count');
+    const clipboardCount = await Selector('span.count-clipboard');
     await t
         .expect(clipboardCount.textContent).eql("1")
-        .click(Selector('button.p-album-clipboard-menu'))
-        .expect(Selector('button.p-album-clipboard-download').visible).ok();
+        .click(Selector('button.action-menu'))
+        .expect(Selector('button.action-download').visible).ok();
 });
 
 test('#4 View folders', async t => {

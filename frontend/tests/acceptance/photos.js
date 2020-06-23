@@ -55,14 +55,15 @@ test('#2 Download single photo/video and download zip using clipboard and fullsc
         .click(Selector('.p-navigation-video'));
     const FirstVideo = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     await page.selectFromUID(FirstVideo);
-    const clipboardCount = await Selector('span.t-clipboard-count');
+    const clipboardCount = await Selector('span.count-clipboard');
     await t
         .expect(clipboardCount.textContent).eql("2")
-        .click(Selector('button.p-photo-clipboard-menu'))
-        .expect(Selector('button.p-photo-clipboard-download').visible).ok();
+        .click(Selector('button.action-menu'))
+        .expect(Selector('button.action-download').visible).ok();
 });
 
 //TODO add part for video as well
+//TODO approve/archive from card view
 test('#3 Approve photo using approve and by adding location', async t => {
     await page.openNav();
     await t
@@ -74,7 +75,6 @@ test('#3 Approve photo using approve and by adding location', async t => {
     const FirstPhoto = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     const SecondPhoto = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
 
-    logger.clear();
     await t
         .click(Selector('.p-navigation-photos'));
     const request2 = await logger.requests[0].response.body;
@@ -214,12 +214,12 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
         .click(Selector('.p-navigation-photos'));
     await page.selectFromUID(FirstPhoto);
     await page.selectFromUID(SecondPhoto);
-    const clipboardCount = await Selector('span.t-clipboard-count');
+    const clipboardCount = await Selector('span.count-clipboard');
     await t
         .expect(clipboardCount.textContent).eql("2")
-        .click(Selector('button.p-photo-clipboard-menu'))
-        .click(Selector('button.p-photo-clipboard-private'))
-        .expect(Selector('button.p-photo-clipboard-menu').exists, {timeout: 5000}).notOk();
+        .click(Selector('button.action-menu'))
+        .click(Selector('button.action-private'))
+        .expect(Selector('button.action-menu').exists, {timeout: 5000}).notOk();
     logger.clear();
     await page.setFilter('view', 'List');
     const request4 = await logger.requests[0].response.body;
@@ -244,12 +244,12 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
     logger.clear();
 
     await page.selectFromUID(FirstVideo);
-    const clipboardCountVideo = await Selector('span.t-clipboard-count');
+    const clipboardCountVideo = await Selector('span.count-clipboard');
     await t
         .expect(clipboardCountVideo.textContent).eql("1")
-        .click(Selector('button.p-photo-clipboard-menu'))
-        .click(Selector('button.p-photo-clipboard-private'))
-        .expect(Selector('button.p-photo-clipboard-menu').exists, {timeout: 5000}).notOk();
+        .click(Selector('button.action-menu'))
+        .click(Selector('button.action-private'))
+        .expect(Selector('button.action-menu').exists, {timeout: 5000}).notOk();
     logger.clear();
     await t
         .click(Selector('.action-reload'));
@@ -271,8 +271,8 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
     await page.selectFromUID(SecondPhoto);
     await page.selectFromUID(FirstVideo);
     await t
-        .click(Selector('button.p-photo-clipboard-menu'))
-        .click(Selector('button.p-photo-clipboard-private'));
+        .click(Selector('button.action-menu'))
+        .click(Selector('button.action-private'));
     await page.setFilter('view', 'List');
     await t
         .click(Selector('button.p-photo-private').withAttribute('data-uid', ThirdPhoto))
@@ -351,13 +351,13 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
     const request6 = await logger.requests[0].response.body;
     logger.clear();
     await page.selectFromUID(FirstVideo);
-    const clipboardCountVideo = await Selector('span.t-clipboard-count');
+    const clipboardCountVideo = await Selector('span.count-clipboard');
     await t
         .expect(clipboardCountVideo.textContent).eql("1");
     await page.archiveSelected();
     logger.clear();
     await t
-        .expect(Selector('button.p-photo-clipboard-menu').exists, {timeout: 5000}).notOk()
+        .expect(Selector('button.action-menu').exists, {timeout: 5000}).notOk()
         .click(Selector('.action-reload'));
     const request7 = await logger.requests[0].response.body;
     logger.clear();
@@ -369,13 +369,13 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
     logger.clear();
     await page.selectFromUID(FirstPhoto);
     await page.selectFromUID(SecondPhoto);
-    const clipboardCountPhotos = await Selector('span.t-clipboard-count');
+    const clipboardCountPhotos = await Selector('span.count-clipboard');
     await t
         .expect(clipboardCountPhotos.textContent).eql("2");
     await page.archiveSelected();
     logger.clear();
     await t
-        .expect(Selector('button.p-photo-clipboard-menu').exists, {timeout: 5000}).notOk()
+        .expect(Selector('button.action-menu').exists, {timeout: 5000}).notOk()
         .click(Selector('.action-reload'));
     const request9 = await logger.requests[0].response.body;
     logger.clear();
@@ -387,7 +387,7 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
     const request10 = await logger.requests[0].response.body;
     logger.clear();
     await page.selectFromUID(FirstPrivatePhoto);
-    const clipboardCountPrivate = await Selector('span.t-clipboard-count');
+    const clipboardCountPrivate = await Selector('span.count-clipboard');
     await t
         .expect(clipboardCountPrivate.textContent).eql("1");
     await t
@@ -396,13 +396,13 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
     const request11 = await logger.requests[0].response.body;
     logger.clear();
     await page.selectFromUID(FirstReviewPhoto);
-    const clipboardCountReview = await Selector('span.t-clipboard-count');
+    const clipboardCountReview = await Selector('span.count-clipboard');
     await t
         .expect(clipboardCountReview.textContent).eql("2");
     await page.archiveSelected();
     logger.clear();
     await t
-        .expect(Selector('button.p-photo-clipboard-menu').exists, {timeout: 5000}).notOk()
+        .expect(Selector('button.action-menu').exists, {timeout: 5000}).notOk()
         .click(Selector('.action-reload'));
     const request12 = await logger.requests[0].response.body;
     logger.clear();
@@ -423,13 +423,13 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
     await page.selectFromUID(FirstVideo);
     await page.selectFromUID(FirstPrivatePhoto);
     await page.selectFromUID(FirstReviewPhoto);
-    const clipboardCountArchive = await Selector('span.t-clipboard-count');
+    const clipboardCountArchive = await Selector('span.count-clipboard');
     await t
         .expect(clipboardCountArchive.textContent).eql("5");
     await page.restoreSelected();
     logger.clear();
     await t
-        .expect(Selector('button.p-photo-clipboard-menu').exists, {timeout: 5000}).notOk()
+        .expect(Selector('button.action-menu').exists, {timeout: 5000}).notOk()
         .click(Selector('.action-reload'));
     const request14 = await logger.requests[0].response.body;
     await t
@@ -508,7 +508,7 @@ test('#7 Edit photo/video', async t => {
     const FirstPhotoLatitude = await (Selector('.input-latitude input').value);
     const FirstPhotoLongitude = await (Selector('.input-longitude input').value);
     const FirstPhotoAltitude = await (Selector('.input-altitude input').value);
-    const FirstPhotoCountry = await (Selector('.input-country div.v-select__selection').innerText);
+    const FirstPhotoCountry = await (Selector('.input-country').innerText);
     const FirstPhotoCamera = await (Selector('div.p-camera-select div.v-select__selection').innerText);
     const FirstPhotoIso = await (Selector('.input-iso input').value);
     const FirstPhotoExposure = await (Selector('.input-exposure input').value);
@@ -713,11 +713,11 @@ test('#7 Edit photo/video', async t => {
     {await t.typeText(Selector('.input-notes textarea'), FirstPhotoNotes, { replace: true })}
     await t
         .click(Selector('button.action-ok'));
-    const clipboardCount = await Selector('span.t-clipboard-count');
+    const clipboardCount = await Selector('span.count-clipboard');
     await t
         .expect(clipboardCount.textContent).eql("1")
-        .click(Selector('.p-photo-clipboard-clear'))
-        .expect(Selector('button.p-photo-clipboard-menu').exists, {timeout: 5000}).notOk();
+        .click(Selector('.action-clear'))
+        .expect(Selector('button.action-menu').exists, {timeout: 5000}).notOk();
     logger.clear();
     await t
         .click(Selector('.action-reload'));
@@ -740,7 +740,7 @@ test('#8 Change primary file', async t => {
         .click(Selector('.action-close'));
     await t
         .click(Selector('button.action-title-edit').withAttribute('data-uid', SequentialPhoto))
-        .click(Selector('#tab-edit-files'))
+        .click(Selector('#tab-files'))
         .expect(Selector('i').withText('radio_button_unchecked').visible, {timeout: 5000}).ok()
         .expect(Selector('i').withText('radio_button_checked').visible, {timeout: 5000}).ok()
         .click(Selector('i').withText('radio_button_unchecked'))
@@ -755,5 +755,5 @@ test('#9 Navigate from card view to place', async t => {
         .click(Selector('button.action-location').nth(0))
         .expect(Selector('#map').exists, {timeout: 15000}).ok()
         .expect(Selector('div.p-map-control').visible).ok()
-        .expect(Selector('.input-search input').value).contains('s2');
+        .expect(Selector('.input-search input').value).notEql('');
 });

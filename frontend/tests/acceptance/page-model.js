@@ -91,47 +91,50 @@ export default class Page {
 
     async archiveSelected() {
         await t
-            .click(Selector('button.p-photo-clipboard-menu'))
-            .click(Selector('button.p-photo-clipboard-archive'))
+            .click(Selector('button.action-menu'))
+            .click(Selector('button.action-archive'))
             .click(Selector('button.p-photo-dialog-confirm'));
     }
 
     async restoreSelected() {
         await t
-            .click(Selector('button.p-photo-clipboard-menu'))
-            .click(Selector('button.p-photo-clipboard-restore'));
+            .click(Selector('button.action-menu'))
+            .click(Selector('button.action-restore'));
     }
 
     async editSelected() {
-        if (await Selector('button.p-photo-clipboard-edit').exists) {
-            await t.click(Selector('button.p-photo-clipboard-edit'));
-        } else if (await Selector('button.p-photo-clipboard-menu').exists) {
+        if (await Selector('button.action-edit').visible) {
+            await t.click(Selector('button.action-edit'));
+        } else if (await Selector('button.action-menu').exists) {
             await t
-                .click(Selector('button.p-photo-clipboard-menu'))
-                .click(Selector('button.p-photo-clipboard-edit'));
+                .click(Selector('button.action-menu'))
+                .click(Selector('button.action-edit'));
         }
     }
 
-    async deleteSelectedAlbum() {
+    async deleteSelected() {
         await t
-            .click(Selector('button.p-album-clipboard-menu'))
-            .click(Selector('button.p-album-clipboard-delete'))
+            .click(Selector('button.action-menu'))
+            .click(Selector('button.action-delete'))
             .click(Selector('button.p-photo-dialog-confirm'));
     }
 
     async removeSelected() {
         await t
-            .click(Selector('button.p-photo-clipboard-menu'))
-            .click(Selector('button.p-photo-clipboard-delete'));
+            .click(Selector('button.action-menu'))
+            .click(Selector('button.action-delete'));
     }
 
     async addSelectedToAlbum(name) {
         await t
-            .click(Selector('button.p-photo-clipboard-menu'))
-            .click(Selector('button.p-photo-clipboard-album'))
+            .click(Selector('button.action-menu'))
+            .click(Selector('button.action-album'))
             .typeText(Selector('.input-album input'), name, { replace: true })
-            .click(Selector('div[role="listitem"]').withText(name))
-            .click(Selector('button.p-photo-dialog-confirm'));
+            .pressKey('enter');
+        if (await Selector('div[role="listitem"]').withText(name).visible) {
+            await t.click(Selector('div[role="listitem"]').withText(name));
+        }
+        await t.click(Selector('button.p-photo-dialog-confirm'));
     }
 
     async login(password) {

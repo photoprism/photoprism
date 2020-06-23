@@ -35,11 +35,11 @@ test('#1 Remove/Activate Add/Delete Label', async t => {
     await t
         .expect(PhotoTitle).contains('Beacon')
         .expect(PhotoKeywords).contains('beacon')
-        .click(Selector('#tab-edit-labels'))
+        .click(Selector('#tab-labels'))
         .click(Selector('button.action-remove'))
         .typeText(Selector('.input-label input'), 'Test')
         .click(Selector('button.p-photo-label-add'))
-        .click(Selector('#tab-edit-details'));
+        .click(Selector('#tab-details'));
     const PhotoTitleAfterEdit = await (Selector('.input-title input').value);
     const PhotoKeywordsAfterEdit = await (Selector('.input-keywords textarea').value);
     await t
@@ -57,10 +57,10 @@ test('#1 Remove/Activate Add/Delete Label', async t => {
     await t
         .click(Selector('div.p-label').withAttribute('data-uid', LabelTest))
         .click(Selector('.action-title-edit').withAttribute('data-uid', PhotoBeacon))
-        .click(Selector('#tab-edit-labels'))
+        .click(Selector('#tab-labels'))
         .click(Selector('.action-delete'))
         .click(Selector('.action-on'))
-        .click(Selector('#tab-edit-details'));
+        .click(Selector('#tab-details'));
     const PhotoTitleAfterUndo = await (Selector('.input-title input').value);
     const PhotoKeywordsAfterUndo = await (Selector('.input-keywords textarea').value);
     await t
@@ -94,11 +94,11 @@ test('#2 Rename Label', async t => {
     await t
         .expect(FirstPhotoTitle).contains('Zebra')
         .expect(FirstPhotoKeywords).contains('zebra')
-        .click(Selector('#tab-edit-labels'))
+        .click(Selector('#tab-labels'))
         .click(Selector('div.p-inline-edit'))
         .typeText(Selector('.input-rename input'), 'Horse', { replace: true })
         .pressKey('enter')
-        .click(Selector('#tab-edit-details'));
+        .click(Selector('#tab-details'));
     const FirstPhotoTitleAfterEdit = await (Selector('.input-title input').value);
     const FirstPhotoKeywordsAfterEdit = await (Selector('.input-keywords textarea').value);
     await t
@@ -113,7 +113,7 @@ test('#2 Rename Label', async t => {
         .click(Selector('div.p-label').withAttribute('data-uid', LabelZebra))
         .expect(Selector('div').withAttribute('data-uid', SecondPhotoZebra).visible).ok()
         .click(Selector('.action-title-edit').withAttribute('data-uid', FirstPhotoZebra))
-        .click(Selector('#tab-edit-labels'))
+        .click(Selector('#tab-labels'))
         .click(Selector('div.p-inline-edit'))
         .typeText(Selector('.input-rename input'), 'Zebra', { replace: true })
         .pressKey('enter')
@@ -145,14 +145,11 @@ test('#3 Add label to album', async t => {
         .click('.p-navigation-labels');
     await page.selectFromUID(LabelLandscape);
 
-    const clipboardCount = await Selector('span.t-clipboard-count');
+    const clipboardCount = await Selector('span.count-clipboard');
     await t
-        .expect(clipboardCount.textContent).eql("1")
-        .click(Selector('button.p-label-clipboard-menu'))
-        .click(Selector('button.p-photo-clipboard-album'))
-        .typeText(Selector('.input-album input'), 'Christmas', { replace: true })
-        .click(Selector('div[role="listitem"]').withText('Christmas'))
-        .click(Selector('button.p-photo-dialog-confirm'))
+        .expect(clipboardCount.textContent).eql("1");
+    await page.addSelectedToAlbum('Christmas');
+    await t
         .click(Selector('.p-navigation-albums'))
         .click(Selector('div.p-album').withAttribute('data-uid', AlbumUid));
     const PhotoCountAfterAdd = await Selector('div.p-photo').count;
@@ -179,18 +176,16 @@ test('#4 Delete label', async t => {
     await t
         .click('.p-navigation-labels')
     await page.selectFromUID(LabelDome);
-    const clipboardCount = await Selector('span.t-clipboard-count');
+    const clipboardCount = await Selector('span.count-clipboard');
     await t
-        .expect(clipboardCount.textContent).eql("1")
-        .click(Selector('button.p-label-clipboard-menu'))
-        .click(Selector('button.p-label-clipboard-delete'))
-        .click(Selector('button.p-photo-dialog-confirm'));
+        .expect(clipboardCount.textContent).eql("1");
+    await page.deleteSelected();
     await page.search('dome');
     await t
         .expect(Selector('h3').withText('No labels matched your search').visible).ok()
         .click('.p-navigation-photos')
         .click(Selector('.action-title-edit').withAttribute('data-uid', FirstPhotoDome))
-        .click(Selector('#tab-edit-labels'))
+        .click(Selector('#tab-labels'))
         .expect(Selector('td').withText('No labels found').visible).ok()
         .typeText(Selector('.input-label input'), 'Dome')
         .click(Selector('button.p-photo-label-add'));
