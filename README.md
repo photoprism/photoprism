@@ -27,7 +27,7 @@ Say goodbye to solutions that force you to upload your visual memories to the pu
 You're welcome to play with our demo at [demo.photoprism.org](https://demo.photoprism.org).
 Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
 
-Step-by-step installation instructions can be found on [docs.photoprism.org](https://docs.photoprism.org/user-guide/) - 
+Step-by-step installation instructions can be found on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) - 
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
 
 Next, you'll have to [index or import](https://docs.photoprism.org/user-guide/library/import-vs-index/) 
