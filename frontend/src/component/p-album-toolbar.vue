@@ -30,6 +30,11 @@
                 <v-icon>refresh</v-icon>
             </v-btn>
 
+            <v-btn icon @click.stop="dialog.share = true"
+                   class="hidden-xs-only" v-if="$config.feature('share')">
+                <v-icon>share</v-icon>
+            </v-btn>
+
             <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')">
                 <v-icon>view_list</v-icon>
             </v-btn>
@@ -38,12 +43,6 @@
             </v-btn>
             <v-btn icon v-else @click.stop="setView('cards')">
                 <v-icon>view_column</v-icon>
-            </v-btn>
-
-            <v-btn icon @click.stop="toggleFullScreen()"
-                   class="hidden-xs-only" v-if="experimental">
-                <v-icon v-if="isFullScreen">fullscreen_exit</v-icon>
-                <v-icon v-else>fullscreen</v-icon>
             </v-btn>
 
             <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
@@ -120,6 +119,10 @@
                 </v-layout>
             </v-card-text>
         </v-card>
+        <p-share-dialog :show="dialog.share" :model="album" @upload="webdavUpload"
+                        @close="dialog.share = false"></p-share-dialog>
+        <p-share-upload-dialog :show="dialog.upload" :selection="[album.getId()]" @cancel="dialog.upload = false"
+                               @confirm="dialog.upload = false"></p-share-upload-dialog>
     </v-form>
 </template>
 <script>
@@ -168,6 +171,10 @@
                         {value: 'relevance', text: this.$gettext('Most relevant')},
                     ],
                 },
+                dialog: {
+                    share: false,
+                    upload: false,
+                },
                 labels: {
                     title: this.$gettext("Album Name"),
                     description: this.$gettext("Description"),
@@ -183,14 +190,9 @@
             };
         },
         methods: {
-            toggleFullScreen() {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().then(() => this.isFullScreen = true);
-                } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen().then(() => this.isFullScreen = false);
-                    }
-                }
+            webdavUpload() {
+                this.dialog.share = false;
+                this.dialog.upload = true;
             },
             showUpload() {
                 Event.publish("dialog.upload");

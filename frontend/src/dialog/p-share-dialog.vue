@@ -3,12 +3,12 @@
         <v-card raised elevation="24">
             <v-card-title primary-title class="pb-0">
                 <v-layout row wrap>
-                    <v-flex xs8>
-                        <h3 class="headline mb-0">Share<span class="hidden-xs-only"> {{model.modelName()}}</span></h3>
+                    <v-flex xs9>
+                        <h3 class="headline mb-0">Share {{model.modelName()}}</h3>
                     </v-flex>
-                    <v-flex xs4 text-xs-right>
-                        <v-btn small depressed dark color="secondary-dark" class="ma-0" @click.stop="add()">
-                            <translate>Add Link</translate>
+                    <v-flex xs3 text-xs-right>
+                        <v-btn icon flat dark color="secondary-dark" class="ma-0" @click.stop="add" :title="$gettext('Add Link')">
+                            <v-icon>add_link</v-icon>
                         </v-btn>
                     </v-flex>
                 </v-layout>
@@ -72,14 +72,16 @@
                                                     @click:append="showPassword = !showPassword"
                                             ></v-text-field>
                                         </v-flex -->
-                                        <v-flex xs12 text-xs-right class="pa-2">
-                                            <v-btn small flat color="remove" class="ma-0"
-                                                   @click.stop.exact="remove(index)">
+                                        <v-flex xs6 text-xs-left class="pa-2">
+                                            <v-btn small icon flat color="remove" class="ma-0"
+                                                   @click.stop.exact="remove(index)" :title="$gettext('Delete')">
                                                 <v-icon>delete</v-icon>
                                             </v-btn>
+                                        </v-flex>
+                                        <v-flex xs6 text-xs-right class="pa-2">
                                             <v-btn small depressed dark color="secondary-dark" class="ma-0"
                                                    @click.stop.exact="update(link)">
-                                                Save
+                                                <translate>Save</translate>
                                             </v-btn>
                                         </v-flex>
                                     </v-layout>
@@ -100,7 +102,7 @@
                     <v-flex xs6>
                         <v-btn @click.stop="upload" depressed color="secondary-light"
                                class="action-webdav">
-                            <span>WebDAV Upload</span>
+                            <translate>WebDAV Upload</translate>
                         </v-btn>
                     </v-flex>
                     <v-flex xs6 text-xs-right>
@@ -120,7 +122,6 @@
         name: 'p-share-dialog',
         props: {
             show: Boolean,
-            title: String,
             model: Object,
         },
         data() {

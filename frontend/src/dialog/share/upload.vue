@@ -1,15 +1,25 @@
 <template>
     <v-dialog lazy v-model="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
         <v-card raised elevation="24">
-            <v-container fluid class="pb-2 pr-2 pl-2">
+            <v-card-title primary-title class="pb-0">
                 <v-layout row wrap>
-                    <v-flex xs3 text-xs-center>
-                        <v-icon size="54" color="grey lighten-1">cloud_upload</v-icon>
+                    <v-flex xs8>
+                        <h3 class="headline mb-0">
+                            <translate>WebDAV Upload</translate>
+                        </h3>
                     </v-flex>
-                    <v-flex xs9 text-xs-left align-self-center>
+                    <v-flex xs4 text-xs-right>
+                        <v-btn icon flat dark color="secondary-dark" class="ma-0" @click.stop="setup">
+                            <v-icon>cloud</v-icon>
+                        </v-btn>
+                    </v-flex>
+                </v-layout>
+            </v-card-title>
+            <v-card-text class="pt-0">
+                <v-layout row wrap>
+                    <v-flex xs12 text-xs-left>
                         <v-select
                                 color="secondary-dark"
-                                class="mr-2"
                                 hide-details hide-no-data flat
                                 :label="labels.account"
                                 item-text="AccName"
@@ -20,10 +30,10 @@
                                 v-model="account"
                                 :items="accounts">
                         </v-select>
-
+                    </v-flex>
+                    <v-flex xs12 text-xs-left>
                         <v-autocomplete
                                 color="secondary-dark"
-                                class="mt-3 mr-2"
                                 hide-details hide-no-data flat
                                 v-model="path"
                                 browser-autocomplete="off"
@@ -38,21 +48,21 @@
                         >
                         </v-autocomplete>
                     </v-flex>
-                    <v-flex xs12 text-xs-right class="pt-3">
-                        <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="action-cancel">
+                    <v-flex xs12 text-xs-right class="pt-4">
+                        <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="action-cancel ml-0 mt-0 mb-0 mr-2">
                             <translate key="Cancel">Cancel</translate>
                         </v-btn>
                         <v-btn color="blue-grey lighten-2" depressed dark @click.stop="setup"
-                               class="action-setup" v-if="noAccounts">
+                               class="action-setup ma-0" v-if="noAccounts">
                             <span>{{ labels.setup }}</span>
                         </v-btn>
                         <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
-                               class="action-upload" v-else>
+                               class="action-upload ma-0" v-else>
                             <span>{{ labels.upload }}</span>
                         </v-btn>
                     </v-flex>
                 </v-layout>
-            </v-container>
+            </v-card-text>
         </v-card>
     </v-dialog>
 </template>

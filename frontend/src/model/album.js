@@ -26,6 +26,7 @@ export class Album extends RestModel {
             Favorite: true,
             Private: false,
             PhotoCount: 0,
+            LinkCount: 0,
             CreatedAt: "",
             UpdatedAt: "",
         };

@@ -59,18 +59,26 @@
     bottom: 4px;
 }
 
+#photoprism .p-photo-cards .action-select,
+#photoprism .p-photo-mosaic .action-select,
 #photoprism .p-photo-cards .p-photo-select,
 #photoprism .p-photo-mosaic .p-photo-select {
     right: 4px;
     bottom: 4px;
 }
 
+#photoprism .p-albums-cards .action-select,
 #photoprism .p-albums-cards .p-album-select,
 #photoprism .p-labels-cards .p-label-select,
 #photoprism .p-folders-cards .p-folder-select,
 #photoprism .p-files-cards .p-file-select {
     right: 4px;
     bottom: 4px;
+}
+
+#photoprism .p-albums-cards .action-share {
+    top: 4px;
+    left: 4px;
 }
 
 #photoprism .p-labels-cards .p-label-count {

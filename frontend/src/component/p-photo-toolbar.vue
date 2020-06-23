@@ -31,12 +31,6 @@
                 <v-icon>view_column</v-icon>
             </v-btn>
 
-            <v-btn icon @click.stop="toggleFullScreen()"
-                   class="hidden-xs-only" v-if="experimental">
-                <v-icon v-if="isFullScreen">fullscreen_exit</v-icon>
-                <v-icon v-else>fullscreen</v-icon>
-            </v-btn>
-
             <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
                    class="hidden-sm-and-down action-upload">
                 <v-icon>cloud_upload</v-icon>
@@ -261,15 +255,6 @@
             },
         },
         methods: {
-            toggleFullScreen() {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().then(() => this.isFullScreen = true);
-                } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen().then(() => this.isFullScreen = false);
-                    }
-                }
-            },
             dropdownChange() {
                 this.filterChange();
 

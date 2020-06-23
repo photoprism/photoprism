@@ -84,7 +84,7 @@
 
                                     <v-btn v-if="hover || selection.includes(album.UID)" :flat="!hover" :ripple="false"
                                            icon large absolute
-                                           :class="selection.includes(album.UID) ? 'p-album-select' : 'p-album-select opacity-50'"
+                                           :class="selection.includes(album.UID) ? 'action-select' : 'action-select opacity-50'"
                                            @click.stop.prevent="onSelect($event, index)">
                                         <v-icon v-if="selection.includes(album.UID)" color="white" class="t-select t-on">check_circle
                                         </v-icon>

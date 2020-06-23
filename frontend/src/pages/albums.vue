@@ -50,7 +50,7 @@
         <v-container fluid class="pa-0" v-else>
             <p-scroll-top></p-scroll-top>
 
-            <p-album-clipboard :refresh="refresh" :selection="selection"
+            <p-album-clipboard :refresh="refresh" :selection="selection" :share="share"
                                :clear-selection="clearSelection"></p-album-clipboard>
 
             <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-cards">
@@ -112,9 +112,16 @@
                                                              color="accent lighten-5"></v-progress-circular>
                                     </v-layout>
 
+                                    <v-btn v-if="featureShare && album.LinkCount > 0" :ripple="false"
+                                           icon large absolute
+                                           class="action-share"
+                                           @click.stop.prevent="share(album)">
+                                        <v-icon color="white">share</v-icon>
+                                    </v-btn>
+
                                     <v-btn v-if="hover || selection.includes(album.UID)" :flat="!hover" :ripple="false"
                                            icon large absolute
-                                           :class="selection.includes(album.UID) ? 'p-album-select' : 'p-album-select opacity-50'"
+                                           :class="selection.includes(album.UID) ? 'action-select' : 'action-select opacity-50'"
                                            @click.stop.prevent="onSelect($event, index)">
                                         <v-icon v-if="selection.includes(album.UID)" color="white"
                                                 class="t-select t-on">check_circle
@@ -172,6 +179,10 @@
                 </v-layout>
             </v-container>
         </v-container>
+        <p-share-dialog :show="dialog.share" :model="album" @upload="webdavUpload"
+                        @close="dialog.share = false"></p-share-dialog>
+        <p-share-upload-dialog :show="dialog.upload" :selection="selection" @cancel="dialog.upload = false"
+                               @confirm="dialog.upload = false"></p-share-upload-dialog>
     </div>
 </template>
 
@@ -215,6 +226,7 @@
             }
 
             return {
+                featureShare: this.$config.feature('share'),
                 categories: categories,
                 subscriptions: [],
                 listen: false,
@@ -241,9 +253,22 @@
                     timeStamp: -1,
                 },
                 lastId: "",
+                dialog: {
+                    share: false,
+                    upload: false,
+                },
+                album: new Album(),
             };
         },
         methods: {
+            share(album) {
+               this.album = album;
+               this.dialog.share = true;
+            },
+            webdavUpload() {
+                this.dialog.share = false;
+                this.dialog.upload = true;
+            },
             showUpload() {
                 Event.publish("dialog.upload");
             },

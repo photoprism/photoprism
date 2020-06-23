@@ -28,7 +28,7 @@
                         v-if="context !== 'archive' && $config.feature('share')"
                         class="action-share"
                 >
-                    <v-icon>share</v-icon>
+                    <v-icon>cloud</v-icon>
                 </v-btn>
                 <v-btn
                         fab dark small
