@@ -30,9 +30,9 @@
             </v-toolbar>
 
             <v-list class="pt-3" v-if="auth">
-                <v-list-tile :to="{ name: 'albums', params: { token: token } }" :exact="true" @click="" class="p-navigation-albums">
+                <v-list-tile :to="{ name: 'albums', params: { token: token } }" :exact="true" @click="" class="p-navigation-albums" active-class="hidden-always">
                     <v-list-tile-action>
-                        <v-icon>folder</v-icon>
+                        <v-icon>arrow_back_ios</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>

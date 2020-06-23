@@ -285,3 +285,7 @@ table.v-table tfoot td div.v-input__slot {
 body.shared .hidden-shared-only {
     display: none !important;
 }
+
+#photoprism .hidden-always {
+    display: none !important;
+}
