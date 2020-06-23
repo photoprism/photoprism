@@ -2,20 +2,6 @@
     <div class="p-page p-page-albums" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
          :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <v-form ref="form" class="p-albums-search" lazy-validation @submit.prevent="updateQuery" dense>
-            <v-toolbar flat color="secondary">
-                <v-toolbar-title>
-                    <translate>Albums</translate>
-                </v-toolbar-title>
-
-                <v-spacer></v-spacer>
-
-                <v-btn icon @click.stop="refresh" class="action-reload">
-                    <v-icon>refresh</v-icon>
-                </v-btn>
-            </v-toolbar>
-        </v-form>
-
         <v-container fluid class="pa-4" v-if="loading">
             <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
         </v-container>

@@ -1,6 +1,6 @@
 <template>
     <div id="p-navigation">
-        <v-toolbar dark scroll-off-screen color="navigation darken-1" class="hidden-md-and-up p-navigation-small"
+        <v-toolbar dark fixed flat color="navigation darken-1" class="hidden-md-and-up p-navigation-small"
                    @click.stop="showNavigation()">
             <v-toolbar-side-icon class="p-navigation-show"></v-toolbar-side-icon>
 
@@ -8,11 +8,16 @@
 
             <v-spacer></v-spacer>
 
-            <v-toolbar-items>
-                <v-btn icon class="action-upload" @click.stop="upload.dialog = true" v-if="!readonly && $config.feature('upload')">
-                    <v-icon>cloud_upload</v-icon>
-                </v-btn>
-            </v-toolbar-items>
+            <v-avatar
+                    tile
+                    :size="28"
+                    class="clickable"
+                    @click.stop="onLogoClick"
+            >
+                <img src="/static/svg/logo-white-bold.svg" alt="Logo">
+            </v-avatar>
+        </v-toolbar>
+        <v-toolbar dark flat color="navigation darken-1" class="hidden-md-and-up">
         </v-toolbar>
         <v-navigation-drawer
                 v-model="drawer"
@@ -413,6 +418,13 @@
             },
         },
         methods: {
+            onLogoClick() {
+                if(!this.readonly && this.$config.feature('upload')) {
+                    this.upload.dialog = true;
+                } else {
+                    this.openDocs();
+                }
+            },
             feature(name) {
                 return this.$config.values.settings.features[name];
             },

@@ -1,55 +1,27 @@
 <template>
     <div id="p-navigation">
-        <v-toolbar dark scroll-off-screen color="navigation darken-1" class="hidden-md-and-up p-navigation-small"
-                   @click.stop="showNavigation()">
-            <v-toolbar-side-icon class="p-navigation-show"></v-toolbar-side-icon>
-
-            <v-toolbar-title class="p-navigation-title">{{ page.title }}</v-toolbar-title>
+        <v-toolbar dark fixed flat color="navigation darken-1" class="p-navigation-small">
+            <v-toolbar-title>
+                <button @click.stop.prevent="goHome">
+                {{ page.title }}
+                </button>
+            </v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-avatar
+                    tile
+                    :size="28"
+                    class="clickable"
+                    @click.stop.prevent="goHome"
+            >
+                <img src="/static/svg/logo-white-bold.svg" alt="Logo">
+            </v-avatar>
         </v-toolbar>
-        <v-navigation-drawer
-                v-model="drawer"
-                mini-variant
-                :width="270"
-                :mobile-break-point="960"
-                class="p-navigation-sidebar navigation"
-                fixed dark app
-        >
-            <v-toolbar flat>
-                <v-list class="navigation-home">
-                    <v-list-tile class="p-navigation-logo">
-                        <v-list-tile-avatar class="clickable" @click.stop.prevent="openDocs">
-                            <img src="/static/img/logo.png" alt="Logo">
-                        </v-list-tile-avatar>
-                        <v-list-tile-content>
-                            <v-list-tile-title class="title">
-                                PhotoPrism
-                            </v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                </v-list>
-            </v-toolbar>
-
-            <v-list class="pt-3" v-if="auth">
-                <v-list-tile :to="{ name: 'albums', params: { token: token } }" :exact="true" @click="" class="p-navigation-albums" active-class="hidden-always">
-                    <v-list-tile-action>
-                        <v-icon>arrow_back_ios</v-icon>
-                    </v-list-tile-action>
-
-                    <v-list-tile-content>
-                        <v-list-tile-title>
-                            <translate key="Albums">Albums</translate>
-                        </v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-            </v-list>
-        </v-navigation-drawer>
+        <v-toolbar dark flat color="navigation darken-1">
+        </v-toolbar>
     </div>
 </template>
 
 <script>
-    import Album from "../model/album";
-    import Event from "pubsub-js";
-
     export default {
         name: "p-navigation",
         data() {
@@ -82,6 +54,11 @@
             },
         },
         methods: {
+            goHome() {
+                if(this.$route.name !== "albums") {
+                    this.$router.push({name: 'albums', params: {token: this.$route.params.token}});
+                }
+            },
             feature(name) {
                 return this.$config.values.settings.features[name];
             },
