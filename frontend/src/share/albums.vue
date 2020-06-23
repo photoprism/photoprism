@@ -4,7 +4,7 @@
 
         <v-form ref="form" class="p-albums-search" lazy-validation @submit.prevent="updateQuery" dense>
             <v-toolbar flat color="secondary">
-                <v-toolbar-title><translate>Shared</translate></v-toolbar-title>
+                <v-toolbar-title><translate>Albums</translate></v-toolbar-title>
 
                 <v-spacer></v-spacer>
 

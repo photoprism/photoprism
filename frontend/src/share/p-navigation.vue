@@ -32,7 +32,7 @@
             <v-list class="pt-3" v-if="auth">
                 <v-list-tile :to="{ name: 'albums', params: { token: token } }" :exact="true" @click="" class="p-navigation-albums">
                     <v-list-tile-action>
-                        <v-icon>share</v-icon>
+                        <v-icon>folder</v-icon>
                     </v-list-tile-action>
 
                     <v-list-tile-content>

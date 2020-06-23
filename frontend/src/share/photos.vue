@@ -6,13 +6,6 @@
                 ref="form" autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8">
             <v-toolbar flat color="secondary">
                 <v-toolbar-title>
-                    <span class="hidden-xs-only">
-                        <router-link :to="{ name: 'albums', params: { token: token } }">
-                            <translate>Shared</translate>
-                        </router-link>
-
-                        <v-icon>navigate_next</v-icon>
-                    </span>
                     {{ model.Title }}
                 </v-toolbar-title>
 
