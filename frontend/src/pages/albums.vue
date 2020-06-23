@@ -133,7 +133,7 @@
                                 </v-img>
 
                                 <v-card-actions primary-title class="pl-3 pr-2 pb-1" style="user-select: none;"
-                                              @click.stop.prevent="">
+                                                @click.stop.prevent="">
                                     <v-edit-dialog
                                             :return-value.sync="album.Title"
                                             lazy
@@ -168,9 +168,27 @@
                                     </v-btn>
                                 </v-card-actions>
 
-                                <v-card-text v-if="album.Description" class="pl-3 pr-3 pt-0 pb-3 p-album-desc">
-                                    <div class="caption" title="Description" v-if="album.Description">
+                                <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc" v-if="album.Description">
+                                    <div class="caption" title="Description">
                                         {{ album.Description }}
+                                    </div>
+                                </v-card-text>
+                                <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc"
+                                             v-else-if="album.Type === 'album'">
+                                    <div v-if="album.PhotoCount === 1" class="caption">
+                                        <translate>Contains one photo. Add more by selecting them from search results.
+                                        </translate>
+                                    </div>
+                                    <div v-else-if="album.PhotoCount > 0" class="caption">
+                                        <translate>Contains</translate>
+                                        {{album.PhotoCount}}
+                                        <translate>photos</translate>
+                                        .
+                                    </div>
+                                    <div v-else class="caption">
+                                        <router-link :to="{name: 'photos'}" class="text-link">
+                                            <translate>Add photos from search results by selecting them.</translate>
+                                        </router-link>
                                     </div>
                                 </v-card-text>
                             </v-card>
@@ -262,8 +280,8 @@
         },
         methods: {
             share(album) {
-               this.album = album;
-               this.dialog.share = true;
+                this.album = album;
+                this.dialog.share = true;
             },
             webdavUpload() {
                 this.dialog.share = false;

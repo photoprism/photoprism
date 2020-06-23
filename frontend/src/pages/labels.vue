@@ -114,7 +114,7 @@
                                             @save="onSave(label)"
                                             class="p-inline-edit"
                                     >
-                                        <span v-if="label.Name">
+                                        <span v-if="label.Name" class="body-2 ma-0">
                                             {{ label.Name | capitalize }}
                                         </span>
                                         <span v-else>
