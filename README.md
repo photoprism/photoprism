@@ -1,4 +1,4 @@
-PhotoPrism: Browse your life in pictures
+PhotoPrism: Browse Your Life in Pictures
 ========================================
 
 [![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)][license]
@@ -109,16 +109,17 @@ Let us know if we mistakenly label an idea as [unfunded](https://github.com/phot
 
 Thank you very much! <3
 
-## Disclaimer ##
+## Trademarks ##
 
-We'd like to remind everyone that we are not full-time marketing specialists but developers who work a lot and 
-enjoy a bit of sarcasm from time to time. Please let us know when there is an issue with our "nuance and tone", 
-and we'll find a solution.
+PhotoPrism™ is a registered trademark of Michael Mayer. You may use it as required to describe 
+our software, run your own server, for educational purposes, but not for offering commercial 
+goods, products, or services without prior written permission. In other words, please ask.
 
-PhotoPrism™ is a registered trademark of Michael Mayer.
-You may use it as required to describe our software, run your own server, for educational purposes,
-but not for offering commercial goods, products, or services without prior written permission.
-In other words, please ask.
+## Don't Panic ##
+
+We'd like to remind everyone that we are not full-time marketing specialists but developers 
+who work a lot and enjoy a bit of sarcasm from time to time. Please let us know when there is 
+an issue with our "nuance and tone", and we'll find a solution.
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
 [wiki:xmp]: https://github.com/photoprism/photoprism/wiki/XMP
