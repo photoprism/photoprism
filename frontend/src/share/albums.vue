@@ -4,7 +4,9 @@
 
         <v-form ref="form" class="p-albums-search" lazy-validation @submit.prevent="updateQuery" dense>
             <v-toolbar flat color="secondary">
-                <v-toolbar-title><translate>Albums</translate></v-toolbar-title>
+                <v-toolbar-title>
+                    <translate>Albums</translate>
+                </v-toolbar-title>
 
                 <v-spacer></v-spacer>
 
@@ -86,9 +88,12 @@
                                            icon large absolute
                                            :class="selection.includes(album.UID) ? 'action-select' : 'action-select opacity-50'"
                                            @click.stop.prevent="onSelect($event, index)">
-                                        <v-icon v-if="selection.includes(album.UID)" color="white" class="t-select t-on">check_circle
+                                        <v-icon v-if="selection.includes(album.UID)" color="white"
+                                                class="t-select t-on">check_circle
                                         </v-icon>
-                                        <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
+                                        <v-icon v-else color="accent lighten-3" class="t-select t-off">
+                                            radio_button_off
+                                        </v-icon>
                                     </v-btn>
                                 </v-img>
 
@@ -110,7 +115,7 @@
                                     <div v-else-if="album.PhotoCount > 0" class="caption">
                                         <translate>Contains</translate>
                                         {{album.PhotoCount}}
-                                        <translate>photos</translate>.
+                                        <translate>photos.</translate>
                                     </div>
                                     <div v-else class="caption">
                                         <router-link :to="{name: 'photos'}" class="text-link">
@@ -160,8 +165,10 @@
 
             let categories = [{"value": "", "text": this.$gettext("All Categories")}];
 
-            if(this.$config.values.albumCategories) {
-                categories = categories.concat(this.$config.values.albumCategories.map(cat => { return {"value": cat, "text": cat}; }));
+            if (this.$config.values.albumCategories) {
+                categories = categories.concat(this.$config.values.albumCategories.map(cat => {
+                    return {"value": cat, "text": cat};
+                }));
             }
 
             return {

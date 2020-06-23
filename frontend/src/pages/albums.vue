@@ -182,7 +182,7 @@
                                     <div v-else-if="album.PhotoCount > 0" class="caption">
                                         <translate>Contains</translate>
                                         {{album.PhotoCount}}
-                                        <translate>photos</translate>.
+                                        <translate>photos.</translate>
                                     </div>
                                     <div v-else class="caption">
                                         <router-link :to="{name: 'photos'}" class="text-link">
