@@ -119,6 +119,11 @@ main {
     color: #333333;
 }
 
+#photoprism .theme--dark.v-sheet .text-link,
+#photoprism .theme--dark.v-card .text-link {
+    color: white;
+}
+
 #photoprism main .p-inline-edit a,
 #photoprism main .p-inline-edit a span {
     cursor: text;

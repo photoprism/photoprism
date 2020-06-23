@@ -184,11 +184,9 @@
                                         {{album.PhotoCount}}
                                         <translate>photos.</translate>
                                     </div>
-                                    <div v-else class="caption">
-                                        <router-link :to="{name: 'photos'}" class="text-link">
-                                            <translate>Add photos from search results by selecting them.</translate>
-                                        </router-link>
-                                    </div>
+                                    <button v-else @click.stop.prevent="$router.push({name: 'photos'})" class="caption">
+                                        <translate>Add photos from search results by selecting them.</translate>
+                                    </button>
                                 </v-card-text>
                             </v-card>
                         </v-hover>
