@@ -15,7 +15,7 @@ Say goodbye to solutions that force you to upload your visual memories to the pu
 
 ![](https://dl.photoprism.org/assets/img/preview.jpg)
 
-### What to expect... ###
+## What to expect... ##
 
 * Clearly structured Web interface for browsing, organizing and sharing your personal photo collection
 * Import everything without worrying about duplicates or [RAW to JPEG conversion][wiki:raw]
@@ -31,7 +31,7 @@ Step-by-step installation instructions can be found on [docs.photoprism.org](htt
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
 
 Next, you'll have to [index or import](https://docs.photoprism.org/user-guide/library/import-vs-index/) 
-existing photos and videos. Please be patient, this will take a while depending on the number of files.
+existing files. Please be patient, this will take a while depending on the size of your library.
 
 Already indexed photos can be browsed in [Photos](https://docs.photoprism.org/user-guide/organize/browse/) 
 while videos show up in [Videos](https://docs.photoprism.org/user-guide/organize/video/).
