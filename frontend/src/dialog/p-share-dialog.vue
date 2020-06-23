@@ -217,6 +217,7 @@
         watch: {
             show: function (show) {
                 if (show) {
+                    this.links = [];
                     this.loading = true;
                     this.model.links().then((resp) => {
                         if (resp.count === 0) {
