@@ -22,38 +22,24 @@ Say goodbye to solutions that force you to upload your visual memories to the pu
 * [Geocoding][wiki:geocoding], [XMP support][wiki:xmp] and [automated tagging][wiki:classification] 
   based on Google TensorFlow
 
-## For the Early Birds ##
+## Getting Started ##
 
 You're welcome to play with our demo at [demo.photoprism.org](https://demo.photoprism.org).
 Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
 
-Step-by-step [installation instructions](https://docs.photoprism.org/getting-started/) can be found
-in our [User Guide](https://docs.photoprism.org/).
-Developers can skip this and move on to the [Developer Guide](https://docs.photoprism.org/developer-guide/).
+Step-by-step installation instructions can be found on [docs.photoprism.org](https://docs.photoprism.org/user-guide/) - 
+all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
 
-All you need is a Web browser and [Docker](https://store.docker.com/search?type=edition&offering=community)
-to run the server. It is available for Mac, Linux and Windows.
+Next, you'll have to [index or import](https://docs.photoprism.org/user-guide/library/import-vs-index/) 
+existing photos and videos. Please be patient, this will take a while depending on the number of files.
 
-There is also a [pre-installed Raspberry Pi image here](https://github.com/guysoft/PhotoPrismPi).
+Already indexed photos can be browsed in [Photos](https://docs.photoprism.org/user-guide/organize/browse/) 
+while videos show up in [Videos](https://docs.photoprism.org/user-guide/organize/video/).
+Counts are continuously updated in the navigation.
 
-Note that this is work in progress. We do our best to provide a complete, stable version.
-If you have a question, don't hesitate to ask in our [help forum][help] 
-or [contact us via email](mailto:hello@photoprism.org).
-
-## Why This Has to Be Free Software ##
-
-The development of every commercial product is focused on monetization.
-We've [built similar apps more than once](https://github.com/photoprism/photoprism/wiki/Mediencenter) 
-and every single time the constraints of working
-in a profit-oriented corporate environment were an impediment.
-
-We are sure we can do better with only a fraction of the budget. Simplicity - the art of maximizing the 
-amount of work not done - can be very powerful.
-Go itself is a [great example](https://talks.golang.org/2015/simplicity-is-complicated.slide).
-
-Our long-term goal is to become an open platform for machine 
-learning [research](https://github.com/photoprism/photoprism/wiki/Research) based on real-world photo collections.
-We're already in contact with data scientists who like our idea.
+If photos are missing, they might be in [review](https://docs.photoprism.org/user-guide/organize/review/) due to low quality or missing metadata.
+You can turn this and other features off in [Settings](https://docs.photoprism.org/user-guide/settings/ui/), depending on
+your specific use case.
 
 ## Contributions ##
 
@@ -63,8 +49,8 @@ Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/hel
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
 good (first) contributions. 
 
-Please follow us on [Twitter][twitter] and join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
-to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
+Follow us on [Twitter][twitter] to receive regular project updates and discuss development 
+related topics. Don't be afraid to ask stupid questions.
 
 ## Funding ##
 
@@ -112,12 +98,6 @@ Thank you very much! <3
 PhotoPrism™ is a registered trademark of Michael Mayer. You may use it as required to describe 
 our software, run your own server, for educational purposes, but not for offering commercial 
 goods, products, or services without prior written permission. In other words, please ask.
-
-## Don't Panic ##
-
-We'd like to remind everyone that we are not marketing specialists but developers 
-who work a lot and enjoy a bit of sarcasm from time to time. Please let us know when there is 
-an issue with our "nuance and tone", and we'll find a solution! :)
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
 [wiki:xmp]: https://github.com/photoprism/photoprism/wiki/XMP
