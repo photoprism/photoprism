@@ -15,16 +15,14 @@ Say goodbye to solutions that force you to upload your visual memories to the pu
 
 ![](https://dl.photoprism.org/assets/img/preview.jpg)
 
-More screenshots: https://github.com/photoprism/photoprism/wiki/Screenshots
-
-## What to expect ##
+### What to expect... ###
 
 * Clearly structured Web interface for browsing, organizing and sharing your personal photo collection
 * Import everything without worrying about duplicates or [RAW to JPEG conversion][wiki:raw]
 * [Geocoding][wiki:geocoding], [XMP support][wiki:xmp] and [automated tagging][wiki:classification] 
   based on Google TensorFlow
 
-## For the early birds ##
+## For the Early Birds ##
 
 You're welcome to play with our demo at [demo.photoprism.org](https://demo.photoprism.org).
 Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
@@ -42,7 +40,7 @@ Note that this is work in progress. We do our best to provide a complete, stable
 If you have a question, don't hesitate to ask in our [help forum][help] 
 or [contact us via email](mailto:hello@photoprism.org).
 
-## Why this has to be free software ##
+## Why This Has to Be Free Software ##
 
 The development of every commercial product is focused on monetization.
 We've [built similar apps more than once](https://github.com/photoprism/photoprism/wiki/Mediencenter) 
@@ -57,7 +55,7 @@ Our long-term goal is to become an open platform for machine
 learning [research](https://github.com/photoprism/photoprism/wiki/Research) based on real-world photo collections.
 We're already in contact with data scientists who like our idea.
 
-## How to contribute ##
+## Contributions ##
 
 We welcome contributions of any kind. If you have a bug or an idea, read our 
 [guide](https://docs.photoprism.org/developer-guide/) before opening an issue.
@@ -68,7 +66,7 @@ good (first) contributions.
 Please follow us on [Twitter][twitter] and join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
 to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
 
-## Free beer ##
+## No Free Beer ##
 
 This project is about freedom and privacy but not necessarily about free beer. We feel like it
 would be a mistake to state there will be no costs, because clearly we have huge expenses, your server hardware
