@@ -17,7 +17,7 @@
             </v-card-title>
             <v-card-text class="pt-0">
                 <v-layout row wrap>
-                    <v-flex xs12 text-xs-left>
+                    <v-flex xs12 text-xs-left class="pt-2">
                         <v-select
                                 color="secondary-dark"
                                 hide-details hide-no-data flat
@@ -31,7 +31,7 @@
                                 :items="accounts">
                         </v-select>
                     </v-flex>
-                    <v-flex xs12 text-xs-left>
+                    <v-flex xs12 text-xs-left class="pt-2">
                         <v-autocomplete
                                 color="secondary-dark"
                                 hide-details hide-no-data flat
