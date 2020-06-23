@@ -58,7 +58,7 @@ func TestAlbumPhotos(t *testing.T) {
 	})
 }
 
-func TestAlbums(t *testing.T) {
+func TestAlbumSearch(t *testing.T) {
 	t.Run("search with string", func(t *testing.T) {
 		query := form.NewAlbumSearch("chr")
 		result, err := AlbumSearch(query)

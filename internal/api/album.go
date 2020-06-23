@@ -46,12 +46,13 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		result, err := query.AlbumSearch(f)
+
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
-		// TODO c.Header("X-Count", strconv.Itoa(count))
+		c.Header("X-Count", strconv.Itoa(len(result)))
 		c.Header("X-Limit", strconv.Itoa(f.Count))
 		c.Header("X-Offset", strconv.Itoa(f.Offset))
 

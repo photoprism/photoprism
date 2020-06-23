@@ -38,6 +38,8 @@ type AlbumResult struct {
 	DeletedAt        time.Time `json:"DeletedAt,omitempty"`
 }
 
+type AlbumResults []AlbumResult
+
 // AlbumByUID returns a Album based on the UID.
 func AlbumByUID(albumUID string) (album entity.Album, err error) {
 	if err := Db().Where("album_uid = ?", albumUID).First(&album).Error; err != nil {
@@ -96,23 +98,18 @@ func AlbumPhotos(a entity.Album, count int) (results PhotoResults, err error) {
 }
 
 // AlbumSearch searches albums based on their name.
-func AlbumSearch(f form.AlbumSearch) (results []AlbumResult, err error) {
+func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
 
 	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("albums: search %s", form.Serialize(f, true))))
 
-	s := Db().NewScope(nil).DB()
-
-	s = s.Table("albums").
-		Select(`albums.*, 
-			COUNT(photos_albums.album_uid) AS photo_count,
-			COUNT(links.share_token) AS link_count`).
-		Joins("LEFT JOIN photos_albums ON photos_albums.album_uid = albums.album_uid").
-		Joins("LEFT JOIN links ON links.share_uid = albums.album_uid").
-		Where("albums.deleted_at IS NULL").
-		Group("albums.id")
+	s := UnscopedDb().Table("albums").
+		Select("albums.*, cp.photo_count,	cl.link_count").
+		Joins("LEFT JOIN (SELECT album_uid, count(album_uid) AS photo_count FROM albums GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
+		Joins("LEFT JOIN (SELECT share_uid, count(share_uid) AS link_count FROM links GROUP BY share_uid) AS cl ON cl.share_uid = albums.album_uid").
+		Where("albums.deleted_at IS NULL")
 
 	if f.ID != "" {
 		s = s.Where("albums.album_uid IN (?)", strings.Split(f.ID, ","))

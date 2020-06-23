@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 )
 
-func TestPhotos(t *testing.T) {
+func TestPhotoSearch(t *testing.T) {
 	t.Run("search all", func(t *testing.T) {
 		//Db().LogMode(true)
 		var f form.PhotoSearch
