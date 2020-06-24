@@ -17,9 +17,9 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 
 ## What to expect... ##
 
-* Clearly structured Web interface for browsing, organizing and sharing your personal photo collection
-* Import everything without worrying about duplicates or [RAW to JPEG conversion][wiki:raw]
-* [Geocoding][wiki:geocoding], [XMP support][wiki:xmp] and [automated tagging][wiki:classification] 
+* clearly structured Web interface for browsing, organizing and sharing your personal photo collection
+* import everything without worrying about duplicates or [RAW to JPEG conversion][wiki:raw]
+* [geocoding][wiki:geocoding], [XMP support][wiki:xmp] and [automated tagging][wiki:classification] 
   based on Google TensorFlow
 
 ## Getting Started ##
