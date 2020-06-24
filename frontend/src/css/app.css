@@ -45,7 +45,7 @@ body {
 }
 
 body {
-    background: rgb(250, 250, 250);
+    background-color: rgb(250, 250, 250);
     color: #333333;
     font-family: Roboto, sans-serif;
 }
@@ -310,10 +310,6 @@ body.shared .hidden-shared-only {
     left: 2px;
     right: 2px;
     bottom: 2px;
-}
-
-body.white {
-    background: white;
 }
 
 #photoprism div.logo-large {
