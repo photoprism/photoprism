@@ -289,3 +289,8 @@ body.shared .hidden-shared-only {
 #photoprism .hidden-always {
     display: none !important;
 }
+
+#photoprism .p-scroll-top {
+    top: 100px;
+    right: 8px;
+}
