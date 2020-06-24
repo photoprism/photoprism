@@ -32,7 +32,7 @@ https://docs.photoprism.org/developer-guide/
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/mapbox-gl/dist/mapbox-gl.css");
 @import url("video.css");
-@import url("colorchange.css");
+@import url("rainbow.css");
 @import url("maps.css");
 @import url("viewer.css");
 @import url("photos.css");
@@ -294,3 +294,41 @@ body.shared .hidden-shared-only {
     top: 72px;
     right: 8px;
 }
+
+#photoprism div.logo {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    right: 1px;
+    bottom: 1px;
+    border-radius: 50%;
+}
+
+#photoprism div.logo img {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+}
+
+#photoprism div.logo-large {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    width: 300px;
+    height: 300px;
+}
+
+#photoprism div.logo-large img {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    right: 30px;
+    bottom: 20px;
+}
+
+
