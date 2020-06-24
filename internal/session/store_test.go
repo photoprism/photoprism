@@ -14,6 +14,54 @@ func TestSession_Create(t *testing.T) {
 	assert.Equal(t, 48, len(token))
 }
 
+func TestSession_Update(t *testing.T) {
+	s := New(time.Hour, "testdata")
+
+	type Data struct {
+		Key string
+	}
+
+	data := Data{
+		Key: "VALUE",
+	}
+
+	randomToken := Token()
+	assert.Equal(t, 48, len(randomToken))
+
+	if _, found := s.Get(randomToken); found {
+		t.Fatalf("session %s should not exist", randomToken)
+	}
+
+	if err := s.Update(randomToken, data); err == nil {
+		t.Fatalf("update should fail for unknown token %s", randomToken)
+	}
+
+	token := s.Create(data)
+	assert.Equal(t, 48, len(token))
+
+	hit, found := s.Get(token)
+
+	if!found {
+		t.Fatalf("session %s should exist", token)
+	}
+
+	cachedData := hit.(Data)
+
+	assert.Equal(t, cachedData, data)
+
+	newData := Data{
+		Key: "NEW",
+	}
+
+	if err := s.Update(token, newData); err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	if _, found := s.Get(token); !found {
+		t.Fatalf("session %s should exist", token)
+	}
+}
+
 func TestSession_Delete(t *testing.T) {
 	s := New(time.Hour, "testdata")
 	s.Delete("abc")
