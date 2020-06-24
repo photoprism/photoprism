@@ -93,7 +93,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 		m := entity.NewAlbum(f.AlbumTitle, entity.AlbumDefault)
 		m.AlbumFavorite = f.AlbumFavorite
 
-		log.Debugf("create album: %+v %+v", f, m)
+		log.Debugf("album: creating %+v %+v", f, m)
 
 		if res := entity.Db().Create(m); res.Error != nil {
 			log.Error(res.Error.Error())
@@ -358,8 +358,8 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if len(f.Photos) == 0 {
-			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
+			log.Error("no items selected")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no items selected")})
 			return
 		}
 

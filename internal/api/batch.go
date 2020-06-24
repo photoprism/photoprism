@@ -34,19 +34,23 @@ func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if len(f.Photos) == 0 {
-			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
+			log.Error("no items selected")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no items selected")})
 			return
 		}
 
-		log.Infof("photos: archiving %#v", f.Photos)
+		log.Infof("archive: adding %s", f.String())
 
+		// Soft delete by setting deleted_at to current date.
 		err := entity.Db().Where("photo_uid IN (?)", f.Photos).Delete(&entity.Photo{}).Error
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
 		}
+
+		// Remove archived photos from albums.
+		logError("archive", entity.Db().Model(&entity.PhotoAlbum{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("hidden", true).Error)
 
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("photos: %s", err)
@@ -80,12 +84,12 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if len(f.Photos) == 0 {
-			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
+			log.Error("no items selected")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no items selected")})
 			return
 		}
 
-		log.Infof("restoring photos: %#v", f.Photos)
+		log.Infof("archive: restoring %s", f.String())
 
 		err := entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uid IN (?)", f.Photos).
 			UpdateColumn("deleted_at", gorm.Expr("NULL")).Error
@@ -130,7 +134,7 @@ func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		log.Infof("albums: deleting %#v", f.Albums)
+		log.Infof("albums: deleting %s", f.String())
 
 		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.Album{})
 		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.PhotoAlbum{})
@@ -161,12 +165,12 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 		}
 
 		if len(f.Photos) == 0 {
-			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
+			log.Error("no items selected")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no items selected")})
 			return
 		}
 
-		log.Infof("marking photos as private: %#v", f.Photos)
+		log.Infof("photos: mark %s as private", f.String())
 
 		err := entity.Db().Model(entity.Photo{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("photo_private",
 			gorm.Expr("CASE WHEN photo_private > 0 THEN 0 ELSE 1 END")).Error
@@ -213,7 +217,7 @@ func BatchLabelsDelete(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		log.Infof("labels: deleting %#v", f.Labels)
+		log.Infof("labels: deleting %s", f.String())
 
 		var labels entity.Labels
 

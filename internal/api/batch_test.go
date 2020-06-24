@@ -28,12 +28,12 @@ func TestBatchPhotosArchive(t *testing.T) {
 		val3 := gjson.Get(r3.Body.String(), "DeletedAt")
 		assert.NotEmpty(t, val3.String())
 	})
-	t.Run("no photos selected", func(t *testing.T) {
+	t.Run("no items selected", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		BatchPhotosArchive(router, conf)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/archive", `{"photos": []}`)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "No photos selected", val.String())
+		assert.Equal(t, "No items selected", val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("invalid request", func(t *testing.T) {
@@ -71,12 +71,12 @@ func TestBatchPhotosRestore(t *testing.T) {
 		val4 := gjson.Get(r4.Body.String(), "DeletedAt")
 		assert.Empty(t, val4.String())
 	})
-	t.Run("no photos selected", func(t *testing.T) {
+	t.Run("no items selected", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		BatchPhotosRestore(router, conf)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/restore", `{"photos": []}`)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "No photos selected", val.String())
+		assert.Equal(t, "No items selected", val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("invalid request", func(t *testing.T) {
@@ -149,12 +149,12 @@ func TestBatchPhotosPrivate(t *testing.T) {
 		val3 := gjson.Get(r3.Body.String(), "Private")
 		assert.Equal(t, "true", val3.String())
 	})
-	t.Run("no photos selected", func(t *testing.T) {
+	t.Run("no items selected", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		BatchPhotosPrivate(router, conf)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/private", `{"photos": []}`)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "No photos selected", val.String())
+		assert.Equal(t, "No items selected", val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("invalid request", func(t *testing.T) {

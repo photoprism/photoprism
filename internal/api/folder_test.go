@@ -52,8 +52,6 @@ func TestGetFoldersOriginals(t *testing.T) {
 			assert.Equal(t, false, folder.FolderIgnore)
 			assert.Equal(t, false, folder.FolderWatch)
 		}
-
-		// t.Logf("ORIGINALS: %+v", folders)
 	})
 	t.Run("recursive", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -91,8 +89,6 @@ func TestGetFoldersOriginals(t *testing.T) {
 			assert.Equal(t, false, folder.FolderIgnore)
 			assert.Equal(t, false, folder.FolderWatch)
 		}
-
-		// t.Logf("ORIGINALS RECURSIVE: %+v", folders)
 	})
 }
 
@@ -123,8 +119,6 @@ func TestGetFoldersImport(t *testing.T) {
 		if len(folders) != len(expected) {
 			t.Fatalf("response contains %d folders", len(folders))
 		}
-
-		// t.Logf("IMPORT FOLDERS: %+v", folders)
 
 		if len(folders) == 0 {
 			// There are no existing folders, that's ok.
@@ -178,7 +172,5 @@ func TestGetFoldersImport(t *testing.T) {
 			assert.Equal(t, false, folder.FolderIgnore)
 			assert.Equal(t, false, folder.FolderWatch)
 		}
-
-		// t.Logf("IMPORT FOLDERS RECURSIVE: %+v", folders)
 	})
 }

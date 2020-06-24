@@ -171,7 +171,7 @@ func CreateAccount(router *gin.RouterGroup, conf *config.Config) {
 
 		m, err := entity.CreateAccount(f)
 
-		log.Debugf("create account: %+v %+v", f, m)
+		log.Debugf("account: creating %+v %+v", f, m)
 
 		if err != nil {
 			log.Error(err)

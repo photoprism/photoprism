@@ -1,5 +1,7 @@
 package form
 
+import "strings"
+
 type Selection struct {
 	Files  []string `json:"files"`
 	Photos []string `json:"photos"`
@@ -23,4 +25,21 @@ func (f Selection) Empty() bool {
 	}
 
 	return true
+}
+
+func (f Selection) All() []string {
+	var all []string
+
+	copy(all, f.Files)
+
+	all = append(all, f.Photos...)
+	all = append(all, f.Albums...)
+	all = append(all, f.Labels...)
+	all = append(all, f.Places...)
+
+	return all
+}
+
+func (f Selection) String() string {
+	return strings.Join(f.All(), ", ")
 }

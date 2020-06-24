@@ -225,12 +225,12 @@ func TestRemovePhotosFromAlbum(t *testing.T) {
 		assert.Equal(t, "entries removed from album", val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("no photos selected", func(t *testing.T) {
+	t.Run("no items selected", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		RemovePhotosFromAlbum(router, conf)
 		r := PerformRequestWithBody(app, "DELETE", "/api/v1/albums/at9lxuqxpogaaba7/photos", `{"photos": []}`)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "No photos selected", val.String())
+		assert.Equal(t, "No items selected", val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("invalid request", func(t *testing.T) {
