@@ -8,6 +8,25 @@ import (
 
 var KeywordsRegexp = regexp.MustCompile("[\\p{L}\\-]{3,}")
 
+// UnknownWord returns true if the string does not seem to be a real word.
+func UnknownWord(s string) bool {
+	if len(s) > 3 || !ASCII(s) {
+		return false
+	}
+
+	s = strings.ToLower(s)
+
+	if _, ok := ShortWords[s]; ok {
+		return false
+	}
+
+	if _, ok := SpecialWords[s]; ok {
+		return false
+	}
+
+	return true
+}
+
 // Words returns a slice of words with at least 3 characters from a string, dashes count as character ("ile-de-france").
 func Words(s string) (results []string) {
 	return KeywordsRegexp.FindAllString(s, -1)
@@ -30,7 +49,11 @@ func FilenameKeywords(s string) (results []string) {
 	for _, w := range FilenameWords(s) {
 		w = strings.ToLower(w)
 
-		if _, ok := Stopwords[w]; ok == false {
+		if UnknownWord(w) {
+			continue
+		}
+
+		if _, ok := StopWords[w]; ok == false {
 			results = append(results, w)
 		}
 	}
@@ -43,7 +66,11 @@ func Keywords(s string) (results []string) {
 	for _, w := range Words(s) {
 		w = strings.ToLower(w)
 
-		if _, ok := Stopwords[w]; ok == false {
+		if UnknownWord(w) {
+			continue
+		}
+
+		if _, ok := StopWords[w]; ok == false {
 			results = append(results, w)
 		}
 	}

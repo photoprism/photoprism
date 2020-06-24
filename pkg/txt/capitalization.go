@@ -10,117 +10,6 @@ import (
 
 var FileTitleRegexp = regexp.MustCompile("[\\p{L}\\-,':]{2,}")
 
-var SpecialWords = map[string]string{
-	"nyc":                "NYC",
-	"ny":                 "NY",
-	"uae":                "UAE",
-	"usa":                "USA",
-	"amd":                "AMD",
-	"tiff":               "TIFF",
-	"ibm":                "IBM",
-	"usd":                "USD",
-	"gbp":                "GBP",
-	"chf":                "CHF",
-	"ceo":                "CEO",
-	"cto":                "CTO",
-	"cfo":                "CFO",
-	"cia":                "CIA ",
-	"fbi":                "FBI",
-	"bnd":                "BND",
-	"fsb":                "FSB",
-	"nsa":                "NSA",
-	"lax":                "LAX",
-	"sfx":                "SFX",
-	"ber":                "BER",
-	"sfo":                "SFO",
-	"lh":                 "LH",
-	"lhr":                "LHR",
-	"afl":                "AFL",
-	"nrl":                "NRL",
-	"nsw":                "NSW",
-	"qld":                "QLD",
-	"vic":                "VIC",
-	"iphone":             "iPhone",
-	"imac":               "iMac",
-	"ipad":               "iPad",
-	"ipod":               "iPod",
-	"macbook":            "MacBook",
-	"airplay":            "AirPlay",
-	"airpods":            "AirPods",
-	"youtube":            "YouTube",
-	"photoprism":         "PhotoPrism",
-	"macgyver":           "MacGyver",
-	"o'brien":            "O'Brien",
-	"mcgregor":           "McGregor",
-	"mcdonald":           "McDonald",
-	"mcdonalds":          "McDonald's",
-	"mcdonald's":         "McDonald's",
-	"macalister":         "MacAlister",
-	"mcalister":          "McAlister",
-	"mcallister":         "McAllister",
-	"macauley":           "MacAuley",
-	"mccauley":           "McCauley",
-	"mcawley":            "McAwley",
-	"macauliffe":         "MacAuliffe",
-	"macbride":           "MacBride",
-	"mcbride":            "McBride",
-	"maccabe":            "MacCabe",
-	"mccabe":             "McCabe",
-	"maccann":            "MacCann",
-	"mccann":             "McCann",
-	"maccarthy":          "MacCarthy",
-	"mccarthy":           "McCarthy",
-	"maccormack":         "MacCormack",
-	"mccormick":          "McCormick",
-	"maccullagh":         "MacCullagh",
-	"macnully":           "MacNully",
-	"mackenna":           "MacKenna",
-	"macnamara":          "MacNamara",
-	"mcnamara":           "McNamara",
-	"gelaende":           "Gelände",
-	"schwaebisch":        "Schwäbisch",
-	"schwaebische":       "Schwäbische",
-	"aegypten":           "Ägypten",
-	"muenchen":           "München",
-	"wuerttemberg":       "Württemberg",
-	"baden-wuerttemberg": "Baden-Württemberg",
-	"nuernberg":          "Nürnberg",
-	"wuerzburg":          "Würzburg",
-	"tubingen":           "Tübingen",
-	"tuebingen":          "Tübingen",
-	"koeln":              "Köln",
-	"oesterreich":        "Österreich",
-	"woerthersee":        "Wörthersee",
-	"oeland":             "Öland",
-	"schoenefeld":        "Schönefeld",
-	"duesseldorf":        "Düsseldorf",
-	"dusseldorf":         "Düsseldorf",
-	"saarbrucken":        "Saarbrücken",
-	"saarbruecken":       "Saarbrücken",
-	"zuerich":            "Zürich",
-}
-
-var SmallWords = map[string]bool{
-	"a":    true,
-	"an":   true,
-	"as":   true,
-	"at":   true,
-	"by":   true,
-	"in":   true,
-	"of":   true,
-	"on":   true,
-	"or":   true,
-	"up":   true,
-	"to":   true,
-	"and":  true,
-	"but":  true,
-	"for":  true,
-	"nor":  true,
-	"the":  true,
-	"from": true,
-	"with": true,
-}
-
 // isSeparator reports whether the rune could mark a word boundary.
 func isSeparator(r rune) bool {
 	// ASCII alphanumerics and underscore are not separators
@@ -215,7 +104,11 @@ func TitleFromFileName(s string) string {
 			continue
 		}
 
-		if _, ok := Stopwords[w]; ok && found == 0 {
+		if _, ok := StopWords[w]; ok && found == 0 {
+			continue
+		}
+
+		if UnknownWord(w) {
 			continue
 		}
 
