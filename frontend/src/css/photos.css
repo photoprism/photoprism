@@ -96,6 +96,7 @@
     background-color: rgba(100, 100, 100, 0.5) !important;
 }
 
+#photoprism .p-album-desc button,
 #photoprism .p-photo-desc button {
     text-align: left;
 }
