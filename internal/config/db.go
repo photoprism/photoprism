@@ -88,6 +88,11 @@ func (c *Config) CloseDb() error {
 func (c *Config) InitDb() {
 	entity.SetDbProvider(c)
 	entity.MigrateDb()
+
+	if err := entity.Admin.SetPassword(c.AdminPassword()); err != nil {
+		log.Error(err)
+	}
+
 	go entity.SaveErrorMessages()
 }
 
@@ -95,6 +100,11 @@ func (c *Config) InitDb() {
 func (c *Config) InitTestDb() {
 	entity.SetDbProvider(c)
 	entity.ResetTestFixtures()
+
+	if err := entity.Admin.SetPassword(c.AdminPassword()); err != nil {
+		log.Error(err)
+	}
+
 	go entity.SaveErrorMessages()
 }
 

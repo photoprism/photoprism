@@ -485,7 +485,15 @@
             }
         },
         created() {
-            this.search();
+            const token = this.$route.params.token;
+
+            if (this.$session.shareToken(token)) {
+                this.search();
+            } else {
+                this.$session.login("", "", token).then(() => {
+                    this.search();
+                });
+            }
 
             this.subscriptions.push(Event.subscribe("albums", (ev, data) => this.onUpdate(ev, data)));
 

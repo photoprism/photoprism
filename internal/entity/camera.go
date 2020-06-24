@@ -148,7 +148,7 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 	return m
 }
 
-// String returns a string designing the given Camera entity
+// String returns an identifier that can be used in logs.
 func (m *Camera) String() string {
 	return m.CameraName
 }

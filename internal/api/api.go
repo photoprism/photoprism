@@ -45,5 +45,5 @@ func logError(prefix string, err error) {
 }
 
 func UpdateClientConfig(conf *config.Config) {
-	event.Publish("config.updated", event.Data{"config": conf.ClientConfig()})
+	event.Publish("config.updated", event.Data{"config": conf.UserConfig()})
 }

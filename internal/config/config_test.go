@@ -308,7 +308,7 @@ func TestConfig_HttpStaticBuildPath(t *testing.T) {
 func TestConfig_ClientConfig(t *testing.T) {
 	c := TestConfig()
 
-	cc := c.ClientConfig()
+	cc := c.UserConfig()
 
 	assert.IsType(t, ClientConfig{}, cc)
 	assert.NotEmpty(t, cc.Name)

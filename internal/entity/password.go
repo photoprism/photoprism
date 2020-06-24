@@ -14,6 +14,7 @@ type Password struct {
 	UpdatedAt time.Time `deepcopier:"skip" json:"UpdatedAt"`
 }
 
+// NewPassword creates a new password instance.
 func NewPassword(uid, password string) Password {
 	if uid == "" {
 		panic("password: uid must not be empty")
@@ -30,6 +31,7 @@ func NewPassword(uid, password string) Password {
 	return m
 }
 
+// SetPassword sets a new password stored as hash.
 func (m *Password) SetPassword(password string) error {
 	if bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14); err != nil {
 		return err
@@ -39,6 +41,7 @@ func (m *Password) SetPassword(password string) error {
 	}
 }
 
+// InvalidPassword returns true if the given password does not match the hash.
 func (m *Password) InvalidPassword(password string) bool {
 	if m.Hash == "" && password == "" {
 		return false

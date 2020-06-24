@@ -4,12 +4,18 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSession_Create(t *testing.T) {
 	s := New(time.Hour, "testdata")
-	token := s.Create(23)
+
+	data := Data{
+		User: entity.Admin,
+	}
+
+	token := s.Create(data)
 	t.Logf("token: %s", token)
 	assert.Equal(t, 48, len(token))
 }
@@ -17,18 +23,14 @@ func TestSession_Create(t *testing.T) {
 func TestSession_Update(t *testing.T) {
 	s := New(time.Hour, "testdata")
 
-	type Data struct {
-		Key string
-	}
-
 	data := Data{
-		Key: "VALUE",
+		User: entity.Admin,
 	}
 
 	randomToken := Token()
 	assert.Equal(t, 48, len(randomToken))
 
-	if _, found := s.Get(randomToken); found {
+	if result := s.Get(randomToken); result != nil {
 		t.Fatalf("session %s should not exist", randomToken)
 	}
 
@@ -39,25 +41,23 @@ func TestSession_Update(t *testing.T) {
 	token := s.Create(data)
 	assert.Equal(t, 48, len(token))
 
-	hit, found := s.Get(token)
+	cachedData := s.Get(token)
 
-	if!found {
+	if cachedData == nil {
 		t.Fatalf("session %s should exist", token)
 	}
 
-	cachedData := hit.(Data)
-
-	assert.Equal(t, cachedData, data)
+	assert.Equal(t, *cachedData, data)
 
 	newData := Data{
-		Key: "NEW",
+		User: entity.Guest,
 	}
 
 	if err := s.Update(token, newData); err != nil {
 		t.Fatalf(err.Error())
 	}
 
-	if _, found := s.Get(token); !found {
+	if cachedData := s.Get(token); cachedData == nil {
 		t.Fatalf("session %s should exist", token)
 	}
 }
@@ -69,27 +69,36 @@ func TestSession_Delete(t *testing.T) {
 
 func TestSession_Get(t *testing.T) {
 	s := New(time.Hour, "testdata")
-	token := s.Create(42)
+	data := Data{
+		User: entity.Guest,
+	}
+
+	token := s.Create(data)
 	t.Logf("token: %s", token)
 	assert.Equal(t, 48, len(token))
 
-	data, exists := s.Get(token)
+	cachedData := s.Get(token)
 
-	assert.Equal(t, 42, data)
-	assert.True(t, exists)
+	if cachedData == nil {
+		t.Fatal("cachedData should not be nil")
+	}
+
+	assert.Equal(t, data, *cachedData)
 
 	s.Delete(token)
 
-	data, exists = s.Get(token)
-
-	assert.Nil(t, data)
-	assert.False(t, s.Exists(token))
+	if cachedData := s.Get(token); cachedData != nil {
+		t.Fatal("cachedData should be nil")
+	}
 }
 
 func TestSession_Exists(t *testing.T) {
 	s := New(time.Hour, "testdata")
 	assert.False(t, s.Exists("xyz"))
-	token := s.Create(23)
+	data := Data{
+		User: entity.Guest,
+	}
+	token := s.Create(data)
 	t.Logf("token: %s", token)
 	assert.Equal(t, 48, len(token))
 	assert.True(t, s.Exists(token))

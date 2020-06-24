@@ -1,0 +1,21 @@
+package session
+
+import (
+	"os"
+	"testing"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/sirupsen/logrus"
+)
+
+func TestMain(m *testing.M) {
+	log = logrus.StandardLogger()
+	log.SetLevel(logrus.DebugLevel)
+
+	db := entity.InitTestDb(os.Getenv("PHOTOPRISM_TEST_DRIVER"), os.Getenv("PHOTOPRISM_TEST_DSN"))
+	defer db.Close()
+
+	code := m.Run()
+
+	os.Exit(code)
+}

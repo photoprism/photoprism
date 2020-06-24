@@ -218,10 +218,9 @@ func FindAlbumBySlug(slug, albumType string) *Album {
 	return &result
 }
 
-// Find updates the entity with values from the database.
+// Find returns an entity from the database.
 func (m *Album) Find() error {
 	if rnd.IsPPID(m.AlbumUID, 'a') {
-		log.Debugf("IS PPID: %s", m.AlbumUID)
 		if err := UnscopedDb().First(m, "album_uid = ?", m.AlbumUID).Error; err != nil {
 			return err
 		}

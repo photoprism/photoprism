@@ -422,7 +422,15 @@
             },
         },
         created() {
-            this.findAlbum().then(() => this.search());
+            const token = this.$route.params.token;
+
+            if (this.$session.shareToken(token)) {
+                this.findAlbum().then(() => this.search());
+            } else {
+                this.$session.login("", "", token).then(() => {
+                    this.findAlbum().then(() => this.search());
+                });
+            }
 
             this.subscriptions.push(Event.subscribe("albums.updated", (ev, data) => this.onAlbumsUpdated(ev, data)));
             this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));

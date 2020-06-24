@@ -15,6 +15,19 @@ func GetConfig(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		c.JSON(http.StatusOK, conf.ClientConfig())
+		sess := Session(SessionToken(c), conf)
+
+		if sess == nil {
+			c.JSON(http.StatusNotFound, ErrSessionNotFound)
+			return
+		}
+
+		if sess.User.Guest() {
+			c.JSON(http.StatusOK, conf.GuestConfig())
+		} else if sess.User.User() {
+			c.JSON(http.StatusOK, conf.UserConfig())
+		} else {
+			c.JSON(http.StatusOK, conf.PublicConfig())
+		}
 	})
 }

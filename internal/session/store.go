@@ -1,16 +1,14 @@
 package session
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 
 	gc "github.com/patrickmn/go-cache"
 )
 
-func (s *Session) Create(data interface{}) string {
+func (s *Session) Create(data Data) string {
 	token := Token()
-	s.cache.Set(token, data, gc.DefaultExpiration)
+	s.cache.Set(token, &data, gc.DefaultExpiration)
 	log.Debugf("session: created")
 
 	if err := s.Save(); err != nil {
@@ -20,12 +18,12 @@ func (s *Session) Create(data interface{}) string {
 	return token
 }
 
-func (s *Session) Update(token string, data interface{}) error {
+func (s *Session) Update(token string, data Data) error {
 	if _, found := s.cache.Get(token); !found {
 		return fmt.Errorf("session: %s not found (update)", token)
 	}
 
-	s.cache.Set(token, data, gc.DefaultExpiration)
+	s.cache.Set(token, &data, gc.DefaultExpiration)
 
 	log.Debugf("session: updated")
 
@@ -45,24 +43,16 @@ func (s *Session) Delete(token string) {
 	}
 }
 
-func (s *Session) Get(token string) (data interface{}, exists bool) {
-	return s.cache.Get(token)
+func (s *Session) Get(token string) (data *Data) {
+	if hit, ok := s.cache.Get(token); ok {
+		return hit.(*Data)
+	}
+
+	return nil
 }
 
 func (s *Session) Exists(token string) bool {
 	_, found := s.cache.Get(token)
 
 	return found
-}
-
-func (s *Session) Save() error {
-	if s.cacheFile == "" {
-		return nil
-	} else if serialized, err := json.MarshalIndent(s.cache.Items(), "", " "); err != nil {
-		return err
-	} else if err = ioutil.WriteFile(s.cacheFile, serialized, 0600); err != nil {
-		return err
-	}
-
-	return nil
 }

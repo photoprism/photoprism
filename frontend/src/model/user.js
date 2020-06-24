@@ -36,8 +36,31 @@ export class User extends RestModel {
     getDefaults() {
         return {
             ID: 0,
+            UID: "",
+            UserName: "",
             FirstName: "",
             LastName: "",
+            DisplayName: "",
+            Email: "",
+            Info: "",
+            Notes: "",
+            Active: false,
+            Confirmed: false,
+            Admin: false,
+            Guest: false,
+            Family: false,
+            Artist: false,
+            Subject: false,
+            CanEdit: false,
+            CanComment: false,
+            CanUpload: false,
+            CanDownload: false,
+            WebDAV: false,
+            ApiToken: "",
+            LoginAttempts: 0,
+            LoginAt: "",
+            CreatedAt: "",
+            UpdatedAt: "",
         };
     }
 

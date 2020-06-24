@@ -119,7 +119,7 @@ func FindLink(linkUID string) *Link {
 }
 
 // FindLinks returns a slice of links for a token and share UID (at least one must be provided).
-func FindLinks(shareToken, shareUID string) (result []Link) {
+func FindLinks(shareToken, shareUID string) (result Links) {
 	if shareToken == "" && shareUID == "" {
 		log.Errorf("link: share token and uid must not be empty at the same time (find links)")
 		return []Link{}

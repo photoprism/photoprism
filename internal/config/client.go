@@ -109,11 +109,13 @@ func (c *Config) Flags() (flags []string) {
 	return flags
 }
 
-// PublicConfig returns public client config values.
+// PublicConfig returns public client config values with as little information as possible.
 func (c *Config) PublicConfig() ClientConfig {
 	if c.Public() {
-		return c.ClientConfig()
+		return c.UserConfig()
 	}
+
+	defer log.Debug(capture.Time(time.Now(), "config: public config created"))
 
 	settings := c.Settings()
 
@@ -149,9 +151,9 @@ func (c *Config) PublicConfig() ClientConfig {
 	return result
 }
 
-// ShareConfig returns client config values for the sharing UI.
-func (c *Config) ShareConfig() ClientConfig {
-	defer log.Debug(capture.Time(time.Now(), "config: share config created"))
+// GuestConfig returns client config values for the sharing with guests.
+func (c *Config) GuestConfig() ClientConfig {
+	defer log.Debug(capture.Time(time.Now(), "config: guest config created"))
 
 	settings := c.Settings()
 
@@ -189,9 +191,9 @@ func (c *Config) ShareConfig() ClientConfig {
 	return result
 }
 
-// ClientConfig returns client configuration values for the UI.
-func (c *Config) ClientConfig() ClientConfig {
-	defer log.Debug(capture.Time(time.Now(), "config: client config created"))
+// UserConfig returns client configuration values for registered users.
+func (c *Config) UserConfig() ClientConfig {
+	defer log.Debug(capture.Time(time.Now(), "config: admin config created"))
 
 	result := ClientConfig{
 		Settings:        *c.Settings(),

@@ -19,7 +19,7 @@ func shareHandler(c *gin.Context, conf *config.Config) {
 		return
 	}
 
-	clientConfig := conf.ShareConfig()
+	clientConfig := conf.GuestConfig()
 
 	c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig})
 }

@@ -30,6 +30,7 @@ type Types map[string]interface{}
 // List of database entities and their table names.
 var Entities = Types{
 	"errors":          &Error{},
+	"people":          &Person{},
 	"accounts":        &Account{},
 	"folders":         &Folder{},
 	"files":           &File{},
@@ -118,6 +119,7 @@ func (list Types) Drop() {
 
 // Creates default database entries for test and production.
 func CreateDefaultFixtures() {
+	CreateDefaultUsers()
 	CreateUnknownPlace()
 	CreateUnknownLocation()
 	CreateUnknownCountry()

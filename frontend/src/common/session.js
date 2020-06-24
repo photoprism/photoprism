@@ -49,8 +49,12 @@ export default class Session {
         }
 
         if (this.applyToken(this.storage.getItem("session_token"))) {
-            const userJson = this.storage.getItem("user");
-            this.user = userJson !== "undefined" ? new User(JSON.parse(userJson)) : null;
+            const dataJson = this.storage.getItem("data");
+            this.data = dataJson !== "undefined" ? JSON.parse(dataJson) : null;
+        }
+
+        if(this.data && this.data.user) {
+            this.user = new User(this.data.user);
         }
 
         if (this.isUser()) {
@@ -108,12 +112,17 @@ export default class Session {
         this.session_token = null;
         this.storage.removeItem("session_token");
         delete Api.defaults.headers.common["X-Session-Token"];
-        this.deleteUser();
+        this.deleteData();
     }
 
-    setUser(user) {
-        this.user = user;
-        this.storage.setItem("user", JSON.stringify(user.getValues()));
+    setData(data) {
+        if(!data) {
+            return;
+        }
+
+        this.data = data;
+        this.user = new User(this.data.user);
+        this.storage.setItem("data", JSON.stringify(data));
         this.auth = true;
     }
 
@@ -150,17 +159,26 @@ export default class Session {
     }
 
     isAdmin() {
-        return this.user && this.user.hasId() && this.user.Role === "admin";
+        return this.user && this.user.hasId() && this.user.Admin;
     }
 
     isAnonymous() {
         return !this.user || !this.user.hasId();
     }
 
-    deleteUser() {
+    shareToken(token) {
+        if(!this.data || !this.data.tokens) {
+            return false;
+        }
+
+        return this.data.tokens.indexOf(token) >= 0;
+    }
+
+    deleteData() {
         this.auth = false;
-        this.user = null;
-        this.storage.removeItem("user");
+        this.user = new User;
+        this.data = null;
+        this.storage.removeItem("data");
     }
 
     sendClientInfo() {
@@ -173,26 +191,25 @@ export default class Session {
 
         try {
             Socket.send(JSON.stringify(clientInfo));
-        } catch(e) {
+        } catch (e) {
             console.log("can't send client info, websocket not connected (yet)");
         }
     }
 
-    login(email, password) {
+    login(username, password, token) {
         this.deleteToken();
 
-        return Api.post("session", {email: email, password: password}).then(
-            (result) => {
-                this.setConfig(result.data.config);
-                this.setToken(result.data.token);
-                this.setUser(new User(result.data.user));
+        return Api.post("session", {username, password, token}).then(
+            (resp) => {
+                this.setConfig(resp.data.config);
+                this.setToken(resp.data.token);
+                this.setData(resp.data.data);
                 this.sendClientInfo();
             }
         );
     }
 
     onLogout() {
-        console.log("ON LOGOUT");
         this.deleteToken();
         window.location = "/";
     }

@@ -5,7 +5,7 @@ export default [
     {
         name: "home",
         path: "/",
-        redirect: {name: 'albums'},
+        redirect: {name: "albums"},
     },
     {
         name: "albums",
@@ -21,6 +21,6 @@ export default [
         meta: {title: "PhotoPrism", auth: true},
     },
     {
-        path: "*", redirect: {name: 'albums'},
+        path: "*", redirect: {name: "albums"},
     },
 ];
