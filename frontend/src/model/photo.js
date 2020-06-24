@@ -115,9 +115,9 @@ export class Photo extends RestModel {
             // Date fields.
             CreatedAt: "",
             UpdatedAt: "",
-            DeletedAt: null,
             EditedAt: null,
-            MaintainedAt: null,
+            CheckedAt: null,
+            DeletedAt: null,
         };
     }
 

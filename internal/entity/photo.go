@@ -82,7 +82,7 @@ type Photo struct {
 	CreatedAt        time.Time    `yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time    `yaml:"UpdatedAt,omitempty"`
 	EditedAt         *time.Time   `yaml:"EditedAt,omitempty"`
-	MaintainedAt     *time.Time   `sql:"index" yaml:"-"`
+	CheckedAt        *time.Time   `sql:"index" yaml:"-"`
 	DeletedAt        *time.Time   `sql:"index" yaml:"DeletedAt,omitempty"`
 }
 

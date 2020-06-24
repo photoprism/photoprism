@@ -81,6 +81,8 @@ type PhotoResult struct {
 	Merged           bool          `json:"Merged"`
 	CreatedAt        time.Time     `json:"CreatedAt"`
 	UpdatedAt        time.Time     `json:"UpdatedAt"`
+	EditedAt         time.Time     `json:"EditedAt,omitempty"`
+	CheckedAt        time.Time     `json:"CheckedAt,omitempty"`
 	DeletedAt        time.Time     `json:"DeletedAt,omitempty"`
 
 	Files []entity.File `json:"Files"`

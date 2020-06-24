@@ -122,10 +122,10 @@
                         {{ model.EditedAt | luxon:format('http') }}
                     </td>
                 </tr>
-                <tr v-if="model.MaintainedAt">
-                    <td><translate key="Maintained">Maintained</translate></td>
+                <tr v-if="model.CheckedAt">
+                    <td><translate key="Checked">Checked</translate></td>
                     <td>
-                        {{ model.MaintainedAt | luxon:format('http') }}
+                        {{ model.CheckedAt | luxon:format('http') }}
                     </td>
                 </tr>
                 <tr v-if="model.DeletedAt">
