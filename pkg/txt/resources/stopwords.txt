@@ -9,6 +9,10 @@ android
 sync
 usb
 dsc
+pic
+pict
+picture
+pictures
 upload
 download
 temp
