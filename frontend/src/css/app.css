@@ -312,6 +312,10 @@ body.shared .hidden-shared-only {
     bottom: 2px;
 }
 
+body.white {
+    background: white;
+}
+
 #photoprism div.logo-large {
     position: absolute;
     top: 50%;
