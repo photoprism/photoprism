@@ -15,7 +15,7 @@
                     @click.stop="onLogoClick"
                     v-show="!drawer"
             >
-                <img src="/static/svg/logo-white-bold.svg" alt="PhotoPrism">
+                <img src="/static/svg/logo-white-6pt.svg" alt="PhotoPrism">
             </v-avatar>
         </v-toolbar>
         <v-toolbar dark flat color="navigation darken-1" class="hidden-md-and-up">
@@ -33,7 +33,7 @@
                     <v-list-tile class="p-navigation-logo">
                         <v-list-tile-avatar class="clickable" @click.stop.prevent="openDocs">
                             <div class="logo rainbow">
-                                <img src="/static/svg/logo-black-bold.svg" alt="PhotoPrism">
+                                <img src="/static/svg/logo-black-6pt.svg" alt="PhotoPrism">
                             </div>
                         </v-list-tile-avatar>
                         <v-list-tile-content>
