@@ -22,10 +22,12 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 * [geocoding][wiki:geocoding], [XMP support][wiki:xmp] and [automated tagging][wiki:classification] 
   based on Google TensorFlow
 
-## Getting Started ##
+## Try our demo ##
 
-You're welcome to play with our demo at [demo.photoprism.org](https://demo.photoprism.org).
+You're welcome to play with the demo at [demo.photoprism.org](https://demo.photoprism.org).
 Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
+
+## For the early birds ##
 
 Step-by-step installation instructions can be found on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) - 
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
