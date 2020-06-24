@@ -2,7 +2,7 @@
     <v-dialog fullscreen hide-overlay scrollable lazy
               v-model="show" persistent class="p-upload-dialog" @keydown.esc="cancel">
         <v-card color="application">
-            <v-toolbar dark color="navigation">
+            <v-toolbar dark flat color="navigation">
                 <v-btn icon dark @click.stop="cancel">
                     <v-icon>close</v-icon>
                 </v-btn>
