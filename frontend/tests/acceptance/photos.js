@@ -35,7 +35,7 @@ test('#1 Scroll to top', async t => {
     await scroll(0, 1400);
     await scroll(0, 1000);
     await t
-        .click(Selector('button.p-photo-scroll-top'))
+        .click(Selector('button.p-scroll-top'))
         .expect(getcurrentPosition()).eql(0);
 });
 

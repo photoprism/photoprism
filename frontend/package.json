@@ -11,8 +11,8 @@
     "fmt": "eslint --cache --fix src/ *.js",
     "test": "karma start",
     "upgrade": "npm --depth 10 update && npm audit fix",
-    "acceptance": "testcafe \"chromium:headless --disable-dev-shm-usage\" --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
-    "acceptance-firefox": "testcafe firefox:headless --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
+    "acceptance": "testcafe \"chromium:headless --disable-dev-shm-usage\" --skip-js-errors --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
+    "acceptance-firefox": "testcafe firefox:headless --skip-js-errors --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
     "acceptance-local": "testcafe chrome --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
     "gettext-extract": "gettext-extract --output src/resources/translations.pot $(find src/ -type f -name '*.vue')",
     "gettext-compile": "gettext-compile --output src/resources/translations.json src/resources/*.po"

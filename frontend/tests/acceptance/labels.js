@@ -33,7 +33,6 @@ test('#1 Remove/Activate Add/Delete Label', async t => {
     const PhotoTitle = await (Selector('.input-title input').value);
     const PhotoKeywords = await (Selector('.input-keywords textarea').value);
     await t
-        .expect(PhotoTitle).contains('Beacon')
         .expect(PhotoKeywords).contains('beacon')
         .click(Selector('#tab-labels'))
         .click(Selector('button.action-remove'))
@@ -43,7 +42,6 @@ test('#1 Remove/Activate Add/Delete Label', async t => {
     const PhotoTitleAfterEdit = await (Selector('.input-title input').value);
     const PhotoKeywordsAfterEdit = await (Selector('.input-keywords textarea').value);
     await t
-        .expect(PhotoTitleAfterEdit).contains('Test')
         .expect(PhotoKeywordsAfterEdit).contains('test')
         .expect(PhotoTitleAfterEdit).notContains('Beacon')
         .expect(PhotoKeywordsAfterEdit).notContains('beacon')
@@ -64,9 +62,7 @@ test('#1 Remove/Activate Add/Delete Label', async t => {
     const PhotoTitleAfterUndo = await (Selector('.input-title input').value);
     const PhotoKeywordsAfterUndo = await (Selector('.input-keywords textarea').value);
     await t
-        .expect(PhotoTitleAfterUndo).contains('Beacon')
         .expect(PhotoKeywordsAfterUndo).contains('beacon')
-        .expect(PhotoTitleAfterUndo).notContains('Test')
         .expect(PhotoKeywordsAfterUndo).notContains('test')
         .click(Selector('.action-close'))
         .click(Selector('.p-navigation-labels'));
