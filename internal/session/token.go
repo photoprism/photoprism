@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func Token() string {
+func NewID() string {
 	b := make([]byte, 24)
 
 	if _, err := rand.Read(b); err != nil {

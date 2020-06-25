@@ -9,8 +9,8 @@ import (
 
 func TestCancelIndex(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		CancelIndexing(router, conf)
+		app, router, _ := NewApiTest()
+		CancelIndexing(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/index")
 		val := gjson.Get(r.Body.String(), "message")
 		assert.Equal(t, "indexing canceled", val.String())

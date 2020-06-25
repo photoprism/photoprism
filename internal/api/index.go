@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -16,12 +16,16 @@ import (
 )
 
 // POST /api/v1/index
-func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
+func StartIndexing(router *gin.RouterGroup) {
 	router.POST("/index", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
+
+		conf := service.Config()
 
 		if !conf.Settings().Features.Library {
 			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)
@@ -80,19 +84,23 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 		event.Success(fmt.Sprintf("indexing completed in %d s", elapsed))
 		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
 
-		UpdateClientConfig(conf)
+		UpdateClientConfig()
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("indexing completed in %d s", elapsed)})
 	})
 }
 
 // DELETE /api/v1/index
-func CancelIndexing(router *gin.RouterGroup, conf *config.Config) {
+func CancelIndexing(router *gin.RouterGroup) {
 	router.DELETE("/index", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
+
+		conf := service.Config()
 
 		if !conf.Settings().Features.Library {
 			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)

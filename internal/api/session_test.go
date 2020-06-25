@@ -9,22 +9,22 @@ import (
 
 func TestCreateSession(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		CreateSession(router, conf)
+		app, router, _ := NewApiTest()
+		CreateSession(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/session", `{"username": "admin", "password": "photoprism"}`)
 		val2 := gjson.Get(r.Body.String(), "user.Email")
 		assert.Equal(t, "", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("bad request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		CreateSession(router, conf)
+		app, router, _ := NewApiTest()
+		CreateSession(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/session", `{"username": 123, "password": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("invalid password", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		CreateSession(router, conf)
+		app, router, _ := NewApiTest()
+		CreateSession(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/session", `{"username": "admin", "password": "xxx"}`)
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "Invalid user name or password", val.String())
@@ -33,15 +33,15 @@ func TestCreateSession(t *testing.T) {
 }
 
 func TestDeleteSession(t *testing.T) {
-	app, router, conf := NewApiTest()
-	CreateSession(router, conf)
+	app, router, _ := NewApiTest()
+	CreateSession(router)
 	r := PerformRequestWithBody(app, "POST", "/api/v1/session", `{"username": "admin", "password": "photoprism"}`)
-	token := gjson.Get(r.Body.String(), "token")
+	id := gjson.Get(r.Body.String(), "id")
 
 	t.Run("successful request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		DeleteSession(router, conf)
-		r := PerformRequest(app, "DELETE", "/api/v1/session/"+token.String())
+		app, router, _ := NewApiTest()
+		DeleteSession(router)
+		r := PerformRequest(app, "DELETE", "/api/v1/session/"+id.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }

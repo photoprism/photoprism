@@ -6,19 +6,22 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GET /api/v1/accounts
-func GetAccounts(router *gin.RouterGroup, conf *config.Config) {
+func GetAccounts(router *gin.RouterGroup) {
 	router.GET("/accounts", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionSearch)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -51,9 +54,11 @@ func GetAccounts(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func GetAccount(router *gin.RouterGroup, conf *config.Config) {
+func GetAccount(router *gin.RouterGroup) {
 	router.GET("/accounts/:id", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionRead)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -72,9 +77,11 @@ func GetAccount(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func GetAccountDirs(router *gin.RouterGroup, conf *config.Config) {
+func GetAccountDirs(router *gin.RouterGroup) {
 	router.GET("/accounts/:id/dirs", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionRead)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -104,9 +111,11 @@ func GetAccountDirs(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
+func ShareWithAccount(router *gin.RouterGroup) {
 	router.POST("/accounts/:id/share", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionUpload)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -142,16 +151,18 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 			entity.FirstOrCreateFileShare(fileShare)
 		}
 
-		workers.StartShare(conf)
+		workers.StartShare(service.Config())
 
 		c.JSON(http.StatusOK, files)
 	})
 }
 
 // POST /api/v1/accounts
-func CreateAccount(router *gin.RouterGroup, conf *config.Config) {
+func CreateAccount(router *gin.RouterGroup) {
 	router.POST("/accounts", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionCreate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -189,9 +200,11 @@ func CreateAccount(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func UpdateAccount(router *gin.RouterGroup, conf *config.Config) {
+func UpdateAccount(router *gin.RouterGroup) {
 	router.PUT("/accounts/:id", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -245,9 +258,11 @@ func UpdateAccount(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func DeleteAccount(router *gin.RouterGroup, conf *config.Config) {
+func DeleteAccount(router *gin.RouterGroup) {
 	router.DELETE("/accounts/:id", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionDelete)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}

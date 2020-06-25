@@ -9,25 +9,28 @@ import (
 func TestGetVideo(t *testing.T) {
 	t.Run("invalid hash", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		GetVideo(router, conf)
+		GetVideo(router)
 		r := PerformRequest(app, "GET", "/api/v1/videos/xxx/"+conf.PreviewToken()+"/mp4")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+
 	t.Run("invalid type", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		GetVideo(router, conf)
+		GetVideo(router)
 		r := PerformRequest(app, "GET", "/api/v1/videos/acad9168fa6acc5c5c2965ddf6ec465ca42fd831/"+conf.PreviewToken()+"/xxx")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+
 	t.Run("file for video not found", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		GetVideo(router, conf)
+		GetVideo(router)
 		r := PerformRequest(app, "GET", "/api/v1/videos/acad9168fa6acc5c5c2965ddf6ec465ca42fd831/"+conf.PreviewToken()+"/mp4")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+
 	t.Run("file with error", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		GetVideo(router, conf)
+		GetVideo(router)
 		r := PerformRequest(app, "GET", "/api/v1/videos/acad9168fa6acc5c5c2965ddf6ec465ca42fd832/"+conf.PreviewToken()+"/mp4")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})

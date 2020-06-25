@@ -11,20 +11,21 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GET /api/v1/preview
-func GetPreview(router *gin.RouterGroup, conf *config.Config) {
+func GetPreview(router *gin.RouterGroup) {
 	router.GET("/preview", func(c *gin.Context) {
 		// TODO: proof of concept - code needs refactoring!
 		t := time.Now().Format("20060102")
+		conf := service.Config()
 		thumbPath := path.Join(conf.ThumbPath(), "preview", t[0:4], t[4:6])
 
 		if err := os.MkdirAll(thumbPath, os.ModePerm); err != nil {

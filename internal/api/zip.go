@@ -10,10 +10,11 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -22,12 +23,16 @@ import (
 )
 
 // POST /api/v1/zip
-func CreateZip(router *gin.RouterGroup, conf *config.Config) {
+func CreateZip(router *gin.RouterGroup) {
 	router.POST("/zip", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDownload)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
+
+		conf := service.Config()
 
 		if !conf.Settings().Features.Download {
 			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)
@@ -108,13 +113,14 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // GET /api/v1/zip/:filename
-func DownloadZip(router *gin.RouterGroup, conf *config.Config) {
+func DownloadZip(router *gin.RouterGroup) {
 	router.GET("/zip/:filename", func(c *gin.Context) {
-		if InvalidDownloadToken(c, conf) {
+		if InvalidDownloadToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}
 
+		conf := service.Config()
 		zipBaseName := filepath.Base(c.Param("filename"))
 		zipPath := path.Join(conf.TempPath(), "zip")
 		zipFileName := path.Join(zipPath, zipBaseName)

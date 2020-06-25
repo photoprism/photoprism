@@ -12,11 +12,11 @@ import (
 
 func TestLinkAlbum(t *testing.T) {
 	t.Run("create share link", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
+		app, router, _ := NewApiTest()
 
 		var link entity.Link
 
-		CreateAlbumLink(router, ctx)
+		CreateAlbumLink(router)
 
 		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/links", `{"Password": "foobar", "ShareExpires": 0, "CanEdit": true}`)
 
@@ -37,8 +37,8 @@ func TestLinkAlbum(t *testing.T) {
 		assert.True(t, link.CanEdit)
 	})
 	t.Run("album does not exist", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		CreateAlbumLink(router, ctx)
+		app, router, _ := NewApiTest()
+		CreateAlbumLink(router)
 		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/xxx/links", `{"Password": "foobar", "ShareExpires": 0, "CanEdit": true}`)
 
 		if resp.Code != http.StatusNotFound {
@@ -49,9 +49,9 @@ func TestLinkAlbum(t *testing.T) {
 		assert.Equal(t, "Album not found", val.String())
 	})
 	t.Run("invalid request", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
+		app, router, _ := NewApiTest()
 
-		CreateAlbumLink(router, ctx)
+		CreateAlbumLink(router)
 
 		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/links", `{"Password": "foobar", "ShareExpires": "abc", "CanEdit": true}`)
 
@@ -63,11 +63,11 @@ func TestLinkAlbum(t *testing.T) {
 
 func TestLinkPhoto(t *testing.T) {
 	t.Run("create share link", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
+		app, router, _ := NewApiTest()
 
 		var link entity.Link
 
-		CreatePhotoLink(router, ctx)
+		CreatePhotoLink(router)
 
 		resp := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/links", `{"Password": "foobar", "ShareExpires": 0, "CanEdit": true}`)
 		assert.Equal(t, http.StatusOK, resp.Code)
@@ -84,9 +84,9 @@ func TestLinkPhoto(t *testing.T) {
 		assert.True(t, link.CanEdit)
 	})
 	t.Run("photo not found", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
+		app, router, _ := NewApiTest()
 
-		CreatePhotoLink(router, ctx)
+		CreatePhotoLink(router)
 
 		resp := PerformRequestWithBody(app, "POST", "/api/v1/photos/xxx/link", `{"Password": "foobar", "ShareExpires": 0, "CanEdit": true}`)
 
@@ -95,8 +95,8 @@ func TestLinkPhoto(t *testing.T) {
 		}
 	})
 	t.Run("invalid request", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		CreatePhotoLink(router, ctx)
+		app, router, _ := NewApiTest()
+		CreatePhotoLink(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh7/links", `{"xxx": 123, "ShareExpires": "abc", "CanEdit": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
@@ -104,11 +104,11 @@ func TestLinkPhoto(t *testing.T) {
 
 func TestLinkLabel(t *testing.T) {
 	t.Run("create share link", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
+		app, router, _ := NewApiTest()
 
 		var link entity.Link
 
-		CreateLabelLink(router, ctx)
+		CreateLabelLink(router)
 
 		resp := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/links", `{"Password": "foobar", "ShareExpires": 0, "CanEdit": true}`)
 		assert.Equal(t, http.StatusOK, resp.Code)
@@ -125,8 +125,8 @@ func TestLinkLabel(t *testing.T) {
 		assert.True(t, link.CanEdit)
 	})
 	t.Run("label not found", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		CreateLabelLink(router, ctx)
+		app, router, _ := NewApiTest()
+		CreateLabelLink(router)
 		resp := PerformRequestWithBody(app, "POST", "/api/v1/labels/xxx/links", `{"Password": "foobar", "ShareExpires": 0, "CanEdit": true}`)
 
 		if resp.Code != http.StatusNotFound {
@@ -134,8 +134,8 @@ func TestLinkLabel(t *testing.T) {
 		}
 	})
 	t.Run("invalid request", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		CreateLabelLink(router, ctx)
+		app, router, _ := NewApiTest()
+		CreateLabelLink(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c2/links", `{"xxx": 123, "ShareExpires": "abc", "CanEdit": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})

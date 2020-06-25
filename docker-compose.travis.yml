@@ -13,7 +13,7 @@ services:
     environment:
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
-      PHOTOPRISM_SITE_CAPTION: "Browse your life"
+      PHOTOPRISM_SITE_CAPTION: "Browse Your Life in Pictures"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Personal Photo Management."
       PHOTOPRISM_SITE_AUTHOR: "Anonymous"
       PHOTOPRISM_DEBUG: "false"

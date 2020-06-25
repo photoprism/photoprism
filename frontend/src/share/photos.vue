@@ -424,10 +424,10 @@
         created() {
             const token = this.$route.params.token;
 
-            if (this.$session.shareToken(token)) {
+            if (this.$session.hasToken(token)) {
                 this.findAlbum().then(() => this.search());
             } else {
-                this.$session.login("", "", token).then(() => {
+                this.$session.redeemToken(token).then(() => {
                     this.findAlbum().then(() => this.search());
                 });
             }

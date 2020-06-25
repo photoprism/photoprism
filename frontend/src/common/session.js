@@ -48,7 +48,7 @@ export default class Session {
             this.storage = storage;
         }
 
-        if (this.applyToken(this.storage.getItem("session_token"))) {
+        if (this.applyId(this.storage.getItem("session_id"))) {
             const dataJson = this.storage.getItem("data");
             this.data = dataJson !== "undefined" ? JSON.parse(dataJson) : null;
         }
@@ -73,7 +73,7 @@ export default class Session {
     }
 
     useSessionStorage() {
-        this.deleteToken();
+        this.deleteId();
         this.storage.setItem("session_storage", "true");
         this.storage = window.sessionStorage;
     }
@@ -83,35 +83,35 @@ export default class Session {
         this.storage = window.localStorage;
     }
 
-    applyToken(token) {
-        if (!token) {
-            this.deleteToken();
+    applyId(id) {
+        if (!id) {
+            this.deleteId();
             return false;
         }
 
-        this.session_token = token;
-        Api.defaults.headers.common["X-Session-Token"] = token;
+        this.session_id = id;
+        Api.defaults.headers.common["X-Session-ID"] = id;
 
         return true;
     }
 
-    setToken(token) {
-        this.storage.setItem("session_token", token);
-        return this.applyToken(token);
+    setId(id) {
+        this.storage.setItem("session_id", id);
+        return this.applyId(id);
     }
 
     setConfig(values) {
         this.config.setValues(values);
     }
 
-    getToken() {
-        return this.session_token;
+    getId() {
+        return this.session_id;
     }
 
-    deleteToken() {
-        this.session_token = null;
-        this.storage.removeItem("session_token");
-        delete Api.defaults.headers.common["X-Session-Token"];
+    deleteId() {
+        this.session_id = null;
+        this.storage.removeItem("session_id");
+        delete Api.defaults.headers.common["X-Session-ID"];
         this.deleteData();
     }
 
@@ -166,7 +166,7 @@ export default class Session {
         return !this.user || !this.user.hasId();
     }
 
-    shareToken(token) {
+    hasToken(token) {
         if(!this.data || !this.data.tokens) {
             return false;
         }
@@ -183,7 +183,7 @@ export default class Session {
 
     sendClientInfo() {
         const clientInfo = {
-            "session": this.getToken(),
+            "session": this.getId(),
             "js": window.__CONFIG__.jsHash,
             "css": window.__CONFIG__.cssHash,
             "version": window.__CONFIG__.version,
@@ -197,12 +197,23 @@ export default class Session {
     }
 
     login(username, password, token) {
-        this.deleteToken();
+        this.deleteId();
 
         return Api.post("session", {username, password, token}).then(
             (resp) => {
                 this.setConfig(resp.data.config);
-                this.setToken(resp.data.token);
+                this.setId(resp.data.id);
+                this.setData(resp.data.data);
+                this.sendClientInfo();
+            }
+        );
+    }
+
+    redeemToken(token) {
+        return Api.post("session", {token}).then(
+            (resp) => {
+                this.setConfig(resp.data.config);
+                this.setId(resp.data.id);
                 this.setData(resp.data.data);
                 this.sendClientInfo();
             }
@@ -210,16 +221,16 @@ export default class Session {
     }
 
     onLogout() {
-        this.deleteToken();
+        this.deleteId();
         window.location = "/";
     }
 
     logout() {
-        const token = this.getToken();
+        const id = this.getId();
 
-        this.deleteToken();
+        this.deleteId();
 
-        Api.delete("session/" + token).then(
+        Api.delete("session/" + id).then(
             () => {
                 window.location = "/";
             }

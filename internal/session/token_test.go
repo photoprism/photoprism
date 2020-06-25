@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestToken(t *testing.T) {
+func TestNewID(t *testing.T) {
 	for n := 0; n < 5; n++ {
-		token := Token()
-		t.Logf("token: %s", token)
-		assert.Equal(t, 48, len(token))
+		id := NewID()
+		t.Logf("id: %s", id)
+		assert.Equal(t, 48, len(id))
 	}
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -54,7 +55,7 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 		if err := json.Unmarshal(m, &info); err != nil {
 			log.Error(err)
 		} else {
-			if sess := Session(info.SessionToken, conf); sess != nil {
+			if sess := Session(info.SessionToken); sess.Valid() {
 				log.Debug("websocket: authenticated")
 
 				wsAuth.mutex.Lock()
@@ -68,7 +69,7 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 					if err := ws.WriteJSON(gin.H{"event": "config.updated", "data": event.Data{"config": conf.GuestConfig()}}); err != nil {
 						log.Error(err)
 					}
-				} else if sess.User.User() {
+				} else if sess.User.Registered() {
 					if err := ws.WriteJSON(gin.H{"event": "config.updated", "data": event.Data{"config": conf.UserConfig()}}); err != nil {
 						log.Error(err)
 					}
@@ -125,7 +126,7 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 			user := wsAuth.user[connId]
 			wsAuth.mutex.RUnlock()
 
-			if user.User() {
+			if user.Registered() {
 				writeMutex.Lock()
 				ws.SetWriteDeadline(time.Now().Add(30 * time.Second))
 
@@ -141,11 +142,13 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 }
 
 // GET /api/v1/ws
-func Websocket(router *gin.RouterGroup, conf *config.Config) {
+func Websocket(router *gin.RouterGroup) {
 	if router == nil {
 		log.Error("websocket: router is nil")
 		return
 	}
+
+	conf := service.Config()
 
 	if conf == nil {
 		log.Error("websocket: conf is nil")

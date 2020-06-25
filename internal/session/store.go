@@ -7,23 +7,27 @@ import (
 )
 
 func (s *Session) Create(data Data) string {
-	token := Token()
-	s.cache.Set(token, &data, gc.DefaultExpiration)
+	id := NewID()
+	s.cache.Set(id, data, gc.DefaultExpiration)
 	log.Debugf("session: created")
 
 	if err := s.Save(); err != nil {
 		log.Errorf("session: %s (create)", err)
 	}
 
-	return token
+	return id
 }
 
-func (s *Session) Update(token string, data Data) error {
-	if _, found := s.cache.Get(token); !found {
-		return fmt.Errorf("session: %s not found (update)", token)
+func (s *Session) Update(id string, data Data) error {
+	if id == "" {
+		return fmt.Errorf("session: empty id")
 	}
 
-	s.cache.Set(token, &data, gc.DefaultExpiration)
+	if _, found := s.cache.Get(id); !found {
+		return fmt.Errorf("session: %s not found (update)", id)
+	}
+
+	s.cache.Set(id, data, gc.DefaultExpiration)
 
 	log.Debugf("session: updated")
 
@@ -34,8 +38,8 @@ func (s *Session) Update(token string, data Data) error {
 	return nil
 }
 
-func (s *Session) Delete(token string) {
-	s.cache.Delete(token)
+func (s *Session) Delete(id string) {
+	s.cache.Delete(id)
 	log.Debugf("session: deleted")
 
 	if err := s.Save(); err != nil {
@@ -43,16 +47,20 @@ func (s *Session) Delete(token string) {
 	}
 }
 
-func (s *Session) Get(token string) (data *Data) {
-	if hit, ok := s.cache.Get(token); ok {
-		return hit.(*Data)
+func (s *Session) Get(id string) Data {
+	if id == "" {
+		return Data{}
 	}
 
-	return nil
+	if hit, ok := s.cache.Get(id); ok {
+		return hit.(Data)
+	}
+
+	return Data{}
 }
 
-func (s *Session) Exists(token string) bool {
-	_, found := s.cache.Get(token)
+func (s *Session) Exists(id string) bool {
+	_, found := s.cache.Get(id)
 
 	return found
 }

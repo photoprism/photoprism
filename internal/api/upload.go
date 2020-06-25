@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -17,14 +17,17 @@ import (
 )
 
 // POST /api/v1/upload/:path
-func Upload(router *gin.RouterGroup, conf *config.Config) {
+func Upload(router *gin.RouterGroup) {
 	router.POST("/upload/:path", func(c *gin.Context) {
+		conf := service.Config()
 		if conf.ReadOnly() || !conf.Settings().Features.Upload {
 			c.AbortWithStatusJSON(http.StatusForbidden, ErrReadOnly)
 			return
 		}
 
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpload)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}

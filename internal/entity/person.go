@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -25,9 +26,11 @@ type Person struct {
 	UserConfirmed bool       `json:"Confirmed" yaml:"Confirmed,omitempty"`
 	RoleAdmin     bool       `json:"Admin" yaml:"Admin,omitempty"`
 	RoleGuest     bool       `json:"Guest" yaml:"Guest,omitempty"`
+	RoleChild     bool       `json:"Child" yaml:"Child,omitempty"`
 	RoleFamily    bool       `json:"Family" yaml:"Family,omitempty"`
-	RoleArtist    bool       `json:"Artist" yaml:"Artist,omitempty"`
-	RoleSubject   bool       `json:"Subject" yaml:"Subject,omitempty"`
+	RoleFriend    bool       `json:"Friend" yaml:"Friend,omitempty"`
+	IsArtist      bool       `json:"Artist" yaml:"Artist,omitempty"`
+	IsSubject     bool       `json:"Subject" yaml:"Subject,omitempty"`
 	CanEdit       bool       `json:"CanEdit" yaml:"CanEdit,omitempty"`
 	CanComment    bool       `json:"CanComment" yaml:"CanComment,omitempty"`
 	CanUpload     bool       `json:"CanUpload" yaml:"CanUpload,omitempty"`
@@ -165,13 +168,13 @@ func (m *Person) String() string {
 }
 
 // User returns true if the person has a user name.
-func (m *Person) User() bool {
+func (m *Person) Registered() bool {
 	return m.UserName != "" && rnd.IsPPID(m.PersonUID, 'u')
 }
 
 // Admin returns true if the person is an admin with user name.
 func (m *Person) Admin() bool {
-	return m.User() && m.RoleAdmin
+	return m.Registered() && m.RoleAdmin
 }
 
 // Anonymous returns true if the person is unknown.
@@ -186,8 +189,8 @@ func (m *Person) Guest() bool {
 
 // SetPassword sets a new password stored as hash.
 func (m *Person) SetPassword(password string) error {
-	if !m.User() {
-		return fmt.Errorf("login: only users can have a password")
+	if !m.Registered() {
+		return fmt.Errorf("auth: only registered users can change their password")
 	}
 
 	pw := NewPassword(m.PersonUID, password)
@@ -197,8 +200,8 @@ func (m *Person) SetPassword(password string) error {
 
 // InitPassword sets the initial user password stored as hash.
 func (m *Person) InitPassword(password string) {
-	if !m.User() {
-		log.Warn("login: only users can have a password")
+	if !m.Registered() {
+		log.Warn("auth: only registered users can change their password")
 		return
 	}
 
@@ -217,8 +220,8 @@ func (m *Person) InitPassword(password string) {
 
 // InvalidPassword returns true if the given password does not match the hash.
 func (m *Person) InvalidPassword(password string) bool {
-	if !m.User() {
-		log.Warn("login: only users can have a password")
+	if !m.Registered() {
+		log.Warn("auth: only registered users can change their password")
 		return true
 	}
 
@@ -229,4 +232,29 @@ func (m *Person) InvalidPassword(password string) bool {
 	}
 
 	return pw.InvalidPassword(password)
+}
+
+// Role returns the user role for ACL permission checks.
+func (m *Person) Role() acl.Role {
+	if m.RoleAdmin {
+		return acl.RoleAdmin
+	}
+
+	if m.RoleChild {
+		return acl.RoleChild
+	}
+
+	if m.RoleFamily {
+		return acl.RoleFamily
+	}
+
+	if m.RoleFriend {
+		return acl.RoleFriend
+	}
+
+	if m.RoleGuest {
+		return acl.RoleGuest
+	}
+
+	return acl.RoleDefault
 }

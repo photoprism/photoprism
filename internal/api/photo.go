@@ -5,18 +5,21 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // SavePhotoAsYaml saves photo data as YAML file.
-func SavePhotoAsYaml(p entity.Photo, conf *config.Config) {
+func SavePhotoAsYaml(p entity.Photo) {
+	conf := service.Config()
+
 	// Write YAML sidecar file (optional).
 	if conf.SidecarYaml() {
 		yamlFile := p.YamlFileName(conf.OriginalsPath(), conf.SidecarPath())
@@ -33,9 +36,11 @@ func SavePhotoAsYaml(p entity.Photo, conf *config.Config) {
 //
 // Parameters:
 //   uid: string PhotoUID as returned by the API
-func GetPhoto(router *gin.RouterGroup, conf *config.Config) {
+func GetPhoto(router *gin.RouterGroup) {
 	router.GET("/photos/:uid", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionRead)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -52,13 +57,16 @@ func GetPhoto(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // PUT /api/v1/photos/:uid
-func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
+func UpdatePhoto(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
+		conf := service.Config()
 		uid := c.Param("uid")
 		m, err := query.PhotoByUID(uid)
 
@@ -102,7 +110,7 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		SavePhotoAsYaml(p, conf)
+		SavePhotoAsYaml(p)
 
 		c.JSON(http.StatusOK, p)
 	})
@@ -112,9 +120,9 @@ func UpdatePhoto(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   uid: string PhotoUID as returned by the API
-func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
+func GetPhotoDownload(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/dl", func(c *gin.Context) {
-		if InvalidDownloadToken(c, conf) {
+		if InvalidDownloadToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}
@@ -150,9 +158,11 @@ func GetPhotoDownload(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   uid: string PhotoUID as returned by the API
-func GetPhotoYaml(router *gin.RouterGroup, conf *config.Config) {
+func GetPhotoYaml(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/yaml", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionExport)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -183,9 +193,11 @@ func GetPhotoYaml(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   uid: string PhotoUID as returned by the API
-func ApprovePhoto(router *gin.RouterGroup, conf *config.Config) {
+func ApprovePhoto(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/approve", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -204,7 +216,7 @@ func ApprovePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		SavePhotoAsYaml(m, conf)
+		SavePhotoAsYaml(m)
 
 		PublishPhotoEvent(EntityUpdated, id, c)
 
@@ -216,9 +228,11 @@ func ApprovePhoto(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   uid: string PhotoUID as returned by the API
-func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
+func LikePhoto(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/like", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionLike)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -237,7 +251,7 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		SavePhotoAsYaml(m, conf)
+		SavePhotoAsYaml(m)
 
 		PublishPhotoEvent(EntityUpdated, id, c)
 
@@ -249,9 +263,11 @@ func LikePhoto(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   uid: string PhotoUID as returned by the API
-func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
+func DislikePhoto(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/like", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionLike)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -270,7 +286,7 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		SavePhotoAsYaml(m, conf)
+		SavePhotoAsYaml(m)
 
 		PublishPhotoEvent(EntityUpdated, id, c)
 
@@ -282,9 +298,11 @@ func DislikePhoto(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   uid: string PhotoUID as returned by the API
-func SetPhotoPrimary(router *gin.RouterGroup, conf *config.Config) {
+func SetPhotoPrimary(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/primary/:file_uid", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}

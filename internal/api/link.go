@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -14,8 +14,10 @@ import (
 )
 
 // PUT /api/v1/:entity/:uid/links/:link
-func UpdateLink(c *gin.Context, conf *config.Config) {
-	if Unauthorized(c, conf) {
+func UpdateLink(c *gin.Context) {
+	s := Auth(SessionID(c), acl.ResourceLinks, acl.ActionUpdate)
+
+	if s.Invalid() {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 		return
 	}
@@ -53,8 +55,10 @@ func UpdateLink(c *gin.Context, conf *config.Config) {
 }
 
 // DELETE /api/v1/:entity/:uid/links/:link
-func DeleteLink(c *gin.Context, conf *config.Config) {
-	if Unauthorized(c, conf) {
+func DeleteLink(c *gin.Context) {
+	s := Auth(SessionID(c), acl.ResourceLinks, acl.ActionDelete)
+
+	if s.Invalid() {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 		return
 	}
@@ -72,8 +76,10 @@ func DeleteLink(c *gin.Context, conf *config.Config) {
 }
 
 // CreateLink returns a new link entity initialized with request data
-func CreateLink(c *gin.Context, conf *config.Config) {
-	if Unauthorized(c, conf) {
+func CreateLink(c *gin.Context) {
+	s := Auth(SessionID(c), acl.ResourceLinks, acl.ActionCreate)
+
+	if s.Invalid() {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 		return
 	}
@@ -109,33 +115,33 @@ func CreateLink(c *gin.Context, conf *config.Config) {
 }
 
 // POST /api/v1/albums/:uid/links
-func CreateAlbumLink(router *gin.RouterGroup, conf *config.Config) {
+func CreateAlbumLink(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/links", func(c *gin.Context) {
 		if _, err := query.AlbumByUID(c.Param("uid")); err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
 			return
 		}
 
-		CreateLink(c, conf)
+		CreateLink(c)
 	})
 }
 
 // PUT /api/v1/albums/:uid/links/:link
-func UpdateAlbumLink(router *gin.RouterGroup, conf *config.Config) {
+func UpdateAlbumLink(router *gin.RouterGroup) {
 	router.PUT("/albums/:uid/links/:link", func(c *gin.Context) {
-		UpdateLink(c, conf)
+		UpdateLink(c)
 	})
 }
 
 // DELETE /api/v1/albums/:uid/links/:link
-func DeleteAlbumLink(router *gin.RouterGroup, conf *config.Config) {
+func DeleteAlbumLink(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/links/:link", func(c *gin.Context) {
-		DeleteLink(c, conf)
+		DeleteLink(c)
 	})
 }
 
 // GET /api/v1/albums/:uid/links
-func GetAlbumLinks(router *gin.RouterGroup, conf *config.Config) {
+func GetAlbumLinks(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/links", func(c *gin.Context) {
 		m, err := query.AlbumByUID(c.Param("uid"))
 
@@ -149,33 +155,33 @@ func GetAlbumLinks(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // POST /api/v1/photos/:uid/links
-func CreatePhotoLink(router *gin.RouterGroup, conf *config.Config) {
+func CreatePhotoLink(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/links", func(c *gin.Context) {
 		if _, err := query.PhotoByUID(c.Param("uid")); err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
 			return
 		}
 
-		CreateLink(c, conf)
+		CreateLink(c)
 	})
 }
 
 // PUT /api/v1/photos/:uid/links/:link
-func UpdatePhotoLink(router *gin.RouterGroup, conf *config.Config) {
+func UpdatePhotoLink(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/links/:link", func(c *gin.Context) {
-		UpdateLink(c, conf)
+		UpdateLink(c)
 	})
 }
 
 // DELETE /api/v1/photos/:uid/links/:link
-func DeletePhotoLink(router *gin.RouterGroup, conf *config.Config) {
+func DeletePhotoLink(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/links/:link", func(c *gin.Context) {
-		DeleteLink(c, conf)
+		DeleteLink(c)
 	})
 }
 
 // GET /api/v1/photos/:uid/links
-func GetPhotoLinks(router *gin.RouterGroup, conf *config.Config) {
+func GetPhotoLinks(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/links", func(c *gin.Context) {
 		m, err := query.PhotoByUID(c.Param("uid"))
 
@@ -189,33 +195,33 @@ func GetPhotoLinks(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // POST /api/v1/labels/:uid/links
-func CreateLabelLink(router *gin.RouterGroup, conf *config.Config) {
+func CreateLabelLink(router *gin.RouterGroup) {
 	router.POST("/labels/:uid/links", func(c *gin.Context) {
 		if _, err := query.LabelByUID(c.Param("uid")); err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrLabelNotFound)
 			return
 		}
 
-		CreateLink(c, conf)
+		CreateLink(c)
 	})
 }
 
 // PUT /api/v1/labels/:uid/links/:link
-func UpdateLabelLink(router *gin.RouterGroup, conf *config.Config) {
+func UpdateLabelLink(router *gin.RouterGroup) {
 	router.PUT("/labels/:uid/links/:link", func(c *gin.Context) {
-		UpdateLink(c, conf)
+		UpdateLink(c)
 	})
 }
 
 // DELETE /api/v1/labels/:uid/links/:link
-func DeleteLabelLink(router *gin.RouterGroup, conf *config.Config) {
+func DeleteLabelLink(router *gin.RouterGroup) {
 	router.DELETE("/labels/:uid/links/:link", func(c *gin.Context) {
-		DeleteLink(c, conf)
+		DeleteLink(c)
 	})
 }
 
 // GET /api/v1/labels/:uid/links
-func GetLabelLinks(router *gin.RouterGroup, conf *config.Config) {
+func GetLabelLinks(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/links", func(c *gin.Context) {
 		m, err := query.LabelByUID(c.Param("uid"))
 

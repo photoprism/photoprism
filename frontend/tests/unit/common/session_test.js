@@ -165,19 +165,19 @@ describe('common/session', () => {
     it('should construct session', () => {
         const storage = window.localStorage;
         const session = new Session(storage, config);
-        assert.equal(session.session_token, null);
+        assert.equal(session.session_id, null);
     });
 
     it('should set, get and delete token', () => {
         const storage = window.localStorage;
         const session = new Session(storage, config);
-        assert.equal(session.session_token, null);
-        session.setToken(123421);
-        assert.equal(session.session_token, 123421);
-        const result = session.getToken();
+        assert.equal(session.session_id, null);
+        session.setId(123421);
+        assert.equal(session.session_id, 123421);
+        const result = session.getId();
         assert.equal(result, 123421);
-        session.deleteToken();
-        assert.equal(session.session_token, null);
+        session.deleteId();
+        assert.equal(session.session_id, null);
     });
 
     it('should set, get and delete user', () => {
@@ -269,17 +269,17 @@ describe('common/session', () => {
 
     it('should test login and logout', async () => {
         mock
-            .onPost("session").reply(200, {token: "8877", data: {user: {ID: 1, Email: "test@test.com"}}})
+            .onPost("session").reply(200, {id: "8877", data: {user: {ID: 1, Email: "test@test.com"}}})
             .onDelete("session/8877").reply(200);
         const storage = window.localStorage;
         const session = new Session(storage, config);
-        assert.equal(session.session_token, null);
+        assert.equal(session.session_id, null);
         assert.equal(session.storage.data, undefined);
         await session.login("test@test.com", "passwd");
-        assert.equal(session.session_token, 8877);
+        assert.equal(session.session_id, 8877);
         assert.equal(session.storage.data, '{"user":{"ID":1,"Email":"test@test.com"}}');
         await session.logout();
-        assert.equal(session.session_token, null);
+        assert.equal(session.session_id, null);
         mock.reset();
     });
 

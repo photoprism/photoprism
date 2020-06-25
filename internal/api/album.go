@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -24,14 +25,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GET /api/v1/albums
-func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
+func GetAlbums(router *gin.RouterGroup) {
 	router.GET("/albums", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionSearch)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -43,6 +45,11 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
+		}
+
+		// Guest permissions are limited to shared albums.
+		if s.Guest() {
+			f.ID = s.Shares.String()
 		}
 
 		result, err := query.AlbumSearch(f)
@@ -61,8 +68,15 @@ func GetAlbums(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // GET /api/v1/albums/:uid
-func GetAlbum(router *gin.RouterGroup, conf *config.Config) {
+func GetAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid", func(c *gin.Context) {
+		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionRead)
+
+		if s.Invalid() {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
 		id := c.Param("uid")
 		m, err := query.AlbumByUID(id)
 
@@ -76,9 +90,11 @@ func GetAlbum(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // POST /api/v1/albums
-func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
+func CreateAlbum(router *gin.RouterGroup) {
 	router.POST("/albums", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionCreate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -103,7 +119,7 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		event.Success("album created")
 
-		UpdateClientConfig(conf)
+		UpdateClientConfig()
 
 		PublishAlbumEvent(EntityCreated, m.AlbumUID, c)
 
@@ -112,9 +128,11 @@ func CreateAlbum(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // PUT /api/v1/albums/:uid
-func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
+func UpdateAlbum(router *gin.RouterGroup) {
 	router.PUT("/albums/:uid", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -147,7 +165,7 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		UpdateClientConfig(conf)
+		UpdateClientConfig()
 
 		event.Success("album saved")
 
@@ -158,13 +176,16 @@ func UpdateAlbum(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // DELETE /api/v1/albums/:uid
-func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
+func DeleteAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionDelete)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
+		conf := service.Config()
 		id := c.Param("uid")
 
 		m, err := query.AlbumByUID(id)
@@ -178,7 +199,7 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 
 		conf.Db().Delete(&m)
 
-		UpdateClientConfig(conf)
+		UpdateClientConfig()
 		event.Success(fmt.Sprintf("album %s deleted", txt.Quote(m.AlbumTitle)))
 
 		c.JSON(http.StatusOK, m)
@@ -189,13 +210,16 @@ func DeleteAlbum(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   uid: string Album UID
-func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
+func LikeAlbum(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/like", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionLike)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
+		conf := service.Config()
 		id := c.Param("uid")
 		album, err := query.AlbumByUID(id)
 
@@ -207,7 +231,7 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		album.AlbumFavorite = true
 		conf.Db().Save(&album)
 
-		UpdateClientConfig(conf)
+		UpdateClientConfig()
 		PublishAlbumEvent(EntityUpdated, id, c)
 
 		c.JSON(http.StatusOK, http.Response{})
@@ -218,13 +242,16 @@ func LikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   uid: string Album UID
-func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
+func DislikeAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/like", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionLike)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
+		conf := service.Config()
 		id := c.Param("uid")
 		album, err := query.AlbumByUID(id)
 
@@ -236,7 +263,7 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 		album.AlbumFavorite = false
 		conf.Db().Save(&album)
 
-		UpdateClientConfig(conf)
+		UpdateClientConfig()
 		PublishAlbumEvent(EntityUpdated, id, c)
 
 		c.JSON(http.StatusOK, http.Response{})
@@ -244,9 +271,11 @@ func DislikeAlbum(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // POST /api/v1/albums/:uid/clone
-func CloneAlbums(router *gin.RouterGroup, conf *config.Config) {
+func CloneAlbums(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/clone", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -296,9 +325,11 @@ func CloneAlbums(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // POST /api/v1/albums/:uid/photos
-func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
+func AddPhotosToAlbum(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/photos", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -343,9 +374,11 @@ func AddPhotosToAlbum(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // DELETE /api/v1/albums/:uid/photos
-func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
+func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/photos", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -387,15 +420,15 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // GET /api/v1/albums/:uid/dl
-func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
+func DownloadAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/dl", func(c *gin.Context) {
-		if InvalidDownloadToken(c, conf) {
+		if InvalidDownloadToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}
 
 		start := time.Now()
-
+		conf := service.Config()
 		a, err := query.AlbumByUID(c.Param("uid"))
 
 		if err != nil {
@@ -476,14 +509,15 @@ func DownloadAlbum(router *gin.RouterGroup, conf *config.Config) {
 // Parameters:
 //   uid: string Album UID
 //   type: string Thumbnail type, see photoprism.ThumbnailTypes
-func AlbumThumbnail(router *gin.RouterGroup, conf *config.Config) {
+func AlbumThumbnail(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/t/:token/:type", func(c *gin.Context) {
-		if InvalidToken(c, conf) {
+		if InvalidToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", albumIconSvg)
 			return
 		}
 
 		start := time.Now()
+		conf := service.Config()
 		typeName := c.Param("type")
 		uid := c.Param("uid")
 

@@ -15,9 +15,9 @@ func TestSession_Create(t *testing.T) {
 		User: entity.Admin,
 	}
 
-	token := s.Create(data)
-	t.Logf("token: %s", token)
-	assert.Equal(t, 48, len(token))
+	id := s.Create(data)
+	t.Logf("id: %s", id)
+	assert.Equal(t, 48, len(id))
 }
 
 func TestSession_Update(t *testing.T) {
@@ -27,38 +27,39 @@ func TestSession_Update(t *testing.T) {
 		User: entity.Admin,
 	}
 
-	randomToken := Token()
-	assert.Equal(t, 48, len(randomToken))
+	id := NewID()
+	assert.Equal(t, 48, len(id))
 
-	if result := s.Get(randomToken); result != nil {
-		t.Fatalf("session %s should not exist", randomToken)
+	if result := s.Get(id); result.Valid() {
+		t.Fatalf("session %s should not exist", id)
 	}
 
-	if err := s.Update(randomToken, data); err == nil {
-		t.Fatalf("update should fail for unknown token %s", randomToken)
+	if err := s.Update(id, data); err == nil {
+		t.Fatalf("update should fail for unknown session id %s", id)
 	}
 
-	token := s.Create(data)
-	assert.Equal(t, 48, len(token))
+	newId := s.Create(data)
+	assert.Equal(t, 48, len(newId))
 
-	cachedData := s.Get(token)
+	cachedData := s.Get(newId)
 
-	if cachedData == nil {
-		t.Fatalf("session %s should exist", token)
+	if cachedData.Invalid() {
+		t.Fatalf("session %s should exist", newId)
 	}
 
-	assert.Equal(t, *cachedData, data)
+	assert.Equal(t, cachedData, data)
 
 	newData := Data{
 		User: entity.Guest,
+		Shares: UIDs{"a000000000000001"},
 	}
 
-	if err := s.Update(token, newData); err != nil {
+	if err := s.Update(newId, newData); err != nil {
 		t.Fatalf(err.Error())
 	}
 
-	if cachedData := s.Get(token); cachedData == nil {
-		t.Fatalf("session %s should exist", token)
+	if cachedData := s.Get(newId); cachedData.Invalid() {
+		t.Fatalf("session %s should be valid", newId)
 	}
 }
 
@@ -71,24 +72,25 @@ func TestSession_Get(t *testing.T) {
 	s := New(time.Hour, "testdata")
 	data := Data{
 		User: entity.Guest,
+		Shares: UIDs{"a000000000000001"},
 	}
 
-	token := s.Create(data)
-	t.Logf("token: %s", token)
-	assert.Equal(t, 48, len(token))
+	id := s.Create(data)
+	t.Logf("id: %s", id)
+	assert.Equal(t, 48, len(id))
 
-	cachedData := s.Get(token)
+	cachedData := s.Get(id)
 
-	if cachedData == nil {
-		t.Fatal("cachedData should not be nil")
+	if cachedData.Invalid() {
+		t.Fatal("cachedData should be valid")
 	}
 
-	assert.Equal(t, data, *cachedData)
+	assert.Equal(t, data, cachedData)
 
-	s.Delete(token)
+	s.Delete(id)
 
-	if cachedData := s.Get(token); cachedData != nil {
-		t.Fatal("cachedData should be nil")
+	if sess := s.Get(id); sess.Valid() {
+		t.Fatal("session should be invalid")
 	}
 }
 
@@ -98,10 +100,10 @@ func TestSession_Exists(t *testing.T) {
 	data := Data{
 		User: entity.Guest,
 	}
-	token := s.Create(data)
-	t.Logf("token: %s", token)
-	assert.Equal(t, 48, len(token))
-	assert.True(t, s.Exists(token))
-	s.Delete(token)
-	assert.False(t, s.Exists(token))
+	id := s.Create(data)
+	t.Logf("id: %s", id)
+	assert.Equal(t, 48, len(id))
+	assert.True(t, s.Exists(id))
+	s.Delete(id)
+	assert.False(t, s.Exists(id))
 }

@@ -9,8 +9,8 @@ import (
 
 func TestGetSettings(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		GetSettings(router, conf)
+		app, router, _ := NewApiTest()
+		GetSettings(router)
 		r := PerformRequest(app, "GET", "/api/v1/settings")
 		val := gjson.Get(r.Body.String(), "theme")
 		assert.NotEmpty(t, val.String())
@@ -38,8 +38,8 @@ func TestSaveSettings(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r3.Code)
 	}) */
 	t.Run("bad request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		SaveSettings(router, conf)
+		app, router, _ := NewApiTest()
+		SaveSettings(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"language": 123}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})

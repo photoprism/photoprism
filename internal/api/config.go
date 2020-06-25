@@ -4,27 +4,25 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/service"
 )
 
 // GET /api/v1/config
-func GetConfig(router *gin.RouterGroup, conf *config.Config) {
+func GetConfig(router *gin.RouterGroup) {
 	router.GET("/config", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceConfig, acl.ActionRead)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 
-		sess := Session(SessionToken(c), conf)
+		conf := service.Config()
 
-		if sess == nil {
-			c.JSON(http.StatusNotFound, ErrSessionNotFound)
-			return
-		}
-
-		if sess.User.Guest() {
+		if s.User.Guest() {
 			c.JSON(http.StatusOK, conf.GuestConfig())
-		} else if sess.User.User() {
+		} else if s.User.Registered() {
 			c.JSON(http.StatusOK, conf.UserConfig())
 		} else {
 			c.JSON(http.StatusOK, conf.PublicConfig())

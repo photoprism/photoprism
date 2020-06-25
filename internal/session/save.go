@@ -28,7 +28,7 @@ func New(expiration time.Duration, cachePath string) *Session {
 			log.Errorf("session: %s", err)
 		} else {
 			for key, saved := range savedItems {
-				user := entity.FindPersonByUID(saved.UID)
+				user := entity.FindPersonByUID(saved.User)
 
 				if user == nil {
 					continue
@@ -49,7 +49,7 @@ func New(expiration time.Duration, cachePath string) *Session {
 
 				}
 
-				data := &Data{User: *user, Tokens: tokens, Shared: shared}
+				data := Data{User: *user, Tokens: tokens, Shares: shared}
 				items[key] = gc.Item{Expiration: saved.Expiration, Object: data}
 			}
 
@@ -73,7 +73,7 @@ func (s *Session) Save() error {
 	savedItems := make(map[string]Saved, len(items))
 
 	for key, item := range items {
-		saved := item.Object.(*Data).Saved()
+		saved := item.Object.(Data).Saved()
 		saved.Expiration = item.Expiration
 		savedItems[key] = saved
 	}

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/txt"
 
@@ -27,9 +27,11 @@ import (
 //   before:    date   Find photos taken before (format: "2006-01-02")
 //   after:     date   Find photos taken after (format: "2006-01-02")
 //   favorite:  bool   Find favorites only
-func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
+func GetPhotos(router *gin.RouterGroup) {
 	router.GET("/photos", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionSearch)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -40,6 +42,12 @@ func GetPhotos(router *gin.RouterGroup, conf *config.Config) {
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		// Guest permissions are limited to shared albums.
+		if s.Guest() && (f.Album == "" || !s.HasShare(f.Album)){
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
 

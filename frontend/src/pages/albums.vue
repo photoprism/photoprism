@@ -177,7 +177,6 @@
                                              v-else-if="album.Type === 'album'">
                                     <div v-if="album.PhotoCount === 1" class="caption">
                                         <translate>Contains one photo.</translate>
-                                        <translate>Add more by selecting them from search results.</translate>
                                     </div>
                                     <div v-else-if="album.PhotoCount > 0" class="caption">
                                         <translate>Contains</translate>

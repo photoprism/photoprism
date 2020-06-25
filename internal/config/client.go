@@ -193,7 +193,7 @@ func (c *Config) GuestConfig() ClientConfig {
 
 // UserConfig returns client configuration values for registered users.
 func (c *Config) UserConfig() ClientConfig {
-	defer log.Debug(capture.Time(time.Now(), "config: admin config created"))
+	defer log.Debug(capture.Time(time.Now(), "config: user config created"))
 
 	result := ClientConfig{
 		Settings:        *c.Settings(),

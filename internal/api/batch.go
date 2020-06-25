@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -17,9 +17,11 @@ import (
 )
 
 // POST /api/v1/batch/photos/archive
-func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
+func BatchPhotosArchive(router *gin.RouterGroup) {
 	router.POST("/batch/photos/archive", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDelete)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -58,7 +60,7 @@ func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
 
 		elapsed := int(time.Since(start).Seconds())
 
-		UpdateClientConfig(conf)
+		UpdateClientConfig()
 
 		event.EntitiesArchived("photos", f.Photos)
 
@@ -67,9 +69,11 @@ func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // POST /api/v1/batch/photos/restore
-func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
+func BatchPhotosRestore(router *gin.RouterGroup) {
 	router.POST("/batch/photos/restore", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDelete)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -105,7 +109,7 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 
 		elapsed := int(time.Since(start).Seconds())
 
-		UpdateClientConfig(conf)
+		UpdateClientConfig()
 
 		event.EntitiesRestored("photos", f.Photos)
 
@@ -114,9 +118,11 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // POST /api/v1/batch/albums/delete
-func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
+func BatchAlbumsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/albums/delete", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionDelete)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -139,7 +145,7 @@ func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
 		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.Album{})
 		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.PhotoAlbum{})
 
-		UpdateClientConfig(conf)
+		UpdateClientConfig()
 
 		event.EntitiesDeleted("albums", f.Albums)
 
@@ -148,9 +154,11 @@ func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // POST /api/v1/batch/photos/private
-func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
+func BatchPhotosPrivate(router *gin.RouterGroup) {
 	router.POST("/batch/photos/private", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionPrivate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -188,7 +196,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 			event.EntitiesUpdated("photos", entities)
 		}
 
-		UpdateClientConfig(conf)
+		UpdateClientConfig()
 
 		elapsed := time.Since(start)
 
@@ -197,9 +205,11 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // POST /api/v1/batch/labels/delete
-func BatchLabelsDelete(router *gin.RouterGroup, conf *config.Config) {
+func BatchLabelsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/labels/delete", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionDelete)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -231,7 +241,7 @@ func BatchLabelsDelete(router *gin.RouterGroup, conf *config.Config) {
 			logError("labels", label.Delete())
 		}
 
-		UpdateClientConfig(conf)
+		UpdateClientConfig()
 
 		event.EntitiesDeleted("labels", f.Labels)
 

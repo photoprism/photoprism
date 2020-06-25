@@ -27,7 +27,7 @@ services:
       PHOTOPRISM_EXPERIMENTAL: "false"               # Enable experimental features
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Canonical / public site URL
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
-      PHOTOPRISM_SITE_CAPTION: "Browse your life"
+      PHOTOPRISM_SITE_CAPTION: "Browse Your Life in Pictures"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Personal Photo Management."
       PHOTOPRISM_SITE_AUTHOR: "Anonymous"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"

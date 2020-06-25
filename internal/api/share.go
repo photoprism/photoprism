@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -24,7 +25,9 @@ func shareHandler(c *gin.Context, conf *config.Config) {
 	c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig})
 }
 
-func InitShare(router *gin.RouterGroup, conf *config.Config) {
+func InitShare(router *gin.RouterGroup) {
+	conf := service.Config()
+
 	router.GET("/:token", func(c *gin.Context) {
 		shareHandler(c, conf)
 	})

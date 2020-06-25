@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/query"
 )
 
@@ -12,9 +12,11 @@ import (
 //
 // Parameters:
 //   hash: string SHA-1 hash of the file
-func GetFile(router *gin.RouterGroup, conf *config.Config) {
+func GetFile(router *gin.RouterGroup) {
 	router.GET("/files/:hash", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceFiles, acl.ActionRead)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
@@ -31,14 +30,15 @@ type ByteCache struct {
 // Parameters:
 //   hash: string The file hash as returned by the search API
 //   type: string Thumbnail type, see photoprism.ThumbnailTypes
-func GetThumbnail(router *gin.RouterGroup, conf *config.Config) {
+func GetThumbnail(router *gin.RouterGroup) {
 	router.GET("/t/:hash/:token/:type", func(c *gin.Context) {
-		if InvalidToken(c, conf) {
+		if InvalidToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}
 
 		start := time.Now()
+		conf := service.Config()
 		fileHash := c.Param("hash")
 		typeName := c.Param("type")
 

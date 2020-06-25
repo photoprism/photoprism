@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/video"
@@ -17,9 +16,9 @@ import (
 // Parameters:
 //   hash: string The photo or video file hash as returned by the search API
 //   type: string Video type
-func GetVideo(router *gin.RouterGroup, conf *config.Config) {
+func GetVideo(router *gin.RouterGroup) {
 	router.GET("/videos/:hash/:token/:type", func(c *gin.Context) {
-		if InvalidToken(c, conf) {
+		if InvalidToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}

@@ -5,8 +5,8 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/classify"
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -18,9 +18,11 @@ import (
 //
 // Parameters:
 //   uid: string PhotoUID as returned by the API
-func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
+func AddPhotoLabel(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/label", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -91,9 +93,11 @@ func AddPhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 // Parameters:
 //   uid: string PhotoUID as returned by the API
 //   id: int LabelId as returned by the API
-func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
+func RemovePhotoLabel(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/label/:id", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -153,9 +157,11 @@ func RemovePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
 // Parameters:
 //   uid: string PhotoUID as returned by the API
 //   id: int LabelId as returned by the API
-func UpdatePhotoLabel(router *gin.RouterGroup, conf *config.Config) {
+func UpdatePhotoLabel(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/label/:id", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}

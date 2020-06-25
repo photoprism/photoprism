@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -19,12 +19,16 @@ import (
 )
 
 // POST /api/v1/import*
-func StartImport(router *gin.RouterGroup, conf *config.Config) {
+func StartImport(router *gin.RouterGroup) {
 	router.POST("/import/*path", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionImport)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
+
+		conf := service.Config()
 
 		if conf.ReadOnly() || !conf.Settings().Features.Import {
 			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)
@@ -96,19 +100,23 @@ func StartImport(router *gin.RouterGroup, conf *config.Config) {
 			PublishAlbumEvent(EntityUpdated, uid, c)
 		}
 
-		UpdateClientConfig(conf)
+		UpdateClientConfig()
 
 		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("import completed in %d s", elapsed)})
 	})
 }
 
 // DELETE /api/v1/import
-func CancelImport(router *gin.RouterGroup, conf *config.Config) {
+func CancelImport(router *gin.RouterGroup) {
 	router.DELETE("/import", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionImport)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
+
+		conf := service.Config()
 
 		if conf.ReadOnly() || !conf.Settings().Features.Import {
 			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)

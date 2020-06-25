@@ -10,7 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
@@ -27,9 +27,11 @@ type FoldersResponse struct {
 }
 
 // GetFolders is a reusable request handler for directory listings (GET /api/v1/folders/*).
-func GetFolders(router *gin.RouterGroup, conf *config.Config, urlPath, rootName, rootPath string) {
+func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 	handler := func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceFolders, acl.ActionSearch)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -104,11 +106,13 @@ func GetFolders(router *gin.RouterGroup, conf *config.Config, urlPath, rootName,
 }
 
 // GET /api/v1/folders/originals
-func GetFoldersOriginals(router *gin.RouterGroup, conf *config.Config) {
-	GetFolders(router, conf, "originals", entity.RootOriginals, conf.OriginalsPath())
+func GetFoldersOriginals(router *gin.RouterGroup) {
+	conf := service.Config()
+	GetFolders(router, "originals", entity.RootOriginals, conf.OriginalsPath())
 }
 
 // GET /api/v1/folders/import
-func GetFoldersImport(router *gin.RouterGroup, conf *config.Config) {
-	GetFolders(router, conf, "import", entity.RootImport, conf.ImportPath())
+func GetFoldersImport(router *gin.RouterGroup) {
+	conf := service.Config()
+	GetFolders(router, "import", entity.RootImport, conf.ImportPath())
 }

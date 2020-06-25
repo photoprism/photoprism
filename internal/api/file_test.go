@@ -11,8 +11,8 @@ import (
 
 func TestGetFile(t *testing.T) {
 	t.Run("search for existing file", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		GetFile(router, ctx)
+		app, router, _ := NewApiTest()
+		GetFile(router)
 		r := PerformRequest(app, "GET", "/api/v1/files/2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		assert.Equal(t, http.StatusOK, r.Code)
 
@@ -20,8 +20,8 @@ func TestGetFile(t *testing.T) {
 		assert.Equal(t, "exampleFileName.jpg", val.String())
 	})
 	t.Run("search for not existing file", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		GetFile(router, ctx)
+		app, router, _ := NewApiTest()
+		GetFile(router)
 		r := PerformRequest(app, "GET", "/api/v1/files/111")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})

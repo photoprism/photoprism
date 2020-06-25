@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/service"
@@ -13,7 +13,7 @@ import (
 )
 
 // POST /api/v1/session
-func CreateSession(router *gin.RouterGroup, conf *config.Config) {
+func CreateSession(router *gin.RouterGroup) {
 	router.POST("/session", func(c *gin.Context) {
 		var f form.Login
 
@@ -22,7 +22,18 @@ func CreateSession(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		data := session.Data{}
+		var data session.Data
+
+		id := SessionID(c)
+
+		if s := Session(id); s.Valid() {
+			data = s
+		} else {
+			data = session.Data{}
+			id = ""
+		}
+
+		conf := service.Config()
 
 		if f.HasToken() {
 			links := entity.FindLinks(f.Token, "")
@@ -34,10 +45,13 @@ func CreateSession(router *gin.RouterGroup, conf *config.Config) {
 			data.Tokens = []string{f.Token}
 
 			for _, link := range links {
-				data.Shared = append(data.Shared, link.ShareUID)
+				data.Shares = append(data.Shares, link.ShareUID)
 			}
 
-			data.User = entity.Guest
+			// Upgrade from anonymous to guest. Don't downgrade.
+			if data.User.Anonymous() {
+				data.User = entity.Guest
+			}
 		} else if f.HasCredentials() {
 			user := entity.FindPersonByUserName(f.UserName)
 
@@ -57,89 +71,70 @@ func CreateSession(router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
-		token := service.Session().Create(data)
+		if err := service.Session().Update(id, data); err != nil {
+			id = service.Session().Create(data)
+		}
 
-		c.Header("X-Session-Token", token)
+		c.Header("X-Session-ID", id)
 
 		if data.User.Anonymous() {
-			c.JSON(http.StatusOK, gin.H{"token": token, "data": data, "config": conf.GuestConfig()})
+			c.JSON(http.StatusOK, gin.H{"status": "ok", "id": id, "data": data, "config": conf.GuestConfig()})
 		} else {
-			c.JSON(http.StatusOK, gin.H{"token": token, "data": data, "config": conf.UserConfig()})
+			c.JSON(http.StatusOK, gin.H{"status": "ok", "id": id, "data": data, "config": conf.UserConfig()})
 		}
 	})
 }
 
 // DELETE /api/v1/session/
-func DeleteSession(router *gin.RouterGroup, conf *config.Config) {
-	router.DELETE("/session/:token", func(c *gin.Context) {
-		token := c.Param("token")
+func DeleteSession(router *gin.RouterGroup) {
+	router.DELETE("/session/:id", func(c *gin.Context) {
+		id := c.Param("id")
 
-		service.Session().Delete(token)
+		service.Session().Delete(id)
 
-		c.JSON(http.StatusOK, gin.H{"status": "ok", "token": token})
+		c.JSON(http.StatusOK, gin.H{"status": "ok", "id": id})
 	})
 }
 
-// Returns true, if user doesn't have a valid session token
-func Unauthorized(c *gin.Context, conf *config.Config) bool {
-	// Always return false if site is public.
-	if conf.Public() {
-		return false
-	}
-
-	// Get session token from HTTP header.
-	token := c.GetHeader("X-Session-Token")
-
-	// Check if session token is valid.
-	return !service.Session().Exists(token)
-}
-
-// Gets session token from HTTP header.
-func SessionToken(c *gin.Context) string {
-	return c.GetHeader("X-Session-Token")
+// Gets session id from HTTP header.
+func SessionID(c *gin.Context) string {
+	return c.GetHeader("X-Session-ID")
 }
 
 // Session returns the current session data.
-func Session(token string, conf *config.Config) (data *session.Data) {
-	if token == "" {
-		return nil
+func Session(id string) session.Data {
+	// Return fake admin session if site is public.
+	if service.Config().Public() {
+		return session.Data{User: entity.Admin}
 	}
 
-	defer func() {
-		if err := recover(); err != nil {
-			data = nil
-			log.Errorf("session: %s [panic]", err)
-		}
-	}()
+	// Check if session id is valid.
+	return service.Session().Get(id)
+}
 
-	// Always return false if site is public.
-	if conf.Public() {
-		admin := entity.FindPersonByUserName("admin")
+// Auth returns the session if user is authorized for the current action.
+func Auth(id string, resource acl.Resource, action acl.Action) session.Data {
+	sess := Session(id)
 
-		if admin == nil {
-			log.Error("session: admin user not found - bug?")
-			return nil
-		}
-
-		return &session.Data{User: *admin}
+	if acl.Permissions.Deny(resource, sess.User.Role(), action) {
+		return session.Data{}
 	}
 
-	// Check if session token is valid.
-	return service.Session().Get(token)
+	return sess
 }
 
 // InvalidToken returns true if the token is invalid.
-func InvalidToken(c *gin.Context, conf *config.Config) bool {
+func InvalidToken(c *gin.Context) bool {
 	token := c.Param("token")
 
 	if token == "" {
 		token = c.Query("t")
 	}
 
-	return conf.InvalidToken(token)
+	return service.Config().InvalidToken(token)
 }
 
 // InvalidDownloadToken returns true if the token is invalid.
-func InvalidDownloadToken(c *gin.Context, conf *config.Config) bool {
-	return conf.InvalidDownloadToken(c.Query("t"))
+func InvalidDownloadToken(c *gin.Context) bool {
+	return service.Config().InvalidDownloadToken(c.Query("t"))
 }

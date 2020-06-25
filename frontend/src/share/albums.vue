@@ -487,10 +487,10 @@
         created() {
             const token = this.$route.params.token;
 
-            if (this.$session.shareToken(token)) {
+            if (this.$session.hasToken(token)) {
                 this.search();
             } else {
-                this.$session.login("", "", token).then(() => {
+                this.$session.redeemToken(token).then(() => {
                     this.search();
                 });
             }

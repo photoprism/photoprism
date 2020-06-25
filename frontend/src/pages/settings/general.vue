@@ -5,7 +5,9 @@
                 @submit.prevent="onChange">
             <v-card flat tile class="mt-0 px-1 application">
                 <v-card-title primary-title class="pb-0">
-                    <h3 class="body-2 mb-0"><translate key="Library">Library</translate></h3>
+                    <h3 class="body-2 mb-0">
+                        <translate key="Library">Library</translate>
+                    </h3>
                 </v-card-title>
 
                 <v-card-actions>
@@ -75,7 +77,9 @@
 
             <v-card flat tile class="mt-0 px-1 application">
                 <v-card-title primary-title class="pb-2">
-                    <h3 class="body-2 mb-0"><translate key="User Interface">User Interface</translate></h3>
+                    <h3 class="body-2 mb-0">
+                        <translate key="User Interface">User Interface</translate>
+                    </h3>
                 </v-card-title>
 
                 <v-card-actions>
@@ -299,7 +303,9 @@
 
             <v-card flat tile class="mt-0 px-1 application" v-if="settings.features.places">
                 <v-card-title primary-title class="pb-2">
-                    <h3 class="body-2 mb-0"><translate key="Places">Places</translate></h3>
+                    <h3 class="body-2 mb-0">
+                        <translate key="Places">Places</translate>
+                    </h3>
                 </v-card-title>
 
                 <v-card-actions>
@@ -339,13 +345,14 @@
                 <v-card-actions>
                     <v-layout wrap align-top>
                         <v-flex xs12 sm6 class="px-2 pb-2 body-1">
-                            <a href="https://docs.photoprism.org/contact/" class="text-link" target="_blank">PhotoPrism™ {{$config.get("version")}}
-                            <br>© 2018-2020 Michael Mayer</a>
+                            <a href="https://docs.photoprism.org/contact/" class="text-link" target="_blank">PhotoPrism™
+                                {{$config.get("version")}}
+                                <br>© 2018-2020 Michael Mayer</a>
                         </v-flex>
 
                         <v-flex xs12 sm6 class="px-2 pb-2 body-1 text-xs-left text-sm-right">
-                            A big <a href="https://docs.photoprism.org/credits/" class="secondary-dark--text"
-                                                            target="_blank">thank you</a> to everyone who made this possible!
+                            <a href="https://docs.photoprism.org/credits/" class="secondary-dark--text"
+                               target="_blank">Thank you</a> to everyone who made this possible!
                             <br>
                             <a href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE"
                                class="secondary-dark--text" target="_blank">

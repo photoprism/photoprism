@@ -1,6 +1,6 @@
 /*
 
-Package api contains PhotoPrism REST API handlers.
+Package acl contains PhotoPrism's access control lists for authorizing user actions.
 
 Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
 
@@ -29,23 +29,45 @@ Additional information can be found in our Developer Guide:
 https://docs.photoprism.org/developer-guide/
 
 */
-package api
+package acl
 
-import (
-	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/service"
-)
-
-var log = event.Log
-
-func logError(prefix string, err error) {
-	if err != nil {
-		log.Errorf("%s: %s", prefix, err.Error())
-	}
+type Permission struct {
+	Roles   Roles
+	Actions Actions
 }
 
-func UpdateClientConfig() {
-	conf := service.Config()
+type ACL map[Resource]Roles
 
-	event.Publish("config.updated", event.Data{"config": conf.UserConfig()})
+func (l ACL) Deny(resource Resource, role Role, action Action) bool {
+	return !l.Allow(resource, role, action)
+}
+
+func (l ACL) Allow(resource Resource, role Role, action Action) bool {
+	if p, ok := l[resource]; ok {
+		return p.Allow(role, action)
+	} else if p, ok := l[ResourceDefault]; ok {
+		return p.Allow(role, action)
+	}
+
+	return false
+}
+
+func (a Actions) Allow(action Action) bool {
+	if result, ok := a[action]; ok {
+		return result
+	} else if result, ok := a[ActionDefault]; ok {
+		return result
+	}
+
+	return false
+}
+
+func (r Roles) Allow(role Role, action Action) bool {
+	if a, ok := r[role]; ok {
+		return a.Allow(action)
+	} else if a, ok := r[RoleDefault]; ok {
+		return a.Allow(action)
+	}
+
+	return false
 }

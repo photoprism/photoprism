@@ -10,7 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -23,9 +23,11 @@ import (
 )
 
 // GET /api/v1/labels
-func GetLabels(router *gin.RouterGroup, conf *config.Config) {
+func GetLabels(router *gin.RouterGroup) {
 	router.GET("/labels", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionSearch)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -55,9 +57,11 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 }
 
 // PUT /api/v1/labels/:uid
-func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
+func UpdateLabel(router *gin.RouterGroup) {
 	router.PUT("/labels/:uid", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -92,9 +96,11 @@ func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   uid: string Label UID
-func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
+func LikeLabel(router *gin.RouterGroup) {
 	router.POST("/labels/:uid/like", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -128,9 +134,11 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   uid: string Label UID
-func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
+func DislikeLabel(router *gin.RouterGroup) {
 	router.DELETE("/labels/:uid/like", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
+		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionUpdate)
+
+		if s.Invalid() {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
 			return
 		}
@@ -165,14 +173,15 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 // Parameters:
 //   uid: string Label UID
 //   type: string Thumbnail type, see photoprism.ThumbnailTypes
-func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
+func LabelThumbnail(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/t/:token/:type", func(c *gin.Context) {
-		if InvalidToken(c, conf) {
+		if InvalidToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", labelIconSvg)
 			return
 		}
 
 		start := time.Now()
+		conf := service.Config()
 		typeName := c.Param("type")
 		uid := c.Param("uid")
 

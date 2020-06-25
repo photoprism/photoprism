@@ -24,4 +24,5 @@ var (
 	ErrDeleteFailed     = gin.H{"code": http.StatusInternalServerError, "error": "Changes could not be saved"}
 	ErrFormInvalid      = gin.H{"code": http.StatusBadRequest, "error": "Changes could not be saved"}
 	ErrFeatureDisabled  = gin.H{"code": http.StatusForbidden, "error": "Feature disabled"}
+	ErrNotFound         = gin.H{"code": http.StatusNotFound, "error": "Not found"}
 )

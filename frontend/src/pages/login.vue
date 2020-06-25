@@ -2,15 +2,15 @@
     <div class="p-page p-page-login">
         <v-toolbar flat color="secondary">
             <v-toolbar-title>
-                <translate>Authentication required</translate>
+                {{ $config.get("siteTitle") }}: {{ $config.get("siteCaption") }}
             </v-toolbar-title>
 
             <v-spacer></v-spacer>
         </v-toolbar>
 
-        <v-container class="pt-5">
+        <v-container class="pt-4">
             <p class="subheading">
-                <span><translate>Please enter your user name and password to proceed:</translate></span>
+                <span><translate>Please enter your name and password to proceed:</translate></span>
             </p>
             <v-form ref="form" autocomplete="off" class="p-form-login" @submit.prevent="login" dense>
                 <v-text-field
@@ -56,14 +56,14 @@
                 password: "",
                 nextUrl: this.$route.params.nextUrl ? this.$route.params.nextUrl : "/",
                 labels: {
-                    username: this.$gettext("User Name"),
+                    username: this.$gettext("Name"),
                     password: this.$gettext("Password"),
                 }
             };
         },
         methods: {
             login() {
-                if(!this.username || !this.password) {
+                if (!this.username || !this.password) {
                     return
                 }
 
