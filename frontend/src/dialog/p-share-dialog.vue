@@ -4,7 +4,7 @@
             <v-card-title primary-title class="pb-0">
                 <v-layout row wrap>
                     <v-flex xs9>
-                        <h3 class="headline mb-0">Share {{model.modelName()}}</h3>
+                        <h3 class="headline mb-0">Share {{model.modelName()}}<!-- TODO: translate--></h3>
                     </v-flex>
                     <v-flex xs3 text-xs-right>
                         <v-btn icon flat dark color="secondary-dark" class="ma-0" @click.stop="add" :title="$gettext('Add Link')">
@@ -92,9 +92,9 @@
                 </v-expansion-panel>
 
                 <v-container fluid text-xs-left class="pb-0 pt-3 pr-0 pl-0 caption">
-                    People you share a link with will be able to view the {{model.modelName().toLowerCase()}}.
-                    A click will copy it to your clipboard. Any private photos remain private.
-                    Alternatively, you can upload files directly to WebDAV servers like Nextcloud.
+                    People you share a link with will be able to view the {{model.modelName().toLowerCase()}}.<!-- TODO: translate-->
+                    <translate>A click will copy it to your clipboard. Any private photos remain private.
+                        Alternatively, you can upload files directly to WebDAV servers like Nextcloud.</translate>
                 </v-container>
             </v-card-text>
             <v-card-actions class="pt-0">
