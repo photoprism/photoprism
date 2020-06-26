@@ -15,7 +15,7 @@
                     @click.stop="onLogoClick"
                     v-show="!drawer"
             >
-                <img src="/static/img/logo.svg" alt="Logo">
+                <img src="/static/img/logo-white.svg" alt="Logo">
             </v-avatar>
         </v-toolbar>
         <v-toolbar dark flat color="navigation darken-1" class="hidden-md-and-up">
@@ -32,7 +32,9 @@
                 <v-list class="navigation-home">
                     <v-list-tile class="p-navigation-logo">
                         <v-list-tile-avatar class="clickable" @click.stop.prevent="openDocs">
-                            <img class="logo" src="/static/img/avatar.svg" alt="Logo">
+                            <div class="logo rainbow-static">
+                                <img src="/static/img/logo-black.svg" alt="Logo">
+                            </div>
                         </v-list-tile-avatar>
                         <v-list-tile-content>
                             <v-list-tile-title class="title">
