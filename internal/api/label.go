@@ -175,7 +175,7 @@ func DislikeLabel(router *gin.RouterGroup) {
 //   type: string Thumbnail type, see photoprism.ThumbnailTypes
 func LabelThumbnail(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/t/:token/:type", func(c *gin.Context) {
-		if InvalidToken(c) {
+		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", labelIconSvg)
 			return
 		}

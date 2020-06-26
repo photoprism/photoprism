@@ -143,8 +143,8 @@ func (c *Config) PublicConfig() ClientConfig {
 		Experimental:    c.Experimental(),
 		Thumbnails:      Thumbnails,
 		Colors:          colors.All.List(),
-		JSHash:          fs.Checksum(c.StaticBuildPath() + "/app.js"),
-		CSSHash:         fs.Checksum(c.StaticBuildPath() + "/app.css"),
+		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
+		CSSHash:         fs.Checksum(c.BuildPath() + "/app.css"),
 		Clip:            txt.ClipDefault,
 		PreviewToken:    "public",
 		DownloadToken:   "public",
@@ -186,8 +186,8 @@ func (c *Config) GuestConfig() ClientConfig {
 		Thumbnails:      Thumbnails,
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
-		JSHash:          fs.Checksum(c.StaticBuildPath() + "/share.js"),
-		CSSHash:         fs.Checksum(c.StaticBuildPath() + "/share.css"),
+		JSHash:          fs.Checksum(c.BuildPath() + "/share.js"),
+		CSSHash:         fs.Checksum(c.BuildPath() + "/share.css"),
 		Clip:            txt.ClipDefault,
 	}
 
@@ -220,8 +220,8 @@ func (c *Config) UserConfig() ClientConfig {
 		Thumbnails:      Thumbnails,
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
-		JSHash:          fs.Checksum(c.StaticBuildPath() + "/app.js"),
-		CSSHash:         fs.Checksum(c.StaticBuildPath() + "/app.css"),
+		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
+		CSSHash:         fs.Checksum(c.BuildPath() + "/app.css"),
 		Clip:            txt.ClipDefault,
 		Server:          NewRuntimeInfo(),
 	}

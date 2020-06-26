@@ -273,7 +273,7 @@ func TestConfig_TensorFlowModelPath(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/nasnet", path)
 }
 
-func TestConfig_HttpTemplatesPath(t *testing.T) {
+func TestConfig_TemplatesPath(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
@@ -281,15 +281,7 @@ func TestConfig_HttpTemplatesPath(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/templates", path)
 }
 
-func TestConfig_HttpFaviconsPath(t *testing.T) {
-	ctx := CliTestContext()
-	c := NewConfig(ctx)
-
-	path := c.FaviconsPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/favicons", path)
-}
-
-func TestConfig_HttpStaticPath(t *testing.T) {
+func TestConfig_StaticPath(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
@@ -297,12 +289,20 @@ func TestConfig_HttpStaticPath(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static", path)
 }
 
-func TestConfig_HttpStaticBuildPath(t *testing.T) {
+func TestConfig_BuildPath(t *testing.T) {
 	ctx := CliTestContext()
 	c := NewConfig(ctx)
 
-	path := c.StaticBuildPath()
+	path := c.BuildPath()
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/build", path)
+}
+
+func TestConfig_ImgPath(t *testing.T) {
+	ctx := CliTestContext()
+	c := NewConfig(ctx)
+
+	path := c.ImgPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/img", path)
 }
 
 func TestConfig_ClientConfig(t *testing.T) {

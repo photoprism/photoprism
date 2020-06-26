@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"path"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/api"
@@ -9,11 +10,11 @@ import (
 )
 
 func registerRoutes(router *gin.Engine, conf *config.Config) {
-	// Static favicon file.
-	router.StaticFile("/favicon.ico", conf.FaviconsPath()+"/favicon.ico")
-
-	// Other static assets like JS and CSS files.
+	// Static assets like js, css and font files.
 	router.Static("/static", conf.StaticPath())
+
+	// Site favicon image.
+	router.StaticFile("/favicon.ico", path.Join(conf.ImgPath(), "favicon.ico"))
 
 	// Rainbow page.
 	router.GET("/rainbow", func(c *gin.Context) {
@@ -147,6 +148,6 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Default HTML page for client-side rendering and routing via VueJS.
 	router.NoRoute(func(c *gin.Context) {
 		clientConfig := conf.PublicConfig()
-		c.HTML(http.StatusOK, conf.DefaultTemplate(), gin.H{"config": clientConfig})
+		c.HTML(http.StatusOK, conf.TemplateName(), gin.H{"config": clientConfig})
 	})
 }

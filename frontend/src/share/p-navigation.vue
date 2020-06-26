@@ -13,7 +13,7 @@
                     class="clickable"
                     @click.stop.prevent="goHome"
             >
-                <img src="/static/svg/logo-white-6pt.svg" alt="PhotoPrism">
+                <img src="/static/img/logo.svg" alt="Logo">
             </v-avatar>
         </v-toolbar>
         <v-toolbar dark flat color="navigation darken-1">

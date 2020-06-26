@@ -32,7 +32,7 @@ type ByteCache struct {
 //   type: string Thumbnail type, see photoprism.ThumbnailTypes
 func GetThumbnail(router *gin.RouterGroup) {
 	router.GET("/t/:hash/:token/:type", func(c *gin.Context) {
-		if InvalidToken(c) {
+		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}

@@ -124,15 +124,15 @@ func Auth(id string, resource acl.Resource, action acl.Action) session.Data {
 	return sess
 }
 
-// InvalidToken returns true if the token is invalid.
-func InvalidToken(c *gin.Context) bool {
+// InvalidPreviewToken returns true if the token is invalid.
+func InvalidPreviewToken(c *gin.Context) bool {
 	token := c.Param("token")
 
 	if token == "" {
 		token = c.Query("t")
 	}
 
-	return service.Config().InvalidToken(token)
+	return service.Config().InvalidPreviewToken(token)
 }
 
 // InvalidDownloadToken returns true if the token is invalid.

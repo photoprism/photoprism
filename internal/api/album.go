@@ -511,7 +511,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 //   type: string Thumbnail type, see photoprism.ThumbnailTypes
 func AlbumThumbnail(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/t/:token/:type", func(c *gin.Context) {
-		if InvalidToken(c) {
+		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", albumIconSvg)
 			return
 		}

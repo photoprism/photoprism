@@ -67,8 +67,8 @@
                 this.player = new MediaElementPlayer(this.$el, {
                     videoWidth: this.width,
                     videoHeight: this.height,
-                    pluginPath: '/static/build/',
-                    shimScriptAccess: 'always',
+                    pluginPath: "/static/build/",
+                    shimScriptAccess: "always",
                     forceLive: false,
                     loop: false,
                     stretching: true,

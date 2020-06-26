@@ -18,7 +18,7 @@ import (
 //   type: string Video type
 func GetVideo(router *gin.RouterGroup) {
 	router.GET("/videos/:hash/:token/:type", func(c *gin.Context) {
-		if InvalidToken(c) {
+		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}

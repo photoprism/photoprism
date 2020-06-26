@@ -85,8 +85,8 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.TensorFlowModelPath(), err)
 	}
 
-	if err := os.MkdirAll(c.StaticBuildPath(), os.ModePerm); err != nil {
-		return createError(c.StaticBuildPath(), err)
+	if err := os.MkdirAll(c.BuildPath(), os.ModePerm); err != nil {
+		return createError(c.BuildPath(), err)
 	}
 
 	if err := os.MkdirAll(filepath.Dir(c.PIDFilename()), os.ModePerm); err != nil {

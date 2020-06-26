@@ -75,10 +75,10 @@ func configAction(ctx *cli.Context) error {
 
 	// Additional path and file names.
 	fmt.Printf("%-25s %s\n", "static-path", conf.StaticPath())
-	fmt.Printf("%-25s %s\n", "static-build-path", conf.StaticBuildPath())
-	fmt.Printf("%-25s %s\n", "favicons-path", conf.FaviconsPath())
+	fmt.Printf("%-25s %s\n", "build-path", conf.BuildPath())
+	fmt.Printf("%-25s %s\n", "img-path", conf.ImgPath())
 	fmt.Printf("%-25s %s\n", "templates-path", conf.TemplatesPath())
-	fmt.Printf("%-25s %s\n", "default-template", conf.DefaultTemplate())
+	fmt.Printf("%-25s %s\n", "template-name", conf.TemplateName())
 	fmt.Printf("%-25s %s\n", "cache-path", conf.CachePath())
 	fmt.Printf("%-25s %s\n", "temp-path", conf.TempPath())
 	fmt.Printf("%-25s %s\n", "config-file", conf.ConfigFile())
@@ -100,7 +100,7 @@ func configAction(ctx *cli.Context) error {
 
 	// Thumbnails, resampling and download security token.
 	fmt.Printf("%-25s %s\n", "download-token", conf.DownloadToken())
-	fmt.Printf("%-25s %s\n", "thumb-token", conf.PreviewToken())
+	fmt.Printf("%-25s %s\n", "preview-token", conf.PreviewToken())
 	fmt.Printf("%-25s %s\n", "thumb-filter", conf.ThumbFilter())
 	fmt.Printf("%-25s %t\n", "thumb-uncached", conf.ThumbUncached())
 	fmt.Printf("%-25s %d\n", "thumb-size", conf.ThumbSize())

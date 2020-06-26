@@ -3,7 +3,7 @@
   "name": "PhotoPrism",
   "icons": [
     {
-      "src": "/static/favicons/favicon.png",
+      "src": "/static/img/favicon.png",
       "sizes": "723x729",
       "type": "image/png"
     }

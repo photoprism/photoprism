@@ -259,8 +259,8 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "preview-token",
-		Usage:  "`SECRET` url token for thumbnails and video streaming",
-		Value:  "static",
+		Usage:  "`SECRET` url token for preview images and video streaming",
+		Value:  "public",
 		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{

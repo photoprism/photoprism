@@ -57,8 +57,8 @@ func (c *Config) TemplateExists(name string) bool {
 	return fs.FileExists(filepath.Join(c.TemplatesPath(), name))
 }
 
-// DefaultTemplate returns the name of the default template (e.g. index.tmpl).
-func (c *Config) DefaultTemplate() string {
+// TemplateName returns the name of the default template (e.g. index.tmpl).
+func (c *Config) TemplateName() string {
 	if c.TemplateExists(c.Settings().Templates.Default) {
 		return c.Settings().Templates.Default
 	}
@@ -66,17 +66,17 @@ func (c *Config) DefaultTemplate() string {
 	return "index.tmpl"
 }
 
-// FaviconsPath returns the favicons path.
-func (c *Config) FaviconsPath() string {
-	return filepath.Join(c.StaticPath(), "favicons")
-}
-
-// StaticPath returns the static server assets path (//server/static/*).
+// StaticPath returns the static assets path.
 func (c *Config) StaticPath() string {
 	return filepath.Join(c.AssetsPath(), "static")
 }
 
-// StaticBuildPath returns the static build path (//server/static/build/*).
-func (c *Config) StaticBuildPath() string {
+// BuildPath returns the static build path.
+func (c *Config) BuildPath() string {
 	return filepath.Join(c.StaticPath(), "build")
+}
+
+// ImgPath returns the static image path.
+func (c *Config) ImgPath() string {
+	return filepath.Join(c.StaticPath(), "img")
 }

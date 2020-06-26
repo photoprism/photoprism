@@ -41,8 +41,8 @@ func (c *Config) DownloadToken() string {
 	return c.params.DownloadToken
 }
 
-// InvalidToken returns true if the token is invalid.
-func (c *Config) InvalidToken(t string) bool {
+// InvalidPreviewToken returns true if the preview token is invalid.
+func (c *Config) InvalidPreviewToken(t string) bool {
 	return c.PreviewToken() != t && c.DownloadToken() != t
 }
 
