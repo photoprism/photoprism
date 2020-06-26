@@ -172,7 +172,7 @@ class Viewer {
             }
         }
 
-        return "fit_720";
+        return "fit_3840";
     }
 }
 
