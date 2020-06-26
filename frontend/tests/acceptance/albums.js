@@ -147,3 +147,50 @@ test('#5 View calendar', async t => {
         .expect(Selector('a').withText('May 2019').visible).ok()
         .expect(Selector('a').withText('October 2019').visible).ok();
 });
+
+//TODO test that sharing link works as expected
+test('#6 Create sharing link', async t => {
+    await t.click(Selector('.p-navigation-albums'));
+    const FirstAlbum = await Selector('div.p-album').nth(0).getAttribute('data-uid');
+    await page.selectFromUID(FirstAlbum);
+    const clipboardCount = await Selector('span.count-clipboard');
+    await t
+        .expect(clipboardCount.textContent).eql("1")
+        .click(Selector('button.action-menu'))
+        .click(Selector('button.action-share'))
+        .click(Selector('div.v-expansion-panel__header__icon').nth(0));
+    const InitialUrl = await (Selector('.action-url').innerText);
+    const InitialSecret = await (Selector('.input-secret input').value)
+    const InitialExpire = await (Selector('div.v-select__selections').innerText);
+    await t
+        .expect(InitialUrl).notContains('secretfortesting')
+        .expect(InitialExpire).eql('Never')
+        .typeText(Selector('.input-secret input'), 'secretForTesting', { replace: true })
+        .click(Selector('.input-expires input'))
+        .click(Selector('div').withText('After 1 day').parent('div[role="listitem"]'))
+        .click(Selector('button.action-save'))
+        .click(Selector('button.action-close'))
+        .click(Selector('button.action-share'))
+        .click(Selector('div.v-expansion-panel__header__icon').nth(0));
+    const UrlAfterChange = await (Selector('.action-url').innerText);
+    const ExpireAfterChange = await (Selector('div.v-select__selections').innerText);
+    await t
+        .expect(UrlAfterChange).contains('secretfortesting')
+        .expect(ExpireAfterChange).eql('After 1 day')
+        .typeText(Selector('.input-secret input'), InitialSecret, { replace: true })
+        .click(Selector('.input-expires input'))
+        .click(Selector('div').withText('Never').parent('div[role="listitem"]'))
+        .click(Selector('button.action-save'))
+        .click(Selector('div.v-expansion-panel__header__icon'));
+    const LinkCount = await (Selector('.action-url').count);
+    await t
+        .click('.action-add-link');
+    const LinkCountAfterAdd = await (Selector('.action-url').count);
+    await t
+        .expect(LinkCountAfterAdd).eql(LinkCount + 1)
+        .click(Selector('div.v-expansion-panel__header__icon'))
+        .click(Selector('.action-delete'));
+    const LinkCountAfterDelete = await (Selector('.action-url').count);
+    await t
+        .expect(LinkCountAfterDelete).eql(LinkCountAfterAdd - 1)
+});
