@@ -18,6 +18,7 @@ type ClientConfig struct {
 	Copyright       string              `json:"copyright"`
 	Flags           string              `json:"flags"`
 	SiteUrl         string              `json:"siteUrl"`
+	SitePreview     string              `json:"sitePreview"`
 	SiteTitle       string              `json:"siteTitle"`
 	SiteCaption     string              `json:"siteCaption"`
 	SiteDescription string              `json:"siteDescription"`
@@ -129,6 +130,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		Flags:           strings.Join(c.Flags(), " "),
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
+		SitePreview:     c.SitePreview(),
 		SiteTitle:       c.SiteTitle(),
 		SiteCaption:     c.SiteCaption(),
 		SiteDescription: c.SiteDescription(),
@@ -167,6 +169,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		Flags:           "readonly public shared",
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
+		SitePreview:     c.SitePreview(),
 		SiteTitle:       c.SiteTitle(),
 		SiteCaption:     c.SiteCaption(),
 		SiteDescription: c.SiteDescription(),
@@ -200,6 +203,7 @@ func (c *Config) UserConfig() ClientConfig {
 		Flags:           strings.Join(c.Flags(), " "),
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
+		SitePreview:     c.SitePreview(),
 		SiteTitle:       c.SiteTitle(),
 		SiteCaption:     c.SiteCaption(),
 		SiteDescription: c.SiteDescription(),

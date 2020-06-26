@@ -32,6 +32,7 @@ func configAction(ctx *cli.Context) error {
 
 	// Site information.
 	fmt.Printf("%-25s %s\n", "site-url", conf.SiteUrl())
+	fmt.Printf("%-25s %s\n", "site-preview", conf.SitePreview())
 	fmt.Printf("%-25s %s\n", "site-title", conf.SiteTitle())
 	fmt.Printf("%-25s %s\n", "site-caption", conf.SiteCaption())
 	fmt.Printf("%-25s %s\n", "site-description", conf.SiteDescription())

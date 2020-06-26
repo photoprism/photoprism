@@ -30,7 +30,6 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.CreateSession(v1)
 		api.DeleteSession(v1)
 
-		api.GetPreview(v1)
 		api.GetThumbnail(v1)
 		api.GetDownload(v1)
 		api.GetVideo(v1)
@@ -115,10 +114,11 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.Websocket(v1)
 	}
 
-	// Link sharing.
-	share := router.Group("/s")
+	// Configure link sharing.
+	s := router.Group("/s")
 	{
-		api.InitShare(share)
+		api.Shares(s)
+		api.SharePreview(s)
 	}
 
 	// WebDAV server for file management, sync and sharing.

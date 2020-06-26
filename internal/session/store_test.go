@@ -50,7 +50,7 @@ func TestSession_Update(t *testing.T) {
 	assert.Equal(t, cachedData, data)
 
 	newData := Data{
-		User: entity.Guest,
+		User:   entity.Guest,
 		Shares: UIDs{"a000000000000001"},
 	}
 
@@ -71,7 +71,7 @@ func TestSession_Delete(t *testing.T) {
 func TestSession_Get(t *testing.T) {
 	s := New(time.Hour, "testdata")
 	data := Data{
-		User: entity.Guest,
+		User:   entity.Guest,
 		Shares: UIDs{"a000000000000001"},
 	}
 

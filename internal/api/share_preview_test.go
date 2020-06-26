@@ -10,8 +10,8 @@ import (
 func TestGetPreview(t *testing.T) {
 	t.Run("not found", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		GetPreview(router)
-		r := PerformRequest(app, "GET", "/api/v1/preview")
+		SharePreview(router)
+		r := PerformRequest(app, "GET", "/a/1jxf3jfn2k/st9lxuqxpogaaba7/preview")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }

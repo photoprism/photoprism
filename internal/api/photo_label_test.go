@@ -61,7 +61,7 @@ func TestRemovePhotoLabel(t *testing.T) {
 		assert.NotContains(t, val.String(), "cake")
 	})
 	t.Run("photo not found", func(t *testing.T) {
-		app, router, _  := NewApiTest()
+		app, router, _ := NewApiTest()
 		RemovePhotoLabel(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/photos/xxx/label/10000001")
 		val := gjson.Get(r.Body.String(), "error")

@@ -32,6 +32,7 @@ type Params struct {
 	Version            string
 	Copyright          string
 	SiteUrl            string `yaml:"site-url" flag:"site-url"`
+	SitePreview        string `yaml:"site-preview" flag:"site-preview"`
 	SiteTitle          string `yaml:"site-title" flag:"site-title"`
 	SiteCaption        string `yaml:"site-caption" flag:"site-caption"`
 	SiteDescription    string `yaml:"site-description" flag:"site-description"`

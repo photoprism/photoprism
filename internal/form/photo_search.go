@@ -25,7 +25,6 @@ type PhotoSearch struct {
 	Public    bool      `form:"public"`
 	Private   bool      `form:"private"`
 	Favorite  bool      `form:"favorite"`
-	Safe      bool      `form:"safe"`
 	Lat       float32   `form:"lat"`
 	Lng       float32   `form:"lng"`
 	Dist      uint      `form:"dist"`

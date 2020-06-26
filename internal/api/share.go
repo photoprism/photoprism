@@ -1,38 +1,51 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-func shareHandler(c *gin.Context, conf *config.Config) {
-	token := c.Param("token")
-	links := entity.FindLinks(token, "")
-
-	if len(links) == 0 {
-		log.Warnf("sharing: invalid token %s", txt.Quote(token))
-		c.Redirect(http.StatusTemporaryRedirect, "/")
-		return
-	}
-
-	clientConfig := conf.GuestConfig()
-
-	c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig})
-}
-
-func InitShare(router *gin.RouterGroup) {
-	conf := service.Config()
-
+// GET /s/:token/...
+func Shares(router *gin.RouterGroup) {
 	router.GET("/:token", func(c *gin.Context) {
-		shareHandler(c, conf)
+		conf := service.Config()
+
+		shareToken := c.Param("token")
+
+		links := entity.FindValidLinks(shareToken, "")
+
+		if len(links) == 0 {
+			log.Warn("share: invalid token")
+			c.Redirect(http.StatusTemporaryRedirect, "/")
+			return
+		}
+
+		clientConfig := conf.GuestConfig()
+
+		c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig, "previewUrl": clientConfig.SitePreview})
 	})
 
-	router.GET("/:token/*uid", func(c *gin.Context) {
-		shareHandler(c, conf)
+	router.GET("/:token/:uid", func(c *gin.Context) {
+		conf := service.Config()
+
+		shareToken := c.Param("token")
+		shareUID := c.Param("uid")
+
+		links := entity.FindValidLinks(shareToken, shareUID)
+
+		if len(links) != 1 {
+			log.Warn("share: invalid token or uid")
+			c.Redirect(http.StatusTemporaryRedirect, "/")
+			return
+		}
+
+		clientConfig := conf.GuestConfig()
+		sharePreview := fmt.Sprintf("%ss/%s/%s/preview", clientConfig.SiteUrl, shareToken, shareUID)
+
+		c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig, "previewUrl": sharePreview})
 	})
 }

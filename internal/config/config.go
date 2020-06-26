@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 
@@ -108,6 +109,19 @@ func (c *Config) SiteUrl() string {
 	}
 
 	return c.params.SiteUrl
+}
+
+// SitePreview returns the site preview image URL for sharing.
+func (c *Config) SitePreview() string {
+	if c.params.SitePreview == "" {
+		return c.SiteUrl() + "static/img/preview.jpg"
+	}
+
+	if !strings.HasPrefix(c.params.SitePreview, "http") {
+		return c.SiteUrl() + c.params.SitePreview
+	}
+
+	return c.params.SitePreview
 }
 
 // SiteTitle returns the main site title (default is application name).

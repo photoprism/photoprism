@@ -40,7 +40,6 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "webdav-password",
 		Usage:  "WebDAV password (none to disable)",
-		Value:  "",
 		EnvVar: "PHOTOPRISM_WEBDAV_PASSWORD",
 	},
 	cli.IntFlag{
@@ -55,9 +54,14 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "site-url",
-		Usage:  "canonical / public site URL",
+		Usage:  "public site `URL`",
 		Value:  "http://localhost:2342/",
 		EnvVar: "PHOTOPRISM_SITE_URL",
+	},
+	cli.StringFlag{
+		Name:   "site-preview",
+		Usage:  "public preview image `URL`",
+		EnvVar: "PHOTOPRISM_SITE_PREVIEW",
 	},
 	cli.StringFlag{
 		Name:   "site-title",
@@ -67,31 +71,29 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "site-caption",
-		Usage:  "short caption / tagline",
+		Usage:  "short site caption",
 		Value:  "Browse Your Life",
 		EnvVar: "PHOTOPRISM_SITE_CAPTION",
 	},
 	cli.StringFlag{
 		Name:   "site-description",
 		Usage:  "long site description",
-		Value:  "Open-Source Personal Photo Management.",
 		EnvVar: "PHOTOPRISM_SITE_DESCRIPTION",
 	},
 	cli.StringFlag{
 		Name:   "site-author",
-		Usage:  "site owner / copyright",
-		Value:  "Anonymous",
+		Usage:  "site artist or copyright",
 		EnvVar: "PHOTOPRISM_SITE_AUTHOR",
 	},
 	cli.IntFlag{
 		Name:   "http-port",
 		Value:  2342,
-		Usage:  "HTTP server port",
+		Usage:  "http server port `NUMBER``",
 		EnvVar: "PHOTOPRISM_HTTP_PORT",
 	},
 	cli.StringFlag{
 		Name:   "http-host",
-		Usage:  "HTTP server host",
+		Usage:  "http server `IP` address",
 		EnvVar: "PHOTOPRISM_HTTP_HOST",
 	},
 	cli.StringFlag{
@@ -101,14 +103,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "database-driver",
-		Usage:  "database `DRIVER` (sqlite or mysql)",
+		Usage:  "database driver `NAME` (sqlite or mysql)",
 		Value:  "sqlite",
 		EnvVar: "PHOTOPRISM_DATABASE_DRIVER",
 	},
 	cli.StringFlag{
 		Name:   "database-dsn",
-		Usage:  "database data source or file name (`DSN`)",
-		Value:  "",
+		Usage:  "data source or file name (`DSN`)",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
 	cli.IntFlag{
@@ -120,31 +121,27 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "assets-path",
 		Usage:  "assets `PATH` for static files like templates and TensorFlow models",
-		Value:  "",
 		EnvVar: "PHOTOPRISM_ASSETS_PATH",
 	},
 	cli.StringFlag{
 		Name:   "storage-path",
 		Usage:  "storage `PATH` for generated files like cache and index",
-		Value:  "",
 		EnvVar: "PHOTOPRISM_STORAGE_PATH",
 	},
 	cli.StringFlag{
 		Name:   "import-path",
 		Usage:  "optional import `PATH` for copying files to originals",
-		Value:  "",
 		EnvVar: "PHOTOPRISM_IMPORT_PATH",
 	},
 	cli.StringFlag{
 		Name:   "originals-path",
 		Usage:  "originals `PATH` for photo, video and sidecar files",
-		Value:  "",
 		EnvVar: "PHOTOPRISM_ORIGINALS_PATH",
 	},
 	cli.IntFlag{
 		Name:   "originals-limit",
 		Value:  1000,
-		Usage:  "file `SIZE` limit for originals in MB",
+		Usage:  "file size limit for originals in `MEGABYTE`",
 		EnvVar: "PHOTOPRISM_ORIGINALS_LIMIT",
 	},
 	cli.StringFlag{
@@ -163,30 +160,25 @@ var GlobalFlags = []cli.Flag{
 		Name:   "pid-filename",
 		Usage:  "filename for the server process id (pid)",
 		EnvVar: "PHOTOPRISM_PID_FILENAME",
-		Value:  "",
 	},
 	cli.StringFlag{
 		Name:   "cache-path",
 		Usage:  "cache `PATH`",
-		Value:  "",
 		EnvVar: "PHOTOPRISM_CACHE_PATH",
 	},
 	cli.StringFlag{
 		Name:   "temp-path",
 		Usage:  "temporary `PATH` for uploads and downloads",
-		Value:  "",
 		EnvVar: "PHOTOPRISM_TEMP_PATH",
 	},
 	cli.StringFlag{
 		Name:   "config-file, c",
 		Usage:  "load configuration from `FILENAME`",
-		Value:  "",
 		EnvVar: "PHOTOPRISM_CONFIG_FILE",
 	},
 	cli.StringFlag{
 		Name:   "settings-path",
 		Usage:  "settings `PATH`",
-		Value:  "",
 		EnvVar: "PHOTOPRISM_SETTINGS_PATH",
 	},
 	cli.BoolFlag{
@@ -242,7 +234,6 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "sidecar-path",
 		Usage:  "storage `PATH` for automatically created sidecar files (relative or absolute)",
-		Value:  "",
 		EnvVar: "PHOTOPRISM_SIDECAR_PATH",
 	},
 	cli.BoolFlag{
@@ -263,19 +254,18 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "download-token",
-		Usage:  "url `TOKEN` for file downloads",
-		Value:  "",
+		Usage:  "`SECRET` url token for file downloads",
 		EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
 	},
 	cli.StringFlag{
 		Name:   "preview-token",
-		Usage:  "url `TOKEN` for thumbnails and video streaming",
+		Usage:  "`SECRET` url token for thumbnails and video streaming",
 		Value:  "static",
 		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{
 		Name:   "thumb-filter, f",
-		Usage:  "resample filter (best to worst: blackman, lanczos, cubic, linear)",
+		Usage:  "resample filter `NAME` (best to worst: blackman, lanczos, cubic, linear)",
 		Value:  "lanczos",
 		EnvVar: "PHOTOPRISM_THUMB_FILTER",
 	},
@@ -286,19 +276,19 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "thumb-size, s",
-		Usage:  "default thumbnail size limit in pixels (720-3840)",
+		Usage:  "default thumbnail size limit in `PIXELS` (720-3840)",
 		Value:  2048,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE",
 	},
 	cli.IntFlag{
 		Name:   "thumb-limit, x",
-		Usage:  "on-demand thumbnail size limit in pixels (720-3840)",
+		Usage:  "on-demand thumbnail size limit in `PIXELS` (720-3840)",
 		Value:  3840,
 		EnvVar: "PHOTOPRISM_THUMB_LIMIT",
 	},
 	cli.IntFlag{
 		Name:   "jpeg-quality, q",
-		Usage:  "set to 95 for high-quality thumbnails (25-100)",
+		Usage:  "choose 95 for high-quality thumbnails (25-100)",
 		Value:  90,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},
