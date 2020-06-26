@@ -7,7 +7,7 @@
                         <h3 class="headline mb-0">Share {{model.modelName()}}<!-- TODO: translate--></h3>
                     </v-flex>
                     <v-flex xs3 text-xs-right>
-                        <v-btn icon flat dark color="secondary-dark" class="ma-0" @click.stop="add" :title="$gettext('Add Link')">
+                        <v-btn icon flat dark color="secondary-dark" class="ma-0 action-add-link" @click.stop="add" :title="$gettext('Add Link')">
                             <v-icon>add_link</v-icon>
                         </v-btn>
                     </v-flex>
@@ -34,7 +34,8 @@
                                                     hide-details readonly
                                                     color="secondary-dark"
                                                     @click.stop="selectText($event)"
-                                                    v-model="link.url()">
+                                                    v-model="link.url()"
+                                                    class="input-url">
                                             </v-text-field>
                                         </v-flex>
                                         <v-flex xs12 sm6 class="pa-2">
@@ -46,7 +47,9 @@
                                                     item-text="text"
                                                     item-value="value"
                                                     v-model="link.ShareExpires"
-                                                    :items="items.expires">
+                                                    :items="items.expires"
+                                                    class="input-expires"
+                                            >
                                             </v-select>
                                         </v-flex>
                                         <v-flex xs12 sm6 class="pa-2">
@@ -57,6 +60,7 @@
                                                     :placeholder="$gettext('Token')"
                                                     color="secondary-dark"
                                                     v-model="link.ShareToken"
+                                                    class="input-secret"
                                             ></v-text-field>
                                         </v-flex>
                                         <!-- v-flex xs12 sm6 class="pa-2">
@@ -73,13 +77,13 @@
                                             ></v-text-field>
                                         </v-flex -->
                                         <v-flex xs6 text-xs-left class="pa-2">
-                                            <v-btn small icon flat color="remove" class="ma-0"
+                                            <v-btn small icon flat color="remove" class="ma-0 action-delete"
                                                    @click.stop.exact="remove(index)" :title="$gettext('Delete')">
                                                 <v-icon>delete</v-icon>
                                             </v-btn>
                                         </v-flex>
                                         <v-flex xs6 text-xs-right class="pa-2">
-                                            <v-btn small depressed dark color="secondary-dark" class="ma-0"
+                                            <v-btn small depressed dark color="secondary-dark" class="ma-0 action-save"
                                                    @click.stop.exact="update(link)">
                                                 <translate>Save</translate>
                                             </v-btn>
