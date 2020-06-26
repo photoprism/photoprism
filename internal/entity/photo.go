@@ -143,7 +143,7 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 		log.Errorf("photo: %s", err.Error())
 	}
 
-	edited := time.Now().UTC()
+	edited := Timestamp()
 	model.EditedAt = &edited
 	model.PhotoQuality = model.QualityScore()
 
@@ -229,7 +229,7 @@ func (m *Photo) ClassifyLabels() classify.Labels {
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
-		now := time.Now()
+		now := Timestamp()
 
 		if err := scope.SetColumn("TakenAt", now); err != nil {
 			return err
@@ -250,7 +250,7 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 // BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo
 func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
-		now := time.Now()
+		now := Timestamp()
 
 		if err := scope.SetColumn("TakenAt", now); err != nil {
 			return err
@@ -854,7 +854,7 @@ func (m *Photo) Approve() error {
 		return nil
 	}
 
-	edited := time.Now().UTC()
+	edited := Timestamp()
 	m.EditedAt = &edited
 	m.PhotoQuality = m.QualityScore()
 

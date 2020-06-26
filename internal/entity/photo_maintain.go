@@ -98,7 +98,7 @@ func (m *Photo) Maintain() error {
 		return errors.New("photo: can't maintain, id is empty")
 	}
 
-	checked := time.Now()
+	checked := Timestamp()
 	m.CheckedAt = &checked
 
 	m.EstimatePlace()

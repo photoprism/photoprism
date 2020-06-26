@@ -2,7 +2,6 @@ package entity
 
 import (
 	"testing"
-	"time"
 
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/stretchr/testify/assert"
@@ -67,8 +66,8 @@ func TestPlace_Find(t *testing.T) {
 			LocNotes:    "",
 			LocFavorite: false,
 			PhotoCount:  0,
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
+			CreatedAt:   Timestamp(),
+			UpdatedAt:   Timestamp(),
 			New:         false,
 		}
 		err := place.Find()

@@ -14,7 +14,6 @@ var LinkFixtures = LinkMap{
 		CanComment:   true,
 		CanEdit:      false,
 		CreatedAt:    time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
-		UpdatedAt:    time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
 	},
 }
 

@@ -96,8 +96,8 @@ var CameraFixtures = CameraMap{
 		CameraType:        "",
 		CameraDescription: "",
 		CameraNotes:       "",
-		CreatedAt:         time.Now(),
-		UpdatedAt:         time.Now(),
+		CreatedAt:         Timestamp(),
+		UpdatedAt:         Timestamp(),
 		DeletedAt:         nil,
 	},
 }

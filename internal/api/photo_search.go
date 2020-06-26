@@ -45,10 +45,18 @@ func GetPhotos(router *gin.RouterGroup) {
 			return
 		}
 
-		// Guest permissions are limited to shared albums.
-		if s.Guest() && (f.Album == "" || !s.HasShare(f.Album)){
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
-			return
+		// Guests may only see public content in shared albums.
+		if s.Guest() {
+			if f.Album == "" || !s.HasShare(f.Album) {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+				return
+			}
+
+			f.Public = true
+			f.Private = false
+			f.Hidden = false
+			f.Archived = false
+			f.Review = false
 		}
 
 		result, count, err := query.PhotoSearch(f)

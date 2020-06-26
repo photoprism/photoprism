@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/photoprism/photoprism/pkg/s2"
 )
 
@@ -35,8 +33,8 @@ var PlaceFixtures = PlacesMap{
 		LocNotes:    "",
 		LocFavorite: false,
 		PhotoCount:  1,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"zinkwazi": {
 		ID:          s2.TokenPrefix + "1ef744d1e279",
@@ -48,8 +46,8 @@ var PlaceFixtures = PlacesMap{
 		LocNotes:    "africa",
 		LocFavorite: true,
 		PhotoCount:  2,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"holidaypark": {
 		ID:          s2.TokenPrefix + "1ef744d1e280",
@@ -61,8 +59,8 @@ var PlaceFixtures = PlacesMap{
 		LocNotes:    "germany",
 		LocFavorite: true,
 		PhotoCount:  2,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"emptyNameLongCity": {
 		ID:          s2.TokenPrefix + "1ef744d1e281",
@@ -74,8 +72,8 @@ var PlaceFixtures = PlacesMap{
 		LocNotes:    "germany",
 		LocFavorite: true,
 		PhotoCount:  2,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"emptyNameShortCity": {
 		ID:          s2.TokenPrefix + "1ef744d1e282",
@@ -87,8 +85,8 @@ var PlaceFixtures = PlacesMap{
 		LocNotes:    "germany",
 		LocFavorite: true,
 		PhotoCount:  2,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"veryLongLocName": {
 		ID:          s2.TokenPrefix + "1ef744d1e283",
@@ -100,8 +98,8 @@ var PlaceFixtures = PlacesMap{
 		LocNotes:    "germany",
 		LocFavorite: true,
 		PhotoCount:  2,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"mediumLongLocName": {
 		ID:          s2.TokenPrefix + "1ef744d1e284",
@@ -113,8 +111,8 @@ var PlaceFixtures = PlacesMap{
 		LocNotes:    "",
 		LocFavorite: true,
 		PhotoCount:  2,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 }
 

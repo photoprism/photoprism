@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/photoprism/photoprism/pkg/s2"
 )
 
@@ -32,8 +30,8 @@ var LocationFixtures = LocationMap{
 		LocCategory: "botanical garden",
 		Place:       PlaceFixtures.Pointer("mexico"),
 		LocSource:   "places",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"caravan park": {
 		ID:      s2.TokenPrefix + "1ef75a71a36c",
@@ -44,14 +42,14 @@ var LocationFixtures = LocationMap{
 			LocCity:    "Mandeni",
 			LocState:   "KwaZulu-Natal",
 			LocCountry: "za",
-			CreatedAt:  time.Now(),
-			UpdatedAt:  time.Now(),
+			CreatedAt:  Timestamp(),
+			UpdatedAt:  Timestamp(),
 		},
 		LocName:     "Lobotes Caravan Park",
 		LocCategory: "camping",
 		LocSource:   "manual",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"zinkwazi": {
 		ID:          s2.TokenPrefix + "1ef744d1e28c",
@@ -60,8 +58,8 @@ var LocationFixtures = LocationMap{
 		LocName:     "Zinkwazi Beach",
 		LocCategory: "beach",
 		LocSource:   "places",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"hassloch": {
 		ID:          s2.TokenPrefix + "1ef744d1e280",
@@ -70,8 +68,8 @@ var LocationFixtures = LocationMap{
 		LocName:     "Holiday Park",
 		LocCategory: "park",
 		LocSource:   "places",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"emptyNameLongCity": {
 		ID:          s2.TokenPrefix + "1ef744d1e281",
@@ -80,8 +78,8 @@ var LocationFixtures = LocationMap{
 		LocName:     "",
 		LocCategory: "botanical garden",
 		LocSource:   "places",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"emptyNameShortCity": {
 		ID:          s2.TokenPrefix + "1ef744d1e282",
@@ -90,8 +88,8 @@ var LocationFixtures = LocationMap{
 		LocName:     "",
 		LocCategory: "botanical garden",
 		LocSource:   "places",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"veryLongLocName": {
 		ID:          s2.TokenPrefix + "1ef744d1e283",
@@ -100,8 +98,8 @@ var LocationFixtures = LocationMap{
 		LocName:     "longlonglonglonglonglonglonglonglonglonglonglonglongName",
 		LocCategory: "cape",
 		LocSource:   "places",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 	"mediumLongLocName": {
 		ID:          s2.TokenPrefix + "1ef744d1e283",
@@ -110,8 +108,8 @@ var LocationFixtures = LocationMap{
 		LocName:     "longlonglonglonglonglongName",
 		LocCategory: "botanical garden",
 		LocSource:   "places",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   Timestamp(),
+		UpdatedAt:   Timestamp(),
 	},
 }
 

@@ -2,7 +2,6 @@ package entity
 
 import (
 	"database/sql"
-	"time"
 )
 
 type AccountMap map[string]Account
@@ -28,13 +27,13 @@ var AccountFixtures = AccountMap{
 		SyncPath:      "/Photos",
 		SyncStatus:    "",
 		SyncInterval:  3600,
-		SyncDate:      sql.NullTime{Time: time.Now()},
+		SyncDate:      sql.NullTime{Time: Timestamp()},
 		SyncUpload:    true,
 		SyncDownload:  true,
 		SyncFilenames: true,
 		SyncRaw:       true,
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
+		CreatedAt:     Timestamp(),
+		UpdatedAt:     Timestamp(),
 		DeletedAt:     nil,
 	},
 	"webdav-dummy2": {
@@ -57,13 +56,13 @@ var AccountFixtures = AccountMap{
 		SyncPath:      "/Photos",
 		SyncStatus:    "test",
 		SyncInterval:  3600,
-		SyncDate:      sql.NullTime{Time: time.Now()},
+		SyncDate:      sql.NullTime{Time: Timestamp()},
 		SyncUpload:    true,
 		SyncDownload:  true,
 		SyncFilenames: true,
 		SyncRaw:       true,
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
+		CreatedAt:     Timestamp(),
+		UpdatedAt:     Timestamp(),
 		DeletedAt:     nil,
 	},
 }

@@ -36,7 +36,7 @@ func CreateSession(router *gin.RouterGroup) {
 		conf := service.Config()
 
 		if f.HasToken() {
-			links := entity.FindLinks(f.Token, "")
+			links := entity.FindValidLinks(f.Token, "")
 
 			if len(links) == 0 {
 				c.AbortWithStatusJSON(400, gin.H{"error": "Invalid link"})
@@ -46,6 +46,7 @@ func CreateSession(router *gin.RouterGroup) {
 
 			for _, link := range links {
 				data.Shares = append(data.Shares, link.ShareUID)
+				link.Redeem()
 			}
 
 			// Upgrade from anonymous to guest. Don't downgrade.
@@ -85,7 +86,7 @@ func CreateSession(router *gin.RouterGroup) {
 	})
 }
 
-// DELETE /api/v1/session/
+// DELETE /api/v1/session/:id
 func DeleteSession(router *gin.RouterGroup) {
 	router.DELETE("/session/:id", func(c *gin.Context) {
 		id := c.Param("id")

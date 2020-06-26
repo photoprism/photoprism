@@ -97,7 +97,7 @@ func AddPhotoToAlbums(photo string, albums []string) (err error) {
 
 // NewAlbum creates a new album; default name is current month and year
 func NewAlbum(albumTitle, albumType string) *Album {
-	now := time.Now().UTC()
+	now := Timestamp()
 
 	if albumType == "" {
 		albumType = AlbumDefault
@@ -121,7 +121,7 @@ func NewFolderAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 		return nil
 	}
 
-	now := time.Now().UTC()
+	now := Timestamp()
 
 	result := &Album{
 		AlbumOrder:  SortOrderOldest,
@@ -142,7 +142,7 @@ func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 		return nil
 	}
 
-	now := time.Now().UTC()
+	now := Timestamp()
 
 	result := &Album{
 		AlbumOrder:  SortOrderOldest,
@@ -163,7 +163,7 @@ func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 		return nil
 	}
 
-	now := time.Now().UTC()
+	now := Timestamp()
 
 	result := &Album{
 		AlbumOrder:  SortOrderOldest,
@@ -190,7 +190,7 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 		Public: true,
 	}
 
-	now := time.Now().UTC()
+	now := Timestamp()
 
 	result := &Album{
 		AlbumOrder:  SortOrderOldest,

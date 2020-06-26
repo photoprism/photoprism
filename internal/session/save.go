@@ -38,15 +38,15 @@ func New(expiration time.Duration, cachePath string) *Session {
 				var shared []string
 
 				for _, token := range saved.Tokens {
-					links := entity.FindLinks(token, "")
+					links := entity.FindValidLinks(token, "")
 
 					if len(links) > 0 {
 						for _, link := range links {
 							shared = append(shared, link.LinkUID)
 						}
+
 						tokens = append(tokens, token)
 					}
-
 				}
 
 				data := Data{User: *user, Tokens: tokens, Shares: shared}
@@ -64,6 +64,7 @@ func New(expiration time.Duration, cachePath string) *Session {
 	return s
 }
 
+// Stores all sessions in a JSON file.
 func (s *Session) Save() error {
 	if s.cacheFile == "" {
 		return nil
