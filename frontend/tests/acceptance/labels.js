@@ -14,7 +14,7 @@ fixture `Test labels`
 
 const page = new Page();
 
-test('#1 Remove/Activate Add/Delete Label', async t => {
+test('#1 Remove/Activate Add/Delete Label from photo', async t => {
     await t.click(Selector('.p-navigation-labels'));
     const countImportantLabels = await Selector('div.p-label').count;
     await t
@@ -35,7 +35,7 @@ test('#1 Remove/Activate Add/Delete Label', async t => {
     await t
         .expect(PhotoKeywords).contains('beacon')
         .click(Selector('#tab-labels'))
-        .click(Selector('button.action-remove'))
+        .click(Selector('button.action-remove'), {timeout: 5000})
         .typeText(Selector('.input-label input'), 'Test')
         .click(Selector('button.p-photo-label-add'))
         .click(Selector('#tab-details'));
@@ -56,7 +56,7 @@ test('#1 Remove/Activate Add/Delete Label', async t => {
         .click(Selector('div.p-label').withAttribute('data-uid', LabelTest))
         .click(Selector('.action-title-edit').withAttribute('data-uid', PhotoBeacon))
         .click(Selector('#tab-labels'))
-        .click(Selector('.action-delete'))
+        .click(Selector('.action-delete'), {timeout: 5000})
         .click(Selector('.action-on'))
         .click(Selector('#tab-details'));
     const PhotoTitleAfterUndo = await (Selector('.input-title input').value);
