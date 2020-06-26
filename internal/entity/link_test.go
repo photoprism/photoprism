@@ -33,6 +33,16 @@ func TestLink_Expired(t *testing.T) {
 	link.ShareExpires = oneDay * 8
 
 	assert.True(t, link.Expired())
+
+	link.ShareExpires = oneDay
+	link.ShareViews = 9
+	link.MaxViews = 10
+
+	assert.False(t, link.Expired())
+
+	link.Redeem()
+
+	assert.True(t, link.Expired())
 }
 
 func TestLink_Redeem(t *testing.T) {

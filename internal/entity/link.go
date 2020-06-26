@@ -17,6 +17,7 @@ type Link struct {
 	ShareToken   string    `gorm:"type:varbinary(255);unique_index:idx_links_uid_token;" json:"ShareToken"`
 	ShareExpires int       `json:"ShareExpires" yaml:"ShareExpires,omitempty"`
 	ShareViews   uint      `json:"ShareViews" yaml:"-"`
+	MaxViews     uint      `json:"MaxViews" yaml:"-"`
 	HasPassword  bool      `json:"HasPassword" yaml:"HasPassword,omitempty"`
 	CanComment   bool      `json:"CanComment" yaml:"CanComment,omitempty"`
 	CanEdit      bool      `json:"CanEdit" yaml:"CanEdit,omitempty"`
@@ -61,6 +62,10 @@ func (m *Link) Redeem() {
 }
 
 func (m *Link) Expired() bool {
+	if m.MaxViews > 0 && m.ShareViews >= m.MaxViews {
+		return true
+	}
+
 	if m.ShareExpires <= 0 {
 		return false
 	}
