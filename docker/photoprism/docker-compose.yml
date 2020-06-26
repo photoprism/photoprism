@@ -27,8 +27,8 @@ services:
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Canonical / public site URL
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
-      PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Personal Photo Management."
-      PHOTOPRISM_SITE_AUTHOR: "Anonymous"
+      PHOTOPRISM_SITE_DESCRIPTION: ""
+      PHOTOPRISM_SITE_AUTHOR: ""
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_SETTINGS_HIDDEN: "false"            # Users can not view or change settings
