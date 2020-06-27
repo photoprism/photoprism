@@ -26,6 +26,7 @@ func Shares(router *gin.RouterGroup) {
 		}
 
 		clientConfig := conf.GuestConfig()
+		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s", clientConfig.SiteUrl, shareToken)
 
 		c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig})
 	})
@@ -52,7 +53,8 @@ func Shares(router *gin.RouterGroup) {
 		}
 
 		clientConfig := conf.GuestConfig()
-		clientConfig.SitePreview = fmt.Sprintf("%ss/%s/%s/preview", clientConfig.SiteUrl, shareToken, uid)
+		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s/%s", clientConfig.SiteUrl, shareToken, uid)
+		clientConfig.SitePreview = fmt.Sprintf("%s/preview", clientConfig.SiteUrl)
 
 		if a, err := query.AlbumByUID(uid); err == nil {
 			clientConfig.SiteCaption = a.AlbumTitle
