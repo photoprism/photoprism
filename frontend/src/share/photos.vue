@@ -1,74 +1,83 @@
 <template>
-    <div class="p-page p-page-album-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
-         :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div class="p-page p-page-album-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
+       :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <v-form lazy-validation dense
-                ref="form" autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8">
-            <v-toolbar flat color="secondary">
-                <v-toolbar-title>
-                    {{ model.Title }}
-                </v-toolbar-title>
+    <v-form lazy-validation dense
+            ref="form" autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8">
+      <v-toolbar flat color="secondary">
+        <v-toolbar-title>
+          {{ model.Title }}
+        </v-toolbar-title>
 
-                <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
 
-                <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload">
-                    <v-icon>refresh</v-icon>
-                </v-btn>
+        <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload">
+          <v-icon>refresh</v-icon>
+        </v-btn>
 
-                <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')">
-                    <v-icon>view_list</v-icon>
-                </v-btn>
-                <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')">
-                    <v-icon>view_comfy</v-icon>
-                </v-btn>
-                <v-btn icon v-else @click.stop="setView('cards')">
-                    <v-icon>view_column</v-icon>
-                </v-btn>
-            </v-toolbar>
-            <v-card flat class="px-2 py-1"
-                    color="secondary-light"
-                    v-if="model.Description">
-                <v-card-text>
-                    {{ model.Description }}
-                </v-card-text>
-            </v-card>
-        </v-form>
+        <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')">
+          <v-icon>view_list</v-icon>
+        </v-btn>
+        <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')">
+          <v-icon>view_comfy</v-icon>
+        </v-btn>
+        <v-btn icon v-else @click.stop="setView('cards')">
+          <v-icon>view_column</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <template v-if="model.Description">
+        <v-card flat class="px-2 py-1 hidden-sm-and-down"
+                color="secondary-light"
+        >
+          <v-card-text>
+            {{ model.Description }}
+          </v-card-text>
+        </v-card>
+        <v-card flat class="pa-0 hidden-md-and-up"
+                color="secondary-light"
+        >
+          <v-card-text>
+            {{ model.Description }}
+          </v-card-text>
+        </v-card>
+      </template>
+    </v-form>
 
-        <v-container fluid class="pa-4" v-if="loading">
-            <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
-        </v-container>
-        <v-container fluid class="pa-0" v-else>
-            <p-scroll-top></p-scroll-top>
+    <v-container fluid class="pa-4" v-if="loading">
+      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+    </v-container>
+    <v-container fluid class="pa-0" v-else>
+      <p-scroll-top></p-scroll-top>
 
-            <p-photo-clipboard :refresh="refresh"
-                               :selection="selection"
-                               :album="model" context="album"></p-photo-clipboard>
+      <p-photo-clipboard :refresh="refresh"
+                         :selection="selection"
+                         :album="model" context="album"></p-photo-clipboard>
 
-            <p-photo-mosaic v-if="settings.view === 'mosaic'"
-                            :photos="results"
-                            :selection="selection"
-                            :filter="filter"
-                            :album="model"
-                            :edit-photo="editPhoto"
-                            :open-photo="openPhoto"></p-photo-mosaic>
-            <p-photo-list v-else-if="settings.view === 'list'"
-                          :photos="results"
-                          :selection="selection"
-                          :filter="filter"
-                          :album="model"
-                          :open-photo="openPhoto"
-                          :edit-photo="editPhoto"
-                          :open-location="openLocation"></p-photo-list>
-            <p-photo-cards v-else
-                           :photos="results"
-                           :selection="selection"
-                           :filter="filter"
-                           :album="model"
-                           :open-photo="openPhoto"
-                           :edit-photo="editPhoto"
-                           :open-location="openLocation"></p-photo-cards>
-        </v-container>
-    </div>
+      <p-photo-mosaic v-if="settings.view === 'mosaic'"
+                      :photos="results"
+                      :selection="selection"
+                      :filter="filter"
+                      :album="model"
+                      :edit-photo="editPhoto"
+                      :open-photo="openPhoto"></p-photo-mosaic>
+      <p-photo-list v-else-if="settings.view === 'list'"
+                    :photos="results"
+                    :selection="selection"
+                    :filter="filter"
+                    :album="model"
+                    :open-photo="openPhoto"
+                    :edit-photo="editPhoto"
+                    :open-location="openLocation"></p-photo-list>
+      <p-photo-cards v-else
+                     :photos="results"
+                     :selection="selection"
+                     :filter="filter"
+                     :album="model"
+                     :open-photo="openPhoto"
+                     :edit-photo="editPhoto"
+                     :open-location="openLocation"></p-photo-cards>
+    </v-container>
+  </div>
 </template>
 
 <script>
