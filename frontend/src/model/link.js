@@ -36,30 +36,35 @@ export default class Link extends Model {
     getDefaults() {
         return {
             UID: "",
-            ShareUID: "",
-            ShareToken: "",
-            ShareExpires: 0,
+            Share: "",
+            Slug: "",
+            Token: "",
+            Expires: 0,
             Password: "",
             HasPassword: false,
             CanComment: false,
             CanEdit: false,
             CreatedAt: "",
-            UpdatedAt: "",
+            ModifiedAt: "",
         };
     }
 
     url() {
-        let token = this.ShareToken.toLowerCase();
+        let token = this.Token.toLowerCase();
 
         if(!token) {
             token = "...";
         }
 
-        return `${window.location.origin}/s/${token}/${this.ShareUID}`;
+        if(this.hasSlug()) {
+            return `${window.location.origin}/s/${token}/${this.Slug}`;
+        }
+
+        return `${window.location.origin}/s/${token}/${this.Share}`;
     }
 
     caption() {
-        return `/s/${this.ShareToken.toLowerCase()}`;
+        return `/s/${this.Token.toLowerCase()}`;
     }
 
     getId() {
@@ -68,6 +73,14 @@ export default class Link extends Model {
 
     hasId() {
         return !!this.getId();
+    }
+
+    getSlug() {
+        return this.Slug ? this.Slug : "";
+    }
+
+    hasSlug() {
+        return !!this.getSlug();
     }
 
     clone() {
@@ -95,7 +108,7 @@ export default class Link extends Model {
     }
 
     expires() {
-        return DateTime.fromISO(this.UpdatedAt).plus({ seconds: this.ShareExpires }).toLocaleString(DateTime.DATE_SHORT);
+        return DateTime.fromISO(this.UpdatedAt).plus({ seconds: this.Expires }).toLocaleString(DateTime.DATE_SHORT);
     }
 
     static getCollectionResource() {

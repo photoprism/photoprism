@@ -66,10 +66,6 @@ export class Album extends RestModel {
         return this.Slug;
     }
 
-    getId() {
-        return this.UID;
-    }
-
     getTitle() {
         return this.Title;
     }

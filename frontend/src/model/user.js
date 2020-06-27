@@ -70,10 +70,6 @@ export class User extends RestModel {
         return this.FirstName + " " + this.LastName;
     }
 
-    getId() {
-        return this.ID;
-    }
-
     getRegisterForm() {
         return Api.options(this.getEntityResource() + "/register").then(response => Promise.resolve(new Form(response.data)));
     }

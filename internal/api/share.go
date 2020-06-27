@@ -34,9 +34,9 @@ func Shares(router *gin.RouterGroup) {
 		conf := service.Config()
 
 		shareToken := c.Param("token")
-		shareUID := c.Param("uid")
+		share := c.Param("uid")
 
-		links := entity.FindValidLinks(shareToken, shareUID)
+		links := entity.FindValidLinks(shareToken, share)
 
 		if len(links) != 1 {
 			log.Warn("share: invalid token or uid")
@@ -44,10 +44,17 @@ func Shares(router *gin.RouterGroup) {
 			return
 		}
 
-		clientConfig := conf.GuestConfig()
-		clientConfig.SitePreview = fmt.Sprintf("%ss/%s/%s/preview", clientConfig.SiteUrl, shareToken, shareUID)
+		uid := links[0].ShareUID
 
-		if a, err := query.AlbumByUID(shareUID); err == nil {
+		if uid != share {
+			c.Redirect(http.StatusPermanentRedirect, fmt.Sprintf("/s/%s/%s", shareToken, uid))
+			return
+		}
+
+		clientConfig := conf.GuestConfig()
+		clientConfig.SitePreview = fmt.Sprintf("%ss/%s/%s/preview", clientConfig.SiteUrl, shareToken, uid)
+
+		if a, err := query.AlbumByUID(uid); err == nil {
 			clientConfig.SiteCaption = a.AlbumTitle
 
 			if a.AlbumDescription != "" {

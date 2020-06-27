@@ -106,6 +106,7 @@
                 listen: false,
                 dirty: false,
                 results: [],
+                allResults: [],
                 scrollDisabled: true,
                 pageSize: 60,
                 offset: 0,
@@ -197,8 +198,41 @@
                 } else if (showMerged) {
                     this.$viewer.show(Thumb.fromFiles([this.results[index]]), 0)
                 } else {
-                    this.$viewer.show(Thumb.fromPhotos(this.results), index);
+                    this.findAll().then((results) => {
+                        this.$viewer.show(Thumb.fromPhotos(results), index);
+                    });
                 }
+            },
+            findAll() {
+                if(this.scrollDisabled) {
+                    return Promise.resolve(this.results);
+                }
+
+                if(this.allResults && !this.dirty) {
+                    return Promise.resolve(this.allResults);
+                }
+
+                const count = Photo.limit();
+                const offset = 0;
+
+                const params = {
+                    count: count,
+                    offset: offset,
+                    merged: true,
+                };
+
+                Object.assign(params, this.lastFilter);
+
+                if (this.staticFilter) {
+                    Object.assign(params, this.staticFilter);
+                }
+
+                return Photo.search(params).then(resp => {
+                    this.allResults = resp.models
+                    return Promise.resolve(this.allResults);
+                }).catch(() => {
+                    return Promise.resolve(this.results);
+                });
             },
             loadMore() {
                 if (this.scrollDisabled) return;

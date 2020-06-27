@@ -35,11 +35,15 @@ import Link from "./link";
 
 export class Rest extends Model {
     getId() {
-        return this.ID;
+        return this.UID ? this.UID : this.ID;
     }
 
     hasId() {
         return !!this.getId();
+    }
+
+    getSlug() {
+        return this.Slug ? this.Slug : "";
     }
 
     clone() {
@@ -86,7 +90,8 @@ export class Rest extends Model {
         return Api
             .post(this.getEntityResource() + "/links", {
                 "Password": password ? password : "",
-                "ShareExpires": expires ? expires : 0,
+                "Expires": expires ? expires : 0,
+                "Slug": this.getSlug(),
                 "CanEdit": false,
                 "CanComment": false,
             })
@@ -146,6 +151,10 @@ export class Rest extends Model {
 
     static getSearchForm() {
         return Api.options(this.getCollectionResource()).then(resp => Promise.resolve(new Form(resp.data)));
+    }
+
+    static limit() {
+        return 3333;
     }
 
     static search(params) {

@@ -92,7 +92,7 @@
                 uid: uid,
                 results: [],
                 scrollDisabled: true,
-                pageSize: 120,
+                pageSize: 60,
                 offset: 0,
                 page: 0,
                 selection: this.$clipboard.selection,
@@ -157,10 +157,40 @@
                 } else if (showMerged) {
                     this.$viewer.show(Thumb.fromFiles([this.results[index]]), 0)
                 } else {
-                    this.$viewer.show(Thumb.fromPhotos(this.results), index);
+                    this.findAll().then((results) => {
+                        this.$viewer.show(Thumb.fromPhotos(results), index);
+                    });
                 }
 
                 return true;
+            },
+            findAll() {
+                if(this.scrollDisabled) {
+                    return Promise.resolve(this.results);
+                }
+
+                const count = Photo.limit();
+                const offset = 0;
+
+                const params = {
+                    count: count,
+                    offset: offset,
+                    album: this.uid,
+                    filter: this.model.Filter ? this.model.Filter : "",
+                    merged: true,
+                };
+
+                Object.assign(params, this.lastFilter);
+
+                if (this.staticFilter) {
+                    Object.assign(params, this.staticFilter);
+                }
+
+                return Photo.search(params).then(resp => {
+                    return Promise.resolve(resp.models);
+                }).catch(() => {
+                    return Promise.resolve(this.results);
+                });
             },
             loadMore() {
                 if (this.scrollDisabled) return;

@@ -85,10 +85,6 @@ export class Folder extends RestModel {
         return this.Root + "/" + this.Path;
     }
 
-    getId() {
-        return this.UID;
-    }
-
     thumbnailUrl() {
         return "/api/v1/svg/folder";
     }

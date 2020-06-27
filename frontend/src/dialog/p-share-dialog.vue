@@ -20,7 +20,8 @@
             <template v-slot:header>
               <button class="text-xs-left action-url ml-0 mt-0 mb-0 pa-0 mr-2" @click.stop="copyUrl(link)" style="user-select: none;">
                 <v-icon size="16" class="pr-1">link</v-icon>
-                /s/<strong style="font-weight: 500;" v-if="link.ShareToken">{{ link.ShareToken.toLowerCase() }}</strong><span v-else>...</span>
+                /s/<strong style="font-weight: 500;" v-if="link.Token">{{ link.Token.toLowerCase()
+                }}</strong><span v-else>...</span>
               </button>
             </template>
             <v-card>
@@ -46,7 +47,7 @@
                               color="secondary-dark"
                               item-text="text"
                               item-value="value"
-                              v-model="link.ShareExpires"
+                              v-model="link.Expires"
                               :items="items.expires"
                               class="input-expires"
                       >
@@ -59,7 +60,7 @@
                               :label="$gettext('Secret')"
                               :placeholder="$gettext('Token')"
                               color="secondary-dark"
-                              v-model="link.ShareToken"
+                              v-model="link.Token"
                               class="input-secret"
                       ></v-text-field>
                     </v-flex>
@@ -171,7 +172,7 @@
             expires(link) {
                 let result = this.$gettext('Expires');
 
-                if (link.ShareExpires <= 0) {
+                if (link.Expires <= 0) {
                     return result
                 }
 

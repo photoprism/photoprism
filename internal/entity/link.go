@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 type Links []Link
@@ -13,9 +16,10 @@ type Links []Link
 // Link represents a sharing link.
 type Link struct {
 	LinkUID      string    `gorm:"type:varbinary(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
-	ShareUID     string    `gorm:"type:varbinary(42);unique_index:idx_links_uid_token;" json:"ShareUID"`
-	ShareToken   string    `gorm:"type:varbinary(255);unique_index:idx_links_uid_token;" json:"ShareToken"`
-	ShareExpires int       `json:"ShareExpires" yaml:"ShareExpires,omitempty"`
+	ShareUID     string    `gorm:"type:varbinary(42);unique_index:idx_links_uid_token;" json:"Share" yaml:"Share"`
+	ShareSlug    string    `gorm:"type:varbinary(255);index;" json:"Slug" yaml:"Slug,omitempty"`
+	ShareToken   string    `gorm:"type:varbinary(255);unique_index:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
+	ShareExpires int       `json:"Expires" yaml:"Expires,omitempty"`
 	ShareViews   uint      `json:"ShareViews" yaml:"-"`
 	MaxViews     uint      `json:"MaxViews" yaml:"-"`
 	HasPassword  bool      `json:"HasPassword" yaml:"HasPassword,omitempty"`
@@ -74,6 +78,10 @@ func (m *Link) Expired() bool {
 	expires := m.ModifiedAt.Add(Seconds(m.ShareExpires))
 
 	return now.Before(expires)
+}
+
+func (m *Link) SetSlug(s string) {
+	m.ShareSlug = slug.Make(txt.Clip(s, txt.ClipSlug))
 }
 
 func (m *Link) SetPassword(password string) error {
@@ -140,8 +148,8 @@ func FindLink(linkUID string) *Link {
 }
 
 // FindLinks returns a slice of links for a token and share UID (at least one must be provided).
-func FindLinks(shareToken, shareUID string) (result Links) {
-	if shareToken == "" && shareUID == "" {
+func FindLinks(shareToken, share string) (result Links) {
+	if shareToken == "" && share == "" {
 		log.Errorf("link: share token and uid must not be empty at the same time (find links)")
 		return []Link{}
 	}
@@ -152,8 +160,12 @@ func FindLinks(shareToken, shareUID string) (result Links) {
 		q = q.Where("share_token = ?", shareToken)
 	}
 
-	if shareUID != "" {
-		q = q.Where("share_uid = ?", shareUID)
+	if share != "" {
+		if rnd.IsPPID(share, 'a') {
+			q = q.Where("share_uid = ?", share)
+		} else {
+			q = q.Where("share_slug = ?", share)
+		}
 	}
 
 	if err := q.Find(&result).Error; err != nil {

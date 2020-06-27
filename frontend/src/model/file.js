@@ -98,10 +98,6 @@ export class File extends RestModel {
         return this.Root + "/" + this.Name;
     }
 
-    getId() {
-        return this.UID;
-    }
-
     thumbnailUrl(type) {
         if(this.Error) {
             return "/api/v1/svg/broken";

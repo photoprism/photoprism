@@ -31,6 +31,8 @@ func UpdateLink(c *gin.Context) {
 
 	link := entity.FindLink(c.Param("link"))
 
+	link.SetSlug(f.ShareSlug)
+	link.MaxViews = f.MaxViews
 	link.ShareExpires = f.ShareExpires
 
 	if f.ShareToken != "" {
@@ -93,9 +95,9 @@ func CreateLink(c *gin.Context) {
 
 	link := entity.NewLink(c.Param("uid"), f.CanComment, f.CanEdit)
 
-	if f.ShareExpires > 0 {
-		link.ShareExpires = f.ShareExpires
-	}
+	link.SetSlug(f.ShareSlug)
+	link.MaxViews = f.MaxViews
+	link.ShareExpires = f.ShareExpires
 
 	if f.Password != "" {
 		if err := link.SetPassword(f.Password); err != nil {

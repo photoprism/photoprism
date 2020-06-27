@@ -57,7 +57,7 @@ class Viewer {
 
     show(items, index = 0) {
         if (!Array.isArray(items) || items.length === 0 || index >= items.length) {
-            console.log("Array passed to gallery was empty:", items);
+            console.log("photo list passed to gallery was empty:", items);
             return;
         }
 

@@ -49,7 +49,7 @@ export class Account extends RestModel {
             RetryLimit: 3,
             SharePath: "/",
             ShareSize: "",
-            ShareExpires: 0,
+            Expires: 0,
             SyncPath: "/",
             SyncStatus: "",
             SyncInterval: 86400,

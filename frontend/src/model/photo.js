@@ -146,10 +146,6 @@ export class Photo extends RestModel {
         return this.Title;
     }
 
-    getId() {
-        return this.UID;
-    }
-
     getTitle() {
         return this.Title;
     }

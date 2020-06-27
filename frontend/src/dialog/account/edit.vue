@@ -103,13 +103,13 @@
           <v-flex xs12 sm6 class="pa-2">
             <v-select
                     :disabled="!model.AccShare"
-                    :label="label.ShareExpires"
+                    :label="label.Expires"
                     browser-autocomplete="off"
                     hide-details
                     color="secondary-dark"
                     item-text="text"
                     item-value="value"
-                    v-model="model.ShareExpires"
+                    v-model="model.Expires"
                     :items="items.expires">
             </v-select>
           </v-flex>
@@ -346,7 +346,7 @@
                     AccType: this.$gettext("Type"),
                     SharePath: this.$gettext("Default Folder"),
                     ShareSize: this.$gettext("Size"),
-                    ShareExpires: this.$gettext("Expires"),
+                    Expires: this.$gettext("Expires"),
                     SyncPath: this.$gettext("Folder"),
                     SyncInterval: this.$gettext("Interval"),
                     SyncFilenames: this.$gettext("Preserve filenames"),
