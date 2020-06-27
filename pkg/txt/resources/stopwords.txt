@@ -29,6 +29,10 @@ download
 downloads
 edit
 edited
+unknown
+title
+caption
+description
 temp
 var
 lib
