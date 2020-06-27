@@ -32,6 +32,8 @@ var StopWords = map[string]bool{
 	"uploads":          true,
 	"download":         true,
 	"downloads":        true,
+	"edit":             true,
+	"edited":           true,
 	"temp":             true,
 	"var":              true,
 	"lib":              true,

@@ -27,6 +27,8 @@ upload
 uploads
 download
 downloads
+edit
+edited
 temp
 var
 lib
