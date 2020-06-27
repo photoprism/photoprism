@@ -11,9 +11,9 @@
                     tile
                     :size="28"
                     class="clickable"
-                    @click.stop.prevent="goHome"
+                    @click.stop.prevent="openDocs"
             >
-                <img src="/static/img/logo-white.svg" alt="Logo">
+                <img src="/static/img/logo-white.svg" alt="PhotoPrism">
             </v-avatar>
         </v-toolbar>
         <v-toolbar dark flat color="navigation darken-1">

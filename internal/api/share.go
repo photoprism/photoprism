@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 )
 
@@ -26,7 +27,7 @@ func Shares(router *gin.RouterGroup) {
 
 		clientConfig := conf.GuestConfig()
 
-		c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig, "previewUrl": clientConfig.SitePreview})
+		c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig})
 	})
 
 	router.GET("/:token/:uid", func(c *gin.Context) {
@@ -44,8 +45,16 @@ func Shares(router *gin.RouterGroup) {
 		}
 
 		clientConfig := conf.GuestConfig()
-		sharePreview := fmt.Sprintf("%ss/%s/%s/preview", clientConfig.SiteUrl, shareToken, shareUID)
+		clientConfig.SitePreview = fmt.Sprintf("%ss/%s/%s/preview", clientConfig.SiteUrl, shareToken, shareUID)
 
-		c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig, "previewUrl": sharePreview})
+		if a, err := query.AlbumByUID(shareUID); err == nil {
+			clientConfig.SiteCaption = a.AlbumTitle
+
+			if a.AlbumDescription != "" {
+				clientConfig.SiteDescription = a.AlbumDescription
+			}
+		}
+
+		c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig})
 	})
 }

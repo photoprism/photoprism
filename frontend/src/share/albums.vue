@@ -88,25 +88,12 @@
                                         {{ album.Title }}
                                     </h3>
                                 </v-card-title>
-                                <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc" v-if="album.Description">
-                                    <div class="caption" title="Description">
+                                <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc">
+                                    <div class="caption" title="Description" v-if="album.Description">
                                         {{ album.Description }}
                                     </div>
-                                </v-card-text>
-                                <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc"
-                                             v-else-if="album.Type === 'album'">
-                                    <div v-if="album.PhotoCount === 1" class="caption">
-                                        <translate>Contains one photo.</translate>
-                                    </div>
-                                    <div v-else-if="album.PhotoCount > 0" class="caption">
-                                        <translate>Contains</translate>
-                                        {{album.PhotoCount}}
-                                        <translate>photos.</translate>
-                                    </div>
-                                    <div v-else class="caption">
-                                        <router-link :to="{name: 'photos'}" class="text-link">
-                                            <translate>Empty album.</translate>
-                                        </router-link>
+                                    <div class="caption" title="Description" v-else>
+                                        <translate>Shared with you.</translate>
                                     </div>
                                 </v-card-text>
                             </v-card>

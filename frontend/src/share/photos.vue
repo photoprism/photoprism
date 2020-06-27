@@ -6,12 +6,6 @@
                 ref="form" autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8">
             <v-toolbar flat color="secondary">
                 <v-toolbar-title>
-                    <router-link :to="{ name: 'albums', params: { token: token } }">
-                        <translate>Albums</translate>
-                    </router-link>
-
-                    <v-icon>navigate_next</v-icon>
-
                     {{ model.Title }}
                 </v-toolbar-title>
 
@@ -31,6 +25,13 @@
                     <v-icon>view_column</v-icon>
                 </v-btn>
             </v-toolbar>
+            <v-card flat class="px-2 py-1"
+                    color="secondary-light"
+                    v-if="model.Description">
+                <v-card-text>
+                    {{ model.Description }}
+                </v-card-text>
+            </v-card>
         </v-form>
 
         <v-container fluid class="pa-4" v-if="loading">
@@ -334,7 +335,7 @@
                     this.model = m;
 
                     this.filter.order = m.Order;
-                    window.document.title = `${this.$config.get("siteTitle")}: ${this.model.Title}`;
+                    window.document.title = this.model.Title;
 
                     return Promise.resolve(this.model)
                 });

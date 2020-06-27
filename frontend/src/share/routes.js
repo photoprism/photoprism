@@ -11,14 +11,14 @@ export default [
         name: "albums",
         path: "/s/:token",
         component: Albums,
-        meta: {title: "PhotoPrism", auth: true},
+        meta: {title: "Albums", auth: true},
         props: {view: "album", staticFilter: {type: "album"}},
     },
     {
         name: "album",
         path: "/s/:token/:uid",
         component: AlbumPhotos,
-        meta: {title: "PhotoPrism", auth: true},
+        meta: {title: "Albums", auth: true},
     },
     {
         path: "*", redirect: {name: "albums"},

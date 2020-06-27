@@ -8,17 +8,17 @@
   <title>{{ .config.SiteTitle }}</title>
 
   <meta property="og:url" content="{{ .config.SiteUrl }}"/>
-  <meta property="og:title" content="{{ .config.SiteTitle }}: {{ .config.SiteCaption }}"/>
+  <meta property="og:title" content="{{ .config.SiteTitle }}{{if .config.SiteCaption}}: {{ .config.SiteCaption }}{{end}}"/>
   <meta property="og:image" content="{{ .config.SitePreview }}"/>
   <meta property="og:description" content="{{ .config.SiteDescription }}"/>
 
   <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="{{ .config.SiteTitle }}: {{ .config.SiteCaption }}"/>
+  <meta name="twitter:title" content="{{ .config.SiteTitle }}{{if .config.SiteCaption}}: {{ .config.SiteCaption }}{{end}}"/>
   <meta name="twitter:image" content="{{ .config.SitePreview }}"/>
   <meta name="twitter:description" content="{{ .config.SiteDescription }}"/>
 
-  <meta name="author" content="{{ .config.SiteAuthor }}">
-  <meta name="description" content="{{ .config.SiteDescription }}"/>
+  {{if .config.SiteAuthor}}<meta name="author" content="{{ .config.SiteAuthor }}">{{end}}
+  {{if .config.SiteDescription}}<meta name="description" content="{{ .config.SiteDescription }}"/>{{end}}
 
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/static/img/favicon.png">
