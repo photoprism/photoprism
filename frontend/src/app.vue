@@ -1,20 +1,20 @@
 <template>
-    <div id="photoprism">
-        <p-loading-bar height="4"></p-loading-bar>
+  <div id="photoprism">
+    <p-loading-bar height="4"></p-loading-bar>
 
-        <p-notify></p-notify>
+    <p-notify></p-notify>
 
-        <v-app :class="$route.meta.background">
-            <p-navigation></p-navigation>
+    <v-app :class="$route.meta.background">
+      <p-navigation></p-navigation>
 
-            <v-content>
-                <router-view></router-view>
-            </v-content>
-        </v-app>
+      <v-content>
+        <router-view></router-view>
+      </v-content>
+    </v-app>
 
-        <p-photo-viewer></p-photo-viewer>
-        <p-video-dialog></p-video-dialog>
-    </div>
+    <p-photo-viewer></p-photo-viewer>
+    <p-video-dialog></p-video-dialog>
+  </div>
 </template>
 
 <script>
@@ -57,6 +57,6 @@
         destroyed() {
             window.removeEventListener('touchstart', (e) => this.onTouchStart(e), false);
             window.removeEventListener('touchmove', (e) => this.onTouchMove(e), false);
-       },
+        },
     };
 </script>

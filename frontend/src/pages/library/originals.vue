@@ -1,87 +1,87 @@
 <template>
-    <div class="p-tab p-tab-index">
-        <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit" dense>
-            <v-container fluid>
-                <p class="subheading">
-                    <span v-if="fileName">{{ action }} {{ fileName }}...</span>
-                    <span v-else-if="busy">{{ $gettext('Indexing photos and sidecar files...') }}</span>
-                    <span v-else-if="completed">{{ $gettext('Done.') }}</span>
-                    <span v-else>{{ $gettext('Press button to start indexing...') }}</span>
-                </p>
+  <div class="p-tab p-tab-index">
+    <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit" dense>
+      <v-container fluid>
+        <p class="subheading">
+          <span v-if="fileName">{{ action }} {{ fileName }}...</span>
+          <span v-else-if="busy">{{ $gettext('Indexing photos and sidecar files...') }}</span>
+          <span v-else-if="completed">{{ $gettext('Done.') }}</span>
+          <span v-else>{{ $gettext('Press button to start indexing...') }}</span>
+        </p>
 
-                <v-autocomplete
-                        @change="onChange"
-                        color="secondary-dark"
-                        class="my-3 input-index-folder"
-                        hide-details hide-no-data flat solo
-                        v-model="settings.index.path"
-                        browser-autocomplete="off"
-                        :items="dirs"
-                        :loading="loading"
-                        :disabled="busy || loading"
-                        item-text="name"
-                        item-value="path"
-                >
-                </v-autocomplete>
+        <v-autocomplete
+                @change="onChange"
+                color="secondary-dark"
+                class="my-3 input-index-folder"
+                hide-details hide-no-data flat solo
+                v-model="settings.index.path"
+                browser-autocomplete="off"
+                :items="dirs"
+                :loading="loading"
+                :disabled="busy || loading"
+                item-text="name"
+                item-value="path"
+        >
+        </v-autocomplete>
 
-                <p class="options">
-                    <v-progress-linear color="secondary-dark" :value="completed"
-                                       :indeterminate="busy"></v-progress-linear>
-                </p>
+        <p class="options">
+          <v-progress-linear color="secondary-dark" :value="completed"
+                             :indeterminate="busy"></v-progress-linear>
+        </p>
 
-                <v-layout wrap align-top class="pb-3">
-                    <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
-                        <v-checkbox
-                                @change="onChange"
-                                :disabled="busy"
-                                class="ma-0 pa-0"
-                                v-model="settings.index.rescan"
-                                color="secondary-dark"
-                                :label="labels.rescan"
-                                :hint="hints.rescan"
-                                prepend-icon="cached"
-                                persistent-hint
-                        >
-                        </v-checkbox>
-                    </v-flex>
-                </v-layout>
+        <v-layout wrap align-top class="pb-3">
+          <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-checkbox
+                    @change="onChange"
+                    :disabled="busy"
+                    class="ma-0 pa-0"
+                    v-model="settings.index.rescan"
+                    color="secondary-dark"
+                    :label="labels.rescan"
+                    :hint="hints.rescan"
+                    prepend-icon="cached"
+                    persistent-hint
+            >
+            </v-checkbox>
+          </v-flex>
+        </v-layout>
 
-                <v-btn
-                        :disabled="!busy"
-                        color="secondary-dark"
-                        class="white--text ml-0 mt-2 action-cancel"
-                        depressed
-                        @click.stop="cancelIndexing()"
-                >
-                    <translate>Cancel</translate>
-                </v-btn>
+        <v-btn
+                :disabled="!busy"
+                color="secondary-dark"
+                class="white--text ml-0 mt-2 action-cancel"
+                depressed
+                @click.stop="cancelIndexing()"
+        >
+          <translate>Cancel</translate>
+        </v-btn>
 
-                <v-btn
-                        :disabled="busy"
-                        color="secondary-dark"
-                        class="white--text ml-0 mt-2 action-index"
-                        depressed
-                        @click.stop="startIndexing()"
-                >
-                    <translate>Index</translate>
-                    <v-icon right dark>update</v-icon>
-                </v-btn>
+        <v-btn
+                :disabled="busy"
+                color="secondary-dark"
+                class="white--text ml-0 mt-2 action-index"
+                depressed
+                @click.stop="startIndexing()"
+        >
+          <translate>Index</translate>
+          <v-icon right dark>update</v-icon>
+        </v-btn>
 
-                <v-alert
-                        :value="true"
-                        color="error"
-                        icon="priority_high"
-                        class="mt-3"
-                        outline
-                        v-if="config.count.hidden > 1"
-                >
-                    The index currently contains {{ config.count.hidden }} hidden files. Their format may not be
-                    supported,
-                    they haven't been converted to JPEG yet or there are duplicates.
-                </v-alert>
-            </v-container>
-        </v-form>
-    </div>
+        <v-alert
+                :value="true"
+                color="error"
+                icon="priority_high"
+                class="mt-3"
+                outline
+                v-if="config.count.hidden > 1"
+        >
+          The index currently contains {{ config.count.hidden }} hidden files. Their format may not be
+          supported,
+          they haven't been converted to JPEG yet or there are duplicates.
+        </v-alert>
+      </v-container>
+    </v-form>
+  </div>
 </template>
 
 <script>

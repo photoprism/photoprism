@@ -1,32 +1,32 @@
 <template>
-    <div class="p-page p-page-settings">
-        <v-tabs
-                v-model="active"
-                flat
-                grow
-                touchless
-                color="secondary"
-                slider-color="secondary-dark"
-                height="64"
-        >
-            <v-tab id="tab-settings-general" ripple @click="changePath('/settings')">
-                <translate key="General">General</translate>
-            </v-tab>
+  <div class="p-page p-page-settings">
+    <v-tabs
+            v-model="active"
+            flat
+            grow
+            touchless
+            color="secondary"
+            slider-color="secondary-dark"
+            height="64"
+    >
+      <v-tab id="tab-settings-general" ripple @click="changePath('/settings')">
+        <translate key="General">General</translate>
+      </v-tab>
 
-            <v-tab id="tab-settings-accounts" ripple @click="changePath('/settings/accounts')">
-                <translate key="Sync">Sync</translate>
-            </v-tab>
+      <v-tab id="tab-settings-accounts" ripple @click="changePath('/settings/accounts')">
+        <translate key="Sync">Sync</translate>
+      </v-tab>
 
-            <v-tabs-items touchless>
-                <v-tab-item lazy>
-                    <p-settings-general></p-settings-general>
-                </v-tab-item>
-                <v-tab-item lazy>
-                    <p-settings-accounts></p-settings-accounts>
-                </v-tab-item>
-            </v-tabs-items>
-        </v-tabs>
-    </div>
+      <v-tabs-items touchless>
+        <v-tab-item lazy>
+          <p-settings-general></p-settings-general>
+        </v-tab-item>
+        <v-tab-item lazy>
+          <p-settings-accounts></p-settings-accounts>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-tabs>
+  </div>
 </template>
 
 <script>

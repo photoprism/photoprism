@@ -1,22 +1,22 @@
 <template>
-    <v-snackbar
-            id="p-notify"
-            v-model="visible"
-            :color="color"
-            :timeout="0"
-            :class="textColor"
-            :bottom="true"
+  <v-snackbar
+          id="p-notify"
+          v-model="visible"
+          :color="color"
+          :timeout="0"
+          :class="textColor"
+          :bottom="true"
+  >
+    {{ text }}
+    <v-btn
+            :class="textColor + ' pr-0'"
+            icon
+            flat
+            @click="close"
     >
-        {{ text }}
-        <v-btn
-                :class="textColor + ' pr-0'"
-                icon
-                flat
-                @click="close"
-        >
-            <v-icon>close</v-icon>
-        </v-btn>
-    </v-snackbar>
+      <v-icon>close</v-icon>
+    </v-btn>
+  </v-snackbar>
 </template>
 <script>
     import Event from 'pubsub-js';
@@ -106,7 +106,7 @@
 
                 this.messages.push(m);
 
-                if(!this.visible) {
+                if (!this.visible) {
                     this.show();
                 }
             },
@@ -118,7 +118,7 @@
             show: function () {
                 const message = this.messages.shift();
 
-                if(message) {
+                if (message) {
                     this.text = message.msg;
                     this.color = message.color;
                     this.textColor = message.textColor;
@@ -127,7 +127,7 @@
                     setTimeout(() => {
                         this.lastMessage = '';
                         this.show();
-                    },  message.delay);
+                    }, message.delay);
                 } else {
                     this.visible = false;
                     this.text = '';

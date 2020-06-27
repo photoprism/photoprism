@@ -1,47 +1,47 @@
 <template>
-    <div>
-        <v-container fluid class="pa-0" v-if="selection.length > 0">
-            <v-speed-dial
-                    fixed bottom right
-                    direction="top"
-                    v-model="expanded"
-                    transition="slide-y-reverse-transition"
-                    class="p-clipboard p-photo-clipboard"
-                    id="t-clipboard"
-            >
-                <v-btn
-                        fab dark
-                        slot="activator"
-                        color="accent darken-2"
-                        class="action-menu"
-                >
-                    <v-icon v-if="selection.length === 0">menu</v-icon>
-                    <span v-else class="count-clipboard">{{ selection.length }}</span>
-                </v-btn>
+  <div>
+    <v-container fluid class="pa-0" v-if="selection.length > 0">
+      <v-speed-dial
+              fixed bottom right
+              direction="top"
+              v-model="expanded"
+              transition="slide-y-reverse-transition"
+              class="p-clipboard p-photo-clipboard"
+              id="t-clipboard"
+      >
+        <v-btn
+                fab dark
+                slot="activator"
+                color="accent darken-2"
+                class="action-menu"
+        >
+          <v-icon v-if="selection.length === 0">menu</v-icon>
+          <span v-else class="count-clipboard">{{ selection.length }}</span>
+        </v-btn>
 
-                <v-btn
-                        fab dark small
-                        :title="labels.download"
-                        color="download"
-                        @click.stop="download()"
-                        :disabled="!$config.feature('download')"
-                        v-if="context !== 'archive'"
-                        class="action-download"
-                >
-                    <v-icon>get_app</v-icon>
-                </v-btn>
+        <v-btn
+                fab dark small
+                :title="labels.download"
+                color="download"
+                @click.stop="download()"
+                :disabled="!$config.feature('download')"
+                v-if="context !== 'archive'"
+                class="action-download"
+        >
+          <v-icon>get_app</v-icon>
+        </v-btn>
 
-                <v-btn
-                        fab dark small
-                        color="accent"
-                        @click.stop="clearClipboard()"
-                        class="action-clear"
-                >
-                    <v-icon>clear</v-icon>
-                </v-btn>
-            </v-speed-dial>
-        </v-container>
-    </div>
+        <v-btn
+                fab dark small
+                color="accent"
+                @click.stop="clearClipboard()"
+                class="action-clear"
+        >
+          <v-icon>clear</v-icon>
+        </v-btn>
+      </v-speed-dial>
+    </v-container>
+  </div>
 </template>
 <script>
     import Api from "common/api";

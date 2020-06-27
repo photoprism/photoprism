@@ -1,95 +1,95 @@
 <template>
-    <div class="p-tab p-tab-import">
-        <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
-            <v-container fluid>
-                <p class="subheading">
-                    <span v-if="fileName">{{ $gettext('Importing') }} {{fileName}}...</span>
-                    <span v-else-if="busy">{{ $gettext('Importing files to originals...') }}</span>
-                    <span v-else-if="completed">{{ $gettext('Done.') }}</span>
-                    <span v-else-if="settings.import.move">{{ $gettext('Press button to start moving...') }}</span>
-                    <span v-else>{{ $gettext('Press button to start copying...') }}</span>
-                </p>
+  <div class="p-tab p-tab-import">
+    <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
+      <v-container fluid>
+        <p class="subheading">
+          <span v-if="fileName">{{ $gettext('Importing') }} {{fileName}}...</span>
+          <span v-else-if="busy">{{ $gettext('Importing files to originals...') }}</span>
+          <span v-else-if="completed">{{ $gettext('Done.') }}</span>
+          <span v-else-if="settings.import.move">{{ $gettext('Press button to start moving...') }}</span>
+          <span v-else>{{ $gettext('Press button to start copying...') }}</span>
+        </p>
 
-                <v-autocomplete
-                        @change="onChange"
-                        color="secondary-dark"
-                        class="my-3 input-import-folder"
-                        hide-details hide-no-data flat solo
-                        v-model="settings.import.path"
-                        browser-autocomplete="off"
-                        :items="dirs"
-                        :loading="loading"
-                        :disabled="busy || loading"
-                        item-text="name"
-                        item-value="path"
-                >
-                </v-autocomplete>
+        <v-autocomplete
+                @change="onChange"
+                color="secondary-dark"
+                class="my-3 input-import-folder"
+                hide-details hide-no-data flat solo
+                v-model="settings.import.path"
+                browser-autocomplete="off"
+                :items="dirs"
+                :loading="loading"
+                :disabled="busy || loading"
+                item-text="name"
+                item-value="path"
+        >
+        </v-autocomplete>
 
-                <p class="options">
-                    <v-progress-linear color="secondary-dark" :value="completed"
-                                       :indeterminate="busy"></v-progress-linear>
-                </p>
+        <p class="options">
+          <v-progress-linear color="secondary-dark" :value="completed"
+                             :indeterminate="busy"></v-progress-linear>
+        </p>
 
-                <v-layout wrap align-top class="pb-2">
-                    <v-flex xs12 class="px-2 pb-2 pt-2">
-                        <v-checkbox
-                                @change="onChange"
-                                :disabled="busy"
-                                class="ma-0 pa-0"
-                                v-model="settings.import.move"
-                                color="secondary-dark"
-                                :label="labels.move"
-                                :hint="hints.move"
-                                prepend-icon="delete"
-                                persistent-hint
-                        >
-                        </v-checkbox>
-                    </v-flex>
-                    <v-flex xs12 class="px-2 pb-2 pt-2">
-                        <p class="body-1 pt-2">
-                            <translate>Imported files will be sorted by date
-                                and given a unique name to avoid duplicates.</translate>
-                            <translate>JPEGs and thumbnails are automatically rendered as needed.</translate>
-                            <translate>Original file names will be stored and indexed.</translate>
-                                <translate>Note that you can as well manage and re-index your originals manually.</translate>
-                        </p>
-                    </v-flex>
-                </v-layout>
+        <v-layout wrap align-top class="pb-2">
+          <v-flex xs12 class="px-2 pb-2 pt-2">
+            <v-checkbox
+                    @change="onChange"
+                    :disabled="busy"
+                    class="ma-0 pa-0"
+                    v-model="settings.import.move"
+                    color="secondary-dark"
+                    :label="labels.move"
+                    :hint="hints.move"
+                    prepend-icon="delete"
+                    persistent-hint
+            >
+            </v-checkbox>
+          </v-flex>
+          <v-flex xs12 class="px-2 pb-2 pt-2">
+            <p class="body-1 pt-2">
+              <translate>Imported files will be sorted by date
+                and given a unique name to avoid duplicates.</translate>
+              <translate>JPEGs and thumbnails are automatically rendered as needed.</translate>
+              <translate>Original file names will be stored and indexed.</translate>
+              <translate>Note that you can as well manage and re-index your originals manually.</translate>
+            </p>
+          </v-flex>
+        </v-layout>
 
-                <v-btn
-                        :disabled="!busy"
-                        color="secondary-dark"
-                        class="white--text ml-0 action-cancel"
-                        depressed
-                        @click.stop="cancelImport()"
-                >
-                    <translate>Cancel</translate>
-                </v-btn>
+        <v-btn
+                :disabled="!busy"
+                color="secondary-dark"
+                class="white--text ml-0 action-cancel"
+                depressed
+                @click.stop="cancelImport()"
+        >
+          <translate>Cancel</translate>
+        </v-btn>
 
-                <v-btn v-if="!$config.values.readonly && $config.feature('upload')"
-                       :disabled="busy"
-                       color="secondary-dark"
-                       class="white--text ml-0 hidden-xs-only action-upload"
-                       depressed
-                       @click.stop="showUpload()"
-                >
-                    <translate>Upload</translate>
-                    <v-icon right dark>cloud_upload</v-icon>
-                </v-btn>
+        <v-btn v-if="!$config.values.readonly && $config.feature('upload')"
+               :disabled="busy"
+               color="secondary-dark"
+               class="white--text ml-0 hidden-xs-only action-upload"
+               depressed
+               @click.stop="showUpload()"
+        >
+          <translate>Upload</translate>
+          <v-icon right dark>cloud_upload</v-icon>
+        </v-btn>
 
-                <v-btn
-                        :disabled="busy"
-                        color="secondary-dark"
-                        class="white--text ml-0 mt-2 action-import"
-                        depressed
-                        @click.stop="startImport()"
-                >
-                    <translate>Import</translate>
-                    <v-icon right dark>create_new_folder</v-icon>
-                </v-btn>
-            </v-container>
-        </v-form>
-    </div>
+        <v-btn
+                :disabled="busy"
+                color="secondary-dark"
+                class="white--text ml-0 mt-2 action-import"
+                depressed
+                @click.stop="startImport()"
+        >
+          <translate>Import</translate>
+          <v-icon right dark>create_new_folder</v-icon>
+        </v-btn>
+      </v-container>
+    </v-form>
+  </div>
 </template>
 
 <script>

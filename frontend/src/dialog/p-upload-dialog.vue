@@ -1,91 +1,91 @@
 <template>
-    <v-dialog fullscreen hide-overlay scrollable lazy
-              v-model="show" persistent class="p-upload-dialog" @keydown.esc="cancel">
-        <v-card color="application">
-            <v-toolbar dark flat color="navigation">
-                <v-btn icon dark @click.stop="cancel">
-                    <v-icon>close</v-icon>
-                </v-btn>
-                <v-toolbar-title>
-                    <translate key="Upload">Upload</translate>
-                </v-toolbar-title>
-            </v-toolbar>
-            <v-container grid-list-xs text-xs-left fluid>
-                <v-form ref="form" class="p-photo-upload" lazy-validation @submit.prevent="submit" dense>
-                    <input type="file" ref="upload" multiple @change.stop="upload()" class="d-none">
+  <v-dialog fullscreen hide-overlay scrollable lazy
+            v-model="show" persistent class="p-upload-dialog" @keydown.esc="cancel">
+    <v-card color="application">
+      <v-toolbar dark flat color="navigation">
+        <v-btn icon dark @click.stop="cancel">
+          <v-icon>close</v-icon>
+        </v-btn>
+        <v-toolbar-title>
+          <translate key="Upload">Upload</translate>
+        </v-toolbar-title>
+      </v-toolbar>
+      <v-container grid-list-xs text-xs-left fluid>
+        <v-form ref="form" class="p-photo-upload" lazy-validation @submit.prevent="submit" dense>
+          <input type="file" ref="upload" multiple @change.stop="upload()" class="d-none">
 
-                    <v-container fluid>
-                        <p class="subheading">
-                            <v-combobox v-if="total === 0" flat solo hide-details chips deletable-chips
-                                        multiple color="secondary-dark" class="my-0"
-                                        v-model="selectedAlbums"
-                                        :items="albums"
-                                        item-text="Title"
-                                        item-value="UID"
-                                        :allow-overflow="false"
-                                        :label="labels.album"
-                                        return-object
-                            >
-                                <template v-slot:no-data>
-                                    <v-list-tile>
-                                        <v-list-tile-content>
-                                            <v-list-tile-title>
-                                                <translate key="Press enter to create a new album.">Press enter to create a new album.</translate>
-                                            </v-list-tile-title>
-                                        </v-list-tile-content>
-                                    </v-list-tile>
-                                </template>
-                                <template v-slot:selection="data">
-                                    <v-chip
-                                            :key="JSON.stringify(data.item)"
-                                            :selected="data.selected"
-                                            :disabled="data.disabled"
-                                            class="v-chip--select-multi"
-                                            @input="data.parent.selectItem(data.item)"
-                                    >
-                                        <v-icon class="pr-1">folder</v-icon>
-                                        {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
-                                    </v-chip>
-                                </template>
-                            </v-combobox>
-                            <span v-else-if="failed"><translate key="Upload failed">Upload failed</translate></span>
-                            <span v-else-if="total > 0 && completed < 100">
+          <v-container fluid>
+            <p class="subheading">
+              <v-combobox v-if="total === 0" flat solo hide-details chips deletable-chips
+                          multiple color="secondary-dark" class="my-0"
+                          v-model="selectedAlbums"
+                          :items="albums"
+                          item-text="Title"
+                          item-value="UID"
+                          :allow-overflow="false"
+                          :label="labels.album"
+                          return-object
+              >
+                <template v-slot:no-data>
+                  <v-list-tile>
+                    <v-list-tile-content>
+                      <v-list-tile-title>
+                        <translate key="Press enter to create a new album.">Press enter to create a new album.</translate>
+                      </v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                </template>
+                <template v-slot:selection="data">
+                  <v-chip
+                          :key="JSON.stringify(data.item)"
+                          :selected="data.selected"
+                          :disabled="data.disabled"
+                          class="v-chip--select-multi"
+                          @input="data.parent.selectItem(data.item)"
+                  >
+                    <v-icon class="pr-1">folder</v-icon>
+                    {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
+                  </v-chip>
+                </template>
+              </v-combobox>
+              <span v-else-if="failed"><translate key="Upload failed">Upload failed</translate></span>
+              <span v-else-if="total > 0 && completed < 100">
                                 <translate key="Uploading">Uploading</translate> {{current}} <translate key="of">of</translate> {{total}}...
                     </span>
-                            <span v-else-if="indexing"><translate key="Upload complete">Upload complete. Indexing...</translate></span>
-                            <span v-else-if="completed === 100"><translate key="Done">Done.</translate></span>
-                        </p>
+              <span v-else-if="indexing"><translate key="Upload complete">Upload complete. Indexing...</translate></span>
+              <span v-else-if="completed === 100"><translate key="Done">Done.</translate></span>
+            </p>
 
 
-                        <v-progress-linear color="secondary-dark" v-model="completed"
-                                           :indeterminate="indexing"></v-progress-linear>
+            <v-progress-linear color="secondary-dark" v-model="completed"
+                               :indeterminate="indexing"></v-progress-linear>
 
 
-                        <p class="body-1" v-if="safe">
-                            <translate key="nsfw-info">Please don't upload photos containing offensive content. Uploads
-                                that may contain such images will be rejected automatically.</translate>
-                        </p>
+            <p class="body-1" v-if="safe">
+              <translate key="nsfw-info">Please don't upload photos containing offensive content. Uploads
+                that may contain such images will be rejected automatically.</translate>
+            </p>
 
-                        <p class="body-1" v-if="review">
-                            <translate key="review-info">Low-quality photos require a review before they appear in search results.</translate>
-                        </p>
+            <p class="body-1" v-if="review">
+              <translate key="review-info">Low-quality photos require a review before they appear in search results.</translate>
+            </p>
 
-                        <v-btn
-                                :disabled="busy"
-                                color="secondary-dark"
-                                class="white--text ml-0 mt-2 action-upload"
-                                depressed
-                                @click.stop="uploadDialog()"
-                        >
-                            <translate key="Upload">Upload</translate>
-                            <v-icon right dark>cloud_upload</v-icon>
-                        </v-btn>
-                    </v-container>
-                </v-form>
+            <v-btn
+                    :disabled="busy"
+                    color="secondary-dark"
+                    class="white--text ml-0 mt-2 action-upload"
+                    depressed
+                    @click.stop="uploadDialog()"
+            >
+              <translate key="Upload">Upload</translate>
+              <v-icon right dark>cloud_upload</v-icon>
+            </v-btn>
+          </v-container>
+        </v-form>
 
-            </v-container>
-        </v-card>
-    </v-dialog>
+      </v-container>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
     import Api from "common/api";

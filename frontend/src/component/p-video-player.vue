@@ -1,6 +1,6 @@
 <template>
-    <video class="p-video-player" ref="player" :height="height" :width="width" :autoplay="autoplay"
-           :preload="preload"></video>
+  <video class="p-video-player" ref="player" :height="height" :width="width" :autoplay="autoplay"
+         :preload="preload"></video>
 </template>
 
 <script>

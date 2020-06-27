@@ -1,404 +1,404 @@
 <template>
-    <div class="p-tab p-tab-photo-details">
-        <v-container fluid>
-            <v-form lazy-validation dense
-                    ref="form" class="p-form-photo-details-meta" accept-charset="UTF-8"
-                    @submit.prevent="save">
-                <v-layout row wrap align-top fill-height>
-                    <v-flex
-                            class="p-photo pa-2"
-                            xs12 sm4 md2
-                    >
-                        <v-card tile
-                                class="ma-1 elevation-0"
-                                :title="model.Title">
-                            <v-img :src="model.thumbnailUrl('tile_500')"
-                                   aspect-ratio="1"
-                                   class="accent lighten-2 elevation-0 clickable"
-                                   @click.exact="openPhoto()"
-                                   v-touch="{left, right}"
-                            >
-                                <v-layout
-                                        slot="placeholder"
-                                        fill-height
-                                        align-center
-                                        justify-center
-                                        ma-0
-                                >
-                                    <v-progress-circular indeterminate
-                                                         color="accent lighten-5"></v-progress-circular>
-                                </v-layout>
-                            </v-img>
-
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs12 sm8 md10 fill-height>
-                        <v-layout row wrap>
-                            <v-flex xs12 class="pa-2">
-                                <v-text-field
-                                        :disabled="disabled"
-                                        :rules="[textRule]"
-                                        hide-details
-                                        :label="labels.title"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        browser-autocomplete="off"
-                                        v-model="model.Title"
-                                        class="input-title"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
-
-                                <v-text-field
-                                        :disabled="disabled"
-                                        :value="timeLocalFormatted"
-                                        browser-autocomplete="off"
-                                        :label="labels.localtime"
-                                        readonly
-                                        hide-details
-                                        color="secondary-dark"
-                                        class="input-local-time"
-                                ></v-text-field>
-
-                            </v-flex>
-                            <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
-                                <v-menu
-                                        :disabled="disabled"
-                                        v-model="showTimePicker"
-                                        :close-on-content-click="false"
-                                        full-width
-                                        max-width="290"
-                                >
-                                    <template v-slot:activator="{ on }">
-                                        <v-text-field
-                                                :disabled="disabled"
-                                                :value="timeFormatted"
-                                                :label="labels.utctime"
-                                                readonly
-                                                hide-details
-                                                v-on="on"
-                                                color="secondary-dark"
-                                                class="input-utc-time"
-                                        ></v-text-field>
-                                    </template>
-                                    <v-time-picker
-                                            color="secondary-dark"
-                                            v-model="time"
-                                            format="24hr"
-                                            use-seconds
-                                            @change="showTimePicker = false"
-                                    ></v-time-picker>
-                                </v-menu>
-                            </v-flex>
-                            <v-flex xs12 sm6 md3 class="pa-2 p-date-select">
-                                <v-menu
-                                        :disabled="disabled"
-                                        :close-on-content-click="false"
-                                        full-width
-                                        max-width="290"
-                                >
-                                    <template v-slot:activator="{ on }">
-                                        <v-text-field
-                                                :disabled="disabled"
-                                                :value="dateFormatted"
-                                                browser-autocomplete="off"
-                                                :label="labels.utcdate"
-                                                readonly
-                                                hide-details
-                                                v-on="on"
-                                                color="secondary-dark"
-                                                class="input-utc-date"
-                                        ></v-text-field>
-                                    </template>
-                                    <v-date-picker
-                                            color="secondary-dark"
-                                            v-model="date"
-                                            @change="showDatePicker = false"
-                                    ></v-date-picker>
-                                </v-menu>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2 p-timezone-select">
-                                <v-autocomplete
-                                        @change="updateTime"
-                                        :disabled="disabled"
-                                        :label="labels.timezone"
-                                        hide-details
-                                        color="secondary-dark"
-                                        item-value="ID"
-                                        item-text="Name"
-                                        v-model="model.TimeZone"
-                                        :items="timeZones"
-                                        class="input-timezone">
-                                </v-autocomplete>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        :disabled="disabled"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        :label="labels.latitude"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.Lat"
-                                        class="input-latitude"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        :disabled="disabled"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        :label="labels.longitude"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.Lng"
-                                        class="input-longitude"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        :disabled="disabled"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        :label="labels.altitude"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.Altitude"
-                                        class="input-altitude"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2 p-countries-select">
-                                <v-autocomplete
-                                        :disabled="disabled"
-                                        :label="labels.country"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        color="secondary-dark"
-                                        item-value="Code"
-                                        item-text="Name"
-                                        v-model="model.Country"
-                                        :items="countries"
-                                        class="input-country">
-                                </v-autocomplete>
-                            </v-flex>
-
-                            <v-flex xs12 md6 pa-2 class="p-camera-select">
-                                <v-select
-                                        :disabled="disabled"
-                                        :label="labels.camera"
-                                        browser-autocomplete="off"
-                                        hide-details
-                                        color="secondary-dark"
-                                        item-value="ID"
-                                        item-text="Name"
-                                        v-model="model.CameraID"
-                                        :items="cameraOptions"
-                                        class="input-camera">
-                                </v-select>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        :disabled="disabled"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        label="ISO"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.Iso"
-                                        class="input-iso"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        :disabled="disabled"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        :label="labels.exposure"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.Exposure"
-                                        class="input-exposure"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 md6 pa-2 class="p-lens-select">
-                                <v-select
-                                        :disabled="disabled"
-                                        :label="labels.lens"
-                                        browser-autocomplete="off"
-                                        hide-details
-                                        color="secondary-dark"
-                                        item-value="ID"
-                                        item-text="Name"
-                                        v-model="model.LensID"
-                                        :items="lensOptions"
-                                        class="input-lens">
-                                </v-select>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        :disabled="disabled"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        :label="labels.fnumber"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.FNumber"
-                                        class="input-fnumber"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        :disabled="disabled"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        :label="labels.focallength"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.FocalLength"
-                                        class="input-focal-length"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-textarea
-                                        :disabled="disabled"
-                                        :rules="[textRule]"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        auto-grow
-                                        :label="labels.subject"
-                                        placeholder=""
-                                        :rows="1"
-                                        color="secondary-dark"
-                                        v-model="model.Details.Subject"
-                                        class="input-subject"
-                                ></v-textarea>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        :disabled="disabled"
-                                        :rules="[textRule]"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        :label="labels.artist"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.Details.Artist"
-                                        class="input-artist"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-text-field
-                                        :disabled="disabled"
-                                        :rules="[textRule]"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        :label="labels.copyright"
-                                        placeholder=""
-                                        color="secondary-dark"
-                                        v-model="model.Details.Copyright"
-                                        class="input-copyright"
-                                ></v-text-field>
-                            </v-flex>
-
-                            <v-flex xs12 sm6 md3 class="pa-2">
-                                <v-textarea
-                                        :disabled="disabled"
-                                        :rules="[textRule]"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        auto-grow
-                                        :label="labels.license"
-                                        placeholder=""
-                                        :rows="1"
-                                        color="secondary-dark"
-                                        v-model="model.Details.License"
-                                        class="input-license"
-                                ></v-textarea>
-                            </v-flex>
-
-                            <v-flex xs12 class="pa-2">
-                                <v-textarea
-                                        :disabled="disabled"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        auto-grow
-                                        :label="labels.description"
-                                        placeholder=""
-                                        :rows="1"
-                                        color="secondary-dark"
-                                        v-model="model.Description"
-                                        class="input-description"
-                                ></v-textarea>
-                            </v-flex>
-
-                            <v-flex xs12 md6 class="pa-2">
-                                <v-textarea
-                                        :disabled="disabled"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        auto-grow
-                                        :label="labels.keywords"
-                                        placeholder=""
-                                        :rows="1"
-                                        color="secondary-dark"
-                                        v-model="model.Details.Keywords"
-                                        class="input-keywords"
-                                ></v-textarea>
-                            </v-flex>
-
-                            <v-flex xs12 md6 class="pa-2">
-                                <v-textarea
-                                        :disabled="disabled"
-                                        hide-details
-                                        browser-autocomplete="off"
-                                        auto-grow
-                                        :label="labels.notes"
-                                        placeholder=""
-                                        :rows="1"
-                                        color="secondary-dark"
-                                        v-model="model.Details.Notes"
-                                        class="input-notes"
-                                ></v-textarea>
-                            </v-flex>
-
-                            <v-flex xs12 text-xs-right class="pt-3" v-if="!disabled">
-                                <v-btn @click.stop="close" depressed color="secondary-light"
-                                       class="p-photo-dialog-close">
-                                    <translate key="Close">Close</translate>
-                                </v-btn>
-                                <v-btn color="secondary-dark" depressed dark @click.stop="save(false)"
-                                       class="p-photo-dialog-confirm action-approve">
-                                    <span v-if="$config.feature('review') && model.Quality < 3"><translate key="Approve">Approve</translate></span>
-                                    <span v-else><translate key="Apply">Apply</translate></span>
-                                </v-btn>
-                                <v-btn color="secondary-dark" depressed dark @click.stop="save(true)"
-                                       class="p-photo-dialog-confirm hidden-xs-only action-ok">
-                                    <span><translate key="OK">OK</translate></span>
-                                    <v-icon right dark>done</v-icon>
-                                </v-btn>
-                            </v-flex>
-                        </v-layout>
-                    </v-flex>
+  <div class="p-tab p-tab-photo-details">
+    <v-container fluid>
+      <v-form lazy-validation dense
+              ref="form" class="p-form-photo-details-meta" accept-charset="UTF-8"
+              @submit.prevent="save">
+        <v-layout row wrap align-top fill-height>
+          <v-flex
+                  class="p-photo pa-2"
+                  xs12 sm4 md2
+          >
+            <v-card tile
+                    class="ma-1 elevation-0"
+                    :title="model.Title">
+              <v-img :src="model.thumbnailUrl('tile_500')"
+                     aspect-ratio="1"
+                     class="accent lighten-2 elevation-0 clickable"
+                     @click.exact="openPhoto()"
+                     v-touch="{left, right}"
+              >
+                <v-layout
+                        slot="placeholder"
+                        fill-height
+                        align-center
+                        justify-center
+                        ma-0
+                >
+                  <v-progress-circular indeterminate
+                                       color="accent lighten-5"></v-progress-circular>
                 </v-layout>
+              </v-img>
 
-                <div class="mt-5"></div>
-            </v-form>
-        </v-container>
-    </div>
+            </v-card>
+          </v-flex>
+          <v-flex xs12 sm8 md10 fill-height>
+            <v-layout row wrap>
+              <v-flex xs12 class="pa-2">
+                <v-text-field
+                        :disabled="disabled"
+                        :rules="[textRule]"
+                        hide-details
+                        :label="labels.title"
+                        placeholder=""
+                        color="secondary-dark"
+                        browser-autocomplete="off"
+                        v-model="model.Title"
+                        class="input-title"
+                ></v-text-field>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
+
+                <v-text-field
+                        :disabled="disabled"
+                        :value="timeLocalFormatted"
+                        browser-autocomplete="off"
+                        :label="labels.localtime"
+                        readonly
+                        hide-details
+                        color="secondary-dark"
+                        class="input-local-time"
+                ></v-text-field>
+
+              </v-flex>
+              <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
+                <v-menu
+                        :disabled="disabled"
+                        v-model="showTimePicker"
+                        :close-on-content-click="false"
+                        full-width
+                        max-width="290"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                            :disabled="disabled"
+                            :value="timeFormatted"
+                            :label="labels.utctime"
+                            readonly
+                            hide-details
+                            v-on="on"
+                            color="secondary-dark"
+                            class="input-utc-time"
+                    ></v-text-field>
+                  </template>
+                  <v-time-picker
+                          color="secondary-dark"
+                          v-model="time"
+                          format="24hr"
+                          use-seconds
+                          @change="showTimePicker = false"
+                  ></v-time-picker>
+                </v-menu>
+              </v-flex>
+              <v-flex xs12 sm6 md3 class="pa-2 p-date-select">
+                <v-menu
+                        :disabled="disabled"
+                        :close-on-content-click="false"
+                        full-width
+                        max-width="290"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                            :disabled="disabled"
+                            :value="dateFormatted"
+                            browser-autocomplete="off"
+                            :label="labels.utcdate"
+                            readonly
+                            hide-details
+                            v-on="on"
+                            color="secondary-dark"
+                            class="input-utc-date"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                          color="secondary-dark"
+                          v-model="date"
+                          @change="showDatePicker = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2 p-timezone-select">
+                <v-autocomplete
+                        @change="updateTime"
+                        :disabled="disabled"
+                        :label="labels.timezone"
+                        hide-details
+                        color="secondary-dark"
+                        item-value="ID"
+                        item-text="Name"
+                        v-model="model.TimeZone"
+                        :items="timeZones"
+                        class="input-timezone">
+                </v-autocomplete>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2">
+                <v-text-field
+                        :disabled="disabled"
+                        hide-details
+                        browser-autocomplete="off"
+                        :label="labels.latitude"
+                        placeholder=""
+                        color="secondary-dark"
+                        v-model="model.Lat"
+                        class="input-latitude"
+                ></v-text-field>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2">
+                <v-text-field
+                        :disabled="disabled"
+                        hide-details
+                        browser-autocomplete="off"
+                        :label="labels.longitude"
+                        placeholder=""
+                        color="secondary-dark"
+                        v-model="model.Lng"
+                        class="input-longitude"
+                ></v-text-field>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2">
+                <v-text-field
+                        :disabled="disabled"
+                        hide-details
+                        browser-autocomplete="off"
+                        :label="labels.altitude"
+                        placeholder=""
+                        color="secondary-dark"
+                        v-model="model.Altitude"
+                        class="input-altitude"
+                ></v-text-field>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2 p-countries-select">
+                <v-autocomplete
+                        :disabled="disabled"
+                        :label="labels.country"
+                        hide-details
+                        browser-autocomplete="off"
+                        color="secondary-dark"
+                        item-value="Code"
+                        item-text="Name"
+                        v-model="model.Country"
+                        :items="countries"
+                        class="input-country">
+                </v-autocomplete>
+              </v-flex>
+
+              <v-flex xs12 md6 pa-2 class="p-camera-select">
+                <v-select
+                        :disabled="disabled"
+                        :label="labels.camera"
+                        browser-autocomplete="off"
+                        hide-details
+                        color="secondary-dark"
+                        item-value="ID"
+                        item-text="Name"
+                        v-model="model.CameraID"
+                        :items="cameraOptions"
+                        class="input-camera">
+                </v-select>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2">
+                <v-text-field
+                        :disabled="disabled"
+                        hide-details
+                        browser-autocomplete="off"
+                        label="ISO"
+                        placeholder=""
+                        color="secondary-dark"
+                        v-model="model.Iso"
+                        class="input-iso"
+                ></v-text-field>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2">
+                <v-text-field
+                        :disabled="disabled"
+                        hide-details
+                        browser-autocomplete="off"
+                        :label="labels.exposure"
+                        placeholder=""
+                        color="secondary-dark"
+                        v-model="model.Exposure"
+                        class="input-exposure"
+                ></v-text-field>
+              </v-flex>
+
+              <v-flex xs12 md6 pa-2 class="p-lens-select">
+                <v-select
+                        :disabled="disabled"
+                        :label="labels.lens"
+                        browser-autocomplete="off"
+                        hide-details
+                        color="secondary-dark"
+                        item-value="ID"
+                        item-text="Name"
+                        v-model="model.LensID"
+                        :items="lensOptions"
+                        class="input-lens">
+                </v-select>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2">
+                <v-text-field
+                        :disabled="disabled"
+                        hide-details
+                        browser-autocomplete="off"
+                        :label="labels.fnumber"
+                        placeholder=""
+                        color="secondary-dark"
+                        v-model="model.FNumber"
+                        class="input-fnumber"
+                ></v-text-field>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2">
+                <v-text-field
+                        :disabled="disabled"
+                        hide-details
+                        browser-autocomplete="off"
+                        :label="labels.focallength"
+                        placeholder=""
+                        color="secondary-dark"
+                        v-model="model.FocalLength"
+                        class="input-focal-length"
+                ></v-text-field>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2">
+                <v-textarea
+                        :disabled="disabled"
+                        :rules="[textRule]"
+                        hide-details
+                        browser-autocomplete="off"
+                        auto-grow
+                        :label="labels.subject"
+                        placeholder=""
+                        :rows="1"
+                        color="secondary-dark"
+                        v-model="model.Details.Subject"
+                        class="input-subject"
+                ></v-textarea>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2">
+                <v-text-field
+                        :disabled="disabled"
+                        :rules="[textRule]"
+                        hide-details
+                        browser-autocomplete="off"
+                        :label="labels.artist"
+                        placeholder=""
+                        color="secondary-dark"
+                        v-model="model.Details.Artist"
+                        class="input-artist"
+                ></v-text-field>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2">
+                <v-text-field
+                        :disabled="disabled"
+                        :rules="[textRule]"
+                        hide-details
+                        browser-autocomplete="off"
+                        :label="labels.copyright"
+                        placeholder=""
+                        color="secondary-dark"
+                        v-model="model.Details.Copyright"
+                        class="input-copyright"
+                ></v-text-field>
+              </v-flex>
+
+              <v-flex xs12 sm6 md3 class="pa-2">
+                <v-textarea
+                        :disabled="disabled"
+                        :rules="[textRule]"
+                        hide-details
+                        browser-autocomplete="off"
+                        auto-grow
+                        :label="labels.license"
+                        placeholder=""
+                        :rows="1"
+                        color="secondary-dark"
+                        v-model="model.Details.License"
+                        class="input-license"
+                ></v-textarea>
+              </v-flex>
+
+              <v-flex xs12 class="pa-2">
+                <v-textarea
+                        :disabled="disabled"
+                        hide-details
+                        browser-autocomplete="off"
+                        auto-grow
+                        :label="labels.description"
+                        placeholder=""
+                        :rows="1"
+                        color="secondary-dark"
+                        v-model="model.Description"
+                        class="input-description"
+                ></v-textarea>
+              </v-flex>
+
+              <v-flex xs12 md6 class="pa-2">
+                <v-textarea
+                        :disabled="disabled"
+                        hide-details
+                        browser-autocomplete="off"
+                        auto-grow
+                        :label="labels.keywords"
+                        placeholder=""
+                        :rows="1"
+                        color="secondary-dark"
+                        v-model="model.Details.Keywords"
+                        class="input-keywords"
+                ></v-textarea>
+              </v-flex>
+
+              <v-flex xs12 md6 class="pa-2">
+                <v-textarea
+                        :disabled="disabled"
+                        hide-details
+                        browser-autocomplete="off"
+                        auto-grow
+                        :label="labels.notes"
+                        placeholder=""
+                        :rows="1"
+                        color="secondary-dark"
+                        v-model="model.Details.Notes"
+                        class="input-notes"
+                ></v-textarea>
+              </v-flex>
+
+              <v-flex xs12 text-xs-right class="pt-3" v-if="!disabled">
+                <v-btn @click.stop="close" depressed color="secondary-light"
+                       class="p-photo-dialog-close">
+                  <translate key="Close">Close</translate>
+                </v-btn>
+                <v-btn color="secondary-dark" depressed dark @click.stop="save(false)"
+                       class="p-photo-dialog-confirm action-approve">
+                  <span v-if="$config.feature('review') && model.Quality < 3"><translate key="Approve">Approve</translate></span>
+                  <span v-else><translate key="Apply">Apply</translate></span>
+                </v-btn>
+                <v-btn color="secondary-dark" depressed dark @click.stop="save(true)"
+                       class="p-photo-dialog-confirm hidden-xs-only action-ok">
+                  <span><translate key="OK">OK</translate></span>
+                  <v-icon right dark>done</v-icon>
+                </v-btn>
+              </v-flex>
+            </v-layout>
+          </v-flex>
+        </v-layout>
+
+        <div class="mt-5"></div>
+      </v-form>
+    </v-container>
+  </div>
 </template>
 
 <script>

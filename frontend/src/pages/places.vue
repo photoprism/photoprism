@@ -1,26 +1,26 @@
 <template>
-    <v-container fluid fill-height class="pa-0 p-page p-page-places">
-        <div id="map" style="width: 100%; height: 100%;">
-            <div class="p-map-control">
-                <div class="mapboxgl-ctrl mapboxgl-ctrl-group">
-                    <v-text-field class="pa-0 ma-0 input-search"
-                                  single-line
-                                  solo
-                                  flat
-                                  :label="labels.search"
-                                  prepend-inner-icon="search"
-                                  clearable
-                                  hide-details
-                                  browser-autocomplete="off"
-                                  color="secondary-dark"
-                                  @click:clear="clearQuery"
-                                  v-model="filter.q"
-                                  @keyup.enter.native="formChange"
-                    ></v-text-field>
-                </div>
-            </div>
+  <v-container fluid fill-height class="pa-0 p-page p-page-places">
+    <div id="map" style="width: 100%; height: 100%;">
+      <div class="p-map-control">
+        <div class="mapboxgl-ctrl mapboxgl-ctrl-group">
+          <v-text-field class="pa-0 ma-0 input-search"
+                        single-line
+                        solo
+                        flat
+                        :label="labels.search"
+                        prepend-inner-icon="search"
+                        clearable
+                        hide-details
+                        browser-autocomplete="off"
+                        color="secondary-dark"
+                        @click:clear="clearQuery"
+                        v-model="filter.q"
+                        @keyup.enter.native="formChange"
+          ></v-text-field>
         </div>
-    </v-container>
+      </div>
+    </div>
+  </v-container>
 </template>
 
 <script>

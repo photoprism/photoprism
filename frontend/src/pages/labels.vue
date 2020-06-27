@@ -1,150 +1,150 @@
 <template>
-    <div class="p-page p-page-labels" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
-         :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div class="p-page p-page-labels" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
+       :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <v-form ref="form" class="p-labels-search" lazy-validation @submit.prevent="updateQuery" dense>
-            <v-toolbar flat color="secondary">
-                <v-text-field class="pt-3 pr-3 p-search-field"
-                              single-line
-                              :label="labels.search"
-                              prepend-inner-icon="search"
-                              browser-autocomplete="off"
-                              clearable
-                              color="secondary-dark"
-                              @click:clear="clearQuery"
-                              v-model="filter.q"
-                              @keyup.enter.native="updateQuery"
-                              id="search"
-                ></v-text-field>
+    <v-form ref="form" class="p-labels-search" lazy-validation @submit.prevent="updateQuery" dense>
+      <v-toolbar flat color="secondary">
+        <v-text-field class="pt-3 pr-3 p-search-field"
+                      single-line
+                      :label="labels.search"
+                      prepend-inner-icon="search"
+                      browser-autocomplete="off"
+                      clearable
+                      color="secondary-dark"
+                      @click:clear="clearQuery"
+                      v-model="filter.q"
+                      @keyup.enter.native="updateQuery"
+                      id="search"
+        ></v-text-field>
 
-                <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
 
-                <v-btn icon @click.stop="refresh" class="action-reload">
-                    <v-icon>refresh</v-icon>
-                </v-btn>
+        <v-btn icon @click.stop="refresh" class="action-reload">
+          <v-icon>refresh</v-icon>
+        </v-btn>
 
-                <v-btn v-if="!filter.all" icon @click.stop="showAll" class="action-show-all">
-                    <v-icon>visibility</v-icon>
-                </v-btn>
-                <v-btn v-else icon @click.stop="showImportant" class="action-show-important">
-                    <v-icon>visibility_off</v-icon>
-                </v-btn>
-            </v-toolbar>
-        </v-form>
+        <v-btn v-if="!filter.all" icon @click.stop="showAll" class="action-show-all">
+          <v-icon>visibility</v-icon>
+        </v-btn>
+        <v-btn v-else icon @click.stop="showImportant" class="action-show-important">
+          <v-icon>visibility_off</v-icon>
+        </v-btn>
+      </v-toolbar>
+    </v-form>
 
-        <v-container fluid class="pa-4" v-if="loading">
-            <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
-        </v-container>
-        <v-container fluid class="pa-0" v-else>
-            <p-label-clipboard :refresh="refresh" :selection="selection"
-                               :clear-selection="clearSelection"></p-label-clipboard>
+    <v-container fluid class="pa-4" v-if="loading">
+      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+    </v-container>
+    <v-container fluid class="pa-0" v-else>
+      <p-label-clipboard :refresh="refresh" :selection="selection"
+                         :clear-selection="clearSelection"></p-label-clipboard>
 
-            <p-scroll-top></p-scroll-top>
+      <p-scroll-top></p-scroll-top>
 
-            <v-container grid-list-xs fluid class="pa-2 p-labels p-labels-cards">
-                <v-card v-if="results.length === 0" class="p-labels-empty secondary-light lighten-1 ma-1" flat>
-                    <v-card-title primary-title>
-                        <div>
-                            <h3 class="title mb-3">
-                                <translate>No labels matched your search</translate>
-                            </h3>
-                            <div>
-                                <translate>Try again using a related or otherwise similar term.</translate>
-                            </div>
-                        </div>
-                    </v-card-title>
-                </v-card>
-                <v-layout row wrap class="p-label-results">
-                    <v-flex
-                            v-for="(label, index) in results"
-                            :key="index"
-                            class="p-label"
-                            :data-uid="label.UID"
-                            xs6 sm4 md3 lg2 d-flex
-                    >
-                        <v-hover>
-                            <v-card tile class="accent lighten-3"
-                                    slot-scope="{ hover }"
-                                    @contextmenu="onContextMenu($event, index)"
-                                    :dark="selection.includes(label.UID)"
-                                    :class="selection.includes(label.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
-                                    :to="{name: 'browse', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.Slug)}}">
-                                <v-img
-                                        :src="label.thumbnailUrl('tile_500')"
-                                        @mousedown="onMouseDown($event, index)"
-                                        @click="onClick($event, index)"
-                                        aspect-ratio="1"
-                                        class="accent lighten-2"
-                                >
-                                    <v-layout
-                                            slot="placeholder"
-                                            fill-height
-                                            align-center
-                                            justify-center
-                                            ma-0
-                                    >
-                                        <v-progress-circular indeterminate
-                                                             color="accent lighten-5"></v-progress-circular>
-                                    </v-layout>
+      <v-container grid-list-xs fluid class="pa-2 p-labels p-labels-cards">
+        <v-card v-if="results.length === 0" class="p-labels-empty secondary-light lighten-1 ma-1" flat>
+          <v-card-title primary-title>
+            <div>
+              <h3 class="title mb-3">
+                <translate>No labels matched your search</translate>
+              </h3>
+              <div>
+                <translate>Try again using a related or otherwise similar term.</translate>
+              </div>
+            </div>
+          </v-card-title>
+        </v-card>
+        <v-layout row wrap class="p-label-results">
+          <v-flex
+                  v-for="(label, index) in results"
+                  :key="index"
+                  class="p-label"
+                  :data-uid="label.UID"
+                  xs6 sm4 md3 lg2 d-flex
+          >
+            <v-hover>
+              <v-card tile class="accent lighten-3"
+                      slot-scope="{ hover }"
+                      @contextmenu="onContextMenu($event, index)"
+                      :dark="selection.includes(label.UID)"
+                      :class="selection.includes(label.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
+                      :to="{name: 'browse', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.Slug)}}">
+                <v-img
+                        :src="label.thumbnailUrl('tile_500')"
+                        @mousedown="onMouseDown($event, index)"
+                        @click="onClick($event, index)"
+                        aspect-ratio="1"
+                        class="accent lighten-2"
+                >
+                  <v-layout
+                          slot="placeholder"
+                          fill-height
+                          align-center
+                          justify-center
+                          ma-0
+                  >
+                    <v-progress-circular indeterminate
+                                         color="accent lighten-5"></v-progress-circular>
+                  </v-layout>
 
-                                    <!-- v-progress-circular
-                                            :rotate="270"
-                                            :size="20"
-                                            :width="10"
-                                            :value="label.popularity(config.count.labelMaxPhotos)"
-                                            color="accent lighten-3"
-                                            class="p-label-count"
-                                    >
-                                    </v-progress-circular -->
+                  <!-- v-progress-circular
+                          :rotate="270"
+                          :size="20"
+                          :width="10"
+                          :value="label.popularity(config.count.labelMaxPhotos)"
+                          color="accent lighten-3"
+                          class="p-label-count"
+                  >
+                  </v-progress-circular -->
 
-                                    <v-btn v-if="hover || selection.includes(label.UID)" :flat="!hover" :ripple="false"
-                                           icon large absolute
-                                           :class="selection.includes(label.UID) ? 'p-label-select' : 'p-label-select opacity-50'"
-                                           @click.stop.prevent="onSelect($event, index)">
-                                        <v-icon v-if="selection.includes(label.UID)" color="white" class="t-select t-on">check_circle
-                                        </v-icon>
-                                        <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
-                                    </v-btn>
-                                </v-img>
+                  <v-btn v-if="hover || selection.includes(label.UID)" :flat="!hover" :ripple="false"
+                         icon large absolute
+                         :class="selection.includes(label.UID) ? 'p-label-select' : 'p-label-select opacity-50'"
+                         @click.stop.prevent="onSelect($event, index)">
+                    <v-icon v-if="selection.includes(label.UID)" color="white" class="t-select t-on">check_circle
+                    </v-icon>
+                    <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
+                  </v-btn>
+                </v-img>
 
-                                <v-card-actions @click.stop.prevent="">
-                                    <v-edit-dialog
-                                            :return-value.sync="label.Name"
-                                            lazy
-                                            @save="onSave(label)"
-                                            class="p-inline-edit"
-                                    >
+                <v-card-actions @click.stop.prevent="">
+                  <v-edit-dialog
+                          :return-value.sync="label.Name"
+                          lazy
+                          @save="onSave(label)"
+                          class="p-inline-edit"
+                  >
                                         <span v-if="label.Name" class="body-2 ma-0">
                                             {{ label.Name | capitalize }}
                                         </span>
-                                        <span v-else>
+                    <span v-else>
                                             <v-icon>edit</v-icon>
                                         </span>
-                                        <template v-slot:input>
-                                            <v-text-field
-                                                    v-model="label.Name"
-                                                    :rules="[titleRule]"
-                                                    :label="labels.name"
-                                                    color="secondary-dark"
-                                                    single-line
-                                                    autofocus
-                                            ></v-text-field>
-                                        </template>
-                                    </v-edit-dialog>
-                                    <v-spacer></v-spacer>
-                                    <v-btn icon @click.stop.prevent="label.toggleLike()">
-                                        <v-icon v-if="label.Favorite" color="#FFD600">star
-                                        </v-icon>
-                                        <v-icon v-else color="accent lighten-2">star</v-icon>
-                                    </v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-hover>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-        </v-container>
-    </div>
+                    <template v-slot:input>
+                      <v-text-field
+                              v-model="label.Name"
+                              :rules="[titleRule]"
+                              :label="labels.name"
+                              color="secondary-dark"
+                              single-line
+                              autofocus
+                      ></v-text-field>
+                    </template>
+                  </v-edit-dialog>
+                  <v-spacer></v-spacer>
+                  <v-btn icon @click.stop.prevent="label.toggleLike()">
+                    <v-icon v-if="label.Favorite" color="#FFD600">star
+                    </v-icon>
+                    <v-icon v-else color="accent lighten-2">star</v-icon>
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-hover>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-container>
+  </div>
 </template>
 
 <script>

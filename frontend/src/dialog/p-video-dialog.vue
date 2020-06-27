@@ -1,9 +1,9 @@
 <template>
-    <modal name="video" ref="video" :height="height" :width="width" :reset="true" class="p-video-dialog" @before-close="onClose"
-           @before-open="onOpen">
-        <p-video-player v-show="show" ref="player" :source="source" :height="height.toString()"
-                        :width="width.toString()" :autoplay="true"></p-video-player>
-    </modal>
+  <modal name="video" ref="video" :height="height" :width="width" :reset="true" class="p-video-dialog" @before-close="onClose"
+         @before-open="onOpen">
+    <p-video-player v-show="show" ref="player" :source="source" :height="height.toString()"
+                    :width="width.toString()" :autoplay="true"></p-video-player>
+  </modal>
 </template>
 <script>
     export default {

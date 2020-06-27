@@ -1,71 +1,71 @@
 <template>
-    <v-dialog fullscreen hide-overlay scrollable lazy
-              v-model="show" persistent class="p-photo-edit-dialog" @keydown.esc="close">
-        <v-card color="application">
-            <v-toolbar dark flat color="navigation">
-                <v-btn icon dark @click.stop="close" class="action-close">
-                    <v-icon>close</v-icon>
-                </v-btn>
-                <v-toolbar-title>{{ title }}
-                    <v-icon v-if="isPrivate" title="Private">lock</v-icon>
-                </v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-toolbar-items v-if="selection.length > 1">
-                    <v-btn icon disabled @click.stop="prev" :disabled="selected < 1" class="action-previous">
-                        <v-icon>navigate_before</v-icon>
-                    </v-btn>
+  <v-dialog fullscreen hide-overlay scrollable lazy
+            v-model="show" persistent class="p-photo-edit-dialog" @keydown.esc="close">
+    <v-card color="application">
+      <v-toolbar dark flat color="navigation">
+        <v-btn icon dark @click.stop="close" class="action-close">
+          <v-icon>close</v-icon>
+        </v-btn>
+        <v-toolbar-title>{{ title }}
+          <v-icon v-if="isPrivate" title="Private">lock</v-icon>
+        </v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-toolbar-items v-if="selection.length > 1">
+          <v-btn icon disabled @click.stop="prev" :disabled="selected < 1" class="action-previous">
+            <v-icon>navigate_before</v-icon>
+          </v-btn>
 
-                    <v-btn icon @click.stop="next" :disabled="selected >= selection.length - 1" class="action-next">
-                        <v-icon>navigate_next</v-icon>
-                    </v-btn>
-                </v-toolbar-items>
-            </v-toolbar>
-            <v-tabs
-                    v-model="active"
-                    flat
-                    grow
-                    color="secondary"
-                    slider-color="secondary-dark"
-                    height="64"
-                    class="form"
-            >
-                <v-tab id="tab-details" ripple>
-                    <translate key="Details">Details</translate>
-                </v-tab>
+          <v-btn icon @click.stop="next" :disabled="selected >= selection.length - 1" class="action-next">
+            <v-icon>navigate_next</v-icon>
+          </v-btn>
+        </v-toolbar-items>
+      </v-toolbar>
+      <v-tabs
+              v-model="active"
+              flat
+              grow
+              color="secondary"
+              slider-color="secondary-dark"
+              height="64"
+              class="form"
+      >
+        <v-tab id="tab-details" ripple>
+          <translate key="Details">Details</translate>
+        </v-tab>
 
-                <v-tab id="tab-labels" ripple :disabled="!$config.feature('labels')">
-                    <translate key="Labels">Labels</translate>
-                </v-tab>
+        <v-tab id="tab-labels" ripple :disabled="!$config.feature('labels')">
+          <translate key="Labels">Labels</translate>
+        </v-tab>
 
-                <v-tab id="tab-files" ripple>
-                    <translate key="Files">Files</translate>
-                </v-tab>
+        <v-tab id="tab-files" ripple>
+          <translate key="Files">Files</translate>
+        </v-tab>
 
-                <v-tab id="tab-info" ripple v-if="$config.feature('edit')">
-                    <v-icon>settings</v-icon>
-                </v-tab>
+        <v-tab id="tab-info" ripple v-if="$config.feature('edit')">
+          <v-icon>settings</v-icon>
+        </v-tab>
 
-                <v-tabs-items touchless>
-                    <v-tab-item>
-                        <p-tab-photo-details :model="model" ref="details"
-                                          @close="close" @prev="prev" @next="next"></p-tab-photo-details>
-                    </v-tab-item>
+        <v-tabs-items touchless>
+          <v-tab-item>
+            <p-tab-photo-details :model="model" ref="details"
+                                 @close="close" @prev="prev" @next="next"></p-tab-photo-details>
+          </v-tab-item>
 
-                    <v-tab-item lazy>
-                        <p-tab-photo-labels :model="model" @close="close"></p-tab-photo-labels>
-                    </v-tab-item>
+          <v-tab-item lazy>
+            <p-tab-photo-labels :model="model" @close="close"></p-tab-photo-labels>
+          </v-tab-item>
 
-                    <v-tab-item lazy>
-                        <p-tab-photo-files :model="model" @close="close"></p-tab-photo-files>
-                    </v-tab-item>
+          <v-tab-item lazy>
+            <p-tab-photo-files :model="model" @close="close"></p-tab-photo-files>
+          </v-tab-item>
 
-                    <v-tab-item lazy v-if="$config.feature('edit')">
-                        <p-tab-photo-info :model="model" @close="close"></p-tab-photo-info>
-                    </v-tab-item>
-                </v-tabs-items>
-            </v-tabs>
-        </v-card>
-    </v-dialog>
+          <v-tab-item lazy v-if="$config.feature('edit')">
+            <p-tab-photo-info :model="model" @close="close"></p-tab-photo-info>
+          </v-tab-item>
+        </v-tabs-items>
+      </v-tabs>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
     import Photo from "../model/photo";

@@ -1,108 +1,108 @@
 <template>
-    <div class="p-page p-page-albums" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
-         :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div class="p-page p-page-albums" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
+       :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <v-container fluid class="pa-4" v-if="loading">
-            <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
-        </v-container>
-        <v-container fluid class="pa-0" v-else>
-            <p-scroll-top></p-scroll-top>
+    <v-container fluid class="pa-4" v-if="loading">
+      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+    </v-container>
+    <v-container fluid class="pa-0" v-else>
+      <p-scroll-top></p-scroll-top>
 
-            <p-album-clipboard :refresh="refresh" :selection="selection"
-                               :clear-selection="clearSelection"></p-album-clipboard>
+      <p-album-clipboard :refresh="refresh" :selection="selection"
+                         :clear-selection="clearSelection"></p-album-clipboard>
 
-            <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-cards">
-                <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1 ma-1" flat>
-                    <v-card-title primary-title>
-                        <div v-if="staticFilter.type === 'moment'">
-                            <h3 class="title mb-3">
-                                <translate key=">No moments">No moments matched your search</translate>
-                            </h3>
-                            <div>
-                                <translate key=">Wait until">Wait until PhotoPrism has analyzed your library or try
-                                    again using a different term.
-                                </translate>
-                            </div>
-                        </div>
-                        <div v-else>
-                            <h3 class="title mb-3">
-                                <translate key=">No albums">No albums matched your search</translate>
-                            </h3>
-                            <div>
-                                <translate key="Try again">Try again using a different term or create a new album from a
-                                    selection in Photos.
-                                </translate>
-                            </div>
-                        </div>
-                    </v-card-title>
-                </v-card>
-                <v-layout row wrap class="p-album-results">
-                    <v-flex
-                            v-for="(album, index) in results"
-                            :key="index"
-                            :data-uid="album.UID"
-                            class="p-album"
-                            xs6 sm4 lg3 xl2 d-flex
-                    >
-                        <v-hover>
-                            <v-card tile class="accent lighten-3"
-                                    slot-scope="{ hover }"
-                                    @contextmenu="onContextMenu($event, index)"
-                                    :dark="selection.includes(album.UID)"
-                                    :class="selection.includes(album.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
-                                    :to="{name: view, params: {uid: album.UID, slug: album.Slug, year: album.Year, month: album.Month}}"
-                            >
-                                <v-img
-                                        :src="album.thumbnailUrl('tile_500')"
-                                        @mousedown="onMouseDown($event, index)"
-                                        @click="onClick($event, index)"
-                                        aspect-ratio="1"
-                                        class="accent lighten-2"
-                                >
-                                    <v-layout
-                                            slot="placeholder"
-                                            fill-height
-                                            align-center
-                                            justify-center
-                                            ma-0
-                                    >
-                                        <v-progress-circular indeterminate
-                                                             color="accent lighten-5"></v-progress-circular>
-                                    </v-layout>
+      <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-cards">
+        <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1 ma-1" flat>
+          <v-card-title primary-title>
+            <div v-if="staticFilter.type === 'moment'">
+              <h3 class="title mb-3">
+                <translate key=">No moments">No moments matched your search</translate>
+              </h3>
+              <div>
+                <translate key=">Wait until">Wait until PhotoPrism has analyzed your library or try
+                  again using a different term.
+                </translate>
+              </div>
+            </div>
+            <div v-else>
+              <h3 class="title mb-3">
+                <translate key=">No albums">No albums matched your search</translate>
+              </h3>
+              <div>
+                <translate key="Try again">Try again using a different term or create a new album from a
+                  selection in Photos.
+                </translate>
+              </div>
+            </div>
+          </v-card-title>
+        </v-card>
+        <v-layout row wrap class="p-album-results">
+          <v-flex
+                  v-for="(album, index) in results"
+                  :key="index"
+                  :data-uid="album.UID"
+                  class="p-album"
+                  xs6 sm4 lg3 xl2 d-flex
+          >
+            <v-hover>
+              <v-card tile class="accent lighten-3"
+                      slot-scope="{ hover }"
+                      @contextmenu="onContextMenu($event, index)"
+                      :dark="selection.includes(album.UID)"
+                      :class="selection.includes(album.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
+                      :to="{name: view, params: {uid: album.UID, slug: album.Slug, year: album.Year, month: album.Month}}"
+              >
+                <v-img
+                        :src="album.thumbnailUrl('tile_500')"
+                        @mousedown="onMouseDown($event, index)"
+                        @click="onClick($event, index)"
+                        aspect-ratio="1"
+                        class="accent lighten-2"
+                >
+                  <v-layout
+                          slot="placeholder"
+                          fill-height
+                          align-center
+                          justify-center
+                          ma-0
+                  >
+                    <v-progress-circular indeterminate
+                                         color="accent lighten-5"></v-progress-circular>
+                  </v-layout>
 
-                                    <v-btn v-if="hover || selection.includes(album.UID)" :flat="!hover" :ripple="false"
-                                           icon large absolute
-                                           :class="selection.includes(album.UID) ? 'action-select' : 'action-select opacity-50'"
-                                           @click.stop.prevent="onSelect($event, index)">
-                                        <v-icon v-if="selection.includes(album.UID)" color="white"
-                                                class="t-select t-on">check_circle
-                                        </v-icon>
-                                        <v-icon v-else color="accent lighten-3" class="t-select t-off">
-                                            radio_button_off
-                                        </v-icon>
-                                    </v-btn>
-                                </v-img>
+                  <v-btn v-if="hover || selection.includes(album.UID)" :flat="!hover" :ripple="false"
+                         icon large absolute
+                         :class="selection.includes(album.UID) ? 'action-select' : 'action-select opacity-50'"
+                         @click.stop.prevent="onSelect($event, index)">
+                    <v-icon v-if="selection.includes(album.UID)" color="white"
+                            class="t-select t-on">check_circle
+                    </v-icon>
+                    <v-icon v-else color="accent lighten-3" class="t-select t-off">
+                      radio_button_off
+                    </v-icon>
+                  </v-btn>
+                </v-img>
 
-                                <v-card-title primary-title class="pa-3 p-album-desc" style="user-select: none;">
-                                    <h3 class="body-2 ma-0">
-                                        {{ album.Title }}
-                                    </h3>
-                                </v-card-title>
-                                <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc">
-                                    <div class="caption" title="Description" v-if="album.Description">
-                                        {{ album.Description }}
-                                    </div>
-                                    <div class="caption" title="Description" v-else>
-                                        <translate>Shared with you.</translate>
-                                    </div>
-                                </v-card-text>
-                            </v-card>
-                        </v-hover>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-        </v-container>
-    </div>
+                <v-card-title primary-title class="pa-3 p-album-desc" style="user-select: none;">
+                  <h3 class="body-2 ma-0">
+                    {{ album.Title }}
+                  </h3>
+                </v-card-title>
+                <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc">
+                  <div class="caption" title="Description" v-if="album.Description">
+                    {{ album.Description }}
+                  </div>
+                  <div class="caption" title="Description" v-else>
+                    <translate>Shared with you.</translate>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-hover>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-container>
+  </div>
 </template>
 
 <script>

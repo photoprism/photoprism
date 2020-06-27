@@ -1,72 +1,72 @@
 <template>
-    <div>
-        <v-container fluid class="pa-0" v-if="selection.length > 0">
-            <v-speed-dial
-                    fixed bottom right
-                    direction="top"
-                    v-model="expanded"
-                    transition="slide-y-reverse-transition"
-                    class="p-clipboard p-label-clipboard"
-                    id="t-clipboard"
-            >
-                <v-btn
-                        fab dark
-                        slot="activator"
-                        color="accent darken-2"
-                        class="action-menu"
-                >
-                    <v-icon v-if="selection.length === 0">menu</v-icon>
-                    <span v-else class="count-clipboard">{{ selection.length }}</span>
-                </v-btn>
+  <div>
+    <v-container fluid class="pa-0" v-if="selection.length > 0">
+      <v-speed-dial
+              fixed bottom right
+              direction="top"
+              v-model="expanded"
+              transition="slide-y-reverse-transition"
+              class="p-clipboard p-label-clipboard"
+              id="t-clipboard"
+      >
+        <v-btn
+                fab dark
+                slot="activator"
+                color="accent darken-2"
+                class="action-menu"
+        >
+          <v-icon v-if="selection.length === 0">menu</v-icon>
+          <span v-else class="count-clipboard">{{ selection.length }}</span>
+        </v-btn>
 
-                <!-- v-btn
-                        fab
-                        dark
-                        small
-                        :title="labels.download"
-                        color="download"
-                        @click.stop="download()"
-                        class="p-label-clipboard-download"
-                        :disabled="selection.length !== 1"
-                >
-                    <v-icon>cloud_download</v-icon>
-                </v-btn -->
-                <v-btn
-                        fab dark small
-                        :title="labels.addToAlbum"
-                        color="album"
-                        :disabled="selection.length === 0"
-                        @click.stop="dialog.album = true"
-                        class="action-album"
-                >
-                    <v-icon>folder</v-icon>
-                </v-btn>
-                <v-btn
-                        fab dark small
-                        color="remove"
-                        :title="labels.delete"
-                        @click.stop="dialog.delete = true"
-                        :disabled="selection.length === 0"
-                        class="action-delete"
-                >
-                    <v-icon>delete</v-icon>
-                </v-btn>
+        <!-- v-btn
+                fab
+                dark
+                small
+                :title="labels.download"
+                color="download"
+                @click.stop="download()"
+                class="p-label-clipboard-download"
+                :disabled="selection.length !== 1"
+        >
+            <v-icon>cloud_download</v-icon>
+        </v-btn -->
+        <v-btn
+                fab dark small
+                :title="labels.addToAlbum"
+                color="album"
+                :disabled="selection.length === 0"
+                @click.stop="dialog.album = true"
+                class="action-album"
+        >
+          <v-icon>folder</v-icon>
+        </v-btn>
+        <v-btn
+                fab dark small
+                color="remove"
+                :title="labels.delete"
+                @click.stop="dialog.delete = true"
+                :disabled="selection.length === 0"
+                class="action-delete"
+        >
+          <v-icon>delete</v-icon>
+        </v-btn>
 
-                <v-btn
-                        fab dark small
-                        color="accent"
-                        @click.stop="clearClipboard()"
-                        class="action-clear"
-                >
-                    <v-icon>clear</v-icon>
-                </v-btn>
-            </v-speed-dial>
-        </v-container>
-        <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false"
-                              @confirm="addToAlbum"></p-photo-album-dialog>
-        <p-label-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false"
-                               @confirm="batchDelete"></p-label-delete-dialog>
-    </div>
+        <v-btn
+                fab dark small
+                color="accent"
+                @click.stop="clearClipboard()"
+                class="action-clear"
+        >
+          <v-icon>clear</v-icon>
+        </v-btn>
+      </v-speed-dial>
+    </v-container>
+    <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false"
+                          @confirm="addToAlbum"></p-photo-album-dialog>
+    <p-label-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false"
+                           @confirm="batchDelete"></p-label-delete-dialog>
+  </div>
 </template>
 <script>
     import Api from "common/api";

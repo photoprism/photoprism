@@ -1,24 +1,24 @@
 <template>
-    <div id="p-navigation">
-        <v-toolbar dark fixed flat color="navigation darken-1" class="p-navigation-small">
-            <v-toolbar-title>
-                <button @click.stop.prevent="goHome">
-                {{ page.title }}
-                </button>
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-avatar
-                    tile
-                    :size="28"
-                    class="clickable"
-                    @click.stop.prevent="openDocs"
-            >
-                <img src="/static/img/logo-white.svg" alt="PhotoPrism">
-            </v-avatar>
-        </v-toolbar>
-        <v-toolbar dark flat color="navigation darken-1">
-        </v-toolbar>
-    </div>
+  <div id="p-navigation">
+    <v-toolbar dark fixed flat color="navigation darken-1" class="p-navigation-small">
+      <v-toolbar-title>
+        <button @click.stop.prevent="goHome">
+          {{ page.title }}
+        </button>
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-avatar
+              tile
+              :size="28"
+              class="clickable"
+              @click.stop.prevent="openDocs"
+      >
+        <img src="/static/img/logo-white.svg" alt="PhotoPrism">
+      </v-avatar>
+    </v-toolbar>
+    <v-toolbar dark flat color="navigation darken-1">
+    </v-toolbar>
+  </div>
 </template>
 
 <script>

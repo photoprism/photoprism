@@ -1,39 +1,39 @@
 <template>
-    <div class="p-tab p-tab-photo-files">
-        <v-data-table
-                :headers="listColumns"
-                :items="model.Files"
-                hide-actions
-                disable-initial-sort
-                class="elevation-0 p-files p-files-list p-results"
-                item-key="ID"
-                v-model="selected"
-                :no-data-text="this.$gettext('No files found')"
-        >
-            <template slot="items" slot-scope="props" class="p-file">
-                <td>
-                    <v-btn v-if="props.item.Type === 'jpg'" flat :ripple="false" icon small
-                           @click.stop.prevent="setPrimary(props.item)">
-                        <v-icon v-if="props.item.Primary" color="secondary-dark">radio_button_checked</v-icon>
-                        <v-icon v-else color="secondary-dark">radio_button_unchecked</v-icon>
-                    </v-btn>
-                </td>
-                <td>
-                    <a :href="'/api/v1/dl/' + props.item.Hash + '?t=' + $config.downloadToken()" class="secondary-dark--text" target="_blank"
-                       v-if="$config.feature('download')">
-                        {{ props.item.Name }}
-                    </a>
-                    <span v-else>
+  <div class="p-tab p-tab-photo-files">
+    <v-data-table
+            :headers="listColumns"
+            :items="model.Files"
+            hide-actions
+            disable-initial-sort
+            class="elevation-0 p-files p-files-list p-results"
+            item-key="ID"
+            v-model="selected"
+            :no-data-text="this.$gettext('No files found')"
+    >
+      <template slot="items" slot-scope="props" class="p-file">
+        <td>
+          <v-btn v-if="props.item.Type === 'jpg'" flat :ripple="false" icon small
+                 @click.stop.prevent="setPrimary(props.item)">
+            <v-icon v-if="props.item.Primary" color="secondary-dark">radio_button_checked</v-icon>
+            <v-icon v-else color="secondary-dark">radio_button_unchecked</v-icon>
+          </v-btn>
+        </td>
+        <td>
+          <a :href="'/api/v1/dl/' + props.item.Hash + '?t=' + $config.downloadToken()" class="secondary-dark--text" target="_blank"
+             v-if="$config.feature('download')">
+            {{ props.item.Name }}
+          </a>
+          <span v-else>
                         {{ props.item.Name }}
                     </span>
-                </td>
-                <td class="hidden-sm-and-down">{{ fileDimensions(props.item) }}</td>
-                <td class="hidden-xs-only">{{ fileSize(props.item) }}</td>
-                <td>{{ fileType(props.item) }}</td>
-                <td>{{ fileStatus(props.item) }}</td>
-            </template>
-        </v-data-table>
-    </div>
+        </td>
+        <td class="hidden-sm-and-down">{{ fileDimensions(props.item) }}</td>
+        <td class="hidden-xs-only">{{ fileSize(props.item) }}</td>
+        <td>{{ fileType(props.item) }}</td>
+        <td>{{ fileStatus(props.item) }}</td>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>

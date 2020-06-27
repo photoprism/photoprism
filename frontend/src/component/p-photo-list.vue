@@ -1,85 +1,86 @@
 <template>
-    <v-data-table
-            :headers="listColumns"
-            :items="photos"
-            hide-actions
-            class="elevation-0 p-photos p-photo-list p-results"
-            disable-initial-sort
-            item-key="ID"
-            v-model="selected"
-            :no-data-text="notFoundMessage"
-    >
-        <template slot="items" slot-scope="props">
-            <td style="user-select: none;" :data-uid="props.item.UID">
-                <v-img class="accent lighten-2 clickable" aspect-ratio="1"
-                       :src="props.item.thumbnailUrl('tile_50')"
-                       @mousedown="onMouseDown($event, props.index)"
-                       @contextmenu="onContextMenu($event, props.index)"
-                       @click.stop.prevent="onClick($event, props.index)"
-                >
-                    <v-layout
-                            slot="placeholder"
-                            fill-height
-                            align-center
-                            justify-center
-                            ma-0
-                    >
-                        <v-progress-circular indeterminate
-                                             color="accent lighten-5"></v-progress-circular>
-                    </v-layout>
+  <v-data-table
+          :headers="listColumns"
+          :items="photos"
+          hide-actions
+          class="elevation-0 p-photos p-photo-list p-results"
+          disable-initial-sort
+          item-key="ID"
+          v-model="selected"
+          :no-data-text="notFoundMessage"
+  >
+    <template slot="items" slot-scope="props">
+      <td style="user-select: none;" :data-uid="props.item.UID">
+        <v-img class="accent lighten-2 clickable" aspect-ratio="1"
+               :src="props.item.thumbnailUrl('tile_50')"
+               @mousedown="onMouseDown($event, props.index)"
+               @contextmenu="onContextMenu($event, props.index)"
+               @click.stop.prevent="onClick($event, props.index)"
+        >
+          <v-layout
+                  slot="placeholder"
+                  fill-height
+                  align-center
+                  justify-center
+                  ma-0
+          >
+            <v-progress-circular indeterminate
+                                 color="accent lighten-5"></v-progress-circular>
+          </v-layout>
 
-                    <v-btn v-if="selection.length && $clipboard.has(props.item)" :ripple="false"
-                           flat icon large absolute class="p-photo-select">
-                        <v-icon color="white" class="t-select t-on">check_circle</v-icon>
-                    </v-btn>
-                    <v-btn v-else-if="!selection.length && props.item.Type === 'video' && props.item.isPlayable()" :ripple="false"
-                           flat icon large absolute class="p-photo-play opacity-75"
-                           @click.stop.prevent="openPhoto(props.index, true)">
-                        <v-icon color="white" class="action-play">play_arrow</v-icon>
-                    </v-btn>
-                </v-img>
-            </td>
+          <v-btn v-if="selection.length && $clipboard.has(props.item)" :ripple="false"
+                 flat icon large absolute class="p-photo-select">
+            <v-icon color="white" class="t-select t-on">check_circle</v-icon>
+          </v-btn>
+          <v-btn v-else-if="!selection.length && props.item.Type === 'video' && props.item.isPlayable()" :ripple="false"
+                 flat icon large absolute class="p-photo-play opacity-75"
+                 @click.stop.prevent="openPhoto(props.index, true)">
+            <v-icon color="white" class="action-play">play_arrow</v-icon>
+          </v-btn>
+        </v-img>
+      </td>
 
-            <td class="p-photo-desc clickable" :data-uid="props.item.UID" @click.exact="editPhoto(props.index)" style="user-select: none;">
-                {{ props.item.Title }}
-            </td>
-            <td class="p-photo-desc hidden-xs-only" :title="props.item.getDateString()">
-                <button @click.stop.prevent="editPhoto(props.index)" style="user-select: none;">
-                    {{ props.item.shortDateString() }}
-                </button>
-            </td>
-            <td class="p-photo-desc hidden-sm-and-down" style="user-select: none;">
-                <button @click.stop.prevent="editPhoto(props.index)">
-                    {{ props.item.CameraMake }} {{ props.item.CameraModel }}
-                </button>
-            </td>
-            <td class="p-photo-desc hidden-xs-only">
-                <button @click.exact="downloadFile(props.index)"
-                        title="Name" v-if="filter.order === 'name'">
-                    {{ props.item.FileName }}
-                </button>
-                <button v-else-if="props.item.Country !== 'zz' && showLocation" @click.stop.prevent="openLocation(props.index)"
-                        style="user-select: none;">
-                    {{ props.item.locationInfo() }}
-                </button>
-                <span v-else>
+      <td class="p-photo-desc clickable" :data-uid="props.item.UID" @click.exact="editPhoto(props.index)"
+          style="user-select: none;">
+        {{ props.item.Title }}
+      </td>
+      <td class="p-photo-desc hidden-xs-only" :title="props.item.getDateString()">
+        <button @click.stop.prevent="editPhoto(props.index)" style="user-select: none;">
+          {{ props.item.shortDateString() }}
+        </button>
+      </td>
+      <td class="p-photo-desc hidden-sm-and-down" style="user-select: none;">
+        <button @click.stop.prevent="editPhoto(props.index)">
+          {{ props.item.CameraMake }} {{ props.item.CameraModel }}
+        </button>
+      </td>
+      <td class="p-photo-desc hidden-xs-only">
+        <button @click.exact="downloadFile(props.index)"
+                title="Name" v-if="filter.order === 'name'">
+          {{ props.item.FileName }}
+        </button>
+        <button v-else-if="props.item.Country !== 'zz' && showLocation" @click.stop.prevent="openLocation(props.index)"
+                style="user-select: none;">
+          {{ props.item.locationInfo() }}
+        </button>
+        <span v-else>
                     {{ props.item.locationInfo() }}
                 </span>
-            </td>
-            <td class="text-xs-center">
-                <v-btn v-if="hidePrivate" class="p-photo-private" icon small flat :ripple="false"
-                       @click.stop.prevent="props.item.togglePrivate()" :data-uid="props.item.UID">
-                    <v-icon v-if="props.item.Private" color="secondary-dark">lock</v-icon>
-                    <v-icon v-else color="accent lighten-3">lock_open</v-icon>
-                </v-btn>
-                <v-btn class="p-photo-like" icon small flat :ripple="false"
-                       @click.stop.prevent="props.item.toggleLike()" :data-uid="props.item.UID">
-                    <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID">favorite</v-icon>
-                    <v-icon v-else color="accent lighten-3" :data-uid="props.item.UID">favorite_border</v-icon>
-                </v-btn>
-            </td>
-        </template>
-    </v-data-table>
+      </td>
+      <td class="text-xs-center">
+        <v-btn v-if="hidePrivate" class="p-photo-private" icon small flat :ripple="false"
+               @click.stop.prevent="props.item.togglePrivate()" :data-uid="props.item.UID">
+          <v-icon v-if="props.item.Private" color="secondary-dark">lock</v-icon>
+          <v-icon v-else color="accent lighten-3">lock_open</v-icon>
+        </v-btn>
+        <v-btn class="p-photo-like" icon small flat :ripple="false"
+               @click.stop.prevent="props.item.toggleLike()" :data-uid="props.item.UID">
+          <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID">favorite</v-icon>
+          <v-icon v-else color="accent lighten-3" :data-uid="props.item.UID">favorite_border</v-icon>
+        </v-btn>
+      </td>
+    </template>
+  </v-data-table>
 </template>
 <script>
     export default {
@@ -96,7 +97,7 @@
         data() {
             let m = this.$gettext('Try using other terms and search options such as category, country and camera.');
 
-            if(this.$config.feature("review")) {
+            if (this.$config.feature("review")) {
                 m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
             }
 
@@ -110,7 +111,11 @@
                     {text: this.$gettext('Title'), value: 'Title'},
                     {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt'},
                     {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel'},
-                    {text: showName ? this.$gettext('Name') : this.$gettext('Location'), class: 'hidden-xs-only', value: showName ? 'FileName' : 'LocLabel'},
+                    {
+                        text: showName ? this.$gettext('Name') : this.$gettext('Location'),
+                        class: 'hidden-xs-only',
+                        value: showName ? 'FileName' : 'LocLabel'
+                    },
                     {text: '', value: '', sortable: false, align: 'center'},
                 ],
                 showName: showName,
@@ -164,10 +169,10 @@
                     } else {
                         this.$clipboard.toggle(this.photos[index]);
                     }
-                } else if(this.photos[index]) {
+                } else if (this.photos[index]) {
                     let photo = this.photos[index];
 
-                    if(photo.Type === 'video' && photo.isPlayable()) {
+                    if (photo.Type === 'video' && photo.isPlayable()) {
                         this.openPhoto(index, true);
                     } else {
                         this.openPhoto(index, false);

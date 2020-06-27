@@ -1,16 +1,16 @@
 <template>
-    <transition
-            id="p-loading-bar"
-            v-on:before-enter="beforeEnter"
-            v-on:enter="enter"
-            v-on:after-enter="afterEnter"
-            v-bind:css="false"
-    >
-        <div class="top-progress" :style="barStyle" v-if="show">
-            <div class="peg" :style="pegStyle">
-            </div>
-        </div>
-    </transition>
+  <transition
+          id="p-loading-bar"
+          v-on:before-enter="beforeEnter"
+          v-on:enter="enter"
+          v-on:after-enter="afterEnter"
+          v-bind:css="false"
+  >
+    <div class="top-progress" :style="barStyle" v-if="show">
+      <div class="peg" :style="pegStyle">
+      </div>
+    </div>
+  </transition>
 </template>
 <script>
     function clamp(n, min, max) {
@@ -45,7 +45,7 @@
 
     export default {
         name: "p-loading-bar",
-        data () {
+        data() {
             return {
                 error: false,
                 show: false,
@@ -56,13 +56,13 @@
             }
         },
 
-        mounted () {
+        mounted() {
             let stackSize = 0;
 
             this.$event.subscribe('ajax.start', function () {
                 stackSize++;
 
-                if(stackSize === 1) {
+                if (stackSize === 1) {
                     this.start();
                 }
             }.bind(this));
@@ -129,15 +129,15 @@
         },
 
         computed: {
-            progressColor () {
+            progressColor() {
                 return this.error ? this.errorColor : this.color
             },
 
-            isStarted () {
+            isStarted() {
                 return typeof this.status === 'number'
             },
 
-            barStyle () {
+            barStyle() {
                 return {
                     position: 'fixed',
                     top: '0',
@@ -152,7 +152,7 @@
                 }
             },
 
-            pegStyle () {
+            pegStyle() {
                 return {
                     display: 'block',
                     position: 'absolute',
@@ -167,22 +167,22 @@
         },
 
         methods: {
-            beforeEnter (el) {
+            beforeEnter(el) {
                 this.opacity = 0
                 this.progress = 0
                 this.width = 0
             },
 
-            enter (el, done) {
+            enter(el, done) {
                 this.opacity = 1
                 done()
             },
 
-            afterEnter (el) {
+            afterEnter(el) {
                 this._runStart()
             },
 
-            _work () {
+            _work() {
                 setTimeout(() => {
                     if (!this.isStarted || this.isPaused) {
                         return
@@ -192,7 +192,7 @@
                 }, this.trickleSpeed)
             },
 
-            _runStart () {
+            _runStart() {
                 this.status = (this.progress === 100 ? null : this.progress)
 
                 if (this.trickle) {
@@ -200,7 +200,7 @@
                 }
             },
 
-            start () {
+            start() {
                 this.isPaused = false
 
                 if (this.show) {
@@ -210,7 +210,7 @@
                 }
             },
 
-            set (amount) {
+            set(amount) {
                 this.isPaused = false
 
                 let o
@@ -241,7 +241,7 @@
                 })
             },
 
-            increase (amount) {
+            increase(amount) {
                 let o = this.progress
 
                 if (o < 100 && typeof amount !== 'number') {
@@ -260,26 +260,26 @@
                 this.set(clamp(o + amount, 0, this.maximum))
             },
 
-            decrease (amount) {
+            decrease(amount) {
                 if (this.progress === 0) {
                     return
                 }
                 this.increase(-amount)
             },
 
-            done () {
+            done() {
                 this.set(100)
             },
 
-            getProgress () {
+            getProgress() {
                 return this.status ? this.progress : 0
             },
 
-            pause () {
+            pause() {
                 this.isPaused = true
             },
 
-            fail () {
+            fail() {
                 this.error = true
                 this.done()
             },

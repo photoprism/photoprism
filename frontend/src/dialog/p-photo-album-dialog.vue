@@ -1,45 +1,45 @@
 <template>
-    <v-dialog lazy v-model="show" persistent max-width="350" class="p-photo-album-dialog" @keydown.esc="cancel">
-        <v-card raised elevation="24">
-            <v-container fluid class="pb-2 pr-2 pl-2">
-                <v-layout row wrap>
-                    <v-flex xs3 text-xs-center>
-                        <v-icon size="54" color="grey lighten-1" v-if="newAlbum">create_new_folder</v-icon>
-                        <v-icon size="54" color="grey lighten-1" v-else>folder</v-icon>
-                    </v-flex>
-                    <v-flex xs9 text-xs-left align-self-center>
-                        <v-autocomplete
-                                v-model="album"
-                                browser-autocomplete="off"
-                                hint="Album Name"
-                                :items="items"
-                                :search-input.sync="search"
-                                :loading="loading"
-                                hide-details
-                                hide-no-data
-                                item-text="Title"
-                                item-value="UID"
-                                :label="labels.select"
-                                color="secondary-dark"
-                                flat solo
-                                class="input-album"
-                        >
-                        </v-autocomplete>
-                    </v-flex>
-                    <v-flex xs12 text-xs-right class="pt-3">
-                        <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="p-photo-dialog-cancel">
-                            <translate key="Cancel">Cancel</translate>
-                        </v-btn>
-                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
-                               class="p-photo-dialog-confirm">
-                            <span v-if="newAlbum">{{ labels.createAlbum }}</span>
-                            <span v-else>{{ labels.addToAlbum }}</span>
-                        </v-btn>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-        </v-card>
-    </v-dialog>
+  <v-dialog lazy v-model="show" persistent max-width="350" class="p-photo-album-dialog" @keydown.esc="cancel">
+    <v-card raised elevation="24">
+      <v-container fluid class="pb-2 pr-2 pl-2">
+        <v-layout row wrap>
+          <v-flex xs3 text-xs-center>
+            <v-icon size="54" color="grey lighten-1" v-if="newAlbum">create_new_folder</v-icon>
+            <v-icon size="54" color="grey lighten-1" v-else>folder</v-icon>
+          </v-flex>
+          <v-flex xs9 text-xs-left align-self-center>
+            <v-autocomplete
+                    v-model="album"
+                    browser-autocomplete="off"
+                    hint="Album Name"
+                    :items="items"
+                    :search-input.sync="search"
+                    :loading="loading"
+                    hide-details
+                    hide-no-data
+                    item-text="Title"
+                    item-value="UID"
+                    :label="labels.select"
+                    color="secondary-dark"
+                    flat solo
+                    class="input-album"
+            >
+            </v-autocomplete>
+          </v-flex>
+          <v-flex xs12 text-xs-right class="pt-3">
+            <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="p-photo-dialog-cancel">
+              <translate key="Cancel">Cancel</translate>
+            </v-btn>
+            <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
+                   class="p-photo-dialog-confirm">
+              <span v-if="newAlbum">{{ labels.createAlbum }}</span>
+              <span v-else>{{ labels.addToAlbum }}</span>
+            </v-btn>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
     import Album from "../model/album";

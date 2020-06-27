@@ -1,45 +1,45 @@
 <template>
-    <div class="p-page p-page-album-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
-         :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div class="p-page p-page-album-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
+       :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-        <p-album-toolbar :album="model" :settings="settings" :filter="filter" :filter-change="updateQuery"
-                         :refresh="refresh"></p-album-toolbar>
+    <p-album-toolbar :album="model" :settings="settings" :filter="filter" :filter-change="updateQuery"
+                     :refresh="refresh"></p-album-toolbar>
 
-        <v-container fluid class="pa-4" v-if="loading">
-            <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
-        </v-container>
-        <v-container fluid class="pa-0" v-else>
-            <p-scroll-top></p-scroll-top>
+    <v-container fluid class="pa-4" v-if="loading">
+      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+    </v-container>
+    <v-container fluid class="pa-0" v-else>
+      <p-scroll-top></p-scroll-top>
 
-            <p-photo-clipboard :refresh="refresh"
-                               :selection="selection"
-                               :album="model" context="album"></p-photo-clipboard>
+      <p-photo-clipboard :refresh="refresh"
+                         :selection="selection"
+                         :album="model" context="album"></p-photo-clipboard>
 
-            <p-photo-mosaic v-if="settings.view === 'mosaic'"
-                            :photos="results"
-                            :selection="selection"
-                            :filter="filter"
-                            :album="model"
-                            :edit-photo="editPhoto"
-                            :open-photo="openPhoto"></p-photo-mosaic>
-            <p-photo-list v-else-if="settings.view === 'list'"
-                          :photos="results"
-                          :selection="selection"
-                          :filter="filter"
-                          :album="model"
-                          :open-photo="openPhoto"
-                          :edit-photo="editPhoto"
-                          :open-location="openLocation"></p-photo-list>
-            <p-photo-cards v-else
-                           :photos="results"
-                           :selection="selection"
-                           :filter="filter"
-                           :album="model"
-                           :open-photo="openPhoto"
-                           :edit-photo="editPhoto"
-                           :open-location="openLocation"></p-photo-cards>
-        </v-container>
-    </div>
+      <p-photo-mosaic v-if="settings.view === 'mosaic'"
+                      :photos="results"
+                      :selection="selection"
+                      :filter="filter"
+                      :album="model"
+                      :edit-photo="editPhoto"
+                      :open-photo="openPhoto"></p-photo-mosaic>
+      <p-photo-list v-else-if="settings.view === 'list'"
+                    :photos="results"
+                    :selection="selection"
+                    :filter="filter"
+                    :album="model"
+                    :open-photo="openPhoto"
+                    :edit-photo="editPhoto"
+                    :open-location="openLocation"></p-photo-list>
+      <p-photo-cards v-else
+                     :photos="results"
+                     :selection="selection"
+                     :filter="filter"
+                     :album="model"
+                     :open-photo="openPhoto"
+                     :edit-photo="editPhoto"
+                     :open-location="openLocation"></p-photo-cards>
+    </v-container>
+  </div>
 </template>
 
 <script>

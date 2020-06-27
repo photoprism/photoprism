@@ -1,70 +1,70 @@
 <template>
-    <v-dialog lazy v-model="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
-        <v-card raised elevation="24">
-            <v-card-title primary-title class="pb-0">
-                <v-layout row wrap>
-                    <v-flex xs8>
-                        <h3 class="headline mb-0">
-                            <translate>WebDAV Upload</translate>
-                        </h3>
-                    </v-flex>
-                    <v-flex xs4 text-xs-right>
-                        <v-btn icon flat dark color="secondary-dark" class="ma-0" @click.stop="setup">
-                            <v-icon>cloud</v-icon>
-                        </v-btn>
-                    </v-flex>
-                </v-layout>
-            </v-card-title>
-            <v-card-text class="pt-0">
-                <v-layout row wrap>
-                    <v-flex xs12 text-xs-left class="pt-2">
-                        <v-select
-                                color="secondary-dark"
-                                hide-details hide-no-data flat
-                                :label="labels.account"
-                                item-text="AccName"
-                                item-value="ID"
-                                @change="onChange"
-                                return-object
-                                :disabled="loading || noAccounts"
-                                v-model="account"
-                                :items="accounts">
-                        </v-select>
-                    </v-flex>
-                    <v-flex xs12 text-xs-left class="pt-2">
-                        <v-autocomplete
-                                color="secondary-dark"
-                                hide-details hide-no-data flat
-                                v-model="path"
-                                browser-autocomplete="off"
-                                hint="Folder"
-                                :search-input.sync="search"
-                                :items="pathItems"
-                                :loading="loading"
-                                :disabled="loading || noAccounts"
-                                item-text="abs"
-                                item-value="abs"
-                                :label="labels.path"
-                        >
-                        </v-autocomplete>
-                    </v-flex>
-                    <v-flex xs12 text-xs-right class="pt-4">
-                        <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="action-cancel ml-0 mt-0 mb-0 mr-2">
-                            <translate key="Cancel">Cancel</translate>
-                        </v-btn>
-                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="setup"
-                               class="action-setup ma-0" v-if="noAccounts">
-                            <span>{{ labels.setup }}</span>
-                        </v-btn>
-                        <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
-                               class="action-upload ma-0" v-else>
-                            <span>{{ labels.upload }}</span>
-                        </v-btn>
-                    </v-flex>
-                </v-layout>
-            </v-card-text>
-        </v-card>
-    </v-dialog>
+  <v-dialog lazy v-model="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
+    <v-card raised elevation="24">
+      <v-card-title primary-title class="pb-0">
+        <v-layout row wrap>
+          <v-flex xs8>
+            <h3 class="headline mb-0">
+              <translate>WebDAV Upload</translate>
+            </h3>
+          </v-flex>
+          <v-flex xs4 text-xs-right>
+            <v-btn icon flat dark color="secondary-dark" class="ma-0" @click.stop="setup">
+              <v-icon>cloud</v-icon>
+            </v-btn>
+          </v-flex>
+        </v-layout>
+      </v-card-title>
+      <v-card-text class="pt-0">
+        <v-layout row wrap>
+          <v-flex xs12 text-xs-left class="pt-2">
+            <v-select
+                    color="secondary-dark"
+                    hide-details hide-no-data flat
+                    :label="labels.account"
+                    item-text="AccName"
+                    item-value="ID"
+                    @change="onChange"
+                    return-object
+                    :disabled="loading || noAccounts"
+                    v-model="account"
+                    :items="accounts">
+            </v-select>
+          </v-flex>
+          <v-flex xs12 text-xs-left class="pt-2">
+            <v-autocomplete
+                    color="secondary-dark"
+                    hide-details hide-no-data flat
+                    v-model="path"
+                    browser-autocomplete="off"
+                    hint="Folder"
+                    :search-input.sync="search"
+                    :items="pathItems"
+                    :loading="loading"
+                    :disabled="loading || noAccounts"
+                    item-text="abs"
+                    item-value="abs"
+                    :label="labels.path"
+            >
+            </v-autocomplete>
+          </v-flex>
+          <v-flex xs12 text-xs-right class="pt-4">
+            <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="action-cancel ml-0 mt-0 mb-0 mr-2">
+              <translate key="Cancel">Cancel</translate>
+            </v-btn>
+            <v-btn color="blue-grey lighten-2" depressed dark @click.stop="setup"
+                   class="action-setup ma-0" v-if="noAccounts">
+              <span>{{ labels.setup }}</span>
+            </v-btn>
+            <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
+                   class="action-upload ma-0" v-else>
+              <span>{{ labels.upload }}</span>
+            </v-btn>
+          </v-flex>
+        </v-layout>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
     import Account from "model/account";

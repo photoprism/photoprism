@@ -1,17 +1,17 @@
 <template>
-    <transition name="fade-transition">
-        <v-btn
-                v-if="show"
-                color="accent darken-2"
-                dark
-                fab
-                fixed
-                @click.stop="scrollToTop"
-                class="p-scroll-top"
-        >
-            <v-icon>arrow_upward</v-icon>
-        </v-btn>
-    </transition>
+  <transition name="fade-transition">
+    <v-btn
+            v-if="show"
+            color="accent darken-2"
+            dark
+            fab
+            fixed
+            @click.stop="scrollToTop"
+            class="p-scroll-top"
+    >
+      <v-icon>arrow_upward</v-icon>
+    </v-btn>
+  </transition>
 </template>
 
 <script>

@@ -1,124 +1,124 @@
 <template>
-    <v-dialog lazy v-model="show" persistent max-width="500" class="p-share-dialog" @keydown.esc="close">
-        <v-card raised elevation="24">
-            <v-card-title primary-title class="pb-0">
-                <v-layout row wrap>
-                    <v-flex xs9>
-                        <h3 class="headline mb-0">Share {{model.modelName()}}<!-- TODO: translate--></h3>
+  <v-dialog lazy v-model="show" persistent max-width="500" class="p-share-dialog" @keydown.esc="close">
+    <v-card raised elevation="24">
+      <v-card-title primary-title class="pb-0">
+        <v-layout row wrap>
+          <v-flex xs9>
+            <h3 class="headline mb-0">Share {{model.modelName()}}<!-- TODO: translate--></h3>
+          </v-flex>
+          <v-flex xs3 text-xs-right>
+            <v-btn icon flat dark color="secondary-dark" class="ma-0 action-add-link" @click.stop="add" :title="$gettext('Add Link')">
+              <v-icon>add_link</v-icon>
+            </v-btn>
+          </v-flex>
+        </v-layout>
+      </v-card-title>
+      <v-card-text>
+        <v-expansion-panel class="pa-0 elevation-0">
+          <v-expansion-panel-content v-for="(link, index) in links" :key="index"
+                                     class="pa-0 elevation-0 secondary-light mb-1">
+            <template v-slot:header>
+              <button class="text-xs-left action-url ml-0 mt-0 mb-0 pa-0 mr-2" @click.stop="copyUrl(link)" style="user-select: none;">
+                <v-icon size="16" class="pr-1">link</v-icon>
+                /s/<strong style="font-weight: 500;" v-if="link.ShareToken">{{ link.ShareToken.toLowerCase() }}</strong><span v-else>...</span>
+              </button>
+            </template>
+            <v-card>
+              <v-card-text class="grey lighten-4">
+                <v-container fluid class="pa-0">
+                  <v-layout row wrap>
+                    <v-flex xs12 class="pa-2">
+                      <v-text-field
+                              :label="$gettext('URL')"
+                              browser-autocomplete="off"
+                              hide-details readonly
+                              color="secondary-dark"
+                              @click.stop="selectText($event)"
+                              v-model="link.url()"
+                              class="input-url">
+                      </v-text-field>
                     </v-flex>
-                    <v-flex xs3 text-xs-right>
-                        <v-btn icon flat dark color="secondary-dark" class="ma-0 action-add-link" @click.stop="add" :title="$gettext('Add Link')">
-                            <v-icon>add_link</v-icon>
-                        </v-btn>
+                    <v-flex xs12 sm6 class="pa-2">
+                      <v-select
+                              :label="expires(link)"
+                              browser-autocomplete="off"
+                              hide-details
+                              color="secondary-dark"
+                              item-text="text"
+                              item-value="value"
+                              v-model="link.ShareExpires"
+                              :items="items.expires"
+                              class="input-expires"
+                      >
+                      </v-select>
                     </v-flex>
-                </v-layout>
-            </v-card-title>
-            <v-card-text>
-                <v-expansion-panel class="pa-0 elevation-0">
-                    <v-expansion-panel-content v-for="(link, index) in links" :key="index"
-                                               class="pa-0 elevation-0 secondary-light mb-1">
-                        <template v-slot:header>
-                            <button class="text-xs-left action-url ml-0 mt-0 mb-0 pa-0 mr-2" @click.stop="copyUrl(link)" style="user-select: none;">
-                                <v-icon size="16" class="pr-1">link</v-icon>
-                                /s/<strong style="font-weight: 500;" v-if="link.ShareToken">{{ link.ShareToken.toLowerCase() }}</strong><span v-else>...</span>
-                            </button>
-                        </template>
-                        <v-card>
-                            <v-card-text class="grey lighten-4">
-                                <v-container fluid class="pa-0">
-                                    <v-layout row wrap>
-                                        <v-flex xs12 class="pa-2">
-                                            <v-text-field
-                                                    :label="$gettext('URL')"
-                                                    browser-autocomplete="off"
-                                                    hide-details readonly
-                                                    color="secondary-dark"
-                                                    @click.stop="selectText($event)"
-                                                    v-model="link.url()"
-                                                    class="input-url">
-                                            </v-text-field>
-                                        </v-flex>
-                                        <v-flex xs12 sm6 class="pa-2">
-                                            <v-select
-                                                    :label="expires(link)"
-                                                    browser-autocomplete="off"
-                                                    hide-details
-                                                    color="secondary-dark"
-                                                    item-text="text"
-                                                    item-value="value"
-                                                    v-model="link.ShareExpires"
-                                                    :items="items.expires"
-                                                    class="input-expires"
-                                            >
-                                            </v-select>
-                                        </v-flex>
-                                        <v-flex xs12 sm6 class="pa-2">
-                                            <v-text-field
-                                                    hide-details required
-                                                    browser-autocomplete="off"
-                                                    :label="$gettext('Secret')"
-                                                    :placeholder="$gettext('Token')"
-                                                    color="secondary-dark"
-                                                    v-model="link.ShareToken"
-                                                    class="input-secret"
-                                            ></v-text-field>
-                                        </v-flex>
-                                        <!-- v-flex xs12 sm6 class="pa-2">
-                                            <v-text-field
-                                                    hide-details
-                                                    browser-autocomplete="off"
-                                                    :label="label.pass"
-                                                    :placeholder="link.HasPassword ? '••••••••' : 'optional'"
-                                                    color="secondary-dark"
-                                                    v-model="link.Password"
-                                                    :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                                                    :type="showPassword ? 'text' : 'password'"
-                                                    @click:append="showPassword = !showPassword"
-                                            ></v-text-field>
-                                        </v-flex -->
-                                        <v-flex xs6 text-xs-left class="pa-2">
-                                            <v-btn small icon flat color="remove" class="ma-0 action-delete"
-                                                   @click.stop.exact="remove(index)" :title="$gettext('Delete')">
-                                                <v-icon>delete</v-icon>
-                                            </v-btn>
-                                        </v-flex>
-                                        <v-flex xs6 text-xs-right class="pa-2">
-                                            <v-btn small depressed dark color="secondary-dark" class="ma-0 action-save"
-                                                   @click.stop.exact="update(link)">
-                                                <translate>Save</translate>
-                                            </v-btn>
-                                        </v-flex>
-                                    </v-layout>
-                                </v-container>
-                            </v-card-text>
-                        </v-card>
-                    </v-expansion-panel-content>
-                </v-expansion-panel>
-
-                <v-container fluid text-xs-left class="pb-0 pt-3 pr-0 pl-0 caption">
-                    People you share a link with will be able to view the {{model.modelName().toLowerCase()}}.<!-- TODO: translate-->
-                    <translate>A click will copy it to your clipboard. Any private photos remain private.
-                        Alternatively, you can upload files directly to WebDAV servers like Nextcloud.</translate>
+                    <v-flex xs12 sm6 class="pa-2">
+                      <v-text-field
+                              hide-details required
+                              browser-autocomplete="off"
+                              :label="$gettext('Secret')"
+                              :placeholder="$gettext('Token')"
+                              color="secondary-dark"
+                              v-model="link.ShareToken"
+                              class="input-secret"
+                      ></v-text-field>
+                    </v-flex>
+                    <!-- v-flex xs12 sm6 class="pa-2">
+                        <v-text-field
+                                hide-details
+                                browser-autocomplete="off"
+                                :label="label.pass"
+                                :placeholder="link.HasPassword ? '••••••••' : 'optional'"
+                                color="secondary-dark"
+                                v-model="link.Password"
+                                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                                :type="showPassword ? 'text' : 'password'"
+                                @click:append="showPassword = !showPassword"
+                        ></v-text-field>
+                    </v-flex -->
+                    <v-flex xs6 text-xs-left class="pa-2">
+                      <v-btn small icon flat color="remove" class="ma-0 action-delete"
+                             @click.stop.exact="remove(index)" :title="$gettext('Delete')">
+                        <v-icon>delete</v-icon>
+                      </v-btn>
+                    </v-flex>
+                    <v-flex xs6 text-xs-right class="pa-2">
+                      <v-btn small depressed dark color="secondary-dark" class="ma-0 action-save"
+                             @click.stop.exact="update(link)">
+                        <translate>Save</translate>
+                      </v-btn>
+                    </v-flex>
+                  </v-layout>
                 </v-container>
-            </v-card-text>
-            <v-card-actions class="pt-0">
-                <v-layout row wrap class="pa-2">
-                    <v-flex xs6>
-                        <v-btn @click.stop="upload" depressed color="secondary-light"
-                               class="action-webdav">
-                            <translate>WebDAV Upload</translate>
-                        </v-btn>
-                    </v-flex>
-                    <v-flex xs6 text-xs-right>
-                        <v-btn depressed color="secondary-light" @click.stop="confirm"
-                               class="action-close">
-                            <translate>Close</translate>
-                        </v-btn>
-                    </v-flex>
-                </v-layout>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+              </v-card-text>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <v-container fluid text-xs-left class="pb-0 pt-3 pr-0 pl-0 caption">
+          People you share a link with will be able to view the {{model.modelName().toLowerCase()}}.<!-- TODO: translate-->
+          <translate>A click will copy it to your clipboard. Any private photos remain private.
+            Alternatively, you can upload files directly to WebDAV servers like Nextcloud.</translate>
+        </v-container>
+      </v-card-text>
+      <v-card-actions class="pt-0">
+        <v-layout row wrap class="pa-2">
+          <v-flex xs6>
+            <v-btn @click.stop="upload" depressed color="secondary-light"
+                   class="action-webdav">
+              <translate>WebDAV Upload</translate>
+            </v-btn>
+          </v-flex>
+          <v-flex xs6 text-xs-right>
+            <v-btn depressed color="secondary-light" @click.stop="confirm"
+                   class="action-close">
+              <translate>Close</translate>
+            </v-btn>
+          </v-flex>
+        </v-layout>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
 

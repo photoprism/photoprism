@@ -1,271 +1,271 @@
 <template>
-    <v-dialog lazy v-model="show" persistent max-width="500" class="p-account-edit-dialog" @keydown.esc="cancel">
-        <v-card raised elevation="24">
-            <v-card-title primary-title>
-                <v-layout row wrap v-if="scope === 'sharing'">
-                    <v-flex xs9>
-                        <h3 class="headline mb-0">{{ $gettext('Upload') }}</h3>
-                    </v-flex>
-                    <v-flex xs3 text-xs-right>
-                        <v-switch
-                                v-model="model.AccShare"
-                                color="secondary-dark"
-                                :true-value="true"
-                                :false-value="false"
-                                :label="model.AccShare ? label.enable : label.disable"
-                                :disabled="model.AccType !== 'webdav'"
-                                class="mt-0 hidden-xs-only"
-                                hide-details
-                        ></v-switch>
-                        <v-switch
-                                v-model="model.AccShare"
-                                color="secondary-dark"
-                                :true-value="true"
-                                :false-value="false"
-                                :disabled="model.AccType !== 'webdav'"
-                                class="mt-0 hidden-sm-and-up"
-                                hide-details
-                        ></v-switch>
-                    </v-flex>
-                </v-layout>
-                <v-layout row wrap v-else-if="scope === 'sync'">
-                    <v-flex xs9>
-                        <h3 class="headline mb-0">{{ $gettext('Remote Sync') }}</h3>
-                    </v-flex>
-                    <v-flex xs3 text-xs-right>
-                        <v-switch
-                                v-model="model.AccSync"
-                                color="secondary-dark"
-                                :true-value="true"
-                                :false-value="false"
-                                :label="model.AccSync ? label.enable : label.disable"
-                                :disabled="model.AccType !== 'webdav'"
-                                class="mt-0 hidden-xs-only"
-                                hide-details
-                        ></v-switch>
-                        <v-switch
-                                v-model="model.AccSync"
-                                color="secondary-dark"
-                                :true-value="true"
-                                :false-value="false"
-                                :disabled="model.AccType !== 'webdav'"
-                                class="mt-0 hidden-sm-and-up"
-                                hide-details
-                        ></v-switch>
-                    </v-flex>
-                </v-layout>
-                <v-layout row wrap v-else>
-                    <v-flex xs10>
-                        <h3 class="headline mb-0">{{ $gettext('Edit Account') }}</h3>
-                    </v-flex>
-                    <v-flex xs2 text-xs-right>
-                        <v-btn icon flat :ripple="false"
-                               class="action-remove mt-0"
-                               @click.stop.prevent="remove()">
-                            <v-icon color="secondary-dark">delete</v-icon>
-                        </v-btn>
-                    </v-flex>
-                </v-layout>
-                <h3 class="headline mb-0" v-else>{{ $gettext('Edit Account') }}</h3>
-            </v-card-title>
-            <v-container fluid class="pt-0 pb-2 pr-2 pl-2">
-                <v-layout row wrap v-if="scope === 'sharing'">
-                    <v-flex xs12 class="pa-2">
-                        <v-autocomplete
-                                color="secondary-dark"
-                                hide-details hide-no-data flat
-                                v-model="model.SharePath"
-                                browser-autocomplete="off"
-                                hint="Folder"
-                                :search-input.sync="search"
-                                :items="pathItems"
-                                :loading="loading"
-                                item-text="abs"
-                                item-value="abs"
-                                :label="label.SharePath"
-                                :disabled="!model.AccShare || loading"
-                        >
-                        </v-autocomplete>
-                    </v-flex>
-                    <v-flex xs12 sm6 class="pa-2 input-share-size">
-                        <v-select
-                                :disabled="!model.AccShare"
-                                :label="label.ShareSize"
-                                browser-autocomplete="off"
-                                hide-details
-                                color="secondary-dark"
-                                item-text="text"
-                                item-value="value"
-                                v-model="model.ShareSize"
-                                :items="items.sizes">
-                        </v-select>
-                    </v-flex>
-                    <v-flex xs12 sm6 class="pa-2">
-                        <v-select
-                                :disabled="!model.AccShare"
-                                :label="label.ShareExpires"
-                                browser-autocomplete="off"
-                                hide-details
-                                color="secondary-dark"
-                                item-text="text"
-                                item-value="value"
-                                v-model="model.ShareExpires"
-                                :items="items.expires">
-                        </v-select>
-                    </v-flex>
-                </v-layout>
-                <v-layout row wrap v-else-if="scope === 'sync'">
-                    <v-flex xs12 sm6 class="pa-2">
-                        <v-autocomplete
-                                color="secondary-dark"
-                                hide-details hide-no-data flat
-                                v-model="model.SyncPath"
-                                browser-autocomplete="off"
-                                hint="Folder"
-                                :search-input.sync="search"
-                                :items="pathItems"
-                                :loading="loading"
-                                item-text="abs"
-                                item-value="abs"
-                                :label="label.SyncPath"
-                                :disabled="!model.AccSync || loading"
-                        >
-                        </v-autocomplete>
-                    </v-flex>
-                    <v-flex xs12 sm6 class="pa-2">
-                        <v-select
-                                :disabled="!model.AccSync"
-                                :label="label.SyncInterval"
-                                browser-autocomplete="off"
-                                hide-details
-                                color="secondary-dark"
-                                item-text="text"
-                                item-value="value"
-                                v-model="model.SyncInterval"
-                                :items="items.intervals">
-                        </v-select>
-                    </v-flex>
-                    <v-flex xs12 sm6 class="px-2">
-                        <v-checkbox
-                                :disabled="!model.AccSync || readonly"
-                                hide-details
-                                color="secondary-dark"
-                                :label="label.SyncDownload"
-                                v-model="model.SyncDownload"
-                        ></v-checkbox>
-                    </v-flex>
-                    <v-flex xs12 sm6 class="px-2">
-                        <v-checkbox
-                                :disabled="!model.AccSync"
-                                hide-details
-                                color="secondary-dark"
-                                :label="label.SyncFilenames"
-                                v-model="model.SyncFilenames"
-                        ></v-checkbox>
-                    </v-flex>
-                    <v-flex xs12 sm6 class="px-2">
-                        <v-checkbox
-                                :disabled="!model.AccSync"
-                                hide-details
-                                color="secondary-dark"
-                                :label="label.SyncUpload"
-                                v-model="model.SyncUpload"
-                        ></v-checkbox>
-                    </v-flex>
-                    <v-flex xs12 sm6 class="px-2">
-                        <v-checkbox
-                                :disabled="!model.AccSync"
-                                hide-details
-                                color="secondary-dark"
-                                :label="label.SyncRaw"
-                                v-model="model.SyncRaw"
-                        ></v-checkbox>
-                    </v-flex>
-                </v-layout>
-                <v-layout row wrap v-else>
-                    <v-flex xs12 class="pa-2">
-                        <v-text-field
-                                hide-details
-                                browser-autocomplete="off"
-                                :label="label.name"
-                                placeholder=""
-                                color="secondary-dark"
-                                v-model="model.AccName"
-                                required
-                        ></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 class="pa-2">
-                        <v-text-field
-                                hide-details
-                                browser-autocomplete="off"
-                                :label="label.url"
-                                placeholder="https://www.example.com/"
-                                color="secondary-dark"
-                                v-model="model.AccURL"
-                        ></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm6 class="pa-2">
-                        <v-text-field
-                                hide-details
-                                browser-autocomplete="off"
-                                :label="label.user"
-                                placeholder="optional"
-                                color="secondary-dark"
-                                v-model="model.AccUser"
-                        ></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm6 class="pa-2">
-                        <v-text-field
-                                hide-details
-                                browser-autocomplete="off"
-                                :label="label.pass"
-                                placeholder="optional"
-                                color="secondary-dark"
-                                v-model="model.AccPass"
-                                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                                :type="showPassword ? 'text' : 'password'"
-                                @click:append="showPassword = !showPassword"
-                        ></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm6 class="pa-2">
-                        <v-text-field
-                                hide-details
-                                browser-autocomplete="off"
-                                :label="label.apiKey"
-                                placeholder="optional"
-                                color="secondary-dark"
-                                v-model="model.AccKey"
-                                required
-                        ></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm6 pa-2 class="input-account-type">
-                        <v-select
-                                :label="label.AccType"
-                                browser-autocomplete="off"
-                                hide-details
-                                color="secondary-dark"
-                                item-text="text"
-                                item-value="value"
-                                v-model="model.AccType"
-                                :items="items.types">
-                        </v-select>
-                    </v-flex>
-                </v-layout>
-                <v-layout row wrap>
-                    <v-flex xs12 text-xs-right class="pt-3">
-                        <v-btn @click.stop="cancel" depressed color="secondary-light"
-                               class="action-cancel">
-                            <span>{{ label.cancel }}</span>
-                        </v-btn>
-                        <v-btn depressed dark color="secondary-dark" @click.stop="save"
-                               class="action-save">
-                            <span>{{ label.save }}</span>
-                        </v-btn>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-        </v-card>
-    </v-dialog>
+  <v-dialog lazy v-model="show" persistent max-width="500" class="p-account-edit-dialog" @keydown.esc="cancel">
+    <v-card raised elevation="24">
+      <v-card-title primary-title>
+        <v-layout row wrap v-if="scope === 'sharing'">
+          <v-flex xs9>
+            <h3 class="headline mb-0">{{ $gettext('Upload') }}</h3>
+          </v-flex>
+          <v-flex xs3 text-xs-right>
+            <v-switch
+                    v-model="model.AccShare"
+                    color="secondary-dark"
+                    :true-value="true"
+                    :false-value="false"
+                    :label="model.AccShare ? label.enable : label.disable"
+                    :disabled="model.AccType !== 'webdav'"
+                    class="mt-0 hidden-xs-only"
+                    hide-details
+            ></v-switch>
+            <v-switch
+                    v-model="model.AccShare"
+                    color="secondary-dark"
+                    :true-value="true"
+                    :false-value="false"
+                    :disabled="model.AccType !== 'webdav'"
+                    class="mt-0 hidden-sm-and-up"
+                    hide-details
+            ></v-switch>
+          </v-flex>
+        </v-layout>
+        <v-layout row wrap v-else-if="scope === 'sync'">
+          <v-flex xs9>
+            <h3 class="headline mb-0">{{ $gettext('Remote Sync') }}</h3>
+          </v-flex>
+          <v-flex xs3 text-xs-right>
+            <v-switch
+                    v-model="model.AccSync"
+                    color="secondary-dark"
+                    :true-value="true"
+                    :false-value="false"
+                    :label="model.AccSync ? label.enable : label.disable"
+                    :disabled="model.AccType !== 'webdav'"
+                    class="mt-0 hidden-xs-only"
+                    hide-details
+            ></v-switch>
+            <v-switch
+                    v-model="model.AccSync"
+                    color="secondary-dark"
+                    :true-value="true"
+                    :false-value="false"
+                    :disabled="model.AccType !== 'webdav'"
+                    class="mt-0 hidden-sm-and-up"
+                    hide-details
+            ></v-switch>
+          </v-flex>
+        </v-layout>
+        <v-layout row wrap v-else>
+          <v-flex xs10>
+            <h3 class="headline mb-0">{{ $gettext('Edit Account') }}</h3>
+          </v-flex>
+          <v-flex xs2 text-xs-right>
+            <v-btn icon flat :ripple="false"
+                   class="action-remove mt-0"
+                   @click.stop.prevent="remove()">
+              <v-icon color="secondary-dark">delete</v-icon>
+            </v-btn>
+          </v-flex>
+        </v-layout>
+        <h3 class="headline mb-0" v-else>{{ $gettext('Edit Account') }}</h3>
+      </v-card-title>
+      <v-container fluid class="pt-0 pb-2 pr-2 pl-2">
+        <v-layout row wrap v-if="scope === 'sharing'">
+          <v-flex xs12 class="pa-2">
+            <v-autocomplete
+                    color="secondary-dark"
+                    hide-details hide-no-data flat
+                    v-model="model.SharePath"
+                    browser-autocomplete="off"
+                    hint="Folder"
+                    :search-input.sync="search"
+                    :items="pathItems"
+                    :loading="loading"
+                    item-text="abs"
+                    item-value="abs"
+                    :label="label.SharePath"
+                    :disabled="!model.AccShare || loading"
+            >
+            </v-autocomplete>
+          </v-flex>
+          <v-flex xs12 sm6 class="pa-2 input-share-size">
+            <v-select
+                    :disabled="!model.AccShare"
+                    :label="label.ShareSize"
+                    browser-autocomplete="off"
+                    hide-details
+                    color="secondary-dark"
+                    item-text="text"
+                    item-value="value"
+                    v-model="model.ShareSize"
+                    :items="items.sizes">
+            </v-select>
+          </v-flex>
+          <v-flex xs12 sm6 class="pa-2">
+            <v-select
+                    :disabled="!model.AccShare"
+                    :label="label.ShareExpires"
+                    browser-autocomplete="off"
+                    hide-details
+                    color="secondary-dark"
+                    item-text="text"
+                    item-value="value"
+                    v-model="model.ShareExpires"
+                    :items="items.expires">
+            </v-select>
+          </v-flex>
+        </v-layout>
+        <v-layout row wrap v-else-if="scope === 'sync'">
+          <v-flex xs12 sm6 class="pa-2">
+            <v-autocomplete
+                    color="secondary-dark"
+                    hide-details hide-no-data flat
+                    v-model="model.SyncPath"
+                    browser-autocomplete="off"
+                    hint="Folder"
+                    :search-input.sync="search"
+                    :items="pathItems"
+                    :loading="loading"
+                    item-text="abs"
+                    item-value="abs"
+                    :label="label.SyncPath"
+                    :disabled="!model.AccSync || loading"
+            >
+            </v-autocomplete>
+          </v-flex>
+          <v-flex xs12 sm6 class="pa-2">
+            <v-select
+                    :disabled="!model.AccSync"
+                    :label="label.SyncInterval"
+                    browser-autocomplete="off"
+                    hide-details
+                    color="secondary-dark"
+                    item-text="text"
+                    item-value="value"
+                    v-model="model.SyncInterval"
+                    :items="items.intervals">
+            </v-select>
+          </v-flex>
+          <v-flex xs12 sm6 class="px-2">
+            <v-checkbox
+                    :disabled="!model.AccSync || readonly"
+                    hide-details
+                    color="secondary-dark"
+                    :label="label.SyncDownload"
+                    v-model="model.SyncDownload"
+            ></v-checkbox>
+          </v-flex>
+          <v-flex xs12 sm6 class="px-2">
+            <v-checkbox
+                    :disabled="!model.AccSync"
+                    hide-details
+                    color="secondary-dark"
+                    :label="label.SyncFilenames"
+                    v-model="model.SyncFilenames"
+            ></v-checkbox>
+          </v-flex>
+          <v-flex xs12 sm6 class="px-2">
+            <v-checkbox
+                    :disabled="!model.AccSync"
+                    hide-details
+                    color="secondary-dark"
+                    :label="label.SyncUpload"
+                    v-model="model.SyncUpload"
+            ></v-checkbox>
+          </v-flex>
+          <v-flex xs12 sm6 class="px-2">
+            <v-checkbox
+                    :disabled="!model.AccSync"
+                    hide-details
+                    color="secondary-dark"
+                    :label="label.SyncRaw"
+                    v-model="model.SyncRaw"
+            ></v-checkbox>
+          </v-flex>
+        </v-layout>
+        <v-layout row wrap v-else>
+          <v-flex xs12 class="pa-2">
+            <v-text-field
+                    hide-details
+                    browser-autocomplete="off"
+                    :label="label.name"
+                    placeholder=""
+                    color="secondary-dark"
+                    v-model="model.AccName"
+                    required
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs12 class="pa-2">
+            <v-text-field
+                    hide-details
+                    browser-autocomplete="off"
+                    :label="label.url"
+                    placeholder="https://www.example.com/"
+                    color="secondary-dark"
+                    v-model="model.AccURL"
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs12 sm6 class="pa-2">
+            <v-text-field
+                    hide-details
+                    browser-autocomplete="off"
+                    :label="label.user"
+                    placeholder="optional"
+                    color="secondary-dark"
+                    v-model="model.AccUser"
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs12 sm6 class="pa-2">
+            <v-text-field
+                    hide-details
+                    browser-autocomplete="off"
+                    :label="label.pass"
+                    placeholder="optional"
+                    color="secondary-dark"
+                    v-model="model.AccPass"
+                    :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                    :type="showPassword ? 'text' : 'password'"
+                    @click:append="showPassword = !showPassword"
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs12 sm6 class="pa-2">
+            <v-text-field
+                    hide-details
+                    browser-autocomplete="off"
+                    :label="label.apiKey"
+                    placeholder="optional"
+                    color="secondary-dark"
+                    v-model="model.AccKey"
+                    required
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs12 sm6 pa-2 class="input-account-type">
+            <v-select
+                    :label="label.AccType"
+                    browser-autocomplete="off"
+                    hide-details
+                    color="secondary-dark"
+                    item-text="text"
+                    item-value="value"
+                    v-model="model.AccType"
+                    :items="items.types">
+            </v-select>
+          </v-flex>
+        </v-layout>
+        <v-layout row wrap>
+          <v-flex xs12 text-xs-right class="pt-3">
+            <v-btn @click.stop="cancel" depressed color="secondary-light"
+                   class="action-cancel">
+              <span>{{ label.cancel }}</span>
+            </v-btn>
+            <v-btn depressed dark color="secondary-dark" @click.stop="save"
+                   class="action-save">
+              <span>{{ label.save }}</span>
+            </v-btn>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
     import options from "resources/options";

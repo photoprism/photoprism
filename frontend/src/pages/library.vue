@@ -1,45 +1,45 @@
 <template>
-    <div class="p-page p-page-library">
-        <v-tabs
-                v-model="active"
-                flat
-                grow
-                color="secondary"
-                slider-color="secondary-dark"
-                height="64"
-        >
-            <v-tab id="tab-originals" ripple @click="changePath('/library')">
-                <translate key="Index">Index</translate>
-            </v-tab>
+  <div class="p-page p-page-library">
+    <v-tabs
+            v-model="active"
+            flat
+            grow
+            color="secondary"
+            slider-color="secondary-dark"
+            height="64"
+    >
+      <v-tab id="tab-originals" ripple @click="changePath('/library')">
+        <translate key="Index">Index</translate>
+      </v-tab>
 
-            <v-tab id="tab-import" :disabled="readonly || !$config.feature('import')" ripple @click="changePath('/library/import')">
-                <template v-if="config.settings.import.move">
-                    <translate key="Move">Move</translate>
-                </template>
-                <template v-else>
-                    <translate key="Copy">Copy</translate>
-                </template>
-            </v-tab>
+      <v-tab id="tab-import" :disabled="readonly || !$config.feature('import')" ripple @click="changePath('/library/import')">
+        <template v-if="config.settings.import.move">
+          <translate key="Move">Move</translate>
+        </template>
+        <template v-else>
+          <translate key="Copy">Copy</translate>
+        </template>
+      </v-tab>
 
-            <v-tab id="tab-logs" ripple @click="changePath('/library/logs')" v-if="$config.feature('logs')">
-                <translate key="Logs">Logs</translate>
-            </v-tab>
+      <v-tab id="tab-logs" ripple @click="changePath('/library/logs')" v-if="$config.feature('logs')">
+        <translate key="Logs">Logs</translate>
+      </v-tab>
 
-            <v-tabs-items touchless>
-                <v-tab-item lazy>
-                    <p-tab-originals></p-tab-originals>
-                </v-tab-item>
+      <v-tabs-items touchless>
+        <v-tab-item lazy>
+          <p-tab-originals></p-tab-originals>
+        </v-tab-item>
 
-                <v-tab-item :disabled="readonly" lazy>
-                    <p-tab-import></p-tab-import>
-                </v-tab-item>
+        <v-tab-item :disabled="readonly" lazy>
+          <p-tab-import></p-tab-import>
+        </v-tab-item>
 
-                <v-tab-item  v-if="$config.feature('logs')">
-                    <p-tab-logs></p-tab-logs>
-                </v-tab-item>
-            </v-tabs-items>
-        </v-tabs>
-    </div>
+        <v-tab-item  v-if="$config.feature('logs')">
+          <p-tab-logs></p-tab-logs>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-tabs>
+  </div>
 </template>
 
 <script>
