@@ -3,6 +3,7 @@ package entity
 import (
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/txt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -17,14 +18,14 @@ type Password struct {
 // NewPassword creates a new password instance.
 func NewPassword(uid, password string) Password {
 	if uid == "" {
-		panic("password: uid must not be empty")
+		panic("auth: can't set password without uid")
 	}
 
 	m := Password{UID: uid}
 
 	if password != "" {
 		if err := m.SetPassword(password); err != nil {
-			log.Errorf("password: %s (set password)", err)
+			log.Errorf("auth: failed setting password for %s", uid)
 		}
 	}
 
@@ -68,7 +69,7 @@ func FindPassword(uid string) *Password {
 	if err := Db().Where("uid = ?", uid).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("password: %s (not found)", err)
+		log.Errorf("auth: no password for %s", txt.Quote(uid))
 	}
 
 	return nil

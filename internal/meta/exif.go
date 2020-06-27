@@ -342,7 +342,7 @@ func (data *Data) Exif(fileName string) (err error) {
 	}
 
 	if value, ok := tags["ImageDescription"]; ok {
-		data.Description = SanitizeString(value)
+		data.Description = SanitizeDescription(value)
 	}
 
 	data.All = tags

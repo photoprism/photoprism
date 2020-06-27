@@ -109,6 +109,9 @@ acceptance:
 acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
 	(cd frontend &&	npm run acceptance-firefox && cd ..)
+reset-photoprism-db:
+	$(info Purging photoprism database...)
+	mysql < scripts/reset-photoprism-db.sql
 reset-test-db:
 	$(info Purging test databases...)
 	mysql < scripts/reset-test-db.sql

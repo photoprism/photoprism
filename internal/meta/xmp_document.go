@@ -203,29 +203,29 @@ func (doc *XmpDocument) Load(filename string) error {
 }
 
 func (doc *XmpDocument) Title() string {
-	return doc.RDF.Description.Title.Alt.Li.Text
+	return SanitizeTitle(doc.RDF.Description.Title.Alt.Li.Text)
 }
 
 func (doc *XmpDocument) Artist() string {
-	return doc.RDF.Description.Creator.Seq.Li
+	return SanitizeString(doc.RDF.Description.Creator.Seq.Li)
 }
 
 func (doc *XmpDocument) Description() string {
-	return doc.RDF.Description.Description.Alt.Li.Text
+	return SanitizeDescription(doc.RDF.Description.Description.Alt.Li.Text)
 }
 
 func (doc *XmpDocument) Copyright() string {
-	return doc.RDF.Description.Rights.Alt.Li.Text
+	return SanitizeString(doc.RDF.Description.Rights.Alt.Li.Text)
 }
 
 func (doc *XmpDocument) CameraMake() string {
-	return doc.RDF.Description.Make
+	return SanitizeString(doc.RDF.Description.Make)
 }
 
 func (doc *XmpDocument) CameraModel() string {
-	return doc.RDF.Description.Model
+	return SanitizeString(doc.RDF.Description.Model)
 }
 
 func (doc *XmpDocument) LensModel() string {
-	return doc.RDF.Description.LensModel
+	return SanitizeString(doc.RDF.Description.LensModel)
 }

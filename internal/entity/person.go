@@ -7,6 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 type People []Person
@@ -133,7 +134,7 @@ func FindPersonByUserName(userName string) *Person {
 	if err := Db().Where("user_name = ?", userName).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("user: %s", err)
+		log.Errorf("auth: user %s not found", txt.Quote(userName))
 		return nil
 	}
 }
@@ -149,7 +150,7 @@ func FindPersonByUID(uid string) *Person {
 	if err := Db().Where("person_uid = ?", uid).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("user: %s", err)
+		log.Errorf("auth: user %s not found", txt.Quote(uid))
 		return nil
 	}
 }

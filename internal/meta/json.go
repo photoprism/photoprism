@@ -187,5 +187,8 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 		data.InstanceID = SanitizeUID(data.InstanceID)
 	}
 
+	data.Title = SanitizeTitle(data.Title)
+	data.Description = SanitizeDescription(data.Description)
+
 	return nil
 }

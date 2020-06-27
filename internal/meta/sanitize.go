@@ -1,8 +1,15 @@
 package meta
 
 import (
+	"regexp"
 	"strings"
 )
+
+var DscTitleRegexp = regexp.MustCompile("\\D{3}[\\d_]\\d{4}(.JPG)?")
+
+var UnwantedDescriptions = map[string]bool{
+	"OLYMPUS DIGITAL CAMERA": true,
+}
 
 // SanitizeString removes unwanted character from an exif value string.
 func SanitizeString(value string) string {
@@ -24,4 +31,26 @@ func SanitizeUID(value string) string {
 	}
 
 	return strings.ToLower(value)
+}
+
+// SanitizeTitle normalizes titles and removes unwanted information.
+func SanitizeTitle(value string) string {
+	value = SanitizeString(value)
+
+	if dsc := DscTitleRegexp.FindString(value); dsc == value {
+		value = ""
+	}
+
+	return value
+}
+
+// SanitizeDescription normalizes descriptions and removes unwanted information.
+func SanitizeDescription(value string) string {
+	value = SanitizeString(value)
+
+	if remove := UnwantedDescriptions[value]; remove {
+		value = ""
+	}
+
+	return value
 }

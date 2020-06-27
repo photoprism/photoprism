@@ -15,7 +15,7 @@ type Data struct {
 	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
 	Codec        string        `meta:"CompressorID,Compression,FileType"`
 	Title        string        `meta:"Title"`
-	Subject      string        `meta:"Subject,PersonInImage"`
+	Subject      string        `meta:"Subject,PersonInImage,ObjectName"`
 	Keywords     string        `meta:"Keywords"`
 	Comment      string        `meta:"-"`
 	Artist       string        `meta:"Artist,Creator"`
