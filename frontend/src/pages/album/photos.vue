@@ -194,7 +194,7 @@
                         this.offset = offset;
 
                         if (this.results.length > 1) {
-                            this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' photos loaded'));
+                            this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' entries loaded'));
                         }
                     } else {
                         this.offset = offset + count;
@@ -279,14 +279,14 @@
 
                     if (this.scrollDisabled) {
                         if (!this.results.length) {
-                            this.$notify.warn(this.$gettext("No photos found"));
+                            this.$notify.warn(this.$gettext("No entries found"));
                         } else if (this.results.length === 1) {
-                            this.$notify.info(this.$gettext("One photo found"));
+                            this.$notify.info(this.$gettext("One entry found"));
                         } else {
-                            this.$notify.info(this.results.length + this.$gettext(" photos found"));
+                            this.$notify.info(this.results.length + this.$gettext(" entries found"));
                         }
                     } else {
-                        this.$notify.info(this.$gettext('More than 50 photos found'));
+                        this.$notify.info(this.$gettext('More than 50 entries found'));
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }
