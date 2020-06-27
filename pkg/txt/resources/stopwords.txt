@@ -2,7 +2,6 @@ olymp
 olympus
 ilford
 fujifilm
-fuji
 leica
 panasonic
 sony

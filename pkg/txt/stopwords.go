@@ -7,7 +7,6 @@ var StopWords = map[string]bool{
 	"olympus":          true,
 	"ilford":           true,
 	"fujifilm":         true,
-	"fuji":             true,
 	"leica":            true,
 	"panasonic":        true,
 	"sony":             true,
