@@ -93,18 +93,6 @@ main {
     bottom: 0;
 }
 
-#photoprism div.loading p {
-    color: #616161;
-}
-
-#photoprism div.loading div.bar {
-    margin: 0;
-    width: 100%;
-    height: 8px;
-    animation: colorchange 3s infinite;
-    -webkit-animation: colorchange 3s infinite;
-}
-
 #photoprism main .p-results a {
     color: #333333;
 }

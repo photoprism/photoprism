@@ -7,10 +7,10 @@
             <translate>No photos matched your search</translate>
           </h3>
           <div>
-            {{$gettext("Try using other terms and search options such as category, country and camera.")}}
+            <translate>Try using other terms and search options such as category, country and camera.</translate>
             <span v-show="$config.feature('review')">
-                            {{$gettext("Non-photographic and low-quality images require a review before they appear in search results.")}}
-                        </span>
+              <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+            </span>
           </div>
         </div>
       </v-card-title>

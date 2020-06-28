@@ -15,7 +15,7 @@
 }
 
 .rainbow {
-    background: repeating-linear-gradient(45deg, #FF9AA2, #FFB7B2, #FFDAC1, #E2F0CB, #B5EAD7, #C7CEEA);
+    background: repeating-linear-gradient(45deg, #ff9aa2, #dabcd2, #c7ceea, #bbe0de, #b5ead7);
     background-size: 200% 200%;
 
     -webkit-animation: rainbow-animation 6s ease infinite;
@@ -25,51 +25,5 @@
 
 .rainbow-static {
     background-size: 200% 200%;
-    background: repeating-linear-gradient(45deg, #FF9AA2, #FFB7B2, #FFDAC1, #E2F0CB, #B5EAD7, #C7CEEA) 100% 50%;
-}
-
-@keyframes colorchange
-{
-    0%   {background: #EF5350;}
-    25%  {background: #FFD600;}
-    50%  {background: #00ACC1;}
-    75%  {background: #00BFA5;}
-    100% {background: #E57373;}
-}
-
-@-webkit-keyframes colorchange
-{
-    0%   {background: #EF5350;}
-    25%  {background: #FFD600;}
-    50%  {background: #00ACC1;}
-    75%  {background: #00BFA5;}
-    100% {background: #E57373;}
-}
-
-.colorchange {
-    animation: colorchange 3s infinite;
-    -webkit-animation: colorchange 3s infinite;
-}
-
-@keyframes colorchange--text
-{
-    0%   {color: #EF5350;}
-    25%  {color: #FFD600;}
-    50%  {color: #00ACC1;}
-    75%  {color: #00BFA5;}
-    100% {color: #E57373;}
-}
-
-@-webkit-keyframes colorchange--text
-{
-    0%   {color: #EF5350;}
-    25%  {color: #FFD600;}
-    50%  {color: #00ACC1;}
-    75%  {color: #00BFA5;}
-    100% {color: #E57373;}
-}
-
-.colorchange--text {
-    animation: colorchange--text 5s infinite;
-    -webkit-animation: colorchange--text 5s infinite;
+    background: repeating-linear-gradient(45deg, #ff9aa2, #dabcd2, #c7ceea, #bbe0de, #b5ead7) 100% 50%;
 }
