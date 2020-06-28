@@ -261,6 +261,7 @@
 
                 Photo.search(params).then(response => {
                     this.results = Photo.mergeResponse(this.results, response);
+                    this.allResults = [];
 
                     this.scrollDisabled = (response.count < count);
 
@@ -346,6 +347,7 @@
                     this.offset = this.pageSize;
 
                     this.results = response.models;
+                    this.allResults = [];
 
                     this.scrollDisabled = (response.count < this.pageSize);
 
