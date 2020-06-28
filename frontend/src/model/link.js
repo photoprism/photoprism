@@ -40,6 +40,8 @@ export default class Link extends Model {
             Slug: "",
             Token: "",
             Expires: 0,
+            Views: 0,
+            MaxViews: 0,
             Password: "",
             HasPassword: false,
             CanComment: false,

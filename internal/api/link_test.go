@@ -30,9 +30,9 @@ func TestLinkAlbum(t *testing.T) {
 
 		assert.NotEmpty(t, link.LinkUID)
 		assert.NotEmpty(t, link.ShareUID)
-		assert.NotEmpty(t, link.ShareToken)
+		assert.NotEmpty(t, link.LinkToken)
 		assert.Equal(t, true, link.CanEdit)
-		assert.Equal(t, 0, link.ShareExpires)
+		assert.Equal(t, 0, link.LinkExpires)
 		assert.False(t, link.CanComment)
 		assert.True(t, link.CanEdit)
 	})
@@ -78,8 +78,8 @@ func TestLinkPhoto(t *testing.T) {
 
 		assert.NotEmpty(t, link.LinkUID)
 		assert.NotEmpty(t, link.ShareUID)
-		assert.NotEmpty(t, link.ShareToken)
-		assert.Equal(t, 0, link.ShareExpires)
+		assert.NotEmpty(t, link.LinkToken)
+		assert.Equal(t, 0, link.LinkExpires)
 		assert.False(t, link.CanComment)
 		assert.True(t, link.CanEdit)
 	})
@@ -119,8 +119,8 @@ func TestLinkLabel(t *testing.T) {
 
 		assert.NotEmpty(t, link.LinkUID)
 		assert.NotEmpty(t, link.ShareUID)
-		assert.NotEmpty(t, link.ShareToken)
-		assert.Equal(t, 0, link.ShareExpires)
+		assert.NotEmpty(t, link.LinkToken)
+		assert.Equal(t, 0, link.LinkExpires)
 		assert.False(t, link.CanComment)
 		assert.True(t, link.CanEdit)
 	})

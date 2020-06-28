@@ -33,10 +33,10 @@ func UpdateLink(c *gin.Context) {
 
 	link.SetSlug(f.ShareSlug)
 	link.MaxViews = f.MaxViews
-	link.ShareExpires = f.ShareExpires
+	link.LinkExpires = f.LinkExpires
 
-	if f.ShareToken != "" {
-		link.ShareToken = strings.ToLower(f.ShareToken)
+	if f.LinkToken != "" {
+		link.LinkToken = strings.ToLower(f.LinkToken)
 	}
 
 	if f.Password != "" {
@@ -97,7 +97,7 @@ func CreateLink(c *gin.Context) {
 
 	link.SetSlug(f.ShareSlug)
 	link.MaxViews = f.MaxViews
-	link.ShareExpires = f.ShareExpires
+	link.LinkExpires = f.LinkExpires
 
 	if f.Password != "" {
 		if err := link.SetPassword(f.Password); err != nil {

@@ -12,7 +12,7 @@ func TestNewLink(t *testing.T) {
 	assert.Equal(t, "st9lxuqxpogaaba1", link.ShareUID)
 	assert.Equal(t, false, link.CanEdit)
 	assert.Equal(t, true, link.CanComment)
-	assert.Equal(t, 10, len(link.ShareToken))
+	assert.Equal(t, 10, len(link.LinkToken))
 	assert.Equal(t, 16, len(link.LinkUID))
 }
 
@@ -22,20 +22,20 @@ func TestLink_Expired(t *testing.T) {
 	link := NewLink("st9lxuqxpogaaba1", true, false)
 
 	link.ModifiedAt = Timestamp().Add(-7 * Day)
-	link.ShareExpires = 0
+	link.LinkExpires = 0
 
 	assert.False(t, link.Expired())
 
-	link.ShareExpires = oneDay
+	link.LinkExpires = oneDay
 
 	assert.False(t, link.Expired())
 
-	link.ShareExpires = oneDay * 8
+	link.LinkExpires = oneDay * 8
 
 	assert.True(t, link.Expired())
 
-	link.ShareExpires = oneDay
-	link.ShareViews = 9
+	link.LinkExpires = oneDay
+	link.LinkViews = 9
 	link.MaxViews = 10
 
 	assert.False(t, link.Expired())
@@ -48,11 +48,11 @@ func TestLink_Expired(t *testing.T) {
 func TestLink_Redeem(t *testing.T) {
 	link := NewLink(rnd.PPID('a'), false, false)
 
-	assert.Equal(t, uint(0), link.ShareViews)
+	assert.Equal(t, uint(0), link.LinkViews)
 
 	link.Redeem()
 
-	assert.Equal(t, uint(1), link.ShareViews)
+	assert.Equal(t, uint(1), link.LinkViews)
 
 	if err := link.Save(); err != nil {
 		t.Fatal(err)
@@ -60,5 +60,5 @@ func TestLink_Redeem(t *testing.T) {
 
 	link.Redeem()
 
-	assert.Equal(t, uint(2), link.ShareViews)
+	assert.Equal(t, uint(2), link.LinkViews)
 }

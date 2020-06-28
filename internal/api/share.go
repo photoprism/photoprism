@@ -15,9 +15,9 @@ func Shares(router *gin.RouterGroup) {
 	router.GET("/:token", func(c *gin.Context) {
 		conf := service.Config()
 
-		shareToken := c.Param("token")
+		token := c.Param("token")
 
-		links := entity.FindValidLinks(shareToken, "")
+		links := entity.FindValidLinks(token, "")
 
 		if len(links) == 0 {
 			log.Warn("share: invalid token")
@@ -26,21 +26,21 @@ func Shares(router *gin.RouterGroup) {
 		}
 
 		clientConfig := conf.GuestConfig()
-		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s", clientConfig.SiteUrl, shareToken)
+		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s", clientConfig.SiteUrl, token)
 
 		c.HTML(http.StatusOK, "share.tmpl", gin.H{"config": clientConfig})
 	})
 
-	router.GET("/:token/:uid", func(c *gin.Context) {
+	router.GET("/:token/:share", func(c *gin.Context) {
 		conf := service.Config()
 
-		shareToken := c.Param("token")
-		share := c.Param("uid")
+		token := c.Param("token")
+		share := c.Param("share")
 
-		links := entity.FindValidLinks(shareToken, share)
+		links := entity.FindValidLinks(token, share)
 
 		if len(links) != 1 {
-			log.Warn("share: invalid token or uid")
+			log.Warn("share: invalid token or share")
 			c.Redirect(http.StatusTemporaryRedirect, "/")
 			return
 		}
@@ -48,12 +48,12 @@ func Shares(router *gin.RouterGroup) {
 		uid := links[0].ShareUID
 
 		if uid != share {
-			c.Redirect(http.StatusPermanentRedirect, fmt.Sprintf("/s/%s/%s", shareToken, uid))
+			c.Redirect(http.StatusPermanentRedirect, fmt.Sprintf("/s/%s/%s", token, uid))
 			return
 		}
 
 		clientConfig := conf.GuestConfig()
-		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s/%s", clientConfig.SiteUrl, shareToken, uid)
+		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s/%s", clientConfig.SiteUrl, token, uid)
 		clientConfig.SitePreview = fmt.Sprintf("%s/preview", clientConfig.SiteUrl)
 
 		if a, err := query.AlbumByUID(uid); err == nil {

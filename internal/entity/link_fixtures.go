@@ -8,12 +8,12 @@ type LinkMap map[string]Link
 
 var LinkFixtures = LinkMap{
 	"1jxf3jfn2k": {
-		ShareToken:   "1jxf3jfn2k",
-		ShareExpires: 0,
-		ShareUID:     "st9lxuqxpogaaba7",
-		CanComment:   true,
-		CanEdit:      false,
-		CreatedAt:    time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
+		LinkToken:   "1jxf3jfn2k",
+		LinkExpires: 0,
+		ShareUID:    "st9lxuqxpogaaba7",
+		CanComment:  true,
+		CanEdit:     false,
+		CreatedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 	},
 }
 
