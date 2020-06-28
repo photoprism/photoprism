@@ -189,17 +189,21 @@
                     return false;
                 }
 
-                if (showMerged && (this.results[index].Type === 'video' || this.results[index].Type === 'live')) {
-                    if (this.results[index].isPlayable()) {
-                        this.$modal.show('video', {video: this.results[index], album: null});
+                const selected = this.results[index];
+
+                if (showMerged && (selected.Type === 'video' || selected.Type === 'live')) {
+                    if (selected.isPlayable()) {
+                        this.$modal.show('video', {video: selected, album: null});
                     } else {
                         this.$viewer.show(Thumb.fromPhotos(this.results), index);
                     }
                 } else if (showMerged) {
-                    this.$viewer.show(Thumb.fromFiles([this.results[index]]), 0)
+                    this.$viewer.show(Thumb.fromFiles([selected]), 0)
                 } else {
                     this.findAll().then((results) => {
-                        this.$viewer.show(Thumb.fromPhotos(results), index);
+                        const thumbs = Thumb.fromPhotos(results);
+                        const thumbsIndex = thumbs.findIndex(t => t.uid === selected.UID);
+                        this.$viewer.show(thumbs, thumbsIndex ? thumbsIndex : 0);
                     });
                 }
             },
@@ -208,7 +212,7 @@
                     return Promise.resolve(this.results);
                 }
 
-                if(this.allResults && !this.dirty) {
+                if(this.allResults.length > 1 && !this.dirty) {
                     return Promise.resolve(this.allResults);
                 }
 

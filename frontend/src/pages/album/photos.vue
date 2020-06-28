@@ -148,17 +148,21 @@
                     return false;
                 }
 
-                if (showMerged && (this.results[index].Type === 'video' || this.results[index].Type === 'live')) {
+                const selected = this.results[index];
+
+                if (showMerged && (selected.Type === 'video' || selected.Type === 'live')) {
                     if (this.results[index].isPlayable()) {
-                        this.$modal.show('video', {video: this.results[index], album: this.album});
+                        this.$modal.show('video', {video: selected, album: this.album});
                     } else {
                         this.$viewer.show(Thumb.fromPhotos(this.results), index);
                     }
                 } else if (showMerged) {
-                    this.$viewer.show(Thumb.fromFiles([this.results[index]]), 0)
+                    this.$viewer.show(Thumb.fromFiles([selected]), 0)
                 } else {
                     this.findAll().then((results) => {
-                        this.$viewer.show(Thumb.fromPhotos(results), index);
+                        const thumbs = Thumb.fromPhotos(results);
+                        const thumbsIndex = thumbs.findIndex(t => t.uid === selected.UID);
+                        this.$viewer.show(thumbs, thumbsIndex ? thumbsIndex : 0);
                     });
                 }
 
