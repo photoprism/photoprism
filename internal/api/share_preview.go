@@ -69,17 +69,45 @@ func SharePreview(router *gin.RouterGroup) {
 		f.Hidden = false
 		f.Archived = false
 		f.Review = false
-		f.Merged = true
+		f.Primary = true
 
 		// Get first 12 album entries.
 		f.Count = 12
 		f.Order = "relevance"
 
-		p, _, err := query.PhotoSearch(f)
+		p, count, err := query.PhotoSearch(f)
 
 		if err != nil {
 			log.Error(err)
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+			return
+		}
+
+		if count == 0 {
+			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+			return
+		} else if count < 12 {
+			f := p[0]
+			thumbType, _ := thumb.Types["fit_720"]
+
+			fileName := photoprism.FileName(f.FileRoot, f.FileName)
+
+			if !fs.FileExists(fileName) {
+				log.Errorf("share: file %s is missing (preview)", txt.Quote(f.FileName))
+				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+				return
+			}
+
+			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+
+			if err != nil {
+				log.Error(err)
+				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+				return
+			}
+
+			c.File(thumbnail)
+
 			return
 		}
 
@@ -105,6 +133,7 @@ func SharePreview(router *gin.RouterGroup) {
 			if err != nil {
 				log.Error(err)
 				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+				return
 			}
 
 			src, err := imaging.Open(thumbnail)

@@ -49,6 +49,11 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		}
 	}
 
+	// Return primary files only.
+	if f.Primary {
+		s = s.Where("files.file_primary = 1")
+	}
+
 	// Shortcut for known photo ids.
 	if f.ID != "" {
 		s = s.Where("photos.photo_uid IN (?)", strings.Split(f.ID, ","))
