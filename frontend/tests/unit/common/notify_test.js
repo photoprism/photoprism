@@ -5,6 +5,8 @@ let chai = require('../../../node_modules/chai/chai');
 let assert = chai.assert;
 
 describe("common/alert", () => {
+
+    let spywarn = sinon.spy(Notify, "warn");
     it("should call alert.info",  () => {
         let spy = sinon.spy(Notify, "info");
         Notify.info("message");
@@ -13,10 +15,9 @@ describe("common/alert", () => {
     });
 
     it("should call alert.warning",  () => {
-        let spy = sinon.spy(Notify, "warn");
         Notify.warn("message");
-        sinon.assert.calledOnce(spy);
-        spy.resetHistory();
+        sinon.assert.calledOnce(spywarn);
+        spywarn.resetHistory();
     });
 
     it("should call alert.error",  () => {
@@ -38,6 +39,12 @@ describe("common/alert", () => {
         Notify.logout("message");
         sinon.assert.calledOnce(spy);
         spy.resetHistory();
+    });
+
+    it("should call wait",  () => {
+        Notify.wait();
+        sinon.assert.calledOnce(spywarn);
+        spywarn.resetHistory();
     });
 
     //TODO How to access element?
