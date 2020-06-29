@@ -545,6 +545,10 @@ func (m *MediaFile) IsJson() bool {
 
 // FileType returns the file type (jpg, gif, tiff,...).
 func (m *MediaFile) FileType() fs.FileType {
+	if m.IsJpeg() {
+		return fs.TypeJpeg
+	}
+
 	return fs.GetFileType(m.fileName)
 }
 
@@ -554,12 +558,12 @@ func (m *MediaFile) MediaType() fs.MediaType {
 }
 
 // HasFileType returns true if this is the given type.
-func (m *MediaFile) HasFileType(t fs.FileType) bool {
-	if t == fs.TypeJpeg {
+func (m *MediaFile) HasFileType(fileType fs.FileType) bool {
+	if fileType == fs.TypeJpeg {
 		return m.IsJpeg()
 	}
 
-	return m.FileType() == t
+	return m.FileType() == fileType
 }
 
 // IsRaw returns true if this is a RAW file.
