@@ -1,6 +1,9 @@
 import Notify from "common/notify";
 let sinon = require("sinon");
 
+let chai = require('../../../node_modules/chai/chai');
+let assert = chai.assert;
+
 describe("common/alert", () => {
     it("should call alert.info",  () => {
         let spy = sinon.spy(Notify, "info");
@@ -29,4 +32,21 @@ describe("common/alert", () => {
         sinon.assert.calledOnce(spy);
         spy.resetHistory();
     });
+
+    it("should call alert.logout",  () => {
+        let spy = sinon.spy(Notify, "logout");
+        Notify.logout("message");
+        sinon.assert.calledOnce(spy);
+        spy.resetHistory();
+    });
+
+    //TODO How to access element?
+    /*it("should test blocking an unblocking UI",  () => {
+        const el = document.getElementById("p-busy-overlay");
+        assert.equal(el.style.display, "xxx");
+        Notify.blockUI();
+        assert.equal(el.style.display, "xxx");
+        Notify.unblockUI();
+        assert.equal(el.style.display, "xxx");
+    });*/
 });
