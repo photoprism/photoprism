@@ -3,6 +3,7 @@ import Config from 'common/config'
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
 
+//TODO Add tokens to config data and test hasToken
 window.__CONFIG__ = {
     "name": "PhotoPrism",
     "version": "200531-4684f66-Linux-x86_64-DEBUG",
@@ -171,6 +172,7 @@ describe('common/session', () => {
     it('should set, get and delete token', () => {
         const storage = window.localStorage;
         const session = new Session(storage, config);
+        assert.equal(session.hasToken("1uhovi0e"), false);
         assert.equal(session.session_id, null);
         session.setId(123421);
         assert.equal(session.session_id, 123421);
@@ -185,6 +187,8 @@ describe('common/session', () => {
         const session = new Session(storage, config);
         assert.isFalse(session.user.hasId());
         const values = {"user": {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Admin: true}};
+        session.setData();
+        assert.equal(session.user.FirstName, "");
         session.setData(values);
         assert.equal(session.user.FirstName, "Max");
         assert.equal(session.user.Admin, true);
@@ -283,4 +287,51 @@ describe('common/session', () => {
         mock.reset();
     });
 
+    //TODO Why does it make other tests fail?
+    /*it('should test onLogout', async () => {
+        mock
+            .onPost("session").reply(200, {id: "8877", data: {user: {ID: 1, Email: "test@test.com"}}})
+            .onDelete("session/8877").reply(200);
+        const storage = window.localStorage;
+        const session = new Session(storage, config);
+        //assert.equal(session.session_id, null);
+        //assert.equal(session.storage.data, undefined);
+        await session.login("test@test.com", "passwd");
+        assert.equal(session.session_id, 8877);
+        assert.equal(session.storage.data, '{"user":{"ID":1,"Email":"test@test.com"}}');
+        await session.onLogout();
+        assert.equal(session.session_id, null);
+        mock.reset();
+        //session.deleteData();
+    });*/
+
+    it('should use session storage', () => {
+        const storage = window.sessionStorage;
+        const session = new Session(storage, config);
+        assert.equal(storage.getItem("session_storage"), null);
+        session.useSessionStorage();
+        assert.equal(storage.getItem("session_storage"), "true");
+        session.deleteData();
+    });
+
+    it('should use local storage', () => {
+        const storage = window.localStorage;
+        const session = new Session(storage, config);
+        assert.equal(storage.getItem("session_storage"), null);
+        session.useLocalStorage();
+        assert.equal(storage.getItem("session_storage"), "false");
+        session.deleteData();
+    });
+
+    it('should test redeem token', async () => {
+        mock
+            .onPost("session").reply(200, {id: "123", data: {token: "123token"}});
+        const storage = window.localStorage;
+        const session = new Session(storage, config);
+        assert.equal(session.data, null);
+        await session.redeemToken("token123");
+        assert.equal(session.data.token, "123token");
+        mock.reset();
+        session.deleteData();
+    });
 });
