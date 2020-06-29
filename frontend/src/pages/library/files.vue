@@ -163,7 +163,7 @@
                 dirty: false,
                 results: [],
                 loading: true,
-                filesLimit: 500,
+                filesLimit: 1111,
                 filesOffset: 0,
                 page: 0,
                 selection: [],

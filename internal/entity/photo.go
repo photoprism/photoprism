@@ -535,13 +535,13 @@ func (m *Photo) DetailsLoaded() bool {
 
 // TitleFromFileName returns a photo title based on the file name and/or path.
 func (m *Photo) TitleFromFileName() string {
-	if fs.NonCanonical(m.PhotoName) {
+	if !fs.IsID(m.PhotoName) {
 		if title := txt.TitleFromFileName(m.PhotoName); title != "" {
 			return title
 		}
 	}
 
-	if m.OriginalName != "" && fs.NonCanonical(m.OriginalName) {
+	if m.OriginalName != "" && !fs.IsID(m.OriginalName) {
 		if title := txt.TitleFromFileName(m.OriginalName); title != "" {
 			return title
 		} else if title := txt.TitleFromFileName(path.Dir(m.OriginalName)); title != "" {

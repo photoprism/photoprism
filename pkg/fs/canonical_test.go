@@ -26,6 +26,6 @@ func TestCanonicalName(t *testing.T) {
 	date := time.Date(
 		2009, 11, 17, 20, 34, 58, 651387237, time.UTC)
 
-	assert.Equal(t, "20091117_203458_ERROR000", CanonicalName(date, "123"))
+	assert.Equal(t, "20091117_203458_EEEEEEEE", CanonicalName(date, "123"))
 	assert.Equal(t, "20091117_203458_12345678", CanonicalName(date, "12345678"))
 }

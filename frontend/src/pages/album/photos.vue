@@ -230,6 +230,10 @@
                         if (this.results.length > 1) {
                             this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' entries loaded'));
                         }
+                    } else if (this.results.length >= Photo.limit()) {
+                        this.offset = offset;
+                        this.scrollDisabled = true;
+                        this.$notify.warn(this.$gettext("Can't load more, limit reached"));
                     } else {
                         this.offset = offset + count;
                         this.page++;

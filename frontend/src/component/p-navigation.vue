@@ -87,7 +87,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile to="/review" @click="" v-if="$config.feature('review') && config.count.review > 0"
+          <v-list-tile to="/review" @click="" v-if="$config.feature('review')"
                        class="p-navigation-review">
             <v-list-tile-content>
               <v-list-tile-title>

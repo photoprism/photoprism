@@ -1,11 +1,10 @@
 package meta
 
 import (
-	"regexp"
 	"strings"
-)
 
-var DscTitleRegexp = regexp.MustCompile("\\D{3}[\\d_]\\d{4}(.JPG)?")
+	"github.com/photoprism/photoprism/pkg/fs"
+)
 
 var UnwantedDescriptions = map[string]bool{
 	"OLYMPUS DIGITAL CAMERA": true,
@@ -37,7 +36,7 @@ func SanitizeUID(value string) string {
 func SanitizeTitle(value string) string {
 	value = SanitizeString(value)
 
-	if dsc := DscTitleRegexp.FindString(value); dsc == value {
+	if fs.IsID(value) {
 		value = ""
 	}
 

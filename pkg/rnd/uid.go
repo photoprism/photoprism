@@ -35,7 +35,7 @@ func IsHex(s string) bool {
 	}
 
 	for _, r := range s {
-		if (r < 48 || r > 57) && (r < 97 || r > 102) && (r < 65 || r > 90) && r != 45 {
+		if (r < 48 || r > 57) && (r < 97 || r > 102) && (r < 65 || r > 70) && r != 45 {
 			return false
 		}
 	}
@@ -58,10 +58,15 @@ func IsLowerAlnum(s string) bool {
 	return true
 }
 
+// Returns true if the string looks like a standard UUID.
+func IsUUID(s string) bool {
+	return len(s) == 36 && IsHex(s)
+}
+
 // IsUID returns true if string is a seemingly unique id.
 func IsUID(s string, prefix byte) bool {
 	// Regular UUID.
-	if len(s) == 36 && IsHex(s) {
+	if IsUUID(s) {
 		return true
 	}
 

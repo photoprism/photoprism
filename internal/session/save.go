@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"path"
+	"sync"
 	"time"
 
 	gc "github.com/patrickmn/go-cache"
 	"github.com/photoprism/photoprism/internal/entity"
 )
+
+var fileMutex sync.RWMutex
 
 // New returns a new session store with an optional cachePath.
 func New(expiration time.Duration, cachePath string) *Session {
@@ -17,6 +20,9 @@ func New(expiration time.Duration, cachePath string) *Session {
 	cleanupInterval := 15 * time.Minute
 
 	if cachePath != "" {
+		fileMutex.RLock()
+		defer fileMutex.RUnlock()
+
 		var savedItems map[string]Saved
 
 		items := make(map[string]gc.Item)
@@ -69,6 +75,9 @@ func (s *Session) Save() error {
 	if s.cacheFile == "" {
 		return nil
 	}
+
+	fileMutex.Lock()
+	defer fileMutex.Unlock()
 
 	items := s.cache.Items()
 	savedItems := make(map[string]Saved, len(items))

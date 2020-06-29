@@ -77,6 +77,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	fileChanged := true
 	fileExists := false
 	photoExists := false
+	stripSequence := Config().Settings().Index.Group
 
 	event.Publish("index.indexing", event.Data{
 		"fileHash": fileHash,
@@ -138,7 +139,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	} else {
 		photo.PhotoQuality = -1
 
-		if yamlName := fs.TypeYaml.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), Config().Settings().Index.Group); yamlName != "" {
+		if yamlName := fs.TypeYaml.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
 			if err := photo.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s (restore from yaml) for %s", err.Error(), quotedName)
 			} else {
@@ -168,7 +169,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.OriginalName = originalName
 
 		if file.FilePrimary && photo.OriginalName == "" {
-			photo.OriginalName = originalName
+			photo.OriginalName = fs.Base(originalName, stripSequence)
 		}
 	}
 
@@ -530,7 +531,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		w := txt.Keywords(photo.Details.Keywords)
 
-		if fs.NonCanonical(fileBase) {
+		if !fs.IsID(fileBase) {
 			w = append(w, txt.FilenameKeywords(filePath)...)
 			w = append(w, txt.FilenameKeywords(fileBase)...)
 		}

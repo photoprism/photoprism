@@ -24,7 +24,7 @@ func (m *Photo) EstimateCountry() {
 		countryCode = code
 	}
 
-	if countryCode == unknown && fs.NonCanonical(m.PhotoName) {
+	if countryCode == unknown && !fs.IsID(m.PhotoName) {
 		if code := txt.CountryCode(m.PhotoName); code != unknown {
 			countryCode = code
 		} else if code := txt.CountryCode(m.PhotoPath); code != unknown {
@@ -32,7 +32,7 @@ func (m *Photo) EstimateCountry() {
 		}
 	}
 
-	if countryCode == unknown && m.OriginalName != "" && fs.NonCanonical(m.OriginalName) {
+	if countryCode == unknown && m.OriginalName != "" && !fs.IsID(m.OriginalName) {
 		if code := txt.CountryCode(m.OriginalName); code != UnknownCountry.ID {
 			countryCode = code
 		}
