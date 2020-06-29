@@ -13,11 +13,11 @@ func TestPrism_Start(t *testing.T) {
 
 	t.Logf("database-dsn: %s", conf.DatabaseDsn())
 
-	worker := NewPrism(conf)
+	worker := NewMeta(conf)
 
-	assert.IsType(t, &Prism{}, worker)
+	assert.IsType(t, &Meta{}, worker)
 
-	if err := mutex.PrismWorker.Start(); err != nil {
+	if err := mutex.MetaWorker.Start(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -25,7 +25,7 @@ func TestPrism_Start(t *testing.T) {
 		t.Fatal("error expected")
 	}
 
-	mutex.PrismWorker.Stop()
+	mutex.MetaWorker.Stop()
 
 	if err := worker.Start(); err != nil {
 		t.Fatal(err)

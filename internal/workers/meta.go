@@ -12,47 +12,47 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 )
 
-// Prism represents a background maintenance worker.
-type Prism struct {
+// Meta represents a background metadata maintenance worker.
+type Meta struct {
 	conf *config.Config
 }
 
-// NewPrism returns a new background maintenance worker.
-func NewPrism(conf *config.Config) *Prism {
-	return &Prism{conf: conf}
+// NewMeta returns a new background metadata maintenance worker.
+func NewMeta(conf *config.Config) *Meta {
+	return &Meta{conf: conf}
 }
 
 // logError logs an error message if err is not nil.
-func (worker *Prism) logError(err error) {
+func (worker *Meta) logError(err error) {
 	if err != nil {
-		log.Errorf("prism: %s", err.Error())
+		log.Errorf("metadata: %s", err.Error())
 	}
 }
 
 // logWarn logs a warning message if err is not nil.
-func (worker *Prism) logWarn(err error) {
+func (worker *Meta) logWarn(err error) {
 	if err != nil {
-		log.Warnf("prism: %s", err.Error())
+		log.Warnf("metadata: %s", err.Error())
 	}
 }
 
 // originalsPath returns the original media files path as string.
-func (worker *Prism) originalsPath() string {
+func (worker *Meta) originalsPath() string {
 	return worker.conf.OriginalsPath()
 }
 
-// Start starts the prism worker.
-func (worker *Prism) Start() (err error) {
-	if err := mutex.PrismWorker.Start(); err != nil {
+// Start starts the metadata worker.
+func (worker *Meta) Start() (err error) {
+	if err := mutex.MetaWorker.Start(); err != nil {
 		worker.logWarn(err)
 		return err
 	}
 
 	defer func() {
-		mutex.PrismWorker.Stop()
+		mutex.MetaWorker.Stop()
 
 		if err := recover(); err != nil {
-			log.Errorf("metadata: %s (prism worker panic)", err)
+			log.Errorf("metadata: %s (worker panic)", err)
 		}
 	}()
 
@@ -78,7 +78,7 @@ func (worker *Prism) Start() (err error) {
 		}
 
 		for _, photo := range photos {
-			if mutex.PrismWorker.Canceled() {
+			if mutex.MetaWorker.Canceled() {
 				return errors.New("metadata: check canceled")
 			}
 
@@ -96,7 +96,7 @@ func (worker *Prism) Start() (err error) {
 			}
 		}
 
-		if mutex.PrismWorker.Canceled() {
+		if mutex.MetaWorker.Canceled() {
 			return errors.New("metadata: check canceled")
 		}
 

@@ -21,12 +21,12 @@ func Start(conf *config.Config) {
 			case <-stop:
 				log.Info("shutting down workers")
 				ticker.Stop()
-				mutex.PrismWorker.Cancel()
+				mutex.MetaWorker.Cancel()
 				mutex.ShareWorker.Cancel()
 				mutex.SyncWorker.Cancel()
 				return
 			case <-ticker.C:
-				StartPrism(conf)
+				StartMeta(conf)
 				StartShare(conf)
 				StartSync(conf)
 			}
@@ -39,11 +39,11 @@ func Stop() {
 	stop <- true
 }
 
-// StartPrism runs the prism worker once.
-func StartPrism(conf *config.Config) {
+// StartMeta runs the metadata worker once.
+func StartMeta(conf *config.Config) {
 	if !mutex.WorkersBusy() {
 		go func() {
-			worker := NewPrism(conf)
+			worker := NewMeta(conf)
 			if err := worker.Start(); err != nil {
 				log.Error(err)
 			}
