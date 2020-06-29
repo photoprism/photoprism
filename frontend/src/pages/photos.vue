@@ -212,7 +212,7 @@
                     return Promise.resolve(this.results);
                 }
 
-                if(this.allResults.length > 1 && !this.dirty) {
+                if(this.allResults.length > 0) {
                     return Promise.resolve(this.allResults);
                 }
 
@@ -381,6 +381,8 @@
                 if (!data || !data.entities) {
                     return
                 }
+
+                this.allResults = [];
 
                 const type = ev.split('.')[1];
 
