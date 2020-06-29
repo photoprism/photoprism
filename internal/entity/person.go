@@ -100,6 +100,11 @@ func (m *Person) Create() error {
 	return Db().Create(m).Error
 }
 
+// Saves the new row to the database.
+func (m *Person) Save() error {
+	return Db().Save(m).Error
+}
+
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Person) BeforeCreate(scope *gorm.Scope) error {
 	if rnd.IsUID(m.PersonUID, 'u') {

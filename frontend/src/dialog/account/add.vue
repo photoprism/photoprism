@@ -3,10 +3,10 @@
     <v-card raised elevation="24">
       <v-card-title primary-title>
         <div>
-          <h3 class="headline mb-0"><translate key="Add Account">Add Account</translate></h3>
+          <h3 class="headline mx-2 my-0"><translate>Add Remote Service</translate></h3>
         </div>
       </v-card-title>
-      <v-container fluid class="pt-0 pb-2 pr-2 pl-2">
+      <v-card-text class="pt-0">
         <v-layout row wrap>
           <v-flex xs12 class="pa-2">
             <v-text-field
@@ -41,18 +41,22 @@
                     @click:append="showPassword = !showPassword"
             ></v-text-field>
           </v-flex>
-          <v-flex xs12 text-xs-right class="pt-3">
+          <v-flex xs12 text-xs-left class="pa-2 caption">
+            Note: Only WebDAV servers like Nextcloud can be configured as remote service at the moment. Support for additional
+            services like Google Drive will be added over time.
+          </v-flex>
+          <v-flex xs12 text-xs-right class="px-2 pt-2 pb-0">
             <v-btn @click.stop="cancel" depressed color="secondary-light"
-                   class="p-account-create-dialog-cancel">
+                   class="action-cancel mr-2">
               <span>{{ label.cancel }}</span>
             </v-btn>
             <v-btn depressed dark color="secondary-dark" @click.stop="confirm"
-                   class="p-account-create-dialog-confirm">
+                   class="action-confirm ma-0">
               <span>{{ label.confirm }}</span>
             </v-btn>
           </v-flex>
         </v-layout>
-      </v-container>
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>
@@ -71,7 +75,7 @@
                 search: null,
                 model: new Account(),
                 label: {
-                    url: this.$gettext("Service URL"),
+                    url: this.$gettext("WebDAV Server"),
                     user: this.$gettext("Username"),
                     pass: this.$gettext("Password"),
                     cancel: this.$gettext("Cancel"),

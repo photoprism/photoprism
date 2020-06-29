@@ -178,18 +178,13 @@ func (c *Config) UploadNSFW() bool {
 	return c.params.UploadNSFW
 }
 
-// AdminPassword returns the admin password.
+// AdminPassword returns the initial admin password.
 func (c *Config) AdminPassword() string {
 	if c.params.AdminPassword == "" {
 		return "photoprism"
 	}
 
 	return c.params.AdminPassword
-}
-
-// WebDAVPassword returns the WebDAV password for remote access.
-func (c *Config) WebDAVPassword() string {
-	return c.params.WebDAVPassword
 }
 
 // LogLevel returns the logrus log level.

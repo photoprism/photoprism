@@ -80,8 +80,8 @@ export class User extends RestModel {
 
     changePassword(oldPassword, newPassword) {
         return Api.put(this.getEntityResource() + "/password", {
-            password: oldPassword,
-            new_password: newPassword,
+            old: oldPassword,
+            new: newPassword,
         }).then((response) => Promise.resolve(response.data));
     }
 

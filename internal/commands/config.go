@@ -47,7 +47,6 @@ func configAction(ctx *cli.Context) error {
 
 	// Passwords.
 	fmt.Printf("%-25s %s\n", "admin-password", conf.AdminPassword())
-	fmt.Printf("%-25s %s\n", "webdav-password", conf.WebDAVPassword())
 
 	// Background workers and logging.
 	fmt.Printf("%-25s %d\n", "workers", conf.Workers())

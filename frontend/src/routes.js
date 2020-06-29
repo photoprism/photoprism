@@ -233,11 +233,18 @@ export default [
         props: {tab: 0},
     },
     {
-        name: "settings_accounts",
-        path: "/settings/accounts",
+        name: "settings_sync",
+        path: "/settings/sync",
         component: Settings,
         meta: {title: "Settings", auth: true, background: "application-light"},
         props: {tab: 1},
+    },
+    {
+        name: "settings_account",
+        path: "/settings/account",
+        component: Settings,
+        meta: {title: "Settings", auth: true, background: "application-light"},
+        props: {tab: 2},
     },
     {
         name: "discover",

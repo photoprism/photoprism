@@ -45,7 +45,6 @@ type Params struct {
 	Workers            int    `yaml:"workers" flag:"workers"`
 	WakeupInterval     int    `yaml:"wakeup-interval" flag:"wakeup-interval"`
 	AdminPassword      string `yaml:"admin-password" flag:"admin-password"`
-	WebDAVPassword     string `yaml:"webdav-password" flag:"webdav-password"`
 	LogLevel           string `yaml:"log-level" flag:"log-level"`
 	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`
 	StoragePath        string `yaml:"storage-path" flag:"storage-path"`

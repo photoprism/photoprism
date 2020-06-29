@@ -89,9 +89,7 @@ func (c *Config) InitDb() {
 	entity.SetDbProvider(c)
 	entity.MigrateDb()
 
-	if err := entity.Admin.SetPassword(c.AdminPassword()); err != nil {
-		log.Error(err)
-	}
+	entity.Admin.InitPassword(c.AdminPassword())
 
 	go entity.SaveErrorMessages()
 }
@@ -101,9 +99,7 @@ func (c *Config) InitTestDb() {
 	entity.SetDbProvider(c)
 	entity.ResetTestFixtures()
 
-	if err := entity.Admin.SetPassword(c.AdminPassword()); err != nil {
-		log.Error(err)
-	}
+	entity.Admin.InitPassword(c.AdminPassword())
 
 	go entity.SaveErrorMessages()
 }

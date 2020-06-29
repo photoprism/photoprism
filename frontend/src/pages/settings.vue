@@ -13,8 +13,12 @@
         <translate key="General">General</translate>
       </v-tab>
 
-      <v-tab id="tab-settings-accounts" ripple @click="changePath('/settings/accounts')">
+      <v-tab id="tab-settings-sync" ripple @click="changePath('/settings/sync')">
         <translate key="Sync">Sync</translate>
+      </v-tab>
+
+      <v-tab id="tab-settings-account" ripple @click="changePath('/settings/account')">
+        <translate key="Account">Account</translate>
       </v-tab>
 
       <v-tabs-items touchless>
@@ -22,7 +26,10 @@
           <p-settings-general></p-settings-general>
         </v-tab-item>
         <v-tab-item lazy>
-          <p-settings-accounts></p-settings-accounts>
+          <p-settings-sync></p-settings-sync>
+        </v-tab-item>
+        <v-tab-item lazy>
+          <p-settings-account></p-settings-account>
         </v-tab-item>
       </v-tabs-items>
     </v-tabs>
@@ -31,7 +38,8 @@
 
 <script>
     import tabGeneral from "pages/settings/general.vue";
-    import tabAccounts from "pages/settings/accounts.vue";
+    import tabSync from "pages/settings/sync.vue";
+    import tabAccount from "pages/settings/account.vue";
 
     export default {
         name: 'p-page-settings',
@@ -40,7 +48,8 @@
         },
         components: {
             'p-settings-general': tabGeneral,
-            'p-settings-accounts': tabAccounts,
+            'p-settings-sync': tabSync,
+            'p-settings-account': tabAccount,
         },
         data() {
             return {
@@ -49,7 +58,7 @@
             }
         },
         methods: {
-            changePath: function(path) {
+            changePath: function (path) {
                 if (this.$route.path !== path) {
                     this.$router.replace(path)
                 }

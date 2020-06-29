@@ -33,14 +33,9 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "admin-password",
-		Usage:  "admin password",
+		Usage:  "initial admin password (can be changed in settings)",
 		Value:  "photoprism",
 		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
-	},
-	cli.StringFlag{
-		Name:   "webdav-password",
-		Usage:  "WebDAV password (none to disable)",
-		EnvVar: "PHOTOPRISM_WEBDAV_PASSWORD",
 	},
 	cli.IntFlag{
 		Name:   "workers, w",

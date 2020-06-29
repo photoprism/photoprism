@@ -1,5 +1,5 @@
 <template>
-  <div class="p-tab p-settings-accounts">
+  <div class="p-tab p-settings-sync">
     <v-data-table
             :headers="listColumns"
             :items="results"
@@ -8,7 +8,7 @@
             class="elevation-0 p-accounts p-accounts-list p-results"
             item-key="ID"
             v-model="selected"
-            :no-data-text="this.$gettext('No accounts configured')"
+            :no-data-text="this.$gettext('No remote services configured.')"
     >
       <template slot="items" slot-scope="props" class="p-account">
         <td>
@@ -74,7 +74,7 @@
     import {DateTime} from "luxon";
 
     export default {
-        name: 'p-settings-accounts',
+        name: 'p-settings-sync',
         data() {
             return {
                 config: this.$config.values,

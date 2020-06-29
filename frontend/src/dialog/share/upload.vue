@@ -101,7 +101,7 @@
                 this.$emit('cancel');
             },
             setup() {
-                this.$router.push({name: "settings_accounts"});
+                this.$router.push({name: "settings_sync"});
             },
             confirm() {
                 if (this.loading) {
