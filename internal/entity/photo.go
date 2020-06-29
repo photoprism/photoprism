@@ -167,7 +167,7 @@ func (m *Photo) String() string {
 			return txt.Quote(m.OriginalName)
 		}
 
-		return "[unknown photo]"
+		return "(unknown)"
 	}
 
 	return "uid " + txt.Quote(m.PhotoUID)
@@ -573,7 +573,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 
 		// TODO: User defined title format
 		if title := labels.Title(loc.Name()); title != "" {
-			log.Infof("photo: using label %s to create title for %s", txt.Quote(title), m.PhotoUID)
+			log.Debugf("photo: using label %s to create title for %s", txt.Quote(title), m.PhotoUID)
 			if loc.NoCity() || loc.LongCity() || loc.CityContains(title) {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), loc.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
@@ -598,7 +598,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 		knownLocation = true
 
 		if title := labels.Title(fileTitle); title != "" {
-			log.Infof("photo: using label %s to create title for %s", txt.Quote(title), m.PhotoUID)
+			log.Debugf("photo: using label %s to create title for %s", txt.Quote(title), m.PhotoUID)
 			if m.Place.NoCity() || m.Place.LongCity() || m.Place.CityContains(title) {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), m.Place.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
@@ -634,7 +634,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	}
 
 	if m.PhotoTitle != oldTitle {
-		log.Infof("photo: changed title of %s to %s", m.PhotoUID, txt.Quote(m.PhotoTitle))
+		log.Debugf("photo: changed title of %s to %s", m.PhotoUID, txt.Quote(m.PhotoTitle))
 	}
 
 	return nil

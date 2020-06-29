@@ -24,7 +24,7 @@ func JSON(jsonName, originalName string) (data Data, err error) {
 func (data *Data) JSON(jsonName, originalName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("%s (json metadata)", e)
+			err = fmt.Errorf("metadata: %s (json panic)", e)
 		}
 	}()
 
@@ -35,14 +35,14 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 	jsonString, err := ioutil.ReadFile(jsonName)
 
 	if err != nil {
-		log.Warnf("meta: %s", err.Error())
+		log.Warnf("metadata: %s (json)", err.Error())
 		return fmt.Errorf("can't read %s (json)", txt.Quote(filepath.Base(jsonName)))
 	}
 
 	j := gjson.GetBytes(jsonString, "@flatten|@join")
 
 	if !j.IsObject() {
-		return fmt.Errorf("data is not an object in %s (json)", txt.Quote(filepath.Base(jsonName)))
+		return fmt.Errorf("metadata: data is not an object in %s (json)", txt.Quote(filepath.Base(jsonName)))
 	}
 
 	jsonValues := j.Map()
@@ -52,7 +52,7 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 	}
 
 	if fileName, ok := data.All["FileName"]; ok && fileName != "" && originalName != "" && fileName != originalName {
-		return fmt.Errorf("meta: original name %s does not match %s (json)", txt.Quote(originalName), txt.Quote(fileName))
+		return fmt.Errorf("metadata: original name %s does not match %s (json)", txt.Quote(originalName), txt.Quote(fileName))
 	}
 
 	v := reflect.ValueOf(data).Elem()
@@ -101,7 +101,7 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 			case bool:
 				fieldValue.SetBool(jsonValue.Bool())
 			default:
-				log.Warnf("meta: can't assign value of type %s to %s", t, tagValue)
+				log.Warnf("metadata: can't assign value of type %s to %s (json)", t, tagValue)
 			}
 		}
 	}
@@ -127,11 +127,11 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 
 		if !data.TakenAtLocal.IsZero() {
 			if loc, err := time.LoadLocation(data.TimeZone); err != nil {
-				log.Warnf("meta: unknown time zone %s", data.TimeZone)
+				log.Warnf("metadata: unknown time zone %s (json)", data.TimeZone)
 			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), loc); err == nil {
 				data.TakenAt = tl.Round(time.Second).UTC()
 			} else {
-				log.Errorf("meta: %s", err.Error()) // this should never happen
+				log.Errorf("metadata: %s (json)", err.Error()) // this should never happen
 			}
 		}
 	}

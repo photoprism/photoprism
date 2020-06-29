@@ -104,7 +104,7 @@ func TestExif(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "no exif data in tweethog.png", err.Error())
+		assert.Equal(t, "metadata: no exif header in tweethog.png", err.Error())
 	})
 
 	t.Run("iphone_7.heic", func(t *testing.T) {
@@ -219,7 +219,7 @@ func TestExif(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "no exif data in no-exif-data.jpg", err.Error())
+		assert.Equal(t, "metadata: no exif header in no-exif-data.jpg", err.Error())
 	})
 
 	t.Run("screenshot.png", func(t *testing.T) {
@@ -255,7 +255,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 
 		if err := data.JSON("testdata/orientation.json", "foo.jpg"); err != nil {
-			assert.EqualError(t, err, "meta: original name foo.jpg does not match orientation.jpg (json)")
+			assert.EqualError(t, err, "metadata: original name foo.jpg does not match orientation.jpg (json)")
 		} else {
 			t.Error("error expected when providing wrong orginal name")
 		}
@@ -264,6 +264,6 @@ func TestExif(t *testing.T) {
 	t.Run("gopher-preview.jpg", func(t *testing.T) {
 		_, err := Exif("testdata/gopher-preview.jpg")
 
-		assert.EqualError(t, err, "no exif data in gopher-preview.jpg")
+		assert.EqualError(t, err, "metadata: no exif header in gopher-preview.jpg")
 	})
 }

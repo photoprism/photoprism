@@ -43,3 +43,20 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 		assert.Equal(t, "Canada", m.CountryName())
 	})
 }
+
+func TestPhoto_Optimize(t *testing.T) {
+	t.Run("update", func(t *testing.T) {
+		photo := PhotoFixtures.Get("Photo19")
+		if updated, err := photo.Optimize(); err != nil {
+			t.Fatal(err)
+		} else if !updated {
+			t.Error("photo should be updated")
+		}
+
+		if updated, err := photo.Optimize(); err != nil {
+			t.Fatal(err)
+		} else if updated {
+			t.Error("photo should NOT be updated")
+		}
+	})
+}

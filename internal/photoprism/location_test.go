@@ -96,8 +96,7 @@ func TestMediaFile_Location(t *testing.T) {
 
 		location, err := mediaFile.Location()
 
-		assert.Error(t, err, "meta: no exif data")
+		assert.Error(t, err, "metadata: no exif header in Random.docx")
 		assert.Nil(t, location)
-
 	})
 }

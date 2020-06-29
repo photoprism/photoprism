@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"reflect"
 	"strings"
 	"time"
 
@@ -92,14 +93,13 @@ func (m *Photo) EstimatePlace() {
 	}
 }
 
-// Maintain photo data, improve if possible.
-func (m *Photo) Maintain() error {
+// Optimize photo data, improve if possible.
+func (m *Photo) Optimize() (updated bool, err error) {
 	if !m.HasID() {
-		return errors.New("photo: can't maintain, id is empty")
+		return false, errors.New("photo: can't maintain, id is empty")
 	}
 
-	checked := Timestamp()
-	m.CheckedAt = &checked
+	current := *m
 
 	m.EstimatePlace()
 
@@ -123,5 +123,13 @@ func (m *Photo) Maintain() error {
 
 	m.PhotoQuality = m.QualityScore()
 
-	return UnscopedDb().Save(m).Error
+	checked := Timestamp()
+
+	if reflect.DeepEqual(*m, current) {
+		return false, m.Update("CheckedAt", &checked)
+	}
+
+	m.CheckedAt = &checked
+
+	return true, UnscopedDb().Save(m).Error
 }

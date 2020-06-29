@@ -18,14 +18,14 @@ func XMP(fileName string) (data Data, err error) {
 func (data *Data) XMP(fileName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("%s (xmp metadata)", e)
+			err = fmt.Errorf("metadata: %s (xmp panic)", e)
 		}
 	}()
 
 	doc := XmpDocument{}
 
 	if err := doc.Load(fileName); err != nil {
-		return fmt.Errorf("can't read %s (xmp)", txt.Quote(filepath.Base(fileName)))
+		return fmt.Errorf("metadata: can't read %s (xmp)", txt.Quote(filepath.Base(fileName)))
 	}
 
 	if doc.Title() != "" {

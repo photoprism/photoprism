@@ -52,14 +52,17 @@ func (worker *Prism) Start() (err error) {
 		mutex.PrismWorker.Stop()
 
 		if err := recover(); err != nil {
-			log.Errorf("prism: %s [panic]", err)
+			log.Errorf("metadata: %s (prism worker panic)", err)
 		}
 	}()
+
+	log.Debugf("metadata: starting routine check")
 
 	done := make(map[string]bool)
 
 	limit := 50
 	offset := 0
+	optimized := 0
 
 	for {
 		photos, err := query.PhotosCheck(limit, offset)
@@ -71,12 +74,12 @@ func (worker *Prism) Start() (err error) {
 		if len(photos) == 0 {
 			break
 		} else if offset == 0 {
-			log.Infof("prism: starting routine check")
+
 		}
 
 		for _, photo := range photos {
 			if mutex.PrismWorker.Canceled() {
-				return errors.New("prism: check canceled")
+				return errors.New("metadata: check canceled")
 			}
 
 			if done[photo.PhotoUID] {
@@ -85,11 +88,16 @@ func (worker *Prism) Start() (err error) {
 
 			done[photo.PhotoUID] = true
 
-			worker.logError(photo.Maintain())
+			if updated, err := photo.Optimize(); err != nil {
+				log.Errorf("metadata: %s", err)
+			} else if updated {
+				optimized++
+				log.Debugf("metadata: optimized photo %s", photo.String())
+			}
 		}
 
 		if mutex.PrismWorker.Canceled() {
-			return errors.New("prism: check canceled")
+			return errors.New("metadata: check canceled")
 		}
 
 		offset += limit
@@ -97,8 +105,8 @@ func (worker *Prism) Start() (err error) {
 		time.Sleep(100 * time.Millisecond)
 	}
 
-	if len(done) > 0 {
-		log.Infof("prism: checked %d photos", len(done))
+	if optimized > 0 {
+		log.Infof("metadata: optimized %d photos", optimized)
 	}
 
 	worker.logError(query.ResetPhotoQuality())

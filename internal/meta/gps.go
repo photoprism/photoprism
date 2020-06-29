@@ -73,7 +73,7 @@ func GpsCoord(s string) float64 {
 	result, err := strconv.ParseFloat(s, 64)
 
 	if err != nil {
-		log.Debugf("meta: %s", err)
+		log.Debugf("metadata: %s", err)
 	}
 
 	return result

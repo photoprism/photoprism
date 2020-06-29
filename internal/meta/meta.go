@@ -43,6 +43,6 @@ func init() {
 	im = exif.NewIfdMapping()
 
 	if err := exif.LoadStandardIfds(im); err != nil {
-		log.Errorf("meta: %s", err.Error())
+		log.Errorf("metadata: %s", err.Error())
 	}
 }
