@@ -1,8 +1,11 @@
 package api
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -13,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -73,12 +77,12 @@ func GetAccount(router *gin.RouterGroup) {
 	})
 }
 
-// GET /api/v1/accounts/:id/dirs
+// GET /api/v1/accounts/:id/folders
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func GetAccountDirs(router *gin.RouterGroup) {
-	router.GET("/accounts/:id/dirs", func(c *gin.Context) {
+func GetAccountFolders(router *gin.RouterGroup) {
+	router.GET("/accounts/:id/folders", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionRead)
 
 		if s.Invalid() {
@@ -86,7 +90,22 @@ func GetAccountDirs(router *gin.RouterGroup) {
 			return
 		}
 
+		start := time.Now()
 		id := ParseUint(c.Param("id"))
+		cache := service.Cache()
+		cacheKey := fmt.Sprintf("account-folders:%d", id)
+
+		if cacheData, err := cache.Get(cacheKey); err == nil {
+			var cached fs.FileInfos
+
+			if err := json.Unmarshal(cacheData, &cached); err != nil {
+				log.Errorf("account-folders: %s", err)
+			} else {
+				log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+				c.JSON(http.StatusOK, cached)
+				return
+			}
+		}
 
 		m, err := query.AccountByID(id)
 
@@ -98,9 +117,14 @@ func GetAccountDirs(router *gin.RouterGroup) {
 		list, err := m.Directories()
 
 		if err != nil {
-			log.Errorf("account: %s", err.Error())
+			log.Errorf("account-folders: %s", err.Error())
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrConnectionFailed)
 			return
+		}
+
+		if c, err := json.Marshal(list); err == nil {
+			logError("account-folders", cache.Set(cacheKey, c))
+			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 		}
 
 		c.JSON(http.StatusOK, list)

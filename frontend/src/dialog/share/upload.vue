@@ -128,7 +128,7 @@
                 this.paths = [{"abs": "/"}];
 
                 this.loading = true;
-                this.account.Dirs().then(p => {
+                this.account.Folders().then(p => {
                     for (let i = 0; i < p.length; i++) {
                         this.paths.push(p[i]);
                     }

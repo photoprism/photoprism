@@ -72,8 +72,8 @@ export class Account extends RestModel {
         return this.ID;
     }
 
-    Dirs() {
-        return Api.get(this.getEntityResource() + "/dirs").then((response) => Promise.resolve(response.data));
+    Folders() {
+        return Api.get(this.getEntityResource() + "/folders").then((response) => Promise.resolve(response.data));
     }
 
     Share(photos, dest) {

@@ -407,7 +407,7 @@
                 this.paths = [{"abs": "/"}];
 
                 this.loading = true;
-                this.model.Dirs().then(p => {
+                this.model.Folders().then(p => {
                     for (let i = 0; i < p.length; i++) {
                         this.paths.push(p[i]);
                     }

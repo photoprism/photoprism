@@ -101,7 +101,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		api.GetAccounts(v1)
 		api.GetAccount(v1)
-		api.GetAccountDirs(v1)
+		api.GetAccountFolders(v1)
 		api.ShareWithAccount(v1)
 		api.CreateAccount(v1)
 		api.DeleteAccount(v1)

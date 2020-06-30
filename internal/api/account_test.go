@@ -46,11 +46,11 @@ func TestGetAccount(t *testing.T) {
 	})
 }
 
-func TestGetAccountDirs(t *testing.T) {
+func TestGetAccountFolders(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		GetAccountDirs(router)
-		r := PerformRequest(app, "GET", "/api/v1/accounts/1000000/dirs")
+		GetAccountFolders(router)
+		r := PerformRequest(app, "GET", "/api/v1/accounts/1000000/folders")
 		count := gjson.Get(r.Body.String(), "#")
 		assert.LessOrEqual(t, int64(2), count.Int())
 		val := gjson.Get(r.Body.String(), "0.abs")
@@ -59,8 +59,8 @@ func TestGetAccountDirs(t *testing.T) {
 	})
 	t.Run("account not found", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		GetAccountDirs(router)
-		r := PerformRequest(app, "GET", "/api/v1/accounts/999000/dirs")
+		GetAccountFolders(router)
+		r := PerformRequest(app, "GET", "/api/v1/accounts/999000/folders")
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "Account not found", val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
