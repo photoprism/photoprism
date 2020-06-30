@@ -208,6 +208,14 @@ class Config {
     previewToken() {
         return this.values["previewToken"];
     }
+
+    albumCategories() {
+        if(this.values["albumCategories"]) {
+            return this.values["albumCategories"];
+        }
+
+        return [];
+    }
 }
 
 export default Config;

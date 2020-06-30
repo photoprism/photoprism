@@ -27,11 +27,11 @@
             </v-autocomplete>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
-            <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="p-photo-dialog-cancel">
+            <v-btn @click.stop="cancel" depressed color="secondary-light" class=action-cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
-                   class="p-photo-dialog-confirm">
+            <v-btn color="secondary-dark" depressed dark @click.stop="confirm"
+                   class="action-confirm">
               <span v-if="newAlbum">{{ labels.createAlbum }}</span>
               <span v-else>{{ labels.addToAlbum }}</span>
             </v-btn>

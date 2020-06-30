@@ -15,12 +15,12 @@ const (
 	SrcImage    = classify.SrcImage
 
 	// Sort orders.
-	SortOrderRelevance = "relevance"
+	SortOrderAdded     = "added"
 	SortOrderNewest    = "newest"
 	SortOrderOldest    = "oldest"
-	SortOrderImported  = "imported"
-	SortOrderSimilar   = "similar"
 	SortOrderName      = "name"
+	SortOrderSimilar   = "similar"
+	SortOrderRelevance = "relevance"
 
 	// Unknown values.
 	YearUnknown  = -1

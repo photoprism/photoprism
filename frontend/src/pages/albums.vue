@@ -132,32 +132,11 @@
                   </v-btn>
                 </v-img>
 
-                <v-card-actions primary-title class="pl-3 pr-2 pb-1" style="user-select: none;"
-                                @click.stop.prevent="">
-                  <v-edit-dialog
-                          :return-value.sync="album.Title"
-                          lazy
-                          @save="onSave(album)"
-                          class="p-inline-edit"
-                  >
-                                        <span v-if="album.Title" class="body-2 ma-0">
-                                            {{ album.Title }}
-                                        </span>
-                    <span v-else>
-                                            <v-icon>edit</v-icon>
-                                        </span>
-                    <template v-slot:input>
-                      <v-text-field
-                              v-model="album.Title"
-                              :rules="[titleRule]"
-                              :label="labels.title"
-                              color="secondary-dark"
-                              class="input-title"
-                              single-line
-                              autofocus
-                      ></v-text-field>
-                    </template>
-                  </v-edit-dialog>
+                <v-card-actions primary-title class="pl-3 pr-2 pb-1" style="user-select: none;" @click.stop.prevent="">
+                  <h3 :title="album.Title " @click.stop.prevent="edit(album)" class="body-2 ma-0 action-title-edit"
+                      :data-uid="album.UID">
+                    {{ album.Title }}
+                  </h3>
 
                   <v-spacer></v-spacer>
 
@@ -169,8 +148,8 @@
                 </v-card-actions>
 
                 <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc" v-if="album.Description">
-                  <div class="caption" title="Description">
-                    {{ album.Description }}
+                  <div class="caption" title="Description" @click.stop.prevent="edit(album)">
+                    {{ album.Description | truncate(100) }}
                   </div>
                 </v-card-text>
                 <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc"
@@ -197,6 +176,7 @@
                     @close="dialog.share = false"></p-share-dialog>
     <p-share-upload-dialog :show="dialog.upload" :selection="selection" @cancel="dialog.upload = false"
                            @confirm="dialog.upload = false"></p-share-upload-dialog>
+    <p-album-edit-dialog :show="dialog.edit" :album="album" @close="dialog.edit = false"></p-album-edit-dialog>
   </div>
 </template>
 
@@ -233,8 +213,8 @@
 
             let categories = [{"value": "", "text": this.$gettext("All Categories")}];
 
-            if (this.$config.values.albumCategories) {
-                categories = categories.concat(this.$config.values.albumCategories.map(cat => {
+            if (this.$config.albumCategories().length > 0) {
+                categories = categories.concat(this.$config.albumCategories().map(cat => {
                     return {"value": cat, "text": cat};
                 }));
             }
@@ -270,6 +250,7 @@
                 dialog: {
                     share: false,
                     upload: false,
+                    edit: false,
                 },
                 album: new Album(),
             };
@@ -278,6 +259,10 @@
             share(album) {
                 this.album = album;
                 this.dialog.share = true;
+            },
+            edit(album) {
+                this.album = album;
+                this.dialog.edit = true;
             },
             webdavUpload() {
                 this.dialog.share = false;

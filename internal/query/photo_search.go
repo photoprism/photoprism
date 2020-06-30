@@ -317,7 +317,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Order("taken_at DESC, photos.photo_uid, files.file_primary DESC")
 	case entity.SortOrderOldest:
 		s = s.Order("taken_at, photos.photo_uid, files.file_primary DESC")
-	case entity.SortOrderImported:
+	case entity.SortOrderAdded:
 		s = s.Order("photos.id DESC, files.file_primary DESC")
 	case entity.SortOrderSimilar:
 		s = s.Where("files.file_diff > 0")

@@ -90,7 +90,7 @@
                 </v-card-title>
                 <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc">
                   <div class="caption" title="Description" v-if="album.Description">
-                    {{ album.Description }}
+                    {{ album.Description | truncate(100) }}
                   </div>
                   <div class="caption" title="Description" v-else>
                     <translate>Shared with you.</translate>

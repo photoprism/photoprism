@@ -124,7 +124,7 @@ func NewFolderAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	now := Timestamp()
 
 	result := &Album{
-		AlbumOrder:  SortOrderOldest,
+		AlbumOrder:  SortOrderAdded,
 		AlbumType:   AlbumFolder,
 		AlbumTitle:  albumTitle,
 		AlbumSlug:   albumSlug,
@@ -166,7 +166,7 @@ func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	now := Timestamp()
 
 	result := &Album{
-		AlbumOrder:  SortOrderOldest,
+		AlbumOrder:  SortOrderNewest,
 		AlbumType:   AlbumState,
 		AlbumTitle:  albumTitle,
 		AlbumSlug:   albumSlug,

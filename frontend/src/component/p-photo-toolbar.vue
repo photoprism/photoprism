@@ -183,7 +183,7 @@
                         {value: 'list', text: this.$gettext('List')},
                     ],
                     'sorting': [
-                        {value: 'imported', text: this.$gettext('Recently added')},
+                        {value: 'added', text: this.$gettext('Recently added')},
                         {value: 'newest', text: this.$gettext('Newest first')},
                         {value: 'oldest', text: this.$gettext('Oldest first')},
                         {value: 'name', text: this.$gettext('Sort by file name')},

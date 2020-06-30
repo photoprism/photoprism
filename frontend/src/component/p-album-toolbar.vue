@@ -3,31 +3,18 @@
           ref="form" autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8"
           @submit.prevent="filterChange">
     <v-toolbar flat color="secondary">
-      <v-edit-dialog
-              :return-value.sync="album.Title"
-              lazy
-              @save="updateAlbum()"
-              class="p-inline-edit">
-        <v-toolbar-title>
-          {{ album.Title }}
-        </v-toolbar-title>
-        <template v-slot:input>
-          <v-text-field
-                  v-model="album.Title"
-                  :rules="[titleRule]"
-                  :label="labels.title"
-                  color="secondary-dark"
-                  single-line
-                  autofocus
-                  class="input-title"
-          ></v-text-field>
-        </template>
-      </v-edit-dialog>
+      <v-toolbar-title :title="album.Title">
+        {{ album.Title }}
+      </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
       <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload">
         <v-icon>refresh</v-icon>
+      </v-btn>
+
+      <v-btn icon @click.stop="dialog.edit = true">
+        <v-icon>edit</v-icon>
       </v-btn>
 
       <v-btn icon @click.stop="dialog.share = true" v-if="$config.feature('share')">
@@ -48,80 +35,30 @@
              class="hidden-sm-and-down">
         <v-icon>cloud_upload</v-icon>
       </v-btn>
-
-      <v-btn icon @click.stop="expand" class="p-expand-search">
-        <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
-      </v-btn>
     </v-toolbar>
 
-    <v-card class="pt-1"
-            flat
-            color="secondary-light"
-            v-show="searchExpanded">
-      <v-card-text>
-        <v-layout row wrap>
-          <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
-            <v-combobox flat solo hide-details color="secondary-dark"
-                        v-model="album.Category"
-                        :items="categories"
-                        :label="labels.category"
-                        @change="updateAlbum"
-                        :allow-overflow="false"
-                        return-masked-value
-                        class="input-category"
-            ></v-combobox>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
-            <v-select @change="dropdownChange"
-                      :label="labels.camera"
-                      flat solo hide-details
-                      color="secondary-dark"
-                      item-value="ID"
-                      item-text="Name"
-                      v-model="filter.camera"
-                      :items="options.cameras">
-            </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
-            <v-select @change="dropdownChange"
-                      :label="labels.view"
-                      flat solo hide-details
-                      color="secondary-dark"
-                      v-model="settings.view"
-                      :items="options.views"
-                      id="viewSelect">
-            </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
-            <v-select @change="dropdownChange"
-                      :label="labels.sort"
-                      flat solo hide-details
-                      color="secondary-dark"
-                      v-model="filter.order"
-                      :items="options.sorting">
-            </v-select>
-          </v-flex>
-          <v-flex xs12 pa-2>
-            <v-textarea flat solo auto-grow
-                        browser-autocomplete="off"
-                        :label="labels.description"
-                        :rows="2"
-                        :key="growDesc"
-                        color="secondary-dark"
-                        style="background-color: white"
-                        v-model="album.Description"
-                        @change="updateAlbum"
-                        class="input-description"
-            >
-            </v-textarea>
-          </v-flex>
-        </v-layout>
-      </v-card-text>
-    </v-card>
+    <template v-if="album.Description">
+      <v-card flat class="px-2 py-1 hidden-sm-and-down"
+              color="secondary-light"
+      >
+        <v-card-text>
+          {{ album.Description }}
+        </v-card-text>
+      </v-card>
+      <v-card flat class="pa-0 hidden-md-and-up"
+              color="secondary-light"
+      >
+        <v-card-text>
+          {{ album.Description }}
+        </v-card-text>
+      </v-card>
+    </template>
+
     <p-share-dialog :show="dialog.share" :model="album" @upload="webdavUpload"
                     @close="dialog.share = false"></p-share-dialog>
     <p-share-upload-dialog :show="dialog.upload" :selection="[album.getId()]" @cancel="dialog.upload = false"
                            @confirm="dialog.upload = false"></p-share-upload-dialog>
+    <p-album-edit-dialog :show="dialog.edit" :album="album" @close="dialog.edit = false"></p-album-edit-dialog>
   </v-form>
 </template>
 <script>
@@ -146,12 +83,10 @@
                 Name: this.$gettext('All Countries')
             }].concat(this.$config.get('countries'));
 
-            const configValues = this.$config.values;
-
             return {
                 experimental: this.$config.get("experimental"),
                 isFullScreen: !!document.fullscreenElement,
-                categories: configValues.albumCategories ? configValues.albumCategories : [],
+                categories: this.$config.albumCategories(),
                 searchExpanded: false,
                 options: {
                     'views': [
@@ -162,7 +97,7 @@
                     'countries': countries,
                     'cameras': cameras,
                     'sorting': [
-                        {value: 'imported', text: this.$gettext('Recently added')},
+                        {value: 'added', text: this.$gettext('Recently added')},
                         {value: 'newest', text: this.$gettext('Newest first')},
                         {value: 'oldest', text: this.$gettext('Oldest first')},
                         {value: 'name', text: this.$gettext('Sort by file name')},
@@ -173,6 +108,7 @@
                 dialog: {
                     share: false,
                     upload: false,
+                    edit: false,
                 },
                 labels: {
                     title: this.$gettext("Album Name"),

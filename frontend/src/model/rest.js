@@ -134,7 +134,8 @@ export class Rest extends Model {
     }
 
     static getCollectionResource() {
-        throw new Error("getCollectionResource() needs to be implemented");
+        // Needs to be implemented!
+        return "";
     }
 
     static getCreateResource() {
