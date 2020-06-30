@@ -49,14 +49,14 @@
             </v-autocomplete>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-4">
-            <v-btn @click.stop="cancel" depressed color="grey lighten-3" class="action-cancel ml-0 mt-0 mb-0 mr-2">
+            <v-btn @click.stop="cancel" depressed color="secondary-light" class="action-cancel ml-0 mt-0 mb-0 mr-2">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn color="blue-grey lighten-2" depressed dark @click.stop="setup"
+            <v-btn color="secondary-dark" depressed dark @click.stop="setup"
                    class="action-setup ma-0" v-if="noAccounts">
               <span>{{ labels.setup }}</span>
             </v-btn>
-            <v-btn color="blue-grey lighten-2" depressed dark @click.stop="confirm"
+            <v-btn color="secondary-dark" depressed dark @click.stop="confirm"
                    class="action-upload ma-0" v-else>
               <span>{{ labels.upload }}</span>
             </v-btn>

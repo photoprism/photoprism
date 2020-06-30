@@ -4,7 +4,7 @@
       <v-card-title primary-title>
         <v-layout row wrap v-if="scope === 'sharing'">
           <v-flex xs9>
-            <h3 class="headline mb-0">{{ $gettext('Upload') }}</h3>
+            <h3 class="headline mx-2 my-0">{{ $gettext('Upload') }}</h3>
           </v-flex>
           <v-flex xs3 text-xs-right>
             <v-switch
@@ -12,9 +12,9 @@
                     color="secondary-dark"
                     :true-value="true"
                     :false-value="false"
-                    :label="model.AccShare ? label.enable : label.disable"
+                    :label="model.AccShare ? label.enabled : label.disabled"
                     :disabled="model.AccType !== 'webdav'"
-                    class="mt-0 hidden-xs-only"
+                    class="ma-0 hidden-xs-only"
                     hide-details
             ></v-switch>
             <v-switch
@@ -23,14 +23,14 @@
                     :true-value="true"
                     :false-value="false"
                     :disabled="model.AccType !== 'webdav'"
-                    class="mt-0 hidden-sm-and-up"
+                    class="ma-0 hidden-sm-and-up"
                     hide-details
             ></v-switch>
           </v-flex>
         </v-layout>
         <v-layout row wrap v-else-if="scope === 'sync'">
           <v-flex xs9>
-            <h3 class="headline mb-0">{{ $gettext('Remote Sync') }}</h3>
+            <h3 class="headline mx-2 my-0">{{ $gettext('Remote Sync') }}</h3>
           </v-flex>
           <v-flex xs3 text-xs-right>
             <v-switch
@@ -38,7 +38,7 @@
                     color="secondary-dark"
                     :true-value="true"
                     :false-value="false"
-                    :label="model.AccSync ? label.enable : label.disable"
+                    :label="model.AccSync ? label.enabled : label.disabled"
                     :disabled="model.AccType !== 'webdav'"
                     class="mt-0 hidden-xs-only"
                     hide-details
@@ -56,7 +56,7 @@
         </v-layout>
         <v-layout row wrap v-else>
           <v-flex xs10>
-            <h3 class="headline mb-0">{{ $gettext('Edit Account') }}</h3>
+            <h3 class="headline mx-2 my-0">{{ $gettext('Edit Account') }}</h3>
           </v-flex>
           <v-flex xs2 text-xs-right>
             <v-btn icon flat :ripple="false"
@@ -68,7 +68,7 @@
         </v-layout>
         <h3 class="headline mb-0" v-else>{{ $gettext('Edit Account') }}</h3>
       </v-card-title>
-      <v-container fluid class="pt-0 pb-2 pr-2 pl-2">
+      <v-card-text class="pt-0">
         <v-layout row wrap v-if="scope === 'sharing'">
           <v-flex xs12 class="pa-2">
             <v-autocomplete
@@ -252,7 +252,7 @@
           </v-flex>
         </v-layout>
         <v-layout row wrap>
-          <v-flex xs12 text-xs-right class="pt-3">
+          <v-flex xs12 text-xs-right class="pt-3 pb-0">
             <v-btn @click.stop="cancel" depressed color="secondary-light"
                    class="action-cancel">
               <span>{{ label.cancel }}</span>
@@ -263,7 +263,7 @@
             </v-btn>
           </v-flex>
         </v-layout>
-      </v-container>
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>
@@ -335,8 +335,8 @@
                     cancel: this.$gettext("Cancel"),
                     confirm: this.$gettext("Save"),
                     save: this.$gettext("Save"),
-                    enable: this.$gettext("Enable"),
-                    disable: this.$gettext("Disable"),
+                    enabled: this.$gettext("Enabled"),
+                    disabled: this.$gettext("Disabled"),
                     name: this.$gettext("Name"),
                     url: this.$gettext("Service URL"),
                     user: this.$gettext("Username"),
