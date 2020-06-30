@@ -3,7 +3,6 @@ package entity
 import (
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/txt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -68,8 +67,6 @@ func FindPassword(uid string) *Password {
 
 	if err := Db().Where("uid = ?", uid).First(&result).Error; err == nil {
 		return &result
-	} else {
-		log.Errorf("auth: no password for %s", txt.Quote(uid))
 	}
 
 	return nil

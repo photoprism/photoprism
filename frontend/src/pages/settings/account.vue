@@ -43,9 +43,11 @@
                       v-model="confirmPassword"
               ></v-text-field>
             </v-flex>
-            <v-flex xs12 text-xs-left class="px-2 pt-4 pb-2">
-              <v-btn depressed dark color="secondary-dark" @click.stop="confirm"
-                     class="action-confirm ma-0" :disabled="busy">
+            <v-flex xs12 class="px-2 pt-4 pb-2">
+              <v-btn depressed color="secondary-dark"
+                     @click.stop="confirm"
+                     :disabled="disabled()"
+                     class="action-confirm white--text ma-0">
                 <translate>Change Password</translate>
                 <v-icon right dark>vpn_key</v-icon>
               </v-btn>
@@ -71,7 +73,7 @@
         },
         methods: {
             disabled() {
-                return (this.oldPassword === "" || this.newPassword === "" || (this.newPassword !== this.confirmPassword));
+                return (this.busy || this.oldPassword === "" || this.newPassword === "" || (this.newPassword !== this.confirmPassword));
             },
             confirm() {
                 this.busy = true;
