@@ -29,6 +29,7 @@ https://docs.photoprism.org/developer-guide/
 */
 
 import RestModel from "model/rest";
+import File from "model/file";
 import Api from "common/api";
 import {DateTime} from "luxon";
 import Util from "common/util";
@@ -228,6 +229,30 @@ export class Photo extends RestModel {
         }
 
         return "";
+    }
+
+    fileModels() {
+        let result = [];
+
+        if (!this.Files) {
+            return result;
+        }
+
+        this.Files.forEach((f) => {
+            result.push(new File(f));
+        });
+
+        result.sort((a, b) => {
+            if (a.Primary > b.Primary) {
+                return -1;
+            } else if (a.Primary < b.Primary) {
+                return 1;
+            }
+
+            return a.localeCompare(b);
+        });
+
+        return result;
     }
 
     thumbnailUrl(type) {

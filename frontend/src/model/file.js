@@ -83,7 +83,7 @@ export class File extends RestModel {
             result = this.Name.substring(slash + 1);
         }
 
-        if(truncate) {
+        if (truncate) {
             result = Util.truncate(result, truncate, "...");
         }
 
@@ -99,7 +99,7 @@ export class File extends RestModel {
     }
 
     thumbnailUrl(type) {
-        if(this.Error) {
+        if (this.Error) {
             return "/api/v1/svg/broken";
         } else if (this.Type === "raw") {
             return "/api/v1/svg/raw";
@@ -172,6 +172,24 @@ export class File extends RestModel {
         if (this.Duration > 0) {
             info.push(Util.duration(this.Duration));
         }
+
+        this.addSizeInfo(info);
+
+        return info.join(", ");
+    }
+
+    typeInfo() {
+        if (this.Video) {
+            return "Video";
+        } else if (this.Sidecar) {
+            return "Sidecar";
+        }
+
+        return this.Type.toUpperCase();
+    }
+
+    sizeInfo() {
+        let info = [];
 
         this.addSizeInfo(info);
 

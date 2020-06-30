@@ -107,3 +107,7 @@
     position: absolute;
     overflow: hidden;
 }
+
+#photoprism table.photo-files tbody tr td:first-child {
+    width: 30%;
+}
