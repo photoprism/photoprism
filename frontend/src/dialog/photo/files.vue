@@ -103,7 +103,7 @@
                         <td>
                           <translate>Codec</translate>
                         </td>
-                        <td>{{ file.Codec }}</td>
+                        <td>{{ file.Codec | uppercase }}</td>
                       </tr>
                       <tr v-if="file.Error">
                         <td>
