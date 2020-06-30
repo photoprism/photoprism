@@ -193,4 +193,40 @@ describe("model/photo", () => {
         assert.equal(photo.Favorite, true);
     });
 
+    it("should get photo defaults",  () => {
+        const values = {ID: 5, UID: "ABC123"};
+        const photo = new Photo(values);
+        const result = photo.getDefaults();
+        assert.equal(result.UID, "");
+    });
+
+    it("should get photos base name",  () => {
+        const values = {ID: 8, UID: "ABC123", Filename: "1980/01/superCuteKitten.jpg", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: true, Type: "TypeJpeg", Width: 500, Height: 600, Hash: "1xxbgdt53"}]};
+        const photo = new Photo(values);
+        const result = photo.baseName();
+        assert.equal(result, "superCuteKitten.jpg");
+        const result2 = photo.baseName(5);
+        assert.equal(result2, "su...");
+    });
+
+    it("should refresh file attributes",  () => {
+        const values2 = {ID: 5, UID: "ABC123"};
+        const photo2 = new Photo(values2);
+        photo2.refreshFileAttr();
+        assert.equal(photo2.Width, undefined);
+        assert.equal(photo2.Height, undefined);
+        assert.equal(photo2.Hash, undefined);
+        const values = {ID: 8, UID: "ABC123", Filename: "1980/01/superCuteKitten.jpg", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: true, Type: "TypeJpeg", Width: 500, Height: 600, Hash: "1xxbgdt53"}]};
+        const photo = new Photo(values);
+        assert.equal(photo.Width, undefined);
+        assert.equal(photo.Height, undefined);
+        assert.equal(photo.Hash, undefined);
+        photo.refreshFileAttr();
+        console.log(photo.Width);
+        assert.equal(photo.Width, 500);
+        assert.equal(photo.Height, 600);
+        assert.equal(photo.Hash, "1xxbgdt53");
+    });
+
+
 });

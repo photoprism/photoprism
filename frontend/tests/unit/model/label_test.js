@@ -98,4 +98,11 @@ describe("model/label", () => {
         label.toggleLike();
         assert.equal(label.Favorite, true);
     });
+
+    it("should get label defaults",  () => {
+        const values = {ID: 5, UID: "ABC123"};
+        const label = new Label(values);
+        const result = label.getDefaults();
+        assert.equal(result.ID, 0);
+    });
 });
