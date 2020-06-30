@@ -121,6 +121,6 @@ describe("model/abstract", () => {
     });
 
     it("should get collection resource",  () => {
-        assert.throws(() => Rest.getCollectionResource(), Error, "getCollectionResource() needs to be implemented");
+        assert.equal(Rest.getCollectionResource(), "");
     });
 });
