@@ -48,7 +48,7 @@
                         </td>
                         <td>
                           <v-btn small depressed dark color="secondary-dark" class="ma-0 action-primary"
-                                 @click.stop.prevent="setPrimary(file)">
+                                 @click.stop.prevent="primary(file)">
                             <translate>Primary</translate>
                           </v-btn>
                           <v-btn small depressed dark color="secondary-dark" class="ma-0 action-ungroup"
@@ -173,10 +173,10 @@
                 this.$viewer.show([Thumb.fromFile(this.model, file)], 0);
             },
             ungroup(file) {
-
+                this.model.ungroupFile(file.UID);
             },
-            setPrimary(file) {
-                this.model.setPrimary(file.UID);
+            primary(file) {
+                this.model.primaryFile(file.UID);
             },
             formatTime(s) {
                 return DateTime.fromISO(s).toHTTP();

@@ -55,7 +55,8 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.UpdatePhotoLabel(v1)
 		api.GetMomentsTime(v1)
 		api.GetFile(v1)
-		api.SetPhotoPrimary(v1)
+		api.PhotoFilePrimary(v1)
+		api.PhotoFileUngroup(v1)
 
 		api.GetLabels(v1)
 		api.UpdateLabel(v1)

@@ -510,8 +510,12 @@ export class Photo extends RestModel {
         return Api.put(this.getEntityResource(), {Private: this.Private});
     }
 
-    setPrimary(uid) {
-        return Api.post(this.getEntityResource() + "/primary/" + uid).then((r) => Promise.resolve(this.setValues(r.data)));
+    primaryFile(fileUID) {
+        return Api.post(`${this.getEntityResource()}/files/${fileUID}/primary`).then((r) => Promise.resolve(this.setValues(r.data)));
+    }
+
+    ungroupFile(fileUID) {
+        return Api.post(`${this.getEntityResource()}/files/${fileUID}/ungroup`).then((r) => Promise.resolve(this.setValues(r.data)));
     }
 
     like() {

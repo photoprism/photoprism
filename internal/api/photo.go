@@ -294,12 +294,13 @@ func DislikePhoto(router *gin.RouterGroup) {
 	})
 }
 
-// POST /api/v1/photos/:uid/primary/:file_uid
+// POST /api/v1/photos/:uid/files/:file_uid/primary
 //
 // Parameters:
 //   uid: string PhotoUID as returned by the API
-func SetPhotoPrimary(router *gin.RouterGroup) {
-	router.POST("/photos/:uid/primary/:file_uid", func(c *gin.Context) {
+//   file_uid: string File UID as returned by the API
+func PhotoFilePrimary(router *gin.RouterGroup) {
+	router.POST("/photos/:uid/files/:file_uid/primary", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
 
 		if s.Invalid() {
@@ -321,6 +322,88 @@ func SetPhotoPrimary(router *gin.RouterGroup) {
 		event.Success("photo saved")
 
 		p, err := query.PhotoPreloadByUID(uid)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			return
+		}
+
+		c.JSON(http.StatusOK, p)
+	})
+}
+
+// POST /api/v1/photos/:uid/files/:file_uid/ungroup
+//
+// Parameters:
+//   uid: string Photo UID as returned by the API
+//   file_uid: string File UID as returned by the API
+func PhotoFileUngroup(router *gin.RouterGroup) {
+	router.POST("/photos/:uid/files/:file_uid/ungroup", func(c *gin.Context) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		photoUID := c.Param("uid")
+		fileUID := c.Param("file_uid")
+
+		file, err := query.FileByUID(fileUID)
+
+		if err != nil {
+			log.Errorf("photo: %s (ungroup)", err)
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrFileNotFound)
+			return
+		}
+
+		if file.FilePrimary {
+			log.Errorf("photo: can't ungroup primary files")
+			c.AbortWithStatusJSON(http.StatusBadRequest, ErrFormInvalid)
+			return
+		}
+
+		existingPhoto := *file.Photo
+		newPhoto := entity.NewPhoto()
+
+		if err := entity.UnscopedDb().Create(&newPhoto).Error; err != nil {
+			log.Errorf("photo: %s", err.Error())
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			return
+		}
+
+		file.Photo = &newPhoto
+		file.PhotoID = newPhoto.ID
+		file.PhotoUID = newPhoto.PhotoUID
+
+		if err := file.Save(); err != nil {
+			log.Errorf("photo: %s", err.Error())
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			return
+		}
+
+		fileName := photoprism.FileName(file.FileRoot, file.FileName)
+
+		f, err := photoprism.NewMediaFile(fileName)
+
+		if err != nil {
+			log.Errorf("photo: %s (ungroup)", err)
+			c.AbortWithStatusJSON(http.StatusNotFound, ErrFileNotFound)
+			return
+		}
+
+		if err := service.Index().MediaFile(f, photoprism.IndexOptions{Rescan:  true}, existingPhoto.OriginalName).Error; err != nil {
+			log.Errorf("photo: %s", err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			return
+		}
+
+		PublishPhotoEvent(EntityCreated, file.PhotoUID, c)
+		PublishPhotoEvent(EntityUpdated, photoUID, c)
+
+		event.Success("file ungrouped")
+
+		p, err := query.PhotoPreloadByUID(photoUID)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)

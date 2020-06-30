@@ -114,8 +114,8 @@ func TestDislikePhoto(t *testing.T) {
 func TestSetPhotoPrimary(t *testing.T) {
 	t.Run("existing photo", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		SetPhotoPrimary(router)
-		r := PerformRequest(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh8/primary/ft1es39w45bnlqdw")
+		PhotoFilePrimary(router)
+		r := PerformRequest(app, "POST", "/api/v1/photos/pt9jtdre2lvl0yh8/files/ft1es39w45bnlqdw/primary")
 		assert.Equal(t, http.StatusOK, r.Code)
 		GetFile(router)
 		r2 := PerformRequest(app, "GET", "/api/v1/files/ocad9168fa6acc5c5c2965ddf6ec465ca42fd818")
@@ -128,8 +128,8 @@ func TestSetPhotoPrimary(t *testing.T) {
 
 	t.Run("wrong photo uid", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		SetPhotoPrimary(router)
-		r := PerformRequest(app, "POST", "/api/v1/photos/xxx/primary/ft1es39w45bnlqdw")
+		PhotoFilePrimary(router)
+		r := PerformRequest(app, "POST", "/api/v1/photos/xxx/files/ft1es39w45bnlqdw/primary")
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "Photo not found", val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
