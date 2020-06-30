@@ -68,11 +68,11 @@
   </v-dialog>
 </template>
 <script>
-    import Photo from "../model/photo";
-    import PhotoDetails from "./photo/details.vue";
-    import PhotoLabels from "./photo/labels.vue";
-    import PhotoFiles from "./photo/files.vue";
-    import PhotoInfo from "./photo/info.vue";
+    import Photo from "model/photo";
+    import PhotoDetails from "./details.vue";
+    import PhotoLabels from "./labels.vue";
+    import PhotoFiles from "./files.vue";
+    import PhotoInfo from "./info.vue";
 
     export default {
         name: 'p-photo-edit-dialog',

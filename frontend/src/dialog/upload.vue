@@ -62,12 +62,12 @@
 
 
             <p class="body-1" v-if="safe">
-              <translate key="nsfw-info">Please don't upload photos containing offensive content. Uploads
+              <translate>Please don't upload photos containing offensive content. Uploads
                 that may contain such images will be rejected automatically.</translate>
             </p>
 
             <p class="body-1" v-if="review">
-              <translate key="review-info">Low-quality photos require a review before they appear in search results.</translate>
+              <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
             </p>
 
             <v-btn

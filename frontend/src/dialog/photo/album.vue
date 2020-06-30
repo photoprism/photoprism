@@ -42,7 +42,7 @@
   </v-dialog>
 </template>
 <script>
-    import Album from "../model/album";
+    import Album from "model/album";
 
     export default {
         name: 'p-photo-album-dialog',
