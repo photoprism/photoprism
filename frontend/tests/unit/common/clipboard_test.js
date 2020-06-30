@@ -177,4 +177,34 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.selection, "");
     });
 
+    it("should add range",  () => {
+        const storage = window.localStorage;
+        const key = "clipboard";
+        const clipboard = new Clipboard(storage, key);
+        clipboard.clear();
+        const values = {ID: 5, UID: "ABC124", Title: "Crazy Cat"};
+        const photo = new Photo(values);
+        const values2 = {ID: 6, UID: "ABC125", Title: "Crazy Dog"};
+        const photo2 = new Photo(values2);
+        const values3 = {ID: 7, UID: "ABC128", Title: "Cute Dog"};
+        const photo3 = new Photo(values3);
+        const values4 = {ID: 8, UID: "ABC129", Title: "Turtle"};
+        const photo4 = new Photo(values4);
+        const Photos = [photo, photo2, photo3, photo4];
+        clipboard.addRange(2);
+        assert.equal(clipboard.selection.length, 0);
+        clipboard.clear();
+        clipboard.addRange(2, Photos);
+        assert.equal(clipboard.selection[0], "ABC128");
+        assert.equal(clipboard.selection.length, 1);
+        clipboard.addRange(1, Photos);
+        assert.equal(clipboard.selection.length, 2);
+        assert.equal(clipboard.selection[0], "ABC128");
+        assert.equal(clipboard.selection[1], "ABC125");
+        clipboard.clear();
+        clipboard.add(photo);
+        assert.equal(clipboard.selection.length, 1);
+        clipboard.addRange(3, Photos);
+        assert.equal(clipboard.selection.length, 4);
+    });
 });

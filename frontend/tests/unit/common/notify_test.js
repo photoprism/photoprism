@@ -7,6 +7,8 @@ let assert = chai.assert;
 describe("common/alert", () => {
 
     let spywarn = sinon.spy(Notify, "warn");
+    let spyerror = sinon.spy(Notify, "error");
+
     it("should call alert.info",  () => {
         let spy = sinon.spy(Notify, "info");
         Notify.info("message");
@@ -21,10 +23,9 @@ describe("common/alert", () => {
     });
 
     it("should call alert.error",  () => {
-        let spy = sinon.spy(Notify, "error");
         Notify.error("message");
-        sinon.assert.calledOnce(spy);
-        spy.resetHistory();
+        sinon.assert.calledOnce(spyerror);
+        spyerror.resetHistory();
     });
 
     it("should call alert.success",  () => {
@@ -46,14 +47,4 @@ describe("common/alert", () => {
         sinon.assert.calledOnce(spywarn);
         spywarn.resetHistory();
     });
-
-    //TODO How to access element?
-    /*it("should test blocking an unblocking UI",  () => {
-        const el = document.getElementById("p-busy-overlay");
-        assert.equal(el.style.display, "xxx");
-        Notify.blockUI();
-        assert.equal(el.style.display, "xxx");
-        Notify.unblockUI();
-        assert.equal(el.style.display, "xxx");
-    });*/
 });
