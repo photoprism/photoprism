@@ -180,10 +180,6 @@ func (c *Config) UploadNSFW() bool {
 
 // AdminPassword returns the initial admin password.
 func (c *Config) AdminPassword() string {
-	if c.params.AdminPassword == "" {
-		return "photoprism"
-	}
-
 	return c.params.AdminPassword
 }
 

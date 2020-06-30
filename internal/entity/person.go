@@ -83,7 +83,6 @@ var Guest = Person{
 func CreateDefaultUsers() {
 	if user := FirstOrCreatePerson(&Admin); user != nil {
 		Admin = *user
-		Admin.InitPassword("photoprism")
 	}
 
 	if user := FirstOrCreatePerson(&UnknownPerson); user != nil {
@@ -211,6 +210,10 @@ func (m *Person) InitPassword(password string) {
 		return
 	}
 
+	if password == "" {
+		return
+	}
+
 	existing := FindPassword(m.PersonUID)
 
 	if existing != nil {
@@ -228,6 +231,10 @@ func (m *Person) InitPassword(password string) {
 func (m *Person) InvalidPassword(password string) bool {
 	if !m.Registered() {
 		log.Warn("auth: only registered users can change their password")
+		return true
+	}
+
+	if password == "" {
 		return true
 	}
 

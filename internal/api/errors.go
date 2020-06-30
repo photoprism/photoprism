@@ -12,6 +12,7 @@ var (
 	ErrUnauthorized     = gin.H{"code": http.StatusUnauthorized, "error": txt.UcFirst(config.ErrUnauthorized.Error())}
 	ErrReadOnly         = gin.H{"code": http.StatusForbidden, "error": txt.UcFirst(config.ErrReadOnly.Error())}
 	ErrUploadNSFW       = gin.H{"code": http.StatusForbidden, "error": txt.UcFirst(config.ErrUploadNSFW.Error())}
+	ErrPublic           = gin.H{"code": http.StatusForbidden, "error": "Not available in public mode"}
 	ErrAccountNotFound  = gin.H{"code": http.StatusNotFound, "error": "Account not found"}
 	ErrConnectionFailed = gin.H{"code": http.StatusConflict, "error": "Failed to connect"}
 	ErrAlbumNotFound    = gin.H{"code": http.StatusNotFound, "error": "Album not found"}
@@ -25,4 +26,5 @@ var (
 	ErrFormInvalid      = gin.H{"code": http.StatusBadRequest, "error": "Changes could not be saved"}
 	ErrFeatureDisabled  = gin.H{"code": http.StatusForbidden, "error": "Feature disabled"}
 	ErrNotFound         = gin.H{"code": http.StatusNotFound, "error": "Not found"}
+	ErrInvalidPassword  = gin.H{"code": http.StatusBadRequest, "error": "Invalid password"}
 )

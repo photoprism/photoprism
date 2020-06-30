@@ -17,7 +17,7 @@
         <translate key="Sync">Sync</translate>
       </v-tab>
 
-      <v-tab id="tab-settings-account" ripple @click="changePath('/settings/account')">
+      <v-tab id="tab-settings-account" ripple @click="changePath('/settings/account')" v-if="!public">
         <translate key="Account">Account</translate>
       </v-tab>
 
@@ -28,7 +28,7 @@
         <v-tab-item lazy>
           <p-settings-sync></p-settings-sync>
         </v-tab-item>
-        <v-tab-item lazy>
+        <v-tab-item lazy v-if="!public">
           <p-settings-account></p-settings-account>
         </v-tab-item>
       </v-tabs-items>
@@ -53,6 +53,7 @@
         },
         data() {
             return {
+                public: this.$config.get("public"),
                 readonly: this.$config.get("readonly"),
                 active: this.tab,
             }

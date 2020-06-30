@@ -72,6 +72,7 @@ func NewTestParams() *Params {
 		SettingsPath:   testDataPath + "/settings",
 		DatabaseDriver: dbDriver,
 		DatabaseDsn:    dbDsn,
+		AdminPassword:  "photoprism",
 	}
 
 	return c
@@ -172,6 +173,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("temp-path", config.OriginalsPath, "doc")
 	globalSet.String("cache-path", config.OriginalsPath, "doc")
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
+	globalSet.String("admin-password", config.DarktableBin, "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
 
 	app := cli.NewApp()
@@ -187,6 +189,7 @@ func CliTestContext() *cli.Context {
 	LogError(c.Set("temp-path", config.TempPath))
 	LogError(c.Set("cache-path", config.CachePath))
 	LogError(c.Set("darktable-cli", config.DarktableBin))
+	LogError(c.Set("admin-password", config.AdminPassword))
 	LogError(c.Set("detect-nsfw", "true"))
 
 	return c

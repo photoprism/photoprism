@@ -7,7 +7,7 @@
           <v-layout wrap align-top>
             <v-flex xs12 class="px-2 pt-2 pb-4">
               <v-text-field
-                      hide-details
+                      hide-details required
                       :disabled="busy"
                       browser-autocomplete="off"
                       label="Current Password"
@@ -20,7 +20,7 @@
 
             <v-flex xs12 class="pa-2">
               <v-text-field
-                      hide-details
+                      hide-details required
                       :disabled="busy"
                       browser-autocomplete="off"
                       label="New Password"
@@ -33,7 +33,7 @@
 
             <v-flex xs12 class="pa-2">
               <v-text-field
-                      hide-details
+                      hide-details required
                       :disabled="busy"
                       browser-autocomplete="off"
                       label="Confirm Password"
@@ -45,7 +45,7 @@
             </v-flex>
             <v-flex xs12 text-xs-left class="px-2 pt-4 pb-2">
               <v-btn depressed dark color="secondary-dark" @click.stop="confirm"
-                     class="action-confirm ma-0">
+                     class="action-confirm ma-0" :disabled="busy">
                 <translate>Change Password</translate>
                 <v-icon right dark>vpn_key</v-icon>
               </v-btn>
@@ -70,6 +70,9 @@
             };
         },
         methods: {
+            disabled() {
+                return (this.oldPassword === "" || this.newPassword === "" || (this.newPassword !== this.confirmPassword));
+            },
             confirm() {
                 this.busy = true;
                 this.$session.getUser().changePassword(this.oldPassword, this.newPassword).then(() => {
