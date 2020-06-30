@@ -12,19 +12,27 @@
           <td>{{ model.DocumentID | uppercase }}</td>
         </tr>
         <tr>
-          <td><translate key="Type">Type</translate></td>
+          <td>
+            <translate key="Type">Type</translate>
+          </td>
           <td>{{ model.Type | capitalize }}</td>
         </tr>
         <tr v-if="model.Path">
-          <td><translate key="Path">Path</translate></td>
+          <td>
+            <translate key="Path">Path</translate>
+          </td>
           <td>{{ model.Path }}</td>
         </tr>
         <tr>
-          <td><translate key="Name">Name</translate></td>
+          <td>
+            <translate key="Name">Name</translate>
+          </td>
           <td>{{ model.Name }}</td>
         </tr>
         <tr v-if="model.OriginalName">
-          <td><translate key="Original Name">Original Name</translate></td>
+          <td>
+            <translate key="Original Name">Original Name</translate>
+          </td>
           <td>
             <v-text-field
                     @change="save"
@@ -35,15 +43,21 @@
           </td>
         </tr>
         <tr>
-          <td><translate key="Title">Title</translate></td>
+          <td>
+            <translate key="Title">Title</translate>
+          </td>
           <td>{{ model.Title }}</td>
         </tr>
         <tr v-if="model.TitleSrc">
-          <td><translate key="Title Source">Title Source</translate></td>
+          <td>
+            <translate key="Title Source">Title Source</translate>
+          </td>
           <td>{{ model.TitleSrc | capitalize }}</td>
         </tr>
         <tr v-if="model.TakenAcc">
-          <td><translate key="Year">Year</translate></td>
+          <td>
+            <translate key="Year">Year</translate>
+          </td>
           <td>
             <v-text-field
                     flat solo dense hide-details v-model="model.Year"
@@ -53,7 +67,9 @@
           </td>
         </tr>
         <tr v-if="model.TakenAcc">
-          <td><translate key="Month">Month</translate></td>
+          <td>
+            <translate key="Month">Month</translate>
+          </td>
           <td>
             <v-select
                     label="Month"
@@ -68,22 +84,30 @@
           </td>
         </tr>
         <tr>
-          <td><translate key="Quality Score">Quality Score</translate></td>
+          <td>
+            <translate key="Quality Score">Quality Score</translate>
+          </td>
           <td>
             <v-rating v-model="model.Quality" :length="7" readonly small></v-rating>
           </td>
         </tr>
         <tr>
-          <td><translate key="Resolution">Resolution</translate></td>
+          <td>
+            <translate key="Resolution">Resolution</translate>
+          </td>
           <td>{{ model.Resolution }} MP</td>
         </tr>
         <tr v-if="model.CameraSerial">
-          <td><translate key="Camera Serial">Camera Serial</translate></td>
+          <td>
+            <translate key="Camera Serial">Camera Serial</translate>
+          </td>
           <td>{{ model.CameraSerial }}
           </td>
         </tr>
         <tr>
-          <td><translate key="Favorite">Favorite</translate></td>
+          <td>
+            <translate key="Favorite">Favorite</translate>
+          </td>
           <td>
             <v-switch
                     @change="save"
@@ -94,7 +118,9 @@
           </td>
         </tr>
         <tr>
-          <td><translate key="Private">Private</translate></td>
+          <td>
+            <translate key="Private">Private</translate>
+          </td>
           <td>
             <v-switch
                     @change="save"
@@ -105,33 +131,43 @@
           </td>
         </tr>
         <tr>
-          <td><translate key="Created">Created</translate></td>
           <td>
-            {{ model.CreatedAt | luxon:format('http') }}
+            <translate key="Created">Created</translate>
+          </td>
+          <td>
+            {{ formatTime(model.CreatedAt) }}
           </td>
         </tr>
         <tr>
-          <td><translate key="Updated">Updated</translate></td>
           <td>
-            {{ model.UpdatedAt | luxon:format('http') }}
+            <translate key="Updated">Updated</translate>
+          </td>
+          <td>
+            {{ formatTime(model.UpdatedAt) }}
           </td>
         </tr>
         <tr v-if="model.EditedAt">
-          <td><translate key="Edited">Edited</translate></td>
           <td>
-            {{ model.EditedAt | luxon:format('http') }}
+            <translate key="Edited">Edited</translate>
+          </td>
+          <td>
+            {{ formatTime(model.EditedAt) }}
           </td>
         </tr>
         <tr v-if="model.CheckedAt">
-          <td><translate key="Checked">Checked</translate></td>
           <td>
-            {{ model.CheckedAt | luxon:format('http') }}
+            <translate key="Checked">Checked</translate>
+          </td>
+          <td>
+            {{ formatTime(model.CheckedAt) }}
           </td>
         </tr>
         <tr v-if="model.DeletedAt">
-          <td><translate key="Archived">Archived</translate></td>
           <td>
-            {{ model.DeletedAt | luxon:format('http') }}
+            <translate key="Archived">Archived</translate>
+          </td>
+          <td>
+            {{ formatTime(model.DeletedAt) }}
           </td>
         </tr>
         </tbody>
@@ -142,7 +178,7 @@
 
 <script>
     import Thumb from "model/thumb";
-    import {Info} from "luxon";
+    import {DateTime, Info} from "luxon";
 
     export default {
         name: 'p-tab-photo-advanced',
@@ -171,6 +207,9 @@
             },
         },
         methods: {
+            formatTime(s) {
+                return DateTime.fromISO(s).toHTTP();
+            },
             save() {
                 this.model.update();
             },

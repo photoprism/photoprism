@@ -8,7 +8,7 @@
             slider-color="secondary-dark"
             height="64"
     >
-      <v-tab id="tab-originals" ripple @click="changePath('/library')">
+      <v-tab id="tab-index" ripple @click="changePath('/library')">
         <translate key="Index">Index</translate>
       </v-tab>
 
@@ -27,7 +27,7 @@
 
       <v-tabs-items touchless>
         <v-tab-item lazy>
-          <p-tab-originals></p-tab-originals>
+          <p-tab-index></p-tab-index>
         </v-tab-item>
 
         <v-tab-item :disabled="readonly" lazy>
@@ -44,9 +44,8 @@
 
 <script>
     import tabImport from "pages/library/import.vue";
-    import tabOriginals from "pages/library/originals.vue";
+    import tabIndex from "pages/library/index.vue";
     import tabLogs from "pages/library/logs.vue";
-    import Settings from "../model/settings";
 
     export default {
         name: 'p-page-library',
@@ -54,7 +53,7 @@
             tab: Number
         },
         components: {
-            'p-tab-originals': tabOriginals,
+            'p-tab-index': tabIndex,
             'p-tab-import': tabImport,
             'p-tab-logs': tabLogs,
         },
