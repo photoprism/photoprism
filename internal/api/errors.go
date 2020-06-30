@@ -26,5 +26,5 @@ var (
 	ErrFormInvalid      = gin.H{"code": http.StatusBadRequest, "error": "Changes could not be saved"}
 	ErrFeatureDisabled  = gin.H{"code": http.StatusForbidden, "error": "Feature disabled"}
 	ErrNotFound         = gin.H{"code": http.StatusNotFound, "error": "Not found"}
-	ErrInvalidPassword  = gin.H{"code": http.StatusBadRequest, "error": "Invalid password"}
+	ErrInvalidPassword  = gin.H{"code": http.StatusBadRequest, "error": "Invalid password, please try again"}
 )
