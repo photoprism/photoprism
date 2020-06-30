@@ -249,7 +249,7 @@ export class Photo extends RestModel {
                 return 1;
             }
 
-            return a.localeCompare(b);
+            return a.Name.localeCompare(b.Name);
         });
 
         return result;
