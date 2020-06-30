@@ -112,6 +112,18 @@ export class File extends RestModel {
         return "/api/v1/dl/" + this.Hash + "?t=" + config.downloadToken();
     }
 
+    download() {
+        if (!this.Hash) {
+            console.warn("no file hash found for download", this);
+            return;
+        }
+
+        let link = document.createElement("a");
+        link.href = this.getDownloadUrl()
+        link.download = this.baseName(this.Name);
+        link.click();
+    }
+
     thumbnailSrcset() {
         const result = [];
 

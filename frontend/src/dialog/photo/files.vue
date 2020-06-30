@@ -61,7 +61,7 @@
                         <td>
                           <translate>Name</translate>
                         </td>
-                        <td>{{ file.Name }}</td>
+                        <td @click.stop.prevent="download(file)" class="clickable">{{ file.Name }}</td>
                       </tr>
                       <tr v-if="file.OriginalName">
                         <td>
@@ -171,6 +171,9 @@
         methods: {
             openFile(file) {
                 this.$viewer.show([Thumb.fromFile(this.model, file)], 0);
+            },
+            download(file) {
+                file.download();
             },
             ungroup(file) {
                 this.model.ungroupFile(file.UID);
