@@ -4,8 +4,8 @@
       <v-expansion-panel-content v-for="(file, index) in model.fileModels()" :key="index"
                                  class="pa-0 elevation-0 grey lighten-4" style="margin-top: 1px;">
         <template v-slot:header>
-          <div class="caption" v-if="file.Primary"><v-icon size="15" color="secondary-dark" class="mr-1">check_box</v-icon> {{ file.baseName(60) }}</div>
-          <div class="caption" v-else><v-icon size="15" color="secondary-dark" class="mr-1">check_box_outline_blank</v-icon> {{ file.baseName(60) }}</div>
+          <div class="caption" v-if="file.Primary"><v-icon size="15" color="secondary-dark" class="mr-1">radio_button_checked</v-icon> {{ file.baseName(60) }}</div>
+          <div class="caption" v-else><v-icon size="15" color="secondary-dark" class="mr-1">radio_button_unchecked</v-icon> {{ file.baseName(60) }}</div>
         </template>
         <v-card>
           <v-card-text class="white pa-0">
