@@ -22,6 +22,17 @@ mock
         Primary: true,
         Type: "mp4",
         Hash: "1xxbgdt55"}]})
+    .onPut("api/v1/photos/pqbemz8276mhtobh").reply(200,
+    {
+        ID: 10,
+        UID: "pqbemz8276mhtobh",
+        TitleSrc: "manual",
+        Files: [{
+            UID: "fqbfk181n4ca5sud",
+            Name: "1980/01/superCuteKitten.mp4",
+            Primary: false,
+            Type: "mp4",
+            Hash: "1xxbgdt55"}]})
     .onDelete().reply(200);
 
 describe("model/photo", () => {
@@ -446,9 +457,10 @@ describe("model/photo", () => {
                 Height: 600,
                 Hash: "1xxbgdt55",
                 Duration: 6000,
+                Size: 222897,
                 Codec: "avc1"}]};
         const photo3 = new Photo(values3);
-        assert.equal(photo3.getVideoInfo(), "6µs, AVC1, 500 × 600");
+        assert.equal(photo3.getVideoInfo(), "6µs, AVC1, 500 × 600, 0.2 MB");
     });
 
     it("should return photo info",  () => {
@@ -466,6 +478,7 @@ describe("model/photo", () => {
                 Primary: true,
                 Type: "jpg",
                 Hash: "1xxbgdt55"}],
+                Size: "300",
             Camera: {
                 Make: "Canon",
                 Model: "abc",
@@ -489,6 +502,34 @@ describe("model/photo", () => {
                 Duration: 6000,
                 Codec: "avc1"}]};
         const photo3 = new Photo(values3);
+        assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC1, 500 × 600");
+        const values4 = {
+            ID: 10,
+            UID: "ABC127",
+            Files: [{
+                UID: "123fgb",
+                Name: "1980/01/superCuteKitten.mp4",
+                Primary: false,
+                Type: "mp4",
+                Width: 500,
+                Height: 600,
+                Hash: "1xxbgdt55",
+                Duration: 6000,
+                Size: 300,
+                Codec: "avc1"},
+                {
+                UID: "123fgx",
+                Name: "1980/01/superCuteKitten.jpg",
+                Primary: true,
+                Type: "jpg",
+                Width: 800,
+                Height: 600,
+                Hash: "1xxbgdt55",
+                Duration: 6000,
+                Size: 200,
+                Codec: "avc1"},
+            ]};
+        const photo4 = new Photo(values4);
         assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC1, 500 × 600");
     });
 
@@ -547,6 +588,34 @@ describe("model/photo", () => {
         photo.primaryFile("fqbfk181n4ca5sud").then(
             (response) => {
                 assert.equal(response.Files[0].Primary, true);
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
+    });
+
+    it("should test update",  (done) => {
+        const values = {
+            ID: 10,
+            UID: "pqbemz8276mhtobh",
+            Lat: 1.1,
+            Lng: 3.3,
+            CameraID: 123,
+            Title: "Test Titel",
+            Description: "Super nice video",
+            Files: [{
+                UID: "fqbfk181n4ca5sud",
+                Name: "1980/01/superCuteKitten.mp4",
+                Primary: false,
+                Type: "mp4",
+                Hash: "1xxbgdt55"}]};
+        const photo = new Photo(values);
+        photo.update().then(
+            (response) => {
+                assert.equal(response.TitleSrc, "manual");
                 done();
             }
         ).catch(
