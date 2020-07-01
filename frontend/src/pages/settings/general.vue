@@ -345,9 +345,11 @@
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm6 class="px-2 pb-2 body-1">
-              <a href="https://docs.photoprism.org/contact/" class="text-link" target="_blank">PhotoPrism™
+              <router-link to="/about">
+                PhotoPrism™
                 {{$config.get("version")}}
-                <br>© 2018-2020 Michael Mayer</a>
+                <br>© 2018-2020 Michael Mayer
+              </router-link>
             </v-flex>
 
             <v-flex xs12 sm6 class="px-2 pb-2 body-1 text-xs-left text-sm-right">
