@@ -111,6 +111,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetSettings(v1)
 		api.SaveSettings(v1)
 		api.ChangePassword(v1)
+		api.GetErrors(v1)
 
 		api.GetSvg(v1)
 

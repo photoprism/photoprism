@@ -2,9 +2,12 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -28,3 +31,28 @@ var (
 	ErrNotFound         = gin.H{"code": http.StatusNotFound, "error": "Not found"}
 	ErrInvalidPassword  = gin.H{"code": http.StatusBadRequest, "error": "Invalid password, please try again"}
 )
+
+func GetErrors(router *gin.RouterGroup) {
+	router.GET("/errors",  func(c *gin.Context) {
+		s := Auth(SessionID(c), acl.ResourceLogs, acl.ActionSearch)
+
+		if s.Invalid() {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			return
+		}
+
+		limit := txt.Int(c.Query("count"))
+		offset := txt.Int(c.Query("offset"))
+
+		if resp, err := query.Errors(limit, offset); err != nil {
+			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		} else {
+			c.Header("X-Count", strconv.Itoa(len(resp)))
+			c.Header("X-Limit", strconv.Itoa(limit))
+			c.Header("X-Offset", strconv.Itoa(offset))
+
+			c.JSON(http.StatusOK, resp)
+		}
+	})
+}

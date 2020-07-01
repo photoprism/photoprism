@@ -292,6 +292,14 @@
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
+
+          <v-list-tile to="/library/errors" @click="" class="nav-errors">
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <translate key="Errors">Errors</translate>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
         </v-list-group>
 
         <template v-if="!config.disableSettings">

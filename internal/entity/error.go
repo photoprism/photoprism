@@ -9,11 +9,13 @@ import (
 
 // Error represents an error message log.
 type Error struct {
-	ID           uint      `gorm:"primary_key"`
-	ErrorTime    time.Time `sql:"index"`
-	ErrorLevel   string    `gorm:"type:varbinary(32)"`
-	ErrorMessage string    `gorm:"type:varbinary(2048)"`
+	ID           uint      `gorm:"primary_key" json:"ID" yaml:"ID"`
+	ErrorTime    time.Time `sql:"index" json:"Time" yaml:"Time"`
+	ErrorLevel   string    `gorm:"type:varbinary(32)" json:"Level" yaml:"Level"`
+	ErrorMessage string    `gorm:"type:varbinary(2048)" json:"Message" yaml:"Message"`
 }
+
+type Errors []Error
 
 // SaveErrorMessages subscribes to error logs and stored them in the errors table.
 func SaveErrorMessages() {

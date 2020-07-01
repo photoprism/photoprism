@@ -33,6 +33,7 @@ import Albums from "pages/albums.vue";
 import AlbumPhotos from "pages/album/photos.vue";
 import Places from "pages/places.vue";
 import Files from "pages/library/files.vue";
+import Errors from "pages/library/errors.vue";
 import Labels from "pages/labels.vue";
 import People from "pages/people.vue";
 import Library from "pages/library.vue";
@@ -199,6 +200,12 @@ export default [
         component: Photos,
         meta: {title: "Hidden Files", auth: true},
         props: {staticFilter: {hidden: true}},
+    },
+    {
+        name: "errors",
+        path: "/library/errors",
+        component: Errors,
+        meta: {title: c.name, auth: true},
     },
     {
         name: "labels",
