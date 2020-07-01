@@ -184,7 +184,7 @@
     import Album from "model/album";
     import {DateTime} from "luxon";
     import Event from "pubsub-js";
-    import RestModel from "../model/rest";
+    import RestModel from "model/rest";
 
     export default {
         name: 'p-page-albums',

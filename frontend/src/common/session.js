@@ -30,7 +30,7 @@ https://docs.photoprism.org/developer-guide/
 
 import Api from "./api";
 import Event from "pubsub-js";
-import User from "../model/user";
+import User from "model/user";
 import Socket from "./websocket";
 
 export default class Session {

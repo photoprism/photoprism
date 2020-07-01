@@ -31,6 +31,10 @@ https://docs.photoprism.org/developer-guide/
 @import url("../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/mapbox-gl/dist/mapbox-gl.css");
+@import url("navigation.css");
+@import url("logs.css");
+@import url("visibility.css");
+@import url("results.css");
 @import url("video.css");
 @import url("rainbow.css");
 @import url("maps.css");
@@ -61,7 +65,7 @@ main {
     z-index: 1;
 }
 
-#p-busy-overlay {
+#busy-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -70,19 +74,6 @@ main {
     height: 100%;
     z-index: 100;
     background-color: rgba(0, 0, 0, 0.2);
-}
-
-#p-navigation {
-    z-index: 10;
-}
-
-#p-navigation .p-navigation-count {
-    opacity: 0.5;
-    position: absolute;
-    left: 80px;
-    width: 40px;
-    display: inline-block;
-    text-align: right;
 }
 
 #photoprism div.loading {
@@ -95,21 +86,6 @@ main {
 
 #photoprism main .p-results a {
     color: #333333;
-}
-
-#photoprism .v-toolbar a {
-    text-decoration: none;
-    color: #333333;
-}
-
-#photoprism .text-link {
-    text-decoration: none;
-    color: #333333;
-}
-
-#photoprism .theme--dark.v-sheet .text-link,
-#photoprism .theme--dark.v-card .text-link {
-    color: white;
 }
 
 #photoprism main .p-inline-edit a,
@@ -125,157 +101,12 @@ main {
     top: -8px;
 }
 
-#photoprism .p-pointer,
 #photoprism .clickable {
     cursor: pointer;
 }
 
-#photoprism .p-logs {
-    color: white;
-}
-
-#photoprism .p-log-empty,
-#photoprism .p-log-message {
-    display: block;
-    text-align: left;
-    font-size: 1em;
-    font-family: monospace;
-    white-space: normal;
-    color: white;
-    padding: 4px;
-    margin: 0;
-}
-
-#photoprism .p-log-empty {
-    font-weight: normal;
-}
-
-#photoprism .p-log-message {
-    font-weight: bold;
-}
-
-#photoprism .p-log-message span {
-    color: #FEFEFE;
-    font-weight: normal;
-}
-
-#photoprism .p-log-fatal,
-#photoprism .p-log-critical,
-#photoprism .p-log-error {
-    color: #F48FB1;
-}
-
-#photoprism .p-log-warning {
-    color: #FFD600;
-}
-
-#photoprism .p-log-fatal {
-    color: #FFECB3;
-}
-
-#photoprism .p-log-info {
-    color: #82B1FF;
-}
-
-#photoprism .p-log-debug {
-    color: #DDDDDD;
-}
-
-#photoprism .p-clickable {
-    cursor: pointer;
-}
-
-#photoprism .p-rounded {
-    border-radius: 50%;
-}
-
-/* Feature Flags */
-
-.p-experimental,
-.p-debug,
-.p-public,
-.p-readonly {
-    display: none;
-}
-
-body.experimental #photoprism .p-experimental,
-body.debug #photoprism .p-debug,
-body.public #photoprism .p-public,
-body.readonly #photoprism .p-readonly {
-    display: block;
-}
-
-div.v-dialog table.v-table thead th,
-div.v-dialog table.v-table tbody td,
-div.v-dialog table.v-table tfoot td {
-    padding: 0 16px;
-}
-
-table.v-table tbody td,
-table.v-table tbody td input,
-table.v-table tbody td label.v-label,
-table.v-table tfoot td,
-table.v-table tfoot td input,
-table.v-table tfoot td label.v-label {
-    font-weight: 400;
-    font-size: 13px;
-}
-
-table.v-table tbody td div.v-input__slot,
-table.v-table tfoot td div.v-input__slot {
-    padding: 0 !important;
-}
-
-#photoprism .opacity-0 {
-    opacity: 0 !important;
-}
-
-#photoprism .opacity-50 {
-    opacity: 0.5 !important;
-}
-
-#photoprism .opacity-60 {
-    opacity: 0.6 !important;
-}
-
-#photoprism .opacity-70 {
-    opacity: 0.7 !important;
-}
-
-#photoprism .opacity-75 {
-    opacity: 0.75 !important;
-}
-
-#photoprism .opacity-80 {
-    opacity: 0.8 !important;
-}
-
-#photoprism .opacity-85 {
-    opacity: 0.85 !important;
-}
-
-#photoprism .opacity-90 {
-    opacity: 0.9 !important;
-}
-
-#photoprism .opacity-95 {
-    opacity: 0.95 !important;
-}
-
-#photoprism .opacity-100 {
-    opacity: 1 !important;
-}
-
 #photoprism button:focus {
     outline: none;
-}
-
-body.shared .hidden-shared-only {
-    display: none !important;
-}
-
-#photoprism .hidden-always {
-    display: none !important;
 }
 
 #photoprism .p-scroll-top {
@@ -321,4 +152,14 @@ body.shared .hidden-shared-only {
     bottom: 20px;
 }
 
+#photoprism .float-left {
+    float: left;
+}
 
+#photoprism .float-right {
+    float: right;
+}
+
+#photoprism .p-page pre {
+    overflow: auto;
+}

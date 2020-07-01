@@ -39,6 +39,8 @@ import Library from "pages/library.vue";
 import Settings from "pages/settings.vue";
 import Login from "pages/login.vue";
 import Discover from "pages/discover.vue";
+import About from "pages/about/about.vue";
+import License from "pages/about/license.vue";
 
 const c = window.__CONFIG__;
 
@@ -47,6 +49,18 @@ export default [
         name: "home",
         path: "/",
         redirect: "/photos",
+    },
+    {
+        name: "about",
+        path: "/about",
+        component: About,
+        meta: {title: "About", auth: false},
+    },
+    {
+        name: "license",
+        path: "/about/license",
+        component: License,
+        meta: {title: c.name, auth: false},
     },
     {
         name: "login",

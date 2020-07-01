@@ -70,7 +70,7 @@
 <script>
     import Settings from "model/settings";
     import options from "resources/options.json";
-    import Account from "../../model/account";
+    import Account from "model/account";
     import {DateTime} from "luxon";
 
     export default {

@@ -90,7 +90,7 @@
 <script>
     import Api from "common/api";
     import Notify from "common/notify";
-    import Album from "../model/album";
+    import Album from "model/album";
 
     export default {
         name: 'p-tab-upload',

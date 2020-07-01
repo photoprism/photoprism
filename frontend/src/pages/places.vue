@@ -26,8 +26,8 @@
 <script>
     import Photo from "model/photo";
     import mapboxgl from "mapbox-gl";
-    import Api from "../common/api";
-    import Thumb from "../model/thumb";
+    import Api from "common/api";
+    import Thumb from "model/thumb";
 
     export default {
         name: 'p-page-places',

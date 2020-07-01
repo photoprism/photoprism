@@ -29,7 +29,7 @@ https://docs.photoprism.org/developer-guide/
 */
 
 import RestModel from "model/rest";
-import Api from "../common/api";
+import Api from "common/api";
 
 export class Account extends RestModel {
     getDefaults() {

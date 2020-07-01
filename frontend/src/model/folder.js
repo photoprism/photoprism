@@ -32,7 +32,7 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
 import File from "model/file";
-import Util from "../common/util";
+import Util from "common/util";
 
 export const RootImport = "import";
 export const RootOriginals = "originals";

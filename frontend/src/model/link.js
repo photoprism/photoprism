@@ -29,7 +29,7 @@ https://docs.photoprism.org/developer-guide/
 */
 
 import Model from "./model";
-import Api from "../common/api";
+import Api from "common/api";
 import {DateTime} from "luxon";
 
 export default class Link extends Model {

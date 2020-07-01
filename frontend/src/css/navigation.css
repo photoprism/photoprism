@@ -1,0 +1,24 @@
+#p-navigation {
+    z-index: 10;
+}
+
+#p-navigation .nav-count {
+    opacity: 0.5;
+    position: absolute;
+    left: 80px;
+    width: 40px;
+    display: inline-block;
+    text-align: right;
+}
+
+#photoprism .p-page a,
+#photoprism .v-toolbar a,
+#photoprism .text-link {
+    text-decoration: none;
+    color: #333333;
+}
+
+#photoprism .theme--dark.v-sheet .text-link,
+#photoprism .theme--dark.v-card .text-link {
+    color: white;
+}

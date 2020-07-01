@@ -29,7 +29,7 @@ https://docs.photoprism.org/developer-guide/
 */
 
 import Model from "./model";
-import Api from "../common/api";
+import Api from "common/api";
 import {config} from "../session";
 
 const thumbs = window.__CONFIG__.thumbnails;

@@ -98,7 +98,7 @@
     import Notify from "common/notify";
     import Event from "pubsub-js";
     import Settings from "model/settings";
-    import Util from "../../common/util";
+    import Util from "common/util";
     import {Folder, RootImport} from "model/folder";
 
     export default {

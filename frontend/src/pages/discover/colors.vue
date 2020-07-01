@@ -17,7 +17,7 @@
           <v-hover>
             <v-card :to="{name: 'photos', query: { color: color.name }}" :dark="useDark(color)"
                     :color="color.example" slot-scope="{ hover }" :flat="!hover"
-                    class="p-clickable py-1">
+                    class="clickable py-1">
               <v-card-text class="px-0 py-5 body-2">{{ color.label }}</v-card-text>
             </v-card>
           </v-hover>

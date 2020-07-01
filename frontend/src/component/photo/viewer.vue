@@ -76,7 +76,7 @@
     import Event from "pubsub-js";
     import Thumb from "model/thumb";
     import Photo from "model/photo";
-    import Notify from "../common/notify";
+    import Notify from "common/notify";
 
     export default {
         name: "p-photo-viewer",

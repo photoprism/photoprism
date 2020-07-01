@@ -54,14 +54,14 @@ const Notify = {
         Event.publish("ajax.end");
     },
     blockUI: function() {
-        const el = document.getElementById("p-busy-overlay");
+        const el = document.getElementById("busy-overlay");
 
         if(el) {
             el.style.display = "block";
         }
     },
     unblockUI: function() {
-        const el = document.getElementById("p-busy-overlay");
+        const el = document.getElementById("busy-overlay");
 
         if(el) {
             el.style.display = "none";

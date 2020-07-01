@@ -1,6 +1,6 @@
 <template>
   <div id="p-navigation">
-    <v-toolbar dark fixed flat color="navigation darken-1" class="p-navigation-small">
+    <v-toolbar dark fixed flat color="navigation darken-1" class="nav-small">
       <v-toolbar-title>
         <button @click.stop.prevent="goHome">
           {{ page.title }}
