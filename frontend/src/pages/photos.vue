@@ -275,7 +275,10 @@
 
                 Photo.search(params).then(response => {
                     this.results = Photo.mergeResponse(this.results, response);
-                    this.viewer.results = [];
+
+                    if(offset === 0) {
+                        this.viewer.results = [];
+                    }
 
                     this.scrollDisabled = (response.count < count);
 
