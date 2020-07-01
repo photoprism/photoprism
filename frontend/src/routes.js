@@ -197,6 +197,7 @@ export default [
         name: "hidden",
         path: "/library/hidden",
         component: Photos,
+        meta: {title: "Hidden Files", auth: true},
         props: {staticFilter: {hidden: true}},
     },
     {
