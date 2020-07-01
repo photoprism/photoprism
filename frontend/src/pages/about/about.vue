@@ -12,6 +12,9 @@
         if you have questions, want to support our work, or just want to say hello.</p>
 
       <p>
+        <router-link to="/about/license">
+          <img src="/static/img/badge-agpl.svg" alt="License AGPL v3" style="max-width:100%;"/>
+        </router-link>
         <a target="_blank" href="https://docs.photoprism.org/" rel="nofollow"><img src="/static/img/badge-docs.svg"
                                                                                    alt="Documentation"
                                                                                    style="max-width:100%;"></a>
