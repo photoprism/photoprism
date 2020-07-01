@@ -443,7 +443,7 @@ export class Photo extends RestModel {
 
         this.addSizeInfo(file, info);
 
-        if (!info) {
+        if (!info.length) {
             return "Video";
         }
 
@@ -469,7 +469,7 @@ export class Photo extends RestModel {
 
         this.addSizeInfo(file, info);
 
-        if (!info) {
+        if (!info.length) {
             return "Unknown";
         }
 

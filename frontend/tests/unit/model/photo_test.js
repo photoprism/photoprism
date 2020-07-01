@@ -10,7 +10,18 @@ let assert = chai.assert;
 const mock = new MockAdapter(Api);
 
 mock
-    .onPost().reply(200)
+    .onPost("batch/photos/archive").reply(200, {"photos": [1, 3]})
+    .onPost("api/v1/photos/pqbemz8276mhtobh/approve").reply(200, {})
+    .onPost("api/v1/photos/pqbemz8276mhtobh/files/fqbfk181n4ca5sud/primary").reply(200,
+    {
+        ID: 10,
+        UID: "pqbemz8276mhtobh",
+        Files: [{
+        UID: "fqbfk181n4ca5sud",
+        Name: "1980/01/superCuteKitten.mp4",
+        Primary: true,
+        Type: "mp4",
+        Hash: "1xxbgdt55"}]})
     .onDelete().reply(200);
 
 describe("model/photo", () => {
@@ -422,7 +433,7 @@ describe("model/photo", () => {
                 Type: "mp4",
                 Hash: "1xxbgdt55"}]};
         const photo2 = new Photo(values2);
-        assert.equal(photo2.getVideoInfo(), "");
+        assert.equal(photo2.getVideoInfo(), "Video");
         const values3 = {
             ID: 10,
             UID: "ABC127",
@@ -445,7 +456,7 @@ describe("model/photo", () => {
             ID: 9,
             UID: "ABC163"};
         const photo = new Photo(values);
-        assert.equal(photo.getPhotoInfo(), "");
+        assert.equal(photo.getPhotoInfo(), "Unknown");
         const values2 = {
             ID: 10,
             UID: "ABC127",
@@ -479,5 +490,69 @@ describe("model/photo", () => {
                 Codec: "avc1"}]};
         const photo3 = new Photo(values3);
         assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC1, 500 × 600");
+    });
+
+    it("should archive photo",  (done) => {
+        const values = {ID: 5, Title: "Crazy Cat", CountryName: "Africa", Favorite: false};
+        const photo = new Photo(values);
+        photo.archive().then(
+            (response) => {
+                assert.equal(200, response.status);
+                assert.deepEqual({ photos: [ 1, 3 ] }, response.data);
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
+    });
+
+    it("should approve photo",  (done) => {
+        const values = {ID: 5, UID: "pqbemz8276mhtobh", Title: "Crazy Cat", CountryName: "Africa", Favorite: false};
+        const photo = new Photo(values);
+        photo.approve().then(
+            (response) => {
+                assert.equal(200, response.status);
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
+    });
+
+    it("should toggle private",  () => {
+        const values = {ID: 5, Title: "Crazy Cat", CountryName: "Africa", Private: true};
+        const photo = new Photo(values);
+        assert.equal(photo.Private, true);
+        photo.togglePrivate();
+        assert.equal(photo.Private, false);
+        photo.togglePrivate();
+        assert.equal(photo.Private, true);
+    });
+
+    it("should mark photo as primary",  (done) => {
+        const values = {
+            ID: 10,
+            UID: "pqbemz8276mhtobh",
+            Files: [{
+                UID: "fqbfk181n4ca5sud",
+                Name: "1980/01/superCuteKitten.mp4",
+                Primary: false,
+                Type: "mp4",
+                Hash: "1xxbgdt55"}]};
+        const photo = new Photo(values);
+        photo.primaryFile("fqbfk181n4ca5sud").then(
+            (response) => {
+                assert.equal(response.Files[0].Primary, true);
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
     });
 });
