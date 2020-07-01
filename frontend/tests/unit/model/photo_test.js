@@ -181,6 +181,23 @@ describe("model/photo", () => {
         const photo = new Photo(values);
         const result = photo.getCamera();
         assert.equal(result, "Canon EOSD10");
+        const values2 = {
+            ID: 10,
+            UID: "ABC127",
+            Files: [{
+                UID: "123fgb",
+                Name: "1980/01/superCuteKitten.jpg",
+                Primary: true,
+                Type: "jpg",
+                Hash: "1xxbgdt55"}],
+            Camera: {
+                Make: "Canon",
+                Model: "abc",
+            },
+        };
+        const photo2 = new Photo(values2);
+        assert.equal(photo2.getCamera(), "Canon abc");
+
     });
 
     it("should get camera",  () => {
@@ -363,5 +380,104 @@ describe("model/photo", () => {
                 ,{UID: "123fgb", Name: "1999/01/dog.jpg", Primary: false, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt56"}]};
         const photo3 = new Photo(values3);
         assert.equal(photo3.fileModels()[0].Name, "1980/01/cat.jpg");
+        const values4 = {ID: 10,
+            UID: "ABC127",
+            Files: [
+                {UID: "123fgb", Name: "1980/01/cat.jpg", Primary: true, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt55"}]};
+        const photo4 = new Photo(values4);
+        assert.equal(photo4.fileModels()[0].Name, "1980/01/cat.jpg");
+    });
+
+    it("should get country name",  () => {
+        const values = {ID: 5, UID: "ABC123", Country: "zz"};
+        const photo = new Photo(values);
+        assert.equal(photo.countryName(), "Unknown");
+        const values2 = {ID: 5, UID: "ABC123", Country: "es"};
+        const photo2 = new Photo(values2);
+        assert.equal(photo2.countryName(), "Spain");
+    });
+
+    it("should get location info",  () => {
+        const values = {ID: 5, UID: "ABC123", Country: "zz", PlaceID: "zz", LocLabel: "Nice beach"};
+        const photo = new Photo(values);
+        assert.equal(photo.locationInfo(), "Nice beach");
+        const values2 = {ID: 5, UID: "ABC123", Country: "es", PlaceID: "zz"};
+        const photo2 = new Photo(values2);
+        assert.equal(photo2.locationInfo(), "Spain");
+    });
+
+    it("should return video info",  () => {
+        const values = {
+            ID: 9,
+            UID: "ABC163"};
+        const photo = new Photo(values);
+        assert.equal(photo.getVideoInfo(), "Video");
+        const values2 = {
+            ID: 10,
+            UID: "ABC127",
+            Files: [{
+                UID: "123fgb",
+                Name: "1980/01/superCuteKitten.mp4",
+                Primary: false,
+                Type: "mp4",
+                Hash: "1xxbgdt55"}]};
+        const photo2 = new Photo(values2);
+        assert.equal(photo2.getVideoInfo(), "");
+        const values3 = {
+            ID: 10,
+            UID: "ABC127",
+            Files: [{
+                UID: "123fgb",
+                Name: "1980/01/superCuteKitten.mp4",
+                Primary: false,
+                Type: "mp4",
+                Width: 500,
+                Height: 600,
+                Hash: "1xxbgdt55",
+                Duration: 6000,
+                Codec: "avc1"}]};
+        const photo3 = new Photo(values3);
+        assert.equal(photo3.getVideoInfo(), "6µs, AVC1, 500 × 600");
+    });
+
+    it("should return photo info",  () => {
+        const values = {
+            ID: 9,
+            UID: "ABC163"};
+        const photo = new Photo(values);
+        assert.equal(photo.getPhotoInfo(), "");
+        const values2 = {
+            ID: 10,
+            UID: "ABC127",
+            Files: [{
+                UID: "123fgb",
+                Name: "1980/01/superCuteKitten.jpg",
+                Primary: true,
+                Type: "jpg",
+                Hash: "1xxbgdt55"}],
+            Camera: {
+                Make: "Canon",
+                Model: "abc",
+            },
+        };
+        const photo2 = new Photo(values2);
+        assert.equal(photo2.getPhotoInfo(), "Canon abc");
+        const values3 = {
+            ID: 10,
+            UID: "ABC127",
+            CameraMake: "Canon",
+            CameraModel: "abcde",
+            Files: [{
+                UID: "123fgb",
+                Name: "1980/01/superCuteKitten.mp4",
+                Primary: false,
+                Type: "mp4",
+                Width: 500,
+                Height: 600,
+                Hash: "1xxbgdt55",
+                Duration: 6000,
+                Codec: "avc1"}]};
+        const photo3 = new Photo(values3);
+        assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC1, 500 × 600");
     });
 });
