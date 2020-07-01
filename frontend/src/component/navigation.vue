@@ -316,7 +316,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile :to="{ name: 'about' }" @click="" class="nav-about">
+            <v-list-tile :to="{ name: 'about' }" :exact="true" @click="" class="nav-about">
               <v-list-tile-content>
                 <v-list-tile-title>
                   <translate key="About">About</translate>
@@ -324,7 +324,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile  :to="{ name: 'license' }" @click="" class="nav-license">
+            <v-list-tile  :to="{ name: 'license' }" :exact="true" @click="" class="nav-license">
               <v-list-tile-content>
                 <v-list-tile-title>
                   <translate key="License">License</translate>
