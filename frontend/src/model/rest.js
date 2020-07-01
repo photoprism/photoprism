@@ -155,7 +155,7 @@ export class Rest extends Model {
     }
 
     static limit() {
-        return 3333;
+        return 2222;
     }
 
     static search(params) {

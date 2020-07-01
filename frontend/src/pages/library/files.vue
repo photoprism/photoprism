@@ -163,15 +163,17 @@
                 dirty: false,
                 results: [],
                 loading: true,
-                filesLimit: 1111,
-                filesOffset: 0,
-                page: 0,
                 selection: [],
                 settings: settings,
                 filter: filter,
                 lastFilter: {},
                 routeName: routeName,
                 path: "",
+                page: 0,
+                files: {
+                    limit: Folder.limit(),
+                    offset: 0,
+                },
                 labels: {
                     search: this.$gettext("Search"),
                     name: this.$gettext("Folder Name"),
@@ -360,8 +362,8 @@
                 const params = {
                     files: true,
                     uncached: true,
-                    count: this.filesLimit,
-                    offset: this.filesOffset,
+                    count: this.files.limit,
+                    offset: this.files.offset,
                 };
 
                 Object.assign(params, this.filter);
@@ -389,7 +391,7 @@
 
                 Object.assign(this.lastFilter, this.filter);
 
-                this.filesOffset = 0;
+                this.files.offset = 0;
                 this.page = 0;
                 this.loading = true;
                 this.listen = false;
@@ -397,7 +399,7 @@
                 const params = this.searchParams();
 
                 Folder.originals(this.path, params).then(response => {
-                    this.filesOffset = this.filesLimit;
+                    this.files.offset = this.files.limit;
 
                     this.results = response.models;
                     this.breadcrumbs = this.getBreadcrumbs();
@@ -406,7 +408,7 @@
                         this.$notify.warn(this.$gettext('Directory is empty'));
                     } else if (response.count === 1) {
                         this.$notify.info(this.$gettext('One entry found'));
-                    } else if (response.files < this.filesLimit) {
+                    } else if (response.files < this.files.limit) {
                         this.$notify.info(response.count + this.$gettext(' entries found'));
                     } else {
                         this.$notify.warn(this.$gettext('Too many files in folder, showing first') + ` ${response.files}`);
