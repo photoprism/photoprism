@@ -392,7 +392,7 @@ func PhotoFileUngroup(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := service.Index().MediaFile(f, photoprism.IndexOptions{Rescan:  true}, existingPhoto.OriginalName).Error; err != nil {
+		if err := service.Index().MediaFile(f, photoprism.IndexOptions{Rescan: true}, existingPhoto.OriginalName).Error; err != nil {
 			log.Errorf("photo: %s", err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
 			return
