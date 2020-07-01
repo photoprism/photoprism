@@ -138,7 +138,7 @@ func FindPersonByUserName(userName string) *Person {
 	if err := Db().Where("user_name = ?", userName).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("auth: user %s not found", txt.Quote(userName))
+		log.Errorf("user %s not found", txt.Quote(userName))
 		return nil
 	}
 }
@@ -154,7 +154,7 @@ func FindPersonByUID(uid string) *Person {
 	if err := Db().Where("person_uid = ?", uid).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("auth: user %s not found", txt.Quote(uid))
+		log.Errorf("user %s not found", txt.Quote(uid))
 		return nil
 	}
 }
@@ -195,7 +195,11 @@ func (m *Person) Guest() bool {
 // SetPassword sets a new password stored as hash.
 func (m *Person) SetPassword(password string) error {
 	if !m.Registered() {
-		return fmt.Errorf("auth: only registered users can change their password")
+		return fmt.Errorf("only registered users can change their password")
+	}
+
+	if len(password) < 6 {
+		return fmt.Errorf("new password for %s must be at least 6 characters", txt.Quote(m.UserName))
 	}
 
 	pw := NewPassword(m.PersonUID, password)
@@ -206,7 +210,7 @@ func (m *Person) SetPassword(password string) error {
 // InitPassword sets the initial user password stored as hash.
 func (m *Person) InitPassword(password string) {
 	if !m.Registered() {
-		log.Warn("auth: only registered users can change their password")
+		log.Warn("only registered users can change their password")
 		return
 	}
 
@@ -230,7 +234,7 @@ func (m *Person) InitPassword(password string) {
 // InvalidPassword returns true if the given password does not match the hash.
 func (m *Person) InvalidPassword(password string) bool {
 	if !m.Registered() {
-		log.Warn("auth: only registered users can change their password")
+		log.Warn("only registered users can change their password")
 		return true
 	}
 

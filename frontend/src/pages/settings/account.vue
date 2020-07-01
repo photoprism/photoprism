@@ -1,16 +1,15 @@
 <template>
   <div class="p-tab p-settings-account">
-    <v-form lazy-validation dense
-            ref="form" class="form-password" accept-charset="UTF-8">
+    <v-form dense ref="form" class="form-password" accept-charset="UTF-8">
       <v-card flat tile class="ma-2 application">
         <v-card-actions>
           <v-layout wrap align-top>
-            <v-flex xs12 class="px-2 pt-2 pb-4">
+            <v-flex xs12 class="pa-2">
               <v-text-field
                       hide-details required
                       :disabled="busy"
                       browser-autocomplete="off"
-                      label="Current Password"
+                      :label="$gettext('Current Password')"
                       color="secondary-dark"
                       type="password"
                       placeholder="••••••••"
@@ -20,30 +19,39 @@
 
             <v-flex xs12 class="pa-2">
               <v-text-field
-                      hide-details required
+                      required counter persistent-hint
                       :disabled="busy"
                       browser-autocomplete="off"
-                      label="New Password"
+                      :label="$gettext('New Password')"
                       color="secondary-dark"
                       type="password"
                       placeholder="••••••••"
                       v-model="newPassword"
+                      :hint="$gettext('At least 6 characters.')"
               ></v-text-field>
             </v-flex>
 
             <v-flex xs12 class="pa-2">
               <v-text-field
-                      hide-details required
+                      required counter persistent-hint
                       :disabled="busy"
                       browser-autocomplete="off"
-                      label="Confirm Password"
+                      :label="$gettext('Retype Password')"
                       color="secondary-dark"
                       type="password"
                       placeholder="••••••••"
                       v-model="confirmPassword"
+                      :hint="$gettext('Please confirm your new password.')"
               ></v-text-field>
             </v-flex>
-            <v-flex xs12 class="px-2 pt-4 pb-2">
+
+            <v-flex xs12 class="pa-2">
+              <p class="caption pa-0">
+                <translate>Note: Updating the password will not revoke access from already authenticated users.</translate>
+              </p>
+            </v-flex>
+
+            <v-flex xs12 class="pa-2">
               <v-btn depressed color="secondary-dark"
                      @click.stop="confirm"
                      :disabled="disabled()"
@@ -73,7 +81,7 @@
         },
         methods: {
             disabled() {
-                return (this.busy || this.oldPassword === "" || this.newPassword === "" || (this.newPassword !== this.confirmPassword));
+                return (this.busy || this.oldPassword === "" || this.newPassword.length < 6 || (this.newPassword !== this.confirmPassword));
             },
             confirm() {
                 this.busy = true;
