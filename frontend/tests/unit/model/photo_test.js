@@ -47,6 +47,16 @@ describe("model/photo", () => {
         const photo = new Photo(values);
         const result = photo.thumbnailUrl("tile500");
         assert.equal(result, "/api/v1/t/345982/static/tile500");
+        const values2 = {ID: 10, UID: "ABC127",
+            Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.mp4", Primary: false, Type: "mp4", Width: 500, Height: 600, Hash: "1xxbgdt55"}]};
+        const photo2 = new Photo(values2);
+        const result2 = photo2.thumbnailUrl("tile500");
+        assert.equal(result2, "/api/v1/t/1xxbgdt55/static/tile500");
+        const values3 = {ID: 10, UID: "ABC127",
+            Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.mp4", Primary: false, Type: "mp4", Width: 500, Height: 600}]};
+        const photo3 = new Photo(values3);
+        const result3 = photo3.thumbnailUrl("tile500");
+        assert.equal(result3, "/api/v1/svg/photo");
     });
 
     it("should get photo download url",  () => {
@@ -99,6 +109,29 @@ describe("model/photo", () => {
         const photo = new Photo(values);
         const result = photo.getDateString();
         assert.equal(result, "July 8, 2012, 2:45 PM UTC");
+        const values2 = {ID: 5, Title: "Crazy Cat", TakenAt: "", TimeZone: "UTC"};
+        const photo2 = new Photo(values2);
+        const result2 = photo2.getDateString();
+        assert.equal(result2, "Unknown");
+        const values3 = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z"};
+        const photo3 = new Photo(values3);
+        const result3 = photo3.getDateString();
+        assert.equal(result3, "Sunday, July 8, 2012");
+    });
+
+    it("should get short date string",  () => {
+        const values = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
+        const photo = new Photo(values);
+        const result = photo.shortDateString();
+        assert.equal(result, "Jul 8, 2012");
+        const values2 = {ID: 5, Title: "Crazy Cat", TakenAt: "", TimeZone: "UTC"};
+        const photo2 = new Photo(values2);
+        const result2 = photo2.shortDateString();
+        assert.equal(result2, "Unknown");
+        const values3 = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z"};
+        const photo3 = new Photo(values3);
+        const result3 = photo3.shortDateString();
+        assert.equal(result3, "Jul 8, 2012");
     });
 
     it("should test whether photo has location",  () => {
@@ -222,11 +255,113 @@ describe("model/photo", () => {
         assert.equal(photo.Height, undefined);
         assert.equal(photo.Hash, undefined);
         photo.refreshFileAttr();
-        console.log(photo.Width);
         assert.equal(photo.Width, 500);
         assert.equal(photo.Height, 600);
         assert.equal(photo.Hash, "1xxbgdt53");
     });
 
+    it("should return is playable",  () => {
+        const values = {ID: 8, UID: "ABC123", Filename: "1980/01/superCuteKitten.jpg", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: true, Type: "TypeJpeg", Width: 500, Height: 600, Hash: "1xxbgdt53"}]};
+        const photo = new Photo(values);
+        assert.equal(photo.isPlayable(), false);
+        const values2 = {ID: 9, UID: "ABC163"};
+        const photo2 = new Photo(values2);
+        assert.equal(photo2.isPlayable(), false);
+        const values3 = {ID: 10, UID: "ABC127", Filename: "1980/01/superCuteKitten.mp4", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.mp4", Primary: false, Type: "mp4", Width: 500, Height: 600, Hash: "1xxbgdt55"}]};
+        const photo3 = new Photo(values3);
+        assert.equal(photo3.isPlayable(), true);
+        const values4 = {ID: 1, UID: "ABC128", Filename: "1980/01/superCuteKitten.jpg", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: false, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt53", Codec: "avc1"}]};
+        const photo4 = new Photo(values4);
+        assert.equal(photo4.isPlayable(), true);
+    });
 
+    it("should return videofile",  () => {
+        const values = {ID: 8, UID: "ABC123", Filename: "1980/01/superCuteKitten.jpg", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: true, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt53"}]};
+        const photo = new Photo(values);
+        assert.equal(photo.videoFile(), undefined);
+        const values2 = {ID: 9, UID: "ABC163"};
+        const photo2 = new Photo(values2);
+        assert.equal(photo2.videoFile(), false);
+        const values3 = {ID: 10, UID: "ABC127", Filename: "1980/01/superCuteKitten.mp4", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.mp4", Primary: false, Type: "mp4", Width: 500, Height: 600, Hash: "1xxbgdt55"}]};
+        const photo3 = new Photo(values3);
+        const file = photo3.videoFile();
+        console.log(file);
+        assert.equal(photo3.videoFile().Name, "1980/01/superCuteKitten.mp4");
+        const values4 = {ID: 1, UID: "ABC128", Filename: "1980/01/superCuteKitten.jpg", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: false, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt53", Codec: "avc1"}]};
+        const photo4 = new Photo(values4);
+        assert.equal(photo4.videoFile().Name, "1980/01/superCuteKitten.jpg");
+        const file2 = photo4.videoFile();
+        console.log(file2);
+    });
+
+    it("should return video url",  () => {
+        const values = {ID: 8, UID: "ABC123", Filename: "1980/01/superCuteKitten.jpg", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: true, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt53"}]};
+        const photo = new Photo(values);
+        assert.equal(photo.videoUrl(), "");
+        const values2 = {ID: 9, UID: "ABC163"};
+        const photo2 = new Photo(values2);
+        assert.equal(photo2.videoUrl(), false);
+        const values3 = {ID: 10, UID: "ABC127", Filename: "1980/01/superCuteKitten.mp4", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.mp4", Primary: false, Type: "mp4", Width: 500, Height: 600, Hash: "1xxbgdt55"}]};
+        const photo3 = new Photo(values3);
+        assert.equal(photo3.videoUrl(), "/api/v1/videos/1xxbgdt55/static/mp4");
+        const values4 = {ID: 1, UID: "ABC128", Filename: "1980/01/superCuteKitten.jpg", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: false, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt53", Codec: "avc1"}]};
+        const photo4 = new Photo(values4);
+        assert.equal(photo4.videoUrl(), "/api/v1/videos/1xxbgdt53/static/mp4");
+    });
+
+    it("should return main file",  () => {
+        const values = {ID: 9, UID: "ABC163"};
+        const photo = new Photo(values);
+        assert.equal(photo.mainFile(), false);
+        const values2 = {ID: 10,
+            UID: "ABC127",
+            Files: [
+                {UID: "123fgb", Name: "1980/01/superCuteKitten.mp4", Primary: false, Type: "mp4", Width: 500, Height: 600, Hash: "1xxbgdt55"}
+                ,{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: false, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt56"}]};
+        const photo2 = new Photo(values2);
+        const file = photo2.mainFile();
+        assert.equal(file.Name, "1980/01/superCuteKitten.jpg");
+        const values3 = {ID: 1,
+            UID: "ABC128",
+            Files: [
+                {UID: "123fgb", Name: "1980/01/NotMainKitten.jpg", Primary: false, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt53"},
+                {UID: "123fgb", Name: "1980/01/MainKitten.jpg", Primary: true, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt54"}
+            ]};
+        const photo3 = new Photo(values3);
+        const file2 = photo3.mainFile();
+        assert.equal(file2.Name, "1980/01/MainKitten.jpg");
+    });
+
+    it("should return main hash",  () => {
+        const values = {ID: 9, UID: "ABC163"};
+        const photo = new Photo(values);
+        assert.equal(photo.mainFileHash(), "");
+        const values2 = {ID: 10,
+            UID: "ABC127",
+            Files: [
+                {UID: "123fgb", Name: "1980/01/superCuteKitten.mp4", Primary: false, Type: "mp4", Width: 500, Height: 600, Hash: "1xxbgdt55"}
+                ,{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: false, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt56"}]};
+        const photo2 = new Photo(values2);
+        assert.equal(photo2.mainFileHash(), "1xxbgdt56");
+    });
+
+    it("should test filemodels",  () => {
+        const values = {ID: 9, UID: "ABC163"};
+        const photo = new Photo(values);
+        assert.empty(photo.fileModels());
+        const values2 = {ID: 10,
+            UID: "ABC127",
+            Files: [
+                {UID: "123fgb", Name: "1980/01/cat.jpg", Primary: false, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt55"}
+                ,{UID: "123fgb", Name: "1999/01/dog.jpg", Primary: true, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt56"}]};
+        const photo2 = new Photo(values2);
+        assert.equal(photo2.fileModels()[0].Name, "1999/01/dog.jpg");
+        const values3 = {ID: 10,
+            UID: "ABC127",
+            Files: [
+                {UID: "123fgb", Name: "1980/01/cat.jpg", Primary: true, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt55"}
+                ,{UID: "123fgb", Name: "1999/01/dog.jpg", Primary: false, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt56"}]};
+        const photo3 = new Photo(values3);
+        assert.equal(photo3.fileModels()[0].Name, "1980/01/cat.jpg");
+    });
 });
