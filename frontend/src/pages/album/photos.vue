@@ -101,6 +101,10 @@
                 lastFilter: {},
                 routeName: routeName,
                 loading: true,
+                viewer: {
+                    results: [],
+                    loading: false,
+                },
             };
         },
         methods: {
@@ -144,7 +148,7 @@
                 Event.publish("dialog.edit", {selection: selection, album: this.album, index: index});
             },
             openPhoto(index, showMerged) {
-                if (!this.results[index]) {
+                if (this.loading || this.viewer.loading || !this.results[index]) {
                     return false;
                 }
 
@@ -159,7 +163,7 @@
                 } else if (showMerged) {
                     this.$viewer.show(Thumb.fromFiles([selected]), 0)
                 } else {
-                    this.findAll().then((results) => {
+                    this.viewerResults().then((results) => {
                         const thumbs = Thumb.fromPhotos(results);
                         const thumbsIndex = thumbs.findIndex(t => t.uid === selected.UID);
                         this.$viewer.show(thumbs, thumbsIndex ? thumbsIndex : 0);
@@ -168,10 +172,20 @@
 
                 return true;
             },
-            findAll() {
-                if(this.scrollDisabled) {
+            viewerResults() {
+                if (this.loading || this.viewer.loading) {
+                    return Promise.reject();
+                }
+
+                if (this.scrollDisabled) {
                     return Promise.resolve(this.results);
                 }
+
+                if (this.viewer.results.length > 0) {
+                    return Promise.resolve(this.viewer.results);
+                }
+
+                this.viewer.loading = true;
 
                 const count = Photo.limit();
                 const offset = 0;
@@ -191,8 +205,13 @@
                 }
 
                 return Photo.search(params).then(resp => {
-                    return Promise.resolve(resp.models);
-                }).catch(() => {
+                    // Success.
+                    this.viewer.loading = false;
+                    this.viewer.results = resp.models;
+                    return Promise.resolve(this.viewer.results);
+                }, () => {
+                    // Error.
+                    this.viewer.loading = false;
                     return Promise.resolve(this.results);
                 });
             },
@@ -221,6 +240,7 @@
 
                 Photo.search(params).then(response => {
                     this.results = Photo.mergeResponse(this.results, response);
+                    this.viewer.results = [];
 
                     this.scrollDisabled = (response.count < count);
 
@@ -312,6 +332,7 @@
                     this.offset = this.pageSize;
 
                     this.results = response.models;
+                    this.viewer.results = [];
 
                     this.scrollDisabled = (response.count < this.pageSize);
 
@@ -383,6 +404,8 @@
                 if (!data || !data.entities) {
                     return
                 }
+
+                this.viewer.results = [];
 
                 const type = ev.split('.')[1];
 

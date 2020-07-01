@@ -82,10 +82,10 @@ func Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
 	}
 
-	if f.Count > 0 && f.Count <= 1000 {
+	if f.Count > 0 && f.Count <= MaxResults {
 		s = s.Limit(f.Count).Offset(f.Offset)
 	} else {
-		s = s.Limit(100).Offset(0)
+		s = s.Limit(MaxResults).Offset(f.Offset)
 	}
 
 	if result := s.Scan(&results); result.Error != nil {

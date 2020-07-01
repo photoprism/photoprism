@@ -145,10 +145,10 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 		s = s.Order("albums.album_favorite DESC, albums.album_year DESC, albums.album_month DESC, albums.album_title, albums.created_at DESC")
 	}
 
-	if f.Count > 0 && f.Count <= 1000 {
+	if f.Count > 0 && f.Count <= MaxResults {
 		s = s.Limit(f.Count).Offset(f.Offset)
 	} else {
-		s = s.Limit(100).Offset(0)
+		s = s.Limit(MaxResults).Offset(f.Offset)
 	}
 
 	if result := s.Scan(&results); result.Error != nil {

@@ -106,7 +106,6 @@
                 listen: false,
                 dirty: false,
                 results: [],
-                allResults: [],
                 scrollDisabled: true,
                 pageSize: 60,
                 offset: 0,
@@ -117,6 +116,10 @@
                 lastFilter: {},
                 routeName: routeName,
                 loading: true,
+                viewer: {
+                    results: [],
+                    loading: false,
+                },
             };
         },
         computed: {
@@ -185,7 +188,7 @@
                 Event.publish("dialog.edit", {selection: selection, album: null, index: index});
             },
             openPhoto(index, showMerged) {
-                if (!this.results[index]) {
+                if (this.loading || this.viewer.loading || !this.results[index]) {
                     return false;
                 }
 
@@ -200,21 +203,27 @@
                 } else if (showMerged) {
                     this.$viewer.show(Thumb.fromFiles([selected]), 0)
                 } else {
-                    this.findAll().then((results) => {
+                    this.viewerResults().then((results) => {
                         const thumbs = Thumb.fromPhotos(results);
                         const thumbsIndex = thumbs.findIndex(t => t.uid === selected.UID);
                         this.$viewer.show(thumbs, thumbsIndex ? thumbsIndex : 0);
                     });
                 }
             },
-            findAll() {
-                if(this.scrollDisabled) {
+            viewerResults() {
+                if (this.loading || this.viewer.loading) {
+                    return Promise.reject();
+                }
+
+                if (this.scrollDisabled) {
                     return Promise.resolve(this.results);
                 }
 
-                if(this.allResults.length > 0) {
-                    return Promise.resolve(this.allResults);
+                if (this.viewer.results.length > 0) {
+                    return Promise.resolve(this.viewer.results);
                 }
+
+                this.viewer.loading = true;
 
                 const count = Photo.limit();
                 const offset = 0;
@@ -231,12 +240,17 @@
                     Object.assign(params, this.staticFilter);
                 }
 
-                return Photo.search(params).then(resp => {
-                    this.allResults = resp.models
-                    return Promise.resolve(this.allResults);
-                }).catch(() => {
-                    return Promise.resolve(this.results);
-                });
+                return Photo.search(params).then((resp) => {
+                        // Success.
+                        this.viewer.loading = false;
+                        this.viewer.results = resp.models;
+                        return Promise.resolve(this.viewer.results);
+                    }, () => {
+                        // Error.
+                        this.viewer.loading = false;
+                        return Promise.resolve(this.results);
+                    }
+                );
             },
             loadMore() {
                 if (this.scrollDisabled) return;
@@ -261,7 +275,7 @@
 
                 Photo.search(params).then(response => {
                     this.results = Photo.mergeResponse(this.results, response);
-                    this.allResults = [];
+                    this.viewer.results = [];
 
                     this.scrollDisabled = (response.count < count);
 
@@ -351,7 +365,7 @@
                     this.offset = this.pageSize;
 
                     this.results = response.models;
-                    this.allResults = [];
+                    this.viewer.results = [];
 
                     this.scrollDisabled = (response.count < this.pageSize);
 
@@ -386,7 +400,7 @@
                     return
                 }
 
-                this.allResults = [];
+                this.viewer.results = [];
 
                 const type = ev.split('.')[1];
 

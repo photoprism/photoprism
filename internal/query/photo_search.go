@@ -328,10 +328,10 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Order("taken_at DESC, photos.photo_uid, files.file_primary DESC")
 	}
 
-	if f.Count > 0 && f.Count <= 1000 {
+	if f.Count > 0 && f.Count <= MaxResults {
 		s = s.Limit(f.Count).Offset(f.Offset)
 	} else {
-		s = s.Limit(100).Offset(0)
+		s = s.Limit(MaxResults).Offset(f.Offset)
 	}
 
 	if err := s.Scan(&results).Error; err != nil {

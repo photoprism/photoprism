@@ -23,10 +23,10 @@ func AccountSearch(f form.AccountSearch) (result entity.Accounts, err error) {
 
 	s = s.Order("acc_name ASC")
 
-	if f.Count > 0 && f.Count <= 1000 {
+	if f.Count > 0 && f.Count <= MaxResults {
 		s = s.Limit(f.Count).Offset(f.Offset)
 	} else {
-		s = s.Limit(1000).Offset(0)
+		s = s.Limit(MaxResults).Offset(f.Offset)
 	}
 
 	if err := s.Find(&result).Error; err != nil {

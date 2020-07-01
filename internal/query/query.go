@@ -51,6 +51,9 @@ const (
 	SQLite = "sqlite3"
 )
 
+// Max result limit for queries.
+const MaxResults = 10000
+
 // About 1km ('good enough' for now)
 const SearchRadius = 0.009
 
