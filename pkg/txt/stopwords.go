@@ -38,6 +38,7 @@ var StopWords = map[string]bool{
 	"caption":          true,
 	"description":      true,
 	"temp":             true,
+	"misc":             true,
 	"var":              true,
 	"lib":              true,
 	"thumb":            true,

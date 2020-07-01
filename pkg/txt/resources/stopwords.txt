@@ -33,6 +33,7 @@ title
 caption
 description
 temp
+misc
 var
 lib
 thumb
