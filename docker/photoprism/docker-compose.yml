@@ -53,7 +53,7 @@ services:
   # photoprism-db: # Uncomment, if you want to use MariaDB instead of SQLite
   #  image: mariadb:10.5 # Alternatively mysql:8.0
   #  restart: unless-stopped
-  #  command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024 --innodb-rollback-on-timeout=ON --innodb-lock-wait-timeout=120
+  #  command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
   #  volumes:
   #    - "photoprism-database:/var/lib/mysql"
   #  environment:
