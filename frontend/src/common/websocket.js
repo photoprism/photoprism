@@ -30,6 +30,7 @@ https://docs.photoprism.org/developer-guide/
 
 import Sockette from "sockette";
 import Event from "pubsub-js";
+import {config} from "session";
 
 const host = window.location.host;
 const prot = ("https:" === document.location.protocol ? "wss://" : "ws://");
@@ -38,6 +39,8 @@ const url = prot + host + "/api/v1/ws";
 const Socket = new Sockette(url, {
     timeout: 5e3,
     onopen: e => {
+        config.disconnected = false;
+        document.body.classList.remove("disconnected");
         console.log("websocket: connected", e);
         Event.publish("websocket.connected", e);
     },
@@ -47,7 +50,11 @@ const Socket = new Sockette(url, {
     },
     onreconnect: e => console.log("websocket: reconnecting", e),
     onmaximum: e => console.warn("websocket: hit max reconnect limit", e),
-    onclose: e => console.log("websocket: closed", e),
+    onclose: e => {
+        config.disconnected = true;
+        console.log("websocket: closed", e)
+        document.body.classList.add("disconnected");
+    },
     onerror: e => console.log("websocket: error", e),
 });
 

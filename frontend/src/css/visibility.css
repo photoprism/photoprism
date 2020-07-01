@@ -1,9 +1,7 @@
 /* Feature Flags */
 
-#photoprism .hidden-always {
-    display: none !important;
-}
-
+#photoprism .hidden-always,
+body.disconnected .connected,
 body.shared #photoprism .hidden-shared-only {
     display: none !important;
 }
@@ -15,13 +13,14 @@ body.shared #photoprism .hidden-shared-only {
     display: none !important;
 }
 
-
 body.experimental #photoprism .feature-experimental,
 body.debug #photoprism .feature-debug,
 body.public #photoprism .feature-public,
 body.readonly #photoprism .feature-readonly {
     display: block !important;
 }
+
+/* Opacity */
 
 #photoprism .opacity-0 {
     opacity: 0 !important;

@@ -1,8 +1,3 @@
-import Session from 'common/session';
-import Config from 'common/config'
-import MockAdapter from "axios-mock-adapter";
-import Api from "common/api";
-
 //TODO Add tokens to config data and test hasToken
 window.__CONFIG__ = {
     "name": "PhotoPrism",
@@ -151,9 +146,13 @@ window.__CONFIG__ = {
     }
 };
 
+import {config} from "session";
+import Session from "common/session";
+import MockAdapter from "axios-mock-adapter";
+import Api from "common/api";
+
 let chai = require('../../../node_modules/chai/chai');
 let assert = chai.assert;
-const config = new Config(window.localStorage, window.__CONFIG__);
 
 describe('common/session', () => {
 

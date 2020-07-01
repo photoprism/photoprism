@@ -1,6 +1,21 @@
 version: '3.5'
 
 services:
+  # Uncomment to test with Caddy as proxy:
+  #
+  # caddy:
+  #  image: abiosoft/caddy:1.0.3-no-stats
+  #  depends_on:
+  #    - photoprism
+  #  ports:
+  #    - 80:80
+  #    - 443:443
+  #    - 2015:2015
+  #  volumes:
+  #    - ./docker/development/Caddyfile:/etc/Caddyfile
+  #  environment:
+  #    ACME_AGREE: "true"
+
   photoprism:
     build: .
     image: photoprism/photoprism:develop

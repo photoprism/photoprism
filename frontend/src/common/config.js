@@ -33,12 +33,13 @@ import themes from "../resources/themes.json";
 import translations from "../resources/translations.json";
 import Api from "./api";
 
-class Config {
+export default class Config {
     /**
      * @param {Storage} storage
      * @param {object} values
      */
     constructor(storage, values) {
+        this.disconnected = false;
         this.storage = storage;
         this.storage_key = "config";
 
@@ -217,5 +218,3 @@ class Config {
         return [];
     }
 }
-
-export default Config;

@@ -1,5 +1,16 @@
 <template>
   <div id="photoprism">
+    <v-snackbar top :timeout="0" v-model="config.disconnected" color="warning">
+      <a href="https://github.com/photoprism/photoprism/issues/330" target="_blank" class="text-link">Connecting...</a>
+      <v-spacer></v-spacer>
+      <v-progress-circular
+            indeterminate
+            color="black"
+            :size="16"
+            :width="2"
+      ></v-progress-circular>
+    </v-snackbar>
+
     <p-loading-bar height="4"></p-loading-bar>
 
     <p-notify></p-notify>
@@ -25,6 +36,7 @@
         name: 'photoprism',
         data() {
             return {
+                config: this.$config,
                 touchStart: 0,
             };
         },
