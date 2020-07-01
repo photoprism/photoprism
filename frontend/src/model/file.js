@@ -119,7 +119,7 @@ export class File extends RestModel {
         }
 
         let link = document.createElement("a");
-        link.href = this.getDownloadUrl()
+        link.href = this.getDownloadUrl();
         link.download = this.baseName(this.Name);
         link.click();
     }

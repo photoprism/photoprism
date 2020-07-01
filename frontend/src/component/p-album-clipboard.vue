@@ -32,6 +32,16 @@
         </v-btn>
         <v-btn
                 fab dark small
+                :title="labels.edit"
+                color="edit"
+                :disabled="selection.length !== 1"
+                @click.stop="editDialog()"
+                class="action-edit"
+        >
+          <v-icon>edit</v-icon>
+        </v-btn>
+        <v-btn
+                fab dark small
                 :title="labels.download"
                 color="download"
                 @click.stop="download()"
@@ -89,6 +99,7 @@
             refresh: Function,
             clearSelection: Function,
             share: Function,
+            edit: Function,
         },
         data() {
             return {
@@ -99,6 +110,7 @@
                     edit: false,
                 },
                 labels: {
+                    edit: this.$gettext("Edit"),
                     share: this.$gettext("Share"),
                     download: this.$gettext("Download"),
                     clone: this.$gettext("Add to album"),
@@ -108,6 +120,19 @@
             };
         },
         methods: {
+            editDialog() {
+                if (this.selection.length !== 1) {
+                    this.$notify.error("select one album to edit");
+                    return;
+                }
+
+                this.model = new Album();
+                this.model.find(this.selection[0]).then(
+                    (m) => {
+                        this.edit(m);
+                    }
+                );
+            },
             shareDialog() {
                 if (this.selection.length !== 1) {
                     this.$notify.error("select one album to share");

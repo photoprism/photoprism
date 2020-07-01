@@ -50,7 +50,7 @@
     <v-container fluid class="pa-0" v-else>
       <p-scroll-top></p-scroll-top>
 
-      <p-album-clipboard :refresh="refresh" :selection="selection" :share="share"
+      <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit"
                          :clear-selection="clearSelection"></p-album-clipboard>
 
       <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-cards">
@@ -58,20 +58,20 @@
           <v-card-title primary-title>
             <div v-if="staticFilter.type === 'moment'">
               <h3 class="title mb-3">
-                <translate key=">No moments">No moments matched your search</translate>
+                <translate>No moments matched your search</translate>
               </h3>
               <div>
-                <translate key=">Wait until">Wait until PhotoPrism has analyzed your library or try
+                <translate>Wait until PhotoPrism has analyzed your library or try
                   again using a different term.
                 </translate>
               </div>
             </div>
             <div v-else>
               <h3 class="title mb-3">
-                <translate key=">No albums">No albums matched your search</translate>
+                <translate>No albums matched your search</translate>
               </h3>
               <div>
-                <translate key="Try again">Try again using a different term or create a new album from a
+                <translate>Try again using a different term or create a new album from a
                   selection in Photos.
                 </translate>
               </div>
