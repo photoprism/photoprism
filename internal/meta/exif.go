@@ -44,9 +44,10 @@ func (data *Data) Exif(fileName string) (err error) {
 	var rawExif []byte
 	var parsed bool
 
-	fileExtension := strings.ToLower(path.Ext(fileName))
+	logName := txt.Quote(filepath.Base(fileName))
+	ext := strings.ToLower(path.Ext(fileName))
 
-	if fileExtension == fs.JpegExt || fileExtension == ".jpeg" {
+	if ext == fs.JpegExt || ext == ".jpeg" {
 		jmp := jpegstructure.NewJpegMediaParser()
 
 		sl, err := jmp.ParseFile(fileName)
@@ -59,14 +60,14 @@ func (data *Data) Exif(fileName string) (err error) {
 
 		if err != nil {
 			if err.Error() == "no exif header" {
-				return fmt.Errorf("metadata: no exif header in %s", txt.Quote(filepath.Base(fileName)))
+				return fmt.Errorf("metadata: no exif header in %s", logName)
 			} else {
-				log.Warnf("metadata: %s in %s (parse jpeg)", err, txt.Quote(filepath.Base(fileName)))
+				log.Warnf("metadata: %s in %s (parse jpeg)", err, logName)
 			}
 		} else {
 			parsed = true
 		}
-	} else if fileExtension == ".png" {
+	} else if ext == ".png" {
 		pmp := pngstructure.NewPngMediaParser()
 
 		cs, err := pmp.ParseFile(fileName)
@@ -79,9 +80,9 @@ func (data *Data) Exif(fileName string) (err error) {
 
 		if err != nil {
 			if err.Error() == "file does not have EXIF" {
-				return fmt.Errorf("metadata: no exif header in %s", txt.Quote(filepath.Base(fileName)))
+				return fmt.Errorf("metadata: no exif header in %s", logName)
 			} else {
-				log.Warnf("metadata: %s in %s (parse png)", err, txt.Quote(filepath.Base(fileName)))
+				log.Warnf("metadata: %s in %s (parse png)", err, logName)
 			}
 		} else {
 			parsed = true
@@ -95,7 +96,7 @@ func (data *Data) Exif(fileName string) (err error) {
 		rawExif, err = exif.SearchFileAndExtractExif(fileName)
 
 		if err != nil {
-			return fmt.Errorf("metadata: no exif header in %s (search and extract)", txt.Quote(filepath.Base(fileName)))
+			return fmt.Errorf("metadata: no exif header in %s (search and extract)", logName)
 		}
 	}
 
@@ -132,7 +133,7 @@ func (data *Data) Exif(fileName string) (err error) {
 			valueString, err = ite.FormatFirst()
 
 			if err != nil {
-				log.Errorf("metadata: %s (exif)", err.Error())
+				log.Errorf("metadata: %s in %s (exif)", err, logName)
 
 				return nil
 			}
@@ -291,7 +292,7 @@ func (data *Data) Exif(fileName string) (err error) {
 			data.Lng = float32(gi.Longitude.Decimal())
 			data.Altitude = gi.Altitude
 		} else {
-			log.Warnf("metadata: %s (exif gps info)", err)
+			log.Warnf("metadata: %s in %s (exif gps info)", err, logName)
 		}
 	}
 
@@ -324,14 +325,14 @@ func (data *Data) Exif(fileName string) (err error) {
 			data.TakenAt = data.TakenAtLocal
 
 			if loc, err := time.LoadLocation(data.TimeZone); err != nil {
-				log.Warnf("metadata: unknown time zone %s", data.TimeZone)
+				log.Warnf("metadata: unknown time zone %s in %s (exif)", data.TimeZone, logName)
 			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", takenAt, loc); err == nil {
 				data.TakenAt = tl.Round(time.Second).UTC()
 			} else {
-				log.Errorf("metadata: %s", err.Error()) // this should never happen
+				log.Errorf("metadata: %s in %s (exif)", err.Error(), logName) // this should never happen
 			}
 		} else {
-			log.Warnf("metadata: invalid time %s", takenAt)
+			log.Warnf("metadata: invalid time %s in %s (exif)", takenAt, logName)
 		}
 	}
 

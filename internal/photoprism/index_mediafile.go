@@ -70,7 +70,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	fileRoot, fileBase, filePath, fileName := m.PathNameInfo()
 
-	quotedName := txt.Quote(fileName)
+	logName := txt.Quote(fileName)
 	fileSize, fileModified := m.Stat()
 
 	fileHash := ""
@@ -141,7 +141,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		if yamlName := fs.TypeYaml.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
 			if err := photo.LoadFromYaml(yamlName); err != nil {
-				log.Errorf("index: %s (restore from yaml) for %s", err.Error(), quotedName)
+				log.Errorf("index: %s (restore from yaml) for %s", err.Error(), logName)
 			} else {
 				log.Infof("index: restored from %s", txt.Quote(fs.Rel(yamlName, Config().OriginalsPath())))
 			}
@@ -187,7 +187,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	case m.IsJpeg():
 		// Color information
 		if p, err := m.Colors(Config().ThumbPath()); err != nil {
-			log.Errorf("index: %s for %s", err.Error(), quotedName)
+			log.Errorf("index: %s for %s", err.Error(), logName)
 		} else {
 			file.FileMainColor = p.MainColor.Name()
 			file.FileColors = p.Colors.Hex()
@@ -258,13 +258,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Debugf("index: %s has document id %s", quotedName, txt.Quote(metaData.DocumentID))
+				log.Debugf("index: %s has document id %s", logName, txt.Quote(metaData.DocumentID))
 
 				photo.UUID = metaData.DocumentID
 			}
 
 			if metaData.HasInstanceID() && file.UUID == "" {
-				log.Debugf("index: %s has instance id %s", quotedName, txt.Quote(metaData.InstanceID))
+				log.Debugf("index: %s has instance id %s", logName, txt.Quote(metaData.InstanceID))
 
 				file.UUID = metaData.InstanceID
 			}
@@ -315,13 +315,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Debugf("index: %s has document id %s", quotedName, txt.Quote(metaData.DocumentID))
+				log.Debugf("index: %s has document id %s", logName, txt.Quote(metaData.DocumentID))
 
 				photo.UUID = metaData.DocumentID
 			}
 
 			if metaData.HasInstanceID() && file.UUID == "" {
-				log.Debugf("index: %s has instance id %s", quotedName, txt.Quote(metaData.InstanceID))
+				log.Debugf("index: %s has instance id %s", logName, txt.Quote(metaData.InstanceID))
 
 				file.UUID = metaData.InstanceID
 			}
@@ -410,13 +410,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Debugf("index: %s has document id %s", quotedName, txt.Quote(metaData.DocumentID))
+				log.Debugf("index: %s has document id %s", logName, txt.Quote(metaData.DocumentID))
 
 				photo.UUID = metaData.DocumentID
 			}
 
 			if metaData.HasInstanceID() && file.UUID == "" {
-				log.Debugf("index: %s has instance id %s", quotedName, txt.Quote(metaData.InstanceID))
+				log.Debugf("index: %s has instance id %s", logName, txt.Quote(metaData.InstanceID))
 
 				file.UUID = metaData.InstanceID
 			}
@@ -481,7 +481,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if photoExists {
 		if err := entity.UnscopedDb().Save(&photo).Error; err != nil {
-			log.Errorf("index: %s for %s", err.Error(), quotedName)
+			log.Errorf("index: %s for %s", err.Error(), logName)
 			result.Status = IndexFailed
 			result.Error = err
 			return result
@@ -526,7 +526,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		labels := photo.ClassifyLabels()
 
 		if err := photo.UpdateTitle(labels); err != nil {
-			log.Warnf("%s for %s", err.Error(), quotedName)
+			log.Warnf("%s for %s", err.Error(), logName)
 		}
 
 		w := txt.Keywords(photo.Details.Keywords)
@@ -544,26 +544,26 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		photo.Details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
 		if photo.Details.Keywords != "" {
-			log.Debugf("index: set keywords %s for %s", photo.Details.Keywords, quotedName)
+			log.Tracef("index: set keywords %s for %s", photo.Details.Keywords, logName)
 		} else {
-			log.Debugf("index: no keywords for %s", quotedName)
+			log.Tracef("index: no keywords for %s", logName)
 		}
 
 		photo.PhotoQuality = photo.QualityScore()
 
 		if err := entity.UnscopedDb().Save(&photo).Error; err != nil {
-			log.Errorf("index: %s for %s", err, quotedName)
+			log.Errorf("index: %s for %s", err, logName)
 			result.Status = IndexFailed
 			result.Error = err
 			return result
 		}
 
 		if err := photo.SyncKeywordLabels(); err != nil {
-			log.Errorf("index: %s for %s", err, quotedName)
+			log.Errorf("index: %s for %s", err, logName)
 		}
 
 		if err := photo.IndexKeywords(); err != nil {
-			log.Errorf("index: %s for %s", err, quotedName)
+			log.Errorf("index: %s for %s", err, logName)
 		}
 	} else {
 		if photo.PhotoQuality >= 0 {
@@ -571,7 +571,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		if err := entity.UnscopedDb().Unscoped().Save(&photo).Error; err != nil {
-			log.Errorf("index: %s for %s", err, quotedName)
+			log.Errorf("index: %s for %s", err, logName)
 			result.Status = IndexFailed
 			result.Error = err
 			return result
@@ -584,7 +584,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.UpdatedIn = int64(time.Since(start))
 
 		if err := entity.UnscopedDb().Save(&file).Error; err != nil {
-			log.Errorf("index: %s for %s", err, quotedName)
+			log.Errorf("index: %s for %s", err, logName)
 			result.Status = IndexFailed
 			result.Error = err
 			return result
@@ -593,7 +593,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.CreatedIn = int64(time.Since(start))
 
 		if err := entity.UnscopedDb().Create(&file).Error; err != nil {
-			log.Errorf("index: %s for %s", err, quotedName)
+			log.Errorf("index: %s for %s", err, logName)
 			result.Status = IndexFailed
 			result.Error = err
 			return result
@@ -608,7 +608,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if (photo.PhotoType == entity.TypeVideo || photo.PhotoType == entity.TypeLive) && file.FilePrimary {
 		if err := file.UpdateVideoInfos(); err != nil {
-			log.Errorf("index: %s for %s", err, quotedName)
+			log.Errorf("index: %s for %s", err, logName)
 		}
 	}
 
@@ -622,7 +622,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	if err := query.SetDownloadFileID(downloadedAs, file.ID); err != nil {
-		log.Errorf("index: %s for %s", err, quotedName)
+		log.Errorf("index: %s for %s", err, logName)
 	}
 
 	// Write YAML sidecar file (optional).
@@ -630,7 +630,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		yamlFile := photo.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 
 		if err := photo.SaveAsYaml(yamlFile); err != nil {
-			log.Errorf("index: %s (update yaml) for %s", err.Error(), quotedName)
+			log.Errorf("index: %s (update yaml) for %s", err.Error(), logName)
 		} else {
 			log.Infof("index: updated yaml file %s", txt.Quote(fs.Rel(yamlFile, Config().OriginalsPath())))
 		}

@@ -98,7 +98,7 @@ func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 	result = t.bestLabels(output[0].Value().([][]float32)[0])
 
 	if len(result) > 0 {
-		log.Debugf("tensorflow: image classified as %+v", result)
+		log.Tracef("tensorflow: image classified as %+v", result)
 	}
 
 	return result, nil

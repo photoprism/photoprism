@@ -79,9 +79,9 @@ func (m *Moments) Start() (err error) {
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumFolder); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
-					log.Debugf("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				} else {
-					log.Debugf("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}
 			} else if a := entity.NewFolderAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				a.AlbumYear = mom.FolderYear
@@ -105,9 +105,9 @@ func (m *Moments) Start() (err error) {
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumMonth); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
-					log.Debugf("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				} else {
-					log.Debugf("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}
 			} else if a := entity.NewMonthAlbum(mom.Title(), mom.Slug(), mom.Year, mom.Month); a != nil {
 				if err := a.Create(); err != nil {
@@ -133,9 +133,9 @@ func (m *Moments) Start() (err error) {
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumMoment); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
-					log.Debugf("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				} else {
-					log.Debugf("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}
 			} else if a := entity.NewMomentsAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				a.AlbumYear = mom.Year
@@ -164,9 +164,9 @@ func (m *Moments) Start() (err error) {
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumState); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
-					log.Debugf("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				} else {
-					log.Debugf("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}
 			} else if a := entity.NewStateAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				a.AlbumCountry = mom.Country
