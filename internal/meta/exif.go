@@ -61,7 +61,7 @@ func (data *Data) Exif(fileName string) (err error) {
 			if err.Error() == "no exif header" {
 				return fmt.Errorf("metadata: no exif header in %s", txt.Quote(filepath.Base(fileName)))
 			} else {
-				log.Warnf("metadata: %s in %s", err, txt.Quote(filepath.Base(fileName)))
+				log.Warnf("metadata: %s in %s (parse jpeg)", err, txt.Quote(filepath.Base(fileName)))
 			}
 		} else {
 			parsed = true
@@ -81,7 +81,7 @@ func (data *Data) Exif(fileName string) (err error) {
 			if err.Error() == "file does not have EXIF" {
 				return fmt.Errorf("metadata: no exif header in %s", txt.Quote(filepath.Base(fileName)))
 			} else {
-				log.Warnf("metadata: %s in %s", err, txt.Quote(filepath.Base(fileName)))
+				log.Warnf("metadata: %s in %s (parse png)", err, txt.Quote(filepath.Base(fileName)))
 			}
 		} else {
 			parsed = true
@@ -95,7 +95,7 @@ func (data *Data) Exif(fileName string) (err error) {
 		rawExif, err = exif.SearchFileAndExtractExif(fileName)
 
 		if err != nil {
-			return fmt.Errorf("metadata: no exif header in %s", txt.Quote(filepath.Base(fileName)))
+			return fmt.Errorf("metadata: no exif header in %s (search and extract)", txt.Quote(filepath.Base(fileName)))
 		}
 	}
 

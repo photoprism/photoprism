@@ -219,7 +219,7 @@ func TestExif(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "metadata: no exif header in no-exif-data.jpg", err.Error())
+		assert.Equal(t, "metadata: no exif header in no-exif-data.jpg (search and extract)", err.Error())
 	})
 
 	t.Run("screenshot.png", func(t *testing.T) {
@@ -264,6 +264,6 @@ func TestExif(t *testing.T) {
 	t.Run("gopher-preview.jpg", func(t *testing.T) {
 		_, err := Exif("testdata/gopher-preview.jpg")
 
-		assert.EqualError(t, err, "metadata: no exif header in gopher-preview.jpg")
+		assert.EqualError(t, err, "metadata: no exif header in gopher-preview.jpg (search and extract)")
 	})
 }
