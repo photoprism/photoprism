@@ -76,7 +76,7 @@ main {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-#photoprism div.loading {
+#photoprism div.fullscreen {
     position: fixed;
     top: 0;
     left: 0;
