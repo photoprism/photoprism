@@ -2,9 +2,13 @@
   <div class="p-page p-page-errors" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-toolbar flat color="secondary">
-      <v-toolbar-title>
+      <v-toolbar-title v-if="errors.length > 0">
         <translate>Event Log</translate>
       </v-toolbar-title>
+      <v-toolbar-title v-else>
+        <translate>No warnings or errors</translate>
+      </v-toolbar-title>
+
       <v-spacer></v-spacer>
 
       <v-btn icon @click.stop="reload" class="action-reload">
@@ -12,7 +16,7 @@
       </v-btn>
     </v-toolbar>
 
-    <v-list two-line>
+    <v-list two-line v-if="errors.length > 0">
       <v-list-tile
               v-for="(err, index) in errors" :key="index"
               avatar
@@ -28,6 +32,11 @@
         </v-list-tile-content>
       </v-list-tile>
     </v-list>
+    <v-card v-else class="errors-empty secondary-light lighten-1 ma-0 pa-2" flat>
+      <v-card-title primary-title>
+        <translate>When PhotoPrism found broken files or there are other potential issues, you'll see a short message on this page.</translate>
+      </v-card-title>
+    </v-card>
   </div>
 </template>
 
