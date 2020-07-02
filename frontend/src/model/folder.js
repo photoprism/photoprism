@@ -63,11 +63,11 @@ export class Folder extends RestModel {
     }
 
     baseName(truncate) {
-        let result = this.Name;
+        let result = this.Path;
         const slash = result.lastIndexOf("/");
 
         if (slash >= 0) {
-            result = this.Name.substring(slash + 1);
+            result = this.Path.substring(slash + 1);
         }
 
         if(truncate) {
