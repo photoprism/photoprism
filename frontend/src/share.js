@@ -58,6 +58,7 @@ import Hls from "hls.js";
 const viewer = new Viewer();
 const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
 const isPublic = config.get("public");
+const isMobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
 
 // HTTP Live Streaming (video support)
 window.Hls = Hls;
@@ -72,7 +73,7 @@ Vue.prototype.$log = Log;
 Vue.prototype.$socket = Socket;
 Vue.prototype.$config = config;
 Vue.prototype.$clipboard = clipboard;
-Vue.prototype.$isMobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+Vue.prototype.$isMobile = isMobile;
 
 // Register Vuetify
 Vue.use(Vuetify, {"theme": config.theme});
@@ -137,6 +138,13 @@ router.afterEach((to) => {
         window.document.title = config.values.siteTitle;
     }
 });
+
+// Pull client config every 10 minutes in case push fails (except on mobile to save battery).
+if(isMobile) {
+    document.body.classList.add("mobile");
+} else {
+    setInterval(() => config.update(), 600000);
+}
 
 // Run app
 new Vue({

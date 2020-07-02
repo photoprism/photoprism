@@ -6,6 +6,7 @@ body.shared #photoprism .hidden-shared-only {
     display: none !important;
 }
 
+#photoprism .feature-mobile,
 #photoprism .feature-experimental,
 #photoprism .feature-debug,
 #photoprism .feature-public,
@@ -13,6 +14,7 @@ body.shared #photoprism .hidden-shared-only {
     display: none !important;
 }
 
+body.mobile #photoprism .feature-mobile,
 body.experimental #photoprism .feature-experimental,
 body.debug #photoprism .feature-debug,
 body.public #photoprism .feature-public,

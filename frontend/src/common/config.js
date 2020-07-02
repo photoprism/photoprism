@@ -71,17 +71,22 @@ export default class Config {
         } else {
             this.setTheme("default");
         }
+
+
     }
 
     update() {
-        Api.get("config").then((response) => this.setValues(response.data));
+        Api.get("config").then(
+            (response) => this.setValues(response.data),
+            () => console.warn("failed pulling updated client config")
+        );
     }
 
     setValues(values) {
         if (!values) return;
 
         if (this.debug) {
-            console.log("new config values", values);
+            console.log("config: new values", values);
         }
 
         for (let key in values) {
@@ -101,58 +106,58 @@ export default class Config {
         const type = ev.split(".")[1];
 
         switch (type) {
-        case "cameras":
-            this.values.count.cameras += data.count;
-            this.update();
-            break;
-        case "lenses":
-            this.values.count.lenses += data.count;
-            break;
-        case "countries":
-            this.values.count.countries += data.count;
-            this.update();
-            break;
-        case "states":
-            this.values.count.states += data.count;
-            break;
-        case "places":
-            this.values.count.places += data.count;
-            break;
-        case "labels":
-            this.values.count.labels += data.count;
-            break;
-        case "videos":
-            this.values.count.videos += data.count;
-            break;
-        case "albums":
-            this.values.count.albums += data.count;
-            break;
-        case "moments":
-            this.values.count.moments += data.count;
-            break;
-        case "months":
-            this.values.count.months += data.count;
-            break;
-        case "folders":
-            this.values.count.folders += data.count;
-            break;
-        case "files":
-            this.values.count.files += data.count;
-            break;
-        case "favorites":
-            this.values.count.favorites += data.count;
-            break;
-        case "review":
-            this.values.count.review += data.count;
-            break;
-        case "private":
-            this.values.count.private += data.count;
-            break;
-        case "photos":
-            this.values.count.photos += data.count;
-            break;
-        default:
-            console.warn("unknown count type", ev, data);
+            case "cameras":
+                this.values.count.cameras += data.count;
+                this.update();
+                break;
+            case "lenses":
+                this.values.count.lenses += data.count;
+                break;
+            case "countries":
+                this.values.count.countries += data.count;
+                this.update();
+                break;
+            case "states":
+                this.values.count.states += data.count;
+                break;
+            case "places":
+                this.values.count.places += data.count;
+                break;
+            case "labels":
+                this.values.count.labels += data.count;
+                break;
+            case "videos":
+                this.values.count.videos += data.count;
+                break;
+            case "albums":
+                this.values.count.albums += data.count;
+                break;
+            case "moments":
+                this.values.count.moments += data.count;
+                break;
+            case "months":
+                this.values.count.months += data.count;
+                break;
+            case "folders":
+                this.values.count.folders += data.count;
+                break;
+            case "files":
+                this.values.count.files += data.count;
+                break;
+            case "favorites":
+                this.values.count.favorites += data.count;
+                break;
+            case "review":
+                this.values.count.review += data.count;
+                break;
+            case "private":
+                this.values.count.private += data.count;
+                break;
+            case "photos":
+                this.values.count.photos += data.count;
+                break;
+            default:
+                console.warn("unknown count type", ev, data);
         }
 
         this.values.count;
@@ -211,7 +216,7 @@ export default class Config {
     }
 
     albumCategories() {
-        if(this.values["albumCategories"]) {
+        if (this.values["albumCategories"]) {
             return this.values["albumCategories"];
         }
 

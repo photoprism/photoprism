@@ -39,23 +39,22 @@ const url = prot + host + "/api/v1/ws";
 const Socket = new Sockette(url, {
     timeout: 5e3,
     onopen: e => {
+        console.log("websocket: connected");
         config.disconnected = false;
         document.body.classList.remove("disconnected");
-        console.log("websocket: connected", e);
         Event.publish("websocket.connected", e);
     },
     onmessage: e => {
         const m = JSON.parse(e.data);
         Event.publish(m.event, m.data);
     },
-    onreconnect: e => console.log("websocket: reconnecting", e),
-    onmaximum: e => console.warn("websocket: hit max reconnect limit", e),
-    onclose: e => {
+    onreconnect: () => console.log("websocket: reconnecting"),
+    onmaximum: () => console.warn("websocket: hit max reconnect limit"),
+    onclose: () => {
+        console.warn("websocket: disconnected");
         config.disconnected = true;
-        console.log("websocket: closed", e)
         document.body.classList.add("disconnected");
     },
-    onerror: e => console.log("websocket: error", e),
 });
 
 export default Socket;

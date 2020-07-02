@@ -192,7 +192,7 @@ export default class Session {
         try {
             Socket.send(JSON.stringify(clientInfo));
         } catch (e) {
-            console.log("can't send client info, websocket not connected (yet)");
+            console.log("session: can't use websocket, not connected (yet)");
         }
     }
 
