@@ -69,7 +69,6 @@
 
 <script>
     import Settings from "model/settings";
-    import * as options from "resources/options";
     import Account from "model/account";
     import {DateTime} from "luxon";
 
@@ -80,7 +79,6 @@
                 config: this.$config.values,
                 readonly: this.$config.get("readonly"),
                 settings: new Settings(this.$config.values.settings),
-                options: options,
                 model: {},
                 results: [],
                 labels: {},

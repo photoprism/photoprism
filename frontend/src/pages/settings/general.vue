@@ -6,7 +6,7 @@
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title primary-title class="pb-0">
           <h3 class="body-2 mb-0">
-            <translate key="Library">Library</translate>
+            <translate>Library</translate>
           </h3>
         </v-card-title>
 
@@ -19,8 +19,8 @@
                       class="ma-0 pa-0 input-private"
                       v-model="settings.features.private"
                       color="secondary-dark"
-                      :label="labels.private"
-                      :hint="hints.private"
+                      :label="$gettext('Hide Private')"
+                      :hint="$gettext('Exclude photos marked as private from search results, shared albums, labels and places.')"
                       prepend-icon="lock"
                       persistent-hint
               >
@@ -34,8 +34,8 @@
                       class="ma-0 pa-0 input-review"
                       v-model="settings.features.review"
                       color="secondary-dark"
-                      :label="labels.review"
-                      :hint="hints.review"
+                      :label="$gettext('Quality Filter')"
+                      :hint="$gettext('Non-photographic and low-quality images require a review before they appear in search results.')"
                       prepend-icon="remove_red_eye"
                       persistent-hint
               >
@@ -49,8 +49,8 @@
                       class="ma-0 pa-0 input-convert"
                       v-model="settings.index.convert"
                       color="secondary-dark"
-                      :label="labels.convert"
-                      :hint="hints.convert"
+                      :label="$gettext('Convert to JPEG')"
+                      :hint="$gettext('File types like RAW might need to be converted so that they can be displayed in a browser. JPEGs will be stored in the same folder next to the original using the best possible quality.')"
                       prepend-icon="photo_camera"
                       persistent-hint
               >
@@ -64,8 +64,8 @@
                       class="ma-0 pa-0 input-group"
                       v-model="settings.index.group"
                       color="secondary-dark"
-                      :label="labels.group"
-                      :hint="hints.group"
+                      :label="$gettext('Group Sequential')"
+                      :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' or \'IMG_1234 copy 2\' belong to the same photo.')"
                       prepend-icon="photo_library"
                       persistent-hint
               >
@@ -88,8 +88,8 @@
               <v-select
                       @change="onChange"
                       :disabled="busy"
-                      :items="options.Themes"
-                      :label="labels.theme"
+                      :items="options.Themes()"
+                      :label="$gettext('Theme')"
                       color="secondary-dark"
                       background-color="secondary-light"
                       v-model="settings.theme"
@@ -102,8 +102,8 @@
               <v-select
                       @change="onChange"
                       :disabled="busy"
-                      :items="options.Languages"
-                      :label="labels.language"
+                      :items="options.Languages()"
+                      :label="$gettext('Language')"
                       color="secondary-dark"
                       background-color="secondary-light"
                       v-model="settings.language"
@@ -125,8 +125,8 @@
                       class="ma-0 pa-0 input-upload"
                       v-model="settings.features.upload"
                       color="secondary-dark"
-                      :label="labels.upload"
-                      :hint="hints.upload"
+                      :label="$gettext('Upload')"
+                      :hint="$gettext('Add files to your library via Web Upload.')"
                       prepend-icon="cloud_upload"
                       persistent-hint
               >
@@ -140,8 +140,8 @@
                       class="ma-0 pa-0 input-download"
                       v-model="settings.features.download"
                       color="secondary-dark"
-                      :label="labels.download"
-                      :hint="hints.download"
+                      :label="$gettext('Download')"
+                      :hint="$gettext('Download single files and zip archives.')"
                       prepend-icon="get_app"
                       persistent-hint
               >
@@ -155,8 +155,8 @@
                       class="ma-0 pa-0 input-share"
                       v-model="settings.features.share"
                       color="secondary-dark"
-                      :label="labels.share"
-                      :hint="hints.share"
+                      :label="$gettext('Share')"
+                      :hint="$gettext('Upload to WebDAV and other remote services.')"
                       prepend-icon="share"
                       persistent-hint
               >
@@ -170,8 +170,8 @@
                       class="ma-0 pa-0 input-archive"
                       v-model="settings.features.archive"
                       color="secondary-dark"
-                      :label="labels.archive"
-                      :hint="hints.archive"
+                      :label="$gettext('Archive')"
+                      :hint="$gettext('Hide photos that have been moved to archive.')"
                       prepend-icon="archive"
                       persistent-hint
               >
@@ -185,8 +185,8 @@
                       class="ma-0 pa-0 input-edit"
                       v-model="settings.features.edit"
                       color="secondary-dark"
-                      :label="labels.edit"
-                      :hint="hints.edit"
+                      :label="$gettext('Edit')"
+                      :hint="$gettext('Change photo titles, locations and other metadata.')"
                       prepend-icon="edit"
                       persistent-hint
               >
@@ -200,8 +200,8 @@
                       class="ma-0 pa-0 input-files"
                       v-model="settings.features.files"
                       color="secondary-dark"
-                      :label="labels.originals"
-                      :hint="hints.originals"
+                      :label="$gettext('Originals')"
+                      :hint="$gettext('Browse indexed files and folders in Library.')"
                       prepend-icon="insert_drive_file"
                       persistent-hint
               >
@@ -215,8 +215,8 @@
                       class="ma-0 pa-0 input-moments"
                       v-model="settings.features.moments"
                       color="secondary-dark"
-                      :label="labels.moments"
-                      :hint="hints.moments"
+                      :label="$gettext('Moments')"
+                      :hint="$gettext('Let PhotoPrism create albums from past events.')"
                       prepend-icon="star"
                       persistent-hint
               >
@@ -230,8 +230,8 @@
                       class="ma-0 pa-0 input-labels"
                       v-model="settings.features.labels"
                       color="secondary-dark"
-                      :label="labels.labels"
-                      :hint="hints.labels"
+                      :label="$gettext('Labels')"
+                      :hint="$gettext('Browse and edit image classification labels.')"
                       prepend-icon="label"
                       persistent-hint
               >
@@ -245,8 +245,8 @@
                       class="ma-0 pa-0 input-library"
                       v-model="settings.features.library"
                       color="secondary-dark"
-                      :label="labels.library"
-                      :hint="hints.library"
+                      :label="$gettext('Library')"
+                      :hint="$gettext('Show Library in navigation menu.')"
                       prepend-icon="camera_roll"
                       persistent-hint
               >
@@ -260,8 +260,8 @@
                       class="ma-0 pa-0 input-import"
                       v-model="settings.features.import"
                       color="secondary-dark"
-                      :label="labels.import"
-                      :hint="hints.import"
+                      :label="$gettext('Import')"
+                      :hint="$gettext('Imported files will be sorted by date and given a unique name.')"
                       prepend-icon="create_new_folder"
                       persistent-hint
               >
@@ -275,8 +275,8 @@
                       class="ma-0 pa-0 input-logs"
                       v-model="settings.features.logs"
                       color="secondary-dark"
-                      :label="labels.logs"
-                      :hint="hints.logs"
+                      :label="$gettext('Logs')"
+                      :hint="$gettext('Show server logs in Library.')"
                       prepend-icon="notes"
                       persistent-hint
               >
@@ -290,8 +290,8 @@
                       class="ma-0 pa-0 input-places"
                       v-model="settings.features.places"
                       color="secondary-dark"
-                      :label="labels.places"
-                      :hint="hints.places"
+                      :label="$gettext('Places')"
+                      :hint="$gettext('Search and display photos on a map.')"
                       prepend-icon="place"
                       persistent-hint
               >
@@ -314,8 +314,8 @@
               <v-select
                       @change="onChange"
                       :disabled="busy"
-                      :items="options.MapsStyle"
-                      :label="labels.mapsStyle"
+                      :items="options.MapsStyle()"
+                      :label="$gettext('Style')"
                       color="secondary-dark"
                       background-color="secondary-light"
                       v-model="settings.maps.style"
@@ -328,8 +328,8 @@
               <v-select
                       @change="onChange"
                       :disabled="busy"
-                      :items="options.MapsAnimate"
-                      :label="labels.mapsAnimate"
+                      :items="options.MapsAnimate()"
+                      :label="$gettext('Animation')"
                       color="secondary-dark"
                       background-color="secondary-light"
                       v-model="settings.maps.animate"
@@ -370,8 +370,6 @@
 <script>
     import Settings from "model/settings";
     import * as options from "resources/options";
-    import labels from "resources/labels";
-    import hints from "resources/hints";
 
     export default {
         name: 'p-settings-general',
@@ -381,8 +379,6 @@
                 experimental: this.$config.get("experimental"),
                 settings: new Settings(this.$config.settings()),
                 options: options,
-                labels: labels,
-                hints: hints,
                 busy: false,
             };
         },

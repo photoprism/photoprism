@@ -12,7 +12,7 @@
                     color="secondary-dark"
                     :true-value="true"
                     :false-value="false"
-                    :label="model.AccShare ? labels.enabled : labels.disabled"
+                    :label="model.AccShare ? $gettext('Enabled') : $gettext('Disabled')"
                     :disabled="model.AccType !== 'webdav'"
                     class="ma-0 hidden-xs-only"
                     hide-details
@@ -38,7 +38,7 @@
                     color="secondary-dark"
                     :true-value="true"
                     :false-value="false"
-                    :label="model.AccSync ? labels.enabled : labels.disabled"
+                    :label="model.AccSync ? $gettext('Enabled') : $gettext('Disabled')"
                     :disabled="model.AccType !== 'webdav'"
                     class="mt-0 hidden-xs-only"
                     hide-details
@@ -82,7 +82,7 @@
                     :loading="loading"
                     item-text="abs"
                     item-value="abs"
-                    :label="labels.SharePath"
+                    :label="$gettext('Default Folder')"
                     :disabled="!model.AccShare || loading"
             >
             </v-autocomplete>
@@ -90,7 +90,7 @@
           <v-flex xs12 sm6 class="pa-2 input-share-size">
             <v-select
                     :disabled="!model.AccShare"
-                    :label="labels.ShareSize"
+                    :label="$gettext('Size')"
                     browser-autocomplete="off"
                     hide-details
                     color="secondary-dark"
@@ -103,13 +103,13 @@
           <v-flex xs12 sm6 class="pa-2">
             <v-select
                     :disabled="!model.AccShare"
-                    :label="labels.Expires"
+                    :label="$gettext('Expires')"
                     browser-autocomplete="off"
                     hide-details
                     color="secondary-dark"
                     item-text="text"
                     item-value="value"
-                    v-model="model.Expires"
+                    v-model="model.ShareExpires"
                     :items="items.expires">
             </v-select>
           </v-flex>
@@ -121,13 +121,13 @@
                     hide-details hide-no-data flat
                     v-model="model.SyncPath"
                     browser-autocomplete="off"
-                    hint="Folder"
+                    :hint="$gettext('Folder')"
                     :search-input.sync="search"
                     :items="pathItems"
                     :loading="loading"
                     item-text="abs"
                     item-value="abs"
-                    :label="labels.SyncPath"
+                    :label="$gettext('Folder')"
                     :disabled="!model.AccSync || loading"
             >
             </v-autocomplete>
@@ -135,7 +135,7 @@
           <v-flex xs12 sm6 class="pa-2">
             <v-select
                     :disabled="!model.AccSync"
-                    :label="labels.SyncInterval"
+                    :label="$gettext('Interval')"
                     browser-autocomplete="off"
                     hide-details
                     color="secondary-dark"
@@ -150,7 +150,7 @@
                     :disabled="!model.AccSync || readonly"
                     hide-details
                     color="secondary-dark"
-                    :label="labels.SyncDownload"
+                    :label="$gettext('Download remote files')"
                     v-model="model.SyncDownload"
             ></v-checkbox>
           </v-flex>
@@ -159,7 +159,7 @@
                     :disabled="!model.AccSync"
                     hide-details
                     color="secondary-dark"
-                    :label="labels.SyncFilenames"
+                    :label="$gettext('Preserve filenames')"
                     v-model="model.SyncFilenames"
             ></v-checkbox>
           </v-flex>
@@ -168,7 +168,7 @@
                     :disabled="!model.AccSync"
                     hide-details
                     color="secondary-dark"
-                    :label="labels.SyncUpload"
+                    :label="$gettext('Upload local files')"
                     v-model="model.SyncUpload"
             ></v-checkbox>
           </v-flex>
@@ -177,7 +177,7 @@
                     :disabled="!model.AccSync"
                     hide-details
                     color="secondary-dark"
-                    :label="labels.SyncRaw"
+                    :label="$gettext('Sync raw images')"
                     v-model="model.SyncRaw"
             ></v-checkbox>
           </v-flex>
@@ -187,7 +187,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="labels.name"
+                    :label="$gettext('Name')"
                     placeholder=""
                     color="secondary-dark"
                     v-model="model.AccName"
@@ -198,7 +198,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="labels.url"
+                    :label="$gettext('Service URL')"
                     placeholder="https://www.example.com/"
                     color="secondary-dark"
                     v-model="model.AccURL"
@@ -208,7 +208,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="labels.user"
+                    :label="$gettext('Username')"
                     placeholder="optional"
                     color="secondary-dark"
                     v-model="model.AccUser"
@@ -218,7 +218,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="labels.pass"
+                    :label="$gettext('Password')"
                     placeholder="optional"
                     color="secondary-dark"
                     v-model="model.AccPass"
@@ -231,7 +231,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="labels.apiKey"
+                    :label="$gettext('API Key')"
                     placeholder="optional"
                     color="secondary-dark"
                     v-model="model.AccKey"
@@ -240,7 +240,7 @@
           </v-flex>
           <v-flex xs12 sm6 pa-2 class="input-account-type">
             <v-select
-                    :label="labels.AccType"
+                    :label="$gettext('Type')"
                     browser-autocomplete="off"
                     hide-details
                     color="secondary-dark"
@@ -255,11 +255,11 @@
           <v-flex xs12 text-xs-right class="pt-3 pb-0">
             <v-btn @click.stop="cancel" depressed color="secondary-light"
                    class="action-cancel">
-              <span>{{ labels.cancel }}</span>
+              <translate>Cancel</translate>
             </v-btn>
             <v-btn depressed dark color="secondary-dark" @click.stop="save"
                    class="action-save">
-              <span>{{ labels.save }}</span>
+              <translate>Save</translate>
             </v-btn>
           </v-flex>
         </v-layout>
@@ -269,7 +269,6 @@
 </template>
 <script>
     import * as options from "resources/options";
-    import labels from "resources/labels";
 
     export default {
         name: 'p-account-edit-dialog',
@@ -284,8 +283,6 @@
             thumbs.sort((a, b) => a.Width - b.Width);
 
             return {
-                options: options,
-                labels: labels,
                 showPassword: false,
                 loading: false,
                 search: null,
@@ -312,25 +309,8 @@
                         {"value": "gdrive", "text": "Google Drive"},
                         {"value": "onedrive", "text": "Microsoft OneDrive"},
                     ],
-                    intervals: [
-                        {"value": 0, "text": "Never"},
-                        {"value": 3600, "text": "1 hour"},
-                        {"value": 3600 * 4, "text": "4 hours"},
-                        {"value": 3600 * 12, "text": "12 hours"},
-                        {"value": 86400, "text": "Daily"},
-                        {"value": 86400 * 2, "text": "Every two days"},
-                        {"value": 86400 * 7, "text": "Once a week"},
-                    ],
-                    expires: [
-                        {"value": 0, "text": "Never"},
-                        {"value": 86400, "text": "After 1 day"},
-                        {"value": 86400 * 3, "text": "After 3 days"},
-                        {"value": 86400 * 7, "text": "After 7 days"},
-                        {"value": 86400 * 14, "text": "After two weeks"},
-                        {"value": 86400 * 31, "text": "After one month"},
-                        {"value": 86400 * 60, "text": "After two months"},
-                        {"value": 86400 * 365, "text": "After one year"},
-                    ],
+                    intervals: options.Intervals(),
+                    expires: options.Expires(),
                 },
                 readonly: this.$config.get("readonly"),
             }
@@ -373,10 +353,9 @@
                     {"text": this.$gettext("Original"), "value": ""}
                 ];
 
-                for (let i in thumbs) {
-                    const s = thumbs[i];
+                thumbs.forEach((s) => {
                     result.push({"text": s["Width"] + 'x' + s["Height"], "value": s["Name"]});
-                }
+                })
 
                 return result;
             },

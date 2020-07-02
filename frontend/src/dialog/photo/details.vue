@@ -129,7 +129,7 @@
                         item-value="ID"
                         item-text="Name"
                         v-model="model.TimeZone"
-                        :items="options.TimeZones"
+                        :items="options.TimeZones()"
                         class="input-timezone">
                 </v-autocomplete>
               </v-flex>
