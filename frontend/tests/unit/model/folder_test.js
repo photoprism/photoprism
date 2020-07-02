@@ -8,10 +8,12 @@ let assert = chai.assert;
 const mock = new MockAdapter(Api);
 
 mock
-    .onGet("folders/2011/10-Halloween", {"params": {"recursive": true, "uncached": true}}, {"x-count": "12", "x-limit": "100", "x-offset": "0"}).reply(200, {folders: [1, 2], files: [1]});
+    .onGet("folders/2011/10-Halloween", {"params": {"recursive": true, "uncached": true}}).reply(200, {folders: [1, 2], files: [1]}, {"x-count": "3", "x-limit": "100", "x-offset": "0"})
+    .onGet("folders/2011/10-Halloween", {"params": {"recursive": true}}).reply(200, {folders: [1, 2, 3], files: [1]})
+    .onGet("folders/originals/2011/10-Halloween", {"params": {"recursive": true}}).reply(200, {folders: [1, 2, 3], files: [1]});
 
 
-describe.only("model/folder", () => {
+describe("model/folder", () => {
 
     it("should get folder defaults",  () => {
         const values = {
@@ -180,10 +182,56 @@ describe.only("model/folder", () => {
         assert.equal(result, "Folder");
     });
 
+    it("should test find all",  (done) => {
+        Folder.findAll("2011/10-Halloween").then(
+            (response) => {
+                assert.equal(response.status, 200);
+                assert.equal(response.count, 4);
+                assert.equal(response.folders, 3);
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
+    });
+
+    it("should test find all uncached",  (done) => {
+        Folder.findAllUncached("2011/10-Halloween").then(
+            (response) => {
+                assert.equal(response.status, 200);
+                assert.equal(response.count, 3);
+                assert.equal(response.folders, 2);
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
+    });
+
+    it("should test find in originals",  (done) => {
+        Folder.originals("2011/10-Halloween", {recursive: true}).then(
+            (response) => {
+                assert.equal(response.status, 200);
+                assert.equal(response.count, 4);
+                assert.equal(response.folders, 3);
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
+    });
+
+
+
     it("should test search",  (done) => {
         Folder.search("2011/10-Halloween",{recursive: true, uncached: true}).then(
             (response) => {
-                console.log(response);
                 assert.equal(response.status, 200);
                 assert.equal(response.count, 3);
                 assert.equal(response.folders, 2);
