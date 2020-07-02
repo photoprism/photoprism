@@ -98,13 +98,11 @@ describe("model/link", () => {
         );
     });*/
 
-    //TODO why is it invalid
     it("should test expire",  () => {
-        const values = {UID: 5, Token: "AcfgbTTh", Slug: "friends", Share: "family", Expires: 8000, UpdatedAt: "2012-07-08T14:45:39Z"};
+        const values = {UID: 5, Token: "AcfgbTTh", Slug: "friends", Share: "family", Expires: 80000, UpdatedAt: "2012-07-08T14:45:39Z"};
         const link = new Link(values);
         const result = link.expires();
-        console.log(result);
-        assert.equal(result, "Invalid DateTime");
+        assert.equal(result, "7/9/2012");
     });
 
     it("should get collection resource",  () => {
