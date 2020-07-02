@@ -1,6 +1,6 @@
 import Form, { FormPropertyType } from 'common/form';
 
-let chai = require('../../../node_modules/chai/chai');
+let chai = require("chai/chai");
 let assert = chai.assert;
 
 describe('common/form', () => {

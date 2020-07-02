@@ -149,7 +149,7 @@ window.__CONFIG__ = {
     }
 };
 
-let chai = require('../../../node_modules/chai/chai');
+let chai = require("chai/chai");
 let assert = chai.assert;
 
 const config2 = new Config(window.localStorage, window.__CONFIG__);

@@ -1,9 +1,8 @@
 import Link from "model/link";
-import Photo from "model/photo";
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
 
-let chai = require('../../../node_modules/chai/chai');
+let chai = require("chai/chai");
 let assert = chai.assert;
 
 const mock = new MockAdapter(Api);
@@ -83,7 +82,7 @@ describe("model/link", () => {
     });
 
     //TODO
-    /*it("should remove link",  (done) => {
+    /*it.only("should remove link",  (done) => {
         const values = {UID: 5, Token: "AcfgbTTh", Slug: "friends", Share: "family"};
         const link = new Link(values);
         link.remove().then(

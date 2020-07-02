@@ -1,7 +1,7 @@
 import Notify from "common/notify";
 let sinon = require("sinon");
 
-let chai = require('../../../node_modules/chai/chai');
+let chai = require("chai/chai");
 let assert = chai.assert;
 
 describe("common/alert", () => {

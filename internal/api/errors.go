@@ -33,7 +33,7 @@ var (
 )
 
 func GetErrors(router *gin.RouterGroup) {
-	router.GET("/errors",  func(c *gin.Context) {
+	router.GET("/errors", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceLogs, acl.ActionSearch)
 
 		if s.Invalid() {
