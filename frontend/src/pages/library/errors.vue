@@ -16,7 +16,7 @@
       </v-btn>
     </v-toolbar>
 
-    <v-list two-line v-if="errors.length > 0">
+    <v-list dense two-line v-if="errors.length > 0">
       <v-list-tile
               v-for="(err, index) in errors" :key="index"
               avatar
