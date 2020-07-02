@@ -158,9 +158,7 @@
                     <translate>Contains one photo.</translate>
                   </div>
                   <div v-else-if="album.PhotoCount > 0" class="caption">
-                    <translate>Contains</translate>
-                    {{album.PhotoCount}}
-                    <translate>photos.</translate>
+                    <translate :translate-params="{count: album.PhotoCount}">Contains %{count} photos.</translate>
                   </div>
                   <button v-else @click.stop.prevent="$router.push({name: 'photos'})" class="caption">
                     <translate>Add photos from search results by selecting them.</translate>

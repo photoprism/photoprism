@@ -32,6 +32,7 @@ import Api from "common/api";
 import Form from "common/form";
 import Model from "./model";
 import Link from "./link";
+import {$gettext} from "common/vm";
 
 export class Rest extends Model {
     getId() {
@@ -147,7 +148,7 @@ export class Rest extends Model {
     }
 
     static getModelName() {
-        return "Item";
+        return $gettext("Item");
     }
 
     static getSearchForm() {

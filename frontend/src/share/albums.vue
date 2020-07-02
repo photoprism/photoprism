@@ -16,22 +16,18 @@
           <v-card-title primary-title>
             <div v-if="staticFilter.type === 'moment'">
               <h3 class="title mb-3">
-                <translate key=">No moments">No moments matched your search</translate>
+                <translate>No moments matched your search</translate>
               </h3>
               <div>
-                <translate key=">Wait until">Wait until PhotoPrism has analyzed your library or try
-                  again using a different term.
-                </translate>
+                <translate>Wait until a moment was shared with you or try again using a different term.</translate>
               </div>
             </div>
             <div v-else>
               <h3 class="title mb-3">
-                <translate key=">No albums">No albums matched your search</translate>
+                <translate>No albums matched your search</translate>
               </h3>
               <div>
-                <translate key="Try again">Try again using a different term or create a new album from a
-                  selection in Photos.
-                </translate>
+                <translate>Wait until an album was shared with you or try again using a different term.</translate>
               </div>
             </div>
           </v-card-title>

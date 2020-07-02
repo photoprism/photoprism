@@ -30,6 +30,7 @@ https://docs.photoprism.org/developer-guide/
 
 import RestModel from "model/rest";
 import Api from "common/api";
+import {$gettext} from "common/vm";
 
 export class Account extends RestModel {
     getDefaults() {
@@ -87,7 +88,7 @@ export class Account extends RestModel {
     }
 
     static getModelName() {
-        return "Account";
+        return $gettext("Account");
     }
 }
 

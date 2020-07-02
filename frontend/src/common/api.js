@@ -30,6 +30,7 @@ https://docs.photoprism.org/developer-guide/
 
 import Axios from "axios";
 import Notify from "common/notify";
+import {$gettext} from "./vm";
 
 const testConfig = {"jsHash":"48019917", "cssHash":"2b327230", "version": "test"};
 const config = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
@@ -56,7 +57,7 @@ Api.interceptors.response.use(function (response) {
     Notify.ajaxEnd();
 
     if(typeof response.data == "string") {
-        Notify.error("Request failed - invalid response");
+        Notify.error($gettext("Request failed - invalid response"));
         console.warn("WARNING: Server returned HTML instead of JSON - API not implemented?");
     }
 
@@ -72,7 +73,7 @@ Api.interceptors.response.use(function (response) {
         console.log(error);
     }
 
-    let errorMessage = "An error occurred - are you offline?";
+    let errorMessage = $gettext("An error occurred - are you offline?");
     let code = error.code;
 
     if(error.response && error.response.data) {

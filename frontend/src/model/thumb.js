@@ -31,6 +31,7 @@ https://docs.photoprism.org/developer-guide/
 import Model from "./model";
 import Api from "common/api";
 import {config} from "../session";
+import {$gettext} from "common/vm";
 
 const thumbs = window.__CONFIG__.thumbnails;
 
@@ -62,7 +63,7 @@ export class Thumb extends Model {
     static thumbNotFound() {
         const result = {
             uid: "",
-            title: "Not Found",
+            title: $gettext("Not Found"),
             taken: "",
             description: "",
             favorite: false,

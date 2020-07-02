@@ -29,6 +29,7 @@ https://docs.photoprism.org/developer-guide/
 */
 
 import Event from "pubsub-js";
+import {$gettext} from "./vm";
 
 const Notify = {
     info: function (message) {
@@ -68,7 +69,7 @@ const Notify = {
         }
     },
     wait: function () {
-        this.warn("Busy, please wait...");
+        this.warn($gettext("Busy, please wait..."));
     },
 };
 

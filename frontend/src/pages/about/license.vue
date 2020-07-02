@@ -2,7 +2,7 @@
   <div class="p-page p-page-license">
     <v-toolbar flat color="secondary">
       <v-toolbar-title>
-        License
+        <translate>License</translate>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>

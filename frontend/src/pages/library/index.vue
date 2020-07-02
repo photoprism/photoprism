@@ -75,9 +75,8 @@
                 outline
                 v-if="config.count.hidden > 1"
         >
-          The index currently contains {{ config.count.hidden }} hidden files. Their format may not be
-          supported,
-          they haven't been converted to JPEG yet or there are duplicates.
+          <translate :translate-params="{count: config.count.hidden}">The index currently contains %{count} hidden files.</translate>
+          <translate>Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates.</translate>
         </v-alert>
       </v-container>
     </v-form>
@@ -91,7 +90,7 @@
     import Event from "pubsub-js";
     import Settings from "model/settings";
     import Util from "common/util";
-    import { Folder, RootOriginals } from "model/folder";
+    import {Folder, RootOriginals} from "model/folder";
 
     export default {
         name: 'p-tab-index',

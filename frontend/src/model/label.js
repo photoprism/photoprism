@@ -32,6 +32,7 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
 import {config} from "../session";
+import {$gettext} from "common/vm";
 
 export class Label extends RestModel {
     getDefaults() {
@@ -117,7 +118,7 @@ export class Label extends RestModel {
     }
 
     static getModelName() {
-        return "Label";
+        return $gettext("Label");
     }
 }
 

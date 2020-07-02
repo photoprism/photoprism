@@ -33,6 +33,7 @@ import Api from "common/api";
 import {DateTime} from "luxon";
 import Util from "common/util";
 import {config} from "../session";
+import {$gettext} from "common/vm";
 
 export class File extends RestModel {
     getDefaults() {
@@ -192,9 +193,9 @@ export class File extends RestModel {
 
     typeInfo() {
         if (this.Video) {
-            return "Video";
+            return $gettext("Video");
         } else if (this.Sidecar) {
-            return "Sidecar";
+            return $gettext("Sidecar");
         }
 
         return this.Type.toUpperCase();
@@ -253,7 +254,7 @@ export class File extends RestModel {
     }
 
     static getModelName() {
-        return "File";
+        return $gettext("File");
     }
 }
 

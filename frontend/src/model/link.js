@@ -31,6 +31,7 @@ https://docs.photoprism.org/developer-guide/
 import Model from "./model";
 import Api from "common/api";
 import {DateTime} from "luxon";
+import {$gettext} from "common/vm";
 
 export default class Link extends Model {
     getDefaults() {
@@ -118,6 +119,6 @@ export default class Link extends Model {
     }
 
     static getModelName() {
-        return "Link";
+        return $gettext("Link");
     }
 }

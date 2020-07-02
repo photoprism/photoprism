@@ -31,6 +31,7 @@ https://docs.photoprism.org/developer-guide/
 import RestModel from "model/rest";
 import Form from "common/form";
 import Api from "common/api";
+import {$gettext} from "common/vm";
 
 export class User extends RestModel {
     getDefaults() {
@@ -94,7 +95,7 @@ export class User extends RestModel {
     }
 
     static getModelName() {
-        return "User";
+        return $gettext("User");
     }
 }
 

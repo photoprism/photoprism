@@ -47,8 +47,7 @@
           </v-flex>
           <v-flex xs12 class="px-2 pb-2 pt-2">
             <p class="body-1 pt-2">
-              <translate>Imported files will be sorted by date
-                and given a unique name to avoid duplicates.</translate>
+              <translate>Imported files will be sorted by date and given a unique name to avoid duplicates.</translate>
               <translate>JPEGs and thumbnails are automatically rendered as needed.</translate>
               <translate>Original file names will be stored and indexed.</translate>
               <translate>Note that you can as well manage and re-index your originals manually.</translate>

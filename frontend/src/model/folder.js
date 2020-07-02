@@ -33,6 +33,7 @@ import Api from "common/api";
 import {DateTime} from "luxon";
 import File from "model/file";
 import Util from "common/util";
+import {$gettext} from "common/vm";
 
 export const RootImport = "import";
 export const RootOriginals = "originals";
@@ -183,7 +184,7 @@ export class Folder extends RestModel {
     }
 
     static getModelName() {
-        return "Folder";
+        return $gettext("Folder");
     }
 }
 

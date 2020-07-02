@@ -32,6 +32,7 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import {DateTime} from "luxon";
 import {config} from "../session";
+import {$gettext} from "common/vm";
 
 export class Album extends RestModel {
     getDefaults() {
@@ -127,7 +128,7 @@ export class Album extends RestModel {
     }
 
     static getModelName() {
-        return "Album";
+        return $gettext("Album");
     }
 }
 

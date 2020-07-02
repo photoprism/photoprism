@@ -35,6 +35,7 @@ import {DateTime} from "luxon";
 import Util from "common/util";
 import {config} from "../session";
 import countries from "resources/countries.json";
+import {$gettext} from "common/vm";
 
 export const SrcManual = "manual";
 export const CodecAvc1 = "avc1";
@@ -345,7 +346,7 @@ export class Photo extends RestModel {
 
     getDateString() {
         if (!this.TakenAt || this.Year === YearUnknown) {
-            return "Unknown";
+            return $gettext("Unknown");
         }
 
         if (this.TimeZone) {
@@ -357,7 +358,7 @@ export class Photo extends RestModel {
 
     shortDateString() {
         if (!this.TakenAt || this.Year === YearUnknown) {
-            return "Unknown";
+            return $gettext("Unknown");
         }
 
 
@@ -381,7 +382,7 @@ export class Photo extends RestModel {
             }
         }
 
-        return "Unknown";
+        return $gettext("Unknown");
     }
 
     locationInfo() {
@@ -393,7 +394,7 @@ export class Photo extends RestModel {
             }
         }
 
-        return this.LocLabel ? this.LocLabel : "Unknown";
+        return this.LocLabel ? this.LocLabel : $gettext("Unknown");
     }
 
     addSizeInfo(file, info) {
@@ -430,7 +431,7 @@ export class Photo extends RestModel {
         }
 
         if (!file) {
-            return "Video";
+            return $gettext("Video");
         }
 
         if (file.Duration > 0) {
@@ -444,7 +445,7 @@ export class Photo extends RestModel {
         this.addSizeInfo(file, info);
 
         if (!info.length) {
-            return "Video";
+            return $gettext("Video");
         }
 
         return info.join(", ");
@@ -470,7 +471,7 @@ export class Photo extends RestModel {
         this.addSizeInfo(file, info);
 
         if (!info.length) {
-            return "Unknown";
+            return $gettext("Unknown");
         }
 
         return info.join(", ");
@@ -483,7 +484,7 @@ export class Photo extends RestModel {
             return this.CameraMake + " " + this.CameraModel;
         }
 
-        return "Unknown";
+        return $gettext("Unknown");
     }
 
     archive() {
@@ -579,7 +580,7 @@ export class Photo extends RestModel {
     }
 
     static getModelName() {
-        return "Photo";
+        return $gettext("Photo");
     }
 
     static mergeResponse(results, response) {

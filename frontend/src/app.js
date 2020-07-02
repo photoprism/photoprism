@@ -53,6 +53,7 @@ import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
 import VueModal from "vue-js-modal";
 import Hls from "hls.js";
+import {Mount} from "common/vm";
 
 // Initialize helpers
 const viewer = new Viewer();
@@ -92,7 +93,7 @@ Vue.use(GetTextPlugin, {
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);
-Vue.use(VueModal, { dynamic: true, dynamicDefaults: { clickToClose: true } });
+Vue.use(VueModal, {dynamic: true, dynamicDefaults: {clickToClose: true}});
 Vue.use(VueFilters);
 Vue.use(Components);
 Vue.use(Dialogs);
@@ -140,14 +141,11 @@ router.afterEach((to) => {
 });
 
 // Pull client config every 10 minutes in case push fails (except on mobile to save battery).
-if(isMobile) {
+if (isMobile) {
     document.body.classList.add("mobile");
 } else {
     setInterval(() => config.update(), 600000);
 }
 
-// Run app
-new Vue({
-    router,
-    render: h => h(PhotoPrism),
-}).$mount("#photoprism");
+// Start application.
+Mount(Vue, PhotoPrism, router);

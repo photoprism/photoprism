@@ -24,7 +24,7 @@
                 src="/static/img/badge-twitter.svg" alt="Twitter" style="max-width:100%;"></a>
       </p>
 
-      <h2 class="py-2 subheading">Who we are</h2>
+      <h2 class="py-2 subheading"><translate>Who we are</translate></h2>
 
       <h3 class="py-2 body-2">Andrea Ceroni</h3>
       <p class="body-1">Andrea is a data scientist specialized in temporal information retrieval and machine
@@ -71,10 +71,10 @@
         contributed</a> to this project!</p>
 
 
-      <h2 class="py-2 subheading">Trademarks</h2>
-      <p class="body-1">PhotoPrism™ is a registered trademark of Michael Mayer. You may use it as required to
+      <h2 class="py-2 subheading"><translate>Trademarks</translate></h2>
+      <p class="body-1"><translate>PhotoPrism™ is a registered trademark of Michael Mayer. You may use it as required to
         describe our software, run your own server, for educational purposes, but not for offering commercial
-        goods, products, or services without prior written permission. In other words, please ask.</p>
+        goods, products, or services without prior written permission. In other words, please ask.</translate></p>
     </v-container>
   </div>
 </template>
