@@ -96,7 +96,7 @@ export class Thumb extends Model {
 
     static fromPhoto(photo) {
         if (photo.Files) {
-            return this.fromFile(photo, photo.Files.find(f => !!f.Primary));
+            return this.fromFile(photo, photo.mainFile());
         }
 
         if (!photo || !photo.Hash) {
