@@ -167,7 +167,7 @@
                     this.viewerResults().then((results) => {
                         const thumbsIndex = results.findIndex(result => result.UID === selected.UID);
 
-                        if(thumbsIndex < 0) {
+                        if (thumbsIndex < 0) {
                             this.$viewer.show(Thumb.fromPhotos(this.results), index);
                         } else {
                             this.$viewer.show(Thumb.fromPhotos(results), thumbsIndex);
@@ -252,7 +252,7 @@
                         this.offset = offset;
 
                         if (this.results.length > 1) {
-                            this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' entries loaded'));
+                            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} entries loaded"), {n: this.results.length}));
                         }
                     } else if (this.results.length >= Photo.limit()) {
                         this.offset = offset;
@@ -270,7 +270,7 @@
                     this.loading = false;
                     this.listen = true;
 
-                    if(offset === 0) {
+                    if (offset === 0) {
                         this.viewerResults();
                     }
                 });

@@ -8,7 +8,7 @@
             class="elevation-0 p-accounts p-accounts-list p-results"
             item-key="ID"
             v-model="selected"
-            :no-data-text="this.$gettext('No remote services configured.')"
+            :no-data-text="$gettext('No remote services configured.')"
     >
       <template slot="items" slot-scope="props" class="p-account">
         <td>
@@ -69,7 +69,7 @@
 
 <script>
     import Settings from "model/settings";
-    import options from "resources/options.json";
+    import * as options from "resources/options";
     import Account from "model/account";
     import {DateTime} from "luxon";
 

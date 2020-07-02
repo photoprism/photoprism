@@ -12,7 +12,7 @@
                     color="secondary-dark"
                     :true-value="true"
                     :false-value="false"
-                    :label="model.AccShare ? label.enabled : label.disabled"
+                    :label="model.AccShare ? labels.enabled : labels.disabled"
                     :disabled="model.AccType !== 'webdav'"
                     class="ma-0 hidden-xs-only"
                     hide-details
@@ -38,7 +38,7 @@
                     color="secondary-dark"
                     :true-value="true"
                     :false-value="false"
-                    :label="model.AccSync ? label.enabled : label.disabled"
+                    :label="model.AccSync ? labels.enabled : labels.disabled"
                     :disabled="model.AccType !== 'webdav'"
                     class="mt-0 hidden-xs-only"
                     hide-details
@@ -82,7 +82,7 @@
                     :loading="loading"
                     item-text="abs"
                     item-value="abs"
-                    :label="label.SharePath"
+                    :label="labels.SharePath"
                     :disabled="!model.AccShare || loading"
             >
             </v-autocomplete>
@@ -90,7 +90,7 @@
           <v-flex xs12 sm6 class="pa-2 input-share-size">
             <v-select
                     :disabled="!model.AccShare"
-                    :label="label.ShareSize"
+                    :label="labels.ShareSize"
                     browser-autocomplete="off"
                     hide-details
                     color="secondary-dark"
@@ -103,7 +103,7 @@
           <v-flex xs12 sm6 class="pa-2">
             <v-select
                     :disabled="!model.AccShare"
-                    :label="label.Expires"
+                    :label="labels.Expires"
                     browser-autocomplete="off"
                     hide-details
                     color="secondary-dark"
@@ -127,7 +127,7 @@
                     :loading="loading"
                     item-text="abs"
                     item-value="abs"
-                    :label="label.SyncPath"
+                    :label="labels.SyncPath"
                     :disabled="!model.AccSync || loading"
             >
             </v-autocomplete>
@@ -135,7 +135,7 @@
           <v-flex xs12 sm6 class="pa-2">
             <v-select
                     :disabled="!model.AccSync"
-                    :label="label.SyncInterval"
+                    :label="labels.SyncInterval"
                     browser-autocomplete="off"
                     hide-details
                     color="secondary-dark"
@@ -150,7 +150,7 @@
                     :disabled="!model.AccSync || readonly"
                     hide-details
                     color="secondary-dark"
-                    :label="label.SyncDownload"
+                    :label="labels.SyncDownload"
                     v-model="model.SyncDownload"
             ></v-checkbox>
           </v-flex>
@@ -159,7 +159,7 @@
                     :disabled="!model.AccSync"
                     hide-details
                     color="secondary-dark"
-                    :label="label.SyncFilenames"
+                    :label="labels.SyncFilenames"
                     v-model="model.SyncFilenames"
             ></v-checkbox>
           </v-flex>
@@ -168,7 +168,7 @@
                     :disabled="!model.AccSync"
                     hide-details
                     color="secondary-dark"
-                    :label="label.SyncUpload"
+                    :label="labels.SyncUpload"
                     v-model="model.SyncUpload"
             ></v-checkbox>
           </v-flex>
@@ -177,7 +177,7 @@
                     :disabled="!model.AccSync"
                     hide-details
                     color="secondary-dark"
-                    :label="label.SyncRaw"
+                    :label="labels.SyncRaw"
                     v-model="model.SyncRaw"
             ></v-checkbox>
           </v-flex>
@@ -187,7 +187,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="label.name"
+                    :label="labels.name"
                     placeholder=""
                     color="secondary-dark"
                     v-model="model.AccName"
@@ -198,7 +198,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="label.url"
+                    :label="labels.url"
                     placeholder="https://www.example.com/"
                     color="secondary-dark"
                     v-model="model.AccURL"
@@ -208,7 +208,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="label.user"
+                    :label="labels.user"
                     placeholder="optional"
                     color="secondary-dark"
                     v-model="model.AccUser"
@@ -218,7 +218,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="label.pass"
+                    :label="labels.pass"
                     placeholder="optional"
                     color="secondary-dark"
                     v-model="model.AccPass"
@@ -231,7 +231,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="label.apiKey"
+                    :label="labels.apiKey"
                     placeholder="optional"
                     color="secondary-dark"
                     v-model="model.AccKey"
@@ -240,7 +240,7 @@
           </v-flex>
           <v-flex xs12 sm6 pa-2 class="input-account-type">
             <v-select
-                    :label="label.AccType"
+                    :label="labels.AccType"
                     browser-autocomplete="off"
                     hide-details
                     color="secondary-dark"
@@ -255,11 +255,11 @@
           <v-flex xs12 text-xs-right class="pt-3 pb-0">
             <v-btn @click.stop="cancel" depressed color="secondary-light"
                    class="action-cancel">
-              <span>{{ label.cancel }}</span>
+              <span>{{ labels.cancel }}</span>
             </v-btn>
             <v-btn depressed dark color="secondary-dark" @click.stop="save"
                    class="action-save">
-              <span>{{ label.save }}</span>
+              <span>{{ labels.save }}</span>
             </v-btn>
           </v-flex>
         </v-layout>
@@ -268,7 +268,8 @@
   </v-dialog>
 </template>
 <script>
-    import options from "resources/options";
+    import * as options from "resources/options";
+    import labels from "resources/labels";
 
     export default {
         name: 'p-account-edit-dialog',
@@ -283,6 +284,8 @@
             thumbs.sort((a, b) => a.Width - b.Width);
 
             return {
+                options: options,
+                labels: labels,
                 showPassword: false,
                 loading: false,
                 search: null,
@@ -330,32 +333,6 @@
                     ],
                 },
                 readonly: this.$config.get("readonly"),
-                options: options,
-                label: {
-                    cancel: this.$gettext("Cancel"),
-                    confirm: this.$gettext("Save"),
-                    save: this.$gettext("Save"),
-                    enabled: this.$gettext("Enabled"),
-                    disabled: this.$gettext("Disabled"),
-                    name: this.$gettext("Name"),
-                    url: this.$gettext("Service URL"),
-                    user: this.$gettext("Username"),
-                    pass: this.$gettext("Password"),
-                    owner: this.$gettext("Owner"),
-                    apiKey: this.$gettext("API Key"),
-                    AccType: this.$gettext("Type"),
-                    SharePath: this.$gettext("Default Folder"),
-                    ShareSize: this.$gettext("Size"),
-                    Expires: this.$gettext("Expires"),
-                    SyncPath: this.$gettext("Folder"),
-                    SyncInterval: this.$gettext("Interval"),
-                    SyncFilenames: this.$gettext("Preserve filenames"),
-                    SyncStart: this.$gettext("Start"),
-                    SyncDownload: this.$gettext("Download remote files"),
-                    SyncUpload: this.$gettext("Upload local files"),
-                    SyncDelete: this.$gettext("Remote delete"),
-                    SyncRaw: this.$gettext("Sync raw images"),
-                }
             }
         },
         computed: {},

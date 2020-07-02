@@ -75,7 +75,7 @@
                 outline
                 v-if="config.count.hidden > 1"
         >
-          <translate :translate-params="{count: config.count.hidden}">The index currently contains %{count} hidden files.</translate>
+          <translate :translate-params="{n: config.count.hidden}">The index currently contains %{n} hidden files.</translate>
           <translate>Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates.</translate>
         </v-alert>
       </v-container>

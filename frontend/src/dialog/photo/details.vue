@@ -129,7 +129,7 @@
                         item-value="ID"
                         item-text="Name"
                         v-model="model.TimeZone"
-                        :items="timeZones"
+                        :items="options.TimeZones"
                         class="input-timezone">
                 </v-autocomplete>
               </v-flex>
@@ -402,9 +402,8 @@
 </template>
 
 <script>
-    import options from "resources/options.json";
+    import * as options from "resources/options";
     import {DateTime} from "luxon";
-    import moment from "moment-timezone"
     import countries from "resources/countries.json";
     import Thumb from "model/thumb";
 
@@ -418,7 +417,7 @@
                 disabled: !this.$config.feature("edit"),
                 config: this.$config.values,
                 all: {
-                    colors: [{label: "Unknown", name: ""}],
+                    colors: [{label: this.$gettext("Unknown"), name: ""}],
                 },
                 readonly: this.$config.get("readonly"),
                 options: options,
@@ -488,9 +487,6 @@
             },
             colorOptions() {
                 return this.all.colors.concat(this.config.colors);
-            },
-            timeZones() {
-                return moment.tz.names();
             },
         },
         methods: {

@@ -88,7 +88,7 @@
               <v-select
                       @change="onChange"
                       :disabled="busy"
-                      :items="options.themes"
+                      :items="options.Themes"
                       :label="labels.theme"
                       color="secondary-dark"
                       background-color="secondary-light"
@@ -102,7 +102,7 @@
               <v-select
                       @change="onChange"
                       :disabled="busy"
-                      :items="options.languages"
+                      :items="options.Languages"
                       :label="labels.language"
                       color="secondary-dark"
                       background-color="secondary-light"
@@ -314,7 +314,7 @@
               <v-select
                       @change="onChange"
                       :disabled="busy"
-                      :items="options.mapsStyle"
+                      :items="options.MapsStyle"
                       :label="labels.mapsStyle"
                       color="secondary-dark"
                       background-color="secondary-light"
@@ -328,7 +328,7 @@
               <v-select
                       @change="onChange"
                       :disabled="busy"
-                      :items="options.mapsAnimate"
+                      :items="options.MapsAnimate"
                       :label="labels.mapsAnimate"
                       color="secondary-dark"
                       background-color="secondary-light"
@@ -369,7 +369,9 @@
 
 <script>
     import Settings from "model/settings";
-    import options from "resources/options.json";
+    import * as options from "resources/options";
+    import labels from "resources/labels";
+    import hints from "resources/hints";
 
     export default {
         name: 'p-settings-general',
@@ -379,50 +381,8 @@
                 experimental: this.$config.get("experimental"),
                 settings: new Settings(this.$config.settings()),
                 options: options,
-                labels: {
-                    language: this.$gettext("Language"),
-                    theme: this.$gettext("Theme"),
-                    mapsAnimate: this.$gettext("Animation"),
-                    mapsStyle: this.$gettext("Style"),
-                    rescan: this.$gettext("Complete rescan"),
-                    thumbs: this.$gettext("Create thumbnails"),
-                    move: this.$gettext("Remove imported files"),
-                    group: this.$gettext("Group Sequential"),
-                    archive: this.$gettext("Archive"),
-                    private: this.$gettext("Hide Private"),
-                    review: this.$gettext("Quality Filter"),
-                    places: this.$gettext("Places"),
-                    originals: this.$gettext("Originals"),
-                    moments: this.$gettext("Moments"),
-                    labels: this.$gettext("Labels"),
-                    import: this.$gettext("Import"),
-                    upload: this.$gettext("Upload"),
-                    download: this.$gettext("Download"),
-                    edit: this.$gettext("Edit"),
-                    share: this.$gettext("Share"),
-                    logs: this.$gettext("Logs"),
-                    library: this.$gettext("Library"),
-                    convert: this.$gettext("Convert to JPEG"),
-                },
-                hints: {
-                    private: this.$gettext("Exclude photos marked as private from search results, shared albums, labels and places."),
-                    review: this.$gettext("Non-photographic and low-quality images require a review before they appear in search results."),
-                    group: this.$gettext("Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' belong to the same photo."),
-                    move: this.$gettext("Move files from import to originals to save storage. Unsupported file types will never be deleted, they remain in their current location."),
-                    places: this.$gettext("Search and display photos on a map."),
-                    originals: this.$gettext("Display indexed files in Originals"),
-                    moments: this.$gettext("Let PhotoPrism create albums from past events."),
-                    labels: this.$gettext("Browse and edit image classification labels."),
-                    import: this.$gettext("Imported files will be sorted by date and given a unique name."),
-                    archive: this.$gettext("Hide photos that have been moved to archive."),
-                    upload: this.$gettext("Add files to your library via Web Upload."),
-                    download: this.$gettext("Download single files and zip archives."),
-                    edit: this.$gettext("Change photo titles, locations and other metadata."),
-                    share: this.$gettext("Upload to WebDAV and other remote services."),
-                    logs: this.$gettext("Show server logs in Library."),
-                    library: this.$gettext("Show Library in navigation menu."),
-                    convert: this.$gettext("File types like RAW might need to be converted so that they can be displayed in a browser. JPEGs will be stored in the same folder next to the original using the best possible quality."),
-                },
+                labels: labels,
+                hints: hints,
                 busy: false,
             };
         },

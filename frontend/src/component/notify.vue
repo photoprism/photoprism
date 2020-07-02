@@ -49,7 +49,7 @@
                 let m = data.msg;
 
                 if (!m || !m.length) {
-                    console.warn("notify: error message missing in api response");
+                    console.warn("notify: empty message");
                     return;
                 }
 
