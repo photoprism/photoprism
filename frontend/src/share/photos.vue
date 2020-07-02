@@ -126,6 +126,7 @@
                 subscriptions: [],
                 listen: false,
                 dirty: false,
+                complete: false,
                 model: new Album(),
                 uid: uid,
                 results: [],
@@ -207,9 +208,13 @@
                     this.$viewer.show(Thumb.fromFiles([selected]), 0)
                 } else {
                     this.viewerResults().then((results) => {
-                        const thumbs = Thumb.fromPhotos(results);
-                        const thumbsIndex = thumbs.findIndex(t => t.uid === selected.UID);
-                        this.$viewer.show(thumbs, thumbsIndex ? thumbsIndex : 0);
+                        const thumbsIndex = results.findIndex(result => result.UID === selected.UID);
+
+                        if(thumbsIndex < 0) {
+                            this.$viewer.show(Thumb.fromPhotos(this.results), index);
+                        } else {
+                            this.$viewer.show(Thumb.fromPhotos(results), thumbsIndex);
+                        }
                     });
                 }
 
@@ -220,11 +225,11 @@
                     return Promise.reject();
                 }
 
-                if(this.scrollDisabled) {
+                if (this.complete) {
                     return Promise.resolve(this.results);
                 }
 
-                if (this.viewer.results.length > 0) {
+                if (this.viewer.results.length >= this.results.length) {
                     return Promise.resolve(this.viewer.results);
                 }
 
@@ -283,14 +288,10 @@
 
                 Photo.search(params).then(response => {
                     this.results = Photo.mergeResponse(this.results, response);
+                    this.complete = (response.count < count);
+                    this.scrollDisabled = this.complete;
 
-                    if(offset === 0) {
-                        this.viewer.results = [];
-                    }
-
-                    this.scrollDisabled = (response.count < count);
-
-                    if (this.scrollDisabled) {
+                    if (this.complete) {
                         this.offset = offset;
 
                         if (this.results.length > 1) {
@@ -299,6 +300,7 @@
                     } else if (this.results.length >= Photo.limit()) {
                         this.offset = offset;
                         this.scrollDisabled = true;
+                        this.complete = true;
                         this.$notify.warn(this.$gettext("Can't load more, limit reached"));
                     } else {
                         this.offset = offset + count;
@@ -310,6 +312,10 @@
                     this.dirty = false;
                     this.loading = false;
                     this.listen = true;
+
+                    if(offset === 0) {
+                        this.viewerResults();
+                    }
                 });
             },
             updateQuery() {
@@ -349,11 +355,16 @@
                 return params;
             },
             refresh() {
-                if (this.loading) return;
+                if (this.loading) {
+                    return;
+                }
+
                 this.loading = true;
                 this.page = 0;
                 this.dirty = true;
+                this.complete = false;
                 this.scrollDisabled = false;
+
                 this.loadMore();
             },
             search() {
@@ -371,18 +382,17 @@
                 this.page = 0;
                 this.loading = true;
                 this.listen = false;
+                this.complete = false;
 
                 const params = this.searchParams();
 
                 Photo.search(params).then(response => {
                     this.offset = this.pageSize;
-
                     this.results = response.models;
-                    this.viewer.results = [];
+                    this.complete = (response.count < this.pageSize);
+                    this.scrollDisabled = this.complete;
 
-                    this.scrollDisabled = (response.count < this.pageSize);
-
-                    if (this.scrollDisabled) {
+                    if (this.complete) {
                         if (!this.results.length) {
                             this.$notify.warn(this.$gettext("No entries found"));
                         } else if (this.results.length === 1) {
@@ -399,6 +409,8 @@
                     this.dirty = false;
                     this.loading = false;
                     this.listen = true;
+
+                    this.viewerResults();
                 });
             },
             findAlbum() {
@@ -431,6 +443,7 @@
                         window.document.title = `${this.$config.get("siteTitle")}: ${this.model.Title}`
 
                         this.dirty = true;
+                        this.complete = false;
                         this.scrollDisabled = false;
 
                         if (this.filter.order !== this.model.Order) {
@@ -444,6 +457,24 @@
                     }
                 }
             },
+            updateResult(results, values) {
+                const model = results.find((m) => m.UID === values.UID);
+
+                if (model) {
+                    for (let key in values) {
+                        if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
+                            model[key] = values[key];
+                        }
+                    }
+                }
+            },
+            removeResult(results, uid) {
+                const index = results.findIndex((m) => m.UID === uid);
+
+                if (index >= 0) {
+                    results.splice(index, 1);
+                }
+            },
             onUpdate(ev, data) {
                 if (!this.listen) return;
 
@@ -451,43 +482,33 @@
                     return
                 }
 
-                this.viewer.results = [];
-
                 const type = ev.split('.')[1];
 
                 switch (type) {
                     case 'updated':
                         for (let i = 0; i < data.entities.length; i++) {
                             const values = data.entities[i];
-                            const model = this.results.find((m) => m.UID === values.UID);
-
-                            if (model) {
-                                for (let key in values) {
-                                    if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
-                                        model[key] = values[key];
-                                    }
-                                }
-                            }
+                            this.updateResult(this.results, values);
+                            this.updateResult(this.viewer.results, values);
                         }
                         break;
                     case 'restored':
                         this.dirty = true;
                         this.scrollDisabled = false;
+                        this.complete = false;
 
                         this.loadMore();
 
                         break;
                     case 'archived':
                         this.dirty = true;
+                        this.complete = false;
 
                         for (let i = 0; i < data.entities.length; i++) {
                             const uid = data.entities[i];
-                            const index = this.results.findIndex((m) => m.UID === uid);
 
-                            if (index >= 0) {
-                                this.results.splice(index, 1);
-                            }
-
+                            this.removeResult(this.results, uid);
+                            this.removeResult(this.viewer.results, uid);
                             this.$clipboard.removeId(uid);
                         }
 
