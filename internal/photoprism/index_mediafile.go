@@ -526,7 +526,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		labels := photo.ClassifyLabels()
 
 		if err := photo.UpdateTitle(labels); err != nil {
-			log.Warnf("%s for %s", err.Error(), logName)
+			log.Debugf("%s (%s)", err.Error(), logName)
 		}
 
 		w := txt.Keywords(photo.Details.Keywords)

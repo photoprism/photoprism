@@ -191,7 +191,7 @@ func (m *Moments) Start() (err error) {
 			}
 
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumMoment); a != nil {
-				log.Debugf("moments: %s already exists (%s)", txt.Quote(mom.Title()), f.Serialize())
+				log.Tracef("moments: %s already exists (%s)", txt.Quote(mom.Title()), f.Serialize())
 
 				if f.Serialize() == a.AlbumFilter || a.DeletedAt != nil {
 					// Nothing to do.
