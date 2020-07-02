@@ -122,10 +122,9 @@ export class Folder extends RestModel {
     }
 
     static originals(path, params) {
-        if(!path) {
-            path = "/";
+        if(!path || path[0] !== "/") {
+            path = "/" + path;
         }
-
         return this.search(RootOriginals + path, params);
     }
 
@@ -137,7 +136,6 @@ export class Folder extends RestModel {
         if (!path || path[0] !== "/") {
             path = "/" + path;
         }
-
         return Api.get(this.getCollectionResource() + path, options).then((response) => {
             let folders = response.data.folders;
             let files = response.data.files ? response.data.files : [];
