@@ -108,7 +108,7 @@ func (m *Photo) Optimize() (updated bool, err error) {
 	m.UpdateYearMonth()
 
 	if err := m.UpdateTitle(labels); err != nil {
-		log.Warn(err)
+		log.Info(err)
 	}
 
 	if m.DetailsLoaded() {

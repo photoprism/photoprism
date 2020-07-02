@@ -136,7 +136,7 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 	}
 
 	if err := model.UpdateTitle(model.ClassifyLabels()); err != nil {
-		log.Warn(err)
+		log.Info(err)
 	}
 
 	if err := model.IndexKeywords(); err != nil {
@@ -184,7 +184,7 @@ func (m *Photo) Save() error {
 	m.UpdateYearMonth()
 
 	if err := m.UpdateTitle(labels); err != nil {
-		log.Warn(err)
+		log.Info(err)
 	}
 
 	if m.DetailsLoaded() {
