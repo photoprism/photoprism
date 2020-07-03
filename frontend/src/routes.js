@@ -57,7 +57,7 @@ export default [
         name: "about",
         path: "/about",
         component: About,
-        meta: {title: $gettext("About"), auth: false},
+        meta: {title: c.name, auth: false},
     },
     {
         name: "license",
@@ -75,7 +75,7 @@ export default [
         name: "login",
         path: "/login",
         component: Login,
-        meta: {title: $gettext("Sign In"), auth: false},
+        meta: {auth: false},
     },
     {
         name: "photos",
@@ -108,7 +108,7 @@ export default [
         name: "album",
         path: "/albums/:uid/:slug",
         component: AlbumPhotos,
-        meta: {title: $gettext("Album"), auth: true},
+        meta: {auth: true},
     },
     {
         name: "calendar",
@@ -225,7 +225,7 @@ export default [
         name: "browse",
         path: "/browse",
         component: Photos,
-        meta: {title: $gettext("All photos and videos"), auth: true},
+        meta: {title: $gettext("Search"), auth: true},
         props: {staticFilter: {quality: 0}},
     },
     {
@@ -238,21 +238,21 @@ export default [
         name: "library_logs",
         path: "/library/logs",
         component: Library,
-        meta: {title: $gettext("Server Logs"), auth: true, background: "application-light"},
+        meta: {auth: true, background: "application-light"},
         props: {tab: 2},
     },
     {
         name: "library_import",
         path: "/library/import",
         component: Library,
-        meta: {title: $gettext("Import"), auth: true, background: "application-light"},
+        meta: {auth: true, background: "application-light"},
         props: {tab: 1},
     },
     {
         name: "library",
         path: "/library",
         component: Library,
-        meta: {title: $gettext("Originals"), auth: true, background: "application-light"},
+        meta: {auth: true, background: "application-light"},
         props: {tab: 0},
     },
     {

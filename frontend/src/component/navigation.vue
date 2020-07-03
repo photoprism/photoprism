@@ -1,8 +1,9 @@
 <template>
   <div id="p-navigation">
-    <v-toolbar dark fixed flat color="navigation darken-1" class="hidden-md-and-up nav-small"
+    <template v-if="$vuetify.breakpoint.smAndDown || !auth">
+    <v-toolbar dark fixed flat color="navigation darken-1" class="nav-small"
                @click.stop="showNavigation()">
-      <v-toolbar-side-icon class="nav-show"></v-toolbar-side-icon>
+      <v-toolbar-side-icon class="nav-show" v-if="auth"></v-toolbar-side-icon>
 
       <v-toolbar-title class="nav-title">{{ page.title }}</v-toolbar-title>
 
@@ -12,17 +13,19 @@
               tile
               :size="28"
               class="clickable"
-              @click.stop="onLogoClick"
+              @click.stop="openUpload"
               v-show="!drawer"
       >
         <img src="/static/img/logo-white.svg" alt="PhotoPrism">
       </v-avatar>
     </v-toolbar>
-    <v-toolbar dark flat color="navigation darken-1" class="hidden-md-and-up">
+    <v-toolbar dark flat color="navigation darken-1">
     </v-toolbar>
+    </template>
     <v-navigation-drawer
+            v-if="auth"
             v-model="drawer"
-            :mini-variant="mini || !auth"
+            :mini-variant="mini"
             :width="270"
             :mobile-break-point="960"
             class="nav-sidebar navigation"
@@ -31,7 +34,7 @@
       <v-toolbar flat>
         <v-list class="navigation-home">
           <v-list-tile class="nav-logo">
-            <v-list-tile-avatar class="clickable" @click.stop.prevent="openDocs">
+            <v-list-tile-avatar class="clickable" @click.stop.prevent="goHome">
               <div class="logo rainbow-static">
                 <img src="/static/img/logo-black.svg" alt="PhotoPrism">
               </div>
@@ -50,7 +53,7 @@
         </v-list>
       </v-toolbar>
 
-      <v-list class="pt-3" v-if="auth">
+      <v-list class="pt-3">
         <v-list-tile v-if="mini" @click.stop="mini = !mini" class="nav-expand">
           <v-list-tile-action>
             <v-icon>chevron_right</v-icon>
@@ -327,7 +330,7 @@
             <v-list-tile :to="{ name: 'about' }" :exact="true" @click="" class="nav-about">
               <v-list-tile-content>
                 <v-list-tile-title>
-                  <translate key="About">About</translate>
+                  <translate key="Help">Help</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
@@ -341,18 +344,6 @@
             </v-list-tile>
           </v-list-group>
         </template>
-
-        <v-list-tile to="/help/websockets" @click="" class="nav-connecting" v-show="$config.disconnected">
-          <v-list-tile-action>
-            <v-icon color="warning">wifi_off</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title class="text--warning">
-              <translate key="Connecting">Connecting...</translate>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
 
         <v-list-tile @click="logout" class="nav-logout" v-show="!public && auth">
           <v-list-tile-action>
@@ -378,6 +369,17 @@
           </v-list-tile-content>
         </v-list-tile>
 
+        <v-list-tile to="/help/websockets" @click="" class="nav-connecting navigation" v-show="$config.disconnected" style="position:fixed; bottom: 0; left:0; right: 0;">
+          <v-list-tile-action>
+            <v-icon color="warning">wifi_off</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title class="text--warning">
+              <translate key="Connecting">Connecting...</translate>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
     <p-upload-dialog :show="upload.dialog" @cancel="upload.dialog = false"
@@ -421,22 +423,26 @@
             },
         },
         methods: {
-            onLogoClick() {
-                if (!this.readonly && this.$config.feature('upload')) {
+            openUpload() {
+                if (this.auth && !this.readonly && this.$config.feature('upload')) {
                     this.upload.dialog = true;
                 } else {
-                    this.openDocs();
+                    this.goHome();
                 }
             },
             feature(name) {
                 return this.$config.values.settings.features[name];
             },
-            openDocs() {
-                window.open("https://docs.photoprism.org/", "_blank");
+            goHome() {
+                if(this.$route.name !== "home") {
+                    this.$router.push({name: "home"});
+                }
             },
             showNavigation() {
-                this.drawer = true;
-                this.mini = false;
+                if (this.auth) {
+                    this.drawer = true;
+                    this.mini = false;
+                }
             },
             createAlbum() {
                 let name = "New Album";

@@ -175,11 +175,11 @@
                   <div class="text-xs-center">
                     <v-btn color="secondary-dark" small flat dark @click.stop="photo.archive()"
                            class="action-approve text-xs-center">
-                      <span>Archive</span>
+                      <translate>Archive</translate>
                     </v-btn>
                     <v-btn color="secondary-dark" small depressed dark @click.stop="photo.approve()"
                            class="action-approve text-xs-center">
-                      <span>Approve</span>
+                      <translate>Approve</translate>
                     </v-btn>
                   </div>
                 </v-flex>

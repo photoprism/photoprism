@@ -56,7 +56,7 @@
                      @click.stop="confirm"
                      :disabled="disabled()"
                      class="action-confirm white--text ma-0">
-                <translate>Change Password</translate>
+                <translate>Update</translate>
                 <v-icon right dark>vpn_key</v-icon>
               </v-btn>
             </v-flex>

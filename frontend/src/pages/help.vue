@@ -7,8 +7,8 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click.stop="bugReport" class="action-support">
-        <v-icon>bug_report</v-icon>
+      <v-btn icon href="https://github.com/photoprism/photoprism" target="_blank" class="action-github" title="GitHub">
+        <img src="/static/brands/github.svg" width="24" alt="GitHub">
       </v-btn>
     </v-toolbar>
 
@@ -32,11 +32,6 @@
             return {
                 topic: this.$route.params.pathMatch,
             };
-        },
-        methods: {
-            bugReport() {
-                console.log("BUG REPORT");
-            }
         },
     };
 </script>

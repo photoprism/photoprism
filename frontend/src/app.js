@@ -53,7 +53,7 @@ import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
 import VueModal from "vue-js-modal";
 import Hls from "hls.js";
-import {Mount} from "common/vm";
+import {$gettext, Mount} from "common/vm";
 
 // Initialize helpers
 const viewer = new Viewer();
@@ -131,11 +131,11 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to) => {
-    if (to.meta.title) {
-        config.page.title = to.meta.title;
-        window.document.title = config.values.siteTitle + ": " + to.meta.title;
+    if (to.meta.title && config.values.siteTitle !== to.meta.title) {
+        config.page.title = $gettext(to.meta.title);
+        window.document.title = config.values.siteTitle + ": " + config.page.title;
     } else {
-        config.page.title = "";
+        config.page.title = config.values.siteTitle;
         window.document.title = config.values.siteTitle + ": " + config.values.siteCaption;
     }
 });

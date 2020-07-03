@@ -11,10 +11,10 @@
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
             <v-btn @click.stop="cancel" depressed color="secondary-light" class="action-cancel">
-              <translate>Cancel</translate>
+              <translate>No</translate>
             </v-btn>
             <v-btn color="secondary-dark" depressed dark @click.stop="confirm"
-                   class="action-confirm"><translate>Archive</translate>
+                   class="action-confirm"><translate>Yes</translate>
             </v-btn>
           </v-flex>
         </v-layout>

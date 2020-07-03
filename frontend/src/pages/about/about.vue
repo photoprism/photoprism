@@ -2,8 +2,14 @@
   <div class="p-page p-page-about">
     <v-toolbar flat color="secondary">
       <v-toolbar-title>
-        PhotoPrism™ {{$config.get("version")}}
+        <translate>Whatever it is, we'd love to hear from you!</translate>
       </v-toolbar-title>
+
+      <v-spacer></v-spacer>
+
+      <v-btn icon href="https://github.com/photoprism/photoprism" target="_blank" class="action-github" title="GitHub">
+        <img src="/static/brands/github.svg" width="24" alt="GitHub">
+      </v-btn>
     </v-toolbar>
     <v-container fluid class="pa-4">
       <p class="body-1">Feel free to use the
@@ -76,6 +82,8 @@
         describe our software, run your own server, for educational purposes, but not for offering commercial
         goods, products, or services without prior written permission. In other words, please ask.</translate></p>
     </v-container>
+
+    <p-about-footer></p-about-footer>
   </div>
 </template>
 
