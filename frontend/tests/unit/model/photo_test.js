@@ -33,7 +33,7 @@ mock
             Primary: false,
             Type: "mp4",
             Hash: "1xxbgdt55"}]})
-    .onDelete().reply(200)
+    .onDelete("api/v1/photos/abc123/unlike").reply(200)
     .onPost("api/v1/photos/pqbemz8276mhtobh/files/fqbfk181n4ca5sud/ungroup").reply(200, {"success": "ok"})
     .onPost("api/v1/photos/pqbemz8276mhtobh/label", {Name: "Cat", Priority: 10}).reply(200, {"success": "ok"})
     .onPut("api/v1/photos/pqbemz8276mhtobh/label/12345", {Uncertainty: 0}).reply(200, {"success": "ok"})
@@ -255,7 +255,7 @@ describe("model/photo", () => {
     });
 
     it("should unlike photo",  () => {
-        const values = {ID: 5, Title: "Crazy Cat", CountryName: "Africa", Favorite: true};
+        const values = {ID: 5, UID: "abc123", Title: "Crazy Cat", CountryName: "Africa", Favorite: true};
         const photo = new Photo(values);
         assert.equal(photo.Favorite, true);
         photo.unlike();
