@@ -123,12 +123,12 @@ describe("model/file", () => {
             UID: "ABC123",
             Hash: "54ghtfd",
             Type: "jpg",
-            Width: 900,
-            Height: 450,
+            Width: 750,
+            Height: 850,
             Name: "1/2/IMG123.jpg"};
         const file3 = new File(values3);
-        assert.equal(file3.calculateSize(300, 800).width,  300);
-        assert.equal(file3.calculateSize(300, 800).height,  150);
+        assert.equal(file3.calculateSize(900, 450).width,  397);
+        assert.equal(file3.calculateSize(900, 450).height,  450);
     });
 
     it("should return thumbnail sizes",  () => {
@@ -237,6 +237,20 @@ describe("model/file", () => {
         };
         const file2 = new File(values2);
         assert.equal(file2.sizeInfo(), "7638.9 MB");
+        const values3 = {
+            InstanceID: 5,
+            UID: "ABC123",
+            Hash: "54ghtfd",
+            Type: "jpg",
+            Size: 8009999987,
+            Name: "1/2/IMG123.jpg",
+            Width: 500,
+            Height: 800,
+            CreatedAt: "2012-07-08T14:45:39Z",
+            UpdatedAt: "2012-07-08T14:45:39Z",
+        };
+        const file3 = new File(values3);
+        assert.equal(file3.sizeInfo(), "500 × 800, 7638.9 MB");
     });
 
     it("should like file",  () => {
