@@ -224,7 +224,7 @@ msgstr "API Key"
 
 #: src/dialog/photo/details.vue:125
 msgid "Apply"
-msgstr "Anwenden"
+msgstr "Speichern"
 
 #: src/component/photo/cards.vue:123 src/dialog/photo/details.vue:124
 msgid "Approve"
@@ -258,7 +258,7 @@ msgstr "Diesen Account wirklich löschen?"
 
 #: src/dialog/photo/details.vue:450
 msgid "Artist"
-msgstr "Künstler"
+msgstr "Fotograf"
 
 #: src/pages/settings/account.vue:70
 msgid "At least 6 characters."
@@ -288,7 +288,7 @@ msgstr "Kamera"
 
 #: src/dialog/photo/info.vue:84
 msgid "Camera Serial"
-msgstr "Kamera Seriennummer"
+msgstr "Kamera-Seriennummer"
 
 #: src/pages/album/photos.vue:261 src/pages/photos.vue:296
 #: src/share/photos.vue:304
@@ -316,7 +316,7 @@ msgstr "Kategorie"
 
 #: src/pages/settings/general.vue:448
 msgid "Change photo titles, locations and other metadata."
-msgstr "Titel, Standort und andere Metadaten können bearbeitet werden."
+msgstr "Titel, Ort und andere Metadaten können bearbeitet werden."
 
 #: src/component/photo/clipboard.vue:151 src/share/photo/clipboard.vue:70
 msgid "Change private flag"
@@ -384,7 +384,7 @@ msgstr "Kopieren"
 
 #: src/dialog/photo/details.vue:451
 msgid "Copyright"
-msgstr "Urheberrecht"
+msgstr "Copyright"
 
 #: src/component/album/toolbar.vue:118 src/component/photo/toolbar.vue:197
 #: src/dialog/album/edit.vue:115 src/dialog/photo/details.vue:428
@@ -397,7 +397,7 @@ msgstr "Album erstellen"
 
 #: src/dialog/photo/info.vue:107
 msgid "Created"
-msgstr "Erstellt"
+msgstr "Hinzugefügt"
 
 #: src/pages/settings/account.vue:38
 msgid "Current Password"
@@ -670,6 +670,10 @@ msgstr "Verberge private Fotos"
 msgid "Hybrid"
 msgstr "Hybrid"
 
+#: src/dialog/photo/labels.vue:126
+msgid "image"
+msgstr "Bild"
+
 #: src/pages/library/import.vue:44 src/pages/settings/general.vue:607
 msgid "Import"
 msgstr "Import"
@@ -785,9 +789,13 @@ msgstr "Liste"
 msgid "Local Time"
 msgstr "Ortszeit"
 
+#: src/dialog/photo/labels.vue:127
+msgid "location"
+msgstr "Ort"
+
 #: src/component/photo/list.vue:115 src/share/photo/list.vue:97
 msgid "Location"
-msgstr "Standort"
+msgstr "Ort"
 
 #: src/component/navigation.vue:343
 msgid "Login"
@@ -804,6 +812,10 @@ msgstr "Logs"
 #: src/dialog/photo/details.vue:444
 msgid "Longitude"
 msgstr "Längengrad"
+
+#: src/dialog/photo/labels.vue:125
+msgid "manual"
+msgstr "Manuell"
 
 #: src/resources/options.js:65
 msgid "Medium"
@@ -898,7 +910,8 @@ msgstr "Neues Passwort"
 msgid "Newest first"
 msgstr "Neueste zuerst"
 
-#: src/dialog/photo/archive.vue:13
+#: src/dialog/photo/archive.vue:13 src/dialog/photo/info.vue:265
+#: src/dialog/photo/info.vue:296
 msgid "No"
 msgstr "Nein"
 
@@ -1155,7 +1168,7 @@ msgstr "Qualitäts Filter"
 
 #: src/dialog/photo/info.vue:70
 msgid "Quality Score"
-msgstr "Qualitätsbewertung"
+msgstr "Qualität"
 
 #: src/pages/discover.vue:16
 msgid "Random"
@@ -1339,7 +1352,7 @@ msgstr "Reihenfolge"
 
 #: src/dialog/photo/labels.vue:107
 msgid "Source"
-msgstr "Herkunft"
+msgstr "Quelle"
 
 #: src/component/navigation.vue:216
 msgid "States"
@@ -1359,7 +1372,7 @@ msgstr "Style"
 
 #: src/dialog/photo/details.vue:449
 msgid "Subject"
-msgstr "Inhalt"
+msgstr "Bildinhalt"
 
 #: src/pages/settings.vue:8 src/pages/settings/sync.vue:94
 msgid "Sync"
@@ -1375,7 +1388,7 @@ msgstr "Synchronisiert"
 
 #: src/component/photo/list.vue:112 src/share/photo/list.vue:95
 msgid "Taken"
-msgstr "Erstellt am"
+msgstr "Aufgenommen"
 
 #: src/component/photo/toolbar.vue:206 src/dialog/photo/details.vue:436
 msgid "Taken after"
@@ -1614,7 +1627,8 @@ msgid "Year"
 msgstr "Jahr"
 
 #: src/dialog/photo/archive.vue:15 src/dialog/photo/files.vue:99
-#: src/dialog/photo/files.vue:105
+#: src/dialog/photo/files.vue:105 src/dialog/photo/info.vue:264
+#: src/dialog/photo/info.vue:295
 msgid "Yes"
 msgstr "Ja"
 

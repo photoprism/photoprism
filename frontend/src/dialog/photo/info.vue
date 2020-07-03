@@ -113,7 +113,7 @@
                     @change="save"
                     hide-details
                     v-model="model.Favorite"
-                    :label="model.Favorite ? 'Yes' : 'No'"
+                    :label="model.Favorite ? $gettext('Yes') : $gettext('No')"
             ></v-switch>
           </td>
         </tr>
@@ -126,7 +126,7 @@
                     @change="save"
                     hide-details
                     v-model="model.Private"
-                    :label="model.Private ? 'Yes' : 'No'"
+                    :label="model.Private ? $gettext('Yes') : $gettext('No')"
             ></v-switch>
           </td>
         </tr>
@@ -208,7 +208,7 @@
         },
         methods: {
             formatTime(s) {
-                return DateTime.fromISO(s).toHTTP();
+                return DateTime.fromISO(s).toLocaleString(DateTime.DATETIME_MED);
             },
             save() {
                 this.model.update();

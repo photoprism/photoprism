@@ -32,7 +32,7 @@
             </template>
           </v-edit-dialog>
         </td>
-        <td class="text-xs-left">{{ props.item.LabelSrc }}</td>
+        <td class="text-xs-left">{{ sourceName(props.item.LabelSrc) }}</td>
         <td class="text-xs-center">{{ 100 - props.item.Uncertainty }}%</td>
         <td class="text-xs-center">
           <v-btn v-if="disabled" icon small flat :ripple="false"
@@ -73,7 +73,7 @@
                   class="input-label"
           ></v-text-field>
         </td>
-        <td class="text-xs-left">manual</td>
+        <td class="text-xs-left">{{ sourceName('manual') }}</td>
         <td class="text-xs-center">100%</td>
         <td class="text-xs-center">
           <v-btn icon small flat :ripple="false" title="Add"
@@ -119,6 +119,14 @@
         computed: {},
         methods: {
             refresh() {
+            },
+            sourceName(s) {
+                switch (s) {
+                    case "manual": return this.$gettext("manual");
+                    case "image": return this.$gettext("image");
+                    case "location": return this.$gettext("location");
+                    default: return s;
+                }
             },
             removeLabel(label) {
                 if (!label) {

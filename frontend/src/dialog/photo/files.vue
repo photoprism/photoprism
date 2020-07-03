@@ -182,7 +182,7 @@
                 this.model.primaryFile(file.UID);
             },
             formatTime(s) {
-                return DateTime.fromISO(s).toHTTP();
+                return DateTime.fromISO(s).toLocaleString(DateTime.DATETIME_MED);
             },
             refresh() {
             },
