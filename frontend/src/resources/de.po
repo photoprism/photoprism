@@ -319,7 +319,7 @@ msgstr "Abbrechen"
 
 #: src/component/album/toolbar.vue:94 src/component/photo/toolbar.vue:183
 msgid "Cards"
-msgstr "Karten"
+msgstr "Karteikarten"
 
 #: src/component/album/toolbar.vue:121 src/component/photo/toolbar.vue:204
 #: src/dialog/album/edit.vue:118 src/dialog/photo/details.vue:433
