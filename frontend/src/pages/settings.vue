@@ -14,7 +14,7 @@
       </v-tab>
 
       <v-tab id="tab-settings-sync" ripple @click="changePath('/settings/sync')">
-        <translate key="Sync">Sync</translate>
+        <translate key="Backups">Backups</translate>
       </v-tab>
 
       <v-tab id="tab-settings-account" ripple @click="changePath('/settings/account')" v-if="!public">

@@ -8,7 +8,7 @@
             class="elevation-0 p-accounts p-accounts-list p-results"
             item-key="ID"
             v-model="selected"
-            :no-data-text="$gettext('No remote services configured.')"
+            :no-data-text="$gettext('No servers configured.')"
     >
       <template slot="items" slot-scope="props" class="p-account">
         <td>
@@ -53,7 +53,7 @@
                class="white--text ml-0 mt-2"
                depressed
                @click.stop="add">
-          <translate>Add</translate>
+          <translate>Add Server</translate>
           <v-icon right dark>add</v-icon>
         </v-btn>
       </v-form>
@@ -89,10 +89,10 @@
                 },
                 editScope: "main",
                 listColumns: [
-                    {text: this.$gettext('Name'), value: 'AccName', sortable: false, align: 'left'},
+                    {text: this.$gettext('Server'), value: 'AccName', sortable: false, align: 'left'},
                     {text: this.$gettext('Upload'), value: 'AccShare', sortable: false, align: 'center'},
                     {text: this.$gettext('Sync'), value: 'AccSync', sortable: false, align: 'center'},
-                    {text: this.$gettext('Synced'), value: 'SyncDate', sortable: false, class: 'hidden-sm-and-down', align: 'left'},
+                    {text: this.$gettext('Last Backup'), value: 'SyncDate', sortable: false, class: 'hidden-sm-and-down', align: 'left'},
                     {text: '', value: '', sortable: false, class: 'hidden-xs-only', align: 'right'},
                 ],
             };

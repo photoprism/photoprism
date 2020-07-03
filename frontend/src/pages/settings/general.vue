@@ -156,7 +156,7 @@
                       v-model="settings.features.share"
                       color="secondary-dark"
                       :label="$gettext('Share')"
-                      :hint="$gettext('Upload to WebDAV and other remote services.')"
+                      :hint="$gettext('Upload to WebDAV and share links with friends.')"
                       prepend-icon="share"
                       persistent-hint
               >

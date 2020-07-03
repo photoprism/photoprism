@@ -4,7 +4,7 @@
       <v-card-title primary-title>
         <v-layout row wrap v-if="scope === 'sharing'">
           <v-flex xs9>
-            <h3 class="headline mx-2 my-0">{{ $gettext('Upload') }}</h3>
+            <h3 class="headline mx-2 my-0">{{ $gettext('Manual Upload') }}</h3>
           </v-flex>
           <v-flex xs3 text-xs-right>
             <v-switch
@@ -110,7 +110,7 @@
                     item-text="text"
                     item-value="value"
                     v-model="model.ShareExpires"
-                    :items="items.expires">
+                    :items="options.Expires()">
             </v-select>
           </v-flex>
         </v-layout>
@@ -142,7 +142,7 @@
                     item-text="text"
                     item-value="value"
                     v-model="model.SyncInterval"
-                    :items="items.intervals">
+                    :items="options.Intervals()">
             </v-select>
           </v-flex>
           <v-flex xs12 sm6 class="px-2">
@@ -283,6 +283,7 @@
             thumbs.sort((a, b) => a.Width - b.Width);
 
             return {
+                options: options,
                 showPassword: false,
                 loading: false,
                 search: null,
@@ -309,8 +310,6 @@
                         {"value": "gdrive", "text": "Google Drive"},
                         {"value": "onedrive", "text": "Microsoft OneDrive"},
                     ],
-                    intervals: options.Intervals(),
-                    expires: options.Expires(),
                 },
                 readonly: this.$config.get("readonly"),
             }

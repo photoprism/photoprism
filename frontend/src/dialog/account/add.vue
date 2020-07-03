@@ -3,7 +3,7 @@
     <v-card raised elevation="24">
       <v-card-title primary-title>
         <div>
-          <h3 class="headline mx-2 my-0"><translate>Add Remote Service</translate></h3>
+          <h3 class="headline mx-2 my-0"><translate>Add Server</translate></h3>
         </div>
       </v-card-title>
       <v-card-text class="pt-0">
@@ -42,8 +42,8 @@
             ></v-text-field>
           </v-flex>
           <v-flex xs12 text-xs-left class="pa-2 caption">
-            Note: Only WebDAV servers like Nextcloud can be configured as remote service at the moment. Support for additional
-            services like Google Drive will be added over time.
+            <translate>Note: Only WebDAV servers like Nextcloud can be configured at the moment. Support for additional
+            services like Google Drive will be added over time.</translate>
           </v-flex>
           <v-flex xs12 text-xs-right class="px-2 pt-2 pb-0">
             <v-btn @click.stop="cancel" depressed color="secondary-light"
@@ -75,7 +75,7 @@
                 search: null,
                 model: new Account(),
                 label: {
-                    url: this.$gettext("WebDAV Server"),
+                    url: this.$gettext("Service URL"),
                     user: this.$gettext("Username"),
                     pass: this.$gettext("Password"),
                     cancel: this.$gettext("Cancel"),
