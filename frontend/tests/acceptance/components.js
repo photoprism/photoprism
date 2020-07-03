@@ -10,10 +10,6 @@ const page = new Page();
 test('#1 Test filter options', async t => {
     await t
         .click('button.p-expand-search')
-        .expect(Selector('body').withText('object Object').exists).notOk()
-        .click('.p-navigation-albums')
-        .click(Selector('div.p-album').nth(0))
-        .click('button.p-expand-search')
         .expect(Selector('body').withText('object Object').exists).notOk();
 });
 

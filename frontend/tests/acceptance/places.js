@@ -9,7 +9,7 @@ fixture`Test places page`
 
 test('#1 Test places', async t => {
     await t
-        .click(Selector('.p-navigation-places'))
+        .click(Selector('.nav-places'))
         .expect(Selector('#map').exists, {timeout: 15000}).ok()
         .expect(Selector('div.p-map-control').visible).ok();
     await t

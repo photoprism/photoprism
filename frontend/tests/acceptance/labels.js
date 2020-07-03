@@ -15,7 +15,7 @@ fixture `Test labels`
 const page = new Page();
 
 test('#1 Remove/Activate Add/Delete Label from photo', async t => {
-    await t.click(Selector('.p-navigation-labels'));
+    await t.click(Selector('.nav-labels'));
     const countImportantLabels = await Selector('div.p-label').count;
     await t
         .click(Selector('button.action-show-all'));
@@ -46,7 +46,7 @@ test('#1 Remove/Activate Add/Delete Label from photo', async t => {
         .expect(PhotoTitleAfterEdit).notContains('Beacon')
         .expect(PhotoKeywordsAfterEdit).notContains('beacon')
         .click(Selector('.action-close'))
-        .click(Selector('.p-navigation-labels'));
+        .click(Selector('.nav-labels'));
     await page.search('beacon');
     await t
         .expect(Selector('h3').withText('No labels matched your search').visible).ok();
@@ -65,7 +65,7 @@ test('#1 Remove/Activate Add/Delete Label from photo', async t => {
         .expect(PhotoKeywordsAfterUndo).contains('beacon')
         .expect(PhotoKeywordsAfterUndo).notContains('test')
         .click(Selector('.action-close'))
-        .click(Selector('.p-navigation-labels'));
+        .click(Selector('.nav-labels'));
     await page.search('test');
     await t
         .expect(Selector('h3').withText('No labels matched your search').visible).ok();
@@ -76,7 +76,7 @@ test('#1 Remove/Activate Add/Delete Label from photo', async t => {
 
 //TODO check title of second image after index
 test('#2 Rename Label', async t => {
-    await t.click(Selector('.p-navigation-labels'));
+    await t.click(Selector('.nav-labels'));
     await page.search('zebra');
     const LabelZebra = await Selector('div.p-label').nth(0).getAttribute('data-uid');
     await t
@@ -102,7 +102,7 @@ test('#2 Rename Label', async t => {
         .expect(FirstPhotoKeywordsAfterEdit).contains('horse')
         .expect(FirstPhotoTitleAfterEdit).notContains('Zebra')
         .click(Selector('.action-close'))
-        .click(Selector('.p-navigation-labels'));
+        .click(Selector('.nav-labels'));
     await page.search('horse');
     await t
         .expect(Selector('div').withAttribute('data-uid', LabelZebra).visible).ok()
@@ -114,7 +114,7 @@ test('#2 Rename Label', async t => {
         .typeText(Selector('.input-rename input'), 'Zebra', { replace: true })
         .pressKey('enter')
         .click(Selector('.action-close'))
-        .click(Selector('.p-navigation-labels'));
+        .click(Selector('.nav-labels'));
     await page.search('horse');
     await t
         .expect(Selector('h3').withText('No labels matched your search').visible).ok();
@@ -122,7 +122,7 @@ test('#2 Rename Label', async t => {
 
 test('#3 Add label to album', async t => {
     await t
-        .click(Selector('.p-navigation-albums'))
+        .click(Selector('.nav-albums'))
         .typeText(Selector('.p-albums-search input'), 'Christmas')
         .pressKey('enter');
     const AlbumUid = await Selector('div.p-album').nth(0).getAttribute('data-uid');
@@ -130,7 +130,7 @@ test('#3 Add label to album', async t => {
         .click(Selector('div.p-album').withAttribute('data-uid', AlbumUid));
     const PhotoCount = await Selector('div.p-photo').count;
     await t
-        .click(Selector('.p-navigation-labels'));
+        .click(Selector('.nav-labels'));
     await page.search('landscape');
     const LabelLandscape = await Selector('div.p-label').nth(1).getAttribute('data-uid');
     await t
@@ -138,7 +138,7 @@ test('#3 Add label to album', async t => {
     const FirstPhotoLandscape = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     const SecondPhotoLandscape = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
     await t
-        .click('.p-navigation-labels');
+        .click('.nav-labels');
     await page.selectFromUID(LabelLandscape);
 
     const clipboardCount = await Selector('span.count-clipboard');
@@ -146,7 +146,7 @@ test('#3 Add label to album', async t => {
         .expect(clipboardCount.textContent).eql("1");
     await page.addSelectedToAlbum('Christmas');
     await t
-        .click(Selector('.p-navigation-albums'))
+        .click(Selector('.nav-albums'))
         .click(Selector('div.p-album').withAttribute('data-uid', AlbumUid));
     const PhotoCountAfterAdd = await Selector('div.p-photo').count;
     await t
@@ -163,14 +163,14 @@ test('#3 Add label to album', async t => {
 
 test('#4 Delete label', async t => {
     await t
-        .click(Selector('.p-navigation-labels'));
+        .click(Selector('.nav-labels'));
     await page.search('dome');
     const LabelDome = await Selector('div.p-label').nth(0).getAttribute('data-uid');
     await t
         .click(Selector('div.p-label').withAttribute('data-uid', LabelDome));
     const FirstPhotoDome = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     await t
-        .click('.p-navigation-labels')
+        .click('.nav-labels')
     await page.selectFromUID(LabelDome);
     const clipboardCount = await Selector('span.count-clipboard');
     await t
@@ -179,7 +179,7 @@ test('#4 Delete label', async t => {
     await page.search('dome');
     await t
         .expect(Selector('h3').withText('No labels matched your search').visible).ok()
-        .click('.p-navigation-photos')
+        .click('.nav-photos')
         .click(Selector('.action-title-edit').withAttribute('data-uid', FirstPhotoDome))
         .click(Selector('#tab-labels'))
         .expect(Selector('td').withText('No labels found').visible).ok()

@@ -9,15 +9,15 @@ const page = new Page();
 
 test('#1 Add originals files to album', async t => {
     await page.openNav();
-    await t.click(Selector('.p-navigation-albums'));
+    await t.click(Selector('.nav-albums'));
     await t
         .typeText(Selector('.p-albums-search input'), 'KanadaVacation')
         .pressKey('enter');
     await t
         .expect(Selector('h3').innerText).eql('No albums matched your search');
     await t
-        .click(Selector('div.p-navigation-library + div'))
-        .click(Selector('.p-navigation-originals'))
+        .click(Selector('div.nav-library + div'))
+        .click(Selector('.nav-originals'))
         .click(Selector('button').withText('Vacation'));
     const FirstItemInVacation = await Selector('div.v-card__title').nth(0).innerText;
     const KanadaUid = await Selector('div.v-card__title').nth(0).getAttribute('data-uid');
@@ -40,7 +40,7 @@ test('#1 Add originals files to album', async t => {
         .expect(clipboardCount.textContent).eql("1");
     await page.addSelectedToAlbum('KanadaVacation');
     await t
-        .click(Selector('.p-navigation-albums'))
+        .click(Selector('.nav-albums'))
         .typeText(Selector('.p-albums-search input'), 'KanadaVacation')
         .pressKey('enter');
     const AlbumUid = await Selector('div.p-album').nth(0).getAttribute('data-uid');
@@ -49,7 +49,7 @@ test('#1 Add originals files to album', async t => {
     const PhotoCountAfterAdd = await Selector('div.p-photo').count;
     await t
         .expect(PhotoCountAfterAdd).eql(2)
-        .click(Selector('.p-navigation-albums'));
+        .click(Selector('.nav-albums'));
     await page.selectFromUID(AlbumUid);
     await page.deleteSelected();
 });
@@ -58,8 +58,8 @@ test('#1 Add originals files to album', async t => {
 test('#2 Download original files', async t => {
     await page.openNav();
     await t
-        .click(Selector('div.p-navigation-library + div'))
-        .click(Selector('.p-navigation-originals'));
+        .click(Selector('div.nav-library + div'))
+        .click(Selector('.nav-originals'));
     const FirstFile = await Selector('div.p-file').nth(0).getAttribute('data-uid');
     await page.selectFromUID(FirstFile);
     const clipboardCount = await Selector('span.count-clipboard');

@@ -48,10 +48,10 @@ export default class Page {
     }
 
     async openNav() {
-        if (await Selector('button.p-navigation-show').visible) {
-            await t.click(Selector('button.p-navigation-show'));
-        } else if (await Selector('div.p-navigation-expand').exists) {
-            await t.click(Selector('div.p-navigation-expand i'));
+        if (await Selector('button.nav-show').visible) {
+            await t.click(Selector('button.nav-show'));
+        } else if (await Selector('div.nav-expand').exists) {
+            await t.click(Selector('div.nav-expand i'));
         }
     }
 
@@ -93,7 +93,7 @@ export default class Page {
         await t
             .click(Selector('button.action-menu'))
             .click(Selector('button.action-archive'))
-            .click(Selector('button.p-photo-dialog-confirm'));
+            .click(Selector('button.action-confirm'));
     }
 
     async restoreSelected() {
@@ -116,7 +116,7 @@ export default class Page {
         await t
             .click(Selector('button.action-menu'))
             .click(Selector('button.action-delete'))
-            .click(Selector('button.p-photo-dialog-confirm'));
+            .click(Selector('button.action-confirm'));
     }
 
     async removeSelected() {
@@ -134,7 +134,7 @@ export default class Page {
         if (await Selector('div[role="listitem"]').withText(name).visible) {
             await t.click(Selector('div[role="listitem"]').withText(name));
         }
-        await t.click(Selector('button.p-photo-dialog-confirm'));
+        await t.click(Selector('button.action-confirm'));
     }
 
     async login(password) {
@@ -145,6 +145,6 @@ export default class Page {
 
     async logout() {
         await t
-            .click(Selector('div.p-navigation-logout'));
+            .click(Selector('div.nav-logout'));
     }
 }
