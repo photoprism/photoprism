@@ -61,6 +61,7 @@ msgstr ""
 
 #: src/dialog/share/upload.vue:92
 #: src/model/account.js:91
+#: src/pages/settings.vue:12
 msgid "Account"
 msgstr ""
 
@@ -343,6 +344,10 @@ msgstr ""
 #: src/pages/albums.vue:241
 #: src/share/albums.vue:163
 msgid "Category"
+msgstr ""
+
+#: src/pages/settings/account.vue:26
+msgid "Change"
 msgstr ""
 
 #: src/pages/settings/general.vue:448
@@ -1197,7 +1202,6 @@ msgstr ""
 #: src/dialog/account/edit.vue:561
 #: src/dialog/share.vue:154
 #: src/pages/login.vue:73
-#: src/pages/settings.vue:12
 msgid "Password"
 msgstr ""
 
@@ -1678,10 +1682,6 @@ msgstr ""
 #: src/model/photo.js:487
 #: src/resources/options.js:16
 msgid "Unknown"
-msgstr ""
-
-#: src/pages/settings/account.vue:26
-msgid "Update"
 msgstr ""
 
 #: src/dialog/photo/info.vue:115

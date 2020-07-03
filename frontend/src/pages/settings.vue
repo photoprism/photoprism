@@ -18,7 +18,7 @@
       </v-tab>
 
       <v-tab id="tab-settings-account" ripple @click="changePath('/settings/account')" v-if="!public">
-        <translate key="Password">Password</translate>
+        <translate key="Account">Account</translate>
       </v-tab>
 
       <v-tabs-items touchless>

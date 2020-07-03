@@ -76,6 +76,7 @@ msgstr ""
 "Nextcloud hochladen."
 
 #: src/dialog/share/upload.vue:92 src/model/account.js:91
+#: src/pages/settings.vue:12
 msgid "Account"
 msgstr "Zugang"
 
@@ -325,6 +326,10 @@ msgstr "Karten"
 #: src/pages/albums.vue:241 src/share/albums.vue:163
 msgid "Category"
 msgstr "Kategorie"
+
+#: src/pages/settings/account.vue:26
+msgid "Change"
+msgstr "Ändern"
 
 #: src/pages/settings/general.vue:448
 msgid "Change photo titles, locations and other metadata."
@@ -693,7 +698,7 @@ msgstr "Archivierte Fotos werden nicht in den Suchergebnissen angezeigt."
 
 #: src/pages/settings/general.vue:66
 msgid "Hide Private"
-msgstr "Private Inhalte ausblenden"
+msgstr "Privates ausblenden"
 
 #: src/resources/options.js:99
 msgid "Hybrid"
@@ -1118,7 +1123,7 @@ msgid "Originals"
 msgstr "Originale"
 
 #: src/dialog/account/add.vue:80 src/dialog/account/edit.vue:561
-#: src/dialog/share.vue:154 src/pages/login.vue:73 src/pages/settings.vue:12
+#: src/dialog/share.vue:154 src/pages/login.vue:73
 msgid "Password"
 msgstr "Passwort"
 
@@ -1168,7 +1173,7 @@ msgstr "Pink"
 #: src/pages/settings/general.vue:124 src/pages/settings/general.vue:671
 #: src/routes.js:178 src/routes.js:184 src/routes.js:190 src/routes.js:197
 msgid "Places"
-msgstr "Karte"
+msgstr "Karten"
 
 #: src/pages/settings/account.vue:99
 msgid "Please confirm your new password."
@@ -1573,10 +1578,6 @@ msgstr "Gruppierung auflösen"
 msgid "Unknown"
 msgstr "Unbekannt"
 
-#: src/pages/settings/account.vue:26
-msgid "Update"
-msgstr "Ändern"
-
 #: src/dialog/photo/info.vue:115
 msgid "Updated"
 msgstr "Geändert"
@@ -1724,6 +1725,9 @@ msgstr "Du kannst nur ein Album gleichzeitig downloaden"
 #: src/component/label/clipboard.vue:123
 msgid "You can only download one label"
 msgstr "Es kann nur eine Kategorie gleichzeitig downgeloadet werden"
+
+#~ msgid "Update"
+#~ msgstr "Ändern"
 
 #~ msgid "Synced"
 #~ msgstr "Synchronisiert"
