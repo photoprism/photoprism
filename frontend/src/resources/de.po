@@ -616,8 +616,8 @@ msgid ""
 "in a browser. JPEGs will be stored in the same folder next to the original "
 "using the best possible quality."
 msgstr ""
-"RAW Dateien werden zu JPEGs konvertiert so, dass sie in der Fotoansicht "
-"angezeigt werden können. Alternativ kannst du das auch manuell machen."
+"RAW-Bilder und Videos müssen zu JPEGs konvertiert werden, damit sie in der "
+"Suche angezeigt werden können."
 
 #: src/dialog/photo/edit.vue:31
 msgid "Files"

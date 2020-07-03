@@ -1071,6 +1071,8 @@ msgid "No moments matched your search"
 msgstr ""
 
 #: src/pages/photos.vue:387
+#: src/pages/places.vue:194
+#: src/pages/places.vue:231
 msgid "No photos found"
 msgstr ""
 
