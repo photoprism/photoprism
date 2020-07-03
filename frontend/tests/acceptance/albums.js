@@ -16,14 +16,14 @@ const page = new Page();
 
 test('#1 Create/delete album', async t => {
     logger.clear();
-    await t.click(Selector('.p-navigation-albums'));
+    await t.click(Selector('.nav-albums'));
     //TODO fails in container with request but outsides without it
     //const request = await logger.requests[0].response.body;
     const countAlbums = await Selector('div.p-album').count;
     logger.clear();
     await t
         .click(Selector('button.action-add'));
-    const request1 = await logger.requests[0].response.body;
+    //const request1 = await logger.requests[0].response.body;
     const countAlbumsAfterCreate = await Selector('div.p-album').count;
     const NewAlbum = await Selector('div.p-album').nth(0).getAttribute('data-uid');
     await t
@@ -31,7 +31,7 @@ test('#1 Create/delete album', async t => {
     await page.selectFromUID(NewAlbum);
     logger.clear();
     await page.deleteSelected();
-    const request2 = await logger.requests[0].response.body;
+    //const request2 = await logger.requests[0].response.body;
     const countAlbumsAfterDelete = await Selector('div.p-album').count;
     await t
         .expect(countAlbumsAfterDelete).eql(countAlbumsAfterCreate - 1);
@@ -39,61 +39,50 @@ test('#1 Create/delete album', async t => {
 
 test('#2 Update album', async t => {
     await t
-        .click(Selector('.p-navigation-albums'))
+        .click(Selector('.nav-albums'))
         .typeText(Selector('.p-albums-search input'), 'Holiday')
         .pressKey('enter');
     const AlbumUid = await Selector('div.p-album').nth(0).getAttribute('data-uid');
     await t
         .expect(Selector('div.v-card__actions').nth(0).innerText).contains('Holiday')
-        .click(Selector('div.v-card__actions').nth(0))
-        .click(Selector('.input-title input'))
-        .pressKey('ctrl+a delete')
-        .typeText(Selector('.input-title input'), 'Animals')
-        .pressKey('enter')
-        .expect(Selector('div.v-card__actions').nth(0).innerText).contains('Animals');
-    logger.clear();
-    await t
-        .click(Selector('div.p-album').nth(0));
-    const request1 = await logger.requests[0].response.body;
-    const PhotoCount = await Selector('div.p-photo').count;
-    await t
-        .click(Selector('.p-expand-search'))
+        .click(Selector('.action-title-edit').nth(0))
+        .typeText(Selector('.input-title input'), 'Animals', { replace: true })
         .expect(Selector('.input-description textarea').value).eql('')
         .expect(Selector('.input-category input').value).eql('')
         .typeText(Selector('.input-description textarea'), 'All my animals')
         .typeText(Selector('.input-category input'), 'Pets')
-        .pressKey('enter');
-    logger.clear();
+        .pressKey('enter')
+        .click('.action-confirm')
+        .click(Selector('div.p-album').nth(0));
+    //const request1 = await logger.requests[0].response.body;
+    const PhotoCount = await Selector('div.p-photo').count;
     await t
-        .click('.action-reload');
-    const request2 = await logger.requests[0].response.body;
-    await t
-        .click(Selector('.p-expand-search'))
-        .expect(Selector('.input-description textarea').value).eql('All my animals')
-        .expect(Selector('.input-category input').value).eql('Pets')
-        .click(Selector('.p-navigation-photos'));
+        .expect(Selector('.v-card__text').nth(0).innerText).contains('All my animals')
+        .expect(Selector('.v-toolbar__title').nth(1).innerText).contains('Animals')
+        .click(Selector('.nav-photos'));
     const FirstPhotoUid = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     const SecondPhotoUid = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
     await page.selectFromUID(FirstPhotoUid);
     await page.selectFromUID(SecondPhotoUid);
     await page.addSelectedToAlbum('Animals');
     await t
-        .click(Selector('.p-navigation-albums'));
+        .click(Selector('.nav-albums'));
     logger.clear();
     await t
-        .click(Selector('.input-category'))
+        .click(Selector('.input-category i'))
         .click(Selector('div[role="listitem"]').withText('Family'));
-    const request3 = await logger.requests[0].response.body;
+    //const request3 = await logger.requests[0].response.body;
     logger.clear();
     await t
         .expect(Selector('div.v-card__actions').nth(0).innerText).contains('Christmas')
-        .click(Selector('.p-navigation-albums'))
-        .click(Selector('.input-category'))
+        .click(Selector('.nav-albums'))
+        .click('.action-reload')
+        .click(Selector('.input-category i'))
         .click(Selector('div[role="listitem"]').withText('All Categories'), {timeout: 55000});
-    const request4 = await logger.requests[0].response.body;
+    //const request4 = await logger.requests[0].response.body;
     await t
         .click(Selector('div.p-album').withAttribute('data-uid', AlbumUid));
-    const request5 = await logger.requests[0].response.body;
+    //const request5 = await logger.requests[0].response.body;
     const PhotoCountAfterAdd = await Selector('div.p-photo').count;
     await t
         .expect(PhotoCountAfterAdd).eql(PhotoCount + 2);
@@ -106,21 +95,26 @@ test('#2 Update album', async t => {
     logger.clear();
     await t
         .expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 2)
-        .click(Selector('.p-expand-search'))
+        .click(Selector('.action-edit'))
+        .typeText(Selector('.input-title input'), 'Holiday', { replace: true })
+        .expect(Selector('.input-description textarea').value).eql('All my animals')
+        .expect(Selector('.input-category input').value).eql('Pets')
         .click(Selector('.input-description textarea'))
         .pressKey('ctrl+a delete')
+        .pressKey('enter')
         .click(Selector('.input-category input'))
         .pressKey('ctrl+a delete')
         .pressKey('enter')
-        .click(Selector('.p-expand-search'))
-        .click(Selector('div.p-inline-edit'))
-        .typeText(Selector('.input-title input'), 'Holiday', { replace: true })
-        .pressKey('enter');
+        .click('.action-confirm')
+        .click('.action-reload')
+        .click(Selector('.nav-albums'))
+        .expect(Selector('div').withText("Holiday").visible).ok()
+        .expect(Selector('div').withText("Animals").exists).notOk();
 });
 
 //TODO test download itself + clipboard count after download
 test('#3 Download album', async t => {
-    await t.click(Selector('.p-navigation-albums'));
+    await t.click(Selector('.nav-albums'));
     const FirstAlbum = await Selector('div.p-album').nth(0).getAttribute('data-uid');
     await page.selectFromUID(FirstAlbum);
     const clipboardCount = await Selector('span.count-clipboard');
@@ -133,8 +127,8 @@ test('#3 Download album', async t => {
 test('#4 View folders', async t => {
     await page.openNav();
     await t
-        .click(Selector('.p-navigation-albums + div'))
-        .click(Selector('.p-navigation-folders'))
+        .click(Selector('.nav-albums + div'))
+        .click(Selector('.nav-folders'))
         .expect(Selector('a').withText('BotanicalGarden').visible).ok()
         .expect(Selector('a').withText('Kanada').visible).ok()
         .expect(Selector('a').withText('KorsikaAdventure').visible).ok();
@@ -143,14 +137,14 @@ test('#4 View folders', async t => {
 test('#5 View calendar', async t => {
     logger.clear();
     await t
-        .click(Selector('.p-navigation-calendar'))
+        .click(Selector('.nav-calendar'))
         .expect(Selector('a').withText('May 2019').visible).ok()
         .expect(Selector('a').withText('October 2019').visible).ok();
 });
 
 //TODO test that sharing link works as expected
 test('#6 Create sharing link', async t => {
-    await t.click(Selector('.p-navigation-albums'));
+    await t.click(Selector('.nav-albums'));
     const FirstAlbum = await Selector('div.p-album').nth(0).getAttribute('data-uid');
     await page.selectFromUID(FirstAlbum);
     const clipboardCount = await Selector('span.count-clipboard');
