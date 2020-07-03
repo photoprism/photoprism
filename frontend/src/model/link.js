@@ -90,7 +90,7 @@ export default class Link extends Model {
         return new this.constructor(this.getValues());
     }
 
-    find(id, params) {
+    /*find(id, params) {
         return Api.get(this.getEntityResource(id), params).then((response) => Promise.resolve(new this.constructor(response.data)));
     }
 
@@ -108,7 +108,7 @@ export default class Link extends Model {
 
     remove() {
         return Api.delete(this.getEntityResource()).then(() => Promise.resolve(this));
-    }
+    }*/
 
     expires() {
         return DateTime.fromISO(this.UpdatedAt).plus({ seconds: this.Expires }).toLocaleString(DateTime.DATE_SHORT);
