@@ -195,4 +195,67 @@ describe("model/thumb", () => {
         assert.equal(result[0].description, "Nice description 3");
         assert.equal(result[0].original_w, 500);
     });
+
+    it("should return downlaload url",  () => {
+        const values = {
+            InstanceID: 5,
+            UID: "ABC123",
+            Hash: "54ghtfd",
+            Type: "jpg",
+            Name: "1/2/IMG123.jpg"};
+        const file = new File(values);
+        assert.equal(Thumb.downloadUrl(file), "/api/v1/dl/54ghtfd?t=1uhovi0e");
+        const values2 = {
+            InstanceID: 5,
+            UID: "ABC123",
+            Type: "jpg",
+            Name: "1/2/IMG123.jpg"};
+        const file2 = new File(values2);
+        assert.equal(Thumb.downloadUrl(file2), "");
+    });
+
+    it("should return thumbnail url",  () => {
+        const values = {
+            InstanceID: 5,
+            UID: "ABC123",
+            Hash: "54ghtfd",
+            Type: "jpg",
+            Name: "1/2/IMG123.jpg"};
+        const file = new File(values);
+        assert.equal(Thumb.thumbnailUrl(file, "abc"), "/api/v1/t/54ghtfd/static/abc");
+        const values2 = {
+            InstanceID: 5,
+            UID: "ABC123",
+            Name: "1/2/IMG123.jpg"};
+        const file2 = new File(values2);
+        assert.equal(Thumb.thumbnailUrl(file2, "bcd"), "/api/v1/svg/photo");
+    });
+
+    it("should calculate size",  () => {
+        const values = {
+            InstanceID: 5,
+            UID: "ABC123",
+            Hash: "54ghtfd",
+            Type: "jpg",
+            Width: 900,
+            Height: 850,
+            Name: "1/2/IMG123.jpg"};
+        const file = new File(values);
+        const result = Thumb.calculateSize(file, 600, 800);//max 0,75
+        assert.equal(result.width,  600);
+        assert.equal(result.height,  567);
+        const values3 = {
+            InstanceID: 5,
+            UID: "ABC123",
+            Hash: "54ghtfd",
+            Type: "jpg",
+            Width: 750,
+            Height: 850,
+            Name: "1/2/IMG123.jpg"};
+        const file3 = new File(values3);
+        const result2 = Thumb.calculateSize(file3, 900, 450);
+        assert.equal(result2.width,  397);
+        assert.equal(result2.height,  450);
+    });
+
 });
