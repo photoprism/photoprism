@@ -43,6 +43,7 @@ import PAlbumClipboard from "./album/clipboard.vue";
 import PAlbumToolbar from "./album/toolbar.vue";
 import PLabelClipboard from "./label/clipboard.vue";
 import PFileClipboard from "./file/clipboard.vue";
+import PAboutFooter from "./footer.vue";
 
 const components = {};
 
@@ -62,6 +63,7 @@ components.install = (Vue) => {
     Vue.component("p-album-toolbar", PAlbumToolbar);
     Vue.component("p-label-clipboard", PLabelClipboard);
     Vue.component("p-file-clipboard", PFileClipboard);
+    Vue.component("p-about-footer", PAboutFooter);
 };
 
 export default components;

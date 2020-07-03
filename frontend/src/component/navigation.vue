@@ -342,6 +342,18 @@
           </v-list-group>
         </template>
 
+        <v-list-tile to="/help/websockets" @click="" class="nav-connecting" v-show="$config.disconnected">
+          <v-list-tile-action>
+            <v-icon color="warning">wifi_off</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title class="text--warning">
+              <translate key="Connecting">Connecting...</translate>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
         <v-list-tile @click="logout" class="nav-logout" v-show="!public && auth">
           <v-list-tile-action>
             <v-icon>power_settings_new</v-icon>

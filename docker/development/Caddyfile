@@ -3,7 +3,8 @@
     gzip
     
     proxy / photoprism:2342 {
-        websocket
+        # Test broken websocket connection.
+        # websocket
         transparent
     }
 }

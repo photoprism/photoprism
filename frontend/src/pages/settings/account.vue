@@ -64,6 +64,8 @@
         </v-card-actions>
       </v-card>
     </v-form>
+
+    <p-about-footer></p-about-footer>
   </div>
 </template>
 

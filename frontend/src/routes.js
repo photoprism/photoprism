@@ -42,6 +42,7 @@ import Login from "pages/login.vue";
 import Discover from "pages/discover.vue";
 import About from "pages/about/about.vue";
 import License from "pages/about/license.vue";
+import Help from "pages/help.vue";
 import {$gettext} from "common/vm";
 
 const c = window.__CONFIG__;
@@ -62,6 +63,12 @@ export default [
         name: "license",
         path: "/about/license",
         component: License,
+        meta: {title: c.name, auth: false},
+    },
+    {
+        name: "help",
+        path: "/help*",
+        component: Help,
         meta: {title: c.name, auth: false},
     },
     {

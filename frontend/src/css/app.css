@@ -42,6 +42,7 @@ https://docs.photoprism.org/developer-guide/
 @import url("photos.css");
 @import url("labels.css");
 @import url("files.css");
+@import url("help.css");
 
 html,
 body {

@@ -707,6 +707,8 @@
         &lt;<a target="_blank" href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>&gt;.</p>
 
     </v-container>
+
+    <p-about-footer></p-about-footer>
   </div>
 </template>
 
