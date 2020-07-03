@@ -13,11 +13,11 @@
         <v-icon>refresh</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="dialog.edit = true">
+      <v-btn icon @click.stop="dialog.edit = true" class="action-edit">
         <v-icon>edit</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="dialog.share = true" v-if="$config.feature('share')">
+      <v-btn icon @click.stop="dialog.share = true" v-if="$config.feature('share')" class="action-share">
         <v-icon>share</v-icon>
       </v-btn>
 
@@ -32,7 +32,7 @@
       </v-btn>
 
       <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-             class="hidden-sm-and-down">
+             class="hidden-sm-and-down action-upload">
         <v-icon>cloud_upload</v-icon>
       </v-btn>
     </v-toolbar>
