@@ -384,7 +384,7 @@ msgstr "Enthält ein Foto."
 
 #: src/pages/library/index.vue:116 src/pages/settings/general.vue:130
 msgid "Convert to JPEG"
-msgstr "JPEG Dateien erstellen"
+msgstr "Automatisch konvertieren"
 
 #: src/dialog/share.vue:170
 msgid "Copied to clipboard"
@@ -623,7 +623,8 @@ msgid ""
 "Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' belong "
 "to the same photo."
 msgstr ""
-"Dateien mit Namen wie ‘IMG_1234 (2)’ oder ‘IMG_1234 copy 2’ werden gruppiert."
+"Dateien mit Namen wie ‘IMG_1234 (2)’ oder ‘IMG_1234 copy 2’ werden "
+"zusammengefasst."
 
 #: src/dialog/photo/details.vue:448
 msgid "Focal Length"
@@ -671,7 +672,7 @@ msgstr "Ähnlichkeit"
 
 #: src/pages/settings/general.vue:162
 msgid "Group Sequential"
-msgstr "Fotos gruppieren"
+msgstr "Sequenzen gruppieren"
 
 #: src/component/navigation.vue:309 src/component/navigation.vue:25
 #: src/pages/help.vue:4
@@ -692,7 +693,7 @@ msgstr "Archivierte Fotos werden nicht in den Suchergebnissen angezeigt."
 
 #: src/pages/settings/general.vue:66
 msgid "Hide Private"
-msgstr "Verberge private Fotos"
+msgstr "Private Inhalte ausblenden"
 
 #: src/resources/options.js:101
 msgid "Hybrid"
@@ -1214,7 +1215,7 @@ msgstr "Purpur"
 
 #: src/pages/settings/general.vue:98
 msgid "Quality Filter"
-msgstr "Qualitäts Filter"
+msgstr "Qualitätsfilter"
 
 #: src/dialog/photo/info.vue:70
 msgid "Quality Score"
