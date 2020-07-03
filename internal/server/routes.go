@@ -127,13 +127,13 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// WebDAV server for file management, sync and sharing.
 	WebDAV(conf.OriginalsPath(), router.Group("/originals", BasicAuth()), conf)
-	log.Info("webdav: /originals/ enabled")
+	log.Info("webdav: /originals/ waiting for connection")
 
 	if conf.ReadOnly() {
 		log.Info("webdav: /import/ not available in read-only mode")
 	} else {
 		WebDAV(conf.ImportPath(), router.Group("/import", BasicAuth()), conf)
-		log.Info("webdav: /import/ enabled")
+		log.Info("webdav: /import/ waiting for connection")
 	}
 
 	// Default HTML page for client-side rendering and routing via VueJS.
