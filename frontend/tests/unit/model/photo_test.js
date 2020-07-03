@@ -33,7 +33,14 @@ mock
             Primary: false,
             Type: "mp4",
             Hash: "1xxbgdt55"}]})
-    .onDelete().reply(200);
+    .onDelete().reply(200)
+    .onPost("api/v1/photos/pqbemz8276mhtobh/files/fqbfk181n4ca5sud/ungroup").reply(200, {"success": "ok"})
+    .onPost("api/v1/photos/pqbemz8276mhtobh/label", {Name: "Cat", Priority: 10}).reply(200, {"success": "ok"})
+    .onPut("api/v1/photos/pqbemz8276mhtobh/label/12345", {Uncertainty: 0}).reply(200, {"success": "ok"})
+    .onPut("api/v1/photos/pqbemz8276mhtobh/label/12345", {Label: {Name: "Sommer"}}).reply(200, {"success": "ok"})
+    .onDelete("api/v1/photos/pqbemz8276mhtobh/label/12345").reply(200, {"success": "ok"});
+
+
 
 describe("model/photo", () => {
     it("should get photo entity name",  () => {
@@ -459,6 +466,28 @@ describe("model/photo", () => {
                 Codec: "avc1"}]};
         const photo3 = new Photo(values3);
         assert.equal(photo3.getVideoInfo(), "6µs, AVC1, 500 × 600, 0.2 MB");
+        const values4 = {
+            ID: 10,
+            UID: "ABC127",
+            Files: [{
+                UID: "123fgb",
+                Name: "1980/01/superCuteKitten.mp4",
+                Primary: false,
+                Type: "mp4",
+                Hash: "1xxbgdt55",
+                Duration: 6000,
+                Size: 10240,
+                Codec: "avc1"},
+                {
+                UID: "345fgb",
+                Name: "1980/01/superCuteKitten.jpg",
+                Primary: true,
+                Type: "jpg",
+                Hash: "1xxbgjhu5",
+                Width: 300,
+                Height: 500}]};
+        const photo4 = new Photo(values4);
+        assert.equal(photo4.getVideoInfo(), "6µs, AVC1, 300 × 500, 10.0 KB");
     });
 
     it("should return photo info",  () => {
@@ -586,6 +615,97 @@ describe("model/photo", () => {
         photo.primaryFile("fqbfk181n4ca5sud").then(
             (response) => {
                 assert.equal(response.Files[0].Primary, true);
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
+    });
+
+    it("should ungroup",  (done) => {
+        const values = {
+            ID: 10,
+            UID: "pqbemz8276mhtobh",
+            Files: [{
+                UID: "fqbfk181n4ca5sud",
+                Name: "1980/01/superCuteKitten.mp4",
+                Primary: false,
+                Type: "mp4",
+                Hash: "1xxbgdt55"}]};
+        const photo = new Photo(values);
+        photo.ungroupFile("fqbfk181n4ca5sud").then(
+            (response) => {
+                assert.equal(response.success, "ok");
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
+    });
+
+    it("should add label",  (done) => {
+        const values = {
+            ID: 10,
+            UID: "pqbemz8276mhtobh"};
+        const photo = new Photo(values);
+        photo.addLabel("Cat").then(
+            (response) => {
+                assert.equal(response.success, "ok");
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
+    });
+
+    it("should activate label",  (done) => {
+        const values = {
+            ID: 10,
+            UID: "pqbemz8276mhtobh"};
+        const photo = new Photo(values);
+        photo.activateLabel(12345).then(
+            (response) => {
+                assert.equal(response.success, "ok");
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
+    });
+
+    it("should rename label",  (done) => {
+        const values = {
+            ID: 10,
+            UID: "pqbemz8276mhtobh"};
+        const photo = new Photo(values);
+        photo.renameLabel(12345, "Sommer").then(
+            (response) => {
+                assert.equal(response.success, "ok");
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
+    });
+
+    it("should remove label",  (done) => {
+        const values = {
+            ID: 10,
+            UID: "pqbemz8276mhtobh"};
+        const photo = new Photo(values);
+        photo.removeLabel(12345).then(
+            (response) => {
+                assert.equal(response.success, "ok");
                 done();
             }
         ).catch(
