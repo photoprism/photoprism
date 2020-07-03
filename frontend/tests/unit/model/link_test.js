@@ -81,23 +81,6 @@ describe("model/link", () => {
         assert.equal(result.Token, "AcfgbTTh");
     });
 
-    //TODO
-    /*it.only("should remove link",  (done) => {
-        const values = {UID: 5, Token: "AcfgbTTh", Slug: "friends", Share: "family"};
-        const link = new Link(values);
-        link.remove().then(
-            (response) => {
-                console.log(response);
-                assert.equal(response, "share success");
-                done();
-            }
-        ).catch(
-            (error) => {
-                done(error);
-            }
-        );
-    });*/
-
     it("should test expire",  () => {
         const values = {UID: 5, Token: "AcfgbTTh", Slug: "friends", Share: "family", Expires: 80000, UpdatedAt: "2012-07-08T14:45:39Z"};
         const link = new Link(values);
