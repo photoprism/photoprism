@@ -109,7 +109,7 @@
                       item-value="Month"
                       item-text="Name"
                       v-model="filter.month"
-                      :items="monthOptions">
+                      :items="monthOptions()">
             </v-select>
           </v-flex>
           <!-- v-flex xs12 sm6 md3 pa-2 class="p-lens-select">
@@ -131,7 +131,7 @@
                       item-value="Slug"
                       item-text="Name"
                       v-model="filter.color"
-                      :items="colorOptions">
+                      :items="colorOptions()">
             </v-select>
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-category-select">
@@ -152,7 +152,7 @@
 </template>
 <script>
     import Event from "pubsub-js";
-    import {Info} from "luxon";
+    import * as options from "resources/options";
 
     export default {
         name: 'p-photo-toolbar',
@@ -175,6 +175,7 @@
                     lenses: [{ID: 0, Name: this.$gettext("All Lenses")}],
                     colors: [{Slug: "", Name: this.$gettext("All Colors")}],
                     categories: [{Slug: "", Name: this.$gettext("All Categories")}],
+                    months: [{Month: 0, Name: this.$gettext("All Months")}],
                 },
                 options: {
                     'views': [
@@ -217,26 +218,8 @@
             lensOptions() {
                 return this.all.lenses.concat(this.config.lenses);
             },
-            colorOptions() {
-                return this.all.colors.concat(this.config.colors);
-            },
             categoryOptions() {
                 return this.all.categories.concat(this.config.categories);
-            },
-            monthOptions() {
-                let result = [
-                    {"Month": 0, "Name": this.$gettext("All Months")},
-                ];
-
-                const months = Info.months("long");
-
-                for (let i = 0; i < months.length; i++) {
-                    result.push({"Month": i + 1, "Name": months[i]});
-                }
-
-                result.push({"Month": -1, "Name": this.$gettext("Unknown")});
-
-                return result;
             },
             yearOptions() {
                 let result = [
@@ -255,6 +238,12 @@
             },
         },
         methods: {
+            colorOptions() {
+                return this.all.colors.concat(options.Colors());
+            },
+            monthOptions() {
+                return this.all.months.concat(options.Months());
+            },
             dropdownChange() {
                 this.filterChange();
 

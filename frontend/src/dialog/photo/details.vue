@@ -402,10 +402,10 @@
 </template>
 
 <script>
-    import * as options from "resources/options";
     import {DateTime} from "luxon";
     import countries from "resources/countries.json";
     import Thumb from "model/thumb";
+    import * as options from "resources/options";
 
     export default {
         name: 'p-tab-photo-details',
@@ -484,9 +484,6 @@
             },
             lensOptions() {
                 return this.config.lenses;
-            },
-            colorOptions() {
-                return this.all.colors.concat(this.config.colors);
             },
         },
         methods: {

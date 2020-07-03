@@ -46,15 +46,15 @@ msgstr " Fotos gefunden"
 msgid " photos loaded"
 msgstr " Fotos geladen"
 
-#: src/resources/options.js:99
+#: src/resources/options.js:116
 msgid "1 hour"
 msgstr "1 Stunde"
 
-#: src/resources/options.js:101
+#: src/resources/options.js:118
 msgid "12 hours"
 msgstr "12 Stunden"
 
-#: src/resources/options.js:100
+#: src/resources/options.js:117
 msgid "4 hours"
 msgstr "4 Stunden"
 
@@ -114,31 +114,31 @@ msgstr "Hinzufügen"
 msgid "Added"
 msgstr "Hinzugefügt"
 
-#: src/resources/options.js:109
+#: src/resources/options.js:126
 msgid "After 1 day"
 msgstr "Nach einem Tag"
 
-#: src/resources/options.js:110
+#: src/resources/options.js:127
 msgid "After 3 days"
 msgstr "Nach 3 Tagen"
 
-#: src/resources/options.js:111
+#: src/resources/options.js:128
 msgid "After 7 days"
 msgstr "Nach 7 Tagen"
 
-#: src/resources/options.js:113
+#: src/resources/options.js:130
 msgid "After one month"
 msgstr "Nach einem Monat"
 
-#: src/resources/options.js:115
+#: src/resources/options.js:132
 msgid "After one year"
 msgstr "Nach einem Jahr"
 
-#: src/resources/options.js:114
+#: src/resources/options.js:131
 msgid "After two months"
 msgstr "Nach zwei Monaten"
 
-#: src/resources/options.js:112
+#: src/resources/options.js:129
 msgid "After two weeks"
 msgstr "Nach zwei Wochen"
 
@@ -194,7 +194,7 @@ msgstr "Alle Dateien aus Import"
 msgid "All Lenses"
 msgstr "Alle Linsen"
 
-#: src/component/photo/toolbar.vue:228
+#: src/resources/options.js:9
 msgid "All Months"
 msgstr "Alle Monate"
 
@@ -202,7 +202,7 @@ msgstr "Alle Monate"
 msgid "All originals"
 msgstr "Alle Dateien aus Originals"
 
-#: src/component/photo/toolbar.vue:243
+#: src/component/photo/toolbar.vue:231
 msgid "All Years"
 msgstr "Alle Jahre"
 
@@ -263,6 +263,18 @@ msgstr "Fotograf"
 #: src/pages/settings/account.vue:70
 msgid "At least 6 characters."
 msgstr "Mindestens 6 Zeichen."
+
+#: src/resources/options.js:151
+msgid "Black"
+msgstr "Schwarz"
+
+#: src/resources/options.js:147
+msgid "Blue"
+msgstr "Blau"
+
+#: src/resources/options.js:148
+msgid "Brown"
+msgstr "Braun"
 
 #: src/pages/settings/general.vue:544
 msgid "Browse and edit image classification labels."
@@ -403,15 +415,19 @@ msgstr "Hinzugefügt"
 msgid "Current Password"
 msgstr "Aktuelles Passwort"
 
-#: src/resources/options.js:31
+#: src/resources/options.js:146
+msgid "Cyan"
+msgstr "Cyan"
+
+#: src/resources/options.js:48
 msgid "Cyano"
 msgstr "Cyanblau"
 
-#: src/resources/options.js:102
+#: src/resources/options.js:119
 msgid "Daily"
 msgstr "Täglich"
 
-#: src/resources/options.js:27
+#: src/resources/options.js:44
 msgid "Default"
 msgstr "Standard"
 
@@ -486,7 +502,7 @@ msgstr "Lade herunter…"
 msgid "Duplicate"
 msgstr "Duplikat"
 
-#: src/resources/options.js:16
+#: src/resources/options.js:33
 msgid "Dutch"
 msgstr "Niederländisch"
 
@@ -515,7 +531,7 @@ msgstr "Bearbeitet"
 msgid "Enabled"
 msgstr "An"
 
-#: src/resources/options.js:8
+#: src/resources/options.js:25
 msgid "English"
 msgstr "Englisch"
 
@@ -531,7 +547,7 @@ msgstr "Ereignisse"
 msgid "Event Log"
 msgstr "Ereignisse"
 
-#: src/resources/options.js:103
+#: src/resources/options.js:120
 msgid "Every two days"
 msgstr "Jeden zweiten Tag"
 
@@ -569,7 +585,7 @@ msgstr "Der Link konnte nicht aktualisiert werden"
 msgid "Failure while importing uploaded files"
 msgstr "Fehler beim Importieren der hochgeladenen Dateien"
 
-#: src/resources/options.js:61
+#: src/resources/options.js:78
 msgid "Fast"
 msgstr "Schnell"
 
@@ -632,9 +648,21 @@ msgstr "Ordner"
 msgid "General"
 msgstr "Allgemein"
 
-#: src/resources/options.js:12
+#: src/resources/options.js:29
 msgid "German"
 msgstr "Deutsch"
+
+#: src/resources/options.js:141
+msgid "Gold"
+msgstr "Gold"
+
+#: src/resources/options.js:144
+msgid "Green"
+msgstr "Grün"
+
+#: src/resources/options.js:150
+msgid "Grey"
+msgstr "Grau"
 
 #: src/component/album/toolbar.vue:104 src/component/photo/toolbar.vue:190
 #: src/dialog/album/edit.vue:105
@@ -666,7 +694,7 @@ msgstr "Archivierte Fotos werden nicht in den Suchergebnissen angezeigt."
 msgid "Hide Private"
 msgstr "Verberge private Fotos"
 
-#: src/resources/options.js:84
+#: src/resources/options.js:101
 msgid "Hybrid"
 msgstr "Hybrid"
 
@@ -755,7 +783,7 @@ msgstr "Sprache"
 msgid "Latitude"
 msgstr "Breitengrad"
 
-#: src/resources/options.js:35
+#: src/resources/options.js:52
 msgid "Lavender"
 msgstr "Lavendel"
 
@@ -776,6 +804,10 @@ msgstr "Dateien"
 #: src/dialog/photo/details.vue:452 src/pages/about/license.vue:4
 msgid "License"
 msgstr "Lizenz"
+
+#: src/resources/options.js:143
+msgid "Lime"
+msgstr "Hellgrün"
 
 #: src/model/link.js:122
 msgid "Link"
@@ -813,11 +845,15 @@ msgstr "Logs"
 msgid "Longitude"
 msgstr "Längengrad"
 
+#: src/resources/options.js:137
+msgid "Magenta"
+msgstr "Magenta"
+
 #: src/dialog/photo/labels.vue:125
 msgid "manual"
 msgstr "Manuell"
 
-#: src/resources/options.js:65
+#: src/resources/options.js:82
 msgid "Medium"
 msgstr "Mittel"
 
@@ -838,7 +874,7 @@ msgstr "Monochrom"
 msgid "Month"
 msgstr "Monat"
 
-#: src/resources/options.js:39 src/resources/options.js:92
+#: src/resources/options.js:56 src/resources/options.js:109
 msgid "Moonlight"
 msgstr "Mondlicht"
 
@@ -896,8 +932,8 @@ msgstr "Name"
 msgid "Name too long"
 msgstr "Name zu  lang"
 
-#: src/pages/settings/sync.vue:103 src/resources/options.js:98
-#: src/resources/options.js:108
+#: src/pages/settings/sync.vue:103 src/resources/options.js:115
+#: src/resources/options.js:125
 msgid "Never"
 msgstr "Nie"
 
@@ -971,7 +1007,7 @@ msgstr ""
 "Nicht-fotografische Inhalte oder Fotos mit geringer Qualität werden erst "
 "nach einer Bestätigung in der Suche angezeigt."
 
-#: src/resources/options.js:57
+#: src/resources/options.js:74
 msgid "None"
 msgstr "Keine"
 
@@ -994,6 +1030,8 @@ msgid ""
 "Note: Updating the password will not revoke access from already "
 "authenticated users."
 msgstr ""
+"Note: Bereits angemeldete Benutzer werden nach ändern des Passworts nicht "
+"automatisch abgemeldet."
 
 #: src/dialog/photo/details.vue:455
 msgid "Notes"
@@ -1007,7 +1045,7 @@ msgstr "Noch nichts zu sehen. Gedulde dich noch ein bisschen."
 msgid "of"
 msgstr "von"
 
-#: src/resources/options.js:76
+#: src/resources/options.js:93
 msgid "Offline"
 msgstr "Offline"
 
@@ -1020,7 +1058,7 @@ msgstr "OK"
 msgid "Oldest first"
 msgstr "Älteste zuerst"
 
-#: src/resources/options.js:104
+#: src/resources/options.js:121
 msgid "Once a week"
 msgstr "Einmal die Woche"
 
@@ -1037,9 +1075,13 @@ msgstr "Ein Eintrag gefunden"
 msgid "One photo found"
 msgstr "Ein Foto gefunden"
 
-#: src/resources/options.js:43
+#: src/resources/options.js:60
 msgid "Onyx"
-msgstr ""
+msgstr "Onyx"
+
+#: src/resources/options.js:140
+msgid "Orange"
+msgstr "Orange"
 
 #: src/dialog/account/edit.vue:353
 msgid "Original"
@@ -1100,6 +1142,10 @@ msgstr "Fotos archiviert"
 #: src/component/photo/clipboard.vue:185
 msgid "Photos restored"
 msgstr "Fotos wiederhergestellt"
+
+#: src/resources/options.js:138
+msgid "Pink"
+msgstr "Pink"
 
 #: src/component/navigation.vue:198 src/component/navigation.vue:207
 #: src/pages/settings/general.vue:124 src/pages/settings/general.vue:671
@@ -1162,6 +1208,10 @@ msgstr "Hauptdatei"
 msgid "Private"
 msgstr "Privat"
 
+#: src/resources/options.js:136
+msgid "Purple"
+msgstr "Purpur"
+
 #: src/pages/settings/general.vue:98
 msgid "Quality Filter"
 msgstr "Qualitäts Filter"
@@ -1174,7 +1224,7 @@ msgstr "Qualität"
 msgid "Random"
 msgstr "Zufällig"
 
-#: src/resources/options.js:47
+#: src/resources/options.js:64
 msgid "Raspberry"
 msgstr "Himbeere"
 
@@ -1187,6 +1237,10 @@ msgstr ""
 #: src/dialog/album/edit.vue:101
 msgid "Recently added"
 msgstr "Zuletzt hinzugefügt"
+
+#: src/resources/options.js:139
+msgid "Red"
+msgstr "Rot"
 
 #: src/pages/settings/general.vue:377
 msgid "Reloading..."
@@ -1236,9 +1290,9 @@ msgstr "Bestätigen"
 
 #: src/dialog/photo/files.vue:67
 msgid "Root"
-msgstr ""
+msgstr "Hauptverzeichnis"
 
-#: src/resources/options.js:20
+#: src/resources/options.js:37
 msgid "Russian"
 msgstr "Russisch"
 
@@ -1263,7 +1317,7 @@ msgstr "Fotos werden auf einer Weltkarte angezeigt."
 msgid "Season"
 msgstr "Jahreszeit"
 
-#: src/resources/options.js:51
+#: src/resources/options.js:68
 msgid "Seaweed"
 msgstr "Seegras"
 
@@ -1332,7 +1386,7 @@ msgstr "Ähnlich"
 msgid "Size"
 msgstr "Größe"
 
-#: src/resources/options.js:69
+#: src/resources/options.js:86
 msgid "Slow"
 msgstr "Langsam"
 
@@ -1362,7 +1416,7 @@ msgstr "Länder"
 msgid "Status"
 msgstr "Status"
 
-#: src/resources/options.js:80
+#: src/resources/options.js:97
 msgid "Streets"
 msgstr "Straßen"
 
@@ -1398,6 +1452,10 @@ msgstr "Erstell nach"
 msgid "Taken before"
 msgstr "Erstellt vor"
 
+#: src/resources/options.js:145
+msgid "Teal"
+msgstr "Blaugrün"
+
 #: src/dialog/photo/details.vue:464
 msgid "Text too long"
 msgstr "Text ist zu lang"
@@ -1411,6 +1469,8 @@ msgid ""
 "Their format may not be supported, they haven't been converted to JPEG yet "
 "or there are duplicates."
 msgstr ""
+"Their format may not be supported, they haven’t been converted to JPEG yet "
+"or there are duplicates."
 
 #: src/pages/settings/general.vue:234
 msgid "Theme"
@@ -1445,7 +1505,7 @@ msgstr "Code"
 msgid "Too many files in folder, showing first"
 msgstr "Es befinden sich zu viele Dateien im Ordner. Zeige die ersten "
 
-#: src/resources/options.js:88
+#: src/resources/options.js:105
 msgid "Topographic"
 msgstr "Topographisch"
 
@@ -1488,10 +1548,10 @@ msgstr "UID"
 msgid "Ungroup"
 msgstr "Gruppierung auflösen"
 
-#: src/component/photo/toolbar.vue:237 src/component/photo/toolbar.vue:252
-#: src/dialog/photo/details.vue:420 src/dialog/photo/info.vue:197
-#: src/model/photo.js:349 src/model/photo.js:361 src/model/photo.js:385
-#: src/model/photo.js:397 src/model/photo.js:474 src/model/photo.js:487
+#: src/component/photo/toolbar.vue:240 src/dialog/photo/details.vue:420
+#: src/dialog/photo/info.vue:197 src/model/photo.js:349 src/model/photo.js:361
+#: src/model/photo.js:385 src/model/photo.js:397 src/model/photo.js:474
+#: src/model/photo.js:487 src/resources/options.js:18
 msgid "Unknown"
 msgstr "Unbekannt"
 
@@ -1609,13 +1669,19 @@ msgstr "WebDAV Upload"
 
 #: src/pages/about/about.vue:4
 msgid "Whatever it is, we'd love to hear from you!"
-msgstr ""
+msgstr "Wir freuen uns, von dir zu hören!"
 
 #: src/pages/library/errors.vue:31
 msgid ""
 "When PhotoPrism found broken files or there are other potential issues, "
 "you'll see a short message on this page."
 msgstr ""
+"Auf dieser Seite erscheint ein Hinweis, falls PhotoPrism beschädigte Dateien "
+"findet oder es andere Probleme gibt."
+
+#: src/resources/options.js:149
+msgid "White"
+msgstr "Weiß"
 
 #: src/pages/about/about.vue:28
 msgid "Who we are"
@@ -1625,6 +1691,10 @@ msgstr "Wer wir sind"
 #: src/dialog/photo/info.vue:53
 msgid "Year"
 msgstr "Jahr"
+
+#: src/resources/options.js:142
+msgid "Yellow"
+msgstr "Gelb"
 
 #: src/dialog/photo/archive.vue:15 src/dialog/photo/files.vue:99
 #: src/dialog/photo/files.vue:105 src/dialog/photo/info.vue:264

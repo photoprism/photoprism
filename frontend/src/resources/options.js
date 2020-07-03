@@ -1,7 +1,22 @@
 import {$gettext} from "common/vm";
 import moment from "moment-timezone";
+import {Info} from "luxon";
 
 export const TimeZones = () => moment.tz.names();
+
+export const Months = () => {
+    let result = [];
+
+    const months = Info.months("long");
+
+    for (let i = 0; i < months.length; i++) {
+        result.push({"Month": i + 1, "Name": months[i]});
+    }
+
+    result.push({"Month": -1, "Name": $gettext("Unknown")});
+
+    return result;
+}
 
 export const Languages = () => [
     {
@@ -113,4 +128,23 @@ export const Expires = () => [
     {"value": 86400 * 31, "text": $gettext("After one month")},
     {"value": 86400 * 60, "text": $gettext("After two months")},
     {"value": 86400 * 365, "text": $gettext("After one year")},
+];
+
+export const Colors = () => [
+    {"Example": "#AB47BC", "Name": $gettext("Purple"), "Slug": "purple"},
+    {"Example": "#FF00FF", "Name": $gettext("Magenta"), "Slug": "magenta"},
+    {"Example": "#EC407A", "Name": $gettext("Pink"), "Slug": "pink"},
+    {"Example": "#EF5350", "Name": $gettext("Red"), "Slug": "red"},
+    {"Example": "#FFA726", "Name": $gettext("Orange"), "Slug": "orange"},
+    {"Example": "#D4AF37", "Name": $gettext("Gold"), "Slug": "gold"},
+    {"Example": "#FDD835", "Name": $gettext("Yellow"), "Slug": "yellow"},
+    {"Example": "#CDDC39", "Name": $gettext("Lime"), "Slug": "lime"},
+    {"Example": "#66BB6A", "Name": $gettext("Green"), "Slug": "green"},
+    {"Example": "#009688", "Name": $gettext("Teal"), "Slug": "teal"},
+    {"Example": "#00BCD4", "Name": $gettext("Cyan"), "Slug": "cyan"},
+    {"Example": "#2196F3", "Name": $gettext("Blue"), "Slug": "blue"},
+    {"Example": "#A1887F", "Name": $gettext("Brown"), "Slug": "brown"},
+    {"Example": "#F5F5F5", "Name": $gettext("White"), "Slug": "white"},
+    {"Example": "#9E9E9E", "Name": $gettext("Grey"), "Slug": "grey"},
+    {"Example": "#212121", "Name": $gettext("Black"), "Slug": "black"},
 ];
