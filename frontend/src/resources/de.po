@@ -1555,8 +1555,7 @@ msgid ""
 "Try using other terms and search options such as category, country and "
 "camera."
 msgstr ""
-"Versuche es nochmal mit anderen Suchbegriffen oder Optionen für Kategorie, "
-"Land oder Kamera"
+"Leider nichts gefunden, versuche es mit anderen Begriffen oder Suchfiltern."
 
 #: src/dialog/account/edit.vue:620 src/dialog/photo/files.vue:79
 #: src/dialog/photo/files.vue:165 src/dialog/photo/info.vue:15
