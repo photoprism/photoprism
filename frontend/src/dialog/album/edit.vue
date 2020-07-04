@@ -39,7 +39,7 @@
                 </v-textarea>
               </v-flex>
               <v-flex xs12 md6 pa-2>
-                <v-combobox hide-details
+                <v-combobox hide-details :search-input.sync="model.Category"
                             v-model="model.Category"
                             :items="categories"
                             :label="labels.category"
@@ -47,7 +47,17 @@
                             return-masked-value
                             color="secondary-dark"
                             class="input-category"
-                ></v-combobox>
+                >
+                  <template v-slot:no-data>
+                    <v-list-tile>
+                      <v-list-tile-content>
+                        <v-list-tile-title>
+                          <translate>Press enter to create a new category.</translate>
+                        </v-list-tile-title>
+                      </v-list-tile-content>
+                    </v-list-tile>
+                  </template>
+                </v-combobox>
               </v-flex>
               <v-flex xs12 md6 pa-2>
                 <v-select
@@ -127,8 +137,10 @@
                 this.$emit('close');
             },
             confirm() {
-                this.$emit('close');
-                this.model.update();
+                this.model.update().then((m) => {
+                    this.categories = this.$config.albumCategories();
+                    this.$emit('close');
+                });
             },
         },
         watch: {

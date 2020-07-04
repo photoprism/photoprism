@@ -287,7 +287,7 @@
                         this.offset = offset;
 
                         if (this.results.length > 1) {
-                            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} photos loaded"), {n: this.results.length}));
+                            this.$notify.info(this.$gettextInterpolate(this.$gettext("Showing all %{n} results"), {n: this.results.length}));
                         }
                     } else if (this.results.length >= Photo.limit()) {
                         this.offset = offset;
@@ -384,14 +384,14 @@
 
                     if (this.complete) {
                         if (!this.results.length) {
-                            this.$notify.warn(this.$gettext("No photos found"));
+                            this.$notify.warn(this.$gettext("Couldn't find any results"));
                         } else if (this.results.length === 1) {
-                            this.$notify.info(this.$gettext("One photo found"));
+                            this.$notify.info(this.$gettext("Found one result"));
                         } else {
-                            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} photos found"), {n: this.results.length}));
+                            this.$notify.info(this.$gettextInterpolate(this.$gettext("Found %{n} results"), {n: this.results.length}));
                         }
                     } else {
-                        this.$notify.info(this.$gettext('More than 50 photos found'));
+                        this.$notify.info(this.$gettext('More than 50 results'));
 
                         this.$nextTick(() => this.$emit("scrollRefresh"));
                     }

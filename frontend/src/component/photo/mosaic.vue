@@ -4,7 +4,7 @@
       <v-card-title primary-title>
         <div>
           <h3 class="title mb-3">
-            <translate>No photos matched your search</translate>
+            <translate>No photos or videos found</translate>
           </h3>
           <div>
             <translate>Try using other terms and search options such as category, country and camera.</translate>

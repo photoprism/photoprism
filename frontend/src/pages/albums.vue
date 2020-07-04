@@ -530,6 +530,17 @@
                                 }
                             }
                         }
+
+                        let categories = [{"value": "", "text": this.$gettext("All Categories")}];
+
+                        if (this.$config.albumCategories().length > 0) {
+                            categories = categories.concat(this.$config.albumCategories().map(cat => {
+                                return {"value": cat, "text": cat};
+                            }));
+                        }
+
+                        this.categories = categories;
+
                         break;
                     case 'deleted':
                         this.dirty = true;
