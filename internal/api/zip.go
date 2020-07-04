@@ -28,7 +28,7 @@ func CreateZip(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDownload)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -43,7 +43,7 @@ func CreateZip(router *gin.RouterGroup) {
 		start := time.Now()
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 

@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
@@ -34,7 +35,7 @@ func GetAlbums(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionSearch)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -43,7 +44,7 @@ func GetAlbums(router *gin.RouterGroup) {
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -73,7 +74,7 @@ func GetAlbum(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionRead)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -81,7 +82,7 @@ func GetAlbum(router *gin.RouterGroup) {
 		m, err := query.AlbumByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
@@ -95,14 +96,14 @@ func CreateAlbum(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionCreate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		var f form.Album
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -112,12 +113,11 @@ func CreateAlbum(router *gin.RouterGroup) {
 		log.Debugf("album: creating %+v %+v", f, m)
 
 		if res := entity.Db().Create(m); res.Error != nil {
-			log.Error(res.Error.Error())
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("%s already exists", txt.Quote(m.AlbumTitle))})
+			AbortAlreadyExists(c, txt.Quote(m.AlbumTitle))
 			return
 		}
 
-		event.Success("album created")
+		event.SuccessMsg(i18n.MsgAlbumCreated)
 
 		UpdateClientConfig()
 
@@ -133,7 +133,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -141,7 +141,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		m, err := query.AlbumByUID(uid)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
@@ -149,25 +149,25 @@ func UpdateAlbum(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
 		if err := c.BindJSON(&f); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusBadRequest, ErrFormInvalid)
+			AbortBadRequest(c)
 			return
 		}
 
 		if err := m.SaveForm(f); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
 		UpdateClientConfig()
 
-		event.Success("album saved")
+		event.SuccessMsg(i18n.MsgAlbumSaved)
 
 		PublishAlbumEvent(EntityUpdated, uid, c)
 
@@ -181,7 +181,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionDelete)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -191,7 +191,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 		m, err := query.AlbumByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
@@ -200,7 +200,8 @@ func DeleteAlbum(router *gin.RouterGroup) {
 		conf.Db().Delete(&m)
 
 		UpdateClientConfig()
-		event.Success(fmt.Sprintf("album %s deleted", txt.Quote(m.AlbumTitle)))
+
+		event.SuccessMsg(i18n.MsgAlbumDeleted, txt.Quote(m.AlbumTitle))
 
 		c.JSON(http.StatusOK, m)
 	})
@@ -215,7 +216,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionLike)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -224,7 +225,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 		album, err := query.AlbumByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
@@ -234,7 +235,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 		UpdateClientConfig()
 		PublishAlbumEvent(EntityUpdated, id, c)
 
-		c.JSON(http.StatusOK, http.Response{})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved))
 	})
 }
 
@@ -247,7 +248,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionLike)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -256,7 +257,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 		album, err := query.AlbumByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
@@ -266,7 +267,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 		UpdateClientConfig()
 		PublishAlbumEvent(EntityUpdated, id, c)
 
-		c.JSON(http.StatusOK, http.Response{})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved))
 	})
 }
 
@@ -276,21 +277,21 @@ func CloneAlbums(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		a, err := query.AlbumByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -315,12 +316,12 @@ func CloneAlbums(router *gin.RouterGroup) {
 		}
 
 		if len(added) > 0 {
-			event.Success(fmt.Sprintf("selection added to %s", txt.Quote(a.Title())))
+			event.SuccessMsg(i18n.MsgSelectionAddedTo, txt.Quote(a.Title()))
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "album contents cloned", "album": a, "added": added})
+		c.JSON(http.StatusOK, gin.H{"message": i18n.Msg(i18n.MsgAlbumCloned), "album": a, "added": added})
 	})
 }
 
@@ -330,14 +331,14 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -345,7 +346,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(uid)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
@@ -353,7 +354,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Errorf("album: %s", err)
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -361,15 +362,15 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 		if len(added) > 0 {
 			if len(added) == 1 {
-				event.Success(fmt.Sprintf("one entry added to %s", txt.Quote(a.Title())))
+				event.SuccessMsg(i18n.MsgEntryAddedTo, txt.Quote(a.Title()))
 			} else {
-				event.Success(fmt.Sprintf("%d entries added to %s", len(added), txt.Quote(a.Title())))
+				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), txt.Quote(a.Title()))
 			}
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "photos added to album", "album": a, "photos": photos.UIDs(), "added": added})
+		c.JSON(http.StatusOK, gin.H{"message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": photos.UIDs(), "added": added})
 	})
 }
 
@@ -379,27 +380,26 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
 		if len(f.Photos) == 0 {
-			log.Error("no items selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no items selected")})
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
 
 		a, err := query.AlbumByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
@@ -407,15 +407,15 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 
 		if len(removed) > 0 {
 			if len(removed) == 1 {
-				event.Success(fmt.Sprintf("one entry removed from %s", txt.Quote(a.Title())))
+				event.SuccessMsg(i18n.MsgEntryRemovedFrom, txt.Quote(a.Title()))
 			} else {
-				event.Success(fmt.Sprintf("%d entries removed from %s", len(removed), txt.Quote(txt.Quote(a.Title()))))
+				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), txt.Quote(txt.Quote(a.Title())))
 			}
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "entries removed from album", "album": a, "photos": f.Photos, "removed": removed})
+		c.JSON(http.StatusOK, gin.H{"message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": f.Photos, "removed": removed})
 	})
 }
 
@@ -423,7 +423,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 func DownloadAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/dl", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {
-			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -432,14 +432,14 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
 		p, err := query.AlbumPhotos(a, 10000)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -450,7 +450,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 		if err := os.MkdirAll(zipPath, 0700); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip folder")})
+			Abort(c, http.StatusInternalServerError, i18n.ErrCreateFolder)
 			return
 		}
 
@@ -458,7 +458,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			Abort(c, http.StatusInternalServerError, i18n.ErrCreateFile)
 			return
 		}
 
@@ -475,7 +475,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
 					log.Error(err)
-					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip file")})
+					Abort(c, http.StatusInternalServerError, i18n.ErrCreateFile)
 					return
 				}
 				log.Infof("album: added %s as %s", txt.Quote(f.FileName), txt.Quote(fileAlias))

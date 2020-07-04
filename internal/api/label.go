@@ -28,7 +28,7 @@ func GetLabels(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionSearch)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -37,7 +37,7 @@ func GetLabels(router *gin.RouterGroup) {
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -62,14 +62,14 @@ func UpdateLabel(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		var f form.Label
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -101,7 +101,7 @@ func LikeLabel(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -139,7 +139,7 @@ func DislikeLabel(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 

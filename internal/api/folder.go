@@ -15,7 +15,6 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 type FoldersResponse struct {
@@ -32,7 +31,7 @@ func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 		s := Auth(SessionID(c), acl.ResourceFolders, acl.ActionSearch)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -42,7 +41,7 @@ func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 

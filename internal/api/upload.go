@@ -28,7 +28,7 @@ func Upload(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpload)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -38,7 +38,7 @@ func Upload(router *gin.RouterGroup) {
 		f, err := c.MultipartForm()
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -51,7 +51,7 @@ func Upload(router *gin.RouterGroup) {
 		p := path.Join(conf.ImportPath(), "upload", subPath)
 
 		if err := os.MkdirAll(p, os.ModePerm); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -61,7 +61,7 @@ func Upload(router *gin.RouterGroup) {
 			log.Debugf("upload: saving file %s", txt.Quote(file.Filename))
 
 			if err := c.SaveUploadedFile(file, filename); err != nil {
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+				AbortBadRequest(c)
 				return
 			}
 

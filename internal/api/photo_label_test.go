@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 )
@@ -29,7 +30,7 @@ func TestAddPhotoLabel(t *testing.T) {
 		AddPhotoLabel(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/photos/xxx/label", `{"Name": "Flower", "Uncertainty": 10, "Priority": 2}`)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Photo not found", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrEntityNotFound), val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 	t.Run("invalid request", func(t *testing.T) {
@@ -65,7 +66,7 @@ func TestRemovePhotoLabel(t *testing.T) {
 		RemovePhotoLabel(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/photos/xxx/label/10000001")
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Photo not found", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrEntityNotFound), val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 	t.Run("label not existing", func(t *testing.T) {
@@ -105,7 +106,7 @@ func TestUpdatePhotoLabel(t *testing.T) {
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/xxx/label/1000006", `{"Label": {"Name": "NewLabelName"}}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Photo not found", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrEntityNotFound), val.String())
 	})
 	t.Run("label not existing", func(t *testing.T) {
 		app, router, _ := NewApiTest()

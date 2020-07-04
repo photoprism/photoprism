@@ -23,7 +23,7 @@ func ChangePassword(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePeople, acl.ActionUpdateSelf)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 

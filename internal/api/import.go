@@ -24,7 +24,7 @@ func StartImport(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionImport)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -40,7 +40,7 @@ func StartImport(router *gin.RouterGroup) {
 		var f form.ImportOptions
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -112,7 +112,7 @@ func CancelImport(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionImport)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 

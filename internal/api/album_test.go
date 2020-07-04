@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/tidwall/gjson"
 
 	"github.com/stretchr/testify/assert"
@@ -182,7 +183,7 @@ func TestAddPhotosToAlbum(t *testing.T) {
 		AddPhotosToAlbum(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["pt9jtdre2lvl0y12", "pt9jtdre2lvl0y11"]}`)
 		val := gjson.Get(r.Body.String(), "message")
-		assert.Equal(t, "photos added to album", val.String())
+		assert.Equal(t, i18n.Msg(i18n.MsgChangesSaved), val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("add one photo to album", func(t *testing.T) {
@@ -190,7 +191,7 @@ func TestAddPhotosToAlbum(t *testing.T) {
 		AddPhotosToAlbum(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["pt9jtdre2lvl0y12"]}`)
 		val := gjson.Get(r.Body.String(), "message")
-		assert.Equal(t, "photos added to album", val.String())
+		assert.Equal(t, i18n.Msg(i18n.MsgChangesSaved), val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("invalid request", func(t *testing.T) {
@@ -222,7 +223,7 @@ func TestRemovePhotosFromAlbum(t *testing.T) {
 		RemovePhotosFromAlbum(router)
 		r := PerformRequestWithBody(app, "DELETE", "/api/v1/albums/"+uid+"/photos", `{"photos": ["pt9jtdre2lvl0y12", "pt9jtdre2lvl0y11"]}`)
 		val := gjson.Get(r.Body.String(), "message")
-		assert.Equal(t, "entries removed from album", val.String())
+		assert.Equal(t, i18n.Msg(i18n.MsgChangesSaved), val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("no items selected", func(t *testing.T) {

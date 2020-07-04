@@ -16,7 +16,7 @@ func GetMomentsTime(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionExport)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 

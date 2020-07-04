@@ -23,21 +23,21 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		m, err := query.PhotoByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
 		var f form.Label
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -71,7 +71,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 		p, err := query.PhotoPreloadByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -98,14 +98,14 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		m, err := query.PhotoByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -133,7 +133,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 		p, err := query.PhotoPreloadByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -162,7 +162,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -171,7 +171,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		m, err := query.PhotoByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -190,7 +190,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		}
 
 		if err := c.BindJSON(&label); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -202,7 +202,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		p, err := query.PhotoPreloadByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 

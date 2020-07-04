@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/yaml.v2"
@@ -106,8 +107,8 @@ func NewSettings() *Settings {
 }
 
 // Propagate updates settings in other packages as needed.
-func (s *Settings) Propagate() {
-
+func (s Settings) Propagate() {
+	i18n.SetLang(s.Language)
 }
 
 // Load uses a yaml config file to initiate the configuration entity.

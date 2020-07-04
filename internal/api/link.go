@@ -18,14 +18,14 @@ func UpdateLink(c *gin.Context) {
 	s := Auth(SessionID(c), acl.ResourceLinks, acl.ActionUpdate)
 
 	if s.Invalid() {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		AbortUnauthorized(c)
 		return
 	}
 
 	var f form.Link
 
 	if err := c.BindJSON(&f); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+		AbortBadRequest(c)
 		return
 	}
 
@@ -61,7 +61,7 @@ func DeleteLink(c *gin.Context) {
 	s := Auth(SessionID(c), acl.ResourceLinks, acl.ActionDelete)
 
 	if s.Invalid() {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		AbortUnauthorized(c)
 		return
 	}
 
@@ -82,14 +82,14 @@ func CreateLink(c *gin.Context) {
 	s := Auth(SessionID(c), acl.ResourceLinks, acl.ActionCreate)
 
 	if s.Invalid() {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		AbortUnauthorized(c)
 		return
 	}
 
 	var f form.Link
 
 	if err := c.BindJSON(&f); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+		AbortBadRequest(c)
 		return
 	}
 
@@ -160,7 +160,7 @@ func GetAlbumLinks(router *gin.RouterGroup) {
 func CreatePhotoLink(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/links", func(c *gin.Context) {
 		if _, err := query.PhotoByUID(c.Param("uid")); err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 

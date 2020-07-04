@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -23,7 +21,7 @@ func PublishPhotoEvent(e EntityEvent, uid string, c *gin.Context) {
 
 	if err != nil {
 		log.Error(err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, ErrUnexpectedError)
+		AbortUnexpected(c)
 		return
 	}
 
@@ -36,7 +34,7 @@ func PublishAlbumEvent(e EntityEvent, uid string, c *gin.Context) {
 
 	if err != nil {
 		log.Error(err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, ErrUnexpectedError)
+		AbortUnexpected(c)
 		return
 	}
 
@@ -49,7 +47,7 @@ func PublishLabelEvent(e EntityEvent, uid string, c *gin.Context) {
 
 	if err != nil {
 		log.Error(err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, ErrUnexpectedError)
+		AbortUnexpected(c)
 		return
 	}
 

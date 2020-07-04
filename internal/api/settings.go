@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GET /api/v1/settings
@@ -15,7 +15,7 @@ func GetSettings(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceSettings, acl.ActionRead)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -33,21 +33,21 @@ func SaveSettings(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceSettings, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		conf := service.Config()
 
 		if conf.SettingsHidden() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		settings := conf.Settings()
 
 		if err := c.BindJSON(settings); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -58,7 +58,7 @@ func SaveSettings(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		log.Infof("settings saved")
+		log.Infof(i18n.Msg(i18n.MsgSettingsSaved))
 
 		c.JSON(http.StatusOK, settings)
 	})

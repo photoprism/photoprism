@@ -4,13 +4,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/photoprism/photoprism/internal/acl"
-	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/txt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/query"
 )
 
 // GET /api/v1/photos
@@ -32,7 +30,7 @@ func GetPhotos(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionSearch)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -41,14 +39,14 @@ func GetPhotos(router *gin.RouterGroup) {
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
 		// Guests may only see public content in shared albums.
 		if s.Guest() {
 			if f.Album == "" || !s.HasShare(f.Album) {
-				c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+				AbortUnauthorized(c)
 				return
 			}
 
@@ -62,7 +60,8 @@ func GetPhotos(router *gin.RouterGroup) {
 		result, count, err := query.PhotoSearch(f)
 
 		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
+			log.Error(err)
+			AbortBadRequest(c)
 			return
 		}
 

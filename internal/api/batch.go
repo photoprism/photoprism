@@ -22,7 +22,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDelete)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -31,7 +31,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -47,7 +47,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 		err := entity.Db().Where("photo_uid IN (?)", f.Photos).Delete(&entity.Photo{}).Error
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
@@ -74,7 +74,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDelete)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -83,7 +83,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -99,7 +99,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 			UpdateColumn("deleted_at", gorm.Expr("NULL")).Error
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
@@ -123,14 +123,14 @@ func BatchAlbumsDelete(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionDelete)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -159,7 +159,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionPrivate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -168,7 +168,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -184,7 +184,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 			gorm.Expr("CASE WHEN photo_private > 0 THEN 0 ELSE 1 END")).Error
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
@@ -210,14 +210,14 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionDelete)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 

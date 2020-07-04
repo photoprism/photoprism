@@ -14,7 +14,7 @@ func GetConfig(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceConfig, acl.ActionRead)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 

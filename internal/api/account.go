@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
@@ -26,7 +27,7 @@ func GetAccounts(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionSearch)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -35,14 +36,14 @@ func GetAccounts(router *gin.RouterGroup) {
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
 		result, err := query.AccountSearch(f)
 
 		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -63,7 +64,7 @@ func GetAccount(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionRead)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -72,7 +73,7 @@ func GetAccount(router *gin.RouterGroup) {
 		if m, err := query.AccountByID(id); err == nil {
 			c.JSON(http.StatusOK, m)
 		} else {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAccountNotFound)
 		}
 	})
 }
@@ -86,7 +87,7 @@ func GetAccountFolders(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionRead)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -110,7 +111,7 @@ func GetAccountFolders(router *gin.RouterGroup) {
 		m, err := query.AccountByID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAccountNotFound)
 			return
 		}
 
@@ -118,7 +119,7 @@ func GetAccountFolders(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Errorf("account-folders: %s", err.Error())
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrConnectionFailed)
+			Abort(c, http.StatusBadRequest, i18n.ErrConnectionFailed)
 			return
 		}
 
@@ -140,7 +141,7 @@ func ShareWithAccount(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionUpload)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -149,14 +150,14 @@ func ShareWithAccount(router *gin.RouterGroup) {
 		m, err := query.AccountByID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAccountNotFound)
 			return
 		}
 
 		var f form.AccountShare
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -164,7 +165,7 @@ func ShareWithAccount(router *gin.RouterGroup) {
 		files, err := query.FilesByUID(f.Photos, 1000, 0)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -187,20 +188,20 @@ func CreateAccount(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionCreate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		var f form.Account
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
 		if err := f.ServiceDiscovery(); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			Abort(c, http.StatusBadRequest, i18n.ErrConnectionFailed)
 			return
 		}
 
@@ -210,11 +211,11 @@ func CreateAccount(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
-		event.Success("account created")
+		event.SuccessMsg(i18n.MsgAccountCreated)
 
 		c.JSON(http.StatusOK, m)
 	})
@@ -229,7 +230,7 @@ func UpdateAccount(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -238,7 +239,7 @@ func UpdateAccount(router *gin.RouterGroup) {
 		m, err := query.AccountByID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAccountNotFound)
 			return
 		}
 
@@ -247,30 +248,30 @@ func UpdateAccount(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
 		// 2) Update form with values from request
 		if err := c.BindJSON(&f); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusBadRequest, ErrFormInvalid)
+			AbortBadRequest(c)
 			return
 		}
 
 		// 3) Save model with values from form
 		if err := m.SaveForm(f); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
-		event.Success("account saved")
+		event.SuccessMsg(i18n.MsgAccountSaved)
 
 		m, err = query.AccountByID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -287,7 +288,7 @@ func DeleteAccount(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionDelete)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -305,7 +306,7 @@ func DeleteAccount(router *gin.RouterGroup) {
 			return
 		}
 
-		event.Success("account deleted")
+		event.SuccessMsg(i18n.MsgAccountDeleted)
 
 		c.JSON(http.StatusOK, m)
 	})

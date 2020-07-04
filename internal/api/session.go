@@ -9,7 +9,6 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/session"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // POST /api/v1/session
@@ -18,7 +17,7 @@ func CreateSession(router *gin.RouterGroup) {
 		var f form.Login
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 

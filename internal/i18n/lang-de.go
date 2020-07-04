@@ -1,0 +1,33 @@
+package i18n
+
+var MsgGerman = MessageMap{
+	ErrUnexpected:       "Unerwarteter Fehler, bitte erneut versuchen",
+	ErrSaveFailed:       "Daten gekonnten nicht gespeichert werden",
+	ErrBadRequest:       "Ungültige Eingabe, bitte erneut versuchen",
+	ErrAlreadyExists:    "%s existiert bereits",
+	ErrEntityNotFound:   "Eintrag nicht gefunden",
+	ErrAccountNotFound:  "Unbekannter Account",
+	ErrAlbumNotFound:    "Album nicht gefunden - gelöscht?",
+	ErrReadOnly:         "Funktion im 'read-only' Modus nicht verfügbar",
+	ErrUnauthorized:     "Anmeldung erforderlich",
+	ErrUploadNSFW:       "Inhalt könnte anstößig sein und wurde abgelehnt",
+	ErrNoItemsSelected:  "Auswahl ist leer, bitte erneut versuchen",
+	ErrCreateFile:       "Datei konnte nicht angelegt werden",
+	ErrCreateFolder:     "Verzeichnis konnte nicht angelegt werden",
+	ErrConnectionFailed: "Could not connect, please try again",
+
+	MsgChangesSaved:       "Änderungen erfolgreich gespeichert",
+	MsgAlbumCreated:       "Album erstellt",
+	MsgAlbumSaved:         "Album gespeichert",
+	MsgAlbumDeleted:       "Album %s gelöscht",
+	MsgAlbumCloned:        "Album-Einträge kopiert",
+	MsgFileUngrouped:      "Datei-Gruppierung aufgehoben",
+	MsgSelectionAddedTo:   "Auswahl zu %s hinzugefügt",
+	MsgEntryAddedTo:       "Ein Eintrag zu %s hinzugefügt",
+	MsgEntriesAddedTo:     "%d Einträge zu %s hinzugefügt",
+	MsgEntryRemovedFrom:   "Ein Eintrag aus %s entfernt",
+	MsgEntriesRemovedFrom: "%d Einträge aus %s entfernt",
+	MsgAccountCreated:     "Server-Konfiguration angelegt",
+	MsgAccountSaved:       "Server-Konfiguration gespeichert",
+	MsgAccountDeleted:     "Server-Konfiguration gelöscht",
+}

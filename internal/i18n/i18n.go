@@ -1,6 +1,6 @@
 /*
 
-Package api contains PhotoPrism REST API handlers.
+Package i18n contains PhotoPrism status and error message strings.
 
 Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
 
@@ -29,57 +29,69 @@ Additional information can be found in our Developer Guide:
 https://docs.photoprism.org/developer-guide/
 
 */
-package api
+package i18n
 
 import (
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/service"
+	"errors"
+	"fmt"
+	"strings"
 )
 
-var log = event.Log
+type Message int
+type MessageMap map[Message]string
 
-func logError(prefix string, err error) {
-	if err != nil {
-		log.Errorf("%s: %s", prefix, err.Error())
+func Msg(id Message, params ...interface{}) string {
+	return LangMsg(id, Lang, params...)
+}
+
+func LangMsg(id Message, lang Language, params ...interface{}) string {
+	msgs, ok := Languages[lang]
+
+	if !ok && lang != Default {
+		msgs, ok = Languages[Default]
 	}
+
+	msg, ok := msgs[id]
+
+	if !ok {
+		msg, ok = Languages[Default][id]
+	}
+
+	if !ok {
+		return fmt.Sprintf("i18n: unknown message id %d", id)
+	}
+
+	if strings.Contains(msg, "%") {
+		msg = fmt.Sprintf(msg, params...)
+	}
+
+	return msg
 }
 
-func UpdateClientConfig() {
-	conf := service.Config()
-
-	event.Publish("config.updated", event.Data{"config": conf.UserConfig()})
+func DefaultMsg(id Message, params ...interface{}) string {
+	return LangMsg(id, Default, params...)
 }
 
-func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {
-	resp := i18n.NewResponse(code, id, params...)
-	log.Errorf("api: %s", resp.LowerString())
-	c.AbortWithStatusJSON(code, resp)
+func Error(id Message, params ...interface{}) error {
+	return errors.New(Msg(id, params...))
 }
 
-func AbortUnauthorized(c *gin.Context) {
-	Abort(c, http.StatusUnauthorized, i18n.ErrUnauthorized)
+func LangError(id Message, lang Language, params ...interface{}) error {
+	return errors.New(LangMsg(id, lang, params...))
 }
 
-func AbortEntityNotFound(c *gin.Context) {
-	Abort(c, http.StatusNotFound, i18n.ErrEntityNotFound)
+func DefaultError(id Message, params ...interface{}) error {
+	return LangError(id, Default, params...)
 }
 
-func AbortSaveFailed(c *gin.Context) {
-	Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
+/*
+func JsonBadRequest(id Message) gin.H {
+	return JsonError(http.StatusBadRequest, msg)
 }
 
-func AbortUnexpected(c *gin.Context) {
-	Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
+func JsonForbidden(id Message) gin.H {
+	return JsonError(http.StatusForbidden, msg)
 }
 
-func AbortBadRequest(c *gin.Context) {
-	Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
-}
 
-func AbortAlreadyExists(c *gin.Context, s string) {
-	Abort(c, http.StatusConflict, i18n.ErrAlreadyExists, s)
-}
+*/

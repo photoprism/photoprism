@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 )
@@ -50,7 +51,7 @@ func TestUpdatePhoto(t *testing.T) {
 		UpdatePhoto(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/xxx", `{"Name": "Updated01", "Country": "de"}`)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Photo not found", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrEntityNotFound), val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }
@@ -131,7 +132,7 @@ func TestSetPhotoPrimary(t *testing.T) {
 		PhotoFilePrimary(router)
 		r := PerformRequest(app, "POST", "/api/v1/photos/xxx/files/ft1es39w45bnlqdw/primary")
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Photo not found", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrEntityNotFound), val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }

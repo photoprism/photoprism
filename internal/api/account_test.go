@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/tidwall/gjson"
 	"net/http"
 	"testing"
@@ -41,7 +42,7 @@ func TestGetAccount(t *testing.T) {
 		GetAccount(router)
 		r := PerformRequest(app, "GET", "/api/v1/accounts/999000")
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Account not found", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrAccountNotFound), val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }
@@ -62,7 +63,7 @@ func TestGetAccountFolders(t *testing.T) {
 		GetAccountFolders(router)
 		r := PerformRequest(app, "GET", "/api/v1/accounts/999000/folders")
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Account not found", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrAccountNotFound), val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }
@@ -73,7 +74,7 @@ func TestShareWithAccount(t *testing.T) {
 		ShareWithAccount(router)
 		r := PerformRequest(app, "POST", "/api/v1/accounts/1000000/share")
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Invalid request", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrBadRequest), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("account not found", func(t *testing.T) {
@@ -81,7 +82,7 @@ func TestShareWithAccount(t *testing.T) {
 		ShareWithAccount(router)
 		r := PerformRequest(app, "POST", "/api/v1/accounts/999000/share")
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Account not found", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrAccountNotFound), val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }
@@ -92,7 +93,7 @@ func TestCreateAccount(t *testing.T) {
 		CreateAccount(router)
 		r := PerformRequest(app, "POST", "/api/v1/accounts")
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Invalid request", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrBadRequest), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("could not connect", func(t *testing.T) {
@@ -102,7 +103,7 @@ func TestCreateAccount(t *testing.T) {
 "AccKey": "123", "AccUser": "testuser", "AccPass": "testpasswd", "AccError": "", "AccShare": false, "AccSync": false, "RetryLimit": 3, "SharePath": "", "ShareSize": "", "ShareExpires": 0,
 "SyncPath": "", "SyncInterval": 3, "SyncUpload": false, "SyncDownload": false, "SyncFilenames": false, "SyncRaw": false}`)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Could not connect", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrConnectionFailed), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("successful request", func(t *testing.T) {
@@ -150,7 +151,7 @@ func TestUpdateAccount(t *testing.T) {
 		UpdateAccount(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/accounts/xxx", `{"AccName": "CreateTestUpdated", "AccOwner": "TestUpdated123", "SyncInterval": 9}`)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Photo not found", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrAccountNotFound), val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 
@@ -159,7 +160,7 @@ func TestUpdateAccount(t *testing.T) {
 		UpdateAccount(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/accounts/"+id, `{"AccName": 6, "AccOwner": "TestUpdated123", "SyncInterval": 9, "AccUrl": "https:xxx.com"}`)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Changes could not be saved", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrBadRequest), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }
@@ -183,7 +184,7 @@ func TestDeleteAccount(t *testing.T) {
 		GetAccount(router)
 		r2 := PerformRequest(app, "GET", "/api/v1/accounts/"+id)
 		val2 := gjson.Get(r2.Body.String(), "error")
-		assert.Equal(t, "Account not found", val2.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrAccountNotFound), val2.String())
 		assert.Equal(t, http.StatusNotFound, r2.Code)
 	})
 

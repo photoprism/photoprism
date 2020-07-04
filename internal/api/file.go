@@ -17,14 +17,14 @@ func GetFile(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceFiles, acl.ActionRead)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		p, err := query.FileByHash(c.Param("hash"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 

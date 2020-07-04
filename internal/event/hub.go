@@ -2,6 +2,7 @@ package event
 
 import (
 	"github.com/leandro-lugaresi/hub"
+	"github.com/photoprism/photoprism/internal/i18n"
 )
 
 type Hub = hub.Hub
@@ -37,6 +38,22 @@ func Info(msg string) {
 func Warning(msg string) {
 	Log.Warn(msg)
 	Publish("notify.warning", Data{"msg": msg})
+}
+
+func ErrorMsg(id i18n.Message, params ...interface{}) {
+	Error(i18n.Msg(id, params...))
+}
+
+func SuccessMsg(id i18n.Message, params ...interface{}) {
+	Success(i18n.Msg(id, params...))
+}
+
+func InfoMsg(id i18n.Message, params ...interface{}) {
+	Info(i18n.Msg(id, params...))
+}
+
+func WarningMsg(id i18n.Message, params ...interface{}) {
+	Warning(i18n.Msg(id, params...))
 }
 
 func Publish(event string, data Data) {

@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
@@ -41,14 +42,14 @@ func GetPhoto(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionRead)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
 		p, err := query.PhotoPreloadByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -62,7 +63,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -71,7 +72,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 		m, err := query.PhotoByUID(uid)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -80,33 +81,30 @@ func UpdatePhoto(router *gin.RouterGroup) {
 		f, err := form.NewPhoto(m)
 
 		if err != nil {
-			log.Errorf("photo: %s", err.Error())
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
 			return
 		}
 
 		// 2) Update form with values from request
 		if err := c.BindJSON(&f); err != nil {
-			log.Errorf("photo: %s", err.Error())
-			c.AbortWithStatusJSON(http.StatusBadRequest, ErrFormInvalid)
+			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
 		}
 
 		// 3) Save model with values from form
 		if err := entity.SavePhotoForm(m, f, conf.GeoCodingApi()); err != nil {
-			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
 			return
 		}
 
 		PublishPhotoEvent(EntityUpdated, uid, c)
 
-		event.Success("photo saved")
+		event.SuccessMsg(i18n.MsgChangesSaved)
 
 		p, err := query.PhotoPreloadByUID(uid)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -130,7 +128,7 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 		f, err := query.FileByPhotoUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 			return
 		}
 
@@ -163,7 +161,7 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionExport)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -198,7 +196,7 @@ func ApprovePhoto(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -206,13 +204,13 @@ func ApprovePhoto(router *gin.RouterGroup) {
 		m, err := query.PhotoByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
 		if err := m.Approve(); err != nil {
 			log.Errorf("photo: %s", err.Error())
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
@@ -233,7 +231,7 @@ func LikePhoto(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionLike)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -241,13 +239,13 @@ func LikePhoto(router *gin.RouterGroup) {
 		m, err := query.PhotoByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
 		if err := m.SetFavorite(true); err != nil {
 			log.Errorf("photo: %s", err.Error())
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
@@ -268,7 +266,7 @@ func DislikePhoto(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionLike)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -276,13 +274,13 @@ func DislikePhoto(router *gin.RouterGroup) {
 		m, err := query.PhotoByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
 		if err := m.SetFavorite(false); err != nil {
 			log.Errorf("photo: %s", err.Error())
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
@@ -304,7 +302,7 @@ func PhotoFilePrimary(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -313,18 +311,18 @@ func PhotoFilePrimary(router *gin.RouterGroup) {
 		err := query.SetPhotoPrimary(uid, fileUID)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
 		PublishPhotoEvent(EntityUpdated, uid, c)
 
-		event.Success("photo saved")
+		event.SuccessMsg(i18n.MsgChangesSaved)
 
 		p, err := query.PhotoPreloadByUID(uid)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -342,7 +340,7 @@ func PhotoFileUngroup(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
 
 		if s.Invalid() {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -353,13 +351,13 @@ func PhotoFileUngroup(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Errorf("photo: %s (ungroup)", err)
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrFileNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
 		if file.FilePrimary {
 			log.Errorf("photo: can't ungroup primary files")
-			c.AbortWithStatusJSON(http.StatusBadRequest, ErrFormInvalid)
+			AbortBadRequest(c)
 			return
 		}
 
@@ -368,7 +366,7 @@ func PhotoFileUngroup(router *gin.RouterGroup) {
 
 		if err := entity.UnscopedDb().Create(&newPhoto).Error; err != nil {
 			log.Errorf("photo: %s", err.Error())
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
@@ -378,7 +376,7 @@ func PhotoFileUngroup(router *gin.RouterGroup) {
 
 		if err := file.Save(); err != nil {
 			log.Errorf("photo: %s", err.Error())
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
@@ -388,25 +386,25 @@ func PhotoFileUngroup(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Errorf("photo: %s (ungroup)", err)
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrFileNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
 		if err := service.Index().MediaFile(f, photoprism.IndexOptions{Rescan: true}, existingPhoto.OriginalName).Error; err != nil {
 			log.Errorf("photo: %s", err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
 		PublishPhotoEvent(EntityCreated, file.PhotoUID, c)
 		PublishPhotoEvent(EntityUpdated, photoUID, c)
 
-		event.Success("file ungrouped")
+		event.SuccessMsg(i18n.MsgFileUngrouped)
 
 		p, err := query.PhotoPreloadByUID(photoUID)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 

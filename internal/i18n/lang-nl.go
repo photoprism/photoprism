@@ -1,0 +1,32 @@
+package i18n
+
+var MsgDutch = MessageMap{
+	ErrUnexpected:      "Unexpected error, please try again",
+	ErrBadRequest:      "Invalid request, please try again",
+	ErrSaveFailed:      "Changes could not be saved",
+	ErrAlreadyExists:   "%s already exists",
+	ErrEntityNotFound:  "Unknown entity",
+	ErrAccountNotFound: "Unknown account",
+	ErrAlbumNotFound:   "Album not found",
+	ErrReadOnly:        "not available in read-only mode",
+	ErrUnauthorized:    "please log in and try again",
+	ErrUploadNSFW:      "Upload might be offensive",
+	ErrNoItemsSelected: "No items selected",
+	ErrCreateFile:      "Failed creating file, please check permissions",
+	ErrCreateFolder:    "Failed creating folder, please check permissions",
+
+	MsgChangesSaved:       "Changes successfully saved",
+	MsgAlbumCreated:       "Album created",
+	MsgAlbumSaved:         "Album saved",
+	MsgAlbumDeleted:       "Album %s deleted",
+	MsgAlbumCloned:        "Album contents cloned",
+	MsgFileUngrouped:      "File successfully ungrouped",
+	MsgSelectionAddedTo:   "Selection added to %s",
+	MsgEntryAddedTo:       "One entry added to %s",
+	MsgEntriesAddedTo:     "%d entries added to %s",
+	MsgEntryRemovedFrom:   "One entry removed from %s",
+	MsgEntriesRemovedFrom: "%d entries removed from %s",
+	MsgAccountCreated:     "Account created",
+	MsgAccountSaved:       "Account saved",
+	MsgAccountDeleted:     "Account deleted",
+}

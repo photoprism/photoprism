@@ -150,6 +150,9 @@ func NewTestConfig() *Config {
 // NewTestErrorConfig inits invalid config used for testing
 func NewTestErrorConfig() *Config {
 	c := &Config{params: NewTestParamsError()}
+
+	c.initSettings()
+
 	err := c.Init(context.Background())
 	if err != nil {
 		log.Fatalf("config: %s", err.Error())
