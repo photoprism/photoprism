@@ -355,7 +355,7 @@
                         } else if (this.results.length === 1) {
                             this.$notify.info(this.$gettext("One entry found"));
                         } else {
-                            this.$notify.info(this.results.length + this.$gettext(" entries found"));
+                            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} entries found"), {n: this.results.length}));
                         }
                     } else {
                         this.$notify.info(this.$gettext('More than 50 entries found'));

@@ -287,7 +287,7 @@
                         this.offset = offset;
 
                         if (this.results.length > 1) {
-                            this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' photos loaded'));
+                            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} photos loaded"), {n: this.results.length}));
                         }
                     } else if (this.results.length >= Photo.limit()) {
                         this.offset = offset;
@@ -388,7 +388,7 @@
                         } else if (this.results.length === 1) {
                             this.$notify.info(this.$gettext("One photo found"));
                         } else {
-                            this.$notify.info(this.results.length + this.$gettext(" photos found"));
+                            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} photos found"), {n: this.results.length}));
                         }
                     } else {
                         this.$notify.info(this.$gettext('More than 50 photos found'));

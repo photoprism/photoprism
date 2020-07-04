@@ -266,7 +266,7 @@
                         this.offset = offset;
 
                         if (this.results.length > 1) {
-                            this.$notify.info(this.$gettext("All ") + this.results.length + this.$gettext(" albums loaded"));
+                            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} albums loaded"), {n: this.results.length}));
                         }
                     } else {
                         this.offset = offset + count;
@@ -344,7 +344,7 @@
                         } else if (this.results.length === 1) {
                             this.$notify.info(this.$gettext("One album found"));
                         } else {
-                            this.$notify.info(this.results.length + this.$gettext(" albums found"));
+                            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} albums found"), {n: this.results.length}));
                         }
                     } else {
                         this.$notify.info(this.$gettext('More than 20 albums found'));

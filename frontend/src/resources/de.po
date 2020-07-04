@@ -13,22 +13,9 @@ msgstr ""
 "X-Generator: Poedit 2.3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/pages/albums.vue:443 src/share/albums.vue:347
-msgid " albums found"
-msgstr " Alben gefunden"
-
-#: src/pages/albums.vue:365 src/share/albums.vue:269
-msgid " albums loaded"
-msgstr " Alben geladen"
-
-#: src/pages/album/photos.vue:358 src/pages/library/files.vue:412
-#: src/share/photos.vue:401
+#: src/pages/library/files.vue:412
 msgid " entries found"
 msgstr " Einträge gefunden"
-
-#: src/share/photos.vue:298
-msgid " entries loaded"
-msgstr " Einträge geladen"
 
 #: src/pages/labels.vue:423
 msgid " labels found"
@@ -38,13 +25,17 @@ msgstr " Kategorien gefunden"
 msgid " labels loaded"
 msgstr " Kategorien geladen"
 
-#: src/pages/photos.vue:391
-msgid " photos found"
-msgstr " Fotos gefunden"
+#: src/pages/albums.vue:443 src/share/albums.vue:347
+msgid "%{n} albums found"
+msgstr "%{n} Alben gefunden"
 
-#: src/pages/photos.vue:290
-msgid " photos loaded"
-msgstr " Fotos geladen"
+#: src/pages/album/photos.vue:358 src/share/photos.vue:401
+msgid "%{n} entries found"
+msgstr "%{n} Einträge gefunden"
+
+#: src/pages/photos.vue:391
+msgid "%{n} photos found"
+msgstr "%{n} Fotos gefunden"
 
 #: src/resources/options.js:114
 msgid "1 hour"
@@ -157,14 +148,21 @@ msgstr "Alben"
 msgid "Albums deleted"
 msgstr "Alben gelöscht"
 
-#: src/pages/albums.vue:365 src/pages/labels.vue:342 src/pages/photos.vue:290
-#: src/share/albums.vue:269 src/share/photos.vue:298
+#: src/pages/labels.vue:342
 msgid "All "
 msgstr "Alle "
 
-#: src/pages/album/photos.vue:255
+#: src/pages/albums.vue:365 src/share/albums.vue:269
+msgid "All %{n} albums loaded"
+msgstr "Alle %{n} Alben geladen"
+
+#: src/pages/album/photos.vue:255 src/share/photos.vue:298
 msgid "All %{n} entries loaded"
 msgstr "Alle %{n} Einträge geladen"
+
+#: src/pages/photos.vue:290
+msgid "All %{n} photos loaded"
+msgstr "Alle %{n} Fotos geladen"
 
 #: src/component/album/toolbar.vue:79 src/component/photo/toolbar.vue:174
 msgid "All Cameras"
@@ -807,6 +805,7 @@ msgstr "PhotoPrism erstellt automatisch Alben deiner schönsten Erlebnisse."
 
 #: src/component/navigation.vue:243 src/component/navigation.vue:252
 #: src/pages/settings/general.vue:6 src/pages/settings/general.vue:575
+#: src/routes.js:241 src/routes.js:248 src/routes.js:255
 msgid "Library"
 msgstr "Dateien"
 
@@ -819,7 +818,7 @@ msgstr "Lizenz"
 msgid "Lime"
 msgstr "Hellgrün"
 
-#: src/model/link.js:122
+#: src/model/link.js:101
 msgid "Link"
 msgstr "Link"
 
@@ -992,7 +991,7 @@ msgstr "Keine Labels entsprechen deinen Suchkriterien"
 msgid "No moments matched your search"
 msgstr "Keine passenden Alben gefunden"
 
-#: src/pages/photos.vue:387
+#: src/pages/photos.vue:387 src/pages/places.vue:194 src/pages/places.vue:231
 msgid "No photos found"
 msgstr "Keine Fotos gefunden"
 
@@ -1724,6 +1723,12 @@ msgstr "Du kannst nur ein Album gleichzeitig downloaden"
 #: src/component/label/clipboard.vue:123
 msgid "You can only download one label"
 msgstr "Es kann nur eine Kategorie gleichzeitig downgeloadet werden"
+
+#~ msgid " entries loaded"
+#~ msgstr " Einträge geladen"
+
+#~ msgid " photos loaded"
+#~ msgstr " Fotos geladen"
 
 #~ msgid "Update"
 #~ msgstr "Ändern"

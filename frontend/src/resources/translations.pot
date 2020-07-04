@@ -5,24 +5,8 @@ msgstr ""
 "Generated-By: easygettext\n"
 "Project-Id-Version: \n"
 
-#: src/pages/albums.vue:443
-#: src/share/albums.vue:347
-msgid " albums found"
-msgstr ""
-
-#: src/pages/albums.vue:365
-#: src/share/albums.vue:269
-msgid " albums loaded"
-msgstr ""
-
-#: src/pages/album/photos.vue:358
 #: src/pages/library/files.vue:412
-#: src/share/photos.vue:401
 msgid " entries found"
-msgstr ""
-
-#: src/share/photos.vue:298
-msgid " entries loaded"
 msgstr ""
 
 #: src/pages/labels.vue:423
@@ -33,12 +17,18 @@ msgstr ""
 msgid " labels loaded"
 msgstr ""
 
-#: src/pages/photos.vue:391
-msgid " photos found"
+#: src/pages/albums.vue:443
+#: src/share/albums.vue:347
+msgid "%{n} albums found"
 msgstr ""
 
-#: src/pages/photos.vue:290
-msgid " photos loaded"
+#: src/pages/album/photos.vue:358
+#: src/share/photos.vue:401
+msgid "%{n} entries found"
+msgstr ""
+
+#: src/pages/photos.vue:391
+msgid "%{n} photos found"
 msgstr ""
 
 #: src/resources/options.js:114
@@ -151,16 +141,22 @@ msgstr ""
 msgid "Albums deleted"
 msgstr ""
 
-#: src/pages/albums.vue:365
 #: src/pages/labels.vue:342
-#: src/pages/photos.vue:290
-#: src/share/albums.vue:269
-#: src/share/photos.vue:298
 msgid "All "
 msgstr ""
 
+#: src/pages/albums.vue:365
+#: src/share/albums.vue:269
+msgid "All %{n} albums loaded"
+msgstr ""
+
 #: src/pages/album/photos.vue:255
+#: src/share/photos.vue:298
 msgid "All %{n} entries loaded"
+msgstr ""
+
+#: src/pages/photos.vue:290
+msgid "All %{n} photos loaded"
 msgstr ""
 
 #: src/component/album/toolbar.vue:79
@@ -856,6 +852,9 @@ msgstr ""
 #: src/component/navigation.vue:252
 #: src/pages/settings/general.vue:6
 #: src/pages/settings/general.vue:575
+#: src/routes.js:241
+#: src/routes.js:248
+#: src/routes.js:255
 msgid "Library"
 msgstr ""
 
@@ -870,7 +869,7 @@ msgstr ""
 msgid "Lime"
 msgstr ""
 
-#: src/model/link.js:122
+#: src/model/link.js:101
 msgid "Link"
 msgstr ""
 
