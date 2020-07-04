@@ -16,97 +16,97 @@ export const Months = () => {
     result.push({"Month": -1, "Name": $gettext("Unknown")});
 
     return result;
-}
+};
 
 export const Languages = () => [
     {
         "text": $gettext("English"),
-        "value": "en"
+        "value": "en",
     },
     {
         "text": $gettext("German"),
-        "value": "de"
+        "value": "de",
     },
     {
         "text": $gettext("Dutch"),
-        "value": "nl"
+        "value": "nl",
     },
     {
         "text": $gettext("Russian"),
-        "value": "ru"
-    }
+        "value": "ru",
+    },
 ];
 
 export const Themes = () => [
     {
         "text": $gettext("Default"),
-        "value": "default"
+        "value": "default",
     },
     {
         "text": $gettext("Cyano"),
-        "value": "cyano"
+        "value": "cyano",
     },
     {
         "text": $gettext("Lavender"),
-        "value": "lavender"
+        "value": "lavender",
     },
     {
         "text": $gettext("Moonlight"),
-        "value": "moonlight"
+        "value": "moonlight",
     },
     {
         "text": $gettext("Onyx"),
-        "value": "onyx"
+        "value": "onyx",
     },
     {
         "text": $gettext("Raspberry"),
-        "value": "raspberry"
+        "value": "raspberry",
     },
     {
         "text": $gettext("Seaweed"),
-        "value": "seaweed"
-    }
+        "value": "seaweed",
+    },
 ];
 export const MapsAnimate = () => [
     {
         "text": $gettext("None"),
-        "value": 0
+        "value": 0,
     },
     {
         "text": $gettext("Fast"),
-        "value": 2500
+        "value": 2500,
     },
     {
         "text": $gettext("Medium"),
-        "value": 6250
+        "value": 6250,
     },
     {
         "text": $gettext("Slow"),
-        "value": 10000
-    }
+        "value": 10000,
+    },
 ];
 
 export const MapsStyle = () => [
     {
         "text": $gettext("Offline"),
-        "value": "offline"
+        "value": "offline",
     },
     {
         "text": $gettext("Streets"),
-        "value": "streets"
+        "value": "streets",
     },
     {
         "text": $gettext("Hybrid"),
-        "value": "hybrid"
+        "value": "hybrid",
     },
     {
         "text": $gettext("Topographic"),
-        "value": "topo"
+        "value": "topo",
     },
     {
         "text": $gettext("Moonlight"),
-        "value": "darkmatter"
-    }
+        "value": "darkmatter",
+    },
 ];
 
 export const Intervals = () => [

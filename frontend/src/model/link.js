@@ -29,7 +29,6 @@ https://docs.photoprism.org/developer-guide/
 */
 
 import Model from "./model";
-import Api from "common/api";
 import {DateTime} from "luxon";
 import {$gettext} from "common/vm";
 
@@ -89,26 +88,6 @@ export default class Link extends Model {
     clone() {
         return new this.constructor(this.getValues());
     }
-
-    /*find(id, params) {
-        return Api.get(this.getEntityResource(id), params).then((response) => Promise.resolve(new this.constructor(response.data)));
-    }
-
-    save() {
-        if (this.hasId()) {
-            return this.update();
-        }
-
-        return Api.post(this.constructor.getCollectionResource(), this.getValues()).then((response) => Promise.resolve(this.setValues(response.data)));
-    }
-
-    update() {
-        return Api.put(this.getEntityResource(), this.getValues(true)).then((response) => Promise.resolve(this.setValues(response.data)));
-    }
-
-    remove() {
-        return Api.delete(this.getEntityResource()).then(() => Promise.resolve(this));
-    }*/
 
     expires() {
         return DateTime.fromISO(this.UpdatedAt).plus({ seconds: this.Expires }).toLocaleString(DateTime.DATE_SHORT);
