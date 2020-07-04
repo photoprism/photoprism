@@ -339,7 +339,7 @@
                     if (this.scrollDisabled) {
                         this.offset = offset;
                         if (this.results.length > 1) {
-                            this.$notify.info(this.$gettext('All ') + this.results.length + this.$gettext(' labels loaded'));
+                            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} labels loaded"), {n: this.results.length}));
                         }
                     } else {
                         this.offset = offset + count;
@@ -420,7 +420,7 @@
                     this.scrollDisabled = (response.models.length < this.pageSize);
 
                     if (this.scrollDisabled) {
-                        this.$notify.info(this.results.length + this.$gettext(' labels found'));
+                        this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), {n: this.results.length}));
                     } else {
                         this.$notify.info(this.$gettext('More than 20 labels found'));
 

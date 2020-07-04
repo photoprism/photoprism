@@ -17,14 +17,6 @@ msgstr ""
 msgid " entries found"
 msgstr " Einträge gefunden"
 
-#: src/pages/labels.vue:423
-msgid " labels found"
-msgstr " Kategorien gefunden"
-
-#: src/pages/labels.vue:342
-msgid " labels loaded"
-msgstr " Kategorien geladen"
-
 #: src/pages/albums.vue:443 src/share/albums.vue:347
 msgid "%{n} albums found"
 msgstr "%{n} Alben gefunden"
@@ -33,9 +25,17 @@ msgstr "%{n} Alben gefunden"
 msgid "%{n} entries found"
 msgstr "%{n} Einträge gefunden"
 
+#: src/pages/labels.vue:423
+msgid "%{n} labels found"
+msgstr "%{n} Kategorien gefunden"
+
 #: src/pages/photos.vue:391
 msgid "%{n} photos found"
-msgstr "%{n} Fotos gefunden"
+msgstr "%{n} Bilder gefunden"
+
+#: src/dialog/share/upload.vue:120
+msgid "%{n} photos shared"
+msgstr "%{n} Bilder geteilt"
 
 #: src/resources/options.js:114
 msgid "1 hour"
@@ -85,7 +85,7 @@ msgstr "Link hinzufügen"
 
 #: src/pages/albums.vue:108
 msgid "Add photos from search results by selecting them."
-msgstr "Füge Fotos hinzu, indem du sie selektierst."
+msgstr "Füge Fotos aus der Suche hinzu, indem du sie selektierst."
 
 #: src/dialog/account/add.vue:5 src/pages/settings/sync.vue:33
 msgid "Add Server"
@@ -148,10 +148,6 @@ msgstr "Alben"
 msgid "Albums deleted"
 msgstr "Alben gelöscht"
 
-#: src/pages/labels.vue:342
-msgid "All "
-msgstr "Alle "
-
 #: src/pages/albums.vue:365 src/share/albums.vue:269
 msgid "All %{n} albums loaded"
 msgstr "Alle %{n} Alben geladen"
@@ -160,9 +156,13 @@ msgstr "Alle %{n} Alben geladen"
 msgid "All %{n} entries loaded"
 msgstr "Alle %{n} Einträge geladen"
 
+#: src/pages/labels.vue:342
+msgid "All %{n} labels loaded"
+msgstr "Alle %{n} Kategorien geladen"
+
 #: src/pages/photos.vue:290
 msgid "All %{n} photos loaded"
-msgstr "Alle %{n} Fotos geladen"
+msgstr "Alle %{n} Bilder geladen"
 
 #: src/component/album/toolbar.vue:79 src/component/photo/toolbar.vue:174
 msgid "All Cameras"
@@ -237,7 +237,7 @@ msgstr "Archiviert"
 
 #: src/dialog/photo/archive.vue:9
 msgid "Are you sure you want to archive these photos?"
-msgstr "Diese Fotos wirklich archivieren?"
+msgstr "Diese Bilder wirklich archivieren?"
 
 #: src/dialog/album/delete.vue:9
 msgid "Are you sure you want to delete these albums?"
@@ -379,7 +379,7 @@ msgstr "Offline"
 
 #: src/pages/albums.vue:105
 msgid "Contains %{n} photos."
-msgstr "Enthält %{n} Fotos."
+msgstr "Enthält %{n} Bilder."
 
 #: src/pages/albums.vue:102
 msgid "Contains one photo."
@@ -492,7 +492,7 @@ msgstr "Dateien herunterladen"
 
 #: src/pages/settings/general.vue:352
 msgid "Download single files and zip archives."
-msgstr "Einzelne Fotos sowie Zip-Archive können heruntergeladen werden."
+msgstr "Einzelne Bilder sowie Zip-Archive können heruntergeladen werden."
 
 #: src/component/album/clipboard.vue:181 src/component/file/clipboard.vue:106
 #: src/component/label/clipboard.vue:132 src/component/photo/clipboard.vue:223
@@ -558,7 +558,7 @@ msgstr "Jeden zweiten Tag"
 msgid ""
 "Exclude photos marked as private from search results, shared albums, labels "
 "and places."
-msgstr "Als privat markierte Fotos werden nicht in Suchergebnissen angezeigt."
+msgstr "Als privat markierte Bilder werden nicht in Suchergebnissen angezeigt."
 
 #: src/dialog/account/edit.vue:288 src/dialog/share.vue:173
 msgid "Expires"
@@ -692,7 +692,7 @@ msgstr "Unsichtbare Dateien"
 
 #: src/pages/settings/general.vue:416
 msgid "Hide photos that have been moved to archive."
-msgstr "Archivierte Fotos werden nicht in den Suchergebnissen angezeigt."
+msgstr "Archivierte Inhalte werden nicht in den Suchergebnissen angezeigt."
 
 #: src/pages/settings/general.vue:66
 msgid "Hide Private"
@@ -744,7 +744,7 @@ msgstr "Indexierung fehlgeschlagen"
 
 #: src/pages/library/index.vue:38
 msgid "Indexing photos and sidecar files..."
-msgstr "Indexiere Fotos und Sidecar Dateien…"
+msgstr "Indexiere Bilder und Sidecar Dateien…"
 
 #: src/dialog/account/edit.vue:362
 msgid "Interval"
@@ -905,7 +905,7 @@ msgstr "Über 50 Einträge gefunden"
 
 #: src/pages/photos.vue:394
 msgid "More than 50 photos found"
-msgstr "Über 50 Fotos gefunden"
+msgstr "Über 50 Bilder gefunden"
 
 #: src/component/album/toolbar.vue:93 src/component/photo/toolbar.vue:182
 msgid "Mosaic"
@@ -993,12 +993,12 @@ msgstr "Keine passenden Alben gefunden"
 
 #: src/pages/photos.vue:387 src/pages/places.vue:194 src/pages/places.vue:231
 msgid "No photos found"
-msgstr "Keine Fotos gefunden"
+msgstr "Keine Bilder gefunden"
 
 #: src/component/photo/cards.vue:6 src/component/photo/mosaic.vue:6
 #: src/share/photo/cards.vue:6 src/share/photo/mosaic.vue:6
 msgid "No photos matched your search"
-msgstr "Keine Fotos entsprechen deinen Suchkriterien"
+msgstr "Es wurden keine passenden Bilder gefunden"
 
 #: src/pages/settings/sync.vue:17
 msgid "No servers configured."
@@ -1541,7 +1541,7 @@ msgid ""
 "                  selection in Photos."
 msgstr ""
 "Versuche es nochmal mit einem anderen Suchbegriff oder erstelle ein neues "
-"Album in dem du Fotos auswählst."
+"Album."
 
 #: src/pages/labels.vue:38
 msgid "Try again using a related or otherwise similar term."
@@ -1603,10 +1603,8 @@ msgid "Upload local files"
 msgstr "Dateien hochladen"
 
 #: src/pages/settings/general.vue:384
-#, fuzzy
-#| msgid "Upload to WebDAV and other remote services."
 msgid "Upload to WebDAV and share links with friends."
-msgstr "Lade Fotos zu WebDAV oder anderen Remote Anbietern hoch."
+msgstr "Teile Links mit Freunden und lade Inhalte hoch."
 
 #: src/dialog/upload.vue:36
 msgid "Uploading"
@@ -1615,7 +1613,7 @@ msgstr "Lade hoch"
 #: src/dialog/upload.vue:143 src/dialog/upload.vue:151
 #: src/dialog/upload.vue:192
 msgid "Uploading photos..."
-msgstr "Lade Fotos hoch"
+msgstr "Bilder werden hochgeladen…"
 
 #: src/dialog/share.vue:193
 msgid "URL"
@@ -1723,6 +1721,12 @@ msgstr "Du kannst nur ein Album gleichzeitig downloaden"
 #: src/component/label/clipboard.vue:123
 msgid "You can only download one label"
 msgstr "Es kann nur eine Kategorie gleichzeitig downgeloadet werden"
+
+#~ msgid " labels loaded"
+#~ msgstr " Kategorien geladen"
+
+#~ msgid "All "
+#~ msgstr "Alle "
 
 #~ msgid " entries loaded"
 #~ msgstr " Einträge geladen"

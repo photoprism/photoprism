@@ -9,14 +9,6 @@ msgstr ""
 msgid " entries found"
 msgstr ""
 
-#: src/pages/labels.vue:423
-msgid " labels found"
-msgstr ""
-
-#: src/pages/labels.vue:342
-msgid " labels loaded"
-msgstr ""
-
 #: src/pages/albums.vue:443
 #: src/share/albums.vue:347
 msgid "%{n} albums found"
@@ -27,8 +19,16 @@ msgstr ""
 msgid "%{n} entries found"
 msgstr ""
 
+#: src/pages/labels.vue:423
+msgid "%{n} labels found"
+msgstr ""
+
 #: src/pages/photos.vue:391
 msgid "%{n} photos found"
+msgstr ""
+
+#: src/dialog/share/upload.vue:120
+msgid "%{n} photos shared"
 msgstr ""
 
 #: src/resources/options.js:114
@@ -141,10 +141,6 @@ msgstr ""
 msgid "Albums deleted"
 msgstr ""
 
-#: src/pages/labels.vue:342
-msgid "All "
-msgstr ""
-
 #: src/pages/albums.vue:365
 #: src/share/albums.vue:269
 msgid "All %{n} albums loaded"
@@ -153,6 +149,10 @@ msgstr ""
 #: src/pages/album/photos.vue:255
 #: src/share/photos.vue:298
 msgid "All %{n} entries loaded"
+msgstr ""
+
+#: src/pages/labels.vue:342
+msgid "All %{n} labels loaded"
 msgstr ""
 
 #: src/pages/photos.vue:290

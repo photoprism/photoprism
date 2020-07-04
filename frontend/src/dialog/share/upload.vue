@@ -117,7 +117,7 @@
                         if (files.length === 1) {
                             this.$notify.success("One photo shared");
                         } else {
-                            this.$notify.success(files.length + " photos shared");
+                            this.$notify.success(this.$gettextInterpolate(this.$gettext("%{n} photos shared"), {n: files.length}));
                         }
 
                         this.$emit('confirm', this.account);
