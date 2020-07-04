@@ -169,7 +169,7 @@
                 Api.post("batch/photos/archive", {"photos": this.selection}).then(() => this.onArchived());
             },
             onArchived() {
-                Notify.success(this.$gettext("Photos archived"));
+                Notify.success(this.$gettext("Selection archived"));
                 this.clearClipboard();
             },
             batchPrivate() {
@@ -182,7 +182,7 @@
                 Api.post("batch/photos/restore", {"photos": this.selection}).then(() => this.onRestored());
             },
             onRestored() {
-                Notify.success(this.$gettext("Photos restored"));
+                Notify.success(this.$gettext("Selection restored"));
                 this.clearClipboard();
             },
             addToAlbum(ppid) {

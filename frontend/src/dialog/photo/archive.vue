@@ -7,7 +7,7 @@
             <v-icon size="54" color="secondary-dark lighten-1">archive</v-icon>
           </v-flex>
           <v-flex xs9 text-xs-left align-self-center>
-            <div class="subheading pr-1"><translate>Are you sure you want to archive these photos?</translate></div>
+            <div class="subheading pr-1"><translate>Are you sure you want to archive the selection?</translate></div>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
             <v-btn @click.stop="cancel" depressed color="secondary-light" class="action-cancel">
