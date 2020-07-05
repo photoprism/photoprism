@@ -36,7 +36,7 @@ func UpdateLink(c *gin.Context) {
 	link.LinkExpires = f.LinkExpires
 
 	if f.LinkToken != "" {
-		link.LinkToken = strings.ToLower(f.LinkToken)
+		link.LinkToken = strings.TrimSpace(strings.ToLower(f.LinkToken))
 	}
 
 	if f.Password != "" {

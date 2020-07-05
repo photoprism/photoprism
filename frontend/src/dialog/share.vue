@@ -61,7 +61,6 @@
                               color="secondary-dark"
                               v-model="link.Token"
                               class="input-secret"
-                              mask="n"
                       ></v-text-field>
                     </v-flex>
                     <!-- v-flex xs12 sm6 class="pa-2">
