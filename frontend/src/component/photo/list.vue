@@ -107,16 +107,17 @@
                 notFoundMessage: m,
                 'selected': [],
                 'listColumns': [
-                    {text: '', value: '', align: 'center', sortable: false, class: 'p-col-select'},
-                    {text: this.$gettext('Title'), value: 'Title'},
-                    {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt'},
-                    {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel'},
+                    {text: '', value: '', align: 'center', class: 'p-col-select', sortable: false},
+                    {text: this.$gettext('Title'), value: 'Title', sortable: false},
+                    {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt', sortable: false},
+                    {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel', sortable: false},
                     {
                         text: showName ? this.$gettext('Name') : this.$gettext('Location'),
                         class: 'hidden-xs-only',
-                        value: showName ? 'FileName' : 'LocLabel'
+                        value: showName ? 'FileName' : 'LocLabel',
+                        sortable: false
                     },
-                    {text: '', value: '', sortable: false, align: 'center'},
+                    {text: '', value: '', align: 'center', sortable: false},
                 ],
                 showName: showName,
                 showLocation: this.$config.settings().features.places,
