@@ -119,8 +119,8 @@ test('#1 Settings', async t => {
 
         .click(Selector('.nav-settings'))
         .click(Selector('.input-language input'))
-        .hover(Selector('div').withText('English').parent('div[role="listitem"]'))
-        .click(Selector('div').withText('English').parent('div[role="listitem"]'))
+        .hover(Selector('div').withText('Englisch').parent('div[role="listitem"]'))
+        .click(Selector('div').withText('Englisch').parent('div[role="listitem"]'))
         .click(Selector('.nav-settings'))
         .click(Selector('.input-upload input'))
         .click(Selector('.input-download input'))

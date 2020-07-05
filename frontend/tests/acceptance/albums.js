@@ -58,7 +58,7 @@ test('#2 Update album', async t => {
     const PhotoCount = await Selector('div.p-photo').count;
     await t
         .expect(Selector('.v-card__text').nth(0).innerText).contains('All my animals')
-        .expect(Selector('.v-toolbar__title').nth(1).innerText).contains('Animals')
+        .expect(Selector('div').withText("Animals").exists).ok()
         .click(Selector('.nav-photos'));
     const FirstPhotoUid = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
     const SecondPhotoUid = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
