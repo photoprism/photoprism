@@ -8,6 +8,15 @@ sony
 canon
 nikon
 iphone
+handy
+tumblr
+bilder
+bild
+film
+films
+filme
+foto
+fotos
 flickr
 picasa
 backup
@@ -16,6 +25,7 @@ imac
 ipad
 android
 sync
+win
 usb
 dsc
 pic

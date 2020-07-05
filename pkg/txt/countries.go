@@ -114,6 +114,8 @@ var Countries = map[string]string{
 	"cologne":           "de",
 	"saarland":          "de",
 	"saarbrücken":       "de",
+	"konstanz":          "de",
+	"reichenau":         "de",
 	"latvia":            "lv",
 	"lettland":          "lv",
 	"lithuania":         "lt",

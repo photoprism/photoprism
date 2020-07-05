@@ -110,6 +110,8 @@ DE:Düsseldorf
 DE:Cologne
 DE:Saarland
 DE:Saarbrücken
+DE:Konstanz
+DE:Reichenau
 LV:Latvia
 LV:Lettland
 LT:Lithuania
