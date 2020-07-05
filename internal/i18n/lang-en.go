@@ -35,7 +35,7 @@ const (
 
 var MsgEnglish = MessageMap{
 	ErrUnexpected:      "Unexpected error, please try again",
-	ErrBadRequest:      "Validation failed, check values",
+	ErrBadRequest:      "Invalid request",
 	ErrSaveFailed:      "Changes could not be saved",
 	ErrAlreadyExists:   "%s already exists",
 	ErrEntityNotFound:  "Unknown entity",

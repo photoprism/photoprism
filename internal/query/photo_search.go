@@ -301,6 +301,10 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
 	}
 
+	if f.Grouped {
+		s = s.Where("photos.id IN (SELECT a.photo_id FROM files a JOIN files b ON a.id != b.id AND a.photo_id = b.photo_id AND a.file_type = b.file_type WHERE a.file_type='jpg')")
+	}
+
 	if f.Album != "" {
 		if f.Filter != "" {
 			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", f.Album)

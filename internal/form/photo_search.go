@@ -28,6 +28,7 @@ type PhotoSearch struct {
 	Private   bool      `form:"private"`
 	Favorite  bool      `form:"favorite"`
 	Unsorted  bool      `form:"unsorted"`
+	Grouped   bool      `form:"grouped"`
 	Lat       float32   `form:"lat"`
 	Lng       float32   `form:"lng"`
 	Dist      uint      `form:"dist"`
