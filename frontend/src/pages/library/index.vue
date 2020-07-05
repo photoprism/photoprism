@@ -3,10 +3,10 @@
     <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit" dense>
       <v-container fluid>
         <p class="subheading">
-          <span v-if="fileName">{{ action }} {{ fileName }}...</span>
-          <span v-else-if="busy">{{ $gettext('Indexing photos and sidecar files...') }}</span>
-          <span v-else-if="completed">{{ $gettext('Done.') }}</span>
-          <span v-else>{{ $gettext('Press button to start indexing...') }}</span>
+          <span v-if="fileName">{{ action }} {{ fileName }}…</span>
+          <span v-else-if="busy"><translate>Indexing media and sidecar files…</translate></span>
+          <span v-else-if="completed"><translate>Done.</translate></span>
+          <span v-else><translate>Press button to start indexing…</translate></span>
         </p>
 
         <v-autocomplete
@@ -173,19 +173,19 @@
 
                 switch (type) {
                     case "indexing":
-                        this.action = "Indexing";
+                        this.action = this.$gettext("Indexing");
                         this.busy = true;
                         this.completed = 0;
                         this.fileName = data.fileName;
                         break;
                     case "converting":
-                        this.action = "Converting";
+                        this.action = this.$gettext("Converting");
                         this.busy = true;
                         this.completed = 0;
                         this.fileName = data.fileName;
                         break;
                     case "thumbnails":
-                        this.action = "Creating thumbnails for";
+                        this.action = this.$gettext("Creating thumbnails for");
                         this.busy = true;
                         this.completed = 0;
                         this.fileName = data.fileName;
@@ -217,7 +217,7 @@
                         found = true;
                     }
 
-                    this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "...")});
+                    this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…")});
                 }
 
                 if (!found) {

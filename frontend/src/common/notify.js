@@ -69,7 +69,7 @@ const Notify = {
         }
     },
     wait: function () {
-        this.warn($gettext("Busy, please wait..."));
+        this.warn($gettext("Busy, please wait…"));
     },
 };
 

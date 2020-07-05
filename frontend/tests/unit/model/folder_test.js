@@ -70,7 +70,7 @@ describe("model/folder", () => {
         const result = folder.baseName();
         assert.equal(result, "10-Halloween");
         const result2 = folder.baseName(8);
-        assert.equal(result2, "10-Ha...");
+        assert.equal(result2, "10-Hall…");
     });
 
     it("should return false",  () => {

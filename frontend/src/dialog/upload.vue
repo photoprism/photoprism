@@ -50,20 +50,18 @@
               </v-combobox>
               <span v-else-if="failed"><translate key="Upload failed">Upload failed</translate></span>
               <span v-else-if="total > 0 && completed < 100">
-                                <translate key="Uploading">Uploading</translate> {{current}} <translate key="of">of</translate> {{total}}...
-                    </span>
-              <span v-else-if="indexing"><translate key="Upload complete">Upload complete. Indexing...</translate></span>
+                <translate :translate-params="{n: current, t: total}">Uploading %{n} of %{t}…</translate>
+              </span>
+              <span v-else-if="indexing"><translate key="Upload complete">Upload complete. Indexing…</translate></span>
               <span v-else-if="completed === 100"><translate key="Done">Done.</translate></span>
             </p>
-
 
             <v-progress-linear color="secondary-dark" v-model="completed"
                                :indeterminate="indexing"></v-progress-linear>
 
-
             <p class="body-1" v-if="safe">
-              <translate>Please don't upload photos containing offensive content. Uploads
-                that may contain such images will be rejected automatically.</translate>
+              <translate>Please don't upload photos containing offensive content.</translate>
+              <translate>Uploads that may contain such images will be rejected automatically.</translate>
             </p>
 
             <p class="body-1" v-if="review">
@@ -140,7 +138,7 @@
             },
             cancel() {
                 if (this.busy) {
-                    Notify.info(this.$gettext("Uploading photos..."));
+                    Notify.info(this.$gettext("Uploading photos…"));
                     return;
                 }
 
@@ -148,7 +146,7 @@
             },
             confirm() {
                 if (this.busy) {
-                    Notify.info(this.$gettext("Uploading photos..."));
+                    Notify.info(this.$gettext("Uploading photos…"));
                     return;
                 }
 
@@ -189,7 +187,7 @@
                 this.completed = 0;
                 this.uploads = [];
 
-                Notify.info(this.$gettext("Uploading photos..."));
+                Notify.info(this.$gettext("Uploading photos…"));
 
                 let addToAlbums = [];
 

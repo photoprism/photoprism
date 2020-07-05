@@ -72,7 +72,7 @@ export class Folder extends RestModel {
         }
 
         if(truncate) {
-            result = Util.truncate(result, truncate, "...");
+            result = Util.truncate(result, truncate, "…");
         }
 
         return result;

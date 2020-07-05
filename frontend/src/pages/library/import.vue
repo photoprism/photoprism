@@ -3,11 +3,10 @@
     <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
       <v-container fluid>
         <p class="subheading">
-          <span v-if="fileName">{{ $gettext('Importing') }} {{fileName}}...</span>
-          <span v-else-if="busy">{{ $gettext('Importing files to originals...') }}</span>
-          <span v-else-if="completed">{{ $gettext('Done.') }}</span>
-          <span v-else-if="settings.import.move">{{ $gettext('Press button to start moving...') }}</span>
-          <span v-else>{{ $gettext('Press button to start copying...') }}</span>
+          <span v-if="fileName"><translate :translate-params="{name: fileName}">Importing %{name}…</translate></span>
+          <span v-else-if="busy"><translate>Importing files to originals…</translate></span>
+          <span v-else-if="completed"><translate>Done.</translate></span>
+          <span v-else><translate>Press button to start importing…</translate></span>
         </p>
 
         <v-autocomplete
@@ -209,7 +208,7 @@
                         found = true;
                     }
 
-                    this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "...")});
+                    this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…")});
                 }
 
                 if (!found) {

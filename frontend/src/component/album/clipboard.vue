@@ -122,7 +122,7 @@
         methods: {
             editDialog() {
                 if (this.selection.length !== 1) {
-                    this.$notify.error("select one album to edit");
+                    this.$notify.error(this.$gettext("You may only select one item"));
                     return;
                 }
 
@@ -135,7 +135,7 @@
             },
             shareDialog() {
                 if (this.selection.length !== 1) {
-                    this.$notify.error("select one album to share");
+                    this.$notify.error(this.$gettext("You may only select one item"));
                     return;
                 }
 
@@ -178,7 +178,7 @@
                 this.expanded = false;
             },
             onDownload(path) {
-                Notify.success(this.$gettext("Downloading..."));
+                Notify.success(this.$gettext("Downloading…"));
                 const link = document.createElement('a')
                 link.href = path;
                 link.download = "album.zip";

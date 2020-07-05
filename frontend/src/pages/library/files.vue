@@ -35,12 +35,10 @@
           <v-card-title primary-title>
             <div>
               <h3 class="title mb-3">
-                <translate key="nofolders">No files matched your search</translate>
+                <translate>No files matched your search</translate>
               </h3>
               <div>
-                <translate key="tryagain">Please re-index your originals if a file you expect is
-                  missing.
-                </translate>
+                <translate>Please re-index your originals if a file you expect is missing.</translate>
               </div>
             </div>
           </v-card-title>
@@ -405,13 +403,17 @@
                     this.breadcrumbs = this.getBreadcrumbs();
 
                     if (response.count === 0) {
-                        this.$notify.warn(this.$gettext('Directory is empty'));
-                    } else if (response.count === 1) {
-                        this.$notify.info(this.$gettext('One entry found'));
+                        this.$notify.warn(this.$gettext('Folder is empty'));
+                    } else if (response.files === 1) {
+                        this.$notify.info(this.$gettext('One file found'));
+                    } else if (response.files === 0 && response.folders === 1) {
+                        this.$notify.info(this.$gettext('One folder found'));
+                    } else if (response.files === 0 && response.folders > 1) {
+                        this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} folders found"), {n: response.folders}));
                     } else if (response.files < this.files.limit) {
-                        this.$notify.info(response.count + this.$gettext(' entries found'));
+                        this.$notify.info(this.$gettextInterpolate(this.$gettext("Folder contains %{n} files"), {n: response.files}));
                     } else {
-                        this.$notify.warn(this.$gettext('Too many files in folder, showing first') + ` ${response.files}`);
+                        this.$notify.warn(this.$gettextInterpolate(this.$gettext("Limit reached, showing first %{n} files"), {n: response.files}));
                     }
                 }).finally(() => {
                     this.dirty = false;

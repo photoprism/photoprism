@@ -48,15 +48,6 @@
                             color="secondary-dark"
                             class="input-category"
                 >
-                  <template v-slot:no-data>
-                    <v-list-tile>
-                      <v-list-tile-content>
-                        <v-list-tile-title>
-                          <translate>Press enter to create a new category.</translate>
-                        </v-list-tile-title>
-                      </v-list-tile-content>
-                    </v-list-tile>
-                  </template>
                 </v-combobox>
               </v-flex>
               <v-flex xs12 md6 pa-2>

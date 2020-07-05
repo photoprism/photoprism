@@ -21,7 +21,7 @@
             <v-select
                     color="secondary-dark"
                     hide-details hide-no-data flat
-                    :label="labels.account"
+                    :label="$gettext('Account')"
                     item-text="AccName"
                     item-value="ID"
                     @change="onChange"
@@ -44,21 +44,21 @@
                     :disabled="loading || noAccounts"
                     item-text="abs"
                     item-value="abs"
-                    :label="labels.path"
+                    :label="$gettext('Folder')"
             >
             </v-autocomplete>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-4">
             <v-btn @click.stop="cancel" depressed color="secondary-light" class="action-cancel ml-0 mt-0 mb-0 mr-2">
-              <translate key="Cancel">Cancel</translate>
+              <translate>Cancel</translate>
             </v-btn>
             <v-btn color="secondary-dark" depressed dark @click.stop="setup"
                    class="action-setup ma-0" v-if="noAccounts">
-              <span>{{ labels.setup }}</span>
+              <translate>Setup</translate>
             </v-btn>
             <v-btn color="secondary-dark" depressed dark @click.stop="confirm"
                    class="action-upload ma-0" v-else>
-              <span>{{ labels.upload }}</span>
+              <translate>Upload</translate>
             </v-btn>
           </v-flex>
         </v-layout>
@@ -88,12 +88,6 @@
                 ],
                 pathItems: [],
                 newPath: "",
-                labels: {
-                    account: this.$gettext("Account"),
-                    path: this.$gettext("Folder"),
-                    upload: this.$gettext("Upload"),
-                    setup: this.$gettext("Setup"),
-                }
             }
         },
         methods: {
@@ -115,9 +109,9 @@
                         this.loading = false;
 
                         if (files.length === 1) {
-                            this.$notify.success("One photo shared");
+                            this.$notify.success("One file uploaded");
                         } else {
-                            this.$notify.success(this.$gettextInterpolate(this.$gettext("%{n} photos shared"), {n: files.length}));
+                            this.$notify.success(this.$gettextInterpolate(this.$gettext("%{n} files uploaded"), {n: files.length}));
                         }
 
                         this.$emit('confirm', this.account);

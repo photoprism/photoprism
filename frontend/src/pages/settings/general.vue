@@ -20,7 +20,7 @@
                       v-model="settings.features.private"
                       color="secondary-dark"
                       :label="$gettext('Hide Private')"
-                      :hint="$gettext('Exclude photos marked as private from search results, shared albums, labels and places.')"
+                      :hint="$gettext('Exclude content marked as private from search results, shared albums, labels and places.')"
                       prepend-icon="lock"
                       persistent-hint
               >
@@ -374,7 +374,7 @@
 
                 this.settings.save().then((s) => {
                     if (reload) {
-                        this.$notify.info(this.$gettext("Reloading..."));
+                        this.$notify.info(this.$gettext("Reloading…"));
                         this.$notify.blockUI();
                         setTimeout(() => window.location.reload(), 100);
                     } else {

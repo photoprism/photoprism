@@ -90,6 +90,14 @@
             </v-list-tile-content>
           </v-list-tile>
 
+          <v-list-tile :to="{name: 'photos', query: { q: 'analog:true' }}" :exact="true" @click="">
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <translate>Film Scans</translate>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
           <v-list-tile to="/review" @click="" v-if="$config.feature('review')"
                        class="nav-review">
             <v-list-tile-content>
@@ -176,6 +184,14 @@
                 <translate key="Folders">Folders</translate>
                 <span v-show="config.count.folders > 0"
                       class="nav-count">{{ config.count.folders }}</span></v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile to="/unsorted" class="nav-unsorted">
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <translate key="Unsorted">Unsorted</translate>
+              </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list-group>
@@ -376,7 +392,7 @@
 
           <v-list-tile-content>
             <v-list-tile-title class="text--warning">
-              <translate key="Connecting">Connecting...</translate>
+              <translate key="Offline">Offline</translate>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>

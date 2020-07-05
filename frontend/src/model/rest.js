@@ -102,6 +102,10 @@ export class Rest extends Model {
     updateLink(link) {
         let values = link.getValues(false);
 
+        if(link.Token) {
+            values["Token"] = link.getToken();
+        }
+
         if(link.Password) {
             values["Password"] = link.Password;
         }

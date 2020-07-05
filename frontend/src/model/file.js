@@ -85,7 +85,7 @@ export class File extends RestModel {
         }
 
         if (truncate) {
-            result = Util.truncate(result, truncate, "...");
+            result = Util.truncate(result, truncate, "…");
         }
 
         return result;

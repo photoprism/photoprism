@@ -1,8 +1,9 @@
 {
   "name": "photoprism",
   "version": "1.0.0",
-  "description": "Single-page Web app frontend for PhotoPrism",
+  "description": "PhotoPrism Progressive Web App (PWA)",
   "author": "Michael Mayer",
+  "license": "AGPL-3.0",
   "private": true,
   "scripts": {
     "watch": "webpack --watch",

@@ -137,6 +137,13 @@ export default [
         meta: {title: $gettext("Folders"), auth: true},
     },
     {
+        name: "unsorted",
+        path: "/unsorted",
+        component: Photos,
+        meta: {title: $gettext("Unsorted"), auth: true},
+        props: {staticFilter: {unsorted: true}},
+    },
+    {
         name: "favorites",
         path: "/favorites",
         component: Photos,

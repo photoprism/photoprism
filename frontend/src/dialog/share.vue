@@ -20,8 +20,7 @@
             <template v-slot:header>
               <button class="text-xs-left action-url ml-0 mt-0 mb-0 pa-0 mr-2" @click.stop="copyUrl(link)" style="user-select: none;">
                 <v-icon size="16" class="pr-1">link</v-icon>
-                /s/<strong style="font-weight: 500;" v-if="link.Token">{{ link.Token.toLowerCase()
-                }}</strong><span v-else>...</span>
+                /s/<strong style="font-weight: 500;" v-if="link.Token">{{ link.getToken() }}</strong><span v-else>…</span>
               </button>
             </template>
             <v-card>
@@ -62,6 +61,7 @@
                               color="secondary-dark"
                               v-model="link.Token"
                               class="input-secret"
+                              mask="n"
                       ></v-text-field>
                     </v-flex>
                     <!-- v-flex xs12 sm6 class="pa-2">
@@ -97,9 +97,10 @@
         </v-expansion-panel>
 
         <v-container fluid text-xs-left class="pb-0 pt-3 pr-0 pl-0 caption">
-          People you share a link with will be able to view the {{model.modelName().toLowerCase()}}.<!-- TODO: translate-->
-          <translate>A click will copy it to your clipboard. Any private photos remain private.
-            Alternatively, you can upload files directly to WebDAV servers like Nextcloud.</translate>
+          <translate :translate-params="{name: model.modelName()}">People you share a link with will be able to view public contents.</translate>
+          <translate>A click will copy it to your clipboard.</translate>
+          <translate>Any private photos and videos remain private and won't be shared.</translate>
+          <translate>Alternatively, you can upload files directly to WebDAV servers like Nextcloud.</translate>
         </v-container>
       </v-card-text>
       <v-card-actions class="pt-0">

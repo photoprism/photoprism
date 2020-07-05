@@ -143,7 +143,7 @@
                     return;
                 }
 
-                Notify.success(this.$gettext("Downloading..."));
+                Notify.success(this.$gettext("Downloading…"));
                 let photo = new Photo();
                 photo.find(this.item.uid).then((p) => {
                     p.downloadAll();

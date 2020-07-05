@@ -51,11 +51,15 @@ export default class Link extends Model {
         };
     }
 
+    getToken() {
+        return this.Token.toLowerCase().trim();
+    }
+
     url() {
-        let token = this.Token.toLowerCase();
+        let token = this.getToken();
 
         if(!token) {
-            token = "...";
+            token = "…";
         }
 
         if(this.hasSlug()) {
@@ -66,7 +70,7 @@ export default class Link extends Model {
     }
 
     caption() {
-        return `/s/${this.Token.toLowerCase()}`;
+        return `/s/${this.getToken()}`;
     }
 
     getId() {

@@ -186,6 +186,10 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
+	if f.Analog {
+		s = s.Where("photos.photo_analog = 1")
+	}
+
 	if f.Country != "" {
 		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), ","))
 	}
@@ -303,6 +307,8 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		} else {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", f.Album)
 		}
+	} else if f.Unsorted && f.Filter == "" {
+		s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 0)")
 	}
 
 	// Set sort order for results.

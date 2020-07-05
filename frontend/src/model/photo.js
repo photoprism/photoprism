@@ -53,6 +53,7 @@ export class Photo extends RestModel {
             Type: TypeImage,
             Favorite: false,
             Private: false,
+            Analog: false,
             TakenAt: "",
             TakenAtLocal: "",
             TakenSrc: "",
@@ -127,7 +128,7 @@ export class Photo extends RestModel {
         let result = this.fileBase(this.FileName ? this.FileName : this.mainFile().Name);
 
         if (truncate) {
-            result = Util.truncate(result, truncate, "...");
+            result = Util.truncate(result, truncate, "…");
         }
 
         return result;

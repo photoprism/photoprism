@@ -3,15 +3,15 @@
     <v-card v-if="photos.length === 0" class="p-photos-empty secondary-light lighten-1 ma-1" flat>
       <v-card-title primary-title>
         <div>
-          <h3 class="title mb-3">
+          <h3 class="title ma-0 pa-0">
             <translate>No photos or videos found</translate>
           </h3>
-          <div>
+          <p class="mt-4 mb-0 pa-0">
             <translate>Try using other terms and search options such as category, country and camera.</translate>
-            <span v-show="$config.feature('review')">
-              <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
-            </span>
-          </div>
+          </p>
+          <p v-if="$config.feature('review')" class="mt-2 mb-0 pa-0">
+            <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+          </p>
         </div>
       </v-card-title>
     </v-card>

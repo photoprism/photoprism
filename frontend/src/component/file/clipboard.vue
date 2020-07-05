@@ -103,7 +103,7 @@
                 this.expanded = false;
             },
             onDownload(path) {
-                Notify.success(this.$gettext("Downloading..."));
+                Notify.success(this.$gettext("Downloading…"));
                 const link = document.createElement('a')
                 link.href = path;
                 link.download = "photos.zip";

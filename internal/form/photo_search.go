@@ -19,6 +19,7 @@ type PhotoSearch struct {
 	Primary   bool      `form:"primary"`
 	Video     bool      `form:"video"`
 	Photo     bool      `form:"photo"`
+	Analog    bool      `form:"analog"`
 	Duplicate bool      `form:"duplicate"`
 	Error     bool      `form:"error"`
 	Hidden    bool      `form:"hidden"`
@@ -26,6 +27,7 @@ type PhotoSearch struct {
 	Public    bool      `form:"public"`
 	Private   bool      `form:"private"`
 	Favorite  bool      `form:"favorite"`
+	Unsorted  bool      `form:"unsorted"`
 	Lat       float32   `form:"lat"`
 	Lng       float32   `form:"lng"`
 	Dist      uint      `form:"dist"`

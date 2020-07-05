@@ -26,7 +26,7 @@ describe("model/file", () => {
         const result = file.baseName();
         assert.equal(result, "IMG123.jpg");
         const result2 = file.baseName(8);
-        assert.equal(result2, "IMG12...");
+        assert.equal(result2, "IMG123.…");
     });
 
     it("should return true",  () => {

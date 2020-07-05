@@ -285,7 +285,7 @@ describe("model/photo", () => {
         const result = photo.baseName();
         assert.equal(result, "superCuteKitten.jpg");
         const result2 = photo.baseName(5);
-        assert.equal(result2, "su...");
+        assert.equal(result2, "supe…");
     });
 
     it("should refresh file attributes",  () => {

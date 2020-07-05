@@ -155,13 +155,13 @@
                 <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc"
                              v-else-if="album.Type === 'album'">
                   <div v-if="album.PhotoCount === 1" class="caption">
-                    <translate>Contains one photo.</translate>
+                    <translate>Contains one entry.</translate>
                   </div>
                   <div v-else-if="album.PhotoCount > 0" class="caption">
-                    <translate :translate-params="{n: album.PhotoCount}">Contains %{n} photos.</translate>
+                    <translate :translate-params="{n: album.PhotoCount}">Contains %{n} entries.</translate>
                   </div>
                   <button v-else @click.stop.prevent="$router.push({name: 'photos'})" class="caption">
-                    <translate>Add photos from search results by selecting them.</translate>
+                    <translate>Add photos or videos from search results by selecting them.</translate>
                   </button>
                 </v-card-text>
               </v-card>

@@ -118,7 +118,7 @@ export default class Util {
             length = 100;
         }
         if (ending == null) {
-            ending = "...";
+            ending = "…";
         }
         if (str.length > length) {
             return str.substring(0, length - ending.length) + ending;

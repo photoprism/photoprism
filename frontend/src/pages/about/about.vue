@@ -78,9 +78,10 @@
 
 
       <h2 class="py-2 subheading"><translate>Trademarks</translate></h2>
-      <p class="body-1"><translate>PhotoPrism™ is a registered trademark of Michael Mayer. You may use it as required to
-        describe our software, run your own server, for educational purposes, but not for offering commercial
-        goods, products, or services without prior written permission. In other words, please ask.</translate></p>
+      <p class="body-1">
+        <translate>PhotoPrism™ is a registered trademark of Michael Mayer.</translate>
+        <translate>You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask.</translate>
+      </p>
     </v-container>
 
     <p-about-footer></p-about-footer>
