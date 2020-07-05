@@ -3,7 +3,7 @@ package i18n
 var MsgGerman = MessageMap{
 	ErrUnexpected:       "Unerwarteter Fehler, bitte erneut versuchen",
 	ErrSaveFailed:       "Daten gekonnten nicht gespeichert werden",
-	ErrBadRequest:       "Ungültige Eingabe, bitte erneut versuchen",
+	ErrBadRequest:       "Fehlerhafte Eingabe, bitte prüfen",
 	ErrAlreadyExists:    "%s existiert bereits",
 	ErrEntityNotFound:   "Eintrag nicht gefunden",
 	ErrAccountNotFound:  "Unbekannter Account",
