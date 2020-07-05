@@ -63,33 +63,16 @@
 
               </v-flex>
               <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
-                <v-menu
+                <v-text-field
                         :disabled="disabled"
-                        v-model="showTimePicker"
-                        :close-on-content-click="false"
-                        full-width
-                        max-width="290"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                            :disabled="disabled"
-                            :value="timeFormatted"
-                            :label="labels.utctime"
-                            readonly
-                            hide-details
-                            v-on="on"
-                            color="secondary-dark"
-                            class="input-utc-time"
-                    ></v-text-field>
-                  </template>
-                  <v-time-picker
-                          color="secondary-dark"
-                          v-model="time"
-                          format="24hr"
-                          use-seconds
-                          @change="showTimePicker = false"
-                  ></v-time-picker>
-                </v-menu>
+                        @change="updateTime"
+                        v-model="time"
+                        :label="labels.utctime"
+                        hide-details return-masked-value
+                        mask="##:##:##"
+                        color="secondary-dark"
+                        class="input-utc-time"
+                ></v-text-field>
               </v-flex>
               <v-flex xs12 sm6 md3 class="pa-2 p-date-select">
                 <v-menu
@@ -474,9 +457,6 @@
 
                 this.dateFormatted = DateTime.fromISO(this.date).toLocaleString(DateTime.DATE_FULL);
             },
-            time() {
-                this.updateTime();
-            },
         },
         computed: {
             cameraOptions() {
@@ -488,9 +468,13 @@
         },
         methods: {
             updateTime() {
-                if (!this.time || !this.date) {
-                    this.timeFormatted = ""
-                    this.timeLocalFormatted = ""
+                if (!this.time) {
+                    this.time = DateTime.fromISO(this.model.TakenAt).toUTC().toFormat("HH:mm:ss");
+                    return;
+                }
+
+                if (!this.date) {
+                    return;
                 }
 
                 this.timeFormatted = DateTime.fromISO(this.time).toLocaleString(DateTime.TIME_24_WITH_SECONDS);
@@ -498,6 +482,8 @@
                 const utcDate = this.date + "T" + this.time + "Z";
 
                 this.model.TakenAt = utcDate;
+
+                this.time = DateTime.fromISO(this.model.TakenAt).toUTC().toFormat("HH:mm:ss");
 
                 let localDate = DateTime.fromISO(utcDate);
 
