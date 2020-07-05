@@ -93,7 +93,7 @@
           <v-list-tile :to="{name: 'photos', query: { q: 'analog:true' }}" :exact="true" @click="">
             <v-list-tile-content>
               <v-list-tile-title>
-                <translate>Film Scans</translate>
+                <translate key="Analog">Analog</translate>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
