@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -116,8 +115,6 @@ func (c *Config) PublicConfig() ClientConfig {
 		return c.UserConfig()
 	}
 
-	defer log.Debug(capture.Time(time.Now(), "client config created (public)"))
-
 	settings := c.Settings()
 
 	result := ClientConfig{
@@ -155,8 +152,6 @@ func (c *Config) PublicConfig() ClientConfig {
 
 // GuestConfig returns client config values for the sharing with guests.
 func (c *Config) GuestConfig() ClientConfig {
-	defer log.Debug(capture.Time(time.Now(), "client config created (guest)"))
-
 	settings := c.Settings()
 
 	result := ClientConfig{
@@ -196,8 +191,6 @@ func (c *Config) GuestConfig() ClientConfig {
 
 // UserConfig returns client configuration values for registered users.
 func (c *Config) UserConfig() ClientConfig {
-	defer log.Debug(capture.Time(time.Now(), "client config created (user)"))
-
 	result := ClientConfig{
 		Settings:        *c.Settings(),
 		Flags:           strings.Join(c.Flags(), " "),
