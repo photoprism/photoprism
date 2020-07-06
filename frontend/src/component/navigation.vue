@@ -98,6 +98,14 @@
             </v-list-tile-content>
           </v-list-tile>
 
+          <v-list-tile :to="{name: 'photos', query: { q: 'grouped:true' }}" :exact="true" @click="">
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <translate key="Grouped">Grouped</translate>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
           <v-list-tile to="/review" @click="" v-if="$config.feature('review')"
                        class="nav-review">
             <v-list-tile-content>
