@@ -56,7 +56,7 @@ func UpdateClientConfig() {
 
 func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {
 	resp := i18n.NewResponse(code, id, params...)
-	log.Errorf("api: %s", resp.LowerString())
+	log.Debugf("api: %s", resp.String())
 	c.AbortWithStatusJSON(code, resp)
 }
 
