@@ -54,7 +54,7 @@ msgstr "Auf den Link klicken, um ihn zu kopieren."
 msgid "Account"
 msgstr "Zugang"
 
-#: src/dialog/photo/info.vue:106
+#: src/dialog/photo/info.vue:122
 msgid "Accuracy"
 msgstr "Genauigkeit"
 
@@ -193,7 +193,7 @@ msgstr ""
 "Alternativ können Dateien auch direkt auf kompatible WebDAV-Server "
 "hochgeladen z.B. Nextcloud."
 
-#: src/dialog/photo/info.vue:101
+#: src/dialog/photo/info.vue:114
 msgid "Altitude"
 msgstr "Höhe"
 
@@ -237,7 +237,7 @@ msgstr "Übernehmen"
 msgid "Archive"
 msgstr "Archiv"
 
-#: src/dialog/photo/info.vue:146
+#: src/dialog/photo/info.vue:162
 msgid "Archived"
 msgstr "Archiviert"
 
@@ -347,7 +347,7 @@ msgstr "Als privat markieren"
 msgid "Change Status"
 msgstr "Status ändern"
 
-#: src/dialog/photo/info.vue:138
+#: src/dialog/photo/info.vue:154
 msgid "Checked"
 msgstr "Geprüft"
 
@@ -395,10 +395,6 @@ msgstr "Automatisch konvertieren"
 msgid "Converting"
 msgstr "Konvertiere"
 
-#: src/dialog/photo/info.vue:98
-msgid "Coordinates"
-msgstr "Koordinaten"
-
 #: src/dialog/share.vue:170
 msgid "Copied to clipboard"
 msgstr "In Zwischenablage kopiert"
@@ -424,7 +420,7 @@ msgstr "Land"
 msgid "Create album"
 msgstr "Album erstellen"
 
-#: src/dialog/photo/info.vue:114
+#: src/dialog/photo/info.vue:130
 msgid "Created"
 msgstr "Hinzugefügt"
 
@@ -545,7 +541,7 @@ msgstr "Account bearbeiten"
 msgid "Edit Photo"
 msgstr "Foto bearbeiten"
 
-#: src/dialog/photo/info.vue:130
+#: src/dialog/photo/info.vue:146
 msgid "Edited"
 msgstr "Bearbeitet"
 
@@ -563,11 +559,11 @@ msgstr "Fehler"
 
 #: src/component/navigation.vue:302
 msgid "Errors"
-msgstr "Ereignisse"
+msgstr "Fehler"
 
 #: src/pages/library/errors.vue:4
 msgid "Event Log"
-msgstr "Ereignisse"
+msgstr "Ereignisprotokoll"
 
 #: src/resources/options.js:159
 msgid "Every two days"
@@ -835,7 +831,7 @@ msgstr "Sprache"
 msgid "Last Backup"
 msgstr "Letztes Backup"
 
-#: src/dialog/photo/details.vue:443 src/dialog/photo/info.vue:101
+#: src/dialog/photo/details.vue:443 src/dialog/photo/info.vue:98
 msgid "Latitude"
 msgstr "Breitengrad"
 
@@ -878,7 +874,7 @@ msgstr "Link"
 msgid "List"
 msgstr "Liste"
 
-#: src/dialog/photo/details.vue:258
+#: src/dialog/photo/details.vue:261
 msgid "Local Time"
 msgstr "Ortszeit"
 
@@ -902,7 +898,7 @@ msgstr "Abmelden"
 msgid "Logs"
 msgstr "Logs"
 
-#: src/dialog/photo/details.vue:444 src/dialog/photo/info.vue:101
+#: src/dialog/photo/details.vue:444 src/dialog/photo/info.vue:106
 msgid "Longitude"
 msgstr "Längengrad"
 
@@ -935,7 +931,7 @@ msgstr "Erlebnisse"
 msgid "Monochrome"
 msgstr "Monochrom"
 
-#: src/component/photo/toolbar.vue:203 src/dialog/photo/details.vue:198
+#: src/component/photo/toolbar.vue:203 src/dialog/photo/details.vue:199
 msgid "Month"
 msgstr "Monat"
 
@@ -1188,7 +1184,7 @@ msgstr "Personen"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Jeder mit diesem Link wird öffentliche Fotos und Videos sehen können."
 
-#: src/model/photo.js:650
+#: src/model/photo.js:652
 msgid "Photo"
 msgstr "Foto"
 
@@ -1539,7 +1535,7 @@ msgstr ""
 msgid "Theme"
 msgstr "Theme"
 
-#: src/dialog/photo/details.vue:288
+#: src/dialog/photo/details.vue:291
 msgid "Time UTC"
 msgstr "Zeit UTC"
 
@@ -1609,9 +1605,9 @@ msgstr "UID"
 msgid "Ungroup"
 msgstr "Gruppierung auflösen"
 
-#: src/dialog/photo/details.vue:423 src/dialog/photo/info.vue:205
-#: src/model/photo.js:421 src/model/photo.js:433 src/model/photo.js:452
-#: src/model/photo.js:464 src/model/photo.js:541 src/model/photo.js:554
+#: src/dialog/photo/details.vue:423 src/dialog/photo/info.vue:221
+#: src/model/photo.js:417 src/model/photo.js:431 src/model/photo.js:454
+#: src/model/photo.js:466 src/model/photo.js:543 src/model/photo.js:556
 #: src/resources/options.js:15 src/resources/options.js:29
 #: src/resources/options.js:43 src/resources/options.js:57
 msgid "Unknown"
@@ -1621,7 +1617,7 @@ msgstr "Unbekannt"
 msgid "Unsorted"
 msgstr "Unsortiert"
 
-#: src/dialog/photo/files.vue:120 src/dialog/photo/info.vue:122
+#: src/dialog/photo/files.vue:120 src/dialog/photo/info.vue:138
 msgid "Updated"
 msgstr "Geändert"
 
@@ -1681,7 +1677,7 @@ msgstr "Benutzeroberfläche"
 msgid "Username"
 msgstr "Nutzername"
 
-#: src/model/file.js:196 src/model/photo.js:501 src/model/photo.js:515
+#: src/model/file.js:196 src/model/photo.js:503 src/model/photo.js:517
 msgid "Video"
 msgstr "Video"
 
@@ -1741,7 +1737,7 @@ msgid "Who we are"
 msgstr "Wer wir sind"
 
 #: src/component/photo/toolbar.vue:202 src/dialog/photo/details.vue:434
-#: src/dialog/photo/details.vue:228
+#: src/dialog/photo/details.vue:230
 msgid "Year"
 msgstr "Jahr"
 
@@ -1778,6 +1774,9 @@ msgstr ""
 "eigenen Server zu betreiben und über das Projekt zu berichten.\n"
 "Das Anbieten oder Bewerben kommerzieller Produkte, Waren oder "
 "Dienstleistungen ist nur nach vorheriger, schriftlicher Genehmigung erlaubt."
+
+#~ msgid "Coordinates"
+#~ msgstr "Koordinaten"
 
 #~ msgid "Grouped"
 #~ msgstr "Gruppiert"

@@ -49,7 +49,7 @@ msgstr ""
 msgid "Account"
 msgstr ""
 
-#: src/dialog/photo/info.vue:106
+#: src/dialog/photo/info.vue:122
 msgid "Accuracy"
 msgstr ""
 
@@ -198,7 +198,7 @@ msgstr ""
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr ""
 
-#: src/dialog/photo/info.vue:101
+#: src/dialog/photo/info.vue:114
 msgid "Altitude"
 msgstr ""
 
@@ -245,7 +245,7 @@ msgstr ""
 msgid "Archive"
 msgstr ""
 
-#: src/dialog/photo/info.vue:146
+#: src/dialog/photo/info.vue:162
 msgid "Archived"
 msgstr ""
 
@@ -371,7 +371,7 @@ msgstr ""
 msgid "Change Status"
 msgstr ""
 
-#: src/dialog/photo/info.vue:138
+#: src/dialog/photo/info.vue:154
 msgid "Checked"
 msgstr ""
 
@@ -422,10 +422,6 @@ msgstr ""
 msgid "Converting"
 msgstr ""
 
-#: src/dialog/photo/info.vue:98
-msgid "Coordinates"
-msgstr ""
-
 #: src/dialog/share.vue:170
 msgid "Copied to clipboard"
 msgstr ""
@@ -454,7 +450,7 @@ msgstr ""
 msgid "Create album"
 msgstr ""
 
-#: src/dialog/photo/info.vue:114
+#: src/dialog/photo/info.vue:130
 msgid "Created"
 msgstr ""
 
@@ -591,7 +587,7 @@ msgstr ""
 msgid "Edit Photo"
 msgstr ""
 
-#: src/dialog/photo/info.vue:130
+#: src/dialog/photo/info.vue:146
 msgid "Edited"
 msgstr ""
 
@@ -882,7 +878,7 @@ msgid "Last Backup"
 msgstr ""
 
 #: src/dialog/photo/details.vue:443
-#: src/dialog/photo/info.vue:101
+#: src/dialog/photo/info.vue:98
 msgid "Latitude"
 msgstr ""
 
@@ -933,7 +929,7 @@ msgstr ""
 msgid "List"
 msgstr ""
 
-#: src/dialog/photo/details.vue:258
+#: src/dialog/photo/details.vue:261
 msgid "Local Time"
 msgstr ""
 
@@ -960,7 +956,7 @@ msgid "Logs"
 msgstr ""
 
 #: src/dialog/photo/details.vue:444
-#: src/dialog/photo/info.vue:101
+#: src/dialog/photo/info.vue:106
 msgid "Longitude"
 msgstr ""
 
@@ -996,7 +992,7 @@ msgid "Monochrome"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:203
-#: src/dialog/photo/details.vue:198
+#: src/dialog/photo/details.vue:199
 msgid "Month"
 msgstr ""
 
@@ -1272,7 +1268,7 @@ msgstr ""
 msgid "People you share a link with will be able to view public contents."
 msgstr ""
 
-#: src/model/photo.js:650
+#: src/model/photo.js:652
 msgid "Photo"
 msgstr ""
 
@@ -1649,7 +1645,7 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-#: src/dialog/photo/details.vue:288
+#: src/dialog/photo/details.vue:291
 msgid "Time UTC"
 msgstr ""
 
@@ -1725,13 +1721,13 @@ msgid "Ungroup"
 msgstr ""
 
 #: src/dialog/photo/details.vue:423
-#: src/dialog/photo/info.vue:205
-#: src/model/photo.js:421
-#: src/model/photo.js:433
-#: src/model/photo.js:452
-#: src/model/photo.js:464
-#: src/model/photo.js:541
-#: src/model/photo.js:554
+#: src/dialog/photo/info.vue:221
+#: src/model/photo.js:417
+#: src/model/photo.js:431
+#: src/model/photo.js:454
+#: src/model/photo.js:466
+#: src/model/photo.js:543
+#: src/model/photo.js:556
 #: src/resources/options.js:15
 #: src/resources/options.js:29
 #: src/resources/options.js:43
@@ -1745,7 +1741,7 @@ msgid "Unsorted"
 msgstr ""
 
 #: src/dialog/photo/files.vue:120
-#: src/dialog/photo/info.vue:122
+#: src/dialog/photo/info.vue:138
 msgid "Updated"
 msgstr ""
 
@@ -1811,8 +1807,8 @@ msgid "Username"
 msgstr ""
 
 #: src/model/file.js:196
-#: src/model/photo.js:501
-#: src/model/photo.js:515
+#: src/model/photo.js:503
+#: src/model/photo.js:517
 msgid "Video"
 msgstr ""
 
@@ -1865,7 +1861,7 @@ msgstr ""
 
 #: src/component/photo/toolbar.vue:202
 #: src/dialog/photo/details.vue:434
-#: src/dialog/photo/details.vue:228
+#: src/dialog/photo/details.vue:230
 msgid "Year"
 msgstr ""
 
