@@ -63,7 +63,7 @@
                 depressed
                 @click.stop="startIndexing()"
         >
-          <translate>Index</translate>
+          <translate>Start</translate>
           <v-icon right dark>update</v-icon>
         </v-btn>
 

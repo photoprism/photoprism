@@ -767,7 +767,7 @@ msgstr "Importiere %{name}…"
 msgid "Importing files to originals…"
 msgstr "Importiere Dateien nach Originals…"
 
-#: src/pages/library.vue:4 src/pages/library/index.vue:30
+#: src/pages/library.vue:4
 msgid "Index"
 msgstr "Index"
 
@@ -1234,7 +1234,7 @@ msgstr "Auf “Import” klicken, um Dateien zu importieren…"
 
 #: src/pages/library/index.vue:8
 msgid "Press button to start indexing…"
-msgstr "Auf “Index” klicken, um Dateien zu indizieren…"
+msgstr "Auf “Start” klicken, um Dateien zu indizieren…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
@@ -1476,6 +1476,10 @@ msgstr "Quelle"
 #: src/component/navigation.vue:80
 msgid "Stacks"
 msgstr "Bildstapel"
+
+#: src/pages/library/index.vue:30
+msgid "Start"
+msgstr "Start"
 
 #: src/component/navigation.vue:240
 msgid "States"
@@ -1908,9 +1912,6 @@ msgstr ""
 
 #~ msgid "Sign In"
 #~ msgstr "Anmelden"
-
-#~ msgid "Start"
-#~ msgstr "Start"
 
 #~ msgid "Add Account"
 #~ msgstr "Neuer Account"

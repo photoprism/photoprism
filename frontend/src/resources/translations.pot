@@ -807,7 +807,6 @@ msgid "Importing files to originals…"
 msgstr ""
 
 #: src/pages/library.vue:4
-#: src/pages/library/index.vue:30
 msgid "Index"
 msgstr ""
 
@@ -1584,6 +1583,10 @@ msgstr ""
 
 #: src/component/navigation.vue:80
 msgid "Stacks"
+msgstr ""
+
+#: src/pages/library/index.vue:30
+msgid "Start"
 msgstr ""
 
 #: src/component/navigation.vue:240
