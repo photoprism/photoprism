@@ -434,7 +434,7 @@
                     year: this.$gettext("Year"),
                     color: this.$gettext("Color"),
                     category: this.$gettext("Category"),
-                    sort: this.$gettext("Sort By"),
+                    sort: this.$gettext("Sort Order"),
                     before: this.$gettext("Taken before"),
                     after: this.$gettext("Taken after"),
                     language: this.$gettext("Language"),

@@ -1561,19 +1561,16 @@ msgstr ""
 msgid "Slow"
 msgstr ""
 
-#: src/component/album/toolbar.vue:120
-#: src/component/photo/toolbar.vue:206
-#: src/dialog/photo/details.vue:437
-msgid "Sort By"
-msgstr ""
-
 #: src/component/album/toolbar.vue:103
 #: src/component/photo/toolbar.vue:191
 #: src/dialog/album/edit.vue:105
 msgid "Sort by file name"
 msgstr ""
 
+#: src/component/album/toolbar.vue:120
+#: src/component/photo/toolbar.vue:206
 #: src/dialog/album/edit.vue:118
+#: src/dialog/photo/details.vue:437
 msgid "Sort Order"
 msgstr ""
 

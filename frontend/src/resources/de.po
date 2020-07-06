@@ -1455,17 +1455,13 @@ msgstr "Größe"
 msgid "Slow"
 msgstr "Langsam"
 
-#: src/component/album/toolbar.vue:120 src/component/photo/toolbar.vue:206
-#: src/dialog/photo/details.vue:437
-msgid "Sort By"
-msgstr "Sortierung"
-
 #: src/component/album/toolbar.vue:103 src/component/photo/toolbar.vue:191
 #: src/dialog/album/edit.vue:105
 msgid "Sort by file name"
 msgstr "Dateinamen"
 
-#: src/dialog/album/edit.vue:118
+#: src/component/album/toolbar.vue:120 src/component/photo/toolbar.vue:206
+#: src/dialog/album/edit.vue:118 src/dialog/photo/details.vue:437
 msgid "Sort Order"
 msgstr "Sortierung"
 
@@ -1785,6 +1781,9 @@ msgstr ""
 "eigenen Server zu betreiben und über das Projekt zu berichten.\n"
 "Das Anbieten oder Bewerben kommerzieller Produkte, Waren oder "
 "Dienstleistungen ist nur nach vorheriger, schriftlicher Genehmigung erlaubt."
+
+#~ msgid "Sort By"
+#~ msgstr "Sortierung"
 
 #~ msgid "Analog"
 #~ msgstr "Analog"

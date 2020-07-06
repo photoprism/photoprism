@@ -117,7 +117,7 @@
                     view: this.$gettext("View"),
                     country: this.$gettext("Country"),
                     camera: this.$gettext("Camera"),
-                    sort: this.$gettext("Sort By"),
+                    sort: this.$gettext("Sort Order"),
                     category: this.$gettext("Category"),
                 },
                 titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
