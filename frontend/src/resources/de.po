@@ -167,7 +167,7 @@ msgstr "Alle Länder"
 
 #: src/pages/library/import.vue:105
 msgid "All files from import folder"
-msgstr "Alle Dateien aus Import"
+msgstr "Gesamten Import-Ordner durchsuchen"
 
 #: src/component/photo/toolbar.vue:175
 msgid "All Lenses"
@@ -179,7 +179,7 @@ msgstr "Alle Monate"
 
 #: src/pages/library/index.vue:98
 msgid "All originals"
-msgstr "Alle Dateien aus Originals"
+msgstr "Alle Ordner durchsuchen"
 
 #: src/component/photo/toolbar.vue:179
 msgid "All Years"
@@ -1375,7 +1375,7 @@ msgstr "Code"
 
 #: src/dialog/upload.vue:115
 msgid "Select albums or create a new one"
-msgstr "Wähle Alben aus oder erstelle ein neues"
+msgstr "Alben auswählen oder neue erstellen"
 
 #: src/component/photo/clipboard.vue:172
 msgid "Selection archived"
