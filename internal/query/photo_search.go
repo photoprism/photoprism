@@ -190,8 +190,8 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
-	if f.Analog {
-		s = s.Where("photos.photo_analog = 1")
+	if f.Scan {
+		s = s.Where("photos.photo_scan = 1")
 	}
 
 	if f.Country != "" {

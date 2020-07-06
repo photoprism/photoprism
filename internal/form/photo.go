@@ -34,7 +34,7 @@ type Photo struct {
 	PhotoFavorite    bool      `json:"Favorite"`
 	PhotoPrivate     bool      `json:"Private"`
 	PhotoReview      bool      `json:"Review"`
-	PhotoAnalog      bool      `json:"Analog"`
+	PhotoScan        bool      `json:"Scan"`
 	LocationID       string    `json:"LocationID"`
 	LocationSrc      string    `json:"LocationSrc"`
 	GPSAccuracy      int       `json:"GPSAccuracy"`

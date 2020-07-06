@@ -103,14 +103,14 @@
         </tr>
         <tr>
           <td>
-            <translate key="Analog">Analog</translate>
+            <translate key="Scan">Scan</translate>
           </td>
           <td>
             <v-switch
                     @change="save"
                     hide-details
-                    v-model="model.Analog"
-                    :label="model.Analog ? $gettext('Yes') : $gettext('No')"
+                    v-model="model.Scan"
+                    :label="model.Scan ? $gettext('Yes') : $gettext('No')"
             ></v-switch>
           </td>
         </tr>
