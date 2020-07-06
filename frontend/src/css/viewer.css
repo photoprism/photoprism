@@ -54,3 +54,20 @@
     -webkit-box-shadow: none;
     box-shadow: none;
 }
+
+@keyframes fadeInOut {
+    0% {
+        opacity:0;
+    }
+    30% {
+        opacity:1;
+    }
+}
+  
+.slide_show {
+    animation-name: fadeInOut;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-duration: 2s;
+    animation-direction: alternate;
+}
