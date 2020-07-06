@@ -116,10 +116,26 @@
         </tr>
         <tr v-if="model.Lat">
           <td>
-            <translate>Coordinates</translate>
+            <translate>Latitude</translate>
           </td>
           <td>
-            <translate>Latitude</translate>: {{ model.Lat }}, <translate>Longitude</translate>: {{ model.Lat }}<span v-if="model.Altitude > 0">, <translate>Altitude</translate>: {{ model.Altitude }} m</span>
+            {{ model.Lat }}
+          </td>
+        </tr>
+        <tr v-if="model.Lng">
+          <td>
+            <translate>Longitude</translate>
+          </td>
+          <td>
+            {{ model.Lng }}
+          </td>
+        </tr>
+        <tr v-if="model.Altitude">
+          <td>
+            <translate>Altitude</translate>
+          </td>
+          <td>
+            {{ model.Altitude }} m
           </td>
         </tr>
         <tr v-if="model.Lat">
