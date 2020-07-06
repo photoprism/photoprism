@@ -46,6 +46,7 @@ type PhotoSearch struct {
 	State     string    `form:"state"`    // Moments
 	Year      int       `form:"year"`     // Moments
 	Month     int       `form:"month"`    // Moments
+	Day       int       `form:"day"`      // Moments
 	Color     string    `form:"color"`
 	Quality   int       `form:"quality"`
 	Review    bool      `form:"review"`

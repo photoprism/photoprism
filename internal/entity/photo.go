@@ -37,7 +37,6 @@ type Photo struct {
 	TakenAt          time.Time    `gorm:"type:datetime;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
 	TakenAtLocal     time.Time    `gorm:"type:datetime;" yaml:"-"`
 	TakenSrc         string       `gorm:"type:varbinary(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
-	TakenAcc         int          `json:"TakenAcc" yaml:"TakenAcc,omitempty"`
 	PhotoUID         string       `gorm:"type:varbinary(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string       `gorm:"type:varbinary(8);default:'image';" json:"Type" yaml:"Type"`
 	PhotoTitle       string       `gorm:"type:varchar(255);" json:"Title" yaml:"Title"`
@@ -60,8 +59,9 @@ type Photo struct {
 	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
 	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
 	PhotoCountry     string       `gorm:"type:varbinary(2);index:idx_photos_country_year_month;default:'zz'" json:"Country" yaml:"-"`
-	PhotoYear        int          `gorm:"index:idx_photos_country_year_month;" json:"Year" yaml:"-"`
-	PhotoMonth       int          `gorm:"index:idx_photos_country_year_month;" json:"Month" yaml:"-"`
+	PhotoYear        int          `gorm:"index:idx_photos_country_year_month;" json:"Year" yaml:"Year"`
+	PhotoMonth       int          `gorm:"index:idx_photos_country_year_month;" json:"Month" yaml:"Month"`
+	PhotoDay         int          `json:"Day" yaml:"Day"`
 	PhotoIso         int          `json:"Iso" yaml:"ISO,omitempty"`
 	PhotoExposure    string       `gorm:"type:varbinary(64);" json:"Exposure" yaml:"Exposure,omitempty"`
 	PhotoFNumber     float32      `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
@@ -111,7 +111,7 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 		return errors.New("photo: can't save form, id is empty")
 	}
 
-	model.UpdateYearMonth()
+	model.UpdateDateFields()
 
 	if form.Details.PhotoID == model.ID {
 		if err := deepcopier.Copy(&model.Details).From(form.Details); err != nil {
@@ -182,7 +182,7 @@ func (m *Photo) Save() error {
 
 	labels := m.ClassifyLabels()
 
-	m.UpdateYearMonth()
+	m.UpdateDateFields()
 
 	if err := m.UpdateTitle(labels); err != nil {
 		log.Info(err)
@@ -735,11 +735,11 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 		m.TimeZone = zone
 	}
 
-	m.UpdateYearMonth()
+	m.UpdateDateFields()
 }
 
-// UpdateYearMonth updates internal date fields.
-func (m *Photo) UpdateYearMonth() {
+// UpdateDateFields updates internal date fields.
+func (m *Photo) UpdateDateFields() {
 	if m.TakenAt.IsZero() || m.TakenAt.Year() < 1000 {
 		return
 	}
@@ -751,9 +751,11 @@ func (m *Photo) UpdateYearMonth() {
 	if m.TakenSrc == SrcAuto {
 		m.PhotoYear = YearUnknown
 		m.PhotoMonth = MonthUnknown
-	} else {
+		m.PhotoDay = DayUnknown
+	} else if m.TakenSrc != SrcManual {
 		m.PhotoYear = m.TakenAtLocal.Year()
 		m.PhotoMonth = int(m.TakenAtLocal.Month())
+		m.PhotoDay = m.TakenAtLocal.Day()
 	}
 }
 

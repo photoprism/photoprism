@@ -44,6 +44,7 @@ export const TypeJpeg = "jpg";
 export const TypeImage = "image";
 export const YearUnknown = -1;
 export const MonthUnknown = -1;
+export const DayUnknown = -1;
 
 export class Photo extends RestModel {
     getDefaults() {
@@ -57,7 +58,6 @@ export class Photo extends RestModel {
             TakenAt: "",
             TakenAtLocal: "",
             TakenSrc: "",
-            TakenAcc: 0,
             TimeZone: "",
             Path: "",
             Color: "",
@@ -86,6 +86,7 @@ export class Photo extends RestModel {
             Country: "",
             Year: YearUnknown,
             Month: MonthUnknown,
+            Day: DayUnknown,
             Details: {
                 Keywords: "",
                 Notes: "",
@@ -122,6 +123,48 @@ export class Photo extends RestModel {
             CheckedAt: null,
             DeletedAt: null,
         };
+    }
+
+    isoDay() {
+        if(!this.Day || this.Day <= 0) {
+            return this.TakenAt.substr(8, 2);
+        }
+
+        return this.Day.toString().padStart(2, "0");
+    }
+
+    isoMonth() {
+        if(!this.Month || this.Month <= 0) {
+            return this.TakenAt.substr(5, 2);
+        }
+
+        return this.Month.toString().padStart(2, "0");
+    }
+
+    isoYear() {
+        if(!this.Year || this.Year <= 1000) {
+            return this.TakenAt.substr(0, 4);
+        }
+
+        return this.Year.toString();
+    }
+
+    isoDate(time) {
+        if(!this.isoYear()) {
+            return this.TakenAt;
+        }
+
+        let date = this.isoYear() + "-" + this.isoMonth() + "-" + this.isoDay();
+
+        if(!time) {
+            time = this.TakenAt.substr(11, 8);
+        }
+
+        return `${date}T${time}Z`;
+    }
+
+    utcDate() {
+        return DateTime.fromISO(this.TakenAt).toUTC();
     }
 
     baseName(truncate) {

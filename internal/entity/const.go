@@ -25,6 +25,7 @@ const (
 	// Unknown values.
 	YearUnknown  = -1
 	MonthUnknown = -1
+	DayUnknown   = -1
 	TitleUnknown = "Unknown"
 
 	// Content types.

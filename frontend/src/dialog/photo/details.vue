@@ -48,61 +48,70 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
+              <v-flex xs12 sm6 md2 pa-2>
+                <v-autocomplete
+                        @change="updateTime"
+                        :disabled="disabled"
+                        :label="$gettext('Day')"
+                        hide-details
+                        color="secondary-dark"
+                        v-model="model.Day"
+                        :items="options.Days()"
+                        class="input-day">
+                </v-autocomplete>
+              </v-flex>
+              <v-flex xs12 sm6 md2 pa-2>
+                <v-autocomplete
+                        @change="updateTime"
+                        :disabled="disabled"
+                        :label="$gettext('Month')"
+                        hide-details
+                        color="secondary-dark"
+                        v-model="model.Month"
+                        :items="options.Months()"
+                        class="input-month">
+                </v-autocomplete>
+              </v-flex>
+              <v-flex xs12 sm6 md2 pa-2>
+                <v-autocomplete
+                        @change="updateTime"
+                        :disabled="disabled"
+                        :label="$gettext('Year')"
+                        hide-details
+                        color="secondary-dark"
+                        v-model="model.Year"
+                        :items="options.Years()"
+                        class="input-year">
+                </v-autocomplete>
+              </v-flex>
 
+              <v-flex xs12 sm6 md2 class="pa-2">
                 <v-text-field
                         :disabled="disabled"
-                        :value="timeLocalFormatted"
+                        :value="localTime"
                         browser-autocomplete="off"
-                        :label="labels.localtime"
+                        :label="$gettext('Local Time')"
                         readonly
                         hide-details
                         color="secondary-dark"
                         class="input-local-time"
                 ></v-text-field>
-
               </v-flex>
-              <v-flex xs12 sm6 md3 pa-2 class="p-date-select">
+
+              <v-flex xs12 sm6 md2 pa-2>
                 <v-text-field
                         :disabled="disabled"
                         @change="updateTime"
                         v-model="time"
-                        :label="labels.utctime"
+                        :label="$gettext('Time UTC')"
                         hide-details return-masked-value
                         mask="##:##:##"
                         color="secondary-dark"
                         class="input-utc-time"
                 ></v-text-field>
               </v-flex>
-              <v-flex xs12 sm6 md3 class="pa-2 p-date-select">
-                <v-menu
-                        :disabled="disabled"
-                        :close-on-content-click="false"
-                        full-width
-                        max-width="290"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                            :disabled="disabled"
-                            :value="dateFormatted"
-                            browser-autocomplete="off"
-                            :label="labels.utcdate"
-                            readonly
-                            hide-details
-                            v-on="on"
-                            color="secondary-dark"
-                            class="input-utc-date"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                          color="secondary-dark"
-                          v-model="date"
-                          @change="showDatePicker = false"
-                  ></v-date-picker>
-                </v-menu>
-              </v-flex>
 
-              <v-flex xs12 sm6 md3 class="pa-2 p-timezone-select">
+              <v-flex xs12 sm6 md2 class="pa-2">
                 <v-autocomplete
                         @change="updateTime"
                         :disabled="disabled"
@@ -115,6 +124,34 @@
                         :items="options.TimeZones()"
                         class="input-timezone">
                 </v-autocomplete>
+              </v-flex>
+
+              <v-flex xs12 sm6 md4 class="pa-2">
+                <v-autocomplete
+                        :disabled="disabled"
+                        :label="labels.country"
+                        hide-details
+                        browser-autocomplete="off"
+                        color="secondary-dark"
+                        item-value="Code"
+                        item-text="Name"
+                        v-model="model.Country"
+                        :items="countries"
+                        class="input-country">
+                </v-autocomplete>
+              </v-flex>
+
+              <v-flex xs12 sm6 md2 class="pa-2">
+                <v-text-field
+                        :disabled="disabled"
+                        hide-details
+                        browser-autocomplete="off"
+                        :label="labels.altitude"
+                        placeholder=""
+                        color="secondary-dark"
+                        v-model="model.Altitude"
+                        class="input-altitude"
+                ></v-text-field>
               </v-flex>
 
               <v-flex xs12 sm6 md3 class="pa-2">
@@ -141,34 +178,6 @@
                         v-model="model.Lng"
                         class="input-longitude"
                 ></v-text-field>
-              </v-flex>
-
-              <v-flex xs12 sm6 md3 class="pa-2">
-                <v-text-field
-                        :disabled="disabled"
-                        hide-details
-                        browser-autocomplete="off"
-                        :label="labels.altitude"
-                        placeholder=""
-                        color="secondary-dark"
-                        v-model="model.Altitude"
-                        class="input-altitude"
-                ></v-text-field>
-              </v-flex>
-
-              <v-flex xs12 sm6 md3 class="pa-2 p-countries-select">
-                <v-autocomplete
-                        :disabled="disabled"
-                        :label="labels.country"
-                        hide-details
-                        browser-autocomplete="off"
-                        color="secondary-dark"
-                        item-value="Code"
-                        item-text="Name"
-                        v-model="model.Country"
-                        :items="countries"
-                        class="input-country">
-                </v-autocomplete>
               </v-flex>
 
               <v-flex xs12 md6 pa-2 class="p-camera-select">
@@ -420,9 +429,6 @@
                     language: this.$gettext("Language"),
                     timezone: this.$gettext("Time Zone"),
                     title: this.$gettext("Title"),
-                    localtime: this.$gettext("Local Time"),
-                    utctime: this.$gettext("UTC Time"),
-                    utcdate: this.$gettext("UTC Date"),
                     latitude: this.$gettext("Latitude"),
                     longitude: this.$gettext("Longitude"),
                     altitude: this.$gettext("Altitude (m)"),
@@ -439,23 +445,18 @@
                 },
                 showDatePicker: false,
                 showTimePicker: false,
-                date: "",
                 time: "",
-                dateFormatted: "",
-                timeFormatted: "",
-                timeLocalFormatted: "",
+                localTime: "",
                 textRule: v => v.length <= this.$config.get('clip') || this.$gettext("Text too long"),
             };
         },
         watch: {
-            date() {
-                if (!this.date) {
-                    this.dateFormatted = "";
-                    this.timeLocalFormatted = "";
-                    return
+            model() {
+                if (!this.model.hasId()) {
+                    return;
                 }
 
-                this.dateFormatted = DateTime.fromISO(this.date).toLocaleString(DateTime.DATE_FULL);
+                this.updateTime();
             },
         },
         computed: {
@@ -468,29 +469,22 @@
         },
         methods: {
             updateTime() {
-                if (!this.time) {
-                    this.time = DateTime.fromISO(this.model.TakenAt).toUTC().toFormat("HH:mm:ss");
-                    return;
+                const isoDate = this.model.isoDate(this.time);
+
+                if(!isoDate) {
+                    return
                 }
 
-                if (!this.date) {
-                    return;
-                }
+                this.model.TakenAt = isoDate;
 
-                this.timeFormatted = DateTime.fromISO(this.time).toLocaleString(DateTime.TIME_24_WITH_SECONDS);
+                const utcDate = this.model.utcDate();
 
-                const utcDate = this.date + "T" + this.time + "Z";
+                this.time = utcDate.toFormat("HH:mm:ss");
 
-                this.model.TakenAt = utcDate;
-
-                this.time = DateTime.fromISO(this.model.TakenAt).toUTC().toFormat("HH:mm:ss");
-
-                let localDate = DateTime.fromISO(utcDate);
+                let localDate = utcDate;
 
                 if (this.model.TimeZone) {
                     localDate = localDate.setZone(this.model.TimeZone);
-                } else {
-                    localDate = localDate.toUTC(0);
                 }
 
                 this.model.TakenAtLocal = localDate.toISO({
@@ -498,7 +492,19 @@
                     includeOffset: false,
                 }) + "Z";
 
-                this.timeLocalFormatted = localDate.toLocaleString(DateTime.TIME_24_WITH_SECONDS);
+                if(this.model.Day === 0) {
+                    this.model.Day = parseInt(localDate.toFormat("d"));
+                }
+
+                if(this.model.Month === 0) {
+                    this.model.Month = parseInt(localDate.toFormat("L"));
+                }
+
+                if(this.model.Year === 0) {
+                    this.model.Year = parseInt(localDate.toFormat("y"));
+                }
+
+                this.localTime = localDate.toLocaleString(DateTime.TIME_24_WITH_SECONDS);
             },
             left() {
                 this.$emit('next');
@@ -509,21 +515,8 @@
             openPhoto() {
                 this.$viewer.show(Thumb.fromFiles([this.model]), 0)
             },
-            refresh(model) {
-                if (!model.hasId()) return;
-
-                if (model.TakenAt) {
-                    const date = DateTime.fromISO(model.TakenAt).toUTC();
-                    this.date = date.toISODate();
-                    this.time = date.toFormat("HH:mm:ss");
-
-                    this.updateTime();
-                }
-            },
             save(close) {
-                if (this.time && this.date) {
-                    this.model.TakenAt = this.date + "T" + this.time + "Z";
-                }
+                this.model.TakenAt = this.model.isoDate(this.time);
 
                 this.model.update().then(() => {
                     if (close) {

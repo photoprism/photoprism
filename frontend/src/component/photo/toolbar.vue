@@ -95,10 +95,10 @@
                       :label="labels.year"
                       flat solo hide-details
                       color="secondary-dark"
-                      item-value="Year"
-                      item-text="Name"
+                      item-value="value"
+                      item-text="text"
                       v-model="filter.year"
-                      :items="yearOptions">
+                      :items="yearOptions()">
             </v-select>
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-month-select">
@@ -106,8 +106,8 @@
                       :label="labels.month"
                       flat solo hide-details
                       color="secondary-dark"
-                      item-value="Month"
-                      item-text="Name"
+                      item-value="value"
+                      item-text="text"
                       v-model="filter.month"
                       :items="monthOptions()">
             </v-select>
@@ -175,7 +175,8 @@
                     lenses: [{ID: 0, Name: this.$gettext("All Lenses")}],
                     colors: [{Slug: "", Name: this.$gettext("All Colors")}],
                     categories: [{Slug: "", Name: this.$gettext("All Categories")}],
-                    months: [{Month: 0, Name: this.$gettext("All Months")}],
+                    months: [{value: 0, text: this.$gettext("All Months")}],
+                    years: [{value: 0, text: this.$gettext("All Years")}],
                 },
                 options: {
                     'views': [
@@ -221,21 +222,6 @@
             categoryOptions() {
                 return this.all.categories.concat(this.config.categories);
             },
-            yearOptions() {
-                let result = [
-                    {"Year": 0, "Name": this.$gettext("All Years")},
-                ];
-
-                if (this.config.years) {
-                    for (let i = 0; i < this.config.years.length; i++) {
-                        result.push({"Year": this.config.years[i], "Name": this.config.years[i].toString()});
-                    }
-                }
-
-                result.push({"Year": -1, "Name": this.$gettext("Unknown")});
-
-                return result;
-            },
         },
         methods: {
             colorOptions() {
@@ -243,6 +229,9 @@
             },
             monthOptions() {
                 return this.all.months.concat(options.Months());
+            },
+            yearOptions() {
+                return this.all.years.concat(options.IndexedYears());
             },
             dropdownChange() {
                 this.filterChange();

@@ -22,8 +22,10 @@ type Photo struct {
 	TakenAt          time.Time `json:"TakenAt"`
 	TakenAtLocal     time.Time `json:"TakenAtLocal"`
 	TakenSrc         string    `json:"TakenSrc"`
-	TakenAcc         int       `json:"TakenAcc"`
 	TimeZone         string    `json:"TimeZone"`
+	PhotoYear        int       `json:"Year"`
+	PhotoMonth       int       `json:"Month"`
+	PhotoDay         int       `json:"Day"`
 	PhotoTitle       string    `json:"Title"`
 	TitleSrc         string    `json:"TitleSrc"`
 	PhotoDescription string    `json:"Description"`

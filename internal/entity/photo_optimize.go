@@ -105,7 +105,7 @@ func (m *Photo) Optimize() (updated bool, err error) {
 
 	labels := m.ClassifyLabels()
 
-	m.UpdateYearMonth()
+	m.UpdateDateFields()
 
 	if err := m.UpdateTitle(labels); err != nil {
 		log.Info(err)

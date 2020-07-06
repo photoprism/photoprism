@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/capture"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // AlbumResult contains found albums
@@ -29,6 +30,7 @@ type AlbumResult struct {
 	AlbumCountry     string    `json:"Country"`
 	AlbumYear        int       `json:"Year"`
 	AlbumMonth       int       `json:"Month"`
+	AlbumDay         int       `json:"Day"`
 	AlbumFavorite    bool      `json:"Favorite"`
 	AlbumPrivate     bool      `json:"Private"`
 	PhotoCount       int       `json:"PhotoCount"`
@@ -138,11 +140,23 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 		s = s.Where("albums.album_favorite = 1")
 	}
 
+	if (f.Year > 0 && f.Year <= txt.YearMax) || f.Year == entity.YearUnknown {
+		s = s.Where("albums.album_year = ?", f.Year)
+	}
+
+	if (f.Month >= txt.MonthMin && f.Month <= txt.MonthMax) || f.Month == entity.MonthUnknown {
+		s = s.Where("albums.album_month = ?", f.Month)
+	}
+
+	if (f.Day >= txt.DayMin && f.Month <= txt.DayMax) || f.Day == entity.DayUnknown {
+		s = s.Where("albums.album_day = ?", f.Day)
+	}
+
 	switch f.Order {
 	case "slug":
 		s = s.Order("albums.album_favorite DESC, album_slug ASC")
 	default:
-		s = s.Order("albums.album_favorite DESC, albums.album_year DESC, albums.album_month DESC, albums.album_title, albums.created_at DESC")
+		s = s.Order("albums.album_favorite DESC, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.created_at DESC")
 	}
 
 	if f.Count > 0 && f.Count <= MaxResults {

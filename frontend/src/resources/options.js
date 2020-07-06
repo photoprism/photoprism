@@ -1,8 +1,49 @@
 import {$gettext} from "common/vm";
 import moment from "moment-timezone";
 import {Info} from "luxon";
+import {config} from "../session";
 
 export const TimeZones = () => moment.tz.names();
+
+export const Days = () => {
+    let result = [];
+
+    for (let i = 1; i <= 31; i++) {
+        result.push({"value": i, "text": i.toString().padStart(2, "0")});
+    }
+
+    result.push({"value": -1, "text": $gettext("Unknown")});
+
+    return result;
+};
+
+export const Years = () => {
+    let result = [];
+
+    const currentYear = new Date().getUTCFullYear();
+
+    for (let i = currentYear; i >= 1750; i--) {
+        result.push({"value": i, "text": i.toString().padStart(4, "0")});
+    }
+
+    result.push({"value": -1, "text": $gettext("Unknown")});
+
+    return result;
+};
+
+export const IndexedYears = () => {
+    let result = [];
+
+    if (config.values.years) {
+        for (let i = 0; i < config.values.years.length; i++) {
+            result.push({"value": parseInt(config.values.years[i]), "text": config.values.years[i].toString()});
+        }
+    }
+
+    result.push({"value": -1, "text": $gettext("Unknown")});
+
+    return result;
+};
 
 export const Months = () => {
     let result = [];
@@ -10,10 +51,10 @@ export const Months = () => {
     const months = Info.months("long");
 
     for (let i = 0; i < months.length; i++) {
-        result.push({"Month": i + 1, "Name": months[i]});
+        result.push({"value": i + 1, "text": months[i]});
     }
 
-    result.push({"Month": -1, "Name": $gettext("Unknown")});
+    result.push({"value": -1, "text": $gettext("Unknown")});
 
     return result;
 };

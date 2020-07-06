@@ -20,7 +20,6 @@ type PhotoResult struct {
 	TakenAt          time.Time     `json:"TakenAt"`
 	TakenAtLocal     time.Time     `json:"TakenAtLocal"`
 	TakenSrc         string        `json:"TakenSrc"`
-	TakenAcc         int           `json:"TakenAcc"`
 	TimeZone         string        `json:"TimeZone"`
 	PhotoPath        string        `json:"Path"`
 	PhotoName        string        `json:"Name"`
@@ -29,6 +28,7 @@ type PhotoResult struct {
 	PhotoDescription string        `json:"Description"`
 	PhotoYear        int           `json:"Year"`
 	PhotoMonth       int           `json:"Month"`
+	PhotoDay         int           `json:"Day"`
 	PhotoCountry     string        `json:"Country"`
 	PhotoFavorite    bool          `json:"Favorite"`
 	PhotoPrivate     bool          `json:"Private"`

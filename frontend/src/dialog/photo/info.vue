@@ -54,35 +54,6 @@
           </td>
           <td>{{ model.TitleSrc | capitalize }}</td>
         </tr>
-        <tr v-if="model.TakenAcc">
-          <td>
-            <translate key="Year">Year</translate>
-          </td>
-          <td>
-            <v-text-field
-                    flat solo dense hide-details v-model="model.Year"
-                    color="secondary-dark"
-                    style="font-weight: 400; font-size: 13px;"
-            ></v-text-field>
-          </td>
-        </tr>
-        <tr v-if="model.TakenAcc">
-          <td>
-            <translate key="Month">Month</translate>
-          </td>
-          <td>
-            <v-select
-                    label="Month"
-                    flat solo dense hide-details
-                    color="secondary-dark"
-                    style="font-weight: 400; font-size: 13px;"
-                    item-value="Month"
-                    item-text="Name"
-                    v-model="model.Month"
-                    :items="monthOptions">
-            </v-select>
-          </td>
-        </tr>
         <tr>
           <td>
             <translate key="Quality Score">Quality Score</translate>

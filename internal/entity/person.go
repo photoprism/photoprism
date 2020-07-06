@@ -38,6 +38,9 @@ type Person struct {
 	CanDownload   bool       `json:"CanDownload" yaml:"CanDownload,omitempty"`
 	WebDAV        bool       `gorm:"column:webdav" json:"WebDAV" yaml:"WebDAV,omitempty"`
 	ApiToken      string     `json:"ApiToken" yaml:"ApiToken,omitempty"`
+	BirthYear     int        `json:"BirthYear" yaml:"BirthYear,omitempty"`
+	BirthMonth    int        `json:"BirthMonth" yaml:"BirthMonth,omitempty"`
+	BirthDay      int        `json:"BirthDay" yaml:"BirthDay,omitempty"`
 	LoginAttempts int        `json:"-" yaml:"-,omitempty"`
 	LoginAt       *time.Time `json:"-" yaml:"-"`
 	CreatedAt     time.Time  `json:"CreatedAt" yaml:"-"`

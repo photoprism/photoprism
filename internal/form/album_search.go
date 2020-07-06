@@ -11,6 +11,7 @@ type AlbumSearch struct {
 	Country  string `json:"country"`
 	Year     int    `json:"year"`
 	Month    int    `json:"month"`
+	Day      int    `json:"day"`
 	Favorite bool   `form:"favorite"`
 	Private  bool   `form:"private"`
 	Count    int    `form:"count" binding:"required" serialize:"-"`

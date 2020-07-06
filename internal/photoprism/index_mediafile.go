@@ -466,7 +466,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		photo.PlaceID = entity.UnknownPlace.ID
 	}
 
-	photo.UpdateYearMonth()
+	photo.UpdateDateFields()
 
 	file.FileSidecar = m.IsSidecar()
 	file.FileVideo = m.IsVideo()
