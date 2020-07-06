@@ -52,7 +52,9 @@
                 <v-autocomplete
                         @change="updateTime"
                         :disabled="disabled"
+                        :error="invalidDate"
                         :label="$gettext('Day')"
+                        browser-autocomplete="off"
                         hide-details
                         color="secondary-dark"
                         v-model="model.Day"
@@ -64,7 +66,9 @@
                 <v-autocomplete
                         @change="updateTime"
                         :disabled="disabled"
+                        :error="invalidDate"
                         :label="$gettext('Month')"
+                        browser-autocomplete="off"
                         hide-details
                         color="secondary-dark"
                         v-model="model.Month"
@@ -76,7 +80,9 @@
                 <v-autocomplete
                         @change="updateTime"
                         :disabled="disabled"
+                        :error="invalidDate"
                         :label="$gettext('Year')"
+                        browser-autocomplete="off"
                         hide-details
                         color="secondary-dark"
                         v-model="model.Year"
@@ -88,11 +94,12 @@
               <v-flex xs12 sm6 md2 class="pa-2">
                 <v-text-field
                         :disabled="disabled"
-                        :value="localTime"
-                        browser-autocomplete="off"
+                        @change="updateTime"
+                        v-model="localTime"
                         :label="$gettext('Local Time')"
-                        readonly
-                        hide-details
+                        browser-autocomplete="off"
+                        hide-details return-masked-value
+                        mask="##:##:##"
                         color="secondary-dark"
                         class="input-local-time"
                 ></v-text-field>
@@ -102,9 +109,10 @@
                 <v-text-field
                         :disabled="disabled"
                         @change="updateTime"
-                        v-model="time"
+                        v-model="utcTime"
                         :label="$gettext('Time UTC')"
-                        hide-details return-masked-value
+                        browser-autocomplete="off"
+                        readonly hide-details return-masked-value
                         mask="##:##:##"
                         color="secondary-dark"
                         class="input-utc-time"
@@ -116,6 +124,7 @@
                         @change="updateTime"
                         :disabled="disabled"
                         :label="labels.timezone"
+                        browser-autocomplete="off"
                         hide-details
                         color="secondary-dark"
                         item-value="ID"
@@ -398,11 +407,13 @@
     import countries from "resources/countries.json";
     import Thumb from "model/thumb";
     import * as options from "resources/options";
+    import Event from "pubsub-js";
 
     export default {
         name: 'p-tab-photo-details',
         props: {
             model: Object,
+            uid: String,
         },
         data() {
             return {
@@ -445,17 +456,20 @@
                 },
                 showDatePicker: false,
                 showTimePicker: false,
-                time: "",
+                invalidDate: false,
+                utcTime: "",
                 localTime: "",
                 textRule: v => v.length <= this.$config.get('clip') || this.$gettext("Text too long"),
             };
         },
+        created() {
+            this.updateTime();
+        },
         watch: {
             model() {
-                if (!this.model.hasId()) {
-                    return;
-                }
-
+                this.updateTime();
+            },
+            uid() {
                 this.updateTime();
             },
         },
@@ -469,28 +483,22 @@
         },
         methods: {
             updateTime() {
-                const isoDate = this.model.isoDate(this.time);
-
-                if(!isoDate) {
-                    return
+                if (!this.model.hasId()) {
+                    return;
                 }
 
-                this.model.TakenAt = isoDate;
+                let localDate = this.model.localDate(this.localTime);
 
-                const utcDate = this.model.utcDate();
+                this.invalidDate = !localDate.isValid
 
-                this.time = utcDate.toFormat("HH:mm:ss");
-
-                let localDate = utcDate;
-
-                if (this.model.TimeZone) {
-                    localDate = localDate.setZone(this.model.TimeZone);
+                if(this.invalidDate) {
+                    return;
                 }
 
-                this.model.TakenAtLocal = localDate.toISO({
-                    suppressMilliseconds: true,
-                    includeOffset: false,
-                }) + "Z";
+                const utcDate = localDate.toUTC();
+
+                this.localTime = localDate.toFormat("HH:mm:ss");
+                this.utcTime = utcDate.toFormat("HH:mm:ss");
 
                 if(this.model.Day === 0) {
                     this.model.Day = parseInt(localDate.toFormat("d"));
@@ -504,7 +512,15 @@
                     this.model.Year = parseInt(localDate.toFormat("y"));
                 }
 
-                this.localTime = localDate.toLocaleString(DateTime.TIME_24_WITH_SECONDS);
+                this.model.TakenAtLocal = localDate.toISO({
+                    suppressMilliseconds: true,
+                    includeOffset: false,
+                }) + "Z";
+
+                this.model.TakenAt = localDate.toUTC().toISO({
+                    suppressMilliseconds: true,
+                    includeOffset: false,
+                }) + "Z";
             },
             left() {
                 this.$emit('next');
@@ -516,14 +532,17 @@
                 this.$viewer.show(Thumb.fromFiles([this.model]), 0)
             },
             save(close) {
-                this.model.TakenAt = this.model.isoDate(this.time);
+                if(this.invalidDate) {
+                    this.$notify.error(this.$gettext("Invalid date"));
+                    return;
+                }
 
                 this.model.update().then(() => {
                     if (close) {
                         this.$emit('close');
-                    } else {
-                        this.refresh(this.model);
                     }
+
+                    this.updateTime();
                 });
             },
             close() {

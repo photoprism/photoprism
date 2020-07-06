@@ -114,6 +114,29 @@
             ></v-switch>
           </td>
         </tr>
+        <tr v-if="model.Lat">
+          <td>
+            <translate>Coordinates</translate>
+          </td>
+          <td>
+            <translate>Latitude</translate>: {{ model.Lat }}, <translate>Longitude</translate>: {{ model.Lat }}<span v-if="model.Altitude > 0">, <translate>Altitude</translate>: {{ model.Altitude }} m</span>
+          </td>
+        </tr>
+        <tr v-if="model.Lat">
+          <td>
+            <translate>Accuracy</translate>
+          </td>
+          <td>
+            <v-text-field
+                    @change="save"
+                    flat solo dense hide-details v-model="model.GPSAccuracy"
+                    color="secondary-dark"
+                    type="number"
+                    suffix="m"
+                    style="font-weight: 400; font-size: 13px; width: 100px;"
+            ></v-text-field>
+          </td>
+        </tr>
         <tr>
           <td>
             <translate key="Created">Created</translate>
@@ -168,6 +191,7 @@
         name: 'p-tab-photo-advanced',
         props: {
             model: Object,
+            uid: String,
         },
         data() {
             return {

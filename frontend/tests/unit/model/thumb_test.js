@@ -74,6 +74,7 @@ describe("model/thumb", () => {
             UID: "5",
             Title: "Crazy Cat",
             TakenAt: "2012-07-08T14:45:39Z",
+            TakenAtLocal: "2012-07-08T14:45:39Z",
             Description: "Nice description",
             Favorite: true,
         };
@@ -91,6 +92,7 @@ describe("model/thumb", () => {
             UID: "5",
             Title: "Crazy Cat",
             TakenAt: "2012-07-08T14:45:39Z",
+            TakenAtLocal: "2012-07-08T14:45:39Z",
             Description: "Nice description",
             Favorite: true,
         };
@@ -100,6 +102,7 @@ describe("model/thumb", () => {
             UID: "5",
             Title: "Crazy Cat",
             TakenAt: "2012-07-08T14:45:39Z",
+            TakenAtLocal: "2012-07-08T14:45:39Z",
             Description: "Nice description",
             Favorite: true,
         };
@@ -162,6 +165,7 @@ describe("model/thumb", () => {
             UID: "ABC123",
             Title: "Crazy Cat",
             TakenAt: "2012-07-08T14:45:39Z",
+            TakenAtLocal: "2012-07-08T14:45:39Z",
             Description: "Nice description",
             Favorite: true,
             Hash: "xdf45m",

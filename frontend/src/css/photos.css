@@ -110,4 +110,5 @@
 
 #photoprism table.photo-files tbody tr td:first-child {
     width: 30%;
+    padding: 0 16px 0 24px;
 }

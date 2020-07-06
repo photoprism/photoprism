@@ -47,20 +47,20 @@
 
         <v-tabs-items touchless>
           <v-tab-item>
-            <p-tab-photo-details :model="model" ref="details"
+            <p-tab-photo-details :model="model" :uid="uid" :key="uid" ref="details"
                                  @close="close" @prev="prev" @next="next"></p-tab-photo-details>
           </v-tab-item>
 
           <v-tab-item lazy>
-            <p-tab-photo-labels :model="model" @close="close"></p-tab-photo-labels>
+            <p-tab-photo-labels :model="model" :uid="uid" :key="uid" @close="close"></p-tab-photo-labels>
           </v-tab-item>
 
           <v-tab-item lazy>
-            <p-tab-photo-files :model="model" @close="close"></p-tab-photo-files>
+            <p-tab-photo-files :model="model" :uid="uid" :key="uid" @close="close"></p-tab-photo-files>
           </v-tab-item>
 
           <v-tab-item lazy v-if="$config.feature('edit')">
-            <p-tab-photo-info :model="model" @close="close"></p-tab-photo-info>
+            <p-tab-photo-info :model="model" :uid="uid"  :key="uid" @close="close"></p-tab-photo-info>
           </v-tab-item>
         </v-tabs-items>
       </v-tabs>
@@ -109,6 +109,7 @@
                 selected: 0,
                 selectedId: "",
                 model: new Photo,
+                uid: "",
                 loading: false,
                 search: null,
                 items: [],
@@ -154,8 +155,8 @@
                 this.model.find(this.selectedId).then(model => {
                     model.refreshFileAttr();
                     this.model = model;
-                    this.$refs.details.refresh(model);
                     this.loading = false;
+                    this.uid = this.selectedId;
                 }).catch(() => this.loading = false);
             },
         },

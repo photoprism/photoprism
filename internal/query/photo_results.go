@@ -32,9 +32,6 @@ type PhotoResult struct {
 	PhotoCountry     string        `json:"Country"`
 	PhotoFavorite    bool          `json:"Favorite"`
 	PhotoPrivate     bool          `json:"Private"`
-	PhotoLat         float32       `json:"Lat"`
-	PhotoLng         float32       `json:"Lng"`
-	PhotoAltitude    int           `json:"Altitude"`
 	PhotoIso         int           `json:"Iso"`
 	PhotoFocalLength int           `json:"FocalLength"`
 	PhotoFNumber     float32       `json:"FNumber"`
@@ -53,7 +50,10 @@ type PhotoResult struct {
 	PlaceID          string        `json:"PlaceID"`
 	LocationID       string        `json:"LocationID"` // Location
 	LocationSrc      string        `json:"LocationSrc"`
-	LocationAcc      int           `json:"LocationAcc"`
+	GPSAccuracy      int           `json:"GPSAccuracy,omitempty"`
+	PhotoAltitude    int           `json:"Altitude,omitempty"`
+	PhotoLat         float32       `json:"Lat"`
+	PhotoLng         float32       `json:"Lng"`
 	LocLabel         string        `json:"LocLabel"`
 	LocCity          string        `json:"LocCity"`
 	LocState         string        `json:"LocState"`

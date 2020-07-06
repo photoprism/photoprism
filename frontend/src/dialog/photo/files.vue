@@ -4,8 +4,7 @@
       <v-expansion-panel-content v-for="(file, index) in model.fileModels()" :key="index"
                                  class="pa-0 elevation-0 grey lighten-4" style="margin-top: 1px;">
         <template v-slot:header>
-          <div class="caption" v-if="file.Primary"><v-icon size="15" color="secondary-dark" class="mr-1">radio_button_checked</v-icon> {{ file.baseName(60) }}</div>
-          <div class="caption" v-else><v-icon size="15" color="secondary-dark" class="mr-1">radio_button_unchecked</v-icon> {{ file.baseName(60) }}</div>
+          <div class="caption">{{ file.baseName(70) }}</div>
         </template>
         <v-card>
           <v-card-text class="white pa-0">
@@ -57,6 +56,18 @@
                           </v-btn>
                         </td>
                       </tr>
+                      <tr>
+                        <td>
+                          <translate>UID</translate>
+                        </td>
+                        <td>{{ file.UID | uppercase }}</td>
+                      </tr>
+                      <tr v-if="file.Root">
+                        <td>
+                          <translate>Folder</translate>
+                        </td>
+                        <td>{{ file.Root }}</td>
+                      </tr>
                       <tr v-if="file.Name">
                         <td>
                           <translate>Name</translate>
@@ -69,30 +80,6 @@
                         </td>
                         <td>{{ file.OriginalName }}</td>
                       </tr>
-                      <tr>
-                        <td>
-                          <translate>UID</translate>
-                        </td>
-                        <td>{{ file.UID | uppercase }}</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <translate>Added</translate>
-                        </td>
-                        <td>{{ formatTime(file.CreatedAt) }}</td>
-                      </tr>
-                      <tr v-if="file.Root">
-                        <td>
-                          <translate>Root</translate>
-                        </td>
-                        <td>{{ file.Root }}</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <translate>Size</translate>
-                        </td>
-                        <td>{{ file.sizeInfo() }}</td>
-                      </tr>
                       <tr v-if="file.Type">
                         <td>
                           <translate>Type</translate>
@@ -104,6 +91,24 @@
                           <translate>Codec</translate>
                         </td>
                         <td>{{ file.Codec | uppercase }}</td>
+                      </tr>
+                      <tr v-if="file.Primary">
+                        <td>
+                          <translate>Primary</translate>
+                        </td>
+                        <td><translate>Yes</translate></td>
+                      </tr>
+                      <tr v-if="file.Portrait">
+                        <td>
+                          <translate>Portrait</translate>
+                        </td>
+                        <td><translate>Yes</translate></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <translate>Size</translate>
+                        </td>
+                        <td>{{ file.sizeInfo() }}</td>
                       </tr>
                       <tr v-if="file.Error">
                         <td>
@@ -122,6 +127,18 @@
                           <translate>Duplicate</translate>
                         </td>
                         <td><translate>Yes</translate></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <translate>Added</translate>
+                        </td>
+                        <td>{{ formatTime(file.CreatedAt) }}</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <translate>Updated</translate>
+                        </td>
+                        <td>{{ formatTime(file.UpdatedAt) }}</td>
                       </tr>
                       </tbody>
                     </table>
@@ -144,6 +161,7 @@
         name: 'p-tab-photo-files',
         props: {
             model: Object,
+            uid: String,
         },
         data() {
             return {

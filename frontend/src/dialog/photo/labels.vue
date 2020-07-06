@@ -94,6 +94,7 @@
         name: 'p-tab-photo-labels',
         props: {
             model: Object,
+            uid: String,
         },
         data() {
             return {

@@ -72,6 +72,7 @@ export class Photo extends RestModel {
             Lat: 0.0,
             Lng: 0.0,
             Altitude: 0,
+            GPSAccuracy: 0,
             Iso: 0,
             FocalLength: 0,
             FNumber: 0.0,
@@ -104,7 +105,6 @@ export class Photo extends RestModel {
             PlaceID: "",
             LocationID: "",
             LocationSrc: "",
-            LocationAcc: 0,
             // Additional data in result lists.
             LocLabel: "",
             LocCity: "",
@@ -125,42 +125,70 @@ export class Photo extends RestModel {
         };
     }
 
-    isoDay() {
+    localDayString() {
+        if(!this.TakenAtLocal) {
+            return new Date().getDay().toString().padStart(2, "0");
+        }
+
         if(!this.Day || this.Day <= 0) {
-            return this.TakenAt.substr(8, 2);
+            return this.TakenAtLocal.substr(8, 2);
         }
 
         return this.Day.toString().padStart(2, "0");
     }
 
-    isoMonth() {
+    localMonthString() {
+        if(!this.TakenAtLocal) {
+            return new Date().getMonth().toString().padStart(2, "0");
+        }
+
         if(!this.Month || this.Month <= 0) {
-            return this.TakenAt.substr(5, 2);
+            return this.TakenAtLocal.substr(5, 2);
         }
 
         return this.Month.toString().padStart(2, "0");
     }
 
-    isoYear() {
+    localYearString() {
+        if(!this.TakenAtLocal) {
+            return new Date().getFullYear().toString().padStart(4, "0");
+        }
+
         if(!this.Year || this.Year <= 1000) {
-            return this.TakenAt.substr(0, 4);
+            return this.TakenAtLocal.substr(0, 4);
         }
 
         return this.Year.toString();
     }
 
-    isoDate(time) {
-        if(!this.isoYear()) {
-            return this.TakenAt;
+    localDateString(time) {
+        if(!this.localYearString()) {
+            return this.TakenAtLocal;
         }
 
-        let date = this.isoYear() + "-" + this.isoMonth() + "-" + this.isoDay();
+        let date = this.localYearString() + "-" + this.localMonthString() + "-" + this.localDayString();
 
         if(!time) {
-            time = this.TakenAt.substr(11, 8);
+            time = this.TakenAtLocal.substr(11, 8);
         }
 
-        return `${date}T${time}Z`;
+        return `${date}T${time}`;
+    }
+
+    getTimeZone() {
+        if(this.TimeZone) {
+            return this.TimeZone;
+        }
+
+        return "utc";
+    }
+
+    localDate(time) {
+        let zone = this.getTimeZone();
+
+        const result = DateTime.fromISO(this.localDateString(time), {zone});
+
+        return result;
     }
 
     utcDate() {
@@ -394,10 +422,10 @@ export class Photo extends RestModel {
         }
 
         if (this.TimeZone) {
-            return DateTime.fromISO(this.TakenAt).setZone(this.TimeZone).toLocaleString(DateTime.DATETIME_FULL);
+            return this.localDate().toLocaleString(DateTime.DATETIME_FULL);
         }
 
-        return DateTime.fromISO(this.TakenAt).setZone("UTC").toLocaleString(DateTime.DATE_HUGE);
+        return this.localDate().toLocaleString(DateTime.DATE_HUGE);
     }
 
     shortDateString() {
@@ -405,12 +433,7 @@ export class Photo extends RestModel {
             return $gettext("Unknown");
         }
 
-
-        if (this.TimeZone) {
-            return DateTime.fromISO(this.TakenAt).setZone(this.TimeZone).toLocaleString(DateTime.DATE_MED);
-        }
-
-        return DateTime.fromISO(this.TakenAt).setZone("UTC").toLocaleString(DateTime.DATE_MED);
+        return this.localDate().toLocaleString(DateTime.DATE_MED);
     }
 
     hasLocation() {
@@ -608,7 +631,7 @@ export class Photo extends RestModel {
             values.LocationSrc = SrcManual;
         }
 
-        if (values.TakenAt || values.TimeZone) {
+        if (values.TakenAt || values.TimeZone || values.Day || values.Month || values.Year) {
             values.TakenSrc = SrcManual;
         }
 

@@ -54,10 +54,10 @@ type Photo struct {
 	PlaceID          string       `gorm:"type:varbinary(42);index;" json:"PlaceID" yaml:"-"`
 	LocationID       string       `gorm:"type:varbinary(42);index;" json:"LocationID" yaml:"-"`
 	LocationSrc      string       `gorm:"type:varbinary(8);" json:"LocationSrc" yaml:"LocationSrc,omitempty"`
-	LocationAcc      int          `json:"LocationAcc" yaml:"LocationAcc,omitempty"`
+	GPSAccuracy      int          `gorm:"column:gps_accuracy" json:"GPSAccuracy" yaml:"GPSAccuracy,omitempty"`
+	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
 	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
 	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
-	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
 	PhotoCountry     string       `gorm:"type:varbinary(2);index:idx_photos_country_year_month;default:'zz'" json:"Country" yaml:"-"`
 	PhotoYear        int          `gorm:"index:idx_photos_country_year_month;" json:"Year" yaml:"Year"`
 	PhotoMonth       int          `gorm:"index:idx_photos_country_year_month;" json:"Month" yaml:"Month"`

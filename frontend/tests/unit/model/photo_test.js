@@ -134,30 +134,30 @@ describe("model/photo", () => {
     });
 
     it("should get date string",  () => {
-        const values = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
+        const values = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
         const photo = new Photo(values);
         const result = photo.getDateString();
         assert.equal(result, "July 8, 2012, 2:45 PM UTC");
-        const values2 = {ID: 5, Title: "Crazy Cat", TakenAt: "", TimeZone: "UTC"};
+        const values2 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "", TakenAt: "", TimeZone: "UTC"};
         const photo2 = new Photo(values2);
         const result2 = photo2.getDateString();
         assert.equal(result2, "Unknown");
-        const values3 = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z"};
+        const values3 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z"};
         const photo3 = new Photo(values3);
         const result3 = photo3.getDateString();
         assert.equal(result3, "Sunday, July 8, 2012");
     });
 
     it("should get short date string",  () => {
-        const values = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
+        const values = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
         const photo = new Photo(values);
         const result = photo.shortDateString();
         assert.equal(result, "Jul 8, 2012");
-        const values2 = {ID: 5, Title: "Crazy Cat", TakenAt: "", TimeZone: "UTC"};
+        const values2 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "", TakenAt: "", TimeZone: "UTC"};
         const photo2 = new Photo(values2);
         const result2 = photo2.shortDateString();
         assert.equal(result2, "Unknown");
-        const values3 = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z"};
+        const values3 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z"};
         const photo3 = new Photo(values3);
         const result3 = photo3.shortDateString();
         assert.equal(result3, "Jul 8, 2012");
