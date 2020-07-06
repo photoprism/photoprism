@@ -377,6 +377,7 @@ msgstr ""
 
 #: src/dialog/photo/details.vue:120
 #: src/dialog/share.vue:85
+#: src/pages/library/errors.vue:56
 msgid "Close"
 msgstr ""
 
@@ -1728,6 +1729,8 @@ msgstr ""
 #: src/model/photo.js:466
 #: src/model/photo.js:543
 #: src/model/photo.js:556
+#: src/pages/library/errors.vue:149
+#: src/pages/library/errors.vue:156
 #: src/resources/options.js:15
 #: src/resources/options.js:29
 #: src/resources/options.js:43
@@ -1847,7 +1850,7 @@ msgstr ""
 msgid "Whatever it is, we'd love to hear from you!"
 msgstr ""
 
-#: src/pages/library/errors.vue:31
+#: src/pages/library/errors.vue:35
 msgid "When PhotoPrism found broken files or there are other potential issues, you'll see a short message on this page."
 msgstr ""
 

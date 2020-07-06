@@ -352,6 +352,7 @@ msgid "Checked"
 msgstr "Geprüft"
 
 #: src/dialog/photo/details.vue:120 src/dialog/share.vue:85
+#: src/pages/library/errors.vue:56
 msgid "Close"
 msgstr "Schließen"
 
@@ -970,7 +971,7 @@ msgstr "Verschieben"
 
 #: src/pages/library/import.vue:119
 msgid "Move Files"
-msgstr "Verschiebe Dateien"
+msgstr "Dateien verschieben"
 
 #: src/common/vm.js:8 src/common/vm.js:9 src/common/vm.js:12
 #: src/common/vm.js:13
@@ -1609,6 +1610,7 @@ msgstr "Gruppierung auflösen"
 #: src/dialog/photo/details.vue:423 src/dialog/photo/info.vue:221
 #: src/model/photo.js:417 src/model/photo.js:431 src/model/photo.js:454
 #: src/model/photo.js:466 src/model/photo.js:543 src/model/photo.js:556
+#: src/pages/library/errors.vue:149 src/pages/library/errors.vue:156
 #: src/resources/options.js:15 src/resources/options.js:29
 #: src/resources/options.js:43 src/resources/options.js:57
 msgid "Unknown"
@@ -1721,7 +1723,7 @@ msgstr "WebDAV Upload"
 msgid "Whatever it is, we'd love to hear from you!"
 msgstr "Wir freuen uns, von dir zu hören!"
 
-#: src/pages/library/errors.vue:31
+#: src/pages/library/errors.vue:35
 msgid ""
 "When PhotoPrism found broken files or there are other potential issues, "
 "you'll see a short message on this page."
