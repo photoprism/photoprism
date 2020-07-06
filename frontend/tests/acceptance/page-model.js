@@ -48,7 +48,7 @@ export default class Page {
     }
 
     async openNav() {
-        if (await Selector('button.nav-show').visible) {
+        if (await Selector('button.nav-show').exists) {
             await t.click(Selector('button.nav-show'));
         } else if (await Selector('div.nav-expand').exists) {
             await t.click(Selector('div.nav-expand i'));

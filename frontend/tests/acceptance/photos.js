@@ -471,10 +471,8 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
 });
 
 //TODO edited values stay after reindex!!
-//TODO test timepicker, datepicker, camera, lens
-//TODO revert country, timezone
+//TODO test camera, lens
 //TODO access video from list + edit
-//TODO check country overwritten by lat/lng
 test('#7 Edit photo/video', async t => {
     await page.openNav();
     await t
@@ -503,12 +501,14 @@ test('#7 Edit photo/video', async t => {
     const FirstPhotoTitle = await (Selector('.input-title input').value);
     const FirstPhotoLocalTime = await (Selector('.input-local-time input').value);
     const FirstPhotoUTCTime = await (Selector('.input-utc-time input').value);
-    const FirstPhotoUTCDate = await (Selector('.input-utc-date input').value);
+    const FirstPhotoDay = await (Selector('.input-day input').value);
+    const FirstPhotoMonth = await (Selector('.input-month input').value);
+    const FirstPhotoYear = await (Selector('.input-year input').value);
     const FirstPhotoTimezone = await (Selector('.input-timezone input').value);
     const FirstPhotoLatitude = await (Selector('.input-latitude input').value);
     const FirstPhotoLongitude = await (Selector('.input-longitude input').value);
     const FirstPhotoAltitude = await (Selector('.input-altitude input').value);
-    const FirstPhotoCountry = await (Selector('.input-country').innerText);
+    const FirstPhotoCountry = await (Selector('.input-country input').value);
     const FirstPhotoCamera = await (Selector('div.p-camera-select div.v-select__selection').innerText);
     const FirstPhotoIso = await (Selector('.input-iso input').value);
     const FirstPhotoExposure = await (Selector('.input-exposure input').value);
@@ -530,13 +530,23 @@ test('#7 Edit photo/video', async t => {
         .click(Selector('button.action-date-edit').withAttribute('data-uid', FirstPhoto))
         .expect(Selector('.input-title input').value).eql(FirstPhotoTitle)
         .typeText(Selector('.input-title input'), 'New Photo Title', { replace: true })
-        .typeText(Selector('.input-timezone input'), 'Africa/Na', { replace: true })
-        .click(Selector('div').withText('Africa/Nairobi').parent('div[role="listitem"]'))
+        .typeText(Selector('.input-timezone input'), 'Europe/Mosc', { replace: true })
+        .click(Selector('div').withText('Europe/Moscow').parent('div[role="listitem"]'))
+        .typeText(Selector('.input-day input'), '15', { replace: true })
+        .pressKey('enter')
+        .typeText(Selector('.input-month input'), 'July', { replace: true })
+        .click(Selector('div').withText('July').parent('div[role="listitem"]'), {timeout: 5000})
+        .typeText(Selector('.input-year input'), 'Unknown', { replace: true })
+        .pressKey('enter')
+        .click(Selector('.input-utc-time input'))
+        .pressKey('ctrl+a delete')
+        .typeText(Selector('.input-utc-time input'), '01:30:30', { replace: true })
+        .pressKey('enter')
         .typeText(Selector('.input-latitude input'), '41.15333', { replace: true })
         .typeText(Selector('.input-longitude input'), '20.168331', { replace: true })
         .typeText(Selector('.input-altitude input'), '-1', { replace: true })
         .click(Selector('.input-country input'))
-        .click(Selector('div').withText('Albania').parent('div[role="listitem"]'))
+        .click(Selector('div').withText('Afghanistan').parent('div[role="listitem"]'))
         //.click(Selector('.input-camera input'))
         //.hover(Selector('div').withText('Apple iPhone 6').parent('div[role="listitem"]'))
         //.click(Selector('div').withText('Apple iPhone 6').parent('div[role="listitem"]'))
@@ -569,11 +579,17 @@ test('#7 Edit photo/video', async t => {
     await page.editSelected();
     await t
         .expect(Selector('.input-title input').value).eql('New Photo Title')
-        .expect(Selector('.input-timezone input').value).eql('Africa/Nairobi')
+        .expect(Selector('.input-timezone input').value).eql('Europe/Moscow')
+        .expect(Selector('.input-local-time input').value).eql('04:30:30')
+        .expect(Selector('.input-utc-time input').value).eql('01:30:30')
+        .expect(Selector('.input-day input').value).eql('15')
+        .expect(Selector('.input-month input').value).eql('July')
+        .expect(Selector('.input-year input').value).eql('Unknown')
         .expect(Selector('.input-latitude input').value).eql('41.15333')
         .expect(Selector('.input-longitude input').value).eql('20.168331')
         .expect(Selector('.input-altitude input').value).eql('-1')
         .expect(Selector('div').withText('Albania').visible).ok()
+        .expect(Selector('div').withText('Afghanistan').visible).notOk()
         //.expect(Selector('div').withText('Apple iPhone 6').visible).ok()
         //.expect(Selector('div').withText('Apple iPhone 5s back camera 4.15mm f/2.2').visible).ok()
         .expect(Selector('.input-iso input').value).eql('32')
@@ -594,15 +610,31 @@ test('#7 Edit photo/video', async t => {
         .pressKey('ctrl+a delete')}
     else
     {await t.typeText(Selector('.input-title input'), FirstPhotoTitle, { replace: true })}
-  //   if (FirstPhotoTimezone.empty || FirstPhotoTimezone === "")
-   // { await t
-    //    .click(Selector('.input-timezone input'))
-    //    .typeText(Selector('.input-timezone input'), 'UTC', { replace: true })
-   //     .click(Selector('div').withText('UTC').parent('div[role="listitem"]'))}
-   // else
-   // {await t
-   //     .typeText(Selector('.input-timezone input'), FirstPhotoTimezone, { replace: true })
-     //   .click(Selector('div').withText(FirstPhotoTimezone).parent('div[role="listitem"]'))}
+    await t.typeText(Selector('.input-day input'), FirstPhotoDay, { replace: true })
+        .pressKey('enter')
+        .typeText(Selector('.input-month input'), FirstPhotoMonth, { replace: true })
+        .click(Selector('div').withText(FirstPhotoMonth).parent('div[role="listitem"]'))
+        .typeText(Selector('.input-year input'), FirstPhotoYear, { replace: true })
+        .pressKey('enter');
+    if (FirstPhotoUTCTime.empty || FirstPhotoUTCTime === "")
+    { await t
+        .click(Selector('.input-utc-time input'))
+        .pressKey('ctrl+a delete')}
+    else
+    {await t
+        .click(Selector('.input-utc-time input'))
+        .pressKey('ctrl+a delete')
+        .typeText(Selector('.input-utc-time input'), FirstPhotoUTCTime, { replace: true })
+        .pressKey('enter')}
+     if (FirstPhotoTimezone.empty || FirstPhotoTimezone === "")
+    { await t
+        .click(Selector('.input-timezone input'))
+        .typeText(Selector('.input-timezone input'), 'UTC', { replace: true })
+        .pressKey('enter')}
+    else
+    {await t
+        .typeText(Selector('.input-timezone input'), FirstPhotoTimezone, { replace: true })
+        .pressKey('enter')}
     if (FirstPhotoLatitude.empty || FirstPhotoLatitude === "")
     { await t
         .click(Selector('.input-latitude input'))
@@ -621,12 +653,16 @@ test('#7 Edit photo/video', async t => {
         .pressKey('ctrl+a delete')}
     else
     {await t.typeText(Selector('.input-altitude input'), FirstPhotoAltitude, { replace: true })}
-   // if (FirstPhotoCountry.empty)
-    //{ await t.clear(Selector('.input-country input'))}
-   // else
-    //{await t
-       // .click(Selector('.input-country input'))
-      //  .click(Selector('div').withText(FirstPhotoCountry).parent('div[role="listitem"]'))}
+    if (FirstPhotoCountry.empty  || FirstPhotoCountry === "")
+    { await t
+        .click(Selector('.input-longitude input'))
+        .pressKey('ctrl+a delete')}
+    else
+    {await t
+        .click(Selector('.input-country input'))
+        .pressKey('ctrl+a delete')
+        .typeText(Selector('.input-country input'), FirstPhotoCountry, { replace: true })
+        .pressKey('enter')}
     // if (FirstPhotoCamera.empty || FirstPhotoCamera === "")
     //{ await t
         //.click(Selector('.input-camera input'))
