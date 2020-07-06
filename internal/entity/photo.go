@@ -534,24 +534,24 @@ func (m *Photo) DetailsLoaded() bool {
 	return m.Details.PhotoID == m.ID
 }
 
-// TitleFromFileName returns a photo title based on the file name and/or path.
-func (m *Photo) TitleFromFileName() string {
+// FileTitle returns a photo title based on the file name and/or path.
+func (m *Photo) FileTitle() string {
 	if !fs.IsID(m.PhotoName) {
-		if title := txt.TitleFromFileName(m.PhotoName); title != "" {
+		if title := txt.FileTitle(m.PhotoName); title != "" {
 			return title
 		}
 	}
 
 	if m.OriginalName != "" && !fs.IsID(m.OriginalName) {
-		if title := txt.TitleFromFileName(m.OriginalName); title != "" {
+		if title := txt.FileTitle(m.OriginalName); title != "" {
 			return title
-		} else if title := txt.TitleFromFileName(path.Dir(m.OriginalName)); title != "" {
+		} else if title := txt.FileTitle(path.Dir(m.OriginalName)); title != "" {
 			return title
 		}
 	}
 
 	if m.PhotoPath != "" {
-		return txt.TitleFromFileName(m.PhotoPath)
+		return txt.FileTitle(m.PhotoPath)
 	}
 
 	return ""
@@ -566,7 +566,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	var knownLocation bool
 
 	oldTitle := m.PhotoTitle
-	fileTitle := m.TitleFromFileName()
+	fileTitle := m.FileTitle()
 
 	if m.LocationLoaded() {
 		knownLocation = true
