@@ -144,19 +144,22 @@ func (m *File) AllFilesMissing() bool {
 	return count == 0
 }
 
+// Create inserts a new row to the database.
+func (m *File) Create() error {
+	if m.PhotoID == 0 {
+		return fmt.Errorf("file: photo id is empty (create)")
+	}
+
+	return UnscopedDb().Create(m).Error
+}
+
 // Saves the file in the database.
 func (m *File) Save() error {
 	if m.PhotoID == 0 {
 		return fmt.Errorf("file: photo id is empty (%s)", m.FileUID)
 	}
 
-	if err := Db().Save(m).Error; err != nil {
-		return err
-	}
-
-	photo := Photo{}
-
-	return Db().Model(m).Related(&photo).Error
+	return UnscopedDb().Save(m).Error
 }
 
 // UpdateVideoInfos updates related video infos based on this file.

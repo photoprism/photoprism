@@ -65,7 +65,8 @@ func TestSavePhotoForm(t *testing.T) {
 		assert.Equal(t, "image", m.PhotoType)
 		assert.Equal(t, float32(7.9999), m.PhotoLat)
 		assert.NotNil(t, m.EditedAt)
-		t.Log(m.Details.Keywords)
+
+		t.Log(m.GetDetails().Keywords)
 	})
 }
 
@@ -97,7 +98,7 @@ func TestPhoto_Save(t *testing.T) {
 			PlaceID:          "765",
 			PhotoCountry:     "de",
 			Keywords:         []Keyword{},
-			Details: Details{
+			Details: &Details{
 				PhotoID:   11111,
 				Keywords:  "test cat dog",
 				Subject:   "animals",
@@ -108,14 +109,14 @@ func TestPhoto_Save(t *testing.T) {
 			},
 		}
 
-		err := photo.Save()
+		err := photo.SaveLabels()
 
 		assert.EqualError(t, err, "photo: can't save to database, id is empty")
 	})
 
 	t.Run("existing photo", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
-		err := m.Save()
+		err := m.SaveLabels()
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -280,14 +281,30 @@ func TestPhoto_NoCameraSerial(t *testing.T) {
 	})
 }
 
-func TestPhoto_DetailsLoaded(t *testing.T) {
+func TestPhoto_GetDetails(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
-		assert.True(t, m.DetailsLoaded())
+		result := m.GetDetails()
+
+		if result == nil {
+			t.Fatal("result should never be nil")
+		}
+
+		if result.PhotoID == 0 {
+			t.Fatal("PhotoID should not be 0")
+		}
 	})
 	t.Run("false", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo12")
-		assert.False(t, m.DetailsLoaded())
+		result := m.GetDetails()
+
+		if result == nil {
+			t.Fatal("result should never be nil")
+		}
+
+		if result.PhotoID != 0 {
+			t.Fatal("PhotoID should be 0")
+		}
 	})
 }
 

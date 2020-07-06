@@ -78,3 +78,22 @@ func TestDetails_NoCopyright(t *testing.T) {
 		assert.Equal(t, false, description.NoCopyright())
 	})
 }
+
+func TestNewDetails(t *testing.T) {
+	t.Run("add to photo", func(t *testing.T) {
+		p := NewPhoto()
+		d := NewDetails(p)
+		p.Details = &d
+		d.Subject = "Foo Bar"
+		d.Keywords = "Baz"
+
+		err := p.Save()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("PHOTO: %#v", p)
+		t.Logf("DETAILS: %#v", d)
+	})
+}

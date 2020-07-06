@@ -364,7 +364,7 @@ func PhotoFileUngroup(router *gin.RouterGroup) {
 		existingPhoto := *file.Photo
 		newPhoto := entity.NewPhoto()
 
-		if err := entity.UnscopedDb().Create(&newPhoto).Error; err != nil {
+		if err := newPhoto.Create(); err != nil {
 			log.Errorf("photo: %s", err.Error())
 			AbortSaveFailed(c)
 			return

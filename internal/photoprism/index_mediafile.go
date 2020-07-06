@@ -65,7 +65,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	photo := entity.NewPhoto()
 	metaData := meta.Data{}
-	description := entity.Details{}
 	labels := classify.Labels{}
 
 	fileRoot, fileBase, filePath, fileName := m.PathNameInfo()
@@ -134,9 +133,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		return result
 	}
 
-	if photoExists {
-		entity.UnscopedDb().Model(&photo).Related(&description)
-	} else {
+	details := photo.GetDetails()
+
+	if !photoExists {
 		photo.PhotoQuality = -1
 
 		if yamlName := fs.TypeYaml.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
@@ -214,16 +213,16 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetTitle(data.Title, entity.SrcXmp)
 			photo.SetDescription(data.Description, entity.SrcXmp)
 
-			if photo.Details.NoNotes() && data.Comment != "" {
-				photo.Details.Notes = data.Comment
+			if details.NoNotes() && data.Comment != "" {
+				details.Notes = data.Comment
 			}
 
-			if photo.Details.NoArtist() && data.Artist != "" {
-				photo.Details.Artist = data.Artist
+			if details.NoArtist() && data.Artist != "" {
+				details.Artist = data.Artist
 			}
 
-			if photo.Details.NoCopyright() && data.Copyright != "" {
-				photo.Details.Copyright = data.Copyright
+			if details.NoCopyright() && data.Copyright != "" {
+				details.Copyright = data.Copyright
 			}
 		}
 	case m.IsRaw(), m.IsHEIF(), m.IsImageOther():
@@ -233,24 +232,24 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
 			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcMeta)
 
-			if photo.Details.NoNotes() {
-				photo.Details.Notes = metaData.Comment
+			if details.NoNotes() {
+				details.Notes = metaData.Comment
 			}
 
-			if photo.Details.NoSubject() {
-				photo.Details.Subject = metaData.Subject
+			if details.NoSubject() {
+				details.Subject = metaData.Subject
 			}
 
-			if photo.Details.NoKeywords() {
-				photo.Details.Keywords = metaData.Keywords
+			if details.NoKeywords() {
+				details.Keywords = metaData.Keywords
 			}
 
-			if photo.Details.NoArtist() && metaData.Artist != "" {
-				photo.Details.Artist = metaData.Artist
+			if details.NoArtist() && metaData.Artist != "" {
+				details.Artist = metaData.Artist
 			}
 
-			if photo.Details.NoArtist() && metaData.CameraOwner != "" {
-				photo.Details.Artist = metaData.CameraOwner
+			if details.NoArtist() && metaData.CameraOwner != "" {
+				details.Artist = metaData.CameraOwner
 			}
 
 			if photo.NoCameraSerial() {
@@ -290,24 +289,24 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
 			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcMeta)
 
-			if photo.Details.NoNotes() {
-				photo.Details.Notes = metaData.Comment
+			if details.NoNotes() {
+				details.Notes = metaData.Comment
 			}
 
-			if photo.Details.NoSubject() {
-				photo.Details.Subject = metaData.Subject
+			if details.NoSubject() {
+				details.Subject = metaData.Subject
 			}
 
-			if photo.Details.NoKeywords() {
-				photo.Details.Keywords = metaData.Keywords
+			if details.NoKeywords() {
+				details.Keywords = metaData.Keywords
 			}
 
-			if photo.Details.NoArtist() && metaData.Artist != "" {
-				photo.Details.Artist = metaData.Artist
+			if details.NoArtist() && metaData.Artist != "" {
+				details.Artist = metaData.Artist
 			}
 
-			if photo.Details.NoArtist() && metaData.CameraOwner != "" {
-				photo.Details.Artist = metaData.CameraOwner
+			if details.NoArtist() && metaData.CameraOwner != "" {
+				details.Artist = metaData.CameraOwner
 			}
 
 			if photo.NoCameraSerial() {
@@ -385,24 +384,24 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
 			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcMeta)
 
-			if photo.Details.NoNotes() {
-				photo.Details.Notes = metaData.Comment
+			if details.NoNotes() {
+				details.Notes = metaData.Comment
 			}
 
-			if photo.Details.NoSubject() {
-				photo.Details.Subject = metaData.Subject
+			if details.NoSubject() {
+				details.Subject = metaData.Subject
 			}
 
-			if photo.Details.NoKeywords() {
-				photo.Details.Keywords = metaData.Keywords
+			if details.NoKeywords() {
+				details.Keywords = metaData.Keywords
 			}
 
-			if photo.Details.NoArtist() && metaData.Artist != "" {
-				photo.Details.Artist = metaData.Artist
+			if details.NoArtist() && metaData.Artist != "" {
+				details.Artist = metaData.Artist
 			}
 
-			if photo.Details.NoArtist() && metaData.CameraOwner != "" {
-				photo.Details.Artist = metaData.CameraOwner
+			if details.NoArtist() && metaData.CameraOwner != "" {
+				details.Artist = metaData.CameraOwner
 			}
 
 			if photo.NoCameraSerial() {
@@ -480,14 +479,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.FileOrientation = m.Orientation()
 
 	if photoExists {
-		if err := entity.UnscopedDb().Save(&photo).Error; err != nil {
+		if err := photo.Save(); err != nil {
 			log.Errorf("index: %s for %s", err.Error(), logName)
 			result.Status = IndexFailed
 			result.Error = err
 			return result
 		}
 	} else {
-		if err := entity.UnscopedDb().Create(&photo).Error; err != nil {
+		if err := photo.Create(); err != nil {
 			log.Errorf("index: %s", err)
 			result.Status = IndexFailed
 			result.Error = err
@@ -529,7 +528,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			log.Debugf("%s (%s)", err.Error(), logName)
 		}
 
-		w := txt.Keywords(photo.Details.Keywords)
+		w := txt.Keywords(details.Keywords)
 
 		if !fs.IsID(fileBase) {
 			w = append(w, txt.FilenameKeywords(filePath)...)
@@ -541,17 +540,17 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		w = append(w, file.FileMainColor)
 		w = append(w, labels.Keywords()...)
 
-		photo.Details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
+		details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
-		if photo.Details.Keywords != "" {
-			log.Tracef("index: set keywords %s for %s", photo.Details.Keywords, logName)
+		if details.Keywords != "" {
+			log.Tracef("index: set keywords %s for %s", details.Keywords, logName)
 		} else {
 			log.Tracef("index: no keywords for %s", logName)
 		}
 
 		photo.PhotoQuality = photo.QualityScore()
 
-		if err := entity.UnscopedDb().Save(&photo).Error; err != nil {
+		if err := photo.Save(); err != nil {
 			log.Errorf("index: %s for %s", err, logName)
 			result.Status = IndexFailed
 			result.Error = err
@@ -570,7 +569,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.PhotoQuality = photo.QualityScore()
 		}
 
-		if err := entity.UnscopedDb().Unscoped().Save(&photo).Error; err != nil {
+		if err := photo.Save(); err != nil {
 			log.Errorf("index: %s for %s", err, logName)
 			result.Status = IndexFailed
 			result.Error = err
@@ -583,7 +582,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if fileQuery.Error == nil {
 		file.UpdatedIn = int64(time.Since(start))
 
-		if err := entity.UnscopedDb().Save(&file).Error; err != nil {
+		if err := file.Save(); err != nil {
 			log.Errorf("index: %s for %s", err, logName)
 			result.Status = IndexFailed
 			result.Error = err
@@ -592,7 +591,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	} else {
 		file.CreatedIn = int64(time.Since(start))
 
-		if err := entity.UnscopedDb().Create(&file).Error; err != nil {
+		if err := file.Create(); err != nil {
 			log.Errorf("index: %s for %s", err, logName)
 			result.Status = IndexFailed
 			result.Error = err

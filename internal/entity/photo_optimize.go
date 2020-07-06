@@ -111,11 +111,10 @@ func (m *Photo) Optimize() (updated bool, err error) {
 		log.Info(err)
 	}
 
-	if m.DetailsLoaded() {
-		w := txt.UniqueWords(txt.Words(m.Details.Keywords))
-		w = append(w, labels.Keywords()...)
-		m.Details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
-	}
+	details := m.GetDetails()
+	w := txt.UniqueWords(txt.Words(details.Keywords))
+	w = append(w, labels.Keywords()...)
+	details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
 	if err := m.IndexKeywords(); err != nil {
 		log.Errorf("photo: %s", err.Error())

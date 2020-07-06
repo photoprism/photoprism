@@ -1,14 +1,23 @@
 package entity
 
+import "time"
+
 // Details stores additional metadata fields for each photo to improve search performance.
 type Details struct {
-	PhotoID   uint   `gorm:"primary_key;auto_increment:false" yaml:"-"`
-	Keywords  string `gorm:"type:text;" json:"Keywords" yaml:"Keywords"`
-	Notes     string `gorm:"type:text;" json:"Notes" yaml:"Notes,omitempty"`
-	Subject   string `gorm:"type:varchar(255);" json:"Subject" yaml:"Subject,omitempty"`
-	Artist    string `gorm:"type:varchar(255);" json:"Artist" yaml:"Artist,omitempty"`
-	Copyright string `gorm:"type:varchar(255);" json:"Copyright" yaml:"Copyright,omitempty"`
-	License   string `gorm:"type:varchar(255);" json:"License" yaml:"License,omitempty"`
+	PhotoID   uint      `gorm:"primary_key;auto_increment:false" yaml:"-"`
+	Keywords  string    `gorm:"type:text;" json:"Keywords" yaml:"Keywords"`
+	Notes     string    `gorm:"type:text;" json:"Notes" yaml:"Notes,omitempty"`
+	Subject   string    `gorm:"type:varchar(255);" json:"Subject" yaml:"Subject,omitempty"`
+	Artist    string    `gorm:"type:varchar(255);" json:"Artist" yaml:"Artist,omitempty"`
+	Copyright string    `gorm:"type:varchar(255);" json:"Copyright" yaml:"Copyright,omitempty"`
+	License   string    `gorm:"type:varchar(255);" json:"License" yaml:"License,omitempty"`
+	CreatedAt time.Time `yaml:"-"`
+	UpdatedAt time.Time `yaml:"-"`
+}
+
+// NewDetails creates new photo details.
+func NewDetails(photo Photo) Details {
+	return Details{PhotoID: photo.ID}
 }
 
 // Create inserts a new row to the database.
@@ -21,6 +30,10 @@ func FirstOrCreateDetails(m *Details) *Details {
 	result := Details{}
 
 	if err := Db().Where("photo_id = ?", m.PhotoID).First(&result).Error; err == nil {
+		if m.CreatedAt.IsZero() {
+			m.CreatedAt = Timestamp()
+		}
+
 		return &result
 	} else if err := m.Create(); err != nil {
 		log.Errorf("details: %s", err)
