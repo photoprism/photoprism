@@ -753,14 +753,14 @@ msgid ""
 "Imported files will be sorted by date and given a unique name to avoid "
 "duplicates."
 msgstr ""
-"Dateien werden beim Import verschoben und nach Datum sortiert, um Duplikate "
-"zu vermeiden."
+"Import kopiert neue Dateien und sortiert sie nach Datum, um Duplikate zu "
+"vermeiden."
 
 #: src/pages/settings/general.vue:608
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr ""
-"Dateien werden beim Import verschoben und nach Datum sortiert, um Duplikate "
-"zu vermeiden."
+"Import kopiert neue Dateien und sortiert sie nach Datum, um Duplikate zu "
+"vermeiden."
 
 #: src/pages/library/import.vue:5
 msgid "Importing %{name}…"
