@@ -1232,11 +1232,11 @@ msgstr "Namen beibehalten"
 
 #: src/pages/library/import.vue:8
 msgid "Press button to start importing…"
-msgstr "Auf die Schaltfläche klicken, um Dateien zu importieren…"
+msgstr "Auf “Import” klicken, um Dateien zu importieren…"
 
 #: src/pages/library/index.vue:8
 msgid "Press button to start indexing…"
-msgstr "Auf die Schaltfläche klicken, um Dateien zu indexieren…"
+msgstr "Auf “Index” klicken, um Dateien zu indexieren…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
