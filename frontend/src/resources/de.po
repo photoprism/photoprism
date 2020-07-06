@@ -1154,7 +1154,7 @@ msgstr "Original"
 
 #: src/pages/library/import.vue:27
 msgid "Original file names will be stored and indexed."
-msgstr "Die originalen Dateinamen werden gespeichert und indiziert."
+msgstr "Die ursprünglichen Dateinamen werden im Index gespeichert."
 
 #: src/dialog/photo/files.vue:60 src/dialog/photo/info.vue:33
 msgid "Original Name"
