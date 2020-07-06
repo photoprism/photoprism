@@ -210,7 +210,7 @@ msgstr ""
 msgid "An error occurred - are you offline?"
 msgstr ""
 
-#: src/component/navigation.vue:80
+#: src/component/navigation.vue:88
 #: src/dialog/photo/info.vue:90
 msgid "Analog"
 msgstr ""
@@ -694,6 +694,7 @@ msgstr ""
 #: src/dialog/account/edit.vue:326
 #: src/dialog/account/edit.vue:332
 #: src/dialog/photo/files.vue:48
+#: src/dialog/photo/info.vue:21
 #: src/dialog/share/upload.vue:147
 #: src/model/folder.js:187
 #: src/pages/library/files.vue:83
@@ -756,10 +757,6 @@ msgstr ""
 
 #: src/pages/settings/general.vue:162
 msgid "Group Sequential"
-msgstr ""
-
-#: src/component/navigation.vue:88
-msgid "Grouped"
 msgstr ""
 
 #: src/component/navigation.vue:333
@@ -1267,10 +1264,6 @@ msgstr ""
 msgid "Password changed"
 msgstr ""
 
-#: src/dialog/photo/info.vue:21
-msgid "Path"
-msgstr ""
-
 #: src/routes.js:242
 msgid "People"
 msgstr ""
@@ -1587,6 +1580,10 @@ msgstr ""
 
 #: src/dialog/photo/labels.vue:108
 msgid "Source"
+msgstr ""
+
+#: src/component/navigation.vue:80
+msgid "Stacks"
 msgstr ""
 
 #: src/component/navigation.vue:240

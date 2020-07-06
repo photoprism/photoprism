@@ -205,7 +205,7 @@ msgstr "Höhe (m)"
 msgid "An error occurred - are you offline?"
 msgstr "Server konnte nicht erreicht werden - keine Verbindung?"
 
-#: src/component/navigation.vue:80 src/dialog/photo/info.vue:90
+#: src/component/navigation.vue:88 src/dialog/photo/info.vue:90
 msgid "Analog"
 msgstr "Analog"
 
@@ -655,9 +655,10 @@ msgid "Focal Length"
 msgstr "Brennweite"
 
 #: src/dialog/account/edit.vue:326 src/dialog/account/edit.vue:332
-#: src/dialog/photo/files.vue:48 src/dialog/share/upload.vue:147
-#: src/model/folder.js:187 src/pages/library/files.vue:83
-#: src/pages/library/import.vue:120 src/pages/library/index.vue:117
+#: src/dialog/photo/files.vue:48 src/dialog/photo/info.vue:21
+#: src/dialog/share/upload.vue:147 src/model/folder.js:187
+#: src/pages/library/files.vue:83 src/pages/library/import.vue:120
+#: src/pages/library/index.vue:117
 msgid "Folder"
 msgstr "Ordner"
 
@@ -713,10 +714,6 @@ msgstr "Ähnlichkeit"
 #: src/pages/settings/general.vue:162
 msgid "Group Sequential"
 msgstr "Sequenzen gruppieren"
-
-#: src/component/navigation.vue:88
-msgid "Grouped"
-msgstr ""
 
 #: src/component/navigation.vue:333 src/component/navigation.vue:25
 #: src/pages/help.vue:4
@@ -1183,10 +1180,6 @@ msgstr "Passwort"
 msgid "Password changed"
 msgstr "Passwort geändert"
 
-#: src/dialog/photo/info.vue:21
-msgid "Path"
-msgstr "Pfad"
-
 #: src/routes.js:242
 msgid "People"
 msgstr "Personen"
@@ -1477,6 +1470,10 @@ msgstr "Sortierung"
 #: src/dialog/photo/labels.vue:108
 msgid "Source"
 msgstr "Quelle"
+
+#: src/component/navigation.vue:80
+msgid "Stacks"
+msgstr "Bildstapel"
 
 #: src/component/navigation.vue:240
 msgid "States"
@@ -1781,6 +1778,12 @@ msgstr ""
 "eigenen Server zu betreiben und über das Projekt zu berichten.\n"
 "Das Anbieten oder Bewerben kommerzieller Produkte, Waren oder "
 "Dienstleistungen ist nur nach vorheriger, schriftlicher Genehmigung erlaubt."
+
+#~ msgid "Grouped"
+#~ msgstr "Gruppiert"
+
+#~ msgid "Path"
+#~ msgstr "Pfad"
 
 #~ msgid "Film Scans"
 #~ msgstr "Film-Scans"
