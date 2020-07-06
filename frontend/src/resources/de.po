@@ -673,7 +673,7 @@ msgstr "Ordner"
 
 #: src/pages/photos.vue:391
 msgid "Found %{n} results"
-msgstr "Es gibt %{n} Ergebnisse"
+msgstr "%{n} Ergebnisse"
 
 #: src/pages/photos.vue:389
 msgid "Found one result"
