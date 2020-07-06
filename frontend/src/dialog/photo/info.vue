@@ -19,7 +19,7 @@
         </tr>
         <tr v-if="model.Path">
           <td>
-            <translate key="Path">Path</translate>
+            <translate key="Folder">Folder</translate>
           </td>
           <td>{{ model.Path }}</td>
         </tr>
