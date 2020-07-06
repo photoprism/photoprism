@@ -205,10 +205,6 @@ msgstr "Höhe (m)"
 msgid "An error occurred - are you offline?"
 msgstr "Server konnte nicht erreicht werden - keine Verbindung?"
 
-#: src/component/navigation.vue:88 src/dialog/photo/info.vue:90
-msgid "Analog"
-msgstr "Analog"
-
 #: src/pages/settings/general.vue:773
 msgid "Animation"
 msgstr "Animation"
@@ -1008,7 +1004,7 @@ msgid "Newest first"
 msgstr "Neueste zuerst"
 
 #: src/dialog/photo/archive.vue:13 src/dialog/photo/info.vue:187
-#: src/dialog/photo/info.vue:218 src/dialog/photo/info.vue:249
+#: src/dialog/photo/info.vue:218 src/dialog/photo/info.vue:245
 msgid "No"
 msgstr "Nein"
 
@@ -1344,6 +1340,14 @@ msgstr "Russisch"
 #: src/dialog/share.vue:59
 msgid "Save"
 msgstr "Speichern"
+
+#: src/dialog/photo/info.vue:90
+msgid "Scan"
+msgstr "Scan"
+
+#: src/component/navigation.vue:88
+msgid "Scans"
+msgstr "Scans"
 
 #: src/component/album/toolbar.vue:116 src/component/photo/toolbar.vue:197
 #: src/dialog/album/edit.vue:114 src/dialog/photo/details.vue:429
@@ -1751,7 +1755,7 @@ msgstr "Gelb"
 #: src/dialog/photo/archive.vue:15 src/dialog/photo/files.vue:80
 #: src/dialog/photo/files.vue:86 src/dialog/photo/files.vue:104
 #: src/dialog/photo/files.vue:110 src/dialog/photo/info.vue:186
-#: src/dialog/photo/info.vue:217 src/dialog/photo/info.vue:248
+#: src/dialog/photo/info.vue:217 src/dialog/photo/info.vue:244
 msgid "Yes"
 msgstr "Ja"
 
@@ -1778,6 +1782,9 @@ msgstr ""
 "Das Anbieten oder Bewerben kommerzieller Produkte, Waren oder "
 "Dienstleistungen ist nur nach vorheriger, schriftlicher Genehmigung erlaubt."
 
+#~ msgid "Analog"
+#~ msgstr "Analog"
+
 #~ msgid "Coordinates"
 #~ msgstr "Koordinaten"
 
@@ -1786,9 +1793,6 @@ msgstr ""
 
 #~ msgid "Path"
 #~ msgstr "Pfad"
-
-#~ msgid "Film Scans"
-#~ msgstr "Film-Scans"
 
 #~ msgid "Root"
 #~ msgstr "Hauptverzeichnis"
