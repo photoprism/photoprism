@@ -290,8 +290,8 @@ func TestPhoto_GetDetails(t *testing.T) {
 			t.Fatal("result should never be nil")
 		}
 
-		if result.PhotoID == 0 {
-			t.Fatal("PhotoID should not be 0")
+		if result.PhotoID != 1000000 {
+			t.Fatal("PhotoID should not be 1000000")
 		}
 	})
 	t.Run("false", func(t *testing.T) {
@@ -302,8 +302,8 @@ func TestPhoto_GetDetails(t *testing.T) {
 			t.Fatal("result should never be nil")
 		}
 
-		if result.PhotoID != 0 {
-			t.Fatal("PhotoID should be 0")
+		if result.PhotoID != 1000012 {
+			t.Fatal("PhotoID should not be 1000012")
 		}
 	})
 }

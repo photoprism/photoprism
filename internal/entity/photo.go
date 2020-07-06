@@ -562,11 +562,15 @@ func (m *Photo) HasDescription() bool {
 
 // GetDetails returns the photo description details.
 func (m *Photo) GetDetails() *Details {
-	if m.Details == nil {
-		m.Details = &Details{PhotoID: m.ID}
-	} else {
+	if m.Details != nil {
+		m.Details.PhotoID = m.ID
+		return m.Details
+	} else if !m.HasID() {
+		m.Details = &Details{}
 		return m.Details
 	}
+
+	m.Details = &Details{PhotoID: m.ID}
 
 	if details := FirstOrCreateDetails(m.Details); details != nil {
 		m.Details = details
