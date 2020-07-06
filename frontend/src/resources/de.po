@@ -1735,7 +1735,7 @@ msgstr "Weiß"
 
 #: src/pages/about/about.vue:28
 msgid "Who we are"
-msgstr "Wer wir sind"
+msgstr "Über uns"
 
 #: src/component/photo/toolbar.vue:202 src/dialog/photo/details.vue:434
 #: src/dialog/photo/details.vue:230

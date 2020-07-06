@@ -14,6 +14,10 @@
       <v-btn icon @click.stop="reload" class="action-reload">
         <v-icon>refresh</v-icon>
       </v-btn>
+
+      <v-btn icon href="https://github.com/photoprism/photoprism/issues" target="_blank" class="action-bug-report" title="Bug Report">
+        <v-icon>bug_report</v-icon>
+      </v-btn>
     </v-toolbar>
 
     <v-list dense two-line v-if="errors.length > 0">
