@@ -1081,8 +1081,9 @@ msgstr "Noch nicht implementiert"
 #: src/pages/library/import.vue:28
 msgid "Note that you can as well manage and re-index your originals manually."
 msgstr ""
-"Beachte: Wenn du deine Ordnerstruktur und Dateinamen beibehalten willst "
-"nutze Index statt Import."
+"Hinweis: Falls die vorhandenen Ordner und Dateinamen beibehalten werden "
+"sollen, ist kein Import notwendig. Die Ordner müssen in diesem Fall manuell "
+"verwaltet und indexiert werden."
 
 #: src/dialog/account/add.vue:20
 msgid ""
