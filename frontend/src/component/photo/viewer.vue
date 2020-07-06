@@ -118,7 +118,7 @@
                     this.interval = false;
                     
                     const psp = this.$viewer.gallery;
-                    psp.framework.removeClass(psp.container, "image_out");
+                    psp.framework.removeClass(psp.container, "slide_show");
                 }
             },
             onSlideshow() {
