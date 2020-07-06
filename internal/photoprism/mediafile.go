@@ -288,8 +288,12 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		result.Files = append(result.Files, resultFile)
 	}
 
+	if result.Main == nil {
+		return result, fmt.Errorf("no main file found for %s", txt.Quote(m.BaseName()))
+	}
+
 	// Add hidden JPEG if exists.
-	if !result.ContainsJpeg() && result.Main != nil {
+	if !result.ContainsJpeg() {
 		if jpegName := fs.TypeJpeg.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); jpegName != "" {
 			if resultFile, err := NewMediaFile(jpegName); err == nil {
 				result.Files = append(result.Files, resultFile)
