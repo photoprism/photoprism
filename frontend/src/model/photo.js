@@ -126,11 +126,11 @@ export class Photo extends RestModel {
     }
 
     localDayString() {
-        if(!this.TakenAtLocal) {
+        if (!this.TakenAtLocal) {
             return new Date().getDay().toString().padStart(2, "0");
         }
 
-        if(!this.Day || this.Day <= 0) {
+        if (!this.Day || this.Day <= 0) {
             return this.TakenAtLocal.substr(8, 2);
         }
 
@@ -138,11 +138,11 @@ export class Photo extends RestModel {
     }
 
     localMonthString() {
-        if(!this.TakenAtLocal) {
+        if (!this.TakenAtLocal) {
             return new Date().getMonth().toString().padStart(2, "0");
         }
 
-        if(!this.Month || this.Month <= 0) {
+        if (!this.Month || this.Month <= 0) {
             return this.TakenAtLocal.substr(5, 2);
         }
 
@@ -150,11 +150,11 @@ export class Photo extends RestModel {
     }
 
     localYearString() {
-        if(!this.TakenAtLocal) {
+        if (!this.TakenAtLocal) {
             return new Date().getFullYear().toString().padStart(4, "0");
         }
 
-        if(!this.Year || this.Year <= 1000) {
+        if (!this.Year || this.Year <= 1000) {
             return this.TakenAtLocal.substr(0, 4);
         }
 
@@ -162,13 +162,13 @@ export class Photo extends RestModel {
     }
 
     localDateString(time) {
-        if(!this.localYearString()) {
+        if (!this.localYearString()) {
             return this.TakenAtLocal;
         }
 
         let date = this.localYearString() + "-" + this.localMonthString() + "-" + this.localDayString();
 
-        if(!time) {
+        if (!time) {
             time = this.TakenAtLocal.substr(11, 8);
         }
 
@@ -176,7 +176,7 @@ export class Photo extends RestModel {
     }
 
     getTimeZone() {
-        if(this.TimeZone) {
+        if (this.TimeZone) {
             return this.TimeZone;
         }
 
@@ -189,10 +189,6 @@ export class Photo extends RestModel {
         const result = DateTime.fromISO(this.localDateString(time), {zone});
 
         return result;
-    }
-
-    utcDate() {
-        return DateTime.fromISO(this.TakenAt).toUTC();
     }
 
     baseName(truncate) {
@@ -419,9 +415,11 @@ export class Photo extends RestModel {
     getDateString() {
         if (!this.TakenAt || this.Year === YearUnknown) {
             return $gettext("Unknown");
-        }
-
-        if (this.TimeZone) {
+        } else if (this.Month === MonthUnknown) {
+            return this.localYearString();
+        } else if (this.Day === DayUnknown) {
+            return this.localDate().toLocaleString({month: "long", year: "numeric"});
+        } else if (this.TimeZone) {
             return this.localDate().toLocaleString(DateTime.DATETIME_FULL);
         }
 
@@ -431,6 +429,10 @@ export class Photo extends RestModel {
     shortDateString() {
         if (!this.TakenAt || this.Year === YearUnknown) {
             return $gettext("Unknown");
+        } else if (this.Month === MonthUnknown) {
+            return this.localYearString();
+        } else if (this.Day === DayUnknown) {
+            return this.localDate().toLocaleString({month: "long", year: "numeric"});
         }
 
         return this.localDate().toLocaleString(DateTime.DATE_MED);

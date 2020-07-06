@@ -55,7 +55,7 @@
                         :error="invalidDate"
                         :label="$gettext('Day')"
                         browser-autocomplete="off"
-                        hide-details
+                        hide-details hide-no-data
                         color="secondary-dark"
                         v-model="model.Day"
                         :items="options.Days()"
@@ -69,7 +69,7 @@
                         :error="invalidDate"
                         :label="$gettext('Month')"
                         browser-autocomplete="off"
-                        hide-details
+                        hide-details hide-no-data
                         color="secondary-dark"
                         v-model="model.Month"
                         :items="options.Months()"
@@ -83,7 +83,7 @@
                         :error="invalidDate"
                         :label="$gettext('Year')"
                         browser-autocomplete="off"
-                        hide-details
+                        hide-details hide-no-data
                         color="secondary-dark"
                         v-model="model.Year"
                         :items="options.Years()"
@@ -125,7 +125,7 @@
                         :disabled="disabled"
                         :label="labels.timezone"
                         browser-autocomplete="off"
-                        hide-details
+                        hide-details hide-no-data
                         color="secondary-dark"
                         item-value="ID"
                         item-text="Name"
@@ -139,7 +139,7 @@
                 <v-autocomplete
                         :disabled="disabled"
                         :label="labels.country"
-                        hide-details
+                        hide-details hide-no-data
                         browser-autocomplete="off"
                         color="secondary-dark"
                         item-value="Code"
