@@ -6,6 +6,7 @@ leica
 panasonic
 sony
 canon
+eos
 nikon
 iphone
 handy

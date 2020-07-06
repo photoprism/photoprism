@@ -11,6 +11,7 @@ var StopWords = map[string]bool{
 	"panasonic":        true,
 	"sony":             true,
 	"canon":            true,
+	"eos":              true,
 	"nikon":            true,
 	"iphone":           true,
 	"handy":            true,
