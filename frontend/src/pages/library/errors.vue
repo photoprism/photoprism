@@ -20,10 +20,10 @@
       <v-list-tile
               v-for="(err, index) in errors" :key="index"
               avatar
-              @click=""
+              @click="showDetails(err)"
       >
         <v-list-tile-avatar>
-          <v-icon>{{ err.Level }}</v-icon>
+          <v-icon :color="err.Level">{{ err.Level }}</v-icon>
         </v-list-tile-avatar>
 
         <v-list-tile-content>
@@ -37,6 +37,33 @@
         <translate>When PhotoPrism found broken files or there are other potential issues, you'll see a short message on this page.</translate>
       </v-card-title>
     </v-card>
+
+    <v-dialog
+            v-model="details.show"
+            max-width="500"
+    >
+      <v-card class="pa-2">
+        <v-card-title class="headline pa-2">
+          {{ details.err.Level | capitalize }}
+        </v-card-title>
+
+        <v-card-text class="pa-2 body-2">
+          {{ localTime(details.err.Time) }}
+        </v-card-text>
+
+        <v-card-text class="pa-2 body-1">
+          {{ details.err.Message }}
+        </v-card-text>
+
+        <v-card-actions class="pa-2">
+          <v-spacer></v-spacer>
+          <v-btn color="secondary-light" depressed @click="details.show = false"
+                 class="action-close">
+            <translate>Close</translate>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -55,10 +82,18 @@
                 pageSize: 100,
                 offset: 0,
                 page: 0,
+                details: {
+                    show: false,
+                    err: {"Level": "", "Message": "", "Time": ""},
+                },
                 loading: false,
             };
         },
         methods: {
+            showDetails(err) {
+                this.details.err = err;
+                this.details.show = true;
+            },
             reload() {
                 if (this.loading) {
                     return;
@@ -105,7 +140,18 @@
             level(s) {
                 return s.substr(0, 4).toUpperCase();
             },
+            localTime(s) {
+                if (!s) {
+                    return this.$gettext("Unknown");
+                }
+
+                return DateTime.fromISO(s).toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS);
+            },
             formatTime(s) {
+                if (!s) {
+                    return this.$gettext("Unknown");
+                }
+
                 return DateTime.fromISO(s).toFormat("yyyy-LL-dd HH:mm:ss");
             },
         },
