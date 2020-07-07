@@ -327,7 +327,7 @@
                     return
                 }
 
-                this.$router.replace({query: query});
+                this.$router.replace({query});
             },
             searchParams() {
                 const params = {

@@ -1,6 +1,6 @@
 package i18n
 
-var MsgDutch = MessageMap{
+var MsgSpanish = MessageMap{
 	// Error messages:
 	ErrUnexpected:         "Unexpected error, please try again",
 	ErrBadRequest:         "Invalid request",

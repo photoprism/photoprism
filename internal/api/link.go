@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -120,7 +121,7 @@ func CreateLink(c *gin.Context) {
 func CreateAlbumLink(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/links", func(c *gin.Context) {
 		if _, err := query.AlbumByUID(c.Param("uid")); err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
@@ -148,7 +149,7 @@ func GetAlbumLinks(router *gin.RouterGroup) {
 		m, err := query.AlbumByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
@@ -188,7 +189,7 @@ func GetPhotoLinks(router *gin.RouterGroup) {
 		m, err := query.PhotoByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
@@ -200,7 +201,7 @@ func GetPhotoLinks(router *gin.RouterGroup) {
 func CreateLabelLink(router *gin.RouterGroup) {
 	router.POST("/labels/:uid/links", func(c *gin.Context) {
 		if _, err := query.LabelByUID(c.Param("uid")); err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrLabelNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
@@ -228,7 +229,7 @@ func GetLabelLinks(router *gin.RouterGroup) {
 		m, err := query.LabelByUID(c.Param("uid"))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAlbumNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 

@@ -188,7 +188,7 @@ func (m *Photo) Create() error {
 	}
 
 	if err := UnscopedDb().Save(m.GetDetails()).Error; err != nil {
-		log.Errorf("photo: %s (save details after create)", err)
+		log.Errorf("photo: %s (save details for %s)", err, m.PhotoUID)
 		return err
 	}
 
@@ -198,12 +198,12 @@ func (m *Photo) Create() error {
 // Save updates the existing or inserts a new row.
 func (m *Photo) Save() error {
 	if err := UnscopedDb().Save(m).Error; err != nil {
-		log.Errorf("photo: %s (save)", err)
+		log.Errorf("photo: %s (save %s)", err, m.PhotoUID)
 		return err
 	}
 
 	if err := UnscopedDb().Save(m.GetDetails()).Error; err != nil {
-		log.Errorf("photo: %s (save details)", err)
+		log.Errorf("photo: %s (save details for %s)", err, m.PhotoUID)
 		return err
 	}
 

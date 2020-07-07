@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // Details stores additional metadata fields for each photo to improve search performance.
 type Details struct {
@@ -22,6 +25,10 @@ func NewDetails(photo Photo) Details {
 
 // Create inserts a new row to the database.
 func (m *Details) Create() error {
+	if m.PhotoID == 0 {
+		return fmt.Errorf("details: photo id must not be empty (create)")
+	}
+
 	return Db().Create(m).Error
 }
 

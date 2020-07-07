@@ -37,7 +37,7 @@ class Log {
         this.logs = [
             /* EXAMPLE LOG MESSAGE
             {
-                "msg": "waiting for events",
+                "message": "waiting for events",
                 "level": "debug",
                 "time": this.created.toISOString(),
             },

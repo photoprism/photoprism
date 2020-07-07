@@ -6,7 +6,7 @@
           <translate>Nothing to see here yet. Be patient.</translate>
         </p>
         <p v-for="(log, index) in logs" :key="index.id" class="p-log-message" :class="'p-log-' + log.level">
-          {{ formatTime(log.time) }} {{ level(log) }} <span>{{ log.msg }}</span>
+          {{ formatTime(log.time) }} {{ level(log) }} <span>{{ log.message }}</span>
         </p>
       </v-flex>
     </v-layout>
@@ -28,6 +28,10 @@
                 return log.level.substr(0, 4).toUpperCase();
             },
             formatTime(s) {
+                if (!s) {
+                    return this.$gettext("Unknown");
+                }
+
                 return DateTime.fromISO(s).toFormat("yyyy-LL-dd HH:mm:ss");
             },
         },

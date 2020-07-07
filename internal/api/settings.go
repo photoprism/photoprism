@@ -22,7 +22,7 @@ func GetSettings(router *gin.RouterGroup) {
 		if settings := service.Config().Settings(); settings != nil {
 			c.JSON(http.StatusOK, settings)
 		} else {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrNotFound)
 		}
 	})
 }

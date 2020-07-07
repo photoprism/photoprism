@@ -32,7 +32,7 @@ func TestNewResponse(t *testing.T) {
 		if s, err := json.Marshal(resp); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.Equal(t, `{"code":200,"success":"Changes successfully saved"}`, string(s))
+			assert.Equal(t, `{"code":200,"message":"Changes successfully saved"}`, string(s))
 		}
 	})
 }

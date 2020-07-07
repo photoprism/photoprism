@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -31,7 +31,7 @@ func StartImport(router *gin.RouterGroup) {
 		conf := service.Config()
 
 		if conf.ReadOnly() || !conf.Settings().Features.Import {
-			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)
+			AbortFeatureDisabled(c)
 			return
 		}
 
@@ -62,10 +62,10 @@ func StartImport(router *gin.RouterGroup) {
 		var opt photoprism.ImportOptions
 
 		if f.Move {
-			event.Info(fmt.Sprintf("moving files from %s", txt.Quote(filepath.Base(path))))
+			event.InfoMsg(i18n.MsgMovingFilesFrom, txt.Quote(filepath.Base(path)))
 			opt = photoprism.ImportOptionsMove(path)
 		} else {
-			event.Info(fmt.Sprintf("copying files from %s", txt.Quote(filepath.Base(path))))
+			event.InfoMsg(i18n.MsgCopyingFilesFrom, txt.Quote(filepath.Base(path)))
 			opt = photoprism.ImportOptionsCopy(path)
 		}
 
@@ -92,7 +92,9 @@ func StartImport(router *gin.RouterGroup) {
 
 		elapsed := int(time.Since(start).Seconds())
 
-		event.Success(fmt.Sprintf("import completed in %d s", elapsed))
+		msg := i18n.Msg(i18n.MsgImportCompletedIn, elapsed)
+
+		event.Success(msg)
 		event.Publish("import.completed", event.Data{"path": path, "seconds": elapsed})
 		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
 
@@ -102,7 +104,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("import completed in %d s", elapsed)})
+		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
 	})
 }
 
@@ -119,7 +121,7 @@ func CancelImport(router *gin.RouterGroup) {
 		conf := service.Config()
 
 		if conf.ReadOnly() || !conf.Settings().Features.Import {
-			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)
+			AbortFeatureDisabled(c)
 			return
 		}
 
@@ -127,6 +129,6 @@ func CancelImport(router *gin.RouterGroup) {
 
 		imp.Cancel()
 
-		c.JSON(http.StatusOK, gin.H{"message": "import canceled"})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgImportCanceled))
 	})
 }

@@ -18,7 +18,6 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GET /api/v1/accounts
@@ -297,12 +296,12 @@ func DeleteAccount(router *gin.RouterGroup) {
 		m, err := query.AccountByID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAccountNotFound)
 			return
 		}
 
 		if err := m.Delete(); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, txt.UcFirst(err.Error()))
+			Error(c, http.StatusInternalServerError, err, i18n.ErrDeleteFailed)
 			return
 		}
 

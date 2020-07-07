@@ -2,12 +2,17 @@
   <div class="p-page p-page-errors" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-toolbar flat color="secondary">
-      <v-toolbar-title v-if="errors.length > 0">
-        <translate>Event Log</translate>
-      </v-toolbar-title>
-      <v-toolbar-title v-else>
-        <translate>No warnings or errors</translate>
-      </v-toolbar-title>
+      <v-text-field class="pt-3 pr-3 input-search"
+                    browser-autocomplete="off"
+                    single-line
+                    :label="$gettext('Search')"
+                    prepend-inner-icon="search"
+                    clearable
+                    color="secondary-dark"
+                    @click:clear="clearQuery"
+                    v-model="filter.q"
+                    @keyup.enter.native="updateQuery"
+      ></v-text-field>
 
       <v-spacer></v-spacer>
 
@@ -19,8 +24,10 @@
         <v-icon>bug_report</v-icon>
       </v-btn>
     </v-toolbar>
-
-    <v-list dense two-line v-if="errors.length > 0">
+    <v-container fluid class="pa-4" v-if="loading">
+      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+    </v-container>
+    <v-list dense two-line v-else-if="errors.length > 0">
       <v-list-tile
               v-for="(err, index) in errors" :key="index"
               avatar
@@ -37,8 +44,11 @@
       </v-list-tile>
     </v-list>
     <v-card v-else class="errors-empty secondary-light lighten-1 ma-0 pa-2" flat>
-      <v-card-title primary-title>
-        <translate>When PhotoPrism found broken files or there are other potential issues, you'll see a short message on this page.</translate>
+      <v-card-title primary-title v-if="filter.q !== ''">
+        <translate>No results. Try again with a different search term.</translate>
+      </v-card-title>
+      <v-card-title primary-title v-else>
+        <translate>Related log messages will appear here whenever PhotoPrism comes across broken files or there are other potential issues.</translate>
       </v-card-title>
     </v-card>
 
@@ -77,23 +87,55 @@
 
     export default {
         name: 'p-page-errors',
+        watch: {
+            '$route'() {
+                const query = this.$route.query;
+                this.filter.q = query['q'] ? query['q'] : '';
+                this.reload();
+            }
+        },
         data() {
+            const query = this.$route.query;
+            const q = query["q"] ? query["q"] : "";
+
             return {
-                errors: [],
                 dirty: false,
-                results: [],
+                loading: false,
                 scrollDisabled: false,
+                filter: {q},
                 pageSize: 100,
                 offset: 0,
                 page: 0,
+                errors: [],
+                results: [],
                 details: {
                     show: false,
                     err: {"Level": "", "Message": "", "Time": ""},
                 },
-                loading: false,
             };
         },
         methods: {
+            updateQuery() {
+                const query = {};
+
+                Object.assign(query, this.filter);
+
+                for (let key in query) {
+                    if (query[key] === undefined || !query[key]) {
+                        delete query[key];
+                    }
+                }
+
+                if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
+                    return
+                }
+
+                this.$router.replace({query});
+            },
+            clearQuery() {
+                this.filter.q = "";
+                this.updateQuery();
+            },
             showDetails(err) {
                 this.details.err = err;
                 this.details.show = true;
@@ -116,11 +158,9 @@
 
                 const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
                 const offset = this.dirty ? 0 : this.offset;
+                const q = this.filter.q;
 
-                const params = {
-                    count: count,
-                    offset: offset,
-                };
+                const params = {count, offset, q};
 
                 Api.get("errors", {params}).then((resp) => {
                     if (!resp.data) {
@@ -139,7 +179,10 @@
                         this.offset = offset + count;
                         this.page++;
                     }
-                }).finally(() => this.loading = false)
+                }).finally(() => {
+                    this.loading = false;
+                    this.dirty = false;
+                });
             },
             level(s) {
                 return s.substr(0, 4).toUpperCase();

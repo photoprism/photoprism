@@ -3,10 +3,10 @@
           ref="form" autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8"
           @submit.prevent="filterChange">
     <v-toolbar flat color="secondary">
-      <v-text-field class="pt-3 pr-3 p-search-field"
+      <v-text-field class="pt-3 pr-3 input-search"
                     browser-autocomplete="off"
                     single-line
-                    :label="labels.search"
+                    :label="$gettext('Search')"
                     prepend-inner-icon="search"
                     clearable
                     color="secondary-dark"

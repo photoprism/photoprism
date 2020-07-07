@@ -13,7 +13,7 @@ func TestCreateZip(t *testing.T) {
 		CreateZip(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/zip", `{"photos": ["pt9jtdre2lvl0y12", "pt9jtdre2lvl0y11"]}`)
 		val := gjson.Get(r.Body.String(), "message")
-		assert.Contains(t, val.String(), "zip created")
+		assert.Contains(t, val.String(), "Zip created")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("no items selected", func(t *testing.T) {

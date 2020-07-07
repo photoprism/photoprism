@@ -7,20 +7,26 @@ type Language string
 type LanguageMap map[Language]MessageMap
 
 const (
-	English Language = "en"
-	Dutch   Language = "nl"
-	French  Language = "fr"
-	German  Language = "de"
-	Russian Language = "ru"
-	Default          = English
+	German     Language = "de"
+	English    Language = "en"
+	Spanish    Language = "es"
+	French     Language = "fr"
+	Dutch      Language = "nl"
+	Portuguese Language = "pt"
+	Russian    Language = "ru"
+	Chinese    Language = "zh"
+	Default             = English
 )
 
 var Languages = LanguageMap{
-	English: MsgEnglish,
-	Dutch:   MsgDutch,
-	French:  MsgFrench,
-	German:  MsgGerman,
-	Russian: MsgRussian,
+	German:     MsgGerman,
+	English:    MsgEnglish,
+	Spanish:    MsgSpanish,
+	French:     MsgFrench,
+	Dutch:      MsgDutch,
+	Portuguese: MsgPortuguese,
+	Russian:    MsgRussian,
+	Chinese:    MsgChinese,
 }
 
 var Lang = Default

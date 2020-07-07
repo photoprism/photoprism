@@ -3,9 +3,10 @@ package i18n
 import "strings"
 
 type Response struct {
-	Code int    `json:"code"`
-	Err  string `json:"error,omitempty"`
-	Msg  string `json:"success,omitempty"`
+	Code    int    `json:"code"`
+	Err     string `json:"error,omitempty"`
+	Msg     string `json:"message,omitempty"`
+	Details string `json:"details,omitempty"`
 }
 
 func (r Response) String() string {
@@ -22,6 +23,10 @@ func (r Response) LowerString() string {
 
 func (r Response) Error() string {
 	return r.Err
+}
+
+func (r Response) Success() bool {
+	return r.Err == "" && r.Code < 400
 }
 
 func NewResponse(code int, id Message, params ...interface{}) Response {

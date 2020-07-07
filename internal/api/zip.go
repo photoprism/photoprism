@@ -12,6 +12,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
@@ -35,7 +36,7 @@ func CreateZip(router *gin.RouterGroup) {
 		conf := service.Config()
 
 		if !conf.Settings().Features.Download {
-			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)
+			AbortFeatureDisabled(c)
 			return
 		}
 
@@ -48,17 +49,17 @@ func CreateZip(router *gin.RouterGroup) {
 		}
 
 		if f.Empty() {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst("no items selected")})
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
 
 		files, err := query.FileSelection(f)
 
 		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+			Error(c, http.StatusBadRequest, err, i18n.ErrZipFailed)
 			return
 		} else if len(files) == 0 {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst("no files available for download")})
+			Abort(c, http.StatusNotFound, i18n.ErrNoFilesForDownload)
 			return
 		}
 
@@ -69,16 +70,14 @@ func CreateZip(router *gin.RouterGroup) {
 		zipFileName := path.Join(zipPath, zipBaseName)
 
 		if err := os.MkdirAll(zipPath, 0700); err != nil {
-			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip folder")})
+			Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 			return
 		}
 
 		newZipFile, err := os.Create(zipFileName)
 
 		if err != nil {
-			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 			return
 		}
 
@@ -93,8 +92,7 @@ func CreateZip(router *gin.RouterGroup) {
 
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
-					log.Error(err)
-					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip file")})
+					Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 					return
 				}
 				log.Infof("zip: added %s as %s", txt.Quote(f.FileName), txt.Quote(fileAlias))
@@ -108,7 +106,7 @@ func CreateZip(router *gin.RouterGroup) {
 
 		log.Infof("zip: archive %s created in %s", txt.Quote(zipBaseName), time.Since(start))
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("zip created in %d s", elapsed), "filename": zipBaseName})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgZipCreatedIn, elapsed), "filename": zipBaseName})
 	})
 }
 

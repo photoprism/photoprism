@@ -321,7 +321,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": i18n.Msg(i18n.MsgAlbumCloned), "album": a, "added": added})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgAlbumCloned), "album": a, "added": added})
 	})
 }
 
@@ -370,7 +370,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": photos.UIDs(), "added": added})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": photos.UIDs(), "added": added})
 	})
 }
 
@@ -415,7 +415,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": f.Photos, "removed": removed})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": f.Photos, "removed": removed})
 	})
 }
 

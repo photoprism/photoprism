@@ -110,6 +110,6 @@ func TestFile_Save(t *testing.T) {
 			t.Fatalf("file id should be 0: %d", file.ID)
 		}
 
-		assert.Equal(t, "file: photo id is empty (123)", err.Error())
+		assert.Equal(t, "file: photo id must not be empty (save 123)", err.Error())
 	})
 }

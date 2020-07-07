@@ -4,7 +4,7 @@
 
     <v-form ref="form" class="p-labels-search" lazy-validation @submit.prevent="updateQuery" dense>
       <v-toolbar flat color="secondary">
-        <v-text-field class="pt-3 pr-3 p-search-field"
+        <v-text-field class="pt-3 pr-3 input-search"
                       single-line
                       :label="labels.search"
                       prepend-inner-icon="search"

@@ -193,7 +193,7 @@ func TestDeleteAccount(t *testing.T) {
 		DeleteAccount(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/accounts/xxx")
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Account not found", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrAccountNotFound), val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }

@@ -46,7 +46,7 @@
                 const type = ev.split('.')[1];
 
                 // get message from data object
-                let m = data.msg;
+                let m = data.message;
 
                 if (!m || !m.length) {
                     console.warn("notify: empty message");
@@ -101,7 +101,7 @@
                     'color': color,
                     'textColor': textColor,
                     'delay': delay,
-                    'msg': message
+                    'message': message
                 };
 
                 this.messages.push(m);
@@ -119,7 +119,7 @@
                 const message = this.messages.shift();
 
                 if (message) {
-                    this.text = message.msg;
+                    this.text = message.message;
                     this.color = message.color;
                     this.textColor = message.textColor;
                     this.visible = true;

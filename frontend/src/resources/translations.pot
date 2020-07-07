@@ -372,7 +372,7 @@ msgstr ""
 
 #: src/dialog/photo/details.vue:120
 #: src/dialog/share.vue:85
-#: src/pages/library/errors.vue:56
+#: src/pages/library/errors.vue:54
 msgid "Close"
 msgstr ""
 
@@ -602,10 +602,6 @@ msgstr ""
 
 #: src/component/navigation.vue:302
 msgid "Errors"
-msgstr ""
-
-#: src/pages/library/errors.vue:4
-msgid "Event Log"
 msgstr ""
 
 #: src/resources/options.js:159
@@ -1129,12 +1125,12 @@ msgstr ""
 msgid "No photos or videos found"
 msgstr ""
 
-#: src/pages/settings/sync.vue:17
-msgid "No servers configured."
+#: src/pages/library/errors.vue:30
+msgid "No results. Try again with a different search term."
 msgstr ""
 
-#: src/pages/library/errors.vue:7
-msgid "No warnings or errors"
+#: src/pages/settings/sync.vue:17
+msgid "No servers configured."
 msgstr ""
 
 #: src/component/photo/cards.vue:12
@@ -1378,6 +1374,10 @@ msgstr ""
 msgid "Red"
 msgstr ""
 
+#: src/pages/library/errors.vue:33
+msgid "Related log messages will appear here whenever PhotoPrism comes across broken files or there are other potential issues."
+msgstr ""
+
 #: src/pages/settings/general.vue:377
 msgid "Reloading…"
 msgstr ""
@@ -1443,11 +1443,13 @@ msgstr ""
 
 #: src/component/album/toolbar.vue:116
 #: src/component/photo/toolbar.vue:197
+#: src/component/photo/toolbar.vue:33
 #: src/dialog/album/edit.vue:114
 #: src/dialog/photo/details.vue:429
 #: src/dialog/photo/labels.vue:114
 #: src/pages/albums.vue:239
 #: src/pages/labels.vue:196
+#: src/pages/library/errors.vue:33
 #: src/pages/library/files.vue:176
 #: src/pages/places.vue:174
 #: src/routes.js:235
@@ -1732,8 +1734,9 @@ msgstr ""
 #: src/model/photo.js:466
 #: src/model/photo.js:543
 #: src/model/photo.js:556
-#: src/pages/library/errors.vue:149
-#: src/pages/library/errors.vue:156
+#: src/pages/library/errors.vue:173
+#: src/pages/library/errors.vue:180
+#: src/pages/library/logs.vue:32
 #: src/resources/options.js:15
 #: src/resources/options.js:29
 #: src/resources/options.js:43
@@ -1851,10 +1854,6 @@ msgstr ""
 
 #: src/pages/about/about.vue:4
 msgid "Whatever it is, we'd love to hear from you!"
-msgstr ""
-
-#: src/pages/library/errors.vue:35
-msgid "When PhotoPrism found broken files or there are other potential issues, you'll see a short message on this page."
 msgstr ""
 
 #: src/resources/options.js:188

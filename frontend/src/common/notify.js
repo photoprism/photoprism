@@ -33,20 +33,20 @@ import {$gettext} from "./vm";
 
 const Notify = {
     info: function (message) {
-        Event.publish("notify.info", {msg: message});
+        Event.publish("notify.info", {message});
     },
     warn: function (message) {
-        Event.publish("notify.warning", {msg: message});
+        Event.publish("notify.warning", {message});
     },
     error: function (message) {
-        Event.publish("notify.error", {msg: message});
+        Event.publish("notify.error", {message});
     },
     success: function (message) {
-        Event.publish("notify.success", {msg: message});
+        Event.publish("notify.success", {message});
     },
     logout: function (message) {
-        Event.publish("notify.error", {msg: message});
-        Event.publish("session.logout", {msg: message});
+        Event.publish("notify.error", {message});
+        Event.publish("session.logout", {message});
     },
     ajaxStart: function() {
         Event.publish("ajax.start");

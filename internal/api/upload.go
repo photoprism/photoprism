@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"path"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 
@@ -21,7 +21,7 @@ func Upload(router *gin.RouterGroup) {
 	router.POST("/upload/:path", func(c *gin.Context) {
 		conf := service.Config()
 		if conf.ReadOnly() || !conf.Settings().Features.Upload {
-			c.AbortWithStatusJSON(http.StatusForbidden, ErrReadOnly)
+			Abort(c, http.StatusForbidden, i18n.ErrReadOnly)
 			return
 		}
 
@@ -97,15 +97,17 @@ func Upload(router *gin.RouterGroup) {
 					}
 				}
 
-				c.AbortWithStatusJSON(http.StatusForbidden, ErrUploadNSFW)
+				Abort(c, http.StatusForbidden, i18n.ErrOffensiveUpload)
 				return
 			}
 		}
 
-		elapsed := time.Since(start)
+		elapsed := int(time.Since(start).Seconds())
 
-		log.Infof("%d files uploaded in %s", uploaded, elapsed)
+		msg := i18n.Msg(i18n.MsgFilesUploadedIn, uploaded, elapsed)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("%d files uploaded in %s", uploaded, elapsed)})
+		log.Info(msg)
+
+		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
 	})
 }

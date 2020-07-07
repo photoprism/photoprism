@@ -38,6 +38,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 var log = event.Log
@@ -56,7 +57,20 @@ func UpdateClientConfig() {
 
 func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {
 	resp := i18n.NewResponse(code, id, params...)
-	log.Debugf("api: %s", resp.String())
+
+	log.Debugf("api: abort %s with code %d (%s)", c.FullPath(), code, resp.String())
+
+	c.AbortWithStatusJSON(code, resp)
+}
+
+func Error(c *gin.Context, code int, err error, id i18n.Message, params ...interface{}) {
+	resp := i18n.NewResponse(code, id, params...)
+
+	if err != nil {
+		resp.Details = err.Error()
+		log.Errorf("api: error %s with code %d in %s (%s)", txt.Quote(err.Error()), code, c.FullPath(), resp.String())
+	}
+
 	c.AbortWithStatusJSON(code, resp)
 }
 
@@ -82,4 +96,8 @@ func AbortBadRequest(c *gin.Context) {
 
 func AbortAlreadyExists(c *gin.Context, s string) {
 	Abort(c, http.StatusConflict, i18n.ErrAlreadyExists, s)
+}
+
+func AbortFeatureDisabled(c *gin.Context) {
+	Abort(c, http.StatusForbidden, i18n.ErrFeatureDisabled)
 }

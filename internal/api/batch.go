@@ -1,19 +1,16 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
-	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/txt"
-
-	"github.com/gin-gonic/gin"
 )
 
 // POST /api/v1/batch/photos/archive
@@ -26,8 +23,6 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 			return
 		}
 
-		start := time.Now()
-
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
@@ -36,8 +31,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 		}
 
 		if len(f.Photos) == 0 {
-			log.Error("no items selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no items selected")})
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
 
@@ -58,13 +52,11 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 			log.Errorf("photos: %s", err)
 		}
 
-		elapsed := int(time.Since(start).Seconds())
-
 		UpdateClientConfig()
 
 		event.EntitiesArchived("photos", f.Photos)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos archived in %d s", elapsed)})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionArchived))
 	})
 }
 
@@ -78,8 +70,6 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 			return
 		}
 
-		start := time.Now()
-
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
@@ -88,8 +78,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 		}
 
 		if len(f.Photos) == 0 {
-			log.Error("no items selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no items selected")})
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
 
@@ -107,13 +96,11 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 			log.Errorf("photos: %s", err)
 		}
 
-		elapsed := int(time.Since(start).Seconds())
-
 		UpdateClientConfig()
 
 		event.EntitiesRestored("photos", f.Photos)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos restored in %d s", elapsed)})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionRestored))
 	})
 }
 
@@ -135,8 +122,7 @@ func BatchAlbumsDelete(router *gin.RouterGroup) {
 		}
 
 		if len(f.Albums) == 0 {
-			log.Error("no albums selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no albums selected")})
+			Abort(c, http.StatusBadRequest, i18n.ErrNoAlbumsSelected)
 			return
 		}
 
@@ -149,7 +135,7 @@ func BatchAlbumsDelete(router *gin.RouterGroup) {
 
 		event.EntitiesDeleted("albums", f.Albums)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("albums deleted")})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgAlbumsDeleted))
 	})
 }
 
@@ -163,8 +149,6 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 			return
 		}
 
-		start := time.Now()
-
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
@@ -173,8 +157,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 		}
 
 		if len(f.Photos) == 0 {
-			log.Error("no items selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no items selected")})
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
 
@@ -198,9 +181,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		elapsed := time.Since(start)
-
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos marked as private in %s", elapsed)})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionProtected))
 	})
 }
 
@@ -223,7 +204,7 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 
 		if len(f.Labels) == 0 {
 			log.Error("no labels selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no labels selected")})
+			Abort(c, http.StatusBadRequest, i18n.ErrNoLabelsSelected)
 			return
 		}
 
@@ -232,8 +213,7 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 		var labels entity.Labels
 
 		if err := entity.Db().Where("label_uid IN (?)", f.Labels).Find(&labels).Error; err != nil {
-			logError("labels", err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrDeleteFailed)
+			Error(c, http.StatusInternalServerError, err, i18n.ErrDeleteFailed)
 			return
 		}
 
@@ -245,6 +225,6 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 
 		event.EntitiesDeleted("labels", f.Labels)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("labels deleted")})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgLabelsDeleted))
 	})
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
 )
 
@@ -16,7 +17,7 @@ func ChangePassword(router *gin.RouterGroup) {
 		conf := service.Config()
 
 		if conf.Public() {
-			c.AbortWithStatusJSON(http.StatusForbidden, ErrPublic)
+			Abort(c, http.StatusForbidden, i18n.ErrPublic)
 			return
 		}
 
@@ -31,31 +32,27 @@ func ChangePassword(router *gin.RouterGroup) {
 		m := entity.FindPersonByUID(uid)
 
 		if m == nil {
-			log.Errorf("change password: user not found")
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrInvalidPassword)
+			Abort(c, http.StatusNotFound, i18n.ErrUserNotFound)
 			return
 		}
 
 		f := form.ChangePassword{}
 
 		if err := c.BindJSON(&f); err != nil {
-			log.Errorf("change password: %s", err)
-			c.AbortWithStatusJSON(http.StatusBadRequest, ErrInvalidPassword)
+			Error(c, http.StatusBadRequest, err, i18n.ErrInvalidPassword)
 			return
 		}
 
 		if m.InvalidPassword(f.OldPassword) {
-			log.Errorf("change password: invalid password")
-			c.AbortWithStatusJSON(http.StatusBadRequest, ErrInvalidPassword)
+			Abort(c, http.StatusBadRequest, i18n.ErrInvalidPassword)
 			return
 		}
 
 		if err := m.SetPassword(f.NewPassword); err != nil {
-			log.Errorf("change password: %s", err)
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "error": err.Error()})
+			Error(c, http.StatusBadRequest, err, i18n.ErrInvalidPassword)
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "password changed"})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgPasswordChanged))
 	})
 }

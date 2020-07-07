@@ -40,7 +40,7 @@ func SaveErrorMessages() {
 
 		newError := Error{ErrorLevel: logLevel.String()}
 
-		if val, ok := msg.Fields["msg"]; ok {
+		if val, ok := msg.Fields["message"]; ok {
 			newError.ErrorMessage = val.(string)
 		}
 
