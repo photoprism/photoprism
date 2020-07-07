@@ -31,4 +31,9 @@ func TestGetMediaType(t *testing.T) {
 		result := GetMediaType("")
 		assert.Equal(t, MediaOther, result)
 	})
+
+	t.Run("invalid type", func(t *testing.T) {
+		result := GetMediaType("/IMG_4120.XXX")
+		assert.Equal(t, MediaOther, result)
+	})
 }

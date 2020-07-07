@@ -27,6 +27,9 @@ func TestRel(t *testing.T) {
 	t.Run("/some/path/bar", func(t *testing.T) {
 		assert.Equal(t, "/some/path/foo/bar.baz", Rel("/some/path/foo/bar.baz", "/some/path/bar"))
 	})
+	t.Run("empty dir", func(t *testing.T) {
+		assert.Equal(t, "/some/path/foo/bar.baz", Rel("/some/path/foo/bar.baz", ""))
+	})
 }
 
 func TestFileName(t *testing.T) {
@@ -56,5 +59,11 @@ func TestFileName(t *testing.T) {
 		result := FileName(Abs("testdata/Test (4).jpg"), tempDir, Abs("testdata"), ".xmp", true)
 
 		assert.Equal(t, tempDir+"/Test.xmp", result)
+	})
+
+	t.Run("empty dir", func(t *testing.T) {
+		result := FileName("testdata/FOO.XMP", "", Abs("testdata"), ".jpeg", true)
+
+		assert.Equal(t, "testdata/FOO.jpeg", result)
 	})
 }

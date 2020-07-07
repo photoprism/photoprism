@@ -115,6 +115,11 @@ func TestRelBase(t *testing.T) {
 		result := RelBase("/testdata/foo/Test (3).jpg", "/testdata", false)
 		assert.Equal(t, "foo/Test (3)", result)
 	})
+
+	t.Run("Test (3).jpg", func(t *testing.T) {
+		result := RelBase("/testdata/foo/Test (3).jpg", "/testdata/foo/Test (3).jpg", false)
+		assert.Equal(t, "Test (3)", result)
+	})
 }
 
 func TestBaseAbs(t *testing.T) {

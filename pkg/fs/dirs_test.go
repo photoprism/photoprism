@@ -31,3 +31,16 @@ func TestDirs(t *testing.T) {
 		assert.Equal(t, expected, result)
 	})
 }
+
+func TestFindDirs(t *testing.T) {
+	t.Run("/directory", func(t *testing.T) {
+		result := FindDir([]string{"/directory", "/directory/subdirectory", "/linked"})
+		assert.Equal(t, "", result)
+	})
+
+	t.Run("./testdata", func(t *testing.T) {
+		result := FindDir([]string{"./testdata"})
+		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/pkg/fs/testdata", result)
+	})
+
+}

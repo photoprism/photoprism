@@ -12,10 +12,10 @@ func TestNonCanonical(t *testing.T) {
 		assert.Equal(t, true, NonCanonical("short"))
 	})
 	t.Run("short_", func(t *testing.T) {
-		assert.Equal(t, true, NonCanonical("short_"))
+		assert.Equal(t, true, NonCanonical("short/short/short/test1_"))
 	})
 	t.Run("short?", func(t *testing.T) {
-		assert.Equal(t, true, NonCanonical("short?"))
+		assert.Equal(t, true, NonCanonical("short/short/short/test1?"))
 	})
 	t.Run("short/test_test_test1234", func(t *testing.T) {
 		assert.Equal(t, false, NonCanonical("hort/test_test_test12345"))

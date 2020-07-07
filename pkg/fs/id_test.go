@@ -51,3 +51,8 @@ func TestIsID(t *testing.T) {
 	assert.False(t, IsID("01 Introduction Businessmodel.pdf"))
 	assert.False(t, IsID("A regular file name with 121345678643 numbers"))
 }
+
+func TestIsInt(t *testing.T) {
+	assert.True(t, IsInt("123"))
+	assert.False(t, IsInt(""))
+}
