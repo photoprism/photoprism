@@ -56,12 +56,12 @@
       <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-cards">
         <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1 ma-1" flat>
           <v-card-title primary-title>
-            <div v-if="staticFilter.type === 'moment'">
+            <div v-if="staticFilter.type === 'album'">
               <h3 class="title mb-3">
                 <translate>No albums found</translate>
               </h3>
               <div>
-                <translate>Wait until indexing is complete and PhotoPrism has analyzed your library.</translate>
+                <translate>Create a new album using the context menu after selecting photos or videos from search results.</translate>
               </div>
             </div>
             <div v-else>
@@ -69,7 +69,7 @@
                 <translate>No albums found</translate>
               </h3>
               <div>
-                <translate>Create a new album using the context menu after selecting photos or videos from search results.</translate>
+                <translate>PhotoPrism continuously analyzes your library to find special moments, journeys and places.</translate>
               </div>
             </div>
           </v-card-title>

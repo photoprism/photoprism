@@ -14,17 +14,9 @@
       <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-cards">
         <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1 ma-1" flat>
           <v-card-title primary-title>
-            <div v-if="staticFilter.type === 'moment'">
+            <div>
               <h3 class="title mb-3">
-                <translate>No moments matched your search</translate>
-              </h3>
-              <div>
-                <translate>Wait until a moment was shared with you or try again using a different term.</translate>
-              </div>
-            </div>
-            <div v-else>
-              <h3 class="title mb-3">
-                <translate>No albums matched your search</translate>
+                <translate>No albums found</translate>
               </h3>
               <div>
                 <translate>Wait until an album was shared with you or try again using a different term.</translate>

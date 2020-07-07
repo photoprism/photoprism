@@ -412,7 +412,7 @@ msgstr "Leider nichts gefunden"
 msgid "Country"
 msgstr "Land"
 
-#: src/pages/albums.vue:50
+#: src/pages/albums.vue:42
 msgid ""
 "Create a new album using the context menu after selecting photos or videos "
 "from search results."
@@ -1185,9 +1185,17 @@ msgstr "Personen"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Jeder mit diesem Link wird öffentliche Fotos und Videos sehen können."
 
-#: src/model/photo.js:652
+#: src/model/photo.js:658
 msgid "Photo"
 msgstr "Foto"
+
+#: src/pages/albums.vue:50
+msgid ""
+"PhotoPrism continuously analyzes your library to find special moments, "
+"journeys and places."
+msgstr ""
+"PhotoPrism analysiert im Hintergrund ihre Bilder und erstellt Alben mit "
+"besonderen Momenten, Reisen und Orten."
 
 #: src/pages/about/about.vue:74
 msgid "PhotoPrism™ is a registered trademark of Michael Mayer."
@@ -1616,8 +1624,8 @@ msgid "Ungroup"
 msgstr "Gruppierung auflösen"
 
 #: src/dialog/photo/details.vue:423 src/dialog/photo/info.vue:221
-#: src/model/photo.js:417 src/model/photo.js:431 src/model/photo.js:454
-#: src/model/photo.js:466 src/model/photo.js:543 src/model/photo.js:556
+#: src/model/photo.js:423 src/model/photo.js:437 src/model/photo.js:460
+#: src/model/photo.js:472 src/model/photo.js:549 src/model/photo.js:562
 #: src/pages/library/errors.vue:192 src/pages/library/errors.vue:199
 #: src/pages/library/logs.vue:32 src/resources/options.js:15
 #: src/resources/options.js:29 src/resources/options.js:43
@@ -1689,7 +1697,7 @@ msgstr "Benutzeroberfläche"
 msgid "Username"
 msgstr "Nutzername"
 
-#: src/model/file.js:196 src/model/photo.js:503 src/model/photo.js:517
+#: src/model/file.js:196 src/model/photo.js:509 src/model/photo.js:523
 msgid "Video"
 msgstr "Video"
 
@@ -1715,13 +1723,6 @@ msgid ""
 msgstr ""
 "Warte bis jemand ein Album mit dir geteilt hat oder versuche es erneut mit "
 "einem anderen Suchbegriff."
-
-#: src/pages/albums.vue:42
-msgid ""
-"Wait until indexing is complete and PhotoPrism has analyzed your library."
-msgstr ""
-"Nachdem alle Dateien indiziert wurden, erstellt PhotoPrism automatisch Alben "
-"mit besonderen Momenten, Reisen und Orten."
 
 #: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -1777,6 +1778,12 @@ msgstr ""
 "eigenen Server zu betreiben und über das Projekt zu berichten.\n"
 "Das Anbieten oder Bewerben kommerzieller Produkte, Waren oder "
 "Dienstleistungen ist nur nach vorheriger, schriftlicher Genehmigung erlaubt."
+
+#~ msgid ""
+#~ "Wait until indexing is complete and PhotoPrism has analyzed your library."
+#~ msgstr ""
+#~ "Nachdem alle Dateien indiziert wurden, erstellt PhotoPrism automatisch "
+#~ "Alben mit besonderen Momenten, Reisen und Orten."
 
 #~ msgid "No files matched your search"
 #~ msgstr "Keine Dateien entsprechen deinen Suchkriterien"

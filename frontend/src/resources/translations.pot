@@ -442,7 +442,7 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: src/pages/albums.vue:50
+#: src/pages/albums.vue:42
 msgid "Create a new album using the context menu after selecting photos or videos from search results."
 msgstr ""
 
@@ -1260,8 +1260,12 @@ msgstr ""
 msgid "People you share a link with will be able to view public contents."
 msgstr ""
 
-#: src/model/photo.js:652
+#: src/model/photo.js:658
 msgid "Photo"
+msgstr ""
+
+#: src/pages/albums.vue:50
+msgid "PhotoPrism continuously analyzes your library to find special moments, journeys and places."
 msgstr ""
 
 #: src/pages/about/about.vue:74
@@ -1723,12 +1727,12 @@ msgstr ""
 
 #: src/dialog/photo/details.vue:423
 #: src/dialog/photo/info.vue:221
-#: src/model/photo.js:417
-#: src/model/photo.js:431
-#: src/model/photo.js:454
-#: src/model/photo.js:466
-#: src/model/photo.js:543
-#: src/model/photo.js:556
+#: src/model/photo.js:423
+#: src/model/photo.js:437
+#: src/model/photo.js:460
+#: src/model/photo.js:472
+#: src/model/photo.js:549
+#: src/model/photo.js:562
 #: src/pages/library/errors.vue:192
 #: src/pages/library/errors.vue:199
 #: src/pages/library/logs.vue:32
@@ -1811,8 +1815,8 @@ msgid "Username"
 msgstr ""
 
 #: src/model/file.js:196
-#: src/model/photo.js:503
-#: src/model/photo.js:517
+#: src/model/photo.js:509
+#: src/model/photo.js:523
 msgid "Video"
 msgstr ""
 
@@ -1834,10 +1838,6 @@ msgstr ""
 
 #: src/share/albums.vue:27
 msgid "Wait until an album was shared with you or try again using a different term."
-msgstr ""
-
-#: src/pages/albums.vue:42
-msgid "Wait until indexing is complete and PhotoPrism has analyzed your library."
 msgstr ""
 
 #: src/dialog/share.vue:80
