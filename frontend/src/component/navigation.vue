@@ -90,7 +90,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'photos', query: { q: 'grouped:true' }}" :exact="true" @click="">
+          <v-list-tile :to="{name: 'photos', query: { q: 'grouped:true' }}" :exact="true" @click="" class="nav-stacks">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Stacks">Stacks</translate>
@@ -98,7 +98,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'photos', query: { q: 'scan:true' }}" :exact="true" @click="">
+          <v-list-tile :to="{name: 'photos', query: { q: 'scan:true' }}" :exact="true" @click="" class="nav-scans">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Scans">Scans</translate>
