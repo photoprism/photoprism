@@ -85,7 +85,11 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 
 			switch t := fieldValue.Interface().(type) {
 			case time.Time:
-				if tv, err := time.Parse("2006:01:02 15:04:05", strings.TrimSpace(jsonValue.String())); err == nil {
+				s := strings.TrimSpace(jsonValue.String())
+				s = strings.ReplaceAll(s, "/", ":")
+				s = strings.ReplaceAll(s, "-", ":")
+
+				if tv, err := time.Parse("2006:01:02 15:04:05", s); err == nil {
 					fieldValue.Set(reflect.ValueOf(tv.Round(time.Second).UTC()))
 				}
 			case time.Duration:

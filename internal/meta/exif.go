@@ -320,6 +320,9 @@ func (data *Data) Exif(fileName string) (err error) {
 	}
 
 	if ValidDateTime(takenAt) {
+		takenAt = strings.ReplaceAll(takenAt, "/", ":")
+		takenAt = strings.ReplaceAll(takenAt, "-", ":")
+
 		if taken, err := time.Parse("2006:01:02 15:04:05", takenAt); err == nil {
 			data.TakenAtLocal = taken.Round(time.Second)
 			data.TakenAt = data.TakenAtLocal
