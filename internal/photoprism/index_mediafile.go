@@ -141,8 +141,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if yamlName := fs.TypeYaml.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
 			if err := photo.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s (restore from yaml) for %s", err.Error(), logName)
+			} else if err := photo.Find(); err != nil {
+				log.Infof("index: data restored from %s", txt.Quote(fs.Rel(yamlName, Config().OriginalsPath())))
 			} else {
-				log.Infof("index: restored from %s", txt.Quote(fs.Rel(yamlName, Config().OriginalsPath())))
+				photoExists = true
+				log.Infof("index: uid %s restored from %s", photo.PhotoUID, txt.Quote(fs.Rel(yamlName, Config().OriginalsPath())))
 			}
 		}
 	}

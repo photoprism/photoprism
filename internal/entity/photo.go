@@ -180,7 +180,7 @@ func (m *Photo) String() string {
 	return "uid " + txt.Quote(m.PhotoUID)
 }
 
-// Create inserts a new row to the database.
+// Create inserts a new photo to the database.
 func (m *Photo) Create() error {
 	if err := UnscopedDb().Create(m).Error; err != nil {
 		log.Errorf("photo: %s (create)", err)
@@ -195,7 +195,7 @@ func (m *Photo) Create() error {
 	return nil
 }
 
-// Save updates the existing or inserts a new row.
+// Save updates an existing photo or inserts a new one.
 func (m *Photo) Save() error {
 	if err := UnscopedDb().Save(m).Error; err != nil {
 		log.Errorf("photo: %s (save %s)", err, m.PhotoUID)
@@ -210,7 +210,36 @@ func (m *Photo) Save() error {
 	return nil
 }
 
-// Save the entity in the database.
+// Find returns a photo from the database.
+func (m *Photo) Find() error {
+	if m.PhotoUID == "" && m.ID == 0 {
+		return fmt.Errorf("photo: id and uid must not be empty (find)")
+	}
+
+	q := UnscopedDb().
+		Preload("Labels", func(db *gorm.DB) *gorm.DB {
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
+		}).
+		Preload("Labels.Label").
+		Preload("Camera").
+		Preload("Lens").
+		Preload("Details").
+		Preload("Place").
+		Preload("Location").
+		Preload("Location.Place")
+
+	if rnd.IsPPID(m.PhotoUID, 'p') {
+		if err := q.First(m, "photo_uid = ?", m.PhotoUID).Error; err != nil {
+			return err
+		}
+	} else if err := q.First(m, "id = ?", m.ID).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Save the photo to the database.
 func (m *Photo) SaveLabels() error {
 	if !m.HasID() {
 		return errors.New("photo: can't save to database, id is empty")

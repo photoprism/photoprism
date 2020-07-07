@@ -49,14 +49,8 @@ func (m *Photo) LoadFromYaml(fileName string) error {
 		return err
 	}
 
-	hadDesc := m.HasDescription()
-
 	if err := yaml.Unmarshal(data, m); err != nil {
 		return err
-	}
-
-	if m.HasDescription() && !hadDesc && m.DescriptionSrc == "" {
-		m.DescriptionSrc = SrcYaml
 	}
 
 	return nil
