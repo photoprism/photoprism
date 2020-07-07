@@ -538,9 +538,9 @@ test('#7 Edit photo/video', async t => {
         .click(Selector('div').withText('July').parent('div[role="listitem"]'), {timeout: 5000})
         .typeText(Selector('.input-year input'), 'Unknown', { replace: true })
         .pressKey('enter')
-        .click(Selector('.input-utc-time input'))
+        .click(Selector('.input-local-time input'))
         .pressKey('ctrl+a delete')
-        .typeText(Selector('.input-utc-time input'), '01:30:30', { replace: true })
+        .typeText(Selector('.input-local-time input'), '04:30:30', { replace: true })
         .pressKey('enter')
         .typeText(Selector('.input-latitude input'), '41.15333', { replace: true })
         .typeText(Selector('.input-longitude input'), '20.168331', { replace: true })
@@ -616,15 +616,15 @@ test('#7 Edit photo/video', async t => {
         .click(Selector('div').withText(FirstPhotoMonth).parent('div[role="listitem"]'))
         .typeText(Selector('.input-year input'), FirstPhotoYear, { replace: true })
         .pressKey('enter');
-    if (FirstPhotoUTCTime.empty || FirstPhotoUTCTime === "")
+    if (FirstPhotoLocalTime.empty || FirstPhotoLocalTime === "")
     { await t
-        .click(Selector('.input-utc-time input'))
+        .click(Selector('.input-local-time input'))
         .pressKey('ctrl+a delete')}
     else
     {await t
-        .click(Selector('.input-utc-time input'))
+        .click(Selector('.input-local-time input'))
         .pressKey('ctrl+a delete')
-        .typeText(Selector('.input-utc-time input'), FirstPhotoUTCTime, { replace: true })
+        .typeText(Selector('.input-local-time input'), FirstPhotoLocalTime, { replace: true })
         .pressKey('enter')}
      if (FirstPhotoTimezone.empty || FirstPhotoTimezone === "")
     { await t
@@ -768,6 +768,7 @@ test('#8 Change primary file', async t => {
         .click(Selector('.p-expand-search'));
     await page.search('ski');
     const SequentialPhoto = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
+
     await t
         .expect(Selector('i.action-burst').visible).ok()
         .click(Selector('i.action-burst'))
@@ -776,12 +777,18 @@ test('#8 Change primary file', async t => {
         .click(Selector('.action-close'));
     await t
         .click(Selector('button.action-title-edit').withAttribute('data-uid', SequentialPhoto))
-        .click(Selector('#tab-files'))
-        .expect(Selector('i').withText('radio_button_unchecked').visible, {timeout: 5000}).ok()
-        .expect(Selector('i').withText('radio_button_checked').visible, {timeout: 5000}).ok()
-        .click(Selector('i').withText('radio_button_unchecked'))
-        .click(Selector('i').withText('radio_button_unchecked'))
-        .click(Selector('button.action-close'));
+        .click(Selector('#tab-files'));
+    const FirstFile = await Selector('div.caption').nth(0).innerText;
+    await t
+        .expect(FirstFile).contains('photos8_1_ski.jpg')
+        .click(Selector('li.v-expansion-panel__container').nth(1))
+        .click(Selector('.action-primary'))
+        .click(Selector('button.action-close'))
+        .click(Selector('button.action-title-edit').withAttribute('data-uid', SequentialPhoto));
+    const FirstFileAfterChange = await Selector('div.caption').nth(0).innerText;
+    await t
+        .expect(FirstFileAfterChange).notContains('photos8_1_ski.jpg')
+        .expect(FirstFileAfterChange).contains('photos8_2_ski.jpg');
 });
 
 test('#9 Navigate from card view to place', async t => {
@@ -792,4 +799,34 @@ test('#9 Navigate from card view to place', async t => {
         .expect(Selector('#map').exists, {timeout: 15000}).ok()
         .expect(Selector('div.p-map-control').visible).ok()
         .expect(Selector('.input-search input').value).notEql('');
+});
+//TODO remove wait
+test('#10 Ungroup files', async t => {
+    await page.openNav();
+    await t
+        .click(Selector('.nav-photos'))
+        .click(Selector('.p-expand-search'));
+    await page.search('group');
+    const PhotoCount = await Selector('button.action-title-edit').count;
+
+    const SequentialPhoto = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
+    await t
+        .expect(PhotoCount).eql(1)
+        .click(Selector('div.nav-photos + div'))
+        .click(Selector('.nav-stacks'))
+        .expect(Selector('i.action-burst').visible).ok()
+        .click(Selector('button.action-title-edit').withAttribute('data-uid', SequentialPhoto))
+        .click(Selector('#tab-files'))
+        .click(Selector('li.v-expansion-panel__container').nth(1))
+        .click(Selector('.action-ungroup'))
+        .wait(11000)
+        .click(Selector('button.action-close'))
+        .click(Selector('.nav-photos'))
+        .click(Selector('.p-expand-search'));
+    await page.search('group');
+    await t
+        .click(Selector('.action-reload'));
+    const PhotoCountAfterUngroup = await Selector('button.action-title-edit').count;
+    await t
+        .expect(PhotoCountAfterUngroup).eql(2);
 });
