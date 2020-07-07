@@ -65,10 +65,10 @@ func (m *Location) Find(api string) error {
 		return err
 	}
 
-	if place := FindPlace(l.PrefixedToken(), l.Label()); place != nil {
-		m.Place = place
+	if found := FindPlace(l.PrefixedToken(), l.Label()); found != nil {
+		m.Place = found
 	} else {
-		place = &Place{
+		place := &Place{
 			ID:          l.PrefixedToken(),
 			LocLabel:    l.Label(),
 			LocCity:     l.City(),
@@ -78,10 +78,7 @@ func (m *Location) Find(api string) error {
 			PhotoCount:  1,
 		}
 
-		if err := place.Create(); err != nil {
-			log.Errorf("place: failed adding %s %s", place.ID, err.Error())
-			m.Place = &UnknownPlace
-		} else {
+		if err := place.Create(); err == nil {
 			event.Publish("count.places", event.Data{
 				"count": 1,
 			})
@@ -89,6 +86,11 @@ func (m *Location) Find(api string) error {
 			log.Infof("place: added %s [%s]", place.ID, time.Since(start))
 
 			m.Place = place
+		} else if found := FindPlace(l.PrefixedToken(), l.Label()); found != nil {
+			m.Place = found
+		} else {
+			log.Errorf("place: %s (add place %s for location %s)", err, place.ID, l.ID)
+			m.Place = &UnknownPlace
 		}
 	}
 

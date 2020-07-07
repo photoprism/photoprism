@@ -68,22 +68,25 @@ func (m *Country) Create() error {
 func FirstOrCreateCountry(m *Country) *Country {
 	result := Country{}
 
-	if err := Db().Where("id = ?", m.ID).First(&result).Error; err == nil {
+	if findErr := Db().Where("id = ?", m.ID).First(&result).Error; findErr == nil {
 		return &result
-	} else if err := m.Create(); err != nil {
-		log.Errorf("country: %s", err)
-		return nil
+	} else if createErr := m.Create(); createErr == nil {
+		if !m.Unknown() {
+			event.EntitiesCreated("countries", []*Country{m})
+
+			event.Publish("count.countries", event.Data{
+				"count": 1,
+			})
+		}
+
+		return m
+	} else if err := Db().Where("id = ?", m.ID).First(&result).Error; err == nil {
+		return &result
+	} else {
+		log.Errorf("country: %s (first or create %s)", createErr, m.ID)
 	}
 
-	if !m.Unknown() {
-		event.EntitiesCreated("countries", []*Country{m})
-
-		event.Publish("count.countries", event.Data{
-			"count": 1,
-		})
-	}
-
-	return m
+	return nil
 }
 
 // AfterCreate sets the New column used for database callback
