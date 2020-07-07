@@ -838,7 +838,7 @@ msgstr "Lavendel"
 
 #: src/component/photo/toolbar.vue:201 src/dialog/photo/details.vue:433
 msgid "Lens"
-msgstr "Linse"
+msgstr "Objektiv"
 
 #: src/pages/settings/general.vue:512
 msgid "Let PhotoPrism create albums from past events."
@@ -1534,8 +1534,8 @@ msgid ""
 "Their format may not be supported, they haven't been converted to JPEG yet "
 "or there are duplicates."
 msgstr ""
-"Their format may not be supported, they haven’t been converted to JPEG yet "
-"or there are duplicates."
+"Ihr Format wird möglicherweise nicht unterstützt, es handelt sich um "
+"Duplikate oder sie wurden noch nicht nach JPEG konvertiert."
 
 #: src/pages/settings/general.vue:234
 msgid "Theme"
