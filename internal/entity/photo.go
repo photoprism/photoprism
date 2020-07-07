@@ -187,8 +187,7 @@ func (m *Photo) Create() error {
 		return err
 	}
 
-	if err := UnscopedDb().Save(m.GetDetails()).Error; err != nil {
-		log.Errorf("photo: %s (save details for %s)", err, m.PhotoUID)
+	if err := m.SaveDetails(); err != nil {
 		return err
 	}
 
@@ -197,13 +196,17 @@ func (m *Photo) Create() error {
 
 // Save updates an existing photo or inserts a new one.
 func (m *Photo) Save() error {
-	if err := UnscopedDb().Save(m).Error; err != nil {
+	if err := UnscopedDb().Save(m).Error; err == nil {
+		// Nothing to do.
+	} else if !strings.Contains(strings.ToLower(err.Error()), "lock") {
 		log.Errorf("photo: %s (save %s)", err, m.PhotoUID)
+		return err
+	} else if err := UnscopedDb().Save(m).Error; err != nil {
+		log.Errorf("photo: %s (save %s after deadlock)", err, m.PhotoUID)
 		return err
 	}
 
-	if err := UnscopedDb().Save(m.GetDetails()).Error; err != nil {
-		log.Errorf("photo: %s (save details for %s)", err, m.PhotoUID)
+	if err := m.SaveDetails(); err != nil {
 		return err
 	}
 
@@ -606,6 +609,19 @@ func (m *Photo) GetDetails() *Details {
 	}
 
 	return m.Details
+}
+
+// SaveDetails writes photo details to the database.
+func(m *Photo) SaveDetails() error {
+	if err := m.GetDetails().Save(); err == nil {
+		return nil
+	} else if details := FirstOrCreateDetails(m.GetDetails()); details != nil {
+		m.Details = details
+		return nil
+	} else {
+		log.Errorf("photo: %s (save details for %s)", err, m.PhotoUID)
+		return err
+	}
 }
 
 // FileTitle returns a photo title based on the file name and/or path.

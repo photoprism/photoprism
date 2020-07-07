@@ -29,7 +29,16 @@ func (m *Details) Create() error {
 		return fmt.Errorf("details: photo id must not be empty (create)")
 	}
 
-	return Db().Create(m).Error
+	return UnscopedDb().Create(m).Error
+}
+
+// Save updates existing photo details or inserts a new row.
+func (m *Details) Save() error {
+	if m.PhotoID == 0 {
+		return fmt.Errorf("details: photo id must not be empty (save)")
+	}
+
+	return UnscopedDb().Save(m).Error
 }
 
 // FirstOrCreateDetails returns the existing row, inserts a new row or nil in case of errors.
