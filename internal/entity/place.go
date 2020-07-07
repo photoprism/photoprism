@@ -66,7 +66,7 @@ func FindPlace(id string, label string) *Place {
 	return place
 }
 
-// Find updates the entity with values from the database.
+// Find fetches entity values from the database the primary key.
 func (m *Place) Find() error {
 	if err := Db().First(m, "id = ?", m.ID).Error; err != nil {
 		return err
@@ -80,28 +80,31 @@ func (m *Place) Create() error {
 	return Db().Create(m).Error
 }
 
-// FirstOrCreatePlace returns the existing row, inserts a new row or nil in case of errors.
+// FirstOrCreatePlace fetches an existing row, inserts a new row or nil in case of errors.
 func FirstOrCreatePlace(m *Place) *Place {
 	if m.ID == "" {
-		log.Errorf("place: id must not be empty")
+		log.Errorf("place: id must not be empty (first or create)")
 		return nil
 	}
 
 	if m.LocLabel == "" {
-		log.Errorf("place: label must not be empty (id %s)", m.ID)
+		log.Errorf("place: label must not be empty (first or create %s)", m.ID)
 		return nil
 	}
 
 	result := Place{}
 
-	if err := Db().Where("id = ? OR loc_label = ?", m.ID, m.LocLabel).First(&result).Error; err == nil {
+	if findErr := Db().Where("id = ? OR loc_label = ?", m.ID, m.LocLabel).First(&result).Error; findErr == nil {
 		return &result
-	} else if err := m.Create(); err != nil {
-		log.Errorf("place: %s", err)
-		return nil
+	} else if createErr := m.Create(); createErr == nil {
+		return m
+	} else if err := Db().Where("id = ? OR loc_label = ?", m.ID, m.LocLabel).First(&result).Error; err == nil {
+		return &result
+	} else {
+		log.Errorf("place: %s (first or create %s)", createErr, m.ID)
 	}
 
-	return m
+	return nil
 }
 
 // Unknown returns true if this is an unknown place

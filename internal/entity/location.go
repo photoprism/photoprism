@@ -115,7 +115,7 @@ func (m *Location) Create() error {
 	return Db().Create(m).Error
 }
 
-// FirstOrCreateLocation returns the existing row, inserts a new row or nil in case of errors.
+// FirstOrCreateLocation fetches an existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateLocation(m *Location) *Location {
 	if m.ID == "" {
 		log.Errorf("location: id must not be empty")
@@ -123,23 +123,26 @@ func FirstOrCreateLocation(m *Location) *Location {
 	}
 
 	if m.PlaceID == "" {
-		log.Errorf("location: place_id must not be empty (id %s)", m.ID)
+		log.Errorf("location: place_id must not be empty (first or create %s)", m.ID)
 		return nil
 	}
 
 	result := Location{}
 
-	if err := Db().Where("id = ?", m.ID).First(&result).Error; err == nil {
+	if findErr := Db().Where("id = ?", m.ID).First(&result).Error; findErr == nil {
 		return &result
-	} else if err := m.Create(); err != nil {
-		log.Errorf("location: %s", err)
-		return nil
+	} else if createErr := m.Create(); createErr == nil {
+		return m
+	} else if err := Db().Where("id = ?", m.ID).First(&result).Error; err == nil {
+		return &result
+	} else {
+		log.Errorf("location: %s (first or create %s)", createErr, m.ID)
 	}
 
-	return m
+	return nil
 }
 
-// Keywords computes keyword based on a Location
+// Keywords returns search keywords for a location.
 func (m *Location) Keywords() (result []string) {
 	if m.Place == nil {
 		log.Errorf("location: place for %s is nil - you might have found a bug", m.ID)
