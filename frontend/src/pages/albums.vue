@@ -58,22 +58,18 @@
           <v-card-title primary-title>
             <div v-if="staticFilter.type === 'moment'">
               <h3 class="title mb-3">
-                <translate>No moments matched your search</translate>
+                <translate>No albums found</translate>
               </h3>
               <div>
-                <translate>Wait until PhotoPrism has analyzed your library or try
-                  again using a different term.
-                </translate>
+                <translate>Wait until indexing is complete and PhotoPrism has analyzed your library.</translate>
               </div>
             </div>
             <div v-else>
               <h3 class="title mb-3">
-                <translate>No albums matched your search</translate>
+                <translate>No albums found</translate>
               </h3>
               <div>
-                <translate>Try again using a different term or create a new album from a
-                  selection in Photos.
-                </translate>
+                <translate>Create a new album using the context menu after selecting photos or videos from search results.</translate>
               </div>
             </div>
           </v-card-title>

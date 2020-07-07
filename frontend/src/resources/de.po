@@ -13,7 +13,7 @@ msgstr ""
 "X-Generator: Poedit 2.3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/pages/albums.vue:443 src/share/albums.vue:347
+#: src/pages/albums.vue:439 src/share/albums.vue:347
 msgid "%{n} albums found"
 msgstr "%{n} Alben gefunden"
 
@@ -70,10 +70,9 @@ msgstr "Dateien über den Browser hochladen und indizieren."
 msgid "Add Link"
 msgstr "Link hinzufügen"
 
-#: src/pages/albums.vue:108
+#: src/pages/albums.vue:104
 msgid "Add photos or videos from search results by selecting them."
-msgstr ""
-"Selektierte Suchergebnisse können über das Kontextmenü hinzugefügt werden."
+msgstr "Fotos und Videos können über das Kontextmenü hinzugefügt werden."
 
 #: src/dialog/account/add.vue:5 src/pages/settings/sync.vue:33
 msgid "Add Server"
@@ -123,7 +122,7 @@ msgid "Album"
 msgstr "Album"
 
 #: src/component/album/toolbar.vue:114 src/dialog/photo/album.vue:61
-#: src/pages/albums.vue:240 src/share/albums.vue:162
+#: src/pages/albums.vue:236 src/share/albums.vue:162
 msgid "Album Name"
 msgstr "Album Name"
 
@@ -136,7 +135,7 @@ msgstr "Alben"
 msgid "Albums deleted"
 msgstr "Alben gelöscht"
 
-#: src/pages/albums.vue:365 src/share/albums.vue:269
+#: src/pages/albums.vue:361 src/share/albums.vue:269
 msgid "All %{n} albums loaded"
 msgstr "Alle %{n} Alben werden angezeigt"
 
@@ -152,8 +151,8 @@ msgstr "Alle %{n} Kategorien werden angezeigt"
 msgid "All Cameras"
 msgstr "Alle Kameras"
 
-#: src/component/photo/toolbar.vue:177 src/pages/albums.vue:212
-#: src/pages/albums.vue:534 src/share/albums.vue:135
+#: src/component/photo/toolbar.vue:177 src/pages/albums.vue:208
+#: src/pages/albums.vue:530 src/share/albums.vue:135
 msgid "All Categories"
 msgstr "Alle Kategorien"
 
@@ -323,7 +322,7 @@ msgstr "Karteikarten"
 
 #: src/component/album/toolbar.vue:121 src/component/photo/toolbar.vue:205
 #: src/dialog/album/edit.vue:119 src/dialog/photo/details.vue:436
-#: src/pages/albums.vue:241 src/share/albums.vue:163
+#: src/pages/albums.vue:237 src/share/albums.vue:163
 msgid "Category"
 msgstr "Kategorie"
 
@@ -348,7 +347,7 @@ msgid "Checked"
 msgstr "Geprüft"
 
 #: src/dialog/photo/details.vue:120 src/dialog/share.vue:85
-#: src/pages/library/errors.vue:54
+#: src/pages/library/errors.vue:56
 msgid "Close"
 msgstr "Schließen"
 
@@ -376,11 +375,11 @@ msgstr "Wahrscheinlichkeit"
 msgid "Connect"
 msgstr "Verbinden"
 
-#: src/pages/albums.vue:105
+#: src/pages/albums.vue:101
 msgid "Contains %{n} entries."
 msgstr "Enthält %{n} Einträge."
 
-#: src/pages/albums.vue:102
+#: src/pages/albums.vue:98
 msgid "Contains one entry."
 msgstr "Enthält einen Eintrag."
 
@@ -412,6 +411,14 @@ msgstr "Leider nichts gefunden"
 #: src/dialog/album/edit.vue:116 src/dialog/photo/details.vue:431
 msgid "Country"
 msgstr "Land"
+
+#: src/pages/albums.vue:50
+msgid ""
+"Create a new album using the context menu after selecting photos or videos "
+"from search results."
+msgstr ""
+"Neue Alben können über das Kontextmenü erstellt werden, nachdem Fotos oder "
+"Videos ausgewählt wurden."
 
 #: src/dialog/photo/album.vue:63
 msgid "Create album"
@@ -838,7 +845,9 @@ msgstr "Objektiv"
 
 #: src/pages/settings/general.vue:512
 msgid "Let PhotoPrism create albums from past events."
-msgstr "PhotoPrism erstellt automatisch Alben deiner schönsten Erlebnisse."
+msgstr ""
+"PhotoPrism erstellt automatisch Alben mit besonderen Momenten, Reisen und "
+"Orten."
 
 #: src/component/navigation.vue:267 src/component/navigation.vue:276
 #: src/pages/settings/general.vue:6 src/pages/settings/general.vue:575
@@ -932,7 +941,7 @@ msgstr "Monat"
 msgid "Moonlight"
 msgstr "Moonlight"
 
-#: src/pages/albums.vue:446 src/share/albums.vue:350
+#: src/pages/albums.vue:442 src/share/albums.vue:350
 msgid "More than 20 albums found"
 msgstr "Mehr als 20 Alben gefunden"
 
@@ -1004,21 +1013,18 @@ msgstr "Neueste zuerst"
 msgid "No"
 msgstr "Nein"
 
-#: src/pages/albums.vue:439 src/share/albums.vue:343
+#: src/pages/albums.vue:39 src/pages/albums.vue:47 src/pages/albums.vue:435
+#: src/share/albums.vue:343
 msgid "No albums found"
 msgstr "Keine Alben gefunden"
 
-#: src/pages/albums.vue:49 src/share/albums.vue:24
+#: src/share/albums.vue:24
 msgid "No albums matched your search"
-msgstr "Keine Alben entsprechen deinen Suchkriterien"
+msgstr "Keine Alben gefunden"
 
 #: src/pages/album/photos.vue:354 src/share/photos.vue:397
 msgid "No entries found"
 msgstr "Keine Einträge gefunden"
-
-#: src/pages/library/files.vue:36
-msgid "No files matched your search"
-msgstr "Keine Dateien entsprechen deinen Suchkriterien"
 
 #: src/dialog/photo/labels.vue:17
 msgid "No labels found"
@@ -1028,7 +1034,7 @@ msgstr "Keine Labels gefunden"
 msgid "No labels matched your search"
 msgstr "Keine Labels entsprechen deinen Suchkriterien"
 
-#: src/pages/albums.vue:39 src/share/albums.vue:16
+#: src/share/albums.vue:16
 msgid "No moments matched your search"
 msgstr "Keine passenden Alben gefunden"
 
@@ -1037,11 +1043,12 @@ msgid "No photos found"
 msgstr "Keine Bilder gefunden"
 
 #: src/component/photo/cards.vue:6 src/component/photo/mosaic.vue:6
-#: src/share/photo/cards.vue:6 src/share/photo/mosaic.vue:6
+#: src/pages/library/files.vue:36 src/share/photo/cards.vue:6
+#: src/share/photo/mosaic.vue:6
 msgid "No photos or videos found"
 msgstr "Keine Fotos oder Videos gefunden"
 
-#: src/pages/library/errors.vue:30
+#: src/pages/library/errors.vue:32
 msgid "No results. Try again with a different search term."
 msgstr "Keine Ergebnisse für diesen Suchbegriff."
 
@@ -1120,7 +1127,7 @@ msgstr "Älteste zuerst"
 msgid "Once a week"
 msgstr "Einmal die Woche"
 
-#: src/pages/albums.vue:441 src/share/albums.vue:345
+#: src/pages/albums.vue:437 src/share/albums.vue:345
 msgid "One album found"
 msgstr "Ein Album gefunden"
 
@@ -1283,7 +1290,7 @@ msgstr "Zuletzt hinzugefügt"
 msgid "Red"
 msgstr "Rot"
 
-#: src/pages/library/errors.vue:33
+#: src/pages/library/errors.vue:35
 msgid ""
 "Related log messages will appear here whenever PhotoPrism comes across "
 "broken files or there are other potential issues."
@@ -1356,7 +1363,7 @@ msgstr "Scans"
 #: src/component/album/toolbar.vue:116 src/component/photo/toolbar.vue:197
 #: src/component/photo/toolbar.vue:33 src/dialog/album/edit.vue:114
 #: src/dialog/photo/details.vue:429 src/dialog/photo/labels.vue:114
-#: src/pages/albums.vue:239 src/pages/labels.vue:196
+#: src/pages/albums.vue:235 src/pages/labels.vue:196
 #: src/pages/library/errors.vue:33 src/pages/library/files.vue:176
 #: src/pages/places.vue:174 src/routes.js:235 src/share/albums.vue:161
 msgid "Search"
@@ -1563,7 +1570,7 @@ msgstr "Titel"
 msgid "Title Source"
 msgstr "Herkunft des Titels"
 
-#: src/pages/albums.vue:237 src/share/albums.vue:159
+#: src/pages/albums.vue:233 src/share/albums.vue:159
 msgid "Title too long"
 msgstr "Titel zu  lang"
 
@@ -1582,14 +1589,6 @@ msgstr "Topographisch"
 #: src/pages/about/about.vue:72
 msgid "Trademarks"
 msgstr "Markenrechte"
-
-#: src/pages/albums.vue:52
-msgid ""
-"Try again using a different term or create a new album from a\n"
-"                  selection in Photos."
-msgstr ""
-"Versuche es nochmal mit einem anderen Suchbegriff oder erstelle ein neues "
-"Album."
 
 #: src/pages/labels.vue:38
 msgid "Try again using a related or otherwise similar term."
@@ -1619,7 +1618,7 @@ msgstr "Gruppierung auflösen"
 #: src/dialog/photo/details.vue:423 src/dialog/photo/info.vue:221
 #: src/model/photo.js:417 src/model/photo.js:431 src/model/photo.js:454
 #: src/model/photo.js:466 src/model/photo.js:543 src/model/photo.js:556
-#: src/pages/library/errors.vue:173 src/pages/library/errors.vue:180
+#: src/pages/library/errors.vue:192 src/pages/library/errors.vue:199
 #: src/pages/library/logs.vue:32 src/resources/options.js:15
 #: src/resources/options.js:29 src/resources/options.js:43
 #: src/resources/options.js:57
@@ -1719,11 +1718,10 @@ msgstr ""
 
 #: src/pages/albums.vue:42
 msgid ""
-"Wait until PhotoPrism has analyzed your library or try\n"
-"                  again using a different term."
+"Wait until indexing is complete and PhotoPrism has analyzed your library."
 msgstr ""
-"Warte bis PhotoPrism deine Dateien analysiert hat oder versuche es erneut "
-"mit einem anderen Suchbegriff."
+"Nachdem alle Dateien indiziert wurden, erstellt PhotoPrism automatisch Alben "
+"mit besonderen Momenten, Reisen und Orten."
 
 #: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -1779,6 +1777,23 @@ msgstr ""
 "eigenen Server zu betreiben und über das Projekt zu berichten.\n"
 "Das Anbieten oder Bewerben kommerzieller Produkte, Waren oder "
 "Dienstleistungen ist nur nach vorheriger, schriftlicher Genehmigung erlaubt."
+
+#~ msgid "No files matched your search"
+#~ msgstr "Keine Dateien entsprechen deinen Suchkriterien"
+
+#~ msgid ""
+#~ "Try again using a different term or create a new album from a\n"
+#~ "                  selection in Photos."
+#~ msgstr ""
+#~ "Versuche es nochmal mit einem anderen Suchbegriff oder erstelle ein neues "
+#~ "Album."
+
+#~ msgid ""
+#~ "Wait until PhotoPrism has analyzed your library or try\n"
+#~ "                  again using a different term."
+#~ msgstr ""
+#~ "Warte bis PhotoPrism deine Dateien analysiert hat oder versuche es erneut "
+#~ "mit einem anderen Suchbegriff."
 
 #~ msgid "Event Log"
 #~ msgstr "Ereignisprotokoll"

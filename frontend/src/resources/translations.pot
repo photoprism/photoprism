@@ -5,7 +5,7 @@ msgstr ""
 "Generated-By: easygettext\n"
 "Project-Id-Version: \n"
 
-#: src/pages/albums.vue:443
+#: src/pages/albums.vue:439
 #: src/share/albums.vue:347
 msgid "%{n} albums found"
 msgstr ""
@@ -65,7 +65,7 @@ msgstr ""
 msgid "Add Link"
 msgstr ""
 
-#: src/pages/albums.vue:108
+#: src/pages/albums.vue:104
 msgid "Add photos or videos from search results by selecting them."
 msgstr ""
 
@@ -122,7 +122,7 @@ msgstr ""
 
 #: src/component/album/toolbar.vue:114
 #: src/dialog/photo/album.vue:61
-#: src/pages/albums.vue:240
+#: src/pages/albums.vue:236
 #: src/share/albums.vue:162
 msgid "Album Name"
 msgstr ""
@@ -139,7 +139,7 @@ msgstr ""
 msgid "Albums deleted"
 msgstr ""
 
-#: src/pages/albums.vue:365
+#: src/pages/albums.vue:361
 #: src/share/albums.vue:269
 msgid "All %{n} albums loaded"
 msgstr ""
@@ -159,8 +159,8 @@ msgid "All Cameras"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:177
-#: src/pages/albums.vue:212
-#: src/pages/albums.vue:534
+#: src/pages/albums.vue:208
+#: src/pages/albums.vue:530
 #: src/share/albums.vue:135
 msgid "All Categories"
 msgstr ""
@@ -344,7 +344,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:205
 #: src/dialog/album/edit.vue:119
 #: src/dialog/photo/details.vue:436
-#: src/pages/albums.vue:241
+#: src/pages/albums.vue:237
 #: src/share/albums.vue:163
 msgid "Category"
 msgstr ""
@@ -372,7 +372,7 @@ msgstr ""
 
 #: src/dialog/photo/details.vue:120
 #: src/dialog/share.vue:85
-#: src/pages/library/errors.vue:54
+#: src/pages/library/errors.vue:56
 msgid "Close"
 msgstr ""
 
@@ -401,11 +401,11 @@ msgstr ""
 msgid "Connect"
 msgstr ""
 
-#: src/pages/albums.vue:105
+#: src/pages/albums.vue:101
 msgid "Contains %{n} entries."
 msgstr ""
 
-#: src/pages/albums.vue:102
+#: src/pages/albums.vue:98
 msgid "Contains one entry."
 msgstr ""
 
@@ -440,6 +440,10 @@ msgstr ""
 #: src/dialog/album/edit.vue:116
 #: src/dialog/photo/details.vue:431
 msgid "Country"
+msgstr ""
+
+#: src/pages/albums.vue:50
+msgid "Create a new album using the context menu after selecting photos or videos from search results."
 msgstr ""
 
 #: src/dialog/photo/album.vue:63
@@ -992,7 +996,7 @@ msgstr ""
 msgid "Moonlight"
 msgstr ""
 
-#: src/pages/albums.vue:446
+#: src/pages/albums.vue:442
 #: src/share/albums.vue:350
 msgid "More than 20 albums found"
 msgstr ""
@@ -1081,12 +1085,13 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: src/pages/albums.vue:439
+#: src/pages/albums.vue:39
+#: src/pages/albums.vue:47
+#: src/pages/albums.vue:435
 #: src/share/albums.vue:343
 msgid "No albums found"
 msgstr ""
 
-#: src/pages/albums.vue:49
 #: src/share/albums.vue:24
 msgid "No albums matched your search"
 msgstr ""
@@ -1094,10 +1099,6 @@ msgstr ""
 #: src/pages/album/photos.vue:354
 #: src/share/photos.vue:397
 msgid "No entries found"
-msgstr ""
-
-#: src/pages/library/files.vue:36
-msgid "No files matched your search"
 msgstr ""
 
 #: src/dialog/photo/labels.vue:17
@@ -1108,7 +1109,6 @@ msgstr ""
 msgid "No labels matched your search"
 msgstr ""
 
-#: src/pages/albums.vue:39
 #: src/share/albums.vue:16
 msgid "No moments matched your search"
 msgstr ""
@@ -1120,12 +1120,13 @@ msgstr ""
 
 #: src/component/photo/cards.vue:6
 #: src/component/photo/mosaic.vue:6
+#: src/pages/library/files.vue:36
 #: src/share/photo/cards.vue:6
 #: src/share/photo/mosaic.vue:6
 msgid "No photos or videos found"
 msgstr ""
 
-#: src/pages/library/errors.vue:30
+#: src/pages/library/errors.vue:32
 msgid "No results. Try again with a different search term."
 msgstr ""
 
@@ -1195,7 +1196,7 @@ msgstr ""
 msgid "Once a week"
 msgstr ""
 
-#: src/pages/albums.vue:441
+#: src/pages/albums.vue:437
 #: src/share/albums.vue:345
 msgid "One album found"
 msgstr ""
@@ -1374,7 +1375,7 @@ msgstr ""
 msgid "Red"
 msgstr ""
 
-#: src/pages/library/errors.vue:33
+#: src/pages/library/errors.vue:35
 msgid "Related log messages will appear here whenever PhotoPrism comes across broken files or there are other potential issues."
 msgstr ""
 
@@ -1447,7 +1448,7 @@ msgstr ""
 #: src/dialog/album/edit.vue:114
 #: src/dialog/photo/details.vue:429
 #: src/dialog/photo/labels.vue:114
-#: src/pages/albums.vue:239
+#: src/pages/albums.vue:235
 #: src/pages/labels.vue:196
 #: src/pages/library/errors.vue:33
 #: src/pages/library/files.vue:176
@@ -1670,7 +1671,7 @@ msgstr ""
 msgid "Title Source"
 msgstr ""
 
-#: src/pages/albums.vue:237
+#: src/pages/albums.vue:233
 #: src/share/albums.vue:159
 msgid "Title too long"
 msgstr ""
@@ -1690,12 +1691,6 @@ msgstr ""
 
 #: src/pages/about/about.vue:72
 msgid "Trademarks"
-msgstr ""
-
-#: src/pages/albums.vue:52
-msgid ""
-"Try again using a different term or create a new album from a\n"
-"                  selection in Photos."
 msgstr ""
 
 #: src/pages/labels.vue:38
@@ -1734,8 +1729,8 @@ msgstr ""
 #: src/model/photo.js:466
 #: src/model/photo.js:543
 #: src/model/photo.js:556
-#: src/pages/library/errors.vue:173
-#: src/pages/library/errors.vue:180
+#: src/pages/library/errors.vue:192
+#: src/pages/library/errors.vue:199
 #: src/pages/library/logs.vue:32
 #: src/resources/options.js:15
 #: src/resources/options.js:29
@@ -1842,9 +1837,7 @@ msgid "Wait until an album was shared with you or try again using a different te
 msgstr ""
 
 #: src/pages/albums.vue:42
-msgid ""
-"Wait until PhotoPrism has analyzed your library or try\n"
-"                  again using a different term."
+msgid "Wait until indexing is complete and PhotoPrism has analyzed your library."
 msgstr ""
 
 #: src/dialog/share.vue:80

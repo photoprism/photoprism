@@ -35,7 +35,7 @@
           <v-card-title primary-title>
             <div>
               <h3 class="title mb-3">
-                <translate>No files matched your search</translate>
+                <translate>No photos or videos found</translate>
               </h3>
               <div>
                 <translate>Please re-index your originals if a file you expect is missing.</translate>
