@@ -184,11 +184,17 @@ export class Photo extends RestModel {
     }
 
     localDate(time) {
+        if(!this.TakenAtLocal) {
+            return this.utcDate();
+        }
+
         let zone = this.getTimeZone();
 
-        const result = DateTime.fromISO(this.localDateString(time), {zone});
+        return DateTime.fromISO(this.localDateString(time), {zone});;
+    }
 
-        return result;
+    utcDate() {
+        return DateTime.fromISO(this.TakenAt).toUTC();
     }
 
     baseName(truncate) {
