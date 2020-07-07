@@ -96,6 +96,11 @@ src
 photo
 image
 file
+datei
+dateien
+ordner
+folder
+folders
 'll
 'tis
 'twas
