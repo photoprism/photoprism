@@ -70,4 +70,8 @@ func TestFileTitle(t *testing.T) {
 	t.Run("IQVG4929", func(t *testing.T) {
 		assert.Equal(t, "", FileTitle("IQVG4929.jpg"))
 	})
+
+	t.Run("du,-ich,-er, Sie und es", func(t *testing.T) {
+		assert.Equal(t, "Du, Ich, Er, Sie und Es", FileTitle("du,-ich,-er, Sie und es"))
+	})
 }

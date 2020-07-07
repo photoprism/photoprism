@@ -19,4 +19,5 @@ var SmallWords = map[string]bool{
 	"the":  true,
 	"from": true,
 	"with": true,
+	"und":  true,
 }
