@@ -105,20 +105,23 @@ func FirstOrCreateLabel(m *Label) *Label {
 
 	if err := UnscopedDb().Where("label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).First(&result).Error; err == nil {
 		return &result
-	} else if err := m.Create(); err != nil {
-		log.Errorf("label: %s", err)
-		return nil
+	} else if createErr := m.Create(); createErr == nil {
+		if m.LabelPriority >= 0 {
+			event.EntitiesCreated("labels", []*Label{m})
+
+			event.Publish("count.labels", event.Data{
+				"count": 1,
+			})
+		}
+
+		return m
+	} else if err := UnscopedDb().Where("label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).First(&result).Error; err == nil {
+		return &result
+	} else {
+		log.Errorf("label: %s (first or create %s)", createErr, m.LabelSlug)
 	}
 
-	if m.LabelPriority >= 0 {
-		event.EntitiesCreated("labels", []*Label{m})
-
-		event.Publish("count.labels", event.Data{
-			"count": 1,
-		})
-	}
-
-	return m
+	return nil
 }
 
 // FindLabel returns an existing row if exists.

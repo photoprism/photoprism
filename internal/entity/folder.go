@@ -164,12 +164,15 @@ func FirstOrCreateFolder(m *Folder) *Folder {
 
 	if err := Db().Where("path = ? AND root = ?", m.Path, m.Root).First(&result).Error; err == nil {
 		return &result
-	} else if err := m.Create(); err != nil {
-		log.Errorf("folder: %s", err)
-		return nil
+	} else if createErr := m.Create(); createErr == nil {
+		return m
+	} else if err := Db().Where("path = ? AND root = ?", m.Path, m.Root).First(&result).Error; err == nil {
+		return &result
+	} else {
+		log.Errorf("folder: %s (first or create %s)", createErr, m.Path)
 	}
 
-	return m
+	return nil
 }
 
 // Updates selected properties in the database.

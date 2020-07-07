@@ -132,20 +132,23 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 
 	if err := Db().Where("camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).First(&result).Error; err == nil {
 		return &result
-	} else if err := m.Create(); err != nil {
-		log.Errorf("camera: %s", err)
-		return nil
+	} else if createErr := m.Create(); createErr == nil {
+		if !m.Unknown() {
+			event.EntitiesCreated("cameras", []*Camera{m})
+
+			event.Publish("count.cameras", event.Data{
+				"count": 1,
+			})
+		}
+
+		return m
+	} else if err := Db().Where("camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).First(&result).Error; err == nil {
+		return &result
+	} else {
+		log.Errorf("camera: %s (first or create %s)", createErr, m.String())
 	}
 
-	if !m.Unknown() {
-		event.EntitiesCreated("cameras", []*Camera{m})
-
-		event.Publish("count.cameras", event.Data{
-			"count": 1,
-		})
-	}
-
-	return m
+	return nil
 }
 
 // String returns an identifier that can be used in logs.

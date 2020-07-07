@@ -32,10 +32,13 @@ func FirstOrCreatePhotoKeyword(m *PhotoKeyword) *PhotoKeyword {
 
 	if err := Db().Where("photo_id = ? AND keyword_id = ?", m.PhotoID, m.KeywordID).First(&result).Error; err == nil {
 		return &result
-	} else if err := m.Create(); err != nil {
-		// Already exists.
-		return nil
+	} else if createErr := m.Create(); createErr == nil {
+		return m
+	} else if err := Db().Where("photo_id = ? AND keyword_id = ?", m.PhotoID, m.KeywordID).First(&result).Error; err == nil {
+		return &result
+	} else {
+		log.Errorf("photo-keyword: %s (first or create)", createErr)
 	}
 
-	return m
+	return nil
 }

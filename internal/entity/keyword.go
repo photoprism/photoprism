@@ -50,10 +50,13 @@ func FirstOrCreateKeyword(m *Keyword) *Keyword {
 
 	if err := Db().Where("keyword = ?", m.Keyword).First(&result).Error; err == nil {
 		return &result
-	} else if err := m.Create(); err != nil {
-		log.Errorf("keyword: %s", err)
-		return nil
+	} else if createErr := m.Create(); createErr == nil {
+		return m
+	} else if err := Db().Where("keyword = ?", m.Keyword).First(&result).Error; err == nil {
+		return &result
+	} else {
+		log.Errorf("keyword: %s (first or create %s)", createErr, m.Keyword)
 	}
 
-	return m
+	return nil
 }

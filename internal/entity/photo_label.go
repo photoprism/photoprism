@@ -66,12 +66,15 @@ func FirstOrCreatePhotoLabel(m *PhotoLabel) *PhotoLabel {
 
 	if err := Db().Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(&result).Error; err == nil {
 		return &result
-	} else if err := m.Create(); err != nil {
-		// Already exists.
-		return nil
+	} else if createErr := m.Create(); createErr == nil {
+		return m
+	} else if err := Db().Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(&result).Error; err == nil {
+		return &result
+	} else {
+		log.Errorf("photo-label: %s (first or create)", createErr)
 	}
 
-	return m
+	return nil
 }
 
 // ClassifyLabel returns the label as classify.Label

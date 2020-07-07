@@ -612,7 +612,7 @@ func (m *Photo) GetDetails() *Details {
 }
 
 // SaveDetails writes photo details to the database.
-func(m *Photo) SaveDetails() error {
+func (m *Photo) SaveDetails() error {
 	if err := m.GetDetails().Save(); err == nil {
 		return nil
 	} else if details := FirstOrCreateDetails(m.GetDetails()); details != nil {

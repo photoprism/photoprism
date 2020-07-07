@@ -90,20 +90,28 @@ func FirstOrCreateLens(m *Lens) *Lens {
 
 	if err := Db().Where("lens_slug = ?", m.LensSlug).First(&result).Error; err == nil {
 		return &result
-	} else if err := m.Create(); err != nil {
-		log.Errorf("lens: %s", err)
-		return nil
+	} else if createErr := m.Create(); createErr == nil {
+		if !m.Unknown() {
+			event.EntitiesCreated("lenses", []*Lens{m})
+
+			event.Publish("count.lenses", event.Data{
+				"count": 1,
+			})
+		}
+
+		return m
+	} else if err := Db().Where("lens_slug = ?", m.LensSlug).First(&result).Error; err == nil {
+		return &result
+	} else {
+		log.Errorf("lens: %s (first or create %s)", createErr, m.String())
 	}
 
-	if !m.Unknown() {
-		event.EntitiesCreated("lenses", []*Lens{m})
+	return nil
+}
 
-		event.Publish("count.lenses", event.Data{
-			"count": 1,
-		})
-	}
-
-	return m
+// String returns an identifier that can be used in logs.
+func (m *Lens) String() string {
+	return m.LensName
 }
 
 // Unknown returns true if the lens is not a known make or model.
