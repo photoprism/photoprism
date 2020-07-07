@@ -254,3 +254,8 @@ func (c *Config) OriginalsLimit() int64 {
 	// Megabyte.
 	return c.params.OriginalsLimit * 1024 * 1024
 }
+
+// DarktableMaxSize returns the maximum dimension in pixels.
+func (c *Config) DarktableMaxSize() int {
+	return c.params.DarktableMaxSize
+}

@@ -286,4 +286,10 @@ var GlobalFlags = []cli.Flag{
 		Value:  90,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},
+	cli.IntFlag{
+		Name:   "darktable-max-size",
+		Usage:  "Set to the maximum size of the sidecar images created by Darktable (in pixels), or 0 for no limit",
+		Value:  0,
+		EnvVar: "PHOTOPRISM_DARKTABLE_MAX_SIZE",
+	},
 }

@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -113,11 +114,12 @@ func (c *Convert) ConvertCommand(mf *MediaFile, jpegName string, xmpName string)
 		} else if c.conf.DarktableBin() != "" {
 			// Only one instance of darktable-cli allowed due to locking
 			useMutex = true
+			maxSize := strconv.Itoa(c.conf.DarktableMaxSize())
 
 			if xmpName != "" {
-				result = exec.Command(c.conf.DarktableBin(), mf.FileName(), xmpName, jpegName)
+				result = exec.Command(c.conf.DarktableBin(), "--width", maxSize, "--height", maxSize, mf.FileName(), xmpName, jpegName)
 			} else {
-				result = exec.Command(c.conf.DarktableBin(), mf.FileName(), jpegName)
+				result = exec.Command(c.conf.DarktableBin(), "--width", maxSize, "--height", maxSize, mf.FileName(), jpegName)
 			}
 		} else {
 			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", mf.Base(c.conf.Settings().Index.Group))

@@ -106,6 +106,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %d\n", "thumb-limit", conf.ThumbLimit())
 	fmt.Printf("%-25s %s\n", "thumb-path", conf.ThumbPath())
 	fmt.Printf("%-25s %d\n", "jpeg-quality", conf.JpegQuality())
+	fmt.Printf("%-25s %d\n", "darktable-max-size", conf.DarktableMaxSize())
 
 	return nil
 }

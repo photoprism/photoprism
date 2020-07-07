@@ -84,6 +84,7 @@ type Params struct {
 	ThumbSize          int    `yaml:"thumb-size" flag:"thumb-size"`
 	ThumbLimit         int    `yaml:"thumb-limit" flag:"thumb-limit"`
 	JpegQuality        int    `yaml:"jpeg-quality" flag:"jpeg-quality"`
+	DarktableMaxSize   int    `yaml:"darktable-max-size" flag:"darktable-max-size"`
 }
 
 // NewParams creates a new configuration entity by using two methods:
