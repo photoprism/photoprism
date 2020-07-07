@@ -1046,7 +1046,7 @@ msgstr "Keine Bilder gefunden"
 #: src/pages/library/files.vue:36 src/share/photo/cards.vue:6
 #: src/share/photo/mosaic.vue:6
 msgid "No photos or videos found"
-msgstr "Keine Fotos oder Videos gefunden"
+msgstr "Keine Ergebnisse gefunden"
 
 #: src/pages/library/errors.vue:32
 msgid "No results. Try again with a different search term."
@@ -1600,7 +1600,7 @@ msgstr "Versuche es mit einem verwandten oder ähnlichen Suchbegriff."
 msgid ""
 "Try using other terms and search options such as category, country and "
 "camera."
-msgstr "Versuche es mit anderen Begriffen oder Suchfiltern."
+msgstr "Versuche es mit einem anderen Suchfilter."
 
 #: src/dialog/account/edit.vue:620 src/dialog/photo/files.vue:66
 #: src/dialog/photo/files.vue:183 src/dialog/photo/info.vue:15
