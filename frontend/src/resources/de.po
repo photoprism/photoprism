@@ -365,7 +365,7 @@ msgstr "Farben"
 
 #: src/pages/library/index.vue:115
 msgid "Complete Rescan"
-msgstr "Alle Dateien erneut indizieren"
+msgstr "Dateien neu indizieren"
 
 #: src/dialog/photo/labels.vue:109
 msgid "Confidence"
