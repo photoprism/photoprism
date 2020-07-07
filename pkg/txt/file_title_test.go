@@ -74,4 +74,10 @@ func TestFileTitle(t *testing.T) {
 	t.Run("du,-ich,-er, Sie und es", func(t *testing.T) {
 		assert.Equal(t, "Du, Ich, Er, Sie und Es", FileTitle("du,-ich,-er, Sie und es"))
 	})
+	t.Run("Title too short", func(t *testing.T) {
+		assert.Equal(t, "", FileTitle("jg.jpg"))
+	})
+	t.Run("invalid words", func(t *testing.T) {
+		assert.Equal(t, "", FileTitle("jg hg "))
+	})
 }

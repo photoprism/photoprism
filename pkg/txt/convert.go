@@ -1,6 +1,7 @@
 package txt
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -113,6 +114,7 @@ func Time(s string) (result time.Time) {
 			time.UTC)
 	} else if found := DatePathRegexp.Find(b); len(found) > 0 { // Is it a date path like "2020/01/03"?
 		n := DateIntRegexp.FindAll(found, -1)
+		fmt.Println(n)
 
 		if len(n) < 2 || len(n) > 3 {
 			return result

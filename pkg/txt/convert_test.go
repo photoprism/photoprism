@@ -162,6 +162,30 @@ func TestTime(t *testing.T) {
 		assert.False(t, result.IsZero())
 		assert.Equal(t, "2019-01-03 00:00:00 +0000 UTC", result.String())
 	})
+
+	t.Run("fo.jpg", func(t *testing.T) {
+		result := Time("fo.jpg")
+		assert.True(t, result.IsZero())
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
+
+	t.Run("n >6", func(t *testing.T) {
+		result := Time("2020-01-30_09-87-18-23.jpg")
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
+
+	t.Run("year < yearmin", func(t *testing.T) {
+		result := Time("1020-01-30_09-57-18.jpg")
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("hour > hourmax", func(t *testing.T) {
+		result := Time("1020-01-30_25-57-18.jpg")
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("invalid days", func(t *testing.T) {
+		result := Time("2020-01-00.jpg")
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
 }
 
 func TestInt(t *testing.T) {
@@ -271,6 +295,11 @@ func TestCountryCode(t *testing.T) {
 		result := CountryCode("")
 		assert.Equal(t, "zz", result)
 	})
+
+	t.Run("zz", func(t *testing.T) {
+		result := CountryCode("zz")
+		assert.Equal(t, "zz", result)
+	})
 }
 
 func TestYear(t *testing.T) {
@@ -303,4 +332,10 @@ func TestYear(t *testing.T) {
 		result := Year("")
 		assert.Equal(t, 0, result)
 	})
+}
+
+func TestIsUInt(t *testing.T) {
+	assert.False(t, IsUInt(""))
+	assert.False(t, IsUInt("12 3"))
+	assert.True(t, IsUInt("123"))
 }

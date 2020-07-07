@@ -29,6 +29,10 @@ func TestIsPPID(t *testing.T) {
 	}
 
 	assert.True(t, IsPPID("lt9k3pw1wowuy3c2", 'l'))
+	assert.False(t, IsPPID("lt9k3pw1wowuy3c2123", 'l'))
+	assert.False(t, IsPPID("lt9k3pw1wowuy3c2123", 'l'))
+	assert.False(t, IsPPID("", 'l'))
+	assert.False(t, IsPPID("lt9k3pw1w  ?owuy  3c2123", 'l'))
 }
 
 func TestIsHex(t *testing.T) {
@@ -37,6 +41,8 @@ func TestIsHex(t *testing.T) {
 	assert.False(t, IsHex("55785BAC-9A4B-4747-B090-GE123FFEE437"))
 	assert.False(t, IsHex("550e8400-e29b-11d4-a716_446655440000"))
 	assert.True(t, IsHex("4B1FEF2D1CF4A5BE38B263E0637EDEAD"))
+	assert.False(t, IsHex(""))
+
 }
 
 func TestIsUUID(t *testing.T) {
