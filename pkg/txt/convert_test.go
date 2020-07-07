@@ -179,7 +179,7 @@ func TestTime(t *testing.T) {
 		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
 	})
 	t.Run("hour > hourmax", func(t *testing.T) {
-		result := Time("1020-01-30_25-57-18.jpg")
+		result := Time("2020-01-30_25-57-18.jpg")
 		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
 	})
 	t.Run("invalid days", func(t *testing.T) {
