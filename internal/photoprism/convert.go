@@ -112,12 +112,12 @@ func (c *Convert) ConvertCommand(mf *MediaFile, jpegName string, xmpName string)
 			result = exec.Command(c.conf.SipsBin(), "-s", "format", "jpeg", "--out", jpegName, mf.FileName())
 		} else if c.conf.DarktableBin() != "" {
 			// Only one instance of darktable-cli allowed due to locking
-			useMutex = true
+			//useMutex = true
 
 			if xmpName != "" {
-				result = exec.Command(c.conf.DarktableBin(), mf.FileName(), xmpName, jpegName)
+				result = exec.Command(c.conf.DarktableBin(), "--apply-custom-presets", "false", mf.FileName(), xmpName, jpegName)
 			} else {
-				result = exec.Command(c.conf.DarktableBin(), mf.FileName(), jpegName)
+				result = exec.Command(c.conf.DarktableBin(), "--apply-custom-presets", "false", mf.FileName(), jpegName)
 			}
 		} else {
 			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", mf.Base(c.conf.Settings().Index.Group))
