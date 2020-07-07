@@ -365,7 +365,7 @@ msgstr "Farben"
 
 #: src/pages/library/index.vue:115
 msgid "Complete Rescan"
-msgstr "Dateien neu indizieren"
+msgstr "Index vollständig aktualisieren"
 
 #: src/dialog/photo/labels.vue:109
 msgid "Confidence"
@@ -1279,7 +1279,7 @@ msgstr "Raspberry"
 
 #: src/pages/library/index.vue:120
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Auch bereits bekannte und unveränderte Dateien indizieren."
+msgstr "Auch bereits bekannte und unveränderte Dateien durchsuchen."
 
 #: src/component/album/toolbar.vue:100 src/component/photo/toolbar.vue:188
 #: src/dialog/album/edit.vue:102
