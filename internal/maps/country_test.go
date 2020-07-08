@@ -16,4 +16,13 @@ func TestCountryName(t *testing.T) {
 		result := CountryName("us")
 		assert.Equal(t, "USA", result)
 	})
+
+	t.Run("empty", func(t *testing.T) {
+		result := CountryName("")
+		assert.Equal(t, "Unknown", result)
+	})
+	t.Run("invalid", func(t *testing.T) {
+		result := CountryName("xyz")
+		assert.Equal(t, "Unknown", result)
+	})
 }
