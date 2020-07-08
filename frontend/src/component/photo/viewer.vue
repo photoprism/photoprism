@@ -2,7 +2,7 @@
   <div id="p-photo-viewer" class="p-viewer pswp" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="pswp__bg"></div>
     <div class="pswp__scroll-wrap">
-      <div class="pswp__container">
+      <div class="pswp__container" v-bind:class="{ 'slideshow': slideshow }">
         <div class="pswp__item"></div>
         <div class="pswp__item"></div>
         <div class="pswp__item"></div>
@@ -86,6 +86,7 @@
                 item: new Thumb(),
                 subscriptions: [],
                 interval: false,
+                slideshow: false,
             };
         },
         created() {
@@ -113,6 +114,8 @@
                 }
             },
             onPause() {
+                this.slideshow = false;
+
                 if (this.interval) {
                     clearInterval(this.interval);
                     this.interval = false;
@@ -123,6 +126,8 @@
                     this.onPause();
                     return;
                 }
+
+                this.slideshow = true;
 
                 const self = this;
                 const psp = this.$viewer.gallery;
