@@ -48,7 +48,7 @@ func TestCreateAccount(t *testing.T) {
 	})
 }
 
-func TestAccount_Save(t *testing.T) {
+func TestAccount_SaveForm(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		account := Account{AccName: "Foo", AccOwner: "bar", AccURL: "test.com", AccType: "test", AccKey: "123", AccUser: "testuser", AccPass: "testpass",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
@@ -162,5 +162,102 @@ func TestAccount_Directories(t *testing.T) {
 		}
 
 		assert.Empty(t, result.Abs())
+	})
+}
+
+func TestAccount_Updates(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		account := Account{AccName: "DeleteAccount", AccOwner: "Delete", AccURL: "test.com", AccType: "test", AccKey: "123", AccUser: "testuser", AccPass: "testpass",
+			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
+			SyncInterval: 5, SyncUpload: true, SyncDownload: false, SyncFilenames: true, SyncRaw: false}
+
+		accountForm, err := form.NewAccount(account)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		model, err := CreateAccount(accountForm)
+		assert.Equal(t, "testuser", model.AccUser)
+		assert.Equal(t, "DeleteAccount", model.AccName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		err = model.Updates(Account{AccName: "UpdatedName", AccUser: "UpdatedUser"})
+		assert.Equal(t, "UpdatedUser", model.AccUser)
+		assert.Equal(t, "UpdatedName", model.AccName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+	})
+}
+
+func TestAccount_Update(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		account := Account{AccName: "DeleteAccount", AccOwner: "Delete", AccURL: "test.com", AccType: "test", AccKey: "123", AccUser: "testuser", AccPass: "testpass",
+			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
+			SyncInterval: 5, SyncUpload: true, SyncDownload: false, SyncFilenames: true, SyncRaw: false}
+
+		accountForm, err := form.NewAccount(account)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		model, err := CreateAccount(accountForm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "testuser", model.AccUser)
+
+		err = model.Update("AccUser", "UpdatedUser")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "UpdatedUser", model.AccUser)
+	})
+}
+
+func TestAccount_Save(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		account := Account{AccName: "DeleteAccount", AccOwner: "Delete", AccURL: "test.com", AccType: "test", AccKey: "123", AccUser: "testuser", AccPass: "testpass",
+			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
+			SyncInterval: 5, SyncUpload: true, SyncDownload: false, SyncFilenames: true, SyncRaw: false}
+
+		accountForm, err := form.NewAccount(account)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		model, err := CreateAccount(accountForm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		initalDate := model.UpdatedAt
+
+		err = model.Save()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		afterDate := model.UpdatedAt
+		assert.True(t, afterDate.After(initalDate))
+	})
+}
+
+func TestAccount_Create(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		account := Account{}
+
+		err := account.Create()
+
+		if err != nil {
+			t.Fatal(err)
+		}
 	})
 }
