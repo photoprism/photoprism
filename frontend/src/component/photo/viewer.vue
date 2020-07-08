@@ -116,9 +116,6 @@
                 if (this.interval) {
                     clearInterval(this.interval);
                     this.interval = false;
-                    
-                    const psp = this.$viewer.gallery;
-                    psp.framework.removeClass(psp.container, "slide_show");
                 }
             },
             onSlideshow() {
@@ -132,15 +129,13 @@
 
                 psp.next();
 
-                psp.framework.addClass(psp.container, "slide_show");
-
                 self.interval = setInterval(() => {
                     if (psp && typeof psp.next === "function") {
                         psp.next();
                     } else {
                         this.onPause();
                     }
-                }, 4000);
+                }, 5000);
             },
             onDownload() {
                 if (!this.item || !this.item.download_url) {
