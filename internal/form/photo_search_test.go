@@ -77,6 +77,21 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, false, form.Duplicate)
 		assert.Equal(t, float32(33.45343), form.Lng)
 	})
+	t.Run("valid query with filter", func(t *testing.T) {
+		form := &PhotoSearch{Query: "label:cat title:\"fooBar baz\"", Filter: "label:dog"}
+
+		err := form.ParseQueryString()
+
+		log.Debugf("%+v\n", form)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "dog", form.Label)
+		assert.Equal(t, "label:dog", form.Filter)
+		assert.Equal(t, "fooBar baz", form.Title)
+	})
 	t.Run("valid query with umlauts", func(t *testing.T) {
 		form := &PhotoSearch{Query: "title:\"tübingen\""}
 
@@ -187,6 +202,26 @@ func TestPhotoSearch_Serialize(t *testing.T) {
 	}
 
 	result := form.Serialize()
+
+	t.Logf("SERIALIZED: %s", result)
+
+	assert.IsType(t, "string", result)
+}
+
+func TestPhotoSearch_SerializeAll(t *testing.T) {
+	form := PhotoSearch{
+		Query:   "foo BAR",
+		Private: true,
+		Photo:   false,
+		Lat:     1.5,
+		Lng:     -10.33333,
+		Year:    2002,
+		Chroma:  1,
+		Diff:    424242,
+		Before:  time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC),
+	}
+
+	result := form.SerializeAll()
 
 	t.Logf("SERIALIZED: %s", result)
 

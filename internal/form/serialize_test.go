@@ -94,4 +94,9 @@ func TestSerialize(t *testing.T) {
 		assert.IsType(t, expectedAll, result)
 		assert.Equal(t, expectedAll, result)
 	})
+
+	t.Run("invalid argument", func(t *testing.T) {
+		result := Serialize("string", true)
+		assert.Equal(t, "", result)
+	})
 }
