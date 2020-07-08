@@ -20,7 +20,8 @@
         <v-icon>refresh</v-icon>
       </v-btn>
 
-      <v-btn icon href="https://github.com/photoprism/photoprism/issues" target="_blank" class="action-bug-report" title="Bug Report">
+      <v-btn icon href="https://github.com/photoprism/photoprism/issues" target="_blank" class="action-bug-report"
+             title="Bug Report">
         <v-icon>bug_report</v-icon>
       </v-btn>
     </v-toolbar>
@@ -151,9 +152,12 @@
                 this.loadMore();
             },
             loadMore() {
-                if (this.loading || this.scrollDisabled) return;
+                if (this.scrollDisabled) return;
 
-                this.loading = true;
+                if (this.offset === 0) {
+                    this.loading = true;
+                }
+
                 this.scrollDisabled = true;
 
                 const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
