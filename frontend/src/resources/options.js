@@ -81,6 +81,10 @@ export const Languages = () => [
         "value": "nl",
     },
     {
+        "text": $gettext("Polish"),
+        "value": "pl",
+    },
+    {
         "text": $gettext("Russian"),
         "value": "ru",
     },

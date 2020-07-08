@@ -1,0 +1,506 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: easygettext\n"
+"Project-Id-Version: Photoprism\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 2.2.3\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: pl\n"
+
+#: src/pages/albums.vue:255
+msgid " albums found"
+msgstr " znalezione albumy"
+
+#: src/pages/albums.vue:196
+msgid " albums loaded"
+msgstr " albumy załadowane"
+
+#: src/pages/labels.vue:203
+msgid " labels found"
+msgstr " znaleziono etykiety"
+
+#: src/pages/labels.vue:149
+msgid " labels loaded"
+msgstr " załadowane etykiety"
+
+#: src/pages/album/photos.vue:224 src/pages/photos.vue:215
+#: src/pages/places.vue:177
+msgid " photos found"
+msgstr " znaleziono zdjęcia"
+
+#: src/pages/album/photos.vue:151 src/pages/photos.vue:143
+msgid " photos loaded"
+msgstr " zdjęcia załadowane"
+
+#: src/pages/events.vue:81
+msgid "4 Day"
+msgstr "4 Dzień"
+
+#: src/component/p-photo-clipboard.vue:151
+#: src/dialog/p-photo-album-dialog.vue:28
+msgid "Add to album"
+msgstr "Dodaj do albumu"
+
+#: src/pages/albums.vue:163
+msgid "Album Name"
+msgstr "Album Name"
+
+#: src/component/p-navigation.vue:81 src/component/p-navigation.vue:88
+msgid "Albums"
+msgstr "Albumy"
+
+#: src/component/p-album-clipboard.vue:101
+msgid "Albums deleted"
+msgstr "Skasowano albumy"
+
+#: src/pages/album/photos.vue:151 src/pages/albums.vue:196
+#: src/pages/labels.vue:149 src/pages/photos.vue:143
+msgid "All "
+msgstr "Wszystko "
+
+#: src/component/p-album-search.vue:107 src/component/p-photo-toolbar.vue:157
+msgid "All Cameras"
+msgstr "Wszystkie kamery"
+
+#: src/component/p-album-search.vue:110 src/component/p-photo-toolbar.vue:160
+msgid "All Countries"
+msgstr "Wszystkie kraje"
+
+#: src/dialog/p-album-delete-dialog.vue:9
+msgid "Are you sure you want to delete these albums?"
+msgstr "Czy na pewno chcesz usunąć te albumy?"
+
+#: src/dialog/p-photo-delete-dialog.vue:9 src/dialog/p-photo-edit-dialog.vue:9
+msgid "Are you sure you want to delete these photos?"
+msgstr "Czy na pewno chcesz usunąć te zdjęcia?"
+
+#: src/component/p-album-search.vue:134 src/component/p-photo-list.vue:53
+#: src/component/p-photo-toolbar.vue:186
+msgid "Camera"
+msgstr "Kamera"
+
+#: src/dialog/p-album-delete-dialog.vue:13
+#: src/dialog/p-photo-album-dialog.vue:25
+#: src/dialog/p-photo-delete-dialog.vue:13
+#: src/dialog/p-photo-edit-dialog.vue:13
+msgid "Cancel"
+msgstr "Przerwij"
+
+#: src/component/p-album-search.vue:133 src/component/p-photo-list.vue:52
+#: src/component/p-photo-toolbar.vue:185
+msgid "Country"
+msgstr "Kraj"
+
+#: src/pages/albums.vue:37
+msgid "create a new album"
+msgstr "utwórz nowy album"
+
+#: src/pages/events.vue:84
+msgid "Custom Daily"
+msgstr "Custom Daily"
+
+#: src/pages/events.vue:85
+msgid "Custom Weekly"
+msgstr "Custom Weekly"
+
+#: src/pages/events.vue:80
+msgid "Day"
+msgstr "Dzień"
+
+#: src/component/p-album-clipboard.vue:85
+#: src/component/p-photo-clipboard.vue:153
+#: src/dialog/p-album-delete-dialog.vue:16
+#: src/dialog/p-photo-delete-dialog.vue:16
+#: src/dialog/p-photo-edit-dialog.vue:16
+msgid "Delete"
+msgstr "Usuń"
+
+#: src/component/p-album-search.vue:119 src/component/p-photo-toolbar.vue:169
+msgid "Details"
+msgstr "Detale"
+
+#: src/pages/library/import.vue:7 src/pages/library/maintenance.vue:7
+#: src/pages/library/upload.vue:10
+msgid "Done."
+msgstr "Zrobione."
+
+#: src/component/p-album-clipboard.vue:84
+#: src/component/p-photo-clipboard.vue:154
+msgid "Download"
+msgstr "Pobierz"
+
+#: src/component/p-album-clipboard.vue:116
+#: src/component/p-photo-clipboard.vue:235
+msgid "Downloading..."
+msgstr "Pobieranie…"
+
+#: src/pages/library/upload.vue:108
+msgid "Failure while importing uploaded files"
+msgstr "Niepowodzenie podczas importowania przekazanych plików"
+
+#: src/component/p-photo-list.vue:54
+msgid "Favorite"
+msgstr "Ulubiony"
+
+#: src/component/p-navigation.vue:107
+msgid "Favorites"
+msgstr "Ulubione"
+
+#: src/pages/places.vue:92
+msgid "Finding your position..."
+msgstr "Odnajdź Twoją pozycję…"
+
+#: src/pages/settings.vue:11
+msgid "General"
+msgstr "Ogólne"
+
+#: src/pages/places.vue:95
+msgid "Geolocation is not available"
+msgstr "Geolokalizacja nie jest dostępna"
+
+#: src/pages/library.vue:18 src/pages/library/import.vue:20
+msgid "Import"
+msgstr "Import"
+
+#: src/pages/library/import.vue:74
+msgid "Import failed"
+msgstr "Błąd importu"
+
+#: src/pages/library/import.vue:5
+msgid "Importing"
+msgstr "Importuję"
+
+#: src/pages/library/import.vue:6
+msgid "Importing files from directory..."
+msgstr "Importuje pliki z katalogu…"
+
+#: src/pages/library/maintenance.vue:5
+msgid "Indexing"
+msgstr "Indeksuje"
+
+#: src/pages/library/maintenance.vue:89
+msgid "Indexing failed"
+msgstr "Błąd indeksowania"
+
+#: src/pages/library/maintenance.vue:6
+msgid "Indexing photos and sidecar files..."
+msgstr "Indeksowanie zdjęć i plików pomocniczych ..."
+
+#: src/component/p-navigation.vue:127
+msgid "Labels"
+msgstr "Etykiety"
+
+#: src/pages/settings/general.vue:53
+msgid "Language"
+msgstr "Język"
+
+#: src/component/p-navigation.vue:157
+msgid "Library"
+msgstr "Biblioteka"
+
+#: src/component/p-album-search.vue:120 src/component/p-photo-toolbar.vue:170
+msgid "List"
+msgstr "Lista"
+
+#: src/component/p-navigation.vue:187 src/pages/login.vue:3
+msgid "Login"
+msgstr "Zaloguj"
+
+#: src/component/p-navigation.vue:177
+msgid "Logout"
+msgstr "Wyloguj"
+
+#: src/pages/settings.vue:18
+msgid "Logs"
+msgstr "Logi"
+
+#: src/pages/library.vue:11
+msgid "Maintenance"
+msgstr "Maintenance"
+
+#: src/component/p-navigation.vue:64
+msgid "Monochrome"
+msgstr "Monochromatyczne"
+
+#: src/pages/events.vue:83
+msgid "Month"
+msgstr "Miesiąc"
+
+#: src/pages/places.vue:175
+msgid "More than 100 photos found"
+msgstr "Znaleziono ponad 100 zdjęć"
+
+#: src/pages/albums.vue:258
+msgid "More than 20 albums found"
+msgstr "Znaleziono ponad 20 albumów"
+
+#: src/pages/labels.vue:205
+msgid "More than 20 labels found"
+msgstr "Znaleziono ponad 20 etykiet"
+
+#: src/pages/album/photos.vue:227 src/pages/photos.vue:218
+msgid "More than 50 photos found"
+msgstr "Znaleziono ponad 50 zdjęć"
+
+#: src/component/p-album-search.vue:118 src/component/p-photo-toolbar.vue:168
+msgid "Mosaic"
+msgstr "Mozaika"
+
+#: src/pages/albums.vue:276
+msgid "New Album"
+msgstr "Nowy Album"
+
+#: src/component/p-album-search.vue:125 src/component/p-photo-toolbar.vue:175
+msgid "Newest first"
+msgstr "Najnowsze na początku"
+
+#: src/pages/events.vue:57
+msgid "Next"
+msgstr "Następny"
+
+#: src/pages/albums.vue:251
+msgid "No albums found"
+msgstr "Nie znaleziono albumów"
+
+#: src/pages/albums.vue:35
+msgid "No albums matched your search"
+msgstr "Brak albumów spełniających Twoje kryteria"
+
+#: src/pages/labels.vue:29
+msgid "No labels matched your search"
+msgstr "Brak etykiet spełniających Twoje kryteria"
+
+#: src/pages/places.vue:162
+msgid "No locations found"
+msgstr "Nie znaleziono lokalizacji"
+
+#: src/pages/album/photos.vue:220 src/pages/photos.vue:211
+#: src/pages/places.vue:212
+msgid "No photos found"
+msgstr "Nie znaleziono zdjęć"
+
+#: src/component/p-photo-details.vue:5 src/component/p-photo-mosaic.vue:5
+#: src/component/p-photo-tiles.vue:5
+msgid "No photos matched your search"
+msgstr "Brak zdjęć spełniających Twoje kryteria"
+
+#: src/component/p-photo-clipboard.vue:190
+#: src/component/p-photo-clipboard.vue:220 src/pages/people.vue:3
+msgid "Not implemented yet"
+msgstr "Jeszcze nie zaimplementowano"
+
+#: src/pages/settings/logs.vue:5
+msgid "Nothing to see here yet. Be patient."
+msgstr "Nie ma tu jeszcze nic do zobaczenia. Bądź cierpliwy."
+
+#: src/pages/library/upload.vue:8
+msgid "of"
+msgstr "z"
+
+#: src/component/p-album-search.vue:126 src/component/p-photo-toolbar.vue:176
+msgid "Oldest first"
+msgstr "Najstarsze na początku"
+
+#: src/pages/albums.vue:253
+msgid "One album found"
+msgstr "Znaleziono jeden album"
+
+#: src/pages/photos.vue:213
+msgid "One photo found"
+msgstr "Znaleziono jedno zdjęcie"
+
+#: src/pages/login.vue:45
+msgid "Password"
+msgstr "Hasło"
+
+#: src/component/p-navigation.vue:51 src/component/p-navigation.vue:58
+msgid "Photos"
+msgstr "Zdjęcia"
+
+#: src/component/p-photo-clipboard.vue:185
+msgid "Photos deleted"
+msgstr "Zdjęcia skasowane"
+
+#: src/component/p-navigation.vue:117
+msgid "Places"
+msgstr "Miejsca"
+
+#: src/pages/login.vue:10
+msgid "Please enter the admin password to proceed..."
+msgstr "Wprowadź hasło administratora, aby kontynuować…"
+
+#: src/pages/library/import.vue:8
+msgid "Press button to import photos from directory..."
+msgstr "Naciśnij przycisk, aby zaimportować zdjęcia z katalogu…"
+
+#: src/pages/library/maintenance.vue:8
+msgid "Press button to start indexing..."
+msgstr "Naciśnij przycisk, aby rozpocząć indeksowanie…"
+
+#: src/pages/events.vue:37
+msgid "Prev"
+msgstr "Poprz"
+
+#: src/component/p-photo-clipboard.vue:149
+msgid "Private"
+msgstr "Prywatny"
+
+#: src/component/p-album-search.vue:127 src/component/p-photo-toolbar.vue:177
+msgid "Recently imported"
+msgstr "Ostatnio zaimportowane"
+
+#: src/component/p-photo-clipboard.vue:204
+msgid "remove failed: unknown album"
+msgstr "usunięcie nie powiodło się: nieznany album"
+
+#: src/component/p-photo-clipboard.vue:152
+msgid "Remove from album"
+msgstr "Usuń z albumu"
+
+#: src/pages/settings/general.vue:32
+msgid "Save"
+msgstr "Zapisz"
+
+#: src/component/p-album-search.vue:131 src/component/p-photo-toolbar.vue:183
+#: src/pages/albums.vue:162 src/pages/labels.vue:116 src/pages/places.vue:73
+msgid "Search"
+msgstr "Szukaj"
+
+#: src/dialog/p-photo-album-dialog.vue:52
+msgid "Select album"
+msgstr "Wybierz album"
+
+#: src/pages/library/upload.vue:7
+msgid "Select photos to start upload..."
+msgstr "Wybierz zdjęcia, aby rozpocząć przesyłanie…"
+
+#: src/component/p-navigation.vue:167
+msgid "Settings"
+msgstr "Ustawienia"
+
+#: src/pages/settings/general.vue:65
+msgid "Settings saved"
+msgstr "Zapisano ustawienia"
+
+#: src/pages/login.vue:27
+msgid "Sign in"
+msgstr "Zaloguj się"
+
+#: src/pages/library/maintenance.vue:58
+msgid "Skip existing photos and sidecar files"
+msgstr "Pomiń istniejące zdjęcia i pliki pomocnicze"
+
+#: src/component/p-album-search.vue:135 src/component/p-photo-toolbar.vue:187
+msgid "Sort By"
+msgstr "Sortuj przez"
+
+#: src/pages/library/maintenance.vue:29
+msgid "Start"
+msgstr "Start"
+
+#: src/component/p-photo-clipboard.vue:150
+msgid "Story"
+msgstr "Opowieść"
+
+#: src/component/p-photo-toolbar.vue:189
+msgid "Taken after"
+msgstr "Wykonano później"
+
+#: src/component/p-photo-list.vue:51
+msgid "Taken At"
+msgstr "Wykonano w"
+
+#: src/component/p-photo-toolbar.vue:188
+msgid "Taken before"
+msgstr "Wykonano przed"
+
+#: src/pages/settings/general.vue:54
+msgid "Theme"
+msgstr "Motyw"
+
+#: src/component/p-album-search.vue:117 src/component/p-photo-toolbar.vue:167
+msgid "Tiles"
+msgstr "Kafelki"
+
+#: src/component/p-photo-list.vue:50
+msgid "Title"
+msgstr "Kafelek"
+
+#: src/pages/albums.vue:160
+msgid "Title too long"
+msgstr "Tytuł za długi"
+
+#: src/component/p-photo-clipboard.vue:167
+msgid "Toggled private flag"
+msgstr "Przełączono prywatną flagę"
+
+#: src/component/p-photo-clipboard.vue:175
+msgid "Toggled story flag"
+msgstr "Przełączono flagę historii"
+
+#: src/pages/albums.vue:36
+msgid "Try again using a different term or"
+msgstr "Spróbuj ponownie, używając innego terminu lub"
+
+#: src/pages/labels.vue:30
+msgid "Try again using a related or otherwise similar term."
+msgstr "Spróbuj ponownie, używając pokrewnego lub podobnego terminu."
+
+#: src/component/p-photo-details.vue:6 src/component/p-photo-mosaic.vue:6
+#: src/component/p-photo-tiles.vue:6
+msgid ""
+"Try using other terms and search options such as category, country and "
+"camera."
+msgstr ""
+"Spróbuj użyć innych terminów i opcji wyszukiwania, takich jak kategoria, "
+"kraj i kamera."
+
+#: src/pages/events.vue:88
+msgid "Type"
+msgstr "Typ"
+
+#: src/pages/library.vue:25 src/pages/library/upload.vue:22
+msgid "Upload"
+msgstr "Wgraj"
+
+#: src/pages/library/upload.vue:103
+msgid "Upload complete"
+msgstr "Ukończono wgrywanie"
+
+#: src/pages/library/upload.vue:9
+msgid "Upload complete. Indexing..."
+msgstr "Wgrywanie zakończone. Indeksowanie…"
+
+#: src/pages/library/upload.vue:92
+msgid "Upload failed"
+msgstr "Przesyłanie nie powiodło się"
+
+#: src/pages/library/upload.vue:8
+msgid "Uploading"
+msgstr "Przesyłanie"
+
+#: src/pages/library/upload.vue:70
+msgid "Uploading photos..."
+msgstr "Przesyłanie zdjęć…"
+
+#: src/component/p-navigation.vue:70
+msgid "Vibrant"
+msgstr "żywe kolory"
+
+#: src/component/p-album-search.vue:132 src/component/p-photo-toolbar.vue:184
+msgid "View"
+msgstr "Widok"
+
+#: src/pages/events.vue:82
+msgid "Week"
+msgstr "Tydzień"
+
+#: src/component/p-album-clipboard.vue:107
+msgid "You can only download one album"
+msgstr "Możesz pobrać tylko jeden album"
