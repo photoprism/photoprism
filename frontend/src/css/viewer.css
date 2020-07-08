@@ -56,5 +56,5 @@
 }
 
 #p-photo-viewer .pswp__container.slideshow {
-    transition: transform 1s ease-in-out;
+    transition: transform 0.8s ease-in-out;
 }

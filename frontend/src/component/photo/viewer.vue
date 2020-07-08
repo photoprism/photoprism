@@ -94,6 +94,8 @@
             this.subscriptions['viewer.pause'] = Event.subscribe('viewer.pause', this.onPause);
         },
         destroyed() {
+            this.onPause();
+
             for (let i = 0; i < this.subscriptions.length; i++) {
                 Event.unsubscribe(this.subscriptions[i]);
             }
@@ -141,6 +143,8 @@
                 }, 5000);
             },
             onDownload() {
+                this.onPause();
+
                 if (!this.item || !this.item.download_url) {
                     console.warn("photo viewer: no download url");
                     return;
@@ -153,6 +157,8 @@
                 });
             },
             onEdit() {
+                this.onPause();
+
                 const g = this.$viewer.gallery; // Gallery
                 let index = 0;
 
