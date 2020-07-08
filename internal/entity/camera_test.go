@@ -18,6 +18,24 @@ func TestFirstOrCreateCamera(t *testing.T) {
 
 		assert.GreaterOrEqual(t, result.ID, uint(1))
 	})
+	t.Run("camera without make and model", func(t *testing.T) {
+		camera := &Camera{ID: 10000000, CameraSlug: "camera-slug"}
+
+		result := FirstOrCreateCamera(camera)
+
+		if result == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.GreaterOrEqual(t, result.ID, uint(1))
+	})
+	t.Run("not existing model and make", func(t *testing.T) {
+		camera := &Camera{CameraModel: "xxx", CameraMake: "xxx"}
+
+		result := FirstOrCreateCamera(camera)
+
+		assert.GreaterOrEqual(t, result.ID, uint(1))
+	})
 }
 
 func TestNewCamera(t *testing.T) {
