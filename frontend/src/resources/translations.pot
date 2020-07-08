@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: \n"
 
 #: src/pages/albums.vue:439
-#: src/share/albums.vue:347
+#: src/share/albums.vue:339
 msgid "%{n} albums found"
 msgstr ""
 
@@ -27,15 +27,15 @@ msgstr ""
 msgid "%{n} labels found"
 msgstr ""
 
-#: src/resources/options.js:155
+#: src/resources/options.js:167
 msgid "1 hour"
 msgstr ""
 
-#: src/resources/options.js:157
+#: src/resources/options.js:169
 msgid "12 hours"
 msgstr ""
 
-#: src/resources/options.js:156
+#: src/resources/options.js:168
 msgid "4 hours"
 msgstr ""
 
@@ -88,31 +88,31 @@ msgstr ""
 msgid "Added"
 msgstr ""
 
-#: src/resources/options.js:165
+#: src/resources/options.js:177
 msgid "After 1 day"
 msgstr ""
 
-#: src/resources/options.js:166
+#: src/resources/options.js:178
 msgid "After 3 days"
 msgstr ""
 
-#: src/resources/options.js:167
+#: src/resources/options.js:179
 msgid "After 7 days"
 msgstr ""
 
-#: src/resources/options.js:169
+#: src/resources/options.js:181
 msgid "After one month"
 msgstr ""
 
-#: src/resources/options.js:171
+#: src/resources/options.js:183
 msgid "After one year"
 msgstr ""
 
-#: src/resources/options.js:170
+#: src/resources/options.js:182
 msgid "After two months"
 msgstr ""
 
-#: src/resources/options.js:168
+#: src/resources/options.js:180
 msgid "After two weeks"
 msgstr ""
 
@@ -123,7 +123,7 @@ msgstr ""
 #: src/component/album/toolbar.vue:114
 #: src/dialog/photo/album.vue:61
 #: src/pages/albums.vue:236
-#: src/share/albums.vue:162
+#: src/share/albums.vue:154
 msgid "Album Name"
 msgstr ""
 
@@ -140,7 +140,7 @@ msgid "Albums deleted"
 msgstr ""
 
 #: src/pages/albums.vue:361
-#: src/share/albums.vue:269
+#: src/share/albums.vue:261
 msgid "All %{n} albums loaded"
 msgstr ""
 
@@ -161,7 +161,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:177
 #: src/pages/albums.vue:208
 #: src/pages/albums.vue:530
-#: src/share/albums.vue:135
+#: src/share/albums.vue:127
 msgid "All Categories"
 msgstr ""
 
@@ -272,15 +272,15 @@ msgstr ""
 msgid "Backups"
 msgstr ""
 
-#: src/resources/options.js:190
+#: src/resources/options.js:202
 msgid "Black"
 msgstr ""
 
-#: src/resources/options.js:186
+#: src/resources/options.js:198
 msgid "Blue"
 msgstr ""
 
-#: src/resources/options.js:187
+#: src/resources/options.js:199
 msgid "Brown"
 msgstr ""
 
@@ -345,7 +345,7 @@ msgstr ""
 #: src/dialog/album/edit.vue:119
 #: src/dialog/photo/details.vue:436
 #: src/pages/albums.vue:237
-#: src/share/albums.vue:163
+#: src/share/albums.vue:155
 msgid "Category"
 msgstr ""
 
@@ -462,15 +462,15 @@ msgstr ""
 msgid "Current Password"
 msgstr ""
 
-#: src/resources/options.js:185
+#: src/resources/options.js:197
 msgid "Cyan"
 msgstr ""
 
-#: src/resources/options.js:87
+#: src/resources/options.js:99
 msgid "Cyano"
 msgstr ""
 
-#: src/resources/options.js:158
+#: src/resources/options.js:170
 msgid "Daily"
 msgstr ""
 
@@ -478,7 +478,7 @@ msgstr ""
 msgid "Day"
 msgstr ""
 
-#: src/resources/options.js:83
+#: src/resources/options.js:95
 msgid "Default"
 msgstr ""
 
@@ -554,7 +554,7 @@ msgstr ""
 #: src/component/file/clipboard.vue:106
 #: src/component/label/clipboard.vue:132
 #: src/component/photo/clipboard.vue:223
-#: src/component/photo/viewer.vue:146
+#: src/component/photo/viewer.vue:149
 #: src/share/album/clipboard.vue:93
 #: src/share/photo/clipboard.vue:97
 msgid "Downloading…"
@@ -564,7 +564,7 @@ msgstr ""
 msgid "Duplicate"
 msgstr ""
 
-#: src/resources/options.js:72
+#: src/resources/options.js:80
 msgid "Dutch"
 msgstr ""
 
@@ -608,7 +608,7 @@ msgstr ""
 msgid "Errors"
 msgstr ""
 
-#: src/resources/options.js:159
+#: src/resources/options.js:171
 msgid "Every two days"
 msgstr ""
 
@@ -645,7 +645,7 @@ msgstr ""
 msgid "Failure while importing uploaded files"
 msgstr ""
 
-#: src/resources/options.js:117
+#: src/resources/options.js:129
 msgid "Fast"
 msgstr ""
 
@@ -721,6 +721,10 @@ msgstr ""
 msgid "Found one result"
 msgstr ""
 
+#: src/resources/options.js:72
+msgid "French"
+msgstr ""
+
 #: src/pages/settings.vue:4
 msgid "General"
 msgstr ""
@@ -729,15 +733,15 @@ msgstr ""
 msgid "German"
 msgstr ""
 
-#: src/resources/options.js:180
+#: src/resources/options.js:192
 msgid "Gold"
 msgstr ""
 
-#: src/resources/options.js:183
+#: src/resources/options.js:195
 msgid "Green"
 msgstr ""
 
-#: src/resources/options.js:189
+#: src/resources/options.js:201
 msgid "Grey"
 msgstr ""
 
@@ -773,7 +777,7 @@ msgstr ""
 msgid "Hide Private"
 msgstr ""
 
-#: src/resources/options.js:140
+#: src/resources/options.js:152
 msgid "Hybrid"
 msgstr ""
 
@@ -877,7 +881,7 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
-#: src/resources/options.js:91
+#: src/resources/options.js:103
 msgid "Lavender"
 msgstr ""
 
@@ -907,7 +911,7 @@ msgstr ""
 msgid "License"
 msgstr ""
 
-#: src/resources/options.js:182
+#: src/resources/options.js:194
 msgid "Lime"
 msgstr ""
 
@@ -955,7 +959,7 @@ msgstr ""
 msgid "Longitude"
 msgstr ""
 
-#: src/resources/options.js:176
+#: src/resources/options.js:188
 msgid "Magenta"
 msgstr ""
 
@@ -967,7 +971,7 @@ msgstr ""
 msgid "Manual Upload"
 msgstr ""
 
-#: src/resources/options.js:121
+#: src/resources/options.js:133
 msgid "Medium"
 msgstr ""
 
@@ -991,13 +995,13 @@ msgstr ""
 msgid "Month"
 msgstr ""
 
-#: src/resources/options.js:95
-#: src/resources/options.js:148
+#: src/resources/options.js:107
+#: src/resources/options.js:160
 msgid "Moonlight"
 msgstr ""
 
 #: src/pages/albums.vue:442
-#: src/share/albums.vue:350
+#: src/share/albums.vue:342
 msgid "More than 20 albums found"
 msgstr ""
 
@@ -1063,8 +1067,8 @@ msgid "Name too long"
 msgstr ""
 
 #: src/pages/settings/sync.vue:103
-#: src/resources/options.js:154
-#: src/resources/options.js:164
+#: src/resources/options.js:166
+#: src/resources/options.js:176
 msgid "Never"
 msgstr ""
 
@@ -1088,12 +1092,9 @@ msgstr ""
 #: src/pages/albums.vue:39
 #: src/pages/albums.vue:47
 #: src/pages/albums.vue:435
-#: src/share/albums.vue:343
+#: src/share/albums.vue:16
+#: src/share/albums.vue:335
 msgid "No albums found"
-msgstr ""
-
-#: src/share/albums.vue:24
-msgid "No albums matched your search"
 msgstr ""
 
 #: src/pages/album/photos.vue:354
@@ -1107,10 +1108,6 @@ msgstr ""
 
 #: src/pages/labels.vue:35
 msgid "No labels matched your search"
-msgstr ""
-
-#: src/share/albums.vue:16
-msgid "No moments matched your search"
 msgstr ""
 
 #: src/pages/places.vue:194
@@ -1143,7 +1140,7 @@ msgstr ""
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
 
-#: src/resources/options.js:113
+#: src/resources/options.js:125
 msgid "None"
 msgstr ""
 
@@ -1178,7 +1175,7 @@ msgid "Nothing to see here yet. Be patient."
 msgstr ""
 
 #: src/component/navigation.vue:379
-#: src/resources/options.js:132
+#: src/resources/options.js:144
 msgid "Offline"
 msgstr ""
 
@@ -1192,12 +1189,12 @@ msgstr ""
 msgid "Oldest first"
 msgstr ""
 
-#: src/resources/options.js:160
+#: src/resources/options.js:172
 msgid "Once a week"
 msgstr ""
 
 #: src/pages/albums.vue:437
-#: src/share/albums.vue:345
+#: src/share/albums.vue:337
 msgid "One album found"
 msgstr ""
 
@@ -1214,11 +1211,11 @@ msgstr ""
 msgid "One folder found"
 msgstr ""
 
-#: src/resources/options.js:99
+#: src/resources/options.js:111
 msgid "Onyx"
 msgstr ""
 
-#: src/resources/options.js:179
+#: src/resources/options.js:191
 msgid "Orange"
 msgstr ""
 
@@ -1277,7 +1274,7 @@ msgstr ""
 msgid "Photos"
 msgstr ""
 
-#: src/resources/options.js:177
+#: src/resources/options.js:189
 msgid "Pink"
 msgstr ""
 
@@ -1306,6 +1303,10 @@ msgstr ""
 
 #: src/pages/library/files.vue:39
 msgid "Please re-index your originals if a file you expect is missing."
+msgstr ""
+
+#: src/resources/options.js:84
+msgid "Polish"
 msgstr ""
 
 #: src/dialog/photo/files.vue:84
@@ -1345,7 +1346,7 @@ msgstr ""
 msgid "Private"
 msgstr ""
 
-#: src/resources/options.js:175
+#: src/resources/options.js:187
 msgid "Purple"
 msgstr ""
 
@@ -1361,7 +1362,7 @@ msgstr ""
 msgid "Random"
 msgstr ""
 
-#: src/resources/options.js:103
+#: src/resources/options.js:115
 msgid "Raspberry"
 msgstr ""
 
@@ -1375,7 +1376,7 @@ msgstr ""
 msgid "Recently added"
 msgstr ""
 
-#: src/resources/options.js:178
+#: src/resources/options.js:190
 msgid "Red"
 msgstr ""
 
@@ -1428,7 +1429,7 @@ msgstr ""
 msgid "Review"
 msgstr ""
 
-#: src/resources/options.js:76
+#: src/resources/options.js:88
 msgid "Russian"
 msgstr ""
 
@@ -1458,7 +1459,7 @@ msgstr ""
 #: src/pages/library/files.vue:176
 #: src/pages/places.vue:174
 #: src/routes.js:235
-#: src/share/albums.vue:161
+#: src/share/albums.vue:153
 msgid "Search"
 msgstr ""
 
@@ -1470,7 +1471,7 @@ msgstr ""
 msgid "Season"
 msgstr ""
 
-#: src/resources/options.js:107
+#: src/resources/options.js:119
 msgid "Seaweed"
 msgstr ""
 
@@ -1530,7 +1531,7 @@ msgstr ""
 msgid "Share %{name}"
 msgstr ""
 
-#: src/share/albums.vue:60
+#: src/share/albums.vue:52
 msgid "Shared with you."
 msgstr ""
 
@@ -1564,7 +1565,7 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: src/resources/options.js:125
+#: src/resources/options.js:137
 msgid "Slow"
 msgstr ""
 
@@ -1585,6 +1586,10 @@ msgstr ""
 msgid "Source"
 msgstr ""
 
+#: src/resources/options.js:76
+msgid "Spanish"
+msgstr ""
+
 #: src/component/navigation.vue:80
 msgid "Stacks"
 msgstr ""
@@ -1601,7 +1606,7 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: src/resources/options.js:136
+#: src/resources/options.js:148
 msgid "Streets"
 msgstr ""
 
@@ -1636,7 +1641,7 @@ msgstr ""
 msgid "Taken before"
 msgstr ""
 
-#: src/resources/options.js:184
+#: src/resources/options.js:196
 msgid "Teal"
 msgstr ""
 
@@ -1676,7 +1681,7 @@ msgid "Title Source"
 msgstr ""
 
 #: src/pages/albums.vue:233
-#: src/share/albums.vue:159
+#: src/share/albums.vue:151
 msgid "Title too long"
 msgstr ""
 
@@ -1689,7 +1694,7 @@ msgstr ""
 msgid "Token"
 msgstr ""
 
-#: src/resources/options.js:144
+#: src/resources/options.js:156
 msgid "Topographic"
 msgstr ""
 
@@ -1733,8 +1738,8 @@ msgstr ""
 #: src/model/photo.js:472
 #: src/model/photo.js:549
 #: src/model/photo.js:562
-#: src/pages/library/errors.vue:192
-#: src/pages/library/errors.vue:199
+#: src/pages/library/errors.vue:196
+#: src/pages/library/errors.vue:203
 #: src/pages/library/logs.vue:32
 #: src/resources/options.js:15
 #: src/resources/options.js:29
@@ -1833,10 +1838,6 @@ msgid "View"
 msgstr ""
 
 #: src/share/albums.vue:19
-msgid "Wait until a moment was shared with you or try again using a different term."
-msgstr ""
-
-#: src/share/albums.vue:27
 msgid "Wait until an album was shared with you or try again using a different term."
 msgstr ""
 
@@ -1849,7 +1850,7 @@ msgstr ""
 msgid "Whatever it is, we'd love to hear from you!"
 msgstr ""
 
-#: src/resources/options.js:188
+#: src/resources/options.js:200
 msgid "White"
 msgstr ""
 
@@ -1863,7 +1864,7 @@ msgstr ""
 msgid "Year"
 msgstr ""
 
-#: src/resources/options.js:181
+#: src/resources/options.js:193
 msgid "Yellow"
 msgstr ""
 
