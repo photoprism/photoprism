@@ -120,7 +120,7 @@ func TestDetails_Create(t *testing.T) {
 		assert.Error(t, details.Create())
 	})
 	t.Run("success", func(t *testing.T) {
-		details := Details{PhotoID: 123}
+		details := Details{PhotoID: 1236799955432}
 
 		err := details.Create()
 
@@ -132,7 +132,7 @@ func TestDetails_Create(t *testing.T) {
 
 func TestDetails_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		details := Details{PhotoID: 123, UpdatedAt: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)}
+		details := Details{PhotoID: 123678955432, UpdatedAt: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)}
 		initialDate := details.UpdatedAt
 
 		err := details.Save()
