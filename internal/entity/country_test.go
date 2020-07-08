@@ -33,8 +33,8 @@ func TestFirstOrCreateCountry(t *testing.T) {
 			t.Fatal("country should not be nil")
 		}
 	})
-	t.Run("Unknown", func(t *testing.T) {
-		country := &Country{ID: "123"}
+	t.Run("de", func(t *testing.T) {
+		country := &Country{ID: "de"}
 		r := FirstOrCreateCountry(country)
 		if r == nil {
 			t.Fatal("country should not be nil")

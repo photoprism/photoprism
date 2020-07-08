@@ -317,13 +317,8 @@ func TestAlbum_Update(t *testing.T) {
 
 func TestAlbum_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		album := Album{
-			AlbumUID:   "abc123",
-			AlbumSlug:  "test-slug",
-			AlbumType:  AlbumDefault,
-			AlbumTitle: "Test Title",
-			UpdatedAt:  time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		}
+		album := NewStateAlbum("Dogs", "dogs", "label:dog")
+
 		initialDate := album.UpdatedAt
 
 		err := album.Save()
