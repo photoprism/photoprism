@@ -12,6 +12,7 @@ const (
 	Spanish    Language = "es"
 	French     Language = "fr"
 	Dutch      Language = "nl"
+	Polish     Language = "pl"
 	Portuguese Language = "pt"
 	Russian    Language = "ru"
 	Chinese    Language = "zh"
@@ -24,6 +25,7 @@ var Languages = LanguageMap{
 	Spanish:    MsgSpanish,
 	French:     MsgFrench,
 	Dutch:      MsgDutch,
+	Polish:     MsgPolish,
 	Portuguese: MsgPortuguese,
 	Russian:    MsgRussian,
 	Chinese:    MsgChinese,

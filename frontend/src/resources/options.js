@@ -69,6 +69,14 @@ export const Languages = () => [
         "value": "de",
     },
     {
+        "text": $gettext("French"),
+        "value": "fr",
+    },
+    {
+        "text": $gettext("Spanish"),
+        "value": "es",
+    },
+    {
         "text": $gettext("Dutch"),
         "value": "nl",
     },

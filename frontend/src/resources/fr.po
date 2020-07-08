@@ -11,7 +11,7 @@ msgstr ""
 "X-Generator: Poedit 2.3.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "Last-Translator: \n"
-"Language: fr_FR\n"
+"Language: fr\n"
 
 #: src/pages/albums.vue:439 src/share/albums.vue:347
 msgid "%{n} albums found"
