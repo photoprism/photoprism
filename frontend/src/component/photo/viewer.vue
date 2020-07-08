@@ -116,6 +116,9 @@
                 if (this.interval) {
                     clearInterval(this.interval);
                     this.interval = false;
+                    
+                    const psp = this.$viewer.gallery;
+                    psp.framework.removeClass(psp.container, "slide_show");
                 }
             },
             onSlideshow() {
@@ -128,6 +131,8 @@
                 const psp = this.$viewer.gallery;
 
                 psp.next();
+
+                psp.framework.addClass(psp.container, "slide_show");
 
                 self.interval = setInterval(() => {
                     if (psp && typeof psp.next === "function") {
