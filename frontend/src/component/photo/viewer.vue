@@ -132,8 +132,6 @@
                 const self = this;
                 const psp = this.$viewer.gallery;
 
-                psp.next();
-
                 self.interval = setInterval(() => {
                     if (psp && typeof psp.next === "function") {
                         psp.next();
