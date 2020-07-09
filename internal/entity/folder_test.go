@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/photoprism/photoprism/internal/form"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -77,6 +78,11 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 0, folder.FolderMonth)
 		assert.Equal(t, "zz", folder.FolderCountry)
 	})
+
+	t.Run("pathName equals root path", func(t *testing.T) {
+		folder := NewFolder("", "", nil)
+		assert.Equal(t, "", folder.Path)
+	})
 }
 
 func TestFirstOrCreateFolder(t *testing.T) {
@@ -108,4 +114,72 @@ func TestFirstOrCreateFolder(t *testing.T) {
 	if found.FolderCountry != "zz" {
 		t.Errorf("FolderCountry should be 'zz'")
 	}
+}
+
+func TestFolder_SetValuesFromPath(t *testing.T) {
+	t.Run("/", func(t *testing.T) {
+		folder := NewFolder("new", "", nil)
+		folder.SetValuesFromPath()
+		assert.Equal(t, "New", folder.FolderTitle)
+	})
+}
+
+func TestFolder_Slug(t *testing.T) {
+	t.Run("/", func(t *testing.T) {
+		folder := Folder{FolderTitle: "Beautiful beach"}
+		assert.Equal(t, "beautiful-beach", folder.Slug())
+	})
+}
+
+func TestFolder_Title(t *testing.T) {
+	t.Run("/", func(t *testing.T) {
+		folder := Folder{FolderTitle: "Beautiful beach"}
+		assert.Equal(t, "Beautiful beach", folder.Title())
+	})
+}
+
+func TestFindFolder(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		assert.Nil(t, FindFolder("vvfgt", "jgfuyf"))
+	})
+}
+
+func TestFolder_Updates(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		folder := NewFolder("oldRoot", "oldPath", nil)
+
+		assert.Equal(t, "oldRoot", folder.Root)
+		assert.Equal(t, "oldPath", folder.Path)
+
+		err := folder.Updates(Folder{Root: "newRoot", Path: "newPath"})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "newRoot", folder.Root)
+		assert.Equal(t, "newPath", folder.Path)
+	})
+}
+
+func TestFolder_SetForm(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		formValues := Folder{FolderTitle: "Beautiful beach"}
+
+		folderForm, err := form.NewFolder(formValues)
+
+		folder := NewFolder("oldRoot", "oldPath", nil)
+
+		assert.Equal(t, "oldRoot", folder.Root)
+		assert.Equal(t, "oldPath", folder.Path)
+		assert.Equal(t, "OldPath", folder.FolderTitle)
+
+		err = folder.SetForm(folderForm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "", folder.Root)
+		assert.Equal(t, "", folder.Path)
+		assert.Equal(t, "Beautiful beach", folder.FolderTitle)
+	})
 }
