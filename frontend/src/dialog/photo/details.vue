@@ -48,7 +48,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs12 sm6 md2 pa-2>
+              <v-flex xs4 md2 pa-2>
                 <v-autocomplete
                         @change="updateTime"
                         :disabled="disabled"
@@ -62,7 +62,7 @@
                         class="input-day">
                 </v-autocomplete>
               </v-flex>
-              <v-flex xs12 sm6 md2 pa-2>
+              <v-flex xs4 md2 pa-2>
                 <v-autocomplete
                         @change="updateTime"
                         :disabled="disabled"
@@ -72,11 +72,11 @@
                         hide-details hide-no-data
                         color="secondary-dark"
                         v-model="model.Month"
-                        :items="options.Months()"
+                        :items="options.MonthsShort()"
                         class="input-month">
                 </v-autocomplete>
               </v-flex>
-              <v-flex xs12 sm6 md2 pa-2>
+              <v-flex xs4 md2 pa-2>
                 <v-autocomplete
                         @change="updateTime"
                         :disabled="disabled"
@@ -91,7 +91,7 @@
                 </v-autocomplete>
               </v-flex>
 
-              <v-flex xs12 sm6 md2 class="pa-2">
+              <v-flex xs6 md2 class="pa-2">
                 <v-text-field
                         :disabled="disabled"
                         @change="updateTime"
@@ -105,7 +105,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs12 sm6 md2 pa-2>
+              <v-flex xs6 sm6 md2 pa-2>
                 <v-text-field
                         :disabled="disabled"
                         @change="updateTime"
@@ -150,7 +150,7 @@
                 </v-autocomplete>
               </v-flex>
 
-              <v-flex xs12 sm6 md2 class="pa-2">
+              <v-flex xs4 md2 class="pa-2">
                 <v-text-field
                         :disabled="disabled"
                         hide-details
@@ -163,7 +163,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs12 sm6 md3 class="pa-2">
+              <v-flex xs4 md3 class="pa-2">
                 <v-text-field
                         :disabled="disabled"
                         hide-details
@@ -176,7 +176,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs12 sm6 md3 class="pa-2">
+              <v-flex xs4 md3 class="pa-2">
                 <v-text-field
                         :disabled="disabled"
                         hide-details
@@ -204,7 +204,7 @@
                 </v-select>
               </v-flex>
 
-              <v-flex xs12 sm6 md3 class="pa-2">
+              <v-flex xs6 md3 class="pa-2">
                 <v-text-field
                         :disabled="disabled"
                         hide-details
@@ -217,7 +217,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs12 sm6 md3 class="pa-2">
+              <v-flex xs6 md3 class="pa-2">
                 <v-text-field
                         :disabled="disabled"
                         hide-details
@@ -245,7 +245,7 @@
                 </v-select>
               </v-flex>
 
-              <v-flex xs12 sm6 md3 class="pa-2">
+              <v-flex xs6 md3 class="pa-2">
                 <v-text-field
                         :disabled="disabled"
                         hide-details
@@ -258,7 +258,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs12 sm6 md3 class="pa-2">
+              <v-flex xs6 md3 class="pa-2">
                 <v-text-field
                         :disabled="disabled"
                         hide-details
