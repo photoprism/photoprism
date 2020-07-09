@@ -45,18 +45,19 @@ func (m *Details) Save() error {
 func FirstOrCreateDetails(m *Details) *Details {
 	result := Details{}
 
-	if err := Db().Where("photo_id = ?", m.PhotoID).First(&result).Error; err == nil {
+	if err := m.Create(); err == nil {
+		return m
+	} else if err := Db().Where("photo_id = ?", m.PhotoID).First(&result).Error; err == nil {
 		if m.CreatedAt.IsZero() {
 			m.CreatedAt = Timestamp()
 		}
 
 		return &result
-	} else if err := m.Create(); err != nil {
-		log.Errorf("details: %s", err)
-		return nil
+	} else {
+		log.Errorf("details: %s (first or create %d)", err, m.PhotoID)
 	}
 
-	return m
+	return nil
 }
 
 // NoKeywords checks if the photo has no Keywords

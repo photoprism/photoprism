@@ -619,7 +619,7 @@ func (m *Photo) SaveDetails() error {
 		m.Details = details
 		return nil
 	} else {
-		log.Errorf("photo: %s (save details for %s)", err, m.PhotoUID)
+		log.Errorf("photo: %s (save details for %d)", err, m.ID)
 		return err
 	}
 }
