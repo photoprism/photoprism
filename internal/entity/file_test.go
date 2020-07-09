@@ -23,7 +23,7 @@ func TestFirstFileByHash(t *testing.T) {
 	})
 }
 
-func TestFile_DownloadFileName(t *testing.T) {
+func TestFile_ShareFileName(t *testing.T) {
 	t.Run("photo with title", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
@@ -48,6 +48,22 @@ func TestFile_DownloadFileName(t *testing.T) {
 
 		assert.Equal(t, "e98eb86480a72bd585d228a709f0622f90e86cbc.jpg", filename)
 	})
+	t.Run("file hash < 8", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
+
+		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98"}
+
+		filename := file.ShareFileName()
+
+		assert.NotContains(t, filename, "20190115-000000-Berlin-Morning-Mood")
+	})
+	t.Run("no file uid", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileHash: "e98ijhyt"}
+
+		filename := file.ShareFileName()
+
+		assert.Equal(t, filename, "e98ijhyt.jpg")
+	})
 }
 
 func TestFile_Changed(t *testing.T) {
@@ -71,6 +87,30 @@ func TestFile_Changed(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, FileModified: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), DeletedAt: &deletedAt}
 		time := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 		assert.Equal(t, true, file.Changed(500, time))
+	})
+}
+
+func TestFile_Create(t *testing.T) {
+	t.Run("photo id == 0", func(t *testing.T) {
+		file := File{PhotoID: 0}
+
+		assert.Error(t, file.Create())
+	})
+	t.Run("file already exists", func(t *testing.T) {
+		file := &File{PhotoID: 123, FileType: "jpg", FileSize: 500, FileModified: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)}
+		file.Create()
+		assert.Error(t, file.Create())
+	})
+	t.Run("success", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
+
+		file := &File{Photo: photo, FileType: "jpg", FileSize: 500, PhotoID: 766, FileName: "testname", FileRoot: "xyz"}
+
+		err := file.Create()
+
+		if err != nil {
+			t.Fatal(err)
+		}
 	})
 }
 
@@ -111,5 +151,84 @@ func TestFile_Save(t *testing.T) {
 		}
 
 		assert.Equal(t, "file: photo id must not be empty (save 123)", err.Error())
+	})
+	t.Run("success", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
+
+		file := &File{Photo: photo, FileType: "jpg", FileSize: 500, PhotoID: 766, FileName: "Food", FileRoot: "", UpdatedAt: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)}
+
+		err := file.Save()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+}
+
+func TestFile_UpdateVideoInfos(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		file := &File{FileType: "jpg", FileWidth: 600, FileName: "VideoUpdate", PhotoID: 1000003}
+
+		assert.Equal(t, "bridge.mp4", FileFixturesExampleBridgeVideo.FileName)
+		assert.Equal(t, int(1200), FileFixturesExampleBridgeVideo.FileWidth)
+
+		err := file.UpdateVideoInfos()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		var files Files
+
+		if err := Db().Where("photo_id = ? AND file_video = 1", file.PhotoID).Find(&files).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, files, 1)
+
+		for _, f := range files {
+			assert.Equal(t, "bridge.mp4", f.FileName)
+			assert.Equal(t, int(600), f.FileWidth)
+		}
+	})
+}
+
+func TestFile_Update(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBeUpdated", FileRoot: "", PhotoID: 5678}
+
+		err := file.Save()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "ToBeUpdated", file.FileName)
+
+		err2 := file.Update("FileName", "Happy")
+
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+		assert.Equal(t, "Happy", file.FileName)
+	})
+}
+
+func TestFile_Links(t *testing.T) {
+	t.Run("1 result", func(t *testing.T) {
+		file := FileFixturesExampleBridge
+		links := file.Links()
+		assert.Equal(t, "5jxf3jfn2k", links[0].LinkToken)
+	})
+}
+
+func TestFile_NoJPEG(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
+		assert.False(t, file.NoJPEG())
+	})
+	t.Run("tre", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "xmp", FileSize: 500}
+		assert.True(t, file.NoJPEG())
 	})
 }

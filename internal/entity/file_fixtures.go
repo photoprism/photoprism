@@ -502,10 +502,50 @@ var FileFixtures = map[string]File{
 		UpdatedIn:       0,
 		DeletedAt:       nil,
 	},
+	"bridge.mp4": {
+		ID:              1000013,
+		Photo:           PhotoFixtures.Pointer("Photo03"),
+		PhotoID:         1000003,
+		PhotoUID:        PhotoFixtures.Pointer("Photo03").PhotoUID,
+		FileUID:         "ft2es49whhbnlqdy",
+		FileName:        "bridge.mp4",
+		OriginalName:    "bridgeOriginal.mp4",
+		FileHash:        "pcad9168fa6acc5c5ba965adf6ec465ca42fd819",
+		FileModified:    time.Date(2017, 2, 6, 2, 6, 51, 0, time.UTC),
+		FileSize:        921851,
+		FileType:        "mp4",
+		FileMime:        "image/mp4",
+		FilePrimary:     false,
+		FileSidecar:     false,
+		FileVideo:       true,
+		FileMissing:     false,
+		FileDuplicate:   false,
+		FilePortrait:    false,
+		FileWidth:       1200,
+		FileHeight:      1600,
+		FileOrientation: 6,
+		FileAspectRatio: 0.75,
+		FileMainColor:   "magenta",
+		FileColors:      "225221C1E",
+		FileLuminance:   "DC42844C8",
+		FileDiff:        986,
+		FileChroma:      32,
+		FileNotes:       "",
+		FileError:       "",
+		Share:           []FileShare{},
+		Sync:            []FileSync{},
+		CreatedAt:       time.Date(2019, 1, 1, 2, 6, 51, 0, time.UTC),
+		CreatedIn:       2,
+		UpdatedAt:       time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
+		UpdatedIn:       0,
+		DeletedAt:       nil,
+	},
 }
 
 var FileFixturesExampleJPG = FileFixtures["exampleFileName.jpg"]
 var FileFixturesExampleXMP = FileFixtures["exampleXmpFile.xmp"]
+var FileFixturesExampleBridge = FileFixtures["bridge.jpg"]
+var FileFixturesExampleBridgeVideo = FileFixtures["bridge.mp4"]
 
 // CreateFileFixtures inserts known entities into the database for testing.
 func CreateFileFixtures() {

@@ -144,4 +144,10 @@ func TestDetails_Save(t *testing.T) {
 
 		assert.True(t, afterDate.After(initialDate))
 	})
+
+	t.Run("error", func(t *testing.T) {
+		details := Details{PhotoID: 0}
+
+		assert.Error(t, details.Save())
+	})
 }

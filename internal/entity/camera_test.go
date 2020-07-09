@@ -29,13 +29,6 @@ func TestFirstOrCreateCamera(t *testing.T) {
 
 		assert.GreaterOrEqual(t, result.ID, uint(1))
 	})
-	/*t.Run("not existing model and make", func(t *testing.T) {
-		camera := &Camera{CameraModel: "xxx", CameraMake: "xxx"}
-
-		result := FirstOrCreateCamera(camera)
-
-		assert.GreaterOrEqual(t, result.ID, uint(1))
-	})*/
 }
 
 func TestNewCamera(t *testing.T) {
