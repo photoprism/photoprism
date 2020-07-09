@@ -2,7 +2,7 @@
   <div id="p-photo-viewer" class="p-viewer pswp" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="pswp__bg"></div>
     <div class="pswp__scroll-wrap">
-      <div class="pswp__container" v-bind:class="{ 'slideshow': slideshow }">
+      <div class="pswp__container" v-bind:class="{ 'slideshow': slideshow.active }">
         <div class="pswp__item"></div>
         <div class="pswp__item"></div>
         <div class="pswp__item"></div>
@@ -28,7 +28,7 @@
           </button>
 
           <button class="pswp__button action-like hidden-shared-only" style="background: none;"
-                  @click.exact="toggleLike" title="Like">
+                  @click.exact="onLike" title="Like">
             <v-icon v-if="item.favorite" size="16" color="white">favorite</v-icon>
             <v-icon v-else size="16" color="white">favorite_border</v-icon>
           </button>
@@ -61,7 +61,7 @@
         <button class="pswp__button pswp__button--arrow--right action-next" title="Next (arrow right)">
         </button>
 
-        <div class="pswp__caption" @click="playVideo">
+        <div class="pswp__caption" @click="onPlay">
           <div class="pswp__caption__center"></div>
         </div>
 
@@ -86,7 +86,10 @@
                 item: new Thumb(),
                 subscriptions: [],
                 interval: false,
-                slideshow: false,
+                slideshow: {
+                    active: false,
+                    next: 0,
+                },
             };
         },
         created() {
@@ -102,12 +105,18 @@
         },
         methods: {
             onChange(ev, data) {
+                const psp = this.$viewer.gallery;
+
+                if(psp && this.slideshow.next !== psp.getCurrentIndex()) {
+                    this.onPause();
+                }
+
                 this.item = data.item;
             },
-            toggleLike() {
+            onLike() {
                 this.item.toggleLike();
             },
-            playVideo() {
+            onPlay() {
                 if (this.item && this.item.playable) {
                     let photo = new Photo();
                     photo.find(this.item.uid).then((p) => {
@@ -116,7 +125,7 @@
                 }
             },
             onPause() {
-                this.slideshow = false;
+                this.slideshow.active = false;
 
                 if (this.interval) {
                     clearInterval(this.interval);
@@ -129,7 +138,7 @@
                     return;
                 }
 
-                this.slideshow = true;
+                this.slideshow.active = true;
 
                 const self = this;
                 const psp = this.$viewer.gallery;
@@ -137,6 +146,7 @@
                 self.interval = setInterval(() => {
                     if (psp && typeof psp.next === "function") {
                         psp.next();
+                        this.slideshow.next = psp.getCurrentIndex();
                     } else {
                         this.onPause();
                     }

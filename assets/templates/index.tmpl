@@ -21,9 +21,7 @@
   {{if .config.SiteAuthor}}<meta name="author" content="{{ .config.SiteAuthor }}">{{end}}
   {{if .config.SiteDescription}}<meta name="description" content="{{ .config.SiteDescription }}"/>{{end}}
 
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" href="/static/img/favicon.png">
-  <link rel="icon" type="image/png" href="/static/img/favicon.png"/>
+  {{template "favicons.tmpl" .}}
 
   <link rel="stylesheet" href="/static/build/app.css?{{ .config.CSSHash }}">
   <link rel="manifest" href="/static/manifest.json">

@@ -2,7 +2,6 @@ package server
 
 import (
 	"net/http"
-	"path"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/api"
@@ -12,9 +11,6 @@ import (
 func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Static assets like js, css and font files.
 	router.Static("/static", conf.StaticPath())
-
-	// Site favicon image.
-	router.StaticFile("/favicon.ico", path.Join(conf.ImgPath(), "favicon.ico"))
 
 	// Rainbow page.
 	router.GET("/rainbow", func(c *gin.Context) {
