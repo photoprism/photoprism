@@ -32,6 +32,15 @@ var LinkFixtures = LinkMap{
 		CanEdit:     false,
 		CreatedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 	},
+	"6jxf3jfn2k": {
+		LinkToken:   "6jxf3jfn2k",
+		LinkExpires: 0,
+		ShareUID:    "st9lxuqxpogaaba7",
+		ShareSlug:   "lt9k3pw1wowuy3c3",
+		CanComment:  true,
+		CanEdit:     false,
+		CreatedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
+	},
 }
 
 // CreateLinkFixtures inserts known entities into the database for testing.

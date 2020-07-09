@@ -31,3 +31,46 @@ func TestFirstOrCreateKeyword(t *testing.T) {
 		t.Errorf("Keyword should be the same: %s %s", result.Keyword, keyword.Keyword)
 	}
 }
+
+func TestKeyword_Updates(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		keyword := NewKeyword("KeywordBeforeUpdate")
+
+		assert.Equal(t, "keywordbeforeupdate", keyword.Keyword)
+
+		err := keyword.Updates(Keyword{Keyword: "KeywordAfterUpdate", ID: 999})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "KeywordAfterUpdate", keyword.Keyword)
+		assert.Equal(t, uint(0x3e7), keyword.ID)
+	})
+}
+
+func TestKeyword_Update(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		keyword := NewKeyword("KeywordBeforeUpdate2")
+		assert.Equal(t, "keywordbeforeupdate2", keyword.Keyword)
+
+		err := keyword.Update("Keyword", "new-name")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "new-name", keyword.Keyword)
+
+	})
+}
+
+func TestKeyword_Save(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		keyword := NewKeyword("KeywordName")
+
+		err := keyword.Save()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+}

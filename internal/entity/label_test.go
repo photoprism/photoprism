@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/photoprism/photoprism/internal/classify"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -129,5 +130,92 @@ func TestLabel_Update(t *testing.T) {
 		assert.Equal(t, "classify", Label.CustomSlug)
 		assert.Equal(t, "Classify", Label.LabelName)
 
+	})
+}
+
+func TestLabel_Save(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		label := NewLabel("Unicorn2000", 5)
+		initialDate := label.UpdatedAt
+		err := label.Save()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		afterDate := label.UpdatedAt
+
+		assert.True(t, afterDate.After(initialDate))
+
+	})
+}
+
+func TestLabel_Delete(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		label := NewLabel("LabelToBeDeleted", 5)
+		err := label.Save()
+		assert.False(t, label.Deleted())
+
+		var labels Labels
+
+		if err := Db().Where("label_name = ?", label.LabelName).Find(&labels).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, labels, 1)
+
+		err = label.Delete()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := Db().Where("label_name = ?", label.LabelName).Find(&labels).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, labels, 0)
+	})
+}
+
+func TestLabel_Restore(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+
+		label := &Label{DeletedAt: &deleteTime, LabelName: "ToBeRestored"}
+		err := label.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, label.Deleted())
+
+		err = label.Restore()
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.False(t, label.Deleted())
+	})
+}
+
+func TestFindLabel(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		label := &Label{LabelSlug: "find-me-label", LabelName: "Find Me"}
+		err := label.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+		r := FindLabel("find-me-label")
+		assert.Equal(t, "Find Me", r.LabelName)
+	})
+	t.Run("nil", func(t *testing.T) {
+		r := FindLabel("XXX")
+		assert.Nil(t, r)
+	})
+
+}
+
+func TestLabel_Links(t *testing.T) {
+	t.Run("1 result", func(t *testing.T) {
+		label := LabelFixtures.Get("flower")
+		links := label.Links()
+		assert.Equal(t, "6jxf3jfn2k", links[0].LinkToken)
 	})
 }
