@@ -2,3 +2,8 @@
     left: 4px;
     bottom: 4px;
 }
+
+#photoprism main .p-inline-edit a,
+#photoprism main .p-inline-edit a span {
+    cursor: text;
+}

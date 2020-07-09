@@ -13,7 +13,7 @@
               class="clickable"
               @click.stop.prevent="openDocs"
       >
-        <img src="/static/img/logo-white.svg" alt="PhotoPrism">
+        <img src="/static/img/logo-white.svg" alt="Logo">
       </v-avatar>
     </v-toolbar>
     <v-toolbar dark flat color="navigation darken-1">

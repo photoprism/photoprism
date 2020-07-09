@@ -190,7 +190,7 @@ export class Photo extends RestModel {
 
         let zone = this.getTimeZone();
 
-        return DateTime.fromISO(this.localDateString(time), {zone});;
+        return DateTime.fromISO(this.localDateString(time), {zone});
     }
 
     utcDate() {

@@ -31,12 +31,12 @@ https://docs.photoprism.org/developer-guide/
 @import url("../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/mapbox-gl/dist/mapbox-gl.css");
+@import url("animate.css");
 @import url("navigation.css");
 @import url("logs.css");
 @import url("visibility.css");
 @import url("results.css");
 @import url("video.css");
-@import url("rainbow.css");
 @import url("maps.css");
 @import url("viewer.css");
 @import url("photos.css");
@@ -50,7 +50,7 @@ body {
 }
 
 body {
-    background-color: rgb(250, 250, 250);
+    background-color: #fafafa;
     color: #333333;
     font-family: Roboto, sans-serif;
 }
@@ -85,13 +85,33 @@ main {
     bottom: 0;
 }
 
-#photoprism main .p-results a {
-    color: #333333;
+#photoprism div.logo-large {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
 }
 
-#photoprism main .p-inline-edit a,
-#photoprism main .p-inline-edit a span {
-    cursor: text;
+#photoprism div.loading-logo {
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+}
+
+#photoprism div.loading-bar {
+    position: fixed;
+    bottom: 15%;
+    right: 10%;
+    left: 10%;
+}
+
+#photoprism main .p-results a {
+    color: #333333;
 }
 
 #photoprism .v-badge__badge {
@@ -113,44 +133,6 @@ main {
 #photoprism .p-scroll-top {
     top: 72px;
     right: 8px;
-}
-
-#photoprism div.logo {
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    right: 1px;
-    bottom: 1px;
-    border-radius: 50%;
-}
-
-#photoprism div.logo img,
-#photoprism div.logo svg {
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    right: 3px;
-    bottom: 3px;
-}
-
-#photoprism div.logo-large {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    width: 300px;
-    height: 300px;
-}
-
-#photoprism div.logo-large img,
-#photoprism div.logo-large svg {
-    position: absolute;
-    top: 15px;
-    left: 20px;
-    right: 30px;
-    bottom: 20px;
 }
 
 #photoprism .float-left {

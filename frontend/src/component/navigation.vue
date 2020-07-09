@@ -16,7 +16,7 @@
               @click.stop="openUpload"
               v-show="!drawer"
       >
-        <img src="/static/img/logo-white.svg" alt="PhotoPrism">
+        <img src="/static/img/logo-white.svg" alt="Logo">
       </v-avatar>
     </v-toolbar>
     <v-toolbar dark flat color="navigation darken-1">
@@ -35,9 +35,7 @@
         <v-list class="navigation-home">
           <v-list-tile class="nav-logo">
             <v-list-tile-avatar class="clickable" @click.stop.prevent="goHome">
-              <div class="logo rainbow-static">
-                <img src="/static/img/logo-black.svg" alt="PhotoPrism">
-              </div>
+              <img src="/static/img/logo-avatar.svg" alt="Logo">
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title class="title">
