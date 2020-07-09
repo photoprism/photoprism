@@ -95,7 +95,9 @@
             filter: Object,
         },
         data() {
-            let m = this.$gettext('Try using other terms and search options such as category, country and camera.');
+            let m = this.$gettext("Couldn't find anything.");
+
+            m += " " + this.$gettext("Try again using other filters or keywords.");
 
             if (this.$config.feature("review")) {
                 m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");

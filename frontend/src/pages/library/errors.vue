@@ -46,7 +46,7 @@
     </v-list>
     <v-card v-else class="errors-empty secondary-light lighten-1 ma-0 pa-2" flat>
       <v-card-title primary-title v-if="filter.q !== ''">
-        <translate>No results. Try again with a different search term.</translate>
+        <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>
       </v-card-title>
       <v-card-title primary-title v-else>
         <translate>Related log messages will appear here whenever PhotoPrism comes across broken files or there are other potential issues.</translate>

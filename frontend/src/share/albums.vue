@@ -15,12 +15,12 @@
         <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1 ma-1" flat>
           <v-card-title primary-title>
             <div>
-              <h3 class="title mb-3">
-                <translate>No albums found</translate>
+              <h3 class="title ma-0 pa-0">
+                <translate>Couldn't find anything</translate>
               </h3>
-              <div>
-                <translate>Wait until an album was shared with you or try again using a different term.</translate>
-              </div>
+              <p class="mt-4 mb-0 pa-0">
+                <translate>Try again using other filters or keywords.</translate>
+              </p>
             </div>
           </v-card-title>
         </v-card>

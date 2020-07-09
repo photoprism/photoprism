@@ -4,10 +4,10 @@
       <v-card-title primary-title>
         <div>
           <h3 class="title ma-0 pa-0">
-            <translate>No photos or videos found</translate>
+            <translate>Couldn't find anything</translate>
           </h3>
           <p class="mt-4 mb-0 pa-0">
-            <translate>Try using other terms and search options such as category, country and camera.</translate>
+            <translate>Try again using other filters or keywords.</translate>
           </p>
         </div>
       </v-card-title>

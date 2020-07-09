@@ -4,13 +4,14 @@
       <v-card-title primary-title>
         <div>
           <h3 class="title ma-0 pa-0">
-            <translate>No photos or videos found</translate>
+            <translate>Couldn't find anything</translate>
           </h3>
           <p class="mt-4 mb-0 pa-0">
-            <translate>Try using other terms and search options such as category, country and camera.</translate>
-          </p>
-          <p v-if="$config.feature('review')" class="mt-2 mb-0 pa-0">
-            <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+            <translate>Try again using other filters or keywords.</translate>
+            <translate>If a file you expect is missing, please re-index your library and wait until indexing has been completed.</translate>
+            <template v-if="$config.feature('review')" class="mt-2 mb-0 pa-0">
+              <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+            </template>
           </p>
         </div>
       </v-card-title>

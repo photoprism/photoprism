@@ -34,12 +34,13 @@
         <v-card v-if="results.length === 0" class="p-files-empty secondary-light lighten-1 ma-1" flat>
           <v-card-title primary-title>
             <div>
-              <h3 class="title mb-3">
-                <translate>No photos or videos found</translate>
+              <h3 class="title ma-0 pa-0">
+                <translate>Couldn't find anything</translate>
               </h3>
-              <div>
-                <translate>Please re-index your originals if a file you expect is missing.</translate>
-              </div>
+              <p class="mt-4 mb-0 pa-0">
+                <translate>Duplicates will be skipped and only appear once.</translate>
+                <translate>If a file you expect is missing, please re-index your library and wait until indexing has been completed.</translate>
+              </p>
             </div>
           </v-card-title>
         </v-card>

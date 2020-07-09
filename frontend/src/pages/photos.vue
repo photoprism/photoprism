@@ -384,11 +384,11 @@
 
                     if (this.complete) {
                         if (!this.results.length) {
-                            this.$notify.warn(this.$gettext("Couldn't find any results"));
+                            this.$notify.warn(this.$gettext("No results"));
                         } else if (this.results.length === 1) {
-                            this.$notify.info(this.$gettext("Found one result"));
+                            this.$notify.info(this.$gettext("One result"));
                         } else {
-                            this.$notify.info(this.$gettextInterpolate(this.$gettext("Found %{n} results"), {n: this.results.length}));
+                            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} results"), {n: this.results.length}));
                         }
                     } else {
                         this.$notify.info(this.$gettext('More than 50 results'));

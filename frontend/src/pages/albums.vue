@@ -57,20 +57,22 @@
         <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1 ma-1" flat>
           <v-card-title primary-title>
             <div v-if="staticFilter.type === 'album'">
-              <h3 class="title mb-3">
-                <translate>No albums found</translate>
+              <h3 class="title ma-0 pa-0">
+                <translate>Couldn't find anything</translate>
               </h3>
-              <div>
-                <translate>Create a new album using the context menu after selecting photos or videos from search results.</translate>
-              </div>
+              <p class="mt-4 mb-0 pa-0">
+                <translate>Try again using other filters or keywords.</translate>
+                <translate>After selecting photos or videos from search results, you can add them to existing or new albums using the context menu.</translate>
+              </p>
             </div>
             <div v-else>
               <h3 class="title mb-3">
-                <translate>No albums found</translate>
+                <translate>Couldn't find anything</translate>
               </h3>
-              <div>
+              <p class="mt-4 mb-0 pa-0">
+                <translate>Try again using other filters or keywords.</translate>
                 <translate>PhotoPrism continuously analyzes your library to find special moments, journeys and places.</translate>
-              </div>
+              </p>
             </div>
           </v-card-title>
         </v-card>
