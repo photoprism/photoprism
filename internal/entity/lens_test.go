@@ -30,3 +30,30 @@ func TestLens_TableName(t *testing.T) {
 	tableName := lens.TableName()
 	assert.Equal(t, "lenses", tableName)
 }
+
+func TestLens_String(t *testing.T) {
+	lens := NewLens("F500-99", "samsung")
+	assert.Equal(t, "Samsung F500-99", lens.String())
+}
+
+func TestFirstOrCreateLens(t *testing.T) {
+	t.Run("existing lens", func(t *testing.T) {
+		lens := NewLens("iPhone SE", "Apple")
+
+		result := FirstOrCreateLens(lens)
+
+		if result == nil {
+			t.Fatal("result should not be nil")
+		}
+	})
+	t.Run("not existing lens", func(t *testing.T) {
+		lens := &Lens{}
+
+		result := FirstOrCreateLens(lens)
+
+		if result == nil {
+			t.Fatal("result should not be nil")
+		}
+		assert.GreaterOrEqual(t, result.ID, uint(1))
+	})
+}

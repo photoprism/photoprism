@@ -8,6 +8,7 @@ type LinkMap map[string]Link
 
 var LinkFixtures = LinkMap{
 	"1jxf3jfn2k": {
+		LinkUID:     "abcfgty",
 		LinkToken:   "1jxf3jfn2k",
 		LinkExpires: 0,
 		ShareUID:    "st9lxuqxpogaaba7",
