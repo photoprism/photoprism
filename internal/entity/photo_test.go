@@ -646,10 +646,6 @@ func TestPhoto_Create(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-	t.Run("error", func(t *testing.T) {
-		photo := PhotoFixtures.Get("Photo16")
-		assert.Error(t, photo.Create())
-	})
 }
 
 func TestPhoto_Save(t *testing.T) {
