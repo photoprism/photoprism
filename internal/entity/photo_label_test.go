@@ -65,7 +65,7 @@ func TestPhotoLabel_Save(t *testing.T) {
 		}
 	})
 	t.Run("photo not nil and label not nil", func(t *testing.T) {
-		label := &Label{LabelName: "ToBeRestored"}
+		label := &Label{LabelName: "LabelSaveUnique", LabelSlug: "unique-slug"}
 		photo := &Photo{}
 
 		photoLabel := PhotoLabel{Photo: photo, Label: label}
