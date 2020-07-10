@@ -180,6 +180,17 @@ func (m *Photo) String() string {
 	return "uid " + txt.Quote(m.PhotoUID)
 }
 
+// FirstOrCreate fetches an existing row from the database or inserts a new one.
+func (m *Photo) FirstOrCreate() error {
+	if err := m.Create(); err == nil {
+		return nil
+	} else if err := m.Find(); err != nil {
+		return fmt.Errorf("photo: %s (first or create %s)", err, m.String())
+	}
+
+	return nil
+}
+
 // Create inserts a new photo to the database.
 func (m *Photo) Create() error {
 	if err := UnscopedDb().Create(m).Error; err != nil {

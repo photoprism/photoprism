@@ -489,7 +489,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			return result
 		}
 	} else {
-		if err := photo.Create(); err != nil {
+		if err := photo.FirstOrCreate(); err != nil {
 			log.Errorf("index: %s", err)
 			result.Status = IndexFailed
 			result.Error = err
