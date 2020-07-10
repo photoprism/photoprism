@@ -15,3 +15,8 @@
     text-shadow: -3px 0px 3px rgba(84, 226, 255, 0.15), 3px 0px 3px rgba(84, 226, 255, 0.15), 6px 0px 6px rgba(84, 226, 255, 0.15), -6px 0px 6px rgba(84, 226, 255, 0.15);
     /* text-shadow: -3px 0px 3px rgba(255, 255, 0, 0.5), 3px 0px 3px rgba(255, 255, 0, 0.5), 6px 0px 6px rgba(255, 255, 0, 0.5), -6px 0px 6px rgba(255, 255, 0, 0.5); */
 }
+
+#photoprism .v-alert a {
+    color: inherit;
+    text-decoration: none;
+}

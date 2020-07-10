@@ -37,15 +37,15 @@ msgstr "%{n} Kategorien gefunden"
 msgid "%{n} results"
 msgstr "%{n} Ergebnisse"
 
-#: src/resources/options.js:167
+#: src/resources/options.js:179
 msgid "1 hour"
 msgstr "1 Stunde"
 
-#: src/resources/options.js:169
+#: src/resources/options.js:181
 msgid "12 hours"
 msgstr "12 Stunden"
 
-#: src/resources/options.js:168
+#: src/resources/options.js:180
 msgid "4 hours"
 msgstr "4 Stunden"
 
@@ -78,7 +78,7 @@ msgstr "Link hinzufügen"
 msgid "Add photos or videos from search results by selecting them."
 msgstr "Fotos und Videos können über das Kontextmenü hinzugefügt werden."
 
-#: src/dialog/account/add.vue:5 src/pages/settings/sync.vue:33
+#: src/dialog/account/add.vue:5 src/pages/settings/sync.vue:40
 msgid "Add Server"
 msgstr "Server hinzufügen"
 
@@ -93,23 +93,23 @@ msgstr "Hinzufügen"
 msgid "Added"
 msgstr "Hinzugefügt"
 
-#: src/resources/options.js:177
+#: src/resources/options.js:189
 msgid "After 1 day"
 msgstr "Nach einem Tag"
 
-#: src/resources/options.js:178
+#: src/resources/options.js:190
 msgid "After 3 days"
 msgstr "Nach 3 Tagen"
 
-#: src/resources/options.js:179
+#: src/resources/options.js:191
 msgid "After 7 days"
 msgstr "Nach 7 Tagen"
 
-#: src/resources/options.js:181
+#: src/resources/options.js:193
 msgid "After one month"
 msgstr "Nach einem Monat"
 
-#: src/resources/options.js:183
+#: src/resources/options.js:195
 msgid "After one year"
 msgstr "Nach einem Jahr"
 
@@ -121,11 +121,11 @@ msgstr ""
 "Fotos und Videos können über das Kontextmenü zu bestehenden oder neuen Alben "
 "hinzugefügt werden."
 
-#: src/resources/options.js:182
+#: src/resources/options.js:194
 msgid "After two months"
 msgstr "Nach zwei Monaten"
 
-#: src/resources/options.js:180
+#: src/resources/options.js:192
 msgid "After two weeks"
 msgstr "Nach zwei Wochen"
 
@@ -234,11 +234,11 @@ msgstr "API Key"
 msgid "Apply"
 msgstr "Speichern"
 
-#: src/component/photo/cards.vue:123 src/dialog/photo/details.vue:123
+#: src/component/photo/cards.vue:124 src/dialog/photo/details.vue:123
 msgid "Approve"
 msgstr "Übernehmen"
 
-#: src/component/navigation.vue:103 src/component/photo/cards.vue:120
+#: src/component/navigation.vue:103 src/component/photo/cards.vue:121
 #: src/component/photo/clipboard.vue:155 src/pages/settings/general.vue:415
 #: src/routes.js:178 src/share/photo/clipboard.vue:74
 msgid "Archive"
@@ -273,18 +273,18 @@ msgid "At least 6 characters."
 msgstr "Mindestens 6 Zeichen."
 
 #: src/pages/settings.vue:8
-msgid "Backups"
-msgstr "Backups"
+msgid "Backup"
+msgstr "Backup"
 
-#: src/resources/options.js:202
+#: src/resources/options.js:214
 msgid "Black"
 msgstr "Schwarz"
 
-#: src/resources/options.js:198
+#: src/resources/options.js:210
 msgid "Blue"
 msgstr "Blau"
 
-#: src/resources/options.js:199
+#: src/resources/options.js:211
 msgid "Brown"
 msgstr "Braun"
 
@@ -387,6 +387,10 @@ msgstr "Wahrscheinlichkeit"
 msgid "Connect"
 msgstr "Verbinden"
 
+#: src/dialog/webdav.vue:4 src/pages/settings/sync.vue:45
+msgid "Connect via WebDAV"
+msgstr "Mit WebDAV verbinden"
+
 #: src/pages/albums.vue:103
 msgid "Contains %{n} entries."
 msgstr "Enthält %{n} Einträge."
@@ -403,7 +407,7 @@ msgstr "Automatisch konvertieren"
 msgid "Converting"
 msgstr "Konvertiere"
 
-#: src/dialog/share.vue:170
+#: src/dialog/share.vue:170 src/dialog/webdav.vue:88
 msgid "Copied to clipboard"
 msgstr "In Zwischenablage kopiert"
 
@@ -447,23 +451,23 @@ msgstr "Erstelle Thumbnails für"
 msgid "Current Password"
 msgstr "Aktuelles Passwort"
 
-#: src/resources/options.js:197
+#: src/resources/options.js:209
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/resources/options.js:99
+#: src/resources/options.js:111
 msgid "Cyano"
 msgstr "Cyano"
 
-#: src/resources/options.js:170
+#: src/resources/options.js:182
 msgid "Daily"
 msgstr "Täglich"
 
-#: src/dialog/photo/details.vue:168
+#: src/dialog/photo/details.vue:166
 msgid "Day"
 msgstr "Tag"
 
-#: src/resources/options.js:95
+#: src/resources/options.js:107
 msgid "Default"
 msgstr "Standard"
 
@@ -482,6 +486,10 @@ msgstr "Löschen"
 #: src/dialog/photo/details.vue:453
 msgid "Description"
 msgstr "Beschreibung"
+
+#: src/dialog/webdav.vue:22 src/dialog/webdav.vue:7
+msgid "Detailed instructions can be found in our User Guide."
+msgstr "Unser englischer User Guide enthält eine detaillierte Anleitung."
 
 #: src/dialog/photo/edit.vue:23
 msgid "Details"
@@ -539,7 +547,7 @@ msgstr "Duplikat"
 msgid "Duplicates will be skipped and only appear once."
 msgstr "Duplikate werden übersprungen und erscheinen nur einmal."
 
-#: src/resources/options.js:80
+#: src/resources/options.js:92
 msgid "Dutch"
 msgstr "Niederländisch"
 
@@ -568,7 +576,7 @@ msgstr "Bearbeitet"
 msgid "Enabled"
 msgstr "Aktiv"
 
-#: src/resources/options.js:64
+#: src/resources/options.js:76
 msgid "English"
 msgstr "Englisch"
 
@@ -580,7 +588,7 @@ msgstr "Fehler"
 msgid "Errors"
 msgstr "Fehler"
 
-#: src/resources/options.js:171
+#: src/resources/options.js:183
 msgid "Every two days"
 msgstr "Jeden zweiten Tag"
 
@@ -604,7 +612,7 @@ msgstr "Belichtungszeit"
 msgid "F Number"
 msgstr "F Nummer"
 
-#: src/dialog/share.vue:170
+#: src/dialog/share.vue:170 src/dialog/webdav.vue:88
 msgid "Failed copying to clipboard"
 msgstr "Konnte nicht in die Zwischenablage kopiert werden"
 
@@ -620,7 +628,7 @@ msgstr "Der Link konnte nicht gespeichert werden"
 msgid "Failure while importing uploaded files"
 msgstr "Fehler beim Importieren der hochgeladenen Dateien"
 
-#: src/resources/options.js:129
+#: src/resources/options.js:141
 msgid "Fast"
 msgstr "Schnell"
 
@@ -689,7 +697,7 @@ msgstr "Ordnername"
 msgid "Folders"
 msgstr "Ordner"
 
-#: src/resources/options.js:72
+#: src/resources/options.js:84
 msgid "French"
 msgstr "Französisch"
 
@@ -697,19 +705,19 @@ msgstr "Französisch"
 msgid "General"
 msgstr "Allgemein"
 
-#: src/resources/options.js:68
+#: src/resources/options.js:80
 msgid "German"
 msgstr "Deutsch"
 
-#: src/resources/options.js:192
+#: src/resources/options.js:204
 msgid "Gold"
 msgstr "Gold"
 
-#: src/resources/options.js:195
+#: src/resources/options.js:207
 msgid "Green"
 msgstr "Grün"
 
-#: src/resources/options.js:201
+#: src/resources/options.js:213
 msgid "Grey"
 msgstr "Grau"
 
@@ -743,10 +751,11 @@ msgstr "Archivierte Inhalte werden nicht in den Suchergebnissen angezeigt."
 msgid "Hide Private"
 msgstr "Privates ausblenden"
 
-#: src/resources/options.js:152
+#: src/resources/options.js:164
 msgid "Hybrid"
 msgstr "Hybrid"
 
+#: src/component/photo/cards.vue:10 src/component/photo/mosaic.vue:10
 #: src/pages/library/files.vue:40
 msgid ""
 "If a file you expect is missing, please re-index your library and wait until "
@@ -847,7 +856,7 @@ msgstr "Kategorien gelöscht"
 msgid "Language"
 msgstr "Sprache"
 
-#: src/pages/settings/sync.vue:95
+#: src/pages/settings/sync.vue:111
 msgid "Last Backup"
 msgstr "Letztes Backup"
 
@@ -855,7 +864,7 @@ msgstr "Letztes Backup"
 msgid "Latitude"
 msgstr "Breitengrad"
 
-#: src/resources/options.js:103
+#: src/resources/options.js:115
 msgid "Lavender"
 msgstr "Lavendel"
 
@@ -880,7 +889,7 @@ msgstr "Dateien"
 msgid "License"
 msgstr "Lizenz"
 
-#: src/resources/options.js:194
+#: src/resources/options.js:206
 msgid "Lime"
 msgstr "Hellgrün"
 
@@ -896,7 +905,7 @@ msgstr "Link"
 msgid "List"
 msgstr "Liste"
 
-#: src/dialog/photo/details.vue:261
+#: src/dialog/photo/details.vue:255
 msgid "Local Time"
 msgstr "Ortszeit"
 
@@ -924,7 +933,7 @@ msgstr "Logs"
 msgid "Longitude"
 msgstr "Längengrad"
 
-#: src/resources/options.js:188
+#: src/resources/options.js:200
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -936,7 +945,7 @@ msgstr "Manuell"
 msgid "Manual Upload"
 msgstr "Manueller Upload"
 
-#: src/resources/options.js:133
+#: src/resources/options.js:145
 msgid "Medium"
 msgstr "Mittel"
 
@@ -953,11 +962,11 @@ msgstr "Erlebnisse"
 msgid "Monochrome"
 msgstr "Monochrom"
 
-#: src/component/photo/toolbar.vue:203 src/dialog/photo/details.vue:199
+#: src/component/photo/toolbar.vue:203 src/dialog/photo/details.vue:195
 msgid "Month"
 msgstr "Monat"
 
-#: src/resources/options.js:107 src/resources/options.js:160
+#: src/resources/options.js:119 src/resources/options.js:172
 msgid "Moonlight"
 msgstr "Moonlight"
 
@@ -1014,8 +1023,8 @@ msgstr "Name"
 msgid "Name too long"
 msgstr "Name zu  lang"
 
-#: src/pages/settings/sync.vue:103 src/resources/options.js:166
-#: src/resources/options.js:176
+#: src/pages/settings/sync.vue:122 src/resources/options.js:178
+#: src/resources/options.js:188
 msgid "Never"
 msgstr "Nie"
 
@@ -1065,8 +1074,8 @@ msgstr ""
 "Keine Warnungen oder Fehler mit diesem Suchbegriff. Bei der Suche wird "
 "zwischen Groß- und Kleinschreibung unterschieden."
 
-#: src/component/photo/cards.vue:11 src/component/photo/cards.vue:1
-#: src/component/photo/list.vue:103 src/component/photo/mosaic.vue:11
+#: src/component/photo/cards.vue:12 src/component/photo/cards.vue:1
+#: src/component/photo/list.vue:103 src/component/photo/mosaic.vue:12
 #: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:50
 #: src/pages/settings/general.vue:99
 msgid ""
@@ -1076,7 +1085,7 @@ msgstr ""
 "Nicht-fotografische Inhalte oder Fotos mit geringer Qualität werden erst "
 "nach einer Bestätigung in der Suche angezeigt."
 
-#: src/resources/options.js:125
+#: src/resources/options.js:137
 msgid "None"
 msgstr "Keine"
 
@@ -1095,14 +1104,17 @@ msgstr ""
 "sollen, ist kein Import notwendig. Die Ordner müssen in diesem Fall manuell "
 "verwaltet und indiziert werden."
 
+#: src/pages/settings/sync.vue:32
+msgid "Note:"
+msgstr "Hinweis:"
+
 #: src/dialog/account/add.vue:20
 msgid ""
-"Note: Only WebDAV servers like Nextcloud can be configured at the moment. "
-"Support for additional\n"
-"            services like Google Drive will be added over time."
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
 msgstr ""
-"Hinweis: Momentan können nur WebDAV-Server wie Nextcloud konfiguriert "
-"werden. Die Unterstützung weiterer Dienste ist geplant."
+"Hinweis: Momentan können nur WebDAV-Server, wie Nextcloud oder PhotoPrism, "
+"für Backups oder zum Datei-Upload verwendet werden."
 
 #: src/pages/settings/account.vue:20
 msgid ""
@@ -1120,7 +1132,7 @@ msgstr "Notizen"
 msgid "Nothing to see here yet. Be patient."
 msgstr "Noch nichts zu sehen. Gedulde dich noch ein bisschen."
 
-#: src/component/navigation.vue:377 src/resources/options.js:144
+#: src/component/navigation.vue:377 src/resources/options.js:156
 msgid "Offline"
 msgstr "Offline"
 
@@ -1133,7 +1145,7 @@ msgstr "OK"
 msgid "Oldest first"
 msgstr "Älteste zuerst"
 
-#: src/resources/options.js:172
+#: src/resources/options.js:184
 msgid "Once a week"
 msgstr "Einmal die Woche"
 
@@ -1157,11 +1169,11 @@ msgstr "Ein Ordner gefunden"
 msgid "One result"
 msgstr "Ein Ergebnis"
 
-#: src/resources/options.js:111
+#: src/resources/options.js:123
 msgid "Onyx"
 msgstr "Onyx"
 
-#: src/resources/options.js:191
+#: src/resources/options.js:203
 msgid "Orange"
 msgstr "Orange"
 
@@ -1219,7 +1231,7 @@ msgstr "PhotoPrism™ ist ein registriertes Markenzeichen von Michael Mayer."
 msgid "Photos"
 msgstr "Fotos"
 
-#: src/resources/options.js:189
+#: src/resources/options.js:201
 msgid "Pink"
 msgstr "Pink"
 
@@ -1241,7 +1253,7 @@ msgstr "Bitte lade keine anstößigen Bilder hoch."
 msgid "Please enter your name and password to proceed:"
 msgstr "Bitte Name und Passwort eingeben, um fortzufahren:"
 
-#: src/resources/options.js:84
+#: src/resources/options.js:96
 msgid "Polish"
 msgstr "Polnisch"
 
@@ -1279,7 +1291,7 @@ msgstr "Hauptdatei"
 msgid "Private"
 msgstr "Privat"
 
-#: src/resources/options.js:187
+#: src/resources/options.js:199
 msgid "Purple"
 msgstr "Purpur"
 
@@ -1295,7 +1307,7 @@ msgstr "Qualität"
 msgid "Random"
 msgstr "Zufällig"
 
-#: src/resources/options.js:115
+#: src/resources/options.js:127
 msgid "Raspberry"
 msgstr "Raspberry"
 
@@ -1308,7 +1320,7 @@ msgstr "Bereits bekannte und unveränderte Dateien neu indizieren."
 msgid "Recently added"
 msgstr "Zuletzt hinzugefügt"
 
-#: src/resources/options.js:190
+#: src/resources/options.js:202
 msgid "Red"
 msgstr "Rot"
 
@@ -1365,7 +1377,7 @@ msgstr "Passwort wiederholen"
 msgid "Review"
 msgstr "Bestätigen"
 
-#: src/resources/options.js:88
+#: src/resources/options.js:100
 msgid "Russian"
 msgstr "Russisch"
 
@@ -1399,7 +1411,7 @@ msgstr "Fotos und Videos auf verschiedenen Weltkarten anzeigen und filtern."
 msgid "Season"
 msgstr "Jahreszeit"
 
-#: src/resources/options.js:119
+#: src/resources/options.js:131
 msgid "Seaweed"
 msgstr "Seegras"
 
@@ -1419,7 +1431,7 @@ msgstr "Auswahl archiviert"
 msgid "Selection restored"
 msgstr "Auswahl wiederhergestellt"
 
-#: src/pages/settings/sync.vue:92
+#: src/pages/settings/sync.vue:108
 msgid "Server"
 msgstr "Server"
 
@@ -1485,7 +1497,7 @@ msgstr "Ähnlich"
 msgid "Size"
 msgstr "Größe"
 
-#: src/resources/options.js:137
+#: src/resources/options.js:149
 msgid "Slow"
 msgstr "Langsam"
 
@@ -1503,7 +1515,7 @@ msgstr "Sortierung"
 msgid "Source"
 msgstr "Quelle"
 
-#: src/resources/options.js:76
+#: src/resources/options.js:88
 msgid "Spanish"
 msgstr "Spanisch"
 
@@ -1523,7 +1535,7 @@ msgstr "Länder"
 msgid "Status"
 msgstr "Status"
 
-#: src/resources/options.js:148
+#: src/resources/options.js:160
 msgid "Streets"
 msgstr "Straßen"
 
@@ -1535,7 +1547,12 @@ msgstr "Style"
 msgid "Subject"
 msgstr "Bildinhalt"
 
-#: src/pages/settings/sync.vue:94
+#: src/dialog/account/add.vue:21
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr "Die Unterstützung weiterer Dienste, wie Google Drive, ist geplant."
+
+#: src/pages/settings/sync.vue:110
 msgid "Sync"
 msgstr "Sync"
 
@@ -1555,7 +1572,7 @@ msgstr "Erstell nach"
 msgid "Taken before"
 msgstr "Erstellt vor"
 
-#: src/resources/options.js:196
+#: src/resources/options.js:208
 msgid "Teal"
 msgstr "Blaugrün"
 
@@ -1579,7 +1596,16 @@ msgstr ""
 msgid "Theme"
 msgstr "Theme"
 
-#: src/dialog/photo/details.vue:291
+#: src/dialog/webdav.vue:17 src/pages/settings/sync.vue:34
+msgid ""
+"This mounts the originals folder as a mapped drive and allows you to view, "
+"edit, and delete files from your computer or smartphone."
+msgstr ""
+"Dabei werden die Dateien als Netzwerk-Ordner direkt ins Betriebssystem "
+"eingebunden, so dass sie auf deinem Computer oder Smartphone angesehen, "
+"bearbeitet und gelöscht werden können."
+
+#: src/dialog/photo/details.vue:285
 msgid "Time UTC"
 msgstr "Zeit UTC"
 
@@ -1608,7 +1634,7 @@ msgstr "nach"
 msgid "Token"
 msgstr "Code"
 
-#: src/resources/options.js:156
+#: src/resources/options.js:168
 msgid "Topographic"
 msgstr "Topographisch"
 
@@ -1643,7 +1669,7 @@ msgstr "Gruppierung auflösen"
 #: src/pages/library/errors.vue:196 src/pages/library/errors.vue:203
 #: src/pages/library/logs.vue:32 src/resources/options.js:15
 #: src/resources/options.js:29 src/resources/options.js:43
-#: src/resources/options.js:57
+#: src/resources/options.js:57 src/resources/options.js:69
 msgid "Unknown"
 msgstr "Unbekannt"
 
@@ -1657,7 +1683,7 @@ msgstr "Geändert"
 
 #: src/dialog/share/upload.vue:35 src/dialog/upload.vue:8
 #: src/dialog/upload.vue:54 src/pages/library/import.vue:38
-#: src/pages/settings/general.vue:319 src/pages/settings/sync.vue:93
+#: src/pages/settings/general.vue:319 src/pages/settings/sync.vue:109
 msgid "Upload"
 msgstr "Upload"
 
@@ -1724,6 +1750,22 @@ msgstr "Videos"
 msgid "View"
 msgstr "Ansicht"
 
+#: src/dialog/webdav.vue:8
+msgid ""
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to PhotoPrism using the following URL:"
+msgstr ""
+"WebDAV Clients, wie der Windows Explorer oder der Finder unter macOS, können "
+"sich über die folgende URL direkt mit PhotoPrism verbinden:"
+
+#: src/pages/settings/sync.vue:33
+msgid ""
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to PhotoPrism."
+msgstr ""
+"WebDAV Clients, wie der Windows Explorer oder der Finder unter macOS, können "
+"sich direkt mit PhotoPrism verbinden."
+
 #: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
 msgstr "WebDAV Upload"
@@ -1732,7 +1774,7 @@ msgstr "WebDAV Upload"
 msgid "Whatever it is, we'd love to hear from you!"
 msgstr "Wir freuen uns, von dir zu hören!"
 
-#: src/resources/options.js:200
+#: src/resources/options.js:212
 msgid "White"
 msgstr "Weiß"
 
@@ -1741,11 +1783,11 @@ msgid "Who we are"
 msgstr "Über uns"
 
 #: src/component/photo/toolbar.vue:202 src/dialog/photo/details.vue:434
-#: src/dialog/photo/details.vue:230
+#: src/dialog/photo/details.vue:224
 msgid "Year"
 msgstr "Jahr"
 
-#: src/resources/options.js:193
+#: src/resources/options.js:205
 msgid "Yellow"
 msgstr "Gelb"
 
@@ -1778,6 +1820,9 @@ msgstr ""
 "Server zu betreiben und über das Projekt zu berichten.\n"
 "Das Bewerben kommerzieller Produkte, Waren oder Dienstleistungen ist nur "
 "nach vorheriger, schriftlicher Genehmigung erlaubt."
+
+#~ msgid "Add"
+#~ msgstr "Hinzufügen"
 
 #~ msgid "No results. Try again with a different search term."
 #~ msgstr "Keine Ergebnisse mit diesem Suchbegriff."
@@ -1975,9 +2020,6 @@ msgstr ""
 
 #~ msgid "Add Remote Service"
 #~ msgstr "Remote Service hinzufügen"
-
-#~ msgid "Add"
-#~ msgstr "Hinzufügen"
 
 #~ msgid "About"
 #~ msgstr "Über"

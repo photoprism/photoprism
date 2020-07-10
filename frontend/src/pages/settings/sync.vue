@@ -46,16 +46,30 @@
       </template>
     </v-data-table>
     <v-container fluid>
+      <p class="caption pa-0 clickable" @click.stop.prevent="webdavDialog">
+        <translate>Note:</translate>
+        <translate>WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism.</translate>
+        <translate>This mounts the originals folder as a mapped drive and allows you to view, edit, and delete files from your computer or smartphone.</translate>
+      </p>
+
       <v-form lazy-validation dense
-              ref="form" class="p-form-settings" accept-charset="UTF-8"
+              ref="form" class="p-form-settings mt-2" accept-charset="UTF-8"
               @submit.prevent="add">
+
         <v-btn color="secondary-dark"
-               class="white--text ml-0 mt-2"
+               class="white--text ml-0"
                depressed
                @click.stop="add">
           <translate>Add Server</translate>
           <v-icon right dark>add</v-icon>
         </v-btn>
+
+        <v-btn depressed color="secondary-light" @click.stop="webdavDialog"
+               class="action-webdav-dialog ml-0">
+          <translate>Connect via WebDAV</translate>
+          <v-icon right>cloud</v-icon>
+        </v-btn>
+
       </v-form>
     </v-container>
     <p-account-add-dialog :show="dialog.add" @cancel="onCancel('add')"
@@ -64,6 +78,7 @@
                              @confirm="onRemoved"></p-account-remove-dialog>
     <p-account-edit-dialog :show="dialog.edit" :model="model" :scope="editScope" @remove="remove(model)" @cancel="onCancel('edit')"
                            @confirm="onEdited"></p-account-edit-dialog>
+    <p-webdav-dialog :show="dialog.webdav" @close="dialog.webdav = false"></p-webdav-dialog>
   </div>
 </template>
 
@@ -86,6 +101,7 @@
                 dialog: {
                     add: false,
                     remove: false,
+                    webdav: false,
                 },
                 editScope: "main",
                 listColumns: [
@@ -98,6 +114,9 @@
             };
         },
         methods: {
+            webdavDialog() {
+                this.dialog.webdav = true;
+            },
             formatDate(d) {
                 if (!d || !d.Valid) {
                     return this.$gettext('Never');

@@ -41,6 +41,7 @@ import PUploadDialog from "./upload.vue";
 import PVideoDialog from "./video.vue";
 import PShareDialog from "./share.vue";
 import PShareUploadDialog from "./share/upload.vue";
+import PWebdavDialog from "./webdav.vue";
 
 const dialogs = {};
 
@@ -58,6 +59,7 @@ dialogs.install = (Vue) => {
     Vue.component("p-video-dialog", PVideoDialog);
     Vue.component("p-share-dialog", PShareDialog);
     Vue.component("p-share-upload-dialog", PShareUploadDialog);
+    Vue.component("p-webdav-dialog", PWebdavDialog);
 };
 
 export default dialogs;

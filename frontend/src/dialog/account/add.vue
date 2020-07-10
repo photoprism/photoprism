@@ -42,8 +42,8 @@
             ></v-text-field>
           </v-flex>
           <v-flex xs12 text-xs-left class="pa-2 caption">
-            <translate>Note: Only WebDAV servers like Nextcloud can be configured at the moment. Support for additional
-            services like Google Drive will be added over time.</translate>
+            <translate>Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload.</translate>
+            <translate>Support for additional services, like Google Drive, will be added over time.</translate>
           </v-flex>
           <v-flex xs12 text-xs-right class="px-2 pt-2 pb-0">
             <v-btn @click.stop="cancel" depressed color="secondary-light"
