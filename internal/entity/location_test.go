@@ -44,6 +44,11 @@ func TestLocation_Keywords(t *testing.T) {
 		r := m.Keywords()
 		assert.Equal(t, []string{"camping", "caravan", "kwazulu-natal", "lobotes", "mandeni", "park", "south-africa"}, r)
 	})
+	t.Run("place id empty", func(t *testing.T) {
+		m := &Location{}
+		r := m.Keywords()
+		assert.Empty(t, r)
+	})
 }
 
 func TestLocation_Find(t *testing.T) {
@@ -61,5 +66,28 @@ func TestLocation_Find(t *testing.T) {
 		}
 
 		assert.Equal(t, "maps: reverse lookup disabled", err.Error())
+	})
+}
+
+func TestFirstOrCreateLocation(t *testing.T) {
+	t.Run("id empty", func(t *testing.T) {
+		loc := &Location{}
+
+		assert.Nil(t, FirstOrCreateLocation(loc))
+	})
+	t.Run("place id empty", func(t *testing.T) {
+		loc := &Location{ID: "1234jhy"}
+
+		assert.Nil(t, FirstOrCreateLocation(loc))
+	})
+	t.Run("success", func(t *testing.T) {
+		loc := LocationFixtures.Pointer("caravan park")
+
+		result := FirstOrCreateLocation(loc)
+
+		if result == nil {
+			t.Fatal("result should not be nil")
+		}
+		assert.NotEmpty(t, result.ID)
 	})
 }
