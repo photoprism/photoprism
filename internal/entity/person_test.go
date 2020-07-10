@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/photoprism/photoprism/internal/acl"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -239,5 +240,32 @@ func TestPerson_InitPassword(t *testing.T) {
 		assert.Nil(t, FindPassword("u000000000000011"))
 		p.InitPassword("")
 		assert.Nil(t, FindPassword("u000000000000011"))
+	})
+}
+
+func TestPerson_Role(t *testing.T) {
+	t.Run("admin", func(t *testing.T) {
+		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleAdmin: true}
+		assert.Equal(t, acl.Role("admin"), p.Role())
+	})
+	t.Run("child", func(t *testing.T) {
+		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleChild: true}
+		assert.Equal(t, acl.Role("child"), p.Role())
+	})
+	t.Run("family", func(t *testing.T) {
+		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleFamily: true}
+		assert.Equal(t, acl.Role("family"), p.Role())
+	})
+	t.Run("friend", func(t *testing.T) {
+		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleFriend: true}
+		assert.Equal(t, acl.Role("friend"), p.Role())
+	})
+	t.Run("guest", func(t *testing.T) {
+		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleGuest: true}
+		assert.Equal(t, acl.Role("guest"), p.Role())
+	})
+	t.Run("default", func(t *testing.T) {
+		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		assert.Equal(t, acl.Role("*"), p.Role())
 	})
 }
