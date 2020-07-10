@@ -46,6 +46,13 @@ func TestFindPlaceByLabel(t *testing.T) {
 			t.Fatal("result should be nil")
 		}
 	})
+	t.Run("not matching empty label", func(t *testing.T) {
+		r := FindPlace("111", "")
+
+		if r != nil {
+			t.Fatal("result should be nil")
+		}
+	})
 }
 
 func TestPlace_Find(t *testing.T) {
@@ -76,7 +83,50 @@ func TestPlace_Find(t *testing.T) {
 }
 
 func TestFirstOrCreatePlace(t *testing.T) {
-	m := PlaceFixtures.Pointer("zinkwazi")
-	r := FirstOrCreatePlace(m)
-	assert.Equal(t, "KwaDukuza, KwaZulu-Natal, South Africa", r.LocLabel)
+	t.Run("existing place", func(t *testing.T) {
+		m := PlaceFixtures.Pointer("zinkwazi")
+		r := FirstOrCreatePlace(m)
+		assert.Equal(t, "KwaDukuza, KwaZulu-Natal, South Africa", r.LocLabel)
+	})
+	t.Run("ID empty", func(t *testing.T) {
+		p := &Place{ID: ""}
+		assert.Nil(t, FirstOrCreatePlace(p))
+	})
+	t.Run("LocLabel empty", func(t *testing.T) {
+		p := &Place{ID: "abcde44", LocLabel: ""}
+		assert.Nil(t, FirstOrCreatePlace(p))
+	})
+}
+
+func TestPlace_LongCity(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		p := Place{LocCity: "veryveryveryverylongcity"}
+		assert.True(t, p.LongCity())
+	})
+	t.Run("false", func(t *testing.T) {
+		p := Place{LocCity: "short"}
+		assert.False(t, p.LongCity())
+	})
+}
+
+func TestPlace_NoCity(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		p := Place{LocCity: ""}
+		assert.True(t, p.NoCity())
+	})
+	t.Run("false", func(t *testing.T) {
+		p := Place{LocCity: "short"}
+		assert.False(t, p.NoCity())
+	})
+}
+
+func TestPlace_CityContains(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		p := Place{LocCity: "Munich"}
+		assert.True(t, p.CityContains("Munich"))
+	})
+	t.Run("false", func(t *testing.T) {
+		p := Place{LocCity: "short"}
+		assert.False(t, p.CityContains("ich"))
+	})
 }
