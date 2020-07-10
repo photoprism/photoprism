@@ -41,12 +41,6 @@
           >
             <a style="color: inherit;" href="https://docs.photoprism.org/user-guide/backup/webdav/" target="_blank"><translate>Detailed instructions can be found in our User Guide.</translate></a>
           </v-alert>
-
-          <!-- div>
-          <v-icon size="16" class="mr-1" color="primary darken-1">info</v-icon><a class="text--primary text--darken-1" ref="https://support.apple.com/en-au/guide/mac-help/mchlp1546/mac" target="_blank"><translate>Detailed instructions can be found in our User Guide.</translate></a>
-          <a class="text-link" href="https://support.apple.com/en-au/guide/mac-help/mchlp1546/mac" target="_blank">Connect to a WebDAV server on a Mac</a><br>
-          <a class="text-link" href="https://www.webdavsystem.com/server/access/windows/" target="_blank">Connect to a  WebDAV server on Microsoft Windows</a>
-          </div -->
         </v-card-text>
       </v-card>
     </v-dialog>
