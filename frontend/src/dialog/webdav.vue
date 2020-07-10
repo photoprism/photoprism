@@ -10,7 +10,7 @@
         </v-card-title>
 
         <v-card-text class="pa-2 body-1">
-          <translate>WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism using the following URL:</translate>
+          <translate>WebDAV clients can connect to PhotoPrism using the following URL:</translate>
         </v-card-text>
 
         <v-card-text class="pa-2 body-1">
@@ -27,7 +27,7 @@
         </v-card-text>
 
         <v-card-text class="pa-2 body-1">
-          <translate>This mounts the originals folder as a mapped drive and allows you to view, edit, and delete files from your computer or smartphone.</translate>
+          <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.</translate>
         </v-card-text>
 
         <v-card-text class="pa-2 body-1">

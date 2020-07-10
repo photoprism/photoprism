@@ -1690,7 +1690,7 @@ msgstr ""
 
 #: src/dialog/webdav.vue:17
 #: src/pages/settings/sync.vue:34
-msgid "This mounts the originals folder as a mapped drive and allows you to view, edit, and delete files from your computer or smartphone."
+msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr ""
 
 #: src/dialog/photo/details.vue:285
@@ -1871,7 +1871,7 @@ msgid "View"
 msgstr ""
 
 #: src/dialog/webdav.vue:8
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism using the following URL:"
+msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr ""
 
 #: src/pages/settings/sync.vue:33

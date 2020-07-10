@@ -49,7 +49,7 @@
       <p class="caption pa-0 clickable" @click.stop.prevent="webdavDialog">
         <translate>Note:</translate>
         <translate>WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism.</translate>
-        <translate>This mounts the originals folder as a mapped drive and allows you to view, edit, and delete files from your computer or smartphone.</translate>
+        <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.</translate>
       </p>
 
       <v-form lazy-validation dense
