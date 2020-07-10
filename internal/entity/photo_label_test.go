@@ -64,4 +64,28 @@ func TestPhotoLabel_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+	t.Run("photo not nil and label not nil", func(t *testing.T) {
+		label := &Label{LabelName: "ToBeRestored"}
+		photo := &Photo{}
+
+		photoLabel := PhotoLabel{Photo: photo, Label: label}
+		err := photoLabel.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+}
+
+func TestPhotoLabel_Update(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		photoLabel := PhotoLabel{LabelID: 555, PhotoID: 888}
+		assert.Equal(t, uint(0x22b), photoLabel.LabelID)
+
+		err := photoLabel.Update("LabelID", 8)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, uint(0x8), photoLabel.LabelID)
+	})
 }

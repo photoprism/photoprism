@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 )
@@ -40,4 +41,15 @@ func TestPhoto_GetTakenAt(t *testing.T) {
 	if utcTime != "2020-02-04T10:54:34" {
 		t.Fatalf("utc time should be 2020-02-04T10:54:34: %s", utcTime)
 	}
+}
+
+func TestPhoto_CountryName(t *testing.T) {
+	t.Run("Unknown", func(t *testing.T) {
+		m := Photo{PhotoCountry: "xx"}
+		assert.Equal(t, "Unknown", m.CountryName())
+	})
+	t.Run("Germany", func(t *testing.T) {
+		m := Photo{PhotoCountry: "de"}
+		assert.Equal(t, "Germany", m.CountryName())
+	})
 }

@@ -22,18 +22,48 @@ func TestPhotoAlbum_TableName(t *testing.T) {
 }
 
 func TestFirstOrCreatePhotoAlbum(t *testing.T) {
-	model := PhotoAlbumFixtures.Get("1", "pt9jtdre2lvl0yh7", "at9lxuqxpogaaba8")
-	result := FirstOrCreatePhotoAlbum(&model)
+	t.Run("existing album", func(t *testing.T) {
+		model := PhotoAlbumFixtures.Get("1", "pt9jtdre2lvl0yh7", "at9lxuqxpogaaba8")
+		result := FirstOrCreatePhotoAlbum(&model)
 
-	if result == nil {
-		t.Fatal("result should not be nil")
-	}
+		if result == nil {
+			t.Fatal("result should not be nil")
+		}
 
-	if result.AlbumUID != model.AlbumUID {
-		t.Errorf("AlbumUID should be the same: %s %s", result.AlbumUID, model.AlbumUID)
-	}
+		if result.AlbumUID != model.AlbumUID {
+			t.Errorf("AlbumUID should be the same: %s %s", result.AlbumUID, model.AlbumUID)
+		}
 
-	if result.PhotoUID != model.PhotoUID {
-		t.Errorf("PhotoUID should be the same: %s %s", result.PhotoUID, model.PhotoUID)
-	}
+		if result.PhotoUID != model.PhotoUID {
+			t.Errorf("PhotoUID should be the same: %s %s", result.PhotoUID, model.PhotoUID)
+		}
+	})
+	t.Run("not yet existing album", func(t *testing.T) {
+		model := &PhotoAlbum{}
+		result := FirstOrCreatePhotoAlbum(model)
+
+		if result == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		if result.AlbumUID != model.AlbumUID {
+			t.Errorf("AlbumUID should be the same: %s %s", result.AlbumUID, model.AlbumUID)
+		}
+
+		if result.PhotoUID != model.PhotoUID {
+			t.Errorf("PhotoUID should be the same: %s %s", result.PhotoUID, model.PhotoUID)
+		}
+	})
+}
+
+func TestPhotoAlbum_Save(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		p := PhotoAlbum{}
+
+		err := p.Create()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
 }
