@@ -38,8 +38,10 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 
 	if bytes.Contains(jsonData, []byte("ExifToolVersion")) {
 		return data.Exiftool(jsonData, originalName)
-	} else if bytes.Contains(jsonData, []byte("geoData")) {
-		return data.GPhotos(jsonData)
+	} else if bytes.Contains(jsonData, []byte("albumData")) {
+		return data.GMeta(jsonData)
+	} else if bytes.Contains(jsonData, []byte("photoTakenTime")) {
+		return data.GPhoto(jsonData)
 	}
 
 	log.Warnf("metadata: unknown format in %s (json)", quotedName)

@@ -12,7 +12,6 @@ type GPhoto struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Views       int    `json:"imageViews,string"`
-	Album       GAlbum `json:"albumData"`
 	Geo         GGeo   `json:"geoData"`
 	TakenAt     GTime  `json:"photoTakenTime"`
 	CreatedAt   GTime  `json:"creationTime"`
@@ -25,6 +24,10 @@ func (m GPhoto) SanitizedTitle() string {
 
 func (m GPhoto) SanitizedDescription() string {
 	return SanitizeDescription(m.Description)
+}
+
+type GMeta struct {
+	Album GAlbum `json:"albumData"`
 }
 
 type GAlbum struct {
@@ -64,7 +67,28 @@ func (m GTime) Time() time.Time {
 }
 
 // Parses JSON sidecar data as created by Google Photos.
-func (data *Data) GPhotos(jsonData []byte) (err error) {
+func (data *Data) GMeta(jsonData []byte) (err error) {
+	defer func() {
+		if e := recover(); e != nil {
+			err = fmt.Errorf("metadata: %s (gphotos panic)", e)
+		}
+	}()
+
+	p := GMeta{}
+
+	if err := json.Unmarshal(jsonData, &p); err != nil {
+		return err
+	}
+
+	if p.Album.Exists() {
+		data.Albums = append(data.Albums, p.Album.Title)
+	}
+
+	return nil
+}
+
+// Parses JSON photo sidecar data as created by Google Photos.
+func (data *Data) GPhoto(jsonData []byte) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			err = fmt.Errorf("metadata: %s (gphotos panic)", e)
@@ -98,10 +122,6 @@ func (data *Data) GPhotos(jsonData []byte) (err error) {
 		data.Lat = float32(p.Geo.Lat)
 		data.Lng = float32(p.Geo.Lng)
 		data.Altitude = int(p.Geo.Altitude)
-	}
-
-	if p.Album.Exists() {
-		data.Albums = append(data.Albums, p.Album.Title)
 	}
 
 	// Set time zone and calculate UTC time.

@@ -560,7 +560,6 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 
 		assert.Equal(t, "2015-02-04.jpg", related.Main.BaseName())
 
-
 		assert.Equal(t, "2015-02-04.jpg", related.Files[0].BaseName())
 		assert.Equal(t, "2015-02-04(1).jpg", related.Files[1].BaseName())
 		assert.Equal(t, "2015-02-04.jpg.json", related.Files[2].BaseName())
