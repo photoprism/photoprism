@@ -4326,7 +4326,7 @@ var rules = LabelRules{
 		Label:      "plate",
 		Threshold:  0.180000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"food"},
 	},
 	"plate rack": {
 		Label:      "",

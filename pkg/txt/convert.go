@@ -15,6 +15,8 @@ var DateTimeRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}.{1,4}
 var DateIntRegexp = regexp.MustCompile("\\d{1,4}")
 var YearRegexp = regexp.MustCompile("\\d{4,5}")
 var CountryWordsRegexp = regexp.MustCompile("[\\p{L}]{2,}")
+var IsDateRegexp = regexp.MustCompile("\\d{4}[\\-_]?\\d{2}[\\-_]?\\d{2}")
+var IsDateTimeRegexp = regexp.MustCompile("\\d{4}[\\-_]?\\d{2}[\\-_]?\\d{2}.{1,4}\\d{2}\\D?\\d{2}\\D?\\d{2}")
 
 var (
 	YearMin = 1990
@@ -151,6 +153,19 @@ func Time(s string) (result time.Time) {
 	}
 
 	return result.UTC()
+}
+
+// IsTime tests if the string looks like a date and/or time.
+func IsTime(s string) bool {
+	if s == "" {
+		return false
+	} else if m := IsDateRegexp.FindString(s); m == s {
+		return true
+	} else if m := IsDateTimeRegexp.FindString(s); m == s {
+		return true
+	}
+
+	return false
 }
 
 // Int returns a string as int or 0 if it can not be converted.

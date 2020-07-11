@@ -48,6 +48,7 @@ var FileExt = FileExtensions{
 	".tif":  TypeTiff,
 	".tiff": TypeTiff,
 	".png":  TypePng,
+	".pn":   TypePng,
 	".crw":  TypeRaw,
 	".cr2":  TypeRaw,
 	".nef":  TypeRaw,
@@ -109,6 +110,24 @@ var FileExt = FileExtensions{
 	".txt":  TypeText,
 	".md":   TypeMarkdown,
 	".json": TypeJson,
+}
+
+func (m FileExtensions) Known(name string) bool {
+	if name == "" {
+		return false
+	}
+
+	ext := strings.ToLower(filepath.Ext(name))
+
+	if ext == "" {
+		return false
+	}
+
+	if _, ok := m[ext]; ok {
+		return true
+	}
+
+	return false
 }
 
 func (m FileExtensions) TypeExt() TypeExtensions {

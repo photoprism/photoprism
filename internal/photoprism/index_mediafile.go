@@ -64,7 +64,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file, primaryFile := entity.File{}, entity.File{}
 
 	photo := entity.NewPhoto()
-	metaData := meta.Data{}
+	metaData := meta.NewData()
 	labels := classify.Labels{}
 
 	fileRoot, fileBase, filePath, fileName := m.PathNameInfo()
@@ -533,7 +533,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		w := txt.Keywords(details.Keywords)
 
-		if !fs.IsID(fileBase) {
+		if !fs.IsGenerated(fileBase) {
 			w = append(w, txt.FilenameKeywords(filePath)...)
 			w = append(w, txt.FilenameKeywords(fileBase)...)
 		}

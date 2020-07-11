@@ -1,9 +1,11 @@
 package meta
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 var UnwantedDescriptions = map[string]bool{
@@ -23,6 +25,8 @@ var UnwantedDescriptions = map[string]bool{
 	"oznor":                  true,
 	"rpt":                    true,
 }
+
+var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")
 
 // SanitizeString removes unwanted character from an exif value string.
 func SanitizeString(value string) string {
@@ -47,25 +51,35 @@ func SanitizeUID(value string) string {
 }
 
 // SanitizeTitle normalizes titles and removes unwanted information.
-func SanitizeTitle(value string) string {
-	value = SanitizeString(value)
+func SanitizeTitle(title string) string {
+	s := SanitizeString(title)
 
-	if fs.IsID(value) {
-		value = ""
+	result := fs.StripKnownExt(s)
+
+	if fs.IsGenerated(result) || txt.IsTime(result) {
+		result = ""
+	} else if result == s {
+		// Do nothing.
+	} else if found := LowerCaseRegexp.FindString(result); found != result {
+		result = strings.ReplaceAll(strings.ReplaceAll(result, "_", " "), "  ", " ")
+	} else if formatted := txt.FileTitle(s); formatted != "" {
+		result = formatted
+	} else {
+		result = txt.Title(strings.ReplaceAll(result, "-", " "))
 	}
 
-	return value
+	return result
 }
 
 // SanitizeDescription normalizes descriptions and removes unwanted information.
-func SanitizeDescription(value string) string {
-	value = SanitizeString(value)
+func SanitizeDescription(s string) string {
+	s = SanitizeString(s)
 
-	if remove := UnwantedDescriptions[value]; remove {
-		value = ""
-	} else if strings.HasPrefix(value, "DCIM\\") && !strings.Contains(value, " ") {
-		value = ""
+	if remove := UnwantedDescriptions[s]; remove {
+		s = ""
+	} else if strings.HasPrefix(s, "DCIM\\") && !strings.Contains(s, " ") {
+		s = ""
 	}
 
-	return value
+	return s
 }

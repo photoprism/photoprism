@@ -43,8 +43,17 @@ type Data struct {
 	Height       int           `meta:"PixelYDimension,ImageHeight,ImageLength,ExifImageHeight,SourceImageHeight"`
 	Orientation  int           `meta:"-"`
 	Rotation     int           `meta:"Rotation"`
+	Views        int           `meta:"-"`
+	Albums       []string      `meta:"-"`
 	Error        error         `meta:"-"`
 	All          map[string]string
+}
+
+// NewData creates a new metadata struct.
+func NewData() Data {
+	return Data{
+		All: make(map[string]string),
+	}
 }
 
 // AspectRatio returns the aspect ratio based on width and height.

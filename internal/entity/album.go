@@ -33,6 +33,7 @@ type Album struct {
 	AlbumSlug        string     `gorm:"type:varbinary(255);index;" json:"Slug" yaml:"Slug"`
 	AlbumType        string     `gorm:"type:varbinary(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
 	AlbumTitle       string     `gorm:"type:varchar(255);" json:"Title" yaml:"Title"`
+	AlbumLocation    string     `gorm:"type:varchar(255);" json:"Location" yaml:"Location,omitempty"`
 	AlbumCategory    string     `gorm:"type:varchar(255);index;" json:"Category" yaml:"Category,omitempty"`
 	AlbumCaption     string     `gorm:"type:text;" json:"Caption" yaml:"Caption,omitempty"`
 	AlbumDescription string     `gorm:"type:text;" json:"Description" yaml:"Description,omitempty"`

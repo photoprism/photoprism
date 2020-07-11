@@ -329,4 +329,105 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 184, data.Height)
 		assert.Equal(t, 1, data.Orientation)
 	})
+
+	t.Run("gphotos-1.json", func(t *testing.T) {
+		data, err := JSON("testdata/gphotos-1.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "2015-12-06 16:18:30 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2015-12-06 15:18:30 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, float32(52.508522), data.Lat)
+		assert.Equal(t, float32(13.443206), data.Lng)
+		assert.Equal(t, 40, data.Altitude)
+		assert.Equal(t, 0, data.Views)
+
+		assert.Equal(t, "", data.DocumentID)
+		assert.Equal(t, "", data.InstanceID)
+		assert.Equal(t, CodecUnknown, data.Codec)
+		assert.Equal(t, "0s", data.Duration.String())
+		assert.Equal(t, 0, data.Width)
+		assert.Equal(t, 0, data.Height)
+		assert.Equal(t, 0, data.Orientation)
+		assert.Equal(t, "", data.CameraMake)
+		assert.Equal(t, "", data.CameraModel)
+		assert.Equal(t, "", data.LensModel)
+	})
+
+	t.Run("gphotos-2.json", func(t *testing.T) {
+		data, err := JSON("testdata/gphotos-2.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "A photo description", data.Description)
+		assert.Equal(t, "2019-05-18 12:06:45 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2019-05-18 10:06:45 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, float32(52.510796), data.Lat)
+		assert.Equal(t, float32(13.456387), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 1118, data.Views)
+	})
+
+	t.Run("gphotos-3.json", func(t *testing.T) {
+		data, err := JSON("testdata/gphotos-3.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Bei den Landungsbrücken", data.Title)
+		assert.Equal(t, "In Hamburg", data.Description)
+		assert.Equal(t, "2011-11-07 21:34:34 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2011-11-07 21:34:34 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 177, data.Views)
+	})
+
+	t.Run("gphotos-4.json", func(t *testing.T) {
+		data, err := JSON("testdata/gphotos-4.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "2012-12-11 00:07:15 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2012-12-10 23:07:15 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, float32(52.49967), data.Lat)
+		assert.Equal(t, float32(13.422334), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 0, data.Views)
+	})
+
+	t.Run("gphotos-album.json", func(t *testing.T) {
+		data, err := JSON("testdata/gphotos-album.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, data.TakenAtLocal.IsZero())
+		assert.True(t, data.TakenAt.IsZero())
+		assert.Equal(t, 0, data.Views)
+
+		if len(data.Albums) == 1 {
+			assert.Equal(t, "iPhone", data.Albums[0])
+		} else {
+			assert.Len(t, data.Albums, 1)
+		}
+	})
 }

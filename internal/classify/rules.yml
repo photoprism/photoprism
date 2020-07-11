@@ -3177,6 +3177,8 @@ plate rack:
 plate:
   label: plate
   threshold: 0.18
+  categories:
+    - food
 
 polaroid camera:
   label: camera

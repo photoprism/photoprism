@@ -6,38 +6,51 @@ import (
 	"strings"
 )
 
-// Base returns the filename base without any extensions and path.
-func Base(fileName string, stripSequence bool) string {
-	basename := filepath.Base(fileName)
-
-	// Strip file type extension.
-	if end := strings.LastIndex(basename, "."); end != -1 {
-		basename = basename[:end]
+// StripExt removes the file type extension from a file name (if any).
+func StripExt(name string) string {
+	if end := strings.LastIndex(name, "."); end != -1 {
+		name = name[:end]
 	}
 
+	return name
+}
+
+// StripKnownExt removes a known file type extension from a file name (if any).
+func StripKnownExt(name string) string {
+	if FileExt.Known(name) {
+		name = StripExt(name)
+	}
+
+	return name
+}
+
+// Base returns the filename base without any extensions and path.
+func Base(fileName string, stripSequence bool) string {
+	name := StripKnownExt(StripExt(filepath.Base(fileName)))
+
 	if !stripSequence {
-		return basename
+		return name
 	}
 
 	// Strip numeric extensions like .00000, .00001, .4542353245,.... (at least 5 digits).
-	if dot := strings.LastIndex(basename, "."); dot != -1 && len(basename[dot+1:]) >= 5 {
-		if i, err := strconv.Atoi(basename[dot+1:]); err == nil && i >= 0 {
-			basename = basename[:dot]
+	if dot := strings.LastIndex(name, "."); dot != -1 && len(name[dot+1:]) >= 5 {
+		if i, err := strconv.Atoi(name[dot+1:]); err == nil && i >= 0 {
+			name = name[:dot]
 		}
 	}
 
 	// Other common sequential naming schemes.
-	if end := strings.Index(basename, "("); end != -1 {
+	if end := strings.Index(name, "("); end != -1 {
 		// Copies created by Chrome & Windows, example: IMG_1234 (2).
-		basename = basename[:end]
-	} else if end := strings.Index(basename, " copy"); end != -1 {
+		name = name[:end]
+	} else if end := strings.Index(name, " copy"); end != -1 {
 		// Copies created by OS X, example: IMG_1234 copy 2.
-		basename = basename[:end]
+		name = name[:end]
 	}
 
-	basename = strings.TrimSpace(basename)
+	name = strings.TrimSpace(name)
 
-	return basename
+	return name
 }
 
 // RelBase returns the relative filename.

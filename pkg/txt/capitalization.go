@@ -41,6 +41,11 @@ func UcFirst(str string) string {
 func Title(s string) string {
 	s = strings.ReplaceAll(s, "_", " ")
 	s = strings.Trim(s, "/ -")
+
+	if s == "" {
+		return ""
+	}
+
 	blocks := strings.Split(s, "/")
 	result := make([]string, 0, len(blocks))
 

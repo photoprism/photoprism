@@ -636,13 +636,13 @@ func (m *Photo) SaveDetails() error {
 
 // FileTitle returns a photo title based on the file name and/or path.
 func (m *Photo) FileTitle() string {
-	if !fs.IsID(m.PhotoName) {
+	if !fs.IsGenerated(m.PhotoName) {
 		if title := txt.FileTitle(m.PhotoName); title != "" {
 			return title
 		}
 	}
 
-	if m.OriginalName != "" && !fs.IsID(m.OriginalName) {
+	if m.OriginalName != "" && !fs.IsGenerated(m.OriginalName) {
 		if title := txt.FileTitle(m.OriginalName); title != "" {
 			return title
 		} else if title := txt.FileTitle(path.Dir(m.OriginalName)); title != "" {

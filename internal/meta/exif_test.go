@@ -255,7 +255,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 
 		if err := data.JSON("testdata/orientation.json", "foo.jpg"); err != nil {
-			assert.EqualError(t, err, "metadata: original name foo.jpg does not match orientation.jpg (json)")
+			assert.EqualError(t, err, "metadata: original name foo.jpg does not match orientation.jpg (exiftool)")
 		} else {
 			t.Error("error expected when providing wrong orginal name")
 		}

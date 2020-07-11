@@ -188,6 +188,48 @@ func TestTime(t *testing.T) {
 	})
 }
 
+func TestIsTime(t *testing.T) {
+	t.Run("/2020/1212/20130518_142022_3D657EBD.jpg", func(t *testing.T) {
+		assert.False(t, IsTime("/2020/1212/20130518_142022_3D657EBD.jpg"))
+	})
+
+	t.Run("telegram_2020_01_30_09_57_18.jpg", func(t *testing.T) {
+		assert.False(t, IsTime("telegram_2020_01_30_09_57_18.jpg"))
+	})
+
+	t.Run("Screenshot 2019_05_21 at 10.45.52.png", func(t *testing.T) {
+		assert.False(t, IsTime("Screenshot 2019_05_21 at 10.45.52.png"))
+	})
+
+	t.Run("telegram_2020-01-30_09-57-18.jpg", func(t *testing.T) {
+		assert.False(t, IsTime("telegram_2020-01-30_09-57-18.jpg"))
+	})
+
+	t.Run("2013-05-18", func(t *testing.T) {
+		assert.True(t, IsTime("2013-05-18"))
+	})
+
+	t.Run("2013-05-18 12:01:01", func(t *testing.T) {
+		assert.True(t, IsTime("2013-05-18 12:01:01"))
+	})
+
+	t.Run("20130518_142022", func(t *testing.T) {
+		assert.True(t, IsTime("20130518_142022"))
+	})
+
+	t.Run("2020_01_30_09_57_18", func(t *testing.T) {
+		assert.True(t, IsTime("2020_01_30_09_57_18"))
+	})
+
+	t.Run("2019_05_21 at 10.45.52", func(t *testing.T) {
+		assert.True(t, IsTime("2019_05_21 at 10.45.52"))
+	})
+
+	t.Run("2020-01-30_09-57-18", func(t *testing.T) {
+		assert.True(t, IsTime("2020-01-30_09-57-18"))
+	})
+}
+
 func TestInt(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
 		result := Int("")

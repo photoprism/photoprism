@@ -1,6 +1,10 @@
 package meta
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestSanitizeTitle(t *testing.T) {
 	t.Run("IMG_0599", func(t *testing.T) {
@@ -33,6 +37,54 @@ func TestSanitizeTitle(t *testing.T) {
 		if result != "" {
 			t.Fatal("result should be empty")
 		}
+	})
+
+	t.Run("titanic_cloud_computing.jpg", func(t *testing.T) {
+		result := SanitizeTitle("titanic_cloud_computing.jpg")
+
+		assert.Equal(t, "Titanic Cloud Computing", result)
+	})
+
+	t.Run("naomi-watts--ewan-mcgregor--the-impossible--tiff-2012_7999540939_o.jpg", func(t *testing.T) {
+		result := SanitizeTitle("naomi-watts--ewan-mcgregor--the-impossible--tiff-2012_7999540939_o.jpg")
+
+		assert.Equal(t, "Naomi Watts / Ewan McGregor / The Impossible / TIFF", result)
+	})
+
+	t.Run("Bei den Landungsbrücken.png", func(t *testing.T) {
+		result := SanitizeTitle("Bei den Landungsbrücken.png")
+
+		assert.Equal(t, "Bei den Landungsbrücken", result)
+	})
+
+	t.Run("Bei den Landungsbrücken.foo", func(t *testing.T) {
+		result := SanitizeTitle("Bei den Landungsbrücken.foo")
+
+		assert.Equal(t, "Bei den Landungsbrücken.foo", result)
+	})
+
+	t.Run("let_it_snow", func(t *testing.T) {
+		result := SanitizeTitle("let_it_snow")
+
+		assert.Equal(t, "let_it_snow", result)
+	})
+
+	t.Run("let_it_snow.jpg", func(t *testing.T) {
+		result := SanitizeTitle("let_it_snow.jpg")
+
+		assert.Equal(t, "Let It Snow", result)
+	})
+
+	t.Run("Niklaus_Wirth.jpg", func(t *testing.T) {
+		result := SanitizeTitle("Niklaus_Wirth.jpg")
+
+		assert.Equal(t, "Niklaus Wirth", result)
+	})
+
+	t.Run("Niklaus_Wirth", func(t *testing.T) {
+		result := SanitizeTitle("Niklaus_Wirth")
+
+		assert.Equal(t, "Niklaus_Wirth", result)
 	})
 }
 

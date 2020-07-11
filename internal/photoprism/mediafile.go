@@ -48,6 +48,7 @@ func NewMediaFile(fileName string) (*MediaFile, error) {
 	instance := &MediaFile{
 		fileName: fileName,
 		fileType: fs.TypeOther,
+		metaData: meta.NewData(),
 	}
 
 	return instance, nil
@@ -238,7 +239,7 @@ func (m *MediaFile) Checksum() string {
 	return m.checksum
 }
 
-// EditedName When editing photos, iPhones create additional files like IMG_E12345.JPG
+// EditedName returns the corresponding edited image file name as used by Apple (e.g. IMG_E12345.JPG).
 func (m *MediaFile) EditedName() string {
 	basename := filepath.Base(m.fileName)
 
@@ -246,6 +247,17 @@ func (m *MediaFile) EditedName() string {
 		if filename := filepath.Dir(m.fileName) + string(os.PathSeparator) + basename[:4] + "E" + basename[4:]; fs.FileExists(filename) {
 			return filename
 		}
+	}
+
+	return ""
+}
+
+// JsonName returns the corresponding JSON sidecar file name as used by Google Photos (and potentially other apps).
+func (m *MediaFile) JsonName() string {
+	jsonName := m.fileName + ".json"
+
+	if fs.FileExists(jsonName) {
+		return jsonName
 	}
 
 	return ""
@@ -260,8 +272,12 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		return result, err
 	}
 
-	if filename := m.EditedName(); filename != "" {
-		matches = append(matches, filename)
+	if name := m.EditedName(); name != "" {
+		matches = append(matches, name)
+	}
+
+	if name := m.JsonName(); name != "" {
+		matches = append(matches, name)
 	}
 
 	for _, filename := range matches {

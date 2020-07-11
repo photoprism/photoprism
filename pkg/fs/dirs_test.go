@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -40,7 +41,6 @@ func TestFindDirs(t *testing.T) {
 
 	t.Run("./testdata", func(t *testing.T) {
 		result := FindDir([]string{"./testdata"})
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/pkg/fs/testdata", result)
+		assert.True(t, strings.HasSuffix(result, "/pkg/fs/testdata"))
 	})
-
 }

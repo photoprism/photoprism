@@ -1,0 +1,31 @@
+{
+  "title": "23481593101_ef7d55f39d_o.jpg",
+  "description": "hdrpl",
+  "imageViews": "0",
+  "creationTime": {
+    "timestamp": "1453565514",
+    "formatted": "Jan 23, 2016, 4:11:54 PM UTC"
+  },
+  "modificationTime": {
+    "timestamp": "1575946774",
+    "formatted": "Dec 10, 2019, 2:59:34 AM UTC"
+  },
+  "geoData": {
+    "latitude": 52.508522222222226,
+    "longitude": 13.443205555555556,
+    "altitude": 40.99780701754386,
+    "latitudeSpan": 0.0,
+    "longitudeSpan": 0.0
+  },
+  "geoDataExif": {
+    "latitude": 52.508522222222226,
+    "longitude": 13.443205555555556,
+    "altitude": 40.99780701754386,
+    "latitudeSpan": 0.0,
+    "longitudeSpan": 0.0
+  },
+  "photoTakenTime": {
+    "timestamp": "1449418710",
+    "formatted": "Dec 6, 2015, 4:18:30 PM UTC"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "title": "2019-05-18.jpg",
+  "description": "A photo description",
+  "imageViews": "1118",
+  "creationTime": {
+    "timestamp": "1558186924",
+    "formatted": "May 18, 2019, 1:42:04 PM UTC"
+  },
+  "modificationTime": {
+    "timestamp": "1575946778",
+    "formatted": "Dec 10, 2019, 2:59:38 AM UTC"
+  },
+  "geoData": {
+    "latitude": 52.5107943,
+    "longitude": 13.4563869,
+    "altitude": 0.0,
+    "latitudeSpan": 0.0,
+    "longitudeSpan": 0.0
+  },
+  "geoDataExif": {
+    "latitude": 52.510758333333335,
+    "longitude": 13.456647222222221,
+    "altitude": 35.32188796680498,
+    "latitudeSpan": 0.0,
+    "longitudeSpan": 0.0
+  },
+  "photoTakenTime": {
+    "timestamp": "1558181205",
+    "formatted": "May 18, 2019, 12:06:45 PM UTC"
+  }
+}
