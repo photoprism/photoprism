@@ -1,0 +1,31 @@
+{
+  "title": "2015-02-04.jpg",
+  "description": "",
+  "imageViews": "0",
+  "creationTime": {
+    "timestamp": "1423080044",
+    "formatted": "Feb 4, 2015, 8:00:44 PM UTC"
+  },
+  "modificationTime": {
+    "timestamp": "1575946773",
+    "formatted": "Dec 10, 2019, 2:59:33 AM UTC"
+  },
+  "geoData": {
+    "latitude": 0.0,
+    "longitude": 0.0,
+    "altitude": 0.0,
+    "latitudeSpan": 0.0,
+    "longitudeSpan": 0.0
+  },
+  "geoDataExif": {
+    "latitude": 0.0,
+    "longitude": 0.0,
+    "altitude": 0.0,
+    "latitudeSpan": 0.0,
+    "longitudeSpan": 0.0
+  },
+  "photoTakenTime": {
+    "timestamp": "1423080044",
+    "formatted": "Feb 4, 2015, 8:00:44 PM UTC"
+  }
+}

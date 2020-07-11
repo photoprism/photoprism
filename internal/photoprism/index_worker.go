@@ -63,7 +63,7 @@ func IndexWorker(jobs <-chan IndexJob) {
 		res := ind.MediaFile(f, opt, "")
 		done[f.FileName()] = true
 
-		if (res.Status == IndexAdded || res.Status == IndexUpdated) && f.IsJpeg() {
+		if res.Indexed() && f.IsJpeg() {
 			if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
 				log.Errorf("index: could not create default thumbnails (%s)", err.Error())
 				query.SetFileError(res.FileUID, err.Error())
@@ -72,7 +72,8 @@ func IndexWorker(jobs <-chan IndexJob) {
 
 		log.Infof("index: %s main %s file %s", res, f.FileType(), txt.Quote(f.RelativeName(ind.originalsPath())))
 
-		if !res.Success() {
+		// Skip related files if main file was merged or an error occurred.
+		if !res.Success() || res.Grouped() {
 			continue
 		}
 
@@ -84,7 +85,7 @@ func IndexWorker(jobs <-chan IndexJob) {
 			res := ind.MediaFile(f, opt, "")
 			done[f.FileName()] = true
 
-			if (res.Status == IndexAdded || res.Status == IndexUpdated) && f.IsJpeg() {
+			if res.Indexed() && f.IsJpeg() {
 				if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
 					log.Errorf("index: could not create default thumbnails (%s)", err.Error())
 					query.SetFileError(res.FileUID, err.Error())

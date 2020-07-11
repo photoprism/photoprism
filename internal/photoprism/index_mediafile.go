@@ -22,6 +22,7 @@ import (
 const (
 	IndexUpdated   IndexStatus = "updated"
 	IndexAdded     IndexStatus = "added"
+	IndexGrouped   IndexStatus = "grouped"
 	IndexSkipped   IndexStatus = "skipped"
 	IndexDuplicate IndexStatus = "skipped duplicate"
 	IndexArchived  IndexStatus = "skipped archived"
@@ -45,6 +46,14 @@ func (r IndexResult) String() string {
 
 func (r IndexResult) Success() bool {
 	return r.Error == nil && r.FileID > 0
+}
+
+func (r IndexResult) Indexed() bool {
+	return r.Status == IndexAdded || r.Status == IndexUpdated || r.Status == IndexGrouped
+}
+
+func (r IndexResult) Grouped() bool {
+	return r.Status == IndexGrouped
 }
 
 func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (result IndexResult) {
@@ -75,7 +84,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	fileHash := ""
 	fileChanged := true
 	fileExists := false
+	fileGrouped := false
+
 	photoExists := false
+
 	stripSequence := Config().Settings().Index.Group
 
 	event.Publish("index.indexing", event.Data{
@@ -111,10 +123,18 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if photoQuery.Error != nil && m.MetaData().HasTimeAndPlace() {
 			metaData = m.MetaData()
 			photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ?", metaData.Lat, metaData.Lng, metaData.TakenAt)
+
+			if photoQuery.Error == nil {
+				fileGrouped = true
+			}
 		}
 
 		if photoQuery.Error != nil && m.MetaData().HasDocumentID() {
 			photoQuery = entity.UnscopedDb().First(&photo, "uuid = ?", m.MetaData().DocumentID)
+
+			if photoQuery.Error == nil {
+				fileGrouped = true
+			}
 		}
 	} else {
 		photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
@@ -128,7 +148,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	photoExists = photoQuery.Error == nil
 
-	if !fileChanged && photoExists && o.SkipUnchanged() {
+	if !fileChanged && photoExists && o.SkipUnchanged() || !photoExists && m.IsSidecar() {
 		result.Status = IndexSkipped
 		return result
 	}
@@ -605,7 +625,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			"count": 1,
 		})
 
-		result.Status = IndexAdded
+		if fileGrouped {
+			result.Status = IndexGrouped
+		} else {
+			result.Status = IndexAdded
+		}
 	}
 
 	if (photo.PhotoType == entity.TypeVideo || photo.PhotoType == entity.TypeLive) && file.FilePrimary {

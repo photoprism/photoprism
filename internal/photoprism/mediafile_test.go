@@ -481,6 +481,91 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			assert.Equal(t, expectedBaseFilename, baseFilename)
 		}
 	})
+
+	t.Run("2015-02-04.jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/2015-02-04.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mediaFile.RelatedFiles(true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if related.Main == nil {
+			t.Fatal("main file must not be nil")
+		}
+
+		if len(related.Files) != 4 {
+			t.Fatalf("length is %d, should be 4", len(related.Files))
+		}
+
+		assert.Equal(t, "2015-02-04.jpg", related.Main.BaseName())
+
+		assert.Equal(t, "2015-02-04.jpg", related.Files[0].BaseName())
+		assert.Equal(t, "2015-02-04(1).jpg", related.Files[1].BaseName())
+		assert.Equal(t, "2015-02-04.jpg.json", related.Files[2].BaseName())
+		assert.Equal(t, "2015-02-04.jpg(1).json", related.Files[3].BaseName())
+	})
+
+	t.Run("2015-02-04(1).jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/2015-02-04(1).jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mediaFile.RelatedFiles(false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if related.Main == nil {
+			t.Fatal("main file must not be nil")
+		}
+
+		if len(related.Files) != 1 {
+			t.Fatalf("length is %d, should be 1", len(related.Files))
+		}
+
+		assert.Equal(t, "2015-02-04(1).jpg", related.Main.BaseName())
+
+		assert.Equal(t, "2015-02-04(1).jpg", related.Files[0].BaseName())
+	})
+
+	t.Run("2015-02-04(1).jpg grouped", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/2015-02-04(1).jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mediaFile.RelatedFiles(true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if related.Main == nil {
+			t.Fatal("main file must not be nil")
+		}
+
+		if len(related.Files) != 4 {
+			t.Fatalf("length is %d, should be 4", len(related.Files))
+		}
+
+		assert.Equal(t, "2015-02-04.jpg", related.Main.BaseName())
+
+
+		assert.Equal(t, "2015-02-04.jpg", related.Files[0].BaseName())
+		assert.Equal(t, "2015-02-04(1).jpg", related.Files[1].BaseName())
+		assert.Equal(t, "2015-02-04.jpg.json", related.Files[2].BaseName())
+		assert.Equal(t, "2015-02-04.jpg(1).json", related.Files[3].BaseName())
+	})
 }
 
 func TestMediaFile_RelatedFiles_Ordering(t *testing.T) {

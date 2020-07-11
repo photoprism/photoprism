@@ -276,10 +276,6 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		matches = append(matches, name)
 	}
 
-	if name := m.JsonName(); name != "" {
-		matches = append(matches, name)
-	}
-
 	for _, filename := range matches {
 		resultFile, err := NewMediaFile(filename)
 
