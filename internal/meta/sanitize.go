@@ -7,7 +7,21 @@ import (
 )
 
 var UnwantedDescriptions = map[string]bool{
-	"OLYMPUS DIGITAL CAMERA": true,
+	"OLYMPUS DIGITAL CAMERA": true, // Olympus
+	"rhdr":                   true, // Huawei
+	"hdrpl":                  true,
+	"fbt":                    true,
+	"mon":                    true,
+	"nor":                    true,
+	"dav":                    true,
+	"mde":                    true,
+	"edf":                    true,
+	"btfmdn":                 true,
+	"btf":                    true,
+	"btfhdr":                 true,
+	"frem":                   true,
+	"oznor":                  true,
+	"rpt":                    true,
 }
 
 // SanitizeString removes unwanted character from an exif value string.
@@ -48,6 +62,8 @@ func SanitizeDescription(value string) string {
 	value = SanitizeString(value)
 
 	if remove := UnwantedDescriptions[value]; remove {
+		value = ""
+	} else if strings.HasPrefix(value, "DCIM\\") && !strings.Contains(value, " ") {
 		value = ""
 	}
 

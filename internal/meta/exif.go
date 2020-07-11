@@ -13,7 +13,6 @@ import (
 	"github.com/dsoprea/go-exif/v2/common"
 	"github.com/dsoprea/go-jpeg-image-structure"
 	"github.com/dsoprea/go-png-image-structure"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
@@ -47,7 +46,7 @@ func (data *Data) Exif(fileName string) (err error) {
 	logName := txt.Quote(filepath.Base(fileName))
 	ext := strings.ToLower(path.Ext(fileName))
 
-	if ext == fs.JpegExt || ext == ".jpeg" {
+	if ext == ".jpg" || ext == ".jpeg" {
 		jmp := jpegstructure.NewJpegMediaParser()
 
 		sl, err := jmp.ParseFile(fileName)

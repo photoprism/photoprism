@@ -82,7 +82,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "2017-12-21T05:17:28Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "", data.Title)
 		assert.Equal(t, "", data.Keywords)
-		assert.Equal(t, "DCIM\\100GOPRO", data.Description)
+		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 180, data.Height)
 		assert.Equal(t, 240, data.Width)

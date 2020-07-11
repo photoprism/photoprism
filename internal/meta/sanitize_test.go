@@ -52,4 +52,36 @@ func TestSanitizeDescription(t *testing.T) {
 			t.Fatal("result should be empty")
 		}
 	})
+
+	t.Run("GoPro", func(t *testing.T) {
+		result := SanitizeDescription("DCIM\\108GOPRO\\GOPR2137.JPG")
+
+		if result != "" {
+			t.Fatal("result should be empty")
+		}
+	})
+
+	t.Run("hdrpl", func(t *testing.T) {
+		result := SanitizeDescription("hdrpl")
+
+		if result != "" {
+			t.Fatal("result should be empty")
+		}
+	})
+
+	t.Run("btf", func(t *testing.T) {
+		result := SanitizeDescription("btf")
+
+		if result != "" {
+			t.Fatal("result should be empty")
+		}
+	})
+
+	t.Run("wtf", func(t *testing.T) {
+		result := SanitizeDescription("wtf")
+
+		if result != "wtf" {
+			t.Fatal("result should be 'wtf'")
+		}
+	})
 }
