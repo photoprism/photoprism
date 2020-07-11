@@ -49,7 +49,7 @@
         <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>
       </v-card-title>
       <v-card-title primary-title v-else>
-        <translate>Related log messages will appear here whenever PhotoPrism comes across broken files or there are other potential issues.</translate>
+        <translate>Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues.</translate>
       </v-card-title>
     </v-card>
 
