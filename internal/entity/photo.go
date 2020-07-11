@@ -194,7 +194,6 @@ func (m *Photo) FirstOrCreate() error {
 // Create inserts a new photo to the database.
 func (m *Photo) Create() error {
 	if err := UnscopedDb().Create(m).Error; err != nil {
-		log.Errorf("photo: %s (create)", err)
 		return err
 	}
 
