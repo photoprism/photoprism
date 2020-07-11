@@ -15,7 +15,7 @@ type Label struct {
 	Categories  []string `json:"categories"`  // List of similar labels
 }
 
-// LocationLabel returns a new labels for a location and expects name, uncertainty and priority as arguments.
+// LocationLabel returns a new location label.
 func LocationLabel(name string, uncertainty int, priority int) Label {
 	if index := strings.Index(name, " / "); index > 1 {
 		name = name[:index]

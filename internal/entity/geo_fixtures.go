@@ -4,32 +4,32 @@ import (
 	"github.com/photoprism/photoprism/pkg/s2"
 )
 
-type LocationMap map[string]Location
+type GeoMap map[string]Geo
 
-func (m LocationMap) Get(name string) Location {
+func (m GeoMap) Get(name string) Geo {
 	if result, ok := m[name]; ok {
 		return result
 	}
 
-	return UnknownLocation
+	return UnknownGeo
 }
 
-func (m LocationMap) Pointer(name string) *Location {
+func (m GeoMap) Pointer(name string) *Geo {
 	if result, ok := m[name]; ok {
 		return &result
 	}
 
-	return &UnknownLocation
+	return &UnknownGeo
 }
 
-var LocationFixtures = LocationMap{
+var GeoFixtures = GeoMap{
 	"mexico": {
 		ID:          s2.TokenPrefix + "85d1ea7d382c",
 		PlaceID:     PlaceFixtures.Get("mexico").ID,
-		LocName:     "Adosada Platform",
-		LocCategory: "botanical garden",
+		GeoName:     "Adosada Platform",
+		GeoCategory: "botanical garden",
 		Place:       PlaceFixtures.Pointer("mexico"),
-		LocSource:   "places",
+		GeoSource:   "places",
 		CreatedAt:   Timestamp(),
 		UpdatedAt:   Timestamp(),
 	},
@@ -38,16 +38,16 @@ var LocationFixtures = LocationMap{
 		PlaceID: s2.TokenPrefix + "1ef75a71a36c",
 		Place: &Place{
 			ID:         s2.TokenPrefix + "1ef75a71a36",
-			LocLabel:   "Mandeni, KwaZulu-Natal, South Africa",
-			LocCity:    "Mandeni",
-			LocState:   "KwaZulu-Natal",
-			LocCountry: "za",
+			GeoLabel:   "Mandeni, KwaZulu-Natal, South Africa",
+			GeoCity:    "Mandeni",
+			GeoState:   "KwaZulu-Natal",
+			GeoCountry: "za",
 			CreatedAt:  Timestamp(),
 			UpdatedAt:  Timestamp(),
 		},
-		LocName:     "Lobotes Caravan Park",
-		LocCategory: "camping",
-		LocSource:   "manual",
+		GeoName:     "Lobotes Caravan Park",
+		GeoCategory: "camping",
+		GeoSource:   "manual",
 		CreatedAt:   Timestamp(),
 		UpdatedAt:   Timestamp(),
 	},
@@ -55,9 +55,9 @@ var LocationFixtures = LocationMap{
 		ID:          s2.TokenPrefix + "1ef744d1e28c",
 		PlaceID:     PlaceFixtures.Get("zinkwazi").ID,
 		Place:       PlaceFixtures.Pointer("zinkwazi"),
-		LocName:     "Zinkwazi Beach",
-		LocCategory: "beach",
-		LocSource:   "places",
+		GeoName:     "Zinkwazi Beach",
+		GeoCategory: "beach",
+		GeoSource:   "places",
 		CreatedAt:   Timestamp(),
 		UpdatedAt:   Timestamp(),
 	},
@@ -65,9 +65,9 @@ var LocationFixtures = LocationMap{
 		ID:          s2.TokenPrefix + "1ef744d1e280",
 		PlaceID:     PlaceFixtures.Get("holidaypark").ID,
 		Place:       PlaceFixtures.Pointer("holidaypark"),
-		LocName:     "Holiday Park",
-		LocCategory: "park",
-		LocSource:   "places",
+		GeoName:     "Holiday Park",
+		GeoCategory: "park",
+		GeoSource:   "places",
 		CreatedAt:   Timestamp(),
 		UpdatedAt:   Timestamp(),
 	},
@@ -75,9 +75,9 @@ var LocationFixtures = LocationMap{
 		ID:          s2.TokenPrefix + "1ef744d1e281",
 		PlaceID:     PlaceFixtures.Get("emptyNameLongCity").ID,
 		Place:       PlaceFixtures.Pointer("emptyNameLongCity"),
-		LocName:     "",
-		LocCategory: "botanical garden",
-		LocSource:   "places",
+		GeoName:     "",
+		GeoCategory: "botanical garden",
+		GeoSource:   "places",
 		CreatedAt:   Timestamp(),
 		UpdatedAt:   Timestamp(),
 	},
@@ -85,9 +85,9 @@ var LocationFixtures = LocationMap{
 		ID:          s2.TokenPrefix + "1ef744d1e282",
 		PlaceID:     PlaceFixtures.Get("emptyNameShortCity").ID,
 		Place:       PlaceFixtures.Pointer("emptyNameShortCity"),
-		LocName:     "",
-		LocCategory: "botanical garden",
-		LocSource:   "places",
+		GeoName:     "",
+		GeoCategory: "botanical garden",
+		GeoSource:   "places",
 		CreatedAt:   Timestamp(),
 		UpdatedAt:   Timestamp(),
 	},
@@ -95,9 +95,9 @@ var LocationFixtures = LocationMap{
 		ID:          s2.TokenPrefix + "1ef744d1e283",
 		PlaceID:     PlaceFixtures.Get("veryLongLocName").ID,
 		Place:       PlaceFixtures.Pointer("veryLongLocName"),
-		LocName:     "longlonglonglonglonglonglonglonglonglonglonglonglongName",
-		LocCategory: "cape",
-		LocSource:   "places",
+		GeoName:     "longlonglonglonglonglonglonglonglonglonglonglonglongName",
+		GeoCategory: "cape",
+		GeoSource:   "places",
 		CreatedAt:   Timestamp(),
 		UpdatedAt:   Timestamp(),
 	},
@@ -105,17 +105,17 @@ var LocationFixtures = LocationMap{
 		ID:          s2.TokenPrefix + "1ef744d1e283",
 		PlaceID:     PlaceFixtures.Get("mediumLongLocName").ID,
 		Place:       PlaceFixtures.Pointer("mediumLongLocName"),
-		LocName:     "longlonglonglonglonglongName",
-		LocCategory: "botanical garden",
-		LocSource:   "places",
+		GeoName:     "longlonglonglonglonglongName",
+		GeoCategory: "botanical garden",
+		GeoSource:   "places",
 		CreatedAt:   Timestamp(),
 		UpdatedAt:   Timestamp(),
 	},
 }
 
-// CreateLocationFixtures inserts known entities into the database for testing.
-func CreateLocationFixtures() {
-	for _, entity := range LocationFixtures {
+// CreateGeoFixtures inserts known entities into the database for testing.
+func CreateGeoFixtures() {
+	for _, entity := range GeoFixtures {
 		Db().Create(&entity)
 	}
 }

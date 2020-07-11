@@ -2,6 +2,8 @@ package entity
 
 import (
 	"github.com/stretchr/testify/assert"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -23,25 +25,20 @@ func TestPhoto_SaveAsYaml(t *testing.T) {
 	t.Run("create from fixture", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		m.PreloadFiles()
-		err := m.SaveAsYaml("test")
 
-		if err != nil {
+		fileName := filepath.Join(os.TempDir(), ".photoprism_test.yml")
+
+		if err := m.SaveAsYaml(fileName); err != nil {
 			t.Fatal(err)
 		}
 
-	})
-}
-
-func TestPhoto_LoadFromYaml(t *testing.T) {
-	t.Run("create from fixture", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo01")
-		m.PreloadFiles()
-		err := m.LoadFromYaml("test")
-
-		if err != nil {
+		if err := m.LoadFromYaml(fileName); err != nil {
 			t.Fatal(err)
 		}
 
+		if err := os.Remove(fileName); err != nil {
+			t.Fatal(err)
+		}
 	})
 }
 

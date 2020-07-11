@@ -165,10 +165,10 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 
 	if f.S2 != "" {
 		s2Min, s2Max := s2.PrefixedRange(f.S2, 7)
-		s = s.Where("photos.location_id BETWEEN ? AND ?", s2Min, s2Max)
+		s = s.Where("photos.geo_id BETWEEN ? AND ?", s2Min, s2Max)
 	} else if f.Olc != "" {
 		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.Olc), 7)
-		s = s.Where("photos.location_id BETWEEN ? AND ?", s2Min, s2Max)
+		s = s.Where("photos.geo_id BETWEEN ? AND ?", s2Min, s2Max)
 	} else {
 		// Inaccurate distance search, but probably 'good enough' for now
 		if f.Lat > 0 {

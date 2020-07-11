@@ -145,7 +145,7 @@
           <td>
             <v-text-field
                     @change="save"
-                    flat solo dense hide-details v-model="model.GPSAccuracy"
+                    flat solo dense hide-details v-model="model.GeoAccuracy"
                     color="secondary-dark"
                     type="number"
                     suffix="m"

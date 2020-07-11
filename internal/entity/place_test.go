@@ -20,7 +20,7 @@ func TestFindPlaceByLabel(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.Equal(t, "de", r.LocCountry)
+		assert.Equal(t, "de", r.GeoCountry)
 	})
 	t.Run("find by id", func(t *testing.T) {
 		r := FindPlace(s2.TokenPrefix+"85d1ea7d3278", "")
@@ -28,7 +28,7 @@ func TestFindPlaceByLabel(t *testing.T) {
 		if r == nil {
 			t.Fatal("result should not be nil")
 		}
-		assert.Equal(t, "mx", r.LocCountry)
+		assert.Equal(t, "mx", r.GeoCountry)
 	})
 	t.Run("find by label", func(t *testing.T) {
 		r := FindPlace("", "KwaDukuza, KwaZulu-Natal, South Africa")
@@ -37,7 +37,7 @@ func TestFindPlaceByLabel(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.Equal(t, "za", r.LocCountry)
+		assert.Equal(t, "za", r.GeoCountry)
 	})
 	t.Run("not matching", func(t *testing.T) {
 		r := FindPlace("111", "xxx")
@@ -65,13 +65,13 @@ func TestPlace_Find(t *testing.T) {
 	t.Run("record does not exist", func(t *testing.T) {
 		place := &Place{
 			ID:          s2.TokenPrefix + "1110",
-			LocLabel:    "test",
-			LocCity:     "testCity",
-			LocState:    "",
-			LocCountry:  "",
-			LocKeywords: "",
-			LocNotes:    "",
-			LocFavorite: false,
+			GeoLabel:    "test",
+			GeoCity:     "testCity",
+			GeoState:    "",
+			GeoCountry:  "",
+			GeoKeywords: "",
+			GeoNotes:    "",
+			GeoFavorite: false,
 			PhotoCount:  0,
 			CreatedAt:   Timestamp(),
 			UpdatedAt:   Timestamp(),
@@ -86,47 +86,47 @@ func TestFirstOrCreatePlace(t *testing.T) {
 	t.Run("existing place", func(t *testing.T) {
 		m := PlaceFixtures.Pointer("zinkwazi")
 		r := FirstOrCreatePlace(m)
-		assert.Equal(t, "KwaDukuza, KwaZulu-Natal, South Africa", r.LocLabel)
+		assert.Equal(t, "KwaDukuza, KwaZulu-Natal, South Africa", r.GeoLabel)
 	})
 	t.Run("ID empty", func(t *testing.T) {
 		p := &Place{ID: ""}
 		assert.Nil(t, FirstOrCreatePlace(p))
 	})
-	t.Run("LocLabel empty", func(t *testing.T) {
-		p := &Place{ID: "abcde44", LocLabel: ""}
+	t.Run("GeoLabel empty", func(t *testing.T) {
+		p := &Place{ID: "abcde44", GeoLabel: ""}
 		assert.Nil(t, FirstOrCreatePlace(p))
 	})
 }
 
 func TestPlace_LongCity(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
-		p := Place{LocCity: "veryveryveryverylongcity"}
+		p := Place{GeoCity: "veryveryveryverylongcity"}
 		assert.True(t, p.LongCity())
 	})
 	t.Run("false", func(t *testing.T) {
-		p := Place{LocCity: "short"}
+		p := Place{GeoCity: "short"}
 		assert.False(t, p.LongCity())
 	})
 }
 
 func TestPlace_NoCity(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
-		p := Place{LocCity: ""}
+		p := Place{GeoCity: ""}
 		assert.True(t, p.NoCity())
 	})
 	t.Run("false", func(t *testing.T) {
-		p := Place{LocCity: "short"}
+		p := Place{GeoCity: "short"}
 		assert.False(t, p.NoCity())
 	})
 }
 
 func TestPlace_CityContains(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
-		p := Place{LocCity: "Munich"}
+		p := Place{GeoCity: "Munich"}
 		assert.True(t, p.CityContains("Munich"))
 	})
 	t.Run("false", func(t *testing.T) {
-		p := Place{LocCity: "short"}
+		p := Place{GeoCity: "short"}
 		assert.False(t, p.CityContains("ich"))
 	})
 }

@@ -479,8 +479,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	if photo.UnknownLocation() {
-		photo.Location = &entity.UnknownLocation
-		photo.LocationID = entity.UnknownLocation.ID
+		photo.Geo = &entity.UnknownGeo
+		photo.GeoID = entity.UnknownGeo.ID
 	}
 
 	if photo.UnknownPlace() {

@@ -173,8 +173,8 @@
             openLocation(index) {
                 const photo = this.results[index];
 
-                if (photo.LocationID && photo.LocationID !== "zz") {
-                    this.$router.push({name: "place", params: {q: photo.LocationID}});
+                if (photo.GeoID && photo.GeoID !== "zz") {
+                    this.$router.push({name: "place", params: {q: photo.GeoID}});
                 } else if (photo.PlaceID && photo.PlaceID !== "zz") {
                     this.$router.push({name: "place", params: {q: photo.PlaceID}});
                 } else if (photo.Country && photo.Country !== "zz") {
@@ -221,11 +221,7 @@
                 return true;
             },
             viewerResults() {
-                if (this.loading || this.viewer.loading) {
-                    return Promise.reject();
-                }
-
-                if (this.complete) {
+                if (this.complete || this.loading || this.viewer.loading) {
                     return Promise.resolve(this.results);
                 }
 

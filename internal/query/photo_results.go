@@ -48,16 +48,16 @@ type PhotoResult struct {
 	LensModel        string        `json:"LensModel"`
 	LensMake         string        `json:"LensMake"`
 	PlaceID          string        `json:"PlaceID"`
-	LocationID       string        `json:"LocationID"` // Location
-	LocationSrc      string        `json:"LocationSrc"`
-	GPSAccuracy      int           `json:"GPSAccuracy,omitempty"`
+	GeoID            string        `json:"GeoID"` // Geo
+	GeoSrc           string        `json:"GeoSrc"`
+	GeoAccuracy      int           `json:"GeoAccuracy,omitempty"`
 	PhotoAltitude    int           `json:"Altitude,omitempty"`
 	PhotoLat         float32       `json:"Lat"`
 	PhotoLng         float32       `json:"Lng"`
-	LocLabel         string        `json:"LocLabel"`
-	LocCity          string        `json:"LocCity"`
-	LocState         string        `json:"LocState"`
-	LocCountry       string        `json:"LocCountry"`
+	GeoLabel         string        `json:"GeoLabel"`
+	GeoCity          string        `json:"GeoCity"`
+	GeoState         string        `json:"GeoState"`
+	GeoCountry       string        `json:"GeoCountry"`
 	FileID           uint          `json:"-"` // File
 	FileUID          string        `json:"FileUID"`
 	FileRoot         string        `json:"FileRoot"`

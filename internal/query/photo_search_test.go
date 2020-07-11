@@ -110,7 +110,7 @@ func TestPhotoSearch(t *testing.T) {
 		f.Query = ""
 		f.Count = 10
 		f.Offset = 0
-		f.Location = true
+		f.Geo = true
 
 		photos, _, err := PhotoSearch(f)
 
@@ -125,7 +125,7 @@ func TestPhotoSearch(t *testing.T) {
 		f.Query = "bridge"
 		f.Count = 10
 		f.Offset = 0
-		f.Location = true
+		f.Geo = true
 		f.Error = false
 
 		photos, _, err := PhotoSearch(f)
@@ -141,7 +141,7 @@ func TestPhotoSearch(t *testing.T) {
 		f.Query = "a"
 		f.Count = 5000
 		f.Offset = 0
-		f.Location = false
+		f.Geo = false
 
 		photos, _, err := PhotoSearch(f)
 

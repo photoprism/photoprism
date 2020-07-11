@@ -19,7 +19,7 @@ func CreateTestFixtures() {
 	CreateKeywordFixtures()
 	CreatePhotoKeywordFixtures()
 	CreateCategoryFixtures()
-	CreateLocationFixtures()
+	CreateGeoFixtures()
 	CreatePlaceFixtures()
 	CreateFileShareFixtures()
 	CreateFileSyncFixtures()

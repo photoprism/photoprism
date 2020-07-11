@@ -72,7 +72,6 @@ export class Photo extends RestModel {
             Lat: 0.0,
             Lng: 0.0,
             Altitude: 0,
-            GPSAccuracy: 0,
             Iso: 0,
             FocalLength: 0,
             FNumber: 0.0,
@@ -100,16 +99,17 @@ export class Photo extends RestModel {
             Labels: [],
             Keywords: [],
             Albums: [],
-            Location: {},
+            Geo: {},
             Place: {},
             PlaceID: "",
-            LocationID: "",
-            LocationSrc: "",
+            GeoID: "",
+            GeoSrc: "",
+            GeoAccuracy: 0,
             // Additional data in result lists.
-            LocLabel: "",
-            LocCity: "",
-            LocState: "",
-            LocCountry: "",
+            GeoLabel: "",
+            GeoCity: "",
+            GeoState: "",
+            GeoCountry: "",
             FileUID: "",
             FileRoot: "",
             FileName: "",
@@ -469,7 +469,7 @@ export class Photo extends RestModel {
             }
         }
 
-        return this.LocLabel ? this.LocLabel : $gettext("Unknown");
+        return this.GeoLabel ? this.GeoLabel : $gettext("Unknown");
     }
 
     addSizeInfo(file, info) {
@@ -636,7 +636,7 @@ export class Photo extends RestModel {
         }
 
         if (values.Lat || values.Lng || values.Country) {
-            values.LocationSrc = SrcManual;
+            values.GeoSrc = SrcManual;
         }
 
         if (values.TakenAt || values.TimeZone || values.Day || values.Month || values.Year) {

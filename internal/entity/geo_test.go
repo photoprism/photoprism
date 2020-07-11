@@ -8,11 +8,11 @@ import (
 
 func TestNewLocation(t *testing.T) {
 	t.Run("new label", func(t *testing.T) {
-		l := NewLocation(1, 1)
-		l.LocCategory = "restaurant"
-		l.LocName = "LocationName"
+		l := NewGeo(1, 1)
+		l.GeoCategory = "restaurant"
+		l.GeoName = "LocationName"
 		l.Place = PlaceFixtures.Pointer("zinkwazi")
-		l.LocSource = "places"
+		l.GeoSource = "places"
 
 		assert.Equal(t, "restaurant", l.Category())
 		assert.Equal(t, false, l.NoCategory())
@@ -35,17 +35,17 @@ func TestNewLocation(t *testing.T) {
 
 func TestLocation_Keywords(t *testing.T) {
 	t.Run("mexico", func(t *testing.T) {
-		m := LocationFixtures["mexico"]
+		m := GeoFixtures["mexico"]
 		r := m.Keywords()
 		assert.Equal(t, []string{"adosada", "ancient", "botanical", "garden", "mexico", "platform", "pyramid", "state-of-mexico", "teotihuacán"}, r)
 	})
 	t.Run("caravan park", func(t *testing.T) {
-		m := LocationFixtures["caravan park"]
+		m := GeoFixtures["caravan park"]
 		r := m.Keywords()
 		assert.Equal(t, []string{"camping", "caravan", "kwazulu-natal", "lobotes", "mandeni", "park", "south-africa"}, r)
 	})
 	t.Run("place id empty", func(t *testing.T) {
-		m := &Location{}
+		m := &Geo{}
 		r := m.Keywords()
 		assert.Empty(t, r)
 	})
@@ -53,12 +53,12 @@ func TestLocation_Keywords(t *testing.T) {
 
 func TestLocation_Find(t *testing.T) {
 	t.Run("place in db", func(t *testing.T) {
-		m := LocationFixtures["mexico"]
+		m := GeoFixtures["mexico"]
 		r := m.Find("")
 		assert.Nil(t, r)
 	})
 	t.Run("invalid api", func(t *testing.T) {
-		l := NewLocation(2, 1)
+		l := NewGeo(2, 1)
 		err := l.Find("")
 
 		if err == nil {
@@ -71,19 +71,19 @@ func TestLocation_Find(t *testing.T) {
 
 func TestFirstOrCreateLocation(t *testing.T) {
 	t.Run("id empty", func(t *testing.T) {
-		loc := &Location{}
+		loc := &Geo{}
 
-		assert.Nil(t, FirstOrCreateLocation(loc))
+		assert.Nil(t, FirstOrCreateGeo(loc))
 	})
 	t.Run("place id empty", func(t *testing.T) {
-		loc := &Location{ID: "1234jhy"}
+		loc := &Geo{ID: "1234jhy"}
 
-		assert.Nil(t, FirstOrCreateLocation(loc))
+		assert.Nil(t, FirstOrCreateGeo(loc))
 	})
 	t.Run("success", func(t *testing.T) {
-		loc := LocationFixtures.Pointer("caravan park")
+		loc := GeoFixtures.Pointer("caravan park")
 
-		result := FirstOrCreateLocation(loc)
+		result := FirstOrCreateGeo(loc)
 
 		if result == nil {
 			t.Fatal("result should not be nil")

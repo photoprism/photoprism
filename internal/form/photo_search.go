@@ -38,7 +38,7 @@ type PhotoSearch struct {
 	Diff      uint32    `form:"diff"`
 	Mono      bool      `form:"mono"`
 	Portrait  bool      `form:"portrait"`
-	Location  bool      `form:"location"`
+	Geo       bool      `form:"geo"`
 	Album     string    `form:"album"`
 	Label     string    `form:"label"`
 	Category  string    `form:"category"` // Moments

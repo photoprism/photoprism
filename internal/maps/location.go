@@ -9,20 +9,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/s2"
 )
 
-/* TODO
-
-(SELECT pl.loc_label as album_name, pl.loc_country, YEAR(ph.taken_at) as taken_year, round(count(ph.id)) as photo_count FROM photos ph
-        JOIN places pl ON ph.place_id = pl.id AND pl.id <> 1
-        GROUP BY album_name, taken_year HAVING photo_count > 5) UNION (
-            SELECT c.country_name AS album_name, pl.loc_country, YEAR(ph.taken_at) as taken_year, round(count(ph.id)) as photo_count FROM photos ph
-        JOIN places pl ON ph.place_id = pl.id AND pl.id <> 1
-            JOIN countries c ON c.id = pl.loc_country
-        GROUP BY album_name, taken_year
-        HAVING photo_count > 10)
-ORDER BY loc_country, album_name, taken_year;
-
-*/
-
 // Photo location
 type Location struct {
 	ID          string

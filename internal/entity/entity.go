@@ -39,7 +39,7 @@ var Entities = Types{
 	"photos":          &Photo{},
 	"details":         &Details{},
 	"places":          &Place{},
-	"locations":       &Location{},
+	"geo":             &Geo{},
 	"cameras":         &Camera{},
 	"lenses":          &Lens{},
 	"countries":       &Country{},
@@ -121,7 +121,7 @@ func (list Types) Drop() {
 func CreateDefaultFixtures() {
 	CreateDefaultUsers()
 	CreateUnknownPlace()
-	CreateUnknownLocation()
+	CreateUnknownGeo()
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()

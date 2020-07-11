@@ -12,13 +12,13 @@ import (
 // Place used to associate photos to places
 type Place struct {
 	ID          string    `gorm:"type:varbinary(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
-	LocLabel    string    `gorm:"type:varbinary(768);unique_index;" json:"Label" yaml:"Label"`
-	LocCity     string    `gorm:"type:varchar(255);" json:"City" yaml:"City,omitempty"`
-	LocState    string    `gorm:"type:varchar(255);" json:"State" yaml:"State,omitempty"`
-	LocCountry  string    `gorm:"type:varbinary(2);" json:"Country" yaml:"Country,omitempty"`
-	LocKeywords string    `gorm:"type:varchar(255);" json:"Keywords" yaml:"Keywords,omitempty"`
-	LocNotes    string    `gorm:"type:text;" json:"Notes" yaml:"Notes,omitempty"`
-	LocFavorite bool      `json:"Favorite" yaml:"Favorite,omitempty"`
+	GeoLabel    string    `gorm:"type:varbinary(768);unique_index;" json:"Label" yaml:"Label"`
+	GeoCity     string    `gorm:"type:varchar(255);" json:"City" yaml:"City,omitempty"`
+	GeoState    string    `gorm:"type:varchar(255);" json:"State" yaml:"State,omitempty"`
+	GeoCountry  string    `gorm:"type:varbinary(2);" json:"Country" yaml:"Country,omitempty"`
+	GeoKeywords string    `gorm:"type:varchar(255);" json:"Keywords" yaml:"Keywords,omitempty"`
+	GeoNotes    string    `gorm:"type:text;" json:"Notes" yaml:"Notes,omitempty"`
+	GeoFavorite bool      `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoCount  int       `gorm:"default:1" json:"PhotoCount" yaml:"-"`
 	CreatedAt   time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt   time.Time `json:"UpdatedAt" yaml:"-"`
@@ -28,13 +28,13 @@ type Place struct {
 // UnknownPlace is PhotoPrism's default place.
 var UnknownPlace = Place{
 	ID:          "zz",
-	LocLabel:    "Unknown",
-	LocCity:     "Unknown",
-	LocState:    "Unknown",
-	LocCountry:  "zz",
-	LocKeywords: "",
-	LocNotes:    "",
-	LocFavorite: false,
+	GeoLabel:    "Unknown",
+	GeoCity:     "Unknown",
+	GeoState:    "Unknown",
+	GeoCountry:  "zz",
+	GeoKeywords: "",
+	GeoNotes:    "",
+	GeoFavorite: false,
 	PhotoCount:  -1,
 }
 
@@ -58,7 +58,7 @@ func FindPlace(id string, label string) *Place {
 			log.Debugf("place: %s for id %s", err.Error(), id)
 			return nil
 		}
-	} else if err := Db().First(place, "id = ? OR loc_label = ?", id, label).Error; err != nil {
+	} else if err := Db().First(place, "id = ? OR geo_label = ?", id, label).Error; err != nil {
 		log.Debugf("place: %s for id %s / label %s", err.Error(), id, txt.Quote(label))
 		return nil
 	}
@@ -87,18 +87,18 @@ func FirstOrCreatePlace(m *Place) *Place {
 		return nil
 	}
 
-	if m.LocLabel == "" {
+	if m.GeoLabel == "" {
 		log.Errorf("place: label must not be empty (first or create %s)", m.ID)
 		return nil
 	}
 
 	result := Place{}
 
-	if findErr := Db().Where("id = ? OR loc_label = ?", m.ID, m.LocLabel).First(&result).Error; findErr == nil {
+	if findErr := Db().Where("id = ? OR geo_label = ?", m.ID, m.GeoLabel).First(&result).Error; findErr == nil {
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
-	} else if err := Db().Where("id = ? OR loc_label = ?", m.ID, m.LocLabel).First(&result).Error; err == nil {
+	} else if err := Db().Where("id = ? OR geo_label = ?", m.ID, m.GeoLabel).First(&result).Error; err == nil {
 		return &result
 	} else {
 		log.Errorf("place: %s (first or create %s)", createErr, m.ID)
@@ -114,45 +114,45 @@ func (m Place) Unknown() bool {
 
 // Label returns place label
 func (m Place) Label() string {
-	return m.LocLabel
+	return m.GeoLabel
 }
 
 // City returns place City
 func (m Place) City() string {
-	return m.LocCity
+	return m.GeoCity
 }
 
 // LongCity checks if the city name is more than 16 char.
 func (m Place) LongCity() bool {
-	return len(m.LocCity) > 16
+	return len(m.GeoCity) > 16
 }
 
 // NoCity checks if the location has no city
 func (m Place) NoCity() bool {
-	return m.LocCity == ""
+	return m.GeoCity == ""
 }
 
 // CityContains checks if the location city contains the text string
 func (m Place) CityContains(text string) bool {
-	return strings.Contains(text, m.LocCity)
+	return strings.Contains(text, m.GeoCity)
 }
 
 // State returns place State
 func (m Place) State() string {
-	return m.LocState
+	return m.GeoState
 }
 
 // CountryCode returns place CountryCode
 func (m Place) CountryCode() string {
-	return m.LocCountry
+	return m.GeoCountry
 }
 
 // CountryName returns place CountryName
 func (m Place) CountryName() string {
-	return maps.CountryNames[m.LocCountry]
+	return maps.CountryNames[m.GeoCountry]
 }
 
 // Notes returns place Notes
 func (m Place) Notes() string {
-	return m.LocNotes
+	return m.GeoNotes
 }

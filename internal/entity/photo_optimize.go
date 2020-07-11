@@ -13,7 +13,7 @@ import (
 
 // EstimateCountry updates the photo with an estimated country if possible.
 func (m *Photo) EstimateCountry() {
-	if m.HasLatLng() || m.HasLocation() || m.HasPlace() || m.HasCountry() && m.LocationSrc != SrcAuto && m.LocationSrc != SrcEstimate {
+	if m.HasLatLng() || m.HasLocation() || m.HasPlace() || m.HasCountry() && m.GeoSrc != SrcAuto && m.GeoSrc != SrcEstimate {
 		// Do nothing.
 		return
 	}
@@ -41,14 +41,14 @@ func (m *Photo) EstimateCountry() {
 
 	if countryCode != unknown {
 		m.PhotoCountry = countryCode
-		m.LocationSrc = SrcEstimate
+		m.GeoSrc = SrcEstimate
 		log.Debugf("photo: probable country for %s is %s", m, txt.Quote(m.CountryName()))
 	}
 }
 
 // EstimatePlace updates the photo with an estimated place and country if possible.
 func (m *Photo) EstimatePlace() {
-	if m.HasLatLng() || m.HasLocation() || m.HasPlace() && m.LocationSrc != SrcAuto && m.LocationSrc != SrcEstimate {
+	if m.HasLatLng() || m.HasLocation() || m.HasPlace() && m.GeoSrc != SrcAuto && m.GeoSrc != SrcEstimate {
 		// Do nothing.
 		return
 	}
@@ -79,11 +79,11 @@ func (m *Photo) EstimatePlace() {
 			m.Place = recentPhoto.Place
 			m.PlaceID = recentPhoto.PlaceID
 			m.PhotoCountry = recentPhoto.PhotoCountry
-			m.LocationSrc = SrcEstimate
+			m.GeoSrc = SrcEstimate
 			log.Debugf("photo: approximate position of %s is %s (id %s)", m, txt.Quote(m.CountryName()), recentPhoto.PlaceID)
 		} else if recentPhoto.HasCountry() {
 			m.PhotoCountry = recentPhoto.PhotoCountry
-			m.LocationSrc = SrcEstimate
+			m.GeoSrc = SrcEstimate
 			log.Debugf("photo: probable country for %s is %s", m, txt.Quote(m.CountryName()))
 		} else {
 			m.EstimateCountry()

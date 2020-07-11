@@ -31,8 +31,8 @@ func TestSavePhotoForm(t *testing.T) {
 			CameraID:         uint(3),
 			CameraSrc:        "meta",
 			LensID:           uint(6),
-			LocationID:       "1234",
-			LocationSrc:      "manual",
+			GeoID:            "1234",
+			GeoSrc:           "manual",
 			PlaceID:          "765",
 			PhotoCountry:     "de",
 			Details: form.Details{
@@ -93,8 +93,8 @@ func TestPhoto_SaveLabels(t *testing.T) {
 			CameraID:         uint(3),
 			CameraSrc:        "meta",
 			LensID:           uint(6),
-			LocationID:       "1234",
-			LocationSrc:      "geo",
+			GeoID:            "1234",
+			GeoSrc:           "geo",
 			PlaceID:          "765",
 			PhotoCountry:     "de",
 			Keywords:         []Keyword{},
@@ -748,8 +748,8 @@ func TestPhoto_LocationLoaded(t *testing.T) {
 		assert.False(t, photo.LocationLoaded())
 	})
 	t.Run("false", func(t *testing.T) {
-		location := &Location{Place: nil}
-		photo := Photo{PhotoName: "Holiday", Location: location}
+		location := &Geo{Place: nil}
+		photo := Photo{PhotoName: "Holiday", Geo: location}
 		assert.False(t, photo.LocationLoaded())
 	})
 }
@@ -763,8 +763,8 @@ func TestPhoto_LoadLocation(t *testing.T) {
 		}
 	})
 	t.Run("unknown location", func(t *testing.T) {
-		location := &Location{Place: nil}
-		photo := Photo{PhotoName: "Holiday", Location: location}
+		location := &Geo{Place: nil}
+		photo := Photo{PhotoName: "Holiday", Geo: location}
 		assert.Error(t, photo.LoadLocation())
 	})
 }
@@ -785,8 +785,8 @@ func TestPhoto_LoadPlace(t *testing.T) {
 		}
 	})
 	t.Run("unknown location", func(t *testing.T) {
-		location := &Location{Place: nil}
-		photo := Photo{PhotoName: "Holiday", Location: location}
+		location := &Geo{Place: nil}
+		photo := Photo{PhotoName: "Holiday", Geo: location}
 		assert.Error(t, photo.LoadPlace())
 	})
 }

@@ -35,9 +35,9 @@ type Photo struct {
 	PhotoPrivate     bool      `json:"Private"`
 	PhotoReview      bool      `json:"Review"`
 	PhotoScan        bool      `json:"Scan"`
-	LocationID       string    `json:"LocationID"`
-	LocationSrc      string    `json:"LocationSrc"`
-	GPSAccuracy      int       `json:"GPSAccuracy"`
+	GeoID            string    `json:"GeoID"`
+	GeoSrc           string    `json:"GeoSrc"`
+	GeoAccuracy      int       `json:"GeoAccuracy"`
 	PhotoAltitude    int       `json:"Altitude"`
 	PhotoLat         float32   `json:"Lat"`
 	PhotoLng         float32   `json:"Lng"`

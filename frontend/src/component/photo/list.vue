@@ -116,7 +116,7 @@
                     {
                         text: showName ? this.$gettext('Name') : this.$gettext('Location'),
                         class: 'hidden-xs-only',
-                        value: showName ? 'FileName' : 'LocLabel',
+                        value: showName ? 'FileName' : 'GeoLabel',
                         sortable: false
                     },
                     {text: '', value: '', align: 'center', sortable: false},

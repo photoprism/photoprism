@@ -17,7 +17,7 @@ const (
 	ResourceLabels     Resource = "labels"
 	ResourceLenses     Resource = "lenses"
 	ResourceLinks      Resource = "links"
-	ResourceLocations  Resource = "locations"
+	ResourceGeo        Resource = "geo"
 	ResourcePasswords  Resource = "passwords"
 	ResourcePeople     Resource = "people"
 	ResourcePhotos     Resource = "photos"

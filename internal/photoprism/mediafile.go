@@ -36,7 +36,7 @@ type MediaFile struct {
 	height       int
 	metaData     meta.Data
 	metaDataOnce sync.Once
-	location     *entity.Location
+	location     *entity.Geo
 }
 
 // NewMediaFile returns a new media file.

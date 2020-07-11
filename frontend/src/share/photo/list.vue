@@ -92,7 +92,7 @@
                     {text: this.$gettext('Title'), value: 'Title', sortable: false},
                     {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt', sortable: false},
                     {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel', sortable: false},
-                    {text: showName ? this.$gettext('Name') : this.$gettext('Location'), class: 'hidden-xs-only', value: showName ? 'FileName' : 'LocLabel', sortable: false},
+                    {text: showName ? this.$gettext('Name') : this.$gettext('Location'), class: 'hidden-xs-only', value: showName ? 'FileName' : 'GeoLabel', sortable: false},
                 ],
                 showName: showName,
                 showLocation: this.$config.settings().features.places,
