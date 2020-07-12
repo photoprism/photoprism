@@ -146,3 +146,7 @@ main {
 #photoprism .p-page pre {
     overflow: auto;
 }
+
+#photoprism .v-card button {
+    overflow-wrap: anywhere;
+}
