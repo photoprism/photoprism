@@ -73,7 +73,7 @@ func (m *Photo) EstimatePlace() {
 		log.Errorf("photo: %s (estimate place)", err.Error())
 		m.EstimateCountry()
 	} else {
-		if days := recentPhoto.TakenAt.Sub(m.TakenAt) / (time.Hour * 24); days < -7 || days > 7 {
+		if days := recentPhoto.TakenAt.Sub(m.TakenAt) / (time.Hour * 24); days < -3 || days > 3 {
 			log.Debugf("photo: can't estimate position of %s, %d days time difference", m, days)
 		} else if recentPhoto.HasPlace() {
 			m.Place = recentPhoto.Place
