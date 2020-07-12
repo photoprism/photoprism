@@ -10,8 +10,8 @@ msgstr ""
 msgid "%{n} albums found"
 msgstr ""
 
-#: src/pages/album/photos.vue:358
-#: src/share/photos.vue:401
+#: src/pages/album/photos.vue:354
+#: src/share/photos.vue:397
 msgid "%{n} entries found"
 msgstr ""
 
@@ -27,7 +27,7 @@ msgstr ""
 msgid "%{n} labels found"
 msgstr ""
 
-#: src/pages/photos.vue:391
+#: src/pages/photos.vue:387
 msgid "%{n} results"
 msgstr ""
 
@@ -152,8 +152,8 @@ msgstr ""
 msgid "All %{n} albums loaded"
 msgstr ""
 
-#: src/pages/album/photos.vue:255
-#: src/share/photos.vue:298
+#: src/pages/album/photos.vue:251
+#: src/share/photos.vue:294
 msgid "All %{n} entries loaded"
 msgstr ""
 
@@ -323,9 +323,9 @@ msgstr ""
 msgid "Camera Serial"
 msgstr ""
 
-#: src/pages/album/photos.vue:261
-#: src/pages/photos.vue:296
-#: src/share/photos.vue:304
+#: src/pages/album/photos.vue:257
+#: src/pages/photos.vue:292
+#: src/share/photos.vue:300
 msgid "Can't load more, limit reached"
 msgstr ""
 
@@ -336,6 +336,7 @@ msgstr ""
 #: src/dialog/album/edit.vue:39
 #: src/dialog/label/delete.vue:13
 #: src/dialog/photo/album.vue:15
+#: src/dialog/reload.vue:11
 #: src/dialog/share.vue:155
 #: src/dialog/share/upload.vue:29
 #: src/pages/library/import.vue:34
@@ -1043,12 +1044,12 @@ msgstr ""
 msgid "More than 20 labels found"
 msgstr ""
 
-#: src/pages/album/photos.vue:361
-#: src/share/photos.vue:404
+#: src/pages/album/photos.vue:357
+#: src/share/photos.vue:400
 msgid "More than 50 entries found"
 msgstr ""
 
-#: src/pages/photos.vue:394
+#: src/pages/photos.vue:390
 msgid "More than 50 results"
 msgstr ""
 
@@ -1128,8 +1129,8 @@ msgstr ""
 msgid "No albums found"
 msgstr ""
 
-#: src/pages/album/photos.vue:354
-#: src/share/photos.vue:397
+#: src/pages/album/photos.vue:350
+#: src/share/photos.vue:393
 msgid "No entries found"
 msgstr ""
 
@@ -1142,7 +1143,7 @@ msgstr ""
 msgid "No photos found"
 msgstr ""
 
-#: src/pages/photos.vue:387
+#: src/pages/photos.vue:383
 msgid "No results"
 msgstr ""
 
@@ -1224,8 +1225,8 @@ msgstr ""
 msgid "One album found"
 msgstr ""
 
-#: src/pages/album/photos.vue:356
-#: src/share/photos.vue:399
+#: src/pages/album/photos.vue:352
+#: src/share/photos.vue:395
 msgid "One entry found"
 msgstr ""
 
@@ -1237,7 +1238,7 @@ msgstr ""
 msgid "One folder found"
 msgstr ""
 
-#: src/pages/photos.vue:389
+#: src/pages/photos.vue:385
 msgid "One result"
 msgstr ""
 
@@ -1293,6 +1294,10 @@ msgstr ""
 
 #: src/pages/albums.vue:52
 msgid "PhotoPrism continuously analyzes your library to find special moments, journeys and places."
+msgstr ""
+
+#: src/dialog/reload.vue:4
+msgid "PhotoPrism has been updated…"
 msgstr ""
 
 #: src/pages/about/about.vue:74
@@ -1406,6 +1411,11 @@ msgstr ""
 msgid "Red"
 msgstr ""
 
+#: src/dialog/reload.vue:15
+msgid "Reload"
+msgstr ""
+
+#: src/dialog/reload.vue:57
 #: src/pages/settings/general.vue:377
 msgid "Reloading…"
 msgstr ""
@@ -1565,7 +1575,7 @@ msgstr ""
 msgid "Show server logs in Library."
 msgstr ""
 
-#: src/pages/photos.vue:290
+#: src/pages/photos.vue:286
 msgid "Showing all %{n} results"
 msgstr ""
 

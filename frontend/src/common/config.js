@@ -71,8 +71,6 @@ export default class Config {
         } else {
             this.setTheme("default");
         }
-
-
     }
 
     update() {
@@ -87,6 +85,10 @@ export default class Config {
 
         if (this.debug) {
             console.log("config: new values", values);
+        }
+
+        if(values.jsHash && this.values.jsHash !== values.jsHash) {
+            Event.publish("dialog.reload", {values});
         }
 
         for (let key in values) {

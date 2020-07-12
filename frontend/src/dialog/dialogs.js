@@ -42,6 +42,7 @@ import PVideoDialog from "./video.vue";
 import PShareDialog from "./share.vue";
 import PShareUploadDialog from "./share/upload.vue";
 import PWebdavDialog from "./webdav.vue";
+import PReloadDialog from "./reload.vue";
 
 const dialogs = {};
 
@@ -60,6 +61,7 @@ dialogs.install = (Vue) => {
     Vue.component("p-share-dialog", PShareDialog);
     Vue.component("p-share-upload-dialog", PShareUploadDialog);
     Vue.component("p-webdav-dialog", PWebdavDialog);
+    Vue.component("p-reload-dialog", PReloadDialog);
 };
 
 export default dialogs;

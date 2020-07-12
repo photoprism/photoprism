@@ -404,6 +404,7 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+    <p-reload-dialog :show="reload.dialog" @close="reload.dialog = false"></p-reload-dialog>
     <p-upload-dialog :show="upload.dialog" @cancel="upload.dialog = false"
                      @confirm="upload.dialog = false"></p-upload-dialog>
     <p-photo-edit-dialog :show="edit.dialog" :selection="edit.selection" :index="edit.index" :album="edit.album"
@@ -426,6 +427,10 @@
                 readonly: this.$config.get("readonly"),
                 config: this.$config.values,
                 page: this.$config.page,
+                reload: {
+                    subscription: null,
+                    dialog: false,
+                },
                 upload: {
                     subscription: null,
                     dialog: false,
@@ -476,6 +481,7 @@
             },
         },
         created() {
+            this.reload.subscription = Event.subscribe("dialog.reload", () => this.reload.dialog = true);
             this.upload.subscription = Event.subscribe("dialog.upload", () => this.upload.dialog = true);
 
             this.edit.subscription = Event.subscribe("dialog.edit", (ev, data) => {
@@ -488,6 +494,7 @@
             });
         },
         destroyed() {
+            Event.unsubscribe(this.reload.subscription);
             Event.unsubscribe(this.upload.subscription);
             Event.unsubscribe(this.edit.subscription);
         }
