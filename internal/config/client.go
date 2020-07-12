@@ -78,7 +78,7 @@ type CategoryLabel struct {
 
 type ClientPosition struct {
 	PhotoUID string    `json:"uid"`
-	GeoID    string    `json:"geo"`
+	CellID   string    `json:"cid"`
 	TakenAt  time.Time `json:"utc"`
 	PhotoLat float64   `json:"lat"`
 	PhotoLng float64   `json:"lng"`
@@ -220,7 +220,7 @@ func (c *Config) UserConfig() ClientConfig {
 	}
 
 	c.Db().Table("photos").
-		Select("photo_uid, geo_id, photo_lat, photo_lng, taken_at").
+		Select("photo_uid, cell_id, photo_lat, photo_lng, taken_at").
 		Where("deleted_at IS NULL AND photo_lat != 0 AND photo_lng != 0").
 		Order("taken_at DESC").
 		Limit(1).Offset(0).

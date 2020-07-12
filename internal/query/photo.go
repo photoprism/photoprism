@@ -18,8 +18,8 @@ func PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 		Preload("Lens").
 		Preload("Details").
 		Preload("Place").
-		Preload("Geo").
-		Preload("Geo.Place").
+		Preload("Cell").
+		Preload("Cell.Place").
 		First(&photo).Error; err != nil {
 		return photo, err
 	}
@@ -38,8 +38,8 @@ func PhotoByUID(photoUID string) (photo entity.Photo, err error) {
 		Preload("Lens").
 		Preload("Details").
 		Preload("Place").
-		Preload("Geo").
-		Preload("Geo.Place").
+		Preload("Cell").
+		Preload("Cell.Place").
 		First(&photo).Error; err != nil {
 		return photo, err
 	}
@@ -58,8 +58,8 @@ func PhotoPreloadByUID(photoUID string) (photo entity.Photo, err error) {
 		Preload("Lens").
 		Preload("Details").
 		Preload("Place").
-		Preload("Geo").
-		Preload("Geo.Place").
+		Preload("Cell").
+		Preload("Cell.Place").
 		First(&photo).Error; err != nil {
 		return photo, err
 	}
@@ -101,8 +101,8 @@ func PhotosCheck(limit int, offset int) (entities entity.Photos, err error) {
 		Preload("Lens").
 		Preload("Details").
 		Preload("Place").
-		Preload("Geo").
-		Preload("Geo.Place").
+		Preload("Cell").
+		Preload("Cell.Place").
 		Where("checked_at IS NULL OR checked_at < ?", time.Now().Add(-1*time.Hour*24*3)).
 		Where("updated_at < ?", time.Now().Add(-1*time.Minute*10)).
 		Limit(limit).Offset(offset).Find(&entities).Error

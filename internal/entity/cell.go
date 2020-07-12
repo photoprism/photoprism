@@ -10,39 +10,34 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Geo represents a S2 cell with location data.
-type Geo struct {
-	ID          string    `gorm:"type:varbinary(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	GeoName     string    `gorm:"type:varchar(255);" json:"Name" yaml:"Name,omitempty"`
-	GeoCategory string    `gorm:"type:varchar(64);" json:"Category" yaml:"Category,omitempty"`
-	PlaceID     string    `gorm:"type:varbinary(42);default:'zz'" json:"-" yaml:"PlaceID"`
-	Place       *Place    `gorm:"PRELOAD:true" json:"Place" yaml:"-"`
-	CreatedAt   time.Time `json:"CreatedAt" yaml:"-"`
-	UpdatedAt   time.Time `json:"UpdatedAt" yaml:"-"`
-}
-
-// TableName return the database table name.
-func (Geo) TableName() string {
-	return "geo"
+// Cell represents a S2 cell with location data.
+type Cell struct {
+	ID           string    `gorm:"type:varbinary(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
+	CellName     string    `gorm:"type:varchar(255);" json:"Name" yaml:"Name,omitempty"`
+	CellCategory string    `gorm:"type:varchar(64);" json:"Category" yaml:"Category,omitempty"`
+	PlaceID      string    `gorm:"type:varbinary(42);default:'zz'" json:"-" yaml:"PlaceID"`
+	Place        *Place    `gorm:"PRELOAD:true" json:"Place" yaml:"-"`
+	CreatedAt    time.Time `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
 }
 
 // UnknownLocation is PhotoPrism's default location.
-var UnknownLocation = Geo{
-	ID:          "zz",
-	Place:       &UnknownPlace,
-	PlaceID:     "zz",
-	GeoName:     "",
-	GeoCategory: "",
+var UnknownLocation = Cell{
+	ID:           "zz",
+	Place:        &UnknownPlace,
+	PlaceID:      "zz",
+	CellName:     "",
+	CellCategory: "",
 }
 
 // CreateUnknownLocation creates the default location if not exists.
 func CreateUnknownLocation() {
-	FirstOrCreateGeo(&UnknownLocation)
+	FirstOrCreateCell(&UnknownLocation)
 }
 
-// NewGeo creates a location using a token extracted from coordinate
-func NewGeo(lat, lng float32) *Geo {
-	result := &Geo{}
+// NewCell creates a location using a token extracted from coordinate
+func NewCell(lat, lng float32) *Cell {
+	result := &Cell{}
 
 	result.ID = s2.PrefixedToken(float64(lat), float64(lng))
 
@@ -50,12 +45,12 @@ func NewGeo(lat, lng float32) *Geo {
 }
 
 // Find retrieves location data from the database or an external api if not known already.
-func (m *Geo) Find(api string) error {
+func (m *Cell) Find(api string) error {
 	start := time.Now()
 	db := Db()
 
 	if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err == nil {
-		log.Infof("geo: found %s (%+v)", m.ID, m)
+		log.Infof("location: found %s (%+v)", m.ID, m)
 		return nil
 	}
 
@@ -64,7 +59,7 @@ func (m *Geo) Find(api string) error {
 	}
 
 	if err := l.QueryApi(api); err != nil {
-		log.Errorf("geo: %s failed %s", m.ID, err)
+		log.Errorf("location: %s failed %s", m.ID, err)
 		return err
 	}
 
@@ -72,13 +67,13 @@ func (m *Geo) Find(api string) error {
 		m.Place = found
 	} else {
 		place := &Place{
-			ID:          l.PrefixedToken(),
-			GeoLabel:    l.Label(),
-			GeoCity:     l.City(),
-			GeoState:    l.State(),
-			GeoCountry:  l.CountryCode(),
-			GeoKeywords: l.KeywordString(),
-			PhotoCount:  1,
+			ID:            l.PrefixedToken(),
+			PlaceLabel:    l.Label(),
+			PlaceCity:     l.City(),
+			PlaceState:    l.State(),
+			PlaceCountry:  l.CountryCode(),
+			PlaceKeywords: l.KeywordString(),
+			PhotoCount:    1,
 		}
 
 		if err := place.Create(); err == nil {
@@ -98,40 +93,40 @@ func (m *Geo) Find(api string) error {
 	}
 
 	m.PlaceID = m.Place.ID
-	m.GeoName = l.Name()
-	m.GeoCategory = l.Category()
+	m.CellName = l.Name()
+	m.CellCategory = l.Category()
 
 	if err := db.Create(m).Error; err == nil {
-		log.Infof("geo: added %s [%s]", m.ID, time.Since(start))
+		log.Infof("location: added %s [%s]", m.ID, time.Since(start))
 		return nil
 	} else if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err != nil {
-		log.Errorf("geo: failed adding %s %s [%s]", m.ID, err.Error(), time.Since(start))
+		log.Errorf("location: failed adding %s %s [%s]", m.ID, err.Error(), time.Since(start))
 		return err
 	} else {
-		log.Infof("geo: found %s after second try [%s]", m.ID, time.Since(start))
+		log.Infof("location: found %s after second try [%s]", m.ID, time.Since(start))
 	}
 
 	return nil
 }
 
 // Create inserts a new row to the database.
-func (m *Geo) Create() error {
+func (m *Cell) Create() error {
 	return Db().Create(m).Error
 }
 
-// FirstOrCreateGeo fetches an existing row, inserts a new row or nil in case of errors.
-func FirstOrCreateGeo(m *Geo) *Geo {
+// FirstOrCreateCell fetches an existing row, inserts a new row or nil in case of errors.
+func FirstOrCreateCell(m *Cell) *Cell {
 	if m.ID == "" {
-		log.Errorf("geo: id must not be empty")
+		log.Errorf("location: id must not be empty")
 		return nil
 	}
 
 	if m.PlaceID == "" {
-		log.Errorf("geo: place_id must not be empty (first or create %s)", m.ID)
+		log.Errorf("location: place_id must not be empty (first or create %s)", m.ID)
 		return nil
 	}
 
-	result := Geo{}
+	result := Cell{}
 
 	if findErr := Db().Where("id = ?", m.ID).First(&result).Error; findErr == nil {
 		return &result
@@ -140,16 +135,16 @@ func FirstOrCreateGeo(m *Geo) *Geo {
 	} else if err := Db().Where("id = ?", m.ID).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("geo: %s (first or create %s)", createErr, m.ID)
+		log.Errorf("location: %s (first or create %s)", createErr, m.ID)
 	}
 
 	return nil
 }
 
 // Keywords returns search keywords for a location.
-func (m *Geo) Keywords() (result []string) {
+func (m *Cell) Keywords() (result []string) {
 	if m.Place == nil {
-		log.Errorf("geo: place for %s is nil - you might have found a bug", m.ID)
+		log.Errorf("location: place for %s is nil - you might have found a bug", m.ID)
 		return result
 	}
 
@@ -158,7 +153,7 @@ func (m *Geo) Keywords() (result []string) {
 	result = append(result, txt.Keywords(txt.ReplaceSpaces(m.CountryName(), "-"))...)
 	result = append(result, txt.Keywords(m.Category())...)
 	result = append(result, txt.Keywords(m.Name())...)
-	result = append(result, txt.Keywords(m.Place.GeoKeywords)...)
+	result = append(result, txt.Keywords(m.Place.PlaceKeywords)...)
 
 	result = txt.UniqueWords(result)
 
@@ -166,71 +161,71 @@ func (m *Geo) Keywords() (result []string) {
 }
 
 // Unknown checks if the location has no id
-func (m *Geo) Unknown() bool {
+func (m *Cell) Unknown() bool {
 	return m.ID == "" || m.ID == UnknownLocation.ID
 }
 
 // Name returns name of location
-func (m *Geo) Name() string {
-	return m.GeoName
+func (m *Cell) Name() string {
+	return m.CellName
 }
 
 // NoName checks if the location has no name
-func (m *Geo) NoName() bool {
-	return m.GeoName == ""
+func (m *Cell) NoName() bool {
+	return m.CellName == ""
 }
 
 // Category returns the location category
-func (m *Geo) Category() string {
-	return m.GeoCategory
+func (m *Cell) Category() string {
+	return m.CellCategory
 }
 
 // NoCategory checks id the location has no category
-func (m *Geo) NoCategory() bool {
-	return m.GeoCategory == ""
+func (m *Cell) NoCategory() bool {
+	return m.CellCategory == ""
 }
 
 // Label returns the location place label
-func (m *Geo) Label() string {
+func (m *Cell) Label() string {
 	return m.Place.Label()
 }
 
 // City returns the location place city
-func (m *Geo) City() string {
+func (m *Cell) City() string {
 	return m.Place.City()
 }
 
 // LongCity checks if the city name is more than 16 char
-func (m *Geo) LongCity() bool {
+func (m *Cell) LongCity() bool {
 	return len(m.City()) > 16
 }
 
 // NoCity checks if the location has no city
-func (m *Geo) NoCity() bool {
+func (m *Cell) NoCity() bool {
 	return m.City() == ""
 }
 
 // CityContains checks if the location city contains the text string
-func (m *Geo) CityContains(text string) bool {
+func (m *Cell) CityContains(text string) bool {
 	return strings.Contains(text, m.City())
 }
 
 // State returns the location place state
-func (m *Geo) State() string {
+func (m *Cell) State() string {
 	return m.Place.State()
 }
 
 // NoState checks if the location place has no state
-func (m *Geo) NoState() bool {
+func (m *Cell) NoState() bool {
 	return m.Place.State() == ""
 }
 
 // CountryCode returns the location place country code
-func (m *Geo) CountryCode() string {
+func (m *Cell) CountryCode() string {
 	return m.Place.CountryCode()
 }
 
 // CountryName returns the location place country name
-func (m *Geo) CountryName() string {
+func (m *Cell) CountryName() string {
 	return m.Place.CountryName()
 }

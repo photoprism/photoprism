@@ -35,9 +35,6 @@ type Photo struct {
 	PhotoPrivate     bool      `json:"Private"`
 	PhotoReview      bool      `json:"Review"`
 	PhotoScan        bool      `json:"Scan"`
-	GeoID            string    `json:"GeoID"`
-	GeoSrc           string    `json:"GeoSrc"`
-	GeoAccuracy      int       `json:"GeoAccuracy"`
 	PhotoAltitude    int       `json:"Altitude"`
 	PhotoLat         float32   `json:"Lat"`
 	PhotoLng         float32   `json:"Lng"`
@@ -46,7 +43,10 @@ type Photo struct {
 	PhotoFNumber     float32   `json:"FNumber"`
 	PhotoExposure    string    `json:"Exposure"`
 	PhotoCountry     string    `json:"Country"`
+	CellID           string    `json:"CellID"`
+	CellAccuracy     int       `json:"CellAccuracy"`
 	PlaceID          string    `json:"PlaceID"`
+	PlaceSrc         string    `json:"PlaceSrc"`
 	CameraID         uint      `json:"CameraID"`
 	CameraSrc        string    `json:"CameraSrc"`
 	LensID           uint      `json:"LensID"`

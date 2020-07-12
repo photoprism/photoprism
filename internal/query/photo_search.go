@@ -33,7 +33,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		files.file_diff, files.file_video, files.file_duration, files.file_size,
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
-		places.geo_label, places.geo_city, places.geo_state, places.geo_country`).
+		places.place_label, places.place_city, places.place_state, places.place_country`).
 		Joins("JOIN files ON photos.id = files.photo_id AND files.file_missing = 0 AND files.deleted_at IS NULL").
 		Joins("JOIN cameras ON photos.camera_id = cameras.id").
 		Joins("JOIN lenses ON photos.lens_id = lenses.id").
@@ -101,7 +101,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 	// Filter by location.
 	if f.Geo == true {
-		s = s.Where("geo_id <> ''")
+		s = s.Where("photos.cell_id <> 'zz'")
 
 		if likeAny := LikeAny("k.keyword", f.Query); likeAny != "" {
 			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(likeAny))
@@ -199,12 +199,12 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.State != "" {
-		s = s.Where("places.geo_state IN (?)", strings.Split(f.State, ","))
+		s = s.Where("places.place_state IN (?)", strings.Split(f.State, ","))
 	}
 
 	if f.Category != "" {
-		s = s.Joins("JOIN geo ON photos.geo_id = geo.id").
-			Where("geo.geo_category IN (?)", strings.Split(strings.ToLower(f.Category), ","))
+		s = s.Joins("JOIN cells ON photos.cell_id = cells.id").
+			Where("cells.cell_category IN (?)", strings.Split(strings.ToLower(f.Category), ","))
 	}
 
 	// Filter by media type.
@@ -335,7 +335,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Order("photos.id DESC, files.file_primary DESC")
 	case entity.SortOrderSimilar:
 		s = s.Where("files.file_diff > 0")
-		s = s.Order("files.file_main_color, photos.geo_id, files.file_diff, taken_at DESC, files.file_primary DESC")
+		s = s.Order("files.file_main_color, photos.cell_id, files.file_diff, taken_at DESC, files.file_primary DESC")
 	case entity.SortOrderName:
 		s = s.Order("photos.photo_path, photos.photo_name, files.file_primary DESC")
 	default:

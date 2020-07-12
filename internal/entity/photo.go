@@ -51,9 +51,9 @@ type Photo struct {
 	PhotoScan        bool         `json:"Scan" yaml:"Scan,omitempty"`
 	TimeZone         string       `gorm:"type:varbinary(64);" json:"TimeZone" yaml:"-"`
 	PlaceID          string       `gorm:"type:varbinary(42);index;default:'zz'" json:"PlaceID" yaml:"-"`
-	GeoID            string       `gorm:"type:varbinary(42);index;default:'zz'" json:"GeoID" yaml:"-"`
-	GeoSrc           string       `gorm:"type:varbinary(8);" json:"GeoSrc" yaml:"GeoSrc,omitempty"`
-	GeoAccuracy      int          `json:"GeoAccuracy" yaml:"GeoAccuracy,omitempty"`
+	PlaceSrc         string       `gorm:"type:varbinary(8);" json:"PlaceSrc" yaml:"PlaceSrc,omitempty"`
+	CellID           string       `gorm:"type:varbinary(42);index;default:'zz'" json:"CellID" yaml:"-"`
+	CellAccuracy     int          `json:"CellAccuracy" yaml:"CellAccuracy,omitempty"`
 	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
 	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
 	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
@@ -74,7 +74,7 @@ type Photo struct {
 	Details          *Details     `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Details" yaml:"Details"`
 	Camera           *Camera      `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Camera" yaml:"-"`
 	Lens             *Lens        `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Lens" yaml:"-"`
-	Geo              *Geo         `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Geo" yaml:"-"`
+	Cell             *Cell        `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Cell" yaml:"-"`
 	Place            *Place       `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Place" yaml:"-"`
 	Keywords         []Keyword    `json:"-" yaml:"-"`
 	Albums           []Album      `json:"-" yaml:"-"`
@@ -94,11 +94,11 @@ func NewPhoto() Photo {
 		PhotoCountry: UnknownCountry.ID,
 		CameraID:     UnknownCamera.ID,
 		LensID:       UnknownLens.ID,
-		GeoID:        UnknownLocation.ID,
+		CellID:       UnknownLocation.ID,
 		PlaceID:      UnknownPlace.ID,
 		Camera:       &UnknownCamera,
 		Lens:         &UnknownLens,
-		Geo:          &UnknownLocation,
+		Cell:         &UnknownLocation,
 		Place:        &UnknownPlace,
 	}
 }
@@ -127,7 +127,7 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 		details.Keywords = strings.Join(txt.UniqueWords(txt.Words(details.Keywords)), ", ")
 	}
 
-	if locChanged && model.GeoSrc == SrcManual {
+	if locChanged && model.PlaceSrc == SrcManual {
 		locKeywords, labels := model.UpdateLocation(geoApi)
 
 		model.AddLabels(labels)
@@ -238,8 +238,8 @@ func (m *Photo) Find() error {
 		Preload("Lens").
 		Preload("Details").
 		Preload("Place").
-		Preload("Geo").
-		Preload("Geo.Place")
+		Preload("Cell").
+		Preload("Cell.Place")
 
 	if rnd.IsPPID(m.PhotoUID, 'p') {
 		if err := q.First(m, "photo_uid = ?", m.PhotoUID).Error; err != nil {
@@ -471,7 +471,7 @@ func (m *Photo) HasID() bool {
 
 // UnknownLocation checks if the photo has an unknown location.
 func (m *Photo) UnknownLocation() bool {
-	return m.GeoID == "" || m.GeoID == UnknownLocation.ID
+	return m.CellID == "" || m.CellID == UnknownLocation.ID
 }
 
 // HasLocation checks if the photo has a known location.
@@ -481,15 +481,15 @@ func (m *Photo) HasLocation() bool {
 
 // LocationLoaded checks if the photo has a known location that is currently loaded.
 func (m *Photo) LocationLoaded() bool {
-	if m.Geo == nil {
+	if m.Cell == nil {
 		return false
 	}
 
-	if m.Geo.Place == nil {
+	if m.Cell.Place == nil {
 		return false
 	}
 
-	return !m.Geo.Unknown() && m.Geo.ID == m.GeoID
+	return !m.Cell.Unknown() && m.Cell.ID == m.CellID
 }
 
 // LoadLocation loads the photo location from the database if not done already.
@@ -502,9 +502,9 @@ func (m *Photo) LoadLocation() error {
 		return fmt.Errorf("photo: unknown location (%s)", m)
 	}
 
-	var location Geo
+	var location Cell
 
-	err := Db().Preload("Place").First(&location, "id = ?", m.GeoID).Error
+	err := Db().Preload("Place").First(&location, "id = ?", m.CellID).Error
 
 	if err != nil {
 		return err
@@ -515,7 +515,7 @@ func (m *Photo) LoadLocation() error {
 		location.PlaceID = UnknownPlace.ID
 	}
 
-	m.Geo = &location
+	m.Cell = &location
 
 	return nil
 }
@@ -670,7 +670,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 
 	if m.LocationLoaded() {
 		knownLocation = true
-		loc := m.Geo
+		loc := m.Cell
 
 		// TODO: User defined title format
 		if title := labels.Title(loc.Name()); title != "" {
@@ -865,14 +865,14 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 		return
 	}
 
-	if m.GeoSrc != SrcAuto && m.GeoSrc != source && source != SrcManual {
+	if m.PlaceSrc != SrcAuto && m.PlaceSrc != source && source != SrcManual {
 		return
 	}
 
 	m.PhotoLat = lat
 	m.PhotoLng = lng
 	m.PhotoAltitude = altitude
-	m.GeoSrc = source
+	m.PlaceSrc = source
 }
 
 // AllFilesMissing returns true, if all files for this photo are missing.

@@ -29,8 +29,8 @@ func TestNewPhoto(t *testing.T) {
 			CameraID:         uint(3),
 			CameraSrc:        "meta",
 			LensID:           uint(6),
-			GeoID:            "1234",
-			GeoSrc:           "geo",
+			CellID:           "1234",
+			PlaceSrc:         "geo",
 			PlaceID:          "765",
 			PhotoCountry:     "de"}
 
@@ -60,8 +60,8 @@ func TestNewPhoto(t *testing.T) {
 		assert.Equal(t, uint(3), r.CameraID)
 		assert.Equal(t, "meta", r.CameraSrc)
 		assert.Equal(t, uint(6), r.LensID)
-		assert.Equal(t, "1234", r.GeoID)
-		assert.Equal(t, "geo", r.GeoSrc)
+		assert.Equal(t, "1234", r.CellID)
+		assert.Equal(t, "geo", r.PlaceSrc)
 		assert.Equal(t, "765", r.PlaceID)
 		assert.Equal(t, "de", r.PhotoCountry)
 	})

@@ -39,7 +39,7 @@ var Entities = Types{
 	"photos":          &Photo{},
 	"details":         &Details{},
 	"places":          &Place{},
-	"geo":             &Geo{},
+	"cells":           &Cell{},
 	"cameras":         &Camera{},
 	"lenses":          &Lens{},
 	"countries":       &Country{},

@@ -173,8 +173,8 @@
             openLocation(index) {
                 const photo = this.results[index];
 
-                if (photo.GeoID && photo.GeoID !== "zz") {
-                    this.$router.push({name: "place", params: {q: photo.GeoID}});
+                if (photo.CellID && photo.CellID !== "zz") {
+                    this.$router.push({name: "place", params: {q: photo.CellID}});
                 } else if (photo.PlaceID && photo.PlaceID !== "zz") {
                     this.$router.push({name: "place", params: {q: photo.PlaceID}});
                 } else if (photo.Country && photo.Country !== "zz") {

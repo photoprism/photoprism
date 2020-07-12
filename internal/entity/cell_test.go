@@ -8,9 +8,9 @@ import (
 
 func TestNewLocation(t *testing.T) {
 	t.Run("new label", func(t *testing.T) {
-		l := NewGeo(1, 1)
-		l.GeoCategory = "restaurant"
-		l.GeoName = "LocationName"
+		l := NewCell(1, 1)
+		l.CellCategory = "restaurant"
+		l.CellName = "LocationName"
 		l.Place = PlaceFixtures.Pointer("zinkwazi")
 
 		assert.Equal(t, "restaurant", l.Category())
@@ -32,17 +32,17 @@ func TestNewLocation(t *testing.T) {
 
 func TestLocation_Keywords(t *testing.T) {
 	t.Run("mexico", func(t *testing.T) {
-		m := GeoFixtures["mexico"]
+		m := CellFixtures["mexico"]
 		r := m.Keywords()
 		assert.Equal(t, []string{"adosada", "ancient", "botanical", "garden", "mexico", "platform", "pyramid", "state-of-mexico", "teotihuacán"}, r)
 	})
 	t.Run("caravan park", func(t *testing.T) {
-		m := GeoFixtures["caravan park"]
+		m := CellFixtures["caravan park"]
 		r := m.Keywords()
 		assert.Equal(t, []string{"camping", "caravan", "kwazulu-natal", "lobotes", "mandeni", "park", "south-africa"}, r)
 	})
 	t.Run("place id empty", func(t *testing.T) {
-		m := &Geo{}
+		m := &Cell{}
 		r := m.Keywords()
 		assert.Empty(t, r)
 	})
@@ -50,12 +50,12 @@ func TestLocation_Keywords(t *testing.T) {
 
 func TestLocation_Find(t *testing.T) {
 	t.Run("place in db", func(t *testing.T) {
-		m := GeoFixtures["mexico"]
+		m := CellFixtures["mexico"]
 		r := m.Find("")
 		assert.Nil(t, r)
 	})
 	t.Run("invalid api", func(t *testing.T) {
-		l := NewGeo(2, 1)
+		l := NewCell(2, 1)
 		err := l.Find("")
 
 		if err == nil {
@@ -68,19 +68,19 @@ func TestLocation_Find(t *testing.T) {
 
 func TestFirstOrCreateLocation(t *testing.T) {
 	t.Run("id empty", func(t *testing.T) {
-		loc := &Geo{}
+		loc := &Cell{}
 
-		assert.Nil(t, FirstOrCreateGeo(loc))
+		assert.Nil(t, FirstOrCreateCell(loc))
 	})
 	t.Run("place id empty", func(t *testing.T) {
-		loc := &Geo{ID: "1234jhy"}
+		loc := &Cell{ID: "1234jhy"}
 
-		assert.Nil(t, FirstOrCreateGeo(loc))
+		assert.Nil(t, FirstOrCreateCell(loc))
 	})
 	t.Run("success", func(t *testing.T) {
-		loc := GeoFixtures.Pointer("caravan park")
+		loc := CellFixtures.Pointer("caravan park")
 
-		result := FirstOrCreateGeo(loc)
+		result := FirstOrCreateCell(loc)
 
 		if result == nil {
 			t.Fatal("result should not be nil")

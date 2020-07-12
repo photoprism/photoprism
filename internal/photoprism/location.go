@@ -6,8 +6,8 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// Geo returns the Geo of a MediaFile.
-func (m *MediaFile) Location() (*entity.Geo, error) {
+// Location returns the S2 cell entity of a MediaFile.
+func (m *MediaFile) Location() (*entity.Cell, error) {
 	if m.location != nil {
 		return m.location, nil
 	}
@@ -18,7 +18,7 @@ func (m *MediaFile) Location() (*entity.Geo, error) {
 		return nil, errors.New("mediafile: no latitude and longitude in metadata")
 	}
 
-	m.location = entity.NewGeo(data.Lat, data.Lng)
+	m.location = entity.NewCell(data.Lat, data.Lng)
 
 	return m.location, nil
 }
