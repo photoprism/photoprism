@@ -193,9 +193,8 @@ func TestLocation_Assign(t *testing.T) {
 
 		assert.Equal(t, "Indian Ocean", l.LocName)
 		assert.Equal(t, "", l.LocCategory)
-		assert.Equal(t, "Unknown", l.LocCity)
-		// TODO: Should be zz for international waters, fixed in places server
-		// assert.Equal(t, "", l.GeoCountry)
+		assert.Equal(t, "", l.LocCity)
+		assert.Equal(t, "zz", l.LocCountry)
 	})
 }
 
