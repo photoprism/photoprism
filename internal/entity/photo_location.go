@@ -70,7 +70,7 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 			log.Warnf("photo: location place is nil (uid %s, location %s) - bug?", m.PhotoUID, location.ID)
 		}
 
-		if err == nil && location.Place != nil && location.ID != UnknownGeo.ID {
+		if err == nil && location.Place != nil && location.ID != UnknownLocation.ID {
 			m.Geo = location
 			m.GeoID = location.ID
 			m.Place = location.Place
@@ -100,8 +100,8 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 	labels = classify.Labels{}
 
 	if m.UnknownLocation() {
-		m.Geo = &UnknownGeo
-		m.GeoID = UnknownGeo.ID
+		m.Geo = &UnknownLocation
+		m.GeoID = UnknownLocation.ID
 	} else if err := m.LoadLocation(); err == nil {
 		m.Place = m.Geo.Place
 		m.PlaceID = m.Geo.PlaceID

@@ -48,5 +48,8 @@ func TestPhoto_YamlFileName(t *testing.T) {
 		m.PreloadFiles()
 		assert.Equal(t, "xxx/2790/02/yyy/Photo01.yml", m.YamlFileName("xxx", "yyy"))
 
+		if err := os.RemoveAll("xxx"); err != nil {
+			t.Fatal(err)
+		}
 	})
 }

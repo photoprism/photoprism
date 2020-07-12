@@ -10,10 +10,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Geo used to associate photos to location
+// Geo represents a S2 cell with location data.
 type Geo struct {
 	ID          string    `gorm:"type:varbinary(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	PlaceID     string    `gorm:"type:varbinary(42);" json:"-" yaml:"PlaceID"`
+	PlaceID     string    `gorm:"type:varbinary(42);default:'zz'" json:"-" yaml:"PlaceID"`
 	Place       *Place    `gorm:"PRELOAD:true" json:"Place" yaml:"-"`
 	GeoName     string    `gorm:"type:varchar(255);" json:"Name" yaml:"Name,omitempty"`
 	GeoCategory string    `gorm:"type:varchar(64);" json:"Category" yaml:"Category,omitempty"`
@@ -27,8 +27,8 @@ func (Geo) TableName() string {
 	return "geo"
 }
 
-// UnknownGeo is PhotoPrism's default location.
-var UnknownGeo = Geo{
+// UnknownLocation is PhotoPrism's default location.
+var UnknownLocation = Geo{
 	ID:          "zz",
 	Place:       &UnknownPlace,
 	PlaceID:     "zz",
@@ -37,9 +37,9 @@ var UnknownGeo = Geo{
 	GeoSource:   SrcAuto,
 }
 
-// CreateUnknownGeo creates the default location if not exists.
-func CreateUnknownGeo() {
-	FirstOrCreateGeo(&UnknownGeo)
+// CreateUnknownLocation creates the default location if not exists.
+func CreateUnknownLocation() {
+	FirstOrCreateGeo(&UnknownLocation)
 }
 
 // NewGeo creates a location using a token extracted from coordinate
@@ -170,7 +170,7 @@ func (m *Geo) Keywords() (result []string) {
 
 // Unknown checks if the location has no id
 func (m *Geo) Unknown() bool {
-	return m.ID == "" || m.ID == UnknownGeo.ID
+	return m.ID == "" || m.ID == UnknownLocation.ID
 }
 
 // Name returns name of location

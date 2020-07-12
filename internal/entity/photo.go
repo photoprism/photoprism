@@ -50,8 +50,8 @@ type Photo struct {
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
 	PhotoScan        bool         `json:"Scan" yaml:"Scan,omitempty"`
 	TimeZone         string       `gorm:"type:varbinary(64);" json:"TimeZone" yaml:"-"`
-	PlaceID          string       `gorm:"type:varbinary(42);index;" json:"PlaceID" yaml:"-"`
-	GeoID            string       `gorm:"type:varbinary(42);index;" json:"GeoID" yaml:"-"`
+	PlaceID          string       `gorm:"type:varbinary(42);index;default:'zz'" json:"PlaceID" yaml:"-"`
+	GeoID            string       `gorm:"type:varbinary(42);index;default:'zz'" json:"GeoID" yaml:"-"`
 	GeoSrc           string       `gorm:"type:varbinary(8);" json:"GeoSrc" yaml:"GeoSrc,omitempty"`
 	GeoAccuracy      int          `json:"GeoAccuracy" yaml:"GeoAccuracy,omitempty"`
 	PhotoAltitude    int          `json:"Altitude" yaml:"Altitude,omitempty"`
@@ -67,10 +67,10 @@ type Photo struct {
 	PhotoFocalLength int          `json:"FocalLength" yaml:"FocalLength,omitempty"`
 	PhotoQuality     int          `gorm:"type:SMALLINT" json:"Quality" yaml:"-"`
 	PhotoResolution  int          `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
-	CameraID         uint         `gorm:"index:idx_photos_camera_lens;" json:"CameraID" yaml:"-"`
+	CameraID         uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
 	CameraSerial     string       `gorm:"type:varbinary(255);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
 	CameraSrc        string       `gorm:"type:varbinary(8);" json:"CameraSrc" yaml:"-"`
-	LensID           uint         `gorm:"index:idx_photos_camera_lens;" json:"LensID" yaml:"-"`
+	LensID           uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"LensID" yaml:"-"`
 	Details          *Details     `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Details" yaml:"Details"`
 	Camera           *Camera      `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Camera" yaml:"-"`
 	Lens             *Lens        `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Lens" yaml:"-"`
@@ -94,11 +94,11 @@ func NewPhoto() Photo {
 		PhotoCountry: UnknownCountry.ID,
 		CameraID:     UnknownCamera.ID,
 		LensID:       UnknownLens.ID,
-		GeoID:        UnknownGeo.ID,
+		GeoID:        UnknownLocation.ID,
 		PlaceID:      UnknownPlace.ID,
 		Camera:       &UnknownCamera,
 		Lens:         &UnknownLens,
-		Geo:          &UnknownGeo,
+		Geo:          &UnknownLocation,
 		Place:        &UnknownPlace,
 	}
 }
@@ -469,9 +469,9 @@ func (m *Photo) HasID() bool {
 	return m.ID > 0 && m.PhotoUID != ""
 }
 
-// UnknownGeo checks if the photo has an unknown location.
+// UnknownLocation checks if the photo has an unknown location.
 func (m *Photo) UnknownLocation() bool {
-	return m.GeoID == "" || m.GeoID == UnknownGeo.ID
+	return m.GeoID == "" || m.GeoID == UnknownLocation.ID
 }
 
 // HasLocation checks if the photo has a known location.

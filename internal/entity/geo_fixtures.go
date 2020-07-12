@@ -11,7 +11,7 @@ func (m GeoMap) Get(name string) Geo {
 		return result
 	}
 
-	return UnknownGeo
+	return UnknownLocation
 }
 
 func (m GeoMap) Pointer(name string) *Geo {
@@ -19,7 +19,7 @@ func (m GeoMap) Pointer(name string) *Geo {
 		return &result
 	}
 
-	return &UnknownGeo
+	return &UnknownLocation
 }
 
 var GeoFixtures = GeoMap{

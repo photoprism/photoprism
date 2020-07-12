@@ -121,11 +121,10 @@ func (list Types) Drop() {
 func CreateDefaultFixtures() {
 	CreateDefaultUsers()
 	CreateUnknownPlace()
-	CreateUnknownGeo()
+	CreateUnknownLocation()
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()
-	// CreateViews()
 }
 
 // MigrateDb creates all tables and inserts default entities as needed.
