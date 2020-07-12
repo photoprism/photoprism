@@ -8,6 +8,7 @@ type Album struct {
 	FolderUID        string `json:"FolderUID"`
 	AlbumType        string `json:"Type"`
 	AlbumTitle       string `json:"Title"`
+	AlbumLocation    string `json:"Location"`
 	AlbumCategory    string `json:"Category"`
 	AlbumCaption     string `json:"Caption"`
 	AlbumDescription string `json:"Description"`

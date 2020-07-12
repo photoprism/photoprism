@@ -192,6 +192,11 @@ var GlobalFlags = []cli.Flag{
 		Value:  "darktable-cli",
 		EnvVar: "PHOTOPRISM_DARKTABLE_BIN",
 	},
+	cli.BoolFlag{
+		Name:   "darktable-workers",
+		Usage:  "disable presets to run multiple instances concurrently",
+		EnvVar: "PHOTOPRISM_DARKTABLE_WORKERS",
+	},
 	cli.StringFlag{
 		Name:   "heifconvert-bin",
 		Usage:  "heif-convert executable `FILENAME`",

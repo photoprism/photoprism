@@ -5,6 +5,7 @@ type AlbumSearch struct {
 	Query    string `form:"q"`
 	ID       string `form:"id"`
 	Type     string `form:"type"`
+	Location string `form:"location"`
 	Category string `form:"category"`
 	Slug     string `form:"slug"`
 	Title    string `form:"title"`

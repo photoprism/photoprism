@@ -130,10 +130,19 @@
                   </v-btn>
                 </v-img>
 
-                <v-card-actions primary-title class="pl-3 pr-2 pb-1" style="user-select: none;" @click.stop.prevent="">
-                  <h3 :title="album.Title " @click.stop.prevent="edit(album)" class="body-2 ma-0 action-title-edit"
+                <v-card-actions primary-title class="pl-3 pr-2 pb-0 mb-0" style="user-select: none;">
+                  <h3 v-if="album.Type !== 'month'"
+                      @click.stop.prevent="edit(album)"
+                      class="body-2 ma-0 action-title-edit"
                       :data-uid="album.UID">
                     {{ album.Title }}
+                  </h3>
+
+                  <h3 v-else
+                      @click.stop.prevent="edit(album)"
+                      class="body-2 ma-0 action-title-edit"
+                      :data-uid="album.UID">
+                    {{ album.getDateString() }}
                   </h3>
 
                   <v-spacer></v-spacer>
@@ -145,22 +154,31 @@
                   </v-btn>
                 </v-card-actions>
 
-                <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc" v-if="album.Description">
-                  <div class="caption" title="Description" @click.stop.prevent="edit(album)">
-                    {{ album.Description | truncate(100) }}
+                <v-card-text primary-title class="pb-2 pt-0 p-photo-desc" style="user-select: none;" @click.stop.prevent="">
+                  <div class="caption mb-2" v-if="album.Description">
+                    <button @click.exact="edit(album)">
+                      {{ album.Description | truncate(100) }}
+                    </button>
                   </div>
-                </v-card-text>
-                <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc"
-                             v-else-if="album.Type === 'album'">
-                  <div v-if="album.PhotoCount === 1" class="caption">
-                    <translate>Contains one entry.</translate>
+
+                  <div class="caption mb-2" v-else-if="album.Type === 'album'">
+                    <button @click.exact="edit(album)" v-if="album.PhotoCount === 1">
+                      <translate>Contains one entry.</translate>
+                    </button>
+                    <button v-else-if="album.PhotoCount > 0">
+                      <translate :translate-params="{n: album.PhotoCount}">Contains %{n} entries.</translate>
+                    </button>
+                    <button v-else @click.stop.prevent="$router.push({name: 'photos'})">
+                      <translate>Add photos or videos from search results by selecting them.</translate>
+                    </button>
                   </div>
-                  <div v-else-if="album.PhotoCount > 0" class="caption">
-                    <translate :translate-params="{n: album.PhotoCount}">Contains %{n} entries.</translate>
+
+                  <div class="caption mb-2 d-block" v-if="album.Location">
+                    <button @click.exact="edit(album)">
+                      <v-icon size="14">location_on</v-icon>
+                      {{ album.Location }}
+                    </button>
                   </div>
-                  <button v-else @click.stop.prevent="$router.push({name: 'photos'})" class="caption">
-                    <translate>Add photos or videos from search results by selecting them.</translate>
-                  </button>
                 </v-card-text>
               </v-card>
             </v-hover>

@@ -30,6 +30,7 @@ type Folder struct {
 	FolderCountry     string     `gorm:"type:varbinary(2);index:idx_folders_country_year_month;default:'zz'" json:"Country" yaml:"Country,omitempty"`
 	FolderYear        int        `gorm:"index:idx_folders_country_year_month;" json:"Year" yaml:"Year,omitempty"`
 	FolderMonth       int        `gorm:"index:idx_folders_country_year_month;" json:"Month" yaml:"Month,omitempty"`
+	FolderDay         int        `json:"Day" yaml:"Day,omitempty"`
 	FolderFavorite    bool       `json:"Favorite" yaml:"Favorite,omitempty"`
 	FolderPrivate     bool       `json:"Private" yaml:"Private,omitempty"`
 	FolderIgnore      bool       `json:"Ignore" yaml:"Ignore,omitempty"`
@@ -100,7 +101,7 @@ func (m *Folder) SetValuesFromPath() {
 
 	if len(m.Path) >= 6 {
 		if date := txt.Time(m.Path); !date.IsZero() {
-			if txt.IsUInt(s) {
+			if txt.IsUInt(s) || txt.IsTime(s) {
 				if date.Day() > 1 {
 					m.FolderTitle = date.Format("January 2, 2006")
 				} else {
@@ -110,6 +111,7 @@ func (m *Folder) SetValuesFromPath() {
 
 			m.FolderYear = date.Year()
 			m.FolderMonth = int(date.Month())
+			m.FolderDay = date.Day()
 		}
 	}
 

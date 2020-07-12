@@ -20,6 +20,7 @@ type AlbumResult struct {
 	AlbumSlug        string    `json:"Slug"`
 	AlbumType        string    `json:"Type"`
 	AlbumTitle       string    `json:"Title"`
+	AlbumLocation    string    `json:"Location"`
 	AlbumCategory    string    `json:"Category"`
 	AlbumCaption     string    `json:"Caption"`
 	AlbumDescription string    `json:"Description"`
@@ -125,7 +126,7 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 
 	if f.Query != "" {
 		likeString := "%" + strings.ToLower(f.Query) + "%"
-		s = s.Where("LOWER(albums.album_title) LIKE ?", likeString)
+		s = s.Where("LOWER(albums.album_title) LIKE ? OR LOWER(albums.album_location) LIKE ?", likeString, likeString)
 	}
 
 	if f.Type != "" {
@@ -134,6 +135,10 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 
 	if f.Category != "" {
 		s = s.Where("albums.album_category IN (?)", strings.Split(f.Category, ","))
+	}
+
+	if f.Location != "" {
+		s = s.Where("albums.album_location IN (?)", strings.Split(f.Location, ","))
 	}
 
 	if f.Favorite {

@@ -110,8 +110,17 @@ func (c *Convert) ConvertCommand(mf *MediaFile, jpegName string, xmpName string)
 	if mf.IsRaw() {
 		if c.conf.SipsBin() != "" {
 			result = exec.Command(c.conf.SipsBin(), "-s", "format", "jpeg", "--out", jpegName, mf.FileName())
-		} else if c.conf.DarktableBin() != "" {
-			// Only one instance of darktable-cli allowed due to locking
+		} else if c.conf.DarktableBin() != "" && c.conf.DarktableWorkers() {
+			// No mutex needed with --apply-custom-presets=false...
+			useMutex = false
+
+			if xmpName != "" {
+				result = exec.Command(c.conf.DarktableBin(), "--apply-custom-presets", "false", mf.FileName(), xmpName, jpegName)
+			} else {
+				result = exec.Command(c.conf.DarktableBin(), "--apply-custom-presets", "false", mf.FileName(), jpegName)
+			}
+		} else if c.conf.DarktableBin() != "" && !c.conf.DarktableWorkers() {
+			// Only one instance of darktable-cli allowed due to locking.
 			useMutex = true
 
 			if xmpName != "" {

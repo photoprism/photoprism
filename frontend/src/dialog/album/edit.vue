@@ -18,13 +18,21 @@
         <v-card-text>
           <v-container fluid class="pa-0">
             <v-layout row wrap>
-              <v-flex xs12 pa-2>
+              <v-flex xs12 pa-2 v-if="album.Type !== 'month'">
                 <v-text-field hide-details
                               v-model="model.Title"
                               :rules="[titleRule]"
                               :label="labels.title"
                               color="secondary-dark"
                               class="input-title"
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs12 pa-2>
+                <v-text-field hide-details
+                              v-model="model.Location"
+                              :label="$gettext('Location')"
+                              color="secondary-dark"
+                              class="input-location"
                 ></v-text-field>
               </v-flex>
               <v-flex xs12 pa-2>

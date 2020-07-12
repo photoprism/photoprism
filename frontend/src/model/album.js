@@ -44,6 +44,7 @@ export class Album extends RestModel {
             Slug: "",
             Type: "",
             Title: "",
+            Location: "",
             Caption: "",
             Category: "",
             Description: "",
@@ -52,8 +53,9 @@ export class Album extends RestModel {
             Order: "",
             Template: "",
             Country: "",
-            Year: 0,
-            Month: 0,
+            Day: -1,
+            Year: -1,
+            Month: -1,
             Favorite: true,
             Private: false,
             PhotoCount: 0,
@@ -99,7 +101,59 @@ export class Album extends RestModel {
         return result.join(", ");
     }
 
+    dayString() {
+        if (!this.Day || this.Day <= 0) {
+            return "01";
+        }
+
+        return this.Day.toString().padStart(2, "0");
+    }
+
+    monthString() {
+        if (!this.Month || this.Month <= 0) {
+            return "01";
+        }
+
+        return this.Month.toString().padStart(2, "0");
+    }
+
+    yearString() {
+        if (!this.Year || this.Year <= 1000) {
+            return new Date().getFullYear().toString().padStart(4, "0");
+        }
+
+        return this.Year.toString();
+    }
+
+    getDate() {
+        let date = this.yearString() + "-" + this.monthString() + "-" + this.dayString();
+
+        return DateTime.fromISO(`${date}T12:00:00Z`).toUTC();
+    }
+
+    localDate(time) {
+        if(!this.TakenAtLocal) {
+            return this.utcDate();
+        }
+
+        let zone = this.getTimeZone();
+
+        return DateTime.fromISO(this.localDateString(time), {zone});
+    }
+
     getDateString() {
+        if (!this.Year || this.Year <= 1000) {
+            return $gettext("Unknown");
+        } else if (!this.Month || this.Month <= 0) {
+            return this.localYearString();
+        } else if (!this.Day || this.Day <= 0) {
+            return this.getDate().toLocaleString({month: "long", year: "numeric"});
+        }
+
+        return this.localDate().toLocaleString(DateTime.DATE_HUGE);
+    }
+
+    getCreatedString() {
         return DateTime.fromISO(this.CreatedAt).toLocaleString(DateTime.DATETIME_MED);
     }
 

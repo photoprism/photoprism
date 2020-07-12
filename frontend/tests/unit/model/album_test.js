@@ -54,11 +54,18 @@ describe("model/album", () => {
         assert.equal(result, "(min-width: 2560px) 3840px, (min-width: 1920px) 2560px, (min-width: 1280px) 1920px, (min-width: 720px) 1280px, 720px");
     });
 
-    it("should get date string",  () => {
+    it("should get created date string",  () => {
         const values = {ID: 5, Title: "Christmas 2019", Slug: "christmas-2019", CreatedAt: "2012-07-08T14:45:39Z"};
         const album = new Album(values);
-        const result = album.getDateString();
+        const result = album.getCreatedString();
         assert.equal(result, "Jul 8, 2012, 2:45 PM");
+    });
+
+    it("should get album date string",  () => {
+        const values = {ID: 5, Title: "Christmas 2019", Slug: "christmas-2019", CreatedAt: "2012-07-08T14:45:39Z", Day: -1, Month: 5, Year: 2019};
+        const album = new Album(values);
+        const result = album.getDateString();
+        assert.equal(result, "May 2019");
     });
 
     it("should get model name",  () => {

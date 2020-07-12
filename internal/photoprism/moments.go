@@ -86,6 +86,7 @@ func (m *Moments) Start() (err error) {
 			} else if a := entity.NewFolderAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				a.AlbumYear = mom.FolderYear
 				a.AlbumMonth = mom.FolderMonth
+				a.AlbumDay = mom.FolderDay
 				a.AlbumCountry = mom.FolderCountry
 
 				if err := a.Create(); err != nil {
