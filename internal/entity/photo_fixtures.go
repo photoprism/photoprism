@@ -181,7 +181,7 @@ var PhotoFixtures = PhotoMap{
 	"Photo03": {
 		ID:               1000003,
 		PhotoUID:         "pt9jtdre2lvl0yh0",
-		TakenAt:          time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
+		TakenAt:          time.Date(2008, 1, 1, 1, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "meta",
 		PhotoTitle:       "",
