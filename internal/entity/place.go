@@ -4,7 +4,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -17,12 +16,10 @@ type Place struct {
 	GeoState    string    `gorm:"type:varchar(255);" json:"State" yaml:"State,omitempty"`
 	GeoCountry  string    `gorm:"type:varbinary(2);" json:"Country" yaml:"Country,omitempty"`
 	GeoKeywords string    `gorm:"type:varchar(255);" json:"Keywords" yaml:"Keywords,omitempty"`
-	GeoNotes    string    `gorm:"type:text;" json:"Notes" yaml:"Notes,omitempty"`
 	GeoFavorite bool      `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoCount  int       `gorm:"default:1" json:"PhotoCount" yaml:"-"`
 	CreatedAt   time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt   time.Time `json:"UpdatedAt" yaml:"-"`
-	New         bool      `gorm:"-" json:"-" yaml:"-"`
 }
 
 // UnknownPlace is PhotoPrism's default place.
@@ -33,7 +30,6 @@ var UnknownPlace = Place{
 	GeoState:    "Unknown",
 	GeoCountry:  "zz",
 	GeoKeywords: "",
-	GeoNotes:    "",
 	GeoFavorite: false,
 	PhotoCount:  -1,
 }
@@ -41,12 +37,6 @@ var UnknownPlace = Place{
 // CreateUnknownPlace creates the default place if not exists.
 func CreateUnknownPlace() {
 	FirstOrCreatePlace(&UnknownPlace)
-}
-
-// AfterCreate sets the New column used for database callback
-func (m *Place) AfterCreate(scope *gorm.Scope) error {
-	m.New = true
-	return nil
 }
 
 // FindPlace finds a matching place or returns nil.
@@ -150,9 +140,4 @@ func (m Place) CountryCode() string {
 // CountryName returns place CountryName
 func (m Place) CountryName() string {
 	return maps.CountryNames[m.GeoCountry]
-}
-
-// Notes returns place Notes
-func (m Place) Notes() string {
-	return m.GeoNotes
 }

@@ -70,12 +70,10 @@ func TestPlace_Find(t *testing.T) {
 			GeoState:    "",
 			GeoCountry:  "",
 			GeoKeywords: "",
-			GeoNotes:    "",
 			GeoFavorite: false,
 			PhotoCount:  0,
 			CreatedAt:   Timestamp(),
 			UpdatedAt:   Timestamp(),
-			New:         false,
 		}
 		err := place.Find()
 		assert.EqualError(t, err, "record not found")

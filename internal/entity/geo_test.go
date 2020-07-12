@@ -12,7 +12,6 @@ func TestNewLocation(t *testing.T) {
 		l.GeoCategory = "restaurant"
 		l.GeoName = "LocationName"
 		l.Place = PlaceFixtures.Pointer("zinkwazi")
-		l.GeoSource = "places"
 
 		assert.Equal(t, "restaurant", l.Category())
 		assert.Equal(t, false, l.NoCategory())
@@ -28,8 +27,6 @@ func TestNewLocation(t *testing.T) {
 		assert.Equal(t, false, l.NoState())
 		assert.Equal(t, "za", l.CountryCode())
 		assert.Equal(t, "South Africa", l.CountryName())
-		assert.Equal(t, "places", l.Source())
-		assert.Equal(t, "africa", l.Notes())
 	})
 }
 

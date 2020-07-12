@@ -13,11 +13,10 @@ import (
 // Geo represents a S2 cell with location data.
 type Geo struct {
 	ID          string    `gorm:"type:varbinary(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	PlaceID     string    `gorm:"type:varbinary(42);default:'zz'" json:"-" yaml:"PlaceID"`
-	Place       *Place    `gorm:"PRELOAD:true" json:"Place" yaml:"-"`
 	GeoName     string    `gorm:"type:varchar(255);" json:"Name" yaml:"Name,omitempty"`
 	GeoCategory string    `gorm:"type:varchar(64);" json:"Category" yaml:"Category,omitempty"`
-	GeoSource   string    `gorm:"type:varbinary(16);" json:"Source" yaml:"Source,omitempty"`
+	PlaceID     string    `gorm:"type:varbinary(42);default:'zz'" json:"-" yaml:"PlaceID"`
+	Place       *Place    `gorm:"PRELOAD:true" json:"Place" yaml:"-"`
 	CreatedAt   time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt   time.Time `json:"UpdatedAt" yaml:"-"`
 }
@@ -34,7 +33,6 @@ var UnknownLocation = Geo{
 	PlaceID:     "zz",
 	GeoName:     "",
 	GeoCategory: "",
-	GeoSource:   SrcAuto,
 }
 
 // CreateUnknownLocation creates the default location if not exists.
@@ -102,7 +100,6 @@ func (m *Geo) Find(api string) error {
 	m.PlaceID = m.Place.ID
 	m.GeoName = l.Name()
 	m.GeoCategory = l.Category()
-	m.GeoSource = l.Source()
 
 	if err := db.Create(m).Error; err == nil {
 		log.Infof("geo: added %s [%s]", m.ID, time.Since(start))
@@ -236,14 +233,4 @@ func (m *Geo) CountryCode() string {
 // CountryName returns the location place country name
 func (m *Geo) CountryName() string {
 	return m.Place.CountryName()
-}
-
-// Notes returns the locations place notes
-func (m *Geo) Notes() string {
-	return m.Place.Notes()
-}
-
-// Source returns the source of location information
-func (m *Geo) Source() string {
-	return m.GeoSource
 }
