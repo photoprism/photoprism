@@ -81,6 +81,17 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		t.Logf("UTC: %s", info.TakenAt.String())
 		t.Logf("Local: %s", info.TakenAtLocal.String())
 	})
+	t.Run("blue-go-video.mp4", func(t *testing.T) {
+		img, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		assert.Nil(t, err)
+
+		info := img.MetaData()
+
+		assert.Empty(t, err)
+
+		assert.IsType(t, meta.Data{}, info)
+	})
 }
 
 func TestMediaFile_Exif_DNG(t *testing.T) {

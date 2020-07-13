@@ -57,6 +57,28 @@ func TestAccounts(t *testing.T) {
 			assert.IsType(t, entity.Account{}, r)
 		}
 	})
+	t.Run("find accounts count > max results", func(t *testing.T) {
+		f := form.AccountSearch{
+			Query:  "",
+			Status: "test",
+			Count:  100000,
+			Offset: 0,
+			Order:  "",
+		}
+		r, err := AccountSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//t.Logf("accounts: %+v", r)
+
+		assert.LessOrEqual(t, 1, len(r))
+
+		for _, r := range r {
+			assert.IsType(t, entity.Account{}, r)
+		}
+	})
 }
 
 func TestAccountByID(t *testing.T) {

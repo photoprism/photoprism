@@ -26,8 +26,8 @@ func TestAlbumByUID(t *testing.T) {
 	})
 }
 
-func TestAlbumThumbByUID(t *testing.T) {
-	t.Run("existing uid", func(t *testing.T) {
+func TestAlbumCoverByUID(t *testing.T) {
+	t.Run("existing uid default album", func(t *testing.T) {
 		file, err := AlbumCoverByUID("at9lxuqxpogaaba8")
 
 		if err != nil {
@@ -35,6 +35,24 @@ func TestAlbumThumbByUID(t *testing.T) {
 		}
 
 		assert.Equal(t, "exampleFileName.jpg", file.FileName)
+	})
+
+	t.Run("existing uid folder album", func(t *testing.T) {
+		file, err := AlbumCoverByUID("at1lxuqipogaaba1")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "bridge2.jpg", file.FileName)
+	})
+
+	t.Run("existing uid empty moment album", func(t *testing.T) {
+		file, err := AlbumCoverByUID("at7axuzitogaaiax")
+
+		assert.Equal(t, "found no cover for moment", err.Error())
+
+		assert.Equal(t, "", file.FileName)
 	})
 
 	t.Run("not existing uid", func(t *testing.T) {
@@ -137,5 +155,44 @@ func TestAlbumSearch(t *testing.T) {
 
 		assert.Equal(t, 1, len(result))
 		assert.Equal(t, "christmas2030", result[0].AlbumSlug)
+	})
+	t.Run("search with multiple filters", func(t *testing.T) {
+		f := form.AlbumSearch{
+			Query:    "",
+			Type:     "moment",
+			Category: "Fun",
+			Location: "Favorite Park",
+			Title:    "Empty Moment",
+			Count:    0,
+			Offset:   0,
+			Order:    "",
+		}
+
+		result, err := AlbumSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 1, len(result))
+		assert.Equal(t, "Empty Moment", result[0].AlbumTitle)
+	})
+	t.Run("search for unknown year/month/day", func(t *testing.T) {
+		f := form.AlbumSearch{
+			Year:   100,
+			Month:  100,
+			Day:    100,
+			Count:  0,
+			Offset: 0,
+			Order:  "",
+		}
+
+		result, err := AlbumSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 0, len(result))
 	})
 }

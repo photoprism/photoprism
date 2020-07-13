@@ -105,6 +105,25 @@ var AlbumFixtures = AlbumMap{
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
 		DeletedAt:        nil,
 	},
+	"emptyMoment": {
+		ID:               1000005,
+		CoverUID:         "",
+		AlbumUID:         "at7axuzitogaaiax",
+		AlbumSlug:        "empty-moment",
+		AlbumType:        AlbumMoment,
+		AlbumTitle:       "Empty Moment",
+		AlbumCategory:    "Fun",
+		AlbumLocation:    "Favorite Park",
+		AlbumDescription: "",
+		AlbumNotes:       "",
+		AlbumOrder:       "name",
+		AlbumTemplate:    "",
+		AlbumFilter:      "",
+		AlbumFavorite:    false,
+		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
+		DeletedAt:        nil,
+	},
 }
 
 // CreateAlbumFixtures inserts known entities into the database for testing.
