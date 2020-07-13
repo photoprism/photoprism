@@ -314,7 +314,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 	assert.NotEmpty(t, cc.Name)
 	assert.NotEmpty(t, cc.Version)
 	assert.NotEmpty(t, cc.Copyright)
-	assert.NotEmpty(t, cc.Thumbnails)
+	assert.NotEmpty(t, cc.Thumbs)
 	assert.NotEmpty(t, cc.JSHash)
 	assert.NotEmpty(t, cc.CSSHash)
 	assert.Equal(t, true, cc.Debug)

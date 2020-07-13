@@ -37,7 +37,7 @@ func init() {
 		t := thumb.Types[size]
 
 		if t.Public {
-			Thumbnails = append(Thumbnails, Thumbnail{Size: size, Use: t.Use, Width: t.Width, Height: t.Height})
+			Thumbs = append(Thumbs, Thumb{Size: size, Use: t.Use, Width: t.Width, Height: t.Height})
 		}
 	}
 }

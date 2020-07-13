@@ -33,7 +33,7 @@ type ClientConfig struct {
 	Cameras         []entity.Camera     `json:"cameras"`
 	Lenses          []entity.Lens       `json:"lenses"`
 	Countries       []entity.Country    `json:"countries"`
-	Thumbnails      []Thumbnail         `json:"thumbnails"`
+	Thumbs          []Thumb             `json:"thumbs"`
 	DownloadToken   string              `json:"downloadToken"`
 	PreviewToken    string              `json:"previewToken"`
 	JSHash          string              `json:"jsHash"`
@@ -138,7 +138,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		ReadOnly:        c.ReadOnly(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
-		Thumbnails:      Thumbnails,
+		Thumbs:          Thumbs,
 		Colors:          colors.All.List(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
 		CSSHash:         fs.Checksum(c.BuildPath() + "/app.css"),
@@ -178,7 +178,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		Public:          true,
 		Experimental:    false,
 		Colors:          colors.All.List(),
-		Thumbnails:      Thumbnails,
+		Thumbs:          Thumbs,
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/share.js"),
@@ -210,7 +210,7 @@ func (c *Config) UserConfig() ClientConfig {
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
 		Colors:          colors.All.List(),
-		Thumbnails:      Thumbnails,
+		Thumbs:          Thumbs,
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),

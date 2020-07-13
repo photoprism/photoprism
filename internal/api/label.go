@@ -1,12 +1,8 @@
 package api
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
-	"path/filepath"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -15,11 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/internal/thumb"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -166,119 +158,5 @@ func DislikeLabel(router *gin.RouterGroup) {
 		PublishLabelEvent(EntityUpdated, id, c)
 
 		c.JSON(http.StatusOK, http.Response{})
-	})
-}
-
-// GET /api/v1/labels/:uid/t/:token/:type
-//
-// Parameters:
-//   uid: string Label UID
-//   type: string Thumbnail type, see photoprism.ThumbnailTypes
-func LabelThumbnail(router *gin.RouterGroup) {
-	router.GET("/labels/:uid/t/:token/:type", func(c *gin.Context) {
-		if InvalidPreviewToken(c) {
-			c.Data(http.StatusForbidden, "image/svg+xml", labelIconSvg)
-			return
-		}
-
-		start := time.Now()
-		conf := service.Config()
-		typeName := c.Param("type")
-		uid := c.Param("uid")
-
-		thumbType, ok := thumb.Types[typeName]
-
-		if !ok {
-			log.Errorf("label-thumbnail: invalid type %s", txt.Quote(typeName))
-			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-			return
-		}
-
-		cache := service.Cache()
-		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", uid, typeName)
-
-		if cacheData, err := cache.Get(cacheKey); err == nil {
-			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
-
-			var cached ThumbCache
-
-			if err := json.Unmarshal(cacheData, &cached); err != nil {
-				log.Errorf("label-thumbnail: %s not found", uid)
-				c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-				return
-			}
-
-			if !fs.FileExists(cached.FileName) {
-				log.Errorf("label-thumbnail: %s not found", uid)
-				c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-				return
-			}
-
-			if c.Query("download") != "" {
-				c.FileAttachment(cached.FileName, cached.ShareName)
-			} else {
-				c.File(cached.FileName)
-			}
-
-			return
-		}
-
-		f, err := query.LabelThumbByUID(uid)
-
-		if err != nil {
-			log.Errorf(err.Error())
-			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-			return
-		}
-
-		fileName := photoprism.FileName(f.FileRoot, f.FileName)
-
-		if !fs.FileExists(fileName) {
-			log.Errorf("label-thumbnail: file %s is missing", txt.Quote(f.FileName))
-			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-
-			// Set missing flag so that the file doesn't show up in search results anymore.
-			logError("label-thumbnail", f.Update("FileMissing", true))
-
-			return
-		}
-
-		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if thumbType.ExceedsLimit() {
-			log.Debugf("label-thumbnail: using original, size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
-
-			c.File(fileName)
-
-			return
-		}
-
-		var thumbnail string
-
-		if conf.ThumbUncached() || thumbType.OnDemand() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
-		} else {
-			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
-		}
-
-		if err != nil {
-			log.Errorf("label-thumbnail: %s", err)
-			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-			return
-		} else if thumbnail == "" {
-			log.Errorf("label-thumbnail: %s has empty thumb name - bug?", filepath.Base(fileName))
-			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-			return
-		}
-
-		if cached, err := json.Marshal(ThumbCache{thumbnail, f.ShareFileName()}); err == nil {
-			logError("label-thumbnail", cache.Set(cacheKey, cached))
-			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
-		}
-
-		if c.Query("download") != "" {
-			c.FileAttachment(thumbnail, f.ShareFileName())
-		} else {
-			c.File(thumbnail)
-		}
 	})
 }

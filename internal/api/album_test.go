@@ -266,25 +266,3 @@ func TestDownloadAlbum(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }
-
-func TestAlbumThumbnail(t *testing.T) {
-	t.Run("invalid type", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		AlbumThumbnail(router)
-		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba7/t/"+conf.PreviewToken()+"/xxx")
-
-		assert.Equal(t, http.StatusOK, r.Code)
-	})
-	t.Run("album has no photo (because is not existing)", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		AlbumThumbnail(router)
-		r := PerformRequest(app, "GET", "/api/v1/albums/987-986435/t/"+conf.PreviewToken()+"/tile_500")
-		assert.Equal(t, http.StatusOK, r.Code)
-	})
-	t.Run("album: could not find original", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		AlbumThumbnail(router)
-		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba8/t/"+conf.PreviewToken()+"/tile_500")
-		assert.Equal(t, http.StatusOK, r.Code)
-	})
-}

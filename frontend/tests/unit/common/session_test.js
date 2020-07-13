@@ -30,7 +30,7 @@ window.__CONFIG__ = {
         "Slug": "iceland",
         "Name": "Iceland"
     }, {"ID": "zz", "Slug": "zz", "Name": "Unknown"}],
-    "thumbnails": [{"Name": "fit_720", "Width": 720, "Height": 720}, {
+    "thumbs": [{"Name": "fit_720", "Width": 720, "Height": 720}, {
         "Name": "fit_2048",
         "Width": 2048,
         "Height": 2048

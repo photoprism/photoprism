@@ -278,7 +278,7 @@
             model: Object,
         },
         data() {
-            const thumbs = this.$config.values.thumbnails;
+            const thumbs = this.$config.values.thumbs;
 
             return {
                 options: options,

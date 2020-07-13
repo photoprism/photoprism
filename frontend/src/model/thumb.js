@@ -33,7 +33,7 @@ import Api from "common/api";
 import {config} from "../session";
 import {$gettext} from "common/vm";
 
-const thumbs = window.__CONFIG__.thumbnails;
+const thumbs = window.__CONFIG__.thumbs;
 
 export class Thumb extends Model {
     getDefaults() {

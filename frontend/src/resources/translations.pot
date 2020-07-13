@@ -53,7 +53,7 @@ msgstr ""
 msgid "Account"
 msgstr ""
 
-#: src/dialog/photo/info.vue:122
+#: src/dialog/photo/info.vue:128
 msgid "Accuracy"
 msgstr ""
 
@@ -74,7 +74,7 @@ msgid "Add photos or videos from search results by selecting them."
 msgstr ""
 
 #: src/dialog/account/add.vue:5
-#: src/pages/settings/sync.vue:40
+#: src/pages/settings/sync.vue:46
 msgid "Add Server"
 msgstr ""
 
@@ -206,7 +206,7 @@ msgstr ""
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr ""
 
-#: src/dialog/photo/info.vue:114
+#: src/dialog/photo/info.vue:120
 msgid "Altitude"
 msgstr ""
 
@@ -248,7 +248,7 @@ msgstr ""
 msgid "Archive"
 msgstr ""
 
-#: src/dialog/photo/info.vue:162
+#: src/dialog/photo/info.vue:168
 msgid "Archived"
 msgstr ""
 
@@ -319,7 +319,7 @@ msgstr ""
 msgid "Camera"
 msgstr ""
 
-#: src/dialog/photo/info.vue:67
+#: src/dialog/photo/info.vue:73
 msgid "Camera Serial"
 msgstr ""
 
@@ -375,7 +375,7 @@ msgstr ""
 msgid "Change Status"
 msgstr ""
 
-#: src/dialog/photo/info.vue:154
+#: src/dialog/photo/info.vue:160
 msgid "Checked"
 msgstr ""
 
@@ -411,7 +411,7 @@ msgid "Connect"
 msgstr ""
 
 #: src/dialog/webdav.vue:4
-#: src/pages/settings/sync.vue:45
+#: src/pages/settings/sync.vue:42
 msgid "Connect via WebDAV"
 msgstr ""
 
@@ -474,7 +474,7 @@ msgstr ""
 msgid "Create album"
 msgstr ""
 
-#: src/dialog/photo/info.vue:130
+#: src/dialog/photo/info.vue:136
 msgid "Created"
 msgstr ""
 
@@ -619,7 +619,7 @@ msgstr ""
 msgid "Edit Photo"
 msgstr ""
 
-#: src/dialog/photo/info.vue:146
+#: src/dialog/photo/info.vue:152
 msgid "Edited"
 msgstr ""
 
@@ -682,7 +682,7 @@ msgstr ""
 msgid "Fast"
 msgstr ""
 
-#: src/dialog/photo/info.vue:74
+#: src/dialog/photo/info.vue:80
 msgid "Favorite"
 msgstr ""
 
@@ -903,12 +903,12 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: src/pages/settings/sync.vue:111
+#: src/pages/settings/sync.vue:113
 msgid "Last Backup"
 msgstr ""
 
 #: src/dialog/photo/details.vue:443
-#: src/dialog/photo/info.vue:98
+#: src/dialog/photo/info.vue:104
 msgid "Latitude"
 msgstr ""
 
@@ -991,7 +991,7 @@ msgid "Logs"
 msgstr ""
 
 #: src/dialog/photo/details.vue:444
-#: src/dialog/photo/info.vue:106
+#: src/dialog/photo/info.vue:112
 msgid "Longitude"
 msgstr ""
 
@@ -1102,7 +1102,7 @@ msgstr ""
 msgid "Name too long"
 msgstr ""
 
-#: src/pages/settings/sync.vue:122
+#: src/pages/settings/sync.vue:129
 #: src/resources/options.js:178
 #: src/resources/options.js:188
 msgid "Never"
@@ -1119,9 +1119,9 @@ msgid "Newest first"
 msgstr ""
 
 #: src/dialog/photo/archive.vue:13
+#: src/dialog/photo/info.vue:160
 #: src/dialog/photo/info.vue:187
-#: src/dialog/photo/info.vue:218
-#: src/dialog/photo/info.vue:245
+#: src/dialog/photo/info.vue:214
 msgid "No"
 msgstr ""
 
@@ -1182,7 +1182,7 @@ msgstr ""
 msgid "Note that you can as well manage and re-index your originals manually."
 msgstr ""
 
-#: src/pages/settings/sync.vue:32
+#: src/pages/settings/sync.vue:34
 msgid "Note:"
 msgstr ""
 
@@ -1373,7 +1373,7 @@ msgid "Primary"
 msgstr ""
 
 #: src/component/navigation.vue:129
-#: src/dialog/photo/info.vue:82
+#: src/dialog/photo/info.vue:88
 #: src/routes.js:171
 msgid "Private"
 msgstr ""
@@ -1386,7 +1386,7 @@ msgstr ""
 msgid "Quality Filter"
 msgstr ""
 
-#: src/dialog/photo/info.vue:53
+#: src/dialog/photo/info.vue:59
 msgid "Quality Score"
 msgstr ""
 
@@ -1444,7 +1444,7 @@ msgstr ""
 msgid "Request failed - invalid response"
 msgstr ""
 
-#: src/dialog/photo/info.vue:61
+#: src/dialog/photo/info.vue:67
 msgid "Resolution"
 msgstr ""
 
@@ -1472,7 +1472,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: src/dialog/photo/info.vue:90
+#: src/dialog/photo/info.vue:96
 msgid "Scan"
 msgstr ""
 
@@ -1524,7 +1524,7 @@ msgstr ""
 msgid "Selection restored"
 msgstr ""
 
-#: src/pages/settings/sync.vue:108
+#: src/pages/settings/sync.vue:109
 msgid "Server"
 msgstr ""
 
@@ -1655,7 +1655,7 @@ msgstr ""
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr ""
 
-#: src/pages/settings/sync.vue:110
+#: src/pages/settings/sync.vue:111
 msgid "Sync"
 msgstr ""
 
@@ -1664,6 +1664,7 @@ msgid "Sync raw images"
 msgstr ""
 
 #: src/component/photo/list.vue:114
+#: src/dialog/photo/info.vue:53
 #: src/share/photo/list.vue:93
 msgid "Taken"
 msgstr ""
@@ -1699,7 +1700,7 @@ msgid "Theme"
 msgstr ""
 
 #: src/dialog/webdav.vue:17
-#: src/pages/settings/sync.vue:34
+#: src/pages/settings/sync.vue:36
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr ""
 
@@ -1769,7 +1770,7 @@ msgid "UID"
 msgstr ""
 
 #: src/dialog/photo/details.vue:423
-#: src/dialog/photo/info.vue:221
+#: src/dialog/photo/info.vue:227
 #: src/model/album.js:122
 #: src/model/photo.js:399
 #: src/model/photo.js:413
@@ -1798,7 +1799,7 @@ msgid "Unstack"
 msgstr ""
 
 #: src/dialog/photo/files.vue:120
-#: src/dialog/photo/info.vue:138
+#: src/dialog/photo/info.vue:144
 msgid "Updated"
 msgstr ""
 
@@ -1807,7 +1808,7 @@ msgstr ""
 #: src/dialog/upload.vue:54
 #: src/pages/library/import.vue:38
 #: src/pages/settings/general.vue:319
-#: src/pages/settings/sync.vue:109
+#: src/pages/settings/sync.vue:110
 msgid "Upload"
 msgstr ""
 
@@ -1885,7 +1886,7 @@ msgstr ""
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr ""
 
-#: src/pages/settings/sync.vue:33
+#: src/pages/settings/sync.vue:35
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr ""
 
@@ -1921,9 +1922,9 @@ msgstr ""
 #: src/dialog/photo/files.vue:86
 #: src/dialog/photo/files.vue:104
 #: src/dialog/photo/files.vue:110
+#: src/dialog/photo/info.vue:159
 #: src/dialog/photo/info.vue:186
-#: src/dialog/photo/info.vue:217
-#: src/dialog/photo/info.vue:244
+#: src/dialog/photo/info.vue:213
 msgid "Yes"
 msgstr ""
 

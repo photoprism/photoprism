@@ -100,7 +100,7 @@ func configAction(ctx *cli.Context) error {
 	// Places / Geocoding API configuration.
 	fmt.Printf("%-25s %s\n", "geocoding-api", conf.GeoCodingApi())
 
-	// Thumbnails, resampling and download security token.
+	// Thumbs, resampling and download security token.
 	fmt.Printf("%-25s %s\n", "download-token", conf.DownloadToken())
 	fmt.Printf("%-25s %s\n", "preview-token", conf.PreviewToken())
 	fmt.Printf("%-25s %s\n", "thumb-filter", conf.ThumbFilter())
