@@ -468,7 +468,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.PhotoExposure = m.Exposure()
 		}
 
-		if photo.TakenAt.IsZero() || photo.TakenAtLocal.IsZero() {
+		if photo.TakenSrc == entity.SrcAuto {
 			takenUtc, takenSrc := m.TakenAt()
 			photo.SetTakenAt(takenUtc, takenUtc, "", takenSrc)
 		}

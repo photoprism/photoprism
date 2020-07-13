@@ -67,7 +67,26 @@ func TestMediaFile_DateCreated(t *testing.T) {
 
 func TestMediaFile_TakenAt(t *testing.T) {
 	conf := config.TestConfig()
+	t.Run("testdata/2018-04-12 19:24:49.gif", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/2018-04-12 19:24:49.gif")
+		if err != nil {
+			t.Fatal(err)
+		}
 
+		date, src := mediaFile.TakenAt()
+		assert.Equal(t, "2018-04-12 19:24:49 +0000 UTC", date.String())
+		assert.Equal(t, entity.SrcName, src)
+	})
+	t.Run("testdata/2018-04-12 19:24:49.jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/2018-04-12 19:24:49.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		date, src := mediaFile.TakenAt()
+		assert.Equal(t, "2018-04-12 19:24:49 +0000 UTC", date.String())
+		assert.Equal(t, entity.SrcName, src)
+	})
 	t.Run("telegram_2020-01-30_09-57-18.jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
 		if err != nil {
