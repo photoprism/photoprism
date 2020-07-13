@@ -88,4 +88,9 @@ func TestAnySlug(t *testing.T) {
 		where := AnySlug("custom_slug", "botanical-garden,landscape,bay", ",")
 		assert.Equal(t, "custom_slug = 'botanical-garden' OR custom_slug = 'landscape' OR custom_slug = 'bay'", where)
 	})
+
+	t.Run("len = 0", func(t *testing.T) {
+		where := AnySlug("custom_slug", " ", "")
+		assert.Equal(t, "custom_slug = '' OR custom_slug = ''", where)
+	})
 }

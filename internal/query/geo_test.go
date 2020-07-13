@@ -172,7 +172,7 @@ func TestGeo(t *testing.T) {
 			Country:  "zz",
 			Type:     "jpg",
 			Video:    true,
-			Path:     "/xxx/xxx",
+			Path:     "/xxx/xxx/",
 			Name:     "xxx",
 			Archived: false,
 			Private:  true,
@@ -189,11 +189,27 @@ func TestGeo(t *testing.T) {
 		f := form.GeoSearch{
 			Query:    "landscape",
 			Photo:    true,
-			Path:     "/xxx/xxx",
+			Path:     "/xxx,xxx",
 			Name:     "xxx",
 			Archived: false,
 			Private:  false,
 			Public:   true,
+		}
+
+		result, err := Geo(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.IsType(t, GeoResults{}, result)
+	})
+	t.Run("search for archived true", func(t *testing.T) {
+		f := form.GeoSearch{
+			Query:    "landscape",
+			Photo:    true,
+			Path:     "/xxx/xxx/",
+			Name:     "xxx",
+			Archived: true,
 		}
 
 		result, err := Geo(f)

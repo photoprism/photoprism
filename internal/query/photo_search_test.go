@@ -570,4 +570,83 @@ func TestPhotoSearch(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
+
+	t.Run("search for primary files", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Primary = true
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("CATEGORY SEARCH: %+v", photos)
+
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+
+	t.Run("search for landscape", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "landscape"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("CATEGORY SEARCH: %+v", photos)
+
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+
+	t.Run("search with multiple parameters", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Hidden = true
+		f.Scan = true
+		f.Year = 2010
+		f.Day = 1
+		f.Photo = true
+		f.Name = "xxx"
+		f.Original = "xxyy"
+		f.Path = "/xxx/xxx/"
+		f.Order = entity.SortOrderName
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("CATEGORY SEARCH: %+v", photos)
+
+		assert.IsType(t, PhotoResults{}, photos)
+	})
+	t.Run("search with multiple parameters", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Hidden = true
+		f.Scan = true
+		f.Year = 2010
+		f.Day = 1
+		f.Video = true
+		f.Name = "xxx"
+		f.Original = "xxyy"
+		f.Path = "/xxx,xxx"
+		f.Type = "mp4"
+		f.Grouped = true
+		f.Unsorted = true
+		f.Filter = ""
+		f.Order = entity.SortOrderAdded
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("CATEGORY SEARCH: %+v", photos)
+
+		assert.IsType(t, PhotoResults{}, photos)
+	})
 }
