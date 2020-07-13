@@ -14,6 +14,6 @@ var Permissions = ACL{
 	},
 	ResourcePhotos: Roles{
 		RoleAdmin: Actions{ActionDefault: true},
-		RoleGuest: Actions{ActionSearch: true, ActionRead: true},
+		RoleGuest: Actions{ActionSearch: true, ActionRead: true, ActionDownload: true},
 	},
 }
