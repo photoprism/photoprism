@@ -24,6 +24,8 @@ func TestConfig_HttpServerMode2(t *testing.T) {
 	assert.Equal(t, "debug", c.HttpServerMode())
 	c.params.Debug = false
 	assert.Equal(t, "release", c.HttpServerMode())
+	c.params.HttpServerMode = "test"
+	assert.Equal(t, "test", c.HttpServerMode())
 }
 
 func TestConfig_TemplateName(t *testing.T) {
@@ -31,4 +33,7 @@ func TestConfig_TemplateName(t *testing.T) {
 	assert.Equal(t, "index.tmpl", c.TemplateName())
 	c.settings.Templates.Default = "rainbow.tmpl"
 	assert.Equal(t, "rainbow.tmpl", c.TemplateName())
+	c.settings.Templates.Default = "xxx"
+	assert.Equal(t, "index.tmpl", c.TemplateName())
+
 }

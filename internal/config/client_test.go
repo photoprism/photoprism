@@ -22,3 +22,12 @@ func TestConfig_GuestConfig(t *testing.T) {
 	assert.IsType(t, ClientConfig{}, result)
 	assert.Equal(t, true, result.Public)
 }
+
+func TestConfig_Flags(t *testing.T) {
+	config := NewTestConfig()
+	config.params.Experimental = true
+	config.params.ReadOnly = true
+
+	result := config.Flags()
+	assert.Equal(t, []string{"public", "debug", "experimental", "readonly", "settings"}, result)
+}

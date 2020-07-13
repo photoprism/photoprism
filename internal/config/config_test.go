@@ -337,9 +337,38 @@ func TestConfig_WakeupInterval(t *testing.T) {
 func TestConfig_GeoCodingApi(t *testing.T) {
 	c := NewTestConfig()
 	assert.Equal(t, "", c.GeoCodingApi())
+	c.params.GeoCodingApi = "places"
+	assert.Equal(t, "places", c.GeoCodingApi())
+	c.params.GeoCodingApi = "osm"
+	assert.Equal(t, "osm", c.GeoCodingApi())
 }
 
 func TestConfig_OriginalsLimit(t *testing.T) {
 	c := NewTestConfig()
 	assert.Equal(t, int64(-1), c.OriginalsLimit())
+	c.params.OriginalsLimit = 800
+	assert.Equal(t, int64(838860800), c.OriginalsLimit())
+}
+
+func TestConfig_SiteUrl(t *testing.T) {
+	c := NewTestConfig()
+	assert.Equal(t, "http://localhost:2342/", c.SiteUrl())
+	c.params.SiteUrl = "http://superhost:2342/"
+	assert.Equal(t, "http://superhost:2342/", c.SiteUrl())
+}
+
+func TestConfig_SitePreview(t *testing.T) {
+	c := NewTestConfig()
+	assert.Equal(t, "http://localhost:2342/static/img/preview.jpg", c.SitePreview())
+	c.params.SitePreview = "http://preview.jpg"
+	assert.Equal(t, "http://preview.jpg", c.SitePreview())
+	c.params.SitePreview = "preview123.jpg"
+	assert.Equal(t, "http://localhost:2342/preview123.jpg", c.SitePreview())
+}
+
+func TestConfig_SiteTitle(t *testing.T) {
+	c := NewTestConfig()
+	assert.Equal(t, "PhotoPrism", c.SiteTitle())
+	c.params.SiteTitle = "Cats"
+	assert.Equal(t, "Cats", c.SiteTitle())
 }

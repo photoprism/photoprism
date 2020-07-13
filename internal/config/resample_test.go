@@ -33,6 +33,8 @@ func TestConfig_ThumbFilter(t *testing.T) {
 	assert.Equal(t, thumb.ResampleFilter("lanczos"), c.ThumbFilter())
 	c.params.ThumbFilter = "linear"
 	assert.Equal(t, thumb.ResampleFilter("linear"), c.ThumbFilter())
+	c.params.ThumbFilter = "cubic"
+	assert.Equal(t, thumb.ResampleFilter("cubic"), c.ThumbFilter())
 }
 
 func TestConfig_ThumbSizeUncached(t *testing.T) {
@@ -54,5 +56,5 @@ func TestConfig_ThumbSizeUncached2(t *testing.T) {
 	assert.Equal(t, int(7680), c.ThumbSizeUncached())
 	c.params.ThumbSizeUncached = 800
 	c.params.ThumbSize = 900
-	assert.Equal(t, int(900), c.ThumbSize())
+	assert.Equal(t, int(900), c.ThumbSizeUncached())
 }
