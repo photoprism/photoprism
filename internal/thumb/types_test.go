@@ -10,8 +10,8 @@ func TestType_ExceedsLimit(t *testing.T) {
 	Size = 1024
 	Limit = 2048
 
-	fit3840 := Types["fit_3840"]
-	assert.True(t, fit3840.ExceedsLimit())
+	fit4096 := Types["fit_4096"]
+	assert.True(t, fit4096.ExceedsLimit())
 
 	fit2048 := Types["fit_2048"]
 	assert.False(t, fit2048.ExceedsLimit())
@@ -19,16 +19,16 @@ func TestType_ExceedsLimit(t *testing.T) {
 	tile500 := Types["tile_500"]
 	assert.False(t, tile500.ExceedsLimit())
 
-	Size = 3840
-	Limit = 3840
+	Size = 2048
+	Limit = 4096
 }
 
 func TestType_SkipPreRender(t *testing.T) {
 	Size = 1024
 	Limit = 2048
 
-	fit3840 := Types["fit_3840"]
-	assert.True(t, fit3840.OnDemand())
+	fit4096 := Types["fit_4096"]
+	assert.True(t, fit4096.OnDemand())
 
 	fit2048 := Types["fit_2048"]
 	assert.True(t, fit2048.OnDemand())
@@ -36,8 +36,8 @@ func TestType_SkipPreRender(t *testing.T) {
 	tile500 := Types["tile_500"]
 	assert.False(t, tile500.OnDemand())
 
-	Size = 3840
-	Limit = 3840
+	Size = 2048
+	Limit = 4096
 }
 
 func TestResampleFilter_Imaging(t *testing.T) {

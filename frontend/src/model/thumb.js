@@ -74,10 +74,12 @@ export class Thumb extends Model {
         };
 
         for (let i = 0; i < thumbs.length; i++) {
-            result[thumbs[i].Name] = {
+            let t = thumbs[i];
+
+            result[t.size] = {
                 src: "/api/v1/svg/photo",
-                w: thumbs[i].Width,
-                h: thumbs[i].Height,
+                w: t.w,
+                h: t.h,
             };
         }
 
@@ -86,11 +88,11 @@ export class Thumb extends Model {
 
     static fromPhotos(photos) {
         let result = [];
+        const n = photos.length;
 
-        photos.forEach((p) => {
-            let thumb = this.fromPhoto(p);
-            result.push(thumb);
-        });
+        for (let i = 0; i < n; i++) {
+            result.push(this.fromPhoto(photos[i]));
+        }
 
         return result;
     }
@@ -117,10 +119,11 @@ export class Thumb extends Model {
         };
 
         for (let i = 0; i < thumbs.length; i++) {
-            let size = photo.calculateSize(thumbs[i].Width, thumbs[i].Height);
+            let t = thumbs[i];
+            let size = photo.calculateSize(t.w, t.h);
 
-            result[thumbs[i].Name] = {
-                src: photo.thumbnailUrl(thumbs[i].Name),
+            result[t.size] = {
+                src: photo.thumbnailUrl(t.size),
                 w: size.width,
                 h: size.height,
             };
@@ -146,15 +149,16 @@ export class Thumb extends Model {
             original_h: file.Height,
         };
 
-        thumbs.forEach((t) => {
-            let size = this.calculateSize(file, t.Width, t.Height);
+        for (let i = 0; i < thumbs.length; i++) {
+            let t = thumbs[i];
+            let size = this.calculateSize(file, t.w, t.h);
 
-            result[t.Name] = {
-                src: this.thumbnailUrl(file, t.Name),
+            result[t.size] = {
+                src: this.thumbnailUrl(file, t.size),
                 w: size.width,
                 h: size.height,
             };
-        });
+        }
 
         return new this(result);
     }
@@ -162,20 +166,33 @@ export class Thumb extends Model {
     static fromFiles(photos) {
         let result = [];
 
-        photos.forEach((p) => {
-            if (!p.Files) return;
+        if (!photos || !photos.length) {
+            return result;
+        }
 
-            p.Files.forEach((f) => {
-                if (f && f.Type === "jpg") {
-                    let thumb = this.fromFile(p, f);
+        const n = photos.length;
 
-                    if (thumb) {
-                        result.push(thumb);
-                    }
+        for (let i = 0; i < n; i++) {
+            let p = photos[i];
+
+            if (!p.Files || !p.Files.length) {
+                continue;
+            }
+
+            for (let j = 0; j < p.Files.length; j++) {
+                let f = p.Files[j];
+
+                if (!f || f.Type !== "jpg") {
+                    continue;
+                }
+
+                let thumb = this.fromFile(p, f);
+
+                if (thumb) {
+                    result.push(thumb);
                 }
             }
-            );
-        });
+        }
 
         return result;
     }
@@ -202,13 +219,13 @@ export class Thumb extends Model {
         return {width: newW, height: newH};
     }
 
-    static thumbnailUrl(file, type) {
+    static thumbnailUrl(file, size) {
         if (!file.Hash) {
             return "/api/v1/svg/photo";
 
         }
 
-        return `/api/v1/t/${file.Hash}/${config.previewToken()}/${type}`;
+        return `/api/v1/t/${file.Hash}/${config.previewToken()}/${size}`;
     }
 
     static downloadUrl(file) {

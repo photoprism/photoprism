@@ -95,13 +95,6 @@ describe("model/photo", () => {
         assert.equal(result, "/api/v1/dl/345982?t=1uhovi0e");
     });
 
-    it("should get photo thumbnail src set",  () => {
-        const values = {ID: 5, Title: "Crazy Cat", Hash: 345982};
-        const photo = new Photo(values);
-        const result = photo.thumbnailSrcset();
-        assert.equal(result, "/api/v1/t/345982/static/fit_720 720w, /api/v1/t/345982/static/fit_1280 1280w, /api/v1/t/345982/static/fit_1920 1920w, /api/v1/t/345982/static/fit_2560 2560w, /api/v1/t/345982/static/fit_3840 3840w");
-    });
-
     it("should calculate photo size",  () => {
         const values = {ID: 5, Title: "Crazy Cat", Width: 500,Height: 200};
         const photo = new Photo(values);
@@ -124,13 +117,6 @@ describe("model/photo", () => {
         const result = photo.calculateSize(400, 300);
         assert.equal(result.width, 400);
         assert.equal(result.height, 160);
-    });
-
-    it("should get thumbnail sizes",  () => {
-        const values = {ID: 5, Title: "Crazy Cat", Width: 500, Height: 200};
-        const photo = new Photo(values);
-        const result = photo.thumbnailSizes();
-        assert.equal(result, "(min-width: 2560px) 3840px, (min-width: 1920px) 2560px, (min-width: 1280px) 1920px, (min-width: 720px) 1280px, 720px");
     });
 
     it("should get date string",  () => {

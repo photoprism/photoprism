@@ -61,32 +61,8 @@ export class Label extends RestModel {
         return this.Name;
     }
 
-    thumbnailUrl(type) {
-        return `/api/v1/labels/${this.getId()}/t/${config.previewToken()}/${type}`;
-    }
-
-    thumbnailSrcset() {
-        const result = [];
-
-        result.push(this.thumbnailUrl("fit_720") + " 720w");
-        result.push(this.thumbnailUrl("fit_1280") + " 1280w");
-        result.push(this.thumbnailUrl("fit_1920") + " 1920w");
-        result.push(this.thumbnailUrl("fit_2560") + " 2560w");
-        result.push(this.thumbnailUrl("fit_3840") + " 3840w");
-
-        return result.join(", ");
-    }
-
-    thumbnailSizes() {
-        const result = [];
-
-        result.push("(min-width: 2560px) 3840px");
-        result.push("(min-width: 1920px) 2560px");
-        result.push("(min-width: 1280px) 1920px");
-        result.push("(min-width: 720px) 1280px");
-        result.push("720px");
-
-        return result.join(", ");
+    thumbnailUrl(size) {
+        return `/api/v1/labels/${this.getId()}/t/${config.previewToken()}/${size}`;
     }
 
     getDateString() {

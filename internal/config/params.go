@@ -66,7 +66,7 @@ type Params struct {
 	HttpServerPassword string `yaml:"http-password" flag:"http-password"`
 	SipsBin            string `yaml:"sips-bin" flag:"sips-bin"`
 	DarktableBin       string `yaml:"darktable-bin" flag:"darktable-bin"`
-	DarktableWorkers   bool   `yaml:"darktable-workers" flag:"darktable-workers"`
+	DarktableUnlock    bool   `yaml:"darktable-unlock" flag:"darktable-unlock"`
 	HeifConvertBin     string `yaml:"heifconvert-bin" flag:"heifconvert-bin"`
 	FFmpegBin          string `yaml:"ffmpeg-bin" flag:"ffmpeg-bin"`
 	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
@@ -84,7 +84,8 @@ type Params struct {
 	ThumbFilter        string `yaml:"thumb-filter" flag:"thumb-filter"`
 	ThumbUncached      bool   `yaml:"thumb-uncached" flag:"thumb-uncached"`
 	ThumbSize          int    `yaml:"thumb-size" flag:"thumb-size"`
-	ThumbLimit         int    `yaml:"thumb-limit" flag:"thumb-limit"`
+	ThumbSizeUncached  int    `yaml:"thumb-size-uncached" flag:"thumb-size-uncached"`
+	ConvertSize        int    `yaml:"convert-size" flag:"convert-size"`
 	JpegQuality        int    `yaml:"jpeg-quality" flag:"jpeg-quality"`
 }
 

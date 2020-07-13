@@ -167,12 +167,14 @@ class Viewer {
 
     static mapViewportToImageSize(viewportWidth, viewportHeight) {
         for (let i = 0; i < thumbs.length; i++) {
-            if (thumbs[i].Width >= viewportWidth || thumbs[i].Height >= viewportHeight) {
-                return thumbs[i].Name;
+            let t = thumbs[i];
+
+            if (t.w >= viewportWidth || t.h >= viewportHeight) {
+                return t.size;
             }
         }
 
-        return "fit_3840";
+        return "fit_7680";
     }
 }
 

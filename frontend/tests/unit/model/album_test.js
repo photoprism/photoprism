@@ -40,20 +40,6 @@ describe("model/album", () => {
         assert.equal(result, "/api/v1/albums/66/t/static/xyz");
     });
 
-    it("should get thumbnail src set",  () => {
-        const values = {id: 5, Title: "Christmas 2019", Slug: "christmas-2019", UID: 66};
-        const album = new Album(values);
-        const result = album.thumbnailSrcset("");
-        assert.equal(result, "/api/v1/albums/66/t/static/fit_720 720w, /api/v1/albums/66/t/static/fit_1280 1280w, /api/v1/albums/66/t/static/fit_1920 1920w, /api/v1/albums/66/t/static/fit_2560 2560w, /api/v1/albums/66/t/static/fit_3840 3840w");
-    });
-
-    it("should get thumbnail sizes",  () => {
-        const values = {id: 5, Title: "Christmas 2019", Slug: "christmas-2019", CreatedAt: "2012-07-08T14:45:39Z"};
-        const album = new Album(values);
-        const result = album.thumbnailSizes();
-        assert.equal(result, "(min-width: 2560px) 3840px, (min-width: 1920px) 2560px, (min-width: 1280px) 1920px, (min-width: 720px) 1280px, 720px");
-    });
-
     it("should get created date string",  () => {
         const values = {ID: 5, Title: "Christmas 2019", Slug: "christmas-2019", CreatedAt: "2012-07-08T14:45:39Z"};
         const album = new Album(values);

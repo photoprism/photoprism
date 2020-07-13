@@ -99,14 +99,14 @@ export class File extends RestModel {
         return this.Root + "/" + this.Name;
     }
 
-    thumbnailUrl(type) {
+    thumbnailUrl(size) {
         if (this.Error) {
             return "/api/v1/svg/broken";
         } else if (this.Type === "raw") {
             return "/api/v1/svg/raw";
         }
 
-        return `/api/v1/t/${this.Hash}/${config.previewToken()}/${type}`;
+        return `/api/v1/t/${this.Hash}/${config.previewToken()}/${size}`;
     }
 
     getDownloadUrl() {
@@ -123,18 +123,6 @@ export class File extends RestModel {
         link.href = this.getDownloadUrl();
         link.download = this.baseName(this.Name);
         link.click();
-    }
-
-    thumbnailSrcset() {
-        const result = [];
-
-        result.push(this.thumbnailUrl("fit_720") + " 720w");
-        result.push(this.thumbnailUrl("fit_1280") + " 1280w");
-        result.push(this.thumbnailUrl("fit_1920") + " 1920w");
-        result.push(this.thumbnailUrl("fit_2560") + " 2560w");
-        result.push(this.thumbnailUrl("fit_3840") + " 3840w");
-
-        return result.join(", ");
     }
 
     calculateSize(width, height) {
@@ -157,18 +145,6 @@ export class File extends RestModel {
         }
 
         return {width: newW, height: newH};
-    }
-
-    thumbnailSizes() {
-        const result = [];
-
-        result.push("(min-width: 2560px) 3840px");
-        result.push("(min-width: 1920px) 2560px");
-        result.push("(min-width: 1280px) 1920px");
-        result.push("(min-width: 720px) 1280px");
-        result.push("720px");
-
-        return result.join(", ");
     }
 
     getDateString() {

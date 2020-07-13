@@ -84,17 +84,6 @@ describe("model/file", () => {
         assert.equal(file.getDownloadUrl("abc"), "/api/v1/dl/54ghtfd?t=1uhovi0e");
     });
 
-    it("should return thumbnail srcset",  () => {
-        const values = {
-            InstanceID: 5,
-            UID: "ABC123",
-            Hash: "54ghtfd",
-            Type: "jpg",
-            Name: "1/2/IMG123.jpg"};
-        const file = new File(values);
-        assert.equal(file.thumbnailSrcset(), "/api/v1/t/54ghtfd/static/fit_720 720w, /api/v1/t/54ghtfd/static/fit_1280 1280w, /api/v1/t/54ghtfd/static/fit_1920 1920w, /api/v1/t/54ghtfd/static/fit_2560 2560w, /api/v1/t/54ghtfd/static/fit_3840 3840w");
-    });
-
     it("should calculate size",  () => {
         const values = {
             InstanceID: 5,
@@ -129,17 +118,6 @@ describe("model/file", () => {
         const file3 = new File(values3);
         assert.equal(file3.calculateSize(900, 450).width,  397);
         assert.equal(file3.calculateSize(900, 450).height,  450);
-    });
-
-    it("should return thumbnail sizes",  () => {
-        const values = {
-            InstanceID: 5,
-            UID: "ABC123",
-            Hash: "54ghtfd",
-            Type: "jpg",
-            Name: "1/2/IMG123.jpg"};
-        const file = new File(values);
-        assert.equal(file.thumbnailSizes(), "(min-width: 2560px) 3840px, (min-width: 1920px) 2560px, (min-width: 1280px) 1920px, (min-width: 720px) 1280px, 720px");
     });
 
     it("should get date string",  () => {

@@ -31,11 +31,13 @@ type Config struct {
 }
 
 func init() {
-	// initialize the Thumbnails global variable
-	for name, t := range thumb.Types {
+	// Init public thumb sizes for use in client apps.
+	for i := len(thumb.DefaultTypes) - 1; i >= 0; i-- {
+		size := thumb.DefaultTypes[i]
+		t := thumb.Types[size]
+
 		if t.Public {
-			thumbnail := Thumbnail{Name: name, Width: t.Width, Height: t.Height}
-			Thumbnails = append(Thumbnails, thumbnail)
+			Thumbnails = append(Thumbnails, Thumbnail{Size: size, Use: t.Use, Width: t.Width, Height: t.Height})
 		}
 	}
 }
@@ -74,7 +76,7 @@ func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
 	thumb.Size = c.ThumbSize()
-	thumb.Limit = c.ThumbLimit()
+	thumb.Limit = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()
 

@@ -166,16 +166,6 @@ func (c *Config) SipsBin() string {
 	return findExecutable(c.params.SipsBin, "sips")
 }
 
-// DarktableBin returns the darktable-cli executable file name.
-func (c *Config) DarktableBin() string {
-	return findExecutable(c.params.DarktableBin, "darktable-cli")
-}
-
-// DarktableWorkers checks if presets should be disabled to run multiple instances concurrently.
-func (c *Config) DarktableWorkers() bool {
-	return c.params.DarktableWorkers
-}
-
 // ExifToolBin returns the exiftool executable file name.
 func (c *Config) ExifToolBin() string {
 	return findExecutable(c.params.ExifToolBin, "exiftool")

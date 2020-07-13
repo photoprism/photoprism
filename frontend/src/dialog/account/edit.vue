@@ -280,8 +280,6 @@
         data() {
             const thumbs = this.$config.values.thumbnails;
 
-            thumbs.sort((a, b) => a.Width - b.Width);
-
             return {
                 options: options,
                 showPassword: false,
@@ -352,9 +350,11 @@
                     {"text": this.$gettext("Original"), "value": ""}
                 ];
 
-                thumbs.forEach((s) => {
-                    result.push({"text": s["Width"] + 'x' + s["Height"], "value": s["Name"]});
-                })
+                for (let i = 0; i < thumbs.length; i++) {
+                    let t = thumbs[i];
+
+                    result.push({"text": t.w + 'x' + t.h, "value": t.size});
+                }
 
                 return result;
             },

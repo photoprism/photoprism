@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime/debug"
+	"strconv"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -106,43 +107,6 @@ func (c *Convert) Start(path string) error {
 	return err
 }
 
-// ConvertCommand returns the command for converting files to JPEG, depending on the format.
-func (c *Convert) ConvertCommand(mf *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, useMutex bool, err error) {
-	if mf.IsRaw() {
-		if c.conf.SipsBin() != "" {
-			result = exec.Command(c.conf.SipsBin(), "-s", "format", "jpeg", "--out", jpegName, mf.FileName())
-		} else if c.conf.DarktableBin() != "" && c.conf.DarktableWorkers() {
-			// No mutex needed with --apply-custom-presets=false...
-			useMutex = false
-
-			if xmpName != "" {
-				result = exec.Command(c.conf.DarktableBin(), "--apply-custom-presets", "false", mf.FileName(), xmpName, jpegName)
-			} else {
-				result = exec.Command(c.conf.DarktableBin(), "--apply-custom-presets", "false", mf.FileName(), jpegName)
-			}
-		} else if c.conf.DarktableBin() != "" && !c.conf.DarktableWorkers() {
-			// Only one instance of darktable-cli allowed due to locking.
-			useMutex = true
-
-			if xmpName != "" {
-				result = exec.Command(c.conf.DarktableBin(), mf.FileName(), xmpName, jpegName)
-			} else {
-				result = exec.Command(c.conf.DarktableBin(), mf.FileName(), jpegName)
-			}
-		} else {
-			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", mf.Base(c.conf.Settings().Index.Group))
-		}
-	} else if mf.IsVideo() {
-		result = exec.Command(c.conf.FFmpegBin(), "-i", mf.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
-	} else if mf.IsHEIF() {
-		result = exec.Command(c.conf.HeifConvertBin(), mf.FileName(), jpegName)
-	} else {
-		return nil, useMutex, fmt.Errorf("convert: file type not supported for conversion (%s)", mf.FileType())
-	}
-
-	return result, useMutex, nil
-}
-
 // ToJson uses exiftool to export metadata to a json file.
 func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 	jsonName := fs.TypeJson.FindFirst(mf.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().Index.Group)
@@ -193,6 +157,46 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 	return NewMediaFile(jsonName)
 }
 
+// JpegConvertCommand returns the command for converting files to JPEG, depending on the format.
+func (c *Convert) JpegConvertCommand(mf *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, useMutex bool, err error) {
+	size := strconv.Itoa(c.conf.ConvertSize())
+
+	if mf.IsRaw() {
+		if c.conf.SipsBin() != "" {
+			result = exec.Command(c.conf.SipsBin(), "-Z", size, "-s", "format", "jpeg", "--out", jpegName, mf.FileName())
+		} else if c.conf.DarktableBin() != "" {
+			var args []string
+
+			// Only one instance of darktable-cli allowed due to locking if presets are loaded.
+			if c.conf.DarktableUnlock() {
+				useMutex = false
+				args = []string{"--apply-custom-presets", "false", "--width", size, "--height", size, mf.FileName()}
+			} else {
+				useMutex = true
+				args = []string{"--width", size, "--height", size, mf.FileName()}
+			}
+
+			if xmpName != "" {
+				args = append(args, xmpName, jpegName)
+			} else {
+				args = append(args, jpegName)
+			}
+
+			result = exec.Command(c.conf.DarktableBin(), args...)
+		} else {
+			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", mf.Base(c.conf.Settings().Index.Group))
+		}
+	} else if mf.IsVideo() {
+		result = exec.Command(c.conf.FFmpegBin(), "-i", mf.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
+	} else if mf.IsHEIF() {
+		result = exec.Command(c.conf.HeifConvertBin(), mf.FileName(), jpegName)
+	} else {
+		return nil, useMutex, fmt.Errorf("convert: file type not supported for conversion (%s)", mf.FileType())
+	}
+
+	return result, useMutex, nil
+}
+
 // ToJpeg converts a single image file to JPEG if possible.
 func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	if !image.Exists() {
@@ -239,7 +243,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return NewMediaFile(jpegName)
 	}
 
-	cmd, useMutex, err := c.ConvertCommand(image, jpegName, xmpName)
+	cmd, useMutex, err := c.JpegConvertCommand(image, jpegName, xmpName)
 
 	if err != nil {
 		return nil, err

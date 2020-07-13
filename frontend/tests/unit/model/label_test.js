@@ -42,20 +42,6 @@ describe("model/label", () => {
         assert.equal(result, "/api/v1/labels/ABC123/t/static/xyz");
     });
 
-    it("should get thumbnail src set",  () => {
-        const values = {ID: 5, UID: "ABC123", Name: "Black Cat", Slug: "black-cat"};
-        const label = new Label(values);
-        const result = label.thumbnailSrcset("");
-        assert.equal(result, "/api/v1/labels/ABC123/t/static/fit_720 720w, /api/v1/labels/ABC123/t/static/fit_1280 1280w, /api/v1/labels/ABC123/t/static/fit_1920 1920w, /api/v1/labels/ABC123/t/static/fit_2560 2560w, /api/v1/labels/ABC123/t/static/fit_3840 3840w");
-    });
-
-    it("should get thumbnail sizes",  () => {
-        const values = {ID: 5, UID: "ABC123", Name: "Black Cat", Slug: "black-cat"};
-        const label = new Label(values);
-        const result = label.thumbnailSizes();
-        assert.equal(result, "(min-width: 2560px) 3840px, (min-width: 1920px) 2560px, (min-width: 1280px) 1920px, (min-width: 720px) 1280px, 720px");
-    });
-
     it("should get date string",  () => {
         const values = {ID: 5, UID: "ABC123", Name: "Black Cat", Slug: "black-cat", CreatedAt: "2012-07-08T14:45:39Z"};
         const label = new Label(values);

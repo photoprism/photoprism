@@ -185,21 +185,21 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_SETTINGS_HIDDEN",
 	},
 	cli.StringFlag{
-		Name:   "sips-bin",
-		Usage:  "sips executable `FILENAME`",
-		Value:  "sips",
-		EnvVar: "PHOTOPRISM_SIPS_BIN",
-	},
-	cli.StringFlag{
 		Name:   "darktable-bin",
 		Usage:  "darktable-cli executable `FILENAME`",
 		Value:  "darktable-cli",
 		EnvVar: "PHOTOPRISM_DARKTABLE_BIN",
 	},
 	cli.BoolFlag{
-		Name:   "darktable-workers",
+		Name:   "darktable-unlock",
 		Usage:  "disable presets to run multiple instances concurrently",
-		EnvVar: "PHOTOPRISM_DARKTABLE_WORKERS",
+		EnvVar: "PHOTOPRISM_DARKTABLE_UNLOCK",
+	},
+	cli.StringFlag{
+		Name:   "sips-bin",
+		Usage:  "sips executable `FILENAME`",
+		Value:  "sips",
+		EnvVar: "PHOTOPRISM_SIPS_BIN",
 	},
 	cli.StringFlag{
 		Name:   "heifconvert-bin",
@@ -274,20 +274,26 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "thumb-uncached, u",
-		Usage:  "on-demand rendering of default thumbnails (high memory and cpu usage)",
+		Usage:  "enable on-demand thumbnail rendering (high memory and cpu usage)",
 		EnvVar: "PHOTOPRISM_THUMB_UNCACHED",
 	},
 	cli.IntFlag{
 		Name:   "thumb-size, s",
-		Usage:  "default thumbnail size limit in `PIXELS` (720-3840)",
+		Usage:  "pre-rendered thumbnail size limit in `PIXELS` (720-7680)",
 		Value:  2048,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE",
 	},
 	cli.IntFlag{
-		Name:   "thumb-limit, x",
-		Usage:  "on-demand thumbnail size limit in `PIXELS` (720-3840)",
-		Value:  3840,
-		EnvVar: "PHOTOPRISM_THUMB_LIMIT",
+		Name:   "thumb-size-uncached, x",
+		Usage:  "on-demand rendering size limit in `PIXELS` (720-7680)",
+		Value:  4096,
+		EnvVar: "PHOTOPRISM_THUMB_SIZE_UNCACHED",
+	},
+	cli.IntFlag{
+		Name:   "convert-size",
+		Usage:  "size limit for converted image files in `PIXELS` (720-30000)",
+		Value:  4096,
+		EnvVar: "PHOTOPRISM_CONVERT_SIZE",
 	},
 	cli.IntFlag{
 		Name:   "jpeg-quality, q",

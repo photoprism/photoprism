@@ -162,7 +162,7 @@ func (c *Config) connectDb() error {
 
 	db.DB().SetMaxOpenConns(c.DatabaseConns())
 	db.DB().SetMaxIdleConns(c.DatabaseConnsIdle())
-	db.DB().SetConnMaxLifetime(10*time.Minute)
+	db.DB().SetConnMaxLifetime(10 * time.Minute)
 
 	c.db = db
 

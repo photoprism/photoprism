@@ -75,7 +75,7 @@ var CameraModels = map[string]string{
 }
 
 // CreateUnknownCamera initializes the database with an unknown camera if not exists
-func  CreateUnknownCamera() {
+func CreateUnknownCamera() {
 	FirstOrCreateCamera(&UnknownCamera)
 }
 

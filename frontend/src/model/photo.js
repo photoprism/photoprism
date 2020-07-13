@@ -330,20 +330,20 @@ export class Photo extends RestModel {
         return result;
     }
 
-    thumbnailUrl(type) {
+    thumbnailUrl(size) {
         let hash = this.mainFileHash();
 
         if (!hash) {
             let video = this.videoFile();
 
             if (video && video.Hash) {
-                return `/api/v1/t/${video.Hash}/${config.previewToken()}/${type}`;
+                return `/api/v1/t/${video.Hash}/${config.previewToken()}/${size}`;
             }
 
             return "/api/v1/svg/photo";
         }
 
-        return `/api/v1/t/${hash}/${config.previewToken()}/${type}`;
+        return `/api/v1/t/${hash}/${config.previewToken()}/${size}`;
     }
 
     getDownloadUrl() {
@@ -372,18 +372,6 @@ export class Photo extends RestModel {
         });
     }
 
-    thumbnailSrcset() {
-        const result = [];
-
-        result.push(this.thumbnailUrl("fit_720") + " 720w");
-        result.push(this.thumbnailUrl("fit_1280") + " 1280w");
-        result.push(this.thumbnailUrl("fit_1920") + " 1920w");
-        result.push(this.thumbnailUrl("fit_2560") + " 2560w");
-        result.push(this.thumbnailUrl("fit_3840") + " 3840w");
-
-        return result.join(", ");
-    }
-
     calculateSize(width, height) {
         if (width >= this.Width && height >= this.Height) { // Smaller
             return {width: this.Width, height: this.Height};
@@ -404,18 +392,6 @@ export class Photo extends RestModel {
         }
 
         return {width: newW, height: newH};
-    }
-
-    thumbnailSizes() {
-        const result = [];
-
-        result.push("(min-width: 2560px) 3840px");
-        result.push("(min-width: 1920px) 2560px");
-        result.push("(min-width: 1280px) 1920px");
-        result.push("(min-width: 720px) 1280px");
-        result.push("720px");
-
-        return result.join(", ");
     }
 
     getDateString() {
