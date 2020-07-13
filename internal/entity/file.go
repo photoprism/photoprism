@@ -47,7 +47,6 @@ type File struct {
 	FileLuminance   string        `gorm:"type:varbinary(9);" json:"Luminance" yaml:"Luminance,omitempty"`
 	FileDiff        uint32        `json:"Diff" yaml:"Diff,omitempty"`
 	FileChroma      uint8         `json:"Chroma" yaml:"Chroma,omitempty"`
-	FileNotes       string        `gorm:"type:text" json:"Notes" yaml:"Notes,omitempty"`
 	FileError       string        `gorm:"type:varbinary(512)" json:"Error" yaml:"Error,omitempty"`
 	Share           []FileShare   `json:"-" yaml:"-"`
 	Sync            []FileSync    `json:"-" yaml:"-"`
