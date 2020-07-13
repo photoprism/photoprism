@@ -138,7 +138,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 				return nil
 			}
 
-			related, err := mf.RelatedFiles(ind.conf.Settings().Index.Group)
+			related, err := mf.RelatedFiles(ind.conf.Settings().Index.Sequences)
 
 			if err != nil {
 				log.Warnf("index: %s", err.Error())

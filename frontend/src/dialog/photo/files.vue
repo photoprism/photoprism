@@ -50,9 +50,9 @@
                                  @click.stop.prevent="primary(file)">
                             <translate>Primary</translate>
                           </v-btn>
-                          <v-btn small depressed dark color="secondary-dark" class="ma-0 action-ungroup"
-                                 @click.stop.prevent="ungroup(file)">
-                            <translate>Ungroup</translate>
+                          <v-btn small depressed dark color="secondary-dark" class="ma-0 action-unstack"
+                                 @click.stop.prevent="unstack(file)">
+                            <translate>Unstack</translate>
                           </v-btn>
                         </td>
                       </tr>
@@ -193,8 +193,8 @@
             download(file) {
                 file.download();
             },
-            ungroup(file) {
-                this.model.ungroupFile(file.UID);
+            unstack(file) {
+                this.model.unstackFile(file.UID);
             },
             primary(file) {
                 this.model.primaryFile(file.UID);

@@ -332,7 +332,7 @@ func (m *MediaFile) PathNameInfo() (fileRoot, fileBase, relativePath, relativeNa
 		rootPath = Config().OriginalsPath()
 	}
 
-	fileBase = m.Base(Config().Settings().Index.Group)
+	fileBase = m.Base(Config().Settings().Index.Sequences)
 	relativePath = m.RelativePath(rootPath)
 	relativeName = m.RelativeName(rootPath)
 

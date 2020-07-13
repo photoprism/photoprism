@@ -109,7 +109,7 @@ func (c *Convert) Start(path string) error {
 
 // ToJson uses exiftool to export metadata to a json file.
 func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
-	jsonName := fs.TypeJson.FindFirst(mf.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().Index.Group)
+	jsonName := fs.TypeJson.FindFirst(mf.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().Index.Sequences)
 
 	result, err := NewMediaFile(jsonName)
 
@@ -121,7 +121,7 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: metadata export to json disabled in read only mode (%s)", mf.RelativeName(c.conf.OriginalsPath()))
 	}
 
-	jsonName = fs.FileName(mf.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), ".json", c.conf.Settings().Index.Group)
+	jsonName = fs.FileName(mf.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), ".json", c.conf.Settings().Index.Sequences)
 
 	fileName := mf.RelativeName(c.conf.OriginalsPath())
 
@@ -184,7 +184,7 @@ func (c *Convert) JpegConvertCommand(mf *MediaFile, jpegName string, xmpName str
 
 			result = exec.Command(c.conf.DarktableBin(), args...)
 		} else {
-			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", mf.Base(c.conf.Settings().Index.Group))
+			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", mf.Base(c.conf.Settings().Index.Sequences))
 		}
 	} else if mf.IsVideo() {
 		result = exec.Command(c.conf.FFmpegBin(), "-i", mf.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
@@ -207,7 +207,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return image, nil
 	}
 
-	jpegName := fs.TypeJpeg.FindFirst(image.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().Index.Group)
+	jpegName := fs.TypeJpeg.FindFirst(image.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().Index.Sequences)
 
 	mediaFile, err := NewMediaFile(jpegName)
 
@@ -219,12 +219,12 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.RelativeName(c.conf.OriginalsPath()))
 	}
 
-	jpegName = fs.FileName(image.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt, c.conf.Settings().Index.Group)
+	jpegName = fs.FileName(image.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt, c.conf.Settings().Index.Sequences)
 	fileName := image.RelativeName(c.conf.OriginalsPath())
 
 	log.Infof("convert: %s -> %s", fileName, filepath.Base(jpegName))
 
-	xmpName := fs.TypeXMP.Find(image.FileName(), c.conf.Settings().Index.Group)
+	xmpName := fs.TypeXMP.Find(image.FileName(), c.conf.Settings().Index.Sequences)
 
 	event.Publish("index.converting", event.Data{
 		"fileType": image.FileType(),

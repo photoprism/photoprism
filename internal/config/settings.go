@@ -26,10 +26,10 @@ type MapsSettings struct {
 }
 
 type IndexSettings struct {
-	Path    string `json:"path" yaml:"path"`
-	Convert bool   `json:"convert" yaml:"convert"`
-	Rescan  bool   `json:"rescan" yaml:"rescan"`
-	Group   bool   `json:"group" yaml:"group"`
+	Path      string `json:"path" yaml:"path"`
+	Convert   bool   `json:"convert" yaml:"convert"`
+	Rescan    bool   `json:"rescan" yaml:"rescan"`
+	Sequences bool   `json:"sequences" yaml:"sequences"`
 }
 
 type ImportSettings struct {
@@ -98,10 +98,10 @@ func NewSettings() *Settings {
 			Move: false,
 		},
 		Index: IndexSettings{
-			Path:    "/",
-			Rescan:  false,
-			Convert: true,
-			Group:   true,
+			Path:      "/",
+			Rescan:    false,
+			Convert:   true,
+			Sequences: true,
 		},
 	}
 }

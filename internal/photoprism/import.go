@@ -134,7 +134,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 				return nil
 			}
 
-			related, err := mf.RelatedFiles(imp.conf.Settings().Index.Group)
+			related, err := mf.RelatedFiles(imp.conf.Settings().Index.Sequences)
 
 			if err != nil {
 				event.Error(fmt.Sprintf("import: %s", err.Error()))

@@ -634,7 +634,7 @@ func TestPhotoSearch(t *testing.T) {
 		f.Original = "xxyy"
 		f.Path = "/xxx,xxx"
 		f.Type = "mp4"
-		f.Grouped = true
+		f.Stack = true
 		f.Unsorted = true
 		f.Filter = ""
 		f.Order = entity.SortOrderAdded

@@ -27,4 +27,4 @@ index:
   path: /
   convert: true
   rescan: false
-  group: true
+  sequences: true

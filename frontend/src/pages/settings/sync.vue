@@ -24,12 +24,14 @@
             <v-icon v-else color="secondary-dark">settings</v-icon>
           </v-btn>
         </td>
-        <td class="text-xs-center"><v-btn icon small flat :ripple="false"
-                                          class="action-toggle-sync"
-                                          @click.stop.prevent="editSync(props.item)">
-          <v-icon v-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
-          <v-icon v-else color="secondary-dark">sync_disabled</v-icon>
-        </v-btn></td>
+        <td class="text-xs-center">
+          <v-btn icon small flat :ripple="false"
+                 class="action-toggle-sync"
+                 @click.stop.prevent="editSync(props.item)">
+            <v-icon v-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
+            <v-icon v-else color="secondary-dark">sync_disabled</v-icon>
+          </v-btn>
+        </td>
         <td class="hidden-sm-and-down">{{ formatDate(props.item.SyncDate) }}</td>
         <td class="hidden-xs-only text-xs-right" nowrap>
           <v-btn icon small flat :ripple="false"
@@ -56,6 +58,11 @@
               ref="form" class="p-form-settings mt-2" accept-charset="UTF-8"
               @submit.prevent="add">
 
+        <v-btn depressed color="secondary-light" @click.stop="webdavDialog"
+               class="action-webdav-dialog ml-0">
+          <translate>Connect via WebDAV</translate>
+        </v-btn>
+
         <v-btn color="secondary-dark"
                class="white--text ml-0"
                depressed
@@ -63,20 +70,14 @@
           <translate>Add Server</translate>
           <v-icon right dark>add</v-icon>
         </v-btn>
-
-        <v-btn depressed color="secondary-light" @click.stop="webdavDialog"
-               class="action-webdav-dialog ml-0">
-          <translate>Connect via WebDAV</translate>
-          <v-icon right>cloud</v-icon>
-        </v-btn>
-
       </v-form>
     </v-container>
     <p-account-add-dialog :show="dialog.add" @cancel="onCancel('add')"
                           @confirm="onAdded"></p-account-add-dialog>
     <p-account-remove-dialog :show="dialog.remove" :model="model" @cancel="onCancel('remove')"
                              @confirm="onRemoved"></p-account-remove-dialog>
-    <p-account-edit-dialog :show="dialog.edit" :model="model" :scope="editScope" @remove="remove(model)" @cancel="onCancel('edit')"
+    <p-account-edit-dialog :show="dialog.edit" :model="model" :scope="editScope" @remove="remove(model)"
+                           @cancel="onCancel('edit')"
                            @confirm="onEdited"></p-account-edit-dialog>
     <p-webdav-dialog :show="dialog.webdav" @close="dialog.webdav = false"></p-webdav-dialog>
   </div>
@@ -108,7 +109,13 @@
                     {text: this.$gettext('Server'), value: 'AccName', sortable: false, align: 'left'},
                     {text: this.$gettext('Upload'), value: 'AccShare', sortable: false, align: 'center'},
                     {text: this.$gettext('Sync'), value: 'AccSync', sortable: false, align: 'center'},
-                    {text: this.$gettext('Last Backup'), value: 'SyncDate', sortable: false, class: 'hidden-sm-and-down', align: 'left'},
+                    {
+                        text: this.$gettext('Last Backup'),
+                        value: 'SyncDate',
+                        sortable: false,
+                        class: 'hidden-sm-and-down',
+                        align: 'left'
+                    },
                     {text: '', value: '', sortable: false, class: 'hidden-xs-only', align: 'right'},
                 ],
             };

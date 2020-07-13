@@ -22,7 +22,7 @@ import (
 const (
 	IndexUpdated   IndexStatus = "updated"
 	IndexAdded     IndexStatus = "added"
-	IndexGrouped   IndexStatus = "grouped"
+	IndexStacked   IndexStatus = "stacked"
 	IndexSkipped   IndexStatus = "skipped"
 	IndexDuplicate IndexStatus = "skipped duplicate"
 	IndexArchived  IndexStatus = "skipped archived"
@@ -49,11 +49,11 @@ func (r IndexResult) Success() bool {
 }
 
 func (r IndexResult) Indexed() bool {
-	return r.Status == IndexAdded || r.Status == IndexUpdated || r.Status == IndexGrouped
+	return r.Status == IndexAdded || r.Status == IndexUpdated || r.Status == IndexStacked
 }
 
 func (r IndexResult) Grouped() bool {
-	return r.Status == IndexGrouped
+	return r.Status == IndexStacked
 }
 
 func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (result IndexResult) {
@@ -88,7 +88,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	photoExists := false
 
-	stripSequence := Config().Settings().Index.Group
+	stripSequence := Config().Settings().Index.Sequences
 
 	event.Publish("index.indexing", event.Data{
 		"fileHash": fileHash,
@@ -626,7 +626,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		})
 
 		if fileGrouped {
-			result.Status = IndexGrouped
+			result.Status = IndexStacked
 		} else {
 			result.Status = IndexAdded
 		}

@@ -36,7 +36,7 @@ var MsgPolish = MessageMap{
 	MsgAlbumSaved:            "Album został zapisany",
 	MsgAlbumDeleted:          "Album %s usunięto",
 	MsgAlbumCloned:           "Sklonowano zawartość albumu",
-	MsgFileUngrouped:         "Plik został rozgrupowany",
+	MsgFileUnstacked:         "Plik został rozgrupowany",
 	MsgSelectionAddedTo:      "Wybór dodany do %s",
 	MsgEntryAddedTo:          "Dodano jeden wpis do %s",
 	MsgEntriesAddedTo:        "%d wpisy dodane do %s",

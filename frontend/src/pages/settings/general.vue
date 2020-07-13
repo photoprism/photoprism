@@ -61,8 +61,8 @@
               <v-checkbox
                       @change="onChange"
                       :disabled="busy"
-                      class="ma-0 pa-0 input-group"
-                      v-model="settings.index.group"
+                      class="ma-0 pa-0 input-sequences"
+                      v-model="settings.index.sequences"
                       color="secondary-dark"
                       :label="$gettext('Group Sequential')"
                       :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' or \'IMG_1234 copy 2\' belong to the same photo.')"

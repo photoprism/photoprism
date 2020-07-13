@@ -36,7 +36,7 @@ var MsgGerman = MessageMap{
 	MsgAlbumSaved:            "Album gespeichert",
 	MsgAlbumDeleted:          "Album %s gelöscht",
 	MsgAlbumCloned:           "Album-Einträge kopiert",
-	MsgFileUngrouped:         "Datei-Gruppierung aufgehoben",
+	MsgFileUnstacked:         "Datei aus Stapel entfernt",
 	MsgSelectionAddedTo:      "Auswahl zu %s hinzugefügt",
 	MsgEntryAddedTo:          "Ein Eintrag zu %s hinzugefügt",
 	MsgEntriesAddedTo:        "%d Einträge zu %s hinzugefügt",

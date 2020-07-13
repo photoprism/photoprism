@@ -36,7 +36,7 @@ var MsgSpanish = MessageMap{
 	MsgAlbumSaved:            "Album saved",
 	MsgAlbumDeleted:          "Album %s deleted",
 	MsgAlbumCloned:           "Album contents cloned",
-	MsgFileUngrouped:         "File successfully ungrouped",
+	MsgFileUnstacked:         "File removed from stack",
 	MsgSelectionAddedTo:      "Selection added to %s",
 	MsgEntryAddedTo:          "One entry added to %s",
 	MsgEntriesAddedTo:        "%d entries added to %s",

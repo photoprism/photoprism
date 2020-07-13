@@ -330,13 +330,13 @@ func PhotoFilePrimary(router *gin.RouterGroup) {
 	})
 }
 
-// POST /api/v1/photos/:uid/files/:file_uid/ungroup
+// POST /api/v1/photos/:uid/files/:file_uid/unstack
 //
 // Parameters:
 //   uid: string Photo UID as returned by the API
 //   file_uid: string File UID as returned by the API
-func PhotoFileUngroup(router *gin.RouterGroup) {
-	router.POST("/photos/:uid/files/:file_uid/ungroup", func(c *gin.Context) {
+func PhotoFileUnstack(router *gin.RouterGroup) {
+	router.POST("/photos/:uid/files/:file_uid/unstack", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
 
 		if s.Invalid() {
@@ -350,13 +350,13 @@ func PhotoFileUngroup(router *gin.RouterGroup) {
 		file, err := query.FileByUID(fileUID)
 
 		if err != nil {
-			log.Errorf("photo: %s (ungroup)", err)
+			log.Errorf("photo: %s (unstack)", err)
 			AbortEntityNotFound(c)
 			return
 		}
 
 		if file.FilePrimary {
-			log.Errorf("photo: can't ungroup primary files")
+			log.Errorf("photo: can't unstack primary file")
 			AbortBadRequest(c)
 			return
 		}
@@ -365,7 +365,7 @@ func PhotoFileUngroup(router *gin.RouterGroup) {
 		newPhoto := entity.NewPhoto()
 
 		if err := newPhoto.Create(); err != nil {
-			log.Errorf("photo: %s", err.Error())
+			log.Errorf("photo: %s (unstack)", err.Error())
 			AbortSaveFailed(c)
 			return
 		}
@@ -375,7 +375,7 @@ func PhotoFileUngroup(router *gin.RouterGroup) {
 		file.PhotoUID = newPhoto.PhotoUID
 
 		if err := file.Save(); err != nil {
-			log.Errorf("photo: %s", err.Error())
+			log.Errorf("photo: %s (unstack)", err.Error())
 			AbortSaveFailed(c)
 			return
 		}
@@ -385,13 +385,13 @@ func PhotoFileUngroup(router *gin.RouterGroup) {
 		f, err := photoprism.NewMediaFile(fileName)
 
 		if err != nil {
-			log.Errorf("photo: %s (ungroup)", err)
+			log.Errorf("photo: %s (unstack)", err)
 			AbortEntityNotFound(c)
 			return
 		}
 
 		if err := service.Index().MediaFile(f, photoprism.IndexOptions{Rescan: true}, existingPhoto.OriginalName).Error; err != nil {
-			log.Errorf("photo: %s", err)
+			log.Errorf("photo: %s (unstack)", err)
 			AbortSaveFailed(c)
 			return
 		}
@@ -399,7 +399,7 @@ func PhotoFileUngroup(router *gin.RouterGroup) {
 		PublishPhotoEvent(EntityCreated, file.PhotoUID, c)
 		PublishPhotoEvent(EntityUpdated, photoUID, c)
 
-		event.SuccessMsg(i18n.MsgFileUngrouped)
+		event.SuccessMsg(i18n.MsgFileUnstacked)
 
 		p, err := query.PhotoPreloadByUID(photoUID)
 

@@ -566,8 +566,8 @@ export class Photo extends RestModel {
         return Api.post(`${this.getEntityResource()}/files/${fileUID}/primary`).then((r) => Promise.resolve(this.setValues(r.data)));
     }
 
-    ungroupFile(fileUID) {
-        return Api.post(`${this.getEntityResource()}/files/${fileUID}/ungroup`).then((r) => Promise.resolve(this.setValues(r.data)));
+    unstackFile(fileUID) {
+        return Api.post(`${this.getEntityResource()}/files/${fileUID}/unstack`).then((r) => Promise.resolve(this.setValues(r.data)));
     }
 
     like() {

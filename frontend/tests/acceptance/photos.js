@@ -818,7 +818,7 @@ test('#10 Ungroup files', async t => {
         .click(Selector('button.action-title-edit').withAttribute('data-uid', SequentialPhoto))
         .click(Selector('#tab-files'))
         .click(Selector('li.v-expansion-panel__container').nth(1))
-        .click(Selector('.action-ungroup'))
+        .click(Selector('.action-unstack'))
         .wait(11000)
         .click(Selector('button.action-close'))
         .click(Selector('.nav-photos'))

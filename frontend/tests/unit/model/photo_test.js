@@ -34,7 +34,7 @@ mock
             Type: "mp4",
             Hash: "1xxbgdt55"}]})
     .onDelete("api/v1/photos/abc123/unlike").reply(200)
-    .onPost("api/v1/photos/pqbemz8276mhtobh/files/fqbfk181n4ca5sud/ungroup").reply(200, {"success": "ok"})
+    .onPost("api/v1/photos/pqbemz8276mhtobh/files/fqbfk181n4ca5sud/unstack").reply(200, {"success": "ok"})
     .onPost("api/v1/photos/pqbemz8276mhtobh/label", {Name: "Cat", Priority: 10}).reply(200, {"success": "ok"})
     .onPut("api/v1/photos/pqbemz8276mhtobh/label/12345", {Uncertainty: 0}).reply(200, {"success": "ok"})
     .onPut("api/v1/photos/pqbemz8276mhtobh/label/12345", {Label: {Name: "Sommer"}}).reply(200, {"success": "ok"})
@@ -610,7 +610,7 @@ describe("model/photo", () => {
         );
     });
 
-    it("should ungroup",  (done) => {
+    it("should unstack",  (done) => {
         const values = {
             ID: 10,
             UID: "pqbemz8276mhtobh",
@@ -621,7 +621,7 @@ describe("model/photo", () => {
                 Type: "mp4",
                 Hash: "1xxbgdt55"}]};
         const photo = new Photo(values);
-        photo.ungroupFile("fqbfk181n4ca5sud").then(
+        photo.unstackFile("fqbfk181n4ca5sud").then(
             (response) => {
                 assert.equal(response.success, "ok");
                 done();

@@ -537,7 +537,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		assert.Equal(t, "2015-02-04(1).jpg", related.Files[0].BaseName())
 	})
 
-	t.Run("2015-02-04(1).jpg grouped", func(t *testing.T) {
+	t.Run("2015-02-04(1).jpg stacked", func(t *testing.T) {
 		mediaFile, err := NewMediaFile("testdata/2015-02-04(1).jpg")
 
 		if err != nil {
