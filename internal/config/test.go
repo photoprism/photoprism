@@ -91,8 +91,8 @@ func NewTestParamsError() *Params {
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
 		TempPath:       testDataPath + "/temp",
-		DatabaseDriver: MySQL,
-		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
+		DatabaseDriver: SQLite,
+		DatabaseDsn:    ".test-error.db",
 	}
 
 	return c
@@ -153,12 +153,9 @@ func NewTestErrorConfig() *Config {
 
 	c.initSettings()
 
-	err := c.Init(context.Background())
-	if err != nil {
+	if err := c.Init(context.Background()); err != nil {
 		log.Fatalf("config: %s", err.Error())
 	}
-
-	c.InitTestDb()
 
 	return c
 }
