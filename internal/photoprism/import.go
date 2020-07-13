@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"runtime/debug"
 	"sort"
 	"sync"
 
@@ -97,8 +98,8 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 	err := godirwalk.Walk(importPath, &godirwalk.Options{
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
 			defer func() {
-				if err := recover(); err != nil {
-					log.Errorf("import: %s [panic]", err)
+				if r := recover(); r != nil {
+					log.Errorf("import: %s (panic)\nstack: %s", r, debug.Stack())
 				}
 			}()
 

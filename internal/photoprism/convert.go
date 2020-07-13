@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime/debug"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -64,8 +65,8 @@ func (c *Convert) Start(path string) error {
 	err := godirwalk.Walk(path, &godirwalk.Options{
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
 			defer func() {
-				if err := recover(); err != nil {
-					log.Errorf("convert: %s [panic]", err)
+				if r := recover(); r != nil {
+					log.Errorf("convert: %s (panic)\nstack: %s", r, debug.Stack())
 				}
 			}()
 

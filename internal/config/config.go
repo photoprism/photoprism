@@ -84,7 +84,7 @@ func (c *Config) Propagate() {
 // Init initialises the database connection and dependencies.
 func (c *Config) Init(ctx context.Context) error {
 	c.Propagate()
-	return c.connectToDatabase(ctx)
+	return c.connectDb()
 }
 
 // Name returns the application name ("PhotoPrism").

@@ -128,5 +128,5 @@ func (m *Photo) Optimize() (updated bool, err error) {
 
 	m.CheckedAt = &checked
 
-	return true, UnscopedDb().Save(m).Error
+	return true, m.Save()
 }

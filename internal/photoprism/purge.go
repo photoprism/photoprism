@@ -3,12 +3,11 @@ package photoprism
 import (
 	"errors"
 	"fmt"
-	"runtime"
+	"runtime/debug"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -31,6 +30,13 @@ func NewPurge(conf *config.Config) *Purge {
 
 // Start removes missing files from search results.
 func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhotos map[string]bool, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("purge: %s (panic)\nstack: %s", r, debug.Stack())
+			log.Error(err)
+		}
+	}()
+
 	var ignore map[string]bool
 
 	if opt.Ignore != nil {
@@ -43,20 +49,11 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 	purgedPhotos = make(map[string]bool)
 
 	if err := mutex.MainWorker.Start(); err != nil {
-		err = fmt.Errorf("purge: %s", err.Error())
-		event.Error(err.Error())
+		log.Warnf("purge: %s (start)", err.Error())
 		return purgedFiles, purgedPhotos, err
 	}
 
-	defer func() {
-		mutex.MainWorker.Stop()
-
-		if err := recover(); err != nil {
-			log.Errorf("purge: %s [panic]", err)
-		} else {
-			runtime.GC()
-		}
-	}()
+	defer mutex.MainWorker.Stop()
 
 	limit := 500
 	offset := 0

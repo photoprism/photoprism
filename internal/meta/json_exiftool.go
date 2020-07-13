@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"reflect"
+	"runtime/debug"
 	"strings"
 	"time"
 
@@ -16,7 +17,7 @@ import (
 func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s (exiftool panic)", e)
+			err = fmt.Errorf("metadata: %s (exiftool panic)\nstack: %s", e, debug.Stack())
 		}
 	}()
 

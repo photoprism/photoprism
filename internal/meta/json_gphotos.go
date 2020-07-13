@@ -3,6 +3,7 @@ package meta
 import (
 	"encoding/json"
 	"fmt"
+	"runtime/debug"
 	"time"
 
 	"gopkg.in/ugjka/go-tz.v2/tz"
@@ -70,7 +71,7 @@ func (m GTime) Time() time.Time {
 func (data *Data) GMeta(jsonData []byte) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s (gphotos panic)", e)
+			err = fmt.Errorf("metadata: %s (gmeta panic)\nstack: %s", e, debug.Stack())
 		}
 	}()
 
@@ -91,7 +92,7 @@ func (data *Data) GMeta(jsonData []byte) (err error) {
 func (data *Data) GPhoto(jsonData []byte) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s (gphotos panic)", e)
+			err = fmt.Errorf("metadata: %s (gphoto panic)\nstack: %s", e, debug.Stack())
 		}
 	}()
 

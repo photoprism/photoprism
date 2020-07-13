@@ -108,9 +108,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "database-conns",
-		Usage:  "maximum `NUMBER` of open connections to the database",
-		Value:  256,
+		Usage:  "max `NUMBER` of open connections to the database",
 		EnvVar: "PHOTOPRISM_DATABASE_CONNS",
+	},
+	cli.IntFlag{
+		Name:   "database-conns-idle",
+		Usage:  "max `NUMBER` of idle connections (equal or less than open)",
+		EnvVar: "PHOTOPRISM_DATABASE_CONNS_IDLE",
 	},
 	cli.StringFlag{
 		Name:   "assets-path",

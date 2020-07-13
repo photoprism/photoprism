@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"runtime/debug"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -20,7 +21,7 @@ func JSON(jsonName, originalName string) (data Data, err error) {
 func (data *Data) JSON(jsonName, originalName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s (json panic)", e)
+			err = fmt.Errorf("metadata: %s in %s (json panic)\nstack: %s", e, txt.Quote(filepath.Base(jsonName)), debug.Stack())
 		}
 	}()
 

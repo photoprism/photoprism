@@ -39,7 +39,7 @@ const (
 // Time returns a string as time or the zero time instant in case it can not be converted.
 func Time(s string) (result time.Time) {
 	defer func() {
-		if err := recover(); err != nil {
+		if r := recover(); r != nil {
 			result = time.Time{}
 		}
 	}()

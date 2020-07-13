@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
+	"runtime/debug"
 	"sync"
 
 	"github.com/jinzhu/gorm"
@@ -59,6 +60,12 @@ func (ind *Index) Cancel() {
 
 // Start indexes media files in the originals directory.
 func (ind *Index) Start(opt IndexOptions) map[string]bool {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Errorf("index: %s (panic)\nstack: %s", r, debug.Stack())
+		}
+	}()
+
 	done := make(map[string]bool)
 	originalsPath := ind.originalsPath()
 	optionsPath := filepath.Join(originalsPath, opt.Path)
@@ -73,13 +80,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 		return done
 	}
 
-	defer func() {
-		mutex.MainWorker.Stop()
-
-		if err := recover(); err != nil {
-			log.Errorf("index: %s [panic]", err)
-		}
-	}()
+	defer mutex.MainWorker.Stop()
 
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("index: %s", err.Error())

@@ -3,12 +3,11 @@ package photoprism
 import (
 	"fmt"
 	"math"
-	"runtime"
+	"runtime/debug"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
@@ -31,21 +30,19 @@ func NewMoments(conf *config.Config) *Moments {
 
 // Start creates albums based on popular locations, dates and categories.
 func (m *Moments) Start() (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("moments: %s (panic)\nstack: %s", r, debug.Stack())
+			log.Error(err)
+		}
+	}()
+
 	if err := mutex.MainWorker.Start(); err != nil {
-		err = fmt.Errorf("moments: %s", err.Error())
-		event.Error(err.Error())
+		log.Warnf("moments: %s (start)", err.Error())
 		return err
 	}
 
-	defer func() {
-		mutex.MainWorker.Stop()
-
-		if err := recover(); err != nil {
-			log.Errorf("moments: %s [panic]", err)
-		} else {
-			runtime.GC()
-		}
-	}()
+	defer mutex.MainWorker.Stop()
 
 	counts := query.Counts{}
 	counts.Refresh()

@@ -2,7 +2,9 @@ package workers
 
 import (
 	"errors"
+	"fmt"
 	"runtime"
+	"runtime/debug"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -22,20 +24,6 @@ func NewMeta(conf *config.Config) *Meta {
 	return &Meta{conf: conf}
 }
 
-// logError logs an error message if err is not nil.
-func (worker *Meta) logError(err error) {
-	if err != nil {
-		log.Errorf("metadata: %s", err.Error())
-	}
-}
-
-// logWarn logs a warning message if err is not nil.
-func (worker *Meta) logWarn(err error) {
-	if err != nil {
-		log.Warnf("metadata: %s", err.Error())
-	}
-}
-
 // originalsPath returns the original media files path as string.
 func (worker *Meta) originalsPath() string {
 	return worker.conf.OriginalsPath()
@@ -43,20 +31,21 @@ func (worker *Meta) originalsPath() string {
 
 // Start starts the metadata worker.
 func (worker *Meta) Start() (err error) {
-	if err := mutex.MetaWorker.Start(); err != nil {
-		worker.logWarn(err)
-		return err
-	}
-
 	defer func() {
-		mutex.MetaWorker.Stop()
-
-		if err := recover(); err != nil {
-			log.Errorf("metadata: %s (worker panic)", err)
+		if r := recover(); r != nil {
+			err = fmt.Errorf("meta-worker: %s (panic)\nstack: %s", r, debug.Stack())
+			log.Error(err)
 		}
 	}()
 
-	log.Debugf("metadata: starting routine check")
+	if err := mutex.MetaWorker.Start(); err != nil {
+		log.Warnf("meta-worker: %s (start)", err.Error())
+		return err
+	}
+
+	defer mutex.MetaWorker.Stop()
+
+	log.Debugf("meta-worker: starting routine check")
 
 	done := make(map[string]bool)
 
@@ -79,7 +68,7 @@ func (worker *Meta) Start() (err error) {
 
 		for _, photo := range photos {
 			if mutex.MetaWorker.Canceled() {
-				return errors.New("metadata: check canceled")
+				return errors.New("meta-worker: check canceled")
 			}
 
 			if done[photo.PhotoUID] {
@@ -89,15 +78,15 @@ func (worker *Meta) Start() (err error) {
 			done[photo.PhotoUID] = true
 
 			if updated, err := photo.Optimize(); err != nil {
-				log.Errorf("metadata: %s", err)
+				log.Errorf("meta-worker: %s (optimize photo)", err)
 			} else if updated {
 				optimized++
-				log.Debugf("metadata: optimized photo %s", photo.String())
+				log.Debugf("meta-worker: optimized photo %s", photo.String())
 			}
 		}
 
 		if mutex.MetaWorker.Canceled() {
-			return errors.New("metadata: check canceled")
+			return errors.New("meta-worker: check canceled")
 		}
 
 		offset += limit
@@ -106,12 +95,16 @@ func (worker *Meta) Start() (err error) {
 	}
 
 	if optimized > 0 {
-		log.Infof("metadata: optimized %d photos", optimized)
+		log.Infof("meta-worker: optimized %d photos", optimized)
 	}
 
-	worker.logError(query.ResetPhotoQuality())
+	if err := query.ResetPhotoQuality(); err != nil {
+		log.Warnf("meta-worker: %s (reset photo quality)", err.Error())
+	}
 
-	worker.logError(entity.UpdatePhotoCounts())
+	if err := entity.UpdatePhotoCounts(); err != nil {
+		log.Warnf("meta-worker: %s (update photo counts)", err.Error())
+	}
 
 	moments := photoprism.NewMoments(worker.conf)
 

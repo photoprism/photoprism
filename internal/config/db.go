@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"errors"
 	"io/ioutil"
 	"path/filepath"
@@ -53,13 +52,34 @@ func (c *Config) DatabaseDsn() string {
 	return c.params.DatabaseDsn
 }
 
-// DatabaseConns sets the maximum number of open connections to the database.
+// DatabaseConns returns the maximum number of open connections to the database.
 func (c *Config) DatabaseConns() int {
-	if c.params.DatabaseConns > 1024 || c.params.DatabaseConns < 0 {
-		return 0
+	limit := c.params.DatabaseConns
+
+	if limit <= 0 {
+		limit = (runtime.NumCPU() * 2) + 16
 	}
 
-	return c.params.DatabaseConns
+	if limit > 1024 {
+		limit = 1024
+	}
+
+	return limit
+}
+
+// DatabaseConnsIdle returns the maximum number of idle connections to the database (equal or less than open).
+func (c *Config) DatabaseConnsIdle() int {
+	limit := c.params.DatabaseConnsIdle
+
+	if limit <= 0 {
+		limit = runtime.NumCPU() + 8
+	}
+
+	if limit > c.DatabaseConns() {
+		limit = c.DatabaseConns()
+	}
+
+	return limit
 }
 
 // Db returns the db connection.
@@ -104,10 +124,8 @@ func (c *Config) InitTestDb() {
 	go entity.SaveErrorMessages()
 }
 
-// connectToDatabase establishes a database connection.
-// When used with the internal driver, it may create a new database server instance.
-// It tries to do this 12 times with a 5 second sleep interval in between.
-func (c *Config) connectToDatabase(ctx context.Context) error {
+// connectDb establishes a database connection.
+func (c *Config) connectDb() error {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
 
@@ -142,16 +160,12 @@ func (c *Config) connectToDatabase(ctx context.Context) error {
 	db.LogMode(false)
 	db.SetLogger(log)
 
-	if runtime.NumCPU() > 4 {
-		db.DB().SetMaxIdleConns(runtime.NumCPU())
-	} else {
-		db.DB().SetMaxIdleConns(4)
-	}
-
-	db.DB().SetConnMaxLifetime(time.Minute)
 	db.DB().SetMaxOpenConns(c.DatabaseConns())
+	db.DB().SetMaxIdleConns(c.DatabaseConnsIdle())
+	db.DB().SetConnMaxLifetime(10*time.Minute)
 
 	c.db = db
+
 	return err
 }
 

@@ -2,7 +2,9 @@ package photoprism
 
 import (
 	"errors"
+	"fmt"
 	"path/filepath"
+	"runtime/debug"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -23,7 +25,14 @@ func NewResample(conf *config.Config) *Resample {
 }
 
 // Start creates default thumbnails for all files in originalsPath.
-func (rs *Resample) Start(force bool) error {
+func (rs *Resample) Start(force bool) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("resample: %s (panic)\nstack: %s", r, debug.Stack())
+			log.Error(err)
+		}
+	}()
+
 	if err := mutex.MainWorker.Start(); err != nil {
 		return err
 	}
@@ -57,11 +66,11 @@ func (rs *Resample) Start(force bool) error {
 		log.Infof(`resample: ignored "%s"`, fs.Rel(fileName, originalsPath))
 	}
 
-	err := godirwalk.Walk(originalsPath, &godirwalk.Options{
+	err = godirwalk.Walk(originalsPath, &godirwalk.Options{
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
 			defer func() {
-				if err := recover(); err != nil {
-					log.Errorf("resample: %s [panic]", err)
+				if r := recover(); r != nil {
+					log.Errorf("resample: %s (panic)\nstack: %s", r, debug.Stack())
 				}
 			}()
 

@@ -64,6 +64,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "database-driver", dbDriver)
 	fmt.Printf("%-25s %s\n", "database-dsn", dbDsn)
 	fmt.Printf("%-25s %d\n", "database-conns", conf.DatabaseConns())
+	fmt.Printf("%-25s %d\n", "database-conns-idle", conf.DatabaseConnsIdle())
 
 	// Main directories.
 	fmt.Printf("%-25s %s\n", "assets-path", conf.AssetsPath())

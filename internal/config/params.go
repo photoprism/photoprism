@@ -59,6 +59,7 @@ type Params struct {
 	DatabaseDriver     string `yaml:"database-driver" flag:"database-driver"`
 	DatabaseDsn        string `yaml:"database-dsn" flag:"database-dsn"`
 	DatabaseConns      int    `yaml:"database-conns" flag:"database-conns"`
+	DatabaseConnsIdle  int    `yaml:"database-conns-idle" flag:"database-conns-idle"`
 	HttpServerHost     string `yaml:"http-host" flag:"http-host"`
 	HttpServerPort     int    `yaml:"http-port" flag:"http-port"`
 	HttpServerMode     string `yaml:"http-mode" flag:"http-mode"`

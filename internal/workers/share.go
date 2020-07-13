@@ -3,10 +3,10 @@ package workers
 import (
 	"fmt"
 	"path/filepath"
+	"runtime/debug"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -29,14 +29,21 @@ func NewShare(conf *config.Config) *Share {
 // logError logs an error message if err is not nil.
 func (worker *Share) logError(err error) {
 	if err != nil {
-		log.Errorf("share: %s", err.Error())
+		log.Errorf("share-worker: %s", err.Error())
 	}
 }
 
 // Start starts the share worker.
 func (worker *Share) Start() (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("share-worker: %s (panic)\nstack: %s", r, debug.Stack())
+			log.Error(err)
+		}
+	}()
+
 	if err := mutex.ShareWorker.Start(); err != nil {
-		event.Error(fmt.Sprintf("share: %s", err.Error()))
+		log.Warnf("share-worker: %s (start)", err.Error())
 		return err
 	}
 
@@ -83,7 +90,7 @@ func (worker *Share) Start() (err error) {
 
 			if _, ok := existingDirs[dir]; !ok {
 				if err := client.CreateDir(dir); err != nil {
-					log.Errorf("share: could not create folder %s", dir)
+					log.Errorf("share-worker: could not create folder %s", dir)
 					continue
 				}
 			}
@@ -94,7 +101,7 @@ func (worker *Share) Start() (err error) {
 				thumbType, ok := thumb.Types[a.ShareSize]
 
 				if !ok {
-					log.Errorf("share: invalid size %s", a.ShareSize)
+					log.Errorf("share-worker: invalid size %s", a.ShareSize)
 					continue
 				}
 
@@ -111,7 +118,7 @@ func (worker *Share) Start() (err error) {
 				file.Errors++
 				file.Error = err.Error()
 			} else {
-				log.Infof("share: uploaded %s to %s", file.RemoteName, a.AccName)
+				log.Infof("share-worker: uploaded %s to %s", file.RemoteName, a.AccName)
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareShared
@@ -162,7 +169,7 @@ func (worker *Share) Start() (err error) {
 				file.Errors++
 				file.Error = err.Error()
 			} else {
-				log.Infof("share: removed %s from %s", file.RemoteName, a.AccName)
+				log.Infof("share-worker: removed %s from %s", file.RemoteName, a.AccName)
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareRemoved

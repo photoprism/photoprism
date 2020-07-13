@@ -5,6 +5,7 @@ import (
 	"math"
 	"path"
 	"path/filepath"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"time"
@@ -35,7 +36,7 @@ func Exif(fileName string) (data Data, err error) {
 func (data *Data) Exif(fileName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s in %s (exif panic)", e, txt.Quote(filepath.Base(fileName)))
+			err = fmt.Errorf("metadata: %s in %s (exif panic)\nstack: %s", e, txt.Quote(filepath.Base(fileName)), debug.Stack())
 		}
 	}()
 

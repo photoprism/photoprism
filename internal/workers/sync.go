@@ -2,6 +2,7 @@ package workers
 
 import (
 	"fmt"
+	"runtime/debug"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -28,21 +29,28 @@ func NewSync(conf *config.Config) *Sync {
 // logError logs an error message if err is not nil.
 func (worker *Sync) logError(err error) {
 	if err != nil {
-		log.Errorf("sync: %s", err.Error())
+		log.Errorf("sync-worker: %s", err.Error())
 	}
 }
 
 // logWarn logs a warning message if err is not nil.
 func (worker *Sync) logWarn(err error) {
 	if err != nil {
-		log.Warnf("sync: %s", err.Error())
+		log.Warnf("sync-worker: %s", err.Error())
 	}
 }
 
 // Start starts the sync worker.
 func (worker *Sync) Start() (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("sync-worker: %s (panic)\nstack: %s", r, debug.Stack())
+			log.Error(err)
+		}
+	}()
+
 	if err := mutex.SyncWorker.Start(); err != nil {
-		event.Error(fmt.Sprintf("sync: %s", err.Error()))
+		log.Warnf("sync-worker: %s (start)", err.Error())
 		return err
 	}
 
@@ -66,7 +74,7 @@ func (worker *Sync) Start() (err error) {
 			if err := entity.Db().Save(&a).Error; err != nil {
 				worker.logError(err)
 			} else {
-				log.Warnf("sync: disabled sync, %s failed more than %d times", a.AccName, a.RetryLimit)
+				log.Warnf("sync-worker: disabled sync, %s failed more than %d times", a.AccName, a.RetryLimit)
 			}
 
 			continue
