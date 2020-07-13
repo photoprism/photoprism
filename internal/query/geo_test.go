@@ -138,4 +138,69 @@ func TestGeo(t *testing.T) {
 		}
 		assert.IsType(t, GeoResults{}, result)
 	})
+	t.Run("query too short", func(t *testing.T) {
+		f := form.GeoSearch{
+			Query: "a",
+		}
+
+		result, err := Geo(f)
+
+		assert.Error(t, err)
+		assert.IsType(t, GeoResults{}, result)
+	})
+	t.Run("query for label flower", func(t *testing.T) {
+		f := form.GeoSearch{
+			Query: "flower",
+		}
+
+		result, err := Geo(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.IsType(t, GeoResults{}, result)
+	})
+	t.Run("query for label landscape", func(t *testing.T) {
+		f := form.GeoSearch{
+			Query:    "landscape",
+			Album:    "test",
+			Camera:   123,
+			Lens:     123,
+			Year:     2010,
+			Month:    12,
+			Color:    "red",
+			Country:  "zz",
+			Type:     "jpg",
+			Video:    true,
+			Path:     "/xxx/xxx",
+			Name:     "xxx",
+			Archived: false,
+			Private:  true,
+		}
+
+		result, err := Geo(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.IsType(t, GeoResults{}, result)
+	})
+	t.Run("search with multiple parameters", func(t *testing.T) {
+		f := form.GeoSearch{
+			Query:    "landscape",
+			Photo:    true,
+			Path:     "/xxx/xxx",
+			Name:     "xxx",
+			Archived: false,
+			Private:  false,
+			Public:   true,
+		}
+
+		result, err := Geo(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.IsType(t, GeoResults{}, result)
+	})
 }

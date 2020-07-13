@@ -1,6 +1,7 @@
 package query
 
 import (
+	"github.com/photoprism/photoprism/internal/entity"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -67,4 +68,12 @@ func TestResetPhotosQuality(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestPhotosCheck(t *testing.T) {
+	result, err := PhotosCheck(10, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.IsType(t, entity.Photos{}, result)
 }

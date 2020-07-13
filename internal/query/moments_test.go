@@ -110,3 +110,54 @@ func TestMomentsCategories(t *testing.T) {
 		}
 	})
 }
+
+func TestMoment_Title(t *testing.T) {
+	t.Run("country", func(t *testing.T) {
+		moment := Moment{
+			Label:      "",
+			Country:    "de",
+			State:      "",
+			Year:       0,
+			Month:      0,
+			PhotoCount: 0,
+		}
+
+		assert.Equal(t, "de", moment.Title())
+	})
+	t.Run("country and year", func(t *testing.T) {
+		moment := Moment{
+			Label:      "",
+			Country:    "de",
+			State:      "",
+			Year:       2010,
+			Month:      0,
+			PhotoCount: 0,
+		}
+
+		assert.Equal(t, "Germany 2010", moment.Title())
+	})
+	t.Run("state, country, month and year", func(t *testing.T) {
+		moment := Moment{
+			Label:      "",
+			Country:    "de",
+			State:      "Pfalz",
+			Year:       2010,
+			Month:      12,
+			PhotoCount: 0,
+		}
+
+		assert.Equal(t, "Germany / December 2010", moment.Title())
+	})
+	t.Run("month", func(t *testing.T) {
+		moment := Moment{
+			Label:      "",
+			Country:    "",
+			State:      "",
+			Year:       0,
+			Month:      13,
+			PhotoCount: 0,
+		}
+
+		assert.Equal(t, "Unknown", moment.Title())
+	})
+}

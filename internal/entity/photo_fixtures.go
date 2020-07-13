@@ -271,6 +271,7 @@ var PhotoFixtures = PhotoMap{
 		LensID:           LensFixtures.Pointer("lens-f-380").ID,
 		Keywords: []Keyword{
 			KeywordFixtures.Get("bridge"),
+			KeywordFixtures.Get("flower"),
 		},
 		Albums: []Album{
 			AlbumFixtures.Get("berlin-2019"),
