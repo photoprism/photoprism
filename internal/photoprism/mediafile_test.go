@@ -1679,3 +1679,251 @@ func TestMediaFile_FileType(t *testing.T) {
 	assert.Equal(t, fs.TypeJpeg, m.FileType())
 	assert.Equal(t, ".png", m.Extension())
 }
+
+func TestMediaFile_Stat(t *testing.T) {
+	t.Run("iphone_7.heic", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		size, time := mediaFile.Stat()
+		assert.Equal(t, int64(785743), size)
+		assert.IsType(t, time, time)
+	})
+}
+
+func TestMediaFile_FileSize(t *testing.T) {
+	t.Run("iphone_7.heic", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		size := mediaFile.FileSize()
+		assert.Equal(t, int64(785743), size)
+	})
+}
+
+func TestMediaFile_JsonName(t *testing.T) {
+	t.Run("blue-go-video.mp4", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		name := mediaFile.JsonName()
+		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples/blue-go-video.mp4.json", name)
+	})
+}
+
+func TestMediaFile_PathNameInfo(t *testing.T) {
+	t.Run("blue-go-video.mp4", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		root, base, path, name := mediaFile.PathNameInfo()
+		assert.Equal(t, "examples", root)
+		assert.Equal(t, "blue-go-video", base)
+		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples", path)
+		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples/blue-go-video.mp4", name)
+
+	})
+
+	t.Run("beach_sand sidecar", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
+		initialName := mediaFile.FileName()
+		mediaFile.SetFileName(".photoprism/beach_sand.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		root, base, path, name := mediaFile.PathNameInfo()
+		assert.Equal(t, "sidecar", root)
+		assert.Equal(t, "beach_sand", base)
+		assert.Equal(t, "", path)
+		assert.Equal(t, "beach_sand.jpg", name)
+		mediaFile.SetFileName(initialName)
+	})
+
+	t.Run("beach_sand import", func(t *testing.T) {
+		conf := config.TestConfig()
+		t.Log(Config().SidecarPath())
+		t.Log(Config().ImportPath())
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
+		initialName := mediaFile.FileName()
+		t.Log(initialName)
+		mediaFile.SetFileName("/go/src/github.com/photoprism/photoprism/storage/testdata/import/beach_sand.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		root, base, path, name := mediaFile.PathNameInfo()
+		assert.Equal(t, "import", root)
+		assert.Equal(t, "beach_sand", base)
+		assert.Equal(t, "", path)
+		assert.Equal(t, "beach_sand.jpg", name)
+		mediaFile.SetFileName(initialName)
+	})
+
+	t.Run("beach_sand unknown root", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
+		initialName := mediaFile.FileName()
+		mediaFile.SetFileName("/go/src/github.com/photoprism/notExisting/xxx/beach_sand.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		root, base, path, name := mediaFile.PathNameInfo()
+		assert.Equal(t, "", root)
+		assert.Equal(t, "beach_sand", base)
+		assert.Equal(t, "/go/src/github.com/photoprism/notExisting/xxx", path)
+		assert.Equal(t, "/go/src/github.com/photoprism/notExisting/xxx/beach_sand.jpg", name)
+		mediaFile.SetFileName(initialName)
+	})
+}
+
+func TestMediaFile_SubDirectory(t *testing.T) {
+	t.Run("blue-go-video.mp4", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		subdir := mediaFile.SubDirectory("xxx")
+		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples/xxx", subdir)
+	})
+}
+
+func TestMediaFile_HasSameName(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		mediaFile2, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, mediaFile.HasSameName(nil))
+		assert.False(t, mediaFile.HasSameName(mediaFile2))
+
+	})
+}
+
+func TestMediaFile_IsJson(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, mediaFile.IsJson())
+	})
+	t.Run("true", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.json")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, mediaFile.IsJson())
+	})
+}
+
+func TestMediaFile_IsPlayableVideo(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.json")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, mediaFile.IsPlayableVideo())
+	})
+	t.Run("true", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, mediaFile.IsPlayableVideo())
+	})
+}
+
+func TestMediaFile_HasJson(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, mediaFile.HasJson())
+	})
+	t.Run("true", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, mediaFile.HasJson())
+	})
+	t.Run("true", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4.json")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, mediaFile.HasJson())
+	})
+}

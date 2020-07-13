@@ -255,6 +255,7 @@ func (m *MediaFile) EditedName() string {
 // JsonName returns the corresponding JSON sidecar file name as used by Google Photos (and potentially other apps).
 func (m *MediaFile) JsonName() string {
 	jsonName := m.fileName + ".json"
+	fmt.Println(jsonName)
 
 	if fs.FileExists(jsonName) {
 		return jsonName
