@@ -341,11 +341,13 @@ func (data *Data) Exif(fileName string) (err error) {
 
 	if value, ok := tags["Flash"]; ok {
 		if i, err := strconv.Atoi(value); err == nil && i&1 == 1 {
+			data.AddKeyword(KeywordFlash)
 			data.Flash = true
 		}
 	}
 
 	if value, ok := tags["ImageDescription"]; ok {
+		data.AutoAddKeywords(value)
 		data.Description = SanitizeDescription(value)
 	}
 

@@ -24,14 +24,20 @@ var UnwantedDescriptions = map[string]bool{
 	"frem":                   true,
 	"oznor":                  true,
 	"rpt":                    true,
+	"burst":                  true,
 }
 
 var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")
 
 // SanitizeString removes unwanted character from an exif value string.
-func SanitizeString(value string) string {
-	value = strings.TrimSpace(value)
-	return strings.Replace(value, "\"", "", -1)
+func SanitizeString(s string) string {
+	if s == "" {
+		return ""
+	}
+
+	s = strings.TrimSpace(s)
+
+	return strings.Replace(s, "\"", "", -1)
 }
 
 // SanitizeUID normalizes unique IDs found in XMP or Exif metadata.
@@ -54,6 +60,10 @@ func SanitizeUID(value string) string {
 func SanitizeTitle(title string) string {
 	s := SanitizeString(title)
 
+	if s == "" {
+		return ""
+	}
+
 	result := fs.StripKnownExt(s)
 
 	if fs.IsGenerated(result) || txt.IsTime(result) {
@@ -75,7 +85,9 @@ func SanitizeTitle(title string) string {
 func SanitizeDescription(s string) string {
 	s = SanitizeString(s)
 
-	if remove := UnwantedDescriptions[s]; remove {
+	if s == "" {
+		return ""
+	} else if remove := UnwantedDescriptions[s]; remove {
 		s = ""
 	} else if strings.HasPrefix(s, "DCIM\\") && !strings.Contains(s, " ") {
 		s = ""
