@@ -2,6 +2,7 @@ package workers
 
 import (
 	"github.com/photoprism/photoprism/internal/entity"
+	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -31,7 +32,7 @@ func TestSync_downloadPath(t *testing.T) {
 	worker := NewSync(conf)
 
 	assert.IsType(t, &Sync{}, worker)
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/temp/sync", worker.downloadPath())
+	assert.True(t, strings.HasSuffix(worker.downloadPath(), "testdata/temp/sync"))
 }
 
 func TestSync_relatedDownloads(t *testing.T) {

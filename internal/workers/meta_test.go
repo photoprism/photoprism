@@ -1,6 +1,7 @@
 package workers
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -30,10 +31,6 @@ func TestPrism_Start(t *testing.T) {
 	if err := worker.Start(); err != nil {
 		t.Fatal(err)
 	}
-
-	if err := worker.Start(); err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestMeta_originalsPath(t *testing.T) {
@@ -42,5 +39,5 @@ func TestMeta_originalsPath(t *testing.T) {
 	worker := NewMeta(conf)
 
 	assert.IsType(t, &Meta{}, worker)
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/originals", worker.originalsPath())
+	assert.True(t, strings.HasSuffix(worker.originalsPath(), "testdata/originals"))
 }
