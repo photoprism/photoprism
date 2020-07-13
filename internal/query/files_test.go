@@ -19,11 +19,32 @@ func TestFilesByPath(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(files))
 	})
+	t.Run("files found - path starting with /", func(t *testing.T) {
+		files, err := FilesByPath(10, 0, entity.RootOriginals, "/2016/11")
+
+		t.Logf("files: %+v", files)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(files))
+	})
 }
 
 func TestExistingFiles(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
 		files, err := Files(1000, 0, "/", true)
+
+		t.Logf("files: %+v", files)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 5, len(files))
+	})
+	t.Run("files found - includeMissing false", func(t *testing.T) {
+		files, err := Files(1000, 0, "/", false)
 
 		t.Logf("files: %+v", files)
 
@@ -83,6 +104,24 @@ func TestFileByPhotoUID(t *testing.T) {
 	})
 }
 
+func TestVideoByPhotoUID(t *testing.T) {
+	t.Run("files found", func(t *testing.T) {
+		file, err := VideoByPhotoUID("pt9jtdre2lvl0yh0")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "bridge.mp4", file.FileName)
+	})
+
+	t.Run("no files found", func(t *testing.T) {
+		file, err := VideoByPhotoUID("111")
+
+		assert.Error(t, err, "record not found")
+		t.Log(file)
+	})
+}
+
 func TestFileByUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
 		file, err := FileByUID("ft8es39w45bnlqdw")
@@ -132,6 +171,15 @@ func TestSetPhotoPrimary(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	//TODO How to assert
+	//assert.Equal(t, true, entity.FileFixturesExampleXMP.FilePrimary)
+}
+
+func TestSetFileError(t *testing.T) {
+	assert.Equal(t, "", entity.FileFixturesExampleXMP.FileError)
+
+	SetFileError("ft2es49whhbnlqdn", "errorFromTest")
+
 	//TODO How to assert
 	//assert.Equal(t, true, entity.FileFixturesExampleXMP.FilePrimary)
 }
