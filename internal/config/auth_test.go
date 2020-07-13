@@ -37,4 +37,17 @@ func TestUtils_isBcrypt(t *testing.T) {
 
 	p = "admin"
 	assert.False(t, isBcrypt(p))
+
+	p = ""
+	assert.False(t, isBcrypt(p))
+}
+
+func TestConfig_InvalidDownloadToken(t *testing.T) {
+	config := NewTestConfig()
+	assert.True(t, config.InvalidDownloadToken("xxx"))
+}
+
+func TestConfig_InvalidPreviewToken(t *testing.T) {
+	config := NewTestConfig()
+	assert.True(t, config.InvalidPreviewToken("xxx"))
 }

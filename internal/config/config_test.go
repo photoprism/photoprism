@@ -4,6 +4,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/sirupsen/logrus"
@@ -326,4 +327,19 @@ func TestConfig_Workers(t *testing.T) {
 	c := NewConfig(ctx)
 
 	assert.GreaterOrEqual(t, c.Workers(), 1)
+}
+
+func TestConfig_WakeupInterval(t *testing.T) {
+	c := NewTestConfig()
+	assert.Equal(t, time.Duration(900000000000), c.WakeupInterval())
+}
+
+func TestConfig_GeoCodingApi(t *testing.T) {
+	c := NewTestConfig()
+	assert.Equal(t, "", c.GeoCodingApi())
+}
+
+func TestConfig_OriginalsLimit(t *testing.T) {
+	c := NewTestConfig()
+	assert.Equal(t, int64(-1), c.OriginalsLimit())
 }
