@@ -6,7 +6,7 @@ import (
 )
 
 func TestConfig_PublicConfig(t *testing.T) {
-	config := NewTestConfig()
+	config := TestConfig()
 	result := config.PublicConfig()
 	assert.IsType(t, ClientConfig{}, result)
 	assert.Equal(t, true, result.Public)
@@ -17,17 +17,22 @@ func TestConfig_PublicConfig(t *testing.T) {
 }
 
 func TestConfig_GuestConfig(t *testing.T) {
-	config := NewTestConfig()
+	config := TestConfig()
 	result := config.GuestConfig()
 	assert.IsType(t, ClientConfig{}, result)
 	assert.Equal(t, true, result.Public)
+	assert.Equal(t, false, result.Experimental)
+	assert.Equal(t, true, result.ReadOnly)
 }
 
 func TestConfig_Flags(t *testing.T) {
-	config := NewTestConfig()
+	config := TestConfig()
 	config.params.Experimental = true
 	config.params.ReadOnly = true
 
 	result := config.Flags()
 	assert.Equal(t, []string{"public", "debug", "experimental", "readonly", "settings"}, result)
+
+	config.params.Experimental = false
+	config.params.ReadOnly = false
 }

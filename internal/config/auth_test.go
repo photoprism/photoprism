@@ -7,8 +7,8 @@ import (
 )
 
 func TestUtils_CheckPassword(t *testing.T) {
-	ctx := CliTestContext()
-	c := NewConfig(ctx)
+	c := NewConfig(CliTestContext())
+
 	formPassword := "photoprism"
 
 	c.params.AdminPassword = "$2b$10$cRhWIleqJkbaFWhBMp54VOI25RvVubxOooCWzWgdrvl5COFxaBnAy"
@@ -43,11 +43,13 @@ func TestUtils_isBcrypt(t *testing.T) {
 }
 
 func TestConfig_InvalidDownloadToken(t *testing.T) {
-	config := NewTestConfig()
-	assert.True(t, config.InvalidDownloadToken("xxx"))
+	c := NewConfig(CliTestContext())
+
+	assert.True(t, c.InvalidDownloadToken("xxx"))
 }
 
 func TestConfig_InvalidPreviewToken(t *testing.T) {
-	config := NewTestConfig()
-	assert.True(t, config.InvalidPreviewToken("xxx"))
+	c := NewConfig(CliTestContext())
+
+	assert.True(t, c.InvalidPreviewToken("xxx"))
 }

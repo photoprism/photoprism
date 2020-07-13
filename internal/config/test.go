@@ -158,7 +158,8 @@ func NewTestErrorConfig() *Config {
 		log.Fatalf("config: %s", err.Error())
 	}
 
-	c.InitDb()
+	c.InitTestDb()
+
 	return c
 }
 
@@ -169,6 +170,7 @@ func CliTestContext() *cli.Context {
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.Bool("debug", false, "doc")
 	globalSet.String("storage-path", config.StoragePath, "doc")
+	globalSet.String("sidecar-path", config.SidecarPath, "doc")
 	globalSet.String("config-file", config.ConfigFile, "doc")
 	globalSet.String("assets-path", config.AssetsPath, "doc")
 	globalSet.String("originals-path", config.OriginalsPath, "doc")
@@ -185,6 +187,7 @@ func CliTestContext() *cli.Context {
 	c := cli.NewContext(app, globalSet, nil)
 
 	LogError(c.Set("storage-path", config.StoragePath))
+	LogError(c.Set("sidecar-path", config.SidecarPath))
 	LogError(c.Set("config-file", config.ConfigFile))
 	LogError(c.Set("assets-path", config.AssetsPath))
 	LogError(c.Set("originals-path", config.OriginalsPath))

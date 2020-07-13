@@ -36,8 +36,4 @@ func TestShare_Start(t *testing.T) {
 	if err := worker.Start(); err != nil {
 		t.Fatal(err)
 	}
-
-	if err := worker.Start(); err != nil {
-		t.Fatal(err)
-	}
 }

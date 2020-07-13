@@ -6,11 +6,13 @@ import (
 )
 
 func TestConfig_DarktableUnlock(t *testing.T) {
-	c := NewTestConfig()
+	c := NewConfig(CliTestContext())
+
 	assert.False(t, c.DarktableUnlock())
 }
 
 func TestConfig_Darktablebin(t *testing.T) {
-	c := NewTestConfig()
+	c := NewConfig(CliTestContext())
+
 	assert.Equal(t, "/usr/bin/darktable-cli", c.DarktableBin())
 }

@@ -19,11 +19,9 @@ func TestSync_download(t *testing.T) {
 	assert.IsType(t, &Sync{}, worker)
 	account := entity.AccountFixtureWebdavDummy
 
-	complete, err := worker.download(account)
-	if err != nil {
+	if _, err := worker.download(account); err != nil {
 		t.Fatal(err)
 	}
-	assert.True(t, complete)
 }
 
 func TestSync_downloadPath(t *testing.T) {
@@ -42,10 +40,10 @@ func TestSync_relatedDownloads(t *testing.T) {
 	account := entity.AccountFixtureWebdavDummy
 
 	assert.IsType(t, &Sync{}, worker)
-	result, err := worker.relatedDownloads(account)
-	if err != nil {
-		t.Fatal(err)
-	}
 
-	assert.IsType(t, Downloads{}, result)
+	if result, err := worker.relatedDownloads(account); err != nil {
+		t.Fatal(err)
+	} else {
+		assert.IsType(t, Downloads{}, result)
+	}
 }
