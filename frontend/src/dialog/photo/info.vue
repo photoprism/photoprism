@@ -13,25 +13,25 @@
         </tr>
         <tr>
           <td>
-            <translate key="Type">Type</translate>
+            <translate>Type</translate>
           </td>
           <td>{{ model.Type | capitalize }}</td>
         </tr>
         <tr v-if="model.Path">
           <td>
-            <translate key="Folder">Folder</translate>
+            <translate>Folder</translate>
           </td>
           <td>{{ model.Path }}</td>
         </tr>
         <tr>
           <td>
-            <translate key="Name">Name</translate>
+            <translate>Name</translate>
           </td>
           <td>{{ model.Name }}</td>
         </tr>
         <tr v-if="model.OriginalName">
           <td>
-            <translate key="Original Name">Original Name</translate>
+            <translate>Original Name</translate>
           </td>
           <td>
             <v-text-field
@@ -44,19 +44,25 @@
         </tr>
         <tr>
           <td>
-            <translate key="Title">Title</translate>
+            <translate>Title</translate>
           </td>
           <td>{{ model.Title }}</td>
         </tr>
         <tr v-if="model.TitleSrc">
           <td>
-            <translate key="Title Source">Title Source</translate>
+            <translate>Title Source</translate>
           </td>
           <td>{{ model.TitleSrc | capitalize }}</td>
         </tr>
         <tr>
           <td>
-            <translate key="Quality Score">Quality Score</translate>
+            <translate>Taken</translate>
+          </td>
+          <td>{{ model.getDateString() }} <span v-if="model.TakenSrc">({{ model.TakenSrc | capitalize }})</span></td>
+        </tr>
+        <tr>
+          <td>
+            <translate>Quality Score</translate>
           </td>
           <td>
             <v-rating v-model="model.Quality" :length="7" readonly small></v-rating>
@@ -64,20 +70,20 @@
         </tr>
         <tr>
           <td>
-            <translate key="Resolution">Resolution</translate>
+            <translate>Resolution</translate>
           </td>
           <td>{{ model.Resolution }} MP</td>
         </tr>
         <tr v-if="model.CameraSerial">
           <td>
-            <translate key="Camera Serial">Camera Serial</translate>
+            <translate>Camera Serial</translate>
           </td>
           <td>{{ model.CameraSerial }}
           </td>
         </tr>
         <tr>
           <td>
-            <translate key="Favorite">Favorite</translate>
+            <translate>Favorite</translate>
           </td>
           <td>
             <v-switch
@@ -90,7 +96,7 @@
         </tr>
         <tr>
           <td>
-            <translate key="Private">Private</translate>
+            <translate>Private</translate>
           </td>
           <td>
             <v-switch
@@ -155,7 +161,7 @@
         </tr>
         <tr>
           <td>
-            <translate key="Created">Created</translate>
+            <translate>Created</translate>
           </td>
           <td>
             {{ formatTime(model.CreatedAt) }}
@@ -163,7 +169,7 @@
         </tr>
         <tr>
           <td>
-            <translate key="Updated">Updated</translate>
+            <translate>Updated</translate>
           </td>
           <td>
             {{ formatTime(model.UpdatedAt) }}
@@ -171,7 +177,7 @@
         </tr>
         <tr v-if="model.EditedAt">
           <td>
-            <translate key="Edited">Edited</translate>
+            <translate>Edited</translate>
           </td>
           <td>
             {{ formatTime(model.EditedAt) }}
@@ -179,7 +185,7 @@
         </tr>
         <tr v-if="model.CheckedAt">
           <td>
-            <translate key="Checked">Checked</translate>
+            <translate>Checked</translate>
           </td>
           <td>
             {{ formatTime(model.CheckedAt) }}
@@ -187,7 +193,7 @@
         </tr>
         <tr v-if="model.DeletedAt">
           <td>
-            <translate key="Archived">Archived</translate>
+            <translate>Archived</translate>
           </td>
           <td>
             {{ formatTime(model.DeletedAt) }}

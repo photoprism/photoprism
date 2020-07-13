@@ -7,6 +7,12 @@ import (
 )
 
 func TestTime(t *testing.T) {
+	t.Run("2018/04 - April/2018-04-12 19:24:49.gif", func(t *testing.T) {
+		result := Time("2018/04 - April/2018-04-12 19:24:49.gif")
+		assert.False(t, result.IsZero())
+		assert.Equal(t, "2018-04-12 19:24:49 +0000 UTC", result.String())
+	})
+
 	t.Run("/2020/1212/20130518_142022_3D657EBD.jpg", func(t *testing.T) {
 		result := Time("/2020/1212/20130518_142022_3D657EBD.jpg")
 		//assert.False(t, result.IsZero())

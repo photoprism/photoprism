@@ -66,7 +66,7 @@
                         <td>
                           <translate>Folder</translate>
                         </td>
-                        <td>{{ file.Root }}</td>
+                        <td>{{ file.Root | capitalize }}</td>
                       </tr>
                       <tr v-if="file.Name">
                         <td>
