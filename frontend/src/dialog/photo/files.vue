@@ -43,7 +43,7 @@
                       </tr>
                       <tr v-if="file.Type === 'jpg' && !file.Primary">
                         <td>
-                          <translate>Change Status</translate>
+                          <translate>Actions</translate>
                         </td>
                         <td>
                           <v-btn small depressed dark color="secondary-dark" class="ma-0 action-primary"
@@ -62,6 +62,12 @@
                         </td>
                         <td>{{ file.UID | uppercase }}</td>
                       </tr>
+                      <tr>
+                        <td>
+                          <translate>Hash</translate>
+                        </td>
+                        <td>{{ file.Hash }}</td>
+                      </tr>
                       <tr v-if="file.Root">
                         <td>
                           <translate>Folder</translate>
@@ -79,6 +85,12 @@
                           <translate>Original Name</translate>
                         </td>
                         <td>{{ file.OriginalName }}</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <translate>Size</translate>
+                        </td>
+                        <td>{{ file.sizeInfo() }}</td>
                       </tr>
                       <tr v-if="file.Type">
                         <td>
@@ -104,11 +116,23 @@
                         </td>
                         <td><translate>Yes</translate></td>
                       </tr>
-                      <tr>
+                      <tr v-if="file.AspectRatio">
                         <td>
-                          <translate>Size</translate>
+                          <translate>Aspect Ratio</translate>
                         </td>
-                        <td>{{ file.sizeInfo() }}</td>
+                        <td>{{ file.AspectRatio }}</td>
+                      </tr>
+                      <tr v-if="file.MainColor">
+                        <td>
+                          <translate>Main Color</translate>
+                        </td>
+                        <td>{{ file.MainColor | capitalize }}</td>
+                      </tr>
+                      <tr v-if="file.Type === 'jpg'">
+                        <td>
+                          <translate>Chroma</translate>
+                        </td>
+                        <td>{{ file.Chroma }} / 100</td>
                       </tr>
                       <tr v-if="file.Error">
                         <td>
@@ -132,13 +156,13 @@
                         <td>
                           <translate>Added</translate>
                         </td>
-                        <td>{{ formatTime(file.CreatedAt) }}</td>
+                        <td>{{ formatTime(file.CreatedAt) }} <translate>in</translate> {{ Math.round(file.CreatedIn / 1000000) | number('0,0') }} ms</td>
                       </tr>
-                      <tr>
+                      <tr v-if="file.UpdatedIn">
                         <td>
                           <translate>Updated</translate>
                         </td>
-                        <td>{{ formatTime(file.UpdatedAt) }}</td>
+                        <td>{{ formatTime(file.UpdatedAt) }} <translate>in</translate> {{ Math.round(file.UpdatedIn / 1000000) | number('0,0') }} ms</td>
                       </tr>
                       </tbody>
                     </table>

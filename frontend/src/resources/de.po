@@ -66,6 +66,10 @@ msgstr "Genauigkeit"
 msgid "Action"
 msgstr "Aktion"
 
+#: src/dialog/photo/files.vue:29
+msgid "Actions"
+msgstr "Aktionen"
+
 #: src/pages/settings/general.vue:320
 msgid "Add files to your library via Web Upload."
 msgstr "Dateien über den Browser hochladen und indizieren."
@@ -89,7 +93,7 @@ msgstr "Server hinzufügen"
 msgid "Add to album"
 msgstr "Hinzufügen"
 
-#: src/dialog/photo/files.vue:114
+#: src/dialog/photo/files.vue:138
 msgid "Added"
 msgstr "Hinzugefügt"
 
@@ -268,6 +272,10 @@ msgstr "Diesen Account wirklich löschen?"
 msgid "Artist"
 msgstr "Ersteller"
 
+#: src/dialog/photo/files.vue:102
+msgid "Aspect Ratio"
+msgstr "Seitenverhältnis"
+
 #: src/pages/settings/account.vue:70
 msgid "At least 6 characters."
 msgstr "Mindestens 6 Zeichen."
@@ -350,20 +358,20 @@ msgstr "Titel, Datum, Ort und andere Metadaten können geändert werden."
 msgid "Change private flag"
 msgstr "Als privat markieren"
 
-#: src/dialog/photo/files.vue:29
-msgid "Change Status"
-msgstr "Status ändern"
-
 #: src/dialog/photo/info.vue:160
 msgid "Checked"
 msgstr "Geprüft"
+
+#: src/dialog/photo/files.vue:114
+msgid "Chroma"
+msgstr "Farbsättigung"
 
 #: src/dialog/photo/details.vue:120 src/dialog/share.vue:85
 #: src/pages/library/errors.vue:56
 msgid "Close"
 msgstr "Schließen"
 
-#: src/dialog/photo/files.vue:72
+#: src/dialog/photo/files.vue:84
 msgid "Codec"
 msgstr "Codec"
 
@@ -495,7 +503,7 @@ msgstr "Unser englischer User Guide enthält eine detaillierte Anleitung."
 msgid "Details"
 msgstr "Details"
 
-#: src/dialog/photo/files.vue:181
+#: src/dialog/photo/files.vue:206
 msgid "Dimensions"
 msgstr "Auflösung"
 
@@ -539,7 +547,7 @@ msgstr ""
 msgid "Downloading…"
 msgstr "Wird heruntergeladen…"
 
-#: src/dialog/photo/files.vue:108
+#: src/dialog/photo/files.vue:132
 msgid "Duplicate"
 msgstr "Duplikat"
 
@@ -580,7 +588,7 @@ msgstr "Aktiv"
 msgid "English"
 msgstr "Englisch"
 
-#: src/dialog/photo/files.vue:96
+#: src/dialog/photo/files.vue:120
 msgid "Error"
 msgstr "Fehler"
 
@@ -674,7 +682,7 @@ msgid "Focal Length"
 msgstr "Brennweite"
 
 #: src/dialog/account/edit.vue:326 src/dialog/account/edit.vue:332
-#: src/dialog/photo/files.vue:48 src/dialog/photo/info.vue:21
+#: src/dialog/photo/files.vue:54 src/dialog/photo/info.vue:21
 #: src/dialog/share/upload.vue:147 src/model/folder.js:187
 #: src/pages/library/files.vue:84 src/pages/library/import.vue:120
 #: src/pages/library/index.vue:117
@@ -729,6 +737,10 @@ msgstr "Ähnlichkeit"
 #: src/pages/settings/general.vue:162
 msgid "Group Sequential"
 msgstr "Sequenzen gruppieren"
+
+#: src/dialog/photo/files.vue:48
+msgid "Hash"
+msgstr "Prüfsumme"
 
 #: src/component/navigation.vue:331 src/component/navigation.vue:25
 #: src/pages/help.vue:4
@@ -798,6 +810,10 @@ msgstr "Importiere %{name}…"
 #: src/pages/library/import.vue:6
 msgid "Importing files to originals…"
 msgstr "Importiere Dateien nach Originals…"
+
+#: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:146
+msgid "in"
+msgstr "in"
 
 #: src/pages/library.vue:4
 msgid "Index"
@@ -946,6 +962,10 @@ msgstr "Längengrad"
 msgid "Magenta"
 msgstr "Magenta"
 
+#: src/dialog/photo/files.vue:108
+msgid "Main Color"
+msgstr "Hauptfarbe"
+
 #: src/dialog/photo/labels.vue:126
 msgid "manual"
 msgstr "Manuell"
@@ -958,7 +978,7 @@ msgstr "Manueller Upload"
 msgid "Medium"
 msgstr "Mittel"
 
-#: src/dialog/photo/files.vue:102
+#: src/dialog/photo/files.vue:126
 msgid "Missing"
 msgstr "Fehlend"
 
@@ -1020,8 +1040,8 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: src/component/photo/list.vue:117 src/dialog/account/edit.vue:488
-#: src/dialog/album/edit.vue:120 src/dialog/photo/files.vue:54
-#: src/dialog/photo/files.vue:180 src/dialog/photo/info.vue:27
+#: src/dialog/album/edit.vue:120 src/dialog/photo/files.vue:60
+#: src/dialog/photo/files.vue:205 src/dialog/photo/info.vue:27
 #: src/pages/login.vue:72 src/share/photo/list.vue:95
 msgid "Name"
 msgstr "Name"
@@ -1194,9 +1214,9 @@ msgstr "Original"
 msgid "Original file names will be stored and indexed."
 msgstr "Die ursprünglichen Dateinamen werden im Index gespeichert."
 
-#: src/dialog/photo/files.vue:60 src/dialog/photo/info.vue:33
+#: src/dialog/photo/files.vue:66 src/dialog/photo/info.vue:33
 msgid "Original Name"
-msgstr "Original Name"
+msgstr "Originalname"
 
 #: src/component/navigation.vue:282 src/pages/library/files.vue:6
 #: src/pages/settings/general.vue:479
@@ -1270,7 +1290,7 @@ msgstr "Bitte Name und Passwort eingeben, um fortzufahren:"
 msgid "Polish"
 msgstr "Polnisch"
 
-#: src/dialog/photo/files.vue:84
+#: src/dialog/photo/files.vue:96
 msgid "Portrait"
 msgstr "Portrait"
 
@@ -1294,10 +1314,10 @@ msgstr "Enter drücken, um ein neues Album zu erstellen."
 msgid "Preview"
 msgstr "Voransicht"
 
-#: src/dialog/photo/files.vue:33 src/dialog/photo/files.vue:78
-#: src/dialog/photo/files.vue:174
+#: src/dialog/photo/files.vue:33 src/dialog/photo/files.vue:90
+#: src/dialog/photo/files.vue:199
 msgid "Primary"
-msgstr "Hauptdatei"
+msgstr "Primärdatei"
 
 #: src/component/navigation.vue:129 src/dialog/photo/info.vue:88
 #: src/routes.js:171
@@ -1479,7 +1499,7 @@ msgstr "Mit dir geteilt."
 
 #: src/pages/settings/general.vue:576
 msgid "Show Library in navigation menu."
-msgstr "Datei-Verwaltung in der Hauptnavigation anzeigen."
+msgstr "Datei-Verwaltung in der Navigation anzeigen."
 
 #: src/pages/settings/general.vue:640
 msgid "Show server logs in Library."
@@ -1501,8 +1521,8 @@ msgstr "Anmelden"
 msgid "Similar"
 msgstr "Ähnlich"
 
-#: src/dialog/account/edit.vue:261 src/dialog/photo/files.vue:90
-#: src/dialog/photo/files.vue:182
+#: src/dialog/account/edit.vue:261 src/dialog/photo/files.vue:72
+#: src/dialog/photo/files.vue:207
 msgid "Size"
 msgstr "Größe"
 
@@ -1540,7 +1560,7 @@ msgstr "Start"
 msgid "States"
 msgstr "Länder"
 
-#: src/dialog/photo/files.vue:184
+#: src/dialog/photo/files.vue:209
 msgid "Status"
 msgstr "Status"
 
@@ -1661,8 +1681,8 @@ msgstr "Markenrechte"
 msgid "Try again using other filters or keywords."
 msgstr "Versuche es mit anderen Filtern oder Suchbegriffen."
 
-#: src/dialog/account/edit.vue:620 src/dialog/photo/files.vue:66
-#: src/dialog/photo/files.vue:183 src/dialog/photo/info.vue:15
+#: src/dialog/account/edit.vue:620 src/dialog/photo/files.vue:78
+#: src/dialog/photo/files.vue:208 src/dialog/photo/info.vue:15
 msgid "Type"
 msgstr "Typ"
 
@@ -1687,9 +1707,9 @@ msgstr "Unsortiert"
 
 #: src/dialog/photo/files.vue:36
 msgid "Unstack"
-msgstr "Aus Stapel entfernen"
+msgstr "Auslagern"
 
-#: src/dialog/photo/files.vue:120 src/dialog/photo/info.vue:144
+#: src/dialog/photo/files.vue:144 src/dialog/photo/info.vue:144
 msgid "Updated"
 msgstr "Geändert"
 
@@ -1800,9 +1820,9 @@ msgstr "Jahr"
 msgid "Yellow"
 msgstr "Gelb"
 
-#: src/dialog/photo/archive.vue:15 src/dialog/photo/files.vue:80
-#: src/dialog/photo/files.vue:86 src/dialog/photo/files.vue:104
-#: src/dialog/photo/files.vue:110 src/dialog/photo/info.vue:159
+#: src/dialog/photo/archive.vue:15 src/dialog/photo/files.vue:92
+#: src/dialog/photo/files.vue:98 src/dialog/photo/files.vue:128
+#: src/dialog/photo/files.vue:134 src/dialog/photo/info.vue:159
 #: src/dialog/photo/info.vue:186 src/dialog/photo/info.vue:213
 msgid "Yes"
 msgstr "Ja"
@@ -1829,6 +1849,9 @@ msgstr ""
 "Server zu betreiben und über das Projekt zu berichten.\n"
 "Das Bewerben kommerzieller Produkte, Waren oder Dienstleistungen ist nur "
 "nach vorheriger, schriftlicher Genehmigung erlaubt."
+
+#~ msgid "Change Status"
+#~ msgstr "Status ändern"
 
 #~ msgid "Ungroup"
 #~ msgstr "Gruppierung auflösen"

@@ -61,6 +61,10 @@ msgstr ""
 msgid "Action"
 msgstr ""
 
+#: src/dialog/photo/files.vue:29
+msgid "Actions"
+msgstr ""
+
 #: src/pages/settings/general.vue:320
 msgid "Add files to your library via Web Upload."
 msgstr ""
@@ -88,7 +92,7 @@ msgstr ""
 msgid "Add to album"
 msgstr ""
 
-#: src/dialog/photo/files.vue:114
+#: src/dialog/photo/files.vue:138
 msgid "Added"
 msgstr ""
 
@@ -272,6 +276,10 @@ msgstr ""
 msgid "Artist"
 msgstr ""
 
+#: src/dialog/photo/files.vue:102
+msgid "Aspect Ratio"
+msgstr ""
+
 #: src/pages/settings/account.vue:70
 msgid "At least 6 characters."
 msgstr ""
@@ -371,12 +379,12 @@ msgstr ""
 msgid "Change private flag"
 msgstr ""
 
-#: src/dialog/photo/files.vue:29
-msgid "Change Status"
-msgstr ""
-
 #: src/dialog/photo/info.vue:160
 msgid "Checked"
+msgstr ""
+
+#: src/dialog/photo/files.vue:114
+msgid "Chroma"
 msgstr ""
 
 #: src/dialog/photo/details.vue:120
@@ -385,7 +393,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: src/dialog/photo/files.vue:72
+#: src/dialog/photo/files.vue:84
 msgid "Codec"
 msgstr ""
 
@@ -534,7 +542,7 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-#: src/dialog/photo/files.vue:181
+#: src/dialog/photo/files.vue:206
 msgid "Dimensions"
 msgstr ""
 
@@ -588,7 +596,7 @@ msgstr ""
 msgid "Downloading…"
 msgstr ""
 
-#: src/dialog/photo/files.vue:108
+#: src/dialog/photo/files.vue:132
 msgid "Duplicate"
 msgstr ""
 
@@ -632,7 +640,7 @@ msgstr ""
 msgid "English"
 msgstr ""
 
-#: src/dialog/photo/files.vue:96
+#: src/dialog/photo/files.vue:120
 msgid "Error"
 msgstr ""
 
@@ -718,7 +726,7 @@ msgstr ""
 
 #: src/dialog/account/edit.vue:326
 #: src/dialog/account/edit.vue:332
-#: src/dialog/photo/files.vue:48
+#: src/dialog/photo/files.vue:54
 #: src/dialog/photo/info.vue:21
 #: src/dialog/share/upload.vue:147
 #: src/model/folder.js:187
@@ -780,6 +788,10 @@ msgstr ""
 msgid "Group Sequential"
 msgstr ""
 
+#: src/dialog/photo/files.vue:48
+msgid "Hash"
+msgstr ""
+
 #: src/component/navigation.vue:331
 #: src/component/navigation.vue:25
 #: src/pages/help.vue:4
@@ -839,6 +851,11 @@ msgstr ""
 
 #: src/pages/library/import.vue:6
 msgid "Importing files to originals…"
+msgstr ""
+
+#: src/dialog/photo/files.vue:140
+#: src/dialog/photo/files.vue:146
+msgid "in"
 msgstr ""
 
 #: src/pages/library.vue:4
@@ -999,6 +1016,10 @@ msgstr ""
 msgid "Magenta"
 msgstr ""
 
+#: src/dialog/photo/files.vue:108
+msgid "Main Color"
+msgstr ""
+
 #: src/dialog/photo/labels.vue:126
 msgid "manual"
 msgstr ""
@@ -1011,7 +1032,7 @@ msgstr ""
 msgid "Medium"
 msgstr ""
 
-#: src/dialog/photo/files.vue:102
+#: src/dialog/photo/files.vue:126
 msgid "Missing"
 msgstr ""
 
@@ -1086,8 +1107,8 @@ msgstr[1] ""
 #: src/component/photo/list.vue:117
 #: src/dialog/account/edit.vue:488
 #: src/dialog/album/edit.vue:120
-#: src/dialog/photo/files.vue:54
-#: src/dialog/photo/files.vue:180
+#: src/dialog/photo/files.vue:60
+#: src/dialog/photo/files.vue:205
 #: src/dialog/photo/info.vue:27
 #: src/pages/login.vue:72
 #: src/share/photo/list.vue:95
@@ -1259,7 +1280,7 @@ msgstr ""
 msgid "Original file names will be stored and indexed."
 msgstr ""
 
-#: src/dialog/photo/files.vue:60
+#: src/dialog/photo/files.vue:66
 #: src/dialog/photo/info.vue:33
 msgid "Original Name"
 msgstr ""
@@ -1341,7 +1362,7 @@ msgstr ""
 msgid "Polish"
 msgstr ""
 
-#: src/dialog/photo/files.vue:84
+#: src/dialog/photo/files.vue:96
 msgid "Portrait"
 msgstr ""
 
@@ -1367,8 +1388,8 @@ msgid "Preview"
 msgstr ""
 
 #: src/dialog/photo/files.vue:33
-#: src/dialog/photo/files.vue:78
-#: src/dialog/photo/files.vue:174
+#: src/dialog/photo/files.vue:90
+#: src/dialog/photo/files.vue:199
 msgid "Primary"
 msgstr ""
 
@@ -1593,8 +1614,8 @@ msgid "Similar"
 msgstr ""
 
 #: src/dialog/account/edit.vue:261
-#: src/dialog/photo/files.vue:90
-#: src/dialog/photo/files.vue:182
+#: src/dialog/photo/files.vue:72
+#: src/dialog/photo/files.vue:207
 msgid "Size"
 msgstr ""
 
@@ -1635,7 +1656,7 @@ msgstr ""
 msgid "States"
 msgstr ""
 
-#: src/dialog/photo/files.vue:184
+#: src/dialog/photo/files.vue:209
 msgid "Status"
 msgstr ""
 
@@ -1759,8 +1780,8 @@ msgid "Try again using other filters or keywords."
 msgstr ""
 
 #: src/dialog/account/edit.vue:620
-#: src/dialog/photo/files.vue:66
-#: src/dialog/photo/files.vue:183
+#: src/dialog/photo/files.vue:78
+#: src/dialog/photo/files.vue:208
 #: src/dialog/photo/info.vue:15
 msgid "Type"
 msgstr ""
@@ -1798,7 +1819,7 @@ msgstr ""
 msgid "Unstack"
 msgstr ""
 
-#: src/dialog/photo/files.vue:120
+#: src/dialog/photo/files.vue:144
 #: src/dialog/photo/info.vue:144
 msgid "Updated"
 msgstr ""
@@ -1918,10 +1939,10 @@ msgid "Yellow"
 msgstr ""
 
 #: src/dialog/photo/archive.vue:15
-#: src/dialog/photo/files.vue:80
-#: src/dialog/photo/files.vue:86
-#: src/dialog/photo/files.vue:104
-#: src/dialog/photo/files.vue:110
+#: src/dialog/photo/files.vue:92
+#: src/dialog/photo/files.vue:98
+#: src/dialog/photo/files.vue:128
+#: src/dialog/photo/files.vue:134
 #: src/dialog/photo/info.vue:159
 #: src/dialog/photo/info.vue:186
 #: src/dialog/photo/info.vue:213
