@@ -40,3 +40,12 @@ func TestParams_SetValuesFromFile(t *testing.T) {
 	assert.NotEmpty(t, c.DatabaseDsn)
 	assert.Equal(t, 81, c.HttpServerPort)
 }
+
+func TestParams_ExpandFilenames(t *testing.T) {
+	p := Params{TempPath: "tmp", ImportPath: "import"}
+	assert.Equal(t, "tmp", p.TempPath)
+	assert.Equal(t, "import", p.ImportPath)
+	p.expandFilenames()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/tmp", p.TempPath)
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/import", p.ImportPath)
+}

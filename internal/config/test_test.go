@@ -9,6 +9,10 @@ import (
 	"github.com/urfave/cli"
 )
 
+func TestConfig_TestdataPath2(t *testing.T) {
+	assert.Equal(t, "/xxx/testdata", testDataPath("/xxx"))
+}
+
 func TestTestCliContext(t *testing.T) {
 	result := CliTestContext()
 
