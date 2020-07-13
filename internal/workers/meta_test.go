@@ -35,3 +35,12 @@ func TestPrism_Start(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestMeta_originalsPath(t *testing.T) {
+	conf := config.TestConfig()
+
+	worker := NewMeta(conf)
+
+	assert.IsType(t, &Meta{}, worker)
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/originals", worker.originalsPath())
+}
