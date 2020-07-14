@@ -266,3 +266,36 @@ func TestDownloadAlbum(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }
+
+func TestCloneAlbums(t *testing.T) {
+	app, router, _ := NewApiTest()
+	CreateAlbum(router)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "Update", "Description": "To be updated", "Notes": "", "Favorite": true}`)
+	assert.Equal(t, http.StatusOK, r.Code)
+	uid := gjson.Get(r.Body.String(), "UID").String()
+
+	t.Run("successful request", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		CloneAlbums(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/clone", `{"albums": ["`+uid+`"]}`)
+		val := gjson.Get(r.Body.String(), "message")
+		assert.Equal(t, "Album contents cloned", val.String())
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		CloneAlbums(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/123/clone", `{albums: ["123"]}`)
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+
+	t.Run("bad request", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		CloneAlbums(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/clone", `{albums: ["`+uid+`"]}`)
+		val := gjson.Get(r.Body.String(), "error")
+		assert.Equal(t, "Invalid request", val.String())
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+}
