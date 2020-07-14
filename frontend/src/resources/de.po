@@ -1724,7 +1724,7 @@ msgstr "Unsortiert"
 
 #: src/dialog/photo/files.vue:36
 msgid "Unstack"
-msgstr "Auslagern"
+msgstr "Entfernen"
 
 #: src/dialog/photo/files.vue:144 src/dialog/photo/info.vue:149
 msgid "Updated"
