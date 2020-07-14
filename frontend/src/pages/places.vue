@@ -202,6 +202,13 @@
                 this.search();
             },
             updateQuery() {
+                const len = this.filter.q.length;
+
+                if (len > 1 && len < 3) {
+                    this.$notify.error(this.$gettext("Search term too short"));
+                    return;
+                }
+
                 if (this.query() !== this.filter.q) {
                     if (this.filter.q) {
                         this.$router.replace({name: "place", params: {q: this.filter.q}});

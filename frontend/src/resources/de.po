@@ -13,11 +13,11 @@ msgstr ""
 "X-Generator: Poedit 2.3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/pages/albums.vue:459 src/share/albums.vue:339
+#: src/pages/albums.vue:466 src/share/albums.vue:346
 msgid "%{n} albums found"
 msgstr "%{n} Alben gefunden"
 
-#: src/pages/album/photos.vue:354 src/share/photos.vue:397
+#: src/pages/album/photos.vue:361 src/share/photos.vue:404
 msgid "%{n} entries found"
 msgstr "%{n} Einträge gefunden"
 
@@ -25,15 +25,15 @@ msgstr "%{n} Einträge gefunden"
 msgid "%{n} files uploaded"
 msgstr "%{n} Dateien hochgeladen"
 
-#: src/pages/library/files.vue:413
+#: src/pages/library/files.vue:420
 msgid "%{n} folders found"
 msgstr "%{n} Ordner gefunden"
 
-#: src/pages/labels.vue:423
+#: src/pages/labels.vue:430
 msgid "%{n} labels found"
 msgstr "%{n} Kategorien gefunden"
 
-#: src/pages/photos.vue:387
+#: src/pages/photos.vue:394
 msgid "%{n} results"
 msgstr "%{n} Ergebnisse"
 
@@ -168,7 +168,7 @@ msgid "All Cameras"
 msgstr "Alle Kameras"
 
 #: src/component/photo/toolbar.vue:177 src/pages/albums.vue:228
-#: src/pages/albums.vue:550 src/share/albums.vue:127
+#: src/pages/albums.vue:557 src/share/albums.vue:127
 msgid "All Categories"
 msgstr "Alle Kategorien"
 
@@ -689,11 +689,11 @@ msgstr "Brennweite"
 msgid "Folder"
 msgstr "Ordner"
 
-#: src/pages/library/files.vue:415
+#: src/pages/library/files.vue:422
 msgid "Folder contains %{n} files"
 msgstr "Ordner enthält %{n} Dateien"
 
-#: src/pages/library/files.vue:407
+#: src/pages/library/files.vue:414
 msgid "Folder is empty"
 msgstr "Ordner ist leer"
 
@@ -913,7 +913,7 @@ msgstr "Lizenz"
 msgid "Lime"
 msgstr "Hellgrün"
 
-#: src/pages/library/files.vue:417
+#: src/pages/library/files.vue:424
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limit erreicht, zeige erste %{n} Dateien"
 
@@ -1007,19 +1007,19 @@ msgstr "Monat"
 msgid "Moonlight"
 msgstr "Moonlight"
 
-#: src/pages/albums.vue:462 src/share/albums.vue:342
+#: src/pages/albums.vue:469 src/share/albums.vue:349
 msgid "More than 20 albums found"
 msgstr "Mehr als 20 Alben gefunden"
 
-#: src/pages/labels.vue:425
+#: src/pages/labels.vue:432
 msgid "More than 20 labels found"
 msgstr "Mehr als 20 Labels gefunden"
 
-#: src/pages/album/photos.vue:357 src/share/photos.vue:400
+#: src/pages/album/photos.vue:364 src/share/photos.vue:407
 msgid "More than 50 entries found"
 msgstr "Mehr als 50 Einträge gefunden"
 
-#: src/pages/photos.vue:390
+#: src/pages/photos.vue:397
 msgid "More than 50 results"
 msgstr "Mehr als 50 Ergebnisse"
 
@@ -1079,11 +1079,11 @@ msgstr "Neueste zuerst"
 msgid "No"
 msgstr "Nein"
 
-#: src/pages/albums.vue:455 src/share/albums.vue:335
+#: src/pages/albums.vue:462 src/share/albums.vue:342
 msgid "No albums found"
 msgstr "Keine Alben gefunden"
 
-#: src/pages/album/photos.vue:350 src/share/photos.vue:393
+#: src/pages/album/photos.vue:357 src/share/photos.vue:400
 msgid "No entries found"
 msgstr "Keine Einträge gefunden"
 
@@ -1091,11 +1091,11 @@ msgstr "Keine Einträge gefunden"
 msgid "No labels found"
 msgstr "Keine Labels gefunden"
 
-#: src/pages/places.vue:194 src/pages/places.vue:231
+#: src/pages/places.vue:194 src/pages/places.vue:238
 msgid "No photos found"
 msgstr "Keine Bilder gefunden"
 
-#: src/pages/photos.vue:383
+#: src/pages/photos.vue:390
 msgid "No results"
 msgstr "Keine Ergebnisse"
 
@@ -1186,23 +1186,23 @@ msgstr "Älteste zuerst"
 msgid "Once a week"
 msgstr "Einmal die Woche"
 
-#: src/pages/albums.vue:457 src/share/albums.vue:337
+#: src/pages/albums.vue:464 src/share/albums.vue:344
 msgid "One album found"
 msgstr "Ein Album gefunden"
 
-#: src/pages/album/photos.vue:352 src/share/photos.vue:395
+#: src/pages/album/photos.vue:359 src/share/photos.vue:402
 msgid "One entry found"
 msgstr "Ein Eintrag gefunden"
 
-#: src/pages/library/files.vue:409
+#: src/pages/library/files.vue:416
 msgid "One file found"
 msgstr "Eine Datei gefunden"
 
-#: src/pages/library/files.vue:411
+#: src/pages/library/files.vue:418
 msgid "One folder found"
 msgstr "Ein Ordner gefunden"
 
-#: src/pages/photos.vue:385
+#: src/pages/photos.vue:392
 msgid "One result"
 msgstr "Ein Ergebnis"
 
@@ -1457,6 +1457,13 @@ msgstr "Suche"
 msgid "Search and display photos on a map."
 msgstr "Fotos und Videos auf verschiedenen Weltkarten anzeigen und filtern."
 
+#: src/pages/album/photos.vue:278 src/pages/albums.vue:399
+#: src/pages/labels.vue:360 src/pages/library/errors.vue:123
+#: src/pages/library/files.vue:345 src/pages/photos.vue:313
+#: src/pages/places.vue:208 src/share/albums.vue:279 src/share/photos.vue:321
+msgid "Search term too short"
+msgstr "Suchbegriff zu kurz"
+
 #: src/pages/discover.vue:12
 msgid "Season"
 msgstr "Jahreszeit"
@@ -1710,8 +1717,8 @@ msgstr "UID"
 #: src/dialog/photo/details.vue:421 src/dialog/photo/info.vue:241
 #: src/model/album.js:122 src/model/photo.js:400 src/model/photo.js:414
 #: src/model/photo.js:437 src/model/photo.js:451 src/model/photo.js:528
-#: src/model/photo.js:541 src/pages/library/errors.vue:196
-#: src/pages/library/errors.vue:203 src/pages/library/logs.vue:32
+#: src/model/photo.js:541 src/pages/library/errors.vue:203
+#: src/pages/library/errors.vue:210 src/pages/library/logs.vue:32
 #: src/resources/options.js:15 src/resources/options.js:29
 #: src/resources/options.js:43 src/resources/options.js:57
 #: src/resources/options.js:69

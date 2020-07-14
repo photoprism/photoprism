@@ -307,6 +307,13 @@
                 });
             },
             updateQuery() {
+                const len = this.filter.q.length;
+
+                if (len > 1 && len < 3) {
+                    this.$notify.error(this.$gettext("Search term too short"));
+                    return;
+                }
+
                 const query = {
                     view: this.settings.view
                 };
