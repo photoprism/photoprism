@@ -44,7 +44,7 @@ services:
       # PHOTOPRISM_THUMB_SIZE: 4096                  # Retina 4K, DCI 4K (requires more storage)
       PHOTOPRISM_THUMB_SIZE_UNCACHED: 4096           # On-demand rendering size limit (default 4096, min 720, max 7680)
       # PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680         # Retina 6K, 8K Ultra HD
-      PHOTOPRISM_CONVERT_SIZE: 4096                  # Size limit for converted image files in pixels (720-30000)
+      PHOTOPRISM_JPEG_SIZE: 4096                     # Size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 90                    # Use 95 for high-quality thumbnails (requires more storage)
       PHOTOPRISM_STORAGE_PATH: "/photoprism/storage" # Storage PATH for generated files like cache and index
     volumes:

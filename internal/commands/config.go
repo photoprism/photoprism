@@ -88,7 +88,7 @@ func configAction(ctx *cli.Context) error {
 	// External binaries and sidecar configuration.
 	fmt.Printf("%-25s %s\n", "darktable-bin", conf.DarktableBin())
 	fmt.Printf("%-25s %t\n", "darktable-unlock", conf.DarktableUnlock())
-	fmt.Printf("%-25s %d\n", "darktable-size", conf.ConvertSize())
+	fmt.Printf("%-25s %d\n", "darktable-size", conf.JpegSize())
 	fmt.Printf("%-25s %s\n", "sips-bin", conf.SipsBin())
 	fmt.Printf("%-25s %s\n", "heifconvert-bin", conf.HeifConvertBin())
 	fmt.Printf("%-25s %s\n", "ffmpeg-bin", conf.FFmpegBin())

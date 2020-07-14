@@ -290,10 +290,10 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_THUMB_SIZE_UNCACHED",
 	},
 	cli.IntFlag{
-		Name:   "convert-size",
+		Name:   "jpeg-size",
 		Usage:  "size limit for converted image files in `PIXELS` (720-30000)",
 		Value:  4096,
-		EnvVar: "PHOTOPRISM_CONVERT_SIZE",
+		EnvVar: "PHOTOPRISM_JPEG_SIZE",
 	},
 	cli.IntFlag{
 		Name:   "jpeg-quality, q",

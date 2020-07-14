@@ -85,7 +85,7 @@ type Params struct {
 	ThumbUncached      bool   `yaml:"thumb-uncached" flag:"thumb-uncached"`
 	ThumbSize          int    `yaml:"thumb-size" flag:"thumb-size"`
 	ThumbSizeUncached  int    `yaml:"thumb-size-uncached" flag:"thumb-size-uncached"`
-	ConvertSize        int    `yaml:"convert-size" flag:"convert-size"`
+	JpegSize           int    `yaml:"jpeg-size" flag:"jpeg-size"`
 	JpegQuality        int    `yaml:"jpeg-quality" flag:"jpeg-quality"`
 }
 

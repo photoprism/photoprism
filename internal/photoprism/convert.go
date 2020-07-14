@@ -159,7 +159,7 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 
 // JpegConvertCommand returns the command for converting files to JPEG, depending on the format.
 func (c *Convert) JpegConvertCommand(mf *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, useMutex bool, err error) {
-	size := strconv.Itoa(c.conf.ConvertSize())
+	size := strconv.Itoa(c.conf.JpegSize())
 
 	if mf.IsRaw() {
 		if c.conf.SipsBin() != "" {

@@ -9,11 +9,11 @@ import (
 func TestConfig_ConvertSize(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, int(720), c.ConvertSize())
-	c.params.ConvertSize = 31000
-	assert.Equal(t, int(30000), c.ConvertSize())
-	c.params.ConvertSize = 800
-	assert.Equal(t, int(800), c.ConvertSize())
+	assert.Equal(t, int(720), c.JpegSize())
+	c.params.JpegSize = 31000
+	assert.Equal(t, int(30000), c.JpegSize())
+	c.params.JpegSize = 800
+	assert.Equal(t, int(800), c.JpegSize())
 }
 
 func TestConfig_JpegQuality(t *testing.T) {

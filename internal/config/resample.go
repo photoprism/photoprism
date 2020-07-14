@@ -6,15 +6,15 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
-// ConvertSize return the size limit for automatically converted files in `PIXELS` (720-30000).
-func (c *Config) ConvertSize() int {
-	if c.params.ConvertSize < 720 {
+// JpegSize returns the size limit for automatically converted files in `PIXELS` (720-30000).
+func (c *Config) JpegSize() int {
+	if c.params.JpegSize < 720 {
 		return 720
-	} else if c.params.ConvertSize > 30000 {
+	} else if c.params.JpegSize > 30000 {
 		return 30000
 	}
 
-	return c.params.ConvertSize
+	return c.params.JpegSize
 }
 
 // JpegQuality returns the jpeg quality for resampling, use 95 for high-quality thumbs (25-100).
