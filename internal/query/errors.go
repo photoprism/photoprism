@@ -12,7 +12,11 @@ func Errors(limit, offset int, s string) (results entity.Errors, err error) {
 
 	s = strings.TrimSpace(s)
 
-	if len(s) >= 3 {
+	if s == "errors" {
+		stmt = stmt.Where("error_level = 'error'")
+	} else if s == "warnings" {
+		stmt = stmt.Where("error_level = 'warning'")
+	} else if len(s) >= 3 {
 		stmt = stmt.Where("error_message LIKE ?", "%"+s+"%")
 	}
 

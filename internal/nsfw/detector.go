@@ -2,7 +2,6 @@ package nsfw
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -51,11 +50,10 @@ func (t *Detector) Labels(img []byte) (result Labels, err error) {
 	}
 
 	// Make tensor
-	tensor, err := makeTensorFromImage(img, "jpeg")
+	tensor, err := createTensorFromImage(img, "jpeg")
 
 	if err != nil {
-		log.Error(err)
-		return result, errors.New("invalid image")
+		return result, fmt.Errorf("nsfw: %s (create tensor)", err.Error())
 	}
 
 	// Run inference
@@ -69,18 +67,17 @@ func (t *Detector) Labels(img []byte) (result Labels, err error) {
 		nil)
 
 	if err != nil {
-		log.Error(err)
-		return result, errors.New("could not run inference")
+		return result, fmt.Errorf("nsfw: %s (run inference)", err.Error())
 	}
 
 	if len(output) < 1 {
-		return result, errors.New("result is empty")
+		return result, fmt.Errorf("nsfw: inference failed, no output")
 	}
 
 	// Return best labels
 	result = t.getLabels(output[0].Value().([][]float32)[0])
 
-	log.Debugf("tensorflow: image classified as %+v", result)
+	log.Debugf("nsfw: image classified as %+v", result)
 
 	return result, nil
 }
@@ -88,7 +85,7 @@ func (t *Detector) Labels(img []byte) (result Labels, err error) {
 func (t *Detector) loadLabels(path string) error {
 	modelLabels := path + "/labels.txt"
 
-	log.Infof("tensorflow: loading classification labels from labels.txt")
+	log.Infof("nsfw: loading labels from labels.txt")
 
 	// Load labels
 	f, err := os.Open(modelLabels)
@@ -122,7 +119,7 @@ func (t *Detector) loadModel() error {
 		return nil
 	}
 
-	log.Infof("tensorflow: loading image classification model from %s", txt.Quote(filepath.Base(t.modelPath)))
+	log.Infof("nsfw: loading model from %s", txt.Quote(filepath.Base(t.modelPath)))
 
 	// Load model
 	model, err := tf.LoadSavedModel(t.modelPath, t.modelTags, nil)
@@ -146,7 +143,7 @@ func (t *Detector) getLabels(p []float32) Labels {
 	}
 }
 
-func makeTransformImageGraph(imageFormat string) (graph *tf.Graph, input, output tf.Output, err error) {
+func transformImageGraph(imageFormat string) (graph *tf.Graph, input, output tf.Output, err error) {
 	const (
 		H, W  = 224, 224
 		Mean  = float32(117)
@@ -178,12 +175,12 @@ func makeTransformImageGraph(imageFormat string) (graph *tf.Graph, input, output
 	return graph, input, output, err
 }
 
-func makeTensorFromImage(image []byte, imageFormat string) (*tf.Tensor, error) {
+func createTensorFromImage(image []byte, imageFormat string) (*tf.Tensor, error) {
 	tensor, err := tf.NewTensor(string(image))
 	if err != nil {
 		return nil, err
 	}
-	graph, input, output, err := makeTransformImageGraph(imageFormat)
+	graph, input, output, err := transformImageGraph(imageFormat)
 	if err != nil {
 		return nil, err
 	}

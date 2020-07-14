@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
@@ -60,7 +61,7 @@ func (c *Convert) Start(path string) error {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`convert: ignored "%s"`, fs.RelName(fileName, path))
+		log.Infof("convert: ignoring %s", txt.Quote(filepath.Base(fileName)))
 	}
 
 	err := godirwalk.Walk(path, &godirwalk.Options{
@@ -118,7 +119,7 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 	}
 
 	if !c.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: metadata export to json disabled in read only mode (%s)", mf.RelName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: can't create json sidecar file for %s in read only mode", txt.Quote(mf.BaseName()))
 	}
 
 	jsonName = fs.FileName(mf.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), ".json", c.conf.Settings().Index.Sequences)
@@ -184,14 +185,14 @@ func (c *Convert) JpegConvertCommand(mf *MediaFile, jpegName string, xmpName str
 
 			result = exec.Command(c.conf.DarktableBin(), args...)
 		} else {
-			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", mf.BasePrefix(c.conf.Settings().Index.Sequences))
+			return nil, useMutex, fmt.Errorf("convert: no converter found for %s", txt.Quote(mf.BaseName()))
 		}
 	} else if mf.IsVideo() {
 		result = exec.Command(c.conf.FFmpegBin(), "-i", mf.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
 	} else if mf.IsHEIF() {
 		result = exec.Command(c.conf.HeifConvertBin(), mf.FileName(), jpegName)
 	} else {
-		return nil, useMutex, fmt.Errorf("convert: file type not supported for conversion (%s)", mf.FileType())
+		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", mf.FileType(), txt.Quote(mf.BaseName()))
 	}
 
 	return result, useMutex, nil

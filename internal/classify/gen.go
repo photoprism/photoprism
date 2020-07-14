@@ -34,7 +34,7 @@ func main() {
 	fileName := "rules.yml"
 
 	if !fs.FileExists(fileName) {
-		log.Panicf("tensorflow: label rules file not found in %s", txt.Quote(filepath.Base(fileName)))
+		log.Panicf("classify: label rules not found in %s", txt.Quote(filepath.Base(fileName)))
 	}
 
 	yamlConfig, err := ioutil.ReadFile(fileName)
@@ -52,7 +52,7 @@ func main() {
 	for label, rule := range rules {
 		for _, char := range label {
 			if unicode.IsUpper(char) {
-				log.Panicf("label must be lowercase: %s", label)
+				log.Panicf("classify: %s must be lowercase", label)
 			}
 		}
 

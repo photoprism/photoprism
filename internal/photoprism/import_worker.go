@@ -29,7 +29,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 		importPath := job.ImportOpt.Path
 
 		if related.Main == nil {
-			log.Warnf("import: no media file found for %s", txt.Quote(fs.RelName(job.FileName, importPath)))
+			log.Warnf("import: %s belongs to no supported media file", txt.Quote(fs.RelName(job.FileName, importPath)))
 			continue
 		}
 
@@ -81,13 +81,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 			f, err := NewMediaFile(destinationMainFilename)
 
 			if err != nil {
-				log.Errorf("import: could not import %s (%s)", txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())), err.Error())
+				log.Errorf("import: %s in %s", err.Error(), txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())))
 				continue
 			}
 
 			if !f.HasJpeg() {
 				if jpegFile, err := imp.convert.ToJpeg(f); err != nil {
-					log.Errorf("import: creating jpeg failed (%s)", err.Error())
+					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())))
 					continue
 				} else {
 					log.Infof("import: %s created", fs.RelName(jpegFile.FileName(), imp.originalsPath()))
@@ -98,14 +98,14 @@ func ImportWorker(jobs <-chan ImportJob) {
 				log.Error(err)
 			} else {
 				if err := jpg.ResampleDefault(imp.thumbPath(), false); err != nil {
-					log.Errorf("import: could not create default thumbnails (%s)", err.Error())
+					log.Errorf("import: %s in %s (resample)", err.Error(), txt.Quote(jpg.BaseName()))
 					continue
 				}
 			}
 
 			if imp.conf.SidecarJson() && !f.HasJson() {
 				if jsonFile, err := imp.convert.ToJson(f); err != nil {
-					log.Errorf("import: creating json sidecar file failed (%s)", err.Error())
+					log.Errorf("import: %s in %s (create json sidecar)", err.Error(), txt.Quote(f.BaseName()))
 				} else {
 					log.Infof("import: %s created", fs.RelName(jsonFile.FileName(), imp.originalsPath()))
 				}
@@ -114,7 +114,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			related, err := f.RelatedFiles(imp.conf.Settings().Index.Sequences)
 
 			if err != nil {
-				log.Errorf("import: could not index %s (%s)", txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())), err.Error())
+				log.Errorf("import: %s in %s (find related files)", err.Error(), txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())))
 
 				continue
 			}
@@ -125,7 +125,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			if related.Main != nil {
 				// Enforce file size limit for originals.
 				if ind.conf.OriginalsLimit() > 0 && related.Main.FileSize() > ind.conf.OriginalsLimit() {
-					log.Warnf("import: %s exceeds file size limit for originals [%d / %d MB]", filepath.Base(related.Main.FileName()), related.Main.FileSize()/(1024*1024), ind.conf.OriginalsLimit()/(1024*1024))
+					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", filepath.Base(related.Main.FileName()), related.Main.FileSize()/(1024*1024), ind.conf.OriginalsLimit()/(1024*1024))
 					continue
 				}
 
@@ -142,7 +142,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					continue
 				}
 			} else {
-				log.Warnf("import: no main file for %s (conversion to jpeg failed?)", fs.RelName(destinationMainFilename, imp.originalsPath()))
+				log.Warnf("import: no main file for %s, conversion to jpeg failed?", fs.RelName(destinationMainFilename, imp.originalsPath()))
 			}
 
 			for _, f := range related.Files {

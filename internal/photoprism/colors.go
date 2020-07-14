@@ -1,25 +1,25 @@
 package photoprism
 
 import (
-	"errors"
+	"fmt"
 	"image/color"
 	"math"
 
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/photoprism/photoprism/pkg/colors"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Colors returns the ColorPerception of an image (only JPEG supported).
 func (m *MediaFile) Colors(thumbPath string) (perception colors.ColorPerception, err error) {
 	if !m.IsJpeg() {
-		return perception, errors.New("no color information: not a JPEG file")
+		return perception, fmt.Errorf("%s is not a jpeg file (detect colors)", txt.Quote(m.BaseName()))
 	}
 
 	img, err := m.Resample(thumbPath, "colors")
 
 	if err != nil {
-		log.Printf("can't open image: %s", err.Error())
-
+		log.Errorf("%s (detect colors)", err.Error())
 		return perception, err
 	}
 

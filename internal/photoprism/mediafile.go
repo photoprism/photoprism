@@ -862,7 +862,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 				img, err := imaging.Open(m.FileName(), imaging.AutoOrientation(true))
 
 				if err != nil {
-					log.Errorf("mediafile: can't open %s (%s)", txt.Quote(m.FileName()), err.Error())
+					log.Errorf("mediafile: %s in %s", err.Error(), txt.Quote(m.BaseName()))
 					return err
 				}
 

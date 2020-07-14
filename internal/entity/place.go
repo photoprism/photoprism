@@ -45,11 +45,11 @@ func FindPlace(id string, label string) *Place {
 
 	if label == "" {
 		if err := Db().First(place, "id = ?", id).Error; err != nil {
-			log.Debugf("place: %s for id %s", err.Error(), id)
+			log.Debugf("place: %s (id %s)", err.Error(), id)
 			return nil
 		}
 	} else if err := Db().First(place, "id = ? OR place_label = ?", id, label).Error; err != nil {
-		log.Debugf("place: %s for id %s / label %s", err.Error(), id, txt.Quote(label))
+		log.Debugf("place: %s (id %s, label %s)", err.Error(), id, txt.Quote(label))
 		return nil
 	}
 

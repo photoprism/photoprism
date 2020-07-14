@@ -164,7 +164,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		if yamlName := fs.TypeYaml.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
 			if err := photo.LoadFromYaml(yamlName); err != nil {
-				log.Errorf("index: %s (restore from yaml) for %s", err.Error(), logName)
+				log.Errorf("index: %s in %s (restore from yaml)", err.Error(), logName)
 			} else if err := photo.Find(); err != nil {
 				log.Infof("index: data restored from %s", txt.Quote(fs.RelName(yamlName, Config().OriginalsPath())))
 			} else {
@@ -213,7 +213,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	case m.IsJpeg():
 		// Color information
 		if p, err := m.Colors(Config().ThumbPath()); err != nil {
-			log.Errorf("index: %s for %s", err.Error(), logName)
+			log.Errorf("index: %s in %s (detect colors)", err.Error(), logName)
 		} else {
 			file.FileMainColor = p.MainColor.Name()
 			file.FileColors = p.Colors.Hex()
@@ -513,14 +513,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if photoExists {
 		if err := photo.Save(); err != nil {
-			log.Errorf("index: %s for %s", err.Error(), logName)
+			log.Errorf("index: %s in %s (save photo)", err.Error(), logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
 		}
 	} else {
 		if err := photo.FirstOrCreate(); err != nil {
-			log.Errorf("index: %s", err)
+			log.Errorf("index: %s in %s (create photo)", err.Error(), logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
@@ -558,7 +558,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		labels := photo.ClassifyLabels()
 
 		if err := photo.UpdateTitle(labels); err != nil {
-			log.Debugf("%s (%s)", err.Error(), logName)
+			log.Debugf("%s in %s (update title)", err.Error(), logName)
 		}
 
 		w := txt.Keywords(details.Keywords)
@@ -584,18 +584,18 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		photo.PhotoQuality = photo.QualityScore()
 
 		if err := photo.Save(); err != nil {
-			log.Errorf("index: %s for %s", err, logName)
+			log.Errorf("index: %s in %s (save photo)", err, logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
 		}
 
 		if err := photo.SyncKeywordLabels(); err != nil {
-			log.Errorf("index: %s for %s", err, logName)
+			log.Errorf("index: %s in %s (sync keywords and labels)", err, logName)
 		}
 
 		if err := photo.IndexKeywords(); err != nil {
-			log.Errorf("index: %s for %s", err, logName)
+			log.Errorf("index: %s in %s (save keywords)", err, logName)
 		}
 	} else {
 		if photo.PhotoQuality >= 0 {
@@ -603,7 +603,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		if err := photo.Save(); err != nil {
-			log.Errorf("index: %s for %s", err, logName)
+			log.Errorf("index: %s in %s (save photo)", err, logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
@@ -616,7 +616,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.UpdatedIn = int64(time.Since(start))
 
 		if err := file.Save(); err != nil {
-			log.Errorf("index: %s for %s", err, logName)
+			log.Errorf("index: %s in %s (save file)", err, logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
@@ -625,7 +625,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.CreatedIn = int64(time.Since(start))
 
 		if err := file.Create(); err != nil {
-			log.Errorf("index: %s for %s", err, logName)
+			log.Errorf("index: %s in %s (create file)", err, logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
@@ -644,7 +644,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if (photo.PhotoType == entity.TypeVideo || photo.PhotoType == entity.TypeLive) && file.FilePrimary {
 		if err := file.UpdateVideoInfos(); err != nil {
-			log.Errorf("index: %s for %s", err, logName)
+			log.Errorf("index: %s in %s (update video infos)", err, logName)
 		}
 	}
 
@@ -658,7 +658,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	if err := query.SetDownloadFileID(downloadedAs, file.ID); err != nil {
-		log.Errorf("index: %s for %s", err, logName)
+		log.Errorf("index: %s in %s (set download id)", err, logName)
 	}
 
 	// Write YAML sidecar file (optional).
@@ -666,7 +666,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		yamlFile := photo.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 
 		if err := photo.SaveAsYaml(yamlFile); err != nil {
-			log.Errorf("index: %s (update yaml) for %s", err.Error(), logName)
+			log.Errorf("index: %s in %s (update yaml)", err.Error(), logName)
 		} else {
 			log.Infof("index: updated yaml file %s", txt.Quote(fs.RelName(yamlFile, Config().OriginalsPath())))
 		}

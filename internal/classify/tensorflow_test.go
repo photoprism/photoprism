@@ -137,12 +137,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 		} else {
 			result, err := tensorFlow.Labels(imageBuffer)
 			assert.Empty(t, result)
-
-			if err != nil {
-				assert.Contains(t, err.Error(), "invalid image")
-			} else {
-				t.Fatal("err should NOT be nil")
-			}
+			assert.Error(t, err)
 		}
 	})
 	t.Run("6720px_white.jpg", func(t *testing.T) {
@@ -235,7 +230,7 @@ func TestTensorFlow_MakeTensor(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		result, err := tensorFlow.makeTensor(imageBuffer, "jpeg")
+		result, err := tensorFlow.createTensor(imageBuffer, "jpeg")
 		assert.Equal(t, tensorflow.DataType(0x1), result.DataType())
 		assert.Equal(t, int64(1), result.Shape()[0])
 		assert.Equal(t, int64(224), result.Shape()[2])
@@ -245,9 +240,10 @@ func TestTensorFlow_MakeTensor(t *testing.T) {
 
 		imageBuffer, err := ioutil.ReadFile(examplesPath + "/Random.docx")
 		assert.Nil(t, err)
-		result, err := tensorFlow.makeTensor(imageBuffer, "jpeg")
+		result, err := tensorFlow.createTensor(imageBuffer, "jpeg")
+
 		assert.Empty(t, result)
-		assert.Equal(t, "image: unknown format", err.Error())
+		assert.EqualError(t, err, "image: unknown format")
 	})
 }
 

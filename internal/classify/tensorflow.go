@@ -3,7 +3,7 @@ package classify
 import (
 	"bufio"
 	"bytes"
-	"errors"
+	"fmt"
 	"image"
 	"io/ioutil"
 	"math"
@@ -67,15 +67,14 @@ func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 		return nil, err
 	}
 
-	// Make tensor
-	tensor, err := t.makeTensor(img, "jpeg")
+	// Create tensor from image.
+	tensor, err := t.createTensor(img, "jpeg")
 
 	if err != nil {
-		log.Error(err)
-		return nil, errors.New("invalid image")
+		return nil, fmt.Errorf("classify: %s (create tensor)", err.Error())
 	}
 
-	// Run inference
+	// Run inference.
 	output, err := t.model.Session.Run(
 		map[tf.Output]*tf.Tensor{
 			t.model.Graph.Operation("input_1").Output(0): tensor,
@@ -86,19 +85,18 @@ func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 		nil)
 
 	if err != nil {
-		log.Error(err)
-		return result, errors.New("could not run inference")
+		return result, fmt.Errorf("classify: %s (run inference)", err.Error())
 	}
 
 	if len(output) < 1 {
-		return result, errors.New("result is empty")
+		return result, fmt.Errorf("classify: inference failed, no output")
 	}
 
 	// Return best labels
 	result = t.bestLabels(output[0].Value().([][]float32)[0])
 
 	if len(result) > 0 {
-		log.Tracef("tensorflow: image classified as %+v", result)
+		log.Tracef("classify: image classified as %+v", result)
 	}
 
 	return result, nil
@@ -107,7 +105,7 @@ func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 func (t *TensorFlow) loadLabels(path string) error {
 	modelLabels := path + "/labels.txt"
 
-	log.Infof("tensorflow: loading classification labels from labels.txt")
+	log.Infof("classify: loading labels from labels.txt")
 
 	// Load labels
 	f, err := os.Open(modelLabels)
@@ -143,7 +141,7 @@ func (t *TensorFlow) loadModel() error {
 
 	modelPath := path.Join(t.modelsPath, t.modelName)
 
-	log.Infof("tensorflow: loading image classification model from %s", txt.Quote(filepath.Base(modelPath)))
+	log.Infof("classify: loading model from %s", txt.Quote(filepath.Base(modelPath)))
 
 	// Load model
 	model, err := tf.LoadSavedModel(modelPath, t.modelTags, nil)
@@ -204,8 +202,8 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 	}
 }
 
-// makeTensor converts bytes jpeg image in a tensor object required as tensorflow model input
-func (t *TensorFlow) makeTensor(image []byte, imageFormat string) (*tf.Tensor, error) {
+// createTensor converts bytes jpeg image in a tensor object required as tensorflow model input
+func (t *TensorFlow) createTensor(image []byte, imageFormat string) (*tf.Tensor, error) {
 	img, err := imaging.Decode(bytes.NewReader(image), imaging.AutoOrientation(true))
 
 	if err != nil {

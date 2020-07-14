@@ -50,7 +50,7 @@ func (m *Cell) Find(api string) error {
 	db := Db()
 
 	if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err == nil {
-		log.Infof("location: found %s (%+v)", m.ID, m)
+		log.Debugf("location: found %s (%+v)", m.ID, m)
 		return nil
 	}
 
@@ -97,13 +97,13 @@ func (m *Cell) Find(api string) error {
 	m.CellCategory = l.Category()
 
 	if err := db.Create(m).Error; err == nil {
-		log.Infof("location: added %s [%s]", m.ID, time.Since(start))
+		log.Debugf("location: added %s [%s]", m.ID, time.Since(start))
 		return nil
 	} else if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err != nil {
 		log.Errorf("location: failed adding %s %s [%s]", m.ID, err.Error(), time.Since(start))
 		return err
 	} else {
-		log.Infof("location: found %s after second try [%s]", m.ID, time.Since(start))
+		log.Debugf("location: found %s after second try [%s]", m.ID, time.Since(start))
 	}
 
 	return nil
