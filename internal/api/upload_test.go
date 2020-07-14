@@ -11,6 +11,6 @@ func TestUpload(t *testing.T) {
 		app, router, _ := NewApiTest()
 		Upload(router)
 		r := PerformRequest(app, "POST", "/api/v1/upload/xxx")
-		assert.Equal(t, http.StatusForbidden, r.Code)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }
