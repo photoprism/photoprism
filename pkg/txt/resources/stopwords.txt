@@ -29,6 +29,9 @@ sync
 win
 usb
 dsc
+dcf
+dmc
+lx
 pic
 pict
 picture

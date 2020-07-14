@@ -78,6 +78,15 @@ func FirstFileByHash(fileHash string) (File, error) {
 	return file, q.Error
 }
 
+// PrimaryFile returns the primary file for a photo uid.
+func PrimaryFile(photoUID string) (File, error) {
+	var file File
+
+	q := Db().Unscoped().First(&file, "file_primary = 1 AND photo_uid = ?", photoUID)
+
+	return file, q.Error
+}
+
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *File) BeforeCreate(scope *gorm.Scope) error {
 	if rnd.IsUID(m.FileUID, 'f') {

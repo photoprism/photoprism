@@ -11,7 +11,7 @@ var FileTitleRegexp = regexp.MustCompile("[\\p{L}\\-,':]{2,}")
 
 // FileTitle returns the string with the first characters of each word converted to uppercase.
 func FileTitle(s string) string {
-	s = fs.Base(s, true)
+	s = fs.BasePrefix(s, true)
 
 	if len(s) < 3 {
 		return ""

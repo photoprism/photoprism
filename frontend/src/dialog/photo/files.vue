@@ -41,13 +41,13 @@
                           </v-img>
                         </td>
                       </tr>
-                      <tr v-if="file.Type === 'jpg' && !file.Primary">
+                      <tr v-if="!file.Sidecar && !file.Primary && !file.Root">
                         <td>
                           <translate>Actions</translate>
                         </td>
                         <td>
                           <v-btn small depressed dark color="secondary-dark" class="ma-0 action-primary"
-                                 @click.stop.prevent="primary(file)">
+                                 @click.stop.prevent="primary(file)" v-if="file.Type === 'jpg' && !file.Primary">
                             <translate>Primary</translate>
                           </v-btn>
                           <v-btn small depressed dark color="secondary-dark" class="ma-0 action-unstack"

@@ -54,7 +54,7 @@ func purgeAction(ctx *cli.Context) error {
 	if subPath == "" {
 		log.Infof("removing missing files in %s", txt.Quote(filepath.Base(conf.OriginalsPath())))
 	} else {
-		log.Infof("removing missing files in %s", txt.Quote(fs.Rel(filepath.Join(conf.OriginalsPath(), subPath), filepath.Dir(conf.OriginalsPath()))))
+		log.Infof("removing missing files in %s", txt.Quote(fs.RelName(filepath.Join(conf.OriginalsPath(), subPath), filepath.Dir(conf.OriginalsPath()))))
 	}
 
 	if conf.ReadOnly() {

@@ -10,13 +10,13 @@ import (
 // FileName returns the a relative filename with the same base and a given extension in a directory.
 func FileName(fileName, dirName, baseDir, fileExt string, stripSequence bool) string {
 	fileDir := filepath.Dir(fileName)
-	baseName := Base(fileName, stripSequence)
+	baseName := BasePrefix(fileName, stripSequence)
 
 	if dirName == "" || dirName == "." {
 		dirName = fileDir
 	} else if fileDir != dirName {
 		if filepath.IsAbs(dirName) {
-			dirName = filepath.Join(dirName, Rel(fileDir, baseDir))
+			dirName = filepath.Join(dirName, RelName(fileDir, baseDir))
 		} else {
 			dirName = filepath.Join(fileDir, dirName)
 		}
@@ -32,8 +32,8 @@ func FileName(fileName, dirName, baseDir, fileExt string, stripSequence bool) st
 	return result
 }
 
-// Rel returns the file name relative to a directory.
-func Rel(fileName, dir string) string {
+// RelName returns the file name relative to a directory.
+func RelName(fileName, dir string) string {
 	if fileName == dir {
 		return ""
 	}

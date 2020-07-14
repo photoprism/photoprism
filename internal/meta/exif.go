@@ -59,10 +59,12 @@ func (data *Data) Exif(fileName string) (err error) {
 		_, rawExif, err = sl.Exif()
 
 		if err != nil {
-			if err.Error() == "no exif header" {
+			if strings.HasPrefix(err.Error(), "no exif header") {
 				return fmt.Errorf("metadata: no exif header in %s", logName)
+			} else if strings.HasPrefix(err.Error(), "no exif data") {
+				log.Debugf("metadata: failed parsing %s, starting brute-force search (exif)", logName)
 			} else {
-				log.Warnf("metadata: %s in %s (parse jpeg)", err, logName)
+				log.Warnf("metadata: %s in %s, starting brute-force search (exif)", err, logName)
 			}
 		} else {
 			parsed = true
@@ -133,7 +135,7 @@ func (data *Data) Exif(fileName string) (err error) {
 			valueString, err = ite.FormatFirst()
 
 			if err != nil {
-				log.Errorf("metadata: %s in %s (exif)", err, logName)
+				log.Errorf("metadata: %s in %s (find exif tags)", err, logName)
 
 				return nil
 			}
@@ -292,7 +294,8 @@ func (data *Data) Exif(fileName string) (err error) {
 			data.Lng = float32(gi.Longitude.Decimal())
 			data.Altitude = gi.Altitude
 		} else {
-			log.Warnf("metadata: %s in %s (exif)", err, logName)
+			log.Debugf("exif: %s in %s", err, logName)
+			log.Warnf("metadata: failed parsing gps coordinates in %s (exif)", logName)
 		}
 	}
 
@@ -332,7 +335,7 @@ func (data *Data) Exif(fileName string) (err error) {
 			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", takenAt, loc); err == nil {
 				data.TakenAt = tl.Round(time.Second).UTC()
 			} else {
-				log.Errorf("metadata: %s in %s (exif)", err.Error(), logName) // this should never happen
+				log.Errorf("metadata: %s in %s (exif time)", err.Error(), logName) // this should never happen
 			}
 		} else {
 			log.Warnf("metadata: invalid time %s in %s (exif)", takenAt, logName)

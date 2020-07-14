@@ -24,14 +24,8 @@ func StripKnownExt(name string) string {
 	return name
 }
 
-// Base returns the filename base without any extensions and path.
-func Base(fileName string, stripSequence bool) string {
-	name := StripKnownExt(StripExt(filepath.Base(fileName)))
-
-	if !stripSequence {
-		return name
-	}
-
+// StripSequence removes common sequence patterns at the end of file names.
+func StripSequence(name string) string {
 	// Strip numeric extensions like .00000, .00001, .4542353245,.... (at least 5 digits).
 	if dot := strings.LastIndex(name, "."); dot != -1 && len(name[dot+1:]) >= 5 {
 		if i, err := strconv.Atoi(name[dot+1:]); err == nil && i >= 0 {
@@ -53,16 +47,27 @@ func Base(fileName string, stripSequence bool) string {
 	return name
 }
 
-// RelBase returns the relative filename.
-func RelBase(fileName, dir string, stripSequence bool) string {
-	if name := Rel(fileName, dir); name != "" {
-		return AbsBase(name, stripSequence)
+// BasePrefix returns the filename base without any extensions and path.
+func BasePrefix(fileName string, stripSequence bool) string {
+	name := StripKnownExt(StripExt(filepath.Base(fileName)))
+
+	if !stripSequence {
+		return name
 	}
 
-	return Base(fileName, stripSequence)
+	return StripSequence(name)
 }
 
-// AbsBase returns the directory and base filename without any extensions.
-func AbsBase(fileName string, stripSequence bool) string {
-	return filepath.Join(filepath.Dir(fileName), Base(fileName, stripSequence))
+// RelPrefix returns the relative filename.
+func RelPrefix(fileName, dir string, stripSequence bool) string {
+	if name := RelName(fileName, dir); name != "" {
+		return AbsPrefix(name, stripSequence)
+	}
+
+	return BasePrefix(fileName, stripSequence)
+}
+
+// AbsPrefix returns the directory and base filename without any extensions.
+func AbsPrefix(fileName string, stripSequence bool) string {
+	return filepath.Join(filepath.Dir(fileName), BasePrefix(fileName, stripSequence))
 }

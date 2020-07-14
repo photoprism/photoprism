@@ -63,7 +63,7 @@ func (rs *Resample) Start(force bool) (err error) {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`resample: ignored "%s"`, fs.Rel(fileName, originalsPath))
+		log.Infof(`resample: ignored "%s"`, fs.RelName(fileName, originalsPath))
 	}
 
 	err = godirwalk.Walk(originalsPath, &godirwalk.Options{
@@ -93,7 +93,7 @@ func (rs *Resample) Start(force bool) (err error) {
 
 			done[fileName] = true
 
-			relativeName := mf.RelativeName(originalsPath)
+			relativeName := mf.RelName(originalsPath)
 
 			event.Publish("index.thumbnails", event.Data{
 				"fileName": relativeName,

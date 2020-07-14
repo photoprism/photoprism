@@ -35,7 +35,7 @@ func (worker *Sync) relatedDownloads(a entity.Account) (result Downloads, err er
 
 	// Group results by directory and base name
 	for i, file := range files {
-		k := fs.AbsBase(file.RemoteName, worker.conf.Settings().Index.Sequences)
+		k := fs.AbsPrefix(file.RemoteName, worker.conf.Settings().Index.Sequences)
 
 		result[k] = append(result[k], file)
 

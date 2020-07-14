@@ -108,7 +108,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`index: ignored "%s"`, fs.Rel(fileName, originalsPath))
+		log.Infof(`index: ignored "%s"`, fs.RelName(fileName, originalsPath))
 	}
 
 	err := godirwalk.Walk(optionsPath, &godirwalk.Options{
@@ -122,7 +122,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
 				if isDir && result != filepath.SkipDir {
-					folder := entity.NewFolder(entity.RootOriginals, fs.Rel(fileName, originalsPath), nil)
+					folder := entity.NewFolder(entity.RootOriginals, fs.RelName(fileName, originalsPath), nil)
 
 					if err := folder.Create(); err == nil {
 						log.Infof("index: added folder /%s", folder.Path)
@@ -190,4 +190,27 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 	runtime.GC()
 
 	return done
+}
+
+// File indexes a single file and returns the result.
+func (ind *Index) File(name string) (result IndexResult) {
+	file, err := NewMediaFile(name)
+
+	if err != nil {
+		result.Err = err
+		result.Status = IndexFailed
+
+		return result
+	}
+
+	related, err := file.RelatedFiles(false)
+
+	if err != nil {
+		result.Err = err
+		result.Status = IndexFailed
+
+		return result
+	}
+
+	return IndexRelated(related, ind, IndexOptionsAll())
 }

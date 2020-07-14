@@ -218,7 +218,7 @@ func (m *MediaFile) CanonicalNameFromFile() string {
 // CanonicalNameFromFileWithDirectory gets the canonical name for a MediaFile
 // including the directory.
 func (m *MediaFile) CanonicalNameFromFileWithDirectory() string {
-	return m.Directory() + string(os.PathSeparator) + m.CanonicalNameFromFile()
+	return m.Dir() + string(os.PathSeparator) + m.CanonicalNameFromFile()
 }
 
 // Hash returns the SHA1 hash of a media file.
@@ -266,7 +266,7 @@ func (m *MediaFile) JsonName() string {
 // RelatedFiles returns files which are related to this file.
 func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err error) {
 	// escape any meta characters in the file name
-	matches, err := filepath.Glob(regexp.QuoteMeta(m.AbsBase(stripSequence)) + "*")
+	matches, err := filepath.Glob(regexp.QuoteMeta(m.AbsPrefix(stripSequence)) + "*")
 
 	if err != nil {
 		return result, err
@@ -332,9 +332,9 @@ func (m *MediaFile) PathNameInfo() (fileRoot, fileBase, relativePath, relativeNa
 		rootPath = Config().OriginalsPath()
 	}
 
-	fileBase = m.Base(Config().Settings().Index.Sequences)
-	relativePath = m.RelativePath(rootPath)
-	relativeName = m.RelativeName(rootPath)
+	fileBase = m.BasePrefix(Config().Settings().Index.Sequences)
+	relativePath = m.RelPath(rootPath)
+	relativeName = m.RelName(rootPath)
 
 	return fileRoot, fileBase, relativePath, relativeName
 }
@@ -354,13 +354,13 @@ func (m *MediaFile) SetFileName(fileName string) {
 	m.fileName = fileName
 }
 
-// Rel returns the relative filename.
-func (m *MediaFile) RelativeName(directory string) string {
-	return fs.Rel(m.fileName, directory)
+// RelName returns the relative filename.
+func (m *MediaFile) RelName(directory string) string {
+	return fs.RelName(m.fileName, directory)
 }
 
-// RelativePath returns the relative path without filename.
-func (m *MediaFile) RelativePath(directory string) string {
+// RelPath returns the relative path without filename.
+func (m *MediaFile) RelPath(directory string) string {
 	pathname := m.fileName
 
 	if i := strings.Index(pathname, directory); i == 0 {
@@ -390,31 +390,31 @@ func (m *MediaFile) RelativePath(directory string) string {
 	return pathname
 }
 
-// RelBase returns the relative filename.
-func (m *MediaFile) RelativeBase(directory string, stripSequence bool) string {
-	if relativePath := m.RelativePath(directory); relativePath != "" {
-		return filepath.Join(relativePath, m.Base(stripSequence))
+// RelPrefix returns the relative path and file name prefix.
+func (m *MediaFile) RelPrefix(directory string, stripSequence bool) string {
+	if relativePath := m.RelPath(directory); relativePath != "" {
+		return filepath.Join(relativePath, m.BasePrefix(stripSequence))
 	}
 
-	return m.Base(stripSequence)
+	return m.BasePrefix(stripSequence)
 }
 
-// Directory returns the file path.
-func (m *MediaFile) Directory() string {
+// Dir returns the file path.
+func (m *MediaFile) Dir() string {
 	return filepath.Dir(m.fileName)
 }
 
-// SubDirectory returns a sub directory name.
-func (m *MediaFile) SubDirectory(dir string) string {
+// SubDir returns a sub directory name.
+func (m *MediaFile) SubDir(dir string) string {
 	return filepath.Join(filepath.Dir(m.fileName), dir)
 }
 
-// Base returns the filename base without any extensions and path.
-func (m *MediaFile) Base(stripSequence bool) string {
-	return fs.Base(m.FileName(), stripSequence)
+// BasePrefix returns the filename base without any extensions and path.
+func (m *MediaFile) BasePrefix(stripSequence bool) string {
+	return fs.BasePrefix(m.FileName(), stripSequence)
 }
 
-// Base returns the filename base without any extensions and path.
+// Root returns the file root directory.
 func (m *MediaFile) Root() string {
 	if strings.HasPrefix(m.FileName(), Config().OriginalsPath()) {
 		return entity.RootOriginals
@@ -441,9 +441,9 @@ func (m *MediaFile) Root() string {
 	return ""
 }
 
-// AbsBase returns the directory and base filename without any extensions.
-func (m *MediaFile) AbsBase(stripSequence bool) string {
-	return fs.AbsBase(m.FileName(), stripSequence)
+// AbsPrefix returns the directory and base filename without any extensions.
+func (m *MediaFile) AbsPrefix(stripSequence bool) string {
+	return fs.AbsPrefix(m.FileName(), stripSequence)
 }
 
 // MimeType returns the mime type.
@@ -487,16 +487,20 @@ func (m *MediaFile) HasSameName(f *MediaFile) bool {
 }
 
 // Move file to a new destination with the filename provided in parameter.
-func (m *MediaFile) Move(newFilename string) error {
-	if err := os.Rename(m.fileName, newFilename); err != nil {
+func (m *MediaFile) Move(dest string) error {
+	if err := os.MkdirAll(filepath.Dir(dest), os.ModePerm); err != nil {
+		return err
+	}
+
+	if err := os.Rename(m.fileName, dest); err != nil {
 		log.Debugf("could not rename file, falling back to copy and delete: %s", err.Error())
 	} else {
-		m.fileName = newFilename
+		m.fileName = dest
 
 		return nil
 	}
 
-	if err := m.Copy(newFilename); err != nil {
+	if err := m.Copy(dest); err != nil {
 		return err
 	}
 
@@ -504,32 +508,36 @@ func (m *MediaFile) Move(newFilename string) error {
 		return err
 	}
 
-	m.fileName = newFilename
+	m.fileName = dest
 
 	return nil
 }
 
 // Copy a MediaFile to another file by destinationFilename.
-func (m *MediaFile) Copy(destinationFilename string) error {
-	file, err := m.openFile()
+func (m *MediaFile) Copy(dest string) error {
+	if err := os.MkdirAll(filepath.Dir(dest), os.ModePerm); err != nil {
+		return err
+	}
+
+	thisFile, err := m.openFile()
 
 	if err != nil {
 		log.Error(err.Error())
 		return err
 	}
 
-	defer file.Close()
+	defer thisFile.Close()
 
-	destination, err := os.OpenFile(destinationFilename, os.O_RDWR|os.O_CREATE, 0666)
+	destFile, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE, os.ModePerm)
 
 	if err != nil {
 		log.Error(err.Error())
 		return err
 	}
 
-	defer destination.Close()
+	defer destFile.Close()
 
-	_, err = io.Copy(destination, file)
+	_, err = io.Copy(destFile, thisFile)
 
 	if err != nil {
 		log.Error(err.Error())
@@ -819,11 +827,11 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	defer func() {
 		switch count {
 		case 0:
-			log.Debug(capture.Time(start, fmt.Sprintf("mediafile: no new thumbnails created for %s", m.Base(false))))
+			log.Debug(capture.Time(start, fmt.Sprintf("mediafile: no new thumbnails created for %s", m.BasePrefix(false))))
 		case 1:
-			log.Info(capture.Time(start, fmt.Sprintf("mediafile: one thumbnail created for %s", m.Base(false))))
+			log.Info(capture.Time(start, fmt.Sprintf("mediafile: one thumbnail created for %s", m.BasePrefix(false))))
 		default:
-			log.Info(capture.Time(start, fmt.Sprintf("mediafile: %d thumbnails created for %s", count, m.Base(false))))
+			log.Info(capture.Time(start, fmt.Sprintf("mediafile: %d thumbnails created for %s", count, m.BasePrefix(false))))
 		}
 	}()
 

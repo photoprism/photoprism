@@ -33,7 +33,7 @@ type IndexStatus string
 
 type IndexResult struct {
 	Status   IndexStatus
-	Error    error
+	Err      error
 	FileID   uint
 	FileUID  string
 	PhotoID  uint
@@ -44,15 +44,19 @@ func (r IndexResult) String() string {
 	return string(r.Status)
 }
 
+func (r IndexResult) Failed() bool {
+	return r.Err != nil
+}
+
 func (r IndexResult) Success() bool {
-	return r.Error == nil && r.FileID > 0
+	return r.Err == nil && r.FileID > 0
 }
 
 func (r IndexResult) Indexed() bool {
 	return r.Status == IndexAdded || r.Status == IndexUpdated || r.Status == IndexStacked
 }
 
-func (r IndexResult) Grouped() bool {
+func (r IndexResult) Stacked() bool {
 	return r.Status == IndexStacked
 }
 
@@ -60,7 +64,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if m == nil {
 		err := errors.New("index: media file is nil - you might have found a bug")
 		log.Error(err)
-		result.Error = err
+		result.Err = err
 		result.Status = IndexFailed
 		return result
 	}
@@ -162,10 +166,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			if err := photo.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s (restore from yaml) for %s", err.Error(), logName)
 			} else if err := photo.Find(); err != nil {
-				log.Infof("index: data restored from %s", txt.Quote(fs.Rel(yamlName, Config().OriginalsPath())))
+				log.Infof("index: data restored from %s", txt.Quote(fs.RelName(yamlName, Config().OriginalsPath())))
 			} else {
 				photoExists = true
-				log.Infof("index: uid %s restored from %s", photo.PhotoUID, txt.Quote(fs.Rel(yamlName, Config().OriginalsPath())))
+				log.Infof("index: uid %s restored from %s", photo.PhotoUID, txt.Quote(fs.RelName(yamlName, Config().OriginalsPath())))
 			}
 		}
 	}
@@ -191,7 +195,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.OriginalName = originalName
 
 		if file.FilePrimary && photo.OriginalName == "" {
-			photo.OriginalName = fs.Base(originalName, stripSequence)
+			photo.OriginalName = fs.BasePrefix(originalName, stripSequence)
 		}
 	}
 
@@ -505,14 +509,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if err := photo.Save(); err != nil {
 			log.Errorf("index: %s for %s", err.Error(), logName)
 			result.Status = IndexFailed
-			result.Error = err
+			result.Err = err
 			return result
 		}
 	} else {
 		if err := photo.FirstOrCreate(); err != nil {
 			log.Errorf("index: %s", err)
 			result.Status = IndexFailed
-			result.Error = err
+			result.Err = err
 			return result
 		}
 
@@ -576,7 +580,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if err := photo.Save(); err != nil {
 			log.Errorf("index: %s for %s", err, logName)
 			result.Status = IndexFailed
-			result.Error = err
+			result.Err = err
 			return result
 		}
 
@@ -595,7 +599,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if err := photo.Save(); err != nil {
 			log.Errorf("index: %s for %s", err, logName)
 			result.Status = IndexFailed
-			result.Error = err
+			result.Err = err
 			return result
 		}
 	}
@@ -608,7 +612,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if err := file.Save(); err != nil {
 			log.Errorf("index: %s for %s", err, logName)
 			result.Status = IndexFailed
-			result.Error = err
+			result.Err = err
 			return result
 		}
 	} else {
@@ -617,7 +621,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if err := file.Create(); err != nil {
 			log.Errorf("index: %s for %s", err, logName)
 			result.Status = IndexFailed
-			result.Error = err
+			result.Err = err
 			return result
 		}
 
@@ -658,7 +662,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if err := photo.SaveAsYaml(yamlFile); err != nil {
 			log.Errorf("index: %s (update yaml) for %s", err.Error(), logName)
 		} else {
-			log.Infof("index: updated yaml file %s", txt.Quote(fs.Rel(yamlFile, Config().OriginalsPath())))
+			log.Infof("index: updated yaml file %s", txt.Quote(fs.RelName(yamlFile, Config().OriginalsPath())))
 		}
 	}
 
@@ -679,7 +683,7 @@ func (ind *Index) NSFW(jpeg *MediaFile) bool {
 		return false
 	} else {
 		if nsfwLabels.NSFW(nsfw.ThresholdHigh) {
-			log.Warnf("index: %s might contain offensive content", txt.Quote(jpeg.RelativeName(Config().OriginalsPath())))
+			log.Warnf("index: %s might contain offensive content", txt.Quote(jpeg.RelName(Config().OriginalsPath())))
 			return true
 		}
 	}

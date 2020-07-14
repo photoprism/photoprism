@@ -28,7 +28,7 @@ func SavePhotoAsYaml(p entity.Photo) {
 		if err := p.SaveAsYaml(yamlFile); err != nil {
 			log.Errorf("photo: %s (update yaml)", err)
 		} else {
-			log.Infof("photo: updated yaml file %s", txt.Quote(fs.Rel(yamlFile, conf.OriginalsPath())))
+			log.Infof("photo: updated yaml file %s", txt.Quote(fs.RelName(yamlFile, conf.OriginalsPath())))
 		}
 	}
 }
@@ -297,7 +297,7 @@ func DislikePhoto(router *gin.RouterGroup) {
 // Parameters:
 //   uid: string PhotoUID as returned by the API
 //   file_uid: string File UID as returned by the API
-func PhotoFilePrimary(router *gin.RouterGroup) {
+func PhotoPrimary(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/files/:file_uid/primary", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
 

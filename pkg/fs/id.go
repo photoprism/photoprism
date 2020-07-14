@@ -74,7 +74,7 @@ func IsGenerated(fileName string) bool {
 		return false
 	}
 
-	base := Base(fileName, false)
+	base := BasePrefix(fileName, false)
 
 	if IsHash(base) {
 		return true

@@ -902,6 +902,7 @@ func (m *Photo) Delete(permanently bool) error {
 // Delete permanently deletes the entity from the database.
 func (m *Photo) DeletePermanently() error {
 	Db().Unscoped().Delete(File{}, "photo_id = ?", m.ID)
+	Db().Unscoped().Delete(Details{}, "photo_id = ?", m.ID)
 	Db().Unscoped().Delete(PhotoKeyword{}, "photo_id = ?", m.ID)
 	Db().Unscoped().Delete(PhotoLabel{}, "photo_id = ?", m.ID)
 	Db().Unscoped().Delete(PhotoAlbum{}, "photo_uid = ?", m.PhotoUID)
@@ -979,4 +980,9 @@ func (m *Photo) Approve() error {
 // Links returns all share links for this entity.
 func (m *Photo) Links() Links {
 	return FindLinks("", m.PhotoUID)
+}
+
+// PrimaryFile returns the primary file for this photo.
+func (m *Photo) PrimaryFile() (File, error) {
+	return PrimaryFile(m.PhotoUID)
 }

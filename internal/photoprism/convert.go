@@ -60,7 +60,7 @@ func (c *Convert) Start(path string) error {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`convert: ignored "%s"`, fs.Rel(fileName, path))
+		log.Infof(`convert: ignored "%s"`, fs.RelName(fileName, path))
 	}
 
 	err := godirwalk.Walk(path, &godirwalk.Options{
@@ -118,12 +118,12 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 	}
 
 	if !c.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: metadata export to json disabled in read only mode (%s)", mf.RelativeName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: metadata export to json disabled in read only mode (%s)", mf.RelName(c.conf.OriginalsPath()))
 	}
 
 	jsonName = fs.FileName(mf.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), ".json", c.conf.Settings().Index.Sequences)
 
-	fileName := mf.RelativeName(c.conf.OriginalsPath())
+	fileName := mf.RelName(c.conf.OriginalsPath())
 
 	log.Infof("convert: %s -> %s", fileName, filepath.Base(jsonName))
 
@@ -184,7 +184,7 @@ func (c *Convert) JpegConvertCommand(mf *MediaFile, jpegName string, xmpName str
 
 			result = exec.Command(c.conf.DarktableBin(), args...)
 		} else {
-			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", mf.Base(c.conf.Settings().Index.Sequences))
+			return nil, useMutex, fmt.Errorf("convert: no raw to jpeg converter installed (%s)", mf.BasePrefix(c.conf.Settings().Index.Sequences))
 		}
 	} else if mf.IsVideo() {
 		result = exec.Command(c.conf.FFmpegBin(), "-i", mf.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
@@ -200,7 +200,7 @@ func (c *Convert) JpegConvertCommand(mf *MediaFile, jpegName string, xmpName str
 // ToJpeg converts a single image file to JPEG if possible.
 func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	if !image.Exists() {
-		return nil, fmt.Errorf("convert: can not convert to jpeg, file does not exist (%s)", image.RelativeName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: can not convert to jpeg, file does not exist (%s)", image.RelName(c.conf.OriginalsPath()))
 	}
 
 	if image.IsJpeg() {
@@ -216,11 +216,11 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	}
 
 	if !c.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.RelativeName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.RelName(c.conf.OriginalsPath()))
 	}
 
 	jpegName = fs.FileName(image.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt, c.conf.Settings().Index.Sequences)
-	fileName := image.RelativeName(c.conf.OriginalsPath())
+	fileName := image.RelName(c.conf.OriginalsPath())
 
 	log.Infof("convert: %s -> %s", fileName, filepath.Base(jpegName))
 

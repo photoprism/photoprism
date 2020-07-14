@@ -266,4 +266,25 @@ func TestExif(t *testing.T) {
 
 		assert.EqualError(t, err, "metadata: no exif header in gopher-preview.jpg (search and extract)")
 	})
+
+	t.Run("huawei-gps-error.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/huawei-gps-error.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2020-06-16T18:52:46Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2020-06-16T18:52:46Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "1/110", data.Exposure)
+		assert.Equal(t, "HUAWEI", data.CameraMake)
+		assert.Equal(t, "ELE-L29", data.CameraModel)
+		assert.Equal(t, 27, data.FocalLength)
+		assert.Equal(t, 0, data.Orientation)
+		assert.Equal(t, "", data.LensMake)
+		assert.Equal(t, "", data.LensModel)
+	})
 }
