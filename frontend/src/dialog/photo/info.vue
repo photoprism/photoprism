@@ -220,7 +220,7 @@
 <script>
     import Thumb from "model/thumb";
     import {DateTime, Info} from "luxon";
-    import * as options from "resources/options";
+    import * as options from "options/options";
 
     export default {
         name: 'p-tab-photo-advanced',

@@ -1,0 +1,270 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-07-14 19:44+0000\n"
+"PO-Revision-Date: 2020-07-14 22:03+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3.1\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: en\n"
+
+#: messages.go:69
+msgid "Unexpected error, please try again"
+msgstr "Unexpected error, please try again"
+
+#: messages.go:70
+msgid "Invalid request"
+msgstr "Invalid request"
+
+#: messages.go:71
+msgid "Changes could not be saved"
+msgstr "Changes could not be saved"
+
+#: messages.go:72
+msgid "Could not be deleted"
+msgstr "Could not be deleted"
+
+#: messages.go:73
+#, c-format
+msgid "%s already exists"
+msgstr "%s already exists"
+
+#: messages.go:74 messages.go:77
+msgid "Not found on server, deleted?"
+msgstr "Not found on server, deleted?"
+
+#: messages.go:75
+msgid "File not found"
+msgstr "File not found"
+
+#: messages.go:76
+msgid "Selection not found"
+msgstr "Selection not found"
+
+#: messages.go:78
+msgid "Account not found"
+msgstr "Account not found"
+
+#: messages.go:79
+msgid "User not found"
+msgstr "User not found"
+
+#: messages.go:80
+msgid "Label not found"
+msgstr "Label not found"
+
+#: messages.go:81
+msgid "Album not found"
+msgstr "Album not found"
+
+#: messages.go:82
+msgid "Not available in public mode"
+msgstr "Not available in public mode"
+
+#: messages.go:83
+msgid "not available in read-only mode"
+msgstr "not available in read-only mode"
+
+#: messages.go:84
+msgid "Please log in and try again"
+msgstr "Please log in and try again"
+
+#: messages.go:85
+msgid "Upload might be offensive"
+msgstr "Upload might be offensive"
+
+#: messages.go:86
+msgid "No items selected"
+msgstr "No items selected"
+
+#: messages.go:87
+msgid "Failed creating file, please check permissions"
+msgstr "Failed creating file, please check permissions"
+
+#: messages.go:88
+msgid "Failed creating folder, please check permissions"
+msgstr "Failed creating folder, please check permissions"
+
+#: messages.go:89
+msgid "Could not connect, please try again"
+msgstr "Could not connect, please try again"
+
+#: messages.go:90
+msgid "Invalid password, please try again"
+msgstr "Invalid password, please try again"
+
+#: messages.go:91
+msgid "Feature disabled"
+msgstr "Feature disabled"
+
+#: messages.go:92
+msgid "No labels selected"
+msgstr "No labels selected"
+
+#: messages.go:93
+msgid "No albums selected"
+msgstr "No albums selected"
+
+#: messages.go:94
+msgid "No files available for download"
+msgstr "No files available for download"
+
+#: messages.go:95
+msgid "Failed to create zip file"
+msgstr "Failed to create zip file"
+
+#: messages.go:98
+msgid "Changes successfully saved"
+msgstr "Changes successfully saved"
+
+#: messages.go:99
+msgid "Album created"
+msgstr "Album created"
+
+#: messages.go:100
+msgid "Album saved"
+msgstr "Album saved"
+
+#: messages.go:101
+#, c-format
+msgid "Album %s deleted"
+msgstr "Album %s deleted"
+
+#: messages.go:102
+msgid "Album contents cloned"
+msgstr "Album contents cloned"
+
+#: messages.go:103
+msgid "File removed from stack"
+msgstr "File removed from stack"
+
+#: messages.go:104
+#, c-format
+msgid "Selection added to %s"
+msgstr "Selection added to %s"
+
+#: messages.go:105
+#, c-format
+msgid "One entry added to %s"
+msgstr "One entry added to %s"
+
+#: messages.go:106
+#, c-format
+msgid "%d entries added to %s"
+msgstr "%d entries added to %s"
+
+#: messages.go:107
+#, c-format
+msgid "One entry removed from %s"
+msgstr "One entry removed from %s"
+
+#: messages.go:108
+#, c-format
+msgid "%d entries removed from %s"
+msgstr "%d entries removed from %s"
+
+#: messages.go:109
+msgid "Account created"
+msgstr "Account created"
+
+#: messages.go:110
+msgid "Account saved"
+msgstr "Account saved"
+
+#: messages.go:111
+msgid "Account deleted"
+msgstr "Account deleted"
+
+#: messages.go:112
+msgid "Settings saved"
+msgstr "Settings saved"
+
+#: messages.go:113
+msgid "Password changed"
+msgstr "Password changed"
+
+#: messages.go:114
+#, c-format
+msgid "Import completed in %d s"
+msgstr "Import completed in %d s"
+
+#: messages.go:115
+msgid "Import canceled"
+msgstr "Import canceled"
+
+#: messages.go:116
+#, c-format
+msgid "Indexing completed in %d s"
+msgstr "Indexing completed in %d s"
+
+#: messages.go:117
+msgid "Indexing originals..."
+msgstr "Indexing originals..."
+
+#: messages.go:118
+#, c-format
+msgid "Indexing files in %s"
+msgstr "Indexing files in %s"
+
+#: messages.go:119
+msgid "Indexing canceled"
+msgstr "Indexing canceled"
+
+#: messages.go:120
+#, c-format
+msgid "Removed %d files and %d photos"
+msgstr "Removed %d files and %d photos"
+
+#: messages.go:121
+#, c-format
+msgid "Moving files from %s"
+msgstr "Moving files from %s"
+
+#: messages.go:122
+#, c-format
+msgid "Copying files from %s"
+msgstr "Copying files from %s"
+
+#: messages.go:123
+msgid "Labels deleted"
+msgstr "Labels deleted"
+
+#: messages.go:124
+msgid "Label saved"
+msgstr "Label saved"
+
+#: messages.go:125
+#, c-format
+msgid "%d files uploaded in %d s"
+msgstr "%d files uploaded in %d s"
+
+#: messages.go:126
+msgid "Selection archived"
+msgstr "Selection archived"
+
+#: messages.go:127
+msgid "Selection restored"
+msgstr "Selection restored"
+
+#: messages.go:128
+msgid "Selection marked as private"
+msgstr "Selection marked as private"
+
+#: messages.go:129
+msgid "Albums deleted"
+msgstr "Albums deleted"
+
+#: messages.go:130
+#, c-format
+msgid "Zip created in %d s"
+msgstr "Zip created in %d s"

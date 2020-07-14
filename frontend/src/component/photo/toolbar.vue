@@ -152,7 +152,7 @@
 </template>
 <script>
     import Event from "pubsub-js";
-    import * as options from "resources/options";
+    import * as options from "options/options";
 
     export default {
         name: 'p-photo-toolbar',

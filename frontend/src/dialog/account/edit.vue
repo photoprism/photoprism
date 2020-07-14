@@ -268,7 +268,7 @@
   </v-dialog>
 </template>
 <script>
-    import * as options from "resources/options";
+    import * as options from "options/options";
 
     export default {
         name: 'p-account-edit-dialog',

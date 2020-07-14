@@ -278,6 +278,11 @@ func (c *Config) AssetsPath() string {
 	return fs.Abs(c.params.AssetsPath)
 }
 
+// LocalesPath returns the translation locales path.
+func (c *Config) LocalesPath() string {
+	return filepath.Join(c.AssetsPath(), "locales")
+}
+
 // ExamplesPath returns the example files path.
 func (c *Config) ExamplesPath() string {
 	return filepath.Join(c.AssetsPath(), "examples")

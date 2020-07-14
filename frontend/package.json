@@ -15,8 +15,8 @@
     "acceptance": "testcafe \"chromium:headless --disable-dev-shm-usage\" --skip-js-errors --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
     "acceptance-firefox": "testcafe firefox:headless --skip-js-errors --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
     "acceptance-local": "testcafe chrome --selector-timeout 5000 -S -s tests/screenshots tests/acceptance",
-    "gettext-extract": "gettext-extract --output src/resources/translations.pot $(find src -type f \\( -iname \\*.vue -o -iname \\*.js \\))",
-    "gettext-compile": "gettext-compile --output src/resources/translations.json src/resources/*.po"
+    "gettext-extract": "gettext-extract --output src/locales/translations.pot $(find src -type f \\( -iname \\*.vue -o -iname \\*.js \\))",
+    "gettext-compile": "gettext-compile --output src/locales/translations.json src/locales/*.po"
   },
   "dependencies": {
     "@babel/cli": "^7.10.4",

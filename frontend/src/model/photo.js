@@ -34,7 +34,7 @@ import Api from "common/api";
 import {DateTime} from "luxon";
 import Util from "common/util";
 import {config} from "../session";
-import countries from "resources/countries.json";
+import countries from "options/countries.json";
 import {$gettext} from "common/vm";
 
 export const SrcManual = "manual";

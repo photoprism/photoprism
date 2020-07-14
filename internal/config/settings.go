@@ -108,7 +108,7 @@ func NewSettings() *Settings {
 
 // Propagate updates settings in other packages as needed.
 func (s Settings) Propagate() {
-	i18n.SetLang(s.Language)
+	i18n.SetLocale(s.Language)
 }
 
 // Load uses a yaml config file to initiate the configuration entity.
@@ -159,6 +159,8 @@ func (c *Config) initSettings() {
 	if err := c.settings.Load(p); err != nil {
 		log.Info(err)
 	}
+
+	i18n.SetDir(c.LocalesPath())
 
 	c.settings.Propagate()
 }

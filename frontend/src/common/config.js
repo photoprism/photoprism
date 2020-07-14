@@ -29,8 +29,8 @@ https://docs.photoprism.org/developer-guide/
 */
 
 import Event from "pubsub-js";
-import themes from "../resources/themes.json";
-import translations from "../resources/translations.json";
+import themes from "options/themes.json";
+import translations from "locales/translations.json";
 import Api from "./api";
 
 export default class Config {

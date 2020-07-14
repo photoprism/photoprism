@@ -348,7 +348,7 @@
 
 <script>
     import Settings from "model/settings";
-    import * as options from "resources/options";
+    import * as options from "options/options";
 
     export default {
         name: 'p-settings-general',

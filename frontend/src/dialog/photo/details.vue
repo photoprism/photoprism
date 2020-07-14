@@ -413,9 +413,9 @@
 </template>
 
 <script>
-    import countries from "resources/countries.json";
+    import countries from "options/countries.json";
     import Thumb from "model/thumb";
-    import * as options from "resources/options";
+    import * as options from "options/options";
 
     export default {
         name: 'p-tab-photo-details',

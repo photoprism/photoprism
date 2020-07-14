@@ -42,6 +42,7 @@ RUN apt-get update && apt-get upgrade && \
     nano \
     wget \
     git \
+    gettext \
     mysql-client \
     tzdata \
     gconf-service \

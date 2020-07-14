@@ -35,31 +35,21 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/leonelquinteros/gotext"
 )
+
+//go:generate xgettext --no-wrap --language=c --from-code=UTF-8 --output=../../assets/locales/messages.pot messages.go
 
 type Message int
 type MessageMap map[Message]string
 
-func Msg(id Message, params ...interface{}) string {
-	return LangMsg(id, Lang, params...)
+func gettext(s string) string {
+	return gotext.Get(s)
 }
 
-func LangMsg(id Message, lang Language, params ...interface{}) string {
-	msgs, ok := Languages[lang]
-
-	if !ok && lang != Default {
-		msgs, ok = Languages[Default]
-	}
-
-	msg, ok := msgs[id]
-
-	if !ok {
-		msg, ok = Languages[Default][id]
-	}
-
-	if !ok {
-		return fmt.Sprintf("i18n: unknown message id %d", id)
-	}
+func Msg(id Message, params ...interface{}) string {
+	msg := gotext.Get(Messages[id])
 
 	if strings.Contains(msg, "%") {
 		msg = fmt.Sprintf(msg, params...)
@@ -68,30 +58,6 @@ func LangMsg(id Message, lang Language, params ...interface{}) string {
 	return msg
 }
 
-func DefaultMsg(id Message, params ...interface{}) string {
-	return LangMsg(id, Default, params...)
-}
-
 func Error(id Message, params ...interface{}) error {
 	return errors.New(Msg(id, params...))
 }
-
-func LangError(id Message, lang Language, params ...interface{}) error {
-	return errors.New(LangMsg(id, lang, params...))
-}
-
-func DefaultError(id Message, params ...interface{}) error {
-	return LangError(id, Default, params...)
-}
-
-/*
-func JsonBadRequest(id Message) gin.H {
-	return JsonError(http.StatusBadRequest, msg)
-}
-
-func JsonForbidden(id Message) gin.H {
-	return JsonError(http.StatusForbidden, msg)
-}
-
-
-*/

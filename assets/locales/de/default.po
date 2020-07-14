@@ -1,0 +1,266 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-07-14 19:44+0000\n"
+"PO-Revision-Date: 2020-07-14 22:16+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3.1\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: messages.go:69
+msgid "Unexpected error, please try again"
+msgstr "Unerwarteter Fehler, bitte erneut versuchen"
+
+#: messages.go:70
+msgid "Invalid request"
+msgstr "Ungültige Anfrage"
+
+#: messages.go:71
+msgid "Changes could not be saved"
+msgstr "Fehler beim Speichern der Daten"
+
+#: messages.go:72
+msgid "Could not be deleted"
+msgstr "Konnte nicht gelöscht werden"
+
+#: messages.go:73
+#, c-format
+msgid "%s already exists"
+msgstr "%s existiert bereits"
+
+#: messages.go:74 messages.go:77
+msgid "Not found on server, deleted?"
+msgstr "Nicht auf Server gefunden, gelöscht?"
+
+#: messages.go:75
+msgid "File not found"
+msgstr "Datei konnte nicht gefunden werden"
+
+#: messages.go:76
+msgid "Selection not found"
+msgstr "Auswahl nicht gefunden"
+
+#: messages.go:78
+msgid "Account not found"
+msgstr "Unbekannter Account"
+
+#: messages.go:79
+msgid "User not found"
+msgstr "Nutzer nicht gefunden"
+
+#: messages.go:80
+msgid "Label not found"
+msgstr "Kategorie nicht gefunden"
+
+#: messages.go:81
+msgid "Album not found"
+msgstr "Album nicht gefunden - gelöscht?"
+
+#: messages.go:82
+msgid "Not available in public mode"
+msgstr "Im öffentlichen Modus nicht verfügbar"
+
+#: messages.go:83
+msgid "not available in read-only mode"
+msgstr "Funktion im ‘read-only’ Modus nicht verfügbar"
+
+#: messages.go:84
+msgid "Please log in and try again"
+msgstr "Anmeldung erforderlich"
+
+#: messages.go:85
+msgid "Upload might be offensive"
+msgstr "Inhalt könnte anstößig sein und wurde abgelehnt"
+
+#: messages.go:86
+msgid "No items selected"
+msgstr "Nichts ausgewählt"
+
+#: messages.go:87
+msgid "Failed creating file, please check permissions"
+msgstr "Datei konnte nicht angelegt werden"
+
+#: messages.go:88
+msgid "Failed creating folder, please check permissions"
+msgstr "Verzeichnis konnte nicht angelegt werden"
+
+#: messages.go:89
+msgid "Could not connect, please try again"
+msgstr "Verbindung fehlgeschlagen"
+
+#: messages.go:90
+msgid "Invalid password, please try again"
+msgstr "Ungültiges Passwort"
+
+#: messages.go:91
+msgid "Feature disabled"
+msgstr "Funktion deaktiviert"
+
+#: messages.go:92
+msgid "No labels selected"
+msgstr "Keine Kategorien ausgewählt"
+
+#: messages.go:93
+msgid "No albums selected"
+msgstr "Keine Alben ausgewählt"
+
+#: messages.go:94
+msgid "No files available for download"
+msgstr "Nicht zum Download verfügbar"
+
+#: messages.go:95
+msgid "Failed to create zip file"
+msgstr "Zip-Datei konnte nicht erstellt werden"
+
+#: messages.go:98
+msgid "Changes successfully saved"
+msgstr "Änderungen erfolgreich gespeichert"
+
+#: messages.go:99
+msgid "Album created"
+msgstr "Album erstellt"
+
+#: messages.go:100
+msgid "Album saved"
+msgstr "Album gespeichert"
+
+#: messages.go:101
+#, c-format
+msgid "Album %s deleted"
+msgstr "Album %s gelöscht"
+
+#: messages.go:102
+msgid "Album contents cloned"
+msgstr "Album-Einträge kopiert"
+
+#: messages.go:103
+msgid "File removed from stack"
+msgstr "Datei aus Stapel entfernt"
+
+#: messages.go:104
+#, c-format
+msgid "Selection added to %s"
+msgstr "Auswahl zu %s hinzugefügt"
+
+#: messages.go:105
+#, c-format
+msgid "One entry added to %s"
+msgstr "Ein Eintrag zu %s hinzugefügt"
+
+#: messages.go:106
+#, c-format
+msgid "%d entries added to %s"
+msgstr "%d Einträge zu %s hinzugefügt"
+
+#: messages.go:107
+#, c-format
+msgid "One entry removed from %s"
+msgstr "Ein Eintrag aus %s entfernt"
+
+#: messages.go:108
+#, c-format
+msgid "%d entries removed from %s"
+msgstr "%d Einträge aus %s entfernt"
+
+#: messages.go:109
+msgid "Account created"
+msgstr "Server-Konfiguration angelegt"
+
+#: messages.go:110
+msgid "Account saved"
+msgstr "Server-Konfiguration gespeichert"
+
+#: messages.go:111
+msgid "Account deleted"
+msgstr "Server-Konfiguration gelöscht"
+
+#: messages.go:112
+msgid "Settings saved"
+msgstr "Einstellungen gespeichert"
+
+#: messages.go:113
+msgid "Password changed"
+msgstr "Passwort geändert"
+
+#: messages.go:114
+#, c-format
+msgid "Import completed in %d s"
+msgstr "Import in %d s abgeschlossen"
+
+#: messages.go:115
+msgid "Import canceled"
+msgstr "Import abgebrochen"
+
+#: messages.go:116
+#, c-format
+msgid "Indexing completed in %d s"
+msgstr "Indizierung in %d s abgeschlossen"
+
+#: messages.go:117
+msgid "Indexing originals..."
+msgstr "Indiziere Dateien…"
+
+#: messages.go:118
+#, c-format
+msgid "Indexing files in %s"
+msgstr "Indiziere Dateien in %s"
+
+#: messages.go:119
+msgid "Indexing canceled"
+msgstr "Indizierung abgebrochen"
+
+#: messages.go:120
+#, c-format
+msgid "Removed %d files and %d photos"
+msgstr "%d Dateien und %d Fotos wurden entfernt"
+
+#: messages.go:121
+#, c-format
+msgid "Moving files from %s"
+msgstr "Verschiebe Dateien von %s"
+
+#: messages.go:122
+#, c-format
+msgid "Copying files from %s"
+msgstr "Kopiere Dateien von %s"
+
+#: messages.go:123
+msgid "Labels deleted"
+msgstr "Kategorien gelöscht”"
+
+#: messages.go:124
+msgid "Label saved"
+msgstr "Kategorie gespeichert"
+
+#: messages.go:125
+#, c-format
+msgid "%d files uploaded in %d s"
+msgstr "%d Dateien hochgeladen in %d s"
+
+#: messages.go:126
+msgid "Selection archived"
+msgstr "Auswahl archiviert"
+
+#: messages.go:127
+msgid "Selection restored"
+msgstr "Auswahl wiederhergestellt"
+
+#: messages.go:128
+msgid "Selection marked as private"
+msgstr "Auswahl als privat markiert"
+
+#: messages.go:129
+msgid "Albums deleted"
+msgstr "Alben gelöscht"
+
+#: messages.go:130
+#, c-format
+msgid "Zip created in %d s"
+msgstr "Zip-Datei erstellt in %d s"

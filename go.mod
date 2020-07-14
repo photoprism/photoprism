@@ -24,6 +24,7 @@ require (
 	github.com/karrick/godirwalk v1.15.6
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/leandro-lugaresi/hub v1.1.0
+	github.com/leonelquinteros/gotext v1.4.0
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.0.3
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
