@@ -95,6 +95,9 @@ func TestIsDscName(t *testing.T) {
 	assert.False(t, IsDscName("550e8400-e29b-11d4-a716-446655440000"))
 	assert.True(t, IsDscName("IMG_0599.JPG"))
 	assert.True(t, IsDscName("IMG_20190721_095643.JPG"))
+	assert.True(t, IsDscName("IMG_20190119_135810_145"))
+	//TODO
+	//assert.True(t, IsDscName("IMG_1059_2048px"))
 	assert.True(t, IsDscName("IMG_20190721_095643"))
 	assert.True(t, IsDscName("DSC_20190721_095643"))
 	assert.True(t, IsDscName("DSC10599"))

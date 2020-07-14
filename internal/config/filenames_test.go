@@ -61,3 +61,17 @@ func TestConfig_TestdataPath(t *testing.T) {
 
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/testdata", c.TestdataPath())
 }
+
+func TestConfig_CreateDirectories(t *testing.T) {
+	c := NewTestConfig()
+	err := c.CreateDirectories()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestConfig_ConfigFile2(t *testing.T) {
+	c := NewTestConfig()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/testdata", c.ConfigFile())
+}

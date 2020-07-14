@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-var DscNameRegexp = regexp.MustCompile("\\D{3}[\\d_]\\d{4,8}_?\\d{0,6}(.JPG)?")
+var DscNameRegexp = regexp.MustCompile("\\D{3}[\\d_]\\d{4,8}_?\\d{0,6}_?\\d{0,6}(.JPG)?")
 var UniqueNameRegexp = regexp.MustCompile("[a-f0-9]{8,16}_[a-f0-9]{6,16}_[A-Za-z0-9]{1,20}_?[A-Za-z0-9]{0,4}") // Example: 8263987746_d0a6055c58_o
 var UUIDNameRegexp = regexp.MustCompile("[A-Fa-f0-9\\-]{16,36}_?[A-Za-z0-9_]{0,20}")                           // Example: 8263987746_d0a6055c58_o
 
