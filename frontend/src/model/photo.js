@@ -52,6 +52,7 @@ export class Photo extends RestModel {
             DocumentID: "",
             UID: "",
             Type: TypeImage,
+            TypeSrc: "",
             Favorite: false,
             Private: false,
             Scan: false,
@@ -443,6 +444,8 @@ export class Photo extends RestModel {
             if (country) {
                 return country.Name;
             }
+        } else if (this.Place && this.Place.Label) {
+            return this.Place.Label;
         }
 
         return this.PlaceLabel ? this.PlaceLabel : $gettext("Unknown");
@@ -607,6 +610,10 @@ export class Photo extends RestModel {
             values.TitleSrc = SrcManual;
         }
 
+        if (values.Type) {
+            values.TypeSrc = SrcManual;
+        }
+
         if (values.Description) {
             values.DescriptionSrc = SrcManual;
         }
@@ -623,7 +630,13 @@ export class Photo extends RestModel {
             values.CameraSrc = SrcManual;
         }
 
-        return Api.put(this.getEntityResource(), values).then((response) => Promise.resolve(this.setValues(response.data)));
+        return Api.put(this.getEntityResource(), values).then((resp) => {
+            if(values.Type || values.Lat) {
+                config.update();
+            }
+
+            return Promise.resolve(this.setValues(resp.data));
+        });
     }
 
     static getCollectionResource() {

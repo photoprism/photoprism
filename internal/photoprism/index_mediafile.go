@@ -306,8 +306,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 
-		if m.IsRaw() && photo.PhotoType == entity.TypeImage {
-			photo.PhotoType = entity.TypeRaw
+		if photo.TypeSrc == entity.SrcAuto {
+			// Update photo type only if not manually modified.
+			if m.IsRaw() && photo.PhotoType == entity.TypeImage {
+				photo.PhotoType = entity.TypeRaw
+			}
 		}
 	case m.IsVideo():
 		if metaData := m.MetaData(); metaData.Error == nil {
@@ -364,10 +367,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 
-		if file.FileDuration == 0 || file.FileDuration > time.Millisecond*3100 {
-			photo.PhotoType = entity.TypeVideo
-		} else {
-			photo.PhotoType = entity.TypeLive
+		if photo.TypeSrc == entity.SrcAuto {
+			// Update photo type only if not manually modified.
+			if file.FileDuration == 0 || file.FileDuration > time.Millisecond*3100 {
+				photo.PhotoType = entity.TypeVideo
+			} else {
+				photo.PhotoType = entity.TypeLive
+			}
 		}
 
 		if file.FileWidth == 0 && primaryFile.FileWidth > 0 {

@@ -17,6 +17,7 @@ type PhotoResult struct {
 	UUID             string        `json:"DocumentID,omitempty"`
 	PhotoUID         string        `json:"UID"`
 	PhotoType        string        `json:"Type"`
+	TypeSrc          string        `json:"TypeSrc"`
 	TakenAt          time.Time     `json:"TakenAt"`
 	TakenAtLocal     time.Time     `json:"TakenAtLocal"`
 	TakenSrc         string        `json:"TakenSrc"`
@@ -40,8 +41,8 @@ type PhotoResult struct {
 	PhotoResolution  int           `json:"Resolution"`
 	PhotoScan        bool          `json:"Scan"`
 	CameraID         uint          `json:"CameraID"` // Camera
-	CameraSerial     string        `json:"CameraSerial"`
-	CameraSrc        string        `json:"CameraSrc"`
+	CameraSerial     string        `json:"CameraSerial,omitempty"`
+	CameraSrc        string        `json:"CameraSrc,omitempty"`
 	CameraModel      string        `json:"CameraModel"`
 	CameraMake       string        `json:"CameraMake"`
 	LensID           uint          `json:"LensID"` // Lens

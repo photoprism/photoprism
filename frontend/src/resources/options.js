@@ -174,6 +174,25 @@ export const MapsStyle = () => [
     },
 ];
 
+export const PhotoTypes = () => [
+    {
+        "text": $gettext("Image"),
+        "value": "image",
+    },
+    {
+        "text": $gettext("Raw"),
+        "value": "raw",
+    },
+    {
+        "text": $gettext("Live"),
+        "value": "live",
+    },
+    {
+        "text": $gettext("Video"),
+        "value": "video",
+    },
+];
+
 export const Intervals = () => [
     {"value": 0, "text": $gettext("Never")},
     {"value": 3600, "text": $gettext("1 hour")},

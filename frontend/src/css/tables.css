@@ -6,9 +6,13 @@ div.v-dialog table.v-table tfoot td {
 
 table.v-table tbody td,
 table.v-table tbody td input,
+table.v-table tbody td select,
+table.v-table tbody td .v-input,
 table.v-table tbody td label.v-label,
 table.v-table tfoot td,
 table.v-table tfoot td input,
+table.v-table tbody td select,
+table.v-table tbody td .v-input,
 table.v-table tfoot td label.v-label {
     font-weight: 400;
     font-size: 13px;
@@ -17,4 +21,9 @@ table.v-table tfoot td label.v-label {
 table.v-table tbody td div.v-input__slot,
 table.v-table tfoot td div.v-input__slot {
     padding: 0 !important;
+}
+
+table.v-table tbody td .v-icon.src {
+    font-size: 13px;
+    margin-left: 4px;
 }

@@ -403,11 +403,9 @@
 </template>
 
 <script>
-    import {DateTime} from "luxon";
     import countries from "resources/countries.json";
     import Thumb from "model/thumb";
     import * as options from "resources/options";
-    import Event from "pubsub-js";
 
     export default {
         name: 'p-tab-photo-details',

@@ -120,7 +120,7 @@
                         <td>
                           <translate>Aspect Ratio</translate>
                         </td>
-                        <td>{{ file.AspectRatio }}</td>
+                        <td>{{ file.AspectRatio | number('0.00') }}</td>
                       </tr>
                       <tr v-if="file.MainColor">
                         <td>

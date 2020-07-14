@@ -21,6 +21,7 @@ const (
 	SortOrderName      = "name"
 	SortOrderSimilar   = "similar"
 	SortOrderRelevance = "relevance"
+	SortOrderEdited    = "edited"
 
 	// Unknown values.
 	YearUnknown  = -1

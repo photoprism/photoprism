@@ -321,6 +321,8 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 	// Set sort order for results.
 	switch f.Order {
+	case entity.SortOrderEdited:
+		s = s.Where("edited_at IS NOT NULL").Order("edited_at DESC, photos.photo_uid, files.file_primary DESC")
 	case entity.SortOrderRelevance:
 		if f.Label != "" {
 			s = s.Order("photo_quality DESC, photos_labels.uncertainty ASC, taken_at DESC, files.file_primary DESC")

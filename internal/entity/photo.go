@@ -39,6 +39,7 @@ type Photo struct {
 	TakenSrc         string       `gorm:"type:varbinary(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
 	PhotoUID         string       `gorm:"type:varbinary(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string       `gorm:"type:varbinary(8);default:'image';" json:"Type" yaml:"Type"`
+	TypeSrc          string       `gorm:"type:varbinary(8);" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
 	PhotoTitle       string       `gorm:"type:varchar(255);" json:"Title" yaml:"Title"`
 	TitleSrc         string       `gorm:"type:varbinary(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
 	PhotoDescription string       `gorm:"type:text;" json:"Description" yaml:"Description,omitempty"`

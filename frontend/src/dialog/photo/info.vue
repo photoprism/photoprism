@@ -12,10 +12,21 @@
           <td>{{ model.DocumentID | uppercase }}</td>
         </tr>
         <tr>
-          <td>
-            <translate>Type</translate>
+          <td :title="model.TypeSrc">
+            <translate>Type</translate> <v-icon v-if="model.TypeSrc === 'manual'" class="src">build</v-icon>
           </td>
-          <td>{{ model.Type | capitalize }}</td>
+          <td>
+            <v-select
+                    @change="save"
+                    flat solo
+                    browser-autocomplete="off"
+                    hide-details
+                    color="secondary-dark"
+                    v-model="model.Type"
+                    :items="options.PhotoTypes()"
+                    class="input-type">
+            </v-select>
+          </td>
         </tr>
         <tr v-if="model.Path">
           <td>
@@ -38,27 +49,20 @@
                     @change="save"
                     flat solo dense hide-details v-model="model.OriginalName"
                     color="secondary-dark"
-                    style="font-weight: 400; font-size: 13px;"
             ></v-text-field>
           </td>
         </tr>
         <tr>
-          <td>
-            <translate>Title</translate>
+          <td :title="model.TitleSrc">
+            <translate>Title</translate> <v-icon v-if="model.TitleSrc === 'manual'" class="src">build</v-icon>
           </td>
           <td>{{ model.Title }}</td>
         </tr>
-        <tr v-if="model.TitleSrc">
-          <td>
-            <translate>Title Source</translate>
-          </td>
-          <td>{{ model.TitleSrc | capitalize }}</td>
-        </tr>
         <tr>
-          <td>
-            <translate>Taken</translate>
+          <td :title="model.TakenSrc">
+            <translate>Taken</translate> <v-icon v-if="model.TakenSrc === 'manual'" class="src">build</v-icon>
           </td>
-          <td>{{ model.getDateString() }} <span v-if="model.TakenSrc">({{ model.TakenSrc | capitalize }})</span></td>
+          <td>{{ model.getDateString() }}</td>
         </tr>
         <tr>
           <td>
@@ -120,6 +124,14 @@
             ></v-switch>
           </td>
         </tr>
+        <tr>
+          <td :title="model.PlaceSrc">
+            <translate>Place</translate>  <v-icon v-if="model.PlaceSrc === 'manual'" class="src">build</v-icon>
+          </td>
+          <td>
+            {{ model.locationInfo() }}
+          </td>
+        </tr>
         <tr v-if="model.Lat">
           <td>
             <translate>Latitude</translate>
@@ -155,7 +167,7 @@
                     color="secondary-dark"
                     type="number"
                     suffix="m"
-                    style="font-weight: 400; font-size: 13px; width: 100px;"
+                    style="width: 100px;"
             ></v-text-field>
           </td>
         </tr>
@@ -208,6 +220,7 @@
 <script>
     import Thumb from "model/thumb";
     import {DateTime, Info} from "luxon";
+    import * as options from "resources/options";
 
     export default {
         name: 'p-tab-photo-advanced',
@@ -217,6 +230,7 @@
         },
         data() {
             return {
+                options: options,
                 config: this.$config.values,
                 readonly: this.$config.get("readonly"),
             };

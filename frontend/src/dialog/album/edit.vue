@@ -108,6 +108,7 @@
                 loading: false,
                 sorting: [
                     {value: 'added', text: this.$gettext('Recently added')},
+                    {value: 'edited', text: this.$gettext('Recently edited')},
                     {value: 'newest', text: this.$gettext('Newest first')},
                     {value: 'oldest', text: this.$gettext('Oldest first')},
                     {value: 'name', text: this.$gettext('Sort by file name')},
