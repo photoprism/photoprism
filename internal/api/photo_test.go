@@ -70,6 +70,13 @@ func TestGetPhotoDownload(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/photos/xxx/dl?t="+conf.DownloadToken())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
+
+	t.Run("invalid token", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		GetPhotoDownload(router)
+		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh7/dl?t=xxx")
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
 }
 
 func TestLikePhoto(t *testing.T) {
@@ -133,6 +140,45 @@ func TestPhotoPrimary(t *testing.T) {
 		r := PerformRequest(app, "POST", "/api/v1/photos/xxx/files/ft1es39w45bnlqdw/primary")
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, i18n.Msg(i18n.ErrEntityNotFound), val.String())
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+}
+
+func TestGetPhotoYaml(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		GetPhotoYaml(router)
+		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh7/yaml")
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+
+	t.Run("not existing photo", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		GetPhotoYaml(router)
+		r := PerformRequest(app, "GET", "/api/v1/photos/xxx/yaml")
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+}
+
+func TestApprovePhoto(t *testing.T) {
+	t.Run("existing photo", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		GetPhoto(router)
+		r3 := PerformRequest(app, "GET", "/api/v1/photos/pt9jtxrexxvl0y20")
+		val2 := gjson.Get(r3.Body.String(), "Quality")
+		assert.Equal(t, "1", val2.String())
+		ApprovePhoto(router)
+		r := PerformRequest(app, "POST", "/api/v1/photos/pt9jtxrexxvl0y20/approve")
+		assert.Equal(t, http.StatusOK, r.Code)
+		r2 := PerformRequest(app, "GET", "/api/v1/photos/pt9jtxrexxvl0y20")
+		val := gjson.Get(r2.Body.String(), "Quality")
+		assert.Equal(t, "3", val.String())
+	})
+
+	t.Run("not existing photo", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		ApprovePhoto(router)
+		r := PerformRequest(app, "POST", "/api/v1/photos/xxx/approve")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }
