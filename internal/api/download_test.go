@@ -25,4 +25,10 @@ func TestGetDownload(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/dl/3cad9168fa6acc5c5c2965ddf6ec465ca42fd818?t="+conf.DownloadToken())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
+	t.Run("invalid download token", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		GetDownload(router)
+		r := PerformRequest(app, "GET", "/api/v1/dl/3cad9168fa6acc5c5c2965ddf6ec465ca42fd818?t=xxx")
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
 }
