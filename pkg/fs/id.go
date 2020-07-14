@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-var DscNameRegexp = regexp.MustCompile("\\D{3}[\\d_]\\d{4,8}_?\\d{0,6}_?\\d{0,6}(.JPG)?")
+var DscNameRegexp = regexp.MustCompile("\\D{3}[\\d_]\\d{4,8}_?\\d{0,6}_?\\d{0,6}[\\.jpgJPGXx]{0,4}")
 var UniqueNameRegexp = regexp.MustCompile("[a-f0-9]{8,16}_[a-f0-9]{6,16}_[A-Za-z0-9]{1,20}_?[A-Za-z0-9]{0,4}") // Example: 8263987746_d0a6055c58_o
 var UUIDNameRegexp = regexp.MustCompile("[A-Fa-f0-9\\-]{16,36}_?[A-Za-z0-9_]{0,20}")                           // Example: 8263987746_d0a6055c58_o
 
@@ -32,7 +32,7 @@ func IsAsciiID(s string) bool {
 	}
 
 	for _, r := range s {
-		if (r < 65 || r > 90) && (r < 48 || r > 57) {
+		if (r < 65 || r > 90) && (r < 48 || r > 57) && r != 45 && r != 95 {
 			return false
 		}
 	}
@@ -76,7 +76,9 @@ func IsGenerated(fileName string) bool {
 
 	base := BasePrefix(fileName, false)
 
-	if IsHash(base) {
+	if IsAsciiID(base) {
+		return true
+	} else if IsHash(base) {
 		return true
 	} else if IsInt(base) {
 		return true
@@ -87,8 +89,6 @@ func IsGenerated(fileName string) bool {
 	} else if rnd.IsUID(base, 0) {
 		return true
 	} else if IsCanonical(base) {
-		return true
-	} else if IsAsciiID(base) {
 		return true
 	}
 
