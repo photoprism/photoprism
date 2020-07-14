@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLinkAlbum(t *testing.T) {
+func TestCreateAlbumLink(t *testing.T) {
 	t.Run("create share link", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
@@ -61,7 +61,94 @@ func TestLinkAlbum(t *testing.T) {
 	})
 }
 
-func TestLinkPhoto(t *testing.T) {
+func TestUpdateAlbumLink(t *testing.T) {
+	app, router, _ := NewApiTest()
+
+	CreateAlbumLink(router)
+
+	r := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+
+	if r.Code != http.StatusOK {
+		t.Fatal(r.Body.String())
+	}
+	val2 := gjson.Get(r.Body.String(), "Expires")
+	assert.Equal(t, "0", val2.String())
+	uid := gjson.Get(r.Body.String(), "UID").String()
+
+	t.Run("successful request", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateAlbumLink(router)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/at9lxuqxpogaaba7/links/"+uid, `{"Token": "newToken", "Expires": 8000, "Password": "1234nhfhfd"}`)
+		val := gjson.Get(r.Body.String(), "Token")
+		assert.Equal(t, "newtoken", val.String())
+		val2 := gjson.Get(r.Body.String(), "Expires")
+		assert.Equal(t, "8000", val2.String())
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+
+	t.Run("bad request", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateAlbumLink(router)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/at9lxuqxpogaaba7/links/"+uid, `{"Token": "newToken", "Expires": "vgft", "xxx": "xxx"}`)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+}
+
+func TestDeleteAlbumLink(t *testing.T) {
+	app, router, _ := NewApiTest()
+
+	CreateAlbumLink(router)
+
+	r := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+
+	if r.Code != http.StatusOK {
+		t.Fatal(r.Body.String())
+	}
+	uid := gjson.Get(r.Body.String(), "UID").String()
+
+	GetAlbumLinks(router)
+	r2 := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba7/links")
+	len := gjson.Get(r2.Body.String(), "#")
+
+	t.Run("successful deletion", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		DeleteAlbumLink(router)
+		r := PerformRequest(app, "DELETE", "/api/v1/albums/at9lxuqxpogaaba7/links/"+uid)
+		assert.Equal(t, http.StatusOK, r.Code)
+		GetAlbumLinks(router)
+		r2 := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba7/links")
+		len2 := gjson.Get(r2.Body.String(), "#")
+		assert.Greater(t, len.Int(), len2.Int())
+	})
+}
+
+func TestGetAlbumLinks(t *testing.T) {
+	t.Run("successful request", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+
+		CreateAlbumLink(router)
+
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+
+		if r.Code != http.StatusOK {
+			t.Fatal(r.Body.String())
+		}
+		GetAlbumLinks(router)
+		r2 := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba7/links")
+		len := gjson.Get(r2.Body.String(), "#")
+		assert.GreaterOrEqual(t, len.Int(), int64(1))
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		GetAlbumLinks(router)
+		r := PerformRequest(app, "GET", "/api/v1/albums/xxx/links")
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+}
+
+func TestCreatePhotoLink(t *testing.T) {
 	t.Run("create share link", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
@@ -102,7 +189,7 @@ func TestLinkPhoto(t *testing.T) {
 	})
 }
 
-func TestLinkLabel(t *testing.T) {
+func TestCreateLabelLink(t *testing.T) {
 	t.Run("create share link", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
