@@ -29,20 +29,12 @@ func Logger() gin.HandlerFunc {
 			path = path + "?" + raw
 		}
 
-		if statusCode >= 400 {
-			log.Errorf("%s %s (%3d) [%v]",
-				method,
-				path,
-				statusCode,
-				latency,
-			)
-		} else {
-			log.Debugf("%s %s (%3d) [%v]",
-				method,
-				path,
-				statusCode,
-				latency,
-			)
-		}
+		// Use debug level to keep production logs clean.
+		log.Debugf("%s %s (%3d) [%v]",
+			method,
+			path,
+			statusCode,
+			latency,
+		)
 	}
 }

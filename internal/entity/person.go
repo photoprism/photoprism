@@ -123,7 +123,7 @@ func FirstOrCreatePerson(m *Person) *Person {
 	if err := Db().Where("id = ? OR person_uid = ?", m.ID, m.PersonUID).First(&result).Error; err == nil {
 		return &result
 	} else if err := m.Create(); err != nil {
-		log.Errorf("person: %s", err)
+		log.Debugf("person: %s", err)
 		return nil
 	}
 
@@ -141,7 +141,7 @@ func FindPersonByUserName(userName string) *Person {
 	if err := Db().Where("user_name = ?", userName).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("user %s not found", txt.Quote(userName))
+		log.Debugf("user %s not found", txt.Quote(userName))
 		return nil
 	}
 }
@@ -157,7 +157,7 @@ func FindPersonByUID(uid string) *Person {
 	if err := Db().Where("person_uid = ?", uid).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("user %s not found", txt.Quote(uid))
+		log.Debugf("user %s not found", txt.Quote(uid))
 		return nil
 	}
 }
