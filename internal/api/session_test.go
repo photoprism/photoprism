@@ -22,6 +22,18 @@ func TestCreateSession(t *testing.T) {
 		r := PerformRequestWithBody(app, "POST", "/api/v1/session", `{"username": 123, "password": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
+	t.Run("invalid token", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		CreateSession(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/session", `{"username": "admin", "password": "photoprism", "token": "xxx"}`)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("valid token", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		CreateSession(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/session", `{"username": "admin", "password": "photoprism", "token": "1jxf3jfn2k"}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
 	t.Run("invalid password", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateSession(router)
