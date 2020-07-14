@@ -36,6 +36,7 @@
             <v-layout row wrap>
               <v-flex xs12 class="pa-2">
                 <v-text-field
+                        :append-icon="model.TitleSrc === 'manual' ? 'check' : ''"
                         :disabled="disabled"
                         :rules="[textRule]"
                         hide-details
@@ -50,6 +51,7 @@
 
               <v-flex xs4 md2 pa-2>
                 <v-autocomplete
+                        :append-icon="model.TakenSrc === 'manual' ? 'check' : ''"
                         @change="updateTime"
                         :disabled="disabled"
                         :error="invalidDate"
@@ -64,6 +66,7 @@
               </v-flex>
               <v-flex xs4 md2 pa-2>
                 <v-autocomplete
+                        :append-icon="model.TakenSrc === 'manual' ? 'check' : ''"
                         @change="updateTime"
                         :disabled="disabled"
                         :error="invalidDate"
@@ -78,6 +81,7 @@
               </v-flex>
               <v-flex xs4 md2 pa-2>
                 <v-autocomplete
+                        :append-icon="model.TakenSrc === 'manual' ? 'check' : ''"
                         @change="updateTime"
                         :disabled="disabled"
                         :error="invalidDate"
@@ -93,6 +97,7 @@
 
               <v-flex xs6 md2 class="pa-2">
                 <v-text-field
+                        :append-icon="model.TakenSrc === 'manual' ? 'check' : ''"
                         :disabled="disabled"
                         @change="updateTime"
                         v-model="localTime"
@@ -137,6 +142,7 @@
 
               <v-flex xs12 sm6 md4 class="pa-2">
                 <v-autocomplete
+                        :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                         :disabled="disabled"
                         :label="labels.country"
                         hide-details hide-no-data
@@ -165,6 +171,7 @@
 
               <v-flex xs4 md3 class="pa-2">
                 <v-text-field
+                        :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                         :disabled="disabled"
                         hide-details
                         browser-autocomplete="off"
@@ -178,6 +185,7 @@
 
               <v-flex xs4 md3 class="pa-2">
                 <v-text-field
+                        :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                         :disabled="disabled"
                         hide-details
                         browser-autocomplete="off"
@@ -191,6 +199,7 @@
 
               <v-flex xs12 md6 pa-2 class="p-camera-select">
                 <v-select
+                        :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
                         :disabled="disabled"
                         :label="labels.camera"
                         browser-autocomplete="off"
@@ -232,6 +241,7 @@
 
               <v-flex xs12 md6 pa-2 class="p-lens-select">
                 <v-select
+                        :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
                         :disabled="disabled"
                         :label="labels.lens"
                         browser-autocomplete="off"
@@ -333,6 +343,7 @@
 
               <v-flex xs12 class="pa-2">
                 <v-textarea
+                        :append-icon="model.DescriptionSrc === 'manual' ? 'check' : ''"
                         :disabled="disabled"
                         hide-details
                         browser-autocomplete="off"
@@ -378,18 +389,17 @@
 
               <v-flex xs12 text-xs-right class="pt-3" v-if="!disabled">
                 <v-btn @click.stop="close" depressed color="secondary-light"
-                       class="p-photo-dialog-close">
-                  <translate key="Close">Close</translate>
+                       class="action-close">
+                  <translate>Close</translate>
                 </v-btn>
                 <v-btn color="secondary-dark" depressed dark @click.stop="save(false)"
-                       class="p-photo-dialog-confirm action-approve">
-                  <span v-if="$config.feature('review') && model.Quality < 3"><translate key="Approve">Approve</translate></span>
-                  <span v-else><translate key="Apply">Apply</translate></span>
+                       class="action-apply action-approve">
+                  <span v-if="$config.feature('review') && model.Quality < 3"><translate>Approve</translate></span>
+                  <span v-else><translate>Apply</translate></span>
                 </v-btn>
                 <v-btn color="secondary-dark" depressed dark @click.stop="save(true)"
-                       class="p-photo-dialog-confirm hidden-xs-only action-ok">
-                  <span><translate key="OK">OK</translate></span>
-                  <v-icon right dark>done</v-icon>
+                       class="action-done hidden-xs-only">
+                  <translate>Done</translate>
                 </v-btn>
               </v-flex>
             </v-layout>

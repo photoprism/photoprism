@@ -13,7 +13,7 @@
         </tr>
         <tr>
           <td :title="model.TypeSrc">
-            <translate>Type</translate> <v-icon v-if="model.TypeSrc === 'manual'" class="src">build</v-icon>
+            <translate>Type</translate> <v-icon v-if="model.TypeSrc === 'manual'" class="src">check</v-icon>
           </td>
           <td>
             <v-select
@@ -54,13 +54,13 @@
         </tr>
         <tr>
           <td :title="model.TitleSrc">
-            <translate>Title</translate> <v-icon v-if="model.TitleSrc === 'manual'" class="src">build</v-icon>
+            <translate>Title</translate> <v-icon v-if="model.TitleSrc === 'manual'" class="src">check</v-icon>
           </td>
           <td>{{ model.Title }}</td>
         </tr>
         <tr>
           <td :title="model.TakenSrc">
-            <translate>Taken</translate> <v-icon v-if="model.TakenSrc === 'manual'" class="src">build</v-icon>
+            <translate>Taken</translate> <v-icon v-if="model.TakenSrc === 'manual'" class="src">check</v-icon>
           </td>
           <td>{{ model.getDateString() }}</td>
         </tr>
@@ -126,7 +126,7 @@
         </tr>
         <tr>
           <td :title="model.PlaceSrc">
-            <translate>Place</translate>  <v-icon v-if="model.PlaceSrc === 'manual'" class="src">build</v-icon>
+            <translate>Place</translate>  <v-icon v-if="model.PlaceSrc === 'manual'" class="src">check</v-icon>
           </td>
           <td>
             {{ model.locationInfo() }}
