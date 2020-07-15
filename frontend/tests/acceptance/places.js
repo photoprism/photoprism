@@ -19,3 +19,11 @@ test('#1 Test places', async t => {
         .expect(Selector('div.p-map-control').visible).ok()
         .expect(getLocation()).contains('Berlin');
 });
+
+test('#2 Open photo from places', async t => {
+    await t
+        .click(Selector('.nav-places'))
+        .expect(Selector('#p-photo-viewer').visible).notOk()
+        .click(Selector('div.marker').nth(0))
+        .expect(Selector('#p-photo-viewer').visible).ok();
+});
