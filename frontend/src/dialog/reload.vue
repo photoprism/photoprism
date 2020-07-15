@@ -20,6 +20,7 @@
                 color="secondary-dark"
                 dark depressed small
                 @click="reload"
+                class="action-update-reload"
         >
           <translate>Reload</translate>
         </v-btn>
