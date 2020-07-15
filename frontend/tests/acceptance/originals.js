@@ -14,21 +14,24 @@ test('#1 Add originals files to album', async t => {
         .typeText(Selector('.p-albums-search input'), 'KanadaVacation')
         .pressKey('enter');
     await t
-        .expect(Selector('h3').innerText).eql('No albums matched your search');
+        .expect(Selector('h3').innerText).eql('Couldn\'t find anything');
     await t
         .click(Selector('div.nav-library + div'))
         .click(Selector('.nav-originals'))
         .click(Selector('button').withText('Vacation'));
-    const FirstItemInVacation = await Selector('div.v-card__title').nth(0).innerText;
-    const KanadaUid = await Selector('div.v-card__title').nth(0).getAttribute('data-uid');
-    const SecondItemInVacation = await Selector('div.v-card__title').nth(1).innerText;
+    if (await Selector('button.action-update-reload').exists) {
+        await t.click(Selector('button.action-update-reload'))
+    }
+    const FirstItemInVacation = await Selector('div.p-photo-desc').nth(0).innerText;
+    const KanadaUid = await Selector('div.p-photo-desc').nth(0).getAttribute('data-uid');
+    const SecondItemInVacation = await Selector('div.p-photo-desc').nth(1).innerText;
     await t
         .expect(FirstItemInVacation).contains('Kanada')
         .expect(SecondItemInVacation).contains('Korsika')
         .click(Selector('button').withText('Kanada'));
 
-    const FirstItemInKanada = await Selector('div.v-card__title').nth(0).innerText;
-    const SecondItemInKanada = await Selector('div.v-card__title').nth(1).innerText;
+    const FirstItemInKanada = await Selector('div.p-photo-desc').nth(0).innerText;
+    const SecondItemInKanada = await Selector('div.p-photo-desc').nth(1).innerText;
     await t
         .expect(FirstItemInKanada).contains('BotanicalGarden')
         .expect(SecondItemInKanada).contains('IMG')

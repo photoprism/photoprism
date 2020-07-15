@@ -49,7 +49,7 @@ test('#1 Remove/Activate Add/Delete Label from photo', async t => {
         .click(Selector('.nav-labels'));
     await page.search('beacon');
     await t
-        .expect(Selector('h3').withText('No labels matched your search').visible).ok();
+        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok();
     await page.search('test');
     const LabelTest = await Selector('div.p-label').nth(0).getAttribute('data-uid');
     await t
@@ -68,7 +68,7 @@ test('#1 Remove/Activate Add/Delete Label from photo', async t => {
         .click(Selector('.nav-labels'));
     await page.search('test');
     await t
-        .expect(Selector('h3').withText('No labels matched your search').visible).ok();
+        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok();
     await page.search('beacon');
     await t
         .expect(Selector('div').withAttribute('data-uid', LabelBeacon).visible).ok();
@@ -117,7 +117,7 @@ test('#2 Rename Label', async t => {
         .click(Selector('.nav-labels'));
     await page.search('horse');
     await t
-        .expect(Selector('h3').withText('No labels matched your search').visible).ok();
+        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok();
 });
 
 test('#3 Add label to album', async t => {
@@ -178,7 +178,7 @@ test('#4 Delete label', async t => {
     await page.deleteSelected();
     await page.search('dome');
     await t
-        .expect(Selector('h3').withText('No labels matched your search').visible).ok()
+        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok()
         .click('.nav-photos')
         .click(Selector('.action-title-edit').withAttribute('data-uid', FirstPhotoDome))
         .click(Selector('#tab-labels'))

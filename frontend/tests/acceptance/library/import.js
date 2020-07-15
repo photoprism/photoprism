@@ -13,7 +13,7 @@ test('#1 Import files from folder using copy', async t => {
         .click(Selector('.nav-labels'));
     await page.search('bakery');
     await t
-        .expect(Selector('h3').withText('No labels matched your search').visible).ok();
+        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok();
    await t
         .click(Selector('.nav-library'))
        //TODO Connecting... error must be moved somewhere else

@@ -44,7 +44,7 @@ test('#2 Update album', async t => {
         .pressKey('enter');
     const AlbumUid = await Selector('div.p-album').nth(0).getAttribute('data-uid');
     await t
-        .expect(Selector('div.v-card__actions').nth(0).innerText).contains('Holiday')
+        .expect(Selector('h3.action-title-edit').nth(0).innerText).contains('Holiday')
         .click(Selector('.action-title-edit').nth(0))
         .typeText(Selector('.input-title input'), 'Animals', { replace: true })
         .expect(Selector('.input-description textarea').value).eql('')
@@ -74,7 +74,7 @@ test('#2 Update album', async t => {
     //const request3 = await logger.requests[0].response.body;
     logger.clear();
     await t
-        .expect(Selector('div.v-card__actions').nth(0).innerText).contains('Christmas')
+        .expect(Selector('h3.action-title-edit').nth(0).innerText).contains('Christmas')
         .click(Selector('.nav-albums'))
         .click('.action-reload')
         .click(Selector('.input-category i'))

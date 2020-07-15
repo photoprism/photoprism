@@ -12,9 +12,9 @@ test('#1 Index files from folder', async t => {
         .click(Selector('.nav-labels'));
     await page.search('cheetah');
     await t
-        .expect(Selector('h3').withText('No labels matched your search').visible).ok()
+        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok()
         .click(Selector('.nav-moments'))
-        .expect(Selector('h3').withText('No moments matched your search').visible).ok();
+        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok();
     await t
         .click(Selector('.nav-library'))
         .click(Selector('#tab-index'))
