@@ -3,7 +3,10 @@
     <v-card v-if="photos.length === 0" class="p-photos-empty secondary-light lighten-1 ma-1" flat>
       <v-card-title primary-title>
         <div>
-          <h3 class="title ma-0 pa-0">
+          <h3 class="title ma-0 pa-0" v-if="filter.order === 'edited'">
+            <translate>Couldn't find recently edited</translate>
+          </h3>
+          <h3 class="title ma-0 pa-0" v-else>
             <translate>Couldn't find anything</translate>
           </h3>
           <p class="mt-4 mb-0 pa-0">
