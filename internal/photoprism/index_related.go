@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -18,14 +17,15 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 		return result
 	}
 
+	f := related.Main
+	sizeLimit := ind.conf.OriginalsLimit()
+
 	// Enforce file size limit for originals.
-	if ind.conf.OriginalsLimit() > 0 && related.Main.FileSize() > ind.conf.OriginalsLimit() {
-		result.Err = fmt.Errorf("index: %s exceeds file size limit for originals [%d / %d MB]", filepath.Base(related.Main.FileName()), related.Main.FileSize()/(1024*1024), ind.conf.OriginalsLimit()/(1024*1024))
+	if sizeLimit > 0 && f.FileSize() > sizeLimit {
+		result.Err = fmt.Errorf("index: %s exceeds file size limit (%d / %d MB)", txt.Quote(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
 		result.Status = IndexFailed
 		return result
 	}
-
-	f := related.Main
 
 	if opt.Convert && !f.HasJpeg() {
 		if jpegFile, err := ind.convert.ToJpeg(f); err != nil {
@@ -72,6 +72,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 // IndexMain indexes a group of related files and returns the result.
 func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result IndexResult) {
 	done := make(map[string]bool)
+	sizeLimit := ind.conf.OriginalsLimit()
 
 	result = IndexMain(&related, ind, opt)
 
@@ -86,12 +87,23 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 	done[related.Main.FileName()] = true
 
 	for _, f := range related.Files {
+		if f == nil {
+			continue
+		}
+
 		if done[f.FileName()] {
 			continue
 		}
 
-		res := ind.MediaFile(f, opt, "")
 		done[f.FileName()] = true
+
+		// Enforce file size limit for originals.
+		if sizeLimit > 0 && f.FileSize() > sizeLimit {
+			log.Warnf("index: %s exceeds file size limit (%d / %d MB)", txt.Quote(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
+			continue
+		}
+
+		res := ind.MediaFile(f, opt, "")
 
 		if res.Indexed() && f.IsJpeg() {
 			if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {

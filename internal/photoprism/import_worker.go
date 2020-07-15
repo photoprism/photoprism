@@ -121,18 +121,21 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			done := make(map[string]bool)
 			ind := imp.index
+			sizeLimit := ind.conf.OriginalsLimit()
 
 			if related.Main != nil {
+				f := related.Main
+
 				// Enforce file size limit for originals.
-				if ind.conf.OriginalsLimit() > 0 && related.Main.FileSize() > ind.conf.OriginalsLimit() {
-					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", filepath.Base(related.Main.FileName()), related.Main.FileSize()/(1024*1024), ind.conf.OriginalsLimit()/(1024*1024))
+				if sizeLimit > 0 && f.FileSize() > sizeLimit {
+					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", txt.Quote(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
 					continue
 				}
 
-				res := ind.MediaFile(related.Main, indexOpt, originalName)
+				res := ind.MediaFile(f, indexOpt, originalName)
 
-				log.Infof("import: %s main %s file %s", res, related.Main.FileType(), txt.Quote(related.Main.RelName(ind.originalsPath())))
-				done[related.Main.FileName()] = true
+				log.Infof("import: %s main %s file %s", res, f.FileType(), txt.Quote(f.RelName(ind.originalsPath())))
+				done[f.FileName()] = true
 
 				if res.Success() {
 					if err := entity.AddPhotoToAlbums(res.PhotoUID, opt.Albums); err != nil {
@@ -154,8 +157,15 @@ func ImportWorker(jobs <-chan ImportJob) {
 					continue
 				}
 
-				res := ind.MediaFile(f, indexOpt, "")
 				done[f.FileName()] = true
+
+				// Enforce file size limit for originals.
+				if sizeLimit > 0 && f.FileSize() > sizeLimit {
+					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", txt.Quote(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
+					continue
+				}
+
+				res := ind.MediaFile(f, indexOpt, "")
 
 				log.Infof("import: %s related %s file %s", res, f.FileType(), txt.Quote(f.RelName(ind.originalsPath())))
 			}
