@@ -4,7 +4,7 @@ import "github.com/disintegration/imaging"
 
 var (
 	Size             = 2048
-	Limit            = 4096
+	Limit            = 7680
 	Filter           = ResampleLanczos
 	JpegQuality      = 95
 	JpegQualitySmall = 80

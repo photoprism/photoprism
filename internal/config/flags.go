@@ -286,13 +286,13 @@ var GlobalFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "thumb-size-uncached, x",
 		Usage:  "on-demand rendering size limit in `PIXELS` (720-7680)",
-		Value:  4096,
+		Value:  7680,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE_UNCACHED",
 	},
 	cli.IntFlag{
 		Name:   "jpeg-size",
 		Usage:  "size limit for converted image files in `PIXELS` (720-30000)",
-		Value:  4096,
+		Value:  7680,
 		EnvVar: "PHOTOPRISM_JPEG_SIZE",
 	},
 	cli.IntFlag{
