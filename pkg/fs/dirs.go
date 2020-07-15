@@ -1,13 +1,12 @@
 package fs
 
 import (
-	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 	"sync"
 
-	"github.com/photoprism/photoprism/pkg/fastwalk"
+	"github.com/karrick/godirwalk"
 )
 
 var OriginalPaths = []string{
@@ -93,8 +92,12 @@ func Dirs(root string, recursive bool) (result []string, err error) {
 	ignore := NewIgnoreList(".ppignore", true, false)
 	mutex := sync.Mutex{}
 
-	err = fastwalk.Walk(root, func(fileName string, info os.FileMode) error {
-		if info.IsDir() {
+	err = godirwalk.Walk(root, &godirwalk.Options{Callback: func(fileName string, info *godirwalk.Dirent) error {
+		isDirlike, err := info.IsDirOrSymlinkToDir()
+		if err != nil {
+			return err
+		}
+		if isDirlike {
 			if ignore.Ignore(fileName) {
 				return filepath.SkipDir
 			}
@@ -112,6 +115,9 @@ func Dirs(root string, recursive bool) (result []string, err error) {
 		}
 
 		return nil
+	},
+		Unsorted:            false,
+		FollowSymbolicLinks: true,
 	})
 
 	sort.Strings(result)
