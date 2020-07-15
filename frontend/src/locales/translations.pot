@@ -1470,7 +1470,7 @@ msgstr ""
 msgid "Reload"
 msgstr ""
 
-#: src/dialog/reload.vue:57
+#: src/dialog/reload.vue:58
 #: src/pages/settings/general.vue:377
 msgid "Reloading…"
 msgstr ""

@@ -50,6 +50,7 @@ type Photo struct {
 	PhotoFavorite    bool         `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
 	PhotoScan        bool         `json:"Scan" yaml:"Scan,omitempty"`
+	PhotoP360        bool         `gorm:"column:photo_P360" json:"P360" yaml:"P360,omitempty"`
 	TimeZone         string       `gorm:"type:varbinary(64);" json:"TimeZone" yaml:"-"`
 	PlaceID          string       `gorm:"type:varbinary(42);index;default:'zz'" json:"PlaceID" yaml:"-"`
 	PlaceSrc         string       `gorm:"type:varbinary(8);" json:"PlaceSrc" yaml:"PlaceSrc,omitempty"`

@@ -113,7 +113,7 @@
         </tr>
         <tr>
           <td>
-            <translate key="Scan">Scan</translate>
+            <translate>Scan</translate>
           </td>
           <td>
             <v-switch
@@ -121,6 +121,19 @@
                     hide-details
                     v-model="model.Scan"
                     :label="model.Scan ? $gettext('Yes') : $gettext('No')"
+            ></v-switch>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <translate>360°</translate>
+          </td>
+          <td>
+            <v-switch
+                    @change="save"
+                    hide-details
+                    v-model="model.P360"
+                    :label="model.P360 ? $gettext('Yes') : $gettext('No')"
             ></v-switch>
           </td>
         </tr>
