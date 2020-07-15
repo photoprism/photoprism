@@ -17,6 +17,7 @@ var UnwantedDescriptions = map[string]bool{
 	"nor":                    true,
 	"dav":                    true,
 	"mde":                    true,
+	"mde_soft":               true,
 	"edf":                    true,
 	"btfmdn":                 true,
 	"btf":                    true,
@@ -25,6 +26,7 @@ var UnwantedDescriptions = map[string]bool{
 	"oznor":                  true,
 	"rpt":                    true,
 	"burst":                  true,
+	"sdr_HDRB":               true,
 }
 
 var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")

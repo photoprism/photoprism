@@ -37,6 +37,16 @@ var CameraMakes = map[string]string{
 }
 
 var CameraModels = map[string]string{
+	"EML-AL00":   "P20",
+	"EML-L09":    "P20",
+	"EML-L09C":   "P20",
+	"EML-L29":    "P20",
+	"EML-L29C":   "P20",
+	"CLT-AL00":   "P20 Pro",
+	"CLT-AL01":   "P20 Pro",
+	"CLT-TL01":   "P20 Pro",
+	"CLT-L09":    "P20 Pro",
+	"CLT-L29":    "P20 Pro",
 	"ELE-L29":    "P30",
 	"ELE-AL00":   "P30",
 	"ELE-L04":    "P30",
