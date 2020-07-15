@@ -45,7 +45,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			if destinationFilename, err := imp.DestinationFilename(related.Main, f); err == nil {
 				if err := os.MkdirAll(path.Dir(destinationFilename), os.ModePerm); err != nil {
-					log.Errorf("import: could not create folders (%s)", err.Error())
+					log.Errorf("import: failed creating folders for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 				}
 
 				if related.Main.HasSameName(f) {
@@ -57,11 +57,11 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if opt.Move {
 					if err := f.Move(destinationFilename); err != nil {
-						log.Errorf("import: could not move file to %s (%s)", txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())), err.Error())
+						log.Errorf("import: failed moving file to %s (%s)", txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())), err.Error())
 					}
 				} else {
 					if err := f.Copy(destinationFilename); err != nil {
-						log.Errorf("import: could not copy file to %s (%s)", txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())), err.Error())
+						log.Errorf("import: failed copying file to %s (%s)", txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())), err.Error())
 					}
 				}
 			} else {
@@ -69,7 +69,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if opt.RemoveExistingFiles {
 					if err := f.Remove(); err != nil {
-						log.Errorf("import: could not delete %s (%s)", txt.Quote(fs.RelName(f.FileName(), importPath)), err.Error())
+						log.Errorf("import: failed deleting %s (%s)", txt.Quote(f.BaseName()), err.Error())
 					} else {
 						log.Infof("import: deleted %s (already exists)", txt.Quote(relativeFilename))
 					}

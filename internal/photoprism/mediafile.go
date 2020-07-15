@@ -493,7 +493,7 @@ func (m *MediaFile) Move(dest string) error {
 	}
 
 	if err := os.Rename(m.fileName, dest); err != nil {
-		log.Debugf("could not rename file, falling back to copy and delete: %s", err.Error())
+		log.Debugf("failed renaming file, fallback to copy and delete: %s", err.Error())
 	} else {
 		m.fileName = dest
 
@@ -802,8 +802,9 @@ func (m *MediaFile) Thumbnail(path string, typeName string) (filename string, er
 	thumbnail, err := thumb.FromFile(m.FileName(), m.Hash(), path, thumbType.Width, thumbType.Height, thumbType.Options...)
 
 	if err != nil {
-		log.Errorf("mediafile: could not create thumbnail (%s)", err)
-		return "", fmt.Errorf("mediafile: could not create thumbnail (%s)", err)
+		err = fmt.Errorf("mediafile: failed creating thumbnail for %s (%s)", txt.Quote(m.BaseName()), err)
+		log.Error(err)
+		return "", err
 	}
 
 	return thumbnail, nil
@@ -850,7 +851,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 		}
 
 		if fileName, err := thumb.Filename(hash, thumbPath, thumbType.Width, thumbType.Height, thumbType.Options...); err != nil {
-			log.Errorf("mediafile: could not create %s (%s)", txt.Quote(name), err)
+			log.Errorf("mediafile: failed creating %s (%s)", txt.Quote(name), err)
 
 			return err
 		} else {
@@ -881,7 +882,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 			}
 
 			if err != nil {
-				log.Errorf("mediafile: could not create %s (%s)", txt.Quote(name), err)
+				log.Errorf("mediafile: failed creating %s (%s)", txt.Quote(name), err)
 				return err
 			}
 

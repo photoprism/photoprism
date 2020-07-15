@@ -134,7 +134,7 @@ func DownloadZip(router *gin.RouterGroup) {
 		c.File(zipFileName)
 
 		if err := os.Remove(zipFileName); err != nil {
-			log.Errorf("zip: could not remove %s (%s)", txt.Quote(zipFileName), err.Error())
+			log.Errorf("zip: failed removing %s (%s)", txt.Quote(zipFileName), err.Error())
 		}
 	})
 }

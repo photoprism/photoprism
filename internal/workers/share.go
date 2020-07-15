@@ -90,7 +90,7 @@ func (worker *Share) Start() (err error) {
 
 			if _, ok := existingDirs[dir]; !ok {
 				if err := client.CreateDir(dir); err != nil {
-					log.Errorf("share-worker: could not create folder %s", dir)
+					log.Errorf("share-worker: failed creating folder %s", dir)
 					continue
 				}
 			}

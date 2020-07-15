@@ -183,7 +183,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 		for _, directory := range directories {
 			if fs.IsEmpty(directory) {
 				if err := os.Remove(directory); err != nil {
-					log.Errorf("import: could not delete empty folder %s (%s)", txt.Quote(fs.RelName(directory, importPath)), err)
+					log.Errorf("import: failed deleting empty folder %s (%s)", txt.Quote(fs.RelName(directory, importPath)), err)
 				} else {
 					log.Infof("import: deleted empty folder %s", txt.Quote(fs.RelName(directory, importPath)))
 				}
@@ -199,7 +199,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 			}
 
 			if err := os.Remove(file); err != nil {
-				log.Errorf("import: could not remove %s (%s)", txt.Quote(fs.RelName(file, importPath)), err.Error())
+				log.Errorf("import: failed removing %s (%s)", txt.Quote(fs.RelName(file, importPath)), err.Error())
 			}
 		}
 	}

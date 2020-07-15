@@ -44,7 +44,7 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 
 		if _, ok := existingDirs[remoteDir]; !ok {
 			if err := client.CreateDir(remoteDir); err != nil {
-				log.Errorf("sync-worker: could not create remote folder %s", remoteDir)
+				log.Errorf("sync-worker: failed creating remote folder %s", remoteDir)
 				continue // try again next time
 			}
 		}

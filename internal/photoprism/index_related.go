@@ -29,7 +29,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 
 	if opt.Convert && !f.HasJpeg() {
 		if jpegFile, err := ind.convert.ToJpeg(f); err != nil {
-			result.Err = fmt.Errorf("index: creating jpeg failed (%s)", err.Error())
+			result.Err = fmt.Errorf("index: failed converting %s to jpeg (%s)", txt.Quote(f.BaseName()), err.Error())
 			result.Status = IndexFailed
 
 			return result
@@ -37,7 +37,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 			log.Infof("index: %s created", fs.RelName(jpegFile.FileName(), ind.originalsPath()))
 
 			if err := jpegFile.ResampleDefault(ind.thumbPath(), false); err != nil {
-				result.Err = fmt.Errorf("index: could not create default thumbnails (%s)", err.Error())
+				result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 				result.Status = IndexFailed
 
 				return result
@@ -49,7 +49,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 
 	if ind.conf.SidecarJson() && !f.HasJson() {
 		if jsonFile, err := ind.convert.ToJson(f); err != nil {
-			log.Errorf("index: creating json sidecar file failed (%s)", err.Error())
+			log.Errorf("index: failed creating json sidecar for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 		} else {
 			log.Infof("index: %s created", fs.RelName(jsonFile.FileName(), ind.originalsPath()))
 		}
@@ -59,7 +59,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 
 	if result.Indexed() && f.IsJpeg() {
 		if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
-			log.Errorf("index: could not create default thumbnails (%s)", err.Error())
+			log.Errorf("index: failed creating thumbnails for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 			query.SetFileError(result.FileUID, err.Error())
 		}
 	}
@@ -107,7 +107,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 
 		if res.Indexed() && f.IsJpeg() {
 			if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
-				log.Errorf("index: could not create default thumbnails (%s)", err.Error())
+				log.Errorf("index: failed creating thumbnails for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 				query.SetFileError(res.FileUID, err.Error())
 			}
 		}

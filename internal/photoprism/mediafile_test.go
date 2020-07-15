@@ -1586,7 +1586,7 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 
 		thumbnail, err := image.Thumbnail(thumbsPath, "tile_500")
 
-		assert.EqualError(t, err, "mediafile: could not create thumbnail (image: unknown format)")
+		assert.EqualError(t, err, "mediafile: failed creating thumbnail for canon_eos_6d.xmp (image: unknown format)")
 
 		t.Log(thumbnail)
 	})
