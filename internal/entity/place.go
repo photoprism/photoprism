@@ -45,11 +45,11 @@ func FindPlace(id string, label string) *Place {
 
 	if label == "" {
 		if err := Db().First(place, "id = ?", id).Error; err != nil {
-			log.Debugf("place: %s (id %s)", err.Error(), id)
+			log.Debugf("places: %s (find place id %s)", err.Error(), id)
 			return nil
 		}
 	} else if err := Db().First(place, "id = ? OR place_label = ?", id, label).Error; err != nil {
-		log.Debugf("place: %s (id %s, label %s)", err.Error(), id, txt.Quote(label))
+		log.Debugf("places: %s (find place id %s, label %s)", err.Error(), id, txt.Quote(label))
 		return nil
 	}
 
@@ -73,12 +73,12 @@ func (m *Place) Create() error {
 // FirstOrCreatePlace fetches an existing row, inserts a new row or nil in case of errors.
 func FirstOrCreatePlace(m *Place) *Place {
 	if m.ID == "" {
-		log.Errorf("place: id must not be empty (first or create)")
+		log.Errorf("places: place id must not be empty (first or create)")
 		return nil
 	}
 
 	if m.PlaceLabel == "" {
-		log.Errorf("place: label must not be empty (first or create %s)", m.ID)
+		log.Errorf("places: label must not be empty in %s (first or create)", m.ID)
 		return nil
 	}
 
@@ -91,7 +91,7 @@ func FirstOrCreatePlace(m *Place) *Place {
 	} else if err := Db().Where("id = ? OR place_label = ?", m.ID, m.PlaceLabel).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("place: %s (first or create %s)", createErr, m.ID)
+		log.Errorf("places: %s in %s (first or create)", createErr, m.ID)
 	}
 
 	return nil
