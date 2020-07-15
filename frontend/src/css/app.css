@@ -147,6 +147,7 @@ main {
     overflow: auto;
 }
 
-#photoprism .v-card button {
+#photoprism .v-card button,
+#photoprism .v-card .caption {
     overflow-wrap: anywhere;
 }
