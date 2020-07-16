@@ -50,7 +50,7 @@ func (m *Cell) Find(api string) error {
 	db := Db()
 
 	if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err == nil {
-		log.Debugf("places: found cell id %s (%+v)", m.ID, m)
+		log.Debugf("places: found cell id %s", m.ID)
 		return nil
 	}
 
@@ -59,7 +59,7 @@ func (m *Cell) Find(api string) error {
 	}
 
 	if err := l.QueryApi(api); err != nil {
-		log.Errorf("places: %s in cell id %s", err, m.ID)
+		log.Errorf("places: %s (query cell id %s)", err, m.ID)
 		return err
 	}
 
@@ -76,7 +76,7 @@ func (m *Cell) Find(api string) error {
 			PhotoCount:    1,
 		}
 
-		if err := place.Create(); err == nil {
+		if createErr := place.Create(); createErr == nil {
 			event.Publish("count.places", event.Data{
 				"count": 1,
 			})
@@ -87,7 +87,7 @@ func (m *Cell) Find(api string) error {
 		} else if found := FindPlace(l.PrefixedToken(), l.Label()); found != nil {
 			m.Place = found
 		} else {
-			log.Errorf("places: %s in place id %s", err, place.ID)
+			log.Errorf("places: %s (create place id %s)", createErr, place.ID)
 			m.Place = &UnknownPlace
 		}
 	}
@@ -96,12 +96,13 @@ func (m *Cell) Find(api string) error {
 	m.CellName = l.Name()
 	m.CellCategory = l.Category()
 
-	if err := db.Create(m).Error; err == nil {
+	if createErr := db.Create(m).Error; createErr == nil {
 		log.Debugf("places: added cell id %s [%s]", m.ID, time.Since(start))
 		return nil
-	} else if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err != nil {
-		log.Errorf("places: %s in cell id %s [%s]", err, m.ID, time.Since(start))
-		return err
+	} else if findErr := db.Preload("Place").First(m, "id = ?", m.ID).Error; findErr != nil {
+		log.Errorf("places: %s (create cell id %s)", createErr, m.ID)
+		log.Errorf("places: %s (find cell id %s)", findErr, m.ID)
+		return createErr
 	} else {
 		log.Debugf("places: found cell id %s after trying again [%s]", m.ID, time.Since(start))
 	}
@@ -122,20 +123,20 @@ func FirstOrCreateCell(m *Cell) *Cell {
 	}
 
 	if m.PlaceID == "" {
-		log.Errorf("places: place id must not be empty in %s (first or create)", m.ID)
+		log.Errorf("places: place id must not be empty (first or create cell id %s)", m.ID)
 		return nil
 	}
 
 	result := Cell{}
 
-	if findErr := Db().Where("id = ?", m.ID).First(&result).Error; findErr == nil {
+	if findErr := Db().Where("id = ?", m.ID).Preload("Place").First(&result).Error; findErr == nil {
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
-	} else if err := Db().Where("id = ?", m.ID).First(&result).Error; err == nil {
+	} else if err := Db().Where("id = ?", m.ID).Preload("Place").First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("places: %s in cell id %s (first or create)", createErr, m.ID)
+		log.Errorf("places: %s (first or create cell id %s)", createErr, m.ID)
 	}
 
 	return nil

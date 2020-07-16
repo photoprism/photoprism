@@ -41,19 +41,23 @@ func CreateUnknownPlace() {
 
 // FindPlace finds a matching place or returns nil.
 func FindPlace(id string, label string) *Place {
-	place := &Place{}
+	place := Place{}
 
 	if label == "" {
-		if err := Db().First(place, "id = ?", id).Error; err != nil {
+		if err := Db().Where("id = ?", id).First(&place).Error; err != nil {
 			log.Debugf("places: %s (find place id %s)", err.Error(), id)
 			return nil
+		} else {
+			return &place
 		}
-	} else if err := Db().First(place, "id = ? OR place_label = ?", id, label).Error; err != nil {
-		log.Debugf("places: %s (find place id %s, label %s)", err.Error(), id, txt.Quote(label))
-		return nil
 	}
 
-	return place
+	if err := Db().Where("id = ? OR place_label = ?", id, label).First(&place).Error; err != nil {
+		log.Debugf("places: %s (find place id %s, label %s)", err.Error(), id, txt.Quote(label))
+		return nil
+	} else {
+		return &place
+	}
 }
 
 // Find fetches entity values from the database the primary key.
@@ -78,7 +82,7 @@ func FirstOrCreatePlace(m *Place) *Place {
 	}
 
 	if m.PlaceLabel == "" {
-		log.Errorf("places: label must not be empty in %s (first or create)", m.ID)
+		log.Errorf("places: label must not be empty (first or create place id %s)", m.ID)
 		return nil
 	}
 
@@ -91,7 +95,7 @@ func FirstOrCreatePlace(m *Place) *Place {
 	} else if err := Db().Where("id = ? OR place_label = ?", m.ID, m.PlaceLabel).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("places: %s in %s (first or create)", createErr, m.ID)
+		log.Errorf("places: %s (create place id %s)", createErr, m.ID)
 	}
 
 	return nil
