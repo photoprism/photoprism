@@ -6,11 +6,16 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.2.0
-	github.com/dsoprea/go-exif/v2 v2.0.0-20200519064707-3cdb59fd80c7
-	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200519062215-d6e72d1f73f3
-	github.com/dsoprea/go-png-image-structure v0.0.0-20200518003737-91ceb687d379
+	github.com/dsoprea/go-exif/v2 v2.0.0-20200711182015-0758712be348
+	github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200520190950-3ae4ff88a0d1
+	github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 // indirect
+	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200615034914-d40a386309d2
+	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
+	github.com/dsoprea/go-photoshop-info-format v0.0.0-20200610045659-121dd752914d // indirect
+	github.com/dsoprea/go-png-image-structure v0.0.0-20200615034826-4cfc78940228
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gin-gonic/gin v1.6.3
+	github.com/go-errors/errors v1.1.1 // indirect
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
 	github.com/golang/geo v0.0.0-20200319012246-673a6f80352d
 	github.com/golang/protobuf v1.4.2 // indirect
@@ -47,7 +52,7 @@ require (
 	github.com/urfave/cli v1.22.4
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
-	golang.org/x/net v0.0.0-20200625001655-4c5254603344
+	golang.org/x/net v0.0.0-20200707034311-ab3426394381
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect

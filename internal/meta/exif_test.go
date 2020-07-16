@@ -104,7 +104,7 @@ func TestExif(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "metadata: no exif header in tweethog.png", err.Error())
+		assert.Equal(t, "metadata: no exif header in tweethog.png (parse png)", err.Error())
 	})
 
 	t.Run("iphone_7.heic", func(t *testing.T) {
@@ -142,8 +142,8 @@ func TestExif(t *testing.T) {
 		assert.True(t, data.TakenAtLocal.IsZero())
 		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
-		assert.Equal(t, 0, data.Height) // TODO
-		assert.Equal(t, 0, data.Width)  // TODO
+		assert.Equal(t, 3272, data.Height)
+		assert.Equal(t, 4940, data.Width)
 		assert.Equal(t, float32(-38.405193), data.Lat)
 		assert.Equal(t, float32(144.18896), data.Lng)
 		assert.Equal(t, 0, data.Altitude)
