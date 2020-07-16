@@ -174,6 +174,10 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		data.InstanceID = SanitizeUID(data.InstanceID)
 	}
 
+	if data.Projection == "equirectangular" {
+		data.AddKeyword(KeywordPanorama)
+	}
+
 	data.Title = SanitizeTitle(data.Title)
 	data.Description = SanitizeDescription(data.Description)
 

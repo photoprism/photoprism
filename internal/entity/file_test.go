@@ -215,7 +215,7 @@ func TestFile_Update(t *testing.T) {
 }
 
 func TestFile_Links(t *testing.T) {
-	t.Run("1 result", func(t *testing.T) {
+	t.Run("result", func(t *testing.T) {
 		file := FileFixturesExampleBridge
 		links := file.Links()
 		assert.Equal(t, "5jxf3jfn2k", links[0].LinkToken)
@@ -223,12 +223,31 @@ func TestFile_Links(t *testing.T) {
 }
 
 func TestFile_NoJPEG(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "xmp", FileSize: 500}
+		assert.True(t, file.NoJPEG())
+	})
 	t.Run("false", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
 		assert.False(t, file.NoJPEG())
 	})
-	t.Run("tre", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "xmp", FileSize: 500}
-		assert.True(t, file.NoJPEG())
+}
+
+func TestFile_Panorama(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 3000, FileHeight: 1000}
+		assert.True(t, file.Panorama())
+	})
+	t.Run("false", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000}
+		assert.False(t, file.Panorama())
+	})
+	t.Run("equirectangular", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: ProjectionEquirectangular}
+		assert.True(t, file.Panorama())
+	})
+	t.Run("sidecar", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "xmp", FileSidecar: true, FileWidth: 3000, FileHeight: 1000}
+		assert.False(t, file.Panorama())
 	})
 }

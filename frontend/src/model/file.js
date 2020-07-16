@@ -60,6 +60,7 @@ export class File extends RestModel {
             Width: 0,
             Height: 0,
             Orientation: 0,
+            Projection: "",
             AspectRatio: 1.0,
             MainColor: "",
             Colors: "",

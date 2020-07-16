@@ -29,7 +29,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		files.id AS file_id, files.file_uid, files.file_primary, files.file_missing, files.file_name,
 		files.file_root, files.file_hash, files.file_codec, files.file_type, files.file_mime, files.file_width, 
 		files.file_height, files.file_aspect_ratio, files.file_orientation, files.file_main_color, 
-		files.file_colors, files.file_luminance, files.file_chroma,
+		files.file_colors, files.file_luminance, files.file_chroma, files.file_projection,
 		files.file_diff, files.file_video, files.file_duration, files.file_size,
 		cameras.camera_make, cameras.camera_model,
 		lenses.lens_make, lenses.lens_model,
@@ -192,6 +192,10 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 	if f.Scan {
 		s = s.Where("photos.photo_scan = 1")
+	}
+
+	if f.Panorama {
+		s = s.Where("photos.photo_panorama = 1")
 	}
 
 	if f.Country != "" {

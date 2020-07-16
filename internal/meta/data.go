@@ -21,6 +21,7 @@ type Data struct {
 	Artist       string        `meta:"Artist,Creator"`
 	Description  string        `meta:"Description"`
 	Copyright    string        `meta:"Rights,Copyright"`
+	Projection   string        `meta:"ProjectionType"`
 	CameraMake   string        `meta:"CameraMake,Make"`
 	CameraModel  string        `meta:"CameraModel,Model"`
 	CameraOwner  string        `meta:"OwnerName"`

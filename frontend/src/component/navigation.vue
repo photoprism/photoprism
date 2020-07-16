@@ -65,7 +65,7 @@
 
           <v-list-tile-content>
             <v-list-tile-title>
-              <translate key="Photos">Photos</translate>
+              <translate>Photos</translate>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -83,7 +83,7 @@
           <v-list-tile :to="{name: 'photos', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" @click="">
             <v-list-tile-content>
               <v-list-tile-title>
-                <translate key="Monochrome">Monochrome</translate>
+                <translate>Monochrome</translate>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -91,7 +91,15 @@
           <v-list-tile :to="{name: 'photos', query: { q: 'stack:true' }}" :exact="true" @click="" class="nav-stacks">
             <v-list-tile-content>
               <v-list-tile-title>
-                <translate key="Stacks">Stacks</translate>
+                <translate>Stacks</translate>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile :to="{name: 'photos', query: { q: 'panorama:true' }}" :exact="true" @click="" class="nav-panoramas">
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <translate>Panoramas</translate>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -99,7 +107,7 @@
           <v-list-tile :to="{name: 'photos', query: { q: 'scan:true' }}" :exact="true" @click="" class="nav-scans">
             <v-list-tile-content>
               <v-list-tile-title>
-                <translate key="Scans">Scans</translate>
+                <translate>Scans</translate>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -108,7 +116,7 @@
                        class="nav-review">
             <v-list-tile-content>
               <v-list-tile-title>
-                <translate key="Review">Review</translate>
+                <translate>Review</translate>
                 <span v-show="config.count.review > 0" class="nav-count">{{ config.count.review }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -117,7 +125,7 @@
           <v-list-tile to="/archive" @click="" class="nav-archive" v-show="$config.feature('archive')">
             <v-list-tile-content>
               <v-list-tile-title>
-                <translate key="Archive">Archive</translate>
+                <translate>Archive</translate>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>

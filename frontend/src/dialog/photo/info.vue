@@ -126,14 +126,14 @@
         </tr>
         <tr>
           <td>
-            <translate>360°</translate>
+            <translate>Panorama</translate>
           </td>
           <td>
             <v-switch
                     @change="save"
                     hide-details
-                    v-model="model.P360"
-                    :label="model.P360 ? $gettext('Yes') : $gettext('No')"
+                    v-model="model.Panorama"
+                    :label="model.Panorama ? $gettext('Yes') : $gettext('No')"
             ></v-switch>
           </td>
         </tr>

@@ -208,7 +208,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		return result
 	}
 
-	// Handle file types other than JPEG.
+	// Handle file types.
 	switch {
 	case m.IsJpeg():
 		// Color information
@@ -233,6 +233,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			if megapixels > photo.PhotoResolution {
 				photo.PhotoResolution = megapixels
 			}
+		}
+
+		if metaData := m.MetaData(); metaData.Error == nil {
+			file.FileProjection = metaData.Projection
 		}
 	case m.IsXMP():
 		// TODO: Proof-of-concept for indexing XMP sidecar files
@@ -300,6 +304,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			file.FileHeight = metaData.ActualHeight()
 			file.FileAspectRatio = metaData.AspectRatio()
 			file.FilePortrait = metaData.Portrait()
+			file.FileProjection = metaData.Projection
 
 			if res := metaData.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
@@ -361,6 +366,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			file.FileDuration = metaData.Duration
 			file.FileAspectRatio = metaData.AspectRatio()
 			file.FilePortrait = metaData.Portrait()
+			file.FileProjection = metaData.Projection
 
 			if res := metaData.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
@@ -396,6 +402,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.DeletedAt = nil
 	file.FileMissing = false
 	file.FileError = ""
+
+	if file.Panorama() {
+		photo.PhotoPanorama = true
+	}
 
 	// primary files are used for rendering thumbnails and image classification (plus sidecar files if they exist)
 	if file.FilePrimary {

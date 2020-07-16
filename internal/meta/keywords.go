@@ -3,12 +3,14 @@ package meta
 import "strings"
 
 const (
-	KeywordFlash = "flash"
-	KeywordHdr   = "hdr"
-	KeywordBurst = "burst"
+	KeywordFlash           = "flash"
+	KeywordHdr             = "hdr"
+	KeywordBurst           = "burst"
+	KeywordPanorama        = "panorama"
+	KeywordEquirectangular = "equirectangular"
 )
 
-var AutoKeywords = []string{KeywordHdr, KeywordBurst}
+var AutoKeywords = []string{KeywordHdr, KeywordBurst, KeywordPanorama, KeywordEquirectangular}
 
 // AddKeyword appends a keyword if not exists.
 func (data *Data) AddKeyword(w string) {

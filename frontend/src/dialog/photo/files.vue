@@ -116,6 +116,12 @@
                         </td>
                         <td><translate>Yes</translate></td>
                       </tr>
+                      <tr v-if="file.Projection">
+                        <td>
+                          <translate>Projection</translate>
+                        </td>
+                        <td>{{ file.Projection | capitalize }}</td>
+                      </tr>
                       <tr v-if="file.AspectRatio">
                         <td>
                           <translate>Aspect Ratio</translate>

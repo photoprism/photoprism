@@ -15,7 +15,9 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 	t.Run("elephants.jpg", func(t *testing.T) {
 		img, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		data := img.MetaData()
 
@@ -52,7 +54,9 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 	t.Run("fern_green.jpg", func(t *testing.T) {
 		img, err := NewMediaFile(conf.ExamplesPath() + "/fern_green.jpg")
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		info := img.MetaData()
 
@@ -81,16 +85,54 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		t.Logf("UTC: %s", info.TakenAt.String())
 		t.Logf("Local: %s", info.TakenAtLocal.String())
 	})
+
 	t.Run("blue-go-video.mp4", func(t *testing.T) {
 		img, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
 
-		assert.Nil(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		info := img.MetaData()
 
 		assert.Empty(t, err)
 
 		assert.IsType(t, meta.Data{}, info)
+	})
+
+	t.Run("panorama360.jpg", func(t *testing.T) {
+		img, err := NewMediaFile("testdata/panorama360.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		data := img.MetaData()
+
+		assert.Empty(t, err)
+
+		assert.IsType(t, meta.Data{}, data)
+
+		assert.Equal(t, "", data.Artist)
+		assert.Equal(t, "2020-05-24T08:55:21Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2020-05-24T11:55:21Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "panorama", data.Keywords)
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, 3600, data.Height)
+		assert.Equal(t, 7200, data.Width)
+		assert.Equal(t, float32(59.84083), data.Lat)
+		assert.Equal(t, float32(30.51), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "1/1250", data.Exposure)
+		assert.Equal(t, "SAMSUNG", data.CameraMake)
+		assert.Equal(t, "SM-C200", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, 6, data.FocalLength)
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, "equirectangular", data.Projection)
 	})
 }
 

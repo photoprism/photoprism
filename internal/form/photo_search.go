@@ -20,6 +20,7 @@ type PhotoSearch struct {
 	Video     bool      `form:"video"`
 	Photo     bool      `form:"photo"`
 	Scan      bool      `form:"scan"`
+	Panorama  bool      `form:"panorama"`
 	Duplicate bool      `form:"duplicate"`
 	Error     bool      `form:"error"`
 	Hidden    bool      `form:"hidden"`

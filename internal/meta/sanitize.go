@@ -10,6 +10,7 @@ import (
 
 var UnwantedDescriptions = map[string]bool{
 	"OLYMPUS DIGITAL CAMERA": true, // Olympus
+	"SAMSUNG":                true, // Samsung
 	"rhdr":                   true, // Huawei
 	"hdrpl":                  true,
 	"fbt":                    true,

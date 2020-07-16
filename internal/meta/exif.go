@@ -354,6 +354,11 @@ func (data *Data) Exif(fileName string) (err error) {
 		data.Description = SanitizeDescription(value)
 	}
 
+	if value, ok := tags["ProjectionType"]; ok {
+		data.AddKeyword(KeywordPanorama)
+		data.Projection = SanitizeString(value)
+	}
+
 	data.All = tags
 
 	return nil

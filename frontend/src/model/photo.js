@@ -56,7 +56,7 @@ export class Photo extends RestModel {
             Favorite: false,
             Private: false,
             Scan: false,
-            P360: false,
+            Panorama: false,
             TakenAt: "",
             TakenAtLocal: "",
             TakenSrc: "",

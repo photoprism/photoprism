@@ -287,4 +287,35 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "", data.LensMake)
 		assert.Equal(t, "", data.LensModel)
 	})
+
+	t.Run("panorama360.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/panorama360.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "", data.Artist)
+		assert.Equal(t, "2020-05-24T11:55:21Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2020-05-24T11:55:21Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, 3600, data.Height)
+		assert.Equal(t, 7200, data.Width)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "1/1250", data.Exposure)
+		assert.Equal(t, "SAMSUNG", data.CameraMake)
+		assert.Equal(t, "SM-C200", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, 6, data.FocalLength)
+		assert.Equal(t, 0, int(data.Orientation))
+		assert.Equal(t, "", data.Projection)
+	})
 }

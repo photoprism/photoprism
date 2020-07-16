@@ -40,7 +40,7 @@ type PhotoResult struct {
 	PhotoQuality     int           `json:"Quality"`
 	PhotoResolution  int           `json:"Resolution"`
 	PhotoScan        bool          `json:"Scan"`
-	PhotoP360        bool          `json:"P360"`
+	PhotoPanorama    bool          `json:"Panorama"`
 	CameraID         uint          `json:"CameraID"` // Camera
 	CameraSerial     string        `json:"CameraSerial,omitempty"`
 	CameraSrc        string        `json:"CameraSrc,omitempty"`
@@ -76,6 +76,7 @@ type PhotoResult struct {
 	FileMime         string        `json:"-"`
 	FileSize         int64         `json:"-"`
 	FileOrientation  int           `json:"-"`
+	FileProjection   string        `json:"-"`
 	FileAspectRatio  float32       `json:"-"`
 	FileColors       string        `json:"-"`
 	FileChroma       uint8         `json:"-"`

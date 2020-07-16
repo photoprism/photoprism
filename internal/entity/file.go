@@ -41,6 +41,7 @@ type File struct {
 	FileWidth       int           `json:"Width" yaml:"Width,omitempty"`
 	FileHeight      int           `json:"Height" yaml:"Height,omitempty"`
 	FileOrientation int           `json:"Orientation" yaml:"Orientation,omitempty"`
+	FileProjection  string        `gorm:"type:varbinary(16);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
 	FileAspectRatio float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
 	FileMainColor   string        `gorm:"type:varbinary(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
 	FileColors      string        `gorm:"type:varbinary(9);" json:"Colors" yaml:"Colors,omitempty"`
@@ -217,4 +218,13 @@ func (m *File) NoJPEG() bool {
 // Links returns all share links for this entity.
 func (m *File) Links() Links {
 	return FindLinks("", m.FileUID)
+}
+
+// Panorama tests if the file seems to be a panorama image.
+func (m *File) Panorama() bool {
+	if m.FileSidecar || m.FileWidth <= 1000 || m.FileHeight <= 500 {
+		return false
+	}
+
+	return m.FileProjection != ProjectionDefault || m.FileWidth / m.FileHeight > 2
 }

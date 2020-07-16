@@ -44,6 +44,12 @@ const (
 	RootImport    = "import"
 	RootPath      = "/"
 
+	// Panorama projections.
+	ProjectionDefault         = ""
+	ProjectionEquirectangular = "equirectangular"
+	ProjectionCubestrip       = "cubestrip"
+	ProjectionCylindrical     = "cylindrical"
+
 	// Event names.
 	Updated = "updated"
 	Created = "created"
