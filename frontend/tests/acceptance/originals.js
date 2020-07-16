@@ -19,9 +19,6 @@ test('#1 Add originals files to album', async t => {
         .click(Selector('div.nav-library + div'))
         .click(Selector('.nav-originals'))
         .click(Selector('button').withText('Vacation'));
-    if (await Selector('button.action-update-reload').exists) {
-        await t.click(Selector('button.action-update-reload'))
-    }
     const FirstItemInVacation = await Selector('div.p-photo-desc').nth(0).innerText;
     const KanadaUid = await Selector('div.p-photo-desc').nth(0).getAttribute('data-uid');
     const SecondItemInVacation = await Selector('div.p-photo-desc').nth(1).innerText;

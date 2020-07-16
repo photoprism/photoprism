@@ -89,7 +89,7 @@ test('#3 Approve photo using approve and by adding location', async t => {
     await page.editSelected();
     logger.clear();
     await t
-        .click(Selector('button.p-photo-dialog-close'));
+        .click(Selector('button.action-close'));
     await t
         .click(Selector('button.action-reload'));
     //const request4 = await logger.requests[0].response.body;
@@ -101,7 +101,7 @@ test('#3 Approve photo using approve and by adding location', async t => {
     logger.clear();
     await t
         .click(Selector('button.action-approve'))
-        .click(Selector('button.action-ok'));
+        .click(Selector('button.action-done'));
     //const request6 = await logger.requests[0].response.body;
     logger.clear();
 
@@ -112,7 +112,7 @@ test('#3 Approve photo using approve and by adding location', async t => {
     await t
         .typeText(Selector('input[aria-label="Latitude"]'), '9.999')
         .typeText(Selector('input[aria-label="Longitude"]'), '9.999')
-        .click(Selector('button.action-ok'));
+        .click(Selector('button.action-done'));
     //const request7 = await logger.requests[0].response.body;
 
     await t
@@ -491,7 +491,7 @@ test('#7 Edit photo/video', async t => {
     await t
         .expect(Selector('button.action-previous').getAttribute('disabled')).notEql('disabled')
         .click(Selector('button.action-previous'))
-        .click(Selector('button.p-photo-dialog-close'))
+        .click(Selector('button.action-close'))
         .click(Selector('div.p-photo').withAttribute('data-uid', FirstPhoto))
         .expect(Selector('#p-photo-viewer').visible).ok()
         .hover(Selector('.action-edit'))
@@ -567,7 +567,7 @@ test('#7 Edit photo/video', async t => {
     //const request2 = await logger.requests[0].response.body;
     await t
         .expect(Selector('.input-latitude input').visible, {timeout: 5000}).ok()
-        .click(Selector('button.action-ok'));
+        .click(Selector('button.action-done'));
     logger.clear();
     await t
         .click(Selector('button.action-reload'));
@@ -748,17 +748,12 @@ test('#7 Edit photo/video', async t => {
     else
     {await t.typeText(Selector('.input-notes textarea'), FirstPhotoNotes, { replace: true })}
     await t
-        .click(Selector('button.action-ok'));
+        .click(Selector('button.action-done'));
     const clipboardCount = await Selector('span.count-clipboard');
     await t
         .expect(clipboardCount.textContent).eql("1")
         .click(Selector('.action-clear'))
         .expect(Selector('button.action-menu').exists, {timeout: 5000}).notOk();
-    logger.clear();
-    await t
-        .click(Selector('.action-reload'));
-    //const request4 = await logger.requests[0].response.body;
-    await t.expect(Selector('button.action-title-edit').withAttribute('data-uid', FirstPhoto).innerText).eql(FirstPhotoTitle);
 });
 
 test('#8 Change primary file', async t => {
