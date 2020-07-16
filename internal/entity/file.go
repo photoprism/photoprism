@@ -226,5 +226,5 @@ func (m *File) Panorama() bool {
 		return false
 	}
 
-	return m.FileProjection != ProjectionDefault || m.FileWidth / m.FileHeight > 2
+	return m.FileProjection != ProjectionDefault || m.FileWidth/m.FileHeight > 2
 }
