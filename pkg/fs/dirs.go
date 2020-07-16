@@ -88,25 +88,51 @@ var ImportPaths = []string{
 	"~/Import",
 }
 
-func Dirs(root string, recursive bool) (result []string, err error) {
+// Dirs returns a slice of directories in a path, optional recursively and with symlinks.
+//
+// Warning: Following symlinks can make the result non-deterministic and hard to test!
+func Dirs(root string, recursive bool, followLinks bool) (result []string, err error) {
 	result = []string{}
 	ignore := NewIgnoreList(".ppignore", true, false)
 	mutex := sync.Mutex{}
 
-	err = fastwalk.Walk(root, func(fileName string, info os.FileMode) error {
-		if info.IsDir() {
+	symlinks := make(map[string]bool)
+	symlinksMutex := sync.Mutex{}
+
+	appendResult := func(fileName string) {
+		fileName = strings.Replace(fileName, root, "", 1)
+		mutex.Lock()
+		defer mutex.Unlock()
+		result = append(result, fileName)
+	}
+
+	err = fastwalk.Walk(root, func(fileName string, typ os.FileMode) error {
+		if typ.IsDir() || typ == os.ModeSymlink && followLinks {
 			if ignore.Ignore(fileName) {
 				return filepath.SkipDir
 			}
 
 			if fileName != root {
-				mutex.Lock()
-				fileName = strings.Replace(fileName, root, "", 1)
-				result = append(result, fileName)
-				mutex.Unlock()
-
 				if !recursive {
+					appendResult(fileName)
+
 					return filepath.SkipDir
+				} else if typ != os.ModeSymlink {
+					appendResult(fileName)
+
+					return nil
+				} else if resolved, err := filepath.EvalSymlinks(fileName); err == nil {
+					symlinksMutex.Lock()
+					defer symlinksMutex.Unlock()
+
+					if _, ok := symlinks[resolved]; ok {
+						return filepath.SkipDir
+					} else {
+						symlinks[resolved] = true
+						appendResult(fileName)
+					}
+
+					return fastwalk.ErrTraverseLink
 				}
 			}
 		}
