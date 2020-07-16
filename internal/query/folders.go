@@ -9,7 +9,7 @@ import (
 
 // FoldersByPath returns a slice of folders in a given directory incl sub directories in recursive mode.
 func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders entity.Folders, err error) {
-	dirs, err := fs.Dirs(filepath.Join(rootPath, path), recursive)
+	dirs, err := fs.Dirs(filepath.Join(rootPath, path), recursive, true)
 
 	if err != nil {
 		return folders, err

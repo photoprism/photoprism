@@ -91,7 +91,7 @@
                   <div>
                     <h3 class="body-2 mb-2" :title="model.Name">
                       <button @click.exact="openFile(index)">
-                        {{ model.baseName(19) }}
+                        {{ model.baseName() }}
                       </button>
                     </h3>
                     <div class="caption" title="Info">
@@ -103,13 +103,10 @@
                   <div>
                     <h3 class="body-2 mb-2" :title="model.Title">
                       <button @click.exact="openFile(index)">
-                        {{ model.Title }}
+                        {{ model.baseName() }}
                       </button>
                     </h3>
-                    <div class="caption" title="Path" v-if="model.Title !== model.Path">
-                      /{{ model.Path }}
-                    </div>
-                    <div class="caption" title="Path" v-else>
+                    <div class="caption" title="Path">
                       <translate key="Folder">Folder</translate>
                     </div>
                   </div>

@@ -36,7 +36,7 @@ type Photo struct {
 	PhotoPrivate     bool      `json:"Private"`
 	PhotoReview      bool      `json:"Review"`
 	PhotoScan        bool      `json:"Scan"`
-	PhotoPanorama        bool      `json:"Panorama"`
+	PhotoPanorama    bool      `json:"Panorama"`
 	PhotoAltitude    int       `json:"Altitude"`
 	PhotoLat         float32   `json:"Lat"`
 	PhotoLng         float32   `json:"Lng"`
