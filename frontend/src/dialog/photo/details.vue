@@ -144,6 +144,7 @@
                 <v-autocomplete
                         :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                         :disabled="disabled"
+                        :readonly="!!(model.Lat || model.Lng)"
                         :label="labels.country"
                         hide-details hide-no-data
                         browser-autocomplete="off"
