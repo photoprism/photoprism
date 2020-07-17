@@ -112,6 +112,48 @@ var FileExt = FileExtensions{
 	".json": TypeJson,
 }
 
+func (m FileExtensions) Media(name string) bool {
+	if name == "" {
+		return false
+	}
+
+	ext := strings.ToLower(filepath.Ext(name))
+
+	fileType, ok := m[ext]
+
+	if !ok {
+		return false
+	}
+
+	switch fileType {
+	case TypeJpeg, TypePng, TypeGif, TypeTiff, TypeBitmap, TypeRaw, TypeHEIF, TypeMov, TypeMP4, TypeAvi:
+		return true
+	default:
+		return false
+	}
+}
+
+func (m FileExtensions) Sidecar(name string) bool {
+	if name == "" {
+		return false
+	}
+
+	ext := strings.ToLower(filepath.Ext(name))
+
+	fileType, ok := m[ext]
+
+	if !ok {
+		return false
+	}
+
+	switch fileType {
+	case TypeAAE, TypeXML, TypeYaml, TypeToml, TypeJson, TypeText, TypeMarkdown:
+		return true
+	default:
+		return false
+	}
+}
+
 func (m FileExtensions) Known(name string) bool {
 	if name == "" {
 		return false

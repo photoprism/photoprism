@@ -119,7 +119,7 @@ func (t *Detector) loadModel() error {
 		return nil
 	}
 
-	log.Infof("nsfw: loading model from %s", txt.Quote(filepath.Base(t.modelPath)))
+	log.Infof("nsfw: loading %s", txt.Quote(filepath.Base(t.modelPath)))
 
 	// Load model
 	model, err := tf.LoadSavedModel(t.modelPath, t.modelTags, nil)

@@ -45,7 +45,7 @@ func (m *Files) Init() error {
 
 // Ignore tests of a file requires indexing, file name must be relative to the originals path.
 func (m *Files) Ignore(fileName string, modTime time.Time, rescan bool) bool {
-	timestamp := modTime.Round(time.Second).Unix()
+	timestamp := modTime.Unix()
 
 	m.mutex.Lock()
 	defer m.mutex.Unlock()

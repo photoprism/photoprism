@@ -203,19 +203,8 @@
                 const model = this.results[index];
 
                 if (model.isFile()) {
-                    if (model.Type === TypeJpeg) {
-                        const photo = new Photo({
-                            UID: model.PhotoUID,
-                            Title: model.Name,
-                            TakenAt: model.Modified,
-                            Description: "",
-                            Favorite: false,
-                            Files: [model]
-                        });
-                        this.$viewer.show(Thumb.fromPhotos([photo]), 0);
-                    } else {
-                        this.downloadFile(index);
-                    }
+                    // Open Edit Dialog
+                    Event.publish("dialog.edit", {selection: [model.PhotoUID], album: null, index: 0});
                 } else {
                     this.$router.push({path: '/library/files/' + model.Path});
                 }

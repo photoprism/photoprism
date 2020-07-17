@@ -1,7 +1,6 @@
 package query
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -112,28 +111,19 @@ func IndexedFiles() (result FileMap, err error) {
 
 	type Files struct {
 		FileName string
-		Modified int64
+		ModTime  int64
 	}
 
 	var files []Files
 
-	var sql string
+	sql := "SELECT file_name, mod_time FROM files"
 
-	switch DbDialect() {
-	case MySQL:
-		sql = "SELECT file_name, UNIX_TIMESTAMP(file_modified) AS modified FROM files"
-	case SQLite:
-		sql = "SELECT file_name, strftime('%s',file_modified) AS modified FROM files"
-	default:
-		return result, fmt.Errorf("unknown sql dialect: %s", DbDialect())
-	}
-
-	if err := Db().Raw(sql).Scan(&files).Error; err != nil {
+	if err := UnscopedDb().Raw(sql).Scan(&files).Error; err != nil {
 		return result, err
 	}
 
 	for _, row := range files {
-		result[row.FileName] = row.Modified
+		result[row.FileName] = row.ModTime
 	}
 
 	return result, err

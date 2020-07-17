@@ -26,7 +26,6 @@ type File struct {
 	FileRoot        string        `gorm:"type:varbinary(16);default:'';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
 	OriginalName    string        `gorm:"type:varbinary(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	FileHash        string        `gorm:"type:varbinary(128);index" json:"Hash" yaml:"Hash,omitempty"`
-	FileModified    time.Time     `json:"Modified" yaml:"Modified,omitempty"`
 	FileSize        int64         `json:"Size" yaml:"Size,omitempty"`
 	FileCodec       string        `gorm:"type:varbinary(32)" json:"Codec" yaml:"Codec,omitempty"`
 	FileType        string        `gorm:"type:varbinary(32)" json:"Type" yaml:"Type,omitempty"`
@@ -49,13 +48,14 @@ type File struct {
 	FileDiff        uint32        `json:"Diff" yaml:"Diff,omitempty"`
 	FileChroma      uint8         `json:"Chroma" yaml:"Chroma,omitempty"`
 	FileError       string        `gorm:"type:varbinary(512)" json:"Error" yaml:"Error,omitempty"`
-	Share           []FileShare   `json:"-" yaml:"-"`
-	Sync            []FileSync    `json:"-" yaml:"-"`
+	ModTime         int64         `json:"ModTime" yaml:"-"`
 	CreatedAt       time.Time     `json:"CreatedAt" yaml:"-"`
 	CreatedIn       int64         `json:"CreatedIn" yaml:"-"`
 	UpdatedAt       time.Time     `json:"UpdatedAt" yaml:"-"`
 	UpdatedIn       int64         `json:"UpdatedIn" yaml:"-"`
 	DeletedAt       *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	Share           []FileShare   `json:"-" yaml:"-"`
+	Sync            []FileSync    `json:"-" yaml:"-"`
 }
 
 type FileInfos struct {
@@ -119,7 +119,7 @@ func (m *File) ShareFileName() string {
 }
 
 // Changed returns true if new and old file size or modified time are different.
-func (m File) Changed(fileSize int64, fileModified time.Time) bool {
+func (m File) Changed(fileSize int64, modTime time.Time) bool {
 	if m.DeletedAt != nil {
 		return true
 	}
@@ -128,7 +128,7 @@ func (m File) Changed(fileSize int64, fileModified time.Time) bool {
 		return true
 	}
 
-	if m.FileModified.Round(time.Second).Equal(fileModified.Round(time.Second)) {
+	if m.ModTime == modTime.Unix() {
 		return false
 	}
 

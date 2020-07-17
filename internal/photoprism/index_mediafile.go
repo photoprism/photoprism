@@ -84,7 +84,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	fileRoot, fileBase, filePath, fileName := m.PathNameInfo()
 
 	logName := txt.Quote(fileName)
-	fileSize, fileModified, err := m.Stat()
+	fileSize, modTime, err := m.Stat()
 
 	if err != nil {
 		err := fmt.Errorf("index: %s not found", logName)
@@ -152,10 +152,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	} else {
 		photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
 
-		fileChanged = file.Changed(fileSize, fileModified)
+		fileChanged = file.Changed(fileSize, modTime)
 
 		if fileChanged {
-			log.Debugf("index: file was modified (new size %d, old size %d, new date %s, old date %s)", fileSize, file.FileSize, fileModified, file.FileModified)
+			log.Debugf("index: file was modified (new size %d, old size %d, new timestamp %d, old timestamp %d)", fileSize, file.FileSize, modTime.Unix(), file.ModTime)
 		}
 	}
 
@@ -525,10 +525,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.FileName = fileName
 	file.FileHash = fileHash
 	file.FileSize = fileSize
-	file.FileModified = fileModified
 	file.FileType = string(m.FileType())
 	file.FileMime = m.MimeType()
 	file.FileOrientation = m.Orientation()
+	file.ModTime = modTime.Unix()
 
 	if photoExists {
 		if err := photo.Save(); err != nil {

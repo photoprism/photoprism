@@ -19,7 +19,7 @@ msgstr ""
 msgid "%{n} files uploaded"
 msgstr ""
 
-#: src/pages/library/files.vue:420
+#: src/pages/library/files.vue:406
 msgid "%{n} folders found"
 msgstr ""
 
@@ -214,7 +214,7 @@ msgstr ""
 msgid "Altitude"
 msgstr ""
 
-#: src/dialog/photo/details.vue:453
+#: src/dialog/photo/details.vue:454
 msgid "Altitude (m)"
 msgstr ""
 
@@ -272,7 +272,7 @@ msgstr ""
 msgid "Are you sure you want to delete this account?"
 msgstr ""
 
-#: src/dialog/photo/details.vue:458
+#: src/dialog/photo/details.vue:459
 msgid "Artist"
 msgstr ""
 
@@ -322,7 +322,7 @@ msgstr ""
 #: src/component/photo/list.vue:138
 #: src/component/photo/toolbar.vue:201
 #: src/dialog/album/edit.vue:126
-#: src/dialog/photo/details.vue:440
+#: src/dialog/photo/details.vue:441
 #: src/share/photo/list.vue:115
 msgid "Camera"
 msgstr ""
@@ -360,7 +360,7 @@ msgstr ""
 #: src/component/album/toolbar.vue:122
 #: src/component/photo/toolbar.vue:206
 #: src/dialog/album/edit.vue:128
-#: src/dialog/photo/details.vue:444
+#: src/dialog/photo/details.vue:445
 #: src/pages/albums.vue:257
 #: src/share/albums.vue:155
 msgid "Category"
@@ -398,7 +398,7 @@ msgid "Codec"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:205
-#: src/dialog/photo/details.vue:443
+#: src/dialog/photo/details.vue:444
 msgid "Color"
 msgstr ""
 
@@ -450,7 +450,7 @@ msgstr ""
 msgid "Copy"
 msgstr ""
 
-#: src/dialog/photo/details.vue:459
+#: src/dialog/photo/details.vue:460
 msgid "Copyright"
 msgstr ""
 
@@ -485,7 +485,7 @@ msgstr ""
 #: src/component/album/toolbar.vue:119
 #: src/component/photo/toolbar.vue:200
 #: src/dialog/album/edit.vue:125
-#: src/dialog/photo/details.vue:439
+#: src/dialog/photo/details.vue:440
 msgid "Country"
 msgstr ""
 
@@ -541,7 +541,7 @@ msgstr ""
 
 #: src/component/album/toolbar.vue:116
 #: src/dialog/album/edit.vue:122
-#: src/dialog/photo/details.vue:461
+#: src/dialog/photo/details.vue:462
 msgid "Description"
 msgstr ""
 
@@ -673,11 +673,11 @@ msgstr ""
 msgid "Expires"
 msgstr ""
 
-#: src/dialog/photo/details.vue:454
+#: src/dialog/photo/details.vue:455
 msgid "Exposure"
 msgstr ""
 
-#: src/dialog/photo/details.vue:455
+#: src/dialog/photo/details.vue:456
 msgid "F Number"
 msgstr ""
 
@@ -732,31 +732,30 @@ msgstr ""
 msgid "Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' belong to the same photo."
 msgstr ""
 
-#: src/dialog/photo/details.vue:456
+#: src/dialog/photo/details.vue:457
 msgid "Focal Length"
 msgstr ""
 
 #: src/dialog/account/edit.vue:326
 #: src/dialog/account/edit.vue:332
-#: src/dialog/photo/files.vue:54
 #: src/dialog/photo/info.vue:24
 #: src/dialog/share/upload.vue:147
 #: src/model/folder.js:187
-#: src/pages/library/files.vue:84
+#: src/pages/library/files.vue:81
 #: src/pages/library/import.vue:120
 #: src/pages/library/index.vue:117
 msgid "Folder"
 msgstr ""
 
-#: src/pages/library/files.vue:422
+#: src/pages/library/files.vue:408
 msgid "Folder contains %{n} files"
 msgstr ""
 
-#: src/pages/library/files.vue:414
+#: src/pages/library/files.vue:400
 msgid "Folder is empty"
 msgstr ""
 
-#: src/pages/library/files.vue:178
+#: src/pages/library/files.vue:175
 msgid "Folder Name"
 msgstr ""
 
@@ -895,7 +894,7 @@ msgstr ""
 msgid "Interval"
 msgstr ""
 
-#: src/dialog/photo/details.vue:544
+#: src/dialog/photo/details.vue:545
 msgid "Invalid date"
 msgstr ""
 
@@ -907,7 +906,7 @@ msgstr ""
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr ""
 
-#: src/dialog/photo/details.vue:462
+#: src/dialog/photo/details.vue:463
 msgid "Keywords"
 msgstr ""
 
@@ -932,7 +931,7 @@ msgstr ""
 msgid "Labels deleted"
 msgstr ""
 
-#: src/dialog/photo/details.vue:448
+#: src/dialog/photo/details.vue:449
 #: src/pages/settings/general.vue:265
 msgid "Language"
 msgstr ""
@@ -941,7 +940,7 @@ msgstr ""
 msgid "Last Backup"
 msgstr ""
 
-#: src/dialog/photo/details.vue:451
+#: src/dialog/photo/details.vue:452
 #: src/dialog/photo/info.vue:117
 msgid "Latitude"
 msgstr ""
@@ -951,7 +950,7 @@ msgid "Lavender"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:202
-#: src/dialog/photo/details.vue:441
+#: src/dialog/photo/details.vue:442
 msgid "Lens"
 msgstr ""
 
@@ -971,7 +970,7 @@ msgstr ""
 
 #: src/component/navigation.vue:347
 #: src/component/navigation.vue:33
-#: src/dialog/photo/details.vue:460
+#: src/dialog/photo/details.vue:461
 #: src/pages/about/license.vue:4
 msgid "License"
 msgstr ""
@@ -980,7 +979,7 @@ msgstr ""
 msgid "Lime"
 msgstr ""
 
-#: src/pages/library/files.vue:424
+#: src/pages/library/files.vue:410
 msgid "Limit reached, showing first %{n} files"
 msgstr ""
 
@@ -1028,7 +1027,7 @@ msgstr ""
 msgid "Logs"
 msgstr ""
 
-#: src/dialog/photo/details.vue:452
+#: src/dialog/photo/details.vue:453
 #: src/dialog/photo/info.vue:125
 msgid "Longitude"
 msgstr ""
@@ -1140,7 +1139,7 @@ msgstr ""
 #: src/dialog/album/edit.vue:119
 #: src/dialog/photo/labels.vue:117
 #: src/pages/labels.vue:199
-#: src/pages/library/files.vue:180
+#: src/pages/library/files.vue:177
 msgid "Name too long"
 msgstr ""
 
@@ -1239,7 +1238,7 @@ msgstr ""
 msgid "Note: Updating the password will not revoke access from already authenticated users."
 msgstr ""
 
-#: src/dialog/photo/details.vue:463
+#: src/dialog/photo/details.vue:464
 msgid "Notes"
 msgstr ""
 
@@ -1272,11 +1271,11 @@ msgstr ""
 msgid "One entry found"
 msgstr ""
 
-#: src/pages/library/files.vue:416
+#: src/pages/library/files.vue:402
 msgid "One file found"
 msgstr ""
 
-#: src/pages/library/files.vue:418
+#: src/pages/library/files.vue:404
 msgid "One folder found"
 msgstr ""
 
@@ -1315,7 +1314,7 @@ msgstr ""
 msgid "Panorama"
 msgstr ""
 
-#: src/component/navigation.vue:86
+#: src/component/navigation.vue:78
 msgid "Panoramas"
 msgstr ""
 
@@ -1551,12 +1550,12 @@ msgstr ""
 #: src/component/photo/toolbar.vue:198
 #: src/component/photo/toolbar.vue:33
 #: src/dialog/album/edit.vue:123
-#: src/dialog/photo/details.vue:437
+#: src/dialog/photo/details.vue:438
 #: src/dialog/photo/labels.vue:114
 #: src/pages/albums.vue:255
 #: src/pages/labels.vue:196
 #: src/pages/library/errors.vue:33
-#: src/pages/library/files.vue:177
+#: src/pages/library/files.vue:174
 #: src/pages/places.vue:174
 #: src/routes.js:235
 #: src/share/albums.vue:153
@@ -1571,7 +1570,7 @@ msgstr ""
 #: src/pages/albums.vue:399
 #: src/pages/labels.vue:360
 #: src/pages/library/errors.vue:123
-#: src/pages/library/files.vue:345
+#: src/pages/library/files.vue:331
 #: src/pages/photos.vue:313
 #: src/pages/places.vue:208
 #: src/share/albums.vue:279
@@ -1690,7 +1689,7 @@ msgstr ""
 #: src/component/album/toolbar.vue:121
 #: src/component/photo/toolbar.vue:207
 #: src/dialog/album/edit.vue:127
-#: src/dialog/photo/details.vue:445
+#: src/dialog/photo/details.vue:446
 msgid "Sort Order"
 msgstr ""
 
@@ -1702,7 +1701,7 @@ msgstr ""
 msgid "Spanish"
 msgstr ""
 
-#: src/component/navigation.vue:78
+#: src/component/navigation.vue:86
 msgid "Stacks"
 msgstr ""
 
@@ -1718,6 +1717,10 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
+#: src/dialog/photo/files.vue:54
+msgid "Storage Folder"
+msgstr ""
+
 #: src/options/options.js:160
 msgid "Streets"
 msgstr ""
@@ -1726,7 +1729,7 @@ msgstr ""
 msgid "Style"
 msgstr ""
 
-#: src/dialog/photo/details.vue:457
+#: src/dialog/photo/details.vue:458
 msgid "Subject"
 msgstr ""
 
@@ -1749,12 +1752,12 @@ msgid "Taken"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:209
-#: src/dialog/photo/details.vue:447
+#: src/dialog/photo/details.vue:448
 msgid "Taken after"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:208
-#: src/dialog/photo/details.vue:446
+#: src/dialog/photo/details.vue:447
 msgid "Taken before"
 msgstr ""
 
@@ -1762,7 +1765,7 @@ msgstr ""
 msgid "Teal"
 msgstr ""
 
-#: src/dialog/photo/details.vue:470
+#: src/dialog/photo/details.vue:471
 msgid "Text too long"
 msgstr ""
 
@@ -1787,12 +1790,12 @@ msgstr ""
 msgid "Time UTC"
 msgstr ""
 
-#: src/dialog/photo/details.vue:449
+#: src/dialog/photo/details.vue:450
 msgid "Time Zone"
 msgstr ""
 
 #: src/component/photo/list.vue:136
-#: src/dialog/photo/details.vue:450
+#: src/dialog/photo/details.vue:451
 #: src/dialog/photo/info.vue:44
 #: src/share/photo/list.vue:113
 msgid "Title"
@@ -1846,7 +1849,7 @@ msgstr ""
 msgid "UID"
 msgstr ""
 
-#: src/dialog/photo/details.vue:431
+#: src/dialog/photo/details.vue:432
 #: src/dialog/photo/info.vue:254
 #: src/model/album.js:122
 #: src/model/photo.js:401
@@ -1956,7 +1959,7 @@ msgstr ""
 #: src/component/album/toolbar.vue:118
 #: src/component/photo/toolbar.vue:199
 #: src/dialog/album/edit.vue:124
-#: src/dialog/photo/details.vue:438
+#: src/dialog/photo/details.vue:439
 msgid "View"
 msgstr ""
 
@@ -1986,7 +1989,7 @@ msgid "Who we are"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:203
-#: src/dialog/photo/details.vue:442
+#: src/dialog/photo/details.vue:443
 #: src/dialog/photo/details.vue:240
 msgid "Year"
 msgstr ""

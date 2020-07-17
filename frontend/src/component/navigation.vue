@@ -88,18 +88,18 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'photos', query: { q: 'stack:true' }}" :exact="true" @click="" class="nav-stacks">
-            <v-list-tile-content>
-              <v-list-tile-title>
-                <translate>Stacks</translate>
-              </v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-
           <v-list-tile :to="{name: 'photos', query: { q: 'panorama:true' }}" :exact="true" @click="" class="nav-panoramas">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Panoramas</translate>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile :to="{name: 'photos', query: { q: 'stack:true' }}" :exact="true" @click="" class="nav-stacks">
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <translate>Stacks</translate>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>

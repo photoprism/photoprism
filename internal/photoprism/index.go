@@ -134,14 +134,18 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 				return result
 			}
 
+			done[fileName] = true
+
+			if !fs.FileExt.Media(fileName) {
+				return nil
+			}
+
 			mf, err := NewMediaFile(fileName)
 
 			if err != nil {
 				log.Error(err)
 				return nil
 			}
-
-			done[fileName] = true
 
 			if ind.files.Ignore(relName, mf.modTime, opt.Rescan) {
 				return nil
