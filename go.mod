@@ -6,13 +6,15 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.2.0
-	github.com/dsoprea/go-exif/v2 v2.0.0-20200717063959-46b1a0cd1772
+	github.com/dsoprea/go-exif/v2 v2.0.0-20200717063959-46b1a0cd1772 // indirect
+	github.com/dsoprea/go-exif/v3 v3.0.0-20200717063959-46b1a0cd1772
 	github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200520190950-3ae4ff88a0d1
 	github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 // indirect
 	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200615034914-d40a386309d2
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-photoshop-info-format v0.0.0-20200610045659-121dd752914d // indirect
 	github.com/dsoprea/go-png-image-structure v0.0.0-20200615034826-4cfc78940228
+	github.com/dsoprea/go-utility v0.0.0-20200717064901-2fccff4aa15e // indirect
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-errors/errors v1.1.1 // indirect
@@ -27,7 +29,6 @@ require (
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.15.6
-	github.com/kr/pretty v0.1.0 // indirect
 	github.com/leandro-lugaresi/hub v1.1.0
 	github.com/leonelquinteros/gotext v1.4.0
 	github.com/lib/pq v1.3.0 // indirect
@@ -42,7 +43,6 @@ require (
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.6.0
-	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.6.1
 	github.com/studio-b12/gowebdav v0.0.0-20200303150724-9380631c29a1
 	github.com/tensorflow/tensorflow v1.15.2
@@ -55,7 +55,6 @@ require (
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.9
 	gopkg.in/yaml.v2 v2.3.0
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect

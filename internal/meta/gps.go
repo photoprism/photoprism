@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/dsoprea/go-exif/v2"
+	"github.com/dsoprea/go-exif/v3"
 )
 
 // var GpsCoordsRegexp = regexp.MustCompile("(-?\\d+(\\.\\d+)?),\\s*(-?\\d+(\\.\\d+)?)")

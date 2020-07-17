@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dsoprea/go-exif/v2"
-	exifcommon "github.com/dsoprea/go-exif/v2/common"
+	"github.com/dsoprea/go-exif/v3"
+	exifcommon "github.com/dsoprea/go-exif/v3/common"
 	heicexif "github.com/dsoprea/go-heic-exif-extractor"
 	"github.com/dsoprea/go-jpeg-image-structure"
 	"github.com/dsoprea/go-png-image-structure"
@@ -24,9 +24,9 @@ var exifTagIndex = exif.NewTagIndex()
 const DateTimeZero = "0000:00:00 00:00:00"
 
 func init() {
-	exifIfdMapping = exif.NewIfdMapping()
+	exifIfdMapping = exifcommon.NewIfdMapping()
 
-	if err := exif.LoadStandardIfds(exifIfdMapping); err != nil {
+	if err := exifcommon.LoadStandardIfds(exifIfdMapping); err != nil {
 		log.Errorf("metadata: %s", err.Error())
 	}
 }
@@ -138,7 +138,8 @@ func (data *Data) Exif(fileName string) (err error) {
 	}
 
 	// Enumerate tags in EXIF block.
-	entries, err := exif.GetFlatExifData(rawExif)
+	opt := exif.ScanOptions{}
+	entries, _, err := exif.GetFlatExifData(rawExif, &opt)
 
 	for _, entry := range entries {
 		if entry.TagName != "" && entry.Formatted != "" {
@@ -153,7 +154,7 @@ func (data *Data) Exif(fileName string) (err error) {
 	if err != nil {
 		log.Warnf("metadata: %s in %s (exif collect)", err.Error(), logName)
 	} else {
-		if ifd, err := index.RootIfd.ChildWithIfdPath(exifcommon.IfdPathStandardGps); err == nil {
+		if ifd, err := index.RootIfd.ChildWithIfdPath(exifcommon.IfdGpsInfoStandardIfdIdentity); err == nil {
 			if gi, err := ifd.GpsInfo(); err == nil {
 				data.Lat = float32(gi.Latitude.Decimal())
 				data.Lng = float32(gi.Longitude.Decimal())
