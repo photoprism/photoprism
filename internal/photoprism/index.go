@@ -121,7 +121,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 			isSymlink := info.IsSymlink()
 
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
-				if isDir && result != filepath.SkipDir {
+				if (isSymlink || isDir) && result != filepath.SkipDir {
 					folder := entity.NewFolder(entity.RootOriginals, fs.RelName(fileName, originalsPath), nil)
 
 					if err := folder.Create(); err == nil {
