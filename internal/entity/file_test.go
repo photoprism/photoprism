@@ -234,8 +234,16 @@ func TestFile_NoJPEG(t *testing.T) {
 }
 
 func TestFile_Panorama(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("3000", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 3000, FileHeight: 1000}
+		assert.True(t, file.Panorama())
+	})
+	t.Run("1999", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1999, FileHeight: 1000}
+		assert.False(t, file.Panorama())
+	})
+	t.Run("2000", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 2000, FileHeight: 1000}
 		assert.True(t, file.Panorama())
 	})
 	t.Run("false", func(t *testing.T) {

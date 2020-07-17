@@ -403,10 +403,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.FileMissing = false
 	file.FileError = ""
 
-	if file.Panorama() {
-		photo.PhotoPanorama = true
-	}
-
 	// primary files are used for rendering thumbnails and image classification (plus sidecar files if they exist)
 	if file.FilePrimary {
 		primaryFile = file
@@ -509,6 +505,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	photo.UpdateDateFields()
+
+	if file.Panorama() {
+		photo.PhotoPanorama = true
+	}
 
 	file.FileSidecar = m.IsSidecar()
 	file.FileVideo = m.IsVideo()
