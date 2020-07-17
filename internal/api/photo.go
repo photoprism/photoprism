@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
@@ -28,7 +29,7 @@ func SavePhotoAsYaml(p entity.Photo) {
 		if err := p.SaveAsYaml(yamlFile); err != nil {
 			log.Errorf("photo: %s (update yaml)", err)
 		} else {
-			log.Infof("photo: updated yaml file %s", txt.Quote(fs.RelName(yamlFile, conf.OriginalsPath())))
+			log.Debugf("photo: updated yaml file %s", txt.Quote(filepath.Base(yamlFile)))
 		}
 	}
 }

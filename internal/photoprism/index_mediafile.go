@@ -175,10 +175,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			if err := photo.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s in %s (restore from yaml)", err.Error(), logName)
 			} else if err := photo.Find(); err != nil {
-				log.Infof("index: data restored from %s", txt.Quote(fs.RelName(yamlName, Config().OriginalsPath())))
+				log.Infof("index: data restored from %s", txt.Quote(filepath.Base(yamlName)))
 			} else {
 				photoExists = true
-				log.Infof("index: uid %s restored from %s", photo.PhotoUID, txt.Quote(fs.RelName(yamlName, Config().OriginalsPath())))
+				log.Infof("index: uid %s restored from %s", photo.PhotoUID, txt.Quote(filepath.Base(yamlName)))
 			}
 		}
 	}
@@ -687,7 +687,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if err := photo.SaveAsYaml(yamlFile); err != nil {
 			log.Errorf("index: %s in %s (update yaml)", err.Error(), logName)
 		} else {
-			log.Infof("index: updated yaml file %s", txt.Quote(fs.RelName(yamlFile, Config().OriginalsPath())))
+			log.Debugf("index: updated yaml file %s", txt.Quote(filepath.Base(yamlFile)))
 		}
 	}
 
