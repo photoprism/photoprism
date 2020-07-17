@@ -1,6 +1,7 @@
 package query
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -101,4 +102,39 @@ func SetFileError(fileUID, errorString string) {
 	if err := Db().Model(entity.File{}).Where("file_uid = ?", fileUID).UpdateColumn("file_error", errorString).Error; err != nil {
 		log.Errorf("query: %s", err.Error())
 	}
+}
+
+type FileMap map[string]int64
+
+// IndexedFiles returns a map of already indexed files with their mod time unix timestamp as value.
+func IndexedFiles() (result FileMap, err error) {
+	result = make(FileMap)
+
+	type Files struct {
+		FileName string
+		Modified int64
+	}
+
+	var files []Files
+
+	var sql string
+
+	switch DbDialect() {
+	case MySQL:
+		sql = "SELECT file_name, UNIX_TIMESTAMP(file_modified) AS modified FROM files"
+	case SQLite:
+		sql = "SELECT file_name, strftime('%s',file_modified) AS modified FROM files"
+	default:
+		return result, fmt.Errorf("unknown sql dialect: %s", DbDialect())
+	}
+
+	if err := Db().Raw(sql).Scan(&files).Error; err != nil {
+		return result, err
+	}
+
+	for _, row := range files {
+		result[row.FileName] = row.Modified
+	}
+
+	return result, err
 }

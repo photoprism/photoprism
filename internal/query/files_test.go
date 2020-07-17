@@ -1,9 +1,9 @@
 package query
 
 import (
-	"github.com/photoprism/photoprism/internal/entity"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -182,4 +182,14 @@ func TestSetFileError(t *testing.T) {
 
 	//TODO How to assert
 	//assert.Equal(t, true, entity.FileFixturesExampleXMP.FilePrimary)
+}
+
+func TestIndexedFiles(t *testing.T) {
+	result, err := IndexedFiles()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Logf("INDEXED FILES: %#v", result)
 }

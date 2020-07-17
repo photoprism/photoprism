@@ -21,6 +21,7 @@ import (
 
 var exifIfdMapping *exifcommon.IfdMapping
 var exifTagIndex = exif.NewTagIndex()
+
 const DateTimeZero = "0000:00:00 00:00:00"
 
 func init() {

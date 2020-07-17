@@ -820,16 +820,20 @@ func TestMediaFile_MimeType(t *testing.T) {
 func TestMediaFile_Exists(t *testing.T) {
 	conf := config.TestConfig()
 
-	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/cat_black.jpg")
+	exists, err := NewMediaFile(conf.ExamplesPath() + "/cat_black.jpg")
+
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.NotNil(t, mediaFile)
-	assert.True(t, mediaFile.Exists())
 
-	mediaFile, err = NewMediaFile(conf.ExamplesPath() + "/xxz.jpg")
-	assert.NotNil(t, err)
-	assert.Nil(t, mediaFile)
+	assert.NotNil(t, exists)
+	assert.True(t, exists.Exists())
+
+	missing, err := NewMediaFile(conf.ExamplesPath() + "/xxz.jpg")
+
+	assert.NotNil(t, exists)
+	assert.Error(t, err)
+	assert.Equal(t, int64(-1), missing.FileSize())
 }
 
 func TestMediaFile_Move(t *testing.T) {
@@ -1709,7 +1713,12 @@ func TestMediaFile_Stat(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		size, time := mediaFile.Stat()
+		size, time, err := mediaFile.Stat()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, int64(785743), size)
 		assert.IsType(t, time, time)
 	})

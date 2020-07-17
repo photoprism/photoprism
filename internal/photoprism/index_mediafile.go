@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"path/filepath"
 	"sort"
@@ -83,7 +84,15 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	fileRoot, fileBase, filePath, fileName := m.PathNameInfo()
 
 	logName := txt.Quote(fileName)
-	fileSize, fileModified := m.Stat()
+	fileSize, fileModified, err := m.Stat()
+
+	if err != nil {
+		err := fmt.Errorf("index: %s not found", logName)
+		log.Error(err)
+		result.Err = err
+		result.Status = IndexFailed
+		return result
+	}
 
 	fileHash := ""
 	fileChanged := true

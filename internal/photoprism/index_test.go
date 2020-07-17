@@ -28,6 +28,7 @@ func TestIndex_Start(t *testing.T) {
 	imp.Start(opt)
 
 	indexOpt := IndexOptionsAll()
+	indexOpt.Rescan = false
 
 	ind.Start(indexOpt)
 }

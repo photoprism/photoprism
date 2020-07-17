@@ -143,7 +143,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 			if opt.Dry {
 				purgedPhotos[photo.PhotoUID] = true
-				log.Infof("purge: photo %s would be removed", txt.Quote(photo.PhotoName))
+				log.Infof("purge: %s would be removed", txt.Quote(photo.PhotoName))
 				continue
 			}
 
@@ -153,9 +153,9 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 				purgedPhotos[photo.PhotoUID] = true
 
 				if opt.Hard {
-					log.Infof("purge: permanently deleted photo %s", txt.Quote(photo.PhotoName))
+					log.Infof("purge: permanently deleted %s", txt.Quote(photo.PhotoName))
 				} else {
-					log.Infof("purge: removed photo %s", txt.Quote(photo.PhotoName))
+					log.Infof("purge: removed %s", txt.Quote(photo.PhotoName))
 				}
 			}
 		}
@@ -169,7 +169,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	log.Info("purge: finding hidden photos")
+	log.Info("purge: searching index for hidden media files")
 
 	if err := query.ResetPhotoQuality(); err != nil {
 		return purgedFiles, purgedPhotos, err

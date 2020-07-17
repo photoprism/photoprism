@@ -8,7 +8,6 @@ import (
 	"runtime/debug"
 	"sync"
 
-	"github.com/jinzhu/gorm"
 	"github.com/karrick/godirwalk"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
@@ -16,7 +15,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/nsfw"
-	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -27,8 +25,7 @@ type Index struct {
 	tensorFlow   *classify.TensorFlow
 	nsfwDetector *nsfw.Detector
 	convert      *Convert
-	db           *gorm.DB
-	q            *query.Query
+	files        *Files
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
@@ -38,8 +35,7 @@ func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector
 		tensorFlow:   tensorFlow,
 		nsfwDetector: nsfwDetector,
 		convert:      convert,
-		db:           conf.Db(),
-		q:            query.New(conf.Db()),
+		files:        NewFiles(),
 	}
 
 	return i
@@ -101,6 +97,11 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 		}()
 	}
 
+	if err := ind.files.Init(); err != nil {
+		log.Errorf("index: %s", err)
+	}
+
+	filesIndexed := 0
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(originalsPath); err != nil {
@@ -119,10 +120,11 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 
 			isDir := info.IsDir()
 			isSymlink := info.IsSymlink()
+			relName := fs.RelName(fileName, originalsPath)
 
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
 				if (isSymlink || isDir) && result != filepath.SkipDir {
-					folder := entity.NewFolder(entity.RootOriginals, fs.RelName(fileName, originalsPath), nil)
+					folder := entity.NewFolder(entity.RootOriginals, relName, nil)
 
 					if err := folder.Create(); err == nil {
 						log.Infof("index: added folder /%s", folder.Path)
@@ -134,7 +136,18 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 
 			mf, err := NewMediaFile(fileName)
 
-			if err != nil || !mf.IsMedia() {
+			if err != nil {
+				log.Error(err)
+				return nil
+			}
+
+			done[fileName] = true
+
+			if ind.files.Ignore(relName, mf.modTime, opt.Rescan) {
+				return nil
+			}
+
+			if !mf.IsMedia() {
 				return nil
 			}
 
@@ -149,15 +162,12 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 			var files MediaFiles
 
 			for _, f := range related.Files {
-				if done[f.FileName()] {
-					continue
-				}
-
 				files = append(files, f)
+				filesIndexed++
 				done[f.FileName()] = true
 			}
 
-			done[fileName] = true
+			filesIndexed++
 
 			related.Files = files
 
@@ -181,10 +191,12 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 		log.Error(err.Error())
 	}
 
-	if len(done) > 0 {
+	if filesIndexed > 0 {
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("index: %s", err)
 		}
+	} else {
+		log.Infof("index: no new or modified files")
 	}
 
 	runtime.GC()

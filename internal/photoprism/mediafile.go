@@ -26,6 +26,9 @@ import (
 // MediaFile represents a single photo, video or sidecar file.
 type MediaFile struct {
 	fileName     string
+	statErr      error
+	modTime      time.Time
+	fileSize     int64
 	fileType     fs.FileType
 	mimeType     string
 	takenAt      time.Time
@@ -41,41 +44,50 @@ type MediaFile struct {
 
 // NewMediaFile returns a new media file.
 func NewMediaFile(fileName string) (*MediaFile, error) {
-	if !fs.FileExists(fileName) {
-		return nil, fmt.Errorf("%s does not exist", filepath.Base(fileName))
-	}
-
-	instance := &MediaFile{
+	m := &MediaFile{
 		fileName: fileName,
 		fileType: fs.TypeOther,
 		metaData: meta.NewData(),
 	}
 
-	return instance, nil
-}
-
-// Stat returns the media file size and modification time.
-func (m *MediaFile) Stat() (size int64, mod time.Time) {
-	s, err := os.Stat(m.FileName())
-
-	if err != nil {
-		log.Errorf("mediafile: unknown size (%s)", err)
-		return -1, time.Now()
+	if _, _, err := m.Stat(); err != nil {
+		return m, fmt.Errorf("mediafile: %s not found", txt.Quote(m.BaseName()))
 	}
 
-	return s.Size(), s.ModTime().Round(time.Second)
+	return m, nil
 }
 
-// FileSize returns the media file size.
-func (m *MediaFile) FileSize() (size int64) {
-	s, err := os.Stat(m.FileName())
-
-	if err != nil {
-		log.Errorf("mediafile: unknown size (%s)", err)
-		return -1
+// Stat returns the media file size and modification time rounded to seconds
+func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
+	if m.fileSize > 0 {
+		return m.fileSize, m.modTime, m.statErr
 	}
 
-	return s.Size()
+	if s, err := os.Stat(m.FileName()); err != nil {
+		m.statErr = err
+		m.modTime = time.Time{}
+		m.fileSize = -1
+	} else {
+		m.statErr = nil
+		m.modTime = s.ModTime().Round(time.Second)
+		m.fileSize = s.Size()
+	}
+
+	return m.fileSize, m.modTime, m.statErr
+}
+
+// ModTime returns the file modification time.
+func (m *MediaFile) ModTime() time.Time {
+	_, modTime, _ := m.Stat()
+
+	return modTime
+}
+
+// FileSize returns the file size in bytes.
+func (m *MediaFile) FileSize() int64 {
+	fileSize, _, _ := m.Stat()
+
+	return fileSize
 }
 
 // DateCreated returns only the date on which the media file was probably taken in UTC.
