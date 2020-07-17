@@ -70,7 +70,7 @@
                       </tr>
                       <tr v-if="file.Root">
                         <td>
-                          <translate>Folder</translate>
+                          <translate>Storage Folder</translate>
                         </td>
                         <td>{{ file.Root | capitalize }}</td>
                       </tr>
