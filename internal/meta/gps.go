@@ -64,7 +64,7 @@ func GpsToDecimal(s string) float32 {
 	return float32(latDeg.Decimal())
 }
 
-// GpsToLng returns a single GPS coordinate value as float point number (degree, minute or second).
+// GpsToLng returns a single GPS coordinate value as floating point number (degree, minute or second).
 func GpsCoord(s string) float64 {
 	if s == "" {
 		return 0
@@ -73,7 +73,8 @@ func GpsCoord(s string) float64 {
 	result, err := strconv.ParseFloat(s, 64)
 
 	if err != nil {
-		log.Debugf("metadata: %s", err)
+		log.Debugf("metadata: invalid floating-point number '%s' (gps coord)", s)
+		return 0
 	}
 
 	return result

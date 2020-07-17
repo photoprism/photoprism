@@ -274,10 +274,10 @@ func TestExif(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "2020-06-16T18:52:46Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2020-06-16T16:52:46Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "2020-06-16T18:52:46Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
-		assert.Equal(t, float32(0), data.Lat)
-		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, float32(48.302776), data.Lat)
+		assert.Equal(t, float32(8.9275), data.Lng)
 		assert.Equal(t, 0, data.Altitude)
 		assert.Equal(t, "1/110", data.Exposure)
 		assert.Equal(t, "HUAWEI", data.CameraMake)
@@ -298,7 +298,7 @@ func TestExif(t *testing.T) {
 		// t.Logf("all: %+v", data.All)
 
 		assert.Equal(t, "", data.Artist)
-		assert.Equal(t, "2020-05-24T11:55:21Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2020-05-24T08:55:21Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "2020-05-24T11:55:21Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "", data.Title)
 		assert.Equal(t, "", data.Keywords)
@@ -306,8 +306,8 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 3600, data.Height)
 		assert.Equal(t, 7200, data.Width)
-		assert.Equal(t, float32(0), data.Lat)
-		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, float32(59.84083), data.Lat)
+		assert.Equal(t, float32(30.51), data.Lng)
 		assert.Equal(t, 0, data.Altitude)
 		assert.Equal(t, "1/1250", data.Exposure)
 		assert.Equal(t, "SAMSUNG", data.CameraMake)
