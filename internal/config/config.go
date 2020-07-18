@@ -76,7 +76,7 @@ func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
 	thumb.Size = c.ThumbSize()
-	thumb.Limit = c.ThumbSizeUncached()
+	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()
 

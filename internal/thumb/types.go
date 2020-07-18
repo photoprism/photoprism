@@ -4,18 +4,18 @@ import "github.com/disintegration/imaging"
 
 var (
 	Size             = 2048
-	Limit            = 7680
+	SizeUncached     = 7680
 	Filter           = ResampleLanczos
 	JpegQuality      = 95
 	JpegQualitySmall = 80
 )
 
 func MaxSize() int {
-	if Size > Limit {
+	if Size > SizeUncached {
 		return Size
 	}
 
-	return Limit
+	return SizeUncached
 }
 
 func InvalidSize(size int) bool {
@@ -113,8 +113,26 @@ var DefaultTypes = []string{
 	"tile_50",
 }
 
-// Returns true if thumbnail is too large and can not be rendered at all.
-func (t Type) ExceedsLimit() bool {
+// Find returns the largest default thumbnail type for the given size limit.
+func Find(limit int) (name string, result Type) {
+	for _, name = range DefaultTypes {
+		t := Types[name]
+
+		if t.Width <= limit && t.Height <= limit {
+			return name, t
+		}
+	}
+
+	return "", Type{}
+}
+
+// Returns true if thumbnail type exceeds the cached thumbnails size.
+func (t Type) ExceedsSize() bool {
+	return t.Width > Size || t.Height > Size
+}
+
+// Returns true if thumbnail type is too large and can not be rendered at all.
+func (t Type) ExceedsSizeUncached() bool {
 	return t.Width > MaxSize() || t.Height > MaxSize()
 }
 
