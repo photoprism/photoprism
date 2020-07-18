@@ -50,7 +50,7 @@
                       v-model="settings.index.convert"
                       color="secondary-dark"
                       :label="$gettext('Convert to JPEG')"
-                      :hint="$gettext('File types like RAW might need to be converted so that they can be displayed in a browser. JPEGs will be stored in the same folder next to the original using the best possible quality.')"
+                      :hint="$gettext('Automatically create JPEGs for other file types so that they can be displayed in a browser.')"
                       prepend-icon="photo_camera"
                       persistent-hint
               >
@@ -64,7 +64,7 @@
                       class="ma-0 pa-0 input-sequences"
                       v-model="settings.index.sequences"
                       color="secondary-dark"
-                      :label="$gettext('Group Sequential')"
+                      :label="$gettext('Stack Sequences')"
                       :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' or \'IMG_1234 copy 2\' belong to the same photo.')"
                       prepend-icon="photo_library"
                       persistent-hint

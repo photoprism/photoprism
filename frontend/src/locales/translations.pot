@@ -284,6 +284,10 @@ msgstr ""
 msgid "At least 6 characters."
 msgstr ""
 
+#: src/pages/settings/general.vue:131
+msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+msgstr ""
+
 #: src/pages/settings.vue:8
 msgid "Backup"
 msgstr ""
@@ -720,7 +724,6 @@ msgid "File Browser"
 msgstr ""
 
 #: src/pages/library/index.vue:121
-#: src/pages/settings/general.vue:131
 msgid "File types like RAW might need to be converted so that they can be displayed in a browser. JPEGs will be stored in the same folder next to the original using the best possible quality."
 msgstr ""
 
@@ -793,10 +796,6 @@ msgstr ""
 #: src/component/photo/toolbar.vue:193
 #: src/dialog/album/edit.vue:115
 msgid "Group by similarity"
-msgstr ""
-
-#: src/pages/settings/general.vue:162
-msgid "Group Sequential"
 msgstr ""
 
 #: src/dialog/photo/files.vue:48
@@ -1699,6 +1698,10 @@ msgstr ""
 
 #: src/options/options.js:88
 msgid "Spanish"
+msgstr ""
+
+#: src/pages/settings/general.vue:162
+msgid "Stack Sequences"
 msgstr ""
 
 #: src/component/navigation.vue:86

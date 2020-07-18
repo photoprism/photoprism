@@ -280,6 +280,14 @@ msgstr "Seitenverhältnis"
 msgid "At least 6 characters."
 msgstr "Mindestens 6 Zeichen."
 
+#: src/pages/settings/general.vue:131
+msgid ""
+"Automatically create JPEGs for other file types so that they can be "
+"displayed in a browser."
+msgstr ""
+"RAW-Bilder und Videos müssen zu JPEGs konvertiert werden, damit sie in der "
+"Suche angezeigt werden können."
+
 #: src/pages/settings.vue:8
 msgid "Backup"
 msgstr "Backup"
@@ -664,7 +672,7 @@ msgstr "Datei"
 msgid "File Browser"
 msgstr "Datei Browser"
 
-#: src/pages/library/index.vue:121 src/pages/settings/general.vue:131
+#: src/pages/library/index.vue:121
 msgid ""
 "File types like RAW might need to be converted so that they can be displayed "
 "in a browser. JPEGs will be stored in the same folder next to the original "
@@ -740,10 +748,6 @@ msgstr "Grau"
 #: src/dialog/album/edit.vue:115
 msgid "Group by similarity"
 msgstr "Ähnlichkeit"
-
-#: src/pages/settings/general.vue:162
-msgid "Group Sequential"
-msgstr "Sequenzen gruppieren"
 
 #: src/dialog/photo/files.vue:48
 msgid "Hash"
@@ -1595,6 +1599,10 @@ msgstr "Quelle"
 msgid "Spanish"
 msgstr "Spanisch"
 
+#: src/pages/settings/general.vue:162
+msgid "Stack Sequences"
+msgstr "Sequenzen gruppieren"
+
 #: src/component/navigation.vue:86
 msgid "Stacks"
 msgstr "Bildstapel"
@@ -1898,6 +1906,9 @@ msgstr ""
 "Server zu betreiben und über das Projekt zu berichten.\n"
 "Das Bewerben kommerzieller Produkte, Waren oder Dienstleistungen ist nur "
 "nach vorheriger, schriftlicher Genehmigung erlaubt."
+
+#~ msgid "Group Sequential"
+#~ msgstr "Sequenzen gruppieren"
 
 #~ msgid "OK"
 #~ msgstr "OK"
