@@ -90,7 +90,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())))
 					continue
 				} else {
-					log.Infof("import: %s created", fs.RelName(jpegFile.FileName(), imp.originalsPath()))
+					log.Debugf("import: %s created", txt.Quote(jpegFile.BaseName()))
 				}
 			}
 
@@ -107,7 +107,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				if jsonFile, err := imp.convert.ToJson(f); err != nil {
 					log.Errorf("import: %s in %s (create json sidecar)", err.Error(), txt.Quote(f.BaseName()))
 				} else {
-					log.Infof("import: %s created", fs.RelName(jsonFile.FileName(), imp.originalsPath()))
+					log.Debugf("import: %s created", txt.Quote(jsonFile.BaseName()))
 				}
 			}
 

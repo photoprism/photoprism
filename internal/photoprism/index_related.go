@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -34,7 +33,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 
 			return result
 		} else {
-			log.Infof("index: %s created", fs.RelName(jpegFile.FileName(), ind.originalsPath()))
+			log.Debugf("index: %s created", txt.Quote(jpegFile.BaseName()))
 
 			if err := jpegFile.ResampleDefault(ind.thumbPath(), false); err != nil {
 				result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", txt.Quote(f.BaseName()), err.Error())
@@ -51,7 +50,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 		if jsonFile, err := ind.convert.ToJson(f); err != nil {
 			log.Errorf("index: failed creating json sidecar for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 		} else {
-			log.Infof("index: %s created", fs.RelName(jsonFile.FileName(), ind.originalsPath()))
+			log.Debugf("index: %s created", txt.Quote(jsonFile.BaseName()))
 		}
 	}
 

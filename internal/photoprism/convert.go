@@ -126,7 +126,7 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 
 	fileName := mf.RelName(c.conf.OriginalsPath())
 
-	log.Infof("convert: %s -> %s", fileName, filepath.Base(jsonName))
+	log.Debugf("convert: %s -> %s", fileName, filepath.Base(jsonName))
 
 	cmd := exec.Command(c.conf.ExifToolBin(), "-j", mf.FileName())
 
@@ -223,7 +223,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	jpegName = fs.FileName(image.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt, c.conf.Settings().Index.Sequences)
 	fileName := image.RelName(c.conf.OriginalsPath())
 
-	log.Infof("convert: %s -> %s", fileName, filepath.Base(jpegName))
+	log.Debugf("convert: %s -> %s", fileName, filepath.Base(jpegName))
 
 	xmpName := fs.TypeXMP.Find(image.FileName(), c.conf.Settings().Index.Sequences)
 
