@@ -55,7 +55,7 @@ func (rs *Resample) Start(force bool) (err error) {
 		}()
 	}
 
-	done := make(map[string]bool)
+	done := make(fs.Done)
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(originalsPath); err != nil {
@@ -91,7 +91,7 @@ func (rs *Resample) Start(force bool) (err error) {
 				return nil
 			}
 
-			done[fileName] = true
+			done[fileName] = fs.Processed
 
 			relativeName := mf.RelName(originalsPath)
 

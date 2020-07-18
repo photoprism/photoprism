@@ -211,10 +211,10 @@ func (m *Photo) Save() error {
 	if err := UnscopedDb().Save(m).Error; err == nil {
 		// Nothing to do.
 	} else if !strings.Contains(strings.ToLower(err.Error()), "lock") {
-		log.Errorf("photo: %s (save %s)", err, m.PhotoUID)
+		log.Debugf("photo: %s (save %s)", err, m.PhotoUID)
 		return err
 	} else if err := UnscopedDb().Save(m).Error; err != nil {
-		log.Errorf("photo: %s (save %s after deadlock)", err, m.PhotoUID)
+		log.Debugf("photo: %s (save %s after deadlock)", err, m.PhotoUID)
 		return err
 	}
 

@@ -635,7 +635,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.UpdatedIn = int64(time.Since(start))
 
 		if err := file.Save(); err != nil {
-			log.Errorf("index: %s in %s (save file)", err, logName)
+			log.Errorf("index: failed updating file %s", logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
@@ -644,7 +644,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.CreatedIn = int64(time.Since(start))
 
 		if err := file.Create(); err != nil {
-			log.Errorf("index: %s in %s (create file)", err, logName)
+			log.Errorf("index: failed adding file %s", logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result

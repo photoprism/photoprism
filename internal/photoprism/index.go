@@ -55,14 +55,14 @@ func (ind *Index) Cancel() {
 }
 
 // Start indexes media files in the originals directory.
-func (ind *Index) Start(opt IndexOptions) map[string]bool {
+func (ind *Index) Start(opt IndexOptions) fs.Done {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("index: %s (panic)\nstack: %s", r, debug.Stack())
 		}
 	}()
 
-	done := make(map[string]bool)
+	done := make(fs.Done)
 	originalsPath := ind.originalsPath()
 	optionsPath := filepath.Join(originalsPath, opt.Path)
 
@@ -134,7 +134,7 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 				return result
 			}
 
-			done[fileName] = true
+			done[fileName] = fs.Found
 
 			if !fs.FileExt.Media(fileName) {
 				return nil
@@ -166,12 +166,17 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 			var files MediaFiles
 
 			for _, f := range related.Files {
+				if done[f.FileName()].Processed() {
+					continue
+				}
+
 				files = append(files, f)
 				filesIndexed++
-				done[f.FileName()] = true
+				done[f.FileName()] = fs.Processed
 			}
 
 			filesIndexed++
+			done[fileName] = fs.Processed
 
 			related.Files = files
 

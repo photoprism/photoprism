@@ -37,12 +37,12 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		}
 	}()
 
-	var ignore map[string]bool
+	var ignore fs.Done
 
 	if opt.Ignore != nil {
 		ignore = opt.Ignore
 	} else {
-		ignore = make(map[string]bool)
+		ignore = make(fs.Done)
 	}
 
 	purgedFiles = make(map[string]bool)
@@ -76,7 +76,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 			fileName := FileName(file.FileRoot, file.FileName)
 
-			if ignore[fileName] || purgedFiles[fileName] {
+			if ignore[fileName].Exists() || purgedFiles[fileName] {
 				continue
 			}
 

@@ -53,7 +53,7 @@ func (c *Convert) Start(path string) error {
 		}()
 	}
 
-	done := make(map[string]bool)
+	done := make(fs.Done)
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(path); err != nil {
@@ -89,7 +89,7 @@ func (c *Convert) Start(path string) error {
 				return nil
 			}
 
-			done[fileName] = true
+			done[fileName] = fs.Processed
 
 			jobs <- ConvertJob{
 				image:   mf,

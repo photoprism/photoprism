@@ -48,9 +48,9 @@ func (imp *Import) thumbPath() string {
 }
 
 // Start imports media files from a directory and converts/indexes them as needed.
-func (imp *Import) Start(opt ImportOptions) map[string]bool {
+func (imp *Import) Start(opt ImportOptions) fs.Done {
 	var directories []string
-	done := make(map[string]bool)
+	done := make(fs.Done)
 	ind := imp.index
 	importPath := opt.Path
 
@@ -145,15 +145,15 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 			var files MediaFiles
 
 			for _, f := range related.Files {
-				if done[f.FileName()] {
+				if done[f.FileName()].Processed() {
 					continue
 				}
 
 				files = append(files, f)
-				done[f.FileName()] = true
+				done[f.FileName()] = fs.Processed
 			}
 
-			done[fileName] = true
+			done[fileName] = fs.Processed
 
 			related.Files = files
 

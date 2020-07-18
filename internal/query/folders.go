@@ -18,18 +18,14 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 	folders = make(entity.Folders, len(dirs))
 
 	for i, dir := range dirs {
-		folder := entity.FindFolder(rootName, filepath.Join(path, dir))
+		newFolder := entity.NewFolder(rootName, filepath.Join(path, dir), nil)
 
-		if folder == nil {
-			newFolder := entity.NewFolder(rootName, filepath.Join(path, dir), nil)
-
-			if err := newFolder.Create(); err != nil {
-				log.Errorf("folders: %s (create folder)", err.Error())
-			} else {
-				folders[i] = newFolder
-			}
-		} else {
+		if err := newFolder.Create(); err == nil {
+			folders[i] = newFolder
+		} else if folder := entity.FindFolder(rootName, filepath.Join(path, dir)); folder != nil {
 			folders[i] = *folder
+		} else {
+			log.Errorf("folders: %s (create folder)", err)
 		}
 	}
 

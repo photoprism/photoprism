@@ -6,8 +6,8 @@ import (
 )
 
 // SkipWalk returns true if the file or directory should be skipped in godirwalk.Walk()
-func SkipWalk(fileName string, isDir, isSymlink bool, done map[string]bool, ignore *IgnoreList) (skip bool, result error) {
-	isDone := done[fileName]
+func SkipWalk(fileName string, isDir, isSymlink bool, done Done, ignore *IgnoreList) (skip bool, result error) {
+	isDone := done[fileName].Exists()
 	isIgnored := ignore.Ignore(fileName)
 
 	if isSymlink {
@@ -18,11 +18,11 @@ func SkipWalk(fileName string, isDir, isSymlink bool, done map[string]bool, igno
 		if link, err := os.Stat(fileName); err == nil && link.IsDir() {
 			resolved, err := filepath.EvalSymlinks(fileName)
 
-			if err != nil || isIgnored || isDone || done[resolved] {
+			if err != nil || isIgnored || isDone || done[resolved].Exists() {
 				result = filepath.SkipDir
 			} else {
 				// Don't traverse symlinks if they are hidden or already done...
-				done[resolved] = true
+				done[resolved] = Found
 			}
 		}
 	} else if isDir {
@@ -38,7 +38,7 @@ func SkipWalk(fileName string, isDir, isSymlink bool, done map[string]bool, igno
 	}
 
 	if skip {
-		done[fileName] = true
+		done[fileName] = Found
 	}
 
 	return skip, result
