@@ -38,7 +38,6 @@ func (m *Moments) Start() (err error) {
 	}()
 
 	if err := mutex.MainWorker.Start(); err != nil {
-		log.Warnf("moments: %s (start)", err.Error())
 		return err
 	}
 
@@ -207,7 +206,7 @@ func (m *Moments) Start() (err error) {
 				if err := a.Update("AlbumFilter", f.Serialize()); err != nil {
 					log.Errorf("moments: %s", err.Error())
 				} else {
-					log.Infof("moments: updated %s (%s)", txt.Quote(a.AlbumTitle), f.Serialize())
+					log.Debugf("moments: updated %s (%s)", txt.Quote(a.AlbumTitle), f.Serialize())
 				}
 			} else if a := entity.NewMomentsAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				if err := a.Create(); err != nil {

@@ -50,7 +50,6 @@ func (worker *Sync) Start() (err error) {
 	}()
 
 	if err := mutex.SyncWorker.Start(); err != nil {
-		log.Warnf("sync-worker: %s (start)", err.Error())
 		return err
 	}
 

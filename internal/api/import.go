@@ -87,7 +87,7 @@ func StartImport(router *gin.RouterGroup) {
 		moments := service.Moments()
 
 		if err := moments.Start(); err != nil {
-			log.Error(err)
+			log.Warnf("moments: %s", err)
 		}
 
 		elapsed := int(time.Since(start).Seconds())

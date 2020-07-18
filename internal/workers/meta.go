@@ -39,7 +39,6 @@ func (worker *Meta) Start() (err error) {
 	}()
 
 	if err := mutex.MetaWorker.Start(); err != nil {
-		log.Warnf("meta-worker: %s (start)", err.Error())
 		return err
 	}
 
@@ -109,7 +108,7 @@ func (worker *Meta) Start() (err error) {
 	moments := photoprism.NewMoments(worker.conf)
 
 	if err := moments.Start(); err != nil {
-		log.Error(err)
+		log.Warnf("moments: %s", err)
 	}
 
 	runtime.GC()

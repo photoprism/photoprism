@@ -43,7 +43,6 @@ func (worker *Share) Start() (err error) {
 	}()
 
 	if err := mutex.ShareWorker.Start(); err != nil {
-		log.Warnf("share-worker: %s (start)", err.Error())
 		return err
 	}
 
