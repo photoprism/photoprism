@@ -53,7 +53,6 @@ export class File extends RestModel {
             Primary: false,
             Sidecar: false,
             Missing: false,
-            Duplicate: false,
             Portrait: false,
             Video: false,
             Duration: 0,

@@ -152,12 +152,6 @@
                         </td>
                         <td><translate>Yes</translate></td>
                       </tr>
-                      <tr v-if="file.Duplicate">
-                        <td>
-                          <translate>Duplicate</translate>
-                        </td>
-                        <td><translate>Yes</translate></td>
-                      </tr>
                       <tr>
                         <td>
                           <translate>Added</translate>
