@@ -33,7 +33,6 @@ type File struct {
 	FilePrimary     bool          `json:"Primary" yaml:"Primary,omitempty"`
 	FileSidecar     bool          `json:"Sidecar" yaml:"Sidecar,omitempty"`
 	FileMissing     bool          `json:"Missing" yaml:"Missing,omitempty"`
-	FileDuplicate   bool          `json:"Duplicate" yaml:"Duplicate,omitempty"`
 	FilePortrait    bool          `json:"Portrait" yaml:"Portrait,omitempty"`
 	FileVideo       bool          `json:"Video" yaml:"Video,omitempty"`
 	FileDuration    time.Duration `json:"Duration" yaml:"Duration,omitempty"`
