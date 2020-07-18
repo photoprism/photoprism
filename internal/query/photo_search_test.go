@@ -349,21 +349,7 @@ func TestPhotoSearch(t *testing.T) {
 		//t.Logf("results: %+v", photos)
 		assert.Equal(t, 1, len(photos))
 	})
-	t.Run("form.duplicate", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = "duplicate:true"
-		f.Count = 10
-		f.Offset = 0
 
-		photos, _, err := PhotoSearch(f)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.LessOrEqual(t, 1, len(photos))
-
-	})
 	t.Run("form.portrait", func(t *testing.T) {
 		var f form.PhotoSearch
 		f.Query = "portrait:true"
@@ -379,6 +365,7 @@ func TestPhotoSearch(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 
 	})
+
 	t.Run("form.mono", func(t *testing.T) {
 		var f form.PhotoSearch
 		f.Query = "mono:true"

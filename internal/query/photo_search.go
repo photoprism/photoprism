@@ -254,10 +254,6 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), ","))
 	}
 
-	if f.Duplicate {
-		s = s.Where("files.file_duplicate = 1")
-	}
-
 	if f.Portrait {
 		s = s.Where("files.file_portrait = 1")
 	}

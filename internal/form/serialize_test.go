@@ -18,7 +18,6 @@ type TestForm struct {
 	Hash      string    `form:"hash"`
 	Video     bool      `form:"video"`
 	Photo     bool      `form:"photo"`
-	Duplicate bool      `form:"duplicate"`
 	Archived  bool      `form:"archived"`
 	Error     bool      `form:"error"`
 	Lat       float32   `form:"lat"`
