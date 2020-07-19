@@ -167,7 +167,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 
 			for _, f := range related.Files {
 				if ind.files.Ignore(f.RelName(originalsPath), f.ModTime(), opt.Rescan) {
-					return nil
+					continue
 				}
 
 				if done[f.FileName()].Processed() {
