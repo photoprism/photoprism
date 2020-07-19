@@ -29,6 +29,8 @@ Thank you very much to all of our sponsors and donors (including those that want
 
 [Thomas Eg](https://github.com/ThomasEg) (GitHub Sponsors, April 2020)
 
+[@mpodshivalin](https://github.com/mpodshivalin) (GitHub Sponsors, July 2020)
+
 For a full list of GitHub sponsors, see https://github.com/sponsors/lastzero.
 
 ## Donations ##
