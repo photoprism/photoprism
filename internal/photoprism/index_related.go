@@ -111,7 +111,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 			}
 		}
 
-		log.Infof("index: %s related %s file %s", res, f.FileType(), txt.Quote(f.RelName(ind.originalsPath())))
+		log.Infof("index: %s related %s file %s", res, f.FileType(), txt.Quote(f.BaseName()))
 	}
 
 	return result

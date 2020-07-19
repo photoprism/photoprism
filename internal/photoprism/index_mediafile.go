@@ -155,7 +155,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		fileChanged = file.Changed(fileSize, modTime)
 
 		if fileChanged {
-			log.Debugf("index: file was modified (new size %d, old size %d, new timestamp %d, old timestamp %d)", fileSize, file.FileSize, modTime.Unix(), file.ModTime)
+			log.Debugf("index: %s was modified (new size %d, old size %d, new timestamp %d, old timestamp %d)", txt.Quote(m.BaseName()), fileSize, file.FileSize, modTime.Unix(), file.ModTime)
 		}
 	}
 
