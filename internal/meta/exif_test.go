@@ -3,12 +3,13 @@ package meta
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExif(t *testing.T) {
 	t.Run("photoshop.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/photoshop.jpg")
+		data, err := Exif("testdata/photoshop.jpg", fs.TypeJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -37,7 +38,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("ladybug.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/ladybug.jpg")
+		data, err := Exif("testdata/ladybug.jpg", fs.TypeJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -69,7 +70,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("gopro_hd2.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/gopro_hd2.jpg")
+		data, err := Exif("testdata/gopro_hd2.jpg", fs.TypeJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -98,7 +99,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("tweethog.png", func(t *testing.T) {
-		_, err := Exif("testdata/tweethog.png")
+		_, err := Exif("testdata/tweethog.png", fs.TypePng)
 
 		if err == nil {
 			t.Fatal("err should NOT be nil")
@@ -108,7 +109,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("iphone_7.heic", func(t *testing.T) {
-		data, err := Exif("testdata/iphone_7.heic")
+		data, err := Exif("testdata/iphone_7.heic", fs.TypeHEIF)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -129,7 +130,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("gps-2000.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/gps-2000.jpg")
+		data, err := Exif("testdata/gps-2000.jpg", fs.TypeJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -157,7 +158,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("image-2011.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/image-2011.jpg")
+		data, err := Exif("testdata/image-2011.jpg", fs.TypeJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -192,7 +193,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("ship.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/ship.jpg")
+		data, err := Exif("testdata/ship.jpg", fs.TypeJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -213,7 +214,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("no-exif-data.jpg", func(t *testing.T) {
-		_, err := Exif("testdata/no-exif-data.jpg")
+		_, err := Exif("testdata/no-exif-data.jpg", fs.TypeJpeg)
 
 		if err == nil {
 			t.Fatal("err should NOT be nil")
@@ -223,7 +224,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("screenshot.png", func(t *testing.T) {
-		data, err := Exif("testdata/screenshot.png")
+		data, err := Exif("testdata/screenshot.png", fs.TypePng)
 
 		if err != nil {
 			t.Fatal(err)
@@ -234,7 +235,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("orientation.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/orientation.jpg")
+		data, err := Exif("testdata/orientation.jpg", fs.TypeJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -262,13 +263,13 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("gopher-preview.jpg", func(t *testing.T) {
-		_, err := Exif("testdata/gopher-preview.jpg")
+		_, err := Exif("testdata/gopher-preview.jpg", fs.TypeJpeg)
 
 		assert.EqualError(t, err, "metadata: no exif header in gopher-preview.jpg (search and extract)")
 	})
 
 	t.Run("huawei-gps-error.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/huawei-gps-error.jpg")
+		data, err := Exif("testdata/huawei-gps-error.jpg", fs.TypeJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -289,7 +290,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("panorama360.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/panorama360.jpg")
+		data, err := Exif("testdata/panorama360.jpg", fs.TypeJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -315,7 +316,38 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "", data.CameraOwner)
 		assert.Equal(t, "", data.CameraSerial)
 		assert.Equal(t, 6, data.FocalLength)
-		assert.Equal(t, 0, int(data.Orientation))
+		assert.Equal(t, 0, data.Orientation)
+		assert.Equal(t, "", data.Projection)
+	})
+
+	t.Run("exif-example.tiff", func(t *testing.T) {
+		data, err := Exif("testdata/exif-example.tiff", fs.TypeTiff)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "", data.Artist)
+		assert.Equal(t, "0001-01-01T00:00:00Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "0001-01-01T00:00:00Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, 43, data.Height)
+		assert.Equal(t, 65, data.Width)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "", data.Exposure)
+		assert.Equal(t, "", data.CameraMake)
+		assert.Equal(t, "", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, 0, data.FocalLength)
+		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.Projection)
 	})
 }

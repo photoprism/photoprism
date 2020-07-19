@@ -6,7 +6,10 @@ import (
 )
 
 const (
-	MimeTypeJpeg = "image/jpeg"
+	MimeTypeJpeg   = "image/jpeg"
+	MimeTypePng    = "image/png"
+	MimeTypeGif    = "image/gif"
+	MimeTypeBitmap = "image/bmp"
 )
 
 // MimeType returns the mime type of a file, empty string if unknown.

@@ -1,7 +1,7 @@
 package photoprism
 
 import (
-	"errors"
+	"fmt"
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/meta"
@@ -14,10 +14,10 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 	m.metaDataOnce.Do(func() {
 		var err error
 
-		if m.IsPhoto() {
-			err = m.metaData.Exif(m.FileName())
+		if m.ExifSupported() {
+			err = m.metaData.Exif(m.FileName(), m.FileType())
 		} else {
-			err = errors.New("not a photo")
+			err = fmt.Errorf("exif not supported: %s", txt.Quote(m.BaseName()))
 		}
 
 		// Parse JSON sidecar file names as Google Photos uses them ("img_1234.jpg.json").

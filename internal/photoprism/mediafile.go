@@ -574,6 +574,21 @@ func (m *MediaFile) IsJpeg() bool {
 	return m.MimeType() == fs.MimeTypeJpeg
 }
 
+// IsPng returns true if this is a PNG file.
+func (m *MediaFile) IsPng() bool {
+	return m.MimeType() == fs.MimeTypePng
+}
+
+// IsGif returns true if this is a GIF file.
+func (m *MediaFile) IsGif() bool {
+	return m.MimeType() == fs.MimeTypeGif
+}
+
+// IsBitmap returns true if this is a bitmap file.
+func (m *MediaFile) IsBitmap() bool {
+	return m.MimeType() == fs.MimeTypeBitmap
+}
+
 // IsJson return true if this media file is a json sidecar file.
 func (m *MediaFile) IsJson() bool {
 	return m.HasFileType(fs.TypeJson)
@@ -581,11 +596,18 @@ func (m *MediaFile) IsJson() bool {
 
 // FileType returns the file type (jpg, gif, tiff,...).
 func (m *MediaFile) FileType() fs.FileType {
-	if m.IsJpeg() {
+	switch {
+	case m.IsJpeg():
 		return fs.TypeJpeg
+	case m.IsPng():
+		return fs.TypePng
+	case m.IsGif():
+		return fs.TypeGif
+	case m.IsBitmap():
+		return fs.TypeBitmap
+	default:
+		return fs.GetFileType(m.fileName)
 	}
-
-	return fs.GetFileType(m.fileName)
 }
 
 // MediaType returns the media type (video, image, raw, sidecar,...).
@@ -607,11 +629,6 @@ func (m *MediaFile) IsRaw() bool {
 	return m.HasFileType(fs.TypeRaw)
 }
 
-// IsPng returns true if this is a PNG file.
-func (m *MediaFile) IsPng() bool {
-	return m.HasFileType(fs.TypePng)
-}
-
 // IsTiff returns true if this is a TIFF file.
 func (m *MediaFile) IsTiff() bool {
 	return m.HasFileType(fs.TypeTiff)
@@ -619,14 +636,8 @@ func (m *MediaFile) IsTiff() bool {
 
 // IsImageOther returns true if this is a PNG, GIF, BMP or TIFF file.
 func (m *MediaFile) IsImageOther() bool {
-	switch m.FileType() {
-	case fs.TypeBitmap:
-		return true
-	case fs.TypeGif:
-		return true
-	case fs.TypePng:
-		return true
-	case fs.TypeTiff:
+	switch {
+	case m.IsPng(), m.IsGif(), m.IsTiff(), m.IsBitmap():
 		return true
 	default:
 		return false
@@ -661,6 +672,11 @@ func (m *MediaFile) IsPlayableVideo() bool {
 // IsPhoto returns true if this file is a photo / image.
 func (m *MediaFile) IsPhoto() bool {
 	return m.IsJpeg() || m.IsRaw() || m.IsHEIF() || m.IsImageOther()
+}
+
+// ExifSupported returns true if parsing exif metadata is supported for the media file type.
+func (m *MediaFile) ExifSupported() bool {
+	return m.IsJpeg() || m.IsRaw() || m.IsHEIF() || m.IsPng() || m.IsTiff()
 }
 
 // IsMedia returns true if this is a media file (photo or video, not sidecar or other).
@@ -707,7 +723,7 @@ func (m *MediaFile) HasJson() bool {
 
 func (m *MediaFile) decodeDimensions() error {
 	if !m.IsMedia() {
-		return fmt.Errorf("not a photo: %s", m.FileName())
+		return fmt.Errorf("failed decoding dimensions for %s", txt.Quote(m.BaseName()))
 	}
 
 	var width, height int
@@ -719,7 +735,7 @@ func (m *MediaFile) decodeDimensions() error {
 		height = data.Height
 	}
 
-	if m.IsJpeg() {
+	if m.IsJpeg() || m.IsPng() || m.IsGif() {
 		file, err := os.Open(m.FileName())
 
 		if err != nil || file == nil {

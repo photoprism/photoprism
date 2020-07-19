@@ -3,7 +3,6 @@ package meta
 import (
 	"fmt"
 	"math"
-	"path"
 	"path/filepath"
 	"runtime/debug"
 	"strconv"
@@ -15,6 +14,8 @@ import (
 	heicexif "github.com/dsoprea/go-heic-exif-extractor"
 	"github.com/dsoprea/go-jpeg-image-structure"
 	"github.com/dsoprea/go-png-image-structure"
+	"github.com/dsoprea/go-tiff-image-structure"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
@@ -38,14 +39,14 @@ func ValidDateTime(s string) bool {
 }
 
 // Exif parses an image file for Exif meta data and returns as Data struct.
-func Exif(fileName string) (data Data, err error) {
-	err = data.Exif(fileName)
+func Exif(fileName string, fileType fs.FileType) (data Data, err error) {
+	err = data.Exif(fileName, fileType)
 
 	return data, err
 }
 
 // Exif parses an image file for Exif meta data and returns as Data struct.
-func (data *Data) Exif(fileName string) (err error) {
+func (data *Data) Exif(fileName string, fileType fs.FileType) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			err = fmt.Errorf("metadata: %s in %s (exif panic)\nstack: %s", e, txt.Quote(filepath.Base(fileName)), debug.Stack())
@@ -57,12 +58,11 @@ func (data *Data) Exif(fileName string) (err error) {
 	var parsed bool
 
 	logName := txt.Quote(filepath.Base(fileName))
-	ext := strings.ToLower(path.Ext(fileName))
 
-	if ext == ".jpg" || ext == ".jpeg" {
-		jmp := jpegstructure.NewJpegMediaParser()
+	if fileType == fs.TypeJpeg {
+		jpegMp := jpegstructure.NewJpegMediaParser()
 
-		sl, err := jmp.ParseFile(fileName)
+		sl, err := jpegMp.ParseFile(fileName)
 
 		if err != nil {
 			return err
@@ -81,10 +81,10 @@ func (data *Data) Exif(fileName string) (err error) {
 		} else {
 			parsed = true
 		}
-	} else if ext == ".png" {
-		pmp := pngstructure.NewPngMediaParser()
+	} else if fileType == fs.TypePng {
+		pngMp := pngstructure.NewPngMediaParser()
 
-		cs, err := pmp.ParseFile(fileName)
+		cs, err := pngMp.ParseFile(fileName)
 
 		if err != nil {
 			return err
@@ -101,10 +101,10 @@ func (data *Data) Exif(fileName string) (err error) {
 		} else {
 			parsed = true
 		}
-	} else if ext == ".heic" {
-		hmp := heicexif.NewHeicExifMediaParser()
+	} else if fileType == fs.TypeHEIF {
+		heicMp := heicexif.NewHeicExifMediaParser()
 
-		cs, err := hmp.ParseFile(fileName)
+		cs, err := heicMp.ParseFile(fileName)
 
 		if err != nil {
 			return err
@@ -117,6 +117,26 @@ func (data *Data) Exif(fileName string) (err error) {
 				return fmt.Errorf("metadata: no exif header in %s (parse heic)", logName)
 			} else {
 				log.Warnf("metadata: %s in %s (parse heic)", err, logName)
+			}
+		} else {
+			parsed = true
+		}
+	} else if fileType == fs.TypeTiff {
+		tiffMp := tiffstructure.NewTiffMediaParser()
+
+		cs, err := tiffMp.ParseFile(fileName)
+
+		if err != nil {
+			return err
+		}
+
+		_, rawExif, err = cs.Exif()
+
+		if err != nil {
+			if err.Error() == "file does not have EXIF" {
+				return fmt.Errorf("metadata: no exif header in %s (parse tiff)", logName)
+			} else {
+				log.Warnf("metadata: %s in %s (parse tiff)", err, logName)
 			}
 		} else {
 			parsed = true

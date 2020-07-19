@@ -1098,9 +1098,13 @@ func TestMediaFile_IsPng(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/tweethog.png")
+
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		assert.Equal(t, fs.TypePng, mediaFile.FileType())
+		assert.Equal(t, "image/png", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsPng())
 	})
 }
@@ -1113,6 +1117,8 @@ func TestMediaFile_IsTiff(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		assert.Equal(t, fs.TypeJson, mediaFile.FileType())
+		assert.Equal(t, "text/plain; charset=utf-8", mediaFile.MimeType())
 		assert.Equal(t, false, mediaFile.IsTiff())
 	})
 	t.Run("/purple.tiff", func(t *testing.T) {
@@ -1122,6 +1128,19 @@ func TestMediaFile_IsTiff(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		assert.Equal(t, fs.TypeTiff, mediaFile.FileType())
+		assert.Equal(t, "application/octet-stream", mediaFile.MimeType())
+		assert.Equal(t, true, mediaFile.IsTiff())
+	})
+	t.Run("/example.tiff", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/example.tif")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, fs.TypeTiff, mediaFile.FileType())
+		assert.Equal(t, "application/octet-stream", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsTiff())
 	})
 }
@@ -1161,6 +1180,9 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		assert.Equal(t, fs.TypeBitmap, mediaFile.FileType())
+		assert.Equal(t, "image/bmp", mediaFile.MimeType())
+		assert.Equal(t, true, mediaFile.IsBitmap())
 		assert.Equal(t, true, mediaFile.IsImageOther())
 	})
 	t.Run("/preloader.gif", func(t *testing.T) {
@@ -1170,6 +1192,9 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		assert.Equal(t, fs.TypeGif, mediaFile.FileType())
+		assert.Equal(t, "image/gif", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsImageOther())
 	})
 }
@@ -1409,8 +1434,9 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 
 		decodeErr := mediaFile.decodeDimensions()
 
-		assert.EqualError(t, decodeErr, "not a photo: "+conf.ExamplesPath()+"/Random.docx")
+		assert.EqualError(t, decodeErr, "failed decoding dimensions for Random.docx")
 	})
+
 	t.Run("clock_purple.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
@@ -1424,6 +1450,7 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+
 	t.Run("iphone_7.heic", func(t *testing.T) {
 		conf := config.TestConfig()
 
@@ -1436,6 +1463,57 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 		if err := mediaFile.decodeDimensions(); err != nil {
 			t.Fatal(err)
 		}
+	})
+
+	t.Run("example.png", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/example.png")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := mediaFile.decodeDimensions(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 100, mediaFile.Width())
+		assert.Equal(t, 67, mediaFile.Height())
+	})
+
+	t.Run("example.gif", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/example.gif")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := mediaFile.decodeDimensions(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 100, mediaFile.Width())
+		assert.Equal(t, 67, mediaFile.Height())
+	})
+
+	t.Run("blue-go-video.mp4", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := mediaFile.decodeDimensions(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 1920, mediaFile.Width())
+		assert.Equal(t, 1080, mediaFile.Height())
 	})
 }
 
