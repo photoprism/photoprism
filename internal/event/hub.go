@@ -9,7 +9,7 @@ type Hub = hub.Hub
 type Data = hub.Fields
 type Message = hub.Message
 
-var channelCap = 10
+var channelCap = 100
 var sharedHub = NewHub()
 
 func NewHub() *Hub {
@@ -64,7 +64,7 @@ func Publish(event string, data Data) {
 }
 
 func Subscribe(topics ...string) hub.Subscription {
-	return SharedHub().Subscribe(channelCap, topics...)
+	return SharedHub().NonBlockingSubscribe(channelCap, topics...)
 }
 
 func Unsubscribe(s hub.Subscription) {
