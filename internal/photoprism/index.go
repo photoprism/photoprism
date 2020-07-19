@@ -166,11 +166,11 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 			var files MediaFiles
 
 			for _, f := range related.Files {
-				if ind.files.Ignore(f.RelName(originalsPath), f.ModTime(), opt.Rescan) {
+				if done[f.FileName()].Processed() || f.FileName() == fileName {
 					continue
 				}
 
-				if done[f.FileName()].Processed() {
+				if ind.files.Ignore(f.RelName(originalsPath), f.ModTime(), opt.Rescan) {
 					continue
 				}
 
