@@ -113,6 +113,10 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	}
 
 	err := godirwalk.Walk(optionsPath, &godirwalk.Options{
+		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
+			log.Errorf("index: %s", err)
+			return godirwalk.SkipNode
+		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
 			if mutex.MainWorker.Canceled() {
 				return errors.New("indexing canceled")
@@ -136,7 +140,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 
 			done[fileName] = fs.Found
 
-			if !fs.FileExt.Media(fileName) {
+			if !fs.IsMedia(fileName) {
 				return nil
 			}
 
@@ -148,10 +152,6 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 			}
 
 			if ind.files.Ignore(relName, mf.modTime, opt.Rescan) {
-				return nil
-			}
-
-			if !mf.IsMedia() {
 				return nil
 			}
 
@@ -173,6 +173,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 				files = append(files, f)
 				filesIndexed++
 				done[f.FileName()] = fs.Processed
+				ind.files.Add(f.RelName(originalsPath), f.ModTime())
 			}
 
 			filesIndexed++

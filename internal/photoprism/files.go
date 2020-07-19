@@ -64,3 +64,13 @@ func (m *Files) Ignore(fileName string, modTime time.Time, rescan bool) bool {
 		return false
 	}
 }
+
+// Add adds or updates a file on the list.
+func (m *Files) Add(fileName string, modTime time.Time) {
+	timestamp := modTime.Unix()
+
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	m.files[fileName] = timestamp
+}

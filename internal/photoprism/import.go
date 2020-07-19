@@ -96,6 +96,10 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	}
 
 	err := godirwalk.Walk(importPath, &godirwalk.Options{
+		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
+			log.Errorf("import: %s", err)
+			return godirwalk.SkipNode
+		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
 			defer func() {
 				if r := recover(); r != nil {
@@ -128,9 +132,13 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				return result
 			}
 
+			if !fs.IsMedia(fileName) {
+				return nil
+			}
+
 			mf, err := NewMediaFile(fileName)
 
-			if err != nil || !mf.IsMedia() {
+			if err != nil {
 				return nil
 			}
 

@@ -65,6 +65,10 @@ func (c *Convert) Start(path string) error {
 	}
 
 	err := godirwalk.Walk(path, &godirwalk.Options{
+		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
+			log.Errorf("convert: %s", err)
+			return godirwalk.SkipNode
+		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
 			defer func() {
 				if r := recover(); r != nil {

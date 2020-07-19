@@ -67,6 +67,10 @@ func (rs *Resample) Start(force bool) (err error) {
 	}
 
 	err = godirwalk.Walk(originalsPath, &godirwalk.Options{
+		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
+			log.Errorf("resample: %s", err)
+			return godirwalk.SkipNode
+		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
 			defer func() {
 				if r := recover(); r != nil {

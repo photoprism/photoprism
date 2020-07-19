@@ -24,6 +24,8 @@ func SkipWalk(fileName string, isDir, isSymlink bool, done Done, ignore *IgnoreL
 				// Don't traverse symlinks if they are hidden or already done...
 				done[resolved] = Found
 			}
+		} else {
+			result = filepath.SkipDir
 		}
 	} else if isDir {
 		skip = true
