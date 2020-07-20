@@ -102,7 +102,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	fileHash := ""
 	fileChanged := true
 	fileExists := false
-	fileGrouped := false
+	fileStacked := false
 
 	photoExists := false
 
@@ -140,10 +140,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		if photoQuery.Error != nil && m.MetaData().HasTimeAndPlace() {
 			metaData = m.MetaData()
-			photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ?", metaData.Lat, metaData.Lng, metaData.TakenAt)
+			photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
 
 			if photoQuery.Error == nil {
-				fileGrouped = true
+				fileStacked = true
 			}
 		}
 
@@ -151,7 +151,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photoQuery = entity.UnscopedDb().First(&photo, "uuid = ?", m.MetaData().DocumentID)
 
 			if photoQuery.Error == nil {
-				fileGrouped = true
+				fileStacked = true
 			}
 		}
 	} else {
@@ -662,7 +662,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			"count": 1,
 		})
 
-		if fileGrouped {
+		if fileStacked {
 			result.Status = IndexStacked
 		} else {
 			result.Status = IndexAdded
