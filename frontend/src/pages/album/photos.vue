@@ -272,6 +272,7 @@
                 });
             },
             updateQuery() {
+                this.filter.q = this.filter.q.trim();
                 const len = this.filter.q.length;
 
                 if (len > 1 && len < 3) {
