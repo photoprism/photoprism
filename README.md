@@ -18,8 +18,8 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 ## What to expect... ##
 
 * clearly structured Web interface for browsing, organizing and sharing your personal photo collection
-* import everything without worrying about duplicates or [RAW to JPEG conversion][wiki:raw]
-* [geocoding][wiki:geocoding], [XMP support][wiki:xmp] and [automated tagging][wiki:classification] 
+* import everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/)
+* [geocoding](https://docs.photoprism.org/developer-guide/metadata/geocoding/), [XMP support](https://docs.photoprism.org/developer-guide/metadata/xmp/) and [automated tagging](https://docs.photoprism.org/developer-guide/metadata/classification/) 
   based on Google TensorFlow
 
 ## Try our demo ##
