@@ -625,10 +625,26 @@ func TestMediaFile_SetFilename(t *testing.T) {
 	assert.Equal(t, "turtle_brown_blue", mediaFile.fileName)
 }
 
-func TestMediaFile_RelativeFilename(t *testing.T) {
+func TestMediaFile_RootRelName(t *testing.T) {
 	conf := config.TestConfig()
 
 	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/tree_white.jpg")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("examples_path", func(t *testing.T) {
+		filename := mediaFile.RootRelName()
+		assert.Equal(t, "tree_white.jpg", filename)
+	})
+}
+
+func TestMediaFile_RelName(t *testing.T) {
+	conf := config.TestConfig()
+
+	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/tree_white.jpg")
+
 	if err != nil {
 		t.Fatal(err)
 	}

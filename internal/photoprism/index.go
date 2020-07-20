@@ -170,7 +170,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 					continue
 				}
 
-				if f.FileName() != fileName && ind.files.Ignore(f.RelName(originalsPath), f.ModTime(), opt.Rescan) {
+				if f.FileName() != fileName && ind.files.Ignore(f.RootRelName(), f.ModTime(), opt.Rescan) {
 					continue
 				}
 

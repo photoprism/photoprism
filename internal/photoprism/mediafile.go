@@ -340,6 +340,8 @@ func (m *MediaFile) PathNameInfo() (fileRoot, fileBase, relativePath, relativeNa
 		rootPath = Config().SidecarPath()
 	case entity.RootImport:
 		rootPath = Config().ImportPath()
+	case entity.RootExamples:
+		rootPath = Config().ExamplesPath()
 	default:
 		rootPath = Config().OriginalsPath()
 	}
@@ -364,6 +366,24 @@ func (m *MediaFile) BaseName() string {
 // SetFileName sets the filename to the given string.
 func (m *MediaFile) SetFileName(fileName string) {
 	m.fileName = fileName
+}
+
+// RootRelName returns the relative filename and automatically detects the root path.
+func (m *MediaFile) RootRelName() string {
+	var rootPath string
+
+	switch m.Root() {
+	case entity.RootSidecar:
+		rootPath = Config().SidecarPath()
+	case entity.RootImport:
+		rootPath = Config().ImportPath()
+	case entity.RootExamples:
+		rootPath = Config().ExamplesPath()
+	default:
+		rootPath = Config().OriginalsPath()
+	}
+
+	return m.RelName(rootPath)
 }
 
 // RelName returns the relative filename.
