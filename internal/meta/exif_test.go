@@ -350,4 +350,35 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.Projection)
 	})
+
+	t.Run("out-of-range-500.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/out-of-range-500.jpg", fs.TypeJpeg)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "", data.Artist)
+		assert.Equal(t, "2017-04-09T18:33:44Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2017-04-09T18:33:44Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, 2448, data.Height)
+		assert.Equal(t, 3264, data.Width)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "1/387", data.Exposure)
+		assert.Equal(t, "Apple", data.CameraMake)
+		assert.Equal(t, "iPhone 5s", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, 29, data.FocalLength)
+		assert.Equal(t, 3, data.Orientation)
+		assert.Equal(t, "", data.Projection)
+	})
 }
