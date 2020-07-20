@@ -65,6 +65,26 @@ func (m *Files) Ignore(fileName string, modTime time.Time, rescan bool) bool {
 	}
 }
 
+// Indexed tests of a file was already indexed without modifying the files map.
+func (m *Files) Indexed(fileName string, modTime time.Time, rescan bool) bool {
+	if rescan {
+		return false
+	}
+
+	timestamp := modTime.Unix()
+
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
+	mod, ok := m.files[fileName]
+
+	if ok && mod == timestamp {
+		return true
+	} else {
+		return false
+	}
+}
+
 // Add adds or updates a file on the list.
 func (m *Files) Add(fileName string, modTime time.Time) {
 	timestamp := modTime.Unix()

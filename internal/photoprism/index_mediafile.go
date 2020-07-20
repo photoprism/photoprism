@@ -70,6 +70,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		return result
 	}
 
+	if ind.files.Ignore(m.RootRelName(), m.ModTime(), o.Rescan) {
+		result.Status = IndexSkipped
+		return result
+	}
+
 	start := time.Now()
 
 	var photoQuery, fileQuery *gorm.DB

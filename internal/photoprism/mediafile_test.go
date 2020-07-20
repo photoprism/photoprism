@@ -1861,8 +1861,8 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		root, base, path, name := mediaFile.PathNameInfo()
 		assert.Equal(t, "examples", root)
 		assert.Equal(t, "blue-go-video", base)
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples", path)
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples/blue-go-video.mp4", name)
+		assert.Equal(t, "", path)
+		assert.Equal(t, "blue-go-video.mp4", name)
 
 	})
 
@@ -1870,12 +1870,13 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
-		initialName := mediaFile.FileName()
-		mediaFile.SetFileName(".photoprism/beach_sand.jpg")
 
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		initialName := mediaFile.FileName()
+		mediaFile.SetFileName(".photoprism/beach_sand.jpg")
 
 		root, base, path, name := mediaFile.PathNameInfo()
 		assert.Equal(t, "sidecar", root)
@@ -1891,13 +1892,14 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		t.Log(Config().ImportPath())
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
-		initialName := mediaFile.FileName()
-		t.Log(initialName)
-		mediaFile.SetFileName("/go/src/github.com/photoprism/photoprism/storage/testdata/import/beach_sand.jpg")
 
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		initialName := mediaFile.FileName()
+		t.Log(initialName)
+		mediaFile.SetFileName("/go/src/github.com/photoprism/photoprism/storage/testdata/import/beach_sand.jpg")
 
 		root, base, path, name := mediaFile.PathNameInfo()
 		assert.Equal(t, "import", root)
@@ -1911,12 +1913,13 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
-		initialName := mediaFile.FileName()
-		mediaFile.SetFileName("/go/src/github.com/photoprism/notExisting/xxx/beach_sand.jpg")
 
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		initialName := mediaFile.FileName()
+		mediaFile.SetFileName("/go/src/github.com/photoprism/notExisting/xxx/beach_sand.jpg")
 
 		root, base, path, name := mediaFile.PathNameInfo()
 		assert.Equal(t, "", root)
