@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"io"
+	"math"
 	"os"
 	"path"
 	"path/filepath"
@@ -26,6 +27,7 @@ import (
 // MediaFile represents a single photo, video or sidecar file.
 type MediaFile struct {
 	fileName     string
+	fileRoot     string
 	statErr      error
 	modTime      time.Time
 	fileSize     int64
@@ -35,6 +37,7 @@ type MediaFile struct {
 	takenAtSrc   string
 	hash         string
 	checksum     string
+	hasJpeg      bool
 	width        int
 	height       int
 	metaData     meta.Data
@@ -46,8 +49,11 @@ type MediaFile struct {
 func NewMediaFile(fileName string) (*MediaFile, error) {
 	m := &MediaFile{
 		fileName: fileName,
+		fileRoot: entity.RootUnknown,
 		fileType: fs.TypeOther,
 		metaData: meta.NewData(),
+		width:    -1,
+		height:   -1,
 	}
 
 	if _, _, err := m.Stat(); err != nil {
@@ -333,6 +339,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 // PathNameInfo returns file name infos for indexing.
 func (m *MediaFile) PathNameInfo() (fileRoot, fileBase, relativePath, relativeName string) {
 	fileRoot = m.Root()
+
 	var rootPath string
 
 	switch fileRoot {
@@ -342,6 +349,8 @@ func (m *MediaFile) PathNameInfo() (fileRoot, fileBase, relativePath, relativeNa
 		rootPath = Config().ImportPath()
 	case entity.RootExamples:
 		rootPath = Config().ExamplesPath()
+	case entity.RootOriginals:
+		rootPath = Config().OriginalsPath()
 	default:
 		rootPath = Config().OriginalsPath()
 	}
@@ -366,6 +375,7 @@ func (m *MediaFile) BaseName() string {
 // SetFileName sets the filename to the given string.
 func (m *MediaFile) SetFileName(fileName string) {
 	m.fileName = fileName
+	m.fileRoot = entity.RootUnknown
 }
 
 // RootRelName returns the relative filename and automatically detects the root path.
@@ -448,29 +458,37 @@ func (m *MediaFile) BasePrefix(stripSequence bool) string {
 
 // Root returns the file root directory.
 func (m *MediaFile) Root() string {
+	if m.fileRoot != entity.RootUnknown {
+		return m.fileRoot
+	}
+
 	if strings.HasPrefix(m.FileName(), Config().OriginalsPath()) {
-		return entity.RootOriginals
+		m.fileRoot = entity.RootOriginals
+		return m.fileRoot
 	}
 
 	importPath := Config().ImportPath()
 
 	if importPath != "" && strings.HasPrefix(m.FileName(), importPath) {
-		return entity.RootImport
+		m.fileRoot = entity.RootImport
+		return m.fileRoot
 	}
 
 	sidecarPath := Config().SidecarPath()
 
 	if sidecarPath != "" && strings.HasPrefix(m.FileName(), sidecarPath) {
-		return entity.RootSidecar
+		m.fileRoot = entity.RootSidecar
+		return m.fileRoot
 	}
 
 	examplesPath := Config().ExamplesPath()
 
 	if examplesPath != "" && strings.HasPrefix(m.FileName(), examplesPath) {
-		return entity.RootExamples
+		m.fileRoot = entity.RootExamples
+		return m.fileRoot
 	}
 
-	return ""
+	return m.fileRoot
 }
 
 // AbsPrefix returns the directory and base filename without any extensions.
@@ -527,7 +545,7 @@ func (m *MediaFile) Move(dest string) error {
 	if err := os.Rename(m.fileName, dest); err != nil {
 		log.Debugf("failed renaming file, fallback to copy and delete: %s", err.Error())
 	} else {
-		m.fileName = dest
+		m.SetFileName(dest)
 
 		return nil
 	}
@@ -540,7 +558,7 @@ func (m *MediaFile) Move(dest string) error {
 		return err
 	}
 
-	m.fileName = dest
+	m.SetFileName(dest)
 
 	return nil
 }
@@ -725,11 +743,24 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 
 // ContainsJpeg returns true if this file has or is a jpeg media file.
 func (m *MediaFile) HasJpeg() bool {
-	if m.IsJpeg() {
+	if m.hasJpeg {
 		return true
 	}
 
-	return fs.TypeJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) != ""
+	if m.IsJpeg() {
+		m.hasJpeg = true
+		return true
+	}
+
+	jpegName := fs.TypeJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+
+	if jpegName == "" {
+		m.hasJpeg = false
+	} else {
+		m.hasJpeg = fs.MimeType(jpegName) == fs.MimeTypeJpeg
+	}
+
+	return m.hasJpeg
 }
 
 // HasJson returns true if this file has or is a json sidecar file.
@@ -744,15 +775,6 @@ func (m *MediaFile) HasJson() bool {
 func (m *MediaFile) decodeDimensions() error {
 	if !m.IsMedia() {
 		return fmt.Errorf("failed decoding dimensions for %s", txt.Quote(m.BaseName()))
-	}
-
-	var width, height int
-
-	data := m.MetaData()
-
-	if data.Error == nil {
-		width = data.Width
-		height = data.Height
 	}
 
 	if m.IsJpeg() || m.IsPng() || m.IsGif() {
@@ -770,16 +792,18 @@ func (m *MediaFile) decodeDimensions() error {
 			return err
 		}
 
-		width = size.Width
-		height = size.Height
-	}
-
-	if m.Orientation() > 4 {
-		m.width = height
-		m.height = width
+		if m.Orientation() > 4 {
+			m.width = size.Height
+			m.height = size.Width
+		} else {
+			m.width = size.Width
+			m.height = size.Height
+		}
+	} else if data := m.MetaData(); data.Error == nil {
+		m.width = data.ActualWidth()
+		m.height = data.ActualHeight()
 	} else {
-		m.width = width
-		m.height = height
+		return data.Error
 	}
 
 	return nil
@@ -791,9 +815,9 @@ func (m *MediaFile) Width() int {
 		return 0
 	}
 
-	if m.width <= 0 {
+	if m.width < 0 {
 		if err := m.decodeDimensions(); err != nil {
-			log.Error(err)
+			log.Debugf("mediafile: %s", err)
 		}
 	}
 
@@ -806,9 +830,9 @@ func (m *MediaFile) Height() int {
 		return 0
 	}
 
-	if m.height <= 0 {
+	if m.height < 0 {
 		if err := m.decodeDimensions(); err != nil {
-			log.Error(err)
+			log.Debugf("mediafile: %s", err)
 		}
 	}
 
@@ -824,9 +848,19 @@ func (m *MediaFile) AspectRatio() float32 {
 		return 0
 	}
 
-	aspectRatio := float32(width / height)
+	aspectRatio := float32(math.Round((width / height)*100)/100)
 
 	return aspectRatio
+}
+
+// Portrait tests if the image is a portrait.
+func (m *MediaFile) Portrait() bool {
+	return m.Width() < m.Height()
+}
+
+// Megapixels returns the resolution in megapixels.
+func (m *MediaFile) Megapixels() int {
+	return int(math.Round(float64(m.Width()*m.Height()) / 1000000))
 }
 
 // Orientation returns the orientation of a MediaFile.

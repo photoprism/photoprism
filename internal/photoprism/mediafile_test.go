@@ -1618,7 +1618,7 @@ func TestMediaFile_AspectRatio(t *testing.T) {
 		}
 
 		ratio := mediaFile.AspectRatio()
-		assert.Equal(t, float32(1.5015106), ratio)
+		assert.Equal(t, float32(1.5), ratio)
 	})
 }
 
@@ -1891,7 +1891,7 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		t.Log(Config().SidecarPath())
 		t.Log(Config().ImportPath())
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
+		mediaFile, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "beach_sand.jpg"))
 
 		if err != nil {
 			t.Fatal(err)
@@ -1899,7 +1899,7 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 
 		initialName := mediaFile.FileName()
 		t.Log(initialName)
-		mediaFile.SetFileName("/go/src/github.com/photoprism/photoprism/storage/testdata/import/beach_sand.jpg")
+		mediaFile.SetFileName(filepath.Join(conf.ImportPath(), "beach_sand.jpg"))
 
 		root, base, path, name := mediaFile.PathNameInfo()
 		assert.Equal(t, "import", root)

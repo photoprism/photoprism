@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,16 +15,22 @@ func TestFiles_Ignore(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.True(t, files.Ignore("exampleFileName.jpg", time.Unix(1583460411, 0), false))
-	assert.False(t, files.Ignore("exampleFileName.jpg", time.Unix(1583460412, 0), false))
-	assert.True(t, files.Ignore("exampleFileName.jpg", time.Unix(1583460412, 0), false))
-	assert.False(t, files.Ignore("exampleFileName.jpg", time.Unix(1583460412, 0), true))
-	assert.False(t, files.Ignore("exampleFileName.jpg", time.Unix(500, 0), false))
-	assert.True(t, files.Ignore("exampleFileName.jpg", time.Unix(500, 0), false))
-	assert.False(t, files.Ignore("new-file.jpg", time.Unix(1583460000, 1), false))
-	assert.True(t, files.Ignore("new-file.jpg", time.Unix(1583460000, 2), false))
-	assert.False(t, files.Ignore("new-file.jpg", time.Unix(1583460001, 2), false))
-	assert.False(t, files.Ignore("new-file.jpg", time.Unix(1583460001, 2), true))
-	assert.True(t, files.Ignore("new-file.jpg", time.Unix(1583460001, 2), false))
-	assert.False(t, files.Ignore("new-file.jpg", time.Unix(501, 0), false))
+	assert.True(t, files.Ignore("exampleFileName.jpg", entity.RootOriginals, time.Unix(1583460411, 0), false))
+	assert.False(t, files.Ignore("exampleFileName.jpg", entity.RootOriginals,time.Unix(1583460412, 0), false))
+	assert.True(t, files.Ignore("exampleFileName.jpg", entity.RootOriginals,time.Unix(1583460412, 0), false))
+	assert.False(t, files.Ignore("exampleFileName.jpg", entity.RootOriginals,time.Unix(1583460412, 0), true))
+	assert.False(t, files.Ignore("exampleFileName.jpg", entity.RootOriginals,time.Unix(500, 0), false))
+	assert.True(t, files.Ignore("exampleFileName.jpg", entity.RootOriginals,time.Unix(500, 0), false))
+	assert.False(t, files.Ignore("new-file.jpg",entity.RootOriginals, time.Unix(1583460000, 1), false))
+	assert.True(t, files.Ignore("new-file.jpg",entity.RootOriginals,time.Unix(1583460000, 2), false))
+	assert.False(t, files.Ignore("new-file.jpg", entity.RootOriginals,time.Unix(1583460001, 2), false))
+	assert.False(t, files.Ignore("new-file.jpg", entity.RootOriginals,time.Unix(1583460001, 2), true))
+	assert.True(t, files.Ignore("new-file.jpg",entity.RootOriginals, time.Unix(1583460001, 2), false))
+	assert.False(t, files.Ignore("new-file.jpg", entity.RootOriginals,time.Unix(501, 0), false))
+	assert.False(t, files.Ignore("new-file.jpg",entity.RootSidecar, time.Unix(1583460000, 1), false))
+	assert.True(t, files.Ignore("new-file.jpg",entity.RootSidecar,time.Unix(1583460000, 2), false))
+	assert.False(t, files.Ignore("new-file.jpg", entity.RootSidecar,time.Unix(1583460001, 2), false))
+	assert.False(t, files.Ignore("new-file.jpg", entity.RootSidecar,time.Unix(1583460001, 2), true))
+	assert.True(t, files.Ignore("new-file.jpg",entity.RootSidecar, time.Unix(1583460001, 2), false))
+	assert.False(t, files.Ignore("new-file.jpg", entity.RootSidecar,time.Unix(501, 0), false))
 }

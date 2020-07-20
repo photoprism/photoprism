@@ -1,6 +1,7 @@
 package query
 
 import (
+	"path"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -109,21 +110,32 @@ type FileMap map[string]int64
 func IndexedFiles() (result FileMap, err error) {
 	result = make(FileMap)
 
-	type Files struct {
+	type File struct {
+		FileRoot string
 		FileName string
 		ModTime  int64
 	}
 
-	var files []Files
+	// Query known duplicates.
+	var duplicates []File
 
-	sql := "SELECT file_name, mod_time FROM files"
+	if err := UnscopedDb().Raw("SELECT file_root, file_name, mod_time FROM duplicates").Scan(&duplicates).Error; err != nil {
+		return result, err
+	}
 
-	if err := UnscopedDb().Raw(sql).Scan(&files).Error; err != nil {
+	for _, row := range duplicates {
+		result[path.Join(row.FileRoot, row.FileName)] = row.ModTime
+	}
+
+	// Query indexed files.
+	var files []File
+
+	if err := UnscopedDb().Raw("SELECT file_root, file_name, mod_time FROM files").Scan(&files).Error; err != nil {
 		return result, err
 	}
 
 	for _, row := range files {
-		result[row.FileName] = row.ModTime
+		result[path.Join(row.FileRoot, row.FileName)] = row.ModTime
 	}
 
 	return result, err

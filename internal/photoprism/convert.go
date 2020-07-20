@@ -216,7 +216,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 
 	mediaFile, err := NewMediaFile(jpegName)
 
-	if err == nil {
+	if err == nil && mediaFile.IsJpeg() {
 		return mediaFile, nil
 	}
 

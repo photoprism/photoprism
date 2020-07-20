@@ -151,7 +151,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 				return nil
 			}
 
-			if ind.files.Indexed(relName, mf.modTime, opt.Rescan) {
+			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, opt.Rescan) {
 				return nil
 			}
 
@@ -170,7 +170,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 					continue
 				}
 
-				if ind.files.Indexed(f.RootRelName(), f.ModTime(), opt.Rescan) {
+				if ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), opt.Rescan) {
 					done[f.FileName()] = fs.Found
 					continue
 				}

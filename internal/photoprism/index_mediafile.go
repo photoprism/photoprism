@@ -3,7 +3,6 @@ package photoprism
 import (
 	"errors"
 	"fmt"
-	"math"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -70,7 +69,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		return result
 	}
 
-	if ind.files.Ignore(m.RootRelName(), m.ModTime(), o.Rescan) {
+	if ind.files.Ignore(m.RootRelName(), m.Root(), m.ModTime(), o.Rescan) {
 		result.Status = IndexSkipped
 		return result
 	}
@@ -116,7 +115,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		"baseName": filepath.Base(fileName),
 	})
 
-	fileQuery = entity.UnscopedDb().First(&file, "file_name = ?", fileName)
+	fileQuery = entity.UnscopedDb().First(&file, "file_name = ? AND (file_root = ? OR file_root = '')", fileName, fileRoot)
 	fileExists = fileQuery.Error == nil
 
 	if !fileExists && !m.IsSidecar() {
@@ -125,6 +124,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		fileExists = fileQuery.Error == nil
 
 		if fileExists && fs.FileExists(FileName(file.FileRoot, file.FileName)) {
+			if err := entity.AddDuplicate(m.RootRelName(), m.Root(), m.Hash(), m.FileSize(), m.ModTime().Unix()); err != nil {
+				log.Error(err)
+			}
+
 			result.Status = IndexDuplicate
 			return result
 		}
@@ -242,9 +245,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			file.FileWidth = m.Width()
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
-			file.FilePortrait = m.Width() < m.Height()
+			file.FilePortrait = m.Portrait()
 
-			megapixels := int(math.Round(float64(file.FileWidth*file.FileHeight) / 1000000))
+			megapixels := m.Megapixels()
 
 			if megapixels > photo.PhotoResolution {
 				photo.PhotoResolution = megapixels
@@ -318,13 +321,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 
 			file.FileCodec = metaData.Codec
-			file.FileWidth = metaData.ActualWidth()
-			file.FileHeight = metaData.ActualHeight()
-			file.FileAspectRatio = metaData.AspectRatio()
-			file.FilePortrait = metaData.Portrait()
+			file.FileWidth = m.Width()
+			file.FileHeight = m.Height()
+			file.FileAspectRatio = m.AspectRatio()
+			file.FilePortrait = m.Portrait()
 			file.FileProjection = metaData.Projection
 
-			if res := metaData.Megapixels(); res > photo.PhotoResolution {
+			if res := m.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
 			}
 		}
@@ -379,14 +382,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 
 			file.FileCodec = metaData.Codec
-			file.FileWidth = metaData.ActualWidth()
-			file.FileHeight = metaData.ActualHeight()
+			file.FileWidth = m.Width()
+			file.FileHeight = m.Height()
+			file.FileAspectRatio = m.AspectRatio()
+			file.FilePortrait = m.Portrait()
 			file.FileDuration = metaData.Duration
-			file.FileAspectRatio = metaData.AspectRatio()
-			file.FilePortrait = metaData.Portrait()
 			file.FileProjection = metaData.Projection
 
-			if res := metaData.Megapixels(); res > photo.PhotoResolution {
+			if res := m.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
 			}
 		}

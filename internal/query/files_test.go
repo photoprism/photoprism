@@ -2,6 +2,7 @@ package query
 
 import (
 	"testing"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
@@ -185,6 +186,16 @@ func TestSetFileError(t *testing.T) {
 }
 
 func TestIndexedFiles(t *testing.T) {
+	if err := entity.AddDuplicate(
+		"Photo18.jpg",
+		entity.RootSidecar,
+		"3cad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		661858,
+		time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix(),
+	); err != nil {
+		t.Fatal(err)
+	}
+
 	result, err := IndexedFiles()
 
 	if err != nil {

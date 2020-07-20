@@ -77,7 +77,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1080, data.Height)
 		assert.Equal(t, 1080, data.ActualWidth())
 		assert.Equal(t, 1920, data.ActualHeight())
-		assert.Equal(t, float32(0.5625), data.AspectRatio())
+		assert.Equal(t, float32(0.56), data.AspectRatio())
 		assert.Equal(t, 6, data.Orientation)
 		assert.Equal(t, float32(52.4596), data.Lat)
 		assert.Equal(t, float32(13.3218), data.Lng)

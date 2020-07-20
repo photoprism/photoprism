@@ -24,7 +24,7 @@ func TestData_AspectRatio(t *testing.T) {
 			All:          nil,
 		}
 
-		assert.Equal(t, float32(0.8333333), data.AspectRatio())
+		assert.Equal(t, float32(0.83), data.AspectRatio())
 	})
 
 	t.Run("invalid", func(t *testing.T) {

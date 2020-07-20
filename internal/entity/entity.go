@@ -33,6 +33,7 @@ var Entities = Types{
 	"people":          &Person{},
 	"accounts":        &Account{},
 	"folders":         &Folder{},
+	"duplicates":      &Duplicate{},
 	"files":           &File{},
 	"files_share":     &FileShare{},
 	"files_sync":      &FileSync{},
@@ -83,12 +84,11 @@ func (list Types) WaitForMigration() {
 // Truncate removes all data from tables without dropping them.
 func (list Types) Truncate() {
 	for name := range list {
-		row := RowCount{}
-		if err := Db().Raw(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Scan(&row).Error; err == nil {
+		if err := Db().Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error; err == nil {
 			log.Debugf("entity: removed all data from %s", name)
 			break
 		} else if err.Error() != "record not found" {
-			log.Debugf("entity: truncate %s (%s)", err.Error(), name)
+			log.Debugf("entity: %s in %s", err, name)
 		}
 	}
 }

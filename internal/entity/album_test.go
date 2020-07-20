@@ -227,12 +227,20 @@ func TestNewMonthAlbum(t *testing.T) {
 func TestFindAlbumBySlug(t *testing.T) {
 	t.Run("1 result", func(t *testing.T) {
 		album := FindAlbumBySlug("holiday-2030", AlbumDefault)
+
+		if album == nil {
+			t.Fatal("expected to find an album")
+		}
+
 		assert.Equal(t, "Holiday2030", album.AlbumTitle)
 		assert.Equal(t, "holiday-2030", album.AlbumSlug)
 	})
 	t.Run("no result", func(t *testing.T) {
 		album := FindAlbumBySlug("holiday-2030", AlbumMonth)
-		assert.Nil(t, album)
+
+		if album != nil {
+			t.Fatal("album should be nil")
+		}
 	})
 }
 

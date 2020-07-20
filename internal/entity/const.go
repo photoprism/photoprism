@@ -38,7 +38,8 @@ const (
 	TypeText    = "text"
 
 	// Root directories.
-	RootOriginals = ""
+	RootUnknown   = ""
+	RootOriginals = "/"
 	RootExamples  = "examples"
 	RootSidecar   = "sidecar"
 	RootImport    = "import"

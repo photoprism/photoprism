@@ -66,7 +66,7 @@ func (data Data) AspectRatio() float32 {
 		return 0
 	}
 
-	aspectRatio := float32(width / height)
+	aspectRatio := float32(math.Round((width / height)*100)/100)
 
 	return aspectRatio
 }

@@ -23,7 +23,7 @@ type File struct {
 	PhotoUID        string        `gorm:"type:varbinary(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
 	FileUID         string        `gorm:"type:varbinary(42);unique_index;" json:"UID" yaml:"UID"`
 	FileName        string        `gorm:"type:varbinary(768);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
-	FileRoot        string        `gorm:"type:varbinary(16);default:'';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
+	FileRoot        string        `gorm:"type:varbinary(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
 	OriginalName    string        `gorm:"type:varbinary(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	FileHash        string        `gorm:"type:varbinary(128);index" json:"Hash" yaml:"Hash,omitempty"`
 	FileSize        int64         `json:"Size" yaml:"Size,omitempty"`
