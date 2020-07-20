@@ -194,6 +194,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	photo.PhotoPath = filePath
 	photo.PhotoName = fileBase
+	file.FileError = ""
 
 	if !file.FilePrimary {
 		if photoExists {
@@ -228,6 +229,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		// Color information
 		if p, err := m.Colors(Config().ThumbPath()); err != nil {
 			log.Errorf("index: %s in %s (detect colors)", err.Error(), logName)
+			file.FileError = err.Error()
 		} else {
 			file.FileMainColor = p.MainColor.Name()
 			file.FileColors = p.Colors.Hex()
@@ -415,7 +417,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	// file obviously exists: remove deleted and missing flags
 	file.DeletedAt = nil
 	file.FileMissing = false
-	file.FileError = ""
 
 	// primary files are used for rendering thumbnails and image classification (plus sidecar files if they exist)
 	if file.FilePrimary {
