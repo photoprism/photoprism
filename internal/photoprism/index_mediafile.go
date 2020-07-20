@@ -271,6 +271,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			if details.NoCopyright() && data.Copyright != "" {
 				details.Copyright = data.Copyright
 			}
+		} else {
+			file.FileError = err.Error()
 		}
 	case m.IsRaw(), m.IsHEIF(), m.IsImageOther():
 		if metaData := m.MetaData(); metaData.Error == nil {
