@@ -173,7 +173,7 @@ func (data *Data) Exif(fileName string, fileType fs.FileType) (err error) {
 	_, index, err := exif.Collect(exifIfdMapping, exifTagIndex, rawExif)
 
 	if err != nil {
-		log.Warnf("metadata: %s in %s (exif collect)", err.Error(), logName)
+		log.Debugf("metadata: %s in %s (exif collect)", err.Error(), logName)
 	} else {
 		if ifd, err := index.RootIfd.ChildWithIfdPath(exifcommon.IfdGpsInfoStandardIfdIdentity); err == nil {
 			if gi, err := ifd.GpsInfo(); err == nil {
@@ -182,7 +182,7 @@ func (data *Data) Exif(fileName string, fileType fs.FileType) (err error) {
 				data.Altitude = gi.Altitude
 			} else {
 				log.Debugf("exif: %s in %s (gps info)", err, logName)
-				log.Warnf("metadata: failed parsing gps coordinates in %s (exif)", logName)
+				log.Infof("metadata: failed parsing gps coordinates in %s (exif)", logName)
 			}
 		}
 	}
