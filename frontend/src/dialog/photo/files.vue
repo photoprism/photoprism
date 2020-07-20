@@ -68,7 +68,7 @@
                         </td>
                         <td>{{ file.Hash }}</td>
                       </tr>
-                      <tr v-if="file.Root">
+                      <tr v-if="file.Root.length > 1">
                         <td>
                           <translate>Storage Folder</translate>
                         </td>
@@ -126,7 +126,7 @@
                         <td>
                           <translate>Aspect Ratio</translate>
                         </td>
-                        <td>{{ file.AspectRatio | number('0.00') }}</td>
+                        <td>{{ file.AspectRatio }}</td>
                       </tr>
                       <tr v-if="file.MainColor">
                         <td>

@@ -41,7 +41,7 @@ export class File extends RestModel {
             InstanceID: "",
             UID: "",
             PhotoUID: "",
-            Root: "",
+            Root: "/",
             Name: "",
             OriginalName: "",
             Hash: "",
