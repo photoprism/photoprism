@@ -739,14 +739,14 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 		filename, err := jpeg.Thumbnail(Config().ThumbPath(), thumb)
 
 		if err != nil {
-			log.Error(err)
+			log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
 			continue
 		}
 
 		imageLabels, err := ind.tensorFlow.File(filename)
 
 		if err != nil {
-			log.Error(err)
+			log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
 			continue
 		}
 

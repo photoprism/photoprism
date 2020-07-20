@@ -71,7 +71,7 @@ func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 	tensor, err := t.createTensor(img, "jpeg")
 
 	if err != nil {
-		return nil, fmt.Errorf("classify: %s (create tensor)", err.Error())
+		return nil, fmt.Errorf("classify: %s", err)
 	}
 
 	// Run inference.

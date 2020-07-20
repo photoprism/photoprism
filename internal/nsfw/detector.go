@@ -53,7 +53,7 @@ func (t *Detector) Labels(img []byte) (result Labels, err error) {
 	tensor, err := createTensorFromImage(img, "jpeg")
 
 	if err != nil {
-		return result, fmt.Errorf("nsfw: %s (create tensor)", err.Error())
+		return result, fmt.Errorf("nsfw: %s", err)
 	}
 
 	// Run inference

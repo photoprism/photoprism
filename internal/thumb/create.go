@@ -141,7 +141,7 @@ func FromFile(imageFilename, hash, thumbPath string, width, height int, opts ...
 	img, err := imaging.Open(imageFilename, imaging.AutoOrientation(true))
 
 	if err != nil {
-		log.Errorf("resample: can't open %s (%s)", txt.Quote(imageFilename), err.Error())
+		log.Errorf("resample: %s in %s", err, txt.Quote(filepath.Base(imageFilename)))
 		return "", err
 	}
 
@@ -176,7 +176,7 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 	err = imaging.Save(result, fileName, saveOption)
 
 	if err != nil {
-		log.Errorf("resample: failed to save %s", fileName)
+		log.Errorf("resample: failed to save %s", txt.Quote(filepath.Base(fileName)))
 		return result, err
 	}
 
