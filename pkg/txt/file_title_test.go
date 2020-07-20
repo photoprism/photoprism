@@ -80,4 +80,7 @@ func TestFileTitle(t *testing.T) {
 	t.Run("invalid words", func(t *testing.T) {
 		assert.Equal(t, "", FileTitle("jg hg "))
 	})
+	t.Run("ampersand", func(t *testing.T) {
+		assert.Equal(t, "Coouussinen, Du & Ich", FileTitle("coouussinen, du & ich"))
+	})
 }
