@@ -1390,6 +1390,7 @@ var ShortWords = map[string]bool{
 	"loq": true,
 	"lor": true,
 	"lot": true,
+	"los": true,
 	"lou": true,
 	"low": true,
 	"lox": true,
